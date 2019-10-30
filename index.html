@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <title>Bangle.js loader</title>
+  </head>
+  <body>
+    <header class="navbar">
+      <section class="navbar-section">
+        <a href="#" class="navbar-brand mr-2">Bangle.js Loader</a>
+        <!-- <a href="#" class="btn btn-link">...</a> -->
+      </section>
+      <!--<section class="navbar-section">
+        <div class="input-group input-inline">
+          <input class="form-input" type="text" placeholder="search">
+          <button class="btn btn-primary input-group-btn">Search</button>
+        </div>
+      </section>-->
+    </header>
+
+    <ul class="tab tab-block" id="tab-navigate">
+      <li class="tab-item active" id="tab-librarycontainer">
+        <a href="javascript:showTab('librarycontainer')">Library</a>
+      </li>
+      <li class="tab-item" id="tab-myappscontainer">
+        <a href="javascript:showTab('myappscontainer')">My Apps</a>
+      </li>
+      <li class="tab-item" id="tab-aboutcontainer">
+        <a href="javascript:showTab('aboutcontainer')">About</a>
+      </li>
+    </ul>
+
+    <div class="container"  id="toastcontainer">
+    </div>
+
+    <div class="container bangle-tab" id="librarycontainer">
+      <!--<div class="filter-nav">
+        <label class="chip" filterid="">All</label>
+        <label class="chip" filterid="clock">Clocks</label>
+        <label class="chip" filterid="game">Games</label>
+        <label class="chip" filterid="tool">Tools</label>
+        <label class="chip" filterid="hardware">Hardware</label>
+      </div>-->
+      <div class="panel">
+        <div class="panel-header">
+        <!--  <div class="input-group">
+            <input class="form-input" type="text" placeholder="Keywords...">
+            <button class="btn btn-primary input-group-btn">Search</button>
+          </div>-->
+        </div>
+        <div class="panel-body"><!-- apps go here --></div>
+      </div>
+    </div>
+
+    <div class="container bangle-tab" id="myappscontainer" style="display:none">
+      <div class="panel">
+        <div class="panel-header" style="text-align:right">
+          <button class="btn input-group-btn" id="myappsrefresh">Refresh...</button>
+        </div>
+        <div class="panel-body"><!-- apps go here --></div>
+      </div>
+    </div>
+
+    <div class="container bangle-tab" id="aboutcontainer" style="display:none">
+      <div class="hero bg-gray">
+        <div class="hero-body">
+          <h1>About Bangle.js loader</h1>
+          <p>A tool for uploading and removing apps from <a href="https://banglejs.com">Bangle.js Smart Watches</a></p>
+        </div>
+      </div>
+      <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
+    </div>
+
+
+
+    <script src="http://www.puck-js.com/puck.js"></script>
+    <script src="utils.js"></script>
+    <script src="comms.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

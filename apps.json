@@ -1,0 +1,24 @@
+[
+  { "id": "trex",
+    "name": "T-Rex",
+    "icon": "trex.png",
+    "description": "T-Rex game in the style of Chrome's offline game",
+    "tags": "game",
+    "storage": [
+      {"name":"+trex","file":"trex.json"},
+      {"name":"-trex","file":"trex.js"},
+      {"name":"*trex","file":"trex-icon.js"}
+    ]
+  },
+  { "id": "compass",
+    "name": "Compass",
+    "icon": "compass.png",
+    "description": "Simple compass that points North",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"+compass","file":"compass.json"},
+      {"name":"-compass","file":"compass.js"},
+      {"name":"*compass","file":"compass-icon.js"}
+    ]
+  }
+]
