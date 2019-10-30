@@ -20,5 +20,58 @@
       {"name":"-compass","file":"compass.js"},
       {"name":"*compass","file":"compass-icon.js"}
     ]
+  },
+  { "id": "clock",
+    "name": "Morphing Clock",
+    "icon": "clock-morphing.png",
+    "description": "7 segment clock that morphs between minutes and hours",
+    "tags": "clock",
+    "storage": [
+      {"name":"+clock","file":"clock.json"},
+      {"name":"-clock","file":"clock-morphing.js"},
+      {"name":"*clock","file":"clock-icon.js"}
+    ]
+  },
+  { "id": "gpstime",
+    "name": "GPS Time",
+    "icon": "gpstime.png",
+    "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
+    "tags": "tool",
+    "storage": [
+      {"name":"+gpstime","file":"gpstime.json"},
+      {"name":"-gpstime","file":"gpstime.js"},
+      {"name":"*gpstime","file":"gpstime-icon.js"}
+    ]
+  },
+  { "id": "openloc",
+    "name": "Open Location / Plus Codes",
+    "description": "Convert your current GPS location to a series of characters",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"+openloc","file":"openlocation.json"},
+      {"name":"-openloc","file":"openlocation.js"}
+    ]
+  },
+  { "id": "speedo",
+    "name": "Speedo",
+    "icon": "speedo.png",
+    "description": "Show the current speed according to the GPS",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"+speedo","file":"speedo.json"},
+      {"name":"-speedo","file":"speedo.js"},
+      {"name":"*speedo","file":"speedo-icon.js"}
+    ]
+  },
+  { "id": "slevel",
+    "name": "Spirit Level",
+    "icon": "spiritlevel.png",
+    "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
+    "tags": "tool",
+    "storage": [
+      {"name":"+slevel","file":"spiritlevel.json"},
+      {"name":"-slevel","file":"spiritlevel.js"},
+      {"name":"*slevel","file":"spiritlevel-icon.js"}
+    ]
   }
 ]
