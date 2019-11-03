@@ -67,7 +67,7 @@ function showTab(tabname) {
 // =========================================== Library
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
-  panelbody.innerHTML = appJSON.map((app,idx) => `<div class="tile">
+  panelbody.innerHTML = appJSON.map((app,idx) => `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?app.icon:"apps/unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
@@ -79,7 +79,7 @@ function refreshLibrary() {
       <button class="btn btn-link btn-action btn-lg"><i class="icon ${appsInstalled.includes(app.id)?"icon-delete":"icon-upload"}" appid="${app.id}"></i></button>
     </div>
   </div>
-  `);
+  `).join("");
   // set badge up top
   var tab = document.querySelector("#tab-librarycontainer a");
   tab.classList.add("badge");
@@ -151,14 +151,14 @@ function showLoadingIndicator() {
   tab.classList.add("badge");
   tab.setAttribute("data-badge", "");
   // Loading indicator
-  panelbody.innerHTML = '<div class="tile"><div class="tile-content" style="min-height:48px;"><div class="loading loading-lg"></div></div></div>';
+  panelbody.innerHTML = '<div class="tile column col-12"><div class="tile-content" style="min-height:48px;"><div class="loading loading-lg"></div></div></div>';
 }
 
 function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
   var tab = document.querySelector("#tab-myappscontainer a");
   tab.setAttribute("data-badge", appsInstalled.length);
-  panelbody.innerHTML = appsInstalled.map(appNameToApp).sort(appSorter).map(app => `<div class="tile">
+  panelbody.innerHTML = appsInstalled.map(appNameToApp).sort(appSorter).map(app => `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon}" alt="${escapeHtml(app.name)}"></figure>
     </div>
@@ -170,7 +170,7 @@ function refreshMyApps() {
       <button class="btn btn-link btn-action btn-lg"><i class="icon icon-delete" appid="${app.id}"></i></button>
     </div>
   </div>
-  `);
+  `).join("");
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
       var icon = event.target;
