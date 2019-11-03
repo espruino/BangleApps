@@ -7,7 +7,7 @@
     "storage": [
       {"name":"+trex","file":"trex.json"},
       {"name":"-trex","file":"trex.js"},
-      {"name":"*trex","file":"trex-icon.js"}
+      {"name":"*trex","file":"trex-icon.js","evaluate":true}
     ]
   },
   { "id": "compass",
@@ -18,7 +18,7 @@
     "storage": [
       {"name":"+compass","file":"compass.json"},
       {"name":"-compass","file":"compass.js"},
-      {"name":"*compass","file":"compass-icon.js"}
+      {"name":"*compass","file":"compass-icon.js","evaluate":true}
     ]
   },
   { "id": "clock",
@@ -29,7 +29,7 @@
     "storage": [
       {"name":"+clock","file":"clock.json"},
       {"name":"-clock","file":"clock-morphing.js"},
-      {"name":"*clock","file":"clock-icon.js"}
+      {"name":"*clock","file":"clock-icon.js","evaluate":true}
     ]
   },
   { "id": "gpstime",
@@ -40,16 +40,17 @@
     "storage": [
       {"name":"+gpstime","file":"gpstime.json"},
       {"name":"-gpstime","file":"gpstime.js"},
-      {"name":"*gpstime","file":"gpstime-icon.js"}
+      {"name":"*gpstime","file":"gpstime-icon.js","evaluate":true}
     ]
   },
   { "id": "openloc",
     "name": "Open Location / Plus Codes",
+    "icon": "openlocation.png",
     "description": "Convert your current GPS location to a series of characters",
     "tags": "tool,outdoors",
     "storage": [
       {"name":"+openloc","file":"openlocation.json"},
-      {"name":"-openloc","file":"openlocation.js"}
+      {"name":"-openloc","file":"openlocation.js","evaluate":true}
     ]
   },
   { "id": "speedo",
@@ -60,7 +61,7 @@
     "storage": [
       {"name":"+speedo","file":"speedo.json"},
       {"name":"-speedo","file":"speedo.js"},
-      {"name":"*speedo","file":"speedo-icon.js"}
+      {"name":"*speedo","file":"speedo-icon.js","evaluate":true}
     ]
   },
   { "id": "slevel",
@@ -71,7 +72,7 @@
     "storage": [
       {"name":"+slevel","file":"spiritlevel.json"},
       {"name":"-slevel","file":"spiritlevel.js"},
-      {"name":"*slevel","file":"spiritlevel-icon.js"}
+      {"name":"*slevel","file":"spiritlevel-icon.js","evaluate":true}
     ]
   }
 ]
