@@ -19,9 +19,9 @@ uploadApp : app => {
     // Load all files
     Promise.all(app.storage.map(storageFile => httpGet("apps/"+storageFile.file)
       // map each file to a command to load into storage
-      .then(contents=>`\x10require('Storage').write(${toJS(storageFile.name)},${storageFile.evaluate ? contents : toJS(contents)});`)))
+      .then(contents=>`\x10require('Storage').write(${toJS(storageFile.name)},${storageFile.evaluate ? contents.trim() : toJS(contents)});`)))
     .then(function(fileContents) {
-      fileContents = fileContents.join("\n");
+      fileContents = fileContents.join("\n")+"\n";
       console.log("uploadApp",fileContents);
       // reset to ensure we have enough memory to upload what we need to
       Puck.write("\x03reset();\n", function() {
