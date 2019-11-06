@@ -95,5 +95,17 @@
       {"name":"+qrcode"},
       {"name":"=qrcode"}
     ]
+  },
+  { "id": "beer",
+    "name": "Beer Compass",
+    "icon": "beercompass.png",
+    "description": "Uploads all the pubs in an area onto your watch, so it can always point you at the nearest one",
+    "tags": "",
+    "custom": "beercompass.html",
+    "storage": [
+      {"name":"-beer"},
+      {"name":"+beer"},
+      {"name":"=beer"}
+    ]
   }
 ]
