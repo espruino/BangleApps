@@ -107,5 +107,17 @@
       {"name":"+beer"},
       {"name":"=beer"}
     ]
+  },
+  { "id": "route",
+    "name": "Route Viewer",
+    "icon": "route.png",
+    "description": "Upload a KML file of a route, and have your watch display a map with how far around it you are",
+    "tags": "",
+    "custom": "route.html",
+    "storage": [
+      {"name":"-route"},
+      {"name":"+route"},
+      {"name":"=route"}
+    ]
   }
 ]
