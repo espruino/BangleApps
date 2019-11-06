@@ -1,6 +1,13 @@
 g.clear();
 var old = {x:0,y:0};
 Bangle.on('accel',function(v) {
+  var max = Math.max(Math.abs(v.x),Math.abs(v.y),Math.abs(v.z));
+  if (Math.abs(v.y)==max) {
+    v = {x:v.x,y:v.z,z:v.y};
+  } else if (Math.abs(v.x)==max) {
+    v = {x:v.z,y:v.y,z:v.x};
+  }
+
   var d = Math.sqrt(v.x*v.x+v.y*v.y);
   var ang = Math.atan2(d,Math.abs(v.z))*180/Math.PI;
   

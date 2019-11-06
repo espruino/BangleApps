@@ -1,4 +1,13 @@
 [
+  { "id": "boot",
+    "name": "Bootloader",
+    "icon": "bootloader.png",
+    "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
+    "tags": "tool,system",
+    "storage": [
+      {"name":".bootcde","url":"bootloader.js"}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
@@ -75,6 +84,19 @@
       {"name":"*slevel","url":"spiritlevel-icon.js","evaluate":true}
     ]
   },
+  { "id": "settings",
+    "name": "Settings",
+    "icon": "settings.png",
+    "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
+    "tags": "tool,system",
+    "storage": [
+      {"name":"+settings","url":"settings.json"},
+      {"name":"-settings","url":"settings.js"},
+      {"name":"=settings","url":"settings-init.js"},
+      {"name":"@settings","url":"settings-default.json","evaluate":true},
+      {"name":"*settings","url":"settings-icon.js","evaluate":true}
+    ]
+  },
   { "id": "sbat",
     "name": "Battery Level Widget",
     "icon": "widget-battery.png",
@@ -82,6 +104,28 @@
     "tags": "widget,battery",
     "storage": [
       {"name":"=sbat","url":"widget-battery.js"}
+    ]
+  },
+  { "id": "hrm",
+    "name": "Heart Rate Monitor",
+    "icon": "heartrate.png",
+    "description": "Measure your current heart rate",
+    "tags": "health",
+    "storage": [
+      {"name":"+hrm","url":"heartrate.json"},
+      {"name":"-hrm","url":"heartrate.js"},
+      {"name":"*hrm","url":"heartrate-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "swatch",
+    "name": "Stopwatch",
+    "icon": "stopwatch.png",
+    "description": "Simple stopwatch with Lap Time recording",
+    "tags": "health",
+    "storage": [
+      {"name":"+swatch","url":"stopwatch.json"},
+      {"name":"-swatch","url":"stopwatch.js"},
+      {"name":"*swatch","url":"stopwatch-icon.js","evaluate":true}
     ]
   },
   { "id": "qrcode",
