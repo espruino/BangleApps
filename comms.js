@@ -17,9 +17,17 @@ var Comms = {
 uploadApp : app => {
   return new Promise((resolve,reject) => {
     // Load all files
-    Promise.all(app.storage.map(storageFile => httpGet("apps/"+storageFile.file)
-      // map each file to a command to load into storage
-      .then(contents=>`\x10require('Storage').write(${toJS(storageFile.name)},${storageFile.evaluate ? contents.trim() : toJS(contents)});`)))
+    Promise.all(app.storage.map(storageFile => {
+      var promise;
+      if (storageFile.content)
+        promise = Promise.resolve(storageFile.content);
+      else if (storageFile.url)
+        promise = httpGet("apps/"+storageFile.url);
+      else promise = Promise.resolve();
+      // then map each file to a command to load into storage
+      return promise.then(contents =>
+        contents?`\x10require('Storage').write(${toJS(storageFile.name)},${storageFile.evaluate ? contents.trim() : toJS(contents)});`:"")
+    })) // now we just have a list of commands...
     .then((fileContents) => {
       fileContents = fileContents.join("\n")+"\n";
       console.log("uploadApp",fileContents);

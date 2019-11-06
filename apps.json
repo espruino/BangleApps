@@ -5,9 +5,9 @@
     "description": "T-Rex game in the style of Chrome's offline game",
     "tags": "game",
     "storage": [
-      {"name":"+trex","file":"trex.json"},
-      {"name":"-trex","file":"trex.js"},
-      {"name":"*trex","file":"trex-icon.js","evaluate":true}
+      {"name":"+trex","url":"trex.json"},
+      {"name":"-trex","url":"trex.js"},
+      {"name":"*trex","url":"trex-icon.js","evaluate":true}
     ]
   },
   { "id": "compass",
@@ -16,9 +16,9 @@
     "description": "Simple compass that points North",
     "tags": "tool,outdoors",
     "storage": [
-      {"name":"+compass","file":"compass.json"},
-      {"name":"-compass","file":"compass.js"},
-      {"name":"*compass","file":"compass-icon.js","evaluate":true}
+      {"name":"+compass","url":"compass.json"},
+      {"name":"-compass","url":"compass.js"},
+      {"name":"*compass","url":"compass-icon.js","evaluate":true}
     ]
   },
   { "id": "clock",
@@ -27,9 +27,9 @@
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "storage": [
-      {"name":"+clock","file":"clock.json"},
-      {"name":"-clock","file":"clock-morphing.js"},
-      {"name":"*clock","file":"clock-icon.js","evaluate":true}
+      {"name":"+clock","url":"clock.json"},
+      {"name":"-clock","url":"clock-morphing.js"},
+      {"name":"*clock","url":"clock-icon.js","evaluate":true}
     ]
   },
   { "id": "gpstime",
@@ -38,9 +38,9 @@
     "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
     "tags": "tool",
     "storage": [
-      {"name":"+gpstime","file":"gpstime.json"},
-      {"name":"-gpstime","file":"gpstime.js"},
-      {"name":"*gpstime","file":"gpstime-icon.js","evaluate":true}
+      {"name":"+gpstime","url":"gpstime.json"},
+      {"name":"-gpstime","url":"gpstime.js"},
+      {"name":"*gpstime","url":"gpstime-icon.js","evaluate":true}
     ]
   },
   { "id": "openloc",
@@ -49,8 +49,8 @@
     "description": "Convert your current GPS location to a series of characters",
     "tags": "tool,outdoors",
     "storage": [
-      {"name":"+openloc","file":"openlocation.json"},
-      {"name":"-openloc","file":"openlocation.js","evaluate":true}
+      {"name":"+openloc","url":"openlocation.json"},
+      {"name":"-openloc","url":"openlocation.js","evaluate":true}
     ]
   },
   { "id": "speedo",
@@ -59,9 +59,9 @@
     "description": "Show the current speed according to the GPS",
     "tags": "tool,outdoors",
     "storage": [
-      {"name":"+speedo","file":"speedo.json"},
-      {"name":"-speedo","file":"speedo.js"},
-      {"name":"*speedo","file":"speedo-icon.js","evaluate":true}
+      {"name":"+speedo","url":"speedo.json"},
+      {"name":"-speedo","url":"speedo.js"},
+      {"name":"*speedo","url":"speedo-icon.js","evaluate":true}
     ]
   },
   { "id": "slevel",
@@ -70,9 +70,30 @@
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "tags": "tool",
     "storage": [
-      {"name":"+slevel","file":"spiritlevel.json"},
-      {"name":"-slevel","file":"spiritlevel.js"},
-      {"name":"*slevel","file":"spiritlevel-icon.js","evaluate":true}
+      {"name":"+slevel","url":"spiritlevel.json"},
+      {"name":"-slevel","url":"spiritlevel.js"},
+      {"name":"*slevel","url":"spiritlevel-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "sbat",
+    "name": "Battery Level Widget",
+    "icon": "widget-battery.png",
+    "description": "Show the current battery level and charging status in the top right of the clock",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"=sbat","url":"widget-battery.js"}
+    ]
+  },
+  { "id": "qrcode",
+    "name": "Custom QR Code",
+    "icon": "qrcode.png",
+    "description": "Use this to upload a customised QR code to Bangle.js",
+    "tags": "",
+    "custom": "qrcode.html",
+    "storage": [
+      {"name":"-qrcode"},
+      {"name":"+qrcode"},
+      {"name":"=qrcode"}
     ]
   }
 ]
