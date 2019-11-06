@@ -5,7 +5,7 @@ g.setColor(0,0,0);
 g.fillCircle(120,130,70,70);
 
 function arrow(r,c) {
-  r=-r*Math.PI/180;
+  r=r*Math.PI/180;
   var p = Math.PI/2;
   g.setColor(c);
   g.fillPoly([
