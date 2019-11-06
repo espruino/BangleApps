@@ -117,7 +117,7 @@ refreshLibrary();
 // =========================================== My Apps
 
 function removeApp(app) {
-  return showPrompt("Delete","Really remove app '"+appid+"'?").then(() => {
+  return showPrompt("Delete","Really remove '"+app.name+"'?").then(() => {
     Comms.removeApp(app).then(()=>{
       appsInstalled = appsInstalled.filter(id=>id!=app.id);
       showToast(app.name+" removed successfully","success");
@@ -188,6 +188,8 @@ function getInstalledApps() {
     appsInstalled = appIDs;
     refreshMyApps();
     refreshLibrary();
+  }).catch(err => {
+    showToast("Getting app list failed, "+err,"error");
   });
 }
 

@@ -20,13 +20,15 @@ uploadApp : app => {
     Promise.all(app.storage.map(storageFile => httpGet("apps/"+storageFile.file)
       // map each file to a command to load into storage
       .then(contents=>`\x10require('Storage').write(${toJS(storageFile.name)},${storageFile.evaluate ? contents.trim() : toJS(contents)});`)))
-    .then(function(fileContents) {
+    .then((fileContents) => {
       fileContents = fileContents.join("\n")+"\n";
       console.log("uploadApp",fileContents);
       // reset to ensure we have enough memory to upload what we need to
-      Puck.write("\x03reset();\n", function() {
-        setTimeout(function() { // wait for reset
-          Puck.write(fileContents,function() {
+      Puck.write("\x03reset();\n", (result) => {
+        if (result===null) return reject("");
+        setTimeout(() => { // wait for reset
+          Puck.write(fileContents,(result) => {
+            if (result===null) return reject("");
             resolve();
           });
         },500);
@@ -36,8 +38,10 @@ uploadApp : app => {
 },
 getInstalledApps : () => {
   return new Promise((resolve,reject) => {
-    Puck.write("\x03",() => {
-      Puck.eval('require("Storage").list().filter(f=>f[0]=="+").map(f=>f.substr(1))', appList => {
+    Puck.write("\x03",(result) => {
+      if (result===null) return reject("");
+      Puck.eval('require("Storage").list().filter(f=>f[0]=="+").map(f=>f.substr(1))', (appList,err) => {
+        if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
       });
@@ -50,7 +54,8 @@ removeApp : app => { // expects an app structure
   }).join("");
   console.log("removeApp", cmds);
   return new Promise((resolve,reject) => {
-    Puck.write("\x03"+cmds,() => {
+    Puck.write("\x03"+cmds,(result) => {
+      if (result===null) return reject("");
       resolve();
     });
   });
