@@ -1,6 +1,8 @@
 Bangle.js App Loader (and Apps)
 ================================
 
+Try it live at [banglejs.com/apps](https://banglejs.com/apps)
+
 ### How does it work?
 
 * A list of apps is in `apps.json`
