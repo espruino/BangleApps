@@ -50,7 +50,7 @@ the *default* of `To RAM`
     {"name":"+7chname","url":"my-great-app.json"},
     {"name":"-7chname","url":"my-great-app.js"},
     {"name":"*7chname","url":"my-great-app.js","evaluate":true}
-  ]
+  ],
 },
 ```
 
@@ -74,7 +74,9 @@ the *default* of `To RAM`
      "evaluate":true          // if supplied, data isn't quoted into a String before upload
                               // (eg it's evaluated as JS)
     },
-
+  "sortorder" : 0,            // optional - choose where in the list this goes.
+                              // this should only really be used to put system
+                              // stuff at the top
   ]
 }
 ```

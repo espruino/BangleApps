@@ -33,5 +33,9 @@ function toJS(txt) {
 function appSorter(a,b) {
   if (a.unknown || b.unknown)
     return (a.unknown)? 1 : -1;
+  var sa = 0|a.sortorder;
+  var sb = 0|b.sortorder;
+  if (sa<sb) return -1;
+  if (sa>sb) return 1;
   return (a.name==b.name) ? 0 : ((a.name<b.name) ? -1 : 1);
 }

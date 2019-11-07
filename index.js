@@ -2,7 +2,12 @@ var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app IDs
 
 httpGet("apps.json").then(apps=>{
-  appJSON = JSON.parse(apps);
+  try {
+    appJSON = JSON.parse(apps);
+  } catch(e) {
+    console.log(e);
+    showToast("App List Corrupted","error");
+  }
   appJSON.sort(appSorter);
   refreshLibrary();
 });
