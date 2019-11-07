@@ -4,7 +4,8 @@
     var buf = Graphics.createArrayBuffer(240, 240, 2, { msb: true });
 
     function flip() {
-        g.drawImage({ width: buf.getWidth(), height: buf.getHeight(), bpp: 2, transparent: 0, buffer: buf.buffer }, 0, 0);
+        var palette = new Uint16Array([0,,,0xFFFF]);
+        g.drawImage({ width: buf.getWidth(), height: buf.getHeight(), bpp: 2, palette : palette, buffer: buf.buffer }, 0, 0);
     }
 
     const allWords = [
@@ -53,8 +54,8 @@
     // font size and color
     const wordFontSize = 20;
     const timeFontSize = 30;
-    const passivColor = 1;
-    const activeColor = 2;
+    const passivColor = 0x3186/*grey*/;
+    const activeColor = 0xF800/*red*/;
 
     function drawWordClock() {
 
@@ -66,7 +67,7 @@
 
         var hidx;
         var midx;
-        var midxA;
+        var midxA=[];
 
         buf.clear();
         buf.setFontVector(wordFontSize);
@@ -110,6 +111,7 @@
         hours[hidx][0].split('').forEach((c, pos) => {
             x = xs + (hours[hidx][pos + 1] / 10 | 0) * dx;
             y = ys + (hours[hidx][pos + 1] % 10) * dy;
+          
             buf.drawString(c, x, y);
         });
 
@@ -129,6 +131,7 @@
 
         // display buf
         flip();
+        drawWidgets();
     }
 
     Bangle.on('lcdPower', function(on) {

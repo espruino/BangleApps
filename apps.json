@@ -9,19 +9,31 @@
     ],
     "sortorder" : -1
   },
-  { "id": "clock",
+  { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
+    "type":"clock",
     "storage": [
-      {"name":"+clock","url":"clock.json"},
-      {"name":"-clock","url":"clock-morphing.js"},
-      {"name":"*clock","url":"clock-icon.js","evaluate":true}
+      {"name":"+mclock","url":"clock-morphing.json"},
+      {"name":"-mclock","url":"clock-morphing.js"},
+      {"name":"*mclock","url":"clock-morphing-icon.js","evaluate":true}
     ],
     "sortorder" : -1
   },
-
+  { "id": "wclock",
+    "name": "Word Clock",
+    "icon": "clock-word.png",
+    "description": "Display Time as Text",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+wclock","url":"clock-word.json"},
+      {"name":"-wclock","url":"clock-word.js"},
+      {"name":"*wclock","url":"clock-word-icon.js","evaluate":true}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
@@ -134,7 +146,7 @@
     ]
   },
   { "id": "sbt",
-    "name": "c Widget",
+    "name": "Bluetooth Widget",
     "icon": "widget-bluetooth.png",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
@@ -241,17 +253,6 @@
       {"name":"-route"},
       {"name":"+route"},
       {"name":"=route"}
-    ]
-  },
-  { "id": "wclock",
-    "name": "Word Clock",
-    "icon": "word-clock.png",
-    "description": "Display Time as Text",
-    "tags": "",
-    "storage": [
-      {"name":"+wclock","url":"word-clock.json"},
-      {"name":"-wclock","url":"word-clock.js"},
-      {"name":"*wclock","url":"word-clock-icon.js","evaluate":true}
     ]
   }
 ]
