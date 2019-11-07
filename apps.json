@@ -6,8 +6,22 @@
     "tags": "tool,system",
     "storage": [
       {"name":".bootcde","url":"bootloader.js"}
-    ]
+    ],
+    "sortorder" : -1
   },
+  { "id": "clock",
+    "name": "Morphing Clock",
+    "icon": "clock-morphing.png",
+    "description": "7 segment clock that morphs between minutes and hours",
+    "tags": "clock",
+    "storage": [
+      {"name":"+clock","url":"clock.json"},
+      {"name":"-clock","url":"clock-morphing.js"},
+      {"name":"*clock","url":"clock-icon.js","evaluate":true}
+    ],
+    "sortorder" : -1
+  },
+
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
@@ -28,17 +42,6 @@
       {"name":"+compass","url":"compass.json"},
       {"name":"-compass","url":"compass.js"},
       {"name":"*compass","url":"compass-icon.js","evaluate":true}
-    ]
-  },
-  { "id": "clock",
-    "name": "Morphing Clock",
-    "icon": "clock-morphing.png",
-    "description": "7 segment clock that morphs between minutes and hours",
-    "tags": "clock",
-    "storage": [
-      {"name":"+clock","url":"clock.json"},
-      {"name":"-clock","url":"clock-morphing.js"},
-      {"name":"*clock","url":"clock-icon.js","evaluate":true}
     ]
   },
   { "id": "gpstime",
@@ -97,6 +100,17 @@
       {"name":"*settings","url":"settings-icon.js","evaluate":true}
     ]
   },
+  { "id": "files",
+    "name": "App Manager",
+    "icon": "files.png",
+    "description": "Show currently installed apps, free space, and allow their deletion from the watch",
+    "tags": "tool,system",
+    "storage": [
+      {"name":"+files","url":"files.json"},
+      {"name":"-files","url":"files.js"},
+      {"name":"*files","url":"files-icon.js","evaluate":true}
+    ]
+  },
   { "id": "sbat",
     "name": "Battery Level Widget",
     "icon": "widget-battery.png",
@@ -126,6 +140,25 @@
       {"name":"+swatch","url":"stopwatch.json"},
       {"name":"-swatch","url":"stopwatch.js"},
       {"name":"*swatch","url":"stopwatch-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "animals",
+    "name": "Animals Game",
+    "icon": "animals.png",
+    "description": "Simple toddler's game - displays a different number of animals each time the screen is pressed",
+    "tags": "game",
+    "storage": [
+      {"name":"+animals","url":"animals.json"},
+      {"name":"-animals","url":"animals.js"},
+      {"name":"*animals","url":"animals-icon.js","evaluate":true},
+      {"name":"*snake","url":"animals-snake.js","evaluate":true},
+      {"name":"*duck","url":"animals-duck.js","evaluate":true},
+      {"name":"*swan","url":"animals-swan.js","evaluate":true},
+      {"name":"*fox","url":"animals-fox.js","evaluate":true},
+      {"name":"*camel","url":"animals-camel.js","evaluate":true},
+      {"name":"*pig","url":"animals-pig.js","evaluate":true},
+      {"name":"*sheep","url":"animals-sheep.js","evaluate":true},
+      {"name":"*mouse","url":"animals-mouse.js","evaluate":true}
     ]
   },
   { "id": "qrcode",
