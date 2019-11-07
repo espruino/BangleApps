@@ -15,7 +15,7 @@ var BTNU = BTN1;
 
 // Images can be added like this in Espruino v2.00
 var IMG = {
-  rex: [Graphics.createImage(\`
+  rex: [Graphics.createImage(`
            ########
           ##########
           ## #######
@@ -38,7 +38,7 @@ var IMG = {
      ##   #
           #
           ##
-\`),Graphics.createImage(\`
+`),Graphics.createImage(`
            ########
           ##########
           ## #######
@@ -61,7 +61,7 @@ var IMG = {
      ##   ##
      #
      ##
-\`),Graphics.createImage(\`
+`),Graphics.createImage(`
            ########
           #   ######
           # # ######
@@ -84,8 +84,8 @@ var IMG = {
      ##   #
      #    #
      ##   ##
-\`)],
-  cacti: [Graphics.createImage(\`
+`)],
+  cacti: [Graphics.createImage(`
      ##
     ####
     ####
@@ -110,7 +110,7 @@ var IMG = {
     ####
     ####
     ####
-\`),Graphics.createImage(\`
+`),Graphics.createImage(`
    ##
    ##
  # ##
@@ -129,7 +129,7 @@ var IMG = {
    ##
    ##
    ##
-\`)],
+`)],
 };
 IMG.rex.forEach(i=>i.transparent=0);
 IMG.cacti.forEach(i=>i.transparent=0);
