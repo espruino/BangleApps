@@ -162,6 +162,28 @@
       {"name":"*swatch","url":"stopwatch-icon.js","evaluate":true}
     ]
   },
+  { "id": "hidmsic",
+    "name": "Bluetooth Music Controls",
+    "icon": "hid-music.png",
+    "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidmsic","url":"hid-music.json"},
+      {"name":"-hidmsic","url":"hid-music.js"},
+      {"name":"*hidmsic","url":"hid-music-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hidkbd",
+    "name": "Bluetooth Keyboard",
+    "icon": "hid-keyboard.png",
+    "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidkbd","url":"hid-keyboard.json"},
+      {"name":"-hidkbd","url":"hid-keyboard.js"},
+      {"name":"*hidkbd","url":"hid-keyboard-icon.js","evaluate":true}
+    ]
+  },
   { "id": "animals",
     "name": "Animals Game",
     "icon": "animals.png",
