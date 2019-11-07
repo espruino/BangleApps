@@ -8,7 +8,10 @@ setWatch(function() {
   Bangle.removeAllListeners();
 
   var s = require("Storage");
-  var apps = s.list().filter(a=>a[0]=='+').map(app=>s.readJSON(app));
+  apps = s.list().filter(a=>a[0]=='+').map(app=>{
+    try { return s.readJSON(app); }
+    catch (e) { return {name:"DEAD: "+app.substr(1)} }
+  });
   var selected = 0;
   var menuScroll = 0;
   var menuShowing = false;
@@ -34,8 +37,10 @@ setWatch(function() {
         g.drawRect(0,y,239,y+63);
       } else
         g.clearRect(0,y,239,y+63);
-      if (app.icon) g.drawImage(s.read(app.icon),8,y+8);
       g.drawString(app.name,64,y+32);
+      var icon=undefined;
+      if (app.icon) icon = s.read(app.icon);
+      if (icon) try {g.drawImage(icon,8,y+8);} catch(e){}
     }
   }
   drawMenu();
@@ -52,6 +57,7 @@ setWatch(function() {
     }
   }, BTN3, {repeat:true});
   setWatch(function() { // run
+    if (!apps[selected].src) return;
     clearWatch();
     g.clear();
     g.setFont("6x8",2);
