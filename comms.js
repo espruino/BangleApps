@@ -35,7 +35,7 @@ uploadApp : app => {
       Puck.write("\x03reset();\n", (result) => {
         if (result===null) return reject("");
         setTimeout(() => { // wait for reset
-          Puck.write(fileContents,(result) => {
+          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"load()\n",(result) => {
             if (result===null) return reject("");
             resolve();
           });
@@ -63,6 +63,26 @@ removeApp : app => { // expects an app structure
   console.log("removeApp", cmds);
   return new Promise((resolve,reject) => {
     Puck.write("\x03"+cmds,(result) => {
+      if (result===null) return reject("");
+      resolve();
+    });
+  });
+},
+removeAllApps : () => {
+  return new Promise((resolve,reject) => {
+    // Use eval here so we wait for it to finish
+    Puck.eval('require("Storage").eraseAll()||true', (result,err) => {
+      if (result===null) return reject(err || "");
+      Puck.write('\x03\x10reset()\n',(result) => {
+        if (result===null) return reject("");
+        resolve();
+      });
+    });
+  });
+},
+setTime : () => {
+  return new Promise((resolve,reject) => {
+    Puck.setTime((result) => {
       if (result===null) return reject("");
       resolve();
     });

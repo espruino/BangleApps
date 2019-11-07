@@ -22,12 +22,17 @@
       bottom:8px;left:0px;right:0px;
       z-index: 100;
     }
+    .hero {
+      padding-bottom: 1rem;
+      padding-top: 1rem;
+      text-align:center;
+    }
 	</style>
   </head>
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section">
-        <a href="#" class="navbar-brand mr-2">Bangle.js Loader</a>
+        <a href="https://banglejs.com" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
       <!--<section class="navbar-section">
@@ -75,7 +80,7 @@
     <div class="container bangle-tab" id="myappscontainer" style="display:none">
       <div class="panel">
         <div class="panel-header" style="text-align:right">
-          <button class="btn input-group-btn" id="myappsrefresh">Refresh...</button>
+          <button class="btn" id="myappsrefresh">Refresh...</button>
         </div>
         <div class="panel-body columns"><!-- apps go here --></div>
       </div>
@@ -84,11 +89,20 @@
     <div class="container bangle-tab" id="aboutcontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
-          <h1>Bangle.js Loader</h1>
+          <a href="https://banglejs.com"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
+          <h2>App Loader</h2>
           <p>A tool for uploading and removing apps from <a href="https://banglejs.com">Bangle.js Smart Watches</a></p>
         </div>
       </div>
-      <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
+      <div class="container" style="padding-top: 8px;">
+        <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
+        <p>Check out <a href="https://github.com/espruino/BangleApps">the Source on GitHub</a> for more information.</p>
+
+
+        <h3>Utilities</h3>
+        <p><button class="btn" id="settime">Set Bangle.js Time</button>
+          <button class="btn" id="removeall">Remove all Apps</button></p>
+      </div>
     </div>
 
     <script src="https://www.puck-js.com/puck.js"></script>

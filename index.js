@@ -263,3 +263,25 @@ function getInstalledApps() {
 document.getElementById("myappsrefresh").addEventListener("click",event=>{
   getInstalledApps();
 });
+
+// =========================================== About
+
+document.getElementById("settime").addEventListener("click",event=>{
+  Comms.setTime().then(()=>{
+    showToast("Time set successfully","success");
+  }, err=>{
+    showToast("Error setting time, "+err,"error");
+  });
+});
+document.getElementById("removeall").addEventListener("click",event=>{
+  showPrompt("Remove All","Really remove all apps?").then(() => {
+    Comms.removeAllApps().then(()=>{
+      appsInstalled = [];
+      showToast("All apps removed","success");
+      refreshMyApps();
+      refreshLibrary();
+    }, err=>{
+      showToast("App removal failed, "+err,"error");
+    });
+  });
+});
