@@ -120,6 +120,15 @@
       {"name":"=sbat","url":"widget-battery.js"}
     ]
   },
+  { "id": "sbt",
+    "name": "Bluetooth Widget",
+    "icon": "widget-bluetooth.png",
+    "description": "Show the current Bluetooth connection status in the top right of the clock",
+    "tags": "widget,bluetooth",
+    "storage": [
+      {"name":"=sbt","url":"widget-bluetooth.js"}
+    ]
+  },
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
