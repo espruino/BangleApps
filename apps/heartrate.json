@@ -1,5 +1,5 @@
 {
-  name:"Heart Rate",
-  icon:"*hrm",
-  src:"-hrm"
+  "name":"Heart Rate",
+  "icon":"*hrm",
+  "src":"-hrm"
 }

@@ -1,5 +1,5 @@
 {
-  name: 'Settings',
-  icon: '*settings',
-  src: '-settings'
+  "name": "Settings",
+  "icon": "*settings",
+  "src": "-settings"
 }
