@@ -242,5 +242,16 @@
       {"name":"+route"},
       {"name":"=route"}
     ]
+  },
+  { "id": "wclock",
+    "name": "Word Clock",
+    "icon": "word-clock.png",
+    "description": "Display Time as Text",
+    "tags": "",
+    "storage": [
+      {"name":"+wclock","url":"word-clock.json"},
+      {"name":"-wclock","url":"word-clock.js"},
+      {"name":"*wclock","url":"word-clock-icon.js","evaluate":true}
+    ]
   }
 ]
