@@ -50,18 +50,19 @@ function drawms() {
 
 setWatch(function() { // Start/stop
   started = !started;
-  if (started) 
+  Bangle.beep();
+  if (started)
     tStart = Date.now()+tStart-tCurrent;
-  tCurrent = Date.now();  
+  tCurrent = Date.now();
   if (displayInterval) {
     clearInterval(displayInterval);
     displayInterval = undefined;
   }
   updateLabels();
-  if (started) 
+  if (started)
     displayInterval = setInterval(function() {
       var last = tCurrent;
-      if (started) tCurrent = Date.now();  
+      if (started) tCurrent = Date.now();
       if (Math.floor(last/1000)!=Math.floor(tCurrent/1000))
         drawsecs();
       else
@@ -69,12 +70,15 @@ setWatch(function() { // Start/stop
     }, 20);
 }, BTN2, {repeat:true});
 setWatch(function() { // Reset
+  Bangle.beep();
   if (!started) {
     tStart = tCurrent = Date.now();
   }
+  lapTimes = [];
   updateLabels();
 }, BTN1, {repeat:true});
 setWatch(function() { // Lap
+  Bangle.beep();
   if (started) tCurrent = Date.now();
   lapTimes.unshift(tCurrent-tStart);
   tStart = tCurrent;
