@@ -62,7 +62,7 @@ removeApp : app => { // expects an app structure
   }).join("");
   console.log("removeApp", cmds);
   return new Promise((resolve,reject) => {
-    Puck.write("\x03"+cmds,(result) => {
+    Puck.write("\x03"+cmds+"\x10load()\n",(result) => {
       if (result===null) return reject("");
       resolve();
     });
