@@ -1,5 +1,5 @@
 {
-  "name":"T-Rex",
+  "name":"T-Rex","type":"app",
   "icon":"*trex",
   "src":"-trex"
 }

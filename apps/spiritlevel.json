@@ -1,5 +1,5 @@
 {
-  "name":"Spirit Level",
+  "name":"Spirit Level","type":"app",
   "icon":"*slevel",
   "src":"-slevel"
 }

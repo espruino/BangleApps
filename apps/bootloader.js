@@ -11,7 +11,7 @@ setWatch(function() {
   apps = s.list().filter(a=>a[0]=='+').map(app=>{
     try { return s.readJSON(app); }
     catch (e) { return {name:"DEAD: "+app.substr(1)} }
-  });
+  }).filter(app=>app.type=="app" || !app.type);
   var selected = 0;
   var menuScroll = 0;
   var menuShowing = false;

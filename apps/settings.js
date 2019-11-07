@@ -12,8 +12,8 @@ function debug(msg, arg) {
 
 function updateSettings() {
   debug('updating settings', settings);
-  storage.erase('@settings');
-  storage.write('@settings', settings);
+  storage.erase('@setting');
+  storage.write('@setting', settings);
 }
 
 function resetSettings() {
@@ -30,7 +30,7 @@ function resetSettings() {
 }
 
 try {
-  settings = storage.readJSON('@settings');
+  settings = storage.readJSON('@setting');
 } catch (e) {}
 if (!settings) resetSettings();
 
@@ -121,11 +121,11 @@ function showResetMenu() {
     },
     // this is include for debugging. remove for production
     /*'Erase': () => {
-      storage.erase('=settings');
-      storage.erase('-settings');
-      storage.erase('@settings');
-      storage.erase('*settings');
-      storage.erase('+settings');
+      storage.erase('=setting');
+      storage.erase('-setting');
+      storage.erase('@setting');
+      storage.erase('*setting');
+      storage.erase('+setting');
       E.reboot();
     }*/
   };

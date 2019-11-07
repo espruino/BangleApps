@@ -98,17 +98,17 @@
       {"name":"*slevel","url":"spiritlevel-icon.js","evaluate":true}
     ]
   },
-  { "id": "settings",
+  { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "tags": "tool,system",
     "storage": [
-      {"name":"+settings","url":"settings.json"},
-      {"name":"-settings","url":"settings.js"},
-      {"name":"=settings","url":"settings-init.js"},
-      {"name":"@settings","url":"settings-default.json","evaluate":true},
-      {"name":"*settings","url":"settings-icon.js","evaluate":true}
+      {"name":"+setting","url":"settings.json"},
+      {"name":"-setting","url":"settings.js"},
+      {"name":"=setting","url":"settings-init.js"},
+      {"name":"@setting","url":"settings-default.json","evaluate":true},
+      {"name":"*setting","url":"settings-icon.js","evaluate":true}
     ]
   },
   { "id": "files",
@@ -127,16 +127,20 @@
     "icon": "widget-battery.png",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
+    "type":"widget",
     "storage": [
+      {"name":"+sbat","url":"widget-battery.json"},
       {"name":"=sbat","url":"widget-battery.js"}
     ]
   },
   { "id": "sbt",
-    "name": "Bluetooth Widget",
+    "name": "c Widget",
     "icon": "widget-bluetooth.png",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
+    "type":"widget",
     "storage": [
+      {"name":"+sbt","url":"widget-bluetooth.json"},
       {"name":"=sbt","url":"widget-bluetooth.js"}
     ]
   },

@@ -63,6 +63,7 @@ the *default* of `To RAM`
   "name": "Readable name",    // readable name
   "icon": "icon.png",         // icon in apps/
   "description": "...",       // long description
+  "type":"...",               // optional(if app) - 'app' or 'widget'
   "tags": "",                 // comma separated tag list for searching
 
   "custom": "custom.html",    // if supplied, apps/custom.html is loaded in an

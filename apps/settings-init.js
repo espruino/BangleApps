@@ -1,5 +1,5 @@
 (function() {
-  var s = require('Storage').readJSON('@settings');
+  var s = require('Storage').readJSON('@setting');
   var adv = { uart: true };
   if (s.HID) {
     // Report from https://notes.iopush.net/custom-usb-hid-device-descriptor-media-keyboard/
