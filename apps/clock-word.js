@@ -1,13 +1,6 @@
 /* jshint esversion: 6 */
 (function() {
 
-    var buf = Graphics.createArrayBuffer(240, 240, 2, { msb: true });
-
-    function flip() {
-        var palette = new Uint16Array([0,,,0xFFFF]);
-        g.drawImage({ width: buf.getWidth(), height: buf.getHeight(), bpp: 2, palette : palette, buffer: buf.buffer }, 0, 0);
-    }
-
     const allWords = [
         "ATWENTYD",
         "QUARTERY",
@@ -69,10 +62,9 @@
         var midx;
         var midxA=[];
 
-        buf.clear();
-        buf.setFontVector(wordFontSize);
-        buf.setColor(passivColor);
-        buf.setFontAlign(0, -1, 0);
+        g.setFontVector(wordFontSize);
+        g.setColor(passivColor);
+        g.setFontAlign(0, -1, 0);
 
         // draw allWords
         var c;
@@ -81,7 +73,7 @@
         allWords.forEach((line) => {
             x = xs;
             for (c in line) {
-                buf.drawString(line[c], x, y);
+                g.drawString(line[c], x, y);
                 x += dx;
             }
             y += dy;
@@ -105,14 +97,14 @@
         }
 
         // write hour in active color
-        buf.setColor(activeColor);
-        buf.setFontVector(wordFontSize);
+        g.setColor(activeColor);
+        g.setFontVector(wordFontSize);
 
         hours[hidx][0].split('').forEach((c, pos) => {
             x = xs + (hours[hidx][pos + 1] / 10 | 0) * dx;
             y = ys + (hours[hidx][pos + 1] % 10) * dy;
           
-            buf.drawString(c, x, y);
+            g.drawString(c, x, y);
         });
 
         // write min words in active color
@@ -120,18 +112,15 @@
             mins[idx][0].split('').forEach((c, pos) => {
                 x = xs + (mins[idx][pos + 1] / 10 | 0) * dx;
                 y = ys + (mins[idx][pos + 1] % 10) * dy;
-                buf.drawString(c, x, y);
+                g.drawString(c, x, y);
             });
         });
 
         // display digital time 
-        buf.setColor(activeColor);
-        buf.setFontVector(timeFontSize);
-        buf.drawString(time, 120, 200);
-
-        // display buf
-        flip();
-        drawWidgets();
+        g.setColor(activeColor);
+        g.setFontVector(timeFontSize);
+        g.clearRect(0,200,240,240);
+        g.drawString(time, 120, 200);
     }
 
     Bangle.on('lcdPower', function(on) {
