@@ -1,5 +1,5 @@
 var g = Graphics.getInstance();
-
+g.setFontAlign(1, 1, 0);
 const d = g.getWidth() - 18;
 function c(a) {
   return {
@@ -72,36 +72,37 @@ function logos() {
 
 function info() {
   var slides = [
+    () => E.showMessage('Visit\nnodewatch.dev\nfor info'),
+    () => E.showMessage('Visit\nbanglejs.com/apps\nfor apps'),
+    () => E.showMessage('Remember\nto charge\nyour watch!'),
     () => {
       g.clear();
       g.setFont('6x8',2);
       g.setColor(1,1,1);
-      g.drawString('Visit', 120, 80);
-      g.drawString('nodewatch.dev', 120, 110);
-      g.drawString('for info', 115, 140);
-    },
-    () => {
-      g.clear();
-      g.setFont('6x8',2);
-      g.setColor(1,1,1);
-      g.drawString('Remember', 120, 80);
-      g.drawString('to charge', 120, 110);
-      g.drawString('your watch!', 125, 140);
-    },
-    () => {
-      g.clear();
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,194);
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
       g.drawString('Menu Up', d - 50, 42);
       g.drawString('Select', d - 40, 118);
       g.drawString('Menu Down', d - 60, 196);
-    }
+    },
+    () => {
+      g.clear();
+      E.showMessage('Hold both\nto return\nto clock');
+      g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
+      g.drawImage(c([0,8,12,14,255,14,12,8]),d,194);
+    },
+    () => {
+      g.clear();
+      E.showMessage('Hold both\nto reboot');
+      g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
+      g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
+    },
+    () => E.showMessage('Open Settings\nto enable\nBluetooth')
   ];
   function next() {
     var n = slides.shift();
     n();
-    g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
     slides.push(n);
   }
   return new Promise((res) => {
