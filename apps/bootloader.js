@@ -11,7 +11,7 @@ setWatch(function() {
   apps = s.list().filter(a=>a[0]=='+').map(app=>{
     try { return s.readJSON(app); }
     catch (e) { return {name:"DEAD: "+app.substr(1)} }
-  });
+  }).filter(app=>app.type=="app" || app.type=="clock" || !app.type);
   var selected = 0;
   var menuScroll = 0;
   var menuShowing = false;
@@ -75,6 +75,12 @@ var WIDGETS={};
 function drawWidgets() {
   Object.keys(WIDGETS).forEach(k=>WIDGETS[k].draw());
 }
-eval(require("Storage").read("-clock"));
+var clockApp = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+  try { return require("Storage").readJSON(app); }
+  catch (e) {}
+}).find(app=>app.type=="clock");
+if (clockApp) eval(require("Storage").read(clockApp.src));
+else E.showMessage("No Clock Found");
+delete clockApp;
 require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
 setTimeout(drawWidgets,100);

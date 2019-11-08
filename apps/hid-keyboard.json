@@ -1,0 +1,5 @@
+{
+  "name": "Keyboard Control","type":"app",
+  "icon": "*hidkbd",
+  "src": "-hidkbd"
+}

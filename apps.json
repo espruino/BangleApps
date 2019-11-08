@@ -9,19 +9,31 @@
     ],
     "sortorder" : -1
   },
-  { "id": "clock",
+  { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
+    "type":"clock",
     "storage": [
-      {"name":"+clock","url":"clock.json"},
-      {"name":"-clock","url":"clock-morphing.js"},
-      {"name":"*clock","url":"clock-icon.js","evaluate":true}
+      {"name":"+mclock","url":"clock-morphing.json"},
+      {"name":"-mclock","url":"clock-morphing.js"},
+      {"name":"*mclock","url":"clock-morphing-icon.js","evaluate":true}
     ],
     "sortorder" : -1
   },
-
+  { "id": "wclock",
+    "name": "Word Clock",
+    "icon": "clock-word.png",
+    "description": "Display Time as Text",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+wclock","url":"clock-word.json"},
+      {"name":"-wclock","url":"clock-word.js"},
+      {"name":"*wclock","url":"clock-word-icon.js","evaluate":true}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
@@ -98,17 +110,17 @@
       {"name":"*slevel","url":"spiritlevel-icon.js","evaluate":true}
     ]
   },
-  { "id": "settings",
+  { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "tags": "tool,system",
     "storage": [
-      {"name":"+settings","url":"settings.json"},
-      {"name":"-settings","url":"settings.js"},
-      {"name":"=settings","url":"settings-init.js"},
-      {"name":"@settings","url":"settings-default.json","evaluate":true},
-      {"name":"*settings","url":"settings-icon.js","evaluate":true}
+      {"name":"+setting","url":"settings.json"},
+      {"name":"-setting","url":"settings.js"},
+      {"name":"=setting","url":"settings-init.js"},
+      {"name":"@setting","url":"settings-default.json","evaluate":true},
+      {"name":"*setting","url":"settings-icon.js","evaluate":true}
     ]
   },
   { "id": "files",
@@ -127,7 +139,9 @@
     "icon": "widget-battery.png",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
+    "type":"widget",
     "storage": [
+      {"name":"+sbat","url":"widget-battery.json"},
       {"name":"=sbat","url":"widget-battery.js"}
     ]
   },
@@ -136,7 +150,9 @@
     "icon": "widget-bluetooth.png",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
+    "type":"widget",
     "storage": [
+      {"name":"+sbt","url":"widget-bluetooth.json"},
       {"name":"=sbt","url":"widget-bluetooth.js"}
     ]
   },
@@ -160,6 +176,28 @@
       {"name":"+swatch","url":"stopwatch.json"},
       {"name":"-swatch","url":"stopwatch.js"},
       {"name":"*swatch","url":"stopwatch-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hidmsic",
+    "name": "Bluetooth Music Controls",
+    "icon": "hid-music.png",
+    "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidmsic","url":"hid-music.json"},
+      {"name":"-hidmsic","url":"hid-music.js"},
+      {"name":"*hidmsic","url":"hid-music-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hidkbd",
+    "name": "Bluetooth Keyboard",
+    "icon": "hid-keyboard.png",
+    "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidkbd","url":"hid-keyboard.json"},
+      {"name":"-hidkbd","url":"hid-keyboard.js"},
+      {"name":"*hidkbd","url":"hid-keyboard-icon.js","evaluate":true}
     ]
   },
   { "id": "animals",

@@ -12,8 +12,8 @@ function debug(msg, arg) {
 
 function updateSettings() {
   debug('updating settings', settings);
-  storage.erase('@settings');
-  storage.write('@settings', settings);
+  storage.erase('@setting');
+  storage.write('@setting', settings);
 }
 
 function resetSettings() {
@@ -30,7 +30,7 @@ function resetSettings() {
 }
 
 try {
-  settings = storage.readJSON('@settings');
+  settings = storage.readJSON('@setting');
 } catch (e) {}
 if (!settings) resetSettings();
 
@@ -99,6 +99,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
+    'Set Time': showSetTimeMenu,
     'Reset': showResetMenu,
     'Turn Off': Bangle.off,
     '< Back': load
@@ -121,15 +122,101 @@ function showResetMenu() {
     },
     // this is include for debugging. remove for production
     /*'Erase': () => {
-      storage.erase('=settings');
-      storage.erase('-settings');
-      storage.erase('@settings');
-      storage.erase('*settings');
-      storage.erase('+settings');
+      storage.erase('=setting');
+      storage.erase('-setting');
+      storage.erase('@setting');
+      storage.erase('*setting');
+      storage.erase('+setting');
       E.reboot();
     }*/
   };
   return Bangle.menu(resetmenu);
+}
+
+function showSetTimeMenu() {
+  d = new Date();
+  const timemenu = {
+    '': {
+      'title': 'Set Time',
+      'predraw': function() {
+        d = new Date();
+        timemenu.Hour.value = d.getHours();
+        timemenu.Minute.value = d.getMinutes();
+        timemenu.Second.value = d.getSeconds();
+        timemenu.Date.value = d.getDate();
+        timemenu.Month.value = d.getMonth() + 1;
+        timemenu.Year.value = d.getFullYear();
+      }
+    },
+    '< Back': showMainMenu,
+    'Hour': {
+      value: d.getHours(),
+      min: 0,
+      max: 23,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setHours(v);
+        setTime(d.getTime()/1000);
+      }
+    },
+    'Minute': {
+      value: d.getMinutes(),
+      min: 0,
+      max: 59,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setMinutes(v);
+        setTime(d.getTime()/1000);
+      }
+    },
+    'Second': {
+      value: d.getSeconds(),
+      min: 0,
+      max: 59,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setSeconds(v);
+        setTime(d.getTime()/1000);
+      }
+    },
+    'Date': {
+      value: d.getDate(),
+      min: 1,
+      max: 31,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setDate(v);
+        setTime(d.getTime()/1000);
+      }
+    },
+    'Month': {
+      value: d.getMonth() + 1,
+      min: 1,
+      max: 12,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setMonth(v - 1);
+        setTime(d.getTime()/1000);
+      }
+    },
+    'Year': {
+      value: d.getFullYear(),
+      min: d.getFullYear() - 10,
+      max: d.getFullYear() + 10,
+      step: 1,
+      onchange: v => {
+        d = new Date();
+        d.setFullYear(v);
+        setTime(d.getTime()/1000);
+      }
+    }
+  };
+  return Bangle.menu(timemenu);
 }
 
 showMainMenu();

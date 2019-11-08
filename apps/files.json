@@ -1,5 +1,5 @@
 {
-  "name":"App Manager",
+  "name":"App Manager","type":"app",
   "icon":"*files",
   "src":"-files"
 }

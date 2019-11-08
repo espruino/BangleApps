@@ -1,5 +1,5 @@
 {
-  "name":"Animals Game",
+  "name":"Animals Game", "type":"app",
   "icon":"*animals",
   "src":"-animals"
 }

@@ -1,6 +1,8 @@
 Bangle.js App Loader (and Apps)
 ================================
 
+Try it live at [banglejs.com/apps](https://banglejs.com/apps)
+
 ### How does it work?
 
 * A list of apps is in `apps.json`
@@ -61,6 +63,7 @@ the *default* of `To RAM`
   "name": "Readable name",    // readable name
   "icon": "icon.png",         // icon in apps/
   "description": "...",       // long description
+  "type":"...",               // optional(if app) - 'app' or 'widget'
   "tags": "",                 // comma separated tag list for searching
 
   "custom": "custom.html",    // if supplied, apps/custom.html is loaded in an

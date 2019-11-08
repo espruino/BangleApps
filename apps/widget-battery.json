@@ -1,0 +1,4 @@
+{
+  "name":"Battery Level","type":"widget",
+  "src":"=sbat"
+}

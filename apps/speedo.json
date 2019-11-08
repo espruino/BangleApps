@@ -1,5 +1,5 @@
 {
-  "name":"Speedo",
+  "name":"Speedo","type":"app",
   "icon":"*speedo",
   "src":"-speedo"
 }

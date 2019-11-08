@@ -1,5 +1,5 @@
 {
-  "name":"Compass",
+  "name":"Compass","type":"app",
   "icon":"*compass",
   "src":"-compass"
 }

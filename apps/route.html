@@ -50,7 +50,7 @@ function fileLoaded() {
     log("No 'coordinates' node found");
     return;
   }
-  var coordinateLine = coordinateNode[0].textContent;
+  var coordinateLine = coordinateNode[0].textContent.trim();
   var coordinateList = coordinateLine.split(/\s+/);
   var coords = [];
   var pmin, pmax;
