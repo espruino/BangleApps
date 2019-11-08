@@ -1,7 +1,7 @@
 (function() {
   var s = require('Storage').readJSON('@setting');
   if (s.ble) {
-    var adv = { uart: true };
+    var adv = { uart: s.dev };
     if (s.HID) {
       // Report from https://notes.iopush.net/custom-usb-hid-device-descriptor-media-keyboard/
       Bangle.HID = new Uint8Array([
@@ -75,7 +75,7 @@
       ]);
       adv.hid = Bangle.HID;
     }
-    NRF.setServices(undefined, adv);
+    NRF.setServices({}, adv);
     try {
       NRF.wake();
     } catch (e) {}

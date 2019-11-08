@@ -19,6 +19,7 @@ function updateSettings() {
 function resetSettings() {
   settings = {
     ble: false,
+    dev: false,
     timeout: 10,
     vibrate: true,
     beep: true,
@@ -45,6 +46,14 @@ function showMainMenu() {
       format: boolFormat,
       onchange: () => {
         settings.ble = !settings.ble;
+        updateSettings();
+      }
+    },
+    'Dev': {
+      value: settings.dev,
+      format: bootFormat,
+      onchange: () => {
+        settings.dev = !settings.dev;
         updateSettings();
       }
     },
