@@ -2,12 +2,5 @@
   "name": "Start",
   "type": "app",
   "icon": "*start",
-  "src": "-start",
-  "files": [
-    "*bangle",
-    "*nceu",
-    "*nfr",
-    "*nodew",
-    "*tf"
-  ]
+  "src": "-start"
 }

@@ -219,6 +219,23 @@
       {"name":"*mouse","url":"animals-mouse.js","evaluate":true}
     ]
   },
+  {
+    "id": "start",
+    "name": "NCEU Startup",
+    "icon": "start.png",
+    "description": "NodeConfEU 2019 Startup Sequence",
+    "tags": "start",
+    "storage": [
+      {"name":"+start","url":"start.json"},
+      {"name":"-start","url":"start.js"},
+      {"name":"*start","url":"start-icon.js"},
+      {"name":"*bangle","url":"start-bangle.js"},
+      {"name":"*nceu","url":"start-nceu.js"},
+      {"name":"*nfr","url":"start-nfr.js"},
+      {"name":"*nodew","url":"start-nodew.js"},
+      {"name":"*tf","url":"start-tf.js"}
+    ]
+  },
   { "id": "qrcode",
     "name": "Custom QR Code",
     "icon": "qrcode.png",
