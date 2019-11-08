@@ -18,6 +18,7 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
+    ble: false,
     timeout: 10,
     vibrate: true,
     beep: true,
@@ -39,6 +40,14 @@ const boolFormat = (v) => v ? "On" : "Off";
 function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
+    'BLE': {
+      value: settings.ble,
+      format: boolFormat,
+      onchange: () => {
+        settings.ble = !settings.ble;
+        updateSettings();
+      }
+    },
     'LCD Timeout': {
       value: settings.timeout,
       min: 0,
