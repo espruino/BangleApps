@@ -51,7 +51,7 @@ function showMainMenu() {
     },
     'Dev': {
       value: settings.dev,
-      format: bootFormat,
+      format: boolFormat,
       onchange: () => {
         settings.dev = !settings.dev;
         updateSettings();

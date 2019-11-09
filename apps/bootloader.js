@@ -2,7 +2,7 @@ E.setTimeZone(1);
 E.setFlags({pretokenise:1});
 var startapp;
 try {
-  startapp = s.readJSON('+start');
+  startapp = require('Storage').readJSON('+start');
 } catch (e) {}
 if (startapp) {
   eval(require("Storage").read(startapp.src));

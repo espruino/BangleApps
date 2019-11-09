@@ -72,9 +72,9 @@ function logos() {
 
 function info() {
   var slides = [
-    () => E.showMessage('Visit\nnodewatch.dev\nfor info'),
-    () => E.showMessage('Visit\nbanglejs.com/apps\nfor apps'),
-    () => E.showMessage('Remember\nto charge\nyour watch!'),
+    () => E.showMessage('Visit\\nnodewatch.dev\\nfor info'),
+    () => E.showMessage('Visit\\nbanglejs.com/apps\\nfor apps'),
+    () => E.showMessage('Remember\\nto charge\\nyour watch!'),
     () => {
       g.clear();
       g.setFont('6x8',2);
@@ -88,17 +88,17 @@ function info() {
     },
     () => {
       g.clear();
-      E.showMessage('Hold both\nto return\nto clock');
+      E.showMessage('Hold both\\nto return\\nto clock');
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,194);
     },
     () => {
       g.clear();
-      E.showMessage('Hold both\nto reboot');
+      E.showMessage('Hold both\\nto reboot');
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
     },
-    () => E.showMessage('Open Settings\nto enable\nBluetooth')
+    () => E.showMessage('Open Settings\\nto enable\\nBluetooth')
   ];
   function next() {
     var n = slides.shift();
