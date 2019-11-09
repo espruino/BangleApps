@@ -78,13 +78,11 @@ if (startapp) {
       g.setFont("6x8",2);
       g.setFontAlign(0,0);
       g.drawString("Loading...",120,120);
-      if (apps[selected].name=="Clock") load();
-      else { // load like this so we ensure we've cleared out our RAM
-        var cmd = 'eval(require("Storage").read("'+apps[selected].src+'"));';
-        setTimeout(cmd,20);
-        // re-add the menu button if we're going to the clock
-        if (app.type=="clock") setWatch(displayMenu, BTN2, {repeat:false});
-      }
+      // load like this so we ensure we've cleared out our RAM
+      var cmd = 'eval(require("Storage").read("'+apps[selected].src+'"));';
+      setTimeout(cmd,20);
+      // re-add the menu button if we're going to the clock
+      if (apps[selected].type=="clock") setWatch(displayMenu, BTN2, {repeat:false});
     }, BTN2, {repeat:true});
   }, BTN2, {repeat:false}); // menu on middle button
   var WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
