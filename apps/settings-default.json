@@ -1,4 +1,6 @@
 {
+  ble: false,          // Bluetooth disabled by default
+  dev: false,          // Espruino IDE disabled by default
   timeout: 10,         // Default LCD timeout in seconds
   vibrate: true,       // Vibration enabled by default. App must support
   beep: true,          // Beep enabled by default. App must support
