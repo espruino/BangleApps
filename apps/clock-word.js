@@ -39,16 +39,15 @@
     };
 
     // offsets and incerments
-    const xs = 30;
-    const ys = 20;
+    const xs = 35;
+    const ys = 31;
     const dy = 22;
     const dx = 25;
 
     // font size and color
-    const wordFontSize = 20;
-    const timeFontSize = 30;
-    const passivColor = 0x3186/*grey*/;
-    const activeColor = 0xF800/*red*/;
+    const fontSize = 3;  // "6x8"
+    const passivColor = 0x3186 /*grey*/ ;
+    const activeColor = 0xF800 /*red*/ ;
 
     function drawWordClock() {
 
@@ -60,9 +59,9 @@
 
         var hidx;
         var midx;
-        var midxA=[];
+        var midxA = [];
 
-        g.setFontVector(wordFontSize);
+        g.setFont("6x8",fontSize);
         g.setColor(passivColor);
         g.setFontAlign(0, -1, 0);
 
@@ -79,7 +78,6 @@
             y += dy;
         });
 
-
         // calc indexes
         midx = Math.round(m / 5);
         hidx = h % 12;
@@ -95,15 +93,13 @@
                 midxA = [12 - midx, 7];
             }
         }
-
+      
         // write hour in active color
         g.setColor(activeColor);
-        g.setFontVector(wordFontSize);
-
         hours[hidx][0].split('').forEach((c, pos) => {
             x = xs + (hours[hidx][pos + 1] / 10 | 0) * dx;
             y = ys + (hours[hidx][pos + 1] % 10) * dy;
-          
+
             g.drawString(c, x, y);
         });
 
@@ -118,9 +114,8 @@
 
         // display digital time 
         g.setColor(activeColor);
-        g.setFontVector(timeFontSize);
-        g.clearRect(0,200,240,240);
-        g.drawString(time, 120, 200);
+        g.clearRect(0, 215, 240, 240);
+        g.drawString(time, 120, 215);
     }
 
     Bangle.on('lcdPower', function(on) {
