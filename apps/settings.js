@@ -25,6 +25,7 @@ function resetSettings() {
     beep: true,
     timezone: 0,
     HID : false,
+    HIDGestures: false,
     debug: false,
   };
   setLCDTimeout(settings.timeout);
@@ -106,6 +107,14 @@ function showMainMenu() {
       format: boolFormat,
       onchange: () => {
         settings.HID = !settings.HID;
+        updateSettings();
+      }
+    },
+    'HID Gestures': {
+      value: settings.HIDGestures,
+      format: boolFormat,
+      onchange: () => {
+        settings.HIDGestures = !settings.HIDGestures;
         updateSettings();
       }
     },

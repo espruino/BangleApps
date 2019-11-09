@@ -5,6 +5,7 @@
   vibrate: true,       // Vibration enabled by default. App must support
   beep: true,          // Beep enabled by default. App must support
   timezone: 0,         // Set the timezone for the device
-  HID: false,          // BLE HID mode, off by default
+  HID : false,         // BLE HID mode, off by default
+  HIDGestures: false,
   debug: false,        // Debug mode disabled by default. App must support
 }

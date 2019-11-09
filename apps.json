@@ -271,5 +271,16 @@
       {"name":"+route"},
       {"name":"=route"}
     ]
+  },
+  { "id": "funrun5",
+    "name": "5K Fun Run",
+    "icon": "nceu-funrun.png",
+    "description": "Display a map of the NodeConf EU 2019 5K Fun Run route and your location on it",
+    "tags": "health",
+    "storage": [
+      {"name":"-funrun5"},
+      {"name":"+funrun5"},
+      {"name":"=funrun5"}
+    ]
   }
 ]
