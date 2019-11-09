@@ -1,7 +1,11 @@
 (function() {
   var s = require('Storage').readJSON('@setting');
   if (s.ble) {
-    var adv = { uart: s.dev };
+    if (s.dev)
+      Bluetooth.setConsole();
+    else
+      LoopbackA.setControl(true);
+    var adv = { uart: true };
     if (s.HID) {
       // Report from https://notes.iopush.net/custom-usb-hid-device-descriptor-media-keyboard/
       Bangle.HID = new Uint8Array([
