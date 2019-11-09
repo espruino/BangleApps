@@ -228,12 +228,12 @@
     "storage": [
       {"name":"+start","url":"start.json"},
       {"name":"-start","url":"start.js"},
-      {"name":"*start","url":"start-icon.js"},
-      {"name":"*bangle","url":"start-bangle.js"},
-      {"name":"*nceu","url":"start-nceu.js"},
-      {"name":"*nfr","url":"start-nfr.js"},
-      {"name":"*nodew","url":"start-nodew.js"},
-      {"name":"*tf","url":"start-tf.js"}
+      {"name":"*start","url":"start-icon.js","evaluate":true},
+      {"name":"*bangle","url":"start-bangle.js","evaluate":true},
+      {"name":"*nceu","url":"start-nceu.js","evaluate":true},
+      {"name":"*nfr","url":"start-nfr.js","evaluate":true},
+      {"name":"*nodew","url":"start-nodew.js","evaluate":true},
+      {"name":"*tf","url":"start-tf.js","evaluate":true}
     ]
   },
   { "id": "qrcode",
