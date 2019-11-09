@@ -22,6 +22,20 @@
     ],
     "sortorder" : -9
   },
+  { "id": "setting",
+    "name": "Settings",
+    "icon": "settings.png",
+    "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
+    "tags": "tool,system",
+    "storage": [
+      {"name":"+setting","url":"settings.json"},
+      {"name":"-setting","url":"settings.js"},
+      {"name":"=setting","url":"settings-init.js"},
+      {"name":"@setting","url":"settings-default.json","evaluate":true},
+      {"name":"*setting","url":"settings-icon.js","evaluate":true}
+    ],
+    "sortorder" : -2
+  },
   { "id": "wclock",
     "name": "Word Clock",
     "icon": "clock-word.png",
@@ -108,19 +122,6 @@
       {"name":"+slevel","url":"spiritlevel.json"},
       {"name":"-slevel","url":"spiritlevel.js"},
       {"name":"*slevel","url":"spiritlevel-icon.js","evaluate":true}
-    ]
-  },
-  { "id": "setting",
-    "name": "Settings",
-    "icon": "settings.png",
-    "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
-    "tags": "tool,system",
-    "storage": [
-      {"name":"+setting","url":"settings.json"},
-      {"name":"-setting","url":"settings.js"},
-      {"name":"=setting","url":"settings-init.js"},
-      {"name":"@setting","url":"settings-default.json","evaluate":true},
-      {"name":"*setting","url":"settings-icon.js","evaluate":true}
     ]
   },
   { "id": "files",
@@ -275,7 +276,7 @@
     "sortorder" : -1
   },
   { "id": "funrun5",
-    "name": "5K Fun Run",
+    "name": "NCEU 5K Fun Run",
     "icon": "nceu-funrun.png",
     "description": "Display a map of the NodeConf EU 2019 5K Fun Run route and your location on it",
     "tags": "health",
@@ -287,7 +288,7 @@
     "sortorder" : -1
   },
   { "id": "sbat",
-    "name": "Battery Level Widget",
+    "name": "NCEU Logo Widget",
     "icon": "nceu-widget.png",
     "description": "Show the NodeConf EU logo in the top left",
     "tags": "widget",
