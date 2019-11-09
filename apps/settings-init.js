@@ -76,7 +76,7 @@ Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQ
     if (s.dev)
       Bluetooth.setConsole();
     else
-      LoopbackA.setControl(true);
+      LoopbackA.setConsole(true);
     var adv = { uart: true };
     if (s.HID) {
       adv.hid = Bangle.HID;
