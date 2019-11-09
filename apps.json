@@ -287,15 +287,15 @@
     ],
     "sortorder" : -1
   },
-  { "id": "sbat",
+  { "id": "nceuwid",
     "name": "NCEU Logo Widget",
     "icon": "nceu-widget.png",
     "description": "Show the NodeConf EU logo in the top left",
     "tags": "widget",
     "type":"widget",
     "storage": [
-      {"name":"+sbat","url":"nceu-widget.json"},
-      {"name":"=sbat","url":"nceu-widget.js"}
+      {"name":"+nceuwid","url":"nceu-widget.json"},
+      {"name":"=nceuwid","url":"nceu-widget.js"}
     ],
     "sortorder" : -1
   }
