@@ -7,7 +7,7 @@ try {
 if (startapp) {
   eval(require("Storage").read(startapp.src));
 } else {
-  setWatch(function() {
+  setWatch(function displayMenu() {
     Bangle.setLCDMode("direct");
     g.clear();
     clearInterval();
@@ -20,6 +20,13 @@ if (startapp) {
       try { return s.readJSON(app); }
       catch (e) { return {name:"DEAD: "+app.substr(1)} }
     }).filter(app=>app.type=="app" || app.type=="clock" || !app.type);
+    apps.sort((a,b)=>{
+      var n=(0|a.sortorder)-(0|b.sortorder);
+      if (n) return n; // do sortorder first
+      if (a.name<b.name) return -1;
+      if (a.name>b.name) return 1;
+      return 0;
+    });
     var selected = 0;
     var menuScroll = 0;
     var menuShowing = false;
@@ -75,6 +82,8 @@ if (startapp) {
       else { // load like this so we ensure we've cleared out our RAM
         var cmd = 'eval(require("Storage").read("'+apps[selected].src+'"));';
         setTimeout(cmd,20);
+        // re-add the menu button if we're going to the clock
+        if (app.type=="clock") setWatch(displayMenu, BTN2, {repeat:false});
       }
     }, BTN2, {repeat:true});
   }, BTN2, {repeat:false}); // menu on middle button
