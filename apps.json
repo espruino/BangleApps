@@ -7,7 +7,7 @@
     "storage": [
       {"name":".bootcde","url":"bootloader.js"}
     ],
-    "sortorder" : -1
+    "sortorder" : -10
   },
   { "id": "mclock",
     "name": "Morphing Clock",
@@ -20,7 +20,7 @@
       {"name":"-mclock","url":"clock-morphing.js"},
       {"name":"*mclock","url":"clock-morphing-icon.js","evaluate":true}
     ],
-    "sortorder" : -1
+    "sortorder" : -9
   },
   { "id": "wclock",
     "name": "Word Clock",
@@ -219,23 +219,6 @@
       {"name":"*mouse","url":"animals-mouse.js","evaluate":true}
     ]
   },
-  {
-    "id": "start",
-    "name": "NCEU Startup",
-    "icon": "start.png",
-    "description": "NodeConfEU 2019 Startup Sequence",
-    "tags": "start",
-    "storage": [
-      {"name":"+start","url":"start.json"},
-      {"name":"-start","url":"start.js"},
-      {"name":"*start","url":"start-icon.js","evaluate":true},
-      {"name":"*bangle","url":"start-bangle.js","evaluate":true},
-      {"name":"*nceu","url":"start-nceu.js","evaluate":true},
-      {"name":"*nfr","url":"start-nfr.js","evaluate":true},
-      {"name":"*nodew","url":"start-nodew.js","evaluate":true},
-      {"name":"*tf","url":"start-tf.js","evaluate":true}
-    ]
-  },
   { "id": "qrcode",
     "name": "Custom QR Code",
     "icon": "qrcode.png",
@@ -272,6 +255,25 @@
       {"name":"=route"}
     ]
   },
+
+  {
+    "id": "start",
+    "name": "NCEU Startup",
+    "icon": "start.png",
+    "description": "NodeConfEU 2019 Startup Sequence",
+    "tags": "start",
+    "storage": [
+      {"name":"+start","url":"start.json"},
+      {"name":"-start","url":"start.js"},
+      {"name":"*start","url":"start-icon.js","evaluate":true},
+      {"name":"*bangle","url":"start-bangle.js","evaluate":true},
+      {"name":"*nceu","url":"start-nceu.js","evaluate":true},
+      {"name":"*nfr","url":"start-nfr.js","evaluate":true},
+      {"name":"*nodew","url":"start-nodew.js","evaluate":true},
+      {"name":"*tf","url":"start-tf.js","evaluate":true}
+    ],
+    "sortorder" : -1
+  },
   { "id": "funrun5",
     "name": "5K Fun Run",
     "icon": "nceu-funrun.png",
@@ -281,6 +283,19 @@
       {"name":"+funrun5","url":"nceu-funrun.json"},
       {"name":"-funrun5","url":"nceu-funrun.js"},
       {"name":"*funrun5","url":"nceu-funrun-icon.js","evaluate":true}
-    ]
+    ],
+    "sortorder" : -1
+  },
+  { "id": "sbat",
+    "name": "Battery Level Widget",
+    "icon": "nceu-widget.png",
+    "description": "Show the NodeConf EU logo in the top left",
+    "tags": "widget",
+    "type":"widget",
+    "storage": [
+      {"name":"+sbat","url":"nceu-widget.json"},
+      {"name":"=sbat","url":"nceu-widget.js"}
+    ],
+    "sortorder" : -1
   }
 ]

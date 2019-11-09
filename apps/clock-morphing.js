@@ -2,7 +2,9 @@
 (function(){ // make our own scope so this is GC'd when intervals are cleared
 // Offscreen buffer
 var buf = Graphics.createArrayBuffer(240,86,1,{msb:true});
-function flip() {  g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},0,50);
+function flip() {
+  g.setColor(1,1,1);
+  g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},0,50);
 }
 // The last time that we displayed
 var lastTime = "     ";
@@ -11,7 +13,7 @@ var animInterval;
 
 /* Get array of lines from digit d to d+1.
  n is the amount (0..1)
- maxFive is true is this digit only counts 0..5 */ 
+ maxFive is true is this digit only counts 0..5 */
 const DIGITS = {
 " ":n=>[],
 "0":n=>[
@@ -108,9 +110,9 @@ const DIGITS = {
 
 /* Draw a transition between lastText and thisText.
  'n' is the amount - 0..1 */
-function draw(lastText,thisText,n) {  
+function draw(lastText,thisText,n) {
   buf.clear();
-  var x = 1;  // x offset  
+  var x = 1;  // x offset
   const p = 2; // padding around digits
   var y = p; // y offset
   const s = 34; // character size
