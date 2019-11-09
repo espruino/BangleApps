@@ -12,7 +12,7 @@ function debug(msg, arg) {
 
 function updateSettings() {
   debug('updating settings', settings);
-  storage.erase('@setting');
+  //storage.erase('@setting'); // - not needed, just causes extra writes if settings were the same
   storage.write('@setting', settings);
 }
 
@@ -127,7 +127,8 @@ function showMainMenu() {
       }
     },
     'Set Time': showSetTimeMenu,
-    'Reset': showResetMenu,
+    'Make Connectable': makeConnectable,
+    'Reset Settings': showResetMenu,
     'Turn Off': Bangle.off,
     '< Back': load
   };
@@ -158,6 +159,19 @@ function showResetMenu() {
     }*/
   };
   return Bangle.menu(resetmenu);
+}
+
+function makeConnectable() {
+  try { NRF.wake(); } catch(e) {}
+  var name="Bangle.js "+NRF.getAddress().substr(-5).replace(":","");
+  E.showPrompt(name+"\nStay Connectable?",{title:"Connectable"}).then(r=>{
+    if (settings.ble!=r) {
+      settings.ble = r;
+      updateSettings();
+    }
+    if (!r) try { NRF.sleep(); } catch(e) {}
+    showMainMenu();
+  });
 }
 
 function showSetTimeMenu() {
