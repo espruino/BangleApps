@@ -48,7 +48,7 @@ function logos() {
     }],
     ['bangle', 70, 90, ()=>{}],
     ['nodew', 20, 90, ()=>{}],
-    ['tf', 5, 60, ()=>{}],
+    ['tf', 24, 90, ()=>{}],
   ];
   function next() {
     var n = logos.shift();
@@ -88,8 +88,7 @@ function info() {
     },
     () => {
       g.clear();
-      E.showMessage('Hold both\nto return\nto clock');
-      g.drawImage(c([0,8,12,14,255,14,12,8]),d,40);
+      E.showMessage('Hold\nto return\nto clock');
       g.drawImage(c([0,8,12,14,255,14,12,8]),d,194);
     },
     () => {

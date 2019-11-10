@@ -13,13 +13,13 @@ var APPS = [ // IDs of apps to install
   "boot",
   "mclock",
   "setting",
-  "trex",
+  "astroid",
   "gpstime",
   "compass",
   "sbat",
   "funrun5",
   "nceuwid",
-  //"start"
+  "start"
 ];
 
 var fs = require("fs");
@@ -29,9 +29,14 @@ var appfiles = [];
 
 function fileGetter(url) {
   console.log("Loading "+url)
-  if (url.endsWith(".js")) {
-    // minify?
-  }
+  /*if (url.endsWith(".js")) {
+    var f = url.slice(0,-3);
+    console.log("MINIFYING "+f);
+    const execSync = require('child_process').execSync;
+    code = execSync(`espruino --board BANGLEJS --minify ${f}.js -o ${f}.min.js`);
+    console.log(code.toString());
+    url = f+".min.js";
+  }*/
   return Promise.resolve(fs.readFileSync(url).toString());
 }
 
