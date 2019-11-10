@@ -298,5 +298,17 @@
       {"name":"=nceuwid","url":"nceu-widget.js"}
     ],
     "sortorder" : -1
+  },
+    { "id": "sclock",
+    "name": "Simple Clock",
+    "icon": "clock-simple.png",
+    "description": "Simple Digital Clock",
+    "tags": "sclock",
+    "type":"clock",
+    "storage": [
+      {"name":"+sclock","url":"clock-simple.json"},
+      {"name":"-sclock","url":"clock-simple.js"},
+      {"name":"*sclock","url":"clock-simple.js","evaluate":true}
+    ]
   }
 ]
