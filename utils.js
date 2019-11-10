@@ -19,7 +19,10 @@ function htmlElement(str) {
 function httpGet(url) {
   return new Promise((resolve,reject) => {
     var oReq = new XMLHttpRequest();
-    oReq.addEventListener("load", () => resolve(oReq.responseText));
+    oReq.addEventListener("load", () => {
+      if (oReq.status==200) resolve(oReq.responseText)
+      else reject(oReq.status+" - "+oReq.statusText);
+    });
     oReq.addEventListener("error", () => reject());
     oReq.addEventListener("abort", () => reject());
     oReq.open("GET", url);
