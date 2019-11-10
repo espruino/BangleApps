@@ -51,7 +51,7 @@ function drawApp() {
 if (next) {
 
   if (settings.HIDGestures) {
-    Bangle.on('aiGestures', (v) => {
+    Bangle.on('aiGesture', (v) => {
       switch (v) {
         case 'swipeleft':
           E.showMessage('next');
@@ -101,4 +101,3 @@ if (next) {
 
   drawApp();
 }
-
