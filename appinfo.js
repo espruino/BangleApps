@@ -35,7 +35,13 @@ var AppInfo = {
             storageFile.content = JSON.stringify(json);
           }
           // format ready for Espruino
-          var js = storageFile.evaluate ? storageFile.content.trim() : toJS(storageFile.content);
+          var js;
+          if (storageFile.evaluate) {
+            js = storageFile.content.trim();
+            if (js.endsWith(";"))
+              js = js.slice(0,-1);
+          } else
+            js = toJS(storageFile.content);
           storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
         });
         resolve(fileContents);
