@@ -50,7 +50,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Dev': {
+    'Programmable': {
       value: settings.dev,
       format: boolFormat,
       onchange: () => {
@@ -163,6 +163,7 @@ function showResetMenu() {
 
 function makeConnectable() {
   try { NRF.wake(); } catch(e) {}
+  Bluetooth.setConsole(1);
   var name="Bangle.js "+NRF.getAddress().substr(-5).replace(":","");
   E.showPrompt(name+"\nStay Connectable?",{title:"Connectable"}).then(r=>{
     if (settings.ble!=r) {
