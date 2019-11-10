@@ -16,6 +16,7 @@ var APPS = [ // IDs of apps to install
   "astroid",
   "gpstime",
   "compass",
+  "sbt",
   "sbat",
   "funrun5",
   "nceuwid",

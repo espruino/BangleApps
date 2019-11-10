@@ -1,3 +1,4 @@
+NRF.sleep();
 var g = Graphics.getInstance();
 g.setFontAlign(1, 1, 0);
 const d = g.getWidth() - 18;
