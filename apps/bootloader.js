@@ -83,7 +83,7 @@ if (startapp) {
       setTimeout(cmd,20);
       // re-add the menu button if we're going to the clock
       if (apps[selected].type=="clock") setWatch(displayMenu, BTN2, {repeat:false});
-    }, BTN2, {repeat:true});
+    }, BTN2, {repeat:true,edge:"falling"});
   }, BTN2, {repeat:false}); // menu on middle button
   var WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
   var WIDGETS={};
