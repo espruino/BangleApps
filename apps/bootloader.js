@@ -1,4 +1,3 @@
-E.setTimeZone(1);
 E.setFlags({pretokenise:1});
 var startapp;
 try {
@@ -7,16 +6,16 @@ try {
 if (startapp) {
   eval(require("Storage").read(startapp.src));
 } else {
+  delete startapp;
   setWatch(function displayMenu() {
     Bangle.setLCDMode("direct");
     g.clear();
     clearInterval();
     clearWatch();
     Bangle.removeAllListeners();
-
     var s = require("Storage");
 
-    apps = s.list().filter(a=>a[0]=='+').map(app=>{
+    var apps = s.list().filter(a=>a[0]=='+').map(app=>{
       try { return s.readJSON(app); }
       catch (e) { return {name:"DEAD: "+app.substr(1)} }
     }).filter(app=>app.type=="app" || app.type=="clock" || !app.type);
@@ -80,17 +79,24 @@ if (startapp) {
       g.drawString("Loading...",120,120);
       // load like this so we ensure we've cleared out our RAM
       var cmd = 'eval(require("Storage").read("'+apps[selected].src+'"));';
+      setTimeout(process.memory,10); // force GC
       setTimeout(cmd,20);
       // re-add the menu button if we're going to the clock
-      if (apps[selected].type=="clock") setWatch(displayMenu, BTN2, {repeat:false});
+      if (apps[selected].type=="clock") {
+        setWatch(displayMenu, BTN2, {repeat:false,edge:"falling"});
+      } else {
+        delete WIDGETS;
+        delete WIDGETPOS;
+        delete drawWidgets;
+      }
     }, BTN2, {repeat:true,edge:"falling"});
-  }, BTN2, {repeat:false}); // menu on middle button
+  }, BTN2, {repeat:false,edge:"falling"}); // menu on middle button
+
   var WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
   var WIDGETS={};
   function drawWidgets() {
     Object.keys(WIDGETS).forEach(k=>WIDGETS[k].draw());
   }
-
   var clockApp = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
     try { return require("Storage").readJSON(app); }
     catch (e) {}
