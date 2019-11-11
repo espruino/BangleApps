@@ -337,5 +337,17 @@
       {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
       {"name":"*gesture","url":"gesture-icon.js","evaluate":true}
     ]
+  },
+  { "id": "pparrot",
+    "name": "Party Parrot",
+    "icon": "party-parrot.png",
+    "description": "Party with a parrot on your wrist",
+    "tags": "party,parrot,lol",
+    "type":"app",
+    "storage": [
+      {"name":"+pparrot","url":"party-parrot.json"},
+      {"name":"-pparrot","url":"party-parrot.js"},
+      {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
+    ]
   }
 ]
