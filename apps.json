@@ -361,5 +361,16 @@
       {"name":"-blescan","url":"blescan.js"},
       {"name":"*blescan","url":"blescan-icon.js", "evaluate":true}
     ]
-  }
+  },
+  { "id": "mmonday",
+  "name": "Manic Monday Tone",
+  "icon": "manic-monday-icon.png",
+  "description": "The Bangles make a comeback",
+  "tags": "sound",
+  "storage": [
+    {"name":"+mmonday","url":"manic-monday.json"},
+    {"name":"-mmonday","url":"manic-monday.js"},
+    {"name":"*mmonday","url":"manic-monday-icon.js","evaluate":true}
+  ],
+},
 ]
