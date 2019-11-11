@@ -48,6 +48,18 @@
       {"name":"*wclock","url":"clock-word-icon.js","evaluate":true}
     ]
   },
+  { "id": "aclock",
+    "name": "Analog Clock",
+    "icon": "clock-analog.png",
+    "description": "An Analog Clock",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+aclock","url":"clock-analog.json"},
+      {"name":"-aclock","url":"clock-analog.js"},
+      {"name":"*aclock","url":"clock-analog-icon.js","evaluate":true}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
