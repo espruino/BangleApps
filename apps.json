@@ -348,6 +348,16 @@
       {"name":"+pparrot","url":"party-parrot.json"},
       {"name":"-pparrot","url":"party-parrot.js"},
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
+  {
+    "id": "blescan",
+    "name": "BLE Scanner",
+    "icon": "blescan.png",
+    "description": "Scan for advertising BLE devices",
+    "tags" : "bluetooth",
+    "storage" : [
+      {"name":"+blescan","url":"blescan.json"},
+      {"name":"-blescan","url":"blescan.js"},
+      {"name":"*blescan","url":"blescan-icon.js", "evaluate":true}
     ]
   }
 ]
