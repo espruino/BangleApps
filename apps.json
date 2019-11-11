@@ -371,6 +371,6 @@
     {"name":"+mmonday","url":"manic-monday.json"},
     {"name":"-mmonday","url":"manic-monday.js"},
     {"name":"*mmonday","url":"manic-monday-icon.js","evaluate":true}
-  ],
-},
+  ]
+  }
 ]
