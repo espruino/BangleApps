@@ -348,6 +348,8 @@
       {"name":"+pparrot","url":"party-parrot.json"},
       {"name":"-pparrot","url":"party-parrot.js"},
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
