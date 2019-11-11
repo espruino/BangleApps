@@ -11,7 +11,7 @@ uploadApp : app => {
       Puck.write("\x03reset();\n", (result) => {
         if (result===null) return reject("");
         setTimeout(() => { // wait for reset
-          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"load()\n",(result) => {
+          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
             if (result===null) return reject("");
             resolve();
           });
