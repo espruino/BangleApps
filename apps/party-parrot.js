@@ -8,10 +8,11 @@ var imgs = [
 ];
 
 function drawImg (i) {
+  g.clear();
   g.drawImage({
   width: 80, height: 57, bpp: 8,
   transparent : 254,
-  buffer: require("heatshrink").decompress(atob(imgs[i]))}, 0, 0, {scale: 3});
+  buffer: imgs[i]}, 0, 0, {scale: 3});
 }
   
 var currImg = 0;
@@ -19,5 +20,5 @@ drawImg(currImg);
 setInterval(function() {
   currImg = (currImg + 1) % imgs.length;
   drawImg(currImg);
-}, 400);
+}, 200);
 })();
