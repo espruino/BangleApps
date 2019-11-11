@@ -312,7 +312,7 @@
     ],
     "sortorder" : -1
   },
-    { "id": "sclock",
+  { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
     "description": "Simple Digital Clock",
@@ -321,7 +321,21 @@
     "storage": [
       {"name":"+sclock","url":"clock-simple.json"},
       {"name":"-sclock","url":"clock-simple.js"},
-      {"name":"*sclock","url":"clock-simple.js","evaluate":true}
+      {"name":"*sclock","url":"clock-simple-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "gesture",
+    "name": "Gesture Test",
+    "icon": "gesture.png",
+    "description": "BETA! Uploads a basic Tensorflow Gesture model, and then outputs each gesture as a message",
+    "tags": "gesture,ai",
+    "type":"app",
+    "storage": [
+      {"name":"+gesture","url":"gesture.json"},
+      {"name":"-gesture","url":"gesture.js"},
+      {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
+      {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
+      {"name":"*gesture","url":"gesture-icon.js","evaluate":true}
     ]
   }
 ]
