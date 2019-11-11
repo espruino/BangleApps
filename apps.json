@@ -218,7 +218,8 @@
       {"name":"*pig","url":"animals-pig.js","evaluate":true},
       {"name":"*sheep","url":"animals-sheep.js","evaluate":true},
       {"name":"*mouse","url":"animals-mouse.js","evaluate":true}
-    ]
+    ],
+    "sortorder" : 1
   },
   { "id": "qrcode",
     "name": "Custom QR Code",
