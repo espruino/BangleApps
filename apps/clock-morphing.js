@@ -1,4 +1,3 @@
-// Enable 'Set Current Time' in Settings -> Communications before sending
 (function(){ // make our own scope so this is GC'd when intervals are cleared
 // Offscreen buffer
 var buf = Graphics.createArrayBuffer(240,86,1,{msb:true});

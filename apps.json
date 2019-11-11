@@ -48,6 +48,18 @@
       {"name":"*wclock","url":"clock-word-icon.js","evaluate":true}
     ]
   },
+  { "id": "aclock",
+    "name": "Analog Clock",
+    "icon": "clock-analog.png",
+    "description": "An Analog Clock",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+aclock","url":"clock-analog.json"},
+      {"name":"-aclock","url":"clock-analog.js"},
+      {"name":"*aclock","url":"clock-analog-icon.js","evaluate":true}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
@@ -300,7 +312,7 @@
     ],
     "sortorder" : -1
   },
-    { "id": "sclock",
+  { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
     "description": "Simple Digital Clock",
@@ -309,7 +321,21 @@
     "storage": [
       {"name":"+sclock","url":"clock-simple.json"},
       {"name":"-sclock","url":"clock-simple.js"},
-      {"name":"*sclock","url":"clock-simple.js","evaluate":true}
+      {"name":"*sclock","url":"clock-simple-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "gesture",
+    "name": "Gesture Test",
+    "icon": "gesture.png",
+    "description": "BETA! Uploads a basic Tensorflow Gesture model, and then outputs each gesture as a message",
+    "tags": "gesture,ai",
+    "type":"app",
+    "storage": [
+      {"name":"+gesture","url":"gesture.json"},
+      {"name":"-gesture","url":"gesture.js"},
+      {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
+      {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
+      {"name":"*gesture","url":"gesture-icon.js","evaluate":true}
     ]
   }
 ]
