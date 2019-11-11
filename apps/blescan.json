@@ -1,0 +1,7 @@
+  
+{
+  "name": "BLE Scanner",
+  "type":"app",
+  "icon": "*blescan",
+  "src": "-blescan"
+}
