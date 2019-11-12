@@ -419,5 +419,17 @@
       {"name":"-scolor","url":"show-color.js"},
       {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
     ]
+  },
+  { "id": "clotris",
+    "name": "Clock-Tris",
+    "icon": "clock-tris.png",
+    "description": "A fully functional clone of a classic game of falling blocks",
+    "tags": "",
+    "storage": [
+      {"name":"+clotris","url":"clock-tris.json"},
+      {"name":"-clotris","url":"clock-tris.js"},
+      {"name":"*clotris","url":"clock-tris-icon.js","evaluate":true},
+      {"name":".trishig","url":"clock-tris-high"}
+    ]
   }
 ]
