@@ -38,4 +38,9 @@ function step() {
 var tune = "aggffefed";
 var pos = 0;
 
-setInterval(step, 500);
+setWatch(() => {
+  var playing = setInterval(step, 500);
+  if(playing === 0) clearInterval(playing);
+}, BTN1);
+
+E.showMessage('BTN1 to start', 'Manic Monday');
