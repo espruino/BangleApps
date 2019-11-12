@@ -93,6 +93,17 @@
       {"name":"*clickms","url":"click-master-icon.js","evaluate":true}
     ]
   },
+  { "id": "horsey",
+    "name": "Horse Race!",
+    "icon": "horse-race.png",
+    "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+    "tags": "game",
+    "storage": [
+      {"name":"+horsey","url":"horse-race.json"},
+      {"name":"-horsey","url":"horse-race.js"},
+      {"name":"*horsey","url":"horse-race-icon.js","evaluate":true}
+    ]
+  },
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
