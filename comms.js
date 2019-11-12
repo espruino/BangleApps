@@ -11,7 +11,7 @@ uploadApp : app => {
       Puck.write("\x03reset();\n", (result) => {
         if (result===null) return reject("");
         setTimeout(() => { // wait for reset
-          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"load()\n",(result) => {
+          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
             if (result===null) return reject("");
             resolve();
           });
@@ -38,7 +38,7 @@ removeApp : app => { // expects an app structure
   }).join("");
   console.log("removeApp", cmds);
   return new Promise((resolve,reject) => {
-    Puck.write("\x03"+cmds+"\x10load()\n",(result) => {
+    Puck.write("\x03"+cmds+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
       if (result===null) return reject("");
       resolve();
     });
@@ -63,5 +63,21 @@ setTime : () => {
       resolve();
     });
   });
+},
+watchConnectionChange : cb => {
+  var connected = Puck.isConnected();
+
+  //TODO Switch to an event listener when Puck will support it
+  var interval = setInterval(() => {
+    if (connected === Puck.isConnected()) return;
+
+    connected = Puck.isConnected();
+    cb(connected);
+  }, 1000);
+
+  //stop watching
+  return () => {
+    clearInterval(interval);
+  };
 }
 };

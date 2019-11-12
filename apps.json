@@ -337,5 +337,52 @@
       {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
       {"name":"*gesture","url":"gesture-icon.js","evaluate":true}
     ]
+  },
+  { "id": "pparrot",
+    "name": "Party Parrot",
+    "icon": "party-parrot.png",
+    "description": "Party with a parrot on your wrist",
+    "tags": "party,parrot,lol",
+    "type":"app",
+    "storage": [
+      {"name":"+pparrot","url":"party-parrot.json"},
+      {"name":"-pparrot","url":"party-parrot.js"},
+      {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "blescan",
+    "name": "BLE Scanner",
+    "icon": "blescan.png",
+    "description": "Scan for advertising BLE devices",
+    "tags" : "bluetooth",
+    "storage" : [
+      {"name":"+blescan","url":"blescan.json"},
+      {"name":"-blescan","url":"blescan.js"},
+      {"name":"*blescan","url":"blescan-icon.js", "evaluate":true}
+    ]
+  },
+  { "id": "mmonday",
+  "name": "Manic Monday Tone",
+  "icon": "manic-monday-icon.png",
+  "description": "The Bangles make a comeback",
+  "tags": "sound",
+  "storage": [
+    {"name":"+mmonday","url":"manic-monday.json"},
+    {"name":"-mmonday","url":"manic-monday.js"},
+    {"name":"*mmonday","url":"manic-monday-icon.js","evaluate":true}
+  ]
+  },
+  { "id": "jbells",
+    "name": "Jingle Bells",
+    "icon": "jbells.png",
+    "description": "Play Jingle Bells",
+    "tags": "sound",
+    "type":"app",
+    "storage": [
+      {"name":"+jbells","url":"jbells.json"},
+      {"name":"-jbells","url":"jbells.js"},
+      {"name":"*jbells","url":"jbells-icon.js","evaluate":true}
+    ]
   }
 ]
