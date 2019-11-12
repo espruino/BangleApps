@@ -97,13 +97,13 @@ if (startapp) {
   function drawWidgets() {
     Object.keys(WIDGETS).forEach(k=>WIDGETS[k].draw());
   }
-  var clockApp = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+  var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
     try { return require("Storage").readJSON(app); }
     catch (e) {}
-  }).find(app=>app.type=="clock");
-  if (clockApp) eval(require("Storage").read(clockApp.src));
+  }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);
+  if (clockApps && clockApps.length > 0) eval(require("Storage").read(clockApps[0].src));
   else E.showMessage("No Clock Found");
-  delete clockApp;
+  delete clockApps;
   require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
   setTimeout(drawWidgets,100);
 }
