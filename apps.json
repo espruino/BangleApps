@@ -372,5 +372,17 @@
     {"name":"-mmonday","url":"manic-monday.js"},
     {"name":"*mmonday","url":"manic-monday-icon.js","evaluate":true}
   ]
+  },
+  { "id": "jbells",
+    "name": "Jingle Bells",
+    "icon": "jbells.png",
+    "description": "Play Jingle Bells",
+    "tags": "sound",
+    "type":"app",
+    "storage": [
+      {"name":"+jbells","url":"jbells.json"},
+      {"name":"-jbells","url":"jbells.js"},
+      {"name":"*jbells","url":"jbells-icon.js","evaluate":true}
+    ]
   }
 ]
