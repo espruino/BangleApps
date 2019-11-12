@@ -73,7 +73,7 @@ if (startapp) {
     setWatch(function() { // run
       if (!apps[selected].src) return;
       clearWatch();
-      g.clear();
+      g.clear(1);
       g.setFont("6x8",2);
       g.setFontAlign(0,0);
       g.drawString("Loading...",120,120);
@@ -84,6 +84,10 @@ if (startapp) {
       // re-add the menu button if we're going to the clock
       if (apps[selected].type=="clock") {
         setWatch(displayMenu, BTN2, {repeat:false,edge:"falling"});
+        WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
+        WIDGETS={};
+        require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
+        setTimeout(drawWidgets,100);
       } else {
         delete WIDGETS;
         delete WIDGETPOS;
@@ -95,7 +99,7 @@ if (startapp) {
   var WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
   var WIDGETS={};
   function drawWidgets() {
-    Object.keys(WIDGETS).forEach(k=>WIDGETS[k].draw());
+    for (var w of WIDGETS) w.draw();
   }
   var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
     try { return require("Storage").readJSON(app); }

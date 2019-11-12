@@ -13,12 +13,12 @@ Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQ
     } else
       delete Bangle.HID;
   }
-  setTimeout(function() {
-    NRF.setServices({}, adv);
-    // we just reset, so BLE should be on
-    if (!s.ble) NRF.sleep(); // disable advertising if BLE should be off
-  },10);
-
+  NRF.setServices({}, adv);
+  // we just reset, so BLE should be on
+  try { // disable advertising if BLE should be off
+    if (!s.ble) NRF.sleep();
+    else  NRF.wake();
+  } catch(e) {}
   if (!s.vibrate) Bangle.buzz=Promise.resolve;
   if (!s.beep) Bangle.beep=Promise.resolve;
   Bangle.setLCDTimeout(s.timeout);
