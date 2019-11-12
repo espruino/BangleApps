@@ -1,0 +1,13 @@
+
+{
+  "name": "Bitdefender",
+  "description": "Choose what the experts use. Award-winning cybersecurity you can trust and rely on.",
+  "type":"app",
+  "icon": "*bitdefender",
+  "src": "-bitdefender",
+  "storage": [
+    {"name":"+bitdefender","url":"bitdefender.json"},
+    {"name":"-bitdefender","url":"bitdefender.js"},
+    {"name":"*bitdefender","url":"bitdefender-icon.js","evaluate":true}
+  ]
+}
