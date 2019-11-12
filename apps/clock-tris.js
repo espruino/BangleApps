@@ -162,7 +162,7 @@ function drawGameOver() {
 
 function draw() {
   g.clear();
-  g.setFontBitmap();
+  g.setFont("6x8");
   drawBoard();
   drawNextBlock();
   drawGameState();
