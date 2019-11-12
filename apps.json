@@ -350,6 +350,18 @@
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
     ]
   },
+  { "id": "rings",
+    "name": "Hypno Rings",
+    "icon": "rings.png",
+    "description": "Experiment with trippy rings, press buttons for change",
+    "tags": "rings,hypnosis,psychadelic",
+    "type":"app",
+    "storage": [
+      {"name":"+hrings","url":"hypno-rings.json"},
+      {"name":"-hrings","url":"hypno-rings.js"},
+      {"name":"*hrings","url":"hypno-rings-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
