@@ -1,6 +1,6 @@
 {
   "name":"Simple Clock","type":"clock",
   "icon":"*sclock",
-  "src":"-sslock",
+  "src":"-sclock",
   "sortorder":-10
 }
