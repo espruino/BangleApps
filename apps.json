@@ -350,9 +350,9 @@
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
     ]
   },
-  { "id": "rings",
+  { "id": "hrings",
     "name": "Hypno Rings",
-    "icon": "rings.png",
+    "icon": "hypno-rings.png",
     "description": "Experiment with trippy rings, press buttons for change",
     "tags": "rings,hypnosis,psychadelic",
     "type":"app",
