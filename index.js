@@ -250,24 +250,35 @@ function refreshMyApps() {
 function getInstalledApps() {
   showLoadingIndicator();
   // Get apps
-  Comms.getInstalledApps().then(appIDs => {
+  return Comms.getInstalledApps().then(appIDs => {
     appsInstalled = appIDs;
     handleConnectionChange(true);
     refreshMyApps();
     refreshLibrary();
-  }).catch(err => {
-    showToast("Getting app list failed, "+err,"error");
   });
 }
 
 var connectMyDeviceBtn = document.getElementById("connectmydevice");
 
 function handleConnectionChange(connected) {
-  connectMyDeviceBtn.style.display = connected ? 'none' : '';
+  connectMyDeviceBtn.textContent = connected ? 'Disconnect' : 'Connect';
+  connectMyDeviceBtn.classList.toggle('is-connected', connected);
 }
 
-document.getElementById("myappsrefresh").addEventListener("click", getInstalledApps);
-connectMyDeviceBtn.addEventListener("click", getInstalledApps);
+document.getElementById("myappsrefresh").addEventListener("click", () => {
+  getInstalledApps().catch(err => {
+    showToast("Getting app list failed, "+err,"error");
+  });
+});
+connectMyDeviceBtn.addEventListener("click", () => {
+  if (connectMyDeviceBtn.classList.contains('is-connected')) {
+    Comms.disconnectDevice();
+  } else {
+    getInstalledApps().catch(err => {
+      showToast("Device connection failed, "+err,"error");
+    });
+  }
+});
 Comms.watchConnectionChange(handleConnectionChange);
 
 // =========================================== About

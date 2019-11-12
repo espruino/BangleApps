@@ -64,6 +64,13 @@ setTime : () => {
     });
   });
 },
+disconnectDevice: () => {
+  var connection = Puck.getConnection();
+
+  if (!connection) return;
+
+  connection.close();
+},
 watchConnectionChange : cb => {
   var connected = Puck.isConnected();
 
