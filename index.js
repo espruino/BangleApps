@@ -252,6 +252,7 @@ function getInstalledApps() {
   // Get apps
   Comms.getInstalledApps().then(appIDs => {
     appsInstalled = appIDs;
+    handleConnectionChange(true);
     refreshMyApps();
     refreshLibrary();
   }).catch(err => {
@@ -259,10 +260,15 @@ function getInstalledApps() {
   });
 }
 
+var connectMyDeviceBtn = document.getElementById("connectmydevice");
 
-document.getElementById("myappsrefresh").addEventListener("click",event=>{
-  getInstalledApps();
-});
+function handleConnectionChange(connected) {
+  connectMyDeviceBtn.style.display = connected ? 'none' : '';
+}
+
+document.getElementById("myappsrefresh").addEventListener("click", getInstalledApps);
+connectMyDeviceBtn.addEventListener("click", getInstalledApps);
+Comms.watchConnectionChange(handleConnectionChange);
 
 // =========================================== About
 
