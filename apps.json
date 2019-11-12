@@ -384,5 +384,17 @@
       {"name":"-jbells","url":"jbells.js"},
       {"name":"*jbells","url":"jbells-icon.js","evaluate":true}
     ]
+  },
+  { "id": "scolor",
+    "name": "Show Color",
+    "icon": "show-color.png",
+    "description": "Display all available Colors / Names",
+    "tags": "develop",
+    "type":"app",
+    "storage": [
+      {"name":"+scolor","url":"show-color.json"},
+      {"name":"-scolor","url":"show-color.js"},
+      {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
+    ]
   }
 ]
