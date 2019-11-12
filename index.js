@@ -247,14 +247,12 @@ function refreshMyApps() {
   });
 }
 
-var connectMyDeviceBtn = document.getElementById("connectmydevice");
-
 function getInstalledApps() {
   showLoadingIndicator();
   // Get apps
   Comms.getInstalledApps().then(appIDs => {
     appsInstalled = appIDs;
-    connectMyDeviceBtn.style.display = 'none';
+    handleConnectionChange(true);
     refreshMyApps();
     refreshLibrary();
   }).catch(err => {
@@ -262,8 +260,15 @@ function getInstalledApps() {
   });
 }
 
+var connectMyDeviceBtn = document.getElementById("connectmydevice");
+
+function handleConnectionChange(connected) {
+  connectMyDeviceBtn.style.display = connected ? 'none' : '';
+}
+
 document.getElementById("myappsrefresh").addEventListener("click", getInstalledApps);
 connectMyDeviceBtn.addEventListener("click", getInstalledApps);
+Comms.watchConnectionChange(handleConnectionChange);
 
 // =========================================== About
 

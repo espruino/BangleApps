@@ -63,5 +63,21 @@ setTime : () => {
       resolve();
     });
   });
+},
+watchConnectionChange : cb => {
+  var connected = Puck.isConnected();
+
+  //TODO Switch to an event listener when Puck will support it
+  var interval = setInterval(() => {
+    if (connected === Puck.isConnected()) return;
+
+    connected = Puck.isConnected();
+    cb(connected);
+  }, 1000);
+
+  //stop watching
+  return () => {
+    clearInterval(interval);
+  };
 }
 };
