@@ -388,8 +388,8 @@
   { "id": "scolor",
     "name": "Show Color",
     "icon": "show-color.png",
-    "description": "Display all available Colors / Names",
-    "tags": "develop",
+    "description": "Display all available Colors and Names",
+    "tags": "tool",
     "type":"app",
     "storage": [
       {"name":"+scolor","url":"show-color.json"},
