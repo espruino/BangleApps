@@ -90,9 +90,6 @@
   Bangle.on('gesture',function(gesture){
     if (gesture && !Bangle.isLCDOn()) {
         clearTimers();
-        g.clear();
-        startTimers();
-        drawWidgets();
         Bangle.setLCDTimeout(30);
         Bangle.setLCDPower(true);
       }
