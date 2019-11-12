@@ -162,7 +162,7 @@ function drawGameOver() {
 
 function draw() {
   g.clear();
-  g.setColor(COLOR_WHITE);
+  g.setFontBitmap();
   drawBoard();
   drawNextBlock();
   drawGameState();
