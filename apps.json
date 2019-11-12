@@ -82,6 +82,17 @@
       {"name":"*astroid","url":"asteroids-icon.js","evaluate":true}
     ]
   },
+  { "id": "clickms",
+    "name": "Click Master",
+    "icon": "click-master.png",
+    "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+    "tags": "game",
+    "storage": [
+      {"name":"+clickms","url":"click-master.json"},
+      {"name":"-clickms","url":"click-master.js"},
+      {"name":"*clickms","url":"click-master-icon.js","evaluate":true}
+    ]
+  },
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
