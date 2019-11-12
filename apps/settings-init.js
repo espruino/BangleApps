@@ -19,8 +19,8 @@ Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQ
     else NRF.sleep();
   },10);
 
-  if (!s.vibrate) Bangle.buzz=()=>Promise.resolve();
-  if (!s.beep) Bangle.beep=()=>Promise.resolve();
+  if (!s.vibrate) Bangle.buzz=Promise.resolve;
+  if (!s.beep) Bangle.beep=Promise.resolve;
   Bangle.setLCDTimeout(s.timeout);
   if (!s.timeout) Bangle.setLCDPower(1);
   E.setTimeZone(s.timezone);
