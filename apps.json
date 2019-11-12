@@ -419,5 +419,17 @@
       {"name":"-scolor","url":"show-color.js"},
       {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
     ]
+  },
+  { "id": "bclock",
+    "name": "Binary Clock",
+    "icon": "clock-binary.png",
+    "description": "A simple binary clock watch face",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+bclock","url":"clock-binary.json"},
+      {"name":"-bclock","url":"clock-binary.js"},
+      {"name":"*bclock","url":"clock-binary-icon.js","evaluate":true}
+    ]
   }
 ]
