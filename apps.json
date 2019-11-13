@@ -384,6 +384,18 @@
       {"name":"*hrings","url":"hypno-rings-icon.js","evaluate":true}
     ]
   },
+  { "id": "morse",
+    "name": "Morse Code",
+    "icon": "morse-code.png",
+    "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
+    "tags": "morse,sound,visual,input",
+    "type":"app",
+    "storage": [
+      {"name":"+morse","url":"morse-code.json"},
+      {"name":"-morse","url":"morse-code.js"},
+      {"name":"*morse","url":"morse-code-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
