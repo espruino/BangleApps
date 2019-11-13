@@ -466,5 +466,18 @@
       {"name":"*clotris","url":"clock-tris-icon.js","evaluate":true},
       {"name":".trishig","url":"clock-tris-high"}
     ]
+  },
+  {
+    "id": "gpsinfo",
+    "name": "GPS Info",
+    "icon": "gps-info.png",
+    "description": "An application that displays information about altitude, lat/lon, satellites and time",
+    "tags": "gps",
+    "type": "app",
+    "storage": [
+      {"name": "+gpsinfo","url": "gps-info.json"},
+      {"name": "-gpsinfo","url": "gps-info.js"},
+      {"name": "*gpsinfo","url": "gps-info-icon.js","evaluate": true}
+    ]
   }
 ]
