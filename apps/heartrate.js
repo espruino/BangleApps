@@ -14,9 +14,9 @@ function readHRM() {
   min=Math.min(min*0.97+a*0.03,a);
   max=Math.max(max*0.97+a*0.03,a);
   y = E.clip(170 - (a*960*4),100,230);
-  if (x==0) { 
-    g.clearRect(0,100,239,239); 
-    g.moveTo(-100,0); 
+  if (x==0) {
+    g.clearRect(0,100,239,239);
+    g.moveTo(-100,0);
   }
   /*g.setColor(0,1,0);
   var z = 170 - (min*960*4); g.fillRect(x,z,x,z);
@@ -39,11 +39,16 @@ function readHRM() {
           t.sort();
           // average the middle 3
           var mid = t.length>>1;
-          hrm = (t[mid]+t[mid+1]+t[mid+2])/3;
+          if (mid+2<t.length)
+            hrm = (t[mid]+t[mid+1]+t[mid+2])/3;
+          else if (mid<t.length)
+            hrm = t[mid];
+          else
+            hrm = 0;
           g.setFontVector(40);
           g.setFontAlign(0,0);
           g.clearRect(0,0,239,100);
-          var str = Math.round(hrm);
+          var str = hrm ? Math.round(hrm) : "?";
           var px = 120;
           g.drawString(str,px,40);
           px += g.stringWidth(str)/2;
