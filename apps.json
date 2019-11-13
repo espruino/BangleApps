@@ -482,7 +482,7 @@
     "name": "Clock-Tris",
     "icon": "clock-tris.png",
     "description": "A fully functional clone of a classic game of falling blocks",
-    "tags": "",
+    "tags": "game",
     "storage": [
       {"name":"+clotris","url":"clock-tris.json"},
       {"name":"-clotris","url":"clock-tris.js"},
