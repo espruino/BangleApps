@@ -454,6 +454,18 @@
       {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
     ]
   },
+  { "id": "miclock",
+    "name": "Mixed Clock",
+    "icon": "clock-mixed.png",
+    "description": "A mix of analog and digital Clock",
+    "tags": "miclock",
+    "type":"clock",
+    "storage": [
+      {"name":"+miclock","url":"clock-mixed.json"},
+      {"name":"-miclock","url":"clock-mixed.js"},
+      {"name":"*miclock","url":"clock-mixed-icon.js","evaluate":true}
+    ]
+  },
   { "id": "bclock",
     "name": "Binary Clock",
     "icon": "clock-binary.png",
