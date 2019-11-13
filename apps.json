@@ -458,7 +458,7 @@
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
     "description": "A mix of analog and digital Clock",
-    "tags": "miclock",
+    "tags": "clock",
     "type":"clock",
     "storage": [
       {"name":"+miclock","url":"clock-mixed.json"},
