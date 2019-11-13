@@ -1,6 +1,6 @@
 {
   "name":"Mixed Clock","type":"clock",
-  "icon":"*mclock",
-  "src":"-mclock",
+  "icon":"*miclock",
+  "src":"-miclock",
   "sortorder":-10
 }

@@ -397,16 +397,16 @@
       {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
     ]
   },
-  { "id": "mclock",
+  { "id": "miclock",
     "name": "A mix of analog and digital Clock",
     "icon": "clock-mixed.png",
     "description": "Mixed AD Clock",
-    "tags": "mclock",
+    "tags": "miclock",
     "type":"clock",
     "storage": [
-      {"name":"+mclock","url":"clock-mixed.json"},
-      {"name":"-mclock","url":"clock-mixed.js"},
-      {"name":"*mclock","url":"clock-mixed-icon.js","evaluate":true}
+      {"name":"+miclock","url":"clock-mixed.json"},
+      {"name":"-miclock","url":"clock-mixed.js"},
+      {"name":"*miclock","url":"clock-mixed-icon.js","evaluate":true}
     ]
   }
 ]
