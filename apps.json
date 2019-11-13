@@ -384,6 +384,18 @@
       {"name":"*hrings","url":"hypno-rings-icon.js","evaluate":true}
     ]
   },
+  { "id": "morse",
+    "name": "Morse Code",
+    "icon": "morse-code.png",
+    "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
+    "tags": "morse,sound,visual,input",
+    "type":"app",
+    "storage": [
+      {"name":"+morse","url":"morse-code.json"},
+      {"name":"-morse","url":"morse-code.js"},
+      {"name":"*morse","url":"morse-code-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
@@ -429,6 +441,30 @@
       {"name":"+scolor","url":"show-color.json"},
       {"name":"-scolor","url":"show-color.js"},
       {"name":"*scolor","url":"show-color-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "bclock",
+    "name": "Binary Clock",
+    "icon": "clock-binary.png",
+    "description": "A simple binary clock watch face",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+bclock","url":"clock-binary.json"},
+      {"name":"-bclock","url":"clock-binary.js"},
+      {"name":"*bclock","url":"clock-binary-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "clotris",
+    "name": "Clock-Tris",
+    "icon": "clock-tris.png",
+    "description": "A fully functional clone of a classic game of falling blocks",
+    "tags": "",
+    "storage": [
+      {"name":"+clotris","url":"clock-tris.json"},
+      {"name":"-clotris","url":"clock-tris.js"},
+      {"name":"*clotris","url":"clock-tris-icon.js","evaluate":true},
+      {"name":".trishig","url":"clock-tris-high"}
     ]
   }
 ]
