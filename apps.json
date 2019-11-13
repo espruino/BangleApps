@@ -398,9 +398,9 @@
     ]
   },
   { "id": "miclock",
-    "name": "A mix of analog and digital Clock",
+    "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "description": "Mixed AD Clock",
+    "description": "A mix of analog and digital Clock",
     "tags": "miclock",
     "type":"clock",
     "storage": [
