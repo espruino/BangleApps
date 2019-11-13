@@ -1,5 +1,13 @@
 Bangle.setLCDMode("doublebuffered");
-var img = require("Storage").read("*horsey");
+var img = {
+  width : 48, height : 48, bpp : 8,
+  transparent : 254,
+  buffer : require("heatshrink").decompress(atob("/wA/AH4A/ACl5p9PvIutp9V0YvpFwV553OFlIAC44vnFwtPFwJfnGIl55vNX1dVsQQMvQvdsQADHpd6AYIvnTgd6F4QxbF4gwFfYgvBGAYvbnAyGFwiOBAAVVLzlcrgvEqxeHAAQvdm4vPlYwZF4gHCrguFqxfFF6QWGF44tERw4wSC467DrgOCFxAZGFhhHKGAgxBRoiMEPRItJFxQABwAxDF4VVLBIGCmQuLRpAwFF4i4MLxwvNL4VcvSLEdCaoDF5iODBxQvfRoeAF7wwLRogvgGBYucF47yNF9FVqwuNqoaDeCQvHBQNVFxYbGYDFWfhx8HMCQfRXoowRF5KtBDpbtGMCgdFPpovcDgh7OF7JMGF87cWCY4vPDZZgQlgABF6qaIIhwveYKQvaVp4wYOo59ORioYEDIreOdqwA/AH4A2A"))
+};
+// ideally we'd just load the image file but it looks like NodeConf
+// Bangle.js firmware had bug which meant that transparency in image
+// strings wasn't used
+//var img = require("Storage").read("*horsey");
 var mycounter = 0;
 var players = {};
 setWatch(x=>{
@@ -18,29 +26,33 @@ try {
 }
 
 function drawPlayers() {
-  g.clear(1);
-  g.setBgColor(0,0.7,0);
-  g.setFont("6x8",2);
-  g.setFontAlign(0,0,1);
+  g.setColor(0,0.3,0);
+  g.fillRect(0,0,240,160);
+  g.setColor(1,1,1);
+  g.setFont("6x8");
+  g.setFontAlign(0,0);
   var max = mycounter;
   for (var player of players) {
     max = Math.max(player.cnt, mycounter);
   }
   var offset = 0;
-  if (max > 220)
-    offset = max-220;
+  if (max > 200)
+    offset = max-200;
 
   var d = 63 - (offset&63);
   g.fillRect(0,10,240,12);
   for (var x=d;x<240;x+=64)
      g.fillRect(x,12,x+2,12+20);
   var y = 20;
-  g.drawImage(img, mycounter-offset,y);
+  var p = mycounter-offset;
+  g.drawString("You",p-16,y+20);
+  g.drawImage(img, p,y);
 
   for (var player of players) {
     y+=45;
-    g.drawString(player.name,10,y);
-    g.drawImage(img, player.cnt-offset,20);
+    var p = player.cnt-offset;
+    g.drawString(player.name,p-16,y+20);
+    g.drawImage(img, p,y);
   }
 
   g.fillRect(0,150,240,152);
