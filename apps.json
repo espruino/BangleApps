@@ -235,6 +235,17 @@
       {"name":"*hidkbd","url":"hid-keyboard-icon.js","evaluate":true}
     ]
   },
+  { "id": "hidbkbd",
+    "name": "Binary Bluetooth Keyboard",
+    "icon": "hid-binary-keyboard.png",
+    "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidbkbd","url":"hid-binary-keyboard.json"},
+      {"name":"-hidbkbd","url":"hid-binary-keyboard.js"},
+      {"name":"*hidbkbd","url":"hid-binary-keyboard-icon.js","evaluate":true}
+    ]
+  },
   { "id": "animals",
     "name": "Animals Game",
     "icon": "animals.png",
