@@ -23,7 +23,7 @@ Bangle.on('mag', function(m) {
   g.fillRect(70,0,170,24);
   g.setColor(0xffff);
   g.setFontAlign(0,0);
-  g.drawString((m.heading===undefined)?"---":Math.round(m.heading),120,12);
+  g.drawString(isNaN(m.heading)?"---":Math.round(m.heading),120,12);
   g.setColor(0,0,0);
   arrow(oldHeading,0);
   arrow(oldHeading+180,0);

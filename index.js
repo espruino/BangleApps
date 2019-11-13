@@ -247,23 +247,39 @@ function refreshMyApps() {
   });
 }
 
-var connectMyDeviceBtn = document.getElementById("connectmydevice");
-
 function getInstalledApps() {
   showLoadingIndicator();
   // Get apps
-  Comms.getInstalledApps().then(appIDs => {
+  return Comms.getInstalledApps().then(appIDs => {
     appsInstalled = appIDs;
-    connectMyDeviceBtn.style.display = 'none';
+    handleConnectionChange(true);
     refreshMyApps();
     refreshLibrary();
-  }).catch(err => {
-    showToast("Getting app list failed, "+err,"error");
   });
 }
 
-document.getElementById("myappsrefresh").addEventListener("click", getInstalledApps);
-connectMyDeviceBtn.addEventListener("click", getInstalledApps);
+var connectMyDeviceBtn = document.getElementById("connectmydevice");
+
+function handleConnectionChange(connected) {
+  connectMyDeviceBtn.textContent = connected ? 'Disconnect' : 'Connect';
+  connectMyDeviceBtn.classList.toggle('is-connected', connected);
+}
+
+document.getElementById("myappsrefresh").addEventListener("click", () => {
+  getInstalledApps().catch(err => {
+    showToast("Getting app list failed, "+err,"error");
+  });
+});
+connectMyDeviceBtn.addEventListener("click", () => {
+  if (connectMyDeviceBtn.classList.contains('is-connected')) {
+    Comms.disconnectDevice();
+  } else {
+    getInstalledApps().catch(err => {
+      showToast("Device connection failed, "+err,"error");
+    });
+  }
+});
+Comms.watchConnectionChange(handleConnectionChange);
 
 // =========================================== About
 
