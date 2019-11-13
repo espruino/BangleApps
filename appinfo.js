@@ -45,7 +45,7 @@ var AppInfo = {
           storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
         });
         resolve(fileContents);
-      });
+      }).catch(err => reject(err));
     });
   },
 };

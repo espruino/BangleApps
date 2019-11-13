@@ -82,6 +82,28 @@
       {"name":"*astroid","url":"asteroids-icon.js","evaluate":true}
     ]
   },
+  { "id": "clickms",
+    "name": "Click Master",
+    "icon": "click-master.png",
+    "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+    "tags": "game",
+    "storage": [
+      {"name":"+clickms","url":"click-master.json"},
+      {"name":"-clickms","url":"click-master.js"},
+      {"name":"*clickms","url":"click-master-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "horsey",
+    "name": "Horse Race!",
+    "icon": "horse-race.png",
+    "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+    "tags": "game",
+    "storage": [
+      {"name":"+horsey","url":"horse-race.json"},
+      {"name":"-horsey","url":"horse-race.js"},
+      {"name":"*horsey","url":"horse-race-icon.js","evaluate":true}
+    ]
+  },
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
@@ -211,6 +233,17 @@
       {"name":"+hidkbd","url":"hid-keyboard.json"},
       {"name":"-hidkbd","url":"hid-keyboard.min.js"},
       {"name":"*hidkbd","url":"hid-keyboard-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hidbkbd",
+    "name": "Binary Bluetooth Keyboard",
+    "icon": "hid-binary-keyboard.png",
+    "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"+hidbkbd","url":"hid-binary-keyboard.json"},
+      {"name":"-hidbkbd","url":"hid-binary-keyboard.js"},
+      {"name":"*hidbkbd","url":"hid-binary-keyboard-icon.js","evaluate":true}
     ]
   },
   { "id": "animals",
@@ -350,6 +383,30 @@
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
     ]
   },
+  { "id": "hrings",
+    "name": "Hypno Rings",
+    "icon": "hypno-rings.png",
+    "description": "Experiment with trippy rings, press buttons for change",
+    "tags": "rings,hypnosis,psychadelic",
+    "type":"app",
+    "storage": [
+      {"name":"+hrings","url":"hypno-rings.json"},
+      {"name":"-hrings","url":"hypno-rings.js"},
+      {"name":"*hrings","url":"hypno-rings-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "morse",
+    "name": "Morse Code",
+    "icon": "morse-code.png",
+    "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
+    "tags": "morse,sound,visual,input",
+    "type":"app",
+    "storage": [
+      {"name":"+morse","url":"morse-code.json"},
+      {"name":"-morse","url":"morse-code.js"},
+      {"name":"*morse","url":"morse-code-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
@@ -407,6 +464,43 @@
       {"name":"+miclock","url":"clock-mixed.json"},
       {"name":"-miclock","url":"clock-mixed.js"},
       {"name":"*miclock","url":"clock-mixed-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "bclock",
+    "name": "Binary Clock",
+    "icon": "clock-binary.png",
+    "description": "A simple binary clock watch face",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+bclock","url":"clock-binary.json"},
+      {"name":"-bclock","url":"clock-binary.js"},
+      {"name":"*bclock","url":"clock-binary-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "clotris",
+    "name": "Clock-Tris",
+    "icon": "clock-tris.png",
+    "description": "A fully functional clone of a classic game of falling blocks",
+    "tags": "game",
+    "storage": [
+      {"name":"+clotris","url":"clock-tris.json"},
+      {"name":"-clotris","url":"clock-tris.js"},
+      {"name":"*clotris","url":"clock-tris-icon.js","evaluate":true},
+      {"name":".trishig","url":"clock-tris-high"}
+    ]
+  },
+  {
+    "id": "gpsinfo",
+    "name": "GPS Info",
+    "icon": "gps-info.png",
+    "description": "An application that displays information about altitude, lat/lon, satellites and time",
+    "tags": "gps",
+    "type": "app",
+    "storage": [
+      {"name": "+gpsinfo","url": "gps-info.json"},
+      {"name": "-gpsinfo","url": "gps-info.js"},
+      {"name": "*gpsinfo","url": "gps-info-icon.js","evaluate": true}
     ]
   }
 ]
