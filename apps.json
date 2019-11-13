@@ -93,6 +93,17 @@
       {"name":"*clickms","url":"click-master-icon.js","evaluate":true}
     ]
   },
+  { "id": "horsey",
+    "name": "Horse Race!",
+    "icon": "horse-race.png",
+    "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+    "tags": "game",
+    "storage": [
+      {"name":"+horsey","url":"horse-race.json"},
+      {"name":"-horsey","url":"horse-race.js"},
+      {"name":"*horsey","url":"horse-race-icon.js","evaluate":true}
+    ]
+  },
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
@@ -373,6 +384,18 @@
       {"name":"*hrings","url":"hypno-rings-icon.js","evaluate":true}
     ]
   },
+  { "id": "morse",
+    "name": "Morse Code",
+    "icon": "morse-code.png",
+    "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
+    "tags": "morse,sound,visual,input",
+    "type":"app",
+    "storage": [
+      {"name":"+morse","url":"morse-code.json"},
+      {"name":"-morse","url":"morse-code.js"},
+      {"name":"*morse","url":"morse-code-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "blescan",
     "name": "BLE Scanner",
@@ -430,6 +453,18 @@
       {"name":"+bclock","url":"clock-binary.json"},
       {"name":"-bclock","url":"clock-binary.js"},
       {"name":"*bclock","url":"clock-binary-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "clotris",
+    "name": "Clock-Tris",
+    "icon": "clock-tris.png",
+    "description": "A fully functional clone of a classic game of falling blocks",
+    "tags": "",
+    "storage": [
+      {"name":"+clotris","url":"clock-tris.json"},
+      {"name":"-clotris","url":"clock-tris.js"},
+      {"name":"*clotris","url":"clock-tris-icon.js","evaluate":true},
+      {"name":".trishig","url":"clock-tris-high"}
     ]
   }
 ]

@@ -1,0 +1,5 @@
+{
+  "name":"Morse Code","type":"app",
+  "icon":"*morse",
+  "src":"-morse"
+}
