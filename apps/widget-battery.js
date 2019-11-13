@@ -7,12 +7,12 @@ function draw() {
   var s = 63;
   var x = xpos, y = 0;
   g.clearRect(x,y,x+s,y+23);
+  g.setColor(1,1,1);
   if (Bangle.isCharging()) {
     g.drawImage(img_charge,x,y);
     x+=16;
     s-=16;
   }
-  g.setColor(1,1,1);
   g.fillRect(x,y+2,x+s-4,y+21);
   g.clearRect(x+2,y+4,x+s-6,y+19);
   g.fillRect(x+s-3,y+10,x+s,y+14);
