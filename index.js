@@ -109,9 +109,23 @@ function showTab(tabname) {
 }
 
 // =========================================== Library
+
+var activeFilter = '';
+var currentSearch = '';
+
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
-  panelbody.innerHTML = appJSON.map((app,idx) => {
+  var visibleApps = appJSON;
+
+  if (activeFilter) {
+    visibleApps = visibleApps.filter(app => app.tags && app.tags.split(',').includes(activeFilter));
+  }
+
+  if (currentSearch) {
+    visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch));
+  }
+
+  panelbody.innerHTML = visibleApps.map((app,idx) => {
     var icon = "icon-upload";
     if (app.custom)
       icon = "icon-menu";
@@ -280,6 +294,24 @@ connectMyDeviceBtn.addEventListener("click", () => {
   }
 });
 Comms.watchConnectionChange(handleConnectionChange);
+
+var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
+filtersContainer.addEventListener('click', ({ target }) => {
+  if (!target.hasAttribute('filterid')) return;
+  if (target.classList.contains('active')) return;
+  
+  activeFilter = target.getAttribute('filterid');
+  filtersContainer.querySelector('.active').classList.remove('active');
+  target.classList.add('active');
+  refreshLibrary();
+});
+
+var librarySearchInput = document.querySelector("#searchform input");
+
+librarySearchInput.addEventListener('input', evt => {  
+  currentSearch = evt.target.value.toLowerCase();
+  refreshLibrary(); 
+});
 
 // =========================================== About
 

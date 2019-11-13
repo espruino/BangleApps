@@ -27,6 +27,9 @@
       padding-top: 1rem;
       text-align:center;
     }
+    .chip {
+      cursor: pointer;
+    }
 	</style>
   </head>
   <body>
@@ -62,19 +65,20 @@
     </div>
 
     <div class="container bangle-tab" id="librarycontainer">
-      <!--<div class="filter-nav">
-        <label class="chip" filterid="">All</label>
+      <div class="filter-nav">
+        <label class="chip active" filterid="">All</label>
         <label class="chip" filterid="clock">Clocks</label>
         <label class="chip" filterid="game">Games</label>
         <label class="chip" filterid="tool">Tools</label>
-        <label class="chip" filterid="hardware">Hardware</label>
-      </div>-->
+        <label class="chip" filterid="widget">Widgets</label>
+        <label class="chip" filterid="bluetooth">Bluetooth</label>
+      </div>
       <div class="panel">
         <div class="panel-header">
-        <!--  <div class="input-group">
+        <div class="input-group" id="searchform">
             <input class="form-input" type="text" placeholder="Keywords...">
             <button class="btn btn-primary input-group-btn">Search</button>
-          </div>-->
+        </div>
         </div>
         <div class="panel-body columns"><!-- apps go here --></div>
       </div>
