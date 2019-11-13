@@ -81,6 +81,7 @@
 
     g.clear();
     setInterval(drawMixedClock, 5E3);
+    drawWidgets();
     drawMixedClock();
 
 })();
