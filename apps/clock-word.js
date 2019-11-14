@@ -1,6 +1,8 @@
 /* jshint esversion: 6 */
 (function() {
 
+    try{ E.setTimeZone(require("Storage").readJSON("@setting").timezone);} catch(e){}
+
     const allWords = [
         "ATWENTYD",
         "QUARTERY",
