@@ -504,16 +504,16 @@
     ]
   },
   {
-    "id": "promodoro",
+    "id": "promodo",
     "name":"Promodoro",
     "icon":"promodoro.png",
     "description": "A simple promodoro timer.",
-    "tags": "promodoro",
+    "tags": "promodoro,cooking,tools",
     "type": "app",
     "storage": [
-      {"name": "+promodoro","url": "promodoro.json"},
-      {"name": "-promodoro","url": "promodoro.js"},
-      {"name": "*promodoro","url": "promodoro.js","evaluate": true}
+      {"name": "+promodo","url": "promodoro.json"},
+      {"name": "-promodo","url": "promodoro.js"},
+      {"name": "*promodo","url": "promodoro-icon.js","evaluate": true}
     ]     
   }
 ]
