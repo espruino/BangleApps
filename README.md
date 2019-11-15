@@ -51,7 +51,7 @@ the *default* of `To RAM`
   "storage": [
     {"name":"+7chname","url":"my-great-app.json"},
     {"name":"-7chname","url":"my-great-app.js"},
-    {"name":"*7chname","url":"my-great-app.js","evaluate":true}
+    {"name":"*7chname","url":"my-great-app-icon.js","evaluate":true}
   ],
 },
 ```
