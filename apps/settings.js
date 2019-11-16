@@ -187,9 +187,9 @@ function showClockMenu() {
     },
     '< Back': showMainMenu,
   };
-  clockApps.forEach(app => {
+  clockApps.forEach((app,index) => {
     var label = app.name;
-    if (settings.clock === app.src) {
+    if ((!settings.clock && index === 0) || (settings.clock === app.src)) {
       label = "* "+label;
     }
     clockMenu[label] = () => {
