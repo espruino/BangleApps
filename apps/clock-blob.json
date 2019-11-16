@@ -1,0 +1,7 @@
+{
+    "name":"Large Digit Clock",
+    "type":"clock",
+    "icon":"*blobclk",
+    "src":"-blobclk",
+    "sortorder":-10
+}
