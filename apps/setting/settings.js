@@ -27,6 +27,7 @@ function resetSettings() {
     HID : false,
     HIDGestures: false,
     debug: false,
+    clock: null
   };
   setLCDTimeout(settings.timeout);
   updateSettings();
@@ -92,6 +93,7 @@ function showMainMenu() {
         }
       }
     },
+    'Select Clock': showClockMenu,
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -174,6 +176,37 @@ function makeConnectable() {
     showMainMenu();
   });
 }
+function showClockMenu() {
+  var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+    try { return require("Storage").readJSON(app); }
+    catch (e) {}
+  }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);
+  const clockMenu = {
+    '': {
+      'title': 'Select Clock',
+    },
+    '< Back': showMainMenu,
+  };
+  clockApps.forEach((app,index) => {
+    var label = app.name;
+    if ((!settings.clock && index === 0) || (settings.clock === app.src)) {
+      label = "* "+label;
+    }
+    clockMenu[label] = () => {
+      if (settings.clock !== app.src) {
+        settings.clock = app.src;
+        updateSettings();
+        showMainMenu();
+      }
+    };
+  });
+  if (clockApps.length === 0) {
+     clockMenu["No Clocks Found"] = () => {};
+  }
+  return Bangle.menu(clockMenu);
+}
+
+
 
 function showSetTimeMenu() {
   d = new Date();
