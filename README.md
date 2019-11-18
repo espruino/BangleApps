@@ -6,7 +6,7 @@ Try it live at [banglejs.com/apps](https://banglejs.com/apps)
 ### How does it work?
 
 * A list of apps is in `apps.json`
-* Each element references an app in `apps/` which is uploaded
+* Each element references an app in `apps/<id>` which is uploaded
 * When it starts, BangleAppLoader checks the JSON and compares
 it with the files it sees in the watch's storage.
 * To upload an app, BangleAppLoader checks the files that are
@@ -26,11 +26,12 @@ easily distinguish between file types, we use the following:
 
 * Start writing your code in the IDE, with `Save on Send` in settings set to
 the *default* of `To RAM`
-* When you have your app as you want it, add it as a file in `apps/`, lets assume `apps/my-great-app.js`
 * Come up with a unique 7 character name, we'll assume `7chname`
-* Create `apps/my-great-app.png` as a 48px icon
-* Use http://www.espruino.com/Image+Converter to create as 1 bit, 4 bit or 8 bit Web Palette "Image String" and save it as `apps/my-great-app-icon.js`
-* Create an entry in `apps/my-great-app.json` as follows:   
+* When you have your app as you want it, add it as a file in `apps/<id>`, lets assume `apps/7chname/my-great-app.js`
+* Create `apps/7chname/my-great-app.png` as a 48px icon
+* Use http://www.espruino.com/Image+Converter to create as 1 bit, 4 bit or 8 bit Web Palette "Image String" and save it
+as `apps/7chname/my-great-app-icon.js`
+* Create an entry in `apps/7chname/my-great-app.json` as follows:
 
 ```
 {
@@ -40,7 +41,7 @@ the *default* of `To RAM`
 }
 ```
 
-* Create an entry in `apps.json` as follows:   
+* Create an entry in `apps.json` as follows:
 
 ```
 { "id": "7chname",

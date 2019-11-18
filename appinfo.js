@@ -10,7 +10,7 @@ var AppInfo = {
         if (storageFile.content)
           return Promise.resolve(storageFile);
         else if (storageFile.url)
-          return fileGetter("apps/"+storageFile.url).then(content => {
+          return fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
             return {
               name : storageFile.name,
               content : content,

@@ -73,7 +73,7 @@ function handleCustomApp(app) {
         </div>
         <div class="modal-body" style="height:100%">
           <div class="content" style="height:100%">
-            <iframe src="apps/${app.custom}" style="width:100%;height:100%;border:0px;">
+            <iframe src="apps/${app.id}/${app.custom}" style="width:100%;height:100%;border:0px;">
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ function refreshLibrary() {
       icon = "icon-delete";
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
-      <figure class="avatar"><img src="apps/${app.icon?app.icon:"apps/unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
+      <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)}</p>
@@ -217,7 +217,7 @@ function appNameToApp(appName) {
   the menu but may not get rid of all files. */
   return { id: appName,
     name: "Unknown app "+appName,
-    icon: "unknown.png",
+    icon: "../unknown.png",
     description: "Unknown app",
     storage: [ {name:"+"+appName}],
     unknown: true,
@@ -240,7 +240,7 @@ function refreshMyApps() {
   tab.setAttribute("data-badge", appsInstalled.length);
   panelbody.innerHTML = appsInstalled.map(appNameToApp).sort(appSorter).map(app => `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
-      <figure class="avatar"><img src="apps/${app.icon}" alt="${escapeHtml(app.name)}"></figure>
+      <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)}</p>
@@ -299,7 +299,7 @@ var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
 filtersContainer.addEventListener('click', ({ target }) => {
   if (!target.hasAttribute('filterid')) return;
   if (target.classList.contains('active')) return;
-  
+
   activeFilter = target.getAttribute('filterid');
   filtersContainer.querySelector('.active').classList.remove('active');
   target.classList.add('active');
@@ -308,9 +308,9 @@ filtersContainer.addEventListener('click', ({ target }) => {
 
 var librarySearchInput = document.querySelector("#searchform input");
 
-librarySearchInput.addEventListener('input', evt => {  
+librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
-  refreshLibrary(); 
+  refreshLibrary();
 });
 
 // =========================================== About
