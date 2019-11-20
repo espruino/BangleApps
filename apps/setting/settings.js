@@ -281,8 +281,8 @@ function showSetTimeMenu() {
     },
     'Year': {
       value: d.getFullYear(),
-      min: d.getFullYear() - 10,
-      max: d.getFullYear() + 10,
+      min: 2019,
+      max: 2100,
       step: 1,
       onchange: v => {
         d = new Date();
