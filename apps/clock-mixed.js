@@ -4,8 +4,6 @@
     const Radius = { "center": 8, "hour": 78, "min": 95, "dots": 102 };
     const Center = { "x": 120, "y": 132 };
 
-    try{ E.setTimeZone(require("Storage").readJSON("@setting").timezone);} catch(e){}
-
     function rotatePoint(x, y, d) {
         rad = -1 * d / 180 * Math.PI;
         var sin = Math.sin(rad);
@@ -76,7 +74,6 @@
     }
     Bangle.on('lcdPower', function(on) {
         if (on) {
-            drawWidgets();
             drawMixedClock();
         }
     });
