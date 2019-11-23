@@ -12,4 +12,5 @@
     }
 
     WIDGETS["your widget name"] = { draw: draw };
+
 })()

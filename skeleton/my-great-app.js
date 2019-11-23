@@ -1,35 +1,15 @@
-/* jshint esversion: 6 */
-
-/*
-
-	the screen area(0,0,239,23) is reserved for wigdets
-
-*/
-
 (() => {
 
-        // section  for const and vars if needed
+    // place your const, vars, functions or classes here
 
-        ...
-
-        // section for functions, classes
-
-        ...
-
-        function < your main function > ()
-
-    }
 
     // special function to handle display switch on
     Bangle.on('lcdPower', (on) => {
-            if (on) {
-                drawWidgets();
-                <your main function>();;
-        }
-    });
+        if (on) {
+            // call your app function here
+    }});
 
-	// clear screen and launch
-	g.clear();
-	<your main funtion>();
+    g.clear();
+    // call your app function here 
 
 })();
