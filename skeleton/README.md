@@ -8,9 +8,9 @@ Take a look into the sections and use the files to quickly start programming Ban
 
 * Start with choosing a _7chname_ id, eg _mygreat_.
 
-* Clock apps use prefix _clock_ for the name, eg _clock-mygreate_
+* Clock apps use prefix _clock_ for the name, eg _clock-mygreat_
 
-* Use prefix _widget_ when writing a widget. eg _widget-mygreate_
+* Use prefix _widget_ when writing a widget. eg _widget-mygreat_
 
 | files | target location app/ | content |
 | :-- | :-- | :-- |
@@ -213,7 +213,7 @@ require("Storage").write("+"+appname,{
 });
 
 require("Storage").write("-"+appname,`
-// place content of my-greate-app.json here
+// place content of my-great-app.json here
 `
 ```
 
