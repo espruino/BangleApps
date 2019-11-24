@@ -105,7 +105,7 @@ Write your app code as encapsulation using anonymous functions with private func
 
 If you like store and restore data with your app, than use the prefix _@_ and your _7chname_, eg _@mygreat_ as name.
 
-Make sure to read [Coding Hints](coding-hints).
+Make sure to read [Coding Hints](#coding-hints).
 
 ### my-great-app.png
 
@@ -229,7 +229,7 @@ Be aware of the delay between commit and avaiable on github.io
 2. Wrap code and run tests on device
 3. Run final test with personal `Bangle App Launcher`
 
-##Appendex
+## Appendex
 
 ### API Reference
 
@@ -239,7 +239,7 @@ Be aware of the delay between commit and avaiable on github.io
 
 [Graphics Class](https://banglejs.com/reference#Graphics)
 
-###Coding hints
+### Coding hints
 
 - use `g.setFont(.., size)` to multiply the font size, eg ("6x8",3) : "18x24"
 
