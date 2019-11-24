@@ -1,16 +1,17 @@
-/*
-	widget area is 24 pixel high and 239 width : (0,0,239,23)
-*/
 (() => {
 
-	// const data, var or image
-
+    // add the width 
+    var xpos = WIDGETPOS.tr-<the widget width>;
+    WIDGETPOS.tr-=<the widget width plus some extra pixel to keep distance to others>;
+    
+    // draw your widget at xpos
     function draw() {
-
-    	...
-
+    
+    	// add your code 
+        
     }
-
-    WIDGETS["your widget name"] = { draw: draw };
+    
+    // add your widget
+    WIDGETS["mywidget"]={draw:draw};
 
 })()
