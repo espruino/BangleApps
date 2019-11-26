@@ -74,14 +74,12 @@
     }
     Bangle.on('lcdPower', function(on) {
         if (on) {
-            drawWidgets();
             drawMixedClock();
         }
     });
 
     g.clear();
     setInterval(drawMixedClock, 5E3);
-    drawWidgets();
     drawMixedClock();
 
 })();
