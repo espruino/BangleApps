@@ -156,7 +156,7 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 * `widget.js` - widget code 
 
 
-## `apps.json` format
+#### `apps.json` format
 
 ```
 { "id": "appid",              // 7 character app id
@@ -224,7 +224,7 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 
 ## Available colors 
 
-Yuu can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bit colors are below:
+You can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bit colors are below:
 
 | color-name | color-value|
 | :-: | :-: |
@@ -255,7 +255,6 @@ Yuu can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bi
 [Bangle Class](https://banglejs.com/reference#Bangle)
 
 [Graphics Class](https://banglejs.com/reference#Graphics)
-
 
 ## 'Testing' folder
 
