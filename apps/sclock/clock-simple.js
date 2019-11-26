@@ -47,7 +47,6 @@
     Bangle.on('lcdPower', function(on) {
         if (on) {
             drawSimpleClock();
-            drawWidgets();
         }
     });
 
