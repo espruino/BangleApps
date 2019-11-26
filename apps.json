@@ -502,5 +502,30 @@
       {"name": "-gpsinfo","url": "gps-info.js"},
       {"name": "*gpsinfo","url": "gps-info-icon.js","evaluate": true}
     ]
+  },
+  {
+    "id": "promodo",
+    "name":"Promodoro",
+    "icon":"promodoro.png",
+    "description": "A simple promodoro timer.",
+    "tags": "promodoro,cooking,tools",
+    "type": "app",
+    "storage": [
+      {"name": "+promodo","url": "promodoro.json"},
+      {"name": "-promodo","url": "promodoro.js"},
+      {"name": "*promodo","url": "promodoro-icon.js","evaluate": true}
+    ]
+},
+  { "id": "blobclk",
+    "name": "Large Digit Clock",
+    "icon": "clock-blob.png",
+    "description": "A clock with big digits",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"+blobclk","url":"clock-blob.json"},
+      {"name":"-blobclk","url":"clock-blob.js"},
+      {"name":"*blobclk","url":"clock-blob-icon.js","evaluate":true}
+    ]
   }
 ]
