@@ -28,6 +28,8 @@ class State {
         setWatch(() => { console.log('BTN1') }, BTN1, { repeat: true });
         setWatch(() => { console.log('BTN2') }, BTN2, { repeat: true });
         setWatch(() => { console.log('BTN3') }, BTN3, { repeat: true });
+        setWatch(() => { console.log('BTN4') }, BTN4, { repeat: true });
+        setWatch(() => { console.log('BTN5') }, BTN5, { repeat: true });
     }
     clear () {
         clearWatch();
@@ -80,6 +82,24 @@ class InitState extends State {
         }, BTN3, { repeat: true });
 
         setWatch(() => {
+            if (this.timeCounter - 60 > 0) {
+                this.timeCounter -= 60;
+                this.draw();
+            }
+        }, BTN4, { repeat: true });
+
+        setWatch(() => {
+            if (this.timeCounter + 60 > 3599) {
+                this.timeCounter = 3599;
+            } else {
+                this.timeCounter += 60;
+            }
+
+            this.draw();
+
+        }, BTN5, { repeat: true });
+
+        setWatch(() => {
             const startedState = new StartedState(this.timeCounter);
 
             this.setNext(startedState);
@@ -90,7 +110,7 @@ class InitState extends State {
     draw () {
         g.clear();
         g.setFontAlign(0, 0); // center font
-        g.setFont("Vector", 50); // vector font, 80px  
+        g.setFont("Vector", 50); // vector font, 80px
         drawCounter(this.timeCounter);
     }
 }
@@ -174,7 +194,7 @@ class DoneState extends State {
         g.setFont("Vector", 45);
         g.setFontAlign(-1, -1);
 
-        g.drawString('You \\nare \\na \\nhero!', 50, 40);
+        g.drawString('You\nare\na\nhero!', 50, 40);
     }
 
     init () {
