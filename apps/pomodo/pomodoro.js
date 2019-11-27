@@ -20,13 +20,8 @@ class State {
         this.next = next;
     }
 
-    setButtons () {
-        setWatch(() => { console.log('BTN1') }, BTN1, { repeat: true });
-        setWatch(() => { console.log('BTN2') }, BTN2, { repeat: true });
-        setWatch(() => { console.log('BTN3') }, BTN3, { repeat: true });
-        setWatch(() => { console.log('BTN4') }, BTN4, { repeat: true });
-        setWatch(() => { console.log('BTN5') }, BTN5, { repeat: true });
-    }
+    setButtons () {}
+
     clear () {
         clearWatch();
         g.clear();
