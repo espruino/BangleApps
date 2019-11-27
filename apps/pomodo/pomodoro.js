@@ -1,3 +1,5 @@
+const storage = require("Storage");
+
 const DEFAULT_TIME = 1500; // 25m
 const TIME_BREAK = 300;
 const STATES = {
@@ -12,12 +14,6 @@ class State {
     constructor (state) {
         this.state = state;
         this.next = null;
-    }
-
-    goNext () {
-        if (this.next) {
-            this.next.run();
-        }
     }
 
     setNext (next) {
@@ -56,10 +52,14 @@ class State {
 }
 
 class InitState extends State {
-    constructor () {
+    constructor (time) {
         super(STATES.INIT);
 
-        this.timeCounter = DEFAULT_TIME;
+        this.timeCounter = parseInt(storage.read(".pomodo") || DEFAULT_TIME, 10);
+    }
+
+    saveTime () {
+        storage.write('.pomodo', '' + this.timeCounter);
     }
 
     setButtons () {
@@ -100,6 +100,7 @@ class InitState extends State {
         }, BTN5, { repeat: true });
 
         setWatch(() => {
+            this.saveTime();
             const startedState = new StartedState(this.timeCounter);
 
             this.setNext(startedState);
@@ -119,7 +120,7 @@ class StartedState extends State {
     constructor (timeCounter) {
         super(STATES.STARTED);
 
-        this.timeCounter = timeCounter || DEFAULT_TIME;
+        this.timeCounter = timeCounter;
     }
 
     draw () {
