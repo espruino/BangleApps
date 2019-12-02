@@ -101,5 +101,5 @@
   });
 
   // call your app function here 
-  Bangle.setLCDPower(true);
+  drawTime();
 })();
