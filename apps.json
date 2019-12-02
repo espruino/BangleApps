@@ -527,16 +527,5 @@
       {"name":"-blobclk","url":"clock-blob.js"},
       {"name":"*blobclk","url":"clock-blob-icon.js","evaluate":true}
     ]
-  },
-  { "id": "clck3x2",
-    "name": "3x2 Pixel Clock",
-    "icon": "clock3x2.png",
-    "description": "This is a simple clock using minimalistic 3x2 pixel numerical digits",
-	"tags": "clock",
-    "storage": [
-      {"name":"+clck3x2","url":"clock3x2.json"},
-      {"name":"-clck3x2","url":"clock3x2.js"},
-      {"name":"*clck3x2","url":"clock3x2-icon.js","evaluate":true}
-    ]
   }
 ]
