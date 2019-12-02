@@ -537,6 +537,6 @@
       {"name":"+clck3x2","url":"clock3x2.json"},
       {"name":"-clck3x2","url":"clock3x2.js"},
       {"name":"*clck3x2","url":"clock3x2-icon.js","evaluate":true}
-    ],
+    ]
   }
 ]
