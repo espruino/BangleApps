@@ -77,7 +77,7 @@
       }
     }
 
-    let d = Date();
+    d = Date();
     let t = d.getSeconds()*1000 + d.getMilliseconds();
     let delta = (60000 - t) % 60000; // time till next minute
     idTimeout = setTimeout(drawTime, delta);  
