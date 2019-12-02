@@ -1,4 +1,4 @@
-(() => {
+(function(){
 
     // place your const, vars, functions or classes here
 	
@@ -104,18 +104,16 @@
 	});
 
     // special function to handle display switch on
-    Bangle.on('lcdPower', (on) => {
+    Bangle.on('lcdPower', function(on){
         if (on) {
-        	drawWidgets();
-            // call your app function here
-			updateTime();
+            updateTime();
+			drawWidgets();
 		} else {
 			stopPlanning();
 		}
 	});
 
     // call your app function here 
-	Bangle.setLCDTimeout(30);
 	updateTime();
-
+    drawWidgets();
 })();
