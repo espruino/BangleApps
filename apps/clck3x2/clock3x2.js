@@ -61,10 +61,10 @@
   function drawTime() {
     g.clear();
     drawWidgets();
+
     let d = Date();
     let h = d.getHours();
     let m = d.getMinutes();
-
     let digits = [Math.floor(h/10), h%10, Math.floor(m/10), m%10]; // time digits
 
     for (let id=0; id<4; id++){
@@ -100,6 +100,6 @@
     }
   });
 
-  // call your app function here 
   drawTime();
+
 })();
