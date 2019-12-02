@@ -58,7 +58,7 @@
 						  [1,1],
 						  [0,1]]];
 
-	let id = null; // timer interval id
+	let idTimeout = null; // timer interval id
 
 	function drawTime() {
 	  g.clear();
@@ -77,24 +77,17 @@
 		  }
 		}
 	  }
-	}
 
-	function planNextUpdate() {
 	  let d = Date();
 	  let t = d.getSeconds()*1000 + d.getMilliseconds();
 	  let delta = (60000 - t) % 60000; // time till next minute
-	  idTimeout = setTimeout(updateTime, delta);
+	  idTimeout = setTimeout(drawTime, delta);  
 	}
 
 	function stopPlanning() {
 	  if(idTimeout) {
 		clearTimeout(idTimeout);
 	  }
-	}
-
-	function updateTime() {
-	  drawTime();
-	  planNextUpdate();
 	}
 
 	Bangle.on('gesture', function(gesture) {
@@ -106,14 +99,13 @@
     // special function to handle display switch on
     Bangle.on('lcdPower', function(on){
         if (on) {
-            updateTime();
 			drawWidgets();
+			drawTime();
 		} else {
 			stopPlanning();
 		}
 	});
 
     // call your app function here 
-	updateTime();
-    drawWidgets();
+	Bangle.setLCDPower(true);
 })();
