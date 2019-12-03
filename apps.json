@@ -15,6 +15,7 @@
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+mclock","url":"clock-morphing.json"},
       {"name":"-mclock","url":"clock-morphing.js"},
@@ -42,6 +43,7 @@
     "description": "Display Time as Text",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+wclock","url":"clock-word.json"},
       {"name":"-wclock","url":"clock-word.js"},
@@ -54,6 +56,7 @@
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+aclock","url":"clock-analog.json"},
       {"name":"-aclock","url":"clock-analog.js"},
@@ -65,6 +68,7 @@
     "icon": "trex.png",
     "description": "T-Rex game in the style of Chrome's offline game",
     "tags": "game",
+    "allow_emulator":true,
     "storage": [
       {"name":"+trex","url":"trex.json"},
       {"name":"-trex","url":"trex.js"},
@@ -76,6 +80,7 @@
     "icon": "asteroids.png",
     "description": "Retro asteroids game",
     "tags": "game",
+    "allow_emulator":true,
     "storage": [
       {"name":"+astroid","url":"asteroids.json"},
       {"name":"-astroid","url":"asteroids.js"},
@@ -207,6 +212,7 @@
     "icon": "stopwatch.png",
     "description": "Simple stopwatch with Lap Time recording",
     "tags": "health",
+    "allow_emulator":true,
     "storage": [
       {"name":"+swatch","url":"stopwatch.json"},
       {"name":"-swatch","url":"stopwatch.js"},
@@ -351,6 +357,7 @@
     "description": "Simple Digital Clock",
     "tags": "sclock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+sclock","url":"clock-simple.json"},
       {"name":"-sclock","url":"clock-simple.js"},
@@ -377,6 +384,7 @@
     "description": "Party with a parrot on your wrist",
     "tags": "party,parrot,lol",
     "type":"app",
+    "allow_emulator":true,
     "storage": [
       {"name":"+pparrot","url":"party-parrot.json"},
       {"name":"-pparrot","url":"party-parrot.js"},
@@ -389,6 +397,7 @@
     "description": "Experiment with trippy rings, press buttons for change",
     "tags": "rings,hypnosis,psychadelic",
     "type":"app",
+    "allow_emulator":true,
     "storage": [
       {"name":"+hrings","url":"hypno-rings.json"},
       {"name":"-hrings","url":"hypno-rings.js"},
@@ -448,6 +457,7 @@
     "description": "Display all available Colors and Names",
     "tags": "tool",
     "type":"app",
+    "allow_emulator":true,
     "storage": [
       {"name":"+scolor","url":"show-color.json"},
       {"name":"-scolor","url":"show-color.js"},
@@ -460,6 +470,7 @@
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+miclock","url":"clock-mixed.json"},
       {"name":"-miclock","url":"clock-mixed.js"},
@@ -472,6 +483,7 @@
     "description": "A simple binary clock watch face",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+bclock","url":"clock-binary.json"},
       {"name":"-bclock","url":"clock-binary.js"},
@@ -483,6 +495,7 @@
     "icon": "clock-tris.png",
     "description": "A fully functional clone of a classic game of falling blocks",
     "tags": "game",
+    "allow_emulator":true,
     "storage": [
       {"name":"+clotris","url":"clock-tris.json"},
       {"name":"-clotris","url":"clock-tris.js"},
@@ -510,6 +523,7 @@
     "description": "A simple promodoro timer.",
     "tags": "promodoro,cooking,tools",
     "type": "app",
+    "allow_emulator":true,
     "storage": [
       {"name": "+promodo","url": "promodoro.json"},
       {"name": "-promodo","url": "promodoro.js"},
@@ -522,6 +536,7 @@
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+blobclk","url":"clock-blob.json"},
       {"name":"-blobclk","url":"clock-blob.js"},

@@ -131,6 +131,10 @@ function refreshLibrary() {
       icon = "icon-menu";
     if (appsInstalled.includes(app.id))
       icon = "icon-delete";
+    var buttons = "";
+    if (app.allow_emulator)
+      buttons += `<button class="btn btn-link btn-action btn-lg" title="Try in Emulator"><i class="icon icon-share" appid="${app.id}"></i></button>`;
+    buttons += `<button class="btn btn-link btn-action btn-lg"><i class="icon ${icon}" appid="${app.id}"></i></button>`;
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
@@ -140,7 +144,7 @@ function refreshLibrary() {
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
     </div>
     <div class="tile-action">
-      <button class="btn btn-link btn-action btn-lg"><i class="icon ${icon}" appid="${app.id}"></i></button>
+      ${buttons}
     </div>
   </div>
   `;}).join("");
@@ -154,7 +158,17 @@ function refreshLibrary() {
       var appid = icon.getAttribute("appid");
       var app = appJSON.find(app=>app.id==appid);
       if (!app) return;
-      if (icon.classList.contains("icon-upload")) {
+      if (icon.classList.contains("icon-share")) {
+        // emulator
+        var file = app.storage.find(f=>f.name[0]=='-');
+        if (!file) {
+          console.error("No entrypoint found for "+appid);
+          return;
+        }
+        var baseurl = window.location.href;
+        var url = baseurl+"apps/"+app.id+"/"+file.url;
+        window.open(`https://espruino.com/ide/emulator.html?codeurl=${url}&upload`);
+      } else if (icon.classList.contains("icon-upload")) {
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
         Comms.uploadApp(app).then(() => {
