@@ -514,6 +514,18 @@
       {"name":".trishig","url":"clock-tris-high"}
     ]
   },
+  { "id": "flappy",
+    "name": "Flappy Bird",
+    "icon": "app.png",
+    "description": "A Flappy Bird game clone",
+    "tags": "game",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+flappy","url":"app.json"},
+      {"name":"-flappy","url":"app.js"},
+      {"name":"*flappy","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "gpsinfo",
     "name": "GPS Info",
