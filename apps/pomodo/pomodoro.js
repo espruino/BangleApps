@@ -1,3 +1,5 @@
+const storage = require("Storage");
+
 const DEFAULT_TIME = 1500; // 25m
 const TIME_BREAK = 300;
 const STATES = {
@@ -14,21 +16,12 @@ class State {
         this.next = null;
     }
 
-    goNext () {
-        if (this.next) {
-            this.next.run();
-        }
-    }
-
     setNext (next) {
         this.next = next;
     }
 
-    setButtons () {
-        setWatch(() => { console.log('BTN1') }, BTN1, { repeat: true });
-        setWatch(() => { console.log('BTN2') }, BTN2, { repeat: true });
-        setWatch(() => { console.log('BTN3') }, BTN3, { repeat: true });
-    }
+    setButtons () {}
+
     clear () {
         clearWatch();
         g.clear();
@@ -54,10 +47,14 @@ class State {
 }
 
 class InitState extends State {
-    constructor () {
+    constructor (time) {
         super(STATES.INIT);
 
-        this.timeCounter = DEFAULT_TIME;
+        this.timeCounter = parseInt(storage.read(".pomodo") || DEFAULT_TIME, 10);
+    }
+
+    saveTime () {
+        storage.write('.pomodo', '' + this.timeCounter);
     }
 
     setButtons () {
@@ -80,6 +77,25 @@ class InitState extends State {
         }, BTN3, { repeat: true });
 
         setWatch(() => {
+            if (this.timeCounter - 60 > 0) {
+                this.timeCounter -= 60;
+                this.draw();
+            }
+        }, BTN4, { repeat: true });
+
+        setWatch(() => {
+            if (this.timeCounter + 60 > 3599) {
+                this.timeCounter = 3599;
+            } else {
+                this.timeCounter += 60;
+            }
+
+            this.draw();
+
+        }, BTN5, { repeat: true });
+
+        setWatch(() => {
+            this.saveTime();
             const startedState = new StartedState(this.timeCounter);
 
             this.setNext(startedState);
@@ -90,7 +106,7 @@ class InitState extends State {
     draw () {
         g.clear();
         g.setFontAlign(0, 0); // center font
-        g.setFont("Vector", 50); // vector font, 80px  
+        g.setFont("Vector", 50); // vector font, 80px
         drawCounter(this.timeCounter);
     }
 }
@@ -99,7 +115,7 @@ class StartedState extends State {
     constructor (timeCounter) {
         super(STATES.STARTED);
 
-        this.timeCounter = timeCounter || DEFAULT_TIME;
+        this.timeCounter = timeCounter;
     }
 
     draw () {
@@ -174,7 +190,7 @@ class DoneState extends State {
         g.setFont("Vector", 45);
         g.setFontAlign(-1, -1);
 
-        g.drawString('You \\nare \\na \\nhero!', 50, 40);
+        g.drawString('You\nare\na\nhero!', 50, 40);
     }
 
     init () {

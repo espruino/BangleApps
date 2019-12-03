@@ -517,17 +517,17 @@
     ]
   },
   {
-    "id": "promodo",
-    "name":"Promodoro",
-    "icon":"promodoro.png",
-    "description": "A simple promodoro timer.",
-    "tags": "promodoro,cooking,tools",
+    "id": "pomodo",
+    "name":"Pomodoro",
+    "icon":"pomodoro.png",
+    "description": "A simple pomodoro timer.",
+    "tags": "pomodoro,cooking,tools",
     "type": "app",
     "allow_emulator":true,
     "storage": [
-      {"name": "+promodo","url": "promodoro.json"},
-      {"name": "-promodo","url": "promodoro.js"},
-      {"name": "*promodo","url": "promodoro-icon.js","evaluate": true}
+      {"name": "+pomodo","url": "pomodoro.json"},
+      {"name": "-pomodo","url": "pomodoro.js"},
+      {"name": "*pomodo","url": "pomodoro-icon.js","evaluate": true}
     ]
 },
   { "id": "blobclk",
