@@ -8,5 +8,5 @@
     {"name":"+7chname","url":"app.json"},
     {"name":"-7chname","url":"app.js"},
     {"name":"*7chname","url":"app-icon.js","evaluate":true}
-  ],
+  ]
 }
