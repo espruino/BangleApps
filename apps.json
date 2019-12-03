@@ -366,7 +366,7 @@
     "name": "Simple Clock",
     "icon": "clock-simple.png",
     "description": "Simple Digital Clock",
-    "tags": "sclock",
+    "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
