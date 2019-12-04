@@ -74,6 +74,7 @@
     }
     Bangle.on('lcdPower', function(on) {
         if (on) {
+            drawWidgets();
             drawMixedClock();
         }
     });
