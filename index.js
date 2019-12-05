@@ -28,6 +28,28 @@ function showToast(message, type) {
     msgDiv.remove();
   }, 5000);
 }
+var progressToast;
+Puck.writeProgress = function(charsSent, charsTotal) {
+  if (charsSent===undefined) {
+    if (progressToast) progressToast.remove();
+    progressToast = undefined;
+    return;
+  }
+  var percent = Math.round(charsSent*100/charsTotal);
+  if (!progressToast) {
+    var toastcontainer = document.getElementById("toastcontainer");
+    progressToast = htmlElement(`<div class="toast">
+    <div class="bar bar-sm">
+      <div class="bar-item" id="progressToast" role="progressbar" style="width:${percent}%;" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>`);
+    toastcontainer.append(progressToast);
+  } else {
+    var pt=document.getElementById("progressToast");
+    pt.setAttribute("aria-valuenow",percent);
+    pt.style.width = percent+"%";
+  }
+}
 function showPrompt(title, text) {
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
