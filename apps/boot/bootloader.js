@@ -6,8 +6,8 @@ try {
 if (startapp) {
   eval(require("Storage").read(startapp.src));
 } else {
-  delete startapp;
   setWatch(function displayMenu() {
+    Bangle.setLCDOffset(0); // remove notifications
     Bangle.setLCDMode("direct");
     g.clear();
     clearInterval();
@@ -77,53 +77,53 @@ if (startapp) {
       g.setFont("6x8",2);
       g.setFontAlign(0,0);
       g.drawString("Loading...",120,120);
-      // load like this so we ensure we've cleared out our RAM
-      var cmd = 'eval(require("Storage").read("'+apps[selected].src+'"));';
-      setTimeout(process.memory,10); // force GC
-      setTimeout(cmd,20);
-      // re-add the menu button if we're going to the clock
+      // if clock, just set the default setting and restart
       if (apps[selected].type=="clock") {
-        setWatch(displayMenu, BTN2, {repeat:false,edge:"falling"});
-        WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
-        WIDGETS={};
-        require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
-        setTimeout(drawWidgets,100);
+        try {
+          var settings = require("Storage").readJSON('@setting');
+          settings.clock = apps[selected].id;
+          require("Storage").write('@setting',settings);
+        } catch (e) { }
+        load();
       } else {
-        delete WIDGETS;
-        delete WIDGETPOS;
-        delete drawWidgets;
+        // load like this so we ensure we've cleared out our RAM
+        setTimeout(process.memory,10); // force GC
+        setTimeout('eval(require("Storage").read("'+apps[selected].src+'"));',20);
+        // allow widgets in apps
+        if (!apps[selected].hasWidgets) {
+          delete WIDGETS;
+          delete WIDGETPOS;
+          delete drawWidgets;
+        } else setTimeout(drawWidgets,100);
       }
     }, BTN2, {repeat:true,edge:"falling"});
   }, BTN2, {repeat:false,edge:"falling"}); // menu on middle button
 
   var WIDGETPOS={tl:32,tr:g.getWidth()-32,bl:32,br:g.getWidth()-32};
   var WIDGETS={};
-  function drawWidgets() {
-    for (var w of WIDGETS) w.draw();
-  }
+  function drawWidgets() { for (var w of WIDGETS) w.draw(); }
   var settings;
   try {
     settings = require("Storage").readJSON('@setting');
   } catch (e) {
     settings = {}
   }
+  // load widgets
+  require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
+  setTimeout(drawWidgets,100);
+  // load clock if specified
   var clockApp = settings.clock;
-  if (clockApp) {
-      clockApp = require("Storage").read(clockApp)
-  }
+  if (clockApp) clockApp = require("Storage").read(clockApp)
   if (!clockApp) {
     var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
       try { return require("Storage").readJSON(app); }
       catch (e) {}
     }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);
-    if (clockApps && clockApps.length > 0) {
-        clockApp = require("Storage").read(clockApps[0].src);
-    }
+    if (clockApps && clockApps.length > 0)
+      clockApp = require("Storage").read(clockApps[0].src);
+    delete clockApps;
   }
   if (clockApp) eval(clockApp);
   else E.showMessage("No Clock Found");
-
-  delete clockApps;
-  require("Storage").list().filter(a=>a[0]=='=').forEach(widget=>eval(require("Storage").read(widget)));
-  setTimeout(drawWidgets,100);
+  delete clockApp;
 }
