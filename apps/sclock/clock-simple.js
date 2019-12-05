@@ -46,6 +46,7 @@
     // handle switch display on by pressing BTN1
     Bangle.on('lcdPower', function(on) {
         if (on) {
+            drawWidgets();
             drawSimpleClock();
         }
     });
