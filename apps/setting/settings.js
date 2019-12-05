@@ -18,8 +18,8 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
-    ble: false,
-    dev: false,
+    ble: true,
+    dev: true,
     timeout: 10,
     vibrate: true,
     beep: true,
