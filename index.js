@@ -1,5 +1,5 @@
 var appJSON = []; // List of apps and info from apps.json
-var appsInstalled = []; // list of app IDs
+var appsInstalled = []; // list of app JSON
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -149,11 +149,15 @@ function refreshLibrary() {
 
   panelbody.innerHTML = visibleApps.map((app,idx) => {
     var icon = "icon-upload";
+    var versionInfo = app.version || "";
     if (app.custom)
       icon = "icon-menu";
-    if (appsInstalled.includes(app.id))
+    if (appsInstalled.find(a=>a.id==app.id)) {
       icon = "icon-delete";
+      versionInfo+=" installed";
+    }
     var buttons = "";
+    if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
     if (app.allow_emulator)
       buttons += `<button class="btn btn-link btn-action btn-lg" title="Try in Emulator"><i class="icon icon-share" appid="${app.id}"></i></button>`;
     buttons += `<button class="btn btn-link btn-action btn-lg"><i class="icon ${icon}" appid="${app.id}"></i></button>`;
@@ -162,7 +166,7 @@ function refreshLibrary() {
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
-      <p class="tile-title text-bold">${escapeHtml(app.name)}</p>
+      <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
     </div>
     <div class="tile-action">
@@ -193,8 +197,8 @@ function refreshLibrary() {
       } else if (icon.classList.contains("icon-upload")) {
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
-        Comms.uploadApp(app).then(() => {
-          appsInstalled.push(app.id);
+        Comms.uploadApp(app).then((appJSON) => {
+          if (appJSON) appsInstalled.push(appJSON);
           showToast(app.name+" Uploaded!", "success");
           icon.classList.remove("loading");
           icon.classList.add("icon-delete");
@@ -208,8 +212,8 @@ function refreshLibrary() {
         if (app.custom) {
           icon.classList.remove("icon-menu");
           icon.classList.add("loading");
-          handleCustomApp(app).then(() => {
-            appsInstalled.push(app.id);
+          handleCustomApp(app).then((appJSON) => {
+            if (appJSON) appsInstalled.push(appJSON);
             showToast(app.name+" Uploaded!", "success");
             icon.classList.remove("loading");
             icon.classList.add("icon-delete");
@@ -235,7 +239,7 @@ refreshLibrary();
 function removeApp(app) {
   return showPrompt("Delete","Really remove '"+app.name+"'?").then(() => {
     Comms.removeApp(app).then(()=>{
-      appsInstalled = appsInstalled.filter(id=>id!=app.id);
+      appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
       showToast(app.name+" removed successfully","success");
       refreshMyApps();
       refreshLibrary();
@@ -274,19 +278,30 @@ function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
   var tab = document.querySelector("#tab-myappscontainer a");
   tab.setAttribute("data-badge", appsInstalled.length);
-  panelbody.innerHTML = appsInstalled.map(appNameToApp).sort(appSorter).map(app => `<div class="tile column col-6 col-sm-12 col-xs-12">
+  panelbody.innerHTML = appsInstalled.map(appJSON => {
+var app = appNameToApp(appJSON.id);
+var version = "";
+if (!appJSON.version) {
+  version = "Unknown version";
+  if (app.version) version += ", latest "+app.version;
+} else {
+  version = appJSON.version;
+  if (app.version == appJSON.version) version += ", up to date";
+  else if (app.version) version += ", latest "+app.version;
+}
+return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
-      <p class="tile-title text-bold">${escapeHtml(app.name)}</p>
+      <p class="tile-title text-bold">${escapeHtml(app.name)} <small>(${version})</small></p>
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg"><i class="icon icon-delete" appid="${app.id}"></i></button>
     </div>
   </div>
-  `).join("");
+  `}).join("");
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
       var icon = event.target;
@@ -300,8 +315,8 @@ function refreshMyApps() {
 function getInstalledApps() {
   showLoadingIndicator();
   // Get apps
-  return Comms.getInstalledApps().then(appIDs => {
-    appsInstalled = appIDs;
+  return Comms.getInstalledApps().then(appJSON => {
+    appsInstalled = appJSON;
     handleConnectionChange(true);
     refreshMyApps();
     refreshLibrary();

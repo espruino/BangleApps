@@ -31,6 +31,7 @@ var AppInfo = {
             } catch (e) {
               reject(storageFile.name+" is not valid JSON");
             }
+            if (app.version) json.version = app.version;
             json.files = fileContents.map(storageFile=>storageFile.name).join(",");
             storageFile.content = JSON.stringify(json);
           }

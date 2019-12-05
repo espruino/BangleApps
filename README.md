@@ -46,6 +46,8 @@ easily distinguish between file types, we use the following:
 }
 ```
 
+See `app.json /  widget.json` below for more info on the correct format.
+
 * Create an entry in `apps.json` as follows:
 
 ```
@@ -155,8 +157,32 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 * `widget.json` - short widget name and storage names
 * `widget.js` - widget code
 
+### `app.json` / `widget.json` format
 
-#### `apps.json` format
+This is the file that's loaded onto Bangle.js, which gives information
+about the app.
+
+```
+{
+  "name":"Short Name", // for Bangle.js menu
+  "icon":"*7chname", // for Bangle.js menu
+  "src":"-7chname", // source file
+  "type":"widget/clock/app", // optional, default "app"
+     // if this is 'widget' then it's not displayed in the menu
+     // if it's 'clock' then it'll be loaded by default at boot time
+  "hasWidgets" : true        // optional, default false
+     // if true, widgets will be loaded so 'drawWidgets' can be
+     // used from the app. You just need to ensure you leave the
+     // top and bottom 24px alone
+  "version":"1.23",
+     // added by BangleApps loader on upload based on apps.json
+  "files:"file1,file2,file3",
+     // added by BangleApps loader on upload - lists all files
+     // that belong to the app so it can be deleted
+}
+```
+
+### `apps.json` format
 
 ```
 { "id": "appid",              // 7 character app id

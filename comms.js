@@ -5,6 +5,15 @@ var Comms = {
 uploadApp : app => {
   return AppInfo.getFiles(app, httpGet).then(fileContents => {
     return new Promise((resolve,reject) => {
+      var appJSONFile = fileContents.find(f=>f.name=="+"+app.id);
+      var appJSON = undefined;
+      if (appJSONFile)
+        try {
+          appJSON=JSON.parse(appJSONFile.content);
+          appJSON.id = app.id;
+        } catch(e) {
+          console.log("Error decoding app JSON for",app.id,e);
+        }
       fileContents = fileContents.map(storageFile=>storageFile.cmd).join("\n")+"\n";
       console.log("uploadApp",fileContents);
       // reset to ensure we have enough memory to upload what we need to
@@ -13,7 +22,7 @@ uploadApp : app => {
         setTimeout(() => { // wait for reset
           Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
             if (result===null) return reject("");
-            resolve();
+            resolve(appJSON);
           });
         },500);
       });
@@ -24,7 +33,7 @@ getInstalledApps : () => {
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      Puck.eval('require("Storage").list().filter(f=>f[0]=="+").map(f=>f.substr(1))', (appList,err) => {
+      Puck.eval('require("Storage").list().filter(f=>f[0]=="+").map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.substr(1);return j})', (appList,err) => {
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
