@@ -60,7 +60,6 @@
 
   function drawTime() {
     g.clear();
-    //drawWidgets();
 
     let d = Date();
     let h = d.getHours();
