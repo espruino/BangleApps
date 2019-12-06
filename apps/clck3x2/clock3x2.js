@@ -60,6 +60,7 @@
 
   function drawTime() {
     g.clear();
+    try { drawWidgets(); } catch(err) {} // as drawWidgets does work in the Emulator
 
     let d = Date();
     let h = d.getHours();
@@ -77,7 +78,7 @@
     }
 
     let t = d.getSeconds()*1000 + d.getMilliseconds();
-    let delta = (60000 - t) % 60000; // time till next minute
+    let delta = 60000 - t; // time till next minute
     idTimeout = setTimeout(drawTime, delta);  
   }
 
@@ -87,7 +88,6 @@
     }
   });
 
-  // special function to handle display switch on
   Bangle.on('lcdPower', function(on){
     if (on) {
       drawTime();
