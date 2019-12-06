@@ -60,7 +60,7 @@
 
   function drawTime() {
     g.clear();
-    try { drawWidgets(); } catch(err) {} // as drawWidgets does work in the Emulator
+    try { drawWidgets(); } catch(err) {} // as drawWidgets does not work in the Emulator
 
     let d = Date();
     let h = d.getHours();
