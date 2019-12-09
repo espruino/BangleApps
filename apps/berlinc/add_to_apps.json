@@ -1,12 +1,12 @@
 // Create an entry in apps.json as follows:
 { "id": "berlinc",
   "name": "Berlin Clock",
-  "icon": "app.png",
+  "icon": "berlin-clock.png",
   "description": "Berlin Clock",
   "tags": "",
   "storage": [
-    {"name":"+berlinc","url":"app.json"},
-    {"name":"-berlinc","url":"app.js"},
-    {"name":"*berlinc","url":"app-icon.js","evaluate":true}
+    {"name":"+berlinc","url":"berlin-clock.json"},
+    {"name":"-berlinc","url":"berlin-clock.js"},
+    {"name":"*berlinc","url":"berlin-clock-icon.js","evaluate":true}
   ]
 }

@@ -9,9 +9,9 @@
 
     function drawBerlinClock() {
         var now = new Date();
-        rowlights[0] = now.getHours() / 5;
+        rowlights[0] = Math.floor(now.getHours() / 5);
         rowlights[1] = now.getHours() % 5;
-        rowlights[2] = now.getMinutes() / 5;
+        rowlights[2] = Math.floor(now.getMinutes() / 5);
         rowlights[3] = now.getMinutes() % 5;
     
         g.clear();
