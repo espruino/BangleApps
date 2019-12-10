@@ -170,10 +170,6 @@ about the app.
   "type":"widget/clock/app", // optional, default "app"
      // if this is 'widget' then it's not displayed in the menu
      // if it's 'clock' then it'll be loaded by default at boot time
-  "hasWidgets" : true        // optional, default false
-     // if true, widgets will be loaded so 'drawWidgets' can be
-     // used from the app. You just need to ensure you leave the
-     // top and bottom 24px alone
   "version":"1.23",
      // added by BangleApps loader on upload based on apps.json
   "files:"file1,file2,file3",

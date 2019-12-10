@@ -10,11 +10,18 @@ if (startapp) {
     Bangle.setLCDOffset(0); // remove notifications
     Bangle.setLCDMode("direct");
     g.clear();
+    // attempt to remove any currently-running code
     clearInterval();
     clearWatch();
     Bangle.removeAllListeners();
+    NRF.removeAllListeners();
+    Bluetooth.removeAllListeners();
+    E.removeAllListeners();
+    delete GB;
+    delete WIDGETS;
+    delete WIDGETPOS;
+    delete drawWidgets;
     var s = require("Storage");
-
     var apps = s.list().filter(a=>a[0]=='+').map(app=>{
       try { return s.readJSON(app); }
       catch (e) { return {name:"DEAD: "+app.substr(1)} }
@@ -89,12 +96,6 @@ if (startapp) {
         // load like this so we ensure we've cleared out our RAM
         setTimeout(process.memory,10); // force GC
         setTimeout('eval(require("Storage").read("'+apps[selected].src+'"));',20);
-        // allow widgets in apps
-        if (!apps[selected].hasWidgets) {
-          delete WIDGETS;
-          delete WIDGETPOS;
-          delete drawWidgets;
-        } else setTimeout(drawWidgets,100);
       }
     }, BTN2, {repeat:true,edge:"falling"});
   }, BTN2, {repeat:false,edge:"falling"}); // menu on middle button
