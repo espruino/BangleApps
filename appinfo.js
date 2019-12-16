@@ -10,7 +10,7 @@ var AppInfo = {
         if (storageFile.content)
           return Promise.resolve(storageFile);
         else if (storageFile.url)
-          return fileGetter("apps/"+storageFile.url).then(content => {
+          return fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
             return {
               name : storageFile.name,
               content : content,
@@ -31,6 +31,7 @@ var AppInfo = {
             } catch (e) {
               reject(storageFile.name+" is not valid JSON");
             }
+            if (app.version) json.version = app.version;
             json.files = fileContents.map(storageFile=>storageFile.name).join(",");
             storageFile.content = JSON.stringify(json);
           }
@@ -45,7 +46,7 @@ var AppInfo = {
           storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
         });
         resolve(fileContents);
-      });
+      }).catch(err => reject(err));
     });
   },
 };
