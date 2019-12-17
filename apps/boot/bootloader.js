@@ -88,7 +88,7 @@ if (startapp) {
       if (apps[selected].type=="clock") {
         try {
           var settings = require("Storage").readJSON('@setting');
-          settings.clock = apps[selected].id;
+          settings.clock = apps[selected].src;
           require("Storage").write('@setting',settings);
         } catch (e) { }
         load();
