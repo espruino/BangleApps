@@ -31,12 +31,14 @@
   
   function drawAll() {
     g.clear();
+    secondDate = minuteDate = new Date();
+    // draw hands first
+    onMinute();
+    // draw seconds
     g.setColor(0,0,0.6);
     for (let i=0;i<60;i++)
       seconds(360*i/60, 90);
-    secondDate = minuteDate = new Date();
     onSecond();
-    onMinute();
   }
   
   function onSecond() {
@@ -61,12 +63,12 @@
       Bangle.buzz();
     }
   }
-  
+
   function clearTimers() {
     if(intervalRefMin) {clearInterval(intervalRefMin);}
     if(intervalRefSec) {clearInterval(intervalRefSec);}
   }
-  
+
   function startTimers() {
     minuteDate = new Date();
     secondDate = new Date();
@@ -74,26 +76,17 @@
     intervalRefMin = setInterval(onMinute,60*1000);
     drawAll();
   }
-  
+
   startTimers();
-  
+
   Bangle.on('lcdPower',function(on) {
     if (on) {
       g.clear();
-      startTimers();
       drawWidgets();
+      startTimers();
     }else {
       clearTimers();
     }
   });
-  
-  Bangle.on('gesture',function(gesture){
-    if (gesture && !Bangle.isLCDOn()) {
-        clearTimers();
-        Bangle.setLCDTimeout(30);
-        Bangle.setLCDPower(true);
-      }
-  });
-  
-  })();
-  
+
+})();
