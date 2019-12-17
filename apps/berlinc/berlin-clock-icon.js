@@ -1,4 +1,1 @@
-var img = {
-  width : 48, height : 48, bpp : 4,
-  buffer : require("heatshrink").decompress(atob("xAAWxOZAAeP/4ADApX4C/4X/C/4XvxAAWF4o1QI4wX/C/4X/C9OIAC2L3e7AQQvBzAEBFAP4FoYEFC/4X/C/4XvxAAWFIIADApYsBAAX4C/4X/C/4XXf54AH"))
-}
+require("heatshrink").decompress(atob("mEwwkBDa8M5gADh//AAYFK+AX/C/4X/C98AACwvFGqBHGC/4X/C/4XpgAAWh3u9wCCF4PAAgIoB+AtDAgoX/C/4X/C98AACwpBAAYFLFgIAC+AX/C/4X/C67/PAA4A=="))

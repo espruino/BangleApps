@@ -628,7 +628,9 @@
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
-    "tags": "",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+berlinc","url":"berlin-clock.json"},
       {"name":"-berlinc","url":"berlin-clock.js"},
