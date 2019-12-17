@@ -1,14 +1,10 @@
-// Draw a rotating cube wireframe...
-// X and Y rotation
 var rx = 0, ry = 0;
 
-// draw a cube
 function draw() {
   var rcx=Math.cos(rx),
       rsx=Math.sin(rx),
       rcy=Math.cos(ry),
       rsy=Math.sin(ry);
-  // Project 3D coordinates into 2D
   function p(x,y,z) {
     var t;
     t = x*rcy + z*rsy;
@@ -22,7 +18,6 @@ function draw() {
   }
 
   var a;
-  // draw a series of lines to make up our cube
   a = p(-1,-1,-1); g.moveTo(a[0],a[1]);
   a = p(1,-1,-1); g.lineTo(a[0],a[1]);
   a = p(1,1,-1); g.lineTo(a[0],a[1]);
@@ -43,7 +38,6 @@ function draw() {
   a = p(-1,1,1); g.lineTo(a[0],a[1]);
 }
 
-// rotate and redraw the cube
 function step() {
   // rotate
   rx += 0.1;
