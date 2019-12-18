@@ -23,8 +23,16 @@
 
         // draw time
         var time = da[4].substr(0, 5);
+        var [hours, minutes] = time.split(":");
+        var meridian = "AM";
+        if (Number(hours) > 12) {
+            hours -= String(Number(hours) - 12);
+            meridian = "PM";
+        }
         g.setFont(font, timeFontSize);
-        g.drawString(time, xyCenter, yposTime, true);
+        g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
+        g.setFont(font, gmtFontSize);
+        g.drawString(meridian, xyCenter + 100, yposTime + 10, true);
 
         // draw Day, name of month, Date
         var date = [da[0], da[1], da[2]].join(" ");
