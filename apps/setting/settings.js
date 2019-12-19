@@ -100,7 +100,7 @@ function showMainMenu() {
       max: 12,
       step: 0.5,
       onchange: v => {
-        settings.timezone = v;
+        settings.timezone = v || 0;
         updateSettings();
       }
     },
