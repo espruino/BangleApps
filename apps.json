@@ -447,6 +447,20 @@
       {"name":"*pparrot","url":"party-parrot-icon.js","evaluate":true}
     ]
   },
+  { "id": "nyancat",
+    "name": "Nyan Cat",
+    "icon": "nyan-cat.png",
+    "version":"0.01",
+    "description": "The amazing nyan cat.",
+    "tags": "nyan,cat,lol",
+    "type":"app",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+nyancat","url":"nyan-cat.json"},
+      {"name":"-nyancat","url":"nyan-cat.js"},
+      {"name":"*nyancat","url":"nyan-cat-icon.js","evaluate":true}
+    ]
+  },
   { "id": "hrings",
     "name": "Hypno Rings",
     "icon": "hypno-rings.png",
