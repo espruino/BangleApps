@@ -641,7 +641,7 @@
     "name": "Centered Digital Clock",
     "icon": "centerclock.png",
     "version":"0.01",
-    "description": "Watch-centered small digital clock",
+    "description": "Watch-centered digital clock",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
