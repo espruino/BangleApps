@@ -638,10 +638,10 @@
     ]
   },
   { "id": "centerclock",
-    "name": "Centered Digital Clock",
+    "name": "Centerclock",
     "icon": "centerclock.png",
     "version":"0.01",
-    "description": "Watch-centered digital clock",
+    "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,

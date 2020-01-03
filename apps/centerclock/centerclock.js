@@ -13,10 +13,11 @@
   let interval = null;
   let middleX = 120;
   let middleY = 106;
-  let baseline = middleY - 4;
   let lineLength = 114;
   let lineY1 = middleY - 10;
   let lineY2 = middleY + 60;
+  let clearRectSegmentY1 = middleY - 9;
+  let clearRectSegmentY2 = middleY + 59;
 
   function setBigFont () {
     g.setFontCustom(
@@ -47,7 +48,7 @@
         (g.stringWidth(str) / 2);
     }
     g.setColor(1, 1, 1);
-    g.drawString(str, point, baseline, false);
+    g.drawString(str, point, middleY - 4, false);
   }
 
   function drawDots (center) {
@@ -78,7 +79,6 @@
   }
 
   function step () {
-    g.clearRect(0, 24, 239, 239);
     let d = new Date();
     let hour = d.getHours();
     let minute = d.getMinutes();
@@ -86,18 +86,48 @@
     let day = d.getDate();
     let month = d.getMonth() + 1;
     let year = d.getFullYear();
+    let dateStr = fixedDigits(day) + '.' + fixedDigits(month) + '.' + year;
     //hour = "00";
     //minute = "00";
     //second = "00";
-    drawLines();
     setBigFont();
-    drawSegment('l', middleX - 120, fixedDigits(hour));
-    drawSegment('c', middleX - 37, fixedDigits(minute));
-    drawSegment('r', middleX + 82, fixedDigits(second));
-    drawDots(middleX - 41);
-    drawDots(middleX + 41);
-    setSmallFont();
-    drawDate(fixedDigits(day) + '.' + fixedDigits(month) + '.' + year);
+    let drawDot1 = false;
+    let drawDot2 = false;
+    if (step.lastHour !== hour) {
+      g.clearRect(0, clearRectSegmentY1, 240, clearRectSegmentY2);
+      drawSegment('l', middleX - 120, fixedDigits(hour));
+      drawDot1 = true;
+      drawDot2 = true;
+      step.lastMinute = null;
+      step.lastSecond = null;
+    }
+    if (step.lastMinute !== minute) {
+      g.clearRect(middleX - 41, clearRectSegmentY1, 240, clearRectSegmentY2);
+      drawSegment('c', middleX - 37, fixedDigits(minute));
+      drawDot1 = true;
+      drawDot2 = true;
+      step.lastSecond = null;
+    }
+    if (step.lastSecond !== second) {
+      g.clearRect(middleX + 42, clearRectSegmentY1, 240, clearRectSegmentY2);
+      drawSegment('r', middleX + 82, fixedDigits(second));
+      drawDot2 = true;
+    }
+    if (drawDot1) {
+      drawDots(middleX - 41);
+    }
+    if (drawDot2) {
+      drawDots(middleX + 41);
+    }
+    if (step.lastDate !== dateStr) {
+      g.clearRect(0, middleY - 22, 240, middleY - 12);
+      setSmallFont();
+      drawDate(dateStr);
+    }
+    step.lastDate = dateStr;
+    step.lastHour = hour;
+    step.lastMinute = minute;
+    step.lastSecond = second;
   }
 
   function stop () {
@@ -110,6 +140,11 @@
     if (interval) {
       clearInterval(interval);
     }
+    drawLines();
+    step.lastDate = null;
+    step.lastHour = null;
+    step.lastMinute = null;
+    step.lastSecond = null;
     interval = setInterval(step, 1000);
     step();
   }
