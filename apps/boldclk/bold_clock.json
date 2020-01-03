@@ -1,0 +1,7 @@
+{
+    "name":"Bold Clock",
+    "type":"clock",
+    "icon":"*boldclk",
+    "src":"-boldclk",
+    "sortorder":-10
+}
