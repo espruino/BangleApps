@@ -98,9 +98,9 @@ function showMainMenu() {
       value: settings.timezone,
       min: -11,
       max: 12,
-      step: 1,
+      step: 0.5,
       onchange: v => {
-        settings.timezone = 0 | v;
+        settings.timezone = v || 0;
         updateSettings();
       }
     },
