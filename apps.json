@@ -638,6 +638,44 @@
       {"name":"*blobclk","url":"clock-blob-icon.js","evaluate":true}
     ]
   },
+  { "id": "boldclk",
+    "name": "Bold Clock",
+    "icon": "bold_clock.png",
+    "version":"0.01",
+    "description": "Simple, readable and practical clock",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+boldclk","url":"bold_clock.json"},
+      {"name":"-boldclk","url":"bold_clock.js"},
+      {"name":"*boldclk","url":"bold_clock-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "wdclk",
+    "name": "Digital clock widget",
+    "icon": "digital_clock_widget.png",
+    "version":"0.01",
+    "description": "A simple digital clock widget",
+    "tags": "widget,clock",
+    "type":"widget",
+    "storage": [
+      {"name":"+wdclk","url":"digital_clock_widget.json"},
+      {"name":"=wdclk","url":"digital_clock_widget.js"}
+    ]
+  },  
+  { "id": "wpedom",
+    "name": "Pedometer widget",
+    "icon": "pedometer_widget.png",
+    "version":"0.01",
+    "description": "Daily pedometer widget",
+    "tags": "widget",
+    "type":"widget",
+    "storage": [
+      {"name":"+wpedom","url":"pedometer_widget.json"},
+      {"name":"=wpedom","url":"pedometer_widget.js"}
+    ]
+  },  
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
