@@ -418,6 +418,20 @@
       {"name":"*sclock","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "stclck",
+    "name": "Simple 12H Clock",
+    "icon": "clock-simple.png",
+    "version":"0.01",
+    "description": "Simple Digital 12-Hour Clock",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+sclock","url":"clock-simple.json"},
+      {"name":"-sclock","url":"clock-simple.js"},
+      {"name":"*sclock","url":"clock-simple-icon.js","evaluate":true}
+    ]
+  },
   { "id": "gesture",
     "name": "Gesture Test",
     "icon": "gesture.png",
