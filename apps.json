@@ -650,5 +650,20 @@
       {"name":"-berlinc","url":"berlin-clock.js"},
       {"name":"*berlinc","url":"berlin-clock-icon.js","evaluate":true}
     ]
+  },
+  { "id": "centerclock",
+    "name": "Centerclock",
+    "icon": "centerclock.png",
+    "version":"0.01",
+    "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+centerclock","url":"centerclock.json"},
+      {"name":"-centerclock","url":"centerclock.js"},
+      {"name":"*centerclock","url":"centerclock-icon.js","evaluate":true}
+    ],
+    "sortorder" : -9
   }
 ]
