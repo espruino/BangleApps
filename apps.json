@@ -663,7 +663,7 @@
       {"name":"+wdclk","url":"digital_clock_widget.json"},
       {"name":"=wdclk","url":"digital_clock_widget.js"}
     ]
-  },  
+  },
   { "id": "wpedom",
     "name": "Pedometer widget",
     "icon": "pedometer_widget.png",
@@ -675,7 +675,7 @@
       {"name":"+wpedom","url":"pedometer_widget.json"},
       {"name":"=wpedom","url":"pedometer_widget.js"}
     ]
-  },  
+  },
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
@@ -689,18 +689,18 @@
       {"name":"*berlinc","url":"berlin-clock-icon.js","evaluate":true}
     ]
   },
-  { "id": "centerclock",
+  { "id": "ctrclk",
     "name": "Centerclock",
-    "icon": "centerclock.png",
+    "icon": "app.png",
     "version":"0.01",
     "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"+centerclock","url":"centerclock.json"},
-      {"name":"-centerclock","url":"centerclock.js"},
-      {"name":"*centerclock","url":"centerclock-icon.js","evaluate":true}
+      {"name":"+ctrclk","url":"app.json"},
+      {"name":"-ctrclk","url":"app.js"},
+      {"name":"*ctrclk","url":"app-icon.js","evaluate":true}
     ],
     "sortorder" : -9
   }
