@@ -1,5 +1,6 @@
 var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app JSON
+var files = []; // list of files on Bangle
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -264,9 +265,9 @@ function appNameToApp(appName) {
   };
 }
 
-function showLoadingIndicator() {
-  var panelbody = document.querySelector("#myappscontainer .panel-body");
-  var tab = document.querySelector("#tab-myappscontainer a");
+function showLoadingIndicator(id) {
+  var panelbody = document.querySelector(`#${id} .panel-body`);
+  var tab = document.querySelector(`#tab-${id} a`);
   // set badge up top
   tab.classList.add("badge");
   tab.setAttribute("data-badge", "");
@@ -313,14 +314,21 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
 }
 
 function getInstalledApps() {
-  showLoadingIndicator();
-  // Get apps
-  return Comms.getInstalledApps().then(appJSON => {
-    appsInstalled = appJSON;
-    handleConnectionChange(true);
-    refreshMyApps();
-    refreshLibrary();
-  });
+  showLoadingIndicator("myappscontainer");
+  showLoadingIndicator("myfscontainer");
+  // Get apps and files
+  return Comms.getInstalledApps()
+    .then(appJSON => {
+      appsInstalled = appJSON;
+      refreshMyApps();
+      refreshLibrary();
+    })
+    .then(Comms.listFiles)
+    .then(list => {
+      files = list;
+      refreshMyFS();
+    })
+    .then(() => handleConnectionChange(true));
 }
 
 var connectMyDeviceBtn = document.getElementById("connectmydevice");
@@ -330,11 +338,11 @@ function handleConnectionChange(connected) {
   connectMyDeviceBtn.classList.toggle('is-connected', connected);
 }
 
-document.getElementById("myappsrefresh").addEventListener("click", () => {
+htmlToArray(document.querySelectorAll(".btn.refresh")).map(button => button.addEventListener("click", () => {
   getInstalledApps().catch(err => {
     showToast("Getting app list failed, "+err,"error");
   });
-});
+}));
 connectMyDeviceBtn.addEventListener("click", () => {
   if (connectMyDeviceBtn.classList.contains('is-connected')) {
     Comms.disconnectDevice();
@@ -363,6 +371,45 @@ librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
   refreshLibrary();
 });
+
+
+// =========================================== My Files
+
+function refreshMyFS() {
+  var panelbody = document.querySelector("#myfscontainer .panel-body");
+  var tab = document.querySelector("#tab-myfscontainer a");
+  tab.setAttribute("data-badge", files.length);
+  panelbody.innerHTML = `
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>${
+    files.map(file =>
+      `<tr data-name="${file}"><td>${escapeHtml(file)}</td><td>${fileType(file).name}</td></li>`
+    ).join("")}
+    </tbody>`;
+
+  htmlToArray(panelbody.getElementsByTagName("tr")).forEach(row => {
+    row.addEventListener("click",event => {
+      var name = event.target.closest('tr').dataset.name;
+      const type = fileType(name);
+      Comms.readFile(name).then(content => content.length && saveAs(new Blob([content], type), name));
+    });
+  });
+}
+
+function fileType(file) {
+  switch (file[0]) {
+    case "+": return { name: "App descriptor", type: "application/json;charset=utf-8" };
+    case "*": return { name: "App icon", type: "text/plain;charset=utf-8" };
+    case "-": return { name: "App code", type: "application/javascript;charset=utf-8" };
+    case "=": return { name: "Boot-time code", type: "application/javascript;charset=utf-8" };
+    default: return { name: "Plain", type: "text/plain;charset=utf-8" };
+  }
+}
 
 // =========================================== About
 

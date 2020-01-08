@@ -95,5 +95,35 @@ watchConnectionChange : cb => {
   return () => {
     clearInterval(interval);
   };
+},
+listFiles : () => {
+  return new Promise((resolve,reject) => {
+    Puck.write("\x03",(result) => {
+      if (result===null) return reject("");
+      //use encodeURIComponent to serialize octal sequence of append files
+      Puck.eval('require("Storage").list().map(encodeURIComponent)', (files,err) => {
+        if (files===null) return reject(err || "");
+        files = files.map(decodeURIComponent);
+        console.log("listFiles", files);
+        resolve(files);
+      });
+    });
+  });
+},
+readFile : (file) => {
+  return new Promise((resolve,reject) => {
+    //encode name to avoid serialization issue due to octal sequence
+    const name = encodeURIComponent(file);
+    Puck.write("\x03",(result) => {
+      if (result===null) return reject("");
+      //TODO: big files will not fit in RAM. 
+      //we should loop and read chunks one by one.
+      //Use btoa for binary content
+      Puck.eval(`btoa(require("Storage").read(decodeURIComponent("${name}"))))`, (content,err) => {
+        if (content===null) return reject(err || "");
+        resolve(atob(content));
+      });
+    });
+  });
 }
 };
