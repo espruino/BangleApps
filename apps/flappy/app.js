@@ -1,6 +1,4 @@
 
-Bangle.setLCDMode("120x120");
-
 var SPEED = 0.5;
 var BIRDIMG = E.toArrayBuffer(atob("EQyI/v7+/v7+/gAAAAAAAP7+/v7+/v7+/gYG0tLS0gDXAP7+/v7+/v4A0tLS0tIA19fXAP7+/v4AAAAA0tLS0gDX1wDXAP7+ANfX19cA0tLSANfXANcA/v4A19fX19cA0tLSANfX1wD+/gDS19fX0gDS0tLSAAAAAAD+/gDS0tIA0tLS0gDAwMDAwAD+/gAAAM3Nzc0AwAAAAAAA/v7+/v4Azc3Nzc0AwMDAwAD+/v7+/v4AAM3Nzc0AAAAAAP7+/v7+/v7+AAAAAP7+/v7+/g=="))
 var FLOORIMG = require("heatshrink").decompress(atob("iEYxH+kklABuLAAlgAAwNFB34OLmAAO0YAO5wAO1YA/AH4A/ADw="));
@@ -96,12 +94,6 @@ function draw() {
   g.flip();
 }
 
-function onInit() {
-  gameStart();
-  setInterval(draw, 50);
-}
-
-
 Bangle.on('touch', function(button) {
   if (!running) {
     gameStart();
@@ -111,4 +103,6 @@ Bangle.on('touch', function(button) {
 });
 
 // Finally, start everything going
-onInit();
+gameStart();
+setTimeout(()=>Bangle.setLCDMode("120x120"),10);
+setInterval(draw, 50);

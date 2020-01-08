@@ -585,7 +585,7 @@
   { "id": "flappy",
     "name": "Flappy Bird",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A Flappy Bird game clone",
     "tags": "game",
     "allow_emulator":true,
