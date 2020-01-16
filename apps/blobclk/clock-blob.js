@@ -17,7 +17,6 @@
     function flip() {
         g.setColor(1,1,1);
         g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},55,26);
-        try { if (drawWidgets) { drawWidgets();} } catch(err) {}
     }
     function drawPixel(ox,oy,x,y,r,p) {
         let x1 = ox+x*(r*2+1);
@@ -81,28 +80,23 @@
         flip();
     }
     function clearTimers() {
-        if(intervalRef) {clearInterval(intervalRef);}
+        if(intervalRef) {
+          clearInterval(intervalRef);
+          intervalRef = undefined;
+        }
     }
     function startTimers() {
         g.clear();
-        digits = [-1,-1,-1,-1,-1,-1];
+        try { if (drawWidgets) { drawWidgets();} } catch(err) {}
         intervalRef = setInterval(redraw,1000);
         redraw();
     }
     startTimers();
     Bangle.on('lcdPower',function(on) {
         if (on) {
-            g.clear();
             startTimers();
-            try { if (drawWidgets) { drawWidgets();} } catch(err) {}
         } else {
             clearTimers();
-        }
-    });
-    Bangle.on('faceUp',function(up){
-        if (up && !Bangle.isLCDOn()) {
-            clearTimers();
-            Bangle.setLCDPower(true);
         }
     });
 })();

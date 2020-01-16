@@ -1,0 +1,3 @@
+0.02: Improve performance when screen wakes
+      Only draw widgets after clearing screen - they update automatically
+      Remove 'faceUp' check as it's automatic

@@ -627,7 +627,7 @@
   { "id": "blobclk",
     "name": "Large Digit Clock",
     "icon": "clock-blob.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
