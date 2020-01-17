@@ -67,7 +67,13 @@ removeAllApps : () => {
 },
 setTime : () => {
   return new Promise((resolve,reject) => {
-    Puck.setTime((result) => {
+    var d = new Date();
+    var tz = d.getTimezoneOffset()/-60
+    var cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
+    // in 1v93 we have timezones too
+    cmd += 'E.setTimeZone('+tz+');';
+    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('@setting',s);})(require('Storage').readJSON('@setting'))\n";
+    Puck.write(cmd, (result) => {
       if (result===null) return reject("");
       resolve();
     });
@@ -116,7 +122,7 @@ readFile : (file) => {
     const name = encodeURIComponent(file);
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      //TODO: big files will not fit in RAM. 
+      //TODO: big files will not fit in RAM.
       //we should loop and read chunks one by one.
       //Use btoa for binary content
       Puck.eval(`btoa(require("Storage").read(decodeURIComponent("${name}"))))`, (content,err) => {
