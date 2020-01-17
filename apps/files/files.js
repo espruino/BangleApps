@@ -27,7 +27,7 @@ function showMainMenu() {
     'Apps': ()=> m = showApps(),
     '< Back': load
   };
-  return Bangle.menu(mainmenu);
+  return E.showMenu(mainmenu);
 }
 
 function eraseApp(app) {
@@ -55,7 +55,7 @@ function showAppMenu(app) {
       });
     }
   };
-  return Bangle.menu(appmenu);
+  return E.showMenu(appmenu);
 }
 
 function showApps() {
@@ -96,7 +96,7 @@ function showApps() {
       onchange: ()=> {}
     };
   }
-  return Bangle.menu(appsmenu);
+  return E.showMenu(appsmenu);
 }
 
 m = showMainMenu();

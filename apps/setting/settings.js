@@ -134,7 +134,7 @@ function showMainMenu() {
     'Turn Off': Bangle.off,
     '< Back': load
   };
-  return Bangle.menu(mainmenu);
+  return E.showMenu(mainmenu);
 }
 
 function showResetMenu() {
@@ -160,7 +160,7 @@ function showResetMenu() {
       E.reboot();
     }*/
   };
-  return Bangle.menu(resetmenu);
+  return E.showMenu(resetmenu);
 }
 
 function makeConnectable() {
@@ -203,7 +203,7 @@ function showClockMenu() {
   if (clockApps.length === 0) {
      clockMenu["No Clocks Found"] = () => {};
   }
-  return Bangle.menu(clockMenu);
+  return E.showMenu(clockMenu);
 }
 
 
@@ -291,7 +291,7 @@ function showSetTimeMenu() {
       }
     }
   };
-  return Bangle.menu(timemenu);
+  return E.showMenu(timemenu);
 }
 
 showMainMenu();
