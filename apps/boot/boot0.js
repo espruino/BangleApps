@@ -33,9 +33,7 @@ if (!Bangle.loadWidgets) {
       NRF.removeAllListeners();
       Bluetooth.removeAllListeners();
       E.removeAllListeners();
-      delete GB;
-      delete WIDGETS;
-      delete WIDGETPOS;
+      for (var i in global) if (i!="g") delete global[i];
       setTimeout('eval(require("Storage").read("'+x+'"));',20);
     },20);
   }
