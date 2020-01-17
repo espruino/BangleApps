@@ -6,7 +6,21 @@
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "storage": [
-      {"name":".bootcde","url":"bootloader.js"}
+      {"name":".boot0","url":"boot0.js"},
+      {"name":".bootcde","url":"bootloader.js"},
+      {"name":"+boot","url":"bootloader.json"}
+    ],
+    "sortorder" : -10
+  },
+  { "id": "launch",
+    "name": "Launcher",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
+    "tags": "tool,system,launcher",
+    "storage": [
+      {"name":"+launch","url":"app.json"},
+      {"name":"-launch","url":"app.js"}
     ],
     "sortorder" : -10
   },
@@ -26,7 +40,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -56,7 +70,7 @@
   { "id": "wclock",
     "name": "Word Clock",
     "icon": "clock-word.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Display Time as Text",
     "tags": "clock",
     "type":"clock",
@@ -70,7 +84,7 @@
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -84,7 +98,7 @@
   { "id": "clck3x2",
     "name": "3x2 Pixel Clock",
     "icon": "clock3x2.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "This is a simple clock using minimalistic 3x2 pixel numerical digits",
     "tags": "clock",
     "storage": [
@@ -359,17 +373,20 @@
       {"name":"=route"}
     ]
   },
+
+
+
   {
-    "id": "start",
+    "id": "ncstart",
     "name": "NCEU Startup",
     "icon": "start.png",
-    "version":"0.01",
-    "description": "NodeConfEU 2019 Startup Sequence",
+    "version":"0.02",
+    "description": "NodeConfEU 2019 'First Start' Sequence",
     "tags": "start",
     "storage": [
-      {"name":"+start","url":"start.json"},
-      {"name":"-start","url":"start.js"},
-      {"name":"*start","url":"start-icon.js","evaluate":true},
+      {"name":"+ncstart","url":"start.json"},
+      {"name":".boot3","url":"start.js"},
+      {"name":"*ncstart","url":"start-icon.js","evaluate":true},
       {"name":"*bangle","url":"start-bangle.js","evaluate":true},
       {"name":"*nceu","url":"start-nceu.js","evaluate":true},
       {"name":"*nfr","url":"start-nfr.js","evaluate":true},
@@ -378,16 +395,16 @@
     ],
     "sortorder" : -1
   },
-  { "id": "funrun5",
+  { "id": "ncfrun",
     "name": "NCEU 5K Fun Run",
     "icon": "nceu-funrun.png",
     "version":"0.01",
     "description": "Display a map of the NodeConf EU 2019 5K Fun Run route and your location on it",
     "tags": "health",
     "storage": [
-      {"name":"+funrun5","url":"nceu-funrun.json"},
-      {"name":"-funrun5","url":"nceu-funrun.js"},
-      {"name":"*funrun5","url":"nceu-funrun-icon.js","evaluate":true}
+      {"name":"+ncfrun","url":"nceu-funrun.json"},
+      {"name":"-ncfrun","url":"nceu-funrun.js"},
+      {"name":"*ncfrun","url":"nceu-funrun-icon.js","evaluate":true}
     ],
     "sortorder" : -1
   },
@@ -404,10 +421,13 @@
     ],
     "sortorder" : -1
   },
+
+
+
   { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple Digital Clock",
     "tags": "clock",
     "type":"clock",
@@ -421,7 +441,7 @@
   { "id": "stclck",
     "name": "Simple 12H Clock",
     "icon": "clock-simple.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple Digital 12-Hour Clock",
     "tags": "clock",
     "type":"clock",
@@ -543,7 +563,7 @@
   { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
@@ -557,7 +577,7 @@
   { "id": "bclock",
     "name": "Binary Clock",
     "icon": "clock-binary.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A simple binary clock watch face",
     "tags": "clock",
     "type":"clock",
@@ -625,9 +645,9 @@
     ]
   },
   { "id": "blobclk",
-    "name": "Large Digit Clock",
+    "name": "Large Digit Blob Clock",
     "icon": "clock-blob.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
@@ -641,7 +661,7 @@
   { "id": "boldclk",
     "name": "Bold Clock",
     "icon": "bold_clock.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple, readable and practical clock",
     "tags": "clock",
     "type":"clock",
@@ -679,6 +699,7 @@
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
+    "version":"0.02",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
     "type":"clock",
@@ -692,7 +713,7 @@
   { "id": "ctrclk",
     "name": "Centerclock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
     "tags": "clock",
     "type":"clock",

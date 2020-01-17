@@ -1,92 +1,94 @@
-(function(){
+const p = Math.PI/2;
+const PRad = Math.PI/180;
+
+let intervalRefMin = null;
+let intervalRefSec = null;
+
+let minuteDate = new Date();
+let secondDate = new Date();
+
+function seconds(angle, r) {
+  const a = angle*PRad;
+  const x = 120+Math.sin(a)*r;
+  const y = 120-Math.cos(a)*r;
+  g.fillRect(x-1,y-1,x+1,y+1);
+}
+function hand(angle, r1,r2) {
+  const a = angle*PRad;
+  const r3 = 3;
+  g.fillPoly([
+    120+Math.sin(a)*r1,
+    120-Math.cos(a)*r1,
+    120+Math.sin(a+p)*r3,
+    120-Math.cos(a+p)*r3,
+    120+Math.sin(a)*r2,
+    120-Math.cos(a)*r2,
+    120+Math.sin(a-p)*r3,
+    120-Math.cos(a-p)*r3]);
+}
+
+function drawAll() {
   g.clear();
-  const p = Math.PI/2;
-  const PRad = Math.PI/180;
-  
-  let intervalRefMin = null;
-  let intervalRefSec = null;
-  
-  let minuteDate = new Date();
-  let secondDate = new Date();
-  
-  function seconds(angle, r) {
-    const a = angle*PRad;
-    const x = 120+Math.sin(a)*r;
-    const y = 120-Math.cos(a)*r;
-    g.fillRect(x-1,y-1,x+1,y+1);
+  secondDate = minuteDate = new Date();
+  // draw hands first
+  onMinute();
+  // draw seconds
+  g.setColor(0,0,0.6);
+  for (let i=0;i<60;i++)
+    seconds(360*i/60, 90);
+  onSecond();
+}
+
+function onSecond() {
+  g.setColor(0,0,0.6);
+  seconds(360*secondDate.getSeconds()/60, 90);
+  g.setColor(1,0,0);
+  secondDate = new Date();
+  seconds(360*secondDate.getSeconds()/60, 90);
+  g.setColor(1,1,1);
+
+}
+
+function onMinute() {
+  g.setColor(0,0,0);
+  hand(360*(minuteDate.getHours() + (minuteDate.getMinutes()/60))/12, -10, 50);
+  hand(360*minuteDate.getMinutes()/60, -10, 82);
+  minuteDate = new Date();
+  g.setColor(1,1,1);
+  hand(360*(minuteDate.getHours() + (minuteDate.getMinutes()/60))/12, -10, 50);
+  hand(360*minuteDate.getMinutes()/60, -10, 82);
+  if(minuteDate.getHours() >= 0 && minuteDate.getMinutes() === 0) {
+    Bangle.buzz();
   }
-  function hand(angle, r1,r2) {
-    const a = angle*PRad;
-    const r3 = 3;
-    g.fillPoly([
-      120+Math.sin(a)*r1,
-      120-Math.cos(a)*r1,
-      120+Math.sin(a+p)*r3,
-      120-Math.cos(a+p)*r3,
-      120+Math.sin(a)*r2,
-      120-Math.cos(a)*r2,
-      120+Math.sin(a-p)*r3,
-      120-Math.cos(a-p)*r3]);
-  }
-  
-  function drawAll() {
+}
+
+function clearTimers() {
+  if(intervalRefMin) {clearInterval(intervalRefMin);}
+  if(intervalRefSec) {clearInterval(intervalRefSec);}
+}
+
+function startTimers() {
+  minuteDate = new Date();
+  secondDate = new Date();
+  intervalRefSec = setInterval(onSecond,1000);
+  intervalRefMin = setInterval(onMinute,60*1000);
+  drawAll();
+}
+
+Bangle.on('lcdPower',function(on) {
+  if (on) {
     g.clear();
-    secondDate = minuteDate = new Date();
-    // draw hands first
-    onMinute();
-    // draw seconds
-    g.setColor(0,0,0.6);
-    for (let i=0;i<60;i++)
-      seconds(360*i/60, 90);
-    onSecond();
+    Bangle.drawWidgets();
+    startTimers();
+  }else {
+    clearTimers();
   }
-  
-  function onSecond() {
-    g.setColor(0,0,0.6);
-    seconds(360*secondDate.getSeconds()/60, 90);
-    g.setColor(1,0,0);
-    secondDate = new Date();
-    seconds(360*secondDate.getSeconds()/60, 90);
-    g.setColor(1,1,1);
-  
-  }
-  
-  function onMinute() {
-    g.setColor(0,0,0);
-    hand(360*minuteDate.getHours()/12, -10, 50);
-    hand(360*minuteDate.getMinutes()/60, -10, 82);
-    minuteDate = new Date();
-    g.setColor(1,1,1);
-    hand(360*minuteDate.getHours()/12, -10, 50);
-    hand(360*minuteDate.getMinutes()/60, -10, 82);
-    if(minuteDate.getHours() >= 0 && minuteDate.getMinutes() === 0) {
-      Bangle.buzz();
-    }
-  }
+});
 
-  function clearTimers() {
-    if(intervalRefMin) {clearInterval(intervalRefMin);}
-    if(intervalRefSec) {clearInterval(intervalRefSec);}
-  }
-
-  function startTimers() {
-    minuteDate = new Date();
-    secondDate = new Date();
-    intervalRefSec = setInterval(onSecond,1000);
-    intervalRefMin = setInterval(onMinute,60*1000);
-    drawAll();
-  }
-
-  startTimers();
-
-  Bangle.on('lcdPower',function(on) {
-    if (on) {
-      g.clear();
-      drawWidgets();
-      startTimers();
-    }else {
-      clearTimers();
-    }
-  });
-
-})();
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+drawAll();
+startTimers();
+// Show launcher when middle button pressed
+setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});

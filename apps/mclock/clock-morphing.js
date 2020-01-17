@@ -1,4 +1,3 @@
-(function(){ // make our own scope so this is GC'd when intervals are cleared
 // Offscreen buffer
 var buf = Graphics.createArrayBuffer(240,86,1,{msb:true});
 function flip() {
@@ -178,14 +177,16 @@ function showTime() {
 }
 
 Bangle.on('lcdPower',function(on) {
-  if (on) {
+  if (on)
     showTime();
-    drawWidgets();
-  }
 });
 
 g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 // Update time once a second
 setInterval(showTime, 1000);
 showTime();
-})();
+
+// Show launcher when middle button pressed
+setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});

@@ -18,7 +18,7 @@ Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQ
   try { // disable advertising if BLE should be off
     if (!s.ble) NRF.sleep();
     else  NRF.wake();
-  } catch(e) {}
+  } catch(e) {}  
   if (!s.vibrate) Bangle.buzz=Promise.resolve;
   if (!s.beep) Bangle.beep=Promise.resolve;
   Bangle.setLCDTimeout(s.timeout);

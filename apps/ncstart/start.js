@@ -124,9 +124,9 @@ function cleanup() {
   s.erase('*bangle');
   s.erase('*nodew');
   s.erase('*tf');
-  s.erase('+start');
-  s.erase('-start');
-  s.erase('*start');
+  s.erase('+ncstart');
+  s.erase('.boot3');
+  s.erase('*ncstart');
   return Promise.resolve();
 }
 
