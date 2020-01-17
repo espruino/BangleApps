@@ -25,7 +25,7 @@ function showMainMenu() {
       m = showMainMenu();
     },
     'Apps': ()=> m = showApps(),
-    '< Back': load
+    '< Back': ()=> {load();}
   };
   return E.showMenu(mainmenu);
 }

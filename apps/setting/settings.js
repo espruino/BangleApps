@@ -132,7 +132,7 @@ function showMainMenu() {
     'Make Connectable': makeConnectable,
     'Reset Settings': showResetMenu,
     'Turn Off': Bangle.off,
-    '< Back': load
+    '< Back': ()=> {load();}
   };
   return E.showMenu(mainmenu);
 }

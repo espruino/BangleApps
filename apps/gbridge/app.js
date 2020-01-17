@@ -6,7 +6,7 @@ var mainmenu = {
   "" : { "title" : "Gadgetbridge" },
   "Connected" : { value : NRF.getSecurityStatus().connected },
   "Find Phone" : function() { E.showMenu(findPhone); },
-  "Exit" : load,
+  "Exit" : ()=> {load();},
 };
 
 var findPhone = {
