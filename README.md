@@ -185,7 +185,7 @@ about the app.
   "name": "Readable name",    // readable name
   "icon": "icon.png",         // icon in apps/
   "description": "...",       // long description
-  "type":"...",               // optional(if app) - 'app' or 'widget'
+  "type":"...",               // optional(if app) - 'app'/'widget'/'launch'
   "tags": "",                 // comma separated tag list for searching
 
   "custom": "custom.html",    // if supplied, apps/custom.html is loaded in an
@@ -210,7 +210,7 @@ about the app.
 ```
 
 * name, icon and description present the app in the app loader.
-* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget` or empty.
+* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
 * storage is used to identify the app files and how to handle them
 
 ## Coding hints

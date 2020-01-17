@@ -1,1 +1,2 @@
 0.02: Attempt to reset state of the interpreter better before loading an app
+0.03: Fix issue switching clockfaces via menu

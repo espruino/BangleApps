@@ -15,9 +15,9 @@ menu[NODEVICE] = {
   onchange : () => {}
 };
 
-  
+
 function draw() {
-  Bangle.menu(menu);
+  E.showMenu(menu);
 }
 
 function scan() {
@@ -25,7 +25,7 @@ function scan() {
       for (let device of devices) {
 
         // Only display devices that advertise a name
-        
+
         if (device.name) {
           // Remove no devices found message if it is present
           if (menu[NODEVICE]) {
