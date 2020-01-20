@@ -1,3 +1,4 @@
+// a variation on the hrm app
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
 Bangle.ioWr(0x80,0)
