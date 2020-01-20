@@ -25,8 +25,8 @@ function readHRM() {
     g.clearRect(0,100,239,239);
     g.moveTo(-100,0);
   }
-  freq(parseFloat(a*960*4));
-  
+  freq(parseFloat(y+1.0)*1000);
+
   g.setColor(1,1,1);
   g.lineTo(x,y);
   if ((max-min)>0.005) {
