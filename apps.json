@@ -264,6 +264,18 @@
       {"name":"*hrm","url":"heartrate-icon.js","evaluate":true}
     ]
   },
+  { "id": "stetho",
+    "name": "Stethoscope",
+    "icon": "stetho.png",
+    "version":"0.0198",
+    "description": "Hear your heart rate",
+    "tags": "health",
+    "storage": [
+      {"name":"+stetho","url":"stetho.json"},
+      {"name":"-stetho","url":"stetho.js"},
+      {"name":"*stetho","url":"stetho-icon.js","evaluate":true}
+    ]
+  },
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
