@@ -28,8 +28,9 @@ function readHRM() {
   }
   g.setColor(1,1,1);
   g.lineTo(x,y);
-  freq((Math.abs(a) * 100.0) + 500.0);
-  console.log("freq ", (a * 100.0) + 500.0);
+  freq((parseFloat(y) * 1000.0) + 500.0);
+  console.log("frequency ",   (y * 1000.0) + 500.0;
+  ;
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
       g.setColor(1,0,0);
@@ -78,4 +79,4 @@ function readHRM() {
   if (x>239)x=0;
 }
 
-setInterval(readHRM,50);
+setInterval(readHRM,100);
