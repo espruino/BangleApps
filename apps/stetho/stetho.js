@@ -11,7 +11,7 @@ var hrm;
 var SPEAKER_PIN = D18;
 function freq(f) {
   if (f===0) digitalWrite(SPEAKER_PIN, 0);
-   else analogWrite(SPEAKER_PIN, 0.9, {freq: f});
+   else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
  }
  
 
@@ -29,7 +29,7 @@ function readHRM() {
   g.setColor(1,1,1);
   g.lineTo(x,y);
   console.log("a ", y);
-  freq((abs(y) * 100000.0) + 100.0);
+  freq((Math.abs(y) * 10000.0) + 500.0);
   console.log("freq ", (y * 1000.0) + 100.0);
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
