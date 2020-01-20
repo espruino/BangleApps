@@ -7,14 +7,13 @@ var wasHigh = 0, wasLow = 0;
 var lastHigh = getTime();
 var hrmList = [];
 var hrm;
-
 var SPEAKER_PIN = D18;
-function freq(f) {
-  if (f===0) digitalWrite(SPEAKER_PIN, 0);
-   else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
- }
- 
 
+function freq(f) {
+ console.log("frequency : ", f);
+ if (f===0) digitalWrite(SPEAKER_PIN, 0);
+  else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
+}
 
 function readHRM() {
   var a = analogRead(D29);
@@ -26,11 +25,10 @@ function readHRM() {
     g.clearRect(0,100,239,239);
     g.moveTo(-100,0);
   }
+  freq(parseFloat(a*960*4));
+  
   g.setColor(1,1,1);
   g.lineTo(x,y);
-  freq((parseFloat(y) * 1000.0) + 500.0);
-  console.log("frequency " + ((parseFloat(y) * 1000.0) + 500.0));
-  
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
       g.setColor(1,0,0);
