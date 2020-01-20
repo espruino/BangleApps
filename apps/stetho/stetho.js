@@ -28,7 +28,7 @@ function readHRM() {
   }
   g.setColor(1,1,1);
   g.lineTo(x,y);
-  freq((y * 1000) + 100.0);
+  freq((a * 1000.0) + 100.0);
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
       g.setColor(1,0,0);
