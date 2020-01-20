@@ -29,7 +29,7 @@ function readHRM() {
   g.setColor(1,1,1);
   g.lineTo(x,y);
   console.log("a ", y);
-  freq((y * 1000.0) + 100.0);
+  freq((abs(y) * 100000.0) + 100.0);
   console.log("freq ", (y * 1000.0) + 100.0);
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
