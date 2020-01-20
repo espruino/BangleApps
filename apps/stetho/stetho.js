@@ -8,6 +8,16 @@ var lastHigh = getTime();
 var hrmList = [];
 var hrm;
 
+var SPEAKER_PIN = D18;
+function freq(f) {
+  if (f===0) digitalWrite(SPEAKER_PIN, 0);
+   else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
+ }
+ freq(1000);
+ freq(1500);
+ freq(0);
+
+ 
 function readHRM() {
   var a = analogRead(D29);
   var h = getTime();
