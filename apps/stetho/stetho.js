@@ -25,7 +25,8 @@ function readHRM() {
     g.clearRect(0,100,239,239);
     g.moveTo(-100,0);
   }
-  freq(parseFloat(y+1.0)*1000);
+  let frequency = parseFloat(y+1.0) * 10000;
+  if(frequency > 0) freq(frequency);
 
   g.setColor(1,1,1);
   g.lineTo(x,y);
