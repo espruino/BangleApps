@@ -17,9 +17,6 @@ function freq(f) {
 
 
 function readHRM() {
-  freq(1000);
- freq(1500);
- freq(0);
   var a = analogRead(D29);
   var h = getTime();
   min=Math.min(min*0.97+a*0.03,a);
@@ -29,11 +26,9 @@ function readHRM() {
     g.clearRect(0,100,239,239);
     g.moveTo(-100,0);
   }
-  /*g.setColor(0,1,0);
-  var z = 170 - (min*960*4); g.fillRect(x,z,x,z);
-  var z = 170 - (max*960*4); g.fillRect(x,z,x,z);*/
   g.setColor(1,1,1);
   g.lineTo(x,y);
+  freq(y + 100.0);
   if ((max-min)>0.005) {
     if (4*a > (min+3*max)) { // high
       g.setColor(1,0,0);
