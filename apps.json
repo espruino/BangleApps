@@ -267,7 +267,7 @@
   { "id": "stetho",
     "name": "Stethoscope",
     "icon": "stetho.png",
-    "version":"0.0193",
+    "version":"0.0194",
     "description": "Hear your heart rate",
     "tags": "health",
     "storage": [

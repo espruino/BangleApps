@@ -12,7 +12,7 @@ var SPEAKER_PIN = D18;
 function freq(f) {
  console.log("frequency: ", f);
  if (f===0) digitalWrite(SPEAKER_PIN, 0);
-  else analogWrite(SPEAKER_PIN, 0.9, {freq: f});
+  else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
 }
 
 function readHRM() {
@@ -25,7 +25,7 @@ function readHRM() {
     g.clearRect(0,100,239,239);
     g.moveTo(-100,0);
   }
-  let frequency = parseFloat(((170 - (a*960*4))*100) + 200);
+  let frequency = parseFloat(((170 - (a*960*4))*60) + 200);
   if(frequency > 0) freq(frequency);
 
   g.setColor(1,1,1);
