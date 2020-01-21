@@ -21,14 +21,14 @@ function drawSimpleClock() {
 
     // draw time
     var time = da[4].substr(0, 5);
-    var [hours, minutes] = time.split(":");
+    var hoursminutes = time.split(":");
     var meridian = "AM";
-    if (Number(hours) > 12) {
-        hours -= String(Number(hours) - 12);
+    if (Number(hoursminutes[0]) > 12) {
+        hoursminutes[0] = String(Number(hoursminutes[0]) - 12);
         meridian = "PM";
     }
     g.setFont(font, timeFontSize);
-    g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
+    g.drawString(`${hoursminutes[0]}:${hoursminutes[1]}`, xyCenter, yposTime, true);
     g.setFont(font, gmtFontSize);
     g.drawString(meridian, xyCenter + 100, yposTime + 10, true);
 
