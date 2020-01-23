@@ -437,10 +437,10 @@
 
 
   { "id": "sclock",
-    "name": "Simple Clock",
+    "name": "Simple 24hr Clock",
     "icon": "clock-simple.png",
-    "version":"0.02",
-    "description": "Simple Digital Clock",
+    "version":"0.03",
+    "description": "Simple Digital 24 Hour Clock",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
@@ -451,17 +451,17 @@
     ]
   },
   { "id": "stclck",
-    "name": "Simple 12H Clock",
+    "name": "Simple 12hr Clock",
     "icon": "clock-simple.png",
-    "version":"0.02",
-    "description": "Simple Digital 12-Hour Clock",
+    "version":"0.03",
+    "description": "Simple Digital 12 Hour Clock",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"+sclock","url":"clock-simple.json"},
-      {"name":"-sclock","url":"clock-simple.js"},
-      {"name":"*sclock","url":"clock-simple-icon.js","evaluate":true}
+      {"name":"+stclck","url":"clock-simple.json"},
+      {"name":"-stclck","url":"clock-simple.js"},
+      {"name":"*stclck","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
   { "id": "gesture",

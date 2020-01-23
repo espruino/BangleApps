@@ -1,7 +1,7 @@
 {
-  "name": "Simple 12H Clock",
+  "name": "12h Clock",
   "type": "clock",
-  "icon": "*sclock",
-  "src": "-sclock",
+  "icon": "*stclck",
+  "src": "-stclck",
   "sortorder": -10
 }

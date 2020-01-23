@@ -20,15 +20,19 @@ function drawSimpleClock() {
 
   // draw time
   var time = da[4].substr(0, 5).split(":");
-  var hours = time[0],
+  var hours = parseInt(time[0],10),
     minutes = time[1];
   var meridian = "AM";
-  if (Number(hours) > 12) {
-    hours -= String(Number(hours) - 12);
+  if (hours == 0) {
+    hours = 12;
+    meridian = "PM";
+  }
+  if (hours > 12) {
+    hours -= 12;
     meridian = "PM";
   }
   g.setFont(font, timeFontSize);
-  g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
+  g.drawString(`${(" "+hours).substr(-2)}:${minutes}`, xyCenter, yposTime, true);
   g.setFont(font, gmtFontSize);
   g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
 
@@ -49,9 +53,8 @@ function drawSimpleClock() {
 }
 
 // handle switch display on by pressing BTN1
-Bangle.on("lcdPower", function(on) {
-  if (on)
-    drawSimpleClock();
+Bangle.on('lcdPower', function(on) {
+  if (on) drawSimpleClock();
 });
 
 // clean app screen

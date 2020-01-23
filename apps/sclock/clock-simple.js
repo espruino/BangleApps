@@ -11,42 +11,34 @@ const yposYear = 175;
 const yposGMT = 220;
 
 function drawSimpleClock() {
+  // get date
+  var d = new Date();
+  var da = d.toString().split(" ");
 
-    // get date
-    var d = new Date();
-    var da = d.toString().split(" ");
+  // drawSting centered
+  g.setFontAlign(0, 0);
 
-    // drawSting centered
-    g.setFontAlign(0, 0);
+  // draw time
+  var time = da[4].substr(0, 5).split(":");
+  var hours = time[0],
+    minutes = time[1];
+  g.setFont(font, timeFontSize);
+  g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
 
-    // draw time
-    var time = da[4].substr(0, 5);
-    var hoursminutes = time.split(":");
-    var meridian = "AM";
-    if (Number(hoursminutes[0]) > 12) {
-        hoursminutes[0] = String(Number(hoursminutes[0]) - 12);
-        meridian = "PM";
-    }
-    g.setFont(font, timeFontSize);
-    g.drawString(`${hoursminutes[0]}:${hoursminutes[1]}`, xyCenter, yposTime, true);
-    g.setFont(font, gmtFontSize);
-    g.drawString(meridian, xyCenter + 100, yposTime + 10, true);
+  // draw Day, name of month, Date
+  var date = [da[0], da[1], da[2]].join(" ");
+  g.setFont(font, dateFontSize);
 
-    // draw Day, name of month, Date
-    var date = [da[0], da[1], da[2]].join(" ");
-    g.setFont(font, dateFontSize);
+  g.drawString(date, xyCenter, yposDate, true);
 
-    g.drawString(date, xyCenter, yposDate, true);
+  // draw year
+  g.setFont(font, dateFontSize);
+  g.drawString(d.getFullYear(), xyCenter, yposYear, true);
 
-    // draw year
-    g.setFont(font, dateFontSize);
-    g.drawString(d.getFullYear(), xyCenter, yposYear, true);
-
-    // draw gmt
-    var gmt = da[5];
-    g.setFont(font, gmtFontSize);
-    g.drawString(gmt, xyCenter, yposGMT, true);
-
+  // draw gmt
+  var gmt = da[5];
+  g.setFont(font, gmtFontSize);
+  g.drawString(gmt, xyCenter, yposGMT, true);
 }
 
 // handle switch display on by pressing BTN1
