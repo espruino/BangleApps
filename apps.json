@@ -736,5 +736,20 @@
       {"name":"*ctrclk","url":"app-icon.js","evaluate":true}
     ],
     "sortorder" : -9
+  },
+  { "id": "demoapp",
+    "name": "Demo Loop",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
+    "tags": "",
+    "type":"app",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"+demoapp","url":"app.json"},
+      {"name":"-demoapp","url":"app.js"},
+      {"name":"*demoapp","url":"app-icon.js","evaluate":true}
+    ],
+    "sortorder" : -9
   }
 ]
