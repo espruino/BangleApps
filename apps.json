@@ -82,10 +82,10 @@
     ]
   },
   { "id": "aclock",
-    "name": "Analog Clock",
+    "name": "Nik's Analog Clock",
     "icon": "clock-analog.png",
-    "version":"0.02",
-    "description": "An Analog Clock",
+    "version":"0.03",
+    "description": "An Analog Clock - Modified by Nik",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
