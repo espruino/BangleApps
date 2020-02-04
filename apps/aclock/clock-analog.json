@@ -1,6 +1,7 @@
 {
-  "name":"Nik's Analog Clock","type":"clock",
-  "icon":"*aclock",
-  "src":"-aclock",
-  "sortorder":-10
+  "name": "Analog Clock",
+  "type": "clock",
+  "icon": "*aclock",
+  "src": "-aclock",
+  "sortorder": -10
 }

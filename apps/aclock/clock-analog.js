@@ -1,5 +1,5 @@
+const version = '0.0.4';
 
-const version = '0.03';
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
 const faceWidth = 95; // watch face is 95 px wide (radius)
