@@ -11,6 +11,7 @@ var APPJSON = ROOTDIR+'/apps.json';
 var OUTFILE = ROOTDIR+'/firmware.js';
 var APPS = [ // IDs of apps to install
   "boot",
+  "launch",
   "mclock",
   "setting",
   "astroid",
