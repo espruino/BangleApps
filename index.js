@@ -422,36 +422,37 @@ document.getElementById("settime").addEventListener("click",event=>{
 });
 document.getElementById("removeall").addEventListener("click",event=>{
   showPrompt("Remove All","Really remove all apps?").then(() => {
-    Comms.removeAllApps().then(()=>{
-      appsInstalled = [];
-      showToast("All apps removed","success");
-      refreshMyApps();
-      refreshLibrary();
-    }, err=>{
-      showToast("App removal failed, "+err,"error");
-    });
+    return Comms.removeAllApps();
+  }).then(()=>{
+    appsInstalled = [];
+    showToast("All apps removed","success");
+    return getInstalledApps();
+  }).catch(err=>{
+    showToast("App removal failed, "+err,"error");
   });
 });
 // Install all default apps in one go
 document.getElementById("installdefault").addEventListener("click",event=>{
-  var defaultApps
+  var defaultApps, appCount;
   httpGet("defaultapps.json").then(json=>{
     defaultApps = JSON.parse(json);
     defaultApps = defaultApps.map( appid => appJSON.find(app=>app.id==appid) );
     if (defaultApps.some(x=>x===undefined))
       throw "Not all apps found";
+    appCount = defaultApps.length;
     return showPrompt("Install Defaults","Remove everything and install default apps?");
   }).then(() => {
     return Comms.removeAllApps();
   }).then(()=>{
-    showToast("Existing apps removed","success");
+    appsInstalled = [];
+    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
     return new Promise(resolve => {
       function upload() {
         var app = defaultApps.shift();
         if (app===undefined) return resolve();
         Comms.uploadApp(app).then((appJSON) => {
           if (appJSON) appsInstalled.push(appJSON);
-          showToast(app.name+" Uploaded", "success");
+          showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
           upload();
         });
       }
@@ -459,8 +460,7 @@ document.getElementById("installdefault").addEventListener("click",event=>{
     });
   }).then(()=>{
     showToast("Default apps successfully installed!","success");
-    refreshMyApps();
-    refreshLibrary();
+    return getInstalledApps();
   }).catch(err=>{
     showToast("App Install failed, "+err,"error");
   });
