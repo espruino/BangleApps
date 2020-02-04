@@ -1315,31 +1315,6 @@
     ]
   },
   {
-    "id": "berlinc",
-    "name": "Berlin Clock",
-    "icon": "berlin-clock.png",
-    "version": "0.02",
-    "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
-    "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
-    "storage": [
-      {
-        "name": "+berlinc",
-        "url": "berlin-clock.json"
-      },
-      {
-        "name": "-berlinc",
-        "url": "berlin-clock.js"
-      },
-      {
-        "name": "*berlinc",
-        "url": "berlin-clock-icon.js",
-        "evaluate": true
-      }
-    ]
-  },
-  {
     "id": "ctrclk",
     "name": "Centerclock",
     "icon": "app.png",
