@@ -432,3 +432,36 @@ document.getElementById("removeall").addEventListener("click",event=>{
     });
   });
 });
+// Install all default apps in one go
+document.getElementById("installdefault").addEventListener("click",event=>{
+  var defaultApps
+  httpGet("defaultapps.json").then(json=>{
+    defaultApps = JSON.parse(json);
+    defaultApps = defaultApps.map( appid => appJSON.find(app=>app.id==appid) );
+    if (defaultApps.some(x=>x===undefined))
+      throw "Not all apps found";
+    return showPrompt("Install Defaults","Remove everything and install default apps?");
+  }).then(() => {
+    return Comms.removeAllApps();
+  }).then(()=>{
+    showToast("Existing apps removed","success");
+    return new Promise(resolve => {
+      function upload() {
+        var app = defaultApps.shift();
+        if (app===undefined) return resolve();
+        Comms.uploadApp(app).then((appJSON) => {
+          if (appJSON) appsInstalled.push(appJSON);
+          showToast(app.name+" Uploaded", "success");
+          upload();
+        });
+      }
+      upload();
+    });
+  }).then(()=>{
+    showToast("Default apps successfully installed!","success");
+    refreshMyApps();
+    refreshLibrary();
+  }).catch(err=>{
+    showToast("App Install failed, "+err,"error");
+  });
+});
