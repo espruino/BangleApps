@@ -1,25 +1,22 @@
 
 const version = '0.03';
-
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
 const faceWidth = 95; // watch face is 95 px wide (radius)
 let timerInterval = null;
 let currentDate = new Date();
+const centerPx = 120;
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 let g;
 
 const seconds = (angle, r) => {
   const a = angle * pRad;
-  const x = 120 + Math.sin(a) * r;
-  const y = 120 - Math.cos(a) * r;
-  
+  const x = centerPx + Math.sin(a) * r;
+  const y = centerPx - Math.cos(a) * r;
+
   // if 15 degrees, make hour marker larger
-  if (angle % 15 === 0) {
-    g.fillCircle(x, y, 4);
-  } else {
-    g.fillCircle(x, y, 2);
-  }
+  const radius = (angle % 15) ? 1 : 2;
+  g.fillCircle(x, y, radius);
 };
 
 const hand = (angle, r1, r2) => {
@@ -27,15 +24,22 @@ const hand = (angle, r1, r2) => {
   const r3 = 3;
 
   g.fillPoly([
-    120 + Math.sin(a) * r1,
-    120 - Math.cos(a) * r1,
-    120 + Math.sin(a + p) * r3,
-    120 - Math.cos(a + p) * r3,
-    120 + Math.sin(a) * r2,
-    120 - Math.cos(a) * r2,
-    120 + Math.sin(a - p) * r3,
-    120 - Math.cos(a - p) * r3
+    Math.round(centerPx + Math.sin(a) * r1),
+    Math.round(centerPx - Math.cos(a) * r1),
+    Math.round(centerPx + Math.sin(a + p) * r3),
+    Math.round(centerPx - Math.cos(a + p) * r3),
+    Math.round(centerPx + Math.sin(a) * r2),
+    Math.round(centerPx - Math.cos(a) * r2),
+    Math.round(centerPx + Math.sin(a - p) * r3),
+    Math.round(centerPx - Math.cos(a - p) * r3)
   ]);
+
+  console.log(`made poly: ,
+    x1: ${Math.round(centerPx + Math.sin(a) * r1)}, y1: ${Math.round(centerPx - Math.cos(a) * r1)},
+    x2: ${Math.round(centerPx + Math.sin(a + p) * r3)}, y2: ${Math.round(centerPx - Math.cos(a + p) * r3)},
+    x3: ${Math.round(centerPx + Math.sin(a) * r2)}, y3: ${Math.round(centerPx - Math.cos(a) * r2)},
+    x4: ${Math.round(centerPx + Math.sin(a - p) * r3)}, y4: ${Math.round(centerPx - Math.cos(a - p) * r3)}`
+  );
 };
 
 const drawAll = () => {
@@ -71,32 +75,56 @@ const onSecond = () => {
   g.setColor(1, 1, 1);
 };
 
+const drawDate = () => {
+  g.setColor(0, 0, 0)
+    .fillRect(centerPx + 28,
+      centerPx + 38,
+      centerPx + 65,
+      centerPx + 49)
+    .setColor(1, 1, 0)
+    .drawRect(
+      centerPx + 28,
+      centerPx + 38,
+      centerPx + 65,
+      centerPx + 48);
+
+  const dayString = days[currentDate.getDay()];
+  let dateString = currentDate.getDate().toString();
+  if (dateString.length === 1) {
+    dateString = `0${dateString}`;
+  }
+  console.log(`${dayString}-${dateString}`);
+  g.setColor(1, 0, 0)
+    .drawString(
+      `${dayString}-${dateString}`,
+      centerPx + 30,
+      centerPx + 40
+    );
+};
 const onMinute = () => {
+  if (currentDate.getHours() === 0 && currentDate.getMinutes() === 0) {
+    console.log('midnight');
+    g.clear();
+    resetSeconds();
+  }
   g.setColor(0, 0, 0);
-  // Minute hand
+  // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 40);
-  // Hour hand
+  // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
   currentDate = new Date();
   g.setColor(1, 0.7, 0.7);
-  // Minute hand
+  // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 40);
   g.setColor(1, 1, 0.8);
-  // Hour hand
+  // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
   if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
     Bangle.buzz();
   }
-  g.setColor(1, 1, 1);
-  const dayString = days[currentDate.getDay()];
-  let dateString = currentDate.getDate().toString();
-  if (dateString.length == 1) {
-    dateString = `0${dateString}`;
-  }
-  console.log(`${dayString}-${dateString}`);
-
-  g.drawString(`${dayString}-${dateString}`, g.getWidth() / 2 + 30, g.getHeight() / 2 + 40);
+  drawDate();
 };
+
 
 const clearTimers = () => {
   if (timerInterval) {
