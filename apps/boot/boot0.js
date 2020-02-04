@@ -1,5 +1,24 @@
 // This ALWAYS runs at boot
 E.setFlags({pretokenise:1});
+// Load settings...
+var s = require('Storage').readJSON('@setting')||{};
+if (s.ble!==false) {
+  if (s.HID) { // Humen interface device
+    Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));
+    NRF.setServices({}, {uart:true, hid:Bangle.HID});
+  }
+}
+// If not programmable, force terminal onto screen
+if (s.dev===false) Terminal.setConsole(true);
+// we just reset, so BLE should be on
+if (s.ble===false) NRF.sleep();
+// Set time, vibrate, beep, etc
+if (!s.vibrate) Bangle.buzz=Promise.resolve;
+if (!s.beep) Bangle.beep=Promise.resolve;
+Bangle.setLCDTimeout(s.timeout);
+if (!s.timeout) Bangle.setLCDPower(1);
+E.setTimeZone(s.timezone);
+delete s;
 // All of this is just shim for older Bangles
 if (!Bangle.loadWidgets) {
   Bangle.loadWidgets = function(){
