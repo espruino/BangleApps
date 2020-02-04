@@ -66,20 +66,15 @@ function ask() {
 g.clear();
 
 Bangle.loadWidgets();
+Bangle.drawWidgets();
+ask();
 
 // Event Handlers
 
 Bangle.on('touch', (button) => reply(button));
 
-setWatch(ask, BTN1, {repeat:true, edge:"falling"});
-setWatch(reply, BTN3, {repeat:true, edge:"falling"});
+setWatch(ask, BTN1, { repeat: true, edge: "falling" });
+setWatch(reply, BTN3, { repeat: true, edge: "falling" });
 
 // Back to launcher
-setWatch(Bangle.showLauncher, BTN2, {repeat:false, edge:"falling"});
-
-Bangle.on('lcdPower', (on) => {
-  if (on) {
-    Bangle.drawWidgets();
-    ask();
-  }
-});
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });

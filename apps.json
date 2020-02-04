@@ -775,7 +775,7 @@
     ],
     "allow_emulator":true,
     "type":"app",
-    "version": "0.01",
+    "version": "0.02",
     "sortorder" : -9
   }
 ]
