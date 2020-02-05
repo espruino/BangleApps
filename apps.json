@@ -751,5 +751,17 @@
       {"name":"*demoapp","url":"app-icon.js","evaluate":true}
     ],
     "sortorder" : -9
+  },
+  { "id": "flagrse",
+    "name": "Espruino Flag Raiser",
+    "icon": "app.png",
+    "description": "App to send a command to an Espruino-based bluetooth Flag",
+    "tags": "",
+    "storage": [
+      {"name":"+flagrse","url":"app.json"},
+      {"name":"-flagrse","url":"app.js"},
+      {"name":"*flagrse","url":"app-icon.js","evaluate":true}
+    ]
   }
+
 ]
