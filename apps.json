@@ -56,7 +56,7 @@
     "name": "Settings",
     "icon": "settings.png",
     "version":"0.02",
-    "description": "A menu for setting up Bangle.js - by default this disables Bluetooth unless you enable 'BLE' AND 'Dev'",
+    "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
       {"name":"+setting","url":"settings.json"},
