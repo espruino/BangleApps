@@ -5,13 +5,7 @@ g.clear();
 const storage = require('Storage');
 let settings;
 
-function debug(msg, arg) {
-  if (settings.debug)
-    console.log(msg, arg);
-}
-
 function updateSettings() {
-  debug('updating settings', settings);
   //storage.erase('@setting'); // - not needed, just causes extra writes if settings were the same
   storage.write('@setting', settings);
 }
@@ -25,9 +19,9 @@ function resetSettings() {
     beep: true,
     timezone: 0,
     HID : false,
-    HIDGestures: false,
-    debug: false,
-    clock: null
+    clock: null,
+    "12hour" : false,
+    distance : "kilometer" // or "mile"
   };
   setLCDTimeout(settings.timeout);
   updateSettings();
@@ -43,6 +37,7 @@ const boolFormat = (v) => v ? "On" : "Off";
 function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
+    'Make Connectable': makeConnectable,
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -93,7 +88,28 @@ function showMainMenu() {
         }
       }
     },
+    'Locale': showLocaleMenu,
     'Select Clock': showClockMenu,
+    'HID': {
+      value: settings.HID,
+      format: boolFormat,
+      onchange: () => {
+        settings.HID = !settings.HID;
+        updateSettings();
+      }
+    },
+    'Set Time': showSetTimeMenu,
+    'Reset Settings': showResetMenu,
+    'Turn Off': Bangle.off,
+    '< Back': ()=> {load();}
+  };
+  return E.showMenu(mainmenu);
+}
+
+function showLocaleMenu() {
+  const localemenu = {
+    '': { 'title': 'Locale' },
+    '< Back': showMainMenu,
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -104,37 +120,24 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'HID': {
-      value: settings.HID,
-      format: boolFormat,
-      onchange: () => {
-        settings.HID = !settings.HID;
+    'Clock Style': {
+      value: !!settings["12hour"],
+      format : v => v?"12hr":"24hr",
+      onchange: v => {
+        settings["12hour"] = v;
         updateSettings();
       }
     },
-    'HID Gestures': {
-      value: settings.HIDGestures,
-      format: boolFormat,
-      onchange: () => {
-        settings.HIDGestures = !settings.HIDGestures;
+    'Distance/Speed': {
+      value: settings.distanceunit=="mile",
+      format: v => v?"mile":"kilometer",
+      onchange: v => {
+        settings.distanceunit = v?"mile":"kilometer";
         updateSettings();
       }
     },
-    'Debug': {
-      value: settings.debug,
-      format: boolFormat,
-      onchange: () => {
-        settings.debug = !settings.debug;
-        updateSettings();
-      }
-    },
-    'Set Time': showSetTimeMenu,
-    'Make Connectable': makeConnectable,
-    'Reset Settings': showResetMenu,
-    'Turn Off': Bangle.off,
-    '< Back': ()=> {load();}
   };
-  return E.showMenu(mainmenu);
+  return E.showMenu(localemenu);
 }
 
 function showResetMenu() {
@@ -149,16 +152,7 @@ function showResetMenu() {
         }
         setTimeout(showMainMenu, 50);
       });
-    },
-    // this is include for debugging. remove for production
-    /*'Erase': () => {
-      storage.erase('=setting');
-      storage.erase('-setting');
-      storage.erase('@setting');
-      storage.erase('*setting');
-      storage.erase('+setting');
-      E.reboot();
-    }*/
+    }
   };
   return E.showMenu(resetmenu);
 }
