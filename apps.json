@@ -777,7 +777,7 @@
     "type":"app",
     "version": "0.02",
     "sortorder" : -9
-  }
+  },
   {
     "id": "jbb",
     "name": "Battery Level",
