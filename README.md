@@ -21,6 +21,7 @@ easily distinguish between file types, we use the following:
 * `*stuff` is an image
 * `-stuff` is JS code
 * `=stuff` is JS code for stuff that is run at boot time - eg. handling settings or creating widgets on the clock screen
+* `@stuff` is used for JSON settings for an app
 
 ## Developing your own app
 
@@ -215,6 +216,8 @@ about the app.
 
 ## Coding hints
 
+- Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `@7chname`, then load it at startup.
+
 - use `g.setFont(.., size)` to multiply the font size, eg ("6x8",3) : "18x24"
 
 - use `g.drawString(text,x,y,true)` to draw with background color to overwrite existing text
@@ -227,7 +230,7 @@ about the app.
 
 - using `g.setLCDBrightness()` can save you power during long periods with lcd on
 
-- chaining graphics methodes, eg `g.setColor(0xFD20).setFontAlign(0,0).setfont("6x8",3)`
+- chaining graphics methods, eg `g.setColor(0xFD20).setFontAlign(0,0).setfont("6x8",3)`
 
 ### Graphic areas
 
@@ -286,7 +289,7 @@ You can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bi
 The [`testing`](testing) folder contains snippets of code that might be useful for your apps.
 
 * `testing/colors.js` - 16 bit colors as name value pairs
-* `testing/gpstrack.js` - code to store a GPS track in Bagle.js storage and output it back to the console
+* `testing/gpstrack.js` - code to store a GPS track in Bangle.js storage and output it back to the console
 * `testing/map` - code for splitting an image into map tiles and then displaying them
 
 ## Credits
