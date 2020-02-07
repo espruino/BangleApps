@@ -19,6 +19,22 @@ Bangle.setLCDTimeout(s.timeout);
 if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
 delete s;
+// check to see if our clock is wrong - if it is use GPS time
+if ((new Date()).getFullYear()==1970) {
+  console.log("Searching for GPS time");
+  Bangle.on('GPS',function cb(g) {
+    Bangle.setGPSPower(0);
+    Bangle.removeListener("GPS",cb);
+    if (!g.time || (g.time.getFullYear()<2000) ||
+       (g.time.getFullYear()==2250)) {
+      console.log("GPS receiver's time not set");
+      return;
+    }
+    setTime(g.time.getTime()/1000);
+    console.log("GPS time",g.time.toString());
+  });
+  Bangle.setGPSPower(1);
+}
 // All of this is just shim for older Bangles
 if (!Bangle.loadWidgets) {
   Bangle.loadWidgets = function(){

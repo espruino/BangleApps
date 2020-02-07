@@ -743,6 +743,19 @@
       {"name":"+demoapp","url":"app.json"},
       {"name":"-demoapp","url":"app.js"},
       {"name":"*demoapp","url":"app-icon.js","evaluate":true}
+    ],
+    "sortorder" : -9
+  },
+  { "id": "flagrse",
+    "name": "Espruino Flag Raiser",
+    "icon": "app.png",
+    "description": "App to send a command to another Espruino to cause it to raise a flag",
+    "tags": "",
+    "storage": [
+      {"name":"+flagrse","url":"app.json"},
+      {"name":"-flagrse","url":"app.js"},
+      {"name":"*flagrse","url":"app-icon.js","evaluate":true}
     ]
   }
+
 ]
