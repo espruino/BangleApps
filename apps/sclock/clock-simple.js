@@ -18,6 +18,7 @@ function drawSimpleClock() {
   var d = new Date();
   var da = d.toString().split(" ");
 
+  g.reset(); // default draw styles
   // drawSting centered
   g.setFontAlign(0, 0);
 
