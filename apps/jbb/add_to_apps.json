@@ -1,0 +1,23 @@
+{
+  "id": "jbb",
+  "name": "Battery Power",
+  "icon": "app.png",
+  "description": "Showing battery level and charging status",
+  "tags": "tool",
+  "storage": [
+    {
+      "name": "+jbb",
+      "url": "app.json"
+    },
+    {
+      "name": "-jbb",
+      "url": "app.js"
+    },
+    {
+      "name": "*jbb",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "version": "0.02"
+}

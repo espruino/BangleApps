@@ -778,4 +778,30 @@
     "version": "0.02",
     "sortorder" : -9
   }
+  {
+    "id": "jbb",
+    "name": "Battery Level",
+    "icon": "app.png",
+    "description": "Battery status and charging indicator",
+    "tags": "tool",
+    "storage": [
+      {
+        "name": "+jbb",
+        "url": "app.json"
+      },
+      {
+        "name": "-jbb",
+        "url": "app.js"
+      },
+      {
+        "name": "*jbb",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ],
+    "allow_emulator":true,
+    "type":"app",
+    "version": "0.02",
+    "sortorder" : -9
+  }
 ]
