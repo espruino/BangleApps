@@ -2,6 +2,7 @@
 { "id": "7chname",
   "name": "My app's human readable name",
   "icon": "app.png",
+  "version":"0.01",
   "description": "A detailed description of my great app",
   "tags": "",
   "storage": [
