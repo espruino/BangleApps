@@ -173,7 +173,7 @@
     "icon": "gpstime.png",
     "version":"0.01",
     "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
-    "tags": "tool",
+    "tags": "tool,gps",
     "storage": [
       {"name":"+gpstime","url":"gpstime.json"},
       {"name":"-gpstime","url":"gpstime.js"},
@@ -185,7 +185,7 @@
     "icon": "openlocation.png",
     "version":"0.01",
     "description": "Convert your current GPS location to a series of characters",
-    "tags": "tool,outdoors",
+    "tags": "tool,outdoors,gps",
     "storage": [
       {"name":"+openloc","url":"openlocation.json"},
       {"name":"-openloc","url":"openlocation.js","evaluate":true}
@@ -196,11 +196,26 @@
     "icon": "speedo.png",
     "version":"0.01",
     "description": "Show the current speed according to the GPS",
-    "tags": "tool,outdoors",
+    "tags": "tool,outdoors,gps",
     "storage": [
       {"name":"+speedo","url":"speedo.json"},
       {"name":"-speedo","url":"speedo.js"},
       {"name":"*speedo","url":"speedo-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "gpsrec",
+    "name": "GPS Recorder",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Application that allows you to record a GPS track. Can run in background",
+    "tags": "tool,outdoors,gps",
+    "storage": [
+      {"name":"+gpsrec","url":"app.json"},
+      {"name":"-gpsrec","url":"app.js"},
+      {"name":"@gpsrec","url":"app-settings.json","evaluate":true},
+      {"name":"*gpsrec","url":"app-icon.js","evaluate":true},
+      {"name":"=gpsrec","url":"widget.js"}
     ]
   },
   { "id": "slevel",

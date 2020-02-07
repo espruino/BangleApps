@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p>Hello!</p>
+
+    <script>
+var __id = 0, __idlookup = [];
+var Puck = {
+  eval : function(data,callback) {
+    __id++;
+    __idlookup[__id] = callback;
+    window.postMessage({type:"eval",data:data,id:__id});
+  },write : function(data,callback) {
+    __id++;
+    __idlookup[__id] = callback;
+    window.postMessage({type:"write",data:data,id:__id});
+  }
+};
+window.addEventListener("message", function(event) {
+  var msg = event.data;
+  if (msg.type=="evalrsp" || msg.type=="writersp") {
+    var cb = __idlookup[msg.id];
+    delete __idlookup[msg.id];
+    cb(msg.data);
+  }
+}, false);
+
+Puck.eval("E.getTemperature()",function(d) {
+  console.log("GOT: "+d);
+});
+
+    </script>
+  </body>
+</html>

@@ -86,6 +86,8 @@ function showPrompt(title, text) {
   });
 }
 function handleCustomApp(app) {
+  // Pops up an IFRAME that allows an app to be customised
+  if (!app.custom) throw new Error("App doesn't have custom HTML");
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
       <a href="#close" class="modal-overlay " aria-label="Close"></a>
@@ -119,6 +121,58 @@ function handleCustomApp(app) {
     }, false);
   });
 }
+
+function handleAppInterface(app) {
+  // IFRAME interface window that can be used to get data from the app
+  if (!app.interface) throw new Error("App doesn't have interface HTML");
+  return new Promise((resolve,reject) => {
+    var modal = htmlElement(`<div class="modal active">
+      <a href="#close" class="modal-overlay " aria-label="Close"></a>
+      <div class="modal-container" style="height:100%">
+        <div class="modal-header">
+          <a href="#close" class="btn btn-clear float-right" aria-label="Close"></a>
+          <div class="modal-title h5">${escapeHtml(app.name)}</div>
+        </div>
+        <div class="modal-body" style="height:100%">
+          <div class="content" style="height:100%">
+            <iframe style="width:100%;height:100%;border:0px;">
+          </div>
+        </div>
+      </div>
+    </div>`);
+    document.body.append(modal);
+    htmlToArray(modal.getElementsByTagName("a")).forEach(button => {
+      button.addEventListener("click",event => {
+        event.preventDefault();
+        modal.remove();
+        //reject("Window closed");
+      });
+    });
+    var iframe = modal.getElementsByTagName("iframe")[0];
+    var iwin = iframe.contentWindow;
+    iwin.addEventListener("message", function(event) {
+      var msg = event.data;
+      if (msg.type=="eval") {
+        Puck.eval(msg.data, function(result) {
+          iwin.postMessage({
+            type : "evalrsp",
+            data : result,
+            id : msg.id
+          });
+        });
+      } else if (msg.type=="write") {
+        Puck.write(msg.data, function() {
+          iwin.postMessage({
+            type : "writersp",
+            id : msg.id
+          });
+        });
+      }
+    }, false);
+    iframe.src = `apps/${app.id}/${app.interface}`
+  });
+}
+
 // ===========================================  Top Navigation
 function showTab(tabname) {
   htmlToArray(document.querySelectorAll("#tab-navigate .tab-item")).forEach(tab => {
@@ -162,6 +216,7 @@ function refreshLibrary() {
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
     </div>
     <div class="tile-action">
+      <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
       <button class="btn btn-link btn-action btn-lg ${app.allow_emulator?"":"d-hide"}" appid="${app.id}" title="Try in Emulator"><i class="icon icon-share"></i></button>
       <button class="btn btn-link btn-action btn-lg ${version.canUpdate?"":"d-hide"}" appid="${app.id}" title="Update App"><i class="icon icon-refresh"></i></button>
       <button class="btn btn-link btn-action btn-lg ${!appInstalled?"":"d-hide"}" appid="${app.id}" title="Upload App"><i class="icon icon-upload"></i></button>
@@ -236,6 +291,8 @@ function refreshLibrary() {
         icon.classList.remove("icon-refresh");
         icon.classList.add("loading");
         updateApp(app);
+      } else if (icon.classList.contains("icon-download")) {
+        handleAppInterface(app);
       }
     });
   });
@@ -272,6 +329,7 @@ function updateApp(app) {
   });
 }
 
+
 function appNameToApp(appName) {
   var app = appJSON.find(app=>app.id==appName);
   if (app) return app;
@@ -301,9 +359,9 @@ function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
   var tab = document.querySelector("#tab-myappscontainer a");
   tab.setAttribute("data-badge", appsInstalled.length);
-  panelbody.innerHTML = appsInstalled.map(appJSON => {
-var app = appNameToApp(appJSON.id);
-var version = getVersionInfo(app, appJSON);
+  panelbody.innerHTML = appsInstalled.map(appInstalled => {
+var app = appNameToApp(appInstalled.id);
+var version = getVersionInfo(app, appInstalled);
 return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
@@ -313,6 +371,7 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
     </div>
     <div class="tile-action">
+      <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
       <button class="btn btn-link btn-action btn-lg ${version.canUpdate?'':'d-hide'}" appid="${app.id}" title="Update App"><i class="icon icon-refresh"></i></button>
       <button class="btn btn-link btn-action btn-lg" appid="${app.id}" title="Remove App"><i class="icon icon-delete"></i></button>
     </div>
@@ -328,6 +387,7 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-delete")) removeApp(app);
       if (icon.classList.contains("icon-refresh")) updateApp(app);
+      if (icon.classList.contains("icon-download")) handleAppInterface(app)
     });
   });
 }

@@ -193,6 +193,10 @@ about the app.
                               // iframe, and it must post back an 'app' structure
                               // like this one with 'storage','name' and 'id' set up
 
+  "interface": "interface.html",   // if supplied, apps/interface.html is loaded in an
+                              // iframe, and it may interact with the connected Bangle
+                              // to retrieve information from it
+
   "allow_emulator":true,      // if 'app.js' will run in the emulator, set to true to
                               // add an icon to allow your app to be tested
 
