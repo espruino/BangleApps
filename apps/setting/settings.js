@@ -129,10 +129,10 @@ function showLocaleMenu() {
       }
     },
     'Distance/Speed': {
-      value: settings.distanceunit=="mile",
-      format: v => v?"mile":"kilometer",
+      value: settings.distance=="mile",
+      format: v => v?"mile":"km",
       onchange: v => {
-        settings.distanceunit = v?"mile":"kilometer";
+        settings.distance = v?"mile":"kilometer";
         updateSettings();
       }
     },
