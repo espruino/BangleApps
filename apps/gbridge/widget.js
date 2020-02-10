@@ -9,7 +9,7 @@
     var oldMode = Bangle.getLCDMode();
     Bangle.setLCDMode("direct");
     g.setClipRect(0,240,239,319);
-    g.setColor("#404040");
+    g.setColor("#222222");
     g.fillRect(1,241,238,318);
     render(320-size);
     g.setColor("#ffffff");
@@ -60,7 +60,7 @@
           g.setFont("6x8",2);
           g.drawString(j.title,x,y+25);
           g.setFont("6x8",1);
-          g.setColor("#b0b0b0");
+          g.setColor("#ffffff");
           // split text up a word boundaries
           var txt = j.body.split("\n");
           var MAXCHARS = 38;
@@ -97,7 +97,7 @@
           g.setColor("#ffffff");
           g.drawString(musicInfo.artist,x,y+8);
           g.setFont("6x8",1);
-          g.setColor("#c0c0c0");
+          g.setColor("#ffffff");
           g.drawString(musicInfo.track,x,y+22);
         });
       if (musicState=="pause")
