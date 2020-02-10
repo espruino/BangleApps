@@ -149,27 +149,31 @@ function handleAppInterface(app) {
       });
     });
     var iframe = modal.getElementsByTagName("iframe")[0];
-    var iwin = iframe.contentWindow;
-    iwin.addEventListener("message", function(event) {
-      var msg = event.data;
-      if (msg.type=="eval") {
-        Puck.eval(msg.data, function(result) {
-          iwin.postMessage({
-            type : "evalrsp",
-            data : result,
-            id : msg.id
+    iframe.onload = function() {
+      var iwin = iframe.contentWindow;
+      iwin.addEventListener("message", function(event) {
+        var msg = event.data;
+        if (msg.type=="eval") {
+          Puck.eval(msg.data, function(result) {
+            iwin.postMessage({
+              type : "evalrsp",
+              data : result,
+              id : msg.id
+            });
           });
-        });
-      } else if (msg.type=="write") {
-        Puck.write(msg.data, function() {
-          iwin.postMessage({
-            type : "writersp",
-            id : msg.id
+        } else if (msg.type=="write") {
+          Puck.write(msg.data, function(result) {
+            iwin.postMessage({
+              type : "writersp",
+              data : result,
+              id : msg.id
+            });
           });
-        });
-      }
-    }, false);
-    iframe.src = `apps/${app.id}/${app.interface}`
+        }
+      }, false);
+      iwin.postMessage({type:"init"});
+    };
+    iframe.src = `apps/${app.id}/${app.interface}`;
   });
 }
 

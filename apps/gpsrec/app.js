@@ -109,7 +109,3 @@ function viewTrack(n) {
 }
 
 showMainMenu();
-
-
-// f = require("Storage").open(".gpsrc"+n,"r");
-// f.readLine()...

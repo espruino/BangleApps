@@ -8,7 +8,7 @@
     <p>Try your QR Code: <div id="qrcode"></div></p>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
-
+    <script src="../../lib/customize.js"></script>
     <script src="../../lib/qrcode.min.js"></script><!-- https://davidshimjs.github.io/qrcodejs/ -->
     <script src="https://espruino.github.io/EspruinoWebTools/heatshrink.js"></script>
     <script src="https://espruino.github.io/EspruinoWebTools/imageconverter.js"></script>
@@ -41,15 +41,13 @@ g.setColor(0,0,0);
 g.drawString(url,120,230);
 g.setColor(1,1,1);
 `;
-        console.log(app);
         var json = JSON.stringify({
           name:"QR Code",
           icon:"*qrcode",
           src:"-qrcode"
         });
         var icon = `require("heatshrink").decompress(atob("mEwgP/AEX8gE8nkAn4FSngCWF6xfYDgIABHAQFPDQXD4YgDApxNDMooFOAQIdDAqIvWfcYA="))`;
-
-        window.postMessage({
+        sendCustomizedApp({
           id : "qrcode",
 
           storage:[
@@ -58,6 +56,7 @@ g.setColor(1,1,1);
             {name:"*qrcode", content:icon, evaluate:true},
           ]
         });
+
       });
 
     </script>

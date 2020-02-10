@@ -192,10 +192,12 @@ about the app.
   "custom": "custom.html",    // if supplied, apps/custom.html is loaded in an
                               // iframe, and it must post back an 'app' structure
                               // like this one with 'storage','name' and 'id' set up
+                              // see below for more info
 
   "interface": "interface.html",   // if supplied, apps/interface.html is loaded in an
                               // iframe, and it may interact with the connected Bangle
                               // to retrieve information from it
+                              // see below for more info
 
   "allow_emulator":true,      // if 'app.js' will run in the emulator, set to true to
                               // add an icon to allow your app to be tested
@@ -217,6 +219,83 @@ about the app.
 * name, icon and description present the app in the app loader.
 * tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
 * storage is used to identify the app files and how to handle them
+
+### `apps.json`: `custom` element
+
+Apps that can be customised need to define a `custom` element in `apps.json`,
+which names an HTML file in that app's folder.
+
+When `custom` is defined, the 'upload' button is replaced by a customize
+button, and when clicked it opens the HTML page specified in an iframe.
+
+In that HTML file you're then responsible for handling a button
+press and calling `sendCustomizedApp` with your own customised
+version of what's in `apps.json`:
+
+```
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <p><button id="upload" class="btn btn-primary">Upload</button></p>
+    <script src="../../lib/customize.js"></script>
+    <script>
+      document.getElementById("upload").addEventListener("click", function() {
+        sendCustomizedApp({
+          id : "7chname",
+          storage:[
+            {name:"-7chname", content:app_source_code},
+            {name:"+7chname", content:JSON.stringify({
+              name:"My app's name",
+              icon:"*7chname",
+              src:"-7chname"
+            })},
+            {name:"*7chname", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>
+```
+
+This'll then be loaded in to the watch. See [apps/qrcode/grcode.html](the QR Code app)
+for a clean example.
+
+### `apps.json`: `interface` element
+
+Apps that create data that can be read back can define a `interface` element in `apps.json`,
+which names an HTML file in that app's folder.
+
+When `interface` is defined, a `Download from App` button is added to
+the app's description, and when clicked it opens the HTML page specified
+in an iframe.
+
+```
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <script src="../../lib/interface.js"></script>
+    <div id="t">Loading...</div>
+    <script>
+      function onInit() {
+        Puck.eval("E.getTemperature()", temp=> {
+          document.getElementById("t").innerHTML = temp;
+        });
+      }
+    </script>
+  </body>
+</html>
+```
+
+When the page is ready a function called `onInit` is called,
+and in that you can call `Puck.write` and `Puck.eval` to get
+the data you require from Bangle.js.
+
+See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 
 ## Coding hints
 
