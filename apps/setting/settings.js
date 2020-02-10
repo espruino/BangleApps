@@ -23,7 +23,7 @@ function resetSettings() {
     "12hour" : false,
     distance : "kilometer" // or "mile"
   };
-  setLCDTimeout(settings.timeout);
+  Bangle.setLCDTimeout(settings.timeout);
   updateSettings();
 }
 
