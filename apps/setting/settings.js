@@ -1,7 +1,3 @@
-Bangle.setLCDPower(1);
-Bangle.setLCDTimeout(0);
-
-g.clear();
 const storage = require('Storage');
 let settings;
 
@@ -23,7 +19,7 @@ function resetSettings() {
     "12hour" : false,
     distance : "kilometer" // or "mile"
   };
-  setLCDTimeout(settings.timeout);
+  Bangle.setLCDTimeout(settings.timeout);
   updateSettings();
 }
 
