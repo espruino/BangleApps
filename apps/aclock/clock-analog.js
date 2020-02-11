@@ -107,11 +107,14 @@ const onMinute = () => {
     g.clear();
     resetSeconds();
   }
+  // clear existing hands
   g.setColor(0, 0, 0);
   // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 40);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
+
+  // get new date, then draw new hands
   currentDate = new Date();
   g.setColor(1, 0.7, 0.7);
   // Hour
@@ -157,7 +160,7 @@ Bangle.on('faceUp', (up) => {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-console.log('Nik\'s watch version ', version);
+console.log('Analog watch version ', version);
 resetSeconds();
 startTimers();
 
