@@ -14,7 +14,7 @@ function draw() {
 }
 function changed() {
   draw();
-  g.flip();
+  g.flip();// turns screen on
 }
 NRF.on('connected',changed);
 NRF.on('disconnected',changed);
