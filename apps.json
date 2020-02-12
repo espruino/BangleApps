@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "storage": [
@@ -13,7 +13,7 @@
     "sortorder" : -10
   },
   { "id": "launch",
-    "name": "Launcher",
+    "name": "Default Launcher",
     "icon": "app.png",
     "version":"0.01",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
@@ -65,6 +65,20 @@
       {"name":"*setting","url":"settings-icon.js","evaluate":true}
     ],
     "sortorder" : -2
+  },
+  { "id": "alarm",
+    "name": "Default Alarm",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Set and respond to alarms",
+    "tags": "tool,alarm",
+    "storage": [
+      {"name":"+alarm","url":"app.json"},
+      {"name":"-alarm","url":"app.js"},
+      {"name":"@alarm","content":"[]"},
+      {"name":"*alarm","url":"app-icon.js","evaluate":true},
+      {"name":"=alarm","url":"widget.js"}
+    ]
   },
   { "id": "wclock",
     "name": "Word Clock",

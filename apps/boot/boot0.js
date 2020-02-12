@@ -19,6 +19,30 @@ Bangle.setLCDTimeout(s.timeout);
 if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
 delete s;
+// check for alarms
+function checkAlarm() {
+  var alarms = require('Storage').readJSON('@alarm')||[];
+  var time = new Date();
+  var active = alarms.filter(a=>a.on&&(a.last!=time.getDate()));
+  if (active.length) {
+    active = active.sort((a,b)=>a.hr-b.hr);
+    var hr = time.getHours()+(time.getMinutes()/60);
+    if (!require('Storage').read("-alarm")) {
+      console.log("No alarm app!");
+      require('Storage').write('@alarm',"[]")
+    } else {
+      if (active[0].hr < hr) {
+        // fire alarm now
+        load("-alarm");
+      } else {
+        // execute alarm at the correct time
+        setTimeout(function() {
+          load("-alarm");
+        },3600000*(active[0].hr-hr));
+      }
+    }
+  }
+}
 // check to see if our clock is wrong - if it is use GPS time
 if ((new Date()).getFullYear()==1970) {
   console.log("Searching for GPS time");
@@ -32,9 +56,12 @@ if ((new Date()).getFullYear()==1970) {
     }
     setTime(g.time.getTime()/1000);
     console.log("GPS time",g.time.toString());
+    checkAlarm();
   });
   Bangle.setGPSPower(1);
-}
+} else checkAlarm();
+delete checkAlarm;
+// Check for
 // All of this is just shim for older Bangles
 if (!Bangle.loadWidgets) {
   Bangle.loadWidgets = function(){
