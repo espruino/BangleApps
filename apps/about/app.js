@@ -22,7 +22,7 @@ getVersion("Settings","+setting");
 y+=h;
 g.drawString(MEM.total+" JS Variables available",0,y+=h);
 g.drawString("Storage: "+(require("Storage").getFree()>>10)+"k free",0,y+=h);
-if (ENV.STORAGE) g.drawString("       "+(ENV.STORAGE>>10)+"k total",0,y+=h);
+if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+"k total",0,y+=h);
 if (ENV.SPIFLASH) g.drawString("SPI Flash: "+(ENV.SPIFLASH>>10)+"k",0,y+=h);
 g.setFontAlign(0,-1);
 g.drawString(NRF.getAddress(),120,232);
