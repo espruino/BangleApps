@@ -92,7 +92,6 @@ function showPrompt(title, text, buttons) {
     });
   });
 }
-sho
 function showChangeLog(appid) {
   var app = appNameToApp(appid);
   function show(contents) {
