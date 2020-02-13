@@ -23,7 +23,7 @@
     } else {
       g.setFont("6x8", 1);
     }
-    g.setFontAlign(0, 0); // align to x: right, y: center
+    g.setFontAlign(0, 0); // align to x: center, y: center
     g.clearRect(xpos,15,xpos+width,24); // erase background
     g.drawString(stps, xpos+width/2, 19);
     g.drawImage(atob("CgoBM5znv+9z3OABznOMwA=="),xpos+(width-10)/2,2);
