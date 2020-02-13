@@ -40,7 +40,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "welcome",
     "allow_emulator":true,

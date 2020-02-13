@@ -1,3 +1,4 @@
+// exec each function from seq one after the other
 function animate(seq,period) {
   var i = setInterval(function() {
     if (seq.length) {
@@ -6,6 +7,23 @@ function animate(seq,period) {
     } else clearInterval(i);
   },period);
 }
+
+// Fade in to FG color with angled lines
+function fade(callback) {
+  var n = 0;
+  function f() {
+    for (var i=n;i<240;i+=10) {
+      g.drawLine(i,0,0,i);
+      g.drawLine(i,240,240,i);
+    }
+    g.flip();
+    n++;
+    if (n<10) setTimeout(f,0);
+    else callback();
+  }
+  f();
+}
+
 
 var scenes = [
   function() {
@@ -24,12 +42,27 @@ var scenes = [
       }
     },50);
   },function() {
+    var img = require("heatshrink").decompress(atob("ptRxH+qYAfvl70mj5gAC0ekvd8FkAAdz3HJAYAH4+eJXWkJJYAF0hK2vfNJaIAB5t7S3fN5/V6wAD6vOTg9SumXy2W3QAB3eXul2JdnO63XAApPEVYvAJQIACJoRQDzBLoJQ3W5/NIwr4GJohMFAAROgJYvVJQiPGABZNN3bsdvYyESwnWJSIAC3RNM3V1JjZAES4nVJSYAB4xMNJrbkE56WD5xLVdB5NbFofNJbgABJh26qREPrFXrlbAAWjFgfWJgRLaTQhMLy5KNJINhsJLDrYrD5xLC6pLa5nGTR7oLq9bJQJMKTAXWJbbnR3RLJSoRMHv4pC5rkec6SaIrBLGw2r2XW1epcoqYeJiOXJYziEsOH2RBBw7lF56Yg5nGc6FScZOGJQPX2TmDFIfVTEBMSc4hLEw5KB6+rsJMH63X6pMf5hMQzBLCq5LD1ZLEJhTlfJiWXTA2GJYpMIcwPNc2O6TAuGRIPX1igDJg/PJmyYDcgXWwxMH1ApC53XcsHAJiVYcg2HJYZME0YpC5vWJkhLNJgLlDTAeFJhF/FQfVJkG6JiGXcomyJgOrJYhMErYqD53NJj7lRzBMDcoeGJhzoBJb3GJiN1qZBCJgWyJYpNF1LigAAXAJiNSJgzlGJgt/JkZLRy9TJgeHJhznFcuSZGw5MHJomjcuhLBqdcJiSaiTChMV1CYxy5LCqdXIAWy6+rJhCalTCN2JgdYH4WHJiGpTF7kDc43W2RMJTUZLQzBLFc4mr6+GJh2jTFmXJYyaEwuyc5Sag4xLZTQmG2WFJhxNaJYZMLJZSaEJoOHTR9/Ja+6JbdTqRNETRRNF1JLV4BLcAANYI5ToK1BLYJhWYJZwABq5NoJZ91JaAABdAZNS0ZLey9SJaRNYv5KM426JZmXuxKUJrKcL0lTzBLKzBKYJrVXvfGSol7EYWXJI27zF1JLQADq5NUrgYB4wAEEIV0comXI7wAFrCcPJgYWBTIIAETIN2JYmWuhMkdSdYCgOeJgueqRLFyzhfTi9bq4TC45MF49TuuXJlpONcogAC0hKB0gHDvZMEqRMpAANSq9crlbJAYADqwRDxGk0mIA4eCTQOeveXJdYAHqxNFdAeIAAQGCrOI0oHEAGVXTRJMGvgGCwRM7TAZMHwQGCvhM1rBMERIhMGAwdZJmtSqVTwNcwJEDJg19cvIADa4d9JhANDJnSLHJgrl6AAhFFAwpZDegjn7vhMGcvwABrJAFJgjl/TQpBBI4jl/AAN8TQhHDcv4ADcJBMDvpM+IYaeDAAhL+qd9SgycEJn7iEAA18Jf7nEcv4AIrJLIcv6aMcv4ADvhMHrJJ/AAbl/c6ZM/AAt9cv7nSIv7nLcv4AHrLl/TRpJBvgnjA=="));
     g.reset();
-    g.setBgColor("#6633ff");g.clear();
-    g.setFont("6x8",3);
-    g.setFontAlign(0,0);
-    g.drawString("Welcome.",120,160);
-    g.drawImage(require("heatshrink").decompress(atob("ptRxH+AEXMAAwrjJEhQ/JSRO7JaZN2Hg/N5/V6wAD6vOJxG6ywAB3QAEJdvO63XAApPE5oTE4BLCJo5PkJRnW5/NIwoFFJopMHJ0I0F6pKER4wALJtoyESwnWJSIAC3RNqS5PVJSYAB4xMNJrYvE56WD5xLVdCBNaFofNJbgABJhxNSsNhrYAC1IsD6xMCJbSaEJhZNOJIJLFrYrD5xLC6pLa5nGTThLDJhKYC6xLbc6JNKJQhMFv4pC5rkec7hLGw2r2XW1epcoqYeJiJNHJQuH2RBBw7lF56Yg5nGc6yVFJQPX2TmDFIfVTEBMXraWEJQPX1dhJg/W6/VJj/MJiBNEJYerJYhMKcr5MWTAeGJYpMIcwPNc2JMCS4eGRIPX1gIDJg/PJnTkC62GJg+oFIXO67lg4BMWcgeHJYZME0YpC5vWJkhLNJgKYHwpMIv4qD6pMg3RMSrZCC2RMB1ZLEJglbFQfO5pMfcqKZEcoeGJhzoBJb3GJiP+Jg2yJYpNF1LigAAXAJjLlGJgt/JkblTJgeHJhznFcuSZGw5MHJomjcuxMUTURLUJiuoTGpMDsOy6+rJhCalJapNEw5MQ1KYvJYv+rbnC62yJhKajTC6aE1fXwxMO0aY0JgmF2TnKTUHGJbJNEw2ywpMOJrRLDJhhLKJgZNBw6aPv5LX3RLbAANbJoaaKJoupJavAJbqbFABboF1BLYJhZLPTQhNlJZ5KQTSRNG0ZLzJrF/JZu6JZpKVJrKcM/xMEJUBNaDIJJGAARJlJrQYB4wAEJYgAEJD5OVJYpM2TiRLIJoRLtJyBLDJhJNGJlJOMcooAB0hJB0gHEJmBPHJIQADB4eI0mkxAHEy+Wz2eJl4AEJhYACA4mlA4pM4JoZMGAwZM2JotcTJRM/rbeFJhJL2AAWHrmBJn4AJHo4HFcvaSQJfxM/JiJGHcv6TMJf5M/c6gFEJn6aHJf5M/dDRM/JiRK/Jn5NZJP5M/JjBI/JphH/Jn5NYIv5M/Jn5NlIf5MJE8wA==")),(240-77)/2,60);
+    g.setColor("#6633ff");
+    g.setBgColor("#6633ff");
+    var y = 240, speed = 5;
+    function balloon(callback) {
+      y-=speed;
+      var x = (240-77)/2;
+      g.drawImage(img,x,y);
+      g.clearRect(x,y+81,x+77,y+81+speed);
+      if (y>60) setTimeout(balloon,0,callback);
+      else callback();
+    }
+    fade(function() {
+      balloon(function() {
+        g.setColor(-1);
+        g.setFont("6x8",3);
+        g.setFontAlign(0,0);
+        g.drawString("Welcome.",120,160);
+      });
+    });
     setTimeout(function() {
       var n=0;
       var i = setInterval(function() {
@@ -212,7 +245,7 @@ var scenes = [
            g.drawString("Bangle.js",x,y+=h);}
      ],400);
   }
-  ];
+];
 
 var sceneNumber = 0;
 
