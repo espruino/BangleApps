@@ -7,6 +7,6 @@
   "tags": "widget",
   "storage": [
     {"name":"+7chname","url":"widget.json"},
-    {"name":"-7chname","url":"widget.js"}
+    {"name":"=7chname","url":"widget.js"}
   ]
 }
