@@ -43,7 +43,7 @@
       if (periodCtr<=0) {
         periodCtr = settings.period;
         if (gpsTrack) gpsTrack.write([
-          fix.time.getTime()|0,
+          fix.time.getTime(),
           fix.lat.toFixed(5),
           fix.lon.toFixed(5),
           fix.alt

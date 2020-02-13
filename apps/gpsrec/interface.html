@@ -35,16 +35,16 @@ function hideModal(title) {
 function saveKML(track,title) {
   var kml = `<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
-<Document>
-  <Placemark>
-    <name>${title}</name>
-    <LineString>
-      <coordinates>
-        ${track.map(pt=>[pt.lon, pt.lat, pt.alt].join(",")).join("        \n")}
-      </coordinates>
-    </LineString>
-  </Placemark>
-</Document>
+  <Document>
+    <Placemark>
+      <name>${title}</name>
+      <LineString>
+        <coordinates>
+          ${track.map(pt=>[pt.lon, pt.lat, pt.alt].join(",")).join("\n          ")}
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
 </kml>`;
   var a = document.createElement("a"),
       file = new Blob([kml], {type: "application/vnd.google-earth.kml+xml"});
@@ -61,24 +61,24 @@ function saveKML(track,title) {
 
 function saveGPX(track, title) {
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
-  <gpx creator="Bangle.js" version="1.1">
-    <metadata>
-      <time>${track[0].date.toISOString()}</time>
-    </metadata>
-    <trk>
-      <name>${title}</name>
-      <trkseg>`;
+<gpx creator="Bangle.js" version="1.1">
+  <metadata>
+    <time>${track[0].date.toISOString()}</time>
+  </metadata>
+  <trk>
+    <name>${title}</name>
+    <trkseg>`;
   track.forEach(pt=>{
     gpx += `
-        <trkpt lat="${pt.lat}" lon="${pt.lon}">
-          <ele>${pt.alt}</ele>
-          <time>${pt.date.toISOString()}</time>
-        </trkpt>`;
+      <trkpt lat="${pt.lat}" lon="${pt.lon}">
+        <ele>${pt.alt}</ele>
+        <time>${pt.date.toISOString()}</time>
+      </trkpt>`;
   });
   gpx += `
-      </trkseg>
-    </trk>
-  </gpx>`;
+    </trkseg>
+  </trk>
+</gpx>`;
   var a = document.createElement("a"),
       file = new Blob([gpx], {type: "application/gpx+xml"});
   var url = URL.createObjectURL(file);
