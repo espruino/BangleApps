@@ -323,7 +323,7 @@
     "name": "Simple Heart Rate widget",
     "icon": "widget.png",
     "version":"0.01",
-    "description": "When the screen is turned on, the widget turns on the heart rate monitor and displays the detected heart rate - can take 20s to get a reading.",
+    "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
     "storage": [
       {"name":"+whrm","url":"widget.json"},
