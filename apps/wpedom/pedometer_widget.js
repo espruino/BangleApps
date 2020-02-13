@@ -26,7 +26,7 @@
     g.setFontAlign(0, 0); // align to x: center, y: center
     g.clearRect(xpos,15,xpos+width,24); // erase background
     g.drawString(stps, xpos+width/2, 19);
-    g.drawImage(atob("CgoBM5znv+9z3OABznOMwA=="),xpos+(width-10)/2,2);
+    g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),xpos+(width-10)/2,2);
   }
 
   Bangle.on('step', (up) => {
