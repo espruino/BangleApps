@@ -1,2 +1,3 @@
 0.02: Save number of steps when unloading from memory
 0.03: Don't turn the screen on for every step!
+0.04: Fix pedometer reload when going back to clock app

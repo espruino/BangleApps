@@ -49,7 +49,7 @@
   // When unloading, save state
   E.on('kill', () => {
     let d = {
-      lastUpdate : lastUpdate.toString(),
+      lastUpdate : lastUpdate.toISOString(),
       stepsToday : stp_today
     };
     require("Storage").write(PEDOMFILE,d);
