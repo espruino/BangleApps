@@ -4,9 +4,9 @@
   "icon": "widget.png",
   "version":"0.01",
   "description": "A detailed description of my great widget",
-  "tags": "",
+  "tags": "widget",
   "storage": [
     {"name":"+7chname","url":"widget.json"},
-    {"name":"-7chname","url":"widget.js"},
+    {"name":"-7chname","url":"widget.js"}
   ]
 }

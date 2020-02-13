@@ -7,6 +7,7 @@ currently-running apps */
 
   // draw your widget at xpos
   function draw() {
+    g.reset(); // reset the graphics context to defaults (color/font/etc)
   	// add your code
   }
 
