@@ -51,7 +51,8 @@ Puck.writeProgress = function(charsSent, charsTotal) {
     pt.style.width = percent+"%";
   }
 }
-function showPrompt(title, text) {
+function showPrompt(title, text, buttons) {
+  if (!buttons) buttons={yes:1,no:1};
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
       <!--<a href="#close" class="modal-overlay" aria-label="Close"></a>-->
@@ -62,18 +63,24 @@ function showPrompt(title, text) {
         </div>
         <div class="modal-body">
           <div class="content">
-            ${escapeHtml(text)}
+            ${escapeHtml(text).replace(/\n/g,'<br/>')}
           </div>
         </div>
         <div class="modal-footer">
           <div class="modal-footer">
-            <button class="btn btn-primary" isyes="1">Yes</button>
-            <button class="btn" isyes="0">No</button>
+            ${buttons.yes?'<button class="btn btn-primary" isyes="1">Yes</button>':''}
+            ${buttons.no?'<button class="btn" isyes="0">No</button>':''}
+            ${buttons.ok?'<button class="btn" isyes="1">Ok</button>':''}
           </div>
         </div>
       </div>
     </div>`);
     document.body.append(modal);
+    modal.querySelector("a[href='#close']").addEventListener("click",event => {
+      event.preventDefault();
+      reject();
+      modal.remove();
+    });
     htmlToArray(modal.getElementsByTagName("button")).forEach(button => {
       button.addEventListener("click",event => {
         event.preventDefault();
@@ -84,6 +91,15 @@ function showPrompt(title, text) {
       });
     });
   });
+}
+sho
+function showChangeLog(appid) {
+  var app = appNameToApp(appid);
+  function show(contents) {
+    showPrompt(app.name+" Change Log",contents,{ok:true}).catch(()=>{});;
+  }
+  httpGet(`apps/${appid}/ChangeLog`).
+  then(show).catch(()=>show("No Change Log available"));
 }
 function handleCustomApp(app) {
   // Pops up an IFRAME that allows an app to be customised

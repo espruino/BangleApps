@@ -48,13 +48,17 @@ work out what to display re: versions and if we can update */
 function getVersionInfo(appListing, appInstalled) {
   var versionText = "";
   var canUpdate = false;
+  function clicky(v) {
+    return `<a href="#" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
+  }
+
   if (!appInstalled) {
     if (appListing.version)
-      versionText = "v"+appListing.version;
+      versionText = clicky("v"+appListing.version);
   } else {
     versionText = (appInstalled.version ? ("v"+appInstalled.version) : "Unknown version");
     if (appListing.version != appInstalled.version) {
-      if (appListing.version) versionText += ", latest "+appListing.version;
+      if (appListing.version) versionText += ", latest "+clicky("v"+appListing.version);
       canUpdate = true;
     }
   }
