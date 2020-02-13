@@ -137,9 +137,10 @@
   { "id": "clck3x2",
     "name": "3x2 Pixel Clock",
     "icon": "clock3x2.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "This is a simple clock using minimalistic 3x2 pixel numerical digits",
     "tags": "clock",
+    "allow_emulator":true,
     "storage": [
       {"name":"+clck3x2","url":"clock3x2.json"},
       {"name":"-clck3x2","url":"clock3x2.js"},

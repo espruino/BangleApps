@@ -32,6 +32,7 @@
       }
     }
     g.drawString("GPS",xpos+12,12);
+    g.setColor(-1); // change color back to be nice to other apps
   }
 
   function onGPS(fix) {

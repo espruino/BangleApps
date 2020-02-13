@@ -57,9 +57,9 @@ const pixels =  [[[0,0], // digit on/off pixels
 let idTimeout = null;
 
 function drawTime() {
-  g.clear();
+  g.clear(1);
   Bangle.drawWidgets();
-
+  g.reset();
   let d = Date();
   let h = d.getHours();
   let m = d.getMinutes();
