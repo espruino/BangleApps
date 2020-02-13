@@ -24,11 +24,10 @@
     if (stps.length > 3){
       stps = stps.slice(0,-3) + "," + stps.slice(-3);
     }
-    g.setColor(1,1,1);
+    g.setColor(-1);
     g.setFont("4x6", 2);
     g.setFontAlign(1, 0); // align to x: right, y: center
     g.drawString(stps, xpos, 11, true); // 6 * 4*2 = 48
-    g.flip();
   }
 
   Bangle.on('step', (up) => {
@@ -41,9 +40,12 @@
     }
     lastUpdate = date;
     //console.log("up: " + up + " stp: " + stp_today + " " + date.toString());
-    draw();
+    if (Bangle.isLCDOn()) draw();
   });
-
+  // redraw when the LCD turns on
+  Bangle.on('lcdPower', function(on) {
+    if (on) draw();
+  });
   // When unloading, save state
   E.on('kill', () => {
     let d = {
