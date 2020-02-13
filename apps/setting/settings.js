@@ -21,6 +21,7 @@ function resetSettings() {
     clock: null,
     "12hour" : false,
     distance : "kilometer" // or "mile"
+    // welcomed : undefined/true (whether welcome app should show)
   };
   Bangle.setLCDTimeout(settings.timeout);
   updateSettings();
@@ -85,6 +86,14 @@ function showMainMenu() {
           VIBRATE.write(1);
           setTimeout(()=>VIBRATE.write(0), 10);
         }
+      }
+    },
+    'Welcome App': {
+      value: !settings.welcomed,
+      format: boolFormat,
+      onchange: v => {
+        settings.welcomed = v?undefined:true;
+        updateSettings();
       }
     },
     'Locale': showLocaleMenu,

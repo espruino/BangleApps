@@ -542,6 +542,8 @@ document.getElementById("installdefault").addEventListener("click",event=>{
       upload();
     });
   }).then(()=>{
+    return Comms.setTime();
+  }).then(()=>{
     showToast("Default apps successfully installed!","success");
     return getInstalledApps();
   }).catch(err=>{

@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "storage": [
@@ -36,6 +36,18 @@
       {"name":"*about","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "welcome",
+    "name": "Welcome",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Appears at first boot and explains how to use Bangle.js",
+    "tags": "",
+    "storage": [
+      {"name":"+welcome","url":"app.json"},
+      {"name":"-welcome","url":"app.js"},
+      {"name":"*welcome","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
@@ -67,7 +79,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
