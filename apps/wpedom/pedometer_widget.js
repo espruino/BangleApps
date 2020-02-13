@@ -4,7 +4,7 @@
   // WIDGETPOS.tr is originally 208 without any widgets
   var xpos = WIDGETPOS.tl;
   var width = 24;
-  WIDGETPOS.tl -= (width + 2);
+  WIDGETPOS.tl += (width + 2);
 
   let lastUpdate = new Date();
   let stp_today = 0;
