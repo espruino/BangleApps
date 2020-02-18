@@ -1,8 +1,13 @@
+const Setter = {
+  UPPER: 'upper',
+  LOWER: 'lower'
+};
+
 upperLimit = 130;
 lowerLimit = 100;
-limitSetter = "lower";
-currentHeartRate = 220;
-hrConfidence = 49;
+limitSetter = Setter.LOWER;
+currentHeartRate = 0;
+hrConfidence = -1;
 
 function drawTrainingHeartRate() {
     renderUpperLimit();
@@ -21,7 +26,7 @@ function renderUpperLimit() {
     g.fillRect(140,40, 230, 70);
     g.fillRect(200,70, 230, 210);
 
-    if(limitSetter === "upper"){
+    if(limitSetter === Setter.UPPER){
         g.setColor(255,255, 255);
         g.drawPoly([140,40,230,40,230,210,200,210,200,70,140,70], true);
     }
@@ -44,7 +49,7 @@ function renderLowerLimit() {
     g.fillRect(10, 180, 100, 210);
     g.fillRect(10, 40, 40, 180); 
 
-    if(limitSetter === "lower"){
+    if(limitSetter === Setter.LOWER){
         g.setColor(255,255, 255);
         g.drawPoly([10,40,40,40,40,180,100,180,100,210,10,210], true);
     }
@@ -91,21 +96,21 @@ function onHrm(hrm){
 }
 
 function setLimitSetterToLower() {
-    limitSetter = "lower";
+    limitSetter = Setter.LOWER;
     console.log("Limit setter is lower");
     renderUpperLimit();
     renderLowerLimit();
 }
 
 function setLimitSetterToUpper() {
-    limitSetter = "upper";
+    limitSetter = Setter.UPPER;
     console.log("Limit setter is upper");
     renderLowerLimit();
     renderUpperLimit();
 }
 
 function incrementLimit(){
-    if(limitSetter === "upper"){
+    if(limitSetter === Setter.UPPER){
         upperLimit++;
         renderUpperLimit();
         console.log("Upper limit: " + upperLimit);
@@ -117,7 +122,7 @@ function incrementLimit(){
 }
 
 function decrementLimit(){
-    if(limitSetter === "upper"){
+    if(limitSetter === Setter.UPPER){
         upperLimit--;
         renderUpperLimit();
         console.log("Upper limit: " + upperLimit);
