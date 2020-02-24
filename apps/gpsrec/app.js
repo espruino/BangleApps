@@ -80,7 +80,7 @@ function viewTrack(n) {
   var l = f.readLine();
   if (l!==undefined) {
     var c = l.split(",");
-    trackTime = new Date(0|c[0]);
+    trackTime = new Date(c[0]);
   }
   while (l!==undefined) {
     trackCount++;
