@@ -413,18 +413,12 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
 
 function getInstalledApps() {
   showLoadingIndicator("myappscontainer");
-  showLoadingIndicator("myfscontainer");
   // Get apps and files
   return Comms.getInstalledApps()
     .then(appJSON => {
       appsInstalled = appJSON;
       refreshMyApps();
       refreshLibrary();
-    })
-    .then(Comms.listFiles)
-    .then(list => {
-      files = list;
-      refreshMyFS();
     })
     .then(() => handleConnectionChange(true));
 }
@@ -469,45 +463,6 @@ librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
   refreshLibrary();
 });
-
-
-// =========================================== My Files
-
-function refreshMyFS() {
-  var panelbody = document.querySelector("#myfscontainer .panel-body");
-  var tab = document.querySelector("#tab-myfscontainer a");
-  tab.setAttribute("data-badge", files.length);
-  panelbody.innerHTML = `
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-      </tr>
-    </thead>
-    <tbody>${
-    files.map(file =>
-      `<tr data-name="${file}"><td>${escapeHtml(file)}</td><td>${fileType(file).name}</td></li>`
-    ).join("")}
-    </tbody>`;
-
-  htmlToArray(panelbody.getElementsByTagName("tr")).forEach(row => {
-    row.addEventListener("click",event => {
-      var name = event.target.closest('tr').dataset.name;
-      const type = fileType(name);
-      Comms.readFile(name).then(content => content.length && saveAs(new Blob([content], type), name));
-    });
-  });
-}
-
-function fileType(file) {
-  switch (file[0]) {
-    case "+": return { name: "App descriptor", type: "application/json;charset=utf-8" };
-    case "*": return { name: "App icon", type: "text/plain;charset=utf-8" };
-    case "-": return { name: "App code", type: "application/javascript;charset=utf-8" };
-    case "=": return { name: "Boot-time code", type: "application/javascript;charset=utf-8" };
-    default: return { name: "Plain", type: "text/plain;charset=utf-8" };
-  }
-}
 
 // =========================================== About
 
