@@ -11,19 +11,19 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
-    ble: true,
-    dev: true,
-    timeout: 10,
-    vibrate: true,
-    beep: true,
-    timezone: 0,
-    HID : false,
-    clock: null,
-    "12hour" : false,
+    ble: true,             // Bluetooth enabled by default
+    blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
+    log: false,            // Do log messages appear on screen?
+    timeout: 10,           // Default LCD timeout in seconds
+    vibrate: true,         // Vibration enabled by default. App must support
+    beep: true,            // Beep enabled by default. App must support
+    timezone: 0,           // Set the timezone for the device
+    HID : false,           // BLE HID mode, off by default
+    clock: null,           // a string for the default clock's name
+    "12hour" : false,      // 12 or 24 hour clock?
     distance : "kilometer" // or "mile"
     // welcomed : undefined/true (whether welcome app should show)
   };
-  Bangle.setLCDTimeout(settings.timeout);
   updateSettings();
 }
 
@@ -32,7 +32,7 @@ try {
 } catch (e) {}
 if (!settings) resetSettings();
 
-const boolFormat = (v) => v ? "On" : "Off";
+const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
   const mainmenu = {
@@ -47,10 +47,18 @@ function showMainMenu() {
       }
     },
     'Programmable': {
-      value: settings.dev,
+      value: settings.blerepl,
       format: boolFormat,
       onchange: () => {
-        settings.dev = !settings.dev;
+        settings.blerepl = !settings.blerepl;
+        updateSettings();
+      }
+    },
+    'Debug info': {
+      value: settings.log,
+      format: v => v ? "Show" : "Hide",
+      onchange: () => {
+        settings.log = !settings.log;
         updateSettings();
       }
     },

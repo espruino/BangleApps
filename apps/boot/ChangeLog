@@ -2,3 +2,4 @@
 0.03: Fix issue switching clockfaces via menu
 0.04: Add alarm functionality
 0.05: Add Welcome screen on boot
+0.06: Disable GPS time log messages, add (default=1) setting to hide log messages

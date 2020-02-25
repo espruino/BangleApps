@@ -8,8 +8,14 @@ if (s.ble!==false) {
     NRF.setServices({}, {uart:true, hid:Bangle.HID});
   }
 }
-// If not programmable, force terminal onto screen
-if (s.dev===false) Terminal.setConsole(true);
+if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
+  if (s.log) Terminal.setConsole(true); // if showing debug, force REPL onto terminal
+  else if (E.setConsole) E.setConsole(null,{force:true}); // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
+  else LoopbackA.setConsole(true); // for old builds, doing this will use some data as LoopbackB stores some of the chars
+} else {
+  if (s.log) Terminal.setConsole(); // if showing debug, put REPL on terminal (until connection)
+  else Bluetooth.setConsole(true); // else if no debug, force REPL to Bluetooth
+}
 // we just reset, so BLE should be on
 if (s.ble===false) NRF.sleep();
 // Set time, vibrate, beep, etc
@@ -45,17 +51,17 @@ function checkAlarm() {
 }
 // check to see if our clock is wrong - if it is use GPS time
 if ((new Date()).getFullYear()==1970) {
-  console.log("Searching for GPS time");
+  //console.log("Searching for GPS time");
   Bangle.on('GPS',function cb(g) {
     Bangle.setGPSPower(0);
     Bangle.removeListener("GPS",cb);
     if (!g.time || (g.time.getFullYear()<2000) ||
        (g.time.getFullYear()==2250)) {
-      console.log("GPS receiver's time not set");
+      //console.log("GPS receiver's time not set");
       return;
     }
     setTime(g.time.getTime()/1000);
-    console.log("GPS time",g.time.toString());
+    //console.log("GPS time",g.time.toString());
     checkAlarm();
   });
   Bangle.setGPSPower(1);

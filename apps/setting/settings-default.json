@@ -1,6 +1,7 @@
 {
   ble: true,             // Bluetooth enabled by default
-  dev: true,             // Is REPL on Bluetooth - can Espruino IDE be used?
+  blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
+  log: false,            // Do log messages appear on screen?
   timeout: 10,           // Default LCD timeout in seconds
   vibrate: true,         // Vibration enabled by default. App must support
   beep: true,            // Beep enabled by default. App must support
@@ -9,4 +10,5 @@
   clock: null,           // a string for the default clock's name
   "12hour" : false,      // 12 or 24 hour clock?
   distance : "kilometer" // or "mile"
+  // welcomed : undefined/true (whether welcome app should show)
 }
