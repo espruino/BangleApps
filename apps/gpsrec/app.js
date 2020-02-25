@@ -80,7 +80,7 @@ function viewTrack(n) {
   var l = f.readLine();
   if (l!==undefined) {
     var c = l.split(",");
-    trackTime = new Date(c[0]);
+    trackTime = new Date(parseInt(c[0]));
   }
   while (l!==undefined) {
     trackCount++;
@@ -104,7 +104,6 @@ function viewTrack(n) {
     });
   };
   menu['< Back'] = viewTracks;
-  print(menu);
   return E.showMenu(menu);
 }
 
