@@ -2,7 +2,15 @@ Puck.debug=3;
 
 // FIXME: use UART lib so that we handle errors properly
 var Comms = {
-uploadApp : app => {
+reset : () => {
+  return new Promise((resolve,reject) => {
+    Puck.write("\x03reset();\n", (result) => {
+      if (result===null) return reject("");
+      setTimeout(resolve,500);
+    });
+  });
+},
+uploadApp : (app,skipReset) => {
   return AppInfo.getFiles(app, httpGet).then(fileContents => {
     return new Promise((resolve,reject) => {
       var appJSONFile = fileContents.find(f=>f.name=="+"+app.id);
@@ -16,16 +24,18 @@ uploadApp : app => {
         }
       fileContents = fileContents.map(storageFile=>storageFile.cmd).join("\n")+"\n";
       console.log("uploadApp",fileContents);
-      // reset to ensure we have enough memory to upload what we need to
-      Puck.write("\x03reset();\n", (result) => {
-        if (result===null) return reject("");
-        setTimeout(() => { // wait for reset
-          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
-            if (result===null) return reject("");
-            resolve(appJSON);
-          });
-        },500);
-      });
+      function doUpload() {
+        Puck.write(`\x10E.showMessage('Uploading\\n${app.id}...')\n${fileContents}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+          if (result===null) return reject("");
+          resolve(appJSON);
+        });
+      }
+      if (skipReset) {
+        doUpload();
+      } else {
+        // reset to ensure we have enough memory to upload what we need to
+        Comms.reset().then(doUpload)
+      }
     });
   });
 },
@@ -46,24 +56,21 @@ removeApp : app => { // expects an app structure
     return `\x10require("Storage").erase(${toJS(file.name)});\n`;
   }).join("");
   console.log("removeApp", cmds);
-  return new Promise((resolve,reject) => {
-    Puck.write("\x03"+cmds+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
+  return Comms.reset().then(new Promise((resolve,reject) => {
+    Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
       if (result===null) return reject("");
       resolve();
     });
-  });
+  }));
 },
 removeAllApps : () => {
-  return new Promise((resolve,reject) => {
-    // Use eval here so we wait for it to finish
-    Puck.eval('require("Storage").eraseAll()||true', (result,err) => {
+  return Comms.reset().then(new Promise((resolve,reject) => {
+    // Use write with newline here so we wait for it to finish
+    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK")\n', (result,err) => {
       if (result===null) return reject(err || "");
-      Puck.write('\x03\x10reset()\n',(result) => {
-        if (result===null) return reject("");
-        resolve();
-      });
-    });
-  });
+      resolve();
+    }, true /* wait for newline */);
+  }));
 },
 setTime : () => {
   return new Promise((resolve,reject) => {

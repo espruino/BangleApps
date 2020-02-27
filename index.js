@@ -29,17 +29,31 @@ function showToast(message, type) {
     msgDiv.remove();
   }, 5000);
 }
-var progressToast;
-Puck.writeProgress = function(charsSent, charsTotal) {
-  if (charsSent===undefined) {
-    if (progressToast) progressToast.remove();
-    progressToast = undefined;
-    return;
-  }
-  var percent = Math.round(charsSent*100/charsTotal);
+var progressToast; // the DOM element
+var progressSticky; // showProgress(,,"sticky") don't remove until hideProgress("sticky")
+var progressInterval; // the interval used if showProgress(..., "animate")
+var progressPercent; // the current progress percentage
+function showProgress(text, percent, sticky) {
+  if (sticky=="sticky")
+    progressSticky = true;
   if (!progressToast) {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = undefined;
+    }
+    if (percent == "animate") {
+      progressInterval = setInterval(function() {
+        progressPercent += 2;
+        if (progressPercent>100) progressPercent=0;
+        showProgress(undefined, progressPercent);
+      }, 100);
+      percent = 0;
+    }
+    progressPercent = percent;
+
     var toastcontainer = document.getElementById("toastcontainer");
     progressToast = htmlElement(`<div class="toast">
+    ${text ? `<div>${text}</div>`:``}
     <div class="bar bar-sm">
       <div class="bar-item" id="progressToast" role="progressbar" style="width:${percent}%;" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
@@ -50,6 +64,26 @@ Puck.writeProgress = function(charsSent, charsTotal) {
     pt.setAttribute("aria-valuenow",percent);
     pt.style.width = percent+"%";
   }
+}
+function hideProgress(sticky) {
+  if (progressSticky && sticky!="sticky")
+    return;
+  progressSticky = false;
+  if (progressInterval) {
+    clearInterval(progressInterval);
+    progressInterval = undefined;
+  }
+  if (progressToast) progressToast.remove();
+  progressToast = undefined;
+}
+
+Puck.writeProgress = function(charsSent, charsTotal) {
+  if (charsSent===undefined) {
+    hideProgress();
+    return;
+  }
+  var percent = Math.round(charsSent*100/charsTotal);
+  showProgress(undefined, percent);
 }
 function showPrompt(title, text, buttons) {
   if (!buttons) buttons={yes:1,no:1};
@@ -78,7 +112,7 @@ function showPrompt(title, text, buttons) {
     document.body.append(modal);
     modal.querySelector("a[href='#close']").addEventListener("click",event => {
       event.preventDefault();
-      reject();
+      reject("User cancelled");
       modal.remove();
     });
     htmlToArray(modal.getElementsByTagName("button")).forEach(button => {
@@ -86,7 +120,7 @@ function showPrompt(title, text, buttons) {
         event.preventDefault();
         var isYes = event.target.getAttribute("isyes")=="1";
         if (isYes) resolve();
-        else reject();
+        else reject("User cancelled");
         modal.remove();
       });
     });
@@ -132,7 +166,14 @@ function handleCustomApp(app) {
       var app = event.data;
       console.log("Received custom app", app);
       modal.remove();
-      Comms.uploadApp(app).then(resolve,reject);
+      showProgress(`Uploading ${app.name}`,undefined,"sticky");
+      Comms.uploadApp(app).then(()=>{
+        hideProgress("sticky");
+        resolve();
+      }).catch(e => {
+        hideProgress("sticky");
+        reject(e);
+      });
     }, false);
   });
 }
@@ -270,7 +311,9 @@ function refreshLibrary() {
         // upload
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
+        showProgress(`Uploading ${app.name}`,undefined,"sticky");
         Comms.uploadApp(app).then((appJSON) => {
+          hideProgress("sticky");
           if (appJSON) appsInstalled.push(appJSON);
           showToast(app.name+" Uploaded!", "success");
           icon.classList.remove("loading");
@@ -278,6 +321,7 @@ function refreshLibrary() {
           refreshMyApps();
           refreshLibrary();
         }).catch(err => {
+          hideProgress("sticky");
           showToast("Upload failed, "+err, "error");
           icon.classList.remove("loading");
           icon.classList.add("icon-upload");
@@ -334,16 +378,19 @@ function removeApp(app) {
 }
 
 function updateApp(app) {
+  showProgress(`Upgrading ${app.name}`,undefined,"sticky");
   Comms.removeApp(app).then(()=>{
     showToast(app.name+" removed successfully. Updating...",);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     return Comms.uploadApp(app);
   }).then((appJSON) => {
+    hideProgress("sticky");
     if (appJSON) appsInstalled.push(appJSON);
     showToast(app.name+" Updated!", "success");
     refreshMyApps();
     refreshLibrary();
   }, err=>{
+    hideProgress("sticky");
     showToast(app.name+" update failed, "+err,"error");
   });
 }
@@ -413,14 +460,20 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
 
 function getInstalledApps() {
   showLoadingIndicator("myappscontainer");
+  showProgress(`Getting app list...`,undefined,"sticky");
   // Get apps and files
   return Comms.getInstalledApps()
     .then(appJSON => {
+      hideProgress("sticky");
       appsInstalled = appJSON;
       refreshMyApps();
       refreshLibrary();
     })
-    .then(() => handleConnectionChange(true));
+    .then(() => handleConnectionChange(true))
+    .catch(err=>{
+      hideProgress("sticky");
+      return Promise.reject();
+    });
 }
 
 var connectMyDeviceBtn = document.getElementById("connectmydevice");
@@ -475,12 +528,15 @@ document.getElementById("settime").addEventListener("click",event=>{
 });
 document.getElementById("removeall").addEventListener("click",event=>{
   showPrompt("Remove All","Really remove all apps?").then(() => {
+    showProgress("Removing all apps","animate", "sticky");
     return Comms.removeAllApps();
   }).then(()=>{
+    hideProgress("sticky");
     appsInstalled = [];
     showToast("All apps removed","success");
     return getInstalledApps();
   }).catch(err=>{
+    hideProgress("sticky");
     showToast("App removal failed, "+err,"error");
   });
 });
@@ -495,18 +551,25 @@ document.getElementById("installdefault").addEventListener("click",event=>{
     appCount = defaultApps.length;
     return showPrompt("Install Defaults","Remove everything and install default apps?");
   }).then(() => {
+    showProgress("Removing all apps","animate", "sticky");
     return Comms.removeAllApps();
   }).then(()=>{
+    hideProgress("sticky");
     appsInstalled = [];
     showToast(`Existing apps removed. Installing  ${appCount} apps...`);
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
       function upload() {
         var app = defaultApps.shift();
         if (app===undefined) return resolve();
+        showProgress(`${app.name} (${appCount-defaultApps.length}/${appCount})`,undefined,"sticky");
         Comms.uploadApp(app).then((appJSON) => {
+          hideProgress("sticky");
           if (appJSON) appsInstalled.push(appJSON);
           showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
           upload();
+        }).catch(function() {
+          hideProgress("sticky");
+          reject()
         });
       }
       upload();
