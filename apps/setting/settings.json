@@ -1,6 +1,6 @@
 {
   "name": "Settings","type":"app",
-  "icon": "*settings",
-  "src": "-settings",
+  "icon": "*setting",
+  "src": "-setting",
   "sortorder": -15
 }
