@@ -1,5 +1,5 @@
 (() => {
-  const PEDOMFILE = "@wpedom";
+  const PEDOMFILE = "wpedom.json";
   // add the width
   // WIDGETPOS.tr is originally 208 without any widgets
   var xpos = WIDGETPOS.tl;

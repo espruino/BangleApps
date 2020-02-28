@@ -134,20 +134,20 @@ function showChangeLog(appid) {
   httpGet(`apps/${appid}/ChangeLog`).
   then(show).catch(()=>show("No Change Log available"));
 }
-function handleCustomApp(app) {
+function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
-  if (!app.custom) throw new Error("App doesn't have custom HTML");
+  if (!appTemplate.custom) throw new Error("App doesn't have custom HTML");
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
       <a href="#close" class="modal-overlay " aria-label="Close"></a>
       <div class="modal-container" style="height:100%">
         <div class="modal-header">
           <a href="#close" class="btn btn-clear float-right" aria-label="Close"></a>
-          <div class="modal-title h5">${escapeHtml(app.name)}</div>
+          <div class="modal-title h5">${escapeHtml(appTemplate.name)}</div>
         </div>
         <div class="modal-body" style="height:100%">
           <div class="content" style="height:100%">
-            <iframe src="apps/${app.id}/${app.custom}" style="width:100%;height:100%;border:0px;">
+            <iframe src="apps/${appTemplate.id}/${appTemplate.custom}" style="width:100%;height:100%;border:0px;">
           </div>
         </div>
       </div>
@@ -163,7 +163,10 @@ function handleCustomApp(app) {
 
     var iframe = modal.getElementsByTagName("iframe")[0];
     iframe.contentWindow.addEventListener("message", function(event) {
-      var app = event.data;
+      var appFiles = event.data;
+      var app = {};
+      Object.keys(appTemplate).forEach(k => app[k] = appTemplate[k]);
+      Object.keys(appFiles).forEach(k => app[k] = appFiles[k]);
       console.log("Received custom app", app);
       modal.remove();
       showProgress(`Uploading ${app.name}`,undefined,"sticky");
@@ -279,7 +282,7 @@ function refreshLibrary() {
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
       <button class="btn btn-link btn-action btn-lg ${app.allow_emulator?"":"d-hide"}" appid="${app.id}" title="Try in Emulator"><i class="icon icon-share"></i></button>
       <button class="btn btn-link btn-action btn-lg ${version.canUpdate?"":"d-hide"}" appid="${app.id}" title="Update App"><i class="icon icon-refresh"></i></button>
-      <button class="btn btn-link btn-action btn-lg ${!appInstalled?"":"d-hide"}" appid="${app.id}" title="Upload App"><i class="icon icon-upload"></i></button>
+      <button class="btn btn-link btn-action btn-lg ${(!appInstalled && !app.custom)?"":"d-hide"}" appid="${app.id}" title="Upload App"><i class="icon icon-upload"></i></button>
       <button class="btn btn-link btn-action btn-lg ${appInstalled?"":"d-hide"}" appid="${app.id}" title="Remove App"><i class="icon icon-delete"></i></button>
       <button class="btn btn-link btn-action btn-lg ${app.custom?"":"d-hide"}" appid="${app.id}" title="Customise and Upload App"><i class="icon icon-menu"></i></button>
     </div>
@@ -406,7 +409,7 @@ function appNameToApp(appName) {
     name: "Unknown app "+appName,
     icon: "../unknown.png",
     description: "Unknown app",
-    storage: [ {name:"+"+appName}],
+    storage: [ {name:appName+".info"}],
     unknown: true,
   };
 }
@@ -562,7 +565,7 @@ document.getElementById("installdefault").addEventListener("click",event=>{
         var app = defaultApps.shift();
         if (app===undefined) return resolve();
         showProgress(`${app.name} (${appCount-defaultApps.length}/${appCount})`,undefined,"sticky");
-        Comms.uploadApp(app).then((appJSON) => {
+        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
           hideProgress("sticky");
           if (appJSON) appsInstalled.push(appJSON);
           showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
@@ -580,6 +583,7 @@ document.getElementById("installdefault").addEventListener("click",event=>{
     showToast("Default apps successfully installed!","success");
     return getInstalledApps();
   }).catch(err=>{
+    hideProgress("sticky");
     showToast("App Install failed, "+err,"error");
   });
 });

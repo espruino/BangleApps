@@ -55,7 +55,7 @@
 
   // Called by the GPS app to reload settings and decide what's
   function reload() {
-    settings = require("Storage").readJSON("@gpsrec")||{};
+    settings = require("Storage").readJSON("gpsrec.json")||{};
     settings.period = settings.period||1;
     settings.file |= 0;
 

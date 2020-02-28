@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("@alarm")||[];
+var alarms = require("Storage").readJSON("alarm.json")||[];
 /*alarms = [
   { on : true,
     hr : 6.5, // hours + minutes/60
@@ -57,13 +57,11 @@ function editAlarm(alarmIndex) {
       value: hrs,
       min: 0,
       max: 23,
-      onchange: v=>hrs=v
+      onchange: v=>{if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;}
     },
     'Minutes': {
       value: mins,
-      min: 0,
-      max: 60,
-      onchange: v=>mins=v
+      onchange: v=>{if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;}
     },
     'Enabled': {
       value: en,
@@ -91,13 +89,13 @@ function editAlarm(alarmIndex) {
   if (newAlarm) {
     menu["> New Alarm"] = function() {
       alarms.push(getAlarm());
-      require("Storage").write("@alarm",JSON.stringify(alarms));
+      require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   } else {
     menu["> Save"] = function() {
       alarms[alarmIndex] = getAlarm();
-      require("Storage").write("@alarm",JSON.stringify(alarms));
+      require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   }
@@ -121,7 +119,7 @@ function showAlarm(alarm) {
       alarm.last = (new Date()).getDate();
       if (!alarm.rp) alarm.on = false;
     }
-    require("Storage").write("@alarm",JSON.stringify(alarms));
+    require("Storage").write("alarm.json",JSON.stringify(alarms));
     load();
   });
   function buzz() {

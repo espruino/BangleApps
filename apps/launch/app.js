@@ -1,5 +1,5 @@
 var s = require("Storage");
-var apps = s.list().filter(a=>a[0]=='+').map(app=>{
+var apps = s.list(/\.info$/).map(app=>{
   try { return s.readJSON(app); }
   catch (e) { return {name:"DEAD: "+app.substr(1)} }
 }).filter(app=>app.type=="app" || app.type=="clock" || !app.type);

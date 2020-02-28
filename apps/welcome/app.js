@@ -284,9 +284,9 @@ setWatch(()=>{
   // If we're on the last page
   if (sceneNumber == scenes.length-1) {
     try {
-      var settings = require("Storage").readJSON('@setting');
+      var settings = require("Storage").readJSON('setting.json');
       settings.welcomed = true;
-      require("Storage").write('@setting',settings);
+      require("Storage").write('setting.json',settings);
     } catch (e) {}
     load();
   }

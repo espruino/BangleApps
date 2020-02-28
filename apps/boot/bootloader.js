@@ -1,6 +1,6 @@
 // This runs after a 'fresh' boot
 var settings={};
-try { settings = require("Storage").readJSON('@setting'); } catch (e) {}
+try { settings = require("Storage").readJSON('setting.json'); } catch (e) {}
 if (!settings.welcomed && require("Storage").read("-welcome")!==undefined) {
   setTimeout(()=>load("-welcome"));
 } else {
@@ -8,7 +8,7 @@ if (!settings.welcomed && require("Storage").read("-welcome")!==undefined) {
   var clockApp = settings.clock;
   if (clockApp) clockApp = require("Storage").read(clockApp)
   if (!clockApp) {
-    var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+    var clockApps = require("Storage").list(/\.info$/).map(app=>{
       try { return require("Storage").readJSON(app); }
       catch (e) {}
     }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);

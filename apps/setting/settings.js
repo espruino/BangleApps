@@ -5,8 +5,8 @@ const storage = require('Storage');
 let settings;
 
 function updateSettings() {
-  //storage.erase('@setting'); // - not needed, just causes extra writes if settings were the same
-  storage.write('@setting', settings);
+  //storage.erase('setting.json'); // - not needed, just causes extra writes if settings were the same
+  storage.write('setting.json', settings);
 }
 
 function resetSettings() {
@@ -28,7 +28,7 @@ function resetSettings() {
 }
 
 try {
-  settings = storage.readJSON('@setting');
+  settings = storage.readJSON('setting.json');
 } catch (e) {}
 if (!settings) resetSettings();
 
@@ -187,7 +187,7 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+  var clockApps = require("Storage").list(/\.info$/).map(app=>{
     try { return require("Storage").readJSON(app); }
     catch (e) {}
   }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);

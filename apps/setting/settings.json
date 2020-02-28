@@ -1,6 +1,0 @@
-{
-  "name": "Settings","type":"app",
-  "icon": "*setting",
-  "src": "-setting",
-  "sortorder": -15
-}
