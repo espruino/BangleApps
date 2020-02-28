@@ -1,6 +1,8 @@
 Bangle.js App Loader (and Apps)
 ================================
 
+[![Build Status](https://travis-ci.org/espruino/BangleApps.svg?branch=master)](https://travis-ci.org/espruino/BangleApps)
+
 Try it live at [banglejs.com/apps](https://banglejs.com/apps)
 
 ## How does it work?
