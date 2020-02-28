@@ -250,6 +250,7 @@ var scenes = [
 var sceneNumber = 0;
 
 function move(dir) {
+  if (dir>0 && sceneNumber+1 == scenes.length) return; // at the end
   sceneNumber = (sceneNumber+dir)%scenes.length;
   if (sceneNumber<0) sceneNumber=0;
   clearInterval();
@@ -270,12 +271,12 @@ function move(dir) {
     }
   }
   if (sceneNumber < scenes.length-1)
-    setTimeout(next, 5000);
+    setTimeout(function() {
+      move(1);
+    }, 5000);
 }
 
-function next() {
-  move(1);
-}
+
 
 Bangle.on('swipe',move);
 setWatch(()=>move(1), BTN3, {repeat:true});
@@ -283,9 +284,9 @@ setWatch(()=>{
   // If we're on the last page
   if (sceneNumber == scenes.length-1) {
     try {
-      var settings = require("Storage").readJSON('@setting');
+      var settings = require("Storage").readJSON('setting.json');
       settings.welcomed = true;
-      require("Storage").write('@setting',settings);
+      require("Storage").write('setting.json',settings);
     } catch (e) {}
     load();
   }

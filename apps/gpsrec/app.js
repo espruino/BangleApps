@@ -1,14 +1,14 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var settings = require("Storage").readJSON("@gpsrec")||{};
+var settings = require("Storage").readJSON("gpsrec.json")||{};
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
 }
 
 function updateSettings() {
-  require("Storage").write("@gpsrec", settings);
+  require("Storage").write("gpsrec.json", settings);
   if (WIDGETS["gpsrec"])
     WIDGETS["gpsrec"].reload();
 }
@@ -80,7 +80,7 @@ function viewTrack(n) {
   var l = f.readLine();
   if (l!==undefined) {
     var c = l.split(",");
-    trackTime = new Date(0|c[0]);
+    trackTime = new Date(parseInt(c[0]));
   }
   while (l!==undefined) {
     trackCount++;
@@ -104,7 +104,6 @@ function viewTrack(n) {
     });
   };
   menu['< Back'] = viewTracks;
-  print(menu);
   return E.showMenu(menu);
 }
 

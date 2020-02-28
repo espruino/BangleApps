@@ -41,19 +41,11 @@ g.setColor(0,0,0);
 g.drawString(url,120,230);
 g.setColor(1,1,1);
 `;
-        var json = JSON.stringify({
-          name:"QR Code",
-          icon:"*qrcode",
-          src:"-qrcode"
-        });
         var icon = `require("heatshrink").decompress(atob("mEwgP/AEX8gE8nkAn4FSngCWF6xfYDgIABHAQFPDQXD4YgDApxNDMooFOAQIdDAqIvWfcYA="))`;
         sendCustomizedApp({
-          id : "qrcode",
-
           storage:[
-            {name:"-qrcode", content:app},
-            {name:"+qrcode", content:json},
-            {name:"*qrcode", content:icon, evaluate:true},
+            {name:"qrcode.app.js", content:app},
+            {name:"qrcode.img", content:icon, evaluate:true},
           ]
         });
 

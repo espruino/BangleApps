@@ -1,6 +1,7 @@
 // Create an entry in apps.json as follows:
 { "id": "7chname",
   "name": "My app's human readable name",
+  "shortName":"Short Name",
   "icon": "app.png",
   "version":"0.01",
   "description": "A detailed description of my great app",

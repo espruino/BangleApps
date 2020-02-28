@@ -20,21 +20,12 @@ var AppInfo = {
       })).then(fileContents => { // now we just have a list of files + contents...
         // filter out empty files
         fileContents = fileContents.filter(x=>x!==undefined);
+        // What about minification?
+        // Add app's info JSON
+        return AppInfo.createAppJSON(app, fileContents);
+      }).then(fileContents => {
         // then map each file to a command to load into storage
         fileContents.forEach(storageFile => {
-          // check if this is the JSON file
-          if (storageFile.name[0]=="+") {
-            storageFile.evaluate = true;
-            var json = {};
-            try {
-              json = JSON.parse(storageFile.content);
-            } catch (e) {
-              reject(storageFile.name+" is not valid JSON");
-            }
-            if (app.version) json.version = app.version;
-            json.files = fileContents.map(storageFile=>storageFile.name).join(",");
-            storageFile.content = JSON.stringify(json);
-          }
           // format ready for Espruino
           var js;
           if (storageFile.evaluate) {
@@ -49,6 +40,35 @@ var AppInfo = {
       }).catch(err => reject(err));
     });
   },
+  createAppJSON : (app, fileContents) => {
+    return new Promise((resolve,reject) => {
+      var appJSONName = app.id+".info";
+      // Check we don't already have a JSON file!
+      var appJSONFile = fileContents.find(f=>f.name==appJSONName);
+      if (appJSONFile) reject("App JSON file explicitly specified!");
+      // Now actually create the app JSON
+      var json = {
+        id : app.id
+      };
+      if (app.shortName) json.name = app.shortName;
+      else json.name = app.name;
+      if (app.type && app.type!="app") json.type = app.type;
+      if (fileContents.find(f=>f.name==app.id+".app.js"))
+        json.src = app.id+".app.js";
+      if (fileContents.find(f=>f.name==app.id+".img"))
+        json.icon = app.id+".img";
+      if (app.sortorder) json.sortorder = app.sortorder;
+      if (app.version) json.version = app.version;
+      var fileList = fileContents.map(storageFile=>storageFile.name);
+      fileList.unshift(appJSONName); // do we want this? makes life easier!
+      json.files = fileList.join(",");
+      fileContents.push({
+        name : appJSONName,
+        content : JSON.stringify(json)
+      });
+      resolve(fileContents);
+    });
+  }
 };
 
 if ("undefined"!=typeof module)

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
-    <title>Bangle.js loader</title>
+    <title>Bangle.js App Loader</title>
     <style>
 		.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
 		.navbar .navbar-brand {
@@ -49,15 +49,20 @@
       </section>-->
     </header>
 
+    <div class="container" style="padding-top:4px">
+      <p><span class="label label-error">App Loader is incompatible with 'old' Bangle.js firmwares</span>
+        <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">(<a href="http://forum.espruino.com/conversations/344251/" target="_blank">more info</a>) Please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates">latest firmware</a> or
+        <a href="https://banglejs.com/oldapps/">use the legacy apps</a>.
+      </p>
+    </div>
+
+
     <ul class="tab tab-block" id="tab-navigate">
       <li class="tab-item active" id="tab-librarycontainer">
         <a href="javascript:showTab('librarycontainer')">Library</a>
       </li>
       <li class="tab-item" id="tab-myappscontainer">
         <a href="javascript:showTab('myappscontainer')">My Apps</a>
-      </li>
-      <li class="tab-item" id="tab-myfscontainer">
-        <a href="javascript:showTab('myfscontainer')">My files</a>
       </li>
       <li class="tab-item" id="tab-aboutcontainer">
         <a href="javascript:showTab('aboutcontainer')">About</a>
@@ -93,21 +98,6 @@
           <button class="btn refresh">Refresh...</button>
         </div>
         <div class="panel-body columns"><!-- apps go here --></div>
-      </div>
-    </div>
-
-    <div class="container bangle-tab" id="myfscontainer" style="display:none">
-      <div class="panel">
-        <div class="panel-header column col-12 container">
-          <div class="columns col-gapless">
-            <p class="column col-9">Files currently stored on the watch. Click row to download.</p>
-            <div class="column col-3" style="text-align:right">
-              <button class="btn refresh">Refresh...</button>
-            </div>
-          </div>
-        </div>
-        <table class="table table-striped table-hover panel-body">
-        </table>
       </div>
     </div>
 

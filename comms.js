@@ -2,30 +2,29 @@ Puck.debug=3;
 
 // FIXME: use UART lib so that we handle errors properly
 var Comms = {
-uploadApp : app => {
+reset : () => new Promise((resolve,reject) => {
+  Puck.write("\x03\x10reset();\n", (result) => {
+    if (result===null) return reject("");
+    setTimeout(resolve,500);
+  });
+}),
+uploadApp : (app,skipReset) => {
   return AppInfo.getFiles(app, httpGet).then(fileContents => {
     return new Promise((resolve,reject) => {
-      var appJSONFile = fileContents.find(f=>f.name=="+"+app.id);
-      var appJSON = undefined;
-      if (appJSONFile)
-        try {
-          appJSON=JSON.parse(appJSONFile.content);
-          appJSON.id = app.id;
-        } catch(e) {
-          console.log("Error decoding app JSON for",app.id,e);
-        }
       fileContents = fileContents.map(storageFile=>storageFile.cmd).join("\n")+"\n";
       console.log("uploadApp",fileContents);
-      // reset to ensure we have enough memory to upload what we need to
-      Puck.write("\x03reset();\n", (result) => {
-        if (result===null) return reject("");
-        setTimeout(() => { // wait for reset
-          Puck.write("\x10E.showMessage('Uploading...')\n"+fileContents+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
-            if (result===null) return reject("");
-            resolve(appJSON);
-          });
-        },500);
-      });
+      function doUpload() {
+        Puck.write(`\x10E.showMessage('Uploading\\n${app.id}...')\n${fileContents}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+          if (result===null) return reject("");
+          resolve(appJSON);
+        });
+      }
+      if (skipReset) {
+        doUpload();
+      } else {
+        // reset to ensure we have enough memory to upload what we need to
+        Comms.reset().then(doUpload)
+      }
     });
   });
 },
@@ -33,7 +32,7 @@ getInstalledApps : () => {
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      Puck.eval('require("Storage").list().filter(f=>f[0]=="+").map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.substr(1);return j})', (appList,err) => {
+      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
@@ -46,24 +45,21 @@ removeApp : app => { // expects an app structure
     return `\x10require("Storage").erase(${toJS(file.name)});\n`;
   }).join("");
   console.log("removeApp", cmds);
-  return new Promise((resolve,reject) => {
-    Puck.write("\x03"+cmds+"\x10E.showMessage('Hold BTN3\\nto reload')\n",(result) => {
+  return Comms.reset().then(new Promise((resolve,reject) => {
+    Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
       if (result===null) return reject("");
       resolve();
     });
-  });
+  }));
 },
 removeAllApps : () => {
-  return new Promise((resolve,reject) => {
-    // Use eval here so we wait for it to finish
-    Puck.eval('require("Storage").eraseAll()||true', (result,err) => {
-      if (result===null) return reject(err || "");
-      Puck.write('\x03\x10reset()\n',(result) => {
-        if (result===null) return reject("");
-        resolve();
-      });
-    });
-  });
+  return Comms.reset().then(() => new Promise((resolve,reject) => {
+    // Use write with newline here so we wait for it to finish
+    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK")\n', (result,err) => {
+      if (!result || result.trim()!="OK") return reject(err || "");
+      resolve();
+    }, true /* wait for newline */);
+  }));
 },
 setTime : () => {
   return new Promise((resolve,reject) => {
@@ -72,7 +68,7 @@ setTime : () => {
     var cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
     // in 1v93 we have timezones too
     cmd += 'E.setTimeZone('+tz+');';
-    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('@setting',s);})(require('Storage').readJSON('@setting'))\n";
+    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('setting.json',s);})(require('Storage').readJSON('setting.json'))\n";
     Puck.write(cmd, (result) => {
       if (result===null) return reject("");
       resolve();
