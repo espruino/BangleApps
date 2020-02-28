@@ -694,7 +694,7 @@
       {"name":"widclk.wid.js","url":"widget.js"}
     ]
   },
-  { "id": "wpedom",
+  { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
     "version":"0.06",
@@ -702,7 +702,7 @@
     "tags": "widget",
     "type":"widget",
     "storage": [
-      {"name":"wpedom.wid.js","url":"widget.js"}
+      {"name":"widpedom.wid.js","url":"widget.js"}
     ]
   },
   { "id": "berlinc",
