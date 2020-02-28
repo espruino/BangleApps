@@ -13,7 +13,7 @@ var alarms = require("Storage").readJSON("alarm.json")||[];
 
 function formatTime(t) {
   var hrs = 0|t;
-  var mins = 0|((t-hrs)*60);
+  var mins = Math.round((t-hrs)*60);
   return hrs+":"+("0"+mins).substr(-2);
 }
 
@@ -47,7 +47,7 @@ function editAlarm(alarmIndex) {
   if (!newAlarm) {
     var a = alarms[alarmIndex];
     hrs = 0|a.hr;
-    mins = 0|((a.hr-hrs)*60);
+    mins = Math.round((a.hr-hrs)*60);
     en = a.on;
     repeat = a.rp;
   }
@@ -55,13 +55,11 @@ function editAlarm(alarmIndex) {
     '': { 'title': 'Alarms' },
     'Hours': {
       value: hrs,
-      min: 0,
-      max: 23,
-      onchange: v=>{if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;}
+      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
     },
     'Minutes': {
       value: mins,
-      onchange: v=>{if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;}
+      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
     },
     'Enabled': {
       value: en,
@@ -77,8 +75,8 @@ function editAlarm(alarmIndex) {
   function getAlarm() {
     var hr = hrs+(mins/60);
     var day = 0;
-    // If alarm is for tomorrow not today, set day
-    if (hr > getCurrentHr())
+    // If alarm is for tomorrow not today (eg, in the past), set day
+    if (hr < getCurrentHr())
       day = (new Date()).getDate();
     // Save alarm
     return {
@@ -103,47 +101,4 @@ function editAlarm(alarmIndex) {
   return E.showMenu(menu);
 }
 
-function showAlarm(alarm) {
-  var msg = formatTime(alarm.hr);
-  var buzzCount = 10;
-  if (alarm.msg)
-    msg += "\n"+alarm.msg;
-  E.showPrompt(msg,{
-    title:"ALARM!",
-    buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
-  }).then(function(sleep) {
-    buzzCount = 0;
-    if (sleep) {
-      alarm.hr += 10/60; // 10 minutes
-    } else {
-      alarm.last = (new Date()).getDate();
-      if (!alarm.rp) alarm.on = false;
-    }
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
-    load();
-  });
-  function buzz() {
-    Bangle.buzz(100).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(100).then(function() {
-          if (buzzCount--)
-            setTimeout(buzz, 3000);
-        });
-      },100);
-    });
-  }
-  buzz();
-}
-
-// Check for alarms
-var day = (new Date()).getDate();
-var hr = getCurrentHr();
-var active = alarms.filter(a=>a.on&&(a.hr<hr)&&(a.last!=day));
-if (active.length) {
-  // if there's an alarm, show it
-  active = active.sort((a,b)=>a.hr-b.hr);
-  showAlarm(active[0]);
-} else {
-  // otherwise show the main menu
-  showMainMenu();
-}
+showMainMenu();
