@@ -32,8 +32,7 @@ getInstalledApps : () => {
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      // could use .list(/\.info$/) on new Espruino firmwares...
-      Puck.eval('require("Storage").list().filter(f=>f.endsWith(".info")).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.substr(1);return j})', (appList,err) => {
+      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.substr(1);return j})', (appList,err) => {
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
