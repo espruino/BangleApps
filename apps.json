@@ -42,9 +42,10 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "Appears at first boot and explains how to use Bangle.js",
-    "tags": "welcome",
+    "tags": "start,welcome",
     "allow_emulator":true,
     "storage": [
+      {"name":"welcome.js","url":"welcome.js"},
       {"name":"welcome.app.js","url":"app.js"},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
     ]
@@ -210,12 +211,14 @@
   },
   { "id": "openloc",
     "name": "Open Location / Plus Codes",
-    "icon": "openlocation.png",
+    "shortName": "Open Location",
+    "icon": "app.png",
     "version":"0.01",
     "description": "Convert your current GPS location to a series of characters",
     "tags": "tool,outdoors,gps",
     "storage": [
-      {"name":"openloc.app.js","url":"openlocation.js","evaluate":true}
+      {"name":"openloc.app.js","url":"app.js"},
+      {"name":"openloc.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "speedo",
@@ -304,6 +307,7 @@
     "version":"0.01",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
+    "type": "widget",
     "storage": [
       {"name":"widhrm.wid.js","url":"widget.js"}
     ]
@@ -333,6 +337,7 @@
   },
   { "id": "hidmsic",
     "name": "Bluetooth Music Controls",
+    "shortName": "Music Control",
     "icon": "hid-music.png",
     "version":"0.01",
     "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
@@ -344,6 +349,7 @@
   },
   { "id": "hidkbd",
     "name": "Bluetooth Keyboard",
+    "shortName": "Bluetooth Kbd",
     "icon": "hid-keyboard.png",
     "version":"0.01",
     "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
@@ -355,6 +361,7 @@
   },
   { "id": "hidbkbd",
     "name": "Binary Bluetooth Keyboard",
+    "shortName": "Binary BT Kbd",
     "icon": "hid-binary-keyboard.png",
     "version":"0.01",
     "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
@@ -392,7 +399,7 @@
     "custom": "qrcode.html",
     "storage": [
       {"name":"qrcode.app.js"},
-      {"name":"qrcode.wid.js"}
+      {"name":"qrcode.img"}
     ]
   },
   { "id": "beer",
@@ -404,7 +411,7 @@
     "custom": "beercompass.html",
     "storage": [
       {"name":"beer.app.js"},
-      {"name":"beer.wid.js"}
+      {"name":"beer.img"}
     ]
   },
   { "id": "route",
@@ -416,27 +423,25 @@
     "custom": "route.html",
     "storage": [
       {"name":"route.app.js"},
-      {"name":"route.wid.js"}
+      {"name":"route.img"}
     ]
   },
-
-
-
   {
     "id": "ncstart",
     "name": "NCEU Startup",
     "icon": "start.png",
     "version":"0.02",
     "description": "NodeConfEU 2019 'First Start' Sequence",
-    "tags": "start",
+    "tags": "start,welcome",
     "storage": [
-      {"name":".boot3","url":"start.js"},
+      {"name":"welcome.js","url":"welcome.js"},
+      {"name":"ncstart.app.js","url":"start.js"},
       {"name":"ncstart.img","url":"start-icon.js","evaluate":true},
-      {"name":"bangle.img","url":"start-bangle.js","evaluate":true},
-      {"name":"nceu.img","url":"start-nceu.js","evaluate":true},
-      {"name":"nfr.img","url":"start-nfr.js","evaluate":true},
-      {"name":"nodew.img","url":"start-nodew.js","evaluate":true},
-      {"name":"tf.img","url":"start-tf.js","evaluate":true}
+      {"name":"nc-bangle.img","url":"start-bangle.js","evaluate":true},
+      {"name":"nc-nceu.img","url":"start-nceu.js","evaluate":true},
+      {"name":"nc-nfr.img","url":"start-nfr.js","evaluate":true},
+      {"name":"nc-nodew.img","url":"start-nodew.js","evaluate":true},
+      {"name":"nc-tf.img","url":"start-tf.js","evaluate":true}
     ]
   },
   { "id": "ncfrun",
@@ -637,9 +642,8 @@
     "tags": "gps",
     "type": "app",
     "storage": [
-      {"name": "+gpsinfo","url": "gps-info.json"},
-      {"name": "-gpsinfo","url": "gps-info.js"},
-      {"name": "*gpsinfo","url": "gps-info-icon.js","evaluate": true}
+      {"name":"gpsinfo.app.js","url": "gps-info.js"},
+      {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
   },
   {
@@ -652,13 +656,13 @@
     "type": "app",
     "allow_emulator":true,
     "storage": [
-      {"name": "+pomodo","url": "pomodoro.json"},
-      {"name": "-pomodo","url": "pomodoro.js"},
-      {"name": "*pomodo","url": "pomodoro-icon.js","evaluate": true}
+      {"name":"pomodo.app.js","url": "pomodoro.js"},
+      {"name":"pomodo.img","url": "pomodoro-icon.js","evaluate": true}
     ]
   },
   { "id": "blobclk",
     "name": "Large Digit Blob Clock",
+    "shortName" : "Blob Clock",
     "icon": "clock-blob.png",
     "version":"0.03",
     "description": "A clock with big digits",

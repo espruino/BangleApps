@@ -3,7 +3,7 @@ E.setFlags({pretokenise:1});
 // Load settings...
 var s = require('Storage').readJSON('setting.json')||{};
 if (s.ble!==false) {
-  if (s.HID) { // Humen interface device
+  if (s.HID) { // Human interface device
     Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));
     NRF.setServices({}, {uart:true, hid:Bangle.HID});
   }

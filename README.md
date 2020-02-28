@@ -67,6 +67,10 @@ This is the best way to test...
 * Run your personal `Bangle App Loader` at https://\<your-github-username\>.github.io/BangleApps/index.html to load apps onto your device
 * Your apps should be inside it - if there are problems, check your web browser's 'developer console' for errors
 
+**Note:** It's a great idea to get a local copy of the repository on your PC,
+then run `bin/sanitycheck.js` - it'll run through a bunch of common issues
+that there might be.
+
 Be aware of the delay between commits and updates on github.io - it can take a few minutes (and a 'hard refresh' of your browser) for changes to take effect.
 
 ### Offline
@@ -280,8 +284,6 @@ See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 
 ## Coding hints
 
-- Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `7chname.json`, then load it at startup.
-
 - use `g.setFont(.., size)` to multiply the font size, eg ("6x8",3) : "18x24"
 
 - use `g.drawString(text,x,y,true)` to draw with background color to overwrite existing text
@@ -295,6 +297,13 @@ See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 - using `g.setLCDBrightness()` can save you power during long periods with lcd on
 
 - chaining graphics methods, eg `g.setColor(0xFD20).setFontAlign(0,0).setfont("6x8",3)`
+
+### Misc Notes
+
+- Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `7chname.json`, then load it at startup.
+
+- 'Welcome' apps define a file called `welcome.js` which the booloader picks up. This then chain-loads the welcome app itself.
+
 
 ### Graphic areas
 

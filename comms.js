@@ -3,7 +3,7 @@ Puck.debug=3;
 // FIXME: use UART lib so that we handle errors properly
 var Comms = {
 reset : () => new Promise((resolve,reject) => {
-  Puck.write("\x03reset();\n", (result) => {
+  Puck.write("\x03\x10reset();\n", (result) => {
     if (result===null) return reject("");
     setTimeout(resolve,500);
   });

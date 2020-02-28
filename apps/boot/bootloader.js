@@ -1,8 +1,8 @@
 // This runs after a 'fresh' boot
 var settings={};
 try { settings = require("Storage").readJSON('setting.json'); } catch (e) {}
-if (!settings.welcomed && require("Storage").read("-welcome")!==undefined) {
-  setTimeout(()=>load("-welcome"));
+if (!settings.welcomed && require("Storage").read("welcome.js")!==undefined) {
+  setTimeout(()=>load("welcome.js"));
 } else {
   // load clock if specified
   var clockApp = settings.clock;
