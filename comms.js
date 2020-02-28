@@ -32,7 +32,7 @@ getInstalledApps : () => {
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.substr(1);return j})', (appList,err) => {
+      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
