@@ -48,7 +48,7 @@ function showAlarm(alarm) {
 // Check for alarms
 var day = (new Date()).getDate();
 var hr = getCurrentHr();
-var alarms = require("Storage").readJSON("alarm.json")||[];
+var alarms = require("Storage").readJSON("alarm.json",1)||[];
 var active = alarms.filter(a=>a.on&&(a.hr<hr)&&(a.last!=day));
 if (active.length) {
   // if there's an alarm, show it

@@ -1,5 +1,5 @@
 (() => {
-  var alarms = require('Storage').readJSON('alarm.json')||[];
+  var alarms = require('Storage').readJSON('alarm.json',1)||[];
   alarms = alarms.filter(alarm=>alarm.on);
   if (!alarms.length) return;
   delete alarms;

@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json")||[];
+var alarms = require("Storage").readJSON("alarm.json",1)||[];
 /*alarms = [
   { on : true,
     hr : 6.5, // hours + minutes/60

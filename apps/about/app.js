@@ -11,7 +11,7 @@ g.drawString("Powered by Espruino",0,y+=4+h);
 g.drawString("Version "+ENV.VERSION,0,y+=h);
 g.drawString("Commit "+ENV.GIT_COMMIT,0,y+=h);
 function getVersion(name,file) {
-  var j = s.readJSON(file);
+  var j = s.readJSON(file,1);
   var v = ("object"==typeof j)?j.version:false;
   g.drawString(v?(name+" "+(v?"v"+v:"Unknown")):"NO "+name,0,y+=h);
 }

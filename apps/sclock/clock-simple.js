@@ -11,7 +11,7 @@ const yposYear = 175;
 const yposGMT = 220;
 
 // Check settings for what type our clock should be
-var is12Hour = (require("Storage").readJSON("setting.json")||{})["12hour"];
+var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 
 function drawSimpleClock() {
   // get date

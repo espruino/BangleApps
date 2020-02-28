@@ -1,7 +1,7 @@
 // This ALWAYS runs at boot
 E.setFlags({pretokenise:1});
 // Load settings...
-var s = require('Storage').readJSON('setting.json')||{};
+var s = require('Storage').readJSON('setting.json',1)||{};
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));
@@ -26,7 +26,7 @@ E.setTimeZone(s.timezone);
 delete s;
 // check for alarms
 function checkAlarm() {
-  var alarms = require('Storage').readJSON('alarm.json')||[];
+  var alarms = require('Storage').readJSON('alarm.json',1)||[];
   var time = new Date();
   var active = alarms.filter(a=>a.on&&(a.last!=time.getDate()));
   if (active.length) {

@@ -32,7 +32,7 @@ getInstalledApps : () => {
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
-      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
+      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
@@ -68,7 +68,7 @@ setTime : () => {
     var cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
     // in 1v93 we have timezones too
     cmd += 'E.setTimeZone('+tz+');';
-    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('setting.json',s);})(require('Storage').readJSON('setting.json'))\n";
+    cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('setting.json',s);})(require('Storage').readJSON('setting.json',1))\n";
     Puck.write(cmd, (result) => {
       if (result===null) return reject("");
       resolve();

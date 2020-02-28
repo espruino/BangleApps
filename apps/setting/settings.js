@@ -27,9 +27,7 @@ function resetSettings() {
   updateSettings();
 }
 
-try {
-  settings = storage.readJSON('setting.json');
-} catch (e) {}
+settings = storage.readJSON('setting.json',1);
 if (!settings) resetSettings();
 
 const boolFormat = v => v ? "On" : "Off";

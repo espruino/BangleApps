@@ -306,6 +306,11 @@ See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 
 - 'Welcome' apps define a file called `welcome.js` which the booloader picks up. This then chain-loads the welcome app itself.
 
+- 'Alarm' apps define a file called `alarm.js` which handles the actual alarm window.
+
+- Locale is handled by `require("locale")`. An app may create a `locale` file in Storage which is
+a module that overwrites Bangle.js's default locale.
+
 
 ### Graphic areas
 
