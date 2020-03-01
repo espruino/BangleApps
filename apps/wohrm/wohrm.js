@@ -1,12 +1,16 @@
 /* eslint-disable no-undef */
 const Setter = {
-  UPPER: 'upper',
-  LOWER: 'lower'
-};
+    NONE: "none",
+    UPPER: 'upper',
+    LOWER: 'lower'
+  };
+  
+const shortBuzzTimeInMs = 100;
+const longBuzzTimeInMs = 200;
 
 let upperLimit = 130;
 let lowerLimit = 100;
-let limitSetter = Setter.LOWER;
+let limitSetter = Setter.NONE;
 let currentHeartRate = 0;
 let hrConfidence = -1;
 
@@ -24,38 +28,28 @@ function drawTrainingHeartRate() {
 
 function renderUpperLimit() {
     g.setColor(255,0,0);
-    g.fillRect(140,40, 230, 70);
-    g.fillRect(200,70, 230, 210);
+    g.fillRect(145,40, 230, 70);
+    g.fillRect(200,70, 230, 200);
 
-    //Round top left corner
-    g.setColor(0,0,0);
-    g.fillRect(140,40, 145, 45);
+    //Round middle left corner
     g.setColor(255,0,0);
-    g.fillCircle(150,50, 10);
+    g.fillEllipse(135,40,155,70);
 
     //Round top right corner
     g.setColor(0,0,0);
     g.fillRect(225,40, 230, 45);
     g.setColor(255,0,0);
-    g.fillCircle(220,50, 10);
+    g.fillEllipse(210,40,230,50);
 
-    //Round middle left corner
-    g.setColor(0,0,0);
-    g.fillRect(140,65, 145, 70);
+    //Round inner corner
     g.setColor(255,0,0);
-    g.fillCircle(150,60, 10);
-  
-    //Round bottom left corner
+    g.fillRect(194,71, 199, 76);
     g.setColor(0,0,0);
-    g.fillRect(200,205, 205, 210);
-    g.setColor(255,0,0);
-    g.fillCircle(210,200, 10);
+    g.fillEllipse(180,71,199,82);
 
-    //Round bottom right corner
-    g.setColor(0,0,0);
-    g.fillRect(225,205, 230, 210);
+    //Round bottom
     g.setColor(255,0,0);
-    g.fillCircle(220,200, 10);
+    g.fillEllipse(200,190, 230, 210);
 
     if(limitSetter === Setter.UPPER){
         g.setColor(255,255, 255);
@@ -68,7 +62,7 @@ function renderUpperLimit() {
 }
 
 function renderCurrentHeartRate() {
-    g.setColor(0,255,0);
+    g.setColor(255,255,255);
     g.fillRect(55, 110, 175, 140);
     g.setColor(0,0,0);
     g.setFontVector(13);
@@ -109,15 +103,15 @@ function buzz()
 {
     if(currentHeartRate > upperLimit)
     {
-        Bangle.buzz(70);
-        setTimeout(() => { Bangle.buzz(70); }, 70);
-        setTimeout(() => { Bangle.buzz(70); }, 70);
+        Bangle.buzz(shortBuzzTimeInMs);
+        setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
+        setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
     }
 
     if(currentHeartRate < upperLimit)
     {
-        Bangle.buzz(140);
-        setTimeout(() => { Bangle.buzz(140); }, 140);
+        Bangle.buzz(longBuzzTimeInMs);
+        setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs);
     }
 }
 
@@ -165,7 +159,7 @@ function decrementLimit(){
 }
 
 // Show launcher when middle button pressed
-function switchOfWidget(){
+function switchOffApp(){
     Bangle.setHRMPower(0);
     Bangle.showLauncher();
 }
@@ -191,7 +185,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawTrainingHeartRate();
 
-setWatch(switchOfWidget, BTN2, {repeat:false,edge:"falling"});
+setWatch(switchOffApp, BTN2, {repeat:false,edge:"falling"});
 
 setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
 
