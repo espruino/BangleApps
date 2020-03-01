@@ -1,13 +1,14 @@
+/* eslint-disable no-undef */
 const Setter = {
   UPPER: 'upper',
   LOWER: 'lower'
 };
 
-upperLimit = 130;
-lowerLimit = 100;
-limitSetter = Setter.LOWER;
-currentHeartRate = 0;
-hrConfidence = -1;
+let upperLimit = 130;
+let lowerLimit = 100;
+let limitSetter = Setter.LOWER;
+let currentHeartRate = 0;
+let hrConfidence = -1;
 
 function drawTrainingHeartRate() {
     renderUpperLimit();
@@ -25,6 +26,36 @@ function renderUpperLimit() {
     g.setColor(255,0,0);
     g.fillRect(140,40, 230, 70);
     g.fillRect(200,70, 230, 210);
+
+    //Round top left corner
+    g.setColor(0,0,0);
+    g.fillRect(140,40, 145, 45);
+    g.setColor(255,0,0);
+    g.fillCircle(150,50, 10);
+
+    //Round top right corner
+    g.setColor(0,0,0);
+    g.fillRect(225,40, 230, 45);
+    g.setColor(255,0,0);
+    g.fillCircle(220,50, 10);
+
+    //Round middle left corner
+    g.setColor(0,0,0);
+    g.fillRect(140,65, 145, 70);
+    g.setColor(255,0,0);
+    g.fillCircle(150,60, 10);
+  
+    //Round bottom left corner
+    g.setColor(0,0,0);
+    g.fillRect(200,205, 205, 210);
+    g.setColor(255,0,0);
+    g.fillCircle(210,200, 10);
+
+    //Round bottom right corner
+    g.setColor(0,0,0);
+    g.fillRect(225,205, 230, 210);
+    g.setColor(255,0,0);
+    g.fillCircle(220,200, 10);
 
     if(limitSetter === Setter.UPPER){
         g.setColor(255,255, 255);
