@@ -302,7 +302,7 @@ function refreshLibrary() {
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-share")) {
         // emulator
-        var file = app.storage.find(f=>f.name[0]=='-');
+        var file = app.storage.find(f=>f.name.endsWith('.js'));
         if (!file) {
           console.error("No entrypoint found for "+appid);
           return;
