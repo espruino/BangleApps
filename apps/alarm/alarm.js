@@ -10,7 +10,7 @@ function formatTime(t) {
 
 function getCurrentHr() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60);
+  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
 }
 
 function showAlarm(alarm) {
@@ -47,7 +47,7 @@ function showAlarm(alarm) {
 
 // Check for alarms
 var day = (new Date()).getDate();
-var hr = getCurrentHr();
+var hr = getCurrentHr()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
 var alarms = require("Storage").readJSON("alarm.json",1)||[];
 var active = alarms.filter(a=>a.on&&(a.hr<hr)&&(a.last!=day));
 if (active.length) {
@@ -56,5 +56,5 @@ if (active.length) {
   showAlarm(active[0]);
 } else {
   // otherwise just go back to default app
-  load();
+  setTimeout(load, 100);
 }

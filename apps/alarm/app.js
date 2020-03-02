@@ -19,7 +19,7 @@ function formatTime(t) {
 
 function getCurrentHr() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60);
+  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
 }
 
 function showMainMenu() {
