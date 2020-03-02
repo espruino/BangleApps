@@ -15,8 +15,9 @@ if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
   if (s.log) Terminal.setConsole(); // if showing debug, put REPL on terminal (until connection)
   else Bluetooth.setConsole(true); // else if no debug, force REPL to Bluetooth
 }
-// we just reset, so BLE should be on
-if (s.ble===false) NRF.sleep();
+// we just reset, so BLE should be on.
+// Don't disconnect if something is already connected to us
+if (s.ble===false && !NRF.getSecurityStatus().connected) NRF.sleep();
 // Set time, vibrate, beep, etc
 if (!s.vibrate) Bangle.buzz=Promise.resolve;
 if (!s.beep) Bangle.beep=Promise.resolve;
