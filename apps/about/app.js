@@ -15,9 +15,9 @@ function getVersion(name,file) {
   var v = ("object"==typeof j)?j.version:false;
   g.drawString(v?(name+" "+(v?"v"+v:"Unknown")):"NO "+name,0,y+=h);
 }
-getVersion("Bootloader","+boot");
-getVersion("Launcher","+launch");
-getVersion("Settings","+setting");
+getVersion("Bootloader","boot.info");
+getVersion("Launcher","launch.info");
+getVersion("Settings","setting.info");
 
 y+=h;
 g.drawString(MEM.total+" JS Variables available",0,y+=h);
