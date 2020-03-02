@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Animate balloon intro
 0.03: BTN3 now won't restart when at the end
+0.04: Fix regression after tweaks to Storage.readJSON
