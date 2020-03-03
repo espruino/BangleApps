@@ -18,7 +18,7 @@ uploadApp : (app,skipReset) => {
         if (fileContents.length==0) {
           Puck.write(`\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
             if (result===null) return reject("");
-            resolve(appJSON);
+            resolve(app);
           });
           return;
         }
