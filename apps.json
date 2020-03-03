@@ -773,5 +773,18 @@
       {"name":"pipboy.app.js","url":"app.js"},
       {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "torch",
+    "name": "Torch",
+    "shortName":"Torch",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN3 four times in quick succession to start when in normal clock mode",
+    "tags": "tool,torch",
+    "storage": [
+      {"name":"torch.app.js","url":"app.js"},
+      {"name":"torch.wid.js","url":"widget.js"},
+      {"name":"torch.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
