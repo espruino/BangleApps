@@ -43,6 +43,7 @@
     "version":"0.01",
     "description": "Translations for different countries",
     "tags": "tool,system",
+    "type": "locale",
     "custom":"locale.html",
     "storage": [
       {"name":"locale"}
