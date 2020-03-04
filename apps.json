@@ -37,6 +37,18 @@
       {"name":"about.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "locale",
+    "name": "Languages",
+    "icon": "locale.png",
+    "version":"0.01",
+    "description": "Translations for different countries",
+    "tags": "tool,system",
+    "custom":"locale.html",
+    "storage": [
+      {"name":"locale"}
+    ],
+    "sortorder" : -10
+  },
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
