@@ -800,5 +800,16 @@
       {"name":"torch.wid.js","url":"widget.js"},
       {"name":"torch.img","url":"app-icon.js","evaluate":true}
     ]
+  },  
+  { "id": "widid",
+    "name": "My NRF ID Widget",
+    "icon": "widid.png",
+    "version":"0.01",
+    "description": "Display the last two tupple of you Bangle.js address in the widget section.",
+    "tags": "widget",
+    "type":"widget",
+    "storage": [
+      {"name":"widid.wid.js","url":"widget.js"}
+    ]
   }
 ]
