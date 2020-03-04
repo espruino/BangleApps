@@ -5,3 +5,4 @@
 0.06: Disable GPS time log messages, add (default=1) setting to hide log messages
 0.07: Fix issues with alarm scheduling
 0.08: Fix issues if BLE=off, 'Make Connectable' is chosen, and the loader resets Bangle.js (fix #108)
+0.09: Only check GPS for time after a fresh boot

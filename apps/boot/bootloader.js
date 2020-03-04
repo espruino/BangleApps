@@ -12,8 +12,27 @@ if (!settings.welcomed && require("Storage").read("welcome.js")!==undefined) {
       clockApp = require("Storage").read(clockApps[0].src);
     delete clockApps;
   }
-  if (clockApp) eval(clockApp);
-  else E.showMessage("No Clock Found");
-  delete clockApp;
+  if (!clockApp) clockApp='E.showMessage("No Clock Found")';
+  delete settings;
+  // check to see if our clock is wrong - if it is use GPS time
+  if ((new Date()).getFullYear()==1970) {
+    E.showMessage("Searching for\nGPS time");
+    Bangle.on('GPS',function cb(g) {
+      Bangle.setGPSPower(0);
+      Bangle.removeListener("GPS",cb);
+      if (!g.time || (g.time.getFullYear()<2000) ||
+         (g.time.getFullYear()==2250)) {
+        // GPS receiver's time not set - just boot clock anyway
+        eval(clockApp);delete clockApp;
+        return;
+      }
+      // We have a GPS time. Set time and reboot (to load alarms properly)
+      setTime(g.time.getTime()/1000);
+      load();
+    });
+    Bangle.setGPSPower(1);
+  } else {
+    eval(clockApp);
+    delete clockApp;
+  }
 }
-delete settings;

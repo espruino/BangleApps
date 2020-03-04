@@ -26,44 +26,24 @@ if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
 delete s;
 // check for alarms
-function checkAlarm() {
-  var alarms = require('Storage').readJSON('alarm.json',1)||[];
-  var time = new Date();
-  var active = alarms.filter(a=>a.on&&(a.last!=time.getDate()));
-  if (active.length) {
-    active = active.sort((a,b)=>a.hr-b.hr);
-    var hr = time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
-    if (!require('Storage').read("alarm.js")) {
-      console.log("No alarm app!");
-      require('Storage').write('alarm.json',"[]")
-    } else {
-      var t = 3600000*(active[0].hr-hr);
-      if (t<1000) t=1000;
-      /* execute alarm at the correct time. We avoid execing immediately
-      since this code will get called AGAIN when alarm.js is loaded. alarm.js
-      will then clearInterval() to get rid of this call so it can proceed
-      normally. */
-      setTimeout(function() {
-        load("alarm.js");
-      },t);
-    }
+var alarms = require('Storage').readJSON('alarm.json',1)||[];
+var time = new Date();
+var active = alarms.filter(a=>a.on&&(a.last!=time.getDate()));
+if (active.length) {
+  active = active.sort((a,b)=>a.hr-b.hr);
+  var hr = time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
+  if (!require('Storage').read("alarm.js")) {
+    console.log("No alarm app!");
+    require('Storage').write('alarm.json',"[]")
+  } else {
+    var t = 3600000*(active[0].hr-hr);
+    if (t<1000) t=1000;
+    /* execute alarm at the correct time. We avoid execing immediately
+    since this code will get called AGAIN when alarm.js is loaded. alarm.js
+    will then clearInterval() to get rid of this call so it can proceed
+    normally. */
+    setTimeout(function() {
+      load("alarm.js");
+    },t);
   }
 }
-// check to see if our clock is wrong - if it is use GPS time
-if ((new Date()).getFullYear()==1970) {
-  //console.log("Searching for GPS time");
-  Bangle.on('GPS',function cb(g) {
-    Bangle.setGPSPower(0);
-    Bangle.removeListener("GPS",cb);
-    if (!g.time || (g.time.getFullYear()<2000) ||
-       (g.time.getFullYear()==2250)) {
-      //console.log("GPS receiver's time not set");
-      return;
-    }
-    setTime(g.time.getTime()/1000);
-    //console.log("GPS time",g.time.toString());
-    checkAlarm();
-  });
-  Bangle.setGPSPower(1);
-} else checkAlarm();
-delete checkAlarm;
