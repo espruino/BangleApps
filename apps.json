@@ -805,7 +805,7 @@
     "name": "My NRF ID Widget",
     "icon": "widid.png",
     "version":"0.01",
-    "description": "Display the last two tupple of you Bangle.js address in the widget section.",
+    "description": "Display the last two tupple of your Bangle.js address in the widget section.",
     "tags": "widget",
     "type":"widget",
     "storage": [
