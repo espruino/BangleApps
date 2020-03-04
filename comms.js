@@ -4,7 +4,7 @@ Puck.debug=3;
 var Comms = {
 reset : () => new Promise((resolve,reject) => {
   Puck.write("\x03\x10reset();\n", (result) => {
-    if (result===null) return reject("");
+    if (result===null) return reject("Connection failed");
     setTimeout(resolve,500);
   });
 }),
@@ -42,7 +42,7 @@ uploadApp : (app,skipReset) => {
         doUpload();
       } else {
         // reset to ensure we have enough memory to upload what we need to
-        Comms.reset().then(doUpload)
+        Comms.reset().then(doUpload, reject)
       }
     });
   });
