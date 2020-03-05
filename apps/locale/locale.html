@@ -72,7 +72,7 @@
             distance: n => (n < 1000) ? Math.round(n) + locale.distance[0] : Math.round(n/1000) + locale.distance[1],
             speed: s => Math.round(s) +locale.speed,
             temp: t => Math.round(t) + locale.temperature,
-            translate: s => locale.trans[s]||locale.trans[s.toLowerCase()]||s,
+            translate: s => {s=""+s;return locale.trans[s]||locale.trans[s.toLowerCase()]||s},
             date: (d,short) =>  (short) ? \`${dateS}\`: \`${dateN}\`,
             time: (d,short) =>  (short) ? \`${timeS}\`: \`${timeN}\`,
         };`;
