@@ -1,38 +1,29 @@
 (() => {
-  // add the width
-  var xpos = WIDGETPOS.tl;
-  WIDGETPOS.tl += 24;/* the widget width plus some extra pixel to keep distance to others */;
   var settings = {};
   var hasFix = false;
   var fixToggle = false; // toggles once for each reading
   var gpsTrack; // file for GPS track
   var periodCtr = 0;
 
-  // draw your widget at xpos
+  // draw your widget
   function draw() {
+    if (!settings.recording) return;
     g.reset();
     g.setFont("4x6");
     g.setFontAlign(0,0);
-    g.clearRect(xpos,0,xpos+23,23);
-
-    if (!settings.recording) {
-      g.setColor("#606060");
+    g.clearRect(this.x,this.y,this.x+23,this.y+23);
+    g.setColor("#ff0000");
+    if (hasFix) {
+      if (fixToggle) {
+        g.fillCircle(this.x+11,this.y+11,9);
+        g.setColor("#000000");
+      } else
+        g.drawCircle(this.x+11,this.y+11,9);
     } else {
-      g.setColor("#ff0000");
-      if (hasFix) {
-        if (fixToggle) {
-          g.fillCircle(xpos+11,11,9);
-          g.setColor("#000000");
-        } else
-          g.drawCircle(xpos+11,11,9);
-      } else {
-        g.setColor(fixToggle ? "#ff0000" : "#7f0000");
-        g.drawString("NO",xpos+12,5);
-        g.drawString("FIX",xpos+12,19);
-      }
+      g.drawString("NO",this.x+12,this.y+5);
+      g.drawString("FIX",this.x+12,this.y+19);
     }
-    g.drawString("GPS",xpos+12,12);
-    g.setColor(-1); // change color back to be nice to other apps
+    g.drawString("GPS",this.x+12,this.y+12);
   }
 
   function onGPS(fix) {
@@ -53,7 +44,7 @@
     }
   }
 
-  // Called by the GPS app to reload settings and decide what's
+  // Called by the GPS app to reload settings and decide what to do
   function reload() {
     settings = require("Storage").readJSON("gpsrec.json",1)||{};
     settings.period = settings.period||1;
@@ -61,17 +52,22 @@
 
     Bangle.removeListener('GPS',onGPS);
     if (settings.recording) {
+      WIDGETS["gpsrec"].width = 24;
       Bangle.on('GPS',onGPS);
       Bangle.setGPSPower(1);
       var n = settings.file.toString(36);
       gpsTrack = require("Storage").open(".gpsrc"+n,"a");
     } else {
+      WIDGETS["gpsrec"].width = 0;
       Bangle.setGPSPower(0);
       gpsTrack = undefined;
     }
-    draw();
   }
-  reload();
   // add the widget
-  WIDGETS["gpsrec"]={draw:draw,reload:reload};
+  WIDGETS["gpsrec"]={area:"tl",width:24,draw:draw,reload:function() {
+    reload();
+    Bangle.drawWidgets(); // relayout all widgets
+  }};
+  // load settings, set correct widget width
+  reload();
 })()

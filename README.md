@@ -120,7 +120,7 @@ Apps are listed in the Bangle.js menu, accessible from a clock app via the middl
 
 #### `app-icon.js`
 
-The icon image and short description is used in the menu entry as selection possibility.
+The icon image and short description is used in Bangle.js's launcher.
 
 Use the Espruino [image converter](https://www.espruino.com/Image+Converter) and upload your `app.png` file.
 
@@ -136,11 +136,14 @@ Follow this steps to create a readable icon as image string.
 Replace this line with the image converter output:
 
 ```
-require("heatshrink").decompress(atob("mEwwJC/AH4A/AH4AgA=="));
+require("heatshrink").decompress(atob("mEwwJC/AH4A/AH4AgA=="))
 ```
 
-Keep in mind to use this converter for creating images you like to draw with `g.drawImage()` with your app.
+You can also use this converter for creating images you like to draw with `g.drawImage()` with your app.
 
+Apps that need widgets can call `Bangle.loadWidgets()` **once** at startup to load
+them, and then `Bangle.drawWidgets()` to draw them onto the screen whenever the app
+has call to completely clear the screen. Widgets themselves will update as and when needed.
 
 ### Widget Example
 
@@ -148,6 +151,23 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 
 * `add_to_apps.json` - insert into `apps.json`, describes the widget to bootloader and loader
 * `widget.js` - widget code
+
+Widgets are just small bits of code that run whenever an app that supports them
+calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
+widget bars at the top and bottom of the screen they can add themselves to
+the global `WIDGETS` array with:
+
+```
+WIDGETS["mywidget"]={
+  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
+  width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
+  draw:draw // called to draw the widget
+};
+```
+
+When the widget is to be drawn, `x` and `y` values are set up in `WIDGETS["mywidget"]`
+and `draw` can then use `this.x` and `this.y` to figure out where it needs to draw to.
+
 
 ### `app.info` format
 

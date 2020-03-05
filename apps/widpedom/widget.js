@@ -1,17 +1,11 @@
 (() => {
   const PEDOMFILE = "wpedom.json";
-  // add the width
-  // WIDGETPOS.tr is originally 208 without any widgets
-  var xpos = WIDGETPOS.tl;
-  var width = 24;
-  WIDGETPOS.tl += (width + 2);
-
   let lastUpdate = new Date();
   let stp_today = 0;
 
-  // draw your widget at xpos
+  // draw your widget
   function draw() {
-    // Widget	(0,0,239,23)
+    var width = 24;
     if (stp_today > 99999){
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
@@ -24,9 +18,9 @@
       g.setFont("6x8", 1);
     }
     g.setFontAlign(0, 0); // align to x: center, y: center
-    g.clearRect(xpos,15,xpos+width,24); // erase background
-    g.drawString(stps, xpos+width/2, 19);
-    g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),xpos+(width-10)/2,2);
+    g.clearRect(this.x,this.y+15,this.x+width,this.y+23); // erase background
+    g.drawString(stps, this.x+width/2, this.y+19);
+    g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),this.x+(width-10)/2,this.y+2);
   }
 
   Bangle.on('step', (up) => {
@@ -55,7 +49,7 @@
   });
 
   // add your widget
-  WIDGETS["wpedom"]={draw:draw};
+  WIDGETS["wpedom"]={area:"tl",width:26,draw:draw};
   // Load data at startup
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
   if (pedomData) {

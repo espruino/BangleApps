@@ -2,6 +2,8 @@ var clickTimes = [];
 var CLICK_COUNT = 4; // number of taps
 var CLICK_PERIOD = 1; // second
 
+// we don't actually create/draw a widget here at all...
+
 Bangle.on("lcdPower",function(on) {
   // First click (that turns LCD on) isn't given to
   // setWatch, so handle it here
