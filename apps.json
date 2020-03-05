@@ -42,7 +42,7 @@
     "icon": "locale.png",
     "version":"0.01",
     "description": "Translations for different countries",
-    "tags": "tool,system",
+    "tags": "tool,system,locale,translate",
     "type": "locale",
     "custom":"locale.html",
     "storage": [
