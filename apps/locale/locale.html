@@ -62,7 +62,6 @@
 
         var app = `
         locale = ${JSON.stringify(locales[lang])};
-
         exports  = {
             lang: locale.lang,
             currencySym: String.fromCharCode(locale.currency_symbol),
@@ -73,7 +72,7 @@
             distance: n => (n < 1000) ? Math.round(n) + locale.distance[0] : Math.round(n/1000) + locale.distance[1],
             speed: s => Math.round(s) +locale.speed,
             temp: t => Math.round(t) + locale.temperature,
-            translate: s => (locale.lang.substr(2) == "en")? s: locale.trans[s],
+            translate: s => locale.trans[s]||locale.trans[s.toLowerCase()]||s,
             date: (d,short) =>  (short) ? \`${dateS}\`: \`${dateN}\`,
             time: (d,short) =>  (short) ? \`${timeS}\`: \`${timeN}\`,
         };`;
