@@ -60,7 +60,8 @@ getInstalledApps : () => {
   });
 },
 removeApp : app => { // expects an app structure
-  var cmds = app.storage.map(file=>{
+  var storage = [{name:app.id+".info"}].concat(app.storage);
+  var cmds = storage.map(file=>{
     return `\x10require("Storage").erase(${toJS(file.name)});\n`;
   }).join("");
   console.log("removeApp", cmds);
