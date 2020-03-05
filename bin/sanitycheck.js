@@ -46,6 +46,17 @@ apps.forEach((app,addIdx) => {
   var isApp = !app.type || app.type=="app";
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`);
   if (!app.version) WARN(`App ${app.id} has no version`);
+  else {
+    if (!fs.existsSync(appDir+"ChangeLog")) {
+      if (app.version != "0.01")
+        WARN(`App ${app.id} has no ChangeLog`);
+    } else {
+      var versions = fs.readFileSync(appDir+"ChangeLog").toString().match(/\d+\.\d+:/g);
+      var lastChangeLog = versions.pop().slice(0,-1);
+      if (lastChangeLog != app.version)
+        WARN(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`);
+    }
+  }
   if (!app.description) ERROR(`App ${app.id} has no description`);
   if (!app.icon) ERROR(`App ${app.id} has no icon`);
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
