@@ -76,8 +76,7 @@ function drawTime() {
   }
 
   let t = d.getSeconds()*1000 + d.getMilliseconds();
-  let delta = (60000 - t) % 60000; // time till next minute
-  idTimeout = setTimeout(drawTime, delta);
+  idTimeout = setTimeout(drawTime, 60000 - t); // time till next minute
 }
 
 // special function to handle display switch on
