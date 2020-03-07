@@ -114,7 +114,7 @@ function renderConfidenceBars(){
     } else if(hrConfidence >= 0){
         g.setColor(255, 0, 0);
     } else {
-        g.setColor(255, 255, 0);
+        g.setColor(255, 255, 255);
     }
 
     g.fillRect(45, 110, 55, 140);
