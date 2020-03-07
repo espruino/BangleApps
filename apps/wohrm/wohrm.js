@@ -30,28 +30,28 @@ function drawTrainingHeartRate() {
 
 function renderUpperLimit() {
     g.setColor(255,0,0);
-    g.fillRect(135,40, 220, 70);
-    g.fillRect(190,70, 220, 200);
+    g.fillRect(125,40, 210, 70);
+    g.fillRect(180,70, 210, 200);
 
     //Round top left corner
     g.setColor(255,0,0);
-    g.fillEllipse(125,40,145,70);
+    g.fillEllipse(115,40,135,70);
 
     //Round top right corner
     g.setColor(0,0,0);
-    g.fillRect(215,40, 220, 45);
+    g.fillRect(205,40, 210, 45);
     g.setColor(255,0,0);
-    g.fillEllipse(200,40,220,50);
+    g.fillEllipse(190,40,210,50);
 
     //Round inner corner
     g.setColor(255,0,0);
-    g.fillRect(184,71, 189, 76);
+    g.fillRect(174,71, 179, 76);
     g.setColor(0,0,0);
-    g.fillEllipse(170,71,189,82);
+    g.fillEllipse(160,71,179,82);
 
     //Round bottom
     g.setColor(255,0,0);
-    g.fillEllipse(190,190, 220, 210);
+    g.fillEllipse(180,190, 210, 210);
 
     // if(limitSetter === Setter.UPPER){
     //     g.setColor(255,255, 255);
@@ -60,7 +60,7 @@ function renderUpperLimit() {
 
     g.setColor(255,255,255);
     g.setFontVector(10);
-    g.drawString("Upper  : " + upperLimit, 140,50);
+    g.drawString("Upper  : " + upperLimit, 130,50);
 }
 
 function renderCurrentHeartRate() {
@@ -114,7 +114,7 @@ function renderConfidenceBars(){
     } else if(hrConfidence >= 0){
         g.setColor(255, 0, 0);
     } else {
-        g.setColor(0, 0, 0);
+        g.setColor(255, 255, 0);
     }
 
     g.fillRect(45, 110, 55, 140);
@@ -126,17 +126,17 @@ function renderButtonIcons() {
   g.setFontVector(14);
   
   // + for Btn1
-  g.drawString("+", 227,50);
+  g.drawString("+", 222,50);
   
   // Home for Btn2
-  g.drawLine(225, 118, 232, 110);
-  g.drawLine(232, 110, 239, 118);
+  g.drawLine(220, 118, 227, 110);
+  g.drawLine(227, 110, 234, 118);
   
-  g.drawPoly([227,117,227,125,237,125,237,117], false);
-  g.drawRect(231,120,234,125);
+  g.drawPoly([222,117,222,125,232,125,232,117], false);
+  g.drawRect(226,120,229,125);
   
   // - for Btn3
-  g.drawString("-", 227,190);
+  g.drawString("-", 222,165);
 }
 
 function buzz()
