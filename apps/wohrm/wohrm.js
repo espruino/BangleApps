@@ -15,6 +15,8 @@ let currentHeartRate = 0;
 let hrConfidence = -1;
 
 function drawTrainingHeartRate() {
+    renderButtonIcons();
+  
     renderUpperLimit();
 
     renderCurrentHeartRate();
@@ -28,56 +30,76 @@ function drawTrainingHeartRate() {
 
 function renderUpperLimit() {
     g.setColor(255,0,0);
-    g.fillRect(145,40, 230, 70);
-    g.fillRect(200,70, 230, 200);
+    g.fillRect(135,40, 220, 70);
+    g.fillRect(190,70, 220, 200);
 
-    //Round middle left corner
+    //Round top left corner
     g.setColor(255,0,0);
-    g.fillEllipse(135,40,155,70);
+    g.fillEllipse(125,40,145,70);
 
     //Round top right corner
     g.setColor(0,0,0);
-    g.fillRect(225,40, 230, 45);
+    g.fillRect(215,40, 220, 45);
     g.setColor(255,0,0);
-    g.fillEllipse(210,40,230,50);
+    g.fillEllipse(200,40,220,50);
 
     //Round inner corner
     g.setColor(255,0,0);
-    g.fillRect(194,71, 199, 76);
+    g.fillRect(184,71, 189, 76);
     g.setColor(0,0,0);
-    g.fillEllipse(180,71,199,82);
+    g.fillEllipse(170,71,189,82);
 
     //Round bottom
     g.setColor(255,0,0);
-    g.fillEllipse(200,190, 230, 210);
+    g.fillEllipse(190,190, 220, 210);
 
-    if(limitSetter === Setter.UPPER){
-        g.setColor(255,255, 255);
-        g.drawPoly([140,40,230,40,230,210,200,210,200,70,140,70], true);
-    }
+    // if(limitSetter === Setter.UPPER){
+    //     g.setColor(255,255, 255);
+    //     g.drawPoly([140,40,230,40,230,210,200,210,200,70,140,70], false);
+    // }
 
     g.setColor(255,255,255);
     g.setFontVector(10);
-    g.drawString("Upper  : " + upperLimit, 150,50);
+    g.drawString("Upper  : " + upperLimit, 140,50);
 }
 
 function renderCurrentHeartRate() {
     g.setColor(255,255,255);
-    g.fillRect(55, 110, 175, 140);
+    g.fillRect(45, 110, 165, 140);
     g.setColor(0,0,0);
     g.setFontVector(13);
-    g.drawString("Current: " + currentHeartRate, 75,117);
+    g.drawString("Current: " + currentHeartRate, 65,117);
 }
 
 function renderLowerLimit() {
     g.setColor(0,0,255);
     g.fillRect(10, 180, 100, 210);
-    g.fillRect(10, 40, 40, 180); 
+    g.fillRect(10, 50, 40, 180);
 
-    if(limitSetter === Setter.LOWER){
-        g.setColor(255,255, 255);
-        g.drawPoly([10,40,40,40,40,180,100,180,100,210,10,210], true);
-    }
+    //Rounded top
+    g.setColor(0,0,255);
+    g.fillEllipse(10,40, 40, 60);
+
+    //Round bottom right corner
+    g.setColor(0,0,255);
+    g.fillEllipse(90,180,110,210);
+
+    //Round inner corner
+    g.setColor(0,0,255);
+    g.fillRect(40,175,45,180);
+    g.setColor(0,0,0);
+    g.fillEllipse(41,170,60,179);
+  
+    //Round bottom left corner
+    g.setColor(0,0,0);
+    g.fillRect(10,205, 15, 210);
+    g.setColor(0,0,255);
+    g.fillEllipse(10,200,30,210);
+
+    // if(limitSetter === Setter.LOWER){
+    //     g.setColor(255,255, 255);
+    //     g.drawPoly([10,40,40,40,40,180,100,180,100,210,10,210], true);
+    // }
 
     g.setColor(255,255,255);
     g.setFontVector(10);
@@ -95,8 +117,26 @@ function renderConfidenceBars(){
         g.setColor(0, 0, 0);
     }
 
-    g.fillRect(55, 110, 65, 140);
-    g.fillRect(175, 110, 185, 140);
+    g.fillRect(45, 110, 55, 140);
+    g.fillRect(165, 110, 175, 140);
+}
+
+function renderButtonIcons() {
+  g.setColor(255,255,255);
+  g.setFontVector(14);
+  
+  // + for Btn1
+  g.drawString("+", 227,50);
+  
+  // Home for Btn2
+  g.drawLine(225, 118, 232, 110);
+  g.drawLine(232, 110, 239, 118);
+  
+  g.drawPoly([227,117,227,125,237,125,237,117], false);
+  g.drawRect(231,120,234,125);
+  
+  // - for Btn3
+  g.drawString("-", 227,190);
 }
 
 function buzz()
