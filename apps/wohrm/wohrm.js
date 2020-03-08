@@ -218,9 +218,11 @@ function decrementLimit(){
 }
   
 function resetHighlightTimeout() {
-  if(setterHiglightTimeout !== undefined)
+  if (setterHighlightTimeout) {
     clearTimeout(setterHighlightTimeout);
-  setterHighlightTimeout = setTimeout(setLimitSetterToNone, 5000);
+  }
+  
+  setterHighlightTimeout = setTimeout(setLimitSetterToNone, 2000);
 }
   
 // Show launcher when middle button pressed
