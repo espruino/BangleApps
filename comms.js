@@ -2,8 +2,8 @@ Puck.debug=3;
 
 // FIXME: use UART lib so that we handle errors properly
 var Comms = {
-reset : () => new Promise((resolve,reject) => {
-  Puck.write("\x03\x10reset();\n", (result) => {
+reset : (opt) => new Promise((resolve,reject) => {
+  Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`, (result) => {
     if (result===null) return reject("Connection failed");
     setTimeout(resolve,500);
   });
@@ -73,7 +73,7 @@ removeApp : app => { // expects an app structure
   }));
 },
 removeAllApps : () => {
-  return Comms.reset().then(() => new Promise((resolve,reject) => {
+  return Comms.reset("wipe").then(() => new Promise((resolve,reject) => {
     // Use write with newline here so we wait for it to finish
     Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK")\n', (result,err) => {
       if (!result || result.trim()!="OK") return reject(err || "");
