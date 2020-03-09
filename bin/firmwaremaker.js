@@ -10,16 +10,10 @@ var APPDIR = ROOTDIR+'/apps';
 var APPJSON = ROOTDIR+'/apps.json';
 var OUTFILE = ROOTDIR+'/firmware.js';
 var APPS = [ // IDs of apps to install
-  "boot",
-  "launch",
-  "mclock",
-  "setting",
-  "astroid",
-  "gpstime",
-  "compass",
-  "sbt",
-  "sbat"
+  "boot","launch","mclock","setting",
+  "about","alarm","widbat","widbt","welcome"
 ];
+var MINIFY = true;
 
 var fs = require("fs");
 var AppInfo = require(ROOTDIR+"/appinfo.js");
@@ -28,14 +22,25 @@ var appfiles = [];
 
 function fileGetter(url) {
   console.log("Loading "+url)
-  /*if (url.endsWith(".js")) {
-    var f = url.slice(0,-3);
-    console.log("MINIFYING "+f);
-    const execSync = require('child_process').execSync;
-    code = execSync(`espruino --board BANGLEJS --minify ${f}.js -o ${f}.min.js`);
-    console.log(code.toString());
-    url = f+".min.js";
-  }*/
+  if (MINIFY) {
+    if (url.endsWith(".js")) {
+      var f = url.slice(0,-3);
+      console.log("MINIFYING "+f);
+      const execSync = require('child_process').execSync;
+      code = execSync(`espruino --board BANGLEJS --minify ${f}.js -o ${f}.min.js`);
+      console.log(code.toString());
+      url = f+".min.js";
+    }
+    if (url.endsWith(".json")) {
+      var f = url.slice(0,-5);
+      console.log("MINIFYING JSON "+f);
+      var j = eval("("+fs.readFileSync(url).toString()+")");
+      var code = JSON.stringify(j);
+      //console.log(code);
+      url = f+".min.json";
+      fs.writeFileSync(url, code);
+    }
+  }
   return Promise.resolve(fs.readFileSync(url).toString());
 }
 
