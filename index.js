@@ -308,7 +308,8 @@ function refreshLibrary() {
           return;
         }
         var baseurl = window.location.href;
-        var url = baseurl+"apps/"+app.id+"/"+file.url;
+        baseurl = baseurl.substr(0,baseurl.lastIndexOf("/"));
+        var url = baseurl+"/apps/"+app.id+"/"+file.url;
         window.open(`https://espruino.com/ide/emulator.html?codeurl=${url}&upload`);
       } else if (icon.classList.contains("icon-upload")) {
         // upload
