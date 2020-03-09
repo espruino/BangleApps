@@ -123,7 +123,7 @@ function getRecordList() {
     for (var i=0;i<buttons.length;i++) {
       buttons[i].addEventListener("click",event => {
         var button = event.currentTarget;
-        var recordNbr = button.getAttribute("recordNbr");
+        var recordNbr = parseInt(button.getAttribute("recordNbr"));
         var task = button.getAttribute("task");
         if (task=="delete") {
           showModal("Deleting record...");
