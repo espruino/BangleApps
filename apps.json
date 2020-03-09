@@ -261,6 +261,20 @@
       {"name":"gpsrec.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "heart",
+    "name": "Heart Rate Recorder",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Application that allows you to record your heart rate. Can run in background",
+    "tags": "tool,health,widget",
+    "storage": [
+      {"name":"heart.app.js","url":"app.js"},
+      {"name":"heart.json","url":"app-settings.json","evaluate":true},
+      {"name":"heart.img","url":"app-icon.js","evaluate":true},
+      {"name":"heart.wid.js","url":"widget.js"}
+    ]
+  },
   { "id": "slevel",
     "name": "Spirit Level",
     "icon": "spiritlevel.png",
