@@ -9,27 +9,21 @@
   function draw() {
     if (!settings.recording) return;
     g.reset();
-    g.setFont("4x6");
-    g.setFontAlign(0,0);
-    g.clearRect(this.x,this.y,this.x+23,this.y+23);
-    g.setColor("#ff0000");
+    g.drawImage(atob("GBgCAAAAAAAAAAQAAAAAAD8AAAAAAP/AAAAAAP/wAAAAAH/8C9AAAB/8L/QAAAfwv/wAAAHS//wAAAAL//gAAAAf/+AAAAAf/4AAAAL//gAAAAD/+DwAAAB/Uf8AAAAfA//AAAACAf/wAAAAAH/0AAAAAB/wAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),this.x,this.y);
     if (hasFix) {
-      if (fixToggle) {
-        g.fillCircle(this.x+11,this.y+11,9);
-        g.setColor("#000000");
-      } else
-        g.drawCircle(this.x+11,this.y+11,9);
+      g.setColor("#FF0000");
+      g.drawImage(fixToggle ? atob("CgoCAAAAA0AAOAAD5AAPwAAAAAAAAAAAAAAAAA==") : atob("CgoCAAABw0AcOAHj5A8PwHwAAvgAB/wABUAAAA=="),this.x,this.y+14);
     } else {
-      g.drawString("NO",this.x+12,this.y+5);
-      g.drawString("FIX",this.x+12,this.y+19);
+      g.setColor("#0000FF");
+      if (fixToggle)
+        g.setFont("6x8").drawString("?",this.x,this.y+14);
     }
-    g.drawString("GPS",this.x+12,this.y+12);
   }
 
   function onGPS(fix) {
     hasFix = fix.fix;
     fixToggle = !fixToggle;
-    draw();
+    WIDGETS["gpsrec"].draw();
     if (hasFix) {
       periodCtr--;
       if (periodCtr<=0) {
