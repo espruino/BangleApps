@@ -10,7 +10,7 @@ function draw() {
   g.drawImage(img_bt,10+this.x,2+this.y);
 }
 function changed() {
-  draw();
+  WIDGETS["bluetooth"].draw();
   g.flip();// turns screen on
 }
 NRF.on('connected',changed);

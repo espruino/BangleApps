@@ -29,7 +29,7 @@
       Bangle.setHRMPower(1);
       firstBPM = true;
       currentBPM = undefined;
-      draw();
+      WIDGETS["hrm"].draw();
     } else {
       Bangle.setHRMPower(0);
     }
@@ -42,7 +42,7 @@
       currentBPM = d.bpm;
       lastBPM = currentBPM;
     }
-    draw();
+    WIDGETS["hrm"].draw();
   });
   Bangle.setHRMPower(Bangle.isLCDOn());
 

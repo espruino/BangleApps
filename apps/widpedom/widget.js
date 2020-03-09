@@ -33,11 +33,11 @@
     }
     lastUpdate = date;
     //console.log("up: " + up + " stp: " + stp_today + " " + date.toString());
-    if (Bangle.isLCDOn()) draw();
+    if (Bangle.isLCDOn()) WIDGETS["wpedom"].draw();
   });
   // redraw when the LCD turns on
   Bangle.on('lcdPower', function(on) {
-    if (on) draw();
+    if (on) WIDGETS["wpedom"].draw();
   });
   // When unloading, save state
   E.on('kill', () => {

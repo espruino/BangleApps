@@ -27,7 +27,7 @@ Bangle.on('charging',function(charging) {
 var batteryInterval;
 Bangle.on('lcdPower', function(on) {
   if (on) {
-   draw();
+   WIDGETS["bat"].draw();
    // refresh once a minute if LCD on
    if (!batteryInterval)
      batteryInterval = setInterval(draw, 60000);

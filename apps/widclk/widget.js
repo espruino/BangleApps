@@ -15,7 +15,7 @@
     }
     function startTimers(){
       intervalRef = setInterval(draw, 60*1000);
-      draw();
+      WIDGETS["wdclk"].draw();
     }
     Bangle.on('lcdPower', (on) => {
       clearTimers();
