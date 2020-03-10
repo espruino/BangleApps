@@ -817,8 +817,8 @@
     "name": "Bluetooth ID Widget",
     "icon": "widget.png",
     "version":"0.02",
-    "description": "Display the last two tuple of your Bangle.js address in the widget section. This is useful for figuring out which Bangle.js to connect to if you have more than one Bangle.js!",
-    "tags": "widget",
+    "description": "Display the last two tuple of your Bangle.js MAC address in the widget section. This is useful for figuring out which Bangle.js to connect to if you have more than one Bangle.js!",
+    "tags": "widget,address,mac",
     "type":"widget",
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
