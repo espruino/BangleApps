@@ -2,3 +2,4 @@
 0.03: Add support for Welcome app
 0.04: Add setting to disable log messages
 0.05: Fix Settings json
+0.06: Remove distance setting as there's a separate app for Locale now
