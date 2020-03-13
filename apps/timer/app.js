@@ -1,0 +1,1 @@
+E.showMessage("My App")
