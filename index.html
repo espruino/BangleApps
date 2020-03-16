@@ -30,12 +30,18 @@
     .chip {
       cursor: pointer;
     }
+    .tile-content { position: relative; }
+    .link-github {
+      position:absolute;
+      top: 36px;
+      left: -24px;
+    }
 	</style>
   </head>
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section">
-        <a href="https://banglejs.com" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
       <section class="navbar-section">
@@ -50,7 +56,7 @@
     </header>
 
     <div class="container" style="padding-top:4px">
-      <p><b>Note:</b> If you have a version of Bangle.js firmware before 2v04, please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates">latest firmware</a> or
+      <p><b>Note:</b> If you have a version of Bangle.js firmware before 2v04, please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">latest firmware</a> or
         <a href="https://banglejs.com/oldapps/">use the legacy app loader</a>.
       </p>
     </div>
@@ -103,15 +109,15 @@
     <div class="container bangle-tab" id="aboutcontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
-          <a href="https://banglejs.com"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
+          <a href="https://banglejs.com" target="_blank"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
           <h2>App Loader</h2>
-          <p>A tool for uploading and removing apps from <a href="https://banglejs.com">Bangle.js Smart Watches</a></p>
+          <p>A tool for uploading and removing apps from <a href="https://banglejs.com" target="_blank">Bangle.js Smart Watches</a></p>
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
-        <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
-        <p>Check out <a href="https://github.com/espruino/BangleApps">the Source on GitHub</a> for more information.</p>
-
+        <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
+          find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</p>
+        <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
         <p><button class="btn" id="settime">Set Bangle.js Time</button>
