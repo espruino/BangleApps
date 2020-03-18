@@ -1,10 +1,24 @@
 (function() {
+  const storage = require('Storage');
+  var settings = storage.readJSON('gbridge.json',1);
+  if (!settings) {
+    settings = {
+      showIcon: true,
+      notificationsEnabled: true,
+      fullscreenNotifications: false
+    };
+  }
+  // Ensure the Notifications app is actually installed
+  settings.fullscreenNotifications = settings.fullscreenNotifications && require("Storage").list("notify.app.js").length > 0;
+
   var musicState = "stop";
   var musicInfo = {"artist":"","album":"","track":""};
   var scrollPos = 0;
+
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
   }
+
   function show(size,render) {
     var oldMode = Bangle.getLCDMode();
     Bangle.setLCDMode("direct");
@@ -26,6 +40,7 @@
     }
     anim();
   }
+
   function hide() {
     function anim() {
       scrollPos+=4;
@@ -39,47 +54,56 @@
   Bangle.on('touch',function() {
     if (scrollPos) hide();
   });
+
   Bangle.on('swipe',function(dir) {
     if (musicState=="play") {
       gb({t:"music",n:dir>0?"next":"previous"});
     }
   });
+
   gb({t:"status",bat:E.getBattery()});
 
   global.GB = function(j) {
     switch (j.t) {
       case "notify":
-        show(80,function(y) {
-          // TODO: icon based on src?
-          var x = 120;
-          g.setFontAlign(0,0);
-          g.setFont("6x8",1);
-          g.setColor("#40d040");
-          g.drawString(j.src,x,y+7);
-          g.setColor("#ffffff");
-          g.setFont("6x8",2);
-          g.drawString(j.title,x,y+25);
-          g.setFont("6x8",1);
-          g.setColor("#ffffff");
-          // split text up a word boundaries
-          var txt = j.body.split("\n");
-          var MAXCHARS = 38;
-          for (var i=0;i<txt.length;i++) {
-            txt[i] = txt[i].trim();
-            var l = txt[i];
-            if (l.length>MAXCHARS) {
-              var p = MAXCHARS;
-              while (p>MAXCHARS-8 && !" \t-_".includes(l[p]))
-                p--;
-              if (p==MAXCHARS-8) p=MAXCHARS;
-              txt[i] = l.substr(0,p);
-              txt.splice(i+1,0,l.substr(p));
+        if (!settings.notificationsEnabled) {
+          return;
+        }
+        if (settings.fullscreenNotifications) {
+          ShowFullscreenNotification(j.src, j.title, j.body);
+        } else {
+          show(80,function(y) {
+            // TODO: icon based on src?
+            var x = 120;
+            g.setFontAlign(0,0);
+            g.setFont("6x8",1);
+            g.setColor("#40d040");
+            g.drawString(j.src,x,y+7);
+            g.setColor("#ffffff");
+            g.setFont("6x8",2);
+            g.drawString(j.title,x,y+25);
+            g.setFont("6x8",1);
+            g.setColor("#ffffff");
+            // split text up a word boundaries
+            var txt = j.body.split("\n");
+            var MAXCHARS = 38;
+            for (var i=0;i<txt.length;i++) {
+              txt[i] = txt[i].trim();
+              var l = txt[i];
+              if (l.length>MAXCHARS) {
+                var p = MAXCHARS;
+                while (p>MAXCHARS-8 && !" \t-_".includes(l[p]))
+                  p--;
+                if (p==MAXCHARS-8) p=MAXCHARS;
+                txt[i] = l.substr(0,p);
+                txt.splice(i+1,0,l.substr(p));
+              }
             }
-          }
-          g.setFontAlign(-1,-1);
-          g.drawString(txt.join("\n"),10,y+40);
-          Bangle.buzz();
-        });
+            g.setFontAlign(-1,-1);
+            g.drawString(txt.join("\n"),10,y+40);
+            Bangle.buzz();
+          });
+        }
       break;
       case "musicinfo":
         musicInfo = j;
@@ -106,20 +130,23 @@
     }
   };
 
-function draw() {
-  g.setColor(-1);
-  if (NRF.getSecurityStatus().connected)
-    g.drawImage(require("heatshrink").decompress(atob("i0WwgHExAABCIwJCBYwJEBYkIBQ2ACgvzCwoECx/z/AKDD4WD+YLBEIYKCx//+cvnAKCBwU/mc4/8/HYv//Ev+Y4EEAePn43DBQkzn4rCEIoABBIwKHO4cjmczK42I6mqlqEEBQeIBQaDED4IgDUhi6KaBbmIA==")),this.x+1,this.y+1);
-  else
-    g.drawImage(require("heatshrink").decompress(atob("i0WwQFC1WgAgYFDAgIFClQFCwEK1W/AoIPB1f+CAMq1f7/WqwQPB/fq1Gq1/+/4dC/2/CAIaB/YbBAAO///qAoX/B4QbBDQQ7BDQQrBAAWoIIIACIIIVC0ECB4cACAZiBAoRtCAoIDBA")),this.x+1,this.y+1);
-}
-function changed() {
-  WIDGETS["gbridgew"].draw();
-  g.flip();// turns screen on
-}
-NRF.on('connected',changed);
-NRF.on('disconnected',changed);
+  if (settings.showIcon) {
+    function draw() {
+      g.setColor(-1);
+      if (NRF.getSecurityStatus().connected)
+        g.drawImage(require("heatshrink").decompress(atob("i0WwgHExAABCIwJCBYwJEBYkIBQ2ACgvzCwoECx/z/AKDD4WD+YLBEIYKCx//+cvnAKCBwU/mc4/8/HYv//Ev+Y4EEAePn43DBQkzn4rCEIoABBIwKHO4cjmczK42I6mqlqEEBQeIBQaDED4IgDUhi6KaBbmIA==")),this.x+1,this.y+1);
+      else
+        g.drawImage(require("heatshrink").decompress(atob("i0WwQFC1WgAgYFDAgIFClQFCwEK1W/AoIPB1f+CAMq1f7/WqwQPB/fq1Gq1/+/4dC/2/CAIaB/YbBAAO///qAoX/B4QbBDQQ7BDQQrBAAWoIIIACIIIVC0ECB4cACAZiBAoRtCAoIDBA")),this.x+1,this.y+1);
+    }
+    function changed() {
+      WIDGETS["gbridgew"].draw();
+      g.flip();// turns screen on
+    }
+    NRF.on('connected',changed);
+    NRF.on('disconnected',changed);
 
-WIDGETS["gbridgew"]={area:"tl",width:24,draw:draw};
-
+    WIDGETS["gbridgew"]={area:"tl",width:24,draw:draw};
+  } else {
+    delete WIDGETS["gbridgew"];
+  }
 })();
