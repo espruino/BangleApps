@@ -17,21 +17,26 @@ function draw() {
       clearNotificationTimeout = setTimeout(load, cfg.duration)
     }
 
-    g.setFontAlign(0,0);
-
     if (n.src) {
+      g.reset()
+      g.setFontAlign(0,0);
       g.setFontVector(14);
       g.setColor("#40d040");
       g.drawString(n.src, g.getWidth()/2, 40);
     }
 
     if (n.title) {
+      g.reset()
+      g.setFontAlign(0,0);
       g.setColor("#ffffff");
       g.setFontVector(22);
       g.drawString(n.title,g.getWidth()/2,65)
     }
 
     if (n.body) {
+      g.reset()
+      g.setFontAlign(0,0);
+      g.setColor("#ffffff");
       g.setFont("6x8",2);
       var txt = n.body.split("\n");
       var MAXCHARS = 19;
