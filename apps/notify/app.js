@@ -55,15 +55,61 @@ function draw() {
 
 draw();
 
-setWatch(function() {
+var upButtonWatch = setWatch(function() {
   clearTimeout(clearNotificationTimeout);
   if (selectedIndex>0) {
     selectedIndex--;
     draw();
+  } else if (selectedIndex == 0) {
+    clearWatch(upButtonWatch);
+    clearWatch(downButtonWatch);
+    clearWatch(middleButtonWatch);
+    E.showMenu({
+      "" : { "title" : "Notifications" },
+      "Vibrate" : {
+        value: cfg.vibrate,
+        step: 50,
+        min: 0,
+        max: 10000,
+        onchange: (value) => {
+          cfg.vibrate = value;
+          s.writeJSON("notify.json", cfg);
+        }
+      },
+      "Beep" : {
+        value: cfg.beep,
+        format: v => v==1 ? "On" : "Off",
+        onchange: (value) => {
+          cfg.beep = value ? 1 : 0;
+          s.writeJSON("notify.json", cfg);
+        }
+      },
+      "Duration" : {
+        value: cfg.duration,
+        step: 500,
+        min: 1000,
+        max: 30000,
+        onchange: (value) => {
+          cfg.duration = value;
+          s.writeJSON("notify.json", cfg);
+        }
+      },
+      "History" : {
+        value: cfg.maxCount,
+        step: 1,
+        min: 1,
+        max: 20,
+        onchange: (value) => {
+          cfg.maxCount = value;
+          s.writeJSON("notify.json", cfg);
+        }
+      },
+      "Exit": ()=> {load();}
+    })
   }
 }, BTN1, {repeat:true});
 
-setWatch(function() {
+var downButtonWatch = setWatch(function() {
   clearTimeout(clearNotificationTimeout);
   if (selectedIndex+1<cfg.notifications.length) {
     selectedIndex++;
@@ -72,7 +118,7 @@ setWatch(function() {
 }, BTN3, {repeat:true});
 
 // Close notifications
-setWatch(function() {
+var middleButtonWatch = setWatch(function() {
   load();
 }, BTN2, {repeat:true,edge:"falling"});
 
