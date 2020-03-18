@@ -17,8 +17,9 @@ function draw() {
       clearNotificationTimeout = setTimeout(load, cfg.duration)
     }
 
+    g.setFontAlign(0,0);
+
     if (n.src) {
-      g.setFontAlign(0,0);
       g.setFontVector(14);
       g.setColor("#40d040");
       g.drawString(n.src, g.getWidth()/2, 40);
