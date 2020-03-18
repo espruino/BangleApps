@@ -7,6 +7,7 @@
     "acorn": ""
   },
   "scripts": {
-    "test": "node bin/sanitycheck.js"
+    "test": "node bin/sanitycheck.js",
+    "start": "npx http-server"
   }
 }
