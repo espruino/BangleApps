@@ -1,0 +1,8 @@
+{
+  "notifications": [],
+  "vibrate": 1000,
+  "beep": 0,
+  "duration": 5000,
+  "maxCount": 5,
+  "isNotify": false
+}
