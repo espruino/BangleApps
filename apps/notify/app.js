@@ -16,32 +16,39 @@ function draw() {
       s.writeJSON("notify.json", cfg);
       clearNotificationTimeout = setTimeout(load, cfg.duration)
     }
-    g.setFontAlign(0,0);
-    g.setFontVector(14);
-    g.setColor("#40d040");
-    g.drawString(n.src, g.getWidth()/2, 40);
 
-    g.setColor("#ffffff");
-    g.setFontVector(22);
-    g.drawString(n.title,g.getWidth()/2,65);
-
-    g.setFont("6x8",2);
-    var txt = n.body.split("\n");
-    var MAXCHARS = 19;
-    for (var i=0;i<txt.length;i++) {
-      txt[i] = txt[i].trim();
-      var l = txt[i];
-      if (l.length>MAXCHARS) {
-        var p = MAXCHARS;
-        while (p>MAXCHARS-8 && !" \t-_".includes(l[p]))
-          p--;
-        if (p==MAXCHARS-8) p=MAXCHARS;
-        txt[i] = l.substr(0,p);
-        txt.splice(i+1,0,l.substr(p));
-      }
+    if (n.src) {
+      g.setFontAlign(0,0);
+      g.setFontVector(14);
+      g.setColor("#40d040");
+      g.drawString(n.src, g.getWidth()/2, 40);
     }
-    g.setFontAlign(0,0);
-    g.drawString(txt.join("\n"),g.getWidth()/2,100);
+
+    if (n.title) {
+      g.setColor("#ffffff");
+      g.setFontVector(22);
+      g.drawString(n.title,g.getWidth()/2,65)
+    }
+
+    if (n.body) {
+      g.setFont("6x8",2);
+      var txt = n.body.split("\n");
+      var MAXCHARS = 19;
+      for (var i=0;i<txt.length;i++) {
+        txt[i] = txt[i].trim();
+        var l = txt[i];
+        if (l.length>MAXCHARS) {
+          var p = MAXCHARS;
+          while (p>MAXCHARS-8 && !" \t-_".includes(l[p]))
+            p--;
+          if (p==MAXCHARS-8) p=MAXCHARS;
+          txt[i] = l.substr(0,p);
+          txt.splice(i+1,0,l.substr(p));
+        }
+      }
+      g.setFontAlign(0,0);
+      g.drawString(txt.join("\n"),g.getWidth()/2,100);
+    }
 
     g.flip();
   } else {
