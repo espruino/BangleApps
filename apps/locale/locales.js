@@ -319,5 +319,22 @@ var locales = {
         month: "Jenner,Hornig,Märze,Abrille,Meije,Bráčet,Heiwet,Öigšte,Herbštmánet,Wímánet,Wintermánet,Chrištmánet",
         abday: "Sun,Män,Ziš,Mit,Fró,Fri,Sam",
         day: "Sunntag,Mäntag,Zištag,Mittwuč,Fróntag,Fritag,Samštag",
-        trans : { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }}
+        trans : { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+    "tr_TR": { // this is default
+        lang: "tr_TR",
+        decimal_point: ",",
+        thousands_sep: ".",
+        currency_symbol: "TL",
+        int_curr_symbol: "TRY",
+        speed: 'kmh',
+        distance: { "0": "km", "1": "m" },
+        temperatur: '°C',
+        ampm: {0:"öö",1:"ös"},
+        timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+        datePattern: { 0: "%d %w %Y %A", 1: "%d/%m/%Y" }, // 1 Mart 2020 Pazar // "01/03/2020"
+        abmonth: "Oca,Sub,Mar,Nis,May,Haz,Tem,Agu,Eyl,Eki,Kas,Ara",
+        month: "Ocak,Subat,Mart,Nisan,Mayis,Haziran,Temmuz,Agustos,Eylul,Ekim,Kasim,Aralik",
+        abday: "Paz,Pzt,Sal,Car,Per,Cum,Cmt",
+        day: "Pazar,Pazartesi,Sali,Carsamba,Persembe,Cuma,Cumartesi",
+        trans: { yes: "evet", Yes: "Evet", no: "hayir", No: "Hayir", ok: "tamam", on: "acik", off: "kapali" }}
 };
