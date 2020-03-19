@@ -1,5 +1,1 @@
-# Changelog
-
-## 2020-03-18
-
-Initial release
+0.01: Initial release
