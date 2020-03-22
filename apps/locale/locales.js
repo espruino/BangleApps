@@ -25,7 +25,7 @@ var locales = {
       int_curr_symbol: "GBP",
       speed: 'mph',
       distance: { "0": "mi", "1": "kmi" },
-      temperatur: '°C',
+      temperature: '°C',
       ampm: {0:"am",1:"pm"},
       timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
       datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)
@@ -193,7 +193,7 @@ var locales = {
         currency_symbol: "₪",
         int_curr_symbol: "ILS",
         speed: "kmh",
-        distance: { 0: "km", 1: "m" },
+        distance: { 0: "m", 1: "km" },
         temperature: "°F",
         ampm: {0:"am",1:"pm"},
         timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -278,7 +278,7 @@ var locales = {
         currency_symbol: "CHF",
         int_curr_symbol: "CHF",
         speed: "kmh",
-        distance: { 0: "km", 1: "m" },
+        distance: { 0: "m", 1: "km" },
         temperature: "°C",
         ampm: {0:"AM",1:"PM"},
         timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
@@ -295,8 +295,8 @@ var locales = {
         currency_symbol: "CHF",
         int_curr_symbol: "CHF",
         speed: 'kmh',
-        distance: { "0": "km", "1": "m" },
-        temperatur: '°C',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
         timePattern: { 0: "%HH.%MM.%SS ", 1: "%HH.%MM" }, // 17.00.00  // 17.00
         datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%Y" }, // sunnuntai 1. maaliskuuta 2020 // 1.3.2020
         abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
@@ -311,8 +311,8 @@ var locales = {
         currency_symbol: "CHF",
         int_curr_symbol: "CHF",
         speed: 'kmh',
-        distance: { "0": "km", "1": "m" },
-        temperatur: '°C',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
         timePattern: { 0: "%HH.%MM.%SS ", 1: "%HH.%MM" }, // 17.00.00  // 17.00
         datePattern: { 0: "%A, %d. %B %Y", "1": "%Y-%m-%d" }, // Sunntag, 1. Märze 2020 //  2020-03-01
         abmonth: "Jen,Hor,Mär,Abr,Mei,Brá,Hei,Öig,Her,Wím,Win,Chr",
@@ -327,8 +327,8 @@ var locales = {
         currency_symbol: "TL",
         int_curr_symbol: "TRY",
         speed: 'kmh',
-        distance: { "0": "km", "1": "m" },
-        temperatur: '°C',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
         ampm: {0:"öö",1:"ös"},
         timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
         datePattern: { 0: "%d %w %Y %A", 1: "%d/%m/%Y" }, // 1 Mart 2020 Pazar // "01/03/2020"
@@ -336,5 +336,22 @@ var locales = {
         month: "Ocak,Subat,Mart,Nisan,Mayis,Haziran,Temmuz,Agustos,Eylul,Ekim,Kasim,Aralik",
         abday: "Paz,Pzt,Sal,Car,Per,Cum,Cmt",
         day: "Pazar,Pazartesi,Sali,Carsamba,Persembe,Cuma,Cumartesi",
-        trans: { yes: "evet", Yes: "Evet", no: "hayir", No: "Hayir", ok: "tamam", on: "acik", off: "kapali" }}
+        trans: { yes: "evet", Yes: "Evet", no: "hayir", No: "Hayir", ok: "tamam", on: "acik", off: "kapali" }},
+  "hu_HU": {
+      lang: "hu_HU",
+      decimal_point: ",",
+      thousands_sep: " ",
+      currency_symbol: "Ft",
+      int_curr_symbol: "HUF",
+      speed: 'kph',
+      distance: { "0": "m", "1": "km" },
+      temperature: '°C',
+      ampm: {0:"de",1:"du"},
+      timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+      datePattern: { 0: "%Y %d %b", 1: "%Y.%m.%d" }, // 2020 Feb 28" // "2020.03.01."(short)
+      abmonth: "Jan,Feb,Már,Ápr,Máj,Jún,Júl,Aug,Szep,Okt,Nov,Dec",
+      month: "Január,Február,Március,Április,Május,Június,Július,Augusztus,Szeptember,Október,November,December",
+      abday: "Vas,Hét,Ke,Szer,Csüt,Pén,Szom",
+      day: "Vasárnap,Hétfő,Kedd,Szerda,Csütörtök,Péntek,Szombat",
+      trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }},	
 };
