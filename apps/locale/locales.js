@@ -217,7 +217,7 @@ var locales = {
         datePattern: { 0: "%A, %d de %B de %Y", "1": "%d/%m/%y" }, //  domingo, 1 de marzo de 2020  // 01/03/20
         abmonth: "ene,feb,mar,abr,may,jun,jul,ago,sept,oct,nov,dic",
         month: "enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre",
-        abday: "dom,lun,mar,mié,jue,vie,sáb.",
+        abday: "dom,lun,mar,mié,jue,vie,sáb",
         day: "domingo,lunes,martes,miércoles,jueves,viernes,sábado",
         trans: { yes : "sí", Yes: "Sí",no: "no", No: "No", ok : "ok", on: "on", off: "off" }},
     "fr_BE": {
