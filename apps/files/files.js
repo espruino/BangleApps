@@ -69,7 +69,7 @@ function showApps() {
   var list = storage.list(/\.info$/).filter((a)=> {
     return a !== 'setting.info';
   }).sort().map((app) => {
-    var ret = storage.readJSON(app);
+    var ret = storage.readJSON(app,1)||{};
     ret[''] = app;
     return ret;
   });

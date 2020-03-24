@@ -1,39 +1,27 @@
 (() => {
     let intervalRef = null;
     var width = 5 * 6*2
-    var xpos = WIDGETPOS.tr - width;
-    WIDGETPOS.tr -= (width + 2);
-    
+
     function draw() {
-        // Widget	(0,0,239,23)
-        let date = new Date();
-        var dateArray = date.toString().split(" ");
-        g.setColor(1,1,1);
-        g.setFont("6x8", 2);
-        g.setFontAlign(-1, 0);
-        g.drawString(dateArray[4].substr(0, 5), xpos, 11, true); // 5 * 6*2 = 60
-        g.flip();
+        g.reset().setFont("6x8", 2).setFontAlign(-1, 0);
+        var time = require("locale").time(new Date(),1);
+        g.drawString(time, this.x, this.y+11, true); // 5 * 6*2 = 60
     }
     function clearTimers(){
-        if(intervalRef) {
-            clearInterval(intervalRef);
-            intervalRef = null;
-        }
+      if(intervalRef) {
+        clearInterval(intervalRef);
+        intervalRef = null;
+      }
     }
     function startTimers(){
-        if(intervalRef) clearTimers();
-        intervalRef = setInterval(draw, 60*1000);
-        draw();
+      intervalRef = setInterval(draw, 60*1000);
+      WIDGETS["wdclk"].draw();
     }
     Bangle.on('lcdPower', (on) => {
-        if (on) {
-            // startTimers(); // comment out as it is called by app anyway
-        } else {
-            clearTimers();
-        }
+      clearTimers();
+      if (on) startTimers();
     });
 
-    // add your widget
-    WIDGETS["wdclk"]={draw:startTimers};
-
+    WIDGETS["wdclk"]={area:"tr",width:width,draw:draw};
+    if (Bangle.isLCDOn) intervalRef = setInterval(draw, 60*1000);
 })()

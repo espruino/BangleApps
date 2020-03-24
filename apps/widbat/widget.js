@@ -1,17 +1,15 @@
 (function(){
-var img_charge = E.toArrayBuffer(atob("DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"));
 var CHARGING = 0x07E0;
-var xpos = WIDGETPOS.tr-64;
-WIDGETPOS.tr-=68;
 
+function setWidth() {
+  WIDGETS["bat"].width = 40 + (Bangle.isCharging()?16:0);
+}
 function draw() {
-  var s = 63;
-  var x = xpos, y = 0;
-  g.clearRect(x,y,x+s,y+23);
+  var s = 39;
+  var x = this.x, y = this.y;
   if (Bangle.isCharging()) {
-    g.setColor(CHARGING).drawImage(img_charge,x,y);
+    g.setColor(CHARGING).drawImage(atob("DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
     x+=16;
-    s-=16;
   }
   g.setColor(-1);
   g.fillRect(x,y+2,x+s-4,y+21);
@@ -20,11 +18,16 @@ function draw() {
   g.setColor(CHARGING).fillRect(x+4,y+6,x+4+E.getBattery()*(s-12)/100,y+17);
   g.setColor(-1);
 }
-Bangle.on('charging',function(charging) { draw(); g.flip(); if(charging)Bangle.buzz(); });
+Bangle.on('charging',function(charging) {
+  if(charging) Bangle.buzz();
+  setWidth();
+  Bangle.drawWidgets(); // relayout widgets
+  g.flip();
+});
 var batteryInterval;
 Bangle.on('lcdPower', function(on) {
   if (on) {
-   draw();
+   WIDGETS["bat"].draw();
    // refresh once a minute if LCD on
    if (!batteryInterval)
      batteryInterval = setInterval(draw, 60000);
@@ -35,5 +38,6 @@ Bangle.on('lcdPower', function(on) {
    }
  }
 });
-WIDGETS["battery"]={draw:draw};
+WIDGETS["bat"]={area:"tr",width:40,draw:draw};
+setWidth();
 })()

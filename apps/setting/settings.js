@@ -21,15 +21,12 @@ function resetSettings() {
     HID : false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
     "12hour" : false,      // 12 or 24 hour clock?
-    distance : "kilometer" // or "mile"
     // welcomed : undefined/true (whether welcome app should show)
   };
   updateSettings();
 }
 
-try {
-  settings = storage.readJSON('setting.json');
-} catch (e) {}
+settings = storage.readJSON('setting.json',1);
 if (!settings) resetSettings();
 
 const boolFormat = v => v ? "On" : "Off";
@@ -143,15 +140,7 @@ function showLocaleMenu() {
         settings["12hour"] = v;
         updateSettings();
       }
-    },
-    'Distance/Speed': {
-      value: settings.distance=="mile",
-      format: v => v?"mile":"km",
-      onchange: v => {
-        settings.distance = v?"mile":"kilometer";
-        updateSettings();
-      }
-    },
+    }
   };
   return E.showMenu(localemenu);
 }

@@ -176,7 +176,7 @@ function getTrackList() {
     for (var i=0;i<buttons.length;i++) {
       buttons[i].addEventListener("click",event => {
         var button = event.currentTarget;
-        var trackid = button.getAttribute("trackid");
+        var trackid = parseInt(button.getAttribute("trackid"));
         var task = button.getAttribute("task");
         if (task=="delete") {
           showModal("Deleting Track...");

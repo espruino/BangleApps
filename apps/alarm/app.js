@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json")||[];
+var alarms = require("Storage").readJSON("alarm.json",1)||[];
 /*alarms = [
   { on : true,
     hr : 6.5, // hours + minutes/60
@@ -19,7 +19,7 @@ function formatTime(t) {
 
 function getCurrentHr() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60);
+  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
 }
 
 function showMainMenu() {

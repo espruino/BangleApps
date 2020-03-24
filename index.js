@@ -272,11 +272,12 @@ function refreshLibrary() {
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
-      <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
+      <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
+      <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
@@ -302,13 +303,14 @@ function refreshLibrary() {
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-share")) {
         // emulator
-        var file = app.storage.find(f=>f.name[0]=='-');
+        var file = app.storage.find(f=>f.name.endsWith('.js'));
         if (!file) {
           console.error("No entrypoint found for "+appid);
           return;
         }
         var baseurl = window.location.href;
-        var url = baseurl+"apps/"+app.id+"/"+file.url;
+        baseurl = baseurl.substr(0,baseurl.lastIndexOf("/"));
+        var url = baseurl+"/apps/"+app.id+"/"+file.url;
         window.open(`https://espruino.com/ide/emulator.html?codeurl=${url}&upload`);
       } else if (icon.classList.contains("icon-upload")) {
         // upload

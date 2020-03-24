@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.07",
+    "version":"0.10",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -28,7 +28,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.04",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -37,10 +37,23 @@
       {"name":"about.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "locale",
+    "name": "Languages",
+    "icon": "locale.png",
+    "version":"0.01",
+    "description": "Translations for different countries",
+    "tags": "tool,system,locale,translate",
+    "type": "locale",
+    "custom":"locale.html",
+    "storage": [
+      {"name":"locale"}
+    ],
+    "sortorder" : -10
+  },
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -53,7 +66,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "storage": [
@@ -79,7 +92,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -93,7 +106,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.04",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -130,16 +143,17 @@
       {"name":"aclock.img","url":"clock-analog-icon.js","evaluate":true}
     ]
   },
-  { "id": "clck3x2",
-    "name": "3x2 Pixel Clock",
-    "icon": "clock3x2.png",
-    "version":"0.03",
-    "description": "This is a simple clock using minimalistic 3x2 pixel numerical digits",
+  { "id": "clock2x3",
+    "name": "2x3 Pixel Clock",
+    "icon": "clock2x3.png",
+    "version":"0.04",
+    "description": "This is a simple clock using minimalist 2x3 pixel numerical digits",
     "tags": "clock",
+    "type": "clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"clck3x2.app.js","url":"clock3x2.js"},
-      {"name":"clck3x2.img","url":"clock3x2-icon.js","evaluate":true}
+      {"name":"clock2x3.app.js","url":"clock2x3-app.js"},
+      {"name":"clock2x3.img","url":"clock2x3-icon.js","evaluate":true}
     ]
   },
   { "id": "trex",
@@ -236,7 +250,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.06",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -245,6 +259,20 @@
       {"name":"gpsrec.json","url":"app-settings.json","evaluate":true},
       {"name":"gpsrec.img","url":"app-icon.js","evaluate":true},
       {"name":"gpsrec.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "heart",
+    "name": "Heart Rate Recorder",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Application that allows you to record your heart rate. Can run in background",
+    "tags": "tool,health,widget",
+    "storage": [
+      {"name":"heart.app.js","url":"app.js"},
+      {"name":"heart.json","url":"app-settings.json","evaluate":true},
+      {"name":"heart.img","url":"app-icon.js","evaluate":true},
+      {"name":"heart.wid.js","url":"widget.js"}
     ]
   },
   { "id": "slevel",
@@ -272,7 +300,7 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.02",
+    "version":"0.04",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type":"widget",
@@ -283,7 +311,7 @@
   { "id": "widbt",
     "name": "Bluetooth Widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.03",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
     "type":"widget",
@@ -305,7 +333,7 @@
   { "id": "widhrm",
     "name": "Simple Heart Rate widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.03",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
     "type": "widget",
@@ -316,7 +344,7 @@
   { "id": "stetho",
     "name": "Stethoscope",
     "icon": "stetho.png",
-    "version":"0.0198",
+    "version":"0.01",
     "description": "Hear your heart rate",
     "tags": "health",
     "storage": [
@@ -459,7 +487,7 @@
   { "id": "widnceu",
     "name": "NCEU Logo Widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Show the NodeConf EU logo in the top left",
     "tags": "widget",
     "type":"widget",
@@ -467,9 +495,6 @@
       {"name":"widnceu.wid.js","url":"widget.js"}
     ]
   },
-
-
-
   { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
@@ -638,7 +663,7 @@
     "id": "gpsinfo",
     "name": "GPS Info",
     "icon": "gps-info.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "tags": "gps",
     "type": "app",
@@ -691,7 +716,7 @@
   { "id": "widclk",
     "name": "Digital clock widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.03",
     "description": "A simple digital clock widget",
     "tags": "widget,clock",
     "type":"widget",
@@ -702,7 +727,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.08",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
@@ -753,6 +778,7 @@
   { "id": "flagrse",
     "name": "Espruino Flag Raiser",
     "icon": "app.png",
+    "version":"0.01",
     "description": "App to send a command to another Espruino to cause it to raise a flag",
     "tags": "",
     "storage": [
@@ -774,6 +800,19 @@
       {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "torch",
+    "name": "Torch",
+    "shortName":"Torch",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN3 four times in quick succession to start when in normal clock mode",
+    "tags": "tool,torch",
+    "storage": [
+      {"name":"torch.app.js","url":"app.js"},
+      {"name":"torch.wid.js","url":"widget.js"},
+      {"name":"torch.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "wohrm",
     "name": "Workout Heart Rate Monitor",
     "icon": "wohrm.png",
@@ -783,9 +822,19 @@
     "type": "app",
     "allow_emulator":true,
     "storage": [
-      {"name":"+wohrm","url":"wohrm.json"},
-      {"name":"-wohrm","url":"wohrm.js"},
-      {"name":"*wohrm","url":"wohrm-icon.js","evaluate":true}
+      {"name":"wohrm.app.js","url":"wohrm.js"},
+      {"name":"wohrm.img","url":"wohrm-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widid",
+    "name": "Bluetooth ID Widget",
+    "icon": "widget.png",
+    "version":"0.02",
+    "description": "Display the last two tuple of your Bangle.js MAC address in the widget section. This is useful for figuring out which Bangle.js to connect to if you have more than one Bangle.js!",
+    "tags": "widget,address,mac",
+    "type":"widget",
+    "storage": [
+      {"name":"widid.wid.js","url":"widget.js"}
     ]
   }
 ]

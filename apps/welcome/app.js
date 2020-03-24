@@ -283,11 +283,9 @@ setWatch(()=>move(1), BTN3, {repeat:true});
 setWatch(()=>{
   // If we're on the last page
   if (sceneNumber == scenes.length-1) {
-    try {
-      var settings = require("Storage").readJSON('setting.json');
-      settings.welcomed = true;
-      require("Storage").write('setting.json',settings);
-    } catch (e) {}
+    var settings = require("Storage").readJSON('setting.json',1)||{};
+    settings.welcomed = true;
+    require("Storage").write('setting.json',settings);
     load();
   }
 }, BTN2, {repeat:true,edge:"rising"});

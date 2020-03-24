@@ -115,11 +115,9 @@ function info() {
 }
 
 function cleanup() {
-  try {
-    var settings = require("Storage").readJSON('setting.json');
-    settings.welcomed = true;
-    require("Storage").write('setting.json',settings);
-  } catch (e) {}
+  var settings = require("Storage").readJSON('setting.json',1)||{};
+  settings.welcomed = true;
+  require("Storage").write('setting.json',settings);
   return Promise.resolve();
 }
 

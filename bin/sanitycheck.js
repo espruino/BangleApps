@@ -18,11 +18,11 @@ try {
 var BASEDIR = __dirname+"/../";
 var APPSDIR = BASEDIR+"apps/";
 function ERROR(s) {
-  console.error(s);
+  console.error("ERROR: "+s);
   process.exit(1);
 }
 function WARN(s) {
-  console.log(s);
+  console.log("Warning: "+s);
 }
 
 var appsFile, apps;
@@ -39,13 +39,24 @@ try{
 
 apps.forEach((app,addIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
-  console.log(`Checking ${app.id}...`);
+  //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
   if (!app.name) ERROR(`App ${app.id} has no name`);
   var isApp = !app.type || app.type=="app";
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`);
   if (!app.version) WARN(`App ${app.id} has no version`);
+  else {
+    if (!fs.existsSync(appDir+"ChangeLog")) {
+      if (app.version != "0.01")
+        WARN(`App ${app.id} has no ChangeLog`);
+    } else {
+      var versions = fs.readFileSync(appDir+"ChangeLog").toString().match(/\d+\.\d+:/g);
+      var lastChangeLog = versions.pop().slice(0,-1);
+      if (lastChangeLog != app.version)
+        WARN(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`);
+    }
+  }
   if (!app.description) ERROR(`App ${app.id} has no description`);
   if (!app.icon) ERROR(`App ${app.id} has no icon`);
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
@@ -59,8 +70,10 @@ apps.forEach((app,addIdx) => {
     fileNames.push(file.name);
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`);
+    var fileContents = "";
+    if (file.content) fileContents = file.content;
+    if (file.url) fileContents = fs.readFileSync(appDir+file.url).toString();
     if (file.evaluate) {
-      var fileContents = file.content ? file.content : fs.readFileSync(appDir+file.url).toString();
       try {
         acorn.parse("("+fileContents+")");
       } catch(e) {
@@ -72,6 +85,21 @@ apps.forEach((app,addIdx) => {
         console.log(fileContents);
         console.log("=====================================================");
         ERROR(`App ${app.id}'s ${file.name} has evaluate:true but is not valid JS expression`);
+      }
+    }
+    if (file.name.endsWith(".js")) {
+      // TODO: actual lint?
+      try {
+        acorn.parse(fileContents);
+      } catch(e) {
+        console.log("=====================================================");
+        console.log("  PARSE OF "+appDir+file.url+" failed.");
+        console.log("");
+        console.log(e);
+        console.log("=====================================================");
+        console.log(fileContents);
+        console.log("=====================================================");
+        ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`);
       }
     }
   });

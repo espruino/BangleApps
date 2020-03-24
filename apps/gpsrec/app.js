@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var settings = require("Storage").readJSON("gpsrec.json")||{};
+var settings = require("Storage").readJSON("gpsrec.json",1)||{};
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
