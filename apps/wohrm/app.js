@@ -17,16 +17,19 @@ let hrConfidence = -1;
 let setterHighlightTimeout;
 
 function drawTrainingHeartRate() {
-  renderButtonIcons();
- 
-  renderUpperLimit();
- 
-  renderCurrentHeartRate();
- 
-  renderLowerLimit();
- 
-  renderConfidenceBars();
- 
+  //Only redraw if the display is on
+  if (Bangle.isLCDOn()) {
+    renderButtonIcons();
+  
+    renderUpperLimit();
+  
+    renderCurrentHeartRate();
+  
+    renderLowerLimit();
+  
+    renderConfidenceBars();
+  }
+
   buzz();
 }
 
