@@ -1,3 +1,4 @@
+var locale = require("locale");
 /* jshint esversion: 6 */
 const Radius = { "center": 8, "hour": 78, "min": 95, "dots": 102 };
 const Center = { "x": 120, "y": 132 };
@@ -16,6 +17,7 @@ function drawMixedClock() {
 
     var date = new Date();
     var dateArray = date.toString().split(" ");
+    var isEn = locale.lang.startsWith("en");
     var point = [];
     var minute = date.getMinutes();
     var hour = date.getHours();
@@ -25,10 +27,10 @@ function drawMixedClock() {
     g.setColor(0x7be0);
     g.setFont("6x8", 2);
     g.setFontAlign(-1, 0);
-    g.drawString(dateArray[0] + ' ', 4, 35, true);
-    g.drawString(' ' + dateArray[2], 4, 225, true);
+    g.drawString(locale.dow(date,true) + ' ', 4, 35, true);
+    g.drawString(isEn?(' ' + dateArray[2]):locale.month(date,true), 4, 225, true);
     g.setFontAlign(1, 0);
-    g.drawString(dateArray[1], 237, 35, true);
+    g.drawString(isEn?locale.month(date,true):(' ' + dateArray[2]), 237, 35, true);
     g.drawString(dateArray[3], 237, 225, true);
 
     // draw hour and minute dots
