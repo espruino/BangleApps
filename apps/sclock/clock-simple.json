@@ -1,7 +1,0 @@
-{
-  "name":"24h Clock",
-  "type":"clock",
-  "icon":"*sclock",
-  "src":"-sclock",
-  "sortorder":-10
-}

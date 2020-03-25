@@ -2,6 +2,7 @@ var img = require("heatshrink").decompress(atob("mEwghC/AH4AKg9wC6t3u4uVC6wWBI6t
 
 Bangle.setGPSPower(1);
 Bangle.setLCDMode("doublebuffered");
+E.showMessage("Loading..."); // avoid showing rubbish on screen
 
 var lastFix = {
   fix: 0,

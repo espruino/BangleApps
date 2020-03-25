@@ -1,8 +1,5 @@
 var s = require("Storage");
-var apps = s.list().filter(a=>a[0]=='+').map(app=>{
-  try { return s.readJSON(app); }
-  catch (e) { return {name:"DEAD: "+app.substr(1)} }
-}).filter(app=>app.type=="app" || app.type=="clock" || !app.type);
+var apps = s.list(/\.info$/).map(app=>s.readJSON(app,1)||{name:"DEAD: "+app.substr(1)}).filter(app=>app.type=="app" || app.type=="clock" || !app.type);
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first

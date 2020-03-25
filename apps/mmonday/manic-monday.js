@@ -1,12 +1,23 @@
 // made using https://www.espruino.com/Making+Music
 // Manic Monday tone by The Bangles
 
-var SPEAKER_PIN = D18;
-
-function freq(f) {
- if (f===0) digitalWrite(SPEAKER_PIN, 0);
-  else analogWrite(SPEAKER_PIN, 0.5, {freq: f});
+var s = require('Storage').readJSON('setting.json',1)||{};
+/* Normally we'd just use Bangle.beep which works automatically
+but because we're going lower level we need to account for the
+different pin. */
+if (s.beep=="vib") {
+  function freq(f) {
+   if (f===0) digitalWrite(D13, 0);
+    else analogWrite(D13, 0.1, {freq: f});
+  }
+} else {
+  function freq(f) {
+   if (f===0) digitalWrite(D18, 0);
+    else analogWrite(D18, 0.5, {freq: f});
+  }
 }
+
+
 freq(1000);
 freq(1500);
 freq(0);
@@ -39,6 +50,7 @@ var tune = "aggffefed";
 var pos = 0;
 
 setWatch(() => {
+  pos = 0;
   var playing = setInterval(step, 500);
   if(playing === 0) clearInterval(playing);
 }, BTN1);

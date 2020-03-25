@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Fix GPS time logging
+0.03: Fix GPS time display in gpsrec app
+0.04: Properly Fix GPS time display in gpsrec app
+0.05: Tweaks for variable size widget system
+0.06: Ensure widget update itself (fix #118) and change to using icons

@@ -1,11 +1,13 @@
 // Create an entry in apps.json as follows:
 { "id": "7chname",
   "name": "My widget's human readable name",
+  "shortName":"Short Name",
   "icon": "widget.png",
+  "version":"0.01",
   "description": "A detailed description of my great widget",
-  "tags": "",
+  "tags": "widget",
+  "type": "widget",
   "storage": [
-    {"name":"+7chname","url":"widget.json"},
-    {"name":"-7chname","url":"widget.js"},
+    {"name":"7chname.wid.js","url":"widget.js"}
   ]
 }

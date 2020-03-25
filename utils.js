@@ -42,3 +42,28 @@ function appSorter(a,b) {
   if (sa>sb) return 1;
   return (a.name==b.name) ? 0 : ((a.name<b.name) ? -1 : 1);
 }
+
+/* Given 2 JSON structures (1st from apps.json, 2nd from an installed app)
+work out what to display re: versions and if we can update */
+function getVersionInfo(appListing, appInstalled) {
+  var versionText = "";
+  var canUpdate = false;
+  function clicky(v) {
+    return `<a href="#" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
+  }
+
+  if (!appInstalled) {
+    if (appListing.version)
+      versionText = clicky("v"+appListing.version);
+  } else {
+    versionText = (appInstalled.version ? ("v"+appInstalled.version) : "Unknown version");
+    if (appListing.version != appInstalled.version) {
+      if (appListing.version) versionText += ", latest "+clicky("v"+appListing.version);
+      canUpdate = true;
+    }
+  }
+  return {
+    text : versionText,
+    canUpdate : canUpdate
+  }
+}

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
-    <title>Bangle.js loader</title>
+    <title>Bangle.js App Loader</title>
     <style>
 		.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
 		.navbar .navbar-brand {
@@ -30,12 +30,18 @@
     .chip {
       cursor: pointer;
     }
+    .tile-content { position: relative; }
+    .link-github {
+      position:absolute;
+      top: 36px;
+      left: -24px;
+    }
 	</style>
   </head>
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section">
-        <a href="https://banglejs.com" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
       <section class="navbar-section">
@@ -49,15 +55,19 @@
       </section>-->
     </header>
 
+    <div class="container" style="padding-top:4px">
+      <p><b>Note:</b> If you have a version of Bangle.js firmware before 2v04, please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">latest firmware</a> or
+        <a href="https://banglejs.com/oldapps/">use the legacy app loader</a>.
+      </p>
+    </div>
+
+
     <ul class="tab tab-block" id="tab-navigate">
       <li class="tab-item active" id="tab-librarycontainer">
         <a href="javascript:showTab('librarycontainer')">Library</a>
       </li>
       <li class="tab-item" id="tab-myappscontainer">
         <a href="javascript:showTab('myappscontainer')">My Apps</a>
-      </li>
-      <li class="tab-item" id="tab-myfscontainer">
-        <a href="javascript:showTab('myfscontainer')">My files</a>
       </li>
       <li class="tab-item" id="tab-aboutcontainer">
         <a href="javascript:showTab('aboutcontainer')">About</a>
@@ -75,6 +85,7 @@
         <label class="chip" filterid="tool">Tools</label>
         <label class="chip" filterid="widget">Widgets</label>
         <label class="chip" filterid="bluetooth">Bluetooth</label>
+        <label class="chip" filterid="outdoors">Outdoors</label>
       </div>
       <div class="panel">
         <div class="panel-header">
@@ -96,37 +107,23 @@
       </div>
     </div>
 
-    <div class="container bangle-tab" id="myfscontainer" style="display:none">
-      <div class="panel">
-        <div class="panel-header column col-12 container">
-          <div class="columns col-gapless">
-            <p class="column col-9">Files currently stored on the watch. Click row to download.</p>
-            <div class="column col-3" style="text-align:right">
-              <button class="btn refresh">Refresh...</button>
-            </div>
-          </div>
-        </div>
-        <table class="table table-striped table-hover panel-body">
-        </table>
-      </div>
-    </div>
-
     <div class="container bangle-tab" id="aboutcontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
-          <a href="https://banglejs.com"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
+          <a href="https://banglejs.com" target="_blank"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
           <h2>App Loader</h2>
-          <p>A tool for uploading and removing apps from <a href="https://banglejs.com">Bangle.js Smart Watches</a></p>
+          <p>A tool for uploading and removing apps from <a href="https://banglejs.com" target="_blank">Bangle.js Smart Watches</a></p>
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
-        <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
-        <p>Check out <a href="https://github.com/espruino/BangleApps">the Source on GitHub</a> for more information.</p>
-
+        <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
+          find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</p>
+        <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
         <p><button class="btn" id="settime">Set Bangle.js Time</button>
-          <button class="btn" id="removeall">Remove all Apps</button></p>
+           <button class="btn" id="removeall">Remove all Apps</button>
+           <button class="btn" id="installdefault">Install default apps</button></p>
       </div>
     </div>
 
