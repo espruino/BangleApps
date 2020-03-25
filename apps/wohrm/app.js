@@ -17,7 +17,7 @@ let hrConfidence = -1;
 let setterHighlightTimeout;
 
 function renderUpperLimitBackground() {
-  g.setColor(255,0,0);
+  g.setColor(1,0,0);
   g.fillRect(125,40, 210, 70);
   g.fillRect(180,70, 210, 200);
 
@@ -27,7 +27,7 @@ function renderUpperLimitBackground() {
   //Round top right corner
   g.setColor(0,0,0);
   g.fillRect(205,40, 210, 45);
-  g.setColor(255,0,0);
+  g.setColor(1,0,0);
   g.fillEllipse(190,40,210,50);
 
   //Round inner corner
@@ -36,32 +36,33 @@ function renderUpperLimitBackground() {
   g.fillEllipse(160,71,179,82);
 
   //Round bottom
-  g.setColor(255,0,0);
+  g.setColor(1,0,0);
   g.fillEllipse(180,190, 210, 210);
 }
 
 function renderCurrentHearRateBackground() {
-  g.setColor(255,255,255);
+  g.setColor(1,1,1);
   g.fillRect(45, 110, 165, 140);
   g.setColor(0,0,0);
   g.setFontVector(13);
+  g.drawString("Current:" , 65,117);
 }
 
 function renderLowerLimitBackground() {
-  g.setColor(0,0,255);
+  g.setColor(0,0,1);
   g.fillRect(10, 180, 100, 210);
   g.fillRect(10, 50, 40, 180);
 
   //Rounded top
-  g.setColor(0,0,255);
+  g.setColor(0,0,1);
   g.fillEllipse(10,40, 40, 60);
 
   //Round bottom right corner
-  g.setColor(0,0,255);
+  g.setColor(0,0,1);
   g.fillEllipse(90,180,110,210);
 
   //Round inner corner
-  g.setColor(0,0,255);
+  g.setColor(0,0,1);
   g.fillRect(40,175,45,180);
   g.setColor(0,0,0);
   g.fillEllipse(41,170,60,179);
@@ -69,12 +70,12 @@ function renderLowerLimitBackground() {
   //Round bottom left corner
   g.setColor(0,0,0);
   g.fillRect(10,205, 15, 210);
-  g.setColor(0,0,255);
+  g.setColor(0,0,1);
   g.fillEllipse(10,200,30,210);
 }
 
 function renderButtonIcons() {
-  g.setColor(255,255,255);
+  g.setColor(1,1,1);
   g.setFontVector(14);
 
   // + for Btn1
@@ -88,14 +89,12 @@ function renderButtonIcons() {
   g.drawRect(226,120,229,125);
 
   // - for Btn3
-  g.drawString("-", 222,165);
+  g.drawString("-", 222,170);
 }
 
 function drawTrainingHeartRate() {
   //Only redraw if the display is on
   if (Bangle.isLCDOn()) {
-    renderButtonIcons();
-  
     renderUpperLimit();
   
     renderCurrentHeartRate();
@@ -110,16 +109,17 @@ function drawTrainingHeartRate() {
 
 function renderUpperLimit() {
   if(limitSetter === Setter.UPPER){
-    g.setColor(255,255, 0);
+    g.setColor(1, 1, 0);
   } else {
-    g.setColor(255,255,255);
+    g.setColor(1, 1, 1);
   }
+
   g.setFontVector(10);
-  g.drawString("Upper  : " + upperLimit, 130,50);
+  g.drawString("Upper : " + upperLimit, 130,50);
 }
   
 function renderCurrentHeartRate() {
-  g.drawString("Current:" , 65,117);
+  g.setFontVector(13);
   g.setFontAlign(1, -1, 0);
   g.drawString(currentHeartRate, 155, 117);
 
@@ -246,21 +246,19 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     Bangle.drawWidgets();
     // call your app function here
+    renderLowerLimitBackground();
+    renderCurrentHearRateBackground();
+    renderUpperLimitBackground();
+    renderButtonIcons();
     drawTrainingHeartRate();
   }
 });
-  
-Bangle.setHRMPower(1);
-Bangle.on('HRM', onHrm);
- 
-// refesh every sec
-setInterval(drawTrainingHeartRate, 1000);
   
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-renderLowerLimitBackground());
+renderLowerLimitBackground();
 renderCurrentHearRateBackground();
 renderUpperLimitBackground();
 renderButtonIcons();
@@ -274,3 +272,9 @@ setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
 setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
   
 setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
+
+Bangle.setHRMPower(1);
+Bangle.on('HRM', onHrm);
+ 
+// refesh every sec
+setInterval(drawTrainingHeartRate, 1000);
