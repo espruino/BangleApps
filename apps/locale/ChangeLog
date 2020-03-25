@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Fix locale.currencySym
+0.03: Fix global 'locale' variable
