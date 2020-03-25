@@ -16,24 +16,7 @@ let hrConfidence = -1;
 
 let setterHighlightTimeout;
 
-function drawTrainingHeartRate() {
-  //Only redraw if the display is on
-  if (Bangle.isLCDOn()) {
-    renderButtonIcons();
-  
-    renderUpperLimit();
-  
-    renderCurrentHeartRate();
-  
-    renderLowerLimit();
-  
-    renderConfidenceBars();
-  }
-
-  buzz();
-}
-
-function renderUpperLimit() {
+function renderUpperLimitBackground() {
   g.setColor(255,0,0);
   g.fillRect(125,40, 210, 70);
   g.fillRect(180,70, 210, 200);
@@ -55,31 +38,16 @@ function renderUpperLimit() {
   //Round bottom
   g.setColor(255,0,0);
   g.fillEllipse(180,190, 210, 210);
-
-  if(limitSetter === Setter.UPPER){
-    g.setColor(255,255, 0);
-  } else {
-    g.setColor(255,255,255);
-  }
-  g.setFontVector(10);
-  g.drawString("Upper  : " + upperLimit, 130,50);
 }
-  
-function renderCurrentHeartRate() {
+
+function renderCurrentHearRateBackground() {
   g.setColor(255,255,255);
   g.fillRect(45, 110, 165, 140);
   g.setColor(0,0,0);
   g.setFontVector(13);
-
-  g.drawString("Current:" , 65,117);
-  g.setFontAlign(1, -1, 0);
-  g.drawString(currentHeartRate, 155, 117);
-
-  //Reset alignment to defaults
-  g.setFontAlign(-1, -1, 0);
 }
-  
-function renderLowerLimit() {
+
+function renderLowerLimitBackground() {
   g.setColor(0,0,255);
   g.fillRect(10, 180, 100, 210);
   g.fillRect(10, 50, 40, 180);
@@ -103,7 +71,63 @@ function renderLowerLimit() {
   g.fillRect(10,205, 15, 210);
   g.setColor(0,0,255);
   g.fillEllipse(10,200,30,210);
+}
 
+function renderButtonIcons() {
+  g.setColor(255,255,255);
+  g.setFontVector(14);
+
+  // + for Btn1
+  g.drawString("+", 222,50);
+
+  // Home for Btn2
+  g.drawLine(220, 118, 227, 110);
+  g.drawLine(227, 110, 234, 118);
+
+  g.drawPoly([222,117,222,125,232,125,232,117], false);
+  g.drawRect(226,120,229,125);
+
+  // - for Btn3
+  g.drawString("-", 222,165);
+}
+
+function drawTrainingHeartRate() {
+  //Only redraw if the display is on
+  if (Bangle.isLCDOn()) {
+    renderButtonIcons();
+  
+    renderUpperLimit();
+  
+    renderCurrentHeartRate();
+  
+    renderLowerLimit();
+  
+    renderConfidenceBars();
+  }
+
+  buzz();
+}
+
+function renderUpperLimit() {
+  if(limitSetter === Setter.UPPER){
+    g.setColor(255,255, 0);
+  } else {
+    g.setColor(255,255,255);
+  }
+  g.setFontVector(10);
+  g.drawString("Upper  : " + upperLimit, 130,50);
+}
+  
+function renderCurrentHeartRate() {
+  g.drawString("Current:" , 65,117);
+  g.setFontAlign(1, -1, 0);
+  g.drawString(currentHeartRate, 155, 117);
+
+  //Reset alignment to defaults
+  g.setFontAlign(-1, -1, 0);
+}
+  
+function renderLowerLimit() {
   if(limitSetter === Setter.LOWER){
     g.setColor(255,255, 0);
   } else {
@@ -126,24 +150,6 @@ function renderConfidenceBars(){
 
   g.fillRect(45, 110, 55, 140);
   g.fillRect(165, 110, 175, 140);
-}
-  
-function renderButtonIcons() {
-  g.setColor(255,255,255);
-  g.setFontVector(14);
-
-  // + for Btn1
-  g.drawString("+", 222,50);
-
-  // Home for Btn2
-  g.drawLine(220, 118, 227, 110);
-  g.drawLine(227, 110, 234, 118);
-
-  g.drawPoly([222,117,222,125,232,125,232,117], false);
-  g.drawRect(226,120,229,125);
-
-  // - for Btn3
-  g.drawString("-", 222,165);
 }
   
 function buzz()
@@ -253,7 +259,11 @@ setInterval(drawTrainingHeartRate, 1000);
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-drawTrainingHeartRate();
+
+renderLowerLimitBackground());
+renderCurrentHearRateBackground();
+renderUpperLimitBackground();
+renderButtonIcons();
   
 setWatch(switchOffApp, BTN2, {repeat:false,edge:"falling"});
   
