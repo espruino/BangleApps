@@ -1,4 +1,4 @@
-var locales = require("locale");
+var locale = require("locale");
 // Offscreen buffer
 var buf = Graphics.createArrayBuffer(240,86,1,{msb:true});
 function flip() {
@@ -146,7 +146,7 @@ function draw(lastText,thisText,n) {
   buf.drawString(("0"+d.getSeconds()).substr(-2), x, y-8);
   // date
   buf.setFontAlign(0,-1);
-  var date = locales?locales.date(d,false):d.toString().substr(0,15);
+  var date = locale.date(d,false);
   buf.drawString(date, buf.getWidth()/2, y+8);
   flip();
 }

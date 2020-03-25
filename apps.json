@@ -78,7 +78,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -811,6 +811,19 @@
       {"name":"torch.app.js","url":"app.js"},
       {"name":"torch.wid.js","url":"widget.js"},
       {"name":"torch.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "openstmap",
+    "name": "OpenStreetMap map",
+    "shortName":"OpenStMap",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Loads map tiles from OpenStreetMap onto your Bangle",
+    "tags": "outdoors",
+    "custom": "custom.html",
+    "storage": [
+      {"name":"openstmap.app.js","url":"app.js"},
+      {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "widid",
