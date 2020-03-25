@@ -64,7 +64,7 @@
         locale = ${JSON.stringify(locales[lang])};
         exports  = {
             lang: locale.lang,
-            currencySym: String.fromCharCode(locale.currency_symbol),
+            currencySym: locale.currency_symbol,
             dow:   (d,short) => {day = d.getDay();return (short) ? locale.abday.split(",")[day] : locale.day.split(",")[day];},
             month: (d,short) => { month = d.getMonth(); return (short) ? locale.abmonth.split(",")[month] : locale.month.split(",")[month];},
             number: n => n.toString().replace(locale.thousands_sep, locale.decimal_point),

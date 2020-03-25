@@ -40,7 +40,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
