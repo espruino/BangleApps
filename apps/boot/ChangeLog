@@ -8,3 +8,4 @@
 0.09: Only check GPS for time after a fresh boot
 0.10: Stop users calling save() (fix #125)
       If Debug info is set to 'show' don't move to Terminal if connected!
+0.11: Added vibrate as beep workaround

@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -92,7 +92,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -575,7 +575,7 @@
   { "id": "mmonday",
   "name": "Manic Monday Tone",
   "icon": "manic-monday-icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "The Bangles make a comeback",
   "tags": "sound",
   "storage": [
