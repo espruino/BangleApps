@@ -1,125 +1,247 @@
-(function() {
-  var musicState = "stop";
-  var musicInfo = {"artist":"","album":"","track":""};
-  var scrollPos = 0;
-  function gb(j) {
-    Bluetooth.println(JSON.stringify(j));
-  }
-  function show(size,render) {
-    var oldMode = Bangle.getLCDMode();
-    Bangle.setLCDMode("direct");
-    g.setClipRect(0,240,239,319);
-    g.setColor("#222222");
-    g.fillRect(1,241,238,318);
-    render(320-size);
-    g.setColor("#ffffff");
-    g.fillRect(0,240,1,319);
-    g.fillRect(238,240,239,319);
-    g.fillRect(2,318,238,319);
-    Bangle.setLCDPower(1); // light up
-    Bangle.setLCDMode(oldMode); // clears cliprect
-    function anim() {
-      scrollPos-=2;
-      if (scrollPos<-size) scrollPos=-size;
-      Bangle.setLCDOffset(scrollPos);
-      if (scrollPos>-size) setTimeout(anim,10);
-    }
-    anim();
-  }
-  function hide() {
-    function anim() {
-      scrollPos+=4;
-      if (scrollPos>0) scrollPos=0;
-      Bangle.setLCDOffset(scrollPos);
-      if (scrollPos<0) setTimeout(anim,10);
-    }
-    anim();
-  }
+(() => {
 
-  Bangle.on('touch',function() {
-    if (scrollPos) hide();
-  });
-  Bangle.on('swipe',function(dir) {
-    if (musicState=="play") {
-      gb({t:"music",n:dir>0?"next":"previous"});
-    }
-  });
-  gb({t:"status",bat:E.getBattery()});
+  const gb = {
+    musicState: {
+      STOP: "stop",
+      PLAY: "play",
+      PAUSE: "pause"
+    },
 
-  global.GB = function(j) {
-    switch (j.t) {
-      case "notify":
-        show(80,function(y) {
-          // TODO: icon based on src?
-          var x = 120;
-          g.setFontAlign(0,0);
-          g.setFont("6x8",1);
-          g.setColor("#40d040");
-          g.drawString(j.src,x,y+7);
-          g.setColor("#ffffff");
-          g.setFont("6x8",2);
-          g.drawString(j.title,x,y+25);
-          g.setFont("6x8",1);
-          g.setColor("#ffffff");
-          // split text up a word boundaries
-          var txt = j.body.split("\n");
-          var MAXCHARS = 38;
-          for (var i=0;i<txt.length;i++) {
-            txt[i] = txt[i].trim();
-            var l = txt[i];
-            if (l.length>MAXCHARS) {
-              var p = MAXCHARS;
-              while (p>MAXCHARS-8 && !" \t-_".includes(l[p]))
-                p--;
-              if (p==MAXCHARS-8) p=MAXCHARS;
-              txt[i] = l.substr(0,p);
-              txt.splice(i+1,0,l.substr(p));
-            }
-          }
-          g.setFontAlign(-1,-1);
-          g.drawString(txt.join("\n"),10,y+40);
-          Bangle.buzz();
-        });
-      break;
-      case "musicinfo":
-        musicInfo = j;
-        break;
-      case "musicstate":
-      musicState = j.state;
-      if (musicState=="play")
-        show(40,function(y) {
-          g.setColor("#ffffff");
-          g.drawImage(              require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")),8,y+8);
-          g.setFontAlign(-1,-1);
-          g.setFont("6x8",1);
-          var x = 40;
-          g.setFont("4x6",2);
-          g.setColor("#ffffff");
-          g.drawString(musicInfo.artist,x,y+8);
-          g.setFont("6x8",1);
-          g.setColor("#ffffff");
-          g.drawString(musicInfo.track,x,y+22);
-        });
-      if (musicState=="pause")
-        hide();
-      break;
+    muiscControl: {
+      NEXT: "next",
+      PREV: "previous"
+    },
+
+    callCommands: {
+      UNDEFINED: "undefined",
+      ACCEPT: "accept",
+      INCOMING: "incoming",
+      OUTGOING: "outgoing",
+      REJECT: "reject",
+      START: "start",
+      END: "end"
+    },
+
+    send: (message) => {
+      Bluetooth.println(JSON.stringify(message));
+    },
+
+    controlMusic: (operation) => {
+      gb.send({ t: "music", n: operation });
+    },
+
+    reportBatteryLevel: () => {
+      gb.send({ t: "status", bat: E.getBattery() });
+    },
+  };
+
+  const state = {
+    music: gb.musicState.STOP,
+
+    musicInfo: {
+      artist: "",
+      album: "",
+      track: ""
+    },
+    debug: false,
+  };
+
+  const notification = {
+
+    backgroundColor: "#222222",
+    frameColor: "#ffffff",
+    titleColor: "#40d040",
+    contentColor: "#ffffff",
+    scrollPos: 0,
+
+    show: (size, content) => {
+      var oldMode = Bangle.getLCDMode();
+      Bangle.setLCDMode("direct");
+
+      g.setClipRect(0, 240, 239, 319);
+      g.setColor(notification.backgroundColor);
+      g.fillRect(1, 241, 238, 318);
+
+      notification.drawContent(320 - size, content);
+
+      g.setColor(notification.frameColor);
+      g.fillRect(0, 240, 1, 319);
+      g.fillRect(238, 240, 239, 319);
+      g.fillRect(2, 318, 238, 319);
+
+      Bangle.setLCDPower(1); // light up
+      Bangle.setLCDMode(oldMode); // clears cliprect
+
+      function anim() {
+        notification.scrollPos -= 2;
+        if (notification.scrollPos < -size) notification.scrollPos = -size;
+        Bangle.setLCDOffset(notification.scrollPos);
+        if (notification.scrollPos > -size) setTimeout(anim, 10);
+      }
+      anim();
+    },
+
+    drawContent: (y, content) => {
+
+      if (content.icon !== undefined) {
+        g.setColor(notification.contentColor);
+        const icon = require("Storage").read(content.icon);
+        g.drawImage(icon, 8, y + 8);
+      }
+
+      var x = 120;
+      g.setFontAlign(0, 0);
+
+      g.setFont("6x8", 1);
+      g.setColor(notification.titleColor);
+      g.drawString(content.title, x, y + 7);
+
+      g.setColor(notification.contentColor);
+      g.setFont("6x8", 2);
+      g.drawString(content.header, x, y + 25);
+
+      g.setFont("6x8", 1);
+      g.setColor(notification.contentColor);
+      g.setFontAlign(-1, -1);
+      g.drawString(content.body, 10, y + 40);
+    },
+
+    hide: () => {
+      function anim() {
+        notification.scrollPos += 4;
+        if (notification.scrollPos > 0) notification.scrollPos = 0;
+        Bangle.setLCDOffset(notification.scrollPos);
+        if (notification.scrollPos < 0) setTimeout(anim, 10);
+      }
+      anim();
+    },
+
+    isVisible: () => {
+      return notification.scrollPos != 0;
     }
   };
 
-function draw() {
-  g.setColor(-1);
-  if (NRF.getSecurityStatus().connected)
-    g.drawImage(require("heatshrink").decompress(atob("i0WwgHExAABCIwJCBYwJEBYkIBQ2ACgvzCwoECx/z/AKDD4WD+YLBEIYKCx//+cvnAKCBwU/mc4/8/HYv//Ev+Y4EEAePn43DBQkzn4rCEIoABBIwKHO4cjmczK42I6mqlqEEBQeIBQaDED4IgDUhi6KaBbmIA==")),this.x+1,this.y+1);
-  else
-    g.drawImage(require("heatshrink").decompress(atob("i0WwQFC1WgAgYFDAgIFClQFCwEK1W/AoIPB1f+CAMq1f7/WqwQPB/fq1Gq1/+/4dC/2/CAIaB/YbBAAO///qAoX/B4QbBDQQ7BDQQrBAAWoIIIACIIIVC0ECB4cACAZiBAoRtCAoIDBA")),this.x+1,this.y+1);
-}
-function changed() {
-  WIDGETS["gbridgew"].draw();
-  g.flip();// turns screen on
-}
-NRF.on('connected',changed);
-NRF.on('disconnected',changed);
+  function showNotification(src, title, body) {
 
-WIDGETS["gbridgew"]={area:"tl",width:24,draw:draw};
+    // split text up at word boundaries
+    var txt = body.split("\n");
+    var MAXCHARS = 38;
+    for (var i = 0; i < txt.length; i++) {
+      txt[i] = txt[i].trim();
+      var l = txt[i];
+      if (l.length > MAXCHARS) {
+        var p = MAXCHARS;
+        while (p > MAXCHARS - 8 && !" \t-_".includes(l[p]))
+          p--;
+        if (p == MAXCHARS - 8) p = MAXCHARS;
+        txt[i] = l.substr(0, p);
+        txt.splice(i + 1, 0, l.substr(p));
+      }
+    }
 
+    var content = {
+      title: src,
+      header: title,
+      body: txt.join("\n")
+    };
+
+    notification.show(80, content);
+    Bangle.buzz();
+  }
+
+  function updateMusicInfo() {
+    if (state.music == gb.musicState.PLAY) {
+
+      var content = {
+        title: "Now playing",
+        icon: "gbridge-music-ico.img",
+        header: state.musicInfo.artist,
+        body: state.musicInfo.track
+      };
+
+      notification.show(40, content);
+    } else {
+      notification.hide();
+    }
+  }
+
+  function handleCall(cmd, name, number) {
+    switch(cmd) {
+
+      case gb.callCommands.ACCEPT:
+        notification.show(80, {
+          title: "Call incoming",
+          icon: "gbridge-call-ico.img",
+          header: name,
+          body: number
+        });
+        Bangle.buzz();
+      break;
+
+      default:
+        if (state.debug) {
+          showNotification(cmd, name, number);
+        }
+    }
+  }
+
+  global.GB = (event) => {
+    switch (event.t) {
+      case "notify":
+        showNotification(event.src, event.title, event.body);
+        break;
+      case "musicinfo":
+        state.musicInfo = event;
+        break;
+      case "musicstate":
+        state.musicInfo = event.state;
+        updateMusicInfo();
+        break;
+      case "call":
+        handleCall(event.cmd, event.name, event.number);
+        break;
+      default:
+        if (state.debug) {
+          showNotification("Gadgetbridge", event.t, JSON.stringify(event));
+        }
+    }
+  };
+
+  // Touch control
+  Bangle.on("touch", () => {
+    if (notification.isVisible()) {
+      notification.hide();
+    }
+  });
+
+  Bangle.on("swipe", (dir) => {
+    if (state.music == gb.musicState.PLAY) {
+      gb.controlMusic(dir > 0 ? gb.muiscControl.NEXT : gb.muiscControl.PREV);
+    }
+  });
+
+  function drawIcon() {
+    g.setColor(-1);
+
+    let icon;
+    if (NRF.getSecurityStatus().connected) {
+      icon = require("Storage").read("gbridge-on-ico.img");
+    } else {
+      icon = require("Storage").read("gbridge-off-ico.img");
+    }
+
+    g.drawImage(icon, this.x + 1, this.y + 1);
+  }
+
+  function changedConnectionState() {
+    WIDGETS["gbridgew"].draw();
+    g.flip(); // turns screen on
+  }
+
+  NRF.on("connected", changedConnectionState);
+  NRF.on("disconnected", changedConnectionState);
+
+  WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: drawIcon };
+
+  gb.reportBatteryLevel();
 })();
