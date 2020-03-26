@@ -87,6 +87,7 @@
 
       function removeProduct(index){
         products = products.filter((p,i) => i!==index)
+        save()
         renderProducts()
       }
 
