@@ -11,6 +11,7 @@ httpGet("apps.json").then(apps=>{
   }
   appJSON.sort(appSorter);
   refreshLibrary();
+  refreshFilter();
 });
 
 // Status
@@ -250,9 +251,16 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var activeFilter = '';
+var activeFilter = window.location.hash ? window.location.hash.slice(1) : '';
 var currentSearch = '';
 
+function refreshFilter(){
+  var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
+  if(activeFilter){
+    filtersContainer.querySelector('.active').classList.remove('active');
+    filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active')
+  }
+}
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
   var visibleApps = appJSON;
@@ -366,6 +374,7 @@ function refreshLibrary() {
   });
 }
 
+refreshFilter();
 refreshLibrary();
 // =========================================== My Apps
 
@@ -510,9 +519,9 @@ filtersContainer.addEventListener('click', ({ target }) => {
   if (target.classList.contains('active')) return;
 
   activeFilter = target.getAttribute('filterid');
-  filtersContainer.querySelector('.active').classList.remove('active');
-  target.classList.add('active');
+  refreshFilter();
   refreshLibrary();
+  window.location.hash = activeFilter
 });
 
 var librarySearchInput = document.querySelector("#searchform input");
