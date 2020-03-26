@@ -282,13 +282,12 @@ function drawTime() {
 function drawDate() {
   const date = new Date();
   const day = locale.dow(date).substr(0, 3);
-  const dayNum = date.getDay();
+  const dayNum = ("0" + date.getDate()).substr(-2);
   const month = locale.month(date).substr(0, 3);
-  const year = date.getFullYear();
 
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  g.drawString(`${day}, ${dayNum} ${month}`, 14, 0, true);
+  g.drawString(`${day} ${dayNum} ${month}`, 10, 0, true);
 }
 
 function redraw() {
