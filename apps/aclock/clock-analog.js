@@ -1,8 +1,9 @@
-const version = '0.0.4';
+const version = '0.0.7';
+const debug = false;
 
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 95; // watch face is 95 px wide (radius)
+const faceWidth = 115; // watch face is 95 px wide (radius)
 let timerInterval = null;
 let currentDate = new Date();
 const centerPx = 120;
@@ -15,7 +16,7 @@ const seconds = (angle, r) => {
   const y = centerPx - Math.cos(a) * r;
 
   // if 15 degrees, make hour marker larger
-  const radius = (angle % 15) ? 1 : 2;
+  const radius = (angle % 15) ? 1 : 3;
   g.fillCircle(x, y, radius);
 };
 
@@ -34,12 +35,14 @@ const hand = (angle, r1, r2) => {
     Math.round(centerPx - Math.cos(a - p) * r3)
   ]);
 
-  console.log(`made poly: ,
+  if (debug) {
+    console.log(`made poly: ,
     x1: ${Math.round(centerPx + Math.sin(a) * r1)}, y1: ${Math.round(centerPx - Math.cos(a) * r1)},
     x2: ${Math.round(centerPx + Math.sin(a + p) * r3)}, y2: ${Math.round(centerPx - Math.cos(a + p) * r3)},
     x3: ${Math.round(centerPx + Math.sin(a) * r2)}, y3: ${Math.round(centerPx - Math.cos(a) * r2)},
     x4: ${Math.round(centerPx + Math.sin(a - p) * r3)}, y4: ${Math.round(centerPx - Math.cos(a - p) * r3)}`
-  );
+    );
+  }
 };
 
 const drawAll = () => {
@@ -77,16 +80,17 @@ const onSecond = () => {
 
 const drawDate = () => {
   g.setColor(0, 0, 0)
-    .fillRect(centerPx + 28,
-      centerPx + 38,
-      centerPx + 65,
-      centerPx + 49)
+    .fillRect(
+      centerPx + 20,
+      centerPx + 35,
+      centerPx + 85,
+      centerPx + 55)
     .setColor(1, 1, 0)
     .drawRect(
-      centerPx + 28,
-      centerPx + 38,
-      centerPx + 65,
-      centerPx + 48);
+      centerPx + 20,
+      centerPx + 35,
+      centerPx + 85,
+      centerPx + 55);
 
   const dayString = days[currentDate.getDay()];
   let dateString = currentDate.getDate().toString();
@@ -94,12 +98,13 @@ const drawDate = () => {
     dateString = `0${dateString}`;
   }
   console.log(`${dayString}-${dateString}`);
-  g.setColor(1, 0, 0)
-    .drawString(
-      `${dayString}-${dateString}`,
-      centerPx + 30,
-      centerPx + 40
-    );
+  const l = centerPx + 50;
+  const t = centerPx + 45;
+  g
+    .setColor(1, 0, 0)
+    .setFontVector(14)
+    .drawString(`${dayString}-${dateString}`, l, t);
+  console.log(l, t);
 };
 const onMinute = () => {
   if (currentDate.getHours() === 0 && currentDate.getMinutes() === 0) {
@@ -110,16 +115,16 @@ const onMinute = () => {
   // clear existing hands
   g.setColor(0, 0, 0);
   // Hour
-  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 40);
+  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
 
   // get new date, then draw new hands
   currentDate = new Date();
-  g.setColor(1, 0.7, 0.7);
+  g.setColor(1, 0.3, 0.5);
   // Hour
-  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 40);
-  g.setColor(1, 1, 0.8);
+  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
+  g.setColor(1, 1, 0.4);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
   if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {

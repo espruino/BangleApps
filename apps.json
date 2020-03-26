@@ -223,7 +223,7 @@
     "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.0.4",
+    "version": "0.07",
     "description": "An Analog Clock with Day/Date",
     "tags": "clock",
     "type": "clock",
@@ -1256,27 +1256,6 @@
       {
         "name": "widpedom.wid.js",
         "url": "widget.js"
-      }
-    ]
-  },
-  {
-    "id": "berlinc",
-    "name": "Berlin Clock",
-    "icon": "berlin-clock.png",
-    "version": "0.02",
-    "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
-    "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
-    "storage": [
-      {
-        "name": "berlinc.app.js",
-        "url": "berlin-clock.js"
-      },
-      {
-        "name": "berlinc.img",
-        "url": "berlin-clock-icon.js",
-        "evaluate": true
       }
     ]
   },
