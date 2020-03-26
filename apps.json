@@ -823,5 +823,19 @@
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
     ]
+  },
+  { 
+    "id": "groceries",
+    "name": "Groceries",
+    "icon": "groceries.png",
+    "version":"0.01",
+    "description": "Simple grocery list - Display a list of product and track if you already put them in your cart.",
+    "tags": "tool,outdoors",
+    "type": "app",
+    "custom":"groceries.html",
+    "storage": [
+      {"name":"groceries.json"},
+      {"name":"groceries.app.js"}
+    ]
   }
 ]
