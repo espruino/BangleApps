@@ -254,7 +254,7 @@ function showTab(tabname) {
 var chips = Array.from(document.querySelectorAll('.chip')).map(chip => chip.attributes.filterid.value)
 var hash = window.location.hash ? window.location.hash.slice(1) : '';
 
-var activeFilter = !!~chips.indexOf(hash) ? hash : ''//window.location.hash ? window.location.hash.slice(1) : '';
+var activeFilter = !!~chips.indexOf(hash) ? hash : '';
 var currentSearch = '';
 
 function refreshFilter(){
@@ -517,7 +517,6 @@ Comms.watchConnectionChange(handleConnectionChange);
 
 var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
 filtersContainer.addEventListener('click', ({ target }) => {
-  //if (!target.hasAttribute('filterid')) return;
   if (target.classList.contains('active')) return;
 
   activeFilter = target.getAttribute('filterid') || '';
