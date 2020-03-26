@@ -9,6 +9,7 @@ var scenes = [
       y+=step;
       if (y>70) {
         clearInterval(i);
+        
         i = undefined;
       }
       g.clearRect(0,y-(step+1),240,y-1);
@@ -159,10 +160,13 @@ var scenes = [
 ];
 var sceneNo = scenes.length-1;
 
-var stop = scenes[sceneNo]();
-setInterval(function() {
+var stop;
+function next() {
   sceneNo++;
   if (sceneNo>=scenes.length) sceneNo=0;
-  stop();
+  if (stop) stop();
+  clearInterval();
   stop = scenes[sceneNo]();
-}, 10000);
+  setTimeout(next, 10000);
+}
+next()

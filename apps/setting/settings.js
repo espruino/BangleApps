@@ -1,48 +1,42 @@
-Bangle.setLCDPower(1);
-Bangle.setLCDTimeout(0);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
-g.clear();
 const storage = require('Storage');
 let settings;
 
-function debug(msg, arg) {
-  if (settings.debug)
-    console.log(msg, arg);
-}
-
 function updateSettings() {
-  debug('updating settings', settings);
-  //storage.erase('@setting'); // - not needed, just causes extra writes if settings were the same
-  storage.write('@setting', settings);
+  //storage.erase('setting.json'); // - not needed, just causes extra writes if settings were the same
+  storage.write('setting.json', settings);
 }
 
 function resetSettings() {
   settings = {
-    ble: true,
-    dev: true,
-    timeout: 10,
-    vibrate: true,
-    beep: true,
-    timezone: 0,
-    HID : false,
-    HIDGestures: false,
-    debug: false,
-    clock: null
+    ble: true,             // Bluetooth enabled by default
+    blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
+    log: false,            // Do log messages appear on screen?
+    timeout: 10,           // Default LCD timeout in seconds
+    vibrate: true,         // Vibration enabled by default. App must support
+    beep: "vib",            // Beep enabled by default. App must support
+    timezone: 0,           // Set the timezone for the device
+    HID : false,           // BLE HID mode, off by default
+    clock: null,           // a string for the default clock's name
+    "12hour" : false,      // 12 or 24 hour clock?
+    // welcomed : undefined/true (whether welcome app should show)
   };
-  setLCDTimeout(settings.timeout);
   updateSettings();
 }
 
-try {
-  settings = storage.readJSON('@setting');
-} catch (e) {}
+settings = storage.readJSON('setting.json',1);
 if (!settings) resetSettings();
 
-const boolFormat = (v) => v ? "On" : "Off";
+const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
+  var beepV = [ false,true,"vib" ];
+  var beepN = [ "Off","Piezo","Vibrate" ];
   const mainmenu = {
     '': { 'title': 'Settings' },
+    'Make Connectable': makeConnectable,
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -52,10 +46,18 @@ function showMainMenu() {
       }
     },
     'Programmable': {
-      value: settings.dev,
+      value: settings.blerepl,
       format: boolFormat,
       onchange: () => {
-        settings.dev = !settings.dev;
+        settings.blerepl = !settings.blerepl;
+        updateSettings();
+      }
+    },
+    'Debug info': {
+      value: settings.log,
+      format: v => v ? "Show" : "Hide",
+      onchange: () => {
+        settings.log = !settings.log;
         updateSettings();
       }
     },
@@ -71,14 +73,14 @@ function showMainMenu() {
       }
     },
     'Beep': {
-      value: settings.beep,
-      format: boolFormat,
-      onchange: () => {
-        settings.beep = !settings.beep;
+      value: 0|beepV.indexOf(settings.beep),
+      min:0,max:2,
+      format: v=>beepN[v],
+      onchange: v => {
+        settings.beep = beepV[v];
+        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200) } // piezo
+        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200) } // vibrate
         updateSettings();
-        if (settings.beep) {
-          Bangle.beep(1);
-        }
       }
     },
     'Vibration': {
@@ -93,7 +95,36 @@ function showMainMenu() {
         }
       }
     },
+    'Welcome App': {
+      value: !settings.welcomed,
+      format: boolFormat,
+      onchange: v => {
+        settings.welcomed = v?undefined:true;
+        updateSettings();
+      }
+    },
+    'Locale': showLocaleMenu,
     'Select Clock': showClockMenu,
+    'HID': {
+      value: settings.HID,
+      format: boolFormat,
+      onchange: () => {
+        settings.HID = !settings.HID;
+        updateSettings();
+      }
+    },
+    'Set Time': showSetTimeMenu,
+    'Reset Settings': showResetMenu,
+    'Turn Off': Bangle.off,
+    '< Back': ()=> {load();}
+  };
+  return E.showMenu(mainmenu);
+}
+
+function showLocaleMenu() {
+  const localemenu = {
+    '': { 'title': 'Locale' },
+    '< Back': showMainMenu,
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -104,37 +135,16 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'HID': {
-      value: settings.HID,
-      format: boolFormat,
-      onchange: () => {
-        settings.HID = !settings.HID;
+    'Clock Style': {
+      value: !!settings["12hour"],
+      format : v => v?"12hr":"24hr",
+      onchange: v => {
+        settings["12hour"] = v;
         updateSettings();
       }
-    },
-    'HID Gestures': {
-      value: settings.HIDGestures,
-      format: boolFormat,
-      onchange: () => {
-        settings.HIDGestures = !settings.HIDGestures;
-        updateSettings();
-      }
-    },
-    'Debug': {
-      value: settings.debug,
-      format: boolFormat,
-      onchange: () => {
-        settings.debug = !settings.debug;
-        updateSettings();
-      }
-    },
-    'Set Time': showSetTimeMenu,
-    'Make Connectable': makeConnectable,
-    'Reset Settings': showResetMenu,
-    'Turn Off': Bangle.off,
-    '< Back': ()=> {load();}
+    }
   };
-  return E.showMenu(mainmenu);
+  return E.showMenu(localemenu);
 }
 
 function showResetMenu() {
@@ -149,16 +159,7 @@ function showResetMenu() {
         }
         setTimeout(showMainMenu, 50);
       });
-    },
-    // this is include for debugging. remove for production
-    /*'Erase': () => {
-      storage.erase('=setting');
-      storage.erase('-setting');
-      storage.erase('@setting');
-      storage.erase('*setting');
-      storage.erase('+setting');
-      E.reboot();
-    }*/
+    }
   };
   return E.showMenu(resetmenu);
 }
@@ -177,7 +178,7 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list().filter(a=>a[0]=='+').map(app=>{
+  var clockApps = require("Storage").list(/\.info$/).map(app=>{
     try { return require("Storage").readJSON(app); }
     catch (e) {}
   }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);

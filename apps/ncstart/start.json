@@ -1,6 +1,0 @@
-{
-  "name": "NCEU Start",
-  "type": "app",
-  "icon": "*ncstart",
-  "src": ".boot3"
-}

@@ -1,0 +1,13 @@
+{
+  "name": "BangleApps",
+  "description": "Bangle.js App Loader (and Apps)",
+  "author": "Gordon Williams <gw@pur3.co.uk> (http://espruino.com)",
+  "version": "0.0.1",
+  "devDependencies": {
+    "acorn": ""
+  },
+  "scripts": {
+    "test": "node bin/sanitycheck.js",
+    "start": "npx http-server"
+  }
+}

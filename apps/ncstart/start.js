@@ -1,5 +1,3 @@
-NRF.sleep();
-var g = Graphics.getInstance();
 g.setFontAlign(1, 1, 0);
 const d = g.getWidth() - 18;
 function c(a) {
@@ -53,7 +51,7 @@ function logos() {
   ];
   function next() {
     var n = logos.shift();
-    var img = require("Storage").read("*"+n[0]);
+    var img = require("Storage").read("nc-"+n[0]+".img");
     g.clear();
     g.drawImage(img, n[1], n[2]);
     n[3]();
@@ -117,16 +115,9 @@ function info() {
 }
 
 function cleanup() {
-  E.showMessage('Loading...');
-  var s = require('Storage');
-  s.erase('*nfr');
-  s.erase('*nceu');
-  s.erase('*bangle');
-  s.erase('*nodew');
-  s.erase('*tf');
-  s.erase('+ncstart');
-  s.erase('.boot3');
-  s.erase('*ncstart');
+  var settings = require("Storage").readJSON('setting.json',1)||{};
+  settings.welcomed = true;
+  require("Storage").write('setting.json',settings);
   return Promise.resolve();
 }
 

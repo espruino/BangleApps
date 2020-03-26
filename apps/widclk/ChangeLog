@@ -1,0 +1,2 @@
+0.02: Now refresh battery monitor every minute if LCD on
+0.03: Ensure redrawing works with variable size widget system

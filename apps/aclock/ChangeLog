@@ -1,1 +1,4 @@
 0.02: Modified for use with new bootloader and firmware
+0.03: add hour ticks, remove timers
+0.04: add day-date display
+0.07: make date and face bigger

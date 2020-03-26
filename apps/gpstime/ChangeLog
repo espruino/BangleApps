@@ -1,0 +1,1 @@
+0.03: Fix time output on new firmwares when no GPS time set (fix #104)

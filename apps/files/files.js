@@ -31,7 +31,7 @@ function showMainMenu() {
 }
 
 function eraseApp(app) {
-  E.showMessage('Erasing ' + app.name + '...');
+  E.showMessage('Erasing\n' + app.name + '...');
   storage.erase(app['']);
   storage.erase(app.icon);
   storage.erase(app.src);
@@ -44,7 +44,7 @@ function showAppMenu(app) {
     },
     '< Back': () => m = showApps(),
     'Erase': () => {
-      E.showPrompt('Erase ' + app.name + '?').then((v) => {
+      E.showPrompt('Erase\n' + app.name + '?').then((v) => {
         if (v) {
           Bangle.buzz(100, 1);
           eraseApp(app);
@@ -66,10 +66,10 @@ function showApps() {
     '< Back': () => m = showMainMenu(),
   };
 
-  var list = storage.list().filter((a)=> {
-    return a[0]=='+' && a !== '+setting';
+  var list = storage.list(/\.info$/).filter((a)=> {
+    return a !== 'setting.info';
   }).sort().map((app) => {
-    var ret = storage.readJSON(app);
+    var ret = storage.readJSON(app,1)||{};
     ret[''] = app;
     return ret;
   });

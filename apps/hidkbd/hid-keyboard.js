@@ -1,6 +1,6 @@
 var storage = require('Storage');
 
-const settings = storage.readJSON('@setting') || { HID: false };
+const settings = storage.readJSON('setting.json',1) || { HID: false };
 
 var sendHid, next, prev, toggle, up, down, profile;
 
@@ -49,23 +49,20 @@ function drawApp() {
 }
 
 if (next) {
-
-  if (settings.HIDGestures) {
-    Bangle.on('aiGesture', (v) => {
-      switch (v) {
-        case 'swipeleft':
-          E.showMessage('next');
-          setTimeout(drawApp, 1000);
-          next(() => {});
-          break;
-        case 'swiperight':
-          E.showMessage('prev');
-          setTimeout(drawApp, 1000);
-          prev(() => {});
-          break;
-      }
-    });
-  }
+  Bangle.on('aiGesture', (v) => {
+    switch (v) {
+      case 'swipeleft':
+        E.showMessage('next');
+        setTimeout(drawApp, 1000);
+        next(() => {});
+        break;
+      case 'swiperight':
+        E.showMessage('prev');
+        setTimeout(drawApp, 1000);
+        prev(() => {});
+        break;
+    }
+  });
 
   setWatch(function(e) {
     var len = e.time - e.lastTime;

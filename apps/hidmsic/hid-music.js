@@ -1,6 +1,6 @@
 var storage = require('Storage');
 
-const settings = storage.readJSON('@setting') || { HID: false };
+const settings = storage.readJSON('setting.json',1) || { HID: false };
 
 var sendHid, next, prev, toggle, up, down, profile;
 
