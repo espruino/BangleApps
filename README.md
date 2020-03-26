@@ -3,7 +3,8 @@ Bangle.js App Loader (and Apps)
 
 [![Build Status](https://travis-ci.org/espruino/BangleApps.svg?branch=master)](https://travis-ci.org/espruino/BangleApps)
 
-Try it live at [banglejs.com/apps](https://banglejs.com/apps)
+* Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
+* Try the **development version** at [github.io](https://espruino.github.io/BangleApps/)
 
 ## How does it work?
 
@@ -13,6 +14,14 @@ Try it live at [banglejs.com/apps](https://banglejs.com/apps)
 it with the files it sees in the watch's storage.
 * To upload an app, BangleAppLoader checks the files that are
 listed in `apps.json`, loads them, and sends them over Web Bluetooth.
+
+## Getting Started
+
+Check out:
+
+* [Building your first Bangle.js Application](https://www.espruino.com/Bangle.js+First+App)
+* [Adding an app to the Bangle.js App Loader](https://www.espruino.com/Bangle.js+App+Loader)
+* [Customising the App Loader](https://www.espruino.com/Bangle.js+App+Loader+Custom)
 
 ## What filenames are used
 
