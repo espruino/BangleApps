@@ -1,5 +1,5 @@
 var line;
-var fontsize = 2;
+var fontsize = 3;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
@@ -18,8 +18,8 @@ function updateTime(){
   var date = locale.date(now,false);
   var h = now.getHours();
   var m = now.getMinutes();
-  h = h>10?h:"0"+h;
-  m = m>10?m:"0"+m;
+  h = h>=10?h:"0"+h;
+  m = m>=10?m:"0"+m;
   g.setFont("6x8",fontsize);
   g.setColor(0,1,0);
   g.setFontAlign(-1,0);
@@ -36,12 +36,12 @@ function updateTime(){
   }
 }
 function writeLineStart(){
-  g.drawString(">",4,marginTop+line*20);
+  g.drawString(">",4,marginTop+line*25);
 }
 function writeLine(str){
-  g.clearRect(0,marginTop+line*20,((str.length+1)*15+15),marginTop+20+line*20);
+  g.clearRect(0,marginTop+line*25,((str.length+1)*15+15),marginTop+20+line*25);
   writeLineStart();
-  g.drawString(str,20,marginTop+line*20);
+  g.drawString(str,25,marginTop+line*25);
   line++;
 } 
 
