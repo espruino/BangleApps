@@ -22,6 +22,8 @@ function updateTime(){
   var m = now.getMinutes();
   h = h>10?h:"0"+h;
   m = m>10?m:"0"+m;
+  g.setFont("6x8",fontsize);
+  g.setColor("#00ff00");
   writeLine(h+":"+m);
   writeLine(WeekDays[now.getDay()]);
   writeLine(date);
@@ -40,7 +42,7 @@ function writeLineStart(){
 function writeLine(str){
   g.clearRect(0,marginTop+line*20,(str.length*15+15),marginTop+20+line*20);
   writeLineStart();
-  g.drawString(str,17,marginTop+line*20);
+  g.drawString(str,20,marginTop+line*20);
   line++;
 } 
 
