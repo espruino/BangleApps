@@ -355,7 +355,7 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple stopwatch with Lap Time recording",
     "tags": "health",
     "allow_emulator":true,
