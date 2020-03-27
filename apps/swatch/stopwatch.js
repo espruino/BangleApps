@@ -22,7 +22,12 @@ function updateLabels() {
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
-    g.drawString(i+": "+timeToText(lapTimes[i]),10,timeY + 30 + i*8);
+    if (i<18)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),8,timeY + 30 + i*8);}
+    else if (i<36)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),80,timeY + 30 + (i-18)*8);}
+    else
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),152,timeY + 30 + (i-36)*8);}
   }
   drawsecs();
 }
