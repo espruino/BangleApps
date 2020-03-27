@@ -60,22 +60,22 @@
         });
 
 
-        var app = `
-        locale = ${JSON.stringify(locales[lang])};
-        exports  = {
-            lang: locale.lang,
-            currencySym: String.fromCharCode(locale.currency_symbol),
-            dow:   (d,short) => {day = d.getDay();return (short) ? locale.abday.split(",")[day] : locale.day.split(",")[day];},
-            month: (d,short) => { month = d.getMonth(); return (short) ? locale.abmonth.split(",")[month] : locale.month.split(",")[month];},
-            number: n => n.toString().replace(locale.thousands_sep, locale.decimal_point),
-            currency: n => n.toFixed(2).replace(locale.thousands_sep, locale.decimal_point) + locale.currency_symbol,
-            distance: n => (n < 1000) ? Math.round(n) + locale.distance[0] : Math.round(n/1000) + locale.distance[1],
-            speed: s => Math.round(s) +locale.speed,
-            temp: t => Math.round(t) + locale.temperature,
-            translate: s => {s=""+s;return locale.trans[s]||locale.trans[s.toLowerCase()]||s},
-            date: (d,short) =>  (short) ? \`${dateS}\`: \`${dateN}\`,
-            time: (d,short) =>  (short) ? \`${timeS}\`: \`${timeN}\`,
-        };`;
+        var app = `var locale = ${JSON.stringify(locales[lang])};
+exports  = {
+  lang: locale.lang,
+  currencySym: locale.currency_symbol,
+  dow:   (d,short) => {day = d.getDay();return (short) ? locale.abday.split(",")[day] : locale.day.split(",")[day];},
+  month: (d,short) => { month = d.getMonth(); return (short) ? locale.abmonth.split(",")[month] : locale.month.split(",")[month];},
+  number: n => n.toString().replace(locale.thousands_sep, locale.decimal_point),
+  currency: n => n.toFixed(2).replace(locale.thousands_sep, locale.decimal_point) + locale.currency_symbol,
+  distance: n => (n < 1000) ? Math.round(n) + locale.distance[0] : Math.round(n/1000) + locale.distance[1],
+  speed: s => Math.round(s) +locale.speed,
+  temp: t => Math.round(t) + locale.temperature,
+  translate: s => {s=""+s;return locale.trans[s]||locale.trans[s.toLowerCase()]||s;},
+  date: (d,short) =>  (short) ? \`${dateS}\`: \`${dateN}\`,
+  time: (d,short) =>  (short) ? \`${timeS}\`: \`${timeN}\`,
+  meridian: d => (d.getHours() <= 12) ? locale.ampm[0]:locale.ampm[1],
+};`;
 
         sendCustomizedApp({
           storage:[

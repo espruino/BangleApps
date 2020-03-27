@@ -11,6 +11,7 @@ httpGet("apps.json").then(apps=>{
   }
   appJSON.sort(appSorter);
   refreshLibrary();
+  refreshFilter();
 });
 
 // Status
@@ -250,9 +251,18 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var activeFilter = '';
+var chips = Array.from(document.querySelectorAll('.chip')).map(chip => chip.attributes.filterid.value)
+var hash = window.location.hash ? window.location.hash.slice(1) : '';
+
+var activeFilter = !!~chips.indexOf(hash) ? hash : '';
 var currentSearch = '';
 
+function refreshFilter(){
+  var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
+  filtersContainer.querySelector('.active').classList.remove('active');
+  if(activeFilter) filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active')
+  else filtersContainer.querySelector('.chip[filterid]').classList.add('active')
+}
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
   var visibleApps = appJSON;
@@ -366,6 +376,7 @@ function refreshLibrary() {
   });
 }
 
+refreshFilter();
 refreshLibrary();
 // =========================================== My Apps
 
@@ -506,13 +517,12 @@ Comms.watchConnectionChange(handleConnectionChange);
 
 var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
 filtersContainer.addEventListener('click', ({ target }) => {
-  if (!target.hasAttribute('filterid')) return;
   if (target.classList.contains('active')) return;
 
-  activeFilter = target.getAttribute('filterid');
-  filtersContainer.querySelector('.active').classList.remove('active');
-  target.classList.add('active');
+  activeFilter = target.getAttribute('filterid') || '';
+  refreshFilter();
   refreshLibrary();
+  window.location.hash = activeFilter
 });
 
 var librarySearchInput = document.querySelector("#searchform input");
