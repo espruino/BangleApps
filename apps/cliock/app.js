@@ -22,12 +22,12 @@ function updateTime(){
   m = m>=10?m:"0"+m;
   g.setFont("6x8",fontsize);
   g.setColor(0,1,0);
-  g.setFontAlign(-1,0);
+  g.setFontAlign(-1,-1);
   writeLine(h+":"+m);
   writeLine(WeekDays[now.getDay()]);
   writeLine(date);
   if(flag){
-    writeLine("");
+    writeLine(" ");
     flag = false;
   }
   else{
@@ -36,12 +36,12 @@ function updateTime(){
   }
 }
 function writeLineStart(){
-  g.drawString(">",4,marginTop+line*25);
+  g.drawString(">",4,marginTop+line*30);
 }
 function writeLine(str){
-  g.clearRect(0,marginTop+line*25,((str.length+1)*15+15),marginTop+20+line*25);
+  g.clearRect(0,marginTop+line*30,((str.length+1)*20),marginTop+25+line*30);
   writeLineStart();
-  g.drawString(str,25,marginTop+line*25);
+  g.drawString(str,25,marginTop+line*30);
   line++;
 } 
 
