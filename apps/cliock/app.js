@@ -4,7 +4,7 @@ var locale = require("locale");
 var marginTop = 40;
 var flag = false;
 
-var WeekDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 function updateTime(){
   if (!Bangle.isLCDOn()) return;
