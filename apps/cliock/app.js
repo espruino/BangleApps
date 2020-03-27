@@ -39,7 +39,7 @@ function writeLineStart(){
   g.drawString(">",4,marginTop+line*20);
 }
 function writeLine(str){
-  g.clearRect(0,marginTop+line*20,(str.length*15+15),marginTop+20+line*20);
+  g.clearRect(0,marginTop+line*20,((str.length+1)*15+15),marginTop+20+line*20);
   writeLineStart();
   g.drawString(str,20,marginTop+line*20);
   line++;
@@ -51,3 +51,4 @@ Bangle.on('lcdPower',function(on) {
     drawAll();
 });
 var click = setInterval(updateTime, 1000);
+setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
