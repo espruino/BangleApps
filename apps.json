@@ -223,7 +223,7 @@
     "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.07",
+    "version": "0.08",
     "description": "An Analog Clock with Day/Date",
     "tags": "clock",
     "type": "clock",

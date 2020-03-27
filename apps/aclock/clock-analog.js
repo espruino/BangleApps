@@ -1,4 +1,4 @@
-const version = '0.0.7';
+const version = '0.08';
 const debug = false;
 
 const p = Math.PI / 2;
