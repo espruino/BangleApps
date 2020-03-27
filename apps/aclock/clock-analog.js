@@ -8,7 +8,9 @@ let timerInterval = null;
 let currentDate = new Date();
 const centerPx = 120;
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+
 let g;
+let Bangle;
 
 const seconds = (angle, r) => {
   const a = angle * pRad;
@@ -16,7 +18,7 @@ const seconds = (angle, r) => {
   const y = centerPx - Math.cos(a) * r;
 
   // if 15 degrees, make hour marker larger
-  const radius = (angle % 15) ? 1 : 3;
+  const radius = (angle % 15) ? 2 : 4;
   g.fillCircle(x, y, radius);
 };
 
@@ -79,17 +81,18 @@ const onSecond = () => {
 };
 
 const drawDate = () => {
+  g.reset();
   g.setColor(0, 0, 0)
     .fillRect(
-      centerPx + 20,
+      centerPx + 12,
       centerPx + 35,
-      centerPx + 85,
+      centerPx + 90,
       centerPx + 55)
     .setColor(1, 1, 0)
     .drawRect(
-      centerPx + 20,
+      centerPx + 12,
       centerPx + 35,
-      centerPx + 85,
+      centerPx + 90,
       centerPx + 55);
 
   const dayString = days[currentDate.getDay()];
@@ -97,12 +100,12 @@ const drawDate = () => {
   if (dateString.length === 1) {
     dateString = `0${dateString}`;
   }
-  console.log(`${dayString}-${dateString}`);
-  const l = centerPx + 50;
-  const t = centerPx + 45;
+  console.log(`${dayString}|${dateString}`);
+  const l = centerPx + 15;
+  const t = centerPx + 37;
   g
     .setColor(1, 0, 0)
-    .setFontVector(14)
+    .setFont('6x8', 2)
     .drawString(`${dayString}-${dateString}`, l, t);
   console.log(l, t);
 };
