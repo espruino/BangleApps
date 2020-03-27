@@ -3,14 +3,12 @@ var fontsize = 2;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
-var WeekDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 function drawAll(){
   g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
-  g.setFont("6x8",fontsize);
-  g.setColor("#00ff00");
   updateTime();
 }
 function updateTime(){
@@ -23,7 +21,8 @@ function updateTime(){
   h = h>10?h:"0"+h;
   m = m>10?m:"0"+m;
   g.setFont("6x8",fontsize);
-  g.setColor("#00ff00");
+  g.setColor(0,1,0);
+  g.setFontAlign(-1,0);
   writeLine(h+":"+m);
   writeLine(WeekDays[now.getDay()]);
   writeLine(date);
