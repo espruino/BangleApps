@@ -836,5 +836,19 @@
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "cliock",
+  "name": "Commandline-Clock",
+  "shortName":"CLI-Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Simple CLI-Styled Clock",
+  "tags": "cli,command,bash,shell",
+  "type": "clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"cliock.app.js","url":"app.js"},
+    {"name":"cliock.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
