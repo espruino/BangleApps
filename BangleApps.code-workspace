@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "/home/nmartin/Projects/Bangle.js/Pixl"
 		}
 	]
 }
