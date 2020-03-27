@@ -23,11 +23,9 @@ function updateLabels() {
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
     if (i<18)
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),8,timeY + 30 + i*8);}
-    else if (i<36)
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),80,timeY + 30 + (i-18)*8);}
-    else
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),152,timeY + 30 + (i-36)*8);}
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 30 + i*8);}
+    else 
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-18)*8);}
   }
   drawsecs();
 }
