@@ -45,6 +45,7 @@ Bangle.on('lcdPower',function(on) {
   if (on)
     updateTime();
 });
+setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 var click = setInterval(updateTime, 1000);
 
 
