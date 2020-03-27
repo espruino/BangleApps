@@ -823,5 +823,18 @@
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
     ]
+  },
+  { "id": "marioclock",
+    "name": "Mario Clock",
+    "icon": "marioclock.png",
+    "version":"0.01",
+    "description": "Animated Mario clock, jumps to change the time!",
+    "tags": "clock,mario,retro",
+    "type": "clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"marioclock.app.js","url":"marioclock-app.js"},
+      {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
+    ]
   }
 ]
