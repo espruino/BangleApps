@@ -3,9 +3,16 @@ var fontsize = 2;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
+var WeekDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
-var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-
+function drawAll(){
+  g.clear();
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  g.setFont("6x8",fontsize);
+  g.setColor("#00ff00");
+  updateTime();
+}
 function updateTime(){
   if (!Bangle.isLCDOn()) return;
   line = 0;
@@ -15,11 +22,6 @@ function updateTime(){
   var m = now.getMinutes();
   h = h>10?h:"0"+h;
   m = m>10?m:"0"+m;
-  g.clear();
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
-  g.setFont("6x8",fontsize);
-  g.setColor("#00ff00");
   writeLine(h+":"+m);
   writeLine(WeekDays[now.getDay()]);
   writeLine(date);
@@ -36,17 +38,15 @@ function writeLineStart(){
   g.drawString(">",4,marginTop+line*20);
 }
 function writeLine(str){
+  g.clearRect(0,marginTop+line*20,(str.length*15+15),marginTop+20+line*20);
   writeLineStart();
   g.drawString(str,17,marginTop+line*20);
   line++;
 } 
 
+drawAll();
 Bangle.on('lcdPower',function(on) {
   if (on)
-    updateTime();
+    drawAll();
 });
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 var click = setInterval(updateTime, 1000);
-
-
-
