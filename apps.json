@@ -356,7 +356,7 @@
     "name": "Stopwatch",
     "icon": "stopwatch.png",
     "version":"0.03",
-    "description": "Simple stopwatch with Lap Time recording",
+    "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator":true,
     "storage": [
