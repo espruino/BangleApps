@@ -49,8 +49,7 @@
   global.GB = function(j) {
     switch (j.t) {
       case "notify":
-        // #sp3t3rs - try bigger notifications
-        show(160,function(y) {
+        show(80,function(y) {
           // TODO: icon based on src?
           var x = 120;
           g.setFontAlign(0,0);
