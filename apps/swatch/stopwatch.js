@@ -18,8 +18,8 @@ function updateLabels() {
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
   g.drawString(started?"STOP":"GO",230,120);
-  if (!started) g.drawString("RESET",230,50);
-  g.drawString(started?"LAP":"SAVE",230,190);
+  if (!started) g.drawString("RESET",230,190);
+  g.drawString(started?"LAP":"SAVE",230,50);
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
@@ -78,14 +78,6 @@ setWatch(function() { // Start/stop
         drawms();
     }, 20);
 }, BTN2, {repeat:true});
-setWatch(function() { // Reset
-  Bangle.beep();
-  if (!started) {
-    tStart = tCurrent = Date.now();
-  }
-  lapTimes = [];
-  updateLabels();
-}, BTN1, {repeat:true});
 setWatch(function() { // Lap
   Bangle.beep();
   if (started) tCurrent = Date.now();
@@ -97,6 +89,14 @@ setWatch(function() { // Lap
     saveconvert();
     require("Storage").writeJSON("StpWch-"+timenow.toString(), saveTimes);
   }
+  updateLabels();
+}, BTN1, {repeat:true});
+setWatch(function() { // Reset
+  Bangle.beep();
+  if (!started) {
+    tStart = tCurrent = Date.now();
+  }
+  lapTimes = [];
   updateLabels();
 }, BTN3, {repeat:true});
 
