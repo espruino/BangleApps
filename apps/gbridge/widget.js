@@ -153,10 +153,10 @@
     if (state.music == gb.musicState.PLAY) {
 
       var content = {
-        title: "Now playing",
+        title: state.musicInfo.artist,
         icon: "gbridge-music-ico.img",
-        header: state.musicInfo.artist,
-        body: state.musicInfo.track
+        header: state.musicInfo.track,
+        body:""
       };
 
       notification.show(40, content);
@@ -194,7 +194,7 @@
         state.musicInfo = event;
         break;
       case "musicstate":
-        state.musicInfo = event.state;
+        state.music = event.state;
         updateMusicInfo();
         break;
       case "call":
