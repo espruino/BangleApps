@@ -511,7 +511,7 @@
   { "id": "dclock",
     "name": "Dev Clock",
     "icon": "clock-dev.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
     "tags": "clock",
     "type":"clock",

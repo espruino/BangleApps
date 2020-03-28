@@ -1,3 +1,4 @@
+var locale = require("locale");
 /* jshint esversion: 6 */
 const timeFontSize = 4;
 const dateFontSize = 3;
@@ -83,7 +84,7 @@ function drawSimpleClock() {
   // draw Month name, Day of the week and beats
   var beats = Math.floor((((dutc[0] + 1) % 24) + dutc[1] / 60 + dutc[2] / 3600) * 1000 / 24);
   g.setFont(font, smallFontSize);
-  g.drawString(`m:${da[1]} d:${da[0]} @${beats}`, xyCenter, yposDayMonth, true);
+  g.drawString(`m:${locale.month(d,true)} d:${locale.dow(d,true)} @${beats}`, xyCenter, yposDayMonth, true);
 
   // draw gmt
   var gmt = da[5];
