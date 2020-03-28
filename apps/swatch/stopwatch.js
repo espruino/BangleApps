@@ -92,11 +92,11 @@ setWatch(function() { // Lap
   updateLabels();
 }, BTN1, {repeat:true});
 setWatch(function() { // Reset
-  Bangle.beep();
   if (!started) {
-    tStart = tCurrent = Date.now();
-  }
+  Bangle.beep();
+  tStart = tCurrent = Date.now();
   lapTimes = [];
+  }
   updateLabels();
 }, BTN3, {repeat:true});
 
