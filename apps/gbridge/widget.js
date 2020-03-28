@@ -49,6 +49,7 @@
   global.GB = function(j) {
     switch (j.t) {
       case "notify":
+        // #sp3t3rs - try bigger notifications
         show(80,function(y) {
           // TODO: icon based on src?
           var x = 120;
@@ -59,7 +60,7 @@
           g.setColor("#ffffff");
           g.setFont("6x8",2);
           g.drawString(j.title,x,y+25);
-          g.setFont("6x8",1);
+          g.setFont("6x8",2);
           g.setColor("#ffffff");
           // split text up a word boundaries
           var txt = j.body.split("\n");
