@@ -836,5 +836,16 @@
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
     ]
+  },
+  { "id": "widver",
+    "name": "Firmware Version Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display the version of the installed firmware in the top widget section.",
+    "tags": "widget,tool,system",
+    "type":"widget",
+    "storage": [
+      {"name":"widver.wid.js","url":"widget.js"}
+    ]
   }
 ]
