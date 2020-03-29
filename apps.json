@@ -814,7 +814,7 @@
     ]
   },
   { "id": "wohrm",
-    "name": "Workout Heart Rate Monitor",
+    "name": "Workout HRM",
     "icon": "app.png",
     "version":"0.03",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
