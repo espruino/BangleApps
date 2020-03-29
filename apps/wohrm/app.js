@@ -87,7 +87,7 @@ function drawTrainingHeartRate() {
     renderConfidenceBars();
   }
 
-  //buzz();
+  buzz();
 }
 
 function renderUpperLimit() {
