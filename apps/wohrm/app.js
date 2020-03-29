@@ -4,6 +4,10 @@ const Setter = {
     UPPER: 'upper',
     LOWER: 'lower'
 };
+
+const Confidence = {
+  NONE
+}
     
 const shortBuzzTimeInMs = 50;
 const longBuzzTimeInMs = 200;
@@ -18,8 +22,8 @@ let limitSetter = Setter.NONE;
 
 let currentHeartRate = 0;
 let hrConfidence = -1;
-let hrOrConfidenceChanged = true;
-
+let hrChanged = true;
+let confidenceChanged = true;
 
 let setterHighlightTimeout;
 
@@ -76,7 +80,7 @@ function renderLowerLimitBackground() {
 function drawTrainingHeartRate() {
   //Only redraw if the display is on
   if (Bangle.isLCDOn()) {
-    renderButtonIcons();
+
   
     renderUpperLimit();
   
@@ -108,7 +112,7 @@ function renderUpperLimit() {
 }
   
 function renderCurrentHeartRate() {
-  if(!hrOrConfidenceChanged) { return; }
+  if(!hrChanged) { return; }
   
   g.setColor(255,255,255);
   g.fillRect(45, 110, 165, 150);
@@ -120,6 +124,8 @@ function renderCurrentHeartRate() {
 
   //Reset alignment to defaults
   g.setFontAlign(-1, -1, 0);
+
+  hrChanged = false;
 }
   
 function renderLowerLimit() {
@@ -140,7 +146,7 @@ function renderLowerLimit() {
 }
   
 function renderConfidenceBars(){
-  if(!hrOrConfidenceChanged) { return; }
+  if(!confidenceChanged) { return; }
   
   if(hrConfidence >= 85){
       g.setColor(0, 255, 0);
@@ -154,6 +160,8 @@ function renderConfidenceBars(){
 
   g.fillRect(45, 110, 55, 150);
   g.fillRect(165, 110, 175, 150);
+
+  confidenceChanged = false;
 }
   
 function renderButtonIcons() {
@@ -176,24 +184,33 @@ function renderButtonIcons() {
   
 function buzz()
 {
+  // Do not buzz if not confident
+  if(hrConfidence < 85) { return; }
+
   if(currentHeartRate > upperLimit)
   {
      Bangle.buzz(shortBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
+     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs+10);
+     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs+10);
   }
 
   if(currentHeartRate < lowerLimit)
   {
      Bangle.buzz(longBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs);
+     setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs+10);
   }
 }
   
 function onHrm(hrm){
-  hrOrConfidenceChanged = (currentHeartRate !== hrm.bpm || hrConfidence !== hrm.confidence);
-  currentHeartRate = hrm.bpm;
-  hrConfidence = hrm.confidence;
+  if(currentHeartRate !== hrm.bpm){
+    currentHeartRate = hrm.bpm;
+    hrChanged = true;
+  }
+
+  if(hrConfidence !== hrm.confidence) {
+    hrConfidence = hrm.confidence;
+    confidenceChanged = true;
+  }
 }
   
 function setLimitSetterToLower() {
@@ -284,6 +301,7 @@ Bangle.on('lcdPower', (on) => {
   g.clear();
   if (on) {
     Bangle.drawWidgets();
+    renderButtonIcons();
     // call your app function here
     renderLowerLimitBackground();
     renderUpperLimitBackground();
@@ -307,7 +325,9 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 //drawTrainingHeartRate();
 
-// refesh every sec
+renderButtonIcons();
 renderLowerLimitBackground();
 renderUpperLimitBackground();
+
+// refesh every sec
 setInterval(drawTrainingHeartRate, 1000);
