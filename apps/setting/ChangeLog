@@ -3,3 +3,4 @@
 0.04: Add setting to disable log messages
 0.05: Fix Settings json
 0.06: Remove distance setting as there's a separate app for Locale now
+0.07: Added vibrate as beep workaround

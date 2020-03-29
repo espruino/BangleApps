@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -40,7 +40,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.01",
+    "version":"0.04",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
@@ -78,7 +78,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -92,7 +92,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -575,7 +575,7 @@
   { "id": "mmonday",
   "name": "Manic Monday Tone",
   "icon": "manic-monday-icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "The Bangles make a comeback",
   "tags": "sound",
   "storage": [
@@ -611,7 +611,7 @@
   { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
@@ -835,6 +835,19 @@
     "type":"widget",
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "marioclock",
+    "name": "Mario Clock",
+    "icon": "marioclock.png",
+    "version":"0.01",
+    "description": "Animated Mario clock, jumps to change the time!",
+    "tags": "clock,mario,retro",
+    "type": "clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"marioclock.app.js","url":"marioclock-app.js"},
+      {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
     ]
   }
 ]

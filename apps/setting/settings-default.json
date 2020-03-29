@@ -4,7 +4,7 @@
   log: false,            // Do log messages appear on screen?
   timeout: 10,           // Default LCD timeout in seconds
   vibrate: true,         // Vibration enabled by default. App must support
-  beep: true,            // Beep enabled by default. App must support
+  beep: "vib",           // Beep enabled by default. App must support
   timezone: 0,           // Set the timezone for the device
   HID : false,           // BLE HID mode, off by default
   clock: null,           // a string for the default clock's name
