@@ -4,10 +4,6 @@ const Setter = {
     UPPER: 'upper',
     LOWER: 'lower'
 };
-
-const Confidence = {
-  NONE
-}
     
 const shortBuzzTimeInMs = 50;
 const longBuzzTimeInMs = 200;
