@@ -3,7 +3,7 @@ const debug = false;
 
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 115; // watch face is 95 px wide (radius)
+const faceWidth = 100; // watch face is 95 px wide (radius)
 let timerInterval = null;
 let currentDate = new Date();
 const centerPx = 120;
@@ -81,37 +81,25 @@ const onSecond = () => {
 };
 
 const drawDate = () => {
+  
   g.reset();
-  g.setColor(0, 0, 0)
-    .fillRect(
-      centerPx + 12,
-      centerPx + 35,
-      centerPx + 90,
-      centerPx + 55)
-    .setColor(1, 1, 0)
-    .drawRect(
-      centerPx + 12,
-      centerPx + 35,
-      centerPx + 90,
-      centerPx + 55);
+  g.setColor(1, 0, 0);
+  g.setFont('6x8', 2)
 
   const dayString = days[currentDate.getDay()];
-  let dateString = currentDate.getDate().toString();
-  if (dateString.length === 1) {
-    dateString = `0${dateString}`;
-  }
-  console.log(`${dayString}|${dateString}`);
-  const l = centerPx + 15;
+  // pad left date
+  let dateString =  (currentDate.getDate() < 10) ? '0' : '' + currentDate.getDate().toString();
+ 
+  const dateDisplay = `${dayString}-${dateString}`;
+  // console.log(`${dayString}|${dateString}`);
+  // center date
+  const l = (g.getWidth() - g.stringWidth(dateDisplay))/2;
   const t = centerPx + 37;
-  g
-    .setColor(1, 0, 0)
-    .setFont('6x8', 2)
-    .drawString(`${dayString}-${dateString}`, l, t);
-  console.log(l, t);
+  g.drawString(dateDisplay, l, t);
+  // console.log(l, t);
 };
 const onMinute = () => {
   if (currentDate.getHours() === 0 && currentDate.getMinutes() === 0) {
-    console.log('midnight');
     g.clear();
     resetSeconds();
   }
@@ -144,24 +132,19 @@ const clearTimers = () => {
 };
 
 const startTimers = () => {
-  currentDate = new Date();
-  timerInterval = setInterval(onSecond, 1000);
+  //currentDate = new Date();
   drawAll();
+  timerInterval = setInterval(onSecond, 1000);
+  
 };
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    g.clear();
+    // g.clear();
     Bangle.drawWidgets();
     startTimers();
   } else {
     clearTimers();
-  }
-});
-
-Bangle.on('faceUp', (up) => {
-  if (up && !Bangle.isLCDOn()) {
-    Bangle.setLCDPower(true);
   }
 });
 
