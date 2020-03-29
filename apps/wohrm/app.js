@@ -1,315 +1,313 @@
-// /* eslint-disable no-undef */
-// const Setter = {
-//     NONE: "none",
-//     UPPER: 'upper',
-//     LOWER: 'lower'
-// };
+/* eslint-disable no-undef */
+const Setter = {
+    NONE: "none",
+    UPPER: 'upper',
+    LOWER: 'lower'
+};
     
-// const shortBuzzTimeInMs = 50;
-// const longBuzzTimeInMs = 200;
+const shortBuzzTimeInMs = 50;
+const longBuzzTimeInMs = 200;
 
-// let upperLimit = 90;
-// let upperLimitChanged = true;
+let upperLimit = 90;
+let upperLimitChanged = true;
 
-// let lowerLimit = 50;
-// let lowerLimitChanged = true;
+let lowerLimit = 50;
+let lowerLimitChanged = true;
 
-// let limitSetter = Setter.NONE;
+let limitSetter = Setter.NONE;
 
-// let currentHeartRate = 0;
-// let hrConfidence = -1;
-// let hrOrConfidenceChanged = true;
+let currentHeartRate = 0;
+let hrConfidence = -1;
+let hrOrConfidenceChanged = true;
 
 
-// let setterHighlightTimeout;
+let setterHighlightTimeout;
 
-// function renderUpperLimitBackground() {
-//   g.setColor(1,0,0);
-//   g.fillRect(125,40, 210, 70);
-//   g.fillRect(180,70, 210, 200);
+function renderUpperLimitBackground() {
+  g.setColor(1,0,0);
+  g.fillRect(125,40, 210, 70);
+  g.fillRect(180,70, 210, 200);
 
-//   //Round top left corner
-//   g.fillEllipse(115,40,135,70);
+  //Round top left corner
+  g.fillEllipse(115,40,135,70);
 
-//   //Round top right corner
-//   g.setColor(0,0,0);
-//   g.fillRect(205,40, 210, 45);
-//   g.setColor(1,0,0);
-//   g.fillEllipse(190,40,210,50);
+  //Round top right corner
+  g.setColor(0,0,0);
+  g.fillRect(205,40, 210, 45);
+  g.setColor(1,0,0);
+  g.fillEllipse(190,40,210,50);
 
-//   //Round inner corner
-//   g.fillRect(174,71, 179, 76);
-//   g.setColor(0,0,0);
-//   g.fillEllipse(160,71,179,82);
+  //Round inner corner
+  g.fillRect(174,71, 179, 76);
+  g.setColor(0,0,0);
+  g.fillEllipse(160,71,179,82);
 
-//   //Round bottom
-//   g.setColor(1,0,0);
-//   g.fillEllipse(180,190, 210, 210);
-// }
+  //Round bottom
+  g.setColor(1,0,0);
+  g.fillEllipse(180,190, 210, 210);
+}
 
-// function renderLowerLimitBackground() {
-//   g.setColor(0,0,1);
-//   g.fillRect(10, 180, 100, 210);
-//   g.fillRect(10, 50, 40, 180);
+function renderLowerLimitBackground() {
+  g.setColor(0,0,1);
+  g.fillRect(10, 180, 100, 210);
+  g.fillRect(10, 50, 40, 180);
 
-//   //Rounded top
-//   g.setColor(0,0,1);
-//   g.fillEllipse(10,40, 40, 60);
+  //Rounded top
+  g.setColor(0,0,1);
+  g.fillEllipse(10,40, 40, 60);
 
-//   //Round bottom right corner
-//   g.setColor(0,0,1);
-//   g.fillEllipse(90,180,110,210);
+  //Round bottom right corner
+  g.setColor(0,0,1);
+  g.fillEllipse(90,180,110,210);
 
-//   //Round inner corner
-//   g.setColor(0,0,1);
-//   g.fillRect(40,175,45,180);
-//   g.setColor(0,0,0);
-//   g.fillEllipse(41,170,60,179);
+  //Round inner corner
+  g.setColor(0,0,1);
+  g.fillRect(40,175,45,180);
+  g.setColor(0,0,0);
+  g.fillEllipse(41,170,60,179);
 
-//   //Round bottom left corner
-//   g.setColor(0,0,0);
-//   g.fillRect(10,205, 15, 210);
-//   g.setColor(0,0,1);
-//   g.fillEllipse(10,200,30,210);
-// }
+  //Round bottom left corner
+  g.setColor(0,0,0);
+  g.fillRect(10,205, 15, 210);
+  g.setColor(0,0,1);
+  g.fillEllipse(10,200,30,210);
+}
 
-// function drawTrainingHeartRate() {
-//   //Only redraw if the display is on
-//   if (Bangle.isLCDOn()) {
-//     renderButtonIcons();
+function drawTrainingHeartRate() {
+  //Only redraw if the display is on
+  if (Bangle.isLCDOn()) {
+    renderButtonIcons();
   
-//     renderUpperLimit();
+    renderUpperLimit();
   
-//     renderCurrentHeartRate();
+    renderCurrentHeartRate();
   
-//     renderLowerLimit();
+    renderLowerLimit();
   
-//     renderConfidenceBars();
-//   }
+    renderConfidenceBars();
+  }
 
-//   //buzz();
-// }
+  //buzz();
+}
 
-// function renderUpperLimit() {
-//   if(!upperLimitChanged) { return; }
+function renderUpperLimit() {
+  if(!upperLimitChanged) { return; }
   
-//   g.setColor(1,0,0);
-//   g.fillRect(125,40, 210, 70);
+  g.setColor(1,0,0);
+  g.fillRect(125,40, 210, 70);
   
-//   if(limitSetter === Setter.UPPER){
-//     g.setColor(255,255, 0);
-//   } else {
-//     g.setColor(255,255,255);
-//   }
-//   g.setFontVector(13);
-//   g.drawString("Upper  : " + upperLimit, 130,50);
+  if(limitSetter === Setter.UPPER){
+    g.setColor(255,255, 0);
+  } else {
+    g.setColor(255,255,255);
+  }
+  g.setFontVector(13);
+  g.drawString("Upper  : " + upperLimit, 130,50);
   
-//   upperLimitChanged = false;
-// }
+  upperLimitChanged = false;
+}
   
-// function renderCurrentHeartRate() {
-//   if(!hrOrConfidenceChanged) { return; }
+function renderCurrentHeartRate() {
+  if(!hrOrConfidenceChanged) { return; }
   
-//   g.setColor(255,255,255);
-//   g.fillRect(45, 110, 165, 150);
+  g.setColor(255,255,255);
+  g.fillRect(45, 110, 165, 150);
 
-//   g.setColor(0,0,0);
-//   g.setFontVector(24);
-//   g.setFontAlign(1, -1, 0);
-//   g.drawString(currentHeartRate, 130, 117);
+  g.setColor(0,0,0);
+  g.setFontVector(24);
+  g.setFontAlign(1, -1, 0);
+  g.drawString(currentHeartRate, 130, 117);
 
-//   //Reset alignment to defaults
-//   g.setFontAlign(-1, -1, 0);
-// }
+  //Reset alignment to defaults
+  g.setFontAlign(-1, -1, 0);
+}
   
-// function renderLowerLimit() {
-//   if(!lowerLimitChanged) { return; }
+function renderLowerLimit() {
+  if(!lowerLimitChanged) { return; }
   
-//   g.setColor(0,0,1);
-//   g.fillRect(10, 180, 100, 210);
+  g.setColor(0,0,1);
+  g.fillRect(10, 180, 100, 210);
   
-//   if(limitSetter === Setter.LOWER){
-//     g.setColor(255,255, 0);
-//   } else {
-//     g.setColor(255,255,255);
-//   }
-//   g.setFontVector(13);
-//   g.drawString("Lower  : " + lowerLimit, 20,190);
+  if(limitSetter === Setter.LOWER){
+    g.setColor(255,255, 0);
+  } else {
+    g.setColor(255,255,255);
+  }
+  g.setFontVector(13);
+  g.drawString("Lower  : " + lowerLimit, 20,190);
   
-//   lowerLimitChanged = false;
-// }
+  lowerLimitChanged = false;
+}
   
-// function renderConfidenceBars(){
-//   if(!hrOrConfidenceChanged) { return; }
+function renderConfidenceBars(){
+  if(!hrOrConfidenceChanged) { return; }
   
-//   if(hrConfidence >= 85){
-//       g.setColor(0, 255, 0);
-//   } else if (hrConfidence >= 50) {
-//       g.setColor(255, 255, 0);
-//   } else if(hrConfidence >= 0){
-//       g.setColor(255, 0, 0);
-//   } else {
-//       g.setColor(255, 255, 255);
-//   }
+  if(hrConfidence >= 85){
+      g.setColor(0, 255, 0);
+  } else if (hrConfidence >= 50) {
+      g.setColor(255, 255, 0);
+  } else if(hrConfidence >= 0){
+      g.setColor(255, 0, 0);
+  } else {
+      g.setColor(255, 255, 255);
+  }
 
-//   g.fillRect(45, 110, 55, 150);
-//   g.fillRect(165, 110, 175, 150);
-// }
+  g.fillRect(45, 110, 55, 150);
+  g.fillRect(165, 110, 175, 150);
+}
   
 function renderButtonIcons() {
   g.setColor(255,255,255);
   g.setFontVector(14);
 
-  // + for Btn1
+  //+ for Btn1
   g.drawString("+", 222,50);
 
-  // Home for Btn2
+  //Home for Btn2
   g.drawLine(220, 118, 227, 110);
   g.drawLine(227, 110, 234, 118);
 
   g.drawPoly([222,117,222,125,232,125,232,117], false);
   g.drawRect(226,120,229,125);
 
-  // - for Btn3
+  //- for Btn3
   g.drawString("-", 222,165);
 }
   
-// function buzz()
-// {
-//   if(currentHeartRate > upperLimit)
-//   {
-//      Bangle.buzz(shortBuzzTimeInMs);
-//      setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
-//      setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
-//   }
+function buzz()
+{
+  if(currentHeartRate > upperLimit)
+  {
+     Bangle.buzz(shortBuzzTimeInMs);
+     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
+     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs);
+  }
 
-//   if(currentHeartRate < lowerLimit)
-//   {
-//      Bangle.buzz(longBuzzTimeInMs);
-//      setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs);
-//   }
-// }
+  if(currentHeartRate < lowerLimit)
+  {
+     Bangle.buzz(longBuzzTimeInMs);
+     setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs);
+  }
+}
   
-// function onHrm(hrm){
-//   hrOrConfidenceChanged = (currentHeartRate !== hrm.bpm || hrConfidence !== hrm.confidence);
-//   currentHeartRate = hrm.bpm;
-//   hrConfidence = hrm.confidence;
-// }
+function onHrm(hrm){
+  hrOrConfidenceChanged = (currentHeartRate !== hrm.bpm || hrConfidence !== hrm.confidence);
+  currentHeartRate = hrm.bpm;
+  hrConfidence = hrm.confidence;
+}
   
-// function setLimitSetterToLower() {
-//   resetHighlightTimeout();
+function setLimitSetterToLower() {
+  resetHighlightTimeout();
 
-//   limitSetter = Setter.LOWER;
-//   console.log("Limit setter is lower");
+  limitSetter = Setter.LOWER;
+  console.log("Limit setter is lower");
   
-//   upperLimitChanged = true;
-//   lowerLimitChanged = true;
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
   
-//   renderUpperLimit();
-//   renderLowerLimit();
-// }
+  renderUpperLimit();
+  renderLowerLimit();
+}
   
-// function setLimitSetterToUpper() {
-//   resetHighlightTimeout();
+function setLimitSetterToUpper() {
+  resetHighlightTimeout();
 
-//   limitSetter = Setter.UPPER;
-//   console.log("Limit setter is upper");
+  limitSetter = Setter.UPPER;
+  console.log("Limit setter is upper");
   
-//   upperLimitChanged = true;
-//   lowerLimitChanged = true;
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
   
-//   renderLowerLimit();
-//   renderUpperLimit();
-// }
+  renderLowerLimit();
+  renderUpperLimit();
+}
   
-// function setLimitSetterToNone() {
-//   limitSetter = Setter.NONE;
-//   console.log("Limit setter is none");
+function setLimitSetterToNone() {
+  limitSetter = Setter.NONE;
+  console.log("Limit setter is none");
   
-//   upperLimitChanged = true;
-//   lowerLimitChanged = true;
+  upperLimitChanged = true;
+  lowerLimitChanged = true;
   
-//   renderLowerLimit();
-//   renderUpperLimit();
-// }
+  renderLowerLimit();
+  renderUpperLimit();
+}
   
-// function incrementLimit(){
-//   resetHighlightTimeout();
+function incrementLimit(){
+  resetHighlightTimeout();
 
-//   if (limitSetter === Setter.UPPER) {
-//     upperLimit++;
-//     renderUpperLimit();
-//     console.log("Upper limit: " + upperLimit);
-//     upperLimitChanged = true;
-//   } else if(limitSetter === Setter.LOWER) {
-//     lowerLimit++;
-//     renderLowerLimit();
-//     console.log("Lower limit: " + lowerLimit);
-//     lowerLimitChanged = true;
-//   }
-// }
+  if (limitSetter === Setter.UPPER) {
+    upperLimit++;
+    renderUpperLimit();
+    console.log("Upper limit: " + upperLimit);
+    upperLimitChanged = true;
+  } else if(limitSetter === Setter.LOWER) {
+    lowerLimit++;
+    renderLowerLimit();
+    console.log("Lower limit: " + lowerLimit);
+    lowerLimitChanged = true;
+  }
+}
   
-// function decrementLimit(){
-//   resetHighlightTimeout();
+function decrementLimit(){
+  resetHighlightTimeout();
 
-//   if (limitSetter === Setter.UPPER) {
-//     upperLimit--;
-//     renderUpperLimit();
-//     console.log("Upper limit: " + upperLimit);
-//     upperLimitChanged = true;
-//   } else if(limitSetter === Setter.LOWER) {
-//     lowerLimit--;
-//     renderLowerLimit();
-//     console.log("Lower limit: " + lowerLimit);
-//     lowerLimitChanged = true;
-//   }
-// }
+  if (limitSetter === Setter.UPPER) {
+    upperLimit--;
+    renderUpperLimit();
+    console.log("Upper limit: " + upperLimit);
+    upperLimitChanged = true;
+  } else if(limitSetter === Setter.LOWER) {
+    lowerLimit--;
+    renderLowerLimit();
+    console.log("Lower limit: " + lowerLimit);
+    lowerLimitChanged = true;
+  }
+}
   
-// function resetHighlightTimeout() {
-//   if (setterHighlightTimeout) {
-//     clearTimeout(setterHighlightTimeout);
-//   }
+function resetHighlightTimeout() {
+  if (setterHighlightTimeout) {
+    clearTimeout(setterHighlightTimeout);
+  }
   
-//   setterHighlightTimeout = setTimeout(setLimitSetterToNone, 2000);
-// }
+  setterHighlightTimeout = setTimeout(setLimitSetterToNone, 2000);
+}
   
-// // Show launcher when middle button pressed
-// function switchOffApp(){
-//   Bangle.setHRMPower(0);
-//   Bangle.showLauncher();
-// }
+// Show launcher when middle button pressed
+function switchOffApp(){
+  Bangle.setHRMPower(0);
+  Bangle.showLauncher();
+}
   
-// // special function to handle display switch on
-// Bangle.on('lcdPower', (on) => {
-//   g.clear();
-//   if (on) {
-//     Bangle.drawWidgets();
-//     // call your app function here
-//     renderLowerLimitBackground();
-//     renderUpperLimitBackground();
-//     lowerLimitChanged = true;
-//     upperLimitChanged = true;
-//     drawTrainingHeartRate();
-//   }
-// });
+// special function to handle display switch on
+Bangle.on('lcdPower', (on) => {
+  g.clear();
+  if (on) {
+    Bangle.drawWidgets();
+    // call your app function here
+    renderLowerLimitBackground();
+    renderUpperLimitBackground();
+    lowerLimitChanged = true;
+    upperLimitChanged = true;
+    drawTrainingHeartRate();
+  }
+});
   
-// Bangle.setHRMPower(1);
-// Bangle.on('HRM', onHrm);
+Bangle.setHRMPower(1);
+Bangle.on('HRM', onHrm);
  
-// setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
+setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
 setWatch(switchOffApp, BTN2, {repeat:false,edge:"falling"});
+setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
+setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
+setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
 
-renderButtonIcons
-// setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
-// setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
-// setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+//drawTrainingHeartRate();
 
-// g.clear();
-// Bangle.loadWidgets();
-// Bangle.drawWidgets();
-// //drawTrainingHeartRate();
-
-// // refesh every sec
-// renderLowerLimitBackground();
-// renderUpperLimitBackground();
-// setInterval(drawTrainingHeartRate, 1000);
+// refesh every sec
+renderLowerLimitBackground();
+renderUpperLimitBackground();
+setInterval(drawTrainingHeartRate, 1000);
