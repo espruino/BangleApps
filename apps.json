@@ -824,6 +824,20 @@
       {"name":"widid.wid.js","url":"widget.js"}
     ]
   },
+  { 
+    "id": "grocery",
+    "name": "Grocery",
+    "icon": "grocery.png",
+    "version":"0.01",
+    "description": "Simple grocery list - Display a list of product and track if you already put them in your cart.",
+    "tags": "tool,outdoors",
+    "type": "app",
+    "custom":"grocery.html",
+    "storage": [
+      {"name":"grocery"},
+      {"name":"grocery.app.js"}
+    ]
+  },
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
