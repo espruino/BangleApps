@@ -837,7 +837,7 @@
       {"name":"widid.wid.js","url":"widget.js"}
     ]
   },
-  { 
+  {
     "id": "grocery",
     "name": "Grocery",
     "icon": "grocery.png",
@@ -848,13 +848,14 @@
     "custom":"grocery.html",
     "storage": [
       {"name":"grocery"},
-      {"name":"grocery.app.js"}
+      {"name":"grocery.app.js"},
+      {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
     ]
   },
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
