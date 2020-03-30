@@ -1,10 +1,23 @@
 /* jshint esversion: 6 */
 /**
- * A simple 24h digital clock showing seconds as a bar
+ * A simple digital clock showing seconds as a bar
  **/
 {
+  // Check settings for what type our clock should be
+  const is12Hour = (require('Storage').readJSON('setting.json', 1) || {})['12hour']
+  const locale = require('locale')
+  { // add some more info to locale
+    let date = new Date()
+    date.setFullYear(1111)
+    date.setMonth(1, 3) // februari: months are zero-indexed
+    const localized = locale.date(date, true)
+    locale.dayFirst = /3.*2/.test(localized)
+    locale.hasMeridian = (locale.meridian(date) !== '')
+  }
+
   const timeFont = '6x8'
-  const timeFontSize = 8 // 'hh:mm' fits exactly
+  const timeFontSize = (is12Hour && locale.hasMeridian) ? 6 : 8
+  const ampmFontSize = 2
   const dateFont = 'Vector'
   const dateFontSize = 20
 
@@ -18,35 +31,50 @@
 
   const SECONDS_PER_MINUTE = 60
 
+
   function timeText(date) {
-    const d = date.toString().split(' ')
-    const time = d[4].substr(0, 5)
-    const t = time.split(':')
-    const hours = t[0],
-      minutes = t[1]
-    return `${hours}:${minutes}`
+    if (!is12Hour) {
+      return {time: locale.time(date, true), ampm: ''}
+    }
+    const meridian = locale.meridian(date)
+    const hours = date.getHours()
+    if (hours === 0) {
+      date.setHours(12)
+    } else if (hours > 12) {
+      date.setHours(hours - 12)
+    }
+    return {time: locale.time(date, true), ampm: meridian}
   }
 
   function dateText(date) {
-    const d = date.toString().split(' ')
-    const dayName = d[0],
-      month = d[1],
-      day = d[2]
-    return `${dayName}  ${day} ${month}`
+    const dayName = locale.dow(date, true),
+      month = locale.month(date, true),
+      day = date.getDate()
+    return `${dayName}  ` + (locale.dayFirst ? `${day} ${month}` : `${month} ${day}`)
   }
 
   function drawDateTime(date) {
+    const timeTexts = timeText(date)
     g.setFontAlign(0, 0) // centered
-
     g.setFont(timeFont, timeFontSize)
-    g.drawString(timeText(date), screenCenter, timeY, true)
+    g.drawString(timeTexts.time, screenCenter, timeY, true)
+    if (timeTexts.ampm !== '') {
+      g.setFontAlign(1, -1)
+      g.setFont(timeFont, ampmFontSize)
+      g.drawString(timeTexts.ampm,
+        // at right edge of screen     , aligned with time bottom
+        (screenSize - ampmFontSize * 2), (timeY + timeFontSize - ampmFontSize),
+        true)
+    }
 
+    g.setFontAlign(0, 0) // centered
     g.setFont(dateFont, dateFontSize)
     g.drawString(dateText(date), screenCenter, dateY, true)
   }
 
   function drawBar(date) {
     const seconds = date.getSeconds()
+    if (seconds === 0) return; // zero-size rect stills draws one line of pixels
     const fraction = seconds / SECONDS_PER_MINUTE
     g.fillRect(0, barY, fraction * screenSize, barY + barThickness)
   }
