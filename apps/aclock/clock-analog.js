@@ -1,9 +1,9 @@
-const version = '0.08';
+const version = '0.09';
 const debug = false;
 
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 100; // watch face is 95 px wide (radius)
+const faceWidth = 100; // watch face radius
 let timerInterval = null;
 let currentDate = new Date();
 const centerPx = 120;
@@ -12,10 +12,10 @@ const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 let g;
 let Bangle;
 
-const seconds = (angle, r) => {
+const seconds = (angle) => {
   const a = angle * pRad;
-  const x = centerPx + Math.sin(a) * r;
-  const y = centerPx - Math.cos(a) * r;
+  const x = centerPx + Math.sin(a) * faceWidth;
+  const y = centerPx - Math.cos(a) * faceWidth;
 
   // if 15 degrees, make hour marker larger
   const radius = (angle % 15) ? 2 : 4;
@@ -36,15 +36,6 @@ const hand = (angle, r1, r2) => {
     Math.round(centerPx + Math.sin(a - p) * r3),
     Math.round(centerPx - Math.cos(a - p) * r3)
   ]);
-
-  if (debug) {
-    console.log(`made poly: ,
-    x1: ${Math.round(centerPx + Math.sin(a) * r1)}, y1: ${Math.round(centerPx - Math.cos(a) * r1)},
-    x2: ${Math.round(centerPx + Math.sin(a + p) * r3)}, y2: ${Math.round(centerPx - Math.cos(a + p) * r3)},
-    x3: ${Math.round(centerPx + Math.sin(a) * r2)}, y3: ${Math.round(centerPx - Math.cos(a) * r2)},
-    x4: ${Math.round(centerPx + Math.sin(a - p) * r3)}, y4: ${Math.round(centerPx - Math.cos(a - p) * r3)}`
-    );
-  }
 };
 
 const drawAll = () => {
@@ -55,7 +46,7 @@ const drawAll = () => {
   // draw seconds
   g.setColor(0, 0, 0.6);
   for (let i = 0; i < 60; i++) {
-    seconds((360 * i) / 60, faceWidth);
+    seconds((360 * i) / 60);
   }
   onSecond();
 };
@@ -63,20 +54,20 @@ const drawAll = () => {
 const resetSeconds = () => {
   g.setColor(0, 0, 0.6);
   for (let i = 0; i < 60; i++) {
-    seconds((360 * i) / 60, faceWidth);
+    seconds((360 * i) / 60);
   }
 };
 
 const onSecond = () => {
   g.setColor(0.3, 0.3, 1);
-  seconds((360 * currentDate.getSeconds()) / 60, faceWidth);
+  seconds((360 * currentDate.getSeconds()) / 60);
   if (currentDate.getSeconds() === 59) {
     resetSeconds();
     onMinute();
   }
   g.setColor(1, 0.7, 0.2);
   currentDate = new Date();
-  seconds((360 * currentDate.getSeconds()) / 60, faceWidth);
+  seconds((360 * currentDate.getSeconds()) / 60);
   g.setColor(1, 1, 1);
 };
 
@@ -124,16 +115,9 @@ const onMinute = () => {
   drawDate();
 };
 
-
-const clearTimers = () => {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-  }
-};
-
 const startTimers = () => {
-  //currentDate = new Date();
-  drawAll();
+
+  
   timerInterval = setInterval(onSecond, 1000);
   
 };
@@ -142,9 +126,12 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     // g.clear();
     Bangle.drawWidgets();
+    drawAll();
     startTimers();
   } else {
-    clearTimers();
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
   }
 });
 
@@ -152,6 +139,7 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 console.log('Analog watch version ', version);
+drawAll();
 resetSeconds();
 startTimers();
 
