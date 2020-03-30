@@ -1,16 +1,14 @@
-const version = '0.09';
-const debug = false;
+let g;
+let Bangle;
 
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
 const faceWidth = 100; // watch face radius
-let timerInterval = null;
+let timer = null;
 let currentDate = new Date();
-const centerPx = 120;
-const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+const centerPx = g.getWidth() / 2;
 
-let g;
-let Bangle;
+const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
 const seconds = (angle) => {
   const a = angle * pRad;
@@ -44,8 +42,15 @@ const drawAll = () => {
   // draw hands first
   onMinute();
   // draw seconds
-  g.setColor(0, 0, 0.6);
+  const currentSec = currentDate.getSeconds();
+  // draw all secs
+
   for (let i = 0; i < 60; i++) {
+    if (i > currentSec) {
+      g.setColor(0, 0, 0.6);
+    } else {
+      g.setColor(0.3, 0.3, 1);
+    }
     seconds((360 * i) / 60);
   }
   onSecond();
@@ -72,19 +77,17 @@ const onSecond = () => {
 };
 
 const drawDate = () => {
-  
   g.reset();
   g.setColor(1, 0, 0);
-  g.setFont('6x8', 2)
+  g.setFont('6x8', 2);
 
   const dayString = days[currentDate.getDay()];
   // pad left date
-  let dateString =  (currentDate.getDate() < 10) ? '0' : '' + currentDate.getDate().toString();
- 
+  const dateString = (currentDate.getDate() < 10) ? '0' : '' + currentDate.getDate().toString();
   const dateDisplay = `${dayString}-${dateString}`;
   // console.log(`${dayString}|${dateString}`);
   // center date
-  const l = (g.getWidth() - g.stringWidth(dateDisplay))/2;
+  const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
   const t = centerPx + 37;
   g.drawString(dateDisplay, l, t);
   // console.log(l, t);
@@ -103,10 +106,10 @@ const onMinute = () => {
 
   // get new date, then draw new hands
   currentDate = new Date();
-  g.setColor(1, 0.3, 0.5);
+  g.setColor(1, 0.9, 0.9);
   // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
-  g.setColor(1, 1, 0.4);
+  g.setColor(1, 1, 0.9);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
   if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
@@ -116,32 +119,28 @@ const onMinute = () => {
 };
 
 const startTimers = () => {
-
-  
-  timerInterval = setInterval(onSecond, 1000);
-  
+  timer = setInterval(onSecond, 1000);
 };
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
     // g.clear();
-    Bangle.drawWidgets();
     drawAll();
     startTimers();
+    Bangle.drawWidgets();
   } else {
-    if (timerInterval) {
-      clearInterval(timerInterval);
+    if (timer) {
+      clearInterval(timer);
     }
   }
 });
 
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-console.log('Analog watch version ', version);
-drawAll();
 resetSeconds();
 startTimers();
+drawAll();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
