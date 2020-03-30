@@ -3,7 +3,7 @@
     "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version": "0.11",
+    "version": "0.12",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type": "bootloader",
@@ -599,8 +599,8 @@
     "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version": "0.01",
-    "description": "Simple stopwatch with Lap Time recording",
+    "version": "0.03",
+    "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator": true,
     "storage": [
@@ -884,6 +884,27 @@
       {
         "name": "sclock.img",
         "url": "clock-simple-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "dclock",
+    "name": "Dev Clock",
+    "icon": "clock-dev.png",
+    "version": "0.09",
+    "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "dclock.app.js",
+        "url": "clock-dev.js"
+      },
+      {
+        "name": "dclock.img",
+        "url": "clock-dev-icon.js",
         "evaluate": true
       }
     ]
@@ -1382,6 +1403,24 @@
     ]
   },
   {
+    "id": "grocery",
+    "name": "Grocery",
+    "icon": "grocery.png",
+    "version": "0.01",
+    "description": "Simple grocery list - Display a list of product and track if you already put them in your cart.",
+    "tags": "tool,outdoors",
+    "type": "app",
+    "custom": "grocery.html",
+    "storage": [
+      {
+        "name": "grocery"
+      },
+      {
+        "name": "grocery.app.js"
+      }
+    ]
+  },
+  {
     "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
@@ -1399,6 +1438,21 @@
         "name": "marioclock.img",
         "url": "marioclock-icon.js",
         "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "widver",
+    "name": "Firmware Version Widget",
+    "icon": "widget.png",
+    "version": "0.01",
+    "description": "Display the version of the installed firmware in the top widget section.",
+    "tags": "widget,tool,system",
+    "type": "widget",
+    "storage": [
+      {
+        "name": "widver.wid.js",
+        "url": "widget.js"
       }
     ]
   }
