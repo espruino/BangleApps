@@ -12,6 +12,19 @@
     ],
     "sortorder" : -10
   },
+  { "id": "daysl",
+     "name": "Days left",
+     "icon": "app.png",
+     "version":"0.01",
+     "description": "Widget to show you the days left until a certain date. Date can be set with a settings app and is written to a file. 1",
+     "tags": "",
+     "allow_emulator":false,
+     "storage": [
+       {"name":"daysl.app.js","url":"app.js"},
+       {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+       {"name":"daysl.wid.js","url":"widget.js"}
+     ]
+   },
   { "id": "launch",
     "name": "Default Launcher",
     "shortName":"Launcher",
