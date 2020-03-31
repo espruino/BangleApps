@@ -1,4 +1,3 @@
-var line;
 var fontsize = 3;
 var locale = require("locale");
 var marginTop = 40;
@@ -10,39 +9,39 @@ function drawAll(){
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   updateTime();
+  updateRest(new Date(),true);
+}
+
+function updateRest(now,force){
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  if (now.getMinutes() != 0  && force) return;
+  let date = locale.date(now,false);
+  writeLine(WeekDays[now.getDay()],1);
+  writeLine(date,2);
 }
 function updateTime(){
   if (!Bangle.isLCDOn()) return;
-  line = 0;
-  var now = new Date();
-  var date = locale.date(now,false);
-  var h = now.getHours();
-  var m = now.getMinutes();
+  let now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
   h = h>=10?h:"0"+h;
   m = m>=10?m:"0"+m;
+  writeLine(h+":"+m,0);
+  writeLine(flag?" ":"_",3);
+  flag = !flag;
+  updateRest(now,false);
+}
+function writeLineStart(line){
+  g.drawString(">",4,marginTop+line*30);
+}
+function writeLine(str,line){
   g.setFont("6x8",fontsize);
   g.setColor(0,1,0);
   g.setFontAlign(-1,-1);
-  writeLine(h+":"+m);
-  writeLine(WeekDays[now.getDay()]);
-  writeLine(date);
-  if(flag){
-    writeLine(" ");
-    flag = false;
-  }
-  else{
-    writeLine("_");
-    flag = true;
-  }
-}
-function writeLineStart(){
-  g.drawString(">",4,marginTop+line*30);
-}
-function writeLine(str){
   g.clearRect(0,marginTop+line*30,((str.length+1)*20),marginTop+25+line*30);
-  writeLineStart();
+  writeLineStart(line);
   g.drawString(str,25,marginTop+line*30);
-  line++;
 } 
 
 drawAll();
