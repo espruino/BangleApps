@@ -9,11 +9,10 @@ function drawAll(){
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   updateTime();
-  updateRest(new Date(),true);
+  updateRest(new Date());
 }
 
-function updateRest(now,force){
-  if (now.getMinutes() != 0  && !force) return;
+function updateRest(now){
   let date = locale.date(now,false);
   writeLine(WeekDays[now.getDay()],1);
   writeLine(date,2);
@@ -28,7 +27,8 @@ function updateTime(){
   writeLine(h+":"+m,0);
   writeLine(flag?" ":"_",3);
   flag = !flag;
-  updateRest(now,false);
+  if(now.getMinutes() == 0)
+    updateRest(now);
 }
 function writeLineStart(line){
   g.drawString(">",4,marginTop+line*30);
