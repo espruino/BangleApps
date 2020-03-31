@@ -841,10 +841,10 @@
   "name": "Commandline-Clock",
   "shortName":"CLI-Clock",
   "icon": "app.png",
-  "version":"0.04",
+  "version":"0.05",
   "description": "Simple CLI-Styled Clock",
-  "tags": "cli,command,bash,shell",
-  "type": "clock",
+  "tags": "clock,cli,command,bash,shell",
+   "type":"clock"
   "allow_emulator":true,
   "storage": [
     {"name":"cliock.app.js","url":"app.js"},
