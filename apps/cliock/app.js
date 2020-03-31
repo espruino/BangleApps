@@ -13,8 +13,6 @@ function drawAll(){
 }
 
 function updateRest(now,force){
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
   if (now.getMinutes() != 0  && force) return;
   let date = locale.date(now,false);
   writeLine(WeekDays[now.getDay()],1);
