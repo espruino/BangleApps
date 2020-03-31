@@ -844,7 +844,7 @@
   "version":"0.05",
   "description": "Simple CLI-Styled Clock",
   "tags": "clock,cli,command,bash,shell",
-   "type":"clock"
+  "type":"clock",
   "allow_emulator":true,
   "storage": [
     {"name":"cliock.app.js","url":"app.js"},
