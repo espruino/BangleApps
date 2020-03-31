@@ -16,7 +16,7 @@
      "name": "Days left",
      "icon": "app.png",
      "version":"0.01",
-     "description": "Widget to show you the days left until a certain date. Date can be set with a settings app and is written to a file. 1",
+     "description": "Widget to show you the days left until a certain date. Date can be set with a settings app and is written to a file.",
      "tags": "",
      "allow_emulator":false,
      "storage": [
