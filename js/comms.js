@@ -147,5 +147,50 @@ readFile : (file) => {
       });
     });
   });
+},
+readStorageFile : (filename) => { // StorageFiles are different to normal storage entries
+  return new Promise((resolve,reject) => {
+    // Use "\xFF" to signal end of file (can't occur in files anyway)
+    var fileContent = "";
+    var fileSize = undefined;
+    var connection = Puck.getConnection();
+    connection.received = "";
+    connection.cb = function(d) {
+      var finished = false;
+      var eofIndex = d.indexOf("\xFF");
+      if (eofIndex>=0) {
+        finished = true;
+        d = d.substr(0,eofIndex);
+      }
+      fileContent += d;
+      if (fileSize === undefined) {
+        var newLineIdx = fileContent.indexOf("\n");
+        if (newLineIdx>=0) {
+          fileSize = parseInt(fileContent.substr(0,newLineIdx));
+          console.log("File size is "+fileSize);
+          fileContent = fileContent.substr(newLineIdx+1);
+        }
+      } else {
+        showProgress(undefined,100*fileContent.length / (fileSize||1000000));
+      }
+      if (finished) {
+        hideProgress();
+        connection.received = "";
+        connection.cb = undefined;
+        resolve(fileContent);
+      }
+    };
+    console.log(`Reading StorageFile ${JSON.stringify(filename)}`);
+    connection.write(`\x03\x10(function() {
+      var f = require("Storage").open(${JSON.stringify(filename)},"r");
+      Bluetooth.println(f.getLength());
+      var l = f.readLine();
+      while (l!==undefined) { Bluetooth.print(l); l = f.readLine(); }
+      Bluetooth.print("\xFF");
+    })()\n`,() => {
+      showProgress(`Reading ${JSON.stringify(filename)}`,0);
+      console.log(`StorageFile read started...`);
+    });
+  });
 }
 };

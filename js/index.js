@@ -229,6 +229,14 @@ function handleAppInterface(app) {
               id : msg.id
             });
           });
+        } else if (msg.type=="readstoragefile") {
+          Comms.readStorageFile(msg.data/*filename*/).then(function(result) {
+            iwin.postMessage({
+              type : "readstoragefilersp",
+              data : result,
+              id : msg.id
+            });
+          });
         }
       }, false);
       iwin.postMessage({type:"init"});
