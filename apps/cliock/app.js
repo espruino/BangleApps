@@ -13,7 +13,7 @@ function drawAll(){
 }
 
 function updateRest(now,force){
-  if (now.getMinutes() != 0  && force) return;
+  if (now.getMinutes() != 0  && !force) return;
   let date = locale.date(now,false);
   writeLine(WeekDays[now.getDay()],1);
   writeLine(date,2);
