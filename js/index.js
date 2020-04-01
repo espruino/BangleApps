@@ -229,6 +229,14 @@ function handleAppInterface(app) {
               id : msg.id
             });
           });
+        } else if (msg.type=="readstoragefile") {
+          Comms.readStorageFile(msg.data/*filename*/).then(function(result) {
+            iwin.postMessage({
+              type : "readstoragefilersp",
+              data : result,
+              id : msg.id
+            });
+          });
         }
       }, false);
       iwin.postMessage({type:"init"});
@@ -343,22 +351,9 @@ function refreshLibrary() {
         });
       } else if (icon.classList.contains("icon-menu")) {
         // custom HTML update
-        if (app.custom) {
-          icon.classList.remove("icon-menu");
-          icon.classList.add("loading");
-          handleCustomApp(app).then((appJSON) => {
-            if (appJSON) appsInstalled.push(appJSON);
-            showToast(app.name+" Uploaded!", "success");
-            icon.classList.remove("loading");
-            icon.classList.add("icon-delete");
-            refreshMyApps();
-            refreshLibrary();
-          }).catch(err => {
-            showToast("Customise failed, "+err, "error");
-            icon.classList.remove("loading");
-            icon.classList.add("icon-menu");
-          });
-        }
+        icon.classList.remove("icon-menu");
+        icon.classList.add("loading");
+        customApp(app);
       } else if (icon.classList.contains("icon-delete")) {
         // Remove app
         icon.classList.remove("icon-delete");
@@ -393,9 +388,23 @@ function removeApp(app) {
   });
 }
 
+function customApp(app) {
+  return handleCustomApp(app).then((appJSON) => {
+    if (appJSON) appsInstalled.push(appJSON);
+    showToast(app.name+" Uploaded!", "success");
+    refreshMyApps();
+    refreshLibrary();
+  }).catch(err => {
+    showToast("Customise failed, "+err, "error");
+    refreshMyApps();
+    refreshLibrary();
+  });
+}
+
 function updateApp(app) {
+  if (app.custom) return customApp(app);
   showProgress(`Upgrading ${app.name}`,undefined,"sticky");
-  Comms.removeApp(app).then(()=>{
+  return Comms.removeApp(app).then(()=>{
     showToast(app.name+" removed successfully. Updating...",);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     return Comms.uploadApp(app);
@@ -408,8 +417,11 @@ function updateApp(app) {
   }, err=>{
     hideProgress("sticky");
     showToast(app.name+" update failed, "+err,"error");
+    refreshMyApps();
+    refreshLibrary();
   });
 }
+
 
 
 function appNameToApp(appName) {

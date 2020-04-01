@@ -1,14 +1,14 @@
 let g;
 let Bangle;
 
+// http://forum.espruino.com/conversations/345155/#comment15172813
+const locale = require('locale');
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
 const faceWidth = 100; // watch face radius
 let timer = null;
 let currentDate = new Date();
 const centerPx = g.getWidth() / 2;
-
-const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
 const seconds = (angle) => {
   const a = angle * pRad;
@@ -81,7 +81,7 @@ const drawDate = () => {
   g.setColor(1, 0, 0);
   g.setFont('6x8', 2);
 
-  const dayString = days[currentDate.getDay()];
+  const dayString = locale.dow(currentDate, true);
   // pad left date
   const dateString = (currentDate.getDate() < 10) ? '0' : '' + currentDate.getDate().toString();
   const dateDisplay = `${dayString}-${dateString}`;

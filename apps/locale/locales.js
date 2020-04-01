@@ -348,7 +348,7 @@ var locales = {
       temperature: '°C',
       ampm: {0:"de",1:"du"},
       timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-      datePattern: { 0: "%Y %d %b", 1: "%Y.%m.%d" }, // 2020 Feb 28" // "2020.03.01."(short)
+      datePattern: { 0: "%Y %b %d, %A", 1: "%Y.%m.%d" }, // 2020 Feb 28, Péntek" // "2020.03.01."(short)
       abmonth: "Jan,Feb,Már,Ápr,Máj,Jún,Júl,Aug,Szep,Okt,Nov,Dec",
       month: "Január,Február,Március,Április,Május,Június,Július,Augusztus,Szeptember,Október,November,December",
       abday: "Vas,Hét,Ke,Szer,Csüt,Pén,Szom",
