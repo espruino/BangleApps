@@ -27,7 +27,6 @@ function updateSettings() {
   const diffDays = Math.round(Math.abs((targetDate - today) / oneDay));
 
 WIDGETS["daysl"]={area:"tl",width:40,draw:function(){
-
   g.setFont("6x8", 1);
   g.drawString(diffDays,this.x+12,this.y+12);
 }};
