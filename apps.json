@@ -836,5 +836,17 @@
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
     ]
+  },
+  { "id": "eightball",
+    "name": "Magic Eightball",
+    "icon": "eightball.png",
+    "version": "0.01",
+    "description": "A detailed description of my great app",
+    "tags": "",
+    "allo2_emulator":true,
+    "storage": [
+      {"name":"eightball.app.js","url":"eightball.js"},
+      {"name":"eightball.img","url":"eightball-icon.js","evaluate":true}
+    ]
   }
 ]
