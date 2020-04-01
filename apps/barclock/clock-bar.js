@@ -59,7 +59,7 @@
     g.setFont(timeFont, timeFontSize)
     g.drawString(timeTexts.time, screenCenter, timeY, true)
     if (timeTexts.ampm !== '') {
-      g.setFontAlign(1, -1)
+      g.setFontAlign(1, -1) // right top
       g.setFont(timeFont, ampmFontSize)
       g.drawString(timeTexts.ampm,
         // at right edge of screen     , aligned with time bottom
@@ -78,11 +78,10 @@
     const fraction = seconds / SECONDS_PER_MINUTE
     g.fillRect(0, barY, fraction * screenSize, barY + barThickness)
   }
-  function eraseBar() {
-    const color = g.getColor()
-    g.setColor(g.getBgColor())
-    g.fillRect(0, barY, screenSize, barY + barThickness)
-    g.setColor(color)
+  function clearScreen() {
+    g.setColor(0)
+    g.fillRect(0, timeY - (timeFontSize * 4), screenSize, screenSize)
+    g.setColor(-1)
   }
 
   let lastSeconds
@@ -92,7 +91,7 @@
     const seconds = date.getSeconds()
     if (lastSeconds > seconds) {
       // new minute
-      eraseBar()
+      clearScreen()
       drawDateTime(date)
     }
     drawBar(date)
