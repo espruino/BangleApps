@@ -3,7 +3,7 @@
     "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version": "0.12",
+    "version": "0.13",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type": "bootloader",
@@ -18,6 +18,50 @@
       }
     ],
     "sortorder": -10
+  },
+  {
+    "id": "moonphase",
+    "name": "Moonphase",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Shows current moon phase. Currently only with fixed coordinates (northern hemisphere).",
+    "tags": "",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "moonphase.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "moonphase.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "daysl",
+    "name": "Days left",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
+    "tags": "",
+    "allow_emulator": false,
+    "storage": [
+      {
+        "name": "daysl.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "daysl.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      },
+      {
+        "name": "daysl.wid.js",
+        "url": "widget.js"
+      }
+    ]
   },
   {
     "id": "launch",
@@ -171,13 +215,17 @@
     "name": "Default Alarm",
     "shortName": "Alarms",
     "icon": "app.png",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
       {
         "name": "alarm.app.js",
         "url": "app.js"
+      },
+      {
+        "name": "alarm.boot.js",
+        "url": "boot.js"
       },
       {
         "name": "alarm.js",
@@ -224,7 +272,7 @@
     "name": "Analog Clock",
     "icon": "clock-analog.png",
     "version": "0.10",
-    "description": "A simple analog clock with Day/Date",
+    "description": "An Analog Clock",
     "tags": "clock",
     "type": "clock",
     "allow_emulator": true,
@@ -1346,7 +1394,7 @@
     "id": "pipboy",
     "name": "Pipboy",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Pipboy themed clock",
     "tags": "clock",
     "type": "clock",
@@ -1417,6 +1465,11 @@
       },
       {
         "name": "grocery.app.js"
+      },
+      {
+        "name": "grocery.img",
+        "url": "grocery-icon.js",
+        "evaluate": true
       }
     ]
   },
@@ -1424,7 +1477,7 @@
     "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version": "0.01",
+    "version": "0.03",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -1442,6 +1495,28 @@
     ]
   },
   {
+    "id": "cliock",
+    "name": "Commandline-Clock",
+    "shortName": "CLI-Clock",
+    "icon": "app.png",
+    "version": "0.07",
+    "description": "Simple CLI-Styled Clock",
+    "tags": "clock,cli,command,bash,shell",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "cliock.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "cliock.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "widver",
     "name": "Firmware Version Widget",
     "icon": "widget.png",
@@ -1453,6 +1528,62 @@
       {
         "name": "widver.wid.js",
         "url": "widget.js"
+      }
+    ]
+  },
+  {
+    "id": "barclock",
+    "name": "Bar Clock",
+    "icon": "clock-bar.png",
+    "version": "0.04",
+    "description": "A simple digital clock showing seconds as a bar",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "barclock.app.js",
+        "url": "clock-bar.js"
+      },
+      {
+        "name": "barclock.img",
+        "url": "clock-bar-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "widtbat",
+    "name": "Tiny Battery Widget",
+    "icon": "widget.png",
+    "version": "0.01",
+    "description": "Tiny blueish battery widget, vibs and changes level color when charging",
+    "tags": "widget,tool,system",
+    "type": "widget",
+    "storage": [
+      {
+        "name": "widtbat.wid.js",
+        "url": "widget.js"
+      }
+    ]
+  },
+  {
+    "id": "chrono",
+    "name": "Chrono",
+    "shortName": "Chrono",
+    "icon": "chrono.png",
+    "version": "0.01",
+    "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
+    "tags": "Tools",
+    "storage": [
+      {
+        "name": "chrono.app.js",
+        "url": "chrono.js"
+      },
+      {
+        "name": "chrono.img",
+        "url": "chrono-icon.js",
+        "evaluate": true
       }
     ]
   }

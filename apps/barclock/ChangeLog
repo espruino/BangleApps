@@ -1,0 +1,4 @@
+0.01: Created Bar Clock
+0.02: Apply locale, 12-hour setting
+0.03: Fix dates drawing over each other at midnight
+0.04: Small bugfix

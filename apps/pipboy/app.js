@@ -29,17 +29,23 @@ function topLine() {
 
 function bottomLine() {
 
-  g.setColor(darkGreen);
-  g.fillRect(5, 175, 60, 185);
-  g.fillRect(67, 175, 140, 185);
+  //first line
+  g.setColor(darkerGreen);
+  g.fillRect(5, 175, 100, 185); //DATE
+  g.fillRect(105, 175, 160, 185);//STIM
+  g.fillRect(166, 175, 239, 185); // RADAWAY
 
+  g.setColor(green);
+  g.setFont("6x8", tinyFont);
+  g.drawString("DATE", 20, 177);
+  g.drawString("STIM (3)", 135, 177);
+  g.drawString("RADAWAY (8)", 205, 177);
+
+  //second line
   g.setColor(darkerGreen);
   g.fillRect(5, 190, 70, 200);
   g.fillRect(75, 190, 239, 200);
 
-  g.setFont("6x8", tinyFont);
-  g.drawString("STIM (0)", 32, 177);
-  g.drawString("RADAWAY (0)", 105, 177);
   g.setColor(green);
   g.drawString("HP 115/115", 38, 192);
   g.drawString("LEVEL 6", 100, 192);
@@ -55,7 +61,15 @@ function drawClock() {
     var t = new Date();
     var h = t.getHours();
     var m = t.getMinutes();
+    var dd = t.getDate();
+    var mm = t.getMonth()+1; //month is zero-based
+    var yy = t.getFullYear();
     var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
+  
+    //create date string
+    if (dd.toString().length < 2) dd = '0' + dd;
+    if (mm.toString().length < 2) mm = '0' + mm;
+    var date = dd + "." + mm + "." + yy;
 
     g.setFont("6x8",bigFont);
     g.setColor(green);
@@ -63,6 +77,10 @@ function drawClock() {
 
     g.clearRect(0, 110, 150, 140);
     g.drawString(time, 70, 110);
+
+    //draw date
+    g.setFont("6x8", tinyFont);
+    g.drawString(date, 67, 177);
 }
 
 function drawAll() {
@@ -83,4 +101,3 @@ setInterval(drawClock, 1E4);
 drawAll();
 
 setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-
