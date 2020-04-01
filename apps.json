@@ -841,7 +841,7 @@
     "name": "Magic Eightball",
     "icon": "eightball.png",
     "version": "0.01",
-    "description": "A detailed description of my great app",
+    "description": "Magic eightball simulation using accelerometer data",
     "tags": "",
     "allo2_emulator":true,
     "storage": [
