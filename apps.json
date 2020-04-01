@@ -12,6 +12,31 @@
     ],
     "sortorder" : -10
   },
+  { "id": "moonphase",
+    "name": "Moonphase",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Shows current moon phase. Currently only with fixed coordinates (northern hemisphere).",
+    "tags": "",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "daysl",
+    "name": "Days left",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
+    "tags": "",
+    "allow_emulator":false,
+    "storage": [
+        {"name":"daysl.app.js","url":"app.js"},
+        {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+        {"name":"daysl.wid.js","url":"widget.js"}
+    ]
+  },
   { "id": "launch",
     "name": "Default Launcher",
     "shortName":"Launcher",
