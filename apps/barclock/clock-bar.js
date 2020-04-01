@@ -103,7 +103,10 @@
   const drawBar = function (date) {
     const b = settings.bar
     const seconds = date.getSeconds()
-    if (seconds === 0) return // zero-size rect stills draws one line of pixels
+    if (seconds === 0) {
+      // zero-size rect stills draws one line of pixels, we don't want that
+      return
+    }
     const fraction = seconds / SECONDS_PER_MINUTE,
       width = fraction * screen.width
     g.setColor(b.color)
