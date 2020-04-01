@@ -943,13 +943,13 @@
   { "id": "timer",
     "name": "Timer",
     "shortName":"Timer",
-    "icon": "app.png",
+    "icon": "timer.png",
     "version":"0.01",
     "description": "BTN1 => +5min, BTN2 => +30sec, BTN3  => +5sec, TOUCH => pause,play, BTN1(double click) => reset",
     "tags": "Tools",
     "storage": [
-      {"name":"timer.app.js","url":"app.js"},
-      {"name":"timer.img","url":"app-icon.js","evaluate":true}
+      {"name":"timer.app.js","url":"timer.js"},
+      {"name":"timer.img","url":"timer-icon.js","evaluate":true}
     ]
   }
 ]
