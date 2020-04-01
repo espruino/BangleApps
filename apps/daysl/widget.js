@@ -22,9 +22,16 @@ function updateSettings() {
       yy = settings.year;
 
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  const targetDate = new Date(yy, mm, dd, 23, 59, 59);
+  const targetDate = new Date(yy, mm, dd);
   const today = new Date();
-  const diffDays = Math.round(Math.abs((targetDate - today) / oneDay));
+
+  //create date object with today, but 00:00:00
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  const currentDay = today.getDate();
+  const todayMorning = new Date (currentYear, currentMonth, currentDay, 0, 0, 0);
+
+  const diffDays = (targetDate - todayMorning) / oneDay;
 
 WIDGETS["daysl"]={area:"tl",width:40,draw:function(){
   g.setFont("6x8", 1);
