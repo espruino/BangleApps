@@ -945,7 +945,7 @@
     "shortName":"Timer",
     "icon": "timer.png",
     "version":"0.01",
-    "description": "BTN1 => +5min, BTN2 => +30sec, BTN3  => +5sec, TOUCH => pause,play, BTN1(double click) => reset",
+    "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
     "tags": "Tools",
     "storage": [
       {"name":"timer.app.js","url":"timer.js"},
