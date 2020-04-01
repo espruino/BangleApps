@@ -24,6 +24,15 @@ function draw() {
   g.fillRect(x+s-3,y+10,x+s,y+14);
   g.setColor(c).fillRect(x+4,y+6,x+4+l*(s-12)/100,y+17);
   g.setColor(-1);
+  g.setFontAlign(-1,-1);
+  if (l >= 100) {
+    g.setFont('4x6', 2);
+    g.drawString(l, x + 6, y + 7);
+  } else {
+    if (l < 10) x+=6;
+    g.setFont('6x8', 2);
+    g.drawString(l, x + 6, y + 4);
+  }
 }
 Bangle.on('charging',function(charging) {
   if(charging) Bangle.buzz();

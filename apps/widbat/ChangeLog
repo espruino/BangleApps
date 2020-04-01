@@ -2,3 +2,4 @@
 0.03: Tweaks for variable size widget system
 0.04: Ensure redrawing works with variable size widget system
 0.05: Change color depending on battery level
+0.06: Show battery percentage as text
