@@ -12,7 +12,11 @@ if (!settings.welcomed && require("Storage").read("welcome.js")!==undefined) {
       clockApp = require("Storage").read(clockApps[0].src);
     delete clockApps;
   }
-  if (!clockApp) clockApp='E.showMessage("No Clock Found")';
+  if (!clockApp) clockApp=`E.showMessage("No Clock Found");
+  setWatch(() => {
+    Bangle.showLauncher();
+  }, BTN2, {repeat:false,edge:"falling"});)
+  `;
   delete settings;
   // check to see if our clock is wrong - if it is use GPS time
   if ((new Date()).getFullYear()==1970) {

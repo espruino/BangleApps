@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.11",
+    "version":"0.13",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -11,6 +11,31 @@
       {"name":".bootcde","url":"bootloader.js"}
     ],
     "sortorder" : -10
+  },
+  { "id": "moonphase",
+    "name": "Moonphase",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Shows current moon phase. Currently only with fixed coordinates (northern hemisphere).",
+    "tags": "",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "daysl",
+    "name": "Days left",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
+    "tags": "",
+    "allow_emulator":false,
+    "storage": [
+        {"name":"daysl.app.js","url":"app.js"},
+        {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+        {"name":"daysl.wid.js","url":"widget.js"}
+    ]
   },
   { "id": "launch",
     "name": "Default Launcher",
@@ -106,11 +131,12 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
+      {"name":"alarm.boot.js","url":"boot.js"},
       {"name":"alarm.js","url":"alarm.js"},
       {"name":"alarm.json","content":"[]"},
       {"name":"alarm.img","url":"app-icon.js","evaluate":true},
@@ -133,7 +159,7 @@
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version":"0.02",
+    "version":"0.10",
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -355,8 +381,8 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.01",
-    "description": "Simple stopwatch with Lap Time recording",
+    "version":"0.03",
+    "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator":true,
     "storage": [
@@ -506,6 +532,19 @@
     "storage": [
       {"name":"sclock.app.js","url":"clock-simple.js"},
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "dclock",
+    "name": "Dev Clock",
+    "icon": "clock-dev.png",
+    "version":"0.09",
+    "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"dclock.app.js","url":"clock-dev.js"},
+      {"name":"dclock.img","url":"clock-dev-icon.js","evaluate":true}
     ]
   },
   { "id": "gesture",
@@ -790,7 +829,7 @@
     "id": "pipboy",
     "name": "Pipboy",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Pipboy themed clock",
     "tags": "clock",
     "type":"clock",
@@ -824,10 +863,25 @@
       {"name":"widid.wid.js","url":"widget.js"}
     ]
   },
+  {
+    "id": "grocery",
+    "name": "Grocery",
+    "icon": "grocery.png",
+    "version":"0.01",
+    "description": "Simple grocery list - Display a list of product and track if you already put them in your cart.",
+    "tags": "tool,outdoors",
+    "type": "app",
+    "custom":"grocery.html",
+    "storage": [
+      {"name":"grocery"},
+      {"name":"grocery.app.js"},
+      {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
+    ]
+  },
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.01",
+    "version":"0.03",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -838,17 +892,41 @@
     ]
   },
   { "id": "cliock",
-  "name": "Commandline-Clock",
-  "shortName":"CLI-Clock",
-  "icon": "app.png",
-  "version":"0.07",
-  "description": "Simple CLI-Styled Clock",
-  "tags": "clock,cli,command,bash,shell",
-  "type":"clock",
-  "allow_emulator":true,
-  "storage": [
-    {"name":"cliock.app.js","url":"app.js"},
-    {"name":"cliock.img","url":"app-icon.js","evaluate":true}
-  ]
-}
+    "name": "Commandline-Clock",
+    "shortName":"CLI-Clock",
+    "icon": "app.png",
+    "version":"0.07",
+    "description": "Simple CLI-Styled Clock",
+    "tags": "clock,cli,command,bash,shell",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"cliock.app.js","url":"app.js"},
+      {"name":"cliock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widver",
+    "name": "Firmware Version Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display the version of the installed firmware in the top widget section.",
+    "tags": "widget,tool,system",
+    "type":"widget",
+    "storage": [
+      {"name":"widver.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "barclock",
+    "name": "Bar Clock",
+    "icon": "clock-bar.png",
+    "version":"0.02",
+    "description": "A simple digital clock showing seconds as a bar",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"barclock.app.js","url":"clock-bar.js"},
+      {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
+    ]
+  }
 ]

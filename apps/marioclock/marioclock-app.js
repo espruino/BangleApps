@@ -6,6 +6,9 @@
 **********************************/
 
 var locale = require("locale");
+const storage = require('Storage');
+const settings = (storage.readJSON('setting.json',1)||{});
+const timeout = settings.timeout||10;
 
 // Screen dimensions
 let W, H;
@@ -280,14 +283,10 @@ function drawTime() {
 }
 
 function drawDate() {
-  const date = new Date();
-  const day = locale.dow(date).substr(0, 3);
-  const dayNum = ("0" + date.getDate()).substr(-2);
-  const month = locale.month(date).substr(0, 3);
-
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  g.drawString(`${day} ${dayNum} ${month}`, 10, 0, true);
+  const dateStr = locale.date(new Date(), true);
+  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 0, true);
 }
 
 function redraw() {
@@ -322,7 +321,7 @@ function resetDisplayTimeout() {
   displayTimeoutRef = setInterval(() => {
     if (Bangle.isLCDOn()) Bangle.setLCDPower(false);
     clearTimers();
-  }, ONE_SECOND * 10);
+  }, ONE_SECOND * timeout);
 }
 
 function startTimers(){

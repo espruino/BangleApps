@@ -4,6 +4,7 @@ var started = false;
 var timeY = 60;
 var hsXPos = 0;
 var lapTimes = [];
+var saveTimes = [];
 var displayInterval;
 
 function timeToText(t) {
@@ -17,12 +18,15 @@ function updateLabels() {
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
   g.drawString(started?"STOP":"GO",230,120);
-  if (!started) g.drawString("RESET",230,50);
-  g.drawString("LAP",230,190);
+  if (!started) g.drawString("RESET",230,190);
+  g.drawString(started?"LAP":"SAVE",230,50);
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
-    g.drawString(i+": "+timeToText(lapTimes[i]),10,timeY + 30 + i*8);
+    if (i<18)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 30 + i*8);}
+    else 
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-18)*8);}
   }
   drawsecs();
 }
@@ -47,6 +51,11 @@ function drawms() {
   g.clearRect(hsXPos,timeY,220,timeY+20);
   g.drawString("."+("0"+hs).substr(-2),hsXPos,timeY+10);
 }
+function saveconvert() {
+  for (var v in lapTimes){
+   saveTimes[v]=v+1+"-"+timeToText(lapTimes[(lapTimes.length-1)-v]); 
+  }
+}
 
 setWatch(function() { // Start/stop
   started = !started;
@@ -69,19 +78,25 @@ setWatch(function() { // Start/stop
         drawms();
     }, 20);
 }, BTN2, {repeat:true});
-setWatch(function() { // Reset
-  Bangle.beep();
-  if (!started) {
-    tStart = tCurrent = Date.now();
-  }
-  lapTimes = [];
-  updateLabels();
-}, BTN1, {repeat:true});
 setWatch(function() { // Lap
   Bangle.beep();
   if (started) tCurrent = Date.now();
   lapTimes.unshift(tCurrent-tStart);
   tStart = tCurrent;
+  if (!started)
+  {
+    var timenow= Date();
+    saveconvert();
+    require("Storage").writeJSON("StpWch-"+timenow.toString(), saveTimes);
+  }
+  updateLabels();
+}, BTN1, {repeat:true});
+setWatch(function() { // Reset
+  if (!started) {
+  Bangle.beep();
+  tStart = tCurrent = Date.now();
+  lapTimes = [];
+  }
   updateLabels();
 }, BTN3, {repeat:true});
 
