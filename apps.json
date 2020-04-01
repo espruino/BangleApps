@@ -928,5 +928,16 @@
       {"name":"barclock.app.js","url":"clock-bar.js"},
       {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
     ]
+  },
+  { "id": "widtbat",
+    "name": "Tiny Battery Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Tiny blueish battery widget, vibs and changes level color when charging",
+    "tags": "widget,tool,system",
+    "type":"widget",
+    "storage": [
+      {"name":"widtbat.wid.js","url":"widget.js"}
+    ]
   }
 ]
