@@ -5,7 +5,7 @@ let Bangle;
 const locale = require('locale');
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 100; // watch face radius
+const faceWidth = 95; // watch face radius (240/2 - 24px for widget area)
 let timer = null;
 let currentDate = new Date();
 const centerPx = g.getWidth() / 2;
@@ -83,13 +83,13 @@ const drawDate = () => {
 
   const dayString = locale.dow(currentDate, true);
   // pad left date
-  const dateString = (currentDate.getDate() < 10) ? '0' : '' + currentDate.getDate().toString();
+  const dateString = ((currentDate.getDate() < 10) ? '0' : '') + currentDate.getDate().toString();
   const dateDisplay = `${dayString}-${dateString}`;
   // console.log(`${dayString}|${dateString}`);
   // center date
   const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
   const t = centerPx + 37;
-  g.drawString(dateDisplay, l, t);
+  g.drawString(dateDisplay, l, t, true);
   // console.log(l, t);
 };
 const onMinute = () => {
