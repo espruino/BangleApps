@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p><button id="fetch" class="btn btn-primary">Fetch Language from Bangle.js</button></p>
+    <div id="formGroup" class="form-group" style="visibility: hidden;">
+    <p>Then please choose a language from the following list:</p>
+    <select id="languages" class="form-select">
+    </select>
+    </div>
+    <p><button id="upload" class="btn btn-primary" style="visibility: hidden;">Then Upload</button></p>
+
+    <script src="../../lib/customize.js"></script>
+    <script src="https://www.puck-js.com/puck.js"></script>
+
+    <script>
+      let request = url => new Promise( (resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.open("GET", url);
+          xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                  resolve(xhr.response);
+              } else {
+                  reject(xhr.statusText);
+              }
+          };
+          xhr.onerror = () => reject(xhr.statusText);
+          xhr.onabort = () => reject(xhr.statusText);
+          xhr.send();
+      });
+
+      let appjsTranslated;
+      let translate = () => {
+        var languageSelector = document.getElementById("languages");
+        var lang = languageSelector.options[languageSelector.selectedIndex].value;
+        console.log(lang);      
+        request("app.js").then( appjs => 
+          request("app_" + lang + ".json")
+          .catch( () => request("app_" + lang.substring(0,2) + ".json"))
+          .catch( () => request("app.json"))
+          .then( langjson => {
+            var trans = JSON.parse(langjson);
+            appjs = appjs.replace(/"([^"]*?)"\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"' + (trans[p1]?'':'/*LANG*/'); });
+            appjs = appjs.replace(/'([^']*?)'\/\*LANG\*\//g, function(m, p1) { return "'" + (trans[p1]||p1) + "'" + (trans[p1]?'':'/*LANG*/'); });
+            return appjs;
+          }).catch( error => {
+            console.log(error);
+            return appjs; // unmodified
+          })
+        ).then( appjs => {
+          appjsTranslated = appjs;
+          document.getElementById("upload").style.visibility = 'visible';
+        }).catch( error => {
+          console.log(error);
+          document.getElementById("upload").style.visibility = 'hidden';
+        });
+      };            
+      
+      document.getElementById("fetch").addEventListener("click", () => {
+        new Promise((resolve,reject) => {
+          Puck.write("\x03",(result) => {
+            if (result===null) return reject("");
+            Puck.eval(`require("locale").lang`, (content,err) => {
+              if (content===null) return reject(err || "");
+              resolve(content);
+            });
+          });
+        }).catch( error => {
+          console.log("Error getting langFromDevice, using fallback en_GB, error was: " + error);
+          return "en_GB";
+        }).then( lang => {
+          document.getElementById("languages").innerHTML = ["en_GB","de_DE","fr_FR","en_US","en_JP","nl_NL","en_CA","sv_SE","en_AU","de_AT","en_IL","es_ES","fr_BE","fi_FI","de_CH","fr_CH","it_CH","tr_TR","hu_HU"].map(l=>`<option value="${l}"${(l===lang)?" selected":""}>${l}</option>`).join("\n");
+          document.getElementById("formGroup").style.visibility = 'visible';
+          translate();
+        });
+      });
+      
+      document.getElementById("languages").addEventListener("onchange", () => {
+        translate();
+      });
+
+      document.getElementById("upload").addEventListener("click", function() {
+        console.log("app.js is:", appjsTranslated);
+        sendCustomizedApp({
+          storage:[
+            {"name":"alarm.app.js",content: appjsTranslated},
+            {"name":"alarm.boot.js","url":"boot.js"},
+            {"name": "alarm.js", "url":"alarm.js"},
+            //{"name":"alarm.json","content":"[]"},
+            {"name":"alarm.img","url":"app-icon.js","evaluate":true},
+            {"name":"alarm.wid.js","url":"widget.js"}                
+          ]
+        });          
+      });
+    </script>
+  </body>
+</html>        

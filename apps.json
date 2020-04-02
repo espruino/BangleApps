@@ -139,6 +139,7 @@
     "version":"0.07",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
+    "custom": "alarm.html",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
       {"name":"alarm.boot.js","url":"boot.js"},
