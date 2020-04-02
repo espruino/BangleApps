@@ -310,7 +310,7 @@ function drawGPSWaitPage() {
     g.drawString("Please wait...", 80, 155);
     g.flip();
 
-    const DEBUG = false;
+    const DEBUG = true;
     if (DEBUG) {
       const gps = {
         "lat": 56.45783133333,
