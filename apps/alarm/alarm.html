@@ -40,7 +40,7 @@
           });
         });
       }).catch( error => {
-        console.log("Error getting langFromDevice, using fallback, error was: " + error);
+        console.log("Error getting langFromDevice, using fallback en_gb, error was: " + error);
         return "en_gb";
       }).then( lang => {
         var languageSelector = document.getElementById("languages");
@@ -54,7 +54,7 @@
         request("app.js").then( appjs => { 
           request("app_" + lang + ".json").catch( () => request("app_" + lang.subsring(0,2) + ".json")).then( langjson => {
             var trans = JSON.parse(langjson);
-            // TODO Translate
+            appjs = appjs.replace(/"(.*?)"\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"'; });
             return appjs;
           }).catch( error => {
             console.log(error) );
