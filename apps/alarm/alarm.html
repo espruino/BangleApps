@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p>Please choose a language from the following list:</p>
+    <div class="form-group">
+    <select id="languages" class="form-select">
+    </select>
+    </div>
+    <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../lib/customize.js"></script>
+    <script src="locales.js"></script>
+
+    <script>
+      let request = url => {
+          return new Promise((resolve, reject) => {
+              let xhr = new XMLHttpRequest();
+              xhr.open("GET", url);
+              xhr.onload = () => {
+                  if (xhr.status >= 200 && xhr.status < 300) {
+                      resolve(xhr.response);
+                  } else {
+                      reject(xhr.statusText);
+                  }
+              };
+              xhr.onerror = () => reject(xhr.statusText);
+              xhr.send(obj.body);
+          });
+      };    
+      
+      (new Promise((resolve,reject) => {
+        Puck.write("\x03",(result) => {
+          if (result===null) return reject("");
+          Puck.eval(`require("locale").lang`, (content,err) => {
+            if (content===null) return reject(err || "");
+            resolve(content);
+          });
+        });
+      }).catch( error => {
+        console.log("Error getting langFromDevice, using fallback, error was: " + error);
+        return "en_gb";
+      }).then( lang => {
+        var languageSelector = document.getElementById("languages");
+        languageSelector.innerHTML = ["en_gb","de_de"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
+      });
+      
+
+      document.getElementById("upload").addEventListener("click", function() {
+        var lang = languageSelector.options[languageSelector.selectedIndex].value;
+        console.log(lang);      
+        request("app.js").then( appjs => { 
+          request("app_" + lang + ".json").catch( () => request("app_" + lang.subsring(0,2) + ".json")).then( langjson => {
+            var trans = JSON.parse(langjson);
+            // TODO Translate
+            return appjs;
+          }).catch( error => {
+            console.log(error) );
+            return appjs; // unmodified app.ja
+          }).then( appjs => {
+            console.log("app.js is:", appjs);
+            sendCustomizedApp({
+              storage:[
+                {name: "app.js", content: appjs}
+              ]
+            });          
+          });
+        }).catch( error => {
+          console.log(error) );        
+      });
+    </script>
+  </body>
+</html>        
