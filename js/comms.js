@@ -73,13 +73,13 @@ removeApp : app => { // expects an app structure
   }));
 },
 removeAllApps : () => {
-  return Comms.reset("wipe").then(() => new Promise((resolve,reject) => {
+  return new Promise((resolve,reject) => {
     // Use write with newline here so we wait for it to finish
-    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK")\n', (result,err) => {
+    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n', (result,err) => {
       if (!result || result.trim()!="OK") return reject(err || "");
       resolve();
     }, true /* wait for newline */);
-  }));
+  });
 },
 setTime : () => {
   return new Promise((resolve,reject) => {
