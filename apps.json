@@ -963,14 +963,14 @@
       {"name":"astrocalc.app.js","url":"astrocalc-app.js"},
       {"name":"suncalc.js","url":"suncalc.js"},
       {"name":"astrocalc.img","url":"astrocalc-icon.js","evaluate":true},
-      {"name":"first-quarter-icon.json","url":"first-quarter-icon.json"},
-      {"name":"last-quarter-icon.json","url":"last-quarter-icon.json"},
-      {"name":"waning-crescent-icon.json","url":"waning-crescent-icon.json"},
-      {"name":"waning-gibbous-icon.json","url":"waning-gibbous-icon.json"},
-      {"name":"full-icon.json","url":"full-icon.json"},
-      {"name":"new-icon.json","url":"new-icon.json"},
-      {"name":"waxing-gibbous-icon.json","url":"waxing-gibbous-icon.json"},
-      {"name":"waxing-crescent-icon.json","url":"waxing-crescent-icon.json"}
+      {"name":"first-quarter.img","url":"first-quarter-icon.js","evaluate":true},
+      {"name":"last-quarter.img","url":"last-quarter-icon.js","evaluate":true},
+      {"name":"waning-crescent.img","url":"waning-crescent-icon.js","evaluate":true},
+      {"name":"waning-gibbous.img","url":"waning-gibbous-icon.js","evaluate":true},
+      {"name":"full.img","url":"full-icon.js","evaluate":true},
+      {"name":"new.img","url":"new-icon.js","evaluate":true},
+      {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
+      {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
     ]
   }
 ]

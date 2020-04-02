@@ -6,19 +6,19 @@ const SunCalc = require("suncalc.js");
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
-    "new-icon.json",
-    "waxing-crescent-icon.json",
-    "first-quarter-icon.json",
-    "waxing-gibbous-icon.json",
-    "full-icon.json",
-    "waning-gibbous-icon.json",
-    "last-quarter-icon.json",
-    "waning-crescent-icon.json"
+    "new",
+    "waxing-crescent",
+    "first-quarter",
+    "waxing-gibbous",
+    "full",
+    "waning-gibbous",
+    "last-quarter",
+    "waning-crescent",
   ];
 
-  imgObj = require("Storage").readJSON(moonImgFiles[phase]);
-  imgObj.buffer = require("heatshrink").decompress(atob(imgObj.image));
-  g.drawImage(imgObj, x - (imgObj.width / 2), y);
+  img = require("Storage").read(`${moonImgFiles[phase]}.img`);
+  // image width & height = 92px
+  g.drawImage(img, x - parseInt(92 / 2), y);
 }
 
 // linear interpolation between two values a and b
