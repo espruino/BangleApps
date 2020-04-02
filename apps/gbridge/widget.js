@@ -139,7 +139,6 @@
       });
 
       Bangle.buzz();
-      break;
     }
   }
 
