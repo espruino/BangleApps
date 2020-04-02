@@ -22,7 +22,7 @@
       scrollPos-=2;
       if (scrollPos<-size) scrollPos=-size;
       Bangle.setLCDOffset(scrollPos);
-      if (scrollPos>-size) setTimeout(anim,10);
+      if (scrollPos>-size) setTimeout(anim,15);
     }
     anim();
   }
