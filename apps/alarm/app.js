@@ -24,8 +24,8 @@ function getCurrentHr() {
 
 function showMainMenu() {
   const menu = {
-    '': { 'title': 'Alarms' },
-    'New Alarm': ()=>editAlarm(-1)
+    '': { 'title': 'Alarms'/*LANG*/ },
+    'New Alarm'/*LANG*/: ()=>editAlarm(-1)
   };
   alarms.forEach((alarm,idx)=>{
     txt = (alarm.on?"on  ":"off ")+formatTime(alarm.hr);
@@ -34,7 +34,7 @@ function showMainMenu() {
       editAlarm(idx);
     };
   });
-  menu['< Back'] =  ()=>{load();};
+  menu['< Back'/*LANG*/] =  ()=>{load();};
   return E.showMenu(menu);
 }
 
@@ -52,21 +52,21 @@ function editAlarm(alarmIndex) {
     repeat = a.rp;
   }
   const menu = {
-    '': { 'title': 'Alarms' },
-    'Hours': {
+    '': { 'title': 'Alarms'/*LANG*/ },
+    'Hours'/*LANG*/: {
       value: hrs,
       onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
     },
-    'Minutes': {
+    'Minutes'/*LANG*/: {
       value: mins,
       onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
     },
-    'Enabled': {
+    'Enabled'/*LANG*/: {
       value: en,
       format: v=>v?"On":"Off",
       onchange: v=>en=v
     },
-    'Repeat': {
+    'Repeat'/*LANG*/: {
       value: en,
       format: v=>v?"Yes":"No",
       onchange: v=>repeat=v
@@ -85,19 +85,19 @@ function editAlarm(alarmIndex) {
     };
   }
   if (newAlarm) {
-    menu["> New Alarm"] = function() {
+    menu["> New Alarm"/*LANG*/] = function() {
       alarms.push(getAlarm());
       require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   } else {
-    menu["> Save"] = function() {
+    menu["> Save"/*LANG*/] = function() {
       alarms[alarmIndex] = getAlarm();
       require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   }
-  menu['< Back'] = showMainMenu;
+  menu['< Back'/*LANG*/] = showMainMenu;
   return E.showMenu(menu);
 }
 
