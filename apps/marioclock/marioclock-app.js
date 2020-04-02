@@ -285,7 +285,10 @@ function drawTime() {
 function drawDate() {
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  const dateStr = locale.date(new Date(), true);
+  let d = new Date(); 
+  let dateStr = locale.date(d, true);
+  dateStr = dateStr.replace(d.getFullYear(), "").trim().replace(/\/$/i,"");
+  dateStr = locale.dow(d, true) + " " + dateStr;
   g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 0, true);
 }
 

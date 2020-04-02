@@ -892,7 +892,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -961,6 +961,17 @@
     "storage": [
       {"name":"chrono.app.js","url":"chrono.js"},
       {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
+    ]
+  },
+    { "id": "widhwt",
+    "name": "Hand Wash Timer",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
+    "tags": "widget,tool",
+    "type":"widget",
+    "storage": [
+      {"name":"widhwt.wid.js","url":"widget.js"}
     ]
   }
 ]
