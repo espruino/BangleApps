@@ -1,130 +1,64 @@
 (() => {
 
-  const gb = {
-    musicState: {
-      STOP: "stop",
-      PLAY: "play",
-      PAUSE: "pause"
-    },
-
-    muiscControl: {
-      NEXT: "next",
-      PREV: "previous"
-    },
-
-    callCommands: {
-      UNDEFINED: "undefined",
-      ACCEPT: "accept",
-      INCOMING: "incoming",
-      OUTGOING: "outgoing",
-      REJECT: "reject",
-      START: "start",
-      END: "end"
-    },
-
-    send: (message) => {
-      Bluetooth.println(JSON.stringify(message));
-    },
-
-    controlMusic: (operation) => {
-      gb.send({ t: "music", n: operation });
-    },
-
-    reportBatteryLevel: () => {
-      gb.send({ t: "status", bat: E.getBattery() });
-    },
-  };
-
   const state = {
-    music: gb.musicState.STOP,
+    music: "stop",
 
     musicInfo: {
       artist: "",
       album: "",
       track: ""
     },
-    debug: false,
+
+    scrollPos: 0
   };
 
-  const notification = {
+  function gbSend(message) {
+    Bluetooth.println(JSON.stringify(message));
+  }
 
-    backgroundColor: "#222222",
-    frameColor: "#ffffff",
-    titleColor: "#40d040",
-    contentColor: "#ffffff",
-    scrollPos: 0,
+  function showNotification(size, render) {
+    var oldMode = Bangle.getLCDMode();
 
-    show: (size, content) => {
-      var oldMode = Bangle.getLCDMode();
-      Bangle.setLCDMode("direct");
+    Bangle.setLCDMode("direct");
+    g.setClipRect(0, 240, 239, 319);
+    g.setColor("#222222");
+    g.fillRect(1, 241, 238, 318);
 
-      g.setClipRect(0, 240, 239, 319);
-      g.setColor(notification.backgroundColor);
-      g.fillRect(1, 241, 238, 318);
+    render(320 - size);
 
-      notification.drawContent(320 - size, content);
+    g.setColor("#ffffff");
+    g.fillRect(0, 240, 1, 319);
+    g.fillRect(238, 240, 239, 319);
+    g.fillRect(2, 318, 238, 319);
 
-      g.setColor(notification.frameColor);
-      g.fillRect(0, 240, 1, 319);
-      g.fillRect(238, 240, 239, 319);
-      g.fillRect(2, 318, 238, 319);
+    Bangle.setLCDPower(1); // light up
+    Bangle.setLCDMode(oldMode); // clears cliprect
 
-      Bangle.setLCDPower(1); // light up
-      Bangle.setLCDMode(oldMode); // clears cliprect
-
-      function anim() {
-        notification.scrollPos -= 2;
-        if (notification.scrollPos < -size) notification.scrollPos = -size;
-        Bangle.setLCDOffset(notification.scrollPos);
-        if (notification.scrollPos > -size) setTimeout(anim, 10);
+    function anim() {
+      state.scrollPos -= 2;
+      if (state.scrollPos < -size) {
+        state.scrollPos = -size;
       }
-      anim();
-    },
-
-    drawContent: (y, content) => {
-
-      if (content.icon !== undefined) {
-        g.setColor(notification.contentColor);
-        const icon = require("Storage").read(content.icon);
-        g.drawImage(icon, 8, y + 8);
-      }
-
-      var x = 120;
-      g.setFontAlign(0, 0);
-
-      g.setFont("6x8", 1);
-      g.setColor(notification.titleColor);
-      g.drawString(content.title, x, y + 7);
-
-      g.setColor(notification.contentColor);
-      g.setFont("6x8", 2);
-      g.drawString(content.header, x, y + 25);
-
-      g.setFont("6x8", 1);
-      g.setColor(notification.contentColor);
-      g.setFontAlign(-1, -1);
-      g.drawString(content.body, 10, y + 40);
-    },
-
-    hide: () => {
-      function anim() {
-        notification.scrollPos += 4;
-        if (notification.scrollPos > 0) notification.scrollPos = 0;
-        Bangle.setLCDOffset(notification.scrollPos);
-        if (notification.scrollPos < 0) setTimeout(anim, 10);
-      }
-      anim();
-    },
-
-    isVisible: () => {
-      return notification.scrollPos != 0;
+      Bangle.setLCDOffset(state.scrollPos);
+      if (state.scrollPos > -size) setTimeout(anim, 10);
     }
-  };
+    anim();
+  }
 
-  function showNotification(src, title, body) {
+  function hideNotification() {
+    function anim() {
+      state.scrollPos += 4;
+      if (state.scrollPos > 0) state.scrollPos = 0;
+      Bangle.setLCDOffset(state.scrollPos);
+      if (state.scrollPos < 0) setTimeout(anim, 10);
+    }
+    anim();
+  }
+
+  function handleNotificationEvent(event) {
 
     // split text up at word boundaries
-    var txt = body.split("\n");
+    var txt = event.body.split("\n");
     var MAXCHARS = 38;
     for (var i = 0; i < txt.length; i++) {
       txt[i] = txt[i].trim();
@@ -139,98 +73,113 @@
       }
     }
 
-    var content = {
-      title: src,
-      header: title,
-      body: txt.join("\n")
-    };
+    showNotification(80, (y) => {
 
-    notification.show(80, content);
+      // TODO: icon based on src?
+      var x = 120;
+      g.setFontAlign(0, 0);
+      g.setFont("6x8", 1);
+      g.setColor("#40d040");
+      g.drawString(event.src, x, y + 7);
+
+      g.setColor("#ffffff");
+      g.setFont("6x8", 2);
+      g.drawString(event.title, x, y + 25);
+
+      g.setFont("6x8", 1);
+      g.setColor("#ffffff");
+      g.setFontAlign(-1, -1);
+      g.drawString(txt.join("\n"), 10, y + 40);
+    });
+
     Bangle.buzz();
   }
 
-  function updateMusicInfo() {
-    if (state.music == gb.musicState.PLAY) {
+  function handleMusicStateUpdate(event) {
+    state.music = event.state
 
-      var content = {
-        title: state.musicInfo.artist,
-        icon: "gbridge-music-ico.img",
-        header: state.musicInfo.track,
-        body:""
-      };
+    if (state.music == "play") {
+      showNotification(40, (y) => {
+        g.setColor("#ffffff");
+        g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")), 8, y + 8);
 
-      notification.show(40, content);
-    } else {
-      notification.hide();
+        g.setFontAlign(-1, -1);
+        var x = 40;
+        g.setFont("4x6", 2);
+        g.setColor("#ffffff");
+        g.drawString(state.musicInfo.artist, x, y + 8);
+
+        g.setFont("6x8", 1);
+        g.setColor("#ffffff");
+        g.drawString(state.musicInfo.track, x, y + 22);
+      });
+    }
+
+    if (state.music == "pause") {
+      hideNotification();
     }
   }
 
-  function handleCall(cmd, name, number) {
-    switch(cmd) {
+  function handleCallEvent(event) {
 
-      case gb.callCommands.ACCEPT:
-        notification.show(80, {
-          title: "Call incoming",
-          icon: "gbridge-call-ico.img",
-          header: name,
-          body: number
-        });
-        Bangle.buzz();
+    if (event.cmd == "accept") {
+      showNotification(40, (y) => {
+        g.setColor("#ffffff");
+        g.drawImage(require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw=")), 8, y + 8);
+
+        g.setFontAlign(-1, -1);
+        var x = 40;
+        g.setFont("4x6", 2);
+        g.setColor("#ffffff");
+        g.drawString(event.name, x, y + 8);
+
+        g.setFont("6x8", 1);
+        g.setColor("#ffffff");
+        g.drawString(event.number, x, y + 22);
+      });
+
+      Bangle.buzz();
       break;
-
-      default:
-        if (state.debug) {
-          showNotification(cmd, name, number);
-        }
     }
   }
 
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
-        showNotification(event.src, event.title, event.body);
+        handleNotificationEvent(event);
         break;
       case "musicinfo":
         state.musicInfo = event;
         break;
       case "musicstate":
-        state.music = event.state;
-        updateMusicInfo();
+        handleMusicStateUpdate(event);
         break;
       case "call":
-        handleCall(event.cmd, event.name, event.number);
+        handleCallEvent(event);
         break;
-      default:
-        if (state.debug) {
-          showNotification("Gadgetbridge", event.t, JSON.stringify(event));
-        }
     }
   };
 
   // Touch control
   Bangle.on("touch", () => {
-    if (notification.isVisible()) {
-      notification.hide();
+    if (state.scrollPos) {
+      hideNotification();
     }
   });
 
   Bangle.on("swipe", (dir) => {
-    if (state.music == gb.musicState.PLAY) {
-      gb.controlMusic(dir > 0 ? gb.muiscControl.NEXT : gb.muiscControl.PREV);
+    if (state.music == "play") {
+      const command = dir > 0 ? "next" : "previous"
+      gbSend({ t: "music", n: command });
     }
   });
 
-  function drawIcon() {
+  function draw() {
     g.setColor(-1);
-
-    let icon;
-    if (NRF.getSecurityStatus().connected) {
-      icon = require("Storage").read("gbridge-on-ico.img");
-    } else {
-      icon = require("Storage").read("gbridge-off-ico.img");
-    }
-
-    g.drawImage(icon, this.x + 1, this.y + 1);
+    if (NRF.getSecurityStatus().connected)
+      g.drawImage(require("heatshrink").decompress(atob("i0WwgHExAABCIwJCBYwJEBYkIBQ2ACgvzCwoECx/z/AKDD4WD+YLBEIYKCx//+cvnAKCBwU/mc4/8/HYv//Ev+Y4EEAePn43DBQkzn4rCEIoABBIwKHO4cjmczK42I6mqlqEEBQeIBQaDED4IgDUhi6KaBbmIA==")), this.x + 1, this.y + 1);
+    else
+      g.drawImage(require("heatshrink").decompress(atob("i0WwQFC1WgAgYFDAgIFClQFCwEK1W/AoIPB1f+CAMq1f7/WqwQPB/fq1Gq1/+/4dC/2/CAIaB/YbBAAO///qAoX/B4QbBDQQ7BDQQrBAAWoIIIACIIIVC0ECB4cACAZiBAoRtCAoIDBA")), this.x + 1, this.y + 1);
   }
 
   function changedConnectionState() {
@@ -241,7 +190,7 @@
   NRF.on("connected", changedConnectionState);
   NRF.on("disconnected", changedConnectionState);
 
-  WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: drawIcon };
+  WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
 
-  gb.reportBatteryLevel();
+  gbSend({ t: "status", bat: E.getBattery() });
 })();
