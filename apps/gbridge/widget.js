@@ -89,7 +89,7 @@
       if (musicState=="play")
         show(40,function(y) {
           g.setColor("#ffffff");
-          g.drawImage(              require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")),8,y+8);
+          g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")),8,y+8);
           g.setFontAlign(-1,-1);
           g.setFont("6x8",1);
           var x = 40;
