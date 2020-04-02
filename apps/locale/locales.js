@@ -1,4 +1,20 @@
+
+const distanceUnits = { // how many meters per X?
+  "m" : 1,
+  "yd" : 0.9144,
+  "mi" : 1609.34,
+  "km" : 1000,
+  "kmi" : 1000
+};
+const speedUnits = { // how many kph per X?
+  "kmh" : 1,
+  "kph" : 1,
+  "mph" : 1.60934
+};
+
 /*
+timePattern / datePattern:
+
     %Y	year four digits
     %y	last two digits of year (00..99)
     %m	month (01..12)
@@ -21,10 +37,10 @@ var locales = {
       lang: "en_GB",
       decimal_point: ".",
       thousands_sep: ",",
-      currency_symbol: "£",
+      currency_symbol: "£", currency_first:true,
       int_curr_symbol: "GBP",
       speed: 'mph',
-      distance: { "0": "mi", "1": "kmi" },
+      distance: { "0": "yd", "1": "mi" },
       temperature: '°C',
       ampm: {0:"am",1:"pm"},
       timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -55,10 +71,10 @@ var locales = {
         lang: "en_US",
         decimal_point: ".",
         thousands_sep: ",",
-        currency_symbol: "$",
+        currency_symbol: "$", currency_first:true,
         int_curr_symbol: "USD",
         speed: "mph",
-        distance: { 0: "mi", 1: "kmi" },
+        distance: { 0: "yd", 1: "mi" },
         temperature: "°F",
         ampm: {0:"am",1:"pm"},
         timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -353,5 +369,5 @@ var locales = {
       month: "Január,Február,Március,Április,Május,Június,Július,Augusztus,Szeptember,Október,November,December",
       abday: "Vas,Hét,Ke,Szer,Csüt,Pén,Szom",
       day: "Vasárnap,Hétfő,Kedd,Szerda,Csütörtök,Péntek,Szombat",
-      trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }},	
+      trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }},
 };

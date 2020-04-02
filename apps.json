@@ -27,7 +27,7 @@
   { "id": "daysl",
     "name": "Days left",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
     "tags": "",
     "allow_emulator":false,
@@ -65,7 +65,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
@@ -332,6 +332,17 @@
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "widbatpc",
+    "name": "Battery Level Widget (with percentage)",
+    "icon": "widget.png",
+    "version":"0.06",
+    "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
+    "tags": "widget,battery",
+    "type":"widget",
+    "storage": [
+      {"name":"widbatpc.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widbt",
@@ -881,7 +892,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -971,6 +982,17 @@
       {"name":"new.img","url":"new-icon.js","evaluate":true},
       {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
       {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widhwt",
+    "name": "Hand Wash Timer",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
+    "tags": "widget,tool",
+    "type":"widget",
+    "storage": [
+      {"name":"widhwt.wid.js","url":"widget.js"}
     ]
   }
 ]
