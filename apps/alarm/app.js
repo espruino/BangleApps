@@ -34,7 +34,7 @@ function showMainMenu() {
       editAlarm(idx);
     };
   });
-  menu['< Back'/*LANG*/] =  ()=>{load();};
+  menu['< ' + 'Back'/*LANG*/] =  ()=>{load();};
   return E.showMenu(menu);
 }
 
@@ -85,19 +85,19 @@ function editAlarm(alarmIndex) {
     };
   }
   if (newAlarm) {
-    menu["> New Alarm"/*LANG*/] = function() {
+    menu["> " + "New Alarm"/*LANG*/] = function() {
       alarms.push(getAlarm());
       require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   } else {
-    menu["> Save"/*LANG*/] = function() {
+    menu["> " + "Save"/*LANG*/] = function() {
       alarms[alarmIndex] = getAlarm();
       require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };
   }
-  menu['< Back'/*LANG*/] = showMainMenu;
+  menu['< ' + 'Back'/*LANG*/] = showMainMenu;
   return E.showMenu(menu);
 }
 
