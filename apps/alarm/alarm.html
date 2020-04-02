@@ -39,11 +39,11 @@
           });
         });
       }).catch( error => {
-        console.log("Error getting langFromDevice, using fallback en_gb, error was: " + error);
-        return "en_gb";
+        console.log("Error getting langFromDevice, using fallback en_GB, error was: " + error);
+        return "en_GB";
       }).then( lang => {
         var languageSelector = document.getElementById("languages");
-        languageSelector.innerHTML = ["en_gb","de_de"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
+        languageSelector.innerHTML = ["en_GB","de_DE","fr_FR"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
       });
       
 
