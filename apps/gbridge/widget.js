@@ -58,7 +58,8 @@
           g.drawString(j.src,x,y+7);
           g.setColor("#ffffff");
           g.setFont("6x8",2);
-          g.drawString(j.title,x,y+25);
+          if (j.title === undefined) g.drawString(j.title,x,y+25);
+          else g.drawString(j.title.slice(0,17),x,y+25);
           g.setFont("6x8",1);
           g.setColor("#ffffff");
           // split text up a word boundaries
