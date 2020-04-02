@@ -18,7 +18,7 @@ function drawMoon(phase, x, y) {
 
   imgObj = require("Storage").readJSON(moonImgFiles[phase]);
   imgObj.buffer = require("heatshrink").decompress(atob(imgObj.image));
-  g.drawImage(imgObj, x /*- (imgObj.width / 2)*/, y /*- (imgObj.height)*/);
+  g.drawImage(imgObj, x - (imgObj.width / 2), y);
 }
 
 // linear interpolation between two values a and b
