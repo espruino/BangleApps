@@ -973,5 +973,18 @@
     "storage": [
       {"name":"widhwt.wid.js","url":"widget.js"}
     ]
+  },
+  { "id": "toucher",
+    "name": "Touch Launcher",
+    "shortName":"Menu",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Touch enable left to right launcher.",
+    "tags": "tool,system,launcher",
+    "type":"launch",
+    "storage": [
+      {"name":"toucher.app.js","url":"app.js"}
+    ],
+    "sortorder" : -10
   }
 ]
