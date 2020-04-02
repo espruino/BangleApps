@@ -22,7 +22,7 @@
       scrollPos-=2;
       if (scrollPos<-size) scrollPos=-size;
       Bangle.setLCDOffset(scrollPos);
-      if (scrollPos>-size) setTimeout(anim,10);
+      if (scrollPos>-size) setTimeout(anim,15);
     }
     anim();
   }
@@ -58,7 +58,8 @@
           g.drawString(j.src,x,y+7);
           g.setColor("#ffffff");
           g.setFont("6x8",2);
-          g.drawString(j.title,x,y+25);
+          if (j.title === undefined) g.drawString(j.title,x,y+25);
+          else g.drawString(j.title.slice(0,17),x,y+25);
           g.setFont("6x8",1);
           g.setColor("#ffffff");
           // split text up a word boundaries
@@ -89,7 +90,7 @@
       if (musicState=="play")
         show(40,function(y) {
           g.setColor("#ffffff");
-          g.drawImage(              require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")),8,y+8);
+          g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")),8,y+8);
           g.setFontAlign(-1,-1);
           g.setFont("6x8",1);
           var x = 40;
