@@ -4,7 +4,8 @@
   </head>
   <body>
 
-    <p>Please choose a language from the following list:</p>
+    <p><button id="fetch" class="btn btn-primary">Fetch Language from Bangle.js</button></p>
+    <p>Then please choose a language from the following list:</p>
     <div class="form-group">
     <select id="languages" class="form-select">
     </select>
@@ -31,20 +32,22 @@
           });
       };    
       
-      new Promise((resolve,reject) => {
-        Puck.write("\x03",(result) => {
-          if (result===null) return reject("");
-          Puck.eval(`require("locale").lang`, (content,err) => {
-            if (content===null) return reject(err || "");
-            resolve(content);
+      document.getElementById("fetch").addEventListener("click", function() {
+        new Promise((resolve,reject) => {
+          Puck.write("\x03",(result) => {
+            if (result===null) return reject("");
+            Puck.eval(`require("locale").lang`, (content,err) => {
+              if (content===null) return reject(err || "");
+              resolve(content);
+            });
           });
+        }).catch( error => {
+          console.log("Error getting langFromDevice, using fallback en_GB, error was: " + error);
+          return "en_GB";
+        }).then( lang => {
+          var languageSelector = document.getElementById("languages");
+          languageSelector.innerHTML = ["en_GB","de_DE","fr_FR","en_US","en_JP","nl_NL","en_CA","sv_SE","en_AU","de_AT","en_IL","es_ES","fr_BE","fi_FI","de_CH","fr_CH","it_CH","tr_TR","hu_HU"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
         });
-      }).catch( error => {
-        console.log("Error getting langFromDevice, using fallback en_GB, error was: " + error);
-        return "en_GB";
-      }).then( lang => {
-        var languageSelector = document.getElementById("languages");
-        languageSelector.innerHTML = ["en_GB","de_DE","fr_FR","en_US","en_JP","nl_NL","en_CA","sv_SE","en_AU","de_AT","en_IL","es_ES","fr_BE","fi_FI","de_CH","fr_CH","it_CH","tr_TR","hu_HU"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
       });
       
 
