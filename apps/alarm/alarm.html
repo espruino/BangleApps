@@ -55,10 +55,11 @@
           request("app_" + lang + ".json").catch( () => request("app_" + lang.subsring(0,2) + ".json")).then( langjson => {
             var trans = JSON.parse(langjson);
             appjs = appjs.replace(/"(.*?)"\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"'; });
+            appjs = appjs.replace(/'(.*?)'\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"'; });
             return appjs;
           }).catch( error => {
-            console.log(error) );
-            return appjs; // unmodified app.ja
+            console.log(error);
+            return appjs; // unmodified app.js
           }).then( appjs => {
             console.log("app.js is:", appjs);
             sendCustomizedApp({
