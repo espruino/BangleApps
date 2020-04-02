@@ -1,7 +1,6 @@
 g.clear();
 
-var Storage = require("Storage");
-
+const Storage = require("Storage");
 
 function getApps(){
   return Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
@@ -15,11 +14,8 @@ function getApps(){
   });
 }
 
-var selected = 0;
-var menuScroll = 0;
-var menuShowing = false;
-var apps = getApps();
-var displayBack = false;
+const selected = 0;
+const apps = getApps();
 
 function prev(){
   if (selected>=0) {
@@ -35,35 +31,6 @@ function next() {
   drawMenu();
 }
 
-/*
-function drawMenu() {
-  g.setFont("6x8",2);
-  g.setFontAlign(-1,0);
-  var n = 3;
-  if (selected>=n+menuScroll) menuScroll = 1+selected-n;
-  if (selected<menuScroll) menuScroll = selected;
-  if (menuScroll) g.fillPoly([120,0,100,20,140,20]);
-  else g.clearRect(100,0,140,20);
-  if (apps.length>n+menuScroll) g.fillPoly([120,239,100,219,140,219]);
-  else g.clearRect(100,219,140,239);
-  for (var i=0;i<n;i++) {
-    var app = apps[i+menuScroll];
-    if (!app) break;
-    var y = 24+i*64;
-    if (i+menuScroll==selected) {
-      g.setColor(0.3,0.3,0.3);
-      g.fillRect(0,y,239,y+63);
-      g.setColor(1,1,1);
-      g.drawRect(0,y,239,y+63);
-    } else
-      g.clearRect(0,y,239,y+63);
-    g.drawString(app.name,64,y+32);
-    var icon=undefined;
-    if (app.icon) icon = Storage.read(app.icon);
-    if (icon) try {g.drawImage(icon,8,y+8);} catch(e){}
-  }
-}
-*/
 function run() {
   if(selected < 0) return load();
   if (!apps[selected].src) return;
@@ -74,11 +41,6 @@ function run() {
     E.showMessage("Loading...");
     load(apps[selected].src);
   }
-}
-
-
-function getPrevApp(){
-  return apps[selected-1];
 }
 
 function getCurrentApp(){
