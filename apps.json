@@ -326,12 +326,23 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.04",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "widbatpc",
+    "name": "Battery Level Widget (with percentage)",
+    "icon": "widget.png",
+    "version":"0.06",
+    "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
+    "tags": "widget,battery",
+    "type":"widget",
+    "storage": [
+      {"name":"widbatpc.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widbt",
