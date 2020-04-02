@@ -12,7 +12,6 @@
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../lib/customize.js"></script>
-    <script src="locales.js"></script>
 
     <script>
       let request = url => {
@@ -40,11 +39,11 @@
           });
         });
       }).catch( error => {
-        console.log("Error getting langFromDevice, using fallback en_gb, error was: " + error);
-        return "en_gb";
+        console.log("Error getting langFromDevice, using fallback en_GB, error was: " + error);
+        return "en_GB";
       }).then( lang => {
         var languageSelector = document.getElementById("languages");
-        languageSelector.innerHTML = ["en_gb","de_de"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
+        languageSelector.innerHTML = ["en_GB","de_DE","fr_FR"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
       });
       
 
@@ -66,7 +65,7 @@
               storage:[
                 {"name":"alarm.app.js",content: appjs},
                 {"name":"alarm.boot.js","url":"boot.js"},
-                {"name": "alarm.js", "url":"alarm.js"}
+                {"name": "alarm.js", "url":"alarm.js"},
                 {"name":"alarm.json","content":"[]"},
                 {"name":"alarm.img","url":"app-icon.js","evaluate":true},
                 {"name":"alarm.wid.js","url":"widget.js"}                
