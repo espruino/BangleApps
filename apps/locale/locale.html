@@ -56,7 +56,14 @@ exports = { name : "en_GB", currencySym:"£",
       });
 
       var languageSelector = document.getElementById("languages");
-      languageSelector.innerHTML = Object.keys(locales).map(l=>`<option value="${l}">${l}</option>`).join("\n");
+      languageSelector.innerHTML = Object.keys(locales).map(l=>{
+        var localeParts = l.split("_"); // en_GB -> ["en","GB"]
+        var icon = "";
+        // If we have a 2 char ISO country code, use it to get the unicode flag
+        if (localeParts[1] && localeParts[1].length==2)
+          icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
+        return `<option value="${l}">${icon}${l}</option>`
+      }).join("\n");
 
       document.getElementById("upload").addEventListener("click", function() {
 
