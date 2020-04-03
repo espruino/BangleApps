@@ -32,6 +32,7 @@ easily distinguish between file types, we use the following:
 * `stuff.img` is an image
 * `stuff.app.js` is JS code for applications
 * `stuff.wid.js` is JS code for widgets
+* `stuff.settings.js` is JS code for the settings menu
 * `stuff.boot.js` is JS code that automatically gets run at boot time
 * `stuff.json` is used for JSON settings for an app
 
@@ -313,6 +314,48 @@ and in that you can call `Puck.write` and `Puck.eval` to get
 the data you require from Bangle.js.
 
 See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
+
+### Adding configuration to the "Settings" menu
+
+Apps (or widgets) can add their own settings to the "Settings" menu under "App/widget settings".   
+To do so, the app needs to include a `settings.js` file, containing a single function
+that handles configuring the app.   
+When the app settings are opened, this function is called with one 
+argument, `back`: a callback to return to the settings menu.
+
+Example `settings.js`
+```js
+// make sure to enclose the function in parentheses
+(function(back) {
+  let settings = require('Storage').readJSON('app.settings.json',1)||{};
+  function save(key, value) {
+    settings[key] = value;
+    require('Storage').write('app.settings.json',settings);
+  } 
+  const appMenu = {
+    '': {'title': 'App Settings'},
+    '< Back': back,
+    'Monkeys': {
+      value: settings.monkeys||12,
+      onchange: (m) => {save('monkeys', m)}
+    }   
+  };
+  E.showMenu(appMenu)
+})
+```
+In this example the app needs to add both `app.settings.js` and
+`app.settings.json` to `apps.json`:
+```json
+  { "id": "app",
+    ...
+    "storage": [
+      ...
+      {"name":"app.settings.js","url":"settings.js"},
+      {"name":"app.settings.json","content":"{}"}
+    ]
+  },
+```
+That way removing the app also cleans up `app.settings.json`.
 
 ## Coding hints
 
