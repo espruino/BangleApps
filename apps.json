@@ -1013,7 +1013,7 @@
     "name": "Touch Launcher",
     "shortName":"Menu",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
