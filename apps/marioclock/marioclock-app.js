@@ -7,7 +7,7 @@
 
 const locale = require("locale");
 const storage = require('Storage');
-const settings = (storage.readJSON('setting.json',1) || {});
+const settings = (storage.readJSON('setting.json', 1) || {});
 const timeout = settings.timeout || 10;
 const is12Hour = settings["12hour"] || false;
 
