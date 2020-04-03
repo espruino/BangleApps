@@ -103,10 +103,28 @@ function drawMenu(){
 }
 
 drawMenu();
+
+// Physical buttons
 setWatch(prev, BTN1, {repeat:true});
-setWatch(prev, BTN4, {repeat:true});
-
 setWatch(next, BTN3, {repeat:true});
-setWatch(next, BTN5, {repeat:true});
-
 setWatch(run, BTN2, {repeat:true,edge:"falling"});
+
+// Screen event
+Bangle.on('touch', function(button){
+  switch(button){
+    case 1:
+      prev();
+      break;
+    case 2:
+      next();
+      break;
+    case 3:
+      run();
+      break;
+  }
+});
+
+Bangle.on('swipe', dir => {
+  if(dir == 1) prev();
+  else next();
+});
