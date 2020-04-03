@@ -662,7 +662,7 @@
   { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
