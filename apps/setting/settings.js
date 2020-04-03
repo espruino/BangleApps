@@ -31,7 +31,11 @@ if (!settings) resetSettings();
 
 const boolFormat = v => v ? "On" : "Off";
 
+let main
 function showMainMenu() {
+  if (main) {
+    return restoreMenu(main)
+  }
   var beepV = [ false,true,"vib" ];
   var beepN = [ "Off","Piezo","Vibrate" ];
   const mainmenu = {
@@ -295,4 +299,22 @@ function showSetTimeMenu() {
   return E.showMenu(timemenu);
 }
 
-showMainMenu();
+
+// from https://github.com/espruino/Espruino/blob/master/libs/js/banglejs/E_showMenu.js
+function restoreMenu(l) {
+  if (Bangle.btnWatches) {
+    Bangle.btnWatches.forEach(clearWatch);
+    Bangle.btnWatches = undefined;
+  }
+  g.clear(1);g.flip();
+  Bangle.drawWidgets();
+  l.draw();
+  Bangle.btnWatches = [
+    setWatch(function() { l.move(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { l.move(1); }, BTN3, {repeat:1}),
+    setWatch(function() { l.select(); }, BTN2, {repeat:1}),
+  ];
+  return l;
+}
+
+main = showMainMenu();
