@@ -4,7 +4,6 @@ var started = false;
 var timeY = 60;
 var hsXPos = 0;
 var lapTimes = [];
-var saveTimes = [];
 var displayInterval;
 
 function timeToText(t) {
@@ -25,7 +24,7 @@ function updateLabels() {
   for (var i in lapTimes) {
     if (i<18)
     {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 30 + i*8);}
-    else 
+    else
     {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-18)*8);}
   }
   drawsecs();
@@ -51,10 +50,8 @@ function drawms() {
   g.clearRect(hsXPos,timeY,220,timeY+20);
   g.drawString("."+("0"+hs).substr(-2),hsXPos,timeY+10);
 }
-function saveconvert() {
-  for (var v in lapTimes){
-   saveTimes[v]=v+1+"-"+timeToText(lapTimes[(lapTimes.length-1)-v]); 
-  }
+function getLapTimesArray() {
+  return lapTimes.map(timeToText).reverse();
 }
 
 setWatch(function() { // Start/stop
@@ -80,16 +77,21 @@ setWatch(function() { // Start/stop
 }, BTN2, {repeat:true});
 setWatch(function() { // Lap
   Bangle.beep();
-  if (started) tCurrent = Date.now();
-  lapTimes.unshift(tCurrent-tStart);
-  tStart = tCurrent;
-  if (!started)
-  {
-    var timenow= Date();
-    saveconvert();
-    require("Storage").writeJSON("StpWch-"+timenow.toString(), saveTimes);
+  if (started) {
+    tCurrent = Date.now();
+    lapTimes.unshift(tCurrent-tStart);
   }
-  updateLabels();
+  tStart = tCurrent;
+  if (!started) { // save
+    var timenow= Date();
+    var filename = "swatch-"+(new Date()).toISOString().substr(0,16).replace("T","_")+".json";
+    // this maxes out the 28 char maximum
+    require("Storage").writeJSON(filename, getLapTimesArray());
+    E.showMessage("Laps Saved","Stopwatch");
+    setTimeout(updateLabels, 1000);
+  } else {
+    updateLabels();
+  }
 }, BTN1, {repeat:true});
 setWatch(function() { // Reset
   if (!started) {
