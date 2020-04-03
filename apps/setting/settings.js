@@ -325,7 +325,7 @@ function showAppSettings(app) {
     return showError('Missing settings');
   }
   try {
-    appSettings = eval(appSettings);
+    appSettings = eval('('+appSettings+')');
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');
