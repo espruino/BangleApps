@@ -1034,5 +1034,16 @@
       {"name":"rpgdice.app.js","url": "app.js"},
       {"name":"rpgdice.img","url": "app-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "widmp",
+    "name": "Moon Phase Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
+    "tags": "widget,tools",
+    "type":"widget",
+    "storage": [
+      {"name":"widmp.wid.js","url":"widget.js"}
+    ]
+  },
 ]
