@@ -12,6 +12,31 @@
     ],
     "sortorder" : -10
   },
+  { "id": "moonphase",
+    "name": "Moonphase",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Shows current moon phase. Now with GPS function.",
+    "tags": "",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "daysl",
+    "name": "Days left",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
+    "tags": "",
+    "allow_emulator":false,
+    "storage": [
+        {"name":"daysl.app.js","url":"app.js"},
+        {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+        {"name":"daysl.wid.js","url":"widget.js"}
+    ]
+  },
   { "id": "launch",
     "name": "Default Launcher",
     "shortName":"Launcher",
@@ -40,7 +65,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
@@ -66,7 +91,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.06",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "storage": [
@@ -309,6 +334,17 @@
       {"name":"widbat.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "widbatpc",
+    "name": "Battery Level Widget (with percentage)",
+    "icon": "widget.png",
+    "version":"0.06",
+    "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
+    "tags": "widget,battery",
+    "type":"widget",
+    "storage": [
+      {"name":"widbatpc.wid.js","url":"widget.js"}
+    ]
+  },
   { "id": "widbt",
     "name": "Bluetooth Widget",
     "icon": "widget.png",
@@ -356,7 +392,8 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.03",
+    "version":"0.05",
+    "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator":true,
@@ -856,7 +893,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -864,6 +901,20 @@
     "storage": [
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "cliock",
+    "name": "Commandline-Clock",
+    "shortName":"CLI-Clock",
+    "icon": "app.png",
+    "version":"0.07",
+    "description": "Simple CLI-Styled Clock",
+    "tags": "clock,cli,command,bash,shell",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"cliock.app.js","url":"app.js"},
+      {"name":"cliock.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "widver",
@@ -880,7 +931,7 @@
   { "id": "barclock",
     "name": "Bar Clock",
     "icon": "clock-bar.png",
-    "version":"0.02",
+    "version":"0.04",
     "description": "A simple digital clock showing seconds as a bar",
     "tags": "clock",
     "type":"clock",
@@ -901,6 +952,112 @@
     "storage": [
       {"name":"dotclock.app.js","url":"clock-dot.js"},
       {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widtbat",
+    "name": "Tiny Battery Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Tiny blueish battery widget, vibs and changes level color when charging",
+    "tags": "widget,tool,system",
+    "type":"widget",
+    "storage": [
+      {"name":"widtbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "chrono",
+    "name": "Chrono",
+    "shortName":"Chrono",
+    "icon": "chrono.png",
+    "version":"0.01",
+    "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
+    "tags": "Tools",
+    "storage": [
+      {"name":"chrono.app.js","url":"chrono.js"},
+      {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "astrocalc",
+    "name": "Astrocalc",
+    "icon": "astrocalc.png",
+    "version":"0.01",
+    "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
+    "tags": "app,sun,moon,cycles,tool,outdoors",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"astrocalc.app.js","url":"astrocalc-app.js"},
+      {"name":"suncalc.js","url":"suncalc.js"},
+      {"name":"astrocalc.img","url":"astrocalc-icon.js","evaluate":true},
+      {"name":"first-quarter.img","url":"first-quarter-icon.js","evaluate":true},
+      {"name":"last-quarter.img","url":"last-quarter-icon.js","evaluate":true},
+      {"name":"waning-crescent.img","url":"waning-crescent-icon.js","evaluate":true},
+      {"name":"waning-gibbous.img","url":"waning-gibbous-icon.js","evaluate":true},
+      {"name":"full.img","url":"full-icon.js","evaluate":true},
+      {"name":"new.img","url":"new-icon.js","evaluate":true},
+      {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
+      {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widhwt",
+    "name": "Hand Wash Timer",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
+    "tags": "widget,tool",
+    "type":"widget",
+    "storage": [
+      {"name":"widhwt.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "toucher",
+    "name": "Touch Launcher",
+    "shortName":"Menu",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Touch enable left to right launcher.",
+    "tags": "tool,system,launcher",
+    "type":"launch",
+    "storage": [
+      {"name":"toucher.app.js","url":"app.js"}
+    ],
+    "sortorder" : -10
+  },
+  {
+    "id": "balltastic",
+    "name": "Balltastic",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Simple but fun ball eats dots game.",
+    "tags": "game,fun",
+    "type": "app",
+    "storage": [
+        {"name":"balltastic.app.js","url":"app.js"},
+        {"name":"balltastic.img","url":"app-icon.js","evaluate":true}
+      ]
+  },
+  {
+    "id": "rpgdice",
+    "name": "RPG dice",
+    "icon": "rpgdice.png",
+    "version": "0.01",
+    "description": "Simple RPG dice rolling app.",
+    "tags": "game,fun",
+    "type": "app",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"rpgdice.app.js","url": "app.js"},
+      {"name":"rpgdice.img","url": "app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widmp",
+    "name": "Moon Phase Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
+    "tags": "widget,tools",
+    "type":"widget",
+    "storage": [
+      {"name":"widmp.wid.js","url":"widget.js"}
     ]
   }
 ]

@@ -1,14 +1,15 @@
 /**********************************
-  BangleJS MARIO CLOCK V0.1.0
+  BangleJS MARIO CLOCK
   + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
   + Converting images to 1bit BMP: Image > Mode > Indexed and tick the "Use black and white (1-bit) palette", Then export as BMP.
   + Online Image convertor: https://www.espruino.com/Image+Converter
 **********************************/
 
-var locale = require("locale");
+const locale = require("locale");
 const storage = require('Storage');
-const settings = (storage.readJSON('setting.json',1)||{});
-const timeout = settings.timeout||10;
+const settings = (storage.readJSON('setting.json', 1) || {});
+const timeout = settings.timeout || 10;
+const is12Hour = settings["12hour"] || false;
 
 // Screen dimensions
 let W, H;
@@ -273,7 +274,8 @@ function drawTime() {
   drawBrick(42, 25);
 
   const t = new Date();
-  const hours = ("0" + t.getHours()).substr(-2);
+  const h = t.getHours();
+  const hours = ("0" + ((is12Hour && h > 12) ? h - 12 : h)).substr(-2);
   const mins = ("0" + t.getMinutes()).substr(-2);
 
   g.setFont("6x8");
@@ -285,7 +287,10 @@ function drawTime() {
 function drawDate() {
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  const dateStr = locale.date(new Date(), true);
+  let d = new Date(); 
+  let dateStr = locale.date(d, true);
+  dateStr = dateStr.replace(d.getFullYear(), "").trim().replace(/\/$/i,"");
+  dateStr = locale.dow(d, true) + " " + dateStr;
   g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 0, true);
 }
 
@@ -371,8 +376,9 @@ function init() {
       Bangle.setLCDPower(true);
     }
   });
+
+  startTimers();
 }
 
 // Initialise!
 init();
-startTimers();

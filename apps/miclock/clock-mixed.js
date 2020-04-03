@@ -17,7 +17,7 @@ function drawMixedClock() {
 
     var date = new Date();
     var dateArray = date.toString().split(" ");
-    var isEn = locale.lang.startsWith("en");
+    var isEn = locale.name.startsWith("en");
     var point = [];
     var minute = date.getMinutes();
     var hour = date.getHours();
