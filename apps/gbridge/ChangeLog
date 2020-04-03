@@ -4,3 +4,4 @@
 0.04: Tweaks for variable size widget system
 0.05: Show incoming call notification
       Optimize animation, limit title length
+0.06: Gadgetbridge App 'Connected' state is no longer toggleable
