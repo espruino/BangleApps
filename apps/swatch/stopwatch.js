@@ -4,7 +4,6 @@ var started = false;
 var timeY = 60;
 var hsXPos = 0;
 var lapTimes = [];
-var saveTimes = [];
 var displayInterval;
 
 function timeToText(t) {
@@ -14,24 +13,26 @@ function timeToText(t) {
   return mins+":"+("0"+secs).substr(-2)+"."+("0"+hs).substr(-2);
 }
 function updateLabels() {
-  g.clear();
+  g.reset(1);
+  g.clearRect(0,23,g.getWidth()-1,g.getHeight()-24);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
   g.drawString(started?"STOP":"GO",230,120);
-  if (!started) g.drawString("RESET",230,190);
+  if (!started) g.drawString("RESET",230,180);
   g.drawString(started?"LAP":"SAVE",230,50);
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
-    if (i<18)
+    if (i<16)
     {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 30 + i*8);}
-    else 
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-18)*8);}
+    else if (i<32)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-16)*8);}
   }
   drawsecs();
 }
 function drawsecs() {
   var t = tCurrent-tStart;
+  g.reset(1);
   g.setFont("Vector",48);
   g.setFontAlign(0,0);
   var secs = Math.floor(t/1000)%60;
@@ -51,10 +52,8 @@ function drawms() {
   g.clearRect(hsXPos,timeY,220,timeY+20);
   g.drawString("."+("0"+hs).substr(-2),hsXPos,timeY+10);
 }
-function saveconvert() {
-  for (var v in lapTimes){
-   saveTimes[v]=v+1+"-"+timeToText(lapTimes[(lapTimes.length-1)-v]); 
-  }
+function getLapTimesArray() {
+  return lapTimes.map(timeToText).reverse();
 }
 
 setWatch(function() { // Start/stop
@@ -80,16 +79,21 @@ setWatch(function() { // Start/stop
 }, BTN2, {repeat:true});
 setWatch(function() { // Lap
   Bangle.beep();
-  if (started) tCurrent = Date.now();
-  lapTimes.unshift(tCurrent-tStart);
-  tStart = tCurrent;
-  if (!started)
-  {
-    var timenow= Date();
-    saveconvert();
-    require("Storage").writeJSON("StpWch-"+timenow.toString(), saveTimes);
+  if (started) {
+    tCurrent = Date.now();
+    lapTimes.unshift(tCurrent-tStart);
   }
-  updateLabels();
+  tStart = tCurrent;
+  if (!started) { // save
+    var timenow= Date();
+    var filename = "swatch-"+(new Date()).toISOString().substr(0,16).replace("T","_")+".json";
+    // this maxes out the 28 char maximum
+    require("Storage").writeJSON(filename, getLapTimesArray());
+    E.showMessage("Laps Saved","Stopwatch");
+    setTimeout(updateLabels, 1000);
+  } else {
+    updateLabels();
+  }
 }, BTN1, {repeat:true});
 setWatch(function() { // Reset
   if (!started) {
@@ -101,3 +105,5 @@ setWatch(function() { // Reset
 }, BTN3, {repeat:true});
 
 updateLabels();
+Bangle.loadWidgets();
+Bangle.drawWidgets();

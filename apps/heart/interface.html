@@ -11,17 +11,7 @@ var domRecords = document.getElementById("records");
 
 function saveRecord(record,name) {
   var csv = `${record.map(rec=>[rec.time, rec.bpm, rec.confidence].join(",")).join("\n")}`;
-  var a = document.createElement("a"),
-      file = new Blob([csv], {type: "Comma-separated value file"});
-  var url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = name+".csv";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-  }, 0);
+  Util.saveCSV(name, csv);
 }
 
 
