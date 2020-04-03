@@ -2,7 +2,7 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-function settings(back) {
+(function(back) {
   const SETTINGS_FILE = 'widbatpc.settings.json'
   const COLORS = ['By Level', 'Green', 'Monochrome']
 
@@ -55,4 +55,4 @@ function settings(back) {
     },
   }
   E.showMenu(menu)
-}
+})
