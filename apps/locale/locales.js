@@ -1,4 +1,4 @@
-
+/* jshint esversion: 6 */
 const distanceUnits = { // how many meters per X?
   "m" : 1,
   "yd" : 0.9144,
@@ -387,4 +387,21 @@ var locales = {
         abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
         day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
         trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }},
+    "cs_CZ": {   
+        lang: "cs_CZ",
+        decimal_point: ",",
+        thousands_sep: " ",
+        currency_symbol: "Kč",
+        int_curr_symbol: " CZK",
+        speed: 'kmh',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
+        ampm: {0:"dop",1:"odp"},
+        timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+        datePattern: { 0: "%d. %b %Y", 1: "%d.%m.%Y" }, // "30. led 2020" // "30.01.2020"(short)
+        abmonth: "led,úno,bře,dub,kvě,čvn,čvc,srp,zář,říj,lis,pro",
+        month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
+        abday: "ne,po,út,st,čt,pá,so",
+        day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
+        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }}  
 };
