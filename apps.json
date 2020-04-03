@@ -117,11 +117,12 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
+      {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.json","url":"settings-default.json","evaluate":true},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],

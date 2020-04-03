@@ -9,6 +9,21 @@ function updateSettings() {
   storage.write('setting.json', settings);
 }
 
+function updateOptions() {
+  updateSettings();
+  Bangle.setOptions(settings.options)
+}
+
+function gToInternal(g) {
+  // converts g to Espruino internal unit
+  return g * 8192;
+}
+
+function internalToG(u) {
+  // converts Espruino internal unit to g
+  return u / 8192
+}
+
 function resetSettings() {
   settings = {
     ble: true,             // Bluetooth enabled by default
@@ -18,22 +33,34 @@ function resetSettings() {
     vibrate: true,         // Vibration enabled by default. App must support
     beep: "vib",            // Beep enabled by default. App must support
     timezone: 0,           // Set the timezone for the device
-    HID : false,           // BLE HID mode, off by default
+    HID: false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
-    "12hour" : false,      // 12 or 24 hour clock?
+    "12hour": false,      // 12 or 24 hour clock?
     // welcomed : undefined/true (whether welcome app should show)
+    options: {
+      wakeOnBTN1: true,
+      wakeOnBTN2: true,
+      wakeOnBTN3: true,
+      wakeOnFaceUp: false,
+      wakeOnTouch: false,
+      wakeOnTwist: true,
+      twistThreshold: 819.2,
+      twistMaxY: -800,
+      twistTimeout: 1000
+    }
   };
   updateSettings();
 }
 
-settings = storage.readJSON('setting.json',1);
+settings = storage.readJSON('setting.json', 1);
 if (!settings) resetSettings();
 
 const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
-  var beepV = [ false,true,"vib" ];
-  var beepN = [ "Off","Piezo","Vibrate" ];
+  var beepV = [false, true, "vib"];
+  var beepN = ["Off", "Piezo", "Vibrate"];
+  var lcdSens = [""]
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': makeConnectable,
@@ -73,13 +100,13 @@ function showMainMenu() {
       }
     },
     'Beep': {
-      value: 0|beepV.indexOf(settings.beep),
-      min:0,max:2,
-      format: v=>beepN[v],
+      value: 0 | beepV.indexOf(settings.beep),
+      min: 0, max: 2,
+      format: v => beepN[v],
       onchange: v => {
         settings.beep = beepV[v];
-        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200) } // piezo
-        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200) } // vibrate
+        if (v == 1) { analogWrite(D18, 0.5, { freq: 2000 }); setTimeout(() => D18.reset(), 200) } // piezo
+        else if (v == 2) { analogWrite(D13, 0.1, { freq: 2000 }); setTimeout(() => D13.reset(), 200) } // vibrate
         updateSettings();
       }
     },
@@ -91,7 +118,7 @@ function showMainMenu() {
         updateSettings();
         if (settings.vibrate) {
           VIBRATE.write(1);
-          setTimeout(()=>VIBRATE.write(0), 10);
+          setTimeout(() => VIBRATE.write(0), 10);
         }
       }
     },
@@ -99,7 +126,7 @@ function showMainMenu() {
       value: !settings.welcomed,
       format: boolFormat,
       onchange: v => {
-        settings.welcomed = v?undefined:true;
+        settings.welcomed = v ? undefined : true;
         updateSettings();
       }
     },
@@ -114,11 +141,98 @@ function showMainMenu() {
       }
     },
     'Set Time': showSetTimeMenu,
+    'Auto-On': showAutoOnMenu,
     'Reset Settings': showResetMenu,
     'Turn Off': Bangle.off,
-    '< Back': ()=> {load();}
+    '< Back': () => { load(); }
   };
   return E.showMenu(mainmenu);
+}
+
+function showAutoOnMenu() {
+  const autoOnMenu = {
+    '': { 'title': 'Auto-On' },
+    '< Back': showMainMenu,
+    'Wake On BTN1': {
+      value: settings.options.wakeOnBTN1,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
+        updateOptions();
+      }
+    },
+    'Wake On BTN2': {
+      value: settings.options.wakeOnBTN2,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnBTN2 = !settings.options.wakeOnBTN2;
+        updateOptions();
+      }
+    },
+    'Wake On BTN3': {
+      value: settings.options.wakeOnBTN3,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
+        updateOptions();
+      }
+    },
+    'Wake on FaceUp': {
+      value: settings.options.wakeOnFaceUp,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnFaceUp = !settings.options.wakeOnFaceUp;
+        updateOptions();
+      }
+    },
+    'Wake on Touch': {
+      value: settings.options.wakeOnTouch,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
+        updateOptions();
+      }
+    },
+    'Wake On Twist': {
+      value: settings.options.wakeOnTwist,
+      format: boolFormat,
+      onchange: () => {
+        settings.options.wakeOnTwist = !settings.options.wakeOnTwist;
+        updateOptions();
+      }
+    },
+    'Twist Threshold': {
+      value: internalToG(settings.options.twistThreshold),
+      min: -0.5,
+      max: 0.5,
+      step: 0.01,
+      onchange: v => {
+        settings.options.twistThreshold = gToInternal(v || 0.1);
+        updateOptions();
+      }
+    },
+    'Twist Max Y': {
+      value: settings.options.twistMaxY,
+      min: -1500,
+      max: 1500,
+      step: 100,
+      onchange: v => {
+        settings.options.twistMaxY = v || -800;
+        updateOptions();
+      }
+    },
+    'Twist Timeout': {
+      value: settings.options.twistTimeout,
+      min: 0,
+      max: 2000,
+      step: 100,
+      onchange: v => {
+        settings.options.twistTimeout = v || 1000;
+        updateOptions();
+      }
+    }
+  }
+  return E.showMenu(autoOnMenu)
 }
 
 function showLocaleMenu() {
@@ -137,7 +251,7 @@ function showLocaleMenu() {
     },
     'Clock Style': {
       value: !!settings["12hour"],
-      format : v => v?"12hr":"24hr",
+      format: v => v ? "12hr" : "24hr",
       onchange: v => {
         settings["12hour"] = v;
         updateSettings();
@@ -165,33 +279,33 @@ function showResetMenu() {
 }
 
 function makeConnectable() {
-  try { NRF.wake(); } catch(e) {}
+  try { NRF.wake(); } catch (e) { }
   Bluetooth.setConsole(1);
-  var name="Bangle.js "+NRF.getAddress().substr(-5).replace(":","");
-  E.showPrompt(name+"\nStay Connectable?",{title:"Connectable"}).then(r=>{
-    if (settings.ble!=r) {
+  var name = "Bangle.js " + NRF.getAddress().substr(-5).replace(":", "");
+  E.showPrompt(name + "\nStay Connectable?", { title: "Connectable" }).then(r => {
+    if (settings.ble != r) {
       settings.ble = r;
       updateSettings();
     }
-    if (!r) try { NRF.sleep(); } catch(e) {}
+    if (!r) try { NRF.sleep(); } catch (e) { }
     showMainMenu();
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/).map(app=>{
+  var clockApps = require("Storage").list(/\.info$/).map(app => {
     try { return require("Storage").readJSON(app); }
-    catch (e) {}
-  }).filter(app=>app.type=="clock").sort((a, b) => a.sortorder - b.sortorder);
+    catch (e) { }
+  }).filter(app => app.type == "clock").sort((a, b) => a.sortorder - b.sortorder);
   const clockMenu = {
     '': {
       'title': 'Select Clock',
     },
     '< Back': showMainMenu,
   };
-  clockApps.forEach((app,index) => {
+  clockApps.forEach((app, index) => {
     var label = app.name;
     if ((!settings.clock && index === 0) || (settings.clock === app.src)) {
-      label = "* "+label;
+      label = "* " + label;
     }
     clockMenu[label] = () => {
       if (settings.clock !== app.src) {
@@ -202,7 +316,7 @@ function showClockMenu() {
     };
   });
   if (clockApps.length === 0) {
-     clockMenu["No Clocks Found"] = () => {};
+    clockMenu["No Clocks Found"] = () => { };
   }
   return E.showMenu(clockMenu);
 }
@@ -214,7 +328,7 @@ function showSetTimeMenu() {
   const timemenu = {
     '': {
       'title': 'Set Time',
-      'predraw': function() {
+      'predraw': function () {
         d = new Date();
         timemenu.Hour.value = d.getHours();
         timemenu.Minute.value = d.getMinutes();
@@ -233,7 +347,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setHours(v);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     },
     'Minute': {
@@ -244,7 +358,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setMinutes(v);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     },
     'Second': {
@@ -255,7 +369,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setSeconds(v);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     },
     'Date': {
@@ -266,7 +380,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setDate(v);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     },
     'Month': {
@@ -277,7 +391,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setMonth(v - 1);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     },
     'Year': {
@@ -288,7 +402,7 @@ function showSetTimeMenu() {
       onchange: v => {
         d = new Date();
         d.setFullYear(v);
-        setTime(d.getTime()/1000);
+        setTime(d.getTime() / 1000);
       }
     }
   };
