@@ -3,3 +3,4 @@
 0.03: Gadgetbridge widget now shows connection state
 0.04: Tweaks for variable size widget system
 0.05: Show incoming call notification
+      Optimize animation, limit title length

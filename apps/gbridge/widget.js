@@ -40,7 +40,7 @@
         state.scrollPos = -size;
       }
       Bangle.setLCDOffset(state.scrollPos);
-      if (state.scrollPos > -size) setTimeout(anim, 10);
+      if (state.scrollPos > -size) setTimeout(anim, 15);
     }
     anim();
   }
@@ -84,7 +84,8 @@
 
       g.setColor("#ffffff");
       g.setFont("6x8", 2);
-      g.drawString(event.title, x, y + 25);
+      if (event.title)
+        g.drawString(event.title.slice(0,17), x, y + 25);
 
       g.setFont("6x8", 1);
       g.setColor("#ffffff");
