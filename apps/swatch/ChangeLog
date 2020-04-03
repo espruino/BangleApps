@@ -4,3 +4,4 @@
 0.03: Added ability to save Lap log as a date named JSON file into memory
       Fixed bug from 0.01 where BN1 (reset) could clear the lap log when timer is running
 0.04: Changed save file filename, add interface.html to allow laps to be loaded
+0.05: Added widgets

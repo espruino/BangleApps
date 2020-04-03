@@ -13,24 +13,26 @@ function timeToText(t) {
   return mins+":"+("0"+secs).substr(-2)+"."+("0"+hs).substr(-2);
 }
 function updateLabels() {
-  g.clear();
+  g.reset(1);
+  g.clearRect(0,23,g.getWidth()-1,g.getHeight()-24);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
   g.drawString(started?"STOP":"GO",230,120);
-  if (!started) g.drawString("RESET",230,190);
+  if (!started) g.drawString("RESET",230,180);
   g.drawString(started?"LAP":"SAVE",230,50);
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
-    if (i<18)
+    if (i<16)
     {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 30 + i*8);}
-    else
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-18)*8);}
+    else if (i<32)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 30 + (i-16)*8);}
   }
   drawsecs();
 }
 function drawsecs() {
   var t = tCurrent-tStart;
+  g.reset(1);
   g.setFont("Vector",48);
   g.setFontAlign(0,0);
   var secs = Math.floor(t/1000)%60;
@@ -103,3 +105,5 @@ setWatch(function() { // Reset
 }, BTN3, {repeat:true});
 
 updateLabels();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
