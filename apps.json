@@ -662,7 +662,7 @@
   { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
@@ -939,6 +939,19 @@
     "storage": [
       {"name":"barclock.app.js","url":"clock-bar.js"},
       {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "dotclock",
+    "name": "Dot Clock",
+    "icon": "clock-dot.png",
+    "version":"0.01",
+    "description": "A Minimal Dot Analog Clock",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"dotclock.app.js","url":"clock-dot.js"},
+      {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
     ]
   },
   { "id": "widtbat",
