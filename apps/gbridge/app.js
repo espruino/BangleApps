@@ -4,7 +4,7 @@ function gb(j) {
 
 var mainmenu = {
   "" : { "title" : "Gadgetbridge" },
-  "Connected" : { value : NRF.getSecurityStatus().connected },
+  "Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
   "Find Phone" : function() { E.showMenu(findPhone); },
   "Exit" : ()=> {load();},
 };

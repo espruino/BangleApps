@@ -91,7 +91,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "storage": [
@@ -392,7 +392,8 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.03",
+    "version":"0.05",
+    "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator":true,
@@ -892,7 +893,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -999,7 +1000,7 @@
     "name": "Touch Launcher",
     "shortName":"Menu",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -1020,5 +1021,30 @@
         {"name":"balltastic.app.js","url":"app.js"},
         {"name":"balltastic.img","url":"app-icon.js","evaluate":true}
       ]
+  },
+  {
+    "id": "rpgdice",
+    "name": "RPG dice",
+    "icon": "rpgdice.png",
+    "version": "0.01",
+    "description": "Simple RPG dice rolling app.",
+    "tags": "game,fun",
+    "type": "app",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"rpgdice.app.js","url": "app.js"},
+      {"name":"rpgdice.img","url": "app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widmp",
+    "name": "Moon Phase Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
+    "tags": "widget,tools",
+    "type":"widget",
+    "storage": [
+      {"name":"widmp.wid.js","url":"widget.js"}
+    ]
   }
 ]
