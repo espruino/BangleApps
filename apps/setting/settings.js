@@ -298,15 +298,13 @@ function showSetTimeMenu() {
 
 function showAppSettingsMenu(){
   let appmenu = {
-    '': {
-      'title': 'App Settings',
-    },
+    '': {'title': 'App Settings'},
     '< Back': showMainMenu,
   }
-  const apps = storage.list(/\.info$/).
-    map(app => storage.readJSON(app, 1)).
-    filter(app => app && app.settings).
-    sort((a, b) => a.sortorder - b.sortorder)
+  const apps = storage.list(/\.info$/)
+    .map(app => storage.readJSON(app, 1))
+    .filter(app => app && app.settings)
+    .sort((a, b) => a.sortorder - b.sortorder)
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => {};
   }
