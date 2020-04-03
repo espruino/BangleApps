@@ -46,7 +46,7 @@
           return "en_GB";
         }).then( lang => {
           var languageSelector = document.getElementById("languages");
-          languageSelector.innerHTML = ["en_GB","de_DE","fr_FR","en_US","en_JP","nl_NL","en_CA","sv_SE","en_AU","de_AT","en_IL","es_ES","fr_BE","fi_FI","de_CH","fr_CH","it_CH","tr_TR","hu_HU"].map(l=>`<option value="${l}"${(l===lang)?" selected":""})>${l}</option>`).join("\n");
+          languageSelector.innerHTML = ["en_GB","de_DE","fr_FR","en_US","en_JP","nl_NL","en_CA","sv_SE","en_AU","de_AT","en_IL","es_ES","fr_BE","fi_FI","de_CH","fr_CH","it_CH","tr_TR","hu_HU"].map(l=>`<option value="${l}"${(l===lang)?" selected":""}>${l}</option>`).join("\n");
         });
       });
       
