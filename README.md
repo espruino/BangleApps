@@ -6,6 +6,9 @@ Bangle.js App Loader (and Apps)
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [github.io](https://espruino.github.io/BangleApps/)
 
+**All software (including apps) in this repository is MIT Licensed - see [LICENSE](LICENSE)** By 
+submitting code to this repository you confirm that you are happy with it being MIT licensed.
+
 ## How does it work?
 
 * A list of apps is in `apps.json`
