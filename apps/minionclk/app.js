@@ -5,9 +5,9 @@ const locale = require("locale");
 const black = 0x0000;
 const white = 0xFFFF;
 
-let hour = '';
-let minute = '';
-let date = '';
+let hour;
+let minute;
+let date;
 
 function draw() {
   const d = new Date();
@@ -47,6 +47,9 @@ function draw() {
 }
 
 function drawAll() {
+  hour = '';
+  minute = '';
+  date = '';
   g.drawImage(bob, 0, 0, { scale: 4 });
   draw();
 }
