@@ -1076,5 +1076,18 @@
     "storage": [
       {"name":"widmp.wid.js","url":"widget.js"}
     ]
+  },
+  { "id": "minionclk",
+    "name": "Minion clock",
+    "icon": "minionclk.png",
+    "version": "0.01",
+    "description": "Minion themed clock.",
+    "tags": "clock,minion",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"minionclk.app.js","url":"app.js"},
+      {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
