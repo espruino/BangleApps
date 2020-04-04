@@ -63,18 +63,16 @@
           <button class="btn btn-primary input-group-btn">Search</button>
         </div>
       </section>-->
+    </header>
+    <header class="floating hidden">
       <p id="requireHTTPS" class="hidden">
         <b>STOP!</b> This page <b>must</b> be served over HTTPS.
         Please <a>reload this page via HTTPS</a>.
       </p>
     </header>
 
-    <!-- Install button, hidden by default -->
-    <div id="installContainer" class="hidden">
-      <button id="butInstall" type="button">
-        Install
-      </button>
-    </div>
+
+
 
     <div class="container" style="padding-top:4px">
       <p><b>Note:</b> If you have a version of Bangle.js firmware before 2v04, please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">latest firmware</a> or
@@ -147,6 +145,15 @@
            <button class="btn" id="installdefault">Install default apps</button></p>
       </div>
     </div>
+
+    <footer class="floating hidden">
+      <!-- Install button, hidden by default -->
+      <div id="installContainer" class="hidden">
+        <button id="butInstall" type="button">
+          Install
+        </button>
+      </div>
+    </footer>
 
     <script src="https://www.puck-js.com/puck.js"></script>
     <script src="js/utils.js"></script>

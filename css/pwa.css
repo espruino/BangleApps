@@ -17,3 +17,18 @@
     font-size: 1em;
     padding: 0.75em;
 }
+
+.floating header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.floating footer {
+    position: fixed;
+    padding: .6em;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
