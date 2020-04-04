@@ -18,5 +18,5 @@
     "background_color": "#5755d9",
     "display": "standalone",
     "start_url": "https://banglejs.com/apps/",
-    "scope": "/apps/"
+    "scope": "https://banglejs.com/apps/"
 }
