@@ -262,7 +262,7 @@
     "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.10",
+    "version": "0.11",
     "description": "An Analog Clock",
     "tags": "clock",
     "type": "clock",

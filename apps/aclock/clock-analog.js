@@ -1,3 +1,4 @@
+// eliminate ide undefined errors
 let g;
 let Bangle;
 
@@ -5,15 +6,18 @@ let Bangle;
 const locale = require('locale');
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 95; // watch face radius (240/2 - 24px for widget area)
+const faceWidth = 100; // watch face radius (240/2 - 24px for widget area)
+const widgetHeight=24+1;
 let timer = null;
 let currentDate = new Date();
-const centerPx = g.getWidth() / 2;
+const centerPxX = g.getWidth() / 2;
+const centerPxY = (g.getWidth() / 2) + widgetHeight/2;
+
 
 const seconds = (angle) => {
   const a = angle * pRad;
-  const x = centerPx + Math.sin(a) * faceWidth;
-  const y = centerPx - Math.cos(a) * faceWidth;
+  const x = centerPxX + Math.sin(a) * faceWidth;
+  const y = centerPxY - Math.cos(a) * faceWidth;
 
   // if 15 degrees, make hour marker larger
   const radius = (angle % 15) ? 2 : 4;
@@ -25,14 +29,14 @@ const hand = (angle, r1, r2) => {
   const r3 = 3;
 
   g.fillPoly([
-    Math.round(centerPx + Math.sin(a) * r1),
-    Math.round(centerPx - Math.cos(a) * r1),
-    Math.round(centerPx + Math.sin(a + p) * r3),
-    Math.round(centerPx - Math.cos(a + p) * r3),
-    Math.round(centerPx + Math.sin(a) * r2),
-    Math.round(centerPx - Math.cos(a) * r2),
-    Math.round(centerPx + Math.sin(a - p) * r3),
-    Math.round(centerPx - Math.cos(a - p) * r3)
+    Math.round(centerPxX + Math.sin(a) * r1),
+    Math.round(centerPxY - Math.cos(a) * r1),
+    Math.round(centerPxX + Math.sin(a + p) * r3),
+    Math.round(centerPxY - Math.cos(a + p) * r3),
+    Math.round(centerPxX + Math.sin(a) * r2),
+    Math.round(centerPxY - Math.cos(a) * r2),
+    Math.round(centerPxX + Math.sin(a - p) * r3),
+    Math.round(centerPxY - Math.cos(a - p) * r3)
   ]);
 };
 
@@ -54,6 +58,7 @@ const drawAll = () => {
     seconds((360 * i) / 60);
   }
   onSecond();
+
 };
 
 const resetSeconds = () => {
@@ -88,7 +93,7 @@ const drawDate = () => {
   // console.log(`${dayString}|${dateString}`);
   // center date
   const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
-  const t = centerPx + 37;
+  const t = centerPxY + 37;
   g.drawString(dateDisplay, l, t, true);
   // console.log(l, t);
 };
