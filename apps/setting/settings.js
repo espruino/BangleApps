@@ -140,7 +140,7 @@ function showMainMenu() {
       }
     },
     'Set Time': showSetTimeMenu,
-    'Auto-On': showAutoOnMenu,
+    'LCD Wake-Up': showWakeUpMenu,
     'Reset Settings': showResetMenu,
     'Turn Off': Bangle.off,
     '< Back': () => { load(); }
@@ -148,9 +148,9 @@ function showMainMenu() {
   return E.showMenu(mainmenu);
 }
 
-function showAutoOnMenu() {
-  const autoOnMenu = {
-    '': { 'title': 'Auto-On' },
+function showWakeUpMenu() {
+  const wakeUpMenu = {
+    '': { 'title': 'LCD Wake-Up' },
     '< Back': showMainMenu,
     'Wake On BTN1': {
       value: settings.options.wakeOnBTN1,
@@ -231,7 +231,7 @@ function showAutoOnMenu() {
       }
     }
   }
-  return E.showMenu(autoOnMenu)
+  return E.showMenu(wakeUpMenu)
 }
 
 function showLocaleMenu() {
