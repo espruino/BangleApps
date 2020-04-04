@@ -4,3 +4,5 @@
 0.05: Fix Settings json
 0.06: Remove distance setting as there's a separate app for Locale now
 0.07: Added vibrate as beep workaround
+0.08: Add support for app/widget settings
+0.09: Move Welcome into App/widget settings

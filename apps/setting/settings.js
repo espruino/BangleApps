@@ -95,14 +95,6 @@ function showMainMenu() {
         }
       }
     },
-    'Welcome App': {
-      value: !settings.welcomed,
-      format: boolFormat,
-      onchange: v => {
-        settings.welcomed = v?undefined:true;
-        updateSettings();
-      }
-    },
     'Locale': showLocaleMenu,
     'Select Clock': showClockMenu,
     'HID': {
@@ -114,6 +106,7 @@ function showMainMenu() {
       }
     },
     'Set Time': showSetTimeMenu,
+    'App/widget settings': showAppSettingsMenu,
     'Reset Settings': showResetMenu,
     'Turn Off': Bangle.off,
     '< Back': ()=> {load();}
@@ -293,6 +286,50 @@ function showSetTimeMenu() {
     }
   };
   return E.showMenu(timemenu);
+}
+
+function showAppSettingsMenu(){
+  let appmenu = {
+    '': {'title': 'App Settings'},
+    '< Back': showMainMenu,
+  }
+  const apps = storage.list(/\.info$/)
+    .map(app => storage.readJSON(app, 1))
+    .filter(app => app && app.settings)
+    .sort((a, b) => a.sortorder - b.sortorder)
+  if (apps.length === 0) {
+    appmenu['No app has settings'] = () => {};
+  }
+  apps.forEach(function (app) {
+    appmenu[app.name] = () => {showAppSettings(app)};
+  })
+  E.showMenu(appmenu)
+}
+function showAppSettings(app) {
+  const showError = msg => {
+    E.showMessage(`${app.name}:\n${msg}!\n\nBTN1 to go back`);
+    setWatch(showAppSettingsMenu, BTN1, { repeat: false });
+  }
+  let appSettings = storage.read(app.settings);
+  if (!appSettings) {
+    return showError('Missing settings');
+  }
+  try {
+    appSettings = eval(appSettings);
+  } catch (e) {
+    console.log(`${app.name} settings error:`, e)
+    return showError('Error in settings');
+  }
+  if (typeof appSettings !== "function") {
+    return showError('Invalid settings');
+  }
+  try {
+    // pass showAppSettingsMenu as "back" argument
+    appSettings(showAppSettingsMenu);
+  } catch (e) {
+    console.log(`${app.name} settings error:`, e)
+    return showError('Error in settings');
+  }
 }
 
 showMainMenu();
