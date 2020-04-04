@@ -27,7 +27,7 @@
   { "id": "daysl",
     "name": "Days left",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
     "tags": "",
     "allow_emulator":false,
