@@ -128,3 +128,7 @@ Bangle.on('swipe', dir => {
   if(dir == 1) prev();
   else next();
 });
+
+Bangle.on('lcdPower', function(on) {
+  if(!on) return load();
+});

@@ -78,13 +78,14 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
     "storage": [
       {"name":"welcome.js","url":"welcome.js"},
       {"name":"welcome.app.js","url":"app.js"},
+      {"name":"welcome.settings.js","url":"settings.js"},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -117,7 +118,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.08",
+    "version":"0.10",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -337,13 +338,16 @@
   },
   { "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
+    "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
-      {"name":"widbatpc.wid.js","url":"widget.js"}
+      {"name":"widbatpc.wid.js","url":"widget.js"},
+      {"name":"widbatpc.settings.js","url":"settings.js"},
+      {"name":"widbatpc.settings.json","content": "{}"}
     ]
   },
   { "id": "widbt",
@@ -663,7 +667,7 @@
   { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
     "type":"clock",
@@ -865,6 +869,19 @@
       {"name":"torch.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "wohrm",
+    "name": "Workout HRM",
+    "icon": "app.png",
+    "version":"0.05",
+    "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
+    "tags": "hrm,workout",
+    "type": "app",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"wohrm.app.js","url":"app.js"},
+      {"name":"wohrm.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "widid",
     "name": "Bluetooth ID Widget",
     "icon": "widget.png",
@@ -894,7 +911,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -940,6 +957,19 @@
     "storage": [
       {"name":"barclock.app.js","url":"clock-bar.js"},
       {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "dotclock",
+    "name": "Dot Clock",
+    "icon": "clock-dot.png",
+    "version":"0.01",
+    "description": "A Minimal Dot Analog Clock",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"dotclock.app.js","url":"clock-dot.js"},
+      {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
     ]
   },
   { "id": "widtbat",
@@ -1001,7 +1031,7 @@
     "name": "Touch Launcher",
     "shortName":"Menu",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -1046,6 +1076,19 @@
     "type":"widget",
     "storage": [
       {"name":"widmp.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "minionclk",
+    "name": "Minion clock",
+    "icon": "minionclk.png",
+    "version": "0.01",
+    "description": "Minion themed clock.",
+    "tags": "clock,minion",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"minionclk.app.js","url":"app.js"},
+      {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]

@@ -1,0 +1,5 @@
+0.01: Only tested on the emulator.
+0.02: Adapted to new App code layout
+0.03: Optimized rendering for the background
+0.04: Only buzz on high confidence (>85%)
+0.05: Improved buzz timing and rendering
