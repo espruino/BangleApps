@@ -18,5 +18,5 @@
     "background_color": "#5755d9",
     "display": "standalone",
     "start_url": "https://omegavoid.github.io/BangleApps",
-    "scope": "https://omegavoid.github.io/BangleApps"
+    "scope": "/BangleApps/"
 }
