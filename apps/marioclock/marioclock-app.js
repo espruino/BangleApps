@@ -228,7 +228,7 @@ function drawDate(date) {
   let dateStr = locale.date(date, true);
   dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
   dateStr = locale.dow(date, true) + " " + dateStr;
-  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 0);
+  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 1);
 }
 
 function redraw() {
