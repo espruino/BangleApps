@@ -5,13 +5,13 @@ const Setter = {
     LOWER: 'lower'
 };
     
-const shortBuzzTimeInMs = 50;
-const longBuzzTimeInMs = 200;
+const shortBuzzTimeInMs = 80;
+const longBuzzTimeInMs = 400;
 
-let upperLimit = 90;
+let upperLimit = 130;
 let upperLimitChanged = true;
 
-let lowerLimit = 50;
+let lowerLimit = 100;
 let lowerLimitChanged = true;
 
 let limitSetter = Setter.NONE;
@@ -76,8 +76,6 @@ function renderLowerLimitBackground() {
 function drawTrainingHeartRate() {
   //Only redraw if the display is on
   if (Bangle.isLCDOn()) {
-
-  
     renderUpperLimit();
   
     renderCurrentHeartRate();
@@ -111,7 +109,7 @@ function renderCurrentHeartRate() {
   if(!hrChanged) { return; }
   
   g.setColor(255,255,255);
-  g.fillRect(45, 110, 165, 150);
+  g.fillRect(55, 110, 165, 150);
 
   g.setColor(0,0,0);
   g.setFontVector(24);
@@ -186,14 +184,12 @@ function buzz()
   if(currentHeartRate > upperLimit)
   {
      Bangle.buzz(shortBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs+10);
-     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs+10);
+     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs * 2);
   }
 
   if(currentHeartRate < lowerLimit)
   {
      Bangle.buzz(longBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(longBuzzTimeInMs); }, longBuzzTimeInMs+10);
   }
 }
   
