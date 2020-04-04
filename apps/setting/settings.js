@@ -60,7 +60,6 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
-  var lcdSens = [""]
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': makeConnectable,
