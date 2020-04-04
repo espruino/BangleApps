@@ -95,14 +95,6 @@ function showMainMenu() {
         }
       }
     },
-    'Welcome App': {
-      value: !settings.welcomed,
-      format: boolFormat,
-      onchange: v => {
-        settings.welcomed = v?undefined:true;
-        updateSettings();
-      }
-    },
     'Locale': showLocaleMenu,
     'Select Clock': showClockMenu,
     'HID': {

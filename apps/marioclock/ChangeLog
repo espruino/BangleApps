@@ -3,3 +3,4 @@
 0.03: use short date format from locale, take timeout from settings
 0.04: modify date to display to be more at the original idea but still localized
 0.05: use 12/24 hour clock from settings
+0.06: Performance refactor, and enhanced graphics!
