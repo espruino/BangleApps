@@ -66,19 +66,26 @@ function draw() {
   g.fillRect(x+s-3,y+10,x+s,y+14);
   const l = E.getBattery(),
     c = levelColor(l);
-  g.setColor(c).fillRect(x+4,y+6,x+4+l*(s-12)/100,y+17);
+  const xl = x+4+l*(s-12)/100
+  g.setColor(c).fillRect(x+4,y+6,xl,y+17);
   g.setColor(-1);
   if (!setting('percentage')) {
     return;
   }
-  g.setFontAlign(-1,-1);
+  let gfx = g
+  if (setting('color') === 'Monochrome') {
+    // draw text inverted on battery level
+    gfx = Graphics.createCallback(240, 240, 1,
+      (x,y) => {g.setPixel(x,y,x<=xl?0:-1)})
+  }
+  gfx.setFontAlign(-1,-1);
   if (l >= 100) {
-    g.setFont('4x6', 2);
-    g.drawString(l, x + 6, y + 7);
+    gfx.setFont('4x6', 2);
+    gfx.drawString(l, x + 6, y + 7);
   } else {
     if (l < 10) x+=6;
-    g.setFont('6x8', 2);
-    g.drawString(l, x + 6, y + 4);
+    gfx.setFont('6x8', 2);
+    gfx.drawString(l, x + 6, y + 4);
   }
 }
 // reload widget, e.g. when settings have changed
