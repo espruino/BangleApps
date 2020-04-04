@@ -51,7 +51,9 @@ apps.forEach((app,addIdx) => {
       if (app.version != "0.01")
         WARN(`App ${app.id} has no ChangeLog`);
     } else {
-      var versions = fs.readFileSync(appDir+"ChangeLog").toString().match(/\d+\.\d+:/g);
+      var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
+      var versions = changeLog.match(/\d+\.\d+:/g);
+      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`);
       var lastChangeLog = versions.pop().slice(0,-1);
       if (lastChangeLog != app.version)
         WARN(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`);

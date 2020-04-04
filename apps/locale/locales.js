@@ -1,4 +1,20 @@
+/* jshint esversion: 6 */
+const distanceUnits = { // how many meters per X?
+  "m" : 1,
+  "yd" : 0.9144,
+  "mi" : 1609.34,
+  "km" : 1000,
+  "kmi" : 1000
+};
+const speedUnits = { // how many kph per X?
+  "kmh" : 1,
+  "kph" : 1,
+  "mph" : 1.60934
+};
+
 /*
+timePattern / datePattern:
+
     %Y	year four digits
     %y	last two digits of year (00..99)
     %m	month (01..12)
@@ -21,10 +37,10 @@ var locales = {
       lang: "en_GB",
       decimal_point: ".",
       thousands_sep: ",",
-      currency_symbol: "£",
+      currency_symbol: "£", currency_first:true,
       int_curr_symbol: "GBP",
       speed: 'mph',
-      distance: { "0": "mi", "1": "kmi" },
+      distance: { "0": "yd", "1": "mi" },
       temperature: '°C',
       ampm: {0:"am",1:"pm"},
       timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -55,10 +71,10 @@ var locales = {
         lang: "en_US",
         decimal_point: ".",
         thousands_sep: ",",
-        currency_symbol: "$",
+        currency_symbol: "$", currency_first:true,
         int_curr_symbol: "USD",
         speed: "mph",
-        distance: { 0: "mi", 1: "kmi" },
+        distance: { 0: "yd", 1: "mi" },
         temperature: "°F",
         ampm: {0:"am",1:"pm"},
         timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -348,10 +364,44 @@ var locales = {
       temperature: '°C',
       ampm: {0:"de",1:"du"},
       timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-      datePattern: { 0: "%Y %d %b", 1: "%Y.%m.%d" }, // 2020 Feb 28" // "2020.03.01."(short)
+      datePattern: { 0: "%Y %b %d, %A", 1: "%Y.%m.%d" }, // 2020 Feb 28, Péntek" // "2020.03.01."(short)
       abmonth: "Jan,Feb,Már,Ápr,Máj,Jún,Júl,Aug,Szep,Okt,Nov,Dec",
       month: "Január,Február,Március,Április,Május,Június,Július,Augusztus,Szeptember,Október,November,December",
       abday: "Vas,Hét,Ke,Szer,Csüt,Pén,Szom",
       day: "Vasárnap,Hétfő,Kedd,Szerda,Csütörtök,Péntek,Szombat",
-      trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }},	
+      trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }},
+    "pt_BR": {
+        lang: "pt_BR",
+        decimal_point: ",",
+        thousands_sep: ".",
+        currency_symbol: "R$", currency_first:true,
+        int_curr_symbol: "BRL",
+        speed: "kmh",
+        distance: { 0: "m", 1: "km" },
+        temperature: "°C",
+        ampm: {0:"am",1:"pm"},
+        timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+        datePattern: { 0: "", 1: "%d/%m/%y" },
+        abmonth: "Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez",
+        month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
+        abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
+        day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
+        trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }},
+    "cs_CZ": {   
+        lang: "cs_CZ",
+        decimal_point: ",",
+        thousands_sep: " ",
+        currency_symbol: "Kč",
+        int_curr_symbol: " CZK",
+        speed: 'kmh',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
+        ampm: {0:"dop",1:"odp"},
+        timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+        datePattern: { 0: "%d. %b %Y", 1: "%d.%m.%Y" }, // "30. led 2020" // "30.01.2020"(short)
+        abmonth: "led,úno,bře,dub,kvě,čvn,čvc,srp,zář,říj,lis,pro",
+        month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
+        abday: "ne,po,út,st,čt,pá,so",
+        day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
+        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }}  
 };

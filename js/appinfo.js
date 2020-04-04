@@ -27,14 +27,19 @@ var AppInfo = {
         // then map each file to a command to load into storage
         fileContents.forEach(storageFile => {
           // format ready for Espruino
-          var js;
           if (storageFile.evaluate) {
-            js = storageFile.content.trim();
+            let js = storageFile.content.trim();
             if (js.endsWith(";"))
               js = js.slice(0,-1);
-          } else
-            js = toJS(storageFile.content);
-          storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
+            storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
+          } else {
+            let code = storageFile.content;
+            // write code in chunks, in case it is too big to fit in RAM (fix #157)
+            var CHUNKSIZE = 4096;
+            storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${toJS(code.substr(0,CHUNKSIZE))},0,${code.length});`;
+            for (var i=CHUNKSIZE;i<code.length;i+=CHUNKSIZE)
+               storageFile.cmd += `\n\x10require('Storage').write(${toJS(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
+          }
         });
         resolve(fileContents);
       }).catch(err => reject(err));
@@ -55,6 +60,8 @@ var AppInfo = {
       if (app.type && app.type!="app") json.type = app.type;
       if (fileContents.find(f=>f.name==app.id+".app.js"))
         json.src = app.id+".app.js";
+      if (fileContents.find(f=>f.name==app.id+".settings.js"))
+        json.settings = app.id+".settings.js";
       if (fileContents.find(f=>f.name==app.id+".img"))
         json.icon = app.id+".img";
       if (app.sortorder) json.sortorder = app.sortorder;

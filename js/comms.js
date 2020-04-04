@@ -9,14 +9,19 @@ reset : (opt) => new Promise((resolve,reject) => {
   });
 }),
 uploadApp : (app,skipReset) => {
+  Progress.show({title:`Uploading ${app.name}`,sticky:true});
   return AppInfo.getFiles(app, httpGet).then(fileContents => {
     return new Promise((resolve,reject) => {
       console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
+      var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
+      var currentBytes = 0;
+
       // Upload each file one at a time
       function doUploadFiles() {
         // No files left - print 'reboot' message
         if (fileContents.length==0) {
           Puck.write(`\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+            Progress.hide({sticky:true});
             if (result===null) return reject("");
             resolve(app);
           });
@@ -24,17 +29,27 @@ uploadApp : (app,skipReset) => {
         }
         var f = fileContents.shift();
         console.log(`Upload ${f.name} => ${JSON.stringify(f.content)}`);
+        Progress.show({
+          min:currentBytes / maxBytes,
+          max:(currentBytes+f.content.length) / maxBytes});
+        currentBytes += f.content.length;
         // Chould check CRC here if needed instead of returning 'OK'...
         // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
         Puck.write(`\x10${f.cmd};Bluetooth.println("OK")\n`,(result) => {
-          if (!result || result.trim()!="OK") return reject("Unexpected response "+(result||""));
+          if (!result || result.trim()!="OK") {
+            Progress.hide({sticky:true});
+            return reject("Unexpected response "+(result||""));
+          }
           doUploadFiles();
         }, true); // wait for a newline
       }
       // Start the upload
       function doUpload() {
         Puck.write(`\x10E.showMessage('Uploading\\n${app.id}...')\n`,(result) => {
-          if (result===null) return reject("");
+          if (result===null) {
+            Progress.hide({sticky:true});
+            return reject("");
+          }
           doUploadFiles();
         });
       }
@@ -48,10 +63,15 @@ uploadApp : (app,skipReset) => {
   });
 },
 getInstalledApps : () => {
+  Progress.show({title:`Getting app list...`,sticky:true});
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
-      if (result===null) return reject("");
+      if (result===null) {
+        Progress.hide({sticky:true});
+        return reject("");
+      }
       Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
+        Progress.hide({sticky:true});
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
@@ -60,6 +80,7 @@ getInstalledApps : () => {
   });
 },
 removeApp : app => { // expects an app structure
+  Progress.show({title:`Removing ${app.name}`,sticky:true});
   var storage = [{name:app.id+".info"}].concat(app.storage);
   var cmds = storage.map(file=>{
     return `\x10require("Storage").erase(${toJS(file.name)});\n`;
@@ -67,19 +88,25 @@ removeApp : app => { // expects an app structure
   console.log("removeApp", cmds);
   return Comms.reset().then(new Promise((resolve,reject) => {
     Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+      Progress.hide({sticky:true});
       if (result===null) return reject("");
       resolve();
     });
-  }));
+  })).catch(function(reason) {
+    Progress.hide({sticky:true});
+    return Promise.reject(reason);
+  });
 },
 removeAllApps : () => {
-  return Comms.reset("wipe").then(() => new Promise((resolve,reject) => {
+  Progress.show({title:"Removing all apps",progess:"animate",sticky:true});
+  return new Promise((resolve,reject) => {
     // Use write with newline here so we wait for it to finish
-    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK")\n', (result,err) => {
+    Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n', (result,err) => {
+      Progress.hide({sticky:true});
       if (!result || result.trim()!="OK") return reject(err || "");
       resolve();
     }, true /* wait for newline */);
-  }));
+  });
 },
 setTime : () => {
   return new Promise((resolve,reject) => {
@@ -145,6 +172,51 @@ readFile : (file) => {
         if (content===null) return reject(err || "");
         resolve(atob(content));
       });
+    });
+  });
+},
+readStorageFile : (filename) => { // StorageFiles are different to normal storage entries
+  return new Promise((resolve,reject) => {
+    // Use "\xFF" to signal end of file (can't occur in files anyway)
+    var fileContent = "";
+    var fileSize = undefined;
+    var connection = Puck.getConnection();
+    connection.received = "";
+    connection.cb = function(d) {
+      var finished = false;
+      var eofIndex = d.indexOf("\xFF");
+      if (eofIndex>=0) {
+        finished = true;
+        d = d.substr(0,eofIndex);
+      }
+      fileContent += d;
+      if (fileSize === undefined) {
+        var newLineIdx = fileContent.indexOf("\n");
+        if (newLineIdx>=0) {
+          fileSize = parseInt(fileContent.substr(0,newLineIdx));
+          console.log("File size is "+fileSize);
+          fileContent = fileContent.substr(newLineIdx+1);
+        }
+      } else {
+        Progress.show({percent:100*fileContent.length / (fileSize||1000000)});
+      }
+      if (finished) {
+        Progress.hide();
+        connection.received = "";
+        connection.cb = undefined;
+        resolve(fileContent);
+      }
+    };
+    console.log(`Reading StorageFile ${JSON.stringify(filename)}`);
+    connection.write(`\x03\x10(function() {
+      var f = require("Storage").open(${JSON.stringify(filename)},"r");
+      Bluetooth.println(f.getLength());
+      var l = f.readLine();
+      while (l!==undefined) { Bluetooth.print(l); l = f.readLine(); }
+      Bluetooth.print("\xFF");
+    })()\n`,() => {
+      Progress.show({title:`Reading ${JSON.stringify(filename)}`,percent:0});
+      console.log(`StorageFile read started...`);
     });
   });
 }
