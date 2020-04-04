@@ -40,6 +40,6 @@ delete s;
 // stop users doing bad things!
 global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }
 // Load *.boot.js files
-var clockApps = require('Storage').list(/\.boot\.js/).map(bootFile=>{
+require('Storage').list(/\.boot\.js/).map(bootFile=>{
   eval(require('Storage').read(bootFile));
 });
