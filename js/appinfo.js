@@ -14,8 +14,16 @@ var AppInfo = {
             return {
               name : storageFile.name,
               content : content,
-              evaluate : storageFile.evaluate
+              evaluate : storageFile.evaluate,
+              type: storageFile.type,
           }});
+        else if ('type' in storageFile && storageFile.type === 'storage') {
+          return Promise.resolve({
+            name : storageFile.name,
+            evaluate : storageFile.evaluate,
+            type: storageFile.type,
+          });
+        }
         else return Promise.resolve();
       })).then(fileContents => { // now we just have a list of files + contents...
         // filter out empty files
@@ -32,7 +40,7 @@ var AppInfo = {
             if (js.endsWith(";"))
               js = js.slice(0,-1);
             storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
-          } else {
+          } else if ('content' in storageFile) {
             let code = storageFile.content;
             // write code in chunks, in case it is too big to fit in RAM (fix #157)
             var CHUNKSIZE = 4096;

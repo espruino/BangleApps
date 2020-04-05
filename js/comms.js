@@ -10,7 +10,21 @@ reset : (opt) => new Promise((resolve,reject) => {
 }),
 uploadApp : (app,skipReset) => {
   Progress.show({title:`Uploading ${app.name}`,sticky:true});
-  return AppInfo.getFiles(app, httpGet).then(fileContents => {
+  return AppInfo.getFiles(app, httpGet)
+    .then(fileContents => {
+      // skip files with no content
+      fileContents = fileContents.filter(f => 'content' in f)
+      // skip existing type:'storage' files
+      const storageFiles = fileContents.filter(f=>('type' in f && f.type === 'storage'))
+      if (storageFiles.length === 0) {
+        return Promise.resolve(fileContents)
+      }
+      const regex = new RegExp('^' + storageFiles.map(f => f.name).join('|') + '$')
+      return Comms.listFiles(regex).then(skip => {
+        return fileContents.filter(f => (skip.indexOf(f.name) === -1))
+      })
+    })
+    .then(fileContents => {
     return new Promise((resolve,reject) => {
       console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
       var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
@@ -79,22 +93,48 @@ getInstalledApps : () => {
     });
   });
 },
-removeApp : app => { // expects an app structure
-  Progress.show({title:`Removing ${app.name}`,sticky:true});
-  var storage = [{name:app.id+".info"}].concat(app.storage);
-  var cmds = storage.map(file=>{
-    return `\x10require("Storage").erase(${toJS(file.name)});\n`;
-  }).join("");
-  console.log("removeApp", cmds);
-  return Comms.reset().then(new Promise((resolve,reject) => {
-    Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+  /**
+   * @param app app structure
+   * @param forUpdate Is this just cleanup before we upload new app?
+   * @returns {Promise<unknown>}
+   */
+removeApp : (app, forUpdate) => { // expects an app structure
+  if (forUpdate === undefined) forUpdate = false // keep type:"storage" & to overwrite files?
+  if (forUpdate) Progress.show({title:`Cleaning old ${app.name} files`,sticky:true});
+  else Progress.show({title:`Removing ${app.name}`,sticky:true});
+  const storage = [{ name: app.id + '.info' }].concat(app.storage)
+  // default in case anything errors while getting list from device
+  let toRemove = storage.map(s => s.name)
+  // try to get file list from device
+  return Comms.readFile(app.id+".info").then(info=>{
+    toRemove = JSON.parse(info).files.split(',')
+    if (forUpdate) {
+      // no need to remove files that will be uploaded anyway
+      toRemove = toRemove.filter(f => (storage.map(s=>s.name).indexOf(f) === -1))
+    }
+  }).finally(()=>{
+    if (forUpdate) {
+      // keep type:"storage" files
+      const toKeep = storage.filter(s => ('type' in s && s.type === 'storage')).map(s => s.name)
+      toRemove = toRemove.filter(f => (toKeep.indexOf(f) === -1))
+      if (toRemove.length === 0) {
+        return Promise.resolve()
+      }
+    }
+    const cmds = toRemove.map(file => {
+      return `\x10require("Storage").erase(${toJS(file)});\n`
+    }).join('')
+    console.log("removeApp", cmds);
+    return Comms.reset().then(new Promise((resolve,reject) => {
+      Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
+        Progress.hide({sticky:true});
+        if (result===null) return reject("");
+        resolve();
+      });
+    })).catch(function(reason) {
       Progress.hide({sticky:true});
-      if (result===null) return reject("");
-      resolve();
+      return Promise.reject(reason);
     });
-  })).catch(function(reason) {
-    Progress.hide({sticky:true});
-    return Promise.reject(reason);
   });
 },
 removeAllApps : () => {
@@ -145,12 +185,13 @@ watchConnectionChange : cb => {
     clearInterval(interval);
   };
 },
-listFiles : () => {
+listFiles : (pattern) => {
+  if (pattern === undefined) pattern = ''
   return new Promise((resolve,reject) => {
     Puck.write("\x03",(result) => {
       if (result===null) return reject("");
       //use encodeURIComponent to serialize octal sequence of append files
-      Puck.eval('require("Storage").list().map(encodeURIComponent)', (files,err) => {
+      Puck.eval(`require("Storage").list(${pattern}).map(encodeURIComponent)`, (files,err) => {
         if (files===null) return reject(err || "");
         files = files.map(decodeURIComponent);
         console.log("listFiles", files);

@@ -221,20 +221,7 @@ function refreshLibrary() {
         // upload
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
-        Comms.uploadApp(app).then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(app.name+" Uploaded!", "success");
-          icon.classList.remove("loading");
-          icon.classList.add("icon-delete");
-          refreshMyApps();
-          refreshLibrary();
-        }).catch(err => {
-          Progress.hide({sticky:true});
-          showToast("Upload failed, "+err, "error");
-          icon.classList.remove("loading");
-          icon.classList.add("icon-upload");
-        });
+        uploadApp(app)
       } else if (icon.classList.contains("icon-menu")) {
         // custom HTML update
         icon.classList.remove("icon-menu");
@@ -260,6 +247,26 @@ function refreshLibrary() {
 refreshFilter();
 refreshLibrary();
 // =========================================== My Apps
+
+function uploadApp(app) {
+  // check app does not exist on device yet
+  return Comms.listFiles(RegExp('^'+app.id+'.info$')).then(info=>{
+    if (info.length !== 0) return updateApp(app)
+    Comms.uploadApp(app).then((appJSON) => {
+      Progress.hide({ sticky: true })
+      if (appJSON) {
+        appsInstalled.push(appJSON)
+      }
+      showToast(app.name + ' Uploaded!', 'success')
+    }).catch(err => {
+      Progress.hide({ sticky: true })
+      showToast('Upload failed, ' + err, 'error')
+    }).finally(()=>{
+      refreshMyApps();
+      refreshLibrary();
+    });
+  })
+}
 
 function removeApp(app) {
   return showPrompt("Delete","Really remove '"+app.name+"'?").then(() => {
@@ -289,7 +296,7 @@ function customApp(app) {
 
 function updateApp(app) {
   if (app.custom) return customApp(app);
-  return Comms.removeApp(app).then(()=>{
+  return Comms.removeApp(app, true).then(()=>{
     showToast(app.name+" removed successfully. Updating...",);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     return Comms.uploadApp(app);

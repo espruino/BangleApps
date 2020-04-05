@@ -346,7 +346,7 @@
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
       {"name":"widbatpc.settings.js","url":"settings.js"},
-      {"name":"widbatpc.settings.json","content": "{}"}
+      {"name":"widbatpc.settings.json","type": "storage"}
     ]
   },
   { "id": "widbt",

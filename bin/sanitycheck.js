@@ -71,7 +71,9 @@ apps.forEach((app,addIdx) => {
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
     fileNames.push(file.name);
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
-    if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`);
+    if (!file.url && !file.content && !app.custom && !('type' in file && file.type === 'storage')) {
+      ERROR(`App ${app.id} file ${file.name} has no contents`);
+    }
     var fileContents = "";
     if (file.content) fileContents = file.content;
     if (file.url) fileContents = fs.readFileSync(appDir+file.url).toString();
