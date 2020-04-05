@@ -21,6 +21,7 @@ function resetSettings() {
     HID : false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
     "12hour" : false,      // 12 or 24 hour clock?
+    brightness: 1,       // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
   };
   updateSettings();
@@ -72,14 +73,25 @@ function showMainMenu() {
         Bangle.setLCDTimeout(settings.timeout);
       }
     },
+    'LCD Brightness': {
+      value: settings.brightness,
+      min: 0,
+      max: 1,
+      step: 0.1,
+      onchange: v => {
+        settings.brightness = v || 1;
+        updateSettings();
+        Bangle.setLCDBrightness(settings.brightness);
+      }
+    },
     'Beep': {
       value: 0|beepV.indexOf(settings.beep),
       min:0,max:2,
       format: v=>beepN[v],
       onchange: v => {
         settings.beep = beepV[v];
-        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200) } // piezo
-        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200) } // vibrate
+        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo
+        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200); } // vibrate
         updateSettings();
       }
     },

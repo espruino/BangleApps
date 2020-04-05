@@ -6,3 +6,4 @@
 0.07: Added vibrate as beep workaround
 0.08: Add support for app/widget settings
 0.09: Move Welcome into App/widget settings
+0.10: Adds LCD brightness setting
