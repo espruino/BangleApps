@@ -19,8 +19,8 @@ function getApps(){
 const HEIGHT = g.getHeight();
 const WIDTH = g.getWidth();
 const HALF = WIDTH/2;
-const ANIMATION_SPEED = 0;
-const ANIMATION_STEP = 20;
+const ANIMATION_FRAME = 3; 
+const ANIMATION_STEP = HALF / ANIMATION_FRAME;
 
 function getPosition(index){
   return (index*HALF);
@@ -106,7 +106,7 @@ function draw(ignoreLoop){
   if(slideOffset == target) return;
   if(slideOffset < target) slideOffset+= ANIMATION_STEP;
   else if(slideOffset > target) slideOffset -= ANIMATION_STEP;
-  if(!ignoreLoop) setTimeout(draw, ANIMATION_SPEED);
+  if(!ignoreLoop) draw();
 }
 
 function animateTo(index){
