@@ -221,20 +221,7 @@ function refreshLibrary() {
         // upload
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
-        Comms.uploadApp(app).then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(app.name+" Uploaded!", "success");
-          icon.classList.remove("loading");
-          icon.classList.add("icon-delete");
-          refreshMyApps();
-          refreshLibrary();
-        }).catch(err => {
-          Progress.hide({sticky:true});
-          showToast("Upload failed, "+err, "error");
-          icon.classList.remove("loading");
-          icon.classList.add("icon-upload");
-        });
+        uploadApp(app)
       } else if (icon.classList.contains("icon-menu")) {
         // custom HTML update
         icon.classList.remove("icon-menu");
@@ -261,9 +248,35 @@ refreshFilter();
 refreshLibrary();
 // =========================================== My Apps
 
+function uploadApp(app) {
+  return getInstalledApps().then(()=>{
+    if (appsInstalled.some(i => i.id === app.id)) {
+      return updateApp(app)
+    }
+    Comms.uploadApp(app).then((appJSON) => {
+      Progress.hide({ sticky: true })
+      if (appJSON) {
+        appsInstalled.push(appJSON)
+      }
+      showToast(app.name + ' Uploaded!', 'success')
+    }).catch(err => {
+      Progress.hide({ sticky: true })
+      showToast('Upload failed, ' + err, 'error')
+    }).finally(()=>{
+      refreshMyApps();
+      refreshLibrary();
+    });
+  }).catch(err => {
+    showToast("Device connection failed, "+err,"error");
+  });
+}
+
 function removeApp(app) {
   return showPrompt("Delete","Really remove '"+app.name+"'?").then(() => {
-    return Comms.removeApp(app);
+    return getInstalledApps().then(()=>{
+      // a = from appid.info, app = from apps.json
+      return Comms.removeApp(appsInstalled.find(a => a.id === app.id))
+    })
   }).then(()=>{
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     showToast(app.name+" removed successfully","success");
@@ -289,8 +302,17 @@ function customApp(app) {
 
 function updateApp(app) {
   if (app.custom) return customApp(app);
-  return Comms.removeApp(app).then(()=>{
-    showToast(app.name+" removed successfully. Updating...",);
+  return getInstalledApps().then(() => {
+    // a = from appid.info, app = from apps.json
+    let remove = appsInstalled.find(a => a.id === app.id)
+    // no need to remove files which will be overwritten anyway
+    remove.files = remove.files.split(',')
+      .filter(f => f !== app.id + '.info')
+      .filter(f => !app.storage.some(s => s.name === f))
+      .join(',')
+    return Comms.removeApp(remove)
+  }).then(()=>{
+    showToast(`Updating ${app.name}...`);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     return Comms.uploadApp(app);
   }).then((appJSON) => {
@@ -369,16 +391,22 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
   });
 }
 
-function getInstalledApps() {
+let haveInstalledApps = false;
+function getInstalledApps(refresh) {
+  if (haveInstalledApps && !refresh) {
+    return Promise.resolve(appsInstalled)
+  }
   showLoadingIndicator("myappscontainer");
   // Get apps and files
   return Comms.getInstalledApps()
     .then(appJSON => {
       appsInstalled = appJSON;
+      haveInstalledApps = true;
       refreshMyApps();
       refreshLibrary();
     })
     .then(() => handleConnectionChange(true))
+    .then(() => appsInstalled)
     .catch(err=>{
       return Promise.reject();
     });
@@ -392,7 +420,7 @@ function handleConnectionChange(connected) {
 }
 
 htmlToArray(document.querySelectorAll(".btn.refresh")).map(button => button.addEventListener("click", () => {
-  getInstalledApps().catch(err => {
+  getInstalledApps(true).catch(err => {
     showToast("Getting app list failed, "+err,"error");
   });
 }));
@@ -400,7 +428,7 @@ connectMyDeviceBtn.addEventListener("click", () => {
   if (connectMyDeviceBtn.classList.contains('is-connected')) {
     Comms.disconnectDevice();
   } else {
-    getInstalledApps().catch(err => {
+    getInstalledApps(true).catch(err => {
       showToast("Device connection failed, "+err,"error");
     });
   }
@@ -440,7 +468,7 @@ document.getElementById("removeall").addEventListener("click",event=>{
     Progress.hide({sticky:true});
     appsInstalled = [];
     showToast("All apps removed","success");
-    return getInstalledApps();
+    return getInstalledApps(true);
   }).catch(err=>{
     Progress.hide({sticky:true});
     showToast("App removal failed, "+err,"error");
@@ -483,7 +511,7 @@ document.getElementById("installdefault").addEventListener("click",event=>{
     return Comms.setTime();
   }).then(()=>{
     showToast("Default apps successfully installed!","success");
-    return getInstalledApps();
+    return getInstalledApps(true);
   }).catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");
