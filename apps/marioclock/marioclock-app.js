@@ -1,10 +1,12 @@
-/**********************************
-  BangleJS MARIO CLOCK
-  + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
-  + Converting images to 1bit BMP: Image > Mode > Indexed and tick the "Use black and white (1-bit) palette", Then export as BMP.
-  + Online Image convertor: https://www.espruino.com/Image+Converter
-  + Images must be converted 1Bit White/Black !!! Not Black/White
-**********************************/
+/**
+ * BangleJS MARIO CLOCK
+ * 
+ * + Original Author: Paul Cockrell https://github.com/paulcockrell
+ * + Created: April 2020
+ * + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
+ * + Online Image convertor: https://www.espruino.com/Image+Converter, Use transparency + compression + 8bit Web + export as Image String
+ * + Images must be drawn as PNGs with transparent backgrounds
+ */
 
 const locale = require("locale");
 const storage = require('Storage');
@@ -105,9 +107,14 @@ function drawTreesFrame(x, y) {
   g.drawLine(x + 6 /* Match stalk to palm tree */, y + 6 /* Match stalk to palm tree */, x + 6, H - 6);
 }
 
-function drawTrees() {
-  let newSprite = {x: 90, y: Math.floor(Math.random() * (40 /* max */ - 5 /* min */ + 1) + 15 /* min */)};
+function generateTreeSprite() {
+  return {
+    x: 90,
+    y: Math.floor(Math.random() * (60 /* max */ - 30 /* min */ + 1) + 30 /* min */)
+  };
+}
 
+function drawTrees() {
   // remove first sprite if offscreen
   let firstBackgroundSprite = backgroundArr[0];
   if (firstBackgroundSprite) {
@@ -117,6 +124,7 @@ function drawTrees() {
   // set background sprite if array empty
   let lastBackgroundSprite = backgroundArr[backgroundArr.length - 1];
   if (!lastBackgroundSprite) {
+    const newSprite = generateTreeSprite();
     lastBackgroundSprite = newSprite;
     backgroundArr.push(lastBackgroundSprite);
   }
@@ -125,6 +133,7 @@ function drawTrees() {
   if (backgroundArr.length < 2 && lastBackgroundSprite.x < (16 * 7)) {
     const randIdx = Math.floor(Math.random() * 25);
     if (randIdx < 2) {
+      const newSprite = generateTreeSprite();
       backgroundArr.push(newSprite);
     }
   }
@@ -155,14 +164,13 @@ function drawCoin() {
 }
 
 function drawMarioFrame(idx, x, y) {
-  const mFr1 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw52FSg2HAAIoDAgIOMB5AAFGQTtKeBLuNcQwOJFwgJFA=")); // Mario Frame 1
-  const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
-
   switch(idx) {
     case 0:
+      const mFr1 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw52FSg2HAAIoDAgIOMB5AAFGQTtKeBLuNcQwOJFwgJFA=")); // Mario Frame 1
       g.drawImage(mFr1, x, y);
       break;
     case 1:
+      const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
       g.drawImage(mFr2, x, y);
       break;
     default:
