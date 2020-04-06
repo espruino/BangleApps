@@ -24,14 +24,20 @@ const LIGHTEST = "#effedd";
 const LIGHT = "#add795";
 const DARK = "#588d77";
 const DARKEST = "#122d3e";
+const NIGHT = "#001818";
 
-const marioSprite = {
+// Character names
+const TOAD = "toad";
+const MARIO = "mario";
+
+const characterSprite = {
   frameIdx: 0,
   x: 35,
   y: 55,
   jumpCounter: 0,
   jumpIncrement: Math.PI / 6,
-  isJumping: false
+  isJumping: false,
+  character: MARIO,
 };
 
 const coinSprite = {
@@ -51,6 +57,27 @@ const ONE_SECOND = 1000;
 
 let timer = 0;
 let backgroundArr = [];
+let nightMode = false;
+
+function genRanNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function switchCharacter() {
+  const curChar = characterSprite.character;
+  let newChar;
+  if (curChar === MARIO) {
+    newChar = TOAD;
+  } else {
+    newChar = MARIO;
+  }
+
+  characterSprite.character = newChar;
+}
+
+function toggleNightMode() {
+  nightMode = !nightMode;
+}
 
 function incrementTimer() {
   if (timer > 1000) {
@@ -63,19 +90,28 @@ function incrementTimer() {
 
 function drawBackground() {
   // Clear screen
-  g.setColor(LIGHTEST);
+  if (nightMode) {
+    g.setColor(NIGHT);
+  } else {
+    g.setColor(LIGHTEST);
+  }
   g.fillRect(0, 10, W, H);
 
-  // Date bar
-  g.setColor(DARKEST);
-  g.fillRect(0, 0, W, 9);
-
-  // draw sky
-  g.setColor(LIGHT);
+  // set cloud colors
+  if (nightMode) {
+    g.setColor(DARKEST);
+  } else {
+    g.setColor(LIGHT);
+  }
+  // draw clouds
   g.fillRect(0, 10, g.getWidth(), 15);
   g.fillRect(0, 17, g.getWidth(), 17);
   g.fillRect(0, 19, g.getWidth(), 19);
   g.fillRect(0, 21, g.getWidth(), 21);
+
+  // Date bar
+  g.setColor(DARKEST);
+  g.fillRect(0, 0, W, 9);
 }
 
 function drawFloor() {
@@ -177,36 +213,57 @@ function drawMarioFrame(idx, x, y) {
   }
 }
 
-function drawMario(date) {
+function drawToadFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const tFr1 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD")); // Toad Frame 1
+      g.drawImage(tFr1, x, y);
+      break;
+    case 1:
+      const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
+      g.drawImage(tFr2, x, y);
+      break;
+    default:
+  }
+}
+
+function drawCharacter(date, character) {
   // calculate jumping
   const seconds = date.getSeconds(),
         milliseconds = date.getMilliseconds();
 
-  if (seconds == 59 && milliseconds > 800 && !marioSprite.isJumping) {
-    marioSprite.isJumping = true;
+  if (seconds == 59 && milliseconds > 800 && !characterSprite.isJumping) {
+    characterSprite.isJumping = true;
   }
 
-  if (marioSprite.isJumping) {
-    marioSprite.y = (Math.sin(marioSprite.jumpCounter) * -12) + 50 /* Mario Y base value */;
-    marioSprite.jumpCounter += marioSprite.jumpIncrement;
+  if (characterSprite.isJumping) {
+    characterSprite.y = (Math.sin(characterSprite.jumpCounter) * -12) + 50 /* Character Y base value */;
+    characterSprite.jumpCounter += characterSprite.jumpIncrement;
 
-    if (parseInt(marioSprite.jumpCounter) === 2 && !coinSprite.isAnimating) {
+    if (parseInt(characterSprite.jumpCounter) === 2 && !coinSprite.isAnimating) {
       coinSprite.isAnimating = true;
     }
 
-    if (marioSprite.jumpCounter.toFixed(1) >= 4) {
-      marioSprite.jumpCounter = 0;
-      marioSprite.isJumping = false;
+    if (characterSprite.jumpCounter.toFixed(1) >= 4) {
+      characterSprite.jumpCounter = 0;
+      characterSprite.isJumping = false;
     }
   }
 
   // calculate animation timing
   if (timer % 50 === 0) {
     // shift to next frame
-    marioSprite.frameIdx ^= 1;
+    characterSprite.frameIdx ^= 1;
   }
 
-  drawMarioFrame(marioSprite.frameIdx, marioSprite.x, marioSprite.y);
+  switch(characterSprite.character) {
+    case("toad"):
+      drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case("mario"):
+    default:
+      drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+  }
 }
 
 function drawBrickFrame(x, y) {
@@ -252,7 +309,7 @@ function redraw() {
   drawTrees();
   drawTime(date);
   drawDate(date);
-  drawMario(date);
+  drawCharacter(date);
   drawCoin();
 
   // Render new frame
@@ -302,7 +359,7 @@ function init() {
 
   // Get Mario to jump!
   setWatch(() => {
-    if (intervalRef && !marioSprite.isJumping) marioSprite.isJumping = true;
+    if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
   }, BTN1, {repeat:true});
 
@@ -319,10 +376,25 @@ function init() {
     }
   });
 
-  Bangle.on('faceUp',function(up){
+  Bangle.on('faceUp', (up) => {
     if (up && !Bangle.isLCDOn()) {
       clearTimers();
       Bangle.setLCDPower(true);
+    }
+  });
+
+  Bangle.on('swipe', (sDir) => {
+    resetDisplayTimeout();
+
+    switch(sDir) {
+      // Swipe right (1) - change character (on a loop)
+      case(1):
+        switchCharacter();
+        break;
+      // Swipe left (-1) - change day/night mode (on a loop)
+      case(-1):
+      default:
+        toggleNightMode();
     }
   });
 
