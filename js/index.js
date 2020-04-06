@@ -26,7 +26,6 @@ function showChangeLog(appid) {
 function showReadme(appid) {
   var app = appNameToApp(appid);
   function show(contents) {
-    document.contents = contents;
     if (!contents) return;
     showPrompt(app.name + " Documentation", marked(contents), {ok: true}, false).catch(() => {});
   }

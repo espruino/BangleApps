@@ -99,7 +99,7 @@ function showToast(message, type) {
 /// Show a yes/no prompt
 function showPrompt(title, text, buttons, shouldEscapeHtml) {
   if (!buttons) buttons={yes:1,no:1};
-  if (!shouldEscapeHtml) shouldEscapeHtml = true;
+  if (typeof(shouldEscapeHtml) === 'undefined' || shouldEscapeHtml === null) shouldEscapeHtml = true;
 
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
