@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
 const Setter = {
-    NONE: "none",
-    UPPER: 'upper',
-    LOWER: 'lower'
+  NONE: "none",
+  UPPER: 'upper',
+  LOWER: 'lower'
 };
-    
+  
 const shortBuzzTimeInMs = 80;
 const longBuzzTimeInMs = 400;
 
@@ -77,11 +77,11 @@ function drawTrainingHeartRate() {
   //Only redraw if the display is on
   if (Bangle.isLCDOn()) {
     renderUpperLimit();
-  
+
     renderCurrentHeartRate();
-  
+
     renderLowerLimit();
-  
+
     renderConfidenceBars();
   }
 
@@ -90,24 +90,24 @@ function drawTrainingHeartRate() {
 
 function renderUpperLimit() {
   if(!upperLimitChanged) { return; }
-  
+
   g.setColor(1,0,0);
   g.fillRect(125,40, 210, 70);
-  
+
   if(limitSetter === Setter.UPPER){
     g.setColor(255,255, 0);
   } else {
     g.setColor(255,255,255);
   }
   g.setFontVector(13);
-  g.drawString("Upper  : " + upperLimit, 130,50);
-  
+  g.drawString("Upper: " + upperLimit, 125, 50);
+
   upperLimitChanged = false;
 }
-  
+
 function renderCurrentHeartRate() {
   if(!hrChanged) { return; }
-  
+
   g.setColor(255,255,255);
   g.fillRect(55, 110, 165, 150);
 
@@ -121,27 +121,27 @@ function renderCurrentHeartRate() {
 
   hrChanged = false;
 }
-  
+
 function renderLowerLimit() {
   if(!lowerLimitChanged) { return; }
-  
+
   g.setColor(0,0,1);
   g.fillRect(10, 180, 100, 210);
-  
+
   if(limitSetter === Setter.LOWER){
     g.setColor(255,255, 0);
   } else {
     g.setColor(255,255,255);
   }
   g.setFontVector(13);
-  g.drawString("Lower  : " + lowerLimit, 20,190);
-  
+  g.drawString("Lower: " + lowerLimit, 20,190);
+
   lowerLimitChanged = false;
 }
-  
+
 function renderConfidenceBars(){
   if(!confidenceChanged) { return; }
-  
+
   if(hrConfidence >= 85){
       g.setColor(0, 255, 0);
   } else if (hrConfidence >= 50) {
@@ -157,42 +157,51 @@ function renderConfidenceBars(){
 
   confidenceChanged = false;
 }
-  
-function renderButtonIcons() {
-  g.setColor(255,255,255);
+
+function renderPlusMinusIcons() {
+  if (limitSetter === Setter.NONE) {
+    g.setColor(0, 0, 0);
+  } else {
+    g.setColor(1, 1, 1);
+  }
+    
   g.setFontVector(14);
 
   //+ for Btn1
-  g.drawString("+", 222,50);
+  g.drawString("+", 222, 50);
+  
+  //- for Btn3
+  g.drawString("-", 222,165);
 
+  return;
+}
+
+function renderHomeIcon() {
   //Home for Btn2
+  g.setColor(1, 1, 1);
   g.drawLine(220, 118, 227, 110);
   g.drawLine(227, 110, 234, 118);
 
   g.drawPoly([222,117,222,125,232,125,232,117], false);
   g.drawRect(226,120,229,125);
-
-  //- for Btn3
-  g.drawString("-", 222,165);
 }
-  
-function buzz()
-{
+
+function buzz() {
   // Do not buzz if not confident
   if(hrConfidence < 85) { return; }
 
   if(currentHeartRate > upperLimit)
   {
-     Bangle.buzz(shortBuzzTimeInMs);
-     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs * 2);
+    Bangle.buzz(shortBuzzTimeInMs);
+    setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs * 2);
   }
 
   if(currentHeartRate < lowerLimit)
   {
-     Bangle.buzz(longBuzzTimeInMs);
+    Bangle.buzz(longBuzzTimeInMs);
   }
 }
-  
+
 function onHrm(hrm){
   if(currentHeartRate !== hrm.bpm){
     currentHeartRate = hrm.bpm;
@@ -204,97 +213,93 @@ function onHrm(hrm){
     confidenceChanged = true;
   }
 }
-  
+
 function setLimitSetterToLower() {
   resetHighlightTimeout();
 
   limitSetter = Setter.LOWER;
-  console.log("Limit setter is lower");
-  
+
   upperLimitChanged = true;
   lowerLimitChanged = true;
-  
+
   renderUpperLimit();
   renderLowerLimit();
+  renderPlusMinusIcons();
 }
-  
+
 function setLimitSetterToUpper() {
   resetHighlightTimeout();
 
   limitSetter = Setter.UPPER;
-  console.log("Limit setter is upper");
-  
+
   upperLimitChanged = true;
   lowerLimitChanged = true;
-  
+
   renderLowerLimit();
   renderUpperLimit();
+  renderPlusMinusIcons();
 }
-  
+
 function setLimitSetterToNone() {
   limitSetter = Setter.NONE;
-  console.log("Limit setter is none");
-  
+
   upperLimitChanged = true;
   lowerLimitChanged = true;
-  
+
   renderLowerLimit();
   renderUpperLimit();
+  renderPlusMinusIcons();
 }
-  
-function incrementLimit(){
+
+function incrementLimit() {
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
     upperLimit++;
     renderUpperLimit();
-    console.log("Upper limit: " + upperLimit);
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
     lowerLimit++;
     renderLowerLimit();
-    console.log("Lower limit: " + lowerLimit);
     lowerLimitChanged = true;
   }
 }
-  
+
 function decrementLimit(){
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
     upperLimit--;
     renderUpperLimit();
-    console.log("Upper limit: " + upperLimit);
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
     lowerLimit--;
     renderLowerLimit();
-    console.log("Lower limit: " + lowerLimit);
     lowerLimitChanged = true;
   }
 }
-  
+
 function resetHighlightTimeout() {
   if (setterHighlightTimeout) {
     clearTimeout(setterHighlightTimeout);
   }
-  
+
   setterHighlightTimeout = setTimeout(setLimitSetterToNone, 2000);
 }
-  
+
 // Show launcher when middle button pressed
 function switchOffApp(){
   Bangle.setHRMPower(0);
   Bangle.showLauncher();
 }
-  
+
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
   g.clear();
   if (on) {
     Bangle.drawWidgets();
-    renderButtonIcons();
-    // call your app function here
+
+    renderHomeIcon();
     renderLowerLimitBackground();
     renderUpperLimitBackground();
     lowerLimitChanged = true;
@@ -302,10 +307,10 @@ Bangle.on('lcdPower', (on) => {
     drawTrainingHeartRate();
   }
 });
-  
+
 Bangle.setHRMPower(1);
 Bangle.on('HRM', onHrm);
- 
+
 setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
 setWatch(switchOffApp, BTN2, {edge:"rising", debounce:50, repeat:true});
 setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
@@ -317,7 +322,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 //drawTrainingHeartRate();
 
-renderButtonIcons();
+renderHomeIcon();
 renderLowerLimitBackground();
 renderUpperLimitBackground();
 
