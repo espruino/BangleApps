@@ -23,13 +23,17 @@ function showChangeLog(appid) {
   httpGet(`apps/${appid}/ChangeLog`).
   then(show).catch(()=>show("No Change Log available"));
 }
+function hasReadme(appid) {
+  var app = appNameToApp(appid);
+  return app.readme;
+}
 function showReadme(appid) {
   var app = appNameToApp(appid);
   function show(contents) {
     if (!contents) return;
     showPrompt(app.name + " Documentation", marked(contents), {ok: true}, false).catch(() => {});
   }
-  httpGet(`apps/${appid}/README.md`).then(show).catch(()=>show("No more information available."));
+  httpGet(`apps/${appid}/${app.readme}`).then(show).catch(()=>show("Failed to load README."));
 }
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
@@ -190,7 +194,7 @@ function refreshLibrary() {
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}<br/>${readme}</p>
+      <p class="tile-subtitle">${escapeHtml(app.description)}${hasReadme ? `<br/>${readme}` : ''}</p>
       <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">

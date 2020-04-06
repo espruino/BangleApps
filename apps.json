@@ -898,6 +898,7 @@
     "tags": "clock,mario,retro",
     "type": "clock",
     "allow_emulator":true,
+    "readme": "README.md",
     "storage": [
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
