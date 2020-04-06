@@ -893,7 +893,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Animated Mario clock, jumps to change the time!",
     "tags": "clock,mario,retro",
     "type": "clock",
