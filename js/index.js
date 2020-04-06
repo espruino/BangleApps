@@ -23,6 +23,13 @@ function showChangeLog(appid) {
   httpGet(`apps/${appid}/ChangeLog`).
   then(show).catch(()=>show("No Change Log available"));
 }
+function showReadme(appid) {
+  var app = appNameToApp(appid);
+  function show(contents) {
+    showPrompt(app.name + " README", marked(contents), {ok: true}).catch(() => {});
+  }
+  httpGet(`apps/${appid}/README.md`).then(show).catch(()=>show("No README available"));
+}
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
   if (!appTemplate.custom) throw new Error("App doesn't have custom HTML");
@@ -175,12 +182,14 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
+    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read me</a>`;
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
+      <p class="tile-title text-bold">${readme}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
       <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
