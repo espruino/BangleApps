@@ -29,7 +29,7 @@ function showReadme(appid) {
     if (!contents) return;
     showPrompt(app.name + " Documentation", marked(contents), {ok: true}, false).catch(() => {});
   }
-  httpGet(`apps/${appid}/README.md`).then(show).catch(()=>show("No README available"));
+  httpGet(`apps/${appid}/README.md`).then(show).catch(()=>show("No more information available."));
 }
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
@@ -183,14 +183,14 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a href="#" onclick="showReadme('${app.id}')">View docs</a>`;
+    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read more...</a>`;
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
     </div>
     <div class="tile-content">
-      <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo} ${readme}</p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}</p>
+      <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
+      <p class="tile-subtitle">${escapeHtml(app.description)}<br/>${readme}</p>
       <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
