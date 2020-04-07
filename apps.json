@@ -1107,5 +1107,17 @@
       {"name":"openstmap.app.js","url":"app.js"},
       {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "tabata",
+    "name": "Tabata",
+    "shortName": "Tabata - Control High-Intensity Interval Training",
+    "icon": "tabata.png",
+    "version":"0.01",
+    "description": "Control high-intensity interval training (according to tabata: https://en.wikipedia.org/wiki/Tabata_method).",
+    "tags": "workout,health",
+    "storage": [
+      {"name":"tabata.app.js","url":"tabata.js"},
+      {"name":"tabata.img","url":"tabata-icon.js","evaluate":true}
+    ]
   }
 ]
