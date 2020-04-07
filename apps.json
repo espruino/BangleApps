@@ -1094,5 +1094,18 @@
       {"name":"minionclk.app.js","url":"app.js"},
       {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "openstmap",
+    "name": "OpenStreetMap",
+    "shortName":"OpenStMap",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
+    "tags": "outdoors,gps",
+    "custom": "custom.html",
+    "storage": [
+      {"name":"openstmap.app.js","url":"app.js"},
+      {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
