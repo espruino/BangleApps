@@ -1,4 +1,6 @@
+Bangle.setLCDMode("120x120");
 g.clear();
+g.flip();
 
 const Storage = require("Storage");
 
@@ -14,99 +16,144 @@ function getApps(){
   });
 }
 
-const selected = 0;
-const apps = getApps();
+const HEIGHT = g.getHeight();
+const WIDTH = g.getWidth();
+const HALF = WIDTH/2;
+const ANIMATION_FRAME = 3; 
+const ANIMATION_STEP = HALF / ANIMATION_FRAME;
 
-function prev(){
-  if (selected>=0) {
-    selected--;
-  }
-  drawMenu();
+function getPosition(index){
+  return (index*HALF);
 }
 
-function next() {
-  if (selected+1<apps.length) {
-    selected++;
-  }
-  drawMenu();
+let current_app = 0;
+let target = 0;
+let slideOffset = 0;
+
+const back = {
+  name: 'BACK',
+  back: true
+};
+
+const apps = [back].concat(getApps());
+apps.push(back);
+
+function noIcon(x, y, size){
+  const half = size/2;
+  g.setColor(1,1,1);
+  g.setFontAlign(-0,0);
+  const fontSize = Math.floor(size / 30 * 2);
+  g.setFont('6x8', fontSize);
+  if(fontSize) g.drawString('-?-', x+1.5, y);
+  g.drawRect(x-half, y-half, x+half, y+half);
+}
+
+function drawIcons(offset){
+  apps.forEach((app, i) => {
+    const x = getPosition(i) + HALF - offset;
+    const y = HALF - (HALF*0.3);//-(HALF*0.7);
+    let diff = (x - HALF);
+    if(diff < 0) diff *=-1;
+    let size = 30;
+    if((diff*0.5) < size) size -= (diff*0.5);
+    else size = 0;
+
+    const scale = size / 30;
+    if(size){
+      let c = size / 30 * 2;
+      c = c -1;
+      if(c < 0) c = 0;
+
+      if(app.back){
+        g.setFont('6x8', 1);
+        g.setFontAlign(0, -1);
+        g.setColor(c,c,c);
+        g.drawString('Back', HALF, HALF);
+        return;
+      }
+      // icon
+      const icon = app.icon ? Storage.read(app.icon) : null;
+      if(icon){
+        try {
+          g.drawImage(icon, x-(scale*24), y-(scale*24), { scale: scale });
+        } catch(e){
+          noIcon(x, y, size);
+        }
+      }else{
+        noIcon(x, y, size);
+      }
+      //text
+      g.setFont('6x8', 1);
+      g.setFontAlign(0, -1);
+      g.setColor(c,c,c);
+      g.drawString(app.name, HALF, HEIGHT - (HALF*0.7));
+
+      const type = app.type ? app.type : 'App';
+      const version = app.version ? app.version : '0.00';
+      const info = type+' v'+version;
+      g.setFontAlign(0,1);
+      g.setFont('4x6', 0.25);
+      g.setColor(c,c,c);
+      g.drawString(info, HALF, 110, { scale: scale });
+    }
+  });
+}
+
+function draw(ignoreLoop){
+  g.clear();
+  drawIcons(slideOffset);
+  g.flip();
+  if(slideOffset == target) return;
+  if(slideOffset < target) slideOffset+= ANIMATION_STEP;
+  else if(slideOffset > target) slideOffset -= ANIMATION_STEP;
+  if(!ignoreLoop) draw();
+}
+
+function animateTo(index){
+  target = getPosition(index);
+  draw();
+}
+function goTo(index){
+  current_app = index;
+  target = getPosition(index);
+  slideOffset = target;
+  draw(true);
+}
+
+goTo(1);
+
+function prev(){
+  if(current_app == 0) goTo(apps.length-1);
+  current_app -= 1;
+  if(current_app < 0) current_app = 0;
+  animateTo(current_app);
+}
+
+function next(){
+  if(current_app == apps.length-1) goTo(0);
+  current_app += 1;
+  if(current_app > apps.length-1) current_app = apps.length-1;
+  animateTo(current_app);
 }
 
 function run() {
-  if(selected < 0) return load();
-  if (!apps[selected].src) return;
-  if (Storage.read(apps[selected].src)===undefined) {
+  const app = apps[current_app];
+  if(app.back) return load();
+  if (Storage.read(app.src)===undefined) {
     E.showMessage("App Source\nNot found");
-    setTimeout(drawMenu, 2000);
+    setTimeout(draw, 2000);
   } else {
-    E.showMessage("Loading...");
-    load(apps[selected].src);
-  }
-}
-
-function getCurrentApp(){
-  return apps[selected];
-}
-
-function getNextApp(){
-  return apps[selected+1];
-}
-
-function drawFallbackIcon(){
-  g.setColor(1,1,1);
-  g.fillRect(72, 40, 168, 136);
-  g.setColor(0,0,0);
-  g.setFont('6x8', 8);
-  g.drawString('?', 124, 88);
-}
-
-function drawArrow(x, y, size, dir){
-  size = size || 10;
-  dir = dir || 1;
-  g.moveTo(x, y).lineTo(x+(size*dir), y-size).lineTo(x+(size*dir),y+size).lineTo(x, y);
-}
-
-function drawMenu(){
-
-  if(selected < 0){
+    Bangle.setLCDMode();
     g.clear();
-    g.setFontAlign(0,0);
-    g.setFont('6x8', 2);
-    g.drawString('Back', 120, 120);
-    drawArrow(220, 120, 10, -1);
-    return;
+    g.flip();
+    E.showMessage("Loading...");
+    load(app.src);
   }
-
-  const app = getCurrentApp();
-  g.clear();
-  g.setFontAlign(0,0);
-  g.setFont('6x8', 2);
-  if(!app) return g.drawString('???', 120, 120);
-  g.drawString(app.name, 120, 160);
-  if (app.icon) icon = Storage.read(app.icon);
-  if (icon) try {g.drawImage(icon, 120-48, 40, { scale: 2 });} catch(e){ drawFallbackIcon(); }
-  else drawFallbackIcon();
-
-  g.setFont('6x8', 1);
-
-  const type = app.type ? app.type : 'App';
-  const version = app.version ? app.version : '0.00';
-  const info = type+' v'+version;
-  g.setFontAlign(-1,1);
-  g.drawString(info, 20, 220);
-
-  const count = (selected+1)+'/'+apps.length;
-  g.setFontAlign(1,1);
-  g.drawString(count, 220, 220);
-
-  drawArrow(20, 120, 10, 1);
-  if(getNextApp()) drawArrow(220, 120, 10, -1);
 }
 
-drawMenu();
 
-// Physical buttons
-setWatch(prev, BTN1, {repeat:true});
-setWatch(next, BTN3, {repeat:true});
+setWatch(prev, BTN1, { repeat: true });
+setWatch(next, BTN3, { repeat: true });
 setWatch(run, BTN2, {repeat:true,edge:"falling"});
 
 // Screen event
@@ -127,4 +174,9 @@ Bangle.on('touch', function(button){
 Bangle.on('swipe', dir => {
   if(dir == 1) prev();
   else next();
+});
+
+// close launcher when lcd is off
+Bangle.on('lcdPower', on => {
+  if(!on) return load();
 });
