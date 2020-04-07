@@ -16,7 +16,8 @@
     Bluetooth.println(JSON.stringify(message));
   }
 
-  function showNotification(size, render) {
+  function showNotification(size, render, turnOn) {
+    if (turnOn === undefined) turnOn = true
     var oldMode = Bangle.getLCDMode();
 
     Bangle.setLCDMode("direct");
@@ -31,7 +32,7 @@
     g.fillRect(238, 240, 239, 319);
     g.fillRect(2, 318, 238, 319);
 
-    Bangle.setLCDPower(1); // light up
+    if (turnOn) Bangle.setLCDPower(1); // light up
     Bangle.setLCDMode(oldMode); // clears cliprect
 
     function anim() {
@@ -97,6 +98,7 @@
   }
 
   function handleMusicStateUpdate(event) {
+    const changed = state.music === event.state
     state.music = event.state
 
     if (state.music == "play") {
@@ -113,7 +115,7 @@
         g.setFont("6x8", 1);
         g.setColor("#ffffff");
         g.drawString(state.musicInfo.track, x, y + 22);
-      });
+      }, changed);
     }
 
     if (state.music == "pause") {
