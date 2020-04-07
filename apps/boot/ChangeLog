@@ -12,3 +12,4 @@
 0.12: Add an event on BTN2 to open launcher when no clock detected (fix #147)
 0.13: Now automatically load *.boot.js at startup
       Move alarm code into alarm.boot.js
+0.14: Move welcome loaders to *.boot.js

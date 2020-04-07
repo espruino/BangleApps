@@ -385,8 +385,6 @@ That way removing the app also cleans up `app.settings.json`.
 
 - Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `7chname.json`, then load it at startup.
 
-- 'Welcome' apps define a file called `welcome.js` which the booloader picks up. This then chain-loads the welcome app itself.
-
 - 'Alarm' apps define a file called `alarm.js` which handles the actual alarm window.
 
 - Locale is handled by `require("locale")`. An app may create a `locale` file in Storage which is
