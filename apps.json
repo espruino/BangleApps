@@ -403,6 +403,7 @@
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
     "allow_emulator":true,
+    "readme": "README.md",
     "storage": [
       {"name":"swatch.app.js","url":"stopwatch.js"},
       {"name":"swatch.img","url":"stopwatch-icon.js","evaluate":true}

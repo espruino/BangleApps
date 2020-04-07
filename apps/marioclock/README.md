@@ -3,7 +3,7 @@ Let's go back in time with this Gameboy inspired Mario retro clock.
 
 Enjoy watching Mario, or one of the other game characters run through a level while showing you the time and date.
 
-![](https://raw.githubusercontent.com/paulcockrell/BangleApps/master/apps/marioclock/mario-clock-screen-shot.png)
+![](mario-clock-screen-shot.png)
 
 ## Features
 

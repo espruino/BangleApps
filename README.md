@@ -216,6 +216,10 @@ and which gives information about the app for the Launcher.
   "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
   "tags": "",                 // comma separated tag list for searching
 
+  "readme": "README.md",      // if supplied, a link to a markdown-style text file
+                              // that contains more information about this app (usage, etc)
+                              // A 'Read more...' link will be added under the app
+
   "custom": "custom.html",    // if supplied, apps/custom.html is loaded in an
                               // iframe, and it must post back an 'app' structure
                               // like this one with 'storage','name' and 'id' set up

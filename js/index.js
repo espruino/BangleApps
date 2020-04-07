@@ -25,11 +25,13 @@ function showChangeLog(appid) {
 }
 function showReadme(appid) {
   var app = appNameToApp(appid);
+  var appPath = `apps/${appid}/`;
+  var markedOptions = { baseUrl : appPath };
   function show(contents) {
     if (!contents) return;
-    showPrompt(app.name + " Documentation", marked(contents), {ok: true}, false).catch(() => {});
+    showPrompt(app.name + " Documentation", marked(contents, markedOptions), {ok: true}, false).catch(() => {});
   }
-  httpGet(`apps/${appid}/${app.readme}`).then(show).catch(()=>show("Failed to load README."));
+  httpGet(appPath+app.readme).then(show).catch(()=>show("Failed to load README."));
 }
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
