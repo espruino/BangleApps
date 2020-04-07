@@ -55,10 +55,18 @@ const pyramidSprite = {
 };
 
 const ONE_SECOND = 1000;
+const DATE_MODE = "date";
+const BATT_MODE = "batt";
+const TEMP_MODE = "temp";
 
 let timer = 0;
 let backgroundArr = [];
 let nightMode = false;
+let infoMode = DATE_MODE;
+
+// Used to stop values flapping when displayed on screen
+let lastBatt = 0;
+let lastTemp = 0;
 
 function genRanNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -303,13 +311,78 @@ function drawTime(date) {
   g.drawString(mins, 47, 29);
 }
 
-function drawDate(date) {
-  g.setFont("6x8");
-  g.setColor(LIGHTEST);
+function buildDateStr(date) {
   let dateStr = locale.date(date, true);
   dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
   dateStr = locale.dow(date, true) + " " + dateStr;
-  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 1);
+
+  return dateStr;
+}
+
+function buildBatStr() {
+  let batt = parseInt(E.getBattery());
+  const battDiff = Math.abs(lastBatt - batt);
+
+  // Suppress flapping values
+  // Only update batt if it moves greater than +-2
+  if (battDiff > 2) {
+    lastBatt = batt;
+  } else {
+    batt = lastBatt;
+  }
+
+  const battStr = `Bat: ${batt}%`;
+
+  return battStr;
+}
+
+function buildTempStr() {
+  let temp = parseInt(E.getTemperature());
+  const tempDiff = Math.abs(lastTemp - temp);
+
+  // Suppress flapping values
+  // Only update temp if it moves greater than +-2
+  if (tempDiff > 2) {
+    lastTemp = temp;
+  } else {
+    temp = lastTemp;
+  }
+  const tempStr = `Temp: ${temp}'c`;
+
+  return tempStr;
+}
+
+function drawInfo(date) {
+  let str = "";
+  switch(infoMode) {
+    case TEMP_MODE:
+      str = buildTempStr();
+      break;
+    case BATT_MODE:
+      str = buildBatStr();
+      break;
+    case DATE_MODE:
+    default:
+      str = buildDateStr(date);
+  }
+
+  g.setFont("6x8");
+  g.setColor(LIGHTEST);
+  g.drawString(str, (W - g.stringWidth(str))/2, 1);
+}
+
+function changeInfoMode() {
+  switch(infoMode) {
+    case BATT_MODE:
+      infoMode = TEMP_MODE;
+      break;
+    case TEMP_MODE:
+      infoMode = DATE_MODE;
+      break;
+    case DATE_MODE:
+    default:
+      infoMode = BATT_MODE;
+  }
 }
 
 function redraw() {
@@ -324,7 +397,7 @@ function redraw() {
   drawPyramid();
   drawTrees();
   drawTime(date);
-  drawDate(date);
+  drawInfo(date);
   drawCharacter(date);
   drawCoin();
 
@@ -377,12 +450,18 @@ function init() {
   setWatch(() => {
     if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
-  }, BTN1, {repeat:true});
+  }, BTN1, {repeat: true});
 
+  // Close watch and load launcher app
   setWatch(() => {
     Bangle.setLCDMode();
     Bangle.showLauncher();
-  }, BTN2, {repeat:false,edge:"falling"});
+  }, BTN2, {repeat: false, edge: "falling"});
+
+  // Change info mode
+  setWatch(() => {
+    changeInfoMode();
+  }, BTN3, {repeat: true});
 
   Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
 
