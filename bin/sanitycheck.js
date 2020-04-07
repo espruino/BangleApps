@@ -62,6 +62,7 @@ apps.forEach((app,addIdx) => {
   if (!app.description) ERROR(`App ${app.id} has no description`);
   if (!app.icon) ERROR(`App ${app.id} has no icon`);
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
+  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`);
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`);
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`);
   var fileNames = [];
