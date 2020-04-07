@@ -5,11 +5,11 @@ Bangle.setLCDTimeout(0);
 
 g.clear();
 
-
-
 var fix;
+Bangle.setGPSPower(1);
 Bangle.on('GPS',function(f) {
   fix = f;
+  g.reset(1);
   g.setFont("6x8",2);
   g.setFontAlign(0,0);
   g.clearRect(90,30,239,90);
@@ -22,9 +22,12 @@ Bangle.on('GPS',function(f) {
   }
   g.setFont("6x8");
   g.drawString(fix.satellites+" satellites",170,80);
-  
+
   g.clearRect(0,100,239,239);
-  var t = fix.time.toString().split(" ");/*
+  var t = ["","","","---",""];
+  if (fix.time!==undefined)
+    t = fix.time.toString().split(" ");
+    /*
  [
   "Sun",
   "Nov",
@@ -42,23 +45,24 @@ Bangle.on('GPS',function(f) {
   g.drawString(t[3],120,160); // year
   g.setFont("6x8",3);
   g.drawString(t[4],120,185); // time
-  // timezone
-  var tz = (new Date()).getTimezoneOffset()/60;
-  if (tz==0) tz="UTC";
-  else if (tz>0) tz="UTC+"+tz;
-  else tz="UTC"+tz;
-  g.setFont("6x8",2);
-  g.drawString(tz,120,210); // gmt
-  g.setFontAlign(0,0,3);
-  g.drawString("Set",230,120);
-  g.setFontAlign(0,0);
+  if (fix.time) {
+    // timezone
+    var tz = (new Date()).getTimezoneOffset()/60;
+    if (tz==0) tz="UTC";
+    else if (tz>0) tz="UTC+"+tz;
+    else tz="UTC"+tz;
+    g.setFont("6x8",2);
+    g.drawString(tz,120,210); // gmt
+    g.setFontAlign(0,0,3);
+    g.drawString("Set",230,120);
+    g.setFontAlign(0,0);
+  }
 });
 
 setInterval(function() {
   g.drawImage(img,48,48,{scale:1.5,rotate:Math.sin(getTime()*2)/2});
 },100);
 setWatch(function() {
-  setTime(fix.time.getTime()/1000);
+  if (fix.time!==undefined)
+    setTime(fix.time.getTime()/1000);
 }, BTN2, {repeat:true});
-
-Bangle.setGPSPower(1)

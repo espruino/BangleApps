@@ -1,0 +1,7 @@
+0.01: Create mario app [Paul Cockrell https://github.com/paulcockrell]
+0.02: Fix day of the week and add padding
+0.03: use short date format from locale, take timeout from settings
+0.04: modify date to display to be more at the original idea but still localized
+0.05: use 12/24 hour clock from settings
+0.06: Performance refactor, and enhanced graphics!
+0.07: Swipe right to change between Mario and Toad characters, swipe left to toggle night mode

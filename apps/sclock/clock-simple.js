@@ -10,11 +10,15 @@ const yposDate = 130;
 const yposYear = 175;
 const yposGMT = 220;
 
+// Check settings for what type our clock should be
+var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+
 function drawSimpleClock() {
   // get date
   var d = new Date();
   var da = d.toString().split(" ");
 
+  g.reset(); // default draw styles
   // drawSting centered
   g.setFontAlign(0, 0);
 
@@ -22,8 +26,24 @@ function drawSimpleClock() {
   var time = da[4].substr(0, 5).split(":");
   var hours = time[0],
     minutes = time[1];
+  var meridian = "";
+  if (is12Hour) {
+    hours = parseInt(hours,10);
+    meridian = "AM";
+    if (hours == 0) {
+      hours = 12;
+      meridian = "AM";
+    } else if (hours >= 12) {
+      meridian = "PM";
+      if (hours>12) hours -= 12;
+    }
+    hours = (" "+hours).substr(-2);
+  }
+
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
+  g.setFont(font, gmtFontSize);
+  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
 
   // draw Day, name of month, Date
   var date = [da[0], da[1], da[2]].join(" ");

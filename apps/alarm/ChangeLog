@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Fix issues with alarm scheduling
+0.03: More alarm scheduling issues
+0.04: Tweaks for variable size widget system
+0.05: Add alarm.boot.js and move code from the bootloader
