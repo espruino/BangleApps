@@ -1,6 +1,6 @@
 /**
  * BangleJS MARIO CLOCK
- * 
+ *
  * + Original Author: Paul Cockrell https://github.com/paulcockrell
  * + Created: April 2020
  * + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
@@ -90,20 +90,13 @@ function incrementTimer() {
 
 function drawBackground() {
   // Clear screen
-  if (nightMode) {
-    g.setColor(NIGHT);
-  } else {
-    g.setColor(LIGHTEST);
-  }
+  const bgColor = (nightMode) ? NIGHT : LIGHTEST;
+  g.setColor(bgColor);
   g.fillRect(0, 10, W, H);
 
-  // set cloud colors
-  if (nightMode) {
-    g.setColor(DARKEST);
-  } else {
-    g.setColor(LIGHT);
-  }
-  // draw clouds
+  // set cloud colors and draw clouds
+  const cloudColor = (nightMode) ? DARK : LIGHT;
+  g.setColor(cloudColor);
   g.fillRect(0, 10, g.getWidth(), 15);
   g.fillRect(0, 17, g.getWidth(), 17);
   g.fillRect(0, 19, g.getWidth(), 19);
@@ -124,14 +117,15 @@ function drawFloor() {
 function drawPyramid() {
   const pPol = [pyramidSprite.x + 10, H - 6, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 6]; // Pyramid poly
 
-  g.setColor(LIGHT);
+  const color = (nightMode) ? DARK : LIGHT;
+  g.setColor(color);
   g.fillPoly(pPol);
 
   pyramidSprite.x -= 1;
   // Reset and randomize pyramid if off-screen
   if (pyramidSprite.x < - 100) {
     pyramidSprite.x = 90;
-    pyramidSprite.height = Math.floor(Math.random() * (60 /* max */ - 25 /* min */ + 1) + 25 /* min */);
+    pyramidSprite.height = genRanNum(25, 60);
   }
 }
 
@@ -146,7 +140,7 @@ function drawTreesFrame(x, y) {
 function generateTreeSprite() {
   return {
     x: 90,
-    y: Math.floor(Math.random() * (60 /* max */ - 30 /* min */ + 1) + 30 /* min */)
+    y: genRanNum(30, 60)
   };
 }
 
@@ -257,10 +251,10 @@ function drawCharacter(date, character) {
   }
 
   switch(characterSprite.character) {
-    case("toad"):
+    case(TOAD):
       drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
       break;
-    case("mario"):
+    case(MARIO):
     default:
       drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
   }

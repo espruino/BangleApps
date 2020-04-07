@@ -913,10 +913,11 @@
     "name": "Mario Clock",
     "icon": "marioclock.png",
     "version":"0.07",
-    "description": "Animated Mario clock, jumps to change the time! Swipe right to change the character, and swipe left to toggle night mode. Press BTN1 to jump.",
+    "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
     "allow_emulator":true,
+    "readme": "README.md",
     "storage": [
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}

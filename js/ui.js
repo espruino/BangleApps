@@ -97,8 +97,10 @@ function showToast(message, type) {
 }
 
 /// Show a yes/no prompt
-function showPrompt(title, text, buttons) {
+function showPrompt(title, text, buttons, shouldEscapeHtml) {
   if (!buttons) buttons={yes:1,no:1};
+  if (typeof(shouldEscapeHtml) === 'undefined' || shouldEscapeHtml === null) shouldEscapeHtml = true;
+
   return new Promise((resolve,reject) => {
     var modal = htmlElement(`<div class="modal active">
       <!--<a href="#close" class="modal-overlay" aria-label="Close"></a>-->
@@ -109,7 +111,7 @@ function showPrompt(title, text, buttons) {
         </div>
         <div class="modal-body">
           <div class="content">
-            ${escapeHtml(text).replace(/\n/g,'<br/>')}
+            ${(shouldEscapeHtml) ? escapeHtml(text).replace(/\n/g,'<br/>') : text}
           </div>
         </div>
         <div class="modal-footer">
