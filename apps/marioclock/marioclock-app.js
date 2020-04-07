@@ -27,6 +27,7 @@ const DARKEST = "#122d3e";
 const NIGHT = "#001818";
 
 // Character names
+const DAISY = "daisy";
 const TOAD = "toad";
 const MARIO = "mario";
 
@@ -65,11 +66,18 @@ function genRanNum(min, max) {
 
 function switchCharacter() {
   const curChar = characterSprite.character;
+
   let newChar;
-  if (curChar === MARIO) {
-    newChar = TOAD;
-  } else {
-    newChar = MARIO;
+  switch(curChar) {
+    case DAISY:
+      newChar = MARIO;
+      break;
+    case  TOAD:
+      newChar = DAISY;
+      break;
+    case MARIO:
+    default:
+      newChar = TOAD;
   }
 
   characterSprite.character = newChar;
@@ -193,6 +201,19 @@ function drawCoin() {
   drawCoinFrame(coinSprite.x, coinSprite.y);
 }
 
+function drawDaisyFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const dFr1 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
+      g.drawImage(dFr1, x, y);
+      break;
+    case 1:
+    default:
+      const dFr2 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
+      g.drawImage(dFr2, x, y);
+  }
+}
+
 function drawMarioFrame(idx, x, y) {
   switch(idx) {
     case 0:
@@ -200,10 +221,9 @@ function drawMarioFrame(idx, x, y) {
       g.drawImage(mFr1, x, y);
       break;
     case 1:
+    default:
       const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
       g.drawImage(mFr2, x, y);
-      break;
-    default:
   }
 }
 
@@ -214,10 +234,9 @@ function drawToadFrame(idx, x, y) {
       g.drawImage(tFr1, x, y);
       break;
     case 1:
+    default:
       const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
       g.drawImage(tFr2, x, y);
-      break;
-    default:
   }
 }
 
@@ -251,10 +270,13 @@ function drawCharacter(date, character) {
   }
 
   switch(characterSprite.character) {
-    case(TOAD):
+    case DAISY:
+      drawDaisyFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case TOAD:
       drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
       break;
-    case(MARIO):
+    case MARIO:
     default:
       drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
   }
@@ -362,13 +384,7 @@ function init() {
     Bangle.showLauncher();
   }, BTN2, {repeat:false,edge:"falling"});
 
-  Bangle.on('lcdPower', (on) => {
-    if (on) {
-      startTimers();
-    } else {
-      clearTimers();
-    }
-  });
+  Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
 
   Bangle.on('faceUp', (up) => {
     if (up && !Bangle.isLCDOn()) {
@@ -382,11 +398,11 @@ function init() {
 
     switch(sDir) {
       // Swipe right (1) - change character (on a loop)
-      case(1):
+      case 1:
         switchCharacter();
         break;
       // Swipe left (-1) - change day/night mode (on a loop)
-      case(-1):
+      case -1:
       default:
         toggleNightMode();
     }
