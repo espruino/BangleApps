@@ -450,7 +450,7 @@ function init() {
   setWatch(() => {
     if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
-  }, BTN1, {repeat: true});
+  }, BTN3, {repeat: true});
 
   // Close watch and load launcher app
   setWatch(() => {
@@ -461,7 +461,7 @@ function init() {
   // Change info mode
   setWatch(() => {
     changeInfoMode();
-  }, BTN3, {repeat: true});
+  }, BTN1, {repeat: true});
 
   Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
 
