@@ -1118,6 +1118,18 @@
     "storage": [
       {"name":"tabata.app.js","url":"tabata.js"},
       {"name":"tabata.img","url":"tabata-icon.js","evaluate":true}
+    ]  
+  },
+  { "id": "custom",
+    "name": "Custom Boot Code ",
+    "icon": "custom.png",
+    "version":"0.01",
+    "description": "Add code you want to run at boot time",
+    "tags": "tool,system",
+    "type": "bootloader",
+    "custom":"custom.html",
+    "storage": [
+       {"name":"custom"}
     ]
   }
 ]
