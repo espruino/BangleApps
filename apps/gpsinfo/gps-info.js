@@ -52,7 +52,11 @@ function onGPS(fix) {
     g.setFont("6x8", 2);
     g.drawString("Waiting for GPS", 120, 80);
     nofix = (nofix+1) % 4;
-    g.drawString(".".repeat(nofix) + " ".repeat(4-nofix), 120, 120)
+    g.drawString(".".repeat(nofix) + " ".repeat(4-nofix), 120, 120);
+    // Show number of satellites:
+    g.setFontAlign(0,0);
+    g.setFont("6x8");
+    g.drawString(fix.satellites+" satellites", 120, 100);
   }
   g.flip();
 }
