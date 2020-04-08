@@ -53,18 +53,23 @@ TODO:
 * Could potentially use a custom 16 color palette?
 * Allow user to choose size of map area to be uploaded (small/med/large)
 * What is faster? Storing as a compressed image and decompressing, or storing decompressed?
-* Scaling for zoom levels
 
     */
       var TILESIZE = 64;
       var OSMTILESIZE = 256;
       var OSMSUBTILES = OSMTILESIZE / TILESIZE;
+      /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
+      However some don't allow cross-origin use */
+      var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
+      //var TILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
       var map = L.map('map').locate({setView: true, maxZoom: 16});
-      var tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      //var tileLayer = L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png', { // black and white
+      var tileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
+      // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
       var mapFiles = [];
       tileLayer.addTo(map);
 
