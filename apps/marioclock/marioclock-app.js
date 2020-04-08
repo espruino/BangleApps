@@ -27,12 +27,13 @@ const DARKEST = "#122d3e";
 const NIGHT = "#001818";
 
 // Character names
+const DAISY = "daisy";
 const TOAD = "toad";
 const MARIO = "mario";
 
 const characterSprite = {
   frameIdx: 0,
-  x: 35,
+  x: 33,
   y: 55,
   jumpCounter: 0,
   jumpIncrement: Math.PI / 6,
@@ -54,10 +55,18 @@ const pyramidSprite = {
 };
 
 const ONE_SECOND = 1000;
+const DATE_MODE = "date";
+const BATT_MODE = "batt";
+const TEMP_MODE = "temp";
 
 let timer = 0;
 let backgroundArr = [];
 let nightMode = false;
+let infoMode = DATE_MODE;
+
+// Used to stop values flapping when displayed on screen
+let lastBatt = 0;
+let lastTemp = 0;
 
 function genRanNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -65,11 +74,18 @@ function genRanNum(min, max) {
 
 function switchCharacter() {
   const curChar = characterSprite.character;
+
   let newChar;
-  if (curChar === MARIO) {
-    newChar = TOAD;
-  } else {
-    newChar = MARIO;
+  switch(curChar) {
+    case DAISY:
+      newChar = MARIO;
+      break;
+    case  TOAD:
+      newChar = DAISY;
+      break;
+    case MARIO:
+    default:
+      newChar = TOAD;
   }
 
   characterSprite.character = newChar;
@@ -193,6 +209,19 @@ function drawCoin() {
   drawCoinFrame(coinSprite.x, coinSprite.y);
 }
 
+function drawDaisyFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const dFr1 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
+      g.drawImage(dFr1, x, y);
+      break;
+    case 1:
+    default:
+      const dFr2 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
+      g.drawImage(dFr2, x, y);
+  }
+}
+
 function drawMarioFrame(idx, x, y) {
   switch(idx) {
     case 0:
@@ -200,10 +229,9 @@ function drawMarioFrame(idx, x, y) {
       g.drawImage(mFr1, x, y);
       break;
     case 1:
+    default:
       const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
       g.drawImage(mFr2, x, y);
-      break;
-    default:
   }
 }
 
@@ -214,10 +242,9 @@ function drawToadFrame(idx, x, y) {
       g.drawImage(tFr1, x, y);
       break;
     case 1:
+    default:
       const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
       g.drawImage(tFr2, x, y);
-      break;
-    default:
   }
 }
 
@@ -251,10 +278,13 @@ function drawCharacter(date, character) {
   }
 
   switch(characterSprite.character) {
-    case(TOAD):
+    case DAISY:
+      drawDaisyFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case TOAD:
       drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
       break;
-    case(MARIO):
+    case MARIO:
     default:
       drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
   }
@@ -281,13 +311,78 @@ function drawTime(date) {
   g.drawString(mins, 47, 29);
 }
 
-function drawDate(date) {
-  g.setFont("6x8");
-  g.setColor(LIGHTEST);
+function buildDateStr(date) {
   let dateStr = locale.date(date, true);
   dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
   dateStr = locale.dow(date, true) + " " + dateStr;
-  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 1);
+
+  return dateStr;
+}
+
+function buildBatStr() {
+  let batt = parseInt(E.getBattery());
+  const battDiff = Math.abs(lastBatt - batt);
+
+  // Suppress flapping values
+  // Only update batt if it moves greater than +-2
+  if (battDiff > 2) {
+    lastBatt = batt;
+  } else {
+    batt = lastBatt;
+  }
+
+  const battStr = `Bat: ${batt}%`;
+
+  return battStr;
+}
+
+function buildTempStr() {
+  let temp = parseInt(E.getTemperature());
+  const tempDiff = Math.abs(lastTemp - temp);
+
+  // Suppress flapping values
+  // Only update temp if it moves greater than +-2
+  if (tempDiff > 2) {
+    lastTemp = temp;
+  } else {
+    temp = lastTemp;
+  }
+  const tempStr = `Temp: ${temp}'c`;
+
+  return tempStr;
+}
+
+function drawInfo(date) {
+  let str = "";
+  switch(infoMode) {
+    case TEMP_MODE:
+      str = buildTempStr();
+      break;
+    case BATT_MODE:
+      str = buildBatStr();
+      break;
+    case DATE_MODE:
+    default:
+      str = buildDateStr(date);
+  }
+
+  g.setFont("6x8");
+  g.setColor(LIGHTEST);
+  g.drawString(str, (W - g.stringWidth(str))/2, 1);
+}
+
+function changeInfoMode() {
+  switch(infoMode) {
+    case BATT_MODE:
+      infoMode = TEMP_MODE;
+      break;
+    case TEMP_MODE:
+      infoMode = DATE_MODE;
+      break;
+    case DATE_MODE:
+    default:
+      infoMode = BATT_MODE;
+  }
 }
 
 function redraw() {
@@ -302,7 +397,7 @@ function redraw() {
   drawPyramid();
   drawTrees();
   drawTime(date);
-  drawDate(date);
+  drawInfo(date);
   drawCharacter(date);
   drawCoin();
 
@@ -355,20 +450,20 @@ function init() {
   setWatch(() => {
     if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
-  }, BTN1, {repeat:true});
+  }, BTN3, {repeat: true});
 
+  // Close watch and load launcher app
   setWatch(() => {
     Bangle.setLCDMode();
     Bangle.showLauncher();
-  }, BTN2, {repeat:false,edge:"falling"});
+  }, BTN2, {repeat: false, edge: "falling"});
 
-  Bangle.on('lcdPower', (on) => {
-    if (on) {
-      startTimers();
-    } else {
-      clearTimers();
-    }
-  });
+  // Change info mode
+  setWatch(() => {
+    changeInfoMode();
+  }, BTN1, {repeat: true});
+
+  Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
 
   Bangle.on('faceUp', (up) => {
     if (up && !Bangle.isLCDOn()) {
@@ -382,11 +477,11 @@ function init() {
 
     switch(sDir) {
       // Swipe right (1) - change character (on a loop)
-      case(1):
+      case 1:
         switchCharacter();
         break;
       // Swipe left (-1) - change day/night mode (on a loop)
-      case(-1):
+      case -1:
       default:
         toggleNightMode();
     }
