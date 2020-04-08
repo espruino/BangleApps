@@ -33,7 +33,7 @@ const MARIO = "mario";
 
 const characterSprite = {
   frameIdx: 0,
-  x: 35,
+  x: 33,
   y: 55,
   jumpCounter: 0,
   jumpIncrement: Math.PI / 6,
