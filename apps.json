@@ -786,12 +786,13 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
     "storage": [
-      {"name":"widpedom.wid.js","url":"widget.js"}
+      {"name":"widpedom.wid.js","url":"widget.js"},
+      {"name":"widpedom.settings.js","url":"settings.js"}
     ]
   },
   { "id": "berlinc",
