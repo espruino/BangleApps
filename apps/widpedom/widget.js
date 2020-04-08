@@ -2,6 +2,7 @@
   const PEDOMFILE = "wpedom.json";
   let lastUpdate = new Date();
   let stp_today = 0;
+  let stp_today_goal = 2000;
 
   // draw your widget
   function draw() {
@@ -10,6 +11,10 @@
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
     let stps = stp_today.toString();
+    if (stp_today_goal > 0) {
+      stp_percentage = Math.round(100 * stp_today / stp_today_goal);
+      stps += " / " + stp_today_goal + "(" + stp_percentage + ")";
+    }
     g.reset();
     if (stps.length > 3){
       stps = stps.slice(0,-3) + "," + stps.slice(-3);
