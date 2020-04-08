@@ -320,6 +320,22 @@ var locales = {
         abday : "dom,lun,mar,mer,gio,ven,sab",
         day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì, sabato",
         trans : { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+    "it_IT": {
+        lang: "it_IT",
+        decimal_point: ",",
+        thousands_sep: ".",
+        currency_symbol: "\x80",
+        int_curr_symbol: "EUR",
+        speed: 'kmh',
+        distance: { "0": "m", "1": "km" },
+        temperature: '°C',
+        timePattern: { 0: "%HH.%MM.%SS ", 1: "%HH.%MM" }, // 17.00.00  // 17.00
+        datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%Y" }, // sunnuntai 1. maaliskuuta 2020 // 1.3.2020
+        abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
+        month: "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
+        abday : "dom,lun,mar,mer,gio,ven,sab",
+        day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì, sabato",
+        trans : { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
     "wae_CH" : {
         lang: "wae_CH",
     	decimal_point: ",",
