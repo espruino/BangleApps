@@ -24,7 +24,7 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
             Progress.hide({sticky:true});
             if (result===null) return reject("");
             // Reload apps to get a fresh list of apps and files
-            this.getInstalledApps();
+            this.getInstalledApps(true);
             resolve(app);
           });
           return;
