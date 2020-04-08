@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+      #map { z-index: 1; }
+      #controls {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid black;
+        position:absolute;
+        right:0px;top:0px;
+        background-color: rgb(255, 255, 255);
+        z-index: 100;
+      }
+      #maptiles {
+        width: 256px;
+        height: 256px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+    </div>
+    <div id="controls">
+      <p>Zoom in to the area you want as a map</p>
+      <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+      <canvas id="maptiles"></canvas>
+    </div>
+
+    <script src="../../lib/customize.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://espruino.github.io/EspruinoWebTools/heatshrink.js"></script>
+    <script src="https://espruino.github.io/EspruinoWebTools/imageconverter.js"></script>
+
+    <script>
+    /*
+
+TODO:
+
+* Could maybe use palettised output?
+* Could potentially use a custom 16 color palette?
+* Allow user to choose size of map area to be uploaded (small/med/large)
+* What is faster? Storing as a compressed image and decompressing, or storing decompressed?
+* Scaling for zoom levels
+
+    */
+      var TILESIZE = 64;
+      var OSMTILESIZE = 256;
+      var OSMSUBTILES = OSMTILESIZE / TILESIZE;
+      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      var tileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      //var tileLayer = L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png', { // black and white
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+      });
+      tileLayer.addTo(map);
+
+      function tilesLoaded(ctx, width, height) {
+        var options = { compression:true, mode:"web", output:"string"};
+        var w = Math.round(width / TILESIZE);
+        var h = Math.round(height / TILESIZE);
+        var tiles = [];
+        for (var y=0;y<h;y++) {
+          for (var x=0;x<w;x++) {
+            var imageData = ctx.getImageData(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
+            var rgba = imageData.data;
+            options.rgbaOut = rgba;
+            options.width = TILESIZE;
+            options.height = TILESIZE;
+            var imgstr = imageconverter.RGBAtoString(rgba, options);
+            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE);
+            /*var compress = 'require("heatshrink").decompress('
+            if (!imgstr.startsWith(compress)) throw "Data in wrong format";
+            imgstr = imgstr.slice(compress.length,-1);*/
+            tiles.push({
+              name:"openstmap-"+x+"-"+y+".img",
+              content:imgstr,
+              evaluate:true
+            });
+          }
+        }
+        return tiles;
+      }
+
+      document.getElementById("upload").addEventListener("click", function() {
+        var bounds = map.getBounds();
+        var zoom = map.getZoom();
+        var centerlatlon = bounds.getCenter();
+        var center = map.project(centerlatlon, zoom).divideBy(256);
+        var ox = Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE);
+        var oy = Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE);
+        center = center.floor();
+        var tileGetters = [];
+
+        // Render everything to a canvas - 512 x 512 px
+        var canvas = document.getElementById("maptiles");
+        var ctx = canvas.getContext('2d');
+        canvas.width = OSMTILESIZE*2;
+        canvas.height = OSMTILESIZE*2;
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+              (function(i,j){
+                var coords = new L.Point(center.x+i-1, center.y+j-1);
+                coords.z = zoom;
+                var img = new Image();
+                img.crossOrigin = "Anonymous";
+                tileGetters.push(new Promise(function(resolve,reject) {
+                  img.onload = function(){
+                    ctx.drawImage(img,i*OSMTILESIZE - ox, j*OSMTILESIZE - oy);
+                    resolve();
+                  };
+                }));
+                img.src = tileLayer.getTileUrl(coords);
+              })(i,j);
+            }
+        }
+
+
+        Promise.all(tileGetters).then(() => {
+          var files = tilesLoaded(ctx, canvas.width, canvas.height);
+          files.unshift({name:"openstmap.json",content:JSON.stringify({
+            imgx : canvas.width,
+            imgy : canvas.height,
+            tilesize : TILESIZE,
+            scale : 10000*Math.pow(2,zoom-16), // FIXME - this is probably wrong
+            lat : centerlatlon.lat,
+            lon : centerlatlon.lng
+          })});
+          files.unshift({"name":"openstmap.app.js","url":"app.js"});
+          files.unshift({"name":"openstmap.img","url":"app-icon.js","evaluate":true});
+
+          console.log(files);
+          sendCustomizedApp({
+            storage:files
+          });
+        });
+
+
+      });
+
+    </script>
+  </body>
+</html>
