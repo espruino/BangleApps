@@ -1099,7 +1099,7 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps",
     "custom": "custom.html",
@@ -1118,7 +1118,7 @@
     "storage": [
       {"name":"tabata.app.js","url":"tabata.js"},
       {"name":"tabata.img","url":"tabata-icon.js","evaluate":true}
-    ]  
+    ]
   },
   { "id": "custom",
     "name": "Custom Boot Code ",
