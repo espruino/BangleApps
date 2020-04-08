@@ -210,7 +210,7 @@ var locales = {
         int_curr_symbol: "ILS",
         speed: "kmh",
         distance: { 0: "m", 1: "km" },
-        temperature: "°F",
+        temperature: "°C",
         ampm: {0:"am",1:"pm"},
         timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
         datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%Y" }, //  Sunday, 1 March 2020  // 01/03/2020
@@ -403,5 +403,22 @@ var locales = {
         month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
         abday: "ne,po,út,st,čt,pá,so",
         day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
-        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }}  
+        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }},
+     "he_IL": {
+        lang: "he_IL",
+        decimal_point: ",",
+        thousands_sep: ".",
+        currency_symbol: "₪",
+        int_curr_symbol: "ILS",
+        speed: "קמ״ש",
+        distance: { 0: "מ׳", 1: "ק״מ" },
+        temperature: "°C",
+        ampm: {0:"am",1:"pm"},
+        timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+        datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%Y" }, //  Sunday, 1 March 2020  // 01/03/2020
+        abmonth: "ינו,פבר,מרץ,אפר,מאי,יונ,יול,אוג,ספט,אוק,נוב,דצמ",
+        month: "ינואר,פברואר,מרץ,אפריל,מאי,יוני,יולי,אוגוסט,ספטמבר,אוקטובר,נובמבר,דצמבר",
+        abday: "א׳,ב׳,ג׳,ד׳,ה,ו׳,ש׳",
+        day: "ראשון,שני,שלישי,רביעי,חמישי,שישי,שבת",
+        trans: { yes: "כן", Yes: "כן", no: "לא", No: "לא", ok: "אישור", on: "פעיל", off: "כבוי" }}
 };
