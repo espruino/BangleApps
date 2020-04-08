@@ -8,3 +8,4 @@
 0.09: Move Welcome into App/widget settings
 0.10: Added LCD wake-up settings
       Adds LCD brightness setting
+0.11: Make LCD brightness work after leaving settings

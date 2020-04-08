@@ -101,7 +101,7 @@ function showMainMenu() {
     },
     'LCD Brightness': {
       value: settings.brightness,
-      min: 0,
+      min: 0.1,
       max: 1,
       step: 0.1,
       onchange: v => {
