@@ -849,7 +849,7 @@
     "id": "pipboy",
     "name": "Pipboy",
     "icon": "app.png",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Pipboy themed clock",
     "tags": "clock",
     "type":"clock",
