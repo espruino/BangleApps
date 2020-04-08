@@ -23,6 +23,8 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
           Puck.write(`\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
             Progress.hide({sticky:true});
             if (result===null) return reject("");
+            // Reload apps to get a fresh list of apps and files
+            this.getInstalledApps();
             resolve(app);
           });
           return;
