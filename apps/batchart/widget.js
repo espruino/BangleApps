@@ -6,7 +6,8 @@
     bluetooth: 4,
     gps: 8,
     hrm: 16
-  }
+  };
+
   var settings = {};
   var batChartFile; // file for battery percentage recording
   const recordingInterval10Min = 60 * 10 * 1000;
@@ -18,26 +19,6 @@
   function draw() {
     g.reset();
     g.drawString("BC", this.x, this.y);
-  }
-
-  // Called by the heart app to reload settings and decide what's
-  function reload() {
-    WIDGETS["batchart"].width = 24;
-
-    // Check if the data file exists, if not try to create it.
-    var batChartFileCheck = require("Storage").open("batchart.dat", "r");
-    if (!batChartFileCheck)
-      if (!require("Storage").write("batchart.dat", ""))
-        //Only continue if the file was created
-        return;
-    
-    recordingInterval = setInterval(() => {
-      var batChartFileAppend = require("Storage").open("batchart.dat", "a");
-      if (batChartFileAppend) {    
-        console.log([getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(","));
-        batChartFileAppend.write([getTime().toFixed(0),E.getBattery].join(",")+"\n");
-      }
-    }, recordingInterval1Min)
   }
 
   function getEnabledConsumersValue() {
@@ -54,8 +35,38 @@
     //   enabledConsumers = enabledConsumers | switchableConsumers.gps;
     // if (Bangle.isHrmOn())
     //   enabledConsumers = enabledConsumers | switchableConsumers.hrm;
-    
+
     return enabledConsumers;
+  }
+
+  function logBatteryData() {
+    const previousWriteLogName = "bcprvday";
+    const previousWriteDay = require("Storage").read(previousWriteLogName);
+    const currentWriteDay = new Date().getDay();
+
+    const logFileName = "bclog" + currentWriteDay;
+
+    // Change log target on day change
+    if (previousWriteDay != currentWriteDay) {
+      //Remove a log file containing data from a week ago
+      require("Storage").erase(logFileName);
+      require("Storage").write(previousWriteLogName, currentWriteDay);
+    }
+
+    var bcLogFileA = require("Storage").open(logFileName, "a");
+    if (bcLogFileA) {
+      console.log([getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(","));
+      bcLogFileA.write([[getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(",")].join(",")+"\n");
+    }
+  }
+
+  // Called by the heart app to reload settings and decide what's
+  function reload() {
+    WIDGETS["batchart"].width = 24;
+
+    recordingInterval = setInterval(logBatteryData, recordingInterval10Min);
+
+    logBatteryData();
   }
 
   // add the widget
