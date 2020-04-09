@@ -1,5 +1,3 @@
-WIDGETS = {};
-
 (() => {
   var switchableConsumers = {
     none: 0,
