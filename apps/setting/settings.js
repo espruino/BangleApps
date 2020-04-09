@@ -63,7 +63,8 @@ function showMainMenu() {
   var beepN = ["Off", "Piezo", "Vibrate"];
   const mainmenu = {
     '': { 'title': 'Settings' },
-    'Make Connectable': makeConnectable,
+    'Make Connectable': ()=>makeConnectable(),
+    'App/widget settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -86,17 +87,6 @@ function showMainMenu() {
       onchange: () => {
         settings.log = !settings.log;
         updateSettings();
-      }
-    },
-    'LCD Timeout': {
-      value: settings.timeout,
-      min: 0,
-      max: 60,
-      step: 5,
-      onchange: v => {
-        settings.timeout = 0 | v;
-        updateSettings();
-        Bangle.setLCDTimeout(settings.timeout);
       }
     },
     'LCD Brightness': {
@@ -133,8 +123,8 @@ function showMainMenu() {
         }
       }
     },
-    'Locale': showLocaleMenu,
-    'Select Clock': showClockMenu,
+    'Locale': ()=>showLocaleMenu(),
+    'Select Clock': ()=>showClockMenu(),
     'HID': {
       value: settings.HID,
       format: boolFormat,
@@ -143,12 +133,11 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Set Time': showSetTimeMenu,
-    'LCD Wake-Up': showWakeUpMenu,
-    'App/widget settings': showAppSettingsMenu,
-    'Reset Settings': showResetMenu,
-    'Turn Off': Bangle.off,
-    '< Back': () => { load(); }
+    'Set Time': ()=>showSetTimeMenu(),
+    'LCD Wake-Up': ()=>showWakeUpMenu(),
+    'Reset Settings': ()=>showResetMenu(),
+    'Turn Off': ()=>Bangle.off(),
+    '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
 }
@@ -156,7 +145,18 @@ function showMainMenu() {
 function showWakeUpMenu() {
   const wakeUpMenu = {
     '': { 'title': 'LCD Wake-Up' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
+    'LCD Timeout': {
+      value: settings.timeout,
+      min: 0,
+      max: 60,
+      step: 5,
+      onchange: v => {
+        settings.timeout = 0 | v;
+        updateSettings();
+        Bangle.setLCDTimeout(settings.timeout);
+      }
+    },
     'Wake On BTN1': {
       value: settings.options.wakeOnBTN1,
       format: boolFormat,
@@ -242,7 +242,7 @@ function showWakeUpMenu() {
 function showLocaleMenu() {
   const localemenu = {
     '': { 'title': 'Locale' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -268,7 +268,7 @@ function showLocaleMenu() {
 function showResetMenu() {
   const resetmenu = {
     '': { 'title': 'Reset' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Reset Settings': () => {
       E.showPrompt('Reset Settings?').then((v) => {
         if (v) {
@@ -304,7 +304,7 @@ function showClockMenu() {
     '': {
       'title': 'Select Clock',
     },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -342,7 +342,7 @@ function showSetTimeMenu() {
         timemenu.Year.value = d.getFullYear();
       }
     },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Hour': {
       value: d.getHours(),
       min: 0,
@@ -416,7 +416,7 @@ function showSetTimeMenu() {
 function showAppSettingsMenu() {
   let appmenu = {
     '': { 'title': 'App Settings' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
   }
   const apps = storage.list(/\.info$/)
     .map(app => storage.readJSON(app, 1))

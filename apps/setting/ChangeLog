@@ -9,3 +9,6 @@
 0.10: Added LCD wake-up settings
       Adds LCD brightness setting
 0.11: Make LCD brightness work after leaving settings
+0.12: Fix memory leak (#206)
+      Bring App settings nearer the top
+      Move LCD Timeout to wakeup menu
