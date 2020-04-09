@@ -1133,9 +1133,9 @@
        {"name":"custom"}
     ]
   },
-  { "id": "stopwatch",
-  "name": "Stopwatch",
-  "shortName":"Stopwatch",
+  { "id": "devstopwatch",
+  "name": "Dev Stopwatch",
+  "shortName":"Dev Stopwatch",
   "icon": "app.png",
   "version":"0.01",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
