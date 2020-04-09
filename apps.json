@@ -1145,5 +1145,18 @@
     {"name":"devstopwatch.app.js","url":"app.js"},
     {"name":"devstopwatch.img","url":"app-icon.js","evaluate":true}
   ]
-}
+  },
+  { "id": "batchart",
+    "name": "Battery Chart",
+    "shortName":"BatChart",
+    "icon": "app.png",
+    "version":"0.03",
+    "description": "A widget and an app for recording and visualizing battery percentage over time.",
+    "tags": "app,widget,battery,time,record,chart,tool",
+    "storage": [
+      {"name":"batchart.wid.js","url":"widget.js"},
+      {"name":"batchart.app.js","url":"app.js"},
+      {"name":"batchart.img","url":"app-icon.js","evaluate":true}
+    ]
+  }
 ]
