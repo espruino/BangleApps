@@ -16,7 +16,6 @@
 
   // draw your widget
   function draw() {
-    if (!settings.isRecording) return;
     g.reset();
     g.drawString("BC", this.x, this.y);
   }

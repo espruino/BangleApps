@@ -27,6 +27,8 @@ Bangle.on('lcdPower', (on) => {
 });
 
 g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 // call your app function here
 
 renderBatteryChart();
