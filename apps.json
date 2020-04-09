@@ -1140,9 +1140,10 @@
   "version":"0.01",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "tags": "stopwatch, chrono, timer, chronometer",
+  "allow_emulator":true,
   "storage": [
-    {"name":"stopwatch.app.js","url":"app.js"},
-    {"name":"stopwatch.img","url":"app-icon.js","evaluate":true}
+    {"name":"devstopwatch.app.js","url":"app.js"},
+    {"name":"devstopwatch.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
