@@ -28,13 +28,23 @@ function redraw() {
       }
     }
   }
-  g.setColor(1,0,0);
-  /*g.fillRect(cx-10,cy-1,cx+10,cy+1);
-  g.fillRect(cx-1,cy-10,cx+1,cy+10);*/
-  if (fix.fix)
-    g.fillRect(cx-2,cy-2,cx+2,cy+2);
+  drawMarker();
 }
+
+function drawMarker() {
+  if (!fix.fix) return;
+  var p = Bangle.project({lat:lat,lon:lon});
+  var q = Bangle.project(fix);
+  var cx = g.getWidth()/2;
+  var cy = g.getHeight()/2;
+  var ix = (q.x-p.x)*4096/map.scale + cx;
+  var iy = cy - (q.y-p.y)*4096/map.scale;
+  g.setColor(1,0,0);
+  g.fillRect(ix-2,iy-2,ix+2,iy+2);
+}
+
 redraw();
+
 
 var fix;
 Bangle.on('GPS',function(f) {
@@ -47,15 +57,7 @@ Bangle.on('GPS',function(f) {
   if (!fix.fix)
     txt += " - NO FIX";
   g.drawString(txt,120,4);
-  if (fix.fix) {
-    var p = Bangle.project({lat:lat,lon:lon});
-    var q = Bangle.project(fix);
-    var cx = g.getWidth()/2;
-    var cy = g.getHeight()/2;
-    var ix = (q.x-p.x)*4096/map.scale + cx;
-    var iy = (q.y-p.y)*4096/map.scale + cy;
-    g.fillRect(ix-2,iy-2,ix+2,iy+2);
-  }
+  drawMarker();
 });
 Bangle.setGPSPower(1);
 redraw();

@@ -58,6 +58,7 @@ const ONE_SECOND = 1000;
 const DATE_MODE = "date";
 const BATT_MODE = "batt";
 const TEMP_MODE = "temp";
+const PHON_MODE = "gbri";
 
 let timer = 0;
 let backgroundArr = [];
@@ -67,6 +68,77 @@ let infoMode = DATE_MODE;
 // Used to stop values flapping when displayed on screen
 let lastBatt = 0;
 let lastTemp = 0;
+
+const phone = {
+  get status() {
+    return NRF.getSecurityStatus().connected ? "Yes" : "No";
+  },
+  message: null,
+  messageTimeout: null,
+  messageScrollX: null,
+  messageType: null,
+};
+
+function phoneOutbound(msg) {
+  Bluetooth.println(JSON.stringify(msg));
+}
+
+function phoneClearMessage() {
+    if (phone.message === null) return;
+
+    if (phone.messageTimeout) {
+      clearTimeout(phone.messageTimeout);
+      phone.messageTimeout = null;
+    }
+    phone.message = null;
+    phone.messageScrollX = null;
+    phone.messageType = null;
+}
+
+function phoneNewMessage(type, msg) {
+    Bangle.buzz();
+
+    phoneClearMessage();
+    phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
+    phone.message = msg;
+    phone.messageType = type;
+
+    // Notify user and active screen
+    if (!Bangle.isLCDOn()) {
+      clearTimers();
+      Bangle.setLCDPower(true);
+    }
+}
+
+function truncStr(str, max) {
+  if (str.length > max) {
+    return str.substr(0, max) + '...';
+  }
+  return str;
+}
+
+function phoneInbound(evt) {
+  switch (evt.t) {
+    case 'notify':
+      const sender = truncStr(evt.sender, 10);
+      const subject = truncStr(evt.subject, 15);
+      phoneNewMessage("notify", `${sender} - '${subject}'`);
+      break;
+    case 'call':
+      if (evt.cmd === "accept") {
+        let nameOrNumber = "Unknown";
+        if (evt.name !== null || evt.name !== "") {
+          nameOrNumber = evt.name;
+        } else if (evt.number !== null || evt.number !== "") {
+          nameOrNumber = evt.number;
+        }
+        phoneNewMessage("call", nameOrNumber);
+      }
+      break;
+    default:
+      return null;
+  }
+}
 
 function genRanNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -248,6 +320,22 @@ function drawToadFrame(idx, x, y) {
   }
 }
 
+// Mario speach bubble
+function drawNotice(x, y) {
+  if (phone.message === null) return;
+
+  switch (phone.messageType) {
+    case "call":
+      const callImg = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
+      g.drawImage(callImg, characterSprite.x, characterSprite.y - 16);
+      break;
+    case "notify":
+      const msgImg = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
+      g.drawImage(msgImg, characterSprite.x, characterSprite.y - 16);
+      break;
+  }
+}
+
 function drawCharacter(date, character) {
   // calculate jumping
   const seconds = date.getSeconds(),
@@ -352,9 +440,33 @@ function buildTempStr() {
   return tempStr;
 }
 
+function buildPhonStr() {
+  return `Phone: ${phone.status}`;
+}
+
 function drawInfo(date) {
+  let xPos;
   let str = "";
-  switch(infoMode) {
+
+  if (phone.message !== null) {
+    str = phone.message;
+    const strLen = g.stringWidth(str);
+    if (strLen > W) {
+      if (phone.messageScrollX === null || (phone.messageScrollX <= (strLen * -1))) {
+        phone.messageScrollX = W;
+        resetDisplayTimeout();
+      } else {
+        phone.messageScrollX -= 2;
+      }
+      xPos = phone.messageScrollX;
+    } else {
+     xPos = (W - g.stringWidth(str)) / 2;
+    }
+  } else {
+    switch(infoMode) {
+    case PHON_MODE:
+      str = buildPhonStr();
+      break;
     case TEMP_MODE:
       str = buildTempStr();
       break;
@@ -364,19 +476,26 @@ function drawInfo(date) {
     case DATE_MODE:
     default:
       str = buildDateStr(date);
+    }
+    xPos = (W - g.stringWidth(str)) / 2;
   }
 
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  g.drawString(str, (W - g.stringWidth(str))/2, 1);
+  g.drawString(str, xPos, 1);
 }
 
 function changeInfoMode() {
+  phoneClearMessage();
+
   switch(infoMode) {
     case BATT_MODE:
       infoMode = TEMP_MODE;
       break;
     case TEMP_MODE:
+      infoMode = PHON_MODE;
+      break;
+    case PHON_MODE:
       infoMode = DATE_MODE;
       break;
     case DATE_MODE:
@@ -399,6 +518,7 @@ function redraw() {
   drawTime(date);
   drawInfo(date);
   drawCharacter(date);
+  drawNotice();
   drawCoin();
 
   // Render new frame
@@ -450,6 +570,7 @@ function init() {
   setWatch(() => {
     if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
+    phoneClearMessage(); // Clear any phone messages and message timers
   }, BTN3, {repeat: true});
 
   // Close watch and load launcher app
@@ -487,8 +608,21 @@ function init() {
     }
   });
 
+  // Phone connectivity
+  try { NRF.wake(); } catch (e) {}
+
+  NRF.on('disconnect', () => Bangle.buzz());
+  NRF.on('connect', () => {
+    setTimeout(() => {
+      phoneOutbound({ t: "status", bat: E.getBattery() });
+    }, ONE_SECOND * 2);
+    Bangle.buzz();
+  });
+
+  GB = (evt) => phoneInbound(evt);
+
   startTimers();
 }
 
 // Initialise!
-init();
+init()

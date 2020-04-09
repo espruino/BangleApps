@@ -19,7 +19,7 @@ function getApps(){
 const HEIGHT = g.getHeight();
 const WIDTH = g.getWidth();
 const HALF = WIDTH/2;
-const ANIMATION_FRAME = 3; 
+const ANIMATION_FRAME = 4; 
 const ANIMATION_STEP = HALF / ANIMATION_FRAME;
 
 function getPosition(index){
@@ -34,6 +34,8 @@ const back = {
   name: 'BACK',
   back: true
 };
+
+let icons = {};
 
 const apps = [back].concat(getApps());
 apps.push(back);
@@ -54,6 +56,12 @@ function drawIcons(offset){
     const y = HALF - (HALF*0.3);//-(HALF*0.7);
     let diff = (x - HALF);
     if(diff < 0) diff *=-1;
+
+    const dontRender = x+(HALF/2)<0 || x-(HALF/2)>120;
+    if(dontRender) {
+      delete icons[app.name];
+      return;
+    }
     let size = 30;
     if((diff*0.5) < size) size -= (diff*0.5);
     else size = 0;
@@ -72,8 +80,12 @@ function drawIcons(offset){
         return;
       }
       // icon
-      const icon = app.icon ? Storage.read(app.icon) : null;
+
+      const icon = app.icon ?
+                    icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
+                  : null;
       if(icon){
+        icons[app.name] = icon;
         try {
           g.drawImage(icon, x-(scale*24), y-(scale*24), { scale: scale });
         } catch(e){
@@ -100,7 +112,8 @@ function drawIcons(offset){
 }
 
 function draw(ignoreLoop){
-  g.clear();
+  g.setColor(0,0,0);
+  g.fillRect(0,0,WIDTH,HEIGHT);
   drawIcons(slideOffset);
   g.flip();
   if(slideOffset == target) return;
