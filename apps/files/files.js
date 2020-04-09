@@ -32,9 +32,7 @@ function showMainMenu() {
 
 function eraseApp(app) {
   E.showMessage('Erasing\n' + app.name + '...');
-  storage.erase(app['']);
-  storage.erase(app.icon);
-  storage.erase(app.src);
+  app.files.split(",").forEach(f=>storage.erase(f));
 }
 
 function showAppMenu(app) {
