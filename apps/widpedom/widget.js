@@ -1,6 +1,5 @@
 (() => {
   const PEDOMFILE = "wpedom.json"
-  const SETTINGS_FILE = "widpedom.settings.json"
   const DEFAULTS = {
     'goal': 10000,
     'progress': false,
@@ -16,7 +15,8 @@
   let settings;
 
   function loadSettings() {
-    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+    const d = require('Storage').readJSON(PEDOMFILE, 1) || {};
+    settings = d.settings || {};
   }
 
   function setting(key) {
@@ -25,31 +25,29 @@
   }
 
   function drawProgress(stps) {
-    if (setting('progress')) {
-      const width = 24, half = width/2;
-      const goal = setting('goal'), left = Math.max(goal-stps,0);
-      const c = left ? COLORS.progress : COLORS.done;
-      g.setColor(c).fillCircle(this.x + half, this.y + half, half);
-      if (left) {
-        const f = left/goal; // fraction to blank out
-        let p = [];
-        p.push(half,half);
-        p.push(half,0);
-        if(f>1/8) p.push(0,0);
-        if(f>2/8) p.push(0,half);
-        if(f>3/8) p.push(0,width);
-        if(f>4/8) p.push(half,width);
-        if(f>5/8) p.push(width,width);
-        if(f>6/8) p.push(width,half);
-        if(f>7/8) p.push(width,0);
-        p.push(half - Math.sin(f * TAU) * half);
-        p.push(half - Math.cos(f * TAU) * half);
-        for (let i = p.length; i; i -= 2) {
-          p[i - 2] += this.x;
-          p[i - 1] += this.y;
-        }
-        g.setColor(0).fillPoly(p);
+    const width = 24, half = width/2;
+    const goal = setting('goal'), left = Math.max(goal-stps,0);
+    const c = left ? COLORS.progress : COLORS.done;
+    g.setColor(c).fillCircle(this.x + half, this.y + half, half);
+    if (left) {
+      const f = left/goal; // fraction to blank out
+      let p = [];
+      p.push(half,half);
+      p.push(half,0);
+      if(f>1/8) p.push(0,0);
+      if(f>2/8) p.push(0,half);
+      if(f>3/8) p.push(0,width);
+      if(f>4/8) p.push(half,width);
+      if(f>5/8) p.push(width,width);
+      if(f>6/8) p.push(width,half);
+      if(f>7/8) p.push(width,0);
+      p.push(half - Math.sin(f * TAU) * half);
+      p.push(half - Math.cos(f * TAU) * half);
+      for (let i = p.length; i; i -= 2) {
+        p[i - 2] += this.x;
+        p[i - 1] += this.y;
       }
+      g.setColor(0).fillPoly(p);
     }
   }
 
@@ -62,7 +60,7 @@
     let stps = stp_today.toString();
     g.reset();
     g.clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
-    drawProgress(stps);
+    if (setting('progress')){ drawProgress.call(this, stps); }
     g.setColor(COLORS.white);
     if (stps.length > 3){
       stps = stps.slice(0,-3) + "," + stps.slice(-3);
@@ -104,9 +102,11 @@
   });
   // When unloading, save state
   E.on('kill', () => {
+    if (!settings) { loadSettings() }
     let d = {
       lastUpdate : lastUpdate.toISOString(),
-      stepsToday : stp_today
+      stepsToday : stp_today,
+      settings   : settings,
     };
     require("Storage").write(PEDOMFILE,d);
   });
