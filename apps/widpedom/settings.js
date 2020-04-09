@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = 'widpedom.settings.json'
+  const PEDOMFILE = "wpedom.json";
 
   // initialize with default settings...
   let s = {
@@ -9,13 +9,15 @@
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
-  const saved = storage.readJSON(SETTINGS_FILE, 1) || {}
+  const d = storage.readJSON(PEDOMFILE, 1) || {}
+  const saved = d.settings || {}
   for (const key in saved) {
     s[key] = saved[key]
   }
 
   function save() {
-    storage.write(SETTINGS_FILE, s)
+    d.settings = s
+    storage.write(PEDOMFILE, d)
     WIDGETS['wpedom'].reload()
   }
 
