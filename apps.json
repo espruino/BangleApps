@@ -1158,7 +1158,7 @@
       {"name":"batchart.app.js","url":"app.js"},
       {"name":"batchart.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
   { "id": "nato",
     "name": "NATO Alphabet",
     "shortName" : "NATOAlphabet",
