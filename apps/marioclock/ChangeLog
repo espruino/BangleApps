@@ -5,4 +5,5 @@
 0.05: use 12/24 hour clock from settings
 0.06: Performance refactor, and enhanced graphics!
 0.07: Swipe right to change between Mario and Toad characters, swipe left to toggle night mode
-0.08: Update date panel to be info panel toggling between Date, Battery and Temperature. Add Princes Daisy.
+0.08: Update date panel to be info panel toggling between Date, Battery and Temperature. Add Princes Daisy
+0.09: Add GadgetBridge functionality. Mario shows message type in speach bubble, while message scrolls in info panel
