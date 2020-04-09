@@ -49,7 +49,8 @@ var locales = {
       month: "January,February,March,April,May,June,July,August,September,October,November,December",
       abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
       day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-      trans: { /*yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off"*/ }},
+      // No translation for english...
+    },
     "de_DE": {
         lang: "de_DE",
         decimal_point: ",",
@@ -83,7 +84,8 @@ var locales = {
         month: "January,February,March,April,May,June,July,August,September,October,November,December",
         abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
         day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "en_JP": { // we do not have the font, so it is not ja_JP
         lang: "en_JP",
         decimal_point: ".",
@@ -100,7 +102,8 @@ var locales = {
         month: "January,February,March,April,May,June,July,August,September,October,November,December",
         abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
         day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "nl_NL": {
         lang: "nl_NL",
         decimal_point: ",",
@@ -117,7 +120,8 @@ var locales = {
         day: "zondag,maandag,dinsdag,woensdag,donderdag,vrijdag,zaterdag",
         abmonth: "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
         month: "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "en_CA": {
         lang: "en_CA",
         decimal_point: ".",
@@ -134,7 +138,8 @@ var locales = {
         month: "January,February,March,April,May,June,July,August,September,October,November,December",
         abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
         day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "fr_FR": {
         lang: "fr_FR",
         decimal_point: ",",
@@ -185,7 +190,8 @@ var locales = {
         month: "January,February,March,April,May,June,July,August,September,October,November,December",
         abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
         day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "de_AT": {
         lang: "de_AT",
         decimal_point: ",",
@@ -218,7 +224,8 @@ var locales = {
         month: "January,February,March,April,May,June,July,August,September,October,November,December",
         abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
         day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-        trans: { yes: "yes", Yes: "Yes", no: "no", No: "No", ok: "ok", on: "on", off: "off" }},
+        // No translation for english...
+    },
     "es_ES": {
         lang: "es_ES",
         decimal_point: ",",
@@ -403,7 +410,7 @@ var locales = {
         abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
         day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
         trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }},
-    "cs_CZ": {   
+    "cs_CZ": {
         lang: "cs_CZ",
         decimal_point: ",",
         thousands_sep: " ",
@@ -419,5 +426,5 @@ var locales = {
         month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
         abday: "ne,po,út,st,čt,pá,so",
         day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
-        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }}  
+        trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }}
 };

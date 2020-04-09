@@ -4,3 +4,5 @@
 0.04: Add function meridian
 0.05: Inline locale details - faster, less memory overhead
       Add correct scaling for speed/distance/temperature
+0.06: Remove translations if not required
+      Ensure 'on' is always supplied for translations
