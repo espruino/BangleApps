@@ -1171,5 +1171,5 @@
       {"name":"nato.app.js","url":"nato.js"},
       {"name":"nato.img","url":"nato-icon.js","evaluate":true}
     ],
-  },
+  }
 ]
