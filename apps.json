@@ -1158,5 +1158,18 @@
       {"name":"batchart.app.js","url":"app.js"},
       {"name":"batchart.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "nato",
+    "name": "NATO Alphabet",
+    "shortName" : "NATOAlphabet",
+    "icon": "nato.png",
+    "version":"0.01",
+    "type": "app",
+    "description": "Learn the NATO Phonetic alphabet plus some numbers.",
+    "tags": "app,learn,visual",
+    "storage": [
+      {"name":"nato.app.js","url":"nato.js"},
+      {"name":"nato.img","url":"nato-icon.js","evaluate":true}
+    ],
+  },
 ]
