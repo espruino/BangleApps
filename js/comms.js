@@ -16,6 +16,11 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
       var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
       var currentBytes = 0;
 
+      var appInfoFileName = app.id+".info";
+      var appInfoFile = fileContents.find(f=>f.name==appInfoFileName);
+      if (!appInfoFile) reject(`${appInfoFileName} not found`);
+      var appInfo = JSON.parse(appInfoFile.content);
+
       // Upload each file one at a time
       function doUploadFiles() {
         // No files left - print 'reboot' message
@@ -23,9 +28,7 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
           Puck.write(`\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
             Progress.hide({sticky:true});
             if (result===null) return reject("");
-            // Reload apps to get a fresh list of apps and files
-            this.getInstalledApps(true);
-            resolve(app);
+            resolve(appInfo);
           });
           return;
         }

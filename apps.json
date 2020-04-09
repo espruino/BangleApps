@@ -849,7 +849,7 @@
     "id": "pipboy",
     "name": "Pipboy",
     "icon": "app.png",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Pipboy themed clock",
     "tags": "clock",
     "type":"clock",
@@ -1035,7 +1035,7 @@
     "name": "Touch Launcher",
     "shortName":"Menu",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -1099,7 +1099,7 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps",
     "custom": "custom.html",
@@ -1118,6 +1118,18 @@
     "storage": [
       {"name":"tabata.app.js","url":"tabata.js"},
       {"name":"tabata.img","url":"tabata-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "custom",
+    "name": "Custom Boot Code ",
+    "icon": "custom.png",
+    "version":"0.01",
+    "description": "Add code you want to run at boot time",
+    "tags": "tool,system",
+    "type": "bootloader",
+    "custom":"custom.html",
+    "storage": [
+       {"name":"custom"}
     ]
   }
 ]
