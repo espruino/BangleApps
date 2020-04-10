@@ -1,10 +1,6 @@
-/**
-  * Teach a user the NATO Phonetic Alphabet + numbers
-*/
+// Teach a user the NATO Phonetic Alphabet + numbers
+// Based on the Morse Code app
 
-/**
- * Constants
-*/
 const FONT_NAME = 'Vector12';
 const FONT_SIZE = 80;
 const SCREEN_PIXELS = 240;
@@ -48,21 +44,16 @@ const NATO_MAP = {
   '9': 'NIN-ER',
 };
 
-/**
- * Set the local state
-*/
 let INDEX = 0;
 let showLetter = true;
 
-/**
- * Utility functions for writing text, changing state
-*/
 const writeText = (txt) => {
   g.clear();
   g.setFont(FONT_NAME, FONT_SIZE);
 
   var width = g.stringWidth(txt);
 
+ // Fit text to screen
   var fontFix = FONT_SIZE;
   while(width > SCREEN_PIXELS-10){
     fontFix--;
@@ -86,9 +77,8 @@ const toggle = () => {
   }
 };
 
-/**
- * Bootstrapping
-*/
+// Bootstrapping
+
 g.clear();
 g.setFont(FONT_NAME, FONT_SIZE);
 g.setColor(0, 1, 0);
@@ -103,7 +93,7 @@ const step = (positive) => () => {
     INDEX = INDEX - 1;
     if (INDEX < 0) INDEX = Object.keys(NATO_MAP).length - 1;
   }
-  showLetter = true;
+  showLetter = true; // for toggle()
   writeLetter();
 };
 
