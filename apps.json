@@ -1158,5 +1158,20 @@
       {"name":"batchart.app.js","url":"app.js"},
       {"name":"batchart.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "numerals",
+    "name": "Numerals Clock",
+    "shortName": "Numerals Clock",
+    "icon": "numerals.png",
+    "version":"0.01",
+    "description": "A simple big numerals clock",
+    "tags": "numerals,clock",
+	"type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"numerals.app.js","url":"numerals.app.js"},
+      {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
+	  {"name":"numerals.settings.js","url":"numerals.settings.js"}
+    ]
   }
 ]
