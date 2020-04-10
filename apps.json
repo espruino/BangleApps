@@ -290,6 +290,17 @@
       {"name":"gpsrec.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "gpstrack",
+    "name": "GPS Track",
+    "icon": "app.png",
+    "version":"0.06",
+    "description": "Application that draws a recorded  GPS track. Best to set period to 10 seconds in gpsrec otherwise the display can be slow with the default setting of 1 second",
+    "tags": "tool,outdoors,gps,widget",
+    "storage": [
+      {"name":"gpstrack.app.js","url":"track.js"},
+      {"name":"gpstrack.img","url":"track-icon.js","evaluate":true}
+    ]
+  },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
