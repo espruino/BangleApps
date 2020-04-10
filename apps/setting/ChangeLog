@@ -12,3 +12,4 @@
 0.12: Fix memory leak (#206)
       Bring App settings nearer the top
       Move LCD Timeout to wakeup menu
+0.13: Move LCD Brightness menu into more general LCD menu
