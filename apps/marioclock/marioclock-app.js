@@ -16,6 +16,8 @@ const is12Hour = settings["12hour"] || false;
 
 // Screen dimensions
 let W, H;
+// Screen brightness
+let brightness = 1;
 
 let intervalRef, displayTimeoutRef = null;
 
@@ -164,7 +166,17 @@ function switchCharacter() {
 }
 
 function toggleNightMode() {
-  nightMode = !nightMode;
+  if (!nightMode) {
+    nightMode = true;
+    return;
+  }
+
+  brightness -= 0.30;
+  if (brightness <= 0) {
+    brightness = 1;
+    nightMode = false;
+  }
+  Bangle.setLCDBrightness(brightness);
 }
 
 function incrementTimer() {
@@ -625,4 +637,4 @@ function init() {
 }
 
 // Initialise!
-init()
+init();
