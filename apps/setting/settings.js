@@ -64,7 +64,7 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
-    'App/widget settings': ()=>showAppSettingsMenu(),
+    'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -81,7 +81,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Debug info': {
+    'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
       onchange: () => {
@@ -157,7 +157,7 @@ function showWakeUpMenu() {
         Bangle.setLCDTimeout(settings.timeout);
       }
     },
-    'Wake On BTN1': {
+    'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
       format: boolFormat,
       onchange: () => {
@@ -165,7 +165,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN2': {
+    'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
       onchange: () => {
@@ -173,7 +173,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN3': {
+    'Wake on BTN3': {
       value: settings.options.wakeOnBTN3,
       format: boolFormat,
       onchange: () => {
@@ -197,7 +197,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On Twist': {
+    'Wake on Twist': {
       value: settings.options.wakeOnTwist,
       format: boolFormat,
       onchange: () => {
@@ -450,7 +450,7 @@ function showAppSettings(app) {
   }
   try {
     // pass showAppSettingsMenu as "back" argument
-    appSettings(showAppSettingsMenu);
+    appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');
