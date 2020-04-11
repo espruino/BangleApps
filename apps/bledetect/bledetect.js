@@ -9,7 +9,6 @@ function showMainMenu() {
 }
 
 function showDeviceInfo(device){
-  console.log(device);
   const deviceMenu = {
     "": { "title": "Device Info" },
     "name": {
@@ -24,13 +23,7 @@ function showDeviceInfo(device){
   };
 
   deviceMenu[device.id] = () => {};
-  deviceMenu["< Back"] =  () => scan();
-
-  /*for(let key in device){
-    deviceMenu[key.substring(0,17)] = {
-      value: device[key.substring(0,17)]
-    };
-  }*/
+  deviceMenu["< Back"] =  () => showMainMenu();
 
   return E.showMenu(deviceMenu);
 }
@@ -44,7 +37,7 @@ function scan() {
   waitMessage();
 
   NRF.findDevices(devices => {
-      for (let device of devices) {
+      devices.forEach(device =>{
         let deviceName = device.id.substring(0,17);
 
         if (device.name) {
@@ -52,7 +45,7 @@ function scan() {
         }
 
         menu[deviceName] = () => showDeviceInfo(device);
-      }
+      });
       showMainMenu(menu);
   }, { active: true });
 }
@@ -64,4 +57,3 @@ function waitMessage() {
 
 scan();
 waitMessage();
-
