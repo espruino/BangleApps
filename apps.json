@@ -1166,6 +1166,7 @@
     "version":"0.02",
     "description": "Detect BLE devices and show some informations.",
     "tags": "app,bluetooth,tool",
+    "readme": "README.md", 
     "storage": [
       {"name":"bledetect.app.js","url":"bledetect.js"},
       {"name":"bledetect.img","url":"bledetect-icon.js","evaluate":true}
