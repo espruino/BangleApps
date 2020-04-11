@@ -1163,7 +1163,7 @@
     "name": "BLE Detector",
     "shortName":"BLE Detector",
     "icon": "bledetect.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Detect BLE devices and show some informations.",
     "tags": "app,bluetooth,tool",
     "storage": [
