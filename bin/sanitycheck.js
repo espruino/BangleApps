@@ -37,7 +37,13 @@ try{
   ERROR("apps.json not valid JSON");
 }
 
-apps.forEach((app,addIdx) => {
+const APP_KEYS = [
+  'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
+  'sortorder', 'readme', 'custom', 'interface', 'storage', 'allow_emulator',
+];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
+
+apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
@@ -105,9 +111,15 @@ apps.forEach((app,addIdx) => {
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`);
       }
     }
+    for (const key in file) {
+      if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id}'s ${file.name} has unknown key ${key}`);
+    }
   });
   //console.log(fileNames);
   if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`);
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`);
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`);
+  for (const key in app) {
+    if (!APP_KEYS.includes(key)) ERROR(`App ${app.id} has unknown key ${key}`);
+  }
 });
