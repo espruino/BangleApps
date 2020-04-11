@@ -81,6 +81,16 @@ const phone = {
   messageType: null,
 };
 
+const SETTINGS_FILE = "marioclock.json";
+
+function readSettings() {
+  return require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+}
+
+function writeSettings(newSettings) {
+  require("Storage").writeJSON(SETTINGS_FILE, newSettings);
+}
+
 function phoneOutbound(msg) {
   Bluetooth.println(JSON.stringify(msg));
 }
@@ -567,8 +577,31 @@ function startTimers(){
   redraw();
 }
 
+function loadSettings() {
+  const settings = readSettings();
+  if (!settings) return;
+
+  if (settings.character) characterSprite.character = settings.character;
+  if (settings.nightMode) nightMode = settings.nightMode;
+  if (settings.brightness) {
+    brightness = settings.brightness;
+    Bangle.setLCDBrightness(brightness);
+  }
+}
+
+function updateSettings() {
+  const newSettings = {
+    character: characterSprite.character,
+    nightMode: nightMode,
+    brightness: brightness,
+  };
+  writeSettings(newSettings);
+}
+
 // Main
 function init() {
+  loadSettings();
+
   clearInterval();
 
   // Initialise display
@@ -618,6 +651,8 @@ function init() {
       default:
         toggleNightMode();
     }
+
+    updateSettings();
   });
 
   // Phone connectivity
