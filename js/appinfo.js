@@ -69,6 +69,19 @@ var AppInfo = {
       var fileList = fileContents.map(storageFile=>storageFile.name);
       fileList.unshift(appJSONName); // do we want this? makes life easier!
       json.files = fileList.join(",");
+      let dataFileList = [], storageFileList = [];
+      if ('data' in app) {
+        // add "data" files to appropriate list
+        app.data.forEach(d=>{
+          if (d.storageFile) storageFileList.push(d.name||d.wildcard)
+          else dataFileList.push(d.name||d.wildcard)
+        })
+      } else if (json.settings) {
+        // settings but no data files: assume app uses <appid>.settings.json file
+        dataFileList.push(app.id + '.settings.json')
+      }
+      if (dataFileList.length) json.dataFiles = dataFileList.join(",");
+      if (storageFileList.length) json.storageFiles = storageFileList.join(",");
       fileContents.push({
         name : appJSONName,
         content : JSON.stringify(json)

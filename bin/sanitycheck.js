@@ -74,6 +74,8 @@ apps.forEach((app,appIdx) => {
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`);
+    if (file.name.includes('?') || file.name.includes('*'))
+      ERROR(`App ${app.id} storage file ${file.name} contains wildcards`);
     if (fileNames.includes(file.name))
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
     fileNames.push(file.name);
@@ -115,6 +117,37 @@ apps.forEach((app,appIdx) => {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id}'s ${file.name} has unknown key ${key}`);
     }
   });
+  let dataNames = [];
+  (app.data||[]).forEach((data)=>{
+    if (!data.name && !data.wildcard) ERROR(`App ${app.id} has a data file with no name`);
+    if (dataNames.includes(data.name||data.wildcard))
+      ERROR(`App ${app.id} data file ${data.name||data.wildcard} is a duplicate`);
+    dataNames.push(data.name||data.wildcard)
+    if ('name' in data && 'wildcard' in data)
+      ERROR(`App ${app.id} data file ${data.name} has both name and wildcard`);
+    if (data.name) {
+      if (data.name.includes('?') || data.name.includes('*'))
+        ERROR(`App ${app.id} data file name ${data.name} contains wildcards`);
+    }
+    if (data.wildcard) {
+      if (!data.wildcard.includes('?') && !data.wildcard.includes('*'))
+        ERROR(`App ${app.id} data file wildcard ${data.wildcard} does not actually contains wildcard`);
+      if (data.wildcard.replace(/\?|\*/g,'') === '')
+        ERROR(`App ${app.id} data file wildcard ${data.wildcard} does not contain regular characters`);
+      else if (data.wildcard.replace(/\?|\*/g,'').length < 3)
+        WARN(`App ${app.id} data file wildcard ${data.wildcard} is very broad`);
+      else if (!data.wildcard.includes(app.id))
+        WARN(`App ${app.id} data file wildcard ${data.wildcard} does not include app ID`);
+    }
+    if ('storageFile' in data && typeof data.storageFile !== 'boolean')
+      ERROR(`App ${app.id} data file ${data.name||data.wildcard} has non-boolean value for "storageFile"`);
+    for (const key in data) {
+      if (!['name','wildcard','storageFile'].includes(key))
+        ERROR(`App ${app.id} data file ${data.name||data.wildcard} has unknown property "${key}"`);
+    }
+  });
+  if (fileNames.includes(app.id+".settings.js") && dataNames.length===1 && dataNames[0] === app.id+'.settings.json')
+    WARN(`App ${app.id} has settings, so does not need to declare data file ${app.id+'.settings.json'}`)
   //console.log(fileNames);
   if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`);
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`);

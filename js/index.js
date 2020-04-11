@@ -349,6 +349,19 @@ function updateApp(app) {
       .filter(f => f !== app.id + '.info')
       .filter(f => !app.storage.some(s => s.name === f))
       .join(',');
+    let dataFiles = (remove.dataFiles||'').split(','),
+      storageFiles = (remove.storageFiles||'').split(',')
+    if ('data' in app) {
+      // keep declared (in new version) data files
+      dataFiles = dataFiles.filter(f => app.data.some(d => (d.name||d.wildcard) === f))
+      storageFiles = storageFiles.filter(f => app.data.some(d => (d.name||d.wildcard) === f))
+    }
+    else if (remove.settings || app.settings) {
+      // app with settings but no data files declared: keep <appid>.settings.json
+      dataFiles = dataFiles.filter(f => f !== (app.id + '.settings.json'))
+    }
+    if (dataFiles.length) remove.dataFiles = dataFiles.join(',');
+    if (storageFiles.length) remove.storageFiles = storageFiles.join(',')
     return Comms.removeApp(remove);
   }).then(()=>{
     showToast(`Updating ${app.name}...`);
