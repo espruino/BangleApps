@@ -163,9 +163,13 @@
   };
 
   // Touch control
-  Bangle.on("touch", () => {
-    if (state.scrollPos) {
-      hideNotification();
+  Bangle.on("touch", function(button){
+    if(button === 3){
+      gbSend({ t: "music", n: state.music === "play" ? "pause" : "play" });
+    } else {
+      if (state.scrollPos) {
+        hideNotification();
+      }
     }
   });
 
