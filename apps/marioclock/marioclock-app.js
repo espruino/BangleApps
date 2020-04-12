@@ -346,16 +346,20 @@ function drawToadFrame(idx, x, y) {
 function drawNotice(x, y) {
   if (phone.message === null) return;
 
+  let img;
   switch (phone.messageType) {
     case "call":
-      const callImg = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
-      g.drawImage(callImg, characterSprite.x, characterSprite.y - 16);
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
       break;
     case "notify":
-      const msgImg = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
-      g.drawImage(msgImg, characterSprite.x, characterSprite.y - 16);
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
+      break;
+    case "lowBatt":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INFrgABB4oOEBoQPFBwwDGB0uHAAIOLJRB3OSpApDBoQAHB4INLByANNAwo"));
       break;
   }
+
+  g.drawImage(img, characterSprite.x, characterSprite.y - 16);
 }
 
 function drawCharacter(date, character) {
@@ -598,6 +602,14 @@ function updateSettings() {
   writeSettings(newSettings);
 }
 
+function checkBatteryLevel() {
+  if (Bangle.isCharging()) return;
+  if (E.getBattery() > 10) return;
+  if (phone.message !== null) return;
+
+  phoneNewMessage("lowBatt", "Warning, battery is low");
+}
+
 // Main
 function init() {
   loadSettings();
@@ -658,17 +670,25 @@ function init() {
   // Phone connectivity
   try { NRF.wake(); } catch (e) {}
 
-  NRF.on('disconnect', () => Bangle.buzz());
+  NRF.on('disconnect', () => {
+    Bangle.buzz();
+    phoneNewMessage(null, "Phone disconnected");
+  });
+
   NRF.on('connect', () => {
     setTimeout(() => {
       phoneOutbound({ t: "status", bat: E.getBattery() });
     }, ONE_SECOND * 2);
     Bangle.buzz();
+    phoneNewMessage(null, "Phone connected");
   });
 
   GB = (evt) => phoneInbound(evt);
 
   startTimers();
+
+  setInterval(checkBatteryLevel, ONE_SECOND * 60 * 10);
+  checkBatteryLevel();
 }
 
 // Initialise!
