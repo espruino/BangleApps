@@ -1150,7 +1150,7 @@
     "name": "Battery Chart",
     "shortName":"BatChart",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
     "storage": [
