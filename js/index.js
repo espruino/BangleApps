@@ -185,7 +185,7 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read more...</a>`;
+    var readme = `<a href="javascript:;" onclick="showReadme('${app.id}')">Read more...</a>`;
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
