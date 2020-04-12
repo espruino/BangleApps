@@ -18,6 +18,7 @@ function drawTime() {
   g.setRotation(3);
   g.drawString(`${dow} ${day} ${month}`, 50, 20, true);
   g.drawString(year, 85, 205, true);
+  g.setRotation(0);
 }
 
 Bangle.on("lcdPower", function(on) {
