@@ -1,10 +1,9 @@
-Bangle.js App Loader (and Apps)
-================================
+Bangle.js App Loader (and Apps) fbedussi FORK
+=============================================
 
 [![Build Status](https://travis-ci.org/espruino/BangleApps.svg?branch=master)](https://travis-ci.org/espruino/BangleApps)
 
-* Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
-* Try the **development version** at [github.io](https://espruino.github.io/BangleApps/)
+* Try the **development version** at [github.io](https://fbedussi.github.io/BangleApps//)
 
 **All software (including apps) in this repository is MIT Licensed - see [LICENSE](LICENSE)** By 
 submitting code to this repository you confirm that you are happy with it being MIT licensed,
