@@ -18,5 +18,26 @@
         "evaluate": true
       }
     ]
+  },
+  {
+    "id": "bigclock",
+    "name": "Big Clock",
+    "icon": "bigclock.png",
+    "version": "0.04",
+    "description": "A big font sunlight readable watch",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "bigclock.app.js",
+        "url": "bigclock.js"
+      },
+      {
+        "name": "bigclock.img",
+        "url": "bigclock-icon.js",
+        "evaluate": true
+      }
+    ]
   }
 ]
