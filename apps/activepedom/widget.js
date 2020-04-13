@@ -84,7 +84,7 @@
 
     if (steps >= setting('stepThreshold')) {
       if (active == 0) {
-        stepsCounted = stepsCounted + (stepThreshold -1) ; //count steps needed to reach active status, last step is counted anyway, so treshold -1
+        stepsCounted = stepsCounted + (setting('stepThreshold') -1) ; //count steps needed to reach active status, last step is counted anyway, so treshold -1
         stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reac active status
       }
       active = 1;
