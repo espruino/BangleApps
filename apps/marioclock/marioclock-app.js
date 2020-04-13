@@ -359,7 +359,7 @@ function drawNotice(x, y) {
       break;
   }
 
-  g.drawImage(img, characterSprite.x, characterSprite.y - 16);
+  if (img) g.drawImage(img, characterSprite.x, characterSprite.y - 16);
 }
 
 function drawCharacter(date, character) {
@@ -671,7 +671,6 @@ function init() {
   try { NRF.wake(); } catch (e) {}
 
   NRF.on('disconnect', () => {
-    Bangle.buzz();
     phoneNewMessage(null, "Phone disconnected");
   });
 
@@ -679,7 +678,6 @@ function init() {
     setTimeout(() => {
       phoneOutbound({ t: "status", bat: E.getBattery() });
     }, ONE_SECOND * 2);
-    Bangle.buzz();
     phoneNewMessage(null, "Phone connected");
   });
 
