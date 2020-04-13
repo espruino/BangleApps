@@ -111,3 +111,4 @@ Bangle.on('lcdPower', (on) => {
 });
 
 startMyApp();
+setInterval(drawWordClock, startMyApp);

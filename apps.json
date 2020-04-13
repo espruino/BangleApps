@@ -1949,11 +1949,11 @@
     ]
   },
   {
-    "id": "mrjau01a",
+    "id": "mrjau01",
     "name": "TestingApp",
     "shortName": "TestApp",
     "icon": "mrjau01.app.png",
-    "version": "0.03",
+    "version": "0.04",
     "description": "My first base app",
     "tags": "Watch,GPX",
     "allow_emulator": true,
