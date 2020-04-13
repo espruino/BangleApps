@@ -1,16 +1,17 @@
 // Create an entry in apps.json as follows:
-{ "id": "mrjau02w",
+{
+  "id": "mrjau02w",
   "name": "Test Widget",
-  "shortName":"Short Name",
-  "icon": "widget.png",
-  "version":"0.01",
+  "shortName": "Short Name",
+  "icon": "mrjau02w.widget.png",
+  "version": "0.01",
   "description": "Test Widget",
   "tags": "widget",
   "type": "widget",
   "storage": [
     {
       "name": "mrjau02w.wid.js",
-      "url": "widget.js"
+      "url": "mrjau02w.widget.js"
     }
   ]
 }

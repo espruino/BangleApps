@@ -1,16 +1,16 @@
 // Create an entry in apps.json as follows:
 {
-  "id": "mrjau01a",
+  "id": "mrjau01a", // unique identifier
   "name": "My first base app",
   "shortName": "TestingApp",
-  "icon": "app.png",
+  "icon": "mrjau01.app.png",
   "version": "0.01",
   "description": "My first base app",
-  "tags": "Watch,GPX",
+  "tags": "Timer, Watch, GPX",
   "storage": [
     {
       "name": "mrjau01a.app.js",
-      "url": "app.js"
+      "url": "mrjau01a.app.js"
     },
     {
       "name": "mrjau01a.img",

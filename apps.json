@@ -1146,17 +1146,64 @@
     {"name":"devstopwatch.img","url":"app-icon.js","evaluate":true}
   ]
   },
-  { "id": "batchart",
+  {
+    "id": "batchart",
     "name": "Battery Chart",
-    "shortName":"BatChart",
+    "shortName": "BatChart",
     "icon": "app.png",
-    "version":"0.03",
+    "version": "0.03",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
     "storage": [
-      {"name":"batchart.wid.js","url":"widget.js"},
-      {"name":"batchart.app.js","url":"app.js"},
-      {"name":"batchart.img","url":"app-icon.js","evaluate":true}
+      {
+        "name": "batchart.wid.js",
+        "url": "widget.js"
+      },
+      {
+        "name": "batchart.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "batchart.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "mrjau01a",
+    "name": "My first base app",
+    "shortName": "TestingApp",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "My first base app",
+    "tags": "Watch,GPX",
+    "storage": [
+      {
+        "name": "mrjau01a.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "mrjau01a.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "mrjau02w",
+    "name": "Test Widget",
+    "shortName": "Short Name",
+    "icon": "mrjau02w.widget.png",
+    "version": "0.01",
+    "description": "Test Widget",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {
+        "name": "mrjau02w.wid.js",
+        "url": "mrjau02w.widget.js"
+      }
     ]
   }
 ]
