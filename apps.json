@@ -1959,11 +1959,11 @@
     "allow_emulator": true,
     "storage": [
       {
-        "name": "mrjau01a.app.js",
+        "name": "mrjau01.app.js",
         "url": "app.js"
       },
       {
-        "name": "mrjau01a.img",
+        "name": "mrjau01.img",
         "url": "app-icon.js",
         "evaluate": true
       }

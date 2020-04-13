@@ -1,11 +1,10 @@
 // place your const, vars, functions or classes here
-var counter = 30;
 var counterInterval;
+var timerCounter = 120;
 var timerRunning = false;
 var menueMode = false;
 
 // Timer
-
 function outOfTime() {
     E.showMessage("Out of Time", "My Timer");
     Bangle.buzz();
@@ -26,10 +25,7 @@ function countDown() {
         return;
     }
     if ((timerRunning) && !(menueMode)) {
-        g.clear();
-        Bangle.loadWidgets();
-        Bangle.drawWidgets();
-
+        g.clearRect(53, 58, 181, 186);
         g.setFontAlign(0, 0); // center font
         g.setFont("Vector", 80); // vector font, 80px  
         // draw the current counter value
@@ -40,7 +36,20 @@ function countDown() {
 }
 
 function startTimer() {
-    counter = 30;
+    // 240 x 240 x 16 bits
+    // 48 Pixel for Widgets
+    // 192 Pixel for the Rest
+    // 96 Pixel seems to be the center
+
+    counter = timerCounter;
+    g.drawRect(3, 29, 237, 215); // Outer Rect
+    g.drawCircle(117, 122, 93);  // Inner Circle
+    g.drawRect(52, 57, 182, 187); // Inner Rect
+
+    g.clear();
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
+
     timerRunning = true;
     countDown();
     if (!counterInterval)
@@ -48,7 +57,6 @@ function startTimer() {
 }
 
 // Menue
-
 var mainmenu = {
     "": {
         "title": "-- Main Menu --"
@@ -84,13 +92,15 @@ Bangle.on('lcdPower', (on) => {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
 // call your app function here
 startTimer();
 
 // Show launcher when middle button pressed
+setWatch(startTimer, BTN1, { repeat: true, edge: "falling" });
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 // Show app menue when right Touchscreen pressed
-setWatch(startAppMenue, BTN1, { repeat: false, edge: "falling" });
+// setWatch(startAppMenue, BTN1, { repeat: false, edge: "falling" });
 
 
 
