@@ -7,6 +7,8 @@
   "Save" : "Opslaan",
   "Back" : "Terug",
   "Repeat" : "Herhalen",
-  "repeat" : "herhalen",
-  "rpt" : "herhalen"
+  "Delete" : "Verwijderen",
+  "rpt" : "herhalen",
+  "ALARM!" : "ALARV.",
+  "Sleep" : "Stand-by"
 }

@@ -7,6 +7,8 @@
   "Save" : "Mentés",
   "Back" : "Vissza",
   "Repeat" : "Ismétlés",
-  "repeat" : "ismétlés",
-  "rpt" : "ismétlés"
+  "Delete" : "Törlés",
+  "rpt" : "ismétlés",
+  "ALARM!" : "ALARM!",
+  "Sleep" : "Alvás"
 }

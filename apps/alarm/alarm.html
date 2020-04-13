@@ -31,30 +31,34 @@
           xhr.send();
       });
 
-      let appjsTranslated;
-      let translate = () => {
+      let translated; = {};
+	  let translate = () => {
+	    Promise.all(translateFile("app.js"), translateFile("alarm.js")).then(() => {
+          document.getElementById("upload").style.visibility = 'visible';
+        }).catch( error => {
+          console.log(error);
+          document.getElementById("upload").style.visibility = 'hidden';
+        });
+	  };
+      let translateFile = (fileName) => {
         var languageSelector = document.getElementById("languages");
         var lang = languageSelector.options[languageSelector.selectedIndex].value;
         console.log(lang);      
-        request("app.js").then( appjs => 
+        request(fileName).then( fileContent => 
           request("app_" + lang + ".json")
           .catch( () => request("app_" + lang.substring(0,2) + ".json"))
           .catch( () => request("app.json"))
           .then( langjson => {
             var trans = JSON.parse(langjson);
-            appjs = appjs.replace(/"([^"]*?)"\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"' + (trans[p1]?'':'/*LANG*/'); });
-            appjs = appjs.replace(/'([^']*?)'\/\*LANG\*\//g, function(m, p1) { return "'" + (trans[p1]||p1) + "'" + (trans[p1]?'':'/*LANG*/'); });
-            return appjs;
+            fileContent = fileContent.replace(/"([^"]*?)"\/\*LANG\*\//g, function(m, p1) { return '"' + (trans[p1]||p1) + '"' + (trans[p1]?'':'/*LANG*/'); });
+            fileContent = fileContent.replace(/'([^']*?)'\/\*LANG\*\//g, function(m, p1) { return "'" + (trans[p1]||p1) + "'" + (trans[p1]?'':'/*LANG*/'); });
+            return fileContent;
           }).catch( error => {
             console.log(error);
-            return appjs; // unmodified
+            return fileContent; // unmodified
           })
-        ).then( appjs => {
-          appjsTranslated = appjs;
-          document.getElementById("upload").style.visibility = 'visible';
-        }).catch( error => {
-          console.log(error);
-          document.getElementById("upload").style.visibility = 'hidden';
+        ).then( fileContent => {
+          translated[fileName] = fileContent;
         });
       };            
       
@@ -82,12 +86,13 @@
       });
 
       document.getElementById("upload").addEventListener("click", function() {
-        console.log("app.js is:", appjsTranslated);
+        console.log("app.js is:", translated["app.js"];
+		console.log("alarm.js is:", translated["alarm.js"];
         sendCustomizedApp({
           storage:[
-            {"name":"alarm.app.js",content: appjsTranslated},
+            {"name":"alarm.app.js",content: translated["app.js"]},
             {"name":"alarm.boot.js","url":"boot.js"},
-            {"name": "alarm.js", "url":"alarm.js"},
+            {"name": "alarm.js", content: translated["alarm.js"]},
             //{"name":"alarm.json","content":"[]"},
             {"name":"alarm.img","url":"app-icon.js","evaluate":true},
             {"name":"alarm.wid.js","url":"widget.js"}                

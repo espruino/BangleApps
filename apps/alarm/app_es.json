@@ -7,6 +7,8 @@
   "Save" : "Grabar",
   "Back" : "Atrás",
   "Repeat" : "Repetición",
-  "repeat" : "repetición",
-  "rpt" : "rep."
+  "Delete" : "Borrar",
+  "rpt" : "rep.",
+  "ALARM!" : "ALARM",
+  "Sleep" : "Dormir"
 }

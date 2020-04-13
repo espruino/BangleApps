@@ -32,8 +32,8 @@ function showMainMenu() {
     'New Alarm'/*LANG*/: ()=>editAlarm(-1)
   };
   alarms.forEach((alarm,idx)=>{
-    txt = alarm.on?locale.translate("on"):locale.translate("off");
-    txt += " ".repeat(Math.max(locale.translate("on").length,locale.translate("off").length) - txt.length);
+    txt = alarm.on?locale.translate("On"):locale.translate("Off");
+    txt += " ".repeat(Math.max(locale.translate("On").length,locale.translate("Off").length) - txt.length);
     txt += " " + formatTime(alarm.hr);
     if (alarm.rp) txt += " (" + "rpt"/*LANG*/ + ")";
     menu[txt] = function() {
