@@ -1953,7 +1953,7 @@
     "name": "TestingApp",
     "shortName": "TestApp",
     "icon": "mrjau01.app.png",
-    "version": "0.02",
+    "version": "0.03",
     "description": "My first base app",
     "tags": "Watch,GPX",
     "allow_emulator": true,

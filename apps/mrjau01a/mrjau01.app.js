@@ -1,9 +1,10 @@
-// Version 0.02
+// Version 0.03
 // place your const, vars, functions or classes here
 var counterInterval;
 var timerCounter = 120;
 var timerRunning = false;
 var menueMode = false;
+var idBTN1;
 
 // Timer
 function outOfTime() {
@@ -66,7 +67,7 @@ var mainmenu = {
     "Buzz": function () { Bangle.buzz(); },
     "Submenu": function () { E.showMenu(submenu); },
     "ShowMessage": {},
-    "Exit": function () { E.showMenu(); },
+    "Exit": function () { startMyApp(); },
 };
 // Submenu
 var submenu = {
@@ -79,29 +80,34 @@ var submenu = {
 };
 // Start meneu
 function startAppMenue() {
+    clearWatch(idBTN1);
+    clearWatch(idBTN2);
+    clearWatch(idBTN3);
     E.showMenu(mainmenu);
+}
+
+function startMyApp() {
+
+    g.clear();
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
+
+    // call your app function here
+    startTimer();
+    // Show launcher when middle button pressed
+    idBTN1 = setWatch(startTimer, BTN1, { repeat: true, edge: "falling" });
+    idBTN2 = setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+    // Show app menue when right Touchscreen pressed
+    idBTN3 = setWatch(startAppMenue, BTN3, { repeat: false, edge: "falling" });
 }
 
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
     if (on) {
         // call your app function here
+        startMyApp();
         // If you clear the screen, do Bangle.drawWidgets();
     }
 });
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
-// call your app function here
-startTimer();
-
-// Show launcher when middle button pressed
-setWatch(startTimer, BTN1, { repeat: true, edge: "falling" });
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-// Show app menue when right Touchscreen pressed
-// setWatch(startAppMenue, BTN1, { repeat: false, edge: "falling" });
-
-
-
+startMyApp();
