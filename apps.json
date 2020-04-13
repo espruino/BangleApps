@@ -1172,12 +1172,13 @@
   },
   {
     "id": "mrjau01a",
-    "name": "My first base app",
-    "shortName": "TestingApp",
-    "icon": "app.png",
+    "name": "TestingApp",
+    "shortName": "TestApp",
+    "icon": "mrjau01.app.png",
     "version": "0.01",
     "description": "My first base app",
     "tags": "Watch,GPX",
+    "allow_emulator": true,
     "storage": [
       {
         "name": "mrjau01a.app.js",
@@ -1189,21 +1190,4 @@
         "evaluate": true
       }
     ]
-  },
-  {
-    "id": "mrjau02w",
-    "name": "Test Widget",
-    "shortName": "Short Name",
-    "icon": "mrjau02w.widget.png",
-    "version": "0.01",
-    "description": "Test Widget",
-    "tags": "widget",
-    "type": "widget",
-    "storage": [
-      {
-        "name": "mrjau02w.wid.js",
-        "url": "mrjau02w.widget.js"
-      }
-    ]
   }
-]
