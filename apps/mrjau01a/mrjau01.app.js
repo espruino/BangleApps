@@ -1,3 +1,4 @@
+// Version 0.02
 // place your const, vars, functions or classes here
 var counterInterval;
 var timerCounter = 120;
