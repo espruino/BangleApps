@@ -1,4 +1,4 @@
-// Version 0.03
+// Version 0.04
 // place your const, vars, functions or classes here
 var counterInterval;
 var timerCounter = 120;
