@@ -7,3 +7,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Added optional `README.md` file for apps
 * Remove 2v04 version warning, add links in About to official/developer versions
 * Fix issue removing an app that was just installed (Fix #253)
+* Add `Favourite` functionality 
