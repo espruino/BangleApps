@@ -8,7 +8,7 @@ Enjoy watching Mario, or one of the other game characters run through a level wh
 ## Features
 
 * Multiple characters - swipe the screen right to change the character between `Mario`, `Toad`, and `Daisy`
-* Night and Day modes - swipe left to toggle mode
+* Night and Day modes - swipe left to enter night mode, with 3 levels of darkness before returning to day mode.
 * Smooth animation
 * Awesome 8-bit style grey-scale graphics
 * Mario jumps to change the time, every minute

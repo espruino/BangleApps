@@ -1,3 +1,5 @@
 0.01: New app and widget
 0.02: Widget stores data to file (1 dataset/10min)
 0.03: Rotate log files once a week.
+0.04: chart in the app is now active.
+0.05: Display temperature and LCD state in chart
