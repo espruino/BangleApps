@@ -78,7 +78,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -86,6 +86,7 @@
       {"name":"welcome.boot.js","url":"boot.js"},
       {"name":"welcome.app.js","url":"app.js"},
       {"name":"welcome.settings.js","url":"settings.js"},
+      {"name":"welcome.settings.json","url":"settings-default.json","evaluate":true},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
     ]
   },
