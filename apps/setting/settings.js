@@ -325,8 +325,6 @@ function showClockMenu() {
   return E.showMenu(clockMenu);
 }
 
-
-
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
@@ -419,8 +417,8 @@ function showAppSettingsMenu() {
     '< Back': ()=>showMainMenu(),
   }
   const apps = storage.list(/\.info$/)
-    .map(app => storage.readJSON(app, 1))
-    .filter(app => app && app.settings)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?a:undefined})
+    .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder)
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
