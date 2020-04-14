@@ -1171,5 +1171,18 @@
       {"name":"bledetect.app.js","url":"bledetect.js"},
       {"name":"bledetect.img","url":"bledetect-icon.js","evaluate":true}
     ]
+  },
+  { "id": "snake",
+    "name": "Snake",
+    "shortName":"Snake",
+    "icon": "snake.png",
+    "version":"0.01",
+    "description": "The classic snake game. Eat apples and don't bite your tail:",
+    "tags": "game,fun",
+    "readme": "README.md", 
+    "storage": [
+      {"name":"snake.app.js","url":"snake.js"},
+      {"name":"snake.img","url":"snake-icon.js","evaluate":true}
+    ]
   }
 ]
