@@ -84,7 +84,7 @@
     // Change log target on day change
     if (previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
-      Storage.open(logFileName, "r")­.erase();
+      Storage.open(logFileName, "r").erase();
       Storage.write(previousWriteLogName, currentWriteDay);
     }
 
