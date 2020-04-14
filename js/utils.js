@@ -56,7 +56,7 @@ function getVersionInfo(appListing, appInstalled) {
     if (appListing.version)
       versionText = clicky("v"+appListing.version);
   } else {
-    versionText = (appInstalled.version ? ("v"+appInstalled.version) : "Unknown version");
+    versionText = (appInstalled.version ? (clicky("v"+appInstalled.version)) : "Unknown version");
     if (appListing.version != appInstalled.version) {
       if (appListing.version) versionText += ", latest "+clicky("v"+appListing.version);
       canUpdate = true;
