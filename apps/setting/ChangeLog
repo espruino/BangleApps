@@ -14,3 +14,4 @@
       Move LCD Timeout to wakeup menu
 0.13: Fix memory leak for App settings
       Make capitalization more consistent
+      Move LCD Brightness menu into more general LCD menu

@@ -89,17 +89,6 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'LCD Brightness': {
-      value: settings.brightness,
-      min: 0.1,
-      max: 1,
-      step: 0.1,
-      onchange: v => {
-        settings.brightness = v || 1;
-        updateSettings();
-        Bangle.setLCDBrightness(settings.brightness);
-      }
-    },
     'Beep': {
       value: 0 | beepV.indexOf(settings.beep),
       min: 0, max: 2,
@@ -134,7 +123,7 @@ function showMainMenu() {
       }
     },
     'Set Time': ()=>showSetTimeMenu(),
-    'LCD Wake-Up': ()=>showWakeUpMenu(),
+    'LCD': ()=>showLCDMenu(),
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>Bangle.off(),
     '< Back': ()=>load()
@@ -142,10 +131,21 @@ function showMainMenu() {
   return E.showMenu(mainmenu);
 }
 
-function showWakeUpMenu() {
-  const wakeUpMenu = {
-    '': { 'title': 'LCD Wake-Up' },
+function showLCDMenu() {
+  const lcdMenu = {
+    '': { 'title': 'LCD' },
     '< Back': ()=>showMainMenu(),
+    'LCD Brightness': {
+      value: settings.brightness,
+      min: 0.1,
+      max: 1,
+      step: 0.1,
+      onchange: v => {
+        settings.brightness = v || 1;
+        updateSettings();
+        Bangle.setLCDBrightness(settings.brightness);
+      }
+    },
     'LCD Timeout': {
       value: settings.timeout,
       min: 0,
@@ -236,7 +236,7 @@ function showWakeUpMenu() {
       }
     }
   }
-  return E.showMenu(wakeUpMenu)
+  return E.showMenu(lcdMenu)
 }
 
 function showLocaleMenu() {
