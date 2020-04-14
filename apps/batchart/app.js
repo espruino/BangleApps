@@ -71,8 +71,11 @@ function loadData() {
     let topUpLogFileName = "bclog" + previousDay;
     let remainingLines = MaxValueCount - dataLines.length;
     let topUpLines = loadLinesFromFile(remainingLines, topUpLogFileName);
-    dataLines = topUpLines.concat(dataLines);
-    
+
+    if(topUpLines) {
+      dataLines = topUpLines.concat(dataLines);
+    }
+
     previousDay = decrementDay(previousDay);
   }
 
