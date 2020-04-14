@@ -26,23 +26,28 @@
     g.drawString("BC", this.x, this.y);
   }
 
+  function onMag(){
+    compassEventReceived = true;
+    // Stop handling events when no longer necessarry
+    Bangle.removeListener("mag", onMag);
+  }
+
+  function onGps() {
+    gpsEventReceived = true;
+    Bangle.removeListener("GPS", onGps);
+  }
+
+  function onHrm() {
+    gpsEventReceived = true;
+    Bangle.removeListener("HRM", onHrm);
+  }
+
   function getEnabledConsumersValue() {
     var enabledConsumers = switchableConsumers.none;
 
-    Bangle.on('mag', (() => {
-      console.log("mag received");
-      compassEventReceived = true;
-    }));
-    
-    Bangle.on('GPS', (() => {
-      console.log("GPS received");
-      gpsEventReceived = true;
-    }));
-
-    Bangle.on('HRM', (() => {
-      console.log("HRM received");
-      hrmEventReceived = true;
-    }));
+    Bangle.on('mag', onMag);
+    Bangle.on('GPS', onGps);
+    Bangle.on('HRM', onHrm);
 
     // Wait two seconds, that should be enough for each of the events to get raised once
     setTimeout(() => { 
@@ -65,8 +70,6 @@
     compassEventReceived = false;
     gpsEventReceived = false;
     hrmEventReceived = false;
-
-    console.log("Enabled: " + enabledConsumers);
 
     return enabledConsumers;
   }
