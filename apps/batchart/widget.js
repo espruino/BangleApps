@@ -20,8 +20,6 @@
   var gpsEventReceived = false;
   var hrmEventReceived = false;
 
-  const Storage = require("Storage");
-
   // draw your widget
   function draw() {
     g.reset();
@@ -34,7 +32,6 @@
     Bangle.on('mag', (() => {
       console.log("mag received");
       compassEventReceived = true;
-      Bangle.on("mag", () => {});
     }));
     
     Bangle.on('GPS', (() => {
@@ -49,9 +46,7 @@
 
     // Wait two seconds, that should be enough for each of the events to get raised once
     setTimeout(() => { 
-      Bangle.on('mag', () => {});
-      Bangle.on('GPS', () => {});
-      Bangle.on('HRM', () => {});
+      Bangle.removeAllListeners;
     }, 2000);
 
     if (Bangle.isLCDOn())
