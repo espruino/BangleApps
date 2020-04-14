@@ -1,5 +1,3 @@
-WIDGETS = {};
-
 (() => {
   const Storage = require("Storage");
 
@@ -24,8 +22,16 @@ WIDGETS = {};
 
   // draw your widget
   function draw() {
+    let x = this.x;
+    let y = this.y;
+    
+    g.setColor(0, 1, 0);
+    g.fillPoly([x+5, y, x+5, y+4, x+1, y+4, x+1, y+20, x+18, y+20, x+18, y+4, x+13, y+4, x+13, y], true);
+
+    g.setColor(0,0,0);
+    g.drawPoly([x+5, y+6, x+8, y+12, x+13, y+12, x+16, y+18], false);
+    
     g.reset();
-    g.drawString("BC", this.x, this.y);
   }
 
   function onMag(){
@@ -53,7 +59,7 @@ WIDGETS = {};
 
     // Wait two seconds, that should be enough for each of the events to get raised once
     setTimeout(() => { 
-      Bangle.removeAllListeners;
+      Bangle.removeAllListeners();
     }, 2000);
 
     if (Bangle.isLCDOn())
@@ -73,7 +79,7 @@ WIDGETS = {};
     gpsEventReceived = false;
     hrmEventReceived = false;
 
-    return enabledConsumers;
+    return enabledConsumers.toString();
   }
 
   function logBatteryData() {
@@ -84,7 +90,7 @@ WIDGETS = {};
     const logFileName = "bclog" + currentWriteDay;
 
     // Change log target on day change
-    if (previousWriteDay != NaN
+    if (!isNaN(previousWriteDay)
       && previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
       Storage.open(logFileName, "r").erase();
@@ -93,9 +99,13 @@ WIDGETS = {};
 
     var bcLogFileA = Storage.open(logFileName, "a");
     if (bcLogFileA) {
-      let logString = [getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(",");
+      let logTime = getTime().toFixed(0);
+      let logPercent = E.getBattery();
+      let logTemperature = E.getTemperature();
+      let logConsumers = getEnabledConsumersValue();
       
-      console.log(logString);
+      let logString = [logTime, logPercent, logTemperature, logConsumers].join(",");
+      
       bcLogFileA.write(logString + "\n");
     }
   }
@@ -103,7 +113,7 @@ WIDGETS = {};
   function reload() {
     WIDGETS["batchart"].width = 24;
 
-    recordingInterval = setInterval(logBatteryData, recordingInterval10S);
+    recordingInterval = setInterval(logBatteryData, recordingInterval10Min);
 
     logBatteryData();
   }
