@@ -3,3 +3,4 @@
 0.03: Rotate log files once a week.
 0.04: chart in the app is now active.
 0.05: Display temperature and LCD state in chart
+0.06: Fixes widget events and charting of component states
