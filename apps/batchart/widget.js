@@ -93,8 +93,10 @@ WIDGETS = {};
 
     var bcLogFileA = Storage.open(logFileName, "a");
     if (bcLogFileA) {
-      console.log([getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(","));
-      bcLogFileA.write([[getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(",")].join(",")+"\n");
+      let logString = [getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(",");
+      
+      console.log(logString);
+      bcLogFileA.write(logString + "\n");
     }
   }
 
