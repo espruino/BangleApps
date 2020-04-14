@@ -1214,5 +1214,17 @@
       {"name":"bledetect.app.js","url":"bledetect.js"},
       {"name":"bledetect.img","url":"bledetect-icon.js","evaluate":true}
     ]
+  },
+    { "id": "calculator",
+    "name": "Calculator",
+    "shortName":"Calculator",
+    "icon": "calculator.png",
+    "version":"0.01",
+    "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus. Push button1 and 3 to navigate up/down, tap right or left to navigate the sides, push button 2 to select.",
+    "tags": "app,tool",
+    "storage": [
+      {"name":"calculator.app.js","url":"app.js"},
+      {"name":"calculator.img","url":"calculator-icon.js","evaluate":true}
+    ]
   }
 ]
