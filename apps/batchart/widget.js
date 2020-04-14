@@ -15,6 +15,12 @@
   const recordingInterval10S = 10*1000; //For testing 
   var recordingInterval = null;
 
+  var compassEventReceived = false;
+  var gpsEventReceived = false;
+  var hrmEventReceived = false;
+
+  const Storage = require("Storage");
+
   // draw your widget
   function draw() {
     g.reset();
@@ -24,24 +30,54 @@
   function getEnabledConsumersValue() {
     var enabledConsumers = switchableConsumers.none;
 
+    Bangle.on('mag', (() => {
+      console.log("mag received");
+      compassEventReceived = true;
+      Bangle.on("mag", () => {});
+    }));
+    
+    Bangle.on('GPS', (() => {
+      console.log("GPS received");
+      gpsEventReceived = true;
+    }));
+
+    Bangle.on('HRM', (() => {
+      console.log("HRM received");
+      hrmEventReceived = true;
+    }));
+
+    // Wait two seconds, that should be enough for each of the events to get raised once
+    setTimeout(() => { 
+      Bangle.on('mag', () => {});
+      Bangle.on('GPS', () => {});
+      Bangle.on('HRM', () => {});
+    }, 2000);
+
     if (Bangle.isLCDOn())
       enabledConsumers = enabledConsumers | switchableConsumers.lcd;
     // Already added in the hope they will be available soon to get more details
-    // if (Bangle.isCompassOn())
-    //   enabledConsumers = enabledConsumers | switchableConsumers.compass;
-    // if (Bangle.isBluetoothOn())
+    if (compassEventReceived)
+      enabledConsumers = enabledConsumers | switchableConsumers.compass;
+    if (gpsEventReceived)
+      enabledConsumers = enabledConsumers | switchableConsumers.gps;
+    if (hrmEventReceived)
+      enabledConsumers = enabledConsumers | switchableConsumers.hrm;
+    //if (Bangle.isBluetoothOn())
     //   enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
-    // if (Bangle.isGpsOn())
-    //   enabledConsumers = enabledConsumers | switchableConsumers.gps;
-    // if (Bangle.isHrmOn())
-    //   enabledConsumers = enabledConsumers | switchableConsumers.hrm;
+      
+    // Reset the event registration vars
+    compassEventReceived = false;
+    gpsEventReceived = false;
+    hrmEventReceived = false;
+
+    console.log("Enabled: " + enabledConsumers);
 
     return enabledConsumers;
   }
 
   function logBatteryData() {
     const previousWriteLogName = "bcprvday";
-    const previousWriteDay = require("Storage").read(previousWriteLogName);
+    const previousWriteDay = Storage.read(previousWriteLogName);
     const currentWriteDay = new Date().getDay();
 
     const logFileName = "bclog" + currentWriteDay;
@@ -49,11 +85,11 @@
     // Change log target on day change
     if (previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
-      require("Storage").erase(logFileName);
-      require("Storage").write(previousWriteLogName, currentWriteDay);
+      Storage.erase(logFileName);
+      Storage.write(previousWriteLogName, currentWriteDay);
     }
 
-    var bcLogFileA = require("Storage").open(logFileName, "a");
+    var bcLogFileA = Storage.open(logFileName, "a");
     if (bcLogFileA) {
       console.log([getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(","));
       bcLogFileA.write([[getTime().toFixed(0), E.getBattery(), E.getTemperature(), getEnabledConsumersValue()].join(",")].join(",")+"\n");
@@ -63,7 +99,7 @@
   function reload() {
     WIDGETS["batchart"].width = 24;
 
-    recordingInterval = setInterval(logBatteryData, recordingInterval10Min);
+    recordingInterval = setInterval(logBatteryData, recordingInterval10S);
 
     logBatteryData();
   }

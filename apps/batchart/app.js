@@ -7,12 +7,12 @@ const MaxValueCount = 144;
 const GraphXMax = GraphXZero + MaxValueCount;
 
 const GraphLcdY = GraphYZero + 10;
-// const GraphCompassY = GraphYZero + 16;
+const GraphCompassY = GraphYZero + 16;
 // const GraphBluetoothY = GraphYZero + 22;
-// const GraphGpsY = GraphYZero + 28;
-// const GraphHrmY = GraphYZero + 34;
+const GraphGpsY = GraphYZero + 28;
+const GraphHrmY = GraphYZero + 34;
 
-var Storage = require("Storage");
+const Storage = require("Storage");
 
 function renderCoordinateSystem() {
   g.setFont("6x8", 1);
@@ -149,13 +149,13 @@ function renderData(dataArray) {
       g.drawLine(GraphXZero + i, GraphLcdY, GraphXZero + i, GraphLcdY + 1);
     }
     
-    // // Compass state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(0, 1, 0);
-    //   g.setFontAlign(-1, -1, 0);
-    //   g.drawString("Compass", GraphXMax + GraphMarkerOffset, GraphCompassY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphCompassY, GraphXZero + i, GraphCompassY + 1);
-    // }
+    // Compass state
+    if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
+      g.setColor(0, 1, 0);
+      g.setFontAlign(-1, -1, 0);
+      g.drawString("Compass", GraphXMax + GraphMarkerOffset, GraphCompassY - 2, true);
+      g.drawLine(GraphXZero + i, GraphCompassY, GraphXZero + i, GraphCompassY + 1);
+    }
     
     // // Bluetooth state
     // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
@@ -165,21 +165,21 @@ function renderData(dataArray) {
     //   g.drawLine(GraphXZero + i, GraphBluetoothY, GraphXZero + i, GraphBluetoothY + 1);
     // }
     
-    // // Gps state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(0.8, 0.5, 0.24);
-    //   g.setFontAlign(-1, -1, 0);
-    //   g.drawString("GPS", GraphXMax + GraphMarkerOffset, GraphGpsY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphGpsY, GraphXZero + i, GraphGpsY + 1);
-    // }
+    // Gps state
+    if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
+      g.setColor(0.8, 0.5, 0.24);
+      g.setFontAlign(-1, -1, 0);
+      g.drawString("GPS", GraphXMax + GraphMarkerOffset, GraphGpsY - 2, true);
+      g.drawLine(GraphXZero + i, GraphGpsY, GraphXZero + i, GraphGpsY + 1);
+    }
     
-    // // Hrm state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(1, 0, 0);
-    //   g.setFontAlign(1, -1, 0);
-    //   g.drawString("HRM", GraphXZero - GraphMarkerOffset, GraphHrmY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphHrmY, GraphXZero + i, GraphHrmY + 1);
-    // }
+    // Hrm state
+    if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
+      g.setColor(1, 0, 0);
+      g.setFontAlign(1, -1, 0);
+      g.drawString("HRM", GraphXZero - GraphMarkerOffset, GraphHrmY - 2, true);
+      g.drawLine(GraphXZero + i, GraphHrmY, GraphXZero + i, GraphHrmY + 1);
+    }
   }
   
   dataArray = null;
