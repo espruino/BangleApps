@@ -38,7 +38,7 @@
   }
 
   function onHrm() {
-    gpsEventReceived = true;
+    hrmEventReceived = true;
     Bangle.removeListener("HRM", onHrm);
   }
 
