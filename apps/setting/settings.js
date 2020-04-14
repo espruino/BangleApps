@@ -64,7 +64,7 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
-    'App/widget settings': ()=>showAppSettingsMenu(),
+    'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -81,7 +81,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Debug info': {
+    'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
       onchange: () => {
@@ -450,7 +450,7 @@ function showAppSettings(app) {
   }
   try {
     // pass showAppSettingsMenu as "back" argument
-    appSettings(showAppSettingsMenu);
+    appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');
