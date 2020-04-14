@@ -1,3 +1,5 @@
+WIDGETS = {};
+
 (() => {
   const Storage = require("Storage");
 
@@ -76,7 +78,7 @@
 
   function logBatteryData() {
     const previousWriteLogName = "bcprvday";
-    const previousWriteDay = Storage.read(previousWriteLogName);
+    const previousWriteDay = parseInt(Storage.open(previousWriteLogName, "r").readLine());
     const currentWriteDay = new Date().getDay();
 
     const logFileName = "bclog" + currentWriteDay;
@@ -85,7 +87,7 @@
     if (previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
       Storage.open(logFileName, "r").erase();
-      Storage.write(previousWriteLogName, currentWriteDay);
+      Storage.open(previousWriteLogName, "w").write(parseInt(currentWriteDay));
     }
 
     var bcLogFileA = Storage.open(logFileName, "a");
