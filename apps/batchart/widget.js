@@ -1,5 +1,7 @@
 (() => {
-  var switchableConsumers = {
+  const Storage = require("Storage");
+
+  const switchableConsumers = {
     none: 0,
     lcd: 1,
     compass: 2,
@@ -8,7 +10,6 @@
     hrm: 16
   };
 
-  var settings = {};
   var batChartFile; // file for battery percentage recording
   const recordingInterval10Min = 60 * 10 * 1000;
   const recordingInterval1Min = 60*1000; //For testing 
@@ -85,7 +86,7 @@
     // Change log target on day change
     if (previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
-      Storage.erase(logFileName);
+      Storage.open(logFileName, "r")­.erase();
       Storage.write(previousWriteLogName, currentWriteDay);
     }
 
