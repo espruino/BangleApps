@@ -60,7 +60,6 @@
     }
   }
 
-  // Called by the heart app to reload settings and decide what's
   function reload() {
     WIDGETS["batchart"].width = 24;
 
