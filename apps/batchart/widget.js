@@ -14,8 +14,8 @@ WIDGETS = {};
 
   var batChartFile; // file for battery percentage recording
   const recordingInterval10Min = 60 * 10 * 1000;
-  const recordingInterval1Min = 60*1000; //For testing 
-  const recordingInterval10S = 10*1000; //For testing 
+  const recordingInterval1Min = 60*1000; //For testing
+  const recordingInterval10S = 10*1000; //For testing
   var recordingInterval = null;
 
   var compassEventReceived = false;
@@ -67,7 +67,7 @@ WIDGETS = {};
       enabledConsumers = enabledConsumers | switchableConsumers.hrm;
     //if (Bangle.isBluetoothOn())
     //   enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
-      
+
     // Reset the event registration vars
     compassEventReceived = false;
     gpsEventReceived = false;
@@ -84,7 +84,8 @@ WIDGETS = {};
     const logFileName = "bclog" + currentWriteDay;
 
     // Change log target on day change
-    if (previousWriteDay != currentWriteDay) {
+    if (previousWriteDay != NaN
+      && previousWriteDay != currentWriteDay) {
       //Remove a log file containing data from a week ago
       Storage.open(logFileName, "r").erase();
       Storage.open(previousWriteLogName, "w").write(parseInt(currentWriteDay));
@@ -110,6 +111,7 @@ WIDGETS = {};
     reload();
     Bangle.drawWidgets(); // relayout all widgets
   }};
+
   // load settings, set correct widget width
   reload();
 })()
