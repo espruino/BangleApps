@@ -119,7 +119,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -915,7 +915,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.09",
+    "version":"0.12",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -1171,6 +1171,34 @@
     "storage": [
       {"name":"nato.app.js","url":"nato.js"},
       {"name":"nato.img","url":"nato-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "numerals",
+    "name": "Numerals Clock",
+    "shortName": "Numerals Clock",
+    "icon": "numerals.png",
+    "version":"0.01",
+    "description": "A simple big numerals clock",
+    "tags": "numerals,clock",
+	"type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"numerals.app.js","url":"numerals.app.js"},
+      {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
+	    {"name":"numerals.settings.js","url":"numerals.settings.js"}
+    ]
+  },
+  { "id": "bledetect",
+    "name": "BLE Detector",
+    "shortName":"BLE Detector",
+    "icon": "bledetect.png",
+    "version":"0.02",
+    "description": "Detect BLE devices and show some informations.",
+    "tags": "app,bluetooth,tool",
+    "readme": "README.md", 
+    "storage": [
+      {"name":"bledetect.app.js","url":"bledetect.js"},
+      {"name":"bledetect.img","url":"bledetect-icon.js","evaluate":true}
     ]
   }
 ]
