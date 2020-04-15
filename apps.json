@@ -355,7 +355,7 @@
   { "id": "widbt",
     "name": "Bluetooth Widget",
     "icon": "widget.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
     "type":"widget",
