@@ -1220,7 +1220,7 @@
     "shortName":"Snake",
     "icon": "snake.png",
     "version":"0.02",
-    "description": "The classic snake game. Eat apples and don't bite your tail:",
+    "description": "The classic snake game. Eat apples and don't bite your tail.",
     "tags": "game,fun",
     "readme": "README.md", 
     "storage": [
