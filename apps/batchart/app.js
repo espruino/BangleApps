@@ -7,12 +7,12 @@ const MaxValueCount = 144;
 const GraphXMax = GraphXZero + MaxValueCount;
 
 const GraphLcdY = GraphYZero + 10;
-// const GraphCompassY = GraphYZero + 16;
+const GraphCompassY = GraphYZero + 16;
 // const GraphBluetoothY = GraphYZero + 22;
-// const GraphGpsY = GraphYZero + 28;
-// const GraphHrmY = GraphYZero + 34;
+const GraphGpsY = GraphYZero + 28;
+const GraphHrmY = GraphYZero + 34;
 
-var Storage = require("Storage");
+const Storage = require("Storage");
 
 function renderCoordinateSystem() {
   g.setFont("6x8", 1);
@@ -71,8 +71,11 @@ function loadData() {
     let topUpLogFileName = "bclog" + previousDay;
     let remainingLines = MaxValueCount - dataLines.length;
     let topUpLines = loadLinesFromFile(remainingLines, topUpLogFileName);
-    dataLines = topUpLines.concat(dataLines);
-    
+
+    if(topUpLines) {
+      dataLines = topUpLines.concat(dataLines);
+    }
+
     previousDay = decrementDay(previousDay);
   }
 
@@ -142,20 +145,20 @@ function renderData(dataArray) {
     g.setPixel(GraphXZero + i, GraphYZero - scaledTemp);
     
     // LCD state
-    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.lcd == switchableConsumers.lcd) {
+    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.lcd) {
       g.setColor(1, 1, 1);
       g.setFontAlign(1, -1, 0);
       g.drawString("LCD", GraphXZero - GraphMarkerOffset, GraphLcdY - 2, true);
       g.drawLine(GraphXZero + i, GraphLcdY, GraphXZero + i, GraphLcdY + 1);
     }
     
-    // // Compass state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(0, 1, 0);
-    //   g.setFontAlign(-1, -1, 0);
-    //   g.drawString("Compass", GraphXMax + GraphMarkerOffset, GraphCompassY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphCompassY, GraphXZero + i, GraphCompassY + 1);
-    // }
+    // Compass state
+    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.compass) {
+      g.setColor(0, 1, 0);
+      g.setFontAlign(-1, -1, 0);
+      g.drawString("Compass", GraphXMax + GraphMarkerOffset, GraphCompassY - 2, true);
+      g.drawLine(GraphXZero + i, GraphCompassY, GraphXZero + i, GraphCompassY + 1);
+    }
     
     // // Bluetooth state
     // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
@@ -165,24 +168,34 @@ function renderData(dataArray) {
     //   g.drawLine(GraphXZero + i, GraphBluetoothY, GraphXZero + i, GraphBluetoothY + 1);
     // }
     
-    // // Gps state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(0.8, 0.5, 0.24);
-    //   g.setFontAlign(-1, -1, 0);
-    //   g.drawString("GPS", GraphXMax + GraphMarkerOffset, GraphGpsY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphGpsY, GraphXZero + i, GraphGpsY + 1);
-    // }
+    // Gps state
+    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.gps) {
+      g.setColor(0.8, 0.5, 0.24);
+      g.setFontAlign(-1, -1, 0);
+      g.drawString("GPS", GraphXMax + GraphMarkerOffset, GraphGpsY - 2, true);
+      g.drawLine(GraphXZero + i, GraphGpsY, GraphXZero + i, GraphGpsY + 1);
+    }
     
-    // // Hrm state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(1, 0, 0);
-    //   g.setFontAlign(1, -1, 0);
-    //   g.drawString("HRM", GraphXZero - GraphMarkerOffset, GraphHrmY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphHrmY, GraphXZero + i, GraphHrmY + 1);
-    // }
+    // Hrm state
+    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.hrm) {
+      g.setColor(1, 0, 0);
+      g.setFontAlign(1, -1, 0);
+      g.drawString("HRM", GraphXZero - GraphMarkerOffset, GraphHrmY - 2, true);
+      g.drawLine(GraphXZero + i, GraphHrmY, GraphXZero + i, GraphHrmY + 1);
+    }
   }
   
   dataArray = null;
+}
+
+function renderHomeIcon() {
+  //Home for Btn2
+  g.setColor(1, 1, 1);
+  g.drawLine(220, 118, 227, 110);
+  g.drawLine(227, 110, 234, 118);
+
+  g.drawPoly([222,117,222,125,232,125,232,117], false);
+  g.drawRect(226,120,229,125);
 }
 
 function renderBatteryChart() {
@@ -192,21 +205,30 @@ function renderBatteryChart() {
   data = null;
 }
 
+// Show launcher when middle button pressed
+function switchOffApp(){
+  Bangle.showLauncher();
+}
+
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
   if (on) {
     // call your app function here
     // If you clear the screen, do Bangle.drawWidgets();
-    g.clear()
+    g.clear();
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     renderBatteryChart();
   }
 });
 
+setWatch(switchOffApp, BTN2, {edge:"rising", debounce:50, repeat:true});
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 // call your app function here
+
+renderHomeIcon();
 
 renderBatteryChart();
