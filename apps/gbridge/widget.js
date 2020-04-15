@@ -189,8 +189,8 @@
     g.flip(); // turns screen on
   }
 
-  NRF.on("connected", changedConnectionState);
-  NRF.on("disconnected", changedConnectionState);
+  NRF.on("connect", changedConnectionState);
+  NRF.on("disconnect", changedConnectionState);
 
   WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
 

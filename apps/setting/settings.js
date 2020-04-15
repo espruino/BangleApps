@@ -64,7 +64,7 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
-    'App/widget settings': ()=>showAppSettingsMenu(),
+    'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -81,23 +81,12 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Debug info': {
+    'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
       onchange: () => {
         settings.log = !settings.log;
         updateSettings();
-      }
-    },
-    'LCD Brightness': {
-      value: settings.brightness,
-      min: 0.1,
-      max: 1,
-      step: 0.1,
-      onchange: v => {
-        settings.brightness = v || 1;
-        updateSettings();
-        Bangle.setLCDBrightness(settings.brightness);
       }
     },
     'Beep': {
@@ -134,7 +123,7 @@ function showMainMenu() {
       }
     },
     'Set Time': ()=>showSetTimeMenu(),
-    'LCD Wake-Up': ()=>showWakeUpMenu(),
+    'LCD': ()=>showLCDMenu(),
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>Bangle.off(),
     '< Back': ()=>load()
@@ -142,10 +131,21 @@ function showMainMenu() {
   return E.showMenu(mainmenu);
 }
 
-function showWakeUpMenu() {
-  const wakeUpMenu = {
-    '': { 'title': 'LCD Wake-Up' },
+function showLCDMenu() {
+  const lcdMenu = {
+    '': { 'title': 'LCD' },
     '< Back': ()=>showMainMenu(),
+    'LCD Brightness': {
+      value: settings.brightness,
+      min: 0.1,
+      max: 1,
+      step: 0.1,
+      onchange: v => {
+        settings.brightness = v || 1;
+        updateSettings();
+        Bangle.setLCDBrightness(settings.brightness);
+      }
+    },
     'LCD Timeout': {
       value: settings.timeout,
       min: 0,
@@ -157,7 +157,7 @@ function showWakeUpMenu() {
         Bangle.setLCDTimeout(settings.timeout);
       }
     },
-    'Wake On BTN1': {
+    'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
       format: boolFormat,
       onchange: () => {
@@ -165,7 +165,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN2': {
+    'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
       onchange: () => {
@@ -173,7 +173,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN3': {
+    'Wake on BTN3': {
       value: settings.options.wakeOnBTN3,
       format: boolFormat,
       onchange: () => {
@@ -197,7 +197,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On Twist': {
+    'Wake on Twist': {
       value: settings.options.wakeOnTwist,
       format: boolFormat,
       onchange: () => {
@@ -236,7 +236,7 @@ function showWakeUpMenu() {
       }
     }
   }
-  return E.showMenu(wakeUpMenu)
+  return E.showMenu(lcdMenu)
 }
 
 function showLocaleMenu() {
@@ -296,10 +296,10 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/).map(app => {
-    try { return require("Storage").readJSON(app); }
-    catch (e) { }
-  }).filter(app => app.type == "clock").sort((a, b) => a.sortorder - b.sortorder);
+  var clockApps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
   const clockMenu = {
     '': {
       'title': 'Select Clock',
@@ -324,8 +324,6 @@ function showClockMenu() {
   }
   return E.showMenu(clockMenu);
 }
-
-
 
 function showSetTimeMenu() {
   d = new Date();
@@ -419,8 +417,8 @@ function showAppSettingsMenu() {
     '< Back': ()=>showMainMenu(),
   }
   const apps = storage.list(/\.info$/)
-    .map(app => storage.readJSON(app, 1))
-    .filter(app => app && app.settings)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?a:undefined})
+    .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder)
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
@@ -450,7 +448,7 @@ function showAppSettings(app) {
   }
   try {
     // pass showAppSettingsMenu as "back" argument
-    appSettings(showAppSettingsMenu);
+    appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');
