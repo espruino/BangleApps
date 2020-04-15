@@ -16,3 +16,4 @@
       Make capitalization more consistent
       Move LCD Brightness menu into more general LCD menu
 0.14: Reduce memory usage when running app settings page
+0.15: Reduce memory usage when running default clock chooser (#294)
