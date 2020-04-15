@@ -40,7 +40,7 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
         currentBytes += f.content.length;
         // Chould check CRC here if needed instead of returning 'OK'...
         // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
-        Puck.write(`\x10${f.cmd};Bluetooth.println("OK")\n`,(result) => {
+        Puck.write(`${f.cmd};Bluetooth.println("OK")\n`,(result) => {
           if (!result || result.trim()!="OK") {
             Progress.hide({sticky:true});
             return reject("Unexpected response "+(result||""));

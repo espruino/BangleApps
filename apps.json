@@ -119,7 +119,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -1164,7 +1164,7 @@
     "name": "Battery Chart",
     "shortName":"Battery Chart",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.07",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
     "storage": [
@@ -1191,7 +1191,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1209,7 +1209,7 @@
     "version":"0.02",
     "description": "Detect BLE devices and show some informations.",
     "tags": "app,bluetooth,tool",
-    "readme": "README.md", 
+    "readme": "README.md",
     "storage": [
       {"name":"bledetect.app.js","url":"bledetect.js"},
       {"name":"bledetect.img","url":"bledetect-icon.js","evaluate":true}
@@ -1222,7 +1222,7 @@
     "version":"0.01",
     "description": "The classic snake game. Eat apples and don't bite your tail:",
     "tags": "game,fun",
-    "readme": "README.md", 
+    "readme": "README.md",
     "storage": [
       {"name":"snake.app.js","url":"snake.js"},
       {"name":"snake.img","url":"snake-icon.js","evaluate":true}
