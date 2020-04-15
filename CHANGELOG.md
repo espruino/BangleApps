@@ -9,3 +9,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Fix issue removing an app that was just installed (fix #253)
 * Add `Favourite` functionality
 * Version number now clickable even when you're at the latest version (fix #291)
+* Rewrite 'getInstalledApps' to minimize RAM usage
