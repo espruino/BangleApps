@@ -20,7 +20,7 @@ function getLapTimes() {
       html += `
         <div class="column col-12">
           <div class="card-header">
-            <div class="card-title h5">${lap.date}</div>
+            <div class="card-title h5">${lap.date} Elapsed Time: ${lap.d.1}</div>
             <div class="card-subtitle text-gray">${lap.d.length} Laps</div>
           </div>
           <div class="card-body">
@@ -32,7 +32,7 @@ function getLapTimes() {
             </tr>
           </thead>
           <tbody>
-          ${ lap.d.map((d,n)=>`<tr><td>${n+1}</td><td>${d}</td></tr>`).join("\n") }
+          ${ lap.d.map((d+1,n)=>`<tr><td>${n+1}</td><td>${d+1}</td></tr>`).join("\n") }
           </tbody>
           </table>
           </div>
