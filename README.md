@@ -202,13 +202,11 @@ and which gives information about the app for the Launcher.
   "files:"file1,file2,file3",
      // added by BangleApps loader on upload - lists all files
      // that belong to the app so it can be deleted
-  "dataFiles":"appid.data.json,appid.data?.json"
+  "data":"appid.data.json,appid.data?.json;appidStorageFile,appidStorageFile*"
      // added by BangleApps loader on upload - lists files that 
      // the app might write, so they can be deleted on uninstall
      // typically these files are not uploaded, but created by the app
      // these can include '*' or '?' wildcards
-  "storageFiles":"
-     // same as "dataFiles", except the app handles these as storageFile
 }
 ```
 

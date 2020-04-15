@@ -39,9 +39,10 @@ try{
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
-  'sortorder', 'readme', 'custom', 'interface', 'storage', 'allow_emulator',
+  'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
+const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
 
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
@@ -142,7 +143,7 @@ apps.forEach((app,appIdx) => {
     if ('storageFile' in data && typeof data.storageFile !== 'boolean')
       ERROR(`App ${app.id} data file ${data.name||data.wildcard} has non-boolean value for "storageFile"`);
     for (const key in data) {
-      if (!['name','wildcard','storageFile'].includes(key))
+      if (!DATA_KEYS.includes(key))
         ERROR(`App ${app.id} data file ${data.name||data.wildcard} has unknown property "${key}"`);
     }
   });

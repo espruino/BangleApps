@@ -94,20 +94,22 @@ getInstalledApps : () => {
   });
 },
 removeApp : app => { // expects an appid.info structure (i.e. with `files`)
-  if (!app.files && !app.dataFiles && !app.storageFiles) return Promise.resolve(); // nothing to erase
+  if (!app.files && !app.data) return Promise.resolve(); // nothing to erase
   Progress.show({title:`Removing ${app.name}`,sticky:true});
   let cmds = '\x10const s=require("Storage");\n';
-  // remove App files (regular files, exact names only)
+  // remove App files: regular files, exact names only
   cmds += app.files.split(',').map(file => `\x10s.erase(${toJS(file)});\n`).join("");
-  // remove Data files (regular files, can use wildcards)
-  cmds += (app.dataFiles||[]).split(',').map(file => {
+  // remove app Data: (dataFiles and storageFiles)
+  const data = AppInfo.parseDataString(app.data)
+  //   regular files, can use wildcards
+  cmds += data.dataFiles.map(file => {
     const isGlob = (file.includes('*') || file.includes('?'))
     if (!isGlob) return `\x10s.erase(${toJS(file)});\n`;
     const regex = new RegExp(globToRegex(file))
     return `\x10s.list(${regex}).forEach(f=>s.erase(f));\n`;
   }).join("");
-  // remove Storage files (storageFiles, can use wildcards)
-  cmds += (app.storageFiles||[]).split(',').map(file => {
+  //   storageFiles, can use wildcards
+  cmds += data.storageFiles.map(file => {
     const isGlob = (file.includes('*') || file.includes('?'))
     if (!isGlob) return `\x10s.open(${toJS(file)},'r').erase();\n`;
     // storageFiles have a chunk number appended to their real name
