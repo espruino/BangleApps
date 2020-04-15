@@ -32,7 +32,7 @@ function getLapTimes() {
             </tr>
           </thead>
           <tbody>
-          ${ lap.d.map((d+1,n)=>`<tr><td>${n+1}</td><td>${d+1}</td></tr>`).join("\n") }
+          ${ lap.d.map((d,n)=>`<tr><td>${n+1}</td><td>${d}</td></tr>`).join("\n") }
           </tbody>
           </table>
           </div>
