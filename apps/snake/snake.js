@@ -1,37 +1,61 @@
+Bangle.setLCDMode("120x120");
+
 const H = g.getWidth();
 const W = g.getHeight();
 let running = true;
 let score = 0;
 let d;
-
-// game world
-const gridSize = 40;
+const gridSize = 20;
 const tileSize = 6;
 let nextX = 0;
 let nextY = 0;
-
-// snake
 const defaultTailSize = 3;
 let tailSize = defaultTailSize;
 const snakeTrail = [];
-let snakeX = 10;
-let snakeY = 10;
+const snake = { x: 10, y: 10 };
+const apple = { x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) };
 
-// apple
-let appleX = Math.floor(Math.random() * gridSize);
-let appleY = Math.floor(Math.random() * gridSize);
+function drawBackground(){
+  g.setColor("#000000");
+  g.fillRect(0, 0, H, W);
+}
+
+function drawApple(){
+  g.setColor("#FF0000");
+  g.fillCircle((apple.x * tileSize) + tileSize/2, (apple.y * tileSize) + tileSize/2, tileSize/2);
+}
+
+function drawSnake(){
+  g.setColor("#008000");
+  for (let i = 0; i < snakeTrail.length; i++) {
+    g.fillRect(snakeTrail[i].x * tileSize, snakeTrail[i].y * tileSize, snakeTrail[i].x * tileSize + tileSize, snakeTrail[i].y * tileSize + tileSize);
+
+    //snake bites it's tail
+    if (snakeTrail[i].x === snake.x && snakeTrail[i].y === snake.y && tailSize > defaultTailSize) {
+      Bangle.buzz(1000);
+      gameOver();
+    }
+  }
+}
+
+function drawScore(){
+  g.setColor("#FFFFFF");
+  g.setFont("6x8");
+  g.setFontAlign(0, 0);
+  g.drawString("Score:" + score, W / 2, 10);
+}
 
 function gameStart() {
   running = true;
   score = 0;
 }
 
-function gameStop() {
+function gameOver() {
   g.clear();
   g.setColor("#FFFFFF");
-  g.setFont("6x8", 2);
-  g.drawString("GAME OVER!", W / 2, H / 2 - 20);
-  g.drawString("Tap to Restart", W / 2, H / 2 + 20);
+  g.setFont("6x8");
+  g.drawString("GAME OVER!", W / 2, H / 2 - 10);
+  g.drawString("Tap to Restart", W / 2, H / 2 + 10);
   running = false;
   tailSize = defaultTailSize;
 }
@@ -41,66 +65,50 @@ function draw() {
     return;
   }
 
+  g.clear();
+
   // move snake in next pos
-  snakeX += nextX;
-  snakeY += nextY;
+  snake.x += nextX;
+  snake.y += nextY;
 
-  // snake over game world?
-  if (snakeX < 0) {
-    snakeX = gridSize - 1;
+  // snake over game world
+  if (snake.x < 0) {
+    snake.x = gridSize - 1;
+  }
+  if (snake.x > gridSize - 1) {
+    snake.x = 0;
   }
 
-  if (snakeX > gridSize - 1) {
-    snakeX = 0;
+  if (snake.y < 0) {
+    snake.y = gridSize - 1;
+  }
+  if (snake.y > gridSize - 1) {
+    snake.y = 0;
   }
 
-  if (snakeY < 0) {
-    snakeY = gridSize - 1;
-  }
-  if (snakeY > gridSize - 1) {
-    snakeY = 0;
-  }
-
-  //snake bite apple?
-  if (snakeX === appleX && snakeY === appleY) {
+  //snake bite apple
+  if (snake.x === apple.x && snake.y === apple.y) {
+    Bangle.beep(20);
     tailSize++;
     score++;
 
-    appleX = Math.floor(Math.random() * gridSize);
-    appleY = Math.floor(Math.random() * gridSize);
+    apple.x = Math.floor(Math.random() * gridSize);
+    apple.y = Math.floor(Math.random() * gridSize);
+    drawApple();
   }
 
-  //paint background
-  g.setColor("#000000");
-  g.fillRect(0, 0, H, W);
-
-  // paint snake
-  g.setColor("#008000");
-
-  for (let i = 0; i < snakeTrail.length; i++) {
-    g.fillRect(snakeTrail[i].x * tileSize, snakeTrail[i].y * tileSize, snakeTrail[i].x * tileSize + tileSize, snakeTrail[i].y * tileSize + tileSize);
-
-    //snake bites it's tail?
-    if (snakeTrail[i].x === snakeX && snakeTrail[i].y === snakeY && tailSize > defaultTailSize) {
-      gameStop();
-    }
-  }
-
-  // paint apple
-  g.setColor("#FF0000");
-  g.fillRect(appleX * tileSize, appleY * tileSize, appleX * tileSize + tileSize, appleY * tileSize + tileSize);
-
-  // paint score
-  g.setColor("#FFFFFF");
-  g.setFont("6x8");
-  g.setFontAlign(0, 0);
-  g.drawString("Score:" + score, W / 2, 10);
+  drawBackground();
+  drawApple();
+  drawSnake();
+  drawScore();
 
   //set snake trail
-  snakeTrail.push({ x: snakeX, y: snakeY });
+  snakeTrail.push({ x: snake.x, y: snake.y });
   while (snakeTrail.length > tailSize) {
     snakeTrail.shift();
   }
+
+  g.flip();
 }
 
 // input
@@ -132,6 +140,9 @@ setWatch(() => {// Right
     d = 'r';
   }
 }, BTN5, { repeat: true });
+setWatch(() => {// Pause
+  running = !running;
+}, BTN2, { repeat: true });
 
 Bangle.on('touch', button => {
   if (!running) {
@@ -140,5 +151,5 @@ Bangle.on('touch', button => {
 });
 
 // render X times per second
-var x = 5;
+const x = 5;
 setInterval(draw, 1000 / x);
