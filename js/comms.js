@@ -75,12 +75,21 @@ getInstalledApps : () => {
         Progress.hide({sticky:true});
         return reject("");
       }
-      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
+      Puck.write('\x10Bluetooth.print("[");require("Storage").list(/\.info$/).forEach(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);Bluetooth.print(JSON.stringify(j)+",")});Bluetooth.println("0]")\n', (appList,err) => {
         Progress.hide({sticky:true});
+        try {
+          appList = JSON.parse(appList);
+          // remove last element since we added a final '0'
+          // to make things easy on the Bangle.js side
+          appList = appList.slice(0,-1);
+        } catch (e) {
+          appList = null;
+          err = e.toString();
+        }
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
-      });
+      }, true /* callback on newline */);
     });
   });
 },

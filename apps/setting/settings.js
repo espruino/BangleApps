@@ -296,10 +296,10 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/).map(app => {
-    try { return require("Storage").readJSON(app); }
-    catch (e) { }
-  }).filter(app => app.type == "clock").sort((a, b) => a.sortorder - b.sortorder);
+  var clockApps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
   const clockMenu = {
     '': {
       'title': 'Select Clock',

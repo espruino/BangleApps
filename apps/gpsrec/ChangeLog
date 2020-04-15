@@ -4,3 +4,4 @@
 0.04: Properly Fix GPS time display in gpsrec app
 0.05: Tweaks for variable size widget system
 0.06: Ensure widget update itself (fix #118) and change to using icons
+0.07: Added @jeffmer's awesome track viewer

@@ -1,2 +1,3 @@
 0.02: Tweaks for variable size widget system
 0.03: Ensure redrawing works with variable size widget system
+0.04: Fix automatic update of Bluetooth connection status
