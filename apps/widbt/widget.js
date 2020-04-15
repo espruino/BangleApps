@@ -13,7 +13,7 @@ function changed() {
   WIDGETS["bluetooth"].draw();
   g.flip();// turns screen on
 }
-NRF.on('connected',changed);
-NRF.on('disconnected',changed);
+NRF.on('connect',changed);
+NRF.on('disconnect',changed);
 WIDGETS["bluetooth"]={area:"tr",width:24,draw:draw};
 })()

@@ -37,7 +37,13 @@ try{
   ERROR("apps.json not valid JSON");
 }
 
-apps.forEach((app,addIdx) => {
+const APP_KEYS = [
+  'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
+  'sortorder', 'readme', 'custom', 'interface', 'storage', 'allow_emulator',
+];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
+
+apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
@@ -51,7 +57,9 @@ apps.forEach((app,addIdx) => {
       if (app.version != "0.01")
         WARN(`App ${app.id} has no ChangeLog`);
     } else {
-      var versions = fs.readFileSync(appDir+"ChangeLog").toString().match(/\d+\.\d+:/g);
+      var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
+      var versions = changeLog.match(/\d+\.\d+:/g);
+      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`);
       var lastChangeLog = versions.pop().slice(0,-1);
       if (lastChangeLog != app.version)
         WARN(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`);
@@ -60,6 +68,7 @@ apps.forEach((app,addIdx) => {
   if (!app.description) ERROR(`App ${app.id} has no description`);
   if (!app.icon) ERROR(`App ${app.id} has no icon`);
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
+  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`);
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`);
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`);
   var fileNames = [];
@@ -102,9 +111,15 @@ apps.forEach((app,addIdx) => {
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`);
       }
     }
+    for (const key in file) {
+      if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id}'s ${file.name} has unknown key ${key}`);
+    }
   });
   //console.log(fileNames);
   if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`);
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`);
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`);
+  for (const key in app) {
+    if (!APP_KEYS.includes(key)) ERROR(`App ${app.id} has unknown key ${key}`);
+  }
 });

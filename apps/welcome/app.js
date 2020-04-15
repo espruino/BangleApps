@@ -283,15 +283,18 @@ setWatch(()=>move(1), BTN3, {repeat:true});
 setWatch(()=>{
   // If we're on the last page
   if (sceneNumber == scenes.length-1) {
-    var settings = require("Storage").readJSON('setting.json',1)||{};
-    settings.welcomed = true;
-    require("Storage").write('setting.json',settings);
     load();
   }
 }, BTN2, {repeat:true,edge:"rising"});
 setWatch(()=>move(-1), BTN1, {repeat:true});
 
-
+(function migrateSettings(){
+  let global_settings = require('Storage').readJSON('setting.json', 1)
+  if (global_settings) {
+    delete global_settings.welcomed
+    require('Storage').write('setting.json', global_settings)
+  }
+})()
 
 Bangle.setLCDTimeout(0);
 Bangle.setLCDPower(1);

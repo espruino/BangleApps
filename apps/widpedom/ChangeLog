@@ -5,3 +5,5 @@
 0.06: Fix widget position increment
 0.07: Tweaks for variable size widget system
 0.08: Ensure redrawing works with variable size widget system
+0.09: Add daily goal
+0.10: Fix daily goal, don't store settings in separate file

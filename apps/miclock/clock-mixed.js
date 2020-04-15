@@ -1,5 +1,5 @@
-var locale = require("locale");
 /* jshint esversion: 6 */
+var locale = require("locale");
 const Radius = { "center": 8, "hour": 78, "min": 95, "dots": 102 };
 const Center = { "x": 120, "y": 132 };
 
@@ -17,7 +17,7 @@ function drawMixedClock() {
 
     var date = new Date();
     var dateArray = date.toString().split(" ");
-    var isEn = locale.lang.startsWith("en");
+    var isEn = locale.name.startsWith("en");
     var point = [];
     var minute = date.getMinutes();
     var hour = date.getHours();

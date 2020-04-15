@@ -1,127 +1,193 @@
-/**********************************
-  BangleJS MARIO CLOCK V0.1.0
-  + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
-  + Converting images to 1bit BMP: Image > Mode > Indexed and tick the "Use black and white (1-bit) palette", Then export as BMP.
-  + Online Image convertor: https://www.espruino.com/Image+Converter
-**********************************/
+/**
+ * BangleJS MARIO CLOCK
+ *
+ * + Original Author: Paul Cockrell https://github.com/paulcockrell
+ * + Created: April 2020
+ * + Based on Espruino Mario Clock V3 https://github.com/paulcockrell/espruino-mario-clock
+ * + Online Image convertor: https://www.espruino.com/Image+Converter, Use transparency + compression + 8bit Web + export as Image String
+ * + Images must be drawn as PNGs with transparent backgrounds
+ */
 
-var locale = require("locale");
+const locale = require("locale");
+const storage = require('Storage');
+const settings = (storage.readJSON('setting.json', 1) || {});
+const timeout = settings.timeout || 10;
+const is12Hour = settings["12hour"] || false;
 
 // Screen dimensions
 let W, H;
+// Screen brightness
+let brightness = 1;
 
 let intervalRef, displayTimeoutRef = null;
-
-// Space to draw watch widgets (e.g battery, bluetooth status)
-const WIDGETS_GUTTER = 10;
 
 // Colours
 const LIGHTEST = "#effedd";
 const LIGHT = "#add795";
 const DARK = "#588d77";
 const DARKEST = "#122d3e";
+const NIGHT = "#001818";
 
-// Mario Images
-const marioRunningImage1 = {
-  width : 15, height : 20, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("B8AfwH+B/8f/z4M+KExcnAUSCw87w4L8CJQRNB/YH+AxgCEAPAA="))
-};
+// Character names
+const DAISY = "daisy";
+const TOAD = "toad";
+const MARIO = "mario";
 
-const marioRunningImage1Neg = {
-  width : 15, height : 20, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAHwB0DOgY/jt8PDAPAEAB2gOyAAgAAAOAB4AAAA="))
-};
-
-const marioRunningImage2 = {
-  width : 15, height : 20, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("B8AfwH+B/8f/z4M+KExcnAUSCw87w4J6BEsPnSfyT+S+OMAAAAA="))
-};
-
-const marioRunningImage2Neg = {
-  width : 15, height : 20, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAHwB0DOgY/jt8PDAPAGEA7QAYhgMMBhAAAAAAAA="))
-};
-
-const pyramid = {
-  width : 20, height : 20, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAkAAQgAIEAEAgCAEBAAggAEQAAoAAE="))
-};
-
-const pipe = {
-  width : 9, height : 6, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("/8BxaCRSCA=="))
-};
-
-const floor = {
-  width : 8, height : 3, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("/6pE"))
-};
-
-const sky = {
-  width : 128, height : 30, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("VVVVVVVVVVVVVVVVVVVVVQAAAAAAAAAAAAAAAAAAAABVVVVVVVVVVVVVVVVVVVVVIiIiIiIiIiIiIiIiIiIiIlVVVVVVVVVVVVVVVVVVVVWIiIiIiIiIiIiIiIiIiIiIVVVVVVVVVVVVVVVVVVVVVSIiIiIiIiICIiIiIiIiIiJVVVVVVVVVAVVVVVVVVVVViIiIiIiIiACIiIiIiIiIiFVVVVVVVVQAVVVVVVVVVVUiIiIiIiIgACIiIiIiIiIiVVVVVVVVUAAVVVUBVVVVUKqqqqqqqggAKCqqAKqqqoBVUBVVVVQAABAVVABVVVUAIiACIiIgAAAgAiAAIiIiAFVABVVVUAAAUAVUABRVVQCqgAKCqqAAACAAAAAgCqoAVUABAVVAAAAAAAAAAAVQAKqAAACqoAAAAAAAAAACgABAAAAAUEAAAAAAAAAABQAAgAAAACAAAAAAAAAAAAIAAAAAAABQAAAAAAAAAAAEAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-};
-
-const brick = {
-  width : 21, height : 15, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("f//0AABoAAsAABgAAMAABgAAMAABgAAMAABgAAMAABoAAsAABf//wA=="))
-};
-
-const flower = {
-  width : 7, height : 7, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("fY3wjW+OAA=="))
-};
-
-const pipePlant = {
-  width : 9, height : 15, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("FBsNhsHDWPn/gOLQSKQSKQQ="))
-};
-
-const marioSprite = {
+const characterSprite = {
   frameIdx: 0,
-  frames: [
-    marioRunningImage1,
-    marioRunningImage2
-  ],
-  negFrames: [
-    marioRunningImage1Neg,
-    marioRunningImage2Neg
-  ],
-  x: 35,
+  x: 33,
   y: 55,
   jumpCounter: 0,
-  jumpIncrement: Math.PI / 10,
-  isJumping: false
+  jumpIncrement: Math.PI / 6,
+  isJumping: false,
+  character: MARIO,
 };
 
-const STATIC_TILES = {
-  "_": {img: floor, x: 16 * 8, y: 75},
-  "X": {img: sky, x: 0, y: 10},
-  "#": {img: brick, x: 0, y: 0},
+const coinSprite = {
+  frameIdx: 0,
+  x: 34,
+  y: 18,
+  isAnimating: false,
+  yDefault: 18,
 };
 
-const TILES = {
-  "T": {img: pipe, x: 16 * 8, y: 69},
-  "^": {img: pyramid, x: 16 * 8, y: 55},
-  "*": {img: flower, x: 16 * 8, y: 68},
-  "V": {img: pipePlant, x: 16 * 8, y: 60}
+const pyramidSprite = {
+  x: 90,
+  height: 34,
 };
 
 const ONE_SECOND = 1000;
+const DATE_MODE = "date";
+const BATT_MODE = "batt";
+const TEMP_MODE = "temp";
+const PHON_MODE = "gbri";
 
 let timer = 0;
 let backgroundArr = [];
+let nightMode = false;
+let infoMode = DATE_MODE;
+
+// Used to stop values flapping when displayed on screen
+let lastBatt = 0;
+let lastTemp = 0;
+
+const phone = {
+  get status() {
+    return NRF.getSecurityStatus().connected ? "Yes" : "No";
+  },
+  message: null,
+  messageTimeout: null,
+  messageScrollX: null,
+  messageType: null,
+};
+
+const SETTINGS_FILE = "marioclock.json";
+
+function readSettings() {
+  return require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+}
+
+function writeSettings(newSettings) {
+  require("Storage").writeJSON(SETTINGS_FILE, newSettings);
+}
+
+function phoneOutbound(msg) {
+  Bluetooth.println(JSON.stringify(msg));
+}
+
+function phoneClearMessage() {
+    if (phone.message === null) return;
+
+    if (phone.messageTimeout) {
+      clearTimeout(phone.messageTimeout);
+      phone.messageTimeout = null;
+    }
+    phone.message = null;
+    phone.messageScrollX = null;
+    phone.messageType = null;
+}
+
+function phoneNewMessage(type, msg) {
+    Bangle.buzz();
+
+    phoneClearMessage();
+    phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
+    phone.message = msg;
+    phone.messageType = type;
+
+    // Notify user and active screen
+    if (!Bangle.isLCDOn()) {
+      clearTimers();
+      Bangle.setLCDPower(true);
+    }
+}
+
+function truncStr(str, max) {
+  if (str.length > max) {
+    return str.substr(0, max) + '...';
+  }
+  return str;
+}
+
+function phoneInbound(evt) {
+  switch (evt.t) {
+    case 'notify':
+      const sender = truncStr(evt.sender, 10);
+      const subject = truncStr(evt.subject, 15);
+      phoneNewMessage("notify", `${sender} - '${subject}'`);
+      break;
+    case 'call':
+      if (evt.cmd === "accept") {
+        let nameOrNumber = "Unknown";
+        if (evt.name !== null || evt.name !== "") {
+          nameOrNumber = evt.name;
+        } else if (evt.number !== null || evt.number !== "") {
+          nameOrNumber = evt.number;
+        }
+        phoneNewMessage("call", nameOrNumber);
+      }
+      break;
+    default:
+      return null;
+  }
+}
+
+function genRanNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function switchCharacter() {
+  const curChar = characterSprite.character;
+
+  let newChar;
+  switch(curChar) {
+    case DAISY:
+      newChar = MARIO;
+      break;
+    case  TOAD:
+      newChar = DAISY;
+      break;
+    case MARIO:
+    default:
+      newChar = TOAD;
+  }
+
+  characterSprite.character = newChar;
+}
+
+function toggleNightMode() {
+  if (!nightMode) {
+    nightMode = true;
+    return;
+  }
+
+  brightness -= 0.30;
+  if (brightness <= 0) {
+    brightness = 1;
+    nightMode = false;
+  }
+  Bangle.setLCDBrightness(brightness);
+}
 
 function incrementTimer() {
   if (timer > 1000) {
@@ -132,146 +198,226 @@ function incrementTimer() {
   }
 }
 
-function drawTile(sprite) {
-  g.drawImage(sprite.img, sprite.x, sprite.y);
-}
-
 function drawBackground() {
-  g.setColor(LIGHTEST);
+  // Clear screen
+  const bgColor = (nightMode) ? NIGHT : LIGHTEST;
+  g.setColor(bgColor);
   g.fillRect(0, 10, W, H);
 
-  // draw floor
-  g.setColor(DARK);
-  for (var x = 0; x < 16; x++) {
-    var floorSprite = Object.assign({}, STATIC_TILES._, {x: x * 8});
-    drawTile(floorSprite);
-  }
+  // set cloud colors and draw clouds
+  const cloudColor = (nightMode) ? DARK : LIGHT;
+  g.setColor(cloudColor);
+  g.fillRect(0, 10, g.getWidth(), 15);
+  g.fillRect(0, 17, g.getWidth(), 17);
+  g.fillRect(0, 19, g.getWidth(), 19);
+  g.fillRect(0, 21, g.getWidth(), 21);
 
-  // draw sky
-  var skySprite = STATIC_TILES.X;
-  g.setColor(LIGHT);
-  drawTile(skySprite);
+  // Date bar
+  g.setColor(DARKEST);
+  g.fillRect(0, 0, W, 9);
 }
 
-function drawScenery() {
-  // new random sprite
-  const spriteKeys = Object.keys(TILES);
-  const key = spriteKeys[Math.floor(Math.random() * spriteKeys.length)];
-  let newSprite = Object.assign({}, TILES[key]);
+function drawFloor() {
+  const fImg = require("heatshrink").decompress(atob("ikDxH+rgATCoIBQAQYDP")); // Floor image
+  for (let x = 0; x < 4; x++) {
+    g.drawImage(fImg, x * 20, g.getHeight() - 5);
+  }
+}
 
+function drawPyramid() {
+  const pPol = [pyramidSprite.x + 10, H - 6, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 6]; // Pyramid poly
+
+  const color = (nightMode) ? DARK : LIGHT;
+  g.setColor(color);
+  g.fillPoly(pPol);
+
+  pyramidSprite.x -= 1;
+  // Reset and randomize pyramid if off-screen
+  if (pyramidSprite.x < - 100) {
+    pyramidSprite.x = 90;
+    pyramidSprite.height = genRanNum(25, 60);
+  }
+}
+
+function drawTreesFrame(x, y) {
+  const tImg = require("heatshrink").decompress(atob("h8GxH+AAMHAAIFCAxADEBYgDCAQYAFCwobOAZAEFBxo=")); // Tree image
+
+  g.drawImage(tImg, x, y);
+  g.setColor(DARKEST);
+  g.drawLine(x + 6 /* Match stalk to palm tree */, y + 6 /* Match stalk to palm tree */, x + 6, H - 6);
+}
+
+function generateTreeSprite() {
+  return {
+    x: 90,
+    y: genRanNum(30, 60)
+  };
+}
+
+function drawTrees() {
   // remove first sprite if offscreen
   let firstBackgroundSprite = backgroundArr[0];
   if (firstBackgroundSprite) {
-      if (firstBackgroundSprite.x < -20) backgroundArr.splice(0, 1);
+      if (firstBackgroundSprite.x < -15) backgroundArr.splice(0, 1);
   }
 
   // set background sprite if array empty
-  var lastBackgroundSprite = backgroundArr[backgroundArr.length - 1];
+  let lastBackgroundSprite = backgroundArr[backgroundArr.length - 1];
   if (!lastBackgroundSprite) {
+    const newSprite = generateTreeSprite();
     lastBackgroundSprite = newSprite;
     backgroundArr.push(lastBackgroundSprite);
   }
 
   // add random sprites
-  if (backgroundArr.length < 6 && lastBackgroundSprite.x < (16 * 7)) {
-    var randIdx = Math.floor(Math.random() * 25);
-    if (randIdx < spriteKeys.length - 1) {
+  if (backgroundArr.length < 2 && lastBackgroundSprite.x < (16 * 7)) {
+    const randIdx = Math.floor(Math.random() * 25);
+    if (randIdx < 2) {
+      const newSprite = generateTreeSprite();
       backgroundArr.push(newSprite);
     }
   }
 
   for (x = 0; x < backgroundArr.length; x++) {
     let scenerySprite = backgroundArr[x];
-
-    // clear sprite at previous position
-    g.setColor(LIGHTEST);
-    drawTile(scenerySprite);
-
-    // draw sprite in new position
-    g.setColor(LIGHT);
     scenerySprite.x -= 5;
-    drawTile(scenerySprite);
+    drawTreesFrame(scenerySprite.x, scenerySprite.y);
   }
 }
 
-function drawMario() {
-  // clear old mario frame
-  g.setColor(LIGHTEST);
-  g.drawImage(
-    marioSprite.negFrames[marioSprite.frameIdx],
-    marioSprite.x,
-    marioSprite.y
-  );
-  g.drawImage(
-    marioSprite.frames[marioSprite.frameIdx],
-    marioSprite.x,
-    marioSprite.y
-  );
+function drawCoinFrame(x, y) {
+  const cImg = require("heatshrink").decompress(atob("hkPxH+AAcHAAQIEBIXWAAQNEBIWHAAdcBgQLBA4IODBYQKEBAQMDBelcBaJUBM4QRBNYx1EBQILDR4QHBBISdIBIoA==")); // Coin image
+  g.drawImage(cImg, x, y);
+}
 
-  // calculate jumping
-  const t = new Date(),
-        seconds = t.getSeconds(),
-        milliseconds = t.getMilliseconds();
+function drawCoin() {
+  if (!coinSprite.isAnimating) return;
 
-  if (seconds == 59 && milliseconds > 800 && !marioSprite.isJumping) {
-    marioSprite.isJumping = true;
+  coinSprite.y -= 8;
+  if (coinSprite.y < (0 - 15 /*Coin sprite height*/)) {
+    coinSprite.isAnimating = false;
+    coinSprite.y = coinSprite.yDefault;
+    return;
   }
 
-  if (marioSprite.isJumping) {
-    marioSprite.y = (Math.sin(marioSprite.jumpCounter) * -10) + 50 /* Mario Y base value */;
-    marioSprite.jumpCounter += marioSprite.jumpIncrement;
+  drawCoinFrame(coinSprite.x, coinSprite.y);
+}
 
-    if (marioSprite.jumpCounter.toFixed(1) >= 4) {
-      marioSprite.jumpCounter = 0;
-      marioSprite.isJumping = false;
+function drawDaisyFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const dFr1 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
+      g.drawImage(dFr1, x, y);
+      break;
+    case 1:
+    default:
+      const dFr2 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
+      g.drawImage(dFr2, x, y);
+  }
+}
+
+function drawMarioFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const mFr1 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw52FSg2HAAIoDAgIOMB5AAFGQTtKeBLuNcQwOJFwgJFA=")); // Mario Frame 1
+      g.drawImage(mFr1, x, y);
+      break;
+    case 1:
+    default:
+      const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
+      g.drawImage(mFr2, x, y);
+  }
+}
+
+function drawToadFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const tFr1 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD")); // Toad Frame 1
+      g.drawImage(tFr1, x, y);
+      break;
+    case 1:
+    default:
+      const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
+      g.drawImage(tFr2, x, y);
+  }
+}
+
+// Mario speach bubble
+function drawNotice(x, y) {
+  if (phone.message === null) return;
+
+  let img;
+  switch (phone.messageType) {
+    case "call":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
+      break;
+    case "notify":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
+      break;
+    case "lowBatt":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INFrgABB4oOEBoQPFBwwDGB0uHAAIOLJRB3OSpApDBoQAHB4INLByANNAwo"));
+      break;
+  }
+
+  if (img) g.drawImage(img, characterSprite.x, characterSprite.y - 16);
+}
+
+function drawCharacter(date, character) {
+  // calculate jumping
+  const seconds = date.getSeconds(),
+        milliseconds = date.getMilliseconds();
+
+  if (seconds == 59 && milliseconds > 800 && !characterSprite.isJumping) {
+    characterSprite.isJumping = true;
+  }
+
+  if (characterSprite.isJumping) {
+    characterSprite.y = (Math.sin(characterSprite.jumpCounter) * -12) + 50 /* Character Y base value */;
+    characterSprite.jumpCounter += characterSprite.jumpIncrement;
+
+    if (parseInt(characterSprite.jumpCounter) === 2 && !coinSprite.isAnimating) {
+      coinSprite.isAnimating = true;
+    }
+
+    if (characterSprite.jumpCounter.toFixed(1) >= 4) {
+      characterSprite.jumpCounter = 0;
+      characterSprite.isJumping = false;
     }
   }
 
   // calculate animation timing
-  if (timer % 100 === 0) {
+  if (timer % 50 === 0) {
     // shift to next frame
-    marioSprite.frameIdx ^= 1;
+    characterSprite.frameIdx ^= 1;
   }
 
-  // colour in mario
-  g.setColor(LIGHT);
-  g.drawImage(
-    marioSprite.negFrames[marioSprite.frameIdx],
-    marioSprite.x,
-    marioSprite.y
-  );
-
-  // draw mario
-  g.setColor(DARKEST);
-  g.drawImage(
-    marioSprite.frames[marioSprite.frameIdx],
-    marioSprite.x,
-    marioSprite.y
-  );
+  switch(characterSprite.character) {
+    case DAISY:
+      drawDaisyFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case TOAD:
+      drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case MARIO:
+    default:
+      drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+  }
 }
 
-
-function drawBrick(x, y) {
-  const brickSprite = Object.assign({}, STATIC_TILES['#'], {x: x, y: y});
-
-  // draw brick background colour
-  g.setColor(LIGHT);
-  g.fillRect(x, y, x + 20, y+14);
-
-  // draw brick sprite
-  g.setColor(DARK);
-  drawTile(brickSprite);
+function drawBrickFrame(x, y) {
+  const brk = require("heatshrink").decompress(atob("ikQxH+/0HACASB6wAQCoPWw4AOrgT/Cf4T/Cb1cAB8H/wVBAB/+A"));
+  g.drawImage(brk, x, y);
 }
 
-function drawTime() {
+function drawTime(date) {
   // draw hour brick
-  drawBrick(20, 25);
+  drawBrickFrame(20, 25);
   // draw minute brick
-  drawBrick(42, 25);
+  drawBrickFrame(42, 25);
 
-  const t = new Date();
-  const hours = ("0" + t.getHours()).substr(-2);
-  const mins = ("0" + t.getMinutes()).substr(-2);
+  const h = date.getHours();
+  const hours = ("0" + ((is12Hour && h > 12) ? h - 12 : h)).substr(-2);
+  const mins = ("0" + date.getMinutes()).substr(-2);
 
   g.setFont("6x8");
   g.setColor(DARKEST);
@@ -279,26 +425,127 @@ function drawTime() {
   g.drawString(mins, 47, 29);
 }
 
-function drawDate() {
-  const date = new Date();
-  const day = locale.dow(date).substr(0, 3);
-  const dayNum = ("0" + date.getDate()).substr(-2);
-  const month = locale.month(date).substr(0, 3);
+function buildDateStr(date) {
+  let dateStr = locale.date(date, true);
+  dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
+  dateStr = locale.dow(date, true) + " " + dateStr;
+
+  return dateStr;
+}
+
+function buildBatStr() {
+  let batt = parseInt(E.getBattery());
+  const battDiff = Math.abs(lastBatt - batt);
+
+  // Suppress flapping values
+  // Only update batt if it moves greater than +-2
+  if (battDiff > 2) {
+    lastBatt = batt;
+  } else {
+    batt = lastBatt;
+  }
+
+  const battStr = `Bat: ${batt}%`;
+
+  return battStr;
+}
+
+function buildTempStr() {
+  let temp = parseInt(E.getTemperature());
+  const tempDiff = Math.abs(lastTemp - temp);
+
+  // Suppress flapping values
+  // Only update temp if it moves greater than +-2
+  if (tempDiff > 2) {
+    lastTemp = temp;
+  } else {
+    temp = lastTemp;
+  }
+  const tempStr = `Temp: ${temp}'c`;
+
+  return tempStr;
+}
+
+function buildPhonStr() {
+  return `Phone: ${phone.status}`;
+}
+
+function drawInfo(date) {
+  let xPos;
+  let str = "";
+
+  if (phone.message !== null) {
+    str = phone.message;
+    const strLen = g.stringWidth(str);
+    if (strLen > W) {
+      if (phone.messageScrollX === null || (phone.messageScrollX <= (strLen * -1))) {
+        phone.messageScrollX = W;
+        resetDisplayTimeout();
+      } else {
+        phone.messageScrollX -= 2;
+      }
+      xPos = phone.messageScrollX;
+    } else {
+     xPos = (W - g.stringWidth(str)) / 2;
+    }
+  } else {
+    switch(infoMode) {
+    case PHON_MODE:
+      str = buildPhonStr();
+      break;
+    case TEMP_MODE:
+      str = buildTempStr();
+      break;
+    case BATT_MODE:
+      str = buildBatStr();
+      break;
+    case DATE_MODE:
+    default:
+      str = buildDateStr(date);
+    }
+    xPos = (W - g.stringWidth(str)) / 2;
+  }
 
   g.setFont("6x8");
   g.setColor(LIGHTEST);
-  g.drawString(`${day} ${dayNum} ${month}`, 10, 0, true);
+  g.drawString(str, xPos, 1);
+}
+
+function changeInfoMode() {
+  phoneClearMessage();
+
+  switch(infoMode) {
+    case BATT_MODE:
+      infoMode = TEMP_MODE;
+      break;
+    case TEMP_MODE:
+      infoMode = PHON_MODE;
+      break;
+    case PHON_MODE:
+      infoMode = DATE_MODE;
+      break;
+    case DATE_MODE:
+    default:
+      infoMode = BATT_MODE;
+  }
 }
 
 function redraw() {
+  const date = new Date();
+
   // Update timers
   incrementTimer();
 
   // Draw frame
-  drawScenery();
-  drawTime();
-  drawDate();
-  drawMario();
+  drawBackground();
+  drawFloor();
+  drawPyramid();
+  drawTrees();
+  drawTime(date);
+  drawInfo(date);
+  drawCharacter(date);
+  drawNotice();
+  drawCoin();
 
   // Render new frame
   g.flip();
@@ -322,7 +569,7 @@ function resetDisplayTimeout() {
   displayTimeoutRef = setInterval(() => {
     if (Bangle.isLCDOn()) Bangle.setLCDPower(false);
     clearTimers();
-  }, ONE_SECOND * 10);
+  }, ONE_SECOND * timeout);
 }
 
 function startTimers(){
@@ -331,17 +578,46 @@ function startTimers(){
 
   resetDisplayTimeout();
 
-  drawBackground();
   redraw();
+}
+
+function loadSettings() {
+  const settings = readSettings();
+  if (!settings) return;
+
+  if (settings.character) characterSprite.character = settings.character;
+  if (settings.nightMode) nightMode = settings.nightMode;
+  if (settings.brightness) {
+    brightness = settings.brightness;
+    Bangle.setLCDBrightness(brightness);
+  }
+}
+
+function updateSettings() {
+  const newSettings = {
+    character: characterSprite.character,
+    nightMode: nightMode,
+    brightness: brightness,
+  };
+  writeSettings(newSettings);
+}
+
+function checkBatteryLevel() {
+  if (Bangle.isCharging()) return;
+  if (E.getBattery() > 10) return;
+  if (phone.message !== null) return;
+
+  phoneNewMessage("lowBatt", "Warning, battery is low");
 }
 
 // Main
 function init() {
+  loadSettings();
+
   clearInterval();
 
   // Initialise display
   Bangle.setLCDMode("80x80");
-  g.clear();
 
   // Store screen dimensions
   W = g.getWidth();
@@ -349,31 +625,69 @@ function init() {
 
   // Get Mario to jump!
   setWatch(() => {
-    if (intervalRef && !marioSprite.isJumping) marioSprite.isJumping = true;
+    if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
-  }, BTN1, {repeat:true});
+    phoneClearMessage(); // Clear any phone messages and message timers
+  }, BTN3, {repeat: true});
 
+  // Close watch and load launcher app
   setWatch(() => {
     Bangle.setLCDMode();
     Bangle.showLauncher();
-  }, BTN2, {repeat:false,edge:"falling"});
+  }, BTN2, {repeat: false, edge: "falling"});
 
-  Bangle.on('lcdPower', (on) => {
-    if (on) {
-      startTimers();
-    } else {
-      clearTimers();
-    }
-  });
+  // Change info mode
+  setWatch(() => {
+    changeInfoMode();
+  }, BTN1, {repeat: true});
 
-  Bangle.on('faceUp',function(up){
+  Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
+
+  Bangle.on('faceUp', (up) => {
     if (up && !Bangle.isLCDOn()) {
       clearTimers();
       Bangle.setLCDPower(true);
     }
   });
+
+  Bangle.on('swipe', (sDir) => {
+    resetDisplayTimeout();
+
+    switch(sDir) {
+      // Swipe right (1) - change character (on a loop)
+      case 1:
+        switchCharacter();
+        break;
+      // Swipe left (-1) - change day/night mode (on a loop)
+      case -1:
+      default:
+        toggleNightMode();
+    }
+
+    updateSettings();
+  });
+
+  // Phone connectivity
+  try { NRF.wake(); } catch (e) {}
+
+  NRF.on('disconnect', () => {
+    phoneNewMessage(null, "Phone disconnected");
+  });
+
+  NRF.on('connect', () => {
+    setTimeout(() => {
+      phoneOutbound({ t: "status", bat: E.getBattery() });
+    }, ONE_SECOND * 2);
+    phoneNewMessage(null, "Phone connected");
+  });
+
+  GB = (evt) => phoneInbound(evt);
+
+  startTimers();
+
+  setInterval(checkBatteryLevel, ONE_SECOND * 60 * 10);
+  checkBatteryLevel();
 }
 
 // Initialise!
 init();
-startTimers();
