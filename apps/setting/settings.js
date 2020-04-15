@@ -64,7 +64,7 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
-    'App/widget settings': ()=>showAppSettingsMenu(),
+    'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -81,7 +81,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Debug info': {
+    'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
       onchange: () => {
@@ -296,10 +296,10 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/).map(app => {
-    try { return require("Storage").readJSON(app); }
-    catch (e) { }
-  }).filter(app => app.type == "clock").sort((a, b) => a.sortorder - b.sortorder);
+  var clockApps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
   const clockMenu = {
     '': {
       'title': 'Select Clock',
@@ -324,8 +324,6 @@ function showClockMenu() {
   }
   return E.showMenu(clockMenu);
 }
-
-
 
 function showSetTimeMenu() {
   d = new Date();
@@ -419,8 +417,8 @@ function showAppSettingsMenu() {
     '< Back': ()=>showMainMenu(),
   }
   const apps = storage.list(/\.info$/)
-    .map(app => storage.readJSON(app, 1))
-    .filter(app => app && app.settings)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?a:undefined})
+    .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder)
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
@@ -450,7 +448,7 @@ function showAppSettings(app) {
   }
   try {
     // pass showAppSettingsMenu as "back" argument
-    appSettings(showAppSettingsMenu);
+    appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');
