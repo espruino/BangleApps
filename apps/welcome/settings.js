@@ -1,16 +1,15 @@
 // The welcome app is special, and gets to use global settings
 (function(back) {
-  let settings = require('Storage').readJSON('setting.json', 1) || {}
+  let settings = require('Storage').readJSON('welcome.settings.json', 1)
+    || require('Storage').readJSON('setting.json', 1) || {}
   E.showMenu({
     '': { 'title': 'Welcome App' },
-    'Run again': {
+    'Run on Next Boot': {
       value: !settings.welcomed,
-      format: v => v ? 'Yes' : 'No',
-      onchange: v => {
-        settings.welcomed = v ? undefined : true
-        require('Storage').write('setting.json', settings)
-      },
+      format: v => v ? 'OK' : 'No',
+      onchange: v => require('Storage').write('welcome.settings.json', {welcomed: !v}),
     },
+    'Run Now': () => load('welcome.app.js'),
     '< Back': back,
   })
 })
