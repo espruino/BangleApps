@@ -363,6 +363,18 @@
       {"name":"widbt.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "widram",
+    "name": "RAM Widget",
+    "shortName":"RAM Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Display your Bangle's available RAM percentage in a widget",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widram.wid.js","url":"widget.js"}
+    ]
+  },
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
