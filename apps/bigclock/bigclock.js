@@ -37,18 +37,3 @@ drawTime();
 intervalRefMin = setInterval(drawTime, 60 * 1000);
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-// change watch
-setWatch(
-  function() {
-    load("anaclock.app.js");
-  },
-  BTN1,
-  { repeat: false, edge: "rising" }
-);
-setWatch(
-  function() {
-    load("digiclock.app.js");
-  },
-  BTN3,
-  { repeat: false, edge: "rising" }
-);
