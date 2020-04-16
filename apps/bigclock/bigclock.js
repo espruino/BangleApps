@@ -1,9 +1,10 @@
+let d;
 function drawTime() {
+  d = new Date();
   if (!Bangle.isLCDOn()) return;
-  var d = new Date();
-  var da = d.toString().split(" ");
-  var time = da[4].substr(0, 5).split(":");
-  var dow = da[0],
+  let da = d.toString().split(" "),
+    time = da[4].substr(0, 5).split(":"),
+    dow = da[0],
     month = da[1],
     day = da[2],
     year = da[3],
@@ -34,6 +35,4 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawTime();
-intervalRefMin = setInterval(drawTime, 60 * 1000);
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+setInterval(drawTime, 60 * 1000);
