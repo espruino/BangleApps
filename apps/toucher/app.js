@@ -5,8 +5,8 @@ g.flip();
 const Storage = require("Storage");
 
 function getApps(){
-  return Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
-    .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
+  return Storage.list(/\.info$/).map(app=>{var a=Storage.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src,version:a.version}})
+    .filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type))
     .sort((a,b)=>{
     var n=(0|a.sortorder)-(0|b.sortorder);
     if (n) return n; // do sortorder first
@@ -19,7 +19,7 @@ function getApps(){
 const HEIGHT = g.getHeight();
 const WIDTH = g.getWidth();
 const HALF = WIDTH/2;
-const ANIMATION_FRAME = 4; 
+const ANIMATION_FRAME = 4;
 const ANIMATION_STEP = HALF / ANIMATION_FRAME;
 
 function getPosition(index){
