@@ -1127,10 +1127,11 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Pedometer that filters out arm movement and displays a step goal progress.",
     "tags": "outdoors,widget",
     "type":"widget",
+     "readme": "README.md",
     "storage": [
       {"name":"activepedom.wid.js","url":"widget.js"},
       {"name":"activepedom.settings.js","url":"settings.js"},
