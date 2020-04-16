@@ -17,6 +17,6 @@
     "theme_color": "#5755d9",
     "background_color": "#5755d9",
     "display": "standalone",
-    "start_url": "https://omegavoid.codes/BangleApps",
-    "scope": "https://omegavoid.codes/BangleApps"
+    "start_url": "https://banglejs.com/apps/",
+    "scope": "https://banglejs.com/apps/"
 }
