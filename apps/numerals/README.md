@@ -5,13 +5,16 @@ Settings can be accessed through the app/widget settings menu of the Bangle.js
 
 ## Settings available
 
-### color:
+### Color:
 * rnd - shows numerals in different color combinations every time the watches wakes
 * r/g - red/green
 * y/w - yellow/white 
 * o/c - orange/cyan
 * b/y - blue/yellow'ish
 
-### draw mode
+### Draw mode
 * fill - fill numerals
 * frame - only shows outline of numerals
+
+### Menu button
+* choose button to start launcher menu with

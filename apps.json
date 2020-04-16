@@ -1205,7 +1205,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1213,7 +1213,8 @@
     "storage": [
       {"name":"numerals.app.js","url":"numerals.app.js"},
       {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
-	    {"name":"numerals.settings.js","url":"numerals.settings.js"}
+	    {"name":"numerals.settings.js","url":"numerals.settings.js"},
+      {"name":"numerals.json","url":"numerals-default.json","evaluate":true}
     ]
   },
   { "id": "bledetect",
