@@ -27,7 +27,7 @@ There are no settings section in the settings app, timer can be set using an app
 ## Releases
 
 * Offifical app loader: Not yet published.
-* Forked app loader: Not yet published.
+* Forked app loader: https://github.com/Purple-Tentacle/BangleApps/tree/master/apps/chronowid (https://purple-tentacle.github.io/BangleApps/index.html#)
 * Development: https://github.com/Purple-Tentacle/BangleAppsDev/tree/master/apps/chronowid
 
 ## Requests
