@@ -417,7 +417,7 @@ function showAppSettingsMenu() {
     '< Back': ()=>showMainMenu(),
   }
   const apps = storage.list(/\.info$/)
-    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?a:undefined})
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?{sortorder:a.sortorder,name:a.name,settings:a.settings}:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder)
   if (apps.length === 0) {
