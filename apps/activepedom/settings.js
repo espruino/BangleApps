@@ -4,6 +4,7 @@
  */
 (function(back) {
   const SETTINGS_FILE = 'activepedom.settings.json';
+  const LINES = ['Steps', 'Distance'];
 
   // initialize with default settings...
   let s = {
@@ -13,6 +14,9 @@
     'intervalResetActive' : 30000,
     'stepSensitivity' : 80,
     'stepGoal' : 10000,
+    'stepLength' : 75,
+    'lineOne': LINES[0],
+    'lineTwo': LINES[1],
   };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -27,7 +31,7 @@
     return function (value) {
       s[key] = value;
       storage.write(SETTINGS_FILE, s);
-      WIDGETS["activepedom"].draw();
+      //WIDGETS["activepedom"].draw();
     };
   }
 
@@ -75,6 +79,33 @@
       max: 100000,
       step: 1000,
       onchange: save('stepGoal'),
+    },
+    'Step length (cm)': {
+      value: s.stepLength,
+      min: 1,
+      max: 150,
+      step: 1,
+      onchange: save('stepLength'),
+    },
+    'Line One': {
+      format: () => s.lineOne,
+      onchange: function () {
+        // cycles through options
+        const oldIndex = LINES.indexOf(s.lineOne)
+        const newIndex = (oldIndex + 1) % LINES.length
+        s.lineOne = LINES[newIndex]
+        save('lineOne')(s.lineOne)
+      },
+    },
+    'Line Two': {
+      format: () => s.lineTwo,
+      onchange: function () {
+        // cycles through options
+        const oldIndex = LINES.indexOf(s.lineTwo)
+        const newIndex = (oldIndex + 1) % LINES.length
+        s.lineTwo = LINES[newIndex]
+        save('lineTwo')(s.lineTwo)
+      },
     },
   };
   E.showMenu(menu);

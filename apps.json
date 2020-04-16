@@ -41,7 +41,7 @@
     "name": "Default Launcher",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -411,7 +411,7 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.05",
+    "version":"0.06",
     "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
@@ -1050,7 +1050,7 @@
     "name": "Touch Launcher",
     "shortName":"Menu",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -1123,18 +1123,33 @@
       {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
     ]
   },
-    { "id": "activepedom",
+  { "id": "activepedom",
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Pedometer that filters out arm movement and displays a step goal progress.",
     "tags": "outdoors,widget",
     "type":"widget",
+     "readme": "README.md",
     "storage": [
       {"name":"activepedom.wid.js","url":"widget.js"},
       {"name":"activepedom.settings.js","url":"settings.js"},
       {"name":"activepedom.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "chronowid",
+    "name": "Chrono Widget",
+    "shortName":"Chrono Widget",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Chronometer (timer) which runs as widget.",
+    "tags": "tools,widget",
+     "readme": "README.md",
+    "storage": [
+      {"name":"chronowid.wid.js","url":"widget.js"},
+      {"name":"chronowid.app.js","url":"app.js"},
+      {"name":"chronowid.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "tabata",
@@ -1206,7 +1221,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1214,7 +1229,8 @@
     "storage": [
       {"name":"numerals.app.js","url":"numerals.app.js"},
       {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
-	    {"name":"numerals.settings.js","url":"numerals.settings.js"}
+	    {"name":"numerals.settings.js","url":"numerals.settings.js"},
+      {"name":"numerals.json","url":"numerals-default.json","evaluate":true}
     ]
   },
   { "id": "bledetect",
