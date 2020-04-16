@@ -35,4 +35,6 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawTime();
-setInterval(drawTime, 60 * 1000);
+intervalRefMin = setInterval(drawTime, 60 * 1000);
+// Show launcher when middle button pressed
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
