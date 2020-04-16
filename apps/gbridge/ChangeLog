@@ -7,3 +7,5 @@
 0.06: Gadgetbridge App 'Connected' state is no longer toggleable
 0.07: Move configuration to settings menu
 0.08: Don't turn on LCD at start of every song
+0.09: Update Bluetooth connection state automatically
+0.10: Make widget play well with other Gadgetbridge widgets/apps

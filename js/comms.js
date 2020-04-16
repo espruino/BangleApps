@@ -40,7 +40,7 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
         currentBytes += f.content.length;
         // Chould check CRC here if needed instead of returning 'OK'...
         // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
-        Puck.write(`\x10${f.cmd};Bluetooth.println("OK")\n`,(result) => {
+        Puck.write(`${f.cmd};Bluetooth.println("OK")\n`,(result) => {
           if (!result || result.trim()!="OK") {
             Progress.hide({sticky:true});
             return reject("Unexpected response "+(result||""));
@@ -75,12 +75,21 @@ getInstalledApps : () => {
         Progress.hide({sticky:true});
         return reject("");
       }
-      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
+      Puck.write('\x10Bluetooth.print("[");require("Storage").list(/\.info$/).forEach(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);Bluetooth.print(JSON.stringify(j)+",")});Bluetooth.println("0]")\n', (appList,err) => {
         Progress.hide({sticky:true});
+        try {
+          appList = JSON.parse(appList);
+          // remove last element since we added a final '0'
+          // to make things easy on the Bangle.js side
+          appList = appList.slice(0,-1);
+        } catch (e) {
+          appList = null;
+          err = e.toString();
+        }
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
-      });
+      }, true /* callback on newline */);
     });
   });
 },

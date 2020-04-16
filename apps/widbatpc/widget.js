@@ -110,7 +110,7 @@ Bangle.on('lcdPower', function(on) {
    WIDGETS["batpc"].draw();
    // refresh once a minute if LCD on
    if (!batteryInterval)
-     batteryInterval = setInterval(draw, 60000);
+     batteryInterval = setInterval(()=>WIDGETS["batpc"].draw(), 60000);
  } else {
    if (batteryInterval) {
      clearInterval(batteryInterval);

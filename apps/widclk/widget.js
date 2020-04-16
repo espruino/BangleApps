@@ -14,7 +14,7 @@
       }
     }
     function startTimers(){
-      intervalRef = setInterval(draw, 60*1000);
+      intervalRef = setInterval(()=>WIDGETS["wdclk"].draw(), 60*1000);
       WIDGETS["wdclk"].draw();
     }
     Bangle.on('lcdPower', (on) => {
@@ -23,5 +23,5 @@
     });
 
     WIDGETS["wdclk"]={area:"tr",width:width,draw:draw};
-    if (Bangle.isLCDOn) intervalRef = setInterval(draw, 60*1000);
+    if (Bangle.isLCDOn) intervalRef = setInterval(()=>WIDGETS["wdclk"].draw(), 60*1000);
 })()
