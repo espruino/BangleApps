@@ -891,6 +891,7 @@
     "name": "Workout HRM",
     "icon": "app.png",
     "version":"0.06",
+    "readme": "README.md",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "tags": "hrm,workout",
     "type": "app",
