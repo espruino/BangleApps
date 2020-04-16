@@ -27,10 +27,10 @@ function updateLabels() {
   g.setFont("6x8",1);
   g.setFontAlign(-1,-1);
   for (var i in lapTimes) {
-    if (i<16)
+    if (i<15)
     {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),35,timeY + 40 + i*8);}
-    else if (i<32)
-    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 40 + (i-16)*8);}
+    else if (i<30)
+    {g.drawString(lapTimes.length-i+": "+timeToText(lapTimes[i]),125,timeY + 40 + (i-15)*8);}
   }
   drawsecs();
 }
@@ -92,12 +92,12 @@ setWatch(function() { // Start/stop
   updateLabels();
   if (started)
     displayInterval = setInterval(function() {
-    var last = tCurrent;
-    if (started) tCurrent = Date.now();
-    if (Math.floor(last/1000)!=Math.floor(tCurrent/1000))
-    drawsecs();
-  else
-    drawms();
+      var last = tCurrent;
+      if (started) tCurrent = Date.now();
+      if (Math.floor(last/1000)!=Math.floor(tCurrent/1000))
+        drawsecs();
+      else
+        drawms();
     }, 20);
 }, BTN2, {repeat:true});
 
@@ -108,10 +108,10 @@ setWatch(function() { // Lap
     lapTimes.unshift(tCurrent-tStart);
   }
   if (!started) { // save
-    var timenow= Date();
     var filename = "swatch-"+(new Date()).toISOString().substr(0,16).replace("T","_")+".json";
+    if (tCurrent!=tStart)
+      lapTimes.unshift(tCurrent-tStart);
     // this maxes out the 28 char maximum
-    lapTimes.unshift(tCurrent-tStart);
     require("Storage").writeJSON(filename, getLapTimesArray());
     tStart = tCurrent = tTotal = Date.now();
     lapTimes = [];
