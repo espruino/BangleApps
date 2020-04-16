@@ -287,13 +287,11 @@ function resetHighlightTimeout() {
   setterHighlightTimeout = setTimeout(setLimitSetterToNone, 2000);
 }
 
-// Show launcher when middle button pressed
 function switchOffApp(){
   Bangle.setHRMPower(0);
   Bangle.showLauncher();
 }
 
-// special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
   g.clear();
   if (on) {
@@ -312,19 +310,18 @@ Bangle.setHRMPower(1);
 Bangle.on('HRM', onHrm);
 
 setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
-setWatch(switchOffApp, BTN2, {edge:"rising", debounce:50, repeat:true});
 setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
 setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
 setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
 
+setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-//drawTrainingHeartRate();
 
 renderHomeIcon();
 renderLowerLimitBackground();
 renderUpperLimitBackground();
 
-// refesh every sec
 setInterval(drawTrainingHeartRate, 1000);
