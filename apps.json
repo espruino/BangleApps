@@ -1193,7 +1193,8 @@
     "name": "Battery Chart",
     "shortName":"Battery Chart",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
+    "readme": "README.md",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
     "storage": [
