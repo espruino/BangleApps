@@ -355,9 +355,6 @@ function updateApp(app) {
       const removeData = (f) => !app.data.some(d => (d.name || d.wildcard)===f)
       data.dataFiles = data.dataFiles.filter(removeData)
       data.storageFiles = data.storageFiles.filter(removeData)
-    } else if (remove.settings || app.settings) {
-      // app with settings but no data files declared: keep <appid>.settings.json
-      data.dataFiles = data.dataFiles.filter(f => f!==(app.id+'.settings.json'))
     }
     remove.data = AppInfo.makeDataString(data)
     return Comms.removeApp(remove);

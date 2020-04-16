@@ -263,9 +263,6 @@ and which gives information about the app for the Launcher.
 * tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
-  (If the app has settings but no data section, it is assumed settings are 
-  stored in `appid.settings.json`, so there is no need to add a data section 
-  containing only that file)
 
 ### `apps.json`: `custom` element
 
@@ -351,10 +348,10 @@ Example `settings.js`
 ```js
 // make sure to enclose the function in parentheses
 (function(back) {
-  let settings = require('Storage').readJSON('app.settings.json',1)||{};
+  let settings = require('Storage').readJSON('app.json',1)||{};
   function save(key, value) {
     settings[key] = value;
-    require('Storage').write('app.settings.json',settings);
+    require('Storage').write('app.json',settings);
   } 
   const appMenu = {
     '': {'title': 'App Settings'},
@@ -367,13 +364,17 @@ Example `settings.js`
   E.showMenu(appMenu)
 })
 ```
-In this example the app needs to add `app.settings.js` to `apps.json`:
+In this example the app needs to add `app.settings.js` to `storage` in `apps.json`.   
+It should also add `app.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
 ```json
   { "id": "app",
     ...
     "storage": [
       ...
       {"name":"app.settings.js","url":"settings.js"},
+    ],
+    "data": [
+      {"name":"app.json"}
     ]
   },
 ```

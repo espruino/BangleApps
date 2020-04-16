@@ -101,17 +101,16 @@ removeApp : app => { // expects an appid.info structure (i.e. with `files`)
   cmds += app.files.split(',').map(file => `\x10s.erase(${toJS(file)});\n`).join("");
   // remove app Data: (dataFiles and storageFiles)
   const data = AppInfo.parseDataString(app.data)
+  const isGlob = f => /[?*]/.test(f)
   //   regular files, can use wildcards
   cmds += data.dataFiles.map(file => {
-    const isGlob = (file.includes('*') || file.includes('?'))
-    if (!isGlob) return `\x10s.erase(${toJS(file)});\n`;
+    if (!isGlob(file)) return `\x10s.erase(${toJS(file)});\n`;
     const regex = new RegExp(globToRegex(file))
     return `\x10s.list(${regex}).forEach(f=>s.erase(f));\n`;
   }).join("");
   //   storageFiles, can use wildcards
   cmds += data.storageFiles.map(file => {
-    const isGlob = (file.includes('*') || file.includes('?'))
-    if (!isGlob) return `\x10s.open(${toJS(file)},'r').erase();\n`;
+    if (!isGlob(file)) return `\x10s.open(${toJS(file)},'r').erase();\n`;
     // storageFiles have a chunk number appended to their real name
     const regex = globToRegex(file+'\u0001')
     // open() doesn't want the chunk number though
