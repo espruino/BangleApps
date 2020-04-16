@@ -17,11 +17,12 @@ function getLapTimes() {
   <div class="columns">\n`;
     lapData.forEach((lap,lapIndex) => {
       lap.date = lap.n.substr(7,16).replace("_"," ");
+      lap.elapsed = lap.d.shift(); // remove first item
       html += `
         <div class="column col-12">
           <div class="card-header">
             <div class="card-title h5">${lap.date}</div>
-            <div class="card-subtitle text-gray">${lap.d.length} Laps</div>
+            <div class="card-subtitle text-gray">${lap.d.length} Laps, total time ${lap.elapsed}</div>
           </div>
           <div class="card-body">
           <table class="table table-striped table-hover">

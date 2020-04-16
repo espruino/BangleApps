@@ -411,7 +411,7 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.05",
+    "version":"0.06",
     "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
