@@ -1116,6 +1116,7 @@
     "description": "Pedometer that filters out arm movement and displays a step goal progress.",
     "tags": "outdoors,widget",
     "type":"widget",
+     "readme": "README.md",
     "storage": [
       {"name":"activepedom.wid.js","url":"widget.js"},
       {"name":"activepedom.settings.js","url":"settings.js"},
