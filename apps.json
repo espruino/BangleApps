@@ -23,7 +23,7 @@
     "id": "bigclock",
     "name": "Big Clock",
     "icon": "bigclock.png",
-    "version": "0.05",
+    "version": "0.06",
     "description": "A big font sunlight readable watch",
     "tags": "clock",
     "type": "clock",
