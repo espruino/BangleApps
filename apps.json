@@ -1123,7 +1123,7 @@
       {"name":"activepedom.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  { "id": "chronowidget",
+  { "id": "chronowid",
     "name": "Chrono Widget",
     "shortName":"Chrono Widget",
     "icon": "app.png",
@@ -1133,9 +1133,9 @@
     "type":"widget",
      "readme": "README.md",
     "storage": [
-      {"name":"chronowidget.wid.js","url":"widget.js"},
-      {"name":"chronowidget.app.js","url":"app.js"},
-      {"name":"chronowidget.img","url":"app-icon.js","evaluate":true}
+      {"name":"chronowid.wid.js","url":"widget.js"},
+      {"name":"chronowid.app.js","url":"app.js"},
+      {"name":"chronowid.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "tabata",
