@@ -1130,7 +1130,6 @@
     "version":"0.01",
     "description": "Chronometer (timer) which runs as widget.",
     "tags": "tools,widget",
-    "type":"widget",
      "readme": "README.md",
     "storage": [
       {"name":"chronowid.wid.js","url":"widget.js"},
