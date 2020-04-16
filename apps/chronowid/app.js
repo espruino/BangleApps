@@ -27,7 +27,7 @@ function resetSettings() {
 }
 
 settingsChronowid = storage.readJSON('chronowid.json',1);
-if (!settingsChronowid.started) resetSettings();
+if (!settingsChronowid) resetSettings();
 
 E.on('kill', () => {
   print("-KILL-");
