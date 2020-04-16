@@ -1108,7 +1108,7 @@
       {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
     ]
   },
-    { "id": "activepedom",
+  { "id": "activepedom",
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
@@ -1121,6 +1121,21 @@
       {"name":"activepedom.wid.js","url":"widget.js"},
       {"name":"activepedom.settings.js","url":"settings.js"},
       {"name":"activepedom.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "chronowidget",
+    "name": "Chrono Widget",
+    "shortName":"Chrono Widget",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Chronometer (timer) which runs as widget.",
+    "tags": "tools,widget",
+    "type":"widget",
+     "readme": "README.md",
+    "storage": [
+      {"name":"chronowidget.wid.js","url":"widget.js"},
+      {"name":"chronowidget.app.js","url":"app.js"},
+      {"name":"chronowidget.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "tabata",
