@@ -1018,7 +1018,7 @@
   { "id": "astrocalc",
     "name": "Astrocalc",
     "icon": "astrocalc.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
     "tags": "app,sun,moon,cycles,tool,outdoors",
     "allow_emulator":true,
