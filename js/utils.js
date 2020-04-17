@@ -8,6 +8,18 @@ function escapeHtml(text) {
   };
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
+// simple glob to regex conversion, only supports "*" and "?" wildcards
+function globToRegex(pattern) {
+  const ESCAPE = '.*+-?^${}()|[]\\';
+  const regex = pattern.replace(/./g, c => {
+    switch (c) {
+      case '?': return '.';
+      case '*': return '.*';
+      default: return ESCAPE.includes(c) ? ('\\' + c) : c;
+    }
+  });
+  return new RegExp('^'+regex+'$');
+}
 function htmlToArray(collection) {
   return [].slice.call(collection);
 }
