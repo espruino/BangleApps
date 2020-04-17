@@ -1,4 +1,4 @@
-// Create an entry in apps.json as follows:
+},
 { "id": "hidcam",
   "name": "HID camera shutter",
   "shortName":"HID cam",
@@ -11,3 +11,4 @@
     {"name":"hidcam.img","url":"app-icon.js","evaluate":true}
   ],
 }
+]
