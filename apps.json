@@ -1143,7 +1143,7 @@
     "name": "Chrono Widget",
     "shortName":"Chrono Widget",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Chronometer (timer) which runs as widget.",
     "tags": "tools,widget",
      "readme": "README.md",
