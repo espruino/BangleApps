@@ -1,8 +1,10 @@
-let d;
+const REFRESH_RATE = 10000;
+
+let interval;
+
 function drawTime() {
-  d = new Date();
-  if (!Bangle.isLCDOn()) return;
-  let da = d.toString().split(" "),
+  const d = new Date();
+  const da = d.toString().split(" "),
     time = da[4].substr(0, 5).split(":"),
     dow = da[0],
     month = da[1],
@@ -27,14 +29,22 @@ Bangle.on("lcdPower", function(on) {
     g.clear();
     Bangle.drawWidgets();
     drawTime();
+    interval = setInterval(draw, REFRESH_RATE, settings.drawMode);
+  } else {
+    clearInterval(interval);
   }
 });
 
-Bangle.setLCDBrightness(1);
+Bangle.setLCDMode();
+
+// Show launcher when middle button pressed
+clearWatch();
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+
 g.clear();
+clearInterval();
+drawTime();
+interval = setInterval(drawTime, REFRESH_RATE);
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-drawTime();
-intervalRefMin = setInterval(drawTime, 60 * 1000);
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
