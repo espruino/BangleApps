@@ -30,7 +30,6 @@ settingsChronowid = storage.readJSON('chronowid.json',1);
 if (!settingsChronowid) resetSettings();
 
 E.on('kill', () => {
-  print("-KILL-");
   updateSettings();
 });
 
@@ -44,6 +43,14 @@ function showMenu() {
         timerMenu.seconds.value = settingsChronowid.seconds;
         timerMenu.started.value = settingsChronowid.started;
       }
+    },
+    'Reset values': function() {
+        settingsChronowid.hours = 0;
+        settingsChronowid.minutes = 0;
+        settingsChronowid.seconds = 0;
+        settingsChronowid.started = false;
+        updateSettings();
+        showMenu();
     },
     'Hours': {
       value: settingsChronowid.hours,
