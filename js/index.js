@@ -349,6 +349,14 @@ function updateApp(app) {
       .filter(f => f !== app.id + '.info')
       .filter(f => !app.storage.some(s => s.name === f))
       .join(',');
+    let data = AppInfo.parseDataString(remove.data)
+    if ('data' in app) {
+      // only remove data files which are no longer declared in new app version
+      const removeData = (f) => !app.data.some(d => (d.name || d.wildcard)===f)
+      data.dataFiles = data.dataFiles.filter(removeData)
+      data.storageFiles = data.storageFiles.filter(removeData)
+    }
+    remove.data = AppInfo.makeDataString(data)
     return Comms.removeApp(remove);
   }).then(()=>{
     showToast(`Updating ${app.name}...`);
