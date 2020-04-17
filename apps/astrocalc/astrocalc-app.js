@@ -339,7 +339,6 @@ function drawGPSWaitPage() {
       setWatch(() => {
         clearWatch();
         Bangle.setGPSPower(0);
-        lastGPS.time = new Date();
         m = indexPageMenu(lastGPS);
       }, BTN3, {repeat: false});
     }
