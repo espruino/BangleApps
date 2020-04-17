@@ -11,7 +11,7 @@ const COLORS = {
   'ok': 0xFD20, // "Orange"
   'low':0xF800, // "Red"
 }
-const SETTINGS_FILE = 'widbatpc.settings.json'
+const SETTINGS_FILE = 'widbatpc.json'
 
 let settings
 function loadSettings() {
