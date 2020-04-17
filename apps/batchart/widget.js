@@ -72,7 +72,7 @@
     if (hrmEventReceived)
       enabledConsumers = enabledConsumers | switchableConsumers.hrm;
     // First, coarse indication if the bluetooth device is enabled
-    if (NodeFilter.getSecuritystatus().connected)
+    if (NRF.getSecurityStatus().connected))
        enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
 
     // Reset the event registration vars
