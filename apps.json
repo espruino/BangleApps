@@ -235,7 +235,7 @@
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple compass that points North",
     "tags": "tool,outdoors",
     "storage": [
