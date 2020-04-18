@@ -24,12 +24,10 @@ if (settings.HID) {
 }
 function drawApp() {
   g.clear();
-  Bangle.loadWidgets()
-  Bangle.drawWidgets()
-//  g.setFont("6x8",2);
-//  g.setFontAlign(0,0);
-//  g.drawString(profile, 120, 120);
-  g.drawImage(storage.read("hidcam.img"),120,120)
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  g.fillCircle(122,127,60);
+  g.drawImage(storage.read("hidcam.img"),100,105);
   const d = g.getWidth() - 18;
 
   function c(a) {
@@ -40,8 +38,7 @@ function drawApp() {
       buffer: (new Uint8Array(a)).buffer
     };
   }
-
-  g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
+  g.fillRect(180,130, 240, 124);
 }
 
 if (camShot) {
