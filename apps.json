@@ -1299,7 +1299,7 @@
     "shortName":"BlackJack game",
     "icon": "blackjack.png",
     "version":"0.01",
-    "description": "Simplle implementation of card game Black Jack",
+    "description": "Simple implementation of card game Black Jack",
     "tags": "",
     "storage": [
       {"name":"blackjack.app.js","url":"blackjack.app.js"},
