@@ -33,6 +33,8 @@ function p(c,cb) { NRF.sendHIDReport(c, function() { NRF.sendHIDReport(0, cb) })
 volumeUp = function(cb) { p(0x20,cb) };
 //end of manual selective import
 
+NRF.setServices(undefined, { hid : report });
+
 g.clear();
 E.showMessage('BTN2 to trigger','camTrigger');
 Bangle.loadWidgets();
@@ -50,7 +52,6 @@ setWatch(function(e){
   E.showMessage('capture');
   Bangle.beep();
   shotTrigger();
-  set.Timeout(load,1000);
   g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
