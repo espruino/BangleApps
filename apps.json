@@ -1305,4 +1305,5 @@
       {"name":"rclock.app.js","url":"app.js"},
       {"name":"rclock.img","url":"app-icon.js","evaluate":true}
     ]
+  }
 ]
