@@ -1,15 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\apps\\animals",
-    "\\apps\\astrocalc",
-    "\\apps\\astroid",
-    "\\apps\\barclock",
-    "\\apps\\demoapp",
-    "\\apps\\files",
-    "\\apps\\gpsinfo",
-    "\\apps\\gpstime",
-    "\\apps\\mrjau01a"
+    "\\apps",
+    "\\apps\\mrjau01",
+    "\\apps\\wclock"
   ],
+  "SelectedNode": "\\apps.json",
   "PreviewInSolutionExplorer": false
 }
