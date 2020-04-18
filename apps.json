@@ -291,6 +291,18 @@
       {"name":"gpsrec.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "gpsnav",
+    "name": "GPS Navigation",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording",
+    "tags": "tool,outdoors,gps",
+    "storage": [
+      {"name":"gpsnav.app.js","url":"app.js"},
+      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
+      {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
