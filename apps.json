@@ -1293,5 +1293,17 @@
         "evaluate": true
       }
     ]
+  },
+  { "id": "blackjack",
+    "name": "Black Jack game",
+    "shortName":"BlackJack game",
+    "icon": "blackjack.png",
+    "version":"0.01",
+    "description": "Simplle implementation of card game Black Jack",
+    "tags": "",
+    "storage": [
+      {"name":"blackjack.app.js","url":"blackjack.app.js"},
+      {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
+    ]
   }
 ]
