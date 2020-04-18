@@ -24,6 +24,8 @@ if (settings.HID) {
 }
 function drawApp() {
   g.clear();
+  Bangle.loadWidgets()
+  Bangle.drawWidgets()
   g.setFont("6x8",2);
   g.setFontAlign(0,0);
   g.drawString(profile, 120, 120);
