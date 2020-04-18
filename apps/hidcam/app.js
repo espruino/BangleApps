@@ -30,7 +30,7 @@ report = new Uint8Array([
   0xc0                           // END_COLLECTION
 ]);
 function p(c,cb) { NRF.sendHIDReport(c, function() { NRF.sendHIDReport(0, cb) }); }
-volumeUp = function(cb) { p(0x20,cb) };
+volumeUp = function(cb) { p(0x80,cb) };
 //end of manual selective import
 
 NRF.setServices(undefined, { hid : report });
