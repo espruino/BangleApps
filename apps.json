@@ -1291,19 +1291,18 @@
         "name": "dane.img",
         "url": "app-icon.js",
         "evaluate": true
-      },
-      { "id": "rclock",
-        "name": "Round clock with seconds,  minutes and date",
-        "shortName":"Round Clock",
-        "icon": "app.png",
-        "version":"0.01",
-        "description": "Designed round clock with ticks for minutes and seconds",
-        "tags": "",
-        "storage": [
-          {"name":"rclock.app.js","url":"app.js"},
-          {"name":"rclock.img","url":"app-icon.js","evaluate":true}
-        ]
       }
     ]
-  }
+  },
+  { "id": "rclock",
+    "name": "Round clock with seconds,  minutes and date",
+    "shortName":"Round Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Designed round clock with ticks for minutes and seconds",
+    "tags": "",
+    "storage": [
+      {"name":"rclock.app.js","url":"app.js"},
+      {"name":"rclock.img","url":"app-icon.js","evaluate":true}
+    ]
 ]
