@@ -104,6 +104,7 @@
       }
       first = false;
     }
+    
     // Reset seconds
     if (seconds == 59) {
       g.setColor('#000000');
