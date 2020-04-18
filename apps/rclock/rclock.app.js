@@ -20,7 +20,7 @@
       font: 'Vector',
       size: 60,
       middle: screen.middle - 30,
-      center: screen.center + 5 ,
+      center: screen.center,
     },
     date: {
       color: '#f0af00',
@@ -31,8 +31,8 @@
       center: screen.center,
     },
     circle: {
-      colormin: '#bbbbbb',
-      colorsec: '#999999',
+      colormin: '#eeeeee',
+      colorsec: '#bbbbbb',
       width: 10,
       middle: screen.middle,
       center: screen.center,
@@ -149,6 +149,7 @@
 
   // clean app screen
   g.clear();
+  g.setFontAlign( 0, 0, 0);
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
