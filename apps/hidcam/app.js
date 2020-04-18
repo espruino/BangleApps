@@ -26,9 +26,10 @@ function drawApp() {
   g.clear();
   Bangle.loadWidgets()
   Bangle.drawWidgets()
-  g.setFont("6x8",2);
-  g.setFontAlign(0,0);
-  g.drawString(profile, 120, 120);
+//  g.setFont("6x8",2);
+//  g.setFontAlign(0,0);
+//  g.drawString(profile, 120, 120);
+  g.drawImage(storage.read("hidcam.img"),120,120)
   const d = g.getWidth() - 18;
 
   function c(a) {
