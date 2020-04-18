@@ -31,8 +31,8 @@
       center: screen.center,
     },
     circle: {
-      colormin: '#999999',
-      colorsec: '#777777',
+      colormin: '#bbbbbb',
+      colorsec: '#999999',
       width: 10,
       middle: screen.middle,
       center: screen.center,
