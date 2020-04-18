@@ -1300,10 +1300,11 @@
     "icon": "blackjack.png",
     "version":"0.01",
     "description": "Simple implementation of card game Black Jack",
-    "tags": "",
+    "tags": "game",
+    "allow_emulator":true,
     "storage": [
       {"name":"blackjack.app.js","url":"blackjack.app.js"},
-      {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
+      {"name":"blackjack.img","url":"blackjack.img"}
     ]
   }
 ]
