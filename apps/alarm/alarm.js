@@ -22,9 +22,10 @@ function showAlarm(alarm) {
   var buzzCount = 10;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
+  const ok = locale.translate("Ok");
   E.showPrompt(msg,{
     title:"ALARM!"/*LANG*/,
-    buttons : {"Sleep"/*LANG*/:true,locale.translate("Ok"):false} // default is sleep so it'll come back in 10 mins
+    buttons : {"Sleep"/*LANG*/:true,ok:false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
