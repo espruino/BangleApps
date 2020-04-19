@@ -1295,7 +1295,7 @@
     ]
   },
   {
-    "id": "Metronome",
+    "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
     "version": "0.03",
