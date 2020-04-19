@@ -1293,5 +1293,25 @@
         "evaluate": true
       }
     ]
+  },
+  {
+    "id": "Metronome",
+    "name": "Metronome",
+    "icon": "metronome_icon.png",
+    "version": "0.03",
+    "description": "Makes the watch blinking and vibrating with a given rate",
+    "tags": "tool",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "metronome.app.js",
+        "url": "metronome.js"
+      },
+      {
+        "name": "metronome.img",
+        "url": "metronome-icon.js",
+        "evaluate": true
+      }
+    ]
   }
 ]
