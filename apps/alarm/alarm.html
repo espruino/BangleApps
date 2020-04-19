@@ -66,7 +66,7 @@
         new Promise((resolve,reject) => {
           Puck.write("\x03",(result) => {
             if (result===null) return reject("");
-            Puck.eval(`require("locale").lang`, (content,err) => {
+            Puck.eval(`require("locale").name`, (content,err) => {
               if (content===null) return reject(err || "");
               resolve(content);
             });
