@@ -11,6 +11,7 @@
     'color': COLORS[0],
     'percentage': true,
     'charger': true,
+    'hideifmorethan20pct': false,
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -51,8 +52,13 @@
         const newIndex = (oldIndex + 1) % COLORS.length
         s.color = COLORS[newIndex]
         save('color')(s.color)
-      },
-    },
-  }
+       }
+     },
+    'Hide when \> 20\%': {
+      value: s.hideifmorethan20pct,
+      format: onOffFormat,
+      onchange: save('hideifmorethan20pct'),
+     },
+    } 
   E.showMenu(menu)
 })

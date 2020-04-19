@@ -3,6 +3,7 @@ const DEFAULTS = {
   'color': 'By Level',
   'percentage': true,
   'charger': true,
+  'hideifmorethan20pct': false,
 }
 const COLORS = {
   'white': -1,
@@ -53,8 +54,16 @@ function setWidth() {
   }
 }
 function draw() {
+
   var s = 39;
   var x = this.x, y = this.y;
+  const l = E.getBattery(),
+  c = levelColor(l);
+  const xl = x+4+l*(s-12)/100
+
+  if(!Bangle.isCharging() && setting('hideifmorethan20pct') && l > 20){
+     return;}
+
   if (Bangle.isCharging() && setting('charger')) {
     g.setColor(chargerColor()).drawImage(atob(
       "DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
@@ -64,9 +73,7 @@ function draw() {
   g.fillRect(x,y+2,x+s-4,y+21);
   g.clearRect(x+2,y+4,x+s-6,y+19);
   g.fillRect(x+s-3,y+10,x+s,y+14);
-  const l = E.getBattery(),
-    c = levelColor(l);
-  const xl = x+4+l*(s-12)/100
+
   g.setColor(c).fillRect(x+4,y+6,xl,y+17);
   g.setColor(-1);
   if (!setting('percentage')) {
