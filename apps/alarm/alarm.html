@@ -33,7 +33,7 @@
 
       let translated = {};
 	  let translate = () => {
-	    Promise.all(translateFile("app.js"), translateFile("alarm.js")).then(() => {
+	    Promise.all([translateFile("app.js"), translateFile("alarm.js")]).then(() => {
           document.getElementById("upload").style.visibility = 'visible';
         }).catch( error => {
           console.log(error);
