@@ -60,8 +60,6 @@ var AppInfo = {
       if (app.type && app.type!="app") json.type = app.type;
       if (fileContents.find(f=>f.name==app.id+".app.js"))
         json.src = app.id+".app.js";
-      if (fileContents.find(f=>f.name==app.id+".settings.js"))
-        json.settings = app.id+".settings.js";
       if (fileContents.find(f=>f.name==app.id+".img"))
         json.icon = app.id+".img";
       if (app.sortorder) json.sortorder = app.sortorder;
@@ -69,13 +67,48 @@ var AppInfo = {
       var fileList = fileContents.map(storageFile=>storageFile.name);
       fileList.unshift(appJSONName); // do we want this? makes life easier!
       json.files = fileList.join(",");
+      if ('data' in app) {
+        let data = {dataFiles: [], storageFiles: []};
+        // add "data" files to appropriate list
+        app.data.forEach(d=>{
+          if (d.storageFile) data.storageFiles.push(d.name||d.wildcard)
+          else data.dataFiles.push(d.name||d.wildcard)
+        })
+        const dataString = AppInfo.makeDataString(data)
+        if (dataString) json.data = dataString
+      }
       fileContents.push({
         name : appJSONName,
         content : JSON.stringify(json)
       });
       resolve(fileContents);
     });
-  }
+  },
+  // (<appid>.info).data holds filenames of data: both regular and storageFiles
+  // These are stored as:  (note comma vs semicolons)
+  //   "fil1,file2", "file1,file2;storageFileA,storageFileB" or ";storageFileA"
+  /**
+   * Convert appid.info "data" to object with file names/patterns
+   * Passing in undefined works
+   * @param data "data" as stored in appid.info
+   * @returns {{storageFiles:[], dataFiles:[]}}
+   */
+  parseDataString(data) {
+    data = data || '';
+    let [files = [], storage = []] = data.split(';').map(d => d.split(','))
+    return {dataFiles: files, storageFiles: storage}
+  },
+  /**
+   * Convert object with file names/patterns to appid.info "data" string
+   * Passing in an incomplete object will not work
+   * @param data {{storageFiles:[], dataFiles:[]}}
+   * @returns {string} "data" to store in appid.info
+   */
+  makeDataString(data) {
+    if (!data.dataFiles.length && !data.storageFiles.length) { return '' }
+    if (!data.storageFiles.length) { return data.dataFiles.join(',') }
+    return [data.dataFiles.join(','),data.storageFiles.join(',')].join(';')
+  },
 };
 
 if ("undefined"!=typeof module)

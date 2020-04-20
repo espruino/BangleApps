@@ -145,6 +145,7 @@
     }
   }
 
+  var _GB = global.GB;
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
@@ -160,6 +161,7 @@
         handleCallEvent(event);
         break;
     }
+    if(_GB)setTimeout(_GB,0,event);
   };
 
   // Touch control

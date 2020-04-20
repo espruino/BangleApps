@@ -202,6 +202,11 @@ and which gives information about the app for the Launcher.
   "files:"file1,file2,file3",
      // added by BangleApps loader on upload - lists all files
      // that belong to the app so it can be deleted
+  "data":"appid.data.json,appid.data?.json;appidStorageFile,appidStorageFile*"
+     // added by BangleApps loader on upload - lists files that 
+     // the app might write, so they can be deleted on uninstall
+     // typically these files are not uploaded, but created by the app
+     // these can include '*' or '?' wildcards
 }
 ```
 
@@ -240,16 +245,24 @@ and which gives information about the app for the Launcher.
      "evaluate":true          // if supplied, data isn't quoted into a String before upload
                               // (eg it's evaluated as JS)
     },
+  ]
+  "data": [                   // list of files the app writes to
+    {"name":"appid.data.json",  // filename used in storage
+     "storageFile":true       // if supplied, file is treated as storageFile
+    },
+    {"wildcard":"appid.data.*" // wildcard of filenames used in storage
+    },                         // this is mutually exclusive with using "name" 
+  ],
   "sortorder" : 0,            // optional - choose where in the list this goes.
                               // this should only really be used to put system
                               // stuff at the top
-  ]
 }
 ```
 
 * name, icon and description present the app in the app loader.
 * tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
 * storage is used to identify the app files and how to handle them
+* data is used to clean up files when the app is uninstalled
 
 ### `apps.json`: `custom` element
 
@@ -335,10 +348,10 @@ Example `settings.js`
 ```js
 // make sure to enclose the function in parentheses
 (function(back) {
-  let settings = require('Storage').readJSON('app.settings.json',1)||{};
+  let settings = require('Storage').readJSON('app.json',1)||{};
   function save(key, value) {
     settings[key] = value;
-    require('Storage').write('app.settings.json',settings);
+    require('Storage').write('app.json',settings);
   } 
   const appMenu = {
     '': {'title': 'App Settings'},
@@ -351,19 +364,20 @@ Example `settings.js`
   E.showMenu(appMenu)
 })
 ```
-In this example the app needs to add both `app.settings.js` and
-`app.settings.json` to `apps.json`:
+In this example the app needs to add `app.settings.js` to `storage` in `apps.json`.   
+It should also add `app.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
 ```json
   { "id": "app",
     ...
     "storage": [
       ...
       {"name":"app.settings.js","url":"settings.js"},
-      {"name":"app.settings.json","content":"{}"}
+    ],
+    "data": [
+      {"name":"app.json"}
     ]
   },
 ```
-That way removing the app also cleans up `app.settings.json`.
 
 ## Coding hints
 

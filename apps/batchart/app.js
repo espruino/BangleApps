@@ -65,9 +65,7 @@ function loadData() {
   
   // Top up to MaxValueCount from previous days as required
   let previousDay = decrementDay(startingDay);
-  while (dataLines.length < MaxValueCount
-    && previousDay !== startingDay) {
-    
+  while (dataLines.length < MaxValueCount  && previousDay !== startingDay) {
     let topUpLogFileName = "bclog" + previousDay;
     let remainingLines = MaxValueCount - dataLines.length;
     let topUpLines = loadLinesFromFile(remainingLines, topUpLogFileName);
@@ -126,6 +124,12 @@ function renderData(dataArray) {
   const batteryIndex = 1;
   const temperatureIndex = 2;
   const switchabelsIndex = 3;
+
+  const minTemperature = 20;
+  const maxTemparature = 40;
+
+  const belowMinIndicatorValue = minTemperature - 1;
+  const aboveMaxIndicatorValue = maxTemparature + 1;
   
   var allConsumers = switchableConsumers.none | switchableConsumers.lcd | switchableConsumers.compass | switchableConsumers.bluetooth | switchableConsumers.gps | switchableConsumers.hrm;
   
@@ -140,8 +144,19 @@ function renderData(dataArray) {
     
     // Temperature
     g.setColor(0.4, 0.4, 1);
-    let scaledTemp = Math.floor(((parseFloat(dataInfo[temperatureIndex]) * 100) - 2000)/20) + ((((parseFloat(dataInfo[temperatureIndex]) * 100) - 2000) % 100)/25);
+        
+    let datapointTemp = parseFloat(dataInfo[temperatureIndex]);
 
+    if (datapointTemp < minTemperature) {
+      datapointTemp = belowMinIndicatorValue;
+    }
+    if (datapointTemp > maxTemparature) {
+      datapointTemp = aboveMaxIndicatorValue;
+    }
+    
+    // Scale down the range of 20 - 40°C to a 100px y-axis, where 1px = .25°
+    let scaledTemp = Math.floor(((datapointTemp * 100) - 2000) / 20) + ((((datapointTemp * 100) - 2000) % 100) / 25);
+    
     g.setPixel(GraphXZero + i, GraphYZero - scaledTemp);
     
     // LCD state
@@ -213,8 +228,6 @@ function switchOffApp(){
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    // call your app function here
-    // If you clear the screen, do Bangle.drawWidgets();
     g.clear();
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -222,12 +235,11 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
-setWatch(switchOffApp, BTN2, {edge:"rising", debounce:50, repeat:true});
+setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-// call your app function here
 
 renderHomeIcon();
 
