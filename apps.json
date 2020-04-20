@@ -120,7 +120,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.16",
+    "version":"0.17",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
@@ -291,6 +291,18 @@
       {"name":"gpsrec.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "gpsnav",
+    "name": "GPS Navigation",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording",
+    "tags": "tool,outdoors,gps",
+    "storage": [
+      {"name":"gpsnav.app.js","url":"app.js"},
+      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
+      {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
@@ -319,7 +331,7 @@
   { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
@@ -890,7 +902,7 @@
   { "id": "wohrm",
     "name": "Workout HRM",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "readme": "README.md",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "tags": "hrm,workout",
@@ -1018,7 +1030,7 @@
   { "id": "astrocalc",
     "name": "Astrocalc",
     "icon": "astrocalc.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
     "tags": "app,sun,moon,cycles,tool,outdoors",
     "allow_emulator":true,
@@ -1264,8 +1276,8 @@
     "name": "Calculator",
     "shortName":"Calculator",
     "icon": "calculator.png",
-    "version":"0.01",
-    "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus. Push button1 and 3 to navigate up/down, tap right or left to navigate the sides, push button 2 to select.",
+    "version":"0.02",
+    "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "tags": "app,tool",
     "storage": [
       {"name":"calculator.app.js","url":"app.js"},
@@ -1313,6 +1325,65 @@
         "url": "app-icon.js",
         "evaluate": true
       }
+    ]
+  },
+  {
+    "id": "metronome",
+    "name": "Metronome",
+    "icon": "metronome_icon.png",
+    "version": "0.03",
+    "description": "Makes the watch blinking and vibrating with a given rate",
+    "tags": "tool",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "metronome.app.js",
+        "url": "metronome.js"
+      },
+      {
+        "name": "metronome.img",
+        "url": "metronome-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  { "id": "blackjack",
+    "name": "Black Jack game",
+    "shortName":"Black Jack game",
+    "icon": "blackjack.png",
+    "version":"0.01",
+    "description": "Simple implementation of card game Black Jack",
+    "tags": "game",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"blackjack.app.js","url":"blackjack.app.js"},
+      {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hidcam",
+    "name": "Camera shutter",
+    "shortName":"Cam shutter",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Enable HID, connect to your phone, start your camera and trigger the shot on your Bangle",
+    "tags": "tools",
+    "storage": [
+        {"name":"hidcam.app.js","url":"app.js"},
+        {"name":"hidcam.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { 
+    "id": "rclock",
+    "name": "Round clock with seconds,  minutes and date",
+    "shortName":"Round Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Designed round clock with ticks for minutes and seconds",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"rclock.app.js","url":"rclock.app.js"},
+      {"name":"rclock.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
