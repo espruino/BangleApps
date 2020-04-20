@@ -207,7 +207,7 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read more...</a>`;
+    var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
     var favourite = favourites.find(e => e == app.id);
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
