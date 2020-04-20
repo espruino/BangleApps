@@ -1276,8 +1276,8 @@
     "name": "Calculator",
     "shortName":"Calculator",
     "icon": "calculator.png",
-    "version":"0.01",
-    "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus. Push button1 and 3 to navigate up/down, tap right or left to navigate the sides, push button 2 to select.",
+    "version":"0.02",
+    "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "tags": "app,tool",
     "storage": [
       {"name":"calculator.app.js","url":"app.js"},
