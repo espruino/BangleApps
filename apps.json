@@ -1308,7 +1308,7 @@
       {"name":"buffgym-set.js","url":"buffgym-set.js"},
       {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
       {"name":"buffgym-program.js","url":"buffgym-program.js"},
-      {"name":"buffgym-programs.json","url":"buffgym-program.json"},
+      {"name":"buffgym-programs.json","url":"buffgym-programs.json"},
       {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
     ]
   }
