@@ -1306,6 +1306,19 @@
       }
     ]
   },
+  { "id": "blackjack",
+    "name": "Black Jack game",
+    "shortName":"Black Jack game",
+    "icon": "blackjack.png",
+    "version":"0.01",
+    "description": "Simple implementation of card game Black Jack",
+    "tags": "game",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"blackjack.app.js","url":"blackjack.app.js"},
+      {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
+    ]
+  },
   { "id": "hidcam",
     "name": "Camera shutter",
     "shortName":"Cam shutter",
