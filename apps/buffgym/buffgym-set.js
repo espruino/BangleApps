@@ -1,4 +1,4 @@
-class Set {
+exports = class Set {
   constructor(maxReps) {
     this._minReps = 0;
     this._maxReps = maxReps;

@@ -2,10 +2,8 @@ const STARTED = 1;
 const RESTING = 2;
 const COMPLETED = 3;
 const ONE_SECOND = 1000;
-const INCREMENT = "increment";
-const DECREMENT = "decrement";
 
-class Exercise {
+exports = class Exercise {
   constructor(params /*{title, weight, unit, restPeriod}*/) {
     const DEFAULTS = {
       title: "Unknown",

@@ -1,4 +1,4 @@
-class Program {
+exports = class Program {
   constructor(params) {
     const DEFAULTS = {
       title: "Unknown",
