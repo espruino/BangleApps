@@ -194,113 +194,32 @@
 
   // Squats
   function buildPrograms() {
-    const squats = new Exercise({
-      title: "Squats",
-      weight: 40,
-      unit: "Kg",
-    });
-    squats.addSets([
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-    ]);
+    const programsJSON = require("Storage").readJSON("buffgym-programs.json", 1);
 
-    const bench = new Exercise({
-      title: "Bench press",
-      weight: 20,
-      unit: "Kg",
-    });
-    bench.addSets([
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-    ]);
+    if (!programsJSON) throw "No programs JSON found";
 
-    const row = new Exercise({
-      title: "Row",
-      weight: 20,
-      unit: "Kg",
-    });
-    row.addSets([
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-    ]);
+    const programs = [];
 
-    const ohPress = new Exercise({
-      title: "Overhead press",
-      weight: 20,
-      unit: "Kg",
-    });
-    ohPress.addSets([
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-      new Set(5),
-    ]);
+    programsJSON.forEach(programJSON => {
+      const program = new Program({
+        title: programJSON.title,
+      });
+      const exercises = programJSON.exercises.map(exerciseJSON => {
+        const exercise = new Exercise({
+          title: exerciseJSON.title,
+          weight: exerciseJSON.weight,
+          unit: exerciseJSON.unit,
+        });
+        exerciseJSON.sets.forEach(setJSON => {
+          exercise.addSet(new Set(setJSON));
+        });
 
-    const deadlift = new Exercise({
-      title: "Deadlift",
-      weight: 20,
-      unit: "Kg",
+        return exercise;
+      });
+      program.addExercises(exercises);
+      programs.push(program);
     });
-    deadlift.addSets([
-      new Set(5),
-    ]);
 
-    const pullups = new Exercise({
-      title: "Pullups",
-      weight: 0,
-      unit: "Kg",
-    });
-    pullups.addSets([
-      new Set(10),
-      new Set(10),
-      new Set(10),
-    ]);
-
-    const triceps = new Exercise({
-      title: "Tricep extension",
-      weight: 20,
-      unit: "Kg",
-    });
-    triceps.addSets([
-      new Set(10),
-      new Set(10),
-      new Set(10),
-    ]);
-
-    const programA = new Program({
-      title: "Program A",
-    });
-    programA.addExercises([
-      squats,
-      ohPress,
-      deadlift,
-      pullups,
-    ]);
-
-    const programB = new Program({
-      title: "Program B",
-    });
-    programB.addExercises([
-      squats,
-      bench,
-      row,
-      triceps,
-    ]);
-
-    const programs = [
-      programA,
-      programB,
-    ];
     return programs;
   }
 
