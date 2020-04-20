@@ -405,7 +405,7 @@
     "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
-    "version":"0.02",
+    "version": "0.02",
     "description": "Simple compass that points North",
     "tags": "tool,outdoors",
     "storage": [
@@ -1946,7 +1946,7 @@
     "name": "Chrono Widget",
     "shortName": "Chrono Widget",
     "icon": "app.png",
-    "version":"0.02",
+    "version": "0.02",
     "description": "Chronometer (timer) which runs as widget.",
     "tags": "tools,widget",
     "readme": "README.md",
@@ -2221,6 +2221,26 @@
       {
         "name": "bigclock.img",
         "url": "bigclock-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
+    "id": "trainer",
+    "name": "Personal trainer",
+    "icon": "trainer.png",
+    "version": "0.01",
+    "description": "A stopwatch with Lap Time logging to a JSON file and heart beat monitor with customizable max BPM alert",
+    "tags": "heart,stopwatch,chronometer",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "trainer.app.js",
+        "url": "trainer.js"
+      },
+      {
+        "name": "trainer.img",
+        "url": "trainer-icon.js",
         "evaluate": true
       }
     ]
