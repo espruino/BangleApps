@@ -99,7 +99,7 @@ function drawProgramCompleted() {
   const msg = "That's the program\ncompleted. Now eat\nsome food and\nget plenty of rest.";
 
   clearWatch();
-  setWatch(reset, BTN2, {repeat: false});
+  setWatch(Bangle.showLauncher, BTN2, {repeat: false});
 
   g.setColor(WHITE);
   g.setFont("Vector", 35);
