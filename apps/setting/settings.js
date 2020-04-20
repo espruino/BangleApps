@@ -416,10 +416,19 @@ function showAppSettingsMenu() {
     '': { 'title': 'App Settings' },
     '< Back': ()=>showMainMenu(),
   }
-  const apps = storage.list(/\.info$/)
-    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.settings)?{sortorder:a.sortorder,name:a.name,settings:a.settings}:undefined})
-    .filter(app => app) // filter out any undefined apps
-    .sort((a, b) => a.sortorder - b.sortorder)
+  const apps = storage.list(/\.settings\.js$/)
+    .map(s => s.substr(0, s.length-12))
+    .map(id => {
+      const a=storage.readJSON(id+'.info',1);
+      return {id:id,name:a.name,sortorder:a.sortorder};
+    })
+    .sort((a, b) => {
+      const n = (0|a.sortorder)-(0|b.sortorder);
+      if (n) return n; // do sortorder first
+      if (a.name<b.name) return -1;
+      if (a.name>b.name) return 1;
+      return 0;
+    })
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
   }
@@ -433,10 +442,7 @@ function showAppSettings(app) {
     E.showMessage(`${app.name}:\n${msg}!\n\nBTN1 to go back`);
     setWatch(showAppSettingsMenu, BTN1, { repeat: false });
   }
-  let appSettings = storage.read(app.settings);
-  if (!appSettings) {
-    return showError('Missing settings');
-  }
+  let appSettings = storage.read(app.id+'.settings.js');
   try {
     appSettings = eval(appSettings);
   } catch (e) {
