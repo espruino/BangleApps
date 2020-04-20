@@ -78,7 +78,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -86,8 +86,10 @@
       {"name":"welcome.boot.js","url":"boot.js"},
       {"name":"welcome.app.js","url":"app.js"},
       {"name":"welcome.settings.js","url":"settings.js"},
-      {"name":"welcome.settings.json","url":"settings-default.json","evaluate":true},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"welcome.json"}
     ]
   },
   { "id": "gbridge",
@@ -120,13 +122,12 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.17",
+    "version":"0.18",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
       {"name":"setting.boot.js","url":"boot.js"},
-      {"name":"setting.json","url":"settings-default.json","evaluate":true},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
     "sortorder" : -2
@@ -135,16 +136,18 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
       {"name":"alarm.boot.js","url":"boot.js"},
       {"name":"alarm.js","url":"alarm.js"},
-      {"name":"alarm.json","content":"[]"},
       {"name":"alarm.img","url":"app-icon.js","evaluate":true},
       {"name":"alarm.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"alarm.json"}
     ]
   },
   { "id": "wclock",
@@ -280,15 +283,18 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
     "storage": [
       {"name":"gpsrec.app.js","url":"app.js"},
-      {"name":"gpsrec.json","url":"app-settings.json","evaluate":true},
       {"name":"gpsrec.img","url":"app-icon.js","evaluate":true},
       {"name":"gpsrec.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"gpsrec.json"},
+      {"wildcard":".gpsrc?","storageFile": true}
     ]
   },
   { "id": "gpsnav",
@@ -306,15 +312,18 @@
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
     "storage": [
       {"name":"heart.app.js","url":"app.js"},
-      {"name":"heart.json","url":"app-settings.json","evaluate":true},
       {"name":"heart.img","url":"app-icon.js","evaluate":true},
       {"name":"heart.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"heart.json"},
+      {"wildcard":".heart?","storageFile": true}
     ]
   },
   { "id": "slevel",
@@ -354,14 +363,16 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
-      {"name":"widbatpc.settings.js","url":"settings.js"},
-      {"name":"widbatpc.settings.json","content": "{}"}
+      {"name":"widbatpc.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widbatpc.json"}
     ]
   },
   { "id": "widbt",
@@ -529,20 +540,22 @@
     "id": "ncstart",
     "name": "NCEU Startup",
     "icon": "start.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "NodeConfEU 2019 'First Start' Sequence",
     "tags": "start,welcome",
     "storage": [
       {"name":"ncstart.app.js","url":"start.js"},
       {"name":"ncstart.boot.js","url":"boot.js"},
       {"name":"ncstart.settings.js","url":"settings.js"},
-      {"name":"ncstart.settings.json","url":"settings-default.json","evaluate":true},
       {"name":"ncstart.img","url":"start-icon.js","evaluate":true},
       {"name":"nc-bangle.img","url":"start-bangle.js","evaluate":true},
       {"name":"nc-nceu.img","url":"start-nceu.js","evaluate":true},
       {"name":"nc-nfr.img","url":"start-nfr.js","evaluate":true},
       {"name":"nc-nodew.img","url":"start-nodew.js","evaluate":true},
       {"name":"nc-tf.img","url":"start-tf.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"ncstart.json"}
     ]
   },
   { "id": "ncfrun",
@@ -1234,7 +1247,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1242,8 +1255,10 @@
     "storage": [
       {"name":"numerals.app.js","url":"numerals.app.js"},
       {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
-	    {"name":"numerals.settings.js","url":"numerals.settings.js"},
-      {"name":"numerals.json","url":"numerals-default.json","evaluate":true}
+      {"name":"numerals.settings.js","url":"numerals.settings.js"}
+    ],
+    "data":[
+      {"name":"numerals.json"}
     ]
   },
   { "id": "bledetect",
