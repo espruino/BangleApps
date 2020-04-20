@@ -11,22 +11,22 @@
     'color': COLORS[0],
     'percentage': true,
     'charger': true,
-    'hideifmorethan20pct': false,
+    'hideifmorethan': 100,
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
   const saved = storage.readJSON(SETTINGS_FILE, 1) || {}
   for (const key in saved) {
-    s[key] = saved[key]
+    s[key] = saved[key];
   }
 
   // creates a function to safe a specific setting, e.g.  save('color')(1)
   function save(key) {
     return function (value) {
-      s[key] = value
-      storage.write(SETTINGS_FILE, s)
-      WIDGETS["batpc"].reload()
+      s[key] = value;
+      storage.write(SETTINGS_FILE, s);
+      WIDGETS["batpc"].reload();
     }
   }
 
@@ -54,11 +54,14 @@
         save('color')(s.color)
        }
      },
-    'Hide when \> 20\%': {
-      value: s.hideifmorethan20pct,
-      format: onOffFormat,
-      onchange: save('hideifmorethan20pct'),
+    'Hide if >': {
+      value: s.hideifmorethan||100,
+      min: 10,
+      max : 100,
+      step: 10,
+      format: x => x+"%",
+      onchange: save('hideifmorethan'),
      },
-    } 
+    }
   E.showMenu(menu)
 })
