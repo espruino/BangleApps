@@ -9,7 +9,6 @@ A Maidenhead locator compresses latitude and longitude into a short string of ch
 The chosen coding uses alternating pairs of letters and digits, like so:
 
 * BL11bh
-
-
+##
 * support Paul Brewer KI6CQ HamGridSquare.js
 * support Chris Veness 2002-2012 LatLon library
