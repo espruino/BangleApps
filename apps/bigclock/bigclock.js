@@ -12,47 +12,56 @@ function drawMoon(d) {
     my = 50;
 
   var moon = {
+    // reset
     0: () => {
       g.reset()
         .setColor(BLACK)
         .fillRect(mx - r, my - r, mx + r, my + r);
     },
+    // new moon
     1: () => {
       moon[0]();
       g.setColor(MOON).drawCircle(mx, my, r);
     },
+    // 1/4 ascending
     2: () => {
-      moon[3]();
+      moon[7]();
       g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
     },
+    // 1/2 ascending
     3: () => {
-      moon[0]();
-      g.setColor(MOON)
-        .fillCircle(mx, my, r)
-        .setColor(BLACK)
-        .fillRect(mx - r, my - r, mx, my + r);
-    },
-    4: () => {
-      moon[3]();
-      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
-    },
-    5: () => {
-      moon[0]();
-      g.setColor(MOON).fillCircle(mx, my, r);
-    },
-    6: () => {
-      moon[7]();
-      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
-    },
-    7: () => {
       moon[0]();
       g.setColor(MOON)
         .fillCircle(mx, my, r)
         .setColor(BLACK)
         .fillRect(mx, my - r, mx + r + r, my + r);
     },
-    8: () => {
+    // 3/4 ascending
+    4: () => {
       moon[7]();
+      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+    },
+    // Full moon
+    5: () => {
+      moon[0]();
+      g.setColor(MOON).fillCircle(mx, my, r);
+    },
+    // 3/4 descending
+    6: () => {
+      moon[3]();
+      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+    },
+    // 1/2 descending
+    7: () => {
+      moon[0]();
+      g.setColor(MOON)
+        .fillCircle(mx, my, r)
+        .setColor(BLACK)
+        .fillRect(mx - r, my - r, mx, my + r);
+    },
+    // 1/4 descending
+    8: () => {
+      moon[3]();
       g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
     }
   };
