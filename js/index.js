@@ -207,7 +207,7 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read more...</a>`;
+    var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
     var favourite = favourites.find(e => e == app.id);
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
@@ -218,7 +218,7 @@ function refreshLibrary() {
       <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
       <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
-    <div class="tile-action"> 
+    <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
       <button class="btn btn-link btn-action btn-lg ${app.allow_emulator?"":"d-hide"}" appid="${app.id}" title="Try in Emulator"><i class="icon icon-share"></i></button>
@@ -349,6 +349,14 @@ function updateApp(app) {
       .filter(f => f !== app.id + '.info')
       .filter(f => !app.storage.some(s => s.name === f))
       .join(',');
+    let data = AppInfo.parseDataString(remove.data)
+    if ('data' in app) {
+      // only remove data files which are no longer declared in new app version
+      const removeData = (f) => !app.data.some(d => (d.name || d.wildcard)===f)
+      data.dataFiles = data.dataFiles.filter(removeData)
+      data.storageFiles = data.storageFiles.filter(removeData)
+    }
+    remove.data = AppInfo.makeDataString(data)
     return Comms.removeApp(remove);
   }).then(()=>{
     showToast(`Updating ${app.name}...`);
@@ -393,10 +401,18 @@ function showLoadingIndicator(id) {
   panelbody.innerHTML = '<div class="tile column col-12"><div class="tile-content" style="min-height:48px;"><div class="loading loading-lg"></div></div></div>';
 }
 
+function getAppsToUpdate() {
+  var appsToUpdate = [];
+  appsInstalled.forEach(appInstalled => {
+    var app = appNameToApp(appInstalled.id);
+    if (app.version != appInstalled.version)
+      appsToUpdate.push(app);
+  });
+  return appsToUpdate;
+}
+
 function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
-  var tab = document.querySelector("#tab-myappscontainer a");
-  tab.setAttribute("data-badge", appsInstalled.length);
   panelbody.innerHTML = appsInstalled.map(appInstalled => {
 var app = appNameToApp(appInstalled.id);
 var version = getVersionInfo(app, appInstalled);
@@ -428,6 +444,17 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
       if (icon.classList.contains("icon-download")) handleAppInterface(app);
     });
   });
+  var appsToUpdate = getAppsToUpdate();
+  var tab = document.querySelector("#tab-myappscontainer a");
+  var updateApps = document.querySelector("#myappscontainer .updateapps");
+  if (appsToUpdate.length) {
+    updateApps.innerHTML = `Update ${appsToUpdate.length} apps`;
+    updateApps.classList.remove("hidden");
+    tab.setAttribute("data-badge", `${appsInstalled.length} ⬆${appsToUpdate.length}`);
+  } else {
+    updateApps.classList.add("hidden");
+    tab.setAttribute("data-badge", appsInstalled.length);
+  }
 }
 
 let haveInstalledApps = false;
@@ -461,6 +488,22 @@ function handleConnectionChange(connected) {
 htmlToArray(document.querySelectorAll(".btn.refresh")).map(button => button.addEventListener("click", () => {
   getInstalledApps(true).catch(err => {
     showToast("Getting app list failed, "+err,"error");
+  });
+}));
+htmlToArray(document.querySelectorAll(".btn.updateapps")).map(button => button.addEventListener("click", () => {
+  var appsToUpdate = getAppsToUpdate();
+  var count = appsToUpdate.length;
+  function updater() {
+    if (!appsToUpdate.length) return;
+    var app = appsToUpdate.pop();
+    return updateApp(app).then(function() {
+      return updater();
+    });
+  }
+  updater().then(err => {
+    showToast(`Updated ${count} apps`,"success");
+  }).catch(err => {
+    showToast("Update failed, "+err,"error");
   });
 }));
 connectMyDeviceBtn.addEventListener("click", () => {
@@ -613,4 +656,3 @@ document.getElementById("installfavourite").addEventListener("click",event=>{
     showToast("App Install failed, "+err,"error");
   });
 });
-

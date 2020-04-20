@@ -94,10 +94,29 @@ getInstalledApps : () => {
   });
 },
 removeApp : app => { // expects an appid.info structure (i.e. with `files`)
-  if (app.files === '') return Promise.resolve(); // nothing to erase
+  if (!app.files && !app.data) return Promise.resolve(); // nothing to erase
   Progress.show({title:`Removing ${app.name}`,sticky:true});
-  var cmds = app.files.split(',').map(file=>{
-    return `\x10require("Storage").erase(${toJS(file)});\n`;
+  let cmds = '\x10const s=require("Storage");\n';
+  // remove App files: regular files, exact names only
+  cmds += app.files.split(',').map(file => `\x10s.erase(${toJS(file)});\n`).join("");
+  // remove app Data: (dataFiles and storageFiles)
+  const data = AppInfo.parseDataString(app.data)
+  const isGlob = f => /[?*]/.test(f)
+  //   regular files, can use wildcards
+  cmds += data.dataFiles.map(file => {
+    if (!isGlob(file)) return `\x10s.erase(${toJS(file)});\n`;
+    const regex = new RegExp(globToRegex(file))
+    return `\x10s.list(${regex}).forEach(f=>s.erase(f));\n`;
+  }).join("");
+  //   storageFiles, can use wildcards
+  cmds += data.storageFiles.map(file => {
+    if (!isGlob(file)) return `\x10s.open(${toJS(file)},'r').erase();\n`;
+    // storageFiles have a chunk number appended to their real name
+    const regex = globToRegex(file+'\u0001')
+    // open() doesn't want the chunk number though
+    let cmd = `\x10s.list(${regex}).forEach(f=>s.open(f.substring(0,f.length-1),'r').erase());\n`
+    // using a literal \u0001 char fails (not sure why), so escape it
+    return cmd.replace('\u0001', '\\x01')
   }).join("");
   console.log("removeApp", cmds);
   return Comms.reset().then(new Promise((resolve,reject) => {

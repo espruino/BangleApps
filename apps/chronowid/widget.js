@@ -36,19 +36,18 @@
 
     //counts down, calculates and displays
     function countDown() {
-        //printDebug();
         now = new Date();
         diff = settingsChronowid.goal - now; //calculate difference
         WIDGETS["chronowid"].draw();
         //time is up
-        if (settingsChronowid.started && diff <= 0) {
+        if (settingsChronowid.started && diff < 1000) {
             Bangle.buzz(1500);
             //write timer off to file
             settingsChronowid.started = false;
             storage.writeJSON('chronowid.json', settingsChronowid);
             clearInterval(interval); //stop interval
-            //printDebug();
         }
+        //printDebug();
     }
 
     // draw your widget
@@ -72,12 +71,13 @@
                 g.drawString(getTime(diff), this.x+1, this.y+((height/2)-4)); //display hour 00:00:00
             }
         }
-        else {
-            width = 58;
-            g.clearRect(this.x,this.y,this.x+width,this.y+height);
-            g.setFont("6x8", 2);
-            g.drawString("END", this.x+15, this.y+5);
-        }
+        // not needed anymoe, because we check if diff < 1000 now, so 00:00 is displayed.
+        // else {
+        //     width = 58;
+        //     g.clearRect(this.x,this.y,this.x+width,this.y+height);
+        //     g.setFont("6x8", 2);
+        //     g.drawString("END", this.x+15, this.y+5);
+        // }
     }
 
     if (settingsChronowid.started) interval = setInterval(countDown, 1000); //start countdown each second
