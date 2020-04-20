@@ -1,1 +1,2 @@
 0.02: Fix deletion of apps - now use files list in app.info (fix #262)
+0.03: Add support for data files
