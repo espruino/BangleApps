@@ -1,7 +1,8 @@
 g.clearRect(0, 0, 239, 239);
 
 Bangle.setHRMPower(1);
-const MAX_BPM = 115;
+const MAX_BPM = (require("Storage").readJSON("app.json", 1) || { maxbpm: 115 })
+  .maxbpm;
 Bangle.on("HRM", function(hrm) {
   /*hrm is an object containing:
     { "bpm": number,             // Beats per minute

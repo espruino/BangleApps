@@ -2227,9 +2227,9 @@
   },
   {
     "id": "trainer",
-    "name": "Personal trainer",
+    "name": "Trainer",
     "icon": "trainer.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A stopwatch with Lap Time logging to a JSON file and heart beat monitor with customizable max BPM alert",
     "tags": "heart,stopwatch,chronometer",
     "allow_emulator": true,
@@ -2239,9 +2239,18 @@
         "url": "trainer.js"
       },
       {
+        "name": "app.settings.js",
+        "url": "settings.js"
+      },
+      {
         "name": "trainer.img",
         "url": "trainer-icon.js",
         "evaluate": true
+      }
+    ],
+    "data": [
+      {
+        "name": "app.json"
       }
     ]
   }
