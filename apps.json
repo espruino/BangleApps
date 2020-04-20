@@ -1307,6 +1307,27 @@
     ]
   },
   {
+    "id": "banglerun",
+    "name": "BangleRun",
+    "shortName": "BangleRun",
+    "icon": "banglerun.png",
+    "version": "0.01",
+    "description": "An app for running sessions.",
+    "tags": "run,running,fitness,outdoors",
+    "allow_emulator": false,
+    "storage": [
+      {
+        "name": "banglerun.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "banglerun.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
