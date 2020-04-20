@@ -1,8 +1,8 @@
 (function(back) {
-  let settings = require("Storage").readJSON("app.json", 1) || {};
+  let settings = require("Storage").readJSON("trainer.json", 1) || {};
   function save(key, value) {
     settings[key] = value;
-    require("Storage").write("app.json", settings);
+    require("Storage").write("trainer.json", settings);
   }
   const appMenu = {
     "": { title: "Trainer Settings" },
