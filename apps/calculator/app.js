@@ -144,19 +144,57 @@ function drawKey(name, k, selected) {
   g.drawString(k.val || name, k.xy[0] + RIGHT_MARGIN + rMargin, k.xy[1] + BOTTOM_MARGIN + bMargin);
 }
 
+function getIntWithPrecision(x) {
+  var xStr = x.toString();
+  var xRadix = xStr.indexOf('.');
+  var xPrecision = xRadix === -1 ? 0 : xStr.length - xRadix - 1;
+  return {
+    num: Number(xStr.replace('.', '')),
+    p: xPrecision
+  };
+}
+
+function multiply(x, y) {
+  var xNum = getIntWithPrecision(x);
+  var yNum = getIntWithPrecision(y);
+  return xNum.num * yNum.num / Math.pow(10, xNum.p + yNum.p);
+}
+
+function divide(x, y) {
+  var xNum = getIntWithPrecision(x);
+  var yNum = getIntWithPrecision(y);
+  return xNum.num / yNum.num / Math.pow(10, xNum.p - yNum.p);
+}
+
+function sum(x, y) {
+  let xNum = getIntWithPrecision(x);
+  let yNum = getIntWithPrecision(y);
+
+  let diffPrecision = Math.abs(xNum.p - yNum.p);
+  if (diffPrecision > 0) {
+    if (xNum.p > yNum.p) {
+      yNum.num = yNum.num * Math.pow(10, diffPrecision);
+    } else {
+      xNum.num = xNum.num * Math.pow(10, diffPrecision);
+    }
+  }
+  return (xNum.num + yNum.num) / Math.pow(10, Math.max(xNum.p, yNum.p));
+}
+
+function subtract(x, y) {
+  return sum(x, -y);
+}
+
 function doMath(x, y, operator) {
-  // might not be a number due to display of dot "." algo
-  x = Number(x);
-  y = Number(y);
   switch (operator) {
     case '/':
-      return x / y;
+      return divide(x, y);
     case '*':
-      return x * y;
+      return multiply(x, y);
     case '+':
-      return x + y;
+      return sum(x, y);
     case '-':
-      return x - y;
+      return subtract(x, y);
   }
 }
 
@@ -204,7 +242,7 @@ function displayOutput(num) {
     }
 
     len = (num + '').length;
-    if (numNumeric < 0) {
+    if (numNumeric < 0 || (numNumeric === 0 && 1/numNumeric === -Infinity)) {
       // minus is not available in font 7x11Numeric7Seg, we use Vector
       g.setFont('Vector', 20);
       g.drawString('-', 220 - (len * 15), 10);
@@ -214,18 +252,33 @@ function displayOutput(num) {
   }
   g.drawString(num, 220 - (len * 15) + minusMarge, 10);
 }
-
+var wasPressedEquals = false;
+var hasPressedNumber = false;
 function calculatorLogic(x) {
-  if (hasPressedEquals) {
-    currNumber = results;
+  if (wasPressedEquals && hasPressedNumber !== false) {
     prevNumber = null;
-    operator = null;
-    results = null;
-    isDecimal = null;
-    displayOutput(currNumber);
-    hasPressedEquals = false;
+    currNumber = hasPressedNumber;
+    wasPressedEquals = false;
+    hasPressedNumber = false;
+    return;
   }
-  if (prevNumber != null && currNumber != null && operator != null) {
+  if (hasPressedEquals) {
+    if (hasPressedNumber) {
+      prevNumber = null;
+      hasPressedNumber = false;
+      operator = null;
+    } else {
+      currNumber = null;
+      prevNumber = results;
+    }
+    hasPressedEquals = false;
+    wasPressedEquals = true;
+  }
+
+  if (currNumber == null && operator != null && '/*-+'.indexOf(x) !== -1) {
+    operator = x;
+    displayOutput(prevNumber);
+  } else if (prevNumber != null && currNumber != null && operator != null) {
     // we execute the calculus only when there was a previous number entered before and an operator
     results = doMath(prevNumber, currNumber, operator);
     operator = x;
@@ -255,8 +308,10 @@ function buttonPress(val) {
         operator = null;
       } else {
         keys.R.val = 'AC';
-        drawKey('R', keys.R);
+        drawKey('R', keys.R, true);
       }
+      wasPressedEquals = false;
+      hasPressedNumber = false;
       displayOutput(0);
       break;
     case '%':
@@ -265,11 +320,12 @@ function buttonPress(val) {
       } else if (currNumber != null) {
         displayOutput(currNumber /= 100);
       }
+      hasPressedNumber = false;
       break;
     case 'N':
       if (results != null) {
         displayOutput(results *= -1);
-      } else if (currNumber != null) {
+      } else {
         displayOutput(currNumber *= -1);
       }
       break;
@@ -278,6 +334,7 @@ function buttonPress(val) {
     case '-':
     case '+':
       calculatorLogic(val);
+      hasPressedNumber = false;
       break;
     case '.':
       keys.R.val = 'C';
@@ -290,18 +347,24 @@ function buttonPress(val) {
         results = doMath(prevNumber, currNumber, operator);
         prevNumber = results;
         displayOutput(results);
-        hasPressedEquals = true;
+        hasPressedEquals = 1;
       }
+      hasPressedNumber = false;
       break;
     default:
       keys.R.val = 'C';
       drawKey('R', keys.R);
+      const is0Negative = (currNumber === 0 && 1/currNumber === -Infinity);
       if (isDecimal) {
-        currNumber = currNumber == null ? 0 + '.' + val : currNumber + '.' + val;
+        currNumber = currNumber == null || hasPressedEquals === 1 ? 0 + '.' + val : currNumber + '.' + val;
         isDecimal = false;
       } else {
-        currNumber = currNumber == null ? val : currNumber + val;
+        currNumber = currNumber == null || hasPressedEquals === 1 ? val : (is0Negative ? '-' + val : currNumber + val);
       }
+      if (hasPressedEquals === 1) {
+        hasPressedEquals = 2;
+      }
+      hasPressedNumber = currNumber;
       displayOutput(currNumber);
       break;
   }
@@ -315,38 +378,15 @@ for (var k in keys) {
 g.setFont('7x11Numeric7Seg', 2.8);
 g.drawString('0', 205, 10);
 
-
-setWatch(function() {
-  drawKey(selected, keys[selected]);
-  // key 0 is 2 keys wide, go up to 1 if it was previously selected
-  if (selected == '0' && prevSelected === '1') {
-    prevSelected = selected;
-    selected = '1';
-  } else {
-    prevSelected = selected;
-    selected = keys[selected].trbl[0];
-  }
-  drawKey(selected, keys[selected], true);
-}, BTN1, {repeat: true, debounce: 100});
-
-setWatch(function() {
+function moveDirection(d) {
   drawKey(selected, keys[selected]);
   prevSelected = selected;
-  selected = keys[selected].trbl[2];
+  selected = (d === 0 && selected == '0' && prevSelected === '1') ? '1' : keys[selected].trbl[d];
   drawKey(selected, keys[selected], true);
-}, BTN3, {repeat: true, debounce: 100});
+}
 
-Bangle.on('touch', function(direction) {
-  drawKey(selected, keys[selected]);
-  prevSelected = selected;
-  if (direction == 1) {
-    selected = keys[selected].trbl[3];
-  } else if (direction == 2) {
-    selected = keys[selected].trbl[1];
-  }
-  drawKey(selected, keys[selected], true);
-});
-
-setWatch(function() {
-  buttonPress(selected);
-}, BTN2, {repeat: true, debounce: 100});
+setWatch(_ => moveDirection(0), BTN1, {repeat: true, debounce: 100});
+setWatch(_ => moveDirection(2), BTN3, {repeat: true, debounce: 100});
+setWatch(_ => moveDirection(3), BTN4, {repeat: true, debounce: 100});
+setWatch(_ => moveDirection(1), BTN5, {repeat: true, debounce: 100});
+setWatch(_ => buttonPress(selected), BTN2, {repeat: true, debounce: 100});
