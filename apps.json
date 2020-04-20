@@ -1304,7 +1304,7 @@
     "type": "app",
     "storage": [
       {"name":"buffgym"},
-      {"name":"buffgym.app.js"},
+      {"name":"buffgym.app.js", "url": "buffgym.app.js"},
       {"name":"buffgym-set.js","url":"buffgym-set.js"},
       {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
       {"name":"buffgym-program.js","url":"buffgym-program.js"},
