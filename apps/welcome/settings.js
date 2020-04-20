@@ -1,6 +1,5 @@
-// The welcome app is special, and gets to use global settings
 (function(back) {
-  let settings = require('Storage').readJSON('welcome.sjson', 1)
+  let settings = require('Storage').readJSON('welcome.json', 1)
     || require('Storage').readJSON('setting.json', 1) || {}
   E.showMenu({
     '': { 'title': 'Welcome App' },

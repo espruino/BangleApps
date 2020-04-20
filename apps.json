@@ -130,9 +130,6 @@
       {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
-    "data": [
-      {"name":"setting.json"}
-    ],
     "sortorder" : -2
   },
   { "id": "alarm",

@@ -1,4 +1,3 @@
-// The welcome app is special, and gets to use global settings
 (function(back) {
   let settings = require('Storage').readJSON('ncstart.json', 1)
     || require('Storage').readJSON('setting.json', 1) || {}
