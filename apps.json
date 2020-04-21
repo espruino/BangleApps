@@ -1302,6 +1302,7 @@
     "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
     "tags": "tool,outdoors",
     "type": "app",
+    "allow_emulator": false,
     "storage": [
       {"name":"buffgym"},
       {"name":"buffgym.app.js", "url": "buffgym.app.js"},
