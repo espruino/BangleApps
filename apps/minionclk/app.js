@@ -48,25 +48,30 @@ function draw() {
   }
 }
 
-function drawAll() {
+function startDrawing() {
   hour = '';
   minute = '';
   date = '';
   g.drawImage(bob, 0, 0, { scale: 4 });
   Bangle.drawWidgets();
   draw();
+  setInterval(draw, 1000);
+}
+
+function stopDrawing() {
+  if (timer) {
+    clearInterval(timer);
+  }
 }
 
 Bangle.on('lcdPower', function(on) {
+  stopDrawing();
   if (on) {
-    drawAll();
-    timer = setInterval(draw, 1000);
-  } else if (timer) {
-    clearInterval(timer);
+    startDrawing();
   }
 });
 
 Bangle.loadWidgets();
-drawAll();
+startDrawing();
 
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: 'falling' });
