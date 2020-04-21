@@ -9,6 +9,8 @@ let hour;
 let minute;
 let date;
 
+let timer;
+
 function draw() {
   const d = new Date();
 
@@ -51,7 +53,6 @@ function drawAll() {
   minute = '';
   date = '';
   g.drawImage(bob, 0, 0, { scale: 4 });
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
   draw();
 }
@@ -59,10 +60,13 @@ function drawAll() {
 Bangle.on('lcdPower', function(on) {
   if (on) {
     drawAll();
+    timer = setInterval(draw, 1000);
+  } else if (timer) {
+    clearInterval(timer);
   }
 });
 
-setInterval(draw, 1000);
+Bangle.loadWidgets();
 drawAll();
 
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: 'falling' });
