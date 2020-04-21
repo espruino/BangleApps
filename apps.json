@@ -1424,5 +1424,19 @@
       {"name":"osmpoi.app.js"},
       {"name":"osmpoi.img"}
     ]
+  },
+  { "id": "pong",
+    "name": "Pong",
+    "shortName": "Pong",
+    "icon": "pong.png",
+    "version": "0.01",
+    "description": "A clone of the Atari game Pong",
+    "tags": "game",
+    "type": "app",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"pong.app.js","url":"app.js"},
+      {"name":"pong.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
