@@ -35,16 +35,24 @@
     now = new Date();
     month = now.getMonth() + 1;
     if (month < 10) month = "0" + month;
-    filename = filename = "activepedom-" + now.getFullYear() + month + now.getDate() + ".data";
+    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data";
     dataFile = s.open(filename,"a");
-    if (dataFile) dataFile.write([
-      now.getTime(),
-      stepsCounted,
-      active,
-      stepsTooShort,
-      stepsTooLong,
-      stepsOutsideTime,
-    ].join(",")+"\n");
+    if (dataFile) {
+      if (dataFile.getLength() == 0) {
+         stepsToWrite = 0;
+      }
+      else {
+        stepsToWrite = stepsCounted;
+      }
+      dataFile.write([
+        now.getTime(),
+        stepsToWrite,
+        active,
+        stepsTooShort,
+        stepsTooLong,
+        stepsOutsideTime,
+      ].join(",")+"\n");
+    }
     dataFile = undefined;
   }
 
