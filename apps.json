@@ -1303,6 +1303,7 @@
     "tags": "tool,outdoors",
     "type": "app",
     "allow_emulator": false,
+    "readme": "README.md",
     "storage": [
       {"name":"buffgym"},
       {"name":"buffgym.app.js", "url": "buffgym.app.js"},
