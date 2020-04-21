@@ -1,68 +1,56 @@
 exports = class Program {
   constructor(params) {
-    const DEFAULTS = {
-      title: "Unknown",
-      trainDay: "", // Day of week
-    };
-    const p = Object.assign({}, DEFAULTS, params);
-
-    this._title = p.title;
-    this._trainDay = p.trainDay;
-    this._exercises = [];
-
+    this.title = params.title;
+    this.exercises = [];
+    this.completed = false;
     this.on("redraw", redraw.bind(null, this));
   }
 
-  get title() {
-    return `${this._title} - ${this._trainDay}`;
-  }
-
-  addExercise(exercise) {
-    this._exercises.push(exercise);
-  }
-
   addExercises(exercises) {
-    exercises.forEach(exercise => this.addExercise(exercise));
+    exercises.forEach(exercise => this.exercises.push(exercise));
   }
 
   currentExercise() {
-    return (
-      this._exercises
-      .filter(exercise => !exercise.isCompleted())[0]
-    );
+    return this.exercises.filter(exercise => !exercise.isCompleted())[0];
   }
 
   canComplete() {
-    return (
-      this._exercises
-      .filter(exercise => exercise.isCompleted())
-      .length === this._exercises.length
-    );
+    return this.exercises.filter(exercise => exercise.isCompleted()).length === this.exercises.length;
   }
 
   setCompleted() {
     if (!this.canComplete()) throw "All exercises must be completed";
-    this._completed = true;
+    this.completed = true;
   }
 
   isCompleted() {
-    return !!this._completed;
+    return !!this.completed;
+  }
+
+  toJSON() {
+    return {
+      title: this.title,
+      exercises: this.exercises.map(exercise => {
+        return {
+          title: exercise.title,
+          weight: exercise.weight,
+          unit: exercise.unit,
+          sets: exercise.sets.map(set => set.maxReps),
+          restPeriod: exercise.restPeriod,
+        };
+      }),
+    };
   }
 
   // State machine
   next() {
-    console.log("XXX Program.next");
-    const exercise = this.currentExercise();
-
-    // All exercises are completed so mark the
-    // Program as comleted
     if (this.canComplete()) {
       this.setCompleted();
       this.emit("redraw");
-
       return;
     }
 
-    exercise.next(this);
+    // Call current exercise state machine
+    this.currentExercise().next(this);
   }
 }

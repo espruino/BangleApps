@@ -1,46 +1,28 @@
 exports = class Set {
   constructor(maxReps) {
-    this._minReps = 0;
-    this._maxReps = maxReps;
-    this._reps = 0;
-    this._completed = false;
-  }
-
-  get title() {
-    return this._title;
-  }
-
-  get weight() {
-    return this._weight;
+    this.minReps = 0;
+    this.maxReps = maxReps;
+    this.reps = 0;
+    this.completed = false;
   }
 
   isCompleted() {
-    return !!this._completed;
+    return !!this.completed;
   }
 
   setCompleted() {
-    this._completed = true;
-  }
-
-  get reps() {
-    return this._reps;
-  }
-
-  get maxReps() {
-    return this._maxReps;
+    this.completed = true;
   }
 
   incReps() {
-    if (this._completed) return;
-    if (this._reps >= this._maxReps) return;
-
-    this._reps++;
+    if (this.completed) return;
+    if (this.reps >= this.maxReps) return;
+    this.reps++;
   }
 
   decReps() {
-    if (this._completed) return;
-    if (this._reps <= this._minReps) return;
-
-    this._reps--;
+    if (this.completed) return;
+    if (this.reps <= this.minReps) return;
+    this.reps--;
   }
 }

@@ -1,177 +1,135 @@
+Bangle.setLCDMode("120x120");
+
 const W = g.getWidth();
 const H = g.getHeight();
 const RED = "#d32e29";
 const PINK = "#f05a56";
 const WHITE = "#ffffff";
 
-const Set = require("buffgym-set.js");
-const Exercise = require("buffgym-exercise.js");
-const Program = require("buffgym-program.js");
-
-function centerStringX(str) {
-  return (W - g.stringWidth(str)) / 2;
-}
-
-function iconIncrement() {
-  const img = require("heatshrink").decompress(atob("ikUxH+AA3XAAgNHCJIVMBYXQ5PC4XJ6AUJCIQQBAAoVCCQwjCAA/JCgglHA4IpJBYwTHA4RMJCY5oDJo4THKIQKET5IMGCaY7TMaKLTWajbTFJIlICgoVBFYXJYQYSGCggAGCRAVIBgw"));
-  return img;
-}
-
-function iconDecrement() {
-  const img = require("heatshrink").decompress(atob("ikUxH+AA3XAAgNHCJIVMBYXQ5PC4XJ6AUJCIQQBAAoVCCQwjCAA/JCgglKFJADBCRYABCYQmOFAhNMKIw6FTw4LHCaY7TMaKLTWajbTFJglFCgoVBFYXJYQYSGCggAGCRAVIBgw="));
-  return img;
-}
-
-function iconOk() {
-  const img = require("heatshrink").decompress(atob("ikUxH+AA3XAAgNHCJIVMBYXQ5PC4XJ6AUJCIQQBAAoVCCQwjCAA/JCgglKFJADBCJQxCCYQmMIwZoDJpQMCKIg6KBYwTGFQgeHHYouCCRI7EMYTXFRhILEK5SfFRgYSIborbSbpglFCgoVBFYXJYQYSGCggAGCRAVIBgwA=="));
-  return img;
-}
-
 function drawMenu(params) {
+  const hs = require("heatshrink");
+  const incImg = hs.decompress(atob("gsFwMAkM+oUA"));
+  const decImg = hs.decompress(atob("gsFwIEBnwCBA"));
+  const okImg = hs.decompress(atob("gsFwMAhGFo0A"));
   const DEFAULT_PARAMS = {
     showBTN1: false,
     showBTN2: false,
     showBTN3: false,
   };
   const p = Object.assign({}, DEFAULT_PARAMS, params);
-  if (p.showBTN1) g.drawImage(iconIncrement(), W - 30, 10);
-  if (p.showBTN2) g.drawImage(iconOk(), W - 30, 110);
-  if (p.showBTN3) g.drawImage(iconDecrement(), W - 30, 210);
+  if (p.showBTN1) g.drawImage(incImg, W - 10, 10);
+  if (p.showBTN2) g.drawImage(okImg, W - 10, 60);
+  if (p.showBTN3) g.drawImage(decImg, W - 10, 110);
 }
 
-function clearScreen() {
-  g.setColor(RED);
-  g.fillRect(0,0,W,H);
-}
-
-function drawTitle(exercise) {
-  const title = exercise.humanTitle;
-
-  g.setFont("Vector",20);
-  g.setColor(WHITE);
-  g.drawString(title, centerStringX(title), 5);
-}
-
-function drawReps(exercise) {
-  const set = exercise.currentSet;
+function drawSet(exercise) {
+  const set = exercise.currentSet();
   if (set.isCompleted()) return;
 
+  g.clear();
+
+  // Draw exercise title
   g.setColor(PINK);
-  g.fillCircle(W / 2, H / 2, 50);
+  g.fillRect(15, 0, W - 15, 18);
+  g.setFontAlign(0, -1);
+  g.setFont("6x8", 1);
   g.setColor(WHITE);
-  g.setFont("Vector", 40);
-  g.drawString(set.reps, centerStringX(set.reps), (H - 45) / 2);
-  g.setFont("Vector", 15);
-  const note = `of ${set.maxReps}`;
-  g.drawString(note, centerStringX(note), (H / 2) + 25);
-}
-
-function drawSets(exercise) {
-  const sets = exercise.subTitle;
-
+  g.drawString(exercise.title, W / 2, 5);
+  g.setFont("6x8", 1);
+  g.drawString(exercise.weight + " " + exercise.unit, W / 2, 27);
+  // Draw completed reps counter
+  g.setFontAlign(0, 0);
+  g.setColor(PINK);
+  g.fillRect(15, 42, W - 15, 80);
   g.setColor(WHITE);
-  g.setFont("Vector", 15);
-  g.drawString(sets, centerStringX(sets), H - 25);
-}
+  g.setFont("6x8", 5);
+  g.drawString(set.reps, (W / 2) + 2, (H / 2) + 1);
+  g.setFont("6x8", 1);
+  const note = `Target reps: ${set.maxReps}`;
+  g.drawString(note, W / 2, H - 24);
+  // Draw sets monitor
+  g.drawString(exercise.subTitle, W / 2, H - 12);
 
-function drawSetProgress(exercise) {
-  drawTitle(exercise);
-  drawReps(exercise);
-  drawSets(exercise);
   drawMenu({showBTN1: true, showBTN2: true, showBTN3: true});
+
+  g.flip();
 }
 
-function drawStartNextExercise() {
-  const title = "Good work";
-  const msg = "No need to rest\nmove straight on\nto the next exercise";
-
-  g.setColor(WHITE);
-  g.setFont("Vector", 35);
-  g.drawString(title, centerStringX(title), 10);
-  g.setFont("Vector", 15);
-  g.drawString(msg, 30, 150);
-  drawMenu({showBTN1: false, showBTN2: true, showBTN3: false});
-}
-
-function drawProgramCompleted() {
+function drawProgDone() {
   const title1 = "You did";
   const title2 = "GREAT!";
   const msg = "That's the program\ncompleted. Now eat\nsome food and\nget plenty of rest.";
 
   clearWatch();
   setWatch(Bangle.showLauncher, BTN2, {repeat: false});
-
-  g.setColor(WHITE);
-  g.setFont("Vector", 35);
-  g.drawString(title1, centerStringX(title1), 10);
-  g.setFont("Vector", 40);
-  g.drawString(title2, centerStringX(title2), 50);
-  g.setFont("Vector", 15);
-  g.drawString(msg, 30, 150);
-  drawMenu({showBTN1: false, showBTN2: true, showBTN3: false});
-}
-
-/*
-function drawExerciseCompleted(program) {
-  const exercise = program.currentExercise();
-  const title = exercise.canProgress?
-        "WELL DONE!" :
-        "NOT BAD!";
-  const msg = exercise.canProgress? 
-        `You weight is automatically increased\nfor ${exercise.title} to ${exercise.weight}${exercise.unit}` :
-        "It looks like you struggled\non a few sets, your weight will\nstay the same";
-  const action = "Move straight on to the next exercise";
-
-  clearScreen();
-  g.setColor(WHITE);
-  g.setFont("Vector", 20);
-  g.drawString(title, centerStringX(title), 10);
-  g.setFont("Vector", 10);
-  g.drawString(msg, centerStringX(msg), 180);
-  g.drawString(action, centerStringX(action), 210);
   drawMenu({showBTN2: true});
 
-  clearWatch();
-  setWatch(() => {
-    init(program);
-  }, BTN2, {repeat: false});
+  g.setFontAlign(0, -1);
+  g.setColor(WHITE);
+  g.setFont("6x8", 2);
+  g.drawString(title1, W / 2, 10);
+  g.drawString(title2, W / 2, 30);
+  g.setFont("6x8", 1);
+  g.drawString(msg, (W / 2) + 3, 70);
+  g.flip();
 }
-*/
+
+function drawSetComp() {
+  const title = "Good work";
+  const msg = "No need to rest\nmove straight on\nto the next\nexercise.Your\nweight has been\nincreased for\nnext time!";
+
+  g.clear();
+  drawMenu({showBTN2: true});
+
+  g.setFontAlign(0, -1);
+  g.setColor(WHITE);
+  g.setFont("6x8", 2);
+  g.drawString(title, W / 2, 10);
+  g.setFont("6x8", 1);
+  g.drawString(msg, (W / 2) - 2, 45);
+
+  g.flip();
+}
 
 function drawRestTimer(program) {
   const exercise = program.currentExercise();
   const motivation = "Take a breather..";
-  clearScreen();
-  drawMenu({showBTN2: true});
-
-  g.setColor(PINK);
-  g.fillCircle(W / 2, H / 2, 50);
-  g.setColor(WHITE);
-  g.setFont("Vector", 15);
-  g.drawString(motivation, centerStringX(motivation), 25);
-  g.setFont("Vector", 40);
-  g.drawString(exercise.restPeriod, centerStringX(exercise.restPeriod), (H - 45) / 2);
-  exercise.decRestPeriod();
 
   if (exercise.restPeriod <= 0) {
     exercise.resetRestTimer();
-    redraw(program);
+    program.next();
+
+    return;
   }
+
+  g.clear();
+  drawMenu({showBTN2: true});
+  g.setFontAlign(0, -1);
+  g.setColor(PINK);
+  g.fillRect(15, 42, W - 15, 80);
+  g.setColor(WHITE);
+  g.setFont("6x8", 1);
+  g.drawString("Have a short\nrest period.", W / 2, 10);
+  g.setFont("6x8", 5);
+  g.drawString(exercise.restPeriod, (W / 2) + 2, (H / 2) - 19);
+  g.flip();
+
+  exercise.decRestPeriod();
 }
 
 function redraw(program) {
   const exercise = program.currentExercise();
-
-  clearScreen();
+  g.clear();
 
   if (program.isCompleted()) {
-    drawProgramCompleted(program);
+    saveProg(program);
+    drawProgDone(program);
     return;
   }
 
   if (exercise.isRestTimerRunning()) {
     if (exercise.isLastSet()) {
-      drawStartNextExercise(program);
+      drawSetComp(program);
     } else {
       drawRestTimer(program);
     }
@@ -179,48 +137,141 @@ function redraw(program) {
     return;
   }
 
-  drawSetProgress(exercise);
+  drawSet(exercise);
 }
 
-function init(program) {
-  clearWatch();
-  program.next();
-}
+function drawProgMenu(programs, selProgIdx) {
+  g.clear();
+  g.setFontAlign(0, -1);
+  g.setColor(WHITE);
+  g.setFont("6x8", 2);
+  g.drawString("BuffGym", W / 2, 10);
 
-// Setup training program. This should come from file
-
-// Squats
-function buildPrograms() {
-  const programsJSON = require("Storage").readJSON("buffgym-programs.json", 1);
-
-  if (!programsJSON) throw "No programs JSON found";
-
-  const programs = [];
-
-  programsJSON.forEach(programJSON => {
-    const program = new Program({
-      title: programJSON.title,
-    });
-    const exercises = programJSON.exercises.map(exerciseJSON => {
-      const exercise = new Exercise({
-        title: exerciseJSON.title,
-        weight: exerciseJSON.weight,
-        unit: exerciseJSON.unit,
-      });
-      exerciseJSON.sets.forEach(setJSON => {
-        exercise.addSet(new Set(setJSON));
-      });
-
-      return exercise;
-    });
-    program.addExercises(exercises);
-    programs.push(program);
+  g.setFont("6x8", 1);
+  g.setFontAlign(-1, -1);
+  let selectedProgram = programs[selProgIdx].title;
+  let yPos = 50;
+  programs.forEach(program => {
+    g.setColor("#f05a56");
+    g.fillRect(0, yPos, W, yPos + 11);
+    g.setColor("#ffffff");
+    if (selectedProgram === program.title) {
+      g.drawRect(0, yPos, W - 1, yPos + 11);
+    }
+    g.drawString(program.title, 10, yPos + 2);
+    yPos += 15;
   });
-
-  return programs;
+  g.flip();
 }
 
-// For this spike, just run the first program, what will
-// really happen is the user picks a program to do from
-// some menu on a start page.
-init(buildPrograms()[0]);
+function setupMenu() {
+  clearWatch();
+  const progs = getProgIndex();
+  let selProgIdx = 0;
+  drawProgMenu(progs, selProgIdx);
+
+  setWatch(()=>{
+    selProgIdx--;
+    if (selProgIdx< 0) selProgIdx = 0;
+    drawProgMenu(progs, selProgIdx);
+  }, BTN1, {repeat: true});
+
+  setWatch(()=>{
+    const prog = buildProg(progs[selProgIdx].file);
+    prog.next();
+  }, BTN2, {repeat: false});
+
+  setWatch(()=>{
+    selProgIdx++;
+    if (selProgIdx > progs.length - 1) selProgIdx = progs.length - 1;
+    drawProgMenu(progs, selProgIdx);
+  }, BTN3, {repeat: true});
+}
+
+function drawSplash() {
+  g.reset();
+  g.setBgColor(RED);
+  g.clear();
+  g.setColor(WHITE);
+  g.setFontAlign(0,-1);
+  g.setFont("6x8", 2);
+  g.drawString("BuffGym", W / 2, 10);
+  g.setFont("6x8", 1);
+  g.drawString("5x5", W / 2, 42);
+  g.drawString("training app", W / 2, 55);
+  g.drawRect(19, 38, 100, 99);
+  const img = require("heatshrink").decompress(atob("lkdxH+AB/I5ASQACwpB5vNFkwpBAIfNFdZZkFYwskFZAsiFZBZiVYawEFf6ETFUwsIFUYmB54ADAwIskFYoRKBoIroB4grV58kkgCDFRotWFZwqHFiwYMFZIsTC5wLDFjGlCoWlkgJDRQIABCRAsLCwodCFAIABCwIOCFQYABr4RCCQIrMC4gqEAAwpFFZosFC5ArHFQ4rFNYQrGEgosMBxIrFLQwrLAB4sFSw4rFFjYrQFi4rNbASeEFjIoJFQYsGMAgAPEQgAIGwosCRoorbA="));
+  g.drawImage(img, 40, 70);
+  g.flip();
+
+  let flasher = false;
+  let bgCol, txtCol;
+  const i = setInterval(() => {
+    if (flasher) {
+      bgCol = WHITE;
+      txtCol = RED;
+    } else {
+      bgCol = RED;
+      txtCol = WHITE;
+    }
+    flasher = !flasher;
+    g.setColor(bgCol);
+    g.fillRect(0, 108, W, 120);
+    g.setColor(txtCol);
+    g.drawString("Press btn to begin", W / 2, 110);
+    g.flip();
+  }, 250);
+
+  setWatch(()=>{
+    clearInterval(i);
+    setupMenu();
+  }, BTN1, {repeat: false});
+
+  setWatch(()=>{
+    clearInterval(i);
+    setupMenu();
+  }, BTN2, {repeat: false});
+
+  setWatch(()=>{
+    clearInterval(i);
+    setupMenu();
+  }, BTN3, {repeat: false});
+}
+
+function getProgIndex() {
+  const progIdx = require("Storage").readJSON("buffgym-program-index.json");
+  return progIdx;
+}
+
+function buildProg(fName) {
+  const Set = require("buffgym-set.js");
+  const Exercise = require("buffgym-exercise.js");
+  const Program = require("buffgym-program.js");
+  const progJSON = require("Storage").readJSON(fName);
+  const prog = new Program({
+    title: progJSON.title,
+  });
+  const exercises = progJSON.exercises.map(exerciseJSON => {
+    const exercise = new Exercise({
+      title: exerciseJSON.title,
+      weight: exerciseJSON.weight,
+      unit: exerciseJSON.unit,
+      restPeriod: exerciseJSON.restPeriod,
+    });
+    exerciseJSON.sets.forEach(setJSON => {
+      exercise.addSet(new Set(setJSON));
+    });
+
+    return exercise;
+  });
+  prog.addExercises(exercises);
+
+  return prog;
+}
+
+function saveProg(program) {
+  const fName = getProgIndex().find(prog => prog.title === program.title).file;
+  require("Storage").writeJSON(fName, program.toJSON());
+}
+
+drawSplash();
