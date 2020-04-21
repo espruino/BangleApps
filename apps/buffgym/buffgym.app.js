@@ -1,3 +1,14 @@
+/**
+ * BangleJS Stronglifts 5x5 training aid
+ *
+ * Original Author: Paul Cockrell https://github.com/paulcockrell
+ * Created: April 2020
+ *
+ * Inspired by:
+ * - Stronglifts 5x5 training program https://stronglifts.com/5x5/
+ * - Stronglifts smart watch app
+ */
+
 Bangle.setLCDMode("120x120");
 
 const W = g.getWidth();
