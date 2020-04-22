@@ -25,7 +25,7 @@ function drawMoon(d) {
     },
     // 1/4 ascending
     2: () => {
-      moon[7]();
+      moon[3]();
       g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
     },
     // 1/2 ascending
@@ -61,7 +61,7 @@ function drawMoon(d) {
     },
     // 1/4 descending
     8: () => {
-      moon[3]();
+      moon[7]();
       g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
     }
   };
