@@ -1322,6 +1322,28 @@
     ]
   },
   {
+    "id": "buffgym",
+    "name": "BuffGym",
+    "icon": "buffgym.png",
+    "version":"0.01",
+    "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
+    "tags": "tool,outdoors,gym,exercise",
+    "type": "app",
+    "allow_emulator": false,
+    "readme": "README.md",
+    "storage": [
+      {"name":"buffgym"},
+      {"name":"buffgym.app.js", "url": "buffgym.app.js"},
+      {"name":"buffgym-set.js","url":"buffgym-set.js"},
+      {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
+      {"name":"buffgym-program.js","url":"buffgym-program.js"},
+      {"name":"buffgym-program-a.json","url":"buffgym-program-a.json"},
+      {"name":"buffgym-program-b.json","url":"buffgym-program-b.json"},
+      {"name":"buffgym-program-index.json","url":"buffgym-program-index.json"},
+      {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
+    ]
+  },
+  {
     "id": "banglerun",
     "name": "BangleRun",
     "shortName": "BangleRun",
