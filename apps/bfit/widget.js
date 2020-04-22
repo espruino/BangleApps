@@ -79,6 +79,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
         g.setColor(-1);
         if(NRF.getSecurityStatus().connected && _Activity.active){
             g.drawImage(ConnectedWithActivity, this.x + 1, this.y + 1);
+            
         }
         if (NRF.getSecurityStatus().connected)
             g.drawImage(ConnectedIcon, this.x + 1, this.y + 1);
