@@ -8,7 +8,7 @@
 
     g.setColor(-1);
 
-    const temp = locale.temp(w.temp).match(/^(\D*\d*)(.*)$/);
+    const temp = locale.temp(w.temp-273.15).match(/^(\D*\d*)(.*)$/);
     let width = g.setFont("Vector", 40).stringWidth(temp[1]);
     width += g.setFont("Vector", 20).stringWidth(temp[2]);
     g.setFont("Vector", 40).setFontAlign(-1, -1, 0);

@@ -8,7 +8,7 @@
       require('weather').drawIcon(w.txt, this.x+10, this.y+8, 8);
     }
     if (w.temp) {
-      let t = require('locale').temp(w.temp);  // applies conversion
+      let t = require('locale').temp(w.temp-273.15);  // applies conversion
       t = t.substr(0, t.length-2); // but we have no room for units
       g.setFontAlign(0, 1); // center horizontally at bottom of widget
       g.setFont('6x8', 1);
