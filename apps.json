@@ -11,6 +11,18 @@
       {"name":".bootcde","url":"bootloader.js"}
     ],
     "sortorder" : -10
+  },{ "id": "bfit",
+    "name": "Bangle Fit",
+    "icon": "app.png",
+    "version":"0.10",
+    "description": "The default notification handler for Gadgetbridge notifications from Android",
+    "tags": "tool,system,android,widget",
+    "type":"widget",
+    "storage": [
+      {"name":"bfit.settings.js","url":"settings.js"},
+      {"name":"bfit.img","url":"app-icon.js","evaluate":true},
+      {"name":"bfit.wid.js","url":"widget.js"}
+    ]
   },
   { "id": "moonphase",
     "name": "Moonphase",
