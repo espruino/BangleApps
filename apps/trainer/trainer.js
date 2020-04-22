@@ -3,32 +3,40 @@ g.clearRect(0, 0, 239, 239);
 Bangle.setHRMPower(1);
 const MAX_BPM = (require("Storage").readJSON("app.json", 1) || { maxbpm: 115 })
   .maxbpm;
+g.drawString(`Max BPM: ${MAX_BPM}`, 15, 10);
+
+let bpms = [];
 Bangle.on("HRM", function(hrm) {
   /*hrm is an object containing:
     { "bpm": number,             // Beats per minute
       "confidence": number,      // 0-100 percentage confidence in the heart rate
       "raw": Uint8Array,         // raw samples from heart rate monitor
    */
+  console.log("confidence", hrm.confidence, "bpm", hrm.bpm);
   g.setColor(1, 0, 0);
   g.setFontVector(40);
-  g.setFontAlign(0, 0);
-  g.clearRect(0, 0, 220, 70);
-  var str = hrm && hrm.bpm ? hrm.bpm : "?";
-  const strWidrth = g.stringWidth(str);
-  var px = 178 - strWidrth;
-  g.drawString(str, px, 30);
-  px += strWidrth / 2;
+  g.clearRect(0, 20, 220, 70);
+  const bpm = hrm.bpm ? hrm.bpm : "0";
+  if (hrm.confidence > 50) bpms.push(bpm);
+  if (bpms.length > 4) bpms.splice(0, 1);
+  console.log(bpms);
+  const avg =
+    bpms.length > 0
+      ? Math.round(bpms.reduce((tot, bpm) => tot + bpm, 0) / bpms.length)
+      : 0;
+  const str = avg.toString();
+  console.log(avg);
+  const strWidth = g.stringWidth(str);
+  var px = 148 - strWidth;
+  g.drawString(str, px, 45);
+  px += strWidth;
   g.setFont("6x8");
-  g.drawString("BPM", px + 20, 50);
+  g.drawString("BPM", px + 10, 65);
   g.setColor(1, 1, 1);
-  if (hrm && hrm.bpm && hrm.bpm > MAX_BPM) {
+  if (avg > MAX_BPM) {
     Bangle.buzz(500, 1)
-      .then(() => {
-        Bangle.buzz(500, 0.5);
-      })
-      .then(() => {
-        Bangle.buzz(500, 1);
-      });
+      .then(() => Bangle.buzz(500, 0.5))
+      .then(() => Bangle.buzz(500, 1));
   }
 });
 
