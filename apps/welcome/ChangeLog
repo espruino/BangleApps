@@ -7,3 +7,4 @@
 0.07: Run again when updated
       Don't run again when settings app is updated (or absent)
       Add "Run Now" option to settings
+0.08: Don't overwrite existing settings on app update
