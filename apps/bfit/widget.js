@@ -108,7 +108,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
     
     
     //touch eventhandler
-    Bangle.on("touch", function(segment){
+    Bangle.on("touch", function(segement){
         if(Date.now() - lastTouchEvent.time < 250 && segement == lastTouchEvent.segement){
             //left
             if(segement == 1){
