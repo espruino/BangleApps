@@ -18,3 +18,5 @@
 0.14: Reduce memory usage when running app settings page
 0.15: Reduce memory usage when running default clock chooser (#294)
 0.16: Reduce memory usage further when running app settings page
+0.17: Remove need for "settings" in appid.info
+0.18: Don't overwrite existing settings on app update

@@ -20,10 +20,19 @@ Bangle.on('mag', function(m) {
   if (!Bangle.isLCDOn()) return;
   g.setFont("6x8",3);
   g.setColor(0);
-  g.fillRect(70,0,170,24);
+  g.fillRect(0,0,230,40);
   g.setColor(0xffff);
-  g.setFontAlign(0,0);
-  g.drawString(isNaN(m.heading)?"---":Math.round(m.heading),120,12);
+  if (isNaN(m.heading)) {
+    g.setFontAlign(-1,-1);
+    g.setFont("6x8",2);
+    g.drawString("Uncalibrated",50,12);
+    g.drawString("turn 360° around",25,26);
+  }
+  else {
+    g.setFontAlign(0,0);
+    g.setFont("6x8",3);
+    g.drawString(Math.round(m.heading),120,12);
+  }
   g.setColor(0,0,0);
   arrow(oldHeading,0);
   arrow(oldHeading+180,0);
