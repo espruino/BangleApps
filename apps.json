@@ -303,6 +303,7 @@
     "version":"0.01",
     "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording",
     "tags": "tool,outdoors,gps",
+    "readme": "README.md",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.js"},
       {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
