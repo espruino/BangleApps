@@ -112,8 +112,8 @@ exports = { name : "en_GB", currencySym:"£",
           `${js(locale.currency_symbol)} + n.toFixed(2)`:
           `n.toFixed(2) + ${js(locale.currency_symbol)}`;
         var temperature;
-        if (locale.temperature=='°C') temperature="(t-273.15)";
-        else if (locale.temperature=='°F') temperature="((t-273.15)*9/5)+32";
+        if (locale.temperature=='°C') temperature="t";
+        else if (locale.temperature=='°F') temperature="(t*9/5)+32";
         else throw new Error("Unknown temperature unit "+locale.temperature);
 
         var localeModule = `var l = ${JSON.stringify({

@@ -6,4 +6,3 @@
       Add correct scaling for speed/distance/temperature
 0.06: Remove translations if not required
       Ensure 'on' is always supplied for translations
-0.07: Measure temperature in Kelvin
