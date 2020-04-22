@@ -349,6 +349,23 @@
       {"name":"files.img","url":"files-icon.js","evaluate":true}
     ]
   },
+  { "id": "weather",
+    "name": "Weather",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "Show Gadgetbridge weather report",
+    "readme": "readme.md",
+    "tags": "widget,outdoors",
+    "storage": [
+      {"name":"weather.app.js","url":"app.js"},
+      {"name":"weather.wid.js","url":"widget.js"},
+      {"name":"weather","url":"lib.js"},
+      {"name":"weather.img","url":"icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name": "weather.json"}
+    ]
+  },
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
