@@ -14,8 +14,8 @@
   },{ "id": "bfit",
     "name": "Bangle Fit",
     "icon": "app.png",
-    "version":"0.10",
-    "description": "The default notification handler for Gadgetbridge notifications from Android",
+    "version":"0.01",
+    "description": "Bangle Fit Widget for Bangle Fit app",
     "tags": "tool,system,android,widget",
     "type":"widget",
     "storage": [
