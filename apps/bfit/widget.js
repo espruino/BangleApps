@@ -1,6 +1,6 @@
-const notConnectedIcon = require("heatshrink").decompress(atob("jEYwkA///+UiAYIABkUvAgQKBAAMvAggQCABAWEAAwdEBY4KJAHpfXBZaPLBZgkIYAYLTboYkGCwYYHBQgYFCwoMEBQ4lDAwgA=="));
-const ConnectedIcon = require("heatshrink").decompress(atob("jEYwkA////WqAYIAB1WvAgQKBAAOvAggQCABAWEAAwdEBY4KJAHpfXBZaPLBZgkIYAYLTboYkGCwYYHBQgYFCwoMEBQ4lDAwgA=="));
-const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkA////nMAYIAB5nPAgQKBAAPPAggQCABAWEAAwdEBY4KJAHpfXBZaPLBZgkIYAYLTboYkGCwYYHBQgYFCwoMEBQ4lDAwgA=="));
+const notConnectedIcon = require("heatshrink").decompress(atob("jEYwUBqtqqtV1NVq2q1Nq1WVrWqAAWlBAIACBwQFDAQOolQID1EKAomCAgco0ALDhALD1WAC4QpB0AjBF4QFFCIWpI4IdC0taFIelLII1CytVIIYFDEYJuBLQRxBqpsC0oFBDwIWCCQQQCCQQQCA"));
+const ConnectedIcon = require("heatshrink").decompress(atob("jEYwkBiMRjWqAYIAB1WhAgQKBAAOhAggQCABAWEAAwdEBY4FE0EKCJOggALKDBAIB0GqDBEAC5IuCCwpTEgAWEL4oLKEYyQBHZKbDKY6zFC4jADQY4LHFwokFCwzZHBQgYFCwoMEBQ4lDAwg"));
+const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjnMAYIAB5nBAgQKBAAPBAggQCABAWEAAwdEBY4FE4EMCJPAgALKDBAIB4HMDBEAC5IuCCwpTEgAWEL4oLKEYyQBHZKbDKY6zFC4jADQY4LHFwokFCwzZHBQgYFCwoMEBQ4lDAwg"));
 const _activityActive;
 (()=>{
 
