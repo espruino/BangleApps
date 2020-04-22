@@ -1332,7 +1332,6 @@
     "allow_emulator": false,
     "readme": "README.md",
     "storage": [
-      {"name":"buffgym"},
       {"name":"buffgym.app.js", "url": "buffgym.app.js"},
       {"name":"buffgym-set.js","url":"buffgym-set.js"},
       {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
@@ -1438,7 +1437,7 @@
   { "id": "osmpoi",
     "name": "POI Compass",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Uploads all the points of interest in an area onto your watch, same as Beer Compass with more p.o.i.",
     "tags": "tool,outdoors,gps",
     "custom": "osmpoi.html",
