@@ -4,7 +4,9 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
 
 
 (()=>{
-    const _Activity={};
+    const _Activity={
+        active: false
+    };
     const steps;
     var hasFix = false;
     var fixToggle = false; // toggles once for each reading
@@ -24,6 +26,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
                 stopActivity();
                 break;
         }
+        WIDGETS["bfit"].draw();
     };
 
 
@@ -33,6 +36,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
         //Bangle.on('step',onStep);
         Bangle.on('GPS',onGPS);
         _Activity.Id = id;
+        _Activity.active = true;
         _Activity.start = getTime().toFixed(0);
 
     }
@@ -43,6 +47,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
         Bangle.removeListener('GPS',onGPS);
         Bangle.setHRMPower(0);
         Bangle.setGPSPower(0);
+        _Activity.active = false;
         _Activity.end = getTime().toFixed(0);
         BLESend(_Activity);
     }
@@ -72,7 +77,7 @@ const ConnectedWithActivity = require("heatshrink").decompress(atob("jEYwkBiMRjn
 
     function draw() {
         g.setColor(-1);
-        if(NRF.getSecurityStatus().connected && _activityActive){
+        if(NRF.getSecurityStatus().connected && _Activity.active){
             g.drawImage(ConnectedWithActivity, this.x + 1, this.y + 1);
         }
         if (NRF.getSecurityStatus().connected)
