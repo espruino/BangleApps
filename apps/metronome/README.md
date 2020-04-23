@@ -11,4 +11,4 @@ This metronome makes your watch blink and vibrate with a given rate.
 
 ## Attributions
 
-"Icon made by Roundicons from www.flaticon.com"
+Icon made by Roundicons from www.flaticon.com
