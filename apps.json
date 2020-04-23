@@ -2208,7 +2208,7 @@
     "id": "bigclock",
     "name": "Big Clock",
     "icon": "bigclock.png",
-    "version": "0.09.2",
+    "version": "0.09.3",
     "description": "A readable digital watch, with date and moon phase",
     "tags": "clock",
     "type": "clock",

@@ -115,7 +115,7 @@ Bangle.on("lcdPower", function(on) {
     g.clear();
     Bangle.drawWidgets();
     drawClockFace();
-    interval = setInterval(drawClockFace, REFRESH_RATE, settings.drawMode);
+    interval = setInterval(drawClockFace, REFRESH_RATE);
   } else {
     clearInterval(interval);
   }
