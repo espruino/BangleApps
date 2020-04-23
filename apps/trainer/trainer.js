@@ -1,8 +1,8 @@
 g.clearRect(0, 0, 239, 239);
 
 Bangle.setHRMPower(1);
-const MAX_BPM = (require("Storage").readJSON("app.json", 1) || { maxbpm: 115 })
-  .maxbpm;
+const MAX_BPM =
+  (require("Storage").readJSON("trainer.json", 1) || {})["maxbpm"] || 115;
 g.drawString(`Max BPM: ${MAX_BPM}`, 15, 10);
 
 let bpms = [];
