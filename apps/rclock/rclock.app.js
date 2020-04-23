@@ -129,13 +129,20 @@
       hours=hours-12;
     }
 
-    var medidian=locale.medidian(new Date());
+    var meridian;
+
+    if (typeof locale.meridian === "function") { 
+      meridian=locale.meridian(new Date());
+    } else {
+      meridian="";
+    }
+
     var timestr;
 
-    if(medidian.length>0) {
-      timestr=hour+" "+medidian;
+    if(meridian.length>0 && _12hour) {
+      timestr=hours+" "+meridian;
     } else {
-      timestr=hour;
+      timestr=hours;
     }
 
     g.setColor(settings.time.color);
