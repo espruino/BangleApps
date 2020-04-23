@@ -17,9 +17,9 @@ Bangle.on("HRM", function(hrm) {
   g.setFontVector(40);
   g.clearRect(0, 20, 220, 70);
   const bpm = hrm.bpm ? hrm.bpm : "0";
-  if (hrm.confidence > 50) bpms.push(bpm);
+  /* if (hrm.confidence > 50)  */ bpms.push(bpm);
   if (bpms.length > 4) bpms.splice(0, 1);
-  console.log(bpms);
+  console.log("bpms", bpms);
   const avg =
     bpms.length > 0
       ? Math.round(bpms.reduce((tot, bpm) => tot + bpm, 0) / bpms.length)
@@ -33,7 +33,7 @@ Bangle.on("HRM", function(hrm) {
   g.setFont("6x8");
   g.drawString("BPM", px + 10, 65);
   g.setColor(1, 1, 1);
-  if (avg > MAX_BPM) {
+  if (bpms.length === 4 && avg > MAX_BPM) {
     Bangle.buzz(500, 1)
       .then(() => Bangle.buzz(500, 0.5))
       .then(() => Bangle.buzz(500, 1));
