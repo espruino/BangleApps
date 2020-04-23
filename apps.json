@@ -921,8 +921,8 @@
     "name": "Torch",
     "shortName":"Torch",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN3 four times in quick succession to start when in normal clock mode",
+    "version":"0.02",
+    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets",
     "tags": "tool,torch",
     "storage": [
       {"name":"torch.app.js","url":"app.js"},
