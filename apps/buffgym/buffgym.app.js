@@ -104,14 +104,6 @@ function drawSetComp() {
 
 function drawRestTimer(workout) {
   const exercise = workout.currentExercise();
-  const motivation = "Take a breather..";
-
-  if (exercise.restPeriod <= 0) {
-    exercise.resetRestTimer();
-    workout.next();
-
-    return;
-  }
 
   g.clear();
   drawMenu({showBTN2: true});
@@ -124,8 +116,6 @@ function drawRestTimer(workout) {
   g.setFont("6x8", 5);
   g.drawString(exercise.restPeriod, (W / 2) + 2, (H / 2) - 19);
   g.flip();
-
-  exercise.decRestPeriod();
 }
 
 function redraw(workout) {

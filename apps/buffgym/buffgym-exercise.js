@@ -69,6 +69,15 @@ exports = class Exercise {
     }, 1000 * this.restPeriod);
 
     this._restInterval = setInterval(() => {
+      this.decRestPeriod();
+
+      if (this.restPeriod < 0) {
+        this.resetRestTimer();
+        this.next();
+
+        return;
+      }
+
       workout.emit("redraw");
     }, 1000 );
   }
