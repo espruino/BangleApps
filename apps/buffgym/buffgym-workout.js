@@ -1,4 +1,4 @@
-exports = class Program {
+exports = class Workout {
   constructor(params) {
     this.title = params.title;
     this.exercises = [];
@@ -27,6 +27,32 @@ exports = class Program {
     return !!this.completed;
   }
 
+  static fromJSON(workoutJSON) {
+    const Set = require("buffgym-set.js");
+    const Exercise = require("buffgym-exercise.js");
+    const workout = new this({
+      title: workoutJSON.title,
+    });
+    const exercises = workoutJSON.exercises.map(exerciseJSON => {
+      const exercise = new Exercise({
+        title: exerciseJSON.title,
+        weight: exerciseJSON.weight,
+        weightIncrement: exerciseJSON.weightIncrement,
+        unit: exerciseJSON.unit,
+        restPeriod: exerciseJSON.restPeriod,
+      });
+      exerciseJSON.sets.forEach(setJSON => {
+        exercise.addSet(new Set(setJSON));
+      });
+
+      return exercise;
+    });
+
+    workout.addExercises(exercises);
+
+    return workout;
+  }
+
   toJSON() {
     return {
       title: this.title,
@@ -34,6 +60,7 @@ exports = class Program {
         return {
           title: exercise.title,
           weight: exercise.weight,
+          weightIncrement: exercise.weightIncrement,
           unit: exercise.unit,
           sets: exercise.sets.map(set => set.maxReps),
           restPeriod: exercise.restPeriod,
