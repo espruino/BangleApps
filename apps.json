@@ -1343,7 +1343,7 @@
     "id": "buffgym",
     "name": "BuffGym",
     "icon": "buffgym.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
     "tags": "tool,outdoors,gym,exercise",
     "type": "app",
