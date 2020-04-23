@@ -5,7 +5,7 @@
  * Created: April 2020
  *
  * Inspired by:
- * - Stronglifts 5x5 training program https://stronglifts.com/5x5/
+ * - Stronglifts 5x5 training workout https://stronglifts.com/5x5/
  * - Stronglifts smart watch app
  */
 
@@ -66,10 +66,10 @@ function drawSet(exercise) {
   g.flip();
 }
 
-function drawProgDone() {
+function drawWorkoutDone() {
   const title1 = "You did";
   const title2 = "GREAT!";
-  const msg = "That's the program\ncompleted. Now eat\nsome food and\nget plenty of rest.";
+  const msg = "That's the workout\ncompleted. Now eat\nsome food and\nget plenty of rest.";
 
   clearWatch();
   setWatch(Bangle.showLauncher, BTN2, {repeat: false});
@@ -102,13 +102,13 @@ function drawSetComp() {
   g.flip();
 }
 
-function drawRestTimer(program) {
-  const exercise = program.currentExercise();
+function drawRestTimer(workout) {
+  const exercise = workout.currentExercise();
   const motivation = "Take a breather..";
 
   if (exercise.restPeriod <= 0) {
     exercise.resetRestTimer();
-    program.next();
+    workout.next();
 
     return;
   }
@@ -128,21 +128,21 @@ function drawRestTimer(program) {
   exercise.decRestPeriod();
 }
 
-function redraw(program) {
-  const exercise = program.currentExercise();
+function redraw(workout) {
+  const exercise = workout.currentExercise();
   g.clear();
 
-  if (program.isCompleted()) {
-    saveProg(program);
-    drawProgDone(program);
+  if (workout.isCompleted()) {
+    saveWorkout(workout);
+    drawWorkoutDone(workout);
     return;
   }
 
   if (exercise.isRestTimerRunning()) {
     if (exercise.isLastSet()) {
-      drawSetComp(program);
+      drawSetComp(workout);
     } else {
-      drawRestTimer(program);
+      drawRestTimer(workout);
     }
 
     return;
@@ -151,7 +151,7 @@ function redraw(program) {
   drawSet(exercise);
 }
 
-function drawProgMenu(programs, selProgIdx) {
+function drawWorkoutMenu(workouts, selWorkoutIdx) {
   g.clear();
   g.setFontAlign(0, -1);
   g.setColor(WHITE);
@@ -160,16 +160,16 @@ function drawProgMenu(programs, selProgIdx) {
 
   g.setFont("6x8", 1);
   g.setFontAlign(-1, -1);
-  let selectedProgram = programs[selProgIdx].title;
+  let selectedWorkout = workouts[selWorkoutIdx].title;
   let yPos = 50;
-  programs.forEach(program => {
+  workouts.forEach(workout => {
     g.setColor("#f05a56");
     g.fillRect(0, yPos, W, yPos + 11);
     g.setColor("#ffffff");
-    if (selectedProgram === program.title) {
+    if (selectedWorkout === workout.title) {
       g.drawRect(0, yPos, W - 1, yPos + 11);
     }
-    g.drawString(program.title, 10, yPos + 2);
+    g.drawString(workout.title, 10, yPos + 2);
     yPos += 15;
   });
   g.flip();
@@ -177,25 +177,25 @@ function drawProgMenu(programs, selProgIdx) {
 
 function setupMenu() {
   clearWatch();
-  const progs = getProgIndex();
-  let selProgIdx = 0;
-  drawProgMenu(progs, selProgIdx);
+  const workouts = getWorkoutIndex();
+  let selWorkoutIdx = 0;
+  drawWorkoutMenu(workouts, selWorkoutIdx);
 
   setWatch(()=>{
-    selProgIdx--;
-    if (selProgIdx< 0) selProgIdx = 0;
-    drawProgMenu(progs, selProgIdx);
+    selWorkoutIdx--;
+    if (selWorkoutIdx< 0) selWorkoutIdx = 0;
+    drawWorkoutMenu(workouts, selWorkoutIdx);
   }, BTN1, {repeat: true});
 
   setWatch(()=>{
-    const prog = buildProg(progs[selProgIdx].file);
-    prog.next();
+    const workout = buildWorkout(workouts[selWorkoutIdx].file);
+    workout.next();
   }, BTN2, {repeat: false});
 
   setWatch(()=>{
-    selProgIdx++;
-    if (selProgIdx > progs.length - 1) selProgIdx = progs.length - 1;
-    drawProgMenu(progs, selProgIdx);
+    selWorkoutIdx++;
+    if (selWorkoutIdx > workouts.length - 1) selWorkoutIdx = workouts.length - 1;
+    drawWorkoutMenu(workouts, selWorkoutIdx);
   }, BTN3, {repeat: true});
 }
 
@@ -249,23 +249,24 @@ function drawSplash() {
   }, BTN3, {repeat: false});
 }
 
-function getProgIndex() {
-  const progIdx = require("Storage").readJSON("buffgym-program-index.json");
-  return progIdx;
+function getWorkoutIndex() {
+  const workoutIdx = require("Storage").readJSON("buffgym-workout-index.json");
+  return workoutIdx;
 }
 
-function buildProg(fName) {
+function buildWorkout(fName) {
   const Set = require("buffgym-set.js");
   const Exercise = require("buffgym-exercise.js");
-  const Program = require("buffgym-program.js");
-  const progJSON = require("Storage").readJSON(fName);
-  const prog = new Program({
-    title: progJSON.title,
+  const Workout = require("buffgym-workout.js");
+  const workoutJSON = require("Storage").readJSON(fName);
+  const workout = new Workout({
+    title: workoutJSON.title,
   });
-  const exercises = progJSON.exercises.map(exerciseJSON => {
+  const exercises = workoutJSON.exercises.map(exerciseJSON => {
     const exercise = new Exercise({
       title: exerciseJSON.title,
       weight: exerciseJSON.weight,
+      weightIncrement: exerciseJSON.weightIncrement,
       unit: exerciseJSON.unit,
       restPeriod: exerciseJSON.restPeriod,
     });
@@ -275,14 +276,14 @@ function buildProg(fName) {
 
     return exercise;
   });
-  prog.addExercises(exercises);
+  workout.addExercises(exercises);
 
-  return prog;
+  return workout;
 }
 
-function saveProg(program) {
-  const fName = getProgIndex().find(prog => prog.title === program.title).file;
-  require("Storage").writeJSON(fName, program.toJSON());
+function saveWorkout(workout) {
+  const fName = getWorkoutIndex().find(workout => workout.title === workout.title).file;
+  require("Storage").writeJSON(fName, workout.toJSON());
 }
 
 drawSplash();

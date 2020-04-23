@@ -1,4 +1,4 @@
-exports = class Program {
+exports = class Workout {
   constructor(params) {
     this.title = params.title;
     this.exercises = [];
@@ -25,6 +25,10 @@ exports = class Program {
 
   isCompleted() {
     return !!this.completed;
+  }
+
+  static fromJSON(workout) {
+
   }
 
   toJSON() {
