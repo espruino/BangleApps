@@ -1092,14 +1092,16 @@
   },
   { "id": "toucher",
     "name": "Touch Launcher",
-    "shortName":"Menu",
+    "shortName":"Toucher",
     "icon": "app.png",
     "version":"0.06",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
     "storage": [
-      {"name":"toucher.app.js","url":"app.js"}
+      {"name":"toucher.app.js","url":"app.js"},
+      {"name":"toucher.settings.js","url":"settings.js"},
+      {"name":"toucher.json"}
     ],
     "sortorder" : -10
   },
