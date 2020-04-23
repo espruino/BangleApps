@@ -4,10 +4,10 @@ exports = class Exercise {
     this.sets = [];
     this.title = params.title;
     this.weight = params.weight;
+    this.weightIncrement = params.weightIncrement;
     this.unit = params.unit;
     this.restPeriod = params.restPeriod;
     this._originalRestPeriod = params.restPeriod;
-    this._weightIncrement = params.weightIncrement;
     this._restTimeout = null;
     this._restInterval = null;
     this._state = null;
@@ -50,7 +50,7 @@ exports = class Exercise {
 
   setCompleted() {
     if (!this.canSetCompleted()) throw "All sets must be completed";
-    if (this.canProgress()) this.weight += this._weightIncrement;
+    if (this.canProgress()) this.weight += this.weightIncrement;
     this.completed = true;
   }
 

@@ -246,34 +246,15 @@ function getWorkoutIndex() {
 }
 
 function buildWorkout(fName) {
-  const Set = require("buffgym-set.js");
-  const Exercise = require("buffgym-exercise.js");
   const Workout = require("buffgym-workout.js");
   const workoutJSON = require("Storage").readJSON(fName);
-  const workout = new Workout({
-    title: workoutJSON.title,
-  });
-  const exercises = workoutJSON.exercises.map(exerciseJSON => {
-    const exercise = new Exercise({
-      title: exerciseJSON.title,
-      weight: exerciseJSON.weight,
-      weightIncrement: exerciseJSON.weightIncrement,
-      unit: exerciseJSON.unit,
-      restPeriod: exerciseJSON.restPeriod,
-    });
-    exerciseJSON.sets.forEach(setJSON => {
-      exercise.addSet(new Set(setJSON));
-    });
-
-    return exercise;
-  });
-  workout.addExercises(exercises);
+  const workout = Workout.fromJSON(workoutJSON);
 
   return workout;
 }
 
 function saveWorkout(workout) {
-  const fName = getWorkoutIndex().find(workout => workout.title === workout.title).file;
+  const fName = getWorkoutIndex().find(w => w.title === workout.title).file;
   require("Storage").writeJSON(fName, workout.toJSON());
 }
 
