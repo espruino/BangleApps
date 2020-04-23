@@ -1098,10 +1098,12 @@
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
+    "data": [
+      {"name":"toucher.json"}
+    ],
     "storage": [
       {"name":"toucher.app.js","url":"app.js"},
-      {"name":"toucher.settings.js","url":"settings.js"},
-      {"name":"toucher.json"}
+      {"name":"toucher.settings.js","url":"settings.js"}
     ],
     "sortorder" : -10
   },
