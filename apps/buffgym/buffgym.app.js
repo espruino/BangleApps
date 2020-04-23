@@ -85,9 +85,12 @@ function drawWorkoutDone() {
   g.flip();
 }
 
-function drawSetComp() {
+function drawSetComp(exercise) {
   const title = "Good work";
-  const msg = "No need to rest\nmove straight on\nto the next\nexercise.Your\nweight has been\nincreased for\nnext time!";
+  const msg1= "No need to rest\nmove straight on\nto the next\nexercise.";
+  const msg2 = exercise.canProgress()?
+    "Your\nweight has been\nincreased for\nnext time!":
+    "You'll\nsmash it next\ntime!";
 
   g.clear();
   drawMenu({showBTN2: true});
@@ -97,14 +100,12 @@ function drawSetComp() {
   g.setFont("6x8", 2);
   g.drawString(title, W / 2, 10);
   g.setFont("6x8", 1);
-  g.drawString(msg, (W / 2) - 2, 45);
+  g.drawString(msg1 + msg2, (W / 2) - 2, 45);
 
   g.flip();
 }
 
-function drawRestTimer(workout) {
-  const exercise = workout.currentExercise();
-
+function drawRestTimer(exercise) {
   g.clear();
   drawMenu({showBTN2: true});
   g.setFontAlign(0, -1);
@@ -124,15 +125,15 @@ function redraw(workout) {
 
   if (workout.isCompleted()) {
     saveWorkout(workout);
-    drawWorkoutDone(workout);
+    drawWorkoutDone();
     return;
   }
 
   if (exercise.isRestTimerRunning()) {
     if (exercise.isLastSet()) {
-      drawSetComp(workout);
+      drawSetComp(exercise);
     } else {
-      drawRestTimer(workout);
+      drawRestTimer(exercise);
     }
 
     return;
