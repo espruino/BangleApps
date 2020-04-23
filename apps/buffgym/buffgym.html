@@ -239,7 +239,7 @@
         document.getElementById("upload").addEventListener("click", function() {
           Puck.eval(`require("Storage").writeJSON("buffgym-workout-a.json",${JSON.stringify(workoutA())})`, ()=>{
             Puck.eval(`require("Storage").writeJSON("buffgym-workout-b.json",${JSON.stringify(workoutB())})`, ()=>{
-              Puck.eval(`Bangle.buzz();`, () => {
+              Puck.eval(`Bangle.buzz()`, () => {
                 console.log("all done");
               })
             })
