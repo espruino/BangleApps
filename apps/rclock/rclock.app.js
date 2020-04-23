@@ -4,6 +4,8 @@
   var hours;
   var date;
   var first = true;
+  var locale = require('locale');
+  var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 
   const screen = {
     width: g.getWidth(),
@@ -41,17 +43,7 @@
   };
 
   const dateStr = function (date) {
-    day = date.getDate();
-    month = date.getMonth();
-    year = date.getFullYear();
-    if (day < 10) {
-      day = "0" + day;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-
-    return year + "-" + month + "-" + day;
+    return locale.date(new Date(),1);
   };
 
   const getArcXY = function (centerX, centerY, radius, angle) {
@@ -133,9 +125,29 @@
 
     //Write the time as configured in the settings
     hours = currentTime.getHours();
+    if(_12hour && hours>13) {
+      hours=hours-12;
+    }
+
+    var meridian;
+
+    if (typeof locale.meridian === "function") { 
+      meridian=locale.meridian(new Date());
+    } else {
+      meridian="";
+    }
+
+    var timestr;
+
+    if(meridian.length>0 && _12hour) {
+      timestr=hours+" "+meridian;
+    } else {
+      timestr=hours;
+    }
+
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size);
-    g.drawString(hours, settings.time.center, settings.time.middle);
+    g.drawString(timestr, settings.time.center, settings.time.middle);
 
     //Write the date as configured in the settings
     g.setColor(settings.date.color);
