@@ -1,16 +1,16 @@
 exports = class Exercise {
   constructor(params) {
-    this.title = params.title;
-    this.weight = params.weight;
-    this.unit = params.unit;
-    this.restPeriod = params.restPeriod;
     this.completed = false;
     this.sets = [];
+    this.title = params.title;
+    this.weight = params.weight;
+    this.weightIncrement = params.weightIncrement;
+    this.unit = params.unit;
+    this.restPeriod = params.restPeriod;
+    this._originalRestPeriod = params.restPeriod;
     this._restTimeout = null;
     this._restInterval = null;
     this._state = null;
-    this._originalRestPeriod = params.restPeriod;
-    this._weightIncrement = params.weightIncrement || 2.5;
   }
 
   get humanTitle() {
@@ -50,7 +50,7 @@ exports = class Exercise {
 
   setCompleted() {
     if (!this.canSetCompleted()) throw "All sets must be completed";
-    if (this.canProgress()) this.weight += this._weightIncrement;
+    if (this.canProgress()) this.weight += this.weightIncrement;
     this.completed = true;
   }
 
@@ -63,13 +63,22 @@ exports = class Exercise {
     return (targetRepsTotalSum - completedRepsTotalSum) === 0;
   }
 
-  startRestTimer(program) {
+  startRestTimer(workout) {
     this._restTimeout = setTimeout(() => {
-      this.next(program);
+      this.next(workout);
     }, 1000 * this.restPeriod);
 
     this._restInterval = setInterval(() => {
-      program.emit("redraw");
+      this.decRestPeriod();
+
+      if (this.restPeriod < 0) {
+        this.resetRestTimer();
+        this.next();
+
+        return;
+      }
+
+      workout.emit("redraw");
     }, 1000 );
   }
 
@@ -85,28 +94,28 @@ exports = class Exercise {
     return this._restTimeout != null;
   }
 
-  setupStartedButtons(program) {
+  setupStartedButtons(workout) {
     clearWatch();
 
     setWatch(() => {
       this.currentSet().incReps();
-      program.emit("redraw");
+      workout.emit("redraw");
     }, BTN1, {repeat: true});
 
-    setWatch(program.next.bind(program), BTN2, {repeat: false});
+    setWatch(workout.next.bind(workout), BTN2, {repeat: false});
 
     setWatch(() => {
       this.currentSet().decReps();
-      program.emit("redraw");
+      workout.emit("redraw");
     }, BTN3, {repeat: true});
   }
 
-  setupRestingButtons(program) {
+  setupRestingButtons(workout) {
     clearWatch();
-    setWatch(program.next.bind(program), BTN2, {repeat: false});
+    setWatch(workout.next.bind(workout), BTN2, {repeat: false});
   }
 
-  next(program) {
+  next(workout) {
     const STARTED = 1;
     const RESTING = 2;
     const COMPLETED = 3;
@@ -114,12 +123,12 @@ exports = class Exercise {
     switch(this._state) {
       case null:
         this._state = STARTED;
-        this.setupStartedButtons(program);
+        this.setupStartedButtons(workout);
         break;
       case STARTED:
         this._state = RESTING;
-        this.startRestTimer(program);
-        this.setupRestingButtons(program);
+        this.startRestTimer(workout);
+        this.setupRestingButtons(workout);
         break;
       case RESTING:
         this.resetRestTimer();
@@ -132,13 +141,13 @@ exports = class Exercise {
           this._state = null;
         }
         // As we are changing state and require it to be reprocessed
-        // invoke the next step of program
-        program.next();
+        // invoke the next step of workout
+        workout.next();
         break;
       default:
         throw "Exercise: Attempting to move to an unknown state";
     }
 
-    program.emit("redraw");
+    workout.emit("redraw");
   }
 }
