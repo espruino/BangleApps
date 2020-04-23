@@ -5,7 +5,7 @@
   var date;
   var first = true;
   var locale = require('locale');
-  var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
+  var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
   const screen = {
     width: g.getWidth(),
@@ -43,7 +43,7 @@
   };
 
   const dateStr = function (date) {
-    return locale.date(new Date(),1);
+    return locale.date(new Date(), 1);
   };
 
   const getArcXY = function (centerX, centerY, radius, angle) {
@@ -64,7 +64,7 @@
     //g.setPixel(r[0],r[1]);
     g.drawLine(r1[0], r1[1], r2[0], r2[1]);
     g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width-4)
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
   };
 
   const drawSecArc = function (sections, color) {
@@ -76,7 +76,7 @@
     //g.setPixel(r[0],r[1]);
     g.drawLine(r1[0], r1[1], r2[0], r2[1]);
     g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width-4)
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
   };
 
   const drawClock = function () {
@@ -96,7 +96,7 @@
       }
       first = false;
     }
-    
+
     // Reset seconds
     if (seconds == 59) {
       g.setColor('#000000');
@@ -120,29 +120,29 @@
     //Update seconds when needed
     if (seconds != currentTime.getSeconds()) {
       seconds = currentTime.getSeconds();
-      drawSecArc(seconds,  settings.circle.colorsec);
+      drawSecArc(seconds, settings.circle.colorsec);
     }
 
     //Write the time as configured in the settings
     hours = currentTime.getHours();
-    if(_12hour && hours>13) {
-      hours=hours-12;
+    if (_12hour && hours > 13) {
+      hours = hours - 12;
     }
 
     var meridian;
 
-    if (typeof locale.meridian === "function") { 
-      meridian=locale.meridian(new Date());
+    if (typeof locale.meridian === "function") {
+      meridian = locale.meridian(new Date());
     } else {
-      meridian="";
+      meridian = "";
     }
 
     var timestr;
 
-    if(meridian.length>0 && _12hour) {
-      timestr=hours+" "+meridian;
+    if (meridian.length > 0 && _12hour) {
+      timestr = hours + " " + meridian;
     } else {
-      timestr=hours;
+      timestr = hours;
     }
 
     g.setColor(settings.time.color);
@@ -161,7 +161,7 @@
 
   // clean app screen
   g.clear();
-  g.setFontAlign( 0, 0, 0);
+  g.setFontAlign(0, 0, 0);
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
