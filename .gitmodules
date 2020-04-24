@@ -1,0 +1,3 @@
+[submodule "apps/elegant-txt"]
+	path = apps/elegant-txt
+	url = git@github.com:jpoles1/BangleElegantText.git
