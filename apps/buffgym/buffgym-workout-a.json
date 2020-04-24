@@ -1,0 +1,33 @@
+{
+    "title": "Workout A",
+    "exercises": [
+        {
+            "title": "Squats",
+            "weight": 40,
+            "unit": "Kg",
+            "sets": [5, 5, 5, 5, 5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Overhead press",
+            "weight": 20,
+            "unit": "Kg",
+            "sets": [5, 5, 5, 5, 5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Deadlift",
+            "weight": 20,
+            "unit": "Kg",
+            "sets": [5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Pullups",
+            "weight": 0,
+            "unit": "Kg",
+            "sets": [10, 10, 10],
+            "restPeriod": 90
+        }
+    ]
+}
