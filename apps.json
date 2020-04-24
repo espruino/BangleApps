@@ -1438,5 +1438,18 @@
       {"name":"pong.app.js","url":"app.js"},
       {"name":"pong.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "elegant-txt",
+    "name": "Elegant Text",
+    "shortName": "Elegant Text",
+    "version": "0.2.4",
+    "description": "An elegant clockface",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"elegant-txt.app.js","url":"elegant.js"},
+      {"name":"elegant-txt.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
