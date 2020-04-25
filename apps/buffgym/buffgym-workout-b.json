@@ -1,5 +1,5 @@
 {
-    "title": "Program A",
+    "title": "Workout B",
     "exercises": [
         {
             "title": "Squats",
@@ -9,22 +9,22 @@
             "restPeriod": 90
         },
         {
-            "title": "Overhead press",
+            "title": "Bench press",
             "weight": 20,
             "unit": "Kg",
             "sets": [5, 5, 5, 5, 5],
             "restPeriod": 90
         },
         {
-            "title": "Deadlift",
+            "title": "Row",
             "weight": 20,
-            "unit": "Kg",
-            "sets": [5],
+            "unit":"Kg",
+            "sets": [5, 5, 5, 5, 5],
             "restPeriod": 90
         },
         {
-            "title": "Pullups",
-            "weight": 0,
+            "title": "Tricep extension",
+            "weight": 20,
             "unit": "Kg",
             "sets": [10, 10, 10],
             "restPeriod": 90

@@ -94,7 +94,8 @@ setWatch(function() { // Start/stop
     displayInterval = setInterval(function() {
       var last = tCurrent;
       if (started) tCurrent = Date.now();
-      if (Math.floor(last/1000)!=Math.floor(tCurrent/1000))
+      if (Math.floor((last-tStart)/1000)!=Math.floor((tCurrent-tStart)/1000) ||
+          Math.floor((last-tTotal)/1000)!=Math.floor((tCurrent-tTotal)/1000))
         drawsecs();
       else
         drawms();

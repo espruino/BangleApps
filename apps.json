@@ -452,7 +452,7 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.06",
+    "version":"0.07",
     "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
@@ -921,8 +921,8 @@
     "name": "Torch",
     "shortName":"Torch",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN3 four times in quick succession to start when in normal clock mode",
+    "version":"0.02",
+    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets",
     "tags": "tool,torch",
     "storage": [
       {"name":"torch.app.js","url":"app.js"},
@@ -1092,14 +1092,18 @@
   },
   { "id": "toucher",
     "name": "Touch Launcher",
-    "shortName":"Menu",
+    "shortName":"Toucher",
     "icon": "app.png",
     "version":"0.06",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
+    "data": [
+      {"name":"toucher.json"}
+    ],
     "storage": [
-      {"name":"toucher.app.js","url":"app.js"}
+      {"name":"toucher.app.js","url":"app.js"},
+      {"name":"toucher.settings.js","url":"settings.js"}
     ],
     "sortorder" : -10
   },
@@ -1343,20 +1347,21 @@
     "id": "buffgym",
     "name": "BuffGym",
     "icon": "buffgym.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
     "tags": "tool,outdoors,gym,exercise",
     "type": "app",
+    "interface": "buffgym.html",
     "allow_emulator": false,
     "readme": "README.md",
     "storage": [
       {"name":"buffgym.app.js", "url": "buffgym.app.js"},
       {"name":"buffgym-set.js","url":"buffgym-set.js"},
       {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
-      {"name":"buffgym-program.js","url":"buffgym-program.js"},
-      {"name":"buffgym-program-a.json","url":"buffgym-program-a.json"},
-      {"name":"buffgym-program-b.json","url":"buffgym-program-b.json"},
-      {"name":"buffgym-program-index.json","url":"buffgym-program-index.json"},
+      {"name":"buffgym-workout.js","url":"buffgym-workout.js"},
+      {"name":"buffgym-workout-a.json","url":"buffgym-workout-a.json"},
+      {"name":"buffgym-workout-b.json","url":"buffgym-workout-b.json"},
+      {"name":"buffgym-workout-index.json","url":"buffgym-workout-index.json"},
       {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
     ]
   },
