@@ -118,10 +118,13 @@ function drawWordClock() {
         });
     });
 
-    // display digital time
-    g.setColor(activeColor);
-    g.clearRect(0, 215, 240, 240);
-    g.drawString(time, 120, 215);
+    // Display digital time while button 1 is pressed
+    if (BTN1.read()){
+        g.setColor(activeColor);
+        g.clearRect(0, 215, 240, 240);
+        g.drawString(time, 120, 215);
+    } else { g.clearRect(0, 215, 240, 240); }
+    
 }
 
 Bangle.on('lcdPower', function(on) {
@@ -134,5 +137,9 @@ Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
 
+// Show digital time while top button is pressed
+setWatch(drawWordClock, BTN1, {repeat:true,edge:"both"});
+
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+
