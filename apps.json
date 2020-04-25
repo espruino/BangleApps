@@ -164,10 +164,10 @@
     ]
   },
   { "id": "impwclock",
-    "name": "Imprecise Clock",
+    "name": "Imprecise Word Clock",
     "icon": "clock-impword.png",
     "version":"0.01",
-    "description": "Imprecise word clock.",
+    "description": "Imprecise word clock for vacations, weekends, and those who never need accurate time.",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
@@ -175,7 +175,7 @@
       {"name":"impwclock.app.js","url":"clock-impword.js"},
       {"name":"impwclock.img","url":"clock-impword-icon.js","evaluate":true}
     ]
-  },
+  },d
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
