@@ -45,7 +45,8 @@ const dx = 25;
 // font size and color
 const fontSize = 3;  // "6x8"
 const passivColor = 0x3186 /*grey*/ ;
-const activeColor = 0xF800 /*red*/ ;
+const activeColorDay = 0xFFFF /*white*/ ;
+const activeColorNight = 0xF800 /*red*/ ;
 
 function drawWordClock() {
 
@@ -59,10 +60,17 @@ function drawWordClock() {
     var midx;
     var midxA = [];
 
+    // Select time word display color based on hour
+    var activeColor = activeColorDay;
+    if(h < 7 || h > 19)
+        activeColor = activeColorNight;
+        
     g.setFont("6x8",fontSize);
     g.setColor(passivColor);
     g.setFontAlign(0, -1, 0);
 
+    
+    
     // draw allWords
     var c;
     var y = ys;
