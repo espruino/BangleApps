@@ -175,7 +175,7 @@
       {"name":"impwclock.app.js","url":"clock-impword.js"},
       {"name":"impwclock.img","url":"clock-impword-icon.js","evaluate":true}
     ]
-  },d
+  },
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
