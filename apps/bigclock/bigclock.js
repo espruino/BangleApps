@@ -126,6 +126,13 @@ Bangle.setLCDMode();
 // Show launcher when middle button pressed
 clearWatch();
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+setWatch(
+  function() {
+    load("calendar.app.js");
+  },
+  BTN3,
+  { repeat: false, edge: "rising" }
+);
 
 g.clear();
 clearInterval();

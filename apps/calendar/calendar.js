@@ -15,6 +15,7 @@ const white = "#ffffff";
 const gray1 = "#444444";
 const gray2 = "#888888";
 const gray3 = "#bbbbbb";
+const red = "#d41706";
 
 function drawCalendar(date) {
   g.setBgColor(color4);
@@ -28,7 +29,7 @@ function drawCalendar(date) {
   for (let y = headerH; y < maxY; y += rowH) {
     g.drawLine(0, y, maxX, y);
   }
-  for (let x = colW; x < maxX; x += colW) {
+  for (let x = 0; x < maxX; x += colW) {
     g.drawLine(x, headerH, x, maxY);
   }
 
@@ -52,6 +53,11 @@ function drawCalendar(date) {
   g.setFont("6x8", 2);
   g.setColor(white);
   g.drawString(`${monthMap[month]} ${year}`, maxX / 2, headerH / 2);
+  g.drawPoly([10, headerH / 2, 20, 10, 20, headerH - 10], true);
+  g.drawPoly(
+    [maxX - 10, headerH / 2, maxX - 20, 10, maxX - 20, headerH - 10],
+    true
+  );
 
   g.setFont("6x8", 2);
   const dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -100,6 +106,17 @@ function drawCalendar(date) {
     for (x = 0; x < colN; x++) {
       i++;
       const day = days[i];
+      const isToday =
+        today.year === year && today.month === month && today.day === day - 50;
+      if (isToday) {
+        g.setColor(red);
+        g.drawRect(
+          x * colW,
+          y * rowH + headerH + rowH,
+          x * colW + colW - 1,
+          y * rowH + headerH + rowH + rowH
+        );
+      }
       g.setColor(day < 50 ? gray3 : white);
       g.drawString(
         (day > 50 ? day - 50 : day).toString(),
@@ -111,6 +128,11 @@ function drawCalendar(date) {
 }
 
 const date = new Date();
+const today = {
+  day: date.getDate(),
+  month: date.getMonth(),
+  year: date.getFullYear()
+};
 drawCalendar(date);
 clearWatch();
 setWatch(
