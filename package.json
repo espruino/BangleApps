@@ -11,6 +11,7 @@
     "start": "npx http-server"
   },
   "dependencies": {
-    "acorn": "^7.1.1"
+    "acorn": "^7.1.1",
+    "terser": "^4.6.12"
   }
 }
