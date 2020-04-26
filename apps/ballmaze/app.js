@@ -99,9 +99,8 @@
       y = rH/2;
       vx = vy = 0;
       ppx = px = x;
-      ppy = py = y
+      ppy = py = y;
 
-      clearWatch();
       generateMaze(); // this shows unbuffered progress messages
       if (settings.cheat && r>1) findRoute(); // not enough memory for r==1 :-(
 
@@ -395,7 +394,7 @@
         y += vy/s;
         bounce();
       }
-      if (x>sW-cW+r && y>sH-rH+r) win();
+      if (x>sW-cW && y>sH-rH) win();
     }
 
     /**
@@ -407,40 +406,79 @@
     function bounce() {
       const row = Math.floor(y/sH*rows), col = Math.floor(x/sW*cols),
         i = row*cols+col, walls = rooms[i];
+      const left = col*cW,
+        right = (col+1)*cW,
+        top = row*rH,
+        bottom = (row+1)*rH;
+      let bounced = false;
       if (vx<0) {
-        const left = col*cW+r;
-        if ((walls&LEFT) && x<=left) {
-          x += (1+e)*(left-x);
+        if ((walls&LEFT) && x<=left+r) {
+          x += (1+e)*(left+r-x);
           const fy = sign(vy)*d*Math.abs(vx);
           vy -= fy/m;
           vx = -vx*e;
+          bounced = true;
         }
       } else {
-        const right = (col+1)*cW-r;
-        if ((walls&RIGHT) && x>=right) {
-          x -= (1+e)*(x-right);
+        if ((walls&RIGHT) && x>=right-r) {
+          x -= (1+e)*(x+r-right);
           const fy = sign(vy)*d*Math.abs(vx);
           vy -= fy/m;
           vx = -vx*e;
+          bounced = true;
         }
       }
       if (vy<0) {
-        const top = row*rH+r;
-        if ((walls&TOP) && y<=top) {
-          y += (1+e)*(top-y);
+        if ((walls&TOP) && y<=top+r) {
+          y += (1+e)*(top+r-y);
           const fx = sign(vx)*d*Math.abs(vy);
           vx -= fx/m;
           vy = -vy*e;
+          bounced = true;
         }
       } else {
-        const bottom = (row+1)*rH-r;
-        if ((walls&BOTTOM) && y>=bottom) {
-          y -= (1+e)*(y-bottom);
+        if ((walls&BOTTOM) && y>=bottom-r) {
+          y -= (1+e)*(y+r-bottom);
           const fx = sign(vx)*d*Math.abs(vy);
           vx -= fx/m;
           vy = -vy*e;
+          bounced = true;
         }
       }
+      if (bounced) return;
+      let cx, cy;
+      if ((rooms[i-1]&TOP) || rooms[i-cols]&LEFT) {
+        if ((x-left)*(x-left)+(y-top)*(y-top)<=r*r) {
+          cx = left;
+          cy = top;
+        }
+      }
+      else if ((rooms[i-1]&BOTTOM) || rooms[i+cols]&LEFT) {
+        if ((x-left)*(x-left)+(bottom-y)*(bottom-y)<=r*r) {
+          cx = left;
+          cy = bottom;
+        }
+      }
+      else if ((rooms[i+1]&TOP) || rooms[i-cols]&RIGHT) {
+        if ((right-x)*(right-x)+(y-top)*(y-top)<=r*r) {
+          cx = right;
+          cy = top;
+        }
+      }
+      else if ((rooms[i+1]&BOTTOM) || rooms[i+cols]&RIGHT) {
+        if ((right-x)*(right-x)+(bottom-y)*(bottom-y)<=r*r) {
+          cx = right;
+          cy = bottom;
+        }
+      }
+      if (!cx) return;
+      let nx = x-cx, ny = y-cy;
+      const l = Math.sqrt(nx*nx+ny*ny);
+      nx /= l;
+      ny /= l;
+      const p = vx*nx+vy*ny;
+      vx -= 2*p*nx*e;
+      vy -= 2*p*ny*e;
     }
 
     /**
