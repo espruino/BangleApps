@@ -7,16 +7,37 @@ var AppInfo = {
     return new Promise((resolve,reject) => {
       // Load all files
       Promise.all(app.storage.map(storageFile => {
-        if (storageFile.content)
+        if (storageFile.content) {
           return Promise.resolve(storageFile);
-        else if (storageFile.url)
-          return fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
-            return {
-              name : storageFile.name,
-              content : content,
-              evaluate : storageFile.evaluate
-          }});
-        else return Promise.resolve();
+        } else if (storageFile.url) {
+          return new Promise((resolve, reject) => {
+            const dir = `apps/${app.id}/`,
+              fileName = storageFile.url,
+              path = dir+fileName;
+            const resolveContent = content => {
+              resolve({
+                name: storageFile.name,
+                content: content,
+                evaluate: storageFile.evaluate,
+              });
+            };
+            // check for minified version of file?
+            const minify = /\.js$/.test(fileName) // only *.js files
+              && !/-min\.js$/.test(fileName)      // not already minified
+              && !storageFile.evaluate            // not evaluated
+            if (!minify) {
+              return fileGetter(path).then(resolveContent).catch(reject);
+            }
+            // not-evaluated .js file: try -min.js version first
+            const minFileName = fileName.replace(/\.js$/,"-min.js"),
+              minPath = dir+minFileName;
+            fileGetter(minPath).then(resolveContent).catch(() => {
+              fileGetter(path).then(resolveContent).catch(reject);
+            });
+          });
+        } else {
+          return Promise.resolve();
+        }
       })).then(fileContents => { // now we just have a list of files + contents...
         // filter out empty files
         fileContents = fileContents.filter(x=>x!==undefined);
