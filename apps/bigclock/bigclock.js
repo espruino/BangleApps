@@ -1,4 +1,4 @@
-const REFRESH_RATE = 10000;
+const REFRESH_RATE = 1000;
 
 let interval;
 
@@ -91,6 +91,8 @@ function drawTime(d) {
   const year = da[3];
   const hours = time[0];
   const minutes = time[1];
+  const seconds = d.getSeconds();
+  console.log(seconds);
   g.clearRect(0, 24, 239, 239);
   g.setColor(1, 1, 1);
   g.setFont("Vector", 100);
@@ -99,9 +101,11 @@ function drawTime(d) {
   g.drawString(minutes, 50, 135, true);
   g.setFont("Vector", 20);
   g.setRotation(3);
-  g.drawString(`${dow} ${day} ${month}`, 50, 20, true);
-  g.drawString(year, 85, 205, true);
+  g.drawString(`${dow} ${day} ${month}`, 50, 15, true);
+  g.drawString(year, 75, 205, true);
   g.setRotation(0);
+  g.setFontAlign(0, -1);
+  g.drawString(seconds, 215, 215);
 }
 
 function drawClockFace() {
