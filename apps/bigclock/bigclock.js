@@ -1,68 +1,94 @@
 const REFRESH_RATE = 1000;
 
 let interval;
+let lastMoonPhase;
+let lastMinutes;
+
+const moonR = 12;
+const moonX = 215;
+const moonY = 50;
 
 function drawMoon(d) {
   const BLACK = 0,
     MOON = 0x41f,
     MC = 29.5305882,
     NM = 694039.09;
-  var r = 12,
-    mx = 215,
-    my = 50;
 
   var moon = {
     // reset
     0: () => {
-      g.reset()
-        .setColor(BLACK)
-        .fillRect(mx - r, my - r, mx + r, my + r);
+      g.setColor(BLACK).fillRect(
+        moonX - moonR,
+        moonY - moonR,
+        moonX + moonR,
+        moonY + moonR
+      );
     },
     // new moon
     1: () => {
       moon[0]();
-      g.setColor(MOON).drawCircle(mx, my, r);
+      g.setColor(MOON).drawCircle(moonX, moonY, moonR);
     },
     // 1/4 ascending
     2: () => {
       moon[3]();
-      g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+      g.setColor(BLACK).fillEllipse(
+        moonX - moonR / 2,
+        moonY - moonR,
+        moonX + moonR / 2,
+        moonY + moonR
+      );
     },
     // 1/2 ascending
     3: () => {
       moon[0]();
       g.setColor(MOON)
-        .fillCircle(mx, my, r)
+        .fillCircle(moonX, moonY, moonR)
         .setColor(BLACK)
-        .fillRect(mx, my - r, mx + r + r, my + r);
+        .fillRect(moonX, moonY - moonR, moonX + moonR + moonR, moonY + moonR);
     },
     // 3/4 ascending
     4: () => {
       moon[7]();
-      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+      g.setColor(MOON).fillEllipse(
+        moonX - moonR / 2,
+        moonY - moonR,
+        moonX + moonR / 2,
+        moonY + moonR
+      );
     },
     // Full moon
     5: () => {
       moon[0]();
-      g.setColor(MOON).fillCircle(mx, my, r);
+      g.setColor(MOON).fillCircle(moonX, moonY, moonR);
     },
     // 3/4 descending
     6: () => {
       moon[3]();
-      g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+      g.setColor(MOON).fillEllipse(
+        moonX - moonR / 2,
+        moonY - moonR,
+        moonX + moonR / 2,
+        moonY + moonR
+      );
     },
     // 1/2 descending
     7: () => {
       moon[0]();
       g.setColor(MOON)
-        .fillCircle(mx, my, r)
+        .fillCircle(moonX, moonY, moonR)
         .setColor(BLACK)
-        .fillRect(mx - r, my - r, mx, my + r);
+        .fillRect(moonX - moonR, moonY - moonR, moonX, moonY + moonR);
     },
     // 1/4 descending
     8: () => {
       moon[7]();
-      g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);
+      g.setColor(BLACK).fillEllipse(
+        moonX - moonR / 2,
+        moonY - moonR,
+        moonX + moonR / 2,
+        moonY + moonR
+      );
     }
   };
 
@@ -79,7 +105,11 @@ function drawMoon(d) {
     return Math.round((tmp - (tmp | 0)) * 7 + 1);
   }
 
-  moon[moonPhase(d)]();
+  const currentMoonPhase = moonPhase(d);
+  if (currentMoonPhase != lastMoonPhase) {
+    moon[currentMoonPhase]();
+    lastMoonPhase = currentMoonPhase;
+  }
 }
 
 function drawTime(d) {
@@ -92,19 +122,25 @@ function drawTime(d) {
   const hours = time[0];
   const minutes = time[1];
   const seconds = d.getSeconds();
-  console.log(seconds);
-  g.clearRect(0, 24, 239, 239);
-  g.setColor(1, 1, 1);
-  g.setFont("Vector", 100);
-  g.drawString(hours, 50, 24, true);
-  g.setColor(1, 50, 1);
-  g.drawString(minutes, 50, 135, true);
-  g.setFont("Vector", 20);
-  g.setRotation(3);
-  g.drawString(`${dow} ${day} ${month}`, 50, 15, true);
-  g.drawString(year, 75, 205, true);
+  if (minutes != lastMinutes) {
+    g.clearRect(0, 24, moonX - moonR - 10, 239);
+    g.setColor(1, 1, 1);
+    g.setFontAlign(-1, -1);
+    g.setFont("Vector", 100);
+    g.drawString(hours, 50, 24, true);
+    g.setColor(1, 50, 1);
+    g.drawString(minutes, 50, 135, true);
+    g.setFont("Vector", 20);
+    g.setRotation(3);
+    g.drawString(`${dow} ${day} ${month}`, 50, 15, true);
+    g.drawString(year, 75, 205, true);
+    lastMinutes = minutes;
+  }
   g.setRotation(0);
+  g.setFont("Vector", 20);
+  g.setColor(1, 1, 1);
   g.setFontAlign(0, -1);
+  g.clearRect(200, 210, 240, 240);
   g.drawString(seconds, 215, 215);
 }
 
@@ -122,6 +158,8 @@ Bangle.on("lcdPower", function(on) {
     interval = setInterval(drawClockFace, REFRESH_RATE);
   } else {
     clearInterval(interval);
+    lastMinutes = undefined;
+    lastMoonPhase = undefined;
   }
 });
 
