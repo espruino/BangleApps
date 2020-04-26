@@ -1,6 +1,6 @@
 (() => {
   let intervalID;
-  let settings = require("Storage").readJSON("ballmaze.json") || {};
+  let settings = require("Storage").readJSON("ballmaze.json",true) || {};
 
   // density, elasticity of bounces, "drag coefficient"
   const rho = 100, e = 0.3, C = 0.01;
