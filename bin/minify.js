@@ -18,6 +18,7 @@ const fs = require("fs"),
 const BASEDIR = __dirname+"/../";
 const APPSDIR = BASEDIR+"apps/";
 let options = {
+  mangle: false, // mangling seems to Break Stuff
   compress: {
     expression: true, // keep e.g. *.settings.js, which will be read into eval()
   },
