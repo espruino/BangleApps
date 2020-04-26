@@ -2259,7 +2259,7 @@
     "id": "calendar",
     "name": "Calendar",
     "icon": "calendar.png",
-    "version": "0.02",
+    "version": "0.02.1",
     "description": "Simple calendar",
     "tags": "calendar",
     "allow_emulator": true,
