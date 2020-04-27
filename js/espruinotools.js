@@ -1,4 +1,5 @@
-// EspruinoTools (https://github.com/espruino/EspruinoTools)
+// EspruinoTools bundle (https://github.com/espruino/EspruinoTools)
+// Cteated with https://github.com/espruino/EspruinoWebIDE/blob/gh-pages/extras/create_espruinotools_js.sh
 
 if (typeof $ === "undefined") {
   var jqReady = [];
@@ -135,8 +136,8 @@ Espruino.Core.Notifications = {
   success : function(e) { console.log(e); },
   error : function(e) { console.error(e); },
   warning : function(e) { console.warn(e); },
-  info : function(e) { console.log(e); },
-};
+  info : function(e) { console.log(e); }, 
+};  
 Espruino.Core.Status = {
   setStatus : function(e,len) { console.log(e); },
   hasProgress : function() { return false; },
@@ -4141,10 +4142,22 @@ Object.defineProperty(exports, '__esModule', { value: true });
         } while (isIn(chAlphaNum,ch));
       } else if (isIn(chNum,ch)) { // NUMBER
         type = "NUMBER";
-        do {
+        var chRange = chNum;
+        if (ch=="0") { // Handle 
           s+=ch;
           nextCh();
-        } while (isIn(chNum,ch) || ch==".")
+          if ("xXoObB".indexOf(ch)>=0) {
+            if (ch=="b" || ch=="B") chRange="01";
+            if (ch=="o" || ch=="O") chRange="01234567";
+            if (ch=="x" || ch=="X") chRange="0123456789ABCDEFabcdef";
+            s+=ch;
+            nextCh();
+          } 
+        }
+        while (isIn(chRange,ch) || ch==".") {
+          s+=ch;
+          nextCh();
+        } 
       } else if (isIn(chQuotes,ch)) { // STRING
         type = "STRING";
         var q = ch;
@@ -4514,8 +4527,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
     fileLoader.click();
   }
 
-  // Save a file with a save file dialog
-  function fileSaveDialog(data, filename) {
+  /* Save a file with a save file dialog. callback(savedFileName) only called in chrome app case when we knopw the filename*/
+  function fileSaveDialog(data, filename, callback) {
     function errorHandler() {
       Espruino.Core.Notifications.error("Error Saving", true);
     }
@@ -4531,6 +4544,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
           writer.onwriteend = function(e) {
             writer.onwriteend = function(e) {
               console.log('FileWriter: complete');
+              if (callback) callback(writableFileEntry.name);
             };
             console.log('FileWriter: writing');
             writer.write(blob);
@@ -4734,39 +4748,39 @@ Object.defineProperty(exports, '__esModule', { value: true });
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ------------------------------------------------------------------
   Central place to store and retrieve Options
-
+  
   To use this, on your plugin's `init` function, do something like the
   following:
-
+  
   Espruino.Core.Config.add("MAX_FOOBARS", {
     section : "Communications",           // Heading this will come under in the config screen
-    name : "Foobars",                     // Nice name
+    name : "Foobars",                     // Nice name 
     description : "How many foobars?",    // More detail about this
     type : "int"/"boolean"/"string"/{ value1:niceName, value2:niceName },
-    defaultValue : 20,
+    defaultValue : 20, 
     onChange : function(newValue) { ... }
   });
-
+  
     * onChange will be called whenever the value changes from the default
       (including when it is loaded)
-
-  Then use:
-
+  
+  Then use: 
+  
   Espruino.Config.MAX_FOOBARS in your code
  ------------------------------------------------------------------
 **/
 "use strict";
 (function() {
-
+  
   /** See addSection and getSections */
   var builtinSections = {};
 
   function _get(callback) {
     if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.sync.get( "CONFIGS", function (data) {
+      chrome.storage.sync.get( "CONFIGS", function (data) { 
         var value = data["CONFIGS"];
         console.log("GET chrome.storage.sync = "+JSON.stringify(value));
         callback(value);
@@ -4777,55 +4791,55 @@ Object.defineProperty(exports, '__esModule', { value: true });
       if (cookie!==undefined && cookie.indexOf("CONFIG=")>=0) {
         cookie = cookie.substring(cookie.indexOf("CONFIG=")+7);
         cookie = cookie.substring(0,cookie.indexOf(";"));
-        try {
+        try { 
           var json = atob(cookie);
-          data = JSON.parse(json);
-        } catch (e) {
+          data = JSON.parse(json); 
+        } catch (e) { 
           console.log("Got ", e, " while reading info");
         }
       }
       callback(data);
     } else {
       callback({});
-    }
+    } 
   }
 
   function _set(data) {
     if (typeof chrome !== 'undefined' && chrome.storage) {
       console.log("SET chrome.storage.sync = "+JSON.stringify(data));
-      chrome.storage.sync.set({ CONFIGS : data });
+      chrome.storage.sync.set({ CONFIGS : data });    
     } else if (typeof document != "undefined") {
       document.cookie = "CONFIG="+btoa(JSON.stringify(data));
     }
   }
-
+  
   function loadConfiguration(callback) {
     _get(function (value) {
-      for (var key in value) {
+      for (var key in value) { 
         if (key=="set") continue;
         Espruino.Config[key] = value[key];
         if (Espruino.Core.Config.data[key] !== undefined &&
             Espruino.Core.Config.data[key].onChange !== undefined)
           Espruino.Core.Config.data[key].onChange(value[key]);
-      }
+      }  
       if (callback!==undefined)
         callback();
     });
   }
-
+  
   function init() {
     addSection("General", { sortOrder:100, description: "General Web IDE Settings" });
     addSection("Communications", { sortOrder:200, description: "Settings for communicating with the Espruino Board" });
     addSection("Board", { sortOrder:300, description: "Settings for the Espruino Board itself" });
-
+    
   }
-
+  
   function add(name, options) {
     Espruino.Core.Config.data[name] = options;
     if (Espruino.Config[name] === undefined)
       Espruino.Config[name] = options.defaultValue;
   }
-
+  
   /** Add a section (or information on the page).
    * options = {
    *   sortOrder : int, // a number used for sorting
@@ -4837,7 +4851,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
     options.name = name;
     builtinSections[name] = options;
   }
-
+  
   /** Get an object containing the information on a section used in configs */
   function getSection(name) {
     if (builtinSections[name]!==undefined)
@@ -4847,7 +4861,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
       name : name
     };
   }
-
+  
   /** Get an object containing information on all 'sections' used in all the configs */
   function getSections() {
     var sections = [];
@@ -4857,26 +4871,26 @@ Object.defineProperty(exports, '__esModule', { value: true });
     // add other sections
     for (var i in Espruino.Core.Config.data) {
       var c = Espruino.Core.Config.data[i];
-
+      
       var found = false;
       for (var s in sections)
         if (sections[s].name == c.section)
           found = true;
-
+      
       if (!found) {
         console.warn("Section named "+c.section+" was not added with Config.addSection");
         sections[c.section] = {
             name : c.section,
             sortOrder : 0
-        };
+        };        
       }
     }
     // Now sort by sortOrder
     sections.sort(function (a,b) { return a.sortOrder - b.sortOrder; });
-
+    
     return sections;
   }
-
+  
   Espruino.Config = {};
   Espruino.Config.set = function (key, value) {
     if (Espruino.Config[key] != value) {
@@ -4889,11 +4903,11 @@ Object.defineProperty(exports, '__esModule', { value: true });
       var data = {};
       for (var key in Espruino.Config)
         if (key != "set")
-          data[key] = Espruino.Config[key];
-      _set(data);
+          data[key] = Espruino.Config[key];      
+      _set(data); 
     }
   };
-
+   
   function clearAll() { // clear all settings
     _set({});
     for (var name in Espruino.Core.Config.data) {
@@ -4901,22 +4915,22 @@ Object.defineProperty(exports, '__esModule', { value: true });
       Espruino.Config[name] = options.defaultValue;
     }
   }
-
+  
   Espruino.Core.Config = {
-      loadConfiguration : loadConfiguration, // special - called before init
-
+      loadConfiguration : loadConfiguration, // special - called before init 
+      
       init : init,
       add : add,
       data : {},
-
-
+      
+      
       addSection : addSection,
       getSection : getSection,
       getSections : getSections,
-
+      
       clearAll : clearAll, // clear all settings
   };
-
+  
 })();
 /*
 Gordon Williams (gw@pur3.co.uk)
@@ -5083,7 +5097,7 @@ To add a new serial device, you must add an object to
     }
 
     connectionInfo = undefined;
-    flowControlXOFF = false;
+    flowControlXOFF = false;   
     currentDevice = portToDevice[serialPort];
     currentDevice.open(serialPort, function(cInfo) {  // CONNECT
       if (!cInfo) {
@@ -5124,7 +5138,7 @@ To add a new serial device, you must add an object to
         // Just call connectCallback(undefined), don't bother sending disconnect
         connectCallback(undefined);
         return;
-      }
+      }      
       connectionInfo = undefined;
       if (writeTimeout!==undefined)
         clearTimeout(writeTimeout);
@@ -5614,6 +5628,9 @@ To add a new serial device, you must add an object to
 
     // When code is sent to Espruino, search it for modules and add extra code required to load them
     Espruino.addProcessor("transformForEspruino", function(code, callback) {
+      if (Espruino.Config.ROLLUP) {
+        return loadModulesRollup(code, callback);
+      }
       loadModules(code, callback);
     });
 
@@ -5790,8 +5807,24 @@ To add a new serial device, you must add an object to
         callback(loadedModuleData.join("\n") + "\n" + code);
       });
     }
-  };
+  }
 
+  function loadModulesRollup(code, callback) {
+    rollupTools.loadModulesRollup(code)
+      .then(generated => {
+        const minified = generated.code;
+        console.log('rollup: '+minified.length+' bytes');
+
+        // FIXME: needs warnings?
+        Espruino.Core.Notifications.info('Rollup no errors. Bundling ' + code.length + ' bytes to ' + minified.length + ' bytes');
+        callback(minified);
+      })
+      .catch(err => {
+        console.log('rollup:error', err);
+        Espruino.Core.Notifications.error("Rollup errors - Bundling failed: " + String(err).trim());
+        callback(code);
+      });
+  }
 
   Espruino.Core.Modules = {
     init : init
@@ -5938,18 +5971,18 @@ To add a new serial device, you must add an object to
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ------------------------------------------------------------------
   Try and get any URLS that are from GitHub
  ------------------------------------------------------------------
 **/
 "use strict";
 (function(){
-
+  
   function init() {
-    Espruino.addProcessor("getURL", getGitHub);
+    Espruino.addProcessor("getURL", getGitHub);      
   }
-
+  
   function getGitHub(data, callback) {
     var match = data.url.match(/^https?:\/\/github.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)$/);
     if (match) {
@@ -5959,7 +5992,7 @@ To add a new serial device, you must add an object to
           branch : match[3],
           path : match[4]
           };
-
+      
       var url = "https://raw.githubusercontent.com/"+git.owner+"/"+git.repo+"/"+git.branch+"/"+git.path;
       console.log("Found GitHub", JSON.stringify(git));
       callback({url: url});
@@ -6232,7 +6265,7 @@ To add a new serial device, you must add an object to
 
   // Node.js doesn't have utf8 installed
   var utf8lib;
-  if ("undefined"==typeof utf8) {
+  if ("undefined"==typeof utf8) {    
     if ("undefined"!=typeof require) {
       console.log("Loading UTF8 with require");
       utf8lib = require('utf8');
@@ -22137,16 +22170,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
                                                                                                                                                             Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>
-
+                                                                                                                                                          
                                                                                                                                                             Redistribution and use in source and binary forms, with or without
                                                                                                                                                             modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                          
                                                                                                                                                               * Redistributions of source code must retain the above copyright
                                                                                                                                                                 notice, this list of conditions and the following disclaimer.
                                                                                                                                                               * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                 notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                 documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                          
                                                                                                                                                             THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                             AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                             IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22237,16 +22270,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                                                                                                                                                                                                                                                     Copyright (C) 2012-2014 Yusuke Suzuki <utatane.tea@gmail.com>
                                                                                                                                                                                                                                                     Copyright (C) 2013 Alex Seville <hi@alexanderseville.com>
                                                                                                                                                                                                                                                     Copyright (C) 2014 Thiago de Arruda <tpadilha84@gmail.com>
-
+                                                                                                                                                                                                                                                  
                                                                                                                                                                                                                                                     Redistribution and use in source and binary forms, with or without
                                                                                                                                                                                                                                                     modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                                                                                                                  
                                                                                                                                                                                                                                                       * Redistributions of source code must retain the above copyright
                                                                                                                                                                                                                                                         notice, this list of conditions and the following disclaimer.
                                                                                                                                                                                                                                                       * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                                                                                                         notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                                                                                                         documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                                                                                                                  
                                                                                                                                                                                                                                                     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                                                                                                                     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                                                                                                                     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22427,16 +22460,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Redistribution and use in source and binary forms, with or without
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Redistributions of source code must retain the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      notice, this list of conditions and the following disclaimer.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22818,16 +22851,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Redistribution and use in source and binary forms, with or without
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Redistributions of source code must retain the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      notice, this list of conditions and the following disclaimer.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -23427,16 +23460,16 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Redistribution and use in source and binary forms, with or without
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Redistributions of source code must retain the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            notice, this list of conditions and the following disclaimer.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -23729,16 +23762,16 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Redistribution and use in source and binary forms, with or without
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        modification, are permitted provided that the following conditions are met:
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Redistributions of source code must retain the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            notice, this list of conditions and the following disclaimer.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Redistributions in binary form must reproduce the above copyright
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            notice, this list of conditions and the following disclaimer in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            documentation and/or other materials provided with the distribution.
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32702,6 +32735,7 @@ global.esmangle = require('../lib/esmangle');
       name : "Minification",
       description : "Automatically minify code from the Editor window?",
       type : { "":"No Minification",
+               "TERSER":"Terser (uglify-es)",
                "ESPRIMA":"Esprima (offline)",
                "WHITESPACE_ONLY":"Closure (online) - Whitespace Only",
                "SIMPLE_OPTIMIZATIONS":"Closure (online) - Simple Optimizations",
@@ -32713,6 +32747,7 @@ global.esmangle = require('../lib/esmangle');
       name : "Module Minification",
       description : "Automatically minify modules? Only modules with a .js extension will be minified - if a file with a .min.js extension exists then it will be used instead.",
       type : { "":"No Minification",
+               "TERSER":"Terser (uglify-es)",
                "ESPRIMA":"Esprima (offline)",
                "WHITESPACE_ONLY":"Closure (online) - Whitespace Only",
                "SIMPLE_OPTIMIZATIONS":"Closure (online) - Simple Optimizations",
@@ -32720,6 +32755,20 @@ global.esmangle = require('../lib/esmangle');
       defaultValue : "ESPRIMA"
     });
 
+    Espruino.Core.Config.add("ROLLUP",{
+      section : "Minification",
+      name : "Rollup: Enable Rollup",
+      description : "Use rollup.js along with rollup-plugin-espruino-modules for bundling",
+      type : "boolean",
+      defaultValue : false
+    });
+    Espruino.Core.Config.add("MODULE_MERGE",{
+      section : "Minification",
+      name : "Rollup: Unwrap modules using rollup.js",
+      description : "Uses rollup.js to merge modules and remove unused code",
+      type : "boolean",
+      defaultValue : true
+    });
     Espruino.Core.Config.add("MINIFICATION_Mangle",{
       section : "Minification",
       name : "Esprima: Mangle",
@@ -32856,7 +32905,28 @@ global.esmangle = require('../lib/esmangle');
     }
   }
 
+  function minifyCodeTerser(code, callback, description){
+    rollupTools.minifyCodeTerser(code)
+      .then(generated => {
+        var minified = generated.code;
+
+        // FIXME: needs warnings?
+        Espruino.Core.Notifications.info('Terser no errors'+description+'. Minifying ' + code.length + ' bytes to ' + minified.length + ' bytes');
+        callback(minified);
+      })
+      .catch(err => {
+        Espruino.Core.Notifications.warning("Terser errors"+description+" - sending unminified code.");
+        Espruino.Core.Notifications.error(String(err).trim());
+        callback(code);
+      });
+  }
+
+
   function minify(code, callback, level, isModule, description) {
+    if (Espruino.Config.ROLLUP) {
+        // already minified by the ROLLUP pipeline
+        return callback(code);
+    }
     (function() {
       Espruino.Core.Status.setStatus("Minifying"+(isModule?description.substr(2):""));
       var _callback = callback;
@@ -32865,6 +32935,7 @@ global.esmangle = require('../lib/esmangle');
         _callback(code);
       };
     })();
+
     var minifyCode = code;
     var minifyCallback = callback;
     if (isModule) {
@@ -32883,6 +32954,7 @@ global.esmangle = require('../lib/esmangle');
       case "SIMPLE_OPTIMIZATIONS":
       case "ADVANCED_OPTIMIZATIONS": minifyCodeGoogle(code, callback, level, description); break;
       case "ESPRIMA": minifyCodeEsprima(code, callback, description); break;
+      case "TERSER": minifyCodeTerser(code, callback, description); break;
       default: callback(code); break;
     }
   }
@@ -33011,16 +33083,16 @@ global.esmangle = require('../lib/esmangle');
       //console.log("prev "+JSON.stringify(previousString)+"   next "+tokenString);
 
       if (tok.str=="(" || tok.str=="{" || tok.str=="[") brackets++;
-      if (tok.str==")" || tok.str=="}" || tok.str=="]") brackets--;
-
       // TODO: check for eg. two IDs/similar which can't be merged without a space
       // preserve newlines at root scope to avoid us filling up the command buffer all at once
       if (brackets==0 && previousString.indexOf("\n")>=0)
         resultCode += "\n";
+      if (tok.str==")" || tok.str=="}" || tok.str=="]") brackets--;
       // if we have a token for something, use that - else use the string
       if (tokenId) {
         //console.log(JSON.stringify(tok.str)+" => "+tokenId);
         resultCode += String.fromCharCode(tokenId);
+        tok.type = "TOKENISED";
       } else {
         if ((tok.type=="ID" || tok.type=="NUMBER") &&
             (lastTok.type=="ID" || lastTok.type=="NUMBER"))

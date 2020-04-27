@@ -14,7 +14,7 @@ var AppInfo = {
             if (storageFile.url.endsWith(".js") && !storageFile.url.endsWith(".min.js")) { // if original file ends in '.js'...
               return Espruino.transform(content, {
                 SET_TIME_ON_WRITE : false,
-                //PRETOKENISE : true, // pretokenise still has an issue with number passing
+                PRETOKENISE : true,
                 MINIFICATION_LEVEL : "ESPRIMA",
                 builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
               });
