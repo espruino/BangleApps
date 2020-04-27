@@ -11,6 +11,16 @@ var AppInfo = {
           return Promise.resolve(storageFile);
         else if (storageFile.url)
           return fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
+            if (storageFile.url.endsWith(".js") && !storageFile.url.endsWith(".min.js")) { // if original file ends in '.js'...
+              return Espruino.transform(content, {
+                SET_TIME_ON_WRITE : false,
+                //PRETOKENISE : true, // pretokenise still has an issue with number passing
+                MINIFICATION_LEVEL : "ESPRIMA",
+                builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
+              });
+            } else
+              return content;
+          }).then(content => {
             return {
               name : storageFile.name,
               content : content,
