@@ -32976,6 +32976,10 @@ global.esmangle = require('../lib/esmangle');
 **/
 "use strict";
 (function(){
+  if (typeof acorn == "undefined") {
+    console.log("pretokenise: needs acorn, disabling.");
+  }
+
   function init() {
     Espruino.Core.Config.add("PRETOKENISE", {
       section : "Minification",
@@ -33069,7 +33073,23 @@ global.esmangle = require('../lib/esmangle');
 
 
   function pretokenise(code, callback) {
-    var lex = Espruino.Core.Utils.getLexer(code);
+    var lex = (function() {
+      var t = acorn.tokenizer(code);
+      return { next : function() {
+        var tk = t.getToken();
+        if (tk.type.label=="eof") return undefined;
+        var tp = "?";
+        if (tk.type.label=="template" || tk.type.label=="string") tp="STRING";
+        if (tk.type.label=="num") tp="NUMBER";
+        if (tk.type.keyword) tp="ID";
+        return {
+          startIdx : tk.start,
+          endIdx : tk.end,
+          str : code.substr(tk.start, tk.end),
+          type : tp
+        };
+      }};
+    })();
     var brackets = 0;
     var resultCode = "";
     var lastIdx = 0;
