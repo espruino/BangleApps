@@ -1025,7 +1025,7 @@
   { "id": "barclock",
     "name": "Bar Clock",
     "icon": "clock-bar.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A simple digital clock showing seconds as a bar",
     "tags": "clock",
     "type":"clock",
