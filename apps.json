@@ -1127,7 +1127,7 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
     "tags": "outdoors,widget",
      "readme": "README.md",
