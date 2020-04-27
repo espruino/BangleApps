@@ -38,12 +38,12 @@ const constrain = (n, low, high) => Math.max(Math.min(n, high), low);
 const random = (min, max) => Math.random() * (max - min) + min;
 const intersects = (circ, rect, right) => {
   var c = circ.pos;
-  c.r = circ.r;
-  if (c.y - c.r < rect.pos.y + rect.height && c.y + c.r > rect.pos.y) {
+  var r = circ.r;
+  if (c.y - r < rect.pos.y + rect.height && c.y + r > rect.pos.y) {
     if (right) {
-      return c.x + c.r > rect.pos.x - rect.width*2 && c.x < rect.pos.x + rect.width
+      return c.x + r > rect.pos.x - rect.width*2 && c.x < rect.pos.x + rect.width
     } else {
-      return c.x - c.r < rect.pos.x + rect.width*2 && c.x > rect.pos.x - rect.width
+      return c.x - r < rect.pos.x + rect.width*2 && c.x > rect.pos.x - rect.width
     }
   }
   return false;
