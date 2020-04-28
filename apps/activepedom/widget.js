@@ -33,27 +33,28 @@
 
   function storeData()  {
     now = new Date();
-    month = now.getMonth() + 1;
-    if (month < 10) month = "0" + month;
-    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data";
+    month = now.getMonth() + 1; //month is 0-based
+    if (month < 10) month = "0" + month; //leading 0
+    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
     dataFile = s.open(filename,"a");
-    if (dataFile) {
+    if (dataFile) { //check if filen already exists
       if (dataFile.getLength() == 0) {
-         stepsToWrite = 0;
-      }
-      else {
-        stepsToWrite = stepsCounted;
+        //new day, set steps to 0
+        stepsCounted = 0;
+        stepsTooShort = 0; 
+        stepsTooLong = 0;
+        stepsOutsideTime = 0;
       }
       dataFile.write([
         now.getTime(),
-        stepsToWrite,
+        stepsCounted,
         active,
         stepsTooShort,
         stepsTooLong,
         stepsOutsideTime,
       ].join(",")+"\n");
     }
-    dataFile = undefined;
+    dataFile = undefined; //save memory
   }
 
   //return setting

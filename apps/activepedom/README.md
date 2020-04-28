@@ -18,7 +18,7 @@ Steps are saved to a datafile every 5 minutes. You can watch a graph using the a
 * 10600 steps
 ![](10600.png)
 
-## Features
+## Features Widget
 
 * Two line display
 * Can display distance (in km) or steps in each line
@@ -32,21 +32,22 @@ Steps are saved to a datafile every 5 minutes. You can watch a graph using the a
 * Steps are saved to a file and read-in at start (to not lose step progress)
 * Settings can be changed in Settings - App/widget settings - Active Pedometer
 
+## Features App
+
+* The app accesses the data stored for the current day
+* Timespan is choseable (1h, 4h, 8h, 12h, 16h, 20, 24h), standard is 24h, the whole current day
+
 ## Data storage
 
-* Data is stored to a file
+* Data is stored to a file named activepedomYYYYMMDD.data (activepedom20200427.data)
+* One file is created for each day
 * Format: now,stepsCounted,active,stepsTooShort,stepsTooLong,stepsOutsideTime
-* now is UNIX timestamp in ms
-* You can chose the app to watch a steps graph
+* 'now' is UNIX timestamp in ms
+* You can use the app to watch a steps graph
 * You can import the file into Excel
 * The file does not include a header
 * You can convert UNIX timestamp to a date in Excel using this formula: =DATUM(1970;1;1)+(LINKS(A2;10)/86400)
 * You have to format the cell with the formula to a date cell. Example: JJJJ-MM-TT-hh-mm-ss
-
-## App
-
-* The app accesses the data stored for the current day
-* Timespan is choseable (1h, 4h, 8h, 12h, 16h, 20, 24h), standard is 24h, the whole current day
 
 ## Settings
 
