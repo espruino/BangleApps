@@ -61,7 +61,7 @@ function getVersionInfo(appListing, appInstalled) {
   var versionText = "";
   var canUpdate = false;
   function clicky(v) {
-    return `<a href="#" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
+    return `<a class="c-hand" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
   }
 
   if (!appInstalled) {
@@ -79,16 +79,3 @@ function getVersionInfo(appListing, appInstalled) {
     canUpdate : canUpdate
   }
 }
-
-const asyncLocalStorage = {
-    setItem: function (key, value) {
-        return Promise.resolve().then(function () {
-            localStorage.setItem(key, value);
-        });
-    },
-    getItem: function (key) {
-        return Promise.resolve().then(function () {
-            return localStorage.getItem(key);
-        });
-    }
-};
