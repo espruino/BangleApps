@@ -1514,5 +1514,26 @@
     "data": [
       {"name": "ballmaze.json"}
     ]
+  },
+  {
+    "id": "calendar",
+    "name": "Calendar",
+    "icon": "calendar.png",
+    "version": "0.01",
+    "description": "Simple calendar",
+    "tags": "calendar",
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "calendar.app.js",
+        "url": "calendar.js"
+      },
+      {
+        "name": "calendar.img",
+        "url": "calendar-icon.js",
+        "evaluate": true
+      }
+    ]
   }
 ]
