@@ -118,6 +118,7 @@ function showMainMenu() {
     'Select Clock': ()=>showClockMenu(),
     'HID': {
       value: 0 | hidV.indexOf(settings.HID),
+      min: 0, max: 3,
       format: v => hidN[v],
       onchange: v => {
         settings.HID = hidV[v];
