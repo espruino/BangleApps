@@ -1,3 +1,6 @@
+var storage = require('Storage');
+const settings = storage.readJSON('setting.json',1) || { HID: false };
+
 const reportIdJs=3;
 var sendInProgress = false; // Only send one message at a time, do not flood
 
@@ -56,8 +59,8 @@ function update() {
 	sendHid(x & 0xff, y & 0xff, btn1, btn2, btn3, btn4, btn5);
 }
 
-drawApp();
 if (settings.HID) {
+	drawApp();
 	setInterval(update, 100); // 10 Hz
 } else {
 	E.showMessage('HID disabled');
