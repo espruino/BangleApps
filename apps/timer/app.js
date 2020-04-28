@@ -1,1 +1,161 @@
-let counterInterval,buzzInterval,btn4WatchId,btn5WatchId,counter=0,setValue=0;const DEBUG=!1,APP_TITLE="TIMER",DEBOUNCE=50;function buzzAndBeep(){Bangle.buzz(1e3,1).then(()=>{Bangle.beep(200,4e3)})}function outOfTime(){counterInterval||(E.showMessage("Time's up\n\nBTN2 to reset","TIMER"),buzzAndBeep(),buzzInterval=setInterval(buzzAndBeep,5e3))}function draw(){const e=Math.floor(counter/60),t=counter-60*e,n=t<10?"0"+t:t.toString();g.clear(),g.setFontAlign(0,0),g.setFont("6x8",8),g.drawString(`${e}:${n}`,120,120)}function countDown(){if(counter<=0)return counterInterval&&(clearInterval(counterInterval),counterInterval=void 0),void outOfTime();counter--,draw()}function startTimer(){counterInterval||(stopTouchWatch(),setValue=counter,countDown(),counterInterval=setInterval(countDown,1e3))}function clearIntervals(){counterInterval&&(clearInterval(counterInterval),counterInterval=void 0),buzzInterval&&(clearInterval(buzzInterval),buzzInterval=void 0)}let lastReleaseTime=0;const THRESHOLD1=5e3,THRESHOLD2=7500;function getDelta(){const e=Date.now()-lastReleaseTime;return 0===lastReleaseTime||e<5e3?1:e<7500?10:30}function handleBtnPress(e,t){setTimeout(()=>{e.read()?t():lastReleaseTime=Date.now()},50)}function increaseTimer(){const e=getDelta();counter+=e,"unset"===state&&(state="set"),draw(),g.flip(),handleBtnPress(BTN5,increaseTimer)}function decreaseTimer(){const e=getDelta();counter=Math.max(0,counter-e),draw(),g.flip(),handleBtnPress(BTN4,decreaseTimer)}function reset(e){counter=e,setTouchWatch(),clearIntervals(),draw()}let state="unset";function changeState(){"unset"!==state&&("set"===state?(state="started",startTimer()):"started"===state&&(state="set",reset(setValue)))}function setTouchWatch(){btn4WatchId=setWatch(decreaseTimer,BTN4,{debounce:50,repeat:!0}),btn5WatchId=setWatch(increaseTimer,BTN5,{debounce:50,repeat:!0})}function stopTouchWatch(){btn4WatchId&&(clearWatch(btn4WatchId),btn4WatchId=void 0),btn5WatchId&&(clearWatch(btn5WatchId),btn5WatchId=void 0)}setWatch(changeState,BTN2,{debounce:1e3,repeat:!0,edge:"falling"}),reset(0),E.showMessage("Tap right, time UP\n\nleft time DOWN","TIMER");
+let counter = 0;
+let setValue = 0;
+let counterInterval;
+let buzzInterval;
+let resetLastReleaseTimeTimeout;
+const DEBUG = true;
+
+const APP_TITLE = "TIMER";
+const DEBOUNCE = 100;
+
+function buzzAndBeep() {
+  Bangle.buzz(1e3, 1).then(() => {
+    Bangle.beep(200, 4000);
+  });
+}
+
+function outOfTime() {
+  E.showMessage("Time's up\n\nBTN1 to restart", APP_TITLE);
+  buzzAndBeep();
+  buzzInterval = setInterval(buzzAndBeep, 5000);
+}
+
+function draw() {
+  const minutes = Math.floor(counter / 60);
+  const seconds = counter - minutes * 60;
+  const seconds2Digits = seconds < 10 ? `0${seconds}` : seconds.toString();
+  g.clear();
+  g.setFontAlign(0, 0);
+  g.setFont("6x8", 7);
+  g.drawString(`${minutes}:${seconds2Digits}`, 120, 120);
+}
+
+function countDown() {
+  if (DEBUG) console.log("countDown");
+  if (counter <= 0) {
+    if (counterInterval) {
+      clearInterval(counterInterval);
+      counterInterval = undefined;
+    }
+    outOfTime();
+    return;
+  }
+
+  counter--;
+  if (DEBUG) console.log("counter", counter);
+  draw();
+}
+
+function clearIntervals() {
+  if (counterInterval) {
+    clearInterval(counterInterval);
+    counterInterval = undefined;
+  }
+  if (buzzInterval) {
+    clearInterval(buzzInterval);
+    buzzInterval = undefined;
+  }
+}
+
+let lastReleaseTime = 0;
+const THRESHOLD1 = 3000;
+const THRESHOLD2 = 5000;
+function getDelta() {
+  const now = Date.now();
+  if (lastReleaseTime === 0) lastReleaseTime = Date.now();
+  const keyDownDuration = now - lastReleaseTime;
+  if (DEBUG) console.log("keyDownDuration", keyDownDuration);
+  if (keyDownDuration < THRESHOLD1) {
+    return 1;
+  } else if (keyDownDuration < THRESHOLD2) {
+    return 10;
+  } else {
+    return 30;
+  }
+}
+
+function handleBtnPress(btn, cb) {
+  setTimeout(() => {
+    if (btn.read()) {
+      if (resetLastReleaseTimeTimeout)
+        clearTimeout(resetLastReleaseTimeTimeout);
+      cb();
+    } else {
+      resetLastReleaseTimeTimeout = setTimeout(() => {
+        lastReleaseTime = Date.now();
+      }, 1000);
+    }
+  }, DEBOUNCE);
+}
+
+function increaseTimer() {
+  if (state === "started") return;
+  if (DEBUG) console.log("increase");
+  const delta = getDelta();
+  counter += delta;
+  if (state === "unset") {
+    state = "set";
+  }
+  draw();
+  g.flip();
+  handleBtnPress(BTN5, increaseTimer);
+}
+
+function decreaseTimer() {
+  if (state === "started") return;
+  if (DEBUG) console.log("decrease");
+  const delta = getDelta();
+  counter = Math.max(0, counter - delta);
+  draw();
+  g.flip();
+  handleBtnPress(BTN4, decreaseTimer);
+}
+
+function startTimer() {
+  setValue = counter;
+  countDown();
+  counterInterval = setInterval(countDown, 1000);
+}
+
+let state = "unset"; // -> set -> started -> set
+const stateMap = {
+  unset: () => {},
+  set: () => {
+    state = "started";
+    startTimer();
+  },
+  started: () => {
+    state = "set";
+    reset(setValue);
+  }
+};
+
+function changeState() {
+  if (DEBUG) console.log("changeState", state);
+  stateMap[state]();
+}
+
+function reset(value) {
+  if (DEBUG) console.log("reset");
+  counter = value;
+  clearIntervals();
+  draw();
+}
+
+reset(0);
+
+clearWatch();
+setWatch(changeState, BTN1, { debounce: 1000, repeat: true, edge: "falling" });
+setWatch(decreaseTimer, BTN4, {
+  debounce: DEBOUNCE,
+  repeat: true
+});
+setWatch(increaseTimer, BTN5, {
+  debounce: DEBOUNCE,
+  repeat: true
+});
+
+E.showMessage(
+  "Tap right, time UP\n\nleft time DOWN,\n\n BTN1 to start/stop",
+  APP_TITLE
+);
