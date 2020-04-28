@@ -53,7 +53,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -78,7 +78,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -86,8 +86,10 @@
       {"name":"welcome.boot.js","url":"boot.js"},
       {"name":"welcome.app.js","url":"app.js"},
       {"name":"welcome.settings.js","url":"settings.js"},
-      {"name":"welcome.settings.json","url":"settings-default.json","evaluate":true},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"welcome.json"}
     ]
   },
   { "id": "gbridge",
@@ -106,7 +108,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -120,13 +122,12 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.17",
+    "version":"0.18",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
       {"name":"setting.boot.js","url":"boot.js"},
-      {"name":"setting.json","url":"settings-default.json","evaluate":true},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
     "sortorder" : -2
@@ -135,16 +136,18 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
       {"name":"alarm.boot.js","url":"boot.js"},
       {"name":"alarm.js","url":"alarm.js"},
-      {"name":"alarm.json","content":"[]"},
       {"name":"alarm.img","url":"app-icon.js","evaluate":true},
       {"name":"alarm.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"alarm.json"}
     ]
   },
   { "id": "wclock",
@@ -158,6 +161,19 @@
     "storage": [
       {"name":"wclock.app.js","url":"clock-word.js"},
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "impwclock",
+    "name": "Imprecise Word Clock",
+    "icon": "clock-impword.png",
+    "version":"0.01",
+    "description": "Imprecise word clock for vacations, weekends, and those who never need accurate time.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"impwclock.app.js","url":"clock-impword.js"},
+      {"name":"impwclock.img","url":"clock-impword-icon.js","evaluate":true}
     ]
   },
   { "id": "aclock",
@@ -280,15 +296,18 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
     "storage": [
       {"name":"gpsrec.app.js","url":"app.js"},
-      {"name":"gpsrec.json","url":"app-settings.json","evaluate":true},
       {"name":"gpsrec.img","url":"app-icon.js","evaluate":true},
       {"name":"gpsrec.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"gpsrec.json"},
+      {"wildcard":".gpsrc?","storageFile": true}
     ]
   },
   { "id": "gpsnav",
@@ -297,6 +316,7 @@
     "version":"0.01",
     "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording",
     "tags": "tool,outdoors,gps",
+    "readme": "README.md",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.js"},
       {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
@@ -306,15 +326,18 @@
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
     "storage": [
       {"name":"heart.app.js","url":"app.js"},
-      {"name":"heart.json","url":"app-settings.json","evaluate":true},
       {"name":"heart.img","url":"app-icon.js","evaluate":true},
       {"name":"heart.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"heart.json"},
+      {"wildcard":".heart?","storageFile": true}
     ]
   },
   { "id": "slevel",
@@ -339,6 +362,23 @@
       {"name":"files.img","url":"files-icon.js","evaluate":true}
     ]
   },
+  { "id": "weather",
+    "name": "Weather",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "Show Gadgetbridge weather report",
+    "readme": "readme.md",
+    "tags": "widget,outdoors",
+    "storage": [
+      {"name":"weather.app.js","url":"app.js"},
+      {"name":"weather.wid.js","url":"widget.js"},
+      {"name":"weather","url":"lib.js"},
+      {"name":"weather.img","url":"icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name": "weather.json"}
+    ]
+  },
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
@@ -354,14 +394,16 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.09",
+    "version":"0.11",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
-      {"name":"widbatpc.settings.js","url":"settings.js"},
-      {"name":"widbatpc.settings.json","content": "{}"}
+      {"name":"widbatpc.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widbatpc.json"}
     ]
   },
   { "id": "widbt",
@@ -423,7 +465,7 @@
   { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
-    "version":"0.06",
+    "version":"0.07",
     "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
@@ -529,20 +571,22 @@
     "id": "ncstart",
     "name": "NCEU Startup",
     "icon": "start.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "NodeConfEU 2019 'First Start' Sequence",
     "tags": "start,welcome",
     "storage": [
       {"name":"ncstart.app.js","url":"start.js"},
       {"name":"ncstart.boot.js","url":"boot.js"},
       {"name":"ncstart.settings.js","url":"settings.js"},
-      {"name":"ncstart.settings.json","url":"settings-default.json","evaluate":true},
       {"name":"ncstart.img","url":"start-icon.js","evaluate":true},
       {"name":"nc-bangle.img","url":"start-bangle.js","evaluate":true},
       {"name":"nc-nceu.img","url":"start-nceu.js","evaluate":true},
       {"name":"nc-nfr.img","url":"start-nfr.js","evaluate":true},
       {"name":"nc-nodew.img","url":"start-nodew.js","evaluate":true},
       {"name":"nc-tf.img","url":"start-tf.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"ncstart.json"}
     ]
   },
   { "id": "ncfrun",
@@ -890,8 +934,8 @@
     "name": "Torch",
     "shortName":"Torch",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN3 four times in quick succession to start when in normal clock mode",
+    "version":"0.02",
+    "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets",
     "tags": "tool,torch",
     "storage": [
       {"name":"torch.app.js","url":"app.js"},
@@ -981,7 +1025,7 @@
   { "id": "barclock",
     "name": "Bar Clock",
     "icon": "clock-bar.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A simple digital clock showing seconds as a bar",
     "tags": "clock",
     "type":"clock",
@@ -1061,14 +1105,18 @@
   },
   { "id": "toucher",
     "name": "Touch Launcher",
-    "shortName":"Menu",
+    "shortName":"Toucher",
     "icon": "app.png",
     "version":"0.06",
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
+    "data": [
+      {"name":"toucher.json"}
+    ],
     "storage": [
-      {"name":"toucher.app.js","url":"app.js"}
+      {"name":"toucher.app.js","url":"app.js"},
+      {"name":"toucher.settings.js","url":"settings.js"}
     ],
     "sortorder" : -10
   },
@@ -1113,7 +1161,7 @@
   { "id": "minionclk",
     "name": "Minion clock",
     "icon": "minionclk.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Minion themed clock.",
     "tags": "clock,minion",
     "type": "clock",
@@ -1140,22 +1188,22 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.02",
-    "description": "Pedometer that filters out arm movement and displays a step goal progress.",
+    "version":"0.04",
+    "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
     "tags": "outdoors,widget",
-    "type":"widget",
      "readme": "README.md",
     "storage": [
       {"name":"activepedom.wid.js","url":"widget.js"},
       {"name":"activepedom.settings.js","url":"settings.js"},
-      {"name":"activepedom.img","url":"app-icon.js","evaluate":true}
+      {"name":"activepedom.img","url":"app-icon.js","evaluate":true},
+      {"name":"activepedom.app.js","url":"app.js"}
     ]
   },
   { "id": "chronowid",
     "name": "Chrono Widget",
     "shortName":"Chrono Widget",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Chronometer (timer) which runs as widget.",
     "tags": "tools,widget",
      "readme": "README.md",
@@ -1234,7 +1282,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1242,8 +1290,10 @@
     "storage": [
       {"name":"numerals.app.js","url":"numerals.app.js"},
       {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
-	    {"name":"numerals.settings.js","url":"numerals.settings.js"},
-      {"name":"numerals.json","url":"numerals-default.json","evaluate":true}
+      {"name":"numerals.settings.js","url":"numerals.settings.js"}
+    ],
+    "data":[
+      {"name":"numerals.json"}
     ]
   },
   { "id": "bledetect",
@@ -1307,10 +1357,54 @@
     ]
   },
   {
+    "id": "buffgym",
+    "name": "BuffGym",
+    "icon": "buffgym.png",
+    "version":"0.02",
+    "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
+    "tags": "tool,outdoors,gym,exercise",
+    "type": "app",
+    "interface": "buffgym.html",
+    "allow_emulator": false,
+    "readme": "README.md",
+    "storage": [
+      {"name":"buffgym.app.js", "url": "buffgym.app.js"},
+      {"name":"buffgym-set.js","url":"buffgym-set.js"},
+      {"name":"buffgym-exercise.js","url":"buffgym-exercise.js"},
+      {"name":"buffgym-workout.js","url":"buffgym-workout.js"},
+      {"name":"buffgym-workout-a.json","url":"buffgym-workout-a.json"},
+      {"name":"buffgym-workout-b.json","url":"buffgym-workout-b.json"},
+      {"name":"buffgym-workout-index.json","url":"buffgym-workout-index.json"},
+      {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "banglerun",
+    "name": "BangleRun",
+    "shortName": "BangleRun",
+    "icon": "banglerun.png",
+    "version": "0.01",
+    "description": "An app for running sessions.",
+    "tags": "run,running,fitness,outdoors",
+    "allow_emulator": false,
+    "storage": [
+      {
+        "name": "banglerun.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "banglerun.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
     "version": "0.03",
+    "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "tags": "tool",
     "allow_emulator": true,
@@ -1351,7 +1445,7 @@
         {"name":"hidcam.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  { 
+  {
     "id": "rclock",
     "name": "Round clock with seconds,  minutes and date",
     "shortName":"Round Clock",
@@ -1363,6 +1457,61 @@
     "storage": [
       {"name":"rclock.app.js","url":"rclock.app.js"},
       {"name":"rclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "hamloc",
+    "name": "QTH Locator / Maidenhead Locator System",
+    "shortName": "QTH Locator",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Convert your current GPS location to the Maidenhead locator system used by HAM amateur radio operators",
+    "tags": "tool,outdoors,gps",
+    "storage": [
+      {"name":"hamloc.app.js","url":"app.js"},
+      {"name":"hamloc.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "osmpoi",
+    "name": "POI Compass",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Uploads all the points of interest in an area onto your watch, same as Beer Compass with more p.o.i.",
+    "tags": "tool,outdoors,gps",
+    "custom": "osmpoi.html",
+    "storage": [
+      {"name":"osmpoi.app.js"},
+      {"name":"osmpoi.img"}
+    ]
+  },
+  { "id": "pong",
+    "name": "Pong",
+    "shortName": "Pong",
+    "icon": "pong.png",
+    "version": "0.02",
+    "description": "A clone of the Atari game Pong",
+    "tags": "game",
+    "type": "app",
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"pong.app.js","url":"app.js"},
+      {"name":"pong.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "ballmaze",
+    "name": "Ball Maze",
+    "icon": "icon.png",
+    "version": "0.01",
+    "description": "Navigate a ball through a maze by tilting your watch.",
+    "readme": "README.md",
+    "tags": "game",
+    "type": "app",
+    "storage": [
+      {"name": "ballmaze.app.js","url":"app.js"},
+      {"name": "ballmaze.img","url":"icon.js","evaluate": true}
+    ],
+    "data": [
+      {"name": "ballmaze.json"}
     ]
   }
 ]
