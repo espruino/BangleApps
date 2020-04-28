@@ -1518,7 +1518,7 @@
     "shortName": "Joystick",
     "icon": "app.png",
     "version":"0.01",
-    "description": "Emulate a 2 Axis/5 Button Joystick using the accelerometer as stick input and buttons 1-3, touch left and touch right.",
+    "description": "Emulate a 2 axis/5 button Joystick using the accelerometer as stick input and buttons 1-3, touch left and touch right.",
     "tags": "bluetooth",
     "storage": [
       {"name":"hidjoystick.app.js","url":"app.js"},
