@@ -57,4 +57,9 @@ function update() {
 }
 
 drawApp();
-setInterval(update, 100); // 10 Hz
+if (settings.HID) {
+	setInterval(update, 100); // 10 Hz
+} else {
+	E.showMessage('HID disabled');
+	setTimeout(load, 1000);
+}
