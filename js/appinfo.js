@@ -15,7 +15,7 @@ var AppInfo = {
               return Espruino.transform(content, {
                 SET_TIME_ON_WRITE : false,
                 PRETOKENISE : true,
-                MINIFICATION_LEVEL : "ESPRIMA",
+                //MINIFICATION_LEVEL : "ESPRIMA", // disable due to https://github.com/espruino/BangleApps/pull/355#issuecomment-620124162
                 builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
               });
             } else
