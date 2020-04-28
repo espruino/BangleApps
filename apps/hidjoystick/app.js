@@ -1,3 +1,4 @@
+const reportIdJs=3;
 var sendInProgress = false; // Only send one message at a time, do not flood
 
 const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
@@ -5,7 +6,7 @@ const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
 		const buttons = (btn5<<4) | (btn4<<3) | (btn3<<2) | (btn2<<1) | (btn1<<0);
 		if (!sendInProgress) {
 			sendInProgress = true;
-			NRF.sendHIDReport([3, buttons, x, y], () => {
+			NRF.sendHIDReport([reportIdJs, buttons, x, y], () => {
 				sendInProgress = false;
 				if (cb) cb();
 			});
