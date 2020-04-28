@@ -71,8 +71,9 @@
       enabledConsumers = enabledConsumers | switchableConsumers.gps;
     if (hrmEventReceived)
       enabledConsumers = enabledConsumers | switchableConsumers.hrm;
-    //if (Bangle.isBluetoothOn())
-    //   enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
+    // Very coarse first approach to check if the BLE device is on.
+    if (NRF.getSecurityStatus().connected)
+       enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
 
     // Reset the event registration vars
     compassEventReceived = false;
