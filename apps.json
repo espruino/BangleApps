@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.14",
+    "version":"0.15",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -122,9 +122,10 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.18",
+    "version":"0.19",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
+    "readme": "README.md",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
       {"name":"setting.boot.js","url":"boot.js"},
@@ -480,7 +481,7 @@
     "name": "Bluetooth Music Controls",
     "shortName": "Music Control",
     "icon": "hid-music.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
     "tags": "bluetooth",
     "storage": [
@@ -492,7 +493,7 @@
     "name": "Bluetooth Keyboard",
     "shortName": "Bluetooth Kbd",
     "icon": "hid-keyboard.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
     "tags": "bluetooth",
     "storage": [
@@ -504,7 +505,7 @@
     "name": "Binary Bluetooth Keyboard",
     "shortName": "Binary BT Kbd",
     "icon": "hid-binary-keyboard.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
     "tags": "bluetooth",
     "storage": [
@@ -1437,7 +1438,7 @@
     "name": "Camera shutter",
     "shortName":"Cam shutter",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Enable HID, connect to your phone, start your camera and trigger the shot on your Bangle",
     "tags": "tools",
     "storage": [

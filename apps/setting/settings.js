@@ -61,6 +61,8 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
+  var hidV = [false, "kbmedia", "kb", "joy"];
+  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
@@ -115,10 +117,10 @@ function showMainMenu() {
     'Locale': ()=>showLocaleMenu(),
     'Select Clock': ()=>showClockMenu(),
     'HID': {
-      value: settings.HID,
-      format: boolFormat,
-      onchange: () => {
-        settings.HID = !settings.HID;
+      value: 0 | hidV.indexOf(settings.HID),
+      format: v => hidN[v],
+      onchange: v => {
+        settings.HID = hidV[v];
         updateSettings();
       }
     },
