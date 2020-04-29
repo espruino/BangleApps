@@ -1,7 +1,11 @@
 var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app JSON
 var files = []; // list of files on Bangle
-const FAVOURITE = "favouriteapps.json";
+var DEFAULTSETTINGS = {
+  pretokenise : true,
+  favourites : ["boot","launch","setting"]
+};
+var SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -143,23 +147,18 @@ function handleAppInterface(app) {
   });
 }
 
-function getAppFavourites() {
-  var f = localStorage.getItem(FAVOURITE);
-  return (f === null) ? ["boot","launch","setting"] : JSON.parse(f);
-}
-
 function changeAppFavourite(favourite, app) {
-  var favourites = getAppFavourites();
+  var favourites = SETTINGS.favourites;
   if (favourite) {
-    favourites = favourites.concat([app.id]);
+    SETTINGS.favourites = SETTINGS.favourites.concat([app.id]);
   } else {
     if ([ "boot","setting"].includes(app.id)) {
       showToast(app.name + ' is required, can\'t remove it' , 'warning');
     }else {
-      favourites = favourites.filter(e => e != app.id);
+      SETTINGS.favourites = SETTINGS.favourites.filter(e => e != app.id);
     }
   }
-  localStorage.setItem(FAVOURITE, JSON.stringify(favourites));
+  saveSettings();
   refreshLibrary();
 }
 
@@ -192,7 +191,7 @@ function refreshFilter(){
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
   var visibleApps = appJSON;
-  var favourites = getAppFavourites();
+  var favourites = SETTINGS.favourites;
 
   if (activeFilter) {
     if ( activeFilter == "favourites" ) {
@@ -590,6 +589,49 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
+// Settings
+var SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
+/// Load settings and update controls
+function loadSettings() {
+  var j = localStorage.getItem("settings");
+  if (typeof j != "string") return;
+  try {
+    var s = JSON.parse(j);
+    Object.keys(s).forEach( k => {
+      SETTINGS[k]=s[k];
+      if (SETTINGS_HOOKS[k]) SETTINGS_HOOKS[k]();
+    } );
+  } catch (e) {
+    console.error("Invalid settings");
+  }
+}
+/// Save settings
+function saveSettings() {
+  localStorage.setItem("settings", JSON.stringify(SETTINGS));
+  console.log("Changed settings", SETTINGS);
+}
+// Link in settings DOM elements
+function settingsCheckbox(id, name) {
+  var setting = document.getElementById(id);
+  function update() {
+    setting.checked = SETTINGS[name];
+  }
+  SETTINGS_HOOKS[name] = update;
+  setting.addEventListener('click', function() {
+    SETTINGS[name] = setting.checked;
+    saveSettings();
+  });
+}
+settingsCheckbox("settings-pretokenise", "pretokenise");
+loadSettings();
+
+document.getElementById("defaultsettings").addEventListener("click",event=>{
+  SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
+  saveSettings();
+  loadSettings(); // update all settings
+  refreshLibrary(); // favourites were in settings
+});
+
 document.getElementById("settime").addEventListener("click",event=>{
   Comms.setTime().then(()=>{
     showToast("Time set successfully","success");
@@ -620,9 +662,9 @@ document.getElementById("installdefault").addEventListener("click",event=>{
   });
 });
 
-// Install all favoutrie apps in one go
+// Install all favourite apps in one go
 document.getElementById("installfavourite").addEventListener("click",event=>{
-  var favApps = getAppFavourites();
+  var favApps = SETTINGS.favourites;
   installMultipleApps(favApps, "favourite").catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");

@@ -14,7 +14,7 @@ var AppInfo = {
             if (storageFile.url.endsWith(".js") && !storageFile.url.endsWith(".min.js")) { // if original file ends in '.js'...
               return Espruino.transform(content, {
                 SET_TIME_ON_WRITE : false,
-                PRETOKENISE : true,
+                PRETOKENISE : SETTINGS.pretokenise,
                 //MINIFICATION_LEVEL : "ESPRIMA", // disable due to https://github.com/espruino/BangleApps/pull/355#issuecomment-620124162
                 builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
               });
