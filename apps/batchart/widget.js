@@ -71,8 +71,10 @@
       enabledConsumers = enabledConsumers | switchableConsumers.gps;
     if (hrmEventReceived)
       enabledConsumers = enabledConsumers | switchableConsumers.hrm;
-    //if (Bangle.isBluetoothOn())
-    //   enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
+
+    // Very coarse first approach to check if the BLE device is on.
+    if (NRF.getSecurityStatus().connected)
+       enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
 
     // Reset the event registration vars
     compassEventReceived = false;
@@ -110,19 +112,14 @@
   }
 
   function reload() {
-    WIDGETS.batchart.width = 24;
+    WIDGETS["batchart"].width = 24;
 
     recordingInterval = setInterval(logBatteryData, recordingInterval10Min);
-
-    logBatteryData();
   }
 
   // add the widget
-  WIDGETS.batchart = {
-    area: "tl", width: 24, draw: draw, reload: function () {
-      reload();
-      Bangle.drawWidgets();
-    }
+  WIDGETS["batchart"] = {
+    area: "tl", width: 24, draw: draw, reload: reload
   };
 
   reload();
