@@ -14,7 +14,7 @@
   },{ "id": "bfit",
     "name": "Bangle Fit",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Bangle Fit Widget for Bangle Fit app",
     "tags": "tool,system,android,widget",
     "type":"widget",
