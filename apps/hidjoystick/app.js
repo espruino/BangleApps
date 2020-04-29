@@ -1,7 +1,6 @@
 var storage = require('Storage');
 const settings = storage.readJSON('setting.json',1) || { HID: false };
 
-const reportIdJs=3;
 var sendInProgress = false; // Only send one message at a time, do not flood
 
 const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
@@ -9,7 +8,7 @@ const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
 		const buttons = (btn5<<4) | (btn4<<3) | (btn3<<2) | (btn2<<1) | (btn1<<0);
 		if (!sendInProgress) {
 			sendInProgress = true;
-			NRF.sendHIDReport([reportIdJs, buttons, x, y], () => {
+			NRF.sendHIDReport([buttons, x, y], () => {
 				sendInProgress = false;
 				if (cb) cb();
 			});
@@ -59,10 +58,17 @@ function update() {
 	sendHid(x & 0xff, y & 0xff, btn1, btn2, btn3, btn4, btn5);
 }
 
-if (settings.HID) {
+if (settings.HID === "joy") {
 	drawApp();
 	setInterval(update, 100); // 10 Hz
 } else {
-	E.showMessage('HID disabled');
-	setTimeout(load, 1000);
+	E.showPrompt("Enable HID?",{title:"HID disabled"}).then(function(enable) {
+		if (enable) {
+			settings.HID = "joy";
+			storage.write('setting.json', settings);
+			setTimeout(load, 1000, "hidjoystick.app.js");
+		} else {
+			setTimeout(load, 1000);
+		}
+	});
 }
