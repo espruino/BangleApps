@@ -1438,7 +1438,7 @@
     "name": "Camera shutter",
     "shortName":"Cam shutter",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Enable HID, connect to your phone, start your camera and trigger the shot on your Bangle",
     "readme": "README.md",
     "tags": "bluetooth,tool",
