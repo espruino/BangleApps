@@ -4,7 +4,7 @@ const settings = storage.readJSON('setting.json',1) || { HID: false };
 
 var sendHid, camShot, profile;
 
-if (settings.HID) {
+if (settings.HID=="kbmedia") {
   profile = 'camShutter';
   sendHid = function (code, cb) {
     try {
@@ -19,8 +19,13 @@ if (settings.HID) {
   };
   camShot = function (cb) { sendHid(0x80, cb); };
 } else {
-  E.showMessage('HID disabled');
-  setTimeout(load, 1000);
+  E.showPrompt("Enable HID?",{title:"HID disabled"}).then(function(enable) {
+    if (enable) {
+      settings.HID = "kbmedia";
+      require("Storage").write('setting.json', settings);
+      setTimeout(load, 1000, "hidcam.app.js");
+    } else setTimeout(load, 1000);
+  });
 }
 function drawApp() {
   g.clear();
