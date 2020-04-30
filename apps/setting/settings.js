@@ -422,7 +422,7 @@ function showAppSettingsMenu() {
   const apps = storage.list(/\.settings\.js$/)
     .map(s => s.substr(0, s.length-12))
     .map(id => {
-      const a=storage.readJSON(id+'.info',1);
+      const a=storage.readJSON(id+'.info',1) || {name: id};
       return {id:id,name:a.name,sortorder:a.sortorder};
     })
     .sort((a, b) => {
