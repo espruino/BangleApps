@@ -1158,5 +1158,22 @@
       {"name":"batchart.app.js","url":"app.js"},
       {"name":"batchart.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "smartswitch",
+    "name": "BTLE Smartswitch",
+    "shortName":"Smartswitch",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Using EspruinoHub, control your smart devices on and off via Bluetooth Low Energy!",
+    "tags": "bluetooth,btle,smart,switch",
+    "readme": "README.md",
+    "storage": [
+      {"name":"smartswitch.app.js","url":"app.js"},
+      {"name":"smartswitch-on.img","url":"app-icon.js","evaluate":true},
+      {"name":"smartswitch-on.img","url":"smartswitch-icon.js","evaluate":true},
+      {"name":"smartswitch-off.img","url":"switch-off.js","evaluate":true},
+      {"name":"light-on.img","url":"light-on.js","evaluate":true},
+      {"name":"light-off.img","url":"light-off.js","evaluate":true}
+    ]
   }
 ]
