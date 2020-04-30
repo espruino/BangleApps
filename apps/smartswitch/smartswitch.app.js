@@ -21,7 +21,7 @@ let pages = [
   },
   {
     name: "Upstairs",
-    icon: "smartswitch",
+    icon: "switch",
     state: false
   }];
 
