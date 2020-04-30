@@ -10,3 +10,5 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Add `Favourite` functionality
 * Version number now clickable even when you're at the latest version (fix #291)
 * Rewrite 'getInstalledApps' to minimize RAM usage
+* Added code to handle Settings
+* Added espruinotools.js for pretokenisation

@@ -58,13 +58,13 @@
         }
         g.reset();
         if (diff >= 0) {
-            if (diff < 600000) { //less than 1 hour left
+            if (diff < 3600000) { //less than 1 hour left
                 width = 58;
                 g.clearRect(this.x,this.y,this.x+width,this.y+height);
                 g.setFont("6x8", 2);
                 g.drawString(getTime(diff).substring(3), this.x+1, this.y+5); //remove hour part 00:00:00 -> 00:00
             }
-            if (diff >= 600000) { //one hour or more left
+            if (diff >= 3600000) { //one hour or more left
                 width = 48;
                 g.clearRect(this.x,this.y,this.x+width,this.y+height);
                 g.setFont("6x8", 1);

@@ -1,2 +1,3 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: Added Locale based date
+0.04: Improve performance, attempt to remove occasional glitch when LCD on (fix #279)
