@@ -1160,7 +1160,7 @@
     ]
   },
   { "id": "smtswch",
-    "name": "Smartswitch",
+    "name": "Smart Switch",
     "shortName":"SmtSwch",
     "icon": "app.png",
     "version":"0.01",
