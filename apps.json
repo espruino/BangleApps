@@ -1169,8 +1169,8 @@
     "type": "bluetooth",
     "readme": "README.md",
     "storage": [
-      {"name":"smtswch.js","url":"app.js"},
-      {"name":"smtswch.img","url":"app-icon.js","evaluate":true},
+      {"name":"app.js","url":"app.js"},
+      {"name":"smtswch.img","url":"smtswch.js","evaluate":true},
       {"name":"light-on.img","url":"light-on.js","evaluate":true},
       {"name":"light-off.img","url":"light-off.js","evaluate":true},
       {"name":"switch-on.img","url":"switch-on.js","evaluate":true},
