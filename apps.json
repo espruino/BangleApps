@@ -1169,8 +1169,8 @@
     "readme": "README.md",
     "storage": [
       {"name":"smartswitch.app.js","url":"app.js"},
-      {"name":"smartswitch-on.img","url":"app-icon.js","evaluate":true},
-      {"name":"smartswitch-on.img","url":"smartswitch-icon.js","evaluate":true},
+      {"name":"smartswitch.img","url":"app-icon.js","evaluate":true},
+      {"name":"smartswitch-on.img","url":"switch-on.js","evaluate":true},
       {"name":"smartswitch-off.img","url":"switch-off.js","evaluate":true},
       {"name":"light-on.img","url":"light-on.js","evaluate":true},
       {"name":"light-off.img","url":"light-off.js","evaluate":true}
