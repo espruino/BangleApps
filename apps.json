@@ -1408,6 +1408,7 @@
     "version":"0.01",
     "description": "Convert your current GPS location to the Maidenhead locator system used by HAM amateur radio operators",
     "tags": "tool,outdoors,gps",
+    "readme": "README.md",
     "storage": [
       {"name":"hamloc.app.js","url":"app.js"},
       {"name":"hamloc.img","url":"app-icon.js","evaluate":true}
@@ -1419,6 +1420,7 @@
     "version":"0.01",
     "description": "Uploads all the points of interest in an area onto your watch, same as Beer Compass with more p.o.i.",
     "tags": "tool,outdoors,gps",
+    "readme": "README.md",
     "custom": "osmpoi.html",
     "storage": [
       {"name":"osmpoi.app.js"},
