@@ -1166,7 +1166,7 @@
     "version":"0.01",
     "description": "Using EspruinoHub, control your smart devices on and off via Bluetooth Low Energy!",
     "tags": "bluetooth,btle,smart,switch",
-    "type": "bluetooth",
+    "type": "app",
     "readme": "README.md",
     "storage": [
       {"name":"smtswch.app.js","url":"app.js"},
