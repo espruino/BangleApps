@@ -1161,7 +1161,7 @@
   },
   { "id": "smtswch",
     "name": "Smart Switch",
-    "shortName":"SmtSwch",
+    "shortName":"Smart Switch",
     "icon": "app.png",
     "version":"0.01",
     "description": "Using EspruinoHub, control your smart devices on and off via Bluetooth Low Energy!",
