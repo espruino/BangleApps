@@ -60,6 +60,10 @@ ec:5a:c1:a7:fc:91 - Bangle.js fc91 (RSSI -83)
     ffff => {"data":"1,1"}
 ```
 
+# Any comments?
+
+[Tweet me!](https://twitter.com/BillyWhizzkid) 
+
 # Future 
 
 PRs welcome!
