@@ -4,3 +4,4 @@
 0.04: Tweaks for variable size widget system
 0.05: Add alarm.boot.js and move code from the bootloader
 0.06: Change 'New Alarm' to 'Save', allow Deletion of Alarms
+0.07: Don't overwrite existing settings on app update

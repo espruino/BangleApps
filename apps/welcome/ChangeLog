@@ -4,3 +4,7 @@
 0.04: Fix regression after tweaks to Storage.readJSON
 0.05: Move configuration into App/widget settings
 0.06: Move loader into welcome.boot.js
+0.07: Run again when updated
+      Don't run again when settings app is updated (or absent)
+      Add "Run Now" option to settings
+0.08: Don't overwrite existing settings on app update

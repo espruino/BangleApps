@@ -1,9 +1,4 @@
 (function(){
-const DEFAULTS = {
-  'color': 'By Level',
-  'percentage': true,
-  'charger': true,
-}
 const COLORS = {
   'white': -1,
   'charging': 0x07E0, // "Green"
@@ -11,15 +6,24 @@ const COLORS = {
   'ok': 0xFD20, // "Orange"
   'low':0xF800, // "Red"
 }
-const SETTINGS_FILE = 'widbatpc.settings.json'
+const SETTINGS_FILE = 'widbatpc.json'
 
 let settings
 function loadSettings() {
   settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {}
+  const DEFAULTS = {
+    'color': 'By Level',
+    'percentage': true,
+    'charger': true,
+    'hideifmorethan': 100,
+  };
+  Object.keys(DEFAULTS).forEach(k=>{
+    if (settings[k]===undefined) settings[k]=DEFAULTS[k]
+  });
 }
 function setting(key) {
   if (!settings) { loadSettings() }
-  return (key in settings) ? settings[key] : DEFAULTS[key]
+  return settings[key];
 }
 
 const levelColor = (l) => {
@@ -45,16 +49,27 @@ const levelColor = (l) => {
 const chargerColor = () => {
   return (setting('color') === 'Monochrome') ? COLORS.white : COLORS.charging
 }
-
+// sets width, returns true if it changed
 function setWidth() {
-  WIDGETS["batpc"].width = 40;
-  if (Bangle.isCharging() && setting('charger')) {
-    WIDGETS["batpc"].width += 16;
-  }
+  var w = 40;
+  if (Bangle.isCharging() && setting('charger'))
+    w += 16;
+  if (E.getBattery() > setting('hideifmorethan'))
+    w = 0;
+  var changed = WIDGETS["batpc"].width != w;
+  WIDGETS["batpc"].width = w;
+  return changed;
 }
 function draw() {
+  // if hidden, don't draw
+  if (!WIDGETS["batpc"].width) return;
+  // else...
   var s = 39;
   var x = this.x, y = this.y;
+  const l = E.getBattery(),
+  c = levelColor(l);
+  const xl = x+4+l*(s-12)/100
+
   if (Bangle.isCharging() && setting('charger')) {
     g.setColor(chargerColor()).drawImage(atob(
       "DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
@@ -64,9 +79,7 @@ function draw() {
   g.fillRect(x,y+2,x+s-4,y+21);
   g.clearRect(x+2,y+4,x+s-6,y+19);
   g.fillRect(x+s-3,y+10,x+s,y+14);
-  const l = E.getBattery(),
-    c = levelColor(l);
-  const xl = x+4+l*(s-12)/100
+
   g.setColor(c).fillRect(x+4,y+6,xl,y+17);
   g.setColor(-1);
   if (!setting('percentage')) {
@@ -97,20 +110,24 @@ function reload() {
   g.clear();
   Bangle.drawWidgets();
 }
+// update widget - redraw just widget, or all widgets if size changed
+function update() {
+  if (setWidth()) Bangle.drawWidgets();
+  else WIDGETS["batpc"].draw();
+}
 
 Bangle.on('charging',function(charging) {
   if(charging) Bangle.buzz();
-  setWidth();
-  Bangle.drawWidgets(); // relayout widgets
+  update();
   g.flip();
 });
 var batteryInterval;
 Bangle.on('lcdPower', function(on) {
   if (on) {
-   WIDGETS["batpc"].draw();
+   update();
    // refresh once a minute if LCD on
    if (!batteryInterval)
-     batteryInterval = setInterval(draw, 60000);
+     batteryInterval = setInterval(update, 60000);
  } else {
    if (batteryInterval) {
      clearInterval(batteryInterval);

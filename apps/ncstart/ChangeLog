@@ -2,3 +2,7 @@
       Renamed as nodeconf-specific
 0.03: Move configuration into App/widget settings
       Move loader into welcome.boot.js
+0.04: Run again when updated
+      Don't run again when settings app is updated (or absent)
+      Add "Run Now" option to settings
+0.05: Don't overwrite existing settings on app update

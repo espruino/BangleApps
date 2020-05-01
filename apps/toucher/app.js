@@ -1,160 +1,206 @@
-Bangle.setLCDMode("120x120");
+const Storage = require("Storage");
+const filename = 'toucher.json';
+let settings = Storage.readJSON(filename,1) || {
+  hightres: true,
+  animation : true,
+  frame : 3,
+  debug: false
+};
+
+if(!settings.highres) Bangle.setLCDMode("80x80");
+else Bangle.setLCDMode();
+
 g.clear();
 g.flip();
 
-const Storage = require("Storage");
-
-function getApps(){
-  return Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
-    .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
-    .sort((a,b)=>{
-    var n=(0|a.sortorder)-(0|b.sortorder);
-    if (n) return n; // do sortorder first
-    if (a.name<b.name) return -1;
-    if (a.name>b.name) return 1;
-    return 0;
-  });
-}
+let icons = {};
 
 const HEIGHT = g.getHeight();
 const WIDTH = g.getWidth();
 const HALF = WIDTH/2;
-const ANIMATION_FRAME = 4; 
-const ANIMATION_STEP = HALF / ANIMATION_FRAME;
+const ORIGINAL_ICON_SIZE = 48;
+
+const STATE = {
+  settings_open: false,
+  index: 0,
+  target: 240,
+  offset: 0
+};
 
 function getPosition(index){
   return (index*HALF);
 }
 
-let current_app = 0;
-let target = 0;
-let slideOffset = 0;
+function getApps(){
+    const exit_app = {
+      name: 'Exit',
+      special: true
+    };
+    const raw_apps = Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
+        .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
+        .sort((a,b)=>{
+        var n=(0|a.sortorder)-(0|b.sortorder);
+        if (n) return n; // do sortorder first
+        if (a.name<b.name) return -1;
+        if (a.name>b.name) return 1;
+        return 0;
+    }).map(raw => ({
+      name: raw.name,
+      src: raw.src,
+      icon: raw.icon,
+      version: raw.version
+    }));
 
-const back = {
-  name: 'BACK',
-  back: true
-};
-
-let icons = {};
-
-const apps = [back].concat(getApps());
-apps.push(back);
-
-function noIcon(x, y, size){
-  const half = size/2;
-  g.setColor(1,1,1);
-  g.setFontAlign(-0,0);
-  const fontSize = Math.floor(size / 30 * 2);
-  g.setFont('6x8', fontSize);
-  if(fontSize) g.drawString('-?-', x+1.5, y);
-  g.drawRect(x-half, y-half, x+half, y+half);
+    const apps = [Object.assign({}, exit_app)].concat(raw_apps);
+    apps.push(exit_app);
+    return apps.map((app, i) => {
+      app.x = getPosition(i);
+      return app;
+    });
 }
 
-function drawIcons(offset){
-  apps.forEach((app, i) => {
-    const x = getPosition(i) + HALF - offset;
-    const y = HALF - (HALF*0.3);//-(HALF*0.7);
-    let diff = (x - HALF);
-    if(diff < 0) diff *=-1;
+const APPS = getApps();
 
-    const dontRender = x+(HALF/2)<0 || x-(HALF/2)>120;
-    if(dontRender) {
-      delete icons[app.name];
+function noIcon(x, y, scale){
+  if(scale < 0.2) return;
+  g.setColor(scale, scale, scale);
+  g.setFontAlign(0,0);
+  g.setFont('6x8',settings.highres ? 6:3);
+  g.drawString('x_x', x+1.5, y);
+  const h = (ORIGINAL_ICON_SIZE/3);
+  g.drawRect(x-h, y-h, x+h, y+h);
+}
+
+function render(){
+  const start = Date.now();
+
+  const ANIMATION_FRAME = settings.frame;
+  const ANIMATION_STEP = Math.floor(HALF / ANIMATION_FRAME);
+  const THRESHOLD = ANIMATION_STEP - 1;
+
+  g.clear();
+  const visibleApps = APPS.filter(app => app.x >= STATE.offset-HALF && app.x <= STATE.offset+WIDTH-HALF );
+
+  visibleApps.forEach(app => {
+
+    const x = app.x+HALF-STATE.offset;
+    const y = HALF - (HALF*0.3);
+
+    let dist = HALF - x;
+    if(dist < 0) dist *= -1;
+
+    const scale = 1 - (dist / HALF);
+
+    if(!scale) return;
+
+    if(app.special){
+      const font = settings.highres ? '6x8' : '4x6';
+      const fontSize = settings.highres ? 2 : 1;
+      g.setFont(font, fontSize);
+      g.setColor(scale,scale,scale);
+      g.setFontAlign(0,0);
+      g.drawString(app.name, HALF, HALF);
       return;
     }
-    let size = 30;
-    if((diff*0.5) < size) size -= (diff*0.5);
-    else size = 0;
 
-    const scale = size / 30;
-    if(size){
-      let c = size / 30 * 2;
-      c = c -1;
-      if(c < 0) c = 0;
+    //draw icon
+    const icon = app.icon ?
+        icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
+        : null;
 
-      if(app.back){
-        g.setFont('6x8', 1);
-        g.setFontAlign(0, -1);
-        g.setColor(c,c,c);
-        g.drawString('Back', HALF, HALF);
-        return;
+    if(icon){
+      icons[app.name] = icon;
+      try {
+        const rescale = settings.highres ? scale*ORIGINAL_ICON_SIZE : (scale*(ORIGINAL_ICON_SIZE/2));
+        const imageScale = settings.highres ? scale*2 : scale;
+        g.drawImage(icon, x-rescale, y-rescale, { scale: imageScale });
+      } catch(e){
+        noIcon(x, y, scale);
       }
-      // icon
-
-      const icon = app.icon ?
-                    icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
-                  : null;
-      if(icon){
-        icons[app.name] = icon;
-        try {
-          g.drawImage(icon, x-(scale*24), y-(scale*24), { scale: scale });
-        } catch(e){
-          noIcon(x, y, size);
-        }
-      }else{
-        noIcon(x, y, size);
-      }
-      //text
-      g.setFont('6x8', 1);
-      g.setFontAlign(0, -1);
-      g.setColor(c,c,c);
-      g.drawString(app.name, HALF, HEIGHT - (HALF*0.7));
-
-      const type = app.type ? app.type : 'App';
-      const version = app.version ? app.version : '0.00';
-      const info = type+' v'+version;
-      g.setFontAlign(0,1);
-      g.setFont('4x6', 0.25);
-      g.setColor(c,c,c);
-      g.drawString(info, HALF, 110, { scale: scale });
+    }else{
+      noIcon(x, y, scale);
     }
-  });
-}
 
-function draw(ignoreLoop){
-  g.setColor(0,0,0);
-  g.fillRect(0,0,WIDTH,HEIGHT);
-  drawIcons(slideOffset);
+    //draw text
+    g.setColor(scale,scale,scale);
+    if(scale > 0.1){
+      const font = settings.highres ? '6x8': '4x6';
+      const fontSize = settings.highres ? 2 : 1;
+      g.setFont(font, fontSize);
+      g.setFontAlign(0,0);
+      g.drawString(app.name, HALF, HEIGHT/4*3);
+    }
+
+    if(settings.highres){
+        const type = app.type ? app.type : 'App';
+        const version = app.version ? app.version : '0.00';
+        const info = type+' v'+version;
+        g.setFontAlign(0,1);
+        g.setFont('6x8', 1.5);
+        g.setColor(scale,scale,scale);
+        g.drawString(info, HALF, 215, { scale: scale });
+    }
+
+  });
+
+  const duration = Math.floor(Date.now()-start);
+  if(settings.debug){
+    g.setFontAlign(0,1);
+    g.setColor(0, 1, 0);
+    const fontSize = settings.highres ? 2 : 1;
+    g.setFont('4x6',fontSize);
+    g.drawString('Render: '+duration+'ms', HALF, HEIGHT);
+  }
   g.flip();
-  if(slideOffset == target) return;
-  if(slideOffset < target) slideOffset+= ANIMATION_STEP;
-  else if(slideOffset > target) slideOffset -= ANIMATION_STEP;
-  if(!ignoreLoop) draw();
+  if(STATE.offset == STATE.target) return;
+
+  if(STATE.offset < STATE.target) STATE.offset += ANIMATION_STEP;
+  else if(STATE.offset > STATE.target) STATE.offset -= ANIMATION_STEP;
+
+  if(STATE.offset >= STATE.target-THRESHOLD && STATE.offset < STATE.target) STATE.offset = STATE.target;
+  if(STATE.offset <= STATE.target+THRESHOLD && STATE.offset > STATE.target) STATE.offset = STATE.target;
+  setTimeout(render, 0);
 }
 
 function animateTo(index){
-  target = getPosition(index);
-  draw();
-}
-function goTo(index){
-  current_app = index;
-  target = getPosition(index);
-  slideOffset = target;
-  draw(true);
+  STATE.index = index;
+  STATE.target = getPosition(index);
+  render();
 }
 
-goTo(1);
+function jumpTo(index){
+  STATE.index = index;
+  STATE.target = getPosition(index);
+  STATE.offset = STATE.target;
+  render();
+}
 
 function prev(){
-  if(current_app == 0) goTo(apps.length-1);
-  current_app -= 1;
-  if(current_app < 0) current_app = 0;
-  animateTo(current_app);
+  if(STATE.settings_open) return;
+  if(STATE.index == 0) jumpTo(APPS.length-1);
+  setTimeout(() => {
+    if(!settings.animation) jumpTo(STATE.index-1);
+    else animateTo(STATE.index-1);
+  },1);
 }
 
 function next(){
-  if(current_app == apps.length-1) goTo(0);
-  current_app += 1;
-  if(current_app > apps.length-1) current_app = apps.length-1;
-  animateTo(current_app);
+  if(STATE.settings_open) return;
+  if(STATE.index == APPS.length-1) jumpTo(0);
+  setTimeout(() => {
+    if(!settings.animation) jumpTo(STATE.index+1);
+    else animateTo(STATE.index+1);
+  },1);
 }
 
-function run() {
-  const app = apps[current_app];
-  if(app.back) return load();
+function run(){
+
+  const app = APPS[STATE.index];
+  if(app.name == 'Exit') return load();
+
   if (Storage.read(app.src)===undefined) {
     E.showMessage("App Source\nNot found");
-    setTimeout(draw, 2000);
+    setTimeout(render, 2000);
   } else {
     Bangle.setLCDMode();
     g.clear();
@@ -162,15 +208,12 @@ function run() {
     E.showMessage("Loading...");
     load(app.src);
   }
+
 }
-
-
-setWatch(prev, BTN1, { repeat: true });
-setWatch(next, BTN3, { repeat: true });
-setWatch(run, BTN2, {repeat:true,edge:"falling"});
 
 // Screen event
 Bangle.on('touch', function(button){
+  if(STATE.settings_open) return;
   switch(button){
     case 1:
       prev();
@@ -185,6 +228,7 @@ Bangle.on('touch', function(button){
 });
 
 Bangle.on('swipe', dir => {
+  if(STATE.settings_open) return;
   if(dir == 1) prev();
   else next();
 });
@@ -193,3 +237,10 @@ Bangle.on('swipe', dir => {
 Bangle.on('lcdPower', on => {
   if(!on) return load();
 });
+
+
+setWatch(prev, BTN1, { repeat: true });
+setWatch(next, BTN3, { repeat: true });
+setWatch(run, BTN2, { repeat:true });
+
+jumpTo(1);

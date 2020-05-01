@@ -12,3 +12,12 @@
 0.12: Fix memory leak (#206)
       Bring App settings nearer the top
       Move LCD Timeout to wakeup menu
+0.13: Fix memory leak for App settings
+      Make capitalization more consistent
+      Move LCD Brightness menu into more general LCD menu
+0.14: Reduce memory usage when running app settings page
+0.15: Reduce memory usage when running default clock chooser (#294)
+0.16: Reduce memory usage further when running app settings page
+0.17: Remove need for "settings" in appid.info
+0.18: Don't overwrite existing settings on app update
+0.19: Allow BLE HID settings, add README.md

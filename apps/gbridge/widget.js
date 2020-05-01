@@ -145,6 +145,7 @@
     }
   }
 
+  var _GB = global.GB;
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
@@ -160,6 +161,7 @@
         handleCallEvent(event);
         break;
     }
+    if(_GB)setTimeout(_GB,0,event);
   };
 
   // Touch control
@@ -189,8 +191,8 @@
     g.flip(); // turns screen on
   }
 
-  NRF.on("connected", changedConnectionState);
-  NRF.on("disconnected", changedConnectionState);
+  NRF.on("connect", changedConnectionState);
+  NRF.on("disconnect", changedConnectionState);
 
   WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
 

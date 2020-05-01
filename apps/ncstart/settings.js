@@ -1,16 +1,14 @@
-// The welcome app is special, and gets to use global settings
 (function(back) {
-  let settings = require('Storage').readJSON('setting.json', 1) || {}
+  let settings = require('Storage').readJSON('ncstart.json', 1)
+    || require('Storage').readJSON('setting.json', 1) || {}
   E.showMenu({
     '': { 'title': 'NCEU Startup' },
-    'Run again': {
+    'Run on Next Boot': {
       value: !settings.welcomed,
-      format: v => v ? 'Yes' : 'No',
-      onchange: v => {
-        settings.welcomed = v ? undefined : true
-        require('Storage').write('setting.json', settings)
-      },
+      format: v => v ? 'OK' : 'No',
+      onchange: v => require('Storage').write('ncstart.json', {welcomed: !v}),
     },
+    'Run Now': () => load('ncstart.app.js'),
     '< Back': back,
   })
 })

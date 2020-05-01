@@ -37,7 +37,29 @@ try{
   ERROR("apps.json not valid JSON");
 }
 
-apps.forEach((app,addIdx) => {
+const APP_KEYS = [
+  'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
+  'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
+];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
+const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
+const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
+
+function globToRegex(pattern) {
+  const ESCAPE = '.*+-?^${}()|[]\\';
+  const regex = pattern.replace(/./g, c => {
+    switch (c) {
+      case '?': return '.';
+      case '*': return '.*';
+      default: return ESCAPE.includes(c) ? ('\\' + c) : c;
+    }
+  });
+  return new RegExp('^'+regex+'$');
+}
+const isGlob = f => /[?*]/.test(f)
+// All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
+let allFiles = [];
+apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
@@ -68,9 +90,13 @@ apps.forEach((app,addIdx) => {
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`);
+    if (isGlob(file.name)) ERROR(`App ${app.id} storage file ${file.name} contains wildcards`);
+    let char = file.name.match(FORBIDDEN_FILE_NAME_CHARS)
+    if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`)
     if (fileNames.includes(file.name))
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
     fileNames.push(file.name);
+    allFiles.push({app: app.id, file: file.name});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`);
     var fileContents = "";
@@ -105,9 +131,80 @@ apps.forEach((app,addIdx) => {
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`);
       }
     }
+    for (const key in file) {
+      if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id}'s ${file.name} has unknown key ${key}`);
+    }
   });
+  let dataNames = [];
+  (app.data||[]).forEach((data)=>{
+    if (!data.name && !data.wildcard) ERROR(`App ${app.id} has a data file with no name`);
+    if (dataNames.includes(data.name||data.wildcard))
+      ERROR(`App ${app.id} data file ${data.name||data.wildcard} is a duplicate`);
+    dataNames.push(data.name||data.wildcard)
+    allFiles.push({app: app.id, data: (data.name||data.wildcard)});
+    if ('name' in data && 'wildcard' in data)
+      ERROR(`App ${app.id} data file ${data.name} has both name and wildcard`);
+    if (isGlob(data.name))
+      ERROR(`App ${app.id} data file name ${data.name} contains wildcards`);
+    if (data.wildcard) {
+      if (!isGlob(data.wildcard))
+        ERROR(`App ${app.id} data file wildcard ${data.wildcard} does not actually contains wildcard`);
+      if (data.wildcard.replace(/\?|\*/g,'') === '')
+        ERROR(`App ${app.id} data file wildcard ${data.wildcard} does not contain regular characters`);
+      else if (data.wildcard.replace(/\?|\*/g,'').length < 3)
+        WARN(`App ${app.id} data file wildcard ${data.wildcard} is very broad`);
+      else if (!data.wildcard.includes(app.id))
+        WARN(`App ${app.id} data file wildcard ${data.wildcard} does not include app ID`);
+    }
+    let char = (data.name||data.wildcard).match(FORBIDDEN_FILE_NAME_CHARS)
+    if (char) ERROR(`App ${app.id} data file ${data.name||data.wildcard} contains invalid character "${char[0]}"`)
+    if ('storageFile' in data && typeof data.storageFile !== 'boolean')
+      ERROR(`App ${app.id} data file ${data.name||data.wildcard} has non-boolean value for "storageFile"`);
+    for (const key in data) {
+      if (!DATA_KEYS.includes(key))
+        ERROR(`App ${app.id} data file ${data.name||data.wildcard} has unknown property "${key}"`);
+    }
+  });
+  // prefer "appid.json" over "appid.settings.json" (TODO: change to ERROR once all apps comply?)
+  if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
+    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'} instead of ${app.id+'.json'}`)
+  // settings files should be listed under data, not storage (TODO: change to ERROR once all apps comply?)
+  if (fileNames.includes(app.id+".settings.json"))
+    WARN(`App ${app.id} uses storage file ${app.id+'.settings.json'} instead of data file`)
+  if (fileNames.includes(app.id+".json"))
+    WARN(`App ${app.id} uses storage file ${app.id+'.json'} instead of data file`)
+  // warn if storage file matches data file of same app
+  dataNames.forEach(dataName=>{
+    const glob = globToRegex(dataName)
+    fileNames.forEach(fileName=>{
+      if (glob.test(fileName)) {
+        if (isGlob(dataName)) WARN(`App ${app.id} storage file ${fileName} matches data wildcard ${dataName}`)
+        else WARN(`App ${app.id} storage file ${fileName} is also listed in data`)
+      }
+    })
+  })
   //console.log(fileNames);
   if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`);
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`);
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`);
+  for (const key in app) {
+    if (!APP_KEYS.includes(key)) ERROR(`App ${app.id} has unknown key ${key}`);
+  }
 });
+// Do not allow files from different apps to collide
+let fileA
+while(fileA=allFiles.pop()) {
+  const nameA = (fileA.file||fileA.data),
+    globA = globToRegex(nameA),
+    typeA = fileA.file?'storage':'data'
+  allFiles.forEach(fileB => {
+    const nameB = (fileB.file||fileB.data),
+      globB = globToRegex(nameB),
+      typeB = fileB.file?'storage':'data'
+    if (globA.test(nameB)||globB.test(nameA)) {
+      if (isGlob(nameA)||isGlob(nameB))
+        ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
+      else ERROR(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+    }
+  })
+}
