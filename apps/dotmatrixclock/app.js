@@ -171,7 +171,7 @@ function drawCompass(lastHeading) {
   let angle = cps.heading;
   const heading = angle?
                   directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
-                  "NE ";
+                  "   ";
 
   if (lastHeading != heading) drawFont(heading, "5x5", 40, 58);
   setTimeout(drawCompass.bind(null, heading), 1000 * 2);
