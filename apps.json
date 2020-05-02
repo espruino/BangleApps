@@ -1550,5 +1550,19 @@
       {"name":"hidjoystick.app.js","url":"app.js"},
       {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "dotmatricsclock",
+    "name": "Dotmatrix Clock",
+    "icon": "dotmatrixclock.png",
+    "version":"0.01",
+    "description": "A clear white-on-blue dotmatrix simulated clock",
+    "tags": "clock,dotmatrix,retro",
+    "type": "clock",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"dotmatrixclock.app.js","url":"app.js"},
+      {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
+    ]
   }
 ]
