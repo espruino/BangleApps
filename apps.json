@@ -1550,5 +1550,36 @@
       {"name":"hidjoystick.app.js","url":"app.js"},
       {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "largeclock",
+    "name": "Large Clock",
+    "icon": "largeclock.png",
+    "version": "0.01",
+    "description": "A readable and informational digital watch, with date, seconds and moon phase",
+    "readme": "README.md",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "largeclock.app.js",
+        "url": "largeclock.js"
+      },
+      {
+        "name": "largeclock.img",
+        "url": "largeclock-icon.js",
+        "evaluate": true
+      },
+      {
+        "name": "largeclock.settings.js",
+        "url": "settings.js"
+      },
+      {
+        "name": "largeclock.json",
+        "url": "largeclock.json",
+        "evaluate": true
+      }
+    ]
   }
 ]
