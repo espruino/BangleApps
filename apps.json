@@ -1552,7 +1552,8 @@
     ]
   },
   { "id": "gbnotify",
-    "name": "Messages",
+    "name": "Gadgetbridge Notifications",
+    "shortName": "Messages",
     "icon": "app.png",
     "version":"0.01",
     "description": "Gadgetbridge notifications",
