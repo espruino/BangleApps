@@ -14,3 +14,4 @@ Simple timer, useful when playing board games or cooking
 - Tap on seconds to increase them one by one
 - Press BTN3 to reset time to 0
 - Press BTN1 to start the timer or reset to the original time
+- When the time is up the timer can be reset to 0 with swipeleft gesture

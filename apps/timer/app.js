@@ -146,6 +146,9 @@ function addWatch() {
     edge: "falling"
   });
 }
+Bangle.on("aiGesture", gesture => {
+  if (gesture === "swipeleft" && state === "stopped") reset(0);
+});
 
 reset(0);
 addWatch();
