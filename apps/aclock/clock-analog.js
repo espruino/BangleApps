@@ -1,7 +1,3 @@
-// eliminate ide undefined errors
-let g;
-let Bangle;
-
 // http://forum.espruino.com/conversations/345155/#comment15172813
 const locale = require('locale');
 const p = Math.PI / 2;

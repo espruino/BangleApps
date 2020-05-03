@@ -8,7 +8,7 @@ const GraphXMax = GraphXZero + MaxValueCount;
 
 const GraphLcdY = GraphYZero + 10;
 const GraphCompassY = GraphYZero + 16;
-// const GraphBluetoothY = GraphYZero + 22;
+const GraphBluetoothY = GraphYZero + 22;
 const GraphGpsY = GraphYZero + 28;
 const GraphHrmY = GraphYZero + 34;
 
@@ -175,13 +175,13 @@ function renderData(dataArray) {
       g.drawLine(GraphXZero + i, GraphCompassY, GraphXZero + i, GraphCompassY + 1);
     }
     
-    // // Bluetooth state
-    // if (switchables & switchableConsumers.lcd == switchableConsumers.lcd) {
-    //   g.setColor(0, 0, 1);
-    //   g.setFontAlign(1, -1, 0);
-    //   g.drawString("BLE", GraphXZero - GraphMarkerOffset, GraphBluetoothY - 2, true);
-    //   g.drawLine(GraphXZero + i, GraphBluetoothY, GraphXZero + i, GraphBluetoothY + 1);
-    // }
+    // Bluetooth state
+    if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.bluetooth) {
+      g.setColor(0, 0, 1);
+      g.setFontAlign(1, -1, 0);
+      g.drawString("BLE", GraphXZero - GraphMarkerOffset, GraphBluetoothY - 2, true);
+      g.drawLine(GraphXZero + i, GraphBluetoothY, GraphXZero + i, GraphBluetoothY + 1);
+    }
     
     // Gps state
     if (parseInt(dataInfo[switchabelsIndex]) & switchableConsumers.gps) {

@@ -3,13 +3,14 @@
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var timerResetActive = 0; //timer to reset active
+  var timerStoreData = 0; //timer to store data
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var active = 0; //x steps in y seconds achieved
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar   
   var lastUpdate = new Date(); //used to reset counted steps on new day
-  var width = 45; //width of widget
+  var width = 46; //width of widget
 
   //used for statistics and debugging
   var stepsTooShort = 0; 
@@ -18,13 +19,42 @@
 
   var distance = 0; //distance travelled
 
+  const s = require('Storage');
   const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
+  var dataFile;
+  var storeDataInterval = 5*60*1000; //ms
   
   let settings;
     //load settings
   function loadSettings() {
-    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+    settings = s.readJSON(SETTINGS_FILE, 1) || {};
+  }
+
+  function storeData()  {
+    now = new Date();
+    month = now.getMonth() + 1; //month is 0-based
+    if (month < 10) month = "0" + month; //leading 0
+    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
+    dataFile = s.open(filename,"a");
+    if (dataFile) { //check if filen already exists
+      if (dataFile.getLength() == 0) {
+        //new day, set steps to 0
+        stepsCounted = 0;
+        stepsTooShort = 0; 
+        stepsTooLong = 0;
+        stepsOutsideTime = 0;
+      }
+      dataFile.write([
+        now.getTime(),
+        stepsCounted,
+        active,
+        stepsTooShort,
+        stepsTooLong,
+        stepsOutsideTime,
+      ].join(",")+"\n");
+    }
+    dataFile = undefined; //save memory
   }
 
   //return setting
@@ -77,20 +107,20 @@
 
     //Remove step if time between first and second step is too long
     if (stepTimeDiff >= setting('cMaxTime')) { //milliseconds
-      stepsTooLong++; //count steps which are note counted, because time too long
+      stepsTooLong++; //count steps which are not counted, because time too long
       steps--;
     }
-
     //Remove step if time between first and second step is too short
     if (stepTimeDiff <= setting('cMinTime')) { //milliseconds
-      stepsTooShort++; //count steps which are note counted, because time too short
+      stepsTooShort++; //count steps which are not counted, because time too short
       steps--;
     }
 
+    //Step threshold reached
     if (steps >= setting('stepThreshold')) {
       if (active == 0) {
         stepsCounted = stepsCounted + (setting('stepThreshold') -1) ; //count steps needed to reach active status, last step is counted anyway, so treshold -1
-        stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reac active status
+        stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reach active status
       }
       active = 1;
       clearInterval(timerResetActive); //stop timer which resets active
@@ -109,14 +139,17 @@
 
   function draw() {
     var height = 23; //width is deined globally
-    distance = (stepsCounted * setting('stepLength')) / 100 /1000 //distance in km
+    distance = (stepsCounted * setting('stepLength')) / 100 /1000; //distance in km
     
     //Check if same day
     let date = new Date();
     if (lastUpdate.getDate() == date.getDate()){ //if same day
     }
-    else {
-      stepsCounted = 1; //set stepcount to 1
+    else { //different day, set all steps to 0
+      stepsCounted = 0;
+      stepsTooShort = 0; 
+      stepsTooLong = 0;
+      stepsOutsideTime = 0;
     }
     lastUpdate = date;
     
@@ -166,7 +199,7 @@
       stepsTooLong : stepsTooLong,
       stepsOutsideTime : stepsOutsideTime
     };
-    require("Storage").write(PEDOMFILE,d); //write array to file
+    s.write(PEDOMFILE,d); //write array to file
   });
 
   //When Step is registered by firmware
@@ -182,8 +215,7 @@
   });
 
   //Read data from file and set variables
-  let pedomData = require("Storage").readJSON(PEDOMFILE,1);
-  
+  let pedomData = s.readJSON(PEDOMFILE,1);
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
@@ -191,12 +223,10 @@
     stepsTooLong = pedomData.stepsTooLong;
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
-
   pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
-
+  timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
   //Add widget
   WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
-
 })();
