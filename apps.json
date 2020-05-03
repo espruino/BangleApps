@@ -1283,7 +1283,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
