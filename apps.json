@@ -974,8 +974,8 @@
     "name": "Grocery",
     "icon": "grocery.png",
     "version":"0.01",
-    "description": "Simple grocery list - Display a list of product and track if you already put them in your cart.",
-    "tags": "tool,outdoors",
+    "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
+    "tags": "tool,outdoors,shopping,list",
     "type": "app",
     "custom":"grocery.html",
     "storage": [
