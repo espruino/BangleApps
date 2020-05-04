@@ -45,13 +45,7 @@ const KEY = {
   0           : 39
 };
 
-function sendHID(code) {
-  return new Promise(resolve=>{
-    NRF.sendHIDReport([2,0,0,code,0,0,0,0,0], () => {
-      NRF.sendHIDReport([2,0,0,0,0,0,0,0,0], resolve);
-    });
-  });
-};
+var sendHID;
 
 function showChars(x,chars) {
   var lines = Math.round(Math.sqrt(chars.length)*2);
@@ -103,10 +97,24 @@ function startKeyboardHID() {
   }).then(startKeyboardHID);
 };
 
-if (!settings.HID) {
-  E.showMessage('HID disabled');
-  setTimeout(load, 1000);
-} else {
+if (settings.HID=="kb" || settings.HID=="kbmedia") {
+  if (settings.HID=="kbmedia") {
+    sendHID = function(code) {
+      return new Promise(resolve=>{
+        NRF.sendHIDReport([2,0,0,code,0,0,0,0,0], () => {
+          NRF.sendHIDReport([2,0,0,0,0,0,0,0,0], resolve);
+        });
+      });
+    };
+  } else {
+    sendHID = function(code) {
+      return new Promise(resolve=>{
+        NRF.sendHIDReport([0,0,code,0,0,0,0,0], () => {
+          NRF.sendHIDReport([0,0,0,0,0,0,0,0], resolve);
+        });
+      });
+    };
+  }
   startKeyboardHID();
   setWatch(() => {
     sendHID(44); // space
@@ -114,4 +122,12 @@ if (!settings.HID) {
   setWatch(() => {
     sendHID(40); // enter
   }, BTN3, {repeat:true});
+} else {
+  E.showPrompt("Enable HID?",{title:"HID disabled"}).then(function(enable) {
+    if (enable) {
+      settings.HID = "kb";
+      require("Storage").write('setting.json', settings);
+      setTimeout(load, 1000, "hidbkbd.app.js");
+    } else setTimeout(load, 1000);
+  });
 }
