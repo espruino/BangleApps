@@ -66,7 +66,8 @@ var Espruino;
   }
 
   // Automatically start up when all is loaded
-  document.addEventListener("DOMContentLoaded", init);
+  if (typeof document!=="undefined") 
+    document.addEventListener("DOMContentLoaded", init);
 
   /** Add a processor function of type function(data,callback) */
   function addProcessor(eventType, processor) {
@@ -4122,7 +4123,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
       } else if (isIn(chNum,ch)) { // NUMBER
         type = "NUMBER";
         var chRange = chNum;
-        if (ch=="0") { // Handle 
+        if (ch=="0") { // Handle
           s+=ch;
           nextCh();
           if ("xXoObB".indexOf(ch)>=0) {
@@ -4131,12 +4132,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
             if (ch=="x" || ch=="X") chRange="0123456789ABCDEFabcdef";
             s+=ch;
             nextCh();
-          } 
+          }
         }
         while (isIn(chRange,ch) || ch==".") {
           s+=ch;
           nextCh();
-        } 
+        }
       } else if (isIn(chQuotes,ch)) { // STRING
         type = "STRING";
         var q = ch;
@@ -4727,39 +4728,39 @@ Object.defineProperty(exports, '__esModule', { value: true });
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  ------------------------------------------------------------------
   Central place to store and retrieve Options
-  
+
   To use this, on your plugin's `init` function, do something like the
   following:
-  
+
   Espruino.Core.Config.add("MAX_FOOBARS", {
     section : "Communications",           // Heading this will come under in the config screen
-    name : "Foobars",                     // Nice name 
+    name : "Foobars",                     // Nice name
     description : "How many foobars?",    // More detail about this
     type : "int"/"boolean"/"string"/{ value1:niceName, value2:niceName },
-    defaultValue : 20, 
+    defaultValue : 20,
     onChange : function(newValue) { ... }
   });
-  
+
     * onChange will be called whenever the value changes from the default
       (including when it is loaded)
-  
-  Then use: 
-  
+
+  Then use:
+
   Espruino.Config.MAX_FOOBARS in your code
  ------------------------------------------------------------------
 **/
 "use strict";
 (function() {
-  
+
   /** See addSection and getSections */
   var builtinSections = {};
 
   function _get(callback) {
     if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.sync.get( "CONFIGS", function (data) { 
+      chrome.storage.sync.get( "CONFIGS", function (data) {
         var value = data["CONFIGS"];
         console.log("GET chrome.storage.sync = "+JSON.stringify(value));
         callback(value);
@@ -4770,55 +4771,55 @@ Object.defineProperty(exports, '__esModule', { value: true });
       if (cookie!==undefined && cookie.indexOf("CONFIG=")>=0) {
         cookie = cookie.substring(cookie.indexOf("CONFIG=")+7);
         cookie = cookie.substring(0,cookie.indexOf(";"));
-        try { 
+        try {
           var json = atob(cookie);
-          data = JSON.parse(json); 
-        } catch (e) { 
+          data = JSON.parse(json);
+        } catch (e) {
           console.log("Got ", e, " while reading info");
         }
       }
       callback(data);
     } else {
       callback({});
-    } 
+    }
   }
 
   function _set(data) {
     if (typeof chrome !== 'undefined' && chrome.storage) {
       console.log("SET chrome.storage.sync = "+JSON.stringify(data));
-      chrome.storage.sync.set({ CONFIGS : data });    
+      chrome.storage.sync.set({ CONFIGS : data });
     } else if (typeof document != "undefined") {
       document.cookie = "CONFIG="+btoa(JSON.stringify(data));
     }
   }
-  
+
   function loadConfiguration(callback) {
     _get(function (value) {
-      for (var key in value) { 
+      for (var key in value) {
         if (key=="set") continue;
         Espruino.Config[key] = value[key];
         if (Espruino.Core.Config.data[key] !== undefined &&
             Espruino.Core.Config.data[key].onChange !== undefined)
           Espruino.Core.Config.data[key].onChange(value[key]);
-      }  
+      }
       if (callback!==undefined)
         callback();
     });
   }
-  
+
   function init() {
     addSection("General", { sortOrder:100, description: "General Web IDE Settings" });
     addSection("Communications", { sortOrder:200, description: "Settings for communicating with the Espruino Board" });
     addSection("Board", { sortOrder:300, description: "Settings for the Espruino Board itself" });
-    
+
   }
-  
+
   function add(name, options) {
     Espruino.Core.Config.data[name] = options;
     if (Espruino.Config[name] === undefined)
       Espruino.Config[name] = options.defaultValue;
   }
-  
+
   /** Add a section (or information on the page).
    * options = {
    *   sortOrder : int, // a number used for sorting
@@ -4830,7 +4831,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
     options.name = name;
     builtinSections[name] = options;
   }
-  
+
   /** Get an object containing the information on a section used in configs */
   function getSection(name) {
     if (builtinSections[name]!==undefined)
@@ -4840,7 +4841,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
       name : name
     };
   }
-  
+
   /** Get an object containing information on all 'sections' used in all the configs */
   function getSections() {
     var sections = [];
@@ -4850,26 +4851,26 @@ Object.defineProperty(exports, '__esModule', { value: true });
     // add other sections
     for (var i in Espruino.Core.Config.data) {
       var c = Espruino.Core.Config.data[i];
-      
+
       var found = false;
       for (var s in sections)
         if (sections[s].name == c.section)
           found = true;
-      
+
       if (!found) {
         console.warn("Section named "+c.section+" was not added with Config.addSection");
         sections[c.section] = {
             name : c.section,
             sortOrder : 0
-        };        
+        };
       }
     }
     // Now sort by sortOrder
     sections.sort(function (a,b) { return a.sortOrder - b.sortOrder; });
-    
+
     return sections;
   }
-  
+
   Espruino.Config = {};
   Espruino.Config.set = function (key, value) {
     if (Espruino.Config[key] != value) {
@@ -4882,11 +4883,11 @@ Object.defineProperty(exports, '__esModule', { value: true });
       var data = {};
       for (var key in Espruino.Config)
         if (key != "set")
-          data[key] = Espruino.Config[key];      
-      _set(data); 
+          data[key] = Espruino.Config[key];
+      _set(data);
     }
   };
-   
+
   function clearAll() { // clear all settings
     _set({});
     for (var name in Espruino.Core.Config.data) {
@@ -4894,22 +4895,22 @@ Object.defineProperty(exports, '__esModule', { value: true });
       Espruino.Config[name] = options.defaultValue;
     }
   }
-  
+
   Espruino.Core.Config = {
-      loadConfiguration : loadConfiguration, // special - called before init 
-      
+      loadConfiguration : loadConfiguration, // special - called before init
+
       init : init,
       add : add,
       data : {},
-      
-      
+
+
       addSection : addSection,
       getSection : getSection,
       getSections : getSections,
-      
+
       clearAll : clearAll, // clear all settings
   };
-  
+
 })();
 /*
 Gordon Williams (gw@pur3.co.uk)
@@ -5076,7 +5077,7 @@ To add a new serial device, you must add an object to
     }
 
     connectionInfo = undefined;
-    flowControlXOFF = false;   
+    flowControlXOFF = false;
     currentDevice = portToDevice[serialPort];
     currentDevice.open(serialPort, function(cInfo) {  // CONNECT
       if (!cInfo) {
@@ -5117,7 +5118,7 @@ To add a new serial device, you must add an object to
         // Just call connectCallback(undefined), don't bother sending disconnect
         connectCallback(undefined);
         return;
-      }      
+      }
       connectionInfo = undefined;
       if (writeTimeout!==undefined)
         clearTimeout(writeTimeout);
@@ -6435,18 +6436,18 @@ To add a new serial device, you must add an object to
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  ------------------------------------------------------------------
   Try and get any URLS that are from GitHub
  ------------------------------------------------------------------
 **/
 "use strict";
 (function(){
-  
+
   function init() {
-    Espruino.addProcessor("getURL", getGitHub);      
+    Espruino.addProcessor("getURL", getGitHub);
   }
-  
+
   function getGitHub(data, callback) {
     var match = data.url.match(/^https?:\/\/github.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)$/);
     if (match) {
@@ -6456,7 +6457,7 @@ To add a new serial device, you must add an object to
           branch : match[3],
           path : match[4]
           };
-      
+
       var url = "https://raw.githubusercontent.com/"+git.owner+"/"+git.repo+"/"+git.branch+"/"+git.path;
       console.log("Found GitHub", JSON.stringify(git));
       callback({url: url});
@@ -6801,3 +6802,5 @@ Espruino.transform = function(code, options) {
   });
 };
 
+if ("undefined"!=typeof module)
+  module.exports = Espruino;

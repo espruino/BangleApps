@@ -10,7 +10,10 @@ reset : (opt) => new Promise((resolve,reject) => {
 }),
 uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `storage`)
   Progress.show({title:`Uploading ${app.name}`,sticky:true});
-  return AppInfo.getFiles(app, httpGet).then(fileContents => {
+  return AppInfo.getFiles(app, {
+    fileGetter : httpGet,
+    settings : SETTINGS
+  }).then(fileContents => {
     return new Promise((resolve,reject) => {
       console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
       var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
