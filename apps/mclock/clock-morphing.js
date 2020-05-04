@@ -1,14 +1,15 @@
 var locale = require("locale");
+var CHARW = 34; // how tall are digits?
+var CHARP = 2; // how chunky are digits?
+var Y = 50; // start height
 // Offscreen buffer
-var buf = Graphics.createArrayBuffer(240,86,1,{msb:true});
-function flip() {
-  g.setColor(1,1,1);
-  g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},0,50);
-}
+var buf = Graphics.createArrayBuffer(CHARW+CHARP*2,CHARW*2 + CHARP*2,1,{msb:true});
+var bufimg = {width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer};
 // The last time that we displayed
 var lastTime = "     ";
 // If animating, this is the interval's id
 var animInterval;
+var timeInterval;
 
 /* Get array of lines from digit d to d+1.
  n is the amount (0..1)
@@ -49,7 +50,7 @@ const DIGITS = {
 [0,1,1,1],
 [1,1,1,2],
 [1-n,2,1,2]],
-"5": (n,maxFive)=>maxFive ? [ // 5 -> 0
+"5to0": n=>[ // 5 -> 0
 [0,0,0,1],
 [0,0,1,0],
 [n,1,1,1],
@@ -57,7 +58,8 @@ const DIGITS = {
 [0,2,1,2],
 [0,2,0,2],
 [1,1-n,1,1],
-[0,1,0,1+n]] : [ // 5 -> 6
+[0,1,0,1+n]],
+"5to6": n=>[ // 5 -> 6
 [0,0,0,1],
 [0,0,1,0],
 [0,1,1,1],
@@ -109,59 +111,66 @@ const DIGITS = {
 
 /* Draw a transition between lastText and thisText.
  'n' is the amount - 0..1 */
-function draw(lastText,thisText,n) {
-  buf.clear();
-  var x = 1;  // x offset
-  const p = 2; // padding around digits
-  var y = p; // y offset
-  const s = 34; // character size
+function drawDigits(lastText,thisText,n) {
+  const p = CHARP; // padding around digits
+  const s = CHARW; // character size
+  var x = 0;  // x offset
+  g.reset();
   for (var i=0;i<lastText.length;i++) {
     var lastCh = lastText[i];
     var thisCh = thisText[i];
     if (thisCh==":") x-=4;
-    var ch, chn = n;
-    if (lastCh!==undefined &&
-        (thisCh-1==lastCh ||
-         (thisCh==0 && lastCh==5) ||
-         (thisCh==0 && lastCh==9)))
-      ch = lastCh;
-    else {
-      ch = thisCh;
-      chn = 0;
+    if (lastCh!=thisCh) {
+      var ch, chn = n;
+      if ((thisCh-1==lastCh ||
+          (thisCh==0 && lastCh==5) ||
+          (thisCh==0 && lastCh==9)))
+        ch = lastCh;
+      else {
+        ch = thisCh;
+        chn = 0;
+      }
+      buf.clear();
+      if (ch=="5") ch = (lastCh==5 && thisCh==0)?"5to0":"5to6";
+      var l = DIGITS[ch](chn);
+      l.forEach(c=>{
+        if (c[0]!=c[2]) // horiz
+          buf.fillRect(p+c[0]*s,c[1]*s,p+c[2]*s,2*p+c[3]*s);
+        else if (c[1]!=c[3]) // vert
+          buf.fillRect(c[0]*s,p+c[1]*s,2*p+c[2]*s,p+c[3]*s);
+      });
+      g.drawImage(bufimg,x,Y);
     }
-    var l = DIGITS[ch](chn,lastCh==5 && thisCh==0);
-    l.forEach(c=>{
-      if (c[0]!=c[2]) // horiz
-        buf.fillRect(x+c[0]*s,y+c[1]*s-p,x+c[2]*s,y+c[3]*s+p);
-      else if (c[1]!=c[3]) // vert
-        buf.fillRect(x+c[0]*s-p,y+c[1]*s,x+c[2]*s+p,y+c[3]*s);
-    });
     if (thisCh==":") x-=4;
     x+=s+p+7;
   }
-  y += 2*s;
+}
+function drawSeconds() {
+  var x = (CHARW + CHARP + 6)*5;
+  var y = Y + 2*CHARW + CHARP;
   var d = new Date();
-  buf.setFont("6x8");
-  buf.setFontAlign(-1,-1);
-  buf.drawString(("0"+d.getSeconds()).substr(-2), x, y-8);
+  g.reset();
+  g.setFont("6x8");
+  g.setFontAlign(-1,-1);
+  g.drawString(("0"+d.getSeconds()).substr(-2), x, y-8, true);
   // date
-  buf.setFontAlign(0,-1);
+  g.setFontAlign(0,-1);
   var date = locale.date(d,false);
-  buf.drawString(date, buf.getWidth()/2, y+8);
-  flip();
+  g.drawString(date, g.getWidth()/2, y+8, true);
 }
 
 /* Show the current time, and animate if needed */
 function showTime() {
-  if (!Bangle.isLCDOn()) return;
   if (animInterval) return; // in animation - quit
   var d = new Date();
   var t = (" "+d.getHours()).substr(-2)+":"+
           ("0"+d.getMinutes()).substr(-2);
   var l = lastTime;
   // same - don't animate
-  if (t==l) {
-    draw(t,l,0);
+  if (t==l || l=="     ") {
+    drawDigits(l,t,0);
+    drawSeconds();
+    lastTime = t;
     return;
   }
   var n = 0;
@@ -170,23 +179,35 @@ function showTime() {
     if (n>=1) {
       n=1;
       clearInterval(animInterval);
-      animInterval=0;
+      animInterval = undefined;
     }
-    draw(l,t,n);
+    drawDigits(l,t,n);
   }, 20);
   lastTime = t;
 }
 
 Bangle.on('lcdPower',function(on) {
-  if (on)
+  if (animInterval) {
+    clearInterval(animInterval);
+    animInterval = undefined;
+  }
+  if (timeInterval) {
+    clearInterval(timeInterval);
+    timeInterval = undefined;
+  }
+  if (on) {
     showTime();
+    timeInterval = setInterval(showTime, 1000);
+  } else {
+    lastTime = "     ";
+  }
 });
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 // Update time once a second
-setInterval(showTime, 1000);
+timeInterval = setInterval(showTime, 1000);
 showTime();
 
 // Show launcher when middle button pressed

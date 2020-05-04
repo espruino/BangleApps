@@ -2,15 +2,34 @@ function toJS(txt) {
   return JSON.stringify(txt);
 }
 
+if ("undefined"!=typeof module)
+  Espruino = require("./espruinotools.js");
+
 var AppInfo = {
-  getFiles : (app,fileGetter) => {
+  /* Get files needed for app.
+     options = {
+        fileGetter : callback for getting URL,
+        settings : global settings object
+      }
+      */
+  getFiles : (app,options) => {
     return new Promise((resolve,reject) => {
       // Load all files
       Promise.all(app.storage.map(storageFile => {
         if (storageFile.content)
           return Promise.resolve(storageFile);
         else if (storageFile.url)
-          return fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
+          return options.fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
+            if (storageFile.url.endsWith(".js") && !storageFile.url.endsWith(".min.js")) { // if original file ends in '.js'...
+              return Espruino.transform(content, {
+                SET_TIME_ON_WRITE : false,
+                PRETOKENISE : options.settings.pretokenise,
+                //MINIFICATION_LEVEL : "ESPRIMA", // disable due to https://github.com/espruino/BangleApps/pull/355#issuecomment-620124162
+                builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
+              });
+            } else
+              return content;
+          }).then(content => {
             return {
               name : storageFile.name,
               content : content,

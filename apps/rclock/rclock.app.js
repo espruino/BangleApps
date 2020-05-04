@@ -7,6 +7,12 @@
   var locale = require('locale');
   var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
+  //HR variables
+  var color="#FF0000";
+  var id=0;
+  var size=10;
+  var grow=true;
+
   const screen = {
     width: g.getWidth(),
     height: g.getWidth(),
@@ -39,6 +45,12 @@
       middle: screen.middle,
       center: screen.center,
       height: screen.height
+    },
+    hr: {
+      color: '#333333',
+      size: 10,
+      x: screen.center,
+      y: screen.middle+45
     }
   };
 
@@ -159,6 +171,42 @@
     if (on) drawClock();
   });
 
+
+//setInterval for HR visualisation
+  const newBeats = function (hr) {
+    if (id != 0) {
+      changeInterval(id, 6e3 / hr.bpm);
+    } else {
+      id = setInterval(drawHR, 6e3 / hr.bpm);
+    }
+  };
+
+//visualize HR with circles pulsating
+  const drawHR = function (hr) {
+    if (grow && size < settings.hr.size) {
+      size++;
+    }
+
+    if (!grow && size > 3) {
+      size--;
+    }
+
+    if (size == settings.hr.size || size == 3) {
+      grow = !grow;
+    }
+
+    if (grow) {
+      color = settings.hr.color;
+      g.setColor(color);
+      g.fillCircle(settings.hr.x, settings.hr.y, size);
+    } else {
+      color = "#000000";
+      g.setColor(color);
+      g.drawCircle(settings.hr.x, settings.hr.y, size);
+    }
+    print(size);
+  };
+
   // clean app screen
   g.clear();
   g.setFontAlign(0, 0, 0);
@@ -168,10 +216,16 @@
   // refesh every 30 sec
   setInterval(drawClock, 1E3);
 
+  //start HR monitor and draw heart rate
+  Bangle.setHRMPower(1);
+  Bangle.on('HRM', function (d) {
+    newBeats(d);
+  });
+
   // draw now
   drawClock();
 
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-}
+} 
