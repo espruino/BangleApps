@@ -56,6 +56,7 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
+const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -206,6 +207,8 @@ apps.forEach((app,appIdx) => {
 // Do not allow files from different apps to collide
 let fileA
 while(fileA=allFiles.pop()) {
+  if (VALID_DUPLICATES.includes(fileA.file))
+    return;
   const nameA = (fileA.file||fileA.data),
     globA = globToRegex(nameA),
     typeA = fileA.file?'storage':'data'
