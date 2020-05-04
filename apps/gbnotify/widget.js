@@ -81,7 +81,7 @@
     if(_GB)setTimeout(_GB,0,event);
   };
 
-  WIDGETS["mywidget"] = {
+  WIDGETS["gbnotify"] = {
     area: "tl",
     width: 24,
     draw: () => { }
