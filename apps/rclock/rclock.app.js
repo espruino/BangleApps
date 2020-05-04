@@ -45,6 +45,12 @@
       middle: screen.middle,
       center: screen.center,
       height: screen.height
+    },
+    hr: {
+      color: '#333333',
+      size: 10,
+      x: screen.center,
+      y: screen.middle-45
     }
   };
 
@@ -177,7 +183,7 @@
 
 //visualize HR with circles pulsating
   const drawHR = function (hr) {
-    if (grow && size < 12) {
+    if (grow && size < settings.hr.size) {
       size++;
     }
 
@@ -185,18 +191,18 @@
       size--;
     }
 
-    if (size == 12 || size == 3) {
+    if (size == settings.hr.size || size == 3) {
       grow = !grow;
     }
 
     if (grow) {
-      color = "#f0af00";
+      color = settings.hr.color;
       g.setColor(color);
-      g.fillCircle(settings.circle.center, settings.circle.middle, size);
+      g.fillCircle(settings.hr.x, settings.hr.y, size);
     } else {
       color = "#000000";
       g.setColor(color);
-      g.drawCircle(settings.circle.center, settings.circle.middle, size);
+      g.drawCircle(settings.hr.x, settings.hr.y, size);
     }
     print(size);
   };
