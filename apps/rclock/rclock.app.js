@@ -50,7 +50,7 @@
       color: '#333333',
       size: 10,
       x: screen.center,
-      y: screen.middle-45
+      y: screen.middle+45
     }
   };
 
