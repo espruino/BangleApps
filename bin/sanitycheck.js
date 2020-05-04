@@ -27,14 +27,26 @@ function WARN(s) {
 
 var appsFile, apps;
 try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json");
+  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
 } catch (e) {
   ERROR("apps.json not found");
 }
 try{
   apps = JSON.parse(appsFile);
 } catch (e) {
+  console.log(e);
+  var m = e.toString().match(/in JSON at position (\d+)/);
+  if (m) {
+    var char = parseInt(m[1]);
+    console.log("===============================================");
+    console.log("LINE "+appsFile.substr(0,char).split("\n").length);
+    console.log("===============================================");
+    console.log(appsFile.substr(char-10, 20));
+    console.log("===============================================");
+  }
+  console.log(m);
   ERROR("apps.json not valid JSON");
+
 }
 
 const APP_KEYS = [
