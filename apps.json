@@ -1568,5 +1568,26 @@
       {"name":"switch-on.img","url":"switch-on.js","evaluate":true},
       {"name":"switch-off.img","url":"switch-off.js","evaluate":true}
     ]
+  },
+  {
+    "id": "timer",
+    "name": "Timer",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Simple timer, useful when playing board games or cooking",
+    "tags": "timer",
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "timer.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "timer.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
   }
 ]
