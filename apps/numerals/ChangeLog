@@ -2,3 +2,4 @@
 0.02: Use BTN2 for settings menu like other clocks
 0.03: maximize numerals, make menu button configurable, change icon to mac palette, add default settings file, respect 12hour setting
 0.04: Don't overwrite existing settings on app update
+0.05: Fix settings issue
