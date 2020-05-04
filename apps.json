@@ -167,7 +167,7 @@
   { "id": "impwclock",
     "name": "Imprecise Word Clock",
     "icon": "clock-impword.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Imprecise word clock for vacations, weekends, and those who never need accurate time.",
     "tags": "clock",
     "type":"clock",
