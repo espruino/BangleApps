@@ -1578,6 +1578,7 @@
       {
         "name": "largeclock.json",
         "url": "largeclock.json",
+        "evaluate": true
       }
     ]
   },
