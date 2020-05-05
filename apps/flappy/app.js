@@ -32,10 +32,11 @@ function gameStop() {
 }
 
 function draw() {
+  "ram"
   var H = g.getHeight()-24;
   g.setColor("#71c6cf");
   g.fillRect(0,0,g.getWidth(),H-1);
-  floorpos++;  
+  floorpos++;
   for (var x=-(floorpos&15);x<g.getWidth();x+=16)
     g.drawImage(FLOORIMG,x,H);
 
@@ -78,13 +79,13 @@ function draw() {
     g.setColor("#538917"); // right
     g.fillRect(b.x2-3, 0, b.x2-1, btop-1);
     g.fillRect(b.x2-3, bbot, b.x2-1, H-1);
-    g.setColor("#808080"); // outlines    
+    g.setColor("#808080"); // outlines
     g.drawRect(b.x1, btop-5, b.x2, btop); // top
-    g.drawLine(b.x1+1, 0, b.x1+1, btop-6); 
-    g.drawLine(b.x2-2, 0, b.x2-2, btop-6); 
-    g.drawRect(b.x1, bbot, b.x2, bbot+5); // bottom  
-    g.drawLine(b.x1+1, bbot+6, b.x1+1, H-1); 
-    g.drawLine(b.x2-1, bbot+6, b.x2-1, H-1); 
+    g.drawLine(b.x1+1, 0, b.x1+1, btop-6);
+    g.drawLine(b.x2-2, 0, b.x2-2, btop-6);
+    g.drawRect(b.x1, bbot, b.x2, bbot+5); // bottom
+    g.drawLine(b.x1+1, bbot+6, b.x1+1, H-1);
+    g.drawLine(b.x2-1, bbot+6, b.x2-1, H-1);
     if (b.x1<6 && (birdy-3<btop || birdy+3>bbot))
       gameStop();
   });

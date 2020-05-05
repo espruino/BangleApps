@@ -1,2 +1,3 @@
 0.02: Tweaks to make flappy bird run with less RAM available
 0.03: A few tweaks to improve rendering speed
+0.04: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
