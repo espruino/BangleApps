@@ -46,6 +46,8 @@ const passivColor = 0x3186 /*grey*/ ;
 const activeColorNight = 0xF800 /*red*/ ;
 const activeColorDay = 0xFFFF /* white */;
 
+var hidxPrev;
+
 function drawWordClock() {
 
 
@@ -64,19 +66,6 @@ function drawWordClock() {
     g.setFont("6x8",fontSize);
     g.setColor(passivColor);
     g.setFontAlign(0, -1, 0);
-
-    // draw allWords
-    var c;
-    var y = ys;
-    var x = xs;
-    allWords.forEach((line) => {
-        x = xs;
-        for (c in line) {
-            g.drawString(line[c], x, y);
-            x += dx;
-        }
-        y += dy;
-    });
 
 
     // Switch case isn't good for this in Js apparently so...
@@ -125,23 +114,39 @@ function drawWordClock() {
     hidx = 10;
     }
 
-    // write hour in active color
-    g.setColor(activeColor);
-    timeOfDay[hidx][0].split('').forEach((c, pos) => {
-        x = xs + (timeOfDay[hidx][pos + 1] / 10 | 0) * dx;
-        y = ys + (timeOfDay[hidx][pos + 1] % 10) * dy;
-        g.drawString(c, x, y);
-    });
+    // check whether we need to redraw the watchface
+    if (hidx !== hidxPrev) {
+      // draw allWords
+      var c;
+      var y = ys;
+      var x = xs;
+      allWords.forEach((line) => {
+          x = xs;
+          for (c in line) {
+              g.drawString(line[c], x, y);
+              x += dx;
+          }
+          y += dy;
+      });
 
+      // write hour in active color
+      g.setColor(activeColor);
+      timeOfDay[hidx][0].split('').forEach((c, pos) => {
+          x = xs + (timeOfDay[hidx][pos + 1] / 10 | 0) * dx;
+          y = ys + (timeOfDay[hidx][pos + 1] % 10) * dy;
+          g.drawString(c, x, y);
+      });
+      hidxPrev = hidx;
+    }
 
     // Display digital time while button 1 is pressed
+    g.clearRect(0, 215, 240, 240);
     if (BTN1.read()){
         g.setColor(activeColor);
-        g.clearRect(0, 215, 240, 240);
         g.drawString(time, 120, 215);
-    } else { g.clearRect(0, 215, 240, 240); }
-    
+    }
 }
+
 
 Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
