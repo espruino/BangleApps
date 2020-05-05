@@ -1452,7 +1452,7 @@
     "name": "Round clock with seconds,  minutes and date",
     "shortName":"Round Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Designed round clock with ticks for minutes and seconds",
     "tags": "clock",
     "type": "clock",
