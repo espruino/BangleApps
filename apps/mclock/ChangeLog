@@ -1,3 +1,5 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: Added Locale based date
 0.04: Improve performance, attempt to remove occasional glitch when LCD on (fix #279)
+0.05: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
+      Fix issue where first digit could get stuck going from "2x:xx" to " x:xx" (fix #365)

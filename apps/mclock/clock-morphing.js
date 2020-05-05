@@ -6,7 +6,7 @@ var Y = 50; // start height
 var buf = Graphics.createArrayBuffer(CHARW+CHARP*2,CHARW*2 + CHARP*2,1,{msb:true});
 var bufimg = {width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer};
 // The last time that we displayed
-var lastTime = "     ";
+var lastTime = "-----";
 // If animating, this is the interval's id
 var animInterval;
 var timeInterval;
@@ -112,6 +112,7 @@ const DIGITS = {
 /* Draw a transition between lastText and thisText.
  'n' is the amount - 0..1 */
 function drawDigits(lastText,thisText,n) {
+  "ram"
   const p = CHARP; // padding around digits
   const s = CHARW; // character size
   var x = 0;  // x offset
@@ -167,7 +168,7 @@ function showTime() {
           ("0"+d.getMinutes()).substr(-2);
   var l = lastTime;
   // same - don't animate
-  if (t==l || l=="     ") {
+  if (t==l || l=="-----") {
     drawDigits(l,t,0);
     drawSeconds();
     lastTime = t;
@@ -199,7 +200,7 @@ Bangle.on('lcdPower',function(on) {
     showTime();
     timeInterval = setInterval(showTime, 1000);
   } else {
-    lastTime = "     ";
+    lastTime = "-----";
   }
 });
 
