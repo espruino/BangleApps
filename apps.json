@@ -1620,5 +1620,19 @@
         "evaluate": true
       }
     ]
+  },
+  {
+    "id": "beebclock",
+    "name": "Beeb Clock",
+    "icon": "beebclock.png",
+    "version":"0.02",
+    "description": "Clock face that may be coincidentally familiar to BBC viewers",
+    "tags": "clock",
+    "type": "clock",
+    "allow_emulator": true,
+    "storage": [
+        {"name":"beebclock.app.js","url":"beebclock.js"},
+        {"name":"beebclock.img","url":"beebclock-icon.js","evaluate":true}
+    ]
   }
 ]
