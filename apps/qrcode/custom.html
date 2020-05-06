@@ -41,11 +41,9 @@ g.setColor(0,0,0);
 g.drawString(url,120,230);
 g.setColor(1,1,1);
 `;
-        var icon = `require("heatshrink").decompress(atob("mEwgP/AEX8gE8nkAn4FSngCWF6xfYDgIABHAQFPDQXD4YgDApxNDMooFOAQIdDAqIvWfcYA="))`;
         sendCustomizedApp({
           storage:[
             {name:"qrcode.app.js", content:app},
-            {name:"qrcode.img", content:icon, evaluate:true},
           ]
         });
 
