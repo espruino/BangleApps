@@ -240,12 +240,10 @@ Bangle.setGPSPower(1);
 Bangle.setCompassPower(1);
 g.clear();
 `;
-var icon = `require("heatshrink").decompress(atob("mEwgIkhvgFE/wEDgOHAocDgYFEgOAAp4XEEYsB4w1E5hBKnByFKw8/AQNAAQP/4EAAIMB4HggBABHoNwCwUGE4kOgEYBAMAhk+hgIBAoM/hkEAoMIv8MC4QFChARCAoIMCDoQXChkcjA1EAoJBBg5dCJoJHDKYWAsCGD4AJBAAXBDYIlCsYFBGwUzPok+AokcsOOmIUCAogAWA=="))`;
 
 sendCustomizedApp({
   storage:[
-    {name:"route.app.js", content:app},
-    {name:"route.img", content:icon, evaluate:true},
+    {name:"route.app.js", content:app}
   ]
 });
 });
