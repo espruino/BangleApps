@@ -13,8 +13,9 @@
 
     <script>
       var faces = [
-        { img:"122240.png", bpp : 8, x:120, y:20, name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
-        { img:"122271.png", bpp : 8, x:10, y:125, name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"122240.png", bpp : 8, x:120, y:20, col:"#FFFFFF", name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"122271.png", bpp : 8, x:10, y:125, col:"#FFFFFF", name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"thisisfine.png", bpp : 8, x:85, y:5, col:"#000000", name:"This is fine.", attrib:"Gunshow #648", attribLink:"https://knowyourmeme.com/memes/this-is-fine", description:"" },
       ];
 
       document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
@@ -44,7 +45,8 @@
           var faceInfo = {
             bpp : face.bpp,
             x : face.x,
-            y : face.y
+            y : face.y,
+            col : face.col
           };
           var img = document.querySelector(`img[face='${facenumber}']`);
           var imgString = imageconverter.imagetoString(img, {mode:"web",output:"raw",compression:false});

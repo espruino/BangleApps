@@ -27,6 +27,7 @@ function draw() {
   // quickly set background image
   new Uint8Array(cg.buffer).set(bgimg);
   // draw time
+  cg.setColor(inf.col);
   cg.setFontAlign(-1,-1);
   var x = 0;
   cg.setFont("7x11Numeric7Seg",3);
