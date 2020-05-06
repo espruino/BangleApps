@@ -1621,7 +1621,7 @@
     "id": "simpletimer",
     "name": "Timer",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Simple timer, useful when playing board games or cooking",
     "tags": "timer",
     "readme": "README.md",
@@ -1630,6 +1630,16 @@
       {
         "name": "simpletimer.app.js",
         "url": "app.js"
+      },
+      {
+        "name": ".tfnames",
+        "url": "gesture-tfnames.js",
+        "evaluate": true
+      },
+      {
+        "name": ".tfmodel",
+        "url": "gesture-tfmodel.js",
+        "evaluate": true
       },
       {
         "name": "simpletimer.img",
