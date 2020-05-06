@@ -156,7 +156,7 @@
     } else {
       timestr = hours;
     }
-
+    g.setFontAlign(0, 0, 0);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size);
     g.drawString(timestr, settings.time.center, settings.time.middle);
@@ -203,7 +203,6 @@
 
   // clean app screen
   g.clear();
-  g.setFontAlign(0, 0, 0);
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
