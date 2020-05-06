@@ -8,11 +8,11 @@
   var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
   //HR variables
-  var color = "#FF0000";
   var id = 0;
-  var size = 10;
   var grow = true;
+  var size=10;
 
+  //Screen dimensions
   const screen = {
     width: g.getWidth(),
     height: g.getWidth(),
@@ -177,7 +177,7 @@
   };
 
   //visualize HR with circles pulsating
-  const drawHR = function (hr) {
+  const drawHR = function () {
     if (grow && size < settings.hr.size) {
       size++;
     }
@@ -210,13 +210,8 @@
 //manage when things should be enabled and not
   Bangle.on('lcdPower', function (on) {
     if (on) {
-      setInterval(drawClock, 1E3);
       Bangle.setHRMPower(1);
-      Bangle.on('HRM', function (d) {
-        newBeats(d);
-      }); 
     } else {
-      clearInterval();
       Bangle.setHRMPower(0);
     }
   });
