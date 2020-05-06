@@ -1,5 +1,7 @@
 function toJS(txt) {
-  return JSON.stringify(txt);
+  var json = JSON.stringify(txt);
+  var b64 = "atob("+JSON.stringify(btoa(json))+")";
+  return b64.length < json.length ? b64 : json;
 }
 
 if ("undefined"!=typeof module)

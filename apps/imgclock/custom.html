@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+      </div>
+    </div>
+
+    <script src="../../lib/customize.js"></script>
+    <script src="https://espruino.github.io/EspruinoWebTools/imageconverter.js"></script>
+
+    <script>
+      var faces = [
+        { img:"122240.png", bpp : 8, x:120, y:20, name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"122271.png", bpp : 8, x:10, y:125, name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+      ];
+
+      document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
+<div class="column col-6 col-xs-12">
+  <div class="card">
+    <div class="card-image">
+      <img src="${face.img}" face="${facenumber}" class="img-responsive">
+    </div>
+    <div class="card-header">
+      <div class="card-title h5">${face.name}</div>
+      <div class="card-subtitle text-gray"><a href="${face.attribLink}" target="_blank">${face.attrib}</a></div>
+    </div>
+    <div class="card-body">${face.description}</div>
+    <div class="card-footer">
+      <button class="btn btn-primary uploadbutton" face="${facenumber}">Upload</button>
+    </div>
+  </div>
+</div>`).join("\n");
+
+      var btns = document.getElementsByClassName("uploadbutton");
+      for (var i=0;i<btns.length;i++) {
+      // When the 'upload' button is clicked...
+        btns[i].addEventListener("click", function(btn) {
+          // build app text
+          var facenumber = btn.target.getAttribute("face");
+          var face = faces[facenumber];
+          var faceInfo = {
+            bpp : face.bpp,
+            x : face.x,
+            y : face.y
+          };
+          var img = document.querySelector(`img[face='${facenumber}']`);
+          var imgString = imageconverter.imagetoString(img, {mode:"web",output:"raw",compression:false});
+          // send finished app
+          sendCustomizedApp({
+            storage:[
+              {name:"imgclock.face.img", content:imgString},
+              {name:"imgclock.face.json", content:JSON.stringify(faceInfo)},
+            ]
+          });
+        });
+      }
+
+    </script>
+  </body>
+</html>
