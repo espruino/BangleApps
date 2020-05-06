@@ -68,9 +68,15 @@ function handleCustomApp(appTemplate) {
     var iframe = modal.getElementsByTagName("iframe")[0];
     iframe.contentWindow.addEventListener("message", function(event) {
       var appFiles = event.data;
-      var app = {};
-      Object.keys(appTemplate).forEach(k => app[k] = appTemplate[k]);
-      Object.keys(appFiles).forEach(k => app[k] = appFiles[k]);
+      var app = JSON.parse(JSON.stringify(appTemplate)); // clone template
+      // copy extra keys from appFiles
+      Object.keys(appFiles).forEach(k => {
+        if (k!="storage") app[k] = appFiles[k]
+      });
+      appFiles.storage.forEach(f => {
+        app.storage = app.storage.filter(s=>s.name!=f.name); // remove existing item
+        app.storage.push(f); // add new
+      });
       console.log("Received custom app", app);
       modal.remove();
       Comms.uploadApp(app).then(()=>{

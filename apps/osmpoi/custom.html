@@ -27,9 +27,25 @@
   <body>
     <div id="map">
     </div>
-    <div id="controls">
-      <p>Find the area of interest</p>
-      <p>Click <button id="pubfinder" class="btn btn-primary">Find Pubs</button></p>
+
+    <div id="controls" class="form-group">
+      <select id="amenity" class="form-select select-lg">
+        <option value="drinking_water">Drinking Water</option>
+        <option value="bicycle_parking">Bicycle Park</option>
+        <option value="post_box">Post Box</option>
+        <option value="bar">Bars</option>
+        <option value="bbq">Barbecue</option>
+        <option value="cafe">Café</option>
+        <option value="fast_food">Fast food</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="bicycle_repair_station">Bicycle Repair</option>
+        <option value="bicycle_rental">Bicycle rental</option>
+        <option value="bus_station">Bus station</option>
+        <option value="atm">Bank</option>
+        <option value="pharmacy">Pharmacy</option>
+        <option value="interner_cafe">Cybercafé</option>
+      </select>
+      <p>Click <button id="poi" class="btn btn-primary">Find P.O.I.</button></p>
       <p>If ok, Click <button id="upload" class="btn btn-primary">Upload</button></p>
     </div>
 
@@ -75,9 +91,10 @@
         return resultUrl;
       }
 
-      document.getElementById("pubfinder").addEventListener("click", function() {
+      document.getElementById("poi").addEventListener("click", function() {
         //var overpassApiUrl = buildOverpassApiUrl(map, "highway=bus_stop");
-        var overpassApiUrl = buildOverpassApiUrl(map, "amenity=pub");
+        var poi = document.getElementById("amenity").options[document.getElementById("amenity").selectedIndex].value;
+        var overpassApiUrl = buildOverpassApiUrl(map, "amenity="+poi);
         var req = new XMLHttpRequest();
         req.responseType = 'json';
         req.onreadystatechange = function() {
@@ -124,8 +141,8 @@
       });
       document.getElementById("upload").addEventListener("click", function() {
         var app = `var features = ${JSON.stringify(features)};
-var img_nofix = require("heatshrink").decompress(atob("mUyxH+ACYhJDygtYGsqLVF8u02gziGBoyhQ5gwDGRozRGCQydGCgybGCwyZC5gAaGPQwnGRAwpGQ4xwGFYyFDKsrlYxYDCsBmUyg4yXLyUsFwMyq1WAgUsNCRjUmVXroAEq8yMbcllkskwCEkplDmQwDq0sC54xEHQ9RqQAGqIwCFgOBAASYBSgMBltRAA0sgJsOGJeBxAAGwMrgIXIloxOJYNSvl8CwIDCqMBlYxNC4wxQDIOCwVYDIIDBGJ9YwV8rADBwRJCSqAVCAYaVMC4oxCPYYxQSo4xMSpIxPY4T5HY54XIMbIxKgwXKfKjhEllWGJNWlgXJGLNXruCGI+CrtXGKP+GJB9HMZ6VO/wxJcI8lfJclfKAxKfJEAGJIXLGKSvBWYQZCMZbfEqTHBGJYyFfIo1DGJ4tDGJQwCGJB9IMZyVNGIYyEfJQxPfJgwEMgoZJgAxMltRAA0tGJQyEksslkmAQklGINXxDTBFwIDCq8rC4YACC4gwJMowAJldWAAwwBABowIGJ4AYGJIymGBQylGBgyjGBwyhGCAzeF6YycGCwzYF7IzVF7o1PDqYA=="));
-var img_fix = require("heatshrink").decompress(atob("mUyxH+ACYhJDygtYGsqLVF94zaDYkq6wAOlQyYJo2A63VAAIoC2m0GI16My5/H5/V64ABGQIwBGQ+rTKwWHkhiBGIYwDGQ3VZioVIqoiBGAJhEGRFPGSYTIYwQxCGA4yFqodJGKeqSgQwJGQmkGKQSJfAYwLGQfPDxQwRgHVfAi/EAA4xLGQwRLYwb5BABoxQCBcA43G5wABAgIAMEBgxQ0QxB54xB5gAG4xgBBYOiGJ4PMGInPGIhcCGIt4EJoxPvHM5oxBGAnO6xrCGoXMqgxdpwxD5qQFL4QADlQxdgAhBGILIDMYoADEBwwPgCHBfQzHDAAb4NACTIIAA74OACLIIMo7GOACQoBZAoHBHQPNA4QwggGiZBA5B54HBY0DIKMYtUGMMqFYLIGY4jGhZAr6FAAYwiZAgxIY0TIFfQgADvAfR/zISGJTGR/wxRkj6CGJBiSGKL6DGP4xOGSKVDGAwxRGAQxU5oxcGR75DGJEkGCYxPlXM5vPGA/MlQxUGR1OGIL4I5lOGCgyOqgxBShHMqgwVGJt4GJd4GKwyMvHG5vGABAxMGBQyM1mtABWsGC4yLGBYABGDAyKGKwwQGZKVUF6b/OABowWGbAvZGaovdGp4dTA"));
+var img_nofix = require("heatshrink").decompress(atob("mEwhBC/AH4A/AH4A/AC2swMllcrBQoHBktWwIEBlYEBqwAEgAICF6FWldbrgDBAIMrFIIhBrlbAAIIBwOsAAgsClcxF6ErrmG2GGw1cqsxrmAwuG2OxxkxFoOCq1VFANVLgIyBPI4vLq2F2OwAAQrCAgPVw0xEgVVMoQ7BwsxmOm1iUCMCIuD2GM2AvC2IuDFQIACwADCrZrCGCOBqovI2NcEAIuBTwQAHlZhCL6FVYAKQG2NV1i3BZYIpDrZiFlb1BYSFWwAvG6tbwOCmIuFF4YAC2FVwOBMCFWraBCRwReDBYIpELQOAAQQ5CqpgBF57RBFYK+C2IcBw4vBEQIwDrYEDrlbGYOMmMr64vQd4hcBX4VcF4LsGOIYGCxhMBYAKORGAhhBF4TtBAAzvFwuAwIvPlbuBXIQAE2BMBHgIoBE4QvEricBqtWF4KPOF4KICAAReCd4WBdoYAJmKPCF50lrhYCYIuxreBwUxR5RrBrmCwIABF54pCFwrkBJoMxFAKGBF4lcFwNbR4JxBX6GGFYeHSoOGSQJgBGARVBFoIqCMIWMlS+ClbvRMIbFEJ4PXwMrmIqBAARjDleB67ABFxowCYAgDBQQVbFwIAB00xGAQMDA4OCNoJdOAAWBYAex6uGNAIcBFwSvB1mCq1VFYMxqwICA4IvRDgKKDw0qwQrBPgIuBX4IoCAAmBDILQCF6AwBwBgBFwgwCldVTQKJBqtcwB1BSgXV6uAXyAvCrYuHAAMrrYuBGIQABwoGBOgWxF6SEBFwWmFwpgBF4IADxgyC2IFCR6Z5BLpHX1krLoQADLYQHEqrvRWQMrFxKOEF4eMxgyBGgVWkovRgCMH1kqZIInBLwwtCRwZfQqxdLEYQuFAQYHCraORq2BXZPVKwIABEoIGBFoYCCRwNWRyIuIquGrgfBldWwGAwqMBFYVbrlcqovSL42sksrwCsBD4QDBkoyBqsxFQINBmItRL4UrGAZdBLIIABCQ8lgAsBH4IsSGA4uBDq4wTq0xmIuqAH4A/AH4A/AH4AHA="));
+var img_fix = require("heatshrink").decompress(atob("mEwhBC/AH4A/AH4A/AE0rg4vtq8PF1kHxM7gJesF4Jgrg+IF4M6MFReBF4JgqXoIvDMFJeCF4RgoLwYvDnZgmLwYvEMEpeEF4jBlmYvIMEheFF4pgjXogvGMEReGF407MEBeGF45gfg+IF5rBfLw4vHMDxeIF5BgdLxAvIMDkHFxAvJMDZeJF5JgaLxQvKnZgYLxQvLMC5eLF5bBXmYvWMCxeMF5hgVXpYvNMCheNF5s7MCReNF5xgRg+IFZNersylcHhEPmjBbLw1er1XlkHIhI0CnRgUmQqEKwKnRgIzBiBpBnUICpszryCCFiIyGM4TBRAH4A/AH4A/AH4AFA"));
 
 // https://github.com/Leaflet/Leaflet/blob/master/src/geo/projection/Projection.SphericalMercator.js
 function project(latlong) {
@@ -196,12 +213,10 @@ Bangle.on('mag', function(m) {
 Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
 g.clear();`;
-var icon = `require("heatshrink").decompress(atob("mEwghC/AB0O/4AG8AXNgYXHmAXl94XH+AXNn4XH/wXW+YX/C6oWHAAIXN7sz9vdAAoXN9sznvuAAXf/vuC53jC4Xd7wXQ93jn3u9vv9vt7wXT/4tBAgIXQ7wvCC4PgC5sO6czIQJfBC6PumaPDC6wwCC50NYAJcBVgIDBCxrAFbgYXP7yoDF6TADL4YXPVAIXCRyAXC7wXW9zwBC6cNC9zABC4gWQC653CR4fQC6x3TF6gXXI4M9d6wAEC9EN73dAAZfQgczAAkwC/4XXAH4"))`;
 
         sendCustomizedApp({
           storage:[
-            {name:"beer.app.js", content:app},
-            {name:"beer.img", content:icon, evaluate:true},
+            {name:"osmpoi.app.js", content:app}
           ]
         });
       });

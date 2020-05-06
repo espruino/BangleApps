@@ -546,14 +546,14 @@
   },
   { "id": "beer",
     "name": "Beer Compass",
-    "icon": "beercompass.png",
+    "icon": "app.png",
     "version":"0.01",
     "description": "Uploads all the pubs in an area onto your watch, so it can always point you at the nearest one",
     "tags": "",
-    "custom": "beercompass.html",
+    "custom": "custom.html",
     "storage": [
       {"name":"beer.app.js"},
-      {"name":"beer.img"}
+      {"name":"beer.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "route",
@@ -1481,10 +1481,10 @@
     "description": "Uploads all the points of interest in an area onto your watch, same as Beer Compass with more p.o.i.",
     "tags": "tool,outdoors,gps",
     "readme": "README.md",
-    "custom": "osmpoi.html",
+    "custom": "custom.html",
     "storage": [
       {"name":"osmpoi.app.js"},
-      {"name":"osmpoi.img"}
+      {"name":"osmpoi.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "pong",
