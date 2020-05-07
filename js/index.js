@@ -225,7 +225,7 @@ function refreshLibrary() {
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
-      <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
+      <a appid="${app.id}" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
@@ -242,6 +242,22 @@ function refreshLibrary() {
   var tab = document.querySelector("#tab-librarycontainer a");
   tab.classList.add("badge");
   tab.setAttribute("data-badge", appJSON.length);
+  //github icon onClick
+  htmlToArray(panelbody.getElementsByClassName("link-github")).forEach(link => {
+    button.addEventListener("click",event => {
+      var username = window.location.href;
+      var url = "https://github.com/espruino/BangleApps/tree/master/apps/"+link.getAttribute("appid");
+      if(!username.startsWith("https://banglejs.com/apps")){
+        username = username.substr(0,username.lastIndexOf("."));
+        if(username.startsWith("https://")){username=username.substr(8,username.length)}
+        if(username.startsWith("http://")){username=username.substr(7,username.length)}
+        if(username.startsWith("www.")){username=username.substr(4,username.length)}
+        username = username.substr(0,username.lastIndexOf("."));
+        url = "https://github.com/"+username+"/BangleApps/tree/master/apps/"+link.getAttribute("appid");
+      }
+      window.open(url);
+    });
+  });
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
       var button = event.currentTarget;
