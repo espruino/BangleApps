@@ -1681,8 +1681,9 @@
     "shortName":"Get Up",
     "icon": "app.png",
     "version":"0.01",
-    "description": "Reminds you to getup every 20 minutes. Sitting to long is dangerous!",
-    "tags": "tools",
+    "description": "Reminds you to getup every x minutes. Sitting to long is dangerous!",
+    "tags": "tools,health",
+    "readme": "README.md",
     "allow_emulator":true,
     "storage": [
       {"name":"getup.app.js","url":"app.js"},
