@@ -1675,5 +1675,17 @@
         {"name":"findphone.app.js","url":"app.js"},
         {"name":"findphone.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "stepup",
+    "name": "Stepup",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Reminds you to stepup every 20 minutes. Sitting to long is dangerous!",
+    "tags": "tools",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"stepup.app.js","url":"app.js"},
+      {"name":"stepup.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
