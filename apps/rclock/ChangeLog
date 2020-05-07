@@ -1,2 +1,3 @@
 0.01: First published version of app
 0.02: Added support for locale and 12H clock
+0.03: Added HR indication to clock
