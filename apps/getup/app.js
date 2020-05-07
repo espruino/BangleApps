@@ -26,6 +26,7 @@ function print_message(){
 	g.clear();
 	g.setColor(0xF800);
 	g.drawString("sitting is dangerous!", g.getWidth()/2, g.getHeight()/2);
+        setTimeout(remind,settings.sitTime * 60000);
 }
 //init graphics
 require("Font8x12").add(Graphics);
@@ -34,5 +35,4 @@ g.setFontAlign(0,0);
 g.flip();
 
 print_message();
-setInterval(remind,settings.sitTime * 60000);
 
