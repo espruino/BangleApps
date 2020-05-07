@@ -1,12 +1,14 @@
+Bangle.loadWidgets();
 Bangle.setGPSPower(1);
 Bangle.setLCDMode("doublebuffered");
 var lastFix = {fix:0,satellites:0};
 function onGPS(fix) {
   lastFix = fix;
   g.clear();
+  Bangle.drawWidgets();
   g.setFontAlign(0,0);
   g.setFont("6x8");
-  g.drawString(fix.satellites+" satellites",120,6);
+  g.drawString(fix.satellites+" satellites",120,36);
   if (fix.fix) {
     var txt = (fix.speed<20) ? fix.speed.toFixed(1) : Math.round(fix.speed);
     var s = 80;
