@@ -23,6 +23,7 @@ function loadSettings() {
 function remind() {
     Bangle.buzz(1000,1);
     g.clear();
+    g.setFont("8x12",4);
     g.setColor(0x03E0);
     g.drawString("MOVE!", g.getWidth()/2, g.getHeight()/2);
     setTimeout(print_message,setting("moveTime") * 60000);
@@ -30,6 +31,7 @@ function remind() {
 //draw sitting message and start timer for reminder
 function print_message(){
 	g.clear();
+        g.setFont("8x12",2);
 	g.setColor(0xF800);
 	g.drawString("sitting is dangerous!", g.getWidth()/2, g.getHeight()/2);
         setTimeout(remind,setting("sitTime") * 60000);
@@ -37,7 +39,6 @@ function print_message(){
 
 //init graphics
 require("Font8x12").add(Graphics);
-g.setFont("8x12",2);
 g.setFontAlign(0,0);
 g.flip();
 
