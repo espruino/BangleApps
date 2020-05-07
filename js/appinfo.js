@@ -1,7 +1,23 @@
+// Converts a string into most efficient way to send to Espruino (either json, base64, or compressed base64)
 function toJS(txt) {
   var json = JSON.stringify(txt);
   var b64 = "atob("+JSON.stringify(btoa(json))+")";
-  return b64.length < json.length ? b64 : json;
+  var js = b64.length < json.length ? b64 : json;
+
+  if (heatshrink) {
+    var ua = new Uint8Array(txt.length);
+    for (var i=0;i<txt.length;i++)  ua[i] = txt.charCodeAt(i);
+    var c = heatshrink.compress(ua);
+    var cs = "";
+    for (var i=0;i<c.length;i++)
+      cs += String.fromCharCode(c[i]);
+    cs = 'require("heatshrink").decompress(atob("'+btoa(cs)+'"))';
+    // if it's more than a little smaller, use compressed version
+    if (cs.length*4 < js.length*3)
+      js = cs;
+  }
+
+  return js;
 }
 
 if ("undefined"!=typeof module)
@@ -18,7 +34,7 @@ var AppInfo = {
     return new Promise((resolve,reject) => {
       // Load all files
       Promise.all(app.storage.map(storageFile => {
-        if (storageFile.content)
+        if (storageFile.content!==undefined)
           return Promise.resolve(storageFile);
         else if (storageFile.url)
           return options.fileGetter(`apps/${app.id}/${storageFile.url}`).then(content => {
@@ -52,14 +68,14 @@ var AppInfo = {
             let js = storageFile.content.trim();
             if (js.endsWith(";"))
               js = js.slice(0,-1);
-            storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${js});`;
+            storageFile.cmd = `\x10require('Storage').write(${JSON.stringify(storageFile.name)},${js});`;
           } else {
             let code = storageFile.content;
             // write code in chunks, in case it is too big to fit in RAM (fix #157)
-            var CHUNKSIZE = 4096;
-            storageFile.cmd = `\x10require('Storage').write(${toJS(storageFile.name)},${toJS(code.substr(0,CHUNKSIZE))},0,${code.length});`;
+            var CHUNKSIZE = 8192;
+            storageFile.cmd = `\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(0,CHUNKSIZE))},0,${code.length});`;
             for (var i=CHUNKSIZE;i<code.length;i+=CHUNKSIZE)
-               storageFile.cmd += `\n\x10require('Storage').write(${toJS(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
+               storageFile.cmd += `\n\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
           }
         });
         resolve(fileContents);

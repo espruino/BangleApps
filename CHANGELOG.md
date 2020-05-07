@@ -12,3 +12,5 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Rewrite 'getInstalledApps' to minimize RAM usage
 * Added code to handle Settings
 * Added espruinotools.js for pretokenisation
+* Included image and compression tools in repo
+* Added better upload of large files (incl. compression)
