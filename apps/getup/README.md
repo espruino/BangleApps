@@ -1,6 +1,6 @@
 # Get Up
 
-Reminds you to getup every 20 minutes.
+Reminds you to getup every x minutes (default: 20).
 
 Sitting to long is dangerous!
 
