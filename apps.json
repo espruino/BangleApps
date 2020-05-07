@@ -168,7 +168,7 @@
     "name": "Image background clock",
     "shortName":"Image Clock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A clock with an image as a background",
     "tags": "clock",
     "type" : "clock",

@@ -8,7 +8,7 @@ var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
 var IW = 110, IH = 45, OY = 24;
 require("Font7x11Numeric7Seg").add(Graphics);
-var cg = Graphics.createArrayBuffer(IW,IH,IBPP);
+var cg = Graphics.createArrayBuffer(IW,IH,IBPP,{msb:true});
 var cgimg = {width:IW,height:IH,bpp:IBPP,buffer:cg.buffer};
 var locale = require("locale");
 
