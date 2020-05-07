@@ -7,7 +7,7 @@
 
   // initialize with default settings...
   let s = {
-    'sitTime' : 20
+    'sitTime' : 20,
     'moveTime' : 1
   };
   // ...and overwrite them with any saved values
