@@ -25,14 +25,14 @@ function remind() {
     g.clear();
     g.setColor(0x03E0);
     g.drawString("MOVE!", g.getWidth()/2, g.getHeight()/2);
-    setTimeout(print_message,moveTime * 60000);
+    setTimeout(print_message,setting("moveTime") * 60000);
 }
 //draw sitting message and start timer for reminder
 function print_message(){
 	g.clear();
 	g.setColor(0xF800);
 	g.drawString("sitting is dangerous!", g.getWidth()/2, g.getHeight()/2);
-        setTimeout(remind,settings.sitTime * 60000);
+        setTimeout(remind,setting("sitTime") * 60000);
 }
 
 //init graphics
