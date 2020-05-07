@@ -7,6 +7,12 @@
   var locale = require('locale');
   var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
+  //HR variables
+  var id = 0;
+  var grow = true;
+  var size=10;
+
+  //Screen dimensions
   const screen = {
     width: g.getWidth(),
     height: g.getWidth(),
@@ -39,6 +45,12 @@
       middle: screen.middle,
       center: screen.center,
       height: screen.height
+    },
+    hr: {
+      color: '#333333',
+      size: 10,
+      x: screen.center,
+      y: screen.middle + 45
     }
   };
 
@@ -144,7 +156,7 @@
     } else {
       timestr = hours;
     }
-
+    g.setFontAlign(0, 0, 0);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size);
     g.drawString(timestr, settings.time.center, settings.time.middle);
@@ -155,18 +167,62 @@
     g.drawString(date, settings.date.center, settings.date.middle);
   };
 
-  Bangle.on('lcdPower', function (on) {
-    if (on) drawClock();
-  });
+   //setInterval for HR visualisation
+  const newBeats = function (hr) {
+    if (id != 0) {
+      changeInterval(id, 6e3 / hr.bpm);
+    } else {
+      id = setInterval(drawHR, 6e3 / hr.bpm);
+    }
+  };
+
+  //visualize HR with circles pulsating
+  const drawHR = function () {
+    if (grow && size < settings.hr.size) {
+      size++;
+    }
+
+    if (!grow && size > 3) {
+      size--;
+    }
+
+    if (size == settings.hr.size || size == 3) {
+      grow = !grow;
+    }
+
+    if (grow) {
+      color = settings.hr.color;
+      g.setColor(color);
+      g.fillCircle(settings.hr.x, settings.hr.y, size);
+    } else {
+      color = "#000000";
+      g.setColor(color);
+      g.drawCircle(settings.hr.x, settings.hr.y, size);
+    }
+  };
 
   // clean app screen
   g.clear();
-  g.setFontAlign(0, 0, 0);
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
-  // refesh every 30 sec
+//manage when things should be enabled and not
+  Bangle.on('lcdPower', function (on) {
+    if (on) {
+      Bangle.setHRMPower(1);
+    } else {
+      Bangle.setHRMPower(0);
+    }
+  });
+
+  // refesh every second
   setInterval(drawClock, 1E3);
+
+  //start HR monitor and update frequency of update
+  Bangle.setHRMPower(1);
+  Bangle.on('HRM', function (d) {
+    newBeats(d);
+  });
 
   // draw now
   drawClock();
@@ -174,4 +230,4 @@
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-}
+} 
