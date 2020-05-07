@@ -1,6 +1,5 @@
 function remind() {
-    return Bangle.buzz(1000,1)
-        .then(() =>setTimeout(remind, 60));
+    Bangle.buzz(1000,1);
 }
 
 //init graphics
@@ -12,7 +11,9 @@ g.flip();
 g.setColor(0xF800);
 g.drawString("sitting is dangerous!", g.getWidth()/2, g.getHeight()/2);
 	
-	setTimeout(remimd,60);false };
+setInterval(remimd,60);;()/2, g.getHeight()/2);
+	
+	setInterval(remimd,60);alse };
 
 //check if HID enabled and show message
 if (settings.HID=="kb" || settings.HID=="kbmedia") {
