@@ -43,4 +43,3 @@ g.setFontAlign(0,0);
 g.flip();
 
 print_message();
-
