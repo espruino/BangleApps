@@ -72,7 +72,7 @@ var AppInfo = {
           } else {
             let code = storageFile.content;
             // write code in chunks, in case it is too big to fit in RAM (fix #157)
-            var CHUNKSIZE = 8192;
+            var CHUNKSIZE = 4096;
             storageFile.cmd = `\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(0,CHUNKSIZE))},0,${code.length});`;
             for (var i=CHUNKSIZE;i<code.length;i+=CHUNKSIZE)
                storageFile.cmd += `\n\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
