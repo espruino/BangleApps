@@ -303,7 +303,7 @@
   { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Show the current speed according to the GPS",
     "tags": "tool,outdoors,gps",
     "storage": [
@@ -1470,7 +1470,7 @@
     "shortName":"Round Clock",
     "icon": "app.png",
     "version":"0.02",
-    "description": "Designed round clock with ticks for minutes and seconds",
+    "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
     "storage": [

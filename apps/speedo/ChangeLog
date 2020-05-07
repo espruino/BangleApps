@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Add widgets to app
+0.03: Use offscreen buffer (not doublebuffer)
+      Use 'locale' to get internationalised speed
