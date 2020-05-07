@@ -244,7 +244,7 @@ function refreshLibrary() {
   tab.setAttribute("data-badge", appJSON.length);
   //github icon onClick
   htmlToArray(panelbody.getElementsByClassName("link-github")).forEach(link => {
-    button.addEventListener("click",event => {
+    link.addEventListener("click",event => {
       var username = window.location.href;
       var url = "https://github.com/espruino/BangleApps/tree/master/apps/"+link.getAttribute("appid");
       if(!username.startsWith("https://banglejs.com/apps")){
