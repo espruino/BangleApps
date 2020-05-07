@@ -17,14 +17,14 @@ settings = storage.readJSON(SETTINGS_FILE, 1) || {};
 function remind() {
     Bangle.buzz(1000,1);
     g.clear();
-    g.setColor(0xF800);
+    g.setColor(0x03E0);
     g.drawString("MOVE!", g.getWidth()/2, g.getHeight()/2);
     setTimeout(print_message,moveTime * 60000);
 }
 
 function print_message(){
 	g.clear();
-	g.setColor(0x03E0);
+	g.setColor(0xF800);
 	g.drawString("sitting is dangerous!", g.getWidth()/2, g.getHeight()/2);
 }
 //init graphics
