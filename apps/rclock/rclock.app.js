@@ -26,8 +26,8 @@
       color: '#f0af00',
       shadow: '#CF7500',
       font: 'Vector',
-      size: 60,
-      middle: screen.middle - 30,
+      size: 50,
+      middle: screen.middle - 20,
       center: screen.center,
     },
     date: {
