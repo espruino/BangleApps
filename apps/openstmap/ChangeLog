@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Fix marker position, color, and map scaling
+0.03: Show widgets (mainly so we can use the GPS recorder widget)
