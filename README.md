@@ -1,5 +1,11 @@
-Bangle.js App Loader (and Apps)
-================================
+Bangle.js App Loader (and Apps) (FORK - not actively maintained)
+================================================================
+
+
+--------------------------------------------------------------
+This is just a fork of: https://github.com/espruino/BangleApps
+--------------------------------------------------------------
+
 
 [![Build Status](https://travis-ci.org/espruino/BangleApps.svg?branch=master)](https://travis-ci.org/espruino/BangleApps)
 
