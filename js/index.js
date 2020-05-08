@@ -244,7 +244,7 @@ function refreshLibrary() {
   tab.setAttribute("data-badge", appJSON.length);
   //github icon onClick
   htmlToArray(panelbody.getElementsByClassName("link-github")).forEach(link => {
-    link.addEventListener("click",event => {
+   
       var username = window.location.href;
       var url = "https://github.com/espruino/BangleApps/tree/master/apps/"+link.getAttribute("appid");
       if(!username.startsWith("https://banglejs.com/apps")){
@@ -255,8 +255,8 @@ function refreshLibrary() {
         username = username.substr(0,username.lastIndexOf("."));
         url = "https://github.com/"+username+"/BangleApps/tree/master/apps/"+link.getAttribute("appid");
       }
-      window.open(url);
-    });
+      link.href=url;
+   
   });
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
