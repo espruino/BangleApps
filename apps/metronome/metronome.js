@@ -40,12 +40,11 @@ function changecolor() {
 }
 
 function updateScreen() {
-  //g.clear();
-  g.clearRect(0, 50, 250, 200);
+  g.clearRect(0, 50, 250, 150);
   changecolor();
   Bangle.buzz(50, 0.75);
   g.setFont("Vector",48);
-  g.drawString(Math.floor(bpm)+"bpm", 5, 80);
+  g.drawString(Math.floor(bpm)+"bpm", 5, 60);
 }
 
 Bangle.on('touch', function(button) {
@@ -91,7 +90,8 @@ setWatch(() => {
 
 interval = setInterval(updateScreen, 60000 / bpm);
 
-g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 15, 20);
+g.clear();
+g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 15, 150);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
