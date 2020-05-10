@@ -1813,7 +1813,7 @@
     "shortName": "Gallifrey Clock",
     "icon": "gallifr.png",
     "version": "0.01",
-    "description": "A Gallifreyan clock. The light pie segment shows the minutes, the black circle, the hour. The symbols on the dial read 'time' in Gallifreyan.",
+    "description": "A Gallifreyan clock. The light pie segment shows the minutes, the black circle, the hour. The symbols on the dial spell time in Gallifreyan.",
     "tags": "clock",
     "type": "clock",
     "storage": [
