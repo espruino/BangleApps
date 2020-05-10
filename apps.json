@@ -1403,7 +1403,7 @@
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
-    "version": "0.03",
+    "version": "0.04",
     "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "tags": "tool",
