@@ -1679,7 +1679,7 @@
 { "id": "gallifr",
   "name": "Gallifreyan Chronometer",
   "shortName":"Gallifrey Clock",
-  "icon": "app.png",
+  "icon": "gallifr.png",
   "version":"0.01",
   "description": "A Gallifreyan clock. The dark and light green segments show the minutes, the black circle, the hour.",
   "tags": "clock",
