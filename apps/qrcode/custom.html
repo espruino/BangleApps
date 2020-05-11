@@ -5,11 +5,11 @@
   <body>
      <input type="radio" id="useUrl" name="useURL"/>
      <label for="useURL">Use URL</label>
-    <p>Enter a URL: <input type="text" id="url" class="form-input" value="http://espruino.com"></p>
+    <input type="text" id="url" class="form-input" value="http://espruino.com">
     <hr>
-    <input type="radiox" id="useWIFI" name="useWIFI"/>
-    <label for="useWIFI">Use WIFI</label>
-    <p>Enter Wifi name: <input type="text" id="ssid" class="form-input" value=""></p>
+    <input type="radio" id="useWIFI" name="useWIFI"/>
+    <label for="useWIFI">Use Wifi Credentials</label>
+    <input type="text" id="ssid" class="form-input" value="">
     <p>Wifi password: <input type="password" id="password" class="form-input" value=""></p>
     <div class="form-group">
             <label for="encryption" class="control-label">Encryption</label>
@@ -23,7 +23,7 @@
     </div>
     <div>
       <input type="checkbox" id="hidden" name="hidden"/>
-      <label for="hidden">Hidden</label>
+      <label for="hidden">Wifi is hidden</label>
     </div>
     <p>Try your QR Code: <div id="qrcode"></div></p>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
@@ -78,7 +78,7 @@
         colorLight : "#ffffff",
       });
 
-      document.getElementById("url").addEventListener("change", refreshQRCode});
+      document.getElementById("url").addEventListener("change", refreshQRCode);
       document.getElementById("ssid").addEventListener("change",refreshQRCode);
       document.getElementById("password").addEventListener("change",refreshQRCode);
       document.getElementById("encryption").addEventListener("change",refreshQRCode);
