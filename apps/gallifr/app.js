@@ -217,7 +217,7 @@ const drawClockFace = () => {
 const drawAll = () => {
   currentDate = new Date();
   g.clear();
-  Bangle.drawWidgets();
+  if (widgets) {Bangle.drawWidgets();}
   drawClockFace();
   drawHands();
 };
