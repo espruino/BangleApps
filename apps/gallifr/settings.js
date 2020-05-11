@@ -23,7 +23,7 @@
         onchange: m => {save('widgets', m)}
       },   
       'Decoration': {
-        value: 1|settings['decoration'],
+        value: 0|settings['decoration'],
         min:0,max:1,
         format: m => onoff[m],
         onchange: m => {save('decoration', m)}

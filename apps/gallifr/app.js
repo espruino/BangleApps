@@ -11,8 +11,8 @@ const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
 // retrieve settings from menu
 let settings = require('Storage').readJSON('app.json',1)||{};
-const decoration = settings.decoration;
-const widgets = settings.widgets;
+const decoration = !settings.decoration;
+const widgets = !settings.widgets;
 if (widgets) {
   widgetHeight = 24;}
 else {
