@@ -1,6 +1,7 @@
 (() => {
+  let recordingInterval = null;
   const Storage = require("Storage");
-
+  
   const switchableConsumers = {
     none: 0,
     lcd: 1,
@@ -14,53 +15,44 @@
   const recordingInterval10Min = 60 * 10 * 1000;
   const recordingInterval1Min = 60 * 1000; //For testing
   const recordingInterval10S = 10 * 1000; //For testing
-  var recordingInterval = null;
 
   var compassEventReceived = false;
   var gpsEventReceived = false;
   var hrmEventReceived = false;
 
-  // draw your widget
   function draw() {
-    let x = this.x;
-    let y = this.y;
-    
-    g.setColor(0, 1, 0);
-    g.fillPoly([x + 5, y, x + 5, y + 4, x + 1, y + 4, x + 1, y + 20, x + 18, y + 20, x + 18, y + 4, x + 13, y + 4, x + 13, y], true);
-
-    g.setColor(0, 0, 0);
-    g.drawPoly([x + 5, y + 6, x + 8, y + 12, x + 13, y + 12, x + 16, y + 18], false);
-    
-    g.reset();
+    // void
   }
 
-  function onMag() {
+  function batteryChartOnMag() {
     compassEventReceived = true;
     // Stop handling events when no longer necessarry
-    Bangle.removeListener("mag", onMag);
+    Bangle.removeListener("mag", batteryChartOnMag);
   }
 
-  function onGps() {
+  function batterChartOnGps() {
     gpsEventReceived = true;
-    Bangle.removeListener("GPS", onGps);
+    Bangle.removeListener("GPS", batterChartOnGps);
   }
 
-  function onHrm() {
+  function batteryChartOnHrm() {
     hrmEventReceived = true;
-    Bangle.removeListener("HRM", onHrm);
+    Bangle.removeListener("HRM", batteryChartOnHrm);
   }
 
   function getEnabledConsumersValue() {
     // Wait for an event from each of the devices to see if they are switched on
     var enabledConsumers = switchableConsumers.none;
 
-    Bangle.on('mag', onMag);
-    Bangle.on('GPS', onGps);
-    Bangle.on('HRM', onHrm);
+    Bangle.on('mag', batteryChartOnMag);
+    Bangle.on('GPS', batterChartOnGps);
+    Bangle.on('HRM', batteryChartOnHrm);
 
     // Wait two seconds, that should be enough for each of the events to get raised once
     setTimeout(() => {
-      Bangle.removeAllListeners();
+      Bangle.removeListener('mag', batteryChartOnMag);
+      Bangle.removeListener('GPS', batterChartOnGps);
+      Bangle.removeListener('HRM', batteryChartOnHrm);
     }, 2000);
 
     if (Bangle.isLCDOn())
@@ -112,14 +104,20 @@
   }
 
   function reload() {
-    WIDGETS["batchart"].width = 24;
+    console.log("Reloading BatteryChart widget");
+    WIDGETS["batchart"].width = 0;
+
+    if (recordingInterval) {
+      clearInterval(recordingInterval);
+      recordingInterval = null;
+    }
 
     recordingInterval = setInterval(logBatteryData, recordingInterval10Min);
   }
 
   // add the widget
   WIDGETS["batchart"] = {
-    area: "tl", width: 24, draw: draw, reload: reload
+    area: "tl", width: 0, draw: draw, reload: reload
   };
 
   reload();
