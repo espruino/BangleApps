@@ -30,7 +30,7 @@ const drawSegment = (params) => {
   x = centerX + (params.x * radius);
   y = centerY - (params.y *radius);
   g.setColor(0,0,0);
-  incr = cirRad/60;
+  incr = cirRad/15;
   for (i = angle1; i < angle2; i=i+incr) {
     brush = thickness * (angle2-angle1) /angle2;
     points = [
