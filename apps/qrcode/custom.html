@@ -36,7 +36,7 @@
         var hex_only = /^[0-9a-f]+$/i;
         var output = "";
         for (var i=0; i<string.length; i++) {
-            if($.inArray(string[i], to_escape) != -1) {
+            if(string[i].includes(to_escape)) {
                 output += '\\'+string[i];
             }
             else {
