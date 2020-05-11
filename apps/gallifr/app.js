@@ -86,7 +86,9 @@ const drawThickLine = (params) => {
 const drawHands = () => {
   drawMinuteHand();
   drawHourHand();
-  if (decoration) {drawDecoration()};
+  if (decoration) {
+    drawDecoration();
+  }
 };
 
 const drawDecoration = () => {
