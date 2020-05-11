@@ -14,14 +14,14 @@ const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
 // retrieve settings from menu
 const settings = require("Storage").readJSON("app.json", 1);
-const decoration = settings['decoration'];
-const widgets = settings['widgets'];
+const decoration = settings.decoration;
+const widgets = settings.widgets;
 if (widgets) {
   widgetHeight = 24;}
 else {
   widgetHeight = 0;}
 const colours = ["green","red","blue","80s"];
-const colour = colours[settings['colour']];
+const colour = colours[settings.colour];
 
 const drawSegment = (params) => {
   angle1 = params.start/360*cirRad;
