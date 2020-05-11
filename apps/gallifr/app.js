@@ -4,7 +4,6 @@
 // based on a skeleton app by Gordon Williams
 //
 const locale = require('locale');
-const widgetHeight=24;
 let timer = null;
 let currentDate = new Date();
 const centerX = Math.round(g.getWidth() / 2);
@@ -13,8 +12,16 @@ const radius = Math.round(Math.min(g.getWidth()/2,(g.getHeight()-widgetHeight) /
 const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
+// retrieve settings from menu
 const settings = require("Storage").readJSON("app.json", 1);
 const decoration = settings['decoration'];
+const widgets = settings['widgets'];
+if (widgets) {
+  widgetHeight = 24;}
+else {
+  widgetHeight = 0;}
+const colours = ["green","red","blue","80s"];
+const colour = colours[settings['colour']];
 
 const drawSegment = (params) => {
   angle1 = params.start/360*cirRad;
@@ -148,7 +155,23 @@ const drawDecoration = () => {
 const drawMinuteHand = () => {
   angle = currentDate.getMinutes()/60 * cirRad;
   //angle = currentDate.getSeconds()/60 * cirRad;
-  g.setColor(0,1,0);
+  switch(colour) {
+    case "red":
+      g.setColor(1,0,0);
+      break;
+    case "green":
+      g.setColor(0,1,0);
+      break;
+    case "blue":
+        g.setColor(0,0,1);
+        break;    
+    case "80's":
+        g.setColor(1,0,0);
+        break;
+    default:
+      g.setColor(0,1,0);
+  }
+
   var points = [centerX,centerY];
   for (i = 0; i < angle; i=i+cirRad/60) {
     points.push(Math.round(centerX + Math.sin(i) * radius),
@@ -169,7 +192,22 @@ const drawHourHand = () => {
 };
 
 const drawClockFace = () => {
-    g.setColor(0.1,0.7,0);
+    switch(colour) {
+      case "red":
+        g.setColor(0.7,0.1,0);
+        break;
+      case "green":
+        g.setColor(0.1,0.7,0);
+        break;
+      case "blue":
+          g.setColor(0.1,0,0.7);
+          break;    
+      case "80's":
+          g.setColor(1,1,1);
+          break;
+      default:
+        g.setColor(0.1,0.7,0);
+    }
     g.fillCircle(centerX,centerY,radius*0.98);
   };
 
