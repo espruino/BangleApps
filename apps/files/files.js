@@ -207,6 +207,7 @@ function showSortAppsManually() {
 }
 
 function setSortorder(app, val) {
+  app = store.readJSON(app.id + '.info', 1);
   app.sortorder = val;
   store.writeJSON(app.id + '.info', app);
 }
@@ -215,7 +216,7 @@ function getAppsList() {
   return store.list('.info').map((a)=> {
     let app = store.readJSON(a, 1) || {};
     if (app.type !== 'widget') {
-      return app;
+      return {id: app.id, name: app.name, sortorder: app.sortorder};
     }
   }).filter((a) => a).sort(sortHelper());
 }
