@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-     <input type="radio" id="useUrl" name="mode" checked/>
+     <input type="radio" id="useURL" name="mode" checked/>
      <label for="useURL">Use URL:</label>
     <input type="text" id="url" class="form-input" value="http://espruino.com">
     <hr>
@@ -83,8 +83,8 @@
       document.getElementById("password").addEventListener("change",refreshQRCode);
       document.getElementById("encryption").addEventListener("change",refreshQRCode);
       document.getElementById("hidden").addEventListener("change",refreshQRCode);
-      document.getElementById("useURL").addEventListener("click",refreshQRCode);
-      document.getElementById("useWIFI").addEventListener("click",refreshQRCode);
+      document.getElementById("useURL").addEventListener("change",refreshQRCode);
+      document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
       document.getElementById("upload").addEventListener("click", function() {
         var content = document.getElementById("url").value;
         if(document.getElementById("useWIFI").checked){
