@@ -1816,9 +1816,14 @@
     "description": "A Gallifreyan clock. The light pie segment shows the minutes, the black circle, the hour. The symbols on the dial spell time in Gallifreyan.",
     "tags": "clock",
     "type": "clock",
+    "allow_emulator":true,
     "storage": [
       { "name": "gallifr.app.js", "url": "app.js" },
-      { "name": "gallifr.img", "url": "app-icon.js", "evaluate": true }
+      { "name": "gallifr.img", "url": "app-icon.js", "evaluate": true },
+      { "name": "gallifr.settings.js", "url": "settings.js" }
+    ],
+    "data": [
+      {"name":"app.json"}
     ]
   }
 ]
