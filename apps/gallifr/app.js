@@ -14,7 +14,7 @@ const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
 const settings = require("Storage").readJSON("app.json", 1);
-const decoration = settings['decoration']
+const decoration = settings['decoration'];
 
 const drawSegment = (params) => {
   angle1 = params.start/360*cirRad;
