@@ -2,8 +2,6 @@ const store = require('Storage');
 
 const boolFormat = (v) => v ? "On" : "Off";
 
-let m;
-
 function showMainMenu() {
   const mainmenu = {
     '': {
@@ -22,13 +20,13 @@ function showMainMenu() {
         store.compact();
       } catch (e) {
       }
-      m = showMainMenu();
+      showMainMenu();
     },
-    'Apps': ()=> m = showApps(),
-    'Sort Apps': () => m = showSortAppsMenu(),
+    'Apps': ()=> showApps(),
+    'Sort Apps': () => showSortAppsMenu(),
     '< Back': ()=> {load();}
   };
-  return E.showMenu(mainmenu);
+  E.showMenu(mainmenu);
 }
 
 function isGlob(f) {
@@ -100,7 +98,7 @@ function showAppMenu(app) {
     '': {
       'title': app.name,
     },
-    '< Back': () => m = showApps(),
+    '< Back': () => showApps(),
   };
   if (app.data) {
     appmenu['Erase Completely']    = () => eraseOne(app, true, true);
@@ -109,7 +107,7 @@ function showAppMenu(app) {
   } else {
     appmenu['Erase'] = () => eraseOne(app, true, false);
   }
-  return E.showMenu(appmenu);
+  E.showMenu(appmenu);
 }
 
 function showApps() {
@@ -117,7 +115,7 @@ function showApps() {
     '': {
       'title': 'Apps',
     },
-    '< Back': () => m = showMainMenu(),
+    '< Back': () => showMainMenu(),
   };
 
   var list = store.list(/\.info$/).filter((a)=> {
@@ -130,7 +128,7 @@ function showApps() {
 
   if (list.length > 0) {
     list.reduce((menu, app) => {
-      menu[app.name] = () => m = showAppMenu(app);
+      menu[app.name] = () => showAppMenu(app);
       return menu;
     }, appsmenu);
     appsmenu['Erase All'] = () => {
@@ -149,7 +147,7 @@ function showApps() {
       onchange: ()=> {}
     };
   }
-  return E.showMenu(appsmenu);
+  E.showMenu(appsmenu);
 }
 
 function showSortAppsMenu() {
@@ -157,24 +155,18 @@ function showSortAppsMenu() {
     '': {
       'title': 'App Sorter',
     },
-    '< Back': () => m = showMainMenu(),
-    'Sort: manually': ()=> m = showSortAppsManually(),
+    '< Back': () => showMainMenu(),
+    'Sort: manually': ()=> showSortAppsManually(),
     'Sort: alph. ASC': () => {
       E.showMessage('Sorting:\nAlphabetically\nascending ...');
-      try {
-        sortAlphabet(false);
-      } catch (e) {
-      }
+      sortAlphabet(false);
     },
     'Sort: alph. DESC': () => {
       E.showMessage('Sorting:\nAlphabetically\ndescending ...');
-      try {
-        sortAlphabet(true);
-      } catch (e) {
-      }
+      sortAlphabet(true);
     }
   };
-  return E.showMenu(sorterMenu);
+  E.showMenu(sorterMenu);
 }
 
 function showSortAppsManually() {
@@ -182,7 +174,7 @@ function showSortAppsManually() {
     '': {
       'title': 'Sort: manually',
     },
-    '< Back': () => m = showSortAppsMenu(),
+    '< Back': () => showSortAppsMenu(),
   };
   let appList = getAppsList();
   if (appList.length > 0) {
@@ -203,7 +195,7 @@ function showSortAppsManually() {
       onchange: ()=> {}
     };
   }
-  return E.showMenu(appsSorterMenu);
+  E.showMenu(appsSorterMenu);
 }
 
 function setSortorder(app, val) {
@@ -226,11 +218,11 @@ function sortAlphabet(desc) {
   appsSorted.forEach((a, i) => {
     setSortorder(a, i);
   });
-  return showSortAppsMenu();
+  showSortAppsMenu();
 }
 
 function sortHelper() {
   return (a, b) => (a.name > b.name) - (a.name < b.name);
 }
 
-m = showMainMenu();
+showMainMenu();
