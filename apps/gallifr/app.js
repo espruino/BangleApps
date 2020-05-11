@@ -6,9 +6,6 @@
 const locale = require('locale');
 let timer = null;
 let currentDate = new Date();
-const centerX = Math.round(g.getWidth() / 2);
-const centerY = widgetHeight + Math.round((g.getHeight()-widgetHeight) / 2);
-const radius = Math.round(Math.min(g.getWidth()/2,(g.getHeight()-widgetHeight) / 2));
 const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
@@ -22,6 +19,9 @@ else {
   widgetHeight = 0;}
 const colours = ["green","red","blue","80s"];
 const colour = colours[settings.colour];
+const centerX = Math.round(g.getWidth() / 2);
+const centerY = widgetHeight + Math.round((g.getHeight()-widgetHeight) / 2);
+const radius = Math.round(Math.min(g.getWidth()/2,(g.getHeight()-widgetHeight) / 2));
 
 const drawSegment = (params) => {
   angle1 = params.start/360*cirRad;
