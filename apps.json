@@ -1815,6 +1815,7 @@
     "version": "0.01",
     "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
     "tags": "clock",
+    "readme": "README.md", 
     "type": "clock",
     "allow_emulator":true,
     "storage": [
