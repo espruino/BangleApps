@@ -116,7 +116,7 @@ const drawDecoration = () => {
     y: 0.3
   };
   drawSegment(params);
-    params = {
+  params = {
     start: 0,
     arc: 360,
     radius: 0.15,
@@ -139,7 +139,7 @@ const drawDecoration = () => {
     toY: 0.1
   };
   drawThickLine(params);
-    params = {
+  params = {
     fromX: -0.2,
     fromY: -0.05, 
     toX: -0.7,
@@ -205,7 +205,7 @@ const drawClockFace = () => {
       case "blue":
           g.setColor(0,0.3,0.8);
           break;    
-      case "80's":
+      case "80s":
           g.setColor(1,1,1);
           break;
       default:
