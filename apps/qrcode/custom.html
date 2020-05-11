@@ -3,10 +3,14 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-
+     <input type="radio" id="useUrl" name="useURL"/>
+     <label for="useURL">Use URL</label>
     <p>Enter a URL: <input type="text" id="url" class="form-input" value="http://espruino.com"></p>
-    <p>or Enter Wifi name: <input type="text" id="ssid" class="form-input" value=""></p>
-    <p>and Wifi password: <input type="password" id="password" class="form-input" value=""></p>
+    <hr>
+    <input type="radiox" id="useWIFI" name="useWIFI"/>
+    <label for="useWIFI">Use WIFI</label>
+    <p>Enter Wifi name: <input type="text" id="ssid" class="form-input" value=""></p>
+    <p>Wifi password: <input type="password" id="password" class="form-input" value=""></p>
     <div class="form-group">
             <label for="encryption" class="control-label">Encryption</label>
             <div class="input-group">
@@ -18,7 +22,7 @@
             </div>
     </div>
     <div>
-      <input type="checkbox" id="hidden" name="hidden" >
+      <input type="checkbox" id="hidden" name="hidden"/>
       <label for="hidden">Hidden</label>
     </div>
     <p>Try your QR Code: <div id="qrcode"></div></p>
@@ -53,14 +57,18 @@
         }
         return qrstring;
       }
-      function refreshWifiQRCode(){
-        const ssid = document.getElementById("ssid").value;
-        const password = document.getElementById("ssid").value;
-        const encryption = document.getElementById("encryption").value;
-        const hidden = document.getElementById("hidden").checked;
-        const wifiString = generateWifiString(ssid, password, hidden, encryption);
-        qrcode.clear();
-        qrcode.makeCode(wifiString);
+      function refreshQRCode(){
+        qrcode.clear(); // clear the code.
+        if(document.getElementById("useWIFI").checked){
+            const ssid = document.getElementById("ssid").value;
+            const password = document.getElementById("password").value;
+            const encryption = document.getElementById("encryption").value;
+            const hidden = document.getElementById("hidden").checked;
+            const wifiString = generateWifiString(ssid, password, hidden, encryption);
+            qrcode.makeCode(wifiString);
+        }else{
+            qrcode.makeCode(document.getElementById("url").value);
+        }
       }
       var qrcode = new QRCode("qrcode", {
         text: document.getElementById("url").value,
@@ -70,26 +78,26 @@
         colorLight : "#ffffff",
       });
 
-      document.getElementById("url").addEventListener("change", function() {
-        qrcode.clear(); // clear the code.
-        qrcode.makeCode(document.getElementById("url").value); // make another code.
-      });
-      document.getElementById("ssid").addEventListener("change",refreshWifiQRCode);
-      document.getElementById("password").addEventListener("change",refreshWifiQRCode);
-      document.getElementById("encryption").addEventListener("change",refreshWifiQRCode);
-      document.getElementById("hidden").addEventListener("change",refreshWifiQRCode);
+      document.getElementById("url").addEventListener("change", refreshQRCode});
+      document.getElementById("ssid").addEventListener("change",refreshQRCode);
+      document.getElementById("password").addEventListener("change",refreshQRCode);
+      document.getElementById("encryption").addEventListener("change",refreshQRCode);
+      document.getElementById("hidden").addEventListener("change",refreshQRCode);
       document.getElementById("upload").addEventListener("click", function() {
-        var url = document.getElementById("url").value;
+        var content = document.getElementById("url").value;
+        if(document.getElementById("useWIFI").checked){
+            content = document.getElementById("ssid").value
+        }
         var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
         var app = `var img = ${img};
-var url = ${JSON.stringify(url)};
+var content = ${JSON.stringify(content)};
 g.setColor(1,1,1);
 g.fillRect(0,0,239,239);
 g.drawImage(img,20,20);
 g.setFontAlign(0,0);
 g.setFont("6x8");
 g.setColor(0,0,0);
-g.drawString(url,120,230);
+g.drawString(content,120,230);
 g.setColor(1,1,1);
 `;
         sendCustomizedApp({
