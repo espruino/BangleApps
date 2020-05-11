@@ -11,16 +11,16 @@
       '': {'title': 'Clock Settings'},
       '< Back': back,
       'Colour': {
-        value: 0||settings['colour'],
+        value: 0|settings['colour'],
         min:0,max:2,
-        format: m=>colours[m],
-        onchange: (m) => {save('colour', m)}
+        format: m => colours[m],
+        onchange: m => {save('colour', m)}
       },
       'Widgets': {
-        value: 0||settings['widgets'],
+        value: 0|settings['widgets'],
         min:0,max:1,
-        format: m=>widgets[m],
-        onchange: (m) => {save('widgets', m)}
+        format: m => widgets[m],
+        onchange: m => {save('widgets', m)}
       }   
     };
     E.showMenu(appMenu)
