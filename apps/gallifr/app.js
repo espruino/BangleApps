@@ -10,7 +10,8 @@ const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
 // retrieve settings from menu
-const settings = require("Storage").readJSON("app.json", 1);
+// const settings = require("Storage").readJSON("app.json", 1);
+require('Storage').read('app.json',settings);
 const decoration = settings.decoration;
 const widgets = settings.widgets;
 if (widgets) {
@@ -165,7 +166,7 @@ const drawMinuteHand = () => {
     case "blue":
         g.setColor(0,0,1);
         break;    
-    case "80's":
+    case "80s":
         g.setColor(1,0,0);
         break;
     default:
@@ -194,13 +195,13 @@ const drawHourHand = () => {
 const drawClockFace = () => {
     switch(colour) {
       case "red":
-        g.setColor(0.7,0.1,0);
+        g.setColor(0.8,0.3,0);
         break;
       case "green":
         g.setColor(0.1,0.7,0);
         break;
       case "blue":
-          g.setColor(0.1,0,0.7);
+          g.setColor(0,0.3,0.8);
           break;    
       case "80's":
           g.setColor(1,1,1);
