@@ -1,3 +1,8 @@
+//
+// Time Travellers Watch
+// Written May 2020 by Richard Hopkins
+// based on a skeleton app by Gordon Williams
+//
 const locale = require('locale');
 const widgetHeight=24;
 let timer = null;
@@ -8,6 +13,8 @@ const radius = Math.round(Math.min(g.getWidth()/2,(g.getHeight()-widgetHeight) /
 const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
+const settings = require("Storage").readJSON("app.json", 1);
+const decoration = settings['decoration']
 
 const drawSegment = (params) => {
   angle1 = params.start/360*cirRad;
@@ -71,7 +78,7 @@ const drawThickLine = (params) => {
 const drawHands = () => {
   drawMinuteHand();
   drawHourHand();
-  drawDecoration();
+  if (decoration) {drawDecoration()};
 };
 
 const drawDecoration = () => {
