@@ -7,6 +7,11 @@ var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
 var IW = 110, IH = 45, OY = 24;
+var bgwidth = img.charCodeAt(0);
+var bgoptions;
+if (bgwidth<240)
+  bgoptions = { scale : 240/bgwidth };
+
 require("Font7x11Numeric7Seg").add(Graphics);
 var cg = Graphics.createArrayBuffer(IW,IH,IBPP,{msb:true});
 var cgimg = {width:IW,height:IH,bpp:IBPP,buffer:cg.buffer};
@@ -16,7 +21,7 @@ var locale = require("locale");
 var bgimg = require("Storage").read("imgclock.face.bg");
 // if it doesn't exist, make it
 function createBgImg() {
-  cg.drawImage(img,-IX,-IY);
+  cg.drawImage(img,-IX,-IY,bgoptions);
   require("Storage").write("imgclock.face.bg", cg.buffer);
   bgimg = require("Storage").read("imgclock.face.bg");
 }
@@ -28,13 +33,14 @@ function draw() {
   new Uint8Array(cg.buffer).set(bgimg);
   // draw time
   cg.setColor(inf.col);
-  cg.setFontAlign(-1,-1);
-  var x = 0;
+  var x = 40;
   cg.setFont("7x11Numeric7Seg",3);
-  cg.drawString((" "+t.getHours()).substr(-2), x, 0);
-  x+=42;
+  cg.setFontAlign(1,-1);
+  cg.drawString(t.getHours(), x, 0);
+  x+=2;
   cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
   x+=6;
+  cg.setFontAlign(-1,-1);
   cg.drawString(("0"+t.getMinutes()).substr(-2), x, 0);
   x+=44;
   cg.setFont("7x11Numeric7Seg",1);
@@ -47,7 +53,7 @@ function draw() {
 }
 
 // draw background
-g.drawImage(img, 0,OY);
+g.drawImage(img, 0,OY,bgoptions);
 // draw clock itself and do it every second
 draw();
 var secondInterval = setInterval(draw,1000);
@@ -59,7 +65,7 @@ Bangle.on('lcdPower',on=>{
   if (secondInterval) clearInterval(secondInterval);
   secondInterval = undefined;
   if (on) {
-    setInterval(draw,1000);
+    secondInterval = setInterval(draw,1000);
     draw();
   }
 });

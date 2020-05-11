@@ -168,7 +168,7 @@
     "name": "Image background clock",
     "shortName":"Image Clock",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "A clock with an image as a background",
     "tags": "clock",
     "type" : "clock",
@@ -314,7 +314,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -372,7 +372,7 @@
   { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
@@ -552,7 +552,7 @@
   { "id": "qrcode",
     "name": "Custom QR Code",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Use this to upload a customised QR code to Bangle.js",
     "tags": "qrcode",
     "custom": "custom.html",
@@ -1193,7 +1193,7 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps",
     "custom": "custom.html",
@@ -1421,7 +1421,7 @@
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
-    "version": "0.03",
+    "version": "0.04",
     "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "tags": "tool",
@@ -1572,7 +1572,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1674,6 +1674,21 @@
     "storage": [
         {"name":"findphone.app.js","url":"app.js"},
         {"name":"findphone.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "getup",
+    "name": "Get Up",
+    "shortName":"Get Up",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Reminds you to getup every x minutes. Sitting to long is dangerous!",
+    "tags": "tools,health",
+    "readme": "README.md",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"getup.app.js","url":"app.js"},
+      {"name":"getup.settings.js","url":"settings.js"},
+      {"name":"getup.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
