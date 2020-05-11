@@ -5,6 +5,22 @@
   <body>
 
     <p>Enter a URL: <input type="text" id="url" class="form-input" value="http://espruino.com"></p>
+    <p>or Enter Wifi name: <input type="text" id="ssid" class="form-input" value=""></p>
+    <p>and Wifi password: <input type="password" id="password" class="form-input" value=""></p>
+    <div class="form-group">
+            <label for="encryption" class="control-label">Encryption</label>
+            <div class="input-group">
+                <select name="encryption" id="encryption" class="form-control">
+                    <option value="WPA">WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">None</option>
+                </select>
+            </div>
+    </div>
+    <div>
+      <input type="checkbox" id="hidden" name="hidden" >
+      <label for="hidden">Hidden</label>
+    </div>
     <p>Try your QR Code: <div id="qrcode"></div></p>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
@@ -14,19 +30,54 @@
     <script src="../../lib/imageconverter.js"></script>
 
     <script>
-
-    var qrcode = new QRCode("qrcode", {
-      text: document.getElementById("url").value,
-      width: 200,
-      height: 200,
-      colorDark : "#000000",
-      colorLight : "#ffffff",
-    });
+      //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
+      function escapeString (string) {
+        var to_escape = ['\\', ';', ',', ':', '"'];
+        var hex_only = /^[0-9a-f]+$/i;
+        var output = "";
+        for (var i=0; i<string.length; i++) {
+            if($.inArray(string[i], to_escape) != -1) {
+                output += '\\'+string[i];
+            }
+            else {
+                output += string[i];
+            }
+        }
+        return output;
+      }
+      function generateWifiString(ssid, password, hidden,encryption){
+        //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L198
+        var qrstring = 'WIFI:S:'+escapeString(ssid)+';T:'+encryption+';P:'+escapeString(password)+';';
+        if (hidden) {
+            qrstring += 'H:true';
+        }
+        return qrstring;
+      }
+      function refreshWifiQRCode(){
+        const ssid = document.getElementById("ssid").value;
+        const password = document.getElementById("ssid)".value;
+        const encryption = document.getElementById("encryption").value;
+        const hidden = document.getElementById("hidden").checked;
+        const wifiString = generateWifiString(ssid, password, hidden, encryption);
+        qrcode.clear();
+        qrcode.makeCode(wifiString);
+      }
+      var qrcode = new QRCode("qrcode", {
+        text: document.getElementById("url").value,
+        width: 200,
+        height: 200,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+      });
 
       document.getElementById("url").addEventListener("change", function() {
         qrcode.clear(); // clear the code.
         qrcode.makeCode(document.getElementById("url").value); // make another code.
       });
+      document.getElementById("ssid").addEventListener("change",refreshWifiQRCode);
+      document.getElementById("password").addEventListener("change",refreshWifiQRCode);
+      document.getElementById("encryption").addEventListener("change",refreshWifiQRCode);
+      document.getElementById("hidden").addEventListener("change",refreshWifiQRCode);
       document.getElementById("upload").addEventListener("click", function() {
         var url = document.getElementById("url").value;
         var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
