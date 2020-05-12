@@ -218,6 +218,12 @@ function refreshLibrary() {
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
     var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
     var favourite = favourites.find(e => e == app.id);
+
+    var username = "espruino";
+    var githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    if(githubMatch) username = githubMatch[1];
+    var url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
@@ -225,7 +231,7 @@ function refreshLibrary() {
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
-      <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
+      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
