@@ -1690,5 +1690,25 @@
       {"name":"getup.settings.js","url":"settings.js"},
       {"name":"getup.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "gallifr",
+    "name": "Time Traveller's Chronometer",
+    "shortName": "Time Travel Clock",
+    "icon": "gallifr.png",
+    "version": "0.01",
+    "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
+    "tags": "clock",
+    "readme": "README.md", 
+    "type": "clock",
+    "allow_emulator":true,
+    "storage": [
+      { "name": "gallifr.app.js", "url": "app.js" },
+      { "name": "gallifr.img", "url": "app-icon.js", "evaluate": true },
+      { "name": "gallifr.settings.js", "url": "settings.js" }
+    ],
+    "data": [
+      {"name":"app.json"}
+    ]
   }
 ]
