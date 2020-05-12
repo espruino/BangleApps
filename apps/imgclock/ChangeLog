@@ -5,3 +5,4 @@
       Scaling for background images <240px wide
 0.05: Fix memory/interval leak when LCD turns on
 0.06: Support 12 hour time
+0.07: Don't cut off wide date formats
