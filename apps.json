@@ -1720,5 +1720,17 @@
     "data": [
       {"name":"gallifr.json"}
     ]
+  },
+  { "id": "rndmclk",
+    "name": "Random Clock Loader",
+    "icon": "rndmclk.png",
+    "version":"0.01",
+    "description": "Load a different clock whenever the LCD is switched on.",
+    "readme": "README.md",
+    "tags": "widget,clock",
+    "type":"widget",
+    "storage": [
+      {"name":"rndmclk.wid.js","url":"widget.js"}
+    ]
   }
 ]
