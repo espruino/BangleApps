@@ -10,7 +10,7 @@ const cirRad = 2*Math.PI;
 const proportion = 0.3; // relative size of hour hand
 const thickness = 4; // thickness of decorative lines
 // retrieve settings from menu
-let settings = require('Storage').readJSON('app.json',1)||{};
+let settings = require('Storage').readJSON('gallifr.json',1)||{};
 const decoration = !settings.decoration;
 const widgets = !settings.widgets;
 if (widgets) {
@@ -133,21 +133,21 @@ const drawDecoration = () => {
   drawSegment(params);
   params = {
     fromX: 0.4,
-    fromY: 0.2, 
+    fromY: 0.2,
     toX: 0.6,
     toY: 0.1
   };
   drawThickLine(params);
   params = {
     fromX: -0.2,
-    fromY: -0.05, 
+    fromY: -0.05,
     toX: -0.7,
     toY: -0.7
   };
   drawThickLine(params);
   params = {
     fromX: -0.3,
-    fromY: 0.05, 
+    fromY: 0.05,
     toX: -0.95,
     toY: -0.3
   };
@@ -166,7 +166,7 @@ const drawMinuteHand = () => {
       break;
     case "blue":
         g.setColor(0,0,1);
-        break;    
+        break;
     case "80s":
         g.setColor(1,0,0);
         break;
@@ -203,7 +203,7 @@ const drawClockFace = () => {
         break;
       case "blue":
           g.setColor(0,0.3,0.8);
-          break;    
+          break;
       case "80s":
           g.setColor(1,1,1);
           break;

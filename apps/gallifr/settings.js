@@ -1,11 +1,11 @@
 // make sure to enclose the function in parentheses
 (function (back) {
-    let settings = require('Storage').readJSON('app.json',1)||{};
+    let settings = require('Storage').readJSON('gallifr.json',1)||{};
     let colours = ["green","red","blue","80s"];
     let onoff = ["on","off"];
     function save(key, value) {
       settings[key] = value;
-      require('Storage').write('app.json',settings);
+      require('Storage').writeJSON('gallifr.json',settings);
     }
     const appMenu = {
       '': {'title': 'Clock Settings'},
@@ -21,13 +21,13 @@
         min:0,max:1,
         format: m => onoff[m],
         onchange: m => {save('widgets', m)}
-      },   
+      },
       'Decoration': {
         value: 0|settings['decoration'],
         min:0,max:1,
         format: m => onoff[m],
         onchange: m => {save('decoration', m)}
-      }  
+      }
     };
     E.showMenu(appMenu)
   })
