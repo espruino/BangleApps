@@ -3,6 +3,7 @@ Draws a fullscreen image from flash memory
 Saves a small image to flash which is just the area where the clock is
 Keeps an offscreen buffer and draws the time to that
 */
+var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
@@ -29,6 +30,12 @@ if (!bgimg || !bgimg.length) createBgImg();
 
 function draw() {
   var t = new Date();
+  var hours = t.getHours();
+  var meridian = "";
+  if (is12Hour) {
+    meridian = (hours < 12) ? "AM" : "PM";
+    hours = ((hours + 11) % 12) + 1;
+  }
   // quickly set background image
   new Uint8Array(cg.buffer).set(bgimg);
   // draw time
@@ -36,7 +43,7 @@ function draw() {
   var x = 40;
   cg.setFont("7x11Numeric7Seg",3);
   cg.setFontAlign(1,-1);
-  cg.drawString(t.getHours(), x, 0);
+  cg.drawString(hours, x, 0);
   x+=2;
   cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
   x+=6;
@@ -46,6 +53,7 @@ function draw() {
   cg.setFont("7x11Numeric7Seg",1);
   cg.drawString(("0"+t.getSeconds()).substr(-2), x, 20);
   cg.setFont("6x8",1);
+  cg.drawString(meridian, x+2, 0);
   cg.setFontAlign(0,-1);
   cg.drawString(locale.date(t),IW/2,IH-8);
   // draw to screen

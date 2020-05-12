@@ -168,7 +168,7 @@
     "name": "Image background clock",
     "shortName":"Image Clock",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A clock with an image as a background",
     "tags": "clock",
     "type" : "clock",
@@ -1272,7 +1272,7 @@
     "name": "Battery Chart",
     "shortName":"Battery Chart",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "readme": "README.md",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
@@ -1469,7 +1469,7 @@
     "name": "Round clock with seconds,  minutes and date",
     "shortName":"Round Clock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
@@ -1572,7 +1572,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1591,12 +1591,10 @@
       {
         "name": "largeclock.settings.js",
         "url": "settings.js"
-      },
-      {
-        "name": "largeclock.json",
-        "url": "largeclock.json",
-        "evaluate": true
       }
+    ],
+    "data": [
+      {"name":"largeclock.json"}
     ]
   },
   { "id": "smtswch",
@@ -1689,6 +1687,26 @@
       {"name":"getup.app.js","url":"app.js"},
       {"name":"getup.settings.js","url":"settings.js"},
       {"name":"getup.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "gallifr",
+    "name": "Time Traveller's Chronometer",
+    "shortName": "Time Travel Clock",
+    "icon": "gallifr.png",
+    "version": "0.01",
+    "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
+    "tags": "clock",
+    "readme": "README.md",
+    "type": "clock",
+    "allow_emulator":true,
+    "storage": [
+      { "name": "gallifr.app.js", "url": "app.js" },
+      { "name": "gallifr.img", "url": "app-icon.js", "evaluate": true },
+      { "name": "gallifr.settings.js", "url": "settings.js" }
+    ],
+    "data": [
+      {"name":"gallifr.json"}
     ]
   }
 ]

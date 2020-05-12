@@ -34,7 +34,7 @@
 
     function onchange(v) {
       settings[btn] = v;
-      s.write("largeclock.json", settings);
+      s.writeJSON("largeclock.json", settings);
     }
 
     const btnMenu = {

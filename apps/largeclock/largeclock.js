@@ -9,10 +9,8 @@ const moonX = 215;
 const moonY = 50;
 
 const settings = require("Storage").readJSON("largeclock.json", 1);
-const BTN1app = settings.BTN1;
-const BTN3app = settings.BTN3;
-console.log("BTN1app", BTN1app);
-console.log("BTN3app", BTN3app);
+const BTN1app = settings.BTN1 || "";
+const BTN3app = settings.BTN3 || "";
 
 function drawMoon(d) {
   const BLACK = 0,
@@ -174,14 +172,14 @@ Bangle.setLCDMode();
 // Show launcher when middle button pressed
 clearWatch();
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-setWatch(
+if (BTN1app) setWatch(
   function() {
     load(BTN1app);
   },
   BTN1,
   { repeat: false, edge: "rising" }
 );
-setWatch(
+if (BTN3app) setWatch(
   function() {
     load(BTN3app);
   },
