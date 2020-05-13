@@ -3,3 +3,4 @@
 0.04: Improve performance, attempt to remove occasional glitch when LCD on (fix #279)
 0.05: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
       Fix issue where first digit could get stuck going from "2x:xx" to " x:xx" (fix #365)
+0.06: Support 12 hour time

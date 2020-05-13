@@ -108,7 +108,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -1719,6 +1719,18 @@
     ],
     "data": [
       {"name":"gallifr.json"}
+    ]
+  },
+  { "id": "rndmclk",
+    "name": "Random Clock Loader",
+    "icon": "rndmclk.png",
+    "version":"0.01",
+    "description": "Load a different clock whenever the LCD is switched on.",
+    "readme": "README.md",
+    "tags": "widget,clock",
+    "type":"widget",
+    "storage": [
+      {"name":"rndmclk.wid.js","url":"widget.js"}
     ]
   }
 ]
