@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd `dirname $0`/..
-node bin/sanitycheck.js || exit 1
+nodejs bin/sanitycheck.js || exit 1
 
 echo "Sanity check passed."
 
