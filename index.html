@@ -40,6 +40,9 @@
     .chip {
       cursor: pointer;
     }
+    .filter-nav {
+      display: inline-block;
+    }
     .sort-nav {
       float: right;
     }
@@ -92,12 +95,6 @@
 
     <div class="container bangle-tab" id="librarycontainer">
       <div>
-        <div class="sort-nav hidden">
-          <span>Sort by:</span>
-          <label class="chip active" sortid="">None</label>
-          <label class="chip" sortid="created">New</label>
-          <label class="chip" sortid="modified">Updated</label>
-        </div>
         <div class="filter-nav">
           <label class="chip active" filterid="">Default</label>
           <label class="chip" filterid="clock">Clocks</label>
@@ -108,10 +105,15 @@
           <label class="chip" filterid="outdoors">Outdoors</label>
           <label class="chip" filterid="favourites">Favourites</label>
         </div>
-
+        <div class="sort-nav hidden">
+          <span>Sort by:</span>
+          <label class="chip active" sortid="">None</label>
+          <label class="chip" sortid="created">New</label>
+          <label class="chip" sortid="modified">Updated</label>
+        </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" style="clear:both">
         <div class="panel-header">
         <div class="input-group" id="searchform">
             <input class="form-input" type="text" placeholder="Keywords...">
