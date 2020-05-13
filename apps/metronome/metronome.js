@@ -9,15 +9,16 @@ Bangle.setLCDTimeout(undefined);  //do not deaktivate display while running this
 function changecolor() {
   const maxColors = 2;
   const colors = {
-        0: { value: 0xFFFF, name: "White" },
-     //  1: { value: 0x000F, name: "Navy" },
-     //   2: { value: 0x03E0, name: "DarkGreen" },
-     //   3: { value: 0x03EF, name: "DarkCyan" },
-     //   4: { value: 0x7800, name: "Maroon" },
-     //   5: { value: 0x780F, name: "Purple" },
-     //   6: { value: 0x7BE0, name: "Olive" },
-     //   7: { value: 0xC618, name: "LightGray" },
-     //   8: { value: 0x7BEF, name: "DarkGrey" },
+        0: { value: 0xF800, name: "Red" },
+        1: { value: 0xFFFF, name: "White" },
+        2: { value: 0x03E0, name: "DarkGreen" },
+        3: { value: 0xFFFF, name: "White" },
+        4: { value: 0x03E0, name: "DarkGreen" },
+        5: { value: 0xFFFF, name: "White" },
+        6: { value: 0x03E0, name: "DarkGreen" },
+        7: { value: 0xFFFF, name: "White" },
+        8: { value: 0x7BEF, name: "DarkGrey" },
+     //   9: { value: 0x001F, name: "Blue" },
      //   9: { value: 0x001F, name: "Blue" },
      //   10: { value: 0x07E0, name: "Green" },
      //   11: { value: 0x07FF, name: "Cyan" },
@@ -42,7 +43,11 @@ function changecolor() {
 function updateScreen() {
   g.clearRect(0, 50, 250, 150);
   changecolor();
-  Bangle.buzz(50, 0.75);
+  try {
+    Bangle.buzz(50, 0.75);
+  }
+  catch(err) {
+  }
   g.setFont("Vector",48);
   g.drawString(Math.floor(bpm)+"bpm", 5, 60);
 }
