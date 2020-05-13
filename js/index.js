@@ -1,6 +1,6 @@
 var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app JSON
-var appPublishDates = {}; // list of app publish dates from recent.csv
+var appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
 var files = []; // list of files on Bangle
 var DEFAULTSETTINGS = {
   pretokenise : true,
@@ -20,11 +20,14 @@ httpGet("apps.json").then(apps=>{
   refreshFilter();
 });
 
-httpGet("recent.csv").then(csv=>{
+httpGet("appdates.csv").then(csv=>{
   document.querySelector(".sort-nav").classList.remove("hidden");
   csv.split("\n").forEach(line=>{
     var l = line.split(",");
-    appPublishDates[l[1]] = Date.parse(l[0]);
+    appSortInfo[l[0]] = { 
+      created : Date.parse(l[1]), 
+      modified : Date.parse(l[2])
+    };
   });
 }).catch(err=>{
   console.log("No recent.csv - app sort disabled");
@@ -231,8 +234,8 @@ function refreshLibrary() {
 
   if (activeSort) {
     visibleApps = visibleApps.slice(); // clone the array so sort doesn't mess with original
-    if (activeSort=="new") {
-      visibleApps = visibleApps.sort((a,b) => appPublishDates[b.id] - appPublishDates[a.id]);
+    if (activeSort=="created" || activeSort=="modified") {
+      visibleApps = visibleApps.sort((a,b) => appSortInfo[b.id][activeSort] - appSortInfo[a.id][activeSort]);
     } else throw new Error("Unknown sort type "+activeSort);
   }
 
