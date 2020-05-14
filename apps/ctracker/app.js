@@ -2,7 +2,9 @@
 var calories = 0;
 var leftMargin = g.getWidth()/2;
 var topMargin = g.getHeight()/2;
-var hrArray = [];
+var previousHr = {
+  timestamp: 0
+};
 
 //personal data (settings file?)
 var age = 27;
@@ -17,13 +19,27 @@ function draw(){
   g.setFont("6x8",8);
   g.drawString(calories.toFixed(0),leftMargin,topMargin);
   g.setFont("6x8",4);
-  g.drawString("cal",leftMargin,topMargin*1.6);
+  g.drawString("kCal",leftMargin,topMargin*1.6);
+  g.flip();
 }
 
 function onHrm(hrm){
   if(hrm.confidence > 95){
-    console.log(hrm.bpm);
-    hrArray.push(hrm.bpm);
+    if(previousHr.timestamp == 0){
+      previousHr.timestamp = getTime();
+    } else {
+      var acCal = 0; 
+      var timespan = (getTime() - previousHr.timestamp);
+      console.log((timespan) + " sec");
+      if(sex === "Male"){
+        acCal = ((age*0.2017) + (weight*0.1988) + (hrm.bpm*0.6309) - 55.0969) * (timespan/60)/4.184;
+      } else if (sex === "Female"){
+        acCal = ((age*0.074) + (weight*0.1263) + (hrm.bpm*0.4472) - 20.4022) * (timespan/60)/4.184;
+      }
+      calories += Math.abs(acCal);
+      previousHr.timestamp += timespan;
+      console.log("kCalories: " + Math.abs(acCal) + "; Sum kCal: "+calories);
+    }
   }
 }
 
@@ -51,6 +67,6 @@ function calcCalories(){
 Bangle.setHRMPower(1);
 Bangle.on('HRM',onHrm);
 setInterval(draw,1000);
-setInterval(calcCalories,30*1000);
+//setInterval(calcCalories,30*1000);
 
 // call your app function here
