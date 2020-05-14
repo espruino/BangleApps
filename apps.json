@@ -28,7 +28,7 @@
     "name": "Calorie Tracker",
     "shortName":"Calorie Tracker",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Calorie Tracker based on heart rate",
     "tags": "",
     "storage": [
