@@ -24,6 +24,18 @@
       {"name":"bfit.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "ctracker",
+    "name": "Calorie Tracker",
+    "shortName":"Calorie Tracker",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Calorie Tracker based on heart rate",
+    "tags": "",
+    "storage": [
+      {"name":"ctracker.app.js","url":"app.js"},
+      {"name":"ctracker.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "moonphase",
     "name": "Moonphase",
     "icon": "app.png",
