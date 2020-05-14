@@ -8,8 +8,9 @@ const storage = require('Storage');
 const settings = (storage.readJSON('setting.json', 1) || {});
 const is12Hour = settings["12hour"] || false;
 
+
 const font7x7 = {
-  "empty": "00000000000000",
+  "empty": "00000000",
   "0": "3E61514945433E",
   "1": "1808080808081C",
   "2": "7E01013E40407F",
@@ -23,7 +24,7 @@ const font7x7 = {
 };
 
 const font5x5 = {
-  "empty": "0000000000",
+  "empty": "00000000",
   "0": "0E1915130E",
   "1": "0C0404040E",
   "2": "1E010E101F",
@@ -74,13 +75,14 @@ function binToHex(bins /* array of binary strings */) {
 // Example
 // hexToBin("3E40407E41413E")
 function hexToBin(hexStr) {
-  return (
-    hexStr
-      .replace(/../g, el => el + '_')
+  const regEx = new RegExp("..", "g");
+  const bin = hexStr
+      .replace(regEx, el => el + '_')
       .slice(0, -1)
       .split('_')
-      .map(hex => ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8))
-  );
+      .map(hex => ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8));
+
+  return bin;
 }
 
 function drawPixel(opts) {
@@ -90,22 +92,27 @@ function drawPixel(opts) {
 
 function drawGrid(pos /* {x:int, y:int} */, dims /* {rows:int, cols:int} */, charAsBin, opts /* {pxlW:int, pxlH:int, gap:int} */) {
   const defaultOpts = {
-    pxlW: 5, pxlH: 5,
+    pxlW: 5,
+    pxlH: 5,
     gap: 1,
-    offColor: COLORS.DARK, onColor: COLORS.LIGHT
+    offColor: COLORS.DARK,
+    onColor: COLORS.LIGHT
   };
   const pxl = Object.assign({}, defaultOpts, opts);
 
   for (let r = 0; r < dims.rows; r++) {
     const y = pos.y + ((pxl.pxlH + pxl.gap) * r);
+
     for (let c = 7; c > (7 - dims.cols); c--) {
       const x = pos.x + ((pxl.pxlW + pxl.gap) * c);
       const color = (charAsBin && parseInt(charAsBin[r][c])) ? pxl.onColor : pxl.offColor;
 
       drawPixel({
-        x: x, y: y,
-        w: pxl.pxlW, h: pxl.pxlH,
-        color: color,
+        x: x,
+        y: y,
+        w: pxl.pxlW,
+        h: pxl.pxlH,
+        color: color
       });
     }
   }
@@ -141,7 +148,7 @@ function drawFont(str, font, x, y) {
     drawGrid(
       {x: x + (i * gridWidthTotal), y: y},
       {rows: rows, cols: cols},
-      charAsBin || fontMap.empty,
+      charAsBin,
       {pxlW: pxlW, pxlH: pxlH, gap: gap}
     );
   }
@@ -150,10 +157,10 @@ function drawFont(str, font, x, y) {
 function drawTitles() {
   g.setColor("#ffffff");
   g.setFont("6x8");
-  g.drawString("COMPASS", 52, 43);
-  g.drawString("HEART", 122, 43);
-  g.drawString("TIME", 52, 85);
-  g.drawString("DATE", 52, 135);
+  g.drawString("COMPASS", 52, 49);
+  g.drawString("HEART", 122, 49);
+  g.drawString("TIME", 52, 94);
+  g.drawString("DATE", 52, 144);
 }
 
 function drawCompass(lastHeading) {
@@ -169,16 +176,17 @@ function drawCompass(lastHeading) {
   ];
   const cps = Bangle.getCompass();
   let angle = cps.heading;
-  const heading = angle?
-                  directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
-                  "   ";
+  let heading = angle?
+                directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
+                "   ";
 
-  if (lastHeading != heading) drawFont(heading, "5x5", 40, 58);
+  heading = (heading + "   ").slice(0, 3);
+  if (lastHeading != heading) drawFont(heading, "5x5", 40, 67);
   setTimeout(drawCompass.bind(null, heading), 1000 * 2);
 }
 
 function drawHeart(hrm) {
-  drawFont(("   " + (hrm ? hrm.bpm : '')).slice(-3), "5x5", 109, 58);
+  drawFont(("   " + (hrm ? hrm.bpm : '')).slice(-3), "5x5", 109, 67);
 }
 
 function drawTime(lastHrs, lastMns, toggle) {
@@ -188,10 +196,10 @@ function drawTime(lastHrs, lastMns, toggle) {
   const mns = ("00" + date.getMinutes()).substr(-2);
 
   if (lastHrs != hrs) {
-    drawFont(hrs, "7x7", 48, 100);
+    drawFont(hrs, "7x7", 48, 109);
   }
   if (lastMns != mns) {
-    drawFont(mns, "7x7", 124, 100);
+    drawFont(mns, "7x7", 124, 109);
   }
 
   const color = toggle? COLORS.LIGHT : COLORS.DARK;
@@ -199,12 +207,12 @@ function drawTime(lastHrs, lastMns, toggle) {
   // This should toggle on/off per second
   drawPixel({
     color: color,
-    x: 118, y: 109,
+    x: 118, y: 118,
     w: 2, h: 2,
   });
   drawPixel({
     color: color,
-    x: 118, y: 116,
+    x: 118, y: 125,
     w: 2, h: 2,
   });
 
@@ -218,28 +226,53 @@ function drawDate(lastDate) {
   if (lastDate != date.toISOString().split('T')[0]) {
     const dow = locale.dow(date, 1).toUpperCase();
     const dayNum = ("00" + date.getDate()).slice(-2);
-    const mon = locale.month(date).toUpperCase();
+    const mon = locale.month(date).toUpperCase().slice(-3);
     const yr = date.getFullYear().toString().slice(-2);
-    drawFont(dow + " " + dayNum, "5x5", 40, 150);
-    drawFont(mon + " " + yr, "5x5", 40, 180);
+    drawFont(dow + " " + dayNum, "5x5", 40, 159);
+    drawFont(mon + " " + yr, "5x5", 40, 189);
   }
 
   setTimeout(drawDate.bind(null, date.toISOString().split('T')), 1000 * 60);
 }
 
-g.setBgColor(COLORS.BG);
-g.clear();
+function setSensors(state) {
+  Bangle.setHRMPower(state);
+  Bangle.setCompassPower(state);
+}
 
+// Turn sensors on
+setSensors(1);
+
+// Reset screen
+g.clear();
+g.setBgColor(COLORS.BG);
+g.clearRect(0, 24, g.getWidth(), g.getHeight());
+
+// Load and draw widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+// Draw screen
 drawTitles();
-drawTime();
-drawDate();
 drawCompass();
 drawHeart();
+drawTime();
+drawDate();
 
+// Setup callbacks
 Bangle.on('HRM', drawHeart);
-Bangle.setHRMPower(1);
 
-Bangle.setCompassPower(1);
+setWatch(() => {
+  setSensors(0);
+  Bangle.setLCDMode();
+  Bangle.showLauncher();
+}, BTN2, {repeat: false, edge: "falling"});
+
+Bangle.on('lcdPower', (on) => on ? setSensors(1) : setSensors(0));
+
+Bangle.on('faceUp', (up) => {
+  if (up && !Bangle.isLCDOn()) {
+    setSensors(1);
+    Bangle.setLCDPower(true);
+  }
+});
