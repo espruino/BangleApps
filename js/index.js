@@ -1,6 +1,12 @@
 var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app JSON
+var appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
 var files = []; // list of files on Bangle
+var DEFAULTSETTINGS = {
+  pretokenise : true,
+  favourites : ["boot","launch","setting"]
+};
+var SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -14,11 +20,24 @@ httpGet("apps.json").then(apps=>{
   refreshFilter();
 });
 
+httpGet("appdates.csv").then(csv=>{
+  document.querySelector(".sort-nav").classList.remove("hidden");
+  csv.split("\n").forEach(line=>{
+    var l = line.split(",");
+    appSortInfo[l[0]] = { 
+      created : Date.parse(l[1]), 
+      modified : Date.parse(l[2])
+    };
+  });
+}).catch(err=>{
+  console.log("No recent.csv - app sort disabled");
+});
+
 // ===========================================  Top Navigation
 function showChangeLog(appid) {
   var app = appNameToApp(appid);
   function show(contents) {
-    showPrompt(app.name+" Change Log",contents,{ok:true}).catch(()=>{});;
+    showPrompt(app.name+" Change Log",contents,{ok:true}).catch(()=>{});
   }
   httpGet(`apps/${appid}/ChangeLog`).
   then(show).catch(()=>show("No Change Log available"));
@@ -63,9 +82,15 @@ function handleCustomApp(appTemplate) {
     var iframe = modal.getElementsByTagName("iframe")[0];
     iframe.contentWindow.addEventListener("message", function(event) {
       var appFiles = event.data;
-      var app = {};
-      Object.keys(appTemplate).forEach(k => app[k] = appTemplate[k]);
-      Object.keys(appFiles).forEach(k => app[k] = appFiles[k]);
+      var app = JSON.parse(JSON.stringify(appTemplate)); // clone template
+      // copy extra keys from appFiles
+      Object.keys(appFiles).forEach(k => {
+        if (k!="storage") app[k] = appFiles[k]
+      });
+      appFiles.storage.forEach(f => {
+        app.storage = app.storage.filter(s=>s.name!=f.name); // remove existing item
+        app.storage.push(f); // add new
+      });
       console.log("Received custom app", app);
       modal.remove();
       Comms.uploadApp(app).then(()=>{
@@ -142,6 +167,21 @@ function handleAppInterface(app) {
   });
 }
 
+function changeAppFavourite(favourite, app) {
+  var favourites = SETTINGS.favourites;
+  if (favourite) {
+    SETTINGS.favourites = SETTINGS.favourites.concat([app.id]);
+  } else {
+    if ([ "boot","setting"].includes(app.id)) {
+      showToast(app.name + ' is required, can\'t remove it' , 'warning');
+    }else {
+      SETTINGS.favourites = SETTINGS.favourites.filter(e => e != app.id);
+    }
+  }
+  saveSettings();
+  refreshLibrary();
+}
+
 // ===========================================  Top Navigation
 function showTab(tabname) {
   htmlToArray(document.querySelectorAll("#tab-navigate .tab-item")).forEach(tab => {
@@ -156,28 +196,47 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var chips = Array.from(document.querySelectorAll('.chip')).map(chip => chip.attributes.filterid.value)
+var chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.attributes.filterid.value);
 var hash = window.location.hash ? window.location.hash.slice(1) : '';
 
 var activeFilter = !!~chips.indexOf(hash) ? hash : '';
-var currentSearch = '';
+var activeSort = '';
+var currentSearch = activeFilter ? '' : hash;
 
 function refreshFilter(){
   var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
   filtersContainer.querySelector('.active').classList.remove('active');
-  if(activeFilter) filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active')
-  else filtersContainer.querySelector('.chip[filterid]').classList.add('active')
+  if(activeFilter) filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active');
+  else filtersContainer.querySelector('.chip[filterid]').classList.add('active');
+}
+function refreshSort(){
+  var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+  sortContainer.querySelector('.active').classList.remove('active');
+  if(activeSort) sortContainer.querySelector('.chip[sortid="'+activeSort+'"]').classList.add('active');
+  else sortContainer.querySelector('.chip[sortid]').classList.add('active');
 }
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
   var visibleApps = appJSON;
+  var favourites = SETTINGS.favourites;
 
   if (activeFilter) {
-    visibleApps = visibleApps.filter(app => app.tags && app.tags.split(',').includes(activeFilter));
+    if ( activeFilter == "favourites" ) {
+      visibleApps = visibleApps.filter(app => app.id && (favourites.filter( e => e == app.id).length));
+    } else {
+      visibleApps = visibleApps.filter(app => app.tags && app.tags.split(',').includes(activeFilter));
+    }
   }
 
   if (currentSearch) {
     visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch));
+  }
+
+  if (activeSort) {
+    visibleApps = visibleApps.slice(); // clone the array so sort doesn't mess with original
+    if (activeSort=="created" || activeSort=="modified") {
+      visibleApps = visibleApps.sort((a,b) => appSortInfo[b.id][activeSort] - appSortInfo[a.id][activeSort]);
+    } else throw new Error("Unknown sort type "+activeSort);
   }
 
   panelbody.innerHTML = visibleApps.map((app,idx) => {
@@ -185,7 +244,14 @@ function refreshLibrary() {
     var version = getVersionInfo(app, appInstalled);
     var versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a href="#" onclick="showReadme('${app.id}')">Read more...</a>`;
+    var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
+    var favourite = favourites.find(e => e == app.id);
+
+    var username = "espruino";
+    var githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    if(githubMatch) username = githubMatch[1];
+    var url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
@@ -193,9 +259,10 @@ function refreshLibrary() {
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
-      <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
+      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
+      <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
       <button class="btn btn-link btn-action btn-lg ${app.allow_emulator?"":"d-hide"}" appid="${app.id}" title="Try in Emulator"><i class="icon icon-share"></i></button>
       <button class="btn btn-link btn-action btn-lg ${version.canUpdate?"":"d-hide"}" appid="${app.id}" title="Update App"><i class="icon icon-refresh"></i></button>
@@ -232,7 +299,7 @@ function refreshLibrary() {
         // upload
         icon.classList.remove("icon-upload");
         icon.classList.add("loading");
-        uploadApp(app)
+        uploadApp(app);
       } else if (icon.classList.contains("icon-menu")) {
         // custom HTML update
         icon.classList.remove("icon-menu");
@@ -250,6 +317,10 @@ function refreshLibrary() {
         updateApp(app);
       } else if (icon.classList.contains("icon-download")) {
         handleAppInterface(app);
+      } else if ( button.innerText == String.fromCharCode(0x2661)) {
+         changeAppFavourite(true, app);
+      } else if ( button.innerText == String.fromCharCode(0x2665) ) {
+         changeAppFavourite(false, app);
       }
     });
   });
@@ -262,17 +333,17 @@ refreshLibrary();
 function uploadApp(app) {
   return getInstalledApps().then(()=>{
     if (appsInstalled.some(i => i.id === app.id)) {
-      return updateApp(app)
+      return updateApp(app);
     }
     Comms.uploadApp(app).then((appJSON) => {
-      Progress.hide({ sticky: true })
+      Progress.hide({ sticky: true });
       if (appJSON) {
-        appsInstalled.push(appJSON)
+        appsInstalled.push(appJSON);
       }
-      showToast(app.name + ' Uploaded!', 'success')
+      showToast(app.name + ' Uploaded!', 'success');
     }).catch(err => {
-      Progress.hide({ sticky: true })
-      showToast('Upload failed, ' + err, 'error')
+      Progress.hide({ sticky: true });
+      showToast('Upload failed, ' + err, 'error');
     }).finally(()=>{
       refreshMyApps();
       refreshLibrary();
@@ -286,8 +357,8 @@ function removeApp(app) {
   return showPrompt("Delete","Really remove '"+app.name+"'?").then(() => {
     return getInstalledApps().then(()=>{
       // a = from appid.info, app = from apps.json
-      return Comms.removeApp(appsInstalled.find(a => a.id === app.id))
-    })
+      return Comms.removeApp(appsInstalled.find(a => a.id === app.id));
+    });
   }).then(()=>{
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
     showToast(app.name+" removed successfully","success");
@@ -315,13 +386,21 @@ function updateApp(app) {
   if (app.custom) return customApp(app);
   return getInstalledApps().then(() => {
     // a = from appid.info, app = from apps.json
-    let remove = appsInstalled.find(a => a.id === app.id)
+    let remove = appsInstalled.find(a => a.id === app.id);
     // no need to remove files which will be overwritten anyway
     remove.files = remove.files.split(',')
       .filter(f => f !== app.id + '.info')
       .filter(f => !app.storage.some(s => s.name === f))
-      .join(',')
-    return Comms.removeApp(remove)
+      .join(',');
+    let data = AppInfo.parseDataString(remove.data)
+    if ('data' in app) {
+      // only remove data files which are no longer declared in new app version
+      const removeData = (f) => !app.data.some(d => (d.name || d.wildcard)===f)
+      data.dataFiles = data.dataFiles.filter(removeData)
+      data.storageFiles = data.storageFiles.filter(removeData)
+    }
+    remove.data = AppInfo.makeDataString(data)
+    return Comms.removeApp(remove);
   }).then(()=>{
     showToast(`Updating ${app.name}...`);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
@@ -365,10 +444,18 @@ function showLoadingIndicator(id) {
   panelbody.innerHTML = '<div class="tile column col-12"><div class="tile-content" style="min-height:48px;"><div class="loading loading-lg"></div></div></div>';
 }
 
+function getAppsToUpdate() {
+  var appsToUpdate = [];
+  appsInstalled.forEach(appInstalled => {
+    var app = appNameToApp(appInstalled.id);
+    if (app.version != appInstalled.version)
+      appsToUpdate.push(app);
+  });
+  return appsToUpdate;
+}
+
 function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
-  var tab = document.querySelector("#tab-myappscontainer a");
-  tab.setAttribute("data-badge", appsInstalled.length);
   panelbody.innerHTML = appsInstalled.map(appInstalled => {
 var app = appNameToApp(appInstalled.id);
 var version = getVersionInfo(app, appInstalled);
@@ -397,15 +484,26 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-delete")) removeApp(app);
       if (icon.classList.contains("icon-refresh")) updateApp(app);
-      if (icon.classList.contains("icon-download")) handleAppInterface(app)
+      if (icon.classList.contains("icon-download")) handleAppInterface(app);
     });
   });
+  var appsToUpdate = getAppsToUpdate();
+  var tab = document.querySelector("#tab-myappscontainer a");
+  var updateApps = document.querySelector("#myappscontainer .updateapps");
+  if (appsToUpdate.length) {
+    updateApps.innerHTML = `Update ${appsToUpdate.length} apps`;
+    updateApps.classList.remove("hidden");
+    tab.setAttribute("data-badge", `${appsInstalled.length} ⬆${appsToUpdate.length}`);
+  } else {
+    updateApps.classList.add("hidden");
+    tab.setAttribute("data-badge", appsInstalled.length);
+  }
 }
 
 let haveInstalledApps = false;
 function getInstalledApps(refresh) {
   if (haveInstalledApps && !refresh) {
-    return Promise.resolve(appsInstalled)
+    return Promise.resolve(appsInstalled);
   }
   showLoadingIndicator("myappscontainer");
   // Get apps and files
@@ -423,6 +521,43 @@ function getInstalledApps(refresh) {
     });
 }
 
+/// Removes everything and install the given apps, eg: installMultipleApps(["boot","mclock"], "minimal")
+function installMultipleApps(appIds, promptName) {
+  var apps = appIds.map( appid => appJSON.find(app=>app.id==appid) );
+  if (apps.some(x=>x===undefined))
+    return Promise.reject("Not all apps found");
+  var appCount = apps.length;
+  return showPrompt("Install Defaults",`Remove everything and install ${promptName} apps?`).then(() => {
+    return Comms.removeAllApps();
+  }).then(()=>{
+    Progress.hide({sticky:true});
+    appsInstalled = [];
+    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
+    return new Promise((resolve,reject) => {
+      function upload() {
+        var app = apps.shift();
+        if (app===undefined) return resolve();
+        Progress.show({title:`${app.name} (${appCount-apps.length}/${appCount})`,sticky:true});
+        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
+          Progress.hide({sticky:true});
+          if (appJSON) appsInstalled.push(appJSON);
+          showToast(`(${appCount-apps.length}/${appCount}) ${app.name} Uploaded`);
+          upload();
+        }).catch(function() {
+          Progress.hide({sticky:true});
+          reject();
+        });
+      }
+      upload();
+    });
+  }).then(()=>{
+    return Comms.setTime();
+  }).then(()=>{
+    showToast("Apps successfully installed!","success");
+    return getInstalledApps(true);
+  });
+}
+
 var connectMyDeviceBtn = document.getElementById("connectmydevice");
 
 function handleConnectionChange(connected) {
@@ -433,6 +568,22 @@ function handleConnectionChange(connected) {
 htmlToArray(document.querySelectorAll(".btn.refresh")).map(button => button.addEventListener("click", () => {
   getInstalledApps(true).catch(err => {
     showToast("Getting app list failed, "+err,"error");
+  });
+}));
+htmlToArray(document.querySelectorAll(".btn.updateapps")).map(button => button.addEventListener("click", () => {
+  var appsToUpdate = getAppsToUpdate();
+  var count = appsToUpdate.length;
+  function updater() {
+    if (!appsToUpdate.length) return;
+    var app = appsToUpdate.pop();
+    return updateApp(app).then(function() {
+      return updater();
+    });
+  }
+  updater().then(err => {
+    showToast(`Updated ${count} apps`,"success");
+  }).catch(err => {
+    showToast("Update failed, "+err,"error");
   });
 }));
 connectMyDeviceBtn.addEventListener("click", () => {
@@ -453,17 +604,83 @@ filtersContainer.addEventListener('click', ({ target }) => {
   activeFilter = target.getAttribute('filterid') || '';
   refreshFilter();
   refreshLibrary();
-  window.location.hash = activeFilter
+  window.location.hash = activeFilter;
 });
 
 var librarySearchInput = document.querySelector("#searchform input");
-
+librarySearchInput.value = currentSearch;
 librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
   refreshLibrary();
 });
 
+var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+sortContainer.addEventListener('click', ({ target }) => {
+  if (target.classList.contains('active')) return;
+
+  activeSort = target.getAttribute('sortid') || '';
+  refreshSort();
+  refreshLibrary();
+  window.location.hash = activeFilter;
+});
+
 // =========================================== About
+
+if (window.location.host=="banglejs.com") {
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is the official Bangle.js App Loader - you can also try the <a href="https://espruino.github.io/BangleApps/">Development Version</a> for the most recent apps.';
+} else if (window.location.host=="espruino.github.io") {
+  document.title += " [Development]";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
+} else {
+  document.title += " [Unofficial]";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
+}
+
+// Settings
+var SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
+/// Load settings and update controls
+function loadSettings() {
+  var j = localStorage.getItem("settings");
+  if (typeof j != "string") return;
+  try {
+    var s = JSON.parse(j);
+    Object.keys(s).forEach( k => {
+      SETTINGS[k]=s[k];
+      if (SETTINGS_HOOKS[k]) SETTINGS_HOOKS[k]();
+    } );
+  } catch (e) {
+    console.error("Invalid settings");
+  }
+}
+/// Save settings
+function saveSettings() {
+  localStorage.setItem("settings", JSON.stringify(SETTINGS));
+  console.log("Changed settings", SETTINGS);
+}
+// Link in settings DOM elements
+function settingsCheckbox(id, name) {
+  var setting = document.getElementById(id);
+  function update() {
+    setting.checked = SETTINGS[name];
+  }
+  SETTINGS_HOOKS[name] = update;
+  setting.addEventListener('click', function() {
+    SETTINGS[name] = setting.checked;
+    saveSettings();
+  });
+}
+settingsCheckbox("settings-pretokenise", "pretokenise");
+loadSettings();
+
+document.getElementById("defaultsettings").addEventListener("click",event=>{
+  SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
+  saveSettings();
+  loadSettings(); // update all settings
+  refreshLibrary(); // favourites were in settings
+});
 
 document.getElementById("settime").addEventListener("click",event=>{
   Comms.setTime().then(()=>{
@@ -487,43 +704,18 @@ document.getElementById("removeall").addEventListener("click",event=>{
 });
 // Install all default apps in one go
 document.getElementById("installdefault").addEventListener("click",event=>{
-  var defaultApps, appCount;
   httpGet("defaultapps.json").then(json=>{
-    defaultApps = JSON.parse(json);
-    defaultApps = defaultApps.map( appid => appJSON.find(app=>app.id==appid) );
-    if (defaultApps.some(x=>x===undefined))
-      throw "Not all apps found";
-    appCount = defaultApps.length;
-    return showPrompt("Install Defaults","Remove everything and install default apps?");
-  }).then(() => {
-    return Comms.removeAllApps();
-  }).then(()=>{
-    Progress.hide({sticky:true});
-    appsInstalled = [];
-    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
-    return new Promise((resolve,reject) => {
-      function upload() {
-        var app = defaultApps.shift();
-        if (app===undefined) return resolve();
-        Progress.show({title:`${app.name} (${appCount-defaultApps.length}/${appCount})`,sticky:true});
-        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
-          upload();
-        }).catch(function() {
-          Progress.hide({sticky:true});
-          reject()
-        });
-      }
-      upload();
-    });
-  }).then(()=>{
-    return Comms.setTime();
-  }).then(()=>{
-    showToast("Default apps successfully installed!","success");
-    return getInstalledApps(true);
+    return installMultipleApps(JSON.parse(json), "default");
   }).catch(err=>{
+    Progress.hide({sticky:true});
+    showToast("App Install failed, "+err,"error");
+  });
+});
+
+// Install all favourite apps in one go
+document.getElementById("installfavourite").addEventListener("click",event=>{
+  var favApps = SETTINGS.favourites;
+  installMultipleApps(favApps, "favourite").catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");
   });

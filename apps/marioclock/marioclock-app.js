@@ -16,6 +16,8 @@ const is12Hour = settings["12hour"] || false;
 
 // Screen dimensions
 let W, H;
+// Screen brightness
+let brightness = 1;
 
 let intervalRef, displayTimeoutRef = null;
 
@@ -27,12 +29,13 @@ const DARKEST = "#122d3e";
 const NIGHT = "#001818";
 
 // Character names
+const DAISY = "daisy";
 const TOAD = "toad";
 const MARIO = "mario";
 
 const characterSprite = {
   frameIdx: 0,
-  x: 35,
+  x: 33,
   y: 55,
   jumpCounter: 0,
   jumpIncrement: Math.PI / 6,
@@ -54,10 +57,100 @@ const pyramidSprite = {
 };
 
 const ONE_SECOND = 1000;
+const DATE_MODE = "date";
+const BATT_MODE = "batt";
+const TEMP_MODE = "temp";
+const PHON_MODE = "gbri";
 
 let timer = 0;
 let backgroundArr = [];
 let nightMode = false;
+let infoMode = DATE_MODE;
+
+// Used to stop values flapping when displayed on screen
+let lastBatt = 0;
+let lastTemp = 0;
+
+const phone = {
+  get status() {
+    return NRF.getSecurityStatus().connected ? "Yes" : "No";
+  },
+  message: null,
+  messageTimeout: null,
+  messageScrollX: null,
+  messageType: null,
+};
+
+const SETTINGS_FILE = "marioclock.json";
+
+function readSettings() {
+  return require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+}
+
+function writeSettings(newSettings) {
+  require("Storage").writeJSON(SETTINGS_FILE, newSettings);
+}
+
+function phoneOutbound(msg) {
+  Bluetooth.println(JSON.stringify(msg));
+}
+
+function phoneClearMessage() {
+    if (phone.message === null) return;
+
+    if (phone.messageTimeout) {
+      clearTimeout(phone.messageTimeout);
+      phone.messageTimeout = null;
+    }
+    phone.message = null;
+    phone.messageScrollX = null;
+    phone.messageType = null;
+}
+
+function phoneNewMessage(type, msg) {
+    Bangle.buzz();
+
+    phoneClearMessage();
+    phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
+    phone.message = msg;
+    phone.messageType = type;
+
+    // Notify user and active screen
+    if (!Bangle.isLCDOn()) {
+      clearTimers();
+      Bangle.setLCDPower(true);
+    }
+}
+
+function truncStr(str, max) {
+  if (str.length > max) {
+    return str.substr(0, max) + '...';
+  }
+  return str;
+}
+
+function phoneInbound(evt) {
+  switch (evt.t) {
+    case 'notify':
+      const sender = truncStr(evt.sender, 10);
+      const subject = truncStr(evt.subject, 15);
+      phoneNewMessage("notify", `${sender} - '${subject}'`);
+      break;
+    case 'call':
+      if (evt.cmd === "accept") {
+        let nameOrNumber = "Unknown";
+        if (evt.name !== null || evt.name !== "") {
+          nameOrNumber = evt.name;
+        } else if (evt.number !== null || evt.number !== "") {
+          nameOrNumber = evt.number;
+        }
+        phoneNewMessage("call", nameOrNumber);
+      }
+      break;
+    default:
+      return null;
+  }
+}
 
 function genRanNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -65,18 +158,35 @@ function genRanNum(min, max) {
 
 function switchCharacter() {
   const curChar = characterSprite.character;
+
   let newChar;
-  if (curChar === MARIO) {
-    newChar = TOAD;
-  } else {
-    newChar = MARIO;
+  switch(curChar) {
+    case DAISY:
+      newChar = MARIO;
+      break;
+    case  TOAD:
+      newChar = DAISY;
+      break;
+    case MARIO:
+    default:
+      newChar = TOAD;
   }
 
   characterSprite.character = newChar;
 }
 
 function toggleNightMode() {
-  nightMode = !nightMode;
+  if (!nightMode) {
+    nightMode = true;
+    return;
+  }
+
+  brightness -= 0.30;
+  if (brightness <= 0) {
+    brightness = 1;
+    nightMode = false;
+  }
+  Bangle.setLCDBrightness(brightness);
 }
 
 function incrementTimer() {
@@ -193,6 +303,19 @@ function drawCoin() {
   drawCoinFrame(coinSprite.x, coinSprite.y);
 }
 
+function drawDaisyFrame(idx, x, y) {
+  switch(idx) {
+    case 0:
+      const dFr1 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
+      g.drawImage(dFr1, x, y);
+      break;
+    case 1:
+    default:
+      const dFr2 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
+      g.drawImage(dFr2, x, y);
+  }
+}
+
 function drawMarioFrame(idx, x, y) {
   switch(idx) {
     case 0:
@@ -200,10 +323,9 @@ function drawMarioFrame(idx, x, y) {
       g.drawImage(mFr1, x, y);
       break;
     case 1:
+    default:
       const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
       g.drawImage(mFr2, x, y);
-      break;
-    default:
   }
 }
 
@@ -214,11 +336,30 @@ function drawToadFrame(idx, x, y) {
       g.drawImage(tFr1, x, y);
       break;
     case 1:
+    default:
       const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
       g.drawImage(tFr2, x, y);
-      break;
-    default:
   }
+}
+
+// Mario speach bubble
+function drawNotice(x, y) {
+  if (phone.message === null) return;
+
+  let img;
+  switch (phone.messageType) {
+    case "call":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
+      break;
+    case "notify":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
+      break;
+    case "lowBatt":
+      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INFrgABB4oOEBoQPFBwwDGB0uHAAIOLJRB3OSpApDBoQAHB4INLByANNAwo"));
+      break;
+  }
+
+  if (img) g.drawImage(img, characterSprite.x, characterSprite.y - 16);
 }
 
 function drawCharacter(date, character) {
@@ -251,10 +392,13 @@ function drawCharacter(date, character) {
   }
 
   switch(characterSprite.character) {
-    case(TOAD):
+    case DAISY:
+      drawDaisyFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      break;
+    case TOAD:
       drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
       break;
-    case(MARIO):
+    case MARIO:
     default:
       drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
   }
@@ -281,13 +425,109 @@ function drawTime(date) {
   g.drawString(mins, 47, 29);
 }
 
-function drawDate(date) {
-  g.setFont("6x8");
-  g.setColor(LIGHTEST);
+function buildDateStr(date) {
   let dateStr = locale.date(date, true);
   dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
   dateStr = locale.dow(date, true) + " " + dateStr;
-  g.drawString(dateStr, (W - g.stringWidth(dateStr))/2, 1);
+
+  return dateStr;
+}
+
+function buildBatStr() {
+  let batt = parseInt(E.getBattery());
+  const battDiff = Math.abs(lastBatt - batt);
+
+  // Suppress flapping values
+  // Only update batt if it moves greater than +-2
+  if (battDiff > 2) {
+    lastBatt = batt;
+  } else {
+    batt = lastBatt;
+  }
+
+  const battStr = `Bat: ${batt}%`;
+
+  return battStr;
+}
+
+function buildTempStr() {
+  let temp = parseInt(E.getTemperature());
+  const tempDiff = Math.abs(lastTemp - temp);
+
+  // Suppress flapping values
+  // Only update temp if it moves greater than +-2
+  if (tempDiff > 2) {
+    lastTemp = temp;
+  } else {
+    temp = lastTemp;
+  }
+  const tempStr = `Temp: ${temp}'c`;
+
+  return tempStr;
+}
+
+function buildPhonStr() {
+  return `Phone: ${phone.status}`;
+}
+
+function drawInfo(date) {
+  let xPos;
+  let str = "";
+
+  if (phone.message !== null) {
+    str = phone.message;
+    const strLen = g.stringWidth(str);
+    if (strLen > W) {
+      if (phone.messageScrollX === null || (phone.messageScrollX <= (strLen * -1))) {
+        phone.messageScrollX = W;
+        resetDisplayTimeout();
+      } else {
+        phone.messageScrollX -= 2;
+      }
+      xPos = phone.messageScrollX;
+    } else {
+     xPos = (W - g.stringWidth(str)) / 2;
+    }
+  } else {
+    switch(infoMode) {
+    case PHON_MODE:
+      str = buildPhonStr();
+      break;
+    case TEMP_MODE:
+      str = buildTempStr();
+      break;
+    case BATT_MODE:
+      str = buildBatStr();
+      break;
+    case DATE_MODE:
+    default:
+      str = buildDateStr(date);
+    }
+    xPos = (W - g.stringWidth(str)) / 2;
+  }
+
+  g.setFont("6x8");
+  g.setColor(LIGHTEST);
+  g.drawString(str, xPos, 1);
+}
+
+function changeInfoMode() {
+  phoneClearMessage();
+
+  switch(infoMode) {
+    case BATT_MODE:
+      infoMode = TEMP_MODE;
+      break;
+    case TEMP_MODE:
+      infoMode = PHON_MODE;
+      break;
+    case PHON_MODE:
+      infoMode = DATE_MODE;
+      break;
+    case DATE_MODE:
+    default:
+      infoMode = BATT_MODE;
+  }
 }
 
 function redraw() {
@@ -302,8 +542,9 @@ function redraw() {
   drawPyramid();
   drawTrees();
   drawTime(date);
-  drawDate(date);
+  drawInfo(date);
   drawCharacter(date);
+  drawNotice();
   drawCoin();
 
   // Render new frame
@@ -340,8 +581,39 @@ function startTimers(){
   redraw();
 }
 
+function loadSettings() {
+  const settings = readSettings();
+  if (!settings) return;
+
+  if (settings.character) characterSprite.character = settings.character;
+  if (settings.nightMode) nightMode = settings.nightMode;
+  if (settings.brightness) {
+    brightness = settings.brightness;
+    Bangle.setLCDBrightness(brightness);
+  }
+}
+
+function updateSettings() {
+  const newSettings = {
+    character: characterSprite.character,
+    nightMode: nightMode,
+    brightness: brightness,
+  };
+  writeSettings(newSettings);
+}
+
+function checkBatteryLevel() {
+  if (Bangle.isCharging()) return;
+  if (E.getBattery() > 10) return;
+  if (phone.message !== null) return;
+
+  phoneNewMessage("lowBatt", "Warning, battery is low");
+}
+
 // Main
 function init() {
+  loadSettings();
+
   clearInterval();
 
   // Initialise display
@@ -355,20 +627,21 @@ function init() {
   setWatch(() => {
     if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
     resetDisplayTimeout();
-  }, BTN1, {repeat:true});
+    phoneClearMessage(); // Clear any phone messages and message timers
+  }, BTN3, {repeat: true});
 
+  // Close watch and load launcher app
   setWatch(() => {
     Bangle.setLCDMode();
     Bangle.showLauncher();
-  }, BTN2, {repeat:false,edge:"falling"});
+  }, BTN2, {repeat: false, edge: "falling"});
 
-  Bangle.on('lcdPower', (on) => {
-    if (on) {
-      startTimers();
-    } else {
-      clearTimers();
-    }
-  });
+  // Change info mode
+  setWatch(() => {
+    changeInfoMode();
+  }, BTN1, {repeat: true});
+
+  Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
 
   Bangle.on('faceUp', (up) => {
     if (up && !Bangle.isLCDOn()) {
@@ -382,17 +655,38 @@ function init() {
 
     switch(sDir) {
       // Swipe right (1) - change character (on a loop)
-      case(1):
+      case 1:
         switchCharacter();
         break;
       // Swipe left (-1) - change day/night mode (on a loop)
-      case(-1):
+      case -1:
       default:
         toggleNightMode();
     }
+
+    updateSettings();
   });
 
+  // Phone connectivity
+  try { NRF.wake(); } catch (e) {}
+
+  NRF.on('disconnect', () => {
+    phoneNewMessage(null, "Phone disconnected");
+  });
+
+  NRF.on('connect', () => {
+    setTimeout(() => {
+      phoneOutbound({ t: "status", bat: E.getBattery() });
+    }, ONE_SECOND * 2);
+    phoneNewMessage(null, "Phone connected");
+  });
+
+  GB = (evt) => phoneInbound(evt);
+
   startTimers();
+
+  setInterval(checkBatteryLevel, ONE_SECOND * 60 * 10);
+  checkBatteryLevel();
 }
 
 // Initialise!

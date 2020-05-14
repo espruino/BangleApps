@@ -6,3 +6,5 @@
 0.09: center date, remove box around it, internal refactor to remove redundant code.
 0.10: remove debug, refactor seconds to show elapsed secs each time app is displayed
 0.11: shift face down for widget area, maximize face size, 0 pad single digit date, use locale for date
+0.12: Fix regression after 0.11
+0.13: Fix broken date padding (fix #376)

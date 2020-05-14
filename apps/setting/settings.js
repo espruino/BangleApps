@@ -61,9 +61,12 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
+  var hidV = [false, "kbmedia", "kb", "joy"];
+  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   const mainmenu = {
     '': { 'title': 'Settings' },
-    'Make Connectable': makeConnectable,
+    'Make Connectable': ()=>makeConnectable(),
+    'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -80,34 +83,12 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Debug info': {
+    'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
       onchange: () => {
         settings.log = !settings.log;
         updateSettings();
-      }
-    },
-    'LCD Timeout': {
-      value: settings.timeout,
-      min: 0,
-      max: 60,
-      step: 5,
-      onchange: v => {
-        settings.timeout = 0 | v;
-        updateSettings();
-        Bangle.setLCDTimeout(settings.timeout);
-      }
-    },
-    'LCD Brightness': {
-      value: settings.brightness,
-      min: 0,
-      max: 1,
-      step: 0.1,
-      onchange: v => {
-        settings.brightness = v || 1;
-        updateSettings();
-        Bangle.setLCDBrightness(settings.brightness);
       }
     },
     'Beep': {
@@ -133,31 +114,53 @@ function showMainMenu() {
         }
       }
     },
-    'Locale': showLocaleMenu,
-    'Select Clock': showClockMenu,
+    'Locale': ()=>showLocaleMenu(),
+    'Select Clock': ()=>showClockMenu(),
     'HID': {
-      value: settings.HID,
-      format: boolFormat,
-      onchange: () => {
-        settings.HID = !settings.HID;
+      value: 0 | hidV.indexOf(settings.HID),
+      min: 0, max: 3,
+      format: v => hidN[v],
+      onchange: v => {
+        settings.HID = hidV[v];
         updateSettings();
       }
     },
-    'Set Time': showSetTimeMenu,
-    'LCD Wake-Up': showWakeUpMenu,
-    'App/widget settings': showAppSettingsMenu,
-    'Reset Settings': showResetMenu,
-    'Turn Off': Bangle.off,
-    '< Back': () => { load(); }
+    'Set Time': ()=>showSetTimeMenu(),
+    'LCD': ()=>showLCDMenu(),
+    'Reset Settings': ()=>showResetMenu(),
+    'Turn Off': ()=>Bangle.off(),
+    '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
 }
 
-function showWakeUpMenu() {
-  const wakeUpMenu = {
-    '': { 'title': 'LCD Wake-Up' },
-    '< Back': showMainMenu,
-    'Wake On BTN1': {
+function showLCDMenu() {
+  const lcdMenu = {
+    '': { 'title': 'LCD' },
+    '< Back': ()=>showMainMenu(),
+    'LCD Brightness': {
+      value: settings.brightness,
+      min: 0.1,
+      max: 1,
+      step: 0.1,
+      onchange: v => {
+        settings.brightness = v || 1;
+        updateSettings();
+        Bangle.setLCDBrightness(settings.brightness);
+      }
+    },
+    'LCD Timeout': {
+      value: settings.timeout,
+      min: 0,
+      max: 60,
+      step: 5,
+      onchange: v => {
+        settings.timeout = 0 | v;
+        updateSettings();
+        Bangle.setLCDTimeout(settings.timeout);
+      }
+    },
+    'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
       format: boolFormat,
       onchange: () => {
@@ -165,7 +168,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN2': {
+    'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
       onchange: () => {
@@ -173,7 +176,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On BTN3': {
+    'Wake on BTN3': {
       value: settings.options.wakeOnBTN3,
       format: boolFormat,
       onchange: () => {
@@ -197,7 +200,7 @@ function showWakeUpMenu() {
         updateOptions();
       }
     },
-    'Wake On Twist': {
+    'Wake on Twist': {
       value: settings.options.wakeOnTwist,
       format: boolFormat,
       onchange: () => {
@@ -236,13 +239,13 @@ function showWakeUpMenu() {
       }
     }
   }
-  return E.showMenu(wakeUpMenu)
+  return E.showMenu(lcdMenu)
 }
 
 function showLocaleMenu() {
   const localemenu = {
     '': { 'title': 'Locale' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -268,7 +271,7 @@ function showLocaleMenu() {
 function showResetMenu() {
   const resetmenu = {
     '': { 'title': 'Reset' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Reset Settings': () => {
       E.showPrompt('Reset Settings?').then((v) => {
         if (v) {
@@ -296,15 +299,15 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/).map(app => {
-    try { return require("Storage").readJSON(app); }
-    catch (e) { }
-  }).filter(app => app.type == "clock").sort((a, b) => a.sortorder - b.sortorder);
+  var clockApps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
   const clockMenu = {
     '': {
       'title': 'Select Clock',
     },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -325,8 +328,6 @@ function showClockMenu() {
   return E.showMenu(clockMenu);
 }
 
-
-
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
@@ -342,7 +343,7 @@ function showSetTimeMenu() {
         timemenu.Year.value = d.getFullYear();
       }
     },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
     'Hour': {
       value: d.getHours(),
       min: 0,
@@ -416,12 +417,21 @@ function showSetTimeMenu() {
 function showAppSettingsMenu() {
   let appmenu = {
     '': { 'title': 'App Settings' },
-    '< Back': showMainMenu,
+    '< Back': ()=>showMainMenu(),
   }
-  const apps = storage.list(/\.info$/)
-    .map(app => storage.readJSON(app, 1))
-    .filter(app => app && app.settings)
-    .sort((a, b) => a.sortorder - b.sortorder)
+  const apps = storage.list(/\.settings\.js$/)
+    .map(s => s.substr(0, s.length-12))
+    .map(id => {
+      const a=storage.readJSON(id+'.info',1) || {name: id};
+      return {id:id,name:a.name,sortorder:a.sortorder};
+    })
+    .sort((a, b) => {
+      const n = (0|a.sortorder)-(0|b.sortorder);
+      if (n) return n; // do sortorder first
+      if (a.name<b.name) return -1;
+      if (a.name>b.name) return 1;
+      return 0;
+    })
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
   }
@@ -435,10 +445,7 @@ function showAppSettings(app) {
     E.showMessage(`${app.name}:\n${msg}!\n\nBTN1 to go back`);
     setWatch(showAppSettingsMenu, BTN1, { repeat: false });
   }
-  let appSettings = storage.read(app.settings);
-  if (!appSettings) {
-    return showError('Missing settings');
-  }
+  let appSettings = storage.read(app.id+'.settings.js');
   try {
     appSettings = eval(appSettings);
   } catch (e) {
@@ -450,7 +457,7 @@ function showAppSettings(app) {
   }
   try {
     // pass showAppSettingsMenu as "back" argument
-    appSettings(showAppSettingsMenu);
+    appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError('Error in settings');

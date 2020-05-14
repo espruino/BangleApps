@@ -10,11 +10,19 @@ reset : (opt) => new Promise((resolve,reject) => {
 }),
 uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `storage`)
   Progress.show({title:`Uploading ${app.name}`,sticky:true});
-  return AppInfo.getFiles(app, httpGet).then(fileContents => {
+  return AppInfo.getFiles(app, {
+    fileGetter : httpGet,
+    settings : SETTINGS
+  }).then(fileContents => {
     return new Promise((resolve,reject) => {
       console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
-      var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
+      var maxBytes = fileContents.reduce((b,f)=>b+f.cmd.length, 0)||1;
       var currentBytes = 0;
+
+      var appInfoFileName = app.id+".info";
+      var appInfoFile = fileContents.find(f=>f.name==appInfoFileName);
+      if (!appInfoFile) reject(`${appInfoFileName} not found`);
+      var appInfo = JSON.parse(appInfoFile.content);
 
       // Upload each file one at a time
       function doUploadFiles() {
@@ -23,25 +31,31 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
           Puck.write(`\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
             Progress.hide({sticky:true});
             if (result===null) return reject("");
-            resolve(app);
+            resolve(appInfo);
           });
           return;
         }
         var f = fileContents.shift();
         console.log(`Upload ${f.name} => ${JSON.stringify(f.content)}`);
-        Progress.show({
-          min:currentBytes / maxBytes,
-          max:(currentBytes+f.content.length) / maxBytes});
-        currentBytes += f.content.length;
         // Chould check CRC here if needed instead of returning 'OK'...
         // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
-        Puck.write(`\x10${f.cmd};Bluetooth.println("OK")\n`,(result) => {
-          if (!result || result.trim()!="OK") {
-            Progress.hide({sticky:true});
-            return reject("Unexpected response "+(result||""));
-          }
-          doUploadFiles();
-        }, true); // wait for a newline
+        var cmds = f.cmd.split("\n");
+        function uploadCmd() {
+          if (!cmds.length) return doUploadFiles();
+          var cmd = cmds.shift();
+          Progress.show({
+            min:currentBytes / maxBytes,
+            max:(currentBytes+cmd.length) / maxBytes});
+          currentBytes += cmd.length;
+          Puck.write(`${cmd};Bluetooth.println("OK")\n`,(result) => {
+            if (!result || result.trim()!="OK") {
+              Progress.hide({sticky:true});
+              return reject("Unexpected response "+(result||""));
+            }
+            uploadCmd();
+          }, true); // wait for a newline
+        }
+        uploadCmd();
       }
       // Start the upload
       function doUpload() {
@@ -70,20 +84,48 @@ getInstalledApps : () => {
         Progress.hide({sticky:true});
         return reject("");
       }
-      Puck.eval('require("Storage").list(/\.info$/).map(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);return j})', (appList,err) => {
+      Puck.write('\x10Bluetooth.print("[");require("Storage").list(/\.info$/).forEach(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);Bluetooth.print(JSON.stringify(j)+",")});Bluetooth.println("0]")\n', (appList,err) => {
         Progress.hide({sticky:true});
+        try {
+          appList = JSON.parse(appList);
+          // remove last element since we added a final '0'
+          // to make things easy on the Bangle.js side
+          appList = appList.slice(0,-1);
+        } catch (e) {
+          appList = null;
+          err = e.toString();
+        }
         if (appList===null) return reject(err || "");
         console.log("getInstalledApps", appList);
         resolve(appList);
-      });
+      }, true /* callback on newline */);
     });
   });
 },
 removeApp : app => { // expects an appid.info structure (i.e. with `files`)
-  if (app.files === '') return Promise.resolve(); // nothing to erase
+  if (!app.files && !app.data) return Promise.resolve(); // nothing to erase
   Progress.show({title:`Removing ${app.name}`,sticky:true});
-  var cmds = app.files.split(',').map(file=>{
-    return `\x10require("Storage").erase(${toJS(file)});\n`;
+  let cmds = '\x10const s=require("Storage");\n';
+  // remove App files: regular files, exact names only
+  cmds += app.files.split(',').map(file => `\x10s.erase(${toJS(file)});\n`).join("");
+  // remove app Data: (dataFiles and storageFiles)
+  const data = AppInfo.parseDataString(app.data)
+  const isGlob = f => /[?*]/.test(f)
+  //   regular files, can use wildcards
+  cmds += data.dataFiles.map(file => {
+    if (!isGlob(file)) return `\x10s.erase(${toJS(file)});\n`;
+    const regex = new RegExp(globToRegex(file))
+    return `\x10s.list(${regex}).forEach(f=>s.erase(f));\n`;
+  }).join("");
+  //   storageFiles, can use wildcards
+  cmds += data.storageFiles.map(file => {
+    if (!isGlob(file)) return `\x10s.open(${toJS(file)},'r').erase();\n`;
+    // storageFiles have a chunk number appended to their real name
+    const regex = globToRegex(file+'\u0001')
+    // open() doesn't want the chunk number though
+    let cmd = `\x10s.list(${regex}).forEach(f=>s.open(f.substring(0,f.length-1),'r').erase());\n`
+    // using a literal \u0001 char fails (not sure why), so escape it
+    return cmd.replace('\u0001', '\\x01')
   }).join("");
   console.log("removeApp", cmds);
   return Comms.reset().then(new Promise((resolve,reject) => {

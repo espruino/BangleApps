@@ -50,6 +50,7 @@ exports = { name : "en_GB", currencySym:"£",
       // do some sanity checks
       Object.keys(locales).forEach(function(localeName) {
         var locale = locales[localeName];
+        if (locale.trans && !locale.trans.on) console.error(localeName+": If translations are provided, 'on' *must* be included");
         if (distanceUnits[locale.distance[0]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[0]);
         if (distanceUnits[locale.distance[1]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[1]);
         if (speedUnits[locale.speed]===undefined) console.error(localeName+": Unknown speed unit "+locale.speed);
@@ -131,7 +132,7 @@ exports  = {
   distance: n => (n < ${distanceUnits[locale.distance[1]]}) ? Math.round(n/${distanceUnits[locale.distance[0]]}) + ${js(locale.distance[0])} : Math.round(n/${distanceUnits[locale.distance[1]]}) + ${js(locale.distance[1])},
   speed: s => Math.round(s/${speedUnits[locale.speed]}) + ${js(locale.speed)},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
-  translate: s => {var t=${js(locale.trans)};s=""+s;return t[s]||t[s.toLowerCase()]||s;},
+  translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=""+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) =>  (short) ? \`${dateS}\`: \`${dateN}\`,
   time: (d,short) =>  (short) ? \`${timeS}\`: \`${timeN}\`,
   meridian: d => (d.getHours() <= 12) ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},

@@ -3,6 +3,9 @@
 Mashes together a bunch of different apps to make
 a single firmware JS file which can be uploaded.
 */
+var SETTINGS = {
+  pretokenise : true
+};
 
 var path = require('path');
 var ROOTDIR = path.join(__dirname, '..');
@@ -16,7 +19,7 @@ var APPS = [ // IDs of apps to install
 var MINIFY = true;
 
 var fs = require("fs");
-var AppInfo = require(ROOTDIR+"/appinfo.js");
+var AppInfo = require(ROOTDIR+"/js/appinfo.js");
 var appjson = JSON.parse(fs.readFileSync(APPJSON).toString());
 var appfiles = [];
 
@@ -49,7 +52,10 @@ function fileGetter(url) {
 Promise.all(APPS.map(appid => {
   var app = appjson.find(app=>app.id==appid);
   if (app===undefined) throw new Error(`App ${appid} not found`);
-  return AppInfo.getFiles(app, fileGetter).then(files => {
+  return AppInfo.getFiles(app, {
+    fileGetter : fileGetter,
+    settings : SETTINGS
+  }).then(files => {
     appfiles = appfiles.concat(files);
   });
 })).then(() => {

@@ -86,6 +86,7 @@ function showToast(message, type) {
   var style = "toast-primary";
   if (type=="success")  style = "toast-success";
   else if (type=="error")  style = "toast-error";
+  else if (type=="warning") style = "toast-warning";
   else if (type!==undefined) console.log("showToast: unknown toast "+type);
   var toastcontainer = document.getElementById("toastcontainer");
   var msgDiv = htmlElement(`<div class="toast ${style}"></div>`);
