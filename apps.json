@@ -1568,7 +1568,6 @@
       {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
     ]
   },
-<<<<<<< HEAD
   {
     "id": "largeclock",
     "name": "Large Clock",
