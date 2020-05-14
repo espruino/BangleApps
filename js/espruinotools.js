@@ -124,6 +124,7 @@ Espruino.Core.Status = {
   hasProgress : function() { return false; },
   incrementProgress : function(amt) {}
 };
+var acorn = (function(){ var exports={};
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -3989,6 +3990,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
+return exports;})();
 /**
  Copyright 2014 Gordon Williams (gw@pur3.co.uk)
 
@@ -6479,6 +6481,7 @@ To add a new serial device, you must add an object to
 (function(){
   if (typeof acorn == "undefined") {
     console.log("pretokenise: needs acorn, disabling.");
+    return;
   }
 
   function init() {
@@ -6582,7 +6585,8 @@ To add a new serial device, you must add an object to
         var tp = "?";
         if (tk.type.label=="template" || tk.type.label=="string") tp="STRING";
         if (tk.type.label=="num") tp="NUMBER";
-        if (tk.type.keyword) tp="ID";
+        if (tk.type.keyword || tk.type.label=="name") tp="ID";
+        if (tp=="?" && tk.start+1==tk.end) tp="CHAR";
         return {
           startIdx : tk.start,
           endIdx : tk.end,
@@ -6797,7 +6801,7 @@ Espruino.transform = function(code, options) {
   });
 };
 
-if (!document) Espruino.init();
+if ("undefined"==typeof document) Espruino.init();
 if ("undefined"!=typeof module)
   module.exports = Espruino;
 
