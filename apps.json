@@ -1417,7 +1417,8 @@
         "name": "metronome.img",
         "url": "metronome-icon.js",
         "evaluate": true
-      }
+      },
+      {"name":"metronome.settings.js","url":"settings.js"}
     ]
   },
   { "id": "blackjack",
