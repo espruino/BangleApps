@@ -226,7 +226,7 @@ function drawDate(lastDate) {
   if (lastDate != date.toISOString().split('T')[0]) {
     const dow = locale.dow(date, 1).toUpperCase();
     const dayNum = ("00" + date.getDate()).slice(-2);
-    const mon = locale.month(date).toUpperCase().slice(-3);
+    const mon = locale.month(date).toUpperCase().slice(0, 3);
     const yr = date.getFullYear().toString().slice(-2);
     drawFont(dow + " " + dayNum, "5x5", 40, 159);
     drawFont(mon + " " + yr, "5x5", 40, 189);
