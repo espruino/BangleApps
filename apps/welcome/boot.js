@@ -1,11 +1,8 @@
 (function() {
-  let s = require('Storage').readJSON('welcome.json', 1)
-    || require('Storage').readJSON('setting.json', 1)
-    || {welcomed: true} // do NOT run if global settings are also absent
-  if (!s.welcomed && require('Storage').read('welcome.app.js')) {
+  let s = require('Storage').readJSON('welcome.json', 1) || {};
+  if (!s.welcomed) {
     setTimeout(() => {
-      s.welcomed = true
-      require('Storage').write('welcome.json', {welcomed: "yes"})
+      require('Storage').write('welcome.json', {welcomed: true})
       load('welcome.app.js')
     })
   }
