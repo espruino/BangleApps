@@ -9,7 +9,7 @@
       onchange: v => require('Storage').write('welcome.json', {welcomed: !v}),
     },
     'Run Now': () => load('welcome.app.js'),
-    'Turn off, run next boot': () => {
+    'Turn off & run next': () => {
       require('Storage').write('welcome.json', {welcomed: false});
       Bangle.off();
     },
