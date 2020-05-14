@@ -40,6 +40,12 @@
     .chip {
       cursor: pointer;
     }
+    .filter-nav {
+      display: inline-block;
+    }
+    .sort-nav {
+      float: right;
+    }
     .tile-content { position: relative; }
     .link-github {
       position:absolute;
@@ -69,9 +75,6 @@
       <p id="requireHTTPS" class="hidden">
         <b>STOP!</b> This page <b>must</b> be served over HTTPS. Please <a>reload this page via HTTPS</a>.
       </p>
-      <p><b>Note:</b> If you have a version of Bangle.js firmware before 2v04, please update to the <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">latest firmware</a> or
-        <a href="https://banglejs.com/oldapps/">use the legacy app loader</a>.
-      </p>
     </div>
 
 
@@ -91,16 +94,26 @@
     </div>
 
     <div class="container bangle-tab" id="librarycontainer">
-      <div class="filter-nav">
-        <label class="chip active" filterid="">All</label>
-        <label class="chip" filterid="clock">Clocks</label>
-        <label class="chip" filterid="game">Games</label>
-        <label class="chip" filterid="tool">Tools</label>
-        <label class="chip" filterid="widget">Widgets</label>
-        <label class="chip" filterid="bluetooth">Bluetooth</label>
-        <label class="chip" filterid="outdoors">Outdoors</label>
+      <div>
+        <div class="filter-nav">
+          <label class="chip active" filterid="">Default</label>
+          <label class="chip" filterid="clock">Clocks</label>
+          <label class="chip" filterid="game">Games</label>
+          <label class="chip" filterid="tool">Tools</label>
+          <label class="chip" filterid="widget">Widgets</label>
+          <label class="chip" filterid="bluetooth">Bluetooth</label>
+          <label class="chip" filterid="outdoors">Outdoors</label>
+          <label class="chip" filterid="favourites">Favourites</label>
+        </div>
+        <div class="sort-nav hidden">
+          <span>Sort by:</span>
+          <label class="chip active" sortid="">None</label>
+          <label class="chip" sortid="created">New</label>
+          <label class="chip" sortid="modified">Updated</label>
+        </div>
       </div>
-      <div class="panel">
+
+      <div class="panel" style="clear:both">
         <div class="panel-header">
         <div class="input-group" id="searchform">
             <input class="form-input" type="text" placeholder="Keywords...">
@@ -115,6 +128,7 @@
       <div class="panel">
         <div class="panel-header" style="text-align:right">
           <button class="btn refresh">Refresh...</button>
+          <button class="btn btn-primary updateapps hidden">Update X apps</button>
         </div>
         <div class="panel-body columns"><!-- apps go here --></div>
       </div>
@@ -129,6 +143,7 @@
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
+        <p id="apploaderlinks"></p>
         <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
           find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</a></p>
         <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
@@ -136,7 +151,16 @@
         <h3>Utilities</h3>
         <p><button class="btn" id="settime">Set Bangle.js Time</button>
            <button class="btn" id="removeall">Remove all Apps</button>
-           <button class="btn" id="installdefault">Install default apps</button></p>
+           <button class="btn" id="installdefault">Install default apps</button>
+           <button class="btn" id="installfavourite">Install favourite apps</button></p>
+        <h3>Settings</h3>
+        <div class="form-group">
+          <label class="form-switch">
+            <input type="checkbox" id="settings-pretokenise">
+            <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
+          </label>
+          <button class="btn" id="defaultsettings">Default settings</button>
+        </div>
       </div>
     </div>
 
@@ -155,6 +179,8 @@
     <script src="js/comms.js"></script>
     <script src="js/appinfo.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/espruinotools.js"></script>
+    <script src="lib/heatshrink.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="js/pwa.js" defer></script>
   </body>

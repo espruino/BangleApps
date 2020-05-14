@@ -41,7 +41,7 @@
   // Called by the GPS app to reload settings and decide what to do
   function reload() {
     settings = require("Storage").readJSON("gpsrec.json",1)||{};
-    settings.period = settings.period||1;
+    settings.period = settings.period||10;
     settings.file |= 0;
 
     Bangle.removeListener('GPS',onGPS);

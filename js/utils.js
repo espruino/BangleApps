@@ -8,6 +8,18 @@ function escapeHtml(text) {
   };
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
+// simple glob to regex conversion, only supports "*" and "?" wildcards
+function globToRegex(pattern) {
+  const ESCAPE = '.*+-?^${}()|[]\\';
+  const regex = pattern.replace(/./g, c => {
+    switch (c) {
+      case '?': return '.';
+      case '*': return '.*';
+      default: return ESCAPE.includes(c) ? ('\\' + c) : c;
+    }
+  });
+  return new RegExp('^'+regex+'$');
+}
 function htmlToArray(collection) {
   return [].slice.call(collection);
 }
@@ -25,7 +37,10 @@ function httpGet(url) {
     });
     oReq.addEventListener("error", () => reject());
     oReq.addEventListener("abort", () => reject());
-    oReq.open("GET", url);
+    oReq.open("GET", url, true);
+    oReq.onerror = function () {
+      reject("HTTP Request failed");
+    };
     oReq.send();
   });
 }
@@ -49,14 +64,14 @@ function getVersionInfo(appListing, appInstalled) {
   var versionText = "";
   var canUpdate = false;
   function clicky(v) {
-    return `<a href="#" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
+    return `<a class="c-hand" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
   }
 
   if (!appInstalled) {
     if (appListing.version)
       versionText = clicky("v"+appListing.version);
   } else {
-    versionText = (appInstalled.version ? ("v"+appInstalled.version) : "Unknown version");
+    versionText = (appInstalled.version ? (clicky("v"+appInstalled.version)) : "Unknown version");
     if (appListing.version != appInstalled.version) {
       if (appListing.version) versionText += ", latest "+clicky("v"+appListing.version);
       canUpdate = true;

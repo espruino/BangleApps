@@ -12,7 +12,12 @@
     date.setMonth(1, 3) // februari: months are zero-indexed
     const localized = locale.date(date, true)
     locale.dayFirst = /3.*2/.test(localized)
-    locale.hasMeridian = (locale.meridian(date) !== '')
+    
+    locale.hasMeridian = false
+    if(typeof locale.meridian === 'function') {  // function does not exists if languages  app is not installed
+      locale.hasMeridian = (locale.meridian(date) !== '')
+    }
+    
   }
   const screen = {
     width: g.getWidth(),

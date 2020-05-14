@@ -165,6 +165,7 @@ function gameStop() {
 }
 
 function onFrame() {
+  "ram"
   g.clear();
   if (rex.alive) {
     frame++;

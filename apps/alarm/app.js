@@ -84,15 +84,15 @@ function editAlarm(alarmIndex) {
       last : day, rp : repeat
     };
   }
-  if (newAlarm) {
-    menu["> New Alarm"] = function() {
-      alarms.push(getAlarm());
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
-      showMainMenu();
-    };
-  } else {
-    menu["> Save"] = function() {
-      alarms[alarmIndex] = getAlarm();
+  menu["> Save"] = function() {
+    if (newAlarm) alarms.push(getAlarm());
+    else alarms[alarmIndex] = getAlarm();
+    require("Storage").write("alarm.json",JSON.stringify(alarms));
+    showMainMenu();
+  };
+  if (!newAlarm) {
+    menu["> Delete"] = function() {
+      alarms.splice(alarmIndex,1);
       require("Storage").write("alarm.json",JSON.stringify(alarms));
       showMainMenu();
     };

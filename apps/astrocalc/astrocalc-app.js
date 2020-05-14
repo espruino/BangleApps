@@ -1,8 +1,18 @@
 /**
+ * BangleJS ASTROCALC
+ *
  * Inspired by: https://www.timeanddate.com
+ *
+ * Original Author: Paul Cockrell https://github.com/paulcockrell
+ * Created: April 2020
+ *
+ * Calculate the Sun and Moon positions based on watch GPS and display graphically
  */
 
 const SunCalc = require("suncalc.js");
+const storage = require("Storage");
+const LAST_GPS_FILE = "astrocalc.gps.json";
+let lastGPS = (storage.readJSON(LAST_GPS_FILE, 1) || null);
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
@@ -296,22 +306,49 @@ function indexPageMenu(gps) {
   return E.showMenu(menu);
 }
 
+function getCenterStringX(str) {
+  return (g.getWidth() - g.stringWidth(str)) / 2;
+}
+
 /**
  * GPS wait page, shows GPS locating animation until it gets a lock, then moves to the Sun page
  */
 function drawGPSWaitPage() {
-    const img = require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AW43GF1wwsFwYwqFwowoFw4wmFxIwdE5YAPF/4vM5nN6YAE5vMF8YtHGIgvhFpQxKF7AuOGA4vXFyAwGF63MFyIABF6xeWMC4UDLwvNGpAJG5gwSdhIIDRBLyWCIgcJHAgJJDoouQF4vMQoICBBJoeGFx6GGACIfHL6YvaX6gvZeCIdFc4gAFXogvGFxgwFDwovQCAguOGAnMMBxeG5guTGAggGGAwNKFySREcA3N5vM5gDBdpQvXEY4AKXqovGGCKbFF7AwPZQwvZGJgtGF7vGdQItG5gSIF7gASF/44WEzgwRF0wwHF1AwFF1QwDF1gvwAH4A/AFAA=="))
-   
+    const img = require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AW43GF1wwsFwYwqFwowoFw4wmFxIwdE5YAPF/4vM5nN6YAE5vMF8YtHGIgvhFpQxKF7AuOGA4vXFyAwGF63MFyIABF6xeWMC4UDLwvNGpAJG5gwSdhIIDRBLyWCIgcJHAgJJDoouQF4vMQoICBBJoeGFx6GGACIfHL6YvaX6gvZeCIdFc4gAFXogvGFxgwFDwovQCAguOGAnMMBxeG5guTGAggGGAwNKFySREcA3N5vM5gDBdpQvXEY4AKXqovGGCKbFF7AwPZQwvZGJgtGF7vGdQItG5gSIF7gASF/44WEzgwRF0wwHF1AwFF1QwDF1gvwAH4A/AFAA=="));
+    const str1 = "Astrocalc v0.02";
+    const str2 = "Locating GPS";
+    const str3 = "Please wait...";
+
     g.clear();
     g.drawImage(img, 100, 50);
     g.setFont("6x8", 1);
-    g.drawString("Astrocalc v0.01", 80, 105);
-    g.drawString("Locating GPS", 85, 140);
-    g.drawString("Please wait...", 80, 155);
+    g.drawString(str1, getCenterStringX(str1), 105);
+    g.drawString(str2, getCenterStringX(str2), 140);
+    g.drawString(str3, getCenterStringX(str3), 155);
+
+    if (lastGPS) {
+      lastGPS = JSON.parse(lastGPS);
+      lastGPS.time = new Date();
+
+      const str4 = "Press Button 3 to use last GPS";
+      g.setColor("#d32e29");
+      g.fillRect(0, 190, g.getWidth(), 215);
+      g.setColor("#ffffff");
+      g.drawString(str4, getCenterStringX(str4), 200);
+
+      setWatch(() => {
+        clearWatch();
+        Bangle.setGPSPower(0);
+        m = indexPageMenu(lastGPS);
+      }, BTN3, {repeat: false});
+    }
+
     g.flip();
 
     const DEBUG = false;
     if (DEBUG) {
+      clearWatch();
+
       const gps = {
         "lat": 56.45783133333,
         "lon": -3.02188583333,
@@ -330,7 +367,10 @@ function drawGPSWaitPage() {
 
     Bangle.on('GPS', (gps) => {
         if (gps.fix === 0) return;
+        clearWatch();
 
+        if (isNaN(gps.course)) gps.course = 0;
+        require("Storage").writeJSON(LAST_GPS_FILE, JSON.stringify(gps));
         Bangle.setGPSPower(0);
         Bangle.buzz();
         Bangle.setLCDPower(true);
