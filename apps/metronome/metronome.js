@@ -14,7 +14,6 @@ function setting(key) {
   //define default settings
   const DEFAULTS = {
     'beatsperbar': 4,
-    'buzzintens': 0.75,
   };
   if (!settings) { loadSettings(); }
   return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -28,15 +27,16 @@ function loadSettings() {
 }
 
 function changecolor() {
-  const colors = { 
-	0: { value: 0xF800, name: "Red" },
-	1: { value: 0xFFFF, name: "White" },
-	2: { value: 0x9492, name: "gray" },
-	3: { value: 0xFFFF, name: "White" },
-	4: { value: 0x9492, name: "gray" },
-	5: { value: 0xFFFF, name: "White" },
-	6: { value: 0x9492, name: "gray" },
+  const colors = {
+        0: { value: 0xF800, name: "Red" },
+        1: { value: 0xFFFF, name: "White" },
+        2: { value: 0x03E0, name: "DarkGreen" },
+        3: { value: 0xFFFF, name: "White" },
+        4: { value: 0x03E0, name: "DarkGreen" },
+        5: { value: 0xFFFF, name: "White" },
+        6: { value: 0x03E0, name: "DarkGreen" },
         7: { value: 0xFFFF, name: "White" },
+        8: { value: 0x03E0, name: "DarkGreen" },
     };
     g.setColor(colors[cindex].value);
     if (cindex == setting('beatsperbar')-1) {
@@ -52,7 +52,7 @@ function updateScreen() {
   g.clearRect(0, 50, 250, 150);
   changecolor();
   try {
-    Bangle.buzz(50, setting('buzzintens'));
+    Bangle.buzz(50, 0.75);
   }
   catch(err) {
   }
