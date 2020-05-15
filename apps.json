@@ -1,129 +1,87 @@
 [
-  {
-    "id": "boot",
+  { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
     "version":"0.17",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
-    "type": "bootloader",
+    "type":"bootloader",
     "storage": [
-      {
-        "name": ".boot0",
-        "url": "boot0.js"
-      },
-      {
-        "name": ".bootcde",
-        "url": "bootloader.js"
-      }
+      {"name":".boot0","url":"boot0.js"},
+      {"name":".bootcde","url":"bootloader.js"}
     ],
-    "sortorder": -10
+    "sortorder" : -10
   },
-  {
-    "id": "moonphase",
+  { "id": "moonphase",
     "name": "Moonphase",
     "icon": "app.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Shows current moon phase. Now with GPS function.",
     "tags": "",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "moonphase.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "moonphase.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "daysl",
+  { "id": "daysl",
     "name": "Days left",
     "icon": "app.png",
-    "version": "0.03",
+    "version":"0.03",
     "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
     "tags": "",
-    "allow_emulator": false,
+    "allow_emulator":false,
     "storage": [
-      {
-        "name": "daysl.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "daysl.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "daysl.wid.js",
-        "url": "widget.js"
-      }
+        {"name":"daysl.app.js","url":"app.js"},
+        {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+        {"name":"daysl.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "launch",
+  { "id": "launch",
     "name": "Default Launcher",
-    "shortName": "Launcher",
+    "shortName":"Launcher",
     "icon": "app.png",
     "version":"0.03",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "tags": "tool,system,launcher",
-    "type": "launch",
+    "type":"launch",
     "storage": [
-      {
-        "name": "launch.app.js",
-        "url": "app.js"
-      }
+      {"name":"launch.app.js","url":"app.js"}
     ],
-    "sortorder": -10
+    "sortorder" : -10
   },
-  {
-    "id": "about",
+  { "id": "about",
     "name": "About",
     "icon": "app.png",
     "version":"0.05",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "about.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "about.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"about.app.js","url":"app.js"},
+      {"name":"about.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "locale",
+  { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
     "version":"0.06",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
-    "custom": "locale.html",
+    "custom":"locale.html",
     "storage": [
-      {
-        "name": "locale"
-      }
+      {"name":"locale"}
     ],
-    "sortorder": -10
+    "sortorder" : -10
   },
-  {
-    "id": "welcome",
+  { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
     "version":"0.09",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
       {"name":"welcome.boot.js","url":"boot.js"},
       {"name":"welcome.app.js","url":"app.js"},
@@ -134,54 +92,34 @@
       {"name":"welcome.json"}
     ]
   },
-  {
-    "id": "gbridge",
+  { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
     "version":"0.10",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "gbridge.settings.js",
-        "url": "settings.js"
-      },
-      {
-        "name": "gbridge.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "gbridge.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"gbridge.settings.js","url":"settings.js"},
+      {"name":"gbridge.img","url":"app-icon.js","evaluate":true},
+      {"name":"gbridge.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "mclock",
+  { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
     "version":"0.06",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "mclock.app.js",
-        "url": "clock-morphing.js"
-      },
-      {
-        "name": "mclock.img",
-        "url": "clock-morphing-icon.js",
-        "evaluate": true
-      }
+      {"name":"mclock.app.js","url":"clock-morphing.js"},
+      {"name":"mclock.img","url":"clock-morphing-icon.js","evaluate":true}
     ],
-    "sortorder": -9
+    "sortorder" : -9
   },
-  {
-    "id": "setting",
+  { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
     "version":"0.19",
@@ -193,12 +131,11 @@
       {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
-    "sortorder": -2
+    "sortorder" : -2
   },
-  {
-    "id": "alarm",
+  { "id": "alarm",
     "name": "Default Alarm",
-    "shortName": "Alarms",
+    "shortName":"Alarms",
     "icon": "app.png",
     "version":"0.07",
     "description": "Set and respond to alarms",
@@ -214,25 +151,17 @@
       {"name":"alarm.json"}
     ]
   },
-  {
-    "id": "wclock",
+  { "id": "wclock",
     "name": "Word Clock",
     "icon": "clock-word.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Display Time as Text",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "wclock.app.js",
-        "url": "clock-word.js"
-      },
-      {
-        "name": "wclock.img",
-        "url": "clock-word-icon.js",
-        "evaluate": true
-      }
+      {"name":"wclock.app.js","url":"clock-word.js"},
+      {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
     ]
   },
   { "id": "imgclock",
@@ -271,198 +200,118 @@
     "version": "0.13",
     "description": "An Analog Clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "aclock.app.js",
-        "url": "clock-analog.js"
-      },
-      {
-        "name": "aclock.img",
-        "url": "clock-analog-icon.js",
-        "evaluate": true
-      }
+      {"name":"aclock.app.js","url":"clock-analog.js"},
+      {"name":"aclock.img","url":"clock-analog-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "clock2x3",
+  { "id": "clock2x3",
     "name": "2x3 Pixel Clock",
     "icon": "clock2x3.png",
-    "version": "0.04",
+    "version":"0.04",
     "description": "This is a simple clock using minimalist 2x3 pixel numerical digits",
     "tags": "clock",
     "type": "clock",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "clock2x3.app.js",
-        "url": "clock2x3-app.js"
-      },
-      {
-        "name": "clock2x3.img",
-        "url": "clock2x3-icon.js",
-        "evaluate": true
-      }
+      {"name":"clock2x3.app.js","url":"clock2x3-app.js"},
+      {"name":"clock2x3.img","url":"clock2x3-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "trex",
+  { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
     "version":"0.02",
     "description": "T-Rex game in the style of Chrome's offline game",
     "tags": "game",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "trex.app.js",
-        "url": "trex.js"
-      },
-      {
-        "name": "trex.img",
-        "url": "trex-icon.js",
-        "evaluate": true
-      }
+      {"name":"trex.app.js","url":"trex.js"},
+      {"name":"trex.img","url":"trex-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "astroid",
+  { "id": "astroid",
     "name": "Asteroids!",
     "icon": "asteroids.png",
     "version":"0.02",
     "description": "Retro asteroids game",
     "tags": "game",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "astroid.app.js",
-        "url": "asteroids.js"
-      },
-      {
-        "name": "astroid.img",
-        "url": "asteroids-icon.js",
-        "evaluate": true
-      }
+      {"name":"astroid.app.js","url":"asteroids.js"},
+      {"name":"astroid.img","url":"asteroids-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "clickms",
+  { "id": "clickms",
     "name": "Click Master",
     "icon": "click-master.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
     "tags": "game",
     "storage": [
-      {
-        "name": "clickms.app.js",
-        "url": "click-master.js"
-      },
-      {
-        "name": "clickms.img",
-        "url": "click-master-icon.js",
-        "evaluate": true
-      }
+      {"name":"clickms.app.js","url":"click-master.js"},
+      {"name":"clickms.img","url":"click-master-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "horsey",
+  { "id": "horsey",
     "name": "Horse Race!",
     "icon": "horse-race.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
     "tags": "game",
     "storage": [
-      {
-        "name": "horsey.app.js",
-        "url": "horse-race.js"
-      },
-      {
-        "name": "horsey.img",
-        "url": "horse-race-icon.js",
-        "evaluate": true
-      }
+      {"name":"horsey.app.js","url":"horse-race.js"},
+      {"name":"horsey.img","url":"horse-race-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "compass",
+  { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
     "version":"0.02",
     "description": "Simple compass that points North",
     "tags": "tool,outdoors",
     "storage": [
-      {
-        "name": "compass.app.js",
-        "url": "compass.js"
-      },
-      {
-        "name": "compass.img",
-        "url": "compass-icon.js",
-        "evaluate": true
-      }
+      {"name":"compass.app.js","url":"compass.js"},
+      {"name":"compass.img","url":"compass-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "gpstime",
+  { "id": "gpstime",
     "name": "GPS Time",
     "icon": "gpstime.png",
-    "version": "0.03",
+    "version":"0.03",
     "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
     "tags": "tool,gps",
     "storage": [
-      {
-        "name": "gpstime.app.js",
-        "url": "gpstime.js"
-      },
-      {
-        "name": "gpstime.img",
-        "url": "gpstime-icon.js",
-        "evaluate": true
-      }
+      {"name":"gpstime.app.js","url":"gpstime.js"},
+      {"name":"gpstime.img","url":"gpstime-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "openloc",
+  { "id": "openloc",
     "name": "Open Location / Plus Codes",
     "shortName": "Open Location",
     "icon": "app.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Convert your current GPS location to a series of characters",
     "tags": "tool,outdoors,gps",
     "storage": [
-      {
-        "name": "openloc.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "openloc.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"openloc.app.js","url":"app.js"},
+      {"name":"openloc.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "speedo",
+  { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
     "version":"0.03",
     "description": "Show the current speed according to the GPS",
     "tags": "tool,outdoors,gps",
     "storage": [
-      {
-        "name": "speedo.app.js",
-        "url": "speedo.js"
-      },
-      {
-        "name": "speedo.img",
-        "url": "speedo-icon.js",
-        "evaluate": true
-      }
+      {"name":"speedo.app.js","url":"speedo.js"},
+      {"name":"speedo.img","url":"speedo-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "gpsrec",
+  { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
     "version":"0.09",
@@ -492,8 +341,7 @@
       {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "heart",
+  { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
     "version":"0.02",
@@ -510,42 +358,26 @@
       {"wildcard":".heart?","storageFile": true}
     ]
   },
-  {
-    "id": "slevel",
+  { "id": "slevel",
     "name": "Spirit Level",
     "icon": "spiritlevel.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "tags": "tool",
     "storage": [
-      {
-        "name": "slevel.app.js",
-        "url": "spiritlevel.js"
-      },
-      {
-        "name": "slevel.img",
-        "url": "spiritlevel-icon.js",
-        "evaluate": true
-      }
+      {"name":"slevel.app.js","url":"spiritlevel.js"},
+      {"name":"slevel.img","url":"spiritlevel-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "files",
+  { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
     "version":"0.05",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
-      {
-        "name": "files.app.js",
-        "url": "files.js"
-      },
-      {
-        "name": "files.img",
-        "url": "files-icon.js",
-        "evaluate": true
-      }
+      {"name":"files.app.js","url":"files.js"},
+      {"name":"files.img","url":"files-icon.js","evaluate":true}
     ]
   },
   { "id": "weather",
@@ -571,23 +403,19 @@
     "version":"0.05",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widbat.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widbat.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "widbatpc",
+  { "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
     "version":"0.11",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery",
-    "type": "widget",
+    "type":"widget",
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
       {"name":"widbatpc.settings.js","url":"settings.js"}
@@ -596,19 +424,15 @@
       {"name":"widbatpc.json"}
     ]
   },
-  {
-    "id": "widbt",
+  { "id": "widbt",
     "name": "Bluetooth Widget",
     "icon": "widget.png",
     "version":"0.04",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "tags": "widget,bluetooth",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widbt.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widbt.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widram",
@@ -626,99 +450,63 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Measure your current heart rate",
     "tags": "health",
     "storage": [
-      {
-        "name": "hrm.app.js",
-        "url": "heartrate.js"
-      },
-      {
-        "name": "hrm.img",
-        "url": "heartrate-icon.js",
-        "evaluate": true
-      }
+      {"name":"hrm.app.js","url":"heartrate.js"},
+      {"name":"hrm.img","url":"heartrate-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widhrm",
+  { "id": "widhrm",
     "name": "Simple Heart Rate widget",
     "icon": "widget.png",
-    "version": "0.03",
+    "version":"0.03",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
     "type": "widget",
     "storage": [
-      {
-        "name": "widhrm.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widhrm.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "stetho",
+  { "id": "stetho",
     "name": "Stethoscope",
     "icon": "stetho.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Hear your heart rate",
     "tags": "health",
     "storage": [
-      {
-        "name": "stetho.app.js",
-        "url": "stetho.js"
-      },
-      {
-        "name": "stetho.img",
-        "url": "stetho-icon.js",
-        "evaluate": true
-      }
+      {"name":"stetho.app.js","url":"stetho.js"},
+      {"name":"stetho.img","url":"stetho-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "swatch",
+  { "id": "swatch",
     "name": "Stopwatch",
     "icon": "stopwatch.png",
     "version":"0.07",
     "interface": "interface.html",
     "description": "Simple stopwatch with Lap Time logging to a JSON file",
     "tags": "health",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "readme": "README.md",
     "storage": [
-      {
-        "name": "swatch.app.js",
-        "url": "stopwatch.js"
-      },
-      {
-        "name": "swatch.img",
-        "url": "stopwatch-icon.js",
-        "evaluate": true
-      }
+      {"name":"swatch.app.js","url":"stopwatch.js"},
+      {"name":"swatch.img","url":"stopwatch-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "hidmsic",
+  { "id": "hidmsic",
     "name": "Bluetooth Music Controls",
     "shortName": "Music Control",
     "icon": "hid-music.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
     "tags": "bluetooth",
     "storage": [
-      {
-        "name": "hidmsic.app.js",
-        "url": "hid-music.js"
-      },
-      {
-        "name": "hidmsic.img",
-        "url": "hid-music-icon.js",
-        "evaluate": true
-      }
+      {"name":"hidmsic.app.js","url":"hid-music.js"},
+      {"name":"hidmsic.img","url":"hid-music-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "hidkbd",
+  { "id": "hidkbd",
     "name": "Bluetooth Keyboard",
     "shortName": "Bluetooth Kbd",
     "icon": "hid-keyboard.png",
@@ -726,19 +514,11 @@
     "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
     "tags": "bluetooth",
     "storage": [
-      {
-        "name": "hidkbd.app.js",
-        "url": "hid-keyboard.js"
-      },
-      {
-        "name": "hidkbd.img",
-        "url": "hid-keyboard-icon.js",
-        "evaluate": true
-      }
+      {"name":"hidkbd.app.js","url":"hid-keyboard.js"},
+      {"name":"hidkbd.img","url":"hid-keyboard-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "hidbkbd",
+  { "id": "hidbkbd",
     "name": "Binary Bluetooth Keyboard",
     "shortName": "Binary BT Kbd",
     "icon": "hid-binary-keyboard.png",
@@ -746,78 +526,30 @@
     "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
     "tags": "bluetooth",
     "storage": [
-      {
-        "name": "hidbkbd.app.js",
-        "url": "hid-binary-keyboard.js"
-      },
-      {
-        "name": "hidbkbd.img",
-        "url": "hid-binary-keyboard-icon.js",
-        "evaluate": true
-      }
+      {"name":"hidbkbd.app.js","url":"hid-binary-keyboard.js"},
+      {"name":"hidbkbd.img","url":"hid-binary-keyboard-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "animals",
+  { "id": "animals",
     "name": "Animals Game",
     "icon": "animals.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Simple toddler's game - displays a different number of animals each time the screen is pressed",
     "tags": "game",
     "storage": [
-      {
-        "name": "animals.app.js",
-        "url": "animals.js"
-      },
-      {
-        "name": "animals.img",
-        "url": "animals-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-snake.img",
-        "url": "animals-snake.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-duck.img",
-        "url": "animals-duck.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-swan.img",
-        "url": "animals-swan.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-fox.img",
-        "url": "animals-fox.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-camel.img",
-        "url": "animals-camel.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-pig.img",
-        "url": "animals-pig.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-sheep.img",
-        "url": "animals-sheep.js",
-        "evaluate": true
-      },
-      {
-        "name": "animals-mouse.img",
-        "url": "animals-mouse.js",
-        "evaluate": true
-      }
+      {"name":"animals.app.js","url":"animals.js"},
+      {"name":"animals.img","url":"animals-icon.js","evaluate":true},
+      {"name":"animals-snake.img","url":"animals-snake.js","evaluate":true},
+      {"name":"animals-duck.img","url":"animals-duck.js","evaluate":true},
+      {"name":"animals-swan.img","url":"animals-swan.js","evaluate":true},
+      {"name":"animals-fox.img","url":"animals-fox.js","evaluate":true},
+      {"name":"animals-camel.img","url":"animals-camel.js","evaluate":true},
+      {"name":"animals-pig.img","url":"animals-pig.js","evaluate":true},
+      {"name":"animals-sheep.img","url":"animals-sheep.js","evaluate":true},
+      {"name":"animals-mouse.img","url":"animals-mouse.js","evaluate":true}
     ]
   },
-  {
-    "id": "qrcode",
+  { "id": "qrcode",
     "name": "Custom QR Code",
     "icon": "app.png",
     "version":"0.02",
@@ -829,8 +561,7 @@
       {"name":"qrcode.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "beer",
+  { "id": "beer",
     "name": "Beer Compass",
     "icon": "app.png",
     "version":"0.01",
@@ -842,8 +573,7 @@
       {"name":"beer.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "route",
+  { "id": "route",
     "name": "Route Viewer",
     "icon": "app.png",
     "version":"0.01",
@@ -877,337 +607,203 @@
       {"name":"ncstart.json"}
     ]
   },
-  {
-    "id": "ncfrun",
+  { "id": "ncfrun",
     "name": "NCEU 5K Fun Run",
     "icon": "nceu-funrun.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Display a map of the NodeConf EU 2019 5K Fun Run route and your location on it",
     "tags": "health",
     "storage": [
-      {
-        "name": "ncfrun.app.js",
-        "url": "nceu-funrun.js"
-      },
-      {
-        "name": "ncfrun.img",
-        "url": "nceu-funrun-icon.js",
-        "evaluate": true
-      }
+      {"name":"ncfrun.app.js","url":"nceu-funrun.js"},
+      {"name":"ncfrun.img","url":"nceu-funrun-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widnceu",
+  { "id": "widnceu",
     "name": "NCEU Logo Widget",
     "icon": "widget.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Show the NodeConf EU logo in the top left",
     "tags": "widget",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widnceu.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widnceu.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "sclock",
+  { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
-    "version": "0.04",
+    "version":"0.04",
     "description": "A Simple Digital Clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "sclock.app.js",
-        "url": "clock-simple.js"
-      },
-      {
-        "name": "sclock.img",
-        "url": "clock-simple-icon.js",
-        "evaluate": true
-      }
+      {"name":"sclock.app.js","url":"clock-simple.js"},
+      {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "dclock",
+  { "id": "dclock",
     "name": "Dev Clock",
     "icon": "clock-dev.png",
-    "version": "0.09",
+    "version":"0.09",
     "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "dclock.app.js",
-        "url": "clock-dev.js"
-      },
-      {
-        "name": "dclock.img",
-        "url": "clock-dev-icon.js",
-        "evaluate": true
-      }
+      {"name":"dclock.app.js","url":"clock-dev.js"},
+      {"name":"dclock.img","url":"clock-dev-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "gesture",
+  { "id": "gesture",
     "name": "Gesture Test",
     "icon": "gesture.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "BETA! Uploads a basic Tensorflow Gesture model, and then outputs each gesture as a message",
     "tags": "gesture,ai",
-    "type": "app",
+    "type":"app",
     "storage": [
-      {
-        "name": "gesture.app.js",
-        "url": "gesture.js"
-      },
-      {
-        "name": ".tfnames",
-        "url": "gesture-tfnames.js",
-        "evaluate": true
-      },
-      {
-        "name": ".tfmodel",
-        "url": "gesture-tfmodel.js",
-        "evaluate": true
-      },
-      {
-        "name": "gesture.img",
-        "url": "gesture-icon.js",
-        "evaluate": true
-      }
+      {"name":"gesture.app.js","url":"gesture.js"},
+      {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
+      {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
+      {"name":"gesture.img","url":"gesture-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "pparrot",
+  { "id": "pparrot",
     "name": "Party Parrot",
     "icon": "party-parrot.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Party with a parrot on your wrist",
     "tags": "party,parrot,lol",
-    "type": "app",
-    "allow_emulator": true,
+    "type":"app",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "pparrot.app.js",
-        "url": "party-parrot.js"
-      },
-      {
-        "name": "pparrot.img",
-        "url": "party-parrot-icon.js",
-        "evaluate": true
-      }
+      {"name":"pparrot.app.js","url":"party-parrot.js"},
+      {"name":"pparrot.img","url":"party-parrot-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "hrings",
+  { "id": "hrings",
     "name": "Hypno Rings",
     "icon": "hypno-rings.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Experiment with trippy rings, press buttons for change",
     "tags": "rings,hypnosis,psychadelic",
-    "type": "app",
-    "allow_emulator": true,
+    "type":"app",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "hrings.app.js",
-        "url": "hypno-rings.js"
-      },
-      {
-        "name": "hrings.img",
-        "url": "hypno-rings-icon.js",
-        "evaluate": true
-      }
+      {"name":"hrings.app.js","url":"hypno-rings.js"},
+      {"name":"hrings.img","url":"hypno-rings-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "morse",
+  { "id": "morse",
     "name": "Morse Code",
     "icon": "morse-code.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
     "tags": "morse,sound,visual,input",
-    "type": "app",
+    "type":"app",
     "storage": [
-      {
-        "name": "morse.app.js",
-        "url": "morse-code.js"
-      },
-      {
-        "name": "morse.img",
-        "url": "morse-code-icon.js",
-        "evaluate": true
-      }
+      {"name":"morse.app.js","url":"morse-code.js"},
+      {"name":"morse.img","url":"morse-code-icon.js","evaluate":true}
     ]
   },
   {
     "id": "blescan",
     "name": "BLE Scanner",
     "icon": "blescan.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Scan for advertising BLE devices",
-    "tags": "bluetooth",
-    "storage": [
-      {
-        "name": "blescan.app.js",
-        "url": "blescan.js"
-      },
-      {
-        "name": "blescan.img",
-        "url": "blescan-icon.js",
-        "evaluate": true
-      }
+    "tags" : "bluetooth",
+    "storage" : [
+      {"name":"blescan.app.js","url":"blescan.js"},
+      {"name":"blescan.img","url":"blescan-icon.js", "evaluate":true}
     ]
   },
-  {
-    "id": "mmonday",
-    "name": "Manic Monday Tone",
-    "icon": "manic-monday-icon.png",
-    "version": "0.02",
-    "description": "The Bangles make a comeback",
-    "tags": "sound",
-    "storage": [
-      {
-        "name": "mmonday.app.js",
-        "url": "manic-monday.js"
-      },
-      {
-        "name": "mmonday.img",
-        "url": "manic-monday-icon.js",
-        "evaluate": true
-      }
-    ]
+  { "id": "mmonday",
+  "name": "Manic Monday Tone",
+  "icon": "manic-monday-icon.png",
+  "version":"0.02",
+  "description": "The Bangles make a comeback",
+  "tags": "sound",
+  "storage": [
+    {"name":"mmonday.app.js","url":"manic-monday.js"},
+    {"name":"mmonday.img","url":"manic-monday-icon.js","evaluate":true}
+  ]
   },
-  {
-    "id": "jbells",
+  { "id": "jbells",
     "name": "Jingle Bells",
     "icon": "jbells.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Play Jingle Bells",
     "tags": "sound",
-    "type": "app",
+    "type":"app",
     "storage": [
-      {
-        "name": "jbells.app.js",
-        "url": "jbells.js"
-      },
-      {
-        "name": "jbells.img",
-        "url": "jbells-icon.js",
-        "evaluate": true
-      }
+      {"name":"jbells.app.js","url":"jbells.js"},
+      {"name":"jbells.img","url":"jbells-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "scolor",
+  { "id": "scolor",
     "name": "Show Color",
     "icon": "show-color.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Display all available Colors and Names",
     "tags": "tool",
-    "type": "app",
-    "allow_emulator": true,
+    "type":"app",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "scolor.app.js",
-        "url": "show-color.js"
-      },
-      {
-        "name": "scolor.img",
-        "url": "show-color-icon.js",
-        "evaluate": true
-      }
+      {"name":"scolor.app.js","url":"show-color.js"},
+      {"name":"scolor.img","url":"show-color-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "miclock",
+  { "id": "miclock",
     "name": "Mixed Clock",
     "icon": "clock-mixed.png",
-    "version": "0.04",
+    "version":"0.04",
     "description": "A mix of analog and digital Clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "miclock.app.js",
-        "url": "clock-mixed.js"
-      },
-      {
-        "name": "miclock.img",
-        "url": "clock-mixed-icon.js",
-        "evaluate": true
-      }
+      {"name":"miclock.app.js","url":"clock-mixed.js"},
+      {"name":"miclock.img","url":"clock-mixed-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "bclock",
+  { "id": "bclock",
     "name": "Binary Clock",
     "icon": "clock-binary.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "A simple binary clock watch face",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "bclock.app.js",
-        "url": "clock-binary.js"
-      },
-      {
-        "name": "bclock.img",
-        "url": "clock-binary-icon.js",
-        "evaluate": true
-      }
+      {"name":"bclock.app.js","url":"clock-binary.js"},
+      {"name":"bclock.img","url":"clock-binary-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "clotris",
+  { "id": "clotris",
     "name": "Clock-Tris",
     "icon": "clock-tris.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "A fully functional clone of a classic game of falling blocks",
     "tags": "game",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "clotris.app.js",
-        "url": "clock-tris.js"
-      },
-      {
-        "name": "clotris.img",
-        "url": "clock-tris-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": ".trishig",
-        "url": "clock-tris-high"
-      }
+      {"name":"clotris.app.js","url":"clock-tris.js"},
+      {"name":"clotris.img","url":"clock-tris-icon.js","evaluate":true},
+      {"name":".trishig","url":"clock-tris-high"}
     ]
   },
-  {
-    "id": "flappy",
+  { "id": "flappy",
     "name": "Flappy Bird",
     "icon": "app.png",
     "version":"0.04",
     "description": "A Flappy Bird game clone",
     "tags": "game",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "flappy.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "flappy.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"flappy.app.js","url":"app.js"},
+      {"name":"flappy.img","url":"app-icon.js","evaluate":true}
     ]
   },
   {
@@ -1219,203 +815,123 @@
     "tags": "gps",
     "type": "app",
     "storage": [
-      {
-        "name": "gpsinfo.app.js",
-        "url": "gps-info.js"
-      },
-      {
-        "name": "gpsinfo.img",
-        "url": "gps-info-icon.js",
-        "evaluate": true
-      }
+      {"name":"gpsinfo.app.js","url": "gps-info.js"},
+      {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
   },
   {
     "id": "pomodo",
-    "name": "Pomodoro",
-    "icon": "pomodoro.png",
-    "version": "0.01",
+    "name":"Pomodoro",
+    "icon":"pomodoro.png",
+    "version":"0.01",
     "description": "A simple pomodoro timer.",
     "tags": "pomodoro,cooking,tools",
     "type": "app",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "pomodo.app.js",
-        "url": "pomodoro.js"
-      },
-      {
-        "name": "pomodo.img",
-        "url": "pomodoro-icon.js",
-        "evaluate": true
-      }
+      {"name":"pomodo.app.js","url": "pomodoro.js"},
+      {"name":"pomodo.img","url": "pomodoro-icon.js","evaluate": true}
     ]
   },
-  {
-    "id": "blobclk",
+  { "id": "blobclk",
     "name": "Large Digit Blob Clock",
-    "shortName": "Blob Clock",
+    "shortName" : "Blob Clock",
     "icon": "clock-blob.png",
-    "version": "0.03",
+    "version":"0.03",
     "description": "A clock with big digits",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "blobclk.app.js",
-        "url": "clock-blob.js"
-      },
-      {
-        "name": "blobclk.img",
-        "url": "clock-blob-icon.js",
-        "evaluate": true
-      }
+      {"name":"blobclk.app.js","url":"clock-blob.js"},
+      {"name":"blobclk.img","url":"clock-blob-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "boldclk",
+  { "id": "boldclk",
     "name": "Bold Clock",
     "icon": "bold_clock.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Simple, readable and practical clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "boldclk.app.js",
-        "url": "bold_clock.js"
-      },
-      {
-        "name": "boldclk.img",
-        "url": "bold_clock-icon.js",
-        "evaluate": true
-      }
+      {"name":"boldclk.app.js","url":"bold_clock.js"},
+      {"name":"boldclk.img","url":"bold_clock-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widclk",
+  { "id": "widclk",
     "name": "Digital clock widget",
     "icon": "widget.png",
     "version":"0.04",
     "description": "A simple digital clock widget",
     "tags": "widget,clock",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widclk.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widclk.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "widpedom",
+  { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
     "version":"0.10",
     "description": "Daily pedometer widget",
     "tags": "widget",
-    "type": "widget",
+    "type":"widget",
     "storage": [
       {"name":"widpedom.wid.js","url":"widget.js"},
       {"name":"widpedom.settings.js","url":"settings.js"}
     ]
   },
-  {
-    "id": "berlinc",
+  { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "berlinc.app.js",
-        "url": "berlin-clock.js"
-      },
-      {
-        "name": "berlinc.img",
-        "url": "berlin-clock-icon.js",
-        "evaluate": true
-      }
+      {"name":"berlinc.app.js","url":"berlin-clock.js"},
+      {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "ctrclk",
+  { "id": "ctrclk",
     "name": "Centerclock",
     "icon": "app.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "ctrclk.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "ctrclk.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"ctrclk.app.js","url":"app.js"},
+      {"name":"ctrclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "demoapp",
+  { "id": "demoapp",
     "name": "Demo Loop",
     "icon": "app.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
     "tags": "",
-    "type": "app",
-    "allow_emulator": true,
+    "type":"app",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "demoapp.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "demoapp.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"demoapp.app.js","url":"app.js"},
+      {"name":"demoapp.img","url":"app-icon.js","evaluate":true}
     ],
-    "sortorder": -9
+    "sortorder" : -9
   },
-  {
-    "id": "jbm8b",
-    "name": "Magic 8 Ball",
-    "shortName": "Magic 8 Ball",
-    "icon": "app.png",
-    "description": "A simple fortune telling app",
-    "tags": "game",
-    "storage": [
-      { "name": "jbm8b.app.js", "url": "app.js" },
-      { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
-    ],
-    "version": "0.03"
-  },
-  {
-    "id": "flagrse",
+  { "id": "flagrse",
     "name": "Espruino Flag Raiser",
     "icon": "app.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "App to send a command to another Espruino to cause it to raise a flag",
     "tags": "",
     "storage": [
-      {
-        "name": "flagrse.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "flagrse.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"flagrse.app.js","url":"app.js"},
+      {"name":"flagrse.img","url":"app-icon.js","evaluate":true}
     ]
   },
   {
@@ -1425,46 +941,27 @@
     "version": "0.03",
     "description": "Pipboy themed clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "pipboy.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "pipboy.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"pipboy.app.js","url":"app.js"},
+      {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "torch",
+  { "id": "torch",
     "name": "Torch",
-    "shortName": "Torch",
+    "shortName":"Torch",
     "icon": "app.png",
     "version":"0.02",
     "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets",
     "tags": "tool,torch",
     "storage": [
-      {
-        "name": "torch.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "torch.wid.js",
-        "url": "widget.js"
-      },
-      {
-        "name": "torch.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"torch.app.js","url":"app.js"},
+      {"name":"torch.wid.js","url":"widget.js"},
+      {"name":"torch.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "wohrm",
+  { "id": "wohrm",
     "name": "Workout HRM",
     "icon": "app.png",
     "version":"0.07",
@@ -1472,32 +969,21 @@
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "tags": "hrm,workout",
     "type": "app",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "wohrm.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "wohrm.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"wohrm.app.js","url":"app.js"},
+      {"name":"wohrm.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widid",
+  { "id": "widid",
     "name": "Bluetooth ID Widget",
     "icon": "widget.png",
-    "version": "0.02",
+    "version":"0.02",
     "description": "Display the last two tuple of your Bangle.js MAC address in the widget section. This is useful for figuring out which Bangle.js to connect to if you have more than one Bangle.js!",
     "tags": "widget,address,mac",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widid.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widid.wid.js","url":"widget.js"}
     ]
   },
   {
@@ -1508,238 +994,134 @@
     "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
     "tags": "tool,outdoors,shopping,list",
     "type": "app",
-    "custom": "grocery.html",
+    "custom":"grocery.html",
     "storage": [
-      {
-        "name": "grocery"
-      },
-      {
-        "name": "grocery.app.js"
-      },
-      {
-        "name": "grocery.img",
-        "url": "grocery-icon.js",
-        "evaluate": true
-      }
+      {"name":"grocery"},
+      {"name":"grocery.app.js"},
+      {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "marioclock",
+  { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
     "version":"0.12",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "readme": "README.md",
     "storage": [
-      {
-        "name": "marioclock.app.js",
-        "url": "marioclock-app.js"
-      },
-      {
-        "name": "marioclock.img",
-        "url": "marioclock-icon.js",
-        "evaluate": true
-      }
+      {"name":"marioclock.app.js","url":"marioclock-app.js"},
+      {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "cliock",
+  { "id": "cliock",
     "name": "Commandline-Clock",
-    "shortName": "CLI-Clock",
+    "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version": "0.07",
+    "version":"0.07",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "cliock.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "cliock.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"cliock.app.js","url":"app.js"},
+      {"name":"cliock.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widver",
+  { "id": "widver",
     "name": "Firmware Version Widget",
     "icon": "widget.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Display the version of the installed firmware in the top widget section.",
     "tags": "widget,tool,system",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widver.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widver.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "barclock",
+  { "id": "barclock",
     "name": "Bar Clock",
     "icon": "clock-bar.png",
     "version":"0.05",
     "description": "A simple digital clock showing seconds as a bar",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "barclock.app.js",
-        "url": "clock-bar.js"
-      },
-      {
-        "name": "barclock.img",
-        "url": "clock-bar-icon.js",
-        "evaluate": true
-      }
+      {"name":"barclock.app.js","url":"clock-bar.js"},
+      {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "dotclock",
+  { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "A Minimal Dot Analog Clock",
     "tags": "clock",
-    "type": "clock",
-    "allow_emulator": true,
+    "type":"clock",
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "dotclock.app.js",
-        "url": "clock-dot.js"
-      },
-      {
-        "name": "dotclock.img",
-        "url": "clock-dot-icon.js",
-        "evaluate": true
-      }
+      {"name":"dotclock.app.js","url":"clock-dot.js"},
+      {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widtbat",
+  { "id": "widtbat",
     "name": "Tiny Battery Widget",
     "icon": "widget.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Tiny blueish battery widget, vibs and changes level color when charging",
     "tags": "widget,tool,system",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widtbat.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widtbat.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "chrono",
+  { "id": "chrono",
     "name": "Chrono",
-    "shortName": "Chrono",
+    "shortName":"Chrono",
     "icon": "chrono.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
     "tags": "Tools",
     "storage": [
-      {
-        "name": "chrono.app.js",
-        "url": "chrono.js"
-      },
-      {
-        "name": "chrono.img",
-        "url": "chrono-icon.js",
-        "evaluate": true
-      }
+      {"name":"chrono.app.js","url":"chrono.js"},
+      {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "astrocalc",
+  { "id": "astrocalc",
     "name": "Astrocalc",
     "icon": "astrocalc.png",
     "version":"0.02",
     "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
     "tags": "app,sun,moon,cycles,tool,outdoors",
-    "allow_emulator": true,
+    "allow_emulator":true,
     "storage": [
-      {
-        "name": "astrocalc.app.js",
-        "url": "astrocalc-app.js"
-      },
-      {
-        "name": "suncalc.js",
-        "url": "suncalc.js"
-      },
-      {
-        "name": "astrocalc.img",
-        "url": "astrocalc-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "first-quarter.img",
-        "url": "first-quarter-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "last-quarter.img",
-        "url": "last-quarter-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "waning-crescent.img",
-        "url": "waning-crescent-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "waning-gibbous.img",
-        "url": "waning-gibbous-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "full.img",
-        "url": "full-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "new.img",
-        "url": "new-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "waxing-gibbous.img",
-        "url": "waxing-gibbous-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "waxing-crescent.img",
-        "url": "waxing-crescent-icon.js",
-        "evaluate": true
-      }
+      {"name":"astrocalc.app.js","url":"astrocalc-app.js"},
+      {"name":"suncalc.js","url":"suncalc.js"},
+      {"name":"astrocalc.img","url":"astrocalc-icon.js","evaluate":true},
+      {"name":"first-quarter.img","url":"first-quarter-icon.js","evaluate":true},
+      {"name":"last-quarter.img","url":"last-quarter-icon.js","evaluate":true},
+      {"name":"waning-crescent.img","url":"waning-crescent-icon.js","evaluate":true},
+      {"name":"waning-gibbous.img","url":"waning-gibbous-icon.js","evaluate":true},
+      {"name":"full.img","url":"full-icon.js","evaluate":true},
+      {"name":"new.img","url":"new-icon.js","evaluate":true},
+      {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
+      {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widhwt",
+  { "id": "widhwt",
     "name": "Hand Wash Timer",
     "icon": "widget.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
     "tags": "widget,tool",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widhwt.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widhwt.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "toucher",
+  { "id": "toucher",
     "name": "Touch Launcher",
     "shortName":"Toucher",
     "icon": "app.png",
@@ -1754,7 +1136,7 @@
       {"name":"toucher.app.js","url":"app.js"},
       {"name":"toucher.settings.js","url":"settings.js"}
     ],
-    "sortorder": -10
+    "sortorder" : -10
   },
   {
     "id": "balltastic",
@@ -1765,16 +1147,9 @@
     "tags": "game,fun",
     "type": "app",
     "storage": [
-      {
-        "name": "balltastic.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "balltastic.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
-    ]
+        {"name":"balltastic.app.js","url":"app.js"},
+        {"name":"balltastic.img","url":"app-icon.js","evaluate":true}
+      ]
   },
   {
     "id": "rpgdice",
@@ -1786,34 +1161,22 @@
     "type": "app",
     "allow_emulator": true,
     "storage": [
-      {
-        "name": "rpgdice.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "rpgdice.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"rpgdice.app.js","url": "app.js"},
+      {"name":"rpgdice.img","url": "app-icon.js","evaluate":true}
     ]
   },
-  {
-    "id": "widmp",
+  { "id": "widmp",
     "name": "Moon Phase Widget",
     "icon": "widget.png",
-    "version": "0.01",
+    "version":"0.01",
     "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
     "tags": "widget,tools",
-    "type": "widget",
+    "type":"widget",
     "storage": [
-      {
-        "name": "widmp.wid.js",
-        "url": "widget.js"
-      }
+      {"name":"widmp.wid.js","url":"widget.js"}
     ]
   },
-  {
-    "id": "minionclk",
+  { "id": "minionclk",
     "name": "Minion clock",
     "icon": "minionclk.png",
     "version": "0.02",
@@ -1822,15 +1185,8 @@
     "type": "clock",
     "allow_emulator": true,
     "storage": [
-      {
-        "name": "minionclk.app.js",
-        "url": "app.js"
-      },
-      {
-        "name": "minionclk.img",
-        "url": "app-icon.js",
-        "evaluate": true
-      }
+      {"name":"minionclk.app.js","url":"app.js"},
+      {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "openstmap",
@@ -2390,5 +1746,18 @@
       {"name":"dotmatrixclock.app.js","url":"app.js"},
       {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
     ]
-  }
+  },
+  {
+    "id": "jbm8b",
+    "name": "Magic 8 Ball",
+    "shortName": "Magic 8 Ball",
+    "icon": "app.png",
+    "description": "A simple fortune telling app",
+    "tags": "game",
+    "storage": [
+      { "name": "jbm8b.app.js", "url": "app.js" },
+      { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
+    ],
+    "version": "0.03"
+  },
 ]
