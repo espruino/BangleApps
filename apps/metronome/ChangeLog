@@ -2,3 +2,4 @@
 0.02: Watch vibrates with every beat
 0.03: Uses mean of three time intervalls to calculate bmp
 0.04: App shows instructions, Widgets remain visible, color changed
+0.05: Buzz intensity and beats per bar can be changed via settings-app

@@ -8,6 +8,7 @@
   // initialize with default settings...
   let s = {
     'beatsperbar': 4,
+    'buzzintens': 0.75,
   };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -34,6 +35,13 @@
       max: 8,
       step: 1,
       onchange: save('beatsperbar'),
+    },
+    'buzz intensity': {
+      value: s.buzzintens,
+      min: 0.0,
+      max: 1.0,
+      step: 0.25,
+      onchange: save('buzzintens'),
     },
   };
   E.showMenu(menu);
