@@ -6,26 +6,8 @@ var tindex=0;  //index to iterate through time_diffs
 
 Bangle.setLCDTimeout(undefined);  //do not deaktivate display while running this app
 
-const storage = require("Storage");
-const SETTINGS_FILE = 'metronome.settings.json';
-
-//return setting
-function setting(key) {
-  //define default settings
-  const DEFAULTS = {
-    'beatsperbar': 4,
-  };
-  if (!settings) { loadSettings(); }
-  return (key in settings) ? settings[key] : DEFAULTS[key];
-}
-
-//load settings
-let settings;
-
-function loadSettings() {
-  settings = storage.readJSON(SETTINGS_FILE, 1) || {};
-
 function changecolor() {
+  const maxColors = 2;
   const colors = {
         0: { value: 0xF800, name: "Red" },
         1: { value: 0xFFFF, name: "White" },
@@ -35,10 +17,21 @@ function changecolor() {
         5: { value: 0xFFFF, name: "White" },
         6: { value: 0x03E0, name: "DarkGreen" },
         7: { value: 0xFFFF, name: "White" },
-        8: { value: 0x03E0, name: "DarkGreen" },
+        8: { value: 0x7BEF, name: "DarkGrey" },
+     //   9: { value: 0x001F, name: "Blue" },
+     //   9: { value: 0x001F, name: "Blue" },
+     //   10: { value: 0x07E0, name: "Green" },
+     //   11: { value: 0x07FF, name: "Cyan" },
+        1: { value: 0xF800, name: "Red" },
+     //   13: { value: 0xF81F, name: "Magenta" },
+     //   14: { value: 0xFFE0, name: "Yellow" },
+     //   15: { value: 0xFFFF, name: "White" },
+     //   16: { value: 0xFD20, name: "Orange" },
+     //   17: { value: 0xAFE5, name: "GreenYellow" },
+     //   18: { value: 0xF81F, name: "Pink" },
     };
     g.setColor(colors[cindex].value);
-    if (cindex == setting('beatsperbar')-1) {
+    if (cindex == maxColors-1) {
       cindex = 0;
     }
     else {
@@ -59,7 +52,6 @@ function updateScreen() {
   g.drawString(Math.floor(bpm)+"bpm", 5, 60);
 }
 
-  
 Bangle.on('touch', function(button) {
 // setting bpm by tapping the screen. Uses the mean time difference between several tappings.
     if (tindex < time_diffs.length) {
