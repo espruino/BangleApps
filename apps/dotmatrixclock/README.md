@@ -10,6 +10,7 @@ A clock face simulating the classic dotmatrix displays. Shows time, date, compas
 * Simulated white-on-blue dotmatrix display
 * Compass
 * Heart rate monitor
+* Multiple colour palletes, swipe to change
 
 ## Requests
 
