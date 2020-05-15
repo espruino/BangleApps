@@ -1725,7 +1725,7 @@
   { "id": "rndmclk",
     "name": "Random Clock Loader",
     "icon": "rndmclk.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Load a different clock whenever the LCD is switched on.",
     "readme": "README.md",
     "tags": "widget,clock",

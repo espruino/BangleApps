@@ -1,4 +1,5 @@
 (() => {
+  let currentClock = "";
 
   /**
    * Random value between zero (inclusive) and max (exclusive)
@@ -15,13 +16,18 @@
     if (clockApps && clockApps.length > 0) {
       var clockIndex = getRandomInt(clockApps.length);
 
-      load(clockApps[clockIndex].src);
+      // Only update the file if the clock really change to be nice to the FLASH mem
+      if (clockApps[clockIndex].src != currentClock) {
+        currentClock = clockApps[clockIndex].src;
+        settings = require("Storage").readJSON('setting.json', 1);
+        settings.clock = clockApps[clockIndex].src;
+        require("Storage").write('setting.json', settings);
+      }
     }
   }
 
   Bangle.on('lcdPower', (on) => {
-    if (on) {
-      // TODO: Only run if the current app is a clock as well
+    if (!on) {
       loadRandomClock();
     }
   });
