@@ -1759,5 +1759,5 @@
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
     ],
     "version": "0.03"
-  },
+  }
 ]
