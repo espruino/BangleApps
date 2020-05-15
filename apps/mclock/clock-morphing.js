@@ -1,3 +1,4 @@
+var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var locale = require("locale");
 var CHARW = 34; // how tall are digits?
 var CHARP = 2; // how chunky are digits?
@@ -6,7 +7,7 @@ var Y = 50; // start height
 var buf = Graphics.createArrayBuffer(CHARW+CHARP*2,CHARW*2 + CHARP*2,1,{msb:true});
 var bufimg = {width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer};
 // The last time that we displayed
-var lastTime = "     ";
+var lastTime = "-----";
 // If animating, this is the interval's id
 var animInterval;
 var timeInterval;
@@ -112,6 +113,7 @@ const DIGITS = {
 /* Draw a transition between lastText and thisText.
  'n' is the amount - 0..1 */
 function drawDigits(lastText,thisText,n) {
+  "ram"
   const p = CHARP; // padding around digits
   const s = CHARW; // character size
   var x = 0;  // x offset
@@ -145,7 +147,7 @@ function drawDigits(lastText,thisText,n) {
     x+=s+p+7;
   }
 }
-function drawSeconds() {
+function drawEverythingElse() {
   var x = (CHARW + CHARP + 6)*5;
   var y = Y + 2*CHARW + CHARP;
   var d = new Date();
@@ -153,6 +155,8 @@ function drawSeconds() {
   g.setFont("6x8");
   g.setFontAlign(-1,-1);
   g.drawString(("0"+d.getSeconds()).substr(-2), x, y-8, true);
+  // meridian
+  if (is12Hour) g.drawString((d.getHours() < 12) ? "AM" : "PM", x, Y + 4, true);
   // date
   g.setFontAlign(0,-1);
   var date = locale.date(d,false);
@@ -163,13 +167,15 @@ function drawSeconds() {
 function showTime() {
   if (animInterval) return; // in animation - quit
   var d = new Date();
-  var t = (" "+d.getHours()).substr(-2)+":"+
+  var hours = d.getHours();
+  if (is12Hour) hours = ((hours + 11) % 12) + 1;
+  var t = (" "+hours).substr(-2)+":"+
           ("0"+d.getMinutes()).substr(-2);
   var l = lastTime;
   // same - don't animate
-  if (t==l || l=="     ") {
+  if (t==l || l=="-----") {
     drawDigits(l,t,0);
-    drawSeconds();
+    drawEverythingElse();
     lastTime = t;
     return;
   }
@@ -199,7 +205,7 @@ Bangle.on('lcdPower',function(on) {
     showTime();
     timeInterval = setInterval(showTime, 1000);
   } else {
-    lastTime = "     ";
+    lastTime = "-----";
   }
 });
 

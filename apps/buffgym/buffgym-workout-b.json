@@ -1,0 +1,33 @@
+{
+    "title": "Workout B",
+    "exercises": [
+        {
+            "title": "Squats",
+            "weight": 40,
+            "unit": "Kg",
+            "sets": [5, 5, 5, 5, 5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Bench press",
+            "weight": 20,
+            "unit": "Kg",
+            "sets": [5, 5, 5, 5, 5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Row",
+            "weight": 20,
+            "unit":"Kg",
+            "sets": [5, 5, 5, 5, 5],
+            "restPeriod": 90
+        },
+        {
+            "title": "Tricep extension",
+            "weight": 20,
+            "unit": "Kg",
+            "sets": [10, 10, 10],
+            "restPeriod": 90
+        }
+    ]
+}

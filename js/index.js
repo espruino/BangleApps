@@ -1,8 +1,12 @@
 var appJSON = []; // List of apps and info from apps.json
 var appsInstalled = []; // list of app JSON
+var appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
 var files = []; // list of files on Bangle
-var favourites = []; // list of user favourite app
-const FAVOURITE = "favouriteapps.json";
+var DEFAULTSETTINGS = {
+  pretokenise : true,
+  favourites : ["boot","launch","setting"]
+};
+var SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -14,6 +18,19 @@ httpGet("apps.json").then(apps=>{
   appJSON.sort(appSorter);
   refreshLibrary();
   refreshFilter();
+});
+
+httpGet("appdates.csv").then(csv=>{
+  document.querySelector(".sort-nav").classList.remove("hidden");
+  csv.split("\n").forEach(line=>{
+    var l = line.split(",");
+    appSortInfo[l[0]] = { 
+      created : Date.parse(l[1]), 
+      modified : Date.parse(l[2])
+    };
+  });
+}).catch(err=>{
+  console.log("No recent.csv - app sort disabled");
 });
 
 // ===========================================  Top Navigation
@@ -65,9 +82,15 @@ function handleCustomApp(appTemplate) {
     var iframe = modal.getElementsByTagName("iframe")[0];
     iframe.contentWindow.addEventListener("message", function(event) {
       var appFiles = event.data;
-      var app = {};
-      Object.keys(appTemplate).forEach(k => app[k] = appTemplate[k]);
-      Object.keys(appFiles).forEach(k => app[k] = appFiles[k]);
+      var app = JSON.parse(JSON.stringify(appTemplate)); // clone template
+      // copy extra keys from appFiles
+      Object.keys(appFiles).forEach(k => {
+        if (k!="storage") app[k] = appFiles[k]
+      });
+      appFiles.storage.forEach(f => {
+        app.storage = app.storage.filter(s=>s.name!=f.name); // remove existing item
+        app.storage.push(f); // add new
+      });
       console.log("Received custom app", app);
       modal.remove();
       Comms.uploadApp(app).then(()=>{
@@ -144,17 +167,18 @@ function handleAppInterface(app) {
   });
 }
 
-function handleAppFavourite(favourite, app){
+function changeAppFavourite(favourite, app) {
+  var favourites = SETTINGS.favourites;
   if (favourite) {
-    favourites = favourites.concat([app.id]);
+    SETTINGS.favourites = SETTINGS.favourites.concat([app.id]);
   } else {
     if ([ "boot","setting"].includes(app.id)) {
       showToast(app.name + ' is required, can\'t remove it' , 'warning');
     }else {
-      favourites = favourites.filter(e => e != app.id);
+      SETTINGS.favourites = SETTINGS.favourites.filter(e => e != app.id);
     }
   }
-  localStorage.setItem("favouriteapps.json", JSON.stringify(favourites));
+  saveSettings();
   refreshLibrary();
 }
 
@@ -172,11 +196,12 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var chips = Array.from(document.querySelectorAll('.chip')).map(chip => chip.attributes.filterid.value);
+var chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.attributes.filterid.value);
 var hash = window.location.hash ? window.location.hash.slice(1) : '';
 
 var activeFilter = !!~chips.indexOf(hash) ? hash : '';
-var currentSearch = '';
+var activeSort = '';
+var currentSearch = activeFilter ? '' : hash;
 
 function refreshFilter(){
   var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
@@ -184,14 +209,21 @@ function refreshFilter(){
   if(activeFilter) filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active');
   else filtersContainer.querySelector('.chip[filterid]').classList.add('active');
 }
+function refreshSort(){
+  var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+  sortContainer.querySelector('.active').classList.remove('active');
+  if(activeSort) sortContainer.querySelector('.chip[sortid="'+activeSort+'"]').classList.add('active');
+  else sortContainer.querySelector('.chip[sortid]').classList.add('active');
+}
 function refreshLibrary() {
   var panelbody = document.querySelector("#librarycontainer .panel-body");
   var visibleApps = appJSON;
+  var favourites = SETTINGS.favourites;
 
   if (activeFilter) {
     if ( activeFilter == "favourites" ) {
       visibleApps = visibleApps.filter(app => app.id && (favourites.filter( e => e == app.id).length));
-    }else{
+    } else {
       visibleApps = visibleApps.filter(app => app.tags && app.tags.split(',').includes(activeFilter));
     }
   }
@@ -200,7 +232,12 @@ function refreshLibrary() {
     visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch));
   }
 
-  favourites = (localStorage.getItem(FAVOURITE)) === null ? JSON.parse('["boot","launch","setting"]') : JSON.parse(localStorage.getItem("favouriteapps.json"));
+  if (activeSort) {
+    visibleApps = visibleApps.slice(); // clone the array so sort doesn't mess with original
+    if (activeSort=="created" || activeSort=="modified") {
+      visibleApps = visibleApps.sort((a,b) => appSortInfo[b.id][activeSort] - appSortInfo[a.id][activeSort]);
+    } else throw new Error("Unknown sort type "+activeSort);
+  }
 
   panelbody.innerHTML = visibleApps.map((app,idx) => {
     var appInstalled = appsInstalled.find(a=>a.id==app.id);
@@ -209,6 +246,12 @@ function refreshLibrary() {
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
     var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
     var favourite = favourites.find(e => e == app.id);
+
+    var username = "espruino";
+    var githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    if(githubMatch) username = githubMatch[1];
+    var url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
@@ -216,7 +259,7 @@ function refreshLibrary() {
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
-      <a href="https://github.com/espruino/BangleApps/tree/master/apps/${app.id}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
+      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
@@ -275,9 +318,9 @@ function refreshLibrary() {
       } else if (icon.classList.contains("icon-download")) {
         handleAppInterface(app);
       } else if ( button.innerText == String.fromCharCode(0x2661)) {
-         handleAppFavourite(true, app);
+         changeAppFavourite(true, app);
       } else if ( button.innerText == String.fromCharCode(0x2665) ) {
-         handleAppFavourite(false, app);
+         changeAppFavourite(false, app);
       }
     });
   });
@@ -478,6 +521,43 @@ function getInstalledApps(refresh) {
     });
 }
 
+/// Removes everything and install the given apps, eg: installMultipleApps(["boot","mclock"], "minimal")
+function installMultipleApps(appIds, promptName) {
+  var apps = appIds.map( appid => appJSON.find(app=>app.id==appid) );
+  if (apps.some(x=>x===undefined))
+    return Promise.reject("Not all apps found");
+  var appCount = apps.length;
+  return showPrompt("Install Defaults",`Remove everything and install ${promptName} apps?`).then(() => {
+    return Comms.removeAllApps();
+  }).then(()=>{
+    Progress.hide({sticky:true});
+    appsInstalled = [];
+    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
+    return new Promise((resolve,reject) => {
+      function upload() {
+        var app = apps.shift();
+        if (app===undefined) return resolve();
+        Progress.show({title:`${app.name} (${appCount-apps.length}/${appCount})`,sticky:true});
+        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
+          Progress.hide({sticky:true});
+          if (appJSON) appsInstalled.push(appJSON);
+          showToast(`(${appCount-apps.length}/${appCount}) ${app.name} Uploaded`);
+          upload();
+        }).catch(function() {
+          Progress.hide({sticky:true});
+          reject();
+        });
+      }
+      upload();
+    });
+  }).then(()=>{
+    return Comms.setTime();
+  }).then(()=>{
+    showToast("Apps successfully installed!","success");
+    return getInstalledApps(true);
+  });
+}
+
 var connectMyDeviceBtn = document.getElementById("connectmydevice");
 
 function handleConnectionChange(connected) {
@@ -528,10 +608,20 @@ filtersContainer.addEventListener('click', ({ target }) => {
 });
 
 var librarySearchInput = document.querySelector("#searchform input");
-
+librarySearchInput.value = currentSearch;
 librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
   refreshLibrary();
+});
+
+var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+sortContainer.addEventListener('click', ({ target }) => {
+  if (target.classList.contains('active')) return;
+
+  activeSort = target.getAttribute('sortid') || '';
+  refreshSort();
+  refreshLibrary();
+  window.location.hash = activeFilter;
 });
 
 // =========================================== About
@@ -548,6 +638,49 @@ if (window.location.host=="banglejs.com") {
   document.getElementById("apploaderlinks").innerHTML =
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
+
+// Settings
+var SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
+/// Load settings and update controls
+function loadSettings() {
+  var j = localStorage.getItem("settings");
+  if (typeof j != "string") return;
+  try {
+    var s = JSON.parse(j);
+    Object.keys(s).forEach( k => {
+      SETTINGS[k]=s[k];
+      if (SETTINGS_HOOKS[k]) SETTINGS_HOOKS[k]();
+    } );
+  } catch (e) {
+    console.error("Invalid settings");
+  }
+}
+/// Save settings
+function saveSettings() {
+  localStorage.setItem("settings", JSON.stringify(SETTINGS));
+  console.log("Changed settings", SETTINGS);
+}
+// Link in settings DOM elements
+function settingsCheckbox(id, name) {
+  var setting = document.getElementById(id);
+  function update() {
+    setting.checked = SETTINGS[name];
+  }
+  SETTINGS_HOOKS[name] = update;
+  setting.addEventListener('click', function() {
+    SETTINGS[name] = setting.checked;
+    saveSettings();
+  });
+}
+settingsCheckbox("settings-pretokenise", "pretokenise");
+loadSettings();
+
+document.getElementById("defaultsettings").addEventListener("click",event=>{
+  SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
+  saveSettings();
+  loadSettings(); // update all settings
+  refreshLibrary(); // favourites were in settings
+});
 
 document.getElementById("settime").addEventListener("click",event=>{
   Comms.setTime().then(()=>{
@@ -571,87 +704,18 @@ document.getElementById("removeall").addEventListener("click",event=>{
 });
 // Install all default apps in one go
 document.getElementById("installdefault").addEventListener("click",event=>{
-  var defaultApps, appCount;
   httpGet("defaultapps.json").then(json=>{
-    defaultApps = JSON.parse(json);
-    defaultApps = defaultApps.map( appid => appJSON.find(app=>app.id==appid) );
-    if (defaultApps.some(x=>x===undefined))
-      throw "Not all apps found";
-    appCount = defaultApps.length;
-    return showPrompt("Install Defaults","Remove everything and install default apps?");
-  }).then(() => {
-    return Comms.removeAllApps();
-  }).then(()=>{
-    Progress.hide({sticky:true});
-    appsInstalled = [];
-    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
-    return new Promise((resolve,reject) => {
-      function upload() {
-        var app = defaultApps.shift();
-        if (app===undefined) return resolve();
-        Progress.show({title:`${app.name} (${appCount-defaultApps.length}/${appCount})`,sticky:true});
-        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
-          upload();
-        }).catch(function() {
-          Progress.hide({sticky:true});
-          reject();
-        });
-      }
-      upload();
-    });
-  }).then(()=>{
-    return Comms.setTime();
-  }).then(()=>{
-    showToast("Default apps successfully installed!","success");
-    return getInstalledApps(true);
+    return installMultipleApps(JSON.parse(json), "default");
   }).catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");
   });
 });
 
-// Install all favoutrie apps in one go
+// Install all favourite apps in one go
 document.getElementById("installfavourite").addEventListener("click",event=>{
-  var defaultApps, appCount;
-  asyncLocalStorage.getItem(FAVOURITE).then(json=>{
-    defaultApps = JSON.parse(json);
-    defaultApps = defaultApps.map( appid => appJSON.find(app=>app.id==appid) );
-    if (defaultApps.some(x=>x===undefined))
-      throw "Not all apps found";
-    appCount = defaultApps.length;
-    return showPrompt("Install Defaults","Remove everything and install favourite apps?");
-  }).then(() => {
-    return Comms.removeAllApps();
-  }).then(()=>{
-    Progress.hide({sticky:true});
-    appsInstalled = [];
-    showToast(`Existing apps removed. Installing  ${appCount} apps...`);
-    return new Promise((resolve,reject) => {
-      function upload() {
-        var app = defaultApps.shift();
-        if (app===undefined) return resolve();
-        Progress.show({title:`${app.name} (${appCount-defaultApps.length}/${appCount})`,sticky:true});
-        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(`(${appCount-defaultApps.length}/${appCount}) ${app.name} Uploaded`);
-          upload();
-        }).catch(function() {
-          Progress.hide({sticky:true});
-          reject();
-        });
-      }
-      upload();
-    });
-  }).then(()=>{
-    return Comms.setTime();
-  }).then(()=>{
-    showToast("Favourites apps successfully installed!","success");
-    return getInstalledApps(true);
-  }).catch(err=>{
+  var favApps = SETTINGS.favourites;
+  installMultipleApps(favApps, "favourite").catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");
   });

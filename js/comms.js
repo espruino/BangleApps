@@ -10,10 +10,13 @@ reset : (opt) => new Promise((resolve,reject) => {
 }),
 uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `storage`)
   Progress.show({title:`Uploading ${app.name}`,sticky:true});
-  return AppInfo.getFiles(app, httpGet).then(fileContents => {
+  return AppInfo.getFiles(app, {
+    fileGetter : httpGet,
+    settings : SETTINGS
+  }).then(fileContents => {
     return new Promise((resolve,reject) => {
       console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
-      var maxBytes = fileContents.reduce((b,f)=>b+f.content.length, 0)||1;
+      var maxBytes = fileContents.reduce((b,f)=>b+f.cmd.length, 0)||1;
       var currentBytes = 0;
 
       var appInfoFileName = app.id+".info";
@@ -34,19 +37,25 @@ uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `s
         }
         var f = fileContents.shift();
         console.log(`Upload ${f.name} => ${JSON.stringify(f.content)}`);
-        Progress.show({
-          min:currentBytes / maxBytes,
-          max:(currentBytes+f.content.length) / maxBytes});
-        currentBytes += f.content.length;
         // Chould check CRC here if needed instead of returning 'OK'...
         // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
-        Puck.write(`${f.cmd};Bluetooth.println("OK")\n`,(result) => {
-          if (!result || result.trim()!="OK") {
-            Progress.hide({sticky:true});
-            return reject("Unexpected response "+(result||""));
-          }
-          doUploadFiles();
-        }, true); // wait for a newline
+        var cmds = f.cmd.split("\n");
+        function uploadCmd() {
+          if (!cmds.length) return doUploadFiles();
+          var cmd = cmds.shift();
+          Progress.show({
+            min:currentBytes / maxBytes,
+            max:(currentBytes+cmd.length) / maxBytes});
+          currentBytes += cmd.length;
+          Puck.write(`${cmd};Bluetooth.println("OK")\n`,(result) => {
+            if (!result || result.trim()!="OK") {
+              Progress.hide({sticky:true});
+              return reject("Unexpected response "+(result||""));
+            }
+            uploadCmd();
+          }, true); // wait for a newline
+        }
+        uploadCmd();
       }
       // Start the upload
       function doUpload() {

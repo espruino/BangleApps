@@ -1,9 +1,9 @@
 exports = class Set {
   constructor(maxReps) {
-    this.minReps = 0;
-    this.maxReps = maxReps;
-    this.reps = 0;
     this.completed = false;
+    this.minReps = 0;
+    this.reps = 0;
+    this.maxReps = maxReps;
   }
 
   isCompleted() {

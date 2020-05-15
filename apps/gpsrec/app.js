@@ -60,7 +60,7 @@ function viewTracks() {
   for (var n=0;n<36;n++) {
     var f = require("Storage").open(getFN(n),"r");
     if (f.readLine()!==undefined) {
-      menu["Track "+n] = viewTrack.bind(null,n);
+      menu["Track "+n] = viewTrack.bind(null,n,false);
       found = true;
     }
   }
@@ -71,6 +71,7 @@ function viewTracks() {
 }
 
 function getTrackInfo(fn) {
+  "ram"
   var filename = getFN(fn);
   var minLat = 90;
   var maxLat = -90;
@@ -88,8 +89,8 @@ function getTrackInfo(fn) {
   // pushed this loop together to try and bump loading speed a little
   while(l!==undefined) {
     ++nl;c=l.split(",");
-    n = parseFloat(c[1]);if(n>maxLat)maxLat=n;if(n<minLat)minLat=n;
-    n = parseFloat(c[2]);if(n>maxLong)maxLong=n;if(n<minLong)minLong=n;
+    n = +c[1];if(n>maxLat)maxLat=n;if(n<minLat)minLat=n;
+    n = +c[2];if(n>maxLong)maxLong=n;if(n<minLong)minLong=n;
     l = f.readLine(f);
   }
   if (c) duration = parseInt(c[0]) - starttime;
@@ -116,9 +117,11 @@ function asTime(v){
   return ""+mins.toString()+"m "+secs.toString()+"s";
 }
 
-function viewTrack(n) {
-  E.showMessage("Loading...","GPS Track "+n);
-  var info = getTrackInfo(n);
+function viewTrack(n, info) {
+  if (!info) {
+    E.showMessage("Loading...","GPS Track "+n);
+    info = getTrackInfo(n);
+  }
   const menu = {
     '': { 'title': 'GPS Track '+n }
   };
@@ -138,7 +141,7 @@ function viewTrack(n) {
         f.erase();
         viewTracks();
       } else
-        viewTrack(n);
+        viewTrack(n, info);
     });
   };
   menu['< Back'] = viewTracks;
@@ -146,13 +149,7 @@ function viewTrack(n) {
 }
 
 function plotTrack(info) {
-  function xcoord(long){
-    return 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-  }
-
-  function ycoord(lat){
-    return 210 - Math.round((lat - info.minLat)*info.scale);
-  }
+  "ram"
 
   function radians(a) {
     return a*Math.PI/180;
@@ -182,27 +179,26 @@ function plotTrack(info) {
   var ox=0;
   var oy=0;
   var olat,olong,dist=0;
-  var first = true;
   var i=0;
+  var c = l.split(",");
+  var lat = +c[1];
+  var long = +c[2];
+  var x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
+  var y = 210 - Math.round((lat - info.minLat)*info.scale);
+  g.moveTo(x,y);
+  g.setColor(0,1,0);
+  g.fillCircle(x,y,5);
+  g.setColor(1,1,1);
+  l = f.readLine(f);
   while(l!==undefined) {
-    var c = l.split(",");
-    var lat = parseFloat(c[1]);
-    var long = parseFloat(c[2]);
-    var x = xcoord(long);
-    var y = ycoord(lat);
-    if (first) {
-      g.moveTo(x,y);
-      g.setColor(0,1,0);
-      g.fillCircle(x,y,5);
-      g.setColor(1,1,1);
-      first = false;
-    } else if (x!=ox || y!=oy) {
-      g.lineTo(x,y);
-    }
-    if (!first) {
-       var d = distance(olat,olong,lat,long);
-       if (!isNaN(d)) dist+=d;
-    }
+    c = l.split(",");
+    lat = +c[1];
+    long = +c[2];
+    x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
+    y = 210 - Math.round((lat - info.minLat)*info.scale);
+    g.lineTo(x,y);
+    var d = distance(olat,olong,lat,long);
+    if (!isNaN(d)) dist+=d;
     olat = lat;
     olong = long;
     ox = x;
@@ -217,7 +213,7 @@ function plotTrack(info) {
   g.setFontAlign(0,0,3);
   g.drawString("Back",230,200);
   setWatch(function() {
-    viewTrack(info.fn);
+    viewTrack(info.fn, info);
   }, BTN3);
 }
 

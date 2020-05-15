@@ -12,3 +12,7 @@ The chosen coding uses alternating pairs of letters and digits, like so:
 ##
 * support Paul Brewer KI6CQ HamGridSquare.js
 * support Chris Veness 2002-2012 LatLon library
+
+## Requests
+
+If you have any bug or feature request, please contact [Renaudgweb](https://github.com/renaudgweb/)
