@@ -36,6 +36,19 @@
       {"name":"ctracker.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "sswatch",
+    "name": "Super Simple Watchface",
+    "shortName":"Simple digital Watchface",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Simple Digital Watchface with time in 24h format and date in dd-MMM-yyyy format.",
+    "tags": "",
+    "readme": "README.md",
+    "storage": [
+      {"name":"sswatch.app.js","url":"app.js"},
+      {"name":"sswatch.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "moonphase",
     "name": "Moonphase",
     "icon": "app.png",
