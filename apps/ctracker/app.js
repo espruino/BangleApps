@@ -16,6 +16,10 @@ var sex = "Male";
 function draw(){
   g.clear();
   g.setFontAlign(0,0);
+  
+  g.setFont("6x8",4);
+  g.drawString(getTimeString(),leftMargin,topMargin*1.6);
+
   g.setFont("6x8",8);
   g.drawString(calories.toFixed(0),leftMargin,topMargin);
   g.setFont("6x8",4);
