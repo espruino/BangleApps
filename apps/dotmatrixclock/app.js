@@ -7,7 +7,7 @@
 const storage = require('Storage');
 const settings = (storage.readJSON('setting.json', 1) || {});
 const is12Hour = settings["12hour"] || false;
-
+const timeout = settings.timeout || 20;
 
 const font7x7 = {
   "empty": "00000000",
@@ -25,6 +25,7 @@ const font7x7 = {
 
 const font5x5 = {
   "empty": "00000000",
+  "-": "0000FF0000",
   "0": "0E1915130E",
   "1": "0C0404040E",
   "2": "1E010E101F",
@@ -74,6 +75,7 @@ const COLORS = {
 };
 
 let selectedColor = "blue";
+let displayTimeoutRef, sensorTimeoutRef;
 
 // Example
 // binToHex(["0111110", "1000000", "1000000", "1111110", "1000001", "1000001", "0111110"])
@@ -109,12 +111,12 @@ function drawGrid(pos, dims, charAsBin, opts) {
   };
   const pxl = Object.assign({}, defaultOpts, opts);
 
-  for (let r = 0; r < dims.rows; r++) {
-    const y = pos.y + ((pxl.pxlH + pxl.gap) * r);
+  for (let rowY = 0; rowY < dims.rows; rowY++) {
+    const y = pos.y + ((pxl.pxlH + pxl.gap) * rowY);
 
-    for (let c = 7; c > (7 - dims.cols); c--) {
-      const x = pos.x + ((pxl.pxlW + pxl.gap) * c);
-      const color = (charAsBin && parseInt(charAsBin[r][c])) ? pxl.onColor : pxl.offColor;
+    for (let colX = 7; colX > (7 - dims.cols); colX--) {
+      const x = pos.x + ((pxl.pxlW + pxl.gap) * colX);
+      const color = (charAsBin && parseInt(charAsBin[rowY][colX])) ? pxl.onColor : pxl.offColor;
 
       drawPixel({
         x: x,
@@ -187,7 +189,7 @@ function drawCompass(lastHeading) {
   let angle = cps.heading;
   let heading = angle?
                 directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
-                "   ";
+                "-- ";
 
   heading = (heading + "   ").slice(0, 3);
   if (lastHeading != heading) drawFont(heading, "5x5", 40, 67);
@@ -195,7 +197,7 @@ function drawCompass(lastHeading) {
 }
 
 function drawHeart(hrm) {
-  drawFont(("   " + (hrm ? hrm.bpm : '')).slice(-3), "5x5", 109, 67);
+  drawFont(("   " + (hrm ? hrm.bpm : "---")).slice(-3), "5x5", 109, 67);
 }
 
 function drawTime(lastHrs, lastMns, toggle) {
@@ -245,6 +247,23 @@ function drawDate(lastDate) {
 }
 
 function setSensors(state) {
+  // Already reading sensors and trying to activate sensors, do nothing
+  if (sensorTimeoutRef && state === 1) return;
+
+  // If we are activating the sensors, turn them off again in one minute
+  if (state === 1) {
+    sensorTimeoutRef = setTimeout(() => { setSensors(0); }, 1000 * 60);
+  } else {
+    if (sensorTimeoutRef) {
+      clearInterval(sensorTimeoutRef);
+      sensorTimeoutRef = null;
+    }
+    // Bit nasty, but we only redraw the heart value on sensor callback
+    // but we want to blank out when sensor is off, but no callback for
+    // that so force redraw here
+    drawHeart();
+  }
+
   Bangle.setHRMPower(state);
   Bangle.setCompassPower(state);
 }
@@ -261,6 +280,28 @@ function drawScreen() {
   drawDate();
 }
 
+function clearTimers(){
+  if (displayTimeoutRef) {
+    clearInterval(displayTimeoutRef);
+    displayTimeoutRef = null;
+  }
+
+  if (sensorTimeoutRef) {
+    clearInterval(sensorTimeoutRef);
+    sensorTimeoutRef = null;
+  }
+}
+
+function resetDisplayTimeout() {
+  if (displayTimeoutRef) clearInterval(displayTimeoutRef);
+  Bangle.setLCDPower(true);
+
+  displayTimeoutRef = setTimeout(() => {
+    if (Bangle.isLCDOn()) Bangle.setLCDPower(false);
+    clearTimers();
+  }, 1000 * timeout);
+}
+
 // Turn sensors on
 setSensors(1);
 
@@ -273,27 +314,41 @@ Bangle.drawWidgets();
 
 // Draw screen
 drawScreen();
+resetDisplayTimeout();
 
 // Setup callbacks
 Bangle.on('swipe', (sDir) => {
   selectedColor = selectedColor === "blue" ? "orange" : "blue";
-  clearTimeout();
+  resetDisplayTimeout();
   drawScreen();
 });
 
 Bangle.on('HRM', drawHeart);
 
 setWatch(() => {
+  setSensors(1);
+  resetDisplayTimeout();
+}, BTN1, {repeat: true, edge: "falling"});
+
+setWatch(() => {
   setSensors(0);
+  clearTimers();
   Bangle.setLCDMode();
   Bangle.showLauncher();
 }, BTN2, {repeat: false, edge: "falling"});
 
-Bangle.on('lcdPower', (on) => on ? setSensors(1) : setSensors(0));
+Bangle.on('lcdPower', (on) => {
+  if(on) {
+    resetDisplayTimeout();
+  } else {
+    clearTimers();
+    setSensors(0);
+  }
+});
 
 Bangle.on('faceUp', (up) => {
   if (up && !Bangle.isLCDOn()) {
     setSensors(1);
-    Bangle.setLCDPower(true);
+    resetDisplayTimeout();
   }
 });
