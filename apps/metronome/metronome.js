@@ -14,7 +14,6 @@ function setting(key) {
   //define default settings
   const DEFAULTS = {
     'beatsperbar': 4,
-    'buzzintens': 0.75,
   };
   if (!settings) { loadSettings(); }
   return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -53,7 +52,7 @@ function updateScreen() {
   g.clearRect(0, 50, 250, 150);
   changecolor();
   try {
-    Bangle.buzz(50, setting('buzzintens'));
+    Bangle.buzz(50, 0.75);
   }
   catch(err) {
   }
