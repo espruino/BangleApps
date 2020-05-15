@@ -124,7 +124,7 @@ Espruino.Core.Status = {
   hasProgress : function() { return false; },
   incrementProgress : function(amt) {}
 };
-var acorn = (function(){ var exports={};
+var acorn = (function(){ var exports={};var module={};
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
