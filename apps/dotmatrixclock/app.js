@@ -61,10 +61,19 @@ const font5x5 = {
 
 // Char renderer
 const COLORS = {
-  BG: "#0297fe",
-  DARK: "#3b3ce8",
-  LIGHT: "#E9ffff",
+  blue: {
+    BG: "#0297fe",
+    DARK: "#3b3ce8",
+    LIGHT: "#E9ffff",
+  },
+  orange: {
+    BG: "#f7b336",
+    DARK: "#ac721e",
+    LIGHT: "#f6fc0f",
+  }
 };
+
+let selectedColor = "blue";
 
 // Example
 // binToHex(["0111110", "1000000", "1000000", "1111110", "1000001", "1000001", "0111110"])
@@ -95,8 +104,8 @@ function drawGrid(pos /* {x:int, y:int} */, dims /* {rows:int, cols:int} */, cha
     pxlW: 5,
     pxlH: 5,
     gap: 1,
-    offColor: COLORS.DARK,
-    onColor: COLORS.LIGHT
+    offColor: COLORS[selectedColor].DARK,
+    onColor: COLORS[selectedColor].LIGHT
   };
   const pxl = Object.assign({}, defaultOpts, opts);
 
@@ -202,7 +211,7 @@ function drawTime(lastHrs, lastMns, toggle) {
     drawFont(mns, "7x7", 124, 109);
   }
 
-  const color = toggle? COLORS.LIGHT : COLORS.DARK;
+  const color = toggle? COLORS[selectedColor].LIGHT : COLORS[selectedColor].DARK;
 
   // This should toggle on/off per second
   drawPixel({
@@ -240,26 +249,38 @@ function setSensors(state) {
   Bangle.setCompassPower(state);
 }
 
+function drawScreen() {
+  g.setBgColor(COLORS[selectedColor].BG);
+  g.clearRect(0, 24, g.getWidth(), g.getHeight());
+
+  // Draw components
+  drawTitles();
+  drawCompass();
+  drawHeart();
+  drawTime();
+  drawDate();
+}
+
 // Turn sensors on
 setSensors(1);
 
 // Reset screen
 g.clear();
-g.setBgColor(COLORS.BG);
-g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
 // Load and draw widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // Draw screen
-drawTitles();
-drawCompass();
-drawHeart();
-drawTime();
-drawDate();
+drawScreen();
 
 // Setup callbacks
+Bangle.on('swipe', (sDir) => {
+  selectedColor = selectedColor === "blue" ? "orange" : "blue";
+  clearTimeout();
+  drawScreen();
+});
+
 Bangle.on('HRM', drawHeart);
 
 setWatch(() => {
