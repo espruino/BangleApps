@@ -77,7 +77,7 @@ let selectedColor = "blue";
 
 // Example
 // binToHex(["0111110", "1000000", "1000000", "1111110", "1000001", "1000001", "0111110"])
-function binToHex(bins /* array of binary strings */) {
+function binToHex(bins) {
   return bins.map(bin => ("00" + (parseInt(bin, 2).toString(16))).substr(-2).toUpperCase()).join("");
 }
 
@@ -99,7 +99,7 @@ function drawPixel(opts) {
   g.fillRect(opts.x, opts.y, opts.x + opts.w, opts.y + opts.h);
 }
 
-function drawGrid(pos /* {x:int, y:int} */, dims /* {rows:int, cols:int} */, charAsBin, opts /* {pxlW:int, pxlH:int, gap:int} */) {
+function drawGrid(pos, dims, charAsBin, opts) {
   const defaultOpts = {
     pxlW: 5,
     pxlH: 5,
@@ -121,7 +121,7 @@ function drawGrid(pos /* {x:int, y:int} */, dims /* {rows:int, cols:int} */, cha
         y: y,
         w: pxl.pxlW,
         h: pxl.pxlH,
-        color: color
+        color: color,
       });
     }
   }
