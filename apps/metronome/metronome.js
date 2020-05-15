@@ -24,7 +24,6 @@ let settings;
 
 function loadSettings() {
   settings = storage.readJSON(SETTINGS_FILE, 1) || {};
-}
 
 function changecolor() {
   const colors = {
