@@ -8,6 +8,7 @@ This metronome makes your watch blink and vibrate with a given rate.
 * Use `BTN1` to increase the bmp value by one.
 * Use `BTN3` to decrease the bmp value by one.
 * You can change the bpm value any time by tapping the screen or using `BTN1` and `BTN3`.
+* Intensity of buzzing and the beats per bar (default 4) can be changed with the settings-app. The first beat per bar will be marked in red.
 
 ## Attributions
 
