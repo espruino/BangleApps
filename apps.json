@@ -1747,5 +1747,18 @@
       {"name":"dotmatrixclock.app.js","url":"app.js"},
       {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "jbm8b",
+    "name": "Magic 8 Ball",
+    "shortName": "Magic 8 Ball",
+    "icon": "app.png",
+    "description": "A simple fortune telling app",
+    "tags": "game",
+    "storage": [
+      { "name": "jbm8b.app.js", "url": "app.js" },
+      { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
+    ],
+    "version": "0.03"
   }
 ]
