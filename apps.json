@@ -1768,7 +1768,7 @@
     "icon": "BLEcontroller.png",
     "version": "0.01",
     "description": "A configurable controller for BLE robots, with a basic four direction joystick.",
-    "tags": "tools",
+    "tags": "tool,bluetooth",
     "readme": "README.md",
     "allow_emulator":true,
     "storage": [
