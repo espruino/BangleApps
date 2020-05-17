@@ -1,6 +1,6 @@
 // EspruinoTools bundle (https://github.com/espruino/EspruinoTools)
 // Created with https://github.com/espruino/EspruinoWebIDE/blob/gh-pages/extras/create_espruinotools_js.sh
-// Based on EspruinoWebIDE  0.73.4
+// Based on EspruinoWebIDE  0.73.7
 /**
  Copyright 2014 Gordon Williams (gw@pur3.co.uk)
 
@@ -23,6 +23,7 @@ var Espruino;
    *
    * Common processors are:
    *
+   *   jsCodeChanged        - called when the code in the editor changes with {code}
    *   sending              - sending code to Espruino (no data)
    *   transformForEspruino - transform code ready to be sent to Espruino
    *   transformModuleForEspruino({code,name})
@@ -123,6 +124,7 @@ Espruino.Core.Status = {
   hasProgress : function() { return false; },
   incrementProgress : function(amt) {}
 };
+var acorn = (function(){ var exports={};var module={};
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -3988,6 +3990,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
+return exports;})();
 /**
  Copyright 2014 Gordon Williams (gw@pur3.co.uk)
 
@@ -4123,7 +4126,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
       } else if (isIn(chNum,ch)) { // NUMBER
         type = "NUMBER";
         var chRange = chNum;
-        if (ch=="0") { // Handle
+        if (ch=="0") { // Handle 
           s+=ch;
           nextCh();
           if ("xXoObB".indexOf(ch)>=0) {
@@ -4132,12 +4135,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
             if (ch=="x" || ch=="X") chRange="0123456789ABCDEFabcdef";
             s+=ch;
             nextCh();
-          }
+          } 
         }
         while (isIn(chRange,ch) || ch==".") {
           s+=ch;
           nextCh();
-        }
+        } 
       } else if (isIn(chQuotes,ch)) { // STRING
         type = "STRING";
         var q = ch;
@@ -4507,8 +4510,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
     fileLoader.click();
   }
 
-  /* Save a file with a save file dialog. callback(savedFileName) only called in chrome app case when we knopw the filename*/
-  function fileSaveDialog(data, filename, callback) {
+  // Save a file with a save file dialog
+  function fileSaveDialog(data, filename) {
     function errorHandler() {
       Espruino.Core.Notifications.error("Error Saving", true);
     }
@@ -4524,7 +4527,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
           writer.onwriteend = function(e) {
             writer.onwriteend = function(e) {
               console.log('FileWriter: complete');
-              if (callback) callback(writableFileEntry.name);
             };
             console.log('FileWriter: writing');
             writer.write(blob);
@@ -4535,8 +4537,10 @@ Object.defineProperty(exports, '__esModule', { value: true });
         }, errorHandler);
       });
     } else {
+      var rawdata = new Uint8Array(data.length);
+      for (var i=0;i<data.length;i++) rawdata[i]=data.charCodeAt(i);
       var a = document.createElement("a"),
-          file = new Blob([data], {type: "text/plain"});
+          file = new Blob([rawdata.buffer], {type: "text/plain"});
       var url = URL.createObjectURL(file);
       a.href = url;
       a.download = filename;
@@ -4765,6 +4769,16 @@ Object.defineProperty(exports, '__esModule', { value: true });
         console.log("GET chrome.storage.sync = "+JSON.stringify(value));
         callback(value);
       });
+    } else if (typeof window !== 'undefined' && window.localStorage) {
+      var data = {};
+      var value = window.localStorage.getItem("CONFIG");
+      console.log("GET window.localStorage = "+JSON.stringify(value));
+      try {
+        data = JSON.parse(value);
+      } catch (e) {
+        console.log("Invalid config data");
+      }
+      callback(data);
     } else if (typeof document != "undefined") {
       var data = {};
       var cookie = document.cookie;
@@ -4786,8 +4800,11 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
   function _set(data) {
     if (typeof chrome !== 'undefined' && chrome.storage) {
-      console.log("SET chrome.storage.sync = "+JSON.stringify(data));
+      console.log("SET chrome.storage.sync = "+JSON.stringify(data,null,2));
       chrome.storage.sync.set({ CONFIGS : data });
+    } else if (typeof window !== 'undefined' && window.localStorage) {
+      console.log("SET window.localStorage = "+JSON.stringify(data,null,2));
+      window.localStorage.setItem("CONFIG",JSON.stringify(data));
     } else if (typeof document != "undefined") {
       document.cookie = "CONFIG="+btoa(JSON.stringify(data));
     }
@@ -4811,7 +4828,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
     addSection("General", { sortOrder:100, description: "General Web IDE Settings" });
     addSection("Communications", { sortOrder:200, description: "Settings for communicating with the Espruino Board" });
     addSection("Board", { sortOrder:300, description: "Settings for the Espruino Board itself" });
-
   }
 
   function add(name, options) {
@@ -5076,6 +5092,7 @@ To add a new serial device, you must add an object to
       }
     }
 
+    var portInfo = { port:serialPort };
     connectionInfo = undefined;
     flowControlXOFF = false;
     currentDevice = portToDevice[serialPort];
@@ -5088,7 +5105,6 @@ To add a new serial device, you must add an object to
         connectionInfo = cInfo;
         connectedPort = serialPort;
         console.log("Connected", cInfo);
-        var portInfo = { port:serialPort };
         if (connectionInfo.portName)
           portInfo.portName = connectionInfo.portName;
         Espruino.callProcessor("connected", portInfo, function() {
@@ -5127,8 +5143,8 @@ To add a new serial device, you must add an object to
       sendingBinary = false;
       flowControlXOFF = false;
 
-      Espruino.callProcessor("disconnected", undefined, function() {
-        disconnectCallback();
+      Espruino.callProcessor("disconnected", portInfo, function() {
+        disconnectCallback(portInfo);
       });
     });
   };
@@ -5608,9 +5624,6 @@ To add a new serial device, you must add an object to
 
     // When code is sent to Espruino, search it for modules and add extra code required to load them
     Espruino.addProcessor("transformForEspruino", function(code, callback) {
-      if (Espruino.Config.ROLLUP) {
-        return loadModulesRollup(code, callback);
-      }
       loadModules(code, callback);
     });
 
@@ -5787,24 +5800,8 @@ To add a new serial device, you must add an object to
         callback(loadedModuleData.join("\n") + "\n" + code);
       });
     }
-  }
+  };
 
-  function loadModulesRollup(code, callback) {
-    rollupTools.loadModulesRollup(code)
-      .then(generated => {
-        const minified = generated.code;
-        console.log('rollup: '+minified.length+' bytes');
-
-        // FIXME: needs warnings?
-        Espruino.Core.Notifications.info('Rollup no errors. Bundling ' + code.length + ' bytes to ' + minified.length + ' bytes');
-        callback(minified);
-      })
-      .catch(err => {
-        console.log('rollup:error', err);
-        Espruino.Core.Notifications.error("Rollup errors - Bundling failed: " + String(err).trim());
-        callback(code);
-      });
-  }
 
   Espruino.Core.Modules = {
     init : init
@@ -6436,18 +6433,18 @@ To add a new serial device, you must add an object to
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ------------------------------------------------------------------
   Try and get any URLS that are from GitHub
  ------------------------------------------------------------------
 **/
 "use strict";
 (function(){
-
+  
   function init() {
-    Espruino.addProcessor("getURL", getGitHub);
+    Espruino.addProcessor("getURL", getGitHub);      
   }
-
+  
   function getGitHub(data, callback) {
     var match = data.url.match(/^https?:\/\/github.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)$/);
     if (match) {
@@ -6457,7 +6454,7 @@ To add a new serial device, you must add an object to
           branch : match[3],
           path : match[4]
           };
-
+      
       var url = "https://raw.githubusercontent.com/"+git.owner+"/"+git.repo+"/"+git.branch+"/"+git.path;
       console.log("Found GitHub", JSON.stringify(git));
       callback({url: url});
@@ -6484,6 +6481,7 @@ To add a new serial device, you must add an object to
 (function(){
   if (typeof acorn == "undefined") {
     console.log("pretokenise: needs acorn, disabling.");
+    return;
   }
 
   function init() {
@@ -6587,11 +6585,12 @@ To add a new serial device, you must add an object to
         var tp = "?";
         if (tk.type.label=="template" || tk.type.label=="string") tp="STRING";
         if (tk.type.label=="num") tp="NUMBER";
-        if (tk.type.keyword) tp="ID";
+        if (tk.type.keyword || tk.type.label=="name") tp="ID";
+        if (tp=="?" && tk.start+1==tk.end) tp="CHAR";
         return {
           startIdx : tk.start,
           endIdx : tk.end,
-          str : code.substr(tk.start, tk.end),
+          str : code.substring(tk.start, tk.end),
           type : tp
         };
       }};
@@ -6802,5 +6801,7 @@ Espruino.transform = function(code, options) {
   });
 };
 
+if ("undefined"==typeof document) Espruino.init();
 if ("undefined"!=typeof module)
   module.exports = Espruino;
+

@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.16",
+    "version":"0.17",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -78,7 +78,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -108,7 +108,7 @@
   { "id": "mclock",
     "name": "Morphing Clock",
     "icon": "clock-morphing.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "7 segment clock that morphs between minutes and hours",
     "tags": "clock",
     "type":"clock",
@@ -168,7 +168,7 @@
     "name": "Image background clock",
     "shortName":"Image Clock",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A clock with an image as a background",
     "tags": "clock",
     "type" : "clock",
@@ -589,7 +589,7 @@
     "id": "ncstart",
     "name": "NCEU Startup",
     "icon": "start.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "NodeConfEU 2019 'First Start' Sequence",
     "tags": "start,welcome",
     "storage": [
@@ -1272,7 +1272,7 @@
     "name": "Battery Chart",
     "shortName":"Battery Chart",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "readme": "README.md",
     "description": "A widget and an app for recording and visualizing battery percentage over time.",
     "tags": "app,widget,battery,time,record,chart,tool",
@@ -1421,7 +1421,7 @@
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
-    "version": "0.04",
+    "version": "0.05",
     "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "tags": "tool",
@@ -1435,7 +1435,8 @@
         "name": "metronome.img",
         "url": "metronome-icon.js",
         "evaluate": true
-      }
+      },
+      {"name":"metronome.settings.js","url":"settings.js"}
     ]
   },
   { "id": "blackjack",
@@ -1469,7 +1470,7 @@
     "name": "Round clock with seconds,  minutes and date",
     "shortName":"Round Clock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
@@ -1572,7 +1573,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1591,12 +1592,10 @@
       {
         "name": "largeclock.settings.js",
         "url": "settings.js"
-      },
-      {
-        "name": "largeclock.json",
-        "url": "largeclock.json",
-        "evaluate": true
       }
+    ],
+    "data": [
+      {"name":"largeclock.json"}
     ]
   },
   { "id": "smtswch",
@@ -1615,6 +1614,18 @@
       {"name":"light-off.img","url":"light-off.js","evaluate":true},
       {"name":"switch-on.img","url":"switch-on.js","evaluate":true},
       {"name":"switch-off.img","url":"switch-off.js","evaluate":true}
+    ]
+  },
+  { "id": "miplant",
+    "name": "Xiaomi Plant Sensor",
+    "shortName":"Mi Plant",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Reads and displays data from Xiaomi bluetooth plant moisture sensors",
+    "tags": "xiaomi,mi,plant,ble,bluetooth",
+    "storage": [
+      {"name":"miplant.app.js","url":"app.js"},
+      {"name":"miplant.img","url":"app-icon.js","evaluate":true}
     ]
   },
   {
@@ -1699,7 +1710,7 @@
     "version": "0.01",
     "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
     "tags": "clock",
-    "readme": "README.md", 
+    "readme": "README.md",
     "type": "clock",
     "allow_emulator":true,
     "storage": [
@@ -1708,7 +1719,46 @@
       { "name": "gallifr.settings.js", "url": "settings.js" }
     ],
     "data": [
-      {"name":"app.json"}
+      {"name":"gallifr.json"}
     ]
+  },
+  { "id": "rndmclk",
+    "name": "Random Clock Loader",
+    "icon": "rndmclk.png",
+    "version":"0.02",
+    "description": "Load a different clock whenever the LCD is switched on.",
+    "readme": "README.md",
+    "tags": "widget,clock",
+    "type":"widget",
+    "storage": [
+      {"name":"rndmclk.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "dotmatrixclock",
+    "name": "Dotmatrix Clock",
+    "icon": "dotmatrixclock.png",
+    "version":"0.01",
+    "description": "A clear white-on-blue dotmatrix simulated clock",
+    "tags": "clock,dotmatrix,retro",
+    "type": "clock",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"dotmatrixclock.app.js","url":"app.js"},
+      {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "jbm8b",
+    "name": "Magic 8 Ball",
+    "shortName": "Magic 8 Ball",
+    "icon": "app.png",
+    "description": "A simple fortune telling app",
+    "tags": "game",
+    "storage": [
+      { "name": "jbm8b.app.js", "url": "app.js" },
+      { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
+    ],
+    "version": "0.03"
   }
 ]

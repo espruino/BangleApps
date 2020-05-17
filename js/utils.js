@@ -37,7 +37,10 @@ function httpGet(url) {
     });
     oReq.addEventListener("error", () => reject());
     oReq.addEventListener("abort", () => reject());
-    oReq.open("GET", url);
+    oReq.open("GET", url, true);
+    oReq.onerror = function () {
+      reject("HTTP Request failed");
+    };
     oReq.send();
   });
 }

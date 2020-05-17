@@ -1,0 +1,2 @@
+0.01: New widget
+0.02: Less invasive, change default clock setting instead of directly loading the new clock (no longer breaks Gadgetbridge notifications)

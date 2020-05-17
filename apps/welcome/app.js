@@ -285,7 +285,7 @@ setWatch(()=>{
   if (sceneNumber == scenes.length-1) {
     load();
   }
-}, BTN2, {repeat:true,edge:"rising"});
+}, BTN2, {repeat:true,edge:"falling"});
 setWatch(()=>move(-1), BTN1, {repeat:true});
 
 (function migrateSettings(){

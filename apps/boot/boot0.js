@@ -21,20 +21,22 @@ if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
 // Don't disconnect if something is already connected to us
 if (s.ble===false && !NRF.getSecurityStatus().connected) NRF.sleep();
 // Set time, vibrate, beep, etc
-if (!s.vibrate) Bangle.buzz=Promise.resolve;
-if (s.beep===false) Bangle.beep=Promise.resolve;
-else if (s.beep=="vib") Bangle.beep = function (time, freq) {
-  return new Promise(function(resolve) {
-    if ((0|freq)<=0) freq=4000;
-    if ((0|time)<=0) time=200;
-    if (time>5000) time=5000;
-    analogWrite(D13,0.1,{freq:freq});
-    setTimeout(function() {
-      digitalWrite(D13,0);
-      resolve();
-    }, time);
-  });
-};
+if (!Bangle.F_BEEPSET) {
+  if (!s.vibrate) Bangle.buzz=Promise.resolve;
+  if (s.beep===false) Bangle.beep=Promise.resolve;
+  else if (s.beep=="vib") Bangle.beep = function (time, freq) {
+    return new Promise(function(resolve) {
+      if ((0|freq)<=0) freq=4000;
+      if ((0|time)<=0) time=200;
+      if (time>5000) time=5000;
+      analogWrite(D13,0.1,{freq:freq});
+      setTimeout(function() {
+        digitalWrite(D13,0);
+        resolve();
+      }, time);
+    });
+  };
+}
 Bangle.setLCDTimeout(s.timeout);
 if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
