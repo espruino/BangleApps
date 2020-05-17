@@ -1760,5 +1760,20 @@
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
     ],
     "version": "0.03"
+  },
+{
+    "id": "BLEcontroller",
+    "name": "BLE Robot Controller with Joystick",
+    "shortName": "BLE Controller",
+    "icon": "BLEcontroller.png",
+    "version": "0.01",
+    "description": "A configurable controller for BLE robots, including a basic joystick.",
+    "tags": "tools",
+    "readme": "README.md",
+    "allow_emulator":true,
+    "storage": [
+      { "name": "BLEcontroller.app.js", "url": "app.js" },
+      { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
+    ]
   }
 ]
