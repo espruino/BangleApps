@@ -13,6 +13,7 @@
   };
 
   function gbSend(message) {
+    Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
 
