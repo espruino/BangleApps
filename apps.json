@@ -331,10 +331,11 @@
   { "id": "gpsnav",
     "name": "GPS Navigation",
     "icon": "icon.png",
-    "version":"0.01",
-    "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording",
+    "version":"0.03",
+    "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording, now with waypoint editor",
     "tags": "tool,outdoors,gps",
     "readme": "README.md",
+    "interface":"waypoints.html",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.js"},
       {"name":"waypoints.json","url":"waypoints.json","evaluate":false},

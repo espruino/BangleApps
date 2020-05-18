@@ -1,6 +1,7 @@
 const Yoff = 40;
 var pal2color = new Uint16Array([0x0000,0xffff,0x07ff,0xC618],0,2);
 var buf = Graphics.createArrayBuffer(240,50,2,{msb:true});
+var candraw = true;
 
 function flip(b,y) {
  g.drawImage({width:240,height:50,bpp:2,buffer:b.buffer, palette:pal2color},0,y);
@@ -12,6 +13,7 @@ var wpindex=0;
 const labels = ["N","NE","E","SE","S","SW","W","NW"];
 
 function drawCompass(course) {
+  if (!candraw) return;
   buf.setColor(1);
   buf.setFont("Vector",16);
   var start = course-90;
@@ -143,7 +145,7 @@ function onGPS(fix) {
     speed  = isNaN(fix.speed) ? speed : fix.speed;
     satellites = fix.satellites;
   }
-  if (Bangle.isLCDOn()) {
+  if (candraw) {
     if (fix!==undefined && fix.fix==1){
       dist = distance(fix,wp);
       if (isNaN(dist)) dist = 0;
@@ -156,27 +158,18 @@ function onGPS(fix) {
 
 var intervalRef;
 
-function clearTimers() {
+function stopdraw() {
+  candraw=false;
   if(intervalRef) {clearInterval(intervalRef);}
 }
 
 function startTimers() {
+  candraw=true;
   intervalRefSec = setInterval(function() {
     newHeading(course,heading);
     if (course!=heading) drawCompass(heading);
   },200);
 }
-
-Bangle.on('lcdPower',function(on) {
-  if (on) {
-    g.clear();
-    Bangle.drawWidgets();
-    startTimers();
-    drawAll();
-  }else {
-    clearTimers();
-  }
-});
 
 function drawAll(){
   g.setColor(1,0.5,0.5);
@@ -185,6 +178,42 @@ function drawAll(){
   drawN();
   drawCompass(heading);
 }
+
+function startdraw(){
+  g.clear();
+  Bangle.drawWidgets();
+  startTimers();
+  drawAll();
+}
+
+function setButtons(){
+  setWatch(nextwp.bind(null,-1), BTN1, {repeat:true,edge:"falling"});
+  setWatch(doselect, BTN2, {repeat:true,edge:"falling"});
+  setWatch(nextwp.bind(null,1), BTN3, {repeat:true,edge:"falling"});
+};
+
+var SCREENACCESS = {
+      withApp:true,
+      request:function(){
+        this.withApp=false;
+        stopdraw();
+        clearWatch();
+      },
+      release:function(){
+        this.withApp=true;
+        startdraw(); 
+        setButtons();
+      }
+} 
+ 
+Bangle.on('lcdPower',function(on) {
+  if (!SCREENACCESS.withApp) return;
+  if (on) {
+    startdraw();
+  } else {
+    stopdraw();
+  }
+});
 
 var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
 wp=waypoints[0];
@@ -199,8 +228,8 @@ function nextwp(inc){
 }
 
 function doselect(){
-  if (selected && waypoints[wpindex].mark===undefined && savedfix.fix) {
-     waypoints[wpindex] ={mark:1, name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
+  if (selected && waypoints[wpindex].lat===undefined && savedfix.fix) {
+     waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
      require("Storage").writeJSON("waypoints.json", waypoints);
   }
@@ -218,7 +247,4 @@ drawAll();
 startTimers();
 Bangle.on('GPS', onGPS);
 // Toggle selected
-setWatch(nextwp.bind(null,-1), BTN1, {repeat:true,edge:"falling"});
-setWatch(doselect, BTN2, {repeat:true,edge:"falling"});
-setWatch(nextwp.bind(null,1), BTN3, {repeat:true,edge:"falling"});
-
+setButtons();
