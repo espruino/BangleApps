@@ -1761,5 +1761,17 @@
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
     ],
     "version": "0.03"
+  },
+  { "id": "widviz",
+    "name": "Widget Visibility Widget",
+    "shortName":"Viz Widget",
+    "icon": "eye.png",
+    "version":"0.01",
+    "description": "Touch left screen to hide top bar widgets, right screen to redisplay. Will not work with apps that use BTN4 & BTN5.",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widviz.wid.js","url":"widget.js"}
+    ]
   }
 ]
