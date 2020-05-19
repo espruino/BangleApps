@@ -111,6 +111,7 @@ function reset(value) {
   state = value === 0 ? "unset" : "set";
 }
 
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 function addWatch() {
   clearWatch();
   setWatch(changeState, BTN1, {
