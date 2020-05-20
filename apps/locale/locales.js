@@ -145,10 +145,10 @@ var locales = {
     "fr_FR": {
         lang: "fr_FR",
         decimal_point: ",",
-        thousands_sep: ".",
+        thousands_sep: " ",
         currency_symbol: "\x80",
         int_curr_symbol: "EUR",
-        speed: "kmh",
+        speed: "km/h",
         distance: { 0: "m", 1: "km" },
         temperature: "°C",
         ampm: { 0: "", 1: "" },
