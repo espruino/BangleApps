@@ -1,21 +1,15 @@
 /*
-
 ==========================================================
-
 Simple event based robot controller that enables robot 
 to switch into automatic or manual control modes. Behaviours
 are controlled via a simple finite state machine.
-
 In automatic mode the
 robot will look after itself.  In manual mode, the watch
 will provide simple forward, back, left and right commands.
 The messages will be transmitted to a partner BLE Espruino
 using BLE
-
 Written by Richard Hopkins, May 2020
-
 ==========================================================
-
 declare global variables for watch button statuses */
 top_btn = false;
 middle_btn = false;
@@ -23,10 +17,10 @@ left_btn= false; // the left side of the touch screen
 right_btn = false; // the right side of the touch screen
 bottom_btn = false;
 
+msgNum = 0; // message number
+
 /* 
-
 CONFIGURATION AREA - STATE VARIABLES
-
 declare global variables for the toggle button
 statuses; if you add an additional toggle button
 you should declare it and initiase it here */
@@ -35,24 +29,32 @@ var status_auto = {value: false};
 var status_mic = {value: true};
 var status_spk = {value: true};
 
-/* trsnsmit message */
+/* trsnsmit message
+where
+s = first character of state,
+o = first three character of object name
+v = value of state.object
+*/
+
 const transmit = (state,object,status) => {
-  message = {
-    state: state,
-    obj: object,
-    val: status,
+  msgNum ++;
+  msg = {
+    n: msgNum.toString().slice(-4),
+    s: state.substr(0,4),
+    o: object.substr(0,4),
+    v: status.substr(0.4),
   };
-  print(message);
-  return JSON.stringify(message);
+  message= msg.n + "," + msg.s + "," + msg.o + "," + msg.v;
+  NRF.setAdvertising({},{
+    showName: false,
+    manufacturer: 0x0590,
+    manufacturerData: JSON.stringify(message)});
 };
 
 /*
-
 CONFIGURATION AREA - ICON DEFINITIONS
-
 Retrieve 30px PNG icons from:
 https://icons8.com/icon/set/speak/ios-glyphs
-
 Create icons using:
 https://www.espruino.com/Image+Converter
 Use compression: true
@@ -60,7 +62,6 @@ Transparency:  true
 Diffusion: flat
 Colours: 16bit RGB
 Ouput as: Image Object
-
 Add an additional element to the icons array
 with a unique name and the data from the Image Object
 */
@@ -133,20 +134,16 @@ const drawIcon = (name) => {
 };
 
 /*
-
 CONFIGURATION AREA - BUTTON DEFINITIONS
-
 for a simple button, just define a primary colour
 and an icon name from the icon array and
 the text to display beneath the button
-
 for toggle buttons, additionally provide secondary
 colours, icon name and text. Also provide a reference
 to a global variable for the value of the button.
 The global variable should be declared at the start of
 the program and it may be adviable to use the 'status_name'
 format to ensure it is clear.
-
 */
 var joystickBtn = {
   primary_colour: 0x653E,
@@ -200,18 +197,14 @@ var spkBtn = {
   };
 
 /*
-
 CONFIGURATION AREA - SCREEN DEFINITIONS
-
 a screen can have a button (as defined above)
 on the left and/or the right of the screen.
-
 in adddition a screen can optionally have
 an icon for each of the three buttons on
 the left hand side of the screen.  These
 are defined as btn1, bt2 and bt3.  The
 values are names from the icon array.
-
 */
 const menuScreen = {
   left: autoBtn,
@@ -234,11 +227,9 @@ const commsScreen = {
 };
 
 /* base state definition 
-
 Each of the screens correspond to a state;
 this class provides a constuctor for each 
 of the states
-
 */
 class State {
   constructor(params) {
@@ -249,39 +240,28 @@ class State {
 }
 
 /*
-
 CONFIGURATION AREA - BUTTON BEHAVIOURS/STATE TRANSITIONS
-
 This area defines how each screen behaves.
-
 Each screen corresponds to a different State of the
 state machine.  This makes it much easier to isolate
 behaviours between screens.
-
 The state value is transmitted whenever a button is pressed
 to provide context (so the receiving device, knows which
 button was pressed on which screen).
-
 The screens are defined above.
-
 The events section identifies if a particular button has been
 pressed and released on the screen and an action can then be taken.
-
 The events function receives a notification from a mySetWatch which
 provides an event object that identifies which button and whether
 it has been pressed down or released.  Actions can then be taken.
 The events function will always return a State object.
-
 If the events function returns different State from the current
 one, then the state machine will change to that new State and redrsw
 the screen appropriately.
-
 To add in additional capabilities for button presses, simply add
 an additional 'if' statement.
-
 For toggle buttons, the value of the sppropiate status object is
 inversed and the new value transmitted.
-
 */
 
 /* The Home State/Page is where the application beings */
@@ -352,19 +332,15 @@ const onOff= status => status ? "on" : "off";
 
 /* create watching functions that will change the global
 button status when pressed or released 
-
 This is actuslly the hesrt of the program.  When a button
 is not being pressed, nothing is happening (no loops).
 This makes the progrsm more battery efficient.
-
 When a setWatch event is raised, the custom callbacks defined
 here will be called.  These then fired as events to the current
 state/screen of the state mschine.
-
 Some events, will result in the stste of the state machine
 chsnging, which is why the screen is redrswn after each 
 button press.
-
 */
 const setMyWatch = (params) => {
   setWatch(() => {
@@ -378,7 +354,7 @@ const setMyWatch = (params) => {
 */
 const buttons = [
   {bool : bottom_btn, label : "bottom",btn : BTN3},
-  {bool : middle_btn, label : "mdiddle",btn : BTN2},
+  {bool : middle_btn, label : "middle",btn : BTN2},
   {bool : top_btn, label : "top",btn : BTN1},
   {bool : left_btn, label : "left",btn : BTN4},
   {bool : right_btn, label : "right",btn : BTN5}
