@@ -20,18 +20,15 @@
     saved=null;
   }
   
-  function setup(){
-    setWatch(hide, BTN4, {repeat:true,edge:"rising"});
-    setWatch(reveal, BTN5, {repeat:true,edge:"rising"});
-  }
-  
   function draw(){
     var img = E.toArrayBuffer(atob("GBgBAAAAAAAAAAAAAAAAAH4AAf+AB4HgDgBwHDw4OH4cMOcMYMMGYMMGMOcMOH4cHDw4DgBwB4HgAf+AAH4AAAAAAAAAAAAAAAAA"));
     g.setColor(0x07ff);
     g.drawImage(img,this.x,this.y);
   }
     
-  WIDGETS["viz"] ={area:"tl", width:24,draw:draw,setup:setup};
-  setup();
-    
+  WIDGETS["viz"] ={area:"tl", width:24,draw:draw};
+
+  Bangle.on('swipe',(dir)=>{
+    if (dir<0) hide(); else reveal();
+  });    
 })();
