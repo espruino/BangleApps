@@ -1,0 +1,47 @@
+{
+    "env": {
+        "shared-node-browser": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+        "require": "readonly",
+        "process": "readonly",
+        "g": "writable",
+        "E": "readonly",
+        "Bangle": "readonly",
+        "Modules": "readonly",
+        "clearWatch": "readonly",
+        "setWatch": "readonly",
+        "getTime": "readonly",
+        "setTime": "readonly",
+        "atob": "readonly",
+        "load": "readonly",
+        "save": "readonly",
+        "BTN1": "readonly",
+        "BTN2": "readonly",
+        "BTN3": "readonly",
+        "BTN4": "readonly",
+        "BTN5": "readonly",
+        "NRF": "readonly",
+        "WIDGETS": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 11
+    },
+    "rules": {
+        "linebreak-style": "off",
+        "no-case-declarations": "off",
+        "no-constant-condition": "off",
+        "no-delete-var": "off",
+        "no-empty": "off",
+        "no-extra-semi": "off",
+        "no-inner-declarations": "off",
+        "no-mixed-spaces-and-tabs": "off",
+        "no-octal": "off",
+        "no-prototype-builtins": "off",
+        "no-redeclare": "off",
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "no-useless-escape": "off"
+    }
+}
