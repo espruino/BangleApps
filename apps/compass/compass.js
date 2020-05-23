@@ -12,7 +12,7 @@ function arrow(r,c) {
     120+60*Math.sin(r), 130-60*Math.cos(r),
     120+10*Math.sin(r+p), 130-10*Math.cos(r+p),
     120+10*Math.sin(r+-p), 130-10*Math.cos(r-p),
-    ]);
+  ]);
 }
 
 var oldHeading = 0;
