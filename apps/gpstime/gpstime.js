@@ -47,7 +47,7 @@ Bangle.on('GPS',function(f) {
   g.drawString(t[4],120,185); // time
   if (fix.time) {
     // timezone
-    var tz = (new Date()).getTimezoneOffset()/60;
+    var tz = (new Date()).getTimezoneOffset()/-60;
     if (tz==0) tz="UTC";
     else if (tz>0) tz="UTC+"+tz;
     else tz="UTC"+tz;
