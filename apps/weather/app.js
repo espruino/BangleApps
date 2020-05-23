@@ -50,5 +50,5 @@
   }
 
   // Show launcher when middle button pressed
-  setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: 'falling'})
+  setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: 'falling'});
 })()

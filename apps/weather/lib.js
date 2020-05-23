@@ -1,13 +1,13 @@
 exports = {
   save: weather => {
-    let json = require('Storage').readJSON('weather.json')||{}
-    json.weather = Object.assign({}, weather) // don't mutate GB events
-    delete json.weather.t // don't save the event type (if present)
-    require('Storage').write('weather.json', json)
+    let json = require('Storage').readJSON('weather.json')||{};
+    json.weather = Object.assign({}, weather); // don't mutate GB events
+    delete json.weather.t; // don't save the event type (if present)
+    require('Storage').write('weather.json', json);
   },
   load: () => {
-    let json = require('Storage').readJSON('weather.json')||{}
-    return json.weather
+    let json = require('Storage').readJSON('weather.json')||{};
+    return json.weather;
   },
   drawIcon: (cond, x, y, r) => {
     function drawSun(x, y, r) {
@@ -171,6 +171,6 @@ exports = {
       return drawMist;
     }
 
-    chooseIcon(cond)(x, y, r)
+    chooseIcon(cond)(x, y, r);
   },
 }
