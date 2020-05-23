@@ -5,8 +5,7 @@ const width = g.getWidth() - 2*offset;
 const height = g.getHeight() - 2*offset;
 const rowHeight = height/4;
 
-settings = require("Storage").readJSON("berlin-clock.json", 1);
-const show_date = settings.show_date || false;
+const show_date = (require('Storage').readJSON('berlin-clock.json', 1) || {})['showdate'];
 
 rowlights = [];
 
