@@ -9,7 +9,8 @@
       '< Back': back,
       'Show Date': {
         value: settings.show_date||false,
-        onchange: (m) => {save('show_date', m)}
+        format: v => v?'On':'Off',
+        onchange: v => {save('show_date', v)}
       }   
     };
     E.showMenu(appMenu)

@@ -12,7 +12,6 @@ rowlights = [];
 
 function drawBerlinClock() {
     g.clear();
-
     var now = new Date();
     if (show_date) {
       var yr = now.getFullYear();
@@ -20,6 +19,7 @@ function drawBerlinClock() {
       var day = now.getDate();
       var dateString=`${yr}-${month<10?'0':''}${month}-${day<10?'0':''}${day}`;  
       var strWidth = g.stringWidth(dateString);
+      g.setColor(1,1,1);
       g.drawString(dateString,(g.getWidth()-strWidth)/2,height+offset+2);
     }
     rowlights[0] = Math.floor(now.getHours() / 5);
