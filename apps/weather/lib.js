@@ -3,6 +3,7 @@ exports = {
     let json = require('Storage').readJSON('weather.json')||{};
     json.weather = Object.assign({}, weather); // don't mutate GB events
     delete json.weather.t; // don't save the event type (if present)
+    json.weather.time = Date.now();
     require('Storage').write('weather.json', json);
   },
   load: () => {

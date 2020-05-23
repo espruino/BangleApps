@@ -1,4 +1,12 @@
 (() => {
+  function formatDuration(millis) {
+    let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");
+    if (millis < 60000) return pluralize(Math.floor(millis/1000), "second");
+    if (millis < 3600000) return pluralize(Math.floor(millis/60000), "minute");
+    if (millis < 86400000) return pluralize(Math.floor(millis/3600000), "hour");
+    return pluralize(Math.floor(millis/86400000), "day");
+  }
+
   function draw(w) {
     g.reset();
     g.setColor(0).fillRect(0, 24, 239, 239);
@@ -30,20 +38,49 @@
     g.setFont("6x8", 1).setFontAlign(0, 0, 0);
     g.drawString(w.txt.charAt(0).toUpperCase()+w.txt.slice(1), 120, 190);
 
+    drawUpdateTime(w);
+
     g.flip();
+  }
+
+  let updateTime = undefined;
+
+  function drawUpdateTime(w) {
+    if (!updateTime) return;
+    let text = `Last update received ${formatDuration(Date.now() - updateTime)} ago`;
+    g.reset();
+    g.setColor(0).fillRect(0, 202, 239, 210);
+    g.setColor(-1).setFont("6x8", 1).setFontAlign(0, 0, 0);
+    g.drawString(text, 120, 206);
   }
 
   const _GB = global.GB;
   global.GB = (event) => {
-    if (event.t==="weather") draw(event);
+    if (event.t==="weather") {
+      updateTime = Date.now();
+      draw(event);
+    }
     if (_GB) setTimeout(_GB, 0, event);
   };
+
+  let interval = setInterval(drawUpdateTime, 1000);
+  Bangle.on('lcdPower', (on) => {
+    if (interval) {
+      clearInterval(interval);
+      interval = undefined;
+    }
+    if (on) {
+      drawUpdateTime();
+      interval = setInterval(drawUpdateTime, 1000);
+    }
+  });
 
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
   const weather = require('weather').load();
   if (weather) {
+    updateTime = weather.time;
     draw(weather);
   } else {
     E.showMessage('Weather unknown\n\nIs Gadgetbridge\nconnected?');
