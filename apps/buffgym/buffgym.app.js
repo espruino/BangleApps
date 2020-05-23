@@ -248,7 +248,7 @@ function getWorkoutIndex() {
 function buildWorkout(fName) {
   const Workout = require("buffgym-workout.js");
   const workoutJSON = require("Storage").readJSON(fName);
-  const workout = Workout.fromJSON(workoutJSON);
+  const workout = Workout.fromJSON(workoutJSON, redraw);
 
   return workout;
 }
