@@ -1777,7 +1777,7 @@
   { 
     "id": "pizzatimer",
     "name": "Pizza Timer",
-    "shortName":"PTimer",
+    "shortName":"Pizza Timer",
     "icon": "pizza.png",
     "version":"0.01",
     "description": "A timer app for when you cook Pizza. Some say it can also time other things",

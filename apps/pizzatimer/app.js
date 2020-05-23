@@ -226,7 +226,6 @@ function countdown() {
 
   if (countDownFinished()) {
     unsetDrawInterval();
-    g.flip();
     alertCountdownFinished();
   }
 }
@@ -240,8 +239,6 @@ function unsetDrawInterval() {
 }
 
 function startMenuScene() {
-  g.flip();
-  Bangle.buzz();
   setupMenuWatches();
   unsetDrawInterval();
   menu();
