@@ -1,29 +1,42 @@
-// place your const, vars, functions or classes here
-fields = [ 4 , 4 , 11 , 4 ];
-width = g.getWidth();
-height = g.getHeight();
-rowHeight = height/4;
+// Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
+const fields = [ 4 , 4 , 11 , 4 ];
+const offset = 20; 
+const width = g.getWidth() - 2*offset;
+const height = g.getHeight() - 2*offset;
+const rowHeight = height/4;
+
+//const settings = require("Storage").readJSON("berlin-clock.json", 1);
+const show_date = true; // settings.show_date || true;
+
 rowlights = [];
 
 function drawBerlinClock() {
+    g.clear();
+
     var now = new Date();
+    if (show_date) {
+      var yr = now.getFullYear();
+      var month = now.getMonth()+1;
+      var day = now.getDate();
+      var dateString=`${yr}-${month<10?'0':''}${month}-${day<10?'0':''}${day}`;  
+      var strWidth = g.stringWidth(dateString);
+      g.drawString(dateString,(g.getWidth()-strWidth)/2,height+offset+2);
+    }
     rowlights[0] = Math.floor(now.getHours() / 5);
     rowlights[1] = now.getHours() % 5;
     rowlights[2] = Math.floor(now.getMinutes() / 5);
     rowlights[3] = now.getMinutes() % 5;
-
-    g.clear();
-
-    g.drawRect(0,0,width,height);
+  
+    g.drawRect(offset,offset,width+offset,height+offset);
     for (row = 0 ; row < 4 ; row++) {
       nfields = fields[row];
       boxWidth = width/nfields;
 
       for (col = 0 ; col < nfields ; col++) {
-        x1 = col*boxWidth;
-        y1 = row*rowHeight;
-        x2 = (col+1)*boxWidth;
-        y2 = (row+1)*rowHeight;
+        x1 = col*boxWidth + offset ;
+        y1 = row*rowHeight + offset;
+        x2 = (col+1)*boxWidth + offset;
+        y2 = (row+1)*rowHeight + offset;
 
         g.setColor(1,1,1);
         g.drawRect(x1,y1,x2,y2);
