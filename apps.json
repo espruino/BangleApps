@@ -892,7 +892,7 @@
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
-    "data": [ 
+    "data": [
       {"name":"berlin-clock.json"}
     ],
     "storage": [
