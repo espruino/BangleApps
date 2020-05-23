@@ -34,7 +34,6 @@
         "no-delete-var": "off",
         "no-empty": "off",
         "no-inner-declarations": "off",
-        "no-mixed-spaces-and-tabs": "off",
         "no-octal": "off",
         "no-prototype-builtins": "off",
         "no-redeclare": "off",

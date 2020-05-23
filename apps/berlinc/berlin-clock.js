@@ -49,7 +49,7 @@ function drawBerlinClock() {
 Bangle.on('lcdPower', (on) => {
   g.clear();
   if (on) {
-  	Bangle.drawWidgets();
+    Bangle.drawWidgets();
   // call your app function here
   drawBerlinClock();
 }});

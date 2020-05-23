@@ -65,7 +65,7 @@ Bangle.on('touch', function(button) {
 // setting bpm by tapping the screen. Uses the mean time difference between several tappings.
     if (tindex < time_diffs.length) {
       if (Date.now()-tStart < 5000) {
-     	 time_diffs[tindex] = Date.now()-tStart;
+        time_diffs[tindex] = Date.now()-tStart;
       }
     } else {
       tindex=0;
