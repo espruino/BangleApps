@@ -17,6 +17,8 @@
     }
   }
 
+  var dirty = false;
+
   function update(weather) {
     require('weather').save(weather);
     if (!WIDGETS["weather"].width) {
@@ -24,8 +26,17 @@
       Bangle.drawWidgets()
     } else if (Bangle.isLCDOn()) {
       WIDGETS["weather"].draw()
+    } else {
+      dirty = true;
     }
   }
+
+  Bangle.on('lcdPower', (on) => {
+    if (on && dirty) {
+      WIDGETS["weather"].draw();
+      dirty = false;
+    }
+  });
 
   const _GB = global.GB;
   global.GB = (event) => {
