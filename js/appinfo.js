@@ -1,5 +1,9 @@
-if (typeof btoa==="undefined") 
-  function btoa(d) { return Buffer.from(d).toString('base64'); }
+if (typeof btoa==="undefined") {
+  // Don't define btoa as a function here because Apple's
+  // iOS browser defines the function even though it's in
+  // an IF statement that is never executed!
+  btoa = function(d) { return BufferA.from(d).toString('base64'); }
+}
 
 // Converts a string into most efficient way to send to Espruino (either json, base64, or compressed base64)
 function toJS(txt) {
