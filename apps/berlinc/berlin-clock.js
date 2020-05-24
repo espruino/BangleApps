@@ -13,6 +13,7 @@ rowlights = [];
 time_digit = [];
 
 function drawBerlinClock() {
+  try {
   g.clear();
   var now = new Date();
   
@@ -65,11 +66,15 @@ function drawBerlinClock() {
       }
       if (row == 3 && show_time) {
         g.setColor(1,1,1);
-        g.setFontAlign(0,0);
+        g.setFontAlign(0,0);        
         g.drawString(time_digit[col],(x1+x2)/2,(y1+y2)/2);
       }
     }
   }
+} catch (e) {
+  console.log(e)
+  console.trace()
+}
 }
 
 function toggleDate() {
