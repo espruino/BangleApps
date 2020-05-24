@@ -887,7 +887,7 @@
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
-    "version":"0.03.03",
+    "version":"0.03.04",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
     "type":"clock",
