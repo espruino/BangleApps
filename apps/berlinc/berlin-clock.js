@@ -1,20 +1,22 @@
 // Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
+// https://github.com/eska-muc/BangleApps
 const fields = [4, 4, 11, 4];
 const offset = 20;
 const width = g.getWidth() - 2 * offset;
 const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
 
-const storage = require("Storage");
-const settingsfile = 'berlinc.json';
 var show_date = false;
+var show_time = false;
 
 rowlights = [];
+time_digit = [];
 
 function drawBerlinClock() {
   g.clear();
   var now = new Date();
   
+  // show date below the clock
   if (show_date) {
     var yr = now.getFullYear();
     var month = now.getMonth() + 1;
@@ -22,13 +24,19 @@ function drawBerlinClock() {
     var dateString = `${yr}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
     var strWidth = g.stringWidth(dateString);
     g.setColor(1, 1, 1);
-    g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 2);
+    g.setFontAlign(-1,-1);
+    g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 4);
   }
   
   rowlights[0] = Math.floor(now.getHours() / 5);
   rowlights[1] = now.getHours() % 5;
   rowlights[2] = Math.floor(now.getMinutes() / 5);
   rowlights[3] = now.getMinutes() % 5;
+
+  time_digit[0] = Math.floor(now.getHours() / 10);
+  time_digit[1] = now.getHours() % 10;
+  time_digit[2] = Math.floor(now.getMinutes() / 10);
+  time_digit[3] = now.getMinutes() % 10;
 
   g.drawRect(offset, offset, width + offset, height + offset);
   for (row = 0; row < 4; row++) {
@@ -44,7 +52,6 @@ function drawBerlinClock() {
       g.setColor(1, 1, 1);
       g.drawRect(x1, y1, x2, y2);
       if (col < rowlights[row]) {
-
         if (row === 2) {
           if (((col + 1) % 3) === 0) {
             g.setColor(1, 0, 0);
@@ -54,16 +61,26 @@ function drawBerlinClock() {
         } else {
           g.setColor(1, 0, 0);
         }
-        g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+        g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);        
+      }
+      if (row == 3 && show_time) {
+        g.setColor(1,1,1);
+        g.setFontAlign(0,0);
+        g.drawString(time_digit[col],(x1+x2)/2,(y1+y2)/2);
       }
     }
   }
 }
 
-// try to read settings
-const settings = storage.readJSON(settingsfile,1) ||  {
-  "showdate" : true
-}  
+function toggleDate() {
+  show_date = ! show_date;
+  drawBerlinClock();
+}
+
+function toggleTime() {
+  show_time = ! show_time;
+  drawBerlinClock();
+}
 
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
@@ -82,5 +99,9 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawBerlinClock();
+// Toggle date display, when BTN3 is pressed
+setWatch(toggleTime,BTN1, { repeat : true, edge: "falling"});
+// Toggle date display, when BTN3 is pressed
+setWatch(toggleDate,BTN3, { repeat : true, edge: "falling"});
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
