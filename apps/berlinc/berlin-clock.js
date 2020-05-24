@@ -5,7 +5,9 @@ const width = g.getWidth() - 2 * offset;
 const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
 
-const show_date = require("Storage").readJSON('berlin-clock.json')['showdate'];
+const storage = require("Storage");
+const settingsfile = 'berlin-clock.json';
+var show_date = false;
 
 rowlights = [];
 
@@ -56,6 +58,14 @@ function drawBerlinClock() {
       }
     }
   }
+}
+
+// try to read settings
+try {
+  const settings = storage.readJSON(settingsfile);
+  show_date=settings['showdate'] || false;
+} catch (exception) {
+  console.log(exception)
 }
 
 // special function to handle display switch on
