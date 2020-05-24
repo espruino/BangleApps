@@ -887,19 +887,19 @@
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
-    "version":"0.03.07",
+    "version":"0.03.08",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "data": [
-      {"name":"berlin-clock.json"}
+      { "name":"berlinc.json","storageFile":true}
     ],
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
       {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true},
-      {"name":"berlinc.settings.js","url":"settings.js"},
-      {"name":"berlin-clock.json","url":"berlin-clock.json"}
+      {"name":"berlinc.settings.js","url":"settings.js"}, 
+      {"name":"berlinc.json","url":"berlin-clock.json"}      
     ]
   },
   { "id": "ctrclk",

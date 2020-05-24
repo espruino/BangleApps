@@ -1,6 +1,6 @@
 (function(back) {
 
-  const SETTINGS_FILE = 'berlin-clock.json'
+  const SETTINGS_FILE = 'berlinc.json'
 
   // initialize structure
   let s = {

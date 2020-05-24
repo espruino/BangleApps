@@ -6,7 +6,7 @@ const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
 
 const storage = require("Storage");
-const settingsfile = 'berlin-clock.json';
+const settingsfile = 'berlinc.json';
 var show_date = false;
 
 rowlights = [];
@@ -63,7 +63,15 @@ function drawBerlinClock() {
 // try to read settings
 try {
   const settings = storage.readJSON(settingsfile);
-  show_date=settings['showdate'] || false;
+  if (settings) {
+    if (settings.showdate) {
+      show_date=settings.showdate;
+    } else  {
+      console.log("Settings file does not contain showdate.");
+    }
+  } else {
+    console.log("Settings file not defined.")
+  }
 } catch (exception) {
   console.log(exception)
 }
