@@ -1775,15 +1775,15 @@
     ]
   },
   { "id": "binclock",
-  "name": "Binary Clock",
-  "shortName":"Binary Clock",
-  "icon": "app.png",
-  "version":"0.01",
-  "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
-  "tags": "",
-  "storage": [
-    {"name":"binclock.app.js","url":"app.js"},
-    {"name":"binclock.img","url":"app-icon.js","evaluate":true}
-  ]
-}	
+    "name": "Binary Clock",
+    "shortName":"Binary Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
+    "tags": "",
+    "storage": [
+      {"name":"binclock.app.js","url":"app.js"},
+      {"name":"binclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  }	
 ]
