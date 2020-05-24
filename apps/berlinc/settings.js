@@ -1,7 +1,5 @@
 (function(back) {
 
-  digitalWrite(LED1,1);
-
   const SETTINGS_FILE = 'berlin-clock.json'
 
   // initialize structure
@@ -31,8 +29,8 @@
     'Show Date' : {
       value : s.showdate,
       format: booleanFormat,
-      onChange: save('showdate'),
-    },
+      onChange: save('showdate')
+    }
   }
   digitalWrite(LED1,0);
   E.showMenu(menu)
