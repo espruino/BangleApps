@@ -13,6 +13,7 @@
   };
 
   function gbSend(message) {
+    Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
 
@@ -196,5 +197,11 @@
 
   WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
 
-  gbSend({ t: "status", bat: E.getBattery() });
+  function sendBattery() {
+    gbSend({ t: "status", bat: E.getBattery() });
+  }
+
+  NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  setInterval(sendBattery, 10*60*1000);
+  sendBattery();
 })();

@@ -24,8 +24,8 @@ httpGet("appdates.csv").then(csv=>{
   document.querySelector(".sort-nav").classList.remove("hidden");
   csv.split("\n").forEach(line=>{
     var l = line.split(",");
-    appSortInfo[l[0]] = { 
-      created : Date.parse(l[1]), 
+    appSortInfo[l[0]] = {
+      created : Date.parse(l[1]),
       modified : Date.parse(l[2])
     };
   });
@@ -196,7 +196,8 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.attributes.filterid.value);
+// Can't use chip.attributes.filterid.value here because Safari/Apple's WebView doesn't handle it
+var chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.getAttribute("filterid"));
 var hash = window.location.hash ? window.location.hash.slice(1) : '';
 
 var activeFilter = !!~chips.indexOf(hash) ? hash : '';
