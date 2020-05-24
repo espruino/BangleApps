@@ -1,4 +1,6 @@
 (() => {
+  const weather = require('weather');
+
   function formatDuration(millis) {
     let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");
     if (millis < 60000) return pluralize(Math.floor(millis/1000), "second");
@@ -7,11 +9,12 @@
     return pluralize(Math.floor(millis/86400000), "day");
   }
 
-  function draw(w) {
+  function draw() {
+    let w = weather.current;
     g.reset();
     g.setColor(0).fillRect(0, 24, 239, 239);
 
-    require('weather').drawIcon(w.txt, 65, 90, 55);
+    weather.drawIcon(w.txt, 65, 90, 55);
     const locale = require("locale");
 
     g.setColor(-1);
@@ -43,25 +46,22 @@
     g.flip();
   }
 
-  let updateTime = undefined;
-
-  function drawUpdateTime(w) {
-    if (!updateTime) return;
-    let text = `Last update received ${formatDuration(Date.now() - updateTime)} ago`;
+  function drawUpdateTime() {
+    if (!weather.current || !weather.current.time) return;
+    let text = `Last update received ${formatDuration(Date.now() - weather.current.time)} ago`;
     g.reset();
     g.setColor(0).fillRect(0, 202, 239, 210);
     g.setColor(-1).setFont("6x8", 1).setFontAlign(0, 0, 0);
     g.drawString(text, 120, 206);
   }
 
-  const _GB = global.GB;
-  global.GB = (event) => {
-    if (event.t==="weather") {
-      updateTime = Date.now();
-      draw(event);
+  function update() {
+    if (weather.current) {
+      draw();
+    } else {
+      E.showMessage('Weather unknown\n\nIs Gadgetbridge\nconnected?');
     }
-    if (_GB) setTimeout(_GB, 0, event);
-  };
+  }
 
   let interval = setInterval(drawUpdateTime, 1000);
   Bangle.on('lcdPower', (on) => {
@@ -75,17 +75,13 @@
     }
   });
 
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
+  weather.on("update", update);
 
-  const weather = require('weather').load();
-  if (weather) {
-    updateTime = weather.time;
-    draw(weather);
-  } else {
-    E.showMessage('Weather unknown\n\nIs Gadgetbridge\nconnected?');
-  }
+  update(weather.current);
 
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: 'falling'});
+
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
 })()
