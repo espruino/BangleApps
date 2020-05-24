@@ -61,20 +61,9 @@ function drawBerlinClock() {
 }
 
 // try to read settings
-try {
-  const settings = storage.readJSON(settingsfile);
-  if (settings) {
-    if (settings.showdate) {
-      show_date=settings.showdate;
-    } else  {
-      console.log("Settings file does not contain showdate.");
-    }
-  } else {
-    console.log("Settings file not defined.")
-  }
-} catch (exception) {
-  console.log(exception)
-}
+const settings = storage.readJSON(settingsfile,1) ||  {
+  "showdate" : true
+}  
 
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {

@@ -4,11 +4,13 @@
 
   // initialize structure
   let s = {
-    'showdate' : false
+    'showdate' : true
   }
 
   const storage = require('Storage')
-  const savedsettings = storage.readJSON(SETTINGS_FILE,1) || {}
+  const savedsettings = storage.readJSON(SETTINGS_FILE,1) || {
+    "showdate" : true
+  }
   // read values from storage (if any)
   for (const key in savedsettings) {
     s[key]=savedsettings[key]
