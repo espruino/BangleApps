@@ -1,6 +1,6 @@
 # Berlin Clock Watch Face
 
-This is a clock-face analogous to the [Berlin Clock][https://en.wikipedia.org/wiki/Mengenlehreuhr].
+This is a clock-face analogous to the [Berlin Clock](https://en.wikipedia.org/wiki/Mengenlehreuhr).
 
 ## Usage
 
