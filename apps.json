@@ -392,7 +392,8 @@
       {"name":"weather.app.js","url":"app.js"},
       {"name":"weather.wid.js","url":"widget.js"},
       {"name":"weather","url":"lib.js"},
-      {"name":"weather.img","url":"icon.js","evaluate":true}
+      {"name":"weather.img","url":"icon.js","evaluate":true},
+      {"name":"weather.settings.js","url":"settings.js"}
     ],
     "data": [
       {"name": "weather.json"}

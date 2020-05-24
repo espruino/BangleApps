@@ -44,6 +44,11 @@
     if (_GB) setTimeout(_GB, 0, event);
   };
 
+  require('weather').on("expiry", () => {
+    WIDGETS["weather"].width = 0;
+    Bangle.drawWidgets();
+  });
+
   WIDGETS["weather"] = {area: "tl", width: 20, draw: draw};
   if (!require('weather').load()) {
     WIDGETS["weather"].width = 0;

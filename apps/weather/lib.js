@@ -1,3 +1,21 @@
+let expiryTimeout = undefined;
+function updateExpiry(json) {
+  if (expiryTimeout) {
+    clearTimeout(expiryTimeout);
+    expiryTimeout = undefined;
+  }
+  if (json.weather && json.weather.time && json.expiry) {
+    let t = json.weather.time + json.expiry - Date.now();
+    expiryTimeout = setTimeout(() => {
+      expiryTimeout = undefined;
+      let json = require('Storage').readJSON('weather.json')||{};
+      delete json.weather;
+      require('Storage').write('weather.json', json);
+      exports.emit("expiry");
+    }, t);
+  }
+}
+
 exports = {
   save: weather => {
     let json = require('Storage').readJSON('weather.json')||{};
@@ -5,6 +23,7 @@ exports = {
     delete json.weather.t; // don't save the event type (if present)
     json.weather.time = Date.now();
     require('Storage').write('weather.json', json);
+    updateExpiry(json);
   },
   load: () => {
     let json = require('Storage').readJSON('weather.json')||{};
@@ -175,3 +194,5 @@ exports = {
     chooseIcon(cond)(x, y, r);
   },
 }
+
+updateExpiry(require('Storage').readJSON('weather.json')||{});
