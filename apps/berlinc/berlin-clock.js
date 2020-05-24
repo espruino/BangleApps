@@ -5,14 +5,14 @@ const width = g.getWidth() - 2 * offset;
 const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
 
-const show_date = (require('Storage').readJSON('berlin-clock.json', 1) || {})['showdate'];
+const show_date = require("Storage").readJSON('berlin-clock.json')['showdate'];
 
 rowlights = [];
 
 function drawBerlinClock() {
   g.clear();
   var now = new Date();
-  /*
+  
   if (show_date) {
     var yr = now.getFullYear();
     var month = now.getMonth() + 1;
@@ -22,7 +22,7 @@ function drawBerlinClock() {
     g.setColor(1, 1, 1);
     g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 2);
   }
-  */
+  
   rowlights[0] = Math.floor(now.getHours() / 5);
   rowlights[1] = now.getHours() % 5;
   rowlights[2] = Math.floor(now.getMinutes() / 5);
