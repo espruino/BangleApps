@@ -887,7 +887,7 @@
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
-    "version":"0.03.01",
+    "version":"0.03.02",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
     "type":"clock",
@@ -898,7 +898,6 @@
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
       {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true},
-      {"name":"berlinc.settings.js","url":"settings.js"},
       {"name":"berlin-clock.json","url":"berlin-clock.json"}
     ]
   },
