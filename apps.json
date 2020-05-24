@@ -384,7 +384,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
