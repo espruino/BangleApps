@@ -45,7 +45,8 @@ function draw() {
   cg.setFontAlign(1,-1);
   cg.drawString(hours, x, 0);
   x+=2;
-  cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
+  if (t.getSeconds() & 1)
+    cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
   x+=6;
   cg.setFontAlign(-1,-1);
   cg.drawString(("0"+t.getMinutes()).substr(-2), x, 0);
