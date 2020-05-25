@@ -5,6 +5,8 @@ const X = 180, Y = 180;
 var displayTime = 0;
 var minuteLED = [0,0,0,0,0,0];
 var hourLED = [0,0,0,0,0];
+var prevMinute = [0,0,0,0,0,0];
+var prevHour = [0,0,0,0,0];
 
 
 function drawTime() {
@@ -22,6 +24,11 @@ function drawTime() {
 }
 
 function updateHourArray(hours){
+  
+  var j;
+  for(j=0;j<hourLED.length;j++){
+    prevHour[j] = hourLED[j];
+  }
   
   var i;
   for(i = 0;i < hourLED.length;i++){
@@ -53,6 +60,10 @@ function updateHourArray(hours){
 }
 
 function updateMinuteArray(minutes){
+  var j;
+  for(j=0;j<minuteLED.length;j++){
+    prevMinute[j] = minuteLED[j];
+  }
   
   var i;
   for(i = 0;i < minuteLED.length;i++){
@@ -89,8 +100,6 @@ function updateMinuteArray(minutes){
 
 function draw(){
   
-  g.clear();
-  
   // work out how to display the current time
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
@@ -101,17 +110,30 @@ function draw(){
   var i;
   //Draw hour circles
   for(i=0; i<hourLED.length; i++){
-    if(hourLED[i] == 1){
-      g.fillCircle(24+i*48,50,10);
-    } else {
-      g.drawCircle(24+i*48,50,10);
+    if(prevHour[i] == hourLED[i]){
+      if(hourLED[i] == 1){
+        g.fillCircle(24+i*48,50,10);
+      } else {
+        var colour = g.getColor();
+        g.setColor(0,0,0);
+        g.fillCircle(24+i*48,50,10);
+        g.setColor(colour);
+        g.drawCircle(24+i*48,50,10);
+      } 
     }
-  }
+  }  
+  
   for(i=0; i<minuteLED.length; i++){
-    if(minuteLED[i] == 1){
-      g.fillCircle(20+i*40,100,10);
-    } else {
-      g.drawCircle(20+i*40,100,10);
+    if(prevMinute[i] == minuteLED[i]){
+      if(minuteLED[i] == 1){
+        g.fillCircle(20+i*40,100,10);
+      } else {
+        var colour = g.getColor();
+        g.setColor(0,0,0);
+        g.fillCircle(20+i*40,100,10);
+        g.setColor(colour);
+        g.drawCircle(20+i*40,100,10);
+      }    
     }
   }
   
