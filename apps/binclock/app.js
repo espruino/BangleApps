@@ -1,7 +1,7 @@
 // Load fonts
 require("Font7x11Numeric7Seg").add(Graphics);
 // position on screen
-const X = 180, Y = 180;
+const X = 160, Y = 180;
 var displayTime = 0;
 var minuteLED = [0,0,0,0,0,0];
 var hourLED = [0,0,0,0,0];
@@ -9,9 +9,8 @@ var prevMinute = [0,0,0,0,0,0];
 var prevHour = [0,0,0,0,0];
 
 
-function drawTime() {
+function drawTime(d) {
   // work out how to display the current time
-  var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
   var time = (" "+h).substr(-2) + ":" + ("0"+m).substr(-2);
   // draw the current time (4x size 7 segment)
@@ -145,7 +144,7 @@ function draw(){
   g.drawString(dateStr, g.getWidth()/2, 130, true /*clear background*/);
   
   if(displayTime){
-   drawTime();
+   drawTime(d);
   }else{
    g.clearRect(0,240,240,130); 
   }
