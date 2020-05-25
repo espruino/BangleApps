@@ -1778,7 +1778,7 @@
     "name": "Binary Clock",
     "shortName":"Binary Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
     "tags": "",
     "storage": [
