@@ -3,6 +3,9 @@ require("Font7x11Numeric7Seg").add(Graphics);
 // position on screen
 const X = 180, Y = 180;
 var displayTime = 0;
+var minuteLED = [0,0,0,0,0,0];
+var hourLED = [0,0,0,0,0];
+
 
 function drawTime() {
   // work out how to display the current time
@@ -18,37 +21,12 @@ function drawTime() {
   g.drawString(("0"+d.getSeconds()).substr(-2), X+30, Y, true /*clear background*/);
 }
 
-function test(intVal){
-  hour_16 = 0;
-  hour_8 = 0;
-  hour_4 = 0;
-  hour_2 = 0;
-  hour_1 = 0;
-
-  if(intVal > 16){
-    hour_16 = 1;
-    intVal = intVal - 16;
+function updateHourArray(hours){
+  
+  var i;
+  for(i = 0;i < hourLED.length;i++){
+   hourLED[i]=0; 
   }
-  if(intVal > 8){
-    hour_8 = 1;
-    intVal = intVal - 8;
-  }
-  if(intVal > 4){
-    hour_4 = 1;
-    intVal = intVal - 4;
-  }
-  if(intVal > 2){
-    hour_2 = 1;
-    intVal = intVal - 2;
-  }
-  if(intVal > 0){
-    hour_1 = 1;
-  }
-}
-
-function getHourArray(hours){
-
-   var hourLED = [0,0,0,0,0];
   
   if(hours > 15){
     hourLED[0] = 1;
@@ -74,9 +52,12 @@ function getHourArray(hours){
   
 }
 
-function getMinuteArray(minutes){
-
-   var minuteLED = [0,0,0,0,0,0];
+function updateMinuteArray(minutes){
+  
+  var i;
+  for(i = 0;i < minuteLED.length;i++){
+   minuteLED[i]=0; 
+  }
   
   if(minutes > 31){
     minuteLED[0] = 1;
@@ -108,13 +89,14 @@ function getMinuteArray(minutes){
 
 function draw(){
   
+  g.clear();
+  
   // work out how to display the current time
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
   
-  //reset hour booleans to 0
-  var hourLED = getHourArray(h);
-  var minuteLED = getMinuteArray(m);
+  updateHourArray(h);
+  updateMinuteArray(m);
   
   var i;
   //Draw hour circles
