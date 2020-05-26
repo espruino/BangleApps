@@ -280,7 +280,7 @@
   { "id": "gpstime",
     "name": "GPS Time",
     "icon": "gpstime.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
     "tags": "tool,gps",
     "storage": [
