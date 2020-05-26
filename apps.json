@@ -303,7 +303,7 @@
   { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Show the current speed according to the GPS",
     "tags": "tool,outdoors,gps",
     "storage": [
@@ -1775,7 +1775,7 @@
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
   },
-  { 
+  {
     "id": "pizzatimer",
     "name": "Pizza Timer",
     "shortName":"Pizza Timer",
