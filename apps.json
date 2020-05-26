@@ -1774,5 +1774,19 @@
     "storage": [
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
+  },
+  { 
+    "id": "pizzatimer",
+    "name": "Pizza Timer",
+    "shortName":"Pizza Timer",
+    "icon": "pizza.png",
+    "version":"0.01",
+    "description": "A timer app for when you cook Pizza. Some say it can also time other things",
+    "tags": "timer,tool,pizza",
+    "readme": "README.md",
+    "storage": [
+      {"name":"pizzatimer.app.js","url":"app.js"},
+      {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
