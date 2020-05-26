@@ -95,7 +95,7 @@ function startKeyboardHID() {
   getCharacter().then(ch => {
     return sendHID(KEY[ch]);
   }).then(startKeyboardHID);
-};
+}
 
 if (settings.HID=="kb" || settings.HID=="kbmedia") {
   if (settings.HID=="kbmedia") {

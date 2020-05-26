@@ -1,7 +1,7 @@
 (function(back) {  
   function updateSettings() {  
     storage.write('numerals.json', numeralsSettings);
-  };
+  }
   function resetSettings() {
     numeralsSettings = {
       color:0,
