@@ -384,7 +384,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -392,7 +392,8 @@
       {"name":"weather.app.js","url":"app.js"},
       {"name":"weather.wid.js","url":"widget.js"},
       {"name":"weather","url":"lib.js"},
-      {"name":"weather.img","url":"icon.js","evaluate":true}
+      {"name":"weather.img","url":"icon.js","evaluate":true},
+      {"name":"weather.settings.js","url":"settings.js"}
     ],
     "data": [
       {"name": "weather.json"}
