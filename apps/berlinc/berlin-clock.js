@@ -88,9 +88,10 @@ Bangle.on('lcdPower', (on) => {
   g.clear();
   if (on) {
     Bangle.drawWidgets();
-  // call your app function here
-  drawBerlinClock();
-}});
+    // call your app function here
+    drawBerlinClock();
+  }
+});
 
 // refesh every 15 sec
 setInterval(drawBerlinClock, 15E3);
