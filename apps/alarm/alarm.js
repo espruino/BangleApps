@@ -1,3 +1,4 @@
+const locale = require("locale");
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(alarm.js)' - so let's remove it first!
 clearInterval();
@@ -5,7 +6,10 @@ clearInterval();
 function formatTime(t) {
   var hrs = 0|t;
   var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+  var d = new Date();
+  d.setHours(hrs);
+  d.setMinutes(mins);
+  return locale.time(d, true);
 }
 
 function getCurrentHr() {
@@ -18,9 +22,10 @@ function showAlarm(alarm) {
   var buzzCount = 10;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
+  const ok = locale.translate("Ok");
   E.showPrompt(msg,{
-    title:"ALARM!",
-    buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
+    title:"ALARM!"/*LANG*/,
+    buttons : {"Sleep"/*LANG*/:true,ok:false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
