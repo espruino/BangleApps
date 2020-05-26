@@ -1,4 +1,3 @@
-Bangle.setGPSPower(1);
 var buf = Graphics.createArrayBuffer(240,120,1,{msb:true});
 var lastFix = {fix:0,satellites:0};
 function onGPS(fix) {
@@ -31,3 +30,4 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 Bangle.on('GPS', onGPS);
+Bangle.setGPSPower(1);
