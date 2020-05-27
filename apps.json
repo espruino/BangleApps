@@ -1798,7 +1798,7 @@
     "tags": "alarm",
     "storage": [
       {"name":"sleepphasealarm.app.js","url":"app.js"},
-      {"name":"sleepphasealarm.img","url":"app.img"}
+      {"name":"sleepphasealarm.img","url":"app-icon.js"}
     ]
   }
 ]
