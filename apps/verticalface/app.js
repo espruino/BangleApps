@@ -1,10 +1,9 @@
-// NOTE: 240 x 240
-// Load fonts
 require("Font8x12").add(Graphics);
+let HRMstate = false;
+let currentHRM = "CALC";
 
 
 function drawTimeDate() {
-  // work out how to display the current time
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
 
@@ -18,7 +17,7 @@ function drawTimeDate() {
   // Reset the state of the graphics library
   g.reset();
   // Set color
-  g.setColor('#27ae60');
+  g.setColor('#2ecc71');
   // draw the current time (4x size 7 segment)
   g.setFont("8x12",9);
   g.setFontAlign(-1,0); // align right bottom
@@ -46,16 +45,27 @@ function drawSteps() {
   g.drawString("-", 145, 65, true /*clear background*/);
 }
 
-function drawBPM() {
+function drawBPM(on) {
   //Reset to defaults.
   g.reset();
-  // draw the date (2x size 7 segment)
   g.setColor('#7f8c8d');
   g.setFont("8x12",2);
-  g.setFontAlign(-1,0); // align right bottom
-  g.drawString("BPM", 145, 105, true /*clear background*/);
-  g.setColor('#bdc3c7');
-  g.drawString("-", 145, 130, true /*clear background*/);
+  g.setFontAlign(-1,0);
+  var heartRate = 0;
+
+  if(on){
+    g.drawString("BPM", 145, 105, true);
+    g.setColor('#e74c3c');
+    g.drawString("*", 190, 105, false);
+    g.setColor('#bdc3c7');
+    //Showing current heartrate reading.
+    heartRate = currentHRM.toString() + "    ";
+    return g.drawString(heartRate, 145, 130, true /*clear background*/);
+  } else {
+    g.drawString("BPM  ", 145, 105, true /*clear background*/);
+    g.setColor('#bdc3c7');
+    return g.drawString("-    ", 145, 130, true); //Padding
+  }
 }
 
 function drawBattery() {
@@ -74,6 +84,7 @@ function drawBattery() {
 
 // Clear the screen once, at startup
 g.clear();
+
 // draw immediately at first
 drawTimeDate();
 drawSteps();
@@ -89,23 +100,50 @@ Bangle.on('lcdPower',on=>{
   if (secondInterval) clearInterval(secondInterval);
   secondInterval = undefined;
   if (on) {
+    //Screen on
     setInterval(drawTimeDate, 5000);
-    drawTimeDate(); // draw immediately
-    drawBattery(); //draw battery
+    drawBPM(HRMstate);
+    drawTimeDate();
+    drawBattery();
+  } else {
+    //Screen off
   }
 });
-
-// Load widgets
-//Bangle.loadWidgets();
-//Bangle.drawWidgets();
 
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
+//HRM Controller.
 Bangle.on('touch', function(button) {
-  if(button == 1 || button == 2) Bangle.showLauncher();
+  if(button == 1 || button == 2){
+    if(!HRMstate){
+      console.log("Toggled HRM");
+      //Turn on.
+      Bangle.buzz();
+      Bangle.setHRMPower(1);
+      HRMstate = true;
+    } else if(HRMstate){
+      console.log("Toggled HRM");
+      //Turn off.
+      Bangle.buzz();
+      Bangle.setHRMPower(0);
+      HRMstate = false;
+      currentHRM = [];
+    }
+  drawBPM(HRMstate);
+  }
+});
+
+Bangle.on('HRM', function(hrm) {
+  if(hrm.confidence > 90){
+   /*Do more research to determine effect algorithm for heartrate average.*/
+   console.log(hrm.bpm);
+   currentHRM = hrm.bpm;
+   drawBPM(HRMstate);
+  }
 });
 
 //Bangle.on('step', function(up) {
 //  console.log("Step");
 //});
+
