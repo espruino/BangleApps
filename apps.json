@@ -1788,5 +1788,17 @@
       {"name":"pizzatimer.app.js","url":"app.js"},
       {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "sleepphasealarm",
+    "name": "SleepPhaseAlarm",
+    "shortName":"SleepPhaseAlarm",
+    "icon": "app.img",
+    "version":"0.01",
+    "description": "Uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments (ESS, see https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en). This app will read the next alarm from the alarm application and will wake you up to 30 minutes early at the best guessed time when you are almost already awake.",
+    "tags": "alarm",
+    "storage": [
+      {"name":"sleepphasealarm.app.js","url":"app.js"},
+      {"name":"sleepphasealarm.img","url":"app.img"}
+    ]
   }
 ]
