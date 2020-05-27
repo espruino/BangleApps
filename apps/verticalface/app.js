@@ -4,28 +4,28 @@ require("Font7x11Numeric7Seg").add(Graphics);
 
 
 function draw() {
-  var daysOfWeek = ["MON", "TUE","WED","THUR","FRI","SAT","SUN"];
   // work out how to display the current time
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = (d.getMonth()+1), weekDay = d.getDay();
-
-  var hours = h;
+  
+  var daysOfWeek = ["MON", "TUE","WED","THUR","FRI","SAT","SUN"];
+  
+  var hours = ("0"+h).substr(-2);
   var mins= ("0"+m).substr(-2);
   var date = `${daysOfWeek[weekDay]}\n\n${day}/${month}`;
-
+  
   // Reset the state of the graphics library
   g.reset();
-
-  // draw the current time
-  g.setFont("7x11Numeric7Seg",8);
+  // draw the current time (4x size 7 segment)
+  g.setFont("7x11Numeric7Seg",6);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(hours, 30, 70, true /*clear background*/);
-  g.drawString(mins, 30, 170, true /*clear background*/);
-
+  g.drawString(hours, 30, 80, true /*clear background*/);
+  g.drawString(mins, 30, 160, true /*clear background*/);
+  
   // draw the date (2x size 7 segment)
-  g.setFont("6x8",2.5);
+  g.setFont("6x8",2);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(date, 150, 110, true /*clear background*/);
+  g.drawString(date, 130, 110, true /*clear background*/);
 }
 
 // Clear the screen once, at startup
