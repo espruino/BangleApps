@@ -31,7 +31,7 @@ function updateHourArray(hours){
   
   var i;
   for(i = 0;i < hourLED.length;i++){
-   hourLED[i]=0; 
+    hourLED[i]=0; 
   }
   
   if(hours > 15){
@@ -66,7 +66,7 @@ function updateMinuteArray(minutes){
   
   var i;
   for(i = 0;i < minuteLED.length;i++){
-   minuteLED[i]=0; 
+    minuteLED[i]=0; 
   }
   
   if(minutes > 31){
@@ -144,9 +144,9 @@ function draw(){
   g.drawString(dateStr, g.getWidth()/2, 130, true /*clear background*/);
   
   if(displayTime){
-   drawTime(d);
+    drawTime(d);
   }else{
-   g.clearRect(0,240,240,130); 
+    g.clearRect(0,240,240,130); 
   }
 }
 
@@ -171,8 +171,8 @@ Bangle.drawWidgets();
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 setWatch(function() {
   if(displayTime == 0){
-     displayTime = 1;
-   } else{
-     displayTime = 0; 
-   }
+    displayTime = 1;
+  } else{
+    displayTime = 0; 
+  }
 }, BTN, {edge:"rising", debounce:50, repeat:true});
