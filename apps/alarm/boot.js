@@ -11,7 +11,7 @@
       require('Storage').write('alarm.json',"[]");
     } else {
       var t = 3600000*(active[0].hr-hr);
-      if (active[0].last == time.getDate()) t += 86400000;
+      if (active[0].last == time.getDate() || t < 0) t += 86400000;
       if (t<1000) t=1000;
       /* execute alarm at the correct time. We avoid execing immediately
       since this code will get called AGAIN when alarm.js is loaded. alarm.js
