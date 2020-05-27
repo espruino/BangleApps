@@ -1795,6 +1795,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "A simple vertical watch face with the date.",
+  "type":"clock",
   "tags": "clock, clock-face, face",
   "storage": [
     {"name":"verticalface.app.js","url":"app.js"},
