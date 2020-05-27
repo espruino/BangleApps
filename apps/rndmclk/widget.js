@@ -16,20 +16,18 @@
     if (clockApps && clockApps.length > 0) {
       var clockIndex = getRandomInt(clockApps.length);
 
-      // Only update the file if the clock really change to be nice to the FLASH mem
+      // Only update the file if the clock really changed to be nice to the FLASH mem
       if (clockApps[clockIndex].src != currentClock) {
         currentClock = clockApps[clockIndex].src;
         settings = require("Storage").readJSON('setting.json', 1);
         settings.clock = clockApps[clockIndex].src;
         require("Storage").write('setting.json', settings);
+        
+        console.log("RandomClockWidget set the clock to '" + clockApps[clockIndex].name + "'");
       }
     }
   }
 
-  Bangle.on('lcdPower', (on) => {
-    if (!on) {
-      loadRandomClock();
-    }
-  });
+  loadRandomClock();
 
 })();

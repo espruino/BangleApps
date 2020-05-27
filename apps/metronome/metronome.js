@@ -29,23 +29,23 @@ function loadSettings() {
 
 function changecolor() {
   const colors = { 
-	0: { value: 0xF800, name: "Red" },
-	1: { value: 0xFFFF, name: "White" },
-	2: { value: 0x9492, name: "gray" },
-	3: { value: 0xFFFF, name: "White" },
-	4: { value: 0x9492, name: "gray" },
-	5: { value: 0xFFFF, name: "White" },
-	6: { value: 0x9492, name: "gray" },
-        7: { value: 0xFFFF, name: "White" },
-    };
-    g.setColor(colors[cindex].value);
-    if (cindex == setting('beatsperbar')-1) {
-      cindex = 0;
-    }
-    else {
+    0: { value: 0xF800, name: "Red" },
+    1: { value: 0xFFFF, name: "White" },
+    2: { value: 0x9492, name: "gray" },
+    3: { value: 0xFFFF, name: "White" },
+    4: { value: 0x9492, name: "gray" },
+    5: { value: 0xFFFF, name: "White" },
+    6: { value: 0x9492, name: "gray" },
+    7: { value: 0xFFFF, name: "White" },
+  };
+  g.setColor(colors[cindex].value);
+  if (cindex == setting('beatsperbar')-1) {
+    cindex = 0;
+  }
+  else {
     cindex += 1;
-    }
-    return cindex;
+  }
+  return cindex;
 }
 
 function updateScreen() {
@@ -63,27 +63,27 @@ function updateScreen() {
   
 Bangle.on('touch', function(button) {
 // setting bpm by tapping the screen. Uses the mean time difference between several tappings.
-    if (tindex < time_diffs.length) {
-      if (Date.now()-tStart < 5000) {
-     	 time_diffs[tindex] = Date.now()-tStart;
-      }
-    } else {
-      tindex=0;
-         time_diffs[tindex] = Date.now()-tStart;
-         }
-    tindex += 1;
-    mean_time = 0.0;
-    for(count = 0; count < time_diffs.length; count++) {
-      mean_time += time_diffs[count];
+  if (tindex < time_diffs.length) {
+    if (Date.now()-tStart < 5000) {
+      time_diffs[tindex] = Date.now()-tStart;
     }
-    time_diff = mean_time/count;
+  } else {
+    tindex=0;
+    time_diffs[tindex] = Date.now()-tStart;
+  }
+  tindex += 1;
+  mean_time = 0.0;
+  for(count = 0; count < time_diffs.length; count++) {
+    mean_time += time_diffs[count];
+  }
+  time_diff = mean_time/count;
 
-    tStart = Date.now();
-    clearInterval(time_diff);
-    bpm = (60 * 1000/(time_diff));
-    updateScreen();
-    clearInterval(interval);
-    interval = setInterval(updateScreen, 60000 / bpm);
+  tStart = Date.now();
+  clearInterval(time_diff);
+  bpm = (60 * 1000/(time_diff));
+  updateScreen();
+  clearInterval(interval);
+  interval = setInterval(updateScreen, 60000 / bpm);
   return bpm;
 });
 
@@ -96,9 +96,9 @@ setWatch(() => {
 
 setWatch(() => {
   if (bpm > 1) {
-  bpm -= 1;
-  clearInterval(interval);
-  interval = setInterval(updateScreen, 60000 / bpm);
+    bpm -= 1;
+    clearInterval(interval);
+    interval = setInterval(updateScreen, 60000 / bpm);
   }
 }, BTN3, {repeat:true});
 

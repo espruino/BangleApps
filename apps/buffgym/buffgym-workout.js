@@ -3,7 +3,7 @@ exports = class Workout {
     this.title = params.title;
     this.exercises = [];
     this.completed = false;
-    this.on("redraw", redraw.bind(null, this));
+    this.on("redraw", params.redraw.bind(null, this));
   }
 
   addExercises(exercises) {
@@ -27,11 +27,12 @@ exports = class Workout {
     return !!this.completed;
   }
 
-  static fromJSON(workoutJSON) {
+  static fromJSON(workoutJSON, redraw) {
     const Set = require("buffgym-set.js");
     const Exercise = require("buffgym-exercise.js");
     const workout = new this({
       title: workoutJSON.title,
+      redraw: redraw,
     });
     const exercises = workoutJSON.exercises.map(exerciseJSON => {
       const exercise = new Exercise({
@@ -80,4 +81,4 @@ exports = class Workout {
     // Call current exercise state machine
     this.currentExercise().next(this);
   }
-}
+};

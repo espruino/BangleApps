@@ -32,18 +32,18 @@ function getPosition(index){
 }
 
 function getApps(){
-    const exit_app = {
-      name: 'Exit',
-      special: true
-    };
-    const raw_apps = Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
-        .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
-        .sort((a,b)=>{
-        var n=(0|a.sortorder)-(0|b.sortorder);
-        if (n) return n; // do sortorder first
-        if (a.name<b.name) return -1;
-        if (a.name>b.name) return 1;
-        return 0;
+  const exit_app = {
+    name: 'Exit',
+    special: true
+  };
+  const raw_apps = Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
+    .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
+    .sort((a,b)=>{
+      var n=(0|a.sortorder)-(0|b.sortorder);
+      if (n) return n; // do sortorder first
+      if (a.name<b.name) return -1;
+      if (a.name>b.name) return 1;
+      return 0;
     }).map(raw => ({
       name: raw.name,
       src: raw.src,
@@ -51,12 +51,12 @@ function getApps(){
       version: raw.version
     }));
 
-    const apps = [Object.assign({}, exit_app)].concat(raw_apps);
-    apps.push(exit_app);
-    return apps.map((app, i) => {
-      app.x = getPosition(i);
-      return app;
-    });
+  const apps = [Object.assign({}, exit_app)].concat(raw_apps);
+  apps.push(exit_app);
+  return apps.map((app, i) => {
+    app.x = getPosition(i);
+    return app;
+  });
 }
 
 const APPS = getApps();
@@ -105,8 +105,8 @@ function render(){
 
     //draw icon
     const icon = app.icon ?
-        icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
-        : null;
+      icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
+      : null;
 
     if(icon){
       icons[app.name] = icon;
@@ -132,13 +132,13 @@ function render(){
     }
 
     if(settings.highres){
-        const type = app.type ? app.type : 'App';
-        const version = app.version ? app.version : '0.00';
-        const info = type+' v'+version;
-        g.setFontAlign(0,1);
-        g.setFont('6x8', 1.5);
-        g.setColor(scale,scale,scale);
-        g.drawString(info, HALF, 215, { scale: scale });
+      const type = app.type ? app.type : 'App';
+      const version = app.version ? app.version : '0.00';
+      const info = type+' v'+version;
+      g.setFontAlign(0,1);
+      g.setFont('6x8', 1.5);
+      g.setColor(scale,scale,scale);
+      g.drawString(info, HALF, 215, { scale: scale });
     }
 
   });

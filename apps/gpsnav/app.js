@@ -4,8 +4,8 @@ var buf = Graphics.createArrayBuffer(240,50,2,{msb:true});
 var candraw = true;
 
 function flip(b,y) {
- g.drawImage({width:240,height:50,bpp:2,buffer:b.buffer, palette:pal2color},0,y);
- b.clear();
+  g.drawImage({width:240,height:50,bpp:2,buffer:b.buffer, palette:pal2color},0,y);
+  b.clear();
 }
 
 var brg=0;
@@ -44,27 +44,27 @@ function drawCompass(course) {
     if (bpos>210) bpos = 226;
     buf.setColor(2);
     buf.fillCircle(bpos,40,8);
-    }
+  }
   flip(buf,Yoff);
 }
 
 //displayed heading
 var heading = 0;
 function newHeading(m,h){
-    var s = Math.abs(m - h);
-    var delta = 1;
-    if (s<2) return h;
-    if (m > h){
-        if (s >= 180) { delta = -1; s = 360 - s;}
-    } else if (m <= h){
-        if (s < 180) delta = -1; 
-        else s = 360 -s;
-    }
-    delta = delta * (1 + Math.round(s/15));
-    heading+=delta;
-    if (heading<0) heading += 360;
-    if (heading>360) heading -= 360;
-    return heading;
+  var s = Math.abs(m - h);
+  var delta = 1;
+  if (s<2) return h;
+  if (m > h){
+    if (s >= 180) { delta = -1; s = 360 - s;}
+  } else if (m <= h){
+    if (s < 180) delta = -1; 
+    else s = 360 -s;
+  }
+  delta = delta * (1 + Math.round(s/15));
+  heading+=delta;
+  if (heading<0) heading += 360;
+  if (heading>360) heading -= 360;
+  return heading;
 }
 
 var course =0;
@@ -190,20 +190,20 @@ function setButtons(){
   setWatch(nextwp.bind(null,-1), BTN1, {repeat:true,edge:"falling"});
   setWatch(doselect, BTN2, {repeat:true,edge:"falling"});
   setWatch(nextwp.bind(null,1), BTN3, {repeat:true,edge:"falling"});
-};
+}
 
 var SCREENACCESS = {
-      withApp:true,
-      request:function(){
-        this.withApp=false;
-        stopdraw();
-        clearWatch();
-      },
-      release:function(){
-        this.withApp=true;
-        startdraw(); 
-        setButtons();
-      }
+  withApp:true,
+  request:function(){
+    this.withApp=false;
+    stopdraw();
+    clearWatch();
+  },
+  release:function(){
+    this.withApp=true;
+    startdraw(); 
+    setButtons();
+  }
 } 
  
 Bangle.on('lcdPower',function(on) {
@@ -229,9 +229,9 @@ function nextwp(inc){
 
 function doselect(){
   if (selected && waypoints[wpindex].lat===undefined && savedfix.fix) {
-     waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
-     wp = waypoints[wpindex];
-     require("Storage").writeJSON("waypoints.json", waypoints);
+    waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
+    wp = waypoints[wpindex];
+    require("Storage").writeJSON("waypoints.json", waypoints);
   }
   selected=!selected;
   drawN();
