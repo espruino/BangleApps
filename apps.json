@@ -1788,5 +1788,17 @@
       {"name":"pizzatimer.app.js","url":"app.js"},
       {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "verticalface",
+  "name": "Vertical watch face",
+  "shortName":"Vertical Face",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A simple vertical watch face with the date.",
+  "tags": "clock, clock-face, face",
+  "storage": [
+    {"name":"verticalface.app.js","url":"app.js"},
+    {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
