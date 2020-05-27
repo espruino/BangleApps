@@ -1793,7 +1793,7 @@
   "name": "Vertical watch face",
   "shortName":"Vertical Face",
   "icon": "app.png",
-  "version":"0.1",
+  "version":"0.1.1",
   "description": "A simple vertical watch face with the date.",
   "tags": "clock",
   "type":"clock",
