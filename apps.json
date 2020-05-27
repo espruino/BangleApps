@@ -1775,6 +1775,19 @@
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "binclock",
+    "name": "Binary Clock",
+    "shortName":"Binary Clock",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
+    "tags": "clock,binary",
+    "type": "clock",
+    "storage": [
+      {"name":"binclock.app.js","url":"app.js"},
+      {"name":"binclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  }	,
   {
     "id": "pizzatimer",
     "name": "Pizza Timer",
