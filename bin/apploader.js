@@ -15,6 +15,7 @@ var SETTINGS = {
 };
 var Utils = require("../js/utils.js");
 var AppInfo = require("../js/appinfo.js");
+var noble = require('@abandonware/noble');
 var apps;
 
 function ERROR(msg) {
@@ -62,7 +63,6 @@ function cmdInstallApp(appId) {
 }
 
 function bangleSend(command) {
-  var noble = require('noble');
   var log = function() {
     var args = [].slice.call(arguments);
     console.log("UART: "+args.join(" "));
