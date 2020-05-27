@@ -19,13 +19,13 @@ function draw() {
   // draw the current time (4x size 7 segment)
   g.setFont("7x11Numeric7Seg",6);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(hours, 55, 85, true /*clear background*/);
-  g.drawString(mins, 55, 150, true /*clear background*/);
+  g.drawString(hours, 55, 80, true /*clear background*/);
+  g.drawString(mins, 55, 155, true /*clear background*/);
   
   // draw the date (2x size 7 segment)
   g.setFont("6x8",2);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(date, 145, 110, true /*clear background*/);
+  g.drawString(date, 145, 100, true /*clear background*/);
 }
 
 // Clear the screen once, at startup
