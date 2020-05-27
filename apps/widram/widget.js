@@ -10,14 +10,14 @@
   var ramInterval;
   Bangle.on('lcdPower', function(on) {
     if (on) {
-     WIDGETS["ram"].draw();
-     if (!ramInterval) ramInterval = setInterval(()=>WIDGETS["ram"].draw(), 10000);
-   } else {
-     if (ramInterval) {
-       clearInterval(ramInterval);
-       ramInterval = undefined;
-     }
-   }
+      WIDGETS["ram"].draw();
+      if (!ramInterval) ramInterval = setInterval(()=>WIDGETS["ram"].draw(), 10000);
+    } else {
+      if (ramInterval) {
+        clearInterval(ramInterval);
+        ramInterval = undefined;
+      }
+    }
   });
   WIDGETS["ram"]={area:"tl",width: 24,draw:draw};
 })()

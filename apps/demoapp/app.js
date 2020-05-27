@@ -27,22 +27,22 @@ var scenes = [
           "|  __|_ -| . |  _| | | |   | . |\n"+
           "|____|___|  _|_| |___|_|_|_|___|\n"+
           "         |_| espruino.com\n\n",
-          "The JavaScript Interpreter for uCs\n",
-          "  * On-chip JS Interpreter",
-          "  * GPS, Acclerometer, Compass",
-          "  * 64 MHz, 64kB RAM, 512kB + 4MB Flash",
-          "  * 240x240 IPS LCD",
-          "  * Speaker & Vibration motor",
-          "  * Bluetooth LE",
-          "  * 1 week battery life",
-          "",
-          "Includes:",
-          "  * Tensorflow AI",
-          "  * Bluetooth LE central & periph",
-          "  * Graphics Library",
-          "  * VT100 terminal",
-          "","",""
-      ];
+    "The JavaScript Interpreter for uCs\n",
+    "  * On-chip JS Interpreter",
+    "  * GPS, Acclerometer, Compass",
+    "  * 64 MHz, 64kB RAM, 512kB + 4MB Flash",
+    "  * 240x240 IPS LCD",
+    "  * Speaker & Vibration motor",
+    "  * Bluetooth LE",
+    "  * 1 week battery life",
+    "",
+    "Includes:",
+    "  * Tensorflow AI",
+    "  * Bluetooth LE central & periph",
+    "  * Graphics Library",
+    "  * VT100 terminal",
+    "","",""
+    ];
     var n=0;
     var i = setInterval(function() {
       Terminal.println(txt[n]);
@@ -62,19 +62,19 @@ var scenes = [
   function() {
     var img = require("heatshrink").decompress(atob("oNBxH+5wA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AHGpAAoQKv4ADCBQAeqsrAAejBw9/B4oABqt/IGepHw5CEQspALH5hBC5pAvv4/MAALFkIBWpPI6IHqpAu0Z3GfYOpRYdPQEhALYIp2FBYNVI4JAvvL4LH0yBYAFJAQQQ5Ay1JAFftBAQBYxCDv+qIGiCHIQiGnIBfOv5BJIQRAyIJkrvKEkIBrFBB4qEGIGRCNYsZAQIQV/IZDEiICRCDQVJAUIQVPC4lVIF6yJQYpAZ5t/FYvNIBepqtVIJGjIDoqBDY2pdYo3DfAhBIQLmpvIcDvIrC5oJEIAhTCGQmj5qgEC4t5e7YrBqt5BI6UFBg15v4XHbQwAQb4oAKv7NKABdVRoYATUAwnICqjZFIMdVE4+jXI4XGYCxBFFZN/M5OpCxUrvJ/ZFYmjvNVAAY+KCwpDBC6YAV5vNC9oA/AH4A/AHYA=="));
 
-  g.clear();
-  y = 0;
-  var step = 4;
-  var i = setInterval(function() {
-    y+=step;
     g.clear();
-    g.drawImage(img,60,60,{rotate:Math.sin(y*0.03)*0.5});
-    g.flip();
-  }, 20);
-  Bangle.setLCDMode("120x120");
-  return function() {
-    if (i) clearInterval(i);
-  };
+    y = 0;
+    var step = 4;
+    var i = setInterval(function() {
+      y+=step;
+      g.clear();
+      g.drawImage(img,60,60,{rotate:Math.sin(y*0.03)*0.5});
+      g.flip();
+    }, 20);
+    Bangle.setLCDMode("120x120");
+    return function() {
+      if (i) clearInterval(i);
+    };
   },
   function() {
     var rx = 0, ry = 0;
@@ -82,9 +82,9 @@ var scenes = [
     // draw a cube
     function draw() {
       var rcx=Math.cos(rx),
-          rsx=Math.sin(rx),
-          rcy=Math.cos(ry),
-          rsy=Math.sin(ry);
+        rsx=Math.sin(rx),
+        rcy=Math.cos(ry),
+        rsy=Math.sin(ry);
       // Project 3D coordinates into 2D
       function p(x,y,z) {
         var t;
@@ -149,7 +149,7 @@ var scenes = [
       y+=step;
       g.scroll(0,1);
       g.drawImage(img,Math.random()*240,Math.random()*240,
-                  {rotate:Math.random()*6.3, scale:0.5+Math.random()});
+        {rotate:Math.random()*6.3, scale:0.5+Math.random()});
     }, 1);
     Bangle.setLCDMode();
     return function() {

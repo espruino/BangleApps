@@ -101,7 +101,7 @@ Bangle.on('touch', function(button) {
   if (!running) {
     gameStart();
   } else {
-     birdvy -= 4;
+    birdvy -= 4;
   }
 });
 

@@ -32,8 +32,8 @@ function parseDevice(device) {
       case 0x1009: event.fertility = d.getUint16(offset+3,true)/10; break;
       // case 0x1007: break; // 3 bytes? got 84,0,0 or 68,0,0
       default: event.code = code;
-               event.raw = new Uint8Array(d.buffer, offset+3, l);
-               break;
+        event.raw = new Uint8Array(d.buffer, offset+3, l);
+        break;
     }
     //print(event);
     show(event);
