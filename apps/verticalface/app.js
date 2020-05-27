@@ -48,3 +48,6 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+Bangle.on('touch', function(button) {
+  if(button == 1 || button == 2) Bangle.showLauncher();
+});
