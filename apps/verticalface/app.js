@@ -93,7 +93,7 @@ drawBattery();
 
 var secondInterval = setInterval(()=>{
   drawTimeDate();
-}, 5000);
+}, 60000);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
@@ -101,7 +101,7 @@ Bangle.on('lcdPower',on=>{
   secondInterval = undefined;
   if (on) {
     //Screen on
-    setInterval(drawTimeDate, 5000);
+    setInterval(drawTimeDate, 60000);
     drawBPM(HRMstate);
     drawTimeDate();
     drawBattery();
@@ -152,4 +152,3 @@ Bangle.on('HRM', function(hrm) {
 //Bangle.on('step', function(up) {
 //  console.log("Step");
 //});
-
