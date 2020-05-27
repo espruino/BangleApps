@@ -93,20 +93,21 @@ drawBattery();
 
 var secondInterval = setInterval(()=>{
   drawTimeDate();
-}, 60000);
+}, 15000);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
-  if (secondInterval) clearInterval(secondInterval);
-  secondInterval = undefined;
   if (on) {
+    secondInterval = setInterval(()=>{
+  drawTimeDate();
+}, 15000);
     //Screen on
-    setInterval(drawTimeDate, 60000);
     drawBPM(HRMstate);
     drawTimeDate();
     drawBattery();
   } else {
     //Screen off
+    clearInterval(secondInterval);
   }
 });
 
