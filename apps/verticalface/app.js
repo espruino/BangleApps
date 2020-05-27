@@ -113,14 +113,20 @@ Bangle.on('lcdPower',on=>{
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-//HRM Controller.
 Bangle.on('touch', function(button) {
   if(button == 1 || button == 2){
-    if(!HRMstate){
+    Bangle.showLauncher();
+  }
+});
+
+//HRM Controller.
+setWatch(function(){
+  if(!HRMstate){
       console.log("Toggled HRM");
       //Turn on.
       Bangle.buzz();
       Bangle.setHRMPower(1);
+      currentHRM = "CALC";
       HRMstate = true;
     } else if(HRMstate){
       console.log("Toggled HRM");
@@ -131,8 +137,7 @@ Bangle.on('touch', function(button) {
       currentHRM = [];
     }
   drawBPM(HRMstate);
-  }
-});
+}, BTN1, { repeat: true, edge: "falling" });
 
 Bangle.on('HRM', function(hrm) {
   if(hrm.confidence > 90){
@@ -142,6 +147,7 @@ Bangle.on('HRM', function(hrm) {
    drawBPM(HRMstate);
   }
 });
+
 
 //Bangle.on('step', function(up) {
 //  console.log("Step");
