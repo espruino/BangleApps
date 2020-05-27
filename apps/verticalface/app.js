@@ -1,3 +1,22 @@
+// NOTE: 240 x 240
+// Load fonts
+require("Font8x12").add(Graphics);
+
+
+function drawTimeDate() {
+  // work out how to display the current time
+  var d = new Date();
+  var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
+
+  var daysOfWeek = ["MON", "TUE","WED","THU","FRI","SAT","SUN"];
+
+  var hours = h;
+  var mins= ("0"+m).substr(-2);
+  var date = `${daysOfWeek[weekDay]}|${day}|${("0"+(month+1)).substr(-2)}`;
+
+
+  // Reset the state of the graphics library
+  g.reset();
   // Set color
   g.setColor('#27ae60');
   // draw the current time (4x size 7 segment)
