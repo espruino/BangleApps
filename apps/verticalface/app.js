@@ -43,7 +43,7 @@ function drawSteps() {
   g.setFontAlign(-1,0); // align right bottom
   g.drawString("STEPS", 145, 40, true /*clear background*/);
   g.setColor('#bdc3c7');
-  g.drawString("1234", 145, 70, true /*clear background*/);
+  g.drawString("-", 145, 65, true /*clear background*/);
 }
 
 function drawBPM() {
@@ -53,9 +53,22 @@ function drawBPM() {
   g.setColor('#7f8c8d');
   g.setFont("8x12",2);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString("BPM", 145, 120, true /*clear background*/);
+  g.drawString("BPM", 145, 105, true /*clear background*/);
   g.setColor('#bdc3c7');
-  g.drawString("1234", 145, 150, true /*clear background*/);
+  g.drawString("-", 145, 130, true /*clear background*/);
+}
+
+function drawBattery() {
+  let charge = E.getBattery();
+  //Reset to defaults.
+  g.reset();
+  // draw the date (2x size 7 segment)
+  g.setColor('#7f8c8d');
+  g.setFont("8x12",2);
+  g.setFontAlign(-1,0); // align right bottom
+  g.drawString("CHARGE", 145, 170, true /*clear background*/);
+  g.setColor('#bdc3c7');
+  g.drawString(`${charge}%`, 145, 195, true /*clear background*/);
 }
 
 
@@ -65,6 +78,7 @@ g.clear();
 drawTimeDate();
 drawSteps();
 drawBPM();
+drawBattery();
 
 var secondInterval = setInterval(()=>{
   drawTimeDate();
@@ -77,6 +91,7 @@ Bangle.on('lcdPower',on=>{
   if (on) {
     setInterval(drawTimeDate, 5000);
     drawTimeDate(); // draw immediately
+    drawBattery(); //draw battery
   }
 });
 
@@ -90,3 +105,7 @@ setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 Bangle.on('touch', function(button) {
   if(button == 1 || button == 2) Bangle.showLauncher();
 });
+
+//Bangle.on('step', function(up) {
+//  console.log("Step");
+//});
