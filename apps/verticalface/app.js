@@ -6,11 +6,11 @@ require("Font7x11Numeric7Seg").add(Graphics);
 function draw() {
   // work out how to display the current time
   var d = new Date();
-  var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = (d.getMonth()+1), weekDay = d.getDay();
+  var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
   
   var daysOfWeek = ["MON", "TUE","WED","THUR","FRI","SAT","SUN"];
   
-  var hours = ("0"+h).substr(-2);
+  var hours = h;
   var mins= ("0"+m).substr(-2);
   var date = `${daysOfWeek[weekDay]}\n\n${day}/${month}`;
   
@@ -19,13 +19,13 @@ function draw() {
   // draw the current time (4x size 7 segment)
   g.setFont("7x11Numeric7Seg",6);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(hours, 30, 80, true /*clear background*/);
-  g.drawString(mins, 30, 160, true /*clear background*/);
+  g.drawString(hours, 55, 85, true /*clear background*/);
+  g.drawString(mins, 55, 150, true /*clear background*/);
   
   // draw the date (2x size 7 segment)
   g.setFont("6x8",2);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(date, 130, 110, true /*clear background*/);
+  g.drawString(date, 145, 110, true /*clear background*/);
 }
 
 // Clear the screen once, at startup
@@ -48,6 +48,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+
 Bangle.on('touch', function(button) {
   if(button == 1 || button == 2) Bangle.showLauncher();
 });
