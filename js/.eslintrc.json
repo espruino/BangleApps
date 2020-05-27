@@ -4,7 +4,13 @@
         "sourceType": "script"
     },
     "rules": {
-
+        "indent": [
+            "warn",
+            2,
+            {
+                "SwitchCase": 1
+            }
+        ]
     },
     "env": {
         "browser": true,
