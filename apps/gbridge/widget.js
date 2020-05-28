@@ -1,4 +1,5 @@
 (() => {
+  const storage = require('Storage');
 
   const state = {
     music: "stop",
@@ -11,6 +12,11 @@
 
     scrollPos: 0
   };
+
+  let settings = storage.readJSON('gbridge.json',1) || {};
+  if (!("showIcon" in settings)) {
+    settings.showIcon = true;
+  }
 
   function gbSend(message) {
     Bluetooth.println("");
@@ -192,10 +198,15 @@
     g.flip(); // turns screen on
   }
 
-  NRF.on("connect", changedConnectionState);
-  NRF.on("disconnect", changedConnectionState);
-
-  WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
+  if (settings.showIcon) {
+    WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw};
+    NRF.on("connect", changedConnectionState);
+    NRF.on("disconnect", changedConnectionState);
+  } else {
+    NRF.removeListener("connect", changedConnectionState);
+    NRF.removeListener("disconnect", changedConnectionState);
+    delete WIDGETS["gbridgew"];
+  }
 
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });
