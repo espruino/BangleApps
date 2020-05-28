@@ -52,6 +52,11 @@ function showReadme(appid) {
   }
   httpGet(appPath+app.readme).then(show).catch(()=>show("Failed to load README."));
 }
+function getAppDescription(app) {
+  let appPath = `apps/${app.id}/`;
+  let markedOptions = { baseUrl : appPath };
+  return marked(app.description, markedOptions);
+}
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
   if (!appTemplate.custom) throw new Error("App doesn't have custom HTML");
@@ -259,7 +264,7 @@ function refreshLibrary() {
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
+      <p class="tile-subtitle">${getAppDescription(app)}${app.readme?`<br/>${readme}`:""}</p>
       <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
@@ -470,7 +475,7 @@ function refreshMyApps() {
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} <small>(${version.text})</small></p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}</p>
+      <p class="tile-subtitle">${getAppDescription(app)}</p>
       <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
