@@ -111,7 +111,6 @@ function reset(value) {
   state = value === 0 ? "unset" : "set";
 }
 
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 function addWatch() {
   clearWatch();
   setWatch(changeState, BTN1, {
@@ -119,6 +118,16 @@ function addWatch() {
     repeat: true,
     edge: "falling"
   });
+  setWatch(() => {
+    if (state !== "started") {
+      Bangle.showLauncher();
+    }},
+  BTN2,
+  {
+    repeat: false,
+    edge: "falling",
+  },
+  );
   setWatch(
     () => {
       reset(0);
