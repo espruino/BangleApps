@@ -32,8 +32,18 @@ function httpGet(url) {
   return new Promise((resolve,reject) => {
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", () => {
-      if (oReq.status==200) resolve(oReq.responseText)
-      else reject(oReq.status+" - "+oReq.statusText);
+      // ensure we actually load the data as a raw 8 bit string (not utf-8/etc)
+      if (oReq.status==200) {
+        let a = new FileReader();
+        a.onloadend = function() {
+          let bytes = new Uint8Array(a.result);
+          let str = "";
+          for (let i=0;i<bytes.length;i++)
+            str += String.fromCharCode(bytes[i]);
+          resolve(str)
+        };
+        a.readAsArrayBuffer(oReq.response);
+      } else reject(oReq.status+" - "+oReq.statusText);
     });
     oReq.addEventListener("error", () => reject());
     oReq.addEventListener("abort", () => reject());
@@ -41,6 +51,7 @@ function httpGet(url) {
     oReq.onerror = function () {
       reject("HTTP Request failed");
     };
+    oReq.responseType = 'blob';
     oReq.send();
   });
 }

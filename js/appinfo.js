@@ -7,9 +7,14 @@ if (typeof btoa==="undefined") {
 
 // Converts a string into most efficient way to send to Espruino (either json, base64, or compressed base64)
 function toJS(txt) {
+  let isBinary = false;
+  for (let i=0;i<txt.length;i++) {
+    let ch = txt.charCodeAt(i);
+    if (ch==0 || ch>127) isBinary=true;
+  }
   let json = JSON.stringify(txt);
-  let b64 = "atob("+JSON.stringify(btoa(json))+")";
-  let js = b64.length < json.length ? b64 : json;
+  let b64 = "atob("+JSON.stringify(btoa(txt))+")";
+  let js = (isBinary || (b64.length < json.length)) ? b64 : json;
 
   if (typeof heatshrink !== "undefined") {
     let ua = new Uint8Array(txt.length);
