@@ -1787,7 +1787,7 @@
       {"name":"binclock.app.js","url":"app.js"},
       {"name":"binclock.img","url":"app-icon.js","evaluate":true}
     ]
-  }	,
+  },
   {
     "id": "pizzatimer",
     "name": "Pizza Timer",
@@ -1800,6 +1800,22 @@
     "storage": [
       {"name":"pizzatimer.app.js","url":"app.js"},
       {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "animclk",
+    "name": "Animated Clock",
+    "shortName":"Anim Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "An animated clock face using Mark Ferrari's amazing 8 bit game art and palette cycling: http://www.markferrari.com/art/8bit-game-art",
+    "tags": "clock,animated",
+    "type": "clock",
+    "storage": [
+      {"name":"animclk.app.js","url":"app.js"},
+      {"name":"animclk.pixels1","url":"animclk.pixels1"},
+      {"name":"animclk.pixels2","url":"animclk.pixels2"},
+      {"name":"animclk.pal","url":"animclk.pal"},
+      {"name":"animclk.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
