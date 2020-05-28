@@ -118,7 +118,7 @@ function arrow(r,c) {
     180+20*Math.sin(r+p), 180-20*Math.cos(r+p),
     180-10*Math.sin(r), 180+10*Math.cos(r),
     180+20*Math.sin(r+-p), 180-20*Math.cos(r-p),
-    ]);
+  ]);
 }
 
 function onCompass(m) {

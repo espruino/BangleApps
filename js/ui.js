@@ -1,7 +1,7 @@
 // General UI tools (progress bar, toast, prompt)
 
 /// Handle progress bars
-var Progress = {
+const Progress = {
   domElement : null, // the DOM element
   sticky : false, // Progress.show({..., sticky:true}) don't remove until Progress.hide({sticky:true})
   interval : undefined, // the interval used if Progress.show({progress:"animate"})
@@ -18,11 +18,11 @@ var Progress = {
   }) */
   show : function(options) {
     options = options||{};
-    var text = options.title;
+    let text = options.title;
     if (options.sticky) Progress.sticky = true;
     if (options.min!==undefined) Progress.min = options.min;
     if (options.max!==undefined) Progress.max = options.max;
-    var percent = options.percent;
+    let percent = options.percent;
     if (percent!==undefined)
       percent = Progress.min*100 + (Progress.max-Progress.min)*percent;
     if (!Progress.domElement) {
@@ -39,7 +39,7 @@ var Progress = {
         percent = 0;
       }
 
-      var toastcontainer = document.getElementById("toastcontainer");
+      let toastcontainer = document.getElementById("toastcontainer");
       Progress.domElement = htmlElement(`<div class="toast">
       ${text ? `<div>${text}</div>`:``}
       <div class="bar bar-sm">
@@ -48,7 +48,7 @@ var Progress = {
     </div>`);
       toastcontainer.append(Progress.domElement);
     } else {
-      var pt=document.getElementById("Progress.domElement");
+      let pt=document.getElementById("Progress.domElement");
       pt.setAttribute("aria-valuenow",percent);
       pt.style.width = percent+"%";
     }
@@ -76,20 +76,20 @@ Puck.writeProgress = function(charsSent, charsTotal) {
     Progress.hide();
     return;
   }
-  var percent = Math.round(charsSent*100/charsTotal);
+  let percent = Math.round(charsSent*100/charsTotal);
   Progress.show({percent: percent});
 }
 
 /// Show a 'toast' message for status
 function showToast(message, type) {
   // toast-primary, toast-success, toast-warning or toast-error
-  var style = "toast-primary";
+  let style = "toast-primary";
   if (type=="success")  style = "toast-success";
   else if (type=="error")  style = "toast-error";
   else if (type=="warning") style = "toast-warning";
   else if (type!==undefined) console.log("showToast: unknown toast "+type);
-  var toastcontainer = document.getElementById("toastcontainer");
-  var msgDiv = htmlElement(`<div class="toast ${style}"></div>`);
+  let toastcontainer = document.getElementById("toastcontainer");
+  let msgDiv = htmlElement(`<div class="toast ${style}"></div>`);
   msgDiv.innerHTML = message;
   toastcontainer.append(msgDiv);
   setTimeout(function() {
@@ -103,7 +103,7 @@ function showPrompt(title, text, buttons, shouldEscapeHtml) {
   if (typeof(shouldEscapeHtml) === 'undefined' || shouldEscapeHtml === null) shouldEscapeHtml = true;
 
   return new Promise((resolve,reject) => {
-    var modal = htmlElement(`<div class="modal active">
+    let modal = htmlElement(`<div class="modal active">
       <!--<a href="#close" class="modal-overlay" aria-label="Close"></a>-->
       <div class="modal-container">
         <div class="modal-header">
@@ -133,7 +133,7 @@ function showPrompt(title, text, buttons, shouldEscapeHtml) {
     htmlToArray(modal.getElementsByTagName("button")).forEach(button => {
       button.addEventListener("click",event => {
         event.preventDefault();
-        var isYes = event.target.getAttribute("isyes")=="1";
+        let isYes = event.target.getAttribute("isyes")=="1";
         if (isYes) resolve();
         else reject("User cancelled");
         modal.remove();

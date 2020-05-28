@@ -1,5 +1,5 @@
 function escapeHtml(text) {
-  var map = {
+  let map = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -24,13 +24,13 @@ function htmlToArray(collection) {
   return [].slice.call(collection);
 }
 function htmlElement(str) {
-  var div = document.createElement('div');
+  let div = document.createElement('div');
   div.innerHTML = str.trim();
   return div.firstChild;
 }
 function httpGet(url) {
   return new Promise((resolve,reject) => {
-    var oReq = new XMLHttpRequest();
+    let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", () => {
       if (oReq.status==200) resolve(oReq.responseText)
       else reject(oReq.status+" - "+oReq.statusText);
@@ -51,8 +51,8 @@ function toJS(txt) {
 function appSorter(a,b) {
   if (a.unknown || b.unknown)
     return (a.unknown)? 1 : -1;
-  var sa = 0|a.sortorder;
-  var sb = 0|b.sortorder;
+  let sa = 0|a.sortorder;
+  let sb = 0|b.sortorder;
   if (sa<sb) return -1;
   if (sa>sb) return 1;
   return (a.name==b.name) ? 0 : ((a.name<b.name) ? -1 : 1);
@@ -61,8 +61,8 @@ function appSorter(a,b) {
 /* Given 2 JSON structures (1st from apps.json, 2nd from an installed app)
 work out what to display re: versions and if we can update */
 function getVersionInfo(appListing, appInstalled) {
-  var versionText = "";
-  var canUpdate = false;
+  let versionText = "";
+  let canUpdate = false;
   function clicky(v) {
     return `<a class="c-hand" onclick="showChangeLog('${appListing.id}')">${v}</a>`;
   }

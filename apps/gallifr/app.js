@@ -34,14 +34,14 @@ const drawSegment = (params) => {
   for (i = angle1; i < angle2; i=i+incr) {
     brush = thickness * (angle2-angle1) /angle2;
     points = [
-    x + Math.sin(i) * (segRadius+brush),
-    y - Math.cos(i) * (segRadius+brush),
-    x + Math.sin(i+incr) * (segRadius+brush),
-    y - Math.cos(i+incr) * (segRadius+brush),
-    x + Math.sin(i+incr) * (segRadius-brush),
-    y - Math.cos(i+incr) * (segRadius-brush),
-    x + Math.sin(i) * (segRadius-brush),
-    y - Math.cos(i) * (segRadius-brush)
+      x + Math.sin(i) * (segRadius+brush),
+      y - Math.cos(i) * (segRadius+brush),
+      x + Math.sin(i+incr) * (segRadius+brush),
+      y - Math.cos(i+incr) * (segRadius+brush),
+      x + Math.sin(i+incr) * (segRadius-brush),
+      y - Math.cos(i+incr) * (segRadius-brush),
+      x + Math.sin(i) * (segRadius-brush),
+      y - Math.cos(i) * (segRadius-brush)
     ];
     g.fillPoly(points);
   }
@@ -165,11 +165,11 @@ const drawMinuteHand = () => {
       g.setColor(0,1,0);
       break;
     case "blue":
-        g.setColor(0,0,1);
-        break;
+      g.setColor(0,0,1);
+      break;
     case "80s":
-        g.setColor(1,0,0);
-        break;
+      g.setColor(1,0,0);
+      break;
     default:
       g.setColor(0,1,0);
   }
@@ -177,7 +177,7 @@ const drawMinuteHand = () => {
   var points = [centerX,centerY];
   for (i = 0; i < angle; i=i+cirRad/60) {
     points.push(Math.round(centerX + Math.sin(i) * radius),
-                Math.round(centerY - Math.cos(i) * radius));
+      Math.round(centerY - Math.cos(i) * radius));
   }
   g.fillPoly(points);
 };
@@ -194,24 +194,24 @@ const drawHourHand = () => {
 };
 
 const drawClockFace = () => {
-    switch(colour) {
-      case "red":
-        g.setColor(0.8,0.3,0);
-        break;
-      case "green":
-        g.setColor(0.1,0.7,0);
-        break;
-      case "blue":
-          g.setColor(0,0.3,0.8);
-          break;
-      case "80s":
-          g.setColor(1,1,1);
-          break;
-      default:
-        g.setColor(0.1,0.7,0);
-    }
-    g.fillCircle(centerX,centerY,radius*0.98);
-  };
+  switch(colour) {
+    case "red":
+      g.setColor(0.8,0.3,0);
+      break;
+    case "green":
+      g.setColor(0.1,0.7,0);
+      break;
+    case "blue":
+      g.setColor(0,0.3,0.8);
+      break;
+    case "80s":
+      g.setColor(1,1,1);
+      break;
+    default:
+      g.setColor(0.1,0.7,0);
+  }
+  g.fillCircle(centerX,centerY,radius*0.98);
+};
 
 const drawAll = () => {
   currentDate = new Date();

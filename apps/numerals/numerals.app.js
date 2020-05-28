@@ -83,7 +83,7 @@ draw(settings.drawMode);
 Bangle.on('lcdPower', function(on){
   if (on){
     if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
-	draw(settings.drawMode);
+    draw(settings.drawMode);
     interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
   }else
   {

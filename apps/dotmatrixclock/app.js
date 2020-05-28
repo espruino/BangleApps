@@ -88,10 +88,10 @@ function binToHex(bins) {
 function hexToBin(hexStr) {
   const regEx = new RegExp("..", "g");
   const bin = hexStr
-      .replace(regEx, el => el + '_')
-      .slice(0, -1)
-      .split('_')
-      .map(hex => ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8));
+    .replace(regEx, el => el + '_')
+    .slice(0, -1)
+    .split('_')
+    .map(hex => ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8));
 
   return bin;
 }
@@ -153,8 +153,8 @@ function drawFont(str, font, x, y) {
   const gridWidthTotal = (rows * (pxlW + gap)) + gutter;
   for (let i = 0; i < charArr.length; i++) {
     const charAsBin = fontMap.hasOwnProperty(charArr[i])?
-                      hexToBin(fontMap[charArr[i]]):
-                      fontMap.empty;
+      hexToBin(fontMap[charArr[i]]):
+      fontMap.empty;
 
     drawGrid(
       {x: x + (i * gridWidthTotal), y: y},
@@ -188,8 +188,8 @@ function drawCompass(lastHeading) {
   const cps = Bangle.getCompass();
   let angle = cps.heading;
   let heading = angle?
-                directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
-                "-- ";
+    directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
+    "-- ";
 
   heading = (heading + "   ").slice(0, 3);
   if (lastHeading != heading) drawFont(heading, "5x5", 40, 67);

@@ -22,22 +22,22 @@ function draw() {
 
 function scan() {
   NRF.findDevices(devices => {
-      for (let device of devices) {
+    for (let device of devices) {
 
-        // Only display devices that advertise a name
+      // Only display devices that advertise a name
 
-        if (device.name) {
-          // Remove no devices found message if it is present
-          if (menu[NODEVICE]) {
-            delete menu[NODEVICE];
-          }
-          menu[device.name] = {
-            value : device.rssi,
-            onchange : () => {}
-          };
+      if (device.name) {
+        // Remove no devices found message if it is present
+        if (menu[NODEVICE]) {
+          delete menu[NODEVICE];
         }
+        menu[device.name] = {
+          value : device.rssi,
+          onchange : () => {}
+        };
       }
-      draw();
+    }
+    draw();
   }, { active: true });
 }
 

@@ -77,29 +77,29 @@ function boy() {
 }
 
 function drawClock() {
-    var t = new Date();
-    var h = t.getHours();
-    var m = t.getMinutes();
-    var dd = t.getDate();
-    var mm = t.getMonth()+1; //month is zero-based
-    var yy = t.getFullYear();
-    var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
+  var t = new Date();
+  var h = t.getHours();
+  var m = t.getMinutes();
+  var dd = t.getDate();
+  var mm = t.getMonth()+1; //month is zero-based
+  var yy = t.getFullYear();
+  var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
   
-    //create date string
-    if (dd.toString().length < 2) dd = '0' + dd;
-    if (mm.toString().length < 2) mm = '0' + mm;
-    var date = dd + "." + mm + "." + yy;
+  //create date string
+  if (dd.toString().length < 2) dd = '0' + dd;
+  if (mm.toString().length < 2) mm = '0' + mm;
+  var date = dd + "." + mm + "." + yy;
 
-    g.setFont("6x8",bigFont);
-    g.setColor(green);
-    g.setFontAlign(0, -1, 0);
+  g.setFont("6x8",bigFont);
+  g.setColor(green);
+  g.setFontAlign(0, -1, 0);
 
-    g.clearRect(0, 110, 150, 140);
-    g.drawString(time, 70, 110);
+  g.clearRect(0, 110, 150, 140);
+  g.drawString(time, 70, 110);
 
-    //draw date
-    g.setFont("6x8", tinyFont);
-    g.drawString(date, 67, 177);
+  //draw date
+  g.setFont("6x8", tinyFont);
+  g.drawString(date, 67, 177);
 }
 
 function drawAll() {

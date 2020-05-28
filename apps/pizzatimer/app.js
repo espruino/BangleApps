@@ -80,7 +80,7 @@ function decrementCountdownTime() {
 }
 
 function toggleShow(timeIndex) {
-   show[timeIndex] = !show[timeIndex];
+  show[timeIndex] = !show[timeIndex];
 }
 
 function twoPadded(i) {

@@ -135,6 +135,13 @@
         "ecmaVersion": 11
     },
     "rules": {
+        "indent": [
+            "warn",
+            2,
+            {
+                "SwitchCase": 1
+            }
+        ],
         "no-case-declarations": "off",
         "no-constant-condition": "off",
         "no-delete-var": "off",

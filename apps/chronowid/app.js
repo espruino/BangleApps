@@ -45,12 +45,12 @@ function showMenu() {
       }
     },
     'Reset values': function() {
-        settingsChronowid.hours = 0;
-        settingsChronowid.minutes = 0;
-        settingsChronowid.seconds = 0;
-        settingsChronowid.started = false;
-        updateSettings();
-        showMenu();
+      settingsChronowid.hours = 0;
+      settingsChronowid.minutes = 0;
+      settingsChronowid.seconds = 0;
+      settingsChronowid.started = false;
+      updateSettings();
+      showMenu();
     },
     'Hours': {
       value: settingsChronowid.hours,
@@ -89,8 +89,8 @@ function showMenu() {
         settingsChronowid.started = v;
         updateSettings();
       }
-      },
-    };
+    },
+  };
   timerMenu['-Exit-'] =  ()=>{load();};
   return E.showMenu(timerMenu);
 }

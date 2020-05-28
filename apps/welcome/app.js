@@ -87,7 +87,7 @@ var scenes = [
       ()=>{g.setFont("Vector",36);g.drawString("1",200,40);},
       ()=>g.drawString("2",200,120),
       ()=>g.drawString("3",200,200)
-     ],200);
+    ],200);
   },
   function() {
     g.reset();
@@ -138,15 +138,15 @@ var scenes = [
     var x = 120, y = 10, h=21;
     animate([
       ()=>{g.drawString("Bangle.js has a",x,y+=h);
-           g.drawString("simple touchscreen",x,y+=h);},
+        g.drawString("simple touchscreen",x,y+=h);},
       0,0,
       ()=>{g.drawString("It'll detect touch",x,y+=h*2);
-           g.drawString("on left and right",x,y+=h);},
+        g.drawString("on left and right",x,y+=h);},
       0,0,
       ()=>{g.drawString("Horizontal swipes",x,y+=h*2);
-           g.drawString("work too. Try now",x,y+=h);
-           g.drawString("to change page.",x,y+=h);}
-     ],300);
+        g.drawString("work too. Try now",x,y+=h);
+        g.drawString("to change page.",x,y+=h);}
+    ],300);
   },
   function() {
     g.reset();
@@ -156,15 +156,15 @@ var scenes = [
     var x = 120, y = 10, h=21;
     animate([
       ()=>{g.drawString("Bangle.js",x,y+=h);
-           g.drawString("comes with",x,y+=h);
-           g.drawString("a few simple",x,y+=h);
-           g.drawString("apps installed",x,y+=h);},
+        g.drawString("comes with",x,y+=h);
+        g.drawString("a few simple",x,y+=h);
+        g.drawString("apps installed",x,y+=h);},
       0,0,
       ()=>{g.drawString("To add more, visit",x,y+=h*2);
-           g.drawString("banglejs.com/apps",x,y+=h);
-           g.drawString("with a Bluetooth",x,y+=h);
-           g.drawString("capable device",x,y+=h);},
-     ],400);
+        g.drawString("banglejs.com/apps",x,y+=h);
+        g.drawString("with a Bluetooth",x,y+=h);
+        g.drawString("capable device",x,y+=h);},
+    ],400);
   },
   function() {
     g.reset();
@@ -186,9 +186,9 @@ var scenes = [
       rx += 0.1;
       ry += 0.11;
       var rcx=Math.cos(rx),
-          rsx=Math.sin(rx),
-          rcy=Math.cos(ry),
-          rsy=Math.sin(ry);
+        rsx=Math.sin(rx),
+        rcy=Math.cos(ry),
+        rsy=Math.sin(ry);
       // Project 3D coordinates into 2D
       function p(x,y,z) {
         var t;
@@ -240,10 +240,10 @@ var scenes = [
     animate([
       ()=>g.drawString("That's it!",x,y+=h),
       ()=>{g.drawString("Press",x,y+=h*3);
-           g.drawString("Button 2",x,y+=h);
-           g.drawString("to start",x,y+=h);
-           g.drawString("Bangle.js",x,y+=h);}
-     ],400);
+        g.drawString("Button 2",x,y+=h);
+        g.drawString("to start",x,y+=h);
+        g.drawString("Bangle.js",x,y+=h);}
+    ],400);
   }
 ];
 

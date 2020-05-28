@@ -137,7 +137,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -269,7 +269,7 @@
   { "id": "compass",
     "name": "Compass",
     "icon": "compass.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Simple compass that points North",
     "tags": "tool,outdoors",
     "storage": [
@@ -1775,6 +1775,19 @@
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "binclock",
+    "name": "Binary Clock",
+    "shortName":"Binary Clock",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
+    "tags": "clock,binary",
+    "type": "clock",
+    "storage": [
+      {"name":"binclock.app.js","url":"app.js"},
+      {"name":"binclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  }	,
   {
     "id": "pizzatimer",
     "name": "Pizza Timer",
@@ -1789,18 +1802,31 @@
       {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  { "id": "verticalface",
-  "name": "Vertical watch face",
-  "shortName":"Vertical Face",
-  "icon": "app.png",
-  "version":"0.4.1",
-  "description": "A simple vertical watch face with the date.",
-  "tags": "clock",
-  "type":"clock",
-  "allow_emulator":true,
-  "storage": [
-    {"name":"verticalface.app.js","url":"app.js"},
-    {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
-  ]
-}
+  { 
+    "id": "verticalface",
+    "name": "Vertical watch face",
+    "shortName":"Vertical Face",
+    "icon": "app.png",
+    "version":"0.4.1",
+    "description": "A simple vertical watch face with the date.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"verticalface.app.js","url":"app.js"},
+      {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "sleepphasealarm",
+    "name": "SleepPhaseAlarm",
+    "shortName":"SleepPhaseAlarm",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments (ESS, see https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en). This app will read the next alarm from the alarm application and will wake you up to 30 minutes early at the best guessed time when you are almost already awake.",
+    "tags": "alarm",
+    "storage": [
+      {"name":"sleepphasealarm.app.js","url":"app.js"},
+      {"name":"sleepphasealarm.img","url":"app-icon.js","evaluate":true}
+    ]
+  }
 ]
