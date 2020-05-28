@@ -1,7 +1,7 @@
 Puck.debug=3;
 
 // FIXME: use UART lib so that we handle errors properly
-var Comms = {
+let Comms = {
   reset : (opt) => new Promise((resolve,reject) => {
     Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`, (result) => {
       if (result===null) return reject("Connection failed");
@@ -16,13 +16,13 @@ var Comms = {
     }).then(fileContents => {
       return new Promise((resolve,reject) => {
         console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
-        var maxBytes = fileContents.reduce((b,f)=>b+f.cmd.length, 0)||1;
-        var currentBytes = 0;
+        let maxBytes = fileContents.reduce((b,f)=>b+f.cmd.length, 0)||1;
+        let currentBytes = 0;
 
-        var appInfoFileName = app.id+".info";
-        var appInfoFile = fileContents.find(f=>f.name==appInfoFileName);
+        let appInfoFileName = app.id+".info";
+        let appInfoFile = fileContents.find(f=>f.name==appInfoFileName);
         if (!appInfoFile) reject(`${appInfoFileName} not found`);
-        var appInfo = JSON.parse(appInfoFile.content);
+        let appInfo = JSON.parse(appInfoFile.content);
 
         // Upload each file one at a time
         function doUploadFiles() {
@@ -35,14 +35,14 @@ var Comms = {
             });
             return;
           }
-          var f = fileContents.shift();
+          let f = fileContents.shift();
           console.log(`Upload ${f.name} => ${JSON.stringify(f.content)}`);
           // Chould check CRC here if needed instead of returning 'OK'...
           // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
-          var cmds = f.cmd.split("\n");
+          let cmds = f.cmd.split("\n");
           function uploadCmd() {
             if (!cmds.length) return doUploadFiles();
-            var cmd = cmds.shift();
+            let cmd = cmds.shift();
             Progress.show({
               min:currentBytes / maxBytes,
               max:(currentBytes+cmd.length) / maxBytes});
@@ -84,7 +84,7 @@ var Comms = {
           Progress.hide({sticky:true});
           return reject("");
         }
-        Puck.write('\x10Bluetooth.print("[");require("Storage").list(/\.info$/).forEach(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);Bluetooth.print(JSON.stringify(j)+",")});Bluetooth.println("0]")\n', (appList,err) => {
+        Puck.write('\x10Bluetooth.print("[");require("Storage").list(/\\.info$/).forEach(f=>{var j=require("Storage").readJSON(f,1)||{};j.id=f.slice(0,-5);Bluetooth.print(JSON.stringify(j)+",")});Bluetooth.println("0]")\n', (appList,err) => {
           Progress.hide({sticky:true});
           try {
             appList = JSON.parse(appList);
@@ -152,9 +152,9 @@ var Comms = {
   },
   setTime : () => {
     return new Promise((resolve,reject) => {
-      var d = new Date();
-      var tz = d.getTimezoneOffset()/-60
-      var cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
+      let d = new Date();
+      let tz = d.getTimezoneOffset()/-60
+      let cmd = '\x03\x10setTime('+(d.getTime()/1000)+');';
       // in 1v93 we have timezones too
       cmd += 'E.setTimeZone('+tz+');';
       cmd += "(s=>{s&&(s.timezone="+tz+")&&require('Storage').write('setting.json',s);})(require('Storage').readJSON('setting.json',1))\n";
@@ -165,17 +165,17 @@ var Comms = {
     });
   },
   disconnectDevice: () => {
-    var connection = Puck.getConnection();
+    let connection = Puck.getConnection();
 
     if (!connection) return;
 
     connection.close();
   },
   watchConnectionChange : cb => {
-    var connected = Puck.isConnected();
+    let connected = Puck.isConnected();
 
     //TODO Switch to an event listener when Puck will support it
-    var interval = setInterval(() => {
+    let interval = setInterval(() => {
       if (connected === Puck.isConnected()) return;
 
       connected = Puck.isConnected();
@@ -220,20 +220,20 @@ var Comms = {
   readStorageFile : (filename) => { // StorageFiles are different to normal storage entries
     return new Promise((resolve,reject) => {
     // Use "\xFF" to signal end of file (can't occur in files anyway)
-      var fileContent = "";
-      var fileSize = undefined;
-      var connection = Puck.getConnection();
+      let fileContent = "";
+      let fileSize = undefined;
+      let connection = Puck.getConnection();
       connection.received = "";
       connection.cb = function(d) {
-        var finished = false;
-        var eofIndex = d.indexOf("\xFF");
+        let finished = false;
+        let eofIndex = d.indexOf("\xFF");
         if (eofIndex>=0) {
           finished = true;
           d = d.substr(0,eofIndex);
         }
         fileContent += d;
         if (fileSize === undefined) {
-          var newLineIdx = fileContent.indexOf("\n");
+          let newLineIdx = fileContent.indexOf("\n");
           if (newLineIdx>=0) {
             fileSize = parseInt(fileContent.substr(0,newLineIdx));
             console.log("File size is "+fileSize);
