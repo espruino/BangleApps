@@ -98,8 +98,8 @@ var secondInterval = setInterval(()=>{
 Bangle.on('lcdPower',on=>{
   if (on) {
     secondInterval = setInterval(()=>{
-  drawTimeDate();
-}, 15000);
+      drawTimeDate();
+    }, 15000);
     //Screen on
     drawBPM(HRMstate);
     drawTimeDate();
@@ -122,29 +122,29 @@ Bangle.on('touch', function(button) {
 //HRM Controller.
 setWatch(function(){
   if(!HRMstate){
-      console.log("Toggled HRM");
-      //Turn on.
-      Bangle.buzz();
-      Bangle.setHRMPower(1);
-      currentHRM = "CALC";
-      HRMstate = true;
-    } else if(HRMstate){
-      console.log("Toggled HRM");
-      //Turn off.
-      Bangle.buzz();
-      Bangle.setHRMPower(0);
-      HRMstate = false;
-      currentHRM = [];
-    }
+    console.log("Toggled HRM");
+    //Turn on.
+    Bangle.buzz();
+    Bangle.setHRMPower(1);
+    currentHRM = "CALC";
+    HRMstate = true;
+  } else if(HRMstate){
+    console.log("Toggled HRM");
+    //Turn off.
+    Bangle.buzz();
+    Bangle.setHRMPower(0);
+    HRMstate = false;
+    currentHRM = [];
+  }
   drawBPM(HRMstate);
 }, BTN1, { repeat: true, edge: "falling" });
 
 Bangle.on('HRM', function(hrm) {
   if(hrm.confidence > 90){
-   /*Do more research to determine effect algorithm for heartrate average.*/
-   console.log(hrm.bpm);
-   currentHRM = hrm.bpm;
-   drawBPM(HRMstate);
+    /*Do more research to determine effect algorithm for heartrate average.*/
+    console.log(hrm.bpm);
+    currentHRM = hrm.bpm;
+    drawBPM(HRMstate);
   }
 });
 
