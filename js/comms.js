@@ -1,7 +1,7 @@
 Puck.debug=3;
 
 // FIXME: use UART lib so that we handle errors properly
-let Comms = {
+const Comms = {
   reset : (opt) => new Promise((resolve,reject) => {
     Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`, (result) => {
       if (result===null) return reject("Connection failed");

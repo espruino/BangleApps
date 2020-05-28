@@ -1,7 +1,7 @@
 // General UI tools (progress bar, toast, prompt)
 
 /// Handle progress bars
-let Progress = {
+const Progress = {
   domElement : null, // the DOM element
   sticky : false, // Progress.show({..., sticky:true}) don't remove until Progress.hide({sticky:true})
   interval : undefined, // the interval used if Progress.show({progress:"animate"})

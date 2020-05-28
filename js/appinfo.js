@@ -30,7 +30,7 @@ function toJS(txt) {
 if ("undefined"!=typeof module)
   Espruino = require("./espruinotools.js");
 
-let AppInfo = {
+const AppInfo = {
   /* Get files needed for app.
      options = {
         fileGetter : callback for getting URL,
