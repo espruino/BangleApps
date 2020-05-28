@@ -1,5 +1,6 @@
 (() => {
   const storage = require('Storage');
+  let settings;
 
   const state = {
     music: "stop",
@@ -13,10 +14,6 @@
     scrollPos: 0
   };
 
-  let settings = storage.readJSON('gbridge.json',1) || {};
-  if (!("showIcon" in settings)) {
-    settings.showIcon = true;
-  }
 
   function gbSend(message) {
     Bluetooth.println("");
@@ -186,6 +183,7 @@
   });
 
   function draw() {
+    if (!settings.showIcon) return;
     g.setColor(-1);
     if (NRF.getSecurityStatus().connected)
       g.drawImage(require("heatshrink").decompress(atob("i0WwgHExAABCIwJCBYwJEBYkIBQ2ACgvzCwoECx/z/AKDD4WD+YLBEIYKCx//+cvnAKCBwU/mc4/8/HYv//Ev+Y4EEAePn43DBQkzn4rCEIoABBIwKHO4cjmczK42I6mqlqEEBQeIBQaDED4IgDUhi6KaBbmIA==")), this.x + 1, this.y + 1);
@@ -198,15 +196,24 @@
     g.flip(); // turns screen on
   }
 
-  if (settings.showIcon) {
-    WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw};
-    NRF.on("connect", changedConnectionState);
-    NRF.on("disconnect", changedConnectionState);
-  } else {
-    NRF.removeListener("connect", changedConnectionState);
-    NRF.removeListener("disconnect", changedConnectionState);
-    delete WIDGETS["gbridgew"];
+  function reload() {
+    settings = storage.readJSON('gbridge.json', 1) || {};
+    if (!("showIcon" in settings)) {
+      settings.showIcon = true;
+    }
+    if (settings.showIcon) {
+      WIDGETS["gbridgew"].width = 24;
+      NRF.on("connect", changedConnectionState);
+      NRF.on("disconnect", changedConnectionState);
+    } else {
+      WIDGETS["gbridgew"].width = 0;
+      NRF.removeListener("connect", changedConnectionState);
+      NRF.removeListener("disconnect", changedConnectionState);
+    }
   }
+
+  WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
+  reload();
 
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });

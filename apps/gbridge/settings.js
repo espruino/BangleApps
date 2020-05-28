@@ -13,7 +13,9 @@
   function toggleIcon() {
     settings.showIcon = !settings.showIcon;
     updateSettings();
-    Bangle.loadWidgets();
+    // need to re-layout widgets
+    WIDGETS["gbridgew"].reload();
+    g.clear();
     Bangle.drawWidgets();
   }
   var mainmenu = {
@@ -35,5 +37,5 @@
     "< Back" : function() { E.showMenu(mainmenu); },
   };
 
-  E.showMenu(mainmenu);
+  const menu = E.showMenu(mainmenu);
 })
