@@ -40,7 +40,7 @@ function showChangeLog(appid) {
     showPrompt(app.name+" Change Log",contents,{ok:true}).catch(()=>{});
   }
   httpGet(`apps/${appid}/ChangeLog`).
-  then(show).catch(()=>show("No Change Log available"));
+    then(show).catch(()=>show("No Change Log available"));
 }
 function showReadme(appid) {
   var app = appNameToApp(appid);
@@ -319,9 +319,9 @@ function refreshLibrary() {
       } else if (icon.classList.contains("icon-download")) {
         handleAppInterface(app);
       } else if ( button.innerText == String.fromCharCode(0x2661)) {
-         changeAppFavourite(true, app);
+        changeAppFavourite(true, app);
       } else if ( button.innerText == String.fromCharCode(0x2665) ) {
-         changeAppFavourite(false, app);
+        changeAppFavourite(false, app);
       }
     });
   });
@@ -458,15 +458,20 @@ function getAppsToUpdate() {
 function refreshMyApps() {
   var panelbody = document.querySelector("#myappscontainer .panel-body");
   panelbody.innerHTML = appsInstalled.map(appInstalled => {
-var app = appNameToApp(appInstalled.id);
-var version = getVersionInfo(app, appInstalled);
-return `<div class="tile column col-6 col-sm-12 col-xs-12">
+    var app = appNameToApp(appInstalled.id);
+    var version = getVersionInfo(app, appInstalled);
+    var username = "espruino";
+    var githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    if(githubMatch) username = githubMatch[1];
+    var url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+    return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} <small>(${version.text})</small></p>
       <p class="tile-subtitle">${escapeHtml(app.description)}</p>
+      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>

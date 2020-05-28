@@ -66,7 +66,7 @@
 
     // Very coarse first approach to check if the BLE device is on.
     if (NRF.getSecurityStatus().connected)
-       enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
+      enabledConsumers = enabledConsumers | switchableConsumers.bluetooth;
 
     // Reset the event registration vars
     compassEventReceived = false;

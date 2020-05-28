@@ -2,7 +2,7 @@ if (typeof btoa==="undefined") {
   // Don't define btoa as a function here because Apple's
   // iOS browser defines the function even though it's in
   // an IF statement that is never executed!
-  btoa = function(d) { return BufferA.from(d).toString('base64'); }
+  btoa = function(d) { return Buffer.from(d).toString('base64'); }
 }
 
 // Converts a string into most efficient way to send to Espruino (either json, base64, or compressed base64)
@@ -59,7 +59,7 @@ var AppInfo = {
               name : storageFile.name,
               content : content,
               evaluate : storageFile.evaluate
-          }});
+            }});
         else return Promise.resolve();
       })).then(fileContents => { // now we just have a list of files + contents...
         // filter out empty files
@@ -82,7 +82,7 @@ var AppInfo = {
             var CHUNKSIZE = 4096;
             storageFile.cmd = `\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(0,CHUNKSIZE))},0,${code.length});`;
             for (var i=CHUNKSIZE;i<code.length;i+=CHUNKSIZE)
-               storageFile.cmd += `\n\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
+              storageFile.cmd += `\n\x10require('Storage').write(${JSON.stringify(storageFile.name)},${toJS(code.substr(i,CHUNKSIZE))},${i});`;
           }
         });
         resolve(fileContents);

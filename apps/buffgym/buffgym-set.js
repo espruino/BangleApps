@@ -25,4 +25,4 @@ exports = class Set {
     if (this.reps <= this.minReps) return;
     this.reps--;
   }
-}
+};

@@ -7,12 +7,12 @@ but because we're going lower level we need to account for the
 different pin. */
 if (s.beep=="vib") {
   function freq(f) {
-   if (f===0) digitalWrite(D13, 0);
+    if (f===0) digitalWrite(D13, 0);
     else analogWrite(D13, 0.1, {freq: f});
   }
 } else {
   function freq(f) {
-   if (f===0) digitalWrite(D18, 0);
+    if (f===0) digitalWrite(D18, 0);
     else analogWrite(D18, 0.5, {freq: f});
   }
 }

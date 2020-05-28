@@ -53,7 +53,7 @@ const writeText = (txt) => {
 
   var width = g.stringWidth(txt);
 
- // Fit text to screen
+  // Fit text to screen
   var fontFix = FONT_SIZE;
   while(width > SCREEN_PIXELS-10){
     fontFix--;

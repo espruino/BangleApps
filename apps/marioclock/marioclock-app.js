@@ -96,30 +96,30 @@ function phoneOutbound(msg) {
 }
 
 function phoneClearMessage() {
-    if (phone.message === null) return;
+  if (phone.message === null) return;
 
-    if (phone.messageTimeout) {
-      clearTimeout(phone.messageTimeout);
-      phone.messageTimeout = null;
-    }
-    phone.message = null;
-    phone.messageScrollX = null;
-    phone.messageType = null;
+  if (phone.messageTimeout) {
+    clearTimeout(phone.messageTimeout);
+    phone.messageTimeout = null;
+  }
+  phone.message = null;
+  phone.messageScrollX = null;
+  phone.messageType = null;
 }
 
 function phoneNewMessage(type, msg) {
-    Bangle.buzz();
+  Bangle.buzz();
 
-    phoneClearMessage();
-    phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
-    phone.message = msg;
-    phone.messageType = type;
+  phoneClearMessage();
+  phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
+  phone.message = msg;
+  phone.messageType = type;
 
-    // Notify user and active screen
-    if (!Bangle.isLCDOn()) {
-      clearTimers();
-      Bangle.setLCDPower(true);
-    }
+  // Notify user and active screen
+  if (!Bangle.isLCDOn()) {
+    clearTimers();
+    Bangle.setLCDPower(true);
+  }
 }
 
 function truncStr(str, max) {
@@ -258,7 +258,7 @@ function drawTrees() {
   // remove first sprite if offscreen
   let firstBackgroundSprite = backgroundArr[0];
   if (firstBackgroundSprite) {
-      if (firstBackgroundSprite.x < -15) backgroundArr.splice(0, 1);
+    if (firstBackgroundSprite.x < -15) backgroundArr.splice(0, 1);
   }
 
   // set background sprite if array empty
@@ -365,7 +365,7 @@ function drawNotice(x, y) {
 function drawCharacter(date, character) {
   // calculate jumping
   const seconds = date.getSeconds(),
-        milliseconds = date.getMilliseconds();
+    milliseconds = date.getMilliseconds();
 
   if (seconds == 59 && milliseconds > 800 && !characterSprite.isJumping) {
     characterSprite.isJumping = true;
@@ -486,22 +486,22 @@ function drawInfo(date) {
       }
       xPos = phone.messageScrollX;
     } else {
-     xPos = (W - g.stringWidth(str)) / 2;
+      xPos = (W - g.stringWidth(str)) / 2;
     }
   } else {
     switch(infoMode) {
-    case PHON_MODE:
-      str = buildPhonStr();
-      break;
-    case TEMP_MODE:
-      str = buildTempStr();
-      break;
-    case BATT_MODE:
-      str = buildBatStr();
-      break;
-    case DATE_MODE:
-    default:
-      str = buildDateStr(date);
+      case PHON_MODE:
+        str = buildPhonStr();
+        break;
+      case TEMP_MODE:
+        str = buildTempStr();
+        break;
+      case BATT_MODE:
+        str = buildBatStr();
+        break;
+      case DATE_MODE:
+      default:
+        str = buildDateStr(date);
     }
     xPos = (W - g.stringWidth(str)) / 2;
   }

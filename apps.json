@@ -137,7 +137,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -280,7 +280,7 @@
   { "id": "gpstime",
     "name": "GPS Time",
     "icon": "gpstime.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
     "tags": "tool,gps",
     "storage": [
@@ -303,7 +303,7 @@
   { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Show the current speed according to the GPS",
     "tags": "tool,outdoors,gps",
     "storage": [
@@ -888,7 +888,7 @@
   { "id": "berlinc",
     "name": "Berlin Clock",
     "icon": "berlin-clock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "tags": "clock",
     "type":"clock",
@@ -1727,7 +1727,7 @@
   { "id": "rndmclk",
     "name": "Random Clock Loader",
     "icon": "rndmclk.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Load a different clock whenever the LCD is switched on.",
     "readme": "README.md",
     "tags": "widget,clock",
@@ -1773,6 +1773,33 @@
     "type": "widget",
     "storage": [
       {"name":"widviz.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "binclock",
+    "name": "Binary Clock",
+    "shortName":"Binary Clock",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
+    "tags": "clock,binary",
+    "type": "clock",
+    "storage": [
+      {"name":"binclock.app.js","url":"app.js"},
+      {"name":"binclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  }	,
+  {
+    "id": "pizzatimer",
+    "name": "Pizza Timer",
+    "shortName":"Pizza Timer",
+    "icon": "pizza.png",
+    "version":"0.01",
+    "description": "A timer app for when you cook Pizza. Some say it can also time other things",
+    "tags": "timer,tool,pizza",
+    "readme": "README.md",
+    "storage": [
+      {"name":"pizzatimer.app.js","url":"app.js"},
+      {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]

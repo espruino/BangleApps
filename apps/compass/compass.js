@@ -27,7 +27,7 @@ function arrow(r,c) {
     80+60*Math.sin(r), 80-60*Math.cos(r),
     80+10*Math.sin(r+p), 80-10*Math.cos(r+p),
     80+10*Math.sin(r-p), 80-10*Math.cos(r-p),
-    ]);
+  ]);
 }
 
 var oldHeading = 0;
