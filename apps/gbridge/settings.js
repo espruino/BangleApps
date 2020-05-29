@@ -40,5 +40,5 @@
     "< Back" : function() { E.showMenu(mainmenu); },
   };
 
-  const menu = E.showMenu(mainmenu);
+  E.showMenu(mainmenu);
 })

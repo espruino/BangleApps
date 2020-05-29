@@ -76,7 +76,7 @@
         var p = MAXCHARS;
         while (p > MAXCHARS - 8 && !" \t-_".includes(l[p]))
           p--;
-        if (p == MAXCHARS - 8) p = MAXCHARS;
+        if (p === MAXCHARS - 8) p = MAXCHARS;
         txt[i] = l.substr(0, p);
         txt.splice(i + 1, 0, l.substr(p));
       }
@@ -109,7 +109,7 @@
     const changed = state.music === event.state
     state.music = event.state
 
-    if (state.music == "play") {
+    if (state.music === "play") {
       showNotification(40, (y) => {
         g.setColor("#ffffff");
         g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")), 8, y + 8);
@@ -126,14 +126,14 @@
       }, changed);
     }
 
-    if (state.music == "pause") {
+    if (state.music === "pause") {
       hideNotification();
     }
   }
 
   function handleCallEvent(event) {
 
-    if (event.cmd == "accept") {
+    if (event.cmd === "accept") {
       showNotification(40, (y) => {
         g.setColor("#ffffff");
         g.drawImage(require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw=")), 8, y + 8);
@@ -180,7 +180,7 @@
   });
 
   Bangle.on("swipe", (dir) => {
-    if (state.music == "play") {
+    if (state.music === "play") {
       const command = dir > 0 ? "next" : "previous"
       gbSend({ t: "music", n: command });
     }
