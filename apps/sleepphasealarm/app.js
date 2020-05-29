@@ -2,7 +2,7 @@ const alarms = require("Storage").readJSON("alarm.json",1)||[];
 const active = alarms.filter(a=>a.on);
 
 // Sleep/Wake detection with Estimation of Stationary Sleep-segments (ESS):
-// Marko Borazio, Eugen Berlin, Nagihan K�c�kyildiz, Philipp M. Scholl and Kristof Van Laerhoven, "Towards a Benchmark for Wearable Sleep Analysis with Inertial Wrist-worn Sensing Units", ICHI 2014, Verona, Italy, IEEE Press, 2014.
+// Marko Borazio, Eugen Berlin, Nagihan Kücükyildiz, Philipp M. Scholl and Kristof Van Laerhoven, "Towards a Benchmark for Wearable Sleep Analysis with Inertial Wrist-worn Sensing Units", ICHI 2014, Verona, Italy, IEEE Press, 2014.
 // https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en
 //
 // Function needs to be called for every measurement but returns a value at maximum once a second (see winwidth)
