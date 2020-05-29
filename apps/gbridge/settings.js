@@ -2,17 +2,20 @@
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
   }
-  const storage = require('Storage');
-  let settings = storage.readJSON("gbridge.json", true) || {};
-  if (!("showIcon" in settings)) {
-    settings.showIcon = true;
+  function settings() {
+    let settings = require('Storage').readJSON("gbridge.json", true) || {};
+    if (!("showIcon" in settings)) {
+      settings.showIcon = true;
+    }
+    return settings
   }
-  function updateSettings() {
-    storage.write('gbridge.json', settings);
+  function updateSetting(setting, value) {
+    let settings = require('Storage').readJSON("gbridge.json", true) || {};
+    settings[setting] = value
+    require('Storage').write('gbridge.json', settings);
   }
-  function toggleIcon() {
-    settings.showIcon = !settings.showIcon;
-    updateSettings();
+  function setIcon(visible) {
+    updateSetting('showIcon', visible);
     // need to re-layout widgets
     WIDGETS["gbridgew"].reload();
     g.clear();
@@ -22,9 +25,9 @@
     "" : { "title" : "Gadgetbridge" },
     "Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
     "Show Icon" : {
-      value: settings.showIcon,
+      value: settings().showIcon,
       format: v => v?"Yes":"No",
-      onchange: toggleIcon
+      onchange: setIcon
     },
     "Find Phone" : function() { E.showMenu(findPhone); },
     "< Back" : back,
