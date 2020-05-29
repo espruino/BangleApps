@@ -2,6 +2,7 @@ let counter = 0;
 let setValue = 0;
 let counterInterval;
 let state;
+let saved = require("Storage").readJSON("simpletimer.json",true) || {};
 
 const DEBOUNCE = 50;
 
@@ -61,6 +62,8 @@ function clearIntervals() {
 function set(delta) {
   if (state === "started") return;
   counter += delta;
+  saved.counter = counter;
+  require("Storage").write("simpletimer.json", saved);
   if (state === "unset") {
     state = "set";
   }
@@ -111,7 +114,6 @@ function reset(value) {
   state = value === 0 ? "unset" : "set";
 }
 
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 function addWatch() {
   clearWatch();
   setWatch(changeState, BTN1, {
@@ -119,6 +121,16 @@ function addWatch() {
     repeat: true,
     edge: "falling"
   });
+  setWatch(() => {
+    if (state !== "started") {
+      Bangle.showLauncher();
+    }},
+  BTN2,
+  {
+    repeat: false,
+    edge: "falling",
+  },
+  );
   setWatch(
     () => {
       reset(0);
@@ -151,5 +163,5 @@ Bangle.on("aiGesture", gesture => {
   if (gesture === "swipeleft" && state === "stopped") reset(0);
 });
 
-reset(0);
+reset(saved.counter || 0);
 addWatch();
