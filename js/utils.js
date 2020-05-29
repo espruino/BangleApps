@@ -29,11 +29,18 @@ function htmlElement(str) {
   return div.firstChild;
 }
 function httpGet(url) {
+  let isBinary = !(url.endsWith(".js") || url.endsWith(".json") || url.endsWith(".csv") || url.endsWith(".txt"));
   return new Promise((resolve,reject) => {
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", () => {
-      // ensure we actually load the data as a raw 8 bit string (not utf-8/etc)
-      if (oReq.status==200) {
+      if (oReq.status!=200) {
+        resolve(oReq.status+" - "+oReq.statusText)
+        return;
+      }
+      if (!isBinary) {
+        resolve(oReq.responseText)
+      } else {
+        // ensure we actually load the data as a raw 8 bit string (not utf-8/etc)
         let a = new FileReader();
         a.onloadend = function() {
           let bytes = new Uint8Array(a.result);
@@ -43,7 +50,7 @@ function httpGet(url) {
           resolve(str)
         };
         a.readAsArrayBuffer(oReq.response);
-      } else reject(oReq.status+" - "+oReq.statusText);
+      }
     });
     oReq.addEventListener("error", () => reject());
     oReq.addEventListener("abort", () => reject());
@@ -51,7 +58,8 @@ function httpGet(url) {
     oReq.onerror = function () {
       reject("HTTP Request failed");
     };
-    oReq.responseType = 'blob';
+    if (isBinary)
+      oReq.responseType = 'blob';
     oReq.send();
   });
 }
