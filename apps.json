@@ -317,7 +317,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -1826,7 +1826,7 @@
       {"name":"animclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  { 
+  {
     "id": "verticalface",
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
