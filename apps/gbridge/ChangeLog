@@ -9,3 +9,5 @@
 0.08: Don't turn on LCD at start of every song
 0.09: Update Bluetooth connection state automatically
 0.10: Make widget play well with other Gadgetbridge widgets/apps
+0.11: Report battery status on connect and at regular intervals
+0.12: Setting to show/hide icon

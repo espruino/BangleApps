@@ -7,7 +7,7 @@ var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
-var IW = 110, IH = 45, OY = 24;
+var IW = 174, IH = 45, OY = 24;
 var bgwidth = img.charCodeAt(0);
 var bgoptions;
 if (bgwidth<240)
@@ -40,12 +40,13 @@ function draw() {
   new Uint8Array(cg.buffer).set(bgimg);
   // draw time
   cg.setColor(inf.col);
-  var x = 40;
+  var x = 74 + 32 * inf.align;
   cg.setFont("7x11Numeric7Seg",3);
   cg.setFontAlign(1,-1);
   cg.drawString(hours, x, 0);
   x+=2;
-  cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
+  if (t.getSeconds() & 1)
+    cg.fillRect(x, 10, x+2, 10+2).fillRect(x, 20, x+2, 20+2);
   x+=6;
   cg.setFontAlign(-1,-1);
   cg.drawString(("0"+t.getMinutes()).substr(-2), x, 0);
@@ -54,8 +55,14 @@ function draw() {
   cg.drawString(("0"+t.getSeconds()).substr(-2), x, 20);
   cg.setFont("6x8",1);
   cg.drawString(meridian, x+2, 0);
-  cg.setFontAlign(0,-1);
-  cg.drawString(locale.date(t),IW/2,IH-8);
+  let date = locale.date(t);
+  if (cg.stringWidth(date) < IW-64) {
+    cg.setFontAlign(0, -1);
+    cg.drawString(date,IW/2+32*inf.align,IH-8);
+  } else {
+    cg.setFontAlign(inf.align, -1);
+    cg.drawString(date,IW*(inf.align+1)/2,IH-8);
+  }
   // draw to screen
   g.drawImage(cgimg,IX,IY+OY);
 }

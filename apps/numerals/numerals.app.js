@@ -51,8 +51,8 @@ function drawNum(num,col,x,y,func){
   let tx = x*100+25;
   let ty = y*104+32;
   for (let i=0;i<numerals[num].length;i++){
-	  if (i>0) g.setColor((func==fill)?"#000000":col);
-	  func(translate(tx,ty,numerals[num][i]));
+    if (i>0) g.setColor((func==fill)?"#000000":col);
+    func(translate(tx,ty,numerals[num][i]));
   }
 }
 
@@ -83,7 +83,7 @@ draw(settings.drawMode);
 Bangle.on('lcdPower', function(on){
   if (on){
     if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
-	draw(settings.drawMode);
+    draw(settings.drawMode);
     interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
   }else
   {

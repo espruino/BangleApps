@@ -18,3 +18,5 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Adding '#search' after the URL (when not the name of a 'filter' chip) will set up search for that term
 * If `bin/pre-publish.sh` has been run and recent.csv created, add 'Sort By' chip
 * New 'espruinotools' which fixes pretokenise issue when ID follows ID (fix #416)
+* Improve upload of binary files
+* App description can now be markdown

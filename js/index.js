@@ -1,12 +1,12 @@
-var appJSON = []; // List of apps and info from apps.json
-var appsInstalled = []; // list of app JSON
-var appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
-var files = []; // list of files on Bangle
-var DEFAULTSETTINGS = {
+let appJSON = []; // List of apps and info from apps.json
+let appsInstalled = []; // list of app JSON
+let appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
+let files = []; // list of files on Bangle
+let DEFAULTSETTINGS = {
   pretokenise : true,
   favourites : ["boot","launch","setting"]
 };
-var SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
+let SETTINGS = JSON.parse(JSON.stringify(DEFAULTSETTINGS)); // clone
 
 httpGet("apps.json").then(apps=>{
   try {
@@ -23,9 +23,9 @@ httpGet("apps.json").then(apps=>{
 httpGet("appdates.csv").then(csv=>{
   document.querySelector(".sort-nav").classList.remove("hidden");
   csv.split("\n").forEach(line=>{
-    var l = line.split(",");
-    appSortInfo[l[0]] = { 
-      created : Date.parse(l[1]), 
+    let l = line.split(",");
+    appSortInfo[l[0]] = {
+      created : Date.parse(l[1]),
       modified : Date.parse(l[2])
     };
   });
@@ -35,28 +35,33 @@ httpGet("appdates.csv").then(csv=>{
 
 // ===========================================  Top Navigation
 function showChangeLog(appid) {
-  var app = appNameToApp(appid);
+  let app = appNameToApp(appid);
   function show(contents) {
     showPrompt(app.name+" Change Log",contents,{ok:true}).catch(()=>{});
   }
   httpGet(`apps/${appid}/ChangeLog`).
-  then(show).catch(()=>show("No Change Log available"));
+    then(show).catch(()=>show("No Change Log available"));
 }
 function showReadme(appid) {
-  var app = appNameToApp(appid);
-  var appPath = `apps/${appid}/`;
-  var markedOptions = { baseUrl : appPath };
+  let app = appNameToApp(appid);
+  let appPath = `apps/${appid}/`;
+  let markedOptions = { baseUrl : appPath };
   function show(contents) {
     if (!contents) return;
     showPrompt(app.name + " Documentation", marked(contents, markedOptions), {ok: true}, false).catch(() => {});
   }
   httpGet(appPath+app.readme).then(show).catch(()=>show("Failed to load README."));
 }
+function getAppDescription(app) {
+  let appPath = `apps/${app.id}/`;
+  let markedOptions = { baseUrl : appPath };
+  return marked(app.description, markedOptions);
+}
 function handleCustomApp(appTemplate) {
   // Pops up an IFRAME that allows an app to be customised
   if (!appTemplate.custom) throw new Error("App doesn't have custom HTML");
   return new Promise((resolve,reject) => {
-    var modal = htmlElement(`<div class="modal active">
+    let modal = htmlElement(`<div class="modal active">
       <a href="#close" class="modal-overlay " aria-label="Close"></a>
       <div class="modal-container" style="height:100%">
         <div class="modal-header">
@@ -79,10 +84,10 @@ function handleCustomApp(appTemplate) {
       });
     });
 
-    var iframe = modal.getElementsByTagName("iframe")[0];
+    let iframe = modal.getElementsByTagName("iframe")[0];
     iframe.contentWindow.addEventListener("message", function(event) {
-      var appFiles = event.data;
-      var app = JSON.parse(JSON.stringify(appTemplate)); // clone template
+      let appFiles = event.data;
+      let app = JSON.parse(JSON.stringify(appTemplate)); // clone template
       // copy extra keys from appFiles
       Object.keys(appFiles).forEach(k => {
         if (k!="storage") app[k] = appFiles[k]
@@ -108,7 +113,7 @@ function handleAppInterface(app) {
   // IFRAME interface window that can be used to get data from the app
   if (!app.interface) throw new Error("App doesn't have interface HTML");
   return new Promise((resolve,reject) => {
-    var modal = htmlElement(`<div class="modal active">
+    let modal = htmlElement(`<div class="modal active">
       <a href="#close" class="modal-overlay " aria-label="Close"></a>
       <div class="modal-container" style="height:100%">
         <div class="modal-header">
@@ -130,11 +135,11 @@ function handleAppInterface(app) {
         //reject("Window closed");
       });
     });
-    var iframe = modal.getElementsByTagName("iframe")[0];
+    let iframe = modal.getElementsByTagName("iframe")[0];
     iframe.onload = function() {
-      var iwin = iframe.contentWindow;
+      let iwin = iframe.contentWindow;
       iwin.addEventListener("message", function(event) {
-        var msg = event.data;
+        let msg = event.data;
         if (msg.type=="eval") {
           Puck.eval(msg.data, function(result) {
             iwin.postMessage({
@@ -168,7 +173,7 @@ function handleAppInterface(app) {
 }
 
 function changeAppFavourite(favourite, app) {
-  var favourites = SETTINGS.favourites;
+  let favourites = SETTINGS.favourites;
   if (favourite) {
     SETTINGS.favourites = SETTINGS.favourites.concat([app.id]);
   } else {
@@ -196,29 +201,30 @@ function showTab(tabname) {
 
 // =========================================== Library
 
-var chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.attributes.filterid.value);
-var hash = window.location.hash ? window.location.hash.slice(1) : '';
+// Can't use chip.attributes.filterid.value here because Safari/Apple's WebView doesn't handle it
+let chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.getAttribute("filterid"));
+let hash = window.location.hash ? window.location.hash.slice(1) : '';
 
-var activeFilter = !!~chips.indexOf(hash) ? hash : '';
-var activeSort = '';
-var currentSearch = activeFilter ? '' : hash;
+let activeFilter = ~chips.indexOf(hash) ? hash : '';
+let activeSort = '';
+let currentSearch = activeFilter ? '' : hash;
 
 function refreshFilter(){
-  var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
+  let filtersContainer = document.querySelector("#librarycontainer .filter-nav");
   filtersContainer.querySelector('.active').classList.remove('active');
   if(activeFilter) filtersContainer.querySelector('.chip[filterid="'+activeFilter+'"]').classList.add('active');
   else filtersContainer.querySelector('.chip[filterid]').classList.add('active');
 }
 function refreshSort(){
-  var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+  let sortContainer = document.querySelector("#librarycontainer .sort-nav");
   sortContainer.querySelector('.active').classList.remove('active');
   if(activeSort) sortContainer.querySelector('.chip[sortid="'+activeSort+'"]').classList.add('active');
   else sortContainer.querySelector('.chip[sortid]').classList.add('active');
 }
 function refreshLibrary() {
-  var panelbody = document.querySelector("#librarycontainer .panel-body");
-  var visibleApps = appJSON;
-  var favourites = SETTINGS.favourites;
+  let panelbody = document.querySelector("#librarycontainer .panel-body");
+  let visibleApps = appJSON;
+  let favourites = SETTINGS.favourites;
 
   if (activeFilter) {
     if ( activeFilter == "favourites" ) {
@@ -240,17 +246,17 @@ function refreshLibrary() {
   }
 
   panelbody.innerHTML = visibleApps.map((app,idx) => {
-    var appInstalled = appsInstalled.find(a=>a.id==app.id);
-    var version = getVersionInfo(app, appInstalled);
-    var versionInfo = version.text;
+    let appInstalled = appsInstalled.find(a=>a.id==app.id);
+    let version = getVersionInfo(app, appInstalled);
+    let versionInfo = version.text;
     if (versionInfo) versionInfo = " <small>("+versionInfo+")</small>";
-    var readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
-    var favourite = favourites.find(e => e == app.id);
+    let readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
+    let favourite = favourites.find(e => e == app.id);
 
-    var username = "espruino";
-    var githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    let username = "espruino";
+    let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
     if(githubMatch) username = githubMatch[1];
-    var url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+    let url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
 
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
@@ -258,7 +264,7 @@ function refreshLibrary() {
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}${app.readme?`<br/>${readme}`:""}</p>
+      <p class="tile-subtitle">${getAppDescription(app)}${app.readme?`<br/>${readme}`:""}</p>
       <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
@@ -273,27 +279,27 @@ function refreshLibrary() {
   </div>
   `;}).join("");
   // set badge up top
-  var tab = document.querySelector("#tab-librarycontainer a");
+  let tab = document.querySelector("#tab-librarycontainer a");
   tab.classList.add("badge");
   tab.setAttribute("data-badge", appJSON.length);
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
-      var button = event.currentTarget;
-      var icon = button.firstChild;
-      var appid = button.getAttribute("appid");
-      var app = appNameToApp(appid);
+      let button = event.currentTarget;
+      let icon = button.firstChild;
+      let appid = button.getAttribute("appid");
+      let app = appNameToApp(appid);
       if (!app) throw new Error("App "+appid+" not found");
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-share")) {
         // emulator
-        var file = app.storage.find(f=>f.name.endsWith('.js'));
+        let file = app.storage.find(f=>f.name.endsWith('.js'));
         if (!file) {
           console.error("No entrypoint found for "+appid);
           return;
         }
-        var baseurl = window.location.href;
+        let baseurl = window.location.href;
         baseurl = baseurl.substr(0,baseurl.lastIndexOf("/"));
-        var url = baseurl+"/apps/"+app.id+"/"+file.url;
+        let url = baseurl+"/apps/"+app.id+"/"+file.url;
         window.open(`https://espruino.com/ide/emulator.html?codeurl=${url}&upload`);
       } else if (icon.classList.contains("icon-upload")) {
         // upload
@@ -318,9 +324,9 @@ function refreshLibrary() {
       } else if (icon.classList.contains("icon-download")) {
         handleAppInterface(app);
       } else if ( button.innerText == String.fromCharCode(0x2661)) {
-         changeAppFavourite(true, app);
+        changeAppFavourite(true, app);
       } else if ( button.innerText == String.fromCharCode(0x2665) ) {
-         changeAppFavourite(false, app);
+        changeAppFavourite(false, app);
       }
     });
   });
@@ -420,7 +426,7 @@ function updateApp(app) {
 
 
 function appNameToApp(appName) {
-  var app = appJSON.find(app=>app.id==appName);
+  let app = appJSON.find(app=>app.id==appName);
   if (app) return app;
   /* If app not known, add just one file
   which is the JSON - so we'll remove it from
@@ -435,8 +441,8 @@ function appNameToApp(appName) {
 }
 
 function showLoadingIndicator(id) {
-  var panelbody = document.querySelector(`#${id} .panel-body`);
-  var tab = document.querySelector(`#tab-${id} a`);
+  let panelbody = document.querySelector(`#${id} .panel-body`);
+  let tab = document.querySelector(`#tab-${id} a`);
   // set badge up top
   tab.classList.add("badge");
   tab.setAttribute("data-badge", "");
@@ -445,9 +451,9 @@ function showLoadingIndicator(id) {
 }
 
 function getAppsToUpdate() {
-  var appsToUpdate = [];
+  let appsToUpdate = [];
   appsInstalled.forEach(appInstalled => {
-    var app = appNameToApp(appInstalled.id);
+    let app = appNameToApp(appInstalled.id);
     if (app.version != appInstalled.version)
       appsToUpdate.push(app);
   });
@@ -455,17 +461,22 @@ function getAppsToUpdate() {
 }
 
 function refreshMyApps() {
-  var panelbody = document.querySelector("#myappscontainer .panel-body");
+  let panelbody = document.querySelector("#myappscontainer .panel-body");
   panelbody.innerHTML = appsInstalled.map(appInstalled => {
-var app = appNameToApp(appInstalled.id);
-var version = getVersionInfo(app, appInstalled);
-return `<div class="tile column col-6 col-sm-12 col-xs-12">
+    let app = appNameToApp(appInstalled.id);
+    let version = getVersionInfo(app, appInstalled);
+    let username = "espruino";
+    let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+    if(githubMatch) username = githubMatch[1];
+    let url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+    return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure>
     </div>
     <div class="tile-content">
       <p class="tile-title text-bold">${escapeHtml(app.name)} <small>(${version.text})</small></p>
-      <p class="tile-subtitle">${escapeHtml(app.description)}</p>
+      <p class="tile-subtitle">${getAppDescription(app)}</p>
+      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${(appInstalled&&app.interface)?"":"d-hide"}" appid="${app.id}" title="Download data from app"><i class="icon icon-download"></i></button>
@@ -476,10 +487,10 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
   `}).join("");
   htmlToArray(panelbody.getElementsByTagName("button")).forEach(button => {
     button.addEventListener("click",event => {
-      var button = event.currentTarget;
-      var icon = button.firstChild;
-      var appid = button.getAttribute("appid");
-      var app = appNameToApp(appid);
+      let button = event.currentTarget;
+      let icon = button.firstChild;
+      let appid = button.getAttribute("appid");
+      let app = appNameToApp(appid);
       if (!app) throw new Error("App "+appid+" not found");
       // check icon to figure out what we should do
       if (icon.classList.contains("icon-delete")) removeApp(app);
@@ -487,9 +498,9 @@ return `<div class="tile column col-6 col-sm-12 col-xs-12">
       if (icon.classList.contains("icon-download")) handleAppInterface(app);
     });
   });
-  var appsToUpdate = getAppsToUpdate();
-  var tab = document.querySelector("#tab-myappscontainer a");
-  var updateApps = document.querySelector("#myappscontainer .updateapps");
+  let appsToUpdate = getAppsToUpdate();
+  let tab = document.querySelector("#tab-myappscontainer a");
+  let updateApps = document.querySelector("#myappscontainer .updateapps");
   if (appsToUpdate.length) {
     updateApps.innerHTML = `Update ${appsToUpdate.length} apps`;
     updateApps.classList.remove("hidden");
@@ -523,10 +534,10 @@ function getInstalledApps(refresh) {
 
 /// Removes everything and install the given apps, eg: installMultipleApps(["boot","mclock"], "minimal")
 function installMultipleApps(appIds, promptName) {
-  var apps = appIds.map( appid => appJSON.find(app=>app.id==appid) );
+  let apps = appIds.map( appid => appJSON.find(app=>app.id==appid) );
   if (apps.some(x=>x===undefined))
     return Promise.reject("Not all apps found");
-  var appCount = apps.length;
+  let appCount = apps.length;
   return showPrompt("Install Defaults",`Remove everything and install ${promptName} apps?`).then(() => {
     return Comms.removeAllApps();
   }).then(()=>{
@@ -535,7 +546,7 @@ function installMultipleApps(appIds, promptName) {
     showToast(`Existing apps removed. Installing  ${appCount} apps...`);
     return new Promise((resolve,reject) => {
       function upload() {
-        var app = apps.shift();
+        let app = apps.shift();
         if (app===undefined) return resolve();
         Progress.show({title:`${app.name} (${appCount-apps.length}/${appCount})`,sticky:true});
         Comms.uploadApp(app,"skip_reset").then((appJSON) => {
@@ -558,7 +569,7 @@ function installMultipleApps(appIds, promptName) {
   });
 }
 
-var connectMyDeviceBtn = document.getElementById("connectmydevice");
+let connectMyDeviceBtn = document.getElementById("connectmydevice");
 
 function handleConnectionChange(connected) {
   connectMyDeviceBtn.textContent = connected ? 'Disconnect' : 'Connect';
@@ -571,11 +582,11 @@ htmlToArray(document.querySelectorAll(".btn.refresh")).map(button => button.addE
   });
 }));
 htmlToArray(document.querySelectorAll(".btn.updateapps")).map(button => button.addEventListener("click", () => {
-  var appsToUpdate = getAppsToUpdate();
-  var count = appsToUpdate.length;
+  let appsToUpdate = getAppsToUpdate();
+  let count = appsToUpdate.length;
   function updater() {
     if (!appsToUpdate.length) return;
-    var app = appsToUpdate.pop();
+    let app = appsToUpdate.pop();
     return updateApp(app).then(function() {
       return updater();
     });
@@ -597,7 +608,7 @@ connectMyDeviceBtn.addEventListener("click", () => {
 });
 Comms.watchConnectionChange(handleConnectionChange);
 
-var filtersContainer = document.querySelector("#librarycontainer .filter-nav");
+let filtersContainer = document.querySelector("#librarycontainer .filter-nav");
 filtersContainer.addEventListener('click', ({ target }) => {
   if (target.classList.contains('active')) return;
 
@@ -607,14 +618,14 @@ filtersContainer.addEventListener('click', ({ target }) => {
   window.location.hash = activeFilter;
 });
 
-var librarySearchInput = document.querySelector("#searchform input");
+let librarySearchInput = document.querySelector("#searchform input");
 librarySearchInput.value = currentSearch;
 librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
   refreshLibrary();
 });
 
-var sortContainer = document.querySelector("#librarycontainer .sort-nav");
+let sortContainer = document.querySelector("#librarycontainer .sort-nav");
 sortContainer.addEventListener('click', ({ target }) => {
   if (target.classList.contains('active')) return;
 
@@ -640,13 +651,13 @@ if (window.location.host=="banglejs.com") {
 }
 
 // Settings
-var SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
+let SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
 /// Load settings and update controls
 function loadSettings() {
-  var j = localStorage.getItem("settings");
+  let j = localStorage.getItem("settings");
   if (typeof j != "string") return;
   try {
-    var s = JSON.parse(j);
+    let s = JSON.parse(j);
     Object.keys(s).forEach( k => {
       SETTINGS[k]=s[k];
       if (SETTINGS_HOOKS[k]) SETTINGS_HOOKS[k]();
@@ -662,7 +673,7 @@ function saveSettings() {
 }
 // Link in settings DOM elements
 function settingsCheckbox(id, name) {
-  var setting = document.getElementById(id);
+  let setting = document.getElementById(id);
   function update() {
     setting.checked = SETTINGS[name];
   }
@@ -714,7 +725,7 @@ document.getElementById("installdefault").addEventListener("click",event=>{
 
 // Install all favourite apps in one go
 document.getElementById("installfavourite").addEventListener("click",event=>{
-  var favApps = SETTINGS.favourites;
+  let favApps = SETTINGS.favourites;
   installMultipleApps(favApps, "favourite").catch(err=>{
     Progress.hide({sticky:true});
     showToast("App Install failed, "+err,"error");

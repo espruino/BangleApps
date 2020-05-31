@@ -129,8 +129,14 @@ function viewTrack(n, info) {
     menu[info.time.toISOString().substr(0,16).replace("T"," ")] = function(){};
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
-  menu['Plot'] = function() {
+  menu['Plot Map'] = function() {
     plotTrack(info);
+  };
+  menu['Plot Alt.'] = function() {
+    plotGraph(info, "altitude");
+  };
+  menu['Plot Speed'] = function() {
+    plotGraph(info, "speed");
   };
   menu['Erase'] = function() {
     E.showPrompt("Delete Track?").then(function(v) {
@@ -215,6 +221,90 @@ function plotTrack(info) {
   setWatch(function() {
     viewTrack(info.fn, info);
   }, BTN3);
+  g.flip();
+}
+
+function plotGraph(info, style) {
+  "ram"
+  E.showMenu(); // remove menu
+  E.showMessage("Calculating...","GPS Track "+info.fn);
+  var filename = getFN(info.fn);
+  var infn = new Float32Array(200);
+  var infc = new Uint16Array(200);
+  var title;
+  var lt = 0; // last time
+  var tn = 0; // count for each time period
+  var strt, dur = info.duration;
+  var f = require("Storage").open(filename,"r");
+  if (f===undefined) return;
+  var l = f.readLine(f);
+  var nl = 0, c, i;
+  if (l!==undefined) {
+    c = l.split(",");
+    strt = c[0]/1000;
+  }
+  if (style=="altitude") {
+    title = "Altitude (m)";
+    while(l!==undefined) {
+      ++nl;c=l.split(",");
+      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      infn[i]+=+c[3];
+      infc[i]++;
+      l = f.readLine(f);
+    }
+  } else if (style=="speed") {
+    title = "Speed (m/s)";
+    var p,lp = Bangle.project({lat:c[1],lon:c[2]});
+    var t,dx,dy,d,lt = c[0]/1000;
+    while(l!==undefined) {
+      ++nl;c=l.split(",");
+      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      t = c[0]/1000;
+      p = Bangle.project({lat:c[1],lon:c[2]});
+      dx = p.x-lp.x;
+      dy = p.y-lp.y;
+      d = Math.sqrt(dx*dx+dy*dy);
+      if (t!=lt) {
+        infn[i]+=d / (t-lt); // speed
+        infc[i]++;
+      }
+      lp = p;
+      lt = t;
+      l = f.readLine(f);
+    }
+  } else throw new Error("Unknown type");
+  var min=100000,max=-100000;
+  for (var i=0;i<infn.length;i++) {
+    if (infc[i]>0) infn[i]/=infc[i];
+    var n = infn[i];
+    if (n>max) max=n;
+    if (n<min) min=n;
+  }
+  // work out a nice grid value
+  var heightDiff = max-min;
+  var grid = 1;
+  while (heightDiff/grid > 8) {
+    grid*=2;
+  }
+  // draw
+  g.clear(1).setFont("6x8",1);
+  var r = require("graph").drawLine(g, infn, {
+    x:4,y:0,
+    width: g.getWidth()-24,
+    height: g.getHeight()-8,
+    axes : true,
+    gridy : grid,
+    gridx : 50,
+    title: title,
+    xlabel : x=>Math.round(x*dur/(60*infn.length))+" min" // minutes
+  });
+  g.setFont("6x8",2);
+  g.setFontAlign(0,0,3);
+  g.drawString("Back",230,200);
+  setWatch(function() {
+    viewTrack(info.fn, info);
+  }, BTN3);
+  g.flip();
 }
 
 showMainMenu();

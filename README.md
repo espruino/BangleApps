@@ -217,7 +217,7 @@ and which gives information about the app for the Launcher.
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
   "icon": "icon.png",         // icon in apps/
-  "description": "...",       // long description
+  "description": "...",       // long description (can contain markdown)
   "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
   "tags": "",                 // comma separated tag list for searching
 
