@@ -80,11 +80,11 @@ const icons = [
   },
   {
     name: "left",
-    data:     "gEBAP4B/AP4BKa9ojHAC5pfHJKDTUsYdZHb6ZfO+I9dABabdLbIBdHf473PP47NJdY7/ePIB/RJop5Ys7t/AP6PvD7o7fP8Y1zTZoHPf/4B/AP4B+A=="
+    data: "gEBAP4B/AP4BKa9ojHAC5pfHJKDTUsYdZHb6ZfO+I9dABabdLbIBdHf473PP47NJdY7/ePIB/RJop5Ys7t/AP6PvD7o7fP8Y1zTZoHPf/4B/AP4B+A=="
   },
   {
     name: "right",
-    data:     "gEBAP4B/AP4BKa+oAXDo45hCaqFbUbLBfbbo7bHMojTR7Y5LHa51ZALo75Ov47/FeY77AP4B5WdbF3dv4B/R94fdHb5/jGuabNA57//AP4B/APw="
+    data: "gEBAP4B/AP4BKa+oAXDo45hCaqFbUbLBfbbo7bHMojTR7Y5LHa51ZALo75Ov47/FeY77AP4B5WdbF3dv4B/R94fdHb5/jGuabNA57//AP4B/APw="
   },
   {
     name: "forward",
@@ -117,8 +117,60 @@ const icons = [
   {
     name: "comms",
     data:  "gEBAP4B+QvbF7ABo7/He49tACI7/Hf47zHtI7jJq47lRqoAVEqY7nHsoAZGJo71HrKxfQaY7bdKo7/Hdqz5B5Y7zHK47RD55FRHao3XHKo7JG7L1NHeJTbHboB/AP4BG"
+  },
+  {
+    name: "dalek",
+    data: "gEBAP4B/AP4B/AJMQwQBBGucIoMAkADBhFhAoZBcAAQfJhEgB45BCHYMBjGiB4ZLCK5APDFpphBC5AbEJosY0YfCG4IAEJIYdGFYR5LHJYlEAI0Y4cY8YXMOpQBFlNFlMkOZA7MKII7JOAXkE4T1UERKtFHoxJBABY5QiGiD5kANYTnCiFiWIJVOgDZCOra3FoKxFDKI7hADQ7PkEIaoIHEaKYfJAoKPFAJcIGYIJHkI7UgMY8ZFHC5rVDKIZTCDIJhBA4ILBBoYFHC4QBEBogpBjHDdsJJEAoYAHKoTxWWb5tNWZOiHZRbBHbwtLF5ynBL7wtLjHjd6oAZkHkI5JJKAAZ3TkAjJhALBsJ5K0a/KkLvfkMEFpVhO8hrIU4QLGG4QAzkCdVAP4B/AP4Bb"
+  },
+  {
+    name: "k9",
+    data: "gEBAP4B/AP4B/AP4B/AP4B/AKAADIf5N/IaIAJJv5LZLeIARffZNdD5JN/KLYATC65RbAGrHlJ/5P/JuYrRJfovNJf4BdAFJL/Jv5N/Jv5L1Jv5PvJv5L7Jv5PpAGpN/dv5HzAP4B/AP4B/AP4B/AP4B/ALg"
+  },
+  {
+    name: "pawn",
+    data: "gEBAP4B/AP4B/AP4BEAA455HuY7/Hf47xAB47/PuI1xPZY7/Hf47/G9Y/zHfIATHPI9nHfYB/AOYAfHf4B/AP4B/APA="
+  },
+  {
+    name: "facerecog",
+    data: "gEBAP4BSLuozNH9YpTHsolXPsYfdDraZhELIZhHeLtJELY1VC4Y7HHqoXJABYdNHa5bJDrLvfHfbrPZJI7nGZpdVNJ4lRIpaznRqp1hCq55ZC6IRPd8oPjW8Y5jSr45dEJppNHcIjLHZY5ja6rrhFK45pVqI5rGI4AHHNpx3ANA="
+  },
+  {
+    name: "sleep",
+    data: "gEBAP4B/AP4B2ACY7/Quq95HP45/HP4APOdY7fACZfnHcaZZAL45/HP45/E7YAHCaZFZHfbh/HP45/HOoAHHf4B/AP4B/AP4BIA="
+  },
+  {
+    name: "awake",
+    data: "gEBAP4B/AKyb7HfIAFHPI77Ov451Hf453Hf453HdoAbHf45/Hf5HrHNY7NHNo7/HO47/HO47HHPJ1/Heo51HfoB/ALg="
+  },
+  {
+    name: "wag_h",
+    data: "gEBAP4B/AP4B/AP4B/AP4B/AMwADD+oAFHb4hTHMIlXHMopTHNItPAG47/WfY9tFKY9lEq49hELY7ja8YB/AP4B/AP4B/AP4B/AP4BCA"
+  },
+  {
+    name: "wag_v",
+    data: "gEBAP4B/AP4BOafIAHHPI9xAB45vd449rFZIHLHsonJBKa7rGNo7/Hf47/Hf47/Hf47/Hf4xlBKY7hFIoHLQM4rHApK7rAB71xHOo9LHOI9HHOoB/AP4BYA="
+  },
+  {
+    name: "happy",
+    data: "gEBAP4B/AP4BKa+oAXHNITfHK4ZtD5JZfHOojZaMYlXHMYnXHfI5nFaYPLaaIRNHf47/d/47/HtInTCZrfZHa4vNABYlVKLI3PbLrzfD7qTXDLaphHMIpLAB45hIKY1pAP4B/AMA"
+  },
+  {
+    name: "sad",
+    data: "gEBAP4B/AP4BKa+oAXHNITfHK4ZtD5JZfHOojZaMYlXHMYnXHfI5nFaYPLaaIRNHf47/d/47/CK4njCZ4APHcIVJBbbdTecYjZHr4fdSa4ZbEZ4lNCaY9dAB45hIKY1pAP4B/AMA"
+  },
+  {
+    name: "hover",
+    data: "gEBAP4B/AP7NedL4fZK7ojNHeJ35DJI7vC5Y7tVMI7XHNYnNYro7hHKI7lAK47/HdoAhHPI7/Hf47/Hf4AtHPI7/Hf47/Hd45LAP4B/ANwA="
+  },
+  {
+    name: "light",
+    data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA=="
+  },
+  {
+    name: "speak",
+    data: "gEBAP4B/AP4BIbO4AXG+4/hAEY55HqoArHPI9PHfIAzHf47/Hf47/HeY9xHJI79Hto5NHtY5RHc45THco5VHcI3XHJpHRG7I7LEro5ZG+IB/AP4BwA=="
   }
-];
+  ];
 
 /* finds icon data by name in the icon array and returns an image object*/
 const drawIcon = (name) => {
@@ -161,6 +213,114 @@ var turnRightBtn = {
   primary_colour: 0x33F9,
   primary_text: 'Right',
   primary_icon: 'right',
+  };
+
+var k9Btn = {
+  primary_colour: 0x653E,
+  primary_text: 'K9',
+  primary_icon: 'k9',
+  };
+
+var dalekBtn = {
+  primary_colour: 0x33F9,
+  primary_text: 'Dalek',
+  primary_icon: 'dalek',
+  };
+
+var tailHBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_h',
+  };
+
+var tailVBtn = {
+  primary_colour: 0x33F9,
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_v',
+  };
+
+var happyBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Speak',
+  primary_icon: 'happy',
+  };
+
+var sadBtn = {
+  primary_colour: 0x33F9,
+  primary_text: 'Speak',
+  primary_icon: 'sad',
+  };
+
+var speakBtn = {
+  primary_colour: 0x33F9,
+  primary_text: 'Speak',
+  primary_icon: 'speak',
+  };
+
+var faceBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Off',
+  primary_icon: 'facerecog',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'On',
+  secondary_icon : 'facerecog',
+  value: status_face
+  };
+
+var chessBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Off',
+  primary_icon: 'pawn',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'On',
+  secondary_icon : 'pawn',
+  value: status_chess
+  };
+
+var irisLightBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Off',
+  primary_icon: 'light',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'On',
+  secondary_icon : 'light',
+  value: status_iris_light
+  };
+
+var irisBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Closed',
+  primary_icon: 'sleep',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'Open',
+  secondary_icon : 'awake',
+  value: status_iris
+  };
+
+var wakeBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Sleeping',
+  primary_icon: 'sleep',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'Awake',
+  secondary_icon : 'awake',
+  value: status_wake
+  };
+
+var hoverBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Off',
+  primary_icon: 'hover',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'On',
+  secondary_icon : 'hover',
+  value: status_hover
   };
 
 var autoBtn = {
@@ -207,9 +367,16 @@ are defined as btn1, bt2 and bt3.  The
 values are names from the icon array.
 */
 const menuScreen = {
-  left: autoBtn,
+  left: k9Btn,
+  right: dalekBtn,
+};
+
+const k9MenuScreen = {
+  left: wakeBtn,
   right: joystickBtn,
-  btn1: "comms"
+  btn1: "pawn",
+  btn2: "wag_h",
+  btn3: "back"
 };
 
 const joystickScreen = {
@@ -220,9 +387,47 @@ const joystickScreen = {
   btn3: "back"
 };
 
+const tailScreen = {
+  left: tailHBtn,
+  right: tailVBtn,
+  btn3: "back"
+};
+
 const commsScreen = {
   left: micBtn,
   right: spkBtn,
+  btn3: "back"
+};
+
+const dalekMenuScreen = {
+  left: faceBtn,
+  right: speakBtn,
+  btn1: "hover",
+  btn2: "light",
+  btn3: "back"
+};
+
+const speakScreen = {
+  left: happyBtn,
+  right: sadBtn,
+  btn3: "back"
+};
+
+const irisScreen = {
+  left: irisBtn,
+  right: irisBirisLightBtn,
+  btn3: "back"
+};
+
+const lightsScreen = {
+  left: hoverBtn,
+  right: spkBtn,
+  btn3: "back"
+};
+
+const chessScreen = {
+  left: chessBtn,
+  right: autoBtn,
   btn3: "back"
 };
 
@@ -270,21 +475,161 @@ const Home = new State({
   screen: menuScreen,
   events: (event) => {
     if ((event.object == "right") && (event.status == "end")) {
-      transmit("Joystick", "joystick", "on");
-      return Joystick;
-      }
-    if ((event.object == "top") && (event.status == "end")) {
-      return Comms;
+      return DalekMenu;
       }
     if ((event.object == "left") && (event.status == "end")) {
-      status_auto.value = !status_auto.value;
-      transmit(this.state, "auto", onOff(status_auto.value));
+      //status_auto.value = !status_auto.value;
+      //transmit(this.state, "auto", onOff(status_auto.value));
+      //return this;
+      return K9Menu;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const K9Menu = new State({
+  state: "K9Menu",
+  screen: k9MenuScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return Home;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      return Joystick;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_wake.value = !status_wake.value;
+      transmit(this.state, "auto", onOff(status_wake.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
     return this;
     }
 });
+
+const DalekMenu = new State({
+  state: "DalekMenu",
+  screen: dalekMenuScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return Home;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      return Speak;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_face.value = !status_face.value;
+      transmit(this.state, "face", onOff(status_face.value));
+      return this;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Speak = new State({
+  state: "Speak",
+  screen: speakScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return DalekMenu;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Chess = new State({
+  state: "Chess",
+  screen: chessScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return K9Menu;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      status_auto.value = !status_auto.value;
+      transmit(this.state, "follow", onOff(status_auto.value));
+      return this;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_chess.value = !status_chess.value;
+      transmit(this.state, "chess", onOff(status_chess.value));
+      return this;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Tail = new State({
+  state: "Tail",
+  screen: tailScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return K9Menu;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Speak = new State({
+  state: "Speak",
+  screen: speakScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return DalekMenu;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Iris = new State({
+  state: "Iris",
+  screen: irisScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return DalekMenu;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      status_iris_light.value = !status_iris_light.value;
+      transmit(this.state, "iris_light", onOff(status_iris_light.value));
+      return this;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_iris.value = !status_iris.value;
+      transmit(this.state, "iris_servo", onOff(status_iris.value));
+      return this;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    } 
+});
+
+const Lights = new State({
+  state: "Lights",
+  screen: lightsScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return DalekMenu;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      status_spk.value = !status_spk.value;
+      transmit(this.state, "iris_light", onOff(status_spk.value));
+      return this;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_hover.value = !status_hover.value;
+      transmit(this.state, "hover", onOff(status_hover.value));
+      return this;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    } 
+});
+
 
 /* Joystick page state */
 const Joystick = new State({
