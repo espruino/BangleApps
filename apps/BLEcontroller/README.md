@@ -1,4 +1,4 @@
-# BLE Customisable Controller with Joystick A
+# BLE Customisable Controller with Joystick
 
 A highly customisable state machine driven user interface that will communicate with another BLE device.  The controller uses the three buttons and the left and right hand side of the watch to provide a flexible and attractive BLE interface.  
 

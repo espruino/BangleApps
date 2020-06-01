@@ -268,7 +268,7 @@ const LightsMenu = new State({
 
 const SocketsMenu = new State({
   state: "SocketsMenu",
-  screen: lightsScreen,
+  screen: socketsScreen,
   events: (event) => {
     if ((event.object == "bottom") && (event.status == "end")) {
       return Home;
