@@ -1785,20 +1785,34 @@
       { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
     ]
     },
-    { "id": "k9control",
-      "name": "K9 BLE Controller with Joystick",
-      "shortName": "K9 Controller",
-      "icon": "k9_icon_30.png",
-      "version": "0.01",
-      "description": "My private K9 BLE controller",
-      "tags": "tool,bluetooth",
-      "readme": "README.md",
-      "allow_emulator":false,
-      "storage": [
-        { "name": "k9control.app.js", "url": "app.js" },
-        { "name": "k9control.img", "url": "app-icon.js", "evaluate": true }
-      ]
-      },
+  { "id": "k9control",
+    "name": "K9 BLE Controller with Joystick",
+    "shortName": "K9 Controller",
+    "icon": "k9_icon_30.png",
+    "version": "0.01",
+    "description": "My private K9 BLE controller",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "k9control.app.js", "url": "app.js" },
+      { "name": "k9control.img", "url": "app-icon.js", "evaluate": true }
+    ]
+    },
+  { "id": "dalekcontrol",
+    "name": "Dalek BLE Controller with Joystick",
+    "shortName": "Dalek Controller",
+    "icon": "dalek_icon_30.png",
+    "version": "0.01",
+    "description": "My private Dalek BLE controller",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "dalekcontrol.app.js", "url": "app.js" },
+      { "name": "dalekcontrol.img", "url": "app-icon.js", "evaluate": true }
+    ]
+    },
   { "id": "widviz",
     "name": "Widget Visibility Widget",
     "shortName":"Viz Widget",
