@@ -313,6 +313,7 @@ const setMyWatch = (params) => {
   machine = machine.events({object: params.label, status: startEnd(params.bool)});
   drawScreen(machine.screen);
   }, params.btn, {repeat:true, edge:"both"});
+  drawWidgets();
 };
 
 /* object array used to set up the watching functions
