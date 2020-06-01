@@ -1,6 +1,6 @@
 /*
 ==========================================================
-Simple event based robot controller that enables robot 
+Simple event based robot controller that enables robot
 to switch into automatic or manual control modes. Behaviours
 are controlled via a simple finite state machine.
 In automatic mode the
@@ -19,7 +19,7 @@ bottom_btn = false;
 
 msgNum = 0; // message number
 
-/* 
+/*
 CONFIGURATION AREA - STATE VARIABLES
 declare global variables for the toggle button
 statuses; if you add an additional toggle button
@@ -28,6 +28,12 @@ you should declare it and initiase it here */
 var status_auto = {value: false};
 var status_mic = {value: true};
 var status_spk = {value: true};
+var status_face = {value: true};
+var status_chess = {value: false};
+var status_iris_light = {value: false};
+var status_iris = {value: false};
+var status_wake = {value: false};
+var status_hover = {value: false};
 
 /* trsnsmit message
 where
@@ -415,7 +421,7 @@ const speakScreen = {
 
 const irisScreen = {
   left: irisBtn,
-  right: irisBirisLightBtn,
+  right: irisLightBtn,
   btn3: "back"
 };
 
@@ -431,9 +437,9 @@ const chessScreen = {
   btn3: "back"
 };
 
-/* base state definition 
+/* base state definition
 Each of the screens correspond to a state;
-this class provides a constuctor for each 
+this class provides a constuctor for each
 of the states
 */
 class State {
@@ -605,7 +611,7 @@ const Iris = new State({
       }
     transmit(this.state, event.object, event.status);
     return this;
-    } 
+    }
 });
 
 const Lights = new State({
@@ -627,7 +633,7 @@ const Lights = new State({
       }
     transmit(this.state, event.object, event.status);
     return this;
-    } 
+    }
 });
 
 
@@ -676,7 +682,7 @@ const onOff= status => status ? "on" : "off";
 
 
 /* create watching functions that will change the global
-button status when pressed or released 
+button status when pressed or released
 This is actuslly the hesrt of the program.  When a button
 is not being pressed, nothing is happening (no loops).
 This makes the progrsm more battery efficient.
@@ -684,7 +690,7 @@ When a setWatch event is raised, the custom callbacks defined
 here will be called.  These then fired as events to the current
 state/screen of the state mschine.
 Some events, will result in the stste of the state machine
-chsnging, which is why the screen is redrswn after each 
+chsnging, which is why the screen is redrswn after each
 button press.
 */
 const setMyWatch = (params) => {
