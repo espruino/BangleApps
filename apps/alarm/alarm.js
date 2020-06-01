@@ -38,6 +38,10 @@ function showAlarm(alarm) {
         Bangle.buzz(100).then(function() {
           if (buzzCount--)
             setTimeout(buzz, 3000);
+          else if(alarm.as) { // auto-snooze
+            buzzCount = 10;
+            setTimeout(buzz, 600000);
+          }
         });
       },100);
     });
