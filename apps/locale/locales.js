@@ -492,5 +492,24 @@ var locales = {
     abday: "ned.,pon.,tor.,sre.,čet.,pet.,sob.",
     day: "nedelja,ponedeljek,torek,sreda,četrtek,petek,sobota",
     trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "On", off: "Off" }
-  }
+  }/*,
+  "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
+    codePage : "ISO8859-8",
+    lang: "he_IL",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "₪",
+    int_curr_symbol: "ILS",
+    speed: "קמ״ש",
+    distance: { 0: "מ׳", 1: "ק״מ" },
+    temperature: "°C",
+    ampm: {0:"am",1:"pm"},
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%Y" }, //  Sunday, 1 March 2020  // 01/03/2020
+    abmonth: "ינו,פבר,מרץ,אפר,מאי,יונ,יול,אוג,ספט,אוק,נוב,דצמ",
+    month: "ינואר,פברואר,מרץ,אפריל,מאי,יוני,יולי,אוגוסט,ספטמבר,אוקטובר,נובמבר,דצמבר",
+    abday: "א׳,ב׳,ג׳,ד׳,ה,ו׳,ש׳",
+    day: "ראשון,שני,שלישי,רביעי,חמישי,שישי,שבת",
+    trans: { yes: "כן", Yes: "כן", no: "לא", No: "לא", ok: "אישור", on: "פעיל", off: "כבוי" }
+  }*/
 };
