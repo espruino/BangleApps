@@ -1765,11 +1765,11 @@
     "icon": "app.png",
     "description": "A simple fortune telling app",
     "tags": "game",
+    "version": "0.03",
     "storage": [
       { "name": "jbm8b.app.js", "url": "app.js" },
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
-    ]
-    "version": "0.03"
+  ]
   },
   { "id": "BLEcontroller",
     "name": "BLE Robot Controller with Joystick",
