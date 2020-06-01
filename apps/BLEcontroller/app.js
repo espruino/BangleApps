@@ -74,6 +74,10 @@ const icons = [
   {
     name: "light",
     data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA=="
+  },
+  {
+    name: "back",
+    data:  "gEBAP4B/AP4B/AKgADHPI71HP45/HP45/HP45/HP45/Hf49/Hv49/Hv49/Hv49/Hv497He4B/AP4B/AJAA=="
   }
   ];
 
@@ -220,7 +224,7 @@ one, then the state machine will change to that new State and redrsw
 the screen appropriately.
 To add in additional capabilities for button presses, simply add
 an additional 'if' statement.
-For toggle buttons, the value of the sppropiate status object is
+For toggle buttons, the value of the appropiate status object is
 inversed and the new value transmitted.
 */
 
