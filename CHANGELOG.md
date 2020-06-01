@@ -20,3 +20,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * New 'espruinotools' which fixes pretokenise issue when ID follows ID (fix #416)
 * Improve upload of binary files
 * App description can now be markdown
+* Fix `marked is not defined` error (and include in repo, just in case)
