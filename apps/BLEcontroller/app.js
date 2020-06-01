@@ -170,7 +170,7 @@ are defined as btn1, bt2 and bt3.  The
 values are names from the icon array.
 */
 const homeScreen = {
-  left: lightsBtn,
+  left: lightBtn,
   right: socketsBtn,
 };
 
