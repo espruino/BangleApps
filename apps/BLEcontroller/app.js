@@ -338,12 +338,12 @@ const Iris = new State({
       }
     if ((event.object == "right") && (event.status == "end")) {
       status_iris_light.value = !status_iris_light.value;
-      transmit(this.state, "iris_light", onOff(status_iris_light.value));
+      transmit(this.state, "light", onOff(status_iris_light.value));
       return this;
       }
     if ((event.object == "left") && (event.status == "end")) {
       status_iris.value = !status_iris.value;
-      transmit(this.state, "iris_servo", onOff(status_iris.value));
+      transmit(this.state, "servo", onOff(status_iris.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
