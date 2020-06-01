@@ -19,6 +19,7 @@ bottom_btn = false;
 
 msgNum = 0; // message number
 
+NRF.setConnectionInterval(100)
 /*
 CONFIGURATION AREA - STATE VARIABLES
 declare global variables for the toggle button
