@@ -253,12 +253,12 @@ const LightsMenu = new State({
       }
     if ((event.object == "right") && (event.status == "end")) {
       status_light_study.value = !status_light_study.value;
-      transmit(this.state, "auto", onOff(status_light_study.value));
+      transmit(this.state, "study", onOff(status_light_study.value));
       return this;
       }
     if ((event.object == "left") && (event.status == "end")) {
       status_light_hall.value = !status_light_hall.value;
-      transmit(this.state, "auto", onOff(status_light_hall.value));
+      transmit(this.state, "hall", onOff(status_light_hall.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
@@ -275,12 +275,12 @@ const SocketsMenu = new State({
       }
     if ((event.object == "right") && (event.status == "end")) {
       status_printer.value = !status_printer.value;
-      transmit(this.state, "auto", onOff(status_printer.value));
+      transmit(this.state, "printer", onOff(status_printer.value));
       return this;
       }
     if ((event.object == "left") && (event.status == "end")) {
       status_tv.value = !status_tv.value;
-      transmit(this.state, "auto", onOff(status_tv.value));
+      transmit(this.state, "tv", onOff(status_tv.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
