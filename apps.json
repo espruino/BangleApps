@@ -1772,11 +1772,11 @@
   ]
   },
   { "id": "BLEcontroller",
-    "name": "BLE Robot Controller with Joystick",
+    "name": "BLE Customisable Controller with Joystick",
     "shortName": "BLE Controller",
     "icon": "BLEcontroller.png",
     "version": "0.01",
-    "description": "A configurable controller for BLE robots, with a basic four direction joystick. Easy to customise and add your own menus.",
+    "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
     "tags": "tool,bluetooth",
     "readme": "README.md",
     "allow_emulator":true,
