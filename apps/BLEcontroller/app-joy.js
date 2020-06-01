@@ -28,10 +28,9 @@ declare global variables for the toggle button
 statuses; if you add an additional toggle button
 you should declare it and initiase it here */
 
-var status_printer = {value: false};
-var status_tv = {value: false};
-var status_light_hall = {value: false};
-var status_light_study = {value: false};
+var status_auto = {value: false};
+var status_chess = {value: false};
+var status_wake = {value: false};
 
 /* trsnsmit message
 where
@@ -71,16 +70,64 @@ with a unique name and the data from the Image Object
 */
 const icons = [
   {
-    name: "switch",
-    data: "gEBAP4B/AP4B/AP4B/AMgA3HPJdlVvI7/Hf47/Hf47/Hf47/Hf47/Hf4AvIPKRXAP4B/AP4B/AP4B/AJgA=="
+    name: "walk",
+    data: "gEBAP4B/ALyh7b/YALHfY9tACY55HfYdNHto7pHpIbXbL5fXAD6VlHuYAjHf47/Hf47tHK47LDa45zHc4NHHeILJHeonTO9o9rHf47/eOoB/ANg="
   },
   {
-    name: "light",
-    data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA=="
+    name: "sit",
+    data: "gEBAP4B/AP4BacO4ANHPI/rACp1/Hf49rGtI5/He7n3ACY55HcYAZHf45/Hf45rHe4XHGbI7/Va47zZZrpbHfbtXD5Y/vHcYB/AP4BmA"
+  },
+  {
+    name: "joystick",
+    data: "gEBAP4B/AP4BMavIALHPI9vHf47/eP45vHpY5xHo451Hf47/FuYAHHNItHABa33AP6xpAD455HqY7/Hf47/Hd49pHKIB/AP4B/AMwA=="
+  },
+  {
+    name: "left",
+    data: "gEBAP4B/AP4BKa9ojHAC5pfHJKDTUsYdZHb6ZfO+I9dABabdLbIBdHf473PP47NJdY7/ePIB/RJop5Ys7t/AP6PvD7o7fP8Y1zTZoHPf/4B/AP4B+A=="
+  },
+  {
+    name: "right",
+    data: "gEBAP4B/AP4BKa+oAXDo45hCaqFbUbLBfbbo7bHMojTR7Y5LHa51ZALo75Ov47/FeY77AP4B5WdbF3dv4B/R94fdHb5/jGuabNA57//AP4B/APw="
+  },
+  {
+    name: "forward",
+    data:  "gEBAP4B/AKSX5avIALHPI9tACY55HsoAbHPI9fHfZFVGMo7/Hf47/Hf47/Hf47/Hf47/Hf47/Hf47/Hf49XHOIB/ALw="
+  },
+  {
+    name: "backward",
+    data:  "gEBAP4B/AKCZ5a/Y7/Hf47/Hf47/Hf47/Hf47/Hf47/Hf47/HfIAfHf491W/L15HMo9THNI9PHNo9LHOI9HHOoB/ALg="
   },
   {
     name: "back",
     data:  "gEBAP4B/AP4B/AKgADHPI71HP45/HP45/HP45/HP45/Hf49/Hv49/Hv49/Hv49/Hv497He4B/AP4B/AJAA=="
+  },
+  {
+    name: "mic_on",
+    data:  "gEBAP4B/AKCZ5a/Y7/Hf47/Hf47/Hf47/GbY7TIcY7/Hf47/Hf47/HdY9NCpp5lCb57fOdYvNeJo91HNrlvHf7tVIdY77AP4BiA="
+  },
+  {
+    name: "comms",
+    data:  "gEBAP4B+QvbF7ABo7/He49tACI7/Hf47zHtI7jJq47lRqoAVEqY7nHsoAZGJo71HrKxfQaY7bdKo7/Hdqz5B5Y7zHK47RD55FRHao3XHKo7JG7L1NHeJTbHboB/AP4BG"
+  },
+  {
+    name: "pawn",
+    data: "gEBAP4B/AP4B/AP4BEAA455HuY7/Hf47xAB47/PuI1xPZY7/Hf47/G9Y/zHfIATHPI9nHfYB/AOYAfHf4B/AP4B/APA="
+  },
+  {
+    name: "sleep",
+    data: "gEBAP4B/AP4B2ACY7/Quq95HP45/HP4APOdY7fACZfnHcaZZAL45/HP45/E7YAHCaZFZHfbh/HP45/HOoAHHf4B/AP4B/AP4BIA="
+  },
+  {
+    name: "awake",
+    data: "gEBAP4B/AKyb7HfIAFHPI77Ov451Hf453Hf453HdoAbHf45/Hf5HrHNY7NHNo7/HO47/HO47HHPJ1/Heo51HfoB/ALg="
+  },
+  {
+    name: "wag_h",
+    data: "gEBAP4B/AP4B/AP4B/AP4B/AMwADD+oAFHb4hTHMIlXHMopTHNItPAG47/WfY9tFKY9lEq49hELY7ja8YB/AP4B/AP4B/AP4B/AP4BCA"
+  },
+  {
+    name: "wag_v",
+    data: "gEBAP4B/AP4BOafIAHHPI9xAB45vd449rFZIHLHsonJBKa7rGNo7/Hf47/Hf47/Hf47/Hf4xlBKY7hFIoHLQM4rHApK7rAB71xHOo9LHOI9HHOoB/AP4BYA="
   }
   ];
 
@@ -110,61 +157,68 @@ the program and it may be adviable to use the 'status_name'
 format to ensure it is clear.
 */
 
-var lightBtn = {
+var joystickBtn = {
   primary_colour: 0x653E,
-  primary_text: 'Lights',
-  primary_icon: 'light',
+  primary_icon: 'joystick',
+  primary_text: 'Joystick',
   };
 
-var socketsBtn = {
+var turnLeftBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Left',
+  primary_icon: 'left',
+  };
+
+var turnRightBtn = {
   primary_colour: 0x33F9,
-  primary_text: 'Sockets',
-  primary_icon: 'switch',
+  primary_text: 'Right',
+  primary_icon: 'right',
   };
 
-var lightHallBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Hall Off',
-  primary_icon: 'light',
-  toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'Hall On',
-  secondary_icon : 'light',
-  value: status_light_hall
+var tailHBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_h',
   };
 
-var lightStudyBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Study Off',
-  primary_icon: 'light',
-  toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'Study On',
-  secondary_icon : 'light',
-  value: status_light_study
-};
-
-var socketTVBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'TV Off',
-  primary_icon: 'switch',
-  toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'TV On',
-  secondary_icon : 'switch',
-  value: status_tv
+var tailVBtn = {
+  primary_colour: 0x33F9,
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_v',
   };
 
-var socketPrinterBtn = {
+var chessBtn = {
   primary_colour: 0xE9C7,
-  primary_text: 'Printer Off',
-  primary_icon: 'switch',
+  primary_text: 'Off',
+  primary_icon: 'pawn',
   toggle: true,
   secondary_colour: 0x3F48,
-  secondary_text: 'Printer On',
-  secondary_icon : 'switch',
-  value: status_printer
-};
+  secondary_text: 'On',
+  secondary_icon : 'pawn',
+  value: status_chess
+  };
+
+var wakeBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Sleeping',
+  primary_icon: 'sleep',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'Awake',
+  secondary_icon : 'awake',
+  value: status_wake
+  };
+
+var autoBtn = {
+  primary_colour: 0xE9C7,
+  primary_text: 'Stop',
+  primary_icon: 'sit',
+  toggle: true,
+  secondary_colour: 0x3F48,
+  secondary_text: 'Move',
+  secondary_icon : 'walk',
+  value: status_auto
+  };
 
 /*
 CONFIGURATION AREA - SCREEN DEFINITIONS
@@ -176,22 +230,33 @@ the left hand side of the screen.  These
 are defined as btn1, bt2 and bt3.  The
 values are names from the icon array.
 */
-const homeScreen = {
-  left: lightBtn,
-  right: socketsBtn,
+const menuScreen = {
+  left: wakeBtn,
+  right: joystickBtn,
+  btn1: "pawn",
+  btn2: "wag_v",
 };
 
-const lightsScreen = {
-  left: lightHallBtn,
-  right: lightStudyBtn,
+const joystickScreen = {
+  left: turnLeftBtn,
+  right: turnRightBtn,
+  btn1: "forward",
+  btn2: "backward",
   btn3: "back"
 };
 
-const socketsScreen = {
-  left: socketTVBtn,
-  right: socketPrinterBtn,
+const tailScreen = {
+  left: tailHBtn,
+  right: tailVBtn,
   btn3: "back"
 };
+
+const chessScreen = {
+  left: chessBtn,
+  right: autoBtn,
+  btn3: "back"
+};
+
 
 /* base state definition
 Each of the screens correspond to a state;
@@ -232,36 +297,23 @@ inversed and the new value transmitted.
 */
 
 /* The Home State/Page is where the application beings */
+
 const Home = new State({
-  state: "Home",
-  screen: homeScreen,
+  state: "K9Menu",
+  screen: menuScreen,
   events: (event) => {
-    if ((event.object == "right") && (event.status == "end")) {
-      return SocketsMenu;
+    if ((event.object == "top") && (event.status == "end")) {
+      return Chess;
       }
-    if ((event.object == "left") && (event.status == "end")) {
-      return LightsMenu;
-      }
-    transmit(this.state, event.object, event.status);
-    return this;
-    }
-});
-
-const LightsMenu = new State({
-  state: "LightsMenu",
-  screen: lightsScreen,
-  events: (event) => {
-    if ((event.object == "bottom") && (event.status == "end")) {
-      return Home;
+    if ((event.object == "middle") && (event.status == "end")) {
+      return Tail;
       }
     if ((event.object == "right") && (event.status == "end")) {
-      status_light_study.value = !status_light_study.value;
-      transmit(this.state, "study", onOff(status_light_study.value));
-      return this;
+      return Joystick;
       }
     if ((event.object == "left") && (event.status == "end")) {
-      status_light_hall.value = !status_light_hall.value;
-      transmit(this.state, "hall", onOff(status_light_hall.value));
+      status_wake.value = !status_wake.value;
+      transmit(this.state, "wake", onOff(status_wake.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
@@ -269,26 +321,52 @@ const LightsMenu = new State({
     }
 });
 
-const SocketsMenu = new State({
-  state: "SocketsMenu",
-  screen: socketsScreen,
+const Chess = new State({
+  state: "Chess",
+  screen: chessScreen,
   events: (event) => {
     if ((event.object == "bottom") && (event.status == "end")) {
       return Home;
       }
     if ((event.object == "right") && (event.status == "end")) {
-      status_printer.value = !status_printer.value;
-      transmit(this.state, "printer", onOff(status_printer.value));
+      status_auto.value = !status_auto.value;
+      transmit(this.state, "follow", onOff(status_auto.value));
       return this;
       }
     if ((event.object == "left") && (event.status == "end")) {
-      status_tv.value = !status_tv.value;
-      transmit(this.state, "tv", onOff(status_tv.value));
+      status_chess.value = !status_chess.value;
+      transmit(this.state, "chess", onOff(status_chess.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
     return this;
     }
+});
+
+const Tail = new State({
+  state: "Tail",
+  screen: tailScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return Home;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+/* Joystick page state */
+const Joystick = new State({
+  state: "Joystick",
+  screen: joystickScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+        transmit("Joystick", "joystick", "off");
+        return Home;
+        }
+    transmit(this.state, event.object, event.status);
+    return this;
+  }
 });
 
 /* translate button status into english */
