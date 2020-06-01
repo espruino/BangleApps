@@ -344,7 +344,7 @@ const drawButton = (params,side) => {
         text = params.secondary_text;
         icon = drawIcon(params.secondary_icon);
     }
-    g.fillRect(0+x,24,119+x, 239);
+    g.fillRect(0+x,28,119+x, 239);
     g.setColor(0x000);
     g.setFont("Vector",15);
     g.setFontAlign(0,0.0);
