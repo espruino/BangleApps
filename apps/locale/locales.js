@@ -14,6 +14,34 @@ const speedUnits = { // how many kph per X?
 };
 
 /*
+For a codepage, 'map' is a map of char codes 128 and above.
+Where there is no character, just use '.'
+*/
+const codePages = {
+  "ISO8859-1" : {
+    name : "ISO8859-1",
+    map : `
+€.‚ƒ„…†‡ˆ‰Š‹Œ.Ž.
+.‘’“”•–—˜™š›œ.žŸ
+.¡¢£¤¥¦§¨©ª«¬.®¯
+°±²³´µ¶·¸¹º»¼½¾¿
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ
+ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
+àáâãäåæçèéêëìíîï
+ðñòóôõö÷øùúûüýþÿ
+`.replace(/[ \n]/g,"")
+  }
+};
+/* When it's not in the codepage, try and use
+these conversions */
+const charFallbacks = {
+  "č":"c",
+  "ř":"r",
+  "ő":"o",
+  "ě":"e"
+};
+
+/*
 timePattern / datePattern:
 
     %Y	year four digits
@@ -56,7 +84,7 @@ var locales = {
     lang: "de_DE",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -92,7 +120,7 @@ var locales = {
     lang: "en_JP",
     decimal_point: ".",
     thousands_sep: ",",
-    currency_symbol: "￥",
+    currency_symbol: "¥",
     int_curr_symbol: "JPY",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -110,7 +138,7 @@ var locales = {
     lang: "nl_NL",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -146,7 +174,7 @@ var locales = {
     lang: "fr_FR",
     decimal_point: ",",
     thousands_sep: " ",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
@@ -200,7 +228,7 @@ var locales = {
     lang: "de_AT",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -217,7 +245,7 @@ var locales = {
     lang: "en_IL",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "₪",
+    currency_symbol: "ILS"/*"₪"*/,
     int_curr_symbol: "ILS",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -235,7 +263,7 @@ var locales = {
     lang: "es_ES",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -253,7 +281,7 @@ var locales = {
     lang: "fr_BE",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -271,7 +299,7 @@ var locales = {
     lang: "fi_FI",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
@@ -343,7 +371,7 @@ var locales = {
     lang: "it_IT",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
@@ -429,7 +457,7 @@ var locales = {
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
     trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
   },
-  "cs_CZ": {
+  "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use charFallbacks
     lang: "cs_CZ",
     decimal_point: ",",
     thousands_sep: " ",
@@ -451,7 +479,7 @@ var locales = {
     lang: "sl_SI",
     decimal_point: ",",
     thousands_sep: ".",
-    currency_symbol: "\x80",
+    currency_symbol: "€",
     int_curr_symbol: "EUR",
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
