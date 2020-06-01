@@ -580,18 +580,6 @@ const Tail = new State({
     }
 });
 
-const Speak = new State({
-  state: "Speak",
-  screen: speakScreen,
-  events: (event) => {
-    if ((event.object == "bottom") && (event.status == "end")) {
-      return DalekMenu;
-      }
-    transmit(this.state, event.object, event.status);
-    return this;
-    }
-});
-
 const Iris = new State({
   state: "Iris",
   screen: irisScreen,
