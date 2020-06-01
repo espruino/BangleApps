@@ -234,8 +234,7 @@ const menuScreen = {
   left: wakeBtn,
   right: joystickBtn,
   btn1: "pawn",
-  btn2: "wag_h",
-  btn3: "back"
+  btn2: "wag_v",
 };
 
 const joystickScreen = {
@@ -303,6 +302,12 @@ const Home = new State({
   state: "K9Menu",
   screen: menuScreen,
   events: (event) => {
+    if ((event.object == "top") && (event.status == "end")) {
+      return Chess;
+      }
+    if ((event.object == "middle") && (event.status == "end")) {
+      return Tail;
+      }
     if ((event.object == "right") && (event.status == "end")) {
       return Joystick;
       }
