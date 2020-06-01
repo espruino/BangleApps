@@ -234,7 +234,6 @@ const menuScreen = {
   right: speakBtn,
   btn1: "hover",
   btn2: "light",
-  btn3: "back"
 };
 
 const speakScreen = {
@@ -299,6 +298,12 @@ const Home = new State({
   state: "DalekMenu",
   screen: menuScreen,
   events: (event) => {
+    if ((event.object == "top") && (event.status == "end")) {
+      return Lights;
+      }
+    if ((event.object == "middle") && (event.status == "end")) {
+      return Iris;
+      }
     if ((event.object == "right") && (event.status == "end")) {
       return Speak;
       }
