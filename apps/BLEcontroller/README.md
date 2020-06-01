@@ -1,14 +1,18 @@
-# BLE Robot Controller with Joystick
+# BLE Generic Controller with Joystick
 
-A highly customisable state machine driven user interface that will communicate with another BLE device.  The controller uses the three buttons and the left and right hand side of the watch to provide a flexible and attractive BLE interface.  Amaze your friends by controlling your robot from your watch!
+A highly customisable state machine driven user interface that will communicate with another BLE device.  The controller uses the three buttons and the left and right hand side of the watch to provide a flexible and attractive BLE interface.  
 
-To keep the messages small, commands are sent from the Controller to the BLE robot in a text string.  This is made up of a comma delimited string of the following elements:
+Amaze your friends by controlling your robot, your house or any other BLE device from your watch!
+
+To keep the messages small, commands are sent from the Controller to the BLE target in a text string.  This is made up of a comma delimited string of the following elements:
 * message number (3 characters)
 * screen name (3 characters)
 * object name (3 characters)
 * value/status (3 characters)
 
-The combination of these variables will uniquely identify the status change requested from the watch to the robot that can then be programmed to respond appropriately.
+The combination of these variables will uniquely identify the status change requested from the watch to the target device that can then be programmed to respond appropriately.
+
+Gordon Williams' EspruinoHub is an excellent way to transform BLE advertisements into MQTT messages for further processing.
 
 ## Usage
 
@@ -18,20 +22,12 @@ Most changes are possible via data, rather than code change.
 
 ## Features
 
-In its default state, it has nine screens that provide the ability to:
-* select which robot to interact with (dog or dalek)
-    * for the dog the following functions are available:
-        * control movement via a joystick (forwards, backwards, spin left, spin right)
-        * turn on/off follow mode
-        * start a game of chess
-        * wake or sleep the robot
-        * wag its tail in two directions
-    * for the dalek, the user can:
-        * turn on or off face recognition
-        * make it say random phrases
-        * control the dalek's iris light and servo
-        * turn the dalek hover lights on or off
-        * turn the speaker on or off
+The default package contains three configurations:
+* a simple home light and sockets controller UI (app.js)
+* a robot controller UI with joystick (app-joy.js)
+* a simple static assistant controller (app-ass.js)
+
+You can try out the other configurations by deleting app.js and renaming the file you want to app.js.
 
 ## Controls
 
