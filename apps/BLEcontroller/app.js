@@ -19,18 +19,18 @@ bottom_btn = false;
 
 msgNum = 0; // message number
 
+NRF.setConnectionInterval(100);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 /*
 CONFIGURATION AREA - STATE VARIABLES
 declare global variables for the toggle button
 statuses; if you add an additional toggle button
 you should declare it and initiase it here */
 
-var status_spk = {value: true};
-var status_face = {value: true};
-var status_iris_light = {value: false};
-var status_iris = {value: false};
-var status_hover = {value: false};
-var status_dome = {value: false};
+var status_auto = {value: false};
+var status_chess = {value: false};
+var status_wake = {value: false};
 
 /* trsnsmit message
 where
@@ -70,20 +70,48 @@ with a unique name and the data from the Image Object
 */
 const icons = [
   {
+    name: "walk",
+    data: "gEBAP4B/ALyh7b/YALHfY9tACY55HfYdNHto7pHpIbXbL5fXAD6VlHuYAjHf47/Hf47tHK47LDa45zHc4NHHeILJHeonTO9o9rHf47/eOoB/ANg="
+  },
+  {
+    name: "sit",
+    data: "gEBAP4B/AP4BacO4ANHPI/rACp1/Hf49rGtI5/He7n3ACY55HcYAZHf45/Hf45rHe4XHGbI7/Va47zZZrpbHfbtXD5Y/vHcYB/AP4BmA"
+  },
+  {
+    name: "joystick",
+    data: "gEBAP4B/AP4BMavIALHPI9vHf47/eP45vHpY5xHo451Hf47/FuYAHHNItHABa33AP6xpAD455HqY7/Hf47/Hd49pHKIB/AP4B/AMwA=="
+  },
+  {
+    name: "left",
+    data: "gEBAP4B/AP4BKa9ojHAC5pfHJKDTUsYdZHb6ZfO+I9dABabdLbIBdHf473PP47NJdY7/ePIB/RJop5Ys7t/AP6PvD7o7fP8Y1zTZoHPf/4B/AP4B+A=="
+  },
+  {
+    name: "right",
+    data: "gEBAP4B/AP4BKa+oAXDo45hCaqFbUbLBfbbo7bHMojTR7Y5LHa51ZALo75Ov47/FeY77AP4B5WdbF3dv4B/R94fdHb5/jGuabNA57//AP4B/APw="
+  },
+  {
+    name: "forward",
+    data:  "gEBAP4B/AKSX5avIALHPI9tACY55HsoAbHPI9fHfZFVGMo7/Hf47/Hf47/Hf47/Hf47/Hf47/Hf47/Hf49XHOIB/ALw="
+  },
+  {
+    name: "backward",
+    data:  "gEBAP4B/AKCZ5a/Y7/Hf47/Hf47/Hf47/Hf47/Hf47/Hf47/HfIAfHf491W/L15HMo9THNI9PHNo9LHOI9HHOoB/ALg="
+  },
+  {
     name: "back",
     data:  "gEBAP4B/AP4B/AKgADHPI71HP45/HP45/HP45/HP45/Hf49/Hv49/Hv49/Hv49/Hv497He4B/AP4B/AJAA=="
   },
   {
-    name: "spk_on",
-    data:  "gEBAP4B/AP4Bic/YAFPP4v1HrYZRVJo7ZDKp5jMJYvZHaYAHVL4LHACZrhADLBTJKI7dPLI7/Hf47/HeZBVFqZHZRJp1lAJ47LOtZTnHbIZDKLpHNAL69ZANp1tQbY5/AP4B/ANQ"
-  },
-    {
-    name: "spk_off",
-    data:  "gEBAPhB7P/o9rFKI9pFKY9tXNYZNHrZXfMaoAHPOZhNF7LdXHpKpZEJpvPDZK1ZAB49NPLo9jHdI9NHd49PHebvxEJY9NI6I7dHpaDXcKqfPHLKjZHcpTjHbIZDKa73JHa4BXGY45xe5Y7zV+o9/Hv49JHe4BEA="
+    name: "mic_on",
+    data:  "gEBAP4B/AKCZ5a/Y7/Hf47/Hf47/Hf47/GbY7TIcY7/Hf47/Hf47/HdY9NCpp5lCb57fOdYvNeJo91HNrlvHf7tVIdY77AP4BiA="
   },
   {
-    name: "facerecog",
-    data: "gEBAP4BSLuozNH9YpTHsolXPsYfdDraZhELIZhHeLtJELY1VC4Y7HHqoXJABYdNHa5bJDrLvfHfbrPZJI7nGZpdVNJ4lRIpaznRqp1hCq55ZC6IRPd8oPjW8Y5jSr45dEJppNHcIjLHZY5ja6rrhFK45pVqI5rGI4AHHNpx3ANA="
+    name: "comms",
+    data:  "gEBAP4B+QvbF7ABo7/He49tACI7/Hf47zHtI7jJq47lRqoAVEqY7nHsoAZGJo71HrKxfQaY7bdKo7/Hdqz5B5Y7zHK47RD55FRHao3XHKo7JG7L1NHeJTbHboB/AP4BG"
+  },
+  {
+    name: "pawn",
+    data: "gEBAP4B/AP4B/AP4BEAA455HuY7/Hf47xAB47/PuI1xPZY7/Hf47/G9Y/zHfIATHPI9nHfYB/AOYAfHf4B/AP4B/APA="
   },
   {
     name: "sleep",
@@ -94,28 +122,12 @@ const icons = [
     data: "gEBAP4B/AKyb7HfIAFHPI77Ov451Hf453Hf453HdoAbHf45/Hf5HrHNY7NHNo7/HO47/HO47HHPJ1/Heo51HfoB/ALg="
   },
   {
-    name: "happy",
-    data: "gEBAP4B/AP4BKa+oAXHNITfHK4ZtD5JZfHOojZaMYlXHMYnXHfI5nFaYPLaaIRNHf47/d/47/HtInTCZrfZHa4vNABYlVKLI3PbLrzfD7qTXDLaphHMIpLAB45hIKY1pAP4B/AMA"
+    name: "wag_h",
+    data: "gEBAP4B/AP4B/AP4B/AP4B/AMwADD+oAFHb4hTHMIlXHMopTHNItPAG47/WfY9tFKY9lEq49hELY7ja8YB/AP4B/AP4B/AP4B/AP4BCA"
   },
   {
-    name: "sad",
-    data: "gEBAP4B/AP4BKa+oAXHNITfHK4ZtD5JZfHOojZaMYlXHMYnXHfI5nFaYPLaaIRNHf47/d/47/CK4njCZ4APHcIVJBbbdTecYjZHr4fdSa4ZbEZ4lNCaY9dAB45hIKY1pAP4B/AMA"
-  },
-  {
-    name: "hover",
-    data: "gEBAP4B/AP7NedL4fZK7ojNHeJ35DJI7vC5Y7tVMI7XHNYnNYro7hHKI7lAK47/HdoAhHPI7/Hf47/Hf4AtHPI7/Hf47/Hd45LAP4B/ANwA="
-  },
-  {
-    name: "light",
-    data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA=="
-  },
-  {
-    name: "speak",
-    data: "gEBAP4B/AP4BIbO4AXG+4/hAEY55HqoArHPI9PHfIAzHf47/Hf47/HeY9xHJI79Hto5NHtY5RHc45THco5VHcI3XHJpHRG7I7LEro5ZG+IB/AP4BwA=="
-  },
-  {
-    name: "dalek",
-    data: "gEBAP4B/AP4B/AJMQwQBBGucIoMAkADBhFhAoZBcAAQfJhEgB45BCHYMBjGiB4ZLCK5APDFpphBC5AbEJosY0YfCG4IAEJIYdGFYR5LHJYlEAI0Y4cY8YXMOpQBFlNFlMkOZA7MKII7JOAXkE4T1UERKtFHoxJBABY5QiGiD5kANYTnCiFiWIJVOgDZCOra3FoKxFDKI7hADQ7PkEIaoIHEaKYfJAoKPFAJcIGYIJHkI7UgMY8ZFHC5rVDKIZTCDIJhBA4ILBBoYFHC4QBEBogpBjHDdsJJEAoYAHKoTxWWb5tNWZOiHZRbBHbwtLF5ynBL7wtLjHjd6oAZkHkI5JJKAAZ3TkAjJhALBsJ5K0a/KkLvfkMEFpVhO8hrIU4QLGG4QAzkCdVAP4B/AP4Bb"
+    name: "wag_v",
+    data: "gEBAP4B/AP4BOafIAHHPI9xAB45vd449rFZIHLHsonJBKa7rGNo7/Hf47/Hf47/Hf47/Hf4xlBKY7hFIoHLQM4rHApK7rAB71xHOo9LHOI9HHOoB/AP4BYA="
   }
   ];
 
@@ -145,78 +157,68 @@ the program and it may be adviable to use the 'status_name'
 format to ensure it is clear.
 */
 
-var happyBtn = {
+var joystickBtn = {
   primary_colour: 0x653E,
-  primary_text: 'Speak',
-  primary_icon: 'happy',
+  primary_icon: 'joystick',
+  primary_text: 'Joystick',
   };
 
-var sadBtn = {
+var turnLeftBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Left',
+  primary_icon: 'left',
+  };
+
+var turnRightBtn = {
   primary_colour: 0x33F9,
-  primary_text: 'Speak',
-  primary_icon: 'sad',
+  primary_text: 'Right',
+  primary_icon: 'right',
   };
 
-var speakBtn = {
+var tailHBtn = {
+  primary_colour: 0x653E,
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_h',
+  };
+
+var tailVBtn = {
   primary_colour: 0x33F9,
-  primary_text: 'Speak',
-  primary_icon: 'speak',
+  primary_text: 'Wag Tail',
+  primary_icon: 'wag_v',
   };
 
-var faceBtn = {
+var chessBtn = {
   primary_colour: 0xE9C7,
   primary_text: 'Off',
-  primary_icon: 'facerecog',
+  primary_icon: 'pawn',
   toggle: true,
   secondary_colour: 0x3F48,
   secondary_text: 'On',
-  secondary_icon : 'facerecog',
-  value: status_face
+  secondary_icon : 'pawn',
+  value: status_chess
   };
 
-var irisLightBtn = {
+var wakeBtn = {
   primary_colour: 0xE9C7,
-  primary_text: 'Off',
-  primary_icon: 'light',
-  toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'On',
-  secondary_icon : 'light',
-  value: status_iris_light
-  };
-
-var irisBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Closed',
+  primary_text: 'Sleeping',
   primary_icon: 'sleep',
   toggle: true,
   secondary_colour: 0x3F48,
-  secondary_text: 'Open',
+  secondary_text: 'Awake',
   secondary_icon : 'awake',
-  value: status_iris
+  value: status_wake
   };
 
-var hoverBtn = {
+var autoBtn = {
   primary_colour: 0xE9C7,
-  primary_text: 'Off',
-  primary_icon: 'hover',
+  primary_text: 'Stop',
+  primary_icon: 'sit',
   toggle: true,
   secondary_colour: 0x3F48,
-  secondary_text: 'On',
-  secondary_icon : 'hover',
-  value: status_hover
+  secondary_text: 'Move',
+  secondary_icon : 'walk',
+  value: status_auto
   };
-
-  var domeBtn = {
-    primary_colour: 0xE9C7,
-    primary_text: 'Off',
-    primary_icon: 'dalek',
-    toggle: true,
-    secondary_colour: 0x3F48,
-    secondary_text: 'On',
-    secondary_icon : 'dalek',
-    value: status_dome
-    };
 
 /*
 CONFIGURATION AREA - SCREEN DEFINITIONS
@@ -228,31 +230,34 @@ the left hand side of the screen.  These
 are defined as btn1, bt2 and bt3.  The
 values are names from the icon array.
 */
-
 const menuScreen = {
-  left: faceBtn,
-  right: speakBtn,
-  btn1: "hover",
-  btn2: "light",
-};
-
-const speakScreen = {
-  left: happyBtn,
-  right: sadBtn,
+  left: wakeBtn,
+  right: joystickBtn,
+  btn1: "pawn",
+  btn2: "wag_h",
   btn3: "back"
 };
 
-const irisScreen = {
-  left: irisBtn,
-  right: irisLightBtn,
+const joystickScreen = {
+  left: turnLeftBtn,
+  right: turnRightBtn,
+  btn1: "forward",
+  btn2: "backward",
   btn3: "back"
 };
 
-const lightsScreen = {
-  left: hoverBtn,
-  right: domeBtn,
+const tailScreen = {
+  left: tailHBtn,
+  right: tailVBtn,
   btn3: "back"
 };
+
+const chessScreen = {
+  left: chessBtn,
+  right: autoBtn,
+  btn3: "back"
+};
+
 
 /* base state definition
 Each of the screens correspond to a state;
@@ -288,28 +293,22 @@ one, then the state machine will change to that new State and redrsw
 the screen appropriately.
 To add in additional capabilities for button presses, simply add
 an additional 'if' statement.
-For toggle buttons, the value of the sppropiate status object is
+For toggle buttons, the value of the appropiate status object is
 inversed and the new value transmitted.
 */
 
 /* The Home State/Page is where the application beings */
 
 const Home = new State({
-  state: "DalekMenu",
+  state: "K9Menu",
   screen: menuScreen,
   events: (event) => {
-    if ((event.object == "top") && (event.status == "end")) {
-      return Lights;
-      }
-    if ((event.object == "middle") && (event.status == "end")) {
-      return Iris;
-      }
     if ((event.object == "right") && (event.status == "end")) {
-      return Speak;
+      return Joystick;
       }
     if ((event.object == "left") && (event.status == "end")) {
-      status_face.value = !status_face.value;
-      transmit(this.state, "face", onOff(status_face.value));
+      status_wake.value = !status_wake.value;
+      transmit(this.state, "wake", onOff(status_wake.value));
       return this;
       }
     transmit(this.state, event.object, event.status);
@@ -317,9 +316,31 @@ const Home = new State({
     }
 });
 
-const Speak = new State({
-  state: "Speak",
-  screen: speakScreen,
+const Chess = new State({
+  state: "Chess",
+  screen: chessScreen,
+  events: (event) => {
+    if ((event.object == "bottom") && (event.status == "end")) {
+      return Home;
+      }
+    if ((event.object == "right") && (event.status == "end")) {
+      status_auto.value = !status_auto.value;
+      transmit(this.state, "follow", onOff(status_auto.value));
+      return this;
+      }
+    if ((event.object == "left") && (event.status == "end")) {
+      status_chess.value = !status_chess.value;
+      transmit(this.state, "chess", onOff(status_chess.value));
+      return this;
+      }
+    transmit(this.state, event.object, event.status);
+    return this;
+    }
+});
+
+const Tail = new State({
+  state: "Tail",
+  screen: tailScreen,
   events: (event) => {
     if ((event.object == "bottom") && (event.status == "end")) {
       return Home;
@@ -329,48 +350,18 @@ const Speak = new State({
     }
 });
 
-const Iris = new State({
-  state: "Iris",
-  screen: irisScreen,
+/* Joystick page state */
+const Joystick = new State({
+  state: "Joystick",
+  screen: joystickScreen,
   events: (event) => {
     if ((event.object == "bottom") && (event.status == "end")) {
-      return Home;
-      }
-    if ((event.object == "right") && (event.status == "end")) {
-      status_iris_light.value = !status_iris_light.value;
-      transmit(this.state, "light", onOff(status_iris_light.value));
-      return this;
-      }
-    if ((event.object == "left") && (event.status == "end")) {
-      status_iris.value = !status_iris.value;
-      transmit(this.state, "servo", onOff(status_iris.value));
-      return this;
-      }
+        transmit("Joystick", "joystick", "off");
+        return Home;
+        }
     transmit(this.state, event.object, event.status);
     return this;
-    }
-});
-
-const Lights = new State({
-  state: "Lights",
-  screen: lightsScreen,
-  events: (event) => {
-    if ((event.object == "bottom") && (event.status == "end")) {
-      return Home;
-      }
-    if ((event.object == "right") && (event.status == "end")) {
-      status_dome.value = !status_dome.value;
-      transmit(this.state, "dome", onOff(status_dome.value));
-      return this;
-      }
-    if ((event.object == "left") && (event.status == "end")) {
-      status_hover.value = !status_hover.value;
-      transmit(this.state, "hover", onOff(status_hover.value));
-      return this;
-      }
-    transmit(this.state, event.object, event.status);
-    return this;
-    }
+  }
 });
 
 /* translate button status into english */
@@ -426,7 +417,7 @@ const drawButton = (params,side) => {
         text = params.secondary_text;
         icon = drawIcon(params.secondary_icon);
     }
-    g.fillRect(0+x,24,119+x, 239);
+    g.fillRect(0+x,28,119+x, 239);
     g.setColor(0x000);
     g.setFont("Vector",15);
     g.setFontAlign(0,0.0);
