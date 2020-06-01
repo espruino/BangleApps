@@ -1779,7 +1779,7 @@
     "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
     "tags": "tool,bluetooth",
     "readme": "README.md",
-    "allow_emulator":true,
+    "allow_emulator":false,
     "storage": [
       { "name": "BLEcontroller.app.js", "url": "app.js" },
       { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
