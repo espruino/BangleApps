@@ -45,7 +45,7 @@ const transmit = (state,object,status) => {
     n: msgNum.toString().slice(-4),
     s: state.substr(0,4),
     o: object.substr(0,4),
-    v: status.substr(0.4),
+    v: status.substr(0,4),
   };
   message= msg.n + "," + msg.s + "," + msg.o + "," + msg.v;
   NRF.setAdvertising({},{

@@ -7,10 +7,10 @@ Amaze your friends by controlling your robot, your house or any other BLE device
 <iframe width="560" height="315" src="https://www.youtube.com/embed/acQxcoFe0W0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 To keep the messages small, commands are sent from the Controller to the BLE target in a text string.  This is made up of a comma delimited string of the following elements:
-* message number (3 characters)
-* screen name (3 characters)
-* object name (3 characters)
-* value/status (3 characters)
+* message number (up to the least significant four digits)
+* screen name (up to four characters)
+* object name (up to four characters)
+* value/status (up to four characters)
 
 The combination of these variables will uniquely identify the status change requested from the watch to the target device that can then be programmed to respond appropriately.
 
