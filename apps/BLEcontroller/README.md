@@ -4,7 +4,7 @@ A highly customisable state machine driven user interface that will communicate 
 
 Amaze your friends by controlling your robot, your house or any other BLE device from your watch!
 
-[![Video of watch and robot](./video.png)](https://www.youtube.com/embed/acQxcoFe0W0 "Control your robot from your Watch")
+<iframe width="560" height="315" src="https://www.youtube.com/embed/acQxcoFe0W0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 To keep the messages small, commands are sent from the Controller to the BLE target in a text string.  This is made up of a comma delimited string of the following elements:
 * message number (3 characters)
