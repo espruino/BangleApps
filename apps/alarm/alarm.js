@@ -24,7 +24,7 @@ function showAlarm(alarm) {
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
-      alarm.ohr = alarm.hr;
+      if(!alarm.ohr) alarm.ohr = alarm.hr;
       alarm.hr += 10/60; // 10 minutes
     } else {
       alarm.last = (new Date()).getDate();
