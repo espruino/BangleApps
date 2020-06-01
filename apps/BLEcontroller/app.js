@@ -20,6 +20,8 @@ bottom_btn = false;
 msgNum = 0; // message number
 
 NRF.setConnectionInterval(100)
+Bangle.loadWidgets()
+Bangle.drawWidgets()
 /*
 CONFIGURATION AREA - STATE VARIABLES
 declare global variables for the toggle button
@@ -314,7 +316,6 @@ const setMyWatch = (params) => {
   machine = machine.events({object: params.label, status: startEnd(params.bool)});
   drawScreen(machine.screen);
   }, params.btn, {repeat:true, edge:"both"});
-  Bangle.drawWidgets();
 };
 
 /* object array used to set up the watching functions
