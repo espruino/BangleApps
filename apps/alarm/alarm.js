@@ -24,9 +24,14 @@ function showAlarm(alarm) {
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
+      alarm.ohr = alarm.hr;
       alarm.hr += 10/60; // 10 minutes
     } else {
       alarm.last = (new Date()).getDate();
+      if (alarm.ohr) {
+          alarm.hr = alarm.ohr;
+          delete alarm.ohr;
+      }
       if (!alarm.rp) alarm.on = false;
     }
     require("Storage").write("alarm.json",JSON.stringify(alarms));
