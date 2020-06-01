@@ -19,9 +19,9 @@ bottom_btn = false;
 
 msgNum = 0; // message number
 
-NRF.setConnectionInterval(100)
-Bangle.loadWidgets()
-Bangle.drawWidgets()
+NRF.setConnectionInterval(100);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 /*
 CONFIGURATION AREA - STATE VARIABLES
 declare global variables for the toggle button
