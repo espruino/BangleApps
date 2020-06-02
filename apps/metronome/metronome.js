@@ -4,6 +4,7 @@ var bpm=60;  // ininital bpm value
 var time_diffs = [1000, 1000, 1000];  //array to calculate mean bpm
 var tindex=0;  //index to iterate through time_diffs
 
+
 Bangle.setLCDTimeout(undefined);  //do not deaktivate display while running this app
 
 const storage = require("Storage");
@@ -57,7 +58,7 @@ function updateScreen() {
   catch(err) {
   }
   g.setFont("Vector",40);
-  g.drawString(Math.floor(bpm)+"bpm", 100, 100);
+  g.drawString(Math.floor(bpm)+"bpm", g.getWidth()/2, 100);
 }
 
   
