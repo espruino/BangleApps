@@ -182,8 +182,8 @@ exports = {
   speed: s => Math.round(s/${speedUnits[locale.speed]}) + ${js(locale.speed)},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
-  date: (d,short) => short ? \`${dateS}\`: \`${dateN}\`,
-  time: (d,short) => short ? \`${timeS}\`: \`${timeN}\`,
+  date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
+  time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
   meridian: d => (d.getHours() <= 12) ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
 };
 `.trim();
