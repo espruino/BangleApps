@@ -133,6 +133,10 @@ exports = { name : "en_GB", currencySym:"£",
           return s;
         }
 
+        function unitConv(x) {
+          return x === 1 ? 'n' : 'n/' + x
+        }
+
         var replaceList  = {
           "%Y":  "d.getFullYear()",
           "%y":  "(d.getFullYear().toString()).slice(-2)",
@@ -178,8 +182,8 @@ exports = {
   month: (d,short) => (short ? abmonth : month).split(',')[d.getMonth()],
   number: n => n.toString(),
   currency: n => ${currency},
-  distance: n => (n < ${distanceUnits[locale.distance[1]]}) ? Math.round(n/${distanceUnits[locale.distance[0]]}) + ${js(locale.distance[0])} : Math.round(n/${distanceUnits[locale.distance[1]]}) + ${js(locale.distance[1])},
-  speed: s => Math.round(s/${speedUnits[locale.speed]}) + ${js(locale.speed)},
+  distance: n => n < ${distanceUnits[locale.distance[1]]} ? Math.round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : Math.round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
+  speed: n => Math.round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
