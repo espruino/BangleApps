@@ -61,7 +61,7 @@ exports = { name : "en_GB", currencySym:"£",
           return undefined;
         }
         // escape the char
-        return '\\x'+(n+256).toString(16).substr(-2);
+        return '\\x'+(n+256).toString(16).slice(-2);
       }
 
       // do some sanity checks
@@ -135,14 +135,14 @@ exports = { name : "en_GB", currencySym:"£",
 
         var replaceList  = {
           "%Y":  "d.getFullYear()",
-          "%y":  "(d.getFullYear().toString()).substr(-2)",
-          "%m":  "('0'+(d.getMonth()+1).toString()).substr(-2)",
+          "%y":  "(d.getFullYear().toString()).slice(-2)",
+          "%m":  "('0'+(d.getMonth()+1).toString()).slice(-2)",
           "%-m": "d.getMonth()+1",
-          "%d":  "('0'+d.getDate()).substr(-2)",
+          "%d":  "('0'+d.getDate()).slice(-2)",
           "%-d": "d.getDate()",
-          "%HH": "('0'+d.getHours()).substr(-2)",
-          "%MM": "('0'+d.getMinutes()).substr(-2)",
-          "%SS": "('0'+d.getSeconds()).substr(-2)",
+          "%HH": "('0'+d.getHours()).slice(-2)",
+          "%MM": "('0'+d.getMinutes()).slice(-2)",
+          "%SS": "('0'+d.getSeconds()).slice(-2)",
           "%A":  "l.day.split(',')[d.getDay()]",
           "%a":  "l.abday.split(',')[d.getDay()]",
           "%B":  "l.month.split(',')[d.getMonth()]",
