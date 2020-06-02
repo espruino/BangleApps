@@ -212,12 +212,12 @@ var locales = {
     thousands_sep: ",",
     currency_symbol: "$",
     int_curr_symbol: "AUD",
-    speed: "mph",
-    distance: { 0: "mi", 1: "kmi" },
-    temperature: "°F",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%A, %B %d, %Y", "1": "%m/%d/%y" }, //  Sunday, 1 March 2020  // 1/3/20
+    datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%y" }, //  Sunday, 1 March 2020  // 1/3/20
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
