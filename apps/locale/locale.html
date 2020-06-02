@@ -143,10 +143,10 @@ exports = { name : "en_GB", currencySym:"£",
           "%HH": "('0'+d.getHours()).slice(-2)",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
-          "%A":  "l.day.split(',')[d.getDay()]",
-          "%a":  "l.abday.split(',')[d.getDay()]",
-          "%B":  "l.month.split(',')[d.getMonth()]",
-          "%b":  "l.abmonth.split(',')[d.getMonth()]",
+          "%A":  "day.split(',')[d.getDay()]",
+          "%a":  "abday.split(',')[d.getDay()]",
+          "%B":  "month.split(',')[d.getMonth()]",
+          "%b":  "abmonth.split(',')[d.getMonth()]",
           "%p":  `(d.getHours()<12)?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
           "%P":  `(d.getHours()<12)?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
@@ -166,17 +166,16 @@ exports = { name : "en_GB", currencySym:"£",
           `n.toFixed(2) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
-        var localeModule = `var l = ${js({
-          abday : locale.abday,
-          day : locale.day,
-          abmonth : locale.abmonth,
-          month : locale.month,
-        })};
+        var localeModule = `
+var day = ${js(locale.day)};
+var abday = ${js(locale.abday)};
+var month = ${js(locale.month)};
+var abmonth = ${js(locale.abmonth)};
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => l[short ? 'abday' : 'day'].split(',')[d.getDay()],
-  month: (d,short) => l[short ? 'abmonth' : 'month'].split(',')[d.getMonth()],
+  dow: (d,short) => (short ? abday : day).split(',')[d.getDay()],
+  month: (d,short) => (short ? abmonth : month).split(',')[d.getMonth()],
   number: n => n.toString(),
   currency: n => ${currency},
   distance: n => (n < ${distanceUnits[locale.distance[1]]}) ? Math.round(n/${distanceUnits[locale.distance[0]]}) + ${js(locale.distance[0])} : Math.round(n/${distanceUnits[locale.distance[1]]}) + ${js(locale.distance[1])},
@@ -186,7 +185,8 @@ exports = {
   date: (d,short) => short ? \`${dateS}\`: \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\`: \`${timeN}\`,
   meridian: d => (d.getHours() <= 12) ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
-};`;
+};
+`.trim();
 console.log("Locale Module is:",localeModule);
 /*
 FIXME:
