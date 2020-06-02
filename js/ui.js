@@ -83,7 +83,7 @@ Puck.writeProgress = function(charsSent, charsTotal) {
 /// Show a 'toast' message for status
 function showToast(message, type) {
   // toast-primary, toast-success, toast-warning or toast-error
-  console.log("TOAST["+(type||"-")+"] "+message);
+  console.log("<TOAST>["+(type||"-")+"] "+message);
   let style = "toast-primary";
   if (type=="success")  style = "toast-success";
   else if (type=="error")  style = "toast-error";

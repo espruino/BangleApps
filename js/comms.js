@@ -3,9 +3,14 @@ Puck.debug=3;
 // FIXME: use UART lib so that we handle errors properly
 const Comms = {
   reset : (opt) => new Promise((resolve,reject) => {
-    Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`, (result) => {
+    var tries = 5;
+    Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`,function rstHandler(result) {
+      console.log("<COMMS> reset: got "+JSON.stringify(result));
       if (result===null) return reject("Connection failed");
-      setTimeout(resolve,500);
+      if (result=="" && (tries-- > 0)) {
+        console.log(`<COMMS> reset: no response. waiting ${tries}...`);
+        Puck.write("\x03",rstHandler);
+      } else setTimeout(resolve,250);
     });
   }),
   uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `storage`)
@@ -15,7 +20,7 @@ const Comms = {
       settings : SETTINGS
     }).then(fileContents => {
       return new Promise((resolve,reject) => {
-        console.log("uploadApp",fileContents.map(f=>f.name).join(", "));
+        console.log("<COMMS> uploadApp:",fileContents.map(f=>f.name).join(", "));
         let maxBytes = fileContents.reduce((b,f)=>b+f.cmd.length, 0)||1;
         let currentBytes = 0;
 
@@ -36,7 +41,7 @@ const Comms = {
             return;
           }
           let f = fileContents.shift();
-          console.log(`Upload ${f.name} => ${JSON.stringify(f.content)}`);
+          console.log(`<COMMS> Upload ${f.name} => ${JSON.stringify(f.content)}`);
           // Chould check CRC here if needed instead of returning 'OK'...
           // E.CRC32(require("Storage").read(${JSON.stringify(app.name)}))
           let cmds = f.cmd.split("\n");
@@ -96,7 +101,7 @@ const Comms = {
             err = e.toString();
           }
           if (appList===null) return reject(err || "");
-          console.log("getInstalledApps", appList);
+          console.log("<COMMS> getInstalledApps", appList);
           resolve(appList);
         }, true /* callback on newline */);
       });
@@ -127,7 +132,7 @@ const Comms = {
       // using a literal \u0001 char fails (not sure why), so escape it
       return cmd.replace('\u0001', '\\x01')
     }).join("");
-    console.log("removeApp", cmds);
+    console.log("<COMMS> removeApp", cmds);
     return Comms.reset().then(new Promise((resolve,reject) => {
       Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
         Progress.hide({sticky:true});
@@ -195,7 +200,7 @@ const Comms = {
         Puck.eval('require("Storage").list().map(encodeURIComponent)', (files,err) => {
           if (files===null) return reject(err || "");
           files = files.map(decodeURIComponent);
-          console.log("listFiles", files);
+          console.log("<COMMS> listFiles", files);
           resolve(files);
         });
       });
@@ -236,7 +241,7 @@ const Comms = {
           let newLineIdx = fileContent.indexOf("\n");
           if (newLineIdx>=0) {
             fileSize = parseInt(fileContent.substr(0,newLineIdx));
-            console.log("File size is "+fileSize);
+            console.log("<COMMS> readStorageFile size is "+fileSize);
             fileContent = fileContent.substr(newLineIdx+1);
           }
         } else {
@@ -249,7 +254,7 @@ const Comms = {
           resolve(fileContent);
         }
       };
-      console.log(`Reading StorageFile ${JSON.stringify(filename)}`);
+      console.log(`<COMMS> readStorageFile ${JSON.stringify(filename)}`);
       connection.write(`\x03\x10(function() {
       var f = require("Storage").open(${JSON.stringify(filename)},"r");
       Bluetooth.println(f.getLength());
@@ -258,7 +263,7 @@ const Comms = {
       Bluetooth.print("\xFF");
     })()\n`,() => {
         Progress.show({title:`Reading ${JSON.stringify(filename)}`,percent:0});
-        console.log(`StorageFile read started...`);
+        console.log(`<COMMS> StorageFile read started...`);
       });
     });
   }
