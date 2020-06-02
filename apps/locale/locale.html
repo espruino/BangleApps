@@ -151,8 +151,8 @@ exports = { name : "en_GB", currencySym:"£",
           "%a":  "abday.split(',')[d.getDay()]",
           "%B":  "month.split(',')[d.getMonth()]",
           "%b":  "abmonth.split(',')[d.getMonth()]",
-          "%p":  `(d.getHours()<12)?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
-          "%P":  `(d.getHours()<12)?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
+          "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
+          "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
 
         var timeN = locales[lang].timePattern[0];
@@ -188,7 +188,7 @@ exports = {
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
-  meridian: d => (d.getHours() <= 12) ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
+  meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
 };
 `.trim();
 console.log("Locale Module is:",localeModule);
