@@ -4,6 +4,7 @@ var bpm=60;  // ininital bpm value
 var time_diffs = [1000, 1000, 1000];  //array to calculate mean bpm
 var tindex=0;  //index to iterate through time_diffs
 
+
 Bangle.setLCDTimeout(undefined);  //do not deaktivate display while running this app
 
 const storage = require("Storage");
@@ -56,8 +57,8 @@ function updateScreen() {
   }
   catch(err) {
   }
-  g.setFont("Vector",48);
-  g.drawString(Math.floor(bpm)+"bpm", 5, 60);
+  g.setFont("Vector",40);
+  g.drawString(Math.floor(bpm)+"bpm", g.getWidth()/2, 100);
 }
 
   
@@ -105,7 +106,7 @@ setWatch(() => {
 interval = setInterval(updateScreen, 60000 / bpm);
 
 g.clear();
-g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 15, 150);
+g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 25, 200);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
