@@ -16,3 +16,4 @@
 0.15: Added BLE HID option for Joystick and bare Keyboard
 0.16: Detect out of memory errors and draw them onto the bottom of the screen in red
 0.17: Don't modify beep/buzz behaviour if firmware does it automatically
+0.18: Fix  'GPS time' checks for western hemisphere
