@@ -1814,7 +1814,7 @@
     "name": "Animated Clock",
     "shortName":"Anim Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "An animated clock face using Mark Ferrari's amazing 8 bit game art and palette cycling: http://www.markferrari.com/art/8bit-game-art",
     "tags": "clock,animated",
     "type": "clock",
