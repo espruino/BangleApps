@@ -155,10 +155,10 @@ exports = { name : "en_GB", currencySym:"£",
           "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
 
-        var timeN = locales[lang].timePattern[0];
-        var timeS = locales[lang].timePattern[1];
-        var dateN = locales[lang].datePattern[0];
-        var dateS = locales[lang].datePattern[1];
+        var timeN = locale.timePattern[0];
+        var timeS = locale.timePattern[1];
+        var dateN = locale.datePattern[0];
+        var dateS = locale.datePattern[1];
         Object.keys(replaceList).forEach(e => {
           timeN = timeN.replace(e,"${"+replaceList[e]+"}");
           timeS = timeS.replace(e,"${"+replaceList[e]+"}");
