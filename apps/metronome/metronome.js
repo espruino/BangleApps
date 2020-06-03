@@ -29,7 +29,7 @@ function loadSettings() {
 }
 
 function changecolor() {
-  const colors = { 
+  const colors = {
     0: { value: 0xF800, name: "Red" },
     1: { value: 0xFFFF, name: "White" },
     2: { value: 0x9492, name: "gray" },
@@ -50,18 +50,16 @@ function changecolor() {
 }
 
 function updateScreen() {
-  g.clearRect(0, 50, 250, 150);
+  g.reset().clearRect(0, 50, 250, 150);
   changecolor();
   try {
     Bangle.buzz(50, setting('buzzintens'));
+  } catch(err) {
   }
-  catch(err) {
-  }
-  g.setFont("Vector",40);
+  g.setFont("Vector",40).setFontAlign(0,0);
   g.drawString(Math.floor(bpm)+"bpm", g.getWidth()/2, 100);
 }
 
-  
 Bangle.on('touch', function(button) {
 // setting bpm by tapping the screen. Uses the mean time difference between several tappings.
   if (tindex < time_diffs.length) {
@@ -105,7 +103,7 @@ setWatch(() => {
 
 interval = setInterval(updateScreen, 60000 / bpm);
 
-g.clear();
+g.clear(1).setFont("6x8");
 g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 25, 200);
 
 Bangle.loadWidgets();
