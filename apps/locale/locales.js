@@ -96,7 +96,7 @@ var locales = {
     month: "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     abday: "So,Mo,Di,Mi,Do,Fr,Sa",
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
-    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus" }
+    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", "< Back": "< Zurück" }
   },
   "en_US": {
     lang: "en_US",
@@ -491,7 +491,7 @@ var locales = {
     month: "januar,februar,marec,april,maj,junij,julij,avgust,september,oktober,november,december",
     abday: "ned.,pon.,tor.,sre.,čet.,pet.,sob.",
     day: "nedelja,ponedeljek,torek,sreda,četrtek,petek,sobota",
-    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "On", off: "Off" }
+    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "On", off: "Off", "< Back": "< Nazaj" }
   }/*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",
