@@ -38,7 +38,7 @@
     ]
   },
   { "id": "launch",
-    "name": "Default Launcher",
+    "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "app.png",
     "version":"0.03",
@@ -70,10 +70,24 @@
     "tags": "tool,system,locale,translate",
     "type": "locale",
     "custom":"locale.html",
+    "readme": "README.md",
     "storage": [
       {"name":"locale"}
     ],
     "sortorder" : -10
+  },
+  { "id": "notify",
+    "name": "Notifications (default)",
+    "shortName":"Notifications",
+    "icon": "notify.png",
+    "version":"0.01",
+    "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
+    "tags": "widget",
+    "type": "notify",
+    "readme": "README.md",
+    "storage": [
+      {"name":"notify","url":"notify.js"}
+    ]
   },
   { "id": "welcome",
     "name": "Welcome",
