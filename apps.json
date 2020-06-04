@@ -89,6 +89,18 @@
       {"name":"notify","url":"notify.js"}
     ]
   },
+  { "id": "notifyfs",
+    "name": "Fullscreen Notifications",
+    "shortName":"Notifications",
+    "icon": "notify.png",
+    "version":"0.01",
+    "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
+    "tags": "widget",
+    "type": "notify",
+    "storage": [
+      {"name":"notify","url":"notify.js"}
+    ]
+  },
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
