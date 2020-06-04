@@ -146,7 +146,7 @@ const Comms = {
   },
   removeAllApps : () => {
     console.log("<COMMS> removeAllApps start");
-    Progress.show({title:"Removing all apps",progess:"animate",sticky:true});
+    Progress.show({title:"Removing all apps",percent:"animate",sticky:true});
     return new Promise((resolve,reject) => {
       var timeout = 5;
       function handleResult(result,err) {

@@ -22,3 +22,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * App description can now be markdown
 * Fix `marked is not defined` error (and include in repo, just in case)
 * Fix error in 'Install Default Apps' if Flash storage is full enough that erasing takes a while
+* Fixed animated progress bar on app removal
