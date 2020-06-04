@@ -1,1 +1,2 @@
 0.01: First release
+0.02: Bugfix time: Reset minutes to 0 when hitting 60

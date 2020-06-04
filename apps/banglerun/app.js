@@ -184,7 +184,7 @@ function formatDistance(m) {
 
 function formatTime(s) {
   const hrs = Math.floor(s / 3600);
-  const min = Math.floor(s / 60);
+  const min = Math.floor(s / 60) % 60;
   const sec = Math.floor(s % 60);
   return (hrs ? hrs + ':' : '') + ('0' + min).substr(-2) + `:` + ('0' + sec).substr(-2);
 }
