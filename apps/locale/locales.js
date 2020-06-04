@@ -212,12 +212,12 @@ var locales = {
     thousands_sep: ",",
     currency_symbol: "$",
     int_curr_symbol: "AUD",
-    speed: "mph",
-    distance: { 0: "mi", 1: "kmi" },
-    temperature: "°F",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%A, %B %d, %Y", "1": "%m/%d/%y" }, //  Sunday, 1 March 2020  // 1/3/20
+    datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%y" }, //  Sunday, 1 March 2020  // 1/3/20
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
@@ -491,7 +491,7 @@ var locales = {
     month: "januar,februar,marec,april,maj,junij,julij,avgust,september,oktober,november,december",
     abday: "ned.,pon.,tor.,sre.,čet.,pet.,sob.",
     day: "nedelja,ponedeljek,torek,sreda,četrtek,petek,sobota",
-    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "On", off: "Off", "< Back": "< Nazaj" }
+    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "Vklj.", off: "Izklj.", "< Back": "< Nazaj" }
   }/*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",
