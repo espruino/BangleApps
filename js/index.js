@@ -99,14 +99,14 @@ function handleCustomApp(appTemplate) {
       console.log("Received custom app", app);
       modal.remove();
       checkDependencies(app)
-      .then(()=>Comms.uploadApp(app))
-      .then(()=>{
-        Progress.hide({sticky:true});
-        resolve();
-      }).catch(e => {
-        Progress.hide({sticky:true});
-        reject(e);
-      });
+        .then(()=>Comms.uploadApp(app))
+        .then(()=>{
+          Progress.hide({sticky:true});
+          resolve();
+        }).catch(e => {
+          Progress.hide({sticky:true});
+          reject(e);
+        });
     }, false);
   });
 }
@@ -344,20 +344,20 @@ function uploadApp(app) {
       return updateApp(app);
     }
     checkDependencies(app)
-    .then(()=>Comms.uploadApp(app))
-    .then((appJSON) => {
-      Progress.hide({ sticky: true });
-      if (appJSON) {
-        appsInstalled.push(appJSON);
-      }
-      showToast(app.name + ' Uploaded!', 'success');
-    }).catch(err => {
-      Progress.hide({ sticky: true });
-      showToast('Upload failed, ' + err, 'error');
-    }).finally(()=>{
-      refreshMyApps();
-      refreshLibrary();
-    });
+      .then(()=>Comms.uploadApp(app))
+      .then((appJSON) => {
+        Progress.hide({ sticky: true });
+        if (appJSON) {
+          appsInstalled.push(appJSON);
+        }
+        showToast(app.name + ' Uploaded!', 'success');
+      }).catch(err => {
+        Progress.hide({ sticky: true });
+        showToast('Upload failed, ' + err, 'error');
+      }).finally(()=>{
+        refreshMyApps();
+        refreshLibrary();
+      });
   }).catch(err => {
     showToast("Device connection failed, "+err,"error");
   });
@@ -394,13 +394,13 @@ function customApp(app) {
 
 /// check for dependencies the app needs and install them if required
 function checkDependencies(app, uploadOptions) {
-  var promise = Promise.resolve();
+  let promise = Promise.resolve();
   if (app.dependencies) {
     Object.keys(app.dependencies).forEach(dependency=>{
       if (app.dependencies[dependency]!="type")
         throw new Error("Only supporting dependencies on app types right now");
       console.log(`Searching for dependency on app type '${dependency}'`);
-      var found = appsInstalled.find(app=>app.type==dependency);
+      let found = appsInstalled.find(app=>app.type==dependency);
       if (found)
         console.log(`Found dependency in installed app '${found.id}'`);
       else {
@@ -580,16 +580,16 @@ function installMultipleApps(appIds, promptName) {
         if (app===undefined) return resolve();
         Progress.show({title:`${app.name} (${appCount-apps.length}/${appCount})`,sticky:true});
         checkDependencies(app,"skip_reset")
-        .then(()=>Comms.uploadApp(app,"skip_reset"))
-        .then((appJSON) => {
-          Progress.hide({sticky:true});
-          if (appJSON) appsInstalled.push(appJSON);
-          showToast(`(${appCount-apps.length}/${appCount}) ${app.name} Uploaded`);
-          upload();
-        }).catch(function() {
-          Progress.hide({sticky:true});
-          reject();
-        });
+          .then(()=>Comms.uploadApp(app,"skip_reset"))
+          .then((appJSON) => {
+            Progress.hide({sticky:true});
+            if (appJSON) appsInstalled.push(appJSON);
+            showToast(`(${appCount-apps.length}/${appCount}) ${app.name} Uploaded`);
+            upload();
+          }).catch(function() {
+            Progress.hide({sticky:true});
+            reject();
+          });
       }
       upload();
     });

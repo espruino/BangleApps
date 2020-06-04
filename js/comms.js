@@ -3,7 +3,7 @@ Puck.debug=3;
 // FIXME: use UART lib so that we handle errors properly
 const Comms = {
   reset : (opt) => new Promise((resolve,reject) => {
-    var tries = 5;
+    let tries = 5;
     Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`,function rstHandler(result) {
       console.log("<COMMS> reset: got "+JSON.stringify(result));
       if (result===null) return reject("Connection failed");
@@ -148,7 +148,7 @@ const Comms = {
     console.log("<COMMS> removeAllApps start");
     Progress.show({title:"Removing all apps",percent:"animate",sticky:true});
     return new Promise((resolve,reject) => {
-      var timeout = 5;
+      let timeout = 5;
       function handleResult(result,err) {
         console.log("<COMMS> removeAllApps: received "+JSON.stringify(result));
         if (result=="" && (timeout--)) {
@@ -164,8 +164,8 @@ const Comms = {
           } else resolve();
         }
       }
-    // Use write with newline here so we wait for it to finish
-      var cmd = '\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n';
+      // Use write with newline here so we wait for it to finish
+      let cmd = '\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n';
       Puck.write(cmd, handleResult, true /* wait for newline */);
     });
   },
