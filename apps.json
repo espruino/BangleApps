@@ -1856,7 +1856,7 @@
   { "id": "life",
     "name": "Game of Life",
     "icon": "life.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Conway's Game of Life - 16x16 board",
     "tags": "game",
     "allow_emulator":true,
