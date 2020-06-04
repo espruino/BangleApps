@@ -55,7 +55,7 @@ const AppInfo = {
                 SET_TIME_ON_WRITE : false,
                 PRETOKENISE : options.settings.pretokenise,
                 //MINIFICATION_LEVEL : "ESPRIMA", // disable due to https://github.com/espruino/BangleApps/pull/355#issuecomment-620124162
-                builtinModules : "Flash,Storage,heatshrink,tensorflow,locale"
+                builtinModules : "Flash,Storage,heatshrink,tensorflow,locale,notify"
               });
             } else
               return content;

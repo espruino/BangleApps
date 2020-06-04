@@ -98,7 +98,9 @@ function handleCustomApp(appTemplate) {
       });
       console.log("Received custom app", app);
       modal.remove();
-      Comms.uploadApp(app).then(()=>{
+      checkDependencies(app)
+      .then(()=>Comms.uploadApp(app))
+      .then(()=>{
         Progress.hide({sticky:true});
         resolve();
       }).catch(e => {
@@ -341,7 +343,9 @@ function uploadApp(app) {
     if (appsInstalled.some(i => i.id === app.id)) {
       return updateApp(app);
     }
-    Comms.uploadApp(app).then((appJSON) => {
+    checkDependencies(app)
+    .then(()=>Comms.uploadApp(app))
+    .then((appJSON) => {
       Progress.hide({ sticky: true });
       if (appJSON) {
         appsInstalled.push(appJSON);
@@ -388,6 +392,31 @@ function customApp(app) {
   });
 }
 
+/// check for dependencies the app needs and install them if required
+function checkDependencies(app, uploadOptions) {
+  var promise = Promise.resolve();
+  if (app.dependencies) {
+    Object.keys(app.dependencies).forEach(dependency=>{
+      if (app.dependencies[dependency]!="type")
+        throw new Error("Only supporting dependencies on app types right now");
+      console.log(`Searching for dependency on app type '${dependency}'`);
+      var found = appsInstalled.find(app=>app.type==dependency);
+      if (found)
+        console.log(`Found dependency in installed app '${found.id}'`);
+      else {
+        found = appJSON.find(app=>app.type==dependency);
+        if (!found) throw new Error(`Dependency of '${dependency}' listed, but nothing satisfies it!`);
+        console.log(`Dependency not installed. Installing app id '${found.id}'`);
+        promise.then(new Promise((resolve,reject)=>{
+          console.log(`Install dependency '${dependency}':'${found.id}'`);
+          return Comms.uploadApp(found);
+        }));
+      }
+    });
+  }
+  return promise;
+}
+
 function updateApp(app) {
   if (app.custom) return customApp(app);
   return getInstalledApps().then(() => {
@@ -410,8 +439,9 @@ function updateApp(app) {
   }).then(()=>{
     showToast(`Updating ${app.name}...`);
     appsInstalled = appsInstalled.filter(a=>a.id!=app.id);
-    return Comms.uploadApp(app);
-  }).then((appJSON) => {
+    return checkDependencies(app);
+  }).then(()=>Comms.uploadApp(app)
+  ).then((appJSON) => {
     if (appJSON) appsInstalled.push(appJSON);
     showToast(app.name+" Updated!", "success");
     refreshMyApps();
@@ -549,7 +579,9 @@ function installMultipleApps(appIds, promptName) {
         let app = apps.shift();
         if (app===undefined) return resolve();
         Progress.show({title:`${app.name} (${appCount-apps.length}/${appCount})`,sticky:true});
-        Comms.uploadApp(app,"skip_reset").then((appJSON) => {
+        checkDependencies(app,"skip_reset")
+        .then(()=>Comms.uploadApp(app,"skip_reset"))
+        .then((appJSON) => {
           Progress.hide({sticky:true});
           if (appJSON) appsInstalled.push(appJSON);
           showToast(`(${appCount-apps.length}/${appCount}) ${app.name} Uploaded`);
