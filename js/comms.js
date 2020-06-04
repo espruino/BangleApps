@@ -145,14 +145,28 @@ const Comms = {
     });
   },
   removeAllApps : () => {
+    console.log("<COMMS> removeAllApps start");
     Progress.show({title:"Removing all apps",progess:"animate",sticky:true});
     return new Promise((resolve,reject) => {
+      var timeout = 5;
+      function handleResult(result,err) {
+        console.log("<COMMS> removeAllApps: received "+JSON.stringify(result));
+        if (result=="" && (timeout--)) {
+          console.log("<COMMS> removeAllApps: no result - waiting some more ("+timeout+").");
+          // send space and delete - so it's something, but it should just cancel out
+          Puck.write(" \u0008", handleResult, true /* wait for newline */);
+        } else {
+          Progress.hide({sticky:true});
+          if (!result || result.trim()!="OK") {
+            if (!result) result = "No response";
+            else result = "Got "+JSON.stringify(result.trim());
+            return reject(err || result);
+          } else resolve();
+        }
+      }
     // Use write with newline here so we wait for it to finish
-      Puck.write('\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n', (result,err) => {
-        Progress.hide({sticky:true});
-        if (!result || result.trim()!="OK") return reject(err || "");
-        resolve();
-      }, true /* wait for newline */);
+      var cmd = '\x10E.showMessage("Erasing...");require("Storage").eraseAll();Bluetooth.println("OK");reset()\n';
+      Puck.write(cmd, handleResult, true /* wait for newline */);
     });
   },
   setTime : () => {
