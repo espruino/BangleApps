@@ -1857,7 +1857,7 @@
     "name": "Analog Clock (Image background)",
     "shortName":"Analog Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "An analog clock with an image background",
     "tags": "clock",
     "type": "clock",

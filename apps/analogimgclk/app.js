@@ -113,3 +113,6 @@ if (g.drawImages) {
 } else {
   E.showMessage("Please update\nBangle.js firmware\nto use this clock","analogimgclk");
 }
+
+// Show launcher when middle button pressed
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
