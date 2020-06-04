@@ -1826,6 +1826,20 @@
       {"name":"animclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "analogimgclk",
+    "name": "Analog Clock (Image background)",
+    "shortName":"Analog Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "An analog clock with an image background",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"analogimgclk.app.js","url":"app.js"},
+      {"name":"analogimgclk.bg.img","url":"bg.img"},
+      {"name":"analogimgclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "verticalface",
     "name": "Vertical watch face",
