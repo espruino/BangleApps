@@ -66,7 +66,6 @@ exports.show = function(options) {
         body += " " + words[i];
       }
     }
-    console.log(body);
     g.setColor(-1).setFont("6x8", 1).setFontAlign(-1, -1, 0).drawString(body, x-4, y+4);
   }
 

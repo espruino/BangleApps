@@ -19,6 +19,13 @@ options = {
 };
 // eg... show notification
 require("notify").show({title:"Test", body:"Hello"});
+// or display lots of text, with a phone icon
+require("notify").show({
+  title:"Hello",
+  src:"Test",
+  body:"This is a really really really long bit of text that has to be wrapped",
+  icon:require("heatshrink").decompress(atob("jEYxH+ACcejwUUAAYWVjESCqoABCqoYNCpQXLCxgXJQowtTA4ZbSZiwW/C4gWWjAXVZwIuVWhxFIC6z6OLpIXSCywXYDAIWVAAYXTA=="))
+});
 // remove it (can also be removed by tapping)
 require("notify").hide();
 ```
