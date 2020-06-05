@@ -140,7 +140,7 @@ const Comms = {
       return cmd.replace('\u0001', '\\x01')
     }).join("");
     console.log("<COMMS> removeApp", cmds);
-    return Comms.reset().then(new Promise((resolve,reject) => {
+    return Comms.reset().then(() => new Promise((resolve,reject) => {
       Puck.write(`\x03\x10E.showMessage('Erasing\\n${app.id}...')${cmds}\x10E.showMessage('Hold BTN3\\nto reload')\n`,(result) => {
         Progress.hide({sticky:true});
         if (result===null) return reject("");
