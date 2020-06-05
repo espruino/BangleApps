@@ -15,7 +15,6 @@ httpGet("apps.json").then(apps=>{
     console.log(e);
     showToast("App List Corrupted","error");
   }
-  appJSON.sort(appSorter);
   refreshLibrary();
   refreshFilter();
 });
@@ -225,7 +224,7 @@ function refreshSort(){
 }
 function refreshLibrary() {
   let panelbody = document.querySelector("#librarycontainer .panel-body");
-  let visibleApps = appJSON;
+  let visibleApps = appJSON.slice(); // clone so we don't mess with the original
   let favourites = SETTINGS.favourites;
 
   if (activeFilter) {
@@ -240,8 +239,8 @@ function refreshLibrary() {
     visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch));
   }
 
+  visibleApps.sort(appSorter);
   if (activeSort) {
-    visibleApps = visibleApps.slice(); // clone the array so sort doesn't mess with original
     if (activeSort=="created" || activeSort=="modified") {
       visibleApps = visibleApps.sort((a,b) => appSortInfo[b.id][activeSort] - appSortInfo[a.id][activeSort]);
     } else throw new Error("Unknown sort type "+activeSort);
@@ -404,12 +403,16 @@ function checkDependencies(app, uploadOptions) {
       if (found)
         console.log(`Found dependency in installed app '${found.id}'`);
       else {
-        found = appJSON.find(app=>app.type==dependency);
-        if (!found) throw new Error(`Dependency of '${dependency}' listed, but nothing satisfies it!`);
+        var foundApps = appJSON.filter(app=>app.type==dependency);
+        if (!foundApps.length) throw new Error(`Dependency of '${dependency}' listed, but nothing satisfies it!`);
+        console.log(`Apps ${foundApps.map(f=>`'${f.id}'`).join("/")} implement '${dependency}'`);
+        found = foundApps[0]; // choose first app in list
         console.log(`Dependency not installed. Installing app id '${found.id}'`);
         promise.then(new Promise((resolve,reject)=>{
           console.log(`Install dependency '${dependency}':'${found.id}'`);
-          return Comms.uploadApp(found);
+          return Comms.uploadApp(found).then(appJSON => {
+            if (appJSON) appsInstalled.push(appJSON);
+          });
         }));
       }
     });

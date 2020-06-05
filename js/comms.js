@@ -1,16 +1,23 @@
-Puck.debug=3;
+//Puck.debug=3;
+console.log("=============================================")
+console.log("Type 'Puck.debug=3' for full BLE debug info")
+console.log("=============================================")
 
 // FIXME: use UART lib so that we handle errors properly
 const Comms = {
   reset : (opt) => new Promise((resolve,reject) => {
-    let tries = 5;
+    let tries = 8;
+    console.log("<COMMS> reset");
     Puck.write(`\x03\x10reset(${opt=="wipe"?"1":""});\n`,function rstHandler(result) {
       console.log("<COMMS> reset: got "+JSON.stringify(result));
       if (result===null) return reject("Connection failed");
       if (result=="" && (tries-- > 0)) {
         console.log(`<COMMS> reset: no response. waiting ${tries}...`);
         Puck.write("\x03",rstHandler);
-      } else setTimeout(resolve,250);
+      } else {
+        console.log(`<COMMS> reset: complete.`);
+        setTimeout(resolve,250);
+      }
     });
   }),
   uploadApp : (app,skipReset) => { // expects an apps.json structure (i.e. with `storage`)
