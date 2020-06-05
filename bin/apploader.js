@@ -1,4 +1,4 @@
-#!/bin/node
+#!/usr/bin/nodejs
 /* Simple Command-line app loader for Node.js
 ===============================================
 
@@ -32,7 +32,9 @@ try {
 var args = process.argv;
 
 if (args.length==3 && args[2]=="list") cmdListApps();
+else if (args.length==3 && args[2]=="list") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
+else if (args.length==5 && args[2]=="install") cmdInstallApp(args[3], args[4]);
 else {
   console.log(`apploader.js
 -------------
@@ -40,7 +42,10 @@ else {
 USAGE:
 
 apploader.js list
-apploader.js install appname
+  - list available apps
+apploader.js devices
+  - list available device addresses
+apploader.js install appname [de:vi:ce:ad:dr:es]
 `);
 process.exit(0);
 }
@@ -48,7 +53,23 @@ process.exit(0);
 function cmdListApps() {
   console.log(apps.map(a=>a.id).join("\n"));
 }
-function cmdInstallApp(appId) {
+function cmdListDevices() {
+  var foundDevices = [];
+  noble.on('discover', function(dev) {
+    if (!dev.advertisement) return;
+    if (!dev.advertisement.localName) return;
+    var a = dev.address.toString();
+    if (foundDevices.indexOf(a)>=0) return;
+    foundDevices.push(a);
+    console.log(a,dev.advertisement.localName);
+  });
+  noble.startScanning([], true);
+  setTimeout(function() {
+    noble.stopScanning();
+  }, 2000);
+}
+
+function cmdInstallApp(appId, deviceAddress) {
   var app = apps.find(a=>a.id==appId);
   if (!app) ERROR(`App ${JSON.stringify(appId)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
@@ -58,11 +79,11 @@ function cmdInstallApp(appId) {
     }, settings : SETTINGS}).then(files => {
     //console.log(files);
     var command = files.map(f=>f.cmd).join("\n")+"\n";
-    bangleSend(command).then(() => process.exit(0));
+    bangleSend(command, deviceAddress).then(() => process.exit(0));
   });
 }
 
-function bangleSend(command) {
+function bangleSend(command, deviceAddress) {
   var log = function() {
     var args = [].slice.call(arguments);
     console.log("UART: "+args.join(" "));
@@ -70,6 +91,8 @@ function bangleSend(command) {
 
   var RESET = true;
   var DEVICEADDRESS = "";
+  if (deviceAddress!==undefined)
+    DEVICEADDRESS = deviceAddress;
 
   var complete = false;
   var foundDevices = [];

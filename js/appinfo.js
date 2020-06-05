@@ -33,7 +33,7 @@ function toJS(txt) {
 }
 
 if ("undefined"!=typeof module)
-  Espruino = require("./espruinotools.js");
+  Espruino = require("../lib/espruinotools.js");
 
 const AppInfo = {
   /* Get files needed for app.
