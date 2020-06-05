@@ -15,7 +15,20 @@ var SETTINGS = {
 };
 var Utils = require("../js/utils.js");
 var AppInfo = require("../js/appinfo.js");
-var noble = require('@abandonware/noble');
+var noble;
+try {
+  noble  = require('@abandonware/noble');
+} catch (e) {}
+if (!noble) try {
+  noble  = require('noble');
+} catch (e) { }
+if (!noble) {
+  console.log("You need to:")
+  console.log("  npm install @abandonware/noble")
+  console.log("or:")
+  console.log("  npm install noble")
+}
+
 var apps;
 
 function ERROR(msg) {
@@ -32,7 +45,7 @@ try {
 var args = process.argv;
 
 if (args.length==3 && args[2]=="list") cmdListApps();
-else if (args.length==3 && args[2]=="list") cmdListDevices();
+else if (args.length==3 && args[2]=="devices") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
 else if (args.length==5 && args[2]=="install") cmdInstallApp(args[3], args[4]);
 else {
