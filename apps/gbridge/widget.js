@@ -58,6 +58,18 @@
     }
   }
 
+  function handleFindEvent(event) {
+    if (state.find) {
+      clearInterval(state.find);
+      delete state.find;
+    }
+    if (event.n)
+      state.find = setInterval(_=>{
+        Bangle.buzz();
+        setTimeout(_=>Bangle.beep(), 1000);
+      },2000);
+  }
+
   var _GB = global.GB;
   global.GB = (event) => {
     switch (event.t) {
@@ -72,6 +84,9 @@
         break;
       case "call":
         handleCallEvent(event);
+        break;
+      case "find":
+        handleFindEvent(event);
         break;
     }
     if(_GB)setTimeout(_GB,0,event);
