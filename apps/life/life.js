@@ -11,7 +11,7 @@ function flip() {
 var genA = new Uint8Array(324);
 var genB = new Uint8Array(324);
 var generation=0;
-var start=Date.now();
+var gentime=0;
 var currentY=1;
 
 function initDraw(gen){
@@ -29,17 +29,17 @@ function initDraw(gen){
 }
 
 function howlong(){
-  var now = Date.now();
-  const duration = Math.floor(now-start);
-  start=now;
   ++generation;
   g.setFont("6x8",2);
   g.setFontAlign(-1,-1,0);
-  g.drawString('Gen:'+generation+'  '+duration+'ms  ',20,220,true);
+  gentime = Math.floor(gentime);
+  g.drawString('Gen:'+generation+'  '+gentime+'ms  ',20,220,true);
+  gentime=0;
 }
 
 function next(){
     "ram";
+    var start = Date.now();
     var cur=genA, fut=genB, y=currentY;
     var count=(p)=>{return cur[p-19]+cur[p-18]+cur[p-17]+cur[p-1]+cur[p+1]+cur[p+17]+cur[p+18]+cur[p+19];};
     for (let x = 1; x<17; ++x){
@@ -53,6 +53,7 @@ function next(){
         buf.fillRect(Xr,Yr, Xr+7,Yr+7);
         }
     }
+    gentime+=(Date.now()-start);
     if (y==16){
       flip();
       var tmp = genA; genA=genB; genB=tmp;
@@ -61,12 +62,6 @@ function next(){
     } else ++currentY;
 }
 
-function reset(){
-  g.setColor(1,1,1);
-  initDraw(genA);
-  currentY=1;
-  generation = 0;
-}
 
 var intervalRef = null;
 
@@ -74,20 +69,34 @@ function stopdraw() {
     if(intervalRef) {clearInterval(intervalRef);}
   }
   
-function startdraw() {
-    g.clear();
+function startdraw(init) {
+    if (init===undefined) init=false;
+    if(!init) g.clear();
     Bangle.drawWidgets();
     g.reset();
     g.setColor(1,1,1);
-    g.setFont("6x8",2);
+    g.setFont("6x8",1);
     g.setFontAlign(0,0,3);
-    g.drawString("Reset",230,200);
-    intervalRef = setInterval(next,60);
+    g.drawString("RESET",230,200);
+    g.drawString("LAUNCH",230,130);
+    g.drawString("CLOCK",230,60);
+    if(!init) intervalRef = setInterval(next,65);
   }
+
+function regen(){
+  stopdraw();
+  g.setColor(1,1,1);
+  initDraw(genA);
+  currentY=1;
+  generation = 0;
+  gentime=0;
+  intervalRef = setInterval(next,65);
+}
   
   function setButtons(){
+    setWatch(()=>{load();}, BTN1, {repeat:false,edge:"falling"});
     setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-    setWatch(reset, BTN3, {repeat:true,edge:"rising"});
+    setWatch(regen, BTN3, {repeat:true,edge:"rising"});
   }
   
   var SCREENACCESS = {
@@ -115,7 +124,7 @@ function startdraw() {
   
   g.clear();
   Bangle.loadWidgets();
-  startdraw();
+  regen();
+  startdraw(true);
   setButtons();
-  reset();
   
