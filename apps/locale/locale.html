@@ -148,9 +148,9 @@ exports = { name : "en_GB", currencySym:"£",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
           "%A":  "day.split(',')[d.getDay()]",
-          "%a":  "abday.split(',')[d.getDay()]",
+          "%a":  "day.split(',')[d.getDay() + 7]",
           "%B":  "month.split(',')[d.getMonth()]",
-          "%b":  "abmonth.split(',')[d.getMonth()]",
+          "%b":  "month.split(',')[d.getMonth() + 12]",
           "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
           "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
@@ -171,15 +171,13 @@ exports = { name : "en_GB", currencySym:"£",
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         var localeModule = `
-var day = ${js(locale.day)};
-var abday = ${js(locale.abday)};
-var month = ${js(locale.month)};
-var abmonth = ${js(locale.abmonth)};
+var day = ${js(locale.day + ',' + locale.abday)};
+var month = ${js(locale.month + ',' + locale.abmonth)};
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => (short ? abday : day).split(',')[d.getDay()],
-  month: (d,short) => (short ? abmonth : month).split(',')[d.getMonth()],
+  dow: (d,short) => day.split(',')[d.getDay() + (short ? 7 : 0)],
+  month: (d,short) => month.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: n => n.toString(),
   currency: n => ${currency},
   distance: n => n < ${distanceUnits[locale.distance[1]]} ? Math.round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : Math.round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
