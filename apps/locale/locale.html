@@ -173,6 +173,9 @@ exports = { name : "en_GB", currencySym:"£",
         var localeModule = `
 var day = ${js(locale.day + ',' + locale.abday)};
 var month = ${js(locale.month + ',' + locale.abmonth)};
+function round(n) {
+  return n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+}
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
@@ -180,8 +183,8 @@ exports = {
   month: (d,short) => month.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: n => n.toString(),
   currency: n => ${currency},
-  distance: n => n < ${distanceUnits[locale.distance[1]]} ? Math.round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : Math.round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
-  speed: n => Math.round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
+  distance: n => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
+  speed: n => round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
@@ -194,7 +197,6 @@ console.log("Locale Module is:",localeModule);
 FIXME:
 
 * Number/Currency need to add thousands separators: .replace(${js(locale.thousands_sep)}, ${js(locale.decimal_point)}) won't cut it as toString doesn't add separators itself
-* distance (and speed) should probably use 1 decimal point for numbers less than 10
 */
 
         sendCustomizedApp({
