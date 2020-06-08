@@ -372,7 +372,7 @@ function buttonPress(val) {
 
 for (var k in keys) {
   if (keys.hasOwnProperty(k)) {
-      drawKey(k, keys[k], k == '5');
+    drawKey(k, keys[k], k == '5');
   }
 }
 g.setFont('7x11Numeric7Seg', 2.8);

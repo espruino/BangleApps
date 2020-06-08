@@ -41,8 +41,8 @@
     <script src="../../lib/customize.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://espruino.github.io/EspruinoWebTools/heatshrink.js"></script>
-    <script src="https://espruino.github.io/EspruinoWebTools/imageconverter.js"></script>
+    <script src="../../lib/heatshrink.js"></script>
+    <script src="../../lib/imageconverter.js"></script>
 
     <script>
     /*
@@ -146,9 +146,6 @@ TODO:
             lat : centerlatlon.lat,
             lon : centerlatlon.lng
           })});
-          mapFiles.unshift({"name":"openstmap.app.js","url":"app.js"});
-          mapFiles.unshift({"name":"openstmap.img","url":"app-icon.js","evaluate":true});
-
           console.log(mapFiles);
         });
       });

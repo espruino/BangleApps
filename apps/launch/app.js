@@ -40,16 +40,14 @@ function drawMenu() {
 }
 drawMenu();
 setWatch(function() {
-  if (selected>0) {
-    selected--;
-    drawMenu();
-  }
+  selected--;
+  if (selected<0) selected = apps.length-1;
+  drawMenu();
 }, BTN1, {repeat:true});
 setWatch(function() {
-  if (selected+1<apps.length) {
-    selected++;
-    drawMenu();
-  }
+  selected++;
+  if (selected>=apps.length) selected = 0;
+  drawMenu();
 }, BTN3, {repeat:true});
 setWatch(function() { // run
   if (!apps[selected].src) return;

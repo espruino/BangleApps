@@ -59,6 +59,7 @@ function gameStart() {
 
 
 function onFrame() {
+  "ram"
   var t = getTime();
   var d = (lastFrame===undefined)?0:(t-lastFrame)*20;
   lastFrame = t;

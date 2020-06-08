@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8,maximum-scale=0.8, minimum-scale=0.8, shrink-to-fit=no">
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
@@ -39,6 +39,12 @@
     }
     .chip {
       cursor: pointer;
+    }
+    .filter-nav {
+      display: inline-block;
+    }
+    .sort-nav {
+      float: right;
     }
     .tile-content { position: relative; }
     .link-github {
@@ -88,17 +94,26 @@
     </div>
 
     <div class="container bangle-tab" id="librarycontainer">
-      <div class="filter-nav">
-        <label class="chip active" filterid="">All</label>
-        <label class="chip" filterid="clock">Clocks</label>
-        <label class="chip" filterid="game">Games</label>
-        <label class="chip" filterid="tool">Tools</label>
-        <label class="chip" filterid="widget">Widgets</label>
-        <label class="chip" filterid="bluetooth">Bluetooth</label>
-        <label class="chip" filterid="outdoors">Outdoors</label>
-        <label class="chip" filterid="favourites">Favourites</label>
+      <div>
+        <div class="filter-nav">
+          <label class="chip active" filterid="">Default</label>
+          <label class="chip" filterid="clock">Clocks</label>
+          <label class="chip" filterid="game">Games</label>
+          <label class="chip" filterid="tool">Tools</label>
+          <label class="chip" filterid="widget">Widgets</label>
+          <label class="chip" filterid="bluetooth">Bluetooth</label>
+          <label class="chip" filterid="outdoors">Outdoors</label>
+          <label class="chip" filterid="favourites">Favourites</label>
+        </div>
+        <div class="sort-nav hidden">
+          <span>Sort by:</span>
+          <label class="chip active" sortid="">None</label>
+          <label class="chip" sortid="created">New</label>
+          <label class="chip" sortid="modified">Updated</label>
+        </div>
       </div>
-      <div class="panel">
+
+      <div class="panel" style="clear:both">
         <div class="panel-header">
         <div class="input-group" id="searchform">
             <input class="form-input" type="text" placeholder="Keywords...">
@@ -159,13 +174,14 @@
     </footer>
 
     <script src="https://www.puck-js.com/puck.js"></script>
+    <script src="lib/marked.min.js"></script>
+    <script src="lib/espruinotools.js"></script>
+    <script src="lib/heatshrink.js"></script>    
     <script src="js/utils.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/comms.js"></script>
     <script src="js/appinfo.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/espruinotools.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="js/pwa.js" defer></script>
   </body>
 </html>
