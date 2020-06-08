@@ -408,7 +408,7 @@ function checkDependencies(app, uploadOptions) {
         console.log(`Apps ${foundApps.map(f=>`'${f.id}'`).join("/")} implement '${dependency}'`);
         found = foundApps[0]; // choose first app in list
         console.log(`Dependency not installed. Installing app id '${found.id}'`);
-        promise.then(new Promise((resolve,reject)=>{
+        promise = promise.then(()=>new Promise((resolve,reject)=>{
           console.log(`Install dependency '${dependency}':'${found.id}'`);
           return Comms.uploadApp(found).then(appJSON => {
             if (appJSON) appsInstalled.push(appJSON);
