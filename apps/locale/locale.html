@@ -148,9 +148,9 @@ exports = { name : "en_GB", currencySym:"£",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
           "%A":  "day.split(',')[d.getDay()]",
-          "%a":  "abday.split(',')[d.getDay()]",
+          "%a":  "day.split(',')[d.getDay() + 7]",
           "%B":  "month.split(',')[d.getMonth()]",
-          "%b":  "abmonth.split(',')[d.getMonth()]",
+          "%b":  "month.split(',')[d.getMonth() + 12]",
           "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
           "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
@@ -166,24 +166,39 @@ exports = { name : "en_GB", currencySym:"£",
           dateS = dateS.replace(e,"${"+replaceList[e]+"}");
         });
         var currency = locale.currency_first ?
-          `${js(locale.currency_symbol)} + n.toFixed(2)`:
-          `n.toFixed(2) + ${js(locale.currency_symbol)}`;
+          `${js(locale.currency_symbol)} + exports.number(n)`:
+          `exports.number(n) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         var localeModule = `
-var day = ${js(locale.day)};
-var abday = ${js(locale.abday)};
-var month = ${js(locale.month)};
-var abmonth = ${js(locale.abmonth)};
+var day = ${js(locale.day + ',' + locale.abday)};
+var month = ${js(locale.month + ',' + locale.abmonth)};
+function round(n) {
+  return n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+}
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => (short ? abday : day).split(',')[d.getDay()],
-  month: (d,short) => (short ? abmonth : month).split(',')[d.getMonth()],
-  number: n => n.toString(),
+  dow: (d,short) => day.split(',')[d.getDay() + (short ? 7 : 0)],
+  month: (d,short) => month.split(',')[d.getMonth() + (short ? 12 : 0)],
+  number: (n, dec) => {
+    if (dec == null) dec = 2;
+    var w = n.toFixed(dec),
+        k = w|0,
+        b = n < 0 ? 1 : 0,
+        u = Math.abs(w-k),
+        d = (''+u.toFixed(dec)).substr(2, dec),
+        s = ''+k,
+        i = s.length,
+        r = '';
+    while ((i-=3) > b) {
+      r = '${locale.thousands_sep}' + s.substr(i, 3) + r;
+    }
+    return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
+  },
   currency: n => ${currency},
-  distance: n => n < ${distanceUnits[locale.distance[1]]} ? Math.round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : Math.round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
-  speed: n => Math.round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
+  distance: n => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
+  speed: n => round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
@@ -191,14 +206,8 @@ exports = {
   meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
 };
 `.trim();
-console.log("Locale Module is:",localeModule);
-/*
-FIXME:
 
-* Number/Currency need to add thousands separators: .replace(${js(locale.thousands_sep)}, ${js(locale.decimal_point)}) won't cut it as toString doesn't add separators itself
-* distance (and speed) should probably use 1 decimal point for numbers less than 10
-*/
-
+        console.log("Locale Module is:",localeModule);
         sendCustomizedApp({
           storage:[
             {name:"locale", content:localeModule}
