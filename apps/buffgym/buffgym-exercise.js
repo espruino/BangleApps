@@ -150,4 +150,4 @@ exports = class Exercise {
 
     workout.emit("redraw");
   }
-}
+};

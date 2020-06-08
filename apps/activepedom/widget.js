@@ -26,7 +26,7 @@
   var storeDataInterval = 5*60*1000; //ms
   
   let settings;
-    //load settings
+  //load settings
   function loadSettings() {
     settings = s.readJSON(SETTINGS_FILE, 1) || {};
   }
@@ -69,8 +69,8 @@
       'stepGoal' : 10000,
       'stepLength' : 75,
     };
-  if (!settings) { loadSettings(); }
-  return (key in settings) ? settings[key] : DEFAULTS[key];
+    if (!settings) { loadSettings(); }
+    return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   function setStepSensitivity(s) {

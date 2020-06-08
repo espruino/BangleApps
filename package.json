@@ -4,13 +4,15 @@
   "author": "Gordon Williams <gw@pur3.co.uk> (http://espruino.com)",
   "version": "0.0.1",
   "devDependencies": {
-    "acorn": ""
+    "acorn": "",
+    "eslint": "7.1.0"
   },
   "scripts": {
-    "test": "node bin/sanitycheck.js",
-    "start": "npx http-server"
+    "lint-apps": "eslint ./apps --ext .js",
+    "test": "node bin/sanitycheck.js && eslint ./apps --ext .js && eslint ./lib ./js",
+    "start": "npx http-server -c-1"
   },
   "dependencies": {
-    "acorn": "^7.1.1"
+    "acorn": "^7.2.0"
   }
 }

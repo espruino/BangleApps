@@ -5,9 +5,6 @@ var flag = false;
 var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 function drawAll(){
-  g.clear();
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
   updateTime();
   updateRest(new Date());
 }
@@ -42,6 +39,9 @@ function writeLine(str,line){
   g.drawString(str,25,marginTop+line*30);
 } 
 
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 drawAll();
 Bangle.on('lcdPower',function(on) {
   if (on)
