@@ -360,7 +360,7 @@ function showSetTimeMenu() {
     'Date': {
       value: d.getDate(),
       onchange: function (v) {
-        this.value = ((v+29)%30)+1;
+        this.value = ((v+30)%31)+1;
         d.setDate(this.value);
       }
     },
