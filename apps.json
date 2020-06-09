@@ -1905,5 +1905,18 @@
       {"name":"life.app.js","url":"life.min.js"},
       {"name":"life.img","url":"life-icon.js","evaluate":true}
     ]
+  },
+   { "id": "magnav",
+    "name": "Navigation Compass",
+    "icon": "magnav.png",
+    "version":"0.03",
+    "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
+    "readme": "README.md",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"magnav.app.js","url":"magnav.min.js"},
+      {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
+    ],
+    "data":[{"name":"magnav.json"}]
   }
 ]
