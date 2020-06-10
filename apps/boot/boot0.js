@@ -42,13 +42,14 @@ if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
 delete s;
 // Draw out of memory errors onto the screen
-E.on('errorFlag', function(errorFlags) {  g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
-  print("Interpreter error:",errorFlags);
+E.on('errorFlag', function(errorFlags) {
+  g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
+  print("Interpreter error:", errorFlags);
   E.getErrorFlags(); // clear flags so we get called next time
 });
 // stop users doing bad things!
 global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }
 // Load *.boot.js files
-require('Storage').list(/\.boot\.js/).map(bootFile=>{
+require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   eval(require('Storage').read(bootFile));
 });
