@@ -2,7 +2,15 @@
 var clockApp=(require("Storage").readJSON("setting.json",1)||{}).clock;
 if (clockApp) clockApp = require("Storage").read(clockApp);
 if (!clockApp) {
-  clockApp = require("Storage").list(/\.info$/).map(a=>require("Storage").readJSON(a,1)||{}).filter(a=>a.type=="clock").sort((a, b) => a.sortorder - b.sortorder)[0];
+  clockApp = require("Storage").list(/\.info$/)
+    .map(file => {
+      const app = require("Storage").readJSON(file,1);
+      if (app && app.type == "clock") {
+        return app;
+      }
+    })
+    .filter(x=>x)
+    .sort((a, b) => a.sortorder - b.sortorder)[0];
   if (clockApp)
     clockApp = require("Storage").read(clockApp.src);
 }
