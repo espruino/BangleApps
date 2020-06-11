@@ -1792,12 +1792,54 @@
     "icon": "app.png",
     "description": "A simple fortune telling app",
     "tags": "game",
+    "version": "0.03",
     "storage": [
       { "name": "jbm8b.app.js", "url": "app.js" },
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
-    ],
-    "version": "0.03"
+  ]
   },
+  { "id": "BLEcontroller",
+    "name": "BLE Customisable Controller with Joystick",
+    "shortName": "BLE Controller",
+    "icon": "BLEcontroller.png",
+    "version": "0.01",
+    "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "BLEcontroller.app.js", "url": "app.js" },
+      { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
+    ]
+    },
+  { "id": "k9control",
+    "name": "K9 BLE Controller with Joystick",
+    "shortName": "K9 Controller",
+    "icon": "k9_icon_30.png",
+    "version": "0.01",
+    "description": "My private K9 BLE controller",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "k9control.app.js", "url": "app.js" },
+      { "name": "k9control.img", "url": "app-icon.js", "evaluate": true }
+    ]
+    },
+  { "id": "dalekcontrol",
+    "name": "Dalek BLE Controller with Joystick",
+    "shortName": "Dalek Controller",
+    "icon": "dalek_icon_30.png",
+    "version": "0.01",
+    "description": "My private Dalek BLE controller",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "dalekcontrol.app.js", "url": "app.js" },
+      { "name": "dalekcontrol.img", "url": "app-icon.js", "evaluate": true }
+    ]
+    },
   { "id": "widviz",
     "name": "Widget Visibility Widget",
     "shortName":"Viz Widget",
