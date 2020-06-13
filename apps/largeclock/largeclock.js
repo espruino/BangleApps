@@ -8,7 +8,7 @@ const moonR = 12;
 const moonX = 215;
 const moonY = 50;
 
-const settings = require("Storage").readJSON("largeclock.json", 1);
+const settings = require("Storage").readJSON("largeclock.json", 1)||{};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
@@ -131,12 +131,12 @@ function drawTime(d) {
     g.setColor(1, 1, 1);
     g.setFontAlign(-1, -1);
     g.setFont("Vector", 100);
-    g.drawString(hours, 50, 24, true);
+    g.drawString(hours, 40, 24, true);
     g.setColor(1, 50, 1);
-    g.drawString(minutes, 50, 135, true);
+    g.drawString(minutes, 40, 135, true);
     g.setFont("Vector", 20);
     g.setRotation(3);
-    g.drawString(`${dow} ${day} ${month}`, 50, 15, true);
+    g.drawString(`${dow} ${day} ${month}`, 50, 10, true);
     g.drawString(year, 75, 205, true);
     lastMinutes = minutes;
   }
@@ -144,7 +144,7 @@ function drawTime(d) {
   g.setFont("Vector", 20);
   g.setColor(1, 1, 1);
   g.setFontAlign(0, -1);
-  g.clearRect(200, 210, 240, 240);
+  g.clearRect(195, 210, 240, 240);
   g.drawString(seconds, 215, 215);
 }
 
