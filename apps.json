@@ -1955,8 +1955,8 @@
     "type":"clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"miclock.app.js","url":"clock-mixed.js"},
-      {"name":"miclock.img","url":"clock-mixed-icon.js","evaluate":true}
+      {"name":"miclock2.app.js","url":"clock-mixed.js"},
+      {"name":"miclock2.img","url":"clock-mixed-icon.js","evaluate":true}
     ]
   }
 ]
