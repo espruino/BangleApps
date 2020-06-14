@@ -9,8 +9,8 @@ const moonX = 215;
 const moonY = 50;
 
 const settings = require("Storage").readJSON("largeclock.json", 1);
-const BTN1app = settings.BTN1 || "";
-const BTN3app = settings.BTN3 || "";
+const BTN1app = settings && settings.BTN1 || "";
+const BTN3app = settings && settings.BTN3 || "";
 
 function drawMoon(d) {
   const BLACK = 0,
