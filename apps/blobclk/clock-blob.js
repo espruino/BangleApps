@@ -18,8 +18,8 @@ function flip() {
   g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},55,26);
 }
 function drawPixel(ox,oy,x,y,r,p) {
-  let x1 = ox+x*(r*2+1);
-  let y1 = oy+y*(r*2+1);
+  let x1 = ox+x*(r*2);
+  let y1 = oy+y*(r*2);
   let xmid = x1+r;
   let ymid = y1+r;
   let x2 = xmid+r;
@@ -27,14 +27,14 @@ function drawPixel(ox,oy,x,y,r,p) {
   if (p > 0) {
     if (p > 1) {
       buf.setColor(0,0,0);
-      buf.fillRect(x1,y1,x2,y2);
+      buf.fillPoly([x1,y1,x2,y1,x2,y2,x1,y2]);
     }
     buf.setColor(1,1,1);
   } else {
     buf.setColor(0,0,0);
   }
   if (p < 2) {
-    buf.fillRect(x1,y1,x2,y2);
+    buf.fillPoly([x1,y1,x2,y1,x2,y2,x1,y2]);
   } else if (p === 2) {
     buf.fillPoly([xmid,y1,x2,y1,x2,y2,x1,y2,x1,ymid]);
   } else if (p === 3) {
