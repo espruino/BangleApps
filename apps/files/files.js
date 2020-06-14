@@ -123,7 +123,7 @@ function showApps() {
   }).map((a)=> {
     let app = store.readJSON(a, 1) || {};
     return {id: app.id, name: app.name, hasData: !!app.data};
-  }).sort(sortHelper());;
+  }).sort(sortHelper());
 
   if (list.length > 0) {
     list.reduce((menu, app) => {
