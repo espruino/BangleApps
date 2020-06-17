@@ -1958,5 +1958,21 @@
       {"name":"miclock2.app.js","url":"clock-mixed.js"},
       {"name":"miclock2.img","url":"clock-mixed-icon.js","evaluate":true}
     ]
+  },
+  { "id": "1button",
+    "name": "One-Button-Tracker",
+    "icon": "widget.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "A widget that turns BTN1 into a tracker, records time of button press/release.",
+    "tags": "tool,quantifiedself,widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"1button.wid.js","url":"widget.js"}
+    ],
+    "data": [
+      {"name":"one_button_presses.csv","storageFile": true}
+    ]
   }
 ]
