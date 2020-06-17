@@ -41,6 +41,7 @@ function getRecordList() {
     var l = f.readLine();
   })()\n`,recordList=>{
     var recordLines = recordList.trim().split("\n");
+    var record = recordLineToObject(recordLines[0]);
     var html = `<div class="container">
   <div class="columns">\n`;
       html += `
@@ -75,7 +76,6 @@ function getRecordList() {
     for (var i=0;i<buttons.length;i++) {
       buttons[i].addEventListener("click",event => {
         var button = event.currentTarget;
-        var recordNbr = parseInt(button.getAttribute("recordNbr"));
         var task = button.getAttribute("task");
         if (task=="delete") {
           Util.showModal("Deleting record...");
