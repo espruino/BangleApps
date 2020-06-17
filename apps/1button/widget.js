@@ -15,7 +15,7 @@
     digitalWrite(LED2,1);
     press_time = new Date();
     Bangle.buzz();
-  }, BTN1, { repeat: true, edge: 'rising', debounce: 50 });
+  }, BTN1, { repeat: true, edge: 'rising', debounce: 130 });
 
   // listen to button go to get end time & write data
   setWatch(function(e) {
