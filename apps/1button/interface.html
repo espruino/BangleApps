@@ -36,16 +36,8 @@ function downloadRecord(callback) {
 function getRecordList() {
   Util.showModal("Loading one button tracker records...");
   domRecords.innerHTML = "";
-  Puck.write(`\x10(function() {
-    var f = require("Storage").open("one_button_presses.csv,"r");
-    var l = f.readLine();
-  })()\n`,recordList=>{
-    var recordLines = recordList.trim().split("\n");
-    console.log(recordLines);
-    var record = recordLineToObject(recordLines[0]);
     var html = `<div class="container">
   <div class="columns">\n`;
-    if (recordLines.length!=0) {
       html += `
         <div class="column col-12">
           <div class="card-header">
@@ -59,17 +51,6 @@ function getRecordList() {
           </div>
         </div>
       `;
-    }
-    if (recordLines.length==0) {
-      html += `
-        <div class="column col-12">
-          <div class="card-header">
-            <div class="card-title h5">No records yet</div>
-            <div class="card-subtitle text-gray">Get started with tracking events by pressing BTN1 on your Bangle</div>
-          </div>
-        </div>
-        `;
-    }
     html += `
     </div>
   </div>`;
