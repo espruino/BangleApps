@@ -45,6 +45,7 @@ function getRecordList() {
     var record = recordLineToObject(recordLines[0]);
     var html = `<div class="container">
   <div class="columns">\n`;
+    if (recordLines.length!=0) {
       html += `
         <div class="column col-12">
           <div class="card-header">
@@ -58,6 +59,7 @@ function getRecordList() {
           </div>
         </div>
       `;
+    }
     if (recordLines.length==0) {
       html += `
         <div class="column col-12">
