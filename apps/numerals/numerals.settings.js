@@ -6,7 +6,8 @@
     numeralsSettings = {
       color:0,
       drawMode:"fill",
-      menuButton:22
+      menuButton:22,
+      showDate:0
     };
     updateSettings();
   }
@@ -35,6 +36,12 @@
       min:0,max:4,
       format: v=>btn[v][1],
       onchange: v=> { numeralsSettings.menuButton=btn[v][0]; updateSettings();}
+    },
+    "Date on touch": {
+      value: 0|numeralsSettings.showDate,
+      min:0,max:1,
+      format: v=>v?"On":"Off",
+      onchange: v=> { numeralsSettings.showDate=v; updateSettings();}
     },
     "< back": back
   };
