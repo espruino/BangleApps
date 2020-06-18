@@ -3,7 +3,7 @@
 
   function formatDuration(millis) {
     let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");
-    if (millis < 60000) return pluralize(Math.floor(millis/1000), "second");
+    if (millis < 60000) return "< 1 minute";
     if (millis < 3600000) return pluralize(Math.floor(millis/60000), "minute");
     if (millis < 86400000) return pluralize(Math.floor(millis/3600000), "hour");
     return pluralize(Math.floor(millis/86400000), "day");
@@ -41,7 +41,7 @@
     g.setFont("6x8", 1).setFontAlign(0, 0, 0);
     g.drawString(w.txt.charAt(0).toUpperCase()+w.txt.slice(1), 120, 190);
 
-    drawUpdateTime(w);
+    drawUpdateTime();
 
     g.flip();
   }
@@ -63,7 +63,7 @@
     }
   }
 
-  let interval = setInterval(drawUpdateTime, 1000);
+  let interval = setInterval(drawUpdateTime, 60000);
   Bangle.on('lcdPower', (on) => {
     if (interval) {
       clearInterval(interval);
@@ -71,7 +71,7 @@
     }
     if (on) {
       drawUpdateTime();
-      interval = setInterval(drawUpdateTime, 1000);
+      interval = setInterval(drawUpdateTime, 60000);
     }
   });
 

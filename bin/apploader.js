@@ -78,8 +78,12 @@ function cmdListDevices() {
   });
   noble.startScanning([], true);
   setTimeout(function() {
+    console.log("Stopping scan");
     noble.stopScanning();
-  }, 2000);
+    setTimeout(function() {
+      process.exit(0);
+    }, 500);
+  }, 4000);
 }
 
 function cmdInstallApp(appId, deviceAddress) {
@@ -88,7 +92,8 @@ function cmdInstallApp(appId, deviceAddress) {
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
   return AppInfo.getFiles(app, {
     fileGetter:function(url) {
-      return Promise.resolve(require("fs").readFileSync(url).toString());
+      console.log(__dirname+"/"+url);
+      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString());
     }, settings : SETTINGS}).then(files => {
     //console.log(files);
     var command = files.map(f=>f.cmd).join("\n")+"\n";
@@ -101,6 +106,7 @@ function bangleSend(command, deviceAddress) {
     var args = [].slice.call(arguments);
     console.log("UART: "+args.join(" "));
   }
+  //console.log("Sending",JSON.stringify(command));
 
   var RESET = true;
   var DEVICEADDRESS = "";
