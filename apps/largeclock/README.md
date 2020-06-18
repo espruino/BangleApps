@@ -11,7 +11,7 @@ A readable and informational digital watch, with date, seconds and moon phase an
 ## How to use it
 
 - The clock can be used as any other one, if you like it just set it as the default clock app in settings > select clock
-- In setting > large clock you can select which app is to be open by BTN1 and BTN3
+- In setting > large clock you can select which app, if any, is to be open by BTN1 and BTN3
 
 ## Credits
 

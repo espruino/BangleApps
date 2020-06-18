@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.18",
+    "version":"0.19",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -53,7 +53,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -403,7 +403,7 @@
   { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
@@ -414,7 +414,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -869,7 +869,7 @@
     "name": "Large Digit Blob Clock",
     "shortName" : "Blob Clock",
     "icon": "clock-blob.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
@@ -1605,7 +1605,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.03",
+    "version": "0.06",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1792,11 +1792,25 @@
     "icon": "app.png",
     "description": "A simple fortune telling app",
     "tags": "game",
+    "version": "0.03",
     "storage": [
       { "name": "jbm8b.app.js", "url": "app.js" },
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
-    ],
-    "version": "0.03"
+  ]
+  },
+  { "id": "BLEcontroller",
+    "name": "BLE Customisable Controller with Joystick",
+    "shortName": "BLE Controller",
+    "icon": "BLEcontroller.png",
+    "version": "0.01",
+    "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "BLEcontroller.app.js", "url": "app.js" },
+      { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
+    ]
   },
   { "id": "widviz",
     "name": "Widget Visibility Widget",
@@ -1904,6 +1918,45 @@
     "storage": [
       {"name":"life.app.js","url":"life.min.js"},
       {"name":"life.img","url":"life-icon.js","evaluate":true}
+    ]
+  },
+   { "id": "magnav",
+    "name": "Navigation Compass",
+    "icon": "magnav.png",
+    "version":"0.03",
+    "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
+    "readme": "README.md",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"magnav.app.js","url":"magnav.min.js"},
+      {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
+    ],
+    "data":[{"name":"magnav.json"}]
+  },
+  { "id": "gpspoilog",
+    "name": "GPS POI Logger",
+    "shortName":"GPS POI Log",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "A simple app to log points of interest with their GPS coordinates and read them back onto your PC. Based on the https://www.espruino.com/Bangle.js+Storage tutorial",
+    "tags": "outdoors",
+    "interface": "interface.html",
+    "storage": [
+      {"name":"gpspoilog.app.js","url":"app.js"},
+      {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "miclock2",
+    "name": "Mixed Clock 2",
+    "icon": "clock-mixed.png",
+    "version":"0.01",
+    "description": "White color variant of the Mixed Clock with thicker clock hands for better readability in the bright sunlight, extra space under the clock for widgets and seconds in the digital clock.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"miclock2.app.js","url":"clock-mixed.js"},
+      {"name":"miclock2.img","url":"clock-mixed-icon.js","evaluate":true}
     ]
   }
 ]

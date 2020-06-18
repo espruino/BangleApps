@@ -45,13 +45,13 @@ function globToRegex(pattern) {
   return new RegExp('^'+regex+'$');
 }
 
-function eraseFiles(app) {
-  app.files.split(",").forEach(f=>store.erase(f));
+function eraseFiles(info) {
+  info.files.split(",").forEach(f=>store.erase(f));
 }
 
-function eraseData(app) {
-  if(!app.data) return;
-  const d=app.data.split(';'),
+function eraseData(info) {
+  if(!info.data) return;
+  const d=info.data.split(';'),
     files=d[0].split(','),
     sFiles=(d[1]||'').split(',');
   let erase = f=>store.erase(f);
@@ -68,8 +68,9 @@ function eraseData(app) {
 }
 function eraseApp(app, files,data) {
   E.showMessage('Erasing\n' + app.name + '...');
-  if (files) eraseFiles(app);
-  if (data) eraseData(app);
+  var info = store.readJSON(app.id + ".info", 1)||{};
+  if (files) eraseFiles(info);
+  if (data) eraseData(info);
 }
 function eraseOne(app, files,data){
   E.showPrompt('Erase\n'+app.name+'?').then((v) => {
@@ -86,8 +87,7 @@ function eraseAll(apps, files,data) {
   E.showPrompt('Erase all?').then((v) => {
     if (v) {
       Bangle.buzz(100, 1);
-      for(var n = 0; n<apps.length; n++)
-        eraseApp(apps[n], files,data);
+      apps.forEach(app => eraseApp(app, files, data));
     }
     showApps();
   });
@@ -100,7 +100,7 @@ function showAppMenu(app) {
     },
     '< Back': () => showApps(),
   };
-  if (app.data) {
+  if (app.hasData) {
     appmenu['Erase Completely']    = () => eraseOne(app, true, true);
     appmenu['Erase App,Keep Data'] = () => eraseOne(app, true, false);
     appmenu['Only Erase Data']     = () => eraseOne(app, false, true);
@@ -120,11 +120,10 @@ function showApps() {
 
   var list = store.list(/\.info$/).filter((a)=> {
     return a !== 'setting.info';
-  }).sort().map((app) => {
-    var ret = store.readJSON(app,1)||{};
-    ret[''] = app;
-    return ret;
-  });
+  }).map((a)=> {
+    let app = store.readJSON(a, 1) || {};
+    return {id: app.id, name: app.name, hasData: !!app.data};
+  }).sort(sortHelper());
 
   if (list.length > 0) {
     list.reduce((menu, app) => {

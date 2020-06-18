@@ -4,11 +4,13 @@ let interval;
 let lastMoonPhase;
 let lastMinutes;
 
+const is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+
 const moonR = 12;
 const moonX = 215;
-const moonY = 50;
+const moonY = is12Hour ? 90 : 50;
 
-const settings = require("Storage").readJSON("largeclock.json", 1);
+const settings = require("Storage").readJSON("largeclock.json", 1)||{};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
@@ -118,33 +120,41 @@ function drawMoon(d) {
 
 function drawTime(d) {
   const da = d.toString().split(" ");
-  const time = da[4].substr(0, 5).split(":");
+  const time = da[4].split(":");
   const dow = da[0];
   const month = da[1];
   const day = da[2];
   const year = da[3];
-  const hours = time[0];
+  const hours = is12Hour ? ("0" + (((d.getHours() + 11) % 12) + 1)).substr(-2) : time[0];
+  const meridian = d.getHours() < 12 ? "AM" : "PM";
   const minutes = time[1];
-  const seconds = d.getSeconds();
+  const seconds = time[2];
   if (minutes != lastMinutes) {
+    if (is12Hour) {
+      g.setFont("Vector", 18);
+      g.setColor(1, 1, 1);
+      g.setFontAlign(0, -1);
+      g.clearRect(195, 34, 240, 44);
+      g.drawString(meridian, 217, 34);
+    }
     g.clearRect(0, 24, moonX - moonR - 10, 239);
     g.setColor(1, 1, 1);
     g.setFontAlign(-1, -1);
     g.setFont("Vector", 100);
-    g.drawString(hours, 50, 24, true);
+    g.drawString(hours, 40, 24, true);
     g.setColor(1, 50, 1);
-    g.drawString(minutes, 50, 135, true);
+    g.drawString(minutes, 40, 135, true);
     g.setFont("Vector", 20);
     g.setRotation(3);
-    g.drawString(`${dow} ${day} ${month}`, 50, 15, true);
-    g.drawString(year, 75, 205, true);
+    g.drawString(`${dow} ${day} ${month}`, 50, 10, true);
+    g.drawString(year, is12Hour ? 46 : 75, 205, true);
     lastMinutes = minutes;
   }
   g.setRotation(0);
   g.setFont("Vector", 20);
   g.setColor(1, 1, 1);
   g.setFontAlign(0, -1);
-  g.clearRect(200, 210, 240, 240);
+  g.clearRect(195, 210, 240, 240);
   g.drawString(seconds, 215, 215);
 }
 
