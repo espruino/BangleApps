@@ -2,3 +2,4 @@
       Only draw widgets after clearing screen - they update automatically
       Remove 'faceUp' check as it's automatic
 0.03: Modified for use with new bootloader and firmware
+0.04: Modified to account for changes in the behavior of Graphics.fillPoly

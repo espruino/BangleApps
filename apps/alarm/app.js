@@ -8,6 +8,7 @@ var alarms = require("Storage").readJSON("alarm.json",1)||[];
     msg : "Eat chocolate",
     last : 0, // last day of the month we alarmed on - so we don't alarm twice in one day!
     rp : true, // repeat
+    as : true, // auto snooze
   }
 ];*/
 
@@ -50,6 +51,7 @@ function editAlarm(alarmIndex) {
     mins = Math.round((a.hr-hrs)*60);
     en = a.on;
     repeat = a.rp;
+    as = a.as;
   }
   const menu = {
     '': { 'title': 'Alarms' },
@@ -70,6 +72,11 @@ function editAlarm(alarmIndex) {
       value: en,
       format: v=>v?"Yes":"No",
       onchange: v=>repeat=v
+    },
+    'Auto snooze': {
+      value: en,
+      format: v=>v?"Yes":"No",
+      onchange: v=>as=v
     }
   };
   function getAlarm() {
@@ -81,7 +88,7 @@ function editAlarm(alarmIndex) {
     // Save alarm
     return {
       on : en, hr : hr,
-      last : day, rp : repeat
+      last : day, rp : repeat, as: as
     };
   }
   menu["> Save"] = function() {

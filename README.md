@@ -197,6 +197,7 @@ and which gives information about the app for the Launcher.
   "type":"widget/clock/app", // optional, default "app"
      // if this is 'widget' then it's not displayed in the menu
      // if it's 'clock' then it'll be loaded by default at boot time
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
   "version":"1.23",
      // added by BangleApps loader on upload based on apps.json
   "files:"file1,file2,file3",

@@ -6,8 +6,9 @@ function scheduleExpiry(json) {
     clearTimeout(expiryTimeout);
     expiryTimeout = undefined;
   }
-  if (json.weather && json.weather.time && json.expiry) {
-    let t = json.weather.time + json.expiry - Date.now();
+  let expiry = "expiry" in json ? json.expiry : 2*3600000;
+  if (json.weather && json.weather.time && expiry) {
+    let t = json.weather.time + expiry - Date.now();
     expiryTimeout = setTimeout(() => {
       expiryTimeout = undefined;
 

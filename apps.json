@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.17",
+    "version":"0.19",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -38,7 +38,7 @@
     ]
   },
   { "id": "launch",
-    "name": "Default Launcher",
+    "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "app.png",
     "version":"0.03",
@@ -53,7 +53,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -65,15 +65,41 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
     "custom":"locale.html",
+    "readme": "README.md",
     "storage": [
       {"name":"locale"}
     ],
     "sortorder" : -10
+  },
+  { "id": "notify",
+    "name": "Notifications (default)",
+    "shortName":"Notifications",
+    "icon": "notify.png",
+    "version":"0.01",
+    "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
+    "tags": "widget",
+    "type": "notify",
+    "readme": "README.md",
+    "storage": [
+      {"name":"notify","url":"notify.js"}
+    ]
+  },
+  { "id": "notifyfs",
+    "name": "Fullscreen Notifications",
+    "shortName":"Notifications",
+    "icon": "notify.png",
+    "version":"0.01",
+    "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
+    "tags": "widget",
+    "type": "notify",
+    "storage": [
+      {"name":"notify","url":"notify.js"}
+    ]
   },
   { "id": "welcome",
     "name": "Welcome",
@@ -95,10 +121,11 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.12",
+    "version":"0.14",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "type":"widget",
+    "dependencies": { "notify":"type" },
     "storage": [
       {"name":"gbridge.settings.js","url":"settings.js"},
       {"name":"gbridge.img","url":"app-icon.js","evaluate":true},
@@ -125,7 +152,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.19",
+    "version":"0.20",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
@@ -140,7 +167,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -317,7 +344,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -376,7 +403,7 @@
   { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
@@ -387,7 +414,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -842,7 +869,7 @@
     "name": "Large Digit Blob Clock",
     "shortName" : "Blob Clock",
     "icon": "clock-blob.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
@@ -1024,7 +1051,7 @@
     "name": "Commandline-Clock",
     "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell",
     "type":"clock",
@@ -1305,7 +1332,7 @@
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
     "icon": "numerals.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A simple big numerals clock",
     "tags": "numerals,clock",
 	"type":"clock",
@@ -1406,7 +1433,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "An app for running sessions.",
     "tags": "run,running,fitness,outdoors",
     "allow_emulator": false,
@@ -1426,7 +1453,7 @@
     "id": "metronome",
     "name": "Metronome",
     "icon": "metronome_icon.png",
-    "version": "0.05",
+    "version": "0.06",
     "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "tags": "tool",
@@ -1578,7 +1605,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.03",
+    "version": "0.06",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1765,11 +1792,25 @@
     "icon": "app.png",
     "description": "A simple fortune telling app",
     "tags": "game",
+    "version": "0.03",
     "storage": [
       { "name": "jbm8b.app.js", "url": "app.js" },
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
-    ],
-    "version": "0.03"
+  ]
+  },
+  { "id": "BLEcontroller",
+    "name": "BLE Customisable Controller with Joystick",
+    "shortName": "BLE Controller",
+    "icon": "BLEcontroller.png",
+    "version": "0.01",
+    "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
+    "tags": "tool,bluetooth",
+    "readme": "README.md",
+    "allow_emulator":false,
+    "storage": [
+      { "name": "BLEcontroller.app.js", "url": "app.js" },
+      { "name": "BLEcontroller.img", "url": "app-icon.js", "evaluate": true }
+    ]
   },
   { "id": "widviz",
     "name": "Widget Visibility Widget",
@@ -1814,7 +1855,7 @@
     "name": "Animated Clock",
     "shortName":"Anim Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "An animated clock face using Mark Ferrari's amazing 8 bit game art and palette cycling: http://www.markferrari.com/art/8bit-game-art",
     "tags": "clock,animated",
     "type": "clock",
@@ -1826,12 +1867,26 @@
       {"name":"animclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
-  { 
+  { "id": "analogimgclk",
+    "name": "Analog Clock (Image background)",
+    "shortName":"Analog Clock",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "An analog clock with an image background",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"analogimgclk.app.js","url":"app.js"},
+      {"name":"analogimgclk.bg.img","url":"bg.img"},
+      {"name":"analogimgclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
     "id": "verticalface",
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
     "icon": "app.png",
-    "version":"0.4.1",
+    "version":"0.04",
     "description": "A simple vertical watch face with the date.",
     "tags": "clock",
     "type":"clock",
@@ -1851,6 +1906,57 @@
     "storage": [
       {"name":"sleepphasealarm.app.js","url":"app.js"},
       {"name":"sleepphasealarm.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "life",
+    "name": "Game of Life",
+    "icon": "life.png",
+    "version":"0.04",
+    "description": "Conway's Game of Life - 16x16 board",
+    "tags": "game",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"life.app.js","url":"life.min.js"},
+      {"name":"life.img","url":"life-icon.js","evaluate":true}
+    ]
+  },
+   { "id": "magnav",
+    "name": "Navigation Compass",
+    "icon": "magnav.png",
+    "version":"0.03",
+    "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
+    "readme": "README.md",
+    "tags": "tool,outdoors",
+    "storage": [
+      {"name":"magnav.app.js","url":"magnav.min.js"},
+      {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
+    ],
+    "data":[{"name":"magnav.json"}]
+  },
+  { "id": "gpspoilog",
+    "name": "GPS POI Logger",
+    "shortName":"GPS POI Log",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "A simple app to log points of interest with their GPS coordinates and read them back onto your PC. Based on the https://www.espruino.com/Bangle.js+Storage tutorial",
+    "tags": "outdoors",
+    "interface": "interface.html",
+    "storage": [
+      {"name":"gpspoilog.app.js","url":"app.js"},
+      {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "miclock2",
+    "name": "Mixed Clock 2",
+    "icon": "clock-mixed.png",
+    "version":"0.01",
+    "description": "White color variant of the Mixed Clock with thicker clock hands for better readability in the bright sunlight, extra space under the clock for widgets and seconds in the digital clock.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"miclock2.app.js","url":"clock-mixed.js"},
+      {"name":"miclock2.img","url":"clock-mixed-icon.js","evaluate":true}
     ]
   }
 ]

@@ -1,4 +1,4 @@
-#!/bin/node
+#!/usr/bin/nodejs
 /* Simple Command-line app loader for Node.js
 ===============================================
 
@@ -15,7 +15,20 @@ var SETTINGS = {
 };
 var Utils = require("../js/utils.js");
 var AppInfo = require("../js/appinfo.js");
-var noble = require('@abandonware/noble');
+var noble;
+try {
+  noble  = require('@abandonware/noble');
+} catch (e) {}
+if (!noble) try {
+  noble  = require('noble');
+} catch (e) { }
+if (!noble) {
+  console.log("You need to:")
+  console.log("  npm install @abandonware/noble")
+  console.log("or:")
+  console.log("  npm install noble")
+}
+
 var apps;
 
 function ERROR(msg) {
@@ -32,7 +45,9 @@ try {
 var args = process.argv;
 
 if (args.length==3 && args[2]=="list") cmdListApps();
+else if (args.length==3 && args[2]=="devices") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
+else if (args.length==5 && args[2]=="install") cmdInstallApp(args[3], args[4]);
 else {
   console.log(`apploader.js
 -------------
@@ -40,7 +55,10 @@ else {
 USAGE:
 
 apploader.js list
-apploader.js install appname
+  - list available apps
+apploader.js devices
+  - list available device addresses
+apploader.js install appname [de:vi:ce:ad:dr:es]
 `);
 process.exit(0);
 }
@@ -48,28 +66,52 @@ process.exit(0);
 function cmdListApps() {
   console.log(apps.map(a=>a.id).join("\n"));
 }
-function cmdInstallApp(appId) {
+function cmdListDevices() {
+  var foundDevices = [];
+  noble.on('discover', function(dev) {
+    if (!dev.advertisement) return;
+    if (!dev.advertisement.localName) return;
+    var a = dev.address.toString();
+    if (foundDevices.indexOf(a)>=0) return;
+    foundDevices.push(a);
+    console.log(a,dev.advertisement.localName);
+  });
+  noble.startScanning([], true);
+  setTimeout(function() {
+    console.log("Stopping scan");
+    noble.stopScanning();
+    setTimeout(function() {
+      process.exit(0);
+    }, 500);
+  }, 4000);
+}
+
+function cmdInstallApp(appId, deviceAddress) {
   var app = apps.find(a=>a.id==appId);
   if (!app) ERROR(`App ${JSON.stringify(appId)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
   return AppInfo.getFiles(app, {
     fileGetter:function(url) {
-      return Promise.resolve(require("fs").readFileSync(url).toString());
+      console.log(__dirname+"/"+url);
+      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString());
     }, settings : SETTINGS}).then(files => {
     //console.log(files);
     var command = files.map(f=>f.cmd).join("\n")+"\n";
-    bangleSend(command).then(() => process.exit(0));
+    bangleSend(command, deviceAddress).then(() => process.exit(0));
   });
 }
 
-function bangleSend(command) {
+function bangleSend(command, deviceAddress) {
   var log = function() {
     var args = [].slice.call(arguments);
     console.log("UART: "+args.join(" "));
   }
+  //console.log("Sending",JSON.stringify(command));
 
   var RESET = true;
   var DEVICEADDRESS = "";
+  if (deviceAddress!==undefined)
+    DEVICEADDRESS = deviceAddress;
 
   var complete = false;
   var foundDevices = [];

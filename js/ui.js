@@ -4,7 +4,7 @@
 const Progress = {
   domElement : null, // the DOM element
   sticky : false, // Progress.show({..., sticky:true}) don't remove until Progress.hide({sticky:true})
-  interval : undefined, // the interval used if Progress.show({progress:"animate"})
+  interval : undefined, // the interval used if Progress.show({percent:"animate"})
   percent : undefined, // the current progress percentage
   min : 0, // scaling for percentage
   max : 1, // scaling for percentage
@@ -30,13 +30,13 @@ const Progress = {
         clearInterval(Progress.interval);
         Progress.interval = undefined;
       }
-      if (percent == "animate") {
+      if (options.percent == "animate") {
         Progress.interval = setInterval(function() {
           Progress.percent += 2;
           if (Progress.percent>100) Progress.percent=0;
           Progress.show({percent:Progress.percent});
         }, 100);
-        percent = 0;
+        Progress.percent = percent = 0;
       }
 
       let toastcontainer = document.getElementById("toastcontainer");
@@ -83,7 +83,7 @@ Puck.writeProgress = function(charsSent, charsTotal) {
 /// Show a 'toast' message for status
 function showToast(message, type) {
   // toast-primary, toast-success, toast-warning or toast-error
-  console.log("TOAST["+(type||"-")+"] "+message);
+  console.log("<TOAST>["+(type||"-")+"] "+message);
   let style = "toast-primary";
   if (type=="success")  style = "toast-success";
   else if (type=="error")  style = "toast-error";

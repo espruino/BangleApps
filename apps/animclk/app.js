@@ -24,16 +24,6 @@ var cgimg = {width:IW,height:IH,bpp:IBPP,transparent:0,buffer:cg.buffer};
 var locale = require("locale");
 var lastTime = "";
 
-// store clock background image in bgimg (a file in flash memory)
-var bgimg = require("Storage").read("imgclock.face.bg");
-// if it doesn't exist, make it
-function createBgImg() {
-  cg.drawImage(img,-IX,-IY,bgoptions);
-  require("Storage").write("imgclock.face.bg", cg.buffer);
-  bgimg = require("Storage").read("imgclock.face.bg");
-}
-if (!bgimg || !bgimg.length) createBgImg();
-
 function drawClock() {
   var t = new Date();
   var hours = t.getHours();
@@ -69,7 +59,7 @@ function drawClock() {
     cg.drawString(date,IW*(inf.align+1)/2,IH-8);
   }
 }
-  
+
 function draw() {
   var t = (new Date()).toString();
   if (t!=lastTime) {
