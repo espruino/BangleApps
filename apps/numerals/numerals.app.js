@@ -63,7 +63,7 @@ function draw(date){
   if (date) {
     setUpdateInt(0);
     l1 = ("0"+(new Date()).getDate()).substr(-2);
-    l2 = ("0"+(new Date()).getMonth()).substr(-2);
+    l2 = ("0"+((new Date()).getMonth()+1)).substr(-2);
     setTimeout(()=>{ draw(); setUpdateInt(1); }, 5000);
   } else {
     l1 = ("0"+(_12hour?d.getHours()%12:d.getHours())).substr(-2);
