@@ -42,7 +42,8 @@ if (!settings) {
   settings = {
     color:0,
     drawMode:"fill",
-    menuButton:24
+    menuButton:24,
+    showDate:0
   };
 }
 
@@ -56,35 +57,46 @@ function drawNum(num,col,x,y,func){
   }
 }
 
-function draw(drawMode){
+function draw(date){
   let d = new Date();
-  let h1 = Math.floor((_12hour?d.getHours()%12:d.getHours())/10);
-  let h2 = (_12hour?d.getHours()%12:d.getHours())%10;
-  let m1 = Math.floor(d.getMinutes()/10);
-  let m2 = d.getMinutes()%10;
+  let l1, l2;
+  if (date) {
+    setUpdateInt(0);
+    l1 = ("0"+(new Date()).getDate()).substr(-2);
+    l2 = ("0"+((new Date()).getMonth()+1)).substr(-2);
+    setTimeout(()=>{ draw(); setUpdateInt(1); }, 5000);
+  } else {
+    l1 = ("0"+(_12hour?d.getHours()%12:d.getHours())).substr(-2);
+    l2 = ("0"+d.getMinutes()).substr(-2);
+  }
   g.clearRect(0,24,240,240);
-  drawNum(h1,_hCol[_rCol],0,0,eval(drawMode));
-  drawNum(h2,_hCol[_rCol],1,0,eval(drawMode));
-  drawNum(m1,_mCol[_rCol],0,1,eval(drawMode));
-  drawNum(m2,_mCol[_rCol],1,1,eval(drawMode));
+  drawNum(l1[0],_hCol[_rCol],0,0,eval(settings.drawMode));
+  drawNum(l1[1],_hCol[_rCol],1,0,eval(settings.drawMode));
+  drawNum(l2[0],_mCol[_rCol],0,1,eval(settings.drawMode));
+  drawNum(l2[1],_mCol[_rCol],1,1,eval(settings.drawMode));
+}
+
+function setUpdateInt(set){
+  if (interval) clearInterval(interval);
+  if (set) interval=setInterval(draw, REFRESH_RATE);
 }
 
 Bangle.setLCDMode();
 g.reset().clear();
 setWatch(Bangle.showLauncher, settings.menuButton, {repeat:false,edge:"falling"});
 if (settings.color>0) _rCol=settings.color-1;
-interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
-draw(settings.drawMode);
+setUpdateInt(1);
+draw();
 
+if (settings.showDate) {
+  Bangle.on('touch', () => draw(1));
+}
 Bangle.on('lcdPower', function(on){
   if (on){
     if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
-    draw(settings.drawMode);
-    interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
-  }else
-  {
-    clearInterval(interval);
-  }
+    draw();
+    setUpdateInt(1);
+  } else setUpdateInt(0);
 });
 
 Bangle.loadWidgets();
