@@ -1984,7 +1984,7 @@
     "tags": "widget,gps",
     "type": "widget",
     "storage": [
-      {"name":"gps_auto_time.wid.js","url":"widget.js"}
+      {"name":"gpsautotime.wid.js","url":"widget.js"}
     ]
   }
 ]
