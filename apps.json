@@ -1558,7 +1558,7 @@
     "version":"0.01",
     "description": "A simple app to log points of interest with their GPS coordinates and read them back onto your PC. Based on the https://www.espruino.com/Bangle.js+Storage tutorial",
     "tags": "outdoors",
-    "interface": "interface.html",
+    "custom": "interface.html",
     "storage": [
       {"name":"gpspoilog.app.js","url":"app.js"},
       {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
