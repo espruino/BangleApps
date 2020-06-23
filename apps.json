@@ -959,6 +959,7 @@
     "name": "Espruino Flag Raiser",
     "icon": "app.png",
     "version":"0.01",
+    "readme": "README.md",
     "description": "App to send a command to another Espruino to cause it to raise a flag",
     "tags": "",
     "storage": [
