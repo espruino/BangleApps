@@ -16,11 +16,11 @@ const clock_center = {x:Math.floor((240-1)/2), y:24+Math.floor((239-24)/2)};
 // ={ x: 119, y: 131 }
 const radius = Math.floor((239-24+1)/2); // =108
 
-let tick0 = Graphics.createArrayBuffer(30,8,1);
+let tick0 = Graphics.createArrayBuffer(30,8,1,{msb:true});
 tick0.fillRect(0,0,tick0.getWidth()-1, tick0.getHeight()-1);
-let tick5 = Graphics.createArrayBuffer(20,6,1);
+let tick5 = Graphics.createArrayBuffer(20,6,1,{msb:true});
 tick5.fillRect(0,0,tick5.getWidth()-1, tick5.getHeight()-1);
-let tick1 = Graphics.createArrayBuffer(8,4,1);
+let tick1 = Graphics.createArrayBuffer(8,4,1,{msb:true});
 tick1.fillRect(0,0,tick1.getWidth()-1, tick1.getHeight()-1);
 
 function big_wheel_x(angle){

@@ -882,7 +882,7 @@
   { "id": "boldclk",
     "name": "Bold Clock",
     "icon": "bold_clock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Simple, readable and practical clock",
     "tags": "clock",
     "type":"clock",
