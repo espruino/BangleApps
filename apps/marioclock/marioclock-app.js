@@ -225,7 +225,7 @@ function drawFloor() {
 }
 
 function drawPyramid() {
-  const pPol = [pyramidSprite.x + 10, H - 6, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 6]; // Pyramid poly
+  const pPol = [pyramidSprite.x + 10, H - 5, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 5]; // Pyramid poly
 
   const color = (nightMode) ? DARK : LIGHT;
   g.setColor(color);
