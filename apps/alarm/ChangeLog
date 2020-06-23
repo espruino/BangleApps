@@ -7,3 +7,4 @@
 0.07: Don't overwrite existing settings on app update
 0.08: Make alarm scheduling more reliable
 0.09: Add per alarm auto-snooze option
+0.10: Fix auto-snooze option (this stopped new alarms being added) (fix #506)
