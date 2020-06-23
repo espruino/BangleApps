@@ -1,6 +1,6 @@
 # Multiclock
 
-This is a clock app that supports multiple clock faces. The user can switch between faces while retaining widget state which makes the switch fast and preserves state such as bluetooth connections. Currently there are four clock faces as shown below:
+This is a clock app that supports multiple clock faces. The user can switch between faces while retaining widget state which makes the switch fast and preserves state such as bluetooth connections. Currently there are four clock faces as shown below. To my eye, these faces look better when widgets are hidden using **widviz**. 
 
 ### Analog Clock Face
 ![](anaface.jpg)
@@ -42,7 +42,7 @@ Clock faces are described in javascript storage files named `name.face.js`. For 
 ```
 For those familiar with the structure of widgets, this is similar, however, there is an additional level of function nesting. This means that although faces are loaded when the clock app starts running they are not instantiated until their `getFace` function is called, i.e.  memory is not allocated to structures such as image buffer arrays declared in `getFace` until the face is selected. Consequently, adding a face does not require a lot of extra memory. 
 
-The app at start up loads all files `*.face.js`. The simplest way of adding a face is thus to load it into Storage using the WebIDE.
+The app at start up loads all files `*.face.js`. The simplest way of adding a face is thus to load it into `Storage` using the WebIDE. Similarly, to remove an unwanted face, simply delete it from `Storage` using the WebIDE.
 
 ## Support
 
