@@ -5,3 +5,4 @@
 0.05: Fix settings issue
 0.06: Improve rendering of Numeral 1, fix issue with alarms not showing up
 0.07: Add date on touch and some improvements (see settings and readme)
+0.08: Add new draw styles, tidy up draw functionality
