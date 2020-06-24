@@ -1987,5 +1987,19 @@
     "storage": [
       {"name":"gpsautotime.wid.js","url":"widget.js"}
     ]
+  },
+  { "id": "espruinoctrl",
+    "name": "Espruino Control",
+    "shortName":"Espruino Ctrl",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Send commands to other Espruino devices via the Bluetooth UART interface. Customisable commands!",
+    "tags": "",
+    "readme": "README.md",
+    "custom": "custom.html",
+    "storage": [
+      {"name":"espruinoctrl.app.js"},
+      {"name":"espruinoctrl.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
