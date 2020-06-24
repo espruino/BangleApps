@@ -1,5 +1,5 @@
 var s = require("Storage");
-var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src}}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
+var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -17,10 +17,13 @@ function drawMenu() {
   var n = 3;
   if (selected>=n+menuScroll) menuScroll = 1+selected-n;
   if (selected<menuScroll) menuScroll = selected;
-  if (menuScroll) g.fillPoly([120,0,100,20,140,20]);
-  else g.clearRect(100,0,140,20);
-  if (apps.length>n+menuScroll) g.fillPoly([120,239,100,219,140,219]);
-  else g.clearRect(100,219,140,239);
+  // arrows
+  g.setColor(menuScroll ? -1 : 0);
+  g.fillPoly([120,6,106,20,134,20]);
+  g.setColor((apps.length>n+menuScroll) ? -1 : 0);
+  g.fillPoly([120,233,106,219,134,219]);
+  // draw
+  g.setColor(-1);
   for (var i=0;i<n;i++) {
     var app = apps[i+menuScroll];
     if (!app) break;
@@ -59,3 +62,5 @@ setWatch(function() { // run
     load(apps[selected].src);
   }
 }, BTN2, {repeat:true,edge:"falling"});
+Bangle.loadWidgets();
+Bangle.drawWidgets();
