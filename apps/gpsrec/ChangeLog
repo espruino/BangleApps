@@ -10,4 +10,5 @@
 0.09: Change default GPS period to 10 (1 is overkill for most uses and makes things slow)
       Added RAM keyword to functions & other tweaks to speed up rendering
       Going 'back' from track view now doesn't load again
-0.10: Can now graph altitude & speed 
+0.10: Can now graph altitude & speed
+0.11: Ensure we don't turn GPS off if it was previously on (eg from another app/widget)

@@ -4,6 +4,7 @@
   var fixToggle = false; // toggles once for each reading
   var gpsTrack; // file for GPS track
   var periodCtr = 0;
+  var gpsOn = false;
 
   // draw your widget
   function draw() {
@@ -45,16 +46,20 @@
     settings.file |= 0;
 
     Bangle.removeListener('GPS',onGPS);
+    var gOn = false;
     if (settings.recording) {
       WIDGETS["gpsrec"].width = 24;
-      Bangle.on('GPS',onGPS);
-      Bangle.setGPSPower(1);
+      Bangle.on('GPS', onGPS);
       var n = settings.file.toString(36);
       gpsTrack = require("Storage").open(".gpsrc"+n,"a");
+      gOn = true;
     } else {
       WIDGETS["gpsrec"].width = 0;
-      Bangle.setGPSPower(0);
       gpsTrack = undefined;
+    }
+    if (gOn != gpsOn) {
+      Bangle.setGPSPower(gOn);
+      gpsOn = gOn;
     }
   }
   // add the widget
