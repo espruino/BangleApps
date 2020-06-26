@@ -2033,5 +2033,30 @@
       {"name":"widancs.wid.js","url":"ancs.min.js"},
       {"name":"widancs.settings.js","url":"settings.js"}
     ]
+  },
+  {
+    "id": "cprassist",
+    "name":"CPR Assist",
+    "icon":"cprassist-icon.png",
+    "version": "0.01",
+    "readme": "README.md",
+    "description": "Provides assistance while performing a CPR",
+    "tags": "tool,firstaid",
+    "allow_emulator": true,
+    "storage": [
+      {
+        "name": "cprassist.app.js",
+        "url": "cprassist.js"
+      },
+      {
+        "name": "cprassist.img",
+        "url": "cprassist-icon.js",
+        "evaluate": true
+      },
+      {
+        "name": "cprassist.settings.js",
+        "url": "settings.js"
+      }
+    ]
   }
 ]
