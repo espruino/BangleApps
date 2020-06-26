@@ -2019,5 +2019,19 @@
       {"name":"txt.face.js","url":"txt.min.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
+  },
+   { "id": "widancs",
+    "name": "Apple Notification Widget",
+    "shortName":"ANCS Widget",
+    "icon": "widget.png",
+    "version":"0.06",
+    "description": "Displays call, message etc notifications from a paired iPhone. Read README before installation as it only works with compatible apps",
+    "readme": "README.md",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widancs.wid.js","url":"ancs.min.js"},
+      {"name":"widancs.settings.js","url":"settings.js"}
+    ]
   }
 ]
