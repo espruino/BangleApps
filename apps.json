@@ -674,6 +674,19 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "svclock",
+    "name": "Simple V-Clock",
+    "icon": "vclock-simple.png",
+    "version":"0.01",
+    "description": "Modification of Simple Clock 0.04 to use Vectorfont",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"svclock.app.js","url":"vclock-simple.js"},
+      {"name":"svclock.img","url":"vclock-simple-icon.js","evaluate":true}
+    ]
+  },
   { "id": "dclock",
     "name": "Dev Clock",
     "icon": "clock-dev.png",
