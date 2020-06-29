@@ -1,1 +1,2 @@
 0.04: Fixed day being displayed
+0.05: Stop hours being displayed wrong if moving from 2 digits to 1 (fix #516)

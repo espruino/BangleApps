@@ -1900,7 +1900,7 @@
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A simple vertical watch face with the date.",
     "tags": "clock",
     "type":"clock",

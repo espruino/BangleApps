@@ -8,7 +8,7 @@ function drawTimeDate() {
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
 
   var daysOfWeek = ["SUN", "MON", "TUE","WED","THU","FRI","SAT"];
-  var hours = h;
+  var hours = (" "+h).substr(-2);
   var mins= ("0"+m).substr(-2);
   var date = `${daysOfWeek[weekDay]}|${day}|${("0"+(month+1)).substr(-2)}`;
 
