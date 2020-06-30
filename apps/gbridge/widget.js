@@ -29,24 +29,31 @@
     Bangle.buzz();
   }
 
-  function handleMusicStateUpdate(event) {
-    const changed = state.music === event.state
-    state.music = event.state
-
+  function updateMusic(options){
     if (state.music === "play") {
-      require("notify").show({size:40, render:y => {
+      require("notify").show(Object.assign({size:40, render:y => {
         g.setColor(-1);
         g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")), 8, y + 8);
         g.setFontAlign(-1, -1);
         var x = 40;
         g.setFont("4x6", 2).drawString(state.musicInfo.artist, x, y + 8);
         g.setFont("6x8", 1).drawString(state.musicInfo.track, x, y + 22);
-      }});
+      }}, options));
     }
 
     if (state.music === "pause") {
       require("notify").hide();
     }
+  }
+  function handleMusicStateUpdate(event) {
+    if (state.music !== event.state) {
+      state.music = event.state
+      updateMusic({on: true});
+    }
+  }
+  function handleMusicInfoUpdate(event) {
+    state.musicInfo = event;
+    updateMusic({on: false});
   }
 
   function handleCallEvent(event) {
@@ -77,7 +84,7 @@
         handleNotificationEvent(event);
         break;
       case "musicinfo":
-        state.musicInfo = event;
+        handleMusicInfoUpdate(event);
         break;
       case "musicstate":
         handleMusicStateUpdate(event);
