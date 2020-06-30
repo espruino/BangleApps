@@ -2992,5 +2992,26 @@
     {"name":"gbmusic.json"},
     {"name":"gbmusic.load.json"}
   ]
+},
+{
+  "id": "battleship",
+  "name":"Battleship",
+  "icon":"battleship-icon.png",
+  "version": "0.01",
+  "readme": "README.md",
+  "description": "The classic game of battleship",
+  "tags": "game",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "battleship.app.js",
+      "url": "battleship.js"
+    },
+    {
+      "name": "battleship.img",
+      "url": "battleship-icon.js",
+      "evaluate": true
+    }
+  ]
 }
 ]
