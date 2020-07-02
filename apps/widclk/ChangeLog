@@ -1,2 +1,3 @@
 0.02: Now refresh battery monitor every minute if LCD on
 0.03: Ensure redrawing works with variable size widget system
+0.04: Fix regression stopping correct widget updates

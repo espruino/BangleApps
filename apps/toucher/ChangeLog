@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Add swipe support and doucle tap to run application
+0.03: Close launcher when lcd turn off
+0.04: Complete rewrite to add animation and loop ( issue  #210 )
+0.05: Improve perf
+0.06: Complete rewrite in 80x80, better perf, add settings

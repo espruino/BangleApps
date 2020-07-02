@@ -5,32 +5,9 @@
   <body>
     <div id="tracks"></div>
 
-    <div class="modal active" id="status-modal">
-      <div class="modal-overlay"></div>
-      <div class="modal-container">
-        <div class="modal-header">
-          <div class="modal-title h5">Please wait</div>
-        </div>
-        <div class="modal-body">
-          <div class="content">
-            Loading...
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="../../lib/interface.js"></script>
     <script>
 var domTracks = document.getElementById("tracks");
-var domModal = document.getElementById("status-modal");
-
-function showModal(title) {
-  domModal.querySelector(".content").innerHTML = title;
-  domModal.classList.add("active");
-}
-function hideModal(title) {
-  domModal.classList.remove("active");
-}
 
 function saveKML(track,title) {
   var kml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -107,19 +84,15 @@ function trackLineToObject(l, hasTrackNumber) {
 }
 
 function downloadTrack(trackid, callback) {
-  showModal("Downloading Track...");
-  Puck.write(`\x10(function() {
-    var f = require("Storage").open(".gpsrc${trackid.toString(36)}","r");
-    var l = f.readLine();
-    while (l!==undefined) { Bluetooth.print(l); l = f.readLine(); }
-  })()\n`,tracklist=>{
-    hideModal();
-    var track = tracklist.trim().split("\n").map(l=>trackLineToObject(l,false));
+  Util.showModal("Downloading Track...");
+  Util.readStorageFile(`.gpsrc${trackid.toString(36)}`,data=>{
+    Util.hideModal();
+    var track = data.trim().split("\n").map(l=>trackLineToObject(l,false));
     callback(track);
   });
 }
 function getTrackList() {
-  showModal("Loading Tracks...");
+  Util.showModal("Loading Tracks...");
   domTracks.innerHTML = "";
   Puck.write(`\x10(function() {
     for (var n=0;n<36;n++) {
@@ -171,7 +144,7 @@ function getTrackList() {
     </div>
   </div>`;
     domTracks.innerHTML = html;
-    hideModal();
+    Util.hideModal();
     var buttons = domTracks.querySelectorAll("button");
     for (var i=0;i<buttons.length;i++) {
       buttons[i].addEventListener("click",event => {
@@ -179,9 +152,9 @@ function getTrackList() {
         var trackid = parseInt(button.getAttribute("trackid"));
         var task = button.getAttribute("task");
         if (task=="delete") {
-          showModal("Deleting Track...");
-          Puck.write(`\x10require("Storage").open(".gpsrc${trackid.toString(36)}","r").erase()\n`,()=>{
-            hideModal();
+          Util.showModal("Deleting Track...");
+          Util.eraseStorageFile(`.gpsrc${trackid.toString(36)}`,()=>{
+            Util.hideModal();
             getTrackList();
           });
         }

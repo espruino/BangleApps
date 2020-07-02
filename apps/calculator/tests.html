@@ -1,0 +1,273 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Calculator tests</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/7.1.0/mocha.min.css">
+  <style>
+    #header {
+      margin: 60px 50px;
+      font: 1em "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight: 200;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header"></div>
+  <div id="mocha"></div>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mocha/7.1.0/mocha.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.min.js"></script>
+  <script>
+// mocks
+const _ = () => {}
+setWatch = _
+drawKey = _
+currentOutput = 0;
+g = {
+  setFont: _,
+  drawString: n => currentOutput = n,
+  setColor: _,
+  fillRect: _,
+  clear: _
+}
+_graphics = function () {
+  this.setFontCustom = _
+}
+Graphics = _graphics
+BTN1 = 1
+BTN2 = 2
+BTN3 = 3
+BTN4 = 4
+BTN5 = 5
+Bangle = {
+  on: _
+}
+Terminal = { println: console.log }
+</script>
+<script src="app.js"></script>
+<script>
+header`
+// Unit tests for the BangleJS's Calculator app
+`
+
+mocha.setup({ui:'bdd'})
+chai.should()
+var expect = chai.expect
+
+const sequencePress = x => x.split('').forEach(y => buttonPress(y))
+const sequenceReset = _ => [...Array(2)].forEach(x => buttonPress('R'))
+
+describe("Simple arithmetic", function(){
+  it("multiplication", function(){
+    multiply(1.4,2.4).should.equal(3.36)
+  })
+
+  it("division", function(){
+    divide(4.4,2).should.equal(2.2)
+  })
+
+  it("sum", function(){
+    sum(4.1,2).should.equal(6.1)
+  })
+
+  it("subtract", function(){
+    subtract(4.1,2).should.equal(2.1)
+  })
+})
+
+describe("Simple Operation with Reset", function(){
+  
+  it("Simple addition", function(){
+    sequencePress("50+3=")
+    currentOutput.should.equal(53)
+  })
+
+  it("Reset output 'C' then 'AC'", function(){
+    sequenceReset()
+    currentOutput.should.equal(0)
+  })
+
+  it("Complex calculus", function(){
+    sequenceReset()
+    sequencePress("3*3+3-2/2=")
+    currentOutput.should.equal(5)
+  })
+
+  it("Change operator", function(){
+    sequenceReset()
+    sequencePress("3*+/3=")
+    currentOutput.should.equal(1)
+  })
+})
+
+describe("Operations on Double-s", function(){
+  
+  it("Simple addition", function(){
+    sequenceReset()
+    sequencePress("1.3+1.7=")
+    currentOutput.should.equal(3)
+  })
+
+  it("some calculation", function(){
+    sequenceReset()
+    sequencePress("1.3+1.7*2.22/2=")
+    currentOutput.should.equal(3.33)
+  })
+
+  it("No corrupt opposed to what javascript Number would", function(){
+    sequenceReset()
+    sequencePress("1.3+1.7*2.2/2=")
+    currentOutput.should.equal(3.3)
+  })
+
+  it("Complex calcul", function(){
+    sequenceReset()
+    sequencePress("48/.2/")
+    currentOutput.should.equal(240)
+  })
+})
+
+describe("Negative Operations", function(){
+  
+  it("Negative on first number", function(){
+    sequenceReset()
+    sequencePress("50N+3=")
+    currentOutput.should.equal(-47)
+  })
+
+  it("Substract negative", function(){
+    sequenceReset()
+    sequencePress("50N-3=")
+    currentOutput.should.equal(-53)
+  })
+
+  it("Negative before number is typed", function(){
+    sequenceReset()
+    sequencePress("N50-3=")
+    currentOutput.should.equal(-53)
+  })
+
+  it("Negative addition on second number", function(){
+    sequenceReset()
+    sequencePress("50-N33=")
+    currentOutput.should.equal(83)
+  })
+
+  it("Negative zero", function(){
+    sequenceReset()
+    sequencePress("N")
+    currentOutput.should.equal(-0)
+    sequenceReset()
+    sequencePress("0N")
+    currentOutput.should.equal(-0)
+    sequenceReset()
+    sequencePress("N0")
+    currentOutput.should.equal('-0')
+    sequenceReset()
+    sequencePress("0N")
+    currentOutput.should.equal(-0)
+    sequencePress("N0")
+    currentOutput.should.equal('0')
+  })
+
+})
+
+
+describe("Zero division", function(){
+  
+  it("Divide 0 by 0", function(){
+    sequenceReset()
+    sequencePress("0/0=")
+    currentOutput.should.equal('NOT A NUMBER')
+  })
+
+  it("Divde N by 0", function(){
+    sequenceReset()
+    sequencePress("1/0=")
+    currentOutput.should.equal('INFINITY')
+  })
+
+  it("Divde -N by 0", function(){
+    sequenceReset()
+    sequencePress("N1/0=")
+    currentOutput.should.equal('-INFINITY')
+  })
+})
+
+describe("Press equals '='", function(){
+
+  it("should display result when new operation button is pressed", function(){
+    sequenceReset()
+    sequencePress("5+6+")
+    currentOutput.should.equal(11)
+    sequenceReset()
+    sequencePress("5-6*4/2/")
+    currentOutput.should.equal(-2)
+  })
+
+  it("New operation after '='", function(){
+    sequenceReset()
+    sequencePress("5+4=5")
+    currentOutput.should.equal('5')
+    sequenceReset()
+    sequencePress("N5+4*3-3/-1=5")
+    currentOutput.should.equal('5')
+  })
+
+  it("Double '=' repeats last operation", function(){
+    sequenceReset()
+    sequencePress("2+2==")
+    currentOutput.should.equal(6)
+  })
+
+  it("New operation applied to calculated result", function(){
+    sequenceReset()
+    sequencePress("9*9=*9=")
+    currentOutput.should.equal(729)
+  })
+
+  it("Turn result negative, do addition", function(){
+    sequenceReset()
+    sequencePress("9*9=N+1=")
+    currentOutput.should.equal(-80)
+  })
+
+  it("New operation after '=' dissociated from previous one", function(){
+    sequenceReset()
+    sequencePress("9*9=9*")
+    currentOutput.should.equal('9')
+    sequenceReset()
+    sequencePress("9*9=99+1=*2=")
+    currentOutput.should.equal(200)
+  })
+})
+
+describe("Memory", function(){
+  
+  it("Reset 1st number with 'C'", function(){
+    sequenceReset()
+    sequencePress("50R3+6=")
+    currentOutput.should.equal(9)
+  })
+
+  it("Reset 2nd number with 'C'", function(){
+    sequenceReset()
+    sequencePress("50+3R+6=")
+    currentOutput.should.equal(56)
+  })
+
+  it("Complex calcul", function(){
+    sequenceReset()
+    sequencePress("/3*3+3R-+2/2=")
+    currentOutput.should.equal(5.5)
+  })
+
+})
+
+mocha.run()
+function header(str) { document.getElementById('header').innerHTML = str[0].replace(/\n/, '').replace(/\n/g, '<br>') }
+  </script>
+</body>
+</html>

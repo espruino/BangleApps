@@ -5,46 +5,13 @@
   <body>
     <div id="records"></div>
 
-    <div class="modal active" id="status-modal">
-      <div class="modal-overlay"></div>
-      <div class="modal-container">
-        <div class="modal-header">
-          <div class="modal-name h5">Please wait</div>
-        </div>
-        <div class="modal-body">
-          <div class="content">
-            Loading...
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="../../lib/interface.js"></script>
     <script>
 var domRecords = document.getElementById("records");
-var domModal = document.getElementById("status-modal");
-
-function showModal(name) {
-  domModal.querySelector(".content").innerHTML = name;
-  domModal.classList.add("active");
-}
-function hideModal(name) {
-  domModal.classList.remove("active");
-}
 
 function saveRecord(record,name) {
   var csv = `${record.map(rec=>[rec.time, rec.bpm, rec.confidence].join(",")).join("\n")}`;
-  var a = document.createElement("a"),
-      file = new Blob([csv], {type: "Comma-separated value file"});
-  var url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = name+".csv";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-  }, 0);
+  Util.saveCSV(name, csv);
 }
 
 
@@ -62,20 +29,16 @@ function recordLineToObject(l, hasRecordNbr) {
 }
 
 function downloadRecord(recordNbr, callback) {
-  showModal("Downloading heart rate record...");
-  Puck.write(`\x10(function() {
-    var f = require("Storage").open(".heart${recordNbr.toString(36)}","r");
-    var l = f.readLine();
-    while (l!==undefined) { Bluetooth.print(l); l = f.readLine(); }
-  })()\n`,recordList=>{
-    hideModal();
-    var record = recordList.trim().split("\n").map(l=>recordLineToObject(l,false));
+  Util.showModal("Downloading heart rate record...");
+  Util.readStorageFile(`.heart${recordNbr.toString(36)}`,data=>{
+    Util.hideModal();
+    var record = data.trim().split("\n").map(l=>recordLineToObject(l,false));
     callback(record);
   });
 }
 
 function getRecordList() {
-  showModal("Loading heart rate records...");
+  Util.showModal("Loading heart rate records...");
   domRecords.innerHTML = "";
   Puck.write(`\x10(function() {
     for (var n=0;n<36;n++) {
@@ -118,7 +81,7 @@ function getRecordList() {
     </div>
   </div>`;
     domRecords.innerHTML = html;
-    hideModal();
+    Util.hideModal();
     var buttons = domRecords.querySelectorAll("button");
     for (var i=0;i<buttons.length;i++) {
       buttons[i].addEventListener("click",event => {
@@ -126,9 +89,9 @@ function getRecordList() {
         var recordNbr = parseInt(button.getAttribute("recordNbr"));
         var task = button.getAttribute("task");
         if (task=="delete") {
-          showModal("Deleting record...");
-          Puck.write(`\x10require("Storage").open(".heart${recordNbr.toString(36)}","r").erase()\n`,()=>{
-            hideModal();
+          Util.showModal("Deleting record...");
+          Util.eraseStorageFile(`.heart${recordNbr.toString(36)}`,()=>{
+            Util.hideModal();
             getRecordList();
           });
         }

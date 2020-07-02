@@ -1,0 +1,10 @@
+0.02: Now refresh battery monitor every minute if LCD on
+0.03: Tweaks for variable size widget system
+0.04: Ensure redrawing works with variable size widget system
+0.05: Change color depending on battery level, cloned from widbat
+0.06: Show battery percentage as text
+0.07: Add settings: percentage/color/charger icon
+0.08: Draw percentage as inverted on monochrome battery
+0.09: Fix regression stopping correct widget updates
+0.10: Add 'hide if charge greater than'
+0.11: Don't overwrite existing settings on app update

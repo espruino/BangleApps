@@ -4,3 +4,21 @@
 0.05: Fix Settings json
 0.06: Remove distance setting as there's a separate app for Locale now
 0.07: Added vibrate as beep workaround
+0.08: Add support for app/widget settings
+0.09: Move Welcome into App/widget settings
+0.10: Added LCD wake-up settings
+      Adds LCD brightness setting
+0.11: Make LCD brightness work after leaving settings
+0.12: Fix memory leak (#206)
+      Bring App settings nearer the top
+      Move LCD Timeout to wakeup menu
+0.13: Fix memory leak for App settings
+      Make capitalization more consistent
+      Move LCD Brightness menu into more general LCD menu
+0.14: Reduce memory usage when running app settings page
+0.15: Reduce memory usage when running default clock chooser (#294)
+0.16: Reduce memory usage further when running app settings page
+0.17: Remove need for "settings" in appid.info
+0.18: Don't overwrite existing settings on app update
+0.19: Allow BLE HID settings, add README.md
+0.20: Fix set time menu, allow dates to roll over

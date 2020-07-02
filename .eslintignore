@@ -1,0 +1,6 @@
+lib/espruinotools.js
+lib/imageconverter.js
+lib/qrcode.min.js
+lib/heatshrink.js
+lib/marked.min.js
+apps/animclk/V29.LBM.js

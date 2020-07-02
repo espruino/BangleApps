@@ -1,0 +1,9 @@
+0.01: Original App
+0.02: Lap log now counts up from 1
+      Lap log now scrolls into 2nd column after 18th entry, able to display 36 entries before going off screen
+0.03: Added ability to save Lap log as a date named JSON file into memory
+      Fixed bug from 0.01 where BN1 (reset) could clear the lap log when timer is running
+0.04: Changed save file filename, add interface.html to allow laps to be loaded
+0.05: Added widgets
+0.06: Added total running time, moved lap time to smaller display, total run time now appends as first entry in array, saving now saves last lap as well
+0.07: Ensure seconds counter is in sync with subseconds (fix #341)

@@ -95,20 +95,20 @@ const beepItOut = () => {
       // Could make buzz optional or switchable potentially
       BUZZING ? Bangle.buzz(UNITS[UNIT_INDEX] === '.' ? UNIT : 3 * UNIT) : null
     ])
-    .then(() => {
-      if (UNITS[UNIT_INDEX + 1]) {
-        setTimeout(() => {
-          UNIT_INDEX++;
-          beepItOut();
-        }, UNIT);
-      } else {
-        setTimeout(() => {
-          BEEPING = false;
-          UNIT_INDEX = 0;
-          writeLetter();
-        }, 3 * UNIT);
-      }
-    });
+      .then(() => {
+        if (UNITS[UNIT_INDEX + 1]) {
+          setTimeout(() => {
+            UNIT_INDEX++;
+            beepItOut();
+          }, UNIT);
+        } else {
+          setTimeout(() => {
+            BEEPING = false;
+            UNIT_INDEX = 0;
+            writeLetter();
+          }, 3 * UNIT);
+        }
+      });
   }, wait);
 };
 const startBeep = () => {

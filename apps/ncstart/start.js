@@ -114,15 +114,7 @@ function info() {
   });
 }
 
-function cleanup() {
-  var settings = require("Storage").readJSON('setting.json',1)||{};
-  settings.welcomed = true;
-  require("Storage").write('setting.json',settings);
-  return Promise.resolve();
-}
-
 welcome()
   .then(logos)
   .then(info)
-  .then(cleanup)
   .then(load);
