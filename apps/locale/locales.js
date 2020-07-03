@@ -84,7 +84,7 @@ var locales = {
     lang: "en_IN",
     decimal_point: ".",
     thousands_sep: ",",
-    currency_symbol: "₹", 
+    currency_symbol: "Rs.",
     currency_first: true,
     int_curr_symbol: "INR",
     speed: 'kms',
