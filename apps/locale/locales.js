@@ -80,6 +80,25 @@ var locales = {
     day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
     // No translation for english...
   },
+  "en_IN": {
+    lang: "en_IN",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "Rs.",
+    currency_first: true,
+    int_curr_symbol: "INR",
+    speed: 'kms',
+    distance: { "0": "m", "1": "km" },
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%d %b %Y", 1: "%d/%m/%Y" }, // 28 Feb 2020" // "28/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
   "de_DE": {
     lang: "de_DE",
     decimal_point: ",",
