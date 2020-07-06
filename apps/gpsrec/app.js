@@ -2,6 +2,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+var qOpenStMap = (require("Storage").list("openstmap.json")>0);
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
@@ -130,8 +131,14 @@ function viewTrack(n, info) {
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
   menu['Plot Map'] = function() {
+    info.qOSTM = false;
     plotTrack(info);
   };
+  if (qOpenStMap)
+    menu['Plot OpenStMap'] = function() {
+      info.qOSTM = true;
+      plotTrack(info);
+    }
   menu['Plot Alt.'] = function() {
     plotGraph(info, "altitude");
   };
@@ -154,6 +161,26 @@ function viewTrack(n, info) {
   return E.showMenu(menu);
 }
 
+function drawopenstmap(lat, lon, map) {
+  var s = require("Storage");
+  var cx = g.getWidth()/2;
+  var cy = g.getHeight()/2;
+  var p = Bangle.project({lat:lat,lon:lon});
+  var ix = (p.x-map.center.x)*4096/map.scale + (map.imgx/2) - cx;
+  var iy = (map.center.y-p.y)*4096/map.scale + (map.imgy/2) - cy;
+  var tx = 0|(ix/map.tilesize);
+  var ty = 0|(iy/map.tilesize);
+  var ox = (tx*map.tilesize)-ix;
+  var oy = (ty*map.tilesize)-iy;
+  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
+    for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
+      var img = s.read("openstmap-"+ttx+"-"+tty+".img");
+      if (img) g.drawImage(img,x,y);
+      else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1);
+    }
+  }
+}
+
 function plotTrack(info) {
   "ram"
 
@@ -167,17 +194,46 @@ function plotTrack(info) {
     return Math.sqrt(x*x + y*y) * 6371000;
   }
 
+  function getMapXY(mylat, mylon) {
+    if (info.qOSTM) {
+      var q = Bangle.project({lat:mylat,lon:mylon});
+      var p = Bangle.project({lat:clat,lon:clon});
+      var ix = (q.x-p.x)*4096/map.scale + cx;
+      var iy = cy - (q.y-p.y)*4096/map.scale;
+      return {x:ix, y:iy};
+    }
+    else {
+      var ix = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
+      var iy = 210 - Math.round((lat - info.minLat)*info.scale);
+      return {x:ix, y:iy};
+    }
+  }
+
   E.showMenu(); // remove menu
+  var s = require("Storage");
+  var cx = g.getWidth()/2;
+  var cy = g.getHeight()/2;
   g.setColor(1,0.5,0.5);
   g.setFont("Vector",16);
-  g.fillRect(9,80,11,120);
-  g.fillPoly([9,60,19,80,0,80]);
-  g.setColor(1,1,1);
-  g.drawString("N",2,40);
   g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
   g.setColor(0,0,0);
   g.fillRect(0,220,239,239);
-  g.setColor(1,1,1);
+  if (!info.qOSTM) {
+    g.setColor(1, 0, 0);
+    g.fillRect(9,80,11,120);
+    g.fillPoly([9,60,19,80,0,80]);
+    g.setColor(1,1,1);
+    g.drawString("N",2,40);
+    g.setColor(1,1,1);
+  }
+  else {  
+    var map = s.readJSON("openstmap.json");
+    map.center = Bangle.project({lat:map.lat,lon:map.lon});
+    var clat = (info.minLat+info.maxLat)/2;
+    var clon = (info.minLong+info.maxLong)/2;
+    drawopenstmap(clat, clon, map);
+    g.setColor(0, 0, 0);
+  }
   g.drawString(asTime(info.duration),10,220);
   var f = require("Storage").open(info.filename,"r");
   if (f===undefined) return;
@@ -189,31 +245,32 @@ function plotTrack(info) {
   var c = l.split(",");
   var lat = +c[1];
   var long = +c[2];
-  var x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-  var y = 210 - Math.round((lat - info.minLat)*info.scale);
-  g.moveTo(x,y);
+  var mp = getMapXY(lat, long);
+  g.moveTo(mp.x,mp.y);
   g.setColor(0,1,0);
-  g.fillCircle(x,y,5);
-  g.setColor(1,1,1);
+  g.fillCircle(mp.x,mp.y,5);
+  if (info.qOSTM) g.setColor(1,0,0.55);
+  else g.setColor(1,1,1);
   l = f.readLine(f);
   while(l!==undefined) {
     c = l.split(",");
     lat = +c[1];
     long = +c[2];
-    x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-    y = 210 - Math.round((lat - info.minLat)*info.scale);
-    g.lineTo(x,y);
+    mp = getMapXY(lat, long);
+    g.lineTo(mp.x,mp.y);
+    if (info.qOSTM) g.fillCircle(mp.x, mp.y, 1);
     var d = distance(olat,olong,lat,long);
     if (!isNaN(d)) dist+=d;
     olat = lat;
     olong = long;
-    ox = x;
-    oy = y;
+    ox = mp.x;
+    oy = mp.y;
     l = f.readLine(f);
   }
   g.setColor(1,0,0);
   g.fillCircle(ox,oy,5);
-  g.setColor(1,1,1);
+  if (info.qOSTM) g.setColor(0, 0, 0);
+  else g.setColor(1,1,1);
   g.drawString(require("locale").distance(dist),120,220);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
