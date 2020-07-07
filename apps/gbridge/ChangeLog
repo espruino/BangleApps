@@ -15,3 +15,4 @@
 0.14: Added 'find' event handling
 0.15: Don't keep LCD on while playing music
 0.16: Handle dismissing notifications on the phone
+      Nicer display of alarm clock notifications
