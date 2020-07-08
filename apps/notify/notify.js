@@ -1,10 +1,12 @@
 var pos = 0;
+var id = null;
 
 /**
  options = {
    on : bool // turn screen on, default true
    size : int // height of notification, default 80 (max)
    title : string // optional title
+   id // optional notification ID, used with hide()
    src : string // optional source name
    body : string // optional body text
    icon : string // optional icon (image string)
@@ -14,6 +16,7 @@ var pos = 0;
 exports.show = function(options) {
   options = options||{};
   if (options.on===undefined) options.on=true;
+  id = ("id" in options)?options.id:null;
   var h = options.size||80;
   var oldMode = Bangle.getLCDMode();
   // TODO: throw exception if double-buffered?
@@ -86,7 +89,15 @@ exports.show = function(options) {
   Bangle.on("touch", exports.hide);
 }
 
-exports.hide = function() {
+/**
+ options = {
+   id // optional, only hide if current notification has this ID
+ }
+*/
+exports.hide = function(options) {
+  options = options||{};
+  if ("id" in options && options.id!==id) return;
+  id = null;
   Bangle.removeListener("touch", exports.hide);
   function anim() {
     pos += 4;
