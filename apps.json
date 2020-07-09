@@ -2047,6 +2047,20 @@
       {"name":"widancs.settings.js","url":"settings.js"}
     ]
   },
+  { "id": "accelrec",
+    "name": "Acceleration Recorder",
+    "shortName":"Accel Rec",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "This app puts the Bangle's accelerometer into 100Hz mode and reads 2 seconds worth of data after movement starts. The data can then be exported back to the PC.",
+    "tags": "",
+    "readme": "README.md",
+    "storage": [
+      {"name":"accelrec.app.js","url":"app.js"},
+      {"name":"accelrec.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "cprassist",
     "name":"CPR Assist",
