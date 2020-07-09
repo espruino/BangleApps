@@ -425,6 +425,7 @@ function updateApp(app) {
   return getInstalledApps().then(() => {
     // a = from appid.info, app = from apps.json
     let remove = appsInstalled.find(a => a.id === app.id);
+    if (remove.files===undefined) remove.files="";
     // no need to remove files which will be overwritten anyway
     remove.files = remove.files.split(',')
       .filter(f => f !== app.id + '.info')
