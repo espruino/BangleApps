@@ -2059,6 +2059,9 @@
     "storage": [
       {"name":"accelrec.app.js","url":"app.js"},
       {"name":"accelrec.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"wildcard":"accelrec.?.csv" }
     ]
   },
   {
