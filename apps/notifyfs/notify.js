@@ -68,7 +68,7 @@ exports.show = function(options) {
     g.setColor(-1).setFont("6x8", 2).setFontAlign(-1, -1, 0).drawString(body, x-4, y+4);
   }
 
-  if (options.render) options.render(320 - h);
+  if (options.render) options.render(120-h/2);
 
   if (options.on) Bangle.setLCDPower(1); // light up
   Bangle.on("touch", exports.hide);
