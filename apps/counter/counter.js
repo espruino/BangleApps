@@ -26,4 +26,6 @@ g.drawString('Use BTN1 to increase\nthe counter by one.\nUse BTN3 to reset count
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-// TODO: Enable saving count to file
+// TODO: Enable saving counts to file
+// Does not work if widgets are not visible
+// Add small watch
