@@ -1582,8 +1582,7 @@
       {"name": "ballmaze.json"}
     ]
   },
-  {
-    "id": "calendar",
+  { "id": "calendar",
     "name": "Calendar",
     "icon": "calendar.png",
     "version": "0.01",
@@ -2100,5 +2099,17 @@
       {"name":"osgridref.app.js","url":"app.js"},
       {"name":"osgridref.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {"id": "counter",
+  "name": "Counter",
+  "icon": "counter_icon.png",
+  "version": "0.01",
+  "description": "Simple counter",
+  "tags": "tool",
+  "allow_emulator": true,
+  "storage": [
+    {"name": "counter.app.js", "url": "counter.js"},
+    {"name": "counter.img", "url": "counter-icon.js", "evaluate": true}
+   ]
   }
 ]
