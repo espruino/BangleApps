@@ -5,7 +5,7 @@
 
   function draw() {
     var width = 24;
-  	g.reset();
+    g.reset();
     g.setFont("6x8", 1);
     g.setFontAlign(0, 0);
     g.clearRect(this.x,this.y+15,this.x+width,this.y+23); // erase background

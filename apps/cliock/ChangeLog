@@ -1,1 +1,2 @@
 0.07: Submitted to App Loader
+0.08: Fixes issue where face would redraw on wake leading to all memory being used and watch crashing. 

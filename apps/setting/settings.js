@@ -61,6 +61,8 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
+  var hidV = [false, "kbmedia", "kb", "joy"];
+  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
@@ -115,10 +117,11 @@ function showMainMenu() {
     'Locale': ()=>showLocaleMenu(),
     'Select Clock': ()=>showClockMenu(),
     'HID': {
-      value: settings.HID,
-      format: boolFormat,
-      onchange: () => {
-        settings.HID = !settings.HID;
+      value: 0 | hidV.indexOf(settings.HID),
+      min: 0, max: 3,
+      format: v => hidN[v],
+      onchange: v => {
+        settings.HID = hidV[v];
         updateSettings();
       }
     },
@@ -328,83 +331,52 @@ function showClockMenu() {
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
-    '': {
-      'title': 'Set Time',
-      'predraw': function () {
-        d = new Date();
-        timemenu.Hour.value = d.getHours();
-        timemenu.Minute.value = d.getMinutes();
-        timemenu.Second.value = d.getSeconds();
-        timemenu.Date.value = d.getDate();
-        timemenu.Month.value = d.getMonth() + 1;
-        timemenu.Year.value = d.getFullYear();
-      }
+    '': { 'title': 'Set Time' },
+    '< Back': function () {
+      setTime(d.getTime() / 1000);
+      showMainMenu();
     },
-    '< Back': ()=>showMainMenu(),
     'Hour': {
       value: d.getHours(),
-      min: 0,
-      max: 23,
-      step: 1,
-      onchange: v => {
-        d = new Date();
-        d.setHours(v);
-        setTime(d.getTime() / 1000);
+      onchange: function (v) {
+        this.value = (v+24)%24;
+        d.setHours(this.value);
       }
     },
     'Minute': {
       value: d.getMinutes(),
-      min: 0,
-      max: 59,
-      step: 1,
-      onchange: v => {
-        d = new Date();
-        d.setMinutes(v);
-        setTime(d.getTime() / 1000);
+      onchange: function (v) {
+        this.value = (v+60)%60;
+        d.setMinutes(this.value);
       }
     },
     'Second': {
       value: d.getSeconds(),
-      min: 0,
-      max: 59,
-      step: 1,
-      onchange: v => {
-        d = new Date();
-        d.setSeconds(v);
-        setTime(d.getTime() / 1000);
+      onchange: function (v) {
+        this.value = (v+60)%60;
+        d.setSeconds(this.value);
       }
     },
     'Date': {
       value: d.getDate(),
-      min: 1,
-      max: 31,
-      step: 1,
-      onchange: v => {
-        d = new Date();
-        d.setDate(v);
-        setTime(d.getTime() / 1000);
+      onchange: function (v) {
+        this.value = ((v+30)%31)+1;
+        d.setDate(this.value);
       }
     },
     'Month': {
       value: d.getMonth() + 1,
-      min: 1,
-      max: 12,
-      step: 1,
-      onchange: v => {
-        d = new Date();
-        d.setMonth(v - 1);
-        setTime(d.getTime() / 1000);
+      onchange: function (v) {
+        this.value = ((v+11)%12)+1;
+        d.setMonth(this.value - 1);
       }
     },
     'Year': {
       value: d.getFullYear(),
       min: 2019,
       max: 2100,
-      step: 1,
-      onchange: v => {
-        d = new Date();
+      onchange: function (v) {
         d.setFullYear(v);
-        setTime(d.getTime() / 1000);
       }
     }
   };
@@ -419,7 +391,7 @@ function showAppSettingsMenu() {
   const apps = storage.list(/\.settings\.js$/)
     .map(s => s.substr(0, s.length-12))
     .map(id => {
-      const a=storage.readJSON(id+'.info',1);
+      const a=storage.readJSON(id+'.info',1) || {name: id};
       return {id:id,name:a.name,sortorder:a.sortorder};
     })
     .sort((a, b) => {

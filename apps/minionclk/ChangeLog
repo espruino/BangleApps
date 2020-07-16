@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Improved date readability, fixed drawing of widgets
+0.03: Fixed rendering for Espruino v2.06

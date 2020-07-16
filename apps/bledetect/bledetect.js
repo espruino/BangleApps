@@ -37,16 +37,16 @@ function scan() {
   waitMessage();
 
   NRF.findDevices(devices => {
-      devices.forEach(device =>{
-        let deviceName = device.id.substring(0,17);
+    devices.forEach(device =>{
+      let deviceName = device.id.substring(0,17);
 
-        if (device.name) {
-          deviceName = device.name;
-        }
+      if (device.name) {
+        deviceName = device.name;
+      }
 
-        menu[deviceName] = () => showDeviceInfo(device);
-      });
-      showMainMenu(menu);
+      menu[deviceName] = () => showDeviceInfo(device);
+    });
+    showMainMenu(menu);
   }, { active: true });
 }
 

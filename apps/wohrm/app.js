@@ -143,13 +143,13 @@ function renderConfidenceBars(){
   if(!confidenceChanged) { return; }
 
   if(hrConfidence >= 85){
-      g.setColor(0, 255, 0);
+    g.setColor(0, 255, 0);
   } else if (hrConfidence >= 50) {
-      g.setColor(255, 255, 0);
+    g.setColor(255, 255, 0);
   } else if(hrConfidence >= 0){
-      g.setColor(255, 0, 0);
+    g.setColor(255, 0, 0);
   } else {
-      g.setColor(255, 255, 255);
+    g.setColor(255, 255, 255);
   }
 
   g.fillRect(45, 110, 55, 150);

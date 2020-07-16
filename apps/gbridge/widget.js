@@ -1,5 +1,4 @@
 (() => {
-
   const state = {
     music: "stop",
 
@@ -12,147 +11,101 @@
     scrollPos: 0
   };
 
+  function settings() {
+    let settings = require('Storage').readJSON("gbridge.json", true) || {};
+    if (!("showIcon" in settings)) {
+      settings.showIcon = true;
+    }
+    return settings
+  }
+
   function gbSend(message) {
+    Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
 
-  function showNotification(size, render, turnOn) {
-    if (turnOn === undefined) turnOn = true
-    var oldMode = Bangle.getLCDMode();
-
-    Bangle.setLCDMode("direct");
-    g.setClipRect(0, 240, 239, 319);
-    g.setColor("#222222");
-    g.fillRect(1, 241, 238, 318);
-
-    render(320 - size);
-
-    g.setColor("#ffffff");
-    g.fillRect(0, 240, 1, 319);
-    g.fillRect(238, 240, 239, 319);
-    g.fillRect(2, 318, 238, 319);
-
-    if (turnOn) Bangle.setLCDPower(1); // light up
-    Bangle.setLCDMode(oldMode); // clears cliprect
-
-    function anim() {
-      state.scrollPos -= 2;
-      if (state.scrollPos < -size) {
-        state.scrollPos = -size;
-      }
-      Bangle.setLCDOffset(state.scrollPos);
-      if (state.scrollPos > -size) setTimeout(anim, 15);
+  function prettifyNotificationEvent(event) {
+    switch (event.src) {
+      case "ALARMCLOCKRECEIVER":
+        return {
+          id: event.id,
+          title: event.title || "Alarm",
+          body: event.body,
+          // same icon as apps/alarm/app-icon.js
+          icon: require("heatshrink").decompress(atob("mEwwkGswAhiMRCCAREAo4eHBIQLEAgwYHsIJDiwHB5gACBpIhHCoYZEGA4gFCw4ABGA4HEjgXJ4IXGAwcUB4VEmf//8zogICoJIFAodMBoNDCoIADmgJB4gXIFwXDCwoABngwFC4guB4k/CQXwh4EC+YMCC44iBp4qDC4n/+gNBC41sEIJCEC4v/GAPGC4dhXYRdFC4xhCCYIXCdQRdDC5HzegQXCsxGHC45IDCwQXCUgwXHJAIXGRogXJSIIXcOw4XIPAYXcBwv/mEDBAwXOgtQC65QGC5vzoEAJAx3Nmk/mEABIiPN+dDAQIwFC4zXGFwKRCGAjvMFwQECGAgXI4YuGGAUvAgU8C4/EFwwGCAgdMC4p4EFwobFOwoXDJAIoEAApGBC4xIEABJGHGAapEAAqNBFwwXD4heI+YuBC5BIBVQhdHIw4wD5inFS4IKCCxFmigNCokzCoMzogICoIWIsMRjgPCAA3BiMWC48RBQIXJEgMRFxAJCCw4lEC44IECooOIBAaBJKwhgIAH4ACA==")),
+        };
+      default:
+        return event;
     }
-    anim();
   }
-
-  function hideNotification() {
-    function anim() {
-      state.scrollPos += 4;
-      if (state.scrollPos > 0) state.scrollPos = 0;
-      Bangle.setLCDOffset(state.scrollPos);
-      if (state.scrollPos < 0) setTimeout(anim, 10);
-    }
-    anim();
-  }
-
   function handleNotificationEvent(event) {
-
-    // split text up at word boundaries
-    var txt = event.body.split("\n");
-    var MAXCHARS = 38;
-    for (var i = 0; i < txt.length; i++) {
-      txt[i] = txt[i].trim();
-      var l = txt[i];
-      if (l.length > MAXCHARS) {
-        var p = MAXCHARS;
-        while (p > MAXCHARS - 8 && !" \t-_".includes(l[p]))
-          p--;
-        if (p == MAXCHARS - 8) p = MAXCHARS;
-        txt[i] = l.substr(0, p);
-        txt.splice(i + 1, 0, l.substr(p));
-      }
+    if (event.t === "notify") {
+      require("notify").show(prettifyNotificationEvent(event));
+      Bangle.buzz();
+    } else { // notify-
+      require("notify").hide(event);
     }
-
-    showNotification(80, (y) => {
-
-      // TODO: icon based on src?
-      var x = 120;
-      g.setFontAlign(0, 0);
-      g.setFont("6x8", 1);
-      g.setColor("#40d040");
-      g.drawString(event.src, x, y + 7);
-
-      g.setColor("#ffffff");
-      g.setFont("6x8", 2);
-      if (event.title)
-        g.drawString(event.title.slice(0,17), x, y + 25);
-
-      g.setFont("6x8", 1);
-      g.setColor("#ffffff");
-      g.setFontAlign(-1, -1);
-      g.drawString(txt.join("\n"), 10, y + 40);
-    });
-
-    Bangle.buzz();
   }
 
+  function updateMusic(options){
+    if (state.music === "play") {
+      require("notify").show(Object.assign({
+        size:40, id:"music",
+        render:y => {
+          g.setColor(-1);
+          g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")), 8, y + 8);
+          g.setFontAlign(-1, -1);
+          var x = 40;
+          g.setFont("4x6", 2).drawString(state.musicInfo.artist, x, y + 8);
+          g.setFont("6x8", 1).drawString(state.musicInfo.track, x, y + 22);
+        }}, options));
+    }
+
+    if (state.music === "pause") {
+      require("notify").hide("music");
+    }
+  }
   function handleMusicStateUpdate(event) {
-    const changed = state.music === event.state
-    state.music = event.state
-
-    if (state.music == "play") {
-      showNotification(40, (y) => {
-        g.setColor("#ffffff");
-        g.drawImage(require("heatshrink").decompress(atob("jEYwILI/EAv/8gP/ARcMgOAASN8h+A/kfwP8n4CD/E/gHgjg/HA=")), 8, y + 8);
-
-        g.setFontAlign(-1, -1);
-        var x = 40;
-        g.setFont("4x6", 2);
-        g.setColor("#ffffff");
-        g.drawString(state.musicInfo.artist, x, y + 8);
-
-        g.setFont("6x8", 1);
-        g.setColor("#ffffff");
-        g.drawString(state.musicInfo.track, x, y + 22);
-      }, changed);
+    if (state.music !== event.state) {
+      state.music = event.state
+      updateMusic({on: true});
     }
-
-    if (state.music == "pause") {
-      hideNotification();
-    }
+  }
+  function handleMusicInfoUpdate(event) {
+    state.musicInfo = event;
+    updateMusic({on: false});
   }
 
   function handleCallEvent(event) {
-
-    if (event.cmd == "accept") {
-      showNotification(40, (y) => {
-        g.setColor("#ffffff");
-        g.drawImage(require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw=")), 8, y + 8);
-
-        g.setFontAlign(-1, -1);
-        var x = 40;
-        g.setFont("4x6", 2);
-        g.setColor("#ffffff");
-        g.drawString(event.name, x, y + 8);
-
-        g.setFont("6x8", 1);
-        g.setColor("#ffffff");
-        g.drawString(event.number, x, y + 22);
-      });
-
+    if (event.cmd === "accept") {
+      require("notify").show({
+        size: 55, title: event.name, id: "call",
+        body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))});
       Bangle.buzz();
     }
+  }
+
+  function handleFindEvent(event) {
+    if (state.find) {
+      clearInterval(state.find);
+      delete state.find;
+    }
+    if (event.n)
+      state.find = setInterval(_=>{
+        Bangle.buzz();
+        setTimeout(_=>Bangle.beep(), 1000);
+      },2000);
   }
 
   var _GB = global.GB;
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
+      case "notify-":
         handleNotificationEvent(event);
         break;
       case "musicinfo":
-        state.musicInfo = event;
+        handleMusicInfoUpdate(event);
         break;
       case "musicstate":
         handleMusicStateUpdate(event);
@@ -160,19 +113,15 @@
       case "call":
         handleCallEvent(event);
         break;
+      case "find":
+        handleFindEvent(event);
+        break;
     }
     if(_GB)setTimeout(_GB,0,event);
   };
 
-  // Touch control
-  Bangle.on("touch", () => {
-    if (state.scrollPos) {
-      hideNotification();
-    }
-  });
-
   Bangle.on("swipe", (dir) => {
-    if (state.music == "play") {
+    if (state.music === "play") {
       const command = dir > 0 ? "next" : "previous"
       gbSend({ t: "music", n: command });
     }
@@ -191,10 +140,28 @@
     g.flip(); // turns screen on
   }
 
-  NRF.on("connect", changedConnectionState);
-  NRF.on("disconnect", changedConnectionState);
+  function reload() {
+    NRF.removeListener("connect", changedConnectionState);
+    NRF.removeListener("disconnect", changedConnectionState);
+    if (settings().showIcon) {
+      WIDGETS["gbridgew"].width = 24;
+      WIDGETS["gbridgew"].draw = draw;
+      NRF.on("connect", changedConnectionState);
+      NRF.on("disconnect", changedConnectionState);
+    } else {
+      WIDGETS["gbridgew"].width = 0;
+      WIDGETS["gbridgew"].draw = ()=>{};
+    }
+  }
 
-  WIDGETS["gbridgew"] = { area: "tl", width: 24, draw: draw };
+  WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
+  reload();
 
-  gbSend({ t: "status", bat: E.getBattery() });
+  function sendBattery() {
+    gbSend({ t: "status", bat: E.getBattery() });
+  }
+
+  NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  setInterval(sendBattery, 10*60*1000);
+  sendBattery();
 })();

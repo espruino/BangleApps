@@ -16,13 +16,13 @@ setWatch(x=>{
 },BTN1,{repeat:true});
 
 function updateAdvertising() {
-try {
-  NRF.setAdvertising({},{
-    manufacturer: 0x0590,
-    manufacturerData: new Uint8Array([mycounter>>8,mycounter&255]),
-    interval: 60
-  });
-} catch(e){}
+  try {
+    NRF.setAdvertising({},{
+      manufacturer: 0x0590,
+      manufacturerData: new Uint8Array([mycounter>>8,mycounter&255]),
+      interval: 60
+    });
+  } catch(e){}
 }
 
 function drawPlayers() {
@@ -44,7 +44,7 @@ function drawPlayers() {
   var d = 63 - (offset&63);
   g.fillRect(0,10,240,12);
   for (var x=d;x<240;x+=64)
-     g.fillRect(x,12,x+2,12+20);
+    g.fillRect(x,12,x+2,12+20);
   var y = 20;
   var p = mycounter-offset;
   g.drawString("You",p-16,y+20);
@@ -60,7 +60,7 @@ function drawPlayers() {
 
   g.fillRect(0,150,240,152);
   for (var x=d;x<240;x+=64)
-     g.fillRect(x,152,x+2,160);
+    g.fillRect(x,152,x+2,160);
   g.flip();
 }
 
