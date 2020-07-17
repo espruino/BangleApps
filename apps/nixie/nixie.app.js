@@ -1,4 +1,3 @@
-
 g.clear();
 
 require("Font8x12").add(Graphics);
@@ -9,7 +8,11 @@ let stepCounter = 0;
 let msgs = require("Storage").readJSON('yngv27.msgs.json');
 let alarms = require("Storage").readJSON('yngv27.alarm.json');
 
+let alarming = false;
+let nightMode = false;
+
 function showMsg(msg) {
+  alarming = true;
   g.setFontAlign(0,-1);
   g.setColor(1,1,1);
   g.drawString("<< ALARM >>", 120, 180, true);
@@ -214,9 +217,7 @@ let points5 = [
   79,  0,
               ];
 
-
 function drawPoints(points, x0, y0) {
- 
   let x = points[0]*xs+x0, y = points[1]*ys+y0;
    //g.drawEllipse(x-2, y-2, x+2, y+2);
    g.moveTo(x, y);
@@ -228,13 +229,14 @@ function drawPoints(points, x0, y0) {
   }
 }
 
-/* create 5 from 2 , and 9 from 6 */
-/* nope, we have a better 5; less authentic, but whatev 
+/* create 5 from 2  */
+/* uncomment if you want the 5 to look more authentic (but uglier)
 for (let idx=0; idx*2 < points2.length; idx++) {
    points5[idx*2] = points2[idx*2];
    points5[idx*2+1] = 99-points2[idx*2+1];
 }
 */
+/* create 9 from 6 */
 for (let idx=0; idx*2 < points6.length; idx++) {
    points9[idx*2] = 79-points6[idx*2];
    points9[idx*2+1] = 99-points6[idx*2+1];
@@ -243,10 +245,13 @@ for (let idx=0; idx*2 < points6.length; idx++) {
 pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
 
 function eraseDigit(d, x, y) {
-  // first time draw
   if(d < 0) return;
   g.setColor("#000000");
-    drawPoints(pointsArray[d], x-2, y-2);
+  if(nightMode) {
+    drawPoints(pointsArray[d], x, y);
+    return;
+  }
+  drawPoints(pointsArray[d], x-2, y-2);
   drawPoints(pointsArray[d], x+2, y-2);
   drawPoints(pointsArray[d], x-2, y+2);
   drawPoints(pointsArray[d], x+2, y+2);
@@ -257,13 +262,14 @@ function eraseDigit(d, x, y) {
 }
 
 function drawDigit(d, x, y) {
-  //g.drawEllipse(20+4*xs, 20, 20+(72 * xs), 20+(40*ys));
-  //g.drawEllipse(20, 20+(40*ys), 20+(80 * xs), 20+(99*ys));
-  //g.drawEllipse(20, 20, 20+(79 * xs), 20+(99*ys));
+  if(nightMode) {
+    g.setColor("#206040");
+    drawPoints(pointsArray[d], x, y);
+    return;
+  }
   g.setColor("#202020");
   for (let idx = pointsArray.length - 1; idx >= 0 ; idx--) {
     if(idx == d)  {
-      
       g.setColor("#FF0000");
       drawPoints(pointsArray[d], x-2, y-2);
       drawPoints(pointsArray[d], x+2, y-2);
@@ -274,7 +280,7 @@ function drawDigit(d, x, y) {
       drawPoints(pointsArray[d], x+1, y-1);
       drawPoints(pointsArray[d], x-1, y+1);
       drawPoints(pointsArray[d], x+1, y+1);
-      
+
       g.setColor("#FFC000");
       drawPoints(pointsArray[d], x, y);
 
@@ -283,12 +289,11 @@ function drawDigit(d, x, y) {
       drawPoints(pointsArray[idx], x, y);
     }
   }
-   
 }
-   
+
 function drawTime() {
   const mstr="JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-  
+
   let d = new Date();
   let hour = d.getHours();
   let minute = d.getMinutes();
@@ -303,7 +308,7 @@ function drawTime() {
   if(h1 == prevH1 && h2 == prevH2 && m1 == prevM1 && m2 == prevM2) {
     return;
   }
-  
+
   if(h1 != prevH1) {
     eraseDigit(prevH1, 10, 80);
     drawDigit(h1, 10, 80);
@@ -315,32 +320,47 @@ function drawTime() {
   if(m1 != prevM1) {
     eraseDigit(prevM1, 135, 80);
     drawDigit(m1, 135, 80);
-  }    
+  }
   if(m2 != prevM2) {
     eraseDigit(prevM2, 190, 80);
     drawDigit(m2, 190, 80);
-  }  
-  
-  g.setColor("#000000");
-  g.fillRect(0, 10, 240, 24);
-  g.fillRect(0, 222, 240, 240);
-  g.setColor("#202020");
-  g.drawLine(0, 24, 239, 24);
-  g.drawLine(0, 226, 239, 226);
-  g.setColor("#C06000");
-  g.setFontAlign(0, -1);
-  g.drawString(mstr.slice(month*3,month*3+3) + " " + date, 120, 10);
-  g.setFontAlign(-1,-1);
-  g.drawString("STEP " + stepCounter, 0, 230);
-  g.setFontAlign(1,-1);
-  g.drawString("BTY "+E.getBattery(), 240, 230);
+  }
+  if(!nightMode) {
+    g.setColor("#000000");
+    g.fillRect(0, 10, 240, 24);
+    g.fillRect(0, 222, 240, 240);
+    g.setColor("#202020");
+    g.drawLine(0, 24, 239, 24);
+    g.drawLine(0, 226, 239, 226);
+    g.setColor("#C06000");
+    g.setFontAlign(0, -1);
+    g.drawString(mstr.slice(month*3,month*3+3) + " " + date, 120, 10);
+    g.setFontAlign(-1,-1);
+    g.drawString("STEP " + stepCounter, 0, 230);
+    g.setFontAlign(1,-1);
+    g.drawString("BTY "+E.getBattery(), 240, 230);
+  }
 
-  
   prevH1 = h1;
   prevH2 = h2;
   prevM1 = m1;
   prevM2 = m2;
-  
+
+}
+
+function btn1Func() {
+  if(alarming) {
+    alarming = false;
+  } else {
+    nightMode = !nightMode;
+    g.setRotation(nightMode ? 1 : 0, 0);
+  }
+    g.clear();
+    prevH1 = -1;
+    prevH2 = -1;
+    prevM1 = -1;
+    prevM2 = -1;
+    drawTime();
 }
 
 function stop () {
@@ -353,7 +373,6 @@ function start () {
   if (interval) {
     clearInterval(interval);
   }
-  // first time init
   interval = setInterval(drawTime, 10000);
   drawTime();
 }
@@ -369,14 +388,6 @@ Bangle.on('lcdPower', function (on) {
   }
 });
 
-function btn1Func() {
-  g.clear();
-  prevH1 = -1;
-  prevH2 = -1;
-  prevM1 = -1;
-  prevM2 = -1;
-  drawTime();
-}
 
 function btn3Func() {
   showMsg("This is a test message");
