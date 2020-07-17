@@ -174,6 +174,11 @@ let gpsReady = false;
 let hrmReady = false;
 let running = false;
 
+let b = Graphics.createArrayBuffer(240,210,2,{msb:true});
+let bpal = new Uint16Array([0,0xF800,0x07E0,0xFFFF]);
+let COL = { RED:1,GREEN:2,WHITE:3 };
+let bimg = {width:240,height:210,bpp:2,buffer:b.buffer,palette:bpal};
+
 function formatClock(date) {
   return ('0' + date.getHours()).substr(-2) + ':' + ('0' + date.getMinutes()).substr(-2);
 }
@@ -200,60 +205,60 @@ function formatSpeed(kmh) {
 }
 
 function drawBackground() {
-  g.setColor(running ? 0x00E0 : 0x0000);
-  g.fillRect(0, 30, 240, 240);
+  b.clear();
 
-  g.setColor(0xFFFF);
-  g.setFontAlign(0, -1, 0);
-  g.setFont('6x8', 2);
+  b.setColor(COL.WHITE);
+  b.setFontAlign(0, -1, 0);
+  b.setFont('6x8', 2);
 
-  g.drawString('DISTANCE', 120, 50);
-  g.drawString('TIME', 60, 100);
-  g.drawString('PACE', 180, 100);
-  g.drawString('STEPS', 60, 150);
-  g.drawString('STP/m', 180, 150);
-  g.drawString('SPEED', 40, 200);
-  g.drawString('HEART', 120, 200);
-  g.drawString('CADENCE', 200, 200);
+  b.drawString('DISTANCE', 120, 20);
+  b.drawString('TIME', 60, 70);
+  b.drawString('PACE', 180, 70);
+  b.drawString('STEPS', 60, 120);
+  b.drawString('STP/m', 180, 120);
+  b.drawString('SPEED', 40, 170);
+  b.drawString('HEART', 120, 170);
+  b.drawString('CADENCE', 200, 170);
 }
 
 function draw() {
   const totSpeed = totTime ? 3.6 * totDist / totTime : 0;
   const totCadence = totTime ? Math.round(60 * totSteps / totTime) : 0;
 
-  g.setColor(running ? 0x00E0 : 0x0000);
-  g.fillRect(0, 30, 240, 50);
-  g.fillRect(0, 70, 240, 100);
-  g.fillRect(0, 120, 240, 150);
-  g.fillRect(0, 170, 240, 200);
-  g.fillRect(0, 220, 240, 240);
+  b.clearRect(0, 00, 240, 20);
+  b.clearRect(0, 40, 240, 70);
+  b.clearRect(0, 90, 240, 120);
+  b.clearRect(0, 140, 240, 170);
+  b.clearRect(0, 190, 240, 210);
 
-  g.setFont('6x8', 2);
+  b.setFont('6x8', 2);
 
-  g.setFontAlign(-1, -1, 0);
-  g.setColor(gpsReady ? 0x07E0 : 0xF800);
-  g.drawString(' GPS', 6, 30);
+  b.setFontAlign(-1, -1, 0);
+  b.setColor(gpsReady ?  COL.GREEN : COL.RED);
+  b.drawString(' GPS', 6, 0);
 
-  g.setFontAlign(1, -1, 0);
-  g.setColor(0xFFFF);
-  g.drawString(formatClock(new Date()), 234, 30);
+  b.setFontAlign(1, -1, 0);
+  b.setColor(COL.WHITE);
+  b.drawString(formatClock(new Date()), 234, 0);
 
-  g.setFontAlign(0, -1, 0);
-  g.setFontVector(20);
-  g.drawString(formatDistance(totDist), 120, 70);
-  g.drawString(formatTime(totTime), 60, 120);
-  g.drawString(formatSpeed(totSpeed), 180, 120);
-  g.drawString(totSteps, 60, 170);
-  g.drawString(totCadence, 180, 170);
+  b.setFontAlign(0, -1, 0);
+  b.setFontVector(20);
+  b.drawString(formatDistance(totDist), 120, 40);
+  b.drawString(formatTime(totTime), 60, 90);
+  b.drawString(formatSpeed(totSpeed), 180, 90);
+  b.drawString(totSteps, 60, 140);
+  b.drawString(totCadence, 180, 140);
 
-  g.setFont('6x8', 2);
-  g.drawString(formatSpeed(speed), 40, 220);
+  b.setFont('6x8', 2);
+  b.drawString(formatSpeed(speed), 40,190);
 
-  g.setColor(hrmReady ? 0x07E0 : 0xF800);
-  g.drawString(heartRate, 120, 220);
+  b.setColor(hrmReady ? COL.GREEN : COL.RED);
+  b.drawString(heartRate, 120, 190);
 
-  g.setColor(0xFFFF);
-  g.drawString(cadence, 200, 220);
+  b.setColor(COL.WHITE);
+  b.drawString(cadence, 200, 190);
+
+  g.drawImage(bimg,0,30);
 }
 
 function handleGps(coords) {
