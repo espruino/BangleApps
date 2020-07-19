@@ -16,7 +16,7 @@ options = {
   src : string, // optional source name
   body : string, // optional body text
   icon : string, // optional icon (image string)
-  render function(y) {} // function callback to render
+  render function(area) {} // function callback to render in area{x,y,w,h} 
 };
 // eg... show notification
 require("notify").show({title:"Test", body:"Hello"});
