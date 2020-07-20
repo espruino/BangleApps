@@ -456,6 +456,23 @@
       {"name":"widbatpc.json"}
     ]
   },
+  { "id": "widbatwarn",
+    "name": "Battery Warning",
+    "shortName": "Battery Warning",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Show a warning when the battery runs low.",
+    "tags": "tool,battery",
+    "type":"widget",
+    "dependencies": { "notify":"type" },
+    "storage": [
+      {"name":"widbatwarn.wid.js","url":"widget.js"},
+      {"name":"widbatwarn.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widbatwarn.json"}
+    ]
+  },
   { "id": "widbt",
     "name": "Bluetooth Widget",
     "icon": "widget.png",
