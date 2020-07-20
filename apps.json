@@ -460,6 +460,7 @@
     "name": "Battery Warning",
     "shortName": "Battery Warning",
     "icon": "widget.png",
+    "readme": "README.md",
     "version":"0.01",
     "description": "Show a warning when the battery runs low.",
     "tags": "tool,battery",
