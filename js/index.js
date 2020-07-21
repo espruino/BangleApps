@@ -204,9 +204,11 @@ function showTab(tabname) {
 
 // Can't use chip.attributes.filterid.value here because Safari/Apple's WebView doesn't handle it
 let chips = Array.from(document.querySelectorAll('.filter-nav .chip')).map(chip => chip.getAttribute("filterid"));
-let hash = window.location.hash ? window.location.hash.slice(1) : '';
+let hash = "";
+if (window.location.hash)
+  hash = decodeURIComponent(window.location.hash.slice(1)).toLowerCase();
 
-let activeFilter = ~chips.indexOf(hash) ? hash : '';
+let activeFilter = (chips.indexOf(hash)>=0) ? hash : '';
 let activeSort = '';
 let currentSearch = activeFilter ? '' : hash;
 
@@ -236,7 +238,7 @@ function refreshLibrary() {
   }
 
   if (currentSearch) {
-    visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch));
+    visibleApps = visibleApps.filter(app => app.name.toLowerCase().includes(currentSearch) || app.tags.includes(currentSearch) || app.id.toLowerCase().includes(currentSearch));
   }
 
   visibleApps.sort(appSorter);
@@ -258,13 +260,14 @@ function refreshLibrary() {
     let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
     if(githubMatch) username = githubMatch[1];
     let url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+    let appurl = window.location.origin + window.location.pathname + "#" + encodeURIComponent(app.id);
 
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
     <div class="tile-icon">
       <figure class="avatar"><img src="apps/${app.icon?`${app.id}/${app.icon}`:"unknown.png"}" alt="${escapeHtml(app.name)}"></figure><br/>
     </div>
     <div class="tile-content">
-      <p class="tile-title text-bold">${escapeHtml(app.name)} ${versionInfo}</p>
+      <p class="tile-title text-bold"><a name="${appurl}"></a>${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${getAppDescription(app)}${app.readme?`<br/>${readme}`:""}</p>
       <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
@@ -658,6 +661,7 @@ let librarySearchInput = document.querySelector("#searchform input");
 librarySearchInput.value = currentSearch;
 librarySearchInput.addEventListener('input', evt => {
   currentSearch = evt.target.value.toLowerCase();
+  window.location.hash = "#"+encodeURIComponent(currentSearch);
   refreshLibrary();
 });
 
