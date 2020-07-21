@@ -20,24 +20,35 @@ setWatch(() => {
 }, BTN2, {repeat:false,edge:"falling"});)
 `;
 // check to see if our clock is wrong - if it is use GPS time
-if ((new Date()).getFullYear()<2000) {
-  E.showMessage("Searching for\nGPS time");
-  Bangle.on("GPS",function cb(g) {
-    Bangle.setGPSPower(0);
-    Bangle.removeListener("GPS",cb);
-    if (!g.time || (g.time.getFullYear()<2000) ||
-       (g.time.getFullYear()>2200)) {
-      // GPS receiver's time not set - just boot clock anyway
-      eval(clockApp);
-      delete clockApp;
-      return;
-    }
+function cancelTimeSearch() {
+  Bangle.setGPSPower(0);
+  Bangle.removeListener("GPS",cb);
+}
+function continueToClock() {
+  eval(clockApp);
+  delete clockApp;
+}
+function cb(g) {
+  if (g.time && (g.time.getFullYear()>2000) &&
+      (g.time.getFullYear()<2200)) {
+
+    cancelTimeSearch();
+
     // We have a GPS time. Set time and reboot (to load alarms properly)
     setTime(g.time.getTime()/1000);
     load();
-  });
+  }
+}
+// check to see if our clock is wrong - if it is use GPS time
+if ((new Date()).getFullYear()<2000) {
+  E.showMessage("Searching for\nGPS time\n\nBTN2 to continue\nwithout setting time");
+  Bangle.on("GPS",cb);
   Bangle.setGPSPower(1);
+
+  setWatch(() => {
+    cancelTimeSearch();
+    continueToClock();
+  }, BTN2, {repeat:false,edge:"falling"});
 } else {
-  eval(clockApp);
-  delete clockApp;
+  continueToClock();
 }
