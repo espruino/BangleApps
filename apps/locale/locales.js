@@ -264,7 +264,7 @@ var locales = {
         month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
         abday: "dim,lun,mar,mer,jeu,ven,sam",
         day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
-        trans: { yes: "oui", Yes: "Oui", no: "no", No: "No", ok: "ok", on: "on", off: "off" }
+        trans: { yes: "oui", Yes: "Oui", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
     },
     "fi_FI": {
         lang: "fi_FI",
@@ -318,7 +318,7 @@ var locales = {
         month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
         abday: "dim,lun,mar,mer,jeu,ven,sam",
         day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
-        trans: { yes: "oui", Yes: "Oui", no: "no", No: "No", ok: "ok", on: "on", off: "off" }
+        trans: { yes: "oui", Yes: "Oui", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
     },
     "it_CH": {
         lang: "it_CH",
