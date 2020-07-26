@@ -15,6 +15,10 @@
 			wakeOnTouch: settings.wakeOnTouch,
 		},
 	};
+	const saved = storage.readJSON("nitemode.settings.json", 1) || {};
+	for (const key in saved) {
+		s[key] = saved[key];
+	}
 
 	function save(key) {
 		return function (value) {
