@@ -40,7 +40,7 @@
     "name": "Super Simple Watchface",
     "shortName":"Simple digital Watchface",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Simple Digital Watchface with time in 24h format and date in dd-MMM-yyyy format.",
     "tags": "clock",
     "type":"clock",

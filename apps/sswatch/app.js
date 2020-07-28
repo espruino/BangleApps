@@ -16,7 +16,7 @@ function draw(){
   g.setFont("6x8",5);
   g.drawString(time,colWidth,rowHeight,true);
   g.setFont("6x8",3);
-  g.drawString(dateArray[2]+"-"+dateArray[1]+"-"+dateArray[3],colWidth,rowHeight*2);
+  g.drawString(dateArray[2]+"-"+dateArray[1]+"-"+dateArray[3],colWidth,rowHeight*2,true);
 }
 // special function to handle display switch on
 Bangle.on('lcdPower', (on) => {
