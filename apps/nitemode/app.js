@@ -1,4 +1,5 @@
 const storage = require("Storage");
+let niteModeSettings = storage.readJSON("nitemode.settings.json", 1) || {};
 
 function setNiteMode(niteMode) {
 	let settings = storage.readJSON("setting.json", 1);
@@ -15,26 +16,31 @@ function setNiteMode(niteMode) {
 		settings.options.wakeOnTouch = niteModeSettings.daySettings.wakeOnTouch;
 	}
 	storage.write("setting.json", settings);
+	Bangle.setOptions(settings.options);
 }
 
 function doTheThing() {
-	let niteModeSettings = storage.readJSON("nitemode.settings.json", 1) || {};
-
 	niteModeSettings.niteMode = !niteModeSettings.niteMode;
 	storage.write("nitemode.settings.json", niteModeSettings);
 
 	g.clear();
-	g.setFont("8x12", 2);
 	g.setColor(0xf800);
-	g.drawString(
-		"NiteMode enabled! You may close the app.",
-		g.getWidth() / 2,
-		g.getHeight() / 2
-	);
+	if (niteModeSettings.niteMode) {
+		g.drawString(
+			"NiteMode enabled!\n\n You may close the app.",
+			g.getWidth() / 2,
+			g.getHeight() / 2
+		);
+	} else {
+		g.drawString(
+			"NiteMode Disabled!\n\n You may close the app.",
+			g.getWidth() / 2,
+			g.getHeight() / 2
+		);
+	}
 	setNiteMode(niteModeSettings.niteMode);
 }
 
-require("Font8x12").add(Graphics);
 g.setFontAlign(0, 0);
 g.flip();
 
