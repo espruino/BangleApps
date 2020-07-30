@@ -13,6 +13,18 @@ if (s.ble!==false) {
 if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
   if (s.log) Terminal.setConsole(true); // if showing debug, force REPL onto terminal
   else E.setConsole(null,{force:true}); // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
+  /* If not programmable add our own handler for Bluetooth data
+  to allow Gadgetbridge commands to be received*/
+  Bluetooth.line="";
+  Bluetooth.on('data',function(d) {
+    var l = (Bluetooth.line + d).split("\n");
+    Bluetooth.line = l.pop();
+    l.forEach(n=>Bluetooth.emit("line",n));
+  });
+  Bluetooth.on('line',function(l) {
+    if (l.startsWith('GB({') && l.endsWith('})') && global.GB)
+      try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
+  });
 } else {
   if (s.log && !NRF.getSecurityStatus().connected) Terminal.setConsole(); // if showing debug, put REPL on terminal (until connection)
   else Bluetooth.setConsole(true); // else if no debug, force REPL to Bluetooth

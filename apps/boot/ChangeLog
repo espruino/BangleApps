@@ -18,3 +18,4 @@
 0.17: Don't modify beep/buzz behaviour if firmware does it automatically
 0.18: Fix  'GPS time' checks for western hemisphere
 0.19: Tweaks to simplify code and lower memory usage
+0.20: Allow Gadgetbridge to work even with programmable:off
