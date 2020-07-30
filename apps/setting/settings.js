@@ -67,22 +67,7 @@ function showMainMenu() {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
     'App/Widget Settings': ()=>showAppSettingsMenu(),
-    'BLE': {
-      value: settings.ble,
-      format: boolFormat,
-      onchange: () => {
-        settings.ble = !settings.ble;
-        updateSettings();
-      }
-    },
-    'Programmable': {
-      value: settings.blerepl,
-      format: boolFormat,
-      onchange: () => {
-        settings.blerepl = !settings.blerepl;
-        updateSettings();
-      }
-    },
+    'BLE': ()=>showBLEMenu(),
     'Debug Info': {
       value: settings.log,
       format: v => v ? "Show" : "Hide",
@@ -132,6 +117,58 @@ function showMainMenu() {
     '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
+}
+
+function showBLEMenu() {
+  E.showMenu({
+    'BLE': {
+      value: settings.ble,
+      format: boolFormat,
+      onchange: () => {
+        settings.ble = !settings.ble;
+        updateSettings();
+      }
+    },
+    'Programmable': {
+      value: settings.blerepl,
+      format: boolFormat,
+      onchange: () => {
+        settings.blerepl = !settings.blerepl;
+        updateSettings();
+      }
+    },
+    'Passkey': {
+      value: settings.passkey?settings.passkey:"none",
+      onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
+    },
+    '< Back': ()=>showMainMenu()
+  });
+}
+
+function showPasskeyMenu() {
+  var menu = {
+    "Disable" : () => {
+      settings.passkey = undefined;
+      updateSettings();
+      showBLEMenu();
+    }
+  };
+  if (!settings.passkey || settings.passkey.length!=6)
+    settings.passkey = "123456";
+  for (var i=0;i<6;i++) (function(i){
+    menu[`Digit ${i+1}`] = {
+      value : 0|settings.passkey[i],
+      min: 0, max: 9,
+      onchange: v => {
+        var p = settings.passkey.split("");
+        p[i] = v;
+        settings.passkey = p.join("");
+        updateSettings();
+      }
+    };
+  })(i);
+  menu['< Back']=()=>showBLEMenu();
+  E.showMenu(menu);
 }
 
 function showLCDMenu() {
