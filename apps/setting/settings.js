@@ -137,9 +137,13 @@ function showBLEMenu() {
         updateSettings();
       }
     },
-    'Passkey': {
+    'Passkey BETA': {
       value: settings.passkey?settings.passkey:"none",
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
+    },
+    'Whitelist': {
+      value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
+      onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
     },
     '< Back': ()=>showMainMenu()
   });
@@ -167,6 +171,43 @@ function showPasskeyMenu() {
       }
     };
   })(i);
+  menu['< Back']=()=>showBLEMenu();
+  E.showMenu(menu);
+}
+
+function showWhitelistMenu() {
+  var menu = {
+    "Disable" : () => {
+      settings.whitelist = undefined;
+      updateSettings();
+      showBLEMenu();
+    }
+  };
+  if (settings.whitelist) settings.whitelist.forEach(function(d){
+    menu[d.substr(0,17)] = function() {
+      E.showPrompt('Remove\n'+d).then((v) => {
+        if (v) {
+          settings.whitelist.splice(settings.whitelist.indexOf(d),1);
+          updateSettings();
+        }
+        setTimeout(showWhitelistMenu, 50);
+      });
+    }
+  });
+  menu['Add Device']=function() {
+    E.showAlert("Connect device\nto add to\nwhitelist","Whitelist").then(function() {
+      NRF.removeAllListeners('connect');
+      showWhitelistMenu();
+    });
+    NRF.removeAllListeners('connect');
+    NRF.on('connect', function(addr) {
+      if (!settings.whitelist) settings.whitelist=[];
+      settings.whitelist.push(addr);
+      updateSettings();
+      NRF.removeAllListeners('connect');
+      showWhitelistMenu();
+    });
+  };
   menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
