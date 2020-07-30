@@ -2,3 +2,4 @@
 0.02: Reset with gesture
 0.03: BTN2 to open launcher
 0.04: Remember last set time
+0.05: Fix buzz that doesn't stop (fix #521)
