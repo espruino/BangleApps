@@ -2129,5 +2129,18 @@
     {"name": "counter.app.js", "url": "counter.js"},
     {"name": "counter.img", "url": "counter-icon.js", "evaluate": true}
    ]
+  },
+  { "id": "widgattbat",
+    "name": "BLE GATT Battery Service",
+    "shortName":"BLE Battery Service",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.\n",
+    "tags": "ble,bluetooth,gatt,widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gattbat.wid.js","url":"widget.js"}
+    ]
   }
 ]
