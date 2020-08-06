@@ -8,7 +8,7 @@
   setInterval(advertiseBattery, 60 * 1000);
   advertiseBattery();
 
-  WIDGETS["blebat"]={
+  WIDGETS["gattbat"]={
     area:"tl",
     width:0,
     draw:function() {}
