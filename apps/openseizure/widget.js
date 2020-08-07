@@ -19,7 +19,7 @@
             value : accelData, notify : true
           }
         }
-      })} catch(e) {};
+      })} catch(e) {}
     }
   });
 
