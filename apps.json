@@ -2118,6 +2118,19 @@
       {"name":"osgridref.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "openseizure",
+    "name": "OpenSeizureDetector Widget",
+    "shortName":"Short Name",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "[BETA!] A widget to work alongside [OpenSeizureDetector](https://www.openseizuredetector.org.uk/)",
+    "tags": "widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"openseizure.wid.js","url":"widget.js"}
+    ]
+  },
   {"id": "counter",
   "name": "Counter",
   "icon": "counter_icon.png",
