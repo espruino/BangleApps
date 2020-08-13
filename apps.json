@@ -2153,9 +2153,9 @@
   "storage": [
     {"name":"viewstl.min.js","url":"viewstl.min.js"},
     {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
-    {"name":"tetra.stl","url":"tetra.stl"}
+    {"name":"tetra.stl","url":"tetra.stl"},
     {"name":"cube.stl","url":"cube.stl"},
-    {"name":"icosa.stl","url":"icosa.stl"},
+    {"name":"icosa.stl","url":"icosa.stl"}
   ]
  }
 ]
