@@ -236,7 +236,7 @@ function initNormals() {
 
 function readSTL(fn) {
   var fb = require("Storage").read(fn);
-  var nverts=0,i=0; while(i=fb.indexOf("vertex",i)+1) nverts++;
+  var nverts=0,i=0; while((i=fb.indexOf("vertex",i)+1)!=0) nverts++;
   points = new Float32Array(nverts);
   p_points = E.getAddressOf(points, true);
   faces = new Uint16Array(nverts);
