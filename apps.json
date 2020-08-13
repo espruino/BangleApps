@@ -2150,6 +2150,7 @@
   "version":"0.01",
   "description": "This app allows you to view STL 3D models on your watch",
   "tags": "tool",
+  "readme": "README.md",
   "storage": [
     {"name":"viewstl.app.js","url":"viewstl.min.js"},
     {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
