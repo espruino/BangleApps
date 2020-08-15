@@ -1,3 +1,4 @@
+var is12Hour = (require('Storage').readJSON('setting.json', 1) || {})['12hour']
 var fontsize = 3;
 var locale = require("locale");
 var marginTop = 40;
@@ -19,9 +20,11 @@ function updateTime(){
   let now = new Date();
   let h = now.getHours();
   let m = now.getMinutes();
+  let amOrPm = is12Hour?h>=12?"pm":"am":"";
+  h = is12Hour&&h>12?h-12:is12Hour&&h==0?12:h;
   h = h>=10?h:"0"+h;
   m = m>=10?m:"0"+m;
-  writeLine(h+":"+m,0);
+  writeLine(h+":"+m+" "+amOrPm,0);
   writeLine(flag?" ":"_",3);
   flag = !flag;
   if(now.getMinutes() == 0)
