@@ -7,10 +7,4 @@
   if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
   setInterval(advertiseBattery, 60 * 1000);
   advertiseBattery();
-
-  WIDGETS["gattbat"]={
-    area:"tl",
-    width:0,
-    draw:function() {}
-  };
-})()
+})();
