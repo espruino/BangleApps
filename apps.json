@@ -2142,5 +2142,21 @@
     {"name": "counter.app.js", "url": "counter.js"},
     {"name": "counter.img", "url": "counter-icon.js", "evaluate": true}
    ]
-  }
+  },
+  { "id": "viewstl",
+  "name": "STL file viewer",
+  "shortName":"ViewSTL",
+  "icon": "icons8-octahedron-48.png",
+  "version":"0.01",
+  "description": "This app allows you to view STL 3D models on your watch",
+  "tags": "tool",
+  "readme": "README.md",
+  "storage": [
+    {"name":"viewstl.app.js","url":"viewstl.min.js"},
+    {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
+    {"name":"tetra.stl","url":"tetra.stl"},
+    {"name":"cube.stl","url":"cube.stl"},
+    {"name":"icosa.stl","url":"icosa.stl"}
+  ]
+ }
 ]
