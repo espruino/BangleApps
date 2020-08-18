@@ -1068,7 +1068,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -2118,6 +2118,19 @@
       {"name":"osgridref.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "openseizure",
+    "name": "OpenSeizureDetector Widget",
+    "shortName":"Short Name",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "[BETA!] A widget to work alongside [OpenSeizureDetector](https://www.openseizuredetector.org.uk/)",
+    "tags": "widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"openseizure.wid.js","url":"widget.js"}
+    ]
+  },
   {"id": "counter",
   "name": "Counter",
   "icon": "counter_icon.png",
@@ -2142,5 +2155,21 @@
     "storage": [
       {"name":"gattbat.boot.js","url":"boot.js"}
     ]
-  }
+  },
+  { "id": "viewstl",
+  "name": "STL file viewer",
+  "shortName":"ViewSTL",
+  "icon": "icons8-octahedron-48.png",
+  "version":"0.01",
+  "description": "This app allows you to view STL 3D models on your watch",
+  "tags": "tool",
+  "readme": "README.md",
+  "storage": [
+    {"name":"viewstl.app.js","url":"viewstl.min.js"},
+    {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
+    {"name":"tetra.stl","url":"tetra.stl"},
+    {"name":"cube.stl","url":"cube.stl"},
+    {"name":"icosa.stl","url":"icosa.stl"}
+  ]
+ }
 ]
