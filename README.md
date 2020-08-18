@@ -194,9 +194,10 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*7chname", // for Bangle.js menu
   "src":"-7chname", // source file
-  "type":"widget/clock/app", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu
+  "type":"widget/clock/app/boot", // optional, default "app"
+     // if this is 'widget' then it's not displayed in the menu  
      // if it's 'clock' then it'll be loaded by default at boot time
+     // if this is 'boot' then it's code that is run at boot time, but is not in a menu
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
   "version":"1.23",
      // added by BangleApps loader on upload based on apps.json
