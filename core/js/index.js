@@ -1,7 +1,7 @@
 let appJSON = []; // List of apps and info from apps.json
 let appsInstalled = []; // list of app JSON
 let appSortInfo = {}; // list of data to sort by, from appdates.csv { created, modified }
-let files = []; // list of files on Bangle
+let files = []; // list of files on the Espruimo Device
 let DEFAULTSETTINGS = {
   pretokenise : true,
   favourites : ["boot","launch","setting"]
@@ -193,7 +193,7 @@ function showTab(tabname) {
   htmlToArray(document.querySelectorAll("#tab-navigate .tab-item")).forEach(tab => {
     tab.classList.remove("active");
   });
-  htmlToArray(document.querySelectorAll(".bangle-tab")).forEach(tab => {
+  htmlToArray(document.querySelectorAll(".apploader-tab")).forEach(tab => {
     tab.style.display = "none";
   });
   document.getElementById("tab-"+tabname).classList.add("active");
@@ -256,10 +256,7 @@ function refreshLibrary() {
     let readme = `<a class="c-hand" onclick="showReadme('${app.id}')">Read more...</a>`;
     let favourite = favourites.find(e => e == app.id);
 
-    let username = "espruino";
-    let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
-    if(githubMatch) username = githubMatch[1];
-    let url = `https://github.com/${username}/BangleApps/tree/master/apps/${app.id}`;
+    let url = `${APP_SOURCECODE_URL}/${app.id}`;
     let appurl = window.location.origin + window.location.pathname + "#" + encodeURIComponent(app.id);
 
     return `<div class="tile column col-6 col-sm-12 col-xs-12">
@@ -269,7 +266,7 @@ function refreshLibrary() {
     <div class="tile-content">
       <p class="tile-title text-bold"><a name="${appurl}"></a>${escapeHtml(app.name)} ${versionInfo}</p>
       <p class="tile-subtitle">${getAppDescription(app)}${app.readme?`<br/>${readme}`:""}</p>
-      <a href="${url}" target="_blank" class="link-github"><img src="img/github-icon-sml.png" alt="See the code on GitHub"/></a>
+      <a href="${url}" target="_blank" class="link-github"><img src="core/img/github-icon-sml.png" alt="See the code on GitHub"/></a>
     </div>
     <div class="tile-action">
       <button class="btn btn-link btn-action btn-lg ${!app.custom?"text-error":"d-hide"}" appid="${app.id}" title="Favorite"><i class="icon"></i>${favourite?"&#x2665;":"&#x2661;"}</button>
@@ -676,19 +673,6 @@ sortContainer.addEventListener('click', ({ target }) => {
 });
 
 // =========================================== About
-
-if (window.location.host=="banglejs.com") {
-  document.getElementById("apploaderlinks").innerHTML =
-    'This is the official Bangle.js App Loader - you can also try the <a href="https://espruino.github.io/BangleApps/">Development Version</a> for the most recent apps.';
-} else if (window.location.host=="espruino.github.io") {
-  document.title += " [Development]";
-  document.getElementById("apploaderlinks").innerHTML =
-    'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
-} else {
-  document.title += " [Unofficial]";
-  document.getElementById("apploaderlinks").innerHTML =
-    'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
-}
 
 // Settings
 let SETTINGS_HOOKS = {}; // stuff to get called when a setting is loaded
