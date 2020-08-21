@@ -1068,7 +1068,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -2142,6 +2142,19 @@
     {"name": "counter.app.js", "url": "counter.js"},
     {"name": "counter.img", "url": "counter-icon.js", "evaluate": true}
    ]
+  },
+  { "id": "bootgattbat",
+    "name": "BLE GATT Battery Service",
+    "shortName":"BLE Battery Service",
+    "icon": "bluetooth.png",
+    "version":"0.01",
+    "description": "Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.\n",
+    "tags": "battery,ble,bluetooth,gatt",
+    "type": "bootloader",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gattbat.boot.js","url":"boot.js"}
+    ]
   },
   { "id": "viewstl",
   "name": "STL file viewer",
