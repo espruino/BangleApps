@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint-apps": "eslint ./apps --ext .js",
-    "test": "node bin/sanitycheck.js && eslint ./apps --ext .js && eslint ./lib ./js",
+    "test": "node bin/sanitycheck.js && eslint ./apps --ext .js && eslint ./core/lib ./core/js",
     "start": "npx http-server -c-1"
   },
   "dependencies": {
