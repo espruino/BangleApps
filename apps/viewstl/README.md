@@ -14,10 +14,11 @@ The app supports 4 different rendering modes, swiping right-to-left on the touch
 - wireframe, only edges between non-coplanar facets visible
 - wireframe, all facet (triangle) edges visible
 
-There are two different rotation modes that slightly alter the function of buttons 1 and 3, swiping left-to-right toggles between the two modes:
+There are three different rotation modes that slightly alter the function of buttons 1 and 3, swiping left-to-right cycles through the modes:
 - free rotation: button 1 zooms in, button 3 out
 - Z-axis (vertical axis) rotation: buttons 1 and 3 tilt the Z-axis
+- align rotation with compass and accelerometer readings: button 1 zooms in, button 3 out
 
 There is currently no interface to upload STL files to the watch, the web IDE storage icon can be used instead.
-A future version might contain rotation based on accelerometer/magnetometer readings.
+
 
