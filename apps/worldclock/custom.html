@@ -66,7 +66,7 @@
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {name:"worldclock.settings.json", content:JSON.stringify(timezones)},
+            {name:"worldclock.settings.json", content:JSON.stringify(app_offsets)},
           ]
         });
       });

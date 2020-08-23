@@ -2183,7 +2183,8 @@
     "custom": "custom.html",
     "storage": [
       {"name":"worldclock.app.js","url":"app.js"},
-      {"name":"worldclock.settings.json"}
+      {"name":"worldclock.settings.json"},
+      {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ]
  }
 ]
