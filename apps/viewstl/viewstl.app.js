@@ -37,7 +37,7 @@ var p_rnormals;
 var lastTime;
 var nFrames = 0;
 var interv;
-var qZrot = false;
+var qZrot = 0;
 var qWireframe = 0;
 var zBeta = 0;
 
@@ -195,28 +195,6 @@ int findSlot(float *p, float *x, int len) {
   p[3*len+2] = x[2];
   return len;
 }
-typedef unsigned int uint32_t;
-typedef signed int int32_t;
-typedef unsigned char uint8_t;
-/*
-https://github.com/espruino/Espruino/blob/master/targetlibs/nrf5x_12/components/toolchain/cmsis/include/cmsis_gcc.h
-*/
-__attribute__( ( always_inline ) ) static inline uint32_t __get_FPSCR(void)
-{
-  uint32_t result;
-  /* Empty asm statement works as a scheduling barrier */
-  __asm volatile ("");
-  __asm volatile ("VMRS %0, fpscr" : "=r" (result) );
-  __asm volatile ("");
-  return(result);
-}
-__attribute__( ( always_inline ) ) static inline void __set_FPSCR(uint32_t fpscr)
-{
-  /* Empty asm statement works as a scheduling barrier */
-  __asm volatile ("");
-  __asm volatile ("VMSR fpscr, %0" : : "r" (fpscr) : "vfpcc");
-  __asm volatile ("");
-}
 `);
 
 function initNormals() {
@@ -283,7 +261,6 @@ function readSTL(fn) {
   addr[6] = p_polyedge;
   addr[7] = p_normals;
   c.initEdges(p_addr, faces.length/3);
-  console.log(edges);
 }
 
 function rotV(v, u, c, s) { 
@@ -306,8 +283,22 @@ function largestExtent(pts) {
 function draw() {
   "ram"
   const n = [1, 0, 0];
-  if (qZrot) {
-    var ca=Math.cos(a), sa=Math.sin(a), cb=Math.cos(zBeta), sb=Math.sin(zBeta);
+  if (qZrot>0) {
+    var ca, sa, cb, sb;
+    if (qZrot==2) {
+      var acc = Bangle.getAccel();
+      zBeta = -Math.atan2(acc.z, -acc.y);
+      var comp = Bangle.getCompass();
+      if (!isNaN(comp.heading)) {
+        var m = [comp.dx, comp.dy, comp.dz];
+        //console.log(m);
+        var rm = rotV(m, [1, 0, 0], Math.cos(zBeta), Math.sin(zBeta));
+        a = -Math.atan2(rm[0], rm[2]);
+        //console.log("heading="+a*180/Math.PI, "zBeta="+zBeta);
+      }
+      else a = 0;
+    }
+    ca=Math.cos(a); sa=Math.sin(a); cb=Math.cos(zBeta); sb=Math.sin(zBeta);
     var ul = Math.sqrt(sb*sb+ca*ca*sb*sb+2*sa*sa*cb+2*ca*sb*sb+2*sa*sa);
     u = [(sb+ca*sb)/ul, (-sa-sa*cb)/ul, (-sa*sb)/ul];
     var ra = Math.acos((ca+cb+ca*cb-1)/2);
@@ -315,7 +306,7 @@ function draw() {
     aux[3] = Math.cos(ra);
     aux[4] = Math.sin(ra);
   }
-  else {
+  else{
     u = rotV(u, n, c05, s05);
     aux[3] = Math.cos(a);
     aux[4] = Math.sin(a);
@@ -389,17 +380,19 @@ function loadFile(fn) {
       interv = setInterval(function() { draw();}, 30);
     } }, BTN2, {repeat:true, debounce:50});
   setWatch(function() {
-    if (qZrot && zBeta<2*Math.PI/2-0.08) zBeta += 0.08;
-    else zDist *= 0.9;
+    if (qZrot==1) {
+      if (zBeta<2*Math.PI/2-0.08) zBeta += 0.08;
+    } else zDist *= 0.9;
   }, BTN1, {repeat:true});
   setWatch(function() {
-    if (qZrot && zBeta>-2*Math.PI/2-0.08) zBeta -= 0.08;
-    else zDist /= 0.9;
+    if (qZrot==1) {
+      if (zBeta>-2*Math.PI/2-0.08) zBeta -= 0.08;
+    } else zDist /= 0.9;
   }, BTN3, {repeat:true});
   Bangle.on('swipe', function(direction){
     switch(direction){
       case 1:
-        qZrot = !qZrot;
+        qZrot = (qZrot+1)%3;
         break;
       case -1:
         qWireframe = (qWireframe+1)%4;
@@ -419,4 +412,6 @@ function drawMenu() {
   E.showMenu(menu);
 }
 
+Bangle.on('kill',()=>{Bangle.setCompassPower(0);});
+Bangle.setCompassPower(1);
 drawMenu();
