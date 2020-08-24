@@ -2171,5 +2171,21 @@
     {"name":"cube.stl","url":"cube.stl"},
     {"name":"icosa.stl","url":"icosa.stl"}
   ]
+ },
+ { "id": "worldclock",
+    "name": "World Clock - 4 time zones",
+    "shortName":"World Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Current time zone plus up to four others",
+    "tags": "clock",
+    "type" : "clock",
+    "custom": "custom.html",
+    "storage": [
+      {"name":"worldclock.app.js","url":"app.js"},
+      {"name":"worldclock.settings.json"},
+      {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
+  ]
  }
 ]
+
