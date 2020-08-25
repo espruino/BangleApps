@@ -25,3 +25,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Fixed animated progress bar on app removal
 * Added ability to specify dependencies (used for `notify` at the moment)
 * Fixed Promise-based bug in removeApp
+* Fixed bin/firmwaremaker and bin/apploader CLI to handle binary file uploads correctly
