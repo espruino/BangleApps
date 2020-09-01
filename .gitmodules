@@ -1,3 +1,3 @@
 [submodule "EspruinoAppLoaderCore"]
 	path = core
-	url = git@github.com:espruino/EspruinoAppLoaderCore.git
+	url = https://github.com/espruino/EspruinoAppLoaderCore.git
