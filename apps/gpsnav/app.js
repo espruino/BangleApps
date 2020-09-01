@@ -93,9 +93,8 @@ function bearing(a,b){
 }
 
 function distance(a,b){
-  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
-  return Math.round(Math.sqrt(x*x + y*y) * 6371000);
+  var dsigma = Math.acos(Math.sin(radians(a.lat))*Math.sin(radians(b.lat))+Math.cos(radians(a.lat))*Math.cos(radians(b.lat))*Math.cos(radians(a.lon-b.lon)));
+  return Math.round(dsigma*6371000);
 }
 
 var selected = false;
