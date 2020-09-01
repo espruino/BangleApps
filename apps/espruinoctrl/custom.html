@@ -266,7 +266,7 @@ function sendCommand(device, text, callback) {
 `;
         sendCustomizedApp({
           storage:[
-            {name:"espruinoctrl.app.js", content:app},
+            {name:"espruinoctrl.app.js", url:"app.js", content:app},
           ]
         });
       });

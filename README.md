@@ -291,7 +291,7 @@ version of what's in `apps.json`:
         sendCustomizedApp({
           id : "7chname",
           storage:[
-            {name:"7chname.app.js", content:app_source_code},
+            {name:"7chname.app.js", url:"app.js", content:app_source_code},
             {name:"7chname.img", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
           ]
         });
@@ -303,6 +303,10 @@ version of what's in `apps.json`:
 
 This'll then be loaded in to the watch. See [apps/qrcode/grcode.html](the QR Code app)
 for a clean example.
+
+**Note:** we specify a `url` for JS files even though it doesn't have to exist
+and will never be loaded. This is so the app loader can tell if it's a JavaScript
+file based on the extension, and if so it can minify and pretokenise it.
 
 ### `apps.json`: `interface` element
 
