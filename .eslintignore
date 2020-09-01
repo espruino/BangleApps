@@ -1,7 +1,2 @@
-core/lib/espruinotools.js
-core/lib/imageconverter.js
-core/lib/qrcode.min.js
-core/lib/heatshrink.js
-core/lib/marked.min.js
 apps/animclk/V29.LBM.js
 apps/banglerun/rollup.config.js
