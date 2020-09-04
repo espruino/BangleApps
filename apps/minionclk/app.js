@@ -56,6 +56,7 @@ function startDrawing() {
   hour = '';
   minute = '';
   date = '';
+  g.clear();
   g.drawImage(getBackground(), 0, 24, { scale: 2 });
   Bangle.drawWidgets();
   draw();
