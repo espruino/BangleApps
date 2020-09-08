@@ -2173,18 +2173,18 @@
    ]
   },
   { "id": "cscsensor",
-  "name": "Cycling speed sensor",
-  "shortName":"CSCSensor",
-  "icon": "icons8-cycling-48.png",
-  "version":"0.01",
-  "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch.",
-  "tags": "outdoors,exercise,ble,bluetooth",
-  "readme": "README.md",
-  "storage": [
-    {"name":"cscsensor.app.js","url":"cscsensor.app.js"},
-    {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true},
-  ]
- },
+    "name": "Cycling speed sensor",
+    "shortName":"CSCSensor",
+    "icon": "icons8-cycling-48.png",
+    "version":"0.01",
+    "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch",
+    "tags": "outdoors,exercise,ble,bluetooth",
+    "readme": "README.md",
+    "storage": [
+	{"name":"cscsensor.app.js","url":"cscsensor.app.js"},
+	{"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
+    ]
+  },
  { "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName":"World Clock",
