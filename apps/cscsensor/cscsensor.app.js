@@ -17,6 +17,10 @@ class CSCSensor {
     this.lastSpeed = 0;
     this.qUpdateScreen = true;
     this.lastRevsStart = -1;
+    this.qMetric = !require("locale").speed(1).toString().endsWith("mph");
+    this.speedUnit = this.qMetric ? "km/h" : "mph";
+    this.distUnit = this.qMetric ? "km" : "mi";
+    this.distFactor = this.qMetric ? 1.609344 : 1;
   }
   reset() {
     this.maxSpeed = 0;
@@ -25,15 +29,15 @@ class CSCSensor {
     this.maxSpeed = 0;
   }
   updateScreen() {
-    var dist = (this.lastRevs-this.lastRevsStart)*this.wheelDia*Math.PI/63360.0;
+    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelDia*Math.PI/63360.0;
     var ddist = Math.round(100*dist)/100;
-    var dspeed = Math.round(10*this.speed)/10; 
+    var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
     var dmins = Math.floor(this.movingTime/60).toString();
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
     if (dsecs.length<2) dsecs = "0"+dsecs;
     var avespeed = (this.movingTime>0 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
-    var maxspeed = Math.round(10*this.maxSpeed)/10;
+    var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
     g.setFontAlign(1, -1, 0).setFontVector(18).setColor(1, 1, 0);
     g.drawString("Time:", 86, 60);
     g.drawString("Speed:", 86, 94);
@@ -42,10 +46,10 @@ class CSCSensor {
     g.drawString("Dist:", 86, 192);
     g.setFontAlign(-1, -1, 0).setFontVector(24).setColor(1, 1, 1).clearRect(92, 60, 239, 240);
     g.drawString(dmins+":"+dsecs, 92, 60);
-    g.drawString(dspeed+" mph", 92, 94);
-    g.drawString(avespeed + " mph", 92, 128);
-    g.drawString(maxspeed + " mph", 92, 160);
-    g.drawString(ddist + " miles", 92, 192);    
+    g.drawString(dspeed+" "+this.speedUnit, 92, 94);
+    g.drawString(avespeed + " " + this.speedUnit, 92, 128);
+    g.drawString(maxspeed + " " + this.speedUnit, 92, 160);
+    g.drawString(ddist + " " + this.distUnit, 92, 192);    
   }
   updateSensor(event) {
     var qChanged = false;
