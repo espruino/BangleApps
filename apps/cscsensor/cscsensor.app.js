@@ -6,21 +6,40 @@ var characteristic;
 
 class CSCSensor {
   constructor() {
+    this.movingTime = 0;
     this.lastTime = 0;
     this.lastBangleTime = Date.now();
     this.lastRevs = -1;
     this.wheelDia = 28.0;
     this.speedFailed = 0;
     this.speed = 0;
+    this.maxSpeed = 0;
     this.lastSpeed = 0;
     this.qUpdateScreen = true;
   }
 
   updateScreen() {
-    var dist = Math.round(100*this.lastRevs*this.wheelDia*Math.PI/63360.0)/100;
+    var dist = this.lastRevs*this.wheelDia*Math.PI/63360.0;
+    var ddist = Math.round(100*dist)/100;
     var dspeed = Math.round(10*this.speed)/10; 
-    g.clearRect(0, 120-2*20, 239, 120+2*20).drawString(dspeed+" mph", 120, 100).drawString(dist+" miles", 120, 140);
-    return;
+    var dmins = Math.floor(this.movingTime/60).toString();
+    if (dmins.length<2) dmins = "0"+dmins;
+    var dsecs = (Math.floor(this.movingTime) % 60).toString();
+    if (dsecs.length<2) dsecs = "0"+dsecs;
+    var avespeed = Math.round(10*dist/this.movingTime)/10;
+    var maxspeed = Math.round(10*this.maxSpeed)/10;
+    g.setFontAlign(1, -1, 0).setFontVector(18).setColor(1, 1, 0);
+    g.drawString("Time:", 86, 60);
+    g.drawString("Speed:", 86, 94);
+    g.drawString("Ave spd:", 86, 128);
+    g.drawString("Max spd:", 86, 160);
+    g.drawString("Dist:", 86, 192);
+    g.setFontAlign(-1, -1, 0).setFontVector(24).setColor(1, 1, 1).clearRect(92, 60, 239, 240);
+    g.drawString(dmins+":"+dsecs, 92, 60);
+    g.drawString(dspeed+" mph", 92, 94);
+    g.drawString(avespeed + " mph", 92, 128);
+    g.drawString(maxspeed + " mph", 92, 160);
+    g.drawString(ddist + " miles", 92, 192);    
   }
 
   updateSensor(event) {
@@ -33,12 +52,14 @@ class CSCSensor {
       var wheelTime = event.target.value.getUint16(5, true);
       var dT = (wheelTime-this.lastTime)/1024;
       var dBT = (Date.now()-this.lastBangleTime)/1000;
+      this.lastBangleTime = Date.now();
       if (dT<0) dT+=64;
       this.lastTime = wheelTime;
       this.speed = this.lastSpeed;
       if (dRevs>0 && dT>0) {
         this.speed = (dRevs*this.wheelDia*Math.PI/63360.0)*3600/dT;
 	    this.speedFailed = 0;
+        this.movingTime += dBT;
       }
       else {
     	this.speedFailed++;
@@ -49,6 +70,7 @@ class CSCSensor {
         }
       }
       this.lastSpeed = this.speed;
+      if (this.speed > this.maxSpeed) this.maxSpeed = this.speed;
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
@@ -58,10 +80,10 @@ var mySensor = new CSCSensor();
 
 function parseDevice(d) {
   device = d;
-  g.clear().drawString("Found device", 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).drawString("Found device", 120, 120).flip();
   device.gatt.connect().then(function(ga) {
   gatt = ga;
-  g.clear().drawString("Connected", 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).drawString("Connected", 120, 120).flip();
   return gatt.getPrimaryService("1816");
 }).then(function(s) {
   service = s;
@@ -72,13 +94,16 @@ function parseDevice(d) {
   return characteristic.startNotifications();
 }).then(function() {
   console.log("Done!");
-  g.clear().setFontVector("40").setColor(1, 1, 1).flip();
+  g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
 }).catch(function(e) {
-  g.clear().setColor(1, 0, 0).drawString("ERROR"+e, 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).drawString("ERROR"+e, 120, 120).flip();
 })}
 
 NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-g.clear().setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
+g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
 g.drawString("Scanning for CSC sensor...", 120, 120);
 
 Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect()});
+
+Bangle.loadWidgets();
+Bangle.drawWidgets();
