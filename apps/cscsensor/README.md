@@ -12,4 +12,4 @@ Currently the app displays the following data:
 Button 1 resets all measurements.
 
 I do not have acces to a cadence sensor at the moment, so only the speed part is currently implemented. Values displayed are imperial or metric (depending on locale),
-and a wheel diameter of 28 inches is assumed. A settings dialog to configure wheel sizes will (hopefully) be added later.
+the wheel circumference can be adjusted in the global settings app.

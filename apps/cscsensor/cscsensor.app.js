@@ -4,13 +4,17 @@ var gatt;
 var service;
 var characteristic;
 
+const SETTINGS_FILE = 'cscsensor.json';
+
 class CSCSensor {
   constructor() {
     this.movingTime = 0;
     this.lastTime = 0;
     this.lastBangleTime = Date.now();
     this.lastRevs = -1;
-    this.wheelDia = 28.0;
+    var settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+    this.wheelCirc = (settings.wheelcirc || 2230)/25.4;
+    console.log("wc = " + this.wheelCirc);
     this.speedFailed = 0;
     this.speed = 0;
     this.maxSpeed = 0;
@@ -29,7 +33,7 @@ class CSCSensor {
     this.maxSpeed = 0;
   }
   updateScreen() {
-    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelDia*Math.PI/63360.0;
+    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
     var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
     var dmins = Math.floor(this.movingTime/60).toString();
@@ -67,7 +71,7 @@ class CSCSensor {
       this.lastTime = wheelTime;
       this.speed = this.lastSpeed;
       if (dRevs>0 && dT>0) {
-        this.speed = (dRevs*this.wheelDia*Math.PI/63360.0)*3600/dT;
+        this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
         this.speedFailed = 0;
         this.movingTime += dBT;
       }

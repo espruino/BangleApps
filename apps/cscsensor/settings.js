@@ -24,9 +24,9 @@
   }
   
   const menu = {
-    '': { 'title': 'Cycling speed sensor' },
+    '': { 'title': 'Cycle speed sensor' },
     '< Back': back,
-    'Wheel diameter (mm)': {
+    'Wheel circ.(mm)': {
       value: s.wheelcirc,
       min: 800,
       max: 2400,
