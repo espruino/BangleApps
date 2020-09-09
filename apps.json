@@ -2181,8 +2181,9 @@
     "tags": "outdoors,exercise,ble,bluetooth",
     "readme": "README.md",
     "storage": [
-	{"name":"cscsensor.app.js","url":"cscsensor.app.js"},
-	{"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
+      {"name":"cscsensor.app.js","url":"cscsensor.app.js"},
+      {"name":"cscsensor.settings.js","url":"settings.js"}
+      {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
     ]
   },
  { "id": "worldclock",
