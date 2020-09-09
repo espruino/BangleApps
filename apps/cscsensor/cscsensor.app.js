@@ -64,7 +64,7 @@ class CSCSensor {
       this.speed = this.lastSpeed;
       if (dRevs>0 && dT>0) {
         this.speed = (dRevs*this.wheelDia*Math.PI/63360.0)*3600/dT;
-	    this.speedFailed = 0;
+        this.speedFailed = 0;
         this.movingTime += dBT;
       }
       else {
