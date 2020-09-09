@@ -68,11 +68,11 @@ class CSCSensor {
         this.movingTime += dBT;
       }
       else {
-    	this.speedFailed++;
+        this.speedFailed++;
         qChanged = false;
-	    if (this.speedFailed>3) {  
+        if (this.speedFailed>3) {  
           this.speed = 0;
-	      qChanged = (this.lastSpeed>0);
+          qChanged = (this.lastSpeed>0);
         }
       }
       this.lastSpeed = this.speed;
@@ -80,7 +80,7 @@ class CSCSensor {
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
-};
+}
 
 var mySensor = new CSCSensor();
 
