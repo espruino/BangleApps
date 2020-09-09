@@ -80,10 +80,10 @@ var mySensor = new CSCSensor();
 
 function parseDevice(d) {
   device = d;
-  g.clearRect(0, 60, 239, 239).drawString("Found device", 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
   device.gatt.connect().then(function(ga) {
   gatt = ga;
-  g.clearRect(0, 60, 239, 239).drawString("Connected", 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
   return gatt.getPrimaryService("1816");
 }).then(function(s) {
   service = s;
@@ -96,7 +96,7 @@ function parseDevice(d) {
   console.log("Done!");
   g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
 }).catch(function(e) {
-  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).drawString("ERROR"+e, 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
 })}
 
 NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
