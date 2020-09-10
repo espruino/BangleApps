@@ -1,10 +1,10 @@
-
 var device;
 var gatt;
 var service;
 var characteristic;
 
 const SETTINGS_FILE = 'cscsensor.json';
+const storage = require('Storage');
 
 class CSCSensor {
   constructor() {
@@ -12,9 +12,10 @@ class CSCSensor {
     this.lastTime = 0;
     this.lastBangleTime = Date.now();
     this.lastRevs = -1;
-    var settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
-    this.wheelCirc = (settings.wheelcirc || 2230)/25.4;
-    console.log("wc = " + this.wheelCirc);
+    this.settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+    this.settings.totaldist = this.settings.totaldist || 0;
+    this.totaldist = this.settings.totaldist;
+    this.wheelCirc = (this.settings.wheelcirc || 2230)/25.4;
     this.speedFailed = 0;
     this.speed = 0;
     this.maxSpeed = 0;
@@ -35,6 +36,7 @@ class CSCSensor {
   updateScreen() {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
+    var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
     var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
     var dmins = Math.floor(this.movingTime/60).toString();
     if (dmins.length<2) dmins = "0"+dmins;
@@ -44,23 +46,32 @@ class CSCSensor {
     var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
     g.setFontAlign(1, -1, 0).setFontVector(18).setColor(1, 1, 0);
     g.drawString("Time:", 86, 60);
-    g.drawString("Speed:", 86, 94);
-    g.drawString("Ave spd:", 86, 128);
-    g.drawString("Max spd:", 86, 160);
-    g.drawString("Dist:", 86, 192);
-    g.setFontAlign(-1, -1, 0).setFontVector(24).setColor(1, 1, 1).clearRect(92, 60, 239, 240);
+    g.drawString("Speed:", 86, 92);
+    g.drawString("Ave spd:", 86, 124);
+    g.drawString("Max spd:", 86, 156);
+    g.drawString("Trip dist:", 86, 188);
+    g.drawString("Total:", 86, 220);
+    g.setFontAlign(-1, -1, 0).setFontVector(24).setColor(1, 1, 1).clearRect(92, 60, 239, 239);
     g.drawString(dmins+":"+dsecs, 92, 60);
-    g.drawString(dspeed+" "+this.speedUnit, 92, 94);
-    g.drawString(avespeed + " " + this.speedUnit, 92, 128);
-    g.drawString(maxspeed + " " + this.speedUnit, 92, 160);
-    g.drawString(ddist + " " + this.distUnit, 92, 192);    
+    g.drawString(dspeed+" "+this.speedUnit, 92, 92);
+    g.drawString(avespeed + " " + this.speedUnit, 92, 124);
+    g.drawString(maxspeed + " " + this.speedUnit, 92, 156);
+    g.drawString(ddist + " " + this.distUnit, 92, 188);
+    g.drawString(tdist + " " + this.distUnit, 92, 220);
   }
   updateSensor(event) {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
       var wheelRevs = event.target.value.getUint32(1, true);
       var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
-      if (dRevs>0) qChanged = true;
+      if (dRevs>0) {
+        qChanged = true;
+        this.totaldist += dRevs*this.wheelCirc/63360.0;
+        if ((this.totaldist-this.settings.totaldist)>0.2) {
+          this.settings.totaldist = this.totaldist;
+          storage.writeJSON(SETTINGS_FILE, this.settings);
+        }
+      }
       this.lastRevs = wheelRevs;
       if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
       var wheelTime = event.target.value.getUint16(5, true);
@@ -119,7 +130,10 @@ g.drawString("Scanning for CSC sensor...", 120, 120);
 
 setWatch(function() { mySensor.reset(); mySensor.updateScreen(); }, BTN1);
 
-Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect()});
+Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect()
+		       mySensor.settings.totaldist = mySensor.totaldist;
+		       storage.writeJSON(SETTINGS_FILE, this.settings);
+		     });
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
