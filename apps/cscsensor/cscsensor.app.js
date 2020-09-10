@@ -130,10 +130,7 @@ g.drawString("Scanning for CSC sensor...", 120, 120);
 
 setWatch(function() { mySensor.reset(); mySensor.updateScreen(); }, BTN1);
 
-Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect()
-		       mySensor.settings.totaldist = mySensor.totaldist;
-		       storage.writeJSON(SETTINGS_FILE, this.settings);
-		     });
+Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, this.settings); });
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
