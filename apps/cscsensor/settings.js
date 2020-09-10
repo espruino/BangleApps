@@ -22,7 +22,6 @@
       storage.write(SETTINGS_FILE, s);
     }
   }
-  
   const menu = {
     '': { 'title': 'Cycle speed sensor' },
     '< Back': back,
@@ -32,6 +31,14 @@
       max: 2400,
       step: 5,
       onchange: save('wheelcirc'),
+    },
+    'Reset total distance': function() {
+      E.showPrompt("Zero total distance?", {buttons: {"No":false, "Yes":true}}).then(function(v) {
+        if (v) {
+          s['totaldist'] = 0;
+          storage.write(SETTINGS_FILE, s);
+        }
+      }).then(back);
     }
   }
   E.showMenu(menu);
