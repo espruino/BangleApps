@@ -42,7 +42,7 @@ class CSCSensor {
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
     if (dsecs.length<2) dsecs = "0"+dsecs;
-    var avespeed = (this.movingTime>0 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
+    var avespeed = (this.movingTime>2 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
     var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
     g.setFontAlign(1, -1, 0).setFontVector(18).setColor(1, 1, 0);
     g.drawString("Time:", 86, 60);
@@ -120,6 +120,7 @@ function parseDevice(d) {
 }).then(function() {
   console.log("Done!");
   g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
+  mySensor.updateScreen();
 }).catch(function(e) {
   g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
 })}
@@ -128,9 +129,9 @@ NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
 g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
 g.drawString("Scanning for CSC sensor...", 120, 120);
 
-setWatch(function() { mySensor.reset(); mySensor.updateScreen(); }, BTN1);
+setWatch(function() { mySensor.reset(); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
 
-Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, this.settings); });
+Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
