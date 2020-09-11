@@ -67,7 +67,7 @@ class CSCSensor {
       if (dRevs>0) {
         qChanged = true;
         this.totaldist += dRevs*this.wheelCirc/63360.0;
-        if ((this.totaldist-this.settings.totaldist)>0.2) {
+        if ((this.totaldist-this.settings.totaldist)>0.1) {
           this.settings.totaldist = this.totaldist;
           storage.writeJSON(SETTINGS_FILE, this.settings);
         }
