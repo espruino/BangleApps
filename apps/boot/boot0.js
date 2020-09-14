@@ -22,6 +22,7 @@ if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
     l.forEach(n=>Bluetooth.emit("line",n));
   });
   Bluetooth.on('line',function(l) {
+    if (l.startsWith('\x10')) l=l.slice(1);
     if (l.startsWith('GB({') && l.endsWith('})') && global.GB)
       try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
   });
