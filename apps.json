@@ -1243,7 +1243,7 @@
   { "id": "minionclk",
     "name": "Minion clock",
     "icon": "minionclk.png",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Minion themed clock.",
     "tags": "clock,minion",
     "type": "clock",
