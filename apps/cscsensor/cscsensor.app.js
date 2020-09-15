@@ -15,7 +15,7 @@ class CSCSensor {
     this.settings = storage.readJSON(SETTINGS_FILE, 1) || {};
     this.settings.totaldist = this.settings.totaldist || 0;
     this.totaldist = this.settings.totaldist;
-    this.wheelCirc = (this.settings.wheelcirc || 2230)/25.4;
+    this.wheelCirc = (this.settings.wheelcirc || 2165)/25.4;
     this.speedFailed = 0;
     this.speed = 0;
     this.maxSpeed = 0;
@@ -28,6 +28,8 @@ class CSCSensor {
     this.distFactor = this.qMetric ? 1.609344 : 1;
   }
   reset() {
+    this.settings.totaldist = this.totaldist;
+    storage.writeJSON(SETTINGS_FILE, this.settings);
     this.maxSpeed = 0;
     this.movingTime = 0;
     this.lastRevsStart = this.lastRevs;
@@ -79,12 +81,13 @@ class CSCSensor {
       var dBT = (Date.now()-this.lastBangleTime)/1000;
       this.lastBangleTime = Date.now();
       if (dT<0) dT+=64;
+      if (Math.abs(dT-dBT)>2) dT = dBT;
       this.lastTime = wheelTime;
       this.speed = this.lastSpeed;
       if (dRevs>0 && dT>0) {
         this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
         this.speedFailed = 0;
-        this.movingTime += dBT;
+        this.movingTime += dT;
       }
       else {
         this.speedFailed++;
@@ -125,13 +128,16 @@ function parseDevice(d) {
   g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
 })}
 
-NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
-g.drawString("Scanning for CSC sensor...", 120, 120);
+function connection_setup() {
+  NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
+  g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
+  g.drawString("Scanning for CSC sensor...", 120, 120);
+}
 
+connection_setup();
 setWatch(function() { mySensor.reset(); g.clearRect(0, 60, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
-
-Bangle.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
+E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
+NRF.on('disconnect', connection_setup);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
