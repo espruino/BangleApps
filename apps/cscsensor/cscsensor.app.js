@@ -15,7 +15,7 @@ class CSCSensor {
     this.settings = storage.readJSON(SETTINGS_FILE, 1) || {};
     this.settings.totaldist = this.settings.totaldist || 0;
     this.totaldist = this.settings.totaldist;
-    this.wheelCirc = (this.settings.wheelcirc || 2165)/25.4;
+    this.wheelCirc = (this.settings.wheelcirc || 2230)/25.4;
     this.speedFailed = 0;
     this.speed = 0;
     this.maxSpeed = 0;
@@ -26,6 +26,7 @@ class CSCSensor {
     this.speedUnit = this.qMetric ? "km/h" : "mph";
     this.distUnit = this.qMetric ? "km" : "mi";
     this.distFactor = this.qMetric ? 1.609344 : 1;
+    this.batteryLevel = -1;
   }
   reset() {
     this.settings.totaldist = this.totaldist;
@@ -34,6 +35,9 @@ class CSCSensor {
     this.movingTime = 0;
     this.lastRevsStart = this.lastRevs;
     this.maxSpeed = 0;
+  }
+  setBatteryLevel(level) {
+    this.batteryLevel = level;
   }
   updateScreen() {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
@@ -60,6 +64,15 @@ class CSCSensor {
     g.drawString(maxspeed + " " + this.speedUnit, 92, 156);
     g.drawString(ddist + " " + this.distUnit, 92, 188);
     g.drawString(tdist + " " + this.distUnit, 92, 220);
+    if (this.batteryLevel!=-1) {
+      g.setColor(1, 1, 1).drawRect(10, 64, 20, 84).fillRect(14, 62, 16, 64);
+      if (this.batteryLevel<25) g.setColor(1, 0, 0);
+      else if (this.batteryLevel<50) g.setColor(1, 0.5, 0);
+      else g.setColor(0, 1, 0);
+      g.fillRect(11, 83-18*this.batteryLevel/100, 19, 83);
+      console.log(this.batteryLevel);
+      this.batteryLevel = -1;
+    }
   }
   updateSensor(event) {
     var qChanged = false;
@@ -106,6 +119,16 @@ class CSCSensor {
 
 var mySensor = new CSCSensor();
 
+function getSensorBatteryLevel(gatt) {
+  gatt.getPrimaryService("180f").then(function(s) {
+    return s.getCharacteristic("2a19");
+  }).then(function(c) {
+    return c.readValue();
+  }).then(function(d) {
+    mySensor.setBatteryLevel(d.buffer[0]);
+  });
+}
+
 function parseDevice(d) {
   device = d;
   g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
@@ -123,9 +146,11 @@ function parseDevice(d) {
 }).then(function() {
   console.log("Done!");
   g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
+  getSensorBatteryLevel(gatt);
   mySensor.updateScreen();
 }).catch(function(e) {
   g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
+    console.log(e);
 })}
 
 function connection_setup() {
