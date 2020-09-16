@@ -52,13 +52,14 @@ class CSCSensor {
   }
 
   drawBatteryIcon() {
+    g.setColor(1, 1, 1).drawRect(10, 55, 20, 75).fillRect(14, 53, 16, 55).setColor(0).fillRect(11, 56, 19, 74);
     if (this.batteryLevel!=-1) {
-      g.setColor(1, 1, 1).drawRect(10, 55, 20, 75).fillRect(14, 53, 16, 55);
       if (this.batteryLevel<25) g.setColor(1, 0, 0);
       else if (this.batteryLevel<50) g.setColor(1, 0.5, 0);
       else g.setColor(0, 1, 0);
       g.fillRect(11, 74-18*this.batteryLevel/100, 19, 74);
     }
+    else g.setFontVector(14).setFontAlign(0, 0, 0).setColor(0xffff).drawString("?", 16, 66);
   }
 
   updateScreen() {
@@ -80,7 +81,8 @@ class CSCSensor {
         if ((i&1)==1) g.setColor(0);
         else g.setColor(0x30cd);
         g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
-        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239).drawRect(0, 48, 87, 239);
+        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239);//.drawRect(0, 48, 87, 239);
+        g.moveTo(0, 80).lineTo(30, 80).lineTo(30, 48).lineTo(87, 48).lineTo(87, 239).lineTo(0, 239).lineTo(0, 80);
       }
       g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
       g.drawString("Time:", 87, 66);
