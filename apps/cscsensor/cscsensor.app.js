@@ -50,26 +50,35 @@ class CSCSensor {
     if (dsecs.length<2) dsecs = "0"+dsecs;
     var avespeed = (this.movingTime>2 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
     var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
-    g.setFontAlign(1, -1, 0).setFontVector(18).setColor(1, 1, 0);
-    g.drawString("Time:", 86, 60);
-    g.drawString("Speed:", 86, 92);
-    g.drawString("Ave spd:", 86, 124);
-    g.drawString("Max spd:", 86, 156);
-    g.drawString("Trip dist:", 86, 188);
-    g.drawString("Total:", 86, 220);
-    g.setFontAlign(-1, -1, 0).setFontVector(24).setColor(1, 1, 1).clearRect(92, 60, 239, 239);
-    g.drawString(dmins+":"+dsecs, 92, 60);
-    g.drawString(dspeed+" "+this.speedUnit, 92, 92);
-    g.drawString(avespeed + " " + this.speedUnit, 92, 124);
-    g.drawString(maxspeed + " " + this.speedUnit, 92, 156);
-    g.drawString(ddist + " " + this.distUnit, 92, 188);
-    g.drawString(tdist + " " + this.distUnit, 92, 220);
+    for (var i=0; i<6; ++i) {
+      if ((i&1)==0) g.setColor(0, 0, 0);
+      else g.setColor(0.2, 0.1, 0.4);
+      g.fillRect(0, 48+i*32, 86, 48+(i+1)*32);
+      if ((i&1)==1) g.setColor(0, 0, 0);
+      else g.setColor(0.2, 0.1, 0.4);
+      g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
+      g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239).drawRect(0, 48, 87, 239);
+    }
+    g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
+    g.drawString("Time:", 87, 66);
+    g.drawString("Speed:", 87, 98);
+    g.drawString("Ave spd:", 87, 130);
+    g.drawString("Max spd:", 87, 162);
+    g.drawString("Trip:", 87, 194);
+    g.drawString("Total:", 87, 226);
+    g.setFontAlign(-1, 0, 0).setFontVector(26).setColor(1, 1, 1);//.clearRect(92, 60, 239, 239);
+    g.drawString(dmins+":"+dsecs, 92, 66);
+    g.drawString(dspeed+" "+this.speedUnit, 92, 98);
+    g.drawString(avespeed + " " + this.speedUnit, 92, 130);
+    g.drawString(maxspeed + " " + this.speedUnit, 92, 162);
+    g.drawString(ddist + " " + this.distUnit, 92, 194);
+    g.drawString(tdist + " " + this.distUnit, 92, 226);
     if (this.batteryLevel!=-1) {
-      g.setColor(1, 1, 1).drawRect(10, 64, 20, 84).fillRect(14, 62, 16, 64);
+      g.setColor(1, 1, 1).drawRect(10, 55, 20, 75).fillRect(14, 53, 16, 55);
       if (this.batteryLevel<25) g.setColor(1, 0, 0);
       else if (this.batteryLevel<50) g.setColor(1, 0.5, 0);
       else g.setColor(0, 1, 0);
-      g.fillRect(11, 83-18*this.batteryLevel/100, 19, 83);
+      g.fillRect(11, 74-18*this.batteryLevel/100, 19, 74);
       console.log(this.batteryLevel);
       this.batteryLevel = -1;
     }
