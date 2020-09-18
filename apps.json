@@ -2,7 +2,7 @@
   { "id": "boot",
     "name": "Bootloader",
     "icon": "bootloader.png",
-    "version":"0.20",
+    "version":"0.21",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
@@ -1243,7 +1243,7 @@
   { "id": "minionclk",
     "name": "Minion clock",
     "icon": "minionclk.png",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Minion themed clock.",
     "tags": "clock,minion",
     "type": "clock",
@@ -2170,8 +2170,22 @@
     {"name":"tetra.stl","url":"tetra.stl"},
     {"name":"cube.stl","url":"cube.stl"},
     {"name":"icosa.stl","url":"icosa.stl"}
-  ]
- },
+   ]
+  },
+  { "id": "cscsensor",
+    "name": "Cycling speed sensor",
+    "shortName":"CSCSensor",
+    "icon": "icons8-cycling-48.png",
+    "version":"0.04",
+    "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch",
+    "tags": "outdoors,exercise,ble,bluetooth",
+    "readme": "README.md",
+    "storage": [
+      {"name":"cscsensor.app.js","url":"cscsensor.app.js"},
+      {"name":"cscsensor.settings.js","url":"settings.js"},
+      {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
+    ]
+  },
  { "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName":"World Clock",
@@ -2189,4 +2203,3 @@
   ]
  }
 ]
-
