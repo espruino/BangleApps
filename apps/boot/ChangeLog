@@ -13,3 +13,10 @@
 0.13: Now automatically load *.boot.js at startup
       Move alarm code into alarm.boot.js
 0.14: Move welcome loaders to *.boot.js
+0.15: Added BLE HID option for Joystick and bare Keyboard
+0.16: Detect out of memory errors and draw them onto the bottom of the screen in red
+0.17: Don't modify beep/buzz behaviour if firmware does it automatically
+0.18: Fix  'GPS time' checks for western hemisphere
+0.19: Tweaks to simplify code and lower memory usage
+0.20: Allow Gadgetbridge to work even with programmable:off
+0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)

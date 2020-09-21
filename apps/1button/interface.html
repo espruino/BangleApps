@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="records"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var domRecords = document.getElementById("records");
+
+function saveRecord(record,name) {
+  var csv = `${record.map(rec=>[rec.start_time, rec.end_time].join(",")).join("\n")}`;
+  Util.saveCSV(name, csv);
+}
+
+
+function recordLineToObject(l) {
+  var t = l.trim().split(",");
+  var o = {
+    start_time: parseFloat(t[0]),
+    end_time: parseFloat(t[1]),
+  };
+  return o;
+}
+
+function downloadRecord(callback) {
+  Util.showModal("Downloading one-button tracker data...");
+  Util.readStorageFile(`one_button_presses.csv`,data=>{
+    Util.hideModal();
+    var record = data.trim().split("\n").map(l=>recordLineToObject(l));
+    callback(record);
+  });
+}
+
+function getRecordList() {
+  Util.showModal("Loading one button tracker records...");
+  domRecords.innerHTML = "";
+    var html = `<div class="container">
+  <div class="columns">\n`;
+      html += `
+        <div class="column col-12">
+          <div class="card-header">
+            <div class="card-title h5">One-Button Presses</div>
+            <div class="card-subtitle text-gray">Get all of your button presses</div>
+          </div>
+          <div class="card-body"></div>
+          <div class="card-footer">
+            <button class="btn btn-primary" task="download">Download</button>
+            <button class="btn btn-default" task="delete">Delete</button>
+          </div>
+        </div>
+      `;
+    html += `
+    </div>
+  </div>`;
+    domRecords.innerHTML = html;
+    Util.hideModal();
+    var buttons = domRecords.querySelectorAll("button");
+    for (var i=0;i<buttons.length;i++) {
+      buttons[i].addEventListener("click",event => {
+        var button = event.currentTarget;
+        var task = button.getAttribute("task");
+        if (task=="delete") {
+          Util.showModal("Deleting record...");
+          Util.eraseStorageFile(`one_button_presses.csv`,()=>{
+            Util.hideModal();
+            getRecordList();
+          });
+        }
+        if (task=="download") {
+          downloadRecord(record => saveRecord(record, `one_button_presses`));
+        }
+      });
+    }
+  }
+
+function onInit() {
+  getRecordList();
+}
+
+    </script>
+  </body>
+</html>

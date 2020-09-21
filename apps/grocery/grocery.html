@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody id="products">
-        
+
       </tbody>
     </table>
     <br><br>
@@ -34,8 +34,8 @@
     </form>
     <br><br>
     <button id="reset" class="btn btn-error">Reset</button> <button id="upload" class="btn btn-primary">Upload</button>
-    
-    <script src="../../lib/customize.js"></script>
+
+    <script src="../../core/lib/customize.js"></script>
 
     <script>
 
@@ -53,15 +53,15 @@
       var $reset = document.getElementById('reset')
 
       renderProducts()
-      
+
       $reset.addEventListener('click', reset)
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
-        
+
         var name = $name.value.trim()
         if(!name) return;
-        
+
         var quantity = parseInt($quantity.value)
 
         products.push({
@@ -95,13 +95,13 @@
         $list.innerHTML = ''
         products.forEach((product,index) => {
           var $product = document.createElement('tr')
-          
+
           $product.innerHTML = `<td>${product.name}</td><td>${product.quantity}</td><td><button class="btn btn-error" onclick="removeProduct(${index})">remove</button></td>`
           $list.appendChild($product)
         })
 
         $name.focus()
-        
+
       }
 
       document.getElementById("upload").addEventListener("click", function() {
@@ -152,7 +152,7 @@ E.showMenu(mainMenu);
         var icon = `require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AQ0QACF1nGAAIxpFoYwqFwwwnRggwGB4eFAggACLzwHCMAeF1WGAgOGw2x2IGCLzYGEF4YpBwotCFwJfWFwo1GSAYtBAIIABRq4vFMhAwBzoAFdzIuKAAOc4IAGGC4qEMZOiF44wXFxovleBYvIGCwmB0WjE4V/AgfG1IvCzujFQOjwoECF6WFwovBDYOFEwN/AgIwCAgOFBwYrBBAQEBzodCF6AAHww1CBpIODAAYvRDAWG2IEBAYYJFBxICCF6Ox1WxAAQfBAYQlCAAIOJAQIvUADQvn1WGR4RfbP4gAFBwgFCF7a5EdwQADF46/cL9wAQF94AGF85bB1TvmF47vdJ4bvFF8qPRFgLv/L7jPCaQq/fYYrvgJgoAGd/7v/F/4v/F5oAdF54weFyAA/AH4A3A="))`;
         sendCustomizedApp({
           storage:[
-            {name:"grocery.app.js", content:app},
+            {name:"grocery.app.js", url:"app.js", content:app},
             {name:"grocery.img", content:icon, evaluate:true},
             {name:"grocery"}
           ]

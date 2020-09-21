@@ -110,8 +110,8 @@ function drawTimeText() {
 
   var time = da[4].split(":");
   var hours = time[0],
-      minutes = time[1],
-      seconds = time[2];
+    minutes = time[1],
+    seconds = time[2];
   g.setColor(mainColor);
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}:${seconds}`, xyCenter, yposTime, true);

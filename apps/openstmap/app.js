@@ -1,10 +1,11 @@
 var s = require("Storage");
 var map = s.readJSON("openstmap.json");
+var HASWIDGETS = true;
+var y1,y2;
 
 map.center = Bangle.project({lat:map.lat,lon:map.lon});
 var lat = map.lat, lon = map.lon;
 var fix = {};
-
 
 function redraw() {
   var cx = g.getWidth()/2;
@@ -17,6 +18,7 @@ function redraw() {
   var ty = 0|(iy/map.tilesize);
   var ox = (tx*map.tilesize)-ix;
   var oy = (ty*map.tilesize)-iy;
+  g.setClipRect(0,y1,g.getWidth()-1,y2);
   for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
     for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
       var img = s.read("openstmap-"+ttx+"-"+tty+".img");
@@ -29,6 +31,7 @@ function redraw() {
     }
   }
   drawMarker();
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
 }
 
 function drawMarker() {
@@ -42,9 +45,6 @@ function drawMarker() {
   g.setColor(1,0,0);
   g.fillRect(ix-2,iy-2,ix+2,iy+2);
 }
-
-redraw();
-
 
 var fix;
 Bangle.on('GPS',function(f) {
@@ -60,6 +60,18 @@ Bangle.on('GPS',function(f) {
   drawMarker();
 });
 Bangle.setGPSPower(1);
+
+if (HASWIDGETS) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  y1 = 24;
+  var hasBottomRow = Object.keys(WIDGETS).some(w=>WIDGETS[w].area[0]=="b");
+  y2 = g.getHeight() - (hasBottomRow ? 24 : 1);
+} else {
+  y1=0;
+  y2=g.getHeight()-1;
+}
+
 redraw();
 
 setWatch(function() {
