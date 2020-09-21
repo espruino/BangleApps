@@ -4,3 +4,7 @@
 0.04: Tweaks for variable size widget system
 0.05: Add alarm.boot.js and move code from the bootloader
 0.06: Change 'New Alarm' to 'Save', allow Deletion of Alarms
+0.07: Don't overwrite existing settings on app update
+0.08: Make alarm scheduling more reliable
+0.09: Add per alarm auto-snooze option
+0.10: Fix auto-snooze option (this stopped new alarms being added) (fix #506)

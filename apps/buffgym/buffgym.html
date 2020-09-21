@@ -1,0 +1,250 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <h1>BuffGym</h1>
+    <p>
+      Enter in your weights for each exercise, start light and keep consistent with your training. The weight increment field is how much the app will increase your weights for an exercise if you successfully complete all the reps and sets for an exercise. Make sure its a value that matches the weights in your gym.
+    </p>
+    <p>
+      For more information on how to train this program refer the <a href="https://stronglifts.com/5x5/" target="_BLANK">Stronglifts website</a>
+    </p>
+    <form id="workouts-form">
+      <h4>Workout A</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Exercise</th>
+            <th>Sets / Reps</th>
+            <th>Weight</th>
+            <th>Weight increment</th>
+          </tr>
+        </thead>
+        <tbody id="workout-a-exercises">
+          <tr>
+            <td>
+              Squats
+            </td>
+            <td>
+              5x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-a-squats-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-a-squats-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Overhead press
+            </td>
+            <td>
+              5x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-a-overhead-press-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-a-overhead-press-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Deadlift
+            </td>
+            <td>
+              1x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-a-deadlift-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-a-deadlift-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Pullups
+            </td>
+            <td>
+              3x10
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-a-pullups-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-a-pullups-weight-increment" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h4>Workout B</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Exercise</th>
+            <th>Sets / Reps</th>
+            <th>Weight</th>
+            <th>Weight increment</th>
+          </tr>
+        </thead>
+        <tbody id="workout-b-exercises">
+          <tr>
+            <td>
+              Squats
+            </td>
+            <td>
+              5x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-b-squats-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-b-squats-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Bench press
+            </td>
+            <td>
+              5x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-b-bench-press-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-b-bench-press-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Row
+            </td>
+            <td>
+              5x5
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-b-row-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-b-row-weight-increment" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Tricep extension
+            </td>
+            <td>
+              3x10
+            </td>
+            <td>
+              <input type="number" value="0" id="buffgym-workout-b-triceps-weight" />
+            </td>
+            <td>
+              <input type="number" value="2.5" id="buffgym-workout-b-triceps-weight-increment" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <br><br>
+    <button id="upload" class="btn btn-primary">Upload</button>
+    
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+        function workoutA() {
+            return {
+                "title": "Workout A",
+                "exercises": [
+                    {
+                        "title": "Squats",
+                        "weight": Number(document.getElementById("buffgym-workout-a-squats-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-squats-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [5, 5, 5, 5, 5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Overhead press",
+                        "weight": Number(document.getElementById("buffgym-workout-a-overhead-press-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-overhead-press-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [5, 5, 5, 5, 5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Deadlift",
+                        "weight": Number(document.getElementById("buffgym-workout-a-deadlift-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-deadlift-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Pullups",
+                        "weight": Number(document.getElementById("buffgym-workout-a-pullups-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-pullups-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [10, 10, 10],
+                        "restPeriod": 90
+                    }
+                ]
+            };
+        }
+
+        function workoutB() {
+            return {
+                "title": "Workout B",
+                "exercises": [
+                    {
+                        "title": "Squats",
+                        "weight": Number(document.getElementById("buffgym-workout-b-squats-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-b-squats-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [5, 5, 5, 5, 5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Bench press",
+                        "weight": Number(document.getElementById("buffgym-workout-b-bench-press-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-b-bench-press-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [5, 5, 5, 5, 5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Row",
+                        "weight": Number(document.getElementById("buffgym-workout-b-row-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-b-row-weight-increment").value),
+                        "unit":"Kg",
+                        "sets": [5, 5, 5, 5, 5],
+                        "restPeriod": 90
+                    },
+                    {
+                        "title": "Tricep extension",
+                        "weight": Number(document.getElementById("buffgym-workout-b-triceps-weight").value),
+                        "weightIncrement": Number(document.getElementById("buffgym-workout-b-triceps-weight-increment").value),
+                        "unit": "Kg",
+                        "sets": [10, 10, 10],
+                        "restPeriod": 90
+                    }
+                ]
+            };
+        }
+
+        document.getElementById("upload").addEventListener("click", function() {
+          Puck.eval(`require("Storage").writeJSON("buffgym-workout-a.json",${JSON.stringify(workoutA())})`, ()=>{
+            Puck.eval(`require("Storage").writeJSON("buffgym-workout-b.json",${JSON.stringify(workoutB())})`, ()=>{
+              Puck.eval(`Bangle.buzz()`, () => {
+                console.log("all done");
+              })
+            })
+          });
+        });
+    </script>
+  </body>
+</html>

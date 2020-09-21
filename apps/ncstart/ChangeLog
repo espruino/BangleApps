@@ -5,3 +5,5 @@
 0.04: Run again when updated
       Don't run again when settings app is updated (or absent)
       Add "Run Now" option to settings
+0.05: Don't overwrite existing settings on app update
+0.06: Allow welcome to run after a fresh install

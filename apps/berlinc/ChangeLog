@@ -1,1 +1,2 @@
 0.02: Modified for use with new bootloader and firmware
+0.03: Shrinked size to avoid cut-off edges on the physical device. BTN3: show date. BTN1: show time in decimal.

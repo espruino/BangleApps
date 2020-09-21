@@ -7,12 +7,12 @@ setWatch(x=>{
 },BTN1,{repeat:true});
 
 function updateAdvertising() {
-try {
-  NRF.setAdvertising({},{
-    manufacturer: 0x0590,
-    manufacturerData: new Uint8Array([mycounter>>8,mycounter&255])
-  });
-} catch(e){}
+  try {
+    NRF.setAdvertising({},{
+      manufacturer: 0x0590,
+      manufacturerData: new Uint8Array([mycounter>>8,mycounter&255])
+    });
+  } catch(e){}
 }
 
 function drawPlayers() {

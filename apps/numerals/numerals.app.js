@@ -8,7 +8,7 @@
 
 var numerals = {
   0:[[9,1,82,1,90,9,90,92,82,100,9,100,1,92,1,9],[30,25,61,25,69,33,69,67,61,75,30,75,22,67,22,33]],
-  1:[[59,1,82,1,90,9,90,92,82,100,73,100,65,92,65,27,59,27,51,19,51,9]],
+  1:[[50,1,82,1,90,9,90,92,82,100,73,100,65,92,65,27,50,27,42,19,42,9]],
   2:[[9,1,82,1,90,9,90,53,82,61,21,61,21,74,82,74,90,82,90,92,82,100,9,100,1,92,1,48,9,40,70,40,70,27,9,27,1,19,1,9]],
   3:[[9,1,82,1,90,9,90,92,82,100,9,100,1,92,1,82,9,74,70,74,70,61,9,61,1,53,1,48,9,40,70,40,70,27,9,27,1,19,1,9]],
   4:[[9,1,14,1,22,9,22,36,69,36,69,9,77,1,82,1,90,9,90,92,82,100,78,100,70,92,70,61,9,61,1,53,1,9]],
@@ -24,71 +24,96 @@ var _mCol = ["#55ff55","#ffffff","#00EFEF","#FFBF00"];
 var _rCol = 0;
 var interval = 0;
 const REFRESH_RATE = 10E3;
+var drawFuncs = {
+  fill : function(poly,isHole){
+    if (isHole) g.setColor(0);
+    g.fillPoly(poly,true);
+  },
+  framefill : function(poly,isHole){
+    var c = g.getColor();
+    g.setColor(isHole ? 0 : ((c&0b1111011111011110)>>1)); // 16 bit half bright
+    g.fillPoly(poly,true);
+    g.setColor(c);
+    g.drawPoly(poly,true);
+  },
+  frame : function(poly,isHole){
+    g.drawPoly(poly,true);
+  },
+  thickframe : function(poly,isHole){
+    g.drawPoly(poly,true);
+    g.drawPoly(translate(1,0,poly),true);
+    g.drawPoly(translate(1,1,poly),true);
+    g.drawPoly(translate(0,1,poly),true);
+  }
+};
 
 function translate(tx, ty, p){
-  return p.map((x, i)=> x+((i%2)?ty:tx));
+  return p.map((x, i)=> x+((i&1)?ty:tx));
 }
 
-function fill(poly){
-  return g.fillPoly(poly,true);
-}
-
-function frame(poly){
-  return g.drawPoly(poly,true);
-}
 
 let settings = require('Storage').readJSON('numerals.json',1);
 if (!settings) {
   settings = {
     color:0,
     drawMode:"fill",
-    menuButton:24
+    menuButton:24,
+    showDate:0
   };
 }
 
-function drawNum(num,col,x,y,func){
+function drawNum(num,col,x,y,func,funcName){
   g.setColor(col);
   let tx = x*100+25;
   let ty = y*104+32;
   for (let i=0;i<numerals[num].length;i++){
-	  if (i>0) g.setColor((func==fill)?"#000000":col);
-	  func(translate(tx,ty,numerals[num][i]));
+    g.setColor(col);
+    func(translate(tx,ty,numerals[num][i]), i>0);
   }
 }
 
-function draw(drawMode){
+function draw(date){
   let d = new Date();
-  let h1 = Math.floor((_12hour?d.getHours()%12:d.getHours())/10);
-  let h2 = (_12hour?d.getHours()%12:d.getHours())%10;
-  let m1 = Math.floor(d.getMinutes()/10);
-  let m2 = d.getMinutes()%10;
+  let l1, l2;
+  if (date) {
+    setUpdateInt(0);
+    l1 = ("0"+(new Date()).getDate()).substr(-2);
+    l2 = ("0"+((new Date()).getMonth()+1)).substr(-2);
+    setTimeout(()=>{ draw(); setUpdateInt(1); }, 5000);
+  } else {
+    l1 = ("0"+(_12hour?d.getHours()%12:d.getHours())).substr(-2);
+    l2 = ("0"+d.getMinutes()).substr(-2);
+  }
+  var drawFunc = drawFuncs[settings.drawMode];
+  if (drawFunc==undefined) drawFunc=drawFuncs.fill;
   g.clearRect(0,24,240,240);
-  drawNum(h1,_hCol[_rCol],0,0,eval(drawMode));
-  drawNum(h2,_hCol[_rCol],1,0,eval(drawMode));
-  drawNum(m1,_mCol[_rCol],0,1,eval(drawMode));
-  drawNum(m2,_mCol[_rCol],1,1,eval(drawMode));
+  drawNum(l1[0],_hCol[_rCol],0,0,drawFunc);
+  drawNum(l1[1],_hCol[_rCol],1,0,drawFunc);
+  drawNum(l2[0],_mCol[_rCol],0,1,drawFunc);
+  drawNum(l2[1],_mCol[_rCol],1,1,drawFunc);
+}
+
+function setUpdateInt(set){
+  if (interval) clearInterval(interval);
+  if (set) interval=setInterval(draw, REFRESH_RATE);
 }
 
 Bangle.setLCDMode();
-
-clearWatch();
+g.reset().clear();
 setWatch(Bangle.showLauncher, settings.menuButton, {repeat:false,edge:"falling"});
-
-g.clear();
-clearInterval();
 if (settings.color>0) _rCol=settings.color-1;
-interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
-draw(settings.drawMode);
+setUpdateInt(1);
+draw();
 
+if (settings.showDate) {
+  Bangle.on('touch', () => draw(1));
+}
 Bangle.on('lcdPower', function(on){
   if (on){
     if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
-	draw(settings.drawMode);
-    interval=setInterval(draw, REFRESH_RATE, settings.drawMode);
-  }else
-  {
-    clearInterval(interval);
-  }
+    draw();
+    setUpdateInt(1);
+  } else setUpdateInt(0);
 });
 
 Bangle.loadWidgets();

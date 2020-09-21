@@ -1,0 +1,18 @@
+{ "id": "multiclock",
+    "name": "Multi Clock",
+    "icon": "multiclock.png",
+    "version":"0.06",
+    "description": "Clock with multiple faces - Big, Analogue, Digital, Text.\n Switch between faces with BT1 & BTN3",
+    "readme": "README.md",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":false,
+    "storage": [
+      {"name":"multiclock.app.js","url":"clock.min.js"},
+      {"name":"big.face.js","url":"big.min.js"},
+      {"name":"ana.face.js","url":"ana.min.js"},
+      {"name":"digi.face.js","url":"digi.min.js"},
+      {"name":"txt.face.js","url":"txt.min.js"},
+      {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
+    ]
+  },
