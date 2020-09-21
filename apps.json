@@ -1421,7 +1421,7 @@
     "name": "Digital Assistant, not EDITH",
     "shortName": "DANE",
     "icon": "app.png",
-    "version": "0.08",
+    "version": "0.09",
     "description": "A Watchface inspired by Tony Stark's EDITH",
     "tags": "clock",
     "type": "clock",
