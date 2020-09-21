@@ -6,20 +6,21 @@ const smallFontSize = 2;
 const yOffset       = 23;
 const width = g.getWidth();
 const height = g.getHeight();
-const xyCenter      = width/2;
+const xyCenter      = width/2+4;
 const cornerSize    = 14;
 const cornerOffset  = 3;
 const borderWidth   = 1;
 const yposTime      = 27+yOffset;
 const yposDate      = 65+yOffset+12;
+const yposCounter   = 58+yOffset+35+40;
 
 const mainColor      = "#26dafd";
 const mainColorDark  = "#029dbb";
 // const mainColorLight = "#8bebfe";
 
 const secondaryColor      = "#df9527";
-// const secondaryColorDark  = "#8b5c15";
-const secondaryColorLight = "#ecc180";
+const secondaryColorDark  = "#8b5c15";
+// const secondaryColorLight = "#ecc180";
 
 const success        = "#00ff00";
 // const successDark        = "#000900";
@@ -27,7 +28,9 @@ const success        = "#00ff00";
 
 const alert          = "#ff0000";
 // const alertDark          = "#090000";
-const alertLight          = "#0f0606";
+// const alertLight          = "#0f0606";
+
+let count = 100;
 
 
 // function getImg() {
@@ -97,6 +100,13 @@ function drawTopFrame(x1,y1,x2,y2) {
   g.setColor("#000000");
   g.fillRect(x1+borderWidth,y1+borderWidth,x2-borderWidth,y2-borderWidth);
 }
+
+function drawFrameNoCorners(x1,y1,x2,y2) {
+  g.setColor(mainColorDark);
+  g.drawRect(x1,y1,x2,y2);
+  g.setColor("#000000");
+  g.fillRect(x1+borderWidth,y1+borderWidth,x2-borderWidth,y2-borderWidth);
+}
 // function drawBottomFrame(x1,y1,x2,y2) {
 //   drawTopLeftCorner(x1,y1);
 //   drawTopRightCorner(x2,y1);
@@ -137,6 +147,32 @@ function drawDateText(d) {
   g.drawString(`${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`, xyCenter, yposDate, true);
 }
 
+function drawCounterText() {
+  if(count>999) count = 999;
+  if(count<0) count = 0;
+  g.setColor("#000000");
+  g.fillRect(37,58+yOffset+36,203,58+80+yOffset+34);
+  g.setFontAlign(0, 0);
+  g.setColor(alert);
+  g.setFont(font, 8);
+  g.drawString(`${count}`, xyCenter, yposCounter, true);
+
+
+}
+
+function levelColor(l) {
+  // no icon -> brightest green to indicate charging, even when showing percentage
+  if (Bangle.isCharging()) return success;
+  if (l >= 50) return success;
+  if (l >= 15) return secondaryColorDark;
+  return alert;
+}
+
+function drawBattery() {
+  const l = E.getBattery(), c = levelColor(l);
+  const xl = 45+l*(194-46)/100;
+  g.setColor(c).fillRect(46,58+80+yOffset+37,xl, height-5);
+}
 
 
 
@@ -144,9 +180,16 @@ function drawClock() {
   // main frame
   drawFrame(3,10+yOffset,width-3,height-3);
   // time frame
-  drawTopFrame(20,10+yOffset,220,46+12+yOffset);
+  drawTopFrame(20,10+yOffset,220,58+yOffset);
   // date frame
-  drawTopFrame(28,46+12+yOffset,212,46+12+yOffset+35);
+  drawTopFrame(28,58+yOffset,212,58+yOffset+35);
+
+  // counter frame
+  drawTopFrame(36,58+yOffset+35,204,58+80+yOffset+35);
+
+  // battery frame
+  drawFrameNoCorners(44,58+80+yOffset+35,196, height-3);
+
 
   updateClock();
 
@@ -158,6 +201,8 @@ function updateClock() {
   const date = new Date();
   drawTimeText(date);
   drawDateText(date);
+  drawCounterText();
+  drawBattery();
 }
 
 
@@ -177,6 +222,15 @@ drawClock();
 
 
 setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+
+setWatch(function() {
+  count+=1;
+  drawCounterText();
+}, BTN1, {repeat:true,edge:"falling"});
+setWatch(function() {
+  count--;
+  drawCounterText();
+}, BTN3, {repeat:true,edge:"falling"});
 
 // refesh every 100 milliseconds
 setInterval(updateClock, 500);
