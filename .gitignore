@@ -5,3 +5,4 @@ package-lock.json
 *.js.bak
 appdates.csv
 .vscode
+.idea/
