@@ -106,8 +106,10 @@ exports.hide = function(options) {
   options = options||{};
   if ("id" in options && options.id!==id) return;
   id = null;
-  g=oldg;
-  oldg = undefined;
+  if (oldg) {
+    g=oldg;
+    oldg = undefined;
+  }
   Bangle.removeListener("touch", exports.hide);
   g.clear();
   Bangle.drawWidgets();

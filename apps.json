@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
