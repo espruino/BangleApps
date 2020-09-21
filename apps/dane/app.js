@@ -1,5 +1,6 @@
 const font          = "6x8";
 const timeFontSize  = 4;
+const unixTimeFontSize  = 2;
 const dateFontSize  = 3;
 const smallFontSize = 2;
 const yOffset       = 23;
@@ -10,13 +11,13 @@ const cornerSize    = 14;
 const cornerOffset  = 3;
 const borderWidth   = 1;
 const yposTime      = 27+yOffset;
-const yposDate      = 65+yOffset;
+const yposDate      = 65+yOffset+12;
 
 const mainColor      = "#26dafd";
 const mainColorDark  = "#029dbb";
 // const mainColorLight = "#8bebfe";
 
-// const secondaryColor      = "#df9527";
+const secondaryColor      = "#df9527";
 // const secondaryColorDark  = "#8b5c15";
 const secondaryColorLight = "#ecc180";
 
@@ -123,12 +124,19 @@ function drawTimeText(d) {
   g.setColor(mainColor);
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}:${seconds}`, xyCenter, yposTime, true);
+  const unix = Math.round(d.getTime());
+
+  g.setFont(font, unixTimeFontSize);
+  g.setColor(secondaryColor);
+  g.drawString(`${unix}`, xyCenter, yposTime +22, true);
   g.setFont(font, smallFontSize);
 }
 function drawDateText(d) {
+  g.setColor(mainColor);
   g.setFont(font, dateFontSize);
   g.drawString(`${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`, xyCenter, yposDate, true);
 }
+
 
 
 
@@ -136,9 +144,9 @@ function drawClock() {
   // main frame
   drawFrame(3,10+yOffset,width-3,height-3);
   // time frame
-  drawTopFrame(20,10+yOffset,220,46+yOffset);
+  drawTopFrame(20,10+yOffset,220,46+12+yOffset);
   // date frame
-  drawTopFrame(28,46+yOffset,212,46+yOffset+35);
+  drawTopFrame(28,46+12+yOffset,212,46+12+yOffset+35);
 
   updateClock();
 
