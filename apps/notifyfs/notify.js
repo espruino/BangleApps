@@ -49,14 +49,13 @@ exports.show = function(options) {
   if (size>120) {size=120}
   Bangle.setLCDMode("direct");
   let x = 0,
-    y = 0,
+    y = 40,
     w = 240,
-    h = 240;
+    h = size;
   // clear screen
   g.clear(1);
   // top bar
   if (options.title||options.src) {
-    y=40;h=size;
     const title = options.title || options.src
     g.setColor(0x39C7).fillRect(x, y, x+w-1, y+30);
     g.setColor(-1).setFontAlign(-1, -1, 0).setFont("6x8", 3);
@@ -64,7 +63,8 @@ exports.show = function(options) {
     if (options.title && options.src) {
       g.setColor(-1).setFontAlign(1, 1, 0).setFont("6x8", 2);
       // above drawing area, but we are fullscreen
-      g.drawString(options.src.substring(0, 10), x+235, y-32);
+      print(options.src.substring(0, 10), w-23, y-4);
+      g.drawString(options.src.substring(0, 10), w-16, y-4);
     }
     y += 30;h -= 30;
   }
