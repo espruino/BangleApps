@@ -19,6 +19,13 @@ var APPS = [ // IDs of apps to install
 var MINIFY = true;
 
 var fs = require("fs");
+global.Const = {
+  /* Are we only putting a single app on a device? If so
+  apps should all be saved as .bootcde and we write info
+  about the current app into app.info */
+  SINGLE_APP_ONLY : false,
+};
+
 var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appjson = JSON.parse(fs.readFileSync(APPJSON).toString());
 var appfiles = [];

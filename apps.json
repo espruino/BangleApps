@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.04",
+    "version":"0.06",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -692,6 +692,19 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "vibrclock",
+    "name": "Vibrate Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"vibrclock.app.js","url":"app.js"},
+      {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "svclock",
     "name": "Simple V-Clock",
     "icon": "vclock-simple.png",
@@ -881,6 +894,16 @@
       {"name":"gpsinfo.app.js","url": "gps-info.js"},
       {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
+  },
+  { "id": "assistedgps",
+    "name": "Assisted GPS Update",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "custom": "custom.html",
+    "tags": "tool,outdoors",
+    "type": "RAM",
+    "storage": [ ]
   },
   {
     "id": "pomodo",
@@ -1421,7 +1444,7 @@
     "name": "Digital Assistant, not EDITH",
     "shortName": "DANE",
     "icon": "app.png",
-    "version": "0.07",
+    "version": "0.10",
     "description": "A Watchface inspired by Tony Stark's EDITH",
     "tags": "clock",
     "type": "clock",

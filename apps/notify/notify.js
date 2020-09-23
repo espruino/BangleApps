@@ -94,8 +94,8 @@ exports.show = function(options) {
     g.setColor(-1).setFontAlign(-1, -1, 0).setFont("6x8", 2);
     g.drawString(title.trim().substring(0, 13), x+25,y+3);
     if (options.title && options.src) {
-      g.setFont("6x8", 1);
-      g.drawString(options.src.substring(0, 10), x+215,y+5);
+      g.setFont("6x8", 1).setFontAlign(1, 1, 0);
+      g.drawString(options.src.substring(0, 10), g.getWidth()-23,y+18);
     }
     y += 20;h -= 20;
   }

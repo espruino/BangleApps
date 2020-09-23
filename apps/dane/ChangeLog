@@ -3,3 +3,6 @@
 0.05: bugfix
 0.06: moved and resized icon
 0.07: Added Description
+0.08: Removed Image, Reduced RAM usage
+0.09: Added Unix Time
+0.10: Added Counter, Added Battery Display
