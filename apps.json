@@ -902,9 +902,8 @@
     "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
     "custom": "custom.html",
     "tags": "tool,outdoors",
-    "readme": "README.md",
-    "storage": [
-    ]
+    "type": "RAM",
+    "storage": [ ]
   },
   {
     "id": "pomodo",

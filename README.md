@@ -219,7 +219,12 @@ and which gives information about the app for the Launcher.
   "shortName": "Short name",  // short name for launcher
   "icon": "icon.png",         // icon in apps/
   "description": "...",       // long description (can contain markdown)
-  "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
+  "type":"...",               // optional(if app) -  
+                              //   'app' - an application
+                              //   'widget' - a widget
+                              //   'launch' - replacement launcher app
+                              //   'bootloader' - code that runs at startup only
+                              //   'RAM' - code that runs and doesn't upload anything to storage
   "tags": "",                 // comma separated tag list for searching
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
