@@ -895,6 +895,17 @@
       {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
   },
+  { "id": "assistedgps",
+    "name": "Assisted GPS Update",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "custom": "custom.html",
+    "tags": "tool,outdoors",
+    "readme": "README.md",
+    "storage": [
+    ]
+  },
   {
     "id": "pomodo",
     "name":"Pomodoro",

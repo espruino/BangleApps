@@ -16,7 +16,7 @@ function writeGPScmd(cmd) {
     a += d[i];
     b += a;
   }
-  d.push(a,b);
+  d.push(a&255,b&255);
   Serial1.write(d);
 }
 function readGPScmd(cmd, callback) {
@@ -131,7 +131,7 @@ function setUBX_MGA_INI_TIME_UTC() {
   dv.setUint8(9, d.getMinutes());
   dv.setUint8(10, d.getSeconds());
   dv.setUint16(16, 10*60); // seconds part of accuracy - 10 minutes
-  writeGPScmd(a.slice());
+  writeGPScmd([].slice.call(a));
 }
 
 setUBX_MGA_INI_TIME_UTC();
