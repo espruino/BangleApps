@@ -1,82 +1,58 @@
-/* jshint esversion: 6 */
-const timeFontSize = 6;
-const dateFontSize = 3;
-const gmtFontSize = 2;
-const font = "6x8";
-
-const xyCenter = g.getWidth() / 2;
-const yposTime = 75;
-const yposDate = 130;
-const yposYear = 175;
-
+// Simple clock from https://www.espruino.com/Bangle.js+Clock
+// Load fonts
+require("Font7x11Numeric7Seg").add(Graphics);
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
-var d, da, time, hours, minutes, meridian = "";
+// position on screen
+const X = 160, Y = 140;
 
-function drawSimpleClock() {
-  // get date
+function draw() {
+  // work out how to display the current time
   var d = new Date();
-  var da = d.toString().split(" ");
-
-  g.reset(); // default draw styles
-  // drawSting centered
-  g.setFontAlign(0, 0);
-
-  // draw time
-  var time = da[4].substr(0, 5).split(":");
-  var hours = time[0],
-    minutes = time[1];
-  var meridian = "";
+  var h = d.getHours(), m = d.getMinutes();
   if (is12Hour) {
-    hours = parseInt(hours,10);
-    meridian = "AM";
-    if (hours == 0) {
-      hours = 12;
-      meridian = "AM";
-    } else if (hours >= 12) {
-      meridian = "PM";
-      if (hours>12) hours -= 12;
-    }
-    hours = (" "+hours).substr(-2);
+    if (h == 0) h = 12;
+    else if (h>12) h -= 12;
   }
-
-  g.setFont(font, timeFontSize);
-  g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
-  g.setFont(font, gmtFontSize);
-  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
-
-  // draw Day, name of month, Date
-  var date = [da[0], da[1], da[2]].join(" ");
-  g.setFont(font, dateFontSize);
-
-  g.drawString(date, xyCenter, yposDate, true);
-
-  // draw year
-  g.setFont(font, dateFontSize);
-  g.drawString(d.getFullYear(), xyCenter, yposYear, true);
-
-  // draw gmt
-  var gmt = da[5];
-  g.setFont(font, gmtFontSize);
-  g.drawString(gmt, xyCenter, yposGMT, true);
+  var time = (" "+h).substr(-2) + ":" + ("0"+m).substr(-2);
+  // Reset the state of the graphics library
+  g.reset();
+  // draw the current time (4x size 7 segment)
+  g.setFont("7x11Numeric7Seg",4);
+  g.setFontAlign(1,1); // align right bottom
+  g.drawString(time, X, Y, true /*clear background*/);
+  // draw the seconds (2x size 7 segment)
+  g.setFont("7x11Numeric7Seg",2);
+  g.drawString(("0"+d.getSeconds()).substr(-2), X+30, Y, true /*clear background*/);
+  // draw the date, in a normal font
+  g.setFont("6x8");
+  g.setFontAlign(0,1); // align center bottom
+  // pad the date - this clears the background if the date were to change length
+  var dateStr = "    "+require("locale").date(d)+"    ";
+  g.drawString(dateStr, g.getWidth()/2, Y+15, true /*clear background*/);
 }
 
-// handle switch display on by pressing BTN1
-Bangle.on('lcdPower', function(on) {
-  if (on) drawSimpleClock();
-});
-
-// clean app screen
+// Clear the screen once, at startup
 g.clear();
+// draw immediately at first
+draw();
+var secondInterval = setInterval(draw, 1000);
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (secondInterval) clearInterval(secondInterval);
+  secondInterval = undefined;
+  if (on) {
+    secondInterval = setInterval(draw, 1000);
+    draw(); // draw immediately
+  }
+});
+// Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+// Show launcher when middle button pressed
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-// refesh every 15 sec
-setInterval(drawSimpleClock, 15E3);
-
-// draw now
-drawSimpleClock();
-
+// ====================================== Vibration
 // vibrate 0..9
 function vibrateDigit(num) {
   if (num==0) return Bangle.buzz(500);
@@ -117,9 +93,5 @@ function vibrateTime() {
     then(() => vibrateBusy=false);
 }
 
-
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 // when BTN1 pressed, vibrate
 setWatch(vibrateTime, BTN1, {repeat:true,edge:"rising"});
