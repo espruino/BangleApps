@@ -71,7 +71,7 @@ class CSCSensor {
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
     if (dsecs.length<2) dsecs = "0"+dsecs;
-    var avespeed = (this.movingTime>2 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
+    var avespeed = (this.movingTime>3 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
     var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
     if (this.screenInit) {
       for (var i=0; i<6; ++i) {
@@ -146,7 +146,7 @@ class CSCSensor {
         }
       }
       this.lastSpeed = this.speed;
-      if (this.speed > this.maxSpeed) this.maxSpeed = this.speed;
+      if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20)) this.maxSpeed = this.speed;
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
