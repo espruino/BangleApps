@@ -2236,5 +2236,5 @@
   "storage": [
     {"name":"digiclock.app.js","url":"digiclock.js"},
     {"name":"digiclock.img","url":"digi-icon.js","evaluate":true}
- ],
+ ]
 }, 
