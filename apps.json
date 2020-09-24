@@ -2234,10 +2234,10 @@
   "icon": "digiclock.png",
   "version":"0.01",
   "description": "A simple digital clock with the time, day, month, and year",
-  "tags": "",
+  "tags": "clock",
   "storage": [
     {"name":"digiclock.app.js","url":"digiclock.js"},
     {"name":"digiclock.img","url":"digi-icon.js","evaluate":true}
   ]
-}
+ }
 ]
