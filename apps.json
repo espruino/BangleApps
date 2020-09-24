@@ -1,11 +1,11 @@
 [
   { "id": "boot",
     "name": "Bootloader",
+    "tags": "tool,system",
+    "type":"bootloader",
     "icon": "bootloader.png",
     "version":"0.21",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
-    "tags": "tool,system",
-    "type":"bootloader",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
       {"name":".bootcde","url":"bootloader.js"}
@@ -2225,4 +2225,19 @@
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ]
  }
+]
+
+},
+{ "id": "digiclock",
+  "name": "Digital Clock",
+  "shortName":"Digi Clock",
+  "icon": "digiclock.png",
+  "version":"0.01",
+  "description": "A simple digital clock with the time, day, month, and year",
+  "tags": "",
+  "storage": [
+    {"name":"digiclock.app.js","url":"digiclock.js"},
+    {"name":"digiclock.img","url":"digi-icon.js","evaluate":true}
+  ]
+}
 ]
