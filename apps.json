@@ -2227,14 +2227,15 @@
  },
 
 { "id": "digiclock",
-  "name": "Digital Clock",
+  "name": "Digital Clock Face",
   "shortName":"Digi Clock",
   "icon": "digiclock.png",
   "version":"0.01",
   "description": "A simple digital clock with the time, day, month, and year",
   "tags": "clock",
+  "type" : "clock",
   "storage": [
     {"name":"digiclock.app.js","url":"digiclock.js"},
-    {"name":"digiclock.img","url":"digi-icon.js","evaluate":true}
+    {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
  ]
 }, 
