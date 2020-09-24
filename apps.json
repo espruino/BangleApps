@@ -2224,9 +2224,7 @@
       {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ]
- }
-]
-},
+ },
 
 { "id": "digiclock",
   "name": "Digital Clock",
