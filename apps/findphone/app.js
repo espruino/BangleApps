@@ -4,11 +4,10 @@ var finding = false;
 
 function draw() {
   // show message
-  g.clear();
+  g.clear(1);
   require("Font8x12").add(Graphics);
   g.setFont("8x12",3);
   g.setFontAlign(0,0);
-  g.setColor(0x03E0);
   if (finding) {
     g.drawString("Finding...", g.getWidth()/2, (g.getHeight()/2)-20);
     g.drawString("Click to stop", g.getWidth()/2, (g.getHeight()/2)+20);
