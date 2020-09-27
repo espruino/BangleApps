@@ -27,23 +27,37 @@ function WARN(s) {
 
 var appsFile, apps;
 try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json");
+  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
 } catch (e) {
   ERROR("apps.json not found");
 }
 try{
   apps = JSON.parse(appsFile);
 } catch (e) {
+  console.log(e);
+  var m = e.toString().match(/in JSON at position (\d+)/);
+  if (m) {
+    var char = parseInt(m[1]);
+    console.log("===============================================");
+    console.log("LINE "+appsFile.substr(0,char).split("\n").length);
+    console.log("===============================================");
+    console.log(appsFile.substr(char-10, 20));
+    console.log("===============================================");
+  }
+  console.log(m);
   ERROR("apps.json not valid JSON");
+
 }
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
+  'dependencies'
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
+const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -87,6 +101,15 @@ apps.forEach((app,appIdx) => {
   if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`);
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`);
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`);
+  if (app.dependencies) {
+    if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
+      Object.keys(app.dependencies).forEach(dependency => {
+        if (app.dependencies[dependency]!="type")
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' right now`);
+      });
+    } else
+      ERROR(`App ${app.id} 'dependencies' must be an object`);
+  }
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`);
@@ -194,6 +217,8 @@ apps.forEach((app,appIdx) => {
 // Do not allow files from different apps to collide
 let fileA
 while(fileA=allFiles.pop()) {
+  if (VALID_DUPLICATES.includes(fileA.file))
+    return;
   const nameA = (fileA.file||fileA.data),
     globA = globToRegex(nameA),
     typeA = fileA.file?'storage':'data'

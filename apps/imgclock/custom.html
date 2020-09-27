@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+      </div>
+    </div>
+
+    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/imageconverter.js"></script>
+
+    <script>
+      var faces = [
+        { img:"122240.png", bpp : 8, x:56, y:20, align: 1, col:"#FFFFFF", name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"122271.png", bpp : 8, x:10, y:125, align: -1, col:"#FFFFFF", name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"thisisfine.png", bpp : 8, x:53, y:5, align: 0, col:"#000000", name:"This is fine.", attrib:"Gunshow #648", attribLink:"https://knowyourmeme.com/memes/this-is-fine", description:"" },
+        { img:"explode.png", bpp : 8, x:0, y:145, align: 0, col:"#FFFFFF", name:"Boom.", attrib:"", attribLink:"", description:"" },
+      ];
+
+      document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
+<div class="column col-6 col-xs-12">
+  <div class="card">
+    <div class="card-image">
+      <img src="${face.img}" face="${facenumber}" class="img-responsive">
+    </div>
+    <div class="card-header">
+      <div class="card-title h5">${face.name}</div>
+      <div class="card-subtitle text-gray"><a href="${face.attribLink}" target="_blank">${face.attrib}</a></div>
+    </div>
+    <div class="card-body">${face.description}</div>
+    <div class="card-footer">
+      <button class="btn btn-primary uploadbutton" face="${facenumber}">Upload</button>
+    </div>
+  </div>
+</div>`).join("\n")+`
+<div class="column col-6 col-xs-12">
+  <div class="card">
+    <div class="card-image">
+      <img id="customimage" src="" face="custom" class="img-responsive">
+    </div>
+    <div class="card-header">
+      <div class="card-title h5">Custom</div>
+      <div class="card-subtitle text-gray">(240x192 or 240x216 8 bit web palette)</div>
+    </div>
+    <div class="card-body">
+    <div class="form-group">
+      <div class="col-3">
+        <label class="form-label" for="customfile">Upload</label>
+      </div>
+      <div class="col-9">
+        <input class="form-input" id="customfile" type="file">
+      </div>
+    </div>
+    <div class="form-group">
+    <label class="form-switch">
+      <input type="checkbox" id="cusom16bit">
+      <i class="form-icon"></i> 16 bit images (look better, slower, not recommended)
+    </label>
+  </div>
+    <div class="form-group">
+      <label class="form-label" for="customcolor">Clock color</label>
+      <select class="form-select" id="customcolor">
+        <option value="#ffffff">White</option>
+        <option value="#000000">Black</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="customlocation">Clock location</label>
+      <select class="form-select" id="customlocation">
+        <option value="16,16,-1">Top Left</option>
+        <option value="50,16,1">Top Right</option>
+        <option value="16,131,-1">Bottom Left</option>
+        <option value="50,131,1">Bottom Right</option>
+      </select>
+    </div>
+    </div>
+    <div class="card-footer">
+      <button id="customupload" class="btn btn-primary uploadbutton disabled" face="custom">Upload</button>
+    </div>
+  </div>
+</div>
+`;
+
+      var btns = document.getElementsByClassName("uploadbutton");
+      for (var i=0;i<btns.length;i++) {
+      // When the 'upload' button is clicked...
+        btns[i].addEventListener("click", function(btn) {
+          // build app text
+          var facenumber = btn.target.getAttribute("face");
+          var face;
+          if (facenumber=="custom") {
+            var select = document.getElementById("customlocation");
+            var pos = select.options[select.selectedIndex].value.split(",").map(x=>parseInt(x));
+            select = document.getElementById("customcolor");
+            var col = select.options[select.selectedIndex].value;
+            face = {
+              x : pos[0],
+              y : pos[1],
+              align: pos[2],
+              bpp : document.getElementById('cusom16bit').checked ? 16 : 8,
+              col : col
+            };
+          } else {
+            face = faces[facenumber];
+          }
+          var faceInfo = {
+            bpp : face.bpp,
+            x : face.x,
+            y : face.y,
+            align : face.align,
+            col : face.col
+          };
+          var imgMode = faceInfo.bpp==16 ? "rgb565" : "web";
+          var img = document.querySelector(`img[face='${facenumber}']`);
+          var imgString = imageconverter.imagetoString(img, {mode:imgMode, output:"raw", compression:false});
+          // send finished app
+          sendCustomizedApp({
+            storage:[
+              {name:"imgclock.face.img", content:imgString},
+              {name:"imgclock.face.json", content:JSON.stringify(faceInfo)},
+            ]
+          });
+        });
+      }
+      // Custom image upload
+      document.getElementById('customfile').onchange = function (evt) {
+        var tgt = evt.target || window.event.srcElement, files = tgt.files;
+        if (FileReader && files && files.length) {
+          var fr = new FileReader();
+          fr.onload = function () {
+            document.getElementById("customimage").src = fr.result;
+            document.getElementById('customupload').classList.remove("disabled");
+          }
+          fr.readAsDataURL(files[0]);
+        }
+    }
+
+    </script>
+  </body>
+</html>

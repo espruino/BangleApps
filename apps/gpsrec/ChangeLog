@@ -7,3 +7,9 @@
 0.07: Added @jeffmer's awesome track viewer
 0.08: Don't overwrite existing settings on app update
       Clean up recorded tracks on app removal
+0.09: Change default GPS period to 10 (1 is overkill for most uses and makes things slow)
+      Added RAM keyword to functions & other tweaks to speed up rendering
+      Going 'back' from track view now doesn't load again
+0.10: Can now graph altitude & speed
+0.11: Ensure we don't turn GPS off if it was previously on (eg from another app/widget)
+0.12: Add option to plot on top of OpenStreetMap tiles (when they are installed on the watch)

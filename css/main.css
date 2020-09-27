@@ -1,0 +1,34 @@
+.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
+.navbar .navbar-brand {
+  color: #fff;
+  font-weight: bold;
+}
+.avatar img {
+  border-radius: 5px 5px 5px 5px;
+  background: #ddd;
+}
+#toastcontainer {
+  position:fixed;
+  bottom:8px;left:0px;right:0px;
+  z-index: 100;
+}
+.hero {
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  text-align:center;
+}
+.chip {
+  cursor: pointer;
+}
+.filter-nav {
+  display: inline-block;
+}
+.sort-nav {
+  float: right;
+}
+.tile-content { position: relative; }
+.link-github {
+  position:absolute;
+  top: 36px;
+  left: -24px;
+}

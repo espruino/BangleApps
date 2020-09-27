@@ -155,7 +155,7 @@ function drawMoonPositionPage(gps, title) {
   drawPoint(azimuthDegrees, 8, {r: 1, g: 1, b: 1});
 
   let m = setWatch(() => {
-      let m = moonIndexPageMenu(gps);
+    let m = moonIndexPageMenu(gps);
   }, BTN3, {repeat: false, edge: "falling"});
 }
 
@@ -232,61 +232,61 @@ function drawSunShowPage(gps, key, date) {
   drawPoint(azimuthDegrees, 8, {r: 1, g: 1, b: 0});
 
   m = setWatch(() => {
-      m = sunIndexPageMenu(gps);
+    m = sunIndexPageMenu(gps);
   }, BTN3, {repeat: false, edge: "falling"});
 
   return null;
 }
 
 function sunIndexPageMenu(gps) {
-    const sunTimes = SunCalc.getTimes(new Date(), gps.lat, gps.lon);
+  const sunTimes = SunCalc.getTimes(new Date(), gps.lat, gps.lon);
 
-    const sunMenu = {
-      "": {
-        "title": "-- Sun --",
-      },
-      "Current Pos": () => {
-        m = E.showMenu();
-        drawSunShowPage(gps, "Current Pos", new Date());
-      },
+  const sunMenu = {
+    "": {
+      "title": "-- Sun --",
+    },
+    "Current Pos": () => {
+      m = E.showMenu();
+      drawSunShowPage(gps, "Current Pos", new Date());
+    },
+  };
+
+  Object.keys(sunTimes).sort().reduce((menu, key) => {
+    const title = titlizeKey(key);
+    menu[title] = () => {
+      m = E.showMenu();
+      drawSunShowPage(gps, key, sunTimes[key]);
     };
+    return menu;
+  }, sunMenu);
 
-    Object.keys(sunTimes).sort().reduce((menu, key) => {
-      const title = titlizeKey(key);
-      menu[title] = () => {
-        m = E.showMenu();
-        drawSunShowPage(gps, key, sunTimes[key]);
-      };
-      return menu;
-    }, sunMenu);
+  sunMenu["< Back"] = () => m = indexPageMenu(gps);
 
-    sunMenu["< Back"] = () => m = indexPageMenu(gps);
-
-    return E.showMenu(sunMenu);
+  return E.showMenu(sunMenu);
 }
 
 
 function moonIndexPageMenu(gps) {
-    const moonMenu = {
-      "": {
-        "title": "-- Moon --",
-      },
-      "Times": () => {
-        m = E.showMenu();
-        drawMoonTimesPage(gps, "Times");
-      },
-      "Position": () => {
-        m = E.showMenu();
-        drawMoonPositionPage(gps, "Position");
-      },
-      "Illumination": () => {
-        m = E.showMenu();
-        drawMoonIlluminationPage(gps, "Illumination");
-      },
-      "< Back": () => m = indexPageMenu(gps),
-    };
+  const moonMenu = {
+    "": {
+      "title": "-- Moon --",
+    },
+    "Times": () => {
+      m = E.showMenu();
+      drawMoonTimesPage(gps, "Times");
+    },
+    "Position": () => {
+      m = E.showMenu();
+      drawMoonPositionPage(gps, "Position");
+    },
+    "Illumination": () => {
+      m = E.showMenu();
+      drawMoonIlluminationPage(gps, "Illumination");
+    },
+    "< Back": () => m = indexPageMenu(gps),
+  };
 
-    return E.showMenu(moonMenu);
+  return E.showMenu(moonMenu);
 }
 
 function indexPageMenu(gps) {
@@ -314,74 +314,74 @@ function getCenterStringX(str) {
  * GPS wait page, shows GPS locating animation until it gets a lock, then moves to the Sun page
  */
 function drawGPSWaitPage() {
-    const img = require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AW43GF1wwsFwYwqFwowoFw4wmFxIwdE5YAPF/4vM5nN6YAE5vMF8YtHGIgvhFpQxKF7AuOGA4vXFyAwGF63MFyIABF6xeWMC4UDLwvNGpAJG5gwSdhIIDRBLyWCIgcJHAgJJDoouQF4vMQoICBBJoeGFx6GGACIfHL6YvaX6gvZeCIdFc4gAFXogvGFxgwFDwovQCAguOGAnMMBxeG5guTGAggGGAwNKFySREcA3N5vM5gDBdpQvXEY4AKXqovGGCKbFF7AwPZQwvZGJgtGF7vGdQItG5gSIF7gASF/44WEzgwRF0wwHF1AwFF1QwDF1gvwAH4A/AFAA=="));
-    const str1 = "Astrocalc v0.02";
-    const str2 = "Locating GPS";
-    const str3 = "Please wait...";
+  const img = require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AW43GF1wwsFwYwqFwowoFw4wmFxIwdE5YAPF/4vM5nN6YAE5vMF8YtHGIgvhFpQxKF7AuOGA4vXFyAwGF63MFyIABF6xeWMC4UDLwvNGpAJG5gwSdhIIDRBLyWCIgcJHAgJJDoouQF4vMQoICBBJoeGFx6GGACIfHL6YvaX6gvZeCIdFc4gAFXogvGFxgwFDwovQCAguOGAnMMBxeG5guTGAggGGAwNKFySREcA3N5vM5gDBdpQvXEY4AKXqovGGCKbFF7AwPZQwvZGJgtGF7vGdQItG5gSIF7gASF/44WEzgwRF0wwHF1AwFF1QwDF1gvwAH4A/AFAA=="));
+  const str1 = "Astrocalc v0.02";
+  const str2 = "Locating GPS";
+  const str3 = "Please wait...";
 
-    g.clear();
-    g.drawImage(img, 100, 50);
-    g.setFont("6x8", 1);
-    g.drawString(str1, getCenterStringX(str1), 105);
-    g.drawString(str2, getCenterStringX(str2), 140);
-    g.drawString(str3, getCenterStringX(str3), 155);
+  g.clear();
+  g.drawImage(img, 100, 50);
+  g.setFont("6x8", 1);
+  g.drawString(str1, getCenterStringX(str1), 105);
+  g.drawString(str2, getCenterStringX(str2), 140);
+  g.drawString(str3, getCenterStringX(str3), 155);
 
-    if (lastGPS) {
-      lastGPS = JSON.parse(lastGPS);
-      lastGPS.time = new Date();
+  if (lastGPS) {
+    lastGPS = JSON.parse(lastGPS);
+    lastGPS.time = new Date();
 
-      const str4 = "Press Button 3 to use last GPS";
-      g.setColor("#d32e29");
-      g.fillRect(0, 190, g.getWidth(), 215);
-      g.setColor("#ffffff");
-      g.drawString(str4, getCenterStringX(str4), 200);
+    const str4 = "Press Button 3 to use last GPS";
+    g.setColor("#d32e29");
+    g.fillRect(0, 190, g.getWidth(), 215);
+    g.setColor("#ffffff");
+    g.drawString(str4, getCenterStringX(str4), 200);
 
-      setWatch(() => {
-        clearWatch();
-        Bangle.setGPSPower(0);
-        m = indexPageMenu(lastGPS);
-      }, BTN3, {repeat: false});
-    }
-
-    g.flip();
-
-    const DEBUG = false;
-    if (DEBUG) {
+    setWatch(() => {
       clearWatch();
+      Bangle.setGPSPower(0);
+      m = indexPageMenu(lastGPS);
+    }, BTN3, {repeat: false});
+  }
 
-      const gps = {
-        "lat": 56.45783133333,
-        "lon": -3.02188583333,
-        "alt": 75.3,
-        "speed": 0.070376,
-        "course": NaN,
-        "time":new Date(),
-        "satellites": 4,
-        "fix": 1
-       };
+  g.flip();
 
-      m = indexPageMenu(gps);
+  const DEBUG = false;
+  if (DEBUG) {
+    clearWatch();
 
-      return;
-    }
+    const gps = {
+      "lat": 56.45783133333,
+      "lon": -3.02188583333,
+      "alt": 75.3,
+      "speed": 0.070376,
+      "course": NaN,
+      "time":new Date(),
+      "satellites": 4,
+      "fix": 1
+    };
 
-    Bangle.on('GPS', (gps) => {
-        if (gps.fix === 0) return;
-        clearWatch();
+    m = indexPageMenu(gps);
 
-        if (isNaN(gps.course)) gps.course = 0;
-        require("Storage").writeJSON(LAST_GPS_FILE, JSON.stringify(gps));
-        Bangle.setGPSPower(0);
-        Bangle.buzz();
-        Bangle.setLCDPower(true);
+    return;
+  }
 
-        m = indexPageMenu(gps);
-    });
+  Bangle.on('GPS', (gps) => {
+    if (gps.fix === 0) return;
+    clearWatch();
+
+    if (isNaN(gps.course)) gps.course = 0;
+    require("Storage").writeJSON(LAST_GPS_FILE, JSON.stringify(gps));
+    Bangle.setGPSPower(0);
+    Bangle.buzz();
+    Bangle.setLCDPower(true);
+
+    m = indexPageMenu(gps);
+  });
 }
 
 function init() {
-    Bangle.setGPSPower(1);
-    drawGPSWaitPage();
+  Bangle.setGPSPower(1);
+  drawGPSWaitPage();
 }
 
 let m;

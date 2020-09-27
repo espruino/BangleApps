@@ -337,6 +337,7 @@ function onFrame() {
     ai.show();
     net();
     ball.show();
+    g.flip()
   } else if (state === 3) {
     g.clear();
     g.setColor(0);

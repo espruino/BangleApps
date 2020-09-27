@@ -21,6 +21,10 @@
     if (a.n > b.n) return 1;
     return 0;
   });
+  apps.push({
+    n: "NONE",
+    src: ""
+  });
 
   const settings = s.readJSON("largeclock.json", 1) || {
     BTN1: "",
@@ -34,7 +38,7 @@
 
     function onchange(v) {
       settings[btn] = v;
-      s.write("largeclock.json", settings);
+      s.writeJSON("largeclock.json", settings);
     }
 
     const btnMenu = {

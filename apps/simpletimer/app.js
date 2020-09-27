@@ -2,6 +2,7 @@ let counter = 0;
 let setValue = 0;
 let counterInterval;
 let state;
+let saved = require("Storage").readJSON("simpletimer.json",true) || {};
 
 const DEBOUNCE = 50;
 
@@ -61,6 +62,8 @@ function clearIntervals() {
 function set(delta) {
   if (state === "started") return;
   counter += delta;
+  saved.counter = counter;
+  require("Storage").write("simpletimer.json", saved);
   if (state === "unset") {
     state = "set";
   }
@@ -81,10 +84,10 @@ const stateMap = {
     startTimer();
   },
   started: () => {
-    reset(setValue);
+    resetTimer(setValue);
   },
   stopped: () => {
-    reset(setValue);
+    resetTimer(setValue);
   }
 };
 
@@ -102,8 +105,9 @@ function drawLabels() {
   g.drawString(`reset                   (re)start`, 230, 120);
 }
 
-function reset(value) {
+function resetTimer(value) {
   clearIntervals();
+  VIBRATE.reset(); // turn off vibration (clearIntervals stops the buzz turning off)
   counter = value;
   setValue = value;
   drawLabels();
@@ -118,9 +122,19 @@ function addWatch() {
     repeat: true,
     edge: "falling"
   });
+  setWatch(() => {
+    if (state !== "started") {
+      Bangle.showLauncher();
+    }},
+  BTN2,
+  {
+    repeat: false,
+    edge: "falling",
+  },
+  );
   setWatch(
     () => {
-      reset(0);
+      resetTimer(0);
     },
     BTN3,
     {
@@ -146,6 +160,9 @@ function addWatch() {
     edge: "falling"
   });
 }
+Bangle.on("aiGesture", gesture => {
+  if (gesture === "swipeleft" && state === "stopped") resetTimer(0);
+});
 
-reset(0);
+resetTimer(saved.counter || 0);
 addWatch();

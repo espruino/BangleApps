@@ -6,7 +6,7 @@ Bangle.js App Loader (and Apps)
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [github.io](https://espruino.github.io/BangleApps/)
 
-**All software (including apps) in this repository is MIT Licensed - see [LICENSE](LICENSE)** By 
+**All software (including apps) in this repository is MIT Licensed - see [LICENSE](LICENSE)** By
 submitting code to this repository you confirm that you are happy with it being MIT licensed,
 and that it is not licensed in another way that would make this impossible.
 
@@ -194,16 +194,17 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*7chname", // for Bangle.js menu
   "src":"-7chname", // source file
-  "type":"widget/clock/app", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu
+  "type":"widget/clock/app/bootloader", // optional, default "app"
+     // if this is 'widget' then it's not displayed in the menu  
      // if it's 'clock' then it'll be loaded by default at boot time
+     // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
   "version":"1.23",
      // added by BangleApps loader on upload based on apps.json
   "files:"file1,file2,file3",
      // added by BangleApps loader on upload - lists all files
      // that belong to the app so it can be deleted
   "data":"appid.data.json,appid.data?.json;appidStorageFile,appidStorageFile*"
-     // added by BangleApps loader on upload - lists files that 
+     // added by BangleApps loader on upload - lists files that
      // the app might write, so they can be deleted on uninstall
      // typically these files are not uploaded, but created by the app
      // these can include '*' or '?' wildcards
@@ -217,10 +218,16 @@ and which gives information about the app for the Launcher.
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
   "icon": "icon.png",         // icon in apps/
-  "description": "...",       // long description
-  "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
+  "description": "...",       // long description (can contain markdown)
+  "type":"...",               // optional(if app) -  
+                              //   'app' - an application
+                              //   'widget' - a widget
+                              //   'launch' - replacement launcher app
+                              //   'bootloader' - code that runs at startup only
+                              //   'RAM' - code that runs and doesn't upload anything to storage
   "tags": "",                 // comma separated tag list for searching
-
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+                              // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
                               // A 'Read more...' link will be added under the app
@@ -239,7 +246,8 @@ and which gives information about the app for the Launcher.
                               // add an icon to allow your app to be tested
 
   "storage": [                // list of files to add to storage
-    {"name":"appid.js",         // filename to use in storage
+    {"name":"appid.js",       // filename to use in storage.
+                              // If name=='RAM', the code is sent directly to Bangle.js and is not saved to a file
      "url":"",                // URL of file to load (currently relative to apps/)
      "content":"..."          // if supplied, this content is loaded directly
      "evaluate":true          // if supplied, data isn't quoted into a String before upload
@@ -251,7 +259,7 @@ and which gives information about the app for the Launcher.
      "storageFile":true       // if supplied, file is treated as storageFile
     },
     {"wildcard":"appid.data.*" // wildcard of filenames used in storage
-    },                         // this is mutually exclusive with using "name" 
+    },                         // this is mutually exclusive with using "name"
   ],
   "sortorder" : 0,            // optional - choose where in the list this goes.
                               // this should only really be used to put system
@@ -289,7 +297,7 @@ version of what's in `apps.json`:
         sendCustomizedApp({
           id : "7chname",
           storage:[
-            {name:"7chname.app.js", content:app_source_code},
+            {name:"7chname.app.js", url:"app.js", content:app_source_code},
             {name:"7chname.img", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
           ]
         });
@@ -301,6 +309,10 @@ version of what's in `apps.json`:
 
 This'll then be loaded in to the watch. See [apps/qrcode/grcode.html](the QR Code app)
 for a clean example.
+
+**Note:** we specify a `url` for JS files even though it doesn't have to exist
+and will never be loaded. This is so the app loader can tell if it's a JavaScript
+file based on the extension, and if so it can minify and pretokenise it.
 
 ### `apps.json`: `interface` element
 
@@ -341,8 +353,11 @@ See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 Apps (or widgets) can add their own settings to the "Settings" menu under "App/widget settings".   
 To do so, the app needs to include a `settings.js` file, containing a single function
 that handles configuring the app.   
-When the app settings are opened, this function is called with one 
+When the app settings are opened, this function is called with one
 argument, `back`: a callback to return to the settings menu.
+
+Usually it will save any information in `app.json` where `app` is the name
+of your app - so you should change the example accordingly.
 
 Example `settings.js`
 ```js
@@ -352,7 +367,7 @@ Example `settings.js`
   function save(key, value) {
     settings[key] = value;
     require('Storage').write('app.json',settings);
-  } 
+  }
   const appMenu = {
     '': {'title': 'App Settings'},
     '< Back': back,

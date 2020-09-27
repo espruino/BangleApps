@@ -18,3 +18,6 @@ Settings can be accessed through the app/widget settings menu of the Bangle.js
 
 ### Menu button
 * choose button to start launcher menu with
+
+### Date on touch
+* shows the current date as DD MM on touch and reverts back to time after 5 seconds

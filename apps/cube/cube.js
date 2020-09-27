@@ -2,9 +2,9 @@ var rx = 0, ry = 0;
 
 function draw() {
   var rcx=Math.cos(rx),
-      rsx=Math.sin(rx),
-      rcy=Math.cos(ry),
-      rsy=Math.sin(ry);
+    rsx=Math.sin(rx),
+    rcy=Math.cos(ry),
+    rsy=Math.sin(ry);
   function p(x,y,z) {
     var t;
     t = x*rcy + z*rsy;
