@@ -12,16 +12,15 @@ function drawTimeDate() {
   var mins= ("0"+m).substr(-2);
   var date = `${daysOfWeek[weekDay]}|${day}|${("0"+(month+1)).substr(-2)}`;
 
-
   // Reset the state of the graphics library
   g.reset();
   // Set color
   g.setColor('#2ecc71');
   // draw the current time (4x size 7 segment)
-  g.setFont("8x12",9);
+  g.setFont("8x12",8);
   g.setFontAlign(-1,0); // align right bottom
-  g.drawString(hours, 25, 65, true /*clear background*/);
-  g.drawString(mins, 25, 155, true /*clear background*/);
+  g.drawString(hours, 25, 75, true /*clear background*/);
+  g.drawString(mins, 25, 165, true /*clear background*/);
 
   // draw the date (2x size 7 segment)
   g.setFont("6x8",2);
@@ -83,6 +82,10 @@ function drawBattery() {
 
 // Clear the screen once, at startup
 g.clear();
+
+// Load and draw widgets
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
 // draw immediately at first
 drawTimeDate();

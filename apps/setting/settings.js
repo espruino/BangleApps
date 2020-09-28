@@ -61,8 +61,6 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
-  var hidV = [false, "kbmedia", "kb", "joy"];
-  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
@@ -101,15 +99,6 @@ function showMainMenu() {
     },
     'Locale': ()=>showLocaleMenu(),
     'Select Clock': ()=>showClockMenu(),
-    'HID': {
-      value: 0 | hidV.indexOf(settings.HID),
-      min: 0, max: 3,
-      format: v => hidN[v],
-      onchange: v => {
-        settings.HID = hidV[v];
-        updateSettings();
-      }
-    },
     'Set Time': ()=>showSetTimeMenu(),
     'LCD': ()=>showLCDMenu(),
     'Reset Settings': ()=>showResetMenu(),
@@ -120,6 +109,8 @@ function showMainMenu() {
 }
 
 function showBLEMenu() {
+  var hidV = [false, "kbmedia", "kb", "joy"];
+  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
     'BLE': {
       value: settings.ble,
@@ -134,6 +125,15 @@ function showBLEMenu() {
       format: boolFormat,
       onchange: () => {
         settings.blerepl = !settings.blerepl;
+        updateSettings();
+      }
+    },
+    'HID': {
+      value: 0 | hidV.indexOf(settings.HID),
+      min: 0, max: 3,
+      format: v => hidN[v],
+      onchange: v => {
+        settings.HID = hidV[v];
         updateSettings();
       }
     },
