@@ -152,7 +152,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.21",
+    "version":"0.22",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
