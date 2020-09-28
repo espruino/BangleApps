@@ -146,7 +146,7 @@ class CSCSensor {
         }
       }
       this.lastSpeed = this.speed;
-      if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20)) this.maxSpeed = this.speed;
+      if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
@@ -189,14 +189,16 @@ function parseDevice(d) {
 
 function connection_setup() {
   NRF.setScan();
+  mySensor.screenInit = true;
   NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-  g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
+  g.clearRect(0, 48, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
   g.drawString("Scanning for CSC sensor...", 120, 120);
 }
 
 connection_setup();
 setWatch(function() { mySensor.reset(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
 E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
+setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});
 NRF.on('disconnect', connection_setup);
 
 Bangle.loadWidgets();
