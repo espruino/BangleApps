@@ -2210,11 +2210,11 @@
     ]
   },
   { "id": "fileman",
-    "name": "Simple file manager",
+    "name": "File manager",
     "shortName":"FileManager",
     "icon": "icons8-filing-cabinet-48.png",
     "version":"0.01",
-    "description": "Simple file manager, allows to examine storage, display or delete files",
+    "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
     "tags": "tools",
     "readme": "README.md",
     "storage": [
