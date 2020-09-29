@@ -2238,4 +2238,4 @@
     {"name":"digiclock.app.js","url":"digiclock.js"},
     {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
  ]
-}, 
+} 
