@@ -2,7 +2,7 @@
 
 A small file manager, mostly written for debugging issues on the watch.
 Upon opening, the app will display a list of all the files in storage (it will contract the sub-components of a StorageFile into one entry).
-When selecting a file the following option occurs (depending on file type detected by extension):
+When selecting a file the following options appear (depending on file type detected by extension):
 
 - Length: file size in bytes
 - Display file: print out file contents on screen (will attempt to add back newlines for minimized JS code)
