@@ -2209,6 +2209,19 @@
       {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
     ]
   },
+  { "id": "fileman",
+    "name": "File manager",
+    "shortName":"FileManager",
+    "icon": "icons8-filing-cabinet-48.png",
+    "version":"0.01",
+    "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
+    "tags": "tools",
+    "readme": "README.md",
+    "storage": [
+      {"name":"fileman.app.js","url":"fileman.app.js"},
+      {"name":"fileman.img","url":"fileman-icon.js","evaluate":true}
+    ]
+  },
  { "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName":"World Clock",
