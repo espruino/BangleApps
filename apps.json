@@ -2230,7 +2230,7 @@
   "name": "Digital Clock Face",
   "shortName":"Digi Clock",
   "icon": "digiclock.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A simple digital clock with the time, day, month, and year",
   "tags": "clock",
   "type" : "clock",
