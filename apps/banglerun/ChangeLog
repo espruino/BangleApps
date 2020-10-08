@@ -1,2 +1,5 @@
 0.01: First release
 0.02: Bugfix time: Reset minutes to 0 when hitting 60
+0.03: Fix distance >=10 km (fix #529)
+0.04: Use offscreen buffer for flickerless updates
+0.05: Complete rewrite. New UI, GPS & HRM Kalman filters, activity logging

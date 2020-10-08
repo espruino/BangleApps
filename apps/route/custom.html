@@ -25,7 +25,7 @@
 <input class="form-input" type="file" id="fileLoader"/></p>
 <p><button id="upload" style="display:none" class="btn btn-primary">Upload</button></p>
 <pre id="log"></pre>
-<script src="../../lib/customize.js"></script>
+<script src="../../core/lib/customize.js"></script>
 <script>
 var xmlText = "";
 var xmlDoc;
@@ -243,7 +243,7 @@ g.clear();
 
 sendCustomizedApp({
   storage:[
-    {name:"route.app.js", content:app}
+    {name:"route.app.js", url:"app.js", content:app}
   ]
 });
 });

@@ -14,3 +14,6 @@
 0.13: Modified to use the 'notify' library
 0.14: Added 'find' event handling
 0.15: Don't keep LCD on while playing music
+0.16: Handle dismissing notifications on the phone
+      Nicer display of alarm clock notifications
+0.17: Modified music notification for updated 'notify' library

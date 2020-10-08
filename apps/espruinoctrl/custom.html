@@ -27,7 +27,7 @@
   </div>
     <p><button id="upload" class="btn btn-primary">Upload to Bangle.js</button></p>
 
-    <script src="../../lib/customize.js"></script>
+    <script src="../../core/lib/customize.js"></script>
 
     <script>
       var options;
@@ -266,7 +266,7 @@ function sendCommand(device, text, callback) {
 `;
         sendCustomizedApp({
           storage:[
-            {name:"espruinoctrl.app.js", content:app},
+            {name:"espruinoctrl.app.js", url:"app.js", content:app},
           ]
         });
       });

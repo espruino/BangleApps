@@ -1,11 +1,11 @@
 [
   { "id": "boot",
     "name": "Bootloader",
-    "icon": "bootloader.png",
-    "version":"0.19",
-    "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
+    "icon": "bootloader.png",
+    "version":"0.21",
+    "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
       {"name":".bootcde","url":"bootloader.js"}
@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.01",
+    "version":"0.05",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.01",
+    "version":"0.06",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -121,7 +121,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.15",
+    "version":"0.17",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "type":"widget",
@@ -152,7 +152,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.20",
+    "version":"0.22",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
@@ -344,7 +344,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -361,7 +361,7 @@
   { "id": "gpsnav",
     "name": "GPS Navigation",
     "icon": "icon.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording, now with waypoint editor",
     "tags": "tool,outdoors,gps",
     "readme": "README.md",
@@ -454,6 +454,24 @@
     ],
     "data": [
       {"name":"widbatpc.json"}
+    ]
+  },
+  { "id": "widbatwarn",
+    "name": "Battery Warning",
+    "shortName": "Battery Warning",
+    "icon": "widget.png",
+    "readme": "README.md",
+    "version":"0.01",
+    "description": "Show a warning when the battery runs low.",
+    "tags": "tool,battery",
+    "type":"widget",
+    "dependencies": { "notify":"type" },
+    "storage": [
+      {"name":"widbatwarn.wid.js","url":"widget.js"},
+      {"name":"widbatwarn.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widbatwarn.json"}
     ]
   },
   { "id": "widbt",
@@ -674,6 +692,19 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "vibrclock",
+    "name": "Vibrate Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"vibrclock.app.js","url":"app.js"},
+      {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "svclock",
     "name": "Simple V-Clock",
     "icon": "vclock-simple.png",
@@ -864,6 +895,16 @@
       {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
   },
+  { "id": "assistedgps",
+    "name": "Assisted GPS Update",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "custom": "custom.html",
+    "tags": "tool,outdoors",
+    "type": "RAM",
+    "storage": [ ]
+  },
   {
     "id": "pomodo",
     "name":"Pomodoro",
@@ -1050,7 +1091,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -1225,7 +1266,7 @@
   { "id": "minionclk",
     "name": "Minion clock",
     "icon": "minionclk.png",
-    "version": "0.02",
+    "version": "0.04",
     "description": "Minion themed clock.",
     "tags": "clock,minion",
     "type": "clock",
@@ -1403,7 +1444,7 @@
     "name": "Digital Assistant, not EDITH",
     "shortName": "DANE",
     "icon": "app.png",
-    "version": "0.07",
+    "version": "0.10",
     "description": "A Watchface inspired by Tony Stark's EDITH",
     "tags": "clock",
     "type": "clock",
@@ -1447,7 +1488,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.02",
+    "version": "0.05",
     "description": "An app for running sessions.",
     "tags": "run,running,fitness,outdoors",
     "allow_emulator": false,
@@ -1582,8 +1623,7 @@
       {"name": "ballmaze.json"}
     ]
   },
-  {
-    "id": "calendar",
+  { "id": "calendar",
     "name": "Calendar",
     "icon": "calendar.png",
     "version": "0.01",
@@ -1678,7 +1718,7 @@
     "id": "simpletimer",
     "name": "Timer",
     "icon": "app.png",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Simple timer, useful when playing board games or cooking",
     "tags": "timer",
     "readme": "README.md",
@@ -1728,8 +1768,8 @@
     "name": "Find Phone",
     "shortName":"Find Phone",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳",
+    "version":"0.02",
+    "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳  Note: The functionality is available even without this app, just go to Settings, App Settings, Gadgetbridge, Find Phone.",
     "tags": "tool,android",
     "readme": "README.md",
     "allow_emulator": true,
@@ -1900,7 +1940,7 @@
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A simple vertical watch face with the date.",
     "tags": "clock",
     "type":"clock",
@@ -2047,6 +2087,23 @@
       {"name":"widancs.settings.js","url":"settings.js"}
     ]
   },
+  { "id": "accelrec",
+    "name": "Acceleration Recorder",
+    "shortName":"Accel Rec",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "This app puts the Bangle's accelerometer into 100Hz mode and reads 2 seconds worth of data after movement starts. The data can then be exported back to the PC.",
+    "tags": "",
+    "readme": "README.md",
+    "storage": [
+      {"name":"accelrec.app.js","url":"app.js"},
+      {"name":"accelrec.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"wildcard":"accelrec.?.csv" }
+    ]
+  },
   {
     "id": "cprassist",
     "name":"CPR Assist",
@@ -2071,5 +2128,128 @@
         "url": "settings.js"
       }
     ]
-  }
+  },
+  { "id": "osgridref",
+    "name": "Ordnance Survey Grid Reference",
+    "shortName":"OS Grid ref",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Displays the UK Ordnance Survey grid reference of your current GPS location. Useful when in the United Kingdom with an Ordnance Survey map",
+    "tags": "outdoors,gps",
+    "storage": [
+      {"name":"osgridref.app.js","url":"app.js"},
+      {"name":"osgridref.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "openseizure",
+    "name": "OpenSeizureDetector Widget",
+    "shortName":"Short Name",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "[BETA!] A widget to work alongside [OpenSeizureDetector](https://www.openseizuredetector.org.uk/)",
+    "tags": "widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"openseizure.wid.js","url":"widget.js"}
+    ]
+  },
+  {"id": "counter",
+  "name": "Counter",
+  "icon": "counter_icon.png",
+  "version": "0.01",
+  "description": "Simple counter",
+  "tags": "tool",
+  "allow_emulator": true,
+  "storage": [
+    {"name": "counter.app.js", "url": "counter.js"},
+    {"name": "counter.img", "url": "counter-icon.js", "evaluate": true}
+   ]
+  },
+  { "id": "bootgattbat",
+    "name": "BLE GATT Battery Service",
+    "shortName":"BLE Battery Service",
+    "icon": "bluetooth.png",
+    "version":"0.01",
+    "description": "Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.\n",
+    "tags": "battery,ble,bluetooth,gatt",
+    "type": "bootloader",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gattbat.boot.js","url":"boot.js"}
+    ]
+  },
+  { "id": "viewstl",
+  "name": "STL file viewer",
+  "shortName":"ViewSTL",
+  "icon": "icons8-octahedron-48.png",
+  "version":"0.02",
+  "description": "This app allows you to view STL 3D models on your watch",
+  "tags": "tool",
+  "readme": "README.md",
+  "storage": [
+    {"name":"viewstl.app.js","url":"viewstl.min.js"},
+    {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
+    {"name":"tetra.stl","url":"tetra.stl"},
+    {"name":"cube.stl","url":"cube.stl"},
+    {"name":"icosa.stl","url":"icosa.stl"}
+   ]
+  },
+  { "id": "cscsensor",
+    "name": "Cycling speed sensor",
+    "shortName":"CSCSensor",
+    "icon": "icons8-cycling-48.png",
+    "version":"0.04",
+    "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch",
+    "tags": "outdoors,exercise,ble,bluetooth",
+    "readme": "README.md",
+    "storage": [
+      {"name":"cscsensor.app.js","url":"cscsensor.app.js"},
+      {"name":"cscsensor.settings.js","url":"settings.js"},
+      {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "fileman",
+    "name": "File manager",
+    "shortName":"FileManager",
+    "icon": "icons8-filing-cabinet-48.png",
+    "version":"0.01",
+    "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
+    "tags": "tools",
+    "readme": "README.md",
+    "storage": [
+      {"name":"fileman.app.js","url":"fileman.app.js"},
+      {"name":"fileman.img","url":"fileman-icon.js","evaluate":true}
+    ]
+  },
+ { "id": "worldclock",
+    "name": "World Clock - 4 time zones",
+    "shortName":"World Clock",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Current time zone plus up to four others",
+    "tags": "clock",
+    "type" : "clock",
+    "custom": "custom.html",
+    "readme": "README.md",
+    "storage": [
+      {"name":"worldclock.app.js","url":"app.js"},
+      {"name":"worldclock.settings.json"},
+      {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
+  ]
+ },
+
+{ "id": "digiclock",
+  "name": "Digital Clock Face",
+  "shortName":"Digi Clock",
+  "icon": "digiclock.png",
+  "version":"0.01",
+  "description": "A simple digital clock with the time, day, month, and year",
+  "tags": "clock",
+  "type" : "clock",
+  "storage": [
+    {"name":"digiclock.app.js","url":"digiclock.js"},
+    {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
+ ]
+} 
 ]

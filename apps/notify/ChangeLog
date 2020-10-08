@@ -1,1 +1,4 @@
 0.01: New Library!
+0.02: Add notification ID option
+0.03: Pass `area{x,y,w,h}` to render callback instead of just `y`
+0.05: Adjust position of notification src text

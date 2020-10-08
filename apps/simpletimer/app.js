@@ -84,10 +84,10 @@ const stateMap = {
     startTimer();
   },
   started: () => {
-    reset(setValue);
+    resetTimer(setValue);
   },
   stopped: () => {
-    reset(setValue);
+    resetTimer(setValue);
   }
 };
 
@@ -105,8 +105,9 @@ function drawLabels() {
   g.drawString(`reset                   (re)start`, 230, 120);
 }
 
-function reset(value) {
+function resetTimer(value) {
   clearIntervals();
+  VIBRATE.reset(); // turn off vibration (clearIntervals stops the buzz turning off)
   counter = value;
   setValue = value;
   drawLabels();
@@ -133,7 +134,7 @@ function addWatch() {
   );
   setWatch(
     () => {
-      reset(0);
+      resetTimer(0);
     },
     BTN3,
     {
@@ -160,8 +161,8 @@ function addWatch() {
   });
 }
 Bangle.on("aiGesture", gesture => {
-  if (gesture === "swipeleft" && state === "stopped") reset(0);
+  if (gesture === "swipeleft" && state === "stopped") resetTimer(0);
 });
 
-reset(saved.counter || 0);
+resetTimer(saved.counter || 0);
 addWatch();
