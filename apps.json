@@ -120,7 +120,7 @@
   },
   { "id": "mywelcome",
     "name": "Customised Welcome",
-    "shortname": "My Welcome",
+    "shortName": "My Welcome",
     "icon": "app.png",
     "version":"0.09",
     "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
