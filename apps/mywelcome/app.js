@@ -9,12 +9,12 @@ function animate(seq,period) {
 }
 
 // Fade in to FG color with angled lines
-function fade(callback) {
+function fade(col, callback) {
   var n = 0;
   function f() {
+    g.setColor(col);
     for (var i=n;i<240;i+=10) {
-      g.drawLine(i,0,0,i);
-      g.drawLine(i,240,240,i);
+      g.drawLine(i,0,0,i).drawLine(i,240,240,i);
     }
     g.flip();
     n++;
@@ -27,6 +27,7 @@ function fade(callback) {
 
 var scenes = [
   function() {
+    console.log("Start app");
     g.clear(1);
     eval(require("Storage").read("mywelcome.custom.js"));
   },function() {
@@ -47,7 +48,6 @@ var scenes = [
   },function() {
     var img = require("heatshrink").decompress(atob("ptRxH+qYAfvl70mj5gAC0ekvd8FkAAdz3HJAYAH4+eJXWkJJYAF0hK2vfNJaIAB5t7S3fN5/V6wAD6vOTg9SumXy2W3QAB3eXul2JdnO63XAApPEVYvAJQIACJoRQDzBLoJQ3W5/NIwr4GJohMFAAROgJYvVJQiPGABZNN3bsdvYyESwnWJSIAC3RNM3V1JjZAES4nVJSYAB4xMNJrbkE56WD5xLVdB5NbFofNJbgABJh26qREPrFXrlbAAWjFgfWJgRLaTQhMLy5KNJINhsJLDrYrD5xLC6pLa5nGTR7oLq9bJQJMKTAXWJbbnR3RLJSoRMHv4pC5rkec6SaIrBLGw2r2XW1epcoqYeJiOXJYziEsOH2RBBw7lF56Yg5nGc6FScZOGJQPX2TmDFIfVTEBMSc4hLEw5KB6+rsJMH63X6pMf5hMQzBLCq5LD1ZLEJhTlfJiWXTA2GJYpMIcwPNc2O6TAuGRIPX1igDJg/PJmyYDcgXWwxMH1ApC53XcsHAJiVYcg2HJYZME0YpC5vWJkhLNJgLlDTAeFJhF/FQfVJkG6JiGXcomyJgOrJYhMErYqD53NJj7lRzBMDcoeGJhzoBJb3GJiN1qZBCJgWyJYpNF1LigAAXAJiNSJgzlGJgt/JkZLRy9TJgeHJhznFcuSZGw5MHJomjcuhLBqdcJiSaiTChMV1CYxy5LCqdXIAWy6+rJhCalTCN2JgdYH4WHJiGpTF7kDc43W2RMJTUZLQzBLFc4mr6+GJh2jTFmXJYyaEwuyc5Sag4xLZTQmG2WFJhxNaJYZMLJZSaEJoOHTR9/Ja+6JbdTqRNETRRNF1JLV4BLcAANYI5ToK1BLYJhWYJZwABq5NoJZ91JaAABdAZNS0ZLey9SJaRNYv5KM426JZmXuxKUJrKcL0lTzBLKzBKYJrVXvfGSol7EYWXJI27zF1JLQADq5NUrgYB4wAEEIV0comXI7wAFrCcPJgYWBTIIAETIN2JYmWuhMkdSdYCgOeJgueqRLFyzhfTi9bq4TC45MF49TuuXJlpONcogAC0hKB0gHDvZMEqRMpAANSq9crlbJAYADqwRDxGk0mIA4eCTQOeveXJdYAHqxNFdAeIAAQGCrOI0oHEAGVXTRJMGvgGCwRM7TAZMHwQGCvhM1rBMERIhMGAwdZJmtSqVTwNcwJEDJg19cvIADa4d9JhANDJnSLHJgrl6AAhFFAwpZDegjn7vhMGcvwABrJAFJgjl/TQpBBI4jl/AAN8TQhHDcv4ADcJBMDvpM+IYaeDAAhL+qd9SgycEJn7iEAA18Jf7nEcv4AIrJLIcv6aMcv4ADvhMHrJJ/AAbl/c6ZM/AAt9cv7nSIv7nLcv4AHrLl/TRpJBvgnjA=="));
     g.reset();
-    g.setColor("#6633ff");
     g.setBgColor("#6633ff");
     var y = 240, speed = 5;
     function balloon(callback) {
@@ -58,7 +58,7 @@ var scenes = [
       if (y>60) setTimeout(balloon,0,callback);
       else callback();
     }
-    fade(function() {
+    fade("#6633ff", function() {
       balloon(function() {
         g.setColor(-1);
         g.setFont("6x8",3);
@@ -260,7 +260,7 @@ function move(dir) {
   Bangle.setLCDMode();
   g.clear();
   scenes[sceneNumber]();
-  if (sceneNumber>1) {
+  if (sceneNumber>2) {
     var l = scenes.length;
     for (var i=0;i<l-2;i++) {
       var x = 120+(i-(l-2)/2)*12;
@@ -278,7 +278,7 @@ function move(dir) {
   if (sceneNumber < scenes.length-1)
     setTimeout(function() {
       move(1);
-    }, 5000);
+    }, (sceneNumber==0) ? 20000 : 5000);
 }
 
 
