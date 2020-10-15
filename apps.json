@@ -2251,5 +2251,18 @@
     {"name":"digiclock.app.js","url":"digiclock.js"},
     {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
  ]
-} 
+},
+  { "id": "dsdrelay",
+    "name": "DSD BLE Relay controller",
+    "shortName":"DSDRelay",
+    "icon": "icons8-relay-48.png",
+    "version":"0.01",
+    "description": "Control BLE relay board from the watch",
+    "tags": "ble,bluetooth",
+    "readme": "README.md",
+    "storage": [
+      {"name":"dsdrelay.app.js","url":"dsdrelay.app.js"},
+      {"name":"dsdrelay.img","url":"dsdrelay-icon.js","evaluate":true}
+    ]
+  }
 ]
