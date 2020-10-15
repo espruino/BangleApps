@@ -3,3 +3,4 @@
 0.03: BTN2 to open launcher
 0.04: Remember last set time
 0.05: Fix buzz that doesn't stop (fix #521)
+0.06: Fix buzz error, remove '+' when timer running and add 'back' text (fix #577)
