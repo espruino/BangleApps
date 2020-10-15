@@ -118,6 +118,24 @@
       {"name":"welcome.json"}
     ]
   },
+  { "id": "mywelcome",
+    "name": "Customised Welcome",
+    "shortname": "My Welcome",
+    "icon": "app.png",
+    "version":"0.09",
+    "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
+    "tags": "start,welcome",
+    "custom":"custom.html",
+    "storage": [
+      {"name":"mywelcome.boot.js","url":"boot.js"},
+      {"name":"mywelcome.app.js","url":"app.js"},
+      {"name":"mywelcome.settings.js","url":"settings.js"},
+      {"name":"mywelcome.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"mywelcome.json"}
+    ]
+  },
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
