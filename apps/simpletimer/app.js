@@ -1,15 +1,19 @@
 let counter = 0;
 let setValue = 0;
-let counterInterval, alarmInterval;
+let counterInterval, alarmInterval, buzzInterval;
 let state;
 let saved = require("Storage").readJSON("simpletimer.json",true) || {};
 
 const DEBOUNCE = 50;
 
 function buzzAndBeep() {
+  buzzInterval = -1;
   return Bangle.buzz(1000, 1)
     .then(() => Bangle.beep(200, 3000))
-    .then(() => setTimeout(buzzAndBeep, 5000));
+    .then(() => {
+      if (buzzInterval==-1)
+        buzzInterval = setTimeout(buzzAndBeep, 5000);
+    });
 }
 
 function outOfTime() {
@@ -58,8 +62,10 @@ function countDown() {
 function clearIntervals() {
   if (alarmInterval) clearInterval(alarmInterval);
   if (counterInterval) clearInterval(counterInterval);
+  if (buzzInterval>0) clearTimeout(buzzInterval);
   alarmInterval = undefined;
   counterInterval = undefined;
+  buzzInterval = undefined;
 }
 
 function set(delta) {
