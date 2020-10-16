@@ -6,6 +6,14 @@ let currentHRM = "CALC";
 function drawTimeDate() {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
+  
+  if (h < 10) {
+    h = "0" + h;
+  }
+  
+  if (m < 10) {
+    m = "0" + h;
+  }
 
   var daysOfWeek = ["SUN", "MON", "TUE","WED","THU","FRI","SAT"];
   var hours = (" "+h).substr(-2);
