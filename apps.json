@@ -2256,7 +2256,6 @@
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ]
  },
-
 { "id": "digiclock",
   "name": "Digital Clock Face",
   "shortName":"Digi Clock",
@@ -2281,6 +2280,19 @@
     "storage": [
       {"name":"dsdrelay.app.js","url":"dsdrelay.app.js"},
       {"name":"dsdrelay.img","url":"dsdrelay-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "mandel",
+    "name": "Mandelbrot",
+    "shortName":"Mandel",
+    "icon": "mandel.png",
+    "version":"0.01",
+    "description": "Draw a zoomable Mandelbrot set",
+    "tags": "game",
+    "readme": "README.md",
+    "storage": [
+      {"name":"mandel.app.js","url":"mandel.min.js"},
+      {"name":"mandel.img","url":"mandel-icon.js","evaluate":true}
     ]
   }
 ]
