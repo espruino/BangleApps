@@ -16,9 +16,10 @@ function accelHandlerTrigger(a) {"ram"
     Bangle.on('accel',accelHandlerRecord);
     lastAccel.forEach(accelHandlerRecord);
     accelHandlerRecord(a);
+  } else {
+    if (lastAccel.length>10) lastAccel.shift();
+    lastAccel.push(a);
   }
-  if (lastAccel.length>10) lastAccel.shift();
-  lastAccel.push(a);
 }
 function accelHandlerRecord(a) {"ram"
   var i = accelIdx++;
