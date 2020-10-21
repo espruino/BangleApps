@@ -1423,7 +1423,7 @@
     "name": "BLE Detector",
     "shortName":"BLE Detector",
     "icon": "bledetect.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Detect BLE devices and show some informations.",
     "tags": "app,bluetooth,tool",
     "readme": "README.md",
