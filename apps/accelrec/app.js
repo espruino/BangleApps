@@ -96,7 +96,7 @@ function showData() {
   g.setFont("6x8").setFontAlign(1,0);
   g.drawString("Max Y Accel: "+maxAccel.toFixed(2)+" g",g.getWidth()-14,g.getHeight()-50);
   g.drawString("Max Y Vel: "+maxVel.toFixed(2)+" m/s",g.getWidth()-14,g.getHeight()-40);
-  g.drawString("Time moving: "+(tEnd-tStart)/HZ,g.getWidth()-14,g.getHeight()-30);
+  g.drawString("Time moving: "+(tEnd-tStart)/HZ+" s",g.getWidth()-14,g.getHeight()-30);
   //console.log("End Velocity "+vel);
   g.setFont("6x8").setFontAlign(0,0,1);
   g.drawString("FINISH",g.getWidth()-4,g.getHeight()/2);
