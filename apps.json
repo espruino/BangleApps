@@ -447,6 +447,18 @@
       {"name": "weather.json"}
     ]
   },
+  { "id": "chargeanim",
+    "name": "Charge Animation",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "When charging, show a sideways charging animation and keep the screen on. When removed from the charger load the clock again.",
+    "tags": "battery",
+    "storage": [
+      {"name":"chargeanim.app.js","url":"app.js"},
+      {"name":"chargeanim.boot.js","url":"boot.js"},
+      {"name":"chargeanim.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
