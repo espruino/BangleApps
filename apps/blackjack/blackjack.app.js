@@ -59,7 +59,7 @@ function hitMe() {
   if(playerWeight == 21)
     EndGameMessdage('WINNER');
   else if(playerWeight > 21)
-    EndGameMessdage('LOOSER'); 
+    EndGameMessdage('LOSER'); 
 }
 
 function calcWeight(hand, hideCard) {
