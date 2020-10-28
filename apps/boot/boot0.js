@@ -50,7 +50,7 @@ if (!Bangle.F_BEEPSET) {
     });
   };
 }
-Bangle.setLCDTimeout(s.timeout);
+if (s.timeout!==undefined) Bangle.setLCDTimeout(s.timeout);
 if (!s.timeout) Bangle.setLCDPower(1);
 E.setTimeZone(s.timezone);
 delete s;
