@@ -2307,5 +2307,18 @@
       {"name":"mandel.app.js","url":"mandel.min.js"},
       {"name":"mandel.img","url":"mandel-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "petrock",
+    "name": "Pet rock",
+    "icon": "petrock.png",
+    "version": "0.01",
+    "description": "A virtual pet rock with wobbly eyes",
+    "tags": "game",
+    "type": "app",
+    "storage": [
+      {"name": "petrock.app.js", "url": "app.js"},
+      {"name": "petrock.img", "url": "app-icon.js", "evaluate": true}
+    ]
   }
 ]
