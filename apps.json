@@ -2312,7 +2312,7 @@
     "id": "petrock",
     "name": "Pet rock",
     "icon": "petrock.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A virtual pet rock with wobbly eyes",
     "tags": "game",
     "type": "app",
