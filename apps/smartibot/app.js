@@ -53,15 +53,15 @@ function startConnectChoose(device) {
 function startConnectBtn(device) {
   E.showMenu();
   startConnect(device,
-               "\x03\x10var w=digitalWrite.bind(null,[D4,D6,D10,D11])\n",
+               "\x03\x10var w=digitalWrite.bind(null,[D4,D6,D11,D10])\n",
                function(gatt, write) {
     function setMotors(val) { write(`\x10w(${val})\n`); }
     drawBGBtn();
     g.reset().setFont("6x8",2).setFontAlign(0,0,1).drawString("BACK", 230,200);
     var state = 0;
     var watches = [
-      setWatch(e=>setMotors(state = (state&0b1100) | e.state), BTN4, {repeat:true, edge:0}),
-      setWatch(e=>setMotors(state = (state&0b0011) | (e.state<<2)), BTN5, {repeat:true, edge:0}),
+      setWatch(e=>setMotors(state = (state&0b0011) | (e.state<<2)), BTN4, {repeat:true, edge:0}),
+      setWatch(e=>setMotors(state = (state&0b1100) | e.state), BTN5, {repeat:true, edge:0}),
       setWatch(() => {
         g.clear();
         watches.forEach(clearWatch);
@@ -86,18 +86,18 @@ function startConnectAccel(device) {
         var v = [0,0,0,0];
         if (a.z<-0.5) {
           var vel = 0, rot = 0;
-          if (a.y<-0.2) vel = -(a.y+0.2);
+          if (a.y<-0.2) vel = a.y+0.2;
           if (a.y>0.2) vel = a.y-0.2;
-          if (a.x<-0.2) rot = -(a.x+0.2);
+          if (a.x<-0.2) rot = a.x+0.2;
           if (a.x>0.2) rot = a.x-0.2;
-          var rl = Math.round((vel+rot)*200)/100;
+          var rl = Math.round(-(vel+rot)*200)/100;
           var rr = Math.round((vel-rot)*200)/100;
-          v[0] = rl>0 ? rl:0;
-          v[1] = rl<0 ? -rl:0;
-          v[2] = rr>0 ? rr:0;
-          v[3] = rr<0 ? -rr:0;
-          write(`\x10w(${v.join(",")})\n`);
+          v[0] = (rl>0) ? rl:0;
+          v[1] = (rl<0) ? -rl:0;
+          v[2] = (rr>0) ? rr:0;
+          v[3] = (rr<0) ? -rr:0;
         }
+        write(`\x10w(${v.join(",")})\n`);
       });
     setWatch(() => {
       g.clear();
