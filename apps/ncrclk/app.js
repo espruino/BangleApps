@@ -16,7 +16,7 @@ function getImg(g, col) {
 
 var handSizeMin = 40;
 var handSizeHr = 25;
-var handSizeSec = 55;
+var handSizeSec = 50;
 var gmin = Graphics.createArrayBuffer(6,handSizeMin*2,1,{msb:true});
 var gminimg = getImg(gmin, 0xFFFF);
 var ghr = Graphics.createArrayBuffer(8,handSizeHr*2,1,{msb:true});
@@ -64,8 +64,8 @@ function drawHands(full) {
       if (y>y2)y2=y;
     }
     function addSec(r) {
-      addPt(r,handSizeSec,5);addPt(r,handSizeSec,-5);
-      addPt(r,-(o+8),5);addPt(r,-(o+8),-5);
+      addPt(r,handSizeSec+5,5);addPt(r,handSizeSec+5,-5);
+      addPt(r,-(o+10),5);addPt(r,-(o+10),-5);
     }
     function addMin(r) {
       addPt(r,handSizeMin,5);addPt(r,handSizeMin,-5);
