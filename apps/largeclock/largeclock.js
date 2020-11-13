@@ -198,7 +198,6 @@ if (BTN3app) setWatch(
 );
 
 g.clear();
-clearInterval();
 drawClockFace();
 interval = setInterval(drawClockFace, REFRESH_RATE);
 
