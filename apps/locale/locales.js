@@ -143,7 +143,7 @@ var locales = {
     int_curr_symbol: "JPY",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
-    temperature: "°F",
+    temperature: "°C",
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
     datePattern: { 0: "%Y/%m/%d", 1: "%y/%m/%d" },
