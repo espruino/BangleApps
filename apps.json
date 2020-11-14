@@ -2356,5 +2356,18 @@
       {"name":"ncrclk.app.js","url":"app.js"},
       {"name":"ncrclk.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
+{ "id": "isoclock",
+  "name": "ISO Compliant Clock Face",
+  "shortName":"ISO Clock",
+  "icon": "isoclock.png",
+  "version":"0.01",
+  "description": "Tweaked fork of digiclock for ISO date and time",
+  "tags": "clock",
+  "type" : "clock",
+  "storage": [
+    {"name":"isoclock.app.js","url":"isoclock.js"},
+    {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
+ ]
+}
 ]
