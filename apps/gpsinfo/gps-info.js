@@ -66,7 +66,7 @@ function onGPS(fix) {
     var speed = fix.speed;
     var time = formatTime(fix.time);
     var satellites = fix.satellites;
-
+    var maidenhead = getMaidenHead(lat,lon);
     var s = 15;
     g.setFontVector(s);
     g.drawString("Altitude: "+alt+" m",10,36);
