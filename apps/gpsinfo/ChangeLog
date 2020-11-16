@@ -1,2 +1,3 @@
 0.02: Ensure screen doesn't display garbage at startup
 0.03: Show number of satellites while waiting for fix
+0.04: Add Maidenhead readout of GPS location
