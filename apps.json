@@ -2188,7 +2188,7 @@
   {"id": "counter",
   "name": "Counter",
   "icon": "counter_icon.png",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Simple counter",
   "tags": "tool",
   "allow_emulator": true,
