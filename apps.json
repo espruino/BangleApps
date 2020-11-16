@@ -2369,5 +2369,17 @@
     {"name":"isoclock.app.js","url":"isoclock.js"},
     {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
  ]
+},
+{ "id": "gpstimeserver",
+  "name": "GPS Time Server",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "A widget which automatically starts the GPS and turns Bangle.js into a Bluetooth time server.",
+  "tags": "widget",
+  "type": "widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpstimeserver.wid.js","url":"widget.js"}
+  ]
 }
 ]
