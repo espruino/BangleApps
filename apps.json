@@ -2391,8 +2391,8 @@
   "type" : "clock",
   "readme": "README.md",
   "storage": [
-    {"name":"benWatch.app.js","url":"benWatch.js"}
+    {"name":"benWatch.app.js","url":"benWatch.js"},
     {"name":"benWatch.img","url":"app-icon.js","evaluate":true}
-  ]
+ ]
 }
 ]
