@@ -1,3 +1,5 @@
+var readings;
+var failures = 0;
 
 function displayInfo(reading) {
   g.reset(1).setColor(1,0,0);
@@ -18,7 +20,11 @@ function displayInfo(reading) {
     g.drawString(reading.color, g.getWidth()*3/4, 24+40);
     g.setFontVector(34);
     g.setFontAlign(0,-1);
-    g.drawString(reading.F.toFixed(1),g.getWidth()/2,120);
+    // we can't use locale directly as it currently is just to the nearest degree
+    var temp = reading.C.toFixed(1)+"°C";
+    if (require("locale").temp(0).endsWith("F")) // check locale
+      temp = reading.F.toFixed(1)+"°F";
+    g.drawString(temp,g.getWidth()/2,120);
     g.drawString(reading.gravity,g.getWidth()/2,180);
   }
   g.flip();
@@ -38,8 +44,6 @@ var TILT_DEVICES = {
     'a495bb10c5b14b44b5121370f02d74de': 'Red',
     'a495bb70c5b14b44b5121370f02d74de': 'Yellow',
 };
-
-var failures = 0;
 
 function takeReading() {
   // scan for 5 seconds max
