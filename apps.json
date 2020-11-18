@@ -2395,5 +2395,17 @@
   "storage": [
     {"name":"gpstimeserver.wid.js","url":"widget.js"}
   ]
+},
+{ "id": "tilthydro",
+  "name": "Tilt Hydrometer Display",
+  "shortName":"Tilt Hydro",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A display for the [Tilt Hydrometer](https://tilthydrometer.com/) - [more info here](http://www.espruino.com/Tilt+Hydrometer+Display)",
+  "tags": "tools,bluetooth",
+  "storage": [
+    {"name":"tilthydro.app.js","url":"app.js"},
+    {"name":"tilthydro.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 ]
