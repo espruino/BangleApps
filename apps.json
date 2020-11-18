@@ -2371,42 +2371,44 @@
       {"name":"ncrclk.img","url":"app-icon.js","evaluate":true}
     ]
   },
-{ "id": "isoclock",
-  "name": "ISO Compliant Clock Face",
-  "shortName":"ISO Clock",
-  "icon": "isoclock.png",
-  "version":"0.01",
-  "description": "Tweaked fork of digiclock for ISO date and time",
-  "tags": "clock",
-  "type" : "clock",
-  "storage": [
-    {"name":"isoclock.app.js","url":"isoclock.js"},
-    {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
- ]
-},
-{ "id": "gpstimeserver",
-  "name": "GPS Time Server",
-  "icon": "widget.png",
-  "version":"0.01",
-  "description": "A widget which automatically starts the GPS and turns Bangle.js into a Bluetooth time server.",
-  "tags": "widget",
-  "type": "widget",
-  "readme": "README.md",
-  "storage": [
-    {"name":"gpstimeserver.wid.js","url":"widget.js"}
+  { "id": "isoclock",
+    "name": "ISO Compliant Clock Face",
+    "shortName":"ISO Clock",
+    "icon": "isoclock.png",
+    "version":"0.01",
+    "description": "Tweaked fork of digiclock for ISO date and time",
+    "tags": "clock",
+    "type" : "clock",
+    "storage": [
+      {"name":"isoclock.app.js","url":"isoclock.js"},
+      {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
   ]
-},
-{ "id": "benWatch",
-  "name": "benWatch",
-  "icon": "benWatch.png",
-  "version":"0.01",
-  "description": "benWatch dev test",
-  "tags": "clock",
-  "type" : "clock",
-  "readme": "README.md",
-  "storage": [
-    {"name":"benWatch.app.js","url":"benWatch.js"},
-    {"name":"benWatch.img","url":"app-icon.js","evaluate":true}
- ]
-}
+  },
+  { "id": "gpstimeserver",
+    "name": "GPS Time Server",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "A widget which automatically starts the GPS and turns Bangle.js into a Bluetooth time server.",
+    "tags": "widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gpstimeserver.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "benWatch",
+    "name": "benWatch",
+    "icon": "benWatch.png",
+    "version":"0.01",
+    "description": "benWatch dev test",
+    "tags": "clock",
+    "type" : "clock",
+    "readme": "README.md",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"benWatch.app.js","url":"benWatch.js"},
+      {"name":"benWatch.img","url":"app-icon.js","evaluate":true}
+  ],
+  "sortorder" : -9
+  }
 ]
