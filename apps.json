@@ -2416,14 +2416,13 @@
     "icon": "GentleNudge.png",
     "version":"0.01",
     "description": "OCD app to give you positive reminders through physical alerts",
-    "tags": "tools",
-    "type" : "tools",
+    "tags": "clocks",
+    "type" : "clocks",
     "readme": "README.md",
     "allow_emulator":true,
     "storage": [
       {"name":"GentleNudge.app.js","url":"GentleNudge.js"},
       {"name":"GentleNudge.img","url":"GentleNudge-icon.js","evaluate":true}
-  ],
-  "sortorder" : -9
+  ]
   }
 ]
