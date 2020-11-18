@@ -2416,8 +2416,8 @@
     "icon": "GentleNudge.png",
     "version":"0.01",
     "description": "OCD app to give you positive reminders through physical alerts",
-    "tags": "clocks",
-    "type" : "clocks",
+    "tags": "clock",
+    "type" : "clock",
     "readme": "README.md",
     "allow_emulator":true,
     "storage": [
