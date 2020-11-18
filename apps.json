@@ -2384,7 +2384,7 @@
 },
 { "id": "benWatch",
   "name": "benWatch",
-  "icon": "app.png",
+  "icon": "benWatch.png",
   "version":"0.01",
   "description": "benWatch dev test",
   "tags": "clock",
