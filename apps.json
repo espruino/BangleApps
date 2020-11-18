@@ -2411,9 +2411,9 @@
   ],
   "sortorder" : -9
   },
-  { "id": "GentleNudge",
-    "name": "GentleNudge",
-    "icon": "GentleNudge.png",
+  { "id": "GentleNudge2",
+    "name": "GentleNudge2",
+    "icon": "GentleNudge2.png",
     "version":"0.01",
     "description": "OCD app to give you positive reminders through physical alerts",
     "tags": "clock",
@@ -2421,8 +2421,8 @@
     "readme": "README.md",
     "allow_emulator":true,
     "storage": [
-      {"name":"GentleNudge.app.js","url":"GentleNudge.js"},
-      {"name":"GentleNudge.img","url":"GentleNudge-icon.js","evaluate":true}
+      {"name":"GentleNudge2.app.js","url":"GentleNudge2.js"},
+      {"name":"GentleNudge2.img","url":"GentleNudge2-icon.js","evaluate":true}
   ]
   }
 ]
