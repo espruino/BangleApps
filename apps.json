@@ -2395,5 +2395,18 @@
   "storage": [
     {"name":"gpstimeserver.wid.js","url":"widget.js"}
   ]
+},
+{ "id": "benWatch",
+  "name": "benWatch",
+  "icon": "benWatch.png",
+  "version":"0.01",
+  "description": "benWatch dev test",
+  "tags": "clock",
+  "type" : "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"benWatch.app.js","url":"benWatch.js"},
+    {"name":"benWatch.img","url":"app-icon.js","evaluate":true}
+ ]
 }
 ]
