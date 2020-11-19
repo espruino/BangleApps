@@ -1287,7 +1287,7 @@
     "id": "rpgdice",
     "name": "RPG dice",
     "icon": "rpgdice.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Simple RPG dice rolling app.",
     "tags": "game,fun",
     "type": "app",
