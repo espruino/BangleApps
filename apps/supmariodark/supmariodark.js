@@ -72,13 +72,12 @@ const onHalfSecond =()=>{
 
 
 Bangle.on('lcdPower', (on) => {
-    resetTimer();
-    if (on) {
-      om=-1;
-      startTimer();
-	  drawFace();
-    }
-	else {
+  resetTimer();
+  if (on) {
+    om=-1;
+    startTimer();
+    drawFace();
+  }	else {
 		resetTimer();
 	}
 });
