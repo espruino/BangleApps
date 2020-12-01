@@ -63,5 +63,57 @@
       {"name":"gpspoilog.app.js","url":"app.js"},
       {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "swlclk",
+    "name": "SWL Clock / Short Wave Listner Clock",
+    "shortName": "SWL Clock",
+    "icon": "swlclk.png",
+    "version":"0.01",
+    "description": "Display Local, UTC time and some programs on the shorts waves along the day, with the frequencies",
+    "tags": "tool,clock",
+    "readme": "README.md",
+    "storage": [
+      {"name":"swlclk.app.js","url":"app.js"},
+      {"name":"swlclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "gnss",
+    "name": "GNSS",
+    "shortName": "GNSS",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "GNSS Terminal App display raw infos about gnss",
+    "tags": "tool,gps,outdoors",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gnss.app.js","url":"app.js"},
+      {"name":"gnss.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "artclk",
+    "name": "Art Clock",
+    "shortName": "Art Clock",
+    "icon": "artclk.png",
+    "version":"0.01",
+    "description": "A clock with graffiti art and some functions like temperature, compass, heart rate, gps...",
+    "tags": "tool,gps,outdoors,clock",
+    "readme": "README.md",
+    "storage": [
+      {"name":"artclk.app.js","url":"app.js"},
+      {"name":"artclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "gpsclk",
+    "name": "GPS Clock",
+    "shortName": "GPS Clock",
+    "icon": "gpsclk.png",
+    "version":"0.01",
+    "description": "A clock with gps can record and store gps coords",
+    "tags": "tool,gps,outdoors,clock",
+    "readme": "README.md",
+    "storage": [
+      {"name":"gpsclk.app.js","url":"app.js"},
+      {"name":"gpsclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
 ]
