@@ -47,6 +47,21 @@ function drawApp() {
 }
 
 if (camShot) {
+    Bangle.on('aiGesture', (v) => {
+    switch (v) {
+      case 'swipeleft':
+        E.showMessage('next');
+        setTimeout(drawApp, 1000);
+        next(() => {});
+        break;
+      case 'swiperight':
+        E.showMessage('prev');
+        setTimeout(drawApp, 1000);
+        prev(() => {});
+        break;
+    }
+  });
+
   setWatch(function(e) {
       E.showMessage('camShot !');
       setTimeout(drawApp, 1000);
