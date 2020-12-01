@@ -54,6 +54,21 @@ function drawApp() {
 }
 
 if (next) {
+  Bangle.on('aiGesture', (v) => {
+    switch (v) {
+      case 'swipeleft':
+        E.showMessage('next');
+        setTimeout(drawApp, 1000);
+        next(() => {});
+        break;
+      case 'swiperight':
+        E.showMessage('prev');
+        setTimeout(drawApp, 1000);
+        prev(() => {});
+        break;
+    }
+  });
+
   setWatch(function(e) {
     var len = e.time - e.lastTime;
     if (len > 0.3 && len < 0.9) {
