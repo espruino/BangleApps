@@ -1,0 +1,1 @@
+var img = require("heatshrink").decompress(atob("mEwxH+AH4A//3QAAIv/ABfOAAgrKF8XN5iLpF4fM0RbKL8QvIX8yPEL9TvMAEGczgKIL8QvMMb/MABQvj4wuJ4y4hAAOgABQuuGEQuNGEIv/F/4v/F/4v/F/4v/F/4v/F/4v/F/4v/F798u11AAV2vgvnFQIkCGgYyDA4SPnM46P/R6AAHR8wnHAA6//X/6/wABwv/AH4AkA"))
