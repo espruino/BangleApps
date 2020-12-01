@@ -71,7 +71,9 @@
     "version":"0.01",
     "description": "Display Local, UTC time and some programs on the shorts waves along the day, with the frequencies",
     "tags": "tool,clock",
+    "type":"clock",
     "readme": "README.md",
+    "allow_emulator":true,
     "storage": [
       {"name":"swlclk.app.js","url":"app.js"},
       {"name":"swlclk.img","url":"app-icon.js","evaluate":true}
@@ -96,7 +98,9 @@
     "version":"0.01",
     "description": "A clock with graffiti art and some functions like temperature, compass, heart rate, gps...",
     "tags": "tool,gps,outdoors,clock",
+    "type":"clock",
     "readme": "README.md",
+    "allow_emulator":true,
     "storage": [
       {"name":"artclk.app.js","url":"app.js"},
       {"name":"artclk.img","url":"app-icon.js","evaluate":true}
@@ -109,7 +113,9 @@
     "version":"0.01",
     "description": "A clock with gps can record and store gps coords",
     "tags": "tool,gps,outdoors,clock",
+    "type":"clock",
     "readme": "README.md",
+    "allow_emulator":true,
     "storage": [
       {"name":"gpsclk.app.js","url":"app.js"},
       {"name":"gpsclk.img","url":"app-icon.js","evaluate":true}
