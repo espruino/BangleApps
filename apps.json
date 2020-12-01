@@ -115,5 +115,5 @@
       {"name":"gpsclk.app.js","url":"app.js"},
       {"name":"gpsclk.img","url":"app-icon.js","evaluate":true}
     ]
-  },
+  }
 ]
