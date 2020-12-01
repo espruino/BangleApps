@@ -64,6 +64,18 @@
       {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "hidmsic",
+    "name": "Bluetooth Music Controls",
+    "shortName": "Music Control",
+    "icon": "hid-music.png",
+    "version":"0.03",
+    "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"hidmsic.app.js","url":"hid-music.js"},
+      {"name":"hidmsic.img","url":"hid-music-icon.js","evaluate":true}
+    ]
+  },
   { "id": "swlclk",
     "name": "SWL Clock / Short Wave Listner Clock",
     "shortName": "SWL Clock",
