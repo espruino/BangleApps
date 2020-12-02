@@ -115,7 +115,7 @@ function gpsTrackCoords(){
       g.setFont("Vector",20);
       g.setColor("#ffffff");
       g.clearRect(0,220,240,240);
-      g.drawString(lat.toFixed(5)+" / "+lon.toFixed(5), xyCenter, 230);
+      g.drawString(lat.toFixed(5)+"° / "+lon.toFixed(5)+"°", xyCenter, 230);
     } else {
         g.setFont("Vector",20);
         g.setColor("#ffffff");
