@@ -2457,7 +2457,7 @@
   "description": "Simple G-Meter",
   "tags": "",
   "storage": [
-    {"name":"gmeter.js","url":"gmeter.js"},
+    {"name":"gmeter.js","url":"gmeter.app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
   ]
 }
