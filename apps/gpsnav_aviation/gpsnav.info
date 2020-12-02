@@ -1,2 +1,2 @@
-{"id":"gpsnav","name":"GPS","src":"gpsnav.app.js","icon":"gpsnav.img","version":"0.05","files":"gpsnav.info,gpsnav.app.js,waypoints.json,gpsnav.img"}
+{"id":"gpsnav","name":"GPS","src":"gpsnav.app.js","icon":"gpsnavaviation.img","version":"0.05","files":"gpsnav.info,gpsnav.app.js,waypoints.json,gpsnavaviation.img"}
 
