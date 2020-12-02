@@ -2446,7 +2446,7 @@
 	  {"name":"pipe.img","url":"pipe.js","evaluate":true}
     ]
   }
-]
+
 
 },
 { "id": "gmeter",
@@ -2456,9 +2456,11 @@
   "version":"0.01",
   "description": "Simple G-Meter",
   "tags": "",
-  "storage": [
+  "storage": 
+ [
     {"name":"gmeter.js","url":"gmeter.app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
   ]
 }
+
 ]
