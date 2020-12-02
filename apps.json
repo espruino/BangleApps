@@ -2445,9 +2445,6 @@
 	  {"name":"mario_wh.img","url":"mario_wh.js","evaluate":true},
 	  {"name":"pipe.img","url":"pipe.js","evaluate":true}
     ]
-  }
-
-
 },
 { "id": "gmeter",
   "name": "G-Meter",
@@ -2462,5 +2459,4 @@
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
   ]
 }
-
 ]
