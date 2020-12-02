@@ -2458,5 +2458,18 @@
     {"name":"gmeter.js","url":"gmeter.app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
   ]
+	
+},
+{ "id": "GPS Navigation - Aviation",
+  "name": "GPS Navigation - Aviation",
+  "shortName":"GPS Navigation - Aviation",
+  "icon": "icon.png",
+  "version":"0.05",
+  "description": "Aviation Navigation",
+  "tags": "",
+  "storage": [
+    {"name":"app.js","url":"app.js"},
+    {"name":"icon.img","url":"app-icon.js","evaluate":true}
+  ]
 }
-]
+]	
