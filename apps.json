@@ -2460,7 +2460,7 @@
   ]
 	
 },
-{ "id": "GPS Navigation - Aviation",
+{ "id": "gpsnav_aviation",
   "name": "GPS Navigation - Aviation",
   "shortName":"GPS Navigation - Aviation",
   "icon": "icon.png",
