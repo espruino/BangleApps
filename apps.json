@@ -2464,7 +2464,7 @@
   "name": "GPS Navigation - Aviation",
   "icon": "icon.png",
   "version":"0.05",
-  "description": "Update test",
+  "description": "Aviation Based GPS",
   "tags": "",
   "storage": [
     {"name":"gpsnav.js","url":"gpsnav.app.js"},
