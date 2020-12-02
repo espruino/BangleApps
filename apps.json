@@ -2470,7 +2470,7 @@
   "storage": [
     {"name":"gpsnav.app.js","url":"app.js"},
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
-    {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    {"name":"gpsnav_aviation.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]	
