@@ -46,7 +46,7 @@ function drawTime(){
   g.setFont("6x8",2);
   g.clearRect(180,75,240,95);
   g.setColor(1,0,0);
-  g.drawString(date+" @"+beats,xyCenter,90);
+  g.drawString(`${date} @${beats}`,xyCenter,90);
 
   // logo
   g.setColor("#4C4C4C");
@@ -66,7 +66,7 @@ function resetCoords() {
     lon : 4.372231,
     alt :  573.7,
     qth : "JN25ek",
-    plusCodes : "C9MC+GV",
+    plusCodes : "C9MC+GV"
   };
   updateCoords();
 }
@@ -74,31 +74,29 @@ function resetCoords() {
 function getGpsFix(){
   Bangle.on('GPS', function(fix) {
     g.clearRect(0,100,240,200);
-
-    if (fix.fix == 1) {
-      setTime(fix.time.getTime()/1000);
-      let gpsString = "lat: " + fix.lat.toFixed(6) + "\nlon: " + fix.lon.toFixed(6) + "alt: " + fix.alt;
-      coords.lat = fix.lat;
-      coords.lon = fix.lon;
+    if (fix.fix) {
+      let gpsString = `lat: ${fix.lat.toFixed(6)} \nlon: ${fix.lon.toFixed(6)} alt: ${fix.alt}`;
+      coords.lat = fix.lat.toFixed(6);
+      coords.lon = fix.lon.toFixed(6);
       coords.alt = fix.alt;
-      coords.qth = latLonToGridSquare(fix.lat,fix.lon);
-      coords.plusCodes = OpenLocationCode.encode(fix.lat,fix.lon);
+      coords.qth = latLonToGridSquare(fix.lat.toFixed(6),fix.lon.toFixed(6));
+      coords.plusCodes = OpenLocationCode.encode(fix.lat.toFixed(6),fix.lon.toFixed(6));
       updateCoords();
       g.setColor(1,0,0);
-      g.setFont("Vector12",15);
+      g.setFont("Vector",15);
       g.drawString("Got GPS fix",xyCenter,115);
       g.setColor(1,1,1);
-      g.setFont("Vector12",15);
+      g.setFont("Vector",15);
       g.drawString(gpsString,xyCenter,125);
-      g.drawString("Press BTN5 to return",xyCenter,135);
+      g.drawString("Swipe right to return",xyCenter,135);
       clearInterval(timer);
       timer = undefined;
     }
     else {
       g.setColor(1,0,0);
-      g.setFont("Vector12",15);
-      g.drawString(fix.satellites+" Satellites",xyCenter,115);
-      g.drawString("Press BTN5 to stop",xyCenter, 135);
+      g.setFont("Vector",15);
+      g.drawString(`${fix.satellites} Satellites`,xyCenter,115);
+      g.drawString("Swipe right to stop",xyCenter, 135);
     }
   });
 }
@@ -117,7 +115,7 @@ function DDToDMS(deg, lat){
       direction = deg >= 0 ? "E" : "W";
     }
 
-  return degrees + "°" + minutes + "'" + seconds + "''" + direction;
+  return `${degrees}°${minutes}'${seconds}"${direction}`;
 }
 
 function DDToDM(lat, lon){
@@ -131,7 +129,7 @@ function DDToDM(lat, lon){
   let LonMin = (Math.floor((convertLng - LonDeg) * 60));
   let LonCardinal = ((lon > 0) ? "E" : "W");
 
-  return "Lat: " + LatDeg + "°" + LatMin  + "'" + LatCardinal + "\nLon: " + LonDeg + "°" + LonMin + "'" + LonCardinal + " (DM)";
+  return `Lat: ${LatDeg}°${LatMin}'${LatCardinal} \nLon: ${LonDeg}°${LonMin}'${LonCardinal} (DM)`;
 }
 
 // GPS coords
@@ -139,22 +137,22 @@ function gps(){
   g.setFont("6x8",2);
   g.setColor(1,1,1);
   g.clearRect(0,116,240,147);
-  g.drawString("Lat: " + coords.lat.toFixed(6) + "\nLon: " + coords.lon.toFixed(6) + "\nAlt: " + coords.alt + " M", xyCenter,124);
-  g.drawString("\nQTH: " + coords.qth + "\n+co: " + coords.plusCodes, xyCenter,157);
+  g.drawString(`Lat: ${coords.lat}° \nLon: ${coords.lon}° \nAlt: ${coords.alt} M`, xyCenter,124);
+  g.drawString(`\nQTH: ${coords.qth} \n+co: ${coords.plusCodes}`, xyCenter,157);
 }
 
 function temp(){
-  let temp = parseInt(E.getTemperature());
+  let temp = locale.temp(parseInt(E.getTemperature())-10);
   g.setColor(1,1,1);
   g.setFont("6x8",2);
   g.clearRect(0,116,240,147);
-  g.drawString("Temperature: "+temp+"°c",xyCenter,124);
+  g.drawString(`Temperature: ${temp}`,xyCenter,124);
 }
 function DMS(){
   g.setColor(1,1,1);
   g.setFont("6x8",2);
   g.clearRect(0,116,240,147);
-  g.drawString("Lat: " + DDToDMS(coords.lat,1) + "\nLon: " + DDToDMS(coords.lon,0),xyCenter,124);
+  g.drawString(`Lat: ${DDToDMS(coords.lat,1)} \nLon: ${DDToDMS(coords.lon,0)}`,xyCenter,124);
 }
 function DM(){
   g.setColor(1,1,1);
@@ -187,32 +185,36 @@ function setButtons(){
   setWatch(() => {
     swap();
     Bangle.beep();
-  }, BTN1, {edge:"rising", repeat:true});
+  }, BTN1, {repeat:true});
 
   // BTN 2
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
-  // BTN 4
-  setWatch(() => {
-    stop();
-    Bangle.buzz(250);
-    g.clearRect(0,24,240,200);
-    g.setColor(1,0,0);
-    g.setFont("Vector12",15);
-    g.drawString("--- Getting GPS signal ---",xyCenter, 115);
-    Bangle.setGPSPower(1);
-    timer = setInterval(getGpsFix, 10000);
-  }, BTN4, {edge:"rising", debounce:50, repeat:true});
-
-  // BTN 5
-  setWatch(() => {
-    if (timer) clearInterval(timer);
-    timer = undefined;
-    Bangle.setGPSPower(0);
-    g.clearRect(0,24,240,200);
-    start();
-    Bangle.buzz(250);
-  }, BTN5, {edge:"rising", debounce:50, repeat:true});
+  // Swipe left for enable, right for disable
+  Bangle.on('swipe', (sDir) => {
+    switch(sDir) {
+      // Swipe right (1)
+      case -1:
+        if (timer) clearInterval(timer);
+        timer = undefined;
+        Bangle.setGPSPower(0);
+        g.clearRect(0,24,240,200);
+        start();
+        Bangle.buzz(250);
+        break;
+      // Swipe left (-1)
+      case 1:
+        stop();
+        Bangle.buzz(250);
+        g.clearRect(0,24,240,200);
+        g.setColor(1,0,0);
+        g.setFont("Vector",15);
+        g.drawString("--- Getting GPS signal ---",xyCenter, 115);
+        Bangle.setGPSPower(1);
+        timer = setInterval(getGpsFix, 10000);
+        break;
+    }
+  });
 }
 
 let intervalRef = null;
