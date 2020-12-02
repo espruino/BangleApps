@@ -1,0 +1,25 @@
+[
+
+// West (- long)
+// South (- lat)    
+  {
+  "name":"KMBT",
+  "lat":35.8770,
+  "lon":-86.3807
+  },
+  {
+  "name":"KCHS",
+  "lat":32.8943,
+  "lon":-80.0382
+  },
+  {
+    "name":"Home",
+    "lat":33.212778,
+    "lon":-80.366389
+    },
+  { "name":"WP0" },
+  { "name":"WP1" },
+  { "name":"WP2" },
+  { "name":"WP3" },
+  { "name":"WP4" }
+]
