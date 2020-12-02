@@ -1,1 +1,2 @@
-{"name":"Aviation GPS","src":"gpsnav.app.js","icon":"gpsnavavaition.img"}
+{"id":"gpsnav","name":"GPS","src":"gpsnav.app.js","icon":"gpsnav.img","version":"0.05","files":"gpsnav.info,gpsnav.app.js,waypoints.json,gpsnav.img"}
+
