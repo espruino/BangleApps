@@ -2461,7 +2461,7 @@
 	
 },
 { "id": "gpsnav_aviation",
-  "name": "GPS Navigation - Aviation",
+  "name": "Aviation GPS",
   "icon": "icon.png",
   "version":"0.06",
   "description": "Aviation Based GPS",
