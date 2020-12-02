@@ -2463,7 +2463,7 @@
 { "id": "gpsnav_aviation",
   "name": "Aviation GPS",
   "icon": "icon.png",
-  "version":"0.06",
+  "version":"0.01",
   "description": "Aviation Based GPS",
   "tags": "",
   "storage": [
