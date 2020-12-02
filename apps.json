@@ -2463,11 +2463,11 @@
 { "id": "gpsnav_aviation",
   "name": "GPS Navigation - Aviation",
   "icon": "icon.png",
-  "version":"0.05",
+  "version":"0.06",
   "description": "Aviation Based GPS",
   "tags": "",
   "storage": [
-    {"name":"gpsnav.js","url":"gpsnav.app.js"},
+    {"name":"gpsnav.app.js","url":"gpsnav.app.js"},
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"gpsnavaviation.img","url":"app-icon.js","evaluate":true}
   ]
