@@ -2468,9 +2468,9 @@
   "description": "Aviation Navigation",
   "tags": "",
   "storage": [
-    {"name":"gpsnav.app.js","url":"app.js"},
+    {"name":"app.js","url":"app.js"},
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
-    {"name":"gpsnav_aviation.img","url":"app-icon.js","evaluate":true}
+    {"name":"gpsnavaviation.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]	
