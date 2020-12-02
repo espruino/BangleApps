@@ -11,7 +11,7 @@ This application allows you to read the time and record the gps coordinates of a
 * More Codes
 * Maidenhead locator system
 the change of coordinate format is done with BTN1.
-BTN4 is for enable the GPS and BTN5 for disable.
+Swipe left is for enable the GPS and Swipe right for disable it.
 Finally this app is compatible with the Apple Notification Widget made by Jeffmer.
 
 ## Requests
