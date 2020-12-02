@@ -44,8 +44,8 @@ function onGPS(fix) {
     var s = 15;
     g.setFontVector(s);
     g.drawString("Altitude: "+alt+" m",10,44);
-    g.drawString("Lat: "+lat.toFixed(6),10,44+20);
-    g.drawString("Lon: "+lon.toFixed(6),10,44+40);
+    g.drawString("Lat: "+lat.toFixed(6)+"°",10,44+20);
+    g.drawString("Lon: "+lon.toFixed(6)+"°",10,44+40);
     g.drawString("course: "+(isNaN(course) ? "---" : course.toFixed(0))+"°",10,44+60);
     g.drawString("Speed: "+speed.toFixed(1)+" km/h",10,44+80);
     g.drawString("Time: "+time,10,44+100);
