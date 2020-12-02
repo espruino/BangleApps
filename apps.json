@@ -2469,7 +2469,7 @@
   "tags": "",
   "storage": [
     {"name":"gpsnav.app.js","url":"app.js"},
-    {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    {"name":"icon.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]	
