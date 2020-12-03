@@ -2463,7 +2463,7 @@
     "name": "Aviation GPS",
     "icon": "icon.png",
     "version":"0.01",
-    "description": "Aviation Based GPS ",
+    "description": "Aviation Based GPS - Credit to https://github.com/jeffmer/ for his gpsnav app",
     "interface":"waypoints.html",
     "storage": [
       {"name":"avigps.app.js","url":"app.js"},
