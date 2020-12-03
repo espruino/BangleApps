@@ -2459,7 +2459,7 @@
   ]	
 
 },
-  { "id": "avigpsv",
+  { "id": "avigps",
     "name": "Aviation GPS",
     "icon": "icon.png",
     "version":"0.01",
