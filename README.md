@@ -219,7 +219,12 @@ and which gives information about the app for the Launcher.
   "shortName": "Short name",  // short name for launcher
   "icon": "icon.png",         // icon in apps/
   "description": "...",       // long description (can contain markdown)
-  "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
+  "type":"...",               // optional(if app) -  
+                              //   'app' - an application
+                              //   'widget' - a widget
+                              //   'launch' - replacement launcher app
+                              //   'bootloader' - code that runs at startup only
+                              //   'RAM' - code that runs and doesn't upload anything to storage
   "tags": "",                 // comma separated tag list for searching
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
@@ -241,7 +246,8 @@ and which gives information about the app for the Launcher.
                               // add an icon to allow your app to be tested
 
   "storage": [                // list of files to add to storage
-    {"name":"appid.js",         // filename to use in storage
+    {"name":"appid.js",       // filename to use in storage.
+                              // If name=='RAM', the code is sent directly to Bangle.js and is not saved to a file
      "url":"",                // URL of file to load (currently relative to apps/)
      "content":"..."          // if supplied, this content is loaded directly
      "evaluate":true          // if supplied, data isn't quoted into a String before upload

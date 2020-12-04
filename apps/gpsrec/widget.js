@@ -31,8 +31,8 @@
         periodCtr = settings.period;
         if (gpsTrack) gpsTrack.write([
           fix.time.getTime(),
-          fix.lat.toFixed(5),
-          fix.lon.toFixed(5),
+          fix.lat.toFixed(6),
+          fix.lon.toFixed(6),
           fix.alt
         ].join(",")+"\n");
       }

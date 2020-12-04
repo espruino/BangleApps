@@ -13,3 +13,5 @@
 0.10: Can now graph altitude & speed
 0.11: Ensure we don't turn GPS off if it was previously on (eg from another app/widget)
 0.12: Add option to plot on top of OpenStreetMap tiles (when they are installed on the watch)
+0.13: Increase GPS recording accuracy by one decimal place
+      Ensure default time period is 10

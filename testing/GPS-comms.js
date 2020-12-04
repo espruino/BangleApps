@@ -1,13 +1,13 @@
 Bangle.setGPSPower(1)
 //Bangle.on('GPS',print);
 
-/*Bangle.on('GPS-raw',function (d) {
+Bangle.on('GPS-raw',function (d) {
   if (d[0]=="$") return;
   if (d.startsWith("\xB5\x62\x05\x01")) print("GPS ACK");
   else if (d.startsWith("\xB5\x62\x05\x00")) print("GPS NACK");
   // 181,98 sync chars  
   else print("GPS",E.toUint8Array(d).join(","));
-});*/
+});
 function writeGPScmd(cmd) {
   var d = [0xB5,0x62]; // sync chars
   d = d.concat(cmd);
@@ -16,7 +16,7 @@ function writeGPScmd(cmd) {
     a += d[i];
     b += a;
   }
-  d.push(a,b);
+  d.push(a&255,b&255);
   Serial1.write(d);
 }
 function readGPScmd(cmd, callback) {
@@ -91,9 +91,9 @@ function getUBX_CFG_GNSS() {
     for (var i=4;i<a.length;i+=8) {
       info.configs.push({
         gnss : ["GPS","SBAS","Galileo","BeiDou","IMES","QZSS","GLONASS"][a[i+0]],
+        enabled : a[i+4]&1,
         reservedCh : a[1+1],
         maxCh : a[i+2],
-        enabled : a[i+4]&1,
         sigCfgMask : a[i+6],
         flags : [a[i+4],a[i+5],a[i+6],a[i+7]]
       });
@@ -107,14 +107,35 @@ function getUBX_CFG_NMEA() {
     print("CFG_NMEA",a.join(","), a.length);
     var info = {
       filter : a[0],
-      nmeaVersion : {0x4b:4.11,0x41:4.1,0x40:4,0x23:2.3,0x21:2.1}[a[1]],
+      nmeaVersion : {0x4b:"4.11",0x41:"4.1",0x40:"4",0x23:"2.3",0x21:"2.1"}[a[1]],
       flags : a[3]
     };
     print(info);
   });
 }
 
-getUBX_CFG_NMEA();
+function setUBX_MGA_INI_TIME_UTC() {
+  var a = new Uint8Array(4+24);
+  a.set([0x13,0x40,24,0]);
+  a.set([ 0x10, // 0: type
+          0,  // 1: version
+          0, // 2: ref - none
+          0x80] ); // 3: leapsecs - unknown
+  var d = new Date();
+  d.setTime(d.getTime()+d.getTimezoneOffset()*60000); // get as UTC
+  var dv = new DataView(a.buffer, 4);
+  dv.setUint16(4, d.getFullYear());
+  dv.setUint8(6, d.getMonth()+1);
+  dv.setUint8(7, d.getDate());
+  dv.setUint8(8, d.getHours());
+  dv.setUint8(9, d.getMinutes());
+  dv.setUint8(10, d.getSeconds());
+  dv.setUint16(16, 10*60); // seconds part of accuracy - 10 minutes
+  writeGPScmd([].slice.call(a));
+}
+
+setUBX_MGA_INI_TIME_UTC();
+Bangle.on('GPS',print);
 
 // UBX-MGA-INI-TIME_UTC looks promising for a start time
 

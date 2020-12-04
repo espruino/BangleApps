@@ -37,9 +37,9 @@ function showMainMenu() {
       }
     },
     'Time Period': {
-      value: settings.period||1,
+      value: settings.period||10,
       min: 1,
-      max: 60,
+      max: 120,
       step: 1,
       onchange: v => {
         settings.recording = false;
@@ -226,7 +226,7 @@ function plotTrack(info) {
     g.drawString("N",2,40);
     g.setColor(1,1,1);
   }
-  else {  
+  else {
     var map = s.readJSON("openstmap.json");
     map.center = Bangle.project({lat:map.lat,lon:map.lon});
     var clat = (info.minLat+info.maxLat)/2;

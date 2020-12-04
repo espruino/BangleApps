@@ -1,11 +1,11 @@
 [
   { "id": "boot",
     "name": "Bootloader",
-    "icon": "bootloader.png",
-    "version":"0.21",
-    "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "tags": "tool,system",
     "type":"bootloader",
+    "icon": "bootloader.png",
+    "version":"0.22",
+    "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
       {"name":".bootcde","url":"bootloader.js"}
@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -116,6 +116,24 @@
     ],
     "data": [
       {"name":"welcome.json"}
+    ]
+  },
+  { "id": "mywelcome",
+    "name": "Customised Welcome",
+    "shortName": "My Welcome",
+    "icon": "app.png",
+    "version":"0.11",
+    "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
+    "tags": "start,welcome",
+    "custom":"custom.html",
+    "storage": [
+      {"name":"mywelcome.boot.js","url":"boot.js"},
+      {"name":"mywelcome.app.js","url":"app.js"},
+      {"name":"mywelcome.settings.js","url":"settings.js"},
+      {"name":"mywelcome.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"mywelcome.json"}
     ]
   },
   { "id": "gbridge",
@@ -152,7 +170,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.21",
+    "version":"0.22",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
@@ -344,7 +362,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.12",
+    "version":"0.13",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -429,6 +447,33 @@
       {"name": "weather.json"}
     ]
   },
+  { "id": "chargeanim",
+    "name": "Charge Animation",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "When charging, show a sideways charging animation and keep the screen on. When removed from the charger load the clock again.",
+    "tags": "battery",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"chargeanim.app.js","url":"app.js"},
+      {"name":"chargeanim.boot.js","url":"boot.js"},
+      {"name":"chargeanim.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "bluetoothdock",
+    "name": "Bluetooth Dock",
+    "shortName":"Dock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "When charging shows the time, scans Bluetooth for known devices (eg temperature) and shows them on the screen",
+    "tags": "bluetooth",
+    "readme": "README.md",
+    "storage": [
+      {"name":"bluetoothdock.app.js","url":"app.js"},
+      {"name":"bluetoothdock.boot.js","url":"boot.js"},
+      {"name":"bluetoothdock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
@@ -500,8 +545,8 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version":"0.01",
-    "description": "Measure your current heart rate",
+    "version":"0.02",
+    "description": "Measure your heart rate and see live sensor data",
     "tags": "health",
     "storage": [
       {"name":"hrm.app.js","url":"heartrate.js"},
@@ -692,6 +737,19 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "vibrclock",
+    "name": "Vibrate Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"vibrclock.app.js","url":"app.js"},
+      {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "svclock",
     "name": "Simple V-Clock",
     "icon": "vclock-simple.png",
@@ -873,7 +931,7 @@
     "id": "gpsinfo",
     "name": "GPS Info",
     "icon": "gps-info.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "tags": "gps",
     "type": "app",
@@ -881,6 +939,16 @@
       {"name":"gpsinfo.app.js","url": "gps-info.js"},
       {"name":"gpsinfo.img","url": "gps-info-icon.js","evaluate": true}
     ]
+  },
+  { "id": "assistedgps",
+    "name": "Assisted GPS Update",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "custom": "custom.html",
+    "tags": "tool,outdoors",
+    "type": "RAM",
+    "storage": [ ]
   },
   {
     "id": "pomodo",
@@ -1219,7 +1287,7 @@
     "id": "rpgdice",
     "name": "RPG dice",
     "icon": "rpgdice.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Simple RPG dice rolling app.",
     "tags": "game,fun",
     "type": "app",
@@ -1382,7 +1450,7 @@
     "name": "BLE Detector",
     "shortName":"BLE Detector",
     "icon": "bledetect.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Detect BLE devices and show some informations.",
     "tags": "app,bluetooth,tool",
     "readme": "README.md",
@@ -1560,6 +1628,21 @@
         {"name":"hidcam.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "swlclk",
+    "name": "SWL Clock / Short Wave Listner Clock",
+    "shortName": "SWL Clock",
+    "icon": "swlclk.png",
+    "version":"0.01",
+    "description": "Display Local, UTC time and some programs on the shorts waves along the day, with the frequencies",
+    "tags": "tool,clock",
+    "type":"clock",
+    "readme": "README.md",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"swlclk.app.js","url":"app.js"},
+      {"name":"swlclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "rclock",
     "name": "Round clock with seconds,  minutes and date",
@@ -1667,7 +1750,7 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.06",
+    "version": "0.07",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
@@ -1714,7 +1797,7 @@
     "name": "Xiaomi Plant Sensor",
     "shortName":"Mi Plant",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Reads and displays data from Xiaomi bluetooth plant moisture sensors",
     "tags": "xiaomi,mi,plant,ble,bluetooth",
     "storage": [
@@ -1726,7 +1809,7 @@
     "id": "simpletimer",
     "name": "Timer",
     "icon": "app.png",
-    "version": "0.05",
+    "version": "0.07",
     "description": "Simple timer, useful when playing board games or cooking",
     "tags": "timer",
     "readme": "README.md",
@@ -1776,8 +1859,8 @@
     "name": "Find Phone",
     "shortName":"Find Phone",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳",
+    "version":"0.02",
+    "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳  Note: The functionality is available even without this app, just go to Settings, App Settings, Gadgetbridge, Find Phone.",
     "tags": "tool,android",
     "readme": "README.md",
     "allow_emulator": true,
@@ -1948,8 +2031,8 @@
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
     "icon": "app.png",
-    "version":"0.05",
-    "description": "A simple vertical watch face with the date.",
+    "version":"0.07",
+    "description": "A simple vertical watch face with the date. Heart rate monitor is toggled with BTN1",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
@@ -2099,7 +2182,7 @@
     "name": "Acceleration Recorder",
     "shortName":"Accel Rec",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "interface": "interface.html",
     "description": "This app puts the Bangle's accelerometer into 100Hz mode and reads 2 seconds worth of data after movement starts. The data can then be exported back to the PC.",
     "tags": "",
@@ -2165,7 +2248,7 @@
   {"id": "counter",
   "name": "Counter",
   "icon": "counter_icon.png",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Simple counter",
   "tags": "tool",
   "allow_emulator": true,
@@ -2217,6 +2300,19 @@
       {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
     ]
   },
+  { "id": "fileman",
+    "name": "File manager",
+    "shortName":"FileManager",
+    "icon": "icons8-filing-cabinet-48.png",
+    "version":"0.01",
+    "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
+    "tags": "tools",
+    "readme": "README.md",
+    "storage": [
+      {"name":"fileman.app.js","url":"fileman.app.js"},
+      {"name":"fileman.img","url":"fileman-icon.js","evaluate":true}
+    ]
+  },
  { "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName":"World Clock",
@@ -2232,5 +2328,165 @@
       {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ]
- }
+ },
+{ "id": "digiclock",
+  "name": "Digital Clock Face",
+  "shortName":"Digi Clock",
+  "icon": "digiclock.png",
+  "version":"0.01",
+  "description": "A simple digital clock with the time, day, month, and year",
+  "tags": "clock",
+  "type" : "clock",
+  "storage": [
+    {"name":"digiclock.app.js","url":"digiclock.js"},
+    {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
+ ]
+},
+  { "id": "dsdrelay",
+    "name": "DSD BLE Relay controller",
+    "shortName":"DSDRelay",
+    "icon": "icons8-relay-48.png",
+    "version":"0.01",
+    "description": "Control BLE relay board from the watch",
+    "tags": "ble,bluetooth",
+    "readme": "README.md",
+    "storage": [
+      {"name":"dsdrelay.app.js","url":"dsdrelay.app.js"},
+      {"name":"dsdrelay.img","url":"dsdrelay-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "mandel",
+    "name": "Mandelbrot",
+    "shortName":"Mandel",
+    "icon": "mandel.png",
+    "version":"0.01",
+    "description": "Draw a zoomable Mandelbrot set",
+    "tags": "game",
+    "readme": "README.md",
+    "storage": [
+      {"name":"mandel.app.js","url":"mandel.min.js"},
+      {"name":"mandel.img","url":"mandel-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "petrock",
+    "name": "Pet rock",
+    "icon": "petrock.png",
+    "version": "0.02",
+    "description": "A virtual pet rock with wobbly eyes",
+    "tags": "game",
+    "type": "app",
+    "storage": [
+      {"name": "petrock.app.js", "url": "app.js"},
+      {"name": "petrock.img", "url": "app-icon.js", "evaluate": true}
+    ]
+  },
+  { "id": "smartibot",
+    "name": "Smartibot controller",
+    "shortName":"Smartibot",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Control a [Smartibot Robot](https://thecraftyrobot.net/) straight from your Bangle.js",
+    "tags": "",
+    "storage": [
+      {"name":"smartibot.app.js","url":"app.js"},
+      {"name":"smartibot.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "widncr",
+    "name": "NCR Logo Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Show the NodeConf Remote logo in the top left",
+    "tags": "widget",
+    "type":"widget",
+    "storage": [
+      {"name":"widncr.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "ncrclk",
+    "name": "NCR Clock",
+    "shortName":"NCR Clock",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "NodeConf Remote clock",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"ncrclk.app.js","url":"app.js"},
+      {"name":"ncrclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+{ "id": "isoclock",
+  "name": "ISO Compliant Clock Face",
+  "shortName":"ISO Clock",
+  "icon": "isoclock.png",
+  "version":"0.01",
+  "description": "Tweaked fork of digiclock for ISO date and time",
+  "tags": "clock",
+  "type" : "clock",
+  "storage": [
+    {"name":"isoclock.app.js","url":"isoclock.js"},
+    {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
+ ]
+},
+{ "id": "gpstimeserver",
+  "name": "GPS Time Server",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "A widget which automatically starts the GPS and turns Bangle.js into a Bluetooth time server.",
+  "tags": "widget",
+  "type": "widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpstimeserver.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "tilthydro",
+  "name": "Tilt Hydrometer Display",
+  "shortName":"Tilt Hydro",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A display for the [Tilt Hydrometer](https://tilthydrometer.com/) - [more info here](http://www.espruino.com/Tilt+Hydrometer+Display)",
+  "tags": "tools,bluetooth",
+  "storage": [
+    {"name":"tilthydro.app.js","url":"app.js"},
+    {"name":"tilthydro.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "supmariodark",
+  "name": "Super mario clock night mode",
+  "shortName":"supmariodark",
+  "icon": "supmariodark.png",
+  "version":"0.01",
+  "description": "Super mario clock in night mode",
+  "tags": "clock",
+  "type" : "clock",
+  "storage": [
+    {"name":"supmariodark.app.js","url":"supmariodark.js"},
+    {"name":"supmariodark.img","url":"supmariodark-icon.js","evaluate":true},
+    {"name":"supmario30x24.bin","url":"supmario30x24.bin.js"},
+    {"name":"supmario30x24.wdt","url":"supmario30x24.wdt.js"},
+    {"name":"banner-up.img","url":"banner-up.js","evaluate":true},
+    {"name":"banner-down.img","url":"banner-down.js","evaluate":true},
+    {"name":"brick2.img","url":"brick2.js","evaluate":true},
+    {"name":"enemy.img","url":"enemy.js","evaluate":true},
+    {"name":"flower.img","url":"flower.js","evaluate":true},
+    {"name":"flower_b.img","url":"flower_b.js","evaluate":true},
+    {"name":"mario_wh.img","url":"mario_wh.js","evaluate":true},
+    {"name":"pipe.img","url":"pipe.js","evaluate":true}
+  ]
+},
+{ "id": "gmeter",
+  "name": "G-Meter",
+  "shortName":"G-Meter",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Simple G-Meter",
+  "tags": "",
+  "storage": [
+    {"name":"gmeter.app.js","url":"app.js"},
+    {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
+  ]	
+}
 ]

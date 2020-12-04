@@ -20,3 +20,4 @@
 0.19: Tweaks to simplify code and lower memory usage
 0.20: Allow Gadgetbridge to work even with programmable:off
 0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)
+0.22: Stop LCD timeout being disabled on first run (when there is no settings.json)

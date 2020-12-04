@@ -136,7 +136,7 @@
     },
     "rules": {
         "indent": [
-            "warn",
+            "off",
             2,
             {
                 "SwitchCase": 1
