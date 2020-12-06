@@ -1523,20 +1523,6 @@
     ],
     "sortorder" : -10
   },
-  { "id": "dane_cfg",
-    "name": "DANE Settings",
-    "icon": "settings.png",
-    "version":"0.01",
-    "description": "The default settings app in DANE Style",
-    "tags": "tool,system",
-    "readme": "README.md",
-    "storage": [
-      {"name":"dane_cfg.app.js","url":"settings.js"},
-      {"name":"dane_cfg.boot.js","url":"boot.js"},
-      {"name":"dane_cfg.img","url":"settings-icon.js","evaluate":true}
-    ],
-    "sortorder" : -2
-  },
   {
     "id": "buffgym",
     "name": "BuffGym",
