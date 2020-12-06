@@ -1,6 +1,98 @@
+
+const yOffset = 23;
+const width = g.getWidth();
+const height = g.getHeight();
+const xyCenter = width / 2 + 4;
+const cornerSize = 14;
+const cornerOffset = 3;
+const borderWidth = 1;
 const mainColor = "#26dafd";
+const mainColorDark = "#029dbb";
+// const mainColorLight = "#8bebfe";
+
 const secondaryColor = "#df9527";
+const secondaryColorDark = "#8b5c15";
+// const secondaryColorLight = "#ecc180";
+
+const success = "#00ff00";
+// const successDark        = "#000900";
+// const successLight        = "#060f06";
+
 const alert = "#ff0000";
+// const alertDark          = "#090000";
+// const alertLight          = "#0f0606";
+
+function drawTopLeftCorner(x, y) {
+  g.setColor(mainColor);
+  const x1 = x - cornerOffset;
+  const y1 = y - cornerOffset;
+  g.fillRect(x1, y1, x1 + cornerSize, y1 + cornerSize);
+  g.setColor("#000000");
+  g.fillRect(x, y, x + cornerSize - cornerOffset, y + cornerSize - cornerOffset);
+}
+
+function drawTopRightCorner(x, y) {
+  g.setColor(mainColor);
+  const x1 = x + cornerOffset;
+  const y1 = y - cornerOffset;
+  g.fillRect(x1, y1, x1 - cornerSize, y1 + cornerSize);
+  g.setColor("#000000");
+  g.fillRect(x, y, x - cornerSize - cornerOffset, y + cornerSize - cornerOffset);
+}
+
+function drawBottomLeftCorner(x, y) {
+  g.setColor(mainColor);
+  const x1 = x - cornerOffset;
+  const y1 = y + cornerOffset;
+  g.fillRect(x1, y1, x1 + cornerSize, y1 - cornerSize);
+  g.setColor("#000000");
+  g.fillRect(x, y, x + cornerSize - cornerOffset, y - cornerSize + cornerOffset);
+}
+
+function drawBottomRightCorner(x, y) {
+  g.setColor(mainColor);
+  const x1 = x + cornerOffset;
+  const y1 = y + cornerOffset;
+  g.fillRect(x1, y1, x1 - cornerSize, y1 - cornerSize);
+  g.setColor("#000000");
+  g.fillRect(x, y, x - cornerSize + cornerOffset, y - cornerSize + cornerOffset);
+}
+
+function drawFrame(x1, y1, x2, y2) {
+  drawTopLeftCorner(x1, y1);
+  drawTopRightCorner(x2, y1);
+  drawBottomLeftCorner(x1, y2);
+  drawBottomRightCorner(x2, y2);
+  g.setColor(mainColorDark);
+  g.drawRect(x1, y1, x2, y2);
+  g.setColor("#000000");
+  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
+}
+function drawFrameNoCorners(x1, y1, x2, y2) {
+  g.setColor(mainColorDark);
+  g.drawRect(x1, y1, x2, y2);
+  g.setColor("#000000");
+  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
+}
+
+function drawTopFrame(x1, y1, x2, y2) {
+
+  drawBottomLeftCorner(x1, y2);
+  drawBottomRightCorner(x2, y2);
+  g.setColor(mainColorDark);
+  g.drawRect(x1, y1, x2, y2);
+  g.setColor("#000000");
+  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
+}
+
+function drawBottomFrame(x1,y1,x2,y2) {
+  drawTopLeftCorner(x1,y1);
+  drawTopRightCorner(x2,y1);
+  g.setColor(mainColorDark);
+  g.drawRect(x1,y1,x2,y2);
+  g.setColor("#000000");
+  g.fillRect(x1+borderWidth,y1+borderWidth,x2-borderWidth,y2-borderWidth);
+}
 
 
 const Storage = require("Storage");
@@ -42,19 +134,19 @@ function getApps(){
     special: true
   };
   const raw_apps = Storage.list(/\.info$/).filter(app => app.endsWith('.info')).map(app => Storage.readJSON(app,1) || { name: "DEAD: "+app.substr(1) })
-    .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
-    .sort((a,b)=>{
-      var n=(0|a.sortorder)-(0|b.sortorder);
-      if (n) return n; // do sortorder first
-      if (a.name<b.name) return -1;
-      if (a.name>b.name) return 1;
-      return 0;
-    }).map(raw => ({
-      name: raw.name,
-      src: raw.src,
-      icon: raw.icon,
-      version: raw.version
-    }));
+      .filter(app=>app.type=="app" || app.type=="clock" || !app.type)
+      .sort((a,b)=>{
+        var n=(0|a.sortorder)-(0|b.sortorder);
+        if (n) return n; // do sortorder first
+        if (a.name<b.name) return -1;
+        if (a.name>b.name) return 1;
+        return 0;
+      }).map(raw => ({
+        name: raw.name,
+        src: raw.src,
+        icon: raw.icon,
+        version: raw.version
+      }));
 
   const apps = [Object.assign({}, exit_app)].concat(raw_apps);
   apps.push(exit_app);
@@ -79,14 +171,20 @@ function noIcon(x, y, scale){
 function render(){
   const start = Date.now();
 
+
   const ANIMATION_FRAME = settings.frame;
   const ANIMATION_STEP = Math.floor(HALF / ANIMATION_FRAME);
   const THRESHOLD = ANIMATION_STEP - 1;
 
   g.clear();
+  drawFrame(3, 10, width - 3, height - 3);
+
+
   const visibleApps = APPS.filter(app => app.x >= STATE.offset-HALF && app.x <= STATE.offset+WIDTH-HALF );
 
   visibleApps.forEach(app => {
+
+
 
     const x = app.x+HALF-STATE.offset;
     const y = HALF - (HALF*0.3);
@@ -101,6 +199,9 @@ function render(){
     if(app.special){
       const font = settings.highres ? '6x8' : '4x6';
       const fontSize = settings.highres ? 2 : 1;
+      const h = (settings.highres ?8:6)*fontSize
+      const w = ((settings.highres ?6:4)*fontSize)*app.name.length
+      drawFrame(HALF-w, HALF-h, HALF+w, HALF+h);
       g.setFont(font, fontSize);
       g.setColor(alert);
       g.setFontAlign(0,0);
@@ -110,15 +211,21 @@ function render(){
 
     //draw icon
     const icon = app.icon ?
-      icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
-      : null;
+        icons[app.name] ? icons[app.name] :  Storage.read(app.icon)
+        : null;
 
     if(icon){
       icons[app.name] = icon;
       try {
         const rescale = settings.highres ? scale*ORIGINAL_ICON_SIZE : (scale*(ORIGINAL_ICON_SIZE/2));
         const imageScale = settings.highres ? scale*2 : scale;
+
+        drawFrame(x-rescale-5, y-rescale-5, x+rescale+5, y+rescale+5);
+
+
+
         g.drawImage(icon, x-rescale, y-rescale, { scale: imageScale });
+
       } catch(e){
         noIcon(x, y, scale);
       }
@@ -127,10 +234,12 @@ function render(){
     }
 
     //draw text
-    g.setColor(mainColor);
+
     if(scale > 0.1){
       const font = settings.highres ? '6x8': '4x6';
       const fontSize = settings.highres ? 2 : 1;
+      drawFrame(36, HEIGHT/4*3-(fontSize*(settings.highres ?8:6)), 204, HEIGHT/4*3+(fontSize*(settings.highres ?8:6)));
+      g.setColor(mainColor);
       g.setFont(font, fontSize);
       g.setFontAlign(0,0);
       g.drawString(app.name, HALF, HEIGHT/4*3);
@@ -140,10 +249,12 @@ function render(){
       const type = app.type ? app.type : 'App';
       const version = app.version ? app.version : '0.00';
       const info = type+' v'+version;
+      const textWidth = (info.length*(6*1.5))
+      drawTopFrame(HALF-textWidth/2, 210-(1.5*8)-2, HALF+textWidth/2, 210+(1.5*8)-2);
       g.setFontAlign(0,1);
       g.setFont('6x8', 1.5);
       g.setColor(secondaryColor);
-      g.drawString(info, HALF, 215, { scale: scale });
+      g.drawString(info, HALF, 210, { scale: scale });
     }
 
   });
