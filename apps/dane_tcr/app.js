@@ -177,7 +177,8 @@ function render(){
   const THRESHOLD = ANIMATION_STEP - 1;
 
   g.clear();
-  drawFrame(3, 10, width - 3, height - 3);
+  // drawFrame(3, 3, width - 3, height - 3);
+  // drawFrame(3, 10, width - 3, height - 3);
 
 
   const visibleApps = APPS.filter(app => app.x >= STATE.offset-HALF && app.x <= STATE.offset+WIDTH-HALF );
@@ -200,8 +201,11 @@ function render(){
       const font = settings.highres ? '6x8' : '4x6';
       const fontSize = settings.highres ? 2 : 1;
       const h = (settings.highres ?8:6)*fontSize
-      const w = ((settings.highres ?6:4)*fontSize)*app.name.length
-      drawFrame(HALF-w, HALF-h, HALF+w, HALF+h);
+      const w = ((settings.highres ?6:2)*fontSize)*app.name.length
+      if(settings.hightres)
+        drawFrame(HALF-w, HALF-h, HALF+w, HALF+h);
+      else
+        drawFrame(HALF-w-2, HALF-h, HALF+w, HALF+h);
       g.setFont(font, fontSize);
       g.setColor(alert);
       g.setFontAlign(0,0);
@@ -220,7 +224,10 @@ function render(){
         const rescale = settings.highres ? scale*ORIGINAL_ICON_SIZE : (scale*(ORIGINAL_ICON_SIZE/2));
         const imageScale = settings.highres ? scale*2 : scale;
 
-        drawFrame(x-rescale-5, y-rescale-5, x+rescale+5, y+rescale+5);
+        if(settings.hightres)
+          drawFrame(x-rescale-5, y-rescale-5, x+rescale+5, y+rescale+5);
+        else
+          drawFrame(x-rescale-2-2, y-rescale-1, x+rescale+2, y+rescale+1);
 
 
 
@@ -238,7 +245,12 @@ function render(){
     if(scale > 0.1){
       const font = settings.highres ? '6x8': '4x6';
       const fontSize = settings.highres ? 2 : 1;
-      drawFrame(36, HEIGHT/4*3-(fontSize*(settings.highres ?8:6)), 204, HEIGHT/4*3+(fontSize*(settings.highres ?8:6)));
+      const h = (settings.highres ?8:6)*fontSize
+      const w = ((settings.highres ?6:2)*fontSize)*10//app.name.length
+      if(settings.highres)
+        drawFrame(36, HEIGHT/4*3-(fontSize*8), 204, HEIGHT/4*3+(fontSize*8));
+      else
+        drawTopFrame(HALF-w-2, HEIGHT/4*3-h, HALF+w, HEIGHT/4*3+h);
       g.setColor(mainColor);
       g.setFont(font, fontSize);
       g.setFontAlign(0,0);
