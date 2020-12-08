@@ -1,4 +1,5 @@
 (() => {
+  // Music handling
   const state = {
     music: "stop",
 
@@ -10,13 +11,17 @@
 
     scrollPos: 0
   };
-
+  // activity reporting
+  var currentSteps = 0, lastSentSteps=0;
+  var activityInterval;
+  var hrmTimeout;
+  
   function settings() {
     let settings = require('Storage').readJSON("gbridge.json", true) || {};
     if (!("showIcon" in settings)) {
       settings.showIcon = true;
     }
-    return settings
+    return settings;
   }
 
   function gbSend(message) {
@@ -143,6 +148,36 @@
         setTimeout(_=>Bangle.beep(), 1000);
       },2000);
   }
+  
+  function handleActivityEvent(event) {
+    // TODO: `t:"act", hrm:bool, stp:bool, int:int`  - Enable realtime step counting, realtime heart rate. 'int' is the report interval in seconds
+    // add live view,
+    var s = settings();
+    if (s.activityInterval===undefined ||
+        s.activityInterval<30)
+      s.activityInterval = 30*60; // 3 minutes default
+    if (event.int) {
+      if (event.int<30) event.int = 30; // min 30 secs
+      s.activityInterval = event.int;
+      require('Storage').write("gbridge.json", s);
+    }
+    var interval = s.activityInterval;
+    if (activityInterval)
+      clearInterval(activityInterval);
+    activityInterval = undefined;
+    Bangle.setHRMPower(1);
+    if (event.hrm || event.stp) {
+      // if realtime reporting, leave HRM on and use that to trigger events
+      hrmTimeout = undefined;
+    } else {
+      // else trigger it manually every so often
+      hrmTimeout = 5;
+      activityInterval = setInterval(function() {
+        hrmTimeout = 5;
+        Bangle.setHRMPower(1);
+      }, interval*1000);
+    }
+  }
 
   var _GB = global.GB;
   global.GB = (event) => {
@@ -162,6 +197,9 @@
         break;
       case "find":
         handleFindEvent(event);
+        break;
+      case "act":
+        handleActivityEvent(event);
         break;
     }
     if(_GB)setTimeout(_GB,0,event);
@@ -201,14 +239,50 @@
     }
   }
 
-  WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
-  reload();
-
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });
   }
+  
+  // Turn on HRM and get a reading
+  function getHRM(callback) {
+    if (settings().hrm) {
+      Bangle.setHRMPower(1);
+      var timeout = 5;
+      
+    } else {
+      callback(-1);
+    }
+  }
+  
+  // Send a summary of activity to Gadgetbridge
+  function sendActivity(hrm) {
+    var steps = currentSteps - lastSentSteps;
+    lastSentSteps = 0;
+    gbSend({ t: "act", stp: steps, hrm:hrm });
+  }
 
+  // Battery monitor
   NRF.on("connect", () => setTimeout(sendBattery, 2000));
   setInterval(sendBattery, 10*60*1000);
   sendBattery();
+  // Activity monitor
+  Bangle.on("step", s => {
+    if (!lastSentSteps)
+      lastSentSteps = s-1;
+    currentSteps = s;
+  });
+  Bangle.on('HRM',function(hrm) {
+    var ok = hrm.confidence>80;
+    if (hrmTimeout!==undefined) hrmTimeout--;
+    if (ok || hrmTimeout<=0) {
+      if (hrmTimeout!==undefined)
+        Bangle.setHRMPower(0);
+      sendActivity(hrm.confidence>20 ? hrm.bpm : -1);
+    }
+  });
+  handleActivityEvent({}); // kicks off activity reporting
+  
+  // Finally add widget
+  WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
+  reload();
 })();

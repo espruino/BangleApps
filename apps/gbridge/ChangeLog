@@ -17,3 +17,4 @@
 0.16: Handle dismissing notifications on the phone
       Nicer display of alarm clock notifications
 0.17: Modified music notification for updated 'notify' library
+0.18: Added reporting of step count and HRM (new Gadgetbridges can now log this)
