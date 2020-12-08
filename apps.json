@@ -1506,6 +1506,23 @@
       }
     ]
   },
+  { "id": "dane_tcr",
+    "name": "DANE Touch Launcher",
+    "shortName":"DANE Toucher",
+    "icon": "app.png",
+    "version":"0.03",
+    "description": "Touch enable left to right launcher in the style of the DANE Watchface",
+    "tags": "tool,system,launcher",
+    "type":"launch",
+    "data": [
+      {"name":"dane_tcr.json"}
+    ],
+    "storage": [
+      {"name":"dane_tcr.app.js","url":"app.js"},
+      {"name":"dane_tcr.settings.js","url":"settings.js"}
+    ],
+    "sortorder" : -10
+  },
   {
     "id": "buffgym",
     "name": "BuffGym",
