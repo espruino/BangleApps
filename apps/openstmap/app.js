@@ -7,6 +7,10 @@ function redraw() {
   g.setClipRect(0,y1,g.getWidth()-1,y2);
   m.draw();
   drawMarker();
+  if (WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
+    g.setColor(0.75,0.2,0);
+    WIDGETS["gpsrec"].plotTrack(m);
+  }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
 }
 
