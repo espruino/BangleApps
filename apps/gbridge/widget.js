@@ -150,31 +150,40 @@
   }
   
   function handleActivityEvent(event) {
-    // TODO: `t:"act", hrm:bool, stp:bool, int:int`  - Enable realtime step counting, realtime heart rate. 'int' is the report interval in seconds
-    // add live view,
     var s = settings();
+    // handle setting activity interval
     if (s.activityInterval===undefined ||
         s.activityInterval<30)
-      s.activityInterval = 30*60; // 3 minutes default
+      s.activityInterval = 3*60; // 3 minutes default
     if (event.int) {
       if (event.int<30) event.int = 30; // min 30 secs
       s.activityInterval = event.int;
-      require('Storage').write("gbridge.json", s);
+      require('Storage').writeJSON("gbridge.json", s);
     }
+    // set up interval/HRM to handle activity data
     var interval = s.activityInterval;
+    var realtime = event.hrm || event.stp;
     if (activityInterval)
       clearInterval(activityInterval);
     activityInterval = undefined;
-    Bangle.setHRMPower(1);
-    if (event.hrm || event.stp) {
-      // if realtime reporting, leave HRM on and use that to trigger events
-      hrmTimeout = undefined;
-    } else {
-      // else trigger it manually every so often
-      hrmTimeout = 5;
-      activityInterval = setInterval(function() {
+    if (s.hrm) Bangle.setHRMPower(1);
+    if (s.hrm) {
+      if (realtime) {
+        // if realtime reporting, leave HRM on and use that to trigger events
+        hrmTimeout = undefined;
+      } else {
+        // else trigger it manually every so often
         hrmTimeout = 5;
-        Bangle.setHRMPower(1);
+        activityInterval = setInterval(function() {
+          hrmTimeout = 5;
+          Bangle.setHRMPower(1);
+        }, interval*1000);
+      }
+    } else {
+      // no HRM - manually push data
+      if (realtime) interval=10;
+      activityInterval = setInterval(function() {
+        sendActivity(-1);
       }, interval*1000);
     }
   }
@@ -241,17 +250,6 @@
 
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });
-  }
-  
-  // Turn on HRM and get a reading
-  function getHRM(callback) {
-    if (settings().hrm) {
-      Bangle.setHRMPower(1);
-      var timeout = 5;
-      
-    } else {
-      callback(-1);
-    }
   }
   
   // Send a summary of activity to Gadgetbridge

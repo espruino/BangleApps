@@ -142,6 +142,7 @@
     "version":"0.18",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
+    "readme": "README.md",
     "type":"widget",
     "dependencies": { "notify":"type" },
     "storage": [
