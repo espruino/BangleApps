@@ -161,7 +161,7 @@ function render(){
       if(settings.highres)
         Arwes.drawFrame(36, HEIGHT/4*3-(fontSize*8), 204, HEIGHT/4*3+(fontSize*8));
       else
-        Arwes.drawTopFrame(HALF-w-2, HEIGHT/4*3-h, HALF+w, HEIGHT/4*3+h);
+        Arwes.drawFrameBottomCorners(HALF-w-2, HEIGHT/4*3-h, HALF+w, HEIGHT/4*3+h);
       g.setColor(Arwes.C.color.primary.base);
       g.setFont(font, fontSize);
       g.setFontAlign(0,0);
@@ -173,7 +173,7 @@ function render(){
       const version = app.version ? app.version : '0.00';
       const info = type+' v'+version;
       const textWidth = (info.length*(6*1.5))
-      Arwes.drawTopFrame(HALF-textWidth/2, 210-(1.5*8)-2, HALF+textWidth/2, 210+(1.5*8)-2);
+      Arwes.drawFrameBottomCorners(HALF-textWidth/2, 210-(1.5*8)-2, HALF+textWidth/2, 210+(1.5*8)-2);
       g.setFontAlign(0,1);
       g.setFont('6x8', 1.5);
       g.setColor(Arwes.C.color.secondary.base);
