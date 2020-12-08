@@ -15,3 +15,4 @@
 0.12: Add option to plot on top of OpenStreetMap tiles (when they are installed on the watch)
 0.13: Increase GPS recording accuracy by one decimal place
       Ensure default time period is 10
+0.14: Now use the openstmap lib for map plotting

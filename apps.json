@@ -363,7 +363,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.13",
+    "version":"0.14",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -942,12 +942,12 @@
     ]
   },
   { "id": "assistedgps",
-    "name": "Assisted GPS Update",
+    "name": "Assisted GPS Update (AGPS)",
     "icon": "app.png",
     "version":"0.01",
     "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
     "custom": "custom.html",
-    "tags": "tool,outdoors",
+    "tags": "tool,outdoors,agps",
     "type": "RAM",
     "storage": [ ]
   },
@@ -1326,7 +1326,7 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps",
     "custom": "custom.html",
@@ -2474,6 +2474,6 @@
   "storage": [
     {"name":"gmeter.app.js","url":"app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
-  ]	
+  ]
 }
 ]
