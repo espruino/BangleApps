@@ -14,7 +14,7 @@ function getFace(){
       var d = new Date();
       var da = d.toString().split(" ");
       var time = da[4];
-      buf.setFont("Vector",42);
+      buf.setFont("Vector",54);
       buf.setFontAlign(0,-1);
       buf.drawString(time,buf.getWidth()/2,0);
       buf.setFont("6x8",2);
