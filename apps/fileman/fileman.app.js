@@ -10,12 +10,12 @@ function delete_file(fn) {
   E.showPrompt("Delete\n"+fn+"?", {buttons: {"No":false, "Yes":true}}).then(function(v) {
     if (v) {
       if (fn.charCodeAt(fn.length-1)==1) {
-        var fh = STOR.open(fn.substr(0, fn.length-1), "w");
+        var fh = STOR.open(fn.substr(0, fn.length-1), "r");
         fh.erase();
       }
       else STOR.erase(fn);
     }
-  }).then(function() { files=get_pruned_file_list(); }).then(drawMenu);
+  }).then(function() { filed=[];files=get_pruned_file_list(); }).then(drawMenu);
 }
 
 function get_length(fn) {
@@ -90,10 +90,13 @@ function drawMenu() {
 }
 
 function get_pruned_file_list() {
-  var fl = STOR.list(/^[^\.]/);
+  // get storagefile list
+  var sf = STOR.list(/\1$/).map(s=>s.slice(0,-1));
+  var sffilter = f=>!sf.includes(f.slice(0,-1)) || f.endsWith("\1");
+  // get files - put '.' last
+  var fl = STOR.list(/^[^\.]/).filter(sffilter);
   fl.sort();
-  fl = fl.concat(STOR.list(/^\./));
-  fl = fl.filter(f => (f.charCodeAt(f.length-1)>31 || f.charCodeAt(f.length-1)<2));
+  fl = fl.concat(STOR.list(/^\./).filter(sffilter).sort());
   return fl;
 }
 
