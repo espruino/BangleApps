@@ -73,6 +73,10 @@ function drawBattery() {
   g.setColor(c).fillRect(46, 58 + 80 + yOffset + 37, xl, height - 5);
 }
 
+function updateCounter() {
+  drawBattery();
+  drawCounterText();
+}
 
 function drawClock() {
   // main frame
@@ -89,7 +93,7 @@ function drawClock() {
   Arwes.drawFrameNoCorners(44, 58 + 80 + yOffset + 35, 196, height - 3);
 
 
-  drawBattery();
+  updateCounter()
   updateClock();
 
   // const img = makeImg();
@@ -101,7 +105,7 @@ function updateClock() {
   const date = new Date();
   drawTimeText(date);
   drawDateText(date);
-  drawCounterText();
+
 }
 
 
@@ -131,6 +135,6 @@ setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: "falling"});
 
 // refesh every 100 milliseconds
 setInterval(updateClock, 500);
-setInterval(drawBattery, 1000);
+setInterval(updateCounter, 1000);
 
 
