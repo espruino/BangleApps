@@ -1,4 +1,4 @@
-var d = require("dane_arwes");
+var d = require("https://raw.githubusercontent.com/OmegaVoid/EspruinoDocs/master/modules/dane_arwes.js");
 var Arwes = d.default();
 
 
@@ -69,6 +69,7 @@ function drawBattery() {
   const l = E.getBattery(), c = levelColor(l);
   count = l;
   const xl = 45 + l * (194 - 46) / 100;
+  g.clearRect(46, 58 + 80 + yOffset + 37, 193, height - 5);
   g.setColor(c).fillRect(46, 58 + 80 + yOffset + 37, xl, height - 5);
 }
 
@@ -88,6 +89,7 @@ function drawClock() {
   Arwes.drawFrameNoCorners(44, 58 + 80 + yOffset + 35, 196, height - 3);
 
 
+  drawBattery();
   updateClock();
 
   // const img = makeImg();
@@ -100,7 +102,6 @@ function updateClock() {
   drawTimeText(date);
   drawDateText(date);
   drawCounterText();
-  drawBattery();
 }
 
 
@@ -130,5 +131,6 @@ setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: "falling"});
 
 // refesh every 100 milliseconds
 setInterval(updateClock, 500);
+setInterval(drawBattery, 1000);
 
 
