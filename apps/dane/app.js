@@ -93,7 +93,7 @@ function drawClock() {
   Arwes.drawFrameNoCorners(44, 58 + 80 + yOffset + 35, 196, height - 3);
 
 
-  updateCounter()
+  updateCounter();
   updateClock();
 
   // const img = makeImg();
