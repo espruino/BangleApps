@@ -139,9 +139,10 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.17",
+    "version":"0.18",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
+    "readme": "README.md",
     "type":"widget",
     "dependencies": { "notify":"type" },
     "storage": [
@@ -362,14 +363,15 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.13",
+    "version":"0.16",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
     "storage": [
       {"name":"gpsrec.app.js","url":"app.js"},
       {"name":"gpsrec.img","url":"app-icon.js","evaluate":true},
-      {"name":"gpsrec.wid.js","url":"widget.js"}
+      {"name":"gpsrec.wid.js","url":"widget.js"},
+      {"name":"gpsrec.settings.js","url":"settings.js"}
     ],
     "data": [
       {"name":"gpsrec.json"},
@@ -941,12 +943,12 @@
     ]
   },
   { "id": "assistedgps",
-    "name": "Assisted GPS Update",
+    "name": "Assisted GPS Update (AGPS)",
     "icon": "app.png",
     "version":"0.01",
     "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
     "custom": "custom.html",
-    "tags": "tool,outdoors",
+    "tags": "tool,outdoors,agps",
     "type": "RAM",
     "storage": [ ]
   },
@@ -1325,11 +1327,12 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.05",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps",
     "custom": "custom.html",
     "storage": [
+      {"name":"openstmap","url":"openstmap.js"},
       {"name":"openstmap.app.js","url":"app.js"},
       {"name":"openstmap.img","url":"app-icon.js","evaluate":true}
     ]
@@ -1505,6 +1508,23 @@
         "evaluate": true
       }
     ]
+  },
+  { "id": "dane_tcr",
+    "name": "DANE Touch Launcher",
+    "shortName":"DANE Toucher",
+    "icon": "app.png",
+    "version":"0.03",
+    "description": "Touch enable left to right launcher in the style of the DANE Watchface",
+    "tags": "tool,system,launcher",
+    "type":"launch",
+    "data": [
+      {"name":"dane_tcr.json"}
+    ],
+    "storage": [
+      {"name":"dane_tcr.app.js","url":"app.js"},
+      {"name":"dane_tcr.settings.js","url":"settings.js"}
+    ],
+    "sortorder" : -10
   },
   {
     "id": "buffgym",
@@ -2273,7 +2293,7 @@
     "name": "File manager",
     "shortName":"FileManager",
     "icon": "icons8-filing-cabinet-48.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
     "tags": "tools",
     "readme": "README.md",
@@ -2456,6 +2476,6 @@
   "storage": [
     {"name":"gmeter.app.js","url":"app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
-  ]	
+  ]
 }
 ]

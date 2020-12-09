@@ -89,7 +89,7 @@ var locales = {
     currency_symbol: "Rs.",
     currency_first: true,
     int_curr_symbol: "INR",
-    speed: 'kms',
+    speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "am", 1: "pm" },
