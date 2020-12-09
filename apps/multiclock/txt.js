@@ -16,7 +16,7 @@
       g.clearRect(0,40,239,210);
       g.setColor(1,1,1);
       g.setFontAlign(0,0);
-      g.setFont("Vector",32);
+      g.setFont("Vector",44);
       var txt = convert(d.getHours());
       g.drawString(txt.top,120,60);
       g.drawString(txt.bot,120,100);
