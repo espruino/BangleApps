@@ -1,1 +1,2 @@
 0.01: New app!
+0.02: Improve handling of large amounts of files (fix #579)

@@ -12,7 +12,7 @@
   function updateSetting(setting, value) {
     let settings = require('Storage').readJSON("gbridge.json", true) || {};
     settings[setting] = value
-    require('Storage').write('gbridge.json', settings);
+    require('Storage').writeJSON('gbridge.json', settings);
   }
   function setIcon(visible) {
     updateSetting('showIcon', visible);
@@ -30,6 +30,11 @@
       onchange: setIcon
     },
     "Find Phone" : function() { E.showMenu(findPhone); },
+    "Record HRM" : {
+      value: settings().hrm,
+      format: v => v?"Yes":"No",
+      onchange: v => updateSetting('hrm', v)
+    },
     "< Back" : back,
   };
 

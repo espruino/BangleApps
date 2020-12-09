@@ -84,15 +84,13 @@
         var chunkSize = 128;
         var js = "\x10Bangle.setGPSPower(1);\n"; // turn GPS on
         //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
-        js += "\x10E.showMessage('Uploading...','AGPS');function p(n) {g.fillRect(0,g.getHeight()-80,g.getWidth()*n,g.getHeight()-60);}";
         //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
         js += `\x10Serial1.write(atob("${btoa(String.fromCharCode.apply(null,UBX_MGA_INI_TIME_UTC()))}"))\n`; // set GPS time
-        
+
         for (var i=0;i<bin.length;i+=chunkSize) {
           var chunk = bin.substr(i,chunkSize);
-          js += `\x10p(${Math.round(100*i/bin.length)/100});Serial1.write(atob("${btoa(chunk)}"))\n`;
+          js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
         }
-        js += "\x10p(1);\n"; // finish progress bar
         return js;
       }
 

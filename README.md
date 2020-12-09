@@ -394,6 +394,18 @@ It should also add `app.json` to `data`, to make sure it is cleaned up when the 
   },
 ```
 
+## Modules
+
+You can include any of [Espruino's modules](https://www.espruino.com/Modules) as
+normal with `require("modulename")`. If you want to develop your own module for your
+app(s) then you can do that too. Just add the module into the `modules` folder
+then you can use it from your app as normal.
+
+You won't be able to develop apps using your own modules with the IDE,
+so instead we'd recommend you write your module to a Storage File called
+`modulename` on Bangle.js. You can then develop your app as normal on Bangle.js
+from the IDE.
+
 ## Coding hints
 
 - use `g.setFont(.., size)` to multiply the font size, eg ("6x8",3) : "18x24"
