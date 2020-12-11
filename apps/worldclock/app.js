@@ -29,27 +29,27 @@ var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
 // Used to test offset array values during development.
 // Uncomment to override secondary offsets value
 
-const mockOffsets = {
-  zeroOffsets: [],
-  oneOffset: [["UTC", 0]],
-  twoOffsets: [
-    ["Tokyo", 9],
-    ["UTC", 0],
-  ],
-  fourOffsets: [
-    ["Tokyo", 9],
-    ["UTC", 0],
-    ["Denver", -7],
-    ["Miami", -5],
-  ],
-  fiveOffsets: [
-    ["Tokyo", 9],
-    ["UTC", 0],
-    ["Denver", -7],
-    ["Chicago", -6],
-    ["Miami", -5],
-  ],
-};
+// const mockOffsets = {
+//   zeroOffsets: [],
+//   oneOffset: [["UTC", 0]],
+//   twoOffsets: [
+//     ["Tokyo", 9],
+//     ["UTC", 0],
+//   ],
+//   fourOffsets: [
+//     ["Tokyo", 9],
+//     ["UTC", 0],
+//     ["Denver", -7],
+//     ["Miami", -5],
+//   ],
+//   fiveOffsets: [
+//     ["Tokyo", 9],
+//     ["UTC", 0],
+//     ["Denver", -7],
+//     ["Chicago", -6],
+//     ["Miami", -5],
+//   ],
+// };
 
 // Uncomment one at a time to test various offsets array scenarios
 // offsets = mockOffsets.zeroOffsets; // should render nothing below primary time
