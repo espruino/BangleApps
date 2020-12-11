@@ -20,7 +20,45 @@ const yposTime = 75;
 const yposDate = 130;
 const yposWorld = 170;
 
-var offsets = require("Storage").readJSON("worldclock.settings.json") || 0;
+const OFFSET_TIME_ZONE = 0;
+const OFFSET_HOURS = 1;
+
+var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
+
+// TESTING CODE
+// Used to test offset array values during development.
+// Uncomment to override secondary offsets value
+
+const mockOffsets = {
+  zeroOffsets: [],
+  oneOffset: [["UTC", 0]],
+  twoOffsets: [
+    ["Tokyo", 9],
+    ["UTC", 0],
+  ],
+  fourOffsets: [
+    ["Tokyo", 9],
+    ["UTC", 0],
+    ["Denver", -7],
+    ["Miami", -5],
+  ],
+  fiveOffsets: [
+    ["Tokyo", 9],
+    ["UTC", 0],
+    ["Denver", -7],
+    ["Chicago", -6],
+    ["Miami", -5],
+  ],
+};
+
+// Uncomment one at a time to test various offsets array scenarios
+// offsets = mockOffsets.zeroOffsets; // should render nothing below primary time
+// offsets = mockOffsets.oneOffset; // should render larger in two rows
+// offsets = mockOffsets.twoOffsets; // should render two in columns
+// offsets = mockOffsets.fourOffsets; // should render in columns
+// offsets = mockOffsets.fiveOffsets; // should render first four in columns
+
+// END TESTING CODE
 
 // Check settings for what type our clock should be
 //var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
@@ -30,7 +68,7 @@ function doublenum(x) {
   return x < 10 ? "0" + x : "" + x;
 }
 
-function offset(dt, offset) {
+function getCurrentTimeFromOffset(dt, offset) {
   return new Date(dt.getTime() + offset * 60 * 60 * 1000);
 }
 
@@ -40,7 +78,7 @@ function drawSimpleClock() {
   var da = d.toString().split(" ");
 
   // default draw styles
-  g.reset(); 
+  g.reset();
 
   // drawSting centered
   g.setFontAlign(0, 0);
@@ -61,21 +99,10 @@ function drawSimpleClock() {
 
   // set gmt to UTC+0
   var gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
-  
-  // Testing Code to set values during development.
-  // Uncomment to override secondary offsets value
-  // offsets = [
-  //   ["Tokyo", 9],
-  //   ["UTC", 0],
-  // ];
-
-  // offsets = [
-  //   ["UTC", 0],
-  // ];
 
   // Loop through offset(s) and render
-  for (var i = 0; i < offsets.length; i++) {
-    dx = offset(gmt, offsets[i][1]);
+  offsets.forEach((offset, index) => {
+    dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
     hours = doublenum(dx.getHours());
     minutes = doublenum(dx.getMinutes());
 
@@ -85,21 +112,25 @@ function drawSimpleClock() {
       g.setFont(font, secondaryTimeFontSize);
       g.drawString(`${hours}:${minutes}`, xyCenter, yposTime + 100, true);
       g.setFont(font, secondaryTimeFontSize - 2);
-      g.drawString(offsets[i][0], xyCenter, yposTime + 130, true);
+      g.drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime + 130, true);
 
       // draw Day, name of month, Date
       g.setFont(font, secondaryTimeZoneFontSize);
       g.drawString(date, xyCenter, yposDate, true);
-
-    } else {
-      // For > 1 extra timezones, list as columns / rows
+    } else if (index < 4) {
+      // For > 1 extra timezones, render as columns / rows
       g.setFont(font, secondaryRowColFontSize);
       g.setFontAlign(-1, 0);
-      g.drawString(offsets[i][0], xcol1, yposWorld + i * 15, true);
+      g.drawString(
+        offset[OFFSET_TIME_ZONE],
+        xcol1,
+        yposWorld + index * 15,
+        true
+      );
       g.setFontAlign(1, 0);
-      g.drawString(`${hours}:${minutes}`, xcol2, yposWorld + i * 15, true);
+      g.drawString(`${hours}:${minutes}`, xcol2, yposWorld + index * 15, true);
     }
-  }
+  });
 }
 
 // clean app screen
