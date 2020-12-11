@@ -2307,7 +2307,7 @@
     "name": "World Clock - 4 time zones",
     "shortName":"World Clock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Current time zone plus up to four others",
     "tags": "clock",
     "type" : "clock",
