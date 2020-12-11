@@ -6,7 +6,7 @@ const primaryDateFontSize = 3;
 
 // Font for single secondary time
 const secondaryTimeFontSize = 4;
-const secondaryTimeZoneFontSize = 4;
+const secondaryTimeZoneFontSize = 2;
 
 // Font / columns for multiple secondary times
 const secondaryRowColFontSize = 2;
@@ -111,7 +111,7 @@ function drawSimpleClock() {
       const xOffset = 30;
       g.setFont(font, secondaryTimeFontSize);
       g.drawString(`${hours}:${minutes}`, xyCenter, yposTime + 100, true);
-      g.setFont(font, secondaryTimeFontSize - 2);
+      g.setFont(font, secondaryTimeZoneFontSize);
       g.drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime + 130, true);
 
       // draw Day, name of month, Date
