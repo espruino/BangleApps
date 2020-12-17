@@ -1522,8 +1522,7 @@
     ],
     "storage": [
       {"name":"dane_tcr.app.js","url":"app.js"},
-      {"name":"dane_tcr.settings.js","url":"settings.js"},
-      {"name": "dane_tcr.img", "url": "app-icon.js", "evaluate": true}
+      {"name":"dane_tcr.settings.js","url":"settings.js"}
     ],
     "sortorder" : -10
   },
