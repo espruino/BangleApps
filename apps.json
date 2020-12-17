@@ -1513,7 +1513,7 @@
     "name": "DANE Touch Launcher",
     "shortName":"DANE Toucher",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Touch enable left to right launcher in the style of the DANE Watchface",
     "tags": "tool,system,launcher",
     "type":"launch",
