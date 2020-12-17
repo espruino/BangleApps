@@ -14,6 +14,9 @@ This is a clock app that supports multiple clock faces. The user can switch betw
 ### Text Clock Face
 ![](txtface.jpg)
 
+### Time and Date Clock Face
+
+
 ## Controls
 Clock faces are kept in a circular list.
 
