@@ -2487,8 +2487,8 @@
   "description": "Heart Rate Variability app",
   "tags": "",
   "storage": [
-    {"name":"HRV.app.js","url":"HRV.js"},
-    {"name":"HRV.img","url":"HRV-icon.js","evaluate":true}
+    {"name":"HRV.app.js","url":"app.js"},
+    {"name":"HRV.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
