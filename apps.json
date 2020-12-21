@@ -2480,3 +2480,17 @@
   ]
 }
 ]
+},
+{ "id": "HRV",
+  "name": "HRV monitor app",
+  "shortName":"HRV monitor",
+  "icon": "HRV-icon.png",
+  "version":"0.01",
+  "description": "Heart Rate Variability app",
+  "tags": "",
+  "storage": [
+    {"name":"HRV.app.js","url":"HRV.js"},
+    {"name":"HRV.img","url":"HRV-icon.js","evaluate":true}
+  ]
+}
+]
