@@ -2496,7 +2496,7 @@
   "shortName":"HardAlarm",
   "icon": "app.png",
   "version":"0.01",
-  "description": "Count to the right number to turn off the alarm",
+  "description": "Make sure you wake up! Count to the right number to turn off the alarm",
   "tags": "tool,alarm,widget",
   "storage": [
     {"name":"hardalarm.app.js","url":"app.js"},
