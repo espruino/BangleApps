@@ -2506,7 +2506,7 @@
     {"name":"hardalarm.wid.js","url":"widget.js"}
   ],
   "data": [
-    {"name":"alarm.json"}
+    {"name":"hardalarm.json"}
   ]
 }
 ]
