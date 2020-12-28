@@ -1,99 +1,10 @@
+var d = require("dane_arwes");
+var Arwes = d.default();
 
 const yOffset = 23;
 const width = g.getWidth();
 const height = g.getHeight();
 const xyCenter = width / 2 + 4;
-const cornerSize = 14;
-const cornerOffset = 3;
-const borderWidth = 1;
-const mainColor = "#26dafd";
-const mainColorDark = "#029dbb";
-// const mainColorLight = "#8bebfe";
-
-const secondaryColor = "#df9527";
-const secondaryColorDark = "#8b5c15";
-// const secondaryColorLight = "#ecc180";
-
-const success = "#00ff00";
-// const successDark        = "#000900";
-// const successLight        = "#060f06";
-
-const alert = "#ff0000";
-// const alertDark          = "#090000";
-// const alertLight          = "#0f0606";
-
-function drawTopLeftCorner(x, y) {
-  g.setColor(mainColor);
-  const x1 = x - cornerOffset;
-  const y1 = y - cornerOffset;
-  g.fillRect(x1, y1, x1 + cornerSize, y1 + cornerSize);
-  g.setColor("#000000");
-  g.fillRect(x, y, x + cornerSize - cornerOffset, y + cornerSize - cornerOffset);
-}
-
-function drawTopRightCorner(x, y) {
-  g.setColor(mainColor);
-  const x1 = x + cornerOffset;
-  const y1 = y - cornerOffset;
-  g.fillRect(x1, y1, x1 - cornerSize, y1 + cornerSize);
-  g.setColor("#000000");
-  g.fillRect(x, y, x - cornerSize - cornerOffset, y + cornerSize - cornerOffset);
-}
-
-function drawBottomLeftCorner(x, y) {
-  g.setColor(mainColor);
-  const x1 = x - cornerOffset;
-  const y1 = y + cornerOffset;
-  g.fillRect(x1, y1, x1 + cornerSize, y1 - cornerSize);
-  g.setColor("#000000");
-  g.fillRect(x, y, x + cornerSize - cornerOffset, y - cornerSize + cornerOffset);
-}
-
-function drawBottomRightCorner(x, y) {
-  g.setColor(mainColor);
-  const x1 = x + cornerOffset;
-  const y1 = y + cornerOffset;
-  g.fillRect(x1, y1, x1 - cornerSize, y1 - cornerSize);
-  g.setColor("#000000");
-  g.fillRect(x, y, x - cornerSize + cornerOffset, y - cornerSize + cornerOffset);
-}
-
-function drawFrame(x1, y1, x2, y2) {
-  drawTopLeftCorner(x1, y1);
-  drawTopRightCorner(x2, y1);
-  drawBottomLeftCorner(x1, y2);
-  drawBottomRightCorner(x2, y2);
-  g.setColor(mainColorDark);
-  g.drawRect(x1, y1, x2, y2);
-  g.setColor("#000000");
-  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
-}
-function drawFrameNoCorners(x1, y1, x2, y2) {
-  g.setColor(mainColorDark);
-  g.drawRect(x1, y1, x2, y2);
-  g.setColor("#000000");
-  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
-}
-
-function drawTopFrame(x1, y1, x2, y2) {
-
-  drawBottomLeftCorner(x1, y2);
-  drawBottomRightCorner(x2, y2);
-  g.setColor(mainColorDark);
-  g.drawRect(x1, y1, x2, y2);
-  g.setColor("#000000");
-  g.fillRect(x1 + borderWidth, y1 + borderWidth, x2 - borderWidth, y2 - borderWidth);
-}
-
-function drawBottomFrame(x1,y1,x2,y2) {
-  drawTopLeftCorner(x1,y1);
-  drawTopRightCorner(x2,y1);
-  g.setColor(mainColorDark);
-  g.drawRect(x1,y1,x2,y2);
-  g.setColor("#000000");
-  g.fillRect(x1+borderWidth,y1+borderWidth,x2-borderWidth,y2-borderWidth);
-}
-
 
 const Storage = require("Storage");
 const filename = 'dane_tcr.json';
@@ -160,7 +71,7 @@ const APPS = getApps();
 
 function noIcon(x, y, scale){
   if(scale < 0.2) return;
-  g.setColor(alert);
+  g.setColor(Arwes.C.color.alert.base);
   g.setFontAlign(0,0);
   g.setFont('6x8',settings.highres ? 6:3);
   g.drawString('x_x', x+1.5, y);
@@ -203,11 +114,11 @@ function render(){
       const h = (settings.highres ?8:6)*fontSize
       const w = ((settings.highres ?6:2)*fontSize)*app.name.length
       if(settings.hightres)
-        drawFrame(HALF-w, HALF-h, HALF+w, HALF+h);
+        Arwes.drawFrame(HALF-w, HALF-h, HALF+w, HALF+h);
       else
-        drawFrame(HALF-w-2, HALF-h, HALF+w, HALF+h);
+        Arwes.drawFrame(HALF-w-2, HALF-h, HALF+w, HALF+h);
       g.setFont(font, fontSize);
-      g.setColor(alert);
+      g.setColor(Arwes.C.color.alert.base);
       g.setFontAlign(0,0);
       g.drawString(app.name, HALF, HALF);
       return;
@@ -225,9 +136,9 @@ function render(){
         const imageScale = settings.highres ? scale*2 : scale;
 
         if(settings.hightres)
-          drawFrame(x-rescale-5, y-rescale-5, x+rescale+5, y+rescale+5);
+          Arwes.drawFrame(x-rescale-5, y-rescale-5, x+rescale+5, y+rescale+5);
         else
-          drawFrame(x-rescale-2-2, y-rescale-1, x+rescale+2, y+rescale+1);
+          Arwes.drawFrame(x-rescale-2-2, y-rescale-1, x+rescale+2, y+rescale+1);
 
 
 
@@ -248,10 +159,10 @@ function render(){
       const h = (settings.highres ?8:6)*fontSize
       const w = ((settings.highres ?6:2)*fontSize)*10//app.name.length
       if(settings.highres)
-        drawFrame(36, HEIGHT/4*3-(fontSize*8), 204, HEIGHT/4*3+(fontSize*8));
+        Arwes.drawFrame(36, HEIGHT/4*3-(fontSize*8), 204, HEIGHT/4*3+(fontSize*8));
       else
-        drawTopFrame(HALF-w-2, HEIGHT/4*3-h, HALF+w, HEIGHT/4*3+h);
-      g.setColor(mainColor);
+        Arwes.drawFrameBottomCorners(HALF-w-2, HEIGHT/4*3-h, HALF+w, HEIGHT/4*3+h);
+      g.setColor(Arwes.C.color.primary.base);
       g.setFont(font, fontSize);
       g.setFontAlign(0,0);
       g.drawString(app.name, HALF, HEIGHT/4*3);
@@ -262,10 +173,10 @@ function render(){
       const version = app.version ? app.version : '0.00';
       const info = type+' v'+version;
       const textWidth = (info.length*(6*1.5))
-      drawTopFrame(HALF-textWidth/2, 210-(1.5*8)-2, HALF+textWidth/2, 210+(1.5*8)-2);
+      Arwes.drawFrameBottomCorners(HALF-textWidth/2, 210-(1.5*8)-2, HALF+textWidth/2, 210+(1.5*8)-2);
       g.setFontAlign(0,1);
       g.setFont('6x8', 1.5);
-      g.setColor(secondaryColor);
+      g.setColor(Arwes.C.color.secondary.base);
       g.drawString(info, HALF, 210, { scale: scale });
     }
 
