@@ -6,7 +6,6 @@ logfile.write(""); //reset HRV log
 
 logfile = require("Storage").open("HRV_log.csv", "a");
 
-var timestamp = getTime();
 var csv = [
           "time",
           "sample count",
