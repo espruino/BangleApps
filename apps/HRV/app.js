@@ -233,7 +233,7 @@ g.drawString("one-time", 140, 50);
 
 g.setColor("#ffffff");
 g.setFontAlign(0, 0); // center font
-g.drawString("read app change log", 120, 120);
+g.drawString("check app README", 120, 120);
 g.drawString("for more info", 120, 140);
 
 setWatch(btn1Pressed, BTN1, {repeat:true});
