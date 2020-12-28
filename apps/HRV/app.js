@@ -1,10 +1,5 @@
 var option = null;
 
-var file = require("Storage").open("HR_log.csv", "w");
-file.write(""); //reset log
-
-file = require("Storage").open("HR_log.csv", "a");
-
 //debugging or analysis files
 var logfile = require("Storage").open("HRV_log.csv", "w");
 logfile.write(""); //reset HRV log
@@ -253,7 +248,6 @@ Bangle.on('HRM', function (hrm) {
                 heartrate.push(hrm.bpm);
             if (pulsecount < 7) {
                 for (let i = 0; i < 256; i++) {
-                    file.write(BPM_array[i]+","+"\n");
                     storeMyData(BPM_array[i], 0);
                 }
             g.clear();
