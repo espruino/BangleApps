@@ -19,7 +19,7 @@ var debugging = true;
 var first_signals = 0; // ignore the first several signals
 var heartrate = [];
 var BPM_array = [];
-var raw_HR_array = new Float32Array(1024);
+var raw_HR_array = new Float32Array(1536);
 var alternate_array = new Float32Array(3072);
 var pulse_array = [];
 var pulsecount = 0;
@@ -215,7 +215,7 @@ var routine = setInterval(function () {
   heartrate = [];
   pulse_array = [];
   Bangle.setHRMPower(1);
-}, 300000);
+}, 210000);
 
 g.clear();
 g.setColor("#00ff7f");
