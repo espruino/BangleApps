@@ -1,17 +1,25 @@
-var file = require("Storage").open("HR_log.csv", "w");
-file.write(""); //reset log
-
-file = require("Storage").open("HR_log.csv", "a");
+var option = null;
 
 //debugging or analysis files
-var cutoff_file = require("Storage").open("cuttoff.csv", "w");
-var peaks_file = require("Storage").open("peaks.csv", "w");
+var logfile = require("Storage").open("HRV_log.csv", "w");
+logfile.write(""); //reset HRV log
+
+logfile = require("Storage").open("HRV_log.csv", "a");
+
+var csv = [
+          "time",
+          "sample count",
+          "HR",
+          "HRV"
+          ];
+logfile.write(csv.join(",")+"\n");
+
 var debugging = true;
 
 var first_signals = 0; // ignore the first several signals
 var heartrate = [];
 var BPM_array = [];
-var raw_HR_array = new Float32Array(1024);
+var raw_HR_array = new Float32Array(1536);
 var alternate_array = new Float32Array(3072);
 var pulse_array = [];
 var pulsecount = 0;
@@ -20,9 +28,6 @@ var sample_frequency = 51.6;
 var gap_threshold = 0.15;
 var hr_min = 40;
 var hr_max = 160;
-
-g.setFontAlign(0, 0); // center font
-g.setFont("6x8", 2);
 
 function storeMyData(data, file_type) {
     log = raw_HR_array;
@@ -67,16 +72,8 @@ function turn_off() {
     g.drawString("processing 4/5", 120, 120);
 
     apply_cutoff();
-    if(debugging)
-        for (let i = 0; i < 256; i++) {
-            cutoff_file.write(alternate_array[i] + "," + "\n");
-        }
-
     find_peaks();
-    if(debugging)
-        for (let i = 0; i < pulse_array.length; i++) {
-            peaks_file.write(pulse_array[i] + "," + "\n");
-        }
+  
     g.clear();
     g.drawString("processing 5/5", 120, 120);
 
@@ -108,7 +105,7 @@ function upscale() {
 }
 
 function rolling_average(values, count) {
-    temp_array = [];
+    var temp_array = [];
 
     for (let i = 0; i < values.length; i++) {
             temp_array = [];
@@ -165,23 +162,81 @@ function calculate_HRV() {
     }
     gap_average = average(temp_array);
     var calculatedHR = (sample_frequency*60)/(gap_average/2);
-    g.flip();
+    if(option == 0)
+          g.flip();
     g.clear();
     //var display_stdv = StandardDeviation(pulse_array).toFixed(1);
     var HRV = (StandardDeviation(temp_array) * (1 / (sample_frequency * 2) * 1000)).toFixed(0);
     g.drawString("HRV:" + HRV + "\nHR:" + calculatedHR.toFixed(0)
                  +"\nSample Count:" + temp_array.length, 120, 120);
-    Bangle.buzz(500,1);
+   
+    if(option == 0){
+      Bangle.buzz(500,1);
+      clearInterval(routine);
+    }
+  
+    else{
+      var csv = [
+          0|getTime(),
+          temp_array.length,
+          calculatedHR.toFixed(0),
+          HRV
+          ];
+      logfile.write(csv.join(",")+"\n");
+
+      for (let i = 0; i < raw_HR_array.length; i++) {
+          raw_HR_array[i] = null;
+      }   
+    }
 }
 
-g.clear();
-g.drawString("preparing", 120, 120);
+function btn1Pressed() {
+  if(option === null){
+    g.clear();
+    g.drawString("one-off assessment", 120, 120);
+    option = 0;
+    Bangle.setHRMPower(1);
+  }
+}
 
-Bangle.setHRMPower(1);
+function btn3Pressed() {
+  if(option === null){
+    g.clear();
+    g.drawString("continuous mode", 120, 120);
+    option = 1;
+    Bangle.setHRMPower(1);
+    }
+}
+
+var routine = setInterval(function () {
+  first_signals = 0; // ignore the first several signals
+  pulsecount = 0;
+  BPM_array = [];
+  heartrate = [];
+  pulse_array = [];
+  Bangle.setHRMPower(1);
+}, 210000);
+
+g.clear();
+g.setColor("#00ff7f");
+g.setFont("6x8", 2);
+g.setFontAlign(-1,1);
+g.drawString("continuous", 120, 210);
+g.setFontAlign(-1,1);
+g.drawString("one-time", 140, 50);
+
+g.setColor("#ffffff");
+g.setFontAlign(0, 0); // center font
+g.drawString("check app README", 120, 120);
+g.drawString("for more info", 120, 140);
+
+setWatch(btn1Pressed, BTN1, {repeat:true});
+setWatch(btn3Pressed, BTN3, {repeat:true});
 
 Bangle.on('HRM', function (hrm) {
-        g.flip();
-        if (first_signals < 5) {
+        if(option == 0)
+          g.flip();
+        if (first_signals < 3) {
             g.clear();
             g.drawString("setting up...\nremain still " + first_signals * 20 + "%", 120, 120);
             first_signals++;
@@ -192,7 +247,6 @@ Bangle.on('HRM', function (hrm) {
                 heartrate.push(hrm.bpm);
             if (pulsecount < 7) {
                 for (let i = 0; i < 256; i++) {
-                    file.write(BPM_array[i]+","+"\n");
                     storeMyData(BPM_array[i], 0);
                 }
             g.clear();
