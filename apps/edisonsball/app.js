@@ -1,6 +1,6 @@
 //ADVANCED SETTINGS
-var lower_limit_BPM = 59;
-var upper_limit_BPM = 100;
+var lower_limit_BPM = 49;
+var upper_limit_BPM = 140;
 var deviation_threshold = 3;
 
 var target_heartrate = 70;
