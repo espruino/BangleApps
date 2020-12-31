@@ -2483,7 +2483,7 @@
   "name": "HRV monitor app",
   "shortName":"HRV monitor",
   "icon": "hrv.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Heart Rate Variability app",
   "tags": "",
   "storage": [
