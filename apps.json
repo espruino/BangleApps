@@ -2521,5 +2521,17 @@
   "data": [
     {"name":"hardalarm.json"}
   ]
+},
+{ "id": "edisonsball",
+  "name": "Edison's Ball",
+  "shortName":"Edison's Ball",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "description": "Hypnagogia/Micro-Sleep alarm for experimental use in exploring sleep transition and combating drowsiness",
+  "tags": "",
+  "storage": [
+    {"name":"edisonsball.app.js","url":"app.js"},
+    {"name":"edisonsball.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 ]
