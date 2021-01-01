@@ -2499,6 +2499,7 @@
   "version":"0.02",
   "description": "Heart Rate Variability app",
   "tags": "",
+  "readme": "README.md",
   "storage": [
     {"name":"HRV.app.js","url":"app.js"},
     {"name":"HRV.img","url":"app-icon.js","evaluate":true}
