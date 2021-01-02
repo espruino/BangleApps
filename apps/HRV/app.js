@@ -2,7 +2,6 @@ var option = null;
 
 //debugging or analysis files
 var logfile = require("Storage").open("HRV_log.csv", "w");
-logfile.write(""); //reset HRV log
 
 logfile = require("Storage").open("HRV_log.csv", "a");
 
@@ -10,7 +9,10 @@ var csv = [
           "time",
           "sample count",
           "HR",
-          "HRV"
+          "SDNN",
+          "RMSSD",
+          "Temp",
+          "movement"
           ];
 logfile.write(csv.join(",")+"\n");
 
@@ -28,6 +30,7 @@ var sample_frequency = 51.6;
 var gap_threshold = 0.15;
 var hr_min = 40;
 var hr_max = 160;
+var movement = 0;
 
 function storeMyData(data, file_type) {
     log = raw_HR_array;
@@ -46,16 +49,19 @@ function average(samples) {
     return avg;
 }
 
-function StandardDeviation(data) {
-    var m = average(data);
-    return Math.sqrt(data.reduce(function (sq, n) {
-        return sq + Math.pow(n - m, 2);
-    }, 0) / (data.length - 1));
+function StandardDeviation (array) {
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
 function turn_off() {
     Bangle.setHRMPower(0);
-
+ 
+    var accel = setInterval(function () {
+    movement = movement + Bangle.getAccel().diff;
+    }, 1000);
+ 
     g.clear();
     g.drawString("processing 1/5", 120, 120);
 
@@ -73,7 +79,7 @@ function turn_off() {
 
     apply_cutoff();
     find_peaks();
-  
+ 
     g.clear();
     g.drawString("processing 5/5", 120, 120);
 
@@ -111,7 +117,7 @@ function rolling_average(values, count) {
             temp_array = [];
             for (let x = 0; x < count; x++)
                 temp_array.push(values[i + x]);
-            
+           
                 values[i] = average(temp_array);
     }
 }
@@ -151,6 +157,21 @@ function find_peaks() {
     }
 }
 
+function RMSSD(data){
+  var sum = 0;
+  var square = 0;
+  for (let i = 0; i < data.length; i++) {
+        square = data[i] * data[i];
+        Math.round(square);
+        sum += square;
+    }
+  //sum = parseInt(sum);
+  var meansquare = sum/data.length;
+  var RMS = Math.sqrt(meansquare);
+  RMS = parseInt(RMS);
+  return RMS;
+}
+
 function calculate_HRV() {
     var gap_average = average(pulse_array);
     var temp_array = [];
@@ -166,32 +187,40 @@ function calculate_HRV() {
           g.flip();
     g.clear();
     //var display_stdv = StandardDeviation(pulse_array).toFixed(1);
-    var HRV = (StandardDeviation(temp_array) * (1 / (sample_frequency * 2) * 1000)).toFixed(0);
-    g.drawString("HRV:" + HRV + "\nHR:" + calculatedHR.toFixed(0)
+    var SDNN = (StandardDeviation(temp_array) * (1 / (sample_frequency * 2) * 1000)).toFixed(0);
+  var RMS_SD = RMSSD(temp_array);
+    g.drawString("SDNN:" + SDNN
+                 +"\nRMSSD:" + RMS_SD
+                + "\nHR:" + calculatedHR.toFixed(0)
                  +"\nSample Count:" + temp_array.length, 120, 120);
    
     if(option == 0){
       Bangle.buzz(500,1);
       clearInterval(routine);
     }
-  
+ 
     else{
       var csv = [
           0|getTime(),
           temp_array.length,
           calculatedHR.toFixed(0),
-          HRV
+          SDNN,
+          RMS_SD,
+          E.getTemperature(),
+          movement.toFixed(5)
           ];
       logfile.write(csv.join(",")+"\n");
 
-      for (let i = 0; i < raw_HR_array.length; i++) {
-          raw_HR_array[i] = null;
-      }   
+      movement = 0;
+   //   for (let i = 0; i < raw_HR_array.length; i++) {
+     //     raw_HR_array[i] = null;
+      //}  
     }
 }
 
 function btn1Pressed() {
   if(option === null){
+    clearInterval(accel);
     g.clear();
     g.drawString("one-off assessment", 120, 120);
     option = 0;
@@ -201,6 +230,8 @@ function btn1Pressed() {
 
 function btn3Pressed() {
   if(option === null){
+    logfile.write(""); //reset HRV log
+    clearInterval(accel);
     g.clear();
     g.drawString("continuous mode", 120, 120);
     option = 1;
@@ -209,13 +240,18 @@ function btn3Pressed() {
 }
 
 var routine = setInterval(function () {
+  clearInterval(accel);
   first_signals = 0; // ignore the first several signals
   pulsecount = 0;
   BPM_array = [];
   heartrate = [];
   pulse_array = [];
   Bangle.setHRMPower(1);
-}, 210000);
+}, 180000);
+
+var accel = setInterval(function () {
+  movement = movement + Bangle.getAccel().diff;
+}, 1000);
 
 g.clear();
 g.setColor("#00ff7f");
