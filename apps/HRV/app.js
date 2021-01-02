@@ -157,15 +157,23 @@ function find_peaks() {
     }
 }
 
-function RMSSD(data){
+function RMSSD(samples){
   var sum = 0;
   var square = 0;
+  var data = [];
+  var value = 0;
+  
+    for (let i = 0; i < samples.length-1; i++) {
+        value = Math.abs(samples[i]-samples[i+1])*((1 / (sample_frequency * 2)) * 1000);
+        data.push(value);
+    }
+  
   for (let i = 0; i < data.length; i++) {
         square = data[i] * data[i];
         Math.round(square);
         sum += square;
     }
-  //sum = parseInt(sum);
+
   var meansquare = sum/data.length;
   var RMS = Math.sqrt(meansquare);
   RMS = parseInt(RMS);
