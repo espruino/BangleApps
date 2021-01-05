@@ -2537,8 +2537,8 @@
   ]
 },
 { "id": "hrmdataexport",
-  "name": "HRM Data Exporter",
-  "shortName":"HRM Data Exporter",
+  "name": "HR Data Exp",
+  "shortName":"HRDataExp",
   "icon": "icon.png",
   "version":"0.01",
   "description": "export raw hrm signal data to a csv file",
