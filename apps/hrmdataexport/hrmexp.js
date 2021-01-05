@@ -1,97 +1,149 @@
-var counter = 1;
-var logging_started;
-var interval;
-var value;
+//ADVANCED SETTINGS
+var lower_limit_BPM = 49;
+var upper_limit_BPM = 140;
+var deviation_threshold = 3;
 
-var file = require("Storage").open("hrm_log.csv", "w+");
-file.write("");
+var target_heartrate = 70;
+var heartrate_set;
 
-file = require("Storage").open("hrm_log.csv", "a");
-
-function update_timer() {
-    g.clear();
-    g.setColor("#00ff7f");
-    g.setFont("6x8", 4);
-    g.setFontAlign(0, 0); // center font
-
-    g.drawString(counter, 120, 120);
-    g.setFont("6x8", 2);
-    g.setFontAlign(-1, -1);
-    g.drawString("-", 220, 200);
-    g.drawString("+", 220, 40);
-    g.drawString("GO", 210, 120);
-
-    g.setColor("#ffffff");
-    g.setFontAlign(0, 0); // center font
-    g.drawString("Timer (minutes)", 120, 90);
-
-    g.setFont("6x8", 4); // bitmap font, 8x magnified
-
-    if (!logging_started)
-        g.flip();
-}
+var currentBPM;
+var lastBPM;
+var firstBPM = true; // first reading since sensor turned on
+var HR_samples = [];
+var trigger_count = 0;
+var file = require("Storage").open("steel_log.csv","a");
+var launchtime;
+var alarm_length;
 
 function btn1Pressed() {
-    if (!logging_started) {
-        if (counter < 60)
-            counter += 1;
-        else
-            counter = 1;
-        update_timer();
-    }
-}
-
-function btn3Pressed() {
-    if (!logging_started) {
-        if (counter > 1)
-            counter -= 1;
-        else
-            counter = 60;
-        update_timer();
-    }
+  if(!heartrate_set){
+  target_heartrate++;
+  update_target_HR();
+  }
 }
 
 function btn2Pressed() {
-    launchtime = 0 | getTime();
-    file.write(launchtime + "," + "\n");
-    logging_started = true;
-    counter = counter * 60;
-    interval = setInterval(countDown, 1000);
-    Bangle.setHRMPower(1);
+   heartrate_set = true;
+  Bangle.setHRMPower(1);
+  launchtime = 0|getTime();
+  g.clear();
+  g.setFont("6x8",2);
+  g.drawString("tracking HR...", 120,120);
+  g.setFont("6x8",3);
+  }
+
+function update_target_HR(){
+  
+  g.clear();
+  g.setColor("#00ff7f");
+  g.setFont("6x8", 4);
+  g.setFontAlign(0,0); // center font
+
+  g.drawString(target_heartrate, 120,120);
+  g.setFont("6x8", 2);
+  g.setFontAlign(-1,-1);
+  g.drawString("-", 220, 200);
+  g.drawString("+", 220, 40);
+  g.drawString("GO", 210, 120);
+  
+  g.setColor("#ffffff");
+  g.setFontAlign(0,0); // center font
+  g.drawString("target HR", 120,90);
+  
+  g.setFont("6x8", 1);
+  g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 120,170);
+  
+  g.setFont("6x8",3);
+  g.flip();
 }
 
-function fmtMSS(e) {
-    var m = Math.floor(e % 3600 / 60).toString().padStart(2, '0'),
-        s = Math.floor(e % 60).toString().padStart(2, '0');
-    return m + ':' + s;
+function btn3Pressed(){
+  if(!heartrate_set){
+    target_heartrate--;
+    update_target_HR();
+  }
 }
 
-function countDown() {
-    g.clear();
-    counter--;
-    if (counter == 0) {
-        Bangle.setHRMPower(0);
-        clearInterval(interval);
-        g.drawString("Finished", g.getWidth() / 2, g.getHeight() / 2);
-        Bangle.buzz(500, 1);
+function alarm(){
+  if(alarm_length > 0){
+    //Bangle.beep(500,4000);
+    Bangle.buzz(500,1);
+    alarm_length--;
+  }
+  else{
+    clearInterval(alarm);
+    if(trigger_count > 1)
+       Bangle.setHRMPower(0);
+  }
+}
+
+function average(nums) {
+  return nums.reduce((a, b) => (a + b)) / nums.length;
+}
+
+function getStandardDeviation (array) {
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+}
+
+function checkHR() {
+  var bpm = currentBPM, isCurrent = true;
+  if (bpm===undefined) {
+    bpm = lastBPM;
+    isCurrent = false;
+  }
+  if (bpm===undefined || bpm < lower_limit_BPM || bpm > upper_limit_BPM)
+     bpm = "--";
+  if (bpm != "--"){
+     HR_samples.push(bpm);
+    // Terminal.println(bpm);
+  }
+
+  if(HR_samples.length == 5){
+     g.clear();
+     average_HR = average(HR_samples).toFixed(0);
+     stdev_HR = getStandardDeviation (HR_samples).toFixed(1);
+
+     g.drawString("HR: " + average_HR, 120,100);
+     g.drawString("STDEV: " + stdev_HR, 120,160);
+     HR_samples = [];
+     if(average_HR < target_heartrate && stdev_HR < deviation_threshold){
+       
+       Bangle.setHRMPower(0);
+       alarm_length = 4;
+       setInterval(alarm, 2000);
+       
+        trigger_count++;
+        var csv = [
+        0|getTime(),
+        launchtime,
+            average_HR,
+            stdev_HR
+          ];
+        file.write(csv.join(",")+"\n");
+       
+       heartrate_set = false;
+       update_target_HR();
+     }
+ }
+}
+
+update_target_HR();
+
+setWatch(btn1Pressed, BTN1, {repeat:true});
+setWatch(btn2Pressed, BTN2, {repeat:true});
+setWatch(btn3Pressed, BTN3, {repeat:true});
+
+Bangle.on('HRM',function(hrm) {
+
+   if(trigger_count < 2){
+    if (firstBPM)
+      firstBPM=false; // ignore the first one as it's usually rubbish
+    else {
+      currentBPM = hrm.bpm;
+      lastBPM = currentBPM;
     }
-    else
-        g.drawString(fmtMSS(counter), g.getWidth() / 2, g.getHeight() / 2);
-}
-
-update_timer();
-
-setWatch(btn1Pressed, BTN1, { repeat: true });
-setWatch(btn2Pressed, BTN2, { repeat: true });
-setWatch(btn3Pressed, BTN3, { repeat: true });
-
-Bangle.on('HRM', function (hrm) {
-    for (let i = 0; i < hrm.raw.length; i++) {
-        value = hrm.raw[i];
-        if (value < -2)
-            value = -2;
-        if (value > 6)
-            value = 6;
-        file.write(value + "," + "\n");
-    }
+    checkHR();
+   }
 });
