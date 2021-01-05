@@ -2546,7 +2546,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"hrmdataexp.app.js","url":"hrmexp.js"},
-    {"name":"hrmdataexp.img","url":"app-icon.js","evaluate":false}
+    {"name":"hrmdataexp.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
