@@ -2548,18 +2548,5 @@
     {"name":"hrmdataexport.app.js","url":"app.js"},
     {"name":"hrmdataexport.img","url":"app-icon.js","evaluate":true}
   ]
-},
-{ "id": "ben_text",
-  "name": "test_app",
-  "shortName":"test_app",
-  "icon": "app-icon.png",
-  "version":"0.01",
-  "description": "test_app",
-  "tags": "",
-  "readme": "README.md",
-  "storage": [
-    {"name":"test_app.app.js","url":"app.js"},
-    {"name":"test_app.img","url":"app-icon.js","evaluate":true}
-  ]
 }
 ]
