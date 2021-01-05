@@ -2536,7 +2536,7 @@
     {"name":"edisonsball.img","url":"app-icon.js","evaluate":true}
   ]
 },
-{ "id": "hrmdataexp",
+{ "id": "hrmdataexport",
   "name": "HRM Data Exporter",
   "shortName":"HRM Data Exporter",
   "icon": "icon.png",
