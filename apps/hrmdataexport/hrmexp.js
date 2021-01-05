@@ -3,7 +3,7 @@ var logging_started;
 var interval;
 var value;
 
-var file = require("Storage").open("hrm_log.csv", "w");
+var file = require("Storage").open("hrm_log.csv", "w+");
 file.write("");
 
 file = require("Storage").open("hrm_log.csv", "a");
