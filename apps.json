@@ -2535,18 +2535,5 @@
     {"name":"edisonsball.app.js","url":"app.js"},
     {"name":"edisonsball.img","url":"app-icon.js","evaluate":true}
   ]
-},
-{ "id": "hrmdataexport",
-  "name": "HR Data Exp",
-  "shortName":"HRDataExp",
-  "icon": "icon.png",
-  "version":"0.01",
-  "description": "export raw hrm signal data to a csv file",
-  "tags": "",
-  "readme": "README.md",
-  "storage": [
-    {"name":"hrmdataexp.app.js","url":"hrmexp.js"},
-    {"name":"hrmdataexp.img","url":"app-icon.js","evaluate":true}
-  ]
 }
 ]
