@@ -2544,6 +2544,7 @@
   "description": "export raw hrm signal data to a csv file",
   "tags": "",
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name":"hrrawexp.app.js","url":"app.js"},
     {"name":"hrrawexp.img","url":"app-icon.js","evaluate":true}
