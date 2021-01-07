@@ -228,6 +228,6 @@
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
   timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
-  //Add widget
-  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
+  //Add widget, use: WIDGETS.activepedom.getSteps() inside another App to return todays step count
+  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw, getSteps:()=>stepsCounted};
 })();
