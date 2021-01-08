@@ -4,6 +4,10 @@ var max_radius = 70;
 var direction = 1;
 var display_HR = "--";
 var first_signal = true;
+var interval;
+var timeout;
+var settings;
+var status = 0;
 
 var colours = {
     green: ["#00ff7f", "green"],
@@ -17,9 +21,8 @@ var settings_file = require("Storage").open("breath.settings.js", "r");
 
 var test = settings_file.read(settings_file.getLength());
 
-var settings;
-
-settings = JSON.parse(test);
+if(test!== undefined)
+  settings = JSON.parse(test);
 
 if (settings === undefined) {
     settings = {
@@ -32,14 +35,8 @@ if (settings === undefined) {
     };
 }
 
-var interval;
-
-var timeout;
-
 var selection = ["speed", "exhale pause", "inhale pause", "colour", "vibrate",
                  "ex_in_ratio", "in_progress", "paused"];
-
-var status = 0;
 
 var colours = {
     green: ["#00ff7f", "green"],
