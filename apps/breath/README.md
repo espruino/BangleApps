@@ -7,11 +7,7 @@ Resonance frequency breathing is a way of breathing (slow relaxed diaphragmatic 
 Increases pulmonary function
 
 Lowers blood pressure
-
 Improves baroreflex gain
-
 Improves heart rate variability
-
 Increases the ability to handle stress
-
 Clinical improvements in asthma
