@@ -13,7 +13,7 @@ var colours = {
     yellow: ["#fdff00", "yellow"]
 };
 
-var settings_file = require("Storage").open("breather_settings.txt", "r");
+var settings_file = require("Storage").open("breath.settings.js", "r");
 
 var test = settings_file.read(settings_file.getLength());
 
@@ -154,7 +154,7 @@ function btn1Pressed() {
 
 function btn2Pressed() {
     if (status < 6) {
-        settings_file = require("Storage").open("breather_settings.txt", "w");
+        settings_file = require("Storage").open("breath.settings.js", "w");
         settings_file.write(JSON.stringify(settings));
         Bangle.setHRMPower(1);
         g.setColor(settings.colour[0]);
