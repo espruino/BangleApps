@@ -1,1 +1,0 @@
-{"period":3,"exhale_pause":1,"inhale_pause":2,"colour":["#00abff","blue"],"vibrate":"forward"}
