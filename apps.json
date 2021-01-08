@@ -2556,7 +2556,7 @@
   "shortName":"Breathing App",
   "icon": "app-icon.png",
   "version":"0.01",
-  "description": "app to aid relaxation and train breath syncronicity, also displays HR",
+  "description": "app to aid relaxation and train breath syncronicity using haptics and visualisation, also displays HR",
   "tags": "tools,health",
   "readme": "README.md",
   "storage": [
