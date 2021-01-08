@@ -4,10 +4,9 @@ This app attempts to aid relaxation and train breath syncronicity by providing a
 
 Resonance frequency breathing is a way of breathing (slow relaxed diaphragmatic breathing at around 3-7 breaths per minute) that has a regulating effect on the autonomic nervous system and other key body systems such as the circulatory system. This has many benefits, supported by numerous studies e.g.:
 
-Increases pulmonary function
-
-Lowers blood pressure
-Improves baroreflex gain
-Improves heart rate variability
-Increases the ability to handle stress
-Clinical improvements in asthma
+Increases pulmonary function  
+Lowers blood pressure  
+Improves baroreflex gain  
+Improves heart rate variability  
+Increases the ability to handle stress  
+Clinical improvements in asthma  
