@@ -11,8 +11,8 @@ function draw() {
   var h = date.getHours(); 
   var m = date.getMinutes(); 
   var day = date.getDay(); 
-  var month = date.getMonth()+1;
-  var dateNum = date.getDate(); 
+  var month = ("0" + date.getMonth()+1).substr(-2);
+  var dateNum = ("0" + date.getDate()).substr(-2);  
   var year = date.getFullYear(); 
   var half = "AM"; 
   var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2); 
