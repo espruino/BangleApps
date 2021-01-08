@@ -10,3 +10,5 @@ Improves baroreflex gain
 Improves heart rate variability
 Increases the ability to handle stress
 Clinical improvements in asthma
+
+![Alt text](https://github.com/jabituyaben/BangleApps/blob/master/apps/breath/readme_gif.gif)
