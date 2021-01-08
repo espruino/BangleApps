@@ -21,34 +21,33 @@ function formatTime(now) {
   var date = [fd[0], fd[1], fd[2]].join(" ");
   return time + " - " + date;
 }
-function getMaidenHead(param1,param2){
-  var lat=-100.0;
-  var lon=0.0;
+getMaidenHead(lat,lon){
   var U = 'ABCDEFGHIJKLMNOPQRSTUVWX';
   var L = U.toLowerCase();
-
-  lat = param1;
-  lon = param2;
-
-  lon = lon + 180;
-  t = lon/20;
-  fLon = Math.floor(t);
-  t = (t % fLon)*10;
-  sqLon = Math.floor(t);
-  t=(t-sqLon)*24;
-  subLon = Math.floor(t);
-  extLon = Math.floor((t-subLon)*10);
-  
-  lat = lat + 90;
-  t = lat/10;
+  //Latitude
+  t = (lat+90)/10;
   fLat = Math.floor(t);
   t = (t % fLat)*10;
   sqLat = Math.floor(t);
   t=(t-sqLat)*24;
   subLat = Math.floor(t);
-  extLat = Math.floor((t-subLat)*10);
-
-  return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]+L[subLat]+extLon+extLat;
+  t=(t-subLat)*10;
+  extLat = Math.floor(t);
+  t=(t-extLat)*24;
+  supLat = Math.floor(t);
+  //Longitude
+  t = (lon+180)/20;
+  fLon = Math.floor(t);
+  t = (t % fLon)*10;
+  sqLon = Math.floor(t);
+  t=(t-sqLon)*24;
+  subLon = Math.floor(t);
+  t=(t-subLon)*10;
+  extLon = Math.floor(t);
+  t=(t-extLon)*24;
+  supLon = Math.floor(t);
+  return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]
+    +L[subLat]+extLon+extLat+U[supLon]+U[supLat];
 }
 function onGPS(fix) {
   lastFix = fix;
