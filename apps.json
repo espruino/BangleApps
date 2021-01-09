@@ -2561,7 +2561,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"breath.app.js","url":"app.js"},
-    {"name":"breath.settings.js","url":"settings.js"},
+    {"name":"breath.settings.json","url":"settings.json"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
   ]
 }
