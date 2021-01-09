@@ -64,7 +64,7 @@ function circle() {
             status = 7;
             timeout = setTimeout(function () {
                 interval = restart_interval();
-            }, settings.inhale_pause * 1000);
+            }, settings.exhale_pause * 1000);
         }
         direction = 0;
     }
@@ -78,7 +78,7 @@ function circle() {
             status = 7;
             timeout = setTimeout(function () {
                 interval = restart_interval();
-            }, settings.exhale_pause * 1000);
+            }, settings.inhale_pause * 1000);
         }
         direction = 1;
     }
@@ -97,7 +97,7 @@ function restart_interval() {
     var calc = 5 - settings.period;
     calc *= 15;
     calc += 120;
-    if(direction == 1 && settings.ex_in_ration == "5:6"){
+    if(direction == 1 && settings.ex_in_ratio == "5:6"){
       calc -= calc*0.2;
     }
     interval = setInterval(circle, calc);
