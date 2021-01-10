@@ -2550,5 +2550,19 @@
     {"name":"hrrawexp.app.js","url":"app.js"},
     {"name":"hrrawexp.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "lazyclock",
+  "name": "Lazy Clock",
+  "icon": "lazyclock.png",
+  "version":"0.01",
+  "readme": "README.md",
+  "description": "Tells the time, roughly",
+  "tags": "clock",
+  "type":"clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
+    {"name":"lazyclock.img","url":"lazyclock-icon.js","evaluate":true}
+  ]
 }
 ]
