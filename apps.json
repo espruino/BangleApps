@@ -2551,6 +2551,20 @@
     {"name":"hrrawexp.img","url":"app-icon.js","evaluate":true}
   ]
 },
+{ "id": "breath",
+  "name": "Breathing App",
+  "shortName":"Breathing App",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "description": "app to aid relaxation and train breath syncronicity using haptics and visualisation, also displays HR",
+  "tags": "tools,health",
+  "readme": "README.md",
+  "storage": [
+    {"name":"breath.app.js","url":"app.js"},
+    {"name":"breath.settings.json","url":"settings.json"},
+    {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ]
+},
 { "id": "lazyclock",
   "name": "Lazy Clock",
   "icon": "lazyclock.png",
