@@ -15,7 +15,7 @@ apps.sort((a,b)=>{
 var Napps = apps.length;
 var Npages = Math.ceil(Napps/6);
 var maxPage = Npages-1;
-var selected = -1;
+var selected = 0;
 var oldselected = -1;
 var page = 0;
 
@@ -45,10 +45,10 @@ Bangle.on("swipe",(dir)=>{
     selected = 0;
     oldselected=-1;
     if (dir<0){
-        ++page; if (page>maxPage) page=maxPage;
+        ++page; if (page>maxPage) page=0;
         drawPage(page);
     } else {
-        --page; if (page<0) page=0;
+        --page; if (page<0) page=maxPage;
         drawPage(page);
     }  
 });
