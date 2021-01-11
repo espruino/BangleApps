@@ -2482,7 +2482,7 @@
 { "id": "dtlaunch",
   "name": "Desktop Launcher",
   "icon": "icon.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Desktop style App Launcher with six apps per page - fast access if you have lots of apps installed.",
   "readme": "README.md",
   "tags": "tool,system,launcher",
