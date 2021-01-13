@@ -42,7 +42,7 @@ Put together, initially at least, by “Ben Jabituya”, https://jabituyaben.wix
 Credit to various sources from which I’ve literally taken source code and shoehorned to fit on the Bangle:
 
 -Stephen R. Schmitt:
-http://www.convertalot.com/celestial_horizon_co-ordinates_calculator.html
+https://codepen.io/lulunac27/full/NRoyxE
 
 -(Not sure who put this one together initially):
 http://www.voidware.com/moon_phase.htm
