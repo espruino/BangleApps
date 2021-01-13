@@ -23,7 +23,7 @@ var test_file = config_file.read(config_file.getLength());
 
 if (test_file !== undefined) {
     astral_settings = JSON.parse(test_file);
-    if (astral_settings.default)
+    if (astral_settings.astral_default)
         display_colour = default_colour;
     else
         display_colour = setupcomplete_colour;
@@ -34,7 +34,7 @@ if (astral_settings === undefined) {
         version: 1,
         lat: 51.9492,
         lon: 0.2834,
-        default: true,
+        astral_default: true,
         extras: [
             { name: "Andromeda", ra: "004244", de: "411609", type: 3 },
             { name: "Cigar", ra: "095552", de: "694047", type: 3 },
@@ -695,7 +695,7 @@ function draw_moon(phase) {
 }
 
 function draw() {
-    if (astral_settings.default)
+    if (astral_settings.astral_default)
         display_colour = default_colour;
     else if (!colours_switched)
         display_colour = setupcomplete_colour;
@@ -780,7 +780,7 @@ Bangle.on('lcdPower', on => {
     if (secondInterval) clearInterval(secondInterval);
     secondInterval = undefined;
     Bangle.setCompassPower(0);
-    if (!astral_settings.default)
+    if (!astral_settings.astral_default)
         Bangle.setGPSPower(0);
     if (on) {
         Bangle.setCompassPower(1);
@@ -817,7 +817,7 @@ setWatch(function () {
 }, BTN1, { repeat: true });
 
 setWatch(function () {
-    if (!astral_settings.default) {
+    if (!astral_settings.astral_default) {
         colours_switched = true;
         if (display_colour == setupcomplete_colour)
             display_colour = default_colour;
