@@ -8,7 +8,10 @@
     "build": "rollup -c",
     "test": "ts-node -P tsconfig.spec.json node_modules/jasmine/bin/jasmine --config=jasmine.json"
   },
-  "author": "Stefano Baldan",
+  "author": {
+    "name": "Stefano Baldan",
+    "email": "singintime@gmail.com"
+  },
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-typescript": "^4.1.1",

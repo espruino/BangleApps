@@ -1,15 +1,22 @@
-import { draw } from './display';
-import { updateLog } from './log';
 import { ActivityStatus, AppState } from './state';
 
 declare var Bangle: any;
+
+interface GpsEvent {
+  lat: number;
+  lon: number;
+  alt: number;
+  speed: number;
+  hdop: number;
+  fix: number;
+}
 
 const EARTH_RADIUS = 6371008.8;
 const POS_ACCURACY = 2.5;
 const VEL_ACCURACY = 0.05;
 
 function initGps(state: AppState): void {
-  Bangle.on('GPS-raw', (nmea: string) => parseNmea(state, nmea));
+  Bangle.on('GPS', (gps: GpsEvent) => readGps(state, gps));
   Bangle.setGPSPower(1);
 }
 
@@ -20,38 +27,13 @@ function parseCoordinate(coordinate: string): number {
   return (degrees + minutes) * Math.PI / 180;
 }
 
-function parseNmea(state: AppState, nmea: string): void {
-  const tokens = nmea.split(',');
-  const sentence = tokens[0].substr(3, 3);
-
-  // FIXME: Bangle.js reports HDOP from GGA - can this be used instead
-  // of manually parsing all of the raw GPS data, which can cause FIFO_FULL
-  // errors?
-
-  switch (sentence) {
-    case 'GGA':
-      state.lat = parseCoordinate(tokens[2]) * (tokens[3] === 'N' ? 1 : -1);
-      state.lon = parseCoordinate(tokens[4]) * (tokens[5] === 'E' ? 1 : -1);
-      state.alt = parseFloat(tokens[9]);
-      break;
-    case 'VTG':
-      state.vel = parseFloat(tokens[7]) / 3.6;
-      break;
-    case 'GSA':
-      state.fix = parseInt(tokens[2]);
-      state.dop = parseFloat(tokens[15]);
-      break;
-    case 'GLL':
-      state.gpsValid = state.fix === 3 && state.dop <= 5;
-      updateGps(state);
-      draw(state);
-      if (state.gpsValid && state.status === ActivityStatus.Running) {
-        updateLog(state);
-      }
-      break;
-    default:
-      break;
-  }
+function readGps(state: AppState, gps: GpsEvent): void {
+  state.lat = gps.lat;
+  state.lon = gps.lon;
+  state.alt = gps.alt;
+  state.vel = gps.speed / 3.6;
+  state.fix = gps.fix;
+  state.dop = gps.hdop;
 }
 
 function updateGps(state: AppState): void {
@@ -121,4 +103,4 @@ function updateGps(state: AppState): void {
   }
 }
 
-export { initGps, parseCoordinate, parseNmea, updateGps };
+export { initGps, parseCoordinate, readGps, updateGps };
