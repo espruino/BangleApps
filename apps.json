@@ -2587,7 +2587,6 @@
   "description": "Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting.",
   "tags": "clock",
   "type":"clock",
-  "allow_emulator":true,
   "storage": [
     {"name":"astral.app.js","url":"app.js"},
     {"name":"astral.config.txt","url":"astral_config.txt"},
