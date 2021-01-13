@@ -25,17 +25,21 @@ The compass is displayed above the minute digits, if you get strange values or d
 
 Also the compass isn’t tilt compensated so try and keep the face parallel when taking a reading.
 
+Additional Astronomy Targets
+----------------------------
+There are currently 15 extra targets as default in the config file, and these were selected based on well known named objects listed in various sources as good choices for both binoculars and telescopes. The objects are processed and then 9 are displayed and ordered descendingly by altitude on the basis those higher up will have better visibility.
+
 You can input different objects rather than those listed in the galaxies/extras mode by changing the astral_config file with the relevant details for: Object name, Right Ascension and Declination, below is an example. Again, there’s little in the way of error handling to streamline the app so be sure to input these in exactly the same format as you see in the file, namely signed 6 digit values with double quotes, example:
 
 *{name: "Andromeda", ra: "004244", de: "411609", type: 3}*
 
-The type property relates to whether the object is (in order): a cluster, nebula or galaxy.
+The type property isn't utilised as yet but relates to whether the object is (in order): a cluster, nebula or galaxy. If you try putting more than 15 or so, the clock will try processing all of them but I advise against doing that because you'll get memory errors if you put in too many. A better approach is to put a limited set in seasonally based on what's best in your location.
 
 Updates & Feedback
 ------------------
-Put together, initially at least, by “Ben Jabituya”, https://jabituyaben.wixsite.com/majorinput, jabituyaben@gmail.com. Feel free to get in touch for any feature request. Also I’m not precious at all - if you know of efficiencies or improvements you could make, just put the changes in.
+Put together, initially at least, by “Ben Jabituya”, https://jabituyaben.wixsite.com/majorinput, jabituyaben@gmail.com. Feel free to get in touch for any feature request. Also I’m not precious at all - if you know of efficiencies or improvements you could make, just put the changes in. One thing that would probably be ideal is to change some of the functions to inline C to make it faster.
 
-Credit to various sources from which I’veliterally taken source code and shoehorned to fit on the Bangle:
+Credit to various sources from which I’ve literally taken source code and shoehorned to fit on the Bangle:
 
 -Stephen R. Schmitt:
 http://www.convertalot.com/celestial_horizon_co-ordinates_calculator.html
