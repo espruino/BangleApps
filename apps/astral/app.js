@@ -18,7 +18,7 @@ const Xaxis = 150, Yaxis = 55;
 
 //lat lon settings loading
 var astral_settings;
-var config_file = require("Storage").open("astral_config.txt", "r");
+var config_file = require("Storage").open("astral.config.txt", "r");
 var test_file = config_file.read(config_file.getLength());
 
 if (test_file !== undefined) {
@@ -50,7 +50,7 @@ if (astral_settings === undefined) {
             { name: "Pleiades", ra: "034724", de: "240700", type: 1 }
         ]
     };
-    config_file = require("Storage").open("astral_config.txt", "w");
+    config_file = require("Storage").open("astral.config.txt", "w");
     config_file.write(JSON.stringify(astral_settings));
 }
 
@@ -841,7 +841,7 @@ Bangle.on('GPS', function (g) {
         astral_settings.lat = g.lat;
         astral_settings.lon = g.lon;
         astral_settings.default = false;
-        config_file = require("Storage").open("astral_config.txt", "w");
+        config_file = require("Storage").open("astral.config.txt", "w");
         config_file.write(JSON.stringify(astral_settings));
     }
 });
