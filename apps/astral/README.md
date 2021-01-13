@@ -2,6 +2,8 @@ Astral Clock
 ============
 Clock that calculates and displays Alt Az positions of all planets, Sun as well as several galaxies and current Moon phase. Coordinates are calculated by GPS and onscreen compass assists orienting.
 
+![screenshot](./Example.PNG)
+
 Functions
 ---------
 BTN1: Refreshes Alt/Az readings.  
