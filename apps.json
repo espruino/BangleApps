@@ -2589,7 +2589,6 @@
   "type":"clock",
   "storage": [
     {"name":"astral.app.js","url":"app.js"},
-    {"name":"astral.config.txt","url":"astral_config.txt"},
     {"name":"astral.img","url":"app-icon.js","evaluate":true}
   ]
 }
