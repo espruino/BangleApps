@@ -31,7 +31,7 @@ There are currently 12 extra targets as default in the config file, and these we
 
 You can input different objects rather than those listed in the galaxies/extras mode by changing the astral.config file with the relevant details for: Object name, Right Ascension and Declination, below is an example. Again, there is little in the way of error handling to streamline the app so be sure to input these in exactly the same format as you see in the file, namely signed 6 digit values with double quotes, example:
 
-*{name: "Andromeda", ra: "004244", de: "411609", type: 3}*
+*{"name": "Andromeda", "ra": "004244", "de": "411609", "type": 3}*
 
 The type property is not utilised as yet but relates to whether the object is (in order): a cluster, nebula or galaxy. If you try putting more than 12 or so, the clock will try processing all of them but I advise against doing that because you will get memory errors if you put in too many. A better approach is to put a limited set in seasonally based on what's best in your location.
 
