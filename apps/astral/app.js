@@ -840,7 +840,7 @@ Bangle.on('GPS', function (g) {
     if (g.fix) {
         astral_settings.lat = g.lat;
         astral_settings.lon = g.lon;
-        astral_settings.default = false;
+        astral_settings.astral_default = false;
         config_file = require("Storage").open("astral.config.txt", "w");
         config_file.write(JSON.stringify(astral_settings));
     }
