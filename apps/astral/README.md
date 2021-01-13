@@ -6,10 +6,10 @@ Clock that calculates and displays Alt Az positions of all planets, Sun as well 
 
 Functions
 ---------
-BTN1: Refreshes Alt/Az readings. The coordinates are NOT continually updated, this is to save resources and battery usage plus it avoids you having to wait for calculations to finish before you can do anything else on the watch - it doesn't take long but it could still be annoying.  
-BTN2: Load side-menu as standard for clocks.  
-BTN3: Changes between planet mode and extras/galactic targets (will still need to press button 1 after switching to update calcs).  
-BTN4: This is the left touchscreen, and when the LCD is on you can use this to change the font between red/white. This will only work after the GPS location has been set initially.  
+**BTN1**: Refreshes Alt/Az readings. The coordinates are NOT continually updated, this is to save resources and battery usage plus it avoids you having to wait for calculations to finish before you can do anything else on the watch - it doesn't take long but it could still be annoying.  
+**BTN2**: Load side-menu as standard for clocks.  
+**BTN3**: Changes between planet mode and extras/galactic targets (will still need to press button 1 after switching to update calcs).  
+**BTN4**: This is the left touchscreen, and when the LCD is on you can use this to change the font between red/white. This will only work after the GPS location has been set initially.  
 
 The text will turn blue during calculation and then back again once complete.
 
