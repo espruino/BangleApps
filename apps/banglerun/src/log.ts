@@ -17,11 +17,10 @@ function initLog(state: AppState): void {
     'distance',
     'heartrate',
     'steps',
-  ].join(','));
+  ].join(',') + '\n');
 }
 
 function updateLog(state: AppState): void {
-  state.file.write('\n');
   state.file.write([
     Date.now().toFixed(0),
     state.lat.toFixed(6),
@@ -31,7 +30,7 @@ function updateLog(state: AppState): void {
     state.distance.toFixed(2),
     state.hr.toFixed(0),
     state.steps.toFixed(0),
-  ].join(','));
+  ].join(',') + '\n');
 }
 
 export { initLog, updateLog };

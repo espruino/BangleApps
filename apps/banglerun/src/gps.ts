@@ -24,6 +24,10 @@ function parseNmea(state: AppState, nmea: string): void {
   const tokens = nmea.split(',');
   const sentence = tokens[0].substr(3, 3);
 
+  // FIXME: Bangle.js reports HDOP from GGA - can this be used instead
+  // of manually parsing all of the raw GPS data, which can cause FIFO_FULL
+  // errors?
+
   switch (sentence) {
     case 'GGA':
       state.lat = parseCoordinate(tokens[2]) * (tokens[3] === 'N' ? 1 : -1);

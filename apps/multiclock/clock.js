@@ -1,6 +1,8 @@
 var FACES = [];
-var iface = 0;
-require("Storage").list(/\.face\.js$/).forEach(face=>FACES.push(eval(require("Storage").read(face))));
+var STOR = require("Storage");
+STOR.list(/\.face\.js$/).forEach(face=>FACES.push(eval(require("Storage").read(face))));
+var lastface = STOR.readJSON("multiclock.json")||{pinned:0};
+var iface = lastface.pinned;
 var face = FACES[iface]();
 var intervalRefSec;
 
@@ -25,7 +27,14 @@ function setButtons(){
     face = FACES[iface]();
     startdraw();
   }
-  setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+  function finish(){
+      if (lastface.pinned!=iface){
+          lastface.pinned=iface;
+          STOR.write("multiclock.json",lastface);
+      }
+      Bangle.showLauncher();
+  }
+  setWatch(finish, BTN2, {repeat:false,edge:"falling"});
   setWatch(newFace.bind(null,1), BTN1, {repeat:true,edge:"rising"});
   setWatch(newFace.bind(null,-1), BTN3, {repeat:true,edge:"rising"});
 }

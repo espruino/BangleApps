@@ -1341,7 +1341,7 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.06",
     "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
     "tags": "outdoors,widget",
      "readme": "README.md",
@@ -1554,7 +1554,8 @@
     "shortName": "BangleRun",
     "icon": "banglerun.png",
     "version": "0.05",
-    "description": "An app for running sessions.",
+    "interface": "interface.html",
+    "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
     "allow_emulator": false,
     "storage": [
@@ -2138,12 +2139,12 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
     "type":"clock",
-    "allow_emulator":false,
+    "allow_emulator":true,
     "storage": [
       {"name":"multiclock.app.js","url":"clock.js"},
       {"name":"big.face.js","url":"big.js"},
@@ -2477,6 +2478,105 @@
   "storage": [
     {"name":"gmeter.app.js","url":"app.js"},
     {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "dtlaunch",
+  "name": "Desktop Launcher",
+  "icon": "icon.png",
+  "version":"0.03",
+  "description": "Desktop style App Launcher with six apps per page - fast access if you have lots of apps installed.",
+  "readme": "README.md",
+  "tags": "tool,system,launcher",
+  "type":"launch",
+  "storage": [
+    {"name":"dtlaunch.app.js","url":"app.js"},
+    {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "HRV",
+  "name": "Heart Rate Variability monitor",
+  "shortName":"HRV monitor",
+  "icon": "hrv.png",
+  "version":"0.03",
+  "description": "Heart Rate Variability monitor, see Readme for more info",
+  "tags": "",
+  "readme": "README.md",
+  "storage": [
+    {"name":"HRV.app.js","url":"app.js"},
+    {"name":"HRV.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "hardalarm",
+  "name": "Hard Alarm",
+  "shortName":"HardAlarm",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Make sure you wake up! Count to the right number to turn off the alarm",
+  "tags": "tool,alarm,widget",
+  "storage": [
+    {"name":"hardalarm.app.js","url":"app.js"},
+    {"name":"hardalarm.boot.js","url":"boot.js"},
+    {"name":"hardalarm.js","url":"hardalarm.js"},
+    {"name":"hardalarm.img","url":"app-icon.js","evaluate":true},
+    {"name":"hardalarm.wid.js","url":"widget.js"}
+  ],
+  "data": [
+    {"name":"hardalarm.json"}
+  ]
+},
+{ "id": "edisonsball",
+  "name": "Edison's Ball",
+  "shortName":"Edison's Ball",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "description": "Hypnagogia/Micro-Sleep alarm for experimental use in exploring sleep transition and combating drowsiness",
+  "tags": "",
+  "readme": "README.md",
+  "storage": [
+    {"name":"edisonsball.app.js","url":"app.js"},
+    {"name":"edisonsball.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "hrrawexp",
+  "name": "HRM Data Exporter",
+  "shortName":"HRM Data Exporter",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "description": "export raw hrm signal data to a csv file",
+  "tags": "",
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"hrrawexp.app.js","url":"app.js"},
+    {"name":"hrrawexp.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "breath",
+  "name": "Breathing App",
+  "shortName":"Breathing App",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "description": "app to aid relaxation and train breath syncronicity using haptics and visualisation, also displays HR",
+  "tags": "tools,health",
+  "readme": "README.md",
+  "storage": [
+    {"name":"breath.app.js","url":"app.js"},
+    {"name":"breath.settings.json","url":"settings.json"},
+    {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "lazyclock",
+  "name": "Lazy Clock",
+  "icon": "lazyclock.png",
+  "version":"0.01",
+  "readme": "README.md",
+  "description": "Tells the time, roughly",
+  "tags": "clock",
+  "type":"clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
+    {"name":"lazyclock.img","url":"lazyclock-icon.js","evaluate":true}
   ]
 }
 ]

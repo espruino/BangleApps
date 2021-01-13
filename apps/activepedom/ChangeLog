@@ -2,3 +2,5 @@
 0.02: Distance calculation and display
 0.03: Data logging and display
 0.04: Steps are set to 0 in log on new day 
+0.05: Fix default step/distance display if it hasn't been set up first
+0.06: Added WIDGETS.activepedom.getSteps()
