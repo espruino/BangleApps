@@ -1394,7 +1394,7 @@
   "name": "Dev Stopwatch",
   "shortName":"Dev Stopwatch",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "tags": "stopwatch, chrono, timer, chronometer",
   "allow_emulator":true,

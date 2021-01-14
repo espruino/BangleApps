@@ -1,1 +1,2 @@
 0.01: App created
+0.02: Persist state to storage to enable stopwatch to continue in the background
