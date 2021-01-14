@@ -39,7 +39,7 @@ if (astral_settings === undefined) {
             { name: "Andromeda", ra: "004244", de: "411609", type: 3 },
             { name: "Cigar", ra: "095552", de: "694047", type: 3 },
             { name: "Pinwheel", ra: "140313", de: "542057", type: 3 },
-            { name: "Whirlpool", ra: "1329553", de: "471143", type: 3 },
+            { name: "Whirlpool", ra: "132953", de: "471143", type: 3 },
             { name: "Orion", ra: "053517", de: "-052328", type: 2 },
             { name: "Hercules", ra: "160515", de: "174455", type: 1 },
             { name: "Beehive", ra: "084024", de: "195900", type: 1 },
