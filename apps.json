@@ -1553,7 +1553,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.05",
+    "version": "0.06",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
