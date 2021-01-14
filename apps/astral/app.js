@@ -32,8 +32,8 @@ if (test_file !== undefined) {
 if (astral_settings === undefined) {
     astral_settings = {
         version: 1,
-        lat: 51.9492,
-        lon: 0.2834,
+        lat: 51.5074,
+        lon: 0.1278,
         astral_default: true,
         extras: [
             { name: "Andromeda", ra: "004244", de: "411609", type: 3 },
