@@ -41,6 +41,7 @@ function readGps(state: AppState, gps: GpsEvent): void {
 
   updateGps(state);
   draw(state);
+
   if (state.gpsValid && state.status === ActivityStatus.Running) {
     updateLog(state);
   }
