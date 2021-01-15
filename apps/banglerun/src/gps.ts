@@ -1,3 +1,5 @@
+import { draw } from './display';
+import { updateLog } from './log';
 import { ActivityStatus, AppState } from './state';
 
 declare var Bangle: any;
@@ -34,6 +36,14 @@ function readGps(state: AppState, gps: GpsEvent): void {
   state.vel = gps.speed / 3.6;
   state.fix = gps.fix;
   state.dop = gps.hdop;
+
+  state.gpsValid = state.fix === 3 && state.dop <= 5;
+
+  updateGps(state);
+  draw(state);
+  if (state.gpsValid && state.status === ActivityStatus.Running) {
+    updateLog(state);
+  }
 }
 
 function updateGps(state: AppState): void {
