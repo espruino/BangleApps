@@ -2,13 +2,11 @@ const storage = require("Storage");
 
 const DEFAULT_TIME = 1500; // 25m
 const TIME_BREAK = 300;
-const SNOOZE_TIME = 120;
 const STATES = {
   INIT: 1,
   STARTED: 2,
   DONE: 3,
-  BREAK: 4,
-  SNOOZE: 5
+  BREAK: 4
 };
 var counterInterval;
 
@@ -52,7 +50,7 @@ class InitState extends State {
   constructor (time) {
     super(STATES.INIT);
 
-   this.timeCounter = parseInt(storage.read(".pomodo") || DEFAULT_TIME, 10);
+    this.timeCounter = parseInt(storage.read(".pomodo") || DEFAULT_TIME, 10);
   }
 
   saveTime () {
@@ -161,65 +159,6 @@ class BreakState extends State {
     this.next.go();
   }
 }
-
-
-class SnoozeState extends State {
-  constructor () {
-    super(STATES.SNOOZE);
-    this.snoozeTime = SNOOZE_TIME;
-  }
- 
-  setButtons () {
-    setWatch(() => {
-      const initState = new InitState();
-      // clearTimeout(this.timeout);
-      initState.go();
-    }, BTN1, { repeat: true });
-
-    setWatch(() => {
-      const breakState = new BreakState();
-    //  clearTimeout(this.timeout);
-      breakState.go();
-    }, BTN3, { repeat: true });
-
-    setWatch(() => {
-    }, BTN2, { repeat: true });
-  }
-  
-
-  draw () {
-    g.clear();
-    g.setFont("6x8", 2);
-    g.setFontAlign(0, 0, 3);
-    g.drawString("AGAIN", 230, 50);
-    g.drawString("BREAK", 230, 190);
-    g.setFont("Vector", 35);
-    g.setFontAlign(-1, -1);
-
-    g.drawString('Snoozed\nfor\ntwo\nminutes!', 50, 40);
-  }
-  
-  init () {
-    function countDown () {
-      this.snoozeTime--;
-
-      // Out of time
-      if (this.snoozeTime <= 0) {
-        clearInterval(counterInterval);
-        counterInterval = undefined;
-        this.next.go();
-        return;
-      }
-
-    }
-
-    const doneState = new DoneState();
-    this.setNext(doneState);
-    counterInterval = setInterval(countDown.bind(this), 1000);
-  }
-
-}
-
 class DoneState extends State {
   constructor () {
     super(STATES.DONE);
@@ -239,9 +178,6 @@ class DoneState extends State {
     }, BTN3, { repeat: true });
 
     setWatch(() => {
-      const snoozeState = new SnoozeState();
-      clearTimeout(this.timeout);
-      snoozeState.go();
     }, BTN2, { repeat: true });
   }
 
@@ -250,7 +186,6 @@ class DoneState extends State {
     g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
     g.drawString("AGAIN", 230, 50);
-    g.drawString("Snooze", 230, 120);
     g.drawString("BREAK", 230, 190);
     g.setFont("Vector", 45);
     g.setFontAlign(-1, -1);
