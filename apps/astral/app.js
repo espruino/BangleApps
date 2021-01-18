@@ -823,6 +823,7 @@ setWatch(function () {
             display_colour = default_colour;
         else
             display_colour = setupcomplete_colour;
+      draw_moon(current_moonphase);
     }
 }, BTN4, { repeat: true });
 
