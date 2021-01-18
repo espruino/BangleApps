@@ -12,8 +12,6 @@
     ],
     "sortorder" : -10
   },
-<<<<<<< Updated upstream
-=======
   {
     "id": "kieser",
     "name": "Kieser App",
@@ -30,7 +28,6 @@
       {"name":"app-icon.img","url":"app-icon.js","evaluate":true}
     ]
   },
->>>>>>> Stashed changes
   { "id": "moonphase",
     "name": "Moonphase",
     "icon": "app.png",
