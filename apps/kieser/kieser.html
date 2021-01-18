@@ -1,64 +1,26 @@
 <html>
-  <head>
+
+<head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
-  </head>
-  <body>
+</head>
+
+<body onload="createTable()">
     <h1>Kieser</h1>
     <p>
-      Enter your training plan here. The weight will be increased/decreased automatically according to your training time.
+        Enter your training plan here. The weight will be increased/decreased automatically according to your training
+        time.
     </p>
-    
-    <form id="training-form">
-      <h4>Trainingsplan</h4>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Machine</th>
-            <th>Settings</th>
-            <th>Weight</th>
-          </tr>
-        </thead>
-        <tbody id="machin-table">
-          <tr>
-            <td>
-              <input type="text" value="" id="machine-one-name" />
-            </td>
-            <td>
-              <input type="text" value="" id="machine-one-settings" />
-            </td>
-            <td>
-              <input type="number" value="0" id="buffgym-workout-a-squats-weight" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="text" value="" id="machine-one-name" />
-            </td>
-            <td>
-              <input type="text" value="" id="machine-one-settings" />
-            </td>
-            <td>
-              <input type="number" value="0" id="buffgym-workout-a-squats-weight" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="text" value="" id="machine-one-name" />
-            </td>
-            <td>
-              <input type="text" value="" id="machine-one-settings" />
-            </td>
-            <td>
-              <input type="number" value="0" id="buffgym-workout-a-squats-weight" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-    </form>
+    <div id="cont">
+        <h4>Trainingsplan</h4>
+    </div>
+    <p>
+        <input type="button" id="bt" value="Add New Machine" onclick="addRow()" />
+    </p>
+
+
     <br><br>
     <button id="upload" class="btn btn-primary">Upload</button>
-    
+
     <script src="../../core/lib/interface.js"></script>
 
     <script>
@@ -100,16 +62,95 @@
                     }
                 ]
             };
+        };
+
+        function createTable() {
+            var arrHead = new Array();
+            arrHead = ['', 'Machine Name', 'Settings', 'Weight']; // table headers.
+
+            var machineTable = document.createElement('table');
+            machineTable.setAttribute('id', 'machineTable');
+
+            var tr = machineTable.insertRow(-1);
+
+            for (var h = 0; h < arrHead.length; h++) {
+                var th = document.createElement('th'); // the header object.
+                th.innerHTML = arrHead[h];
+                tr.appendChild(th);
+            }
+
+            var div = document.getElementById('cont');
+            div.appendChild(machineTable);
+            addRow();
+        }
+
+        function addRow() {
+            var machineTable = document.getElementById("machineTable");
+            var rowCount = machineTable.rows.length;
+            var tr = machineTable.insertRow(rowCount);
+
+            tdRemoveButton = tr.insertCell(0);
+            var removeButton = document.createElement('input');
+            removeButton.setAttribute('type', 'button');
+            removeButton.setAttribute('value', 'Remove');
+            removeButton.setAttribute('onclick', 'removeRow(this)');
+            tdRemoveButton.appendChild(removeButton);
+
+            tdMachine = tr.insertCell(1);
+            var machineElement = document.createElement('input');
+            machineElement.setAttribute('type', 'text');
+            machineElement.setAttribute('value', '');
+            tdMachine.appendChild(machineElement);
+
+            tdSetting = tr.insertCell(2);
+            var settingElement = document.createElement('input');
+            settingElement.setAttribute('type', 'text');
+            settingElement.setAttribute('value', '');
+            tdSetting.appendChild(settingElement);
+            var addSettingButton = document.createElement('input');
+            addSettingButton.setAttribute('type', 'button')
+            addSettingButton.setAttribute('value', 'Add Setting');
+            addSettingButton.setAttribute('onclick', 'addSetting(this)');
+            tdSetting.appendChild(addSettingButton);
+
+            tdWeight = tr.insertCell(3);
+            var weightElement = document.createElement('input');
+            weightElement.setAttribute('type', 'number');
+            weightElement.setAttribute('value', '');
+            tdWeight.appendChild(weightElement);
+        }
+
+        function removeRow(oButton) {
+            var machineTable = document.getElementById('machineTable');
+            machineTable.deleteRow(oButton.parentNode.parentNode.rowIndex); // buttton -> td -> tr
+        }
+
+        function addSetting(button){
+            var tdSetting = button.parentNode;
+            var br = document.createElement('br');
+            tdSetting.insertBefore(br, tdSetting.lastChild);
+            var settingElement = document.createElement('input');
+            settingElement.setAttribute('type', 'text');
+            settingElement.setAttribute('value', '');
+            tdSetting.insertBefore(settingElement, tdSetting.lastChild);
+            var br = document.createElement('br');
+            tdSetting.insertBefore(br, tdSetting.lastChild);
         }
 
 
-        document.getElementById("upload").addEventListener("click", function() {
-          Puck.eval(`require("Storage").writeJSON("buffgym-workout-a.json",${JSON.stringify(workoutA())})`, ()=>{
-              Puck.eval(`Bangle.buzz()`, () => {
-              console.log("all done");
-            })
-          });
+
+        document.getElementById("upload").addEventListener("click", function () {
+            Puck.eval(`require("Storage").writeJSON("buffgym-workout-a.json",${JSON.stringify(workoutA())})`, () => {
+                Puck.eval(`Bangle.buzz()`, () => {
+                    console.log("all done");
+                })
+            });
         });
+
+
+
+
     </script>
-  </body>
+</body>
+
 </html>
