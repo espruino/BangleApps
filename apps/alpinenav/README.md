@@ -1,6 +1,6 @@
 Alpine Navigator Clock
 ======================
-Clock that includes GPS monitoring that tracks and displays position relative to a given origin in realtime. Also includes ambient temperature estimate, moonphase and local sunrise and sunset times. Please see readme before using.
+Clock that includes GPS monitoring that tracks and displays position relative to a given origin in realtime. Also includes ambient temperature estimate, moonphase and local sunrise and sunset times.
 
 Functions
 ---------
