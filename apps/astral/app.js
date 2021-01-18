@@ -828,14 +828,15 @@ setWatch(function () {
 
 //events
 Bangle.on('mag', function (m) {
+  g.setFont("6x8",2);
     if (isNaN(m.heading))
-        compass_heading = "--";
+        compass_heading = "---";
     else
         compass_heading = 360 - Math.round(m.heading);
-    g.setColor("#000000");
-    g.fillRect(100, 10, 140, 20);
+  //  g.setColor("#000000");
+   // g.fillRect(160, 10, 160, 20);
     g.setColor(display_colour);
-    g.drawString("  " + (compass_heading) + " ", 130, 20, true /*clear background*/);
+    g.drawString(compass_heading, 150, 20, true /*clear background*/);
 });
 
 Bangle.on('GPS', function (g) {
