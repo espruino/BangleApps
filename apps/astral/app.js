@@ -837,6 +837,8 @@ Bangle.on('mag', function (m) {
   //  g.setColor("#000000");
    // g.fillRect(160, 10, 160, 20);
     g.setColor(display_colour);
+    if(compass_heading<100)
+      compass_heading = " " + compass_heading;
     g.drawString(compass_heading, 150, 20, true /*clear background*/);
 });
 
