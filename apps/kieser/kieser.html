@@ -139,7 +139,7 @@
 
         function collectValues(){
             machineTable = document.getElementById("machineTable");
-            var arrTable = new Array();
+            var tableObject = new Object();
 
             // loop through each row of the table.
             for (row = 1; row < machineTable.rows.length; row++) {
@@ -157,13 +157,13 @@
                 rowObject.settings = settingsArray;
                 var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
                 rowObject.weight = weight;
-                arrTable.push(rowObject);
+                tableObject[row]= rowObject;
             }
                 
             
             
-            console.log(arrTable);
-            return{arrTable};
+            console.log(tableObject);
+            return{tableObject};
         }
         
         document.getElementById("upload").addEventListener("click", function () {
