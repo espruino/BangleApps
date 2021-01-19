@@ -20,9 +20,10 @@
   // Called by the GPS widget settings to reload settings and decide what to do
   function reload() {
     settings = require("Storage").readJSON("gpsservice.settings.json",1)||{};
-    settings.period = settings.period||12;
-    settings.ontime = settings.ontime||5;
-    //settings.rate = settings.rate||10;
+    settings.service = settings.service||false;
+    settings.update = settings.update||120;
+    settings.search = settings.search||5;   
+    settings.power = "PSMOO";  //settings.power||"SuperE";
     console.log(settings);
 	  
     Bangle.removeListener('GPS',onGPS);
@@ -60,19 +61,35 @@
 
   function setupGPS() {
     Bangle.setGPSPower(1);
+    console.log(settings);
+    
+    //if (settings.power === "PMSOO") {
+      console.log("setupGPS() PSMOO");
+      UBX_CFG_RESET();
+      wait(100);
+      
+      UBX_CFG_PM2(settings.update, settings.search);
+      wait(20);
+    
+      UBX_CFG_RXM();
+      wait(20);
+      
+      UBX_CFG_SAVE();
+      wait(20);
+/*
+    
+    } else {
+      console.log("setupGPS() PMS");
+      UBX_CFG_RESET();
+      wait(100);
+      
+      UBX_CFG_PMS();
+      wait(20);
 
-    UBX_CFG_RESET();
-    wait(100);
-
-    UBX_CFG_PM2(settings.period, settings.ontime);
-    wait(20);
-    
-    UBX_CFG_RXM();
-    wait(20);
-    
-    UBX_CFG_SAVE();
-    wait(20);
-    
+      UBX_CFG_SAVE();
+      wait(20);
+    }
+*/
     Bangle.on('GPS',onGPS);
   }
 
@@ -172,6 +189,7 @@
  
   // draw the widget
   function draw() {
+    if (!settings.service) return;
     g.reset();
     g.drawImage(atob("GBgCAAAAAAAAAAQAAAAAAD8AAAAAAP/AAAAAAP/wAAAAAH/8C9AAAB/8L/QAAAfwv/wAAAHS//wAAAAL//gAAAAf/+AAAAAf/4AAAAL//gAAAAD/+DwAAAB/Uf8AAAAfA//AAAACAf/wAAAAAH/0AAAAAB/wAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),this.x,this.y);
     if (gps_get_status() === true && have_fix) {
@@ -212,7 +230,7 @@
   });
   
   // add the widget
-  WIDGETS["gpsservice"]={
+  WIDGETS.gpsservice = {
     area:"tl",
     width:24,
     draw:draw,

@@ -2,7 +2,6 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const SETTINGS_FILE = "gpsservice.settings.json";
-const POWER_OPTIONS = ['SuperE', 'PSMOO'];
 let settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
 
 function updateSettings() {
@@ -27,18 +26,28 @@ function showMainMenu() {
 	reloadWidget();  // only when we change On/Off status
       },
     },
-    'Period (s)': {
-      value: settings.period,
-      min: 1,
+
+    'Power Mode': {
+      value: settings.power,
+      format: v => v ? 'SuperE' : 'PMSOO',
+      onchange: v => {
+        settings.power = v; // ? 'SuperE' : 'PMSOO';
+	updateSettings();
+      },
+    },
+
+    'Update (s)': {
+      value: settings.update,
+      min: 10,
       max: 1800,
-      step: 1,
+      step: 10,
       onchange: v => {
 	settings.period =v;
 	updateSettings();
       }
     },
-    'Ontime (s)': {
-      value: settings.ontime,
+    'Search (s)': {
+      value: settings.search,
       min: 1,
       max: 65,
       step: 1,
@@ -47,17 +56,6 @@ function showMainMenu() {
 	updateSettings();
       }
     },
-    'Rate (s)': {
-      value: settings.period,
-      min: 1,
-      max: 60,
-      step: 1,
-      onchange: v => {
-	settings.rate = v;
-	updateSettings();
-      }
-    },
-
     '< Back': ()=>{load();}
   };
 
