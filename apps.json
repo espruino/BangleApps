@@ -2600,6 +2600,7 @@
   "description": "Modification and clockification of Conway's Game of Life",
   "tags": "clock",
   "type" : "clock",
+  "readme": "README.md",
   "storage": [
     {"name":"lifeclk.app.js","url":"app.js"},
     {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
