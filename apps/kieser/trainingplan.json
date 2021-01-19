@@ -1,0 +1,11 @@
+
+    {
+        "machine": "example",
+        "settings": ["Beine 5", "Arm 9", "Test"],
+        "weight": 22
+    },
+    {
+        "machine": "machine2",
+        "settings": ["Sitz 5", "Kopf 9", "Bli", "Blaa"],
+        "weight": 22
+    }

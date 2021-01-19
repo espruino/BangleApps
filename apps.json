@@ -25,6 +25,7 @@
     "readme": "README.md",
     "storage": [
       {"name":"kieser.app.js", "url": "kieser.app.js"},
+      {"name":"trainingplan.json","url":"trainingplan.json"},
       {"name":"app-icon.img","url":"app-icon.js","evaluate":true}
     ]
   },

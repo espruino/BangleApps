@@ -137,10 +137,41 @@
             tdSetting.insertBefore(br, tdSetting.lastChild);
         }
 
+        function collectValues(){
+            machineTable = document.getElementById("machineTable");
+            var arrTable = new Array();
 
-
+            // loop through each row of the table.
+            for (row = 1; row < machineTable.rows.length; row++) {
+                var rowObject = new Object();
+                var machine = machineTable.rows.item(row).cells[1].childNodes[0].value;
+                rowObject.machine = machine;
+                var settingsArray = new Array();
+                var settingsCell =  machineTable.rows.item(row).cells[2];
+                for (c = 0; c < settingsCell.childNodes.length-1; c++) {
+                    var element = settingsCell.childNodes[c];
+                        if (element.getAttribute('type') == 'text'){
+                            settingsArray.push(element.value);
+                        }
+                }
+                rowObject.settings = settingsArray;
+                var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
+                rowObject.weight = weight;
+                arrTable.push(rowObject);
+            }
+                
+            
+            
+            console.log(arrTable);
+            return{arrTable};
+        }
+        
         document.getElementById("upload").addEventListener("click", function () {
-            Puck.eval(`require("Storage").writeJSON("buffgym-workout-a.json",${JSON.stringify(workoutA())})`, () => {
+            values = collectValues();
+            console.log("!!!!!!!!!!!!!!!")
+            console.log(JSON.stringify(values));
+            console.log("____________________");
+            Puck.eval(`require("Storage").writeJSON("trainingplan.json",${JSON.stringify(values)})`, () => {
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
                 })
