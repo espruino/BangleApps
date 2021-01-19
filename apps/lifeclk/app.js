@@ -403,6 +403,7 @@ function startdraw(init) {
     updateSecondText();
     // stopdraw();
     runOn = true;
+    sleeptime = 0;
     nextLineComp();
   }
 }
@@ -423,6 +424,7 @@ function regen(){
   initDraw();
   // stopdraw();
   runOn = true;
+  sleeptime = 0;
   nextLineComp();
 }
 
