@@ -15,6 +15,6 @@ The GPS and magnetometer will be turned on and after a few moments, when the wat
 5. compass heading, at the top  
 
 The buttons do the following:  
-BTN1: this will display an 'X' in the bottom of the screen and lock all the buttons, this is to prevent you accidentally pressing any of the below. Remember to press this again to unlock it to access the other buttons!
-BTN2: this removes all waypoints aside from the origin and your current location; sometimes during smaller journeys and walks, the GPS can give sporadic differences in locations because of the error margins of GPS and this can add noise to your route.  
+BTN1: this will display an 'X' in the bottom of the screen and lock all the buttons, this is to prevent you accidentally pressing any of the below. Remember to press this again to unlock it to access the other buttons!  
+BTN2: this removes all waypoints aside from the origin and your current location; sometimes during smaller journeys and walks, the GPS can give sporadic differences in locations because of the error margins of GPS and this can add noise to your route.    
 BTN3: this will pause the GPS and magnetometer, useful for saving power for situations where you don't necessarily need to track parts of your route e.g. you're going indoors/shelter for some time. You'll know it's paused because the compass won't update it's reading and all the metrics will be blacked out on the screen.
