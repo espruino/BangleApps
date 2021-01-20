@@ -16,8 +16,7 @@ function reloadWidget() {
 }
 
 function showMainMenu() {
-  var powerV = [0,1];
-  var powerN = ["PMS","PSMOO"];
+  var power_options = ["SuperE","PSMOO"];
 
   const mainmenu = {
     '': { 'title': 'GPS Service' },
@@ -26,18 +25,18 @@ function showMainMenu() {
       value: !!settings.service,
       format: v =>v?'On':'Off',
       onchange: v => {
-        settings.service = v;
+        settings.gpsservice = v;
 	updateSettings();
 	reloadWidget();  // only when we change On/Off status
       },
     },
 
     'Power Mode': {
-      value: 0 | powerV.indexOf(settings.power),
+      value: 0 | power_options.indexOf(settings.power_mode),
       min: 0, max: 1,
-      format: v => powerN[v],
+      format: v => power_options[v],
       onchange: v => {
-        settings.power = powerV[v];
+        settings.power_mode = power_options[v];
 	updateSettings();
       },
     },
@@ -58,7 +57,7 @@ function showMainMenu() {
       max: 65,
       step: 1,
       onchange: v => {
-	settings.ontime = v;
+	settings.search = v;
 	updateSettings();
       }
     },

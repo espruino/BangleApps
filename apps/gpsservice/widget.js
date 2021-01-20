@@ -15,20 +15,20 @@
 
   function gps_get_fix() { return last_fix; }
   function gps_get_status() { return WIDGETS.gpsservice.width === 24 ? true : false;}
-  function gps_get_version() { return "0.2"; }
+  function gps_get_version() { return "0.1"; }
 	
   // Called by the GPS widget settings to reload settings and decide what to do
   function reload() {
     settings = require("Storage").readJSON("gpsservice.settings.json",1)||{};
-    settings.service = settings.service||false;
+    settings.gpsservice = settings.gpsservice||false;
     settings.update = settings.update||120;
-    settings.search = settings.search||5;   
-    settings.power = settings.power||0;
-    console.log(settings);
+    settings.search = settings.search||5;
+    settings.power_mode = settings.power_mode||"SuperE";
+    //console.log(settings);
 	  
     Bangle.removeListener('GPS',onGPS);
 
-    if (settings.service) {
+    if (settings.gpsservice) {
        gps_power_on();
     } else {
        gps_power_off();
@@ -61,11 +61,10 @@
 
   function setupGPS() {
     Bangle.setGPSPower(1);
-    console.log(settings);
+    //console.log(settings);
 
-    // 1 == PMSOO, 0 == PSM
-    if (settings.power === 1) {
-      console.log("setupGPS() PSMOO");
+    if (settings.power_mode === "PSMOO") {
+      //console.log("setupGPS() PSMOO");
       UBX_CFG_RESET();
       wait(100);
       
@@ -78,7 +77,7 @@
       UBX_CFG_SAVE();
       wait(20);
     } else {
-      console.log("setupGPS() PMS");
+      //console.log("setupGPS() Super-E");
       UBX_CFG_RESET();
       wait(100);
       
@@ -187,7 +186,7 @@
  
   // draw the widget
   function draw() {
-    if (!settings.service) return;
+    if (!settings.gpsservice) return;
     g.reset();
     g.drawImage(atob("GBgCAAAAAAAAAAQAAAAAAD8AAAAAAP/AAAAAAP/wAAAAAH/8C9AAAB/8L/QAAAfwv/wAAAHS//wAAAAL//gAAAAf/+AAAAAf/4AAAAL//gAAAAD/+DwAAAB/Uf8AAAAfA//AAAACAf/wAAAAAH/0AAAAAB/wAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),this.x,this.y);
     if (gps_get_status() === true && have_fix) {
