@@ -26,28 +26,41 @@ facilitate an OS grid reference display in a watch face.
 The Settings App enables you set the following options for the GPS
 Service.  Go to Settings, select App/Widgets and then 'GPS Service'.
 
-* GPS - On/Off.  When this value is changed the GPS Service will be
+- GPS - On/Off.  When this value is changed the GPS Service will be
   powered on or off and the GPS Widget will be displayed.
 
-* Power Mode:
+- Power Mode:
 
-** Super-E - the factory default setup for the GPS. The
-   recommended power saving mode.
+   - SuperE - the factory default setup for the GPS. The recommended
+   power saving mode.
 
-** PSMOO - On/Off power saving mode. Configured by interval and
+   - PSMOO - On/Off power saving mode. Configured by interval and
    search time. Choose this mode if you are happy to get a GPS
    position update less often (say every 1 or 2 minutes). The longer
    the interval the more time the GPS will spend sleeping in low
    power mode (7mA) between obtaining fixes (35mA).  For walking in
    open country an update once every 60 seconds is adequate to put
    you within a 6 digit grid refernce sqaure.
-   
+
+- update - the time between two position fix attempts.
+
+- search - the time between two acquisition attempts if the receiver
+  is unable to get a position fix.
+
+
 
 ## Screenshots
-* GPS Watch face
+### GPS Watch face
+
+* The Age value is the number of seconds since the last position fix was received.
+
 ![](gps_face.jpg)
 
-* Grid Reference Watch face
+### Grid Reference Watch face
+
+* The time shown is the timestamp of the last position fix.
+* The age value is shown at the bottom of the screen. 
+
 ![](osref_face.jpg)
 
 
@@ -57,7 +70,11 @@ Service.  Go to Settings, select App/Widgets and then 'GPS Service'.
 
 
 ## References
-* data sheet
-* power saving PDF
-* other code
+
+* [UBLOX M8 Receiver Data Sheet](https://www.u-blox.com/sites/default/files/products/documents/u-blox8-M8_ReceiverDescrProtSpec_%28UBX-13003221%29.pdf)
+
+* [UBLOX Power Management App Note](https://www.u-blox.com/sites/default/files/products/documents/PowerManagement_AppNote_%28UBX-13005162%29.pdf)
+
+* Some useful code on Github and be found [here](https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control)
+and [here](https://github.com/thasti/utrak/blob/master/gps.c)
 
