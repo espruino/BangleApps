@@ -23,7 +23,7 @@
     settings.service = settings.service||false;
     settings.update = settings.update||120;
     settings.search = settings.search||5;   
-    settings.power = "PSMOO";  //settings.power||"SuperE";
+    settings.power = settings.power||0;
     console.log(settings);
 	  
     Bangle.removeListener('GPS',onGPS);
@@ -62,8 +62,9 @@
   function setupGPS() {
     Bangle.setGPSPower(1);
     console.log(settings);
-    
-    //if (settings.power === "PMSOO") {
+
+    // 1 == PMSOO, 0 == PSM
+    if (settings.power === 1) {
       console.log("setupGPS() PSMOO");
       UBX_CFG_RESET();
       wait(100);
@@ -76,8 +77,6 @@
       
       UBX_CFG_SAVE();
       wait(20);
-/*
-    
     } else {
       console.log("setupGPS() PMS");
       UBX_CFG_RESET();
@@ -89,7 +88,6 @@
       UBX_CFG_SAVE();
       wait(20);
     }
-*/
     Bangle.on('GPS',onGPS);
   }
 

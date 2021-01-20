@@ -4,6 +4,8 @@ Bangle.drawWidgets();
 const SETTINGS_FILE = "gpsservice.settings.json";
 let settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
 
+
+
 function updateSettings() {
   require("Storage").write(SETTINGS_FILE, settings);
 }
@@ -14,6 +16,9 @@ function reloadWidget() {
 }
 
 function showMainMenu() {
+  var powerV = [0,1];
+  var powerN = ["PMS","PSMOO"];
+
   const mainmenu = {
     '': { 'title': 'GPS Service' },
     '< Exit': ()=>{load();},
@@ -28,10 +33,11 @@ function showMainMenu() {
     },
 
     'Power Mode': {
-      value: settings.power,
-      format: v => v ? 'SuperE' : 'PMSOO',
+      value: 0 | powerV.indexOf(settings.power),
+      min: 0, max: 1,
+      format: v => powerN[v],
       onchange: v => {
-        settings.power = v; // ? 'SuperE' : 'PMSOO';
+        settings.power = powerV[v];
 	updateSettings();
       },
     },

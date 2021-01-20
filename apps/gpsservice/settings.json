@@ -1,6 +1,1 @@
-{ 
-  "service": false, 
-  "power": "SuperE", 
-  "update": 120, 
-  "search": 6, 
-}
+{"service":false, "power":"PSMOO", "update":120, "search":6}
