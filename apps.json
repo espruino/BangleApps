@@ -2231,7 +2231,7 @@
   "shortName":"Digi Clock",
   "icon": "digiclock.png",
   "version":"0.02",
-  "description": "A simple digital clock with the time, day, month, and year",
+  "description": "A digital clock face with the time, day, month, heart rate, battery, and GPS info",
   "tags": "clock",
   "type" : "clock",
   "storage": [
