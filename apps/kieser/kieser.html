@@ -24,46 +24,7 @@
     <script src="../../core/lib/interface.js"></script>
 
     <script>
-        function workoutA() {
-            return {
-                "title": "Workout A",
-                "exercises": [
-                    {
-                        "title": "Machine one",
-                        "weight": Number(document.getElementById("buffgym-workout-a-squats-weight").value),
-                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-squats-weight-increment").value),
-                        "unit": "Kg",
-                        "sets": [5, 5, 5, 5, 5],
-                        "restPeriod": 90
-                    },
-                    {
-                        "title": "Overhead press",
-                        "weight": Number(document.getElementById("buffgym-workout-a-overhead-press-weight").value),
-                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-overhead-press-weight-increment").value),
-                        "unit": "Kg",
-                        "sets": [5, 5, 5, 5, 5],
-                        "restPeriod": 90
-                    },
-                    {
-                        "title": "Deadlift",
-                        "weight": Number(document.getElementById("buffgym-workout-a-deadlift-weight").value),
-                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-deadlift-weight-increment").value),
-                        "unit": "Kg",
-                        "sets": [5],
-                        "restPeriod": 90
-                    },
-                    {
-                        "title": "Pullups",
-                        "weight": Number(document.getElementById("buffgym-workout-a-pullups-weight").value),
-                        "weightIncrement": Number(document.getElementById("buffgym-workout-a-pullups-weight-increment").value),
-                        "unit": "Kg",
-                        "sets": [10, 10, 10],
-                        "restPeriod": 90
-                    }
-                ]
-            };
-        };
-
+       
         function createTable() {
             var arrHead = new Array();
             arrHead = ['', 'Machine Name', 'Settings', 'Weight']; // table headers.
@@ -139,7 +100,7 @@
 
         function collectValues(){
             machineTable = document.getElementById("machineTable");
-            var tableObject = new Object();
+            var trainingplan = "";
 
             // loop through each row of the table.
             for (row = 1; row < machineTable.rows.length; row++) {
@@ -157,21 +118,22 @@
                 rowObject.settings = settingsArray;
                 var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
                 rowObject.weight = weight;
-                tableObject[row]= rowObject;
+                trainingplan = trainingplan.concat(JSON.stringify(rowObject));
             }
                 
             
             
-            console.log(tableObject);
-            return{tableObject};
+            console.log(trainingplan);
+            return{trainingplan};
         }
         
         document.getElementById("upload").addEventListener("click", function () {
             values = collectValues();
             console.log("!!!!!!!!!!!!!!!")
+            console.log(values);
             console.log(JSON.stringify(values));
             console.log("____________________");
-            Puck.eval(`require("Storage").writeJSON("trainingplan.json",${JSON.stringify(values)})`, () => {
+            Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json",${JSON.stringify(values)})`, () => {
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
                 })
