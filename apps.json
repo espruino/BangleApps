@@ -1394,7 +1394,7 @@
   "name": "Dev Stopwatch",
   "shortName":"Dev Stopwatch",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "tags": "stopwatch, chrono, timer, chronometer",
   "allow_emulator":true,
@@ -1553,7 +1553,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.05",
+    "version": "0.06",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -2577,6 +2577,33 @@
   "storage": [
     {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
     {"name":"lazyclock.img","url":"lazyclock-icon.js","evaluate":true}
+  ]
+},
+{ "id": "astral",
+  "name": "Astral Clock",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "readme": "README.md",
+  "description": "Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting. See Readme before using.",
+  "tags": "clock",
+  "type":"clock",
+  "storage": [
+    {"name":"astral.app.js","url":"app.js"},
+    {"name":"astral.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "lifeclk",
+  "name": "Game of Life Clock",
+  "shortName":"Conway's Clock",
+  "icon": "app.png",
+  "version":"0.05",
+  "description": "Modification and clockification of Conway's Game of Life",
+  "tags": "clock",
+  "type" : "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"lifeclk.app.js","url":"app.js"},
+    {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
