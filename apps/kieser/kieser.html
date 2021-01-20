@@ -118,7 +118,7 @@
                 rowObject.settings = settingsArray;
                 var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
                 rowObject.weight = weight;
-                trainingplan = trainingplan.concat(JSON.stringify(rowObject));
+                trainingplan = trainingplan.concat(rowObject);
             }
                 
             
