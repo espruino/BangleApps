@@ -6,6 +6,7 @@
 
 <body onload="createTable()">
     <h1>Kieser</h1>
+
     <p>
         Enter your training plan here. The weight will be increased/decreased automatically according to your training
         time.
@@ -100,7 +101,7 @@
 
         function collectValues(){
             machineTable = document.getElementById("machineTable");
-            var trainingplan = "";
+            var trainingplan = new Array();
 
             // loop through each row of the table.
             for (row = 1; row < machineTable.rows.length; row++) {
@@ -118,7 +119,7 @@
                 rowObject.settings = settingsArray;
                 var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
                 rowObject.weight = weight;
-                trainingplan = trainingplan.concat(rowObject);
+                trainingplan.push(rowObject);
             }
                 
             
@@ -133,7 +134,7 @@
             console.log(values);
             console.log(JSON.stringify(values));
             console.log("____________________");
-            Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json",${JSON.stringify(values)})`, () => {
+            Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json", values)`, () => {
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
                 })
