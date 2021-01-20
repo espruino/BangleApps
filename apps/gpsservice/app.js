@@ -22,7 +22,7 @@ function showMainMenu() {
     '': { 'title': 'GPS Service' },
     '< Exit': ()=>{load();},
     'GPS': {
-      value: !!settings.service,
+      value: !!settings.gpsservice,
       format: v =>v?'On':'Off',
       onchange: v => {
         settings.gpsservice = v;
