@@ -7,3 +7,4 @@
   buttons (BTN4 and BTN5)
 - [Bugfix] Fixed newlines in message
 - [Chore] Renamed to Pomodoro
+- [Feature] Adding Snooze function
