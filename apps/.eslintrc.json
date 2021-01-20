@@ -151,6 +151,7 @@
         "no-octal": "off",
         "no-prototype-builtins": "off",
         "no-redeclare": "off",
+        "no-unreachable": "warn",
         // TODO: "no-undef": "warn",
         "no-undef": "off",
         "no-unused-vars": "off",

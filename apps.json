@@ -962,7 +962,7 @@
     "name": "Assisted GPS Update (AGPS)",
     "icon": "app.png",
     "version":"0.01",
-    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "description": "Downloads assisted GPS (AGPS) data to Bangle.js for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "custom": "custom.html",
     "tags": "tool,outdoors,agps",
     "type": "RAM",
@@ -2606,6 +2606,20 @@
   "storage": [
     {"name":"astral.app.js","url":"app.js"},
     {"name":"astral.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "lifeclk",
+  "name": "Game of Life Clock",
+  "shortName":"Conway's Clock",
+  "icon": "app.png",
+  "version":"0.05",
+  "description": "Modification and clockification of Conway's Game of Life",
+  "tags": "clock",
+  "type" : "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"lifeclk.app.js","url":"app.js"},
+    {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
