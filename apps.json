@@ -2613,8 +2613,8 @@
   "version":"0.01",
   "description": "Simple haptic heartbeat",
   "storage": [
-    {"name":"stress.app.js","url":"app.js"},
-    {"name":"stress.img","url":"app-icon.js","evaluate":true}
+    {"name":"de-stress.app.js","url":"app.js"},
+    {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
   ]
 }
 	
