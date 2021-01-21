@@ -1,5 +1,5 @@
 
-g.clear();
+//g.clear();
 
 var img = {
   width : 100, height : 100, bpp : 8,
