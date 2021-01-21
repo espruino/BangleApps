@@ -2612,7 +2612,7 @@
   "icon": "app.png",
   "version":"0.1",
   "description": "GPS speed and altitude display. One as the primary display with the other as a smaller secondary display. Tap the screen to toggle primary display. BTN3 to select display units. Designed for easy viewing and use during active outdoor activities such as para gliding, hang gliding, sailing, cycling etc.",
-  "tags": "",
+  "tags": "tool,outdoors",
   "readme": "README.md",
   "storage": [
     {"name":"speedalt.app.js","url":"app.js"},
