@@ -12,9 +12,9 @@ function hr(){
   
 Bangle.buzz(100,0.1).then(()=>{
   g.clear();
-  return new Promise(resolve=>setTimeout(resolve,250)); // wait 500ms
+  return new Promise(resolve=>setTimeout(resolve,250)); // wait 250ms
 }).then(()=>{
-  return Bangle.buzz(200);
+  return Bangle.buzz(150);
 }).then(()=>{
   g.drawImage(img, 25, 40, {scale:2});
 });
