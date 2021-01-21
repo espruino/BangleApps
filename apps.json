@@ -2609,6 +2609,17 @@
     {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
   ]
 },
+{ "id": "de-stress",
+  "name": "De-Stress",
+  "shortName":"De-Stress",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Simple haptic heartbeat",
+  "storage": [
+    {"name":"de-stress.app.js","url":"app.js"},
+    {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
+  ]
+},
 { "id": "gpsservice",
   "name": "Low power GPS Service",
   "shortName":"GPS Service",
@@ -2624,5 +2635,5 @@
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
   ]
-}
+}   
 ]
