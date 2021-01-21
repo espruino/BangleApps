@@ -125,7 +125,7 @@
             
             
             console.log(trainingplan);
-            return{trainingplan};
+            return trainingplan;
         }
         
         document.getElementById("upload").addEventListener("click", function () {
@@ -134,7 +134,7 @@
             console.log(values);
             console.log(JSON.stringify(values));
             console.log("____________________");
-            Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json", values)`, () => {
+            Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json", ${JSON.stringify(values)})`, () => {
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
                 })
