@@ -4,6 +4,8 @@ Display Tap : Swaps the displays. You can have either speed or altitude on the l
 
 BTN3 : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres.
 
+<img src="screen1.png">
+
 Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
 
 ( Many thanks to Gordon Williams. Awesome job. )
