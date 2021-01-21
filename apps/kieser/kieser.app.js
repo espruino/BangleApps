@@ -1,42 +1,85 @@
-var counter = 30;
-var counterInterval;
+var machineArray = require("Storage").readJSON("kieser-trainingplan.json", false);
 
-function outOfTime() {
-  if (counterInterval) return;
-  E.showMessage("Out of Time", "My Timer");
-  Bangle.buzz();
-  Bangle.beep(200, 4000)
-    .then(() => new Promise(resolve => setTimeout(resolve,200)))
-    .then(() => Bangle.beep(200, 3000));
-  // again, 10 secs later
-  setTimeout(outOfTime, 10000);
-}
+//array to temporary skip machine
+var tempArray = machineArray;
 
-function countDown() {
-  counter--;
-  // Out of time
-  if (counter<=0) {
-    clearInterval(counterInterval);
-    counterInterval = undefined;
-    setWatch(startTimer, BTN2);
-    outOfTime();
-    return;
-  }
-
+function showSettings(machine){
+  var settingY = 100;
   g.clear();
   g.setFontAlign(0,0); // center font
-  g.setFont("Vector",80); // vector font, 80px  
+  g.setFont("Vector",200); // vector font, 80px  
   // draw the current counter value
-  g.drawString(counter,120,120);
+  E.showMessage("", machine.machine);
+  
+  g.drawString("Weight: "+ machine.weight, 100, 70);
+  for (let setting of machine.settings) {
+    g.drawString(setting, 100, settingY);
+    settingY += 30;
+  };
+  
+  g.setFont("6x8", 2);
+    g.setFontAlign(0, 0, 3);
+    g.drawString("Menu", 230, 50);
+    g.drawString("Start", 230, 110);
+    g.setFont("Vector", 35);
+    g.setFontAlign(-1, -1);
+  
+  setWatch(function() {
+    showMenu();
+  }, BTN1, {repeat:true,debounce:50,edge:"rising"});
+
+
+  setWatch(function() {
+    startTraining(machineArray[1]);
+  }, BTN2, {repeat:true,debounce:50,edge:"rising"});
+  
   // optional - this keeps the watch LCD lit up
   g.flip();
+  //setWatch(showSettings(f[1]) , BTN2);
+};
+
+function startTraining(machine){
+  g.clear();
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",200); // vector font, 80px  
+  // draw the current counter value
+  E.showMessage("Training für diese Maschine ist gestartet", machine.machine);
 }
 
-function startTimer() {
-  counter = 30;
-  countDown();
-  if (!counterInterval)
-    counterInterval = setInterval(countDown, 1000);
+function showMenu(){
+  g.clear();
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",200); // vector font, 80px  
+  // draw the current counter value
+  E.showMessage("hier steht das menu", "Menu");
+
 }
 
-startTimer();
+
+
+function init(){
+  g.clear();
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",200); // vector font, 80px  
+  // draw the current counter value
+  E.showMessage("Start training", "Welcome");
+
+  g.setFont("6x8", 2);
+    g.setFontAlign(0, 0, 3);
+    g.drawString("Menu", 230, 50);
+    g.drawString("Start", 230, 110);
+    g.setFont("Vector", 35);
+    g.setFontAlign(-1, -1);
+  
+  setWatch(function() {
+    showMenu();
+  }, BTN1, {repeat:true,debounce:50,edge:"rising"});
+
+
+  setWatch(function() {
+    showSettings(machineArray[1]);
+  }, BTN2, {repeat:true,debounce:50,edge:"rising"});
+}
+
+
+init();
