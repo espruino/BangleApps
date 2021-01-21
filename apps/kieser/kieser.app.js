@@ -1,7 +1,7 @@
 var machineArray = require("Storage").readJSON("kieser-trainingplan.json", false);
 
 //array to temporary skip machine
-var tempArray = machineArray;
+var tempArray = machineArray.slice();
 
 function showSettings(machine){
   var settingY = 100;
@@ -15,7 +15,7 @@ function showSettings(machine){
   for (let setting of machine.settings) {
     g.drawString(setting, 100, settingY);
     settingY += 30;
-  };
+  }
   
   g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
@@ -36,28 +36,45 @@ function showSettings(machine){
   // optional - this keeps the watch LCD lit up
   g.flip();
   //setWatch(showSettings(f[1]) , BTN2);
-};
+}
 
 function startTraining(machine){
   g.clear();
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",200); // vector font, 80px  
   // draw the current counter value
-  E.showMessage("Training für diese Maschine ist gestartet", machine.machine);
+  E.showMessage("Timer starten", machine.machine);
 }
 
 function showMenu(){
-  g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
-  // draw the current counter value
-  E.showMessage("hier steht das menu", "Menu");
-
+  function createMenuItems(){
+    menuObjekt = {};
+    menuObjekt[""] = {"title" : "machines left"};
+    for (var i = 0; i < tempArray.length; i++){
+      if (tempArray[i].finished == false){
+        key = tempArray[i].machine;
+                
+        menuObjekt[key] = function(){showSettings(tempArray[i])};
+      }
+      
+    }
+    menuObjekt.Exit = function() { E.showMenu();};
+    return menuObjekt;
+  }
+  
+  var mainmenu = createMenuItems();
+  console.log(mainmenu);
+  E.showMenu(mainmenu);
 }
 
 
 
 function init(){
+  for (let machine of tempArray){
+   var finished = false;
+   machine.finished = finished;
+  }
+  
   g.clear();
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",200); // vector font, 80px  
@@ -77,7 +94,7 @@ function init(){
 
 
   setWatch(function() {
-    showSettings(machineArray[1]);
+    showSettings(tempArray[0]);
   }, BTN2, {repeat:true,debounce:50,edge:"rising"});
 }
 
