@@ -63,6 +63,64 @@ Service.  Go to Settings, select App/Widgets and then 'GPS Service'.
 
 ![](osref_face.jpg)
 
+## Interface for Apps
+
+The code below demonstrates how you can setup and start the gpsservice from your own App.
+
+```js
+function test_gps_on() {
+
+  var settings = WIDGETS.gpsservice.gps_get_settings();
+
+  // change the settings to what you require
+  settings.gpsservice = true;
+  settings.update = 65;
+  settings.search = 5;
+  settings.power_mode = "PSMOO";
+  
+  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.reload(); // will power on
+}
+```
+
+In your app can retrieve the last fix as and when required.
+
+```js
+var fix = {
+  fix: 0,
+  alt: 0,
+  lat: 0,
+  lon: 0,
+  speed: 0,
+  time: 0,
+  satellites: 0
+};
+
+// only attempt to get gps fix if gpsservice is loaded
+if (WIDGETS.gpsservice !== undefined) {
+  fix = WIDGETS.gpsservice.gps_get_fix();
+  gps_on = WIDGETS.gpsservice.gps_get_status();
+}
+
+if (fix.fix) {
+  var time = formatTime(fix.time);
+  var age = timeSince(time);
+```
+
+When done you can turn the gpsservice off using the code below.
+
+```js
+function test_gps_off() {
+
+  var settings = WIDGETS.gpsservice.gps_get_settings();
+
+  settings.gpsservice = false;
+  settings.power_mode = "SuperE";
+  
+  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.reload(); // will power off
+}
+```
 
 ## To Do List
 * add a logging option with options for interval between log points
