@@ -20,8 +20,24 @@
     require('Storage').write('settings.json',settings);
   }
 
+  function setTime(b) {
+    settings['time'] = b;
+    require('Storage').write('settings.json',settings);
+  }
+
 
   const appMenu = {
+    '': {'title': 'GPS Speed Alt'},
+    '< Back': back,
+    "Units" : function() { E.showMenu(unitsMenu); },
+    "Show Time" : {
+      value : boolean,
+      format : v => v?"On":"Off",
+      onchange : v => { setTime(v); }
+    }
+  };
+  
+  const unitsMenu = {
     '': {'title': 'Units'},
     '< Back': back,
     'default (spd)' : function() { setUnits(0,''); },
@@ -32,5 +48,7 @@
     "Meters (alt)" : function() { setUnitsAlt(1,'m'); },
     "Feet (alt)" : function() { setUnitsAlt(0.3048,'feet'); }
   };
+
+  
   E.showMenu(appMenu)
 })
