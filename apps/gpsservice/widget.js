@@ -16,7 +16,7 @@
   function gps_get_fix() { return last_fix; }
   function gps_get_status() { return WIDGETS.gpsservice.width === 24 ? true : false;}
   function gps_get_version() { return "0.1"; }
-	
+  
   // Called by the GPS widget settings to reload settings and decide what to do
   function reload() {
     settings = require("Storage").readJSON("gpsservice.settings.json",1)||{};
@@ -25,7 +25,7 @@
     settings.search = settings.search||5;
     settings.power_mode = settings.power_mode||"SuperE";
     //console.log(settings);
-	  
+    
     Bangle.removeListener('GPS',onGPS);
 
     if (settings.gpsservice) {
@@ -105,8 +105,8 @@
   // UBX-CFG-PMS - enable power management - Super-E
   function UBX_CFG_PMS() {
     writeGPScmd([0x06,0x86, // msg class + type
-		 8,0,//length
-		 0x00,0x03, 0,0, 0,0, 0,0]);  
+     8,0,//length
+     0x00,0x03, 0,0, 0,0, 0,0]);  
   }
 
   // convert an integer to an array of bytes
@@ -135,26 +135,26 @@
     var s = int_2_bytes(search*1000);
 
     writeGPScmd([0x06, 0x3B,                /* class id */
-		 44, 0,	                    /* length */
-		 0x01, 0x00, 0x00, 0x00,    /* v1, reserved 1..3 */
-		 0x00, 0x10, 0x00, 0x00,    /* on/off-mode, update ephemeris */
-		 u[3], u[2], u[1], u[0],    /* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
-		 s[3], s[2], s[1], s[0],    /* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
-		 0x00, 0x00, 0x00, 0x00,    /* grid offset */
-		 0x00, 0x00,	            /* on-time after first fix */
-		 0x01, 0x00,                /* minimum acquisition time */
-		 0x00, 0x00, 0x00, 0x00,    /* reserved 4,5 */
-		 0x00, 0x00, 0x00, 0x00,    /* reserved 6 */
-		 0x00, 0x00, 0x00, 0x00,    /* reserved 7 */
-		 0x00, 0x00, 0x00, 0x00,    /* reserved 8,9,10 */
-		 0x00, 0x00, 0x00, 0x00]);  /* reserved 11 */
+     44, 0,                      /* length */
+     0x01, 0x00, 0x00, 0x00,    /* v1, reserved 1..3 */
+     0x00, 0x10, 0x00, 0x00,    /* on/off-mode, update ephemeris */
+     u[3], u[2], u[1], u[0],    /* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
+     s[3], s[2], s[1], s[0],    /* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
+     0x00, 0x00, 0x00, 0x00,    /* grid offset */
+     0x00, 0x00,              /* on-time after first fix */
+     0x01, 0x00,                /* minimum acquisition time */
+     0x00, 0x00, 0x00, 0x00,    /* reserved 4,5 */
+     0x00, 0x00, 0x00, 0x00,    /* reserved 6 */
+     0x00, 0x00, 0x00, 0x00,    /* reserved 7 */
+     0x00, 0x00, 0x00, 0x00,    /* reserved 8,9,10 */
+     0x00, 0x00, 0x00, 0x00]);  /* reserved 11 */
   }
   
   // enable power saving mode, after configured with PM2
   function UBX_CFG_RXM() {
     writeGPScmd([0x06, 0x11,      /* UBX-CFG-RXM */
-		 2, 0,	          /* length */
-		 0x08, 0x01]);	  /* reserved, enable power save mode */
+     2, 0,            /* length */
+     0x08, 0x01]);    /* reserved, enable power save mode */
   }
 
 
@@ -164,11 +164,11 @@
    */
   function UBX_CFG_SAVE() {
     writeGPScmd([0x06, 0x09,   // class id
-		 0x0D, 0x00,   // length
-		 0x00, 0x00, 0x00, 0x00,  // clear mask
-		 0xFF, 0xFF, 0x00, 0x00,  // save mask
-		 0x00, 0x00, 0x00, 0x00,  // load mask
-		 0x07]);                  // b2=eeprom b1=flash b0=bat backed ram
+     0x0D, 0x00,   // length
+     0x00, 0x00, 0x00, 0x00,  // clear mask
+     0xFF, 0xFF, 0x00, 0x00,  // save mask
+     0x00, 0x00, 0x00, 0x00,  // load mask
+     0x07]);                  // b2=eeprom b1=flash b0=bat backed ram
   }
 
   /*
@@ -178,10 +178,10 @@
   function UBX_CFG_RESET() {
     writeGPScmd([0x06, 0x09,   // class id 
                  0x0D, 0x00,
-		 0xFF, 0xFB, 0x00, 0x00,  // clear mask
-		 0x00, 0x00, 0x00, 0x00,  // save mask
-		 0xFF, 0xFF, 0x00, 0x00,  // load mask
-		 0x17]);
+     0xFF, 0xFB, 0x00, 0x00,  // clear mask
+     0x00, 0x00, 0x00, 0x00,  // save mask
+     0xFF, 0xFF, 0x00, 0x00,  // load mask
+     0x17]);
   }
  
   // draw the widget

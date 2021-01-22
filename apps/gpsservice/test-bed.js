@@ -1,3 +1,4 @@
+
 /*
 
 test bed for working out lowest power consumption, with workable GPS
@@ -53,14 +54,14 @@ function wait(ms){
  */
 function UBX_CFG_DISABLE_NMEA() {
   writeGPScmd([0x06, 0x00,  /* UBX-CFG-PRT */
-	       20, 0x00,		
-	       0x01, 0x00, 0x00, 0x00, 			        /* UART1, reserved, no TX ready */
-	       0xe0, 0x08, 0x00, 0x00,				/* UART mode (8N1) */
-	       0x80, 0x25, 0x00, 0x00,				/* UART baud rate (9600) */
-	       0x01, 0x00,					/* input protocols (uBx only) */
-	       0x01, 0x00,					/* output protocols (uBx only) */
-	       0x00, 0x00,					/* flags */
-	       0x00, 0x00]);					/* reserved */
+           20, 0x00,        
+           0x01, 0x00, 0x00, 0x00,                     /* UART1, reserved, no TX ready */
+           0xe0, 0x08, 0x00, 0x00,                /* UART mode (8N1) */
+           0x80, 0x25, 0x00, 0x00,                /* UART baud rate (9600) */
+           0x01, 0x00,                    /* input protocols (uBx only) */
+           0x01, 0x00,                    /* output protocols (uBx only) */
+           0x00, 0x00,                    /* flags */
+           0x00, 0x00]);                    /* reserved */
 }
 
 /* 
@@ -76,14 +77,14 @@ function UBX_CFG_DISABLE_NMEA() {
  */
 function UBX_CFG_RESTORE_NMEA() {
   writeGPScmd([0x06, 0x00,  /* UBX-CFG-PRT */
-	       20, 0x00,		
-	       0x01, 0x00, 0x00, 0x00, 			        /* UART1, reserved, no TX ready */
-	       0xe0, 0x08, 0x00, 0x00,				/* UART mode (8N1) */
-	       0x80, 0x25, 0x00, 0x00,				/* UART baud rate (9600) */
-	       0x03, 0x00,					/* input protocols (uBx only) */
-	       0x03, 0x00,					/* output protocols (uBx only) */
-	       0x00, 0x00,					/* flags */
-	       0x00, 0x00]);					/* reserved */
+           20, 0x00,        
+           0x01, 0x00, 0x00, 0x00,                     /* UART1, reserved, no TX ready */
+           0xe0, 0x08, 0x00, 0x00,                /* UART mode (8N1) */
+           0x80, 0x25, 0x00, 0x00,                /* UART baud rate (9600) */
+           0x03, 0x00,                    /* input protocols (uBx only) */
+           0x03, 0x00,                    /* output protocols (uBx only) */
+           0x00, 0x00,                    /* flags */
+           0x00, 0x00]);                    /* reserved */
 }
 
 function UBX_CFG_PMS() {
@@ -115,10 +116,10 @@ function UBX_CFG_RATE(rate) {
   //console.log("rate=" + rate);
    
   writeGPScmd([0x06,0x08,  // class, id 
-	       0x06, 0,          // length
-	       0x00, rate,       // b0: 8192ms 0x2000,  0x00FF (~65sec)
-	       0x01, 0x00,       // b2: 
-	       0x01, 0x00]);     // b4: timeref GPS
+           0x06, 0,          // length
+           0x00, rate,       // b0: 8192ms 0x2000,  0x00FF (~65sec)
+           0x01, 0x00,       // b2: 
+           0x01, 0x00]);     // b4: timeref GPS
 }
 
 /*
@@ -127,11 +128,11 @@ function UBX_CFG_RATE(rate) {
  */
 function UBX_CFG_SAVE() {
   writeGPScmd([0x06, 0x09,   // class id
-	       0x0D, 0x00,   // length
-	       0x00, 0x00, 0x00, 0x00,  // clear mask
-	       0xFF, 0xFF, 0x00, 0x00,  // save mask
-	       0x00, 0x00, 0x00, 0x00,  // load mask
-	       0x07]);                  // b2=eeprom b1=flash b0=bat backed ram
+           0x0D, 0x00,   // length
+           0x00, 0x00, 0x00, 0x00,  // clear mask
+           0xFF, 0xFF, 0x00, 0x00,  // save mask
+           0x00, 0x00, 0x00, 0x00,  // load mask
+           0x07]);                  // b2=eeprom b1=flash b0=bat backed ram
                                         // code on github had 7 - all 3 set ?
 }
 
@@ -144,10 +145,10 @@ function UBX_CFG_SAVE() {
   function UBX_CFG_RESET() {
     writeGPScmd([0x06, 0x09,   // class id 
                  0x0D, 0x00,
-		 0xFF, 0xFB, 0x00, 0x00,  // clear mask
-		 0x00, 0x00, 0x00, 0x00,  // save mask
-		 0xFF, 0xFF, 0x00, 0x00,  // load mask
-		 0x17]);
+         0xFF, 0xFB, 0x00, 0x00,  // clear mask
+         0x00, 0x00, 0x00, 0x00,  // save mask
+         0xFF, 0xFF, 0x00, 0x00,  // load mask
+         0x17]);
   }
 
 
@@ -176,30 +177,30 @@ function UBX_CFG_PM2(update,search) {
   var s = int_2_bytes(search*1000);
 
   writeGPScmd([0x06, 0x3B,                   /* class id */
-	       44, 0,	                     /* length */
-	       0x01, 0x00, 0x00, 0x00,       /* v1, reserved 1..3 */
-	       0x00, 0x10, 0x00, 0x00,       /* on/off-mode, update ephemeris */
-	       // little endian, lsb first
-	       //0x30, 0x75, 0x00, 0x00,	/* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
-	       //0x88, 0x13, 0x00, 0x00,	/* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
-	       u[3], u[2], u[1], u[0],          /* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
-	       s[3], s[2], s[1], s[0],          /* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
-	       0x00, 0x00, 0x00, 0x00,    /* grid offset */
-	       0x00, 0x00,	          /* on-time after first fix */
-	       0x01, 0x00,                /* minimum acquisition time */
-	       0x00, 0x00, 0x00, 0x00,	  /* reserved 4,5 */
-	       0x00, 0x00, 0x00, 0x00,	  /* reserved 6 */
-	       0x00, 0x00, 0x00, 0x00,    /* reserved 7 */
-	       0x00, 0x00, 0x00, 0x00,    /* reserved 8,9,10 */
-	       0x00, 0x00, 0x00, 0x00]);  /* reserved 11 */
+           44, 0,                         /* length */
+           0x01, 0x00, 0x00, 0x00,       /* v1, reserved 1..3 */
+           0x00, 0x10, 0x00, 0x00,       /* on/off-mode, update ephemeris */
+           // little endian, lsb first
+           //0x30, 0x75, 0x00, 0x00,    /* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
+           //0x88, 0x13, 0x00, 0x00,    /* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
+           u[3], u[2], u[1], u[0],          /* update period, ms, 120s=00 01 D4 C0, 30s= 00 00 75 30 */
+           s[3], s[2], s[1], s[0],          /* search period, ms, 120s, 20s = 00 00 4E 20, 5s = 13 88 */
+           0x00, 0x00, 0x00, 0x00,    /* grid offset */
+           0x00, 0x00,              /* on-time after first fix */
+           0x01, 0x00,                /* minimum acquisition time */
+           0x00, 0x00, 0x00, 0x00,      /* reserved 4,5 */
+           0x00, 0x00, 0x00, 0x00,      /* reserved 6 */
+           0x00, 0x00, 0x00, 0x00,    /* reserved 7 */
+           0x00, 0x00, 0x00, 0x00,    /* reserved 8,9,10 */
+           0x00, 0x00, 0x00, 0x00]);  /* reserved 11 */
 }
 
 
 // enable power saving mode, after configured with PM2
 function UBX_CFG_RXM() {
   writeGPScmd([0x06, 0x11,        /* UBX-CFG-RXM */
-	       2, 0,	          /* length */
-	       0x08, 0x01]);	  /* reserved, enable power save mode */
+           2, 0,              /* length */
+           0x08, 0x01]);      /* reserved, enable power save mode */
 }
 
 function onGPS(fix) {
