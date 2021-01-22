@@ -4,7 +4,10 @@ var machineArray = require("Storage").readJSON("kieser-trainingplan.json", false
 var tempArray = machineArray.slice();
 
 function showSettings(machine){
+  clearWatch();
+
   var settingY = 100;
+  console.log("Show Setting for " + machine.machine);
   g.clear();
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",200); // vector font, 80px  
@@ -26,38 +29,56 @@ function showSettings(machine){
   
   setWatch(function() {
     showMenu();
-  }, BTN1, {repeat:true,debounce:50,edge:"rising"});
+  }, BTN1, {repeat:true});
 
 
   setWatch(function() {
-    startTraining(machineArray[1]);
-  }, BTN2, {repeat:true,debounce:50,edge:"rising"});
+    startTraining(machine);
+  }, BTN2, {repeat:true});
   
   // optional - this keeps the watch LCD lit up
   g.flip();
-  //setWatch(showSettings(f[1]) , BTN2);
 }
 
 function startTraining(machine){
+  clearWatch();
+
+  console.log("start training for " + machine.machine);
+
   g.clear();
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",200); // vector font, 80px  
   // draw the current counter value
   E.showMessage("Timer starten", machine.machine);
+  
+  setWatch(function() {
+  }, BTN1, {repeat:true});
+
+
+  setWatch(function() {
+  }, BTN2, {repeat:true});
+  
 }
 
 function showMenu(){
+
   function createMenuItems(){
     menuObjekt = {};
     menuObjekt[""] = {"title" : "machines left"};
-    for (var i = 0; i < tempArray.length; i++){
+    /* for (var i = 0; i < tempArray.length; i++){
       if (tempArray[i].finished == false){
         key = tempArray[i].machine;
                 
         menuObjekt[key] = function(){showSettings(tempArray[i])};
       }
       
-    }
+    } */
+    tempArray.forEach(function(m, i) {
+       if (m.finished == false){
+          menuObjekt[m.machine] = function(){showSettings(m)};
+          }
+    });
+    
     menuObjekt.Exit = function() { E.showMenu();};
     return menuObjekt;
   }
@@ -66,7 +87,6 @@ function showMenu(){
   console.log(mainmenu);
   E.showMenu(mainmenu);
 }
-
 
 
 function init(){
@@ -90,12 +110,12 @@ function init(){
   
   setWatch(function() {
     showMenu();
-  }, BTN1, {repeat:true,debounce:50,edge:"rising"});
+  }, BTN1, {repeat:false});
 
 
   setWatch(function() {
     showSettings(tempArray[0]);
-  }, BTN2, {repeat:true,debounce:50,edge:"rising"});
+  }, BTN2, {repeat:false});
 }
 
 
