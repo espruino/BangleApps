@@ -2139,7 +2139,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.08",
+    "version":"0.10",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2152,6 +2152,9 @@
       {"name":"digi.face.js","url":"digi.js"},
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
+      {"name":"ped.face.js","url":"ped.js"},
+      {"name":"gps.face.js","url":"gps.js"},
+      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2616,6 +2619,21 @@
     {"name":"de-stress.app.js","url":"app.js"},
     {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
   ]
-}
-	
+},
+{ "id": "gpsservice",
+  "name": "Low power GPS Service",
+  "shortName":"GPS Service",
+  "icon": "gpsservice.png",
+  "version":"0.01",
+  "description": "low power GPS widget",
+  "tags": "gps outdoors navigation",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpsservice.app.js","url":"app.js"},
+    {"name":"gpsservice.settings.js","url":"settings.js"},
+    {"name":"gpsservice.settings.json","url":"settings.json"},
+    {"name":"gpsservice.wid.js","url":"widget.js"},
+    {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ]
+}   
 ]
