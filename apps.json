@@ -2644,6 +2644,7 @@
   "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
   "tags": "clock",
   "type": "clock",
+  "readme": "README.md",
   "storage": [
     {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
     {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
