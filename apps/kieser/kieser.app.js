@@ -1,8 +1,8 @@
 var machineArray = require("Storage").readJSON("kieser-trainingplan.json", false);
 var startDate = new Date().toUTCString();
 
-var trainingTimes = [];
-
+var trainingTimes = new Array(machineArray.lenght);
+// Array 
 //array to temporary skip machine
 var tempArray = machineArray.slice();
 
@@ -51,10 +51,16 @@ function startTraining(machine){
   function draw(){
   g.clear();
   g.setFontAlign(0,0); // center font
-  g.setFont("Vector",100); // vector font, 80px  
-  // draw the current counter value
+  g.setFont("Vector",100); // vector font, 80px
+  if (time < 90){
+    g.setColor(0xF800); //red
+  }
+  if (time > 120){
+    g.setColor(0x07E0); //green
+  }
   g.drawString(time, 120, 120);
   
+  g.setColor(0xFFFF); //white
   g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
     g.drawString("Buzz", 230, 50);
@@ -160,8 +166,26 @@ function showNext(){
 function showFinished(){
        var dateString = (new Date()).toISOString().substr(0,16).replace("T","_");
     
-  var resultFile = require("Storage").open("kieser-results.json", a);
-  resultFile.dataString = trainingTimes;
+ // var resultFile = require("Storage").open("kieser-results.json", r);
+//  resultFile.dataString = trainingTimes;
+  
+  g.clear();
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",200); // vector font, 80px  
+  // draw the current counter value
+  E.showMessage("Training finished");
+  
+  g.setFont("6x8", 2);
+    g.setFontAlign(0, 0, 3);
+    g.drawString("Close", 230, 110);
+    g.setFont("Vector", 35);
+    g.setFontAlign(-1, -1);
+  
+  setWatch(function() {
+  }, BTN1, {repeat:true});
+
+
+ setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
 }
 
