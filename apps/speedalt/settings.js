@@ -25,16 +25,22 @@
     require('Storage').write('settings.json',settings);
   }
 
+  function setDimLevel(b) {
+    settings['dim_b'] = b;
+    require('Storage').write('settings.json',settings);
+  }
+  
+  function setDimDelay(m) {
+    settings['dim_m'] = m;
+    require('Storage').write('settings.json',settings);
+  }
 
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     "Units" : function() { E.showMenu(unitsMenu); },
-    "Show Time" : {
-      value : boolean,
-      format : v => v?"On":"Off",
-      onchange : v => { setTime(v); }
-    }
+    "Power Saving Time" : function() { E.showMenu(dimDelayMenu); },
+    "Power Saving Brightness" : function() { E.showMenu(dimLevelMenu); }
   };
   
   const unitsMenu = {
@@ -49,6 +55,38 @@
     "Feet (alt)" : function() { setUnitsAlt(0.3048,'feet'); }
   };
 
+  const appMenu = {
+    '': {'title': 'GPS Speed Alt'},
+    '< Back': back,
+    "Units" : function() { E.showMenu(unitsMenu); },
+    "Show Time" : {
+      value : boolean,
+      format : v => v?"On":"Off",
+      onchange : v => { setTime(v); }
+    }
+  };
+  
+  const dimDelayMenu = {
+    '': {'title': 'Reduce Display'},
+    '< Back': back,
+    'never' : function() { setDimDelay(0); },
+    "1 min" : function() { setDimDelay(1); },
+    "2 mins" : function() { setDimDelay(2); },
+    "5 mins" : function() { setDimDelay(5); },
+    "10 mins" : function() { setDimDelay(10); },
+    "15 mins" : function() { setDimDelay(15); }
+  };
+
+  const dimLevelMenu = {
+    '': {'title': 'Display Brightness'},
+    '< Back': back,
+    '80%' : function() { setDimLevel(0.8); },
+    "60%" : function() { setDimLevel(0.6); },
+    "40%" : function() { setDimLevel(0.4); },
+    "20%" : function() { setDimLevel(0.2); },
+    "0%" : function() { setDimLevel(0); }
+  };
+  
   
   E.showMenu(appMenu)
 })
