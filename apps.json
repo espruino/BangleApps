@@ -2597,7 +2597,7 @@
   "icon": "app-icon.png",
   "version":"0.01",
   "readme": "README.md",
-  "App that performs GPS monitoring to track and display position relative to a given origin in realtime",
+  "description": "App that performs GPS monitoring to track and display position relative to a given origin in realtime",
   "tags": "outdoors,gps",
   "storage": [
     {"name":"alpinenav.app.js","url":"app.js"},
