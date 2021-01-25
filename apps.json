@@ -2593,7 +2593,7 @@
   ]
 },
 { "id": "alpinenav",
-  "name": "Alpine Navigator",
+  "name": "Alpine Nav",
   "icon": "app-icon.png",
   "version":"0.01",
   "readme": "README.md",
