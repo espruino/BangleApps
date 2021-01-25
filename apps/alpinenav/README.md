@@ -2,6 +2,8 @@ Alpine Navigator
 ================
 App that performs GPS monitoring to track and display position relative to a given origin in realtime.
 
+![screenshot](./sample.PNG)  
+
 Functions
 ---------
 Note if you've not used GPS yet I suggest using one of the GPS apps to get your first fix and confirm as I've found that helps initially.  
