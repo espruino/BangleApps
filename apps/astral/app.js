@@ -662,7 +662,7 @@ function draw_moon(phase) {
     if (phase == 5) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(220, 20, 240, 90);
+        g.fillRect(220, 25, 240, 90);
     }
     else if (phase == 6) {
         g.fillCircle(200, Yaxis, 30);
@@ -679,7 +679,7 @@ function draw_moon(phase) {
     else if (phase == 3) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(160, 20, 180, 90);
+        g.fillRect(160, 25, 180, 90);
     }
     else if (phase == 2) {
         g.fillCircle(200, Yaxis, 30);
