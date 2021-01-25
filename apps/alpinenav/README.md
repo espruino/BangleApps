@@ -18,6 +18,8 @@ The GPS and magnetometer will be turned on and after a few moments, when the wat
 
 For the display, the route is kept at a set resolution, so there's no risk of running into memory problems if you run this for long periods or any length of time because the waypoints will be reduced when it reaches a set threshold so you may see the path smooth out slightly at intervals.
 
+If you get strange values or dashes for the compass, it just needs calibration so you need to move the watch around briefly for this each time, ideally 360 degrees around itself, which involves taking the watch off. If you don't want to do that you can also just wave your hand around for a few seconds like you're at a rave or Dr Strange making a Sling Ring but often just moving your wrist a bit is enough.
+
 The buttons do the following:  
 BTN1: this will display an 'X' in the bottom of the screen and lock all the buttons, this is to prevent you accidentally either of the below. Remember to press this again to unlock it! soft and hard reset will both still work.
 BTN2: this removes all waypoints aside from the origin and your current location; sometimes during smaller journeys and walks, the GPS can give sporadic differences in locations because of the error margins of GPS and this can add noise to your route.    
