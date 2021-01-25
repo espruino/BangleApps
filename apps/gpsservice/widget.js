@@ -2,6 +2,7 @@
   var settings = {};
   var fixToggle = false; // toggles once for each reading
   var have_fix = false;
+  var debug = false;
   
   var last_fix = {
     fix: 0,
@@ -15,17 +16,20 @@
 
   function gps_get_fix() { return last_fix; }
   function gps_get_status() { return WIDGETS.gpsservice.width === 24 ? true : false;}
-  function gps_get_version() { return "0.1"; }
+  function gps_get_version() { return "0.2"; }
+
+  function log_debug(o) {
+    if (debug) console.log(o);
+  }
+
+  function gps_set_debug(v) {
+    debug = v;
+  }
   
   // Called by the GPS widget settings to reload settings and decide what to do
   function reload() {
-    settings = require("Storage").readJSON("gpsservice.settings.json",1)||{};
-    settings.gpsservice = settings.gpsservice||false;
-    settings.update = settings.update||120;
-    settings.search = settings.search||5;
-    settings.power_mode = settings.power_mode||"SuperE";
-    //console.log(settings);
-    
+    settings = gps_get_settings();
+    log_debug(settings);
     Bangle.removeListener('GPS',onGPS);
 
     if (settings.gpsservice) {
@@ -35,6 +39,26 @@
     }
   }
   
+  // retrieve the settings from Storage, can be called by external apps
+  function gps_get_settings() {
+    var sets = require("Storage").readJSON("gpsservice.settings.json",1)||{};
+    sets.gpsservice = sets.gpsservice||false;
+    sets.update = sets.update||120;
+    sets.search = sets.search||5;
+    sets.power_mode = sets.power_mode||"SuperE";
+    return sets;
+  }
+  
+  // pass in the required settings, can be called by external apps
+  function gps_set_settings(sets) {
+    settings.gpsservice = sets.gpsservice||false;
+    settings.update = sets.update||120;
+    settings.search = sets.search||5;
+    settings.power_mode = sets.power_mode||"SuperE";
+    require("Storage").write("gpsservice.settings.json", settings);
+  }
+
+  // issue: currently possible to call this without having set settings.gpsservice in settings file
   function gps_power_on() {
     have_fix = false;
     fixToggle = false;
@@ -43,6 +67,7 @@
   }
 
   function gps_power_off() {
+    setupSuperE();  // return to expected setup for other apps
     Bangle.setGPSPower(0);
     have_fix = false;
     fixToggle = false;
@@ -61,35 +86,42 @@
 
   function setupGPS() {
     Bangle.setGPSPower(1);
-    //console.log(settings);
 
     if (settings.power_mode === "PSMOO") {
-      //console.log("setupGPS() PSMOO");
-      UBX_CFG_RESET();
-      wait(100);
-      
-      UBX_CFG_PM2(settings.update, settings.search);
-      wait(20);
-    
-      UBX_CFG_RXM();
-      wait(20);
-      
-      UBX_CFG_SAVE();
-      wait(20);
+      setupPSMOO();
     } else {
-      //console.log("setupGPS() Super-E");
-      UBX_CFG_RESET();
-      wait(100);
-      
-      UBX_CFG_PMS();
-      wait(20);
-
-      UBX_CFG_SAVE();
-      wait(20);
+      setupSuperE();
     }
     Bangle.on('GPS',onGPS);
   }
 
+  function setupPSMOO() {
+    log_debug("setupGPS() PSMOO");
+    UBX_CFG_RESET();
+    wait(100);
+      
+    UBX_CFG_PM2(settings.update, settings.search);
+    wait(20);
+    
+    UBX_CFG_RXM();
+    wait(20);
+      
+    UBX_CFG_SAVE();
+    wait(20);
+  }
+
+  function setupSuperE() {
+    log_debug("setupGPS() Super-E");
+    UBX_CFG_RESET();
+    wait(100);
+      
+    UBX_CFG_PMS();
+    wait(20);
+
+    UBX_CFG_SAVE();
+    wait(20);
+  }
+  
   function writeGPScmd(cmd) {
     var d = [0xB5,0x62]; // sync chars
     d = d.concat(cmd);
@@ -201,7 +233,7 @@
   function onGPS(fix) {
     fixToggle = !fixToggle;
     WIDGETS.gpsservice.draw();
-
+    log_debug(fix);
     last_fix.satellites = fix.satellites;
 
     /*
@@ -236,12 +268,15 @@
     gps_get_status:gps_get_status,
     gps_get_fix:gps_get_fix,
     gps_get_version:gps_get_version,
+    gps_get_settings:gps_get_settings,
+    gps_set_settings:gps_set_settings,
+    gps_set_debug:gps_set_debug,
     reload:function() {
-        reload();
-        Bangle.drawWidgets(); // relayout all widgets
+      reload();
+      Bangle.drawWidgets(); // relayout all widgets
     }};
 
-   // load settings, set correct widget width
+  // load settings, set correct widget width
   reload();
   
 })();

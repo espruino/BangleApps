@@ -229,3 +229,31 @@ function setupGPS() {
   Bangle.on('GPS',onGPS);
 }
 
+function test_gps_on() {
+
+  var settings = WIDGETS.gpsservice.gps_get_settings();
+
+  settings.gpsservice = true;
+  settings.update = 65;
+  settings.search = 5;
+  settings.power_mode = "PSMOO";
+  
+  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.reload(); // will power on
+}
+
+
+function test_gps_off() {
+
+  var settings = WIDGETS.gpsservice.gps_get_settings();
+
+  settings.gpsservice = false;
+  settings.power_mode = "SuperE";
+  
+  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.reload(); // will power off
+}
+
+// test_gps_on();
+// test_gps_off();
+
