@@ -6,116 +6,116 @@ var trainingTimes = new Array(machineArray.lenght);
 //array to temporary skip machine
 var tempArray = machineArray.slice();
 
-function showSettings(machine){
+function showSettings(machine) {
   clearWatch();
 
   var settingY = 100;
   console.log("Show Setting for " + machine.machine);
   g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
+  g.setFontAlign(0, 0); // center font
+  g.setFont("Vector", 200); // vector font, 80px  
   // draw the current counter value
   E.showMessage("", machine.machine);
-  
-  g.drawString("Weight: "+ machine.weight, 100, 70);
+
+  g.drawString("Weight: " + machine.weight, 100, 70);
   for (let setting of machine.settings) {
     g.drawString(setting, 100, settingY);
     settingY += 30;
   }
-  
+
   g.setFont("6x8", 2);
-    g.setFontAlign(0, 0, 3);
-    g.drawString("Menu", 230, 50);
-    g.drawString("Start", 230, 110);
-    g.setFont("Vector", 35);
-    g.setFontAlign(-1, -1);
-  
-  setWatch(function() {
+  g.setFontAlign(0, 0, 3);
+  g.drawString("Menu", 230, 50);
+  g.drawString("Start", 230, 110);
+  g.setFont("Vector", 35);
+  g.setFontAlign(-1, -1);
+
+  setWatch(function () {
     showMenu();
-  }, BTN1, {repeat:true});
+  }, BTN1, { repeat: true });
 
 
-  setWatch(function() {
+  setWatch(function () {
     startTraining(machine);
-  }, BTN2, {repeat:true});
-  
+  }, BTN2, { repeat: true });
+
   // optional - this keeps the watch LCD lit up
   g.flip();
 }
 
-function startTraining(machine){
+function startTraining(machine) {
   clearWatch();
   var time = 0;
   console.log("start training for " + machine.machine);
-  
-  function draw(){
-  g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",100); // vector font, 80px
-  if (time < 90){
-    g.setColor(0xF800); //red
-  }
-  if (time > 120){
-    g.setColor(0x07E0); //green
-  }
-  g.drawString(time, 120, 120);
-  
-  g.setColor(0xFFFF); //white
-  g.setFont("6x8", 2);
+
+  function draw() {
+    g.clear();
+    g.setFontAlign(0, 0); // center font
+    g.setFont("Vector", 100); // vector font, 80px
+    if (time < 90) {
+      g.setColor(0xF800); //red
+    }
+    if (time > 120) {
+      g.setColor(0x07E0); //green
+    }
+    g.drawString(time, 120, 120);
+
+    g.setColor(0xFFFF); //white
+    g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
     g.drawString("Buzz", 230, 50);
     g.drawString("Stop", 230, 110);
     g.setFont("Vector", 35);
     g.setFontAlign(-1, -1);
   }
-  
+
   setInterval(function () {
     time++;
     draw();
   }, 1000);
-  
-  
-  setWatch(function() {
+
+
+  setWatch(function () {
     vibrate();
-  }, BTN1, {repeat:true});
+  }, BTN1, { repeat: true });
 
 
-  setWatch(function() {
+  setWatch(function () {
     clearInterval();
-     showTime(machine, time);
-  }, BTN2, {repeat:true});
-  
+    showTime(machine, time);
+  }, BTN2, { repeat: true });
+
 }
 
 function vibrate() {
-   
+
   //Bangle.buzz()
   //  .then(() => new Promise(resolve => setTimeout(resolve, 4000)))
   //  .then(() => Bangle.buzz())
   //  .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
-   // .then(() => Bangle.buzz());
+  // .then(() => Bangle.buzz());
 
   setTimeout(function () {
-  Bangle.buzz();
-}, 4000);
+    Bangle.buzz();
+  }, 4000);
   setTimeout(function () {
-  Bangle.buzz();
-}, 2000);
+    Bangle.buzz();
+  }, 2000);
   //setTimeout(vibrate, 2000);
 }
 
-function showTime(machine, time){
+function showTime(machine, time) {
   clearWatch();
 
-  function draw(){
-  g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
-  // draw the current counter value
-  E.showMessage("Training finished for ", machine.machine);
-  E.showMessage("Time was " + time);
-  
-  g.setFont("6x8", 2);
+  function draw() {
+    g.clear();
+    g.setFontAlign(0, 0); // center font
+    g.setFont("Vector", 200); // vector font, 80px  
+    // draw the current counter value
+    E.showMessage("Training finished for ", machine.machine);
+    E.showMessage("Time was " + time);
+
+    g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
     g.drawString("+10", 230, 50);
     g.drawString("Next", 230, 110);
@@ -124,79 +124,79 @@ function showTime(machine, time){
     g.setFontAlign(-1, -1);
   }
   draw();
-  
-  setWatch(function() {
+
+  setWatch(function () {
     time += 10;
     draw();
-  }, BTN1, {repeat:true});
+  }, BTN1, { repeat: true });
 
 
-  setWatch(function() {
-     setFinished(machine, time);
-  }, BTN2, {repeat:true});
-  
-  setWatch(function() {
-    if (time - 10 >= 0){
-    time -= 10;
-    draw();
+  setWatch(function () {
+    setFinished(machine, time);
+  }, BTN2, { repeat: true });
+
+  setWatch(function () {
+    if (time - 10 >= 0) {
+      time -= 10;
+      draw();
     }
-  }, BTN3, {repeat:true});
-  
-  setWatch(function() {
-    if (time -5 >= 0){
-    time -= 5;
-    draw();
+  }, BTN3, { repeat: true });
+
+  setWatch(function () {
+    if (time - 5 >= 0) {
+      time -= 5;
+      draw();
     }
-  }, BTN4, {repeat:true});
-  
-  setWatch(function() {
+  }, BTN4, { repeat: true });
+
+  setWatch(function () {
     time += 5;
     draw();
-  }, BTN5, {repeat:true});
-  
+  }, BTN5, { repeat: true });
+
 }
 
-function setFinished(machine, time){
-  console.log("finished "+ machine.machine); 
+function setFinished(machine, time) {
+  console.log("finished " + machine.machine);
   clearWatch();
   machine.finished = true;
   oldWeight = machine.weight;
   fiveProcent = Math.ceil(oldWeight / 100 * 5);
-  
+
   console.log("old " + oldWeight);
   console.log("prozent" + fiveProcent);
-  if (time < 90){
+  if (time < 90) {
     newWeight = oldWeight - fiveProcent;
   } else if (time > 120) {
     newWeight = oldWeight + fiveProcent;
   } else {
     newWeight = oldWeight;
   }
-  if (newWeight%2 != 0){
+  if (newWeight % 2 != 0) {
     newWeight++;
   }
   console.log("new " + newWeight);
   machine.weight = newWeight;
-  
 
-  function draw(){
-  g.clear();
- // g.setFontAlign(0,0); // center font
-  g.setFont("Vector",20); // vector font  
-  // draw the current counter value
-  g.drawString("Training for\nmachine " + machine.machine + "\nfinished", 50, 50);
-  if (time < 90){
-    g.drawString("The weight has\nbeen decreased\nto: " + newWeight, 50, 110);
-  } else if (time > 120) {
-    g.drawString("The weight has\nbeen increased\nto: " + newWeight, 50, 110);
-  } else {
-    g.drawString("The weight\nremains at:\n" + newWeight, 50, 110);
+
+  function draw() {
+    g.clear();
+    // g.setFontAlign(0,0); // center font
+    g.setFont("Vector", 20); // vector font  
+    // draw the current counter value
+    g.drawString("Training for\nmachine " + machine.machine + "\nfinished", 50, 50);
+    if (time < 90) {
+      g.drawString("The weight has\nbeen decreased\nto: " + newWeight, 50, 110);
+    } else if (time > 120) {
+      g.drawString("The weight has\nbeen increased\nto: " + newWeight, 50, 110);
+    } else {
+      g.drawString("The weight\nremains at:\n" + newWeight, 50, 110);
+    }
+    drawButtons();
   }
-  drawButtons();
-  }
-  
-  function drawButtons(){
-  g.setFont("6x8", 2);
+
+  function drawButtons() {
+    g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
     g.drawString("+4", 230, 50);
     g.drawString("Next", 230, 110);
@@ -204,126 +204,126 @@ function setFinished(machine, time){
     g.setFont("Vector", 35);
     g.setFontAlign(-1, -1);
   }
-  
+
   draw();
-  setWatch(function() {
+  setWatch(function () {
     newWeight += 4;
     console.log("new " + newWeight);
     E.showMessage("New Weight is " + newWeight);
     drawButtons();
 
     machine.weight = newWeight;
-  }, BTN1, {repeat:true});
+  }, BTN1, { repeat: true });
 
 
-  setWatch(function() {
+  setWatch(function () {
     require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
-    trainingTimes.push(machine.machine+ " "  + oldWeight + " " + time);
+    trainingTimes.push(machine.machine + " " + oldWeight + " " + time);
     console.log("hier ist noch was zu tun!");
     // TODO Implementieren!
-     showNext();
-  }, BTN2, {repeat:true});
-  
-  setWatch(function() {
-     newWeight -= 4;
+    showNext();
+  }, BTN2, { repeat: true });
+
+  setWatch(function () {
+    newWeight -= 4;
     console.log("new " + newWeight);
     E.showMessage("New Weight is " + newWeight);
     drawButtons();
 
     machine.weight = newWeight;
-  }, BTN3, {repeat:true});
+  }, BTN3, { repeat: true });
 }
 
-function showNext(){
+function showNext() {
   var nextMachine;
-  for (let i = 0; i < tempArray.length; i++){
-    if (tempArray[i].finished == false){
+  for (let i = 0; i < tempArray.length; i++) {
+    if (tempArray[i].finished == false) {
       nextMachine = machineArray[i];
       break;
     }
   }
-  if (nextMachine == undefined) {allFinished();}
+  if (nextMachine == undefined) { allFinished(); }
   console.log(nextMachine);
   showSettings(nextMachine);
 }
 
-function allFinished(){
-       var dateString = (new Date()).toISOString().substr(0,16).replace("T","_");
-    
- // var resultFile = require("Storage").open("kieser-results.json", r);
-//  resultFile.dataString = trainingTimes;
-  
+function allFinished() {
+  var dateString = (new Date()).toISOString().substr(0, 16).replace("T", "_");
+
+  // var resultFile = require("Storage").open("kieser-results.json", r);
+  //  resultFile.dataString = trainingTimes;
+
   g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
+  g.setFontAlign(0, 0); // center font
+  g.setFont("Vector", 200); // vector font, 80px  
   // draw the current counter value
   E.showMessage("Training finished");
-  
+
   g.setFont("6x8", 2);
-    g.setFontAlign(0, 0, 3);
-    g.drawString("Close", 230, 110);
-    g.setFont("Vector", 35);
-    g.setFontAlign(-1, -1);
-  
-  setWatch(function() {
-  }, BTN1, {repeat:true});
+  g.setFontAlign(0, 0, 3);
+  g.drawString("Close", 230, 110);
+  g.setFont("Vector", 35);
+  g.setFontAlign(-1, -1);
+
+  setWatch(function () {
+  }, BTN1, { repeat: true });
 
 
- setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+  setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
 }
 
-function showMenu(){
+function showMenu() {
   clearWatch();
 
-  function createMenuItems(){
+  function createMenuItems() {
     menuObjekt = {};
-    menuObjekt[""] = {"title" : "machines left"};
+    menuObjekt[""] = { "title": "machines left" };
 
-    tempArray.forEach(function(m, i) {
-       if (m.finished == false){
-          menuObjekt[m.machine] = function(){showSettings(m);};
-          }
+    tempArray.forEach(function (m, i) {
+      if (m.finished == false) {
+        menuObjekt[m.machine] = function () { showSettings(m); };
+      }
     });
-    
-    menuObjekt.Exit = function() { E.showMenu();};
+
+    menuObjekt.Exit = function () { E.showMenu(); };
     return menuObjekt;
   }
-  
+
   var mainmenu = createMenuItems();
   console.log(mainmenu);
   E.showMenu(mainmenu);
 }
 
 
-function init(){
-  for (let machine of tempArray){
-   var finished = false;
-   machine.finished = finished;
+function init() {
+  for (let machine of tempArray) {
+    var finished = false;
+    machine.finished = finished;
   }
   console.log(startDate);
-  
+
   g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
+  g.setFontAlign(0, 0); // center font
+  g.setFont("Vector", 200); // vector font, 80px  
   // draw the current counter value
   E.showMessage("Start training", "Welcome");
 
   g.setFont("6x8", 2);
-    g.setFontAlign(0, 0, 3);
-    g.drawString("Menu", 230, 50);
-    g.drawString("Start", 230, 110);
-    g.setFont("Vector", 35);
-    g.setFontAlign(-1, -1);
-  
-  setWatch(function() {
+  g.setFontAlign(0, 0, 3);
+  g.drawString("Menu", 230, 50);
+  g.drawString("Start", 230, 110);
+  g.setFont("Vector", 35);
+  g.setFontAlign(-1, -1);
+
+  setWatch(function () {
     showMenu();
-  }, BTN1, {repeat:false});
+  }, BTN1, { repeat: false });
 
 
-  setWatch(function() {
-showNext();
-  }, BTN2, {repeat:false});
+  setWatch(function () {
+    showNext();
+  }, BTN2, { repeat: false });
 }
 
 
