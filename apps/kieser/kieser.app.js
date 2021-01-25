@@ -82,7 +82,7 @@ function startTraining(machine){
 
   setWatch(function() {
     clearInterval();
-     setFinished(machine, time);
+     showTime(machine, time);
   }, BTN2, {repeat:true});
   
 }
@@ -104,6 +104,58 @@ function vibrate() {
   //setTimeout(vibrate, 2000);
 }
 
+function showTime(machine, time){
+  clearWatch();
+
+  function draw(){
+  g.clear();
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",200); // vector font, 80px  
+  // draw the current counter value
+  E.showMessage("Training finished for ", machine.machine);
+  E.showMessage("Time was " + time);
+  
+  g.setFont("6x8", 2);
+    g.setFontAlign(0, 0, 3);
+    g.drawString("+10", 230, 50);
+    g.drawString("Next", 230, 110);
+    g.drawString("-10", 230, 170);
+    g.setFont("Vector", 35);
+    g.setFontAlign(-1, -1);
+  }
+  draw();
+  
+  setWatch(function() {
+    time += 10;
+    draw();
+  }, BTN1, {repeat:true});
+
+
+  setWatch(function() {
+     setFinished(machine, time);
+  }, BTN2, {repeat:true});
+  
+  setWatch(function() {
+    if (time - 10 >= 0){
+    time -= 10;
+    draw();
+    }
+  }, BTN3, {repeat:true});
+  
+  setWatch(function() {
+    if (time -5 >= 0){
+    time -= 5;
+    draw();
+    }
+  }, BTN4, {repeat:true});
+  
+  setWatch(function() {
+    time += 5;
+    draw();
+  }, BTN5, {repeat:true});
+  
+}
+
 function setFinished(machine, time){
   console.log("finished "+ machine.machine); 
   clearWatch();
@@ -111,7 +163,7 @@ function setFinished(machine, time){
   oldWeight = machine.weight;
   fiveProcent = Math.ceil(oldWeight / 100 * 5);
   
-  console.log("alt" + oldWeight);
+  console.log("old " + oldWeight);
   console.log("prozent" + fiveProcent);
   if (time < 90){
     newWeight = oldWeight - fiveProcent;
@@ -123,31 +175,63 @@ function setFinished(machine, time){
   if (newWeight%2 != 0){
     newWeight++;
   }
-  console.log("neu" + newWeight);
+  console.log("new " + newWeight);
   machine.weight = newWeight;
-  require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
-  trainingTimes.push(machine.machine+ " "  + oldWeight + " " + time);
   
+
+  function draw(){
   g.clear();
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",200); // vector font, 80px  
+ // g.setFontAlign(0,0); // center font
+  g.setFont("Vector",20); // vector font  
   // draw the current counter value
-  E.showMessage("Training finished for ", machine.machine);
-  E.showMessage("Time was " + time);
+  g.drawString("Training for\nmachine " + machine.machine + "\nfinished", 50, 50);
+  if (time < 90){
+    g.drawString("The weight has\nbeen decreased\nto: " + newWeight, 50, 110);
+  } else if (time > 120) {
+    g.drawString("The weight has\nbeen increased\nto: " + newWeight, 50, 110);
+  } else {
+    g.drawString("The weight\nremains at:\n" + newWeight, 50, 110);
+  }
+  drawButtons();
+  }
   
+  function drawButtons(){
   g.setFont("6x8", 2);
     g.setFontAlign(0, 0, 3);
+    g.drawString("+4", 230, 50);
     g.drawString("Next", 230, 110);
+    g.drawString("-4", 230, 170);
     g.setFont("Vector", 35);
     g.setFontAlign(-1, -1);
+  }
   
+  draw();
   setWatch(function() {
+    newWeight += 4;
+    console.log("new " + newWeight);
+    E.showMessage("New Weight is " + newWeight);
+    drawButtons();
+
+    machine.weight = newWeight;
   }, BTN1, {repeat:true});
 
 
   setWatch(function() {
+    require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
+    trainingTimes.push(machine.machine+ " "  + oldWeight + " " + time);
+    console.log("hier ist noch was zu tun!");
+    // TODO Implementieren!
      showNext();
   }, BTN2, {repeat:true});
+  
+  setWatch(function() {
+     newWeight -= 4;
+    console.log("new " + newWeight);
+    E.showMessage("New Weight is " + newWeight);
+    drawButtons();
+
+    machine.weight = newWeight;
+  }, BTN3, {repeat:true});
 }
 
 function showNext(){
@@ -158,12 +242,12 @@ function showNext(){
       break;
     }
   }
-  if (nextMachine == undefined) {showFinished();}
+  if (nextMachine == undefined) {allFinished();}
   console.log(nextMachine);
   showSettings(nextMachine);
 }
 
-function showFinished(){
+function allFinished(){
        var dateString = (new Date()).toISOString().substr(0,16).replace("T","_");
     
  // var resultFile = require("Storage").open("kieser-results.json", r);
