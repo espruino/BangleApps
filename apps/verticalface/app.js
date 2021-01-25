@@ -129,7 +129,6 @@ Bangle.on('lcdPower',on=>{
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-// this can be annoying as you loose the watch face, middle button is enough
 Bangle.on('touch', function(button) {
   if(button == 1 || button == 2){
     Bangle.showLauncher();
