@@ -39,7 +39,7 @@
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     "Units" : function() { E.showMenu(unitsMenu); },
-    "Power Saving Time" : function() { E.showMenu(dimDelayMenu); },
+    "Power Saving Timeout" : function() { E.showMenu(dimDelayMenu); },
     "Power Saving Brightness" : function() { E.showMenu(dimLevelMenu); }
   };
   
@@ -55,17 +55,6 @@
     "Feet (alt)" : function() { setUnitsAlt(0.3048,'feet'); }
   };
 
-  const appMenu = {
-    '': {'title': 'GPS Speed Alt'},
-    '< Back': back,
-    "Units" : function() { E.showMenu(unitsMenu); },
-    "Show Time" : {
-      value : boolean,
-      format : v => v?"On":"Off",
-      onchange : v => { setTime(v); }
-    }
-  };
-  
   const dimDelayMenu = {
     '': {'title': 'Reduce Display'},
     '< Back': back,
