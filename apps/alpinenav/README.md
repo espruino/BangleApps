@@ -2,7 +2,7 @@ Alpine Navigator
 ================
 App that performs GPS monitoring to track and display position relative to a given origin in realtime.
 
-![screenshot](./sample.PNG)  
+![screenshot](./sample.png)  
 
 Functions
 ---------
