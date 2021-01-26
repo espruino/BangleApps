@@ -1553,7 +1553,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.06",
+    "version": "0.07",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -2585,7 +2585,7 @@
 { "id": "astral",
   "name": "Astral Clock",
   "icon": "app-icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "readme": "README.md",
   "description": "Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting. See Readme before using.",
   "tags": "clock",
@@ -2593,6 +2593,18 @@
   "storage": [
     {"name":"astral.app.js","url":"app.js"},
     {"name":"astral.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "alpinenav",
+  "name": "Alpine Nav",
+  "icon": "app-icon.png",
+  "version":"0.01",
+  "readme": "README.md",
+  "description": "App that performs GPS monitoring to track and display position relative to a given origin in realtime",
+  "tags": "outdoors,gps",
+  "storage": [
+    {"name":"alpinenav.app.js","url":"app.js"},
+    {"name":"alpinenav.img","url":"app-icon.js","evaluate":true}
   ]
 },
 { "id": "lifeclk",
@@ -2635,5 +2647,19 @@
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
   ]
-}   
+},
+{ "id": "mclockplus",
+  "name": "Morph Clock+",
+  "shortName":"Morph Clock+",
+  "icon": "mclockplus.png",
+  "version":"1.0",
+  "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
+    {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
+  ]
+}
 ]
