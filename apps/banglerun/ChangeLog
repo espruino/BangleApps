@@ -4,3 +4,4 @@
 0.04: Use offscreen buffer for flickerless updates
 0.05: Complete rewrite. New UI, GPS & HRM Kalman filters, activity logging
 0.06: Reading HDOP directly from the GPS event (needs Espruino 2v07 or above)
+0.07: Fixed GPS update, added guards against NaN values
