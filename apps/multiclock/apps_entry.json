@@ -13,6 +13,9 @@
       {"name":"ana.face.js","url":"ana.min.js"},
       {"name":"digi.face.js","url":"digi.min.js"},
       {"name":"txt.face.js","url":"txt.min.js"},
+      {"name":"ped.face.js","url":"ped.js"},
+      {"name":"osref.face.js","url":"osref.js"},
+      {"name":"gps.face.js","url":"pgs.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
