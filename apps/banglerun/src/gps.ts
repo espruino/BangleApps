@@ -37,7 +37,7 @@ function readGps(state: AppState, gps: GpsEvent): void {
   state.fix = gps.fix;
   state.dop = gps.hdop;
 
-  state.gpsValid = state.fix === 3 && state.dop <= 5;
+  state.gpsValid = state.fix > 0 && state.dop <= 5;
 
   updateGps(state);
   draw(state);
