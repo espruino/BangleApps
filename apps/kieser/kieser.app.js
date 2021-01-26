@@ -184,7 +184,7 @@ function setFinished(machine, time) {
     // g.setFontAlign(0,0); // center font
     g.setFont("Vector", 20); // vector font  
     // draw the current counter value
-    g.drawString("Training for\nmachine " + machine.machine + "\nfinished", 50, 50);
+    g.drawString("Training for\nmachine " + machine.machine + "\nfinished.", 50, 50);
     if (time < 90) {
       g.drawString("The weight has\nbeen decreased\nto: " + newWeight, 50, 110);
     } else if (time > 120) {
@@ -242,7 +242,10 @@ function showNext() {
       break;
     }
   }
-  if (nextMachine == undefined) { allFinished(); }
+  if (nextMachine == undefined) { 
+    allFinished();
+    return;
+  }
   console.log(nextMachine);
   showSettings(nextMachine);
 }
