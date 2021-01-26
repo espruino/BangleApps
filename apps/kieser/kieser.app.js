@@ -223,14 +223,13 @@ function setFinished(machine, time) {
 
   setWatch(function () {
     console.log(currentIndex);
-    console.log("hier würde dann das Ergebnis eingespielt");
     weightTimeObject = {};
     weightTimeObject.weight = oldWeight;
     weightTimeObject.time = time;
     var machineName = machine.machine;
-    resultObject[machineName] = weightTimeObject;
-    console.log("hier ist noch was zu tun!");
-    // TODO Implementieren!
+    trainingTime = {};
+    trainingTime[machineName] = weightTimeObject;
+    trainingTimes[currentIndex] = trainingTime;
     showNext();
   }, BTN2, { repeat: true });
 
@@ -265,6 +264,10 @@ function showNext() {
 }
 
 function allFinished() {
+  clearWatch();
+  var dateString = (new Date()).toISOString().substr(0, 16).replace("T", "_");
+  resultObject.date = dateString;
+  resultObject.machines = trainingTimes;
   resultFile.push(resultObject);
   require("Storage").writeJSON("kieser-results.json", resultFile);
   require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
@@ -319,8 +322,6 @@ function init() {
     machine.finished = finished;
   }
   console.log(startDate);
-  var dateString = (new Date()).toISOString().substr(0, 16).replace("T", "_");
-  resultObject.date = dateString;
   g.clear();
   g.setFontAlign(0, 0); // center font
   g.setFont("Vector", 200); // vector font, 80px  
