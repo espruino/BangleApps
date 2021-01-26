@@ -49,7 +49,9 @@ function drawSteps() {
   g.setFontAlign(-1,0); // align right bottom
   g.drawString("STEPS", 145, 40, true /*clear background*/);
   g.setColor('#bdc3c7');
-  if (WIDGETS.wpedom !== undefined) {
+  if (WIDGETS.activepedom !== undefined) {
+    steps = WIDGETS.activepedom.getSteps();
+  } else if (WIDGETS.wpedom !== undefined) {
     steps = WIDGETS.wpedom.getSteps();
   }
   g.drawString(steps, 145, 65, true /*clear background*/);

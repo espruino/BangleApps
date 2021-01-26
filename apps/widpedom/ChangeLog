@@ -7,3 +7,4 @@
 0.08: Ensure redrawing works with variable size widget system
 0.09: Add daily goal
 0.10: Fix daily goal, don't store settings in separate file
+0.11: added getSteps() method for apps to retrieve step count

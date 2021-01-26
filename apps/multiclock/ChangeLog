@@ -8,3 +8,4 @@
 0.08: Add pinned clock face
 0.09: Added Pedometer clock
 0.10: Added GPS and Grid Ref clock faces
+0.11: Updated Pedometer clock to retrieve steps from either wpedom or activepedom
