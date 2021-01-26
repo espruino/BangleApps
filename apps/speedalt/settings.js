@@ -86,7 +86,7 @@
     '': {'title': 'Colours'},
     '< Back': back,
     'Default' : function() { setColor(0); },
-    "Bright" : function() { setColor(1); },
+    "Hi Contrast" : function() { setColor(1); },
     "Night" : function() { setColor(2); }
   };
   
