@@ -2612,7 +2612,8 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "GPS speed and altitude display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
-  "tags": "tool,outdoors",
+  "tags": "clock,tool,outdoors",
+  "type":"clock",
   "readme": "README.md",
   "storage": [
     {"name":"speedalt.app.js","url":"app.js"},
