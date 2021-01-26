@@ -91,8 +91,8 @@ function updateGps(state: AppState): void {
   const pError = dpMag + state.dop * POS_ACCURACY;
   const vError = dvMag + state.dop * VEL_ACCURACY;
 
-  const pGain = state.pError / (state.pError + pError);
-  const vGain = state.vError / (state.vError + vError);
+  const pGain = (state.pError / (state.pError + pError)) || 0;
+  const vGain = (state.vError / (state.vError + vError)) || 0;
 
   state.x += dx * pGain;
   state.y += dy * pGain;
@@ -103,7 +103,7 @@ function updateGps(state: AppState): void {
 
   const pMag = Math.sqrt(state.x * state.x + state.y * state.y + state.z * state.z);
 
-  state.lat = Math.asin(state.z / pMag) * 180 / Math.PI;
+  state.lat = (Math.asin(state.z / pMag) * 180 / Math.PI) || 0;
   state.lon = (Math.atan2(state.y, state.x) * 180 / Math.PI) || 0;
   state.alt = pMag - EARTH_RADIUS;
 
