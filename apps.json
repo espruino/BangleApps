@@ -946,7 +946,7 @@
     "name": "Assisted GPS Update (AGPS)",
     "icon": "app.png",
     "version":"0.01",
-    "description": "Downloads assisted GPS data to Bangle.js for faster GPS startup and more accurate fixes",
+    "description": "Downloads assisted GPS (AGPS) data to Bangle.js for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "custom": "custom.html",
     "tags": "tool,outdoors,agps",
     "type": "RAM",
@@ -1394,7 +1394,7 @@
   "name": "Dev Stopwatch",
   "shortName":"Dev Stopwatch",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "tags": "stopwatch, chrono, timer, chronometer",
   "allow_emulator":true,
@@ -1553,7 +1553,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.05",
+    "version": "0.07",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -2139,7 +2139,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.08",
+    "version":"0.10",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2152,6 +2152,9 @@
       {"name":"digi.face.js","url":"digi.js"},
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
+      {"name":"ped.face.js","url":"ped.js"},
+      {"name":"gps.face.js","url":"gps.js"},
+      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2602,6 +2605,61 @@
   "storage": [
     {"name":"alpinenav.app.js","url":"app.js"},
     {"name":"alpinenav.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "lifeclk",
+  "name": "Game of Life Clock",
+  "shortName":"Conway's Clock",
+  "icon": "app.png",
+  "version":"0.05",
+  "description": "Modification and clockification of Conway's Game of Life",
+  "tags": "clock",
+  "type" : "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"lifeclk.app.js","url":"app.js"},
+    {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "de-stress",
+  "name": "De-Stress",
+  "shortName":"De-Stress",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Simple haptic heartbeat",
+  "storage": [
+    {"name":"de-stress.app.js","url":"app.js"},
+    {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "gpsservice",
+  "name": "Low power GPS Service",
+  "shortName":"GPS Service",
+  "icon": "gpsservice.png",
+  "version":"0.02",
+  "description": "low power GPS widget",
+  "tags": "gps outdoors navigation",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpsservice.app.js","url":"app.js"},
+    {"name":"gpsservice.settings.js","url":"settings.js"},
+    {"name":"gpsservice.settings.json","url":"settings.json"},
+    {"name":"gpsservice.wid.js","url":"widget.js"},
+    {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ]
+},
+{ "id": "mclockplus",
+  "name": "Morph Clock+",
+  "shortName":"Morph Clock+",
+  "icon": "mclockplus.png",
+  "version":"1.0",
+  "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
+    {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
   ]
 }
 ]
