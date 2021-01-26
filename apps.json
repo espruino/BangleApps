@@ -2635,5 +2635,19 @@
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
   ]
-}   
+},
+{ "id": "mclockplus",
+  "name": "Morph Clock+",
+  "shortName":"Morph Clock+",
+  "icon": "mclockplus.png",
+  "version":"1.0",
+  "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
+    {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
+  ]
+}
 ]
