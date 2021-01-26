@@ -35,10 +35,16 @@
     require('Storage').write('settings.json',settings);
   }
 
+  function setColour(c) {
+    settings['colour'] = c;
+    require('Storage').write('settings.json',settings);
+  }
+  
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     "Units" : function() { E.showMenu(unitsMenu); },
+    "Colours" : function() { E.showMenu(colMenu); },
     "Power Saving Timeout" : function() { E.showMenu(dimDelayMenu); },
     "Power Saving Brightness" : function() { E.showMenu(dimLevelMenu); }
   };
@@ -74,6 +80,14 @@
     "40%" : function() { setDimLevel(0.4); },
     "20%" : function() { setDimLevel(0.2); },
     "0%" : function() { setDimLevel(0); }
+  };
+
+  const colMenu = {
+    '': {'title': 'Colours'},
+    '< Back': back,
+    'Default' : function() { setColor(0); },
+    "Bright" : function() { setColor(1); },
+    "Night" : function() { setColor(2); }
   };
   
   
