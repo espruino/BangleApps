@@ -32,14 +32,14 @@ if (test_file !== undefined) {
 if (astral_settings === undefined) {
     astral_settings = {
         version: 1,
-        lat: 51.9492,
-        lon: 0.2834,
+        lat: 51.5074,
+        lon: 0.1278,
         astral_default: true,
         extras: [
             { name: "Andromeda", ra: "004244", de: "411609", type: 3 },
             { name: "Cigar", ra: "095552", de: "694047", type: 3 },
             { name: "Pinwheel", ra: "140313", de: "542057", type: 3 },
-            { name: "Whirlpool", ra: "1329553", de: "471143", type: 3 },
+            { name: "Whirlpool", ra: "132953", de: "471143", type: 3 },
             { name: "Orion", ra: "053517", de: "-052328", type: 2 },
             { name: "Hercules", ra: "160515", de: "174455", type: 1 },
             { name: "Beehive", ra: "084024", de: "195900", type: 1 },
@@ -662,12 +662,12 @@ function draw_moon(phase) {
     if (phase == 5) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(220, 20, 240, 90);
+        g.fillRect(220, 25, 240, 90);
     }
     else if (phase == 6) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(200, 20, 240, 90);
+        g.fillRect(200, 25, 240, 90);
     }
     else if (phase == 1) {
         g.fillCircle(200, Yaxis, 30);
@@ -679,12 +679,12 @@ function draw_moon(phase) {
     else if (phase == 3) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(160, 20, 180, 90);
+        g.fillRect(160, 25, 180, 90);
     }
     else if (phase == 2) {
         g.fillCircle(200, Yaxis, 30);
         g.setColor("#000000");
-        g.fillRect(160, 20, 200, 90);
+        g.fillRect(160, 25, 200, 90);
     }
     else if (phase == 7) {
         g.fillCircle(200, Yaxis, 30);
@@ -823,19 +823,23 @@ setWatch(function () {
             display_colour = default_colour;
         else
             display_colour = setupcomplete_colour;
+      draw_moon(current_moonphase);
     }
 }, BTN4, { repeat: true });
 
 //events
 Bangle.on('mag', function (m) {
+  g.setFont("6x8",2);
     if (isNaN(m.heading))
-        compass_heading = "--";
+        compass_heading = "---";
     else
         compass_heading = 360 - Math.round(m.heading);
-    g.setColor("#000000");
-    g.fillRect(100, 10, 140, 20);
+  //  g.setColor("#000000");
+   // g.fillRect(160, 10, 160, 20);
     g.setColor(display_colour);
-    g.drawString("  " + (compass_heading) + " ", 130, 20, true /*clear background*/);
+    if(compass_heading<100)
+      compass_heading = " " + compass_heading;
+    g.drawString(compass_heading, 150, 20, true /*clear background*/);
 });
 
 Bangle.on('GPS', function (g) {
