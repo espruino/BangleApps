@@ -1,7 +1,11 @@
 var machineArray = require("Storage").readJSON("kieser-trainingplan.json", false);
+var resultFile = require("Storage").readJSON("kieser-results.json", false);
+
 var startDate = new Date().toUTCString();
 
-var trainingTimes = new Array(machineArray.lenght);
+var trainingTimes = new Array(machineArray.length);
+var resultObject = {};
+var currentIndex = 0;
 // Array 
 //array to temporary skip machine
 var tempArray = machineArray.slice();
@@ -159,12 +163,13 @@ function showTime(machine, time) {
 function setFinished(machine, time) {
   console.log("finished " + machine.machine);
   clearWatch();
-  machine.finished = true;
+  tempArray[currentIndex].finished = true;
   oldWeight = machine.weight;
   fiveProcent = Math.ceil(oldWeight / 100 * 5);
 
   console.log("old " + oldWeight);
   console.log("prozent" + fiveProcent);
+  console.log(currentIndex);
   if (time < 90) {
     newWeight = oldWeight - fiveProcent;
   } else if (time > 120) {
@@ -217,8 +222,13 @@ function setFinished(machine, time) {
 
 
   setWatch(function () {
-    require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
-    trainingTimes.push(machine.machine + " " + oldWeight + " " + time);
+    console.log(currentIndex);
+    console.log("hier würde dann das Ergebnis eingespielt");
+    weightTimeObject = {};
+    weightTimeObject.weight = oldWeight;
+    weightTimeObject.time = time;
+    var machineName = machine.machine;
+    resultObject[machineName] = weightTimeObject;
     console.log("hier ist noch was zu tun!");
     // TODO Implementieren!
     showNext();
@@ -236,25 +246,28 @@ function setFinished(machine, time) {
 
 function showNext() {
   var nextMachine;
+  console.log(currentIndex);
   for (let i = 0; i < tempArray.length; i++) {
+    currentIndex = i;
     if (tempArray[i].finished == false) {
       nextMachine = machineArray[i];
       break;
     }
   }
+  
   if (nextMachine == undefined) { 
     allFinished();
     return;
   }
   console.log(nextMachine);
+  console.log(currentIndex);
   showSettings(nextMachine);
 }
 
 function allFinished() {
-  var dateString = (new Date()).toISOString().substr(0, 16).replace("T", "_");
-
-  // var resultFile = require("Storage").open("kieser-results.json", r);
-  //  resultFile.dataString = trainingTimes;
+  resultFile.push(resultObject);
+  require("Storage").writeJSON("kieser-results.json", resultFile);
+  require("Storage").writeJSON("kieser-trainingplan.json", machineArray);
 
   g.clear();
   g.setFontAlign(0, 0); // center font
@@ -272,7 +285,7 @@ function allFinished() {
   }, BTN1, { repeat: true });
 
 
-  setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+  setWatch(Bangle.showLauncher, BTN2, { repeat: false});
 
 }
 
@@ -284,6 +297,7 @@ function showMenu() {
     menuObjekt[""] = { "title": "machines left" };
 
     tempArray.forEach(function (m, i) {
+      currentIndex= i;
       if (m.finished == false) {
         menuObjekt[m.machine] = function () { showSettings(m); };
       }
@@ -305,7 +319,8 @@ function init() {
     machine.finished = finished;
   }
   console.log(startDate);
-
+  var dateString = (new Date()).toISOString().substr(0, 16).replace("T", "_");
+  resultObject.date = dateString;
   g.clear();
   g.setFontAlign(0, 0); // center font
   g.setFont("Vector", 200); // vector font, 80px  
