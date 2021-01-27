@@ -316,3 +316,15 @@ setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 // Start stopwatch when BTN3 is pressed
 setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
 B3 = 1;  // BTN3 is bound to start the stopwatch
+
+setWatch(function(e) { 
+    var pressedTime = e.time-e.lastTime;
+    if (pressedTime > 1.2){
+     if (require("Storage").read("chronowid.app.js")===undefined) {
+    E.showMessage("App Source\nNot found");
+    setTimeout(drawMenu, 2000);
+  } else {
+    E.showMessage("Loading...");
+load("chronowid.app.js");} 
+    }
+  }, BTN1, {   repeat:true, edge:'falling' });
