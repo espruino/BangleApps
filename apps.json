@@ -2661,5 +2661,17 @@
     {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
     {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
   ]
+},
+{ "id": "intervals",
+  "name": "Intervals App",
+  "shortName":"Intervals",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Intervals for training. It is possible to configure work time and rest time and number of sets.",
+  "tags": "",
+  "storage": [
+    {"name":"intervals.app.js","url":"app.js"},
+    {"name":"intervals.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 ]
