@@ -4,13 +4,15 @@ const distanceUnits = { // how many meters per X?
   "yd": 0.9144,
   "mi": 1609.34,
   "km": 1000,
-  "kmi": 1000
+  "kmi": 1000,
+  "nm": 1852
 };
 const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
-  "mph": 1.60934
+  "mph": 1.60934,
+  "kts": 1.852
 };
 
 /*
@@ -87,12 +89,30 @@ var locales = {
     currency_symbol: "Rs.",
     currency_first: true,
     int_curr_symbol: "INR",
-    speed: 'kms',
+    speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
     datePattern: { 0: "%d %b %Y", 1: "%d/%m/%Y" }, // 28 Feb 2020" // "28/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "en_NAV": { // navigation units nautical miles and knots
+    lang: "en_NAV",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "£", currency_first: true,
+    int_curr_symbol: "GBP",
+    speed: 'kts',
+    distance: { "0": "m", "1": "nm" },
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
@@ -143,10 +163,10 @@ var locales = {
     int_curr_symbol: "JPY",
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
-    temperature: "°F",
+    temperature: "°C",
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%y/%M/%d", 1: "%y/%m;/%d" },
+    datePattern: { 0: "%Y/%m/%d", 1: "%y/%m/%d" },
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",

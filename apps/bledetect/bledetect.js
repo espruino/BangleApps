@@ -18,7 +18,7 @@ function showDeviceInfo(device){
       value: device.rssi
     },
     "manufacturer": {
-      value: device.manufacturer
+      value: device.manufacturer===undefined ? "-" : device.manufacturer
     }
   };
 

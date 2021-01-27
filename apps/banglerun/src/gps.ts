@@ -4,12 +4,21 @@ import { ActivityStatus, AppState } from './state';
 
 declare var Bangle: any;
 
+interface GpsEvent {
+  lat: number;
+  lon: number;
+  alt: number;
+  speed: number;
+  hdop: number;
+  fix: number;
+}
+
 const EARTH_RADIUS = 6371008.8;
 const POS_ACCURACY = 2.5;
 const VEL_ACCURACY = 0.05;
 
 function initGps(state: AppState): void {
-  Bangle.on('GPS-raw', (nmea: string) => parseNmea(state, nmea));
+  Bangle.on('GPS', (gps: GpsEvent) => readGps(state, gps));
   Bangle.setGPSPower(1);
 }
 
@@ -20,33 +29,21 @@ function parseCoordinate(coordinate: string): number {
   return (degrees + minutes) * Math.PI / 180;
 }
 
-function parseNmea(state: AppState, nmea: string): void {
-  const tokens = nmea.split(',');
-  const sentence = tokens[0].substr(3, 3);
+function readGps(state: AppState, gps: GpsEvent): void {
+  state.lat = gps.lat;
+  state.lon = gps.lon;
+  state.alt = gps.alt;
+  state.vel = gps.speed / 3.6;
+  state.fix = gps.fix;
+  state.dop = gps.hdop;
 
-  switch (sentence) {
-    case 'GGA':
-      state.lat = parseCoordinate(tokens[2]) * (tokens[3] === 'N' ? 1 : -1);
-      state.lon = parseCoordinate(tokens[4]) * (tokens[5] === 'E' ? 1 : -1);
-      state.alt = parseFloat(tokens[9]);
-      break;
-    case 'VTG':
-      state.vel = parseFloat(tokens[7]) / 3.6;
-      break;
-    case 'GSA':
-      state.fix = parseInt(tokens[2]);
-      state.dop = parseFloat(tokens[15]);
-      break;
-    case 'GLL':
-      state.gpsValid = state.fix === 3 && state.dop <= 5;
-      updateGps(state);
-      draw(state);
-      if (state.gpsValid && state.status === ActivityStatus.Running) {
-        updateLog(state);
-      }
-      break;
-    default:
-      break;
+  state.gpsValid = state.fix > 0 && state.dop <= 5;
+
+  updateGps(state);
+  draw(state);
+
+  if (state.gpsValid && state.status === ActivityStatus.Running) {
+    updateLog(state);
   }
 }
 
@@ -94,8 +91,8 @@ function updateGps(state: AppState): void {
   const pError = dpMag + state.dop * POS_ACCURACY;
   const vError = dvMag + state.dop * VEL_ACCURACY;
 
-  const pGain = state.pError / (state.pError + pError);
-  const vGain = state.vError / (state.vError + vError);
+  const pGain = (state.pError / (state.pError + pError)) || 0;
+  const vGain = (state.vError / (state.vError + vError)) || 0;
 
   state.x += dx * pGain;
   state.y += dy * pGain;
@@ -106,7 +103,7 @@ function updateGps(state: AppState): void {
 
   const pMag = Math.sqrt(state.x * state.x + state.y * state.y + state.z * state.z);
 
-  state.lat = Math.asin(state.z / pMag) * 180 / Math.PI;
+  state.lat = (Math.asin(state.z / pMag) * 180 / Math.PI) || 0;
   state.lon = (Math.atan2(state.y, state.x) * 180 / Math.PI) || 0;
   state.alt = pMag - EARTH_RADIUS;
 
@@ -117,4 +114,4 @@ function updateGps(state: AppState): void {
   }
 }
 
-export { initGps, parseCoordinate, parseNmea, updateGps };
+export { initGps, parseCoordinate, readGps, updateGps };

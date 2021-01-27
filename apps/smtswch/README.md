@@ -20,6 +20,7 @@ This app allows you to remotely control devices (or anything else you like!) wit
 First, you'll need a device that supports BLE. 
 
 Install EspruinoHub following the directions at [https://github.com/espruino/EspruinoHub](https://github.com/espruino/EspruinoHub)
+
 Install [Node-RED](https://nodered.org/docs/getting-started)
 
 ## Example Node-RED flow

@@ -31,8 +31,8 @@
         periodCtr = settings.period;
         if (gpsTrack) gpsTrack.write([
           fix.time.getTime(),
-          fix.lat.toFixed(5),
-          fix.lon.toFixed(5),
+          fix.lat.toFixed(6),
+          fix.lon.toFixed(6),
           fix.alt
         ].join(",")+"\n");
       }
@@ -66,6 +66,24 @@
   WIDGETS["gpsrec"]={area:"tl",width:24,draw:draw,reload:function() {
     reload();
     Bangle.drawWidgets(); // relayout all widgets
+  },plotTrack:function(m) { // m=instance of openstmap module
+    settings = require("Storage").readJSON("gpsrec.json",1)||{};
+    settings.file |= 0;
+    var n = settings.file.toString(36);
+    var f = require("Storage").open(".gpsrc"+n,"r");
+    var l = f.readLine(f);
+    if (l===undefined) return;
+    var c = l.split(",");
+    var mp = m.latLonToXY(+c[1], +c[2]);
+    g.moveTo(mp.x,mp.y);
+    l = f.readLine(f);
+    while(l!==undefined) {
+      c = l.split(",");
+      mp = m.latLonToXY(+c[1], +c[2]);
+      g.lineTo(mp.x,mp.y);
+      g.fillCircle(mp.x,mp.y,2); // make the track more visible
+      l = f.readLine(f);
+    }
   }};
   // load settings, set correct widget width
   reload();

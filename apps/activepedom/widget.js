@@ -68,6 +68,8 @@
       'stepSensitivity' : 80,
       'stepGoal' : 10000,
       'stepLength' : 75,
+      'lineOne' : "Distance",
+      'lineTwo' : "Steps",
     };
     if (!settings) { loadSettings(); }
     return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -160,7 +162,6 @@
     if (active == 1) g.setColor(0x07E0); //green
     else g.setColor(0xFFFF); //white
     g.setFont("6x8", 2);
-
     if (setting('lineOne') == 'Steps') {
       g.drawString(kFormatterSteps(stepsCounted),this.x+1,this.y);  //first line, big number, steps
     }
@@ -227,6 +228,6 @@
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
   timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
-  //Add widget
-  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
+  //Add widget, use: WIDGETS.activepedom.getSteps() inside another App to return todays step count
+  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw, getSteps:()=>stepsCounted};
 })();

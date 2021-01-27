@@ -6,3 +6,8 @@
 0.08: Removed Image, Reduced RAM usage
 0.09: Added Unix Time
 0.10: Added Counter, Added Battery Display
+0.11: Code Refactoring, Improved Description
+0.12: Move code to Arwes Module
+0.13: Improve icon
+0.14: Switch Icon back to 8bit web palette to fix it
+0.15: Hotfix: Remove var declaration from app image

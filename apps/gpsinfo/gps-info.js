@@ -21,7 +21,35 @@ function formatTime(now) {
   var date = [fd[0], fd[1], fd[2]].join(" ");
   return time + " - " + date;
 }
+function getMaidenHead(param1,param2){
+  var lat=-100.0;
+  var lon=0.0;
+  var U = 'ABCDEFGHIJKLMNOPQRSTUVWX';
+  var L = U.toLowerCase();
 
+  lat = param1;
+  lon = param2;
+
+  lon = lon + 180;
+  t = lon/20;
+  fLon = Math.floor(t);
+  t = (t % fLon)*10;
+  sqLon = Math.floor(t);
+  t=(t-sqLon)*24;
+  subLon = Math.floor(t);
+  extLon = Math.floor((t-subLon)*10);
+  
+  lat = lat + 90;
+  t = lat/10;
+  fLat = Math.floor(t);
+  t = (t % fLat)*10;
+  sqLat = Math.floor(t);
+  t=(t-sqLat)*24;
+  subLat = Math.floor(t);
+  extLat = Math.floor((t-subLat)*10);
+
+  return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]+L[subLat]+extLon+extLat;
+}
 function onGPS(fix) {
   lastFix = fix;
   g.clear();
@@ -38,15 +66,16 @@ function onGPS(fix) {
     var speed = fix.speed;
     var time = formatTime(fix.time);
     var satellites = fix.satellites;
-
+    var maidenhead = getMaidenHead(lat,lon);
     var s = 15;
     g.setFontVector(s);
-    g.drawString("Altitude: "+alt+" m",10,44);
-    g.drawString("Lat: "+lat,10,44+20);
-    g.drawString("Lon: "+lon,10,44+40);
-    g.drawString("Speed: "+speed.toFixed(1)+" km/h",10,44+60);
-    g.drawString("Time: "+time,10,44+80);
-    g.drawString("Satellites: "+satellites,10,44+100);
+    g.drawString("Altitude: "+alt+" m",10,36);
+    g.drawString("Lat: "+lat,10,54);
+    g.drawString("Lon: "+lon,10,72);
+    g.drawString("Speed: "+speed.toFixed(1)+" km/h",10,90);
+    g.drawString("Time: "+time,10,108);
+    g.drawString("Satellites: "+satellites,10,126);
+    g.drawString("Maidenhead: "+maidenhead,10,144);
   } else {
     g.setFontAlign(0, 1);
     g.setFont("6x8", 2);

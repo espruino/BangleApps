@@ -2,7 +2,10 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("gpsrec.json",1)||{};
-var qOpenStMap = (require("Storage").list("openstmap.json")>0);
+var osm;
+try { // if it's installed, use the OpenStreetMap module
+  osm = require("openstmap");
+} catch (e) {}
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
@@ -37,9 +40,9 @@ function showMainMenu() {
       }
     },
     'Time Period': {
-      value: settings.period||1,
+      value: settings.period||10,
       min: 1,
-      max: 60,
+      max: 120,
       step: 1,
       onchange: v => {
         settings.recording = false;
@@ -134,7 +137,7 @@ function viewTrack(n, info) {
     info.qOSTM = false;
     plotTrack(info);
   };
-  if (qOpenStMap)
+  if (osm)
     menu['Plot OpenStMap'] = function() {
       info.qOSTM = true;
       plotTrack(info);
@@ -161,49 +164,22 @@ function viewTrack(n, info) {
   return E.showMenu(menu);
 }
 
-function drawopenstmap(lat, lon, map) {
-  var s = require("Storage");
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
-  var p = Bangle.project({lat:lat,lon:lon});
-  var ix = (p.x-map.center.x)*4096/map.scale + (map.imgx/2) - cx;
-  var iy = (map.center.y-p.y)*4096/map.scale + (map.imgy/2) - cy;
-  var tx = 0|(ix/map.tilesize);
-  var ty = 0|(iy/map.tilesize);
-  var ox = (tx*map.tilesize)-ix;
-  var oy = (ty*map.tilesize)-iy;
-  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
-    for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
-      var img = s.read("openstmap-"+ttx+"-"+tty+".img");
-      if (img) g.drawImage(img,x,y);
-      else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1);
-    }
-  }
-}
-
 function plotTrack(info) {
   "ram"
 
-  function radians(a) {
-    return a*Math.PI/180;
+  function distance(lat1,long1,lat2,long2) { "ram"
+    var x = (long1-long2) * Math.cos((lat1+lat2)*Math.PI/360);
+    var y = lat2 - lat1;
+    return Math.sqrt(x*x + y*y) * 6371000 * Math.PI / 180;
   }
 
-  function distance(lat1,long1,lat2,long2){
-    var x = radians(long1-long2) * Math.cos(radians((lat1+lat2)/2));
-    var y = radians(lat2-lat1);
-    return Math.sqrt(x*x + y*y) * 6371000;
-  }
-
-  function getMapXY(mylat, mylon) {
-    if (info.qOSTM) {
-      var q = Bangle.project({lat:mylat,lon:mylon});
-      var p = Bangle.project({lat:clat,lon:clon});
-      var ix = (q.x-p.x)*4096/map.scale + cx;
-      var iy = cy - (q.y-p.y)*4096/map.scale;
-      return {x:ix, y:iy};
-    }
-    else {
-      var ix = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
+  // Function to convert lat/lon to XY
+  var getMapXY;
+  if (info.qOSTM) {
+    getMapXY = osm.latLonToXY.bind(osm);
+  } else {
+    getMapXY = function(lat, lon) { "ram"
+      var ix = 30 + Math.round((long - info.minLong)*info.lfactor*info.scale);
       var iy = 210 - Math.round((lat - info.minLat)*info.scale);
       return {x:ix, y:iy};
     }
@@ -225,13 +201,10 @@ function plotTrack(info) {
     g.setColor(1,1,1);
     g.drawString("N",2,40);
     g.setColor(1,1,1);
-  }
-  else {  
-    var map = s.readJSON("openstmap.json");
-    map.center = Bangle.project({lat:map.lat,lon:map.lon});
-    var clat = (info.minLat+info.maxLat)/2;
-    var clon = (info.minLong+info.maxLong)/2;
-    drawopenstmap(clat, clon, map);
+  } else {
+    osm.lat = (info.minLat+info.maxLat)/2;
+    osm.lon = (info.minLong+info.maxLong)/2;
+    osm.draw();
     g.setColor(0, 0, 0);
   }
   g.drawString(asTime(info.duration),10,220);
@@ -258,7 +231,7 @@ function plotTrack(info) {
     long = +c[2];
     mp = getMapXY(lat, long);
     g.lineTo(mp.x,mp.y);
-    if (info.qOSTM) g.fillCircle(mp.x, mp.y, 1);
+    if (info.qOSTM) g.fillCircle(mp.x,mp.y,2); // make the track more visible
     var d = distance(olat,olong,lat,long);
     if (!isNaN(d)) dist+=d;
     olat = lat;
