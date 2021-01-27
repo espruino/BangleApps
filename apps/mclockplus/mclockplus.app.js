@@ -242,7 +242,12 @@ function stopWatch() {
   }
 
   // Bind BTN1 to call the reset function:
-  if (!w1) w1 = setWatch(resetStopWatch, BTN1, {repeat:false,edge:"falling"});
+  if (!w1) w1 = setWatch(function(e) { 
+    var pressedTime = e.time-e.lastTime;
+    if (pressedTime < 1.2){
+     resetStopWatch();
+    }
+  }, BTN1, {   repeat:true, edge:'falling' });
 
   // Draw elapsed time:
   g.reset();
@@ -259,7 +264,7 @@ function stopWatch() {
 }
 
 function resetStopWatch() {
-
+  console.log("resetting");
   // Stop the interval if necessary:
   if (swInterval) {
     clearInterval(swInterval);
