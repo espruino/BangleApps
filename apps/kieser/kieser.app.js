@@ -252,8 +252,8 @@ function showNext() {
       break;
     }
   }
-  
-  if (nextMachine == undefined) { 
+
+  if (nextMachine == undefined) {
     allFinished();
     return;
   }
@@ -287,7 +287,7 @@ function allFinished() {
   }, BTN1, { repeat: true });
 
 
-  setWatch(Bangle.showLauncher, BTN2, { repeat: false});
+  setWatch(Bangle.showLauncher, BTN2, { repeat: false });
 
 }
 
@@ -299,7 +299,7 @@ function showMenu() {
     menuObjekt[""] = { "title": "machines left" };
 
     tempArray.forEach(function (m, i) {
-      currentIndex= i;
+      currentIndex = i;
       if (m.finished == false) {
         menuObjekt[m.machine] = function () { showSettings(m); };
       }
