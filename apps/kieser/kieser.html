@@ -39,29 +39,65 @@
     <script src="../../core/lib/interface.js"></script>
 
     <script>
+
+        // beginning of test-stuff
         function readSingleFile(e) {
             var file = e.target.files[0];
             if (!file) {
                 return;
             }
+            console.log(file);
             var reader = new FileReader();
             reader.onload = function (e) {
                 var contents = e.target.result;
-                displayContents(contents);
+                jsonObject = JSON.parse(contents);
+                displayContents(jsonObject);
+                console.log(contents);
+                console.log(jsonObject);
+                console.log("this upload stuff is just for testing purposses");
             };
             reader.readAsText(file);
-        }
-
-        function displayContents(contents) {
-            var element = document.getElementById('result-content');
-            element.textContent = contents;
         }
 
         document.getElementById('file-input')
             .addEventListener('change', readSingleFile, false);
 
+        //end of test-stuff!
+
+        function displayContents(contents) {
+            var element = document.getElementById('result-content');
+            var machineNames = [];
+            if (contents == []){
+                element.innerHTML = "Keine Ergebnisse"
+            } else { 
+                firstResult = contents[0].machines;
+                firstResult.forEach(result => {
+                    var key = Object.keys(result);
+                    keyString = key[0];
+                    console.log(keyString);
+                    machineNames.push(keyString);
+                });
+               
+                var resultTable = document.createElement('table');
+                resultTable.setAttribute('id', 'resultTable');
+
+
+
+                var tr = resultTable.insertRow(-1);
+
+                for (var h = 0; h < machineNames.length; h++) {
+                    var th = document.createElement('th'); // the header object.
+                    th.innerHTML = machineNames[h];
+                    tr.appendChild(th);
+                }
+
+                element.appendChild(resultTable);
+            }
+        }
+
         document.getElementById("get-data").addEventListener("click", function () {
-            Puck.eval(`require("Storage").readJSON("kieser-results.json")`, (file) => {
+            Puck.eval(`require("Storage").readJSON("kieser-results.json")`, (results) => {
+                displayContents(results);
                 console.log(file);
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
