@@ -2234,6 +2234,8 @@
   "description": "A digital clock face with the time, day, month, heart rate, battery, and GPS info",
   "tags": "clock",
   "type" : "clock",
+  "allow emulator" : true, 
+  "readme": "README.md"
   "storage": [
     {"name":"digiclock.app.js","url":"digiclock.js"},
     {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
