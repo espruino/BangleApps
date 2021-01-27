@@ -40,6 +40,7 @@ function drawTimeDate() {
 //We will create custom "Widgets" for our face.
 
 function drawSteps() {
+  var steps = "-";
   //Reset to defaults.
   g.reset();
   // draw the date (2x size 7 segment)
@@ -48,7 +49,12 @@ function drawSteps() {
   g.setFontAlign(-1,0); // align right bottom
   g.drawString("STEPS", 145, 40, true /*clear background*/);
   g.setColor('#bdc3c7');
-  g.drawString("-", 145, 65, true /*clear background*/);
+  if (WIDGETS.activepedom !== undefined) {
+    steps = WIDGETS.activepedom.getSteps();
+  } else if (WIDGETS.wpedom !== undefined) {
+    steps = WIDGETS.wpedom.getSteps();
+  }
+  g.drawString(steps, 145, 65, true /*clear background*/);
 }
 
 function drawBPM(on) {
@@ -114,6 +120,7 @@ Bangle.on('lcdPower',on=>{
     //Screen on
     drawBPM(HRMstate);
     drawTimeDate();
+    drawSteps();
     drawBattery();
   } else {
     //Screen off
@@ -133,14 +140,14 @@ Bangle.on('touch', function(button) {
 //HRM Controller.
 setWatch(function(){
   if(!HRMstate){
-    console.log("Toggled HRM");
+    //console.log("Toggled HRM");
     //Turn on.
     Bangle.buzz();
     Bangle.setHRMPower(1);
     currentHRM = "CALC";
     HRMstate = true;
   } else if(HRMstate){
-    console.log("Toggled HRM");
+    //console.log("Toggled HRM");
     //Turn off.
     Bangle.buzz();
     Bangle.setHRMPower(0);
@@ -153,7 +160,7 @@ setWatch(function(){
 Bangle.on('HRM', function(hrm) {
   if(hrm.confidence > 90){
     /*Do more research to determine effect algorithm for heartrate average.*/
-    console.log(hrm.bpm);
+    //console.log(hrm.bpm);
     currentHRM = hrm.bpm;
     drawBPM(HRMstate);
   }

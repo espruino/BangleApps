@@ -112,7 +112,11 @@
   });
 
   // add your widget
-  WIDGETS["wpedom"]={area:"tl",width:26,draw:draw,reload:reload};
+  WIDGETS["wpedom"]={area:"tl",width:26,
+         draw:draw,
+         reload:reload,
+         getSteps:()=>stp_today
+        };
   // Load data at startup
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
   if (pedomData) {
