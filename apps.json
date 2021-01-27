@@ -2671,7 +2671,7 @@
   "tags": "",
   "storage": [
     {"name":"intervals.app.js","url":"app.js"},
-    {"name":"intervals.img","url":"app-icon.js","evaluate":true}
+    {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
   ]
 }
 ]
