@@ -2665,7 +2665,7 @@
 { "id": "intervals",
   "name": "Intervals App",
   "shortName":"Intervals",
-  "icon": "app.png",
+  "icon": "intervals.png",
   "version":"0.01",
   "description": "Intervals for training. It is possible to configure work time and rest time and number of sets.",
   "tags": "",
