@@ -22,10 +22,53 @@
     <br><br>
     <button id="upload" class="btn btn-primary">Upload</button>
 
+    <br><br>
+    <hr>
+    <h4>Show training results:</h4>
+    <button id="get-data" class="btn btn-primary">Get Data</button>
+    <input type="file" id="file-input" />
+    <div id="result-content"></div>
+
+
+
+
+
     <script src="../../core/lib/interface.js"></script>
 
     <script>
-       
+        function readSingleFile(e) {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                displayContents(contents);
+            };
+            reader.readAsText(file);
+        }
+
+        function displayContents(contents) {
+            var element = document.getElementById('result-content');
+            element.textContent = contents;
+        }
+
+        document.getElementById('file-input')
+            .addEventListener('change', readSingleFile, false);
+
+        document.getElementById("get-data").addEventListener("click", function () {
+            Puck.eval(`require("Storage").readJSON("kieser-results.json"})`, (file) => {
+                console.log(file);
+                Puck.eval(`Bangle.buzz()`, () => {
+                    console.log("all done");
+                })
+            });
+        });
+    </script>
+
+    <script>
+
         function createTable() {
             var arrHead = new Array();
             arrHead = ['', 'Machine Name', 'Settings', 'Weight']; // table headers.
@@ -87,7 +130,7 @@
             machineTable.deleteRow(oButton.parentNode.parentNode.rowIndex); // buttton -> td -> tr
         }
 
-        function addSetting(button){
+        function addSetting(button) {
             var tdSetting = button.parentNode;
             var br = document.createElement('br');
             tdSetting.insertBefore(br, tdSetting.lastChild);
@@ -99,7 +142,7 @@
             tdSetting.insertBefore(br, tdSetting.lastChild);
         }
 
-        function collectValues(){
+        function collectValues() {
             machineTable = document.getElementById("machineTable");
             var trainingplan = new Array();
 
@@ -109,25 +152,25 @@
                 var machine = machineTable.rows.item(row).cells[1].childNodes[0].value;
                 rowObject.machine = machine;
                 var settingsArray = new Array();
-                var settingsCell =  machineTable.rows.item(row).cells[2];
-                for (c = 0; c < settingsCell.childNodes.length-1; c++) {
+                var settingsCell = machineTable.rows.item(row).cells[2];
+                for (c = 0; c < settingsCell.childNodes.length - 1; c++) {
                     var element = settingsCell.childNodes[c];
-                        if (element.getAttribute('type') == 'text'){
-                            settingsArray.push(element.value);
-                        }
+                    if (element.getAttribute('type') == 'text') {
+                        settingsArray.push(element.value);
+                    }
                 }
                 rowObject.settings = settingsArray;
                 var weight = machineTable.rows.item(row).cells[3].childNodes[0].value;
                 rowObject.weight = weight;
                 trainingplan.push(rowObject);
             }
-                
-            
-            
+
+
+
             console.log(trainingplan);
             return trainingplan;
         }
-        
+
         document.getElementById("upload").addEventListener("click", function () {
             values = collectValues();
             console.log("!!!!!!!!!!!!!!!")
