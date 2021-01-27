@@ -61,7 +61,7 @@
             .addEventListener('change', readSingleFile, false);
 
         document.getElementById("get-data").addEventListener("click", function () {
-            Puck.eval(`require("Storage").readJSON("kieser-results.json"})`, (file) => {
+            Puck.eval(`require("Storage").readJSON("kieser-results.json")`, (file) => {
                 console.log(file);
                 Puck.eval(`Bangle.buzz()`, () => {
                     console.log("all done");
