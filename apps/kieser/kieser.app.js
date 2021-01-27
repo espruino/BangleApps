@@ -92,20 +92,19 @@ function startTraining(machine) {
 }
 
 function vibrate() {
-
-  //Bangle.buzz()
-  //  .then(() => new Promise(resolve => setTimeout(resolve, 4000)))
-  //  .then(() => Bangle.buzz())
-  //  .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
-  // .then(() => Bangle.buzz());
-
-  setTimeout(function () {
-    Bangle.buzz();
-  }, 4000);
-  setTimeout(function () {
-    Bangle.buzz();
-  }, 2000);
-  //setTimeout(vibrate, 2000);
+  Bangle.beep()
+    .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
+    .then(() => Bangle.buzz())
+    .then(() => new Promise(resolve => setTimeout(resolve, 4000)))
+    .then(() => Bangle.buzz())
+    .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
+    .then(() => Bangle.buzz())
+    .then(() => new Promise(resolve => setTimeout(resolve, 4000)))
+    .then(() => Bangle.buzz())
+    .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
+    .then(() => Bangle.buzz())
+    .then(() => new Promise(resolve => setTimeout(resolve, 4000)))
+    .then(() => Bangle.buzz());
 }
 
 function showTime(machine, time) {
