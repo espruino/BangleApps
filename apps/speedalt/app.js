@@ -1,10 +1,10 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.03
+Ver : 0.04
 Mike Bennett mike[at]kereru.com
 */
 
-const dbg = 1;
+const dbg = 0;
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
@@ -31,8 +31,8 @@ var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 //var inMenu = 0;
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
-
-var timeBright = 0;    // Time of last activity that keeps the display bright
+var lastBuzz = 0;      // What sort of buzz was last performed. 0 = no fix, 1 = fix. 
+var timerBuzz2 = 0;    // ID of timer for fix second buzz
 
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 
@@ -160,7 +160,7 @@ function drawTime() {
   var x = 0;
   var y = 160;
 
-  buf.setFont("7x11Numeric7Seg", 1);
+  buf.setFont("7x11Numeric7Seg", 2);
   buf.setFontAlign(-1,1); //left, bottom
 
   buf.setColor(0);
@@ -173,7 +173,7 @@ function drawTime() {
 function drawSats(sats) {
   buf.setFontAlign(1,1); //right, bottom
   buf.setColor(3);  
-  buf.setFont("6x8", 1);
+  buf.setFont("6x8", 2);
   if ( showMax ) {
     buf.setColor(2); 
     buf.drawString("MAX",240,160);
@@ -198,6 +198,7 @@ function onGPS(fix) {
   var m;
 
   if (fix.fix || emulator) {
+    doBuzz(1);
 
     //==== Speed ====
     if ( settings.spd == 0 ) {
@@ -233,10 +234,48 @@ function onGPS(fix) {
     else drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit);
 
   } else {
+    doBuzz(0);
     drawNoFix(fix.satellites);
   }
 
 }
+
+// Vibrate watch when fix lost or gained.
+function doBuzz(hasFix) {
+
+  // nothing to do
+  if ( lastBuzz === hasFix ) {
+    print('Buzz : no change');
+    return;
+  }
+  
+  // fix gained - double buzz
+  if ( !lastBuzz && hasFix ) {
+    if ( dbg ) print('Fix');
+    Bangle.buzz();
+    timerBuzz2 = setInterval(doBuzz2, 400); // Trigger a second buzz in 400ms
+
+      lastBuzz = 1;
+    return;
+  }
+  
+  // fix lost - single buzz
+  if ( lastBuzz && !hasFix ) {
+    if ( dbg ) print('Fix lost');
+    Bangle.buzz();
+    lastBuzz = 1;
+    return;
+  }
+  
+  
+}
+
+// Second buzz
+function doBuzz2() {
+    if ( dbg ) print('Buzz2');
+    clearInterval(timerBuzz2);
+    Bangle.buzz();
+ }
 
 
 /*
@@ -410,6 +449,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1);
 
+onGPS(lastFix);
 Bangle.on('GPS', onGPS);
 
 setButtons();
