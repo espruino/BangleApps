@@ -1,14 +1,7 @@
 (function(back) {
   let settings = require('Storage').readJSON('speedalt.json',1)||{};
   
-  /*
-  function save(key, value) {
-    settings[key] = value;
-    require('Storage').write('speedalt.json',settings);
-  }
-  */
-
-  function setUnits(m,u) {
+   function setUnits(m,u) {
     settings['spd'] = m;
     settings['spd_unit'] = u;
     require('Storage').write('speedalt.json',settings);
