@@ -62,7 +62,7 @@ function drawStars(lat,lon,date){
   var size = 240;
 
   storage = require('Storage');
-  f=storage.read("planetarium.csv","r");
+  f=storage.read("planetarium.data.csv","r");
   linestart=0;
   g.clear();
 
