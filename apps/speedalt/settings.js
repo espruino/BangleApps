@@ -51,7 +51,7 @@
   
   const unitsMenu = {
     '': {'title': 'Units'},
-    '< Back': { E.showMenu(appMenu); },
+    '< Back': function() { E.showMenu(appMenu); },
     'default (spd)' : function() { setUnits(0,''); },
     "Kph (spd)" : function() { setUnits(1,'kph'); },
     "Knots (spd)" : function() { setUnits(1.852,'knots'); },
@@ -63,7 +63,7 @@
 
   const dimDelayMenu = {
     '': {'title': 'Reduce Display'},
-    '< Back': { E.showMenu(appMenu); },
+    '< Back': function() { E.showMenu(appMenu); },
     'never' : function() { setDimDelay(0); },
     "1 min" : function() { setDimDelay(1); },
     "2 mins" : function() { setDimDelay(2); },
@@ -74,7 +74,7 @@
 
   const dimLevelMenu = {
     '': {'title': 'Display Brightness'},
-    '< Back': { E.showMenu(appMenu); },
+    '< Back': function() { E.showMenu(appMenu); },
     '80%' : function() { setDimLevel(0.8); },
     "60%" : function() { setDimLevel(0.6); },
     "40%" : function() { setDimLevel(0.4); },
@@ -84,7 +84,7 @@
 
   const colMenu = {
     '': {'title': 'Colours'},
-    '< Back': { E.showMenu(appMenu); },
+    '< Back': function() { E.showMenu(appMenu); },
     'Default' : function() { setColor(0); },
     "Hi Contrast" : function() { setColor(1); },
     "Night" : function() { setColor(2); }
