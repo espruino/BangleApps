@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.01
+Ver : 0.03
 Mike Bennett mike[at]kereru.com
 */
 
@@ -30,10 +30,9 @@ var showSpeed = 1;      // 1 = Speed in primary display. 0 = alt in primary
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 //var inMenu = 0;
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
+var canDraw = 1;
 
 var timeBright = 0;    // Time of last activity that keeps the display bright
-var isDim = 0;        // Current brightness state
-var gpsPwr = 1;
 
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 
@@ -45,7 +44,10 @@ var emulator = 0;
 if (process.env.BOARD=="EMSCRIPTEN") emulator = 1;  // 1 = running in emulator. Supplies test values;
 
 function drawFix(speed,units,sats,alt,alt_units) {
+  if (!canDraw) return;
 
+  buf.clear();
+  
   var val = '';  
   var u='';
   
@@ -74,13 +76,21 @@ function drawFix(speed,units,sats,alt,alt_units) {
   
   //Sats
   drawSats(sats);
+
+  g.reset();
+  g.drawImage(img,0,40);
+//  g.flip();
+
   
 }
 
 
 function drawNoFix(sats) {
+  if (!canDraw) return;
   var u;
-  
+
+  buf.clear();
+
   buf.setFontAlign(0,0);
   buf.setColor(3);  
   
@@ -92,7 +102,11 @@ function drawNoFix(sats) {
   
   //Sats
   drawSats(sats);
-   
+
+  g.reset();
+  g.drawImage(img,0,40);
+//  g.flip();
+
   
 }
 
@@ -146,22 +160,8 @@ function drawTime() {
   var x = 0;
   var y = 160;
 
-  if ( gpsPwr ) {
-    buf.setFont("7x11Numeric7Seg", 1);
-    buf.setFontAlign(-1,1); //left, bottom
-  }
-  else {
-//    buf.setFont("7x11Numeric7Seg", 6);
-    buf.setFontAlign(1,-1); //right, top
-    buf.setColor(2);  
-    buf.setFont("6x8", 1);
-    buf.drawString('GPS On >',240,0);
-
-    buf.setFontVector(80);
-    buf.setFontAlign(0,0); //centre
-    x = 120;
-    y = 80;
-  }
+  buf.setFont("7x11Numeric7Seg", 1);
+  buf.setFontAlign(-1,1); //left, bottom
 
   buf.setColor(0);
   buf.drawString(time,x,y);
@@ -181,6 +181,7 @@ function drawSats(sats) {
   else buf.drawString("Sats:"+sats,240,160);  
 }
 
+/*
 function drawClockLarge() {
     buf.clear();
     drawTime();
@@ -188,12 +189,11 @@ function drawClockLarge() {
     g.drawImage(img,0,40);
     g.flip();
 }
+*/
 
 
 function onGPS(fix) {
-
   lastFix = fix;
-  buf.clear();
   
   var m;
 
@@ -235,10 +235,7 @@ function onGPS(fix) {
   } else {
     drawNoFix(fix.satellites);
   }
-  
-  g.reset();
-  g.drawImage(img,0,40);
-  g.flip();
+
 }
 
 
@@ -253,42 +250,28 @@ function setUnits(m,u) {
   E.showMenu(); // remove the menu
   onGPS(lastFix);  // Back to Speed display
 }
-
 function setUnitsAlt(m,u) {
   settings.alt = m;
   settings.alt_unit = u;
   require('Storage').write('speedalt.json',settings);
-
   inMenu = 0;
-
   E.showMenu(); // remove the menu
   onGPS(lastFix);  // Back to Speed display
 }
-
 function enterMenu() {
   if ( inMenu ) return;
   inMenu = 1;
   E.showMenu(mainmenu);
 }
-
 function exitMenu() {
   inMenu = 0;
   E.showMenu(); 
   onGPS(lastFix); // remove the menu and restore
   
 }
-
 */
 
 function toggleDisplay() {
-
-  if ( isDim ) {
-    onBright();
-    return;
-  }
-
-  if ( ! gpsPwr ) return;
-
   showSpeed = !showSpeed;
   onGPS(lastFix);  // Back to Speed display
 }
@@ -299,36 +282,10 @@ function toggleMax() {
   onGPS(lastFix);  // Back to Speed display
 }
 
-function gpsPower() {
-
-  if ( isDim ) {
-    onBright();
-    return;
-  }
-  
-  gpsPwr = !gpsPwr;
-  if ( dbg ) print('GPS Power : '+gpsPwr);
-  
-  Bangle.setGPSPower(gpsPwr);
-
-  if ( gpsPwr ) {
-    // Display GPS speed/alt
-    g.clear();
-    onGPS(lastFix); 
-  }
-  else {
-    // Display simple clock
-    drawClockLarge();    
-  }
-  
-}
 
 // How to disable these while in menu? Interim using inMenu flag.
 function setButtons(){
   
-  // Turn GPS on/off
-  setWatch(gpsPower, BTN1,{repeat:true,edge:"falling"});
-
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
@@ -344,20 +301,11 @@ function setButtons(){
 }
 
 function maxPressed() {
-  if ( isDim ) {
-    onBright();
-    return;
-  }
-
-  if ( ! gpsPwr ) return;
-
   maxPress = getTime();
 }
 
 function maxReleased() {
   var dur = getTime()-maxPress;
-  
-  if ( ! gpsPwr ) return;
   
   if ( dur < 2 ) toggleMax();   // Short press toggle fix/max display
   else {
@@ -367,31 +315,14 @@ function maxReleased() {
   }
 }
 
-function onBright() {
-  if ( dbg ) print('Undimming');
-  Bangle.setLCDBrightness(1);
-  timeBright = getTime();
-  isDim = 0;
-}
-
-function onDim() {
-  if ( ! settings.dim_m ) {
-    return;
-  }
-  if ( getTime() > timeBright+(settings.dim_m*60) ) {
-    // Time to dim the lcd. Screen tap or BTN3 will restore to 100%
-    if ( dbg ) print('Dimming');
-    Bangle.setLCDBrightness(settings.dim_b);
-    isDim = 1;
-  }
-}
-
 function updateClock() {
   if ( dbg ) print('Updating clock');
+  if (!canDraw) return;
+
   drawTime(); 
   g.reset();
   g.drawImage(img,0,40);
-  g.flip();
+//  g.flip();
   
   // Something different to display in the emulator
   if ( emulator ) {
@@ -399,17 +330,28 @@ function updateClock() {
     max.alt++;
   }
   
-  onDim();    // Check if time to dim the LCD
 }
+
+function startDraw(){
+  canDraw=true;
+  g.clear();
+  Bangle.drawWidgets();
+  onGPS(lastFix);  // draw app screen
+}
+
+function stopDraw() {
+  canDraw=false;
+}
+
+// ===== Main Prog =====
 
 // Read settings. 
 let settings = require('Storage').readJSON('speedalt.json',1)||{};
+
 settings.spd = settings.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
 settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
-settings.dim_b = settings.dim_b||0.5;              // Auto dim brightness
-settings.dim_m = settings.dim_m||5;              // Time in mins before auto dim.
 settings.colour = settings.colour||0;          // Colour scheme. 
 
 /*
@@ -438,16 +380,38 @@ if ( settings.spd == 0 ) {
   settings.spd_unit = m[2];
 }
 
+var SCREENACCESS = {
+      withApp:true,
+      request:function(){
+        this.withApp=false;
+        stopDraw();
+        clearWatch();
+      },
+      release:function(){
+        this.withApp=true;
+        startDraw(); 
+        setButtons();
+      }
+}; 
 
-// Main prog
-onBright();    // Start with display not dimmed
+Bangle.on('lcdPower',function(on) {
+  if (!SCREENACCESS.withApp) return;
+  if (on) {
+    startDraw();
+  } else {
+    stopDraw();
+  }
+});
 
+// All set up. Lets go.
 g.clear();
-onGPS(lastFix);
+Bangle.setLCDBrightness(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-Bangle.on('GPS', onGPS);
 Bangle.setGPSPower(1);
+
+Bangle.on('GPS', onGPS);
+
 setButtons();
 setInterval(updateClock, 30000);
 
