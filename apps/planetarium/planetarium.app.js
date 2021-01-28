@@ -121,7 +121,7 @@ var gps = { fix : 0};
 var prevSats = 0;
 g.clear();
 
-var settings = require('Storage').readJSON('planetarium.settings.json',1)||
+var settings = require('Storage').readJSON('planetarium.json',1)||
       { starnames:false,constellations:true};
 
 g.setFontAlign(0,0);
