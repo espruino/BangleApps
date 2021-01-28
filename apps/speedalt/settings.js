@@ -27,29 +27,29 @@
   
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
+    '< Back': back,
     'Units' : function() { E.showMenu(unitsMenu); },
-    'Colours' : function() { E.showMenu(colMenu); },
-    '< Back': back
+    'Colours' : function() { E.showMenu(colMenu); }
   };
   
   const unitsMenu = {
     '': {'title': 'Units'},
+    '< Back': function() { E.showMenu(appMenu); },
     'default (spd)' : function() { setUnits(0,''); },
     'Kph (spd)' : function() { setUnits(1,'kph'); },
     'Knots (spd)' : function() { setUnits(1.852,'knots'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
     'm/s (spd)' : function() { setUnits(3.6,'m/s'); },
     'Meters (alt)' : function() { setUnitsAlt(1,'m'); },
-    'Feet (alt)' : function() { setUnitsAlt(0.3048,'feet'); },
-    '< Back': function() { E.showMenu(appMenu); }
+    'Feet (alt)' : function() { setUnitsAlt(0.3048,'feet'); }
   };
 
   const colMenu = {
     '': {'title': 'Colours'},
+    '< Back': function() { E.showMenu(appMenu); },
     'Default' : function() { setColour(0); },
     'Hi Contrast' : function() { setColour(1); },
-    'Night' : function() { setColour(2); },
-    '< Back': function() { E.showMenu(appMenu); }
+    'Night' : function() { setColour(2); }
   };
   
   
