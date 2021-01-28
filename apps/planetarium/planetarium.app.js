@@ -83,7 +83,6 @@ function drawStars(lat,lon,date){
   for (i=0;i<f.length;i++)
   {
     if (f[i]=='\n'){
-      var start = new Date().getTime();
       starNumber++;
       //console.log("Line from "+linestart.toString()+"to "+(i-1).toString());
       line = f.substr(linestart,i-linestart);
@@ -99,8 +98,6 @@ function drawStars(lat,lon,date){
       var dec = Math.asin(Math.sin(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) + Math.cos(theta) * Math.sin(starDE));
       var ascen = Math.atan2(Math.cos(starDE) * Math.sin(starRA + zeta), Math.cos(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) - Math.sin(theta) * Math.sin(starDE)) + z;
       var H = siderealTime(julianDay) - longitude - ascen;
-      //var end = new Date().getTime();
-      //console.log("Call to doSomething took " + (end - start) + " milliseconds.");
       //Compute altitude
       var alt = Math.asin(Math.sin(latitude) * Math.sin(dec) + Math.cos(latitude) * Math.cos(dec) * Math.cos(H));
       if(alt >= 0)
@@ -136,7 +133,6 @@ function drawStars(lat,lon,date){
 Bangle.setGPSPower(1);
 
 var gps = { fix : 0};
-var gpsCount = 0;
 var prevSats = 0;
 g.clear();
 
@@ -147,7 +143,6 @@ g.setFontAlign(0,0);
 Bangle.on('GPS',function(gp) {
   date = new Date();
   gps = gp;
-  gpsCount++;
   if (gp.fix) {
     lat = gp.lat;
     lon = gp.lon;
