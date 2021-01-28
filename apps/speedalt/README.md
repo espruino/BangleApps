@@ -1,19 +1,12 @@
-A watch/clock that displays the GPS speed and altitude. One is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
+Displays the GPS speed and altitude. One is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
-As a power saving measure you can :
-
-- Set a timeout after which the display will dim. Touching the display or buttons will restore the display to 100% brightness. The brightness while dimmed can be set to anything between 100% (no dimming) to 0% (fully off)
-- Turn the GPS on/off using one of the buttons. While GPS is off the display becomes a simple clock.
-
-Display Tap : Swaps the displays. You can have either speed or altitude on the large display.
-
-BTN1 : GPS Power on/off.
+Display Tap : Swaps the displays. You can have either speed or altitude on the large primary display.
 
 BTN3 : Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum values recorded.
 
 BTN3 : Long press > 2 secs resets the recorded maximum values.
 
-App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Power saving settings.
+App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration on/off can be used to indicate when a fix is lost or gained.
 
 <img src="screen1.png">
 <img src="screen2.png">
