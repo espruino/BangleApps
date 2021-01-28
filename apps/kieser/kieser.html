@@ -46,15 +46,13 @@
             if (!file) {
                 return;
             }
-            console.log(file);
+            //console.log(file);
             var reader = new FileReader();
             reader.onload = function (e) {
                 var contents = e.target.result;
                 jsonObject = JSON.parse(contents);
                 displayContents(jsonObject);
-                console.log(contents);
-                console.log(jsonObject);
-                console.log("this upload stuff is just for testing purposses");
+                //console.log("this upload stuff is just for testing purposses");
             };
             reader.readAsText(file);
         }
@@ -67,28 +65,55 @@
         function displayContents(contents) {
             var element = document.getElementById('result-content');
             var machineNames = [];
-            if (contents == []){
+            if (contents == []) {
                 element.innerHTML = "Keine Ergebnisse"
-            } else { 
+            } else {
+                machineNames.push("Date");
                 firstResult = contents[0].machines;
                 firstResult.forEach(result => {
                     var key = Object.keys(result);
                     keyString = key[0];
-                    console.log(keyString);
+                    ////console.log(keyString);
                     machineNames.push(keyString);
                 });
-               
+
                 var resultTable = document.createElement('table');
                 resultTable.setAttribute('id', 'resultTable');
-
-
-
+                resultTable.setAttribute('style', "border: 1px solid black");
                 var tr = resultTable.insertRow(-1);
 
                 for (var h = 0; h < machineNames.length; h++) {
-                    var th = document.createElement('th'); // the header object.
+                    var th = document.createElement('th');
+                    th.setAttribute('style', "border: 1px solid black");
                     th.innerHTML = machineNames[h];
                     tr.appendChild(th);
+                }
+
+                for (const row of contents) {
+                    var rowCount = resultTable.rows.length;
+                    var tr = resultTable.insertRow(rowCount);
+
+                    tdDate = tr.insertCell(0);
+                    var dateCell = document.createElement('div');
+                    dateCell.setAttribute('id', 'dateCell');
+                    dateCell.innerHTML = row.date;
+                    tdDate.appendChild(dateCell);
+                    //console.log(row.date);
+                    for (let i = 0; i <= row.machines.length - 1; i++) {
+
+                        var machine = row.machines[i];
+                        var results = Object.values(machine)[0];
+                        var resultString = results.weight + " - " + results.time;
+                        //console.log(resultString);
+
+                        tdContent = tr.insertCell(i + 1);
+                        var cell = document.createElement('div');
+                        cell.setAttribute('id', 'cell');
+                        cell.setAttribute('style', "border: 1px solid black");
+
+                        cell.innerHTML = resultString;
+                        tdContent.appendChild(cell);
+                    }
                 }
 
                 element.appendChild(resultTable);
@@ -98,9 +123,9 @@
         document.getElementById("get-data").addEventListener("click", function () {
             Puck.eval(`require("Storage").readJSON("kieser-results.json")`, (results) => {
                 displayContents(results);
-                console.log(file);
+                //console.log(file);
                 Puck.eval(`Bangle.buzz()`, () => {
-                    console.log("all done");
+                    //console.log("all done");
                 })
             });
         });
@@ -114,15 +139,18 @@
 
             var machineTable = document.createElement('table');
             machineTable.setAttribute('id', 'machineTable');
+            machineTable.setAttribute('style', "border: 1px solid black");
+
 
             var tr = machineTable.insertRow(-1);
 
             for (var h = 0; h < arrHead.length; h++) {
                 var th = document.createElement('th'); // the header object.
+                th.setAttribute('style', "border: 1px solid black");
+
                 th.innerHTML = arrHead[h];
                 tr.appendChild(th);
             }
-
             var div = document.getElementById('cont');
             div.appendChild(machineTable);
             addRow();
@@ -137,11 +165,15 @@
             var removeButton = document.createElement('input');
             removeButton.setAttribute('type', 'button');
             removeButton.setAttribute('value', 'Remove');
+            removeButton.setAttribute('style', "border: 1px solid black");
+
             removeButton.setAttribute('onclick', 'removeRow(this)');
             tdRemoveButton.appendChild(removeButton);
 
             tdMachine = tr.insertCell(1);
             var machineElement = document.createElement('input');
+            machineElement.setAttribute('style', "border: 1px solid black");
+
             machineElement.setAttribute('type', 'text');
             machineElement.setAttribute('value', '');
             tdMachine.appendChild(machineElement);
@@ -206,19 +238,19 @@
 
 
 
-            console.log(trainingplan);
+            //console.log(trainingplan);
             return trainingplan;
         }
 
         document.getElementById("upload").addEventListener("click", function () {
             values = collectValues();
-            console.log("!!!!!!!!!!!!!!!")
-            console.log(values);
-            console.log(JSON.stringify(values));
-            console.log("____________________");
+            //console.log("!!!!!!!!!!!!!!!")
+            //console.log(values);
+            //console.log(JSON.stringify(values));
+            //console.log("____________________");
             Puck.eval(`require("Storage").writeJSON("kieser-trainingplan.json", ${JSON.stringify(values)})`, () => {
                 Puck.eval(`Bangle.buzz()`, () => {
-                    console.log("all done");
+                    //console.log("all done");
                 })
             });
         });
