@@ -322,6 +322,41 @@ setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
 B3 = 1;  // BTN3 is bound to start the stopwatch
 
+setWatch(function(){
+  console.log("dunkler");
+ // var brightness = (require("Storage").readJSON("setting.json",1)||{})["brightness"];
+  var settings = (require("Storage").readJSON("setting.json",1));
+  var brightness = settings.brightness;
+  var newBrightness;
+  console.log(brightness);
+  if (brightness > 0.2){
+    newBrightness = brightness - 0.2;
+    settings.brightness = newBrightness;
+    require("Storage").writeJSON("setting.json",settings);
+    Bangle.setLCDBrightness(newBrightness);
+  }
+  console.log(newBrightness);
+  console.log(settings);
+  
+  
+}, BTN4, {repeat:true});
+
+setWatch(function(){
+  console.log("hell");
+  var settings = (require("Storage").readJSON("setting.json",1));
+  var brightness = settings.brightness;
+  var newBrightness;
+  console.log(brightness);
+  if (brightness < 1){
+    newBrightness = brightness + 0.2;
+    settings.brightness = newBrightness;
+    require("Storage").writeJSON("setting.json",settings);
+    Bangle.setLCDBrightness(newBrightness);
+  }
+  console.log(newBrightness);
+  console.log(settings);
+}, BTN5, {repeat:true});
+
 setWatch(function(e) { 
     var pressedTime = e.time-e.lastTime;
     if (pressedTime > 1.2){
