@@ -1,5 +1,6 @@
 (function(back) {
   let settings = require('Storage').readJSON('speedalt.json',1)||{};
+  var vibrate = settings.buzz||1;
   
    function setUnits(m,u) {
     settings['spd'] = m;
@@ -24,10 +25,9 @@
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
     'Vibrate' : {
-    value : boolean,
+    value : vibrate,
     format : v => v?"On":"Off",
-    onchange : v => { settings['buzz'] = v; require('Storage').write('speedalt.json',settings); }
-  }
+    onchange : v => { settings.buzz = v; require('Storage').write('speedalt.json',settings); }
   };
   
   const unitsMenu = {
