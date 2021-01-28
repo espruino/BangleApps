@@ -31,6 +31,7 @@ Steps are saved to a datafile every 5 minutes. You can watch a graph using the a
 * Step detection sensitivity from firmware can be configured
 * Steps are saved to a file and read-in at start (to not lose step progress)
 * Settings can be changed in Settings - App/widget settings - Active Pedometer
+* Can hide the widget display if required using settings
 
 ## Features App
 
