@@ -1,164 +1,170 @@
-var counter;
-var counterInterval;
-
-var settings;
-
-var work=false; //true if training false if resting
-var prep=true; //true if we are in prep phase (at the beginning of the session
-var setNum;
-
-var paused;
-
-function endPart() {
-  g.clear();
-  if (prep){
-    prep=false;
-    work = true;
-    counter = settings.workseg+settings.workmin*60;
-    startCounter();
-  }else if (work){
-    work = false;
-    counter = settings.restseg+settings.restmin*60;
-    startCounter();
-  }
-  else{
-    if (setNum>1)
-    {
-      setNum--;
-      work = true;
-      counter = settings.workseg+settings.workmin*60;
-      startCounter();
-    }
-    else
-    {
-       //End session
-      setWatch(showMenu, BTN2);
-      E.showMessage("Press BTN2 for\ngoing back\nto the menu","Well done!");
-    }
-  }
-}
-
-function printCounter(counter){
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",80); // vector font, 80px  
-  // draw the current counter value
-  let minutes = Math.floor(counter/60);
-  let segs = counter % 60;
-  let textMinutes = minutes.toString().padStart(2, "0");
-  let textSegs = segs.toString().padStart(2,"0");
-  g.clearRect(0,80,239,160);
-  g.setFont("Vector",30);
-  if (prep)
-    g.setColor(125,125,0);
-  else if (work)
-    g.setColor(255,0,0);
-  else
-    g.setColor(0,255,0);
-  g.drawString(setNum,120,50);
-  if (prep)
-    g.drawString("PREPARATION",120,190);
-  else if (work)
-    g.drawString("WORK",120,190);
-  else
-    g.drawString("REST",120,190);
-  g.setFont("Vector",10);
-  g.drawString("Touch to pause",120,215);
-  g.setFont("Vector",80); 
-  g.drawString(textMinutes+":"+textSegs,120,120);
-}
-
-function signal_to_user(le){
-  if (settings.buzz)
-    Bangle.buzz(le);
-  else
-    Bangle.beep(le,4000);
-}
-
-function countDown() {
-  counter--;
-  if (counter<4 && counter>0)
-    signal_to_user(200);
-  if (counter==0)
-    signal_to_user(600);
-
-  if (counter<0) {
-    clearInterval(counterInterval);
-    counterInterval = undefined;
-    endPart();
-  }
-  else
-  {
-    printCounter(counter);
-  }
-  g.flip();
-}
-
-function startCounter(){
-  if (!counterInterval)
-    counterInterval = setInterval(countDown, 1000);
-}
-
-function pause()
+/*
+ * Degrees to radians
+ */
+function toRadians(degrees)
 {
-  if (!paused)
-  {
-    clearInterval(counterInterval);
-    counterInterval = undefined;
-    setWatch(resume,BTN4);
-    setWatch(resume,BTN5);
-    paused=true;
-    g.clear();
-    g.setFont("Vector",60);
-    g.drawString("PAUSED",120,120);
-    g.setFont("Vector",20);
-    g.drawString("Touch to continue",120,180);
-  }
+    return Math.PI * degrees / 180;
 }
 
-function resume(){
-  if (paused)
-  {
-    g.clear();
-    counterInterval = setInterval(countDown, 1000);
-    setWatch(pause,BTN4);
-    setWatch(pause,BTN5);
-    paused=false;
-  }
-}
-
-function startSession() {
-  E.showMenu();
-  paused=false;
-  setWatch(pause,BTN4);
-  setWatch(pause,BTN5);
-  require('Storage').write('intervals.settings.json',settings);
-  setNum = settings.sets;
-  counter = 5;//prep time
-  prep=true;
-  work=false;
-  startCounter();
-}
-
-function showMenu()
+/*
+ * Julian day number
+ * Assumes a proleptic gregorian calendar where the year 1 is preceded by the
+ * year 0.
+ */
+function toJulianDay(year, month, day, hours, minutes, seconds)
 {
-  settings = require('Storage').readJSON('intervals.settings.json',1)||
-      { sets:1,workseg:10,workmin:0,restseg:5,restmin:0,buzz:true};
+    day += hours / 24 + minutes / 1440 + seconds / 86400;
+    
+    if(month <= 2)
+    {
+        year -= 1;
+        month += 12;
+    }
+    
+    var A = Math.floor(year / 100);
+    var B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+}
 
-  var mainmenu = {
-  "" : { "title" : "-- Main Menu --" },
-  "START" : function() { startSession(); },
-  "Sets" : { value : settings.sets,min:0,max:20,step:1,onchange : v => { settings.sets=v; } },
-  "Work minutes" : { value : settings.workmin,min:0,max:59,step:1,onchange : v => { settings.workmin=v; } },
-  "Work seconds" : { value : settings.workseg,min:0,max:59,step:5,onchange : v => { settings.workseg=v; } },
-  "Rest minutes" : { value : settings.restmin,min:0,max:59,step:1,onchange : v => { settings.restmin=v; } },
-  "Rest seconds" : { value : settings.restseg,min:0,max:59,step:5,onchange : v => { settings.restseg=v; } },
-  "Signal type" :  { value : settings.buzz,format : v => v?"Buzz":"Beep",onchange : v => { settings.buzz=v; }}
-  };
+/*
+ * Sidereal time in Greenwich
+ */
+function siderealTime(julianDay)
+{
+    var T = (julianDay - 2451545.0) / 36525;
+    return toRadians(280.46061837 + 360.98564736629 * (julianDay - 2451545.0) + 0.000387933 * T * T - T * T * T / 38710000);
+}
+
+function binary_search(a, value) {
+    var lo = 0, hi = a.length - 1, mid;
+    while (lo <= hi) {
+        mid = Math.floor((lo+hi)/2);
+        if (a[mid] > value)
+            hi = mid - 1;
+        else if (a[mid] < value)
+            lo = mid + 1;
+        else
+            return mid;
+    }
+    return null;
+}
+
+function drawStars(lat,lon){
+  var longitude = toRadians(-lon);
+  var latitude = toRadians(lat);
   
-  E.showMenu(mainmenu);
+  date = new Date();
+
+  var julianDay = toJulianDay(date.getFullYear(), date.getMonth()+1,date.getDate(),
+                              date.getHours() + date.getTimezoneOffset() / 60,
+                              date.getMinutes(), date.getSeconds());
+  var size = 240;
+
+  storage = require('Storage');
+  f=storage.read("planetarium.csv","r");
+  linestart=0;
+  g.clear();
+
+  //Common calculations based only on time
+  var t = (julianDay - 2451545.0) / 36525;
+  var zeta = toRadians((2306.2181 * t + 0.30188 * t * t + 0.017998 * t * t * t) / 3600);
+  var theta = toRadians((2004.3109 * t - 0.42665 * t * t - 0.041833 * t * t * t) / 3600);
+  var z = toRadians((2306.2181 * t + 1.09468 * t * t + 0.018203 * t * t * t) / 3600);
+
+
+  let starNumber = 0;
+  //Each star has a number (the position on the file (line number)). These are the lines
+  //joining each star in the constellations.
+  constelation_lines=[/*Orion*/[7,68],[10,53],[53,56],[28,68],/*Taurus*/[13,172],[13,340],[293,340],[29,293],
+                      /*canis menor*/[155,8]];
+  var starPositions = {};
+
+  for (i=0;i<f.length;i++)
+  {
+    if (f[i]=='\n'){
+      var start = new Date().getTime();
+      starNumber++;
+      //console.log("Line from "+linestart.toString()+"to "+(i-1).toString());
+      line = f.substr(linestart,i-linestart);
+      //console.log(line);
+      linestart = i+1;
+      //Process the star
+      starInfo = line.split(',');
+      //console.log(starInfo[0]);
+      starRA = parseFloat(starInfo[0]);
+      starDE = parseFloat(starInfo[1]);
+      starMag = parseFloat(starInfo[2]);
+      //var start = new Date().getTime();
+      var dec = Math.asin(Math.sin(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) + Math.cos(theta) * Math.sin(starDE));
+      var ascen = Math.atan2(Math.cos(starDE) * Math.sin(starRA + zeta), Math.cos(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) - Math.sin(theta) * Math.sin(starDE)) + z;
+      var H = siderealTime(julianDay) - longitude - ascen;
+      //var end = new Date().getTime();
+      //console.log("Call to doSomething took " + (end - start) + " milliseconds.");
+      //Compute altitude
+      var alt = Math.asin(Math.sin(latitude) * Math.sin(dec) + Math.cos(latitude) * Math.cos(dec) * Math.cos(H));
+      if(alt >= 0)
+      {
+        //Compute azimuth  
+        var azi = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(latitude) - Math.tan(dec) * Math.cos(latitude));
+        var x = size / 2 + size / 2 * Math.cos(alt) * Math.sin(azi);
+        var y = size / 2 + size / 2 * Math.cos(alt) * Math.cos(azi);
+        starPositions[starNumber] = [x,y];
+        var magnitude = starMag<1.5?2:1;
+        g.fillCircle(x, y, magnitude);
+        if (starMag<1)
+          g.drawString(starInfo[3],x,y+2);
+        g.flip();
+
+      }
+    }
+  }
+
+  for (i=0;i<constelation_lines.length;i++)
+  {
+    constelation = constelation_lines[i];
+    positionStar1=starPositions[constelation[0]];
+    positionStar2=starPositions[constelation[1]];
+    //Both stars need to be visible
+    g.setColor(0,255,0);
+    if (positionStar1 && positionStar2)
+      g.drawLine(positionStar1[0],positionStar1[1],positionStar2[0],positionStar2[1]);
+    g.flip();
+  }
 }
 
-showMenu();
+Bangle.setGPSPower(1);
+
+var gps = { fix : 0};
+var gpsCount = 0;
+var prevSats = 0;
+g.clear();
+
+
+
+g.setFontAlign(0,0);
+
+Bangle.on('GPS',function(gp) {
+  gps = gp;
+  gpsCount++;
+  var msg;
+  if (gp.fix) {
+    lat = gp.lat;
+    lon = gp.lon;
+    Bangle.setGPSPower(0);
+    drawStars(lat,lon);
+  } else {
+    g.setFont("Vector",20); 
+    g.drawString("Waiting for position",120,120);
+    g.setFont("Vector",15); 
+    if (gp.satellites>prevSats || prevSats===0){
+      prevSats = gp.satellites;
+      g.clearRect(0,150,240,180);
+      g.drawString("Got "+gp.satellites+" satellites",120,160);
+    }
+    g.flip();
+  }
+});
+
 
 
 

@@ -2684,7 +2684,7 @@
   "tags": "",
   "storage": [
     {"name":"planetarium.app.js","url":"planetarium.app.js"},
-    {"name":"planetarium.app.csv","url":"planetarium.app.csv"},
+    {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
     {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
   ]
 }
