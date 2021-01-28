@@ -327,7 +327,7 @@ function showLocaleMenu() {
     'Time Zone': {
       value: settings.timezone,
       min: -11,
-      max: 12,
+      max: 13,
       step: 0.5,
       onchange: v => {
         settings.timezone = v || 0;
