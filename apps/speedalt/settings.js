@@ -1,22 +1,27 @@
 (function(back) {
+
   let settings = require('Storage').readJSON('speedalt.json',1)||{};
   settings.buzz = settings.buzz||1;
   
-   function setUnits(m,u) {
-    settings['spd'] = m;
-    settings['spd_unit'] = u;
+  function writeSettings() {
     require('Storage').write('speedalt.json',settings);
+  }
+  
+   function setUnits(m,u) {
+    settings.spd = m;
+    settings.spd_unit = u;
+    writeSettings();
   }
 
   function setUnitsAlt(m,u) {
-    settings['alt'] = m;
-    settings['alt_unit'] = u;
-    require('Storage').write('speedalt.json',settings);
+    settings.alt = m;
+    settings.alt_unit = u;
+    writeSettings();
   }
 
   function setColour(c) {
-    settings['colour'] = c;
-    require('Storage').write('speedalt.json',settings);
+    settings.colour = c;
+    writeSettings();
   }
   
   const appMenu = {
@@ -27,7 +32,7 @@
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; require('Storage').write('speedalt.json',settings); }
+    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
     }};
   
   const unitsMenu = {
@@ -51,5 +56,6 @@
   };
   
   
-  E.showMenu(appMenu)
+  E.showMenu(appMenu);
+
 })
