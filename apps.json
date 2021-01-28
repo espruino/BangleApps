@@ -2677,10 +2677,10 @@
 ,
 { "id": "planetarium",
   "name": "Planetarium",
-  "shortName":"planetarium",
+  "shortName":"Planetarium",
   "icon": "planetarium.png",
   "version":"0.01",
-  "description": "Planetarium.",
+  "description": "Planetarium showing up to 350 stars using the watch location and time",
   "tags": "",
   "storage": [
     {"name":"planetarium.app.js","url":"planetarium.app.js"},
