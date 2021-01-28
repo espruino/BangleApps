@@ -20,11 +20,6 @@
     require('Storage').write('speedalt.json',settings);
   }
 
-  function setTime(b) {
-    settings['time'] = b;
-    require('Storage').write('speedalt.json',settings);
-  }
-
   function setColour(c) {
     settings['colour'] = c;
     require('Storage').write('speedalt.json',settings);
@@ -52,9 +47,9 @@
   const colMenu = {
     '': {'title': 'Colours'},
     '< Back': function() { E.showMenu(appMenu); },
-    'Default' : function() { setColor(0); },
-    "Hi Contrast" : function() { setColor(1); },
-    "Night" : function() { setColor(2); }
+    'Default' : function() { setColour(0); },
+    "Hi Contrast" : function() { setColour(1); },
+    "Night" : function() { setColour(2); }
   };
   
   
