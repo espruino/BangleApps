@@ -450,3 +450,4 @@ Bangle.on('GPS', onGPS);
 Bangle.setGPSPower(1);
 setButtons();
 setInterval(updateClock, 30000);
+
