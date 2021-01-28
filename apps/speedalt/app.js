@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.04
+Ver : 0.05
 Mike Bennett mike[at]kereru.com
 */
 
@@ -28,12 +28,10 @@ var mainmenu = {
 var lastFix = {fix:0,satellites:0};
 var showSpeed = 1;      // 1 = Speed in primary display. 0 = alt in primary
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
-//var inMenu = 0;
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
 var lastBuzz = 0;      // What sort of buzz was last performed. 0 = no fix, 1 = fix. 
 var timerBuzz2 = 0;    // ID of timer for fix second buzz
-
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 
 var max = {};
@@ -181,17 +179,6 @@ function drawSats(sats) {
   else buf.drawString("Sats:"+sats,240,160);  
 }
 
-/*
-function drawClockLarge() {
-    buf.clear();
-    drawTime();
-    g.reset();
-    g.drawImage(img,0,40);
-    g.flip();
-}
-*/
-
-
 function onGPS(fix) {
   lastFix = fix;
   
@@ -253,9 +240,8 @@ function doBuzz(hasFix) {
   if ( !lastBuzz && hasFix ) {
     if ( dbg ) print('Fix');
     Bangle.buzz();
-    timerBuzz2 = setInterval(doBuzz2, 400); // Trigger a second buzz in 400ms
-
-      lastBuzz = 1;
+    timerBuzz2 = setInterval(doBuzz2, 500); // Trigger a second buzz
+    lastBuzz = 1;
     return;
   }
   
@@ -263,7 +249,7 @@ function doBuzz(hasFix) {
   if ( lastBuzz && !hasFix ) {
     if ( dbg ) print('Fix lost');
     Bangle.buzz();
-    lastBuzz = 1;
+    lastBuzz = 0;
     return;
   }
   
@@ -277,39 +263,6 @@ function doBuzz2() {
     Bangle.buzz();
  }
 
-
-/*
-function setUnits(m,u) {
-  settings.spd = m;
-  settings.spd_unit = u;
-  require('Storage').writeJSON('speedalt.json',settings);
-  
-  inMenu = 0;
- 
-  E.showMenu(); // remove the menu
-  onGPS(lastFix);  // Back to Speed display
-}
-function setUnitsAlt(m,u) {
-  settings.alt = m;
-  settings.alt_unit = u;
-  require('Storage').write('speedalt.json',settings);
-  inMenu = 0;
-  E.showMenu(); // remove the menu
-  onGPS(lastFix);  // Back to Speed display
-}
-function enterMenu() {
-  if ( inMenu ) return;
-  inMenu = 1;
-  E.showMenu(mainmenu);
-}
-function exitMenu() {
-  inMenu = 0;
-  E.showMenu(); 
-  onGPS(lastFix); // remove the menu and restore
-  
-}
-*/
-
 function toggleDisplay() {
   showSpeed = !showSpeed;
   onGPS(lastFix);  // Back to Speed display
@@ -321,14 +274,12 @@ function toggleMax() {
   onGPS(lastFix);  // Back to Speed display
 }
 
-
-// How to disable these while in menu? Interim using inMenu flag.
 function setButtons(){
   
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
-  // Switch between fix and max display
+  // Switch between fix and max display on short press or reset max values on long press
   setWatch(maxPressed, BTN3,{repeat:true,edge:"rising"});
   setWatch(maxReleased, BTN3,{repeat:true,edge:"falling"});
 
@@ -392,6 +343,7 @@ settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
 settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
 settings.colour = settings.colour||0;          // Colour scheme. 
+settings.buzz = settings.buzz||1;          // Buzz when fix lost or gained. 
 
 /*
 Colour Pallet Idx
