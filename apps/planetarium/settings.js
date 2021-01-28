@@ -1,21 +1,19 @@
 // make sure to enclose the function in parentheses
 (function(back) {
     let settings = require('Storage').readJSON('planetarium.json',1)||{};
-    function save(key, value) {
-      settings[key] = value;
-      require('Storage').write('planetarium.json',settings);
-    }
     const appMenu = {
       '': {'title': 'Planetarium Settings'},
       '< Back': back,
-      'Show star names': {
-        value: settings.showstarnames||false,
-        onchange: (m) => {save('showstarnames', m)}
+      'Star names': {
+        value: !settings.starnames,
+        format: v => v ? 'Yes' : 'No',
+        onchange: v => require('Storage').write('planetarium.json', {starnames: !v}),
       },
-      'Show constellations': {
-        value: settings.showcons||true,
-        onchange: (m) => {save('showcons', m)}
-      }      
+      'Constellations': {
+        value: !settings.constellations,
+        format: v => v ? 'Yes' : 'No',
+        onchange: v => require('Storage').write('planetarium.json', {constellations: !v}),
+      }   
     };
     E.showMenu(appMenu)
   })

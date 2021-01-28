@@ -35,26 +35,9 @@ function siderealTime(julianDay)
     return toRadians(280.46061837 + 360.98564736629 * (julianDay - 2451545.0) + 0.000387933 * T * T - T * T * T / 38710000);
 }
 
-function binary_search(a, value) {
-    var lo = 0, hi = a.length - 1, mid;
-    while (lo <= hi) {
-        mid = Math.floor((lo+hi)/2);
-        if (a[mid] > value)
-            hi = mid - 1;
-        else if (a[mid] < value)
-            lo = mid + 1;
-        else
-            return mid;
-    }
-    return null;
-}
-
 function drawStars(lat,lon,date){
   var longitude = toRadians(-lon);
   var latitude = toRadians(lat);
-  
-  
-  
 
   var julianDay = toJulianDay(date.getFullYear(), date.getMonth()+1,date.getDate(),
                               date.getHours() + date.getTimezoneOffset() / 60,
@@ -109,7 +92,7 @@ function drawStars(lat,lon,date){
         starPositions[starNumber] = [x,y];
         var magnitude = starMag<1.5?2:1;
         g.fillCircle(x, y, magnitude);
-        if (starMag<1)
+        if (starMag<1 && settings.starnames)
           g.drawString(starInfo[3],x,y+2);
         g.flip();
 
@@ -117,16 +100,18 @@ function drawStars(lat,lon,date){
     }
   }
 
-  for (i=0;i<constelation_lines.length;i++)
-  {
-    constelation = constelation_lines[i];
-    positionStar1=starPositions[constelation[0]];
-    positionStar2=starPositions[constelation[1]];
-    //Both stars need to be visible
-    g.setColor(0,255,0);
-    if (positionStar1 && positionStar2)
-      g.drawLine(positionStar1[0],positionStar1[1],positionStar2[0],positionStar2[1]);
-    g.flip();
+  if (settings.constellations){
+    for (i=0;i<constelation_lines.length;i++)
+    {
+      constelation = constelation_lines[i];
+      positionStar1=starPositions[constelation[0]];
+      positionStar2=starPositions[constelation[1]];
+      //Both stars need to be visible
+      g.setColor(0,255,0);
+      if (positionStar1 && positionStar2)
+        g.drawLine(positionStar1[0],positionStar1[1],positionStar2[0],positionStar2[1]);
+      g.flip();
+    }
   }
 }
 
@@ -136,7 +121,8 @@ var gps = { fix : 0};
 var prevSats = 0;
 g.clear();
 
-
+var settings = require('Storage').readJSON('planetarium.settings.json',1)||
+      { starnames:false,constellations:true};
 
 g.setFontAlign(0,0);
 
