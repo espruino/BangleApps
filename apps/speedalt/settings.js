@@ -29,7 +29,12 @@
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     'Units' : function() { E.showMenu(unitsMenu); },
-    'Colours' : function() { E.showMenu(colMenu); }
+    'Colours' : function() { E.showMenu(colMenu); },
+    'Vibrate' : {
+    value : boolean,
+    format : v => v?"On":"Off",
+    onchange : v => { settings['buzz'] = v; require('Storage').write('speedalt.json',settings); }
+  }
   };
   
   const unitsMenu = {
