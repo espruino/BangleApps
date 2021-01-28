@@ -28,7 +28,7 @@
     value : settings.buzz,
     format : v => v?"On":"Off",
     onchange : () => { settings.buzz = !settings.buzz; require('Storage').write('speedalt.json',settings); }
-  };
+    }};
   
   const unitsMenu = {
     '': {'title': 'Units'},
