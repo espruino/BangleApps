@@ -11,12 +11,12 @@
       'Star names': {
         value: settings.starnames,
         format: v => v ? 'Yes' : 'No',
-        onchange: (v) => {save('starnames', v)}
+        onchange: (v) => {save('starnames', !settings.starnames)}
       },
       'Constellations': {
         value: settings.constellations,
         format: v => v ? 'Yes' : 'No',
-        onchange: (v) => {save('constellations', v)}
+        onchange: (v) => {save('constellations', !settings.constellations)}
       }   
     };
     E.showMenu(appMenu)
