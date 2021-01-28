@@ -239,17 +239,17 @@ function doBuzz(hasFix) {
   // fix gained - double buzz
   if ( !lastBuzz && hasFix ) {
     if ( dbg ) print('Fix');
+    lastBuzz = 1;
     Bangle.buzz();
     timerBuzz2 = setInterval(doBuzz2, 500); // Trigger a second buzz
-    lastBuzz = 1;
     return;
   }
   
   // fix lost - single buzz
   if ( lastBuzz && !hasFix ) {
     if ( dbg ) print('Fix lost');
-    Bangle.buzz();
     lastBuzz = 0;
+    Bangle.buzz();
     return;
   }
   
