@@ -16,7 +16,7 @@
 
   function gps_get_fix() { return last_fix; }
   function gps_get_status() { return WIDGETS.gpsservice.width === 24 ? true : false;}
-  function gps_get_version() { return "0.2"; }
+  function gps_get_version() { return "0.03"; }
 
   function log_debug(o) {
     if (debug) console.log(o);
@@ -67,7 +67,7 @@
   }
 
   function gps_power_off() {
-    setupSuperE();  // return to expected setup for other apps
+    //setupSuperE();  // return to expected setup for other apps
     Bangle.setGPSPower(0);
     have_fix = false;
     fixToggle = false;
