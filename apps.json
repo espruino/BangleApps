@@ -2674,4 +2674,18 @@
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
   ]
 }
+,
+{ "id": "planetarium",
+  "name": "Planetarium",
+  "shortName":"planetarium",
+  "icon": "planetarium.png",
+  "version":"0.01",
+  "description": "Planetarium.",
+  "tags": "",
+  "storage": [
+    {"name":"planetarium.app.js","url":"planetarium.app.js"},
+    {"name":"planetarium.app.csv","url":"planetarium.app.csv"},
+    {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
+  ]
+}
 ]
