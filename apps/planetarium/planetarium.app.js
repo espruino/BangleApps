@@ -57,10 +57,6 @@ function drawStars(lat,lon,date){
 
 
   let starNumber = 0;
-  //Each star has a number (the position on the file (line number)). These are the lines
-  //joining each star in the constellations.
-  constelation_lines=[/*Orion*/[7,68],[10,53],[53,56],[28,68],/*Taurus*/[13,172],[13,340],[293,340],[29,293],
-                      /*canis menor*/[155,8]];
   var starPositions = {};
 
   for (i=0;i<f.length;i++)
@@ -101,16 +97,30 @@ function drawStars(lat,lon,date){
   }
 
   if (settings.constellations){
-    for (i=0;i<constelation_lines.length;i++)
+    //Each star has a number (the position on the file (line number)). These are the lines
+    //joining each star in the constellations.
+    constelations=[[[7,68],[10,53],[53,56],[28,68],"Orion"],[[13,172],[13,340],[293,340],[29,293],"Taurus"],
+                      [[155,8],"Canis Menor"],[[36,81],[87,81],[235,87],[33,235],[33,75],[75,40],"Ursa Major"],[[67,91],[74,67],[91,110],[110,252],"Cassiopeia"],[[23,166],[16,294],[294,44],[166,149],[230,149],[16,23],"Gemini"]];
+    g.setColor(0,255,0);
+    for (i=0;i<constelations.length;i++)
     {
-      constelation = constelation_lines[i];
-      positionStar1=starPositions[constelation[0]];
-      positionStar2=starPositions[constelation[1]];
-      //Both stars need to be visible
-      g.setColor(0,255,0);
-      if (positionStar1 && positionStar2)
-        g.drawLine(positionStar1[0],positionStar1[1],positionStar2[0],positionStar2[1]);
-      g.flip();
+      constelationShowing=false;
+      for (j=0;j<constelations[i].length-1;j++){
+        positionStar1=starPositions[constelations[i][j][0]];
+        positionStar2=starPositions[constelations[i][j][1]];
+        //Both stars need to be visible
+        if (positionStar1 && positionStar2)
+        {
+          g.drawLine(positionStar1[0],positionStar1[1],positionStar2[0],positionStar2[1]);
+          constelationShowing=true;
+        }
+        else
+          constelationShowing=false;
+        g.flip();
+      }
+      //Write the name
+      if (constelationShowing)
+        g.drawString(constelations[i][constelations[i].length-1],positionStar2[0]+10,positionStar2[1]);
     }
   }
 }
