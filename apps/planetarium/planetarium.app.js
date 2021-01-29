@@ -132,7 +132,7 @@ function drawStars(lat,lon,date){
         g.flip();
       }
       //Write the name
-      if (constelationShowing)
+      if (constelationShowing && settings.consnames)
         g.drawString(constelations[i][constelations[i].length-1],positionStar2[0]+10,positionStar2[1]);
     }
   }
@@ -145,7 +145,7 @@ var prevSats = 0;
 g.clear();
 
 var settings = require('Storage').readJSON('planetarium.json',1)||
-      { starnames:false,constellations:true};
+      { starnames:false,constellations:true,consnames:false};
 
 g.setFontAlign(0,0);
 
