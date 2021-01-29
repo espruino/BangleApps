@@ -83,7 +83,21 @@ function drawStars(lat,lon,date){
       var x = size / 2 + size / 2 * Math.cos(alt) * Math.sin(azi);
       var y = size / 2 + size / 2 * Math.cos(alt) * Math.cos(azi);
       starPositions[starNumber] = [x,y];
-      var magnitude = starMag<1.5?2:1;
+      var magnitude = starMag<1?2:1;
+      //Stars between 1.5 and 4 magnitude should get a different colour
+      var col=1;
+      if (starMag<=1.5)
+        col=1;
+      else if (starMag>1.5 && starMag<2)
+        col=0.9;
+      else if (starMag>=2 && starMag<3)
+        col=0.7;
+      else if (starMag>=3 && starMag<3.5)
+        col=0.5;
+      else
+        col=0.3;
+        
+      g.setColor(col,col,col);
       g.fillCircle(x, y, magnitude);
       if (starMag<1 && settings.starnames)
         g.drawString(starInfo[3],x,y+2);
@@ -99,7 +113,7 @@ function drawStars(lat,lon,date){
     //Each star has a number (the position on the file (line number)). These are the lines
     //joining each star in the constellations.
     constelations=[[[7,68],[10,53],[53,56],[28,68],"Orion"],[[13,172],[13,340],[293,340],[29,293],"Taurus"],
-                      [[155,8],"Canis Menor"],[[36,81],[87,81],[235,87],[33,235],[33,75],[75,40],"Ursa Major"],[[67,91],[74,67],[91,110],[110,252],"Cassiopeia"],[[23,166],[16,294],[294,44],[166,149],[230,149],[16,23],"Gemini"]];
+                      [[155,8],"Canis Menor"],[[36,81],[87,81],[235,87],[33,235],[33,75],[75,40],"Ursa Major"],[[67,91],[74,67],[91,110],[110,252],"Cassiopeia"],[[23,166],[16,294],[294,44],[166,149],[230,149],[16,23],"Gemini"],[[88,218],[215,292],[218,292],[245,88],[292,245],[215,218],"Cepheus"],[[150,62],[150,175],[175,35],[403,62],[487,158],[384,487],[384,158],[35,158],[487,403],"Perseus"],[[19,65],[65,90],[65,147],[466,65],[466,189],[147,401],[213,90],"Cygnus"],[[6,42],[168,6],[168,113],[113,29],[104,29],[104,42],"Auriga"]];
     g.setColor(0,255,0);
     for (i=0;i<constelations.length;i++)
     {
