@@ -171,7 +171,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.22",
+    "version":"0.23",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
@@ -2620,6 +2620,25 @@
     {"name":"lifeclk.app.js","url":"app.js"},
     {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "speedalt",
+  "name": "GPS Speedo and Altimeter",
+  "shortName":"GPS Speed Alt",
+  "icon": "app.png",
+  "version":"0.07",
+  "description": "GPS speed and altitude display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
+  "tags": "tool,outdoors",
+  "type":"app",
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"speedalt.app.js","url":"app.js"},
+    {"name":"speedalt.img","url":"app-icon.js","evaluate":true},
+    {"name":"speedalt.settings.js","url":"settings.js"}
+  ],
+ "data": [
+      {"name":"speedalt.json"}
+    ]
 },
 { "id": "de-stress",
   "name": "De-Stress",
