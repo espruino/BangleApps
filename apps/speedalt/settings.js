@@ -1,7 +1,7 @@
 (function(back) {
 
   let settings = require('Storage').readJSON('speedalt.json',1)||{};
-  settings.buzz = settings.buzz||1;
+  //settings.buzz = settings.buzz||1;
   
   function writeSettings() {
     require('Storage').write('speedalt.json',settings);
