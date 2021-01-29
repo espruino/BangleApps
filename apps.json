@@ -2692,8 +2692,7 @@
     {"name":"intervals.app.js","url":"intervals.app.js"},
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
   ]
-}
-,
+},
 { "id": "planetarium",
   "name": "Planetarium",
   "shortName":"Planetarium",
@@ -2710,5 +2709,19 @@
   "data":[
     {"name":"planetarium.json"}
   ]
+},
+{ "id": "tapelaunch",
+  "name": "Tape Launcher",
+  "icon": "icon.png",
+  "version":"0.01",
+  "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
+  "readme": "README.md",
+  "tags": "tool,system,launcher",
+  "type":"launch",
+  "storage": [
+    {"name":"tapelaunch.app.js","url":"app.js"},
+    {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
+  ]
 }
+  
 ]
