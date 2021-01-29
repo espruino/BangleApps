@@ -10,7 +10,11 @@ const ID_MODE = "id";
 const VER_MODE = "ver";
 const BATT_MODE = "batt";
 const MEM_MODE = "mem";
+const STEP_MODE = "step";
+const HRT_MODE = "hrt";
+
 let infoMode = NONE_MODE;
+let functionMode = NONE_MODE;
 
 function drawAll(){
   updateTime();
@@ -102,6 +106,20 @@ function changeInfoMode() {
   }
 }
 
+function changeFunctionMode() {
+  switch(functionMode) {
+  case NONE_MODE:
+    functionMode = STEP_MODE;
+    break;
+  case STEP_MODE:
+    functionMode = HRT_MODE;
+    break;
+  case HRT_MODE:
+  default:
+    functionMode = NONE_MODE;
+  }
+}
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -113,3 +131,4 @@ Bangle.on('lcdPower',function(on) {
 var click = setInterval(updateTime, 1000);
 setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
+setWatch(() => { changeFunctionMode(); drawAll(); }, BTN2, {repeat: true});
