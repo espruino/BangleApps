@@ -141,6 +141,10 @@
 
   function draw() {
     var height = 23; //width is deined globally
+    // not everyone likes a widget
+    if (setting('lineOne') == 'Hide' && setting('lineTwo') == 'Hide')
+      return;
+    
     distance = (stepsCounted * setting('stepLength')) / 100 /1000; //distance in km
     
     //Check if same day
