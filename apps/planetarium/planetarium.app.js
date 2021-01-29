@@ -46,7 +46,6 @@ function drawStars(lat,lon,date){
 
   storage = require('Storage');
   f=storage.read("planetarium.data.csv","r");
-  linestart=0;
   g.clear();
 
   //Common calculations based only on time
@@ -59,42 +58,42 @@ function drawStars(lat,lon,date){
   let starNumber = 0;
   var starPositions = {};
 
-  for (i=0;i<f.length;i++)
-  {
-    if (f[i]=='\n'){
-      starNumber++;
-      //console.log("Line from "+linestart.toString()+"to "+(i-1).toString());
-      line = f.substr(linestart,i-linestart);
-      //console.log(line);
-      linestart = i+1;
-      //Process the star
-      starInfo = line.split(',');
-      //console.log(starInfo[0]);
-      starRA = parseFloat(starInfo[0]);
-      starDE = parseFloat(starInfo[1]);
-      starMag = parseFloat(starInfo[2]);
-      //var start = new Date().getTime();
-      var dec = Math.asin(Math.sin(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) + Math.cos(theta) * Math.sin(starDE));
-      var ascen = Math.atan2(Math.cos(starDE) * Math.sin(starRA + zeta), Math.cos(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) - Math.sin(theta) * Math.sin(starDE)) + z;
-      var H = siderealTime(julianDay) - longitude - ascen;
-      //Compute altitude
-      var alt = Math.asin(Math.sin(latitude) * Math.sin(dec) + Math.cos(latitude) * Math.cos(dec) * Math.cos(H));
-      if(alt >= 0)
-      {
-        //Compute azimuth  
-        var azi = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(latitude) - Math.tan(dec) * Math.cos(latitude));
-        var x = size / 2 + size / 2 * Math.cos(alt) * Math.sin(azi);
-        var y = size / 2 + size / 2 * Math.cos(alt) * Math.cos(azi);
-        starPositions[starNumber] = [x,y];
-        var magnitude = starMag<1.5?2:1;
-        g.fillCircle(x, y, magnitude);
-        if (starMag<1 && settings.starnames)
-          g.drawString(starInfo[3],x,y+2);
-        g.flip();
+  var line,linestart = 0;
+  lineend = f.indexOf("\n");
+  while (lineend>=0) {
+    line = f.substring(linestart,lineend);
+    starNumber++;
+    //console.log(line);
+    //Process the star
+    starInfo = line.split(',');
+    //console.log(starInfo[0]);
+    starRA = parseFloat(starInfo[0]);
+    starDE = parseFloat(starInfo[1]);
+    starMag = parseFloat(starInfo[2]);
+    //var start = new Date().getTime();
+    var dec = Math.asin(Math.sin(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) + Math.cos(theta) * Math.sin(starDE));
+    var ascen = Math.atan2(Math.cos(starDE) * Math.sin(starRA + zeta), Math.cos(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) - Math.sin(theta) * Math.sin(starDE)) + z;
+    var H = siderealTime(julianDay) - longitude - ascen;
+    //Compute altitude
+    var alt = Math.asin(Math.sin(latitude) * Math.sin(dec) + Math.cos(latitude) * Math.cos(dec) * Math.cos(H));
+    if(alt >= 0)
+    {
+      //Compute azimuth  
+      var azi = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(latitude) - Math.tan(dec) * Math.cos(latitude));
+      var x = size / 2 + size / 2 * Math.cos(alt) * Math.sin(azi);
+      var y = size / 2 + size / 2 * Math.cos(alt) * Math.cos(azi);
+      starPositions[starNumber] = [x,y];
+      var magnitude = starMag<1.5?2:1;
+      g.fillCircle(x, y, magnitude);
+      if (starMag<1 && settings.starnames)
+        g.drawString(starInfo[3],x,y+2);
+      g.flip();
 
-      }
     }
+    linestart = lineend+1;
+    lineend = f.indexOf("\n",linestart);
   }
+  
 
   if (settings.constellations){
     //Each star has a number (the position on the file (line number)). These are the lines
