@@ -6,7 +6,7 @@ BTN3 : Short press < 2 secs toggles the displays between showing the current spe
 
 BTN3 : Long press > 2 secs resets the recorded maximum values.
 
-App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration on/off can be used to indicate when a fix is lost or gained.
+App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration can be used to indicate when a fix is lost or gained. One buzz for a lost fix and a double buzz when a fix is found.
 
 <img src="screen1.png">
 <img src="screen2.png">
