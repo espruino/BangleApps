@@ -1,0 +1,3 @@
+0.01: New App
+0.02: Restore to SuperE mode on power off.
+0.03: dont reset to SuperE mode on power, as it prevents its general use

@@ -20,7 +20,7 @@ function updateHrm(state: AppState, hrm: HrmData) {
 
   const dHr = hrm.bpm - state.hr;
   const hrError = Math.abs(dHr) + 101 - hrm.confidence;
-  const hrGain = state.hrError / (state.hrError + hrError);
+  const hrGain = (state.hrError / (state.hrError + hrError)) || 0;
 
   state.hr += dHr * hrGain;
   state.hrError += (hrError - state.hrError) * hrGain;
