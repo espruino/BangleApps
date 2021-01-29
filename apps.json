@@ -2693,4 +2693,22 @@
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
   ]
 }
+,
+{ "id": "planetarium",
+  "name": "Planetarium",
+  "shortName":"Planetarium",
+  "icon": "planetarium.png",
+  "version":"0.01",
+  "description": "Planetarium showing up to 350 stars using the watch location and time",
+  "tags": "",
+  "storage": [
+    {"name":"planetarium.app.js","url":"planetarium.app.js"},
+    {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
+    {"name":"planetarium.settings.js","url":"settings.js"},
+    {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
+  ],
+  "data":[
+    {"name":"planetarium.json"}
+  ]
+}
 ]
