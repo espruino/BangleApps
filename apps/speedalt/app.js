@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.05
+Ver : 0.06
 Mike Bennett mike[at]kereru.com
 */
 
@@ -231,8 +231,7 @@ function onGPS(fix) {
 function doBuzz(hasFix) {
 
   // nothing to do
-  if ( lastBuzz === hasFix ) {
-    print('Buzz : no change');
+  if ( lastBuzz === hasFix || !settings.buzz ) {
     return;
   }
   
@@ -241,7 +240,7 @@ function doBuzz(hasFix) {
     if ( dbg ) print('Fix');
     lastBuzz = 1;
     Bangle.buzz();
-    timerBuzz2 = setInterval(doBuzz2, 500); // Trigger a second buzz
+    timerBuzz2 = setInterval(doBuzz2, 600); // Trigger a second buzz
     return;
   }
   
