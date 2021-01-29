@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.06
+Ver : 0.07
 Mike Bennett mike[at]kereru.com
 */
 
@@ -279,8 +279,8 @@ function setButtons(){
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
   // Switch between fix and max display on short press or reset max values on long press
-  setWatch(maxPressed, BTN3,{repeat:true,edge:"rising"});
-  setWatch(maxReleased, BTN3,{repeat:true,edge:"falling"});
+  setWatch(maxPressed, BTN1,{repeat:true,edge:"rising"});
+  setWatch(maxReleased, BTN1,{repeat:true,edge:"falling"});
 
   // Touch screen to toggle display
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
