@@ -9,9 +9,9 @@ BTN1 : Long press > 2 secs resets the recorded maximum values.
 App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration can be used to indicate when a fix is lost or gained. One buzz for a lost fix and a double buzz when a fix is found.
 
 ![](screen1.png)
-<img src="screen2.png">
-<img src="screen3.png">
-<img src="screen4.png">
+![](screen2.png)
+![](screen3.png)
+![](screen4.png)
 
 Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
 
