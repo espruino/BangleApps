@@ -2,7 +2,7 @@
 
 This planetarium takes your position and time and plots the sky as it is.
 
-No planets, or moon, only stars. It can show the 350 most brilliant stars in the sky. 
+No planets, or moon, only stars. It can show the 500 most brilliant stars in the sky. 
 
 Plan is to show also constellations, but this is work in progress. Now it shows Taurus and Orion as examples.
 
