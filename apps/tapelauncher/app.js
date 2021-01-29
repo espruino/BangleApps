@@ -20,19 +20,11 @@ function draw_icon(pos, id, select) {
   var x = ((pos % 3)*80) + 2; 
   var y = 80;
 
-  if (select) {
-    //g.setColor(0.3,0.3,0.3).fillRect(x,y,x+79,y+99); // bigger than icon
-  } else {
-    // some icons will vanish on a black background, so draw a box smaller than the icon to sit on
-    //g.setColor(0.3,0.3,0.3).fillRect(x+5,y+11,x+73,y+73);
-  }
-
   g.setColor(-1);
   g.drawImage(s.read(apps[id].icon),x+2,y+11,{scale:1.625});
 
   if (select) {
-    // white bounding box
-    g.setColor(1,1,1).drawRect(x,y,x+79,y+99); 
+    g.setColor(1,1,1).drawRect(x,y,x+79,y+99); // white bounding box
   }
 }
 
@@ -54,8 +46,8 @@ function draw() {
   } else {
     // some app names are too long for one line
     var name = apps[selected].name;
-    var first = name.substring(0, name.lastIndexOf(" "));
-    var last = name.substring(name.lastIndexOf(" ") + 1, name.length);
+    var first = name.substring(0, name.indexOf(" "));
+    var last = name.substring(name.indexOf(" ") + 1, name.length);
     g.drawString(first, 120, 40, true);
     g.drawString(last, 120, 200, true);
   }
