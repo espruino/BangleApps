@@ -2710,7 +2710,7 @@
     {"name":"planetarium.json"}
   ]
 },
-{ "id": "tapelaunch",
+{ "id": "tapelauncher",
   "name": "Tape Launcher",
   "icon": "icon.png",
   "version":"0.01",
