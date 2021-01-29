@@ -2679,7 +2679,7 @@
   "name": "Planetarium",
   "shortName":"Planetarium",
   "icon": "planetarium.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Planetarium showing up to 350 stars using the watch location and time",
   "tags": "",
   "storage": [
