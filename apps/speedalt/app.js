@@ -342,7 +342,7 @@ settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
 settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
 settings.colour = settings.colour||0;          // Colour scheme. 
-settings.buzz = settings.buzz||1;          // Buzz when fix lost or gained. 
+settings.buzz = settings.buzz||0;          // Buzz when fix lost or gained. 
 
 /*
 Colour Pallet Idx
