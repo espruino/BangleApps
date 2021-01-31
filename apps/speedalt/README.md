@@ -16,10 +16,16 @@ BTN3 : (Only in Speed+Distance mode) Select waypoint. Last fix distance from sel
 
 App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance caqn be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration can be used to indicate when a fix is lost or gained. One buzz for a lost fix and a double buzz when a fix is found.
 
-![](screen1.png)
-![](screen2.png)
-![](screen3.png)
-![](screen4.png)
+Speed and Altitude:<br>
+![](screen1.png)<p>
+Left tap swaps displays:<br>
+![](screen2.png)<p>
+Distance to waypoint DeltaW:<br>
+![](screen5.png)<p>
+MAX Values instead:<br>
+![](screen3.png)<p>
+Settings:<br>
+![](screen4.png)<p>
 
 Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
 
