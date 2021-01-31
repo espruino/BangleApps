@@ -8,17 +8,17 @@
   "lon":175.7613350
   },
   {
-  "name":"DeltW",
+  "name":"DeltaW",
   "lat":-38.9438550,
   "lon":175.7676930
   },
   {
-  "name":"DeltE",
+  "name":"DeltaE",
   "lat":-38.9395240,
   "lon":175.7814420
   },
   {
-  "name":"BClub",
+  "name":"BtClub",
   "lat":-38.9446020,
   "lon":175.8475720
   },
@@ -33,7 +33,7 @@
   "lon":175.7839440
   },
   {
-  "name":"ChyBy",
+  "name":"ChryBy",
   "lat":-38.7975050,
   "lon":175.7551960
   },
@@ -43,17 +43,17 @@
   "lon":175.7481520
   },
   {
-  "name":"KwaKw",
+  "name":"KwaKwa",
   "lat":-38.6632310,
   "lon":175.8670320
   },
   {
-  "name":"Hatep",
+  "name":"Hatepe",
   "lat":-38.8547420,
   "lon":176.0089124
   },
   {
-  "name":"Kinlc",
+  "name":"Kinloc",
   "lat":-38.6614442,
   "lon":175.9161607
   }
