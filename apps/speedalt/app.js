@@ -34,6 +34,8 @@ var wp = {};        // Waypoint to use for distance from cur position.
 
 function nextwp(inc){
   if (altDisp) return;
+  if ( showMax ) return;
+
   wpindex+=inc;
   if (wpindex>=waypoints.length) wpindex=0;
   if (wpindex<0) wpindex = waypoints.length-1;
@@ -194,6 +196,7 @@ function drawWP() {
   if ( nm == undefined ) nm = '';
   if ( nm == 'NONE' ) nm = '';
   if ( altDisp ) nm='';
+  if ( showMax ) nm='';
   
   
   buf.setFontAlign(-12,1); //left, bottom
