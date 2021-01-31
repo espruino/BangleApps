@@ -34,8 +34,6 @@ var wp = {};        // Waypoint to use for distance from cur position.
 
 function nextwp(inc){
   if (altDisp) return;
-  if ( showMax ) return;
-
   wpindex+=inc;
   if (wpindex>=waypoints.length) wpindex=0;
   if (wpindex<0) wpindex = waypoints.length-1;
@@ -208,7 +206,6 @@ function drawWP() {
   if ( nm == undefined ) nm = '';
   if ( nm == 'NONE' ) nm = '';
   if ( altDisp ) nm='';
-  if ( showMax ) nm='';
   
   
   buf.setFontAlign(-12,1); //left, bottom
@@ -224,7 +221,7 @@ function drawSats(sats) {
   buf.setFontAlign(1,1); //right, bottom
   buf.setColor(3);  
   buf.setFont("6x8", 2);
-  if ( showMax ) {
+  if ( showMax && altDisp ) {
     buf.setColor(2); 
     buf.drawString("MAX",240,160);
   }
@@ -282,27 +279,26 @@ function onGPS(fix) {
     if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
     if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
     
-    if ( showMax ) {
-      // Speed and alt maximums
-      drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit);
-    }
-    else {
-      if ( altDisp ) {
+    if ( altDisp ) {
+      if ( showMax ) {
+        // Speed and alt maximums
+        drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit);
+      }
+      else {
         // Show speed/altitude
         drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit);
       }
+    }
+    else {
+      // Show speed/distance
+      if ( dist <= 0 ) {
+        // No WP selected
+        drawFix(speed,settings.spd_unit,fix.satellites,'','');
+      }
       else {
-        // Show speed/distance
-        if ( dist <= 0 ) {
-          // No WP selected
-          drawFix(speed,settings.spd_unit,fix.satellites,'','');
-        }
-        else {
-          drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit);
-        }
+        drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit);
       }
     }
-
   } 
   else {
     lastFix.fix=0; 
@@ -351,7 +347,6 @@ function toggleDisplay() {
 }
 
 function toggleAltDist() {
-  if ( showMax ) return;
   altDisp = !altDisp;
   onGPS(lastFix); 
 }
