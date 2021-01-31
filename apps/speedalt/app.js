@@ -357,14 +357,13 @@ function setButtons(){
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
   // Select a waypoint for dist display
-  setWatch(nextwp.bind(this,1), BTN3, {repeat:true,edge:"falling"});
+  setWatch(nextwp.bind(this,1), BTN3, {repeat:true,edge:"rising"});
   
   // Touch left screen to toggle display
-  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
+  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"rising"});
 
   // Touch left screen to toggle between alt or dist
-  setWatch(toggleAltDist, BTN5, {repeat:true,edge:"falling"});
-  
+  setWatch(toggleAltDist, BTN5, {repeat:true,edge:"rising"});
   
 }
 
@@ -420,10 +419,8 @@ settings.spd = settings.spd||0;  // Multiplier for speed unit conversions. 0 = u
 settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
 settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
-
 settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
 settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
-
 settings.colour = settings.colour||0;          // Colour scheme. 
 settings.buzz = settings.buzz||0;          // Buzz when fix lost or gained. 
 
