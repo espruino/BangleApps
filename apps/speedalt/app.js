@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.11
+Ver : 1.01
 Mike Bennett mike[at]kereru.com
 */
 
