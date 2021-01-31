@@ -62,7 +62,7 @@ function drawInfo(line) {
   let str = "";
   let col = 0x07E0; // green
 
-  console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
+  //console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
 
   switch(functionMode) {
   case NONE_FN_MODE:
@@ -156,7 +156,7 @@ function changeInfoMode() {
 }
 
 function changeFunctionMode() {
-  console.log("changeFunctionMode()");
+  //console.log("changeFunctionMode()");
   switch(functionMode) {
   case NONE_FN_MODE:
     functionMode = HRT_FN_MODE;
@@ -165,7 +165,7 @@ function changeFunctionMode() {
   default:
     functionMode = NONE_FN_MODE;
   }
-  console.log(functionMode);
+  //console.log(functionMode);
   
 }
 
