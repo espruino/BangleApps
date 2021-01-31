@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.07
+Ver : 0.10
 Mike Bennett mike[at]kereru.com
 */
 
@@ -11,22 +11,9 @@ var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 // Load fonts
 require("Font7x11Numeric7Seg").add(Graphics);
 
-/*
-var mainmenu = {
-  "" : { "title" : "-- Units --" },
-  "default" : function() { setUnits(0,''); },
-  "Kph (spd)" : function() { setUnits(1,'kph'); },
-  "Knots (spd)" : function() { setUnits(1.852,'knots'); },
-  "Mph (spd)" : function() { setUnits(1.60934,'mph'); },
-  "m/s (spd)" : function() { setUnits(3.6,'m/s'); },
-  "Meters (alt)" : function() { setUnitsAlt(1,'m'); },
-  "Feet (alt)" : function() { setUnitsAlt(0.3048,'feet'); },
-  "Exit" : function() { exitMenu(); }, // remove the menu and restore
-};
-*/
-
 var lastFix = {fix:0,satellites:0};
-var showSpeed = 1;      // 1 = Speed in primary display. 0 = alt in primary
+var primaryDisp = 1;      // 1 = Speed in primary display. 0 = alt/dist in primary
+var altDisp = 1;            // 1 = alt, 0 = dist to wp
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
@@ -41,6 +28,36 @@ max.alt = 0;
 var emulator = 0;
 if (process.env.BOARD=="EMSCRIPTEN") emulator = 1;  // 1 = running in emulator. Supplies test values;
 
+var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+var wpindex=0;
+var wp = {};        // Waypoint to use for distance from cur position.
+
+function nextwp(inc){
+  if (altDisp) return;
+  wpindex+=inc;
+  if (wpindex>=waypoints.length) wpindex=0;
+  if (wpindex<0) wpindex = waypoints.length-1;
+  wp = waypoints[wpindex];
+  onGPS(lastFix);
+}
+
+function radians(a) {
+  return a*Math.PI/180;
+}
+
+function distance(a,b){
+  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
+  var y = radians(b.lat-a.lat);
+  
+  // Distance in selected units
+  var d = Math.sqrt(x*x + y*y) * 6371000;
+  d = (d/parseFloat(settings.dist)).toFixed(2);
+  if ( d >= 100 ) d = parseFloat(d).toFixed(1);
+  if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
+
+  return d;
+}
+
 function drawFix(speed,units,sats,alt,alt_units) {
   if (!canDraw) return;
 
@@ -51,26 +68,29 @@ function drawFix(speed,units,sats,alt,alt_units) {
   
   // Primary Display
   val = speed.toString();
-  if ( !showSpeed ) val = alt.toString();
+  if ( !primaryDisp ) val = alt.toString();
   
   // Primary Units
   u = settings.spd_unit;
-  if ( !showSpeed ) u = alt_units;
+  if ( !primaryDisp ) u = alt_units;
 
   drawPrimary(val,u);
   
   // Secondary Display
   val = alt.toString();
-  if ( !showSpeed ) val = speed.toString();
+  if ( !primaryDisp ) val = speed.toString();
 
   // Secondary Units
   u = alt_units;
-  if ( !showSpeed ) u = settings.spd_unit;
+  if ( !primaryDisp ) u = settings.spd_unit;
   
   drawSecondary(val,u);
   
   // Time
   drawTime();
+
+  // Waypoint name
+  drawWP();
   
   //Sats
   drawSats(sats);
@@ -154,6 +174,7 @@ function drawSecondary(n,u) {
 }
 
 
+
 function drawTime() {
   var x = 0;
   var y = 160;
@@ -167,6 +188,22 @@ function drawTime() {
   buf.setColor(3);  
   buf.drawString(time,x,y);
 }
+
+function drawWP() {
+  var nm = wp.name;
+  if ( nm == undefined ) nm = '';
+  if ( nm == 'NONE' ) nm = '';
+  if ( altDisp ) nm='';
+  
+  
+  buf.setFontAlign(-12,1); //left, bottom
+  buf.setColor(2);  
+//  buf.setFont("6x8", 1);
+  buf.setFontVector(20);
+  buf.drawString(nm.substring(0,6),77,160);  
+ 
+}
+
 
 function drawSats(sats) {
   buf.setFontAlign(1,1); //right, bottom
@@ -205,22 +242,51 @@ function onGPS(fix) {
     else {
       speed = fix.speed;
       if ( emulator ) speed = '100';
-      speed = Math.round(parseFloat(speed)/parseFloat(settings.spd),0);
+      speed = Math.round(parseFloat(speed)/parseFloat(settings.spd));
     }
     
     // ==== Altitude ====
     alt = fix.alt;
     if ( emulator ) alt = '360';
-    alt = Math.round(parseFloat(alt)/parseFloat(settings.alt),0);
+    alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
+    
+    // ==== Distance to waypoint ====
+    if ( emulator ) {
+      lastFix.lat = -38.92;
+      lastFix.lon = 175.7613350;
+    }
+    
+    dist = distance(lastFix,wp);
+    if (isNaN(dist)) dist = 0;
+    
     
     // Record max values
     if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
     if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
     
-    if ( showMax ) drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit);
-    else drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit);
+    if ( showMax ) {
+      // Speed and alt maximums
+      drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit);
+    }
+    else {
+      if ( altDisp ) {
+        // Show speed/altitude
+        drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit);
+      }
+      else {
+        // Show speed/distance
+        if ( dist <= 0 ) {
+          // No WP selected
+          drawFix(speed,settings.spd_unit,fix.satellites,'','');
+        }
+        else {
+          drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit);
+        }
+      }
+    }
 
-  } else {
+  } 
+  else {
     doBuzz(0);
     drawNoFix(fix.satellites);
   }
@@ -263,28 +329,38 @@ function doBuzz2() {
  }
 
 function toggleDisplay() {
-  showSpeed = !showSpeed;
-  onGPS(lastFix);  // Back to Speed display
+  primaryDisp = !primaryDisp;
+  onGPS(lastFix);  // Update display
+}
+
+function toggleAltDist() {
+  altDisp = !altDisp;
+  onGPS(lastFix); 
 }
 
 function toggleMax() {
 //  if ( inMenu ) return;
   showMax = !showMax;
-  onGPS(lastFix);  // Back to Speed display
+  onGPS(lastFix);
 }
 
 function setButtons(){
-  
-  // Show launcher when middle button pressed
-  setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
   // Switch between fix and max display on short press or reset max values on long press
   setWatch(maxPressed, BTN1,{repeat:true,edge:"rising"});
   setWatch(maxReleased, BTN1,{repeat:true,edge:"falling"});
 
-  // Touch screen to toggle display
+  // Show launcher when middle button pressed
+  setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+
+  // Select a waypoint for dist display
+  setWatch(nextwp.bind(this,1), BTN3, {repeat:true,edge:"falling"});
+  
+  // Touch left screen to toggle display
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
-  setWatch(toggleDisplay, BTN5, {repeat:true,edge:"falling"});
+
+  // Touch left screen to toggle between alt or dist
+  setWatch(toggleAltDist, BTN5, {repeat:true,edge:"falling"});
   
   
 }
@@ -341,6 +417,10 @@ settings.spd = settings.spd||0;  // Multiplier for speed unit conversions. 0 = u
 settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
 settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
+
+settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
+settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
+
 settings.colour = settings.colour||0;          // Colour scheme. 
 settings.buzz = settings.buzz||0;          // Buzz when fix lost or gained. 
 
@@ -405,4 +485,3 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 30000);
-
