@@ -6,7 +6,7 @@ The waypoints list is the same as that used with the [GPS Navigation] app so the
 
 Left Display Tap : Swaps the displays. You can have either speed or altitude/distance on the large primary display.
 
-Right Display Tap : Swaps the modes between Speed+Altitude or Speed+Distance Note: You cannot swap to Speed+Distance or select waypoints while displaying MAX values.
+Right Display Tap : Swaps the modes between Speed+Altitude or Speed+Distance Note: You cannot swap to Speed+Distance while displaying MAX values.
 
 BTN1 : Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
 
@@ -32,3 +32,72 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 Thanks:
 Many thanks to Gordon Williams. Awesome job.
 Also to @jeffmer, the developer of the 'GPS Navigation' app. 
+
+Waypoints:
+
+Create a file waypoints.json and write to storage on the Bangle.js using the IDE.
+
+Sample waypoints.json
+
+<pre>
+[
+  {
+  "name":"NONE"
+  },
+  {
+  "name":"Omori",
+  "lat":-38.9058670,
+  "lon":175.7613350
+  },
+  {
+  "name":"DeltaW",
+  "lat":-38.9438550,
+  "lon":175.7676930
+  },
+  {
+  "name":"DeltaE",
+  "lat":-38.9395240,
+  "lon":175.7814420
+  },
+  {
+  "name":"BtClub",
+  "lat":-38.9446020,
+  "lon":175.8475720
+  },
+  {
+  "name":"Hapua",
+  "lat":-38.8177750,
+  "lon":175.8088720
+  },
+  {
+  "name":"Nook",
+  "lat":-38.7848090,
+  "lon":175.7839440
+  },
+  {
+  "name":"ChryBy",
+  "lat":-38.7975050,
+  "lon":175.7551960
+  },
+  {
+  "name":"Waiha",
+  "lat":-38.7219630,
+  "lon":175.7481520
+  },
+  {
+  "name":"KwaKwa",
+  "lat":-38.6632310,
+  "lon":175.8670320
+  },
+  {
+  "name":"Hatepe",
+  "lat":-38.8547420,
+  "lon":176.0089124
+  },
+  {
+  "name":"Kinloc",
+  "lat":-38.6614442,
+  "lon":175.9161607
+  }
+]
+</pre>
