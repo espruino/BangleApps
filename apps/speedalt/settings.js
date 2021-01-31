@@ -43,6 +43,9 @@
     'Knots (spd)' : function() { setUnits(1.852,'knots'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
     'm/s (spd)' : function() { setUnits(3.6,'m/s'); },
+    'Km (dist)' : function() { setUnits(1000,'km'); },
+    'Miles (dist)' : function() { setUnits(1609.344,'miles'); },
+    'Nm (dist)' : function() { setUnits(1852.001,'nm'); },
     'Meters (alt)' : function() { setUnitsAlt(1,'m'); },
     'Feet (alt)' : function() { setUnitsAlt(0.3048,'feet'); }
   };
