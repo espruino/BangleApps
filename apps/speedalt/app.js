@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 0.10
+Ver : 0.11
 Mike Bennett mike[at]kereru.com
 */
 
@@ -40,7 +40,6 @@ function nextwp(inc){
   if (wpindex>=waypoints.length) wpindex=0;
   if (wpindex<0) wpindex = waypoints.length-1;
   wp = waypoints[wpindex];
-  onGPS(lastFix);
 }
 
 function radians(a) {
@@ -64,9 +63,13 @@ function drawFix(speed,units,sats,alt,alt_units) {
   if (!canDraw) return;
 
   buf.clear();
+
+  drawLED(0);  // Use LED to indicate current mode
   
   var val = '';  
   var u='';
+  
+  // LED to distingush current mode
   
   // Primary Display
   val = speed.toString();
@@ -111,6 +114,8 @@ function drawNoFix(sats) {
 
   buf.clear();
 
+  drawLED(1);  
+  
   buf.setFontAlign(0,0);
   buf.setColor(3);  
   
@@ -175,7 +180,14 @@ function drawSecondary(n,u) {
   buf.drawString(u,s,135);
 }
 
+function drawLED(rst) {
+  LED1.reset();
+  LED2.reset();
+  if ( rst ) return;
 
+  if ( altDisp ) LED2.set();    // green = Speed/Alt mode
+  else LED1.set(); // red = Speed/Dist mode
+}
 
 function drawTime() {
   var x = 0;
@@ -225,6 +237,9 @@ function onGPS(fix) {
   var m;
 
   if (fix.fix || emulator) {
+
+    lastFix.fix=1; 
+
     doBuzz(1);
 
     //==== Speed ====
@@ -290,6 +305,7 @@ function onGPS(fix) {
 
   } 
   else {
+    lastFix.fix=0; 
     doBuzz(0);
     drawNoFix(fix.satellites);
   }
@@ -320,8 +336,6 @@ function doBuzz(hasFix) {
     Bangle.buzz();
     return;
   }
-  
-  
 }
 
 // Second buzz
@@ -337,28 +351,21 @@ function toggleDisplay() {
 }
 
 function toggleAltDist() {
+  if ( showMax ) return;
   altDisp = !altDisp;
   onGPS(lastFix); 
 }
 
-function toggleMax() {
-//  if ( inMenu ) return;
-  showMax = !showMax;
-  onGPS(lastFix);
-}
-
 function setButtons(){
 
-  // Switch between fix and max display on short press or reset max values on long press
-  setWatch(maxPressed, BTN1,{repeat:true,edge:"rising"});
-  setWatch(maxReleased, BTN1,{repeat:true,edge:"falling"});
+  // Spd+Alt : Switch between fix and max display on short press or reset max values on long press
+  // Spd+Dist : Select next waypoint
+  setWatch(btnPressed, BTN1,{repeat:true,edge:"rising"});
+  setWatch(btnReleased, BTN1,{repeat:true,edge:"falling"});
 
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
-  // Select a waypoint for dist display
-  setWatch(nextwp.bind(this,1), BTN3, {repeat:true,edge:"rising"});
-  
   // Touch left screen to toggle display
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"rising"});
 
@@ -367,19 +374,29 @@ function setButtons(){
   
 }
 
-function maxPressed() {
+function btnPressed() {
+  if ( !lastFix.fix ) return; 
   maxPress = getTime();
 }
 
-function maxReleased() {
+function btnReleased() {
+  if ( !lastFix.fix ) return; 
   var dur = getTime()-maxPress;
-  
-  if ( dur < 2 ) toggleMax();   // Short press toggle fix/max display
-  else {
-    max.spd = 0;  // Long press resets max values.
-    max.alt = 0;
-    onGPS(lastFix);  // redraw display
+  if ( altDisp ) {
+    // Spd+Alt mode - Switch between fix and MAX
+    if ( dur < 2 ) {
+      showMax = !showMax;   // Short press toggle fix/max display
+    }
+    else {
+      max.spd = 0;  // Long press resets max values.
+      max.alt = 0;
+    }
   }
+  else {
+    // Spd+Dist mode - Select next waypoint
+    nextwp(1);
+  }
+  onGPS(lastFix);
 }
 
 function updateClock() {
