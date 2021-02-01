@@ -3,7 +3,8 @@
   var fixToggle = false; // toggles once for each reading
   var have_fix = false;
   var debug = false;
-  
+  var gpsPowerEnabled = false;
+
   var last_fix = {
     fix: 0,
     alt: 0,
@@ -25,7 +26,7 @@
   function gps_set_debug(v) {
     debug = v;
   }
-  
+
   // Called by the GPS widget settings to reload settings and decide what to do
   function reload() {
     settings = gps_get_settings();
@@ -38,7 +39,7 @@
        gps_power_off();
     }
   }
-  
+
   // retrieve the settings from Storage, can be called by external apps
   function gps_get_settings() {
     var sets = require("Storage").readJSON("gpsservice.settings.json",1)||{};
@@ -48,7 +49,7 @@
     sets.power_mode = sets.power_mode||"SuperE";
     return sets;
   }
-  
+
   // pass in the required settings, can be called by external apps
   function gps_set_settings(sets) {
     settings.gpsservice = sets.gpsservice||false;
@@ -68,7 +69,10 @@
 
   function gps_power_off() {
     //setupSuperE();  // return to expected setup for other apps
-    Bangle.setGPSPower(0);
+    if (gpsPowerEnabled) {
+      gpsPowerEnabled = false;
+      Bangle.setGPSPower(0);
+    }
     have_fix = false;
     fixToggle = false;
     last_fix.fix = 0;
@@ -86,6 +90,7 @@
 
   function setupGPS() {
     Bangle.setGPSPower(1);
+    gpsPowerEnabled = true;
 
     if (settings.power_mode === "PSMOO") {
       setupPSMOO();
@@ -99,13 +104,13 @@
     log_debug("setupGPS() PSMOO");
     UBX_CFG_RESET();
     wait(100);
-      
+
     UBX_CFG_PM2(settings.update, settings.search);
     wait(20);
-    
+
     UBX_CFG_RXM();
     wait(20);
-      
+
     UBX_CFG_SAVE();
     wait(20);
   }
@@ -114,14 +119,14 @@
     log_debug("setupGPS() Super-E");
     UBX_CFG_RESET();
     wait(100);
-      
+
     UBX_CFG_PMS();
     wait(20);
 
     UBX_CFG_SAVE();
     wait(20);
   }
-  
+
   function writeGPScmd(cmd) {
     var d = [0xB5,0x62]; // sync chars
     d = d.concat(cmd);
@@ -133,12 +138,12 @@
     d.push(a&255,b&255);
     Serial1.write(d);
   }
-  
+
   // UBX-CFG-PMS - enable power management - Super-E
   function UBX_CFG_PMS() {
     writeGPScmd([0x06,0x86, // msg class + type
      8,0,//length
-     0x00,0x03, 0,0, 0,0, 0,0]);  
+     0x00,0x03, 0,0, 0,0, 0,0]);
   }
 
   // convert an integer to an array of bytes
@@ -149,13 +154,13 @@
       bytes[--i] = x & (255);
       x = x>>8;
     } while (i);
-    
+
     return bytes;
   }
 
 
   /*
-   * Extended Power Management 
+   * Extended Power Management
    * update and search are in milli seconds
    * settings are loaded little endian, lsb first
    *
@@ -181,7 +186,7 @@
      0x00, 0x00, 0x00, 0x00,    /* reserved 8,9,10 */
      0x00, 0x00, 0x00, 0x00]);  /* reserved 11 */
   }
-  
+
   // enable power saving mode, after configured with PM2
   function UBX_CFG_RXM() {
     writeGPScmd([0x06, 0x11,      /* UBX-CFG-RXM */
@@ -208,14 +213,14 @@
    * https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control
    */
   function UBX_CFG_RESET() {
-    writeGPScmd([0x06, 0x09,   // class id 
+    writeGPScmd([0x06, 0x09,   // class id
                  0x0D, 0x00,
      0xFF, 0xFB, 0x00, 0x00,  // clear mask
      0x00, 0x00, 0x00, 0x00,  // save mask
      0xFF, 0xFF, 0x00, 0x00,  // load mask
      0x17]);
   }
- 
+
   // draw the widget
   function draw() {
     if (!settings.gpsservice) return;
@@ -229,7 +234,7 @@
       if (fixToggle) g.setFont("6x8").drawString("?",this.x,this.y+14);
     }
   }
-  
+
   function onGPS(fix) {
     fixToggle = !fixToggle;
     WIDGETS.gpsservice.draw();
@@ -252,12 +257,12 @@
       last_fix.time = fix.time;
     }
   }
-  
+
   // redraw when the LCD turns on
   Bangle.on('lcdPower', function(on) {
     if (on) WIDGETS.gpsservice.draw();
   });
-  
+
   // add the widget
   WIDGETS.gpsservice = {
     area:"tl",
@@ -278,6 +283,5 @@
 
   // load settings, set correct widget width
   reload();
-  
-})();
 
+})();

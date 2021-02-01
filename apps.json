@@ -2655,7 +2655,7 @@
   "name": "Low power GPS Service",
   "shortName":"GPS Service",
   "icon": "gpsservice.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "low power GPS widget",
   "tags": "gps outdoors navigation",
   "readme": "README.md",
@@ -2723,5 +2723,5 @@
     {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
   ]
 }
-  
+
 ]
