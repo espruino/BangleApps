@@ -30,7 +30,9 @@ function draw_clock(){
     let tens = (mins / 10 | 0);
     g.drawString(tensStr[tens], 20, 100);
     let remainder = mins - tens * 10;
-    g.drawString(numberStr[remainder], 20, 125);
+    if(remainder > 0){
+      g.drawString(numberStr[remainder], 20, 125);
+    }
     
   } else if(mins > 0) {
     g.drawString(numberStr[mins], 20, 100);
