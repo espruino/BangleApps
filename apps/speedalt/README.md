@@ -12,9 +12,11 @@ BTN1 : [Speed+Altitude] Long press > 2 secs resets the recorded maximum values.
 
 BTN1 : [Speed+Distance] Select next waypoint. Last fix distance from selected waypoint is displayed.
 
-BTN3 : Swaps the modes between Speed+Altitude.
+BTN3 : Swaps the modes between Speed+[A]ltitude or Speed+[D]istance.
 
-App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance caqn be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Colours, high contrast (all white on black) or night ( all red on black ). Vibration can be used to indicate when a fix is lost or gained. One buzz for a lost fix and a double buzz when a fix is found.
+App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance caqn be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default, high contrast (all white on black) or night ( all red on black ). 
+
+Loss of fix : When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a fix or not.  
 
 Speed and Altitude:<br>
 ![](screen1.png)<p>
@@ -35,7 +37,7 @@ Also to @jeffmer, the developer of the 'GPS Navigation' app.
 
 Waypoints:
 
-Create a file waypoints.json and write to storage on the Bangle.js using the IDE.
+Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displyed in Speed+[D]istance mode.
 
 Sample waypoints.json
 
