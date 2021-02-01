@@ -24,3 +24,4 @@ Maybe you want to add some more constellations to the planetarium. As you can se
 - Find the two stars that you want to join in your constellation (a constellation line). For identifying a star you have to have a look at the name, usually something like `AL UMA` (alpha star of constellation ursa major). Lets say that you want to join stars 155 and 8 (this is constellation canis menor, that only has a line joining two stars).
 - Go to file `planetarium.const.csv` and add two lines for your new constellation. The first one will be the name of the constellation, the second one the pair of stars that you want to join, separated by coma (see the file for examples).
 - Do not forget to add a break line after the last constellation.
+- Upload the new `planetarium.const.csv` to your bangle (or emualator) and test it out.
