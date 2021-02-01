@@ -290,7 +290,7 @@ function setButtons(){
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"rising"});
 
   // Toggle between alt or dist
-  setWatch(toggleAltDist, BTN2, {repeat:true,edge:"rising"});
+  setWatch(toggleAltDist, BTN2, {repeat:true,edge:"falling"});
   
 }
 
