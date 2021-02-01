@@ -1,7 +1,8 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.04
+Ver : 1.05
 Mike Bennett mike[at]kereru.com
+process.memory()
 */
 
 const dbg = 0;
@@ -26,16 +27,20 @@ max.alt = 0;
 var emulator = 0;
 if (process.env.BOARD=="EMSCRIPTEN") emulator = 1;  // 1 = running in emulator. Supplies test values;
 
-var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
-var wpindex=0;
 var wp = {};        // Waypoint to use for distance from cur position.
 
-function nextwp(inc){
+function nxtWp(inc){
   if (altDisp) return;
-  wpindex+=inc;
-  if (wpindex>=waypoints.length) wpindex=0;
-  if (wpindex<0) wpindex = waypoints.length-1;
-  wp = waypoints[wpindex];
+  settings.wp+=inc;
+  loadWp();
+}
+
+function loadWp() {
+  var w = require("Storage").readJSON('waypoints.json')||[{name:"NONE"}];
+  if (settings.wp>=w.length) settings.wp=0;
+  if (settings.wp<0) settings.wp = w.length-1;
+  require("Storage").write('speedalt.json',settings);
+  wp = w[settings.wp];
 }
 
 function radians(a) {
@@ -312,7 +317,7 @@ function btnReleased() {
   }
   else {
     // Spd+Dist mode - Select next waypoint
-    nextwp(1);
+    nxtWp(1);
   }
   onGPS(lf);
 }
@@ -355,7 +360,10 @@ settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
 settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
 settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
 settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
-settings.colour = settings.colour||0;          // Colour scheme. 
+settings.colour = settings.colour||0;          // Colour scheme.
+settings.wp = settings.wp||0;        // Last selected waypoint for dist
+
+loadWp();
 
 /*
 Colour Pallet Idx
