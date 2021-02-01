@@ -150,7 +150,7 @@ function plotSky(lat,lon,date){
         g.flip();
       }
       //Write the name
-      if (constelationShowing && true)
+      if (constelationShowing && settings.consnames)
         g.drawString(name,positionStar2[0]+10,positionStar2[1]);
     }
   }
