@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.02
+Ver : 1.03
 Mike Bennett mike[at]kereru.com
 */
 
@@ -17,9 +17,9 @@ var altDisp = 1;            // 1 = alt, 0 = dist to wp
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
-var lastBuzz = 0;      // What sort of buzz was last performed. 0 = no fix, 1 = fix. 
-var timerBuzz2 = 0;    // ID of timer for fix second buzz
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
+var ledID = 0;      // ID of interval doing the LED flasher
+var ledOn = 0;      // LED state flag for flasher
 
 var max = {};
 max.spd = 0;
@@ -57,17 +57,16 @@ function distance(a,b){
   return d;
 }
 
-function drawFix(speed,units,sats,alt,alt_units) {
+function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   if (!canDraw) return;
 
   buf.clear();
 
-  drawLED(0);  // Use LED to indicate current mode
+  if ( fix ) drawLED(0);  // Use LED to indicate current mode
+  else drawLEDFlash(0); // Flashing indicate no fix sodisplaying last known
   
   var val = '';  
   var u='';
-  
-  // LED to distingush current mode
   
   // Primary Display
   val = speed.toString();
@@ -96,40 +95,11 @@ function drawFix(speed,units,sats,alt,alt_units) {
   drawWP();
   
   //Sats
-  drawSats(sats);
+  if ( fix ) drawSats('Sats:'+sats);
+  else drawSats('Age:'+age);
 
   g.reset();
   g.drawImage(img,0,40);
-//  g.flip();
-
-  
-}
-
-
-function drawNoFix(sats) {
-  if (!canDraw) return;
-  var u;
-
-  buf.clear();
-
-  drawLED(1);  
-  
-  buf.setFontAlign(0,0);
-  buf.setColor(3);  
-  
-  buf.setFontVector(25);
-  buf.drawString("Waiting for GPS",120,56);
-
-  // Time
-  drawTime();
-  
-  //Sats
-  drawSats(sats);
-
-  g.reset();
-  g.drawImage(img,0,40);
-//  g.flip();
-
   
 }
 
@@ -179,13 +149,24 @@ function drawSecondary(n,u) {
 }
 
 function drawLED(rst) {
+  if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
   LED1.reset();
   LED2.reset();
   if ( rst ) return;
-
   if ( altDisp ) LED2.set();    // green = Speed/Alt mode
   else LED1.set(); // red = Speed/Dist mode
 }
+
+function drawLEDFlash(rst) {
+  if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
+  LED1.reset();
+  LED2.reset();
+  ledOn = 0;
+  if ( rst ) return;
+  if ( altDisp ) ledID = setInterval(function() {ledOn=!ledOn;digitalWrite(LED2,ledOn);},500);    // green = Speed/Alt mode
+  else ledID = setInterval(function() {ledOn=!ledOn;digitalWrite(LED1,ledOn);},500); // red = Speed/Dist mode
+}
+
 
 function drawTime() {
   var x = 0;
@@ -207,7 +188,6 @@ function drawWP() {
   if ( nm == 'NONE' ) nm = '';
   if ( altDisp ) nm='';
   
-  
   buf.setFontAlign(-12,1); //left, bottom
   buf.setColor(2);  
 //  buf.setFont("6x8", 1);
@@ -218,128 +198,98 @@ function drawWP() {
 
 
 function drawSats(sats) {
-  buf.setFontAlign(1,1); //right, bottom
+
+  if ( showMax && altDisp ) {
+    buf.setFontVector(20);
+    buf.setFontAlign(0,1); //centre, bottom
+    buf.setColor(2); 
+    buf.drawString("MAX",120,160);
+  }
+  
   buf.setColor(3);  
   buf.setFont("6x8", 2);
-  if ( showMax && altDisp ) {
-    buf.setColor(2); 
-    buf.drawString("MAX",240,160);
-  }
-  else buf.drawString("Sats:"+sats,240,160);  
+  buf.setFontAlign(1,1); //right, bottom
+  buf.drawString(sats,240,160);  
 }
 
 function onGPS(fix) {
-  lastFix = fix;
+
+//print ( fix);
   
+  
+ if ( emulator ) {
+    fix.fix = 1;
+    fix.speed = 125;
+    fix.alt = 390;
+    fix.lat = -38.92;
+    fix.lon = 175.7613350;   
+    fix.course = 245;
+    fix.satellites = 12;
+    fix.time = new Date();
+  }
+  
+  if (fix.fix) lastFix = fix;
+
   var m;
 
-  if (fix.fix || emulator) {
+    speed = '---';        
+    alt = '---';
+    dist = '---';
+    age = '---';
+  
+    if (lastFix.fix == 1 ) {  
 
-    lastFix.fix=1; 
-
-    doBuzz(1);
-
-    //==== Speed ====
-    if ( settings.spd == 0 ) {
-      var strSpeed = require("locale").speed(fix.speed);
-      m = strSpeed.match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-
-      if ( emulator ) {
-        speed = '125';  //testing only
-        settings.spd_unit = 'kph';
-      }
-      else {
+      //==== Speed ====
+      if ( settings.spd == 0 ) {
+        m = require("locale").speed(lastFix.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
         speed = m[1];
         settings.spd_unit = m[2];
       }
+      else {
+        // Calculate for selected units
+        speed = lastFix.speed;
+        if ( emulator ) speed = '100';
+        speed = Math.round(parseFloat(speed)/parseFloat(settings.spd));
+      }
+      if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
+
+      // ==== Altitude ====
+      alt = lastFix.alt;
+      alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
+      if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
+
+      // ==== Distance to waypoint ====
+      dist = distance(lastFix,wp);
+      if (isNaN(dist)) dist = 0;
+
+      // Age of last fix (secs)
+      age = Math.max(0,Math.round(getTime())-(lastFix.time.getTime()/1000)); //Can be negative if GPS time and watch drift apart.
+      if ( age > 90 ) age = '>90';
     }
-    // Calculate for selected units
-    else {
-      speed = fix.speed;
-      if ( emulator ) speed = '100';
-      speed = Math.round(parseFloat(speed)/parseFloat(settings.spd));
-    }
-    
-    // ==== Altitude ====
-    alt = fix.alt;
-    if ( emulator ) alt = '360';
-    alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
-    
-    // ==== Distance to waypoint ====
-    if ( emulator ) {
-      lastFix.lat = -38.92;
-      lastFix.lon = 175.7613350;
-    }
-    
-    dist = distance(lastFix,wp);
-    if (isNaN(dist)) dist = 0;
-    
-    
-    // Record max values
-    if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
-    if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
-    
+      
     if ( altDisp ) {
       if ( showMax ) {
         // Speed and alt maximums
-        drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit);
+        drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit,age,fix.fix);
       }
       else {
         // Show speed/altitude
-        drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit);
+        drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit,age,fix.fix);
       }
     }
     else {
       // Show speed/distance
       if ( dist <= 0 ) {
         // No WP selected
-        drawFix(speed,settings.spd_unit,fix.satellites,'','');
+        drawFix(speed,settings.spd_unit,fix.satellites,'','',age,fix.fix);
       }
       else {
-        drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit);
+        drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit,age,fix.fix);
       }
     }
-  } 
-  else {
-    lastFix.fix=0; 
-    doBuzz(0);
-    drawNoFix(fix.satellites);
-  }
 
 }
 
-// Vibrate watch when fix lost or gained.
-function doBuzz(hasFix) {
-
-  // nothing to do
-  if ( lastBuzz === hasFix || !settings.buzz ) {
-    return;
-  }
-  
-  // fix gained - double buzz
-  if ( !lastBuzz && hasFix ) {
-    if ( dbg ) print('Fix');
-    lastBuzz = 1;
-    Bangle.buzz();
-    timerBuzz2 = setInterval(doBuzz2, 600); // Trigger a second buzz
-    return;
-  }
-  
-  // fix lost - single buzz
-  if ( lastBuzz && !hasFix ) {
-    if ( dbg ) print('Fix lost');
-    lastBuzz = 0;
-    Bangle.buzz();
-    return;
-  }
-}
-
-// Second buzz
-function doBuzz2() {
-    if ( dbg ) print('Buzz2');
-    clearInterval(timerBuzz2);
-    Bangle.buzz();
- }
 
 function toggleDisplay() {
   primaryDisp = !primaryDisp;
@@ -370,12 +320,10 @@ function setButtons(){
 }
 
 function btnPressed() {
-  if ( !lastFix.fix ) return; 
   maxPress = getTime();
 }
 
 function btnReleased() {
-  if ( !lastFix.fix ) return; 
   var dur = getTime()-maxPress;
   if ( altDisp ) {
     // Spd+Alt mode - Switch between fix and MAX
@@ -434,7 +382,6 @@ settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
 settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
 settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
 settings.colour = settings.colour||0;          // Colour scheme. 
-settings.buzz = settings.buzz||0;          // Buzz when fix lost or gained. 
 
 /*
 Colour Pallet Idx
