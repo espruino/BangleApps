@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 
 const dbg = 0;
 
-var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
+var buf = Graphics.createArrayBuffer(240,160,4,{msb:true});
 
 // Load fonts
 require("Font7x11Numeric7Seg").add(Graphics);
@@ -62,8 +62,8 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
 
   buf.clear();
 
-  if ( fix ) drawLED(0);  // Use LED to indicate current mode
-  else drawLEDFlash(0); // Flashing indicate no fix sodisplaying last known
+  if ( fix ) drawLED();  // Use LED to indicate current mode
+  else drawLEDFlash(); // Flashing indicate no fix so displaying last known
   
   var val = '';  
   var u='';
@@ -148,25 +148,29 @@ function drawSecondary(n,u) {
   buf.drawString(u,s,135);
 }
 
-function drawLED(rst) {
+function drawLED() {
   if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
-  LED1.reset();
-  LED2.reset();
-  if ( rst ) return;
-  if ( altDisp ) LED2.set();    // green = Speed/Alt mode
-  else LED1.set(); // red = Speed/Dist mode
+  drawLEDCircle(0);
 }
 
-function drawLEDFlash(rst) {
+function drawLEDFlash() {
   if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
-  LED1.reset();
-  LED2.reset();
   ledOn = 0;
-  if ( rst ) return;
-  if ( altDisp ) ledID = setInterval(function() {ledOn=!ledOn;digitalWrite(LED2,ledOn);},500);    // green = Speed/Alt mode
-  else ledID = setInterval(function() {ledOn=!ledOn;digitalWrite(LED1,ledOn);},500); // red = Speed/Dist mode
+  ledID = setInterval(function() {ledOn=!ledOn;drawLEDCircle(ledOn);},500); // Toggle the LED
+
 }
 
+function drawLEDCircle(rst) {
+  var x=225;
+  var y=120;
+  var r=10;
+  if ( rst ) buf.setColor(0);  // background = off
+  else if ( altDisp ) buf.setColor(5);    // blue = Speed/Alt mode
+  else buf.setColor(4); // red = Speed/Dist mode
+  buf.fillCircle(x,y,r);
+  g.reset();
+  g.drawImage(img,0,40);
+}
 
 function drawTime() {
   var x = 0;
@@ -196,7 +200,6 @@ function drawWP() {
  
 }
 
-
 function drawSats(sats) {
 
   if ( showMax && altDisp ) {
@@ -213,9 +216,6 @@ function drawSats(sats) {
 }
 
 function onGPS(fix) {
-
-//print ( fix);
-  
   
  if ( emulator ) {
     fix.fix = 1;
@@ -232,14 +232,13 @@ function onGPS(fix) {
 
   var m;
 
-    speed = '---';        
+  speed = '---';        
     alt = '---';
     dist = '---';
     age = '---';
   
     if (lastFix.fix == 1 ) {  
-
-      //==== Speed ====
+      // Speed
       if ( settings.spd == 0 ) {
         m = require("locale").speed(lastFix.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
         speed = m[1];
@@ -253,17 +252,17 @@ function onGPS(fix) {
       }
       if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
 
-      // ==== Altitude ====
+      // Altitude
       alt = lastFix.alt;
       alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
       if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
 
-      // ==== Distance to waypoint ====
+      // Distance to waypoint
       dist = distance(lastFix,wp);
       if (isNaN(dist)) dist = 0;
 
       // Age of last fix (secs)
-      age = Math.max(0,Math.round(getTime())-(lastFix.time.getTime()/1000)); //Can be negative if GPS time and watch drift apart.
+      age = Math.max(0,Math.round(getTime())-(lastFix.time.getTime()/1000));
       if ( age > 90 ) age = '>90';
     }
       
@@ -303,7 +302,6 @@ function toggleAltDist() {
 
 function setButtons(){
 
-  // Spd+Alt : Switch between fix and max display on short press or reset max values on long press
   // Spd+Dist : Select next waypoint
   setWatch(btnPressed, BTN1,{repeat:true,edge:"rising"});
   setWatch(btnReleased, BTN1,{repeat:true,edge:"falling"});
@@ -351,7 +349,6 @@ function updateClock() {
   g.drawImage(img,0,40);
 //  g.flip();
   
-  // Something different to display in the emulator
   if ( emulator ) {
     max.spd++;
     max.alt++;
@@ -370,7 +367,7 @@ function stopDraw() {
   canDraw=false;
 }
 
-// ===== Main Prog =====
+// =Main Prog
 
 // Read settings. 
 let settings = require('Storage').readJSON('speedalt.json',1)||{};
@@ -389,18 +386,21 @@ Colour Pallet Idx
 1 : Speed/Alt
 2 : Units
 3 : Sats
+4 : led1 (red)
+5 : led2 (blue)
 */
 var img = {
   width:buf.getWidth(),
   height:buf.getHeight(),
-  bpp:2,
+  bpp:4,
   buffer:buf.buffer,
-  palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB])
+  palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB,0xF800,0x051F,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF])
 };
 
-if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF]);
-if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800]);
-
+/*
+if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF]);
+if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF]);
+*/
 
 // Find speed unit if using locale speed
 if ( settings.spd == 0 ) {
