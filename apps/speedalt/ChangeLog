@@ -7,3 +7,4 @@
 0.07 : Switch to BTN1 for Max toggle and reset function.
 1.00 : New feature. Added waypoints file and distance to selected waypoint display
 1.04 : Misc tweaks.
+1.05 : Memory optimisation. Stopped loading entire waypoint list into memory.
