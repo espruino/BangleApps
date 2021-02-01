@@ -289,8 +289,8 @@ function setButtons(){
   // Touch left screen to toggle display
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"rising"});
 
-  // Touch left screen to toggle between alt or dist
-  setWatch(toggleAltDist, BTN5, {repeat:true,edge:"rising"});
+  // Toggle between alt or dist
+  setWatch(toggleAltDist, BTN2, {repeat:true,edge:"rising"});
   
 }
 
