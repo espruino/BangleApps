@@ -1,25 +1,23 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.03
+Ver : 1.04
 Mike Bennett mike[at]kereru.com
 */
 
 const dbg = 0;
 
-var buf = Graphics.createArrayBuffer(240,160,4,{msb:true});
+var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
 require("Font7x11Numeric7Seg").add(Graphics);
 
-var lastFix = {fix:0,satellites:0};
+var lf = {fix:0,satellites:0};
 var primaryDisp = 1;      // 1 = Speed in primary display. 0 = alt/dist in primary
 var altDisp = 1;            // 1 = alt, 0 = dist to wp
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
-var ledID = 0;      // ID of interval doing the LED flasher
-var ledOn = 0;      // LED state flag for flasher
 
 var max = {};
 max.spd = 0;
@@ -62,9 +60,6 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
 
   buf.clear();
 
-  if ( fix ) drawLED();  // Use LED to indicate current mode
-  else drawLEDFlash(); // Flashing indicate no fix so displaying last known
-  
   var val = '';  
   var u='';
   
@@ -148,30 +143,6 @@ function drawSecondary(n,u) {
   buf.drawString(u,s,135);
 }
 
-function drawLED() {
-  if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
-  drawLEDCircle(0);
-}
-
-function drawLEDFlash() {
-  if ( ledID > 0 ) clearInterval(ledID);  // Stop the flasher
-  ledOn = 0;
-  ledID = setInterval(function() {ledOn=!ledOn;drawLEDCircle(ledOn);},500); // Toggle the LED
-
-}
-
-function drawLEDCircle(rst) {
-  var x=225;
-  var y=120;
-  var r=10;
-  if ( rst ) buf.setColor(0);  // background = off
-  else if ( altDisp ) buf.setColor(5);    // blue = Speed/Alt mode
-  else buf.setColor(4); // red = Speed/Dist mode
-  buf.fillCircle(x,y,r);
-  g.reset();
-  g.drawImage(img,0,40);
-}
-
 function drawTime() {
   var x = 0;
   var y = 160;
@@ -202,23 +173,29 @@ function drawWP() {
 
 function drawSats(sats) {
 
-  if ( showMax && altDisp ) {
-    buf.setFontVector(20);
-    buf.setFontAlign(0,1); //centre, bottom
-    buf.setColor(2); 
-    buf.drawString("MAX",120,160);
-  }
-  
   buf.setColor(3);  
   buf.setFont("6x8", 2);
   buf.setFontAlign(1,1); //right, bottom
   buf.drawString(sats,240,160);  
+
+  buf.setFontVector(20);
+  buf.setColor(2); 
+  
+  if ( altDisp ) buf.drawString("A",240,140);
+  else buf.drawString("D",240,140);
+    
+  if ( showMax && altDisp ) {
+    buf.setFontAlign(0,1); //centre, bottom
+    buf.drawString("MAX",120,164);
+  }
+  
+
 }
 
 function onGPS(fix) {
   
  if ( emulator ) {
-    fix.fix = 1;
+    fix.fix = 0;
     fix.speed = 125;
     fix.alt = 390;
     fix.lat = -38.92;
@@ -228,7 +205,7 @@ function onGPS(fix) {
     fix.time = new Date();
   }
   
-  if (fix.fix) lastFix = fix;
+  if (fix.fix) lf = fix;
 
   var m;
 
@@ -237,32 +214,32 @@ function onGPS(fix) {
     dist = '---';
     age = '---';
   
-    if (lastFix.fix == 1 ) {  
+    if (lf.fix == 1 ) {  
       // Speed
       if ( settings.spd == 0 ) {
-        m = require("locale").speed(lastFix.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
+        m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
         speed = m[1];
         settings.spd_unit = m[2];
       }
       else {
         // Calculate for selected units
-        speed = lastFix.speed;
+        speed = lf.speed;
         if ( emulator ) speed = '100';
         speed = Math.round(parseFloat(speed)/parseFloat(settings.spd));
       }
       if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
 
       // Altitude
-      alt = lastFix.alt;
+      alt = lf.alt;
       alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
       if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
 
       // Distance to waypoint
-      dist = distance(lastFix,wp);
+      dist = distance(lf,wp);
       if (isNaN(dist)) dist = 0;
 
       // Age of last fix (secs)
-      age = Math.max(0,Math.round(getTime())-(lastFix.time.getTime()/1000));
+      age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
       if ( age > 90 ) age = '>90';
     }
       
@@ -292,12 +269,12 @@ function onGPS(fix) {
 
 function toggleDisplay() {
   primaryDisp = !primaryDisp;
-  onGPS(lastFix);  // Update display
+  onGPS(lf);  // Update display
 }
 
 function toggleAltDist() {
   altDisp = !altDisp;
-  onGPS(lastFix); 
+  onGPS(lf); 
 }
 
 function setButtons(){
@@ -337,7 +314,7 @@ function btnReleased() {
     // Spd+Dist mode - Select next waypoint
     nextwp(1);
   }
-  onGPS(lastFix);
+  onGPS(lf);
 }
 
 function updateClock() {
@@ -360,7 +337,7 @@ function startDraw(){
   canDraw=true;
   g.clear();
   Bangle.drawWidgets();
-  onGPS(lastFix);  // draw app screen
+  onGPS(lf);  // draw app screen
 }
 
 function stopDraw() {
@@ -386,21 +363,17 @@ Colour Pallet Idx
 1 : Speed/Alt
 2 : Units
 3 : Sats
-4 : led1 (red)
-5 : led2 (blue)
 */
 var img = {
   width:buf.getWidth(),
   height:buf.getHeight(),
-  bpp:4,
+  bpp:2,
   buffer:buf.buffer,
-  palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB,0xF800,0x051F,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF])
+  palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB])
 };
 
-/*
-if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF]);
-if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF]);
-*/
+if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF]);
+if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800]);
 
 // Find speed unit if using locale speed
 if ( settings.spd == 0 ) {
@@ -439,7 +412,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1);
 
-onGPS(lastFix);
+onGPS(lf);
 Bangle.on('GPS', onGPS);
 
 setButtons();
