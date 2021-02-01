@@ -201,7 +201,7 @@ function onGPS(fix) {
   
  if ( emulator ) {
     fix.fix = 1;
-    fix.speed = 15;
+    fix.speed = 10;
     fix.alt = 354;
     fix.lat = -38.92;
     fix.lon = 175.7613350;   
@@ -231,9 +231,9 @@ function onGPS(fix) {
         speed = lf.speed;
         speed = parseFloat(speed)/parseFloat(settings.spd);
       }
-      if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
       if ( speed < 10 ) speed = speed.toFixed(1);
       else speed = Math.round(speed);
+      if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
 
       // Altitude
       alt = lf.alt;
