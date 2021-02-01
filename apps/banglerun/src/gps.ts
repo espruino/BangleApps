@@ -63,9 +63,11 @@ function updateGps(state: AppState): void {
   }
 
   const r = EARTH_RADIUS + state.alt;
-  const x = r * Math.cos(state.lat) * Math.cos(state.lon);
-  const y = r * Math.cos(state.lat) * Math.sin(state.lon);
-  const z = r * Math.sin(state.lat);
+  const lat = state.lat * Math.PI / 180;
+  const lon = state.lon * Math.PI / 180;
+  const x = r * Math.cos(lat) * Math.cos(lon);
+  const y = r * Math.cos(lat) * Math.sin(lon);
+  const z = r * Math.sin(lat);
   const v = state.vel;
 
   if (!state.x) {
