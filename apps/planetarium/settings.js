@@ -19,7 +19,13 @@
             format: v =>v?'On':'Off',
             onchange: v => {
               save('constellations',v);
-            }
-      }};
+            }},
+        'Const. names': {
+          value: !!settings.consnames,
+          format: v =>v?'On':'Off',
+          onchange: v => {
+            save('consnames',v);
+          }},
+      };
     E.showMenu(appMenu)
   })
