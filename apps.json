@@ -2720,6 +2720,7 @@
   "storage": [
     {"name":"planetarium.app.js","url":"planetarium.app.js"},
     {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
+    {"name":"planetarium.const.csv","url":"planetarium.const.csv"},
     {"name":"planetarium.settings.js","url":"settings.js"},
     {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
   ],
