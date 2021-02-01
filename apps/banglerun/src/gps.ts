@@ -22,13 +22,6 @@ function initGps(state: AppState): void {
   Bangle.setGPSPower(1);
 }
 
-function parseCoordinate(coordinate: string): number {
-  const pivot = coordinate.indexOf('.') - 2;
-  const degrees = parseInt(coordinate.substr(0, pivot));
-  const minutes = parseFloat(coordinate.substr(pivot)) / 60;
-  return (degrees + minutes) * Math.PI / 180;
-}
-
 function readGps(state: AppState, gps: GpsEvent): void {
   state.lat = gps.lat;
   state.lon = gps.lon;
@@ -116,4 +109,4 @@ function updateGps(state: AppState): void {
   }
 }
 
-export { initGps, parseCoordinate, readGps, updateGps };
+export { initGps, readGps, updateGps };
