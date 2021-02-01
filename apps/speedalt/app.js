@@ -200,9 +200,9 @@ function drawSats(sats) {
 function onGPS(fix) {
   
  if ( emulator ) {
-    fix.fix = 0;
-    fix.speed = 125;
-    fix.alt = 390;
+    fix.fix = 1;
+    fix.speed = 15;
+    fix.alt = 354;
     fix.lat = -38.92;
     fix.lon = 175.7613350;   
     fix.course = 245;
@@ -229,10 +229,11 @@ function onGPS(fix) {
       else {
         // Calculate for selected units
         speed = lf.speed;
-        if ( emulator ) speed = '100';
-        speed = Math.round(parseFloat(speed)/parseFloat(settings.spd));
+        speed = parseFloat(speed)/parseFloat(settings.spd);
       }
       if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
+      if ( speed < 10 ) speed = speed.toFixed(1);
+      else speed = Math.round(speed);
 
       // Altitude
       alt = lf.alt;
