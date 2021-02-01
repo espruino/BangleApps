@@ -213,6 +213,19 @@
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
     ]
   },
+  { "id": "wordyclock",
+    "name": "Wordy Clock",
+    "icon": "wordyclock.png",
+    "version":"0.01",
+    "description": "Text Readable Time",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"wordyclock.app.js","url":"wordyclock.js"},
+      {"name":"wordyclock.img","url":"wordyclock-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
