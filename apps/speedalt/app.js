@@ -286,12 +286,12 @@ function setButtons(){
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
-  // Touch left screen to toggle display
-  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"rising"});
-
   // Toggle between alt or dist
-  setWatch(toggleAltDist, BTN3, {repeat:true,edge:"rising"});
+  setWatch(toggleAltDist, BTN3, {repeat:true,edge:"falling"});
   
+  // Touch left screen to toggle display
+  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
+
 }
 
 function btnPressed() {
