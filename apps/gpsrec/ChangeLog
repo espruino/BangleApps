@@ -18,3 +18,4 @@
 0.14: Now use the openstmap lib for map plotting
 0.15: Add plotTrack method to allow current track to be plotted on a map (#395)
 0.16: Add gpsrec app to Settings menu
+0.17: Disable recording if storage is full (fix #574)
