@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.05
+Ver : 1.06
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
@@ -13,8 +13,6 @@ var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 require("Font7x11Numeric7Seg").add(Graphics);
 
 var lf = {fix:0,satellites:0};
-var primaryDisp = 1;      // 1 = Speed in primary display. 0 = alt/dist in primary
-var altDisp = 1;            // 1 = alt, 0 = dist to wp
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
@@ -30,7 +28,7 @@ if (process.env.BOARD=="EMSCRIPTEN") emulator = 1;  // 1 = running in emulator. 
 var wp = {};        // Waypoint to use for distance from cur position.
 
 function nxtWp(inc){
-  if (altDisp) return;
+  if (settings.modeA) return;
   settings.wp+=inc;
   loadWp();
 }
@@ -39,7 +37,7 @@ function loadWp() {
   var w = require("Storage").readJSON('waypoints.json')||[{name:"NONE"}];
   if (settings.wp>=w.length) settings.wp=0;
   if (settings.wp<0) settings.wp = w.length-1;
-  require("Storage").write('speedalt.json',settings);
+  savSettings();
   wp = w[settings.wp];
 }
 
@@ -70,21 +68,21 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   
   // Primary Display
   val = speed.toString();
-  if ( !primaryDisp ) val = alt.toString();
+  if ( !settings.primSpd ) val = alt.toString();
   
   // Primary Units
   u = settings.spd_unit;
-  if ( !primaryDisp ) u = alt_units;
+  if ( !settings.primSpd ) u = alt_units;
 
   drawPrimary(val,u);
   
   // Secondary Display
   val = alt.toString();
-  if ( !primaryDisp ) val = speed.toString();
+  if ( !settings.primSpd ) val = speed.toString();
 
   // Secondary Units
   u = alt_units;
-  if ( !primaryDisp ) u = settings.spd_unit;
+  if ( !settings.primSpd ) u = settings.spd_unit;
   
   drawSecondary(val,u);
   
@@ -166,7 +164,7 @@ function drawWP() {
   var nm = wp.name;
   if ( nm == undefined ) nm = '';
   if ( nm == 'NONE' ) nm = '';
-  if ( altDisp ) nm='';
+  if ( settings.modeA ) nm='';
   
   buf.setFontAlign(-12,1); //left, bottom
   buf.setColor(2);  
@@ -186,10 +184,10 @@ function drawSats(sats) {
   buf.setFontVector(20);
   buf.setColor(2); 
   
-  if ( altDisp ) buf.drawString("A",240,140);
+  if ( settings.modeA ) buf.drawString("A",240,140);
   else buf.drawString("D",240,140);
     
-  if ( showMax && altDisp ) {
+  if ( showMax && settings.modeA ) {
     buf.setFontAlign(0,1); //centre, bottom
     buf.drawString("MAX",120,164);
   }
@@ -249,7 +247,7 @@ function onGPS(fix) {
       if ( age > 90 ) age = '>90';
     }
       
-    if ( altDisp ) {
+    if ( settings.modeA ) {
       if ( showMax ) {
         // Speed and alt maximums
         drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit,age,fix.fix);
@@ -274,12 +272,14 @@ function onGPS(fix) {
 
 
 function toggleDisplay() {
-  primaryDisp = !primaryDisp;
+  settings.primSpd = !settings.primSpd;
+  savSettings();
   onGPS(lf);  // Update display
 }
 
 function toggleAltDist() {
-  altDisp = !altDisp;
+  settings.modeA = !settings.modeA;
+  savSettings();
   onGPS(lf); 
 }
 
@@ -306,7 +306,7 @@ function btnPressed() {
 
 function btnReleased() {
   var dur = getTime()-maxPress;
-  if ( altDisp ) {
+  if ( settings.modeA ) {
     // Spd+Alt mode - Switch between fix and MAX
     if ( dur < 2 ) {
       showMax = !showMax;   // Short press toggle fix/max display
@@ -350,6 +350,10 @@ function stopDraw() {
   canDraw=false;
 }
 
+function savSettings() {
+  require("Storage").write('speedalt.json',settings);
+}
+
 // =Main Prog
 
 // Read settings. 
@@ -363,6 +367,9 @@ settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
 settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
 settings.colour = settings.colour||0;          // Colour scheme.
 settings.wp = settings.wp||0;        // Last selected waypoint for dist
+settings.modeA = settings.modeA||0;    // 0 = [D], 1 = [A]
+settings.primSpd = settings.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
+
 
 loadWp();
 
