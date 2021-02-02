@@ -42,7 +42,8 @@ function readGps(state: AppState, gps: GpsEvent): void {
 
 function updateGps(state: AppState): void {
   const t = Date.now();
-  const dt = (t - state.t) / 1000;
+  let dt = (t - state.t) / 1000;
+  if (!isFinite(dt)) dt=0;
 
   state.t = t;
   state.dt += dt;
