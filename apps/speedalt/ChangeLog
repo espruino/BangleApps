@@ -8,4 +8,4 @@
 1.00 : New feature. Added waypoints file and distance to selected waypoint display
 1.04 : Misc tweaks.
 1.05 : Memory optimisation. Stopped loading entire waypoint list into memory.
-1.06 : Save dispay settings and restore when app restarted.  
+1.06 : Save display settings and restore when app restarted.  
