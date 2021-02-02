@@ -96,11 +96,14 @@ function updateGps(state: AppState): void {
   state.pError += (pError - state.pError) * pGain;
   state.vError += (vError - state.vError) * vGain;
 
+/*// we're not currently updating lat/lon with the kalman filter
+  // as it seems not to update them correctly at the moment
+  // and we only use them for logging (where it makes sense to use
+  // raw GPS coordinates)
   const pMag = Math.sqrt(state.x * state.x + state.y * state.y + state.z * state.z);
-
   state.lat = (Math.asin(state.z / pMag) * 180 / Math.PI) || 0;
   state.lon = (Math.atan2(state.y, state.x) * 180 / Math.PI) || 0;
-  state.alt = pMag - EARTH_RADIUS;
+  state.alt = pMag - EARTH_RADIUS;*/
 
   if (state.status === ActivityStatus.Running) {
     state.distance += dpMag * pGain;
