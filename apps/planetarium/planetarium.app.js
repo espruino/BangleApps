@@ -39,7 +39,10 @@ function siderealTime(julianDay)
 * Draws a single star in the sky. 
 * starPositions is a dictionary that gets modified and it is used later for ploting the constelations
 */
-function drawStar(zeta,theta,z,julianDay,latitude,longitude,starDE,starRA,starMag,starNumber,starPositions){
+function drawStar(zeta,theta,z,julianDay,latitude,longitude,starInfo,starNumber,starPositions){
+  let starRA = parseFloat(starInfo[0]);
+  let starDE = parseFloat(starInfo[1]);
+  let starMag = parseFloat(starInfo[2]);
   var dec = Math.asin(Math.sin(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) + Math.cos(theta) * Math.sin(starDE));
   var ascen = Math.atan2(Math.cos(starDE) * Math.sin(starRA + zeta), Math.cos(theta) * Math.cos(starDE) * Math.cos(starRA + zeta) - Math.sin(theta) * Math.sin(starDE)) + z;
   var H = siderealTime(julianDay) - longitude - ascen;
@@ -107,17 +110,28 @@ function plotSky(lat,lon,date){
     starNumber++;
     //Process the star
     starInfo = line.split(',');
-    //console.log(starInfo[0]);
-    starRA = parseFloat(starInfo[0]);
-    starDE = parseFloat(starInfo[1]);
-    starMag = parseFloat(starInfo[2]);
-    drawStar(zeta,theta,z,julianDay,latitude,longitude,starDE,starRA,starMag,starNumber,starPositions);
+    drawStar(zeta,theta,z,julianDay,latitude,longitude,starInfo,starNumber,starPositions);
     linestart = lineend+1;
     lineend = f.indexOf("\n",linestart);
   }
   
 
   if (settings.constellations){
+    //First plot the extra stars for the constellations
+    fe=storage.read("planetarium.extra.csv","r");
+    linenum=linestart = 0;
+    lineend = fe.indexOf("\n");
+    let starNumber = 0;
+    while (lineend>=0) {
+      line = fe.substring(linestart,lineend);
+      starNumber++;
+      starInfo = line.split(',');
+      drawStar(zeta,theta,z,julianDay,latitude,longitude,starInfo,"e_"+starNumber,starPositions);
+      linestart = lineend+1;
+      lineend = fe.indexOf("\n",linestart);
+    }
+    //End of ploting extra stars
+    
     linenum=linestart = 0;
     fc=storage.read("planetarium.const.csv","r");
     lineend = fc.indexOf("\n");
@@ -131,14 +145,13 @@ function plotSky(lat,lon,date){
       linestart = lineend+1;
       lineend = fc.indexOf("\n",linestart);
       g.setColor(0,255,0);
-      if (linenum>11)
-        break;
+      
       constelationShowing=false;
       
       for (j=0;j<lines.length;j++){
-        positions = lines[j].split(' ');
-        positionStar1=starPositions[parseInt(positions[0])];
-        positionStar2=starPositions[parseInt(positions[1])];
+        positions = lines[j].split(' ');            
+        positionStar1=starPositions[positions[0]];
+        positionStar2=starPositions[positions[1]];
         //Both stars need to be visible
         if (positionStar1 && positionStar2)
         {
@@ -149,6 +162,7 @@ function plotSky(lat,lon,date){
           constelationShowing=false;
         g.flip();
       }
+      
       //Write the name
       if (constelationShowing && settings.consnames)
         g.drawString(name,positionStar2[0]+10,positionStar2[1]);
