@@ -2189,6 +2189,23 @@
       {"wildcard":"accelrec.?.csv" }
     ]
   },
+  { "id": "accellog",
+    "name": "Acceleration Logger",
+    "shortName":"Accel Log",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
+    "tags": "outdoor",
+    "readme": "README.md",
+    "storage": [
+      {"name":"accellog.app.js","url":"app.js"},
+      {"name":"accellog.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"wildcard":"accellog.?.csv" }
+    ]
+  },
   {
     "id": "cprassist",
     "name":"CPR Assist",
