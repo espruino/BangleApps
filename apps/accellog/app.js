@@ -32,7 +32,7 @@ function viewLog(n) {
   E.showMessage("Loading...");
   var f = require("Storage").open(getFileName(n), "r");
   var records = 0, l = "", ll="";
-  while (l=f.readLine()) {records++;ll=l};
+  while ((l=f.readLine())!==undefined) {records++;ll=l;}
   var length = 0;
   if (ll) length = (ll.split(",")[0]|0)/1000;
 
