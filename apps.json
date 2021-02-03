@@ -1341,7 +1341,7 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
     "tags": "outdoors,widget",
      "readme": "README.md",
@@ -2187,6 +2187,23 @@
     ],
     "data": [
       {"wildcard":"accelrec.?.csv" }
+    ]
+  },
+  { "id": "accellog",
+    "name": "Acceleration Logger",
+    "shortName":"Accel Log",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
+    "tags": "outdoor",
+    "readme": "README.md",
+    "storage": [
+      {"name":"accellog.app.js","url":"app.js"},
+      {"name":"accellog.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"wildcard":"accellog.?.csv" }
     ]
   },
   {
