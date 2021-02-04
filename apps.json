@@ -2748,7 +2748,7 @@
   "tags": "tool",
   "storage": [
     {"name":"oblique.app.js","url":"app.js"},
-    {"name":"eno.img","url":"icon.js","evaluate":true}
+    {"name":"oblique.img","url":"app-icon.js","evaluate":true}
   ]
 }
 
