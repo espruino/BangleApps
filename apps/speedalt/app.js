@@ -208,12 +208,7 @@ function onGPS(fix) {
   }
 
   if (fix.fix) lf = fix;
-  doFix();
-  
-}
 
-function doFix() {
-  
   var m;
 
   var sp = '---';        
@@ -221,56 +216,56 @@ function doFix() {
   var di = '---';
   var age = '---';
 
-  if (lf.fix == 1 ) {  
-      // Speed
-      if ( settings.spd == 0 ) {
-        m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-        sp = parseFloat(m[1]);
-        settings.spd_unit = m[2];
-      }
-      else {
-        // Calculate for selected units
-        sp = lf.speed;
-        sp = parseFloat(sp)/parseFloat(settings.spd);
-      }
-      if ( sp < 10 ) sp = sp.toFixed(1);
-      else sp = Math.round(sp);
-      if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
-
-      // Altitude
-      al = lf.alt;
-      al = Math.round(parseFloat(al)/parseFloat(settings.alt));
-      if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
-
-      // Distance to waypoint
-      di = distance(lf,wp);
-      if (isNaN(di)) di = 0;
-
-      // Age of last fix (secs)
-      age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
-      if ( age > 90 ) age = '>90';
-    }
-      
-    if ( settings.modeA ) {
-      if ( showMax ) {
-        // Speed and alt maximums
-        drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix);
-      }
-      else {
-        // Show speed/altitude
-        drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix);
-      }
+//  if (lf.fix == 1 ) {  
+    // Speed
+    if ( settings.spd == 0 ) {
+      m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
+      sp = parseFloat(m[1]);
+      settings.spd_unit = m[2];
     }
     else {
-      // Show speed/distance
-      if ( di <= 0 ) {
-        // No WP selected
-        drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix);
-      }
-      else {
-        drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
-      }
+      // Calculate for selected units
+      sp = lf.speed;
+      sp = parseFloat(sp)/parseFloat(settings.spd);
     }
+    if ( sp < 10 ) sp = sp.toFixed(1);
+    else sp = Math.round(sp);
+    if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
+
+    // Altitude
+    al = lf.alt;
+    al = Math.round(parseFloat(al)/parseFloat(settings.alt));
+    if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
+
+    // Distance to waypoint
+    di = distance(lf,wp);
+    if (isNaN(di)) di = 0;
+
+    // Age of last fix (secs)
+    age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+    if ( age > 90 ) age = '>90';
+//  }
+      
+  if ( settings.modeA ) {
+    if ( showMax ) {
+      // Speed and alt maximums
+      drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix);
+    }
+    else {
+      // Show speed/altitude
+      drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix);
+    }
+  }
+  else {
+    // Show speed/distance
+    if ( di <= 0 ) {
+      // No WP selected
+      drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix);
+    }
+    else {
+      drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
+    }
+  }
 
 }
 
