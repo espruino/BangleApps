@@ -244,9 +244,7 @@ function onGPS(fix) {
     if (isNaN(di)) di = 0;
 
     // Age of last fix (secs)
-    //age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
-    var time = formatTime(lf.time);
-    age = timeSince(time);
+    age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
     if ( age > 90 ) age = '>90';
   }
       
