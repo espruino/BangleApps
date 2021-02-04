@@ -221,6 +221,8 @@ function doFix() {
   var di = '---';
   var age = '---';
   
+print(lf.fix+' '+lf.alt);
+  
     if (lf.fix == 1 ) {  
       // Speed
       if ( settings.spd == 0 ) {
@@ -360,9 +362,12 @@ function isLP() {
 
 function setLpMode(on) {
   if ( !lp ) return;
-  var settings = WIDGETS.gpsservice.gps_get_settings();
-  settings.gpsservice = true;
-  settings.power_mode = (on)?'PSMOO':'SuperE';
+  var s = WIDGETS.gpsservice.gps_get_settings();
+  s.gpsservice = true;
+  s.power_mode = (on)?'PSMOO':'SuperE';
+  
+print( s.power_mode );
+  
   WIDGETS.gpsservice.gps_set_settings(settings);
   WIDGETS.gpsservice.reload();
 }
