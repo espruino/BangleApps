@@ -209,8 +209,6 @@ function onGPS(fix) {
     fix.time = new Date();
   }
 
-  if (fix.fix) lf = fix;
-
   var m;
 
   var sp = '---';        
@@ -218,7 +216,9 @@ function onGPS(fix) {
   var di = '---';
   var age = '---';
 
-  if (lf.fix == 1 ) {  
+  if (fix.fix) { 
+    lf = fix;
+    
     // Speed
     if ( settings.spd == 0 ) {
       m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
@@ -342,7 +342,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  setLpMode(1); // on
+  if (lf.fix) setLpMode(1); // on. Keep lp mode off until we have a  first fix.
 }
 
 function savSettings() {
