@@ -347,7 +347,9 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  setLpMode(1); // on
+//  setLpMode(1); // on
+setLpMode(0); // off
+
 }
 
 function savSettings() {
