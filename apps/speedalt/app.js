@@ -370,7 +370,7 @@ function setLpMode(on) {
   s.gpsservice = true;
   s.power_mode = (on)?'PSMOO':'SuperE';
   
-print( s.power_mode );
+print( s );
   
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
