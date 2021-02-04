@@ -2740,7 +2740,7 @@
     {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
   ]
 },
-{ "id": "oblique",
+{ "id": "obliquestrategies",
   "name": "Oblique Strategies",
   "icon": "eno.png",
   "version":"0.01",
