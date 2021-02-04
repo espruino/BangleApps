@@ -360,7 +360,7 @@ function isLP() {
 function setLpMode(on) {
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
-  s.gpsservice = on;
+  s.gpsservice = true;
   s.power_mode = (on)?'PSMOO':'SuperE';
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
