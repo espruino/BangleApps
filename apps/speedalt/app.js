@@ -360,6 +360,10 @@ function isLP() {
   return(1);
 }
 
+function lpGetFix() {
+  onGPS(WIDGETS.gpsservice.gps_get_fix());
+}
+
 function setLpMode(on) {
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
@@ -431,6 +435,9 @@ var lp = isLP();   // Low power GPS widget installed.
 
 Bangle.setGPSPower(1);
 onGPS(lf);
-Bangle.on('GPS', onGPS);
+
+if ( lp ) setInterval(lpGetFix, 1000);
+else Bangle.on('GPS', onGPS);
+
 setButtons();
 setInterval(updateClock, 30000);
