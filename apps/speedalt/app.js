@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.07
+Ver : 1.07a  mem optimise
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
@@ -211,35 +211,35 @@ function onGPS(fix) {
 
   var m;
 
-  var speed = '---';        
-  var alt = '---';
-  var dist = '---';
+  var sp = '---';        
+  var al = '---';
+  var di = '---';
   var age = '---';
   
     if (lf.fix == 1 ) {  
       // Speed
       if ( settings.spd == 0 ) {
         m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-        speed = parseFloat(m[1]);
+        sp = parseFloat(m[1]);
         settings.spd_unit = m[2];
       }
       else {
         // Calculate for selected units
-        speed = lf.speed;
-        speed = parseFloat(speed)/parseFloat(settings.spd);
+        sp = lf.speed;
+        sp = parseFloat(sp)/parseFloat(settings.spd);
       }
-      if ( speed < 10 ) speed = speed.toFixed(1);
-      else speed = Math.round(speed);
-      if (parseFloat(speed) > parseFloat(max.spd) ) max.spd = parseFloat(speed);
+      if ( sp < 10 ) sp = sp.toFixed(1);
+      else sp = Math.round(sp);
+      if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
 
       // Altitude
-      alt = lf.alt;
-      alt = Math.round(parseFloat(alt)/parseFloat(settings.alt));
-      if (parseFloat(alt) > parseFloat(max.alt) ) max.alt = parseFloat(alt);
+      al = lf.alt;
+      al = Math.round(parseFloat(al)/parseFloat(settings.alt));
+      if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
 
       // Distance to waypoint
-      dist = distance(lf,wp);
-      if (isNaN(dist)) dist = 0;
+      di = distance(lf,wp);
+      if (isNaN(di)) di = 0;
 
       // Age of last fix (secs)
       age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
@@ -253,17 +253,17 @@ function onGPS(fix) {
       }
       else {
         // Show speed/altitude
-        drawFix(speed,settings.spd_unit,fix.satellites,alt,settings.alt_unit,age,fix.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,al,settings.alt_unit,age,fix.fix);
       }
     }
     else {
       // Show speed/distance
-      if ( dist <= 0 ) {
+      if ( di <= 0 ) {
         // No WP selected
-        drawFix(speed,settings.spd_unit,fix.satellites,'','',age,fix.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,'','',age,fix.fix);
       }
       else {
-        drawFix(speed,settings.spd_unit,fix.satellites,dist,settings.dist_unit,age,fix.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,di,settings.dist_unit,age,fix.fix);
       }
     }
 
@@ -384,23 +384,14 @@ if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF8
 
 var SCREENACCESS = {
       withApp:true,
-      request:function(){
-        this.withApp=false;
-        stopDraw();
-      },
-      release:function(){
-        this.withApp=true;
-        startDraw(); 
-      }
+      request:function(){this.withApp=false;stopDraw();},
+      release:function(){this.withApp=true;startDraw();}
 }; 
 
 Bangle.on('lcdPower',function(on) {
   if (!SCREENACCESS.withApp) return;
-  if (on) {
-    startDraw();
-  } else {
-    stopDraw();
-  }
+  if (on) startDraw(); 
+  else stopDraw();
 });
 
 // All set up. Lets go.
