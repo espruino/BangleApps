@@ -347,9 +347,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-//  setLpMode(1); // on
-setLpMode(0); // off
-
+  setLpMode(1); // on
 }
 
 function savSettings() {
@@ -372,7 +370,7 @@ function setLpMode(on) {
   s.gpsservice = true;
   s.power_mode = (on)?'PSMOO':'SuperE';
   
-print( s );
+print('[a] '+s.power_mode);  
   
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
