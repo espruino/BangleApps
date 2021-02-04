@@ -354,19 +354,18 @@ function savSettings() {
 
 // Is low power GPS service available to use?
 function isLP() {
-  if (WIDGETS.gpsservice == undefined) return(0);
-  return(1);
+  retrun (WIDGETS.gpsservice==undefined)?0:1;
 }
 
 function setLpMode(on) {
   if ( !lp ) return;
-  var settings = WIDGETS.gpsservice.gps_get_settings();
-  settings.gpsservice = on;
-  settings.power_mode = (on)?'PSMOO':'SuperE';
+  var s = WIDGETS.gpsservice.gps_get_settings();
+  s.gpsservice = on;
+  s.power_mode = (on)?'PSMOO':'SuperE';
   
-  print(settings.power_mode);
+  print(s.power_mode+''+s.update);
   
-  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
 }
 
