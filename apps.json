@@ -2744,7 +2744,7 @@
   "name": "Oblique Strategies",
   "icon": "eno.png",
   "version":"0.01",
-  "description": "Oblique Strategies for creative vigor. Copied from Brian Eno.",
+  "description": "Oblique Strategies for creativity. Copied from Brian Eno.",
   "tags": "tool",
   "storage": [
     {"name":"obliquestrategies.app.js","url":"app.js"},
