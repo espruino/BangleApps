@@ -1,11 +1,9 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.06
+Ver : 1.07
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-
-const dbg = 0;
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
@@ -22,8 +20,7 @@ var max = {};
 max.spd = 0;
 max.alt = 0;
 
-var emulator = 0;
-if (process.env.BOARD=="EMSCRIPTEN") emulator = 1;  // 1 = running in emulator. Supplies test values;
+var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 
 var wp = {};        // Waypoint to use for distance from cur position.
 
@@ -63,28 +60,28 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
 
   buf.clear();
 
-  var val = '';  
+  var v = '';  
   var u='';
   
   // Primary Display
-  val = speed.toString();
-  if ( !settings.primSpd ) val = alt.toString();
+  v = speed.toString();
+  if ( !settings.primSpd ) v = alt.toString();
   
   // Primary Units
   u = settings.spd_unit;
   if ( !settings.primSpd ) u = alt_units;
 
-  drawPrimary(val,u);
+  drawPrimary(v,u);
   
   // Secondary Display
-  val = alt.toString();
-  if ( !settings.primSpd ) val = speed.toString();
+  v = alt.toString();
+  if ( !settings.primSpd ) v = speed.toString();
 
   // Secondary Units
   u = alt_units;
   if ( !settings.primSpd ) u = settings.spd_unit;
   
-  drawSecondary(val,u);
+  drawSecondary(v,u);
   
   // Time
   drawTime();
@@ -106,15 +103,16 @@ function drawPrimary(n,u) {
   // Primary Display
   
   var s=40;    // Font size
-  if ( n.length <= 7 ) s=48;
-  if ( n.length <= 6 ) s=55;
-  if ( n.length <= 5 ) s=68;
-  if ( n.length <= 4 ) s=85;
-  if ( n.length <= 3 ) s=110;
+  var l=n.length;
+  
+  if ( l <= 7 ) s=48;
+  if ( l <= 6 ) s=55;
+  if ( l <= 5 ) s=68;
+  if ( l <= 4 ) s=85;
+  if ( l <= 3 ) s=110;
         
   buf.setFontAlign(0,-1); //Centre 
   buf.setColor(1);  
-
   buf.setFontVector(s);
   buf.drawString(n,110,0);
     
@@ -128,11 +126,12 @@ function drawPrimary(n,u) {
 function drawSecondary(n,u) {
 
   var s=180;    // units X position
-  if ( n.length <= 5 ) s=155;
-  if ( n.length <= 4 ) s=125;
-  if ( n.length <= 3 ) s=100;
-  if ( n.length <= 2 ) s=65;
-  if ( n.length <= 1 ) s=35;
+  var l=n.length;
+  if ( l <= 5 ) s=155;
+  if ( l <= 4 ) s=125;
+  if ( l <= 3 ) s=100;
+  if ( l <= 2 ) s=65;
+  if ( l <= 1 ) s=35;
   
   buf.setFontAlign(-1,1); //left, bottom 
   buf.setColor(1);  
@@ -212,10 +211,10 @@ function onGPS(fix) {
 
   var m;
 
-  speed = '---';        
-    alt = '---';
-    dist = '---';
-    age = '---';
+  var speed = '---';        
+  var alt = '---';
+  var dist = '---';
+  var age = '---';
   
     if (lf.fix == 1 ) {  
       // Speed
@@ -324,19 +323,11 @@ function btnReleased() {
 }
 
 function updateClock() {
-  if ( dbg ) print('Updating clock');
   if (!canDraw) return;
-
   drawTime(); 
   g.reset();
   g.drawImage(img,0,40);
-//  g.flip();
-  
-  if ( emulator ) {
-    max.spd++;
-    max.alt++;
-  }
-  
+  if ( emulator ) {max.spd++;max.alt++;}
 }
 
 function startDraw(){
@@ -391,24 +382,15 @@ var img = {
 if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF]);
 if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800]);
 
-// Find speed unit if using locale speed
-if ( settings.spd == 0 ) {
-  var strSpeed = require("locale").speed(1);
-  m = strSpeed.match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-  settings.spd_unit = m[2];
-}
-
 var SCREENACCESS = {
       withApp:true,
       request:function(){
         this.withApp=false;
         stopDraw();
-        clearWatch();
       },
       release:function(){
         this.withApp=true;
         startDraw(); 
-        setButtons();
       }
 }; 
 
@@ -423,13 +405,10 @@ Bangle.on('lcdPower',function(on) {
 
 // All set up. Lets go.
 g.clear();
-Bangle.setLCDBrightness(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1);
-
 onGPS(lf);
 Bangle.on('GPS', onGPS);
-
 setButtons();
 setInterval(updateClock, 30000);
