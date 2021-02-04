@@ -372,7 +372,7 @@ function setLpMode(on) {
   
 print( s.power_mode );
   
-  WIDGETS.gpsservice.gps_set_settings(settings);
+  WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
 }
 
