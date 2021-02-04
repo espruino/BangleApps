@@ -10,3 +10,4 @@
 1.05 : Memory optimisation. Stopped loading entire waypoint list into memory.
 1.06 : Save display settings and restore when app restarted.
 1.07 : Memory optimisation.
+2.01 : Integrate with Low Power GPS service
