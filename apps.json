@@ -2315,7 +2315,7 @@
     "name": "File manager",
     "shortName":"FileManager",
     "icon": "icons8-filing-cabinet-48.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
     "tags": "tools",
     "readme": "README.md",
