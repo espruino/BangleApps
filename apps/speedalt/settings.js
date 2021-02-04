@@ -38,8 +38,9 @@
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }*/
-    }};
+    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
+    }*/
+  };
   
   const unitsMenu = {
     '': {'title': 'Units'},
