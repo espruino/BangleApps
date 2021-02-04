@@ -141,7 +141,7 @@ function downloadTrack(trackid, callback) {
 function getTrackList() {
   Util.showModal("Loading Tracks...");
   domTracks.innerHTML = "";
-  Puck.eval(`require("Storage").list(/banglerun_.*\\1/).map(fn=>{fn=fn.slice(0,-1);var f=require("Storage").open(fn,"r");f.readLine();return fn+","+f.readLine()})`,trackLines=>{
+  Puck.eval(`require("Storage").list(/banglerun_.*\\x01/).map(fn=>{fn=fn.slice(0,-1);var f=require("Storage").open(fn,"r");f.readLine();return fn+","+f.readLine()})`,trackLines=>{
     var html = `<div class="container">
   <div class="columns">\n`;
     trackLines.forEach(l => {
