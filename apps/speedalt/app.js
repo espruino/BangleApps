@@ -354,7 +354,7 @@ function savSettings() {
 
 // Is low power GPS service available to use?
 function isLP() {
-  retrun (WIDGETS.gpsservice==undefined)?0:1;
+  return (WIDGETS.gpsservice==undefined)?0:1;
 }
 
 function setLpMode(on) {
