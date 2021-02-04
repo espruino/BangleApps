@@ -34,11 +34,11 @@
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     'Units' : function() { E.showMenu(unitsMenu); },
-    'Colours' : function() { E.showMenu(colMenu); },
+    'Colours' : function() { E.showMenu(colMenu); }/*,
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
+    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }*/
     }};
   
   const unitsMenu = {
