@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.07b low power gps widget
+Ver : 1.07
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
@@ -208,12 +208,7 @@ function onGPS(fix) {
   }
   
   if (fix.fix) lf = fix;
-  doFix();
-  
-}
 
-function doFix() {
-  
   var m;
 
   var sp = '---';        
@@ -254,21 +249,21 @@ function doFix() {
     if ( settings.modeA ) {
       if ( showMax ) {
         // Speed and alt maximums
-        drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix);
+        drawFix(max.spd,settings.spd_unit,fix.satellites,max.alt,settings.alt_unit,age,fix.fix);
       }
       else {
         // Show speed/altitude
-        drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,al,settings.alt_unit,age,fix.fix);
       }
     }
     else {
       // Show speed/distance
       if ( di <= 0 ) {
         // No WP selected
-        drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,'','',age,fix.fix);
       }
       else {
-        drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
+        drawFix(sp,settings.spd_unit,fix.satellites,di,settings.dist_unit,age,fix.fix);
       }
     }
 
@@ -337,7 +332,6 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
-  setLpMode(0); // off
   g.clear();
   Bangle.drawWidgets();
   onGPS(lf);  // draw app screen
@@ -345,28 +339,10 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  setLpMode(1); // on
 }
 
 function savSettings() {
   require("Storage").write('speedalt.json',settings);
-}
-
-// Is low power GPS service available to use?
-function isLP() {
-  return (WIDGETS.gpsservice==undefined)?0:1;
-}
-
-function setLpMode(on) {
-  if ( !lp ) return;
-  var s = WIDGETS.gpsservice.gps_get_settings();
-  s.gpsservice = true;
-  s.power_mode = (on)?'PSMOO':'SuperE';
-  
-print(s.power_mode+' ['+s.update+']');
-  
-  WIDGETS.gpsservice.gps_set_settings(s);
-  WIDGETS.gpsservice.reload();
 }
 
 // =Main Prog
@@ -422,10 +398,7 @@ Bangle.on('lcdPower',function(on) {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-var lp = isLP();   // Low power GPS widget installed.
 Bangle.setGPSPower(1);
-setLpMode(0);
 onGPS(lf);
 Bangle.on('GPS', onGPS);
 setButtons();
