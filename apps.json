@@ -2739,6 +2739,17 @@
     {"name":"tapelaunch.app.js","url":"app.js"},
     {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
   ]
+},
+{ "id": "oblique",
+  "name": "Oblique Strategies",
+  "icon": "eno.png",
+  "version": "0.01",
+  "description": "Oblique Strategies for creativity. Copied from Brian Eno.",
+  "tags": "tool",
+  "storage": [
+    {"name":"oblique.app.js","url":"app.js"},
+    {"name":"oblique.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 
 ]
