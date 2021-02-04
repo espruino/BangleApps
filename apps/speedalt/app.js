@@ -207,6 +207,10 @@ function onGPS(fix) {
     fix.time = new Date();
   }
   
+    
+print(fix.fix+' '+fix.alt);
+  
+
   if (fix.fix) lf = fix;
   doFix();
   
@@ -220,10 +224,8 @@ function doFix() {
   var al = '---';
   var di = '---';
   var age = '---';
-  
-print(lf.fix+' '+lf.alt);
-  
-    if (lf.fix == 1 ) {  
+
+  if (lf.fix == 1 ) {  
       // Speed
       if ( settings.spd == 0 ) {
         m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
@@ -370,7 +372,7 @@ function setLpMode(on) {
   s.gpsservice = true;
   s.power_mode = (on)?'PSMOO':'SuperE';
   
-print('[a] '+s.power_mode);  
+print('[b] '+s.power_mode);  
   
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
