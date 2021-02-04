@@ -2740,15 +2740,15 @@
     {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
   ]
 },
-{ "id": "obliquestrategies",
+{ "id": "oblique",
   "name": "Oblique Strategies",
   "icon": "eno.png",
-  "version":"0.01",
+  "version": "0.01",
   "description": "Oblique Strategies for creativity. Copied from Brian Eno.",
   "tags": "tool",
   "storage": [
-    {"name":"obliquestrategies.app.js","url":"app.js"},
-    {"name":"eno.img","url":"app-icon.js","evaluate":true}
+    {"name":"oblique.app.js","url":"app.js"},
+    {"name":"eno.img","url":"icon.js","evaluate":true}
   ]
 }
 
