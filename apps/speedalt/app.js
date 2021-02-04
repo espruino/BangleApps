@@ -90,9 +90,11 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   drawWP();
   
   //Sats
-  if ( fix ) drawSats('Sats:'+sats);
-  else drawSats('Age:'+age);
-
+//  if ( fix ) drawSats('Sats:'+sats);
+//  else drawSats('Age:'+age);
+  if ( age > 10 ) drawSats('Age:'+age);
+  else drawSats('Sats:'+sats);
+  
   g.reset();
   g.drawImage(img,0,40);
   
@@ -242,7 +244,9 @@ function onGPS(fix) {
     if (isNaN(di)) di = 0;
 
     // Age of last fix (secs)
-    age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+    //age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+    var time = formatTime(lf.time);
+    age = timeSince(time);
     if ( age > 90 ) age = '>90';
   }
       
