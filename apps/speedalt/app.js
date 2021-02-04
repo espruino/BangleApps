@@ -220,7 +220,7 @@ function onGPS(fix) {
       // Speed
       if ( settings.spd == 0 ) {
         m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-        speed = m[1];
+        speed = parseFloat(m[1]);
         settings.spd_unit = m[2];
       }
       else {
@@ -387,12 +387,10 @@ var SCREENACCESS = {
       request:function(){
         this.withApp=false;
         stopDraw();
-        clearWatch();
       },
       release:function(){
         this.withApp=true;
         startDraw(); 
-        setButtons();
       }
 }; 
 
@@ -414,4 +412,3 @@ onGPS(lf);
 Bangle.on('GPS', onGPS);
 setButtons();
 setInterval(updateClock, 30000);
-
