@@ -387,10 +387,12 @@ var SCREENACCESS = {
       request:function(){
         this.withApp=false;
         stopDraw();
+        clearWatch();
       },
       release:function(){
         this.withApp=true;
         startDraw(); 
+        setButtons();
       }
 }; 
 
@@ -412,3 +414,4 @@ onGPS(lf);
 Bangle.on('GPS', onGPS);
 setButtons();
 setInterval(updateClock, 30000);
+
