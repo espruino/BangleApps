@@ -216,7 +216,7 @@ function onGPS(fix) {
   var di = '---';
   var age = '---';
 
-//  if (lf.fix == 1 ) {  
+  if (lf.fix == 1 ) {  
     // Speed
     if ( settings.spd == 0 ) {
       m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
@@ -244,7 +244,7 @@ function onGPS(fix) {
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
     if ( age > 90 ) age = '>90';
-//  }
+  }
       
   if ( settings.modeA ) {
     if ( showMax ) {
