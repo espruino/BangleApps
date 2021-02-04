@@ -425,9 +425,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var lp = isLP();   // Low power GPS widget installed.
-
-
 Bangle.setGPSPower(1);
+setLpMode(0);
 onGPS(lf);
 Bangle.on('GPS', onGPS);
 setButtons();
