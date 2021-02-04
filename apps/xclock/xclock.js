@@ -176,9 +176,10 @@ let date_formatter = new EnglishDateFormatter();
 
 function reset_clock(){
   console.log("reset_clock");
-  this.hour_shift_txt.reset();
-  this.min_shift_txt.reset();
-  this.min_remainder_shift_txt.reset();
+  var i;
+  for (i = 0; i < row_displays.length; i++) {
+    row_displays[i].reset();
+  }
 }
 
 function draw_clock(){
