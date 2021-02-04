@@ -361,7 +361,7 @@ function isLP() {
 function setLpMode(on) {
   if ( !lp ) return;
   var settings = WIDGETS.gpsservice.gps_get_settings();
-  settings.gpsservice = on;
+  settings.gpsservice = true;
   settings.power_mode = (on)?'PSMOO':'SuperE';
   WIDGETS.gpsservice.gps_set_settings(settings);
   WIDGETS.gpsservice.reload();
