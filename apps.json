@@ -2625,7 +2625,7 @@
   "name": "GPS Speedo and Altimeter",
   "shortName":"GPS Speed Alt",
   "icon": "app.png",
-  "version":"2.02",
+  "version":"2.03",
   "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "tags": "tool,outdoors",
   "type":"app",
