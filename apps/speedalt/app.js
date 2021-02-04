@@ -206,10 +206,6 @@ function onGPS(fix) {
     fix.satellites = 12;
     fix.time = new Date();
   }
-  
-    
-print(fix.fix+' '+fix.alt);
-  
 
   if (fix.fix) lf = fix;
   doFix();
@@ -371,9 +367,6 @@ function setLpMode(on) {
   var s = WIDGETS.gpsservice.gps_get_settings();
   s.gpsservice = true;
   s.power_mode = (on)?'PSMOO':'SuperE';
-  
-print('[b] '+s.power_mode);  
-  
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
 }
