@@ -1,6 +1,6 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 1.07b low power gps widget
+Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
