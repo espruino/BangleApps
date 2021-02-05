@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '7';
+var v = '8';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -220,11 +220,8 @@ function onGPS(fix) {
       sp = parseFloat(m[1]);
       settings.spd_unit = m[2];
     }
-    else {
-      // Calculate for selected units
-      sp = lf.speed;
-      sp = parseFloat(sp)/parseFloat(settings.spd);
-    }
+    else sp = parseFloat(lf.speed)/parseFloat(settings.spd); // Calculate for selected units
+    
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
     if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
@@ -243,24 +240,13 @@ function onGPS(fix) {
   }
       
   if ( settings.modeA ) {
-    if ( showMax ) {
-      // Speed and alt maximums
-      drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix);
-    }
-    else {
-      // Show speed/altitude
-      drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix);
-    }
-  }
+    if ( showMax ) drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix); // Speed and alt maximums
+    else drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix); // Show speed/altitude
+   }
   else {
     // Show speed/distance
-    if ( di <= 0 ) {
-      // No WP selected
-      drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix);
-    }
-    else {
-      drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
-    }
+    if ( di <= 0 ) drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix); // No WP selected
+    else drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
   }
 
 }
@@ -303,18 +289,11 @@ function btnReleased() {
   var dur = getTime()-maxPress;
   if ( settings.modeA ) {
     // Spd+Alt mode - Switch between fix and MAX
-    if ( dur < 2 ) {
-      showMax = !showMax;   // Short press toggle fix/max display
-    }
-    else {
-      max.spd = 0;  // Long press resets max values.
-      max.alt = 0;
-    }
+    if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
+    else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
   }
-  else {
-    // Spd+Dist mode - Select next waypoint
-    nxtWp(1);
-  }
+  else nxtWp(1);  // Spd+Dist mode - Select next waypoint
+  
   onGPS(lf);
 }
 
