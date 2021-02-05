@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '6';
+var v = '7';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -357,7 +357,7 @@ function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
-  if ( m <> s.power_mode ) {
+  if ( m !== s.power_mode ) {
     s.gpsservice = true;
     s.power_mode = m;
     WIDGETS.gpsservice.gps_set_settings(s);
