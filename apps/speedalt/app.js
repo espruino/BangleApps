@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '4';
+var v = '5';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -65,22 +65,18 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   var u='';
   
   // Primary Display
-  v = speed.toString();
-  if ( !settings.primSpd ) v = alt.toString();
+  v = (settings.primSpd)?speed.toString():alt.toString();
   
   // Primary Units
-  u = settings.spd_unit;
-  if ( !settings.primSpd ) u = alt_units;
+  u = (settings.primSpd)?settings.spd_unit:alt_units;
 
   drawPrimary(v,u);
   
   // Secondary Display
-  v = alt.toString();
-  if ( !settings.primSpd ) v = speed.toString();
+  v = (settings.primSpd)?alt.toString():speed.toString();
 
   // Secondary Units
-  u = alt_units;
-  if ( !settings.primSpd ) u = settings.spd_unit;
+  u = (settings.primSpd)?alt_units:settings.spd_unit;
   
   drawSecondary(v,u);
   
