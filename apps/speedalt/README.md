@@ -1,10 +1,12 @@
-Displays the GPS speed, altitude and distance to selected waypoint. One is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
+# GPS Speed, Altimeter and Distance to Waypoint
 
-You can chose between two modes. One showing speed and altitude (A) and one showing speed and distance to waypoint (D). 
+You can switch between two display modes. One showing speed and altitude (A) and one showing speed and distance to waypoint (D). 
+
+Within each display mode one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
 The waypoints list is the same as that used with the [GPS Navigation] app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
-Left Display Tap : Swaps the displays. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
 
 BTN1 : [Speed+Altitude] Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
 
@@ -14,9 +16,9 @@ BTN1 : [Speed+Distance] Select next waypoint. Last fix distance from selected wa
 
 BTN3 : Swaps the modes between Speed+[A]ltitude or Speed+[D]istance.
 
-App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance caqn be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default, high contrast (all white on black) or night ( all red on black ). 
+App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
 
-Loss of fix : When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a fix or not.  
+Loss of fix : When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a current fix or not.  
 
 Speed and Altitude:<br>
 ![](screen1.png)<p>
@@ -31,7 +33,7 @@ Settings:<br>
 
 Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
 
-Low Power GPS Service :
+## Low Power GPS Service
 
 This app will work quite happily without this service but will use the Low power GPS Service if it is installed. In this case the GPS Service must be On for this app to obtain a fix. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
 
@@ -39,7 +41,7 @@ When using the Low Power GPS Service this app switches the GPS to SuperE (defaul
 
 There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
-Waypoints:
+## Waypoints
 
 Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
@@ -110,7 +112,7 @@ Sample waypoints.json (My sailing waypoints)
 ]
 </pre>
 
-Thanks:
+## Thanks
 
 Many thanks to Gordon Williams. Awesome job.
 
