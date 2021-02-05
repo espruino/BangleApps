@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.03';
+var v = '1.04';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
