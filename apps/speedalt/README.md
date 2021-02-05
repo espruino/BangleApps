@@ -33,17 +33,19 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 
 Low Power GPS Service :
 
-This app will work quite happily without this service but will use the Low power GPS Service if it is installed. In this case the GPS Service must be On for this app to obtain a fix. You may choose to use the Low Power GPS Service to gain significant longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
+This app will work quite happily without this service but will use the Low power GPS Service if it is installed. In this case the GPS Service must be On for this app to obtain a fix. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
 
-When using the Low Power GPS Service this app switches the GPS to SuperE ( default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off. This delay gives an opportunity to restore the display before the power mode is switched.
+When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off. This delay gives an opportunity to restore the display before the power mode is switched.
 
-There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will contribute to this. The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
+There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
 Waypoints:
 
-Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displyed in Speed+[D]istance mode.
+Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
-Sample waypoints.json
+The GPS Navigation app in the App Loader has a really nice waypoints file editor.
+
+Sample waypoints.json (My sailing waypoints)
 
 <pre>
 [
