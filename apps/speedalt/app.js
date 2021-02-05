@@ -15,6 +15,7 @@ var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
+var tmrLP;            // Timer for delay in switching to low power after screen turns off
 
 var max = {};
 max.spd = 0;
@@ -334,6 +335,10 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
+  if (tmrLP) {
+    clearInterval(tmrLP);  // Stop any scheduled drop to low power
+    tmrLP = false;
+  }
   setLpMode(0); // off
   g.clear();
   Bangle.drawWidgets();
@@ -342,7 +347,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  if (lf.fix) setLpMode(1); // on. Keep lp mode off until we have a  first fix.
+  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode(1);}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
 }
 
 function savSettings() {
