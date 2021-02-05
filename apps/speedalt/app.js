@@ -416,15 +416,17 @@ Bangle.on('lcdPower',function(on) {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-var lp = isLP();   // Low power GPS widget installed.
 onGPS(lf);
+
+var lp = isLP();   // Low power GPS widget installed?
 if ( lp ) {
   setLpMode('SuperE');
-  setInterval(onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
+  setInterval(()=>onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
 }
 else {
   Bangle.setGPSPower(1);
   Bangle.on('GPS', onGPS);
 }
+
 setButtons();
 setInterval(updateClock, 30000);
