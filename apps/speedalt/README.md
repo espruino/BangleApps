@@ -6,7 +6,9 @@ Within each display mode one figure is displayed on the watch face using the lar
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
-Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+BTN4 : Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+
+BTN5 : Right Display Tap : Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Tap again to restore power saving timeouts.
 
 BTN1 : [Speed+Altitude] Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
 
