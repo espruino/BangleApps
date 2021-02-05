@@ -4,7 +4,7 @@ You can switch between two display modes. One showing speed and altitude (A) and
 
 Within each display mode one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
-The waypoints list is the same as that used with the [GPS Navigation] app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
+The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
 Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
 
@@ -35,9 +35,9 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 
 ## Low Power GPS Service
 
-This app will work quite happily without this service but will use the Low power GPS Service if it is installed. In this case the GPS Service must be On for this app to obtain a fix. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
+This app will work quite happily without this service but will use the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) if it is installed. In this case the GPS Service must be On for this app to obtain a fix. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
 
-When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off. This delay gives an opportunity to restore the display before the power mode is switched.
+When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
 There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
@@ -45,7 +45,7 @@ There are a couple of things to consider when using the Low Power GPS Service. T
 
 Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
-The GPS Navigation app in the App Loader has a really nice waypoints file editor.
+The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
 
 Sample waypoints.json (My sailing waypoints)
 
@@ -116,6 +116,6 @@ Sample waypoints.json (My sailing waypoints)
 
 Many thanks to Gordon Williams. Awesome job.
 
-Special thanks also to @jeffmer, for the 'GPS Navigation' app and @hughbarney for the 'Low power GPS Service' work.
+Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) work.
 
 
