@@ -1,10 +1,8 @@
 /*
 Speed and Altitude [speedalt]
-Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
-process.memory()
 */
-var v = '8';
+var v = '1.00';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
