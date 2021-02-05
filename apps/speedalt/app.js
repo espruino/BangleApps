@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.04';
+var v = '1.05';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -391,8 +391,8 @@ var img = {
   palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB])
 };
 
-if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFFF,0xFFFF]);
-if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xF800,0xF800]);
+if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
+if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xFAE0,0xF813]);
 
 var SCREENACCESS = {
       withApp:true,
