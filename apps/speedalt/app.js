@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.00';
+var v = '1.01';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -10,6 +10,7 @@ require("Font7x11Numeric7Seg").add(Graphics);
 
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
+var pwrSav = 1;         // 1 = default power saving with watch screen off and GPS to PMOO mode. 0 = screen kept on.
 var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
@@ -262,6 +263,19 @@ function toggleAltDist() {
   onGPS(lf); 
 }
 
+function togglePwrSav() {
+  pwrSav=!pwrSav; 
+  if ( pwrSav ) {
+    var s = require('Storage').readJSON('setting.json',1)||{};
+    var t = s.timeout||10;
+    Bangle.setLCDTimeout(t);
+  }
+  else {
+    Bangle.setLCDTimeout(0);
+    Bangle.setLCDPower(1);
+  }
+}
+
 function setButtons(){
 
   // Spd+Dist : Select next waypoint
@@ -277,6 +291,9 @@ function setButtons(){
   // Touch left screen to toggle display
   setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
 
+  // Touch right screen to toggle pwrSav 
+  setWatch(togglePwrSav, BTN5, {repeat:true,edge:"falling"});
+  
 }
 
 function btnPressed() {
