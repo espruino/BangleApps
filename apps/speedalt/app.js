@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.01';
+var v = '1.02';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -266,6 +266,7 @@ function toggleAltDist() {
 function togglePwrSav() {
   pwrSav=!pwrSav; 
   if ( pwrSav ) {
+    LED1.reset();
     var s = require('Storage').readJSON('setting.json',1)||{};
     var t = s.timeout||10;
     Bangle.setLCDTimeout(t);
@@ -273,6 +274,7 @@ function togglePwrSav() {
   else {
     Bangle.setLCDTimeout(0);
     Bangle.setLCDPower(1);
+    LED1.set();
   }
 }
 
