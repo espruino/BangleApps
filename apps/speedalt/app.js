@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '5';
+var v = '6';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -328,7 +328,7 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
-  setLpMode(0); // off
+  setLpMode('SuperE'); // off
   g.clear();
   Bangle.drawWidgets();
   onGPS(lf);  // draw app screen
@@ -336,7 +336,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode(1);}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
+  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
 }
 
 function savSettings() {
@@ -353,14 +353,16 @@ function lpGetFix() {
   onGPS(WIDGETS.gpsservice.gps_get_fix());
 }
 
-function setLpMode(on) {
+function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
-  s.gpsservice = true;
-  s.power_mode = (on)?'PSMOO':'SuperE';
-  WIDGETS.gpsservice.gps_set_settings(s);
-  WIDGETS.gpsservice.reload();
+  if ( m <> s.power_mode ) {
+    s.gpsservice = true;
+    s.power_mode = (on)?'PSMOO':'SuperE';
+    WIDGETS.gpsservice.gps_set_settings(s);
+    WIDGETS.gpsservice.reload();
+  }
 }
 
 // =Main Prog
