@@ -27,3 +27,6 @@ Maybe you want to add some more constellations to the planetarium. As you can se
 - Upload the new `planetarium.const.csv` to your bangle (or emulator) and test it out.
 
 What is a constellation star is not in the 500 star list in `planetarium.data.csv`? If you need another star to draw the constellation you can find that star in the full star list (`starinfo/planetarium.stars.csv`) and put it in `planetarium.extra.csv`. That stars will be loaded only when constellations are shown. In order to refer to these extra stars in the `planetarium.const.csv` you have to use the code `e_linenumber`, in order to differenciate them from the stars in the normal file. For instance, to refer to the first star in the file `planetarium.extra.csv`, you will refer it as `e_1`. Do not forget to add an extra line at the end as in the other files.
+
+## Development version
+Please check the latest development version [here](https://github.com/pglez82/BangleApps)
