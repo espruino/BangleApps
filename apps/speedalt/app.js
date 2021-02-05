@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '2';
+var v = '3';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -335,10 +335,6 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
-  if (tmrLP) {
-    clearInterval(tmrLP);  // Stop any scheduled drop to low power
-    tmrLP = false;
-  }
   setLpMode(0); // off
   g.clear();
   Bangle.drawWidgets();
@@ -365,6 +361,7 @@ function lpGetFix() {
 }
 
 function setLpMode(on) {
+  if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
   s.gpsservice = true;
