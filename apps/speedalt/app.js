@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.00';
+var v = '1.01';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -345,9 +345,11 @@ function isLP() {
   return(1);
 }
 
+/*
 function lpGetFix() {
   onGPS(WIDGETS.gpsservice.gps_get_fix());
 }
+*/
 
 function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
@@ -414,15 +416,15 @@ Bangle.on('lcdPower',function(on) {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
 var lp = isLP();   // Low power GPS widget installed.
-
-
-Bangle.setGPSPower(1);
 onGPS(lf);
-
-if ( lp ) setInterval(lpGetFix, 1000);
-else Bangle.on('GPS', onGPS);
-
+if ( lp ) {
+  setLpMode('SuperE');
+  setInterval(onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
+}
+else {
+  Bangle.setGPSPower(1);
+  Bangle.on('GPS', onGPS);
+}
 setButtons();
 setInterval(updateClock, 30000);
