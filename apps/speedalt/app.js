@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-
+var v = '2';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
