@@ -4,7 +4,7 @@ Ver : 2.01 low power gps widget
 Mike Bennett mike[at]kereru.com
 process.memory()
 */
-var v = '3';
+var v = '4';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -91,9 +91,10 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   drawWP();
   
   //Sats
-//  if ( fix ) drawSats('Sats:'+sats);
-//  else drawSats('Age:'+age);
-  if ( age > 10 ) drawSats('Age:'+age);
+  if ( age > 10 ) {
+    if ( age > 90 ) age = '>90';
+    drawSats('Age:'+age);
+  }
   else drawSats('Sats:'+sats);
   
   g.reset();
@@ -164,13 +165,10 @@ function drawTime() {
 
 function drawWP() {
   var nm = wp.name;
-  if ( nm == undefined ) nm = '';
-  if ( nm == 'NONE' ) nm = '';
-  if ( settings.modeA ) nm='';
+  if ( nm == undefined || nm == 'NONE' || settings.modeA ) nm = '';
   
-  buf.setFontAlign(-12,1); //left, bottom
+  buf.setFontAlign(-1,1); //left, bottom
   buf.setColor(2);  
-//  buf.setFont("6x8", 1);
   buf.setFontVector(20);
   buf.drawString(nm.substring(0,6),77,160);  
  
@@ -246,7 +244,6 @@ function onGPS(fix) {
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
-    if ( age > 90 ) age = '>90';
   }
       
   if ( settings.modeA ) {
