@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.07';
+var v = '1.08';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -249,34 +249,6 @@ function onGPS(fix) {
 
 }
 
-
-function toggleDisplay() {
-  settings.primSpd = !settings.primSpd;
-  savSettings();
-  onGPS(lf);  // Update display
-}
-
-function toggleAltDist() {
-  settings.modeA = !settings.modeA;
-  savSettings();
-  onGPS(lf); 
-}
-
-function togglePwrSav() {
-  pwrSav=!pwrSav; 
-  if ( pwrSav ) {
-    LED1.reset();
-    var s = require('Storage').readJSON('setting.json',1)||{};
-    var t = s.timeout||10;
-    Bangle.setLCDTimeout(t);
-  }
-  else {
-    Bangle.setLCDTimeout(0);
-    Bangle.setLCDPower(1);
-    LED1.set();
-  }
-}
-
 function setButtons(){
 
   // Spd+Dist : Select next waypoint
@@ -293,17 +265,38 @@ function setButtons(){
   
   
   // Show launcher when middle button pressed
-  setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+  // setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
+  // Power saving on/off 
+  setWatch(function(e){
+    pwrSav=!pwrSav; 
+    if ( pwrSav ) {
+      LED1.reset();
+      var s = require('Storage').readJSON('setting.json',1)||{};
+      var t = s.timeout||10;
+      Bangle.setLCDTimeout(t);
+    }
+    else {
+      Bangle.setLCDTimeout(0);
+      Bangle.setLCDPower(1);
+      LED1.set();
+    }
+  }, BTN2, {repeat:true,edge:"falling",debounce:50});
+  
   // Toggle between alt or dist
-  setWatch(toggleAltDist, BTN3, {repeat:true,edge:"falling",debounce:50});
+  setWatch(function(e){
+    settings.modeA = !settings.modeA;
+    savSettings();
+    onGPS(lf); 
+  }, BTN3, {repeat:true,edge:"falling",debounce:50});
   
   // Touch left screen to toggle display
-  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling",debounce:50});
+  setWatch(function(e){
+    settings.primSpd = !settings.primSpd;
+    savSettings();
+    onGPS(lf);  // Update display
+  }, BTN4, {repeat:true,edge:"falling",debounce:50});
 
-  // Touch right screen to toggle pwrSav 
-  setWatch(togglePwrSav, BTN5, {repeat:true,edge:"falling",debounce:50});
-  
 }
 
 function updateClock() {
