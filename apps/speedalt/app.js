@@ -11,7 +11,6 @@ require("Font7x11Numeric7Seg").add(Graphics);
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var pwrSav = 1;         // 1 = default power saving with watch screen off and GPS to PMOO mode. 0 = screen kept on.
-// var maxPress = 0;      // Time max button pressed. Used to calculate short or long press.
 var canDraw = 1;
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 var tmrLP;            // Timer for delay in switching to low power after screen turns off
@@ -281,8 +280,6 @@ function togglePwrSav() {
 function setButtons(){
 
   // Spd+Dist : Select next waypoint
-//  setWatch(btnPressed, BTN1,{repeat:true,edge:"rising"});
-//  setWatch(btnReleased, BTN1,{repeat:true,edge:"falling"});
   setWatch(function(e) {
     var dur = e.time - e.lastTime;
     if ( settings.modeA ) {
@@ -308,25 +305,6 @@ function setButtons(){
   setWatch(togglePwrSav, BTN5, {repeat:true,edge:"falling",debounce:50});
   
 }
-
-/*
-function btnPressed() {
-  maxPress = getTime();
-}
-
-
-function btnReleased() {
-  var dur = getTime()-maxPress;
-  if ( settings.modeA ) {
-    // Spd+Alt mode - Switch between fix and MAX
-    if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
-    else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
-  }
-  else nxtWp(1);  // Spd+Dist mode - Select next waypoint
-  
-  onGPS(lf);
-}
-*/
 
 function updateClock() {
   if (!canDraw) return;
