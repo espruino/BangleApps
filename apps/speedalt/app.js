@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.10';
+var v = '1.11';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -283,8 +283,8 @@ function setButtons(){
         Bangle.setLCDPower(1);
         LED1.set();
       }
-      else setLpMode('SuperE',false);  // long press, power off LP GPS 
     }
+    else setLpMode('SuperE',false);  // long press, power off LP GPS 
   }, BTN2, {repeat:true,edge:"falling"});
   
   // Toggle between alt or dist
