@@ -23,7 +23,7 @@
   // Ssettings
   const settings = {
     time: {
-      color: '#f0af00',
+      color: '#D6ED17',
       shadow: '#CF7500',
       font: 'Vector',
       size: 60,
@@ -31,7 +31,7 @@
       center: screen.center,
     },
     date: {
-      color: '#f0af00',
+      color: '#D6ED17,
       shadow: '#CF7500',
       font: 'Vector',
       size: 15,
@@ -39,8 +39,8 @@
       center: screen.center,
     },
     circle: {
-      colormin: '#eeeeee',
-      colorsec: '#bbbbbb',
+      colormin: '#606060',
+      colorsec: '#656565',
       width: 10,
       middle: screen.middle,
       center: screen.center,
