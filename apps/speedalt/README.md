@@ -8,15 +8,17 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 
 BTN4 : Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
 
-BTN5 : Right Display Tap : Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Tap again to restore power saving timeouts.
-
 BTN1 : [Speed+Altitude] Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
 
 BTN1 : [Speed+Altitude] Long press > 2 secs resets the recorded maximum values.
 
 BTN1 : [Speed+Distance] Select next waypoint. Last fix distance from selected waypoint is displayed.
 
+BTN2 : Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Tap again to restore power saving timeouts.
+
 BTN3 : Swaps the modes between Speed+[A]ltitude or Speed+[D]istance.
+
+BTN3 : Long press exit and return to watch.
 
 App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
 
