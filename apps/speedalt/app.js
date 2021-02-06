@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.09';
+var v = '1.10';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -269,17 +269,21 @@ function setButtons(){
 
   // Power saving on/off 
   setWatch(function(e){
-    pwrSav=!pwrSav; 
-    if ( pwrSav ) {
-      LED1.reset();
-      var s = require('Storage').readJSON('setting.json',1)||{};
-      var t = s.timeout||10;
-      Bangle.setLCDTimeout(t);
-    }
-    else {
-      Bangle.setLCDTimeout(0);
-      Bangle.setLCDPower(1);
-      LED1.set();
+    var dur = e.time - e.lastTime;
+    if ( dur < 2 ) {  // Short press.
+      pwrSav=!pwrSav; 
+      if ( pwrSav ) {
+        LED1.reset();
+        var s = require('Storage').readJSON('setting.json',1)||{};
+        var t = s.timeout||10;
+        Bangle.setLCDTimeout(t);
+      }
+      else {
+        Bangle.setLCDTimeout(0);
+        Bangle.setLCDPower(1);
+        LED1.set();
+      }
+      else setLpMode('SuperE',false);  // long press, power off LP GPS 
     }
   }, BTN2, {repeat:true,edge:"falling"});
   
@@ -309,7 +313,7 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
-  setLpMode('SuperE'); // off
+  setLpMode('SuperE',true); // off
   g.clear();
   Bangle.drawWidgets();
   onGPS(lf);  // draw app screen
@@ -317,7 +321,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
+  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO',true);}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
 }
 
 function savSettings() {
@@ -330,12 +334,12 @@ function isLP() {
   return(1);
 }
 
-function setLpMode(m) {
+function setLpMode(m,p) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
   if ( m !== s.power_mode || !s.gpsservice ) {
-    s.gpsservice = true;
+    s.gpsservice = p;
     s.power_mode = m;
     WIDGETS.gpsservice.gps_set_settings(s);
     WIDGETS.gpsservice.reload();
@@ -399,7 +403,7 @@ onGPS(lf);
 
 var lp = isLP();   // Low power GPS widget installed?
 if ( lp ) {
-  setLpMode('SuperE');
+  setLpMode('SuperE',true);
   setInterval(()=>onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
 }
 else {
