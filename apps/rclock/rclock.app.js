@@ -167,7 +167,7 @@
     g.drawString(date, settings.date.center, settings.date.middle);
   };
 
-   //setInterval for HR visualisation
+  //setInterval for HR visualisation
   const newBeats = function (hr) {
     if (id != 0) {
       changeInterval(id, 6e3 / hr.bpm);
@@ -206,7 +206,7 @@
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
-//manage when things should be enabled and not
+  //manage when things should be enabled and not
   Bangle.on('lcdPower', function (on) {
     if (on) {
       Bangle.setHRMPower(1);

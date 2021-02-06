@@ -1,0 +1,226 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+      #map { z-index: 1; }
+      #controls {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid black;
+        position:absolute;
+        right:0px;top:0px;
+        background-color: rgb(255, 255, 255);
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+    </div>
+
+    <div id="controls" class="form-group">
+      <select id="amenity" class="form-select select-lg">
+        <option value="drinking_water">Drinking Water</option>
+        <option value="bicycle_parking">Bicycle Park</option>
+        <option value="post_box">Post Box</option>
+        <option value="bar">Bars</option>
+        <option value="bbq">Barbecue</option>
+        <option value="cafe">Café</option>
+        <option value="fast_food">Fast food</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="bicycle_repair_station">Bicycle Repair</option>
+        <option value="bicycle_rental">Bicycle rental</option>
+        <option value="bus_station">Bus station</option>
+        <option value="atm">Bank</option>
+        <option value="pharmacy">Pharmacy</option>
+        <option value="interner_cafe">Cybercafé</option>
+      </select>
+      <p>Click <button id="poi" class="btn btn-primary">Find P.O.I.</button></p>
+      <p>If ok, Click <button id="upload" class="btn btn-primary">Upload</button></p>
+    </div>
+
+    <script src="../../core/lib/customize.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js"></script>
+
+    <script>
+ /*
+
+      https://overpass-turbo.eu/ to check queries.
+      Run:
+
+      node
+        ({{bbox}});
+      out;
+
+      Over the area you're interested in, click on the POI and find out
+      what you need to search for, eg.
+
+        node
+        [amenity=pub]
+        ({{bbox}});
+      out;
+
+*/
+
+      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      var features = [];
+      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+      }).addTo(map);
+      function buildOverpassApiUrl(map, overpassQuery) {
+        var bounds = map.getBounds().getSouth() + ',' + map.getBounds().getWest() + ',' + map.getBounds().getNorth() + ',' + map.getBounds().getEast();
+        var nodeQuery = 'node[' + overpassQuery + '](' + bounds + ');';
+        var wayQuery = 'way[' + overpassQuery + '](' + bounds + ');';
+        var relationQuery = 'relation[' + overpassQuery + '](' + bounds + ');';
+        var query = '?data=[out:json][timeout:15];(' + nodeQuery + wayQuery + relationQuery + ');out body geom;';
+        var baseUrl = 'https://overpass-api.de/api/interpreter';
+        var resultUrl = baseUrl + query;
+        return resultUrl;
+      }
+
+      document.getElementById("poi").addEventListener("click", function() {
+        //var overpassApiUrl = buildOverpassApiUrl(map, "highway=bus_stop");
+        var poi = document.getElementById("amenity").options[document.getElementById("amenity").selectedIndex].value;
+        var overpassApiUrl = buildOverpassApiUrl(map, "amenity="+poi);
+        var req = new XMLHttpRequest();
+        req.responseType = 'json';
+        req.onreadystatechange = function() {
+          console.log("XMLHttpRequest", this.readyState);
+          if (this.readyState == 4) {
+            var osmDataAsJson = req.response;
+            features = [];
+            if (osmDataAsJson.elements) {
+              osmDataAsJson.elements.forEach(function(el) {
+                if (el.type!="node") return;
+                features.push({lat:el.lat, lon:el.lon,name:el.tags.name});
+              });
+            }
+
+            var resultAsGeojson = osmtogeojson(osmDataAsJson);
+            var resultLayer = L.geoJson(resultAsGeojson, {
+              style: function (feature) {
+                return {color: "#ff0000"};
+              },
+              filter: function (feature, layer) {
+                var isPolygon = (feature.geometry) && (feature.geometry.type !== undefined) && (feature.geometry.type === "Polygon");
+                if (isPolygon) {
+                  feature.geometry.type = "Point";
+                  var polygonCenter = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+                  feature.geometry.coordinates = [ polygonCenter.lat, polygonCenter.lng ];
+                }
+                return true;
+              },
+              onEachFeature: function (feature, layer) {
+                var popupContent = "";
+                popupContent = popupContent + "<dt>@id</dt><dd>" + feature.properties.type + "/" + feature.properties.id + "</dd>";
+                var keys = Object.keys(feature.properties.tags);
+                keys.forEach(function (key) {
+                  popupContent = popupContent + "<dt>" + key + "</dt><dd>" + feature.properties.tags[key] + "</dd>";
+                });
+                popupContent = popupContent + "</dl>"
+                layer.bindPopup(popupContent);
+              }
+            }).addTo(map);
+          }
+        };
+        req.open("GET", overpassApiUrl, true);
+        req.send();
+      });
+      document.getElementById("upload").addEventListener("click", function() {
+        var app = `var features = ${JSON.stringify(features)};
+var img_nofix = require("heatshrink").decompress(atob("mEwhBC/AH4A/AH4A/AC2swMllcrBQoHBktWwIEBlYEBqwAEgAICF6FWldbrgDBAIMrFIIhBrlbAAIIBwOsAAgsClcxF6ErrmG2GGw1cqsxrmAwuG2OxxkxFoOCq1VFANVLgIyBPI4vLq2F2OwAAQrCAgPVw0xEgVVMoQ7BwsxmOm1iUCMCIuD2GM2AvC2IuDFQIACwADCrZrCGCOBqovI2NcEAIuBTwQAHlZhCL6FVYAKQG2NV1i3BZYIpDrZiFlb1BYSFWwAvG6tbwOCmIuFF4YAC2FVwOBMCFWraBCRwReDBYIpELQOAAQQ5CqpgBF57RBFYK+C2IcBw4vBEQIwDrYEDrlbGYOMmMr64vQd4hcBX4VcF4LsGOIYGCxhMBYAKORGAhhBF4TtBAAzvFwuAwIvPlbuBXIQAE2BMBHgIoBE4QvEricBqtWF4KPOF4KICAAReCd4WBdoYAJmKPCF50lrhYCYIuxreBwUxR5RrBrmCwIABF54pCFwrkBJoMxFAKGBF4lcFwNbR4JxBX6GGFYeHSoOGSQJgBGARVBFoIqCMIWMlS+ClbvRMIbFEJ4PXwMrmIqBAARjDleB67ABFxowCYAgDBQQVbFwIAB00xGAQMDA4OCNoJdOAAWBYAex6uGNAIcBFwSvB1mCq1VFYMxqwICA4IvRDgKKDw0qwQrBPgIuBX4IoCAAmBDILQCF6AwBwBgBFwgwCldVTQKJBqtcwB1BSgXV6uAXyAvCrYuHAAMrrYuBGIQABwoGBOgWxF6SEBFwWmFwpgBF4IADxgyC2IFCR6Z5BLpHX1krLoQADLYQHEqrvRWQMrFxKOEF4eMxgyBGgVWkovRgCMH1kqZIInBLwwtCRwZfQqxdLEYQuFAQYHCraORq2BXZPVKwIABEoIGBFoYCCRwNWRyIuIquGrgfBldWwGAwqMBFYVbrlcqovSL42sksrwCsBD4QDBkoyBqsxFQINBmItRL4UrGAZdBLIIABCQ8lgAsBH4IsSGA4uBDq4wTq0xmIuqAH4A/AH4A/AH4AHA="));
+var img_fix = require("heatshrink").decompress(atob("mEwhBC/AH4A/AH4A/AE0rg4vtq8PF1kHxM7gJesF4Jgrg+IF4M6MFReBF4JgqXoIvDMFJeCF4RgoLwYvDnZgmLwYvEMEpeEF4jBlmYvIMEheFF4pgjXogvGMEReGF407MEBeGF45gfg+IF5rBfLw4vHMDxeIF5BgdLxAvIMDkHFxAvJMDZeJF5JgaLxQvKnZgYLxQvLMC5eLF5bBXmYvWMCxeMF5hgVXpYvNMCheNF5s7MCReNF5xgRg+IFZNersylcHhEPmjBbLw1er1XlkHIhI0CnRgUmQqEKwKnRgIzBiBpBnUICpszryCCFiIyGM4TBRAH4A/AH4A/AH4AFA"));
+
+// https://github.com/Leaflet/Leaflet/blob/master/src/geo/projection/Projection.SphericalMercator.js
+function project(latlong) {
+  var d = Math.PI / 180,
+      max = 85.0511287798,
+      R = 6378137, // earth radius in m
+      lat = Math.max(Math.min(max, latlong.lat), -max),
+      sin = Math.sin(lat * d);
+  return {x:R * latlong.lon * d,
+          y:R * Math.log((1 + sin) / (1 - sin)) / 2};
+}
+
+features.forEach(function(f) {
+  f.p = project(f);
+});
+var fix = {fix:false,satellites:0};
+var nearest = undefined;
+var nearestangle = 0;
+var nearestdist = 0;
+
+Bangle.on('GPS', function(f) {
+  fix = f;
+  fix.p = project(fix);
+  nearest = undefined;
+  nearestangle = 0;
+  nearestdist = 5000; // 5km
+  features.forEach(function(f) {
+    var dx = f.p.x - fix.p.x;
+    var dy = f.p.y - fix.p.y;
+    var d = Math.sqrt(dx*dx + dy*dy);
+    if (d<nearestdist) {
+      nearestdist = d;
+      nearest = f;
+    }
+  });
+  if (nearest) {
+    var dx = nearest.p.x - fix.p.x;
+    var dy = nearest.p.y - fix.p.y;
+    nearestangle = Math.atan2(dy,dx);
+  }
+});
+
+Bangle.on('mag', function(m) {
+  if (!Bangle.isLCDOn()) return;
+  var headingrad = m.heading*Math.PI/180; // in radians
+  if (!isFinite(headingrad)) headingrad=0;
+  if (nearest)
+    g.drawImage(img_fix,120,120,{
+      rotate: (Math.PI/2)+headingrad-nearestangle,
+      scale:3,
+    });
+  else
+    g.drawImage(img_nofix,120,120,{
+      rotate: headingrad,
+      scale:2,
+    });
+  g.clearRect(60,0,180,24);
+  g.setFontAlign(0,0);
+  g.setFont("6x8");
+  if (fix.fix) {
+    g.drawString(nearest ? nearest.name : "---",120,4);
+    g.setFont("6x8",2);
+    g.drawString(nearest ? Math.round(nearestdist)+"m" : "---",120,16);
+  } else {
+    g.drawString(fix.satellites+" satellites",120,4);
+  }
+});
+Bangle.setCompassPower(1);
+Bangle.setGPSPower(1);
+g.clear();`;
+
+        sendCustomizedApp({
+          storage:[
+            {name:"osmpoi.app.js", url:"app.js", content:app}
+          ]
+        });
+      });
+
+    </script>
+  </body>
+</html>

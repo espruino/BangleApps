@@ -3,3 +3,6 @@
 0.03: maximize numerals, make menu button configurable, change icon to mac palette, add default settings file, respect 12hour setting
 0.04: Don't overwrite existing settings on app update
 0.05: Fix settings issue
+0.06: Improve rendering of Numeral 1, fix issue with alarms not showing up
+0.07: Add date on touch and some improvements (see settings and readme)
+0.08: Add new draw styles, tidy up draw functionality

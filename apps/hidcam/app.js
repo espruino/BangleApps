@@ -48,9 +48,9 @@ function drawApp() {
 
 if (camShot) {
   setWatch(function(e) {
-      E.showMessage('camShot !');
-      setTimeout(drawApp, 1000);
-      camShot(() => {});
+    E.showMessage('camShot !');
+    setTimeout(drawApp, 1000);
+    camShot(() => {});
   }, BTN2, { edge:"falling",repeat:true,debounce:50});
 
   drawApp();
