@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.12';
+var v = '1.13';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -349,7 +349,7 @@ function setLpMode(m) {
 function gpsOff() {
   if ( !lp ) return;
   var s = WIDGETS.gpsservice.gps_get_settings();
-  s.gpsservice = true;
+  s.gpsservice = false;
   s.power_mode = 'SuperE';
   WIDGETS.gpsservice.gps_set_settings(s);
   WIDGETS.gpsservice.reload();
