@@ -26,7 +26,7 @@
       color: '#f0af00',
       shadow: '#CF7500',
       font: 'Vector',
-      size: 55,
+      size: 60,
       middle: screen.middle,
       center: screen.center,
     },
@@ -35,7 +35,7 @@
       shadow: '#CF7500',
       font: 'Vector',
       size: 15,
-      middle: screen.height-25, // at bottom of screen
+      middle: screen.height-35, // at bottom of screen
       center: screen.center,
     },
     circle: {
