@@ -1,5 +1,4 @@
-/* Test  bangle.js input interface   
-*/
+/* Test  bangle.js input interface */
  var colbackg='#111111';
  //var coldarkred='#CC3333';
  var colorange='#e56e06';
@@ -19,33 +18,33 @@ function ClearBannerArea(){
   g.flip();
 }
  
-function PrintUserInput(boton){   
+function PrintUserInput(boton){
   console.log("Pressed touch/BTN",boton);
-   if (v_clicks=='0') PrintAreas();  
+   if (v_clicks=='0') PrintAreas();
   ClearBannerArea();
   
-	if (boton=='  <---') {
-	var img_off = {
-	  width : 48, height : 48, bpp : 2,
-	  transparent : 0,
-	  palette : new Uint16Array([65535,63968,40283,50781]),
-	  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAAAAAAAAAA///9VVVVVVVQAAAD/qq/1VVVVVVVAAAP6qqv9VVVVVVVUAA/qqqv/VVVVVVVVAD+qqq//1VVVVVVVQP6qqq//1VVVVVVVQPqqqr//9VVVVVVVUvqqqr//9VVVVVVVU+qqqv/+uVVVVVVVV+qqqv+quVVVVVVVV+qqq+qqvVVVVVVVV+qqvqqqvVVVVVVVV+qv+qqquVVVVVVVV+r/+qqquVVVVVVVVv//6qqq9VVVVVVVUP//6qqq9VVVVVVVUP//qqqr1VVVVVVVQD//qqqv1VVVVVVVQA/+qqq/VVVVVVVVAAP+qqr9VVVVVVVUAAD/qq/1VVVVVVVAAAA///9VVVVVVVQAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-	};
-	g.drawImage(img_off,90,35);  	
+    if (boton=='  <---') {
+    var img_off = {
+      width : 48, height : 48, bpp : 2,
+      transparent : 0,
+      palette : new Uint16Array([65535,63968,40283,50781]),
+      buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAAAAAAAAAA///9VVVVVVVQAAAD/qq/1VVVVVVVAAAP6qqv9VVVVVVVUAA/qqqv/VVVVVVVVAD+qqq//1VVVVVVVQP6qqq//1VVVVVVVQPqqqr//9VVVVVVVUvqqqr//9VVVVVVVU+qqqv/+uVVVVVVVV+qqqv+quVVVVVVVV+qqq+qqvVVVVVVVV+qqvqqqvVVVVVVVV+qv+qqquVVVVVVVV+r/+qqquVVVVVVVVv//6qqq9VVVVVVVUP//6qqq9VVVVVVVUP//qqqr1VVVVVVVQD//qqqv1VVVVVVVQA/+qqq/VVVVVVVVAAP+qqr9VVVVVVVUAAD/qq/1VVVVVVVAAAA///9VVVVVVVQAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+    };
+    g.drawImage(img_off,90,35);
   }
-	else if (boton=='  --->')  {
-	  var img_on = {
-	  width : 48, height : 48, bpp : 2,
-	  transparent : 0,
-	  palette : new Uint16Array([65535,36361,27879,40283]),
-	  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAABVVVVVqqf///AAAAVVVVVWqn////wAAFVVVVVWqf////8AAVVVVVVap//////ABVVVVVVqr//////wBVVVVVVqn//////8FVVVVVVqv//////8FVVVVVWqf///////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////FVVVVVWqf///////FVVVVVVqv//////8BVVVVVVqn//////8BVVVVVVar//////wAVVVVVVap//////AAFVVVVVWqf////8AAAVVVVVWqn////wAAABVVVVVqqf///AAAAAAAAAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-	};
+    else if (boton=='  --->')  {
+      var img_on = {
+      width : 48, height : 48, bpp : 2,
+      transparent : 0,
+      palette : new Uint16Array([65535,36361,27879,40283]),
+      buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAABVVVVVqqf///AAAAVVVVVWqn////wAAFVVVVVWqf////8AAVVVVVVap//////ABVVVVVVqr//////wBVVVVVVqn//////8FVVVVVVqv//////8FVVVVVWqf///////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////FVVVVVWqf///////FVVVVVVqv//////8BVVVVVVqn//////8BVVVVVVar//////wAVVVVVVap//////AAFVVVVVWqf////8AAAVVVVVWqn////wAAABVVVVVqqf///AAAAAAAAAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+    };
     g.drawImage(img_on,90,35);  
   }
-	else  
-  {	  //no swipe /slide
-	g.setColor(colorange); 
-	g.setFontVector(32).drawString(boton, 60, 65);
+    else  
+  {   //no swipe /slide
+    g.setColor(colorange); 
+    g.setFontVector(32).drawString(boton, 60, 65);
   }
   g.flip();    
   v_clicks++;  
@@ -100,29 +99,29 @@ function PrintAreas(){
   g.flip();    
 }  
 
-function UserInput(){	
-	Bangle.on('touch', function(button){ 
-		switch(button){
-			case 1:
-			   PrintUserInput("Touch 1");//left
-				 break;
-			case 2:
-			   PrintUserInput("Touch 2");//right
-				 break;
-			case 3: 
-			  PrintUserInput("Touch 3");//center 1+2
-				break;
-		}
-	});
-	//only the name of the function
-	setWatch(PrintBtn1, BTN1, { repeat: true });
-	setWatch(PrintBtn2, BTN2, { repeat: true });
-	setWatch(Bangle.showLauncher, BTN3, { repeat: true });
-	Bangle.on('swipe', dir => {  
-	  if(dir == 1) PrintUserInput("  --->");
-	  else PrintUserInput("  <---");
-	});
-	console.log("Log: Input conditions loaded");
+function UserInput(){
+    Bangle.on('touch', function(button){ 
+        switch(button){
+            case 1:
+               PrintUserInput("Touch 1");//left
+                 break;
+            case 2:
+               PrintUserInput("Touch 2");//right
+                 break;
+            case 3: 
+              PrintUserInput("Touch 3");//center 1+2
+                break;
+        }
+    });
+    //only the name of the function
+    setWatch(PrintBtn1, BTN1, { repeat: true });
+    setWatch(PrintBtn2, BTN2, { repeat: true });
+    setWatch(Bangle.showLauncher, BTN3, { repeat: true });
+    Bangle.on('swipe', dir => {  
+      if(dir == 1) PrintUserInput("  --->");
+      else PrintUserInput("  <---");
+    });
+    console.log("Log: Input conditions loaded");
 } //end of UserInput
 
 //Main code
@@ -133,4 +132,3 @@ function UserInput(){
  g.flip(); 
  PrintHelp();
  UserInput();
-
