@@ -35,7 +35,7 @@
       shadow: '#CF7500',
       font: 'Vector',
       size: 15,
-      middle: screen.height-15, // at bottom of screen
+      middle: screen.height-19, // at bottom of screen
       center: screen.center,
     },
     circle: {
