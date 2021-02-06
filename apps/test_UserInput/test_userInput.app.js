@@ -1,53 +1,66 @@
-/* Testing input    dapgo2021
+/* Test  bangle.js input interface   
 */
  var colbackg='#111111';
  //var coldarkred='#CC3333';
  var colorange='#e56e06';
  var colgrey='#51504f';
  var v_font1size='16';
- var v_clicks='0'
- console.log("*** Testing basic UserInput - dapgo***");
+ var v_clicks='0';
+ console.log("*** Test input interface ***");
  
  function ClearActiveArea(){
-  //all except widget area
-  g.setColor(colbackg); //white
+  g.setColor(colbackg); 
   g.fillRect(0,32,239,239); //fill all screen except widget area
   g.flip();
 }
 function ClearBannerArea(){
-  //all except widget area
-  g.setColor(colgrey); //white
+  g.setColor(colgrey); 
   g.fillRect(50,32,190,85); //fill an specific area
   g.flip();
 }
-
  
 function PrintUserInput(boton){   
   console.log("Pressed touch/BTN",boton);
-   if (v_clicks=='0') PrintAreas();
+   if (v_clicks=='0') PrintAreas();  
+  ClearBannerArea();
   
-  ClearBannerArea(); 
-  //Bangle.drawWidgets(); //not paint if not removed
-  
-  g.setColor(colorange); 
-  g.setFontVector(32).drawString(boton, 50, 65);
-  g.flip();  
-  v_clicks++;
-  
+	if (boton=='  <---') {
+	var img = {
+	  width : 48, height : 48, bpp : 2,
+	  transparent : 0,
+	  palette : new Uint16Array([65535,63968,40283,50781]),
+	  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAAAAAAAAAA///9VVVVVVVQAAAD/qq/1VVVVVVVAAAP6qqv9VVVVVVVUAA/qqqv/VVVVVVVVAD+qqq//1VVVVVVVQP6qqq//1VVVVVVVQPqqqr//9VVVVVVVUvqqqr//9VVVVVVVU+qqqv/+uVVVVVVVV+qqqv+quVVVVVVVV+qqq+qqvVVVVVVVV+qqvqqqvVVVVVVVV+qv+qqquVVVVVVVV+r/+qqquVVVVVVVVv//6qqq9VVVVVVVUP//6qqq9VVVVVVVUP//qqqr1VVVVVVVQD//qqqv1VVVVVVVQA/+qqq/VVVVVVVVAAP+qqr9VVVVVVVUAAD/qq/1VVVVVVVAAAA///9VVVVVVVQAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+	};
+	g.drawImage(img,90,35);  	
+  }
+	else if (boton=='  --->')  {
+	  var img = {
+	  width : 48, height : 48, bpp : 2,
+	  transparent : 0,
+	  palette : new Uint16Array([65535,36361,27879,40283]),
+	  buffer : E.toArrayBuffer(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAABVVVVVqqf///AAAAVVVVVWqn////wAAFVVVVVWqf////8AAVVVVVVap//////ABVVVVVVqr//////wBVVVVVVqn//////8FVVVVVVqv//////8FVVVVVWqf///////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////VVVVVVWq////////FVVVVVWqf///////FVVVVVVqv//////8BVVVVVVqn//////8BVVVVVVar//////wAVVVVVVap//////AAFVVVVVWqf////8AAAVVVVVWqn////wAAABVVVVVqqf///AAAAAAAAAAAAA//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+	};
+    g.drawImage(img,90,35);  
+  }
+	else  
+  {	  //no swipe /slide
+	g.setColor(colorange); 
+	g.setFontVector(32).drawString(boton, 60, 65);
+  }
+  g.flip();    
+  v_clicks++;  
 }
 function PrintBtn1(boton){ 
  console.log("Pressed BTN1");
  if (v_clicks=='0') PrintAreas();
- PrintUserInput("Button1")
- //delay   
+ PrintUserInput("Button1"); 
  v_clicks++;
 }
 
 function PrintBtn2(boton){ 
  console.log("Pressed BTN2");
  if (v_clicks=='0') PrintAreas();
- PrintUserInput("Button2")
- //delay   
+ PrintUserInput("Button2"); 
  v_clicks++;
 }
 
@@ -67,13 +80,12 @@ function PrintHelp(){
   g.setFontVector(v_font1size).drawString("Press Button2 ", 30,205);
   g.setFontVector(v_font1size).drawString("Press Button3 to Quit", 30,220);  
   g.flip();    
-};  
+} 
 
 function PrintAreas(){  
   console.log("********************************");
   console.log("Log: *** Print Areas in screen");
-  ClearActiveArea();
-     
+  ClearActiveArea();     
   g.setColor(0,1,0);  //green    
   g.drawLine(1, 140, 1, 200);//side border
   g.drawLine(239, 140, 239, 200);//side border
@@ -84,12 +96,9 @@ function PrintAreas(){
   g.setFontVector(v_font1size).drawString("BTN3", 195,225);  
   g.setFontVector(v_font1size).drawString("Middle area", 80,120);
   g.setFontVector(v_font1size).drawString("Left area", 15, 165);
-  g.setFontVector(v_font1size).drawString("Right area", 140,165);
-    
-  
+  g.setFontVector(v_font1size).drawString("Right area", 140,165);    
   g.flip();    
-};  
-
+}  
 
 function UserInput(){	
 	Bangle.on('touch', function(button){ 
@@ -101,32 +110,27 @@ function UserInput(){
 			   PrintUserInput("Touch 2");//right
 				 break;
 			case 3: 
-			  PrintUserInput("Touch 3");//center      
+			  PrintUserInput("Touch 3");//center 1+2
 				break;
-		}  
+		}
 	});
 	//only the name of the function
-	setWatch(PrintBtn1, BTN1, { repeat: true });	
-	setWatch(PrintBtn2, BTN2, { repeat: true });	
-	setWatch(Bangle.showLauncher, BTN3, { repeat: true });	
+	setWatch(PrintBtn1, BTN1, { repeat: true });
+	setWatch(PrintBtn2, BTN2, { repeat: true });
+	setWatch(Bangle.showLauncher, BTN3, { repeat: true });
 	Bangle.on('swipe', dir => {  
-	  if(dir == 1) PrintUserInput("   --->"); //func load to quit
-	  else PrintUserInput("   <---");
+	  if(dir == 1) PrintUserInput("  --->");
+	  else PrintUserInput("  <---");
 	});
-	console.log("Log: Input conditions loaded");	
-}; //end of UserInput
+	console.log("Log: Input conditions loaded");
+} //end of UserInput
 
 //Main code
-//Call Once
-
  Bangle.loadWidgets();
- Bangle.drawWidgets();  
+ Bangle.drawWidgets();
  g.setColor(0,1,0);  //green    
- g.drawLine(60, 30, 180, 30); //line below widgets check if deleted
- g.flip();
- 
+ g.drawLine(60, 30, 180, 30); //optional line below widgets area
+ g.flip(); 
  PrintHelp();
- //printhelp clear the full screen
- 
  UserInput();
 
