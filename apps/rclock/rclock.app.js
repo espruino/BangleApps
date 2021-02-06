@@ -31,7 +31,7 @@
       center: screen.center,
     },
     date: {
-      color: '#D6ED17,
+      color: '#D6ED17',
       shadow: '#CF7500',
       font: 'Vector',
       size: 15,
