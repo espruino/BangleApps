@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.06';
+var v = '1.07';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -292,20 +292,20 @@ function setButtons(){
     }
     else nxtWp(1);  // Spd+Dist mode - Select next waypoint
     onGPS(lf);
-  }, BTN1, { edge:"falling",repeat:true});
+  }, BTN1, { edge:"falling",repeat:true,debounce:50});
   
   
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
 
   // Toggle between alt or dist
-  setWatch(toggleAltDist, BTN3, {repeat:true,edge:"falling"});
+  setWatch(toggleAltDist, BTN3, {repeat:true,edge:"falling",debounce:50});
   
   // Touch left screen to toggle display
-  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling"});
+  setWatch(toggleDisplay, BTN4, {repeat:true,edge:"falling",debounce:50});
 
   // Touch right screen to toggle pwrSav 
-  setWatch(togglePwrSav, BTN5, {repeat:true,edge:"falling"});
+  setWatch(togglePwrSav, BTN5, {repeat:true,edge:"falling",debounce:50});
   
 }
 
