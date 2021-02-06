@@ -1,14 +1,3 @@
-// The interval reference for updating the clock
-let intervalRef = null;
-
-// String numbers
-const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
-                 "SIX", "SEVEN","EIGHT", "NINE", "TEN",
-                 "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
-                  "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN",
-                  "NINETEEN", "TWENTY"];
-const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY",
-                 "FIFTY"];
 /**
 * This is a object that initializes itself with a position and
 * text after which you can tell it where you want to move to
@@ -67,6 +56,12 @@ class ShiftText {
   setTextXPosition(txt,x){
     this.hide();
     this.x = x;
+    this.txt = txt;
+    this.show();
+  }
+  setTextYPosition(txt,y){
+    this.hide();
+    this.y = y;
     this.txt = txt;
     this.show();
   }
@@ -132,47 +127,120 @@ class ShiftText {
 }
 
 
-class DateFormatter { 
+class DateFormatter {
+  name(){"no name";}
   formatDate(date){
     return ["","",""];
   }
 }
 
+// String numbers
+const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
+                 "SIX", "SEVEN","EIGHT", "NINE", "TEN",
+                 "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
+                  "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN",
+                  "NINETEEN", "TWENTY"];
+const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY",
+                 "FIFTY"];
+
+function hoursToText(hours){
+  if(hours == 0){
+    hours = 12;
+  } else if(hours > 12){
+    hours = hours - 12;
+  }
+  return numberStr[hours];
+}
+
+function numberToText(value){
+  word1 = '';
+  word2 = '';
+  if(value > 20){
+    tens = (value / 10 | 0);
+    word1 = tensStr[tens];
+    remainder = value - tens * 10;
+    if(remainder > 0){
+      word2 = numberStr[remainder];
+    }
+  } else if(value > 0) {
+    word1 = numberStr[value];
+  }
+  return [word1,word2];
+}
+
 class EnglishDateFormatter extends DateFormatter{
+  name(){return "English";}
   formatDate(date){
-    // First display the hours as a text number
-    let hours = date.getHours();
-    if(hours == 0){
-      hours = 12;
-    } else if(hours > 12){
-      hours = hours - 12;
-    }
-    new_hours = numberStr[hours]; 
-    // If the mins is over 20 we have to display the text on 2 lines
-    // Otherwise we just output our defined numbers from 1 to 20
-    let mins = date.getMinutes();
-    new_mins = '';
-    new_mins_remainder = '';
-    if(mins > 20){
-      tens = (mins / 10 | 0);
-      new_mins = tensStr[tens];
-      let remainder = mins - tens * 10;
-      if(remainder > 0){
-        new_mins_remainder = numberStr[remainder];
-      }
-    } else if(mins > 0) {
-      new_mins = numberStr[mins];
-    }
-    return [new_hours,new_mins,new_mins_remainder];
+    hours_txt = hoursToText(date.getHours());
+    mins_txt = numberToText(date.getMinutes());
+    return [hours_txt,mins_txt[0],mins_txt[1]];
   }
 }
 
-let row_displays = [ new ShiftText(240,50,'',"Vector",40,10,10,50,[1,1,1]),
+class EnglishTraditionalDateFormatter extends DateFormatter {
+  constructor() {
+    super();
+  }
+  name(){return "English Traditional";}
+  formatDate(date){
+    hours = hoursToText(date.getHours());
+    mins = date.getMinutes();
+    if(mins == 0){
+      return [hours, "o'","clock"];
+    } else if(mins == 30){
+      return ["HALF", "PAST", hours];
+    }
+    mins_txt = ['',''];
+    if(mins == 15 || mins == 45){
+      mins_txt[0] = "QUARTER";
+    }
+    from_to = '';
+    if(mins > 30){
+      from_to = "TO";
+      mins_txt = numberToText(60-mins);
+    } else {
+      from_to = "PAST";
+      mins_txt = numberToText(mins);
+    }
+    return [ mins_txt[0], mins_txt[1] + ' ' + from_to , hours ];
+  }
+}
+
+
+let row_displays = [ 
+  new ShiftText(240,50,'',"Vector",40,10,10,50,[1,1,1]),
   new ShiftText(240,100,'',"Vector",20,10,10,50,[0.85,0.85,0.85]),
   new ShiftText(240,120,'',"Vector",20,10,10,50,[0.85,0.85,0.85])
 ];
 
-let date_formatter = new EnglishDateFormatter();
+let date_formatters = [
+    new EnglishDateFormatter(),
+    new EnglishTraditionalDateFormatter()
+  ];
+
+let date_formatter_idx = 0;
+let date_formatter = date_formatters[date_formatter_idx];
+
+let format_name_display = new ShiftText(20,0,'',"Vector",10,1,1,50,[1,1,1]);
+
+function changeFormatter(){
+  date_formatter_idx += 1;
+  if(date_formatter_idx >= date_formatters.length){
+    date_formatter_idx = 0;
+  }
+  console.log("changing to formatter " + date_formatter_idx);
+  date_formatter = date_formatters[date_formatter_idx];
+  reset_clock();
+  draw_clock();
+  // now announce the formatter by name
+  format_name_display.setTextYPosition(date_formatter.name(),-10);
+  format_name_display.moveToY(15);
+  format_name_display.onFinished(
+      function(){
+        format_name_display.moveToY(-10);
+      }
+    );
+}
 
 function reset_clock(){
   console.log("reset_clock");
@@ -211,6 +279,9 @@ function display_row(display,txt){
     display.setTextXPosition(txt,20);
   }
 }
+
+// The interval reference for updating the clock
+let intervalRef = null;
 
 function clearTimers(){
   if(intervalRef) {
@@ -262,3 +333,4 @@ Bangle.drawWidgets();
 startTimers();
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
+setWatch(changeFormatter, BTN1,{repeat:true,edge:"falling"});

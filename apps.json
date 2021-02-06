@@ -216,7 +216,7 @@
   { "id": "xclock",
     "name": "X Clock",
     "icon": "xclock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Text Readable Time",
     "tags": "clock",
     "type":"clock",
