@@ -23,31 +23,29 @@
   // Ssettings
   const settings = {
     time: {
-      color: '#f0af00',
-      shadow: '#CF7500',
+      color: 0xD6ED17,
       font: 'Vector',
       size: 60,
-      middle: screen.middle - 30,
+      middle: screen.middle,
       center: screen.center,
     },
     date: {
-      color: '#f0af00',
-      shadow: '#CF7500',
+      color: 0xD6ED17,
       font: 'Vector',
       size: 15,
-      middle: screen.height - 20, // at bottom of screen
+      middle: screen.height-17, // at bottom of screen
       center: screen.center,
     },
     circle: {
-      colormin: '#eeeeee',
-      colorsec: '#bbbbbb',
+      colormin: 0x606060,
+      colorsec: 0x656565,
       width: 10,
       middle: screen.middle,
       center: screen.center,
       height: screen.height
     },
     hr: {
-      color: '#333333',
+      color: 0x333333,
       size: 10,
       x: screen.center,
       y: screen.middle + 45
