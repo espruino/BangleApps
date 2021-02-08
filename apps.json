@@ -2733,14 +2733,14 @@
 { "id": "tapelauncher",
   "name": "Tape Launcher",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
   "readme": "README.md",
   "tags": "tool,system,launcher",
   "type":"launch",
   "storage": [
-    {"name":"tapelaunch.app.js","url":"app.js"},
-    {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
+    {"name":"tapelauncher.app.js","url":"app.js"},
+    {"name":"tapelauncher.img","url":"icon.js","evaluate":true}
   ]
 },
 { "id": "oblique",
