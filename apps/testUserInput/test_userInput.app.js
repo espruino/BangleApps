@@ -2,7 +2,7 @@
  var colbackg='#111111';
  //var coldarkred='#CC3333';
  var colorange='#e56e06';
- var colgrey='#51504f';
+ var colgrey='#f3f3f1'  //'#51504f'; //lighter gray
  var v_font1size='16';
  var v_clicks='0';
  console.log("*** Test input interface ***");
@@ -20,7 +20,7 @@ function ClearBannerArea(){
  
 function PrintUserInput(boton){
   console.log("Pressed touch/BTN",boton);
-   if (v_clicks=='0') PrintAreas();
+  if (v_clicks=='0') PrintAreas();
   ClearBannerArea();
   
     if (boton=='  <---') {
@@ -62,7 +62,6 @@ function PrintBtn2(boton){
  PrintUserInput("Button2"); 
  v_clicks++;
 }
-
 
 function PrintHelp(){  
   console.log("********************************");
@@ -127,8 +126,10 @@ function UserInput(){
 //Main code
  Bangle.loadWidgets();
  Bangle.drawWidgets();
+ //optional line below widgets area
  g.setColor(0,1,0);  //green    
- g.drawLine(60, 30, 180, 30); //optional line below widgets area
+ g.drawLine(60, 30, 180, 30); 
  g.flip(); 
+ //end optional
  PrintHelp();
  UserInput();
