@@ -2,7 +2,7 @@
  var colbackg='#111111';
  //var coldarkred='#CC3333';
  var colorange='#e56e06';
- var colgrey='#f3f3f1'  //'#51504f'; //lighter gray
+ var colgrey='#f3f3f1';  //'#51504f'; //lighter gray
  var v_font1size='16';
  var v_clicks='0';
  console.log("*** Test input interface ***");
