@@ -2751,7 +2751,7 @@
     {"name":"oblique.img","url":"app-icon.js","evaluate":true}
   ]
 },
-{ "id": "testuserInput",
+{ "id": "testuserinput",
   "name": "Test User Input",
   "shortName":"Test User Input",
   "icon": "app.png",
