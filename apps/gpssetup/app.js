@@ -1,3 +1,17 @@
+/*
+ * GPS Setup app, hughbarney AT googlemail DOT com
+ * With thanks to Gordon Williams for support and advice
+ *
+ * UBLOX power modes:
+ *   SuperE - will provide updates every second and consume 35mA, 75mA with LCD on
+ *   PSMOO -  will sleep for update time and consume around 7mA during that period
+ *            after acquiring satelite fixes the GPS will settle into a cycle of 
+ *            obtaining fix, sleeping for update seconds, wake up, get fix and sleep.
+ *
+ * See README file for more details
+ * 
+ */
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -22,8 +36,8 @@ function loadSettings() {
 /***********  GPS Power and Setup Functions  ******************/
 
 function log_debug(o) {
-  let timestamp = new Date().getTime();
-  console.log(timestamp + " : " + o);
+  //let timestamp = new Date().getTime();
+  //console.log(timestamp + " : " + o);
 }
 
 function setupGPS() {
@@ -34,44 +48,6 @@ function setupGPS() {
     setupSuperE();
   }
 }
-
-/*
-// quick hack
-function wait(ms){
-  var start = new Date().getTime();
-  var end = start;
-  while(end < start + ms) {
-    end = new Date().getTime();
-  }
-}
-
-function setupPSMOO() {
-  log_debug("setupGPS() PSMOO");
-  UBX_CFG_RESET();
-  wait(100);
-  
-  UBX_CFG_PM2(settings.update, settings.search);
-  wait(20);
-  
-  UBX_CFG_RXM();
-  wait(20);
-  
-  UBX_CFG_SAVE();
-  wait(20);
-}
-
-function setupSuperE() {
-  log_debug("setupGPS() Super-E");
-  UBX_CFG_RESET();
-  wait(100);
-  
-  UBX_CFG_PMS();
-  wait(20);
-
-  UBX_CFG_SAVE();
-  wait(20);
-}
-*/
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -90,6 +66,12 @@ function setupSuperE() {
     return delay(20);
   }).then(function() {
     log_debug("Powering GPS Off");
+    /*
+     * must be part of the promise chain to ensure that
+     * setup does not return and powerOff before config functions
+     * have run
+     *
+     */
     Bangle.setGPSPower(0);
     return delay(20);
   });
@@ -111,6 +93,12 @@ function setupPSMOO() {
     return delay(20);
   }).then(function() {
     log_debug("Powering GPS Off");
+    /*
+     * must be part of the promise chain to ensure that
+     * setup does not return and powerOff before config functions
+     * have run
+     *
+     */
     Bangle.setGPSPower(0);
     return delay(20);
   });
@@ -258,18 +246,6 @@ function showMainMenu() {
   return E.showMenu(mainmenu);
 }
 
-/*
-function exitSetup() {
-  log_debug("exitSetup()");
-  if (settings_changed) {
-    log_debug(settings);
-    E.showMessage("Configuring GPS");
-    setupGPS();
-  }
-  load();
-}
-*/
-
 function exitSetup() {
   log_debug("exitSetup()");
   if (settings_changed) {
@@ -283,24 +259,6 @@ function exitSetup() {
     load();
   };
 }
-
-/*
-function exitSetup() {
-  log_debug("exitSetup()");
-  if (settings_changed) {
-    log_debug(settings);
-    g.clear();
-    g.setFontAlign(0,0);
-    g.setColor(3);  
-    g.setFontVector(25);
-    g.drawString("Configuring GPS",120,120);
-    setTimeout(function() {
-      setupGPS();
-      setTimeout(function() { load() }, 500);
-    }, 500);
-  } else load();
-}
-*/
 
 loadSettings();
 showMainMenu();
