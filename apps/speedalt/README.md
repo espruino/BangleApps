@@ -55,7 +55,7 @@ Settings:<br>
 
 This app will work quite happily without this service but will use the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) if it is installed. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
 
-When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
+When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
 There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. 
 
