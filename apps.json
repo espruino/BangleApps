@@ -2762,8 +2762,8 @@
   "description": "Basic app to test the bangle.js input interface. It displays the result in text or a switch on/off image.",
   "tags": "input,interface,buttons,touch",
   "storage": [
-    {"name":"test_userInput.app.js","url":"app.js"},
-    {"name":"test_userInput.img","url":"app-icon.js","evaluate":true}
+    {"name":"testuserinput.app.js","url":"app.js"},
+    {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
   ]
 }
 
