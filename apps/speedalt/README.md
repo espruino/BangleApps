@@ -1,22 +1,44 @@
-Displays the GPS speed, altitude and distance to selected waypoint. One is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
+# GPS Speed, Altimeter and Distance to Waypoint
 
-You can chose between two modes. One showing speed and altitude (A) and one showing speed and distance to waypoint (D). 
+You can switch between two display modes. One showing speed and altitude (A) and one showing speed and distance to waypoint (D). 
 
-The waypoints list is the same as that used with the [GPS Navigation] app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
+Within each display mode one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
-Left Display Tap : Swaps the displays. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
-BTN1 : [Speed+Altitude] Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
-
-BTN1 : [Speed+Altitude] Long press > 2 secs resets the recorded maximum values.
-
-BTN1 : [Speed+Distance] Select next waypoint. Last fix distance from selected waypoint is displayed.
+## Buttons and Controls
 
 BTN3 : Swaps the modes between Speed+[A]ltitude or Speed+[D]istance.
 
-App Settings : Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance caqn be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default, high contrast (all white on black) or night ( all red on black ). 
+### [A]ltitude mode
 
-Loss of fix : When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a fix or not.  
+BTN1 : Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
+
+BTN1 : Long press > 2 secs resets the recorded maximum values.
+
+### [D]istance mode
+
+BTN1 : Select next waypoint. Last fix distance from selected waypoint is displayed.
+
+### Both modes
+
+BTN2 : Short press < 2 secs Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Tap again to restore power saving timeouts.
+
+BTN2 : Long press > 2 secs turns off the low power GPS service and GPS. Exit and restart the app to turn back on. If you are using the low power gps service it will keep the GPS powered on after exiting the app. This is a convenient way to turn it off.
+
+BTN3 : Long press exit and return to watch.
+
+BTN4 : Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+
+## App Settings
+
+Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
+
+## Loss of fix
+
+When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a current fix or not.  
+
+## Screens
 
 Speed and Altitude:<br>
 ![](screen1.png)<p>
@@ -29,17 +51,25 @@ MAX Values instead:<br>
 Settings:<br>
 ![](screen4.png)<p>
 
-Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
+## Low Power GPS Service
 
-Thanks:
-Many thanks to Gordon Williams. Awesome job.
-Also to @jeffmer, the developer of the 'GPS Navigation' app. 
+This app will work quite happily without this service but will use the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) if it is installed. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
 
-Waypoints:
+When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 30 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
-Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displyed in Speed+[D]istance mode.
+There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. 
 
-Sample waypoints.json
+The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
+
+When exiting this app the Low Power GPS Service will keep the GPS powered on, using battery. It can be manually turned off using the gps service settings menu. As a convenience, long press BTN2 for 2 seconds will turn it off while using this GPS Adv app. 
+
+## Waypoints
+
+Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
+
+The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
+
+Sample waypoints.json (My sailing waypoints)
 
 <pre>
 [
@@ -103,3 +133,15 @@ Sample waypoints.json
   }
 ]
 </pre>
+
+## Comments and Feedback
+
+Developed for my use in sailing, cycling and motorcycling. If you find this software useful or have feedback drop me a line mike[at]kereru.com. Enjoy!
+
+## Thanks
+
+Many thanks to Gordon Williams. Awesome job.
+
+Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) work.
+
+
