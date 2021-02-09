@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.13';
+var v = '1.14';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -321,7 +321,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
-  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 30000);   //Drop to low power in 30 secs. Keep lp mode off until we have a  first fix.
+  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 10000);   //Drop to low power in 10 secs. Keep lp mode off until we have a  first fix.
 }
 
 function savSettings() {
