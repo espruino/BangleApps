@@ -2768,7 +2768,7 @@
 },
 { "id": "gpssetup",
   "name": "GPS Setup",
-  "shortName":"GPS configuration app",
+  "shortName":"GPS Setup",
   "icon": "gpssetup.png",
   "version":"0.01",
   "description": "Configure the GPS power options and store them in the GPS nvram",
