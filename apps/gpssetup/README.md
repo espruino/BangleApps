@@ -61,6 +61,6 @@ used. These settings will remain for all apps that use the GPS.
 
 * [UBLOX Power Management App Note](https://www.u-blox.com/sites/default/files/products/documents/PowerManagement_AppNote_%28UBX-13005162%29.pdf)
 
-* Some useful code on Github and be found [here](https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control)
+* Some useful code on Github can be found [here](https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control)
 and [here](https://github.com/thasti/utrak/blob/master/gps.c)
 
