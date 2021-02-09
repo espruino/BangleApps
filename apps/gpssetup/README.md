@@ -4,16 +4,17 @@ An App to enable the GPS to be configured into low power mode.
 
 ## Goals
 
-To develop app that sets the GPS up to run with the lowest possible
-power consumption.
+To develop an app that configures the GPS to run with the lowest
+possible power consumption.
 
+Example power consumption of the GPS while powered on:
 
 * An app that turns on the GPS and constantly displays the screen
   will use around 75mA, the battery will last between 3-4 hours.
 
-* Using the GPS in a Widget in Super-E Power Saving Mode (PSM) with
-  the screen off most of the time, will consume around 35mA and you
-  might get 10hrs before a recharge.
+* Using the GPS with Super-E Power Saving Mode (PSM) with the screen
+  off most of the time, will consume around 35mA and you might get
+  10hrs before a recharge.
   
 * Using the GPS in Power Saving Mode On/Off (PSMOO) with suitable
   settings can reduce the average consumption to around 15mA.  A
@@ -23,22 +24,23 @@ power consumption.
 
 ## Settings
 
-The Settings App enables you set the options below for the GPS.
-Either start the App from the launcher or go to Settings, select
-App/Widgets and then 'GPS Setup'.
+The Settings App enables you set the options below. Either start the
+App from the launcher or go to Settings, select App/Widgets and then
+'GPS Setup'.
 
-When you exit the setup App the settings will be stored in the
-gpssetup.settings.json file; the GPS will be switched on and the
+When you exit the setup app, the settings will be stored in the
+gpssetup.settings.json file, the GPS will be switched on and the
 necessary commands sent to the GPS to configure it. The GPS is then
 powered off.  The GPS configuration is stored in the GPS non-volatile
-memory so that next time the GPS is powered on they are used. These
-settings will remain and impact every app that uses the GPS.
+memory so that next time the GPS is powered, that configuration is
+used. These settings will remain for all apps that use the GPS.
 
 
 - Power Mode:
 
    - SuperE - the factory default setup for the GPS. The recommended
-   power saving mode.
+   power saving mode.  If you need frequent (every second) updates on
+   position, then this is the mode for you.
 
    - PSMOO - On/Off power saving mode. Configured by interval and
    search time. Choose this mode if you are happy to get a GPS
