@@ -22,16 +22,8 @@ function loadSettings() {
 /***********  GPS Power and Setup Functions  ******************/
 
 function log_debug(o) {
-  //console.log(o);
-}
-
-// quick hack
-function wait(ms){
-  var start = new Date().getTime();
-  var end = start;
-  while(end < start + ms) {
-    end = new Date().getTime();
-  }
+  let timestamp = new Date().getTime();
+  console.log(timestamp + " : " + o);
 }
 
 function setupGPS() {
@@ -41,9 +33,16 @@ function setupGPS() {
   } else {
     setupSuperE();
   }
-  
-  log_debug("Powering GPS Off");
-  Bangle.setGPSPower(0);
+}
+
+/*
+// quick hack
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+  }
 }
 
 function setupPSMOO() {
@@ -72,6 +71,50 @@ function setupSuperE() {
   UBX_CFG_SAVE();
   wait(20);
 }
+*/
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function setupSuperE() {
+  log_debug("setupGPS() Super-E");
+  Promise.resolve().then(function() {
+    UBX_CFG_RESET();
+    return delay(100);
+  }).then(function() {
+    UBX_CFG_PMS();
+    return delay(20);
+  }).then(function() {
+    UBX_CFG_SAVE();
+    return delay(20);
+  }).then(function() {
+    log_debug("Powering GPS Off");
+    Bangle.setGPSPower(0);
+    return delay(20);
+  });
+}
+
+function setupPSMOO() {
+  log_debug("setupGPS() PSMOO");
+  Promise.resolve().then(function() {
+    UBX_CFG_RESET();
+    return delay(100);
+  }).then(function() {
+    UBX_CFG_PM2(settings.update, settings.search);
+    return delay(20);
+  }).then(function() {
+    UBX_CFG_RXM();
+    return delay(20);
+  }).then(function() {
+    UBX_CFG_SAVE();
+    return delay(20);
+  }).then(function() {
+    log_debug("Powering GPS Off");
+    Bangle.setGPSPower(0);
+    return delay(20);
+  });
+}
 
 function writeGPScmd(cmd) {
   var d = [0xB5,0x62]; // sync chars
@@ -87,6 +130,7 @@ function writeGPScmd(cmd) {
 
 // UBX-CFG-PMS - enable power management - Super-E
 function UBX_CFG_PMS() {
+  log_debug("UBX_CFG_PMS()");
   writeGPScmd([0x06,0x86, // msg class + type
                8,0,//length
                0x00,0x03, 0,0, 0,0, 0,0]);  
@@ -104,7 +148,6 @@ function int_2_bytes( x ){
   return bytes;
 }
 
-
 /*
  * Extended Power Management 
  * update and search are in milli seconds
@@ -113,6 +156,7 @@ function int_2_bytes( x ){
  * https://github.com/thasti/utrak/blob/master/gps.c
  */
 function UBX_CFG_PM2(update,search) {
+  log_debug("UBX_CFG_PM2()");
 
   var u = int_2_bytes(update*1000);
   var s = int_2_bytes(search*1000);
@@ -135,6 +179,7 @@ function UBX_CFG_PM2(update,search) {
 
 // enable power saving mode, after configured with PM2
 function UBX_CFG_RXM() {
+  log_debug("UBX_CFG_RXM()");
   writeGPScmd([0x06, 0x11,      /* UBX-CFG-RXM */
                2, 0,            /* length */
                0x08, 0x01]);    /* reserved, enable power save mode */
@@ -146,6 +191,7 @@ function UBX_CFG_RXM() {
  *
  */
 function UBX_CFG_SAVE() {
+  log_debug("UBX_CFG_SAVE()");
   writeGPScmd([0x06, 0x09,   // class id
                0x0D, 0x00,   // length
                0x00, 0x00, 0x00, 0x00,  // clear mask
@@ -159,6 +205,7 @@ function UBX_CFG_SAVE() {
  * https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control
  */
 function UBX_CFG_RESET() {
+  log_debug("UBX_CFG_RESET()");
   writeGPScmd([0x06, 0x09,   // class id 
                0x0D, 0x00,
                0xFF, 0xFB, 0x00, 0x00,  // clear mask
