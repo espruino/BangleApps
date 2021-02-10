@@ -257,7 +257,7 @@ function exitSetup() {
     }, 500);
   } else {
     load();
-  };
+  }
 }
 
 loadSettings();
