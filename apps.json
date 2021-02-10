@@ -2766,6 +2766,20 @@
     {"name":"testuserinput.app.js","url":"app.js"},
     {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "gpssetup",
+  "name": "GPS Setup",
+  "shortName":"GPS Setup",
+  "icon": "gpssetup.png",
+  "version":"0.01",
+  "description": "Configure the GPS power options and store them in the GPS nvram",
+  "tags": "gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpssetup.settings.js","url":"settings.js"},
+    {"name":"gpssetup.settings.json","url":"settings.json"},
+    {"name":"gpssetup.app.js","url":"app.js"},
+    {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ]
 }
-
 ]
