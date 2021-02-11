@@ -184,9 +184,9 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
     hours = hoursToText(date.getHours());
     mins = date.getMinutes();
     if(mins == 0){
-      return [hours, "o'","clock"];
+      return [hours, "o'","clock","",""];
     } else if(mins == 30){
-      return ["HALF", "PAST", hours];
+      return ["","HALF", "PAST", "", hours];
     }
     mins_txt = ['',''];
     if(mins == 15 || mins == 45){
@@ -202,9 +202,9 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
       mins_txt = numberToText(mins);
     }
     if(mins_txt[1] != ''){
-      return [ mins_txt[0], mins_txt[1] + ' ' + from_to , hours ];
+      return ["", mins_txt[0], mins_txt[1] + ' ' + from_to , "",hours ];
     } else {
-      return [ mins_txt[0], from_to , hours ];
+      return ["", mins_txt[0], from_to ,"", hours ];
     }
   }
 }
@@ -253,14 +253,14 @@ class FrenchDateFormatter extends DateFormatter {
         return [hours, heures,""];
       }
     } else if(mins == 30){
-      return [hours, heures,"ET DEMIE"];
+      return [hours, heures,'ET DEMIE'];
     } else if(mins == 15){
-      return [hours, heures,"ET QUERT"];
+      return [hours, heures,'ET QUERT'];
     } else if(mins == 45){
       next_hour = date.getHours()  + 1;
       hours = frenchHoursToText(next_hour);
       heures = frenchHeures(next_hour);
-      return [hours, heures,"MOINS LET QUERT"];
+      return [hours, heures,"MOINS",'LET QUERT'];
     }
     if(mins > 30){
       to_mins = 60-mins;
@@ -268,7 +268,7 @@ class FrenchDateFormatter extends DateFormatter {
       next_hour = date.getHours()  + 1;
       hours = frenchHoursToText(next_hour);
       heures = frenchHeures(next_hour);
-      return [ hours, heures , "MOINS " + mins_txt ];
+      return [ hours, heures , "MOINS", mins_txt ];
     } else {
       mins_txt = frenchNumberStr[mins];
       return [ hours, heures , mins_txt ];
@@ -279,10 +279,26 @@ class FrenchDateFormatter extends DateFormatter {
 // Japanese Date formatting
 const japaneseHourStr = [ "ZERO", "ICHII", "NI", "SAN", "YO",
                           "GO", "ROKU", "SHICHI", "HACHI", "KU", "JUU",
-                          "JUU ICHI", "JUU NI"];
+                          'JUU ICHI', 'JUU NI'];
+const tensPrefixStr = [ "",
+                         "JUU",
+                         'NIJUU',
+                         'SAN JUU',
+                         'YON JUU',
+                         'GO JUU'];
 
-const japaneseNumberStr = [ "ZERO", "ICHII", "NI", "SAN", "SHI",
-                          "GO", "ROKU", "NANA", "HACHI", "KU", "JUU"];
+const japaneseMinuteStr = [ ["", "PUN"],
+                            ["IP","PUN" ],
+                            ["NI", "FUN"],
+                            ["SAN", "PUN"],
+                            ["YON","FUN"],
+                            ["GO", "HUN"],
+                            ["RO", "PUN"],
+                            ["NANA", "FUN"],
+                            ["HAP", "PUN"],
+                            ["KYU","FUN"],
+                            ["JUP", "PUN"]
+                          ];
 
 function japaneseHoursToText(hours){
   hours = hours % 12;
@@ -292,33 +308,18 @@ function japaneseHoursToText(hours){
   return japaneseHourStr[hours];
 }
 
-function japaneseNumberToText(value){
-  units = value % 10;
-  tens = (value/10) | 0;
-  if(tens == 1){
-    if(units > 0){
-      return "JUU " + japaneseNumberStr[units];
-    } else {
-      return "JUU ";
-    }
-  } if(tens > 1){
-      if(units > 0){
-        return japaneseNumberStr[tens] + " JUU " + japaneseNumberStr[units];
-      } else {
-        return japaneseNumberStr[tens] + " JUU";
-      }
-  } else {
-    return japaneseNumberStr[units];
-  }
-}
-
 function japaneseMinsToText(mins){
   if(mins == 0){
     return ["",""];
   } else if(mins == 30)
     return ["HAN",""];
-  else
-    return [japaneseNumberToText(mins),"FUN"];
+  else {
+    units = mins % 10;
+    mins_txt = japaneseMinuteStr[units];
+    tens = mins /10 | 0;
+    tens_txt = tensPrefixStr[tens];
+    return [tens_txt + ' ' + mins_txt[0],  mins_txt[1]];
+  }
 }
 
 class JapaneseDateFormatter extends DateFormatter {
@@ -329,6 +330,7 @@ class JapaneseDateFormatter extends DateFormatter {
   formatDate(date){
     hours_txt = japaneseHoursToText(date.getHours());
     mins_txt = japaneseMinsToText(date.getMinutes());
+    console.log("mins=" + mins_txt);
     return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
   }
 }
@@ -336,10 +338,11 @@ class JapaneseDateFormatter extends DateFormatter {
 
 
 let row_displays = [ 
-  new ShiftText(240,50,'',"Vector",40,10,10,40,[1,1,1]),
+  new ShiftText(240,60,'',"Vector",40,10,10,40,[1,1,1]),
   new ShiftText(240,100,'',"Vector",20,10,10,50,[0.85,0.85,0.85]),
   new ShiftText(240,120,'',"Vector",20,10,10,60,[0.85,0.85,0.85]),
-  new ShiftText(240,140,'',"Vector",20,10,10,60,[0.85,0.85,0.85])
+  new ShiftText(240,140,'',"Vector",20,10,10,70,[0.85,0.85,0.85]),
+  new ShiftText(240,140,'',"Vector",40,10,10,80,[1,1,1])
 ];
 
 let date_formatters = [
@@ -383,13 +386,17 @@ function reset_clock(){
 
 function draw_clock(){
   console.log("draw_clock");
-  let date = new Date();
+  date = new Date();
   rows = date_formatter.formatDate(date);
   var i;
   for (i = 0; i < rows.length; i++) {
     display = row_displays[i];
     txt = rows[i];
     display_row(display,txt);
+  }
+  for (j = i; j < row_displays.length; j++) {
+    display = row_displays[j];
+    display_row(display,'');
   }
   console.log(date);
 }
