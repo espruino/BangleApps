@@ -175,6 +175,7 @@ class EnglishDateFormatter extends DateFormatter{
   }
 }
 
+/*
 class EnglishTraditionalDateFormatter extends DateFormatter {
   constructor() {
     super();
@@ -208,6 +209,7 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
     }
   }
 }
+*/
 
 // French date formatting
 const frenchNumberStr = [ "ZERO", "UNE", "DEUX", "TROIS", "QUATRE",
@@ -317,8 +319,12 @@ function japaneseMinsToText(mins){
     units = mins % 10;
     mins_txt = japaneseMinuteStr[units];
     tens = mins /10 | 0;
-    tens_txt = tensPrefixStr[tens];
-    return [tens_txt + ' ' + mins_txt[0],  mins_txt[1]];
+    if(tens > 0){
+      tens_txt = tensPrefixStr[tens];
+      return [tens_txt + ' ' + mins_txt[0],  mins_txt[1]];
+    } else {
+      return [mins_txt[0],  mins_txt[1]];
+    }
   }
 }
 
@@ -342,12 +348,12 @@ let row_displays = [
   new ShiftText(240,100,'',"Vector",20,10,10,50,[0.85,0.85,0.85]),
   new ShiftText(240,120,'',"Vector",20,10,10,60,[0.85,0.85,0.85]),
   new ShiftText(240,140,'',"Vector",20,10,10,70,[0.85,0.85,0.85]),
-  new ShiftText(240,140,'',"Vector",40,10,10,80,[1,1,1])
+  //new ShiftText(240,140,'',"Vector",40,10,10,80,[1,1,1])
 ];
 
 let date_formatters = [
     new EnglishDateFormatter(),
-    new EnglishTraditionalDateFormatter(),
+    //new EnglishTraditionalDateFormatter(),
     new FrenchDateFormatter(),
     new JapaneseDateFormatter()
   ];
