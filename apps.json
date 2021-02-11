@@ -2139,7 +2139,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2153,8 +2153,6 @@
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
       {"name":"ped.face.js","url":"ped.js"},
-      {"name":"gps.face.js","url":"gps.js"},
-      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2781,6 +2779,19 @@
     {"name":"gpssetup.settings.json","url":"settings.json"},
     {"name":"gpssetup.app.js","url":"app.js"},
     {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "walkersclock",
+  "name": "Walkers Clock",
+  "shortName":"Walkers Clock",
+  "icon": "walkersclock48.png",
+  "version":"0.01",
+  "description": "A larg font watch, displays steps, can switch GPS on/off, displays grid reference",
+  "tags": "gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"walkersclock.app.js","url":"app.js"},
+    {"name":"walkersclock.img","url":"icon.js","evaluate":true}
   ]
 }
 ]
