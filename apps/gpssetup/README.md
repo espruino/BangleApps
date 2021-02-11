@@ -1,6 +1,6 @@
 # GPS Setup
 
-An App to enable the GPS to be configured into low power mode.
+An App and module to enable the GPS to be configured into low power mode.
 
 ## Goals
 
@@ -15,14 +15,14 @@ Example power consumption of the GPS while powered on:
 * Using the GPS with Super-E Power Saving Mode (PSM) with the screen
   off most of the time, will consume around 35mA and you might get
   10hrs before a recharge.
-  
+
 * Using the GPS in Power Saving Mode On/Off (PSMOO) with suitable
   settings can reduce the average consumption to around 15mA.  A
   simple test using a 120s update period, 6s search period was still
   running with 45% battery 20 hours after it started.
 
 
-## Settings
+## Settings App
 
 The Settings App enables you set the options below. Either start the
 App from the launcher or go to Settings, select App/Widgets and then
@@ -38,11 +38,11 @@ used. These settings will remain for all apps that use the GPS.
 
 - Power Mode:
 
-   - SuperE - the factory default setup for the GPS. The recommended
+   - **SuperE** - the factory default setup for the GPS. The recommended
    power saving mode.  If you need frequent (every second) updates on
    position, then this is the mode for you.
 
-   - PSMOO - On/Off power saving mode. Configured by interval and
+   - **PSMOO** - On/Off power saving mode. Configured by interval and
    search time. Choose this mode if you are happy to get a GPS
    position update less often (say every 1 or 2 minutes). The longer
    the interval the more time the GPS will spend sleeping in low
@@ -55,6 +55,37 @@ used. These settings will remain for all apps that use the GPS.
 - search - the time between two acquisition attempts if the receiver
   is unable to get a position fix.
 
+## Module
+
+A module is provided that'll allow you to set GPS configuration from your own
+app. To use it:
+
+```
+// This will set up the GPS to current saved defaults. It's not normally
+// needed unless the watch's battery has run down
+require("gpssetup").setPowerMode();
+
+// This sets up the PSMOO mode. update/search are optional in seconds
+require("gpssetup").setPowerMode({
+  power_mode:"PSMOO",
+  update:optional (default 120),
+  search:optional (default 5)})
+
+// This sets up SuperE
+require("gpssetup").setPowerMode({power_mode:"SuperE"})
+```
+
+`setPowerMode` returns a promise, which is completed when the GPS is set up.
+
+So you can for instance do the following to turn the GPS off once it
+has been configured:
+
+```
+require("gpssetup").setPowerMode().then(function() {
+  Bangle.setGPSPower(0);
+});
+```  
+
 ## References
 
 * [UBLOX M8 Receiver Data Sheet](https://www.u-blox.com/sites/default/files/products/documents/u-blox8-M8_ReceiverDescrProtSpec_%28UBX-13003221%29.pdf)
@@ -63,4 +94,3 @@ used. These settings will remain for all apps that use the GPS.
 
 * Some useful code on Github can be found [here](https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control)
 and [here](https://github.com/thasti/utrak/blob/master/gps.c)
-

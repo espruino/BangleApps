@@ -2771,11 +2771,12 @@
   "name": "GPS Setup",
   "shortName":"GPS Setup",
   "icon": "gpssetup.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Configure the GPS power options and store them in the GPS nvram",
   "tags": "gps, tools, outdoors",
   "readme": "README.md",
   "storage": [
+    {"name":"gpssetup","url":"gpssetup.js"},
     {"name":"gpssetup.settings.js","url":"settings.js"},
     {"name":"gpssetup.settings.json","url":"settings.json"},
     {"name":"gpssetup.app.js","url":"app.js"},
