@@ -15,7 +15,7 @@
   var currentSteps = 0, lastSentSteps=0;
   var activityInterval;
   var hrmTimeout;
-  
+
   function settings() {
     let settings = require('Storage').readJSON("gbridge.json", true) || {};
     if (!("showIcon" in settings)) {
@@ -129,11 +129,23 @@
   }
 
   function handleCallEvent(event) {
-    if (event.cmd === "accept") {
+    var callIcon = require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="));
+    if (event.cmd === "incoming") {
       require("notify").show({
         size: 55, title: event.name, id: "call",
-        body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))});
+        body: event.number, icon:callIcon});
       Bangle.buzz();
+    } else if (event.cmd === "start") {
+      require("notify").show({
+        size: 55, title: event.name, id: "call", bgColor : "#008000", titleBgColor : "#00C000",
+        body: "In progress: "+event.number, icon:callIcon});
+    } else if (event.cmd === "end") {
+      require("notify").show({
+        size: 55, title: event.name, id: "call",  bgColor : "#800000", titleBgColor : "#C00000",
+        body: "Ended: "+event.number, icon:callIcon});
+      setTimeout(function() {
+        require("notify").hide({ id: "call" });
+      }, 2000);
     }
   }
 
@@ -148,7 +160,7 @@
         setTimeout(_=>Bangle.beep(), 1000);
       },2000);
   }
-  
+
   function handleActivityEvent(event) {
     var s = settings();
     // handle setting activity interval
@@ -251,7 +263,7 @@
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });
   }
-  
+
   // Send a summary of activity to Gadgetbridge
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
@@ -279,7 +291,7 @@
     }
   });
   handleActivityEvent({}); // kicks off activity reporting
-  
+
   // Finally add widget
   WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
   reload();
