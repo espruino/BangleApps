@@ -84,7 +84,20 @@ has been configured:
 require("gpssetup").setPowerMode().then(function() {
   Bangle.setGPSPower(0);
 });
-```  
+```
+
+**Note:** It's not guaranteed that the user will have installed the `gpssetup`
+app/module. It might be worth checking for its existence by surrounding the
+`require` call with `try...catch` block.
+
+```
+var gpssetup;
+try {
+  gpssetup = require("gpssetup")
+} catch(e) {
+  E.showMessage("gpssetup\nnot installed");
+}
+```
 
 ## References
 
