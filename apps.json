@@ -139,7 +139,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.19",
+    "version":"0.20",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
