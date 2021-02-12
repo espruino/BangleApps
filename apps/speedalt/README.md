@@ -22,9 +22,7 @@ BTN1 : Select next waypoint. Last fix distance from selected waypoint is display
 
 ### Both modes
 
-BTN2 : Short press < 2 secs Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Tap again to restore power saving timeouts.
-
-BTN2 : Long press > 2 secs turns off the low power GPS service and GPS. Exit and restart the app to turn back on. If you are using the low power gps service it will keep the GPS powered on after exiting the app. This is a convenient way to turn it off.
+BTN2 : Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
 BTN3 : Long press exit and return to watch.
 
@@ -51,17 +49,17 @@ MAX Values instead:<br>
 Settings:<br>
 ![](screen4.png)<p>
 
-## Low Power GPS Service
+## Power Saving
 
-This app will work quite happily without this service but will use the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) if it is installed. You may choose to use the Low Power GPS Service to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Service Readme to understand what this does.
+The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the colck/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
 
-When using the Low Power GPS Service this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PMOO mode and will only attempt to get a fix every minute or two. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
+This app will work quite happily on its own but will use the [GPS Setup App](https://banglejs.com/apps/#gps setup) if it is installed. You may choose to use the GPS Setup App to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Setup App Readme to understand what this does.
 
-There are a couple of things to consider when using the Low Power GPS Service. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. 
+When using the GPS Setup App this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PSMOO mode and will only attempt to get a fix every two minutes. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
+
+There are a couple of things to consider when using the GPS Setup App. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. 
 
 The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
-
-When exiting this app the Low Power GPS Service will keep the GPS powered on, using battery. It can be manually turned off using the gps service settings menu. As a convenience, long press BTN2 for 2 seconds will turn it off while using this GPS Adv app. 
 
 ## Waypoints
 
@@ -142,6 +140,6 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 
 Many thanks to Gordon Williams. Awesome job.
 
-Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the [Low power GPS Service](https://banglejs.com/apps/#low%20power%20gps%20service) work.
+Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development.
 
 
