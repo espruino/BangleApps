@@ -3,7 +3,7 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 */
-var v = '1.19';
+var v = '1.20';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -55,7 +55,9 @@ function distance(a,b){
   return d;
 }
 
-function drawFix(speed,units,sats,alt,alt_units,age,fix) {
+//function drawFix(speed,sats,alt,alt_units,age,fix) {
+function drawFix(dat) {
+
   if (!canDraw) return;
 
   buf.clear();
@@ -64,18 +66,18 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   var u='';
   
   // Primary Display
-  v = (cfg.primSpd)?speed.toString():alt.toString();
+  v = (cfg.primSpd)?dat.speed.toString():dat.alt.toString();
   
   // Primary Units
-  u = (cfg.primSpd)?cfg.spd_unit:alt_units;
+  u = (cfg.primSpd)?cfg.spd_unit:dat.alt_units;
 
   drawPrimary(v,u);
   
   // Secondary Display
-  v = (cfg.primSpd)?alt.toString():speed.toString();
+  v = (cfg.primSpd)?dat.alt.toString():dat.speed.toString();
 
   // Secondary Units
-  u = (cfg.primSpd)?alt_units:cfg.spd_unit;
+  u = (cfg.primSpd)?dat.alt_units:cfg.spd_unit;
   
   drawSecondary(v,u);
   
@@ -86,11 +88,11 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   drawWP();
   
   //Sats
-  if ( age > 10 ) {
-    if ( age > 90 ) age = '>90';
-    drawSats('Age:'+age);
+  if ( dat.age > 10 ) {
+    if ( dat.age > 90 ) dat.age = '>90';
+    drawSats('Age:'+dat.age);
   }
-  else drawSats('Sats:'+sats);
+  else drawSats('Sats:'+dat.sats);
   
   g.reset();
   g.drawImage(img,0,40);
@@ -238,14 +240,48 @@ function onGPS(fix) {
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   }
       
+
+  // {speed:,sats:,alt:,alt_units:,age:,fix:}
   if ( cfg.modeA ) {
-    if ( showMax ) drawFix(max.spd,cfg.spd_unit,lf.satellites,max.alt,cfg.alt_unit,age,lf.fix); // Speed and alt maximums
-    else drawFix(sp,cfg.spd_unit,lf.satellites,al,cfg.alt_unit,age,lf.fix); // Show speed/altitude
+    if ( showMax ) 
+      drawFix({
+        speed:max.spd,
+        sats:lf.satellites,
+        alt:max.alt,
+        alt_units:cfg.alt_unit,
+        age:age,
+        fix:lf.fix
+      }); // Speed and alt maximums
+    else 
+      drawFix({
+        speed:sp,
+        sats:lf.satellites,
+        alt:al,
+        alt_units:cfg.alt_unit,
+        age:age,
+        fix:lf.fix
+      }); // Show speed/altitude
    }
   else {
     // Show speed/distance
-    if ( di <= 0 ) drawFix(sp,cfg.spd_unit,lf.satellites,'','',age,lf.fix); // No WP selected
-    else drawFix(sp,cfg.spd_unit,lf.satellites,di,cfg.dist_unit,age,lf.fix);
+    if ( di <= 0 ) 
+      drawFix({
+        speed:sp,
+        sats:lf.satellites,
+        alt:'',
+        alt_units:'',
+        age:age,
+        fix:lf.fix
+      }); // No WP selected
+    else 
+      drawFix({
+        speed:sp,
+        sats:lf.satellites,
+        alt:di,
+        alt_units:cfg.dist_unit,
+        age:age,
+        fix:lf.fix
+      });
   }
 
 }
@@ -396,7 +432,6 @@ Bangle.setGPSPower(1);
 
 if ( gpssetup ) {
   gpssetup.setPowerMode({power_mode:"SuperE"}).then(function() { Bangle.setGPSPower(1); });
-//  setInterval(()=>onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
 }
 else {
   Bangle.setGPSPower(1);
