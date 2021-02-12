@@ -3,7 +3,7 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 */
-var v = '1.18';
+var v = '1.19';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
