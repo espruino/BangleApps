@@ -55,7 +55,6 @@ function distance(a,b){
   return d;
 }
 
-//function drawFix(speed,sats,alt,alt_units,age,fix) {
 function drawFix(dat) {
 
   if (!canDraw) return;
@@ -240,8 +239,6 @@ function onGPS(fix) {
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   }
       
-
-  // {speed:,sats:,alt:,alt_units:,age:,fix:}
   if ( cfg.modeA ) {
     if ( showMax ) 
       drawFix({
@@ -300,10 +297,6 @@ function setButtons(){
     onGPS(lf);
   }, BTN1, { edge:"falling",repeat:true});
   
-  
-  // Show launcher when middle button pressed
-  // setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-
   // Power saving on/off 
   setWatch(function(e){
     pwrSav=!pwrSav; 
@@ -418,7 +411,7 @@ Bangle.on('lcdPower',function(on) {
 
 var gpssetup;
 try {
-  gpssetup = require("gpssetup")
+  gpssetup = require("gpssetup");
 } catch(e) {
   gpssetup = false;
 }
