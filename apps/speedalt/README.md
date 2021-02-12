@@ -53,7 +53,7 @@ Settings:<br>
 
 The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the colck/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
 
-This app will work quite happily on its own but will use the [GPS Setup App](https://banglejs.com/apps/#gps setup) if it is installed. You may choose to use the GPS Setup App to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Setup App Readme to understand what this does.
+This app will work quite happily on its own but will use the [GPS Setup App](https://banglejs.com/apps/#gps%20setup) if it is installed. You may choose to use the GPS Setup App to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Setup App Readme to understand what this does.
 
 When using the GPS Setup App this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PSMOO mode and will only attempt to get a fix every two minutes. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
