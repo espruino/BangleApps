@@ -2802,6 +2802,7 @@
   "description": "Show the power on/off status of the GPS",
   "tags": "widget,gps",
   "type":"widget",
+  "readme": "README.md",
   "storage": [
     {"name":"widgps.wid.js","url":"widget.js"}
   ]
@@ -2813,6 +2814,7 @@
   "description": "Show the power on/off status of the Heart Rate Monitor",
   "tags": "widget, hrm",
   "type":"widget",
+  "readme": "README.md",
   "storage": [
     {"name":"widhrt.wid.js","url":"widget.js"}
   ]
