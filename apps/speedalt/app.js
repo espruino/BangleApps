@@ -1,8 +1,9 @@
 /*
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
+1.16 : Use new GPS settings module
 */
-var v = '1.15';
+var v = '1.16';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -269,22 +270,18 @@ function setButtons(){
 
   // Power saving on/off 
   setWatch(function(e){
-    var dur = e.time - e.lastTime;
-    if ( dur < 2 ) {  // Short press.
-      pwrSav=!pwrSav; 
-      if ( pwrSav ) {
-        LED1.reset();
-        var s = require('Storage').readJSON('setting.json',1)||{};
-        var t = s.timeout||10;
-        Bangle.setLCDTimeout(t);
-      }
-      else {
-        Bangle.setLCDTimeout(0);
-        Bangle.setLCDPower(1);
-        LED1.set();
-      }
+    pwrSav=!pwrSav; 
+    if ( pwrSav ) {
+      LED1.reset();
+      var s = require('Storage').readJSON('setting.json',1)||{};
+      var t = s.timeout||10;
+      Bangle.setLCDTimeout(t);
     }
-    else gpsOff();  // long press, power off LP GPS 
+    else {
+      Bangle.setLCDTimeout(0);
+      Bangle.setLCDPower(1);
+      LED1.set();
+    }
   }, BTN2, {repeat:true,edge:"falling"});
   
   // Toggle between alt or dist
@@ -328,31 +325,10 @@ function savSettings() {
   require("Storage").write('speedalt.json',settings);
 }
 
-// Is low power GPS service available to use?
-function isLP() {
-  if (WIDGETS.gpsservice == undefined) return(0);
-  return(1);
-}
-
 function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
-  if ( !lp ) return;
-  var s = WIDGETS.gpsservice.gps_get_settings();
-  if ( m !== s.power_mode || !s.gpsservice ) {
-    s.gpsservice = true;
-    s.power_mode = m;
-    WIDGETS.gpsservice.gps_set_settings(s);
-    WIDGETS.gpsservice.reload();
-  }
-}
-
-function gpsOff() {
-  if ( !lp ) return;
-  var s = WIDGETS.gpsservice.gps_get_settings();
-  s.gpsservice = false;
-  s.power_mode = 'SuperE';
-  WIDGETS.gpsservice.gps_set_settings(s);
-  WIDGETS.gpsservice.reload();
+  if ( !gpssetup ) return;
+  gpssetup.setPowerMode({power_mode:m})
 }
 
 // =Main Prog
@@ -404,21 +380,29 @@ Bangle.on('lcdPower',function(on) {
   else stopDraw();
 });
 
+var gpssetup;
+try {
+  gpssetup = require("gpssetup")
+} catch(e) {
+  gpssetup = false;
+}
+
 // All set up. Lets go.
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 onGPS(lf);
+Bangle.setGPSPower(1);
 
-var lp = isLP();   // Low power GPS widget installed?
-if ( lp ) {
-  setLpMode('SuperE');
-  setInterval(()=>onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
+if ( gpssetup ) {
+  gpssetup.setPowerMode({power_mode:"SuperE"}).then(function() { Bangle.setGPSPower(1); });
+//  setInterval(()=>onGPS(WIDGETS.gpsservice.gps_get_fix()), 1000);
 }
 else {
   Bangle.setGPSPower(1);
-  Bangle.on('GPS', onGPS);
 }
+
+Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 30000);
