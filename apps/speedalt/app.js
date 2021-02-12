@@ -3,7 +3,7 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 */
-var v = '1.16';
+var v = '1.17';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -25,17 +25,17 @@ var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulato
 var wp = {};        // Waypoint to use for distance from cur position.
 
 function nxtWp(inc){
-  if (settings.modeA) return;
-  settings.wp+=inc;
+  if (cfg.modeA) return;
+  cfg.wp+=inc;
   loadWp();
 }
 
 function loadWp() {
   var w = require("Storage").readJSON('waypoints.json')||[{name:"NONE"}];
-  if (settings.wp>=w.length) settings.wp=0;
-  if (settings.wp<0) settings.wp = w.length-1;
+  if (cfg.wp>=w.length) cfg.wp=0;
+  if (cfg.wp<0) cfg.wp = w.length-1;
   savSettings();
-  wp = w[settings.wp];
+  wp = w[cfg.wp];
 }
 
 function radians(a) {
@@ -48,7 +48,7 @@ function distance(a,b){
   
   // Distance in selected units
   var d = Math.sqrt(x*x + y*y) * 6371000;
-  d = (d/parseFloat(settings.dist)).toFixed(2);
+  d = (d/parseFloat(cfg.dist)).toFixed(2);
   if ( d >= 100 ) d = parseFloat(d).toFixed(1);
   if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
 
@@ -64,18 +64,18 @@ function drawFix(speed,units,sats,alt,alt_units,age,fix) {
   var u='';
   
   // Primary Display
-  v = (settings.primSpd)?speed.toString():alt.toString();
+  v = (cfg.primSpd)?speed.toString():alt.toString();
   
   // Primary Units
-  u = (settings.primSpd)?settings.spd_unit:alt_units;
+  u = (cfg.primSpd)?cfg.spd_unit:alt_units;
 
   drawPrimary(v,u);
   
   // Secondary Display
-  v = (settings.primSpd)?alt.toString():speed.toString();
+  v = (cfg.primSpd)?alt.toString():speed.toString();
 
   // Secondary Units
-  u = (settings.primSpd)?alt_units:settings.spd_unit;
+  u = (cfg.primSpd)?alt_units:cfg.spd_unit;
   
   drawSecondary(v,u);
   
@@ -160,7 +160,7 @@ function drawTime() {
 
 function drawWP() {
   var nm = wp.name;
-  if ( nm == undefined || nm == 'NONE' || settings.modeA ) nm = '';
+  if ( nm == undefined || nm == 'NONE' || cfg.modeA ) nm = '';
   
   buf.setFontAlign(-1,1); //left, bottom
   buf.setColor(2);  
@@ -179,10 +179,10 @@ function drawSats(sats) {
   buf.setFontVector(20);
   buf.setColor(2); 
   
-  if ( settings.modeA ) buf.drawString("A",240,140);
+  if ( cfg.modeA ) buf.drawString("A",240,140);
   else buf.drawString("D",240,140);
     
-  if ( showMax && settings.modeA ) {
+  if ( showMax && cfg.modeA ) {
     buf.setFontAlign(0,1); //centre, bottom
     buf.drawString("MAX",120,164);
   }
@@ -214,12 +214,12 @@ function onGPS(fix) {
     lf = fix;
     
     // Speed
-    if ( settings.spd == 0 ) {
+    if ( cfg.spd == 0 ) {
       m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
       sp = parseFloat(m[1]);
-      settings.spd_unit = m[2];
+      cfg.spd_unit = m[2];
     }
-    else sp = parseFloat(lf.speed)/parseFloat(settings.spd); // Calculate for selected units
+    else sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
     
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
@@ -227,7 +227,7 @@ function onGPS(fix) {
 
     // Altitude
     al = lf.alt;
-    al = Math.round(parseFloat(al)/parseFloat(settings.alt));
+    al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
     if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
 
     // Distance to waypoint
@@ -238,14 +238,14 @@ function onGPS(fix) {
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   }
       
-  if ( settings.modeA ) {
-    if ( showMax ) drawFix(max.spd,settings.spd_unit,lf.satellites,max.alt,settings.alt_unit,age,lf.fix); // Speed and alt maximums
-    else drawFix(sp,settings.spd_unit,lf.satellites,al,settings.alt_unit,age,lf.fix); // Show speed/altitude
+  if ( cfg.modeA ) {
+    if ( showMax ) drawFix(max.spd,cfg.spd_unit,lf.satellites,max.alt,cfg.alt_unit,age,lf.fix); // Speed and alt maximums
+    else drawFix(sp,cfg.spd_unit,lf.satellites,al,cfg.alt_unit,age,lf.fix); // Show speed/altitude
    }
   else {
     // Show speed/distance
-    if ( di <= 0 ) drawFix(sp,settings.spd_unit,lf.satellites,'','',age,lf.fix); // No WP selected
-    else drawFix(sp,settings.spd_unit,lf.satellites,di,settings.dist_unit,age,lf.fix);
+    if ( di <= 0 ) drawFix(sp,cfg.spd_unit,lf.satellites,'','',age,lf.fix); // No WP selected
+    else drawFix(sp,cfg.spd_unit,lf.satellites,di,cfg.dist_unit,age,lf.fix);
   }
 
 }
@@ -255,7 +255,7 @@ function setButtons(){
   // Spd+Dist : Select next waypoint
   setWatch(function(e) {
     var dur = e.time - e.lastTime;
-    if ( settings.modeA ) {
+    if ( cfg.modeA ) {
       // Spd+Alt mode - Switch between fix and MAX
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
       else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
@@ -286,14 +286,14 @@ function setButtons(){
   
   // Toggle between alt or dist
   setWatch(function(e){
-    settings.modeA = !settings.modeA;
+    cfg.modeA = !cfg.modeA;
     savSettings();
     onGPS(lf); 
   }, BTN3, {repeat:true,edge:"falling"});
   
   // Touch left screen to toggle display
   setWatch(function(e){
-    settings.primSpd = !settings.primSpd;
+    cfg.primSpd = !cfg.primSpd;
     savSettings();
     onGPS(lf);  // Update display
   }, BTN4, {repeat:true,edge:"falling"});
@@ -322,7 +322,7 @@ function stopDraw() {
 }
 
 function savSettings() {
-  require("Storage").write('speedalt.json',settings);
+  require("Storage").write('speedalt.json',cfg);
 }
 
 function setLpMode(m) {
@@ -334,18 +334,18 @@ function setLpMode(m) {
 // =Main Prog
 
 // Read settings. 
-let settings = require('Storage').readJSON('speedalt.json',1)||{};
+let cfg = require('Storage').readJSON('speedalt.json',1)||{};
 
-settings.spd = settings.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
-settings.spd_unit = settings.spd_unit||'';  // Displayed speed unit
-settings.alt = settings.alt||0.3048;// Multiplier for altitude unit conversions.
-settings.alt_unit = settings.alt_unit||'feet';  // Displayed altitude units
-settings.dist = settings.dist||1000;// Multiplier for distnce unit conversions.
-settings.dist_unit = settings.dist_unit||'km';  // Displayed altitude units
-settings.colour = settings.colour||0;          // Colour scheme.
-settings.wp = settings.wp||0;        // Last selected waypoint for dist
-settings.modeA = settings.modeA||0;    // 0 = [D], 1 = [A]
-settings.primSpd = settings.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
+cfg.spd = cfg.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd_unit = cfg.spd_unit||'';  // Displayed speed unit
+cfg.alt = cfg.alt||0.3048;// Multiplier for altitude unit conversions.
+cfg.alt_unit = cfg.alt_unit||'feet';  // Displayed altitude units
+cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
+cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
+cfg.colour = cfg.colour||0;          // Colour scheme.
+cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
+cfg.modeA = cfg.modeA||0;    // 0 = [D], 1 = [A]
+cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 
 loadWp();
@@ -365,8 +365,8 @@ var img = {
   palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB])
 };
 
-if ( settings.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
-if ( settings.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xFAE0,0xF813]);
+if ( cfg.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
+if ( cfg.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xFAE0,0xF813]);
 
 var SCREENACCESS = {
       withApp:true,
