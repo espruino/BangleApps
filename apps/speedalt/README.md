@@ -57,8 +57,6 @@ This app will work quite happily on its own but will use the [GPS Setup App](htt
 
 When using the GPS Setup App this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PSMOO mode and will only attempt to get a fix every two minutes. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
-There are a couple of things to consider when using the GPS Setup App. This app plus the LP GPS service together use a considerable chunk of the Bangle.JS memory. A large waypoints file will also contribute to this. 
-
 The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
 ## Waypoints
