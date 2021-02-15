@@ -19,6 +19,12 @@
     writeSettings();
   }
 
+  function setUnitsDist(d,u) {
+    settings.dist = d;
+    settings.dist_unit = u;
+    writeSettings();
+  }
+
   function setColour(c) {
     settings.colour = c;
     writeSettings();
@@ -27,13 +33,15 @@
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
+    '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
-    'Colours' : function() { E.showMenu(colMenu); },
+    'Colours' : function() { E.showMenu(colMenu); }/*,
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
     onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }};
+    }*/
+  };
   
   const unitsMenu = {
     '': {'title': 'Units'},
@@ -43,6 +51,9 @@
     'Knots (spd)' : function() { setUnits(1.852,'knots'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
     'm/s (spd)' : function() { setUnits(3.6,'m/s'); },
+    'Km (dist)' : function() { setUnitsDist(1000,'km'); },
+    'Miles (dist)' : function() { setUnitsDist(1609.344,'miles'); },
+    'Nm (dist)' : function() { setUnitsDist(1852.001,'nm'); },
     'Meters (alt)' : function() { setUnitsAlt(1,'m'); },
     'Feet (alt)' : function() { setUnitsAlt(0.3048,'feet'); }
   };
