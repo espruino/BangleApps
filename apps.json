@@ -2794,5 +2794,29 @@
     {"name":"walkersclock.app.js","url":"app.js"},
     {"name":"walkersclock.img","url":"icon.js","evaluate":true}
   ]
+},
+{ "id": "widgps",
+  "name": "GPS Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the GPS. Require firmware v2.08.167 or later",
+  "tags": "widget,gps",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widgps.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "widhrt",
+  "name": "HRM Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
+  "tags": "widget, hrm",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widhrt.wid.js","url":"widget.js"}
+  ]
 }
 ]
