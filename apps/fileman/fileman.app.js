@@ -91,8 +91,8 @@ function drawMenu() {
 
 function get_pruned_file_list() {
   // get storagefile list
-  var sf = STOR.list(/\1$/).map(s=>s.slice(0,-1));
-  var sffilter = f=>!sf.includes(f.slice(0,-1)) || f.endsWith("\1");
+  var sf = STOR.list(/\x01$/).map(s=>s.slice(0,-1));
+  var sffilter = f=>!sf.includes(f.slice(0,-1)) || f.endsWith("\x01");
   // get files - put '.' last
   var fl = STOR.list(/^[^\.]/).filter(sffilter);
   fl.sort();

@@ -22,13 +22,6 @@ function initGps(state: AppState): void {
   Bangle.setGPSPower(1);
 }
 
-function parseCoordinate(coordinate: string): number {
-  const pivot = coordinate.indexOf('.') - 2;
-  const degrees = parseInt(coordinate.substr(0, pivot));
-  const minutes = parseFloat(coordinate.substr(pivot)) / 60;
-  return (degrees + minutes) * Math.PI / 180;
-}
-
 function readGps(state: AppState, gps: GpsEvent): void {
   state.lat = gps.lat;
   state.lon = gps.lon;
@@ -49,7 +42,8 @@ function readGps(state: AppState, gps: GpsEvent): void {
 
 function updateGps(state: AppState): void {
   const t = Date.now();
-  const dt = (t - state.t) / 1000;
+  let dt = (t - state.t) / 1000;
+  if (!isFinite(dt)) dt=0;
 
   state.t = t;
   state.dt += dt;
@@ -63,9 +57,11 @@ function updateGps(state: AppState): void {
   }
 
   const r = EARTH_RADIUS + state.alt;
-  const x = r * Math.cos(state.lat) * Math.cos(state.lon);
-  const y = r * Math.cos(state.lat) * Math.sin(state.lon);
-  const z = r * Math.sin(state.lat);
+  const lat = state.lat * Math.PI / 180;
+  const lon = state.lon * Math.PI / 180;
+  const x = r * Math.cos(lat) * Math.cos(lon);
+  const y = r * Math.cos(lat) * Math.sin(lon);
+  const z = r * Math.sin(lat);
   const v = state.vel;
 
   if (!state.x) {
@@ -101,11 +97,14 @@ function updateGps(state: AppState): void {
   state.pError += (pError - state.pError) * pGain;
   state.vError += (vError - state.vError) * vGain;
 
+/*// we're not currently updating lat/lon with the kalman filter
+  // as it seems not to update them correctly at the moment
+  // and we only use them for logging (where it makes sense to use
+  // raw GPS coordinates)
   const pMag = Math.sqrt(state.x * state.x + state.y * state.y + state.z * state.z);
-
   state.lat = (Math.asin(state.z / pMag) * 180 / Math.PI) || 0;
   state.lon = (Math.atan2(state.y, state.x) * 180 / Math.PI) || 0;
-  state.alt = pMag - EARTH_RADIUS;
+  state.alt = pMag - EARTH_RADIUS;*/
 
   if (state.status === ActivityStatus.Running) {
     state.distance += dpMag * pGain;
@@ -114,4 +113,4 @@ function updateGps(state: AppState): void {
   }
 }
 
-export { initGps, parseCoordinate, readGps, updateGps };
+export { initGps, readGps, updateGps };

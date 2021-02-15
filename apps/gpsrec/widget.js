@@ -29,12 +29,21 @@
       periodCtr--;
       if (periodCtr<=0) {
         periodCtr = settings.period;
-        if (gpsTrack) gpsTrack.write([
-          fix.time.getTime(),
-          fix.lat.toFixed(6),
-          fix.lon.toFixed(6),
-          fix.alt
-        ].join(",")+"\n");
+        try {
+          if (gpsTrack) gpsTrack.write([
+            fix.time.getTime(),
+            fix.lat.toFixed(6),
+            fix.lon.toFixed(6),
+            fix.alt
+          ].join(",")+"\n");
+        } catch(e) {
+          // If storage.write caused an error, disable
+          // GPS recording so we don't keep getting errors!
+          console.log("gpsrec: write error", e);
+          settings.recording = false;
+          require("Storage").write("gpsrec.json", settings);
+          reload();
+        }
       }
     }
   }
