@@ -251,7 +251,7 @@ var locales = {
     thousands_sep: ",",
     currency_symbol: "$",
     int_curr_symbol: "NZD",
-    speed: "kmh",
+    speed: "kph",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
     ampm: { 0: "am", 1: "pm" },
