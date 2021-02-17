@@ -65,7 +65,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
