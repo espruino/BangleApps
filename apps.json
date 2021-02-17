@@ -217,7 +217,7 @@
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
     "version":"0.01",
-    "description": "Sliding Text Clock",
+    "description": "Sliding Clock",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
