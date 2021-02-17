@@ -269,6 +269,30 @@
       {"name":"clock2x3.img","url":"clock2x3-icon.js","evaluate":true}
     ]
   },
+  { "id": "geissclk",
+    "name": "Geiss Clock",
+    "icon": "clock.png",
+    "version":"0.01",
+    "description": "7 segment clock with animated background in the style of Ryan Geiss' music visualisation. NOTE: The first run will take ~1 minute to do some precalculation",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"geissclk.app.js","url":"clock.js"},
+      {"name":"geissclk.precompute.js","url":"precompute.js"},
+      {"name":"geissclk.img","url":"clock-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"geissclk.0.map"},
+      {"name":"geissclk.1.map"},
+      {"name":"geissclk.2.map"},
+      {"name":"geissclk.3.map"},
+      {"name":"geissclk.4.map"},
+      {"name":"geissclk.5.map"},
+      {"name":"geissclk.0.pal"},
+      {"name":"geissclk.1.pal"},
+      {"name":"geissclk.2.pal"}
+    ]
+  },
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
