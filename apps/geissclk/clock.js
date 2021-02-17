@@ -88,10 +88,6 @@ var im = {
   palette: pal,
   buffer : dataa.buffer
 };
-Bangle.setLCDPower(1);Bangle.setLCDTimeout(0);
-g.clear();
-
-
 var lastSeconds = -1;
 
 function iterate() { "ram"
@@ -142,6 +138,7 @@ Bangle.on('lcdPower',function(on) {
     animInterval = setInterval(iterate, 50);
   }
 });
+g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 iterate();
