@@ -1,9 +1,19 @@
 /**
-* This is a object that initializes itself with a position and
-* text after which you can tell it where you want to move to
-* using the moveTo method and it will smoothly move the text across
+* Adrian Kirk 2021-02
+* Sliding text clock inspired by the Pebble
+* clock with the same name
 */
+
+
 class ShiftText {
+  /**
+  * Class Responsible for shifting text around the screen
+  *
+  * This is a object that initializes itself with a position and
+  * text after which you can tell it where you want to move to
+  * using the moveTo method and it will smoothly move the text across
+  * at the selected frame rate and speed
+  */
   constructor(x,y,txt,font_name,
               font_size,speed_x,speed_y,freq_millis, color){
     this.x = x;
@@ -127,11 +137,22 @@ class ShiftText {
 }
 
 class DateFormatter {
+  /**
+  * A pure virtual class which all the other date formatters will
+  * inherit from.
+  * The name will be used to declare the date format when selected
+  * and the date formatDate methid will return the time formated
+  * to the lines of text on the screen
+  */
   name(){"no name";}
   formatDate(date){
     return ["","",""];
   }
 }
+
+/**
+* English date formatting
+*/
 
 // English String Numbers
 const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
@@ -175,43 +196,9 @@ class EnglishDateFormatter extends DateFormatter{
   }
 }
 
-/*
-class EnglishTraditionalDateFormatter extends DateFormatter {
-  constructor() {
-    super();
-  }
-  name(){return "English Traditional";}
-  formatDate(date){
-    hours = hoursToText(date.getHours());
-    mins = date.getMinutes();
-    if(mins == 0){
-      return [hours, "o'","clock","",""];
-    } else if(mins == 30){
-      return ["","HALF", "PAST", "", hours];
-    }
-    mins_txt = ['',''];
-    if(mins == 15 || mins == 45){
-      mins_txt[0] = "QUARTER";
-    }
-    from_to = '';
-    if(mins > 30){
-      from_to = "TO";
-      mins_txt = numberToText(60-mins);
-      hours = hoursToText(date.getHours() + 1 );
-    } else {
-      from_to = "PAST";
-      mins_txt = numberToText(mins);
-    }
-    if(mins_txt[1] != ''){
-      return ["", mins_txt[0], mins_txt[1] + ' ' + from_to , "",hours ];
-    } else {
-      return ["", mins_txt[0], from_to ,"", hours ];
-    }
-  }
-}
+/**
+* French date formatting
 */
-
-// French date formatting
 const frenchNumberStr = [ "ZERO", "UNE", "DEUX", "TROIS", "QUATRE",
                           "CINQ", "SIX", "SEPT", "HUIT", "NEUF", "DIX",
                           "ONZE", "DOUZE", "TREIZE", "QUATORZE","QUINZE", 
@@ -278,7 +265,9 @@ class FrenchDateFormatter extends DateFormatter {
   }
 }
 
-// Japanese Date formatting
+/**
+* Japanese date formatting
+*/
 const japaneseHourStr = [ "ZERO", "ICHII", "NI", "SAN", "YO",
                           "GO", "ROKU", "SHICHI", "HACHI", "KU", "JUU",
                           'JUU ICHI', 'JUU NI'];
@@ -336,31 +325,34 @@ class JapaneseDateFormatter extends DateFormatter {
   formatDate(date){
     hours_txt = japaneseHoursToText(date.getHours());
     mins_txt = japaneseMinsToText(date.getMinutes());
-    console.log("mins=" + mins_txt);
     return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
   }
 }
 
+/**
+* The Watch Display
+*/
 
-
+// a list of display rows 
 let row_displays = [ 
   new ShiftText(240,60,'',"Vector",40,10,10,40,[1,1,1]),
   new ShiftText(240,100,'',"Vector",20,10,10,50,[0.85,0.85,0.85]),
   new ShiftText(240,120,'',"Vector",20,10,10,60,[0.85,0.85,0.85]),
-  new ShiftText(240,140,'',"Vector",20,10,10,70,[0.85,0.85,0.85]),
-  //new ShiftText(240,140,'',"Vector",40,10,10,80,[1,1,1])
+  new ShiftText(240,140,'',"Vector",20,10,10,70,[0.85,0.85,0.85])
 ];
 
+// a list of the formatters to cycle through
 let date_formatters = [
     new EnglishDateFormatter(),
-    //new EnglishTraditionalDateFormatter(),
     new FrenchDateFormatter(),
     new JapaneseDateFormatter()
   ];
 
+// current index of the date formatter to display
 let date_formatter_idx = 0;
 let date_formatter = date_formatters[date_formatter_idx];
 
+// The small display at the top which announces the date format
 let format_name_display = new ShiftText(55,0,'',"Vector",10,1,1,50,[1,1,1]);
 
 function changeFormatter(){
@@ -375,6 +367,7 @@ function changeFormatter(){
   // now announce the formatter by name
   format_name_display.setTextYPosition(date_formatter.name(),-10);
   format_name_display.moveToY(15);
+  // and then move back
   format_name_display.onFinished(
       function(){
         format_name_display.moveToY(-10);
@@ -383,7 +376,7 @@ function changeFormatter(){
 }
 
 function reset_clock(){
-  console.log("reset_clock");
+  //console.log("reset_clock");
   var i;
   for (i = 0; i < row_displays.length; i++) {
     row_displays[i].reset();
@@ -391,7 +384,7 @@ function reset_clock(){
 }
 
 function draw_clock(){
-  console.log("draw_clock");
+  //console.log("draw_clock");
   date = new Date();
   rows = date_formatter.formatDate(date);
   var i;
@@ -400,11 +393,13 @@ function draw_clock(){
     txt = rows[i];
     display_row(display,txt);
   }
+  // If the dateformatter has not returned enough 
+  // rows then treat the reamining rows as empty
   for (j = i; j < row_displays.length; j++) {
     display = row_displays[j];
     display_row(display,'');
   }
-  console.log(date);
+  //console.log(date);
 }
 
 function display_row(display,txt){
@@ -438,13 +433,13 @@ function startTimers(){
   let date = new Date();
   let secs = date.getSeconds();
   let nextMinuteStart = 60 - secs;
-  console.log("scheduling clock draw in " + nextMinuteStart + " seconds");
+  //console.log("scheduling clock draw in " + nextMinuteStart + " seconds");
   setTimeout(scheduleDrawClock,nextMinuteStart * 1000);
   draw_clock();
 }
 
 function scheduleDrawClock(){
-  console.log("scheduleDrawClock");
+  //console.log("scheduleDrawClock");
   if(intervalRef) clearTimers();
   intervalRef = setInterval(draw_clock, 60*1000);
   draw_clock();
@@ -463,7 +458,7 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 Bangle.on('faceUp',function(up){
-  console.log("faceUp: " + up + " LCD: " + Bangle.isLCDOn());
+  //console.log("faceUp: " + up + " LCD: " + Bangle.isLCDOn());
   if (up && !Bangle.isLCDOn()) {
     //console.log("faceUp and LCD off");
     clearTimers();
