@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -139,7 +139,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.18",
+    "version":"0.20",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -1492,7 +1492,7 @@
     "name": "Digital Assistant, not EDITH",
     "shortName": "DANE",
     "icon": "app.png",
-    "version": "0.15",
+    "version": "0.16",
     "description": "A Watchface inspired by Tony Stark's EDITH and based on https://arwes.dev/",
     "tags": "clock",
     "type": "clock",
@@ -2139,7 +2139,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2153,8 +2153,6 @@
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
       {"name":"ped.face.js","url":"ped.js"},
-      {"name":"gps.face.js","url":"gps.js"},
-      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2639,11 +2637,11 @@
   ]
 },
 { "id": "speedalt",
-  "name": "GPS Speedo and Altimeter",
-  "shortName":"GPS Speed Alt",
+  "name": "GPS Adventure Sports",
+  "shortName":"GPS Adv Sport",
   "icon": "app.png",
-  "version":"0.07",
-  "description": "GPS speed and altitude display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
+  "version":"1.00",
+  "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "tags": "tool,outdoors",
   "type":"app",
   "allow_emulator":true,
@@ -2758,6 +2756,7 @@
   "name": "Test User Input",
   "shortName":"Test User Input",
   "icon": "app.png",
+  "readme": "README.md",
   "version":"0.02",
   "description": "Basic app to test the bangle.js input interface. It displays the result in text or a switch on/off image.",
   "tags": "input,interface,buttons,touch",
@@ -2765,6 +2764,59 @@
     {"name":"testuserinput.app.js","url":"app.js"},
     {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "gpssetup",
+  "name": "GPS Setup",
+  "shortName":"GPS Setup",
+  "icon": "gpssetup.png",
+  "version":"0.02",
+  "description": "Configure the GPS power options and store them in the GPS nvram",
+  "tags": "gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpssetup","url":"gpssetup.js"},
+    {"name":"gpssetup.settings.js","url":"settings.js"},
+    {"name":"gpssetup.settings.json","url":"settings.json"},
+    {"name":"gpssetup.app.js","url":"app.js"},
+    {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "walkersclock",
+  "name": "Walkers Clock",
+  "shortName":"Walkers Clock",
+  "icon": "walkersclock48.png",
+  "version":"0.01",
+  "description": "A larg font watch, displays steps, can switch GPS on/off, displays grid reference",
+  "type":"clock",
+  "tags": "clock, gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"walkersclock.app.js","url":"app.js"},
+    {"name":"walkersclock.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "widgps",
+  "name": "GPS Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the GPS. Require firmware v2.08.167 or later",
+  "tags": "widget,gps",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widgps.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "widhrt",
+  "name": "HRM Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
+  "tags": "widget, hrm",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widhrt.wid.js","url":"widget.js"}
+  ]
 }
-
 ]
