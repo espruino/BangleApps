@@ -2755,10 +2755,10 @@
 { "id": "testuserinput",
   "name": "Test User Input",
   "shortName":"Test User Input",
-  "icon": "app.png",
-  "readme": "README.md",
+  "icon": "app.png",  
   "version":"0.02",
   "description": "Basic app to test the bangle.js input interface. It displays the result in text or a switch on/off image.",
+  "readme": "README.md",
   "tags": "input,interface,buttons,touch",
   "storage": [
     {"name":"testuserinput.app.js","url":"app.js"},
