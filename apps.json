@@ -214,7 +214,7 @@
     ]
   },
   { "id": "slidingtext",
-    "name": "Sliding Text Clock",
+    "name": "Sliding Clock",
     "icon": "slidingtext.png",
     "version":"0.01",
     "description": "Sliding Text Clock",
