@@ -67,7 +67,7 @@ function levelColor(l) {
 
 function drawBattery() {
   const l = E.getBattery(), c = levelColor(l);
-  count = l;
+  // count = l;
   const xl = 45 + l * (194 - 46) / 100;
   g.clearRect(46, 58 + 80 + yOffset + 37, 193, height - 5);
   g.setColor(c).fillRect(46, 58 + 80 + yOffset + 37, xl, height - 5);
@@ -124,14 +124,14 @@ drawClock();
 
 setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: "falling"});
 
-// setWatch(function () {
-//   count++;
-//   drawCounterText();
-// }, BTN1, {repeat: true, edge: "falling"});
-// setWatch(function () {
-//   count--;
-//   drawCounterText();
-// }, BTN3, {repeat: true, edge: "falling"});
+setWatch(function () {
+  count++;
+  drawCounterText();
+}, BTN1, {repeat: true, edge: "falling"});
+setWatch(function () {
+  count--;
+  drawCounterText();
+}, BTN3, {repeat: true, edge: "falling"});
 
 // refesh every 100 milliseconds
 setInterval(updateClock, 500);
