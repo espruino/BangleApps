@@ -213,17 +213,17 @@
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
     ]
   },
-  { "id": "shifttext",
-    "name": "Shift Text Clock",
-    "icon": "shifttext.png",
+  { "id": "text",
+    "name": "Sliding Text Clock",
+    "icon": "slidingtext.png",
     "version":"0.01",
-    "description": "Shifting Text Clock",
+    "description": "Sliding Text Clock",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"shifttext.app.js","url":"shifttext.js"},
-      {"name":"shifttext.img","url":"shifttext-icon.js","evaluate":true}
+      {"name":"slidingtext.app.js","url":"slidingtext.js"},
+      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
     ]
   },
   { "id": "imgclock",
