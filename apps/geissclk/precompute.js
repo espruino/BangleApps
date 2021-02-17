@@ -33,7 +33,7 @@ require("Storage").write("geissclk.2.pal",pal.buffer);
 
 
 // MAPS ----------------------------------------------
-E.showMessage("Precomputing\nmaps\n\nPlease wait...\n0");
+E.showMessage("Precomputing\nmaps\n\nPlease wait...\n0 / 5");
 // straight out
 (function() { "ram"; var n = 0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
