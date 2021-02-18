@@ -34,7 +34,10 @@ var compiled = (function(){
   };
 })();
 
-require("Font7x11Numeric7Seg").add(Graphics);
+//require("Font5x9Numeric7Seg").add(Graphics);
+Graphics.prototype.setFont5x9Numeric7Seg = function() {
+   this.setFontCustom(atob("AAAAAAAAAAIAAAQCAQAAAd0BgMBdwAAAAAAAdwAB0RiMRcAAAERiMRdwAcAQCAQdwAcERiMRBwAd0RiMRBwAAEAgEAdwAd0RiMRdwAcERiMRdwAFAAd0QiEQdwAdwRCIRBwAd0BgMBAAABwRCIRdwAd0RiMRAAAd0QiEQAAAAAAAAAA="), 32, atob("BgAAAAAAAAAAAAAAAAYCAAYGBgYGBgYGBgYCAAAAAAAABgYGBgYG"), 9);
+  }
 
 // Allocate the data
 var dataa = new Uint8Array(W*H);
@@ -92,7 +95,7 @@ var lastSeconds = -1;
 
 function iterate() { "ram"
   var d = new Date();
-  var time = d.getHours().toString().padStart(2," ")+":"+d.getMinutes().toString().padStart(2,0);
+  var time = require("locale").time(d,1);
   var seconds = d.getSeconds().toString().padStart(2,0);
   t = addra; addra = addrb; addrb = t;
   t = dataa; dataa = datab; datab = t;
@@ -117,10 +120,11 @@ function iterate() { "ram"
   compiled.transl(addrmap, addra, addrb);
 
 
-  gfx.setFont("7x11Numeric7Seg",2);
-  gfx.drawString(time, -5, 20);
-  gfx.setFont("7x11Numeric7Seg");
-  gfx.drawString(seconds, 62, 30);
+  x = 8;
+  gfx.setFont("5x9Numeric7Seg",2);
+  gfx.drawString(time, x, 20);
+  gfx.setFont("5x9Numeric7Seg");
+  gfx.drawString(seconds, x+55, 30);
   // firmwares pre-2v09 wouldn't accelerate a 3x blit if it went right to the RHS - hence we're 79px not 80
   g.drawImage(im,1,24,{scale:3});
 }
@@ -143,3 +147,5 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 iterate();
 animInterval = setInterval(iterate, 50);
+
+setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
