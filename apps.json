@@ -213,6 +213,19 @@
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
     ]
   },
+  { "id": "slidingtext",
+    "name": "Sliding Clock",
+    "icon": "slidingtext.png",
+    "version":"0.01",
+    "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently only English, French and Japanese are supported",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"slidingtext.app.js","url":"slidingtext.js"},
+      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
