@@ -1,8 +1,9 @@
 /* Test  bangle.js input interface */
- var colbackg='#111111';
+ var colbackg='#111111';//black
  //var coldarkred='#CC3333';
- var colorange='#e56e06';
- var colgrey='#f3f3f1';  //'#51504f'; //lighter gray
+ var colorange='#e56e06'; //RGB format rrggbb
+ var v_color_lines=0xFFFF; //White hex format
+ var v_color_b_area=colbackg;
  var v_font1size='16';
  var v_clicks='0';
  console.log("*** Test input interface ***");
@@ -12,8 +13,15 @@
   g.fillRect(0,32,239,239); //fill all screen except widget area
   g.flip();
 }
+function ChangeColorBannerArea(v_color){
+ if (v_color=='#111111') v_color='#f3f3f1';
+  else if (v_color=='#f3f3f1') v_color='#51504f';
+    else if (v_color=='#51504f') v_color=0x7800;// Maroon
+      else if (v_color==0x7800) v_color='#111111';
+      return (v_color);  
+}
 function ClearBannerArea(){
-  g.setColor(colgrey); 
+  g.setColor(v_color_b_area); 
   g.fillRect(50,32,190,85); //fill an specific area
   g.flip();
 }
@@ -58,6 +66,7 @@ function PrintBtn1(boton){
 
 function PrintBtn2(boton){ 
  console.log("Pressed BTN2");
+ v_color_b_area=ChangeColorBannerArea(v_color_b_area);
  if (v_clicks=='0') PrintAreas();
  PrintUserInput("Button2"); 
  v_clicks++;
@@ -75,7 +84,7 @@ function PrintHelp(){
   g.setFontVector(v_font1size).drawString("Click Right area", 30,160);
   g.setFontVector(v_font1size).drawString("Click Middle area", 30,175);
   g.setFontVector(v_font1size).drawString("Press Button1 ", 30,190);
-  g.setFontVector(v_font1size).drawString("Press Button2 ", 30,205);
+  g.setFontVector(v_font1size).drawString("Press Button2 for colors", 30,205);
   g.setFontVector(v_font1size).drawString("Press Button3 to Quit", 30,220);  
   g.flip();    
 } 
@@ -84,17 +93,26 @@ function PrintAreas(){
   console.log("********************************");
   console.log("Log: *** Print Areas in screen");
   ClearActiveArea();     
-  g.setColor(0,1,0);  //green    
+  g.setColor(v_color_lines);
   g.drawLine(1, 140, 1, 200);//side border
   g.drawLine(239, 140, 239, 200);//side border
-  g.drawLine(120, 140, 120, 200);//middle of areas
-  g.setFontVector(v_font1size).drawString("BTN1", 195,45);
-  g.setFontVector(v_font1size).drawString("BTN2", 195,125);
-  g.setFontVector(v_font1size).drawString("Quit<--", 130,225);  
+  g.drawLine(120, 100, 120, 135);//middle separation  top
+  g.drawLine(120, 170, 120, 200);//middle separation  bottom
+  
+  //BTN1 
+  g.setFontVector(v_font1size).drawString("Color<-", 130,125);  
+  //BTN13
+  g.setFontVector(v_font1size).drawString("Quit<-", 135,225);  
+  g.flip();  
+  g.setColor(0,1,0);  //green    
+  g.setFontVector(v_font1size).drawString("BTN1", 195,45);  
+  
+  g.setFontVector(v_font1size).drawString("BTN2", 195,125);  
+  
   g.setFontVector(v_font1size).drawString("BTN3", 195,225);  
-  g.setFontVector(v_font1size).drawString("Middle area", 80,120);
-  g.setFontVector(v_font1size).drawString("Left area", 15, 165);
-  g.setFontVector(v_font1size).drawString("Right area", 140,165);    
+  g.setFontVector(v_font1size).drawString("Middle area", 80,155);
+  g.setFontVector(v_font1size).drawString("Left area", 15, 185);
+  g.setFontVector(v_font1size).drawString("Right area", 140,185);    
   g.flip();    
 }  
 
@@ -127,7 +145,7 @@ function UserInput(){
  Bangle.loadWidgets();
  Bangle.drawWidgets();
  //optional line below widgets area
- g.setColor(0,1,0);  //green    
+ g.setColor(v_color_lines);    
  g.drawLine(60, 30, 180, 30); 
  g.flip(); 
  //end optional
