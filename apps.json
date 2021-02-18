@@ -2757,7 +2757,7 @@
   "shortName":"Test User Input",
   "icon": "app.png",  
   "version":"0.03",
-  "description": "Basic app to test the bangle.js input interface. It displays the user action in text or an "on/off" switch image for swipe movement.",
+  "description": "Basic app to test the bangle.js input interface. It displays the user action in text or an on/off switch image for swipe movement.",
   "readme": "README.md",
   "tags": "input,interface,buttons,touch",
   "storage": [
