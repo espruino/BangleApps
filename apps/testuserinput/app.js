@@ -17,8 +17,8 @@ function ChangeColorBannerArea(v_color){
  if (v_color=='#111111') v_color='#f3f3f1';
   else if (v_color=='#f3f3f1') v_color='#51504f';
     else if (v_color=='#51504f') v_color=0x7800;// Maroon
-	  else if (v_color==0x7800) v_color='#111111';
-	  return (v_color);  
+      else if (v_color==0x7800) v_color='#111111';
+      return (v_color);  
 }
 function ClearBannerArea(){
   g.setColor(v_color_b_area); 
