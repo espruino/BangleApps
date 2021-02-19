@@ -102,8 +102,8 @@ if (swipedir=='  <---') {
 function PrintUserInput(boton){
   console.log("Pressed touch/BTN",boton);
   if (v_clicks=='0') {
-	  PrintAreas();
-	  v_clicks=1;
+      PrintAreas();
+      v_clicks=1;
   }
   ClearBannerArea();
   
@@ -122,7 +122,7 @@ function PrintBtn1(boton){
  console.log("Pressed BTN1");
  if (v_clicks=='0'){ 
       PrintAreas();
-	  v_clicks=1; 
+      v_clicks=1; 
  }
  PrintUserInput("Button1"); 
  
@@ -132,8 +132,8 @@ function PrintBtn2(boton){
  console.log("Pressed BTN2");
  v_color_b_area=ChangeColorBannerArea(v_color_b_area);
  if (v_clicks=='0'){
-	 PrintAreas();
-	 v_clicks=1; 
+     PrintAreas();
+     v_clicks=1; 
  }
  PrintUserInput("Button2");  
 }
