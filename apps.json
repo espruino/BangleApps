@@ -53,7 +53,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -139,7 +139,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.18",
+    "version":"0.20",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -363,7 +363,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.16",
+    "version":"0.17",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -1153,7 +1153,7 @@
     "name": "Commandline-Clock",
     "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.11",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell",
     "type":"clock",
@@ -1341,7 +1341,7 @@
     "name": "Active Pedometer",
     "shortName":"Active Pedometer",
     "icon": "app.png",
-    "version":"0.06",
+    "version":"0.09",
     "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
     "tags": "outdoors,widget",
      "readme": "README.md",
@@ -1553,7 +1553,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.07",
+    "version": "0.09",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -1638,7 +1638,7 @@
     "name": "Round clock with seconds,  minutes and date",
     "shortName":"Round Clock",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
@@ -2139,7 +2139,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2153,8 +2153,6 @@
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
       {"name":"ped.face.js","url":"ped.js"},
-      {"name":"gps.face.js","url":"gps.js"},
-      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2187,6 +2185,23 @@
     ],
     "data": [
       {"wildcard":"accelrec.?.csv" }
+    ]
+  },
+  { "id": "accellog",
+    "name": "Acceleration Logger",
+    "shortName":"Accel Log",
+    "icon": "app.png",
+    "version":"0.01",
+    "interface": "interface.html",
+    "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
+    "tags": "outdoor",
+    "readme": "README.md",
+    "storage": [
+      {"name":"accellog.app.js","url":"app.js"},
+      {"name":"accellog.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"wildcard":"accellog.?.csv" }
     ]
   },
   {
@@ -2298,7 +2313,7 @@
     "name": "File manager",
     "shortName":"FileManager",
     "icon": "icons8-filing-cabinet-48.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
     "tags": "tools",
     "readme": "README.md",
@@ -2655,7 +2670,7 @@
   "name": "Low power GPS Service",
   "shortName":"GPS Service",
   "icon": "gpsservice.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "low power GPS widget",
   "tags": "gps outdoors navigation",
   "readme": "README.md",
@@ -2691,6 +2706,93 @@
   "storage": [
     {"name":"intervals.app.js","url":"intervals.app.js"},
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
+  ]
+},
+{ "id": "planetarium",
+  "name": "Planetarium",
+  "shortName":"Planetarium",
+  "icon": "planetarium.png",
+  "readme": "README.md",
+  "version":"0.03",
+  "description": "Planetarium showing up to 500 stars using the watch location and time",
+  "tags": "",
+  "storage": [
+    {"name":"planetarium.app.js","url":"planetarium.app.js"},
+    {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
+    {"name":"planetarium.const.csv","url":"planetarium.const.csv"},
+    {"name":"planetarium.extra.csv","url":"planetarium.extra.csv"},
+    {"name":"planetarium.settings.js","url":"settings.js"},
+    {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
+  ],
+  "data":[
+    {"name":"planetarium.json"}
+  ]
+},
+{ "id": "tapelauncher",
+  "name": "Tape Launcher",
+  "icon": "icon.png",
+  "version":"0.02",
+  "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
+  "readme": "README.md",
+  "tags": "tool,system,launcher",
+  "type":"launch",
+  "storage": [
+    {"name":"tapelauncher.app.js","url":"app.js"},
+    {"name":"tapelauncher.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "oblique",
+  "name": "Oblique Strategies",
+  "icon": "eno.png",
+  "version": "0.01",
+  "description": "Oblique Strategies for creativity. Copied from Brian Eno.",
+  "tags": "tool",
+  "storage": [
+    {"name":"oblique.app.js","url":"app.js"},
+    {"name":"oblique.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "testuserinput",
+  "name": "Test User Input",
+  "shortName":"Test User Input",
+  "icon": "app.png",
+  "readme": "README.md",
+  "version":"0.02",
+  "description": "Basic app to test the bangle.js input interface. It displays the result in text or a switch on/off image.",
+  "tags": "input,interface,buttons,touch",
+  "storage": [
+    {"name":"testuserinput.app.js","url":"app.js"},
+    {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "gpssetup",
+  "name": "GPS Setup",
+  "shortName":"GPS Setup",
+  "icon": "gpssetup.png",
+  "version":"0.02",
+  "description": "Configure the GPS power options and store them in the GPS nvram",
+  "tags": "gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpssetup","url":"gpssetup.js"},
+    {"name":"gpssetup.settings.js","url":"settings.js"},
+    {"name":"gpssetup.settings.json","url":"settings.json"},
+    {"name":"gpssetup.app.js","url":"app.js"},
+    {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "walkersclock",
+  "name": "Walkers Clock",
+  "shortName":"Walkers Clock",
+  "icon": "walkersclock48.png",
+  "version":"0.01",
+  "description": "A larg font watch, displays steps, can switch GPS on/off, displays grid reference",
+  "type":"clock",
+  "tags": "clock, gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"walkersclock.app.js","url":"app.js"},
+    {"name":"walkersclock.img","url":"icon.js","evaluate":true}
   ]
 }
 ]

@@ -111,6 +111,7 @@ function trackLineToObject(l, hasFileName) {
   var t = l.trim().split(",");
   var n = hasFileName ? 1 : 0;
   var o = {
+    invalid : t.length < 8,
     date : new Date(parseInt(t[n+0])),
     lat : parseFloat(t[n+1]),
     lon : parseFloat(t[n+2]),
@@ -140,7 +141,7 @@ function downloadTrack(trackid, callback) {
 function getTrackList() {
   Util.showModal("Loading Tracks...");
   domTracks.innerHTML = "";
-  Puck.eval(`require("Storage").list(/banglerun_.*\\1/).map(fn=>{fn=fn.slice(0,-1);var f=require("Storage").open(fn,"r");f.readLine();return fn+","+f.readLine()})`,trackLines=>{
+  Puck.eval(`require("Storage").list(/banglerun_.*\\x01/).map(fn=>{fn=fn.slice(0,-1);var f=require("Storage").open(fn,"r");f.readLine();return fn+","+f.readLine()})`,trackLines=>{
     var html = `<div class="container">
   <div class="columns">\n`;
     trackLines.forEach(l => {
@@ -149,9 +150,9 @@ function getTrackList() {
         <div class="column col-12">
           <div class="card-header">
             <div class="card-title h5">Track ${track.filename}</div>
-            <div class="card-subtitle text-gray">${track.date.toString().substr(0,24)}</div>
+            <div class="card-subtitle text-gray">${track.invalid ? "No Data":track.date.toString().substr(0,24)}</div>
           </div>
-          <div class="card-image">
+          ${track.invalid?``:`<div class="card-image">
             <iframe
               width="100%"
               height="250"
@@ -159,10 +160,10 @@ function getTrackList() {
               src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxTcwrrVOh2piz7EmIs1Xn4FsRxJWeVH4&q=${track.lat},${track.lon}&zoom=10" allowfullscreen>
             </iframe>
           </div>
-          <div class="card-body"></div>
-          <div class="card-footer">
+          <div class="card-body"></div>`}
+          <div class="card-footer">${track.invalid?``:`
             <button class="btn btn-primary" trackid="${track.filename}" task="downloadkml">Download KML</button>
-            <button class="btn btn-primary" trackid="${track.filename}" task="downloadgpx">Download GPX</button>
+            <button class="btn btn-primary" trackid="${track.filename}" task="downloadgpx">Download GPX</button>`}
             <button class="btn btn-default" trackid="${track.filename}" task="delete">Delete</button>
           </div>
         </div>

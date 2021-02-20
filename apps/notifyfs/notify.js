@@ -37,7 +37,9 @@ function fitWords(text,rows,width) {
    src : string // optional source name
    body : string // optional body text
    icon : string // optional icon (image string)
-   render function(y) // function callback to render
+   render : function(y) // function callback to render
+   bgColor : int/string // optional background color (default black)
+   titleBgColor : int/string // optional background color for title (default black)
  }
 */
 exports.show = function(options) {
@@ -53,11 +55,11 @@ exports.show = function(options) {
     w = 240,
     h = size;
   // clear screen
-  g.clear(1);
+  g.setColor(options.bgColor||0).fillRect(0,0,g.getWidth(),g.getHeight());
   // top bar
   if (options.title||options.src) {
     const title = options.title || options.src
-    g.setColor(0x39C7).fillRect(x, y, x+w-1, y+30);
+    g.setColor(options.titleBgColor||0x39C7).fillRect(x, y, x+w-1, y+30);
     g.setColor(-1).setFontAlign(-1, -1, 0).setFont("6x8", 3);
     g.drawString(title.trim().substring(0, 13), x+5, y+3);
     if (options.title && options.src) {
