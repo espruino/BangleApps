@@ -3,7 +3,7 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 */
-var v = '1.20';
+var v = '1.21';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -25,7 +25,6 @@ var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulato
 var wp = {};        // Waypoint to use for distance from cur position.
 
 function nxtWp(inc){
-  if (cfg.modeA) return;
   cfg.wp+=inc;
   loadWp();
 }
@@ -98,6 +97,14 @@ function drawFix(dat) {
   
 }
 
+function drawClock() {
+  if (!canDraw) return;
+  buf.clear();
+  drawTime();
+  g.reset();
+  g.drawImage(img,0,40);
+}
+
 function drawPrimary(n,u) {
  
   // Primary Display
@@ -146,11 +153,21 @@ function drawSecondary(n,u) {
 }
 
 function drawTime() {
-  var x = 0;
-  var y = 160;
+  var x, y;
+  
+  if ( cfg.modeA == 2 ) {
+    x=120;
+    y=80;
+    buf.setFontAlign(0,0); //left, bottom
+    buf.setFontVector(80);
+  }
+  else {
+    x = 0;
+    y = 160;
+    buf.setFontAlign(-1,1);
+    buf.setFont("7x11Numeric7Seg", 2);
+  }
 
-  buf.setFont("7x11Numeric7Seg", 2);
-  buf.setFontAlign(-1,1); //left, bottom
 
   buf.setColor(0);
   buf.drawString(time,x,y);
@@ -161,7 +178,7 @@ function drawTime() {
 
 function drawWP() {
   var nm = wp.name;
-  if ( nm == undefined || nm == 'NONE' || cfg.modeA ) nm = '';
+  if ( nm == undefined || nm == 'NONE' || cfg.modeA != 0 ) nm = '';
   
   buf.setFontAlign(-1,1); //left, bottom
   buf.setColor(2);  
@@ -180,15 +197,14 @@ function drawSats(sats) {
   buf.setFontVector(20);
   buf.setColor(2); 
   
-  if ( cfg.modeA ) buf.drawString("A",240,140);
-  else buf.drawString("D",240,140);
-    
-  if ( showMax && cfg.modeA ) {
-    buf.setFontAlign(0,1); //centre, bottom
-    buf.drawString("MAX",120,164);
+  if ( cfg.modeA == 1 ) {
+    buf.drawString("A",240,140);
+    if ( showMax ) {
+      buf.setFontAlign(0,1); //centre, bottom
+      buf.drawString("MAX",120,164);
+    }
   }
-  
-
+  if ( cfg.modeA == 0 ) buf.drawString("D",240,140);
 }
 
 function onGPS(fix) {
@@ -239,7 +255,7 @@ function onGPS(fix) {
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   }
       
-  if ( cfg.modeA ) {
+  if ( cfg.modeA == 1 ) {
     if ( showMax ) 
       drawFix({
         speed:max.spd,
@@ -258,8 +274,8 @@ function onGPS(fix) {
         age:age,
         fix:lf.fix
       }); // Show speed/altitude
-   }
-  else {
+  }
+  if ( cfg.modeA == 0 )  {
     // Show speed/distance
     if ( di <= 0 ) 
       drawFix({
@@ -280,6 +296,10 @@ function onGPS(fix) {
         fix:lf.fix
       });
   }
+  if ( cfg.modeA == 2 )  {
+    // Large clock
+    drawClock();
+  }
 
 }
 
@@ -288,12 +308,12 @@ function setButtons(){
   // Spd+Dist : Select next waypoint
   setWatch(function(e) {
     var dur = e.time - e.lastTime;
-    if ( cfg.modeA ) {
+    if ( cfg.modeA == 1 ) {
       // Spd+Alt mode - Switch between fix and MAX
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
       else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
     }
-    else nxtWp(1);  // Spd+Dist mode - Select next waypoint
+    if ( cfg.modeA == 0 ) nxtWp(1);  // Spd+Dist mode - Select next waypoint
     onGPS(lf);
   }, BTN1, { edge:"falling",repeat:true});
   
@@ -315,7 +335,8 @@ function setButtons(){
   
   // Toggle between alt or dist
   setWatch(function(e){
-    cfg.modeA = !cfg.modeA;
+    cfg.modeA = cfg.modeA+1;
+    if ( cfg.modeA > 2 ) cfg.modeA = 0;
     savSettings();
     onGPS(lf); 
   }, BTN3, {repeat:true,edge:"falling"});
@@ -373,7 +394,7 @@ cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0 = [D], 1 = [A]
+cfg.modeA = cfg.modeA||0;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 
