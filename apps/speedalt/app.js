@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 1.21 : Third mode large clock display
 */
-var v = '1.21';
+var v = '1.22';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -102,6 +102,7 @@ function drawClock() {
   if (!canDraw) return;
   buf.clear();
   drawTime();
+  drawWP();
   g.reset();
   g.drawImage(img,0,40);
 }
@@ -158,8 +159,8 @@ function drawTime() {
   
   if ( cfg.modeA == 2 ) {
     x=120;
-    y=80;
-    buf.setFontAlign(0,0); //left, bottom
+    y=0;
+    buf.setFontAlign(0,-1); 
     buf.setFontVector(80);
   }
   else {
@@ -179,13 +180,21 @@ function drawTime() {
 
 function drawWP() {
   var nm = wp.name;
-  if ( nm == undefined || nm == 'NONE' || cfg.modeA != 0 ) nm = '';
-  
-  buf.setFontAlign(-1,1); //left, bottom
+  if ( nm == undefined || nm == 'NONE' || cfg.modeA ==1 ) nm = '';
   buf.setColor(2);  
-  buf.setFontVector(20);
-  buf.drawString(nm.substring(0,6),77,160);  
- 
+  
+  if ( cfg.modeA == 0 ) {  // dist mode
+    buf.setFontAlign(-1,1); //left, bottom
+    buf.setFontVector(20);
+    buf.drawString(nm.substring(0,6),72,160);  
+  }
+
+  if ( cfg.modeA == 2 ) {  // clock/large mode
+    buf.setFontAlign(0,1); //left, bottom
+    buf.setFontVector(55);
+    buf.drawString(nm.substring(0,6),120,160);  
+  }
+  
 }
 
 function drawSats(sats) {
@@ -314,7 +323,7 @@ function setButtons(){
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
       else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
     }
-    if ( cfg.modeA == 0 ) nxtWp(1);  // Spd+Dist mode - Select next waypoint
+    else nxtWp(1);  // Spd+Dist or Clock mode - Select next waypoint
     onGPS(lf);
   }, BTN1, { edge:"falling",repeat:true});
   
