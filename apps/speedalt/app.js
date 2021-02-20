@@ -2,6 +2,7 @@
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
+1.21 : Third mode large clock display
 */
 var v = '1.21';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
@@ -454,4 +455,4 @@ else {
 Bangle.on('GPS', onGPS);
 
 setButtons();
-setInterval(updateClock, 30000);
+setInterval(updateClock, 10000);
