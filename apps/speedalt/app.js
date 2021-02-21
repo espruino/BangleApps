@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 1.21 : Third mode large clock display
 */
-var v = '1.23';
+var v = '1.24';
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -108,7 +108,7 @@ function drawClock() {
 }
 
 function drawPrimary(n,u) {
- 
+  
   // Primary Display
   
   var s=40;    // Font size
@@ -116,7 +116,7 @@ function drawPrimary(n,u) {
   
   if ( l <= 7 ) s=48;
   if ( l <= 6 ) s=55;
-  if ( l <= 5 ) s=68;
+  if ( l <= 5 ) s=66;
   if ( l <= 4 ) s=85;
   if ( l <= 3 ) s=110;
         
@@ -124,11 +124,13 @@ function drawPrimary(n,u) {
   buf.setColor(1);  
   buf.setFontVector(s);
   buf.drawString(n,110,0);
-    
+ 
+ 
+  
     // Primary Units
   buf.setFontAlign(1,-1,3); //right
   buf.setColor(2);  
-  buf.setFontVector(25);
+  buf.setFontVector(35);
   buf.drawString(u,210,0);  
 }
 
@@ -150,7 +152,7 @@ function drawSecondary(n,u) {
   // Secondary Units
   buf.setFontAlign(-1,1); //left, bottom
   buf.setColor(2);  
-  buf.setFontVector(25);
+  buf.setFontVector(30);
   buf.drawString(u,s,135);
 }
 
