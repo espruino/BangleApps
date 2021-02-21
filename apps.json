@@ -2855,5 +2855,17 @@
   "storage": [
     {"name":"widhrt.wid.js","url":"widget.js"}
   ]
+},
+{ "id": "countdowntimer",
+  "name" : "Countdown Timer",
+  "icon": "countdowntimer.png",
+  "version": "0.01",
+  "description": "A simple countdown timer with a focus on usability",
+  "tags": "timer, tool",
+  "readme": "README.md",
+  "storage": [
+    {"name": "countdowntimer.app.js", "url": "countdowntimer.js"},
+    {"name": "countdowntimer.img", "url": "countdowntimer-icon.js", "evaluate": true}
+  ]
 }
 ]
