@@ -10,3 +10,4 @@
 0.10: Removed kalman filtering to allow distance log to work
       Only log data every 5 seconds (not 1 sec)
       Don't create a file until the first log entry is ready
+      Add labels for buttons
