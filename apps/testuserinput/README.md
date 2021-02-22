@@ -4,12 +4,19 @@ This very basic app, allows to *test the bangle.js input interface*, and display
 
 
 Launcher icon
+
 ![](testUserInput_ss0.png)
+
 1st screen - Help/Intro
+
 ![](testUserInput_ss1.png)
+
 2nd screen - interface and a result
+
 ![](testUserInput_ss2.png)
+
 3rd screen - interface and a result
+
 ![](testUserInput_ss3.png)
 
 
