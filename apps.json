@@ -2793,8 +2793,8 @@
   "name": "Test User Input",
   "shortName":"Test User Input",
   "icon": "app.png",
-  "version":"0.03",
-  "description": "Basic app to test the bangle.js input interface. It displays the user action in text or an on/off switch image for swipe movement.",
+  "version":"0.04",
+  "description": "Basic app to test the bangle.js input interface. It displays the user action in text, an  option round element or an on/off switch image for swipe movements.",
   "readme": "README.md",
   "tags": "input,interface,buttons,touch",
   "storage": [
@@ -2866,6 +2866,19 @@
   "storage": [
     {"name": "countdowntimer.app.js", "url": "countdowntimer.js"},
     {"name": "countdowntimer.img", "url": "countdowntimer-icon.js", "evaluate": true}
+  ]
+},
+{ "id": "helloworld",
+  "name": "hello,world!",
+  "shortName":"helloworld",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A cross cultural hello world!/hola mundo! app with colors and languages",
+  "readme": "README.md",
+  "tags": "input,interface,buttons,touch",
+  "storage": [
+    {"name":"helloworld.app.js","url":"app.js"},
+    {"name":"helloworld.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
