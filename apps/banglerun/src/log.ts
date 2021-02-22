@@ -8,19 +8,23 @@ function initLog(state: AppState): void {
   const time = datetime.substr(9, 6);
   const filename = `banglerun_${date}_${time}`;
   state.file = require('Storage').open(filename, 'w');
-  state.file.write([
-    'timestamp',
-    'latitude',
-    'longitude',
-    'altitude',
-    'duration',
-    'distance',
-    'heartrate',
-    'steps',
-  ].join(',') + '\n');
+  state.fileWritten = false;
 }
 
 function updateLog(state: AppState): void {
+  if (!state.fileWritten) {
+    state.file.write([
+      'timestamp',
+      'latitude',
+      'longitude',
+      'altitude',
+      'duration',
+      'distance',
+      'heartrate',
+      'steps',
+    ].join(',') + '\n');
+    state.fileWritten = true;
+  }
   state.file.write([
     Date.now().toFixed(0),
     state.lat.toFixed(6),
