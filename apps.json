@@ -2880,5 +2880,17 @@
     {"name":"helloworld.app.js","url":"app.js"},
     {"name":"helloworld.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "widcom",
+  "name": "Compass Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
+  "tags": "widget, compass",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widcom.wid.js","url":"widget.js"}
+  ]
 }
 ]
