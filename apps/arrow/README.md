@@ -10,7 +10,7 @@ rolled (rotation around the N-S) axis. *Even with compensation, it
 would be beyond foolish to rely solely on this app for any serious
 navigational purpose.*
 
-![](screenshot.jpg)
+![](arrow_screenshot.jpg)
 
 ## Calibration
 
