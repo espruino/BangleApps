@@ -35,3 +35,7 @@ charge.
 
 *BTN3* - invokes calibration ( can be cancelled if pressed accidentally)
 
+
+## Acknowledgement
+
+This app is based in the work done by [jeffmer](https://github.com/jeffmer/JeffsBangleAppsDev)
