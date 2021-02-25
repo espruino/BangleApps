@@ -5,6 +5,7 @@ var pal_bb = new Uint16Array([0x0000,0x07ff],0,1); // black, blue
 // having 3 2 color pallette keeps the memory requirement lower
 var buf1 = Graphics.createArrayBuffer(160,160,1, {msb:true});
 var buf2 = Graphics.createArrayBuffer(80,40,1, {msb:true});
+var arrow_img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
 function flip1(x,y) {
   g.drawImage({width:160,height:160,bpp:1,buffer:buf1.buffer, palette:pal_by},x,y);
@@ -46,17 +47,15 @@ function clear_previous() {
 
 function drawCompass(course) {
   if(!candraw) return;
-  if (Math.abs(previous.course - course) < 12) return; // reduce number of draws due to compass jitter
+  if (Math.abs(previous.course - course) < 9) return; // reduce number of draws due to compass jitter
   previous.course = course;
   
-  var img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
-
   buf1.setColor(1);
   buf1.fillCircle(80,80,79,79);
   buf1.setColor(0);
   buf1.fillCircle(80,80,69,69);
   buf1.setColor(1);
-  buf1.drawImage(img, 80, 80, {scale:3,  rotate:radians(course)} );
+  buf1.drawImage(arrow_img, 80, 80, {scale:3,  rotate:radians(course)} );
   flip1(40, 30);
 }
 
