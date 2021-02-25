@@ -2894,10 +2894,10 @@
   ]
 },
 { "id": "arrow",
-  "name": "Arrow",
+  "name": "Arrow Compass",
   "icon": "arrow.png",
   "type":"app",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Moving arrow compass that points North, shows heading, with tilt correction. Based on jeffmer's Navigation Compass",
   "tags": "tool,outdoors",
   "readme": "README.md",
