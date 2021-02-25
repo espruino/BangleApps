@@ -2915,7 +2915,7 @@
   "readme": "README.md",
   "interface":"waypoints.html",
   "storage": [
-    {"name":"waypointer.app.js","url":"app.min.js"},
+    {"name":"waypointer.app.js","url":"app.js"},
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
   ]
