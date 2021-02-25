@@ -34,8 +34,10 @@ const GPS_SATS = "gps_sats";
 const GPS_RUNNING = "gps_running";
 
 const GDISP_OS = "g_osref";
+const GDISP_LATLN = "g_latln";
 const GDISP_SPEED = "g_speed";
 const GDISP_ALT = "g_alt";
+const GDISP_COURSE = "g_course";
 
 const Y_TIME = 40;
 const Y_ACTIVITY = 120;
@@ -138,13 +140,20 @@ function drawActivity() {
     case GDISP_OS:
       activityStr = ref;
       break;
+    case GDISP_LATLN:
+      g.setFontVector(26);
+      activityStr = last_fix.lat.toFixed(4) + ", " + last_fix.lon.toFixed(4);
+      break;
     case GDISP_SPEED:
       speed = last_fix.speed;
       speed = speed.toFixed(1);
-      activityStr = speed + "kph" 
+      activityStr = speed + "kph"; 
       break;
     case GDISP_ALT:
       activityStr = last_fix.alt + "m";
+      break;
+    case GDISP_COURSE:
+      activityStr = last_fix.course;
       break;
     }
 
@@ -203,11 +212,17 @@ function drawInfo() {
     case GDISP_OS:
       str = "GPS: Grid";
       break;
+    case GDISP_LATLN:
+      str = "GPS: Lat,Lon";
+      break;
     case GDISP_SPEED:
       str = "GPS: Speed";
       break;
     case GDISP_ALT:
       str = "GPS: Alt";
+      break;
+    case GDISP_COURSE:
+      str = "GPS: Course";
       break;
     }
     drawModeLine(str,col);
@@ -280,6 +295,12 @@ function changeInfoMode() {
       gpsDisplay = GDISP_ALT;
       break;
     case GDISP_ALT:
+      gpsDisplay = GDISP_COURSE;
+      break;
+    case GDISP_COURSE:
+      gpsDisplay = GDISP_LATLN;
+      break;
+    case GDISP_LATLN:
     default:
       gpsDisplay = GDISP_OS;
       break;
