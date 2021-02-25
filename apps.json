@@ -2908,7 +2908,7 @@
 },
 { "id": "waypointer",
   "name": "Way Pointer",
-  "icon": "icon.png",
+  "icon": "waypointer.png",
   "version":"0.01",
   "description": "Navigate to a waypoint using the GPS for bearing and compass to point way, uses the same waypoint interface as GPS Navigation",
   "tags": "tool,outdoors,gps",
