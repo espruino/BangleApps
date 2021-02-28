@@ -31,7 +31,7 @@
     },
     "Find Phone" : function() { E.showMenu(findPhone); },
     "Record HRM" : {
-      value: settings().hrm,
+      value: !!settings().hrm,
       format: v => v?"Yes":"No",
       onchange: v => updateSetting('hrm', v)
     },

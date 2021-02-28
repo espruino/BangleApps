@@ -20,3 +20,4 @@
 0.18: Added reporting of step count and HRM (new Gadgetbridges can now log this)
 0.19: Support for call incoming/start/end
 0.20: Reduce memory usage
+0.21: Fix HRM setting
