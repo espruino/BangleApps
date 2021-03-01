@@ -43,7 +43,7 @@ function clear_previous() {
   previous.dst = '-';
   previous.wp_name = '-';
   previous.course = -999;
-};
+}
 
 function drawCompass(course) {
   if(!candraw) return;
