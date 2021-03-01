@@ -2,6 +2,7 @@ var pal1color = new Uint16Array([0x0000,0xFFC0],0,1);
 var pal2color = new Uint16Array([0x0000,0xffff],0,1);
 var buf1 = Graphics.createArrayBuffer(160,160,1,{msb:true});
 var buf2 = Graphics.createArrayBuffer(80,40,1,{msb:true});
+var img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
 var bearing=0; // always point north
 var heading = 0;
@@ -26,8 +27,6 @@ function radians(d) {
 
 function drawCompass(course) {
   if(!candraw) return;
-
-  var img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
   buf1.setColor(1);
   buf1.fillCircle(80,80,79,79);
