@@ -1,4 +1,4 @@
-# Moving Arrow Compass
+# Arrow Compass
 
 A variation of jeffmer's Navigation Compass.  The compass points
 North and shows the current heading.
