@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.21 : Third mode large clock display
 1.02 : add smoothing with kalman filter
 */
-var v = '1.02c';
+var v = '1.02d';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -170,8 +170,8 @@ var KalmanFilter = (function () {
 
 }());
 
-var spdFilter = new KalmanFilter({R: 0.01, Q: 3});
-var altFilter = new KalmanFilter({R: 0.01, Q: 10});
+var spdFilter = new KalmanFilter({R: 0.01, Q: 2});
+var altFilter = new KalmanFilter({R: 0.01, Q: 2});
 
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
@@ -189,6 +189,7 @@ var tmrLP;            // Timer for delay in switching to low power after screen 
 var max = {};
 max.spd = 0;
 max.alt = 0;
+max.n = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 
@@ -375,7 +376,7 @@ function drawSats(sats) {
   buf.setFontAlign(1,1); //right, bottom
   buf.drawString(sats,240,160);  
 
-  buf.setFontVector(40);
+  buf.setFontVector(30);
   buf.setColor(2); 
   
   if ( cfg.modeA == 1 ) {
@@ -418,6 +419,7 @@ function onGPS(fix) {
       lf.speed = spdFilter.filter(lf.speed);
       lf.alt = altFilter.filter(lf.alt);
       lf.smoothed = 1;
+      if ( max.n <= 15 ) max.n++;
     }
   
     
@@ -431,12 +433,12 @@ function onGPS(fix) {
     
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
-    if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
+    if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
 
     // Altitude
     al = lf.alt;
     al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
-    if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
+    if (parseFloat(al) > parseFloat(max.alt) && max.n > 15 ) max.alt = parseFloat(al);
 
     // Distance to waypoint
     di = distance(lf,wp);
