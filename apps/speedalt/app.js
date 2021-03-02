@@ -3,9 +3,9 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 1.21 : Third mode large clock display
-1.25 : add smoothing with kalman filter
+1.01b : add smoothing with kalman filter
 */
-var v = '1.25';
+var v = '1.01b';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -171,7 +171,7 @@ var KalmanFilter = (function () {
 }());
 
 var spdFilter = new KalmanFilter({R: 0.01, Q: 3});
-var altFilter = new KalmanFilter({R: 0.01, Q: 3});
+var altFilter = new KalmanFilter({R: 0.01, Q: 10});
 
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
@@ -575,7 +575,7 @@ function savSettings() {
 function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !gpssetup ) return;
-  gpssetup.setPowerMode({power_mode:m})
+  gpssetup.setPowerMode({power_mode:m});
 }
 
 // =Main Prog
@@ -593,10 +593,6 @@ cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
 cfg.modeA = cfg.modeA||0;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
-
-
-cfg.spd = 1;
-cfg.spd_unit = 'kph';
 
 loadWp();
 
