@@ -3,9 +3,9 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 1.21 : Third mode large clock display
-1.01b : add smoothing with kalman filter
+1.02 : add smoothing with kalman filter
 */
-var v = '1.02b';
+var v = '1.02c';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -415,14 +415,8 @@ function onGPS(fix) {
 
     // Smooth data
     if ( lf.smoothed !== 1 ) {
-      
-      print('u: '+lf.speed+'  '+lf.alt);
-      
       lf.speed = spdFilter.filter(lf.speed);
       lf.alt = altFilter.filter(lf.alt);
-
-      print('f: '+lf.speed+'  '+lf.alt);
-
       lf.smoothed = 1;
     }
   
