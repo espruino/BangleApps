@@ -70,8 +70,18 @@ exports.show = function(options) {
   options = options || {};
   if (options.on===undefined) options.on = true;
   id = ("id" in options)?options.id:null;
-  let size = options.size || 80;
-  if (size>80) {size = 80}
+  let w = 240;
+  let text = [];
+  let size = options.size;
+  if (options.body) {
+    const bh = (size || 80) - 20,
+          maxRows=Math.floor((bh-4)/8), // font=6x8
+          maxChars=Math.floor(w/6)-2;
+    text=fitWords(options.body, maxRows, maxChars);
+    // set size based on newlines
+    if (!size) size = 28 + (text.match(/\n/g).length+1)*8;
+  } else size = 20;
+  if (size>80) size = 80;
   const oldMode = Bangle.getLCDMode();
   // TODO: throw exception if double-buffered?
   // TODO: throw exception if size>80?
@@ -80,7 +90,6 @@ exports.show = function(options) {
   // drawing area
   let x = 0,
     y = 320-size,
-    w = 240,
     h = size,
     b = y+h-1, r = x+w-1; // bottom,right
   g.setClipRect(x,y, r,b);
@@ -99,20 +108,18 @@ exports.show = function(options) {
       g.setFont("6x8", 1).setFontAlign(1, 1, 0);
       g.drawString(options.src.substring(0, 10), g.getWidth()-23,y+18);
     }
-    y += 20;h -= 20;
   }
+  // we always need to pad because of the curved edges of the screen
+  y += 20; h -= 20;
   if (options.icon) {
     let i = options.icon, iw;
     g.drawImage(i, x,y+4);
-    if ("string"==typeof i) {iw = i.charCodeAt(0)}
-    else {iw = i[0]}
+    if ("string"==typeof i) iw = i.charCodeAt(0);
+    else iw = i[0];
     x += iw;w -= iw;
   }
   // body text
   if (options.body) {
-    const maxRows=Math.floor((h-4)/8), // font=6x8
-      maxChars=Math.floor(w/6)-2,
-      text=fitWords(options.body, maxRows, maxChars);
     g.setColor(-1).setFont("6x8", 1).setFontAlign(-1, -1, 0).drawString(text, x+6,y+4);
   }
 
@@ -133,7 +140,7 @@ exports.show = function(options) {
   }
   anim();
   Bangle.on("touch", exports.hide);
-}
+};
 
 /**
  options = {
@@ -152,4 +159,4 @@ exports.hide = function(options) {
     if (pos < 0) setTimeout(anim, 10);
   }
   anim();
-}
+};
