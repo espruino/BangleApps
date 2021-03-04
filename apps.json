@@ -584,7 +584,7 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Measure your heart rate and see live sensor data",
     "tags": "health",
     "storage": [
