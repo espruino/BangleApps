@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.21 : Third mode large clock display
 1.02 : add smoothing with kalman filter
 */
-var v = '1.02d';
+var v = '1.02e';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -170,7 +170,7 @@ var KalmanFilter = (function () {
 
 }());
 
-var spdFilter = new KalmanFilter({R: 0.01, Q: 2});
+var spdFilter = new KalmanFilter({R: 0.1, Q: 1});
 var altFilter = new KalmanFilter({R: 0.01, Q: 2});
 
 
