@@ -402,6 +402,14 @@ function showClockMenu() {
   });
   if (clockApps.length === 0) {
     clockMenu["No Clocks Found"] = () => { };
+  } else {
+    clockMenu[`${settings.clock === " random" ? "* " : ""}random`] = () => {
+      if (settings.clock !== " random") {
+        settings.clock = " random";
+        updateSettings();
+        showMainMenu();
+      }
+    };
   }
   return E.showMenu(clockMenu);
 }
