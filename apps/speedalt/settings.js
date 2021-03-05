@@ -70,6 +70,7 @@
   
   const kalMenu = {
     '': {'title': 'Kalman Filter'},
+    '< Back': function() { E.showMenu(appMenu); },
     'Speed' : {
     value : settings.spdFilt,
     format : v => v?"On":"Off",
