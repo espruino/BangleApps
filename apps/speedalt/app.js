@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.21 : Third mode large clock display
 1.02 : add smoothing with kalman filter
 */
-var v = '1.02e';
+var v = '1.02g';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -169,9 +169,6 @@ var KalmanFilter = (function () {
   return KalmanFilter;
 
 }());
-
-var spdFilter = new KalmanFilter({R: 0.1, Q: 1});
-var altFilter = new KalmanFilter({R: 0.01, Q: 2});
 
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
@@ -416,8 +413,8 @@ function onGPS(fix) {
 
     // Smooth data
     if ( lf.smoothed !== 1 ) {
-      lf.speed = spdFilter.filter(lf.speed);
-      lf.alt = altFilter.filter(lf.alt);
+      if ( cfg.spdFilt ) lf.speed = spdFilter.filter(lf.speed);
+      if ( cfg.altFilt ) lf.alt = altFilter.filter(lf.alt);
       lf.smoothed = 1;
       if ( max.n <= 15 ) max.n++;
     }
@@ -589,6 +586,12 @@ cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
 cfg.modeA = cfg.modeA||0;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
+
+cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
+cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
+
+if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
+if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
 
 loadWp();
 

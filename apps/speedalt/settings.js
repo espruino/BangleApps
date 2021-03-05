@@ -29,13 +29,15 @@
     settings.colour = c;
     writeSettings();
   }
+
   
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
     '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
-    'Colours' : function() { E.showMenu(colMenu); }/*,
+    'Colours' : function() { E.showMenu(colMenu); },
+    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
@@ -66,7 +68,21 @@
     'Night' : function() { setColour(2); }
   };
   
+  const kalMenu = {
+    '': {'title': 'Kalman Filter'},
+    'Speed' : {
+    value : settings.spdFilt,
+    format : v => v?"On":"Off",
+    onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
+    },
+    'Altitude' : {
+    value : settings.altFilt,
+    format : v => v?"On":"Off",
+    onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
+    }
+  };
+
   
   E.showMenu(appMenu);
 
-})
+});
