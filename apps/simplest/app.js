@@ -5,6 +5,7 @@ function draw() {
   var time = da[4].substr(0,5);
 
   g.reset();
+  g.clearRect(0, 30, 239, 99);
   g.setFontAlign(0, -1);
   g.setFont("Vector", 80);
   g.drawString(time, 120, 40);
