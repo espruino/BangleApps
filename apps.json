@@ -226,6 +226,19 @@
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
     ]
   },
+  { "id": "numeralclock",
+    "name": "Numeral Clock",
+    "icon": "numeralclock.png",
+    "version":"0.01",
+    "description": "Smooth sweep secondhand with single hour numeral",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"numeralclock.app.js","url":"numeralclock.js"},
+      {"name":"numeralclock.img","url":"numeralclock-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
