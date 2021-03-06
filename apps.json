@@ -226,17 +226,17 @@
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
     ]
   },
-  { "id": "numeralclock",
-    "name": "Numeral Clock",
-    "icon": "numeralclock.png",
+  { "id": "sweepclock",
+    "name": "Sweep Clock",
+    "icon": "sweepclock.png",
     "version":"0.01",
     "description": "Smooth sweep secondhand with single hour numeral",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
-      {"name":"numeralclock.app.js","url":"numeralclock.js"},
-      {"name":"numeralclock.img","url":"numeralclock-icon.js","evaluate":true}
+      {"name":"sweepclock.app.js","url":"sweepclock.js"},
+      {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
     ]
   },
   { "id": "imgclock",
