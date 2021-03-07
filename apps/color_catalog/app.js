@@ -126,8 +126,7 @@ function DrawBangleButtons(){
             g.flip();
             
             v_acolorpos=page*(v_boxes_row*2);
-            
-            ;
+                        
             console.log("page"+cont_page+"arraypos"+v_acolorpos);
         for (cont_row=0;cont_row<2;cont_row++){
             console.log("row"+cont_row);
