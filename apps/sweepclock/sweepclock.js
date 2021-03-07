@@ -4,13 +4,13 @@ const screen_center_y = g.getHeight()/2;
 require("FontCopasetic40x58Numeric").add(Graphics);
 
 class Hand {
-  constructor(centerX, 
-               centerY, 
-               length, 
-               tolerance, 
+  constructor(centerX,
+               centerY,
+               length,
+               tolerance,
                draw_test,
-               red, 
-               green, 
+               red,
+               green,
                blue){
     this.centerX = centerX;
     this.centerY = centerY;
@@ -131,17 +131,18 @@ class ThickHand {
   }
 }
 
+let force_redraw = false;
 let seconds_hand = new Hand(screen_center_x, 
                            screen_center_y,
                            100,
                             0,
                             (angle, last_draw_time) => false,
-                           0.5,0.5,0.5);
+                           1.0,0.0,0.0);
 
 let minutes_hand_redraw = function(angle, last_draw_time){
-  return seconds_hand.angle > angle &&
+  return force_redraw || (seconds_hand.angle > angle &&
     Math.abs(seconds_hand.angle - angle) <2*Math.PI/25 &&
-    new Date().getTime() - last_draw_time.getTime() > 500;
+    new Date().getTime() - last_draw_time.getTime() > 500);
 };
 
 let minutes_hand = new Hand(screen_center_x, 
@@ -152,9 +153,9 @@ let minutes_hand = new Hand(screen_center_x,
                            1.0,1.0,1.0);
 
 let hour_hand_redraw = function(angle_from, angle_to, last_draw_time){
-  return seconds_hand.angle >= angle_from &&
+  return force_redraw || (seconds_hand.angle >= angle_from &&
     seconds_hand.angle <= angle_to  &&
-    new Date().getTime() - last_draw_time.getTime() > 500;
+    new Date().getTime() - last_draw_time.getTime() > 500);
 };
 let hours_hand = new ThickHand(screen_center_x, 
                            screen_center_y,
@@ -171,6 +172,7 @@ function draw_clock(){
   draw_seconds(date);
   draw_mins(date);
   draw_hours(date);
+  force_redraw = false;
 }
 
 function draw_seconds(date){
@@ -244,7 +246,7 @@ function clearTimers(){
 }
 
 function startTimers(){
-  setTimeout(scheduleDrawClock,1000);
+  setTimeout(scheduleDrawClock,100);
   draw_clock();
 }
 
@@ -256,6 +258,7 @@ function scheduleDrawClock(){
 
 function reset_clock(){
   g.clear();
+  force_redraw = true;
 }
 
 Bangle.on('lcdPower', (on) => {
