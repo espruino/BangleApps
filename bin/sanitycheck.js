@@ -229,7 +229,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
-      else ERROR(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+      else WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
     }
   })
 }

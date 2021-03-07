@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -139,7 +139,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.20",
+    "version":"0.21",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -584,7 +584,7 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Measure your heart rate and see live sensor data",
     "tags": "health",
     "storage": [
@@ -1590,7 +1590,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.09",
+    "version": "0.10",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -2822,8 +2822,8 @@
   "name": "Walkers Clock",
   "shortName":"Walkers Clock",
   "icon": "walkersclock48.png",
-  "version":"0.02",
-  "description": "A larg font watch, displays steps, can switch GPS on/off, displays grid reference",
+  "version":"0.03",
+  "description": "A large font watch, displays steps, can switch GPS on/off, displays grid reference",
   "type":"clock",
   "tags": "clock, gps, tools, outdoors",
   "readme": "README.md",
@@ -2856,6 +2856,18 @@
     {"name":"widhrt.wid.js","url":"widget.js"}
   ]
 },
+{ "id": "countdowntimer",
+  "name" : "Countdown Timer",
+  "icon": "countdowntimer.png",
+  "version": "0.01",
+  "description": "A simple countdown timer with a focus on usability",
+  "tags": "timer, tool",
+  "readme": "README.md",
+  "storage": [
+    {"name": "countdowntimer.app.js", "url": "countdowntimer.js"},
+    {"name": "countdowntimer.img", "url": "countdowntimer-icon.js", "evaluate": true}
+  ]
+},
 { "id": "helloworld",
   "name": "hello,world!",
   "shortName":"helloworld",
@@ -2867,6 +2879,45 @@
   "storage": [
     {"name":"helloworld.app.js","url":"app.js"},
     {"name":"helloworld.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "widcom",
+  "name": "Compass Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
+  "tags": "widget, compass",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widcom.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "arrow",
+  "name": "Arrow Compass",
+  "icon": "arrow.png",
+  "type":"app",
+  "version":"0.02",
+  "description": "Moving arrow compass that points North, shows heading, with tilt correction. Based on jeffmer's Navigation Compass",
+  "tags": "tool,outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"arrow.app.js","url":"app.js"},
+    {"name":"arrow.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "waypointer",
+  "name": "Way Pointer",
+  "icon": "waypointer.png",
+  "version":"0.01",
+  "description": "Navigate to a waypoint using the GPS for bearing and compass to point way, uses the same waypoint interface as GPS Navigation",
+  "tags": "tool,outdoors,gps",
+  "readme": "README.md",
+  "interface":"waypoints.html",
+  "storage": [
+    {"name":"waypointer.app.js","url":"app.js"},
+    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
+    {"name":"waypointer.img","url":"icon.js","evaluate":true}
   ]
 }
 ]
