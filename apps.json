@@ -2793,7 +2793,7 @@
   "name": "Test User Input",
   "shortName":"Test User Input",
   "icon": "app.png",
-  "version":"0.04",
+  "version":"0.05",
   "description": "Basic app to test the bangle.js input interface. It displays the user action in text, an  option round element or an on/off switch image for swipe movements.",
   "readme": "README.md",
   "tags": "input,interface,buttons,touch",
@@ -2869,10 +2869,10 @@
   ]
 },
 { "id": "helloworld",
-  "name": "hello,world!",
-  "shortName":"helloworld",
+  "name": "hello, world!",
+  "shortName":"hello world",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A cross cultural hello world!/hola mundo! app with colors and languages",
   "readme": "README.md",
   "tags": "input,interface,buttons,touch",
@@ -2920,7 +2920,32 @@
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
   ]
 },
-
+{ "id": "color_catalog",
+  "name": "Colors Catalog",
+  "shortName":"Colors Catalog",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
+  "readme": "README.md",
+  "tags": "Color, input,buttons,touch,UI",
+  "storage": [
+    {"name":"color_catalog.app.js","url":"app.js"},
+    {"name":"color_catalog.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "UI4swatch",
+  "name": "UI 4 swatch",
+  "shortName":"UI 4 swatch",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A UI/UX for espruino smartwatches, displays dinamically calc. x,y coordinates.",
+  "readme": "README.md",
+  "tags": "Color, input,buttons,touch,UI",
+  "storage": [
+    {"name":"UI4swatch.app.js","url":"app.js"},
+    {"name":"UI4swatch.img","url":"app-icon.js","evaluate":true}
+  ]
+},
 { "id": "simplest",
   "name": "Simplest Clock",
   "icon": "simplest.png",
