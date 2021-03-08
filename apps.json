@@ -2919,5 +2919,32 @@
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
   ]
-}
+},
+
+{ "id": "simplest",
+  "name": "Simplest Clock",
+  "icon": "simplest.png",
+  "version":"0.01",
+  "description": "The simplest working clock, acts as a tutorial piece",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"simplest.app.js","url":"app.js"},
+    {"name":"simplest.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "stepo",
+  "name": "Stepometer Clock",
+  "icon": "stepo.png",
+  "version":"0.01",
+  "description": "A large font watch, displays step count in a doughnut guage and warns of low battery",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"stepo.app.js","url":"app.js"},
+    {"name":"stepo.img","url":"icon.js","evaluate":true}
+  ]
+} 
 ]
