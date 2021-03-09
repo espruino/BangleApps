@@ -1,8 +1,8 @@
 /*
 Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
-1.16 : Use new GPS settings module
-1.21 : Third mode large clock display
+1.00 : Use new GPS settings module
+1.01 : Third mode large clock display
 1.02 : add smoothing with kalman filter
 */
 var v = '1.02g';
