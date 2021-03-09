@@ -1,2 +1,2 @@
 0.01: First version
-0.02: Speeded up first draw, ensure timer is stopped and started depending on screen event
+0.02: Speeded up draw, start stop timer, long press BTN2 to switch to the launcher

@@ -108,9 +108,40 @@ Bangle.on('lcdPower', function(on) {
     stopTimer();
 });
 
+let firstPress = 0;
+var pressTimer;
+
+// start a timer and buzz whenn held long enough
+function firstPressed() {
+  firstPress = getTime();
+  pressTimer = setInterval(longPressCheck, 1500);
+}
+
+// if you release too soon there is no buzz as timer is cleared
+function thenReleased() {
+  var dur = getTime() - firstPress;
+  if (pressTimer) {
+    clearInterval(pressTimer);
+    pressTimer = undefined;
+  }
+  if ( dur >= 1.5 ) Bangle.showLauncher();
+}
+
+// when you feel the buzzer you know you have done a long press
+function longPressCheck() {
+  Bangle.buzz();
+  if (pressTimer) {
+    clearInterval(pressTimer);
+    pressTimer = undefined;
+  }
+}
+
+// make BTN require a long press (1.5 seconds) to switch to launcher
+setWatch(firstPressed, BTN2,{repeat:true,edge:"rising"});
+setWatch(thenReleased, BTN2,{repeat:true,edge:"falling"});
+
 g.reset();
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 startTimer();
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
