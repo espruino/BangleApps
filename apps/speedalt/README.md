@@ -1,14 +1,14 @@
 # GPS Speed, Altimeter and Distance to Waypoint
 
-You can switch between two display modes. One showing speed and altitude (A) and one showing speed and distance to waypoint (D). 
+You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint. 
 
-Within each display mode one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
+Within the [A]ltitude and [D]istance displays modes one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
 ## Buttons and Controls
 
-BTN3 : Swaps the modes between Speed+[A]ltitude or Speed+[D]istance.
+BTN3 : Cycles the modes between Speed+[A]ltitude,  Speed+[D]istance and large Time/Waypoint
 
 ### [A]ltitude mode
 
@@ -20,9 +20,13 @@ BTN1 : Long press > 2 secs resets the recorded maximum values.
 
 BTN1 : Select next waypoint. Last fix distance from selected waypoint is displayed.
 
-### Both modes
+### Large mode
 
-BTN2 : Disables/Restores power saving timeout. Locks the screen on to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
+BTN1 : Select next waypoint.
+
+### All modes
+
+BTN2 : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
 BTN3 : Long press exit and return to watch.
 
@@ -31,6 +35,10 @@ BTN4 : Left Display Tap : Swaps which figure is in the large display. You can ha
 ## App Settings
 
 Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
+
+## Kalman Filter
+
+This filter smooths the altitude and the speed values and reduces these values 'jumping around' from one GPS fix to the next. The down side of this is that if these values change rapidly ( eg. a quick change in altitude ) then it can take a few GPS fixes for the values to move to the new vlaues. Disabling the Kalman filter in the settings will cause the raw values to be displayed from each GPS fix as they are found.
 
 ## Loss of fix
 
@@ -138,6 +146,6 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 
 Many thanks to Gordon Williams. Awesome job.
 
-Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development.
+Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development and Wouter Bulten for the Kalman filter code.
 
 
