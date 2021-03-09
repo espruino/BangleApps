@@ -3,8 +3,174 @@ Speed and Altitude [speedalt]
 Mike Bennett mike[at]kereru.com
 1.16 : Use new GPS settings module
 1.21 : Third mode large clock display
+1.02 : add smoothing with kalman filter
 */
-var v = '1.24';
+var v = '1.02g';
+
+/*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
+var KalmanFilter = (function () {
+  'use strict';
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  /**
+  * KalmanFilter
+  * @class
+  * @author Wouter Bulten
+  * @see {@link http://github.com/wouterbulten/kalmanjs}
+  * @version Version: 1.0.0-beta
+  * @copyright Copyright 2015-2018 Wouter Bulten
+  * @license MIT License
+  * @preserve
+  */
+  var KalmanFilter =
+  /*#__PURE__*/
+  function () {
+    /**
+    * Create 1-dimensional kalman filter
+    * @param  {Number} options.R Process noise
+    * @param  {Number} options.Q Measurement noise
+    * @param  {Number} options.A State vector
+    * @param  {Number} options.B Control vector
+    * @param  {Number} options.C Measurement vector
+    * @return {KalmanFilter}
+    */
+    function KalmanFilter() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref$R = _ref.R,
+          R = _ref$R === void 0 ? 1 : _ref$R,
+          _ref$Q = _ref.Q,
+          Q = _ref$Q === void 0 ? 1 : _ref$Q,
+          _ref$A = _ref.A,
+          A = _ref$A === void 0 ? 1 : _ref$A,
+          _ref$B = _ref.B,
+          B = _ref$B === void 0 ? 0 : _ref$B,
+          _ref$C = _ref.C,
+          C = _ref$C === void 0 ? 1 : _ref$C;
+
+      _classCallCheck(this, KalmanFilter);
+
+      this.R = R; // noise power desirable
+
+      this.Q = Q; // noise power estimated
+
+      this.A = A;
+      this.C = C;
+      this.B = B;
+      this.cov = NaN;
+      this.x = NaN; // estimated signal without noise
+    }
+    /**
+    * Filter a new value
+    * @param  {Number} z Measurement
+    * @param  {Number} u Control
+    * @return {Number}
+    */
+
+
+    _createClass(KalmanFilter, [{
+      key: "filter",
+      value: function filter(z) {
+        var u = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+        if (isNaN(this.x)) {
+          this.x = 1 / this.C * z;
+          this.cov = 1 / this.C * this.Q * (1 / this.C);
+        } else {
+          // Compute prediction
+          var predX = this.predict(u);
+          var predCov = this.uncertainty(); // Kalman gain
+
+          var K = predCov * this.C * (1 / (this.C * predCov * this.C + this.Q)); // Correction
+
+          this.x = predX + K * (z - this.C * predX);
+          this.cov = predCov - K * this.C * predCov;
+        }
+
+        return this.x;
+      }
+      /**
+      * Predict next value
+      * @param  {Number} [u] Control
+      * @return {Number}
+      */
+
+    }, {
+      key: "predict",
+      value: function predict() {
+        var u = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        return this.A * this.x + this.B * u;
+      }
+      /**
+      * Return uncertainty of filter
+      * @return {Number}
+      */
+
+    }, {
+      key: "uncertainty",
+      value: function uncertainty() {
+        return this.A * this.cov * this.A + this.R;
+      }
+      /**
+      * Return the last filtered measurement
+      * @return {Number}
+      */
+
+    }, {
+      key: "lastMeasurement",
+      value: function lastMeasurement() {
+        return this.x;
+      }
+      /**
+      * Set measurement noise Q
+      * @param {Number} noise
+      */
+
+    }, {
+      key: "setMeasurementNoise",
+      value: function setMeasurementNoise(noise) {
+        this.Q = noise;
+      }
+      /**
+      * Set the process noise R
+      * @param {Number} noise
+      */
+
+    }, {
+      key: "setProcessNoise",
+      value: function setProcessNoise(noise) {
+        this.R = noise;
+      }
+    }]);
+
+    return KalmanFilter;
+  }();
+
+  return KalmanFilter;
+
+}());
+
+
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
@@ -20,6 +186,7 @@ var tmrLP;            // Timer for delay in switching to low power after screen 
 var max = {};
 max.spd = 0;
 max.alt = 0;
+max.n = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 
@@ -206,7 +373,7 @@ function drawSats(sats) {
   buf.setFontAlign(1,1); //right, bottom
   buf.drawString(sats,240,160);  
 
-  buf.setFontVector(40);
+  buf.setFontVector(30);
   buf.setColor(2); 
   
   if ( cfg.modeA == 1 ) {
@@ -223,13 +390,14 @@ function onGPS(fix) {
   
  if ( emulator ) {
     fix.fix = 1;
-    fix.speed = 10;
-    fix.alt = 354;
+    fix.speed = 10 + (Math.random()*5);
+    fix.alt = 354 + (Math.random()*50);
     fix.lat = -38.92;
     fix.lon = 175.7613350;   
     fix.course = 245;
     fix.satellites = 12;
     fix.time = new Date();
+    fix.smoothed = 0;
   }
 
   var m;
@@ -240,7 +408,17 @@ function onGPS(fix) {
   var age = '---';
 
   if (fix.fix) lf = fix;
-  if (lf.fix) {
+
+    if (lf.fix) {
+
+    // Smooth data
+    if ( lf.smoothed !== 1 ) {
+      if ( cfg.spdFilt ) lf.speed = spdFilter.filter(lf.speed);
+      if ( cfg.altFilt ) lf.alt = altFilter.filter(lf.alt);
+      lf.smoothed = 1;
+      if ( max.n <= 15 ) max.n++;
+    }
+  
     
     // Speed
     if ( cfg.spd == 0 ) {
@@ -252,12 +430,12 @@ function onGPS(fix) {
     
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
-    if (parseFloat(sp) > parseFloat(max.spd) ) max.spd = parseFloat(sp);
+    if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
 
     // Altitude
     al = lf.alt;
     al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
-    if (parseFloat(al) > parseFloat(max.alt) ) max.alt = parseFloat(al);
+    if (parseFloat(al) > parseFloat(max.alt) && max.n > 15 ) max.alt = parseFloat(al);
 
     // Distance to waypoint
     di = distance(lf,wp);
@@ -390,7 +568,7 @@ function savSettings() {
 function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !gpssetup ) return;
-  gpssetup.setPowerMode({power_mode:m})
+  gpssetup.setPowerMode({power_mode:m});
 }
 
 // =Main Prog
@@ -409,6 +587,11 @@ cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
 cfg.modeA = cfg.modeA||0;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
+cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
+cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
+
+if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
+if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
 
 loadWp();
 
