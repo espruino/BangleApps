@@ -146,6 +146,6 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 
 Many thanks to Gordon Williams. Awesome job.
 
-Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development.
+Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development and Wouter Bulten for the Kalman filter code.
 
 
