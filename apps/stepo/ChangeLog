@@ -1,0 +1,2 @@
+0.01: First version
+0.02: Speeded up first draw, ensure timer is stopped and started depending on screen event

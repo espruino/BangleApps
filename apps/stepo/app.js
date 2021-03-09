@@ -1,6 +1,7 @@
 var pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
 var pal4red = new Uint16Array([0x0000,0xFFFF,0xF800,0xAFE5],0,2);   // b,w,red,greenyellow
 var buf = Graphics.createArrayBuffer(160,160,2,{msb:true});
+var intervalRefSec;
 
 function flip(x,y) {
  g.drawImage({width:160,height:160,bpp:2,buffer:buf.buffer, palette:pal4color}, x, y);
@@ -33,7 +34,7 @@ function drawSteps() {
   buf.setColor(3);   // green-yellow
 
   // draw guauge
-  for (i = startrot; i > midrot; i--) {
+  for (i = startrot; i > midrot; i -= 4) {
     x = cx + r * Math.sin(radians(i));
     y = cy + r * Math.cos(radians(i));
     buf.fillCircle(x,y,4);
@@ -42,7 +43,7 @@ function drawSteps() {
   buf.setColor(2); // grey
 
   // draw remainder of guage in grey
-  for (i = midrot; i > endrot; i--) {
+  for (i = midrot; i > endrot; i -= 4) {
     x = cx + r * Math.sin(radians(i));
     y = cy + r * Math.cos(radians(i));
     buf.fillCircle(x,y,4);
@@ -80,6 +81,15 @@ function getSteps() {
     return stepsWidget().getSteps();
   return "-";
 }
+    
+function startTimer() {
+  draw();
+  intervalRefSec = setInterval(draw, 15000);
+}
+
+function stopTimer() {
+  if(intervalRefSec) { intervalRefSec = clearInterval(intervalRefSec); }
+}
 
 function stepsWidget() {
   if (WIDGETS.activepedom !== undefined) {
@@ -92,13 +102,15 @@ function stepsWidget() {
 
 // handle switch display on by pressing BTN1
 Bangle.on('lcdPower', function(on) {
-  if (on) draw();
+  if (on)
+    startTimer();
+  else
+    stopTimer();
 });
 
 g.reset();
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-setInterval(draw, 15000); // refresh every 15s
-draw();
+startTimer();
 setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
