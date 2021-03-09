@@ -22,7 +22,7 @@ BTN1 : Select next waypoint. Last fix distance from selected waypoint is display
 
 ### Large mode
 
-BTN1 : Select next waypoint. Last fix distance from selected waypoint is displayed.
+BTN1 : Select next waypoint.
 
 ### All modes
 
