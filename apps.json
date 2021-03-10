@@ -2962,7 +2962,7 @@
 { "id": "stepo",
   "name": "Stepometer Clock",
   "icon": "stepo.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A large font watch, displays step count in a doughnut guage and warns of low battery",
   "tags": "clock",
   "type":"clock",
