@@ -400,7 +400,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.17",
+    "version":"0.18",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -2971,5 +2971,5 @@
     {"name":"stepo.app.js","url":"app.js"},
     {"name":"stepo.img","url":"icon.js","evaluate":true}
   ]
-} 
+}
 ]

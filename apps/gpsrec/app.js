@@ -44,6 +44,7 @@ function showMainMenu() {
       min: 1,
       max: 120,
       step: 1,
+      format: v=>v+"s",
       onchange: v => {
         settings.recording = false;
         settings.period = v;
