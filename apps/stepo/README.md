@@ -10,6 +10,7 @@ A large font watch, displays step count in a doughnut guage and warns of low bat
 - The guage show percentage of steps out of a goal of 10000 steps
 
 
+
 ![](screenshot1.jpg)
 
 - When the battery is less than 25% the doughnut turns red
@@ -17,8 +18,14 @@ A large font watch, displays step count in a doughnut guage and warns of low bat
 ![](screenshot2.jpg)
 
 
-# Notes
+## BTN2 Long press to start the launcher
 
+BTN2 is confiured to respond to a 1.5 second press in order to switch
+to the launcher App. Simply press and hold until you hear a buzz and
+release. This avoids accidently switching out of the watch app when
+clothing catches it.
+
+## Notes
 
 * Uses an arrayBuffer to prepare the doughnut guage. The arrayBuffer
   is 160*160 and is larger than required. The reason for this is that
