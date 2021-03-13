@@ -229,7 +229,7 @@
   { "id": "sweepclock",
     "name": "Sweep Clock",
     "icon": "sweepclock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Smooth sweep secondhand with single hour numeral",
     "tags": "clock",
     "type":"clock",
