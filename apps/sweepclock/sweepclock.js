@@ -63,8 +63,8 @@ class ThinHand extends Hand {
       g.drawLine(this.centerX, this.centerY, this.last_x, this.last_y);
       // Now draw the new hand line
       g.setColor(this.red,this.green,this.blue);
-      x2 = this.centerX + this.length*Math.cos(angle);
-      y2 = this.centerY + this.length*Math.sin(angle);
+      x2 = this.centerX + this.length*Math.sin(angle);
+      y2 = this.centerY - this.length*Math.cos(angle);
       g.setColor(this.red,this.green,this.blue);
       g.drawLine(this.centerX, this.centerY, x2, y2);
       // and store the last draw details for the next call
@@ -133,18 +133,18 @@ class ThickHand extends Hand {
       g.setColor(this.red,this.green,this.blue);
       // bottom left
       x1 = this.centerX + 
-        this.start_height*Math.cos(angle - this.delta_base);
-      y1 = this.centerY + this.start_height*Math.sin(angle - this.delta_base);
+        this.start_height*Math.sin(angle - this.delta_base);
+      y1 = this.centerY - this.start_height*Math.cos(angle - this.delta_base);
       // bottom right
       x2 = this.centerX + 
-        this.start_height*Math.cos(angle + this.delta_base);
-      y2 = this.centerY + this.start_height*Math.sin(angle + this.delta_base);
+        this.start_height*Math.sin(angle + this.delta_base);
+      y2 = this.centerY - this.start_height*Math.cos(angle + this.delta_base);
       // top right
-      x3 = this.centerX + this.length*Math.cos(angle + this.delta_top);
-      y3 = this.centerY + this.length*Math.sin(angle + this.delta_top);
+      x3 = this.centerX + this.length*Math.sin(angle + this.delta_top);
+      y3 = this.centerY - this.length*Math.cos(angle + this.delta_top);
       // top left
-      x4 = this.centerX + this.length*Math.cos(angle - this.delta_top);
-      y4 = this.centerY + this.length*Math.sin(angle - this.delta_top);
+      x4 = this.centerX + this.length*Math.sin(angle - this.delta_top);
+      y4 = this.centerY - this.length*Math.cos(angle - this.delta_top);
       g.setColor(this.red,this.green,this.blue);
       g.fillPoly([x1,y1,
                   x2,y2,
@@ -219,7 +219,7 @@ function draw_clock(){
 function draw_seconds(date){
   seconds = date.getSeconds() + date.getMilliseconds()/1000;
   seconds_frac = seconds / 60;
-  seconds_angle = 2*Math.PI*seconds_frac - (Math.PI/2.0);
+  seconds_angle = 2*Math.PI*seconds_frac;
   seconds_hand.moveTo(seconds_angle);
 }
 // drawing the minute includes the second and millisec to make the
@@ -227,20 +227,20 @@ function draw_seconds(date){
 function draw_mins(date,seconds_angle){
   mins = date.getMinutes() + date.getSeconds()/60 + date.getMilliseconds()/(60*1000);
   mins_frac = mins / 60;
-  mins_angle = 2*Math.PI*mins_frac - (Math.PI/2.0);
+  mins_angle = 2*Math.PI*mins_frac;
   redraw = minutes_hand.moveTo(mins_angle);
   if(redraw){
-    //console.log(date.getSeconds() + " redraw mins");
+    console.log("redraw mins");
   }
 }
 
 function draw_hours(date){
   hours = (date.getHours() % 12) + date.getMinutes()/60 + date.getSeconds()/3600;
   hours_frac = hours / 12;
-  hours_angle = 2*Math.PI*hours_frac - (Math.PI/2.0);
+  hours_angle = 2*Math.PI*hours_frac;
   redraw = hours_hand.moveTo(hours_angle);
   if(redraw){
-    console.log(date.getSeconds() + " redraw hours");
+    console.log("redraw hours");
   }
 }
 
@@ -277,7 +277,7 @@ class CopasetFont extends NumeralFont{
       7 : [30,58],
       8 : [40,58],
       9 : [40,58],
-      10: [50,40],
+      10: [50,58],
       11: [40,58],
       12: [40,58]
     };
@@ -285,7 +285,7 @@ class CopasetFont extends NumeralFont{
   getDimensions(hour){return this.dimension_map[hour];}
   hour_txt(hour){ return hour.toString(); }
   draw(hour_txt,x,y){
-    /* dim = [20,58];
+    /*dim = [50,58];
     g.setColor(0.5,0,0);
     g.fillPoly([x,y,
                   x+dim[0],y,
@@ -338,48 +338,151 @@ class RomanNumeralFont extends NumeralFont{
   }
 }
 
+function reifyasin(x,y,asin_angle){
+  if(x >= 0 && y >= 0){
+    return asin_angle;
+  } else if(x >= 0 && y < 0){
+    return Math.PI - asin_angle;
+  } else if(x < 0 && y < 0){
+    return Math.PI - asin_angle;
+  } else {
+    return 2*Math.PI + asin_angle;
+  }
+}
+
+function rebaseNegative(angle){
+  if(angle > Math.PI){
+    return angle - 2*Math.PI;
+  } else {
+    return angle;
+  }
+}
+
+function rebasePositive(angle){
+  if(angle < 0){
+    return angle + 2*Math.PI;
+  } else {
+    return angle;
+  }
+}
 
 class HourScriber {
-  constructor(numeral_font){
+  constructor(radius, numeral_font, draw_test){
+    this.radius = radius;
     this.numeral_font = numeral_font;
+    this.draw_test = draw_test;
     this.curr_numeral_font = numeral_font;
     this.curr_hour_x = -1;
     this.curr_hour_y = -1;
+    this.curr_hours = -1;
     this.curr_hour_str = null;
-    this.radius = 70;
+    this.last_draw_time = null;
   }
   setNumeralFont(numeral_font){
     this.numeral_font = numeral_font;
   }
   drawHour(hours){
-    hours_frac = hours / 12;
-    angle = 2*Math.PI*hours_frac;
-    dimensions = this.numeral_font.getDimensions(hours);
-    // we set the radial coord to be in the middle
-    // of the drawn text.
-    x = screen_center_x + this.radius*Math.sin(angle) - dimensions[0]/2;
-    y = screen_center_y - this.radius*Math.cos(angle) - dimensions[1]/2;
-    txt = this.numeral_font.hour_txt(hours);
-    if(this.curr_hour_str != null && this.curr_hour_str != txt){
+    changed = false;
+    if(this.curr_hours != hours || this.curr_numeral_font !=this.numeral_font){
       g.setColor(0,0,0);
       this.curr_numeral_font.draw(this.curr_hour_str,
                              this.curr_hour_x,
                              this.curr_hour_y);
       console.log("erasing old hour");
+      hours_frac = hours / 12;
+      angle = 2*Math.PI*hours_frac;
+      dimensions = this.numeral_font.getDimensions(hours);
+      // we set the radial coord to be in the middle
+      // of the drawn text.
+      width = dimensions[0];
+      height = dimensions[1];
+      delta_center_x = this.radius*Math.sin(angle) - width/2;
+      delta_center_y = this.radius*Math.cos(angle) + height/2;
+      this.curr_hour_x  = screen_center_x + delta_center_x;
+      this.curr_hour_y = screen_center_y - delta_center_y;
+      this.curr_hour_str = this.numeral_font.hour_txt(hours);
+      // now work out the angle of the beginning and the end of the 
+      // text box so we know when to redraw
+      // bottom left angle
+      x1 = delta_center_x;
+      y1 = delta_center_y;
+      r1 = Math.sqrt(x1*x1 + y1*y1);
+      angle1 = reifyasin(x1,y1,Math.asin(x1/r1));
+      // bottom right angle
+      x2 = delta_center_x;
+      y2 = delta_center_y - height;
+      r2 = Math.sqrt(x2*x2 + y2*y2);
+      angle2 = reifyasin(x2,y2,Math.asin(x2/r2));
+      // top left angle
+      x3 = delta_center_x + width;
+      y3 = delta_center_y;
+      r3 = Math.sqrt(x3*x3 + y3*y3);
+      angle3 = reifyasin(x3,y3, Math.asin(x3/r3));
+      // top right angle
+      x4 = delta_center_x + width;
+      y4 = delta_center_y - height;
+      r4 = Math.sqrt(x4*x4 + y4*y4);
+      angle4 = reifyasin(x4,y4,Math.asin(x4/r4));
+      if(Math.min(angle1,angle2,angle3,angle4) < Math.PI && Math.max(angle1,angle2,angle3,angle4) > 1.5*Math.PI){
+        angle1 = rebaseNegative(angle1);
+        angle2 = rebaseNegative(angle2);
+        angle3 = rebaseNegative(angle3);
+        angle3 = rebaseNegative(angle4);
+        this.angle_from = rebasePositive( Math.min(angle1,angle2,angle3,angle4) );
+        this.angle_to = rebasePositive( Math.max(angle1,angle2,angle3,angle4) ); 
+      } else {
+        this.angle_from = Math.min(angle1,angle2,angle3,angle4);
+        this.angle_to = Math.max(angle1,angle2,angle3,angle4); 
+      }
+      //console.log(angle1 + "/" + angle2  + " / " + angle3 + " / " + angle4);
+      //console.log( this.angle_from + " to " + this.angle_to);
+      this.curr_hours = hours;
+      this.curr_numeral_font = this.numeral_font;
+      changed = true;
     }
-    g.setColor(1,1,1);
-    this.numeral_font.draw(txt,x,y);
-    this.curr_numeral_font = this.numeral_font;
-    this.curr_hour_x = x;
-    this.curr_hour_y = y;
-    this.curr_hour_str = txt;
+    if(changed ||
+       this.draw_test(this.angle_from, this.angle_to, this.last_draw_time) ){
+      g.setColor(1,1,1);
+      this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
+      this.last_draw_time = new Date();
+      console.log("redraw digit");
+    }
   }
 }
 
 let numeral_fonts = [new CopasetFont(), new RomanNumeralFont()];
 let numeral_fonts_index = 0;
-let hour_scriber = new HourScriber(numeral_fonts[numeral_fonts_index]);
-
+/**
+* predicate for deciding when the digit has to be redrawn
+*/
+let hour_numeral_redraw = function(angle_from, angle_to, last_draw_time){ 
+  seconds_hand_angle = seconds_hand.angle; 
+  // we have to cope with the 12 problem where the 
+  // left side of the box has a value almost 2PI and the right
+  // side has a small positive value. The values are rebased so
+  // that they can be compared
+  if(angle_from > angle_to && angle_from > 1.5*Math.PI){
+    angle_from = angle_from - 2*Math.PI;
+    if(seconds_hand_angle > Math.PI)
+       seconds_hand_angle = seconds_hand_angle - 2*Math.PI;
+  } 
+  //console.log("initial:" + angle_from + "/" + angle_to  + " seconds " + seconds_hand_angle);
+   redraw = force_redraw ||
+     (seconds_hand_angle >= angle_from && seconds_hand_angle <= angle_to) ||
+     (minutes_hand.last_draw_time.getTime() > last_draw_time.getTime());
+  if(redraw){
+     //console.log(angle_from + "/" + angle_to  + " seconds " + seconds_hand_angle);
+  }
+  return redraw;
+};
+let hour_scriber = new HourScriber(70,
+                                   numeral_fonts[numeral_fonts_index],
+                                   hour_numeral_redraw
+                                  );
+/**
+* Called from button 1 to change the numerals that are
+* displayed on the clock face
+*/
 function next_font(){
   numeral_fonts_index = numeral_fonts_index + 1;
   if(numeral_fonts_index >= numeral_fonts.length){
@@ -392,7 +495,6 @@ function next_font(){
 
 function draw_hour_digit(date){
   hours = date.getHours() % 12;
-  //hours = date.getMinutes() % 12;
   mins = date.getMinutes();
   if(mins > 30){
     hours = (hours +1) % 12;
@@ -400,7 +502,6 @@ function draw_hour_digit(date){
   if(hours == 0){
     hours = 12;
   }
-  //hours = 1;
   hour_scriber.drawHour(hours);
 }
 
