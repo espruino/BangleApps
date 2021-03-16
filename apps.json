@@ -2971,5 +2971,47 @@
     {"name":"stepo.app.js","url":"app.js"},
     {"name":"stepo.img","url":"icon.js","evaluate":true}
   ]
+},
+{ "id": "gbmusic",
+  "name": "Gadgetbridge Music Controls",
+  "shortName":"Music Controls",
+  "icon": "icon.png",
+  "version":"0.01",
+  "description": "Control the music on your Gadgetbridge-connected phone",
+  "tags": "tools,bluetooth,gadgetbridge,music",
+  "type":"app",
+  "allow_emulator": false,
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbmusic.app.js","url":"app.js"},
+    {"name":"gbmusic.settings.js","url":"settings.js"},
+    {"name":"gbmusic.wid.js","url":"widget.js"},
+    {"name":"gbmusic.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gbmusic.json"},
+    {"name":"gbmusic.load.json"}
+  ]
+},
+{
+  "id": "battleship",
+  "name":"Battleship",
+  "icon":"battleship-icon.png",
+  "version": "0.01",
+  "readme": "README.md",
+  "description": "The classic game of battleship",
+  "tags": "game",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "battleship.app.js",
+      "url": "battleship.js"
+    },
+    {
+      "name": "battleship.img",
+      "url": "battleship-icon.js",
+      "evaluate": true
+    }
+  ]
 }
 ]
