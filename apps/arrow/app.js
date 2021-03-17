@@ -1,19 +1,17 @@
 var pal1color = new Uint16Array([0x0000,0xFFC0],0,1);
 var pal2color = new Uint16Array([0x0000,0xffff],0,1);
-var buf1 = Graphics.createArrayBuffer(160,160,1,{msb:true});
+var buf1 = Graphics.createArrayBuffer(128,128,1,{msb:true});
 var buf2 = Graphics.createArrayBuffer(80,40,1,{msb:true});
-var img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
-
+var intervalRef;
 var bearing=0; // always point north
 var heading = 0;
+var oldHeading = 0;
 var candraw = false;
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 
-Bangle.setLCDTimeout(30);
-
 function flip1(x,y) {
- g.drawImage({width:160,height:160,bpp:1,buffer:buf1.buffer, palette:pal1color},x,y);
- buf1.clear();
+  g.drawImage({width:128,height:128,bpp:1,buffer:buf1.buffer, palette:pal1color},x,y);
+  buf1.clear();
 }
 
 function flip2(x,y) {
@@ -25,18 +23,32 @@ function radians(d) {
   return (d*Math.PI) / 180;
 }
 
-function drawCompass(course) {
+// takes 32ms
+function drawCompass(hd) {
   if(!candraw) return;
-
-  buf1.setColor(1);
-  buf1.fillCircle(80,80,79,79);
-  buf1.setColor(0);
-  buf1.fillCircle(80,80,69,69);
-  buf1.setColor(1);
-  buf1.drawImage(img, 80, 80, {scale:3,  rotate:radians(course)} );
-  flip1(40, 30);
+  if (Math.abs(hd - oldHeading) < 2) return 0;
+  var t1 = getTime();
+  hd=hd*Math.PI/180;
+  var p = [0, 1.1071, Math.PI/4, 2.8198, 3.4633, 7*Math.PI/4 , 5.1760];
+  
+  // using polar cordinates, 64,64 is the offset from the 0,0 origin
+  var poly = [
+    64+60*Math.sin(hd+p[0]),       64-60*Math.cos(hd+p[0]),
+    64+44.7214*Math.sin(hd+p[1]),  64-44.7214*Math.cos(hd+p[1]),
+    64+28.2843*Math.sin(hd+p[2]),  64-28.2843*Math.cos(hd+p[2]),
+    64+63.2455*Math.sin(hd+p[3]),  64-63.2455*Math.cos(hd+p[3]),
+    64+63.2455*Math.sin(hd+p[4]),  64-63.2455*Math.cos(hd+p[4]),
+    64+28.2843*Math.sin(hd+p[5]),  64-28.2843*Math.cos(hd+p[5]),
+    64+44.7214*Math.sin(hd+p[6]),  64-44.7214*Math.cos(hd+p[6])
+  ];
+      
+  buf1.fillPoly(poly);
+  flip1(56, 56);
+  var t = Math.round((getTime() - t1)*1000);
+  LED1.write((t > 100));
 }
 
+// stops violent compass swings and wobbles, takes 3ms
 function newHeading(m,h){ 
     var s = Math.abs(m - h);
     var delta = (m>h)?1:-1;
@@ -48,6 +60,7 @@ function newHeading(m,h){
     return hd;
 }
 
+// takes approx 7ms
 function tiltfixread(O,S){
   var start = Date.now();
   var m = Bangle.getCompass();
@@ -66,7 +79,6 @@ function tiltfixread(O,S){
   return psi;
 }
 
-// Note actual mag is 360-m, error in firmware
 function reading() {
   var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
   heading = newHeading(d,heading);
@@ -74,6 +86,7 @@ function reading() {
   if (dir < 0) dir += 360;
   if (dir > 360) dir -= 360;
   drawCompass(dir);  // we want compass to show us where to go
+  oldHeading = dir;
   buf2.setColor(1);
   buf2.setFontAlign(-1,-1);
   buf2.setFont("Vector",38);
@@ -114,12 +127,12 @@ function docalibrate(e,first){
   function action(b){
     if (b) {
       buf1.setColor(1);
-      buf1.setFont("Vector", 30);
+      buf1.setFont("Vector", 20);
       buf1.setFontAlign(0,-1);
-      buf1.drawString("Figure 8s",80, 40);
-      buf1.drawString("to",80, 80);
-      buf1.drawString("Calibrate",80, 120);
-      flip1(40,40);
+      buf1.drawString("Figure 8s",64, 0);
+      buf1.drawString("to",64, 40);
+      buf1.drawString("Calibrate",64, 80);
+      flip1(56,56);
 
       calibrate().then((r)=>{
         require("Storage").write("magnav.json",r);
@@ -142,14 +155,12 @@ function docalibrate(e,first){
     E.showPrompt(msg,{title:title,buttons:{"Start":true,"Cancel":false}}).then(action);
 }
 
-var intervalRef;
-
 function startdraw(){
   g.clear();
   g.setColor(1,1,1);
   Bangle.drawWidgets();
   candraw = true;
-  intervalRef = setInterval(reading,200);
+  intervalRef = setInterval(reading,500);
 }
 
 function stopdraw() {
