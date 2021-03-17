@@ -127,12 +127,12 @@ function docalibrate(e,first){
   function action(b){
     if (b) {
       buf1.setColor(1);
-      buf1.setFont("Vector", 30);
+      buf1.setFont("Vector", 20);
       buf1.setFontAlign(0,-1);
-      buf1.drawString("Figure 8s",80, 40);
-      buf1.drawString("to",80, 80);
-      buf1.drawString("Calibrate",80, 120);
-      flip1(40,40);
+      buf1.drawString("Figure 8s",64, 0);
+      buf1.drawString("to",64, 40);
+      buf1.drawString("Calibrate",64, 80);
+      flip1(56,56);
 
       calibrate().then((r)=>{
         require("Storage").write("magnav.json",r);
