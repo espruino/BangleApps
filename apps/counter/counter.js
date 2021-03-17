@@ -43,6 +43,7 @@ g.drawString('Tap right or BTN1 to increase\nTap left or BTN3 to decrease\nPress
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+updateScreen();
 
 // TODO: Enable saving counts to file
 // Add small watch
