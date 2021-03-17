@@ -1,9 +1,8 @@
 var counter = 0;
 
-g.setColor(0xFFFF);
-
 function updateScreen() {
   g.clearRect(0, 50, 250, 150);
+  g.setColor(0xFFFF);
   g.setFont("Vector",40).setFontAlign(0,0);
   g.drawString(Math.floor(counter), g.getWidth()/2, 100);
   g.drawString('-', 45, 100);
@@ -46,5 +45,4 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // TODO: Enable saving counts to file
-// Does not work if widgets are not visible
 // Add small watch
