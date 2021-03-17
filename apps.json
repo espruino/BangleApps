@@ -2623,7 +2623,7 @@
 { "id": "lazyclock",
   "name": "Lazy Clock",
   "icon": "lazyclock.png",
-  "version":"0.01",
+  "version":"0.02",
   "readme": "README.md",
   "description": "Tells the time, roughly",
   "tags": "clock",
