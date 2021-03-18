@@ -1,4 +1,5 @@
 (function(){
+  if (!Bangle.isGPSOn) return; // old firmware
   var img = E.toArrayBuffer(atob("GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="));
   
   function draw() {

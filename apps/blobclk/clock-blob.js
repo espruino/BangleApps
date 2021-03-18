@@ -86,9 +86,9 @@ function clearTimers() {
 }
 function startTimers() {
   g.clear();
+  redraw();
   Bangle.drawWidgets();
   intervalRef = setInterval(redraw,1000);
-  redraw();
 }
 Bangle.loadWidgets();
 startTimers();
