@@ -1,15 +1,15 @@
 var pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
 var pal4red = new Uint16Array([0x0000,0xFFFF,0xF800,0xAFE5],0,2);   // b,w,red,greenyellow
-var buf = Graphics.createArrayBuffer(160,160,2,{msb:true});
+var buf = Graphics.createArrayBuffer(120,120,2,{msb:true});
 var intervalRefSec;
 
 function flip(x,y) {
- g.drawImage({width:160,height:160,bpp:2,buffer:buf.buffer, palette:pal4color}, x, y);
+ g.drawImage({width:120,height:120,bpp:2,buffer:buf.buffer, palette:pal4color}, x, y);
  buf.clear();
 }
 
 function flip_red(x,y) {
- g.drawImage({width:160,height:160,bpp:2,buffer:buf.buffer, palette:pal4red}, x, y);
+ g.drawImage({width:120,height:120,bpp:2,buffer:buf.buffer, palette:pal4red}, x, y);
  buf.clear();
 }
 
@@ -19,8 +19,8 @@ function radians(a) {
 
 function drawSteps() {
   var i = 0;
-  var cx = 80;
-  var cy = 75;
+  var cx = 60;
+  var cy = 60;
   var r = 56;
   var steps = getSteps();
   var percent = steps / 10000;
@@ -53,13 +53,13 @@ function drawSteps() {
   buf.setColor(1); // white
   buf.setFont("Vector", 24);
   buf.setFontAlign(0,0);
-  buf.drawString(steps, 80, cy);
+  buf.drawString(steps, cx, cy);
 
   // change the remaining color to RED if battery is below 25%
   if (E.getBattery() > 25) 
-    flip(40,100);
+    flip(60,115);
   else
-    flip_red(40,100);
+    flip_red(60,115);
 }
 
 function draw() {
