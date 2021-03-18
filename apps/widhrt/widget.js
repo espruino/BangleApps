@@ -1,4 +1,5 @@
 (function(){
+  if (!Bangle.isHRMOn) return; // old firmware
   var img = E.toArrayBuffer(atob("FhaBAAAAAAAAAAAAAcDgD8/AYeGDAwMMDAwwADDAAMOABwYAGAwAwBgGADAwAGGAAMwAAeAAAwAAAAAAAAAAAAA="));
   
   function draw() {
