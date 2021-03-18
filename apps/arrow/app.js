@@ -27,7 +27,6 @@ function radians(d) {
 function drawCompass(hd) {
   if(!candraw) return;
   if (Math.abs(hd - oldHeading) < 2) return 0;
-  var t1 = getTime();
   hd=hd*Math.PI/180;
   var p = [0, 1.1071, Math.PI/4, 2.8198, 3.4633, 7*Math.PI/4 , 5.1760];
   
@@ -44,8 +43,6 @@ function drawCompass(hd) {
       
   buf1.fillPoly(poly);
   flip1(56, 56);
-  var t = Math.round((getTime() - t1)*1000);
-  LED1.write((t > 100));
 }
 
 // stops violent compass swings and wobbles, takes 3ms
