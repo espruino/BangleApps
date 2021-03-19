@@ -92,7 +92,7 @@ class ThickHand extends Hand {
                red,
                green,
                blue,
-               start_height,
+               base_height,
                thickness){
     this.centerX = centerX;
     this.centerY = centerY;
@@ -101,9 +101,16 @@ class ThickHand extends Hand {
     this.green = green;
     this.blue = blue;
     this.thickness = thickness;
-    this.start_height = start_height;
+    this.base_height = base_height;
+    // angle from the center to the top corners of the rectangle
     this.delta_top = Math.atan(thickness/(2*length));
-    this.delta_base = Math.atan(thickness/(2*start_height));
+    // angle from the center to the bottom corners of the rectangle
+    this.delta_base = Math.atan(thickness/(2*base_height));
+    // the radius that the bottom corners of the rectangle move through
+    this.vertex_radius_base = Math.sqrt( (thickness*thickness/4) + base_height * base_height);
+    // the radius that the top corners of the rectangle move through
+    this.vertex_radius_top = Math.sqrt( (thickness*thickness/4) + length * length);
+    // last records the last plotted values (so we don't have to keep recalculating
     this.last_x1 = centerX;
     this.last_y1 = centerY;
     this.last_x2 = centerX;
@@ -112,7 +119,10 @@ class ThickHand extends Hand {
     this.last_y3 = centerY;
     this.last_x4 = centerX;
     this.last_y4 = centerY;
+    // The change in angle from the last plotted angle before we actually redraw
     this.tolerance = tolerance;
+    // predicate test that is called if the hand is not going to redraw to see
+    // if there is an externally defined reason for redrawing (like another hand)
     this.draw_test = draw_test;
     this.angle = -1;
     this.last_draw_time = null;
@@ -132,19 +142,19 @@ class ThickHand extends Hand {
                  ]);
       g.setColor(this.red,this.green,this.blue);
       // bottom left
-      x1 = this.centerX + 
-        this.start_height*Math.sin(angle - this.delta_base);
-      y1 = this.centerY - this.start_height*Math.cos(angle - this.delta_base);
+      x1 = this.centerX +
+        this.vertex_radius_base*Math.sin(angle - this.delta_base);
+      y1 = this.centerY - this.vertex_radius_base*Math.cos(angle - this.delta_base);
       // bottom right
-      x2 = this.centerX + 
-        this.start_height*Math.sin(angle + this.delta_base);
-      y2 = this.centerY - this.start_height*Math.cos(angle + this.delta_base);
+      x2 = this.centerX +
+        this.vertex_radius_base*Math.sin(angle + this.delta_base);
+      y2 = this.centerY - this.vertex_radius_base*Math.cos(angle + this.delta_base);
       // top right
-      x3 = this.centerX + this.length*Math.sin(angle + this.delta_top);
-      y3 = this.centerY - this.length*Math.cos(angle + this.delta_top);
+      x3 = this.centerX + this.vertex_radius_top*Math.sin(angle + this.delta_top);
+      y3 = this.centerY - this.vertex_radius_top*Math.cos(angle + this.delta_top);
       // top left
-      x4 = this.centerX + this.length*Math.sin(angle - this.delta_top);
-      y4 = this.centerY - this.length*Math.cos(angle - this.delta_top);
+      x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
+      y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
       g.setColor(this.red,this.green,this.blue);
       g.fillPoly([x1,y1,
                   x2,y2,
@@ -267,6 +277,8 @@ class NumeralFont {
 
 class CopasetFont extends NumeralFont{
   constructor(){
+    // dimesion map provides the dimesions of the character for 
+    // each number for plotting and collision detection
     this.dimension_map = {
       1 : [20,58],
       2 : [30,58],
@@ -285,7 +297,10 @@ class CopasetFont extends NumeralFont{
   getDimensions(hour){return this.dimension_map[hour];}
   hour_txt(hour){ return hour.toString(); }
   draw(hour_txt,x,y){
-    /*dim = [50,58];
+    /* going to leave this in here for future testing.
+     uncomment this so that it draws a box behind the string
+     so we can guess the digit dimensions
+    dim = [50,58];
     g.setColor(0.5,0,0);
     g.fillPoly([x,y,
                   x+dim[0],y,
@@ -301,6 +316,7 @@ class CopasetFont extends NumeralFont{
 
 class RomanNumeralFont extends NumeralFont{
   constructor(){
+    // text map provides the mapping between hour and roman numeral
     this.txt_map = {
       1 : 'I',
       2 : 'II',
@@ -315,6 +331,8 @@ class RomanNumeralFont extends NumeralFont{
       11: 'XI',
       12: 'XII'
     };
+    // dimesion map provides the dimesions of the characters for 
+    // each hour for plotting and collision detection
     this.dimension_map = {
       1 : [10,40],
       2 : [25,40],
@@ -338,6 +356,10 @@ class RomanNumeralFont extends NumeralFont{
   }
 }
 
+// The problem with the trig inverse functions on 
+// a full circle is that the sector information will be lost
+// Choosing to use arcsin because you can get back the 
+// sector with the help of the original coordinates
 function reifyasin(x,y,asin_angle){
   if(x >= 0 && y >= 0){
     return asin_angle;
@@ -350,6 +372,8 @@ function reifyasin(x,y,asin_angle){
   }
 }
 
+// rebase and angle so be between -pi and pi 
+// rather than 0 to 2PI
 function rebaseNegative(angle){
   if(angle > Math.PI){
     return angle - 2*Math.PI;
@@ -358,6 +382,8 @@ function rebaseNegative(angle){
   }
 }
 
+// rebase an angle so that it is between 0 to 2pi
+// rather than -pi to pi
 function rebasePositive(angle){
   if(angle < 0){
     return angle + 2*Math.PI;
@@ -366,6 +392,11 @@ function rebasePositive(angle){
   }
 }
 
+/**
+* The Hour Scriber is responsible for drawing the numeral
+* on the screen at the requested angle.
+* It allows for the font to be changed on the fly.
+*/
 class HourScriber {
   constructor(radius, numeral_font, draw_test){
     this.radius = radius;

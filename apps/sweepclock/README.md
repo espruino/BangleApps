@@ -1,13 +1,16 @@
-# Sliding Text Clock - See the time in different languages
+# Sweep Clock
 
-Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently only English, French and Japanese are supported
+The Sweep Clock provides a clock with a perfectly smooth sweep second hand with a single Numeral Display. 
 
 ![](app.png)
 
 ## Usage
 
-Use Button 1 (the top right button) to change the language
+Use Button 1 (the top right button) to change the numeral types (currently European and Roman)
 
+##Further Details
+
+For further details of design and working please visit [The Project Page](https://www.notion.so/adrianwkirk/Sweep-hand-clock-6aa5b6b3d1074d4e87fc947975b1e4b7)
 
 ## Requests
 
