@@ -154,7 +154,9 @@
       case "notify-":
         if (event.t === "notify") {
           require("notify").show(prettifyNotificationEvent(event));
-          Bangle.buzz();
+          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+            Bangle.buzz();
+          }
         } else { // notify-
           require("notify").hide(event);
         }
@@ -174,7 +176,9 @@
                      body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
         if (event.cmd === "incoming") {
           require("notify").show(note);
-          Bangle.buzz();
+          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+            Bangle.buzz();
+          }
         } else if (event.cmd === "start") {
           require("notify").show(Object.assign(note, {
             bgColor : "#008000", titleBgColor : "#00C000",
@@ -194,6 +198,7 @@
           delete state.find;
         }
         if (event.n)
+          // Ignore quiet mode: we always want to find our watch
           state.find = setInterval(_=>{
             Bangle.buzz();
             setTimeout(_=>Bangle.beep(), 1000);
