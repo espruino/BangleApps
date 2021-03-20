@@ -127,7 +127,9 @@ exports.show = function(options) {
     options.render({x:x, y:y, w:w, h:h});
   }
 
-  if (options.on) Bangle.setLCDPower(1); // light up
+  if (options.on && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.setLCDPower(1); // light up
+  }
   Bangle.setLCDMode(oldMode); // clears cliprect
 
   function anim() {

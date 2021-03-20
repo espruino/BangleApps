@@ -9,7 +9,7 @@ other applications or widgets to display messages.
 
 ```JS
 options = {
-  on : bool, // turn screen on, default true
+  on : bool, // turn screen on, default true (But not if Quiet Mode is enabled)
   size : int, // height of notification, default is fit to height (80 max)  
   title : string, // optional title
   id // optional notification ID, used with hide()
