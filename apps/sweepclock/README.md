@@ -8,7 +8,7 @@ The Sweep Clock provides a clock with a perfectly smooth sweep second hand with 
 
 Use Button 1 (the top right button) to change the numeral types (currently European and Roman)
 
-##Further Details
+## Further Details
 
 For further details of design and working please visit [The Project Page](https://www.notion.so/adrianwkirk/Sweep-hand-clock-6aa5b6b3d1074d4e87fc947975b1e4b7)
 
