@@ -31,6 +31,7 @@ class ThinHand extends Hand {
                red,
                green,
                blue){
+    super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
@@ -94,6 +95,7 @@ class ThickHand extends Hand {
                blue,
                base_height,
                thickness){
+    super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
@@ -277,6 +279,7 @@ class NumeralFont {
 
 class CopasetFont extends NumeralFont{
   constructor(){
+    super();
     // dimesion map provides the dimesions of the character for 
     // each number for plotting and collision detection
     this.dimension_map = {
@@ -316,6 +319,7 @@ class CopasetFont extends NumeralFont{
 
 class RomanNumeralFont extends NumeralFont{
   constructor(){
+    super();
     // text map provides the mapping between hour and roman numeral
     this.txt_map = {
       1 : 'I',
