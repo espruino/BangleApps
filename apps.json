@@ -186,7 +186,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
