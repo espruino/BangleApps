@@ -1072,7 +1072,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
