@@ -29,6 +29,7 @@ function resetSettings() {
     ble: true,             // Bluetooth enabled by default
     blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
     log: false,            // Do log messages appear on screen?
+    quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
     timeout: 10,           // Default LCD timeout in seconds
     vibrate: true,         // Vibration enabled by default. App must support
     beep: "vib",            // Beep enabled by default. App must support
@@ -61,6 +62,7 @@ const boolFormat = v => v ? "On" : "Off";
 function showMainMenu() {
   var beepV = [false, true, "vib"];
   var beepN = ["Off", "Piezo", "Vibrate"];
+  var quietN = ["Off", "Alarms", "Silent"];
   const mainmenu = {
     '': { 'title': 'Settings' },
     'Make Connectable': ()=>makeConnectable(),
@@ -96,6 +98,15 @@ function showMainMenu() {
           setTimeout(() => VIBRATE.write(0), 10);
         }
       }
+    },
+    "Quiet Mode": {
+      value: settings.quiet | 0,
+      min: 0, max: 2,
+      format: v => quietN[v],
+      onchange: v => {
+        settings.quiet = v
+        updateSettings()
+      },
     },
     'Locale': ()=>showLocaleMenu(),
     'Select Clock': ()=>showClockMenu(),
