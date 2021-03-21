@@ -218,9 +218,9 @@ function showLCDMenu() {
     '< Back': ()=>showMainMenu(),
     'LCD Brightness': {
       value: settings.brightness,
-      min: 0.1,
-      max: 1,
-      step: 0.1,
+      min: 1,
+      max: 10,
+      step: 1,
       onchange: v => {
         settings.brightness = v || 1;
         updateSettings();
