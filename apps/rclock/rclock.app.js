@@ -37,8 +37,8 @@
       center: screen.center,
     },
     circle: {
-      colormin: 0xffffff,
-      colorsec: 0xffffff,
+      colormin: '#ffffff',
+      colorsec: '#ffffff',
       width: 10,
       middle: screen.middle,
       center: screen.center,
