@@ -226,6 +226,19 @@
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
     ]
   },
+  { "id": "sweepclock",
+    "name": "Sweep Clock",
+    "icon": "sweepclock.png",
+    "version":"0.01",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"sweepclock.app.js","url":"sweepclock.js"},
+      {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
