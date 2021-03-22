@@ -109,7 +109,7 @@
 
     // Reset
     if (seconds == 59) {
-      g.setColor('#000000');
+      g.setColor('#0000FF');
       g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
       for (count = 0; count <= minutes; count++) {
         drawMinArc(count, settings.circle.colormin);
