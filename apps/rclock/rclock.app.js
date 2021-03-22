@@ -108,7 +108,7 @@
     }
 
     // Reset
-    if (seconds == 59) {
+    if (seconds == 0) {
       g.setColor('#0000FF');
       g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
       for (count = 0; count <= minutes; count++) {
