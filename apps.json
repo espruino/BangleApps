@@ -569,6 +569,21 @@
       {"name":"widbt.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "widchime",
+    "name": "Hour Chime",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Buzz or beep on every whole hour.",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widchime.wid.js","url":"widget.js"},
+      {"name":"widchime.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widchime.json"}
+    ]
+  },
   { "id": "widram",
     "name": "RAM Widget",
     "shortName":"RAM Widget",
