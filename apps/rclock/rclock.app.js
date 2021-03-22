@@ -23,14 +23,14 @@
   // Ssettings
   const settings = {
     time: {
-      color: 0xD6ED17,
+      color: '#D6ED17',
       font: 'Vector',
       size: 60,
       middle: screen.middle,
       center: screen.center,
     },
     date: {
-      color: 0xD6ED17,
+      color: '#D6ED17',
       font: 'Vector',
       size: 15,
       middle: screen.height-17, // at bottom of screen
@@ -45,7 +45,7 @@
       height: screen.height
     },
     hr: {
-      color: 0x333333,
+      color: '#333333',
       size: 10,
       x: screen.center,
       y: screen.middle + 45
