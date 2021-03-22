@@ -110,12 +110,12 @@
     // Reset seconds
     if (seconds == 59) {
       g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 40);
+      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 20);
     }
     // Reset minutes
     if (minutes == 59 && seconds == 59) {
       g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 20);
+      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 40);
     }
 
     //Get date as a string
