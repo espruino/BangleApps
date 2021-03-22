@@ -114,10 +114,6 @@
       for (count = 0; count <= minutes; count++) {
         drawMinArc(count, settings.circle.colormin);
       }
-
-      for (count = 0; count <= seconds; count++) {
-        drawSecArc(count, settings.circle.colorsec);
-      }
     }
 
     //Get date as a string
