@@ -107,15 +107,19 @@
       first = false;
     }
 
-    // Reset seconds
+    // Reset
     if (seconds == 59) {
       g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 20);
-    }
-    // Reset minutes
-    if (minutes == 59 && seconds == 59) {
-      g.setColor('#000000');
       g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 40);
+      minutes = currentTime.getMinutes();
+      seconds = currentTime.getSeconds();
+      for (count = 0; count <= minutes; count++) {
+        drawMinArc(count, settings.circle.colormin);
+      }
+
+      for (count = 0; count <= seconds; count++) {
+        drawSecArc(count, settings.circle.colorsec);
+      }
     }
 
     //Get date as a string
