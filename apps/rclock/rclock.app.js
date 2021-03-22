@@ -67,7 +67,7 @@
 
   const drawMinArc = function (sections, color) {
     g.setColor(color);
-    rad = (settings.circle.height / 2) - 20;
+    rad = (settings.circle.height / 2) - 40;
     r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
     //g.setPixel(r[0],r[1]);
     r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
@@ -79,7 +79,7 @@
 
   const drawSecArc = function (sections, color) {
     g.setColor(color);
-    rad = (settings.circle.height / 2) - 40;
+    rad = (settings.circle.height / 2) - 20;
     r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
     //g.setPixel(r[0],r[1]);
     r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
