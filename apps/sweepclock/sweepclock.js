@@ -9,6 +9,32 @@ const screen_center_y = g.getHeight()/2;
 
 require("FontCopasetic40x58Numeric").add(Graphics);
 
+const color_schemes = [
+    {
+      background : [0.0,0.0,0.0],
+      second_hand: [1.0,0.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      background : [1.0,0.0,0.0],
+      second_hand: [1.0,1.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      background : [0.5,0.5,0.5],
+      second_hand: [0.0,0.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    }
+  ];
+
+let color_scheme_index = 0;
+
 class Hand {
   /**
   * Pure virtual class for all Hand classes to extend.
@@ -28,16 +54,12 @@ class ThinHand extends Hand {
                length,
                tolerance,
                draw_test,
-               red,
-               green,
-               blue){
+               color_theme){
     super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
-    this.red = red;
-    this.green = green;
-    this.blue = blue;
+    this.color_theme = color_theme;
     // The last x and y coordinates (not the centre) of the last draw
     this.last_x = centerX;
     this.last_y = centerY;
@@ -60,13 +82,14 @@ class ThinHand extends Hand {
        // and then call the predicate to see if a redraw is needed
        this.draw_test(this.angle,this.last_draw_time) ){
       // rub out the old hand line
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       g.drawLine(this.centerX, this.centerY, this.last_x, this.last_y);
       // Now draw the new hand line
-      g.setColor(this.red,this.green,this.blue);
+      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       x2 = this.centerX + this.length*Math.sin(angle);
       y2 = this.centerY - this.length*Math.cos(angle);
-      g.setColor(this.red,this.green,this.blue);
       g.drawLine(this.centerX, this.centerY, x2, y2);
       // and store the last draw details for the next call
       this.last_x = x2;
@@ -90,18 +113,14 @@ class ThickHand extends Hand {
                length,
                tolerance,
                draw_test,
-               red,
-               green,
-               blue,
+               color_theme,
                base_height,
                thickness){
     super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
-    this.red = red;
-    this.green = green;
-    this.blue = blue;
+    this.color_theme = color_theme;
     this.thickness = thickness;
     this.base_height = base_height;
     // angle from the center to the top corners of the rectangle
@@ -132,7 +151,8 @@ class ThickHand extends Hand {
   // method to move the hand to a new angle
   moveTo(angle){
     if(Math.abs(angle - this.angle) > this.tolerance || this.draw_test(this.angle - this.delta_base,this.angle + this.delta_base ,this.last_draw_time) ){
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       g.fillPoly([this.last_x1,
                   this.last_y1,
                   this.last_x2,
@@ -142,7 +162,6 @@ class ThickHand extends Hand {
                   this.last_x4,
                   this.last_y4
                  ]);
-      g.setColor(this.red,this.green,this.blue);
       // bottom left
       x1 = this.centerX +
         this.vertex_radius_base*Math.sin(angle - this.delta_base);
@@ -157,7 +176,8 @@ class ThickHand extends Hand {
       // top left
       x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
       y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
-      g.setColor(this.red,this.green,this.blue);
+      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       g.fillPoly([x1,y1,
                   x2,y2,
                   x3,y3,
@@ -184,10 +204,10 @@ let force_redraw = false;
 // The seconds hand is the main focus and is set to redraw on every cycle
 let seconds_hand = new ThinHand(screen_center_x, 
                            screen_center_y,
-                           100,
+                           95,
                             0,
                             (angle, last_draw_time) => false,
-                           1.0,0.0,0.0);
+                           "second_hand");
 // The minute hand is set to redraw at a 250th of a circle,
 // when the second hand is ontop or slighly overtaking
 // or when a force_redraw is called
@@ -201,7 +221,7 @@ let minutes_hand = new ThinHand(screen_center_x,
                            80,
                             2*Math.PI/250,
                            minutes_hand_redraw,
-                           1.0,1.0,1.0);
+                           "minute_hand");
 // The hour hand is a thick hand so we have to redraw when the minute hand
 // overlaps from its behind andle coverage to its ahead angle coverage.
 let hour_hand_redraw = function(angle_from, angle_to, last_draw_time){
@@ -214,12 +234,13 @@ let hours_hand = new ThickHand(screen_center_x,
                            40,
                             2*Math.PI/600,
                           hour_hand_redraw,
-                           1.0,1.0,1.0,
+                           "hour_hand",
                           5,
                           4);
 
 function draw_clock(){
   date = new Date();
+  draw_background();
   draw_hour_digit(date);
   draw_seconds(date);
   draw_mins(date);
@@ -274,6 +295,13 @@ class NumeralFont {
   /**
    * method to draw text at the required coordinates
    */
+  draw(hour_txt,x,y){ return "";}
+}
+
+class NoFont extends NumeralFont{
+  constructor(){super();}
+  getDimensions(hour){return [0,0];}
+  hour_txt(hour){ return ""; }
   draw(hour_txt,x,y){ return "";}
 }
 
@@ -419,7 +447,8 @@ class HourScriber {
   drawHour(hours){
     changed = false;
     if(this.curr_hours != hours || this.curr_numeral_font !=this.numeral_font){
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       this.curr_numeral_font.draw(this.curr_hour_str,
                              this.curr_hour_x,
                              this.curr_hour_y);
@@ -477,7 +506,8 @@ class HourScriber {
     }
     if(changed ||
        this.draw_test(this.angle_from, this.angle_to, this.last_draw_time) ){
-      g.setColor(1,1,1);
+      numeral_color = color_schemes[color_scheme_index].numeral;
+      g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
       this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
       this.last_draw_time = new Date();
       console.log("redraw digit");
@@ -485,7 +515,7 @@ class HourScriber {
   }
 }
 
-let numeral_fonts = [new CopasetFont(), new RomanNumeralFont()];
+let numeral_fonts = [new CopasetFont(), new RomanNumeralFont(), new NoFont()];
 let numeral_fonts_index = 0;
 /**
 * predicate for deciding when the digit has to be redrawn
@@ -538,6 +568,25 @@ function draw_hour_digit(date){
     hours = 12;
   }
   hour_scriber.drawHour(hours);
+}
+
+function draw_background(){
+  if(force_redraw){
+    background = color_schemes[color_scheme_index].background;
+    g.setColor(background[0],background[1],background[2]);
+    g.fillPoly([0,25,
+                0,240,
+                240,240,
+                240,25
+               ]);
+  }
+}
+
+function next_colorscheme(){
+  color_scheme_index += 1;
+  color_scheme_index = color_scheme_index % color_schemes.length;
+  console.log("color_scheme_index=" + color_scheme_index);
+  force_redraw = true;
 }
 
 // Boiler plate code for setting up the clock
@@ -604,6 +653,13 @@ function button1pressed(){
   next_font(); 
 }
 
+function button3pressed(){
+  next_colorscheme(); 
+}
+
 // Handle button 1 being pressed
 setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
+
+// Handle button 3 being pressed
+setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 
