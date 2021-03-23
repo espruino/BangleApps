@@ -379,7 +379,9 @@ function processFix(fix) {
   
   if (fix.fix) {
     if (!last_fix.fix) {
-      Bangle.buzz(); // buzz on first position
+      if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+        Bangle.buzz(); // buzz on first position
+      }
       clearActivityArea = true;
     }
     gpsState = GPS_RUNNING;
