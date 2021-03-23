@@ -2225,7 +2225,7 @@
     "name": "Apple Notification Widget",
     "shortName":"ANCS Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Displays call, message etc notifications from a paired iPhone. Read README before installation as it only works with compatible apps",
     "readme": "README.md",
     "tags": "widget",

@@ -187,9 +187,11 @@
     //we may already be displaying a prompt, so clear it
     E.showPrompt();
     if (screentimeout) clearTimeout(screentimeout);
-    Bangle.setLCDPower(true);
+    if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+      Bangle.setLCDPower(true);
+    }
     SCREENACCESS.request();
-    if (!buzzing){
+    if (!buzzing && !(require('Storage').readJSON('setting.json',1)||{}).quiet){
         buzzing=true;
         Bangle.buzz(500).then(()=>{buzzing=false;});
     }
