@@ -1255,7 +1255,7 @@
   { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A Minimal Dot Analog Clock",
     "tags": "clock",
     "type":"clock",
