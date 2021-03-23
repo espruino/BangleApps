@@ -807,7 +807,7 @@
   { "id": "vibrclock",
     "name": "Vibrate Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
     "tags": "clock",
     "type":"clock",
