@@ -585,7 +585,7 @@
   { "id": "widchime",
     "name": "Hour Chime",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Buzz or beep on every whole hour.",
     "tags": "widget",
     "type": "widget",
