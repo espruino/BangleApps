@@ -246,7 +246,9 @@ GPS.prototype.processFix = function(fix) {
   if (fix.fix) {
     //this.log_debug("Got fix - setting state to GPS_RUNNING");
     this.gpsState = this.GPS_RUNNING;
-    if (!this.last_fix.fix) Bangle.buzz(); // buzz on first position
+    if (!this.last_fix.fix && !(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
+      Bangle.buzz(); // buzz on first position
+    }
     this.last_fix = fix;
   }
 };
