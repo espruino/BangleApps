@@ -3059,5 +3059,23 @@
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
   ]
-}  
+},
+  { "id": "qmsched",
+    "name": "Quiet Mode Schedule",
+    "shortName":"Quiet Mode",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Automatically turn Quiet Mode on or off at set times",
+    "readme": "README.md",
+    "tags": "tool",
+    "storage": [
+      {"name":"qmsched","url":"lib.js"},
+      {"name":"qmsched.app.js","url":"app.js"},
+      {"name":"qmsched.boot.js","url":"boot.js"},
+      {"name":"qmsched.img","url":"icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"qmsched.json"}
+    ]
+  }
 ]
