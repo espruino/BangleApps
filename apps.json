@@ -3013,5 +3013,23 @@
       "evaluate": true
     }
   ]
-}
+},
+{ "id": "kitchen",
+  "name": "Kitchen Combo",
+  "icon": "kitchen.png",
+  "version":"0.01",
+  "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format.",
+  "tags": "tool,outdoors,gps",
+  "readme": "README.md",
+  "interface":"waypoints.html",
+  "storage": [
+    {"name":"kitchen.app.js","url":"kitchen.app.js"},
+    {"name":"stepo.kit.js","url":"stepo.kit.js"},
+    {"name":"gps.kit.js","url":"gps.kit.js"},
+    {"name":"digi.kit.js","url":"digi.kit.js"},
+    {"name":"compass.kit.js","url":"compass.kit.js"},
+    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
+    {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
+  ]
+}  
 ]
