@@ -3046,7 +3046,7 @@
   "name": "Kitchen Combo",
   "icon": "kitchen.png",
   "version":"0.01",
-  "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format.",
+  "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format. 'Everything but the kitchen'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
   "readme": "README.md",
   "interface":"waypoints.html",
