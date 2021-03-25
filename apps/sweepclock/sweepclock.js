@@ -11,6 +11,7 @@ require("FontCopasetic40x58Numeric").add(Graphics);
 
 const color_schemes = [
     {
+      name: "black",
       background : [0.0,0.0,0.0],
       second_hand: [1.0,0.0,0.0],
       minute_hand: [1.0,1.0,1.0],
@@ -18,6 +19,7 @@ const color_schemes = [
       numeral:[1.0,1.0,1.0]
     },
     {
+      name: "red",
       background : [1.0,0.0,0.0],
       second_hand: [1.0,1.0,0.0],
       minute_hand: [1.0,1.0,1.0],
@@ -25,8 +27,17 @@ const color_schemes = [
       numeral:[1.0,1.0,1.0]
     },
     {
+      name: "grey",
       background : [0.5,0.5,0.5],
       second_hand: [0.0,0.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "purple",
+      background : [1.0,0.0,1.0],
+      second_hand: [1.0,1.0,0.0],
       minute_hand: [1.0,1.0,1.0],
       hour_hand: [1.0,1.0,1.0],
       numeral:[1.0,1.0,1.0]
@@ -263,7 +274,7 @@ function draw_mins(date,seconds_angle){
   mins_angle = 2*Math.PI*mins_frac;
   redraw = minutes_hand.moveTo(mins_angle);
   if(redraw){
-    console.log("redraw mins");
+    //console.log("redraw mins");
   }
 }
 
@@ -273,7 +284,7 @@ function draw_hours(date){
   hours_angle = 2*Math.PI*hours_frac;
   redraw = hours_hand.moveTo(hours_angle);
   if(redraw){
-    console.log("redraw hours");
+    //console.log("redraw hours");
   }
 }
 
@@ -296,6 +307,10 @@ class NumeralFont {
    * method to draw text at the required coordinates
    */
   draw(hour_txt,x,y){ return "";}
+  /**
+   * Called from the settings loader to identify the font
+   */
+  getName(){return "";}
 }
 
 class NoFont extends NumeralFont{
@@ -303,6 +318,7 @@ class NoFont extends NumeralFont{
   getDimensions(hour){return [0,0];}
   hour_txt(hour){ return ""; }
   draw(hour_txt,x,y){ return "";}
+  getName(){return "NoFont";}
 }
 
 class CopasetFont extends NumeralFont{
@@ -342,6 +358,7 @@ class CopasetFont extends NumeralFont{
     g.setFontCopasetic40x58Numeric();
     g.drawString(hour_txt,x,y);
   }
+  getName(){return "Copaset";}
 }
 
 
@@ -386,6 +403,7 @@ class RomanNumeralFont extends NumeralFont{
     g.setFont("Vector",40);
     g.drawString(hour_txt,x,y);
   }
+  getName(){return "Roman";}
 }
 
 // The problem with the trig inverse functions on 
@@ -452,7 +470,7 @@ class HourScriber {
       this.curr_numeral_font.draw(this.curr_hour_str,
                              this.curr_hour_x,
                              this.curr_hour_y);
-      console.log("erasing old hour");
+      //console.log("erasing old hour");
       hours_frac = hours / 12;
       angle = 2*Math.PI*hours_frac;
       dimensions = this.numeral_font.getDimensions(hours);
@@ -510,7 +528,7 @@ class HourScriber {
       g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
       this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
       this.last_draw_time = new Date();
-      console.log("redraw digit");
+      //console.log("redraw digit");
     }
   }
 }
@@ -585,11 +603,78 @@ function draw_background(){
 function next_colorscheme(){
   color_scheme_index += 1;
   color_scheme_index = color_scheme_index % color_schemes.length;
-  console.log("color_scheme_index=" + color_scheme_index);
+  //console.log("color_scheme_index=" + color_scheme_index);
   force_redraw = true;
 }
 
-// Boiler plate code for setting up the clock
+/**
+* called from load_settings on startup to
+* set the color scheme to named value
+*/
+function set_colorscheme(colorscheme_name){
+  console.log("setting color scheme:" + colorscheme_name);
+  for (var i=0; i < color_schemes.length; i++) {
+    if(color_schemes[i].name == colorscheme_name){
+      color_scheme_index = i;
+      force_redraw = true;
+      console.log("match");
+      break;
+    }
+  }
+}
+
+/**
+* called from load_settings on startup
+* to set the font to named value
+*/
+function set_font(font_name){
+  console.log("setting font:" + font_name);
+  for (var i=0; i < numeral_fonts.length; i++) {
+    if(numeral_fonts[i].getName() == font_name){
+      numeral_fonts_index = i;
+      force_redraw = true;
+      console.log("match");
+      hour_scriber.setNumeralFont(numeral_fonts[numeral_fonts_index]);
+      break;
+    }
+  }
+}
+
+/**
+* Called on startup to set the watch to the last preference settings
+*/
+function load_settings(){
+  try{
+    settings = require("Storage").readJSON("sweepclock.settings.json");
+    if(settings != null){
+      console.log("loaded:" + JSON.stringify(settings));
+      if(settings.color_scheme != null){
+        set_colorscheme(settings.color_scheme);
+      }
+      if(settings.font != null){
+        set_font(settings.font);
+      }
+    } else {
+      console.log("no settings to load");
+    }
+  } catch(e){
+    console.log("failed to load settings:" + e);
+  }
+}
+
+/**
+* Called on button press to save down the last preference settings
+*/
+function save_settings(){
+  settings = { 
+    font : numeral_fonts[numeral_fonts_index].getName(),
+    color_scheme : color_schemes[color_scheme_index].name,
+  };
+  console.log("saving:" + JSON.stringify(settings));
+  require("Storage").writeJSON("sweepclock.settings.json",settings);
+}
+
+// Boiler plate code for setting up the clock,
 // below
 let intervalRef = null;
 
@@ -642,6 +727,7 @@ Bangle.on('faceUp',function(up){
 });
 
 g.clear();
+load_settings();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 startTimers();
@@ -651,10 +737,12 @@ setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
 
 function button1pressed(){
   next_font(); 
+  save_settings();
 }
 
 function button3pressed(){
-  next_colorscheme(); 
+  next_colorscheme();
+  save_settings();
 }
 
 // Handle button 1 being pressed

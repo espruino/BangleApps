@@ -234,6 +234,7 @@
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
+     "readme": "README.md",
     "storage": [
       {"name":"sweepclock.app.js","url":"sweepclock.js"},
       {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
