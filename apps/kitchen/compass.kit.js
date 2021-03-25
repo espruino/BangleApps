@@ -106,6 +106,7 @@
     }
 
     function onButtonShort(btn) {
+      if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
       switch(btn) {
       case 1:
         log_debug("prev waypoint");
