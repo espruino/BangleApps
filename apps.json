@@ -226,6 +226,19 @@
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
     ]
   },
+  { "id": "sweepclock",
+    "name": "Sweep Clock",
+    "icon": "sweepclock.png",
+    "version":"0.01",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"sweepclock.app.js","url":"sweepclock.js"},
+      {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
@@ -259,7 +272,7 @@
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.13",
+    "version": "0.14",
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -569,6 +582,21 @@
       {"name":"widbt.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "widchime",
+    "name": "Hour Chime",
+    "icon": "widget.png",
+    "version":"0.02",
+    "description": "Buzz or beep on every whole hour.",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widchime.wid.js","url":"widget.js"},
+      {"name":"widchime.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widchime.json"}
+    ]
+  },
   { "id": "widram",
     "name": "RAM Widget",
     "shortName":"RAM Widget",
@@ -779,7 +807,7 @@
   { "id": "vibrclock",
     "name": "Vibrate Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
     "tags": "clock",
     "type":"clock",
@@ -1227,7 +1255,7 @@
   { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A Minimal Dot Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -1872,7 +1900,7 @@
     "id": "beebclock",
     "name": "Beeb Clock",
     "icon": "beebclock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Clock face that may be coincidentally familiar to BBC viewers",
     "tags": "clock",
     "type": "clock",
