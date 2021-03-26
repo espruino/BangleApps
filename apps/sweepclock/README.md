@@ -10,13 +10,13 @@ Use Button 1 (the top right button) to change the numeral type
 
 |   Button 1   |      |      |
 | ---- | ---- | ---- |
-|   <img src="./numeral-01.jpg" alt="Western" style="zoom:50%;" />   |  <img src="./numeral-02.jpg" alt="Roman" style="zoom:50%;" />  | <img src="./numeral-03.jpg" alt="No Digits" style="zoom:50%;" />  |
+|   <img src="numeral-01.jpg" alt="Western" style="zoom:50%;" />   |  <img src="numeral-02.jpg" alt="Roman" style="zoom:50%;" />  | <img src="numeral-03.jpg" alt="No Digits" style="zoom:50%;" />  |
 
 Button 3 (bottom right button) is used to change the colour
 
 |   Button 3   |      |      |
 | ---- | ---- | ---- |
-|   <img src="./color-01.jpg" style="zoom:50%;" />   |  <img src="./color-02.jpg" style="zoom:50%;" />  | <img src="./color-03.jpg"  style="zoom:50%;" />  |
+|   <img src="color-01.jpg" style="zoom:50%;" />   |  <img src="color-02.jpg" style="zoom:50%;" />  | <img src="color-03.jpg"  style="zoom:50%;" />  |
 
 
 ## Further Details
