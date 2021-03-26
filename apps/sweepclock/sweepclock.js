@@ -5,7 +5,7 @@
 */
 
 const screen_center_x = g.getWidth()/2;
-const screen_center_y = g.getHeight()/2;
+const screen_center_y = 10 + g.getHeight()/2;
 
 require("FontCopasetic40x58Numeric").add(Graphics);
 
@@ -38,6 +38,14 @@ const color_schemes = [
       name: "purple",
       background : [1.0,0.0,1.0],
       second_hand: [1.0,1.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "blue",
+      background : [0.4,0.7,1.0],
+      second_hand: [0.5,0.5,0.5],
       minute_hand: [1.0,1.0,1.0],
       hour_hand: [1.0,1.0,1.0],
       numeral:[1.0,1.0,1.0]
