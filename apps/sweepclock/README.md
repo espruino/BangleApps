@@ -18,6 +18,7 @@ Use Button 1 (the top right button) to change the numeral type
 
 ### Button 3
 Button 3 (bottom right button) is used to change the colour
+
 |  Red   |  Grey    |  Purple    |
 | ---- | ---- | ---- |
 |   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   |
