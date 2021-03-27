@@ -10,25 +10,18 @@ The Sweep Clock provides a clock with a perfectly smooth sweep second hand with 
 
 Use Button 1 (the top right button) to change the numeral type 
 
-![](./numeral-01.jpg) Default clock face
+|   Default clock face   |  Roman Numeral Font    |  No Digits    |
+| ---- | ---- | ---- |
+|   ![](./numeral-01.jpg)   | ![](numeral-02.jpg)     |  ![](numeral-03.jpg)    |
 
-
-
-![](numeral-02.jpg) Roman Numeral Font
-
-![](numeral-03.jpg) No Digits
 
 
 ### Button 3
 Button 3 (bottom right button) is used to change the colour
+|  Red   |  Grey    |  Purple    |
+| ---- | ---- | ---- |
+|   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   |
 
-![](./color-01.jpg) Red
-
-
-
-![](color-02.jpg) Grey
-
-![](color-03.jpg) Purple
 
 
 ## Further Details
