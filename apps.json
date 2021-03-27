@@ -3034,7 +3034,7 @@
   "name": "Gadgetbridge Music Controls",
   "shortName":"Music Controls",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Control the music on your Gadgetbridge-connected phone",
   "tags": "tools,bluetooth,gadgetbridge,music",
   "type":"app",
