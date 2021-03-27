@@ -52,6 +52,7 @@
       // Smaller interval+step might be smoother, but flickers :-(
       interval: 200, // scroll interval in ms
       step: 10, // scroll speed per interval
+      space: 40, // pixels between scrolling text
     },
     artist: { // center below middle
       font: "Vector",
@@ -163,10 +164,10 @@
       this.since = null;
     }
     brightness() {
-      if (fadeOut.since) {
-        return Math.max(0, 1-((Date.now()-fadeOut.since)/TIMEOUT));
+      if (!fadeOut.since) {
+        return 1;
       }
-      return 1;
+      return Math.max(0, 1-((Date.now()-fadeOut.since)/TIMEOUT));
     }
   }
 
@@ -183,27 +184,27 @@
     }
     draw() {
       const s = defaults.track;
-      const sep = "   ";
       g.setFont(s.font, s.size);
       g.setColor(infoColor("track"));
-      const text = sep+info.track,
-        text2 = text.repeat(2),
-        w1 = g.stringWidth(text),
+      const w = g.stringWidth(info.track)+s.space,
         bottom = screen.height-s.bottom;
-      this.offset = this.offset%w1;
+      this.offset = this.offset%w;
       g.setFontAlign(-1, 1);
       g.clearRect(0, bottom-s.size, screen.width, bottom)
-        .drawString(text2, -this.offset, screen.height-s.bottom);
+        .drawString(info.track, -this.offset+s.space, screen.height-s.bottom)
+        .drawString(info.track, -this.offset+s.space+w, screen.height-s.bottom);
     }
     start() {
       this.offset = 0;
       super.start();
     }
     stop() {
+      if (this.active) {
+        const s = defaults.track,
+          bottom = screen.height-s.bottom;
+        g.clearRect(0, bottom-s.size, screen.width, bottom);
+      }
       super.stop();
-      const s = defaults.track,
-        bottom = screen.height-s.bottom;
-      g.clearRect(0, bottom-s.size, screen.width, bottom);
     }
   }
 
@@ -214,9 +215,9 @@
       force: fadeOut.active,
     }, options));
   }
-  let oldText = {};
+  let oldText = {}, clear = {};
   function drawText(name, text, options) {
-    if (name in oldText && oldText[name].text===text && !(options || {}).force) {
+    if (name in oldText && !(name in clear) && !(options || {}).force) {
       return; // nothing to do
     }
     const s = Object.assign(
@@ -239,20 +240,16 @@
     if (name in oldText) {
       const old = oldText[name];
       // only clear if text/area has changed
-      if (old.text!==text
-        || old.left!==left || old.top!==top
-        || old.w!==w || old.h!==h) {
-        g.clearRect(old.left, old.top, old.left+old.w, old.top+old.h);
+      if (name in clear || [left, top, w, h].toString()!==old.toString()) {
+        //            left     top    left+w         left+h
+        g.clearRect(old[0], old[1], old[0]+old[2], old[1]+old[3]);
       }
     }
+    delete clear[name];
     if (text.length) {
       g.drawString(text, x, y);
       // remember which rectangle to clear before next draw
-      oldText[name] = {
-        text: text,
-        left: left, top: top,
-        w: w, h: h,
-      };
+      oldText[name] = [left, top, w, h];
     } else {
       delete oldText[name];
     }
@@ -306,6 +303,9 @@
    */
   let infoColors = {};
   function infoColor(name) {
+    if (name in infoColors && !fadeOut.active) {
+      return infoColors[name];
+    }
     let h, s, v;
     if (name==="num") {
       // always white
@@ -313,31 +313,29 @@
       s = 0;
     } else {
       // complicated scheme to make color depend deterministically on info
-      // s=1 and hue depends on the text, so we always get a bright color
-      let text = "";
+      let code = 0;
+      const textCode = t => {
+        let c = 0;
+        for(let i = 0; i<t.length; i++) {
+          c += t.charCodeAt(i);
+        }
+        return c%360;
+      };
       switch(name) {
         case "track":
-          text = info.track;
+          code += textCode(info.track);
         // fallthrough: also use album+artist
         case "album":
-          text += info.album;
+          code += textCode(info.album);
         // fallthrough: also use artist
-        case "artist":
-          text += info.artist;
-          break;
         default:
-          text = info[name];
+          code += textCode(info[name]);
       }
-      if (name in infoColors && infoColors[name].text===text && !fadeOut.active) {
-        return infoColors[name].color;
-      }
-      let code = 0; // just the sum of all ascii values of text
-      text.split("").forEach(c => code += c.charCodeAt(0));
-      // dark magic
       h = code%360;
-      s = 1;
+      s = 0.7;
     }
     v = fadeOut.brightness();
+    // dark magic
     const hsv2rgb = (h, s, v) => {
       const f = (n) => {
         const k = (n+h/60)%6;
@@ -352,21 +350,19 @@
     return color;
   }
 
-  let lastTrack;
   function drawTrack() {
     // we try if we can squeeze this in with a slightly smaller font, but if
     // the title is too long we start up the scroller instead
-    const trackInfo = ([info.artist, info.album, info.n, info.track]).join("-");
-    if (trackInfo===lastTrack) {
-      return; // already visible
-    }
     if (infoSize("track")<defaults.track.min_size) {
-      scroller.start();
+      if (!scroller.active) {
+        scroller.start();
+      }
     } else {
-      scroller.stop();
+      if (scroller.active) {
+        scroller.stop();
+      }
       drawInfo("track");
     }
-    lastTrack = trackInfo;
   }
 
   function drawArtistAlbum() {
@@ -470,10 +466,9 @@
     drawInfo("num");
     drawTrack();
     drawArtistAlbum();
-    drawControls();
   }
   let tQuit;
-  function updateMusic() {
+  function updateState() {
     // if paused for five minutes, load the clock
     // (but timeout resets if we get new info, even while paused)
     if (tQuit) {
@@ -490,7 +485,7 @@
     } else {
       fadeOut.stop();
     }
-    drawMusic();
+    drawControls();
   }
 
   // create tickers
@@ -642,10 +637,15 @@
       switch(event.t) {
         case "musicinfo":
           info = event;
+          infoColors = {};
+          scroller.offset = 0;
           delete (info.t);
+          clear.artist = clear.album = clear.title = clear.num = true;
+          drawMusic();
           break;
         case "musicstate":
           state = event.state;
+          updateState();
           break;
         default:
           // pass on other events
@@ -654,10 +654,10 @@
           }
           return; // no drawMusic
       }
-      updateMusic();
     };
-    startWatches();
     drawMusic();
+    updateState();
+    startWatches();
     clock.start();
     startEmulator();
   }
