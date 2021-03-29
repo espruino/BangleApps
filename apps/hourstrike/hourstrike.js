@@ -15,6 +15,8 @@ if (cur_hour<setting.start) {
   wait_sec = 0;
 }
 
+console.log(wait_sec);
+
 var notify_func = function () {
   Bangle.buzz(200, 0.5)
     .then(() => new Promise(resolve => setTimeout(resolve,200)))

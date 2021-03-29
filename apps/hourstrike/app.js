@@ -7,7 +7,7 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
-    interval: 3600,
+    interval: 60,
     start: 9,
     end: 21,
   };
