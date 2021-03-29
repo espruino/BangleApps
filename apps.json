@@ -3064,10 +3064,10 @@
   "id": "hourstrike",
   "name": "Hour Strike",
   "shortName": "Hour Strike",
-  "icon": "app.png",
+  "icon": "app-icon.png",
   "version": "0.01",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
-  "tags": "tool,alarm,widget",
+  "tags": "tool,alarm",
   "readme": "README.md",
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
