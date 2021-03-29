@@ -34,7 +34,6 @@ function showMainMenu() {
     'Start': {
       value: settings.start,
       min: 0, max: 23,
-      format: v => v+':00',
       onchange: v=> {
         settings.start = v;
         updateSettings();
@@ -43,7 +42,6 @@ function showMainMenu() {
     'End': {
       value: settings.end,
       min: 0, max: 23,
-      format: v => v+':59',
       onchange: v=> {
         settings.end = v;
         updateSettings();
