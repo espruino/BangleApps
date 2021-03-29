@@ -1714,11 +1714,11 @@
   },
   {
     "id": "fclock",
-    "name": "",
+    "name": "fclock",
     "shortName": "F Clock",
     "icon": "app.png",
     "version": "0.01",
-    "description": "",
+    "description": "Simple design of a digital clock",
     "tags": "clock",
     "type": "clock",
     "storage": [
