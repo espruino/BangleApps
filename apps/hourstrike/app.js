@@ -23,7 +23,8 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Hour Strike' },
     'Mode': {
-      value: mode_interval.indexOf(settings.mode),
+      value: mode_interval.indexOf(settings.interval),
+      min: 0, max: 3,
       format: v => mode_txt[v],
       onchange: v => {
         settings.interval = mode_interval[v];
@@ -31,20 +32,20 @@ function showMainMenu() {
       }
     },
     'Start': {
-      value: settings.start_hour,
+      value: settings.start,
       min: 0, max: 23,
       format: v => v+':00',
       onchange: v=> {
-        settings.start_hour = v;
+        settings.start = v;
         updateSettings();
       }
     },
-    'End hour': {
-      value: settings.end_hour,
+    'End': {
+      value: settings.end,
       min: 0, max: 23,
       format: v => v+':59',
       onchange: v=> {
-        settings.end_hour = v;
+        settings.end = v;
         updateSettings();
       }
     },
