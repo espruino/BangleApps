@@ -65,24 +65,33 @@
     return r;
   };
 
+  const getFormated = function(val) {
+    if (val<10) {
+      val='0'+val;
+    }
+
+    return val;
+  };
+
   const drawMin = function (sections, color) {
+    
     g.setFontAlign(0, 0, 0);
     g.setColor('#000000');
     g.setFont(settings.time.font, settings.time.size/2);
-    g.drawString(sections-1, settings.time.center+50, settings.time.middle);
+    g.drawString(getFormated(sections-1), settings.time.center+50, settings.time.middle);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size/2);
-    g.drawString(sections, settings.time.center+50, settings.time.middle);
+    g.drawString(getFormated(sections), settings.time.center+50, settings.time.middle);
   };
 
   const drawSec = function (sections, color) {
     g.setFontAlign(0, 0, 0);
     g.setColor('#000000');
     g.setFont(settings.time.font, settings.time.size/4);
-    g.drawString(sections-1, settings.time.center+100, settings.time.middle);
+    g.drawString(getFormated(sections-1), settings.time.center+100, settings.time.middle);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size/4);
-    g.drawString(sections, settings.time.center+100, settings.time.middle);
+    g.drawString(getFormated(sections), settings.time.center+100, settings.time.middle);
   };
 
   const drawClock = function () {
