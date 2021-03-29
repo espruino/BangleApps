@@ -10,12 +10,12 @@ This app is slightly different from [Hour Chime](https://github.com/espruino/Ban
 
 ## Features
 
-- Strikes the hour or the half hour
-- Set up a quiet time
+- Strike the hour, the half hour, or the quarter hour
+- Set up a range of hours that clock will strike
 
 ## Known Issues
 
-1. This app does not know or check whether your clock already chimes on the hour.
+- This app does not know or check whether your clock already chimes on the hour.
 
 ## Creator
 
