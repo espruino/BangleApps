@@ -74,7 +74,7 @@
     //g.setPixel(r[0],r[1]);
     g.drawLine(r1[0], r1[1], r2[0], r2[1]);
     g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
   };
 
   const drawSecArc = function (sections, color) {
@@ -86,7 +86,7 @@
     //g.setPixel(r[0],r[1]);
     g.drawLine(r1[0], r1[1], r2[0], r2[1]);
     g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
   };
 
   const drawClock = function () {
@@ -108,8 +108,8 @@
     }
 
     // Reset
-    if (seconds == 0) {
-      g.setColor('#0000FF');
+    if (seconds == 59) {
+      g.setColor('#000000');
       g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
       for (count = 0; count <= minutes; count++) {
         drawMinArc(count, settings.circle.colormin);
