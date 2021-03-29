@@ -272,7 +272,7 @@
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.13",
+    "version": "0.14",
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -585,7 +585,7 @@
   { "id": "widchime",
     "name": "Hour Chime",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Buzz or beep on every whole hour.",
     "tags": "widget",
     "type": "widget",
@@ -807,7 +807,7 @@
   { "id": "vibrclock",
     "name": "Vibrate Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
     "tags": "clock",
     "type":"clock",
@@ -1255,7 +1255,7 @@
   { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A Minimal Dot Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -1900,7 +1900,7 @@
     "id": "beebclock",
     "name": "Beeb Clock",
     "icon": "beebclock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Clock face that may be coincidentally familiar to BBC viewers",
     "tags": "clock",
     "type": "clock",
@@ -3041,5 +3041,23 @@
       "evaluate": true
     }
   ]
-}
+},
+{ "id": "kitchen",
+  "name": "Kitchen Combo",
+  "icon": "kitchen.png",
+  "version":"0.01",
+  "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
+  "tags": "tool,outdoors,gps",
+  "readme": "README.md",
+  "interface":"waypoints.html",
+  "storage": [
+    {"name":"kitchen.app.js","url":"kitchen.app.js"},
+    {"name":"stepo.kit.js","url":"stepo.kit.js"},
+    {"name":"gps.kit.js","url":"gps.kit.js"},
+    {"name":"digi.kit.js","url":"digi.kit.js"},
+    {"name":"compass.kit.js","url":"compass.kit.js"},
+    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
+    {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
+  ]
+}  
 ]
