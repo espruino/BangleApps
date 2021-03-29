@@ -7,7 +7,7 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
-    interval: 60,
+    interval: 3600,
     start: 9,
     end: 21,
   };
@@ -23,7 +23,7 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Hour Strike' },
     'Mode': {
-      value: mode_interval.indexOf(settings.interval),
+      value: 1 | mode_interval.indexOf(settings.interval),
       min: 0, max: 3,
       format: v => mode_txt[v],
       onchange: v => {
