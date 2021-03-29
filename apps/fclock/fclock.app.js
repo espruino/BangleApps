@@ -23,14 +23,14 @@
   // Ssettings
   const settings = {
     time: {
-      color: '#D6ED17',
+      color: '#dddddd',
       font: 'Vector',
-      size: 60,
+      size: 100,
       middle: screen.middle,
       center: screen.center,
     },
     date: {
-      color: '#D6ED17',
+      color: '#dddddd',
       font: 'Vector',
       size: 15,
       middle: screen.height-17, // at bottom of screen
@@ -46,9 +46,9 @@
     },
     hr: {
       color: '#333333',
-      size: 10,
+      size: 20,
       x: screen.center,
-      y: screen.middle + 45
+      y: screen.middle + 65
     }
   };
 
@@ -67,47 +67,36 @@
 
   const drawMin = function (sections, color) {
     g.setFontAlign(0, 0, 0);
+    g.setColor('#000000');
+    g.setFont(settings.time.font, settings.time.size/2);
+    g.drawString(sections-1, settings.time.center+50, settings.time.middle);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size/2);
-    g.drawString(timestr, settings.time.center, settings.time.middle);
+    g.drawString(sections, settings.time.center+50, settings.time.middle);
   };
 
   const drawSec = function (sections, color) {
     g.setFontAlign(0, 0, 0);
+    g.setColor('#000000');
+    g.setFont(settings.time.font, settings.time.size/4);
+    g.drawString(sections-1, settings.time.center+100, settings.time.middle);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size/4);
-    g.drawString(timestr, settings.time.center+20, settings.time.middle);
+    g.drawString(sections, settings.time.center+100, settings.time.middle);
   };
 
   const drawClock = function () {
 
     currentTime = new Date();
 
-    //Set to initial time when started
-    if (first == true) {
-      minutes = currentTime.getMinutes();
-      seconds = currentTime.getSeconds();
-      for (count = 0; count <= minutes; count++) {
-        drawMin(count, settings.circle.colormin);
-      }
-
-      for (count = 0; count <= seconds; count++) {
-        drawSec(count, settings.circle.colorsec);
-      }
-      first = false;
-    }
-
-    // Reset
-    if (seconds == 59) {
-      g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
-      for (count = 0; count <= minutes; count++) {
-        drawMin(count, settings.circle.colormin);
-      }
-    }
-
     //Get date as a string
     date = dateStr(currentTime);
+    
+    if(seconds==59) {
+        g.clear();
+        Bangle.loadWidgets();
+        Bangle.drawWidgets();
+    }
 
     // Update minutes when needed
     if (minutes != currentTime.getMinutes()) {
@@ -145,7 +134,7 @@
     g.setFontAlign(0, 0, 0);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size);
-    g.drawString(timestr, settings.time.center+20, settings.time.middle);
+    g.drawString(timestr, settings.time.center-40, settings.time.middle);
 
     //Write the date as configured in the settings
     g.setColor(settings.date.color);
