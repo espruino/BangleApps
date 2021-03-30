@@ -12,103 +12,47 @@
     n: 0,
     c: 0,
   };
-
-  const screen = {
-    width: g.getWidth(),
-    height: g.getHeight(),
-    center: g.getWidth()/2,
-    middle: g.getHeight()/2,
-  };
-
   const TIMEOUT = 5*1000*60; // auto close timeout: 5 minutes
-  // drawText defaults
-  const defaults = {
-    time: { // top center
-      color: -1,
-      font: "Vector",
-      size: 24,
-      left: 10,
-      top: 30,
-    },
-    date: { // bottom center
-      color: -1,
-      font: "Vector",
-      size: 16,
-      bottom: 26,
-      center: screen.width/2,
-    },
-    num: { // top right
-      font: "Vector",
-      size: 30,
-      top: 30,
-      right: 15,
-    },
-    track: { // center above middle
-      font: "Vector",
-      size: 40, // maximum size
-      min_size: 25, // scroll (at maximum size) if this doesn't fit
-      bottom: (screen.height/2)+10,
-      center: screen.width/2,
-      // Smaller interval+step might be smoother, but flickers :-(
-      interval: 200, // scroll interval in ms
-      step: 10, // scroll speed per interval
-      space: 40, // pixels between scrolling text
-    },
-    artist: { // center below middle
-      font: "Vector",
-      size: 30, // maximum size
-      middle: (screen.height/2)+17,
-      center: screen.width/2,
-    },
-    album: { // center below middle
-      font: "Vector",
-      size: 20, // maximum size
-      middle: (screen.height/2)+18, // moved down if artist is present
-      center: screen.width/2,
-    },
-    // these work a bit different, as they apply to all controls
-    controls: {
-      color: "#008800",
-      highlight: 200, // highlight pressed controls for this long, ms
-      activeColor: "#ff0000",
-      size: 20, // icons
-      left: 10, // for right-side
-      right: 20, // for left-side (more space because of +- buttons)
-      top: 30,
-      bottom: 30,
-      font: "6x8", // volume buttons
-      volSize: 2, // volume buttons
-    },
-  };
 
+  /**
+   * Base ticker class, needs children to implement `redraw`
+   */
   class Ticker {
-    constructor(interval) {
+    constructor(ms) {
       this.i = null;
-      this.interval = interval;
+      this.ms = ms;
       this.active = false;
+      this.onLCD = (on) => {
+        if (this.i) {
+          clearInterval(this.i);
+          this.i = null;
+        }
+        if (on) {
+          this.i = setInterval(() => {this.tick();}, this.ms);
+          this.redraw();
+        }
+      };
     }
-    clear() {
+    start() {
       if (this.i) {
         clearInterval(this.i);
       }
-      this.i = null;
-    }
-    start() {
+      this.i = setInterval(() => {this.tick();}, this.ms);
       this.active = true;
-      this.resume();
+      Bangle.on("lcdPower", this.onLCD);
     }
     stop() {
+      if (this.i) {
+        clearInterval(this.i);
+        this.i = null;
+      }
       this.active = false;
-      this.clear();
+      Bangle.removeListener("lcdPower", this.onLCD);
     }
-    pause() {
-      this.clear();
-    }
-    resume() {
-      this.clear();
-      if (this.active && Bangle.isLCDOn()) {
-        this.tick();
-        this.i = setInterval(() => {this.tick();}, this.interval);
+    tick() {
+      // default: just redraw
+      if (Bangle.isLCDOn()) {
+        this.redraw();
       }
     }
   }
@@ -119,38 +63,29 @@
   class Clock extends Ticker {
     constructor() {
       super(1000);
+      this.lastTime = -1;
     }
     tick() {
-      g.reset();
+      // only redraw if time has changed
       const now = new Date;
-      drawText("time", this.text(now));
-      drawText("date", require("locale").date(now, true));
+      if (Bangle.isLCDOn() && now.getHours()*60+now.getMinutes()!==this.lastTime) {
+        this.redraw();
+        this.lastTime = now.getHours()*60+now.getMinutes();
+      }
     }
-    text(time) {
-      const l = require("locale");
-      const is12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-      if (!is12hour) {
-        return l.time(time, true);
-      }
-      const date12 = new Date(time.getTime());
-      const hours = date12.getHours();
-      if (hours===0) {
-        date12.setHours(12);
-      } else if (hours>12) {
-        date12.setHours(hours-12);
-      }
-      return l.time(date12, true)+l.meridian(time);
+    redraw() {
+      drawDateTime();
     }
   }
 
   /**
-   * Update all info every second while fading out
+   * Keep redrawing music while fading out
    */
   class Fader extends Ticker {
     constructor() {
-      super(defaults.track.interval); // redraw at same speed as scroller
+      super(500);
     }
-    tick() {
+    redraw() {
       drawMusic();
     }
     start() {
@@ -160,7 +95,7 @@
     stop() {
       super.stop();
       this.since = Date.now(); // force redraw at 100% brightness
-      drawMusic();
+      this.redraw();
       this.since = null;
     }
     brightness() {
@@ -176,143 +111,62 @@
    */
   class Scroller extends Ticker {
     constructor() {
-      super(defaults.track.interval);
+      super(200);
     }
     tick() {
-      this.offset += defaults.track.step;
-      this.draw();
+      this.offset += 10;
+      if (Bangle.isLCDOn()) {
+        this.redraw();
+      }
     }
-    draw() {
-      const s = defaults.track;
-      g.setFont(s.font, s.size);
-      g.setColor(infoColor("track"));
-      const w = g.stringWidth(info.track)+s.space,
-        bottom = screen.height-s.bottom;
-      this.offset = this.offset%w;
-      g.setFontAlign(-1, 1);
-      g.clearRect(0, bottom-s.size, screen.width, bottom)
-        .drawString(info.track, -this.offset+s.space, screen.height-s.bottom)
-        .drawString(info.track, -this.offset+s.space+w, screen.height-s.bottom);
+    redraw() {
+      drawScroller();
     }
     start() {
       this.offset = 0;
       super.start();
     }
-    stop() {
-      if (this.active) {
-        const s = defaults.track,
-          bottom = screen.height-s.bottom;
-        g.clearRect(0, bottom-s.size, screen.width, bottom);
-      }
-      super.stop();
-    }
-  }
-
-  function drawInfo(name, options) {
-    drawText(name, info[name], Object.assign({
-      color: infoColor(name),
-      size: infoSize(name),
-      force: fadeOut.active,
-    }, options));
-  }
-  let oldText = {}, clear = {};
-  function drawText(name, text, options) {
-    if (name in oldText && !(name in clear) && !(options || {}).force) {
-      return; // nothing to do
-    }
-    const s = Object.assign(
-      // deep clone defaults to prevent them being overwritten with options
-      JSON.parse(JSON.stringify(defaults[name])),
-      options || {},
-    );
-    g.setColor(s.color);
-    g.setFont(s.font, s.size);
-    const ax = "left" in s ? -1 : ("right" in s ? 1 : 0),
-      ay = "top" in s ? -1 : ("bottom" in s ? 1 : 0);
-    g.setFontAlign(ax, ay);
-    // drawString coordinates
-    const x = "left" in s ? s.left : ("right" in s ? screen.width-s.right : s.center),
-      y = "top" in s ? s.top : ("bottom" in s ? screen.height-s.bottom : s.middle);
-    // bounding rectangle
-    const w = g.stringWidth(text), h = g.getFontHeight(),
-      left = "left" in s ? x : ("right" in s ? x-w : x-w/2),
-      top = "top" in s ? y : ("bottom" in s ? y-h : y-h/2);
-    if (name in oldText) {
-      const old = oldText[name];
-      // only clear if text/area has changed
-      if (name in clear || [left, top, w, h].toString()!==old.toString()) {
-        //            left     top    left+w         left+h
-        g.clearRect(old[0], old[1], old[0]+old[2], old[1]+old[3]);
-      }
-    }
-    delete clear[name];
-    if (text.length) {
-      g.drawString(text, x, y);
-      // remember which rectangle to clear before next draw
-      oldText[name] = [left, top, w, h];
-    } else {
-      delete oldText[name];
-    }
   }
 
   /**
-   *
-   * @param text
+   * @param {string} text
    * @return {number} Maximum font size to make text fit on screen
    */
   function fitText(text) {
     if (!text.length) {
       return Infinity;
     }
-    // Vector: make a guess, then shrink/grow until it fits
-    const getWidth = (size) => g.setFont("Vector", size).stringWidth(text)
-      , sw = screen.width;
-    let guess = Math.round(sw/(text.length*0.6));
-    if (getWidth(guess)===sw) { // good guess!
+    // make a guess, then shrink/grow until it fits
+    const getWidth = (size) => g.setFont("Vector", size).stringWidth(text);
+    let guess = Math.floor(24000/getWidth(100));
+    if (getWidth(guess)===240) { // good guess!
       return guess;
     }
-    if (getWidth(guess)<sw) {
+    if (getWidth(guess)<240) {
       do {
         guess++;
-      } while(getWidth(guess)<=sw);
+      } while(getWidth(guess)<=240);
       return guess-1;
     }
-    // width > target
+    // width > 240
     do {
       guess--;
-    } while(getWidth(guess)>sw);
+    } while(getWidth(guess)>240);
     return guess;
   }
 
   /**
    * @param name
-   * @return {number} Font size to use for given info
-   */
-  function infoSize(name) {
-    if (name==="num") { // fixed size
-      return defaults[name].size;
-    }
-    return Math.min(
-      defaults[name].size,
-      fitText(info[name]),
-    );
-  }
-  /**
-   * @param name
    * @return {string} Semi-random color to use for given info
    */
-  let infoColors = {};
   function infoColor(name) {
-    if (name in infoColors && !fadeOut.active) {
-      return infoColors[name];
-    }
     let h, s, v;
     if (name==="num") {
       // always white
       h = 0;
       s = 0;
     } else {
-      // complicated scheme to make color depend deterministically on info
+      // make color depend deterministically on info
       let code = 0;
       const textCode = t => {
         let c = 0;
@@ -345,40 +199,156 @@
     };
     const rgb = hsv2rgb(h, s, v);
     const f2hex = (f) => ("00"+(Math.round(f*255)).toString(16)).substr(-2);
-    const color = "#"+f2hex(rgb.r)+f2hex(rgb.g)+f2hex(rgb.b);
-    infoColors[name] = color;
-    return color;
+    return "#"+f2hex(rgb.r)+f2hex(rgb.g)+f2hex(rgb.b);
+  }
+  /**
+   * Remember track color until info changes
+   * Because we need this every time we move the scroller
+   * @return {string}
+   */
+  function trackColor() {
+    if (!("track_color" in info) || fadeOut.active) {
+      info.track_color = infoColor("track");
+    }
+    return info.track_color;
   }
 
+  ////////////////////
+  // Drawing functions
+  ////////////////////
+  /**
+   * Draw date and time
+   * @return {*}
+   */
+  function drawDateTime() {
+    const now = new Date;
+    const l = require("locale");
+    const is12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
+    let time;
+    if (is12hour) {
+      const date12 = new Date(now.getTime());
+      const hours = date12.getHours();
+      if (hours===0) {
+        date12.setHours(12);
+      } else if (hours>12) {
+        date12.setHours(hours-12);
+      }
+      time = l.time(date12, true)+l.meridian(now);
+    } else {
+      time = l.time(now, true);
+    }
+    g.reset();
+    g.setFont("Vector", 24)
+      .setFontAlign(-1, -1) // top left
+      .clearRect(10, 30, 119, 54)
+      .drawString(time, 10, 30);
+
+    const date = require("locale").date(now, true);
+    g.setFont("Vector", 16)
+      .setFontAlign(0, 1) // bottom center
+      .setClipRect(35, 198, 199, 214)
+      .clearRect(31, 198, 199, 214)
+      .drawString(date, 119, 240-26);
+  }
+
+  /**
+   * Draw track number and total count
+   */
+  function drawNum() {
+    let num = "";
+    if ("n" in info && info.n>0) {
+      num = "#"+info.n;
+      if ("c" in info && info.c>0) { // I've seen { c:-1 }
+        num += "/"+info.c;
+      }
+    }
+    g.reset();
+    g.setFont("Vector", 30)
+      .setFontAlign(1, -1) // top right
+      .setClipRect(225, 30, 120, 60)
+      .clearRect(225, 30, 120, 60)
+      .drawString(num, 225, 30);
+  }
+  /**
+   * Clear rectangle used by track title
+   */
+  function clearTrack() {
+    g.clearRect(0, 60, 239, 119);
+  }
+  /**
+   * Draw track title
+   */
   function drawTrack() {
-    // we try if we can squeeze this in with a slightly smaller font, but if
-    // the title is too long we start up the scroller instead
-    if (infoSize("track")<defaults.track.min_size) {
+    let size = fitText(info.track);
+    if (size>40) {
+      size = 40;
+    }
+    if (size<25) {
+      // the title is too long: start up the scroller
       if (!scroller.active) {
         scroller.start();
       }
-    } else {
-      if (scroller.active) {
-        scroller.stop();
-      }
-      drawInfo("track");
+      return;
+    } else if (scroller.active) {
+      scroller.stop();
+    }
+    // stationary track
+    g.reset();
+    g.setFont("Vector", size)
+      .setFontAlign(0, 1) // center bottom
+      .setColor(trackColor());
+    clearTrack();
+    g.drawString(info.track, 119, 109);
+  }
+  /**
+   * Draw scrolling track title
+   */
+  function drawScroller() {
+    g.reset();
+    g.setFont("Vector", 40);
+    const w = g.stringWidth(info.track)+40;
+    scroller.offset = scroller.offset%w;
+    g.setFontAlign(-1, 1) // left bottom
+      .setColor(trackColor());
+    clearTrack();
+    g.drawString(info.track, -scroller.offset+40, 109)
+      .drawString(info.track, -scroller.offset+40+w, 109);
+  }
+
+  /**
+   * Draw track artist and album
+   */
+  function drawArtistAlbum() {
+    // we just use small enough fonts to make these always fit
+    // calculate stuff before clear+redraw
+    const artistColor = infoColor("artist");
+    const albumColor = infoColor("album");
+    let artistSize = fitText(info.artist);
+    if (artistSize>30) {
+      artistSize = 30;
+    }
+    let albumSize = fitText(info.album);
+    if (albumSize>20) {
+      albumSize = 20;
+    }
+    g.reset();
+    g.clearRect(0, 120, 240, 189);
+    let top = 124;
+    if (info.artist) {
+      g.setFont("Vector", artistSize)
+        .setFontAlign(0, -1) // center top
+        .setColor(artistColor)
+        .drawString(info.artist, 119, top);
+      top += artistSize+4; // fit album neatly under artist
+    }
+    if (info.album) {
+      g.setFont("Vector", albumSize)
+        .setFontAlign(0, -1) // center top
+        .setColor(albumColor)
+        .drawString(info.album, 119, top);
     }
   }
 
-  function drawArtistAlbum() {
-    // we just use small enough fonts to make these always fit
-    let album_middle = defaults.album.middle;
-    const artist_size = infoSize("artist");
-    if (info.artist) {
-      album_middle += defaults.artist.size;
-    }
-    drawInfo("artist", {
-      size: artist_size,
-    });
-    drawInfo("album", {
-      middle: album_middle,
-    });
-  }
   const icons = {
     pause: function(x, y, s) {
       const w1 = s/3;
@@ -412,16 +382,15 @@
     },
   };
   function controlColor(control) {
-    const s = defaults.controls;
     if (volCmd && control===volCmd) {
       // volume button kept pressed down
-      return s.activeColor;
+      return "#ff0000";
     }
-    return (control in tCommand) ? s.activeColor : s.color;
+    return (control in tCommand) ? "#ff0000" : "#008800";
   }
   function drawControl(control, x, y) {
     g.setColor(controlColor(control));
-    const s = defaults.controls.size;
+    const s = 20;
     if (state!==controlState) {
       g.clearRect(x, y, x+s, y+s);
     }
@@ -429,44 +398,49 @@
   }
   let controlState;
   function drawControls() {
-    const s = defaults.controls;
+    g.reset();
     if (state==="play") {
       // left touch
-      drawControl("pause", s.left, screen.height-(s.bottom+s.size));
+      drawControl("pause", 10, 190);
       // right touch
-      drawControl("next", screen.width-(s.right+s.size), screen.height-(s.bottom+s.size));
+      drawControl("next", 200, 190);
     } else {
-      drawControl("previous", s.left, screen.height-(s.bottom+s.size));
-      drawControl("play", screen.width-(s.right+s.size), screen.height-(s.bottom+s.size));
+      drawControl("previous", 10, 190);
+      drawControl("play", 200, 190);
     }
-    g.setFont("6x8", s.volSize);
+    g.setFont("6x8", 2);
     // BTN1
     g.setFontAlign(1, -1);
     g.setColor(controlColor("volumeup"));
-    g.drawString("+", screen.width, s.top);
+    g.drawString("+", 240, 30);
     // BTN2
     g.setFontAlign(1, 1);
     g.setColor(controlColor("volumedown"));
-    g.drawString("-", screen.width, screen.height-s.bottom);
+    g.drawString("-", 240, 210);
     controlState = state;
   }
 
-  function setNumInfo() {
-    info.num = "";
-    if ("n" in info && info.n>0) {
-      info.num = "#"+info.n;
-      if ("c" in info && info.c>0) { // I've seen { c:-1 }
-        info.num += "/"+info.c;
-      }
-    }
-  }
   function drawMusic() {
-    g.reset();
-    setNumInfo();
-    drawInfo("num");
+    drawNum();
     drawTrack();
     drawArtistAlbum();
   }
+
+  /////////////////////////
+
+  /**
+   * Update music info
+   * @param event
+   */
+  function setInfo(event) {
+    info = event;
+    delete (info.t);
+    scroller.offset = 0;
+    if (Bangle.isLCDOn()) {
+      drawMusic();
+    }
+  }
+
   let tQuit;
   function updateState() {
     // if paused for five minutes, load the clock
@@ -475,6 +449,7 @@
       clearTimeout(tQuit);
     }
     tQuit = null;
+    fadeOut.stop();
     if (state!=="play" && autoClose) {
       if (state==="stop") { // never actually happens with my phone :-(
         load();
@@ -482,10 +457,10 @@
         tQuit = setTimeout(load, TIMEOUT);
         fadeOut.start();
       }
-    } else {
-      fadeOut.stop();
     }
-    drawControls();
+    if (Bangle.isLCDOn()) {
+      drawControls();
+    }
   }
 
   // create tickers
@@ -496,19 +471,6 @@
   ////////////////////
   // Events
   ////////////////////
-
-  // pause timers while screen is off
-  Bangle.on("lcdPower", on => {
-    if (on) {
-      clock.resume();
-      scroller.resume();
-      fadeOut.resume();
-    } else {
-      clock.pause();
-      scroller.pause();
-      fadeOut.pause();
-    }
-  });
 
   let tLauncher;
   // we put starting of watches inside a function, so we can defer it until we
@@ -545,7 +507,7 @@
     tCommand[command] = setTimeout(function() {
       delete tCommand[command];
       drawControls();
-    }, defaults.controls.highlight);
+    }, 200);
     drawControls();
   }
 
@@ -629,6 +591,7 @@
     startLauncherWatch();
     startTouchWatches();
   }
+
   function start() {
     // start listening for music updates
     const _GB = global.GB;
@@ -636,12 +599,7 @@
       // we eat music events!
       switch(event.t) {
         case "musicinfo":
-          info = event;
-          infoColors = {};
-          scroller.offset = 0;
-          delete (info.t);
-          clear.artist = clear.album = clear.title = clear.num = true;
-          drawMusic();
+          setInfo(event);
           break;
         case "musicstate":
           state = event.state;
@@ -652,7 +610,7 @@
           if (_GB) {
             setTimeout(_GB, 0, event);
           }
-          return; // no drawMusic
+          return;
       }
     };
     drawMusic();
@@ -660,6 +618,12 @@
     startWatches();
     clock.start();
     startEmulator();
+    Bangle.on("lcdPower", function(on) {
+      if (on) {
+        drawMusic();
+        drawControls();
+      }
+    });
   }
 
   let saved = require("Storage").readJSON("gbmusic.load.json", true);
