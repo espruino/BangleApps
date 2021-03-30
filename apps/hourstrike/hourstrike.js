@@ -15,11 +15,13 @@ if (cur_hour<setting.start) {
   wait_sec = 0;
 }
 
-var notify_func = function () {
-  Bangle.buzz(200, 0.5)
+function notify_func () {
+  Bangle.buzz(200, setting.vlevel)
     .then(() => new Promise(resolve => setTimeout(resolve,200)))
-    .then(() => Bangle.buzz(200, 0.5));
-};
+    .then(() => Bangle.buzz(200, setting.vlevel));
+}
 
 setTimeout(notify_func, wait_sec*1000);
 setTimeout(load, wait_sec*1000+800);
+
+
