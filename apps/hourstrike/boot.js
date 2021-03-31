@@ -9,6 +9,7 @@
     if (t_hour<settings.start||t_hour>settings.end) {
       var strike = new Date(t.getTime());
       strike.setHours(settings.start);
+      strike.setMinutes(0);
       if (t_hour>settings.end) {
         strike.setDate(strike.getDate()+1);
       }
