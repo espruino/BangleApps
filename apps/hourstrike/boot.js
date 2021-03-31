@@ -20,7 +20,10 @@
       settings.next_hour = t_hour;
       settings.next_minute = t.getMinutes();
     }
-    require('Storage').write('hourstrike.json', settings);
     setTimeout(function() {load("hourstrike.js");}, wait_msec);
+  } else {
+    settings.next_hour = -1;
+    settings.next_minute = -1;
   }
+  require('Storage').write('hourstrike.json', settings);
 })();

@@ -31,6 +31,10 @@ function showMainMenu() {
       format: v => mode_txt[v],
       onchange: v => {
         settings.interval = mode_interval[v];
+          if (v===0) {
+            settings.next_hour = -1;
+            settings.next_minute = -1;
+          }
         updateSettings();
       }
     },
