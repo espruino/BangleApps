@@ -207,6 +207,23 @@ var locales = {
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
     trans: { yes: "oui", Yes: "Oui", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
   },
+  "ko_KR": { // this is Korean locale
+    lang: "ko_KR",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "₩", currency_first: true,
+    int_curr_symbol: "KRW",
+    speed: 'km/h',
+    distance: { "0": "m", "1": "km" },
+    temperature: '°C',
+    ampm: { 0: "오전", 1: "오후" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%Y년 %m월 %d일", 1: "%d/%m/%Y" }, // 2020년 02월 28일" // "01/03/2020"(short)
+    abmonth: "1,2,3,4,5,6,7,8,9,10,11,12",
+    month: "1월,2월,3월,4월,5월,6월,7월,8월,9월,10월,11월,12월",
+    abday: "일,월,화,수,목,금,토",
+    day: "일요일,월요일,화요일,수요일,목요일,금요일,토요일",    
+  },
   "sv_SE": {
     lang: "sv_SE",
     decimal_point: ",",
