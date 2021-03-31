@@ -7,7 +7,7 @@
     t.setMilliseconds(t.getMilliseconds()+wait_msec);
     var t_hour = t.getHours();
     if (t_hour<setting.start||t_hour>setting.end) {
-      var strike = new Date(t);
+      var strike = new Date(t.getTime());
       strike.setHours(setting.start);
       if (t_hour>setting.end) {
         strike.setDate(strike.getDate()+1);

@@ -8,5 +8,5 @@ function notify_func () {
     .then(() => Bangle.buzz(200, setting.vlevel||0.5));
 }
 
-notify_func;
+notify_func();
 setTimeout(load, 800);
