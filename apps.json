@@ -3065,7 +3065,7 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "icon": "app-icon.png",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "tags": "tool,alarm",
   "readme": "README.md",
