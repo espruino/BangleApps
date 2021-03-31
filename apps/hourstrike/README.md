@@ -13,6 +13,7 @@ This app is slightly different from [Hour Chime](https://github.com/espruino/Ban
 - Strike the hour, the half hour, the quarter hour, and more
 - Set up a range of hours that clock will strike
 - Set up the strength of the strike
+- Preview when the next strike will happen
 
 ## Known Issues
 

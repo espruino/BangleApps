@@ -11,6 +11,8 @@ function resetSettings() {
     start: 9,
     end: 21,
     vlevel: 0.5,
+    next_hour: -1,
+    next_minute: -1,
   };
   updateSettings();
 }
@@ -58,9 +60,10 @@ function showMainMenu() {
         settings.vlevel = v/10;
         updateSettings();
       }
-    },
-    '< Back': ()=>load()
+    }
   };
+  mainmenu['Next strike '+settings.next_hour+':'+settings.next_minute] = function(){};
+  mainmenu['< Back'] = ()=>load();
   return E.showMenu(mainmenu);
 }
 
