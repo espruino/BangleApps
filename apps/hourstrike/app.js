@@ -24,7 +24,7 @@ function showMainMenu() {
   var mode_txt = ['Off','1 min','5 min','10 min','1/4 h','1/2 h','1 h'];
   var mode_interval = [-1,60,300,600,900,1800,3600];
   const mainmenu = {'': { 'title': 'Hour Strike' }};
-  mainmenu['Next strike at '+settings.next_hour+':'+settings.next_minute] = function(){};
+  mainmenu['Next strike '+settings.next_hour+':'+settings.next_minute] = function(){};
   mainmenu['Notify every'] = {
     value: mode_interval.indexOf(settings.interval),
     min: 0, max: 6, format: v => mode_txt[v],
