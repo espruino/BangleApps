@@ -3065,14 +3065,13 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "icon": "app-icon.png",
-  "version": "0.06",
+  "version": "0.07",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "tags": "tool,alarm",
   "readme": "README.md",
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
-    {"name":"hourstrike.js","url":"hourstrike.js"},
     {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
   ]
 }
