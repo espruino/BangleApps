@@ -56,15 +56,6 @@
     return locale.date(new Date(), 1);
   };
 
-  const getArcXY = function (centerX, centerY, radius, angle) {
-    var s, r = [];
-    s = 2 * Math.PI * angle / 360;
-    r.push(centerX + Math.round(Math.cos(s) * radius));
-    r.push(centerY + Math.round(Math.sin(s) * radius));
-
-    return r;
-  };
-
   const getFormated = function(val) {
     if (val<10) {
       val='0'+val;
@@ -103,8 +94,6 @@
     
     if(seconds==59) {
         g.clear();
-        Bangle.loadWidgets();
-        Bangle.drawWidgets();
     }
 
     // Update minutes when needed
