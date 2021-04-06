@@ -6,7 +6,24 @@ The Sweep Clock provides a clock with a perfectly smooth sweep second hand with 
 
 ## Usage
 
-Use Button 1 (the top right button) to change the numeral types (currently European and Roman)
+### Button 1
+
+Use Button 1 (the top right button) to change the numeral type 
+
+|   Default clock face   |  Roman Numeral Font    |  No Digits    |
+| ---- | ---- | ---- |
+|   ![](./numeral-01.jpg)   | ![](numeral-02.jpg)     |  ![](numeral-03.jpg)    |
+
+
+
+### Button 3
+Button 3 (bottom right button) is used to change the colour
+
+|  Red   |  Grey    |  Purple    |
+| ---- | ---- | ---- |
+|   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   |
+
+
 
 ## Further Details
 
@@ -14,8 +31,8 @@ For further details of design and working please visit [The Project Page](https:
 
 ## Requests
 
-[Reach out to Adrian](https://www.github.com/awkirk71) if you have feature requests or notice bugs.
+Reach out to adrian@adriankirk.com if you have feature requests or notice bugs.
 
 ## Creator
 
-Made by [Adrian Kirk](https://www.github.com/awkirk71).
+Made by [Adrian Kirk](mailto:adrian@adriankirk.com)
