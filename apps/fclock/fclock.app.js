@@ -23,14 +23,14 @@
   // Ssettings
   const settings = {
     time: {
-      color: '#D6ED17',
+      color: '#dddddd',
       font: 'Vector',
-      size: 60,
+      size: 100,
       middle: screen.middle,
       center: screen.center,
     },
     date: {
-      color: '#D6ED17',
+      color: '#dddddd',
       font: 'Vector',
       size: 15,
       middle: screen.height-17, // at bottom of screen
@@ -46,9 +46,9 @@
     },
     hr: {
       color: '#333333',
-      size: 10,
+      size: 20,
       x: screen.center,
-      y: screen.middle + 45
+      y: screen.middle + 65
     }
   };
 
@@ -56,79 +56,56 @@
     return locale.date(new Date(), 1);
   };
 
-  const getArcXY = function (centerX, centerY, radius, angle) {
-    var s, r = [];
-    s = 2 * Math.PI * angle / 360;
-    r.push(centerX + Math.round(Math.cos(s) * radius));
-    r.push(centerY + Math.round(Math.sin(s) * radius));
+  const getFormated = function(val) {
+    if (val<10) {
+      val='0'+val;
+    }
 
-    return r;
+    return val;
   };
 
-  const drawMinArc = function (sections, color) {
-    g.setColor(color);
-    rad = (settings.circle.height / 2) - 40;
-    r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    g.drawLine(r1[0], r1[1], r2[0], r2[1]);
-    g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
+  const drawMin = function (sections, color) {
+    
+    g.setFontAlign(0, 0, 0);
+    g.setColor('#000000');
+    g.setFont(settings.time.font, settings.time.size/2);
+    g.drawString(getFormated(sections-1), settings.time.center+50, settings.time.middle);
+    g.setColor(settings.time.color);
+    g.setFont(settings.time.font, settings.time.size/2);
+    g.drawString(getFormated(sections), settings.time.center+50, settings.time.middle);
   };
 
-  const drawSecArc = function (sections, color) {
-    g.setColor(color);
-    rad = (settings.circle.height / 2) - 20;
-    r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    g.drawLine(r1[0], r1[1], r2[0], r2[1]);
-    g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
+  const drawSec = function (sections, color) {
+    g.setFontAlign(0, 0, 0);
+    g.setColor('#000000');
+    g.setFont(settings.time.font, settings.time.size/4);
+    g.drawString(getFormated(sections-1), settings.time.center+100, settings.time.middle);
+    g.setColor(settings.time.color);
+    g.setFont(settings.time.font, settings.time.size/4);
+    g.drawString(getFormated(sections), settings.time.center+100, settings.time.middle);
   };
 
   const drawClock = function () {
 
     currentTime = new Date();
 
-    //Set to initial time when started
-    if (first == true) {
-      minutes = currentTime.getMinutes();
-      seconds = currentTime.getSeconds();
-      for (count = 0; count <= minutes; count++) {
-        drawMinArc(count, settings.circle.colormin);
-      }
-
-      for (count = 0; count <= seconds; count++) {
-        drawSecArc(count, settings.circle.colorsec);
-      }
-      first = false;
-    }
-
-    // Reset
-    if (seconds == 59) {
-      g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
-      for (count = 0; count <= minutes; count++) {
-        drawMinArc(count, settings.circle.colormin);
-      }
-    }
-
     //Get date as a string
     date = dateStr(currentTime);
+    
+    if(seconds==59) {
+        g.clear();
+    }
 
     // Update minutes when needed
     if (minutes != currentTime.getMinutes()) {
       minutes = currentTime.getMinutes();
-      drawMinArc(minutes, settings.circle.colormin);
+      drawMin(minutes, settings.circle.colormin);
     }
 
     //Update seconds when needed
     if (seconds != currentTime.getSeconds()) {
       seconds = currentTime.getSeconds();
-      drawSecArc(seconds, settings.circle.colorsec);
+      drawSec(seconds, settings.circle.colorsec);
     }
 
     //Write the time as configured in the settings
@@ -155,7 +132,7 @@
     g.setFontAlign(0, 0, 0);
     g.setColor(settings.time.color);
     g.setFont(settings.time.font, settings.time.size);
-    g.drawString(timestr, settings.time.center, settings.time.middle);
+    g.drawString(timestr, settings.time.center-40, settings.time.middle);
 
     //Write the date as configured in the settings
     g.setColor(settings.date.color);
