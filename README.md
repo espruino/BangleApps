@@ -439,12 +439,15 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 | areas | as rectangle or point |
 | :-:| :-: |
 | Widget | (0,0,239,23) |
-| Apps | (0,24,239,239) |
+| Widget bottom bar (optional) | (0,216,239,239) |
+| Apps | (0,24,239,239) (see below) |
 | BTN1 | (230, 55)  |
 | BTN2 | (230, 140) |
 | BTN3 | (230, 210) |
 | BTN4 | (0,0,119, 239)|
 | BTN5 |  (120,0,239,239) |
+
+- If there are widgets at the bottom of the screen, apps should actually keep the bottom 24px free, so should keep to the area (0,24,239,215)
 
 - Use `g.setFontAlign(0, 0, 3)` to draw rotated string to BTN1-BTN3 with `g.drawString()`.
 

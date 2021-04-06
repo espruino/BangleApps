@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Use HRM data and calculations from Bangle.js (don't access hardware directly)
+0.03: Fix timing issues, and use 1/2 scale to keep graph on screen

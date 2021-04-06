@@ -262,12 +262,6 @@ Graphics.prototype.drawRotLine = function (sina, cosa, cx, cy, r1, r2) {
         g.drawRotLine(Math.sin(a), Math.cos(a), CX, CY+TM, RC1, R1);
       }
 
-      // Clock chime on the hour.
-      if (hours >= 0 && minutes === 0)
-        try {
-          Bangle.buzz();
-        } catch (e) { }
-
       // And draw widgets if we're in that mode
       if (with_widgets)
         Bangle.drawWidgets();

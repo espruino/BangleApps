@@ -128,9 +128,6 @@ const onMinute = () => {
   g.setColor(1, 0.9, 0.9);
   // Minute
   minDot((360 * currentDate.getMinutes()) / 60,3);
-  if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
-    Bangle.buzz();
-  }
   drawDate();
 };
 

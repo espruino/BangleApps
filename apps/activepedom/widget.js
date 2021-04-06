@@ -141,9 +141,6 @@
 
   function draw() {
     var height = 23; //width is deined globally
-    // not everyone likes a widget
-    if (setting('lineOne') == 'Hide' && setting('lineTwo') == 'Hide')
-      return;
     
     distance = (stepsCounted * setting('stepLength')) / 100 /1000; //distance in km
     
@@ -158,6 +155,12 @@
       stepsOutsideTime = 0;
     }
     lastUpdate = date;
+
+    // not everyone likes a widget, having refreshed lastUpdate we can exit
+    if (setting('lineOne') == 'Hide' && setting('lineTwo') == 'Hide') {
+      settings = 0; //reset settings to save memory
+      return;
+    }
     
     g.reset();
     g.clearRect(this.x, this.y, this.x+width, this.y+height);

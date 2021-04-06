@@ -113,9 +113,6 @@ const onMinute = () => {
   g.setColor(1, 1, 0.9);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
-  if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
-    Bangle.buzz();
-  }
   drawDate();
 };
 

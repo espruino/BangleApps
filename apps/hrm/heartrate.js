@@ -12,7 +12,10 @@ function onHRM(h) {
   hrmInfo = h;
   hrmOffset = 0;
   if (hrmInterval) clearInterval(hrmInterval);
-  hrmInterval = setInterval(readHRM,40);
+  hrmInterval = undefined;
+  setTimeout(function() {
+    hrmInterval = setInterval(readHRM,41);
+  }, 40);
 
   var px = g.getWidth()/2;
   g.setFontAlign(0,0);
@@ -35,7 +38,6 @@ function countDown() {
 countDown();
 
 
-var min=0,max=0;
 var wasHigh = 0, wasLow = 0;
 var lastHigh = getTime();
 var hrmList = [];
@@ -51,9 +53,7 @@ function readHRM() {
   for (var i=0;i<2;i++) {
     var a = hrmInfo.raw[hrmOffset];
     hrmOffset++;
-    min=Math.min(min*0.97+a*0.03,a);
-    max=Math.max(max*0.97+a*0.03,a);
-    y = E.clip(170 - (a*4),100,230);
+    y = E.clip(170 - (a*2),100,230);
     g.setColor(1,1,1);
     g.lineTo(hrmOffset, y);
   }

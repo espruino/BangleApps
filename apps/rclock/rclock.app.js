@@ -23,24 +23,22 @@
   // Ssettings
   const settings = {
     time: {
-      color: '#f0af00',
-      shadow: '#CF7500',
+      color: '#D6ED17',
       font: 'Vector',
       size: 60,
-      middle: screen.middle - 30,
+      middle: screen.middle,
       center: screen.center,
     },
     date: {
-      color: '#f0af00',
-      shadow: '#CF7500',
+      color: '#D6ED17',
       font: 'Vector',
       size: 15,
-      middle: screen.height - 20, // at bottom of screen
+      middle: screen.height-17, // at bottom of screen
       center: screen.center,
     },
     circle: {
-      colormin: '#eeeeee',
-      colorsec: '#bbbbbb',
+      colormin: '#ffffff',
+      colorsec: '#ffffff',
       width: 10,
       middle: screen.middle,
       center: screen.center,
@@ -69,18 +67,6 @@
 
   const drawMinArc = function (sections, color) {
     g.setColor(color);
-    rad = (settings.circle.height / 2) - 20;
-    r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
-    //g.setPixel(r[0],r[1]);
-    g.drawLine(r1[0], r1[1], r2[0], r2[1]);
-    g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
-  };
-
-  const drawSecArc = function (sections, color) {
-    g.setColor(color);
     rad = (settings.circle.height / 2) - 40;
     r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
     //g.setPixel(r[0],r[1]);
@@ -88,7 +74,19 @@
     //g.setPixel(r[0],r[1]);
     g.drawLine(r1[0], r1[1], r2[0], r2[1]);
     g.setColor('#333333');
-    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4)
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
+  };
+
+  const drawSecArc = function (sections, color) {
+    g.setColor(color);
+    rad = (settings.circle.height / 2) - 20;
+    r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
+    //g.setPixel(r[0],r[1]);
+    r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
+    //g.setPixel(r[0],r[1]);
+    g.drawLine(r1[0], r1[1], r2[0], r2[1]);
+    g.setColor('#333333');
+    g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
   };
 
   const drawClock = function () {
@@ -109,15 +107,13 @@
       first = false;
     }
 
-    // Reset seconds
+    // Reset
     if (seconds == 59) {
       g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 40);
-    }
-    // Reset minutes
-    if (minutes == 59 && seconds == 59) {
-      g.setColor('#000000');
-      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2) - 20);
+      g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
+      for (count = 0; count <= minutes; count++) {
+        drawMinArc(count, settings.circle.colormin);
+      }
     }
 
     //Get date as a string
