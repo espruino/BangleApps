@@ -216,14 +216,19 @@
   { "id": "slidingtext",
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently only English, French and Japanese are supported",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
+     "readme": "README.md",
     "storage": [
       {"name":"slidingtext.app.js","url":"slidingtext.js"},
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
+      {"name":"slidingtext.local.en.js","url":"slidingtext.local.en.js"},
+      {"name":"slidingtext.local.fr.js","url":"slidingtext.local.fr.js"},
+      {"name":"slidingtext.local.jp.js","url":"slidingtext.local.jp.js"},
+      {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"},
     ]
   },
   { "id": "sweepclock",
