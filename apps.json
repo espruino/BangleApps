@@ -224,7 +224,7 @@
      "readme": "README.md",
     "storage": [
       {"name":"slidingtext.app.js","url":"slidingtext.js"},
-      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
+      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
       {"name":"slidingtext.local.en.js","url":"slidingtext.local.en.js"},
       {"name":"slidingtext.local.fr.js","url":"slidingtext.local.fr.js"},
       {"name":"slidingtext.local.jp.js","url":"slidingtext.local.jp.js"},
