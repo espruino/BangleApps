@@ -233,16 +233,15 @@ class ShiftText {
   }
 }
 
-
+const CLOCK_TEXT_SPEED_X = 10;
 // a list of display rows
 let row_displays = [
-  new ShiftText(240,60,'',"Vector",40,10,1,10,main_color(),bg_color()),
-  new ShiftText(240,100,'',"Vector",30,10,1,10,other_color(),bg_color()),
-  new ShiftText(240,130,'',"Vector",30,10,1,10,other_color(),bg_color()),
-  new ShiftText(240,160,'',"Vector",30,10,1,10,other_color(),bg_color())
+  new ShiftText(240,50,'',"Vector",40,CLOCK_TEXT_SPEED_X,1,10,main_color(),bg_color()),
+  new ShiftText(240,90,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
+  new ShiftText(240,120,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
+  new ShiftText(240,150,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
+  new ShiftText(240,180,'',"Vector",40,CLOCK_TEXT_SPEED_X,1,10,main_color(),bg_color())
 ];
-
-
 
 function nextColorTheme(){
   //console.log("next color theme");
@@ -261,10 +260,12 @@ function nextColorTheme(){
 function setColor(main_color,other_color,bg_color){
   row_displays[0].setColor(main_color);
   row_displays[0].setBgColor(bg_color);
-  for(var i=1; i<row_displays.length; i++){
+  for(var i=1; i<row_displays.length - 1; i++){
     row_displays[i].setColor(other_color);
     row_displays[i].setBgColor(bg_color);
   }
+  row_displays[row_displays.length - 1].setColor(main_color);
+  row_displays[row_displays.length - 1].setBgColor(bg_color);
   g.setColor(bg_color[0],bg_color[1],bg_color[2]);
   g.fillPoly([0,25,
     0,240,
@@ -274,7 +275,7 @@ function setColor(main_color,other_color,bg_color){
 }
 
 // load the date formats required
-var locales = ["en","fr","jp"];
+var locales = ["en","en2","fr","jp"];
 
 let date_formatters = [];
 for(var i=0; i< locales.length; i++){
@@ -287,40 +288,52 @@ for(var i=0; i< locales.length; i++){
 let date_formatter_idx = 0;
 let date_formatter = date_formatters[date_formatter_idx];
 
-// The small display at the top which announces the date format
-let format_name_display = new ShiftText(55,0,'',"Vector",10,1,1,50,[1,1,1],[0,0,0]);
-
 function changeFormatter(){
   date_formatter_idx += 1;
   if(date_formatter_idx >= date_formatters.length){
     date_formatter_idx = 0;
   }
-  //console.log("changing to formatter " + date_formatter_idx);
+  console.log("changing to formatter " + date_formatter_idx);
   date_formatter = date_formatters[date_formatter_idx];
   reset_clock();
   draw_clock();
-  // now announce the formatter by name
-  format_name_display.setTextYPosition(date_formatter.name(),-10);
-  format_name_display.moveToY(15);
-  // and then move back
-  format_name_display.onFinished(
-      function(){
-        format_name_display.moveToY(-10);
+  command_stack_high_priority.unshift(
+      function() {
+        //console.log("move in new:" + txt);
+        // first select the top or bottom to display the formatter name
+        // We choose the first spare row without text
+        var format_name_display = row_displays[row_displays.length - 1];
+        if (format_name_display.txt != '') {
+          format_name_display = row_displays[0];
+        }
+        if (format_name_display.txt != ''){
+          return;
+        }
+        format_name_display.speed_x = 3;
+        format_name_display.onFinished(function(){
+          format_name_display.speed_x = CLOCK_TEXT_SPEED_X;
+          console.log("return speed to:" + format_name_display.speed_x)
+          next_command();
+        });
+        format_name_display.setTextXPosition(date_formatter.name(),220);
+        format_name_display.moveToX(-date_formatter.name().length * format_name_display.font_size);
       }
   );
+
 }
 
 
 function reset_clock(){
   //console.log("reset_clock");
   for (var i = 0; i < row_displays.length; i++) {
+    row_displays[i].speed_x = CLOCK_TEXT_SPEED_X;
     row_displays[i].reset();
   }
   reset_commands();
 }
 
 let last_draw_time = null;
-const next_minute_boundary_secs = 5;
+const next_minute_boundary_secs = 7.5;
 
 function draw_clock(){
   var date = new Date();
@@ -362,14 +375,16 @@ function draw_clock(){
 
 function display_row(display,txt){
   if(display.txt == ''){
-    command_stack_high_priority.unshift(
-        function(){
-          //console.log("move in new:" + txt);
-          display.onFinished(next_command);
-          display.setTextXPosition(txt,240);
-          display.moveToX(20);
-        }
-    );
+    if(txt != '') {
+      command_stack_high_priority.unshift(
+          function () {
+            //console.log("move in new:" + txt);
+            display.onFinished(next_command);
+            display.setTextXPosition(txt, 240);
+            display.moveToX(20);
+          }
+      );
+    }
   } else if(txt != display.txt && display.txt != null){
     command_stack_high_priority.push(
         function(){
