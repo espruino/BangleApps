@@ -180,6 +180,9 @@
       {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
+    "data": [
+      {"name":"setting.json", "url":"settings.min.json","evaluate":true}
+    ],
     "sortorder" : -2
   },
   { "id": "alarm",
@@ -439,8 +442,10 @@
     "interface":"waypoints.html",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.min.js"},
-      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
       {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
     ]
   },
   { "id": "heart",
@@ -2414,9 +2419,11 @@
     "readme": "README.md",
     "storage": [
       {"name":"worldclock.app.js","url":"app.js"},
-      {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
-  ]
+    ],
+    "data": [
+      {"name":"worldclock.settings.json"}
+    ]
  },
 { "id": "digiclock",
   "name": "Digital Clock Face",
@@ -2659,8 +2666,10 @@
   "readme": "README.md",
   "storage": [
     {"name":"breath.app.js","url":"app.js"},
-    {"name":"breath.settings.json","url":"settings.json"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"breath.settings.json","url":"settings.json"}
   ]
 },
 { "id": "lazyclock",
@@ -2757,9 +2766,11 @@
   "storage": [
     {"name":"gpsservice.app.js","url":"app.js"},
     {"name":"gpsservice.settings.js","url":"settings.js"},
-    {"name":"gpsservice.settings.json","url":"settings.json"},
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpsservice.settings.json","url":"settings.json"}
   ]
 },
 { "id": "mclockplus",
@@ -2856,9 +2867,11 @@
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},
     {"name":"gpssetup.settings.js","url":"settings.js"},
-    {"name":"gpssetup.settings.json","url":"settings.json"},
     {"name":"gpssetup.app.js","url":"app.js"},
     {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpssetup.settings.json","url":"settings.json"}
   ]
 },
 { "id": "walkersclock",
@@ -2959,8 +2972,10 @@
   "interface":"waypoints.html",
   "storage": [
     {"name":"waypointer.app.js","url":"app.js"},
-    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
 { "id": "color_catalog",
