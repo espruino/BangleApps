@@ -40,16 +40,18 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
     formatDate(date){
         var hours = hoursToText(date.getHours());
         var mins = date.getMinutes();
+        // Deal with the special times first
         if(mins == 0){
             return [hours,"", "O'","CLOCK"];
         } else if(mins == 30){
             return ["","HALF", "PAST", "", hours];
+        } else if(mins == 15){
+            return ["","QUARTER", "PAST", "", hours];
+        } else if(mins == 45) {
+            return ["", "QUARTER", "TO", "", hours];
         }
-        var mins_txt = ['',''];
-        if(mins == 15 || mins == 45){
-            mins_txt[0] = "QUARTER";
-        }
-        var from_to = '';
+        var mins_txt;
+        var from_to;
         if(mins > 30){
             from_to = "TO";
             mins_txt = numberToText(60-mins);
