@@ -50,7 +50,7 @@ function brightness() {
 // Scroll long track names
 // use an interval to get smooth movement
 let offset = null, // scroll Offset: null = no scrolling
-  scrollI;
+  iScroll;
 function scroll() {
   offset += 10;
   drawScroller();
@@ -61,16 +61,16 @@ function scrollStart() {
   }
   offset = 0;
   if (Bangle.isLCDOn()) {
-    if (!scrollI) {
-      scrollI = setInterval(scroll, 200);
+    if (!iScroll) {
+      iScroll = setInterval(scroll, 200);
     }
     drawScroller();
   }
 }
 function scrollStop() {
-  if (scrollI) {
-    clearInterval(scrollI);
-    scrollI = null;
+  if (iScroll) {
+    clearInterval(iScroll);
+    iScroll = null;
   }
   offset = null;
 }
@@ -342,10 +342,6 @@ function drawIcon(icon, x, y, s) {
   })[icon](x, y, s);
 }
 function controlColor(ctrl) {
-  if (vCmd && ctrl===vCmd) {
-    // volume button kept pressed down
-    return "#ff0000";
-  }
   return (ctrl in tCommand) ? "#ff0000" : "#008800";
 }
 function drawControl(ctrl, x, y) {
@@ -431,25 +427,47 @@ function musicState(e) {
 // Events
 ////////////////////
 
-let tLauncher;
-// we put starting of watches inside a function, so we can defer it until we
-// asked the user about autoStart
-function startLauncherWatch() {
-  // long-press: launcher
-  // short-press: toggle play/pause
-  setWatch(function() {
-    if (tLauncher) {
-      clearTimeout(tLauncher);
+// we put starting of watches inside a function, so we can defer it until
+// we asked the user about autoStart
+/**
+ * Start watching for BTN2 presses
+ */
+let tPress, nPress = 0;
+function startButtonWatches() {
+  // BTN1/3: volume control
+  // Wait for falling edge to avoid messing with volume while long-pressing BTN3
+  // to reload the watch (and same for BTN2 for consistency)
+  setWatch(() => { sendCommand("volumeup"); }, BTN1, {repeat: true, edge: "falling"});
+  setWatch(() => { sendCommand("volumedown"); }, BTN3, {repeat: true, edge: "falling"});
+
+  // BTN2: long-press for launcher, otherwise depends on number of presses
+  setWatch(() => {
+    if (nPress===0) {
+      tPress = setTimeout(() => {Bangle.showLauncher();}, 3000);
     }
-    tLauncher = setTimeout(Bangle.showLauncher, 1000);
   }, BTN2, {repeat: true, edge: "rising"});
-  setWatch(function() {
-    if (tLauncher) {
-      clearTimeout(tLauncher);
-      tLauncher = null;
-    }
-    togglePlay();
+  setWatch(() => {
+    nPress++;
+    clearTimeout(tPress);
+    tPress = setTimeout(handleButton2Press, 500);
   }, BTN2, {repeat: true, edge: "falling"});
+}
+function handleButton2Press() {
+  tPress = null;
+  switch(nPress) {
+    case 1:
+      togglePlay();
+      break;
+    case 2:
+      sendCommand("next");
+      break;
+    case 3:
+      sendCommand("previous");
+      break;
+    default: // invalid
+      Bangle.buzz(50);
+  }
+  nPress = 0;
 }
 
 let tCommand = {};
@@ -470,46 +488,12 @@ function sendCommand(command) {
   drawControls();
 }
 
-// BTN1/3: volume control (with repeat after long-press)
-let tVol, vCmd;
-function volUp() {
-  volStart("up");
-}
-function volDown() {
-  volStart("down");
-}
-function volStart(dir) {
-  const command = "volume"+dir;
-  stopVol();
-  sendCommand(command);
-  vCmd = command;
-  tVol = setTimeout(repeatVol, 500);
-}
-function repeatVol() {
-  sendCommand(vCmd);
-  tVol = setTimeout(repeatVol, 100);
-}
-function stopVol() {
-  if (tVol) {
-    clearTimeout(tVol);
-    tVol = null;
-  }
-  vCmd = null;
-  drawControls();
-}
-function startVolWatches() {
-  setWatch(volUp, BTN1, {repeat: true, edge: "rising"});
-  setWatch(stopVol, BTN1, {repeat: true, edge: "falling"});
-  setWatch(volDown, BTN3, {repeat: true, edge: "rising"});
-  setWatch(stopVol, BTN3, {repeat: true, edge: "falling"});
-}
-
 // touch/swipe: navigation
 function togglePlay() {
   sendCommand(stat==="play" ? "pause" : "play");
 }
 function startTouchWatches() {
-  Bangle.on("touch", function(side) {
+  Bangle.on("touch", side => {
     switch(side) {
       case 1:
         sendCommand(stat==="play" ? "pause" : "previous");
@@ -521,10 +505,34 @@ function startTouchWatches() {
         togglePlay();
     }
   });
-  Bangle.on("swipe", function(dir) {
+  Bangle.on("swipe", dir => {
     sendCommand(dir===1 ? "previous" : "next");
   });
 }
+function startLCDWatch() {
+  Bangle.on("lcdPower", (on) => {
+    if (on) {
+      // redraw and resume scrolling
+      tick();
+      drawMusic();
+      drawControls();
+      fadeOut();
+      if (offset!==null) {
+        drawScroller();
+        if (!iScroll) {
+          iScroll = setInterval(scroll, 200);
+        }
+      }
+    } else {
+      // pause scrolling
+      if (iScroll) {
+        clearInterval(iScroll);
+        iScroll = null;
+      }
+    }
+  });
+}
+
 /////////////////////
 // Startup
 /////////////////////
@@ -546,9 +554,9 @@ function startEmulator() {
   }
 }
 function startWatches() {
-  startVolWatches();
-  startLauncherWatch();
+  startButtonWatches();
   startTouchWatches();
+  startLCDWatch();
 }
 
 function start() {
@@ -576,23 +584,6 @@ function start() {
   startWatches();
   tick();
   startEmulator();
-  Bangle.on("lcdPower", (on) => {
-    if (on) {
-      tick();
-      drawMusic();
-      drawControls();
-      fadeOut();
-      if (offset!==null) {
-        drawScroller();
-        scrollI = setInterval(scroll, 200);
-      }
-    } else {
-      if (scrollI) {
-        clearInterval(scrollI);
-        scrollI = null;
-      }
-    }
-  });
 }
 
 function init() {
@@ -602,23 +593,26 @@ function init() {
     // autoloaded: load state was saved by widget
     info = saved.info;
     stat = saved.state;
-    delete (saved);
+    delete saved;
     auto = true;
     start();
   } else {
-    const s = require("Storage").readJSON("gbmusic.json", 1) || {};
+    delete saved;
+    let s = require("Storage").readJSON("gbmusic.json", 1) || {};
     if (!("autoStart" in s)) {
       // user opened the app, but has not picked a setting yet
       // ask them about autoloading now
       E.showPrompt(
         "Automatically load\n"+
         "when playing music?\n",
-      ).then(function(autoStart) {
-        s.autoStart = autoStart;
+      ).then(choice => {
+        s.autoStart = choice;
         require("Storage").writeJSON("gbmusic.json", s);
+        delete s;
         setTimeout(start, 0);
       });
     } else {
+      delete s;
       start();
     }
   }
