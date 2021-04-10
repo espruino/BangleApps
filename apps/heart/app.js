@@ -1,3 +1,4 @@
+E.setFlags({pretokenise:1});
 const GraphXZero = 40;
 const GraphYZero = 200;
 const GraphY100 = 80;
@@ -19,6 +20,7 @@ require('DateExt').locale({
     globalSettings.timezone * 60
   ]
 });
+globalSettings = undefined;
 
 function getFileNbr(n) {
   return ".heart"+n.toString(36);
@@ -52,22 +54,22 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Records': ()=>{viewRecords()},
-    'Graph Records': ()=>{graphRecords()},
+    'View Records': createRecordMenu.bind(null, viewRecord.bind()),
+    'Graph Records': createRecordMenu.bind(null, graphRecord.bind()),
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainMenu);
 }
 
-function viewRecords() {
+function createRecordMenu(func) {
   const menu = {
     '': { 'title': 'Heart Records' }
   };
   var found = false;
   for (var n=0;n<36;n++) {
-    var f = require("Storage").open(getFileNbr(n),"r");
-    if (f.readLine()!==undefined) {
-      menu["Record "+n] = viewRecord.bind(null,n);
+    var line = require("Storage").open(getFileNbr(n),"r").readLine();
+    if (line!==undefined) {
+      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = func.bind(null,n);
       found = true;
     }
   }
@@ -81,72 +83,68 @@ function viewRecord(n) {
   const menu = {
     '': { 'title': 'Heart Record '+n }
   };
-  var heartCount = 0;
   var heartTime;
   var f = require("Storage").open(getFileNbr(n),"r");
   var l = f.readLine();
-  if (l!==undefined) {
-    var c = l.split(",");
-    heartTime = new Date(c[0]*1000);
-  }
+  var limits = {"min": 2000, "max": 0, "avg": 0, "cnt": 0};
+  var value = 0;
+  if (l!==undefined)
+    heartTime = new Date(l.split(",")[0]*1000);
+  console.log("heart: parsing records");
   while (l!==undefined) {
-    heartCount++;
-    // TODO: min/max/average of heart rate?
+    if (parseInt(l.split(',')[2]) > 70) {
+      limits.cnt++;
+      value = parseInt(l.split(',')[1]);
+      if (value < limits.min) {
+        limits.min = value;
+      } else if (value > limits.max) {
+        limits.max = value;
+      }
+      limits.avg += value;
+    }
     l = f.readLine();
   }
+  l = undefined;
+  value = undefined;
+  console.log("heart: finished parsing");
+  limits.avg = limits.avg / limits.cnt;
   if (heartTime)
     menu[" "+heartTime.toString().substr(4,17)] = function(){};
-  menu[heartCount+" records"] = function(){};
-  // TODO: option to draw it? Just scan through, project using min/max
-  menu['Erase'] = function() {
+  menu[limits.cnt+" records"] = function(){};
+  menu["Min: " + limits.min] = function(){};
+  menu["Max: " + limits.max] = function(){};
+  menu["Avg: " + Math.round(limits.avg)] = function(){};
+  menu["Erase"] = function() {
     E.showPrompt("Delete Record?").then(function(v) {
       if (v) {
         settings.isRecording = false;
         updateSettings();
-        var f = require("Storage").open(getFileNbr(n),"r");
-        f.erase();
-        viewRecords();
+        require("Storage").open(getFileNbr(n),"r").erase();
+        E.showMenu();
+        load();
       } else
         viewRecord(n);
     });
   };
-  menu['< Back'] = ()=>{viewRecords()};
-  print(menu);
-  return E.showMenu(menu);
-}
-
-function graphRecords() {
-  const menu = {
-    '': { 'title': 'Heart Records' }
+  menu['< Back'] = function() {
+    limits = undefined;
+    E.showMenu();
+    createRecordMenu(viewRecord);
   };
-  var found = false;
-  for (var n=0;n<36;n++) {
-    var f = require("Storage").open(getFileNbr(n),"r");
-    var line = f.readLine();
-    if (line!==undefined) {
-      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = graphRecord.bind(null,n);
-      found = true;
-    }
-  }
-  if (!found)
-    menu["No Records Found"] = function(){};
-  menu['< Back'] = ()=>{showMainMenu()};
+  limits = undefined;
   return E.showMenu(menu);
 }
 
-// based on batchart
-function renderHomeIcon() {
-  //Home for Btn2
+function renderChart() {
+  // Home for Btn2
   g.setColor(1, 1, 1);
   g.drawLine(220, 118, 227, 110);
   g.drawLine(227, 110, 234, 118);
 
   g.drawPoly([222,117,222,125,232,125,232,117], false);
   g.drawRect(226,120,229,125);
-}
 
-function renderChart() {
-  // Left Y axis (Battery)
+  // Chart
   g.setColor(1, 1, 0);
   g.drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100);
 
@@ -183,27 +181,23 @@ function renderChart() {
   g.setColor(1, 1, 1);
   g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
 
-  console.log("Finished drawing chart");
+  console.log("heart: Finished drawing chart");
 }
 
 // as drawing starts at 30 HRM decreasing measrure by 30
 // recalculate for range 110-150 as only 20 pixels are available
 function getY(measure) {
-  positionY = GraphYZero - measure + 30;
+  var positionY = GraphYZero - measure + 30;
   if (100 < measure < 150) {
     positionY = GraphYZero - ( 100 + Math.round((measure - 100)/2) ) + 30;
-    g.setColor(1, 0, 0);
   } else if (60 < measrure < 100) {
     positionY = GraphYZero - ( 30 + Math.round((measure - 30)/2) ) + 30;
-    g.setColor(0, 1, 0);
   }
   if (positionY > GraphYZero) {
     positionY = GraphYZero;
-    g.setColor(1, 0, 0);
   }
   if (positionY < GraphY100) {
     positionY = GraphY100;
-    g.setColor(1, 0, 0);
   }
   return positionY;
 }
@@ -221,37 +215,39 @@ function graphRecord(n) {
   );
   g.setFont("Vector", 10);
 
-  var lastPixel;
   var lineCount = 0;
-  var positionX = GraphXZero;
-  var positionY = GraphYZero;
   var startLine = 1;
-  var tempCount = 0;
   var f = require("Storage").open(getFileNbr(n),"r");
   var line = f.readLine();
-  var times = Array(2);
-  console.log("Counting lines");
+  console.log("heart: Counting lines");
+
   while (line !== undefined) {
     lineCount++;
     line = f.readLine();
   }
-  console.log(`Line count: ${lineCount}`);
-  if (lineCount > MaxValueCount) {
+
+  console.log(`heart: Line count: ${lineCount}`);
+  if (lineCount > MaxValueCount)
     startLine = lineCount - MaxValueCount;
-  }
-  console.log(`start: ${startLine}`);
+  f = undefined;
+  line = undefined;
+  lineCount = undefined;
+  console.log(`heart: start: ${startLine}`);
 
   f = require("Storage").open(getFileNbr(n),"r");
   line = f.readLine();
+
+  var times = Uint32Array(2);
+  var tempCount = 0;
+  var positionX = GraphXZero;
+  var positionY = GraphYZero;
+
   while (line !== undefined) {
     currentLine = line;
     line = f.readLine();
     tempCount++;
     if (tempCount == startLine) {
       g.clear();
-      Bangle.loadWidgets();
-      Bangle.drawWidgets();
-      renderHomeIcon();
       renderChart();
     } else if (tempCount > startLine) {
       positionX++;
@@ -270,24 +266,23 @@ function graphRecord(n) {
         }
       }
     }
-    g.flip();
   }
+  g.flip();
 
-  g.setColor(1, 1, 0);
-  g.setFont("Vector", 10);
-  console.log('start: ' + times[0]);
-  console.log('end: ' + times[1]);
+  g.setColor(1, 1, 0).setFont("Vector", 10);
+  console.log('heart: start: ' + times[0]);
+  console.log('heart: end: ' + times[1]);
   if (times[0] !== undefined) {
     g.setFontAlign(-1, -1, 0);
-    var startdate = new Date(times[0]*1000);
-    g.drawString(startdate.local().as("0h:0m").str, 15, GraphYZero + 12);
+    g.drawString(Date(times[0]*1000).local().as("0h:0m").str, 15, GraphYZero + 12);
   }
+
   if (times[1] !== undefined) {
     g.setFontAlign(1, -1, 0);
-    var enddate = new Date(times[1]*1000);
-    g.drawString(enddate.local().as().str, GraphXMax, GraphYZero + 12);
+    g.drawString(Date(times[1]*1000).local().as().str, GraphXMax, GraphYZero + 12);
   }
-  console.log("Finished rendering data");
+
+  console.log("heart: Finished rendering data");
   Bangle.buzz(200, 0.3);
   setWatch(stop, BTN2, {edge:"falling", debounce:50, repeat:false});
 }
