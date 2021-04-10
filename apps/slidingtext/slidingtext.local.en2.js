@@ -38,8 +38,12 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
     }
     name(){return "English Traditional";}
     formatDate(date){
-        var hours = hoursToText(date.getHours());
         var mins = date.getMinutes();
+        var hourOfDay = date.getHours();
+        if(mins > 30){
+            hourOfDay += 1;
+        }
+        var hours = hoursToText(hourOfDay);
         // Deal with the special times first
         if(mins == 0){
             return [hours,"", "O'","CLOCK"];
