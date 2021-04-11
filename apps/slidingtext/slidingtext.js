@@ -275,7 +275,25 @@ function setColor(main_color,other_color,bg_color){
 }
 
 // load the date formats required
-var locales = ["en","en2","fr","jp"];
+
+LANGUAGES_FILE = "slidingtext.languages.json";
+var LANGUAGES_DEFAULT = ["en","en2"];
+var locales = null;
+try{
+  locales = require("Storage").readJSON(LANGUAGES_FILE);
+  if(locales != null){
+    console.log("loaded languages:" + JSON.stringify(locales));
+  } else {
+    console.log("no languages loaded");
+    locales = LANGUAGES_DEFAULT;
+  }
+} catch(e){
+  console.log("failed to load languages:" + e);
+}
+if(locales == null || locales.length == 0){
+  locales = LANGUAGES_DEFAULT;
+  console.log("defaulting languages to locale:" + locales);
+}
 
 let date_formatters = [];
 for(var i=0; i< locales.length; i++){

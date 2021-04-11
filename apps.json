@@ -222,6 +222,7 @@
     "type":"clock",
     "allow_emulator":true,
      "readme": "README.md",
+    "custom":"custom.html",
     "storage": [
       {"name":"slidingtext.app.js","url":"slidingtext.js"},
       {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
