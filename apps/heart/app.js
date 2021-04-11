@@ -1,11 +1,11 @@
 E.setFlags({pretokenise:1});
-const GraphXZero = 40;
-const GraphYZero = 200;
-const GraphY100 = 80;
 
-const GraphMarkerOffset = 5;
-const MaxValueCount = 164;
-const GraphXMax = GraphXZero + MaxValueCount;
+function log(msg) {
+  console.log("heart: " + msg + " mem: " + process.memory().usage / process.memory().blocksize);
+  return;
+}
+
+log("start");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -30,6 +30,7 @@ function updateSettings() {
   require("Storage").write("heart.json", settings);
   if (WIDGETS["heart"])
     WIDGETS["heart"].reload();
+  return;
 }
 
 function showMainMenu() {
@@ -54,8 +55,8 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Records': createRecordMenu.bind(null, viewRecord.bind()),
-    'Graph Records': createRecordMenu.bind(null, graphRecord.bind()),
+    'View Records': ()=>{createRecordMenu(viewRecord.bind());},
+    'Graph Records': ()=>{createRecordMenu(graphRecord.bind());},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainMenu);
@@ -69,51 +70,68 @@ function createRecordMenu(func) {
   for (var n=0;n<36;n++) {
     var line = require("Storage").open(getFileNbr(n),"r").readLine();
     if (line!==undefined) {
-      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = func.bind(null,n);
+      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = func.bind(null, n);
       found = true;
     }
   }
   if (!found)
     menu["No Records Found"] = function(){};
-  menu['< Back'] = ()=>{showMainMenu()};
+  menu['< Back'] = ()=>{showMainMenu();};
   return E.showMenu(menu);
 }
 
 function viewRecord(n) {
+  E.showMenu({'': 'Heart Record '+n});
+  E.showMessage(
+    "Loading Data ...\n\nMay take a while,\nwill vibrate\nwhen done.",
+    'Heart Record '+n
+  );
   const menu = {
     '': { 'title': 'Heart Record '+n }
   };
   var heartTime;
   var f = require("Storage").open(getFileNbr(n),"r");
   var l = f.readLine();
-  var limits = {"min": 2000, "max": 0, "avg": 0, "cnt": 0};
+  // using arrays for memory optimization
+  var limits = Uint8Array(2);
+  // using arrays for memory optimization
+  var avg = Uint32Array(2);
+  // minimum
+  limits[0] = 2000;
+  // maximum
+  limits[1] = 0;
+  // count
+  avg[0] = 0;
+  // average sum
+  avg[1] = 0;
+  var count = 0;
   var value = 0;
   if (l!==undefined)
     heartTime = new Date(l.split(",")[0]*1000);
-  console.log("heart: parsing records");
+  log("parsing records");
   while (l!==undefined) {
+    count++;
     if (parseInt(l.split(',')[2]) > 70) {
-      limits.cnt++;
+      avg[0]++;
       value = parseInt(l.split(',')[1]);
-      if (value < limits.min) {
-        limits.min = value;
-      } else if (value > limits.max) {
-        limits.max = value;
+      if (value < limits[0]) {
+        limits[0] = value;
+      } else if (value > limits[1]) {
+        limits[1] = value;
       }
-      limits.avg += value;
+      avg[1] += value;
     }
     l = f.readLine();
   }
   l = undefined;
   value = undefined;
-  console.log("heart: finished parsing");
-  limits.avg = limits.avg / limits.cnt;
+  log("finished parsing");
   if (heartTime)
     menu[" "+heartTime.toString().substr(4,17)] = function(){};
-  menu[limits.cnt+" records"] = function(){};
-  menu["Min: " + limits.min] = function(){};
-  menu["Max: " + limits.max] = function(){};
-  menu["Avg: " + Math.round(limits.avg)] = function(){};
+  menu[count + " records"] = function(){};
+  menu["Min: " + limits[0]] = function(){};
+  menu["Max: " + limits[1]] = function(){};
+  menu["Avg: " + Math.round(avg[1] / avg[0])] = function(){};
   menu["Erase"] = function() {
     E.showPrompt("Delete Record?").then(function(v) {
       if (v) {
@@ -123,83 +141,12 @@ function viewRecord(n) {
         E.showMenu();
         load();
       } else
-        viewRecord(n);
+        return viewRecord(n);
     });
   };
-  menu['< Back'] = function() {
-    limits = undefined;
-    E.showMenu();
-    createRecordMenu(viewRecord);
-  };
-  limits = undefined;
+  menu['< Back'] = ()=>{createRecordMenu(viewRecord.bind());};
+  Bangle.buzz(200, 0.3);
   return E.showMenu(menu);
-}
-
-function renderChart() {
-  // Home for Btn2
-  g.setColor(1, 1, 1);
-  g.drawLine(220, 118, 227, 110);
-  g.drawLine(227, 110, 234, 118);
-
-  g.drawPoly([222,117,222,125,232,125,232,117], false);
-  g.drawRect(226,120,229,125);
-
-  // Chart
-  g.setColor(1, 1, 0);
-  g.drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100);
-
-  g.setFontAlign(1, -1, 0);
-  g.drawString("150", 35, GraphY100 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100);
-
-  g.drawString("125", 35, GraphYZero - 110 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("100", 35, GraphYZero - 100 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("90", 35, GraphYZero - 90 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("80", 35, GraphYZero - 70 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("70", 35, GraphYZero - 50 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("60", 35, GraphYZero - 30 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("50", 35, GraphYZero - 20 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("40", 35, GraphYZero - 10 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("30", 35, GraphYZero - GraphMarkerOffset);
-
-  g.setColor(1, 1, 1);
-  g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
-
-  console.log("heart: Finished drawing chart");
-}
-
-// as drawing starts at 30 HRM decreasing measrure by 30
-// recalculate for range 110-150 as only 20 pixels are available
-function getY(measure) {
-  var positionY = GraphYZero - measure + 30;
-  if (100 < measure < 150) {
-    positionY = GraphYZero - ( 100 + Math.round((measure - 100)/2) ) + 30;
-  } else if (60 < measrure < 100) {
-    positionY = GraphYZero - ( 30 + Math.round((measure - 30)/2) ) + 30;
-  }
-  if (positionY > GraphYZero) {
-    positionY = GraphYZero;
-  }
-  if (positionY < GraphY100) {
-    positionY = GraphY100;
-  }
-  return positionY;
 }
 
 function stop() {
@@ -208,6 +155,14 @@ function stop() {
 }
 
 function graphRecord(n) {
+  const MaxValueCount = 164;
+  const GraphXZero = 40;
+  const GraphYZero = 200;
+  const GraphY100 = 80;
+  const GraphMarkerOffset = 5;
+  const GraphXLabel = 35;
+  const GraphXMax = GraphXZero + MaxValueCount;
+
   E.showMenu({'': 'Heart Record '+n});
   E.showMessage(
     "Loading Data ...\n\nMay take a while,\nwill vibrate\nwhen done.",
@@ -219,20 +174,21 @@ function graphRecord(n) {
   var startLine = 1;
   var f = require("Storage").open(getFileNbr(n),"r");
   var line = f.readLine();
-  console.log("heart: Counting lines");
+
+  log("Counting lines");
 
   while (line !== undefined) {
     lineCount++;
     line = f.readLine();
   }
 
-  console.log(`heart: Line count: ${lineCount}`);
+  log(`Line count: ${lineCount}`);
   if (lineCount > MaxValueCount)
     startLine = lineCount - MaxValueCount;
   f = undefined;
   line = undefined;
   lineCount = undefined;
-  console.log(`heart: start: ${startLine}`);
+  log(`start: ${startLine}`);
 
   f = require("Storage").open(getFileNbr(n),"r");
   line = f.readLine();
@@ -241,6 +197,7 @@ function graphRecord(n) {
   var tempCount = 0;
   var positionX = GraphXZero;
   var positionY = GraphYZero;
+  var measure;
 
   while (line !== undefined) {
     currentLine = line;
@@ -248,13 +205,71 @@ function graphRecord(n) {
     tempCount++;
     if (tempCount == startLine) {
       g.clear();
-      renderChart();
+      // Home for Btn2
+      g.setColor(1, 1, 1);
+      g.drawLine(220, 118, 227, 110);
+      g.drawLine(227, 110, 234, 118);
+
+      g.drawPoly([222,117,222,125,232,125,232,117], false);
+      g.drawRect(226,120,229,125);
+
+      // Chart
+      g.setColor(1, 1, 0);
+      g.drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100);
+
+      g.setFontAlign(1, -1, 0);
+      g.drawString("150", GraphXLabel, GraphY100 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100);
+
+      g.drawString("125", GraphXLabel, GraphYZero - 110 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("100", GraphXLabel, GraphYZero - 100 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("90", GraphXLabel, GraphYZero - 90 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("80", GraphXLabel, GraphYZero - 70 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("70", GraphXLabel, GraphYZero - 50 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("60", GraphXLabel, GraphYZero - 30 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("50", GraphXLabel, GraphYZero - 20 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("40", GraphXLabel, GraphYZero - 10 - GraphMarkerOffset);
+      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
+
+      g.drawString("30", GraphXLabel, GraphYZero - GraphMarkerOffset);
+
+      g.setColor(1, 1, 1);
+      g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
+
+      log("Finished drawing chart");
     } else if (tempCount > startLine) {
       positionX++;
       if (parseInt(currentLine.split(",")[2]) >= 70) {
         g.setColor(1, 1, 1);
         oldPositionY = positionY;
-        positionY = getY(parseInt(currentLine.split(",")[1]));
+        measure = parseInt(currentLine.split(",")[1]);
+        positionY = GraphYZero - measure + 30;
+        if (100 < measure < 150) {
+          positionY = GraphYZero - ( 100 + Math.round((measure - 100)/2) ) + 30;
+        } else if (60 < measrure < 100) {
+          positionY = GraphYZero - ( 30 + Math.round((measure - 30)/2) ) + 30;
+        }
+        if (positionY > GraphYZero) {
+          positionY = GraphYZero;
+        }
+        if (positionY < GraphY100) {
+          positionY = GraphY100;
+        }
+
         if (times[0] === undefined) {
           times[0] = parseInt(currentLine.split(",")[0]);
         }
@@ -270,8 +285,8 @@ function graphRecord(n) {
   g.flip();
 
   g.setColor(1, 1, 0).setFont("Vector", 10);
-  console.log('heart: start: ' + times[0]);
-  console.log('heart: end: ' + times[1]);
+  log('start: ' + times[0]);
+  log('end: ' + times[1]);
   if (times[0] !== undefined) {
     g.setFontAlign(-1, -1, 0);
     g.drawString(Date(times[0]*1000).local().as("0h:0m").str, 15, GraphYZero + 12);
@@ -282,9 +297,10 @@ function graphRecord(n) {
     g.drawString(Date(times[1]*1000).local().as().str, GraphXMax, GraphYZero + 12);
   }
 
-  console.log("heart: Finished rendering data");
+  log("Finished rendering data");
   Bangle.buzz(200, 0.3);
   setWatch(stop, BTN2, {edge:"falling", debounce:50, repeat:false});
+  return;
 }
 
 showMainMenu();
