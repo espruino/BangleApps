@@ -1,5 +1,3 @@
-var DateFormatter = require("slidingtext.dtfmt.js");
-
 const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
     "SIX", "SEVEN","EIGHT", "NINE", "TEN",
     "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
@@ -8,7 +6,7 @@ const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
 const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY",
     "FIFTY"];
 
-function hoursToText(hours){
+const hoursToText = (hours)=>{
     hours = hours % 12;
     if(hours == 0){
         hours = 12;
@@ -16,7 +14,7 @@ function hoursToText(hours){
     return numberStr[hours];
 }
 
-function numberToText(value){
+const numberToText = (value)=> {
     var word1 = '';
     var word2 = '';
     if(value > 20){
@@ -32,14 +30,5 @@ function numberToText(value){
     return [word1,word2];
 }
 
-class EnglishDateFormatter extends DateFormatter {
-    constructor() { super();}
-    name(){return "English";}
-    formatDate(date){
-        var hours_txt = hoursToText(date.getHours());
-        var mins_txt = numberToText(date.getMinutes());
-        return [hours_txt,mins_txt[0],mins_txt[1]];
-    }
-}
-
-module.exports = EnglishDateFormatter;
+exports.hoursToText = hoursToText;
+exports.numberToText = numberToText;

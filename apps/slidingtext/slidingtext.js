@@ -246,7 +246,7 @@ let row_displays = [
 function nextColorTheme(){
   //console.log("next color theme");
   color_scheme_index += 1;
-  if(color_scheme_index > row_displays.length){
+  if(color_scheme_index >= row_displays.length){
     color_scheme_index = 0;
   }
   var color_scheme = color_schemes[color_scheme_index];
@@ -298,7 +298,7 @@ if(locales == null || locales.length == 0){
 let date_formatters = [];
 for(var i=0; i< locales.length; i++){
   console.log("loading locale:" + locales[i]);
-  var Formatter = require("slidingtext.local." + locales[i] + ".js");
+  var Formatter = require("slidingtext.locale." + locales[i] + ".js");
   date_formatters.push(new Formatter());
 }
 
@@ -382,7 +382,7 @@ function draw_clock(){
   }
   // If the dateformatter has not returned enough
   // rows then treat the reamining rows as empty
-  for (j = i; j < row_displays.length; j++) {
+  for (var j = i; j < row_displays.length; j++) {
     display = row_displays[j];
     //console.log(i + "->''(empty)");
     display_row(display,'');
@@ -392,7 +392,12 @@ function draw_clock(){
 }
 
 function display_row(display,txt){
-  if(display.txt == ''){
+  if(display == null) {
+    console.log("no display for text:" + txt)
+    return;
+  }
+
+  if(display.txt == null || display.txt == ''){
     if(txt != '') {
       command_stack_high_priority.unshift(
           function () {
