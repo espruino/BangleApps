@@ -38,6 +38,7 @@ function showAlarm(alarm) {
     load();
   });
   function buzz() {
+    if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
     Bangle.buzz(100).then(()=>{
       setTimeout(()=>{
         Bangle.buzz(100).then(function() {

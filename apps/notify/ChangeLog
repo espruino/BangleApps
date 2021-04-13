@@ -4,3 +4,4 @@
 0.05: Adjust position of notification src text
 0.06: Support background color
 0.07: Auto-calculate height, and pad text down even when there's no title (so it stays on-screen)
+0.08: Don't turn on screen during Quiet Mode
