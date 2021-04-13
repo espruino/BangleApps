@@ -23,9 +23,13 @@ You can change this under `Settings`->`App/Widget Settings`->`Music Controls`.
 ## Controls
 
 ### Buttons
-* Button 1: Volume up (hold to repeat)
-* Button 2: Toggle play/pause, long-press for menu
-* Button 3: Volume down (hold to repeat, but remember that holding for too long resets your watch)
+* Button 1: Volume up
+* Button 2: 
+  - Single press: toggle play/pause 
+  - Double press: next song
+  - Triple press: previous song
+  - Long-press: open application launcher 
+* Button 3: Volume down
 
 ### Touch
 * Left: pause/previous song

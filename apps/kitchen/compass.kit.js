@@ -106,6 +106,8 @@
     }
 
     function onButtonShort(btn) {
+      log_debug("onButtonShort()");
+      if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
       switch(btn) {
       case 1:
         log_debug("prev waypoint");
@@ -128,7 +130,6 @@
       log_debug("markWaypoint()");
       if (btn !== 1) return;
       if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
-
       log_debug("markWaypoint()");
       
       gpsObject.markWaypoint();
@@ -143,8 +144,8 @@
       wp_distance = gpsObject.getWPdistance();
       wp_bearing = gpsObject.getWPbearing();
       log_debug(wp);
-      log_debug(wp_distance);
-      log_debug(wp_bearing);
+      log_debug("wp_distance:" + wp_distance);
+      log_debug("wp_bearing:" + wp_bearing);
     }
     
     // takes 32ms
@@ -205,16 +206,8 @@
       var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
       heading = newHeading(d,heading);
 
-      if (gpsObject.getState() === gpsObject.GPS_RUNNING) {
-        wp_dist = gpsObject.getWPdistance();
-        wp_bearing = gpsObject.getWPbearing();
-        bearing = wp_bearing;
-      } else {
-        bearing = 0;
-        wp_distance = 0;
-        wp_bearing = 0;
-      }
-
+      getWaypoint();
+      
       var dir = bearing - heading;
       if (dir < 0) dir += 360;
       if (dir > 360) dir -= 360;

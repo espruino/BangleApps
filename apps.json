@@ -180,6 +180,9 @@
       {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
+    "data": [
+      {"name":"setting.json", "url":"settings.min.json","evaluate":true}
+    ],
     "sortorder" : -2
   },
   { "id": "alarm",
@@ -216,24 +219,33 @@
   { "id": "slidingtext",
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently only English, French and Japanese are supported",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
+     "readme": "README.md",
+    "custom":"custom.html",
     "storage": [
       {"name":"slidingtext.app.js","url":"slidingtext.js"},
-      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true}
+      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
+      {"name":"slidingtext.locale.en.js","url":"slidingtext.locale.en.js"},
+      {"name":"slidingtext.locale.en2.js","url":"slidingtext.locale.en2.js"},
+      {"name":"slidingtext.utils.en.js","url":"slidingtext.utils.en.js"},
+      {"name":"slidingtext.locale.fr.js","url":"slidingtext.locale.fr.js"},
+      {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
+      {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
     ]
   },
   { "id": "sweepclock",
     "name": "Sweep Clock",
     "icon": "sweepclock.png",
-    "version":"0.01",
-    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font",
+    "version":"0.02",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font and button3 to change the colour theme",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
+     "readme": "README.md",
     "storage": [
       {"name":"sweepclock.app.js","url":"sweepclock.js"},
       {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
@@ -438,14 +450,16 @@
     "interface":"waypoints.html",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.min.js"},
-      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
       {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
     ]
   },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
@@ -1701,15 +1715,29 @@
   {
     "id": "rclock",
     "name": "Round clock with seconds,  minutes and date",
-    "shortName":"Round Clock",
+    "shortName": "Round Clock",
     "icon": "app.png",
-    "version":"0.04",
+    "version": "0.05",
     "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
     "storage": [
       {"name":"rclock.app.js","url":"rclock.app.js"},
       {"name":"rclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "fclock",
+    "name": "fclock",
+    "shortName": "F Clock",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Simple design of a digital clock",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"fclock.app.js","url":"fclock.app.js"},
+      {"name":"fclock.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "hamloc",
@@ -2399,9 +2427,11 @@
     "readme": "README.md",
     "storage": [
       {"name":"worldclock.app.js","url":"app.js"},
-      {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
-  ]
+    ],
+    "data": [
+      {"name":"worldclock.settings.json"}
+    ]
  },
 { "id": "digiclock",
   "name": "Digital Clock Face",
@@ -2644,8 +2674,10 @@
   "readme": "README.md",
   "storage": [
     {"name":"breath.app.js","url":"app.js"},
-    {"name":"breath.settings.json","url":"settings.json"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"breath.settings.json","url":"settings.json"}
   ]
 },
 { "id": "lazyclock",
@@ -2742,9 +2774,11 @@
   "storage": [
     {"name":"gpsservice.app.js","url":"app.js"},
     {"name":"gpsservice.settings.js","url":"settings.js"},
-    {"name":"gpsservice.settings.json","url":"settings.json"},
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpsservice.settings.json","url":"settings.json"}
   ]
 },
 { "id": "mclockplus",
@@ -2841,9 +2875,11 @@
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},
     {"name":"gpssetup.settings.js","url":"settings.js"},
-    {"name":"gpssetup.settings.json","url":"settings.json"},
     {"name":"gpssetup.app.js","url":"app.js"},
     {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpssetup.settings.json","url":"settings.json"}
   ]
 },
 { "id": "walkersclock",
@@ -2944,8 +2980,10 @@
   "interface":"waypoints.html",
   "storage": [
     {"name":"waypointer.app.js","url":"app.js"},
-    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
 { "id": "color_catalog",
@@ -3004,7 +3042,7 @@
   "name": "Gadgetbridge Music Controls",
   "shortName":"Music Controls",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Control the music on your Gadgetbridge-connected phone",
   "tags": "tools,bluetooth,gadgetbridge,music",
   "type":"app",
@@ -3045,7 +3083,7 @@
 { "id": "kitchen",
   "name": "Kitchen Combo",
   "icon": "kitchen.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
   "readme": "README.md",
@@ -3060,22 +3098,37 @@
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
   ]
 },
-  { "id": "qmsched",
-    "name": "Quiet Mode Schedule",
-    "shortName":"Quiet Mode",
-    "icon": "app.png",
-    "version":"0.01",
-    "description": "Automatically turn Quiet Mode on or off at set times",
-    "readme": "README.md",
-    "tags": "tool",
-    "storage": [
-      {"name":"qmsched","url":"lib.js"},
-      {"name":"qmsched.app.js","url":"app.js"},
-      {"name":"qmsched.boot.js","url":"boot.js"},
-      {"name":"qmsched.img","url":"icon.js","evaluate":true}
-    ],
-    "data": [
-      {"name":"qmsched.json"}
-    ]
-  }
+{ "id": "qmsched",
+  "name": "Quiet Mode Schedule",
+  "shortName":"Quiet Mode",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Automatically turn Quiet Mode on or off at set times",
+  "readme": "README.md",
+  "tags": "tool",
+  "storage": [
+    {"name":"qmsched","url":"lib.js"},
+    {"name":"qmsched.app.js","url":"app.js"},
+    {"name":"qmsched.boot.js","url":"boot.js"},
+    {"name":"qmsched.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"qmsched.json"}
+  ]
+},
+{
+  "id": "hourstrike",
+  "name": "Hour Strike",
+  "shortName": "Hour Strike",
+  "icon": "app-icon.png",
+  "version": "0.07",
+  "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
+  "tags": "tool,alarm",
+  "readme": "README.md",
+  "storage": [
+    {"name":"hourstrike.app.js","url":"app.js"},
+    {"name":"hourstrike.boot.js","url":"boot.js"},
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
