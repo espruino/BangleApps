@@ -3086,6 +3086,7 @@
   "version":"0.04",
   "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
+  "type":"clock",
   "readme": "README.md",
   "interface":"waypoints.html",
   "storage": [
