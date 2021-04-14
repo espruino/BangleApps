@@ -51,7 +51,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Tracks': viewTracks,
+    'View Tracks': ()=>{viewTracks();},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainmenu);
@@ -65,13 +65,13 @@ function viewTracks() {
   for (var n=0;n<36;n++) {
     var f = require("Storage").open(getFN(n),"r");
     if (f.readLine()!==undefined) {
-      menu["Track "+n] = viewTrack.bind(null,n,false);
+      menu["Track "+n] = (n=>viewTrack(n)).bind(null,n,false);
       found = true;
     }
   }
   if (!found)
     menu["No Tracks found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = () => { showMainMenu(); };
   return E.showMenu(menu);
 }
 
@@ -161,7 +161,7 @@ function viewTrack(n, info) {
         viewTrack(n, info);
     });
   };
-  menu['< Back'] = viewTracks;
+  menu['< Back'] = () => { viewTracks(); };
   return E.showMenu(menu);
 }
 

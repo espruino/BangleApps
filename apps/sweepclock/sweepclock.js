@@ -5,9 +5,54 @@
 */
 
 const screen_center_x = g.getWidth()/2;
-const screen_center_y = g.getHeight()/2;
+const screen_center_y = 10 + g.getHeight()/2;
 
 require("FontCopasetic40x58Numeric").add(Graphics);
+
+const color_schemes = [
+    {
+      name: "black",
+      background : [0.0,0.0,0.0],
+      second_hand: [1.0,0.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "red",
+      background : [1.0,0.0,0.0],
+      second_hand: [1.0,1.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "grey",
+      background : [0.5,0.5,0.5],
+      second_hand: [0.0,0.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "purple",
+      background : [1.0,0.0,1.0],
+      second_hand: [1.0,1.0,0.0],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    },
+    {
+      name: "blue",
+      background : [0.4,0.7,1.0],
+      second_hand: [0.5,0.5,0.5],
+      minute_hand: [1.0,1.0,1.0],
+      hour_hand: [1.0,1.0,1.0],
+      numeral:[1.0,1.0,1.0]
+    }
+  ];
+
+let color_scheme_index = 0;
 
 class Hand {
   /**
@@ -28,16 +73,12 @@ class ThinHand extends Hand {
                length,
                tolerance,
                draw_test,
-               red,
-               green,
-               blue){
+               color_theme){
     super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
-    this.red = red;
-    this.green = green;
-    this.blue = blue;
+    this.color_theme = color_theme;
     // The last x and y coordinates (not the centre) of the last draw
     this.last_x = centerX;
     this.last_y = centerY;
@@ -60,13 +101,14 @@ class ThinHand extends Hand {
        // and then call the predicate to see if a redraw is needed
        this.draw_test(this.angle,this.last_draw_time) ){
       // rub out the old hand line
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       g.drawLine(this.centerX, this.centerY, this.last_x, this.last_y);
       // Now draw the new hand line
-      g.setColor(this.red,this.green,this.blue);
+      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       x2 = this.centerX + this.length*Math.sin(angle);
       y2 = this.centerY - this.length*Math.cos(angle);
-      g.setColor(this.red,this.green,this.blue);
       g.drawLine(this.centerX, this.centerY, x2, y2);
       // and store the last draw details for the next call
       this.last_x = x2;
@@ -90,18 +132,14 @@ class ThickHand extends Hand {
                length,
                tolerance,
                draw_test,
-               red,
-               green,
-               blue,
+               color_theme,
                base_height,
                thickness){
     super();
     this.centerX = centerX;
     this.centerY = centerY;
     this.length = length;
-    this.red = red;
-    this.green = green;
-    this.blue = blue;
+    this.color_theme = color_theme;
     this.thickness = thickness;
     this.base_height = base_height;
     // angle from the center to the top corners of the rectangle
@@ -132,7 +170,8 @@ class ThickHand extends Hand {
   // method to move the hand to a new angle
   moveTo(angle){
     if(Math.abs(angle - this.angle) > this.tolerance || this.draw_test(this.angle - this.delta_base,this.angle + this.delta_base ,this.last_draw_time) ){
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       g.fillPoly([this.last_x1,
                   this.last_y1,
                   this.last_x2,
@@ -142,7 +181,6 @@ class ThickHand extends Hand {
                   this.last_x4,
                   this.last_y4
                  ]);
-      g.setColor(this.red,this.green,this.blue);
       // bottom left
       x1 = this.centerX +
         this.vertex_radius_base*Math.sin(angle - this.delta_base);
@@ -157,7 +195,8 @@ class ThickHand extends Hand {
       // top left
       x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
       y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
-      g.setColor(this.red,this.green,this.blue);
+      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       g.fillPoly([x1,y1,
                   x2,y2,
                   x3,y3,
@@ -184,10 +223,10 @@ let force_redraw = false;
 // The seconds hand is the main focus and is set to redraw on every cycle
 let seconds_hand = new ThinHand(screen_center_x, 
                            screen_center_y,
-                           100,
+                           95,
                             0,
                             (angle, last_draw_time) => false,
-                           1.0,0.0,0.0);
+                           "second_hand");
 // The minute hand is set to redraw at a 250th of a circle,
 // when the second hand is ontop or slighly overtaking
 // or when a force_redraw is called
@@ -201,7 +240,7 @@ let minutes_hand = new ThinHand(screen_center_x,
                            80,
                             2*Math.PI/250,
                            minutes_hand_redraw,
-                           1.0,1.0,1.0);
+                           "minute_hand");
 // The hour hand is a thick hand so we have to redraw when the minute hand
 // overlaps from its behind andle coverage to its ahead angle coverage.
 let hour_hand_redraw = function(angle_from, angle_to, last_draw_time){
@@ -214,12 +253,13 @@ let hours_hand = new ThickHand(screen_center_x,
                            40,
                             2*Math.PI/600,
                           hour_hand_redraw,
-                           1.0,1.0,1.0,
+                           "hour_hand",
                           5,
                           4);
 
 function draw_clock(){
   date = new Date();
+  draw_background();
   draw_hour_digit(date);
   draw_seconds(date);
   draw_mins(date);
@@ -242,7 +282,7 @@ function draw_mins(date,seconds_angle){
   mins_angle = 2*Math.PI*mins_frac;
   redraw = minutes_hand.moveTo(mins_angle);
   if(redraw){
-    console.log("redraw mins");
+    //console.log("redraw mins");
   }
 }
 
@@ -252,7 +292,7 @@ function draw_hours(date){
   hours_angle = 2*Math.PI*hours_frac;
   redraw = hours_hand.moveTo(hours_angle);
   if(redraw){
-    console.log("redraw hours");
+    //console.log("redraw hours");
   }
 }
 
@@ -275,6 +315,18 @@ class NumeralFont {
    * method to draw text at the required coordinates
    */
   draw(hour_txt,x,y){ return "";}
+  /**
+   * Called from the settings loader to identify the font
+   */
+  getName(){return "";}
+}
+
+class NoFont extends NumeralFont{
+  constructor(){super();}
+  getDimensions(hour){return [0,0];}
+  hour_txt(hour){ return ""; }
+  draw(hour_txt,x,y){ return "";}
+  getName(){return "NoFont";}
 }
 
 class CopasetFont extends NumeralFont{
@@ -314,6 +366,7 @@ class CopasetFont extends NumeralFont{
     g.setFontCopasetic40x58Numeric();
     g.drawString(hour_txt,x,y);
   }
+  getName(){return "Copaset";}
 }
 
 
@@ -358,6 +411,7 @@ class RomanNumeralFont extends NumeralFont{
     g.setFont("Vector",40);
     g.drawString(hour_txt,x,y);
   }
+  getName(){return "Roman";}
 }
 
 // The problem with the trig inverse functions on 
@@ -419,11 +473,12 @@ class HourScriber {
   drawHour(hours){
     changed = false;
     if(this.curr_hours != hours || this.curr_numeral_font !=this.numeral_font){
-      g.setColor(0,0,0);
+      background = color_schemes[color_scheme_index].background;
+      g.setColor(background[0],background[1],background[2]);
       this.curr_numeral_font.draw(this.curr_hour_str,
                              this.curr_hour_x,
                              this.curr_hour_y);
-      console.log("erasing old hour");
+      //console.log("erasing old hour");
       hours_frac = hours / 12;
       angle = 2*Math.PI*hours_frac;
       dimensions = this.numeral_font.getDimensions(hours);
@@ -477,15 +532,16 @@ class HourScriber {
     }
     if(changed ||
        this.draw_test(this.angle_from, this.angle_to, this.last_draw_time) ){
-      g.setColor(1,1,1);
+      numeral_color = color_schemes[color_scheme_index].numeral;
+      g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
       this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
       this.last_draw_time = new Date();
-      console.log("redraw digit");
+      //console.log("redraw digit");
     }
   }
 }
 
-let numeral_fonts = [new CopasetFont(), new RomanNumeralFont()];
+let numeral_fonts = [new CopasetFont(), new RomanNumeralFont(), new NoFont()];
 let numeral_fonts_index = 0;
 /**
 * predicate for deciding when the digit has to be redrawn
@@ -540,7 +596,93 @@ function draw_hour_digit(date){
   hour_scriber.drawHour(hours);
 }
 
-// Boiler plate code for setting up the clock
+function draw_background(){
+  if(force_redraw){
+    background = color_schemes[color_scheme_index].background;
+    g.setColor(background[0],background[1],background[2]);
+    g.fillPoly([0,25,
+                0,240,
+                240,240,
+                240,25
+               ]);
+  }
+}
+
+function next_colorscheme(){
+  color_scheme_index += 1;
+  color_scheme_index = color_scheme_index % color_schemes.length;
+  //console.log("color_scheme_index=" + color_scheme_index);
+  force_redraw = true;
+}
+
+/**
+* called from load_settings on startup to
+* set the color scheme to named value
+*/
+function set_colorscheme(colorscheme_name){
+  console.log("setting color scheme:" + colorscheme_name);
+  for (var i=0; i < color_schemes.length; i++) {
+    if(color_schemes[i].name == colorscheme_name){
+      color_scheme_index = i;
+      force_redraw = true;
+      console.log("match");
+      break;
+    }
+  }
+}
+
+/**
+* called from load_settings on startup
+* to set the font to named value
+*/
+function set_font(font_name){
+  console.log("setting font:" + font_name);
+  for (var i=0; i < numeral_fonts.length; i++) {
+    if(numeral_fonts[i].getName() == font_name){
+      numeral_fonts_index = i;
+      force_redraw = true;
+      console.log("match");
+      hour_scriber.setNumeralFont(numeral_fonts[numeral_fonts_index]);
+      break;
+    }
+  }
+}
+
+/**
+* Called on startup to set the watch to the last preference settings
+*/
+function load_settings(){
+  try{
+    settings = require("Storage").readJSON("sweepclock.settings.json");
+    if(settings != null){
+      console.log("loaded:" + JSON.stringify(settings));
+      if(settings.color_scheme != null){
+        set_colorscheme(settings.color_scheme);
+      }
+      if(settings.font != null){
+        set_font(settings.font);
+      }
+    } else {
+      console.log("no settings to load");
+    }
+  } catch(e){
+    console.log("failed to load settings:" + e);
+  }
+}
+
+/**
+* Called on button press to save down the last preference settings
+*/
+function save_settings(){
+  settings = { 
+    font : numeral_fonts[numeral_fonts_index].getName(),
+    color_scheme : color_schemes[color_scheme_index].name,
+  };
+  console.log("saving:" + JSON.stringify(settings));
+  require("Storage").writeJSON("sweepclock.settings.json",settings);
+}
+
+// Boiler plate code for setting up the clock,
 // below
 let intervalRef = null;
 
@@ -593,6 +735,7 @@ Bangle.on('faceUp',function(up){
 });
 
 g.clear();
+load_settings();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 startTimers();
@@ -602,8 +745,17 @@ setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
 
 function button1pressed(){
   next_font(); 
+  save_settings();
+}
+
+function button3pressed(){
+  next_colorscheme();
+  save_settings();
 }
 
 // Handle button 1 being pressed
 setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
+
+// Handle button 3 being pressed
+setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 
