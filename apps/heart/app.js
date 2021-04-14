@@ -52,8 +52,8 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Records': viewRecords,
-    'Graph Records': graphRecords,
+    'View Records': ()=>{viewRecords()},
+    'Graph Records': ()=>{graphRecords()},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainMenu);
@@ -73,7 +73,7 @@ function viewRecords() {
   }
   if (!found)
     menu["No Records Found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = ()=>{showMainMenu()};
   return E.showMenu(menu);
 }
 
@@ -110,7 +110,7 @@ function viewRecord(n) {
         viewRecord(n);
     });
   };
-  menu['< Back'] = viewRecords;
+  menu['< Back'] = ()=>{viewRecords()};
   print(menu);
   return E.showMenu(menu);
 }
@@ -130,7 +130,7 @@ function graphRecords() {
   }
   if (!found)
     menu["No Records Found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = ()=>{showMainMenu()};
   return E.showMenu(menu);
 }
 

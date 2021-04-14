@@ -2,3 +2,4 @@
 0.02: Don't overwrite existing settings on app update
       Clean up recordings on app removal
 0.03: added graphing feature of 164 latest measurements
+0.04: Fix memory usage when viewing HRM traces
