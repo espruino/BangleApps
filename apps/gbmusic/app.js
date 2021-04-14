@@ -2,690 +2,620 @@
 /**
  * Control the music on your Gadgetbridge-connected phone
  **/
-{
-  let autoClose = false // only if opened automatically
-  let state = ""
-  let info = {
-    artist: "",
-    album: "",
-    track: "",
-    n: 0,
-    c: 0,
-  }
+let auto = false; // auto close if opened automatically
+let stat = "";
+let info = {
+  artist: "",
+  album: "",
+  track: "",
+  n: 0,
+  c: 0,
+};
+const TOUT = 300000; // auto close timeout: 5 minutes (in ms)
 
-  const screen = {
-    width: g.getWidth(),
-    height: g.getHeight(),
-    center: g.getWidth()/2,
-    middle: g.getHeight()/2,
-  }
+///////////////////////
+// Self-repeating timeouts
+///////////////////////
 
-  const TIMEOUT = 5*1000*60 // auto close timeout: 5 minutes
-  // drawText defaults
-  const defaults = {
-    time: { // top center
-      color: -1,
-      font: "Vector",
-      size: 24,
-      left: 10,
-      top: 30,
-    },
-    date: { // bottom center
-      color: -1,
-      font: "Vector",
-      size: 16,
-      bottom: 26,
-      center: screen.width/2,
-    },
-    num: { // top right
-      font: "Vector",
-      size: 30,
-      top: 30,
-      right: 15,
-    },
-    track: { // center above middle
-      font: "Vector",
-      size: 40, // maximum size
-      min_size: 25, // scroll (at maximum size) if this doesn't fit
-      bottom: (screen.height/2)+10,
-      center: screen.width/2,
-      // Smaller interval+step might be smoother, but flickers :-(
-      interval: 200, // scroll interval in ms
-      step: 10, // scroll speed per interval
-    },
-    artist: { // center below middle
-      font: "Vector",
-      size: 30, // maximum size
-      middle: (screen.height/2)+17,
-      center: screen.width/2,
-    },
-    album: { // center below middle
-      font: "Vector",
-      size: 20, // maximum size
-      middle: (screen.height/2)+18, // moved down if artist is present
-      center: screen.width/2,
-    },
-    // these work a bit different, as they apply to all controls
-    controls: {
-      color: "#008800",
-      highlight: 200, // highlight pressed controls for this long, ms
-      activeColor: "#ff0000",
-      size: 20, // icons
-      left: 10, // for right-side
-      right: 20, // for left-side (more space because of +- buttons)
-      top: 30,
-      bottom: 30,
-      font: "6x8", // volume buttons
-      volSize: 2, // volume buttons
-    },
+// Clock
+let tock = -1;
+function tick() {
+  if (!Bangle.isLCDOn()) {
+    return;
   }
+  const now = new Date;
+  if (now.getHours()*60+now.getMinutes()!==tock) {
+    drawDateTime();
+    tock = now.getHours()*60+now.getMinutes();
+  }
+  setTimeout(tick, 1000); // we only show minute precision anyway
+}
 
-  class Ticker {
-    constructor(interval) {
-      this.i = null
-      this.interval = interval
-      this.active = false
-    }
-    clear() {
-      if (this.i) {
-        clearInterval(this.i)
-      }
-      this.i = null
-    }
-    start() {
-      this.active = true
-      this.resume()
-    }
-    stop() {
-      this.active = false
-      this.clear()
-    }
-    pause() {
-      this.clear()
-    }
-    resume() {
-      this.clear()
-      if (this.active && Bangle.isLCDOn()) {
-        this.tick()
-        this.i = setInterval(() => {this.tick()}, this.interval)
-      }
-    }
+// Fade out while paused and auto closing
+let fade = null;
+function fadeOut() {
+  if (!Bangle.isLCDOn() || !fade) {
+    return;
   }
+  drawMusic();
+  setTimeout(fadeOut, 500);
+}
+function brightness() {
+  if (!fade) {
+    return 1;
+  }
+  return Math.max(0, 1-((Date.now()-fade)/TOUT));
+}
 
-  /**
-   * Draw time and date
-   */
-  class Clock extends Ticker {
-    constructor() {
-      super(1000)
-    }
-    tick() {
-      g.reset()
-      const now = new Date
-      drawText("time", this.text(now))
-      drawText("date", require("locale").date(now, true))
-    }
-    text(time) {
-      const l = require("locale")
-      const is12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"]
-      if (!is12hour) {
-        return l.time(time, true)
-      }
-      const date12 = new Date(time.getTime())
-      const hours = date12.getHours()
-      if (hours===0) {
-        date12.setHours(12)
-      } else if (hours>12) {
-        date12.setHours(hours-12)
-      }
-      return l.time(date12, true)+l.meridian(time)
-    }
+// Scroll long track names
+// use an interval to get smooth movement
+let offset = null, // scroll Offset: null = no scrolling
+  iScroll;
+function scroll() {
+  offset += 10;
+  drawScroller();
+}
+function scrollStart() {
+  if (offset!==null) {
+    return; // already started
   }
+  offset = 0;
+  if (Bangle.isLCDOn()) {
+    if (!iScroll) {
+      iScroll = setInterval(scroll, 200);
+    }
+    drawScroller();
+  }
+}
+function scrollStop() {
+  if (iScroll) {
+    clearInterval(iScroll);
+    iScroll = null;
+  }
+  offset = null;
+}
 
-  /**
-   * Update all info every second while fading out
-   */
-  class Fader extends Ticker {
-    constructor() {
-      super(defaults.track.interval) // redraw at same speed as scroller
-    }
-    tick() {
-      drawMusic()
-    }
-    start() {
-      this.since = Date.now()
-      super.start()
-    }
-    stop() {
-      super.stop()
-      this.since = Date.now() // force redraw at 100% brightness
-      drawMusic()
-      this.since = null
-    }
-    brightness() {
-      if (fadeOut.since) {
-        return Math.max(0, 1-((Date.now()-fadeOut.since)/TIMEOUT))
-      }
-      return 1
-    }
+/**
+ * @param {string} text
+ * @return {number} Maximum font size to make text fit on screen
+ */
+function fitText(text) {
+  if (!text.length) {
+    return Infinity;
   }
-
-  /**
-   * Scroll long track names
-   */
-  class Scroller extends Ticker {
-    constructor() {
-      super(defaults.track.interval)
-    }
-    tick() {
-      this.offset += defaults.track.step
-      this.draw()
-    }
-    draw() {
-      const s = defaults.track
-      const sep = "   "
-      g.setFont(s.font, s.size)
-      g.setColor(infoColor("track"))
-      const text = sep+info.track,
-        text2 = text.repeat(2),
-        w1 = g.stringWidth(text),
-        bottom = screen.height-s.bottom
-      this.offset = this.offset%w1
-      g.setFontAlign(-1, 1)
-      g.clearRect(0, bottom-s.size, screen.width, bottom)
-        .drawString(text2, -this.offset, screen.height-s.bottom)
-    }
-    start() {
-      this.offset = 0
-      super.start()
-    }
-    stop() {
-      super.stop()
-      const s = defaults.track,
-        bottom = screen.height-s.bottom
-      g.clearRect(0, bottom-s.size, screen.width, bottom)
-    }
+  // make a guess, then shrink/grow until it fits
+  const test = (s) => g.setFont("Vector", s).stringWidth(text);
+  let best = Math.floor(24000/test(100));
+  if (test(best)===240) { // good guess!
+    return best;
   }
-
-  function drawInfo(name, options) {
-    drawText(name, info[name], Object.assign({
-      color: infoColor(name),
-      size: infoSize(name),
-      force: fadeOut.active,
-    }, options))
-  }
-  let oldText = {}
-  function drawText(name, text, options) {
-    if (name in oldText && oldText[name].text===text && !(options || {}).force) {
-      return // nothing to do
-    }
-    const s = Object.assign(
-      // deep clone defaults to prevent them being overwritten with options
-      JSON.parse(JSON.stringify(defaults[name])),
-      options || {},
-    )
-    g.setColor(s.color)
-    g.setFont(s.font, s.size)
-    const ax = "left" in s ? -1 : ("right" in s ? 1 : 0),
-      ay = "top" in s ? -1 : ("bottom" in s ? 1 : 0)
-    g.setFontAlign(ax, ay)
-    // drawString coordinates
-    const x = "left" in s ? s.left : ("right" in s ? screen.width-s.right : s.center),
-      y = "top" in s ? s.top : ("bottom" in s ? screen.height-s.bottom : s.middle)
-    // bounding rectangle
-    const w = g.stringWidth(text), h = g.getFontHeight(),
-      left = "left" in s ? x : ("right" in s ? x-w : x-w/2),
-      top = "top" in s ? y : ("bottom" in s ? y-h : y-h/2)
-    if (name in oldText) {
-      const old = oldText[name]
-      // only clear if text/area has changed
-      if (old.text!==text
-        || old.left!==left || old.top!==top
-        || old.w!==w || old.h!==h) {
-        g.clearRect(old.left, old.top, old.left+old.w, old.top+old.h)
-      }
-    }
-    if (text.length) {
-      g.drawString(text, x, y)
-      // remember which rectangle to clear before next draw
-      oldText[name] = {
-        text: text,
-        left: left, top: top,
-        w: w, h: h,
-      }
-    } else {
-      delete oldText[name]
-    }
-  }
-
-  /**
-   *
-   * @param text
-   * @return {number} Maximum font size to make text fit on screen
-   */
-  function fitText(text) {
-    if (!text.length) {
-      return Infinity
-    }
-    // Vector: make a guess, then shrink/grow until it fits
-    const getWidth = (size) => g.setFont("Vector", size).stringWidth(text)
-      , sw = screen.width
-    let guess = Math.round(sw/(text.length*0.6))
-    if (getWidth(guess)===sw) { // good guess!
-      return guess
-    }
-    if (getWidth(guess)<sw) {
-      do {
-        guess++
-      } while(getWidth(guess)<=sw)
-      return guess-1
-    }
-    // width > target
+  if (test(best)<240) {
     do {
-      guess--
-    } while(getWidth(guess)>sw)
-    return guess
+      best++;
+    } while(test(best)<=240);
+    return best-1;
   }
+  // width > 240
+  do {
+    best--;
+  } while(test(best)>240);
+  return best;
+}
 
-  /**
-   * @param name
-   * @return {number} Font size to use for given info
-   */
-  function infoSize(name) {
-    if (name==="num") { // fixed size
-      return defaults[name].size
-    }
-    return Math.min(
-      defaults[name].size,
-      fitText(info[name]),
-    )
+/**
+ * @param {string} text
+ * @return {number} Randomish but deterministic number from 0-360 for text
+ */
+function textCode(text) {
+  "ram";
+  let code = 0;
+  for(let i = 0; i<text.length; i++) {
+    code += text.charCodeAt(i);
   }
-  /**
-   * @param name
-   * @return {string} Semi-random color to use for given info
-   */
-  let infoColors = {}
-  function infoColor(name) {
-    let h, s, v
-    if (name==="num") {
-      // always white
-      h = 0
-      s = 0
-    } else {
-      // complicated scheme to make color depend deterministically on info
-      // s=1 and hue depends on the text, so we always get a bright color
-      let text = ""
-      switch(name) {
-        case "track":
-          text = info.track
-        // fallthrough: also use album+artist
-        case "album":
-          text += info.album
-        // fallthrough: also use artist
-        case "artist":
-          text += info.artist
-          break
-        default:
-          text = info[name]
-      }
-      if (name in infoColors && infoColors[name].text===text && !fadeOut.active) {
-        return infoColors[name].color
-      }
-      let code = 0 // just the sum of all ascii values of text
-      text.split("").forEach(c => code += c.charCodeAt(0))
-      // dark magic
-      h = code%360
-      s = 1
+  return code%360;
+}
+// dark magic
+function hsv2rgb(h, s, v) {
+  const f = (n) => {
+    const k = (n+h/60)%6;
+    return v-v*s*Math.max(Math.min(k, 4-k, 1), 0);
+  };
+  return {r: f(5), g: f(3), b: f(1)};
+}
+function f2hex(f) {
+  return ("00"+(Math.round(f*255)).toString(16)).substr(-2);
+}
+/**
+ * @param name
+ * @return {string} Semi-random color to use for given info
+ */
+function infoColor(name) {
+  let h, s, v;
+  if (name==="num") {
+    // always white
+    h = 0;
+    s = 0;
+  } else {
+    // make color depend deterministically on info
+    let code = 0;
+    switch(name) {
+      case "track":
+        code += textCode(info.track);
+      // fallthrough: also use album+artist
+      case "album":
+        code += textCode(info.album);
+      // fallthrough: also use artist
+      default:
+        code += textCode(info[name]);
     }
-    v = fadeOut.brightness()
-    const hsv2rgb = (h, s, v) => {
-      const f = (n) => {
-        const k = (n+h/60)%6
-        return v-v*s*Math.max(Math.min(k, 4-k, 1), 0)
-      }
-      return {r: f(5), g: f(3), b: f(1)}
-    }
-    const rgb = hsv2rgb(h, s, v)
-    const f2hex = (f) => ("00"+(Math.round(f*255)).toString(16)).substr(-2)
-    const color = "#"+f2hex(rgb.r)+f2hex(rgb.g)+f2hex(rgb.b)
-    infoColors[name] = color
-    return color
+    h = code%360;
+    s = 0.7;
   }
+  v = brightness();
+  const rgb = hsv2rgb(h, s, v);
+  return "#"+f2hex(rgb.r)+f2hex(rgb.g)+f2hex(rgb.b);
+}
+/**
+ * Remember track color until info changes
+ * Because we need this every time we move the scroller
+ * @return {string}
+ */
+function trackColor() {
+  if (!("track_color" in info) || fade) {
+    info.track_color = infoColor("track");
+  }
+  return info.track_color;
+}
 
-  let lastTrack
-  function drawTrack() {
-    // we try if we can squeeze this in with a slightly smaller font, but if
-    // the title is too long we start up the scroller instead
-    const trackInfo = ([info.artist, info.album, info.n, info.track]).join("-")
-    if (trackInfo===lastTrack) {
-      return // already visible
+////////////////////
+// Drawing functions
+////////////////////
+/**
+ * Draw date and time
+ * @return {*}
+ */
+function drawDateTime() {
+  const now = new Date;
+  const l = require("locale");
+  const is12 = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
+  let time;
+  if (is12) {
+    const d12 = new Date(now.getTime());
+    const hour = d12.getHours();
+    if (hour===0) {
+      d12.setHours(12);
+    } else if (hour>12) {
+      d12.setHours(hour-12);
     }
-    if (infoSize("track")<defaults.track.min_size) {
-      scroller.start()
-    } else {
-      scroller.stop()
-      drawInfo("track")
-    }
-    lastTrack = trackInfo
+    time = l.time(d12, true)+l.meridian(now);
+  } else {
+    time = l.time(now, true);
   }
+  g.reset();
+  g.setFont("Vector", 24)
+    .setFontAlign(-1, -1) // top left
+    .clearRect(10, 30, 119, 54)
+    .drawString(time, 10, 30);
 
-  function drawArtistAlbum() {
-    // we just use small enough fonts to make these always fit
-    let album_middle = defaults.album.middle
-    const artist_size = infoSize("artist")
-    if (info.artist) {
-      album_middle += defaults.artist.size
+  const date = require("locale").date(now, true);
+  g.setFont("Vector", 16)
+    .setFontAlign(0, 1) // bottom center
+    .setClipRect(35, 198, 199, 214)
+    .clearRect(31, 198, 199, 214)
+    .drawString(date, 119, 240-26);
+}
+
+/**
+ * Draw track number and total count
+ */
+function drawNum() {
+  let num = "";
+  if ("n" in info && info.n>0) {
+    num = "#"+info.n;
+    if ("c" in info && info.c>0) { // I've seen { c:-1 }
+      num += "/"+info.c;
     }
-    drawInfo("artist", {
-      size: artist_size,
-    })
-    drawInfo("album", {
-      middle: album_middle,
-    })
   }
-  const icons = {
+  g.reset();
+  g.setFont("Vector", 30)
+    .setFontAlign(1, -1) // top right
+    .clearRect(225, 30, 120, 60)
+    .drawString(num, 225, 30);
+}
+/**
+ * Clear rectangle used by track title
+ */
+function clearTrack() {
+  g.clearRect(0, 60, 239, 119);
+}
+/**
+ * Draw track title
+ */
+function drawTrack() {
+  let size = fitText(info.track);
+  if (size<25) {
+    // the title is too long: start the scroller
+    scrollStart();
+    return;
+  } else {
+    scrollStop();
+  }
+  // stationary track
+  if (size>40) {
+    size = 40;
+  }
+  g.reset();
+  g.setFont("Vector", size)
+    .setFontAlign(0, 1) // center bottom
+    .setColor(trackColor());
+  clearTrack();
+  g.drawString(info.track, 119, 109);
+}
+/**
+ * Draw scrolling track title
+ */
+function drawScroller() {
+  g.reset();
+  g.setFont("Vector", 40);
+  const w = g.stringWidth(info.track)+40;
+  offset = offset%w;
+  g.setFontAlign(-1, 1) // left bottom
+    .setColor(trackColor());
+  clearTrack();
+  g.drawString(info.track, -offset+40, 109)
+    .drawString(info.track, -offset+40+w, 109);
+}
+
+/**
+ * Draw track artist and album
+ */
+function drawArtistAlbum() {
+  // we just use small enough fonts to make these always fit
+  // calculate stuff before clear+redraw
+  const aCol = infoColor("artist");
+  const bCol = infoColor("album");
+  let aSiz = fitText(info.artist);
+  if (aSiz>30) {
+    aSiz = 30;
+  }
+  let bSiz = fitText(info.album);
+  if (bSiz>20) {
+    bSiz = 20;
+  }
+  g.reset();
+  g.clearRect(0, 120, 240, 189);
+  let top = 124;
+  if (info.artist) {
+    g.setFont("Vector", aSiz)
+      .setFontAlign(0, -1) // center top
+      .setColor(aCol)
+      .drawString(info.artist, 119, top);
+    top += aSiz+4; // fit album neatly under artist
+  }
+  if (info.album) {
+    g.setFont("Vector", bSiz)
+      .setFontAlign(0, -1) // center top
+      .setColor(bCol)
+      .drawString(info.album, 119, top);
+  }
+}
+
+/**
+ *
+ * @param {string} icon Icon name
+ * @param {number} x
+ * @param {number} y
+ * @param {number} s Icon size
+ */
+function drawIcon(icon, x, y, s) {
+  ({
     pause: function(x, y, s) {
-      const w1 = s/3
-      g.drawRect(x, y, x+w1, y+s)
-      g.drawRect(x+s-w1, y, x+s, y+s)
+      const w1 = s/3;
+      g.drawRect(x, y, x+w1, y+s);
+      g.drawRect(x+s-w1, y, x+s, y+s);
     },
     play: function(x, y, s) {
       g.drawPoly([
         x, y,
         x+s, y+s/2,
         x, y+s,
-      ], true)
+      ], true);
     },
     previous: function(x, y, s) {
-      const w2 = s*1/5
+      const w2 = s*1/5;
       g.drawPoly([
         x+s, y,
         x+w2, y+s/2,
         x+s, y+s,
-      ], true)
-      g.drawRect(x, y, x+w2, y+s)
+      ], true);
+      g.drawRect(x, y, x+w2, y+s);
     },
     next: function(x, y, s) {
-      const w2 = s*4/5
+      const w2 = s*4/5;
       g.drawPoly([
         x, y,
         x+w2, y+s/2,
         x, y+s,
-      ], true)
-      g.drawRect(x+w2, y, x+s, y+s)
+      ], true);
+      g.drawRect(x+w2, y, x+s, y+s);
     },
+  })[icon](x, y, s);
+}
+function controlColor(ctrl) {
+  return (ctrl in tCommand) ? "#ff0000" : "#008800";
+}
+function drawControl(ctrl, x, y) {
+  g.setColor(controlColor(ctrl));
+  const s = 20;
+  if (stat!==controlState) {
+    g.clearRect(x, y, x+s, y+s);
   }
-  function controlColor(control) {
-    const s = defaults.controls
-    if (volCmd && control===volCmd) {
-      // volume button kept pressed down
-      return s.activeColor
-    }
-    return (control in tCommand) ? s.activeColor : s.color
+  drawIcon(ctrl, x, y, s);
+}
+let controlState;
+function drawControls() {
+  g.reset();
+  if (stat==="play") {
+    // left touch
+    drawControl("pause", 10, 190);
+    // right touch
+    drawControl("next", 200, 190);
+  } else {
+    drawControl("previous", 10, 190);
+    drawControl("play", 200, 190);
   }
-  function drawControl(control, x, y) {
-    g.setColor(controlColor(control))
-    const s = defaults.controls.size
-    if (state!==controlState) {
-      g.clearRect(x, y, x+s, y+s)
-    }
-    icons[control](x, y, s)
-  }
-  let controlState
-  function drawControls() {
-    const s = defaults.controls
-    if (state==="play") {
-      // left touch
-      drawControl("pause", s.left, screen.height-(s.bottom+s.size))
-      // right touch
-      drawControl("next", screen.width-(s.right+s.size), screen.height-(s.bottom+s.size))
-    } else {
-      drawControl("previous", s.left, screen.height-(s.bottom+s.size))
-      drawControl("play", screen.width-(s.right+s.size), screen.height-(s.bottom+s.size))
-    }
-    g.setFont("6x8", s.volSize)
-    // BTN1
-    g.setFontAlign(1, -1)
-    g.setColor(controlColor("volumeup"))
-    g.drawString("+", screen.width, s.top)
-    // BTN2
-    g.setFontAlign(1, 1)
-    g.setColor(controlColor("volumedown"))
-    g.drawString("-", screen.width, screen.height-s.bottom)
-    controlState = state
-  }
+  g.setFont("6x8", 2);
+  // BTN1
+  g.setFontAlign(1, -1);
+  g.setColor(controlColor("volumeup"));
+  g.drawString("+", 240, 30);
+  // BTN2
+  g.setFontAlign(1, 1);
+  g.setColor(controlColor("volumedown"));
+  g.drawString("-", 240, 210);
+  controlState = stat;
+}
 
-  function setNumInfo() {
-    info.num = ""
-    if ("n" in info && info.n>0) {
-      info.num = "#"+info.n
-      if ("c" in info && info.c>0) { // I've seen { c:-1 }
-        info.num += "/"+info.c
-      }
+function drawMusic() {
+  drawNum();
+  drawTrack();
+  drawArtistAlbum();
+}
+
+////////////////////////
+// GB event handlers
+///////////////////////
+/**
+ * Update music info
+ * @param e
+ */
+function musicInfo(e) {
+  info = e;
+  delete (info.t);
+  offset = null;
+  if (Bangle.isLCDOn()) {
+    drawMusic();
+  }
+}
+
+let tXit;
+function musicState(e) {
+  stat = e.state;
+  // if paused for five minutes, load the clock
+  // (but timeout resets if we get new info, even while paused)
+  if (tXit) {
+    clearTimeout(tXit);
+  }
+  tXit = null;
+  fade = null;
+  delete info.track_color;
+  if (stat!=="play" && auto) {
+    if (stat==="stop") { // never actually happens with my phone :-(
+      load();
+    } else { // also quit when paused for a long time
+      tXit = setTimeout(load, TOUT);
+      fade = Date.now();
+      fadeOut();
     }
   }
-  function drawMusic() {
-    g.reset()
-    setNumInfo()
-    drawInfo("num")
-    drawTrack()
-    drawArtistAlbum()
-    drawControls()
+  if (Bangle.isLCDOn()) {
+    drawControls();
   }
-  let tQuit
-  function updateMusic() {
-    // if paused for five minutes, load the clock
-    // (but timeout resets if we get new info, even while paused)
-    if (tQuit) {
-      clearTimeout(tQuit)
+}
+
+////////////////////
+// Events
+////////////////////
+
+// we put starting of watches inside a function, so we can defer it until
+// we asked the user about autoStart
+/**
+ * Start watching for BTN2 presses
+ */
+let tPress, nPress = 0;
+function startButtonWatches() {
+  // BTN1/3: volume control
+  // Wait for falling edge to avoid messing with volume while long-pressing BTN3
+  // to reload the watch (and same for BTN2 for consistency)
+  setWatch(() => { sendCommand("volumeup"); }, BTN1, {repeat: true, edge: "falling"});
+  setWatch(() => { sendCommand("volumedown"); }, BTN3, {repeat: true, edge: "falling"});
+
+  // BTN2: long-press for launcher, otherwise depends on number of presses
+  setWatch(() => {
+    if (nPress===0) {
+      tPress = setTimeout(() => {Bangle.showLauncher();}, 3000);
     }
-    tQuit = null
-    if (state!=="play" && autoClose) {
-      if (state==="stop") { // never actually happens with my phone :-(
-        load()
-      } else { // also quit when paused for a long time
-        tQuit = setTimeout(load, TIMEOUT)
-        fadeOut.start()
-      }
-    } else {
-      fadeOut.stop()
-    }
-    drawMusic()
+  }, BTN2, {repeat: true, edge: "rising"});
+  setWatch(() => {
+    nPress++;
+    clearTimeout(tPress);
+    tPress = setTimeout(handleButton2Press, 500);
+  }, BTN2, {repeat: true, edge: "falling"});
+}
+function handleButton2Press() {
+  tPress = null;
+  switch(nPress) {
+    case 1:
+      togglePlay();
+      break;
+    case 2:
+      sendCommand("next");
+      break;
+    case 3:
+      sendCommand("previous");
+      break;
+    default: // invalid
+      Bangle.buzz(50);
   }
+  nPress = 0;
+}
 
-  // create tickers
-  const clock = new Clock()
-  const fadeOut = new Fader()
-  const scroller = new Scroller()
+let tCommand = {};
+/**
+ * Send command and highlight corresponding control
+ * @param command "play/pause/next/previous/volumeup/volumedown"
+ */
+function sendCommand(command) {
+  Bluetooth.println(JSON.stringify({t: "music", n: command}));
+  // for controlColor
+  if (command in tCommand) {
+    clearTimeout(tCommand[command]);
+  }
+  tCommand[command] = setTimeout(function() {
+    delete tCommand[command];
+    drawControls();
+  }, 200);
+  drawControls();
+}
 
-  ////////////////////
-  // Events
-  ////////////////////
-
-  // pause timers while screen is off
-  Bangle.on("lcdPower", on => {
+// touch/swipe: navigation
+function togglePlay() {
+  sendCommand(stat==="play" ? "pause" : "play");
+}
+function startTouchWatches() {
+  Bangle.on("touch", side => {
+    switch(side) {
+      case 1:
+        sendCommand(stat==="play" ? "pause" : "previous");
+        break;
+      case 2:
+        sendCommand(stat==="play" ? "next" : "play");
+        break;
+      case 3:
+        togglePlay();
+    }
+  });
+  Bangle.on("swipe", dir => {
+    sendCommand(dir===1 ? "previous" : "next");
+  });
+}
+function startLCDWatch() {
+  Bangle.on("lcdPower", (on) => {
     if (on) {
-      clock.resume()
-      scroller.resume()
-      fadeOut.resume()
+      // redraw and resume scrolling
+      tick();
+      drawMusic();
+      drawControls();
+      fadeOut();
+      if (offset!==null) {
+        drawScroller();
+        if (!iScroll) {
+          iScroll = setInterval(scroll, 200);
+        }
+      }
     } else {
-      clock.pause()
-      scroller.pause()
-      fadeOut.pause()
-    }
-  })
-
-  let tLauncher
-  // we put starting of watches inside a function, so we can defer it until we
-  // asked the user about autoStart
-  function startLauncherWatch() {
-    // long-press: launcher
-    // short-press: toggle play/pause
-    setWatch(function() {
-      if (tLauncher) {
-        clearTimeout(tLauncher)
+      // pause scrolling
+      if (iScroll) {
+        clearInterval(iScroll);
+        iScroll = null;
       }
-      tLauncher = setTimeout(Bangle.showLauncher, 1000)
-    }, BTN2, {repeat: true, edge: "rising"})
-    setWatch(function() {
-      if (tLauncher) {
-        clearTimeout(tLauncher)
-        tLauncher = null
-      }
-      togglePlay()
-    }, BTN2, {repeat: true, edge: "falling"})
-  }
-
-  let tCommand = {}
-  /**
-   * Send command and highlight corresponding control
-   * @param command "play/pause/next/previous/volumeup/volumedown"
-   */
-  function sendCommand(command) {
-    Bluetooth.println(JSON.stringify({t: "music", n: command}))
-    // for controlColor
-    if (command in tCommand) {
-      clearTimeout(tCommand[command])
     }
-    tCommand[command] = setTimeout(function() {
-      delete tCommand[command]
-      drawControls()
-    }, defaults.controls.highlight)
-    drawControls()
-  }
+  });
+}
 
-  // BTN1/3: volume control (with repeat after long-press)
-  let tVol, volCmd
-  function volUp() {
-    volStart("up")
+/////////////////////
+// Startup
+/////////////////////
+// check for saved music stat (by widget) to load
+g.clear();
+global.gbmusic_active = true; // we don't need our widget
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+delete (global.gbmusic_active);
+
+function startEmulator() {
+  if (typeof Bluetooth==="undefined") { // emulator!
+    Bluetooth = {
+      println: (line) => {console.log("Bluetooth:", line);},
+    };
+    // some example info
+    GB({"t": "musicinfo", "artist": "Some Artist Name", "album": "The Album Name", "track": "The Track Title Goes Here", "dur": 241, "c": 2, "n": 2});
+    GB({"t": "musicstate", "state": "play", "position": 0, "shuffle": 1, "repeat": 1});
   }
-  function volDown() {
-    volStart("down")
-  }
-  function volStart(dir) {
-    const command = "volume"+dir
-    stopVol()
-    sendCommand(command)
-    volCmd = command
-    tVol = setTimeout(repeatVol, 500)
-  }
-  function repeatVol() {
-    sendCommand(volCmd)
-    tVol = setTimeout(repeatVol, 100)
-  }
-  function stopVol() {
-    if (tVol) {
-      clearTimeout(tVol)
-      tVol = null
+}
+function startWatches() {
+  startButtonWatches();
+  startTouchWatches();
+  startLCDWatch();
+}
+
+function start() {
+  // start listening for music updates
+  const _GB = global.GB;
+  global.GB = (event) => {
+    // we eat music events!
+    switch(event.t) {
+      case "musicinfo":
+        musicInfo(event);
+        break;
+      case "musicstate":
+        musicState(event);
+        break;
+      default:
+        // pass on other events
+        if (_GB) {
+          setTimeout(_GB, 0, event);
+        }
+        return;
     }
-    volCmd = null
-    drawControls()
-  }
-  function startVolWatches() {
-    setWatch(volUp, BTN1, {repeat: true, edge: "rising"})
-    setWatch(stopVol, BTN1, {repeat: true, edge: "falling"})
-    setWatch(volDown, BTN3, {repeat: true, edge: "rising"})
-    setWatch(stopVol, BTN3, {repeat: true, edge: "falling"})
-  }
+  };
+  drawMusic();
+  drawControls();
+  startWatches();
+  tick();
+  startEmulator();
+}
 
-  // touch/swipe: navigation
-  function togglePlay() {
-    sendCommand(state==="play" ? "pause" : "play")
-  }
-  function startTouchWatches() {
-    Bangle.on("touch", function(side) {
-      switch(side) {
-        case 1:
-          sendCommand(state==="play" ? "pause" : "previous")
-          break
-        case 2:
-          sendCommand(state==="play" ? "next" : "play")
-          break
-        case 3:
-          togglePlay()
-      }
-    })
-    Bangle.on("swipe", function(dir) {
-      sendCommand(dir===1 ? "previous" : "next")
-    })
-  }
-  /////////////////////
-  // Startup
-  /////////////////////
-  // check for saved music state (by widget) to load
-  g.clear()
-  global.gbmusic_active = true // we don't need our widget
-  Bangle.loadWidgets()
-  Bangle.drawWidgets()
-  delete (global.gbmusic_active)
-
-  function startEmulator() {
-    if (typeof Bluetooth==="undefined") { // emulator!
-      Bluetooth = {
-        println: (line) => {console.log("Bluetooth:", line)},
-      }
-      // some example info
-      GB({"t": "musicinfo", "artist": "Some Artist Name", "album": "The Album Name", "track": "The Track Title Goes Here", "dur": 241, "c": 2, "n": 2})
-      GB({"t": "musicstate", "state": "play", "position": 0, "shuffle": 1, "repeat": 1})
-    }
-  }
-  function startWatches() {
-    startVolWatches()
-    startLauncherWatch()
-    startTouchWatches()
-  }
-  function start() {
-    // start listening for music updates
-    const _GB = global.GB
-    global.GB = (event) => {
-      // we eat music events!
-      switch(event.t) {
-        case "musicinfo":
-          info = event
-          delete (info.t)
-          break
-        case "musicstate":
-          state = event.state
-          break
-        default:
-          // pass on other events
-          if (_GB) {
-            setTimeout(_GB, 0, event)
-          }
-          return // no drawMusic
-      }
-      updateMusic()
-    }
-    startWatches()
-    drawMusic()
-    clock.start()
-    startEmulator()
-  }
-
-  let saved = require("Storage").readJSON("gbmusic.load.json", true)
-  require("Storage").erase("gbmusic.load.json")
+function init() {
+  let saved = require("Storage").readJSON("gbmusic.load.json", true);
+  require("Storage").erase("gbmusic.load.json");
   if (saved) {
     // autoloaded: load state was saved by widget
-    info = saved.info
-    state = saved.state
-    delete (saved)
-    autoClose = true
-    start()
+    info = saved.info;
+    stat = saved.state;
+    delete saved;
+    auto = true;
+    start();
   } else {
-    const s = require("Storage").readJSON("gbmusic.json", 1) || {}
+    delete saved;
+    let s = require("Storage").readJSON("gbmusic.json", 1) || {};
     if (!("autoStart" in s)) {
       // user opened the app, but has not picked a setting yet
       // ask them about autoloading now
       E.showPrompt(
         "Automatically load\n"+
         "when playing music?\n",
-      ).then(function(autoStart) {
-        s.autoStart = autoStart
-        require("Storage").writeJSON("gbmusic.json", s)
-        setTimeout(start, 0)
-      })
+      ).then(choice => {
+        s.autoStart = choice;
+        require("Storage").writeJSON("gbmusic.json", s);
+        delete s;
+        setTimeout(start, 0);
+      });
     } else {
-      start()
+      delete s;
+      start();
     }
   }
 }
+init();
+

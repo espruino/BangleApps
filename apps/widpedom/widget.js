@@ -86,7 +86,8 @@
       // TODO: could save this to PEDOMFILE for lastUpdate's day?
       stp_today = 1;
     }
-    if (stp_today === setting('goal')) {
+    if (stp_today === setting('goal')
+        && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
       let b = 3, buzz = () => {
         if (b--) Bangle.buzz().then(() => setTimeout(buzz, 100))
       }
