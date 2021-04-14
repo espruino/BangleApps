@@ -2,6 +2,10 @@
   function getFace(){
     let swObject = undefined;
 
+    function log_debug(o) {
+      //console.log(o);
+    }
+    
     function init(gps, sw) {
       showMem("swatch init 1");
       swObject = sw;
@@ -18,16 +22,16 @@
     function showMem(msg) {
       var val = process.memory();
       var str = msg + " " + Math.round(val.usage*100/val.total) + "%";
-      console.log(str);
+      log_debug(str);
     }
     
     function startTimer() {
-      console.log("swObject.startTimer()");
+      log_debug("swObject.startTimer()");
       swObject.startTimer();
     }
     
     function stopTimer() {
-      console.log("swObject.stopTimer()");
+      log_debug("swObject.stopTimer()");
       swObject.stopTimer();
     }
 

@@ -491,7 +491,7 @@ function STOPWATCH() {
 }
   
 STOPWATCH.prototype.log_debug = function(o) {
-  console.log(o);
+  //console.log(o);
 }
 
 STOPWATCH.prototype.timeToText = function(t) {
@@ -511,10 +511,6 @@ STOPWATCH.prototype.getLapTimesArray = function() {
 
 STOPWATCH.prototype.stopStart = function() {
   this.log_debug("stopStart()");
-
-  //  if (this.running)
-  //    this.stopTimer();
-
   this.running = !this.running;
 
   if (this.running)
@@ -524,14 +520,6 @@ STOPWATCH.prototype.stopStart = function() {
   this.tCurrent = Date.now();
   this.redrawButtons = true;
   this.redrawLaps = true;
-
-  /*
-  if (this.running) {
-    this.startTimer();
-  } else {
-    this.draw();
-  }
-  */
 
   this.draw();
 }
