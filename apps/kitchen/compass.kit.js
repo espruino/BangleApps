@@ -21,7 +21,7 @@
       //console.log(o);
     }
 
-    function init(gps) {
+    function init(gps,sw) {
       showMem("compass init() START");
       gpsObject = gps;
       pal_by = new Uint16Array([0x0000,0xFFC0],0,1); // black, yellow
