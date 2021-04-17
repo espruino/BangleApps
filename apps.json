@@ -3145,5 +3145,19 @@
     {"name":"whereworld.img","url":"app-icon.js","evaluate":true},
     {"name":"whereworld.worldmap","url":"worldmap"}
   ]
+},
+{
+  "id": "omnitrix",
+  "name":"Omnitrix",
+  "icon":"omnitrix.png",
+  "version": "1.0",
+  "readme": "README.md",
+  "description": "An Omnitrix Showpiece",
+  "tags": "game",
+  "readme": "README.md",
+  "storage": [
+    {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
+    {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
+  ]
 }
 ]
