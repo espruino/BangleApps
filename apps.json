@@ -3132,5 +3132,18 @@
     {"name":"hourstrike.boot.js","url":"boot.js"},
     {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "whereworld",
+  "name": "Where in the World?",
+  "shortName" : "Where World",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Shows your current location on the world map",
+  "tags": "gps",
+  "storage": [
+    {"name":"whereworld.app.js","url":"app.js"},
+    {"name":"whereworld.img","url":"app-icon.js","evaluate":true},
+    {"name":"whereworld.worldmap","url":"worldmap"}
+  ]
 }
 ]
