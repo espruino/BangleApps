@@ -207,4 +207,8 @@ is recorded in a storage file named `magnav.json`.
 * GPS time display shows GMT and not BST, needs localising
 * Occassional buzzing after 2-3 days of use, seems to disappear after
   a reset to the launcher menu. Needs investigation
-* Stopwatch display to hide hours count if elapsed time is less than 1 hour.
+* Need to gracefully handle incorrect firmware
+* Need to gracefully handle missing compass calibration data
+* Need to gracefully handle missing steps widget
+* Need to improve memory management for compass widget
+
