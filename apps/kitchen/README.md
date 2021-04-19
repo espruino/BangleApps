@@ -202,6 +202,22 @@ the correct direction heading or is not stable with respect to tilt
 and roll - redo the calibration by pressing *BTN3*. Calibration data
 is recorded in a storage file named `magnav.json`.
 
+
+### Technical Notes on Memory Management
+
+v0.06: The stepo watch face uses an ArrayBuffer to setup the doughnut
+gauge before it is displayed.  This is necessary as the drawing of
+the doughnut shape is quite slow.  However I found that when an
+ArrayBuffer was also used for the compass arrow part of the App it
+could result in LOW_MEMORY errors due to the memory fragmentation
+caused when switching multiple times between the watch faces. It is
+possible to call Bangle.defrag() when switching to a new watch face
+but this causes an annoying delay in the time it takes to switch. So
+I have settled on directly writing to the screen using the Graphics
+object (g.) for the compass App.  This creates a bit of flicker when
+the arrow moves but is more reliable than using the ArrayBuffer.
+
+
 ### Issues
 
 * GPS time display shows GMT and not BST, needs localising
@@ -210,5 +226,3 @@ is recorded in a storage file named `magnav.json`.
 * Need to gracefully handle incorrect firmware
 * Need to gracefully handle missing compass calibration data
 * Need to gracefully handle missing steps widget
-* Need to improve memory management for compass widget
-
