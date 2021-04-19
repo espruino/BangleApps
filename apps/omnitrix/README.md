@@ -1,7 +1,7 @@
 <div align="center">
 <h1> Omnitrix </h1>
 <p align="center">
-  <img src="./assets/screenshot.png" width="240px" height="240px">
+  <img src="https://github.com/espruino/BangleApps/raw/master/apps/omnitrix/assets/screenshot.png" width="240px" height="240px">
 </p>
 <h3>This App is a portable library of intergalactic genetic data that allows the wielder to alter xer DNA at will and transform into the selected pre-scanned alien species.</h3>
 <br>
@@ -20,4 +20,4 @@ Please leave bug reports and requests by raising an issue [here](https://github.
 
 ## Creator
 
-[〈 RA 〉](https://github.com/ra101)
+[< RA >](https://github.com/ra101)
