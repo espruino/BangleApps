@@ -3159,5 +3159,19 @@
     {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
     {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
   ]
+},
+{ "id": "batclock",
+  "name": "Bat Clock",
+  "shortName":"Bat Clock",
+  "icon": "bat-clock.png",
+  "version":"1.0",
+  "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"bat-clock.app.js","url":"bat-clock.app.js"},
+    {"name":"bat-clock.img","url":"bat-clock.icon.js","evaluate":true}
+  ]
 }
 ]
