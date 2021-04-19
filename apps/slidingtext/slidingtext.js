@@ -251,12 +251,15 @@ function nextColorTheme(){
   if(color_scheme_index >= row_displays.length){
     color_scheme_index = 0;
   }
-  var color_scheme = color_schemes[color_scheme_index];
+  setColorScheme(color_schemes[color_scheme_index]);
+  reset_clock(true);
+  draw_clock();
+}
+
+function setColorScheme(color_scheme){
   setColor(color_scheme.main_bar,
       color_scheme.other_bars,
       color_scheme.background);
-  reset_clock(true);
-  draw_clock();
 }
 
 function setColor(main_color,other_color,bg_color){
@@ -345,6 +348,7 @@ var DISPLAY_TEXT_X = 20;
 function reset_clock(hard_reset){
   console.log("reset_clock hard_reset:" + hard_reset);
 
+  setColorScheme(color_schemes[color_scheme_index]);
   if(!hard_reset && last_draw_time != null){
     // If its not a hard reset then we want to reset the
     // rows set to the last time. If the last time is too long
@@ -354,7 +358,7 @@ function reset_clock(hard_reset){
     var reset_time = last_draw_time;
     var last_minute_millis = Date.now() - 60000;
     if(reset_time.getTime() < last_minute_millis){
-      reset_time = new Date(last_minute_millis);
+      reset_time = display_time(new Date(last_minute_millis));
     }
     var rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
@@ -380,12 +384,24 @@ function reset_clock(hard_reset){
 }
 
 let last_draw_time = null;
-const next_minute_boundary_secs = 7.5;
+const next_minute_boundary_secs = 10;
+
+function display_time(date){
+  if(date.getSeconds() > 60 - next_minute_boundary_secs){
+    console.log("forwarding to next minute");
+    return new Date(date.getTime() + next_minute_boundary_secs * 1000);
+  } else {
+    return date;
+  }
+}
 
 function draw_clock(){
   var date = new Date();
+
+  // we don't want the time to be displayed
+  // and then immediately be trigger another time
   if(last_draw_time != null &&
-      date.getTime() - last_draw_time.getTime() < next_minute_boundary_secs * 1000 &&
+      Date.now() - last_draw_time.getTime() < next_minute_boundary_secs * 1000 &&
       has_commands() ){
     console.log("skipping draw clock");
     return;
@@ -393,13 +409,8 @@ function draw_clock(){
     last_draw_time = date;
   }
   reset_commands();
-  console.log("draw_clock:" + date.toISOString());
-  // we don't want the time to be displayed
-  // and then immediately be trigger another time
-  if(date.getSeconds() > 60 - next_minute_boundary_secs){
-    console.log("forwarding to next minute");
-    date = new Date(date.getTime() + next_minute_boundary_secs * 1000);
-  }
+  date = display_time(date);
+  console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString());
   // for debugging only
   //date.setMinutes(37);
   var rows = date_formatter.formatDate(date);
@@ -475,10 +486,7 @@ function set_colorscheme(colorscheme_name){
     if(color_schemes[i].name == colorscheme_name){
       color_scheme_index = i;
       console.log("match");
-      var color_scheme = color_schemes[color_scheme_index];
-      setColor(color_scheme.main_bar,
-          color_scheme.other_bars,
-          color_scheme.background);
+      setColorScheme(color_schemes[color_scheme_index]);
       break;
     }
   }
@@ -562,19 +570,36 @@ function startTimers(){
   draw_clock();
 }
 
+/**
+ * confirms that a redraw is needed by checking the last redraw time and
+ * the lcd state of the UI
+ * @returns {boolean|*}
+ */
+function shouldRedraw(){
+  return last_draw_time != null &&
+      Date.now() - last_draw_time.getTime() > next_minute_boundary_secs * 1000
+      && Bangle.isLCDOn();
+}
+
 function scheduleDrawClock(){
   clearTimers();
   if (Bangle.isLCDOn()) {
-    console.log("scheduleDrawClock");
+    console.log("schedule draw of clock");
     intervalRef = setInterval(() => {
-      if (Bangle.isLCDOn()) {
-        console.log("draw clock callback");
-        draw_clock()
-      } else {
-        console.log("draw clock callback - skipped not visible");
-      }
-    }, 60 * 1000);
-    draw_clock();
+        if (!shouldRedraw()) {
+          console.log("draw clock callback - skipped redraw");
+        } else {
+          console.log("draw clock callback");
+          draw_clock()
+        }
+      }, 60 * 1000
+    );
+
+    if (shouldRedraw()) {
+      draw_clock();
+    } else {
+      console.log("scheduleDrawClock - skipped redraw");
+    }
   } else {
     console.log("scheduleDrawClock - skipped not visible");
   }
