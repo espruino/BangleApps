@@ -1,7 +1,7 @@
 <div align="center">
 <h1> Omnitrix </h1>
 <p align="center">
-  <img src="https://github.com/espruino/BangleApps/raw/master/apps/omnitrix/assets/screenshot.png" width="240px" height="240px">
+  <img src="screenshot.png" width="240px" height="240px">
 </p>
 <h3>This App is a portable library of intergalactic genetic data that allows the wielder to alter xer DNA at will and transform into the selected pre-scanned alien species.</h3>
 <br>
