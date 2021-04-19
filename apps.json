@@ -3156,8 +3156,8 @@
   "type": "clock",
   "readme": "README.md",
   "storage": [
-    {"name":"bat-clock.app.js","url":"bat-clock.app.js"},
-    {"name":"bat-clock.img","url":"bat-clock.icon.js","evaluate":true}
+    {"name":"batclock.app.js","url":"bat-clock.app.js"},
+    {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
   ]
 }
 ]
