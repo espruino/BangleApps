@@ -488,6 +488,7 @@ function STOPWATCH() {
   this.displayInterval;
   this.redrawButtons = true;
   this.redrawLaps = true;
+  this.redrawTime = true;
 }
   
 STOPWATCH.prototype.log_debug = function(o) {
@@ -498,8 +499,13 @@ STOPWATCH.prototype.timeToText = function(t) {
   let hrs = Math.floor(t/3600000);
   let mins = Math.floor(t/60000)%60;
   let secs = Math.floor(t/1000)%60;
+  let text;
 
-  let text = ("00"+hrs).substr(-3) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
+  if (hrs === 0) 
+    text = ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
+  else
+    text = (""+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
+
   this.log_debug(text);
   return text;
 }
@@ -520,7 +526,7 @@ STOPWATCH.prototype.stopStart = function() {
   this.tCurrent = Date.now();
   this.redrawButtons = true;
   this.redrawLaps = true;
-
+  this.redrawTime = true;
   this.draw();
 }
 
@@ -529,7 +535,7 @@ STOPWATCH.prototype.lap = function() {
   if (this.running) {
     this.tCurrent = Date.now();
     this.lapTimes.unshift(this.tCurrent - this.tStart);
-    console.log(this.tCurrent - this.tStart);
+    log_debug(this.tCurrent - this.tStart);
   }
 
   this.tStart = this.tCurrent;
@@ -552,6 +558,7 @@ STOPWATCH.prototype.reset = function() {
 STOPWATCH.prototype.lapOrReset = function() {
   this.redrawButtons = true;
   this.redrawLaptimes = true;
+  this.redrawTime = true;
 
   this.log_debug("lapReset()");
   if (this.running)
@@ -566,7 +573,7 @@ STOPWATCH.prototype.draw = function() {
 
   g.setColor(1,1,1);
   if (this.redrawButtons) this.drawButtons();
-  this.drawTime();
+  if (this.running || this.redrawTime) this.drawTime();
   if (this.redrawLaps) this.drawLaptimes();
 }
 
@@ -597,33 +604,34 @@ STOPWATCH.prototype.drawLaptimes = function() {
 
 STOPWATCH.prototype.drawTime = function() {
   this.log_debug("drawTime()");
-  let t = this.tCurrent - this.tStart;
-  let Tt = this.tCurrent - this.tTotal;
-
-  let txt = this.timeToText(t);
-  let Ttxt = this.timeToText(Tt);
-  
-  let x = 100;
-  let Tx = 125;
+  let tLap = this.tCurrent - this.tStart;
+  let tTotal = this.tCurrent - this.tTotal;
+  let txtLap = this.timeToText(tLap);
+  let txtTotal = this.timeToText(tTotal);
+  let xTotal = 100;
+  let xLap = 125;
 
   // total time
   g.setFont("Vector",38);
   g.setFontAlign(0,0);
-  g.clearRect(0,this.timeY-21,200,this.timeY+21);
+  g.clearRect(0, this.timeY-21, 200, this.timeY+21);
   g.setColor(0xFFC0); 
-  g.drawString(Ttxt,x,this.timeY);
+  g.drawString(txtTotal, xTotal, this.timeY);
 
   // current lap time
   g.setFont("Vector", 20);
-  g.clearRect(0, this.TtimeY-7,200, this.TtimeY+7);
+  g.clearRect(0, this.TtimeY-7, 200, this.TtimeY+7);
   g.setColor(1,1,1);
-  g.drawString(txt,Tx, this.TtimeY);
+  g.drawString(txtLap, xLap, this.TtimeY);
+
+  this.redrawTime = false;
 }
 
 STOPWATCH.prototype.startTimer = function() {
   this.log_debug("startTimer()");
   this.redrawButtons = true;
   this.redrawLaps = true;
+  this.redrawTime = true;
   this.draw();
   this.displayInterval = setInterval(stopwatchDraw, 1000);
 }
