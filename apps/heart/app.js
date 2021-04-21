@@ -1,7 +1,7 @@
 E.setFlags({pretokenise:1});
 
 function log(msg) {
-  console.log("heart: " + msg + " mem: " + process.memory().usage / process.memory().blocksize);
+  console.log("heart: " + msg + "; mem used: " + process.memory().usage / process.memory().blocksize);
   return;
 }
 
@@ -11,16 +11,6 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("heart.json",1)||{};
-
-var globalSettings = require('Storage').readJSON('setting.json', true) || {timezone: 0};
-require('DateExt').locale({
-  str: "0D.0M. 0h:0m",
-  offset: [
-    globalSettings.timezone * 60,
-    globalSettings.timezone * 60
-  ]
-});
-globalSettings = undefined;
 
 function getFileNbr(n) {
   return ".heart"+n.toString(36);
@@ -62,6 +52,22 @@ function showMainMenu() {
   return E.showMenu(mainMenu);
 }
 
+// Date().as().str cannot be used as it always returns UTC time
+function getDateString(timestamp) {
+  var date = new Date(timestamp);
+  var day = date.getDate() < 10 ? "0" + date.getDate().toString() : date.getDate().toString();
+  var month = date.getMonth() < 10 ? "0" + date.getMonth().toString() : date.getMonth().toString();
+  return day + "." + month + "." + date.getFullYear();
+}
+
+// Date().as().str cannot be used as it always returns UTC time
+function getTimeString(timestamp) {
+  var date = new Date(timestamp);
+  var hour = date.getHours() < 10 ? '0' + date.getHours().toString() : date.getHours().toString();
+  var minute = date.getMinutes() < 10 ? '0' + date.getMinutes().toString() : date.getMinutes().toString();
+  return hour + ':' + minute;
+}
+
 function createRecordMenu(func) {
   const menu = {
     '': { 'title': 'Heart Records' }
@@ -70,7 +76,7 @@ function createRecordMenu(func) {
   for (var n=0;n<36;n++) {
     var line = require("Storage").open(getFileNbr(n),"r").readLine();
     if (line!==undefined) {
-      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = func.bind(null, n);
+      menu["#" + n + " " + getDateString(line.split(",")[0]*1000) + " " + getTimeString(line.split(",")[0]*1000)] = func.bind(null, n);
       found = true;
     }
   }
@@ -111,7 +117,7 @@ function viewRecord(n) {
   log("parsing records");
   while (l!==undefined) {
     count++;
-    if (parseInt(l.split(',')[2]) > 70) {
+    if (parseInt(l.split(',')[2]) >= 70) {
       avg[0]++;
       value = parseInt(l.split(',')[1]);
       if (value < limits[0]) {
@@ -135,11 +141,13 @@ function viewRecord(n) {
   menu["Erase"] = function() {
     E.showPrompt("Delete Record?").then(function(v) {
       if (v) {
-        settings.isRecording = false;
-        updateSettings();
+        if (n == settings.fileNbr) {
+          settings.isRecording = false;
+          updateSettings();
+        }
         require("Storage").open(getFileNbr(n),"r").erase();
         E.showMenu();
-        load();
+        createRecordMenu(viewRecord.bind());
       } else
         return viewRecord(n);
     });
@@ -155,20 +163,27 @@ function stop() {
 }
 
 function graphRecord(n) {
-  const MaxValueCount = 164;
-  const GraphXZero = 40;
-  const GraphYZero = 200;
-  const GraphY100 = 80;
-  const GraphMarkerOffset = 5;
-  const GraphXLabel = 35;
-  const GraphXMax = GraphXZero + MaxValueCount;
-
-  E.showMenu({'': 'Heart Record '+n});
+  var headline = "Heart Record " + n;
+  E.showMenu({'': headline});
   E.showMessage(
     "Loading Data ...\n\nMay take a while,\nwill vibrate\nwhen done.",
-    'Heart Record '+n
+    headline
   );
-  g.setFont("Vector", 10);
+
+  const MinMeasurement = 30;
+  const MaxMeasurement = 150;
+  const GraphXLabel = 35;
+  const GraphXZero = 40;
+  const GraphY100 = 60;
+  const GraphMarkerOffset = 5;
+  // calculate number of pixels based on display width
+  const MaxValueCount = g.getWidth() - GraphXZero - ( g.getWidth() - 220 ) - GraphMarkerOffset;
+  // calculate Y axis "0" pixel
+  const GraphYZero = g.getHeight() - g.setFont("Vector", 10).getFontHeight() - GraphMarkerOffset * 2;
+  // calculate X axis max drawable pixel
+  const GraphXMax = GraphXZero + MaxValueCount;
+  // calculate space between labels of scale
+  const LabelOffset = (GraphYZero - GraphY100) / (MaxMeasurement - MinMeasurement);
 
   var lineCount = 0;
   var startLine = 1;
@@ -182,13 +197,13 @@ function graphRecord(n) {
     line = f.readLine();
   }
 
-  log(`Line count: ${lineCount}`);
+  log(`lineCount: ${lineCount}`);
   if (lineCount > MaxValueCount)
     startLine = lineCount - MaxValueCount;
   f = undefined;
   line = undefined;
   lineCount = undefined;
-  log(`start: ${startLine}`);
+  log(`startLine: ${startLine}`);
 
   f = require("Storage").open(getFileNbr(n),"r");
   line = f.readLine();
@@ -204,65 +219,50 @@ function graphRecord(n) {
     line = f.readLine();
     tempCount++;
     if (tempCount == startLine) {
-      g.clear();
+      // generating rgaph in loop when reaching startLine to keep loading
+      // message on screen until graph can be drawn
+      g.clear().
       // Home for Btn2
-      g.setColor(1, 1, 1);
-      g.drawLine(220, 118, 227, 110);
-      g.drawLine(227, 110, 234, 118);
+        setColor(1, 1, 1).
+        drawLine(220, 118, 227, 110).
+        drawLine(227, 110, 234, 118).
+        drawPoly([222,117,222,125,232,125,232,117], false).
+        drawRect(226,120,229,125).
 
-      g.drawPoly([222,117,222,125,232,125,232,117], false);
-      g.drawRect(226,120,229,125);
+      // headline
+        setFontAlign(0, -1, 0).
+        setFont("6x8", 2).
+        drawString(headline, g.getWidth()/2 - headline.length/2, GraphY100 - g.getFontHeight() - GraphMarkerOffset).
 
       // Chart
-      g.setColor(1, 1, 0);
-      g.drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100);
+        setColor(1, 1, 0).
+        // horizontal bottom line
+        drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100).
+        // vertical left line
+        drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero).
+        // scale indicator line for 100%
+        drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100).
+        // scale indicator line for 50%
+        drawLine(GraphXZero - GraphMarkerOffset, GraphY100 + (GraphYZero - GraphY100)/2, GraphXZero, GraphY100 + (GraphYZero - GraphY100)/2).
+        // background line for 50%
+        setColor(1, 1, 1).
+        drawLine(GraphXZero + 1, GraphY100 + (GraphYZero - GraphY100)/2, GraphXMax, GraphY100 + (GraphYZero - GraphY100)/2).
+        setFontAlign(1, -1, 0).
+        setFont("Vector", 10);
 
-      g.setFontAlign(1, -1, 0);
-      g.drawString("150", GraphXLabel, GraphY100 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100);
-
-      g.drawString("125", GraphXLabel, GraphYZero - 110 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("100", GraphXLabel, GraphYZero - 100 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("90", GraphXLabel, GraphYZero - 90 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("80", GraphXLabel, GraphYZero - 70 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("70", GraphXLabel, GraphYZero - 50 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("60", GraphXLabel, GraphYZero - 30 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("50", GraphXLabel, GraphYZero - 20 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("40", GraphXLabel, GraphYZero - 10 - GraphMarkerOffset);
-      g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-      g.drawString("30", GraphXLabel, GraphYZero - GraphMarkerOffset);
-
-      g.setColor(1, 1, 1);
-      g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
+      // scale text
+      for (var i = MaxMeasurement; i >= MinMeasurement; i-=10) {
+        g.drawString(i, GraphXLabel, GraphY100 + LabelOffset * ( MaxMeasurement - i ) - GraphMarkerOffset);
+      }
 
       log("Finished drawing chart");
     } else if (tempCount > startLine) {
       positionX++;
       if (parseInt(currentLine.split(",")[2]) >= 70) {
-        g.setColor(1, 1, 1);
+        g.setColor(1, 0.3, 0.3);
         oldPositionY = positionY;
         measure = parseInt(currentLine.split(",")[1]);
-        positionY = GraphYZero - measure + 30;
-        if (100 < measure < 150) {
-          positionY = GraphYZero - ( 100 + Math.round((measure - 100)/2) ) + 30;
-        } else if (60 < measrure < 100) {
-          positionY = GraphYZero - ( 30 + Math.round((measure - 30)/2) ) + 30;
-        }
+        positionY = GraphYZero - measure + MinMeasurement;
         if (positionY > GraphYZero) {
           positionY = GraphYZero;
         }
@@ -270,7 +270,7 @@ function graphRecord(n) {
           positionY = GraphY100;
         }
 
-        if (times[0] === undefined) {
+        if (times[0] === 0) {
           times[0] = parseInt(currentLine.split(",")[0]);
         }
         if (tempCount == startLine + 1) {
@@ -282,23 +282,27 @@ function graphRecord(n) {
       }
     }
   }
-  g.flip();
 
   g.setColor(1, 1, 0).setFont("Vector", 10);
-  log('start: ' + times[0]);
-  log('end: ' + times[1]);
-  if (times[0] !== undefined) {
-    g.setFontAlign(-1, -1, 0);
-    g.drawString(Date(times[0]*1000).local().as("0h:0m").str, 15, GraphYZero + 12);
+  log('startTime: ' + times[0]);
+  log('endTime: ' + times[1]);
+
+  if (times[0] !== 0) {
+    g.setFontAlign(-1, -1, 0).
+      drawString(getTimeString(times[0]*1000), 15, GraphYZero + 12);
   }
 
-  if (times[1] !== undefined) {
-    g.setFontAlign(1, -1, 0);
-    g.drawString(Date(times[1]*1000).local().as().str, GraphXMax, GraphYZero + 12);
+  if (times[1] !== 0) {
+    var dateStr = getDateString(times[1]*1000);
+    g.setFontAlign(-1, -1, 0).
+      drawString(dateStr, GraphXMax/2 - dateStr.length/2 - GraphMarkerOffset, GraphYZero + 12).
+      setFontAlign(1, -1, 0).
+      drawString(getTimeString(times[1]*1000), GraphXMax, GraphYZero + 12);
   }
 
   log("Finished rendering data");
   Bangle.buzz(200, 0.3);
+  g.flip();
   setWatch(stop, BTN2, {edge:"falling", debounce:50, repeat:false});
   return;
 }
