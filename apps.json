@@ -216,7 +216,7 @@
   { "id": "slidingtext",
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese and Spanish are supported",
     "tags": "clock",
     "type":"clock",
@@ -232,6 +232,7 @@
       {"name":"slidingtext.locale.es.js","url":"slidingtext.locale.es.js"},
       {"name":"slidingtext.locale.fr.js","url":"slidingtext.locale.fr.js"},
       {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
+      {"name":"slidingtext.locale.de.js","url":"slidingtext.locale.de.js"},
       {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
     ]
   },
