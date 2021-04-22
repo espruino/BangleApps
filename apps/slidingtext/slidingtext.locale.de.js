@@ -85,7 +85,7 @@ class GermanDateFormatter extends DateFormatter {
         if(mins == 0){
             var hours = germanHoursToText(hourOfDay);
             return [hours,"UHR", "","",""];
-        } else if(mins == 30){
+        } /* else if(mins == 30){
             var hours = germanHoursToText(hourOfDay+1);
             return ["", "", "HALB","", hours];
         } else if(mins == 15){
@@ -94,7 +94,7 @@ class GermanDateFormatter extends DateFormatter {
         } else if(mins == 45) {
             var hours = germanHoursToText(hourOfDay+1);
             return ["", "", "VIERTEL", "VOR",hours];
-        } else {
+        } */ else {
             var mins_txt = germanMinsToText(mins);
             return [hours, "UHR", mins_txt[0],mins_txt[1]];
         }
