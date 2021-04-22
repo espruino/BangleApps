@@ -25,7 +25,7 @@ const germanNumberStr = [ ["ZERO",""], // 0
 const germanTensStr = ["ZERO",//0
     "ZEHN",//10
     "ZWANZIG",//20
-    "DREISSIG",//30
+    "DREIßIG",//30
     "VIERZIG",//40
     "FÜNFZIG",//50
     "SECHZIG"//60
