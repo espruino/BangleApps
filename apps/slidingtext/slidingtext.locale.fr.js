@@ -46,12 +46,12 @@ class FrenchDateFormatter extends DateFormatter {
         } else if(mins == 30){
             return [hours, heures,'ET DEMIE'];
         } else if(mins == 15){
-            return [hours, heures,'ET QUERT'];
+            return [hours, heures,'ET QUART'];
         } else if(mins == 45){
             var next_hour = date.getHours()  + 1;
             hours = frenchHoursToText(next_hour);
             heures = frenchHeures(next_hour);
-            return [hours, heures,"MOINS",'LET QUERT'];
+            return [hours, heures,"MOINS",'LET QUART'];
         }
         if(mins > 30){
             var to_mins = 60-mins;
