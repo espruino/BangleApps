@@ -13,6 +13,8 @@ Use Button 1 (the top right button) to change the language
 |   English   |  English (Traditional)    |  French    | Japanese (Romanji) |
 | ---- | ---- | ---- | ---- |
 |   ![](./format-01.jpg)   | ![](format-02.jpg)     |  ![](format-03.jpg) |![](format-04.jpg)    |
+|   **German**   |  **Spanish**    |      |  |
+|   ![](./format-05.jpg)   | ![](format-06.jpg)     | |    |
 
 ### Button 3
 Button 3 (bottom right button) is used to change the colour
