@@ -12,24 +12,14 @@ const germanNumberStr = [ ["ZERO",""], // 0
     ["NUEN",''], // 9,
     ["ZEHN",''], // 10
     ["ELF",''], // 11,
-    ["ZWOLF",''], // 12
+    ["ZWÖLF",''], // 12
     ["DREI",'ZEHN'], // 13
     ["VIER",'ZEHN'], // 14
-    ["FUNF",'ZEHN'], // 15
+    ["FÜNF",'ZEHN'], // 15
     ["SECH",'ZEHN'], // 16
     ["SIEB",'ZEHN'], // 17
     ["ACHT",'ZEHN'], // 18
     ["NEUN",'ZEHN'], // 19
-    ["ZWANZIG",''], // 20
-    ["EINUND",'ZWANZIG'], // 21
-    ["ZWEIUND",'ZWANZIG'], // 22
-    ["DREIUND",'ZWANZIG'], // 23
-    ["VIERUND",'ZWANZIG'], // 24
-    ["FUNFUND",'ZWANZIG'], // 25
-    ["SECHSUND",'ZWANZIG'], // 26
-    ["SEIBEN",'ZWANZIG'], // 27
-    ["ACHTUND",'ZWANZIG'], // 28
-    ["NEUNUND",'ZWANZIG'] // 29
 ];
 
 const germanTensStr = ["ZERO",//0
@@ -37,7 +27,7 @@ const germanTensStr = ["ZERO",//0
     "ZWANZIG",//20
     "DREISSIG",//30
     "VIERZIG",//40
-    "FUNFZIG",//50
+    "FÜNFZIG",//50
     "SECHZIG"//60
 ]
 
@@ -46,7 +36,7 @@ const germanUnit = ["",//0
     "ZWEIUND",//2
     "DREIUND",//3
     "VIERUND", //4
-    "FUNFUND", //5
+    "FÜNFUND", //5
     "SECHSUND", //6
     "SEIBENUND", //7
     "ACHTUND", //8
@@ -85,7 +75,7 @@ class GermanDateFormatter extends DateFormatter {
         if(mins == 0){
             var hours = germanHoursToText(hourOfDay);
             return [hours,"UHR", "","",""];
-        } /* else if(mins == 30){
+        } /*else if(mins == 30){
             var hours = germanHoursToText(hourOfDay+1);
             return ["", "", "HALB","", hours];
         } else if(mins == 15){
