@@ -11,7 +11,8 @@ let info = {
   n: 0,
   c: 0,
 };
-const TOUT = 300000; // auto close timeout: 5 minutes (in ms)
+const POUT = 300000; // auto close timeout when paused: 5 minutes (in ms)
+const IOUT = 3600000; // auto close timeout for inactivity: 1 hour (in ms)
 
 ///////////////////////
 // Self-repeating timeouts
@@ -44,7 +45,7 @@ function brightness() {
   if (!fade) {
     return 1;
   }
-  return Math.max(0, 1-((Date.now()-fade)/TOUT));
+  return Math.max(0, 1-((Date.now()-fade)/POUT));
 }
 
 // Scroll long track names
@@ -396,26 +397,50 @@ function musicInfo(e) {
   if (Bangle.isLCDOn()) {
     drawMusic();
   }
+  if (tIxt) {
+    clearTimeout(tIxt);
+    tIxt = null;
+  }
+  if (auto && stat==="play") {
+    // if inactive for double song duration (or an hour if unknown), load the clock
+    // i.e. phone finished playing without bothering to notify the watch
+    tIxt = setTimeout(load, (info.dur*2000) || IOUT);
+  }
 }
 
-let tXit;
+let tPxt, tIxt;
 function musicState(e) {
   stat = e.state;
   // if paused for five minutes, load the clock
   // (but timeout resets if we get new info, even while paused)
-  if (tXit) {
-    clearTimeout(tXit);
+  if (tPxt) {
+    clearTimeout(tPxt);
+    tPxt = null;
   }
-  tXit = null;
+  if (tIxt) {
+    clearTimeout(tIxt);
+    tIxt = null;
+  }
   fade = null;
   delete info.track_color;
-  if (stat!=="play" && auto) {
-    if (stat==="stop") { // never actually happens with my phone :-(
-      load();
-    } else { // also quit when paused for a long time
-      tXit = setTimeout(load, TOUT);
-      fade = Date.now();
-      fadeOut();
+  if (auto) { // auto opened -> auto close
+    switch(stat) {
+      case "stop": // never actually happens with my phone :-(
+        load();
+        break;
+      case "play":
+        // if inactive for double song duration (or an hour if unknown), load the clock
+        // i.e. phone finished playing without bothering to notify the watch
+        tIxt = setTimeout(load, (info.dur*2000) || IOUT);
+        break;
+      case "pause":
+      default:
+        // quit when paused for a long time
+        // also fade out track info while waiting for this
+        tPxt = setTimeout(load, POUT);
+        fade = Date.now();
+        fadeOut();
+        break;
     }
   }
   if (Bangle.isLCDOn()) {
