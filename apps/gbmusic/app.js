@@ -538,7 +538,7 @@ function startLCDWatch() {
 /////////////////////
 // check for saved music stat (by widget) to load
 g.clear();
-global.gbmusic_active = true; // we don't need our widget
+global.gbmusic_active = true; // we don't need our widget (needed for <2.09 devices)
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 delete (global.gbmusic_active);

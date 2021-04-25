@@ -2,6 +2,12 @@
   if (global.gbmusic_active || !(require("Storage").readJSON("gbmusic.json", 1) || {}).autoStart) {
     return
   }
+  if (typeof __FILE__ === 'string') { // only exists since 2v09
+    const info = require("Storage").readJSON(__FILE__.split(".")[0]+".info", 1) || false;
+    if (info && info.type!=="clock") { // info can have no type (but then it isn't a clock)
+      return;
+    }
+  }
 
   let state, info
   function checkMusic() {
