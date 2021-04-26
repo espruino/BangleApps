@@ -4,7 +4,7 @@
   </head>
   <body>
       
-      <p>Please select watch languages</p>
+      <p>Please select watch languages (Max 3, only the first 3 selected will be loaded)</p>
       
       <table id="language_selection">
           <tr>
@@ -24,7 +24,8 @@
               {name:"English(Traditional)",shortname:"en2"},
               {name:"French",shortname:"fr"},
               {name:"Japanese",shortname:"jp"},
-              {name:"Spanish",shortname:"es"}
+              {name:"Spanish",shortname:"es"},
+              {name:"German",shortname:"de"}
       ];
       var selected_languages = ["en","es","jp"];
       try{
@@ -51,7 +52,7 @@
           for (var i=0; i<slidingtext_languages.length; i++) {
               var curr_language = slidingtext_languages[i];
               var checked=document.getElementById("enabled_"+i).checked;
-              if (checked) {
+              if (checked && new_selected_languages.length < 3 ) {
                   new_selected_languages.push(curr_language.shortname);
               }
           }
