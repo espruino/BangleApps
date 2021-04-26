@@ -80,7 +80,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +93,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -139,7 +139,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.21",
+    "version":"0.22",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -171,7 +171,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.23",
+    "version":"0.24",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
@@ -180,13 +180,16 @@
       {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
+    "data": [
+      {"name":"setting.json", "url":"settings.min.json","evaluate":true}
+    ],
     "sortorder" : -2
   },
   { "id": "alarm",
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -424,7 +427,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.18",
+    "version":"0.19",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -449,14 +452,16 @@
     "interface":"waypoints.html",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.min.js"},
-      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
       {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
     ]
   },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.03",
+    "version":"0.05",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
@@ -569,7 +574,7 @@
     "shortName": "Battery Warning",
     "icon": "widget.png",
     "readme": "README.md",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Show a warning when the battery runs low.",
     "tags": "tool,battery",
     "type":"widget",
@@ -749,7 +754,7 @@
   { "id": "route",
     "name": "Route Viewer",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Upload a KML file of a route, and have your watch display a map with how far around it you are",
     "tags": "",
     "custom": "custom.html",
@@ -1083,7 +1088,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
@@ -1214,7 +1219,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.14",
+    "version":"0.15",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -2125,7 +2130,7 @@
     "name": "SleepPhaseAlarm",
     "shortName":"SleepPhaseAlarm",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments (ESS, see https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en). This app will read the next alarm from the alarm application and will wake you up to 30 minutes early at the best guessed time when you are almost already awake.",
     "tags": "alarm",
     "storage": [
@@ -2250,7 +2255,7 @@
     "name": "Apple Notification Widget",
     "shortName":"ANCS Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Displays call, message etc notifications from a paired iPhone. Read README before installation as it only works with compatible apps",
     "readme": "README.md",
     "tags": "widget",
@@ -2424,9 +2429,11 @@
     "readme": "README.md",
     "storage": [
       {"name":"worldclock.app.js","url":"app.js"},
-      {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
-  ]
+    ],
+    "data": [
+      {"name":"worldclock.settings.json"}
+    ]
  },
 { "id": "digiclock",
   "name": "Digital Clock Face",
@@ -2618,7 +2625,7 @@
   "name": "Hard Alarm",
   "shortName":"HardAlarm",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Make sure you wake up! Count to the right number to turn off the alarm",
   "tags": "tool,alarm,widget",
   "storage": [
@@ -2669,8 +2676,10 @@
   "readme": "README.md",
   "storage": [
     {"name":"breath.app.js","url":"app.js"},
-    {"name":"breath.settings.json","url":"settings.json"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"breath.settings.json","url":"settings.json"}
   ]
 },
 { "id": "lazyclock",
@@ -2767,9 +2776,11 @@
   "storage": [
     {"name":"gpsservice.app.js","url":"app.js"},
     {"name":"gpsservice.settings.js","url":"settings.js"},
-    {"name":"gpsservice.settings.json","url":"settings.json"},
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpsservice.settings.json","url":"settings.json"}
   ]
 },
 { "id": "mclockplus",
@@ -2866,16 +2877,18 @@
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},
     {"name":"gpssetup.settings.js","url":"settings.js"},
-    {"name":"gpssetup.settings.json","url":"settings.json"},
     {"name":"gpssetup.app.js","url":"app.js"},
     {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpssetup.settings.json","url":"settings.json"}
   ]
 },
 { "id": "walkersclock",
   "name": "Walkers Clock",
   "shortName":"Walkers Clock",
   "icon": "walkersclock48.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A large font watch, displays steps, can switch GPS on/off, displays grid reference",
   "type":"clock",
   "tags": "clock, gps, tools, outdoors",
@@ -2969,8 +2982,10 @@
   "interface":"waypoints.html",
   "storage": [
     {"name":"waypointer.app.js","url":"app.js"},
-    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
 { "id": "color_catalog",
@@ -3016,7 +3031,7 @@
   "name": "Stepometer Clock",
   "icon": "stepo.png",
   "version":"0.03",
-  "description": "A large font watch, displays step count in a doughnut guage and warns of low battery",
+  "description": "A large font watch, displays step count in a doughnut guage and warns of low battery, requires one of the steps widgets to be installed",
   "tags": "clock",
   "type":"clock",
   "readme": "README.md",
@@ -3029,7 +3044,7 @@
   "name": "Gadgetbridge Music Controls",
   "shortName":"Music Controls",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.03",
   "description": "Control the music on your Gadgetbridge-connected phone",
   "tags": "tools,bluetooth,gadgetbridge,music",
   "type":"app",
@@ -3070,9 +3085,10 @@
 { "id": "kitchen",
   "name": "Kitchen Combo",
   "icon": "kitchen.png",
-  "version":"0.02",
+  "version":"0.06",
   "description": "Combination of the stepo, walkersclock, arrow and waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
+  "type":"clock",
   "readme": "README.md",
   "interface":"waypoints.html",
   "storage": [
@@ -3080,9 +3096,84 @@
     {"name":"stepo.kit.js","url":"stepo.kit.js"},
     {"name":"gps.kit.js","url":"gps.kit.js"},
     {"name":"digi.kit.js","url":"digi.kit.js"},
+    {"name":"swatch.kit.js","url":"swatch.kit.js"}, 
     {"name":"compass.kit.js","url":"compass.kit.js"},
     {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
   ]
-}  
+},
+{ "id": "qmsched",
+  "name": "Quiet Mode Schedule",
+  "shortName":"Quiet Mode",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Automatically turn Quiet Mode on or off at set times",
+  "readme": "README.md",
+  "tags": "tool",
+  "storage": [
+    {"name":"qmsched","url":"lib.js"},
+    {"name":"qmsched.app.js","url":"app.js"},
+    {"name":"qmsched.boot.js","url":"boot.js"},
+    {"name":"qmsched.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"qmsched.json"}
+  ]
+},
+{
+  "id": "hourstrike",
+  "name": "Hour Strike",
+  "shortName": "Hour Strike",
+  "icon": "app-icon.png",
+  "version": "0.07",
+  "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
+  "tags": "tool,alarm",
+  "readme": "README.md",
+  "storage": [
+    {"name":"hourstrike.app.js","url":"app.js"},
+    {"name":"hourstrike.boot.js","url":"boot.js"},
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "whereworld",
+  "name": "Where in the World?",
+  "shortName" : "Where World",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Shows your current location on the world map",
+  "tags": "gps",
+  "storage": [
+    {"name":"whereworld.app.js","url":"app.js"},
+    {"name":"whereworld.img","url":"app-icon.js","evaluate":true},
+    {"name":"whereworld.worldmap","url":"worldmap"}
+  ]
+},
+{
+  "id": "omnitrix",
+  "name":"Omnitrix",
+  "icon":"omnitrix.png",
+  "version": "1.0",
+  "readme": "README.md",
+  "description": "An Omnitrix Showpiece",
+  "tags": "game",
+  "readme": "README.md",
+  "storage": [
+    {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
+    {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
+  ]
+},
+{ "id": "batclock",
+  "name": "Bat Clock",
+  "shortName":"Bat Clock",
+  "icon": "bat-clock.png",
+  "version":"1.0",
+  "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"batclock.app.js","url":"bat-clock.app.js"},
+    {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
+  ]
+}
 ]

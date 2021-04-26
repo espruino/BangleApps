@@ -88,6 +88,7 @@ function drawApp() {
 
 var buzzCount = 19;
 function buzz() {
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
   Bangle.setLCDPower(1);
   Bangle.buzz().then(()=>{
     if (buzzCount--) {

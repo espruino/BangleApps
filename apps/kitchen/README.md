@@ -1,4 +1,4 @@
-# Kitchen Combo - a multiclock format of the waypointer, walksersclock, stopo and arrow apps.
+# Kitchen Combo - a multiclock format of the waypointer, walksersclock, stepo and arrow apps.
 
 ![](screenshot_kitchen.jpg)
 
@@ -14,13 +14,13 @@ Please refer to the section on calibration of the compass.  This
 should be done each time the app is going to be used.
 
 The app has 4 faces that can quickly be switched from one to another.
-* Stepo - a large font clock that dosplays the current steps in a doughnut guauge
+* Stepo - a large font clock that displays the current steps in a doughnut gauge
 * GPS - when the GPS is on displays current grid ref, lat, lon, speed, altitude and course
 * Digi - a digital clock with day and date, displays battery and memory status (click BTN1)
+* Swatch - a simple stopwatch that times in seconds, minutes and up to 999 hours, with lap times
 * Waypointer - a compass arrow that points to a selected waypoint when the GPS is on.
   - enables you to mark waypoints and cycle through a list of waypoints
   - shows distance and bearing to currently selected waypoint
-
 
 ## Common buttons used to navigate through the app
 
@@ -45,9 +45,9 @@ The following buttons depend on which face is currently in use
 ![](screenshot_stepo.jpg)
 
 - Displays the time in large font
-- Display current step count in a doughnut guage
-- Show step count in the middle of the doughnut guage
-- The guage show percentage of steps out of a goal of 10000 steps
+- Display current step count in a doughnut gauge
+- Show step count in the middle of the doughnut gauge
+- The gauge show percentage of steps out of a goal of 10000 steps
 - When the battery is less than 25% the doughnut turns red
 - Use BTN3 to switch to the next app
 
@@ -63,6 +63,11 @@ The following buttons depend on which face is currently in use
 - Display day and date
 - Use BTN1 to switch between display of battery and memory %.
 - Use BTN3 to switch to the next app.
+
+## Swatch
+- A simple stopwatch
+- BTN1 - start, stop
+- BTN2 - lap if the timer is running, reset if the timer is stopped
 
 ## Waypointer
 - Use BTN1 to select previous waypoint (when GPS is on)
@@ -197,3 +202,27 @@ the correct direction heading or is not stable with respect to tilt
 and roll - redo the calibration by pressing *BTN3*. Calibration data
 is recorded in a storage file named `magnav.json`.
 
+
+### Technical Notes on Memory Management
+
+v0.06: The stepo watch face uses an ArrayBuffer to setup the doughnut
+gauge before it is displayed.  This is necessary as the drawing of
+the doughnut shape is quite slow.  However I found that when an
+ArrayBuffer was also used for the compass arrow part of the App it
+could result in LOW_MEMORY errors due to the memory fragmentation
+caused when switching multiple times between the watch faces. It is
+possible to call Bangle.defrag() when switching to a new watch face
+but this causes an annoying delay in the time it takes to switch. So
+I have settled on directly writing to the screen using the Graphics
+object (g.) for the compass App.  This creates a bit of flicker when
+the arrow moves but is more reliable than using the ArrayBuffer.
+
+
+### Issues
+
+* GPS time display shows GMT and not BST, needs localising
+* Occassional buzzing after 2-3 days of use, seems to disappear after
+  a reset to the launcher menu. Needs investigation
+* Need to gracefully handle incorrect firmware
+* Need to gracefully handle missing compass calibration data
+* Need to gracefully handle missing steps widget

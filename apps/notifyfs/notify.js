@@ -90,8 +90,9 @@ exports.show = function(options) {
     const area={x:x, y:y, w:w, h:h}
     options.render(area);
   }
-
-  if (options.on) Bangle.setLCDPower(1); // light up
+  if (options.on && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.setLCDPower(1); // light up
+  }
   Bangle.on("touch", exports.hide);
   // Create a fake graphics to hide draw attempts
   oldg = g;
@@ -115,9 +116,11 @@ exports.hide = function(options) {
   Bangle.removeListener("touch", exports.hide);
   g.clear();
   Bangle.drawWidgets();
-  // flipping the screen off then on often triggers a redraw - it may not!
-  Bangle.setLCDPower(0);
-  Bangle.setLCDPower(1);
+  if (Bangle.isLCDOn() || !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    // flipping the screen off then on often triggers a redraw - it may not!
+    Bangle.setLCDPower(0);
+    Bangle.setLCDPower(1);
+  }
   // hack for E.showMenu/showAlert/showPrompt - can force a redraw by faking next/back
   if (Bangle.btnWatches) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
