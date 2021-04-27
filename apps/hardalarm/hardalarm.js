@@ -62,6 +62,7 @@ function showPrompt(msg, buzzCount, alarm) {
 }
 
 function showAlarm(alarm) {
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
   var msg = formatTime(alarm.hr);
   var buzzCount = 20;
   if (alarm.msg)

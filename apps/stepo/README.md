@@ -10,6 +10,9 @@ A large font watch, displays step count in a doughnut guage and warns of low bat
 - The guage show percentage of steps out of a goal of 10000 steps
 
 
+## Dependancies
+- Requires one of the steps widgets to be installed
+
 
 ![](screenshot1.jpg)
 

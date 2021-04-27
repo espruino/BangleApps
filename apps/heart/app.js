@@ -1,24 +1,16 @@
-const GraphXZero = 40;
-const GraphYZero = 200;
-const GraphY100 = 80;
+E.setFlags({pretokenise:1});
 
-const GraphMarkerOffset = 5;
-const MaxValueCount = 164;
-const GraphXMax = GraphXZero + MaxValueCount;
+function log(msg) {
+  console.log("heart: " + msg + "; mem used: " + process.memory().usage / process.memory().blocksize);
+  return;
+}
+
+log("start");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("heart.json",1)||{};
-
-var globalSettings = require('Storage').readJSON('setting.json', true) || {timezone: 0};
-require('DateExt').locale({
-  str: "0D.0M. 0h:0m",
-  offset: [
-    globalSettings.timezone * 60,
-    globalSettings.timezone * 60
-  ]
-});
 
 function getFileNbr(n) {
   return ".heart"+n.toString(36);
@@ -28,6 +20,7 @@ function updateSettings() {
   require("Storage").write("heart.json", settings);
   if (WIDGETS["heart"])
     WIDGETS["heart"].reload();
+  return;
 }
 
 function showMainMenu() {
@@ -52,160 +45,116 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Records': viewRecords,
-    'Graph Records': graphRecords,
+    'View Records': ()=>{createRecordMenu(viewRecord.bind());},
+    'Graph Records': ()=>{createRecordMenu(graphRecord.bind());},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainMenu);
 }
 
-function viewRecords() {
+// Date().as().str cannot be used as it always returns UTC time
+function getDateString(timestamp) {
+  var date = new Date(timestamp);
+  var day = date.getDate() < 10 ? "0" + date.getDate().toString() : date.getDate().toString();
+  var month = date.getMonth() < 10 ? "0" + date.getMonth().toString() : date.getMonth().toString();
+  return day + "." + month + "." + date.getFullYear();
+}
+
+// Date().as().str cannot be used as it always returns UTC time
+function getTimeString(timestamp) {
+  var date = new Date(timestamp);
+  var hour = date.getHours() < 10 ? '0' + date.getHours().toString() : date.getHours().toString();
+  var minute = date.getMinutes() < 10 ? '0' + date.getMinutes().toString() : date.getMinutes().toString();
+  return hour + ':' + minute;
+}
+
+function createRecordMenu(func) {
   const menu = {
     '': { 'title': 'Heart Records' }
   };
   var found = false;
   for (var n=0;n<36;n++) {
-    var f = require("Storage").open(getFileNbr(n),"r");
-    if (f.readLine()!==undefined) {
-      menu["Record "+n] = viewRecord.bind(null,n);
+    var line = require("Storage").open(getFileNbr(n),"r").readLine();
+    if (line!==undefined) {
+      menu["#" + n + " " + getDateString(line.split(",")[0]*1000) + " " + getTimeString(line.split(",")[0]*1000)] = func.bind(null, n);
       found = true;
     }
   }
   if (!found)
     menu["No Records Found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = ()=>{showMainMenu();};
   return E.showMenu(menu);
 }
 
 function viewRecord(n) {
+  E.showMenu({'': 'Heart Record '+n});
+  E.showMessage(
+    "Loading Data ...\n\nMay take a while,\nwill vibrate\nwhen done.",
+    'Heart Record '+n
+  );
   const menu = {
     '': { 'title': 'Heart Record '+n }
   };
-  var heartCount = 0;
   var heartTime;
   var f = require("Storage").open(getFileNbr(n),"r");
   var l = f.readLine();
-  if (l!==undefined) {
-    var c = l.split(",");
-    heartTime = new Date(c[0]*1000);
-  }
+  // using arrays for memory optimization
+  var limits = Uint8Array(2);
+  // using arrays for memory optimization
+  var avg = Uint32Array(2);
+  // minimum
+  limits[0] = 2000;
+  // maximum
+  limits[1] = 0;
+  // count
+  avg[0] = 0;
+  // average sum
+  avg[1] = 0;
+  var count = 0;
+  var value = 0;
+  if (l!==undefined)
+    heartTime = new Date(l.split(",")[0]*1000);
+  log("parsing records");
   while (l!==undefined) {
-    heartCount++;
-    // TODO: min/max/average of heart rate?
+    count++;
+    if (parseInt(l.split(',')[2]) >= 70) {
+      avg[0]++;
+      value = parseInt(l.split(',')[1]);
+      if (value < limits[0]) {
+        limits[0] = value;
+      } else if (value > limits[1]) {
+        limits[1] = value;
+      }
+      avg[1] += value;
+    }
     l = f.readLine();
   }
+  l = undefined;
+  value = undefined;
+  log("finished parsing");
   if (heartTime)
     menu[" "+heartTime.toString().substr(4,17)] = function(){};
-  menu[heartCount+" records"] = function(){};
-  // TODO: option to draw it? Just scan through, project using min/max
-  menu['Erase'] = function() {
+  menu[count + " records"] = function(){};
+  menu["Min: " + limits[0]] = function(){};
+  menu["Max: " + limits[1]] = function(){};
+  menu["Avg: " + Math.round(avg[1] / avg[0])] = function(){};
+  menu["Erase"] = function() {
     E.showPrompt("Delete Record?").then(function(v) {
       if (v) {
-        settings.isRecording = false;
-        updateSettings();
-        var f = require("Storage").open(getFileNbr(n),"r");
-        f.erase();
-        viewRecords();
+        if (n == settings.fileNbr) {
+          settings.isRecording = false;
+          updateSettings();
+        }
+        require("Storage").open(getFileNbr(n),"r").erase();
+        E.showMenu();
+        createRecordMenu(viewRecord.bind());
       } else
-        viewRecord(n);
+        return viewRecord(n);
     });
   };
-  menu['< Back'] = viewRecords;
-  print(menu);
+  menu['< Back'] = ()=>{createRecordMenu(viewRecord.bind());};
+  Bangle.buzz(200, 0.3);
   return E.showMenu(menu);
-}
-
-function graphRecords() {
-  const menu = {
-    '': { 'title': 'Heart Records' }
-  };
-  var found = false;
-  for (var n=0;n<36;n++) {
-    var f = require("Storage").open(getFileNbr(n),"r");
-    var line = f.readLine();
-    if (line!==undefined) {
-      menu["#"+n+" "+Date(line.split(",")[0]*1000).as().str] = graphRecord.bind(null,n);
-      found = true;
-    }
-  }
-  if (!found)
-    menu["No Records Found"] = function(){};
-  menu['< Back'] = showMainMenu;
-  return E.showMenu(menu);
-}
-
-// based on batchart
-function renderHomeIcon() {
-  //Home for Btn2
-  g.setColor(1, 1, 1);
-  g.drawLine(220, 118, 227, 110);
-  g.drawLine(227, 110, 234, 118);
-
-  g.drawPoly([222,117,222,125,232,125,232,117], false);
-  g.drawRect(226,120,229,125);
-}
-
-function renderChart() {
-  // Left Y axis (Battery)
-  g.setColor(1, 1, 0);
-  g.drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100);
-
-  g.setFontAlign(1, -1, 0);
-  g.drawString("150", 35, GraphY100 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100);
-
-  g.drawString("125", 35, GraphYZero - 110 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("100", 35, GraphYZero - 100 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("90", 35, GraphYZero - 90 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("80", 35, GraphYZero - 70 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("70", 35, GraphYZero - 50 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("60", 35, GraphYZero - 30 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("50", 35, GraphYZero - 20 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("40", 35, GraphYZero - 10 - GraphMarkerOffset);
-  g.drawLine(GraphXZero - GraphMarkerOffset, 150, GraphXZero, 150);
-
-  g.drawString("30", 35, GraphYZero - GraphMarkerOffset);
-
-  g.setColor(1, 1, 1);
-  g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
-
-  console.log("Finished drawing chart");
-}
-
-// as drawing starts at 30 HRM decreasing measrure by 30
-// recalculate for range 110-150 as only 20 pixels are available
-function getY(measure) {
-  positionY = GraphYZero - measure + 30;
-  if (100 < measure < 150) {
-    positionY = GraphYZero - ( 100 + Math.round((measure - 100)/2) ) + 30;
-    g.setColor(1, 0, 0);
-  } else if (60 < measrure < 100) {
-    positionY = GraphYZero - ( 30 + Math.round((measure - 30)/2) ) + 30;
-    g.setColor(0, 1, 0);
-  }
-  if (positionY > GraphYZero) {
-    positionY = GraphYZero;
-    g.setColor(1, 0, 0);
-  }
-  if (positionY < GraphY100) {
-    positionY = GraphY100;
-    g.setColor(1, 0, 0);
-  }
-  return positionY;
 }
 
 function stop() {
@@ -214,52 +163,114 @@ function stop() {
 }
 
 function graphRecord(n) {
-  E.showMenu({'': 'Heart Record '+n});
+  var headline = "Heart Record " + n;
+  E.showMenu({'': headline});
   E.showMessage(
     "Loading Data ...\n\nMay take a while,\nwill vibrate\nwhen done.",
-    'Heart Record '+n
+    headline
   );
-  g.setFont("Vector", 10);
 
-  var lastPixel;
+  const MinMeasurement = 30;
+  const MaxMeasurement = 150;
+  const GraphXLabel = 35;
+  const GraphXZero = 40;
+  const GraphY100 = 60;
+  const GraphMarkerOffset = 5;
+  // calculate number of pixels based on display width
+  const MaxValueCount = g.getWidth() - GraphXZero - ( g.getWidth() - 220 ) - GraphMarkerOffset;
+  // calculate Y axis "0" pixel
+  const GraphYZero = g.getHeight() - g.setFont("Vector", 10).getFontHeight() - GraphMarkerOffset * 2;
+  // calculate X axis max drawable pixel
+  const GraphXMax = GraphXZero + MaxValueCount;
+  // calculate space between labels of scale
+  const LabelOffset = (GraphYZero - GraphY100) / (MaxMeasurement - MinMeasurement);
+
   var lineCount = 0;
-  var positionX = GraphXZero;
-  var positionY = GraphYZero;
   var startLine = 1;
-  var tempCount = 0;
   var f = require("Storage").open(getFileNbr(n),"r");
   var line = f.readLine();
-  var times = Array(2);
-  console.log("Counting lines");
+
+  log("Counting lines");
+
   while (line !== undefined) {
     lineCount++;
     line = f.readLine();
   }
-  console.log(`Line count: ${lineCount}`);
-  if (lineCount > MaxValueCount) {
+
+  log(`lineCount: ${lineCount}`);
+  if (lineCount > MaxValueCount)
     startLine = lineCount - MaxValueCount;
-  }
-  console.log(`start: ${startLine}`);
+  f = undefined;
+  line = undefined;
+  lineCount = undefined;
+  log(`startLine: ${startLine}`);
 
   f = require("Storage").open(getFileNbr(n),"r");
   line = f.readLine();
+
+  var times = Uint32Array(2);
+  var tempCount = 0;
+  var positionX = GraphXZero;
+  var positionY = GraphYZero;
+  var measure;
+
   while (line !== undefined) {
     currentLine = line;
     line = f.readLine();
     tempCount++;
     if (tempCount == startLine) {
-      g.clear();
-      Bangle.loadWidgets();
-      Bangle.drawWidgets();
-      renderHomeIcon();
-      renderChart();
+      // generating rgaph in loop when reaching startLine to keep loading
+      // message on screen until graph can be drawn
+      g.clear().
+      // Home for Btn2
+        setColor(1, 1, 1).
+        drawLine(220, 118, 227, 110).
+        drawLine(227, 110, 234, 118).
+        drawPoly([222,117,222,125,232,125,232,117], false).
+        drawRect(226,120,229,125).
+
+      // headline
+        setFontAlign(0, -1, 0).
+        setFont("6x8", 2).
+        drawString(headline, g.getWidth()/2 - headline.length/2, GraphY100 - g.getFontHeight() - GraphMarkerOffset).
+
+      // Chart
+        setColor(1, 1, 0).
+        // horizontal bottom line
+        drawLine(GraphXZero, GraphYZero + GraphMarkerOffset, GraphXZero, GraphY100).
+        // vertical left line
+        drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero).
+        // scale indicator line for 100%
+        drawLine(GraphXZero - GraphMarkerOffset, GraphY100, GraphXZero, GraphY100).
+        // scale indicator line for 50%
+        drawLine(GraphXZero - GraphMarkerOffset, GraphY100 + (GraphYZero - GraphY100)/2, GraphXZero, GraphY100 + (GraphYZero - GraphY100)/2).
+        // background line for 50%
+        setColor(1, 1, 1).
+        drawLine(GraphXZero + 1, GraphY100 + (GraphYZero - GraphY100)/2, GraphXMax, GraphY100 + (GraphYZero - GraphY100)/2).
+        setFontAlign(1, -1, 0).
+        setFont("Vector", 10);
+
+      // scale text
+      for (var i = MaxMeasurement; i >= MinMeasurement; i-=10) {
+        g.drawString(i, GraphXLabel, GraphY100 + LabelOffset * ( MaxMeasurement - i ) - GraphMarkerOffset);
+      }
+
+      log("Finished drawing chart");
     } else if (tempCount > startLine) {
       positionX++;
       if (parseInt(currentLine.split(",")[2]) >= 70) {
-        g.setColor(1, 1, 1);
+        g.setColor(1, 0.3, 0.3);
         oldPositionY = positionY;
-        positionY = getY(parseInt(currentLine.split(",")[1]));
-        if (times[0] === undefined) {
+        measure = parseInt(currentLine.split(",")[1]);
+        positionY = GraphYZero - measure + MinMeasurement;
+        if (positionY > GraphYZero) {
+          positionY = GraphYZero;
+        }
+        if (positionY < GraphY100) {
+          positionY = GraphY100;
+        }
+
+        if (times[0] === 0) {
           times[0] = parseInt(currentLine.split(",")[0]);
         }
         if (tempCount == startLine + 1) {
@@ -270,26 +281,30 @@ function graphRecord(n) {
         }
       }
     }
-    g.flip();
   }
 
-  g.setColor(1, 1, 0);
-  g.setFont("Vector", 10);
-  console.log('start: ' + times[0]);
-  console.log('end: ' + times[1]);
-  if (times[0] !== undefined) {
-    g.setFontAlign(-1, -1, 0);
-    var startdate = new Date(times[0]*1000);
-    g.drawString(startdate.local().as("0h:0m").str, 15, GraphYZero + 12);
+  g.setColor(1, 1, 0).setFont("Vector", 10);
+  log('startTime: ' + times[0]);
+  log('endTime: ' + times[1]);
+
+  if (times[0] !== 0) {
+    g.setFontAlign(-1, -1, 0).
+      drawString(getTimeString(times[0]*1000), 15, GraphYZero + 12);
   }
-  if (times[1] !== undefined) {
-    g.setFontAlign(1, -1, 0);
-    var enddate = new Date(times[1]*1000);
-    g.drawString(enddate.local().as().str, GraphXMax, GraphYZero + 12);
+
+  if (times[1] !== 0) {
+    var dateStr = getDateString(times[1]*1000);
+    g.setFontAlign(-1, -1, 0).
+      drawString(dateStr, GraphXMax/2 - dateStr.length/2 - GraphMarkerOffset, GraphYZero + 12).
+      setFontAlign(1, -1, 0).
+      drawString(getTimeString(times[1]*1000), GraphXMax, GraphYZero + 12);
   }
-  console.log("Finished rendering data");
+
+  log("Finished rendering data");
   Bangle.buzz(200, 0.3);
+  g.flip();
   setWatch(stop, BTN2, {edge:"falling", debounce:50, repeat:false});
+  return;
 }
 
 showMainMenu();

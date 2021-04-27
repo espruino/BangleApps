@@ -143,7 +143,7 @@ var currentDist = 0;
 function drawMap() {
   g.clearRect(0,0,239,120);
   g.setFontAlign(0,0);
-  g.setColor(1,0,0);
+  g.setColor(1,1,0);
   g.setFontVector(40);
   g.drawString((currentDist===undefined)?"?":(Math.round(currentDist)+"m"), 160, 30);
   g.setColor(1,1,1);
@@ -151,7 +151,7 @@ function drawMap() {
   g.drawString(Math.round(totalDistance)+"m", 160, 70);
   g.drawString((nextPtIdx/2)+"/"+coordDistance.length, 50, 20);
   if (!fix.fix) {
-    g.setColor(1,0,0);
+    g.setColor(1,1,0);
     g.drawString("No GPS", 50, 50);
     g.setFont("6x8",1);
     g.drawString(fix.satellites+" Sats", 50, 70);
@@ -161,17 +161,17 @@ function drawMap() {
     g.setColor(0,0,0);
     g.drawCircle(lastFix.s.x,lastFix.s.y,10);
   }
-  for (var i=0;i<gcoords.length;i+=2) {
-    g.setColor((i<=nextPtIdx) ? 63488 : 46486); // red/grey
-    g.fillRect(gcoords[i]-2,gcoords[i+1]-2,gcoords[i]+2,gcoords[i+1]+2);
-  }
-  g.setColor(1,0,0); // first part of path
+  var c1 = g.toColor(1,1,0);
+  var c2 = g.toColor(0.7,0.7,0.7);
+  for (var i=0;i<gcoords.length;i+=2)
+    g.setColor((i<=nextPtIdx) ? c1 : c2).fillRect(gcoords[i]-2,gcoords[i+1]-2,gcoords[i]+2,gcoords[i+1]+2);
+  g.setColor(1,1,0); // first part of path
   g.drawPoly(new Uint8Array(gcoords.buffer, 0, nextPtIdx+2));
   g.setColor(1,1,1); // remaining part of path
   g.drawPoly(new Uint8Array(gcoords.buffer, nextPtIdx));
 
   if (fix && fix.fix) {
-    g.setColor(1,0,0);
+    g.setColor(1,1,0);
     g.drawCircle(fix.s.x,fix.s.y,10);
   }
   lastFix = fix;
