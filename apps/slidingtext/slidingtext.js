@@ -135,11 +135,13 @@ class ShiftText {
     }
   }
   show() {
+    g.setFontAlign(-1,-1,0);
     g.setFont(this.font_name,this.font_size);
     g.setColor(this.color[0],this.color[1],this.color[2]);
     g.drawString(this.txt, this.x, this.y);
   }
   hide(){
+    g.setFontAlign(-1,-1,0);
     g.setFont(this.font_name,this.font_size);
     //console.log("bgcolor:" + this.bg_color);
     g.setColor(this.bg_color[0],this.bg_color[1],this.bg_color[2]);
