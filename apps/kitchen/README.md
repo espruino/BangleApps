@@ -1,10 +1,10 @@
-# Kitchen Combo - a multiclock format of the waypointer, walksersclock, stepo and arrow apps.
+# Kitchen Combo - a multiclock format of the waypointer, walkersclock, stepo and arrow apps.
 
 ![](screenshot_kitchen.jpg)
 
 *...everything but the kitchen sink..*
 
-NOTE: This app require Bangle firmware 2.08.187 or later.  
+NOTE: This app requires Bangle firmware 2.08.187 or later.  
 
 The app is aimed at navigation whilst walking. Please note that it
 would be foolish in the extreme to rely on this as your only
@@ -44,6 +44,7 @@ The following buttons depend on which face is currently in use
 ## Stepo
 ![](screenshot_stepo.jpg)
 
+- Requires one of the pedominter widgets to be installed 
 - Displays the time in large font
 - Display current step count in a doughnut gauge
 - Show step count in the middle of the doughnut gauge
@@ -218,11 +219,16 @@ object (g.) for the compass App.  This creates a bit of flicker when
 the arrow moves but is more reliable than using the ArrayBuffer.
 
 
+### Error Codes
+
+The following error codes will be displayed if one of the dependancies is not met.
+
+* E-STEPS - no pedomintor widget has been installed, please install the widpedom or the activepedom widgets
+* E-CALIB - no compass calibration data was found, see 'Compass Calibration'
+* E-FW    - require firmware 2v08.187 or later to detect gps and compass power status
+
 ### Issues
 
 * GPS time display shows GMT and not BST, needs localising
 * Occassional buzzing after 2-3 days of use, seems to disappear after
   a reset to the launcher menu. Needs investigation
-* Need to gracefully handle incorrect firmware
-* Need to gracefully handle missing compass calibration data
-* Need to gracefully handle missing steps widget

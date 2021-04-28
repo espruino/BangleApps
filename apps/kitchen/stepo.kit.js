@@ -115,7 +115,7 @@
     function getSteps() {
       if (stepsWidget() !== undefined)
         return stepsWidget().getSteps();
-      return "-";
+      return "E-STEPS";
     }
 
     function stepsWidget() {
