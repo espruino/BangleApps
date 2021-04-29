@@ -175,7 +175,16 @@
     }
 
     function draw() {
-      //log_debug("draw()");
+      log_debug("draw()");
+
+      if (CALIBDATA === undefined || CALIBDATA === null) {
+        g.setFontAlign(0,0);
+        g.setColor(1,1,1);
+        g.setFont("Vector", 24);
+        g.drawString("E-CALIB", 120, 120);
+        return
+      }
+      
       var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
       heading = newHeading(d,heading);
       // sets bearing to waypoint bearing if GPS on else sets to 0 (north)
