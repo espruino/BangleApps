@@ -1,3 +1,4 @@
 0.01: Initial version
 0.02: Increase text brightness, improve controls, (try to) reduce memory usage
 0.03: Only auto-start if active app is a clock, auto close after 1 hour of inactivity
+0.04: Minor bugfix

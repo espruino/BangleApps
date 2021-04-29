@@ -138,16 +138,13 @@ function infoColor(name) {
     s = 0;
   } else {
     // make color depend deterministically on info
-    let code = 0;
+    let code = textCode(info[name]);
     switch(name) {
-      case "track":
-        code += textCode(info.track);
-      // fallthrough: also use album+artist
-      case "album":
+      case "track": // also use album
         code += textCode(info.album);
-      // fallthrough: also use artist
-      default:
-        code += textCode(info[name]);
+      // fallthrough
+      case "album": // also use artist
+        code += textCode(info.artist);
     }
     h = code%360;
     s = 0.7;
