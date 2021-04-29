@@ -13,6 +13,10 @@ let info = {
 };
 const POUT = 300000; // auto close timeout when paused: 5 minutes (in ms)
 const IOUT = 3600000; // auto close timeout for inactivity: 1 hour (in ms)
+// Touch controls?  0: off, 1: when LCD on, 2: always
+let s = require("Storage").readJSON("gbmusic.json", 1) || {};
+const TCTL = ("touch" in s) ? (s.touch|0)%3 : 1;
+delete s;
 
 ///////////////////////
 // Self-repeating timeouts
@@ -343,6 +347,7 @@ function controlColor(ctrl) {
   return (ctrl in tCommand) ? "#ff0000" : "#008800";
 }
 function drawControl(ctrl, x, y) {
+  if (!TCTL) {return;}
   g.setColor(controlColor(ctrl));
   const s = 20;
   if (stat!==controlState) {
@@ -515,7 +520,9 @@ function togglePlay() {
   sendCommand(stat==="play" ? "pause" : "play");
 }
 function startTouchWatches() {
+  if (!TCTL) {return;}
   Bangle.on("touch", side => {
+    if (TCTL<2 && !Bangle.isLCDOn()) {return;}
     switch(side) {
       case 1:
         sendCommand(stat==="play" ? "pause" : "previous");
@@ -528,6 +535,7 @@ function startTouchWatches() {
     }
   });
   Bangle.on("swipe", dir => {
+    if (TCTL<2 && !Bangle.isLCDOn()) {return;}
     sendCommand(dir===1 ? "previous" : "next");
   });
 }

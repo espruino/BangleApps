@@ -16,9 +16,14 @@ Download the [latest Gadgetbridge for Android here](https://f-droid.org/packages
 
 ## Settings
 
-The app can automatically load when you play music and close when the music stops.
-You can change this under `Settings`->`App/Widget Settings`->`Music Controls`.
+You can change these under `Settings`->`App/Widget Settings`->`Music Controls`.
+
+**Auto start**: 
+Automatically load the app when you play music and close when the music stops.
 (If the app opened automatically, it closes after music has been paused for 5 minutes.)
+
+**Touch**:
+Enable touch controls?
 
 ## Controls
 
