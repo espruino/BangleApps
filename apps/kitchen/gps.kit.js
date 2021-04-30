@@ -79,7 +79,7 @@
       g.setColor(0xFFC0); 
       g.setFontAlign(0, -1);
 
-      if (!checkFirmware(2,8,187)) {
+      if (Bangle.isGPSOn === undefined) {
         g.setColor(1,1,1);
         g.drawString("E-FW", 120, Y_ACTIVITY);
         return;
@@ -177,18 +177,6 @@
       
       clearActivityArea = true;
       drawGPSData();
-    }
-
-    function checkFirmware(maj,min,bld) {
-      var major = process.env.VERSION.split(".")[0].split("v")[0];
-      var minor = process.env.VERSION.split(".")[0].split("v")[1];
-      var build = process.env.VERSION.split(".")[1];
-
-      if (major > maj) return true;
-      if (major == 2 && minor > min) return true;
-      if (major == 2 && minor == min && build >= bld) return true;
-
-      return false;
     }
 
     return {init:init, freeResources:freeResources, startTimer:startTimer, stopTimer:stopTimer,
