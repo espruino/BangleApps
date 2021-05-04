@@ -180,7 +180,7 @@ GPS.prototype.determineGPSState = function() {
     }
   } else {
     if (this.listenerCount > 0) {
-      Bangle.removeListener("GPS", this.processFix);
+      Bangle.removeListener("GPS", processFix);
       this.listenerCount--;
       this.log_debug("listener removed " + this.listenerCount);
     }
