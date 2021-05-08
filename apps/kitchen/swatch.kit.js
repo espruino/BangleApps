@@ -2,7 +2,7 @@
   function getFace(){
     let swObject = undefined;
 
-    function init(gps, sw) {
+    function init(gps, sw, hrm) {
       swObject = sw;
       g.clear();
     }

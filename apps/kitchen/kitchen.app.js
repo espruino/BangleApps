@@ -26,7 +26,7 @@ function nextFace(){
   
   g.clear();
   g.reset();
-  face.init(gpsObj, swObj);
+  face.init(gpsObj, swObj, hrmObj);
   startdraw();
 }
 
@@ -653,12 +653,70 @@ function stopwatchDraw() {
 
 /*****************************************************************************
 
+Heart Rate Monitor
+
+******************************************************************************/
+
+function HRM() {
+  this.bpm = 0;
+  this.confidence = 0;
+}
+  
+HRM.prototype.log_debug = function(o) {
+  //console.log(o);
+}
+
+HRM.prototype.toggleHRMPower = function() {
+  this.log_debug("HRM.toggleHRMPower()");
+  if (!Bangle.isHRMOn) return; // old firmware
+
+  if (!Bangle.isHRMOn()) {
+    this.log_debug("HRM.toggleHRMPower(powerOn)");
+    Bangle.removeListener('HRM', onHRM);
+    Bangle.setHRMPower(1);
+    Bangle.on('HRM', onHRM);
+  } else {
+    this.log_debug("HRM.toggleHRMPower(powerOff)");
+    Bangle.removeListener('HRM', onHRM);
+    Bangle.setHRMPower(0);
+  }
+
+  // poke the hrt widget indicator to change
+  if (WIDGETS.widhrt !== undefined) {
+    WIDGETS.widhrt.draw();
+  }
+}
+
+HRM.prototype.getBpm = function() {
+  return this.bpm;
+}
+
+HRM.prototype.getConfidence = function() {
+  return this.confidence;
+}
+
+HRM.prototype.onHRM = function(hrm) {
+  this.bpm = hrm.bpm;
+  this.confidence = hrm.confidence;
+  this.log_debug("onHRM:(bpm)" + this.bpm);
+  this.log_debug("onHRM:(conf) " + this.confidence);
+}
+
+let hrmObj = new HRM();
+
+function onHRM(hrm) {
+  hrmObj.onHRM(hrm);
+}
+
+
+/*****************************************************************************
+
 Start App
 
 ******************************************************************************/
 
 g.clear();
 Bangle.loadWidgets();
-face.init(gpsObj,swObj);
+face.init(gpsObj,swObj, hrmObj);
 startdraw();
 setButtons();

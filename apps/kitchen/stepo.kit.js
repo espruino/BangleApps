@@ -5,7 +5,7 @@
     var buf;
     var intervalRefSec;
 
-    function init(g,sw) {
+    function init(g,sw,hrm) {
       showMem("stepo init 1");
       pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
       pal4red = new Uint16Array([0x0000,0xFFFF,0xF800,0xAFE5],0,2);   // b,w,red,greenyellow

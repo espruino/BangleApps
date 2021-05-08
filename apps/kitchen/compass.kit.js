@@ -16,7 +16,7 @@
       //console.log(o);
     }
 
-    function init(gps,sw) {
+    function init(gps,sw, hrm) {
       showMem("compass init() START");
       gpsObject = gps;
       intervalRefSec = undefined;

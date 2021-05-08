@@ -3085,7 +3085,7 @@
 { "id": "kitchen",
   "name": "Kitchen Combo",
   "icon": "kitchen.png",
-  "version":"0.08",
+  "version":"0.09",
   "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
   "type":"clock",
@@ -3096,10 +3096,13 @@
     {"name":"stepo.kit.js","url":"stepo.kit.js"},
     {"name":"gps.kit.js","url":"gps.kit.js"},
     {"name":"digi.kit.js","url":"digi.kit.js"},
+    {"name":"heart.kit.js","url":"heart.kit.js"},
     {"name":"swatch.kit.js","url":"swatch.kit.js"}, 
     {"name":"compass.kit.js","url":"compass.kit.js"},
-    {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
+  ]
+  "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
 { "id": "qmsched",

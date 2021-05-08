@@ -16,7 +16,7 @@
     const Y_ACTIVITY = 116;
     const Y_MODELINE = 200;
     
-    function init(gps,sw) {
+    function init(gps,sw,hrm) {
       showMem("digi init 1");
       days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"];
       prevInfo = "";
