@@ -264,8 +264,30 @@ function draw_clock(){
   draw_seconds(date);
   draw_mins(date);
   draw_hours(date);
+  draw_date(date);
   force_redraw = false;
 }
+
+var local = require('locale');
+var last_date = null;
+var last_datestr = null;
+const DATE_COORD_X = 180;
+const DATE_COORD_Y = 30;
+function draw_date(date){
+   if(force_redraw || last_date == null || last_date.getDate() != date.getDate()){
+     var date_format = local.dow(date,1) + " " + date.getDate();
+     g.setFontAlign(-1,-1,0);
+     g.setFont("Vector",15);
+     background = color_schemes[color_scheme_index].background;
+     g.setColor(background[0],background[1],background[2]);
+      g.drawString(last_datestr,DATE_COORD_X,DATE_COORD_Y);
+     g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
+     g.drawString(date_format,DATE_COORD_X,DATE_COORD_Y);
+     last_date = date;
+     last_datestr = date_format;
+   }
+}
+
 // drawing the second the millisecond as we need the fine gradation
 // for the sweep second hand.
 function draw_seconds(date){
@@ -363,6 +385,7 @@ class CopasetFont extends NumeralFont{
                   x,y+dim[1]
                  ]);
     g.setColor(1.0,1.0,1.0);*/
+    g.setFontAlign(-1,-1,0);
     g.setFontCopasetic40x58Numeric();
     g.drawString(hour_txt,x,y);
   }
@@ -408,6 +431,7 @@ class RomanNumeralFont extends NumeralFont{
   getDimensions(hour){ return this.dimension_map[hour];}
   hour_txt(hour){ return this.txt_map[hour]; }
   draw(hour_txt,x,y){
+    g.setFontAlign(-1,-1,0);
     g.setFont("Vector",40);
     g.drawString(hour_txt,x,y);
   }
