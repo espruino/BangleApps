@@ -1,7 +1,14 @@
 # Test User Input
 
-This very basic app, allows to *test the bangle.js input interface*, and displays the result in text or a switch on/off image.
+This basic app, allows to **test the bangle.js input interface** trough every types of finger interaction. 
+Interactrion type is displayed in text or a switch on/off image for swipe screen. 
 
+Besides the basics, the UI also includes multiple rows with radio buttons
+
+
+## Captures
+
+(Following images can be outdated)
 
 Launcher icon
 
@@ -31,14 +38,14 @@ Colours, font, user input, image, load widgets
 
 
 ## Controls
-Press left area - Prints Touch1
-Press righ area - Prints Touch2
-Press center area - Prints Touch3
-Swipe Left - Displays Switch OFF image
-Swipe Right - Displays Switch ON image
-BTN1 - Prints Button1
-BTN2 - Prints Button2
-BTN3 - Quit to Launcher
+ - Press left area - Prints Touch1
+ - Press righ area - Prints Touch2 
+ - Press center area - Prints Touch3
+ - Swipe Left - Displays Switch OFF image
+ - Swipe Right - Displays Switch ON image
+ - BTN1 - Prints Button1
+ - BTN2 - Prints Button2
+ - BTN3 - Quit to Launcher
 
 
 ## Support
