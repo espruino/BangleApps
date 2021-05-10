@@ -3100,7 +3100,7 @@
     {"name":"swatch.kit.js","url":"swatch.kit.js"}, 
     {"name":"compass.kit.js","url":"compass.kit.js"},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
-  ]
+  ],
   "data": [
       {"name":"waypoints.json","url":"waypoints.json"}
   ]

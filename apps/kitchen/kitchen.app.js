@@ -26,7 +26,7 @@ function nextFace(){
   
   g.clear();
   g.reset();
-  face.init(gpsObj, swObj, hrmObj);
+  face.init(gpsObj, swObj, hrmObj, tripObject);
   startdraw();
 }
 
@@ -717,6 +717,41 @@ function onHRM(hrm) {
   hrmObj.onHRM(hrm);
 }
 
+
+/*****************************************************************************
+
+Trip Counter
+
+******************************************************************************/
+
+function TRIP() {
+  this.showTrip = false;
+  this.tripStart = 0;
+}
+
+TRIP.prototype.resetTrip = function(steps) {
+  this.tripStart = (0 + steps);
+  console.log("resetTrip starting=" + this.tripStart);
+}
+
+TRIP.prototype.getTrip = function(steps) {
+  let tripSteps = (0 + steps) - this.tripStart;
+  console.log("getTrip steps=" + steps);
+  console.log("getTrip tripStart=" + this.tripStart);
+  console.log("getTrip=" + tripSteps);
+  return tripSteps;
+}
+
+TRIP.prototype.getTripState = function() {
+  return this.showTrip;
+}
+
+TRIP.prototype.setTripState = function(t) {
+  this.showTrip = t;
+}
+
+let tripObject = new TRIP();
+
 /*****************************************************************************
 
 Debug Object
@@ -743,6 +778,6 @@ Start App
 
 g.clear();
 Bangle.loadWidgets();
-face.init(gpsObj,swObj, hrmObj);
+face.init(gpsObj,swObj, hrmObj, tripObject);
 startdraw();
 setButtons();
