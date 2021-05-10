@@ -33,10 +33,10 @@ function nextFace(){
 // when you feel the buzzer you know you have done a long press
 function longPressCheck() {
   Bangle.buzz();
-  debugObj.log("long PressCheck()");
+  debug_log("long PressCheck() buzz");
   if (pressTimer) {
     clearInterval(pressTimer);
-    debugObj.log("clear pressTimer 2");
+    debug_log("clear pressTimer 2");
     pressTimer = undefined;
   }
 }
@@ -48,10 +48,10 @@ function buttonPressed(btn) {
   } else {
     firstPress = getTime();
     if (pressTimer) {
-      debugObj.log("clear pressTimer 1");
+      debug_log("clear pressTimer 1");
       clearInterval(pressTimer);
     }
-    debugObj.log("set pressTimer 1");
+    debug_log("set pressTimer 1");
     pressTimer = setInterval(longPressCheck, 1500);
   }
 }
@@ -60,7 +60,7 @@ function buttonPressed(btn) {
 function buttonReleased(btn) {
   var dur = getTime() - firstPress;
   if (pressTimer) {
-    debugObj.log("clear pressTimer 3");
+    debug_log("clear pressTimer 3");
     clearInterval(pressTimer);
     pressTimer = undefined;
   }
@@ -256,7 +256,7 @@ GPS.prototype.processFix = function(fix) {
     this.gpsState = this.GPS_RUNNING;
     if (!this.last_fix.fix && !(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
       Bangle.buzz(); // buzz on first position
-      debugObj.log("GPS fix buzz");
+      debug_log("GPS fix buzz");
     }
     this.last_fix = fix;
   }
@@ -758,6 +758,7 @@ Debug Object
 
 ******************************************************************************/
 
+/*
 function DEBUG() {
   this.logfile = require("Storage").open("debug.log","a");
 }
@@ -769,6 +770,11 @@ DEBUG.prototype.log = function(msg) {
 }
 
 debugObj = new DEBUG();
+*/
+
+function debug_log(m) {
+  //debugObj.log(m);
+}
 
 /*****************************************************************************
 

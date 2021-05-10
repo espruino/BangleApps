@@ -7,3 +7,4 @@
 0.07: Added error codes if dependancies are missing
 0.08: Improved error handling for missing firmware features, added template app.kit.js
 0.09: Added heart rate monitor app
+0.10: Converted Stepo to use direct screen writes, added a Trip Counter feature to stepo

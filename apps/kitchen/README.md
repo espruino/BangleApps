@@ -50,7 +50,9 @@ The following buttons depend on which face is currently in use
 - Show step count in the middle of the doughnut gauge
 - The gauge show percentage of steps out of a goal of 10000 steps
 - When the battery is less than 25% the doughnut turns red
+- Use BTN1 to switch to the Trip Counter, use long press to reset Trip Counter
 - Use BTN3 to switch to the next app
+
 
 ## GPS
 ![](screenshot_gps.jpg)
@@ -231,6 +233,9 @@ ArrayBuffer for stepo rather than using new everytime you switch back
 into the stepo watch face.  The problem is that the bangle memory
 management / defragmentation is quite slow to run.
 
+v0.10: Revisited having a display buffer for the stepo part of the App.
+Now use direct screen writing as it means less memory allocation and
+reduces chance of getting a memory error on switching watch faces.
 
 ### Error Codes
 
@@ -242,7 +247,6 @@ The following error codes will be displayed if one of the dependancies is not me
 
 ### Issues / Future enhancements
 
-* Revisit statically assigning the display buffer for stepo to avoid memory defrag
 * GPS time display shows GMT and not BST, needs localising
 * Occassional buzzing after 2-3 days of use, seems to disappear after
   a reset to the launcher menu. Needs investigation
