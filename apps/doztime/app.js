@@ -15,8 +15,8 @@ const B1 = [30,30,30,30,30,31,31,31,31,31,30,30];
 const B2 = [30,30,30,30,31,31,31,31,31,30,30,30];
 const timeColour = "#f2f2f2";
 const dateColours = ["#ff0000","#ffa500","#ffff00","#00b800","#0000ff","#ff00ff","#ff0080"];
-const calen10 = {"size":32,"pt0":[32-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for usual calendar line
-const calen7 = {"size":32,"pt0":[62-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line
+const calen10 = {"size":32,"pt0":[34-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for usual calendar line
+const calen7 = {"size":32,"pt0":[64-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line
 const time5 = {"size":48,"pt0":[64-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line
 const time6 = {"size":48,"pt0":[48-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line
 const baseYear = 11584;
@@ -158,14 +158,14 @@ function drawTime()
 	dt.setDate(dt.getDate());
 	if(addTimeDigit){
 		x =
-		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
+		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*(dt.getMilliseconds()+750);
 		let msg = "00000"+Math.floor(x).toString(12);
 		let time = msg.substr(-5,3)+"."+msg.substr(-2);
 		let wait = 347*(1-(x%1));
 		timeDef = time6;
 	} else {
 		x =
-		864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*dt.getMilliseconds();
+		864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*(dt.getMilliseconds()+750);
 		let msg = "0000"+Math.floor(x).toString(12);
 		let time = msg.substr(-4,3)+"."+msg.substr(-1);
 		let wait = 4167*(1-(x%1));
