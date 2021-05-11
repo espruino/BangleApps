@@ -160,14 +160,14 @@ function drawTime()
 	dt.setDate(dt.getDate());
 	if(addTimeDigit){
 		x =
-		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*(dt.getMilliseconds()+1500);
+		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
 		let msg = "00000"+Math.floor(x).toString(12);
 		let time = msg.substr(-5,3)+"."+msg.substr(-2);
 		let wait = 347*(1-(x%1));
 		timeDef = time6;
 	} else {
 		x =
-		864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*(dt.getMilliseconds()+1500);
+		864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*dt.getMilliseconds();
 		let msg = "0000"+Math.floor(x).toString(12);
 		let time = msg.substr(-4,3)+"."+msg.substr(-1);
 		let wait = 4167*(1-(x%1));
