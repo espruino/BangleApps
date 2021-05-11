@@ -124,7 +124,6 @@ function writeDozTime(text,def,colour){
 	let y=def.pt0[1];
 	g_t.clear();
 	g_t.setFont("Vector",def.size);
-	g_t.setColor(colour);
 	for(let i in text){
 		if(text[i]=="a"){ g_t.setFontAlign(0,0,2); g_t.drawString("2",x+def.dx,y+def.dy); }
 		else if(text[i]=="b"){ g_t.setFontAlign(0,0,2); g_t.drawString("3",x+def.dx,y+def.dy); }
@@ -140,7 +139,6 @@ function writeDozDate(text,def,colour){
 	let y=def.pt0[1];
 	g_d.clear();
 	g_d.setFont("Vector",def.size);
-	g_d.setColor(colour);
 	for(let i in text){
 		if(text[i]=="a"){ g_d.setFontAlign(0,0,2); g_d.drawString("2",x+def.dx,y+def.dy); }
 		else if(text[i]=="b"){ g_d.setFontAlign(0,0,2); g_d.drawString("3",x+def.dx,y+def.dy); }
