@@ -3184,7 +3184,8 @@
   "icon": "doztime.png",
   "version":"0.01",
   "description": "A dozenal Holocene calendar and dozenal diurnal clock",
-  "tags": "",
+  "tags": "clock",
+  "type": "clock",
   "storage": [
     {"name":"doztime.app.js","url":"doztime.app.js"},
     {"name":"doztime.img","url":"doztime-icon.js","evaluate":true}
