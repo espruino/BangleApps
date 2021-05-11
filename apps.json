@@ -3177,3 +3177,17 @@
   ]
 }
 ]
+},
+{ "id": "doztime",
+  "name": "Dozenal Watch",
+  "shortName":"Dozenal Watch",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A dozenal Holocene calendar and dozenal diurnal clock",
+  "tags": "",
+  "storage": [
+    {"name":"doztime.app.js","url":"app.js"},
+    {"name":"doztime.img","url":"app-icon.js","evaluate":true}
+  ]
+}
+]
