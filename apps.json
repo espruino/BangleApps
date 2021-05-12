@@ -3181,7 +3181,7 @@
 { "id": "doztime",
   "name": "Dozenal Watch",
   "shortName":"Dozenal Watch",
-  "icon": "doztime.png",
+  "icon": "app.png",
   "version":"0.01",
   "description": "A dozenal Holocene calendar and dozenal diurnal clock",
   "tags": "clock",
