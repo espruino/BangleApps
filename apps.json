@@ -3175,14 +3175,12 @@
     {"name":"batclock.app.js","url":"bat-clock.app.js"},
     {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
   ]
-}
-]
 },
 { "id": "doztime",
   "name": "Dozenal Watch",
   "shortName":"Dozenal Watch",
   "icon": "app.png",
-  "version":"0.01",
+  "version": "1.0",
   "description": "A dozenal Holocene calendar and dozenal diurnal clock",
   "tags": "clock",
   "type": "clock",
@@ -3190,5 +3188,3 @@
     {"name":"doztime.app.js","url":"app.js"},
     {"name":"doztime.img","url":"app-icon.js","evaluate":true}
   ]
-}
-]
