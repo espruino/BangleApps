@@ -23,7 +23,12 @@ Button 3 (bottom right button) is used to change the colour
 | ---- | ---- | ---- |
 |   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   |
 
+### Button 4
+Button 4 (bottom left of screen) is used to change the date positioning (or to remove from the screen)
 
+|  Top Right   |  Bottom Right    |  Bottom Left    | Top Left |
+| ---- | ---- | ---- | ---- |
+|   ![](./date-01.jpg) | ![](date-02.jpg) |  ![](date-03.jpg)   | ![](date-04.jpg)   |
 
 ## Further Details
 

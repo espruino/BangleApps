@@ -6,6 +6,7 @@
 
 const screen_center_x = g.getWidth()/2;
 const screen_center_y = 10 + g.getHeight()/2;
+const TWO_PI = 2*Math.PI;
 
 require("FontCopasetic40x58Numeric").add(Graphics);
 
@@ -222,25 +223,27 @@ class ThickHand extends Hand {
 let force_redraw = false;
 // The seconds hand is the main focus and is set to redraw on every cycle
 let seconds_hand = new ThinHand(screen_center_x, 
-                           screen_center_y,
-                           95,
-                            0,
-                            (angle, last_draw_time) => false,
-                           "second_hand");
+    screen_center_y,
+    95,
+    0,
+    (angle, last_draw_time) => false,
+    "second_hand");
+
 // The minute hand is set to redraw at a 250th of a circle,
 // when the second hand is ontop or slighly overtaking
 // or when a force_redraw is called
 let minutes_hand_redraw = function(angle, last_draw_time){
   return force_redraw || (seconds_hand.angle > angle &&
-    Math.abs(seconds_hand.angle - angle) <2*Math.PI/25 &&
+    Math.abs(seconds_hand.angle - angle) <TWO_PI/25 &&
     new Date().getTime() - last_draw_time.getTime() > 500);
 };
-let minutes_hand = new ThinHand(screen_center_x, 
-                           screen_center_y,
-                           80,
-                            2*Math.PI/250,
-                           minutes_hand_redraw,
-                           "minute_hand");
+let minutes_hand = new ThinHand(screen_center_x,
+    screen_center_y,
+    80,
+    TWO_PI/250,
+    minutes_hand_redraw,
+    "minute_hand"
+);
 // The hour hand is a thick hand so we have to redraw when the minute hand
 // overlaps from its behind andle coverage to its ahead angle coverage.
 let hour_hand_redraw = function(angle_from, angle_to, last_draw_time){
@@ -249,16 +252,16 @@ let hour_hand_redraw = function(angle_from, angle_to, last_draw_time){
     new Date().getTime() - last_draw_time.getTime() > 500);
 };
 let hours_hand = new ThickHand(screen_center_x, 
-                           screen_center_y,
-                           40,
-                            2*Math.PI/600,
-                          hour_hand_redraw,
-                           "hour_hand",
-                          5,
-                          4);
+    screen_center_y,
+    40,
+    TWO_PI/600,
+    hour_hand_redraw,
+    "hour_hand",
+    5,
+    4);
 
 function draw_clock(){
-  date = new Date();
+  var date = new Date();
   draw_background();
   draw_hour_digit(date);
   draw_seconds(date);
@@ -287,7 +290,7 @@ function draw_date(date){
      g.setFontAlign(-1,-1,0);
      g.setFont("Vector",15);
      if(last_coords != null && last_datestr != null) {
-       background = color_schemes[color_scheme_index].background;
+       var background = color_schemes[color_scheme_index].background;
        g.setColor(background[0], background[1], background[2]);
        g.drawString(last_datestr, last_coords[0], last_coords[1]);
      }
@@ -328,28 +331,28 @@ function set_datecoords(date_name){
 // drawing the second the millisecond as we need the fine gradation
 // for the sweep second hand.
 function draw_seconds(date){
-  seconds = date.getSeconds() + date.getMilliseconds()/1000;
-  seconds_frac = seconds / 60;
-  seconds_angle = 2*Math.PI*seconds_frac;
+  var seconds = date.getSeconds() + date.getMilliseconds()/1000;
+  var seconds_frac = seconds / 60;
+  var seconds_angle = TWO_PI*seconds_frac;
   seconds_hand.moveTo(seconds_angle);
 }
 // drawing the minute includes the second and millisec to make the
 // movement as continuous as possible.
 function draw_mins(date,seconds_angle){
-  mins = date.getMinutes() + date.getSeconds()/60 + date.getMilliseconds()/(60*1000);
-  mins_frac = mins / 60;
-  mins_angle = 2*Math.PI*mins_frac;
-  redraw = minutes_hand.moveTo(mins_angle);
+  var mins = date.getMinutes() + date.getSeconds()/60 + date.getMilliseconds()/(60*1000);
+  var mins_frac = mins / 60;
+  var mins_angle = TWO_PI*mins_frac;
+  var redraw = minutes_hand.moveTo(mins_angle);
   if(redraw){
     //console.log("redraw mins");
   }
 }
 
 function draw_hours(date){
-  hours = (date.getHours() % 12) + date.getMinutes()/60 + date.getSeconds()/3600;
-  hours_frac = hours / 12;
-  hours_angle = 2*Math.PI*hours_frac;
-  redraw = hours_hand.moveTo(hours_angle);
+  var hours = (date.getHours() % 12) + date.getMinutes()/60 + date.getSeconds()/3600;
+  var hours_frac = hours / 12;
+  var hours_angle = TWO_PI*hours_frac;
+  var redraw = hours_hand.moveTo(hours_angle);
   if(redraw){
     //console.log("redraw hours");
   }
@@ -487,7 +490,7 @@ function reifyasin(x,y,asin_angle){
   } else if(x < 0 && y < 0){
     return Math.PI - asin_angle;
   } else {
-    return 2*Math.PI + asin_angle;
+    return TWO_PI + asin_angle;
   }
 }
 
@@ -495,7 +498,7 @@ function reifyasin(x,y,asin_angle){
 // rather than 0 to 2PI
 function rebaseNegative(angle){
   if(angle > Math.PI){
-    return angle - 2*Math.PI;
+    return angle - TWO_PI;
   } else {
     return angle;
   }
@@ -505,7 +508,7 @@ function rebaseNegative(angle){
 // rather than -pi to pi
 function rebasePositive(angle){
   if(angle < 0){
-    return angle + 2*Math.PI;
+    return angle + TWO_PI;
   } else {
     return angle;
   }
@@ -541,7 +544,7 @@ class HourScriber {
                              this.curr_hour_y);
       //console.log("erasing old hour");
       var hours_frac = hours / 12;
-      var angle = 2*Math.PI*hours_frac;
+      var angle = TWO_PI*hours_frac;
       var dimensions = this.numeral_font.getDimensions(hours);
       // we set the radial coord to be in the middle
       // of the drawn text.
@@ -614,12 +617,12 @@ let hour_numeral_redraw = function(angle_from, angle_to, last_draw_time){
   // side has a small positive value. The values are rebased so
   // that they can be compared
   if(angle_from > angle_to && angle_from > 1.5*Math.PI){
-    angle_from = angle_from - 2*Math.PI;
+    angle_from = angle_from - TWO_PI;
     if(seconds_hand_angle > Math.PI)
-       seconds_hand_angle = seconds_hand_angle - 2*Math.PI;
+       seconds_hand_angle = seconds_hand_angle - TWO_PI;
   } 
   //console.log("initial:" + angle_from + "/" + angle_to  + " seconds " + seconds_hand_angle);
-   redraw = force_redraw ||
+   var redraw = force_redraw ||
      (seconds_hand_angle >= angle_from && seconds_hand_angle <= angle_to) ||
      (minutes_hand.last_draw_time.getTime() > last_draw_time.getTime());
   if(redraw){
@@ -714,7 +717,7 @@ function set_font(font_name){
 */
 function load_settings(){
   try{
-    settings = require("Storage").readJSON("sweepclock.settings.json");
+    var settings = require("Storage").readJSON("sweepclock.settings.json");
     if(settings != null){
       console.log("loaded:" + JSON.stringify(settings));
       if(settings.color_scheme != null){
@@ -723,7 +726,7 @@ function load_settings(){
       if(settings.font != null){
         set_font(settings.font);
       }
-      if(settings.date!= null){
+      if(settings.date != null){
         set_datecoords(settings.date);
       }
     } else {
@@ -738,7 +741,7 @@ function load_settings(){
 * Called on button press to save down the last preference settings
 */
 function save_settings(){
-  settings = { 
+  var settings = {
     font : numeral_fonts[numeral_fonts_index].getName(),
     color_scheme : color_schemes[color_scheme_index].name,
     date: date_coords[date_coord_index].name
