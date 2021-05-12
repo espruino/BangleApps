@@ -243,7 +243,7 @@
     "name": "Sweep Clock",
     "icon": "sweepclock.png",
     "version":"0.03",
-    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font and button 3 to change the colour theme",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font, button 3 to change the colour theme and button 4 to change the date placement",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
