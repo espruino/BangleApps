@@ -20,7 +20,7 @@ const calen7 = {"size":32,"pt0":[62-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.
 const time5 = {"size":48,"pt0":[62-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line, was 64
 const time6 = {"size":48,"pt0":[48-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line
 const baseYear = 11584;
-const baseDate = Date(2020,11,20); // month values run from 0 to 11
+const baseDate = Date(2020,11,21); // month values run from 0 to 11
 let accum = new Date(baseDate.getTime());
 let sequence = [];
 let timeActiveUntil;
