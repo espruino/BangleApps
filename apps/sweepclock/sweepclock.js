@@ -101,14 +101,14 @@ class ThinHand extends Hand {
        // and then call the predicate to see if a redraw is needed
        this.draw_test(this.angle,this.last_draw_time) ){
       // rub out the old hand line
-      background = color_schemes[color_scheme_index].background;
+      var background = color_schemes[color_scheme_index].background;
       g.setColor(background[0],background[1],background[2]);
       g.drawLine(this.centerX, this.centerY, this.last_x, this.last_y);
       // Now draw the new hand line
-      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      var hand_color = color_schemes[color_scheme_index][this.color_theme];
       g.setColor(hand_color[0],hand_color[1],hand_color[2]);
-      x2 = this.centerX + this.length*Math.sin(angle);
-      y2 = this.centerY - this.length*Math.cos(angle);
+      var x2 = this.centerX + this.length*Math.sin(angle);
+      var y2 = this.centerY - this.length*Math.cos(angle);
       g.drawLine(this.centerX, this.centerY, x2, y2);
       // and store the last draw details for the next call
       this.last_x = x2;
@@ -170,7 +170,7 @@ class ThickHand extends Hand {
   // method to move the hand to a new angle
   moveTo(angle){
     if(Math.abs(angle - this.angle) > this.tolerance || this.draw_test(this.angle - this.delta_base,this.angle + this.delta_base ,this.last_draw_time) ){
-      background = color_schemes[color_scheme_index].background;
+      var background = color_schemes[color_scheme_index].background;
       g.setColor(background[0],background[1],background[2]);
       g.fillPoly([this.last_x1,
                   this.last_y1,
@@ -182,20 +182,20 @@ class ThickHand extends Hand {
                   this.last_y4
                  ]);
       // bottom left
-      x1 = this.centerX +
+      var x1 = this.centerX +
         this.vertex_radius_base*Math.sin(angle - this.delta_base);
-      y1 = this.centerY - this.vertex_radius_base*Math.cos(angle - this.delta_base);
+      var y1 = this.centerY - this.vertex_radius_base*Math.cos(angle - this.delta_base);
       // bottom right
-      x2 = this.centerX +
+      var x2 = this.centerX +
         this.vertex_radius_base*Math.sin(angle + this.delta_base);
-      y2 = this.centerY - this.vertex_radius_base*Math.cos(angle + this.delta_base);
+      var y2 = this.centerY - this.vertex_radius_base*Math.cos(angle + this.delta_base);
       // top right
-      x3 = this.centerX + this.vertex_radius_top*Math.sin(angle + this.delta_top);
-      y3 = this.centerY - this.vertex_radius_top*Math.cos(angle + this.delta_top);
+      var x3 = this.centerX + this.vertex_radius_top*Math.sin(angle + this.delta_top);
+      var y3 = this.centerY - this.vertex_radius_top*Math.cos(angle + this.delta_top);
       // top left
-      x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
-      y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
-      hand_color = color_schemes[color_scheme_index][this.color_theme];
+      var x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
+      var y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
+      var hand_color = color_schemes[color_scheme_index][this.color_theme];
       g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       g.fillPoly([x1,y1,
                   x2,y2,
@@ -271,21 +271,58 @@ function draw_clock(){
 var local = require('locale');
 var last_date = null;
 var last_datestr = null;
-const DATE_COORD_X = 180;
-const DATE_COORD_Y = 30;
+var last_coords = null;
+var date_coords = [
+    { name: "topright", coords:[180,30]},
+  { name: "bottomright", coords:[180,220]},
+  { name: "bottomleft", coords: [5,220]},
+  { name: "topleft", coords:[5,30]},
+  { name: "offscreen", coords: [240,30]}
+];
+var date_coord_index = 0;
+
 function draw_date(date){
    if(force_redraw || last_date == null || last_date.getDate() != date.getDate()){
-     var date_format = local.dow(date,1) + " " + date.getDate();
+     //console.log("redrawing date");
      g.setFontAlign(-1,-1,0);
      g.setFont("Vector",15);
-     background = color_schemes[color_scheme_index].background;
-     g.setColor(background[0],background[1],background[2]);
-      g.drawString(last_datestr,DATE_COORD_X,DATE_COORD_Y);
-     g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
-     g.drawString(date_format,DATE_COORD_X,DATE_COORD_Y);
-     last_date = date;
-     last_datestr = date_format;
+     if(last_coords != null && last_datestr != null) {
+       background = color_schemes[color_scheme_index].background;
+       g.setColor(background[0], background[1], background[2]);
+       g.drawString(last_datestr, last_coords[0], last_coords[1]);
+     }
+     var coords = date_coords[date_coord_index].coords;
+     if(coords != null) {
+       var date_format = local.dow(date,1) + " " + date.getDate();
+       var numeral_color = color_schemes[color_scheme_index].numeral;
+       g.setColor(numeral_color[0], numeral_color[1], numeral_color[2]);
+       g.drawString(date_format, coords[0], coords[1]);
+       last_date = date;
+       last_datestr = date_format;
+       last_coords = coords;
+     }
    }
+}
+
+function next_datecoords() {
+  date_coord_index = date_coord_index + 1;
+  if (date_coord_index >= date_coords.length) {
+    date_coord_index = 0;
+  }
+  //console.log("date coord index->" + date_coord_index);
+  force_redraw = true;
+}
+
+function set_datecoords(date_name){
+  console.log("setting date:" + date_name);
+  for (var i=0; i < date_coords.length; i++) {
+    if(date_coords[i].getName() == date_name){
+      date_coord_index = i;
+      force_redraw = true;
+      console.log("date match");
+      break;
+    }
+  }
 }
 
 // drawing the second the millisecond as we need the fine gradation
@@ -495,48 +532,48 @@ class HourScriber {
     this.numeral_font = numeral_font;
   }
   drawHour(hours){
-    changed = false;
+    var changed = false;
     if(this.curr_hours != hours || this.curr_numeral_font !=this.numeral_font){
-      background = color_schemes[color_scheme_index].background;
+      var background = color_schemes[color_scheme_index].background;
       g.setColor(background[0],background[1],background[2]);
       this.curr_numeral_font.draw(this.curr_hour_str,
                              this.curr_hour_x,
                              this.curr_hour_y);
       //console.log("erasing old hour");
-      hours_frac = hours / 12;
-      angle = 2*Math.PI*hours_frac;
-      dimensions = this.numeral_font.getDimensions(hours);
+      var hours_frac = hours / 12;
+      var angle = 2*Math.PI*hours_frac;
+      var dimensions = this.numeral_font.getDimensions(hours);
       // we set the radial coord to be in the middle
       // of the drawn text.
-      width = dimensions[0];
-      height = dimensions[1];
-      delta_center_x = this.radius*Math.sin(angle) - width/2;
-      delta_center_y = this.radius*Math.cos(angle) + height/2;
+      var width = dimensions[0];
+      var height = dimensions[1];
+      var delta_center_x = this.radius*Math.sin(angle) - width/2;
+      var delta_center_y = this.radius*Math.cos(angle) + height/2;
       this.curr_hour_x  = screen_center_x + delta_center_x;
       this.curr_hour_y = screen_center_y - delta_center_y;
       this.curr_hour_str = this.numeral_font.hour_txt(hours);
       // now work out the angle of the beginning and the end of the 
       // text box so we know when to redraw
       // bottom left angle
-      x1 = delta_center_x;
-      y1 = delta_center_y;
-      r1 = Math.sqrt(x1*x1 + y1*y1);
-      angle1 = reifyasin(x1,y1,Math.asin(x1/r1));
+      var x1 = delta_center_x;
+      var y1 = delta_center_y;
+      var r1 = Math.sqrt(x1*x1 + y1*y1);
+      var angle1 = reifyasin(x1,y1,Math.asin(x1/r1));
       // bottom right angle
-      x2 = delta_center_x;
-      y2 = delta_center_y - height;
-      r2 = Math.sqrt(x2*x2 + y2*y2);
-      angle2 = reifyasin(x2,y2,Math.asin(x2/r2));
+      var x2 = delta_center_x;
+      var y2 = delta_center_y - height;
+      var r2 = Math.sqrt(x2*x2 + y2*y2);
+      var angle2 = reifyasin(x2,y2,Math.asin(x2/r2));
       // top left angle
-      x3 = delta_center_x + width;
-      y3 = delta_center_y;
-      r3 = Math.sqrt(x3*x3 + y3*y3);
-      angle3 = reifyasin(x3,y3, Math.asin(x3/r3));
+      var x3 = delta_center_x + width;
+      var y3 = delta_center_y;
+      var r3 = Math.sqrt(x3*x3 + y3*y3);
+      var angle3 = reifyasin(x3,y3, Math.asin(x3/r3));
       // top right angle
-      x4 = delta_center_x + width;
-      y4 = delta_center_y - height;
-      r4 = Math.sqrt(x4*x4 + y4*y4);
-      angle4 = reifyasin(x4,y4,Math.asin(x4/r4));
+      var x4 = delta_center_x + width;
+      var y4 = delta_center_y - height;
+      var r4 = Math.sqrt(x4*x4 + y4*y4);
+      var angle4 = reifyasin(x4,y4,Math.asin(x4/r4));
       if(Math.min(angle1,angle2,angle3,angle4) < Math.PI && Math.max(angle1,angle2,angle3,angle4) > 1.5*Math.PI){
         angle1 = rebaseNegative(angle1);
         angle2 = rebaseNegative(angle2);
@@ -556,7 +593,7 @@ class HourScriber {
     }
     if(changed ||
        this.draw_test(this.angle_from, this.angle_to, this.last_draw_time) ){
-      numeral_color = color_schemes[color_scheme_index].numeral;
+      var numeral_color = color_schemes[color_scheme_index].numeral;
       g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
       this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
       this.last_draw_time = new Date();
@@ -571,7 +608,7 @@ let numeral_fonts_index = 0;
 * predicate for deciding when the digit has to be redrawn
 */
 let hour_numeral_redraw = function(angle_from, angle_to, last_draw_time){ 
-  seconds_hand_angle = seconds_hand.angle; 
+  var seconds_hand_angle = seconds_hand.angle;
   // we have to cope with the 12 problem where the 
   // left side of the box has a value almost 2PI and the right
   // side has a small positive value. The values are rebased so
@@ -609,8 +646,8 @@ function next_font(){
 }
 
 function draw_hour_digit(date){
-  hours = date.getHours() % 12;
-  mins = date.getMinutes();
+  var hours = date.getHours() % 12;
+  var mins = date.getMinutes();
   if(mins > 30){
     hours = (hours +1) % 12;
   }
@@ -622,7 +659,7 @@ function draw_hour_digit(date){
 
 function draw_background(){
   if(force_redraw){
-    background = color_schemes[color_scheme_index].background;
+    var background = color_schemes[color_scheme_index].background;
     g.setColor(background[0],background[1],background[2]);
     g.fillPoly([0,25,
                 0,240,
@@ -649,7 +686,7 @@ function set_colorscheme(colorscheme_name){
     if(color_schemes[i].name == colorscheme_name){
       color_scheme_index = i;
       force_redraw = true;
-      console.log("match");
+      console.log("color scheme match");
       break;
     }
   }
@@ -665,7 +702,7 @@ function set_font(font_name){
     if(numeral_fonts[i].getName() == font_name){
       numeral_fonts_index = i;
       force_redraw = true;
-      console.log("match");
+      console.log("font match");
       hour_scriber.setNumeralFont(numeral_fonts[numeral_fonts_index]);
       break;
     }
@@ -686,6 +723,9 @@ function load_settings(){
       if(settings.font != null){
         set_font(settings.font);
       }
+      if(settings.date!= null){
+        set_datecoords(settings.date);
+      }
     } else {
       console.log("no settings to load");
     }
@@ -701,6 +741,7 @@ function save_settings(){
   settings = { 
     font : numeral_fonts[numeral_fonts_index].getName(),
     color_scheme : color_schemes[color_scheme_index].name,
+    date: date_coords[date_coord_index].name
   };
   console.log("saving:" + JSON.stringify(settings));
   require("Storage").writeJSON("sweepclock.settings.json",settings);
@@ -777,9 +818,17 @@ function button3pressed(){
   save_settings();
 }
 
+function button4pressed(){
+  //console.log("button 4 pressed");
+  next_datecoords();
+  save_settings();
+}
+
 // Handle button 1 being pressed
 setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
 
 // Handle button 3 being pressed
 setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 
+// Handle button 3 being pressed
+setWatch(button4pressed, BTN4,{repeat:true,edge:"falling"});
