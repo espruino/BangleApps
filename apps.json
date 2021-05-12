@@ -3188,3 +3188,5 @@
     {"name":"doztime.app.js","url":"app.js"},
     {"name":"doztime.img","url":"app-icon.js","evaluate":true}
   ]
+}
+]
