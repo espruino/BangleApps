@@ -9,7 +9,6 @@
   // initialize with default settings...
   let s = {
     autoStart: true,
-    touch: true,
   };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -34,11 +33,6 @@
     value: !!s.autoStart,
     format: yesNo,
     onchange: save("autoStart"),
-  };
-  menu[translate("Touch controls")] = {
-    value: !!s.touch,
-    format: yesNo,
-    onchange: save("touch"),
   };
 
   E.showMenu(menu);

@@ -22,8 +22,6 @@ You can change these under `Settings`->`App/Widget Settings`->`Music Controls`.
 Automatically load the app when you play music and close when the music stops.
 (If the app opened automatically, it closes after music has been paused for 5 minutes.)
 
-**Touch controls**:
-Enable touch controls?
 
 ## Controls
 
