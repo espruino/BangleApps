@@ -42,7 +42,7 @@ function fadeOut() {
   if (!Bangle.isLCDOn() || !fade) {
     return;
   }
-  drawMusic();
+  drawMusic(false); // don't clear: draw over existing text to prevent flicker
   setTimeout(fadeOut, 500);
 }
 function brightness() {
@@ -131,7 +131,7 @@ function f2hex(f) {
   return ("00"+(Math.round(f*255)).toString(16)).substr(-2);
 }
 /**
- * @param name
+ * @param {string} name - musicinfo property "num"/"artist"/"album"/"track"
  * @return {string} Semi-random color to use for given info
  */
 function infoColor(name) {
@@ -174,7 +174,6 @@ function trackColor() {
 ////////////////////
 /**
  * Draw date and time
- * @return {*}
  */
 function drawDateTime() {
   const now = new Date;
@@ -209,8 +208,9 @@ function drawDateTime() {
 
 /**
  * Draw track number and total count
+ * @param {boolean} clr - Clear area before redrawing?
  */
-function drawNum() {
+function drawNum(clr) {
   let num = "";
   if ("n" in info && info.n>0) {
     num = "#"+info.n;
@@ -220,9 +220,11 @@ function drawNum() {
   }
   g.reset();
   g.setFont("Vector", 30)
-    .setFontAlign(1, -1) // top right
-    .clearRect(225, 30, 120, 60)
-    .drawString(num, 225, 30);
+    .setFontAlign(1, -1); // top right
+  if (clr) {
+    g.clearRect(225, 30, 120, 60);
+  }
+  g.drawString(num, 225, 30);
 }
 /**
  * Clear rectangle used by track title
@@ -232,8 +234,9 @@ function clearTrack() {
 }
 /**
  * Draw track title
+ * @param {boolean} clr - Clear area before redrawing?
  */
-function drawTrack() {
+function drawTrack(clr) {
   let size = fitText(info.track);
   if (size<25) {
     // the title is too long: start the scroller
@@ -250,7 +253,9 @@ function drawTrack() {
   g.setFont("Vector", size)
     .setFontAlign(0, 1) // center bottom
     .setColor(trackColor());
-  clearTrack();
+  if (clr) {
+    clearTrack();
+  }
   g.drawString(info.track, 119, 109);
 }
 /**
@@ -270,8 +275,9 @@ function drawScroller() {
 
 /**
  * Draw track artist and album
+ * @param {boolean} clr - Clear area before redrawing?
  */
-function drawArtistAlbum() {
+function drawArtistAlbum(clr) {
   // we just use small enough fonts to make these always fit
   // calculate stuff before clear+redraw
   const aCol = infoColor("artist");
@@ -285,7 +291,9 @@ function drawArtistAlbum() {
     bSiz = 20;
   }
   g.reset();
-  g.clearRect(0, 120, 240, 189);
+  if (clr) {
+    g.clearRect(0, 120, 240, 189);
+  }
   let top = 124;
   if (info.artist) {
     g.setFont("Vector", aSiz)
@@ -379,10 +387,14 @@ function drawControls() {
   controlState = stat;
 }
 
-function drawMusic() {
-  drawNum();
-  drawTrack();
-  drawArtistAlbum();
+/**
+ * @param {boolean} [clr=true] Clear area before redrawing?
+ */
+function drawMusic(clr) {
+  clr = !(clr===false); // undefined means yes
+  drawNum(clr);
+  drawTrack(clr);
+  drawArtistAlbum(clr);
 }
 
 ////////////////////////
@@ -390,7 +402,7 @@ function drawMusic() {
 ///////////////////////
 /**
  * Update music info
- * @param e
+ * @param {Object} e - Gadgetbridge musicinfo event
  */
 function musicInfo(e) {
   info = e;
@@ -410,7 +422,11 @@ function musicInfo(e) {
   }
 }
 
-let tPxt, tIxt;
+let tPxt, tIxt; // Timeouts to eXiT when Paused/Inactive for too long
+/**
+ * Update music state
+ * @param {Object} e - Gadgetbridge musicstate event
+ */
 function musicState(e) {
   stat = e.state;
   // if paused for five minutes, load the clock
@@ -446,6 +462,7 @@ function musicState(e) {
     }
   }
   if (Bangle.isLCDOn()) {
+    drawMusic(false); // redraw in case we were fading out but resumed play
     drawControls();
   }
 }
@@ -500,7 +517,7 @@ function handleButton2Press() {
 let tCommand = {};
 /**
  * Send command and highlight corresponding control
- * @param command "play/pause/next/previous/volumeup/volumedown"
+ * @param {string} command - "play"/"pause"/"next"/"previous"/"volumeup"/"volumedown"
  */
 function sendCommand(command) {
   Bluetooth.println(JSON.stringify({t: "music", n: command}));
