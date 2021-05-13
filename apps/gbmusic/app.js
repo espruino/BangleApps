@@ -485,11 +485,19 @@ function startButtonWatches() {
       tPress = setTimeout(() => {Bangle.showLauncher();}, 3000);
     }
   }, BTN2, {repeat: true, edge: "rising"});
-  setWatch(() => {
-    nPress++;
-    clearTimeout(tPress);
-    tPress = setTimeout(handleButton2Press, 500);
-  }, BTN2, {repeat: true, edge: "falling"});
+  const s = require("Storage").readJSON("gbmusic.json", 1) || {};
+  if (s.simpleButton) {
+    setWatch(() => {
+      clearTimeout(tPress);
+      togglePlay();
+    }, BTN2, {repeat: true, edge: "falling"});
+  } else {
+    setWatch(() => {
+      nPress++;
+      clearTimeout(tPress);
+      tPress = setTimeout(handleButton2Press, 500);
+    }, BTN2, {repeat: true, edge: "falling"});
+  }
 }
 function handleButton2Press() {
   tPress = null;

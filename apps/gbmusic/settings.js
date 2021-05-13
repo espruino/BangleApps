@@ -9,6 +9,7 @@
   // initialize with default settings...
   let s = {
     autoStart: true,
+    simpleButton: false,
   };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -33,6 +34,11 @@
     value: !!s.autoStart,
     format: yesNo,
     onchange: save("autoStart"),
+  };
+  menu[translate("Simple button")] = {
+    value: !!s.simpleButton,
+    format: yesNo,
+    onchange: save("simpleButton"),
   };
 
   E.showMenu(menu);

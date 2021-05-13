@@ -22,6 +22,9 @@ You can change these under `Settings`->`App/Widget Settings`->`Music Controls`.
 Automatically load the app when you play music and close when the music stops.
 (If the app opened automatically, it closes after music has been paused for 5 minutes.)
 
+**Simple button**:
+Disable double/triple pressing Button 2: always simply toggle play/pause.
+(For music players which handle multiple button presses themselves.)
 
 ## Controls
 
