@@ -201,6 +201,9 @@ function modeTime()
 	drawTime();
 }
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
 // Time-logging function
 /*function logTime(label)
 {
