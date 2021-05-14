@@ -20,7 +20,7 @@
       //console.log(o);
     }
 
-    function init(gps, sw) {
+    function init(gps, sw, hrm) {
       log_debug("gps init");
       //log_debug(gps);
       gpsObject = gps;
