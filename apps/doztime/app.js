@@ -202,7 +202,6 @@ function modeTime()
 }
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
 
 // Time-logging function
 /*function logTime(label)
@@ -222,3 +221,5 @@ function modeWeather() {}
 Bangle.on('twist', function() {
 	modeTime();
 });
+
+Bangle.drawWidgets();
