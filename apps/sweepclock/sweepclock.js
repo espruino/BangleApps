@@ -15,45 +15,39 @@ const color_schemes = [
       name: "black",
       background : [0.0,0.0,0.0],
       second_hand: [1.0,0.0,0.0],
-      minute_hand: [1.0,1.0,1.0],
-      hour_hand: [1.0,1.0,1.0],
-      numeral:[1.0,1.0,1.0]
     },
     {
       name: "red",
       background : [1.0,0.0,0.0],
       second_hand: [1.0,1.0,0.0],
-      minute_hand: [1.0,1.0,1.0],
-      hour_hand: [1.0,1.0,1.0],
-      numeral:[1.0,1.0,1.0]
     },
     {
       name: "grey",
       background : [0.5,0.5,0.5],
       second_hand: [0.0,0.0,0.0],
-      minute_hand: [1.0,1.0,1.0],
-      hour_hand: [1.0,1.0,1.0],
-      numeral:[1.0,1.0,1.0]
     },
     {
       name: "purple",
       background : [1.0,0.0,1.0],
       second_hand: [1.0,1.0,0.0],
-      minute_hand: [1.0,1.0,1.0],
-      hour_hand: [1.0,1.0,1.0],
-      numeral:[1.0,1.0,1.0]
     },
     {
       name: "blue",
       background : [0.4,0.7,1.0],
       second_hand: [0.5,0.5,0.5],
-      minute_hand: [1.0,1.0,1.0],
-      hour_hand: [1.0,1.0,1.0],
-      numeral:[1.0,1.0,1.0]
     }
   ];
 
 let color_scheme_index = 0;
+
+var WHITE = [1.0,1.0,1.0];
+function default_white(color){
+  if(color == null){
+    return WHITE
+  } else {
+    return color;
+  }
+}
 
 class Hand {
   /**
@@ -106,7 +100,7 @@ class ThinHand extends Hand {
       g.setColor(background[0],background[1],background[2]);
       g.drawLine(this.centerX, this.centerY, this.last_x, this.last_y);
       // Now draw the new hand line
-      var hand_color = color_schemes[color_scheme_index][this.color_theme];
+      var hand_color = default_white(color_schemes[color_scheme_index][this.color_theme]);
       g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       var x2 = this.centerX + this.length*Math.sin(angle);
       var y2 = this.centerY - this.length*Math.cos(angle);
@@ -196,7 +190,7 @@ class ThickHand extends Hand {
       // top left
       var x4 = this.centerX + this.vertex_radius_top*Math.sin(angle - this.delta_top);
       var y4 = this.centerY - this.vertex_radius_top*Math.cos(angle - this.delta_top);
-      var hand_color = color_schemes[color_scheme_index][this.color_theme];
+      var hand_color = default_white(color_schemes[color_scheme_index][this.color_theme]);
       g.setColor(hand_color[0],hand_color[1],hand_color[2]);
       g.fillPoly([x1,y1,
                   x2,y2,
@@ -297,7 +291,7 @@ function draw_date(date){
      var coords = date_coords[date_coord_index].coords;
      if(coords != null) {
        var date_format = local.dow(date,1) + " " + date.getDate();
-       var numeral_color = color_schemes[color_scheme_index].numeral;
+       var numeral_color = default_white(color_schemes[color_scheme_index].numeral);
        g.setColor(numeral_color[0], numeral_color[1], numeral_color[2]);
        g.drawString(date_format, coords[0], coords[1]);
        last_date = date;
@@ -319,7 +313,7 @@ function next_datecoords() {
 function set_datecoords(date_name){
   console.log("setting date:" + date_name);
   for (var i=0; i < date_coords.length; i++) {
-    if(date_coords[i].getName() == date_name){
+    if(date_coords[i].name == date_name){
       date_coord_index = i;
       force_redraw = true;
       console.log("date match");
@@ -596,7 +590,7 @@ class HourScriber {
     }
     if(changed ||
        this.draw_test(this.angle_from, this.angle_to, this.last_draw_time) ){
-      var numeral_color = color_schemes[color_scheme_index].numeral;
+      var numeral_color = default_white(color_schemes[color_scheme_index].numeral);
       g.setColor(numeral_color[0],numeral_color[1],numeral_color[2]);
       this.numeral_font.draw(this.curr_hour_str,this.curr_hour_x,this.curr_hour_y);
       this.last_draw_time = new Date();
