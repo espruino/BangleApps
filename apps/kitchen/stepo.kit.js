@@ -1,44 +1,28 @@
 (() => {
   function getFace(){
-    var pal4color;
-    var pal4red;
-    var buf;
     var intervalRefSec;
+    var trip;
+    var prevSteps;
 
-    function init(g,sw) {
-      showMem("stepo init 1");
-      pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
-      pal4red = new Uint16Array([0x0000,0xFFFF,0xF800,0xAFE5],0,2);   // b,w,red,greenyellow
-      buf = Graphics.createArrayBuffer(120,120,2,{msb:true});
-      showMem("stepo init 2");
+    function init(g,sw,hrm,tr) {
+      trip = tr;
     }
 
     function freeResources() {
-      showMem("stepo free 1");
-      pal4color = undefined;
-      pal4red = undefined;
-      buf = undefined;
-      showMem("stepo free 2");
-    }
-    
-    function showMem(msg) {
-      var val = process.memory();
-      var str = msg + " " + Math.round(val.usage*100/val.total) + "%";
-      //console.log(str);
+      trip = undefined;
+      prevSteps = -1;
     }
 
-    function flip(x,y) {
-      g.drawImage({width:120,height:120,bpp:2,buffer:buf.buffer, palette:pal4color}, x, y);
-      buf.clear();
+    function onButtonShort(btn) {
+      trip.setTripState(!trip.getTripState());
+      drawStepText();
     }
 
-    function flip_red(x,y) {
-      g.drawImage({width:120,height:120,bpp:2,buffer:buf.buffer, palette:pal4red}, x, y);
-      buf.clear();
+    function onButtonLong(btn) {
+      trip.resetTrip(getSteps());
+      trip.setTripState(true);
+      drawStepText();
     }
-
-    function onButtonShort(btn) {}
-    function onButtonLong(btn) {}
     
     function radians(a) {
       return a*Math.PI/180;
@@ -55,10 +39,16 @@
 
     function drawSteps() {
       var i = 0;
-      var cx = 60;
-      var cy = 60;
+      var cx = 60 + 60;
+      var cy = 60 + 115;
       var r = 56;
       var steps = getSteps();
+
+      if (prevSteps == steps)
+        return;
+
+      prevSteps = steps;
+      
       var percent = steps / 10000;
 
       if (percent > 1) percent = 1;
@@ -66,38 +56,60 @@
       var startrot = 0 - 180;
       var midrot = -180 - (360 * percent);
       var endrot = -360  - 180;
-      
-      buf.setColor(3);   // green-yellow
+
+      g.setColor(0xAFE5);  // greenyellow
 
       // draw guauge
       for (i = startrot; i > midrot; i -= 4) {
         x = cx + r * Math.sin(radians(i));
         y = cy + r * Math.cos(radians(i));
-        buf.fillCircle(x,y,4);
+        g.fillCircle(x,y,4);
       }
-
-      buf.setColor(2); // grey
-
-      // draw remainder of guage in grey
-      for (i = midrot; i > endrot; i -= 4) {
-        x = cx + r * Math.sin(radians(i));
-        y = cy + r * Math.cos(radians(i));
-        buf.fillCircle(x,y,4);
-      }
-
-      // draw steps
-      buf.setColor(1); // white
-      buf.setFont("Vector", 24);
-      buf.setFontAlign(0,0);
-      buf.drawString(steps, cx, cy);
 
       // change the remaining color to RED if battery is below 25%
       if (E.getBattery() > 25) 
-        flip(60,115);
+        g.setColor(0x7BEF); // grey
       else
-        flip_red(60,115);
+        g.setColor(0xF800); // red
+      
+      // draw remainder of guage in grey or red
+      for (i = midrot; i > endrot; i -= 4) {
+        x = cx + r * Math.sin(radians(i));
+        y = cy + r * Math.cos(radians(i));
+        g.fillCircle(x,y,4);
+      }
     }
 
+    function drawStepText() {
+      var cx = 60 + 60;
+      var cy = 60 + 115;
+      var r = 56;
+      var steps = getSteps();
+
+      /*
+       * if our trip count is greater than todays steps then we have
+       * rolled over to the next day so we should reset the trip counter
+       */
+      if (trip.getTrip(steps) < 0)
+        trip.resetTrip(steps);
+      
+      // show trip count or total steps today
+      g.setFontAlign(0,0);
+      g.setFont("Vector", 24);
+
+      // clear the space for the text
+      g.clearRect(cx - (r - 12), cy - 16, cx + (r - 12), cy + 16); 
+      
+      if (trip.getTripState() == true) {
+        g.setColor(0x7BEF); // grey
+        //g.setColor(1,0,0); // red
+        g.drawString(trip.getTrip(steps), cx, cy);
+      } else {
+        g.setColor(1,1,1); // white
+        g.drawString(steps, cx, cy);
+      }
+    }
+    
     function draw() {
       var d = new Date();
       var da = d.toString().split(" ");
@@ -110,12 +122,13 @@
       g.drawString(time, 120, 30, true);
 
       drawSteps();
+      drawStepText();
     }
 
     function getSteps() {
       if (stepsWidget() !== undefined)
         return stepsWidget().getSteps();
-      return "-";
+      return "E-STEPS";
     }
 
     function stepsWidget() {
@@ -132,5 +145,4 @@
   }
 
   return getFace;
-
 })();

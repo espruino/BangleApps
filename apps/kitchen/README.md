@@ -1,10 +1,10 @@
-# Kitchen Combo - a multiclock format of the waypointer, walksersclock, stepo and arrow apps.
+# Kitchen Combo - a multiclock format of the waypointer, walkersclock, stepo, stopwatch, heartrate and arrow apps.
 
 ![](screenshot_kitchen.jpg)
 
 *...everything but the kitchen sink..*
 
-NOTE: This app require Bangle firmware 2.08.187 or later.  
+NOTE: This app requires Bangle firmware 2.08.187 or later.  
 
 The app is aimed at navigation whilst walking. Please note that it
 would be foolish in the extreme to rely on this as your only
@@ -44,12 +44,15 @@ The following buttons depend on which face is currently in use
 ## Stepo
 ![](screenshot_stepo.jpg)
 
+- Requires one of the pedominter widgets to be installed 
 - Displays the time in large font
 - Display current step count in a doughnut gauge
 - Show step count in the middle of the doughnut gauge
 - The gauge show percentage of steps out of a goal of 10000 steps
 - When the battery is less than 25% the doughnut turns red
+- Use BTN1 to switch to the Trip Counter, use long press to reset Trip Counter
 - Use BTN3 to switch to the next app
+
 
 ## GPS
 ![](screenshot_gps.jpg)
@@ -65,9 +68,15 @@ The following buttons depend on which face is currently in use
 - Use BTN3 to switch to the next app.
 
 ## Swatch
+![](screenshot_swatch.jpg)
 - A simple stopwatch
 - BTN1 - start, stop
 - BTN2 - lap if the timer is running, reset if the timer is stopped
+
+## Heart
+![](screenshot_heart.jpg)
+- A simple heart rate monitor, at present the app is just showing the raw value from HRM.bpm
+- BTN1, long press, turn heart rate monitor on / off
 
 ## Waypointer
 - Use BTN1 to select previous waypoint (when GPS is on)
@@ -217,12 +226,31 @@ I have settled on directly writing to the screen using the Graphics
 object (g.) for the compass App.  This creates a bit of flicker when
 the arrow moves but is more reliable than using the ArrayBuffer.
 
+v0.09: Since adding the heart rate monitor I have noticed that I can
+sometimes can a memory error when switch through the Apps back to the
+Stepo App.  I think this can be cured by statically allocating the
+ArrayBuffer for stepo rather than using new everytime you switch back
+into the stepo watch face.  The problem is that the bangle memory
+management / defragmentation is quite slow to run.
 
-### Issues
+v0.10: Revisited having a display buffer for the stepo part of the App.
+Now use direct screen writing as it means less memory allocation and
+reduces chance of getting a memory error on switching watch faces.
+
+### Error Codes
+
+The following error codes will be displayed if one of the dependancies is not met.
+
+* E-STEPS - no pedomintor widget has been installed, please install the widpedom or the activepedom widgets
+* E-CALIB - no compass calibration data was found, see 'Compass Calibration'
+* E-FW    - require firmware 2v08.187 or later to detect gps and compass power status
+
+### Issues / Future enhancements
 
 * GPS time display shows GMT and not BST, needs localising
 * Occassional buzzing after 2-3 days of use, seems to disappear after
   a reset to the launcher menu. Needs investigation
-* Need to gracefully handle incorrect firmware
-* Need to gracefully handle missing compass calibration data
-* Need to gracefully handle missing steps widget
+* Automatically switch the GPS power setting from Super-E to PSMOO 10
+  seconds after the LCD goes off.  At present I just rely on using
+  the GPSSetup app and set the GPS power mode that I want.
+* Add a small graph to the heart rate monitor app

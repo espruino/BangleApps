@@ -16,7 +16,7 @@
       //console.log(o);
     }
 
-    function init(gps,sw) {
+    function init(gps,sw, hrm) {
       showMem("compass init() START");
       gpsObject = gps;
       intervalRefSec = undefined;
@@ -49,13 +49,13 @@
       loc = undefined;
       CALIBDATA = undefined;
       wp = undefined;
-      if (Bangle.isCompassOn()) Bangle.setCompassPower(0);
+      if (Bangle.isCompassOn !== undefined && Bangle.isCompassOn()) Bangle.setCompassPower(0);
       showMem("compass freeResources() END");
     }
     
     function startTimer() {
       log_debug("startTimer()");
-      if (!Bangle.isCompassOn()) Bangle.setCompassPower(1);
+      if (Bangle.isCompassOn !== undefined && !Bangle.isCompassOn()) Bangle.setCompassPower(1);
       resetPrevious();
       draw();
       intervalRefSec = setInterval(draw, 500);
@@ -63,8 +63,8 @@
 
     function stopTimer() {
       log_debug("stopTimer()");
-      if(intervalRefSec) {intervalRefSec=clearInterval(intervalRefSec);}
-      if (Bangle.isCompassOn()) Bangle.setCompassPower(0);
+      if (intervalRefSec) {intervalRefSec=clearInterval(intervalRefSec);}
+      if (Bangle.isCompassOn !== undefined && Bangle.isCompassOn()) Bangle.setCompassPower(0);
     }
 
     function showMem(msg) {
@@ -175,7 +175,22 @@
     }
 
     function draw() {
-      //log_debug("draw()");
+      log_debug("draw()");
+
+      g.setFontAlign(0,0);
+      g.setColor(1,1,1);
+      g.setFont("Vector", 24);
+
+      if (Bangle.isCompassOn === undefined) {
+        g.drawString("E-FW", 120, 120);
+        return
+      }
+      
+      if (CALIBDATA === undefined || CALIBDATA === null) {
+        g.drawString("E-CALIB", 120, 120);
+        return
+      }
+      
       var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
       heading = newHeading(d,heading);
       // sets bearing to waypoint bearing if GPS on else sets to 0 (north)

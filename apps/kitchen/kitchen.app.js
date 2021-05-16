@@ -26,15 +26,17 @@ function nextFace(){
   
   g.clear();
   g.reset();
-  face.init(gpsObj, swObj);
+  face.init(gpsObj, swObj, hrmObj, tripObject);
   startdraw();
 }
 
 // when you feel the buzzer you know you have done a long press
 function longPressCheck() {
   Bangle.buzz();
+  debug_log("long PressCheck() buzz");
   if (pressTimer) {
     clearInterval(pressTimer);
+    debug_log("clear pressTimer 2");
     pressTimer = undefined;
   }
 }
@@ -45,6 +47,11 @@ function buttonPressed(btn) {
     nextFace();
   } else {
     firstPress = getTime();
+    if (pressTimer) {
+      debug_log("clear pressTimer 1");
+      clearInterval(pressTimer);
+    }
+    debug_log("set pressTimer 1");
     pressTimer = setInterval(longPressCheck, 1500);
   }
 }
@@ -53,6 +60,7 @@ function buttonPressed(btn) {
 function buttonReleased(btn) {
   var dur = getTime() - firstPress;
   if (pressTimer) {
+    debug_log("clear pressTimer 3");
     clearInterval(pressTimer);
     pressTimer = undefined;
   }
@@ -180,7 +188,7 @@ GPS.prototype.determineGPSState = function() {
     }
   } else {
     if (this.listenerCount > 0) {
-      Bangle.removeListener("GPS", this.processFix);
+      Bangle.removeListener("GPS", processFix);
       this.listenerCount--;
       this.log_debug("listener removed " + this.listenerCount);
     }
@@ -248,6 +256,7 @@ GPS.prototype.processFix = function(fix) {
     this.gpsState = this.GPS_RUNNING;
     if (!this.last_fix.fix && !(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
       Bangle.buzz(); // buzz on first position
+      debug_log("GPS fix buzz");
     }
     this.last_fix = fix;
   }
@@ -653,12 +662,128 @@ function stopwatchDraw() {
 
 /*****************************************************************************
 
+Heart Rate Monitor
+
+******************************************************************************/
+
+function HRM() {
+  this.bpm = 0;
+  this.confidence = 0;
+}
+  
+HRM.prototype.log_debug = function(o) {
+  //console.log(o);
+}
+
+HRM.prototype.toggleHRMPower = function() {
+  this.log_debug("HRM.toggleHRMPower()");
+  if (!Bangle.isHRMOn) return; // old firmware
+
+  if (!Bangle.isHRMOn()) {
+    this.log_debug("HRM.toggleHRMPower(powerOn)");
+    Bangle.removeListener('HRM', onHRM);
+    Bangle.setHRMPower(1);
+    Bangle.on('HRM', onHRM);
+  } else {
+    this.log_debug("HRM.toggleHRMPower(powerOff)");
+    Bangle.removeListener('HRM', onHRM);
+    Bangle.setHRMPower(0);
+  }
+
+  // poke the hrt widget indicator to change
+  if (WIDGETS.widhrt !== undefined) {
+    WIDGETS.widhrt.draw();
+  }
+}
+
+HRM.prototype.getBpm = function() {
+  return this.bpm;
+}
+
+HRM.prototype.getConfidence = function() {
+  return this.confidence;
+}
+
+HRM.prototype.onHRM = function(hrm) {
+  this.bpm = hrm.bpm;
+  this.confidence = hrm.confidence;
+  this.log_debug("onHRM:(bpm)" + this.bpm);
+  this.log_debug("onHRM:(conf) " + this.confidence);
+}
+
+let hrmObj = new HRM();
+
+function onHRM(hrm) {
+  hrmObj.onHRM(hrm);
+}
+
+
+/*****************************************************************************
+
+Trip Counter
+
+******************************************************************************/
+
+function TRIP() {
+  this.showTrip = false;
+  this.tripStart = 0;
+}
+
+TRIP.prototype.resetTrip = function(steps) {
+  this.tripStart = (0 + steps);
+  console.log("resetTrip starting=" + this.tripStart);
+}
+
+TRIP.prototype.getTrip = function(steps) {
+  let tripSteps = (0 + steps) - this.tripStart;
+  console.log("getTrip steps=" + steps);
+  console.log("getTrip tripStart=" + this.tripStart);
+  console.log("getTrip=" + tripSteps);
+  return tripSteps;
+}
+
+TRIP.prototype.getTripState = function() {
+  return this.showTrip;
+}
+
+TRIP.prototype.setTripState = function(t) {
+  this.showTrip = t;
+}
+
+let tripObject = new TRIP();
+
+/*****************************************************************************
+
+Debug Object
+
+******************************************************************************/
+
+/*
+function DEBUG() {
+  this.logfile = require("Storage").open("debug.log","a");
+}
+  
+DEBUG.prototype.log = function(msg) {
+  let timestamp = new Date().toString().split(" ")[4];
+  let line = timestamp + ", " + msg + "\n";
+  this.logfile.write(line);
+}
+
+debugObj = new DEBUG();
+*/
+
+function debug_log(m) {
+  //debugObj.log(m);
+}
+
+/*****************************************************************************
+
 Start App
 
 ******************************************************************************/
 
 g.clear();
 Bangle.loadWidgets();
-face.init(gpsObj,swObj);
+face.init(gpsObj,swObj, hrmObj, tripObject);
 startdraw();
 setButtons();

@@ -20,7 +20,7 @@
       //console.log(o);
     }
 
-    function init(gps, sw) {
+    function init(gps, sw, hrm) {
       log_debug("gps init");
       //log_debug(gps);
       gpsObject = gps;
@@ -78,6 +78,12 @@
       g.setFontVector(26);
       g.setColor(0xFFC0); 
       g.setFontAlign(0, -1);
+
+      if (Bangle.isGPSOn === undefined) {
+        g.setColor(1,1,1);
+        g.drawString("E-FW", 120, Y_ACTIVITY);
+        return;
+      }
 
       if (gpsObject.getState() === gpsObject.GPS_OFF) {
         g.drawString("GPS off", 120, Y_ACTIVITY);

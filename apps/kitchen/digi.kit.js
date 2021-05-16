@@ -11,11 +11,12 @@
     const INFO_NONE = 0;
     const INFO_BATT = 1;
     const INFO_MEM = 2;
+    const INFO_FW = 3;
     const Y_TIME = 30;
     const Y_ACTIVITY = 116;
     const Y_MODELINE = 200;
     
-    function init(gps,sw) {
+    function init(gps,sw,hrm) {
       showMem("digi init 1");
       days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"];
       prevInfo = "";
@@ -98,6 +99,9 @@
         infoMode = INFO_MEM
         break;
       case INFO_MEM:
+        infoMode = INFO_FW
+        break;
+      case INFO_FW:
       default:
         infoMode = INFO_NONE;
         break;
@@ -111,17 +115,21 @@
       let col = 0x07FF; // cyan 
   
       switch(infoMode) {
-      case INFO_NONE:
-        col = 0x0000;
-        str = "";
-        break;
       case INFO_MEM:
         val = process.memory();
         str = "Memory: " + Math.round(val.usage*100/val.total) + "%";
         break;
       case INFO_BATT:
-      default:
         str = "Battery: " + E.getBattery() + "%";
+        break;
+      case INFO_FW:
+        str = "Fw: " + process.env.VERSION;
+        break;
+      case INFO_NONE:
+      default:
+        col = 0x0000;
+        str = "";
+        break;
       }
       
       // check if we need to draw, avoid flicker
