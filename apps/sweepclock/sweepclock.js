@@ -276,6 +276,7 @@ var date_coords = [
   { name: "topleft", coords:[5,30]},
   { name: "offscreen", coords: [240,30]}
 ];
+
 var date_coord_index = 0;
 
 function draw_date(date){
@@ -388,24 +389,28 @@ class NoFont extends NumeralFont{
 class CopasetFont extends NumeralFont{
   constructor(){
     super();
-    // dimesion map provides the dimesions of the character for 
-    // each number for plotting and collision detection
-    this.dimension_map = {
-      1 : [20,58],
-      2 : [30,58],
-      3 : [30,58],
-      4 : [30,58],
-      5 : [30,58],
-      6 : [40,58],
-      7 : [30,58],
-      8 : [40,58],
-      9 : [40,58],
-      10: [50,58],
-      11: [40,58],
-      12: [40,58]
-    };
   }
-  getDimensions(hour){return this.dimension_map[hour];}
+  getDimensions(hour){
+    switch(hour){
+      case 1: return [20,58];
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 7:
+        return [30,58];
+      case 6:
+      case 8:
+      case 9:
+      case 11:
+      case 12:
+        return [40,58];
+      case 10:
+        return [50,58];
+      default:
+        return [30,58];
+    }
+  }
   hour_txt(hour){ return hour.toString(); }
   draw(hour_txt,x,y){
     /* going to leave this in here for future testing.
@@ -430,40 +435,50 @@ class CopasetFont extends NumeralFont{
 class RomanNumeralFont extends NumeralFont{
   constructor(){
     super();
-    // text map provides the mapping between hour and roman numeral
-    this.txt_map = {
-      1 : 'I',
-      2 : 'II',
-      3 : 'III',
-      4 : 'IV',
-      5 : 'V',
-      6 : 'VI',
-      7 : 'VII',
-      8 : 'VIII',
-      9 : 'IX',
-      10: 'X',
-      11: 'XI',
-      12: 'XII'
-    };
-    // dimesion map provides the dimesions of the characters for 
-    // each hour for plotting and collision detection
-    this.dimension_map = {
-      1 : [10,40],
-      2 : [25,40],
-      3 : [40,40],
-      4 : [40,40],
-      5 : [30,40],
-      6 : [40,40],
-      7 : [60,40],
-      8 : [70,40],
-      9 : [40,40],
-      10: [20,40],
-      11: [40,40],
-      12: [60,40]
-    };
   }
-  getDimensions(hour){ return this.dimension_map[hour];}
-  hour_txt(hour){ return this.txt_map[hour]; }
+  getText(hour){
+    switch (hour){
+      case 1 : return 'I';
+      case 2 : return 'II';
+      case 3 : return 'III';
+      case 4 : return 'IV';
+      case 5 : return 'V';
+      case 6 : return 'VI';
+      case 7 : return 'VII';
+      case 8 : return 'VIII';
+      case 9 : return 'IX';
+      case 10: return 'X';
+      case 11: return 'XI';
+      case 12: return 'XII';
+      default: return '';
+    }
+  }
+  getDimensions(hour){
+    switch (hour){
+      case 1:
+        return [10,40];
+      case 2:
+        return [25,40];
+      case 3:
+      case 4:
+      case 6:
+      case 9:
+      case 11:
+      case 12:
+        return [40,40];
+      case 5:
+        return [30,40];
+      case 7:
+        return [60,40];
+      case 8:
+        return [70,40];
+      case 10:
+        return [20,40];
+      default:
+        return [40,40];
+    }
+  }
+  hour_txt(hour){ return this.getText(hour); }
   draw(hour_txt,x,y){
     g.setFontAlign(-1,-1,0);
     g.setFont("Vector",40);
