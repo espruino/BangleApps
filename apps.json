@@ -3187,6 +3187,7 @@
   "description":"A dozenal Holocene calendar and dozenal diurnal clock",
   "tags":"clock",
   "type":"clock",
+  "allow_emulator":true,
   "readme": "README.md",
   "storage": [
     {"name":"doztime.app.js","url":"app.js"},
