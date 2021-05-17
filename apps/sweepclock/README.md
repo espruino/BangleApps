@@ -36,7 +36,7 @@ For further details of design and working please visit [The Project Page](https:
 
 ## Requests
 
-Reach out to adrian@adriankirk.com if you have feature requests or notice bugs.
+Please reach out to adrian@adriankirk.com if you have feature requests or notice bugs.
 
 ## Creator
 
