@@ -227,7 +227,7 @@
      "readme": "README.md",
     "custom":"custom.html",
     "storage": [
-      {"name":"fontclock.app.js","url":"fonclock.js"},
+      {"name":"fontclock.app.js","url":"fontclock.js"},
       {"name":"fontclock.img","url":"fontclock-icon.js","evaluate":true},
       {"name":"fontclock.hand.js","url":"fontclock.hand.js"},
       {"name":"fontclock.thinhand.js","url":"fontclock.thinhand.js"},
