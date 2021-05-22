@@ -1,34 +1,19 @@
-# Sweep Clock
+# Font Clock
 
-The Sweep Clock provides a clock with a perfectly smooth sweep second hand with a single Numeral Display. 
+The Font Clock allows you to choose the font and clock style.
 
 ![](app.png)
 
 ## Usage
 
-### Button 1
+### Choose the Clock Face from the selection
 
-Use Button 1 (the top right button) to change the numeral type 
+Before uploading the upload page will ask which clock face you like to choose. Please choose using the provided pull down. As you look through the different selections a sample image will be shown to the right hand side.
 
-|   Default clock face   |  Roman Numeral Font    |  No Digits    |
-| ---- | ---- | ---- |
-|   ![](./numeral-01.jpg)   | ![](numeral-02.jpg)     |  ![](numeral-03.jpg)    |
-
-
+Once you have chosen your watch face press the upload button and the selection will be uploaded to the watch
 
 ### Button 3
-Button 3 (bottom right button) is used to change the colour
-
-|  Red   |  Grey    |  Purple    |
-| ---- | ---- | ---- |
-|   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   |
-
-### Button 4
-Button 4 (bottom left of screen) is used to change the date positioning (or to remove from the screen)
-
-|  Top Right   |  Bottom Right    |  Bottom Left    | Top Left |
-| ---- | ---- | ---- | ---- |
-|   ![](./date-01.jpg) | ![](date-02.jpg) |  ![](date-03.jpg)   | ![](date-04.jpg)   |
+Button 3 (bottom right button) is used to change the background colour. 
 
 ## Further Details
 
