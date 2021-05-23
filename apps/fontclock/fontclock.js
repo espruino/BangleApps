@@ -268,9 +268,9 @@ function next_colorscheme(){
   //console.log("color_scheme_index=" + color_scheme_index);
   force_redraw = true;
   if(prev_color_scheme_index == color_scheme_index){
-    return true;
-  } else {
     return false;
+  } else {
+    return true;
   }
 }
 
