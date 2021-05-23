@@ -71,7 +71,7 @@ class HourScriber {
             this.curr_numeral_font.draw(this.curr_hour_str,
                 this.curr_hour_x,
                 this.curr_hour_y);
-            //console.log("erasing old hour");
+            //console.log("erasing old hour display:" + this.curr_hour_str + " color:" + background);
             var hours_frac = this.hours / 12;
             var angle = TWO_PI*hours_frac;
             var dimensions = this.numeral_font.getDimensions(this.hours);

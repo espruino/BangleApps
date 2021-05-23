@@ -219,6 +219,7 @@ function next_font() {
   }
 
   if (curr_font != numeral_fonts_index) {
+    console.log("numeral font changed")
     for (var i = 0; i < hour_scribers.length; i++) {
       hour_scribers[i].setNumeralFont(
           numeral_fonts[numeral_fonts_index]);

@@ -81,7 +81,6 @@ class RomanNumeralFont extends NumeralFont{
             x+dim[0],y+dim[1],
             x,y+dim[1]
         ]);*/
-        g.setColor(1.0,1.0,1.0);
         g.setFontAlign(-1,-1,0);
         g.setFont("Vector",50);
         g.drawString(hour_txt,x,y);
