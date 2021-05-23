@@ -5,22 +5,6 @@ const DIM_27x22 = [27,22];
 class DigitNumeralFont extends NumeralFont{
     constructor(){
         super();
-        // dimension map provides the dimesions of the character for
-        // each number for plotting and collision detection
-        /*this.dimension_map = {
-            1 : [14,22],
-            2 : [14,22],
-            3 : [14,22],
-            4 : [14,22],
-            5 : [14,22],
-            6 : [14,22],
-            7 : [14,22],
-            8 : [14,22],
-            9 : [14,22],
-            10: [27,22],
-            11: [27,22],
-            12: [27,22]
-        };*/
     }
     getDimensions(hour){
         if (hour < 10){

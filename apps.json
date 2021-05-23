@@ -223,7 +223,7 @@
     "description": "Choose the font and design of clock face from a library of available designs",
     "tags": "clock",
     "type":"clock",
-    "allow_emulator":true,
+    "allow_emulator":false,
      "readme": "README.md",
     "custom":"custom.html",
     "storage": [

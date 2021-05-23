@@ -28,23 +28,26 @@ var color_schemes = [
 var fonts = DEFAULT_NUMERALS;
 var numerals = DEFAULT_NUMERALS;
 var radius = DEFAULT_RADIUS;
-try{
-  var fonts_info = require("Storage").readJSON(FONTS_FILE);
-  if(fonts_info != null){
-    console.log("loaded font:" + JSON.stringify(fonts_info));
-    fonts = fonts_info.fonts;
-    numerals = fonts_info.numerals;
-    radius = fonts_info.radius;
-    color_schemes = fonts_info.color_schemes;
-  } else {
-    fonts = DEFAULT_FONTS;
-    numerals = DEFAULT_NUMERALS;
-    radius = DEFAULT_RADIUS;
-    console.log("no fonts loaded defaulting to:" + fonts);
-  }
+
+var fonts_info = null;
+try {
+  fonts_info = require("Storage").readJSON(FONTS_FILE);
 } catch(e){
-  console.log("failed to load fonts:" + e);
+  console.log("failed to load fonts file:" + FONTS_FILE + e);
 }
+if(fonts_info != null){
+  console.log("loaded font:" + JSON.stringify(fonts_info));
+  fonts = fonts_info.fonts;
+  numerals = fonts_info.numerals;
+  radius = fonts_info.radius;
+  color_schemes = fonts_info.color_schemes;
+} else {
+  fonts = DEFAULT_FONTS;
+  numerals = DEFAULT_NUMERALS;
+  radius = DEFAULT_RADIUS;
+  console.log("no fonts loaded defaulting to:" + fonts);
+}
+
 if(fonts == null || fonts.length == 0){
   fonts = DEFAULT_FONTS;
   console.log("defaulting fonts to locale:" + fonts);
