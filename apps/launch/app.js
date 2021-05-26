@@ -43,25 +43,22 @@ function drawMenu() {
 }
 g.clear();
 drawMenu();
-setWatch(function() {
-  selected--;
-  if (selected<0) selected = apps.length-1;
-  drawMenu();
-}, BTN1, {repeat:true});
-setWatch(function() {
-  selected++;
-  if (selected>=apps.length) selected = 0;
-  drawMenu();
-}, BTN3, {repeat:true});
-setWatch(function() { // run
-  if (!apps[selected].src) return;
-  if (require("Storage").read(apps[selected].src)===undefined) {
-    E.showMessage("App Source\nNot found");
-    setTimeout(drawMenu, 2000);
+Bangle.setUI("updown",dir=>{
+  if (dir) {
+    selected += dir;
+    if (selected<0) selected = apps.length-1;
+    if (selected>=apps.length) selected = 0;
+    drawMenu();
   } else {
-    E.showMessage("Loading...");
-    load(apps[selected].src);
+    if (!apps[selected].src) return;
+    if (require("Storage").read(apps[selected].src)===undefined) {
+      E.showMessage("App Source\nNot found");
+      setTimeout(drawMenu, 2000);
+    } else {
+      E.showMessage("Loading...");
+      load(apps[selected].src);
+    }
   }
-}, BTN2, {repeat:true,edge:"falling"});
+});
 Bangle.loadWidgets();
 Bangle.drawWidgets();

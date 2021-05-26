@@ -79,9 +79,47 @@ if (s.quiet && s.qmBrightness) {
 if (s.quiet && s.qmTimeout) boot+=`Bangle.setLCDTimeout(${s.qmTimeout});\n`;
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${s.passkey}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
-// Pre-2v10 firmwares without a theme
+// Pre-2v10 firmwares without a theme/setUI
 if (!g.theme) {
   boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7};\n`;
+}
+if (!Bangle.setUI) {
+  boot += `Bangle.setUI=function(mode, cb) {
+if (Bangle.btnWatches) {
+  Bangle.btnWatches.forEach(clearWatch);
+  delete Bangle.btnWatches;
+}
+if (Bangle.swipeHandler) {
+  Bangle.removeListener("swipe", Bangle.swipeHandler);
+  delete Bangle.swipeHandler;
+}
+if (Bangle.touchandler) {
+  Bangle.removeListener("touch", Bangle.touchHandler);
+  delete Bangle.touchHandler;
+}
+function b() {
+  try{Bangle.buzz(20);}catch(e){}
+}
+if (!mode) return;
+else if (mode=="updown") {
+  Bangle.btnWatches = [
+    setWatch(function() { b();cb(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { b();cb(1); }, BTN3, {repeat:1}),
+    setWatch(function() { b();cb(); }, BTN2, {repeat:1})
+  ];
+} else if (mode=="leftright") {
+  Bangle.btnWatches = [
+    setWatch(function() { b();cb(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { b();cb(1); }, BTN3, {repeat:1}),
+    setWatch(function() { b();cb(); }, BTN2, {repeat:1})
+  ];
+  Bangle.swipeHandler = d => {b();cb(d);};
+  Bangle.on("swipe", Bangle.swipeHandler);
+  Bangle.touchHandler = d => {b();cb();};
+  Bangle.on("touch", Bangle.touchHandler);
+} else
+  throw new Error("Unknown UI mode");
+};\n`;
 }
 // Append *.boot.js files
 require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
