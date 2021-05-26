@@ -4,11 +4,12 @@
     "tags": "tool,system",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.22",
+    "version":"0.23",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
-      {"name":".bootcde","url":"bootloader.js"}
+      {"name":".bootcde","url":"bootloader.js"},
+      {"name":"bootupdate.js","url":"bootupdate.js"}
     ],
     "sortorder" : -10
   },
@@ -41,7 +42,7 @@
     "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -171,13 +172,12 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.24",
+    "version":"0.25",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
-      {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
     "data": [
@@ -571,12 +571,23 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "widlock",
+    "name": "Lock Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
+    "tags": "widget,lock",
+    "type":"widget",
+    "storage": [
+      {"name":"widlock.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widbatpc",
@@ -3123,7 +3134,7 @@
     {"name":"gps.kit.js","url":"gps.kit.js"},
     {"name":"digi.kit.js","url":"digi.kit.js"},
     {"name":"heart.kit.js","url":"heart.kit.js"},
-    {"name":"swatch.kit.js","url":"swatch.kit.js"}, 
+    {"name":"swatch.kit.js","url":"swatch.kit.js"},
     {"name":"compass.kit.js","url":"compass.kit.js"},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
   ],

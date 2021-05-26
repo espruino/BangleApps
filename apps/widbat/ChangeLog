@@ -2,3 +2,4 @@
 0.03: Tweaks for variable size widget system
 0.04: Ensure redrawing works with variable size widget system
 0.05: Fix regression stopping correct widget updates
+0.06: Use 'g.theme' (requires bootloader 0.23)
