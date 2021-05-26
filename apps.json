@@ -857,6 +857,19 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "s7clk",
+    "name": "Simple 7 segment Clock",
+    "icon": "icon.png",
+    "version":"0.04",
+    "description": "A simple 7 segment Clock with date",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"s7clk.app.js","url":"app.js"},
+      {"name":"s7clk.img","url":"icon.js","evaluate":true}
+    ]
+  },
   { "id": "vibrclock",
     "name": "Vibrate Clock",
     "icon": "app.png",
@@ -1125,7 +1138,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",

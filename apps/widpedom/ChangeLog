@@ -9,3 +9,4 @@
 0.10: Fix daily goal, don't store settings in separate file
 0.11: added getSteps() method for apps to retrieve step count
 0.12: Respect Quiet Mode
+0.13: Now use system color theme
