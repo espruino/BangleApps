@@ -2,7 +2,6 @@ var fontsize = 3;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
-var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 var hrtOn = false;
 var hrtStr = "Hrt: ??? bpm";
@@ -26,19 +25,14 @@ function drawAll(){
 }
 
 function updateRest(now){
-  let date = locale.date(now,false);
-  writeLine(WeekDays[now.getDay()],1);
-  writeLine(date,2);
+  writeLine(locale.dow(now),1);
+  writeLine(locale.date(now,1),2);
   drawInfo(5);
 }
 function updateTime(){
   if (!Bangle.isLCDOn()) return;
   let now = new Date();
-  let h = now.getHours();
-  let m = now.getMinutes();
-  h = h>=10?h:"0"+h;
-  m = m>=10?m:"0"+m;
-  writeLine(h+":"+m,0);
+  writeLine(locale.time(now,1),0);
   writeLine(flag?" ":"_",3);
   flag = !flag;
   if(now.getMinutes() == 0)
