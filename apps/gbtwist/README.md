@@ -7,5 +7,4 @@ Control your music app (e.g. MortPlayer Music [a folder based, not tag based pla
     • the command to be sent is shown in green 
     • Volume up/down is controlled by BTN1/BTN3 presses
 
-![screenshot1](https://user-images.githubusercontent.com/84921310/119907281-3ad10d80-bf50-11eb-9818-c2247c99352c.jpg)
-
+![screenshot1](https://user-images.githubusercontent.com/84921310/119907374-65bb6180-bf50-11eb-9073-f29f7e333e00.jpg)
