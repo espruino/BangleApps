@@ -16,11 +16,12 @@ function draw() {
   g.drawString(("0"+d.getSeconds()).substr(-2),x+size*18,y + size*7);
   // date
   var s = d.toString().split(" ").slice(0,4).join(" ");
-  g.reset().setFontAlign(0,-1);
+  g.setFont("6x8").setFontAlign(0,-1);
   g.drawString(s,g.getWidth()/2, y + size*12);
 }
 
 // Only update when display turns on
+if (process.env.BOARD!="SMAQ3") // hack for Q3 which is always-on
 Bangle.on('lcdPower', function(on) {
   if (secondInterval)
     clearInterval(secondInterval);
