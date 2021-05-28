@@ -31,8 +31,8 @@ Bangle.on('lcdPower', function(on) {
   draw();
 });
 
-var secondInterval = setInterval(draw, 1000);
 g.clear();
+var secondInterval = setInterval(draw, 1000);
 draw();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
