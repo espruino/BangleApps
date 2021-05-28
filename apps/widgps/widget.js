@@ -1,7 +1,6 @@
 (function(){
   if (!Bangle.isGPSOn) return; // old firmware
-  var img = E.toArrayBuffer(atob("GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="));
-  
+
   function draw() {
     g.reset();
     if (Bangle.isGPSOn()) {
@@ -9,7 +8,7 @@
     } else {
       g.setColor(0.3,0.3,0.3); // off = grey
     }
-    g.drawImage(img, 10+this.x, 2+this.y);
+    g.drawImage(atob("GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="), 10+this.x, 2+this.y);
   }
 
   var timerInterval;
