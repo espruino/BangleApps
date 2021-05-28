@@ -115,7 +115,7 @@ function showMainMenu() {
     'Set Time': ()=>showSetTimeMenu(),
     'LCD': ()=>showLCDMenu(),
     'Reset Settings': ()=>showResetMenu(),
-    'Turn Off': ()=>{ Bangle.off(); },
+    'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
     '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
