@@ -9,8 +9,8 @@ g.flip = function() {
   },0,(240-128)/2,{scale:2});
 };
 var W = g.getWidth();
-var BTNL = BTN4;
-var BTNR = BTN5;
+var BTNL = BTN2;
+var BTNR = BTN3;
 var BTNU = BTN1;
 
 // Images can be added like this in Espruino v2.00
