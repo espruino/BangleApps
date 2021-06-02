@@ -33,10 +33,10 @@ function nextFace(){
 // when you feel the buzzer you know you have done a long press
 function longPressCheck() {
   Bangle.buzz();
-  debug_log("long PressCheck() buzz");
+  debug_log("BUZZ, long press");
   if (pressTimer) {
     clearInterval(pressTimer);
-    debug_log("clear pressTimer 2");
+    debug_log("CLEAR pressTimer 2");
     pressTimer = undefined;
   }
 }
@@ -48,10 +48,10 @@ function buttonPressed(btn) {
   } else {
     firstPress = getTime();
     if (pressTimer) {
-      debug_log("clear pressTimer 1");
+      debug_log("CLEAR pressTimer 1");
       clearInterval(pressTimer);
     }
-    debug_log("set pressTimer 1");
+    debug_log("SET pressTimer 1");
     pressTimer = setInterval(longPressCheck, 1500);
   }
 }
@@ -60,7 +60,7 @@ function buttonPressed(btn) {
 function buttonReleased(btn) {
   var dur = getTime() - firstPress;
   if (pressTimer) {
-    debug_log("clear pressTimer 3");
+    debug_log("CLEAR pressTimer 3");
     clearInterval(pressTimer);
     pressTimer = undefined;
   }
@@ -256,7 +256,7 @@ GPS.prototype.processFix = function(fix) {
     this.gpsState = this.GPS_RUNNING;
     if (!this.last_fix.fix && !(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
       Bangle.buzz(); // buzz on first position
-      debug_log("GPS fix buzz");
+      debug_log("BUZZ - gps fix");
     }
     this.last_fix = fix;
   }
@@ -303,7 +303,7 @@ GPS.prototype.getWPdistance = function() {
   //log_debug(this.last_fix);
   //log_debug(this.wp_current);
 
-  if (this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
+  if (this.wp_current.name === "E-WPT" || this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
     return 0;
   else
     return this.calcDistance(this.last_fix, this.wp_current);
@@ -313,14 +313,14 @@ GPS.prototype.getWPbearing = function() {
   //log_debug(this.last_fix);
   //log_debug(this.wp_current);
   
-  if (this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
+  if (this.wp_current.name === "E-WPT" || this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
     return 0;
   else
     return this.calcBearing(this.last_fix, this.wp_current);
 }
 
 GPS.prototype.loadFirstWaypoint = function() {
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
   this.wp_index = 0;
   this.wp_current = waypoints[this.wp_index];
   log_debug(this.wp_current);
@@ -332,7 +332,7 @@ GPS.prototype.getCurrentWaypoint = function() {
 }
 
 GPS.prototype.waypointHasLocation = function() {
-  if (this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
+  if (this.wp_current.name === "E-WPT" || this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
     return false;
   else
     return true;
@@ -340,12 +340,12 @@ GPS.prototype.waypointHasLocation = function() {
 
 GPS.prototype.markWaypoint = function() {
 
-  if(this.wp_current.name === "NONE")
+  if(this.wp_current.name === "E-WPT" || this.wp_current.name === "NONE")
     return;
 
   log_debug("GPS::markWaypoint()");
   
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
   this.wp_current = waypoints[this.wp_index];
   
   if (this.waypointHasLocation()) {
@@ -360,7 +360,7 @@ GPS.prototype.markWaypoint = function() {
 }
 
 GPS.prototype.nextWaypoint = function(inc) {
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
   this.wp_index+=inc;
   if (this.wp_index>=waypoints.length) this.wp_index=0;
   if (this.wp_index<0) this.wp_index = waypoints.length-1;
@@ -731,14 +731,14 @@ function TRIP() {
 
 TRIP.prototype.resetTrip = function(steps) {
   this.tripStart = (0 + steps);
-  console.log("resetTrip starting=" + this.tripStart);
+  log_debug("resetTrip starting=" + this.tripStart);
 }
 
 TRIP.prototype.getTrip = function(steps) {
   let tripSteps = (0 + steps) - this.tripStart;
-  console.log("getTrip steps=" + steps);
-  console.log("getTrip tripStart=" + this.tripStart);
-  console.log("getTrip=" + tripSteps);
+  log_debug("getTrip steps=" + steps);
+  log_debug("getTrip tripStart=" + this.tripStart);
+  log_debug("getTrip=" + tripSteps);
   return tripSteps;
 }
 
@@ -758,7 +758,6 @@ Debug Object
 
 ******************************************************************************/
 
-/*
 function DEBUG() {
   this.logfile = require("Storage").open("debug.log","a");
 }
@@ -770,7 +769,6 @@ DEBUG.prototype.log = function(msg) {
 }
 
 debugObj = new DEBUG();
-*/
 
 function debug_log(m) {
   //debugObj.log(m);

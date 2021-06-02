@@ -244,6 +244,7 @@ The following error codes will be displayed if one of the dependancies is not me
 * E-STEPS - no pedomintor widget has been installed, please install the widpedom or the activepedom widgets
 * E-CALIB - no compass calibration data was found, see 'Compass Calibration'
 * E-FW    - require firmware 2v08.187 or later to detect gps and compass power status
+* E-WPT   - missing waypoints.json file
 
 ### Issues / Future enhancements
 
@@ -254,3 +255,5 @@ The following error codes will be displayed if one of the dependancies is not me
   seconds after the LCD goes off.  At present I just rely on using
   the GPSSetup app and set the GPS power mode that I want.
 * Add a small graph to the heart rate monitor app
+* Add a facility to call the Arrow calibration process
+* Maybe create waypoints.json file if missing
