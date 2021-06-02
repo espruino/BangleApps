@@ -1,7 +1,6 @@
 (function(){
   if (!Bangle.isHRMOn) return; // old firmware
-  var img = E.toArrayBuffer(atob("FhaBAAAAAAAAAAAAAcDgD8/AYeGDAwMMDAwwADDAAMOABwYAGAwAwBgGADAwAGGAAMwAAeAAAwAAAAAAAAAAAAA="));
-  
+
   function draw() {
     g.reset();
     if (Bangle.isHRMOn()) {
@@ -9,7 +8,7 @@
     } else {
       g.setColor(0.3,0.3,0.3); // off = grey
     }
-    g.drawImage(img, 10+this.x, 2+this.y);
+    g.drawImage(atob("FhaBAAAAAAAAAAAAAcDgD8/AYeGDAwMMDAwwADDAAMOABwYAGAwAwBgGADAwAGGAAMwAAeAAAwAAAAAAAAAAAAA="), 10+this.x, 2+this.y);
   }
 
   var timerInterval;

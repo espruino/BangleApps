@@ -21,3 +21,6 @@
 0.20: Allow Gadgetbridge to work even with programmable:off
 0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)
 0.22: Stop LCD timeout being disabled on first run (when there is no settings.json)
+0.23: Move to a precalculated .boot0 file which should speed up load time
+0.24: Add Bangle.setUI polyfill
+0.25: Fix error in 'no clock app' message

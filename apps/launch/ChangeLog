@@ -2,3 +2,5 @@
 0.02: Only store relevant app data (saves RAM when many apps)
 0.03: Allow scrolling to wrap around (fix #382)
 0.04: Now displays widgets
+0.05: Use g.theme for colours
+0.06: Use Bangle.setUI for buttons

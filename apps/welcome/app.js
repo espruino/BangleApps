@@ -11,7 +11,7 @@ function animate(seq,period) {
 // Fade in to FG color with angled lines
 function fade(callback) {
   var n = 0;
-  function f() {
+  function f() {"ram"
     for (var i=n;i<240;i+=10) {
       g.drawLine(i,0,0,i);
       g.drawLine(i,240,240,i);
@@ -24,16 +24,17 @@ function fade(callback) {
   f();
 }
 
-
-var scenes = [
-  function() {
+var SCENE_COUNT=11;
+function getScene(n) {
+  if (n==0) return function() {
     g.clear(1);
     g.setFont("4x6",2);
     var n=0;
+    var l = Bangle.getLogo();
     var i = setInterval(function() {
       n+=0.04;
       g.setColor(n,n,n);
-      g.drawImage(Bangle.getLogo(),(240-222)/2,(240-100)/2);
+      g.drawImage(l,(240-222)/2,(240-100)/2);
       if (n>=1) {
         clearInterval(i);
         setTimeout(()=>g.drawString("Open",34,144), 500);
@@ -41,7 +42,8 @@ var scenes = [
         setTimeout(()=>g.drawString("Smart Watch",34,168), 1500);
       }
     },50);
-  },function() {
+  };
+  if (n==1) return function() {
     var img = require("heatshrink").decompress(atob("ptRxH+qYAfvl70mj5gAC0ekvd8FkAAdz3HJAYAH4+eJXWkJJYAF0hK2vfNJaIAB5t7S3fN5/V6wAD6vOTg9SumXy2W3QAB3eXul2JdnO63XAApPEVYvAJQIACJoRQDzBLoJQ3W5/NIwr4GJohMFAAROgJYvVJQiPGABZNN3bsdvYyESwnWJSIAC3RNM3V1JjZAES4nVJSYAB4xMNJrbkE56WD5xLVdB5NbFofNJbgABJh26qREPrFXrlbAAWjFgfWJgRLaTQhMLy5KNJINhsJLDrYrD5xLC6pLa5nGTR7oLq9bJQJMKTAXWJbbnR3RLJSoRMHv4pC5rkec6SaIrBLGw2r2XW1epcoqYeJiOXJYziEsOH2RBBw7lF56Yg5nGc6FScZOGJQPX2TmDFIfVTEBMSc4hLEw5KB6+rsJMH63X6pMf5hMQzBLCq5LD1ZLEJhTlfJiWXTA2GJYpMIcwPNc2O6TAuGRIPX1igDJg/PJmyYDcgXWwxMH1ApC53XcsHAJiVYcg2HJYZME0YpC5vWJkhLNJgLlDTAeFJhF/FQfVJkG6JiGXcomyJgOrJYhMErYqD53NJj7lRzBMDcoeGJhzoBJb3GJiN1qZBCJgWyJYpNF1LigAAXAJiNSJgzlGJgt/JkZLRy9TJgeHJhznFcuSZGw5MHJomjcuhLBqdcJiSaiTChMV1CYxy5LCqdXIAWy6+rJhCalTCN2JgdYH4WHJiGpTF7kDc43W2RMJTUZLQzBLFc4mr6+GJh2jTFmXJYyaEwuyc5Sag4xLZTQmG2WFJhxNaJYZMLJZSaEJoOHTR9/Ja+6JbdTqRNETRRNF1JLV4BLcAANYI5ToK1BLYJhWYJZwABq5NoJZ91JaAABdAZNS0ZLey9SJaRNYv5KM426JZmXuxKUJrKcL0lTzBLKzBKYJrVXvfGSol7EYWXJI27zF1JLQADq5NUrgYB4wAEEIV0comXI7wAFrCcPJgYWBTIIAETIN2JYmWuhMkdSdYCgOeJgueqRLFyzhfTi9bq4TC45MF49TuuXJlpONcogAC0hKB0gHDvZMEqRMpAANSq9crlbJAYADqwRDxGk0mIA4eCTQOeveXJdYAHqxNFdAeIAAQGCrOI0oHEAGVXTRJMGvgGCwRM7TAZMHwQGCvhM1rBMERIhMGAwdZJmtSqVTwNcwJEDJg19cvIADa4d9JhANDJnSLHJgrl6AAhFFAwpZDegjn7vhMGcvwABrJAFJgjl/TQpBBI4jl/AAN8TQhHDcv4ADcJBMDvpM+IYaeDAAhL+qd9SgycEJn7iEAA18Jf7nEcv4AIrJLIcv6aMcv4ADvhMHrJJ/AAbl/c6ZM/AAt9cv7nSIv7nLcv4AHrLl/TRpJBvgnjA=="));
     g.reset();
     g.setColor("#6633ff");
@@ -73,7 +75,8 @@ var scenes = [
       },20);
     },3500);
 
-  },function() {
+  };
+  if (n==2) return function() {
     g.reset();
     g.setBgColor("#ffa800");g.clear();
     g.setFont("6x8",2);
@@ -88,8 +91,8 @@ var scenes = [
       ()=>g.drawString("2",200,120),
       ()=>g.drawString("3",200,200)
     ],200);
-  },
-  function() {
+  };
+  if (n==3) return function() {
     g.reset();
     g.setBgColor("#00a8ff");g.clear();
     g.setFontAlign(0,0);
@@ -98,8 +101,8 @@ var scenes = [
     g.setFontAlign(-1,-1);
     g.setFont("6x8",2);
     g.drawString("Move up\nin menus\n\nTurn Bangle.js on\nif it was off", 20,40);
-  },
-  function() {
+  };
+  if (n==4) return function() {
     g.reset();
     g.setBgColor("#00a8ff");g.clear();
     g.setFontAlign(0,0);
@@ -108,8 +111,8 @@ var scenes = [
     g.setFontAlign(-1,-1);
     g.setFont("6x8",2);
     g.drawString("Select menu\nitem\n\nLaunch app\nwhen watch\nis showing", 20,70);
-  },
-  function() {
+  };
+  if (n==5) return function() {
     g.reset();
     g.setBgColor("#00a8ff");g.clear();
     g.setFontAlign(0,0);
@@ -118,8 +121,8 @@ var scenes = [
     g.setFontAlign(-1,-1);
     g.setFont("6x8",2);
     g.drawString("Move down\nin menus\n\nLong press\nto exit app\nand go back\nto clock", 20,100);
-  },
-  function() {
+  };
+  if (n==6) return function() {
     g.reset();
     g.setBgColor("#ff3300");g.clear();
     g.setFontAlign(0,0);
@@ -129,8 +132,8 @@ var scenes = [
     g.setFontAlign(-1,-1);
     g.setFont("6x8",2);
     g.drawString("If Bangle.js\never stops,\nhold buttons\n1 and 2 for\naround six\nseconds.\n\n\n\nBangle.js will\nthen reboot.", 20,20);
-  },
-  function() {
+  };
+  if (n==7) return function() {
     g.reset();
     g.setBgColor("#00a8ff");g.clear();
     g.setFont("6x8",2);
@@ -147,8 +150,8 @@ var scenes = [
         g.drawString("work too. Try now",x,y+=h);
         g.drawString("to change page.",x,y+=h);}
     ],300);
-  },
-  function() {
+  };
+  if (n==8) return function() {
     g.reset();
     g.setBgColor("#339900");g.clear();
     g.setFont("6x8",2);
@@ -165,8 +168,8 @@ var scenes = [
         g.drawString("with a Bluetooth",x,y+=h);
         g.drawString("capable device",x,y+=h);},
     ],400);
-  },
-  function() {
+  };
+  if (n==9) return function() {
     g.reset();
     g.setBgColor("#990066");g.clear();
     g.setFont("6x8",2);
@@ -227,8 +230,8 @@ var scenes = [
     }
 
     setInterval(draw,50);
-  },
-  function() {
+  };
+  if (n==10) return function() {
     g.reset();
     g.setBgColor("#660099");g.clear();
     g.setFontAlign(0,0);
@@ -245,18 +248,18 @@ var scenes = [
         g.drawString("Bangle.js",x,y+=h);}
     ],400);
   }
-];
+}
 
 var sceneNumber = 0;
 
 function move(dir) {
-  if (dir>0 && sceneNumber+1 == scenes.length) return; // at the end
-  sceneNumber = (sceneNumber+dir)%scenes.length;
+  if (dir>0 && sceneNumber+1 == SCENE_COUNT) return; // at the end
+  sceneNumber = (sceneNumber+dir)%SCENE_COUNT;
   if (sceneNumber<0) sceneNumber=0;
   clearInterval();
-  scenes[sceneNumber]();
+  getScene(sceneNumber)();
   if (sceneNumber>1) {
-    var l = scenes.length;
+    var l = SCENE_COUNT;
     for (var i=0;i<l-2;i++) {
       var x = 120+(i-(l-2)/2)*12;
       if (i<sceneNumber-1) {
@@ -270,7 +273,7 @@ function move(dir) {
       }
     }
   }
-  if (sceneNumber < scenes.length-1)
+  if (sceneNumber < SCENE_COUNT-1)
     setTimeout(function() {
       move(1);
     }, 5000);
@@ -282,7 +285,7 @@ Bangle.on('swipe',move);
 setWatch(()=>move(1), BTN3, {repeat:true});
 setWatch(()=>{
   // If we're on the last page
-  if (sceneNumber == scenes.length-1) {
+  if (sceneNumber == SCENE_COUNT-1) {
     load();
   }
 }, BTN2, {repeat:true,edge:"falling"});

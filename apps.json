@@ -4,11 +4,12 @@
     "tags": "tool,system",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.22",
+    "version":"0.25",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
-      {"name":".bootcde","url":"bootloader.js"}
+      {"name":".bootcde","url":"bootloader.js"},
+      {"name":"bootupdate.js","url":"bootupdate.js"}
     ],
     "sortorder" : -10
   },
@@ -41,7 +42,7 @@
     "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.06",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -53,7 +54,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -104,7 +105,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -171,13 +172,12 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.24",
+    "version":"0.26",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
-      {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
     "data": [
@@ -216,6 +216,32 @@
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
     ]
   },
+  { "id": "fontclock",
+    "name": "Font Clock",
+    "icon": "fontclock.png",
+    "version":"0.01",
+    "description": "Choose the font and design of clock face from a library of available designs",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":false,
+     "readme": "README.md",
+    "custom":"custom.html",
+    "storage": [
+      {"name":"fontclock.app.js","url":"fontclock.js"},
+      {"name":"fontclock.img","url":"fontclock-icon.js","evaluate":true},
+      {"name":"fontclock.hand.js","url":"fontclock.hand.js"},
+      {"name":"fontclock.thinhand.js","url":"fontclock.thinhand.js"},
+      {"name":"fontclock.thickhand.js","url":"fontclock.thickhand.js"},
+      {"name":"fontclock.hourscriber.js","url":"fontclock.hourscriber.js"},
+      {"name":"fontclock.font.js","url":"fontclock.font.js"},
+      {"name":"fontclock.font.abril_ff50.js","url":"fontclock.font.abril_ff50.js"},
+      {"name":"fontclock.font.cpstc58.js","url":"fontclock.font.cpstc58.js"},
+      {"name":"fontclock.font.mntn25.js","url":"fontclock.font.mntn25.js"},
+      {"name":"fontclock.font.mntn50.js","url":"fontclock.font.mntn50.js"},
+      {"name":"fontclock.font.vector25.js","url":"fontclock.font.vector25.js"},
+      {"name":"fontclock.font.vector50.js","url":"fontclock.font.vector50.js"}
+    ]
+  },
   { "id": "slidingtext",
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
@@ -223,7 +249,7 @@
     "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese, Spanish and German are supported",
     "tags": "clock",
     "type":"clock",
-    "allow_emulator":true,
+    "allow_emulator":false,
      "readme": "README.md",
     "custom":"custom.html",
     "storage": [
@@ -242,8 +268,8 @@
   { "id": "sweepclock",
     "name": "Sweep Clock",
     "icon": "sweepclock.png",
-    "version":"0.02",
-    "description": "Smooth sweep secondhand with single hour numeral. Use button1 to toggle the numeral font and button3 to change the colour theme",
+    "version":"0.04",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button 1 to toggle the numeral font, button 3 to change the colour theme and button 4 to change the date placement",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":true,
@@ -545,12 +571,23 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "widlock",
+    "name": "Lock Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
+    "tags": "widget,lock",
+    "type":"widget",
+    "storage": [
+      {"name":"widlock.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widbatpc",
@@ -628,7 +665,7 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Measure your heart rate and see live sensor data",
     "tags": "health",
     "storage": [
@@ -818,6 +855,19 @@
     "storage": [
       {"name":"sclock.app.js","url":"clock-simple.js"},
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "s7clk",
+    "name": "Simple 7 segment Clock",
+    "icon": "icon.png",
+    "version":"0.02",
+    "description": "A simple 7 segment Clock with date",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"s7clk.app.js","url":"app.js"},
+      {"name":"s7clk.img","url":"icon.js","evaluate":true}
     ]
   },
   { "id": "vibrclock",
@@ -1088,7 +1138,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
@@ -1234,7 +1284,7 @@
     "name": "Commandline-Clock",
     "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell",
     "type":"clock",
@@ -2234,7 +2284,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -3044,7 +3094,7 @@
   "name": "Gadgetbridge Music Controls",
   "shortName":"Music Controls",
   "icon": "icon.png",
-  "version":"0.04",
+  "version":"0.05",
   "description": "Control the music on your Gadgetbridge-connected phone",
   "tags": "tools,bluetooth,gadgetbridge,music",
   "type":"app",
@@ -3097,7 +3147,7 @@
     {"name":"gps.kit.js","url":"gps.kit.js"},
     {"name":"digi.kit.js","url":"digi.kit.js"},
     {"name":"heart.kit.js","url":"heart.kit.js"},
-    {"name":"swatch.kit.js","url":"swatch.kit.js"}, 
+    {"name":"swatch.kit.js","url":"swatch.kit.js"},
     {"name":"compass.kit.js","url":"compass.kit.js"},
     {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
   ],
@@ -3155,7 +3205,7 @@
   "id": "omnitrix",
   "name":"Omnitrix",
   "icon":"omnitrix.png",
-  "version": "1.0",
+  "version": "0.01",
   "readme": "README.md",
   "description": "An Omnitrix Showpiece",
   "tags": "game",
@@ -3169,7 +3219,7 @@
   "name": "Bat Clock",
   "shortName":"Bat Clock",
   "icon": "bat-clock.png",
-  "version":"1.0",
+  "version":"0.01",
   "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
   "tags": "clock",
   "type": "clock",
@@ -3177,6 +3227,36 @@
   "storage": [
     {"name":"batclock.app.js","url":"bat-clock.app.js"},
     {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
+  ]
+},
+{ "id":"doztime",
+  "name":"Dozenal Time",
+  "shortName":"Dozenal Time",
+  "icon":"app.png",
+  "version":"0.01",
+  "description":"A dozenal Holocene calendar and dozenal diurnal clock",
+  "tags":"clock",
+  "type":"clock",
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"doztime.app.js","url":"app.js"},
+    {"name":"doztime.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id":"gbtwist",
+  "name":"Gadgetbridge Twist Control",
+  "shortName":"Twist Control",
+  "icon":"app.png",
+  "version":"0.01",
+  "description":"Shake your wrist to control your music app via Gadgetbridge",
+  "tags":"tools,bluetooth,gadgetbridge,music",
+  "type":"app",
+  "allow_emulator":false,
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbtwist.app.js","url":"app.js"},
+    {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]

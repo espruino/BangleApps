@@ -14,11 +14,7 @@ if (!clockApp) {
   if (clockApp)
     clockApp = require("Storage").read(clockApp.src);
 }
-if (!clockApp) clockApp=`E.showMessage("No Clock Found");
-setWatch(() => {
-  Bangle.showLauncher();
-}, BTN2, {repeat:false,edge:"falling"});)
-`;
+if (!clockApp) clockApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, BTN2, {repeat:false,edge:"falling"});`;
 // check to see if our clock is wrong - if it is use GPS time
 if ((new Date()).getFullYear()<2000) {
   E.showMessage("Searching for\nGPS time");

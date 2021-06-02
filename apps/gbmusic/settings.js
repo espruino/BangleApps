@@ -5,12 +5,11 @@
   const SETTINGS_FILE = "gbmusic.json",
     storage = require("Storage"),
     translate = require("locale").translate;
-  const TOUCH_OPTIONS = ["Off", "When LCD on", "Always"];
 
   // initialize with default settings...
   let s = {
     autoStart: true,
-    touch: 1,
+    simpleButton: false,
   };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -19,24 +18,27 @@
     s[key] = saved[key];
   }
 
-  function save(key, value) {
-    s[key] = value;
-    storage.write(SETTINGS_FILE, s);
+  function save(key) {
+    return function (value) {
+      s[key] = value;
+      storage.write(SETTINGS_FILE, s);
+    }
   }
 
+  const yesNo = (v) => translate(v ? "Yes" : "No");
   let menu = {
     "": {"title": "Music Control"},
   };
   menu[translate("< Back")] = back;
   menu[translate("Auto start")] = {
-    value: s.autoStart,
-    format: v => translate(v ? "Yes" : "No"),
-    onchange: v => {save("autoStart", v);},
+    value: !!s.autoStart,
+    format: yesNo,
+    onchange: save("autoStart"),
   };
-  menu[translate("Touch")] = {
-    value: s.touch|0,
-    format: v => translate(TOUCH_OPTIONS[(v+3)%3]),
-    onchange: v => {save("touch", (v+3)%3);},
+  menu[translate("Simple button")] = {
+    value: !!s.simpleButton,
+    format: yesNo,
+    onchange: save("simpleButton"),
   };
 
   E.showMenu(menu);
