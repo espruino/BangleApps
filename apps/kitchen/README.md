@@ -76,6 +76,9 @@ The following buttons depend on which face is currently in use
 ## Heart
 ![](screenshot_heart.jpg)
 - A simple heart rate monitor, at present the app is just showing the raw value from HRM.bpm
+- This is an experimental app and not installed by default. The
+  heart.kit.js file can be uploaded via the Espruino IDE if you want
+  to try it out.  Then reload the App.
 - BTN1, long press, turn heart rate monitor on / off
 
 ## Waypointer
