@@ -3258,5 +3258,20 @@
     {"name":"gbtwist.app.js","url":"app.js"},
     {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "mysticclock",
+  "name": "Mystic Clock",
+  "icon": "mystic-clock.png",
+  "version":"1.00",
+  "description": "A retro-inspired watchface featuring time, date, and an interactive data display line.",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"mysticclock.app.js","url":"mystic-clock-app.js"},
+    {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
+    {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
+  ]
 }
 ]
