@@ -12,55 +12,53 @@ var menuScroll = 0;
 var menuShowing = false;
 
 function drawMenu() {
-  g.setFont("6x8",2);
-  g.setFontAlign(-1,0);
-  var n = 3;
+  g.reset().setFont("6x8",2).setFontAlign(-1,0);
+  var w = g.getWidth();
+  var h = g.getHeight();
+  var m = w/2;
+  var n = (h-48)/64;
   if (selected>=n+menuScroll) menuScroll = 1+selected-n;
   if (selected<menuScroll) menuScroll = selected;
   // arrows
-  g.setColor(menuScroll ? -1 : 0);
-  g.fillPoly([120,6,106,20,134,20]);
-  g.setColor((apps.length>n+menuScroll) ? -1 : 0);
-  g.fillPoly([120,233,106,219,134,219]);
+  g.setColor(menuScroll ? g.theme.fg : g.theme.bg);
+  g.fillPoly([m,6,m-14,20,m+14,20]);
+  g.setColor((apps.length>n+menuScroll) ? g.theme.fg : g.theme.bg);
+  g.fillPoly([m,h-7,m-14,h-21,m+14,h-21]);
   // draw
-  g.setColor(-1);
+  g.setColor(g.theme.fg);
   for (var i=0;i<n;i++) {
     var app = apps[i+menuScroll];
     if (!app) break;
     var y = 24+i*64;
     if (i+menuScroll==selected) {
-      g.setColor(0.3,0.3,0.3);
-      g.fillRect(0,y,239,y+63);
-      g.setColor(1,1,1);
-      g.drawRect(0,y,239,y+63);
+      g.setColor(g.theme.bgH).fillRect(0,y,w-1,y+63);
+      g.setColor(g.theme.fgH).drawRect(0,y,w-1,y+63);
     } else
-      g.clearRect(0,y,239,y+63);
+      g.clearRect(0,y,w-1,y+63);
     g.drawString(app.name,64,y+32);
     var icon=undefined;
     if (app.icon) icon = s.read(app.icon);
     if (icon) try {g.drawImage(icon,8,y+8);} catch(e){}
   }
 }
+g.clear();
 drawMenu();
-setWatch(function() {
-  selected--;
-  if (selected<0) selected = apps.length-1;
-  drawMenu();
-}, BTN1, {repeat:true});
-setWatch(function() {
-  selected++;
-  if (selected>=apps.length) selected = 0;
-  drawMenu();
-}, BTN3, {repeat:true});
-setWatch(function() { // run
-  if (!apps[selected].src) return;
-  if (require("Storage").read(apps[selected].src)===undefined) {
-    E.showMessage("App Source\nNot found");
-    setTimeout(drawMenu, 2000);
+Bangle.setUI("updown",dir=>{
+  if (dir) {
+    selected += dir;
+    if (selected<0) selected = apps.length-1;
+    if (selected>=apps.length) selected = 0;
+    drawMenu();
   } else {
-    E.showMessage("Loading...");
-    load(apps[selected].src);
+    if (!apps[selected].src) return;
+    if (require("Storage").read(apps[selected].src)===undefined) {
+      E.showMessage("App Source\nNot found");
+      setTimeout(drawMenu, 2000);
+    } else {
+      E.showMessage("Loading...");
+      load(apps[selected].src);
+    }
   }
-}, BTN2, {repeat:true,edge:"falling"});
+});
 Bangle.loadWidgets();
 Bangle.drawWidgets();

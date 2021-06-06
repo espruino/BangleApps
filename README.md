@@ -249,14 +249,20 @@ and which gives information about the app for the Launcher.
     {"name":"appid.js",       // filename to use in storage.
                               // If name=='RAM', the code is sent directly to Bangle.js and is not saved to a file
      "url":"",                // URL of file to load (currently relative to apps/)
-     "content":"..."          // if supplied, this content is loaded directly
-     "evaluate":true          // if supplied, data isn't quoted into a String before upload
+     "content":"...",         // if supplied, this content is loaded directly
+     "evaluate":true,         // if supplied, data isn't quoted into a String before upload
                               // (eg it's evaluated as JS)
+     "noOverwrite":true       // if supplied, this file will not be overwritten if it
+                              // already exists
     },
   ]
   "data": [                   // list of files the app writes to
     {"name":"appid.data.json",  // filename used in storage
      "storageFile":true       // if supplied, file is treated as storageFile
+     "url":"",                // if supplied URL of file to load (currently relative to apps/)
+     "content":"...",         // if supplied, this content is loaded directly     
+     "evaluate":true,         // if supplied, data isn't quoted into a String before upload
+                              // (eg it's evaluated as JS)     
     },
     {"wildcard":"appid.data.*" // wildcard of filenames used in storage
     },                         // this is mutually exclusive with using "name"
@@ -439,12 +445,15 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 | areas | as rectangle or point |
 | :-:| :-: |
 | Widget | (0,0,239,23) |
-| Apps | (0,24,239,239) |
+| Widget bottom bar (optional) | (0,216,239,239) |
+| Apps | (0,24,239,239) (see below) |
 | BTN1 | (230, 55)  |
 | BTN2 | (230, 140) |
 | BTN3 | (230, 210) |
 | BTN4 | (0,0,119, 239)|
 | BTN5 |  (120,0,239,239) |
+
+- If there are widgets at the bottom of the screen, apps should actually keep the bottom 24px free, so should keep to the area (0,24,239,215)
 
 - Use `g.setFontAlign(0, 0, 3)` to draw rotated string to BTN1-BTN3 with `g.drawString()`.
 

@@ -1,4 +1,4 @@
-import { AppState } from './state';
+import { ActivityStatus, AppState } from './state';
 
 declare var Bangle: any;
 declare var g: any;
@@ -26,11 +26,11 @@ function drawBackground(): void {
   g.setFont('6x8', 2);
   g.setFontAlign(0, -1, 0);
   g.drawString('DIST (KM)', 60, 32);
-  g.drawString('TIME', 180, 32);
+  g.drawString('TIME', 172, 32);
   g.drawString('PACE', 60, 92);
-  g.drawString('HEART', 180, 92);
+  g.drawString('HEART', 172, 92);
   g.drawString('STEPS', 60, 152);
-  g.drawString('CADENCE', 180, 152);
+  g.drawString('CADENCE', 172, 152);
 }
 
 function drawValue(value: string, x: number, y: number) {
@@ -45,11 +45,11 @@ function draw(state: AppState): void {
   g.setFontAlign(0, -1, 0);
 
   drawValue(formatDistance(state.distance), 60, 55);
-  drawValue(formatTime(state.duration), 180, 55);
+  drawValue(formatTime(state.duration), 172, 55);
   drawValue(formatPace(state.speed), 60, 115);
-  drawValue(state.hr.toFixed(0), 180, 115);
+  drawValue(state.hr.toFixed(0), 172, 115);
   drawValue(state.steps.toFixed(0), 60, 175);
-  drawValue(state.cadence.toFixed(0), 180, 175);
+  drawValue(state.cadence.toFixed(0), 172, 175);
 
   g.setFont('6x8', 2);
 
@@ -64,9 +64,18 @@ function draw(state: AppState): void {
   g.drawString(formatClock(new Date()), 120, 220);
 
   g.setColor(STATUS_COLORS[state.status]);
-  g.fillRect(160, 216, 240, 240);
+  g.fillRect(160, 216, 230, 240);
   g.setColor(0x0000);
   g.drawString(state.status, 200, 220);
+
+  g.setFont("6x8").setFontAlign(0,0,1).setColor(-1);
+  if (state.status === ActivityStatus.Paused) {
+    g.drawString("START",236,60,1).drawString(" CLEAR ",236,180,1);
+  } else if (state.status === ActivityStatus.Running) {
+    g.drawString(" PAUSE ",236,60,1).drawString(" PAUSE ",236,180,1);
+  } else {
+    g.drawString("START",236,60,1).drawString("      ",236,180,1);
+  }
 }
 
 function drawAll(state: AppState) {

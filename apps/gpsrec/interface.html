@@ -98,11 +98,10 @@ function getTrackList() {
     for (var n=0;n<36;n++) {
       var f = require("Storage").open(".gpsrc"+n.toString(36),"r");
       var l = f.readLine();
-      if (l!==undefined)
-        Bluetooth.println(n+","+l.trim());
+      Bluetooth.println((l!==undefined) ? (n + "," + l.trim()) : "");
     }
   })()\n`,tracklist=>{
-    var trackLines = tracklist.trim().split("\n");
+    var trackLines = tracklist.trim().split("\n").filter(l=>l!="");
     var html = `<div class="container">
   <div class="columns">\n`;
     trackLines.forEach(l => {

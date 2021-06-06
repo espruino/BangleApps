@@ -4,3 +4,5 @@
 0.04: Pass `area{x,y,w,h}` to render callback instead of just `y`
 0.05: Fix `g` corruption issue if .hide gets called twice
 0.06: Adjust position of notification src text and notifications without title
+0.07: Support background color
+0.08: Don't turn on screen during Quiet Mode

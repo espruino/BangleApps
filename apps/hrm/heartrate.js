@@ -4,15 +4,25 @@ Bangle.setHRMPower(1);
 var hrmInfo, hrmOffset = 0;
 var hrmInterval;
 function onHRM(h) {
-  // this is the first time we're called
   if (counter!==undefined) {
+    // the first time we're called remove
+    // the countdown
     counter = undefined;
     g.clear();
   }
   hrmInfo = h;
-  hrmOffset = 0;
+  /* On 2v09 and earlier firmwares the only solution for realtime
+  HRM was to look at the 'raw' array that got reported. If you timed
+  it right you could grab the data pretty much as soon as it was written.
+  In new firmwares, '.raw' is not available. */
   if (hrmInterval) clearInterval(hrmInterval);
-  hrmInterval = setInterval(readHRM,40);
+  hrmInterval = undefined;
+  if (hrmInfo.raw) {
+    hrmOffset = 0;
+    setTimeout(function() {
+      hrmInterval = setInterval(readHRM,41);
+    }, 40);
+  }
 
   var px = g.getWidth()/2;
   g.setFontAlign(0,0);
@@ -25,17 +35,35 @@ function onHRM(h) {
   g.drawString("BPM",px+15,45);
 }
 Bangle.on('HRM', onHRM);
+/* On newer (2v10) firmwares we can subscribe to get
+HRM events as they happen */
+Bangle.on('HRM-raw', function(v) {
+  var a = v.raw;
+  hrmOffset++;
+  if (hrmOffset>g.getWidth()) {
+    hrmOffset=0;
+    g.clearRect(0,90,239,239);
+    g.moveTo(-100,0);
+  }
+
+  y = E.clip(170 - (v.raw*2),100,230);
+  g.setColor(1,1,1);
+  g.lineTo(hrmOffset, y);
+});
 
 // It takes 5 secs for us to get the first HRM event
 var counter = 5;
 function countDown() {
-  E.showMessage("Please wait...\n"+counter--);
-  if (counter) setTimeout(countDown, 1000);
+  if (counter) {
+    g.drawString(counter--,g.getWidth()/2,g.getHeight()/2, true);
+    setTimeout(countDown, 1000);
+  }
 }
+g.clear().setFont("6x8",2).setFontAlign(0,0);
+g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 countDown();
 
 
-var min=0,max=0;
 var wasHigh = 0, wasLow = 0;
 var lastHigh = getTime();
 var hrmList = [];
@@ -51,9 +79,7 @@ function readHRM() {
   for (var i=0;i<2;i++) {
     var a = hrmInfo.raw[hrmOffset];
     hrmOffset++;
-    min=Math.min(min*0.97+a*0.03,a);
-    max=Math.max(max*0.97+a*0.03,a);
-    y = E.clip(170 - (a*4),100,230);
+    y = E.clip(170 - (a*2),100,230);
     g.setColor(1,1,1);
     g.lineTo(hrmOffset, y);
   }

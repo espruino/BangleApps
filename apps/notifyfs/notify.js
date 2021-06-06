@@ -37,7 +37,9 @@ function fitWords(text,rows,width) {
    src : string // optional source name
    body : string // optional body text
    icon : string // optional icon (image string)
-   render function(y) // function callback to render
+   render : function(y) // function callback to render
+   bgColor : int/string // optional background color (default black)
+   titleBgColor : int/string // optional background color for title (default black)
  }
 */
 exports.show = function(options) {
@@ -53,11 +55,11 @@ exports.show = function(options) {
     w = 240,
     h = size;
   // clear screen
-  g.clear(1);
+  g.setColor(options.bgColor||0).fillRect(0,0,g.getWidth(),g.getHeight());
   // top bar
   if (options.title||options.src) {
     const title = options.title || options.src
-    g.setColor(0x39C7).fillRect(x, y, x+w-1, y+30);
+    g.setColor(options.titleBgColor||0x39C7).fillRect(x, y, x+w-1, y+30);
     g.setColor(-1).setFontAlign(-1, -1, 0).setFont("6x8", 3);
     g.drawString(title.trim().substring(0, 13), x+5, y+3);
     if (options.title && options.src) {
@@ -88,8 +90,9 @@ exports.show = function(options) {
     const area={x:x, y:y, w:w, h:h}
     options.render(area);
   }
-
-  if (options.on) Bangle.setLCDPower(1); // light up
+  if (options.on && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.setLCDPower(1); // light up
+  }
   Bangle.on("touch", exports.hide);
   // Create a fake graphics to hide draw attempts
   oldg = g;
@@ -113,9 +116,11 @@ exports.hide = function(options) {
   Bangle.removeListener("touch", exports.hide);
   g.clear();
   Bangle.drawWidgets();
-  // flipping the screen off then on often triggers a redraw - it may not!
-  Bangle.setLCDPower(0);
-  Bangle.setLCDPower(1);
+  if (Bangle.isLCDOn() || !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    // flipping the screen off then on often triggers a redraw - it may not!
+    Bangle.setLCDPower(0);
+    Bangle.setLCDPower(1);
+  }
   // hack for E.showMenu/showAlert/showPrompt - can force a redraw by faking next/back
   if (Bangle.btnWatches) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();

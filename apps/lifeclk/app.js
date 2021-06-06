@@ -264,7 +264,6 @@ function improveLetter(textPreBuf, char, x,y){
         return;}
     default: return;
   }
-  return;
 }
 
 function fillMinTextBuf(date){

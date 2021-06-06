@@ -54,8 +54,8 @@ const APP_KEYS = [
   'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
   'dependencies'
 ];
-const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
-const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite'];
+const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 
@@ -229,7 +229,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
-      else ERROR(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+      else WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
     }
   })
 }

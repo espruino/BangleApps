@@ -9,14 +9,14 @@ other applications or widgets to display messages.
 
 ```JS
 options = {
-  on : bool, // turn screen on, default true
-  size : int, // height of notification, default 80 (max)  
+  on : bool, // turn screen on, default true (But not if Quiet Mode is enabled)
+  size : int, // height of notification, default is fit to height (80 max)  
   title : string, // optional title
   id // optional notification ID, used with hide()
   src : string, // optional source name
   body : string, // optional body text
   icon : string, // optional icon (image string)
-  render function(area) {} // function callback to render in area{x,y,w,h} 
+  render function(area) {} // function callback to render in area{x,y,w,h}
 };
 // eg... show notification
 require("notify").show({title:"Test", body:"Hello"});

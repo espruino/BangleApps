@@ -1,5 +1,6 @@
 let secondInterval;
 let showRealTime = false;
+let currentFormatter;
 
 const utils = {
   random: function(items) {
@@ -68,13 +69,14 @@ const words = {
   approx: ['\'Bout', 'About', 'Around', `Summat\nlike`, 'Near', 'Close to'],
   approach: ['Nearly', `Coming\nup to`, 'Approaching', `A touch\nbefore`],
   past: [`A shade\nafter`, `A whisker\nafter`, 'Just gone'],
-  quarter: ['Quarter', `Fifteen\nminutes`],
+  quarter: ['A quarter', 'Quarter'],
   half: ['Half', 'Half past'],
   exactly: ['exactly', 'on the dot',  'o\' clock'],
-  ish: ['-ish', `\n(ish)`]
+  ish: ['-ish', `\n(ish)`, `\nand change`, `\nand some`, `\nor`, `\nor\nthereabouts`]
 };
 
 function switchMode() {
+  currentFormatter = null;
   showRealTime = !showRealTime;
   refreshTime();
 }
@@ -94,76 +96,69 @@ function drawRealTime(date) {
 
 }
 
-function drawDumbTime(time) {
-  const hours = time.getHours();
-  const minutes = time.getMinutes();
+const makeApprox = (str, template) => {
+  let _template = template || 'approx';
+  if (utils.oneIn(2)) {
+    _template = 'approx';
 
-  function formatTime(hours, minutes) {
-    const makeApprox = (str, template) => {
-      let _template = template || 'approx';
-      if (utils.oneIn(2)) {
-        _template = 'approx';
-
-        if (utils.oneIn(words.approx.length)) {
-          const ish = utils.random(words.ish);
-          return `${str}${ish}`;
-        }
-      }
-
-      const approx = `${utils.random(words[_template])} `;
-
-      return `${approx}\n${str.toLowerCase()}`;
-    };
-
-    const formatters = {
-      'onTheHour': (hoursAsWord) => {
-          const exactly = utils.random(words.exactly);
-
-          return `${hoursAsWord}\n${exactly}`;
-      },
-      'nearTheHour': (hoursAsWord) => {
-        const template = (minutes < 10) ? 'past' : 'approach';
-
-        return makeApprox(hoursAsWord, template);
-      },
-      'nearQuarter': (hoursAsWord, minutes) => {
-        const direction = (minutes > 30) ? 'to' : 'past';
-        const quarter = utils.random(words.quarter);
-
-        const formatted = `${quarter} ${direction}\n${hoursAsWord}`;
-
-        return (minutes === 15 || minutes === 45) ? formatted : makeApprox(formatted);
-      },
-      'nearHalf': (hoursAsWord, minutes) => {
-        const half = utils.random(words.half);
-
-        const formatted = `${half}\n${hoursAsWord}`;
-
-        const template = (minutes > 30) ? 'past' : 'approach';
-        return (minutes === 30) ? formatted : makeApprox(formatted, template);
-      },
-    };
-
-    function getFormatter(hours, minutes) {
-      if (minutes === 0) {
-        return formatters.onTheHour;
-      } else if (minutes > 50 || minutes < 10) {
-        return formatters.nearTheHour;
-      } else if (minutes > 40|| minutes < 20) {
-        return formatters.nearQuarter;
-      } else {
-        return formatters.nearHalf;
-      }
+    if (utils.oneIn(words.approx.length)) {
+      const ish = utils.random(words.ish);
+      return `${str}${ish}`;
     }
+  }
 
+  const approx = `${utils.random(words[_template])} `;
+
+  return `${approx}\n${str.toLowerCase()}`;
+};
+
+const formatters = {
+  'onTheHour': (hoursAsWord) => {
+      const exactly = utils.random(words.exactly);
+
+      return `${hoursAsWord}\n${exactly}`;
+  },
+  'nearTheHour': (hoursAsWord, minutes) => {
+    const template = (minutes < 10) ? 'past' : 'approach';
+
+    return makeApprox(hoursAsWord, template);
+  },
+  'nearQuarter': (hoursAsWord, minutes) => {
+    const direction = (minutes > 30) ? 'to' : 'past';
+    const quarter = utils.random(words.quarter);
+    const formatted = `${quarter} ${direction}\n${hoursAsWord}`;
+
+    return (minutes === 15 || minutes === 45) ? formatted : makeApprox(formatted);
+  },
+  'nearHalf': (hoursAsWord, minutes) => {
+    const half = utils.random(words.half);
+    const formatted = `${half}\n${hoursAsWord}`;
+    const template = (minutes > 30) ? 'past' : 'approach';
+
+    return (minutes === 30) ? formatted : makeApprox(formatted, template);
+  },
+};
+
+function getFormatter(hours, minutes) {
+  if (minutes === 0) {
+    return 'onTheHour';
+  } else if (minutes > 50 || minutes < 10) {
+    return 'nearTheHour';
+  } else if (minutes > 40|| minutes < 20) {
+    return 'nearQuarter';
+  }
+
+  return 'nearHalf';
+}
+
+function drawDumbTime(hours, minutes, formatter) {
+  function formatTime(hours, minutes, formatter) {
     const hoursAsWord = utils.hours2Word(hours, minutes);
-
-    const formatter = getFormatter(hours, minutes);
 
     return formatter(hoursAsWord, minutes);
   }
 
-  utils.print(formatTime(hours, minutes));
+  utils.print(formatTime(hours, minutes, formatter));
 }
 
 function cancelTimeout() {
@@ -174,22 +169,42 @@ function cancelTimeout() {
   secondInterval = undefined;
 }
 
-function refreshTime() {
-  cancelTimeout();
+function refreshTime(force) {
+  function clearForRefresh() {
+    g.clearRect(0, 24, g.getWidth(), g.getHeight()-24);
+    g.reset();
+    g.setFontAlign(0,0);
+  }
 
-  g.clearRect(0, 24, g.getWidth(), g.getHeight()-24);
-  g.reset();
-  g.setFontAlign(0,0);
+  function setRefreshInterval(time) {
+    const secondsTillRefresh = 60 - time.getSeconds();
+    secondInterval = setTimeout(refreshTime, secondsTillRefresh * 1000);
+
+    return secondInterval;
+  }
+
+  force = force === true;
+  cancelTimeout();
 
   const time = new Date();
 
-  const method = showRealTime ? drawRealTime : drawDumbTime;
+  if (showRealTime) {
+    clearForRefresh();
+    drawRealTime(time);
+    return setRefreshInterval(time);
+  }
 
-  method(time);
+  const hours = time.getHours();
+  const minutes = time.getMinutes();
+  const formatter = getFormatter(hours, minutes);
 
-  const secondsTillRefresh = 60 - time.getSeconds();
+  if (formatter !== currentFormatter) {
+    clearForRefresh();
+    currentFormatter = formatter;
+    drawDumbTime(hours, minutes, formatters[formatter]);
+  }
 
-  secondInterval = setTimeout(refreshTime, secondsTillRefresh * 1000);
+  return setRefreshInterval(time);
 }
 
 
@@ -200,6 +215,7 @@ function startClock() {
 function addEvents() {
   Bangle.on('lcdPower', (on) => {
     cancelTimeout();
+    currentFormatter = null;
     if (on) {
       startClock();
     }
@@ -215,8 +231,10 @@ function addEvents() {
     edge: "falling"
   });
 
-
-  setWatch(refreshTime, BTN3, {
+  setWatch(() => {
+    currentFormatter = null;
+    refreshTime();
+  }, BTN3, {
     repeat: true,
     edge: "falling"
   });
@@ -231,6 +249,5 @@ function init() {
 
   addEvents();
 }
-
 
 init();

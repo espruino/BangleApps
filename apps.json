@@ -4,11 +4,12 @@
     "tags": "tool,system",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.22",
+    "version":"0.25",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
-      {"name":".bootcde","url":"bootloader.js"}
+      {"name":".bootcde","url":"bootloader.js"},
+      {"name":"bootupdate.js","url":"bootupdate.js"}
     ],
     "sortorder" : -10
   },
@@ -41,7 +42,7 @@
     "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.06",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "tags": "tool,system,launcher",
     "type":"launch",
@@ -53,7 +54,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system",
     "allow_emulator":true,
@@ -65,7 +66,7 @@
   { "id": "locale",
     "name": "Languages",
     "icon": "locale.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Translations for different countries",
     "tags": "tool,system,locale,translate",
     "type": "locale",
@@ -80,7 +81,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.05",
+    "version":"0.08",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -93,7 +94,7 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.06",
+    "version":"0.08",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
     "tags": "widget",
     "type": "notify",
@@ -104,7 +105,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.09",
+    "version":"0.10",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -139,7 +140,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.18",
+    "version":"0.22",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -171,14 +172,16 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.23",
+    "version":"0.26",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system",
     "readme": "README.md",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
-      {"name":"setting.boot.js","url":"boot.js"},
       {"name":"setting.img","url":"settings-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"setting.json", "url":"settings.min.json","evaluate":true}
     ],
     "sortorder" : -2
   },
@@ -186,7 +189,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.10",
+    "version":"0.11",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -211,6 +214,69 @@
     "storage": [
       {"name":"wclock.app.js","url":"clock-word.js"},
       {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "fontclock",
+    "name": "Font Clock",
+    "icon": "fontclock.png",
+    "version":"0.01",
+    "description": "Choose the font and design of clock face from a library of available designs",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":false,
+     "readme": "README.md",
+    "custom":"custom.html",
+    "storage": [
+      {"name":"fontclock.app.js","url":"fontclock.js"},
+      {"name":"fontclock.img","url":"fontclock-icon.js","evaluate":true},
+      {"name":"fontclock.hand.js","url":"fontclock.hand.js"},
+      {"name":"fontclock.thinhand.js","url":"fontclock.thinhand.js"},
+      {"name":"fontclock.thickhand.js","url":"fontclock.thickhand.js"},
+      {"name":"fontclock.hourscriber.js","url":"fontclock.hourscriber.js"},
+      {"name":"fontclock.font.js","url":"fontclock.font.js"},
+      {"name":"fontclock.font.abril_ff50.js","url":"fontclock.font.abril_ff50.js"},
+      {"name":"fontclock.font.cpstc58.js","url":"fontclock.font.cpstc58.js"},
+      {"name":"fontclock.font.mntn25.js","url":"fontclock.font.mntn25.js"},
+      {"name":"fontclock.font.mntn50.js","url":"fontclock.font.mntn50.js"},
+      {"name":"fontclock.font.vector25.js","url":"fontclock.font.vector25.js"},
+      {"name":"fontclock.font.vector50.js","url":"fontclock.font.vector50.js"}
+    ]
+  },
+  { "id": "slidingtext",
+    "name": "Sliding Clock",
+    "icon": "slidingtext.png",
+    "version":"0.05",
+    "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese, Spanish and German are supported",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":false,
+     "readme": "README.md",
+    "custom":"custom.html",
+    "storage": [
+      {"name":"slidingtext.app.js","url":"slidingtext.js"},
+      {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
+      {"name":"slidingtext.locale.en.js","url":"slidingtext.locale.en.js"},
+      {"name":"slidingtext.locale.en2.js","url":"slidingtext.locale.en2.js"},
+      {"name":"slidingtext.utils.en.js","url":"slidingtext.utils.en.js"},
+      {"name":"slidingtext.locale.es.js","url":"slidingtext.locale.es.js"},
+      {"name":"slidingtext.locale.fr.js","url":"slidingtext.locale.fr.js"},
+      {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
+      {"name":"slidingtext.locale.de.js","url":"slidingtext.locale.de.js"},
+      {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
+    ]
+  },
+  { "id": "sweepclock",
+    "name": "Sweep Clock",
+    "icon": "sweepclock.png",
+    "version":"0.04",
+    "description": "Smooth sweep secondhand with single hour numeral. Use button 1 to toggle the numeral font, button 3 to change the colour theme and button 4 to change the date placement",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+     "readme": "README.md",
+    "storage": [
+      {"name":"sweepclock.app.js","url":"sweepclock.js"},
+      {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
     ]
   },
   { "id": "imgclock",
@@ -246,7 +312,7 @@
   { "id": "aclock",
     "name": "Analog Clock",
     "icon": "clock-analog.png",
-    "version": "0.13",
+    "version": "0.14",
     "description": "An Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -267,6 +333,30 @@
     "storage": [
       {"name":"clock2x3.app.js","url":"clock2x3-app.js"},
       {"name":"clock2x3.img","url":"clock2x3-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "geissclk",
+    "name": "Geiss Clock",
+    "icon": "clock.png",
+    "version":"0.02",
+    "description": "7 segment clock with animated background in the style of Ryan Geiss' music visualisation. NOTE: The first run will take ~1 minute to do some precalculation",
+    "tags": "clock",
+    "type":"clock",
+    "storage": [
+      {"name":"geissclk.app.js","url":"clock.js"},
+      {"name":"geissclk.precompute.js","url":"precompute.js"},
+      {"name":"geissclk.img","url":"clock-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"geissclk.0.map"},
+      {"name":"geissclk.1.map"},
+      {"name":"geissclk.2.map"},
+      {"name":"geissclk.3.map"},
+      {"name":"geissclk.4.map"},
+      {"name":"geissclk.5.map"},
+      {"name":"geissclk.0.pal"},
+      {"name":"geissclk.1.pal"},
+      {"name":"geissclk.2.pal"}
     ]
   },
   { "id": "trex",
@@ -363,7 +453,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.17",
+    "version":"0.19",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -388,14 +478,16 @@
     "interface":"waypoints.html",
     "storage": [
       {"name":"gpsnav.app.js","url":"app.min.js"},
-      {"name":"waypoints.json","url":"waypoints.json","evaluate":false},
       {"name":"gpsnav.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
     ]
   },
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.05",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
@@ -479,12 +571,23 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "widlock",
+    "name": "Lock Widget",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
+    "tags": "widget,lock",
+    "type":"widget",
+    "storage": [
+      {"name":"widlock.wid.js","url":"widget.js"}
     ]
   },
   { "id": "widbatpc",
@@ -508,7 +611,7 @@
     "shortName": "Battery Warning",
     "icon": "widget.png",
     "readme": "README.md",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Show a warning when the battery runs low.",
     "tags": "tool,battery",
     "type":"widget",
@@ -532,6 +635,21 @@
       {"name":"widbt.wid.js","url":"widget.js"}
     ]
   },
+  { "id": "widchime",
+    "name": "Hour Chime",
+    "icon": "widget.png",
+    "version":"0.02",
+    "description": "Buzz or beep on every whole hour.",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widchime.wid.js","url":"widget.js"},
+      {"name":"widchime.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"widchime.json"}
+    ]
+  },
   { "id": "widram",
     "name": "RAM Widget",
     "shortName":"RAM Widget",
@@ -547,7 +665,7 @@
   { "id": "hrm",
     "name": "Heart Rate Monitor",
     "icon": "heartrate.png",
-    "version":"0.02",
+    "version":"0.04",
     "description": "Measure your heart rate and see live sensor data",
     "tags": "health",
     "storage": [
@@ -673,7 +791,7 @@
   { "id": "route",
     "name": "Route Viewer",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Upload a KML file of a route, and have your watch display a map with how far around it you are",
     "tags": "",
     "custom": "custom.html",
@@ -739,10 +857,23 @@
       {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
     ]
   },
+  { "id": "s7clk",
+    "name": "Simple 7 segment Clock",
+    "icon": "icon.png",
+    "version":"0.02",
+    "description": "A simple 7 segment Clock with date",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+    "storage": [
+      {"name":"s7clk.app.js","url":"app.js"},
+      {"name":"s7clk.img","url":"icon.js","evaluate":true}
+    ]
+  },
   { "id": "vibrclock",
     "name": "Vibrate Clock",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
     "tags": "clock",
     "type":"clock",
@@ -970,7 +1101,7 @@
     "name": "Large Digit Blob Clock",
     "shortName" : "Blob Clock",
     "icon": "clock-blob.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A clock with big digits",
     "tags": "clock",
     "type":"clock",
@@ -1007,7 +1138,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.11",
+    "version":"0.13",
     "description": "Daily pedometer widget",
     "tags": "widget",
     "type":"widget",
@@ -1138,7 +1269,7 @@
   { "id": "marioclock",
     "name": "Mario Clock",
     "icon": "marioclock.png",
-    "version":"0.14",
+    "version":"0.15",
     "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
     "tags": "clock,mario,retro",
     "type": "clock",
@@ -1153,7 +1284,7 @@
     "name": "Commandline-Clock",
     "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell",
     "type":"clock",
@@ -1190,7 +1321,7 @@
   { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A Minimal Dot Analog Clock",
     "tags": "clock",
     "type":"clock",
@@ -1492,7 +1623,7 @@
     "name": "Digital Assistant, not EDITH",
     "shortName": "DANE",
     "icon": "app.png",
-    "version": "0.15",
+    "version": "0.16",
     "description": "A Watchface inspired by Tony Stark's EDITH and based on https://arwes.dev/",
     "tags": "clock",
     "type": "clock",
@@ -1553,7 +1684,7 @@
     "name": "BangleRun",
     "shortName": "BangleRun",
     "icon": "banglerun.png",
-    "version": "0.09",
+    "version": "0.10",
     "interface": "interface.html",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "tags": "run,running,fitness,outdoors",
@@ -1636,15 +1767,29 @@
   {
     "id": "rclock",
     "name": "Round clock with seconds,  minutes and date",
-    "shortName":"Round Clock",
+    "shortName": "Round Clock",
     "icon": "app.png",
-    "version":"0.03",
+    "version": "0.05",
     "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
     "tags": "clock",
     "type": "clock",
     "storage": [
       {"name":"rclock.app.js","url":"rclock.app.js"},
       {"name":"rclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "fclock",
+    "name": "fclock",
+    "shortName": "F Clock",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "Simple design of a digital clock",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"fclock.app.js","url":"fclock.app.js"},
+      {"name":"fclock.img","url":"app-icon.js","evaluate":true}
     ]
   },
   { "id": "hamloc",
@@ -1835,7 +1980,7 @@
     "id": "beebclock",
     "name": "Beeb Clock",
     "icon": "beebclock.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Clock face that may be coincidentally familiar to BBC viewers",
     "tags": "clock",
     "type": "clock",
@@ -2035,7 +2180,7 @@
     "name": "SleepPhaseAlarm",
     "shortName":"SleepPhaseAlarm",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments (ESS, see https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en). This app will read the next alarm from the alarm application and will wake you up to 30 minutes early at the best guessed time when you are almost already awake.",
     "tags": "alarm",
     "storage": [
@@ -2139,7 +2284,7 @@
   { "id": "multiclock",
     "name": "Multi Clock",
     "icon": "multiclock.png",
-    "version":"0.11",
+    "version":"0.13",
     "description": "Clock with multiple faces - Big, Analogue, Digital, Text, Time-Date.\n Switch between faces with BTN1 & BTN3",
     "readme": "README.md",
     "tags": "clock",
@@ -2153,8 +2298,6 @@
       {"name":"txt.face.js","url":"txt.js"},
       {"name":"timdat.face.js","url":"timdat.js"},
       {"name":"ped.face.js","url":"ped.js"},
-      {"name":"gps.face.js","url":"gps.js"},
-      {"name":"osref.face.js","url":"osref.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
     ]
   },
@@ -2162,7 +2305,7 @@
     "name": "Apple Notification Widget",
     "shortName":"ANCS Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Displays call, message etc notifications from a paired iPhone. Read README before installation as it only works with compatible apps",
     "readme": "README.md",
     "tags": "widget",
@@ -2259,7 +2402,7 @@
   {"id": "counter",
   "name": "Counter",
   "icon": "counter_icon.png",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Simple counter",
   "tags": "tool",
   "allow_emulator": true,
@@ -2336,9 +2479,11 @@
     "readme": "README.md",
     "storage": [
       {"name":"worldclock.app.js","url":"app.js"},
-      {"name":"worldclock.settings.json"},
       {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
-  ]
+    ],
+    "data": [
+      {"name":"worldclock.settings.json"}
+    ]
  },
 { "id": "digiclock",
   "name": "Digital Clock Face",
@@ -2530,7 +2675,7 @@
   "name": "Hard Alarm",
   "shortName":"HardAlarm",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Make sure you wake up! Count to the right number to turn off the alarm",
   "tags": "tool,alarm,widget",
   "storage": [
@@ -2581,14 +2726,16 @@
   "readme": "README.md",
   "storage": [
     {"name":"breath.app.js","url":"app.js"},
-    {"name":"breath.settings.json","url":"settings.json"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"breath.settings.json","url":"settings.json"}
   ]
 },
 { "id": "lazyclock",
   "name": "Lazy Clock",
   "icon": "lazyclock.png",
-  "version":"0.01",
+  "version":"0.02",
   "readme": "README.md",
   "description": "Tells the time, roughly",
   "tags": "clock",
@@ -2639,11 +2786,11 @@
   ]
 },
 { "id": "speedalt",
-  "name": "GPS Speedo and Altimeter",
-  "shortName":"GPS Speed Alt",
+  "name": "GPS Adventure Sports",
+  "shortName":"GPS Adv Sport",
   "icon": "app.png",
-  "version":"0.07",
-  "description": "GPS speed and altitude display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
+  "version":"1.02",
+  "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "tags": "tool,outdoors",
   "type":"app",
   "allow_emulator":true,
@@ -2679,9 +2826,11 @@
   "storage": [
     {"name":"gpsservice.app.js","url":"app.js"},
     {"name":"gpsservice.settings.js","url":"settings.js"},
-    {"name":"gpsservice.settings.json","url":"settings.json"},
     {"name":"gpsservice.wid.js","url":"widget.js"},
     {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpsservice.settings.json","url":"settings.json"}
   ]
 },
 { "id": "mclockplus",
@@ -2714,12 +2863,15 @@
   "name": "Planetarium",
   "shortName":"Planetarium",
   "icon": "planetarium.png",
-  "version":"0.02",
+  "readme": "README.md",
+  "version":"0.03",
   "description": "Planetarium showing up to 500 stars using the watch location and time",
   "tags": "",
   "storage": [
     {"name":"planetarium.app.js","url":"planetarium.app.js"},
     {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
+    {"name":"planetarium.const.csv","url":"planetarium.const.csv"},
+    {"name":"planetarium.extra.csv","url":"planetarium.extra.csv"},
     {"name":"planetarium.settings.js","url":"settings.js"},
     {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
   ],
@@ -2730,14 +2882,14 @@
 { "id": "tapelauncher",
   "name": "Tape Launcher",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
   "readme": "README.md",
   "tags": "tool,system,launcher",
   "type":"launch",
   "storage": [
-    {"name":"tapelaunch.app.js","url":"app.js"},
-    {"name":"tapelaunch.img","url":"icon.js","evaluate":true}
+    {"name":"tapelauncher.app.js","url":"app.js"},
+    {"name":"tapelauncher.img","url":"icon.js","evaluate":true}
   ]
 },
 { "id": "oblique",
@@ -2750,6 +2902,361 @@
     {"name":"oblique.app.js","url":"app.js"},
     {"name":"oblique.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "testuserinput",
+  "name": "Test User Input",
+  "shortName":"Test User Input",
+  "icon": "app.png",
+  "version":"0.06",
+  "description": "App to test the bangle.js input interface. It displays the user action in text, circle buttons or on/off switch UI elements.",
+  "readme": "README.md",
+  "tags": "input,interface,buttons,touch,UI",
+  "storage": [
+    {"name":"testuserinput.app.js","url":"app.js"},
+    {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "gpssetup",
+  "name": "GPS Setup",
+  "shortName":"GPS Setup",
+  "icon": "gpssetup.png",
+  "version":"0.02",
+  "description": "Configure the GPS power options and store them in the GPS nvram",
+  "tags": "gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpssetup","url":"gpssetup.js"},
+    {"name":"gpssetup.settings.js","url":"settings.js"},
+    {"name":"gpssetup.app.js","url":"app.js"},
+    {"name":"gpssetup.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpssetup.settings.json","url":"settings.json"}
+  ]
+},
+{ "id": "walkersclock",
+  "name": "Walkers Clock",
+  "shortName":"Walkers Clock",
+  "icon": "walkersclock48.png",
+  "version":"0.04",
+  "description": "A large font watch, displays steps, can switch GPS on/off, displays grid reference",
+  "type":"clock",
+  "tags": "clock, gps, tools, outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"walkersclock.app.js","url":"app.js"},
+    {"name":"walkersclock.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "widgps",
+  "name": "GPS Widget",
+  "icon": "widget.png",
+  "version":"0.02",
+  "description": "Tiny widget to show the power on/off status of the GPS. Require firmware v2.08.167 or later",
+  "tags": "widget,gps",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widgps.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "widhrt",
+  "name": "HRM Widget",
+  "icon": "widget.png",
+  "version":"0.02",
+  "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
+  "tags": "widget, hrm",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widhrt.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "countdowntimer",
+  "name" : "Countdown Timer",
+  "icon": "countdowntimer.png",
+  "version": "0.01",
+  "description": "A simple countdown timer with a focus on usability",
+  "tags": "timer, tool",
+  "readme": "README.md",
+  "storage": [
+    {"name": "countdowntimer.app.js", "url": "countdowntimer.js"},
+    {"name": "countdowntimer.img", "url": "countdowntimer-icon.js", "evaluate": true}
+  ]
+},
+{ "id": "helloworld",
+  "name": "hello, world!",
+  "shortName":"hello world",
+  "icon": "app.png",
+  "version":"0.02",
+  "description": "A cross cultural hello world!/hola mundo! app with colors and languages",
+  "readme": "README.md",
+  "tags": "input,interface,buttons,touch",
+  "storage": [
+    {"name":"helloworld.app.js","url":"app.js"},
+    {"name":"helloworld.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "widcom",
+  "name": "Compass Widget",
+  "icon": "widget.png",
+  "version":"0.01",
+  "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
+  "tags": "widget, compass",
+  "type":"widget",
+  "readme": "README.md",
+  "storage": [
+    {"name":"widcom.wid.js","url":"widget.js"}
+  ]
+},
+{ "id": "arrow",
+  "name": "Arrow Compass",
+  "icon": "arrow.png",
+  "type":"app",
+  "version":"0.04",
+  "description": "Moving arrow compass that points North, shows heading, with tilt correction. Based on jeffmer's Navigation Compass",
+  "tags": "tool,outdoors",
+  "readme": "README.md",
+  "storage": [
+    {"name":"arrow.app.js","url":"app.js"},
+    {"name":"arrow.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "waypointer",
+  "name": "Way Pointer",
+  "icon": "waypointer.png",
+  "version":"0.01",
+  "description": "Navigate to a waypoint using the GPS for bearing and compass to point way, uses the same waypoint interface as GPS Navigation",
+  "tags": "tool,outdoors,gps",
+  "readme": "README.md",
+  "interface":"waypoints.html",
+  "storage": [
+    {"name":"waypointer.app.js","url":"app.js"},
+    {"name":"waypointer.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"waypoints.json","url":"waypoints.json"}
+  ]
+},
+{ "id": "color_catalog",
+  "name": "Colors Catalog",
+  "shortName":"Colors Catalog",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
+  "readme": "README.md",
+  "tags": "Color, input,buttons,touch,UI",
+  "storage": [
+    {"name":"color_catalog.app.js","url":"app.js"},
+    {"name":"color_catalog.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "UI4swatch",
+  "name": "UI 4 swatch",
+  "shortName":"UI 4 swatch",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A UI/UX for espruino smartwatches, displays dinamically calc. x,y coordinates.",
+  "readme": "README.md",
+  "tags": "Color, input,buttons,touch,UI",
+  "storage": [
+    {"name":"UI4swatch.app.js","url":"app.js"},
+    {"name":"UI4swatch.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "simplest",
+  "name": "Simplest Clock",
+  "icon": "simplest.png",
+  "version":"0.01",
+  "description": "The simplest working clock, acts as a tutorial piece",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"simplest.app.js","url":"app.js"},
+    {"name":"simplest.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "stepo",
+  "name": "Stepometer Clock",
+  "icon": "stepo.png",
+  "version":"0.03",
+  "description": "A large font watch, displays step count in a doughnut guage and warns of low battery, requires one of the steps widgets to be installed",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"stepo.app.js","url":"app.js"},
+    {"name":"stepo.img","url":"icon.js","evaluate":true}
+  ]
+},
+{ "id": "gbmusic",
+  "name": "Gadgetbridge Music Controls",
+  "shortName":"Music Controls",
+  "icon": "icon.png",
+  "version":"0.05",
+  "description": "Control the music on your Gadgetbridge-connected phone",
+  "tags": "tools,bluetooth,gadgetbridge,music",
+  "type":"app",
+  "allow_emulator": false,
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbmusic.app.js","url":"app.js"},
+    {"name":"gbmusic.settings.js","url":"settings.js"},
+    {"name":"gbmusic.wid.js","url":"widget.js"},
+    {"name":"gbmusic.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gbmusic.json"},
+    {"name":"gbmusic.load.json"}
+  ]
+},
+{
+  "id": "battleship",
+  "name":"Battleship",
+  "icon":"battleship-icon.png",
+  "version": "0.01",
+  "readme": "README.md",
+  "description": "The classic game of battleship",
+  "tags": "game",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "battleship.app.js",
+      "url": "battleship.js"
+    },
+    {
+      "name": "battleship.img",
+      "url": "battleship-icon.js",
+      "evaluate": true
+    }
+  ]
+},
+{ "id": "kitchen",
+  "name": "Kitchen Combo",
+  "icon": "kitchen.png",
+  "version":"0.10",
+  "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
+  "tags": "tool,outdoors,gps",
+  "type":"clock",
+  "readme": "README.md",
+  "interface":"waypoints.html",
+  "storage": [
+    {"name":"kitchen.app.js","url":"kitchen.app.js"},
+    {"name":"stepo.kit.js","url":"stepo.kit.js"},
+    {"name":"gps.kit.js","url":"gps.kit.js"},
+    {"name":"digi.kit.js","url":"digi.kit.js"},
+    {"name":"heart.kit.js","url":"heart.kit.js"},
+    {"name":"swatch.kit.js","url":"swatch.kit.js"},
+    {"name":"compass.kit.js","url":"compass.kit.js"},
+    {"name":"kitchen.img","url":"kitchen.icon.js","evaluate":true}
+  ],
+  "data": [
+      {"name":"waypoints.json","url":"waypoints.json"}
+  ]
+},
+{ "id": "qmsched",
+  "name": "Quiet Mode Schedule",
+  "shortName":"Quiet Mode",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Automatically turn Quiet Mode on or off at set times",
+  "readme": "README.md",
+  "tags": "tool",
+  "storage": [
+    {"name":"qmsched","url":"lib.js"},
+    {"name":"qmsched.app.js","url":"app.js"},
+    {"name":"qmsched.boot.js","url":"boot.js"},
+    {"name":"qmsched.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"qmsched.json"}
+  ]
+},
+{
+  "id": "hourstrike",
+  "name": "Hour Strike",
+  "shortName": "Hour Strike",
+  "icon": "app-icon.png",
+  "version": "0.07",
+  "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
+  "tags": "tool,alarm",
+  "readme": "README.md",
+  "storage": [
+    {"name":"hourstrike.app.js","url":"app.js"},
+    {"name":"hourstrike.boot.js","url":"boot.js"},
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "whereworld",
+  "name": "Where in the World?",
+  "shortName" : "Where World",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Shows your current location on the world map",
+  "tags": "gps",
+  "storage": [
+    {"name":"whereworld.app.js","url":"app.js"},
+    {"name":"whereworld.img","url":"app-icon.js","evaluate":true},
+    {"name":"whereworld.worldmap","url":"worldmap"}
+  ]
+},
+{
+  "id": "omnitrix",
+  "name":"Omnitrix",
+  "icon":"omnitrix.png",
+  "version": "0.01",
+  "readme": "README.md",
+  "description": "An Omnitrix Showpiece",
+  "tags": "game",
+  "readme": "README.md",
+  "storage": [
+    {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
+    {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
+  ]
+},
+{ "id": "batclock",
+  "name": "Bat Clock",
+  "shortName":"Bat Clock",
+  "icon": "bat-clock.png",
+  "version":"0.01",
+  "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
+  "tags": "clock",
+  "type": "clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"batclock.app.js","url":"bat-clock.app.js"},
+    {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
+  ]
+},
+{ "id":"doztime",
+  "name":"Dozenal Time",
+  "shortName":"Dozenal Time",
+  "icon":"app.png",
+  "version":"0.01",
+  "description":"A dozenal Holocene calendar and dozenal diurnal clock",
+  "tags":"clock",
+  "type":"clock",
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"doztime.app.js","url":"app.js"},
+    {"name":"doztime.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id":"gbtwist",
+  "name":"Gadgetbridge Twist Control",
+  "shortName":"Twist Control",
+  "icon":"app.png",
+  "version":"0.01",
+  "description":"Shake your wrist to control your music app via Gadgetbridge",
+  "tags":"tools,bluetooth,gadgetbridge,music",
+  "type":"app",
+  "allow_emulator":false,
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbtwist.app.js","url":"app.js"},
+    {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
+  ]
 }
-
 ]

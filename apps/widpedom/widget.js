@@ -4,11 +4,6 @@
     'goal': 10000,
     'progress': false,
   }
-  const COLORS = {
-    'white': -1,
-    'progress': 0x001F, // Blue
-    'done': 0x03E0, // DarkGreen
-  }
   const TAU = Math.PI*2;
   let lastUpdate = new Date();
   let stp_today = 0;
@@ -27,7 +22,7 @@
   function drawProgress(stps) {
     const width = 24, half = width/2;
     const goal = setting('goal'), left = Math.max(goal-stps,0);
-    const c = left ? COLORS.progress : COLORS.done;
+    const c = left ? "#00f" : "#090"; // blue or dark green
     g.setColor(c).fillCircle(this.x + half, this.y + half, half);
     if (left) {
       const f = left/goal; // fraction to blank out
@@ -47,7 +42,7 @@
         p[i - 2] += this.x;
         p[i - 1] += this.y;
       }
-      g.setColor(0).fillPoly(p);
+      g.setColor(g.theme.bg).fillPoly(p);
     }
   }
 
@@ -58,10 +53,9 @@
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
     let stps = stp_today.toString();
-    g.reset();
-    g.clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
+    g.reset().clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
     if (setting('progress')){ drawProgress.call(this, stps); }
-    g.setColor(COLORS.white);
+    g.setColor(g.theme.fg);
     if (stps.length > 3){
       stps = stps.slice(0,-3) + "," + stps.slice(-3);
       g.setFont("4x6", 1); // if big, shrink text to fix
@@ -86,7 +80,8 @@
       // TODO: could save this to PEDOMFILE for lastUpdate's day?
       stp_today = 1;
     }
-    if (stp_today === setting('goal')) {
+    if (stp_today === setting('goal')
+        && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
       let b = 3, buzz = () => {
         if (b--) Bangle.buzz().then(() => setTimeout(buzz, 100))
       }

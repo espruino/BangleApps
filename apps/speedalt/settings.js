@@ -19,32 +19,45 @@
     writeSettings();
   }
 
+  function setUnitsDist(d,u) {
+    settings.dist = d;
+    settings.dist_unit = u;
+    writeSettings();
+  }
+
   function setColour(c) {
     settings.colour = c;
     writeSettings();
   }
+
   
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
+    '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
+    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
     'Vibrate' : {
     value : settings.buzz,
     format : v => v?"On":"Off",
     onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }};
+    }*/
+  };
   
   const unitsMenu = {
     '': {'title': 'Units'},
     '< Back': function() { E.showMenu(appMenu); },
     'default (spd)' : function() { setUnits(0,''); },
     'Kph (spd)' : function() { setUnits(1,'kph'); },
-    'Knots (spd)' : function() { setUnits(1.852,'knots'); },
+    'Knots (spd)' : function() { setUnits(1.852,'kts'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
     'm/s (spd)' : function() { setUnits(3.6,'m/s'); },
+    'Km (dist)' : function() { setUnitsDist(1000,'km'); },
+    'Miles (dist)' : function() { setUnitsDist(1609.344,'mi'); },
+    'Nm (dist)' : function() { setUnitsDist(1852.001,'nm'); },
     'Meters (alt)' : function() { setUnitsAlt(1,'m'); },
-    'Feet (alt)' : function() { setUnitsAlt(0.3048,'feet'); }
+    'Feet (alt)' : function() { setUnitsAlt(0.3048,'ft'); }
   };
 
   const colMenu = {
@@ -55,7 +68,22 @@
     'Night' : function() { setColour(2); }
   };
   
+  const kalMenu = {
+    '': {'title': 'Kalman Filter'},
+    '< Back': function() { E.showMenu(appMenu); },
+    'Speed' : {
+    value : settings.spdFilt,
+    format : v => v?"On":"Off",
+    onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
+    },
+    'Altitude' : {
+    value : settings.altFilt,
+    format : v => v?"On":"Off",
+    onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
+    }
+  };
+
   
   E.showMenu(appMenu);
 
-})
+});

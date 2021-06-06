@@ -26,3 +26,6 @@
       Add whitelist option (fix #78)
 0.22: Move HID to BLE menu
 0.23: Change max time offset to 13 for NZ summer daylight time (NZDT)
+0.24: Add Quiet Mode settings
+0.25: Move boot.js code into 'boot' app itself
+0.26: Use Bangle.softOff if available as this keeps the time

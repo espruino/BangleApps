@@ -2,20 +2,18 @@
   // Music handling
   const state = {
     music: "stop",
-
     musicInfo: {
       artist: "",
       album: "",
       track: ""
     },
-
     scrollPos: 0
   };
   // activity reporting
   var currentSteps = 0, lastSentSteps=0;
   var activityInterval;
   var hrmTimeout;
-  
+
   function settings() {
     let settings = require('Storage').readJSON("gbridge.json", true) || {};
     if (!("showIcon" in settings)) {
@@ -41,14 +39,6 @@
         };
       default:
         return event;
-    }
-  }
-  function handleNotificationEvent(event) {
-    if (event.t === "notify") {
-      require("notify").show(prettifyNotificationEvent(event));
-      Bangle.buzz();
-    } else { // notify-
-      require("notify").hide(event);
     }
   }
 
@@ -117,38 +107,7 @@
       require("notify").hide("music");
     }
   }
-  function handleMusicStateUpdate(event) {
-    if (state.music !== event.state) {
-      state.music = event.state
-      updateMusic({on: true});
-    }
-  }
-  function handleMusicInfoUpdate(event) {
-    state.musicInfo = event;
-    updateMusic({on: false});
-  }
 
-  function handleCallEvent(event) {
-    if (event.cmd === "accept") {
-      require("notify").show({
-        size: 55, title: event.name, id: "call",
-        body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))});
-      Bangle.buzz();
-    }
-  }
-
-  function handleFindEvent(event) {
-    if (state.find) {
-      clearInterval(state.find);
-      delete state.find;
-    }
-    if (event.n)
-      state.find = setInterval(_=>{
-        Bangle.buzz();
-        setTimeout(_=>Bangle.beep(), 1000);
-      },2000);
-  }
-  
   function handleActivityEvent(event) {
     var s = settings();
     // handle setting activity interval
@@ -193,19 +152,57 @@
     switch (event.t) {
       case "notify":
       case "notify-":
-        handleNotificationEvent(event);
+        if (event.t === "notify") {
+          require("notify").show(prettifyNotificationEvent(event));
+          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+            Bangle.buzz();
+          }
+        } else { // notify-
+          require("notify").hide(event);
+        }
         break;
       case "musicinfo":
-        handleMusicInfoUpdate(event);
+        state.musicInfo = event;
+        updateMusic({on: false});
         break;
       case "musicstate":
-        handleMusicStateUpdate(event);
+        if (state.music !== event.state) {
+          state.music = event.state
+          updateMusic({on: true});
+        }
         break;
       case "call":
-        handleCallEvent(event);
+        var note = { size: 55, title: event.name, id: "call",
+                     body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
+        if (event.cmd === "incoming") {
+          require("notify").show(note);
+          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+            Bangle.buzz();
+          }
+        } else if (event.cmd === "start") {
+          require("notify").show(Object.assign(note, {
+            bgColor : "#008000", titleBgColor : "#00C000",
+            body: "In progress: "+event.number}));
+        } else if (event.cmd === "end") {
+          require("notify").show(Object.assign(note, {
+            bgColor : "#800000", titleBgColor : "#C00000",
+            body: "Ended: "+event.number}));
+          setTimeout(function() {
+            require("notify").hide({ id: "call" });
+          }, 2000);
+        }
         break;
       case "find":
-        handleFindEvent(event);
+        if (state.find) {
+          clearInterval(state.find);
+          delete state.find;
+        }
+        if (event.n)
+          // Ignore quiet mode: we always want to find our watch
+          state.find = setInterval(_=>{
+            Bangle.buzz();
+            setTimeout(_=>Bangle.beep(), 1000);
+          },2000);
         break;
       case "act":
         handleActivityEvent(event);
@@ -251,7 +248,7 @@
   function sendBattery() {
     gbSend({ t: "status", bat: E.getBattery() });
   }
-  
+
   // Send a summary of activity to Gadgetbridge
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
@@ -279,7 +276,7 @@
     }
   });
   handleActivityEvent({}); // kicks off activity reporting
-  
+
   // Finally add widget
   WIDGETS["gbridgew"] = {area: "tl", width: 24, draw: draw, reload: reload};
   reload();
