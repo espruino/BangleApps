@@ -3258,6 +3258,21 @@
     {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
   ]
 },
+{ "id": "mysticdock",
+  "name": "Mystic Dock",
+  "icon": "mystic-dock.png",
+  "version":"1.0",
+  "description": "A retro-inspired dockface that displays the current time and battery charge while plugged in, and which features an interactive mode that shows the time, date, and a rotating data display line.",
+  "tags": "dock",
+  "type":"dock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"mysticdock.app.js","url":"mystic-dock-app.js"},
+    {"name":"mysticdock.boot.js","url":"mystic-dock-boot.js"},
+    {"name":"mysticdock.settings.js","url":"mystic-dock-settings.js"},
+    {"name":"mysticdock.img","url":"mystic-dock-icon.js","evaluate":true}
+  ]
+},
 { "id": "mysticclock",
   "name": "Mystic Clock",
   "icon": "mystic-clock.png",
