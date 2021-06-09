@@ -4,7 +4,7 @@
     "tags": "tool,system",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.25",
+    "version":"0.26",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
@@ -362,13 +362,17 @@
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "T-Rex game in the style of Chrome's offline game",
     "tags": "game",
     "allow_emulator":true,
     "storage": [
       {"name":"trex.app.js","url":"trex.js"},
-      {"name":"trex.img","url":"trex-icon.js","evaluate":true}
+      {"name":"trex.img","url":"trex-icon.js","evaluate":true},
+      {"name":"trex.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"trex.score", "storageFile": true}
     ]
   },
   { "id": "astroid",

@@ -1,3 +1,13 @@
+function loadHighScore() {
+  var f = require("Storage").open("trex.score", "r");
+  return f.readLine() || 0;
+}
+
+function saveHighScore(score) {
+  var f = require("Storage").open("trex.score", "w");
+  f.write(score + "\n");
+}
+
 greal = g;
 g.clear();
 g = Graphics.createArrayBuffer(120,64,1,{msb:true});
@@ -9,8 +19,8 @@ g.flip = function() {
   },0,(240-128)/2,{scale:2});
 };
 var W = g.getWidth();
-var BTNL = BTN4;
-var BTNR = BTN5;
+var BTNL = BTN2;
+var BTNR = BTN3;
 var BTNU = BTN1;
 
 // Images can be added like this in Espruino v2.00
@@ -134,6 +144,8 @@ var IMG = {
 IMG.rex.forEach(i=>i.transparent=0);
 IMG.cacti.forEach(i=>i.transparent=0);
 var cacti, rex, frame;
+// displayedHighScore is not updated before restart
+var highScore = loadHighScore(), displayedHighScore;
 
 function gameStart() {
   rex = {
@@ -152,6 +164,7 @@ function gameStart() {
   }
   IMG.ground = { width: 128, height: 3, bpp : 1, buffer : random.buffer };
   frame = 0;
+  displayedHighScore = highScore;
   setInterval(onFrame, 50);
 }
 function gameStop() {
@@ -159,8 +172,13 @@ function gameStop() {
   rex.img = 2; // dead
   clearInterval();
   setTimeout(function() {
+    // putting saveHighScore here to not delay the frame drawing
+    if (rex.score > highScore) {
+      highScore = rex.score;
+      saveHighScore(highScore);
+    }
     setWatch(gameStart, BTNU, {repeat:0,debounce:50,edge:"rising"});
-  }, 1000);
+  }, 800);
   setTimeout(onFrame, 10);
 }
 
@@ -190,6 +208,9 @@ function onFrame() {
     while (cacti.length && cacti[0].x<0) cacti.shift();
   } else {
     g.drawString("Game Over!",(W-g.stringWidth("Game Over!"))/2,20);
+    if (rex.score > highScore) {
+      g.drawString("New Record!",(W-g.stringWidth("New Record!"))/2,28);
+    }
   }
   g.drawLine(0,60,239,60);
   cacti.forEach(c=>g.drawImage(IMG.cacti[c.img],c.x,60-IMG.cacti[c.img].height));
@@ -213,7 +234,8 @@ function onFrame() {
   var groundOffset = frame&127;
   g.drawImage(IMG.ground, -groundOffset, 61);
   g.drawImage(IMG.ground, 128-groundOffset, 61);
-  g.drawString(rex.score,(W-1)-g.stringWidth(rex.score));
+  g.drawString(displayedHighScore,(W-1)-g.stringWidth(displayedHighScore), 0);
+  g.drawString(rex.score,(W-1)-g.stringWidth(rex.score), 8);
   g.flip();
 }
 
