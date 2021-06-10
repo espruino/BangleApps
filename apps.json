@@ -1316,6 +1316,7 @@
     "description": "A simple digital clock showing seconds as a bar",
     "tags": "clock",
     "type":"clock",
+    "readme": "README.md",
     "allow_emulator":true,
     "storage": [
       {"name":"barclock.app.js","url":"clock-bar.js"},
