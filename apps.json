@@ -3212,7 +3212,6 @@
   "readme": "README.md",
   "description": "An Omnitrix Showpiece",
   "tags": "game",
-  "readme": "README.md",
   "storage": [
     {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
     {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
