@@ -3,3 +3,4 @@
 0.03: Fix dates drawing over each other at midnight
 0.04: Small bugfix
 0.05: Clock does not start if app Languages is not installed
+0.06: Improve accuracy

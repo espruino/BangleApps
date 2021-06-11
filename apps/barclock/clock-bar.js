@@ -12,12 +12,12 @@
     date.setMonth(1, 3) // februari: months are zero-indexed
     const localized = locale.date(date, true)
     locale.dayFirst = /3.*2/.test(localized)
-    
+
     locale.hasMeridian = false
     if(typeof locale.meridian === 'function') {  // function does not exists if languages  app is not installed
       locale.hasMeridian = (locale.meridian(date) !== '')
     }
-    
+
   }
   const screen = {
     width: g.getWidth(),
@@ -124,7 +124,7 @@
     g.fillRect(0, timeTop, screen.width, screen.height)
   }
 
-  let lastSeconds
+  let lastSeconds, tTick
   const tick = function () {
     g.reset()
     const date = new Date()
@@ -136,20 +136,20 @@
     }
     // the bar only gets larger, so drawing on top of the previous one is fine
     drawBar(date)
-
     lastSeconds = seconds
+    // schedule next update
+    const millis = date.getMilliseconds()
+    tTick = setTimeout(tick, 1000-millis)
   }
 
-  let iTick
   const start = function () {
     lastSeconds = 99 // force redraw
     tick()
-    iTick = setInterval(tick, 1000)
   }
   const stop = function () {
-    if (iTick) {
-      clearInterval(iTick)
-      iTick = undefined
+    if (tTick) {
+      clearTimeout(tTick)
+      tTick = undefined
     }
   }
 
