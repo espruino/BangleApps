@@ -32,6 +32,7 @@
     <div id="map">
     </div>
     <div id="controls">
+      <div style="display:inline-block;text-align:center;vertical-align: top;"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
       <button id="getmap" class="btn btn-primary">Get Map</button><br/>
       <canvas id="maptiles" style="display:none"></canvas>
       <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
@@ -49,6 +50,7 @@
 
 TODO:
 
+* Allow a larger tilesize. Currently we use 'evaluate:true' which means we can only send 64x64x8 bit, but with some tweaking we could send 128x128 which would reduce the number of files and make things a bit snappier
 * Could maybe use palettised output?
 * Could potentially use a custom 16 color palette?
 * Allow user to choose size of map area to be uploaded (small/med/large)
@@ -75,6 +77,15 @@ TODO:
 
       function tilesLoaded(ctx, width, height) {
         var options = { compression:true, mode:"web", output:"string"};
+        if (document.getElementById("3bit").checked) {
+          options = {
+            compression:true,
+            //mode:"web",
+            mode:"3bit", brightness:-64,
+            output:"string"
+          };
+        }
+        console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);
         var tiles = [];

@@ -3,3 +3,4 @@
 0.03: Show widgets (mainly so we can use the GPS recorder widget)
 0.04: Move map rendering to a module (fix #396)
 0.05: Show currently active gpsrec GPS trace (fix #395)
+0.06: Add support for scrolling, option for 3 bit maps
