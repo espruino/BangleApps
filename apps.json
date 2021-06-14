@@ -3262,6 +3262,18 @@
     {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
   ]
 },
+{ "id": "thermom",
+  "name": "Thermometer",
+  "icon": "app.png",
+  "version":"0.02",
+  "description": "Displays the current temperature, updated every 20 seconds",
+  "tags": "tool",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"thermom.app.js","url":"app.js"},
+    {"name":"thermom.img","url":"app-icon.js","evaluate":true}
+  ]
+},
 { "id": "mysticdock",
   "name": "Mystic Dock",
   "icon": "mystic-dock.png",
