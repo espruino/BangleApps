@@ -587,7 +587,7 @@
   { "id": "widlock",
     "name": "Lock Widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
     "tags": "widget,lock",
     "type":"widget",
