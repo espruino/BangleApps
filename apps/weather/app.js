@@ -30,10 +30,14 @@
     g.setFont("6x8", 1);
     g.setFontAlign(-1, 0, 0);
     g.drawString("Humidity", 135, 130);
-    g.drawString("Wind", 135, 142);
     g.setFontAlign(1, 0, 0);
     g.drawString(w.hum+"%", 225, 130);
-    g.drawString(locale.speed(w.wind), 225, 142);
+    if ('wind' in w) {
+      g.setFontAlign(-1, 0, 0);
+      g.drawString("Wind", 135, 142);
+      g.setFontAlign(1, 0, 0);
+      g.drawString(locale.speed(w.wind)+' '+w.wrose.toUpperCase(), 225, 142);
+    }
 
     g.setFont("6x8", 2).setFontAlign(0, 0, 0);
     g.drawString(w.loc, 120, 170);
