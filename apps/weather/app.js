@@ -56,10 +56,14 @@
   }
 
   function update() {
+    NRF.removeListener("connect", update);
     if (weather.current) {
       draw();
+    } else if (NRF.getSecurityStatus().connected) {
+      E.showMessage("Weather unknown\n\nIs Gadgetbridge\nweather reporting\nset up on your\nphone?");
     } else {
-      E.showMessage('Weather unknown\n\nIs Gadgetbridge\nconnected?');
+      E.showMessage("Weather unknown\n\nGadgetbridge\nnot connected");
+      NRF.on("connect", update);
     }
   }
 
@@ -77,7 +81,7 @@
 
   weather.on("update", update);
 
-  update(weather.current);
+  update();
 
   // Show launcher when middle button pressed
   setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: 'falling'});
