@@ -22,3 +22,4 @@
 0.18: Period counter now uses GPS time rather than counting packets (allows use with GPS Setup)
 0.19: Fix memory usage issues inside track viewer app
 0.20: Add documentation to explain time needed for getting a time fix
+0.21: Fix issue where a period of 1s recorded every 2s, 5s every 6s, and so on

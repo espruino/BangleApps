@@ -29,7 +29,7 @@
       var period = 1000000;
       if (lastFixTime!==undefined)
         period = fix.time.getTime() - lastFixTime;
-      if (period > settings.period*1000) {
+      if (period+500 > settings.period*1000) { // round up
         lastFixTime = fix.time.getTime();
         try {
           if (gpsTrack) gpsTrack.write([
