@@ -182,6 +182,7 @@ function getScene(n) {
     g.drawString("banglejs.com",x,y+=h);
 
     var rx = 0, ry = 0;
+    E.defrag(); // rearrange memory to ensure we have space
     var h = Graphics.createArrayBuffer(96,96,1,{msb:true});
     // draw a cube
     function draw() {
