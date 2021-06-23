@@ -1,7 +1,7 @@
 [
   { "id": "boot",
     "name": "Bootloader",
-    "tags": "tool,system",
+    "tags": "tool,system,b2",
     "type":"bootloader",
     "icon": "bootloader.png",
     "version":"0.26",
@@ -44,7 +44,7 @@
     "icon": "app.png",
     "version":"0.06",
     "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
-    "tags": "tool,system,launcher",
+    "tags": "tool,system,launcher,b2",
     "type":"launch",
     "storage": [
       {"name":"launch.app.js","url":"app.js"}
@@ -56,7 +56,7 @@
     "icon": "app.png",
     "version":"0.08",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
-    "tags": "tool,system",
+    "tags": "tool,system,b2",
     "allow_emulator":true,
     "storage": [
       {"name":"about.app.js","url":"app.js"},
@@ -68,7 +68,7 @@
     "icon": "locale.png",
     "version":"0.09",
     "description": "Translations for different countries",
-    "tags": "tool,system,locale,translate",
+    "tags": "tool,system,locale,translate,b2",
     "type": "locale",
     "custom":"locale.html",
     "readme": "README.md",
@@ -174,7 +174,7 @@
     "icon": "settings.png",
     "version":"0.26",
     "description": "A menu for setting up Bangle.js",
-    "tags": "tool,system",
+    "tags": "tool,system,b2",
     "readme": "README.md",
     "storage": [
       {"name":"setting.app.js","url":"settings.js"},
@@ -191,7 +191,7 @@
     "icon": "app.png",
     "version":"0.11",
     "description": "Set and respond to alarms",
-    "tags": "tool,alarm,widget",
+    "tags": "tool,alarm,widget,b2",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
       {"name":"alarm.boot.js","url":"boot.js"},
@@ -578,7 +578,7 @@
     "icon": "widget.png",
     "version":"0.07",
     "description": "Show the current battery level and charging status in the top right of the clock",
-    "tags": "widget,battery",
+    "tags": "widget,battery,b2",
     "type":"widget",
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
@@ -589,7 +589,7 @@
     "icon": "widget.png",
     "version":"0.03",
     "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
-    "tags": "widget,lock",
+    "tags": "widget,lock,b2",
     "type":"widget",
     "storage": [
       {"name":"widlock.wid.js","url":"widget.js"}
@@ -634,7 +634,7 @@
     "icon": "widget.png",
     "version":"0.05",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
-    "tags": "widget,bluetooth",
+    "tags": "widget,bluetooth,b2",
     "type":"widget",
     "storage": [
       {"name":"widbt.wid.js","url":"widget.js"}
@@ -867,7 +867,7 @@
     "icon": "icon.png",
     "version":"0.02",
     "description": "A simple 7 segment Clock with date",
-    "tags": "clock",
+    "tags": "clock,b2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
@@ -1145,7 +1145,7 @@
     "icon": "widget.png",
     "version":"0.14",
     "description": "Daily pedometer widget",
-    "tags": "widget",
+    "tags": "widget,b2",
     "type":"widget",
     "storage": [
       {"name":"widpedom.wid.js","url":"widget.js"},
@@ -1466,7 +1466,7 @@
     "icon": "app.png",
     "version":"0.07",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
-    "tags": "outdoors,gps",
+    "tags": "outdoors,gps,b2",
     "custom": "custom.html",
     "storage": [
       {"name":"openstmap","url":"openstmap.js"},
