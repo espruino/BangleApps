@@ -12,9 +12,9 @@ var minute_hand = {
 //g.fillRect(0,24,239,239); // Apps area
 let intervalRef = null;
 const p180 = Math.PI/180;
-const clock_center = {x:Math.floor((240-1)/2), y:24+Math.floor((239-24)/2)};
+const clock_center = {x:Math.floor((g.getWidth()-1)/2), y:24+Math.floor((g.getHeight()-25)/2)};
 // ={ x: 119, y: 131 }
-const radius = Math.floor((239-24+1)/2); // =108
+const radius = Math.floor((g.getWidth()-24+1)/2); // =108
 
 let tick0 = Graphics.createArrayBuffer(30,8,1,{msb:true});
 tick0.fillRect(0,0,tick0.getWidth()-1, tick0.getHeight()-1);
@@ -60,18 +60,15 @@ function hour_angle(date){
 function draw_clock(){
   //console.log("draw_clock");
   let date = new Date();
-  //g.clear();
-  g.setBgColor(0,0,0);
-  g.setColor(0,0,0);
-  g.fillRect(0,24,239,239); // clear app area
-  g.setColor(1,1,1);
+  g.reset();
+  g.clearRect(0,24,239,239); // clear app area
 
   // draw cross lines for testing
   // g.setColor(1,0,0);
   // g.drawLine(clock_center.x - radius, clock_center.y, clock_center.x + radius, clock_center.y);
   // g.drawLine(clock_center.x, clock_center.y - radius, clock_center.x, clock_center.y + radius);
 
-  g.setColor(1,1,1);
+  g.setColor(g.theme.fg);
   let ticks = [0, 90, 180, 270];
   ticks.forEach((item)=>{
     let agl = item+180;
@@ -87,13 +84,13 @@ function draw_clock(){
   let minute_agl = minute_angle(date);
   g.drawImage(hour_hand, hour_pos_x(hour_agl), hour_pos_y(hour_agl), {rotate:hour_agl*p180}); //
   g.drawImage(minute_hand, minute_pos_x(minute_agl), minute_pos_y(minute_agl), {rotate:minute_agl*p180}); //
-  g.setColor(1,1,1);
+  g.setColor(g.theme.fg);
   g.fillCircle(clock_center.x, clock_center.y, 6);
-  g.setColor(0,0,0);
+  g.setColor(g.theme.bg);
   g.fillCircle(clock_center.x, clock_center.y, 3);
 
   // draw minute ticks. Takes long time to draw!
-  g.setColor(1,1,1);
+  g.setColor(g.theme.fg);
   for (var i=0; i<60; i++){
     let agl = i*6+180;
     g.drawImage(tick1.asImage(), rotate_around_x(big_wheel_x(i*6), agl, tick1), rotate_around_y(big_wheel_y(i*6), agl, tick1), {rotate:agl*p180});
@@ -141,5 +138,5 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 startTimers();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");
