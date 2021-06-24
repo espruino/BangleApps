@@ -25,3 +25,4 @@
 0.24: Add Bangle.setUI polyfill
 0.25: Fix error in 'no clock app' message
 0.26: Remove buzz in setUI polyfill (#750)
+0.27: Update polyfill for most recent changes
