@@ -1327,9 +1327,9 @@
   { "id": "dotclock",
     "name": "Dot Clock",
     "icon": "clock-dot.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A Minimal Dot Analog Clock",
-    "tags": "clock",
+    "tags": "clock,b2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
