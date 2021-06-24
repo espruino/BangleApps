@@ -852,9 +852,9 @@
   { "id": "sclock",
     "name": "Simple Clock",
     "icon": "clock-simple.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A Simple Digital Clock",
-    "tags": "clock",
+    "tags": "clock,b2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [

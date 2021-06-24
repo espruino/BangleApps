@@ -1,14 +1,15 @@
 /* jshint esversion: 6 */
-const timeFontSize = 6;
-const dateFontSize = 3;
+const big = g.getWidth()>200;
+const timeFontSize = big?6:5;
+const dateFontSize = big?3:2;
 const gmtFontSize = 2;
 const font = "6x8";
 
 const xyCenter = g.getWidth() / 2;
-const yposTime = 75;
-const yposDate = 130;
-const yposYear = 175;
-const yposGMT = 220;
+const yposTime = xyCenter*0.6;
+const yposDate = xyCenter*1.1;
+const yposYear = xyCenter*1.4;
+const yposGMT = xyCenter*1.9;
 
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
@@ -77,5 +78,5 @@ setInterval(drawSimpleClock, 15E3);
 // draw now
 drawSimpleClock();
 
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");
