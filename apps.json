@@ -904,9 +904,9 @@
   { "id": "dclock",
     "name": "Dev Clock",
     "icon": "clock-dev.png",
-    "version":"0.09",
+    "version":"0.10",
     "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
-    "tags": "clock",
+    "tags": "clock,b2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
@@ -1168,9 +1168,9 @@
   { "id": "ctrclk",
     "name": "Centerclock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
-    "tags": "clock",
+    "tags": "clock,nob2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
@@ -3051,7 +3051,7 @@
   "version":"0.01",
   "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
   "readme": "README.md",
-  "tags": "Color, input,buttons,touch,UI",
+  "tags": "Color,input,buttons,touch,UI,nob2",
   "storage": [
     {"name":"color_catalog.app.js","url":"app.js"},
     {"name":"color_catalog.img","url":"app-icon.js","evaluate":true}
