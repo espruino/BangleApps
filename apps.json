@@ -1531,9 +1531,9 @@
   "name": "Dev Stopwatch",
   "shortName":"Dev Stopwatch",
   "icon": "app.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
-  "tags": "stopwatch, chrono, timer, chronometer",
+  "tags": "stopwatch,chrono,timer,chronometer,b2",
   "allow_emulator":true,
   "storage": [
     {"name":"devstopwatch.app.js","url":"app.js"},
@@ -2814,7 +2814,7 @@
   "name": "De-Stress",
   "shortName":"De-Stress",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Simple haptic heartbeat",
   "storage": [
     {"name":"de-stress.app.js","url":"app.js"},
