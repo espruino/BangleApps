@@ -4,8 +4,9 @@ require("Font7x11Numeric7Seg").add(Graphics);
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 // position on screen
-const X = 160, Y = 140;
- 
+const big = g.getWidth()>200;
+const X = big?160:135, Y = big?140:100;
+
 function draw() {
   // work out how to display the current time
   var d = new Date();
@@ -25,13 +26,13 @@ function draw() {
   g.setFont("7x11Numeric7Seg",2);
   g.drawString(("0"+d.getSeconds()).substr(-2), X+35, Y, true /*clear background*/);
   // draw the date, in a normal font
-  g.setFont("6x8", 3);
+  g.setFont("6x8", big?3:2);
   g.setFontAlign(0,1); // align center bottom
   // pad the date - this clears the background if the date were to change length
   var dateStr = "    "+require("locale").date(d)+"    ";
   g.drawString(dateStr, g.getWidth()/2, Y+35, true /*clear background*/);
 }
- 
+
 // Clear the screen once, at startup
 g.clear();
 // draw immediately at first
@@ -46,12 +47,15 @@ Bangle.on('lcdPower',on=>{
     draw(); // draw immediately
   }
 });
+
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn==0) vibrateTime();
+});
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
- 
+
 // ====================================== Vibration
 // vibrate 0..9
 function vibrateDigit(num) {
@@ -74,24 +78,21 @@ function vibrateNumber(num) {
     });
   });
 }
- 
+
 var vibrateBusy;
 function vibrateTime() {
   if (vibrateBusy) return;
   vibrateBusy = true;
- 
+
   var d = new Date();
   var hours = d.getHours(), minutes = d.getMinutes();
   if (is12Hour) {
     if (hours == 0) hours = 12;
     else if (hours>12) hours -= 12;
   }
- 
+
   vibrateNumber(hours.toString()).
     then(() => new Promise(resolve=>setTimeout(resolve,500))).
     then(() => vibrateNumber(minutes.toString())).
     then(() => vibrateBusy=false);
 }
- 
-// when BTN1 pressed, vibrate
-setWatch(vibrateTime, BTN1, {repeat:true,edge:"rising"});
