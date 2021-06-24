@@ -49,15 +49,17 @@ if (HASWIDGETS) {
 
 redraw();
 
-setWatch(function() {
+function recenter() {
   if (!fix.fix) return;
   m.lat = fix.lat;
   m.lon = fix.lon;
   redraw();
-}, BTN2, {repeat:true});
+}
+
+setWatch(recenter, global.BTN2?BTN2:BTN1, {repeat:true});
 
 var hasScrolled = false;
-E.on('touch',e=>{
+Bangle.on('drag',e=>{
   if (e.b) {
     g.setClipRect(0,y1,g.getWidth()-1,y2);
     g.scroll(e.dx,e.dy);

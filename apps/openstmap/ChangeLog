@@ -5,3 +5,4 @@
 0.05: Show currently active gpsrec GPS trace (fix #395)
 0.06: Add support for scrolling, option for 3 bit maps
 0.07: Move to 96px tiles - less files (64 -> 25) and speed up rendering
+0.08: Update for drag event refactor
