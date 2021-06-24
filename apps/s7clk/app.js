@@ -34,8 +34,7 @@ Bangle.on('lcdPower', function(on) {
 g.clear();
 var secondInterval = setInterval(draw, 1000);
 draw();
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
