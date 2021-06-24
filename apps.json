@@ -2157,9 +2157,9 @@
     "name": "Analog Clock (Image background)",
     "shortName":"Analog Clock",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "An analog clock with an image background",
-    "tags": "clock",
+    "tags": "clock,nob2",
     "type": "clock",
     "storage": [
       {"name":"analogimgclk.app.js","url":"app.js"},
