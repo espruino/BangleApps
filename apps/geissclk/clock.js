@@ -148,4 +148,5 @@ Bangle.drawWidgets();
 iterate();
 animInterval = setInterval(iterate, 50);
 
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");

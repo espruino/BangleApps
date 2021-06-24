@@ -1,4 +1,5 @@
-var fontsize = 3;
+var fontsize = g.getWidth()>200 ? 3 : 2;
+var fontheight = 10*fontsize;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
@@ -39,22 +40,23 @@ function updateTime(){
     updateRest(now);
 }
 function writeLineStart(line){
-  g.drawString(">",4,marginTop+line*30);
+  g.drawString(">",4,marginTop+line*fontheight);
 }
 function writeLine(str,line){
+  var y = marginTop+line*fontheight;
   g.setFont("6x8",fontsize);
   //g.setColor(0,1,0);
-  g.setColor(0,0x07E0,0);
+  g.setColor("#0f0");
   g.setFontAlign(-1,-1);
-  g.clearRect(0,marginTop+line*30,((str.length+1)*20),marginTop+25+line*30);
+  g.clearRect(0,y,((str.length+1)*20),y+fontheight-1);
   writeLineStart(line);
-  g.drawString(str,25,marginTop+line*30);
-} 
+  g.drawString(str,25,y);
+}
 
 function drawInfo(line) {
   let val;
   let str = "";
-  let col = 0x07E0; // green
+  let col = "#0f0"; // green
 
   //console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
 
@@ -62,15 +64,15 @@ function drawInfo(line) {
   case NONE_FN_MODE:
     break;
   case HRT_FN_MODE:
-    col = 0x07FF; // cyan
+    col = "#0ff"; // cyan
     str = "HRM: " + (hrtOn ? "ON" : "OFF");
     drawModeLine(line,str,col);
     return;
   }
-  
+
   switch(infoMode) {
   case NONE_MODE:
-    col = 0x0000;
+    col = "#fff";
     str = "";
     break;
   case HRT_MODE:
@@ -100,10 +102,11 @@ function drawInfo(line) {
 
 function drawModeLine(line, str, col) {
   g.setColor(col);
-  g.fillRect(0, marginTop-3+line*30, 239, marginTop+25+line*30);
-  g.setColor(0,0,0);
+  var y = marginTop+line*fontheight;
+  g.fillRect(0, y, 239, y+fontheight-1);
+  g.setColor(0);
   g.setFontAlign(0, -1);
-  g.drawString(str, g.getWidth()/2, marginTop+line*30);
+  g.drawString(str, g.getWidth()/2, y);
 }
 
 function changeInfoMode() {
@@ -160,7 +163,7 @@ function changeFunctionMode() {
     functionMode = NONE_FN_MODE;
   }
   //console.log(functionMode);
-  
+
 }
 
 function stepsWidget() {
@@ -185,10 +188,12 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawAll();
 Bangle.on('lcdPower',function(on) {
-  if (on)
-    drawAll();
+  if (on) drawAll();
 });
 var click = setInterval(updateTime, 1000);
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
-setWatch(() => { changeFunctionMode(); drawAll(); }, BTN3, {repeat: true});
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn==0) changeInfoMode();
+  if (btn==1) changeFunctionMode();
+  drawAll();
+});

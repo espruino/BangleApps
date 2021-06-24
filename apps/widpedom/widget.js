@@ -1,10 +1,5 @@
 (() => {
   const PEDOMFILE = "wpedom.json"
-  const DEFAULTS = {
-    'goal': 10000,
-    'progress': false,
-  }
-  const TAU = Math.PI*2;
   let lastUpdate = new Date();
   let stp_today = 0;
   let settings;
@@ -16,6 +11,10 @@
 
   function setting(key) {
     if (!settings) { loadSettings() }
+    const DEFAULTS = {
+      'goal': 10000,
+      'progress': false,
+    }
     return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
@@ -24,6 +23,7 @@
     const goal = setting('goal'), left = Math.max(goal-stps,0);
     const c = left ? "#00f" : "#090"; // blue or dark green
     g.setColor(c).fillCircle(this.x + half, this.y + half, half);
+    const TAU = Math.PI*2;
     if (left) {
       const f = left/goal; // fraction to blank out
       let p = [];
@@ -64,6 +64,7 @@
     }
     g.setFontAlign(0, 0); // align to x: center, y: center
     g.drawString(stps, this.x+width/2, this.y+19);
+    // on low bpp screens, draw 1 bit. Currently there is no getBPP so we just do it based on resolution
     g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),this.x+(width-10)/2,this.y+2);
   }
 
@@ -118,5 +119,6 @@
     if (pedomData.lastUpdate)
       lastUpdate = new Date(pedomData.lastUpdate);
     stp_today = pedomData.stepsToday|0;
+    delete pedomData;
   }
 })()
