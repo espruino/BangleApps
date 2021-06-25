@@ -5,6 +5,6 @@ Part of smartPPE project https://jorgepramos.github.io/Smart_PPE/index.html
 
 Widget that allows Bangle Js to record pair and end data using Bluetooth Low Energy in combination with the BangleBridge Android App.
 
-## Compilation
+## Full Project
 
-Part of smartPPE project[SmartPEE](https://jorgepramos.github.io/Smart_PPE/index.html).
+Part of smartPPE project [SmartPEE](https://jorgepramos.github.io/Smart_PPE/index.html).
