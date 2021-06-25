@@ -2,7 +2,7 @@
 var FACES = [];
 var STOR = require("Storage");
 STOR.list(/\.kit\.js$/).forEach(face=>FACES.push(eval(require("Storage").read(face))));
-var iface = STOR.list(/\.kit\.js$/).indexOf("stepo.kit.js");
+var iface = STOR.list(/\.kit\.js$/).indexOf("stepo2.kit.js");
 var face = FACES[iface]();
 var firstPress
 var pressTimer;
