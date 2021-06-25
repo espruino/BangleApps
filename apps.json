@@ -3169,7 +3169,7 @@
     "type": "widget",
     "readme": "README.md",
     "storage": [
-      {"name":"7chname.wid.js","url":"widget.js"}
+      {"name":"banglebridge.wid.js","url":"widget.js"}
     ]
  },
 { "id": "qmsched",
