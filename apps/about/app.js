@@ -37,5 +37,7 @@ g.drawString(NRF.getAddress(),g.getWidth()/2,g.getHeight()-8,true);
 g.flip();
 
 setWatch(_=>load(), BTN1);
-setWatch(_=>load(), BTN2);
-setWatch(_=>load(), BTN3);
+if (global.BTN2) {
+  setWatch(_=>load(), BTN2);
+  setWatch(_=>load(), BTN3);
+}
