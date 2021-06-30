@@ -31,6 +31,6 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
     Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
   }
   if (deviceId == "BANGLEJS2") {
-    Const.MESSAGE_RELOAD = 'Hold Button\nto reload';
+    Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
 }
