@@ -190,7 +190,7 @@ function showThemeMenu() {
       upd({
         fg:cl("#000"), bg:cl("#fff"),
         fg2:cl("#00f"), bg2:cl("#0ff"),
-        fgH:cl("#000"), bgH:cl("#00f"),
+        fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
     },
