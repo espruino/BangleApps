@@ -51,6 +51,19 @@
     ],
     "sortorder" : -10
   },
+  { "id": "launchb2",
+    "name": "Launcher (Bangle.js 2)",
+    "shortName":"Launcher",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications. It will not work on Bangle.js 1.0.",
+    "tags": "tool,system,launcher,b2,bno1",
+    "type":"launch",
+    "storage": [
+      {"name":"launchb2.app.js","url":"app.js"}
+    ],
+    "sortorder" : -10
+  },
   { "id": "about",
     "name": "About",
     "icon": "app.png",
