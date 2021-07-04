@@ -71,7 +71,8 @@ function buttonReleased(btn) {
       face.onButtonLong(btn);
       break;
     case 2:
-      Bangle.showLauncher();
+      face.onButtonLong(btn);
+      //Bangle.showLauncher();
       break;
     case 3:
       // do nothing
@@ -367,6 +368,26 @@ GPS.prototype.nextWaypoint = function(inc) {
   this.wp_current = waypoints[this.wp_index];
   log_debug(this.wp_current);
   return this.wp_current;
+}
+
+GPS.prototype.toggleGpsLogging = function() {
+  var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+  if (settings == {}) return false;
+
+  settings.recording = !settings.recording;
+  require("Storage").write("gpsrec.json", settings);
+
+  if (WIDGETS["gpsrec"])
+    WIDGETS["gpsrec"].reload();
+
+  return true;
+}
+
+GPS.prototype.loggingStatus = function() {
+  var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+  if (settings == {}) return "E-LOG";
+  if (settings.recording) return "ON";
+  return "OFF";
 }
 
 var gpsObj = new GPS();
