@@ -51,6 +51,19 @@
     ],
     "sortorder" : -10
   },
+  { "id": "launchb2",
+    "name": "Launcher (Bangle.js 2)",
+    "shortName":"Launcher",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications. It will not work on Bangle.js 1.0.",
+    "tags": "tool,system,launcher,b2,bno1",
+    "type":"launch",
+    "storage": [
+      {"name":"launchb2.app.js","url":"app.js"}
+    ],
+    "sortorder" : -10
+  },
   { "id": "about",
     "name": "About",
     "icon": "app.png",
@@ -172,7 +185,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.26",
+    "version":"0.27",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system,b2",
     "readme": "README.md",
@@ -340,7 +353,7 @@
     "icon": "clock.png",
     "version":"0.03",
     "description": "7 segment clock with animated background in the style of Ryan Geiss' music visualisation. NOTE: The first run will take ~1 minute to do some precalculation",
-    "tags": "clock,nob2",
+    "tags": "clock,bno2",
     "type":"clock",
     "storage": [
       {"name":"geissclk.app.js","url":"clock.js"},
@@ -1170,7 +1183,7 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
-    "tags": "clock,nob2",
+    "tags": "clock,bno2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
@@ -1210,7 +1223,7 @@
     "icon": "app.png",
     "version": "0.04",
     "description": "Pipboy themed clock",
-    "tags": "clock,nob2",
+    "tags": "clock,bno2",
     "type":"clock",
     "allow_emulator":true,
     "storage": [
@@ -2143,7 +2156,7 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "An animated clock face using Mark Ferrari's amazing 8 bit game art and palette cycling: http://www.markferrari.com/art/8bit-game-art",
-    "tags": "clock,animated,nob2",
+    "tags": "clock,animated,bno2",
     "type": "clock",
     "storage": [
       {"name":"animclk.app.js","url":"app.js"},
@@ -2159,7 +2172,7 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "An analog clock with an image background",
-    "tags": "clock,nob2",
+    "tags": "clock,bno2",
     "type": "clock",
     "storage": [
       {"name":"analogimgclk.app.js","url":"app.js"},
@@ -2172,7 +2185,7 @@
     "name": "Vertical watch face",
     "shortName":"Vertical Face",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "A simple vertical watch face with the date. Heart rate monitor is toggled with BTN1",
     "tags": "clock",
     "type":"clock",
@@ -2497,7 +2510,7 @@
   "icon": "digiclock.png",
   "version":"0.02",
   "description": "A simple digital clock with the time, day, month, and year",
-  "tags": "clock,nob2",
+  "tags": "clock,bno2",
   "type" : "clock",
   "storage": [
     {"name":"digiclock.app.js","url":"digiclock.js"},
@@ -3051,7 +3064,7 @@
   "version":"0.01",
   "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
   "readme": "README.md",
-  "tags": "Color,input,buttons,touch,UI,nob2",
+  "tags": "Color,input,buttons,touch,UI,bno2",
   "storage": [
     {"name":"color_catalog.app.js","url":"app.js"},
     {"name":"color_catalog.img","url":"app-icon.js","evaluate":true}
