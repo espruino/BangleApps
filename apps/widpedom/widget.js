@@ -14,11 +14,13 @@
     const DEFAULTS = {
       'goal': 10000,
       'progress': false,
+      'hide': false
     }
     return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   function drawProgress(stps) {
+    if (setting('hide')) return;
     const width = 24, half = width/2;
     const goal = setting('goal'), left = Math.max(goal-stps,0);
     const c = left ? "#00f" : "#090"; // blue or dark green
@@ -48,6 +50,7 @@
 
   // draw your widget
   function draw() {
+    if (setting('hide')) return;
     var width = 24;
     if (stp_today > 99999){
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
