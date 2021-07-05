@@ -50,7 +50,8 @@
         toggleGPSPower();
         return;
       case 2:
-        gpsObject.toggleGpsLogging();
+        if (gpsObject.getState() === gpsObject.GPS_RUNNING)
+          gpsObject.toggleGpsLogging();
         return;
       }
     }
