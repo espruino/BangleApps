@@ -95,8 +95,8 @@ function setButtons(){
 }
 
 Bangle.on('kill',()=>{
-  Bangle.setCompassPower(0);
-  Bangle.setGPSPower(0);
+  Bangle.setCompassPower(0,'kitchen');
+  Bangle.setGPSPower(0,'kitchen');
 });
 
 Bangle.on('lcdPower',function(on) {
@@ -215,7 +215,7 @@ GPS.prototype.toggleGPSPower = function() {
   this.log_debug("toggleGPSPower()");
   this.gpsPowerState = Bangle.isGPSOn();
   this.gpsPowerState = !this.gpsPowerState;
-  Bangle.setGPSPower(this.gpsPowerState ? 1 : 0);
+  Bangle.setGPSPower((this.gpsPowerState ? 1 : 0), 'kitchen');
   
   this.resetLastFix();
   this.determineGPSState();
