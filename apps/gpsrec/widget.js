@@ -69,7 +69,7 @@
       gpsTrack = undefined;
     }
     if (gOn != gpsOn) {
-      Bangle.setGPSPower(gOn);
+      Bangle.setGPSPower(gOn,"gpsrec");
       gpsOn = gOn;
     }
   }
