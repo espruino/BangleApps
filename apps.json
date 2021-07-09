@@ -1900,6 +1900,22 @@
       {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "gbnotify",
+    "name": "Gadgetbridge Notifications",
+    "shortName": "Messages",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Modular Gadgetbridge notification handler",
+    "tags": "system,android,gadgetbridge",
+    "storage": [
+      {"name":"gbnotify.img","url":"app-icon.js","evaluate":true},
+      {"name":"gbnotify.wid.js","url":"widget.js"},
+      {"name":"gbnotify.app.js","url":"app.js"}
+    ],
+    "data": [
+      {"name": "gbnotify.json"}
+    ]
+  },
   {
     "id": "largeclock",
     "name": "Large Clock",
