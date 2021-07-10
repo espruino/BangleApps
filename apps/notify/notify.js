@@ -141,7 +141,7 @@ exports.show = function(options) {
     if (pos > -size) setTimeout(anim, 15);
   }
   anim();
-  Bangle.on("touch", exports.hide);
+  Bangle.on("touch", exports.dismiss_and_hide);
 };
 
 /**
@@ -161,4 +161,21 @@ exports.hide = function(options) {
     if (pos < 0) setTimeout(anim, 10);
   }
   anim();
+};
+
+/**
+ Calls exports.hide(), but if Gadgetbridge is installed, dismiss through it
+ instead (which will call call exports.hide() itself).
+*/
+exports.dismiss_and_hide = function(options) {
+    options = options||{};
+    if (typeof(options) == "number") {
+        options = {};
+    }
+    if ("GB" in global) {
+        options["t"] = "notify-";
+        GB(options);
+    } else {
+        exports.hide(options);
+    }
 };
