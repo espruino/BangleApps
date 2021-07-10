@@ -157,9 +157,9 @@
         currentNot = prettifyNotificationEvent(event);
         require("notify").show(currentNot);
         if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
-            Bangle.buzz();
+          Bangle.buzz();
         }
-	break;
+        break;
       case "notify-":
         currentNot.t = "notify";
         currentNot.n = "DISMISS";
