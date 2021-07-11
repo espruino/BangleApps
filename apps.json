@@ -1746,7 +1746,7 @@
     "name": "Black Jack game",
     "shortName":"Black Jack game",
     "icon": "blackjack.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple implementation of card game Black Jack",
     "tags": "game",
     "allow_emulator":true,
