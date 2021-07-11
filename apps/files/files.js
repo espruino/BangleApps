@@ -180,7 +180,7 @@ function showSortAppsManually() {
     appList.reduce((menu, app) => {
       menu[app.name] = {
         value: app.sortorder || 0,
-        min: 0,
+        min: -appList.length,
         max: appList.length,
         step: 1,
         onchange: val => setSortorder(app, val)
