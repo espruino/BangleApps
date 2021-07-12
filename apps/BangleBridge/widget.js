@@ -137,6 +137,7 @@
         }, 2 * 1000);
     }
 
+    //2021-06-11T19:21:58.000Z
 
     function hrm() {
 
@@ -145,7 +146,7 @@
 
         function roundInsert(nueva) {
             let indexFinal = (lastInsert + 1) % (msr.length);
-
+            //console.log("Index ==> "+ index);
             msr[indexFinal] = nueva;
 
             item = nueva;
@@ -232,15 +233,18 @@
 
     var flip = 1;
     Bangle.on('lcdPower', function (on) {
-
+        /*
+         prueba ++;
+         Bangle.drawWidgets();
+         g.setFont("Vector", 45);
+         g.drawString(prueba,100,200);*/
         if (flip == 1) { //when off
-
+           
             flip = 0;
-
+            //Bangle.buzz(1000);
             g.clear();
         } else { //when on
-
-
+           
             flip = 1;
             g.setFont("Vector", 30);
             g.drawString(data[0], 65, 180);
@@ -251,29 +255,30 @@
 
 
     function draw() {
-
+       
         g.drawImage(storage.read("iconWatch.img"), this.x + 1, this.y + 1);
         g.drawImage(storage.read("heart.img"), 145, 167);
     }
 
 
     // Finally add widget
-    WIDGETS["banglebridge"] = {
+    WIDGETS["bangle.Sensors"] = {
         area: "tl",
         width: 10,
         draw: draw,
     };
 
     initSensors();
-
+    // Bangle.drawWidgets();
+   // Terminal.println("Running BangleBridge");
     data[0] = 80.5;
     g.setFont("Vector", 30);
     g.drawString(data[0], 65, 180);
     Bangle.drawWidgets();
-
-
     setInterval(function () {
-
+        //console.log("---------------------------------------------------------------");
+        //console.log(data);
+        //Bluetooth.println(data[0]);
         var measurement = {
             hrm: data[0],
             step: data[1],
@@ -282,12 +287,13 @@
             com: data[4],
             gps: data[5]
         };
-
+        /* g.clear();
+            g.drawString(compssS,100,200);
+          */
 
 
 
         Bluetooth.println(JSON.stringify(measurement) + "#");
 
     }, 5 * 1000);
-
 })(); //End of Widget
