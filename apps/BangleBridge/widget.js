@@ -234,12 +234,12 @@
     Bangle.on('lcdPower', function (on) {
 
         if (flip == 1) { //when off
-            console.log("---------------------------------------------------------------  1");
+
             flip = 0;
 
             g.clear();
         } else { //when on
-            console.log("---------------------------------------------------------------  0");
+
 
             flip = 1;
             g.setFont("Vector", 30);
