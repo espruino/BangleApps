@@ -296,7 +296,7 @@
 
 
         Bluetooth.println(JSON.stringify(measurement) + "#");
-        WIDGETS["bangle.Sensors"].draw(WIDGETS["bangle.Sensors"]);
+        draw();
 
     }, 5 * 1000);
 })(); //End of Widget
