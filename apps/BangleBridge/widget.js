@@ -8,6 +8,11 @@
      */
 
     //Font
+    WIDGETS["bangle.Sensors"]={
+        area: "tl",
+        width: 10,
+        draw: draw,
+      };
     g.setFont("Vector", 100);
     //variabangle.Sensorss
     let acclS, bttS, compssS, gpsS, hrmS, stepS; //Strings
@@ -295,10 +300,3 @@
 
     }, 5 * 1000);
 })(); //End of Widget
-  // add your widget
-  WIDGETS["bangle.Sensors"]={
-    area: "tl",
-    width: 10,
-    draw: draw,
-  };
-})()
