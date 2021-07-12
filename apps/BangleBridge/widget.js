@@ -262,11 +262,7 @@
 
 
     // Finally add widget
-    WIDGETS["bangle.Sensors"] = {
-        area: "tl",
-        width: 10,
-        draw: draw,
-    };
+
 
     initSensors();
     // Bangle.drawWidgets();
@@ -297,3 +293,10 @@
 
     }, 5 * 1000);
 })(); //End of Widget
+  // add your widget
+  WIDGETS["bangle.Sensors"]={
+    area: "tl",
+    width: 10,
+    draw: draw,
+  };
+})()
