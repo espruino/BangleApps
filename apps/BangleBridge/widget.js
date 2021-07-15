@@ -292,7 +292,7 @@
 
 
         Bluetooth.println(JSON.stringify(measurement) + "#");
-        draw();
+        //draw();
 
     }, 5 * 1000);
   
