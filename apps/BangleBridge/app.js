@@ -1,4 +1,4 @@
-(() => {
+
     /**
      * Widget measurements
      * Description: 
@@ -261,12 +261,6 @@
     }
 
 
-    // Finally add widget
-    WIDGETS["bangle.Sensors"] = {
-        area: "tl",
-        width: 10,
-        draw: draw,
-    };
 
     initSensors();
     // Bangle.drawWidgets();
@@ -296,4 +290,3 @@
         Bluetooth.println(JSON.stringify(measurement) + "#");
 
     }, 5 * 1000);
-})(); //End of Widget
