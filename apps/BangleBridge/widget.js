@@ -257,9 +257,9 @@
 
     function draw() {
        // g.drawImage(storage.read("iconWatch.img"), this.x + 1, this.y + 1);
-       g.drawImage(storage.read("iconWatch.img"),this.x + 1,this.y + 1);
-       
-        g.drawImage(storage.read("heart.img"), 145, 167);
+       g.drawImage(storage.read("iconWatch.png"),this.x + 1,this.y + 1);
+
+        g.drawImage(storage.read("heart.png"), 145, 167);
     }
 
 
@@ -296,7 +296,7 @@
 
     }, 5 * 1000);
   
-      WIDGETS["bangle.Sensors"]={
+      WIDGETS["banglebridge"]={
         area: "tl",
         width: 10,
         draw: draw,
