@@ -3169,7 +3169,9 @@
     "type": "widget",
     "readme": "README.md",
     "storage": [
-      {"name":"BangleBridge.app.js","url":"app.js"}
+      {"name":"BangleBridge.app.js","url":"app.js"},
+	{"name":"iconWatch.img","url":"iconWatch.img","evaluate":true},
+	    {"name":"heart.img","url":"heart.img","evaluate":true}
     ]
  },
 { "id": "qmsched",
