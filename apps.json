@@ -3169,7 +3169,7 @@
     "type": "widget",
     "readme": "README.md",
     "storage": [
-      {"name":"BangleBridge.wid.js","url":"widget.js"}
+      {"name":"BangleBridge.app.js","url":"app.js"}
     ]
  },
 { "id": "qmsched",
