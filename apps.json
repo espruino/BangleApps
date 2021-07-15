@@ -3170,8 +3170,8 @@
     "readme": "README.md",
     "storage": [
       {"name":"banglebridge.wid.js","url":"widget.js"},
-	{"name":"iconWatch.img","url":"iconWatch.img"},
-	    {"name":"heart.img","url":"heart.img"}
+	{"name":"iconWatch.png","url":"iconWatch.png"},
+	    {"name":"heart.png","url":"heart.png"}
     ]
  },
 { "id": "qmsched",
