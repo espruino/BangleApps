@@ -3169,7 +3169,7 @@
     "type": "widget",
     "readme": "README.md",
     "storage": [
-      {"name":"BangleBridge.app.js","url":"app.js"},
+      {"name":"banglebridge.wid.js","url":"widget.js"},
 	{"name":"iconWatch.img","url":"iconWatch.img"},
 	    {"name":"heart.img","url":"heart.img"}
     ]
