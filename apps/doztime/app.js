@@ -17,7 +17,7 @@ const timeColour = "#f2f2f2";
 const dateColours = ["#ff0000","#ffa500","#ffff00","#00b800","#0000ff","#ff00ff","#ff0080"];
 const calen10 = {"size":32,"pt0":[32-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for usual calendar line
 const calen7 = {"size":32,"pt0":[62-g_x_off,16],"step":[20,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line
-const time5 = {"size":48,"pt0":[64-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line; was 64
+const time5 = {"size":48,"pt0":[64-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line
 const time6 = {"size":48,"pt0":[48-g_x_off,24],"step":[30,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line
 const baseYear = 11584;
 const baseDate = Date(2020,11,21); // month values run from 0 to 11
@@ -30,8 +30,11 @@ let lastX = 999999999;
 let res = {};
 //var last_time_log = 0;
 
+var drawtime_timeout;
+
 // Date and time graphics buffers
 var dateColour = "#ffffff"; // override later
+var timeColour2 = timeColour;
 var g_d = Graphics.createArrayBuffer(g_width,g_height_d,1,{'msb':true});
 var g_t = Graphics.createArrayBuffer(g_width,g_height_t,1,{'msb':true});
 // Set screen mode and function to write graphics buffers
@@ -46,7 +49,7 @@ g.flip = function()
 		height:g_height_d,
 		buffer:g_d.buffer
 	}, g_x_off, g_y_off + g_y_off_d);
-	g.setColor(timeColour);
+	g.setColor(timeColour2);
 	g.drawImage(
 	{
 		width:g_width,
@@ -118,7 +121,7 @@ function formatDate(res,dateFormat){
 	return(yyyy+"-"+m+"-"+w+"-"+d);
 }
 
-function writeDozTime(text,def,colour){
+function writeDozTime(text,def){
 	let pts = def.pts;
 	let x=def.pt0[0];
 	let y=def.pt0[1];
@@ -133,6 +136,7 @@ function writeDozTime(text,def,colour){
 	}
 }
 function writeDozDate(text,def,colour){
+	
 	dateColour = colour;
 	let pts = def.pts;
 	let x=def.pt0[0];
@@ -177,10 +181,10 @@ function drawTime()
 	{
 		// Write to background buffers, then display on screen
 		writeDozDate(date,calenDef,res.colour);
-		writeDozTime(time,timeDef,timeColour);
+		writeDozTime(time,timeDef);
 		g.flip();
 		// Ready next interval
-		setTimeout(drawTime,wait);
+		drawtime_timeout = setTimeout(drawTime,wait);
 	}
 	else
 	{
@@ -196,22 +200,14 @@ function modeTime()
 	timeActiveUntil = new Date();
 	timeActiveUntil.setDate(timeActiveUntil.getDate());
 	timeActiveUntil.setSeconds(timeActiveUntil.getSeconds()+15);
-	//Bangle.setLCDPower(true);
-	clearTimeout();
+	if (typeof drawtime_timeout !== 'undefined')
+	{
+		clearTimeout(drawtime_timeout);
+	}
 	drawTime();
 }
-
 Bangle.loadWidgets();
-
-// Time-logging function
-/*function logTime(label)
-{
-	var d = new Date();
-	var t = d.getTime();
-	var diff_test = t - last_time_log;
-	last_time_log = t;
-	console.log(label + " at time: " + t + ", since last: " + diff_test);
-}*/
+Bangle.drawWidgets();
 
 // Functions for weather mode - TODO
 function drawWeather() {}
@@ -222,4 +218,20 @@ Bangle.on('twist', function() {
 	modeTime();
 });
 
-Bangle.drawWidgets();
+// Time fix with GPS
+function fixTime() {
+	Bangle.on("GPS",function cb(g) {
+		Bangle.setGPSPower(0,"time");
+		Bangle.removeListener("GPS",cb);
+		if (!g.time || (g.time.getFullYear()<2000) ||
+			(g.time.getFullYear()>2200)) {
+		} else {
+			// We have a GPS time. Set time
+			setTime(g.time.getTime()/1000);
+		}
+	});
+	Bangle.setGPSPower(1,"time");
+	setTimeout(fixTime, 10*60*1000); // every 10 minutes
+}
+// Start time fixing with GPS on next 10 minute interval
+setTimeout(fixTime, ((60-(new Date()).getMinutes()) % 10) * 60 * 1000);
