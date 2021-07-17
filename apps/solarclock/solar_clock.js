@@ -169,9 +169,9 @@ function write_GPS_status(){
   var gps_coords_msg_n;
   var gps_coords_msg_e;
   if(gps_coords != null){
-    gps_coords_msg_n = "N: " + gps_coords[0];
+    gps_coords_msg_n = "N: " + gps_coords[1];
     gps_coords_msg_n = gps_coords_msg_n.substr(0,Math.min(gps_coords_msg_n.length - 1,10));
-    gps_coords_msg_e = "E: " + gps_coords[1];
+    gps_coords_msg_e = "E: " + gps_coords[0];
     gps_coords_msg_e = gps_coords_msg_e.substr(0,Math.min(gps_coords_msg_e.length - 1,10));
   } else {
     gps_coords_msg_n = "";
