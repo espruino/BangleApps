@@ -265,6 +265,31 @@
       {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
     ]
   },
+  { "id": "solarclock",
+    "name": "Solar Clock",
+    "icon": "solar_clock.png",
+    "version":"0.01",
+    "description": "The solar clock will use your current or chosen location to work out the the current sun phase of the day",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":false,
+     "readme": "README.md",
+    "storage": [
+      {"name":"solarclock.app.js","url":"solar_clock.js"},
+      {"name":"solarclock.img","url":"solar_clock-icon.js","evaluate":true},
+      {"name":"solar_colors.js","url":"solar_colors.js"},
+      {"name":"solar_controller.js","url":"solar_controller.js"},
+      {"name":"solar_date_utils.js","url":"solar_date_utils.js"},
+      {"name":"solar_graphic_utils.js","url":"solar_graphic_utils.js"},
+      {"name":"solar_location.js","url":"solar_location.js"},
+      {"name":"solar_math_utils.js","url":"solar_math_utils.js"},
+      {"name":"solar_loc.Iceland.json","url":"solar_loc.Iceland.json"},
+      {"name":"solar_loc.Kauai.json","url":"solar_loc.Kauai.json"},
+      {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
+      {"name":"solar_loc.local.json","url":"solar_loc.local.json"}
+      {"name":"solar_locations.json","url":"solar_locations.json"}
+    ]
+  },
   { "id": "sweepclock",
     "name": "Sweep Clock",
     "icon": "sweepclock.png",
