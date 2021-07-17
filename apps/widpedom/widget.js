@@ -1,15 +1,5 @@
 (() => {
   const PEDOMFILE = "wpedom.json"
-  const DEFAULTS = {
-    'goal': 10000,
-    'progress': false,
-  }
-  const COLORS = {
-    'white': -1,
-    'progress': 0x001F, // Blue
-    'done': 0x03E0, // DarkGreen
-  }
-  const TAU = Math.PI*2;
   let lastUpdate = new Date();
   let stp_today = 0;
   let settings;
@@ -21,14 +11,19 @@
 
   function setting(key) {
     if (!settings) { loadSettings() }
+    const DEFAULTS = {
+      'goal': 10000,
+      'progress': false,
+    }
     return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   function drawProgress(stps) {
     const width = 24, half = width/2;
     const goal = setting('goal'), left = Math.max(goal-stps,0);
-    const c = left ? COLORS.progress : COLORS.done;
+    const c = left ? "#00f" : "#090"; // blue or dark green
     g.setColor(c).fillCircle(this.x + half, this.y + half, half);
+    const TAU = Math.PI*2;
     if (left) {
       const f = left/goal; // fraction to blank out
       let p = [];
@@ -47,7 +42,7 @@
         p[i - 2] += this.x;
         p[i - 1] += this.y;
       }
-      g.setColor(0).fillPoly(p);
+      g.setColor(g.theme.bg).fillPoly(p);
     }
   }
 
@@ -58,10 +53,9 @@
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
     let stps = stp_today.toString();
-    g.reset();
-    g.clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
+    g.reset().clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
     if (setting('progress')){ drawProgress.call(this, stps); }
-    g.setColor(COLORS.white);
+    g.setColor(g.theme.fg);
     if (stps.length > 3){
       stps = stps.slice(0,-3) + "," + stps.slice(-3);
       g.setFont("4x6", 1); // if big, shrink text to fix
@@ -70,6 +64,7 @@
     }
     g.setFontAlign(0, 0); // align to x: center, y: center
     g.drawString(stps, this.x+width/2, this.y+19);
+    // on low bpp screens, draw 1 bit. Currently there is no getBPP so we just do it based on resolution
     g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),this.x+(width-10)/2,this.y+2);
   }
 
@@ -124,5 +119,6 @@
     if (pedomData.lastUpdate)
       lastUpdate = new Date(pedomData.lastUpdate);
     stp_today = pedomData.stepsToday|0;
+    delete pedomData;
   }
 })()

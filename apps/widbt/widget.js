@@ -1,13 +1,11 @@
 (function(){
-  var img_bt = E.toArrayBuffer(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="));
-
   function draw() {
     g.reset();
     if (NRF.getSecurityStatus().connected)
-      g.setColor(0,0.5,1);
+      g.setColor("#07f");
     else
-      g.setColor(0.3,0.3,0.3);
-    g.drawImage(img_bt,10+this.x,2+this.y);
+      g.setColor(g.theme.bg ? "#AAA" : "#555");
+    g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),2+this.x,2+this.y);
   }
   function changed() {
     WIDGETS["bluetooth"].draw();
@@ -15,5 +13,5 @@
   }
   NRF.on('connect',changed);
   NRF.on('disconnect',changed);
-  WIDGETS["bluetooth"]={area:"tr",width:24,draw:draw};
+  WIDGETS["bluetooth"]={area:"tr",width:15,draw:draw};
 })()

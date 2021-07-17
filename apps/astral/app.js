@@ -503,8 +503,8 @@ function coord_to_horizon(utc, ra, dec, lat, lon, h) {
 }
 
 //
-// "mean_sidereal_time" returns the Mean Sidereal Time in units of degrees. 
-// Use lon = 0 to get the Greenwich MST. 
+// "mean_sidereal_time" returns the Mean Sidereal Time in units of degrees.
+// Use lon = 0 to get the Greenwich MST.
 // East longitudes are positive; West longitudes are negative
 //
 // returns: time in degrees
@@ -523,7 +523,7 @@ function mean_sidereal_time(lon) {
     var c = Math.floor(365.25 * year);
     var da = Math.floor(30.6001 * (month + 1));
 
-    // days since J2000.0   
+    // days since J2000.0
     var jd = b + c + da - 730550.5 + day
         + (hour + mins / 60.0 + secs / 3600.0) / 24.0;
 
@@ -796,10 +796,11 @@ Bangle.on('lcdPower', on => {
 Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
 
-// Buttons
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+// Show launcher when button pressed
+Bangle.setClockMode();
 
-setWatch(function () {
+Bangle.setUI("clockupdown", btn => {
+  if (btn==0) {
     if (!processing) {
         if (!modeswitch) {
             modeswitch = true;
@@ -809,12 +810,11 @@ setWatch(function () {
         else
             modeswitch = false;
     }
-}, BTN3, { repeat: true });
-
-setWatch(function () {
+  } else {
     if (!processing)
         ready_to_compute = true;
-}, BTN1, { repeat: true });
+  }
+});
 
 setWatch(function () {
     if (!astral_settings.astral_default) {

@@ -36,16 +36,18 @@ const mins = {
   7: ["TO", 43, 53]
 };
 
+var big = g.getWidth()>200
 // offsets and incerments
-const xs = 35;
-const ys = 31;
-const dy = 22;
-const dx = 25;
+const xs = big ? 35 : 20;
+const ys = big ? 31 : 28;
+const dx = big ? 25 : 20;
+const dy = big ? 22 : 16;
 
 // font size and color
-const fontSize = 3;  // "6x8"
-const passivColor = 0x3186 /*grey*/ ;
-const activeColor = 0xF800 /*red*/ ;
+const fontSize = big ? 3 : 2;  // "6x8"
+const lowBPP = g.getBPP && (g.getBPP()<12);
+const passivColor = lowBPP ? "#788" : "#333" /*grey*/ ;
+const activeColor = lowBPP ? "#F00" : "#F00" /*red*/ ;
 
 function drawWordClock() {
 
@@ -112,8 +114,8 @@ function drawWordClock() {
 
   // display digital time
   g.setColor(activeColor);
-  g.clearRect(0, 215, 240, 240);
-  g.drawString(time, 120, 215);
+  g.clearRect(0, g.getHeight()-fontSize*8, g.getWidth(), g.getHeight());
+  g.drawString(time, g.getWidth()/2, g.getHeight()-fontSize*8);
 }
 
 Bangle.on('lcdPower', function(on) {
@@ -126,5 +128,5 @@ Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
 
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");

@@ -1,1 +1,2 @@
 0.02: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
+0.03: Enabled BTN2 and BTN3, added highscore (score is saved to storage and can be reset in app settings menu)

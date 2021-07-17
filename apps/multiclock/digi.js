@@ -1,5 +1,7 @@
 (() => {
 
+var locale = require("locale");
+
 function getFace(){
 
     var buf = Graphics.createArrayBuffer(240,92,1,{msb:true});
@@ -19,7 +21,7 @@ function getFace(){
       buf.drawString(time,buf.getWidth()/2,0);
       buf.setFont("6x8",2);
       buf.setFontAlign(0,-1);
-      var date = d.toString().substr(0,15);
+      var date = locale.dow(d, 1) + " " + locale.date(d, 1);
       buf.drawString(date, buf.getWidth()/2, 70);
       flip();
     }  

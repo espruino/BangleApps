@@ -1,8 +1,9 @@
 /* jshint esversion: 6 */
 
+const big = g.getWidth()>200;
 // Font for primary time and date
-const primaryTimeFontSize = 6;
-const primaryDateFontSize = 3;
+const primaryTimeFontSize = big?6:5;
+const primaryDateFontSize = big?3:2;
 
 // Font for single secondary time
 const secondaryTimeFontSize = 4;
@@ -16,9 +17,9 @@ const xcol2 = g.getWidth() - xcol1;
 const font = "6x8";
 
 const xyCenter = g.getWidth() / 2;
-const yposTime = 75;
-const yposDate = 130;
-const yposWorld = 170;
+const yposTime = big ? 75 : 60;
+const yposDate = big ? 130 : 90;
+const yposWorld = big ? 170 : 120;
 
 const OFFSET_TIME_ZONE = 0;
 const OFFSET_HOURS = 1;
@@ -135,6 +136,8 @@ function drawSimpleClock() {
 
 // clean app screen
 g.clear();
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -153,6 +156,3 @@ drawSimpleClock();
 if (Bangle.isLCDOn()) {
   secondInterval = setInterval(drawSimpleClock, 15e3);
 }
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });

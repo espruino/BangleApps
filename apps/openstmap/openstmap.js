@@ -45,15 +45,12 @@ exports.draw = function() {
     for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
       var img = s.read("openstmap-"+ttx+"-"+tty+".img");
       if (img) g.drawImage(img,x,y);
-      else {
-        g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1);
-        g.drawLine(x,y,x+map.tilesize-1,y+map.tilesize-1);
-        g.drawLine(x,y+map.tilesize-1,x+map.tilesize-1,y);
-      }
+      else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y+map.tilesize-1,x+map.tilesize-1,y);
     }
   }
 };
 
+/// Convert lat/lon to pixels on the screen
 exports.latLonToXY = function(lat, lon) {
   var p = Bangle.project({lat:m.lat,lon:m.lon});
   var q = Bangle.project({lat:lat, lon:lon});
@@ -63,4 +60,12 @@ exports.latLonToXY = function(lat, lon) {
     x : (q.x-p.x)*4096/map.scale + cx,
     y : cy - (q.y-p.y)*4096/map.scale
   };
+};
+
+/// Given an amount to scroll in pixels on the screen, adjust the lat/lon of the map to match
+exports.scroll = function(x,y) {
+  var a = Bangle.project({lat:this.lat,lon:this.lon});
+  var b = Bangle.project({lat:this.lat+1,lon:this.lon+1});
+  this.lon += x * this.map.scale / ((a.x-b.x) * 4096);
+  this.lat -= y * this.map.scale / ((a.y-b.y) * 4096);
 };
