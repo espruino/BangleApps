@@ -299,7 +299,7 @@
       {"name":"solar_loc.Iceland.json","url":"solar_loc.Iceland.json"},
       {"name":"solar_loc.Kauai.json","url":"solar_loc.Kauai.json"},
       {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
-      {"name":"solar_loc.local.json","url":"solar_loc.local.json"}
+      {"name":"solar_loc.local.json","url":"solar_loc.local.json"},
       {"name":"solar_locations.json","url":"solar_locations.json"}
     ]
   },
