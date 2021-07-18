@@ -131,7 +131,7 @@ var last_date = null;
 const time_color = Colors.WHITE;
 const date_color = Colors.YELLOW;
 const DATE_Y_COORD = 35;
-const DATE_X_COORD = 10;
+const DATE_X_COORD = 5;
 const TIME_X_COORD = 140;
 const TIME_Y_COORD = 35;
 const OFFSET_Y_COORD = 70;
@@ -159,20 +159,18 @@ function write_date(now){
 var last_status_msg = ""
 var last_gps_coords_msg_n = "";
 var last_gps_coords_msg_e = "";
-const GPS_MSG_X_COORD = 70;
+const GPS_MSG_X_COORD = 65;
 const GPS_MSG_Y = 220;
-const GPS_MSG_COORDS_Y_E = 80;
-const GPS_MSG_COORDS_Y_N = 90;
+const GPS_MSG_COORDS_Y_E = 90;
+const GPS_MSG_COORDS_Y_N = 105;
 
 function write_GPS_status(){
   var gps_coords = location.getCoordinates();
   var gps_coords_msg_n;
   var gps_coords_msg_e;
   if(gps_coords != null){
-    gps_coords_msg_n = "N: " + gps_coords[1];
-    gps_coords_msg_n = gps_coords_msg_n.substr(0,Math.min(gps_coords_msg_n.length - 1,10));
-    gps_coords_msg_e = "E: " + gps_coords[0];
-    gps_coords_msg_e = gps_coords_msg_e.substr(0,Math.min(gps_coords_msg_e.length - 1,10));
+    gps_coords_msg_n = "N:" + Math2.format000_00(gps_coords[1]);
+    gps_coords_msg_e = "E:" + Math2.format000_00(gps_coords[0]);
   } else {
     gps_coords_msg_n = "";
     gps_coords_msg_e = "";
@@ -191,7 +189,7 @@ function write_GPS_status(){
       }
     }
   }
-  g.setFont("Vector",11);
+  g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
   if(last_status_msg != status_msg) {
     g.setColor(screen_info.screen_bg_color[0],
@@ -209,13 +207,50 @@ function write_GPS_status(){
         screen_info.screen_bg_color[2]);
     g.drawString(last_gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
     g.drawString(last_gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
-    g.setColor(Colors.WHITE[0],Colors.WHITE[1],Colors.WHITE[2]);
+    g.setColor(0.9,0.9,0.9);
 
     g.drawString(gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
     g.drawString(gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
     last_gps_coords_msg_e = gps_coords_msg_e;
     last_gps_coords_msg_n = gps_coords_msg_n;
   }
+}
+
+const TWILIGHT_X_COORD = 200;
+const SUNUP_Y_COORD = 90;
+const SUNDOWN_Y_COORD = 105;
+var last_sunup = "";
+var last_sundown = "";
+function write_twilight_times(){
+  var sunup;
+  var sundown;
+  if(day_info != null) {
+    sunup = format_time(day_info.sunrise_date);
+    sundown = format_time(day_info.sunset_date);
+  } else {
+    sunup = "";
+    sundown = "";
+  }
+
+  g.setFont("Vector",13);
+  g.setFontAlign(-1,-1,0);
+  if(last_sunup != "" && last_sunup != sunup){
+    g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+    g.drawString(last_sunup, TWILIGHT_X_COORD,SUNUP_Y_COORD);
+    g.drawString(last_sundown, TWILIGHT_X_COORD,SUNDOWN_Y_COORD);
+  }
+  g.setColor(Colors.YELLOW[0],Colors.YELLOW[1],Colors.YELLOW[2]);
+  g.drawString(sunup, TWILIGHT_X_COORD,SUNUP_Y_COORD);
+  GraphicUtils.fill_circle_partial_y(TWILIGHT_X_COORD-15,
+      SUNUP_Y_COORD+7,
+      7,
+      SUNUP_Y_COORD+7,
+      SUNUP_Y_COORD);
+  g.setColor(1,0.7,0);
+  g.drawString(sundown, TWILIGHT_X_COORD,SUNDOWN_Y_COORD);
+
+  last_sunup = sunup;
+  last_sundown = sundown;
 }
 
 function write_time(now){
@@ -298,6 +333,9 @@ location.addUpdateListener(
       screen_info.sunrise_y = null;
       curr_mode = null;
       draw_clock();
+      write_location_name();
+      write_GPS_status();
+      write_twilight_times();
     }
 );
 
@@ -340,8 +378,15 @@ function draw_clock(){
   write_time(now);
   write_date(now);
   write_offset();
-  write_location_name();
-  write_GPS_status();
+  if(last_location_name == "")
+    write_location_name();
+
+  if(last_gps_coords_msg_n == "")
+    write_GPS_status();
+
+  if(last_sunup == "")
+    write_twilight_times();
+
   last_draw_time = now;
   log_memory_used();
   var time_taken = Date.now() - start_time;

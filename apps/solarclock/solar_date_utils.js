@@ -95,7 +95,7 @@ const DateUtils = {
         if(utc_offset == null){
             utc_offset = -local_offset_hours;
         }
-        var timezone_offset_hours = (utc_offset - local_offset_hours);
+        var timezone_offset_hours = utc_offset; //(utc_offset - local_offset_hours);
         console.log("timezone_offset_hours=" + timezone_offset_hours +
             " longitude" + longitude +
             " utc_offset=" + utc_offset
