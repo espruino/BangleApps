@@ -487,6 +487,7 @@ function schedule_draw_clock(){
 Bangle.on('lcdPower', (on) => {
   if (on) {
     console.log("lcdPower: on");
+    gps_status_requires_update = true;
     draw_clock();
     start_timers();
   } else {

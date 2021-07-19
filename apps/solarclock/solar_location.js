@@ -37,11 +37,12 @@ class LocationManager {
                 };
                 console.log("Received gps fixing:" + JSON.stringify(loc_info));
                 storage.writeJSON("solar_loc.local.json", this.location_info);
+                this.setGPSPower(0);
                 if(this.isGPSLocation()){
                     this.location_info = loc_info;
                     this.notifyUpdate();
                 }
-                this.setGPSPower(0);
+
             }
         });
     }
