@@ -159,12 +159,16 @@ function write_date(now){
 var last_status_msg = ""
 var last_gps_coords_msg_n = "";
 var last_gps_coords_msg_e = "";
-const GPS_MSG_X_COORD = 65;
+const GPS_MSG_X_COORD = 55;
 const GPS_MSG_Y = 220;
 const GPS_MSG_COORDS_Y_E = 90;
 const GPS_MSG_COORDS_Y_N = 105;
+var gps_status_requires_update = true;
 
 function write_GPS_status(){
+  if(!gps_status_requires_update)
+    return;
+
   var gps_coords = location.getCoordinates();
   var gps_coords_msg_n;
   var gps_coords_msg_e;
@@ -214,6 +218,8 @@ function write_GPS_status(){
     last_gps_coords_msg_e = gps_coords_msg_e;
     last_gps_coords_msg_n = gps_coords_msg_n;
   }
+
+  gps_status_requires_update = false;
 }
 
 const TWILIGHT_X_COORD = 200;
@@ -221,7 +227,11 @@ const SUNUP_Y_COORD = 90;
 const SUNDOWN_Y_COORD = 105;
 var last_sunup = "";
 var last_sundown = "";
+var twilight_times_requires_update = true;
 function write_twilight_times(){
+  if(!twilight_times_requires_update)
+    return;
+
   var sunup;
   var sundown;
   if(day_info != null) {
@@ -251,6 +261,7 @@ function write_twilight_times(){
 
   last_sunup = sunup;
   last_sundown = sundown;
+  twilight_times_requires_update = false;
 }
 
 function write_time(now){
@@ -308,8 +319,12 @@ let last_draw_time = null;
 var day_info = null;
 var location = LocationUtils.load_locations();
 var last_location_name = null;
+var location_requires_update = true;
 
 function write_location_name() {
+  if(!location_requires_update)
+    return;
+
   var new_location_name = location.getName();
   g.setFont("Vector", 20);
   g.setFontAlign(-1, -1, 0);
@@ -322,6 +337,7 @@ function write_location_name() {
     g.drawString(new_location_name, DATE_X_COORD, LOCATION_Y_COORD);
   }
   last_location_name = new_location_name;
+  location_requires_update = false;
 }
 
 location.addUpdateListener(
@@ -332,10 +348,10 @@ location.addUpdateListener(
       day_info = null;
       screen_info.sunrise_y = null;
       curr_mode = null;
+      gps_status_requires_update = true;
+      location_requires_update = true;
+      twilight_times_requires_update = true;
       draw_clock();
-      write_location_name();
-      write_GPS_status();
-      write_twilight_times();
     }
 );
 
@@ -346,6 +362,7 @@ function dayInfo(now) {
     var coords = location.getCoordinates();
     if(coords != null) {
       day_info = DateUtils.sunrise_sunset(now, coords[0], coords[1], location.getUTCOffset());
+      twilight_times_requires_update = true;
       //console.log("day info:" + JSON.stringify(day_info));
     } else {
       day_info = null;
@@ -378,14 +395,9 @@ function draw_clock(){
   write_time(now);
   write_date(now);
   write_offset();
-  if(last_location_name == "")
-    write_location_name();
-
-  if(last_gps_coords_msg_n == "")
-    write_GPS_status();
-
-  if(last_sunup == "")
-    write_twilight_times();
+  write_location_name();
+  write_GPS_status();
+  write_twilight_times();
 
   last_draw_time = now;
   log_memory_used();
