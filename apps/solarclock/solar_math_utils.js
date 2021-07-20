@@ -24,16 +24,6 @@ const Maths2 = {
     format00: (num)=>{
        return _format00(num)
     },
-    format000_00: (num)=>{
-        var mantissa = (num | 0);
-        var mantissa_abs = Math.abs(mantissa);
-        var remainder = ((Math.abs(num) - mantissa_abs)*100|0);
-        var sign = "-";
-        if(num >= 0)
-            sign = "+";
-        return sign + mantissa_abs.toString() + "." + _format00(remainder);
-
-    },
     random_walk: (value,step,max,min)=>{
         if(Math.random()>0.5){
             value -= step;

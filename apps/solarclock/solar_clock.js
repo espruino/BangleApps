@@ -157,12 +157,8 @@ function write_date(now){
 }
 
 var last_status_msg = ""
-var last_gps_coords_msg_n = "";
-var last_gps_coords_msg_e = "";
 const GPS_MSG_X_COORD = 55;
 const GPS_MSG_Y = 220;
-const GPS_MSG_COORDS_Y_E = 90;
-const GPS_MSG_COORDS_Y_N = 105;
 var gps_status_requires_update = true;
 
 function write_GPS_status(){
@@ -170,18 +166,9 @@ function write_GPS_status(){
     return;
 
   var gps_coords = location.getCoordinates();
-  var gps_coords_msg_n;
-  var gps_coords_msg_e;
-  if(gps_coords != null){
-    gps_coords_msg_n = "N:" + Math2.format000_00(gps_coords[1]);
-    gps_coords_msg_e = "E:" + Math2.format000_00(gps_coords[0]);
-  } else {
-    gps_coords_msg_n = "";
-    gps_coords_msg_e = "";
-  }
   var status_msg = "";
   if(location.isGPSLocation()) {
-    if(gps_coords == null) {
+    if (gps_coords == null) {
       if (location.getGPSPower() > 0) {
         status_msg = "Finding GPS Position";
       } else {
@@ -200,23 +187,9 @@ function write_GPS_status(){
         screen_info.screen_bg_color[1],
         screen_info.screen_bg_color[2]);
     g.drawString(last_status_msg, GPS_MSG_X_COORD, GPS_MSG_Y);
-    g.setColor(Colors.YELLOW[0],Colors.YELLOW[1],Colors.YELLOW[2]);
+    g.setColor(Colors.GREY[0],Colors.GREY[1],Colors.GREY[2]);
     g.drawString(status_msg, GPS_MSG_X_COORD, GPS_MSG_Y);
     last_status_msg = status_msg;
-  }
-
-  if(last_gps_coords_msg_e != gps_coords_msg_e) {
-    g.setColor(screen_info.screen_bg_color[0],
-        screen_info.screen_bg_color[1],
-        screen_info.screen_bg_color[2]);
-    g.drawString(last_gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
-    g.drawString(last_gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
-    g.setColor(0.9,0.9,0.9);
-
-    g.drawString(gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
-    g.drawString(gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
-    last_gps_coords_msg_e = gps_coords_msg_e;
-    last_gps_coords_msg_n = gps_coords_msg_n;
   }
 
   gps_status_requires_update = false;
