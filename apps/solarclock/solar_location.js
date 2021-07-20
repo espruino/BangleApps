@@ -15,9 +15,7 @@ class LocationManager {
             console.log("updating local location");
             this._gpsUpdate();
             this.gps_queried = true;
-        } else {
-
-        }
+        } 
     }
     setGPSPower(power){
         this.gpsPower = power;

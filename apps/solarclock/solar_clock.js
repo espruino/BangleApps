@@ -156,40 +156,58 @@ function write_date(now){
   last_date = new_date;
 }
 
-var last_status_msg = ""
-const GPS_MSG_X_COORD = 55;
-const GPS_MSG_Y = 220;
+
+const GPS_MSG_COORDS_Y_E = 90;
+const GPS_MSG_COORDS_Y_N = 105;
 var gps_status_requires_update = true;
+var last_gps_coords_msg_n = "";
+var last_gps_coords_msg_e = "";
 
 function write_GPS_status(){
   if(!gps_status_requires_update)
     return;
 
   var gps_coords = location.getCoordinates();
-  var status_msg = "";
+  var gps_coords_msg_n;
+  var gps_coords_msg_e;
+
   if(location.isGPSLocation()) {
-    if (gps_coords == null) {
+    if(gps_coords == null) {
       if (location.getGPSPower() > 0) {
-        status_msg = "Finding GPS Position";
+        gps_coords_msg_n = "Locating";
+        gps_coords_msg_e = "GPS";
       } else {
-        status_msg = "ERROR GPS Position not found";
+        gps_coords_msg_n = "ERROR";
+        gps_coords_msg_e = "GPS";
       }
     } else {
       if (location.getGPSPower() > 0) {
-        status_msg = "Updating GPS Position";
+        gps_coords_msg_n = "Updating";
+        gps_coords_msg_e = "GPS";
       }
     }
   }
+
+  if(gps_coords_msg_n == null){
+    gps_coords_msg_n = "N:" + Math2.format000_00(gps_coords[1]);
+    gps_coords_msg_e = "E:" + Math2.format000_00(gps_coords[0]);
+  }
+
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
-  if(last_status_msg != status_msg) {
+  console.log("n:" + gps_coords_msg_n + " e:" + gps_coords_msg_e);
+  if(last_gps_coords_msg_e != gps_coords_msg_e) {
     g.setColor(screen_info.screen_bg_color[0],
         screen_info.screen_bg_color[1],
         screen_info.screen_bg_color[2]);
-    g.drawString(last_status_msg, GPS_MSG_X_COORD, GPS_MSG_Y);
-    g.setColor(Colors.GREY[0],Colors.GREY[1],Colors.GREY[2]);
-    g.drawString(status_msg, GPS_MSG_X_COORD, GPS_MSG_Y);
-    last_status_msg = status_msg;
+    g.drawString(last_gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
+    g.drawString(last_gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
+    g.setColor(0.9,0.9,0.9);
+
+    g.drawString(gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
+    g.drawString(gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
+    last_gps_coords_msg_e = gps_coords_msg_e;
+    last_gps_coords_msg_n = gps_coords_msg_n;
   }
 
   gps_status_requires_update = false;
