@@ -34,7 +34,7 @@ class LocationManager {
                     coordinates: [g.lon, g.lat]
                 };
                 console.log("Received gps fixing:" + JSON.stringify(loc_info));
-                storage.writeJSON("solar_loc.local.json", this.location_info);
+                storage.writeJSON("solar_loc.local.json", loc_info);
                 this.setGPSPower(0);
                 if(this.isGPSLocation()){
                     this.location_info = loc_info;
