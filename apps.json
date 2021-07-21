@@ -3316,5 +3316,19 @@
     {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
     {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
   ]
+},
+{ "id": "hcclock",
+  "name": "HiContrast Clock",
+  "icon": "hcclock-icon.png",
+  "version":"0.01",
+  "description": "High Contrast Clock",
+  "tags": "clock",
+  "type":"clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"hcclock.app.js","url":"hcclock.app.js"},
+    {"name":"hcclock.img","url":"hcclock-icon.js","evaluate":true}
+  ],
+  "sortorder" : -9
 }
 ]
