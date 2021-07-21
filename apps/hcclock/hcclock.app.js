@@ -1,4 +1,4 @@
-{
+
 //////////////////////////////////////////////////////
 // Numbers Rect order (left, top, right, bottom)
 // Each number defines a set of rects to draw
@@ -72,6 +72,8 @@ const months = [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY",
 const interval = 1000; // in ms
 const top = 32;
 
+let ampm = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+
 let bg = 255;
 let fg = 0;
 
@@ -94,7 +96,7 @@ function updateTime()
   let h = now.getHours();
   let mo = now.getMonth();
   let y = now.getFullYear();
-  let d = now.getDay();
+  let d = now.getDate();
   
   if(h != hour)
   {
@@ -102,7 +104,9 @@ function updateTime()
     g.setColor(bg,bg,bg);
     g.fillRect(0,60,240,110);
     g.setColor(fg,fg,fg);
-    drawDigits(60, hour);
+    if(ampm)
+      h = h%12;
+    drawDigits(60, h);
   }
   if(m != mins)
   {
@@ -117,7 +121,7 @@ function updateTime()
     day = d;
     g.setFont("6x8", 2);
     g.setFontAlign(0, -1, 0);
-    g.drawString(fmtDate(d,mo,y), 120, 120); 
+    g.drawString(fmtDate(d,mo,y,hour), 120, 120); 
   }
 }
 
@@ -154,9 +158,17 @@ function lerp(a,b,t)
   return a + t*(b-a);
 }
 
-function fmtDate(day,month,year)
+function fmtDate(day,month,year,hour)
 {
-  return months[month] + " " + day + " " + year;
+  if(ampm)
+  {
+    let ap = "(AM)";
+    if(hour == 0 || hour > 12)
+      ap = "(PM)";
+    return months[month] + " " + day + " " + year + " "+ ap;    
+  }
+  else
+    return months[month] + " " + day + " " + year;
 }
 
 // Handles Flipping colors, then refreshes the UI
@@ -188,4 +200,3 @@ setInterval(updateTime, interval);
 setWatch(flipColors, BTN1, true);
 setWatch(Bangle.showLauncher, BTN2, false);
 
-}
