@@ -67,7 +67,7 @@ const numbers =
   ] 
 ];
 
-const months = [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ];
+const months = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
 
 const interval = 1000; // in ms
 const top = 32;
@@ -168,7 +168,7 @@ function fmtDate(day,month,year,hour)
     return months[month] + " " + day + " " + year + " "+ ap;    
   }
   else
-    return months[month] + " " + day + " " + year;
+    return months[month] + ". " + day + " " + year;
 }
 
 // Handles Flipping colors, then refreshes the UI
