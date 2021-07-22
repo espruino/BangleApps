@@ -3318,15 +3318,15 @@
   ]
 },
 { "id": "thermomF",
-  "name": "Fahrenheit Thermometer",
-  "shortName":"Thermometer F",
-  "icon": "app.png",
+  "name": "Fahrenheit Temp",
+  "shortName":"F Temp",
+  "icon": "thermf.png",
   "version":"0.01",
   "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
   "tags": "",
   "storage": [
     {"name":"thermof.app.js","url":"app.js"},
-    {"name":"thermof.png","url":"app-icon.js","evaluate":true}
+    {"name":"thermof.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
