@@ -157,101 +157,73 @@ function write_date(now){
 }
 
 
-const GPS_MSG_COORDS_Y_E = 90;
-const GPS_MSG_COORDS_Y_N = 105;
+const INFO_PANEL_LINE_Y1 = 90;
+const INFO_PANEL_LINE_Y2 = 105;
 var gps_status_requires_update = true;
-var last_gps_coords_msg_n = "";
-var last_gps_coords_msg_e = "";
 
 function write_GPS_status(){
   if(!gps_status_requires_update)
     return;
 
   var gps_coords = location.getCoordinates();
-  var gps_coords_msg_n;
-  var gps_coords_msg_e;
+  var gps_coords_msg = [];
 
   if(location.isGPSLocation()) {
     if(gps_coords == null) {
       if (location.getGPSPower() > 0) {
-        gps_coords_msg_n = "Locating";
-        gps_coords_msg_e = "GPS";
+        gps_coords_msg = ["Locating","GPS"];
       } else {
-        gps_coords_msg_n = "ERROR";
-        gps_coords_msg_e = "GPS";
+        gps_coords_msg = ["ERROR","GPS"];
       }
     } else {
       if (location.getGPSPower() > 0) {
-        gps_coords_msg_n = "Updating";
-        gps_coords_msg_e = "GPS";
+        gps_coords_msg = ["Updating","GPS"];
       }
     }
   }
 
-  if(gps_coords_msg_n == null){
-    gps_coords_msg_n = "N:" + Math2.format000_00(gps_coords[1]);
-    gps_coords_msg_e = "E:" + Math2.format000_00(gps_coords[0]);
+  if(gps_coords_msg.length == 0){
+    gps_coords_msg = ["N:" + Math2.format000_00(gps_coords[1]),
+      "E:" + Math2.format000_00(gps_coords[0])];
   }
 
+  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+  //g.setColor(0.5,0.5,0.5);
+  g.fillRect(DATE_X_COORD,INFO_PANEL_LINE_Y1,60,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
-  console.log("n:" + gps_coords_msg_n + " e:" + gps_coords_msg_e);
-  if(last_gps_coords_msg_e != gps_coords_msg_e) {
-    g.setColor(screen_info.screen_bg_color[0],
-        screen_info.screen_bg_color[1],
-        screen_info.screen_bg_color[2]);
-    g.drawString(last_gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
-    g.drawString(last_gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
-    g.setColor(0.9,0.9,0.9);
-
-    g.drawString(gps_coords_msg_e, DATE_X_COORD, GPS_MSG_COORDS_Y_E);
-    g.drawString(gps_coords_msg_n, DATE_X_COORD, GPS_MSG_COORDS_Y_N);
-    last_gps_coords_msg_e = gps_coords_msg_e;
-    last_gps_coords_msg_n = gps_coords_msg_n;
-  }
+  g.drawString(gps_coords_msg[0], DATE_X_COORD, INFO_PANEL_LINE_Y1,1);
+  g.drawString(gps_coords_msg[1], DATE_X_COORD, INFO_PANEL_LINE_Y2,1);
 
   gps_status_requires_update = false;
 }
 
 const TWILIGHT_X_COORD = 200;
-const SUNUP_Y_COORD = 90;
-const SUNDOWN_Y_COORD = 105;
-var last_sunup = "";
-var last_sundown = "";
+
 var twilight_times_requires_update = true;
 function write_twilight_times(){
   if(!twilight_times_requires_update)
     return;
 
-  var sunup;
-  var sundown;
+  var twilight_msg=[];
   if(day_info != null) {
-    sunup = format_time(day_info.sunrise_date);
-    sundown = format_time(day_info.sunset_date);
-  } else {
-    sunup = "";
-    sundown = "";
+    twilight_msg = [format_time(day_info.sunrise_date), format_time(day_info.sunset_date)];
   }
-
+  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+  g.fillRect(TWILIGHT_X_COORD,INFO_PANEL_LINE_Y1,240,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
-  if(last_sunup != "" && last_sunup != sunup){
-    g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
-    g.drawString(last_sunup, TWILIGHT_X_COORD,SUNUP_Y_COORD);
-    g.drawString(last_sundown, TWILIGHT_X_COORD,SUNDOWN_Y_COORD);
-  }
   g.setColor(Colors.YELLOW[0],Colors.YELLOW[1],Colors.YELLOW[2]);
-  g.drawString(sunup, TWILIGHT_X_COORD,SUNUP_Y_COORD);
   GraphicUtils.fill_circle_partial_y(TWILIGHT_X_COORD-15,
-      SUNUP_Y_COORD+7,
+      INFO_PANEL_LINE_Y1+7,
       7,
-      SUNUP_Y_COORD+7,
-      SUNUP_Y_COORD);
-  g.setColor(1,0.7,0);
-  g.drawString(sundown, TWILIGHT_X_COORD,SUNDOWN_Y_COORD);
+      INFO_PANEL_LINE_Y1+7,
+      INFO_PANEL_LINE_Y1);
 
-  last_sunup = sunup;
-  last_sundown = sundown;
+  g.drawString(twilight_msg[0], TWILIGHT_X_COORD,INFO_PANEL_LINE_Y1,1);
+  g.setColor(1,0.8,0);
+  g.drawString(twilight_msg[1], TWILIGHT_X_COORD,INFO_PANEL_LINE_Y2,1);
+
   twilight_times_requires_update = false;
 }
 
