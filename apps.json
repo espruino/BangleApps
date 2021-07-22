@@ -3322,7 +3322,7 @@
   "icon": "thermf.png",
   "version":"0.01",
   "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
-  "tags": "Temperature, Thermometer",
+  "tags": "tool",
   "storage": [
     {"name":"thermomF.app.js","url":"app.js"},
     {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
