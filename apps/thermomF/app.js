@@ -13,7 +13,7 @@ function drawTemperature() {
     Bangle.getPressure().then(onTemperature);
   } else {
     onTemperature({
-      temperature : E.getTemperature()  * (9/5) + 32,
+      temperature : E.getTemperature()  * (9/5) + 32
     });
   }
 }
