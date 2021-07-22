@@ -3172,6 +3172,21 @@
       {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
+{ "id": "BangleBridge",
+    "name": "BangleBridge",
+    "shortName":"BangleBridge",
+    "icon": "widget.png",
+    "version":"0.01",
+    "description": "Widget that allows Bangle Js to record pair and end data using Bluetooth Low Energy in combination with the BangleBridge Android App",
+    "tags": "widget",
+    "type": "widget",
+    "readme": "README.md",
+    "storage": [
+      {"name":"banglebridge.wid.js","url":"widget.js"},
+	{"name":"iconWatch.png","url":"iconWatch.png"},
+	    {"name":"heart.png","url":"heart.png"}
+    ]
+ },
 { "id": "qmsched",
   "name": "Quiet Mode Schedule",
   "shortName":"Quiet Mode",
