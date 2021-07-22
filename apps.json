@@ -3325,8 +3325,8 @@
   "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
   "tags": "",
   "storage": [
-    {"name":"thermof.app.js","url":"app.js"},
-    {"name":"thermof.img","url":"app-icon.js","evaluate":true}
+    {"name":"thermomF.app.js","url":"app.js"},
+    {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
