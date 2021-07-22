@@ -3264,7 +3264,7 @@
   "name":"Dozenal Time",
   "shortName":"Dozenal Time",
   "icon":"app.png",
-  "version":"0.01",
+  "version":"0.04",
   "description":"A dozenal Holocene calendar and dozenal diurnal clock",
   "tags":"clock",
   "type":"clock",
