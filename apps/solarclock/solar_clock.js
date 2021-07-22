@@ -188,10 +188,10 @@ function write_GPS_status(){
   }
 
   g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
-  //g.setColor(0.5,0.5,0.5);
   g.fillRect(DATE_X_COORD,INFO_PANEL_LINE_Y1,60,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
+  g.setColor(Colors.WHITE[0], Colors.WHITE[1], Colors.WHITE[0]);
   g.drawString(gps_coords_msg[0], DATE_X_COORD, INFO_PANEL_LINE_Y1,1);
   g.drawString(gps_coords_msg[1], DATE_X_COORD, INFO_PANEL_LINE_Y2,1);
 
