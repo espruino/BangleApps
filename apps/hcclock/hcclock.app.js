@@ -81,8 +81,14 @@ let mins = -1;
 let hour = -1;
 let day = -1;
 
-function refresh()
-{
+function redraw() {
+  mins = -1;
+  hour = -1;
+  day = -1;
+  refresh();
+}
+
+function refresh() {
   g.setColor(bg,bg,bg);
   g.fillRect(0,45,240,210);
   Bangle.drawWidgets();
@@ -127,6 +133,9 @@ function updateTime()
 
 function drawDigits(x, value)
 {
+  if(!Bangle.isLCDOn()) // No need to draw when LCD Off
+    return;
+  
   drawChar(Math.floor(value/10),  15, x, 115, x+50);
   if(value%10 == 1)
     drawChar(value%10, 55, x, 155, x+50);
@@ -177,10 +186,7 @@ function flipColors()
   let t = bg;
   bg = fg;
   fg = t;
-  mins = -1;
-  hour = -1;
-  day = -1;
-  refresh();
+  redraw();
 }
 
 //////////////////////////////////////////
@@ -191,7 +197,7 @@ function flipColors()
 // Initialize
 g.clear();
 Bangle.loadWidgets();
-refresh();
+redraw();
 
 // Define Refresh Interval
 setInterval(updateTime, interval);
@@ -200,3 +206,5 @@ setInterval(updateTime, interval);
 setWatch(flipColors, BTN1, true);
 setWatch(Bangle.showLauncher, BTN2, false);
 
+// Handle redraw on LCD on
+Bangle.on('lcdPower', (on) => { if(on) redraw(); });
