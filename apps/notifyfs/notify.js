@@ -126,4 +126,5 @@ exports.hide = function(options) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
     global["\xff"].watches[Bangle.btnWatches[1]].callback();
   }
+  Bangle.emit('notifyHide');
 };

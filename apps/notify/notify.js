@@ -156,7 +156,10 @@ exports.hide = function(options) {
   Bangle.removeListener("touch", exports.hide);
   function anim() {
     pos += 4;
-    if (pos > 0) pos = 0;
+    if (pos > 0){
+      pos = 0;
+      Bangle.emit('notifyHide');
+    }
     Bangle.setLCDOffset(pos);
     if (pos < 0) setTimeout(anim, 10);
   }
