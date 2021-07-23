@@ -6,3 +6,4 @@
 0.06: Adjust position of notification src text and notifications without title
 0.07: Support background color
 0.08: Don't turn on screen during Quiet Mode
+0.09: Emits a 'notifyHide' event when dismissing notifications
