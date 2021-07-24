@@ -1,4 +1,5 @@
 const storage = require("Storage");
+const DateUtils = require("solar_date_utils.js");
 class LocationManager {
     constructor(locations) {
         this.idx=0;
@@ -10,12 +11,26 @@ class LocationManager {
         this.location_info = null;
     }
     init(){
-        this.location_info = storage.readJSON("solar_loc." + this.getName() + ".json");
-        if(this.isGPSLocation() && !this.gps_queried) {
-            console.log("updating local location");
-            this._gpsUpdate();
-            this.gps_queried = true;
-        } 
+        try {
+            this.location_info = storage.readJSON("solar_loc." + this.getName() + ".json");
+        } catch(e){
+            console.log("failed to load location:" + this.getName())
+        }
+        if(this.location_info == null){
+            this.location_info = {};
+        }
+        if (this.isGPSLocation() && !this.gps_queried) {
+            //console.log("gps location:" + JSON.stringify(this.location_info));
+            var last_update_str = this.location_info.last_update;
+            if(last_update_str == null ||
+                (Date.now() - new Date(last_update_str).getTime() > DateUtils.DAY_MILLIS ) ){
+                console.log("updating local location last update:" + last_update_str);
+                this._gpsUpdate();
+                this.gps_queried = true;
+            } else {
+                console.log("gps update not required last update:" + last_update_str);
+            }
+        }
     }
     setGPSPower(power){
         this.gpsPower = power;

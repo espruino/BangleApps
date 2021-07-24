@@ -199,15 +199,18 @@ function write_GPS_status(){
 }
 
 const TWILIGHT_X_COORD = 200;
+const NO_TIME = "--:--";
 
 var twilight_times_requires_update = true;
 function write_twilight_times(){
   if(!twilight_times_requires_update)
     return;
 
-  var twilight_msg=[];
+  var twilight_msg;
   if(day_info != null) {
     twilight_msg = [format_time(day_info.sunrise_date), format_time(day_info.sunset_date)];
+  } else {
+    twilight_msg = [NO_TIME,NO_TIME];
   }
   g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
   g.fillRect(TWILIGHT_X_COORD,INFO_PANEL_LINE_Y1,240,INFO_PANEL_LINE_Y2 + 13);
