@@ -188,7 +188,7 @@ function write_GPS_status(){
   }
 
   g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
-  g.fillRect(DATE_X_COORD,INFO_PANEL_LINE_Y1,60,INFO_PANEL_LINE_Y2 + 13);
+  g.fillRect(DATE_X_COORD,INFO_PANEL_LINE_Y1,70,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
   g.setColor(Colors.WHITE[0], Colors.WHITE[1], Colors.WHITE[0]);
@@ -281,7 +281,6 @@ let time_offset = 0;
 let last_draw_time = null;
 var day_info = null;
 var location = LocationUtils.load_locations();
-var last_location_name = null;
 var location_requires_update = true;
 
 function write_location_name() {
@@ -291,15 +290,14 @@ function write_location_name() {
   var new_location_name = location.getName();
   g.setFont("Vector", 20);
   g.setFontAlign(-1, -1, 0);
-  if (last_location_name != null) {
-    g.setColor(screen_info.screen_bg_color[0], screen_info.screen_bg_color[1], screen_info.screen_bg_color[2]);
-    g.drawString(last_location_name, DATE_X_COORD, LOCATION_Y_COORD);
-  }
-  g.setColor(time_color[0], time_color[1], time_color[2]);
+
+  g.setColor(screen_info.screen_bg_color[0], screen_info.screen_bg_color[1], screen_info.screen_bg_color[2]);
+  g.fillRect(DATE_X_COORD, LOCATION_Y_COORD, DATE_X_COORD + 95, LOCATION_Y_COORD + 20);
+
   if (new_location_name != "local") {
+    g.setColor(time_color[0], time_color[1], time_color[2]);
     g.drawString(new_location_name, DATE_X_COORD, LOCATION_Y_COORD);
   }
-  last_location_name = new_location_name;
   location_requires_update = false;
 }
 
@@ -351,6 +349,8 @@ function draw_clock(){
   var start_time = Date.now();
   var now = time_now();
 
+  write_location_name();
+  write_GPS_status();
   var day_info = dayInfo(now);
   if(day_info != null) {
     draw_sun(now, day_info);
@@ -358,8 +358,6 @@ function draw_clock(){
   write_time(now);
   write_date(now);
   write_offset();
-  write_location_name();
-  write_GPS_status();
   write_twilight_times();
 
   last_draw_time = now;
@@ -424,6 +422,7 @@ function clear_timers(){
 }
 
 function start_timers(){
+  console.log("start timers")
   var date = new Date();
   var secs = date.getSeconds();
   var nextMinuteStart = 60 - secs;
@@ -451,7 +450,7 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     console.log("lcdPower: on");
     gps_status_requires_update = true;
-    draw_clock();
+    time_offset = 0;
     start_timers();
   } else {
     console.log("lcdPower: off");
