@@ -300,7 +300,6 @@
       {"name":"solar_loc.Reykjavik.json","url":"solar_loc.Reykjavik.json"},
       {"name":"solar_loc.Honolulu.json","url":"solar_loc.Honolulu.json"},
       {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
-      {"name":"solar_locations.json","url":"solar_locations.json"}
     ]
   },
   { "id": "sweepclock",

@@ -56,8 +56,11 @@
           }
           console.log("new selected locations:" + new_selected_locations);
           localStorage.setItem('solar_locations',JSON.stringify(new_selected_locations));
-          // send finished app (in addition to contents of app.json)
-          sendCustomizedApp(JSON.stringify(new_selected_locations));
+          sendCustomizedApp({
+              storage:[
+                  {name:"solar_locations.json", content:JSON.stringify(new_selected_locations)},
+              ]
+          });
       });
 
     </script>

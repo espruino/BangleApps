@@ -88,7 +88,15 @@ class LocationManager {
 const LOCATIONS_FILE = "solar_locations.json";
 const LocationUtils = {
     load_locations : ()=>{
-        var locations = storage.readJSON(LOCATIONS_FILE);
+        var locations;
+        try {
+            locations = storage.readJSON(LOCATIONS_FILE);
+        } catch(e){
+            console.log("failed to load locations file:" + e);
+        }
+        if(locations == null)
+            locations = ['local'];
+
         console.log("loaded locations:" + locations);
         var mgr = new LocationManager(locations);
         mgr.init();
