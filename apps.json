@@ -299,7 +299,7 @@
       {"name":"solar_math_utils.js","url":"solar_math_utils.js"},
       {"name":"solar_loc.Reykjavik.json","url":"solar_loc.Reykjavik.json"},
       {"name":"solar_loc.Honolulu.json","url":"solar_loc.Honolulu.json"},
-      {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
+      {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"}
     ]
   },
   { "id": "sweepclock",
