@@ -282,7 +282,7 @@
     "name": "Solar Clock",
     "icon": "solar_clock.png",
     "version":"0.01",
-    "description": "The solar clock will use your current or chosen location to work out the the current sun phase of the day",
+    "description": "Using your current or chosen location the solar watch face shows the Sun's sky position, time and date. Also allows you to wind backwards and forwards in time to see the sun's position",
     "tags": "clock",
     "type":"clock",
     "allow_emulator":false,
