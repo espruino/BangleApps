@@ -18,6 +18,7 @@ const Diamonds = { width : 48, height : 48, bpp : 4,
 var deck = [];
 var player = {Hand:[]};
 var computer = {Hand:[]};
+var ctx = {ready:true};
 
 function createDeck() {
   var suits = ["Spades", "Hearts", "Diamonds", "Clubs"];
@@ -44,6 +45,7 @@ function shuffle(a) {
 }
 
 function EndGameMessdage(msg){
+  ctx.ready = false;
   g.drawString(msg, 155, 200);
   setTimeout(function(){
     startGame();
@@ -52,6 +54,7 @@ function EndGameMessdage(msg){
 }
 
 function hitMe() {
+  if (!ctx.ready) return;
   player.Hand.push(deck.pop());
   renderOnScreen(1);
   var playerWeight = calcWeight(player.Hand, 0);
@@ -97,6 +100,8 @@ function calcWeight(hand, hideCard) {
 }
 
 function stand(){
+  if (!ctx.ready) return;
+  ctx.ready = false;
   function sleepFor( sleepDuration ){
     console.log("Sleeping...");
     var now = new Date().getTime();
@@ -156,6 +161,7 @@ function renderOnScreen(HideCard) {
 function dealHands() {
   player.Hand= [];
   computer.Hand= [];
+  ctx.ready = false;
 
   setTimeout(function(){
     player.Hand.push(deck.pop());
@@ -175,6 +181,7 @@ function dealHands() {
   setTimeout(function(){
     computer.Hand.push(deck.pop());
     renderOnScreen(1);
+    ctx.ready = true;
   }, 2000);
 }
 
