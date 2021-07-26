@@ -4,7 +4,7 @@
     "tags": "tool,system,b2",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.27",
+    "version":"0.28",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
@@ -533,7 +533,7 @@
   { "id": "files",
     "name": "App Manager",
     "icon": "files.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "tags": "tool,system,files",
     "storage": [
@@ -1244,6 +1244,19 @@
       {"name":"torch.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  { "id": "rtorch",
+    "name": "Red Torch",
+    "shortName":"RedTorch",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Turns screen RED to help you see in the dark without breaking your night vision. Select from the launcher or press BTN3,BTN1,BTN3,BTN1 quickly to start when in any app that shows widgets",
+    "tags": "tool,torch",
+    "storage": [
+      {"name":"rtorch.app.js","url":"app.js"},
+      {"name":"rtorch.wid.js","url":"widget.js"},
+      {"name":"rtorch.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   { "id": "wohrm",
     "name": "Workout HRM",
     "icon": "app.png",
@@ -1746,7 +1759,7 @@
     "name": "Black Jack game",
     "shortName":"Black Jack game",
     "icon": "blackjack.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple implementation of card game Black Jack",
     "tags": "game",
     "allow_emulator":true,
@@ -2095,6 +2108,20 @@
     "storage": [
       { "name": "jbm8b.app.js", "url": "app.js" },
       { "name": "jbm8b.img", "url": "app-icon.js",  "evaluate": true  }
+  ]
+  },
+  {
+    "id": "jbm8b_IT",
+    "name": "Magic 8 Ball Italiano",
+    "shortName": "Magic 8 Ball IT",
+    "icon": "app.png",
+    "description": "La palla predice il futuro",
+    "tags": "game",
+    "version": "0.03",
+    "allow_emulator":true,
+    "storage": [
+      { "name": "jbm8b_IT.app.js", "url": "app.js" },
+      { "name": "jbm8b_IT.img", "url": "app-icon.js",  "evaluate": true  }
   ]
   },
   { "id": "BLEcontroller",
@@ -2667,7 +2694,7 @@
 { "id": "dtlaunch",
   "name": "Desktop Launcher",
   "icon": "icon.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Desktop style App Launcher with six apps per page - fast access if you have lots of apps installed.",
   "readme": "README.md",
   "tags": "tool,system,launcher",
@@ -3183,7 +3210,7 @@
     "readme": "README.md",
     "storage": [
       {"name":"banglebridge.wid.js","url":"widget.js"},
-	{"name":"iconWatch.png","url":"iconWatch.png"},
+	    {"name":"iconWatch.png","url":"iconWatch.png"},
 	    {"name":"heart.png","url":"heart.png"}
     ]
  },
@@ -3264,7 +3291,7 @@
   "name":"Dozenal Time",
   "shortName":"Dozenal Time",
   "icon":"app.png",
-  "version":"0.01",
+  "version":"0.04",
   "description":"A dozenal Holocene calendar and dozenal diurnal clock",
   "tags":"clock",
   "type":"clock",
@@ -3343,6 +3370,17 @@
   "storage": [
     {"name":"hcclock.app.js","url":"hcclock.app.js"},
     {"name":"hcclock.img","url":"hcclock-icon.js","evaluate":true}
+  ]
+},
+{ "id": "thermomF",
+  "name": "Fahrenheit Temp",
+  "icon": "thermf.png",
+  "version":"0.01",
+  "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
+  "tags": "tool",
+  "storage": [
+    {"name":"thermomF.app.js","url":"app.js"},
+    {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
