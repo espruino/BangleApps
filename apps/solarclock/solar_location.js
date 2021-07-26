@@ -1,44 +1,14 @@
 const storage = require("Storage");
-const DateUtils = require("solar_date_utils.js");
 class LocationManager {
     constructor(locations) {
         this.idx=0;
         this.locations = locations;
         this.listeners = [];
         this.in_use = true;
-        this.gps_queried = false;
         this.gpsPower = 0;
         this.location_info = null;
     }
     init(){
-        try {
-            this.location_info = storage.readJSON("solar_loc." + this.getName() + ".json");
-        } catch(e){
-            console.log("failed to load location:" + this.getName())
-        }
-        if(this.location_info == null){
-            this.location_info = {};
-        }
-        if (this.isGPSLocation() && !this.gps_queried) {
-            //console.log("gps location:" + JSON.stringify(this.location_info));
-            var last_update_str = this.location_info.last_update;
-            if(last_update_str == null ||
-                (Date.now() - new Date(last_update_str).getTime() > DateUtils.DAY_MILLIS ) ){
-                console.log("updating local location last update:" + last_update_str);
-                this._gpsUpdate();
-                this.gps_queried = true;
-            } else {
-                console.log("gps update not required last update:" + last_update_str);
-            }
-        }
-    }
-    setGPSPower(power){
-        this.gpsPower = power;
-        Bangle.setGPSPower(this.gpsPower);
-    }
-    getGPSPower(){return this.gpsPower;}
-    _gpsUpdate(){
-        this.setGPSPower(1);
         Bangle.on('GPS', (g) => {
             if (!this.in_use)
                 return;
@@ -58,6 +28,30 @@ class LocationManager {
 
             }
         });
+        try {
+            this.location_info = storage.readJSON("solar_loc." + this.getName() + ".json");
+        } catch(e){
+            console.log("failed to load location:" + this.getName())
+        }
+        if(this.location_info == null){
+            this.location_info = {};
+        }
+        if (this.isGPSLocation() && this.getCoordinates() == null) {
+           this.requestGpsUpdate();
+        }
+    }
+    setGPSPower(power){
+        this.gpsPower = power;
+        Bangle.setGPSPower(this.gpsPower);
+    }
+    getGPSPower(){return this.gpsPower;}
+    requestGpsUpdate(){
+        if (this.getGPSPower() == 0) {
+            console.log("updating gps location update");
+            this.setGPSPower(1);
+        } else {
+            console.log("gps already updating");
+        }
     }
     isGPSLocation(){return this.getName() == 'local';}
     addUpdateListener(listener){this.listeners.push(listener);}

@@ -379,18 +379,36 @@ function log_memory_used() {
   );
 }
 
+var button1pressStart = null;
 function button1pressed(){
-  console.log("button 1 pressed");
-  time_offset = 0;
-  clear_sun();
-  day_info = null;
-  draw_clock();
+  if(button1pressStart == null) {
+    button1pressStart = Date.now();
+  }
+  //console.log("button 1 pressed for:" + (Date.now() - button1pressStart));
+  if(BTN1.read()){
+    setTimeout(button1pressed,100);
+  } else {
+    var buttonPressTime = Date.now() - button1pressStart;
+    button1pressStart = null;
+    console.log("button press time=" + buttonPressTime);
+    if (buttonPressTime < 3000) {
+      //console.log("offset reset");
+      time_offset = 0;
+      clear_sun();
+      day_info = null;
+    } else {
+      //console.log("requesting gps update");
+      location.requestGpsUpdate();
+      gps_status_requires_update = true;
+    }
+    draw_clock();
+  }
 }
 
-function button3pressed(){
-  console.log("button 3 pressed");
-  time_offset = 0;
-  location.nextLocation();
+function button3pressed() {
+    console.log("button 3 pressed");
+    time_offset = 0;
+    location.nextLocation();
 }
 
 function button4pressed(){
@@ -485,7 +503,7 @@ function button2pressed(){
   Bangle.showLauncher();
 }
 setWatch(button2pressed, BTN2,{repeat:false,edge:"falling"});
-setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
+setWatch(button1pressed, BTN1,{repeat:true,edge:"rising"});
 setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 setWatch(button4pressed, BTN4,{repeat:true,edge:"rising"});
 setWatch(button5pressed, BTN5,{repeat:true,edge:"rising"});
