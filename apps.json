@@ -3210,7 +3210,7 @@
     "readme": "README.md",
     "storage": [
       {"name":"banglebridge.wid.js","url":"widget.js"},
-	{"name":"iconWatch.png","url":"iconWatch.png"},
+	    {"name":"iconWatch.png","url":"iconWatch.png"},
 	    {"name":"heart.png","url":"heart.png"}
     ]
  },
@@ -3291,7 +3291,7 @@
   "name":"Dozenal Time",
   "shortName":"Dozenal Time",
   "icon":"app.png",
-  "version":"0.01",
+  "version":"0.04",
   "description":"A dozenal Holocene calendar and dozenal diurnal clock",
   "tags":"clock",
   "type":"clock",
