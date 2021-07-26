@@ -4,7 +4,7 @@
     "tags": "tool,system,b2",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.27",
+    "version":"0.28",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
@@ -3371,6 +3371,3 @@
   ]
 }
 ]
-
-
-
