@@ -126,5 +126,6 @@ exports.hide = function(options) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
     global["\xff"].watches[Bangle.btnWatches[1]].callback();
   }
+  // Emits a notifyHide event that other apps can catch in order to redraw, if previous statements were unsuccessful.
   Bangle.emit('notifyHide');
 };
