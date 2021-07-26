@@ -113,12 +113,14 @@ function draw_sun(now, day_info) {
 }
 
 function clear_sun(){
-  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
-  g.fillRect(img_info.x,img_info.y,img_info.x+img_width,img_info.y + img_width);
-  GraphicUtils.draw_cosine(img_info.x - 4,
-      img_info.x + img_width + 4,
-      COSINE_COLOUR,
-      screen_info);
+  if(img_info.x != null && img_info.y != null) {
+    g.setColor(screen_info.screen_bg_color[0], screen_info.screen_bg_color[1], screen_info.screen_bg_color[2]);
+    g.fillRect(img_info.x, img_info.y, img_info.x + img_width, img_info.y + img_width);
+    GraphicUtils.draw_cosine(img_info.x - 4,
+        img_info.x + img_width + 4,
+        COSINE_COLOUR,
+        screen_info);
+  }
   GraphicUtils.draw_sunrise_line(HORIZON_COLOUR, day_info, screen_info);
   screen_info.sun_x = null;
   screen_info.sun_y = null;
