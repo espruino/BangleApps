@@ -3358,5 +3358,19 @@
     {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
     {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
   ]
+},
+{ "id": "thermomF",
+  "name": "Fahrenheit Temp",
+  "icon": "thermf.png",
+  "version":"0.01",
+  "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
+  "tags": "tool",
+  "storage": [
+    {"name":"thermomF.app.js","url":"app.js"},
+    {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 ]
+
+
+
