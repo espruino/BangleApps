@@ -7,27 +7,9 @@ class LocationManager {
         this.in_use = true;
         this.gpsPower = 0;
         this.location_info = null;
+        this.gpsRequested = false;
     }
     init(){
-        Bangle.on('GPS', (g) => {
-            if (!this.in_use)
-                return;
-
-            if (g.fix) {
-                var loc_info = {
-                    last_update: new Date(),
-                    coordinates: [g.lon, g.lat]
-                };
-                console.log("Received gps fixing:" + JSON.stringify(loc_info));
-                storage.writeJSON("solar_loc.local.json", loc_info);
-                this.setGPSPower(0);
-                if(this.isGPSLocation()){
-                    this.location_info = loc_info;
-                    this.notifyUpdate();
-                }
-
-            }
-        });
         try {
             this.location_info = storage.readJSON("solar_loc." + this.getName() + ".json");
         } catch(e){
@@ -40,8 +22,31 @@ class LocationManager {
            this.requestGpsUpdate();
         }
     }
+    initCallback(){
+        Bangle.on('GPS', (g) => {
+            if (!this.in_use)
+                return;
+
+            if (g.fix) {
+                var loc_info = {
+                    coordinates: [g.lon, g.lat]
+                };
+                console.log("Received gps fixing:" + JSON.stringify(loc_info));
+                storage.writeJSON("solar_loc.local.json", loc_info);
+                this.setGPSPower(0);
+                if(this.isGPSLocation()){
+                    this.location_info = loc_info;
+                    this.notifyUpdate();
+                }
+            }
+        });
+    }
     setGPSPower(power){
+        if(power && !this.gpsRequested){
+            this.initCallback();
+        }
         this.gpsPower = power;
+        this.gpsRequested = true;
         Bangle.setGPSPower(this.gpsPower);
     }
     getGPSPower(){return this.gpsPower;}

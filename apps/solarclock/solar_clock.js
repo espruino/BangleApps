@@ -168,7 +168,7 @@ function write_GPS_status(){
     return;
 
   var gps_coords = location.getCoordinates();
-  var gps_coords_msg = [];
+  var gps_coords_msg;
 
   if(location.isGPSLocation()) {
     if(gps_coords == null) {
@@ -184,7 +184,7 @@ function write_GPS_status(){
     }
   }
 
-  if(gps_coords_msg.length == 0){
+  if(gps_coords_msg == null){
     gps_coords_msg = ["N:" + Math2.format000_00(gps_coords[1]),
       "E:" + Math2.format000_00(gps_coords[0])];
   }
@@ -283,7 +283,6 @@ function format_offset(){
 }
 
 let time_offset = 0;
-let last_draw_time = null;
 var day_info = null;
 var location = LocationUtils.load_locations();
 var location_requires_update = true;
@@ -364,8 +363,6 @@ function draw_clock(){
   write_date(now);
   write_offset();
   write_twilight_times();
-
-  last_draw_time = now;
   log_memory_used();
   var time_taken = Date.now() - start_time;
   console.log("drawing clock:" + now.toISOString() + " time taken:" + time_taken );
