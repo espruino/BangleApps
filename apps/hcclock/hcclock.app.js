@@ -206,7 +206,5 @@ setInterval(updateTime, interval);
 setWatch(flipColors, BTN1, true);
 setWatch(Bangle.showLauncher, BTN2, false);
 
-// Handle redraw on LCD on
+// Handle redraw on LCD on / fullscreen notifications dismissed
 Bangle.on('lcdPower', (on) => { if(on) redraw(); });
-// Handle redraw on Dismissed Notifications
-// Bangle.on('notifyHide', () => { redraw(); } );
