@@ -209,4 +209,4 @@ setWatch(Bangle.showLauncher, BTN2, false);
 // Handle redraw on LCD on
 Bangle.on('lcdPower', (on) => { if(on) redraw(); });
 // Handle redraw on Dismissed Notifications
-Bangle.on('notifyHide', () => { redraw(); } );
+// Bangle.on('notifyHide', () => { redraw(); } );
