@@ -46,9 +46,12 @@ Bangle.on('HRM-raw', function(v) {
     g.moveTo(-100,0);
   }
 
-  y = E.clip(170 - (v.raw*2),100,230);
-  g.setColor(1,1,1);
-  g.lineTo(hrmOffset, y);
+  y = E.clip(170 - (v.raw),100,230);
+  g.setColor(g.theme.fg).lineTo(hrmOffset, y);
+  if (counter !==undefined) {
+    counter = undefined;
+    g.clear();
+  }
 });
 
 // It takes 5 secs for us to get the first HRM event
@@ -80,7 +83,6 @@ function readHRM() {
     var a = hrmInfo.raw[hrmOffset];
     hrmOffset++;
     y = E.clip(170 - (a*2),100,230);
-    g.setColor(1,1,1);
-    g.lineTo(hrmOffset, y);
+    g.setColor(g.theme.fg).lineTo(hrmOffset, y);
   }
 }
