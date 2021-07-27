@@ -7,7 +7,7 @@ class LocationManager {
         this.in_use = true;
         this.gpsPower = 0;
         this.location_info = null;
-        this.gpsRequested = false;
+        this.gpsCallbackInstalled = false;
     }
     init(){
         try {
@@ -42,11 +42,11 @@ class LocationManager {
         });
     }
     setGPSPower(power){
-        if(power && !this.gpsRequested){
+        if(power && !this.gpsCallbackInstalled){
             this.initCallback();
+            this.gpsCallbackInstalled = true;
         }
         this.gpsPower = power;
-        this.gpsRequested = true;
         Bangle.setGPSPower(this.gpsPower);
     }
     getGPSPower(){return this.gpsPower;}
