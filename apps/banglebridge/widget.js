@@ -256,10 +256,8 @@
 
 
     function draw() {
-       // g.drawImage(storage.read("iconWatch.img"), this.x + 1, this.y + 1);
-       g.drawImage(storage.read("iconWatch.png"),this.x + 1,this.y + 1);
-
-        g.drawImage(storage.read("heart.png"), 145, 167);
+       g.drawImage(storage.read("banglebridge.watch.img"),this.x + 1,this.y + 1);
+       g.drawImage(storage.read("banglebridge.heart.img"), 145, 167);
     }
 
 

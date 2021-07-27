@@ -2117,7 +2117,7 @@
     "icon": "app.png",
     "description": "La palla predice il futuro",
     "tags": "game",
-    "version": "0.03",
+    "version": "0.01",
     "allow_emulator":true,
     "storage": [
       { "name": "jbm8b_IT.app.js", "url": "app.js" },
@@ -3199,7 +3199,7 @@
       {"name":"waypoints.json","url":"waypoints.json"}
   ]
 },
-{ "id": "BangleBridge",
+{ "id": "banglebridge",
     "name": "BangleBridge",
     "shortName":"BangleBridge",
     "icon": "widget.png",
@@ -3210,8 +3210,8 @@
     "readme": "README.md",
     "storage": [
       {"name":"banglebridge.wid.js","url":"widget.js"},
-	    {"name":"iconWatch.png","url":"iconWatch.png"},
-	    {"name":"heart.png","url":"heart.png"}
+	    {"name":"banglebridge.watch.img","url":"watch.img"},
+	    {"name":"banglebridge.heart.img","url":"heart.img"}
     ]
  },
 { "id": "qmsched",
