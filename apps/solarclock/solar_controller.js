@@ -62,7 +62,7 @@ function draw_partial_sun(time, day_info, screen_info,img_info){
             screen_info.sun_y - draw_info.offset_y,
             screen_info.sun_radius-1);
         var sun_color = daytime_sun_color(time,day_info);
-        GraphicUtils.set_color(sun_color[0],draw_info.buff);
+        GraphicUtils.set_color(sun_color,draw_info.buff);
         draw_info.buff.drawCircle(screen_info.sun_x - draw_info.offset_x,
             screen_info.sun_y - draw_info.offset_y,
             screen_info.sun_radius);
