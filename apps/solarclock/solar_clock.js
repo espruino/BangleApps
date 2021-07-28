@@ -290,7 +290,7 @@ function write_location_name() {
   g.setFontAlign(-1, -1, 0);
 
   GraphicUtils.set_color(screen_info.screen_bg_color);
-  g.fillRect(DATE_X_COORD, LOCATION_Y_COORD, DATE_X_COORD + 95, LOCATION_Y_COORD + 20);
+  g.fillRect(DATE_X_COORD, LOCATION_Y_COORD, DATE_X_COORD + 105, LOCATION_Y_COORD + 20);
 
   if (new_location_name != "local") {
     GraphicUtils.set_color(time_color);
