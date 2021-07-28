@@ -30,6 +30,42 @@ global.Const = {
   SINGLE_APP_ONLY : false,
 };
 
+
+function atob(input) {
+    // Copied from https://github.com/strophe/strophejs/blob/e06d027/src/polyfills.js#L149
+    // This code was written by Tyler Akins and has been placed in the
+    // public domain.  It would be nice if you left this header intact.
+    // Base64 code from Tyler Akins -- http://rumkin.com
+    var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+    var output = [];
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+    var i = 0;
+    // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+    do {
+      enc1 = keyStr.indexOf(input.charAt(i++));
+      enc2 = keyStr.indexOf(input.charAt(i++));
+      enc3 = keyStr.indexOf(input.charAt(i++));
+      enc4 = keyStr.indexOf(input.charAt(i++));
+
+      chr1 = (enc1 << 2) | (enc2 >> 4);
+      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+      chr3 = ((enc3 & 3) << 6) | enc4;
+
+      output.push(chr1);
+
+      if (enc3 !== 64) {
+        output.push(chr2);
+      }
+      if (enc4 !== 64) {
+        output.push(chr3);
+      }
+    } while (i < input.length);
+    return new Uint8Array(output);
+  }
+
 var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appjson = JSON.parse(fs.readFileSync(APPJSON).toString());
 var appfiles = [];
@@ -50,6 +86,28 @@ function fileGetter(url) {
   return Promise.resolve(fs.readFileSync(url).toString("binary"));
 }
 
+// If file should be evaluated, try and do it...
+function evaluateFile(file) {
+  var hsStart = 'require("heatshrink").decompress(atob("';
+  var hsEnd = '"))';
+  if (file.content.startsWith(hsStart) && file.content.endsWith(hsEnd)) {
+    var heatshrink = require(ROOTDIR+"/core/lib/heatshrink.js");
+    var b64 = file.content.slice(hsStart.length, -hsEnd.length);
+    var decompressed = heatshrink.decompress(atob(b64));
+    file.content = "";
+    for (var i=0;i<decompressed.length;i++)
+      file.content += String.fromCharCode(decompressed[i]);
+    return;
+  }
+  // if JSON just pass through. We could try and minify.
+  if (file.name.endsWith(".json")) {
+    return;
+  }
+  // else... uh-oh
+  console.log(file);
+  throw new Error("Unable to evaluate "+file.name);
+}
+
 Promise.all(APPS.map(appid => {
   var app = appjson.find(app=>app.id==appid);
   if (app===undefined) throw new Error(`App ${appid} not found`);
@@ -63,6 +121,8 @@ Promise.all(APPS.map(appid => {
   // work out what goes in storage
   var storageContent = "";
   appfiles.forEach((file) => {
+    //console.log(file);
+    if (file.evaluate) evaluateFile(file);
     var fileLength = file.content.length;
     console.log(file.name+" -> "+fileLength+"b");
     // set up header
