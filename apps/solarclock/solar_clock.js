@@ -3,6 +3,7 @@ const Math2 = require("solar_math_utils.js");
 const GraphicUtils = require("solar_graphic_utils.js");
 const Colors = require("solar_colors.js");
 const LocationUtils = require("solar_location.js");
+const Locale = require('locale');
 
 var screen_info = {
   screen_width : g.getWidth(),
@@ -68,10 +69,7 @@ function draw_sun(now, day_info) {
   // decide on the new sun drawing mode and draw
   curr_mode = controller.mode(now,day_info,screen_info);
   img_info.img_buffer.clear();
-  img_info.img_buffer.setColor(screen_info.screen_bg_color[0],
-      screen_info.screen_bg_color[1],
-      screen_info.screen_bg_color[2],
-  );
+  GraphicUtils.set_color(screen_info.screen_bg_color, img_info.img_buffer);
   img_info.img_buffer.fillRect(0,0,img_width, img_height);
   img_info.x = screen_info.sun_x - img_info.img.width/2;
   img_info.y = screen_info.sun_y - img_info.img.height/2;
@@ -97,7 +95,7 @@ function draw_sun(now, day_info) {
     GraphicUtils.draw_sunrise_line(HORIZON_COLOUR, day_info, screen_info);
   }
   // we draw a blank where the image is going to be drawn to clear out the area
-  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+  GraphicUtils.set_color(screen_info.screen_bg_color);
   g.fillRect(img_info.x,img_info.y-2,img_info.x+img_width,img_info.y + img_height + 2);
   g.drawImage(img,img_info.x,img_info.y);
   // paint the cosine curve back to the normal color where it just came from
@@ -114,7 +112,7 @@ function draw_sun(now, day_info) {
 
 function clear_sun(){
   if(img_info.x != null && img_info.y != null) {
-    g.setColor(screen_info.screen_bg_color[0], screen_info.screen_bg_color[1], screen_info.screen_bg_color[2]);
+    GraphicUtils.set_color(screen_info.screen_bg_color);
     g.fillRect(img_info.x, img_info.y, img_info.x + img_width, img_info.y + img_width);
     GraphicUtils.draw_cosine(img_info.x - 4,
         img_info.x + img_width + 4,
@@ -140,24 +138,20 @@ const OFFSET_Y_COORD = 70;
 const LOCATION_Y_COORD = 55;
 
 function write_date(now){
-  var new_date = require('locale').dow(now,1) + " " + Math2.format00(now.getDate());
-  //console.log("writing date:" + new_date)
-  g.setFont("Vector",15);
-  g.setFontAlign(-1,-1,0);
-  if(last_date != null){
-    if(new_date == last_date){
-      return;
-    }
-    g.setColor(screen_info.screen_bg_color[0],
-        screen_info.screen_bg_color[1],
-        screen_info.screen_bg_color[2]);
-    g.drawString(last_date, DATE_X_COORD,DATE_Y_COORD);
-  } 
-  g.setColor(date_color[0],date_color[1],date_color[2]);
-  g.drawString(new_date, DATE_X_COORD,DATE_Y_COORD);
-  last_date = new_date;
-}
+  var new_date = now.getDate();
+  if(last_date == null || new_date != last_date){
+    GraphicUtils.set_color(screen_info.screen_bg_color);
+    g.fillRect(DATE_X_COORD,DATE_Y_COORD, DATE_X_COORD+80,DATE_Y_COORD+15);
 
+    g.setFont("Vector",15);
+    g.setFontAlign(-1,-1,0);
+    GraphicUtils.set_color(date_color);
+    var date_str = Locale.dow(now,1) + " " + Math2.format00(now.getDate());
+    //console.log("writing date:" + new_date)
+    g.drawString(date_str, DATE_X_COORD,DATE_Y_COORD);
+    last_date = new_date;
+  }
+}
 
 const INFO_PANEL_LINE_Y1 = 90;
 const INFO_PANEL_LINE_Y2 = 105;
@@ -189,11 +183,11 @@ function write_GPS_status(){
       "E:" + Math2.format000_00(gps_coords[0])];
   }
 
-  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+  GraphicUtils.set_color(screen_info.screen_bg_color);
   g.fillRect(DATE_X_COORD,INFO_PANEL_LINE_Y1,70,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
-  g.setColor(Colors.WHITE[0], Colors.WHITE[1], Colors.WHITE[0]);
+  GraphicUtils.set_color(Colors.WHITE);
   g.drawString(gps_coords_msg[0], DATE_X_COORD, INFO_PANEL_LINE_Y1,1);
   g.drawString(gps_coords_msg[1], DATE_X_COORD, INFO_PANEL_LINE_Y2,1);
 
@@ -214,11 +208,11 @@ function write_twilight_times(){
   } else {
     twilight_msg = [NO_TIME,NO_TIME];
   }
-  g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+  GraphicUtils.set_color(screen_info.screen_bg_color);
   g.fillRect(TWILIGHT_X_COORD,INFO_PANEL_LINE_Y1,240,INFO_PANEL_LINE_Y2 + 13);
   g.setFont("Vector",13);
   g.setFontAlign(-1,-1,0);
-  g.setColor(Colors.YELLOW[0],Colors.YELLOW[1],Colors.YELLOW[2]);
+  GraphicUtils.set_color(Colors.YELLOW);
   GraphicUtils.fill_circle_partial_y(TWILIGHT_X_COORD-15,
       INFO_PANEL_LINE_Y1+7,
       7,
@@ -237,10 +231,10 @@ function write_time(now){
    g.setFont("Vector",35);
    g.setFontAlign(-1,-1,0);
    if(last_time != null){
-    g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+     GraphicUtils.set_color(screen_info.screen_bg_color);
     g.drawString(last_time, TIME_X_COORD,TIME_Y_COORD);
-  } 
-  g.setColor(time_color[0],time_color[1],time_color[2]);
+  }
+  GraphicUtils.set_color(time_color);
   g.drawString(new_time, TIME_X_COORD,TIME_Y_COORD);
   last_time = new_time;
 }
@@ -259,10 +253,10 @@ function write_offset(){
   g.setFont("Vector",15);
   g.setFontAlign(-1,-1,0);
   if(last_offset != null){
-    g.setColor(screen_info.screen_bg_color[0],screen_info.screen_bg_color[1],screen_info.screen_bg_color[2]);
+    GraphicUtils.set_color(screen_info.screen_bg_color);
     g.drawString(last_offset, TIME_X_COORD,OFFSET_Y_COORD);
   }
-  g.setColor(time_color[0],time_color[1],time_color[2]);
+  GraphicUtils.set_color(time_color);
   g.drawString(new_offset, TIME_X_COORD,OFFSET_Y_COORD);
   last_offset = new_offset;
 }
@@ -295,12 +289,12 @@ function write_location_name() {
   g.setFont("Vector", 20);
   g.setFontAlign(-1, -1, 0);
 
-  g.setColor(screen_info.screen_bg_color[0], screen_info.screen_bg_color[1], screen_info.screen_bg_color[2]);
+  GraphicUtils.set_color(screen_info.screen_bg_color);
   g.fillRect(DATE_X_COORD, LOCATION_Y_COORD, DATE_X_COORD + 95, LOCATION_Y_COORD + 20);
 
   if (new_location_name != "local") {
-    g.setColor(time_color[0], time_color[1], time_color[2]);
-    g.drawString(new_location_name, DATE_X_COORD, LOCATION_Y_COORD);
+    GraphicUtils.set_color(time_color);
+    g.drawString(new_location_name.replace("_", " "), DATE_X_COORD, LOCATION_Y_COORD);
   }
   location_requires_update = false;
 }

@@ -19,6 +19,12 @@ function _draw_info(img_info){
 }
 const GraphicUtils = {
     draw_info : (img_info)=>_draw_info(img_info),
+    set_color: (color_vector,buff)=>{
+        if(buff == null)
+            buff = g;
+
+        buff.setColor(color_vector[0],color_vector[1],color_vector[2])
+    },
     draw_cosine : (from_x,to_x, line_colour, screen_info, img_info)=>{
         //console.log("draw_cosine from_x=" + from_x + " to_x=" + to_x);
         var draw_info = _draw_info(img_info);

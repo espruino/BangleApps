@@ -33,11 +33,11 @@ function daytime_sun_color(now,day_info){
 
 function draw_night_sun(sun_x,sun_y,sun_radius,img_info){
     var draw_info = GraphicUtils.draw_info(img_info);
-    draw_info.buff.setColor(Colors.WHITE[0],Colors.WHITE[1],Colors.WHITE[2]);
+    GraphicUtils.set_color(Colors.WHITE,draw_info.buff);
     draw_info.buff.fillCircle(sun_x - draw_info.offset_x,
         sun_y - draw_info.offset_y,
         sun_radius);
-    draw_info.buff.setColor(NIGHT_COLOUR[0],NIGHT_COLOUR[1],NIGHT_COLOUR[2]);
+    GraphicUtils.set_color(NIGHT_COLOUR,draw_info.buff);
     draw_info.buff.fillCircle(sun_x - draw_info.offset_x,
         sun_y - draw_info.offset_y,
         sun_radius-1);
@@ -48,7 +48,7 @@ function draw_partial_sun(time, day_info, screen_info,img_info){
     if(sun_height > screen_info.sun_radius){
         var sun_color = daytime_sun_color(time,day_info);
         var draw_info = GraphicUtils.draw_info(img_info);
-        draw_info.buff.setColor(sun_color[0],sun_color[1],sun_color[2]);
+        GraphicUtils.set_color(sun_color,draw_info.buff);
         draw_info.buff.fillCircle(screen_info.sun_x - draw_info.offset_x,
             screen_info.sun_y - draw_info.offset_y,
             screen_info.sun_radius
@@ -57,12 +57,12 @@ function draw_partial_sun(time, day_info, screen_info,img_info){
         draw_night_sun(screen_info.sun_x,screen_info.sun_y,screen_info.sun_radius, img_info);
     } else {
         var draw_info = GraphicUtils.draw_info(img_info);
-        draw_info.buff.setColor(NIGHT_COLOUR[0],NIGHT_COLOUR[1],NIGHT_COLOUR[2]);
+        GraphicUtils.set_color(NIGHT_COLOUR,draw_info.buff);
         draw_info.buff.fillCircle(screen_info.sun_x - draw_info.offset_x,
             screen_info.sun_y - draw_info.offset_y,
             screen_info.sun_radius-1);
         var sun_color = daytime_sun_color(time,day_info);
-        draw_info.buff.setColor(sun_color[0],sun_color[1],sun_color[2]);
+        GraphicUtils.set_color(sun_color[0],draw_info.buff);
         draw_info.buff.drawCircle(screen_info.sun_x - draw_info.offset_x,
             screen_info.sun_y - draw_info.offset_y,
             screen_info.sun_radius);
@@ -88,7 +88,8 @@ function draw_random_background(screen_info,
             if(rgb_step[i]>0)
                 rgb[i] = Math2.random_walk(rgb[i],rgb_step[i],1,0);
         }
-        draw_info.buff.setColor(rgb[0],rgb[1],rgb[2]);
+
+        GraphicUtils.set_color(rgb,draw_info.buff);
         draw_info.buff.moveTo(screen_info.sun_x +
             Math.random()*img_info.img.width/8 -
             0.4*img_info.img.width -
@@ -100,7 +101,7 @@ function draw_random_background(screen_info,
             draw_info.offset_x,
             sky_y  - draw_info.offset_y);
     }
-    draw_info.buff.setColor(NIGHT_COLOUR[0],NIGHT_COLOUR[1],NIGHT_COLOUR[2]);
+    GraphicUtils.set_color(NIGHT_COLOUR,draw_info.buff);
     draw_info.buff.fillCircle(screen_info.sun_x - draw_info.offset_x,
         screen_info.sun_y - draw_info.offset_y,
         screen_info.sun_radius+1);
@@ -166,7 +167,7 @@ class DayLightMode extends SolarMode {
         var sun_color = daytime_sun_color(now,day_info);
         var corona_radius = this._calc_corona_radius(now, day_info);
         var draw_info = GraphicUtils.draw_info(img_info);
-        draw_info.buff.setColor(sun_color[0],sun_color[1],sun_color[2]);
+        GraphicUtils.set_color(sun_color,draw_info.buff);
         if(corona_radius > screen_info.sun_radius){
             this._drawCorona(corona_radius,
                 screen_info.sun_x,
