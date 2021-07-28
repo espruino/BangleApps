@@ -21,4 +21,5 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 setInterval(draw, 15000); // refresh every 15s
 draw();
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");

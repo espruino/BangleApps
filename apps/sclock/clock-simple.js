@@ -69,6 +69,8 @@ Bangle.on('lcdPower', function(on) {
 
 // clean app screen
 g.clear();
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -77,6 +79,3 @@ setInterval(drawSimpleClock, 15E3);
 
 // draw now
 drawSimpleClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");
