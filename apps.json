@@ -301,7 +301,8 @@
       {"name":"solar_loc.Hong_Kong.json","url":"solar_loc.Hong_Kong.json"},
       {"name":"solar_loc.Honolulu.json","url":"solar_loc.Honolulu.json"},
       {"name":"solar_loc.Rio.json","url":"solar_loc.Rio.json"},
-      {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"}
+      {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
+      {"name":"solar_loc.Seoul.json","url":"solar_loc.Seoul.json"}
     ]
   },
   { "id": "sweepclock",
