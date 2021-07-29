@@ -36,6 +36,7 @@ function drawMenu() {
 }
 g.clear();
 drawMenu();
+g.flip(); // force an update now to make this snappier
 Bangle.on('drag',e=>{
   var dy = e.dy;
   if (menuScroll - dy < 0)

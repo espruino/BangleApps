@@ -81,4 +81,5 @@ Bangle.on('lcdPower', (on) => {
 Bangle.loadWidgets();
 startDrawing();
 
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: 'falling' });
+// Show launcher when button pressed
+Bangle.setUI("clock");

@@ -200,16 +200,9 @@ if (Bangle.isLCDOn()) {
   drawAll(); // draw immediately
 }
 
-// show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-
-// rotate through info when the buttons are pressed
-setWatch(() => {
-  nextInfo();
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn<0) prevInfo();
+  if (btn>0) nextInfo();
   drawAll();
-}, BTN3, { repeat: true });
-
-setWatch(() => {
-    prevInfo();
-    drawAll();
-}, BTN1, { repeat: true });
+});

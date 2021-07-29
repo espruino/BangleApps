@@ -1,5 +1,6 @@
 let pos = 0;
 let id = null;
+let hideCallback = undefined;
 
 /**
  * Fit text into area, trying to insert newlines between words
@@ -44,6 +45,7 @@ function fitWords(text,rows,width) {
    render : function(y) // function callback to render
    bgColor : int/string // optional background color (default black)
    titleBgColor : int/string // optional background color for title (default black)
+   onHide : function() // callback when notification is hidden
  }
 */
 /*
@@ -141,7 +143,9 @@ exports.show = function(options) {
     if (pos > -size) setTimeout(anim, 15);
   }
   anim();
-  Bangle.on("touch", exports.dismiss_and_hide);
+  Bangle.on("touch", exports.hide);
+  if (options.onHide)
+    hideCallback = options.onHide;
 };
 
 /**
@@ -152,6 +156,8 @@ exports.show = function(options) {
 exports.hide = function(options) {
   options = options||{};
   if ("id" in options && options.id!==id) return;
+  if (hideCallback) hideCallback({id:id});
+  hideCallback = undefined;
   id = null;
   Bangle.removeListener("touch", exports.hide);
   function anim() {
@@ -161,21 +167,4 @@ exports.hide = function(options) {
     if (pos < 0) setTimeout(anim, 10);
   }
   anim();
-};
-
-/**
- Calls exports.hide(), but if Gadgetbridge is installed, dismiss through it
- instead (which will call call exports.hide() itself).
-*/
-exports.dismiss_and_hide = function(options) {
-    options = options||{};
-    if (typeof(options) == "number") {
-        options = {};
-    }
-    if ("GB" in global) {
-        options["t"] = "notify-";
-        GB(options);
-    } else {
-        exports.hide(options);
-    }
 };
