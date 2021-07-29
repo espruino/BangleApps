@@ -72,7 +72,7 @@ Button 4 (left side of screen) will move the sun backwards in time and button 5 
 
 ### Button 1
 A short press of Button 1 by itself will change the time offset back to 0, making the sun go back to its current position
-A long press of Button 1 will request a GPS update to your current position
+A long press (3 seconds+) of Button 1 will request a GPS update to your current position
 
 ## Further Details
 For further details of design and working please visit [The Project Page]( https://adrianwkirk.notion.site/Solar-Clock-a2b6268075a6481686b86ecc2094dc14)
