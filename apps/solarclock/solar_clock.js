@@ -1,3 +1,12 @@
+/**
+ * Adrian Kirk 2021-07
+ *
+ * Solar Clock
+ *
+ * Using your current or chosen location the solar watch face shows the Sun's sky position,
+ * time and date. Also allows you to wind backwards and forwards in time to see the sun's position
+ **/
+
 const DateUtils = require("solar_date_utils.js");
 const Math2 = require("solar_math_utils.js");
 const GraphicUtils = require("solar_graphic_utils.js");
@@ -5,6 +14,11 @@ const Colors = require("solar_colors.js");
 const LocationUtils = require("solar_location.js");
 const Locale = require('locale');
 
+/**
+ * The screen info data structure stores all of the
+ * relevant screen information, such as the sun's position
+ * where the sunrise line is, etc
+ */
 var screen_info = {
   screen_width : g.getWidth(),
   screen_start_x : 0,
@@ -18,10 +32,16 @@ var screen_info = {
   sun_y : null,
   sunrise_y : null,
 }
+// we set up the image buffer with which we draw the sun with
 const img_width=40;
 const img_height=30;
 var img_buffer = Graphics.createArrayBuffer(img_width,img_height,8);
 var img = {width:img_width,height:img_height,bpp:8,transparent:0,buffer:img_buffer.buffer};
+/**
+ * We use an image buffer to do the sun animation.
+ * We pass around the img_info structure with the
+ * image buffer data
+ */
 var img_info = {
   x: null,
   y: null,
@@ -36,6 +56,9 @@ var curr_mode = null;
 var last_sun_draw_time = null;
 var draw_full_cosine = true;
 
+// The draw sun function is responsible for
+// drawing the whole sun animation which includes the
+// sun, the cosine curve and the sunrise line.
 function draw_sun(now, day_info) {
 
   var now_fraction = (now.getTime() - day_info.day_start.getTime())/DateUtils.DAY_MILLIS;
@@ -110,6 +133,8 @@ function draw_sun(now, day_info) {
   return true;
 }
 
+// clear sun is called when there is a large change in the sun's
+// location, such as location change.
 function clear_sun(){
   if(img_info.x != null && img_info.y != null) {
     GraphicUtils.set_color(screen_info.screen_bg_color);
@@ -153,10 +178,14 @@ function write_date(now){
   }
 }
 
+// The info panels mid way down the screen on the left and right
 const INFO_PANEL_LINE_Y1 = 90;
 const INFO_PANEL_LINE_Y2 = 105;
 var gps_status_requires_update = true;
 
+// The GPS status panel shows the status of the GPS
+// when the location is know it shows the
+// longitude and latitude.
 function write_GPS_status(){
   if(!gps_status_requires_update)
     return;
@@ -198,6 +227,8 @@ const TWILIGHT_X_COORD = 200;
 const NO_TIME = "--:--";
 
 var twilight_times_requires_update = true;
+// The right panel shows the sun rise and sunset times.
+// we make provision for when there is no times available
 function write_twilight_times(){
   if(!twilight_times_requires_update)
     return;
@@ -314,8 +345,10 @@ location.addUpdateListener(
     }
 );
 
-
-
+// day info is responsible for populating the day_info structure
+// The day_info structure holds the sun set and sunset times
+// The function also has to detect when the end of the solar
+// day has been reached and flip the day over.
 function dayInfo(now) {
   if (day_info == null || now > day_info.day_end) {
     var coords = location.getCoordinates();
@@ -342,7 +375,8 @@ function time_now() {
   }
 }
 
-
+// The main loop called everytime we want to refresh the
+// clock
 function draw_clock(){
   var start_time = Date.now();
   var now = time_now();
@@ -370,6 +404,11 @@ function log_memory_used() {
   );
 }
 
+// Button has a short press action of resetting the offet
+// and a long press set the GPS up for refreshing the current
+// position.
+// To accomodate the long and short press we record when the press
+// starts and time to when it is released
 var button1pressStart = null;
 function button1pressed(){
   if(button1pressStart == null) {
@@ -377,6 +416,8 @@ function button1pressed(){
   }
   //console.log("button 1 pressed for:" + (Date.now() - button1pressStart));
   if(BTN1.read()){
+    // we look every 100 ms to see if the button is still pressed
+    // (to makes the button responsive)
     setTimeout(button1pressed,100);
   } else {
     var buttonPressTime = Date.now() - button1pressStart;
@@ -396,12 +437,18 @@ function button1pressed(){
   }
 }
 
+// button 3 kicks off a the change to the next location
 function button3pressed() {
     console.log("button 3 pressed");
     time_offset = 0;
     location.nextLocation();
 }
 
+// button 4 moves the offset back
+// keeping the button pressed repeats
+// to give the sun the continuous animation
+// to achieve this we put in a call back
+// to see if its still presses after 50 ms.
 function button4pressed(){
   time_offset -= DateUtils.HOUR_MILLIS/4;
   draw_clock();
@@ -414,6 +461,11 @@ function button4pressed(){
   )
 }
 
+// button 5 moves the offset forward
+// keeping the button pressed repeats
+// to give the sun the continuous animation
+// to achieve this we put in a call back
+// to see if its still presses after 50 ms.
 function button5pressed(){
   time_offset += DateUtils.HOUR_MILLIS/4;
   draw_clock();
@@ -485,6 +537,12 @@ Bangle.drawWidgets();
 
 start_timers();
 
+// When button 2 is pressed we return to the
+// launcher. We run through a shutdown sequence
+// we shutdown the location object, which
+// shut down the GPS (if running)
+// we deference the location and controller to
+// to free up memory before the jump is made.
 function button2pressed(){
   controller = null;
 
@@ -494,6 +552,7 @@ function button2pressed(){
   Bangle.showLauncher();
 }
 setWatch(button2pressed, BTN2,{repeat:false,edge:"falling"});
+// we are timing button 1 so we put a callback in the the rising edge.
 setWatch(button1pressed, BTN1,{repeat:true,edge:"rising"});
 setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 setWatch(button4pressed, BTN4,{repeat:true,edge:"rising"});

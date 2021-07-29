@@ -31,7 +31,7 @@ const GraphicUtils = {
 
         draw_info.buff.reset();
         draw_info.buff.setColor(line_colour[0],line_colour[1],line_colour[2]);
-        first = true;
+        var first = true;
         for(var x=from_x; x<to_x;x++){
             var radians = Math2.TWO_PI *((x-screen_info.screen_start_x) - screen_info.screen_centre_x)/(screen_info.screen_width);
             var y = screen_info.screen_centre_y - screen_info.screen_height * Math.cos(radians)/2;

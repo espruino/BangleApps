@@ -75,6 +75,7 @@ function draw_partial_sun(time, day_info, screen_info,img_info){
         );
     }
 }
+
 function draw_random_background(screen_info,
                                 img_info,
                                 rgb_init,
@@ -106,6 +107,13 @@ function draw_random_background(screen_info,
         screen_info.sun_y - draw_info.offset_y,
         screen_info.sun_radius+1);
 }
+
+/**
+ * SolarControllerImpl to SolarMode is a Strategy pattern.
+ * The sun animation is very different through the different
+ * sectors of the day so the correct strategy is selected
+ * for the day sector
+ */
 class SolarMode {
     test(time, day_info, screen_info){ throw "test undefined";}
     draw(time, day_info, screen_info, img_buffer_info){
@@ -136,10 +144,11 @@ class DayLightMode extends SolarMode {
             time > day_info.sunrise_date &&
             sun_height >= screen_info.sun_radius * 2 + SUNSET_START_HEIGHT;
     }
+    // The corona is larger the closer you are to solar noon
     _calc_corona_radius(now, day_info){
         if(now < day_info.sunset_date &&
             now > day_info.sunrise_date){
-            var now_fraction_of_day =DateUtils.now_fraction_of_day(now,day_info);
+            var now_fraction_of_day = DateUtils.now_fraction_of_day(now,day_info);
             var sunset_fraction = (day_info.sunset_date.getTime() - day_info.day_start.getTime())/DateUtils.DAY_MILLIS;
             var now_fraction_from_midday =
                 1 - Math.abs(now_fraction_of_day-0.5)/(sunset_fraction-0.5);
@@ -227,18 +236,25 @@ class SolarControllerImpl {
     toString(){
         return "SolarControllerImpl";
     }
+    // The mode method is responsible for selecting the
+    // correct mode to the time given.
     mode(time, day_info, screen_info){
+        // first we test the last selection
+        // to see if its still valid
         if(this.last != null){
             if(this.last.test(time,day_info,screen_info)){
                 return this.last;
             }
         }
+        // next we step through the different modes and test then
+        // one by one.
         for(var i=0; i<this.solar_modes.length; i++){
             if(this.solar_modes[i].test(time,day_info,screen_info) ){
                 this.last = this.solar_modes[i];
                 return this.last;
             }
         }
+        // Otherwise we use the default
         //console.log("defaulting");
         this.last = this.default_mode;
         return this.last;

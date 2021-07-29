@@ -36,6 +36,8 @@ const DateUtils = {
     DAY_MILLIS : _DAY_MILLIS,
     HOUR_MILLIS : _HOUR_MILLIS,
     MIN_MILLIS: _MIN_MILLIS,
+    // calculate the sunrise and sunset information using the NOAA
+    // equations.
     sunrise_sunset: (now,longitude,latitude, utc_offset)=>{
 
         var sod_julian = _start_of_julian_day(now);
