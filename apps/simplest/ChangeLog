@@ -1,0 +1,2 @@
+0.01: Modified for use with new bootloader and firmware
+0.02: Use Bangle.setUI for button/launcher handling

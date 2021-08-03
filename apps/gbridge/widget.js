@@ -155,6 +155,10 @@
     switch (event.t) {
       case "notify":
         currentNot = prettifyNotificationEvent(event);
+        currentNot.onHide = function() {
+          // when notification hidden, remove from phone
+          gbSend({ t:"notify", n:"DISMISS", id:currentNot.id });
+        };
         require("notify").show(currentNot);
         if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
           Bangle.buzz();
