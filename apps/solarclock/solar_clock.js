@@ -53,7 +53,6 @@ const HORIZON_COLOUR = Colors.GREY;
 const SolarController = require("solar_controller.js");
 var controller = new SolarController();
 var curr_mode = null;
-var last_sun_draw_time = null;
 var draw_full_cosine = true;
 
 // The draw sun function is responsible for
@@ -64,19 +63,20 @@ function draw_sun(now, day_info) {
   var now_fraction = (now.getTime() - day_info.day_start.getTime())/DateUtils.DAY_MILLIS;
   var now_x = now_fraction * screen_info.screen_width;
   if(screen_info.sun_x != null && Math.abs(now_x- screen_info.sun_x) < 1){
-    console.log("no sun movement");
+    console.log("no sun movement now_x:" + now_x + " screen sun_x:" + screen_info.sun_x);
     return false;
   }
   // now calculate thew new sun coordinates
   var now_radians = Math2.TWO_PI *(now_x - screen_info.screen_centre_x)/screen_info.screen_width;
   var now_y = screen_info.screen_centre_y - (screen_info.screen_height * Math.cos(now_radians) / 2);
-  if(Math.abs(now_x - screen_info.sun_x) > 5){
+  if(screen_info.sun_x != null && Math.abs(now_x - screen_info.sun_x) > 5.0){
+    clear_sun();
+  } else if(screen_info.sun_y != null && Math.abs(now_y - screen_info.sun_y) > 5.0){
     clear_sun();
   }
   // update the screen info with the new sun info
   screen_info.sun_x = now_x;
   screen_info.sun_y = now_y;
-  last_sun_draw_time =  now;
 
   if(draw_full_cosine){
     //console.log("drawing full cosine");
