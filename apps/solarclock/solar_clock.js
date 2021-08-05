@@ -350,7 +350,7 @@ location.addUpdateListener(
 // The function also has to detect when the end of the solar
 // day has been reached and flip the day over.
 function dayInfo(now) {
-  if (day_info == null || now > day_info.day_end) {
+  if (day_info == null || now > day_info.day_end || now < day_info.day_start) {
     var coords = location.getCoordinates();
     if(coords != null) {
       day_info = DateUtils.sunrise_sunset(now, coords[0], coords[1], location.getUTCOffset());

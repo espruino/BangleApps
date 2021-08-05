@@ -121,7 +121,6 @@ class SolarMode {
     }
 }
 class NightMode extends SolarMode {
-    toString(){return "NightMode";}
     test(time, day_info, screen_info, img_info) {
         return (time < day_info.sunrise_date || time > day_info.sunset_date);
     }
@@ -130,9 +129,6 @@ class NightMode extends SolarMode {
     }
 }
 class DayLightMode extends SolarMode {
-    toString(){
-        return "DayLightMode";
-    }
     test(time, day_info, screen_info){
         var sun_height = screen_info.sunrise_y - screen_info.sun_y;
         /*console.log("DayLightMode " +
@@ -190,9 +186,6 @@ class DayLightMode extends SolarMode {
     }
 }
 class TwiLightMode extends SolarMode {
-    toString(){
-        return "TwilightMode";
-    }
     test(time, day_info, screen_info){
         if(screen_info.sunrise_y == null) {
             console.log("warning no sunrise_defined");
@@ -232,9 +225,6 @@ class SolarControllerImpl {
         this.solar_modes = [new TwiLightMode(), new DayLightMode()];
         this.default_mode = new NightMode();
         this.last = null;
-    }
-    toString(){
-        return "SolarControllerImpl";
     }
     // The mode method is responsible for selecting the
     // correct mode to the time given.
