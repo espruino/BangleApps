@@ -387,6 +387,7 @@ function showQuietModeMenu() {
         settings.quiet = v%3;
         updateSettings();
         updateOptions();
+        if ("qmsched" in WIDGETS) {WIDGETS["qmsched"].draw();}
       },
     },
     "LCD Brightness": {

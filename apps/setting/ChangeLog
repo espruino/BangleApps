@@ -30,3 +30,4 @@
 0.25: Move boot.js code into 'boot' app itself
 0.26: Use Bangle.softOff if available as this keeps the time
 0.27: Add Theme menu
+0.28: Update Quiet Mode widget (if present)
