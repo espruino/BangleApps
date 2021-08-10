@@ -3245,7 +3245,7 @@
   "name": "Quiet Mode Schedule",
   "shortName":"Quiet Mode",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Automatically turn Quiet Mode on or off at set times",
   "readme": "README.md",
   "tags": "tool",
