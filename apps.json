@@ -281,7 +281,7 @@
   { "id": "solarclock",
     "name": "Solar Clock",
     "icon": "solar_clock.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Using your current or chosen location the solar watch face shows the Sun's sky position, time and date. Also allows you to wind backwards and forwards in time to see the sun's position",
     "tags": "clock",
     "type":"clock",
