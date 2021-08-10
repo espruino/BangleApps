@@ -3242,18 +3242,19 @@
     ]
  },
 { "id": "qmsched",
-  "name": "Quiet Mode Schedule",
+  "name": "Quiet Mode Schedule and Widget",
   "shortName":"Quiet Mode",
   "icon": "app.png",
   "version":"0.02",
   "description": "Automatically turn Quiet Mode on or off at set times",
   "readme": "README.md",
-  "tags": "tool",
+  "tags": "tool,widget",
   "storage": [
     {"name":"qmsched","url":"lib.js"},
     {"name":"qmsched.app.js","url":"app.js"},
     {"name":"qmsched.boot.js","url":"boot.js"},
-    {"name":"qmsched.img","url":"icon.js","evaluate":true}
+    {"name":"qmsched.img","url":"icon.js","evaluate":true},
+    {"name":"qmsched.wid.js","url":"widget.js"}
   ],
   "data": [
     {"name":"qmsched.json"}
