@@ -3,6 +3,7 @@ recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
 E.showMessage("Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
+var isB2 = process.env.HWVERSION; // Is Bangle.js 2
 var boot = "";
 var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
 boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))!=${CRC}) { eval(require('Storage').read('bootupdate.js'));} else {\n`;
@@ -81,9 +82,9 @@ if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passke
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 // Pre-2v10 firmwares without a theme/setUI
 if (!g.theme) {
-  boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7};\n`;
+  boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
 }
-if (!Bangle.setUI) {
+if (!Bangle.setUI) { // assume this is just for F18 - Q3 should already have it
   boot += `Bangle.setUI=function(mode, cb) {
 if (Bangle.btnWatches) {
   Bangle.btnWatches.forEach(clearWatch);
@@ -97,26 +98,35 @@ if (Bangle.touchandler) {
   Bangle.removeListener("touch", Bangle.touchHandler);
   delete Bangle.touchHandler;
 }
-function b() {
-  try{Bangle.buzz(20);}catch(e){}
-}
 if (!mode) return;
 else if (mode=="updown") {
   Bangle.btnWatches = [
-    setWatch(function() { b();cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { b();cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { b();cb(); }, BTN2, {repeat:1})
+    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
+    setWatch(function() { cb(); }, BTN2, {repeat:1})
   ];
 } else if (mode=="leftright") {
   Bangle.btnWatches = [
-    setWatch(function() { b();cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { b();cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { b();cb(); }, BTN2, {repeat:1})
+    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
+    setWatch(function() { cb(); }, BTN2, {repeat:1})
   ];
-  Bangle.swipeHandler = d => {b();cb(d);};
+  Bangle.swipeHandler = d => {cb(d);};
   Bangle.on("swipe", Bangle.swipeHandler);
-  Bangle.touchHandler = d => {b();cb();};
+  Bangle.touchHandler = d => {cb();};
   Bangle.on("touch", Bangle.touchHandler);
+} else if (mode=="clock") {
+  Bangle.CLOCK=1;
+  Bangle.btnWatches = [
+    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
+  ];
+} else if (mode=="clockupdown") {
+  Bangle.CLOCK=1;
+  Bangle.btnWatches = [
+    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
+    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
+    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
+  ];
 } else
   throw new Error("Unknown UI mode");
 };\n`;
@@ -126,8 +136,9 @@ require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   boot += "//"+bootFile+"\n"+require('Storage').read(bootFile)+"\n";
 });
 boot += "}\n";// initial 'if'
-var s = require('Storage').write('.boot0',boot);
+require('Storage').write('.boot0',boot);
 delete boot;
 E.showMessage("Reloading...");
 eval(require('Storage').read('.boot0'));
-eval(require('Storage').read('.bootcde'));
+// .bootcde should be run automatically after if required, since
+// we normally get called automatically from '.boot0'

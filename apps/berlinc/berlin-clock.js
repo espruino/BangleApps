@@ -16,7 +16,7 @@ time_digit = [];
 function drawBerlinClock() {
   g.clear();
   var now = new Date();
-  
+
   // show date below the clock
   if (show_date) {
     var yr = now.getFullYear();
@@ -28,7 +28,7 @@ function drawBerlinClock() {
     g.setFontAlign(-1,-1);
     g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 4);
   }
-  
+
   rowlights[0] = Math.floor(now.getHours() / 5);
   rowlights[1] = now.getHours() % 5;
   rowlights[2] = Math.floor(now.getMinutes() / 5);
@@ -62,7 +62,7 @@ function drawBerlinClock() {
         } else {
           g.setColor(1, 0, 0);
         }
-        g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);        
+        g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
       }
       if (row == 3 && show_time) {
         g.setColor(1,1,1);
@@ -100,9 +100,11 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawBerlinClock();
-// Toggle date display, when BTN3 is pressed
-setWatch(toggleTime,BTN1, { repeat : true, edge: "falling"});
-// Toggle date display, when BTN3 is pressed
-setWatch(toggleDate,BTN3, { repeat : true, edge: "falling"});
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+if (BTN3) {
+  // Toggle date display, when BTN3 is pressed
+  setWatch(toggleTime,BTN1, { repeat : true, edge: "falling"});
+  // Toggle date display, when BTN3 is pressed
+  setWatch(toggleDate,BTN3, { repeat : true, edge: "falling"});
+}
+// Show launcher when button pressed
+Bangle.setUI("clock");

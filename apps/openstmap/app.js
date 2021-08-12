@@ -34,7 +34,7 @@ Bangle.on('GPS',function(f) {
   g.drawString(txt,120,y1 + 4);
   drawMarker();
 });
-Bangle.setGPSPower(1);
+Bangle.setGPSPower(1, "app");
 
 if (HASWIDGETS) {
   Bangle.loadWidgets();
@@ -49,9 +49,25 @@ if (HASWIDGETS) {
 
 redraw();
 
-setWatch(function() {
+function recenter() {
   if (!fix.fix) return;
   m.lat = fix.lat;
   m.lon = fix.lon;
   redraw();
-}, BTN2, {repeat:true});
+}
+
+setWatch(recenter, global.BTN2?BTN2:BTN1, {repeat:true});
+
+var hasScrolled = false;
+Bangle.on('drag',e=>{
+  if (e.b) {
+    g.setClipRect(0,y1,g.getWidth()-1,y2);
+    g.scroll(e.dx,e.dy);
+    m.scroll(e.dx,e.dy);
+    g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+    hasScrolled = true;
+  } else if (hasScrolled) {
+    hasScrolled = false;
+    redraw();
+  }
+});

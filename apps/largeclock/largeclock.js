@@ -179,9 +179,9 @@ Bangle.on("lcdPower", function(on) {
 
 Bangle.setLCDMode();
 
-// Show launcher when middle button pressed
-clearWatch();
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 if (BTN1app) setWatch(
   function() {
     load(BTN1app);

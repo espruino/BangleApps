@@ -5,16 +5,23 @@ const modeNames = ["Off", "Alarms", "Silent"];
 let scheds = require("Storage").readJSON("qmsched.json", 1);
 /*scheds = [
   { hr : 6.5, // hours + minutes/60
-    last : 0, // last day of the month we fired on - so we don't switch twice in one day!
     mode : 1, // quiet mode (0/1/2)
   }
 ];*/
 if (!scheds) {
   // set default schedule on first load of app
   scheds = [
-    {"hr": 8, "mode": 0, "last": 25},
-    {"hr": 22, "mode": 1, "last": 25},
+    {"hr": 8, "mode": 0},
+    {"hr": 22, "mode": 1},
   ];
+  require("Storage").writeJSON("qmsched.json", scheds);
+}
+if (scheds.length && scheds.some(s => "last" in s)) {
+  // cleanup: remove "last" values (used by old versions)
+  scheds = scheds.map(s => {
+    delete s.last;
+    return s;
+  });
   require("Storage").writeJSON("qmsched.json", scheds);
 }
 
@@ -24,11 +31,6 @@ function formatTime(t) {
   return (" "+hrs).substr(-2)+":"+("0"+mins).substr(-2);
 }
 
-function getCurrentHr() {
-  const time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
-}
-
 function showMainMenu() {
   const menu = {
     "": {"title": "Quiet Mode"},
@@ -36,8 +38,8 @@ function showMainMenu() {
       value: (require("Storage").readJSON("setting.json", 1) || {}).quiet|0,
       format: v => modeNames[v],
       onchange: function(v) {
-        if (v<0) v = 2;
-        if (v>2) v = 0;
+        if (v<0) {v = 2;}
+        if (v>2) {v = 0;}
         require("qmsched").setMode(v);
         this.value = v;
       },
@@ -71,8 +73,8 @@ function showEditMenu(index) {
     "Hours": {
       value: hrs,
       onchange: function(v) {
-        if (v<0) v = 23;
-        if (v>23) v = 0;
+        if (v<0) {v = 23;}
+        if (v>23) {v = 0;}
         hrs = v;
         this.value = v;
       }, // no arrow fn -> preserve 'this'
@@ -80,8 +82,8 @@ function showEditMenu(index) {
     "Minutes": {
       value: mins,
       onchange: function(v) {
-        if (v<0) v = 59;
-        if (v>59) v = 0;
+        if (v<0) {v = 59;}
+        if (v>59) {v = 0;}
         mins = v;
         this.value = v;
       }, // no arrow fn -> preserve 'this'
@@ -90,24 +92,17 @@ function showEditMenu(index) {
       value: mode,
       format: v => modeNames[v],
       onchange: function(v) {
-        if (v<0) v = 2;
-        if (v>2) v = 0;
+        if (v<0) {v = 2;}
+        if (v>2) {v = 0;}
         mode = v;
         this.value = v;
       }, // no arrow fn -> preserve 'this'
     },
   };
   function getSched() {
-    const hr = hrs+(mins/60);
-    let day = 0;
-    // If schedule is for tomorrow not today (eg, in the past), set day
-    if (hr<getCurrentHr()) {
-      day = (new Date()).getDate();
-    }
     return {
-      hr: hr,
+      hr: hrs+(mins/60),
       mode: mode,
-      last: day,
     };
   }
   menu["> Save"] = function() {

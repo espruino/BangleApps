@@ -22,6 +22,20 @@ function scheduleExpiry(json) {
   }
 }
 
+/**
+ * Convert numeric direction into human-readable label
+ *
+ * @param {number} deg - Direction in degrees
+ * @return {string|null} - Nearest compass point
+ */
+function compassRose(deg) {
+  if (typeof deg === 'undefined') return null;
+  while (deg<0 || deg>360) {
+    deg = (deg+360)%360;
+  }
+  return ['n','ne','e','se','s','sw','w','nw','n'][Math.floor((deg+22.5)/45)];
+}
+
 function setCurrentWeather(json) {
   scheduleExpiry(json);
   exports.current = json.weather;
@@ -30,6 +44,9 @@ function setCurrentWeather(json) {
 function update(weatherEvent) {
   let weather = Object.assign({}, weatherEvent);
   weather.time = Date.now();
+  if ('wdir' in weather) {
+    weather.wrose = compassRose(weather.wdir);
+  }
   delete weather.t;
 
   let json = storage.readJSON('weather.json')||{};
