@@ -14,4 +14,5 @@ exports.setMode = function(mode) {
     if (s.brightness && s.brightness!=1) Bangle.setLCDBrightness(s.brightness);
   }
   if (mode && s.qmTimeout) Bangle.setLCDTimeout(s.qmTimeout);
+  if (typeof (WIDGETS)!=="undefined" && "qmsched" in WIDGETS) {WIDGETS["qmsched"].draw();}
 };
