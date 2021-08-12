@@ -120,29 +120,9 @@ class SolarMode {
         throw "sun drawing undefined";
     }
 }
-class NightMode extends SolarMode {
-    toString(){return "NightMode";}
-    test(time, day_info, screen_info, img_info) {
-        return (time < day_info.sunrise_date || time > day_info.sunset_date);
-    }
-    draw(time, day_info, screen_info, img_info){
-        draw_night_sun(screen_info.sun_x,screen_info.sun_y,screen_info.sun_radius, img_info);
-    }
-}
-class DayLightMode extends SolarMode {
-    toString(){
-        return "DayLightMode";
-    }
+class DayNightMode extends SolarMode {
     test(time, day_info, screen_info){
-        var sun_height = screen_info.sunrise_y - screen_info.sun_y;
-        /*console.log("DayLightMode " +
-            "time=" + time.toISOString() +
-            " sunset_date=" + day_info.sunset_date.toISOString() +
-            " sunrise_date=" + day_info.sunrise_date.toISOString()
-        );*/
-        return time < day_info.sunset_date &&
-            time > day_info.sunrise_date &&
-            sun_height >= screen_info.sun_radius * 2 + SUNSET_START_HEIGHT;
+        return true;
     }
     // The corona is larger the closer you are to solar noon
     _calc_corona_radius(now, day_info){
@@ -173,26 +153,27 @@ class DayLightMode extends SolarMode {
         }
     }
     draw(now, day_info, screen_info, img_info){
-        var sun_color = daytime_sun_color(now,day_info);
-        var corona_radius = this._calc_corona_radius(now, day_info);
-        var draw_info = GraphicUtils.draw_info(img_info);
-        GraphicUtils.set_color(sun_color,draw_info.buff);
-        if(corona_radius > screen_info.sun_radius){
-            this._drawCorona(corona_radius,
-                screen_info.sun_x,
-                screen_info.sun_y,
-                screen_info.sun_radius,
-                draw_info);
+        if(now < day_info.sunrise_date || now > day_info.sunset_date){
+            draw_night_sun(screen_info.sun_x,screen_info.sun_y,screen_info.sun_radius, img_info);
+        } else {
+            var sun_color = daytime_sun_color(now, day_info);
+            var corona_radius = this._calc_corona_radius(now, day_info);
+            var draw_info = GraphicUtils.draw_info(img_info);
+            GraphicUtils.set_color(sun_color, draw_info.buff);
+            if (corona_radius > screen_info.sun_radius) {
+                this._drawCorona(corona_radius,
+                    screen_info.sun_x,
+                    screen_info.sun_y,
+                    screen_info.sun_radius,
+                    draw_info);
+            }
+            draw_info.buff.fillCircle(screen_info.sun_x - draw_info.offset_x,
+                screen_info.sun_y - draw_info.offset_y,
+                screen_info.sun_radius);
         }
-        draw_info.buff.fillCircle(screen_info.sun_x - draw_info.offset_x,
-            screen_info.sun_y - draw_info.offset_y,
-            screen_info.sun_radius);
     }
 }
 class TwiLightMode extends SolarMode {
-    toString(){
-        return "TwilightMode";
-    }
     test(time, day_info, screen_info){
         if(screen_info.sunrise_y == null) {
             console.log("warning no sunrise_defined");
@@ -229,35 +210,22 @@ class TwiLightMode extends SolarMode {
 }
 class SolarControllerImpl {
     constructor(){
-        this.solar_modes = [new TwiLightMode(), new DayLightMode()];
-        this.default_mode = new NightMode();
-        this.last = null;
-    }
-    toString(){
-        return "SolarControllerImpl";
+        this.solar_modes = [new TwiLightMode()];
+        this.default_mode = new DayNightMode()
     }
     // The mode method is responsible for selecting the
     // correct mode to the time given.
     mode(time, day_info, screen_info){
-        // first we test the last selection
-        // to see if its still valid
-        if(this.last != null){
-            if(this.last.test(time,day_info,screen_info)){
-                return this.last;
-            }
-        }
         // next we step through the different modes and test then
         // one by one.
         for(var i=0; i<this.solar_modes.length; i++){
             if(this.solar_modes[i].test(time,day_info,screen_info) ){
-                this.last = this.solar_modes[i];
-                return this.last;
+                return this.solar_modes[i];
             }
         }
         // Otherwise we use the default
         //console.log("defaulting");
-        this.last = this.default_mode;
-        return this.last;
+        return this.default_mode;
     }
 }
 
