@@ -1159,7 +1159,7 @@
   { "id": "boldclk",
     "name": "Bold Clock",
     "icon": "bold_clock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Simple, readable and practical clock",
     "tags": "clock,b2",
     "type":"clock",
