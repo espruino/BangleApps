@@ -4,7 +4,7 @@
   var fixToggle = false; // toggles once for each reading
   var gpsTrack; // file for GPS track
   var gpsOn = false;
-  var lastFixTime;
+  var lastFixTime = Date.now();
 
   // draw your widget
   function draw() {
@@ -26,9 +26,7 @@
     fixToggle = !fixToggle;
     WIDGETS["gpsrec"].draw();
     if (hasFix) {
-      var period = 1000000;
-      if (lastFixTime!==undefined)
-        period = fix.time.getTime() - lastFixTime;
+      var period = fix.time.getTime() - lastFixTime;
       if (period+500 > settings.period*1000) { // round up
         lastFixTime = fix.time.getTime();
         try {
@@ -78,8 +76,7 @@
     reload();
     Bangle.drawWidgets(); // relayout all widgets
   },plotTrack:function(m) { // m=instance of openstmap module
-    settings = require("Storage").readJSON("gpsrec.json",1)||{};
-    settings.file |= 0;
+    // if we're here, settings was already loaded
     var n = settings.file.toString(36);
     var f = require("Storage").open(".gpsrc"+n,"r");
     var l = f.readLine(f);
