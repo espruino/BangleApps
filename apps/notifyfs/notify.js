@@ -127,7 +127,7 @@ exports.hide = function(options) {
     Bangle.setLCDPower(1);
   }
   // hack for E.showMenu/showAlert/showPrompt - can force a redraw by faking next/back
-  if (Bangle.btnWatches) {
+  if (!Bangle.CLOCK && Bangle.btnWatches && Bangle.btnWatches.length==3) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
     global["\xff"].watches[Bangle.btnWatches[1]].callback();
   }

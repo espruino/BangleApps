@@ -7,3 +7,4 @@
 0.07: Support background color
 0.08: Don't turn on screen during Quiet Mode
 0.09: Add onHide callback
+0.10: Ensure dismissing a notification dismissal doesn't enter launcher if in clock mode
