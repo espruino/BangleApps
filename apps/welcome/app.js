@@ -12,6 +12,7 @@ function animate(seq,period) {
 function fade(col, callback) {
   var n = 0;
   function f() {"ram"
+    g.setColor(col);
     for (var i=n;i<240;i+=10) g.drawLine(i,0,0,i).drawLine(i,240,240,i);
     g.flip();
     n++;
