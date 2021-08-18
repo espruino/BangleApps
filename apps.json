@@ -1669,9 +1669,9 @@
     "name": "Calculator",
     "shortName":"Calculator",
     "icon": "calculator.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
-    "tags": "app,tool",
+    "tags": "app,tool,b2",
     "storage": [
       {"name":"calculator.app.js","url":"app.js"},
       {"name":"calculator.img","url":"calculator-icon.js","evaluate":true}
