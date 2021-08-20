@@ -3390,13 +3390,14 @@
 { "id": "hcclock",
   "name": "Hi-Contrast Clock",
   "icon": "hcclock-icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Hi-Contrast Clock : A simple yet very bold clock that aims to be readable in high luninosity environments. Uses big 10x5 pixel digits. Use BTN 1 to switch background and foreground colors.",
   "tags": "clock",
   "type":"clock",
   "allow_emulator":true,
   "storage": [
     {"name":"hcclock.app.js","url":"hcclock.app.js"},
+    {"name":"hcclock.settings.js","url":"hcclock.settings.js"},
     {"name":"hcclock.img","url":"hcclock-icon.js","evaluate":true}
   ]
 },
