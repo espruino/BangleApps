@@ -10,6 +10,7 @@
     }
     function setColorScheme(value)
     {
+        value = value + 1 % 2;
         let settings = require('Storage').readJSON("hcclock.json", true) || {};
         settings.scheme = value? 1 : 0;
         require('Storage').writeJSON('hcclock.json', settings);
