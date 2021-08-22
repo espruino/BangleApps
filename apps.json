@@ -3416,7 +3416,7 @@
   "shortName":"Car Crazy",
   "icon": "carcrash.png",
   "version":"0.01",
-  "description": "A simple car game where you try to aviod the other cars by tilting your wrist left and right. Hold down button 2 to start.",
+  "description": "A simple car game where you try to avoid the other cars by tilting your wrist left and right. Hold down button 2 to start.",
   "tags": "game",
   "storage": [
     {"name":"carcrazy.app.js","url":"app.js"},
