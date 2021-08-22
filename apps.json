@@ -3414,7 +3414,7 @@
 { "id": "carcrazy",
   "name": "Car Crazy",
   "shortName":"Car Crazy",
-  "icon": "app.png",
+  "icon": "carcrash.png",
   "version":"0.01",
   "description": "A simple car game where you try to aviod the other cars by tilting your wrist left and right. Hold down button 2 to start.",
   "tags": "game",
