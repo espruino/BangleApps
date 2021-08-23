@@ -2,6 +2,10 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+var osm;
+try { // if it's installed, use the OpenStreetMap module
+  osm = require("openstmap");
+} catch (e) {}
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
@@ -36,17 +40,18 @@ function showMainMenu() {
       }
     },
     'Time Period': {
-      value: settings.period||1,
+      value: settings.period||10,
       min: 1,
-      max: 60,
+      max: 120,
       step: 1,
+      format: v=>v+"s",
       onchange: v => {
         settings.recording = false;
         settings.period = v;
         updateSettings();
       }
     },
-    'View Tracks': viewTracks,
+    'View Tracks': ()=>{viewTracks();},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainmenu);
@@ -60,13 +65,13 @@ function viewTracks() {
   for (var n=0;n<36;n++) {
     var f = require("Storage").open(getFN(n),"r");
     if (f.readLine()!==undefined) {
-      menu["Track "+n] = viewTrack.bind(null,n,false);
+      menu["Track "+n] = (n=>viewTrack(n)).bind(null,n,false);
       found = true;
     }
   }
   if (!found)
     menu["No Tracks found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = () => { showMainMenu(); };
   return E.showMenu(menu);
 }
 
@@ -129,8 +134,20 @@ function viewTrack(n, info) {
     menu[info.time.toISOString().substr(0,16).replace("T"," ")] = function(){};
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
-  menu['Plot'] = function() {
+  menu['Plot Map'] = function() {
+    info.qOSTM = false;
     plotTrack(info);
+  };
+  if (osm)
+    menu['Plot OpenStMap'] = function() {
+      info.qOSTM = true;
+      plotTrack(info);
+    }
+  menu['Plot Alt.'] = function() {
+    plotGraph(info, "altitude");
+  };
+  menu['Plot Speed'] = function() {
+    plotGraph(info, "speed");
   };
   menu['Erase'] = function() {
     E.showPrompt("Delete Track?").then(function(v) {
@@ -144,34 +161,53 @@ function viewTrack(n, info) {
         viewTrack(n, info);
     });
   };
-  menu['< Back'] = viewTracks;
+  menu['< Back'] = () => { viewTracks(); };
   return E.showMenu(menu);
 }
 
 function plotTrack(info) {
   "ram"
 
-  function radians(a) {
-    return a*Math.PI/180;
+  function distance(lat1,long1,lat2,long2) { "ram"
+    var x = (long1-long2) * Math.cos((lat1+lat2)*Math.PI/360);
+    var y = lat2 - lat1;
+    return Math.sqrt(x*x + y*y) * 6371000 * Math.PI / 180;
   }
 
-  function distance(lat1,long1,lat2,long2){
-    var x = radians(long1-long2) * Math.cos(radians((lat1+lat2)/2));
-    var y = radians(lat2-lat1);
-    return Math.sqrt(x*x + y*y) * 6371000;
+  // Function to convert lat/lon to XY
+  var getMapXY;
+  if (info.qOSTM) {
+    getMapXY = osm.latLonToXY.bind(osm);
+  } else {
+    getMapXY = function(lat, lon) { "ram"
+      var ix = 30 + Math.round((long - info.minLong)*info.lfactor*info.scale);
+      var iy = 210 - Math.round((lat - info.minLat)*info.scale);
+      return {x:ix, y:iy};
+    }
   }
 
   E.showMenu(); // remove menu
+  var s = require("Storage");
+  var cx = g.getWidth()/2;
+  var cy = g.getHeight()/2;
   g.setColor(1,0.5,0.5);
   g.setFont("Vector",16);
-  g.fillRect(9,80,11,120);
-  g.fillPoly([9,60,19,80,0,80]);
-  g.setColor(1,1,1);
-  g.drawString("N",2,40);
   g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
   g.setColor(0,0,0);
   g.fillRect(0,220,239,239);
-  g.setColor(1,1,1);
+  if (!info.qOSTM) {
+    g.setColor(1, 0, 0);
+    g.fillRect(9,80,11,120);
+    g.fillPoly([9,60,19,80,0,80]);
+    g.setColor(1,1,1);
+    g.drawString("N",2,40);
+    g.setColor(1,1,1);
+  } else {
+    osm.lat = (info.minLat+info.maxLat)/2;
+    osm.lon = (info.minLong+info.maxLong)/2;
+    osm.draw();
+    g.setColor(0, 0, 0);
+  }
   g.drawString(asTime(info.duration),10,220);
   var f = require("Storage").open(info.filename,"r");
   if (f===undefined) return;
@@ -183,31 +219,32 @@ function plotTrack(info) {
   var c = l.split(",");
   var lat = +c[1];
   var long = +c[2];
-  var x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-  var y = 210 - Math.round((lat - info.minLat)*info.scale);
-  g.moveTo(x,y);
+  var mp = getMapXY(lat, long);
+  g.moveTo(mp.x,mp.y);
   g.setColor(0,1,0);
-  g.fillCircle(x,y,5);
-  g.setColor(1,1,1);
+  g.fillCircle(mp.x,mp.y,5);
+  if (info.qOSTM) g.setColor(1,0,0.55);
+  else g.setColor(1,1,1);
   l = f.readLine(f);
   while(l!==undefined) {
     c = l.split(",");
     lat = +c[1];
     long = +c[2];
-    x = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-    y = 210 - Math.round((lat - info.minLat)*info.scale);
-    g.lineTo(x,y);
+    mp = getMapXY(lat, long);
+    g.lineTo(mp.x,mp.y);
+    if (info.qOSTM) g.fillCircle(mp.x,mp.y,2); // make the track more visible
     var d = distance(olat,olong,lat,long);
     if (!isNaN(d)) dist+=d;
     olat = lat;
     olong = long;
-    ox = x;
-    oy = y;
+    ox = mp.x;
+    oy = mp.y;
     l = f.readLine(f);
   }
   g.setColor(1,0,0);
   g.fillCircle(ox,oy,5);
-  g.setColor(1,1,1);
+  if (info.qOSTM) g.setColor(0, 0, 0);
+  else g.setColor(1,1,1);
   g.drawString(require("locale").distance(dist),120,220);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
@@ -215,6 +252,90 @@ function plotTrack(info) {
   setWatch(function() {
     viewTrack(info.fn, info);
   }, BTN3);
+  g.flip();
+}
+
+function plotGraph(info, style) {
+  "ram"
+  E.showMenu(); // remove menu
+  E.showMessage("Calculating...","GPS Track "+info.fn);
+  var filename = getFN(info.fn);
+  var infn = new Float32Array(200);
+  var infc = new Uint16Array(200);
+  var title;
+  var lt = 0; // last time
+  var tn = 0; // count for each time period
+  var strt, dur = info.duration;
+  var f = require("Storage").open(filename,"r");
+  if (f===undefined) return;
+  var l = f.readLine(f);
+  var nl = 0, c, i;
+  if (l!==undefined) {
+    c = l.split(",");
+    strt = c[0]/1000;
+  }
+  if (style=="altitude") {
+    title = "Altitude (m)";
+    while(l!==undefined) {
+      ++nl;c=l.split(",");
+      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      infn[i]+=+c[3];
+      infc[i]++;
+      l = f.readLine(f);
+    }
+  } else if (style=="speed") {
+    title = "Speed (m/s)";
+    var p,lp = Bangle.project({lat:c[1],lon:c[2]});
+    var t,dx,dy,d,lt = c[0]/1000;
+    while(l!==undefined) {
+      ++nl;c=l.split(",");
+      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      t = c[0]/1000;
+      p = Bangle.project({lat:c[1],lon:c[2]});
+      dx = p.x-lp.x;
+      dy = p.y-lp.y;
+      d = Math.sqrt(dx*dx+dy*dy);
+      if (t!=lt) {
+        infn[i]+=d / (t-lt); // speed
+        infc[i]++;
+      }
+      lp = p;
+      lt = t;
+      l = f.readLine(f);
+    }
+  } else throw new Error("Unknown type");
+  var min=100000,max=-100000;
+  for (var i=0;i<infn.length;i++) {
+    if (infc[i]>0) infn[i]/=infc[i];
+    var n = infn[i];
+    if (n>max) max=n;
+    if (n<min) min=n;
+  }
+  // work out a nice grid value
+  var heightDiff = max-min;
+  var grid = 1;
+  while (heightDiff/grid > 8) {
+    grid*=2;
+  }
+  // draw
+  g.clear(1).setFont("6x8",1);
+  var r = require("graph").drawLine(g, infn, {
+    x:4,y:0,
+    width: g.getWidth()-24,
+    height: g.getHeight()-8,
+    axes : true,
+    gridy : grid,
+    gridx : 50,
+    title: title,
+    xlabel : x=>Math.round(x*dur/(60*infn.length))+" min" // minutes
+  });
+  g.setFont("6x8",2);
+  g.setFontAlign(0,0,3);
+  g.drawString("Back",230,200);
+  setWatch(function() {
+    viewTrack(info.fn, info);
+  }, BTN3);
+  g.flip();
 }
 
 showMainMenu();

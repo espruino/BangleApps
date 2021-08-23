@@ -11,11 +11,12 @@ function flip(b,y) {
 var brg=0;
 var wpindex=0;
 const labels = ["N","NE","E","SE","S","SW","W","NW"];
+var loc = require("locale");
 
 function drawCompass(course) {
   if (!candraw) return;
   buf.setColor(1);
-  buf.setFont("Vector",16);
+  buf.setFont("Vector",24);
   var start = course-90;
   if (start<0) start+=360;
   buf.fillRect(28,45,212,49);
@@ -50,21 +51,15 @@ function drawCompass(course) {
 
 //displayed heading
 var heading = 0;
-function newHeading(m,h){
+function newHeading(m,h){ 
     var s = Math.abs(m - h);
-    var delta = 1;
+    var delta = (m>h)?1:-1;
+    if (s>=180){s=360-s; delta = -delta;} 
     if (s<2) return h;
-    if (m > h){
-        if (s >= 180) { delta = -1; s = 360 - s;}
-    } else if (m <= h){
-        if (s < 180) delta = -1; 
-        else s = 360 -s;
-    }
-    delta = delta * (1 + Math.round(s/15));
-    heading+=delta;
-    if (heading<0) heading += 360;
-    if (heading>360) heading -= 360;
-    return heading;
+    var hd = h + delta*(1 + Math.round(s/5));
+    if (hd<0) hd+=360;
+    if (hd>360)hd-= 360;
+    return hd;
 }
 
 var course =0;
@@ -101,20 +96,20 @@ function distance(a,b){
 var selected = false;
 
 function drawN(){
+  var txt = loc.speed(speed);
   buf.setColor(1);
   buf.setFont("6x8",2);
   buf.drawString("o",100,0);
   buf.setFont("6x8",1);
-  buf.drawString("kph",220,40);
-  buf.setFont("Vector",40);
+  buf.drawString(txt.substring(txt.length-3),220,40);
+  buf.setFont("Vector",48);
   var cs = course.toString();
   cs = course<10?"00"+cs : course<100 ?"0"+cs : cs;
   buf.drawString(cs,10,0);
-  var txt = (speed<10) ? speed.toFixed(1) : Math.round(speed);
-  buf.drawString(txt,140,4);
+  buf.drawString(txt.substring(0,txt.length-3),140,4);
   flip(buf,Yoff+70);
   buf.setColor(1);
-  buf.setFont("Vector",20);
+  buf.setFont("Vector",24);
   var bs = brg.toString();
   bs = brg<10?"00"+bs : brg<100 ?"0"+bs : bs;
   buf.setColor(3);
@@ -124,10 +119,7 @@ function drawN(){
   buf.drawString(wp.name,140,0);
   buf.setColor(1);
   buf.drawString(bs,60,0);
-  if (dist<1000)
-    buf.drawString(dist.toString()+"m",60,30);
-  else
-    buf.drawString((dist/1000).toFixed(2)+"Km",60,30);
+  buf.drawString(loc.distance(dist),60,30);
   flip(buf,Yoff+130);
   g.setFont("6x8",1);
   g.setColor(0,0,0);
@@ -166,7 +158,7 @@ function stopdraw() {
 function startTimers() {
   candraw=true;
   intervalRefSec = setInterval(function() {
-    newHeading(course,heading);
+    heading = newHeading(course,heading);
     if (course!=heading) drawCompass(heading);
   },200);
 }
@@ -190,7 +182,7 @@ function setButtons(){
   setWatch(nextwp.bind(null,-1), BTN1, {repeat:true,edge:"falling"});
   setWatch(doselect, BTN2, {repeat:true,edge:"falling"});
   setWatch(nextwp.bind(null,1), BTN3, {repeat:true,edge:"falling"});
-};
+}
 
 var SCREENACCESS = {
       withApp:true,
@@ -228,7 +220,7 @@ function nextwp(inc){
 }
 
 function doselect(){
-  if (selected && waypoints[wpindex].lat===undefined && savedfix.fix) {
+  if (selected && wpindex!=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
      waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
      require("Storage").writeJSON("waypoints.json", waypoints);

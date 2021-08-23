@@ -52,8 +52,8 @@
         const newIndex = (oldIndex + 1) % COLORS.length
         s.color = COLORS[newIndex]
         save('color')(s.color)
-       }
-     },
+      }
+    },
     'Hide if >': {
       value: s.hideifmorethan||100,
       min: 10,
@@ -61,7 +61,7 @@
       step: 10,
       format: x => x+"%",
       onchange: save('hideifmorethan'),
-     },
-    }
+    },
+  }
   E.showMenu(menu)
 })

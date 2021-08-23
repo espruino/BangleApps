@@ -1,8 +1,10 @@
+
+const big = g.getWidth()>200;
 const ox=10; // x offset
-const oy=80;
-const pw=20; // pixel width
-const ps=5; // pixel spacing
-const ds=10; // digit spacing
+const oy=big ? 80 : 70;
+const pw=big ? 20 : 14; // pixel width
+const ps=big ? 5 : 3; // pixel spacing
+const ds=big ? 10 : 8; // digit spacing
 const ms=20; // middle space
 
 const x00=ox; // digit 0, pixel 0, x position
@@ -14,9 +16,9 @@ const x21=x20+pw+ps;
 const x30=x21+pw+ds;
 const x31=x30+pw+ps;
 const xSpace=[[x00,x01], // all pixel x spacing
-              [x10,x11],
-              [x20,x21],
-              [x30,x31]];
+  [x10,x11],
+  [x20,x21],
+  [x30,x31]];
 
 const y0=oy; // y spacing
 const y1=y0+pw+ps;
@@ -24,35 +26,35 @@ const y2=y1+pw+ps;
 const ySpace=[y0, y1, y2];
 
 const pixels =  [[[0,0], // digit on/off pixels
-                  [1,1],
-                  [1,1]],
-                     [[0,1], // digit 1
-                      [0,1],
-                      [0,1]],
-                 [[0,1],
-                  [1,0],
-                  [1,1]],
-                     [[1,1],
-                      [0,1],
-                      [1,1]],
-                 [[1,0],
-                  [1,1],
-                  [0,1]],
-                     [[1,1],
-                      [1,0],
-                      [0,1]],
-                 [[1,0],
-                  [1,1],
-                  [1,1]],
-                     [[1,1],
-                      [0,1],
-                      [0,1]],
-                 [[1,1],
-                  [1,1],
-                  [1,1]],
-                     [[1,1],
-                      [1,1],
-                      [0,1]]];
+  [1,1],
+  [1,1]],
+[[0,1], // digit 1
+  [0,1],
+  [0,1]],
+[[0,1],
+  [1,0],
+  [1,1]],
+[[1,1],
+  [0,1],
+  [1,1]],
+[[1,0],
+  [1,1],
+  [0,1]],
+[[1,1],
+  [1,0],
+  [0,1]],
+[[1,0],
+  [1,1],
+  [1,1]],
+[[1,1],
+  [0,1],
+  [0,1]],
+[[1,1],
+  [1,1],
+  [1,1]],
+[[1,1],
+  [1,1],
+  [0,1]]];
 
 let idTimeout = null;
 
@@ -90,7 +92,7 @@ Bangle.on('lcdPower', function(on){
   }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 drawTime();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});

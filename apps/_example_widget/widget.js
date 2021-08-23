@@ -3,7 +3,7 @@ currently-running apps */
 (() => {
   function draw() {
     g.reset(); // reset the graphics context to defaults (color/font/etc)
-  	// add your code
+    // add your code
     g.drawString("X", this.x, this.y);
   }
 

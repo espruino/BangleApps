@@ -83,8 +83,8 @@ setWatch(function() { // Start/stop
   Bangle.beep();
   if (started)
     tStart = Date.now()+tStart-tCurrent;
-    tTotal = Date.now()+tTotal-tCurrent;
-    tCurrent = Date.now();
+  tTotal = Date.now()+tTotal-tCurrent;
+  tCurrent = Date.now();
   if (displayInterval) {
     clearInterval(displayInterval);
     displayInterval = undefined;

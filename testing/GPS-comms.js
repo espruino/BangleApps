@@ -1,12 +1,3 @@
-/* This code allows you to communicate with the GPS
-receiver in Bangle.js in order to set it up.
-
-Protocol spec:
-
-https://cdn.sparkfun.com/assets/0/b/0/f/7/u-blox8-M8_ReceiverDescrProtSpec__UBX-13003221__Public.pdf
-
-*/
-
 Bangle.setGPSPower(1)
 //Bangle.on('GPS',print);
 
@@ -25,8 +16,25 @@ function writeGPScmd(cmd) {
     a += d[i];
     b += a;
   }
-  d.push(a,b);
+  d.push(a&255,b&255);
   Serial1.write(d);
+}
+function readGPScmd(cmd, callback) {
+  var prefix = String.fromCharCode(0xb5,0x62,cmd[0],cmd[1]);
+  function handler(d) {
+    if (!d.startsWith(prefix)) return;
+    clearInterval(timeout);
+    var a = E.toUint8Array(d);
+    // cut off id + length 
+    a = new Uint8Array(a.buffer,6, a.length-8);
+    callback(a);
+  }
+  Bangle.on('GPS-raw',handler);
+  var timeout = setTimeout(function() {
+    callback();
+    Bangle.removeListener('GPS-raw',handler);
+  }, 2000);
+  writeGPScmd(cmd);
 }
 function UBX_CFG_PMS() {
   // UBX-CFG-PMS - enable power management - Super-E
@@ -64,4 +72,70 @@ function UBX_CFG_MSG(msg,enable) {
 // Enter super-e low power
 // UBX_CFG_PMS()
 // Disable DTM messages (see UBX_CFG_MSG comments):
-UBX_CFG_MSG("DTM",false);
+//UBX_CFG_MSG("DTM",false);
+// UBX-CFG-HNR (0x06 0x5C) - high rate (up to 30hz)
+
+
+// GPS 181,98,6,62,60,0,0,32,32,7,0,8,16,0,1,0,1,1,1,1,3,0,0,0,1,1,2,4,8,0,0,0,1,1,3,8,16,0,1,0,1,1,4,0,8,0,0,0,1,3,5,0,3,0,1,0,1,5,6,8,14,0,0,0,1,1,84,27
+//GPS ACK
+
+function getUBX_CFG_GNSS() {
+  // 
+  readGPScmd([0x06,0x3E,0,0], function(a) {
+    print("CFG_GNSS",a.join(","), a.length);
+    var info = {
+      numTrkChHw : a[1],
+      numTrkChUse : a[2],
+      configs : []
+    };
+    for (var i=4;i<a.length;i+=8) {
+      info.configs.push({
+        gnss : ["GPS","SBAS","Galileo","BeiDou","IMES","QZSS","GLONASS"][a[i+0]],
+        enabled : a[i+4]&1,
+        reservedCh : a[1+1],
+        maxCh : a[i+2],
+        sigCfgMask : a[i+6],
+        flags : [a[i+4],a[i+5],a[i+6],a[i+7]]
+      });
+    }
+    print(info);
+  });
+}
+
+function getUBX_CFG_NMEA() {
+  readGPScmd([0x06,0x17,0,0], function(a) {
+    print("CFG_NMEA",a.join(","), a.length);
+    var info = {
+      filter : a[0],
+      nmeaVersion : {0x4b:"4.11",0x41:"4.1",0x40:"4",0x23:"2.3",0x21:"2.1"}[a[1]],
+      flags : a[3]
+    };
+    print(info);
+  });
+}
+
+function setUBX_MGA_INI_TIME_UTC() {
+  var a = new Uint8Array(4+24);
+  a.set([0x13,0x40,24,0]);
+  a.set([ 0x10, // 0: type
+          0,  // 1: version
+          0, // 2: ref - none
+          0x80] ); // 3: leapsecs - unknown
+  var d = new Date();
+  d.setTime(d.getTime()+d.getTimezoneOffset()*60000); // get as UTC
+  var dv = new DataView(a.buffer, 4);
+  dv.setUint16(4, d.getFullYear());
+  dv.setUint8(6, d.getMonth()+1);
+  dv.setUint8(7, d.getDate());
+  dv.setUint8(8, d.getHours());
+  dv.setUint8(9, d.getMinutes());
+  dv.setUint8(10, d.getSeconds());
+  dv.setUint16(16, 10*60); // seconds part of accuracy - 10 minutes
+  writeGPScmd([].slice.call(a));
+}
+
+setUBX_MGA_INI_TIME_UTC();
+Bangle.on('GPS',print);
+
+// UBX-MGA-INI-TIME_UTC looks promising for a start time
+

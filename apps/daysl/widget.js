@@ -7,7 +7,7 @@ var debug = 0; //1 = show debug info
 
 //write settings to file
 function updateSettings() {
-    storage.write('daysleft.json', settings);
+  storage.write('daysleft.json', settings);
 }
 
 //Define standard settings
@@ -24,8 +24,8 @@ settings = storage.readJSON('daysleft.json',1); //read storage
 if (!settings) resetSettings(); //if settings file was not found, set to standard
 
 var dd = settings.day,
-    mm = settings.month-1, //-1 because month is zero-based
-    yy = settings.year;
+  mm = settings.month-1, //-1 because month is zero-based
+  yy = settings.year;
 
 const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 const targetDate = new Date(yy, mm, dd); //is 00:00

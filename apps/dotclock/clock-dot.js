@@ -1,20 +1,22 @@
-let g;
-let Bangle;
-
+const big = g.getWidth()>200;
 const locale = require('locale');
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 100; // watch face radius
 let timer = null;
 let currentDate = new Date();
-let hourRadius = 60;
-let minRadius = 80;
-const centerPx = g.getWidth() / 2;
+const faceWidth = big?100:65; // watch face radius
+let hourRadius = big?60:40;
+let minRadius = big?80:55;
+const centerX = g.getWidth() / 2;
+const centerY = 24 + (g.getHeight()-24) / 2;
+let colSecA = g.theme.dark ? "#00A" : "#58F"; // before the second
+let colSecB = g.theme.dark ? "#58F" : "#00A"; // after the second
+let colSec1 = g.theme.dark ? "#F83" : "#000"; // ON the second
 
 const seconds = (angle) => {
   const a = angle * pRad;
-  const x = centerPx + Math.sin(a) * faceWidth;
-  const y = centerPx - Math.cos(a) * faceWidth;
+  const x = centerX + Math.sin(a) * faceWidth;
+  const y = centerY - Math.cos(a) * faceWidth;
 
   // if 15 degrees, make hour marker larger
   const radius = (angle % 15) ? 2 : 4;
@@ -23,15 +25,15 @@ const seconds = (angle) => {
 
 const hourDot = (angle,radius) => {
   const a = angle * pRad;
-  const x = centerPx + Math.sin(a) * hourRadius;
-  const y = centerPx - Math.cos(a) * hourRadius;
+  const x = centerX + Math.sin(a) * hourRadius;
+  const y = centerY - Math.cos(a) * hourRadius;
   g.fillCircle(x, y, radius);
 };
 
 const minDot = (angle,radius) => {
   const a = angle * pRad;
-  const x = centerPx + Math.sin(a) * minRadius;
-  const y = centerPx - Math.cos(a) * minRadius;
+  const x = centerX + Math.sin(a) * minRadius;
+  const y = centerY - Math.cos(a) * minRadius;
   g.fillCircle(x, y, radius);
 };
 
@@ -45,54 +47,49 @@ const drawAll = () => {
   // draw all secs
 
   for (let i = 0; i < 60; i++) {
-    if (i > currentSec) {
-      g.setColor(0, 0, 0.6);
-    } else {
-      g.setColor(0.3, 0.3, 1);
-    }
+    g.setColor((i > currentSec) ? colSecA : colSecB);
     seconds((360 * i) / 60);
   }
   onSecond();
 };
 
 const resetSeconds = () => {
-  g.setColor(0, 0, 0.6);
+  g.setColor(colSecA);
   for (let i = 0; i < 60; i++) {
     seconds((360 * i) / 60);
   }
 };
 
 const drawMin = () => {
-  g.setColor(0.5, 0.5, 0.5);
+  g.setColor("#777");
   for (let i = 0; i < 60; i++) {
     minDot((360 * i) / 60,1);
   }
 };
 
 const drawHour = () => {
-  g.setColor(0.5, 0.5, 0.5);
+  g.setColor("#777");
   for (let i = 0; i < 12; i++) {
     hourDot((360 * 5 * i) / 60,1);
   }
 };
 
 const onSecond = () => {
-  g.setColor(0.3, 0.3, 1);
+  g.setColor(colSecB);
   seconds((360 * currentDate.getSeconds()) / 60);
   if (currentDate.getSeconds() === 59) {
     resetSeconds();
     onMinute();
   }
-  g.setColor(1, 0.7, 0.2);
+  g.setColor(colSec1);
   currentDate = new Date();
   seconds((360 * currentDate.getSeconds()) / 60);
-  g.setColor(1, 1, 1);
+  g.setColor(g.theme.fg);
 };
 
 const drawDate = () => {
   g.reset();
-  g.setColor(1, 1, 1);
-  g.setFont('6x8', 2);
+  g.setFont('6x8', big?2:1);
 
   const dayString = locale.dow(currentDate, true);
   // pad left date
@@ -101,7 +98,7 @@ const drawDate = () => {
   // console.log(`${dayString}|${dateString}`);
   // center date
   const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
-  const t = centerPx - 6 ;
+  const t = centerY - 6 ;
   g.drawString(dateDisplay, l, t);
   // console.log(l, t);
 };
@@ -111,7 +108,7 @@ const onMinute = () => {
     resetSeconds();
   }
   // clear existing hands
-  g.setColor(0, 0, 0);
+  g.setColor(g.theme.bg);
   hourDot((360 * currentDate.getHours()) / 12,4);
   minDot((360 * currentDate.getMinutes()) / 60,3);
 
@@ -125,12 +122,9 @@ const onMinute = () => {
   g.setColor(1, 0, 0);
   // Hour
   hourDot((360 * currentDate.getHours()) / 12,4);
-  g.setColor(1, 0.9, 0.9);
+  g.setColor(g.theme.fg2);
   // Minute
   minDot((360 * currentDate.getMinutes()) / 60,3);
-  if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
-    Bangle.buzz();
-  }
   drawDate();
 };
 
@@ -155,8 +149,8 @@ g.clear();
 resetSeconds();
 startTimers();
 drawAll();
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });

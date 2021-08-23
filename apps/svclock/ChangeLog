@@ -1,0 +1,2 @@
+0.01: Modification of SimpleClock 0.04 to use Vectorfont
+0.02: Use Bangle.setUI for button/launcher handling

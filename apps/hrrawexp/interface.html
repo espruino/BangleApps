@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="data"></div>
+    <button class="btn btn-default" id="btnSave">Save</button>
+    <button class="btn btn-default" id="btnDelete">Delete</button>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var dataElement = document.getElementById("data");
+var csvData = "";
+
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  dataElement.innerHTML = "";
+  Util.readStorageFile(`hrm_log.csv`,data=>{
+    csvData = data.trim();
+    // remove window
+    Util.hideModal();
+    // If no data, report it and exit
+    if (data.length==0) {
+      dataElement.innerHTML = "<b>No data found</b>";
+      return;
+    }
+    else{
+      dataElement.innerHTML = "<b>data file found</b>";
+      return;
+    }
+  });
+}
+
+// You can call a utility function to save the data
+document.getElementById("btnSave").addEventListener("click", function() {
+  Util.saveCSV("HRM_data", csvData);
+});
+// Or you can also delete the file
+document.getElementById("btnDelete").addEventListener("click", function() {
+  Util.showModal("Deleting...");
+  Util.eraseStorageFile("hrm_log.csv", function() {
+    Util.hideModal();
+    getData();
+  });
+});
+// Called when app starts
+function onInit() {
+  getData();
+}
+    </script>
+  </body>
+</html>

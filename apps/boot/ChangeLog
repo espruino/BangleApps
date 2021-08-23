@@ -16,3 +16,14 @@
 0.15: Added BLE HID option for Joystick and bare Keyboard
 0.16: Detect out of memory errors and draw them onto the bottom of the screen in red
 0.17: Don't modify beep/buzz behaviour if firmware does it automatically
+0.18: Fix  'GPS time' checks for western hemisphere
+0.19: Tweaks to simplify code and lower memory usage
+0.20: Allow Gadgetbridge to work even with programmable:off
+0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)
+0.22: Stop LCD timeout being disabled on first run (when there is no settings.json)
+0.23: Move to a precalculated .boot0 file which should speed up load time
+0.24: Add Bangle.setUI polyfill
+0.25: Fix error in 'no clock app' message
+0.26: Remove buzz in setUI polyfill (#750)
+0.27: Update polyfill for most recent changes
+0.28: Fix double clock load after settings are changed

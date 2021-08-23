@@ -2,13 +2,16 @@
 const locale = require('locale');
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = 100; // watch face radius (240/2 - 24px for widget area)
+const faceWidth = g.getWidth()/2 - 20; // watch face radius (240/2 - 24px for widget area)
 const widgetHeight=24+1;
 let timer = null;
 let currentDate = new Date();
 const centerX = g.getWidth() / 2;
 const centerY = (g.getWidth() / 2) + widgetHeight/2;
-
+g.theme.dark=false;
+let colSecA = g.theme.dark ? "#00A" : "#58F"; // before the second
+let colSecB = g.theme.dark ? "#58F" : "#00A"; // after the second
+let colSec1 = g.theme.dark ? "#F83" : "#000"; // ON the second
 
 const seconds = (angle) => {
   const a = angle * pRad;
@@ -46,40 +49,35 @@ const drawAll = () => {
   // draw all secs
 
   for (let i = 0; i < 60; i++) {
-    if (i > currentSec) {
-      g.setColor(0, 0, 0.6);
-    } else {
-      g.setColor(0.3, 0.3, 1);
-    }
+    g.setColor((i > currentSec) ? colSecA : colSecB);
     seconds((360 * i) / 60);
   }
   onSecond();
-
 };
 
 const resetSeconds = () => {
-  g.setColor(0, 0, 0.6);
+  g.setColor(colSecA);
   for (let i = 0; i < 60; i++) {
     seconds((360 * i) / 60);
   }
 };
 
 const onSecond = () => {
-  g.setColor(0.3, 0.3, 1);
+  g.setColor(colSecB);
   seconds((360 * currentDate.getSeconds()) / 60);
   if (currentDate.getSeconds() === 59) {
     resetSeconds();
     onMinute();
   }
-  g.setColor(1, 0.7, 0.2);
+  g.setColor(colSec1);
   currentDate = new Date();
   seconds((360 * currentDate.getSeconds()) / 60);
-  g.setColor(1, 1, 1);
+  g.setColor(g.theme.fg);
 };
 
 const drawDate = () => {
   g.reset();
-  g.setColor(1, 0, 0);
+  g.setColor("#f00");
   g.setFont('6x8', 2);
 
   const dayString = locale.dow(currentDate, true);
@@ -89,7 +87,7 @@ const drawDate = () => {
   // console.log(`${dayString}|${dateString}`);
   // center date
   const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
-  const t = centerY + 37;
+  const t = centerY + faceWidth*0.37;
   g.drawString(dateDisplay, l, t, true);
   // console.log(l, t);
 };
@@ -99,7 +97,7 @@ const onMinute = () => {
     resetSeconds();
   }
   // clear existing hands
-  g.setColor(0, 0, 0);
+  g.setColor(g.theme.bg);
   // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
   // Minute
@@ -107,15 +105,12 @@ const onMinute = () => {
 
   // get new date, then draw new hands
   currentDate = new Date();
-  g.setColor(1, 0.9, 0.9);
+  g.setColor(g.theme.fg);
   // Hour
   hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
-  g.setColor(1, 1, 0.9);
+  g.setColor(g.theme.fg);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
-  if (currentDate.getHours() >= 0 && currentDate.getMinutes() === 0) {
-    Bangle.buzz();
-  }
   drawDate();
 };
 
@@ -140,8 +135,9 @@ g.clear();
 resetSeconds();
 startTimers();
 drawAll();
+
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });

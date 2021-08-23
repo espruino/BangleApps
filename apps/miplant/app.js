@@ -32,8 +32,8 @@ function parseDevice(device) {
       case 0x1009: event.fertility = d.getUint16(offset+3,true)/10; break;
       // case 0x1007: break; // 3 bytes? got 84,0,0 or 68,0,0
       default: event.code = code;
-               event.raw = new Uint8Array(d.buffer, offset+3, l);
-               break;
+        event.raw = new Uint8Array(d.buffer, offset+3, l);
+        break;
     }
     //print(event);
     show(event);
@@ -49,19 +49,19 @@ eg. {
 */
 function show(event) {
   g.reset().setFont("6x8");
-  var y = 45 + 50*Object.keys(deviceInfo).indexOf(event.id);
+  var y = 45 + 55*Object.keys(deviceInfo).indexOf(event.id);
 
   g.drawString(event.id.substr(0,17),0,y);
-  g.drawImage(getImgHum(),0,y+15);
+  g.drawImage(getImgHum(),0,y+10);
   g.setFont("6x8",2);
   var t = (event.moisture===undefined) ? "?" : event.moisture;
-  g.drawString((t+"   ").substr(0,3),35,y+25,true);
-  g.drawImage(getImgFert(),80,y+15);
+  g.drawString((t+"   ").substr(0,3),35,y+20,true);
+  g.drawImage(getImgFert(),80,y+10);
   t = Math.round(event.fertility) || "?";
-  g.drawString((t+"   ").substr(0,3), 120, y+25, true);
-  g.drawImage(getImgTemp(),160,y+15);
+  g.drawString((t+"   ").substr(0,3), 120, y+20, true);
+  g.drawImage(getImgTemp(),160,y+10);
   t = Math.round(event.temperature) || "?";
-  g.drawString((t+"   ").substr(0,3), 180, y+25, true);
+  g.drawString((t+"   ").substr(0,3), 180, y+20, true);
   g.flip();
 }
 

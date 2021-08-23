@@ -1,0 +1,6 @@
+0.01: Initial Release
+0.02: Color Themes, Smoother scrolling
+0.03: Added Spanish Language
+0.04: Added German Language
+0.05: BUGFIX: pedometer widget interfered with the clock Font Alignment
+0.06: Use Bangle.setUI for button/launcher handling

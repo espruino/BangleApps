@@ -2,3 +2,4 @@
 0.02: Add widgets to app
 0.03: Use offscreen buffer (not doublebuffer)
       Use 'locale' to get internationalised speed
+0.04: Start GPS after loading app, just in case widgets affect it (#449)

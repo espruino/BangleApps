@@ -1,0 +1,15 @@
+0.01: New App!
+0.02: Animate balloon intro
+0.03: BTN3 now won't restart when at the end
+0.04: Fix regression after tweaks to Storage.readJSON
+0.05: Move configuration into App/widget settings
+0.06: Move loader into welcome.boot.js
+0.07: Run again when updated
+      Don't run again when settings app is updated (or absent)
+      Add "Run Now" option to settings
+0.08: Don't overwrite existing settings on app update
+0.09: Allow welcome to run after a fresh install
+      More useful app menu
+      BTN2 now goes to menu on release
+0.10: Add birthday style
+0.11: Skip double buffering, use 240x240 size

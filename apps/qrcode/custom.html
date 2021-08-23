@@ -28,10 +28,10 @@
     <p>Try your QR Code: <div id="qrcode"></div></p>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
-    <script src="../../lib/customize.js"></script>
-    <script src="../../lib/qrcode.min.js"></script><!-- https://davidshimjs.github.io/qrcodejs/ -->
-    <script src="../../lib/heatshrink.js"></script>
-    <script src="../../lib/imageconverter.js"></script>
+    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/qrcode.min.js"></script><!-- https://davidshimjs.github.io/qrcodejs/ -->
+    <script src="../../core/lib/heatshrink.js"></script>
+    <script src="../../core/lib/imageconverter.js"></script>
 
     <script>
       //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
@@ -104,7 +104,7 @@ g.setColor(1,1,1);
 `;
         sendCustomizedApp({
           storage:[
-            {name:"qrcode.app.js", content:app},
+            {name:"qrcode.app.js", url:"app.js", content:app},
           ]
         });
 

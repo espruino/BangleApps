@@ -1,5 +1,6 @@
-const maxX = 240;
-const maxY = 240;
+const maxX = g.getWidth();
+const maxY = g.getHeight();
+const fontSize = g.getWidth()>200?2:1;
 const rowN = 7;
 const colN = 7;
 const headerH = maxY / 7;
@@ -50,7 +51,7 @@ function drawCalendar(date) {
     11: "December"
   };
   g.setFontAlign(0, 0);
-  g.setFont("6x8", 2);
+  g.setFont("6x8", fontSize);
   g.setColor(white);
   g.drawString(`${monthMap[month]} ${year}`, maxX / 2, headerH / 2);
   g.drawPoly([10, headerH / 2, 20, 10, 20, headerH - 10], true);
@@ -59,7 +60,7 @@ function drawCalendar(date) {
     true
   );
 
-  g.setFont("6x8", 2);
+  g.setFont("6x8", fontSize);
   const dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
   dowLbls.forEach((lbl, i) => {
     g.drawString(lbl, i * colW + colW / 2, headerH + rowH / 2);
@@ -135,26 +136,21 @@ const today = {
 };
 drawCalendar(date);
 clearWatch();
-setWatch(
-  () => {
-    const month = date.getMonth();
-    const prevMonth = month > 0 ? month - 1 : 11;
+Bangle.on("touch",area=>{
+  const month = date.getMonth();
+  let prevMonth;
+  if (area==1) {
+    let prevMonth = month > 0 ? month - 1 : 11;
     if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
     date.setMonth(prevMonth);
-    drawCalendar(date);
-  },
-  BTN4,
-  { repeat: true }
-);
-setWatch(
-  () => {
-    const month = date.getMonth();
-    const prevMonth = month < 11 ? month + 1 : 0;
+  } else {
+    let prevMonth = month < 11 ? month + 1 : 0;
     if (prevMonth === 0) date.setFullYear(date.getFullYear() + 1);
     date.setMonth(month + 1);
-    drawCalendar(date);
-  },
-  BTN5,
-  { repeat: true }
-);
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+  }
+  drawCalendar(date);
+});
+
+// Show launcher when button pressed
+Bangle.setUI("clock"); // TODO: ideally don't set 'clock' mode
+// No space for widgets!

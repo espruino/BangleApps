@@ -1,0 +1,4 @@
+0.02: Make minor adjustments to widget, and discard stale weather data after a configurable period.
+0.03: Fix flickering last updated time.
+0.04: Adjust "weather unknown" message according to Bluetooth connection.
+0.05: Add wind direction.

@@ -1,0 +1,2 @@
+widget.png: https://icons8.com/icon/vga9edYpuB7a/warning-battery
+battery-low.png: https://icons8.com/icon/96282/low-battery (recolored)

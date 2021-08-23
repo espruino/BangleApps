@@ -194,9 +194,10 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*7chname", // for Bangle.js menu
   "src":"-7chname", // source file
-  "type":"widget/clock/app", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu
+  "type":"widget/clock/app/bootloader", // optional, default "app"
+     // if this is 'widget' then it's not displayed in the menu  
      // if it's 'clock' then it'll be loaded by default at boot time
+     // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
   "version":"1.23",
      // added by BangleApps loader on upload based on apps.json
   "files:"file1,file2,file3",
@@ -217,10 +218,16 @@ and which gives information about the app for the Launcher.
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
   "icon": "icon.png",         // icon in apps/
-  "description": "...",       // long description
-  "type":"...",               // optional(if app) - 'app'/'widget'/'launch'/'bootloader'
+  "description": "...",       // long description (can contain markdown)
+  "type":"...",               // optional(if app) -  
+                              //   'app' - an application
+                              //   'widget' - a widget
+                              //   'launch' - replacement launcher app
+                              //   'bootloader' - code that runs at startup only
+                              //   'RAM' - code that runs and doesn't upload anything to storage
   "tags": "",                 // comma separated tag list for searching
-
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+                              // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
                               // A 'Read more...' link will be added under the app
@@ -239,16 +246,23 @@ and which gives information about the app for the Launcher.
                               // add an icon to allow your app to be tested
 
   "storage": [                // list of files to add to storage
-    {"name":"appid.js",         // filename to use in storage
+    {"name":"appid.js",       // filename to use in storage.
+                              // If name=='RAM', the code is sent directly to Bangle.js and is not saved to a file
      "url":"",                // URL of file to load (currently relative to apps/)
-     "content":"..."          // if supplied, this content is loaded directly
-     "evaluate":true          // if supplied, data isn't quoted into a String before upload
+     "content":"...",         // if supplied, this content is loaded directly
+     "evaluate":true,         // if supplied, data isn't quoted into a String before upload
                               // (eg it's evaluated as JS)
+     "noOverwrite":true       // if supplied, this file will not be overwritten if it
+                              // already exists
     },
   ]
   "data": [                   // list of files the app writes to
     {"name":"appid.data.json",  // filename used in storage
      "storageFile":true       // if supplied, file is treated as storageFile
+     "url":"",                // if supplied URL of file to load (currently relative to apps/)
+     "content":"...",         // if supplied, this content is loaded directly     
+     "evaluate":true,         // if supplied, data isn't quoted into a String before upload
+                              // (eg it's evaluated as JS)     
     },
     {"wildcard":"appid.data.*" // wildcard of filenames used in storage
     },                         // this is mutually exclusive with using "name"
@@ -289,7 +303,7 @@ version of what's in `apps.json`:
         sendCustomizedApp({
           id : "7chname",
           storage:[
-            {name:"7chname.app.js", content:app_source_code},
+            {name:"7chname.app.js", url:"app.js", content:app_source_code},
             {name:"7chname.img", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
           ]
         });
@@ -301,6 +315,10 @@ version of what's in `apps.json`:
 
 This'll then be loaded in to the watch. See [apps/qrcode/grcode.html](the QR Code app)
 for a clean example.
+
+**Note:** we specify a `url` for JS files even though it doesn't have to exist
+and will never be loaded. This is so the app loader can tell if it's a JavaScript
+file based on the extension, and if so it can minify and pretokenise it.
 
 ### `apps.json`: `interface` element
 
@@ -382,6 +400,18 @@ It should also add `app.json` to `data`, to make sure it is cleaned up when the 
   },
 ```
 
+## Modules
+
+You can include any of [Espruino's modules](https://www.espruino.com/Modules) as
+normal with `require("modulename")`. If you want to develop your own module for your
+app(s) then you can do that too. Just add the module into the `modules` folder
+then you can use it from your app as normal.
+
+You won't be able to develop apps using your own modules with the IDE,
+so instead we'd recommend you write your module to a Storage File called
+`modulename` on Bangle.js. You can then develop your app as normal on Bangle.js
+from the IDE.
+
 ## Coding hints
 
 - use `g.setFont(.., size)` to multiply the font size, eg ("6x8",3) : "18x24"
@@ -415,12 +445,15 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 | areas | as rectangle or point |
 | :-:| :-: |
 | Widget | (0,0,239,23) |
-| Apps | (0,24,239,239) |
+| Widget bottom bar (optional) | (0,216,239,239) |
+| Apps | (0,24,239,239) (see below) |
 | BTN1 | (230, 55)  |
 | BTN2 | (230, 140) |
 | BTN3 | (230, 210) |
 | BTN4 | (0,0,119, 239)|
 | BTN5 |  (120,0,239,239) |
+
+- If there are widgets at the bottom of the screen, apps should actually keep the bottom 24px free, so should keep to the area (0,24,239,215)
 
 - Use `g.setFontAlign(0, 0, 3)` to draw rotated string to BTN1-BTN3 with `g.drawString()`.
 

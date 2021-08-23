@@ -21,6 +21,10 @@
     if (a.n > b.n) return 1;
     return 0;
   });
+  apps.push({
+    n: "NONE",
+    src: ""
+  });
 
   const settings = s.readJSON("largeclock.json", 1) || {
     BTN1: "",
