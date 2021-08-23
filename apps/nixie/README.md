@@ -1,6 +1,7 @@
-Nixie clock
+## Nixie clock
 
-This clock displays the time in nixie-inspired numerals.
+This clock displays the time in nixie-inspired numerals and works on both Bangle versions (1 and 2). It uses a generic
+coordinate system (0 <= width < 1) and has helper functions to use inline.
 
 The app makes use of a module called "m_vatch" which manages all the timers, and makes calls to functions in the 'main' file 
 to manage drawing the background, time, and any data like sensor info, step counters, battery, etc. The idea is that it is
