@@ -1,50 +1,47 @@
+const EMULATOR = false;
+// which Bangle?
+const isB2 = g.getWidth() < 200;
+
+// global coordinate system
+const wX = g.getWidth();
+const wY = g.getHeight();
+const midX = wX/2, midY = wY/2;
+// relative positioning: send 0 <= coord < 1
+function relX(x) { return Math.floor(x*wX); }
+function relY(y) { return Math.floor(y*wY); }
+
+// colors
+const col_bg = 0;
+const col_nm =isB2 ? 1 :"#206040";
+const col_sep = isB2 ? 6 :"#202020";
+const col_off = isB2 ? 1 : "#202020";
+const col_shad1 = isB2 ? 4 :"#FF0000";
+const col_shad2 = isB2 ? 6 :"#FF6000";
+const col_hi =isB2 ? 7 : "#FFC000";
+const col_data = isB2 ? 6 :"#C06000";
+
+g.setBgColor(col_bg);
 g.clear();
+
+var imgTube = {
+  width : 64, height : 128, bpp : 2,
+  buffer : require("heatshrink").decompress(atob("AE9AB7sQD54AOiFQB5tVsgPN0uoBxkByEFB5kGyIPNhVVB5tpLwKAMoJuOgNQggMJgtVDhsVqtEZ5cVrWlEBcFtWq1WlJxUaBwOq1IgJgIdCqoABEBEC1WVBwTkGKgUGFYIOCgIRDC4kaFoVUOQQKCQ4IgCB4YKDCYIgCq2QgEqHwJLIEoOkgFqB4KaIEoNkB4Z7JHQVqquqD5EVDYQPCVRIPE1IPKgsAtJTCAA8GyEBD4TrKqAPOgNRB5sRB5wfPgAPOiA/RP4IPaiD6BB5oCBB5kAdQIPNH5wPCvIPMBgIPMR4QPcL4QPNgIPQvS/MqtAB59+B9cVB91VL91BF91RF79RB4OVD5wPsH59BB51FB5sQB/0AD7xvPV4elD5wPLqIPOgJPeX/6//X8YPMH5wPPL74PfN55PQB6TfPB5afDB51/D57P/Z/7P/B97vOB5kAB58VoAA="))
+};
+var imgTubeBW = {
+  width : 46, height : 92, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AD0EAomAAgcCBQkQEykwAgcP/gFD/wKECok4AgcB4A7DgwQEjAFEsYWExg2DhkgAoVAE4kA8AEDgZqEhw+JgA+DCwIKEhhrJCyJELFqBbQIiByLIk6gWZyC3WOSItWOVq3nCywA="))
+};
 
 require("Font8x12").add(Graphics);
 g.setFont("8x12", 1);
 let interval = null;
-let stepCounter = 0;
-
-let msgs = require("Storage").readJSON('yngv27.msgs.json');
-let alarms = require("Storage").readJSON('yngv27.alarm.json');
 
 let alarming = false;
 let nightMode = false;
 
-function showMsg(msg) {
-  alarming = true;
-  g.setFontAlign(0,-1);
-  g.setColor(1,1,1);
-  g.drawString("<< ALARM >>", 120, 180, true);
-  g.drawString(msg, 120, 200, true);
-  Bangle.buzz();
-  setTimeout(Bangle.buzz, 800);
-  setTimeout(Bangle.buzz, 1600);
-  setTimeout(Bangle.buzz, 2400);
-  setTimeout(Bangle.buzz, 3200);
-}
-
-function checkMsgs() {
-  for(let idx=0; idx < alarms.length; idx++) {
-    let tdiff = Date.now() - Date.parse(alarms[idx].time);
-    // 10 sec margin of error
-    if(tdiff > 0 && tdiff < 10000) {
-      showMsg(alarms[idx].msg);
-    }
-  }
-}
-
-for(let idx=0; idx < alarms.length; idx++) {
-  let tdiff = Date.parse(alarms[idx].time) - Date.now();
-  let msg = alarms[idx].msg;
-  if(tdiff > 0) {
-    /*console.log(`will alarm ${msg} in ${tdiff}`);*/
-    setTimeout(checkMsgs, tdiff);
-  }
-}
-
-let xs = 0.5;
-let ys = 0.75;
+// our scale factor
+let xs = 0.5 * wX/240;
+let ys = 0.75 * wY/240;
 
 let prevH1 = -1;
 let prevH2 = -1;
@@ -52,7 +49,7 @@ let prevM1 = -1;
 let prevM2 = -1;
 
 
-let points0 = [
+let points0 = new Uint8Array([
   0, 40,
   1, 35,
   7, 20, 
@@ -79,11 +76,11 @@ let points0 = [
   1, 64,
   0, 59,
   0, 40
-];
+]);
 
-let points1 = [ 40, 99, 40, 0];
+let points1 = new Uint8Array([ 40, 99, 40, 0]);
 
-let points2 = [ 0, 25,
+let points2 = new Uint8Array([ 0, 25,
                2, 22,
               6, 13, 
               17, 5,
@@ -103,11 +100,11 @@ let points2 = [ 0, 25,
               8, 80,
               0, 99,
               79, 99
-              ];
+              ]);
 
-let points4 = [ 60, 99, 60, 0, 0, 75, 79, 75 ];
+let points4 = new Uint8Array([ 60, 99, 60, 0, 0, 75, 79, 75 ]);
 
-let points8 = [
+let points8 = new Uint8Array([
   40, 40,
   26, 42,
   15, 46,
@@ -148,9 +145,9 @@ let points8 = [
   18, 34,
   28, 39,
   40, 40,
-  ];
+  ]);
 
-let points6 = [
+let points6 = new Uint8Array([
   50, 0,
   4, 56,
   1, 66,
@@ -171,9 +168,9 @@ let points6 = [
   26, 42,
   15, 46,
   4, 56,
-  ];
+  ]);
 
-let points3 = [
+let points3 = new Uint8Array([
   1, 77,
   6, 87,
   17, 94,
@@ -190,12 +187,12 @@ let points3 = [
   39, 40,
   79, 0,
   1, 0
-  ];
+  ]);
 
-let points7 = [ 0, 0, 79, 0, 30, 99 ];
+let points7 = new Uint8Array([ 0, 0, 79, 0, 30, 99 ]);
 
-let points9 = [];
-let points5 = [
+let points9 = new Uint8Array(points6.length);
+let points5 = new Uint8Array([
   1, 77,
   6, 87,
   17, 94,
@@ -215,7 +212,7 @@ let points5 = [
   15, 46,
   27,  0,
   79,  0,
-              ];
+]);
 
 function drawPoints(points, x0, y0) {
   let x = points[0]*xs+x0, y = points[1]*ys+y0;
@@ -245,8 +242,8 @@ for (let idx=0; idx*2 < points6.length; idx++) {
 pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
 
 function eraseDigit(d, x, y) {
-  if(d < 0) return;
-  g.setColor("#000000");
+  if(d < 0 || d > 9) return;
+  g.setColor(col_bg);
   if(nightMode) {
     drawPoints(pointsArray[d], x, y);
     return;
@@ -263,84 +260,101 @@ function eraseDigit(d, x, y) {
 
 function drawDigit(d, x, y) {
   if(nightMode) {
-    g.setColor("#206040");
+    g.setColor(col_nm);
     drawPoints(pointsArray[d], x, y);
     return;
   }
-  g.setColor("#202020");
+  g.setColor(col_off);
   for (let idx = pointsArray.length - 1; idx >= 0 ; idx--) {
     if(idx == d)  {
-      g.setColor("#FF0000");
+      g.setColor(col_shad1);
       drawPoints(pointsArray[d], x-2, y-2);
       drawPoints(pointsArray[d], x+2, y-2);
       drawPoints(pointsArray[d], x-2, y+2);
       drawPoints(pointsArray[d], x+2, y+2);
-      g.setColor("#FF6000");
+      g.setColor(col_shad2);
       drawPoints(pointsArray[d], x-1, y-1);
       drawPoints(pointsArray[d], x+1, y-1);
       drawPoints(pointsArray[d], x-1, y+1);
       drawPoints(pointsArray[d], x+1, y+1);
 
-      g.setColor("#FFC000");
+      g.setColor(col_hi);
       drawPoints(pointsArray[d], x, y);
 
-      g.setColor("#202020");
+      g.setColor(col_off);
     } else {
       drawPoints(pointsArray[idx], x, y);
     }
   }
 }
 
-function drawTime() {
-  const mstr="JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
+function drawBkgd(nm) {
+  g.clear();
+  prevH1=-1;prevH2=-1;prevM1=-1;prevM2=-1;
+  if(nm) return;
+  
+  if(!isB2) {
+    // tube images
+    g.setColor(col_shad2);
 
-  let d = new Date();
-  let hour = d.getHours();
-  let minute = d.getMinutes();
-  let month = d.getMonth();
-  let date = d.getDate();
+    [relX(0),relX(0.25),relX(0.5),relX(0.75)].forEach((v,i,a) => {
+      g.drawImage(imgTube,v,relY(0.225));
+    });
+    // something to sit on
+    g.setColor(col_shad2);
+    g.fillRect(0, relY(0.76),wX,relY(0.76));
+  } else {
+    // simple tubes
+     [1,45,89,133].forEach((v,i,a) => {
+       g.setColor(col_shad1);
+       g.drawEllipse(v, 52, v+41, 90);
+       g.drawRect(v,66,v+41,125);
+       g.clearRect(v+1,66,v+40,124);
+     });
+  }
+  g.setColor(col_shad2);
+  g.moveTo(relX(0.125), 0);
+  g.lineTo(relX(0.25), relY(0.125));
+  g.lineTo(relX(0.75), relY(0.125));
+  g.lineTo(relX(0.875),0);
+  
+  g.moveTo(relX(0.125), wY);
+  g.lineTo(relX(0.25), relY(0.875));
+  g.lineTo(relX(0.75), relY(0.875));
+  g.lineTo(relX(0.875), wY);
 
-  let h1 = Math.floor(hour / 10);
-  let h2 = hour % 10;
-  let m1 = Math.floor(minute / 10);
-  let m2 = minute % 10;
+}
+  
+function drawTime(d,nm) {
+  const dx = [relX(0.042), relX(0.29), relX(0.55), relX(0.791)]; //[ 10, 65, 135, 190];
+  const dy = [relY(0.38),relY(0.38),relY(0.38),relY(0.38)];
+  
+  let h1 = Math.floor(d.hour / 10);
+  let h2 = d.hour % 10;
+  let m1 = Math.floor(d.min / 10);
+  let m2 = d.min % 10;
 
   if(h1 == prevH1 && h2 == prevH2 && m1 == prevM1 && m2 == prevM2) {
     return;
   }
+  nightMode = nm;
 
   if(h1 != prevH1) {
-    eraseDigit(prevH1, 10, 80);
-    drawDigit(h1, 10, 80);
+    eraseDigit(prevH1, dx[0], dy[0]);
+    drawDigit(h1, dx[0], dy[0]);
   }
   if(h2 != prevH2) {
-    eraseDigit(prevH2, 65, 80);
-    drawDigit(h2, 65, 80);
+    eraseDigit(prevH2, dx[1], dy[1]);
+    drawDigit(h2, dx[1], dy[1]);
   }
   if(m1 != prevM1) {
-    eraseDigit(prevM1, 135, 80);
-    drawDigit(m1, 135, 80);
+    eraseDigit(prevM1, dx[2], dy[2]);
+    drawDigit(m1, dx[2], dy[2]);
   }
   if(m2 != prevM2) {
-    eraseDigit(prevM2, 190, 80);
-    drawDigit(m2, 190, 80);
+    eraseDigit(prevM2, dx[3], dy[3]);
+    drawDigit(m2, dx[3], dy[3]);
   }
-  if(!nightMode) {
-    g.setColor("#000000");
-    g.fillRect(0, 10, 240, 24);
-    g.fillRect(0, 222, 240, 240);
-    g.setColor("#202020");
-    g.drawLine(0, 24, 239, 24);
-    g.drawLine(0, 226, 239, 226);
-    g.setColor("#C06000");
-    g.setFontAlign(0, -1);
-    g.drawString(mstr.slice(month*3,month*3+3) + " " + date, 120, 10);
-    g.setFontAlign(-1,-1);
-    g.drawString("STEP " + stepCounter, 0, 230);
-    g.setFontAlign(1,-1);
-    g.drawString("BTY "+E.getBattery(), 240, 230);
-  }
-
   prevH1 = h1;
   prevH2 = h2;
   prevM1 = m1;
@@ -348,56 +362,68 @@ function drawTime() {
 
 }
 
-function btn1Func() {
-  if(alarming) {
-    alarming = false;
-  } else {
-    nightMode = !nightMode;
-    g.setRotation(nightMode ? 1 : 0, 0);
-  }
-    g.clear();
-    prevH1 = -1;
-    prevH2 = -1;
-    prevM1 = -1;
-    prevM2 = -1;
-    drawTime();
-}
-
-function stop () {
-  if (interval) {
-    clearInterval(interval);
+function drawData(d) {
+  if(!nightMode) {
+    g.setColor(col_data);
+    g.setFontAlign(0, -1);
+    g.drawString(` ${d.dow}, ${d.mon3} ${d.date} `, wX/2, relX(0.042), true);
+    g.setFontAlign(-1,-1);
+    g.drawString("STEP ", 0, relY(0.82), true);
+    g.drawString(`${d.steps} `,0, relY(0.875), true);
+    g.setFontAlign(1,-1);
+    g.drawString(" BTY", relX(0.999), relY(0.82), true);
+    g.drawString(` ${d.batt}`, relX(0.999), relY(0.875), true);
+    g.setFontAlign(0,-1);
+    g.setColor(col_shad2);
+    g.drawString('BANGLE.JS', wX/2, relY(0.925));
   }
 }
 
-function start () {
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(drawTime, 10000);
-  drawTime();
+//setWatch(E.showLauncher, BTN1, {repeat:true,edge:"falling"});
+if(EMULATOR) {
+  let d = new Date();
+
+  let hour = d.getHours();
+  let minute = d.getMinutes();
+
+  let h1 = Math.floor(hour / 10);
+  let h2 = hour % 10;
+  let m1 = Math.floor(minute / 10);
+  let m2 = minute % 10;
+
+  let data = {
+    h1: h1,
+    h2: h2,
+    m1: m1,
+    m2: m2,
+    hour: hour,
+    min: minute,
+  };
+
+  drawBkgd(nightMode);
+
+  drawTime(data, nightMode);
+  const mstr="JanFebMarAprMayJunJulAugSepOctNovDec";
+  const dowstr = "SunMonTueWedThuFriSat";
+
+  let month = d.getMonth();
+  let dow = d.getDay();
+  data.month = month;
+  data.date = d.getDate();
+
+  data.mon3 = mstr.slice(month*3,month*3+3);
+  data.dow = dowstr.substr(dow*3,3);
+  data.dateStr = data.dow + " " + data.mon3 + " " + data.date;
+  data.steps = 12345;
+  data.batt = E.getBattery() + (Bangle.isCharging() ? "+" : "");
+  data.charging = Bangle.isCharging();
+
+  drawData(data);
+} else { 
+  Bangle.setUI("clock");
+  let v = require("m_vatch.js");
+  v.setDrawTime(drawTime);
+  v.setDrawBackground(drawBkgd);
+  v.setDrawData(drawData);
+  v.begin();
 }
-
-start();
-
-
-Bangle.on('lcdPower', function (on) {
-  if (on) {
-    start();
-  } else {
-    stop();
-  }
-});
-
-
-function btn3Func() {
-  showMsg("This is a test message");
-}
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-// redraw
-setWatch(btn1Func, BTN1, {repeat:true,edge:"falling"});
-setWatch(btn3Func, BTN3, {repeat:true,edge:"falling"});
-Bangle.on('step', function(cnt) { 
-  stepCounter = cnt / 10;
-});
