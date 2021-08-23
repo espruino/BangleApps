@@ -156,7 +156,8 @@ function draw(){
 
     g.setColor(0,0,0);
     g.drawString("Score:  "+score,180,5);
-    g.drawString("High Score:  "+currentHighScore,180,15);
+    g.drawString("HighScore:",178,15);
+    g.drawString(currentHighScore,205,25);
 
     if(BackgroundYPosition > 170){
       BackgroundYPosition = BackgroundStartingPosition;
@@ -230,3 +231,10 @@ setWatch(() => {
     score = 0;
   }
 }, BTN2, {repeat:true});
+
+
+
+
+
+
+
