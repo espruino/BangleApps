@@ -1,5 +1,6 @@
 let oldg;
 let id = null;
+let hideCallback = null;
 
 /**
  * See notify/notify.js
@@ -40,6 +41,7 @@ function fitWords(text,rows,width) {
    render : function(y) // function callback to render
    bgColor : int/string // optional background color (default black)
    titleBgColor : int/string // optional background color for title (default black)
+   onHide : function() // callback when notification is hidden
  }
 */
 exports.show = function(options) {
@@ -65,7 +67,6 @@ exports.show = function(options) {
     if (options.title && options.src) {
       g.setColor(-1).setFontAlign(1, 1, 0).setFont("6x8", 2);
       // above drawing area, but we are fullscreen
-      print(options.src.substring(0, 10), w-23, y-4);
       g.drawString(options.src.substring(0, 10), w-16, y-4);
     }
     y += 30;h -= 30;
@@ -94,6 +95,8 @@ exports.show = function(options) {
     Bangle.setLCDPower(1); // light up
   }
   Bangle.on("touch", exports.hide);
+  if (options.onHide)
+    hideCallback = options.onHide;
   // Create a fake graphics to hide draw attempts
   oldg = g;
   g = Graphics.createArrayBuffer(8,8,1);
@@ -108,6 +111,8 @@ exports.show = function(options) {
 exports.hide = function(options) {
   options = options||{};
   if ("id" in options && options.id!==id) return;
+  if (hideCallback) hideCallback({id:id});
+  hideCallback = undefined;
   id = null;
   if (oldg) {
     g=oldg;
@@ -122,7 +127,7 @@ exports.hide = function(options) {
     Bangle.setLCDPower(1);
   }
   // hack for E.showMenu/showAlert/showPrompt - can force a redraw by faking next/back
-  if (Bangle.btnWatches) {
+  if (!Bangle.CLOCK && Bangle.btnWatches && Bangle.btnWatches.length==3) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
     global["\xff"].watches[Bangle.btnWatches[1]].callback();
   }

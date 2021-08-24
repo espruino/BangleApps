@@ -140,13 +140,13 @@ function drawTime(d) {
     g.clearRect(0, 24, moonX - moonR - 10, 239);
     g.setColor(1, 1, 1);
     g.setFontAlign(-1, -1);
-    g.setFont("Vector", 100);
+    g.setFont("Vector", 130);
     g.drawString(hours, 40, 24, true);
     g.setColor(1, 50, 1);
-    g.drawString(minutes, 40, 135, true);
+    g.drawString(minutes, 40, 130, true);
     g.setFont("Vector", 20);
     g.setRotation(3);
-    g.drawString(`${dow} ${day} ${month}`, 50, 10, true);
+    g.drawString(`${dow} ${day} ${month}`, 60, 10, true);
     g.drawString(year, is12Hour ? 46 : 75, 205, true);
     lastMinutes = minutes;
   }
@@ -179,9 +179,9 @@ Bangle.on("lcdPower", function(on) {
 
 Bangle.setLCDMode();
 
-// Show launcher when middle button pressed
-clearWatch();
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 if (BTN1app) setWatch(
   function() {
     load(BTN1app);

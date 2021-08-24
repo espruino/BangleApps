@@ -136,8 +136,9 @@ require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   boot += "//"+bootFile+"\n"+require('Storage').read(bootFile)+"\n";
 });
 boot += "}\n";// initial 'if'
-var s = require('Storage').write('.boot0',boot);
+require('Storage').write('.boot0',boot);
 delete boot;
 E.showMessage("Reloading...");
 eval(require('Storage').read('.boot0'));
-eval(require('Storage').read('.bootcde'));
+// .bootcde should be run automatically after if required, since
+// we normally get called automatically from '.boot0'

@@ -3,6 +3,8 @@ Bangle.setLCDTimeout(0);
 Bangle.setHRMPower(1);
 var hrmInfo, hrmOffset = 0;
 var hrmInterval;
+var btm = g.getHeight()-1;
+
 function onHRM(h) {
   if (counter!==undefined) {
     // the first time we're called remove
@@ -26,7 +28,7 @@ function onHRM(h) {
 
   var px = g.getWidth()/2;
   g.setFontAlign(0,0);
-  g.clearRect(0,24,239,90);
+  g.clearRect(0,24,239,80);
   g.setFont("6x8").drawString("Confidence "+hrmInfo.confidence+"%", px, 75);
   var str = hrmInfo.bpm;
   g.setFontVector(40).drawString(str,px,45);
@@ -38,17 +40,21 @@ Bangle.on('HRM', onHRM);
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
 Bangle.on('HRM-raw', function(v) {
-  var a = v.raw;
   hrmOffset++;
   if (hrmOffset>g.getWidth()) {
     hrmOffset=0;
-    g.clearRect(0,90,239,239);
+    g.clearRect(0,80,239,239);
     g.moveTo(-100,0);
   }
 
-  y = E.clip(170 - (v.raw*2),100,230);
-  g.setColor(1,1,1);
-  g.lineTo(hrmOffset, y);
+  y = E.clip(btm-v.filt/4,btm-10,btm);
+  g.setColor(1,0,0).fillRect(hrmOffset,btm, hrmOffset, y);
+  y = E.clip(170 - (v.raw/2),80,btm);
+  g.setColor(g.theme.fg).lineTo(hrmOffset, y);
+  if (counter !==undefined) {
+    counter = undefined;
+    g.clear();
+  }
 });
 
 // It takes 5 secs for us to get the first HRM event
@@ -80,7 +86,6 @@ function readHRM() {
     var a = hrmInfo.raw[hrmOffset];
     hrmOffset++;
     y = E.clip(170 - (a*2),100,230);
-    g.setColor(1,1,1);
-    g.lineTo(hrmOffset, y);
+    g.setColor(g.theme.fg).lineTo(hrmOffset, y);
   }
 }
