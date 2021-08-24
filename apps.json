@@ -3410,5 +3410,20 @@
     {"name":"thermomF.app.js","url":"app.js"},
     {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "vNixie",
+  "name": "Nixie Clock",
+  "shortName":"Nixie",
+  "icon": "nixie.png",
+  "version":"1.0",
+  "description": "A nixie tube clock for both Bangle 1 and 2.",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"nixie.app.js","url":"app.js"},
+    {"name":"nixie.img","url":"app-icon.js","evaluate":true},
+    {"name":"m_vatch.js","url":"m_vatch.js"}
+  ]
 }
 ]
