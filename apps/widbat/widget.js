@@ -23,7 +23,7 @@
     Bangle.drawWidgets(); // relayout widgets
     g.flip();
   });
-  var batteryInterval;
+  var batteryInterval = Bangle.isLCDOn() ? setInterval(()=>WIDGETS["bat"].draw(), 60000) : undefined;
   Bangle.on('lcdPower', function(on) {
     if (on) {
       WIDGETS["bat"].draw();
