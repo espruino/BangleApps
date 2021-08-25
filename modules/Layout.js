@@ -1,39 +1,101 @@
-if (!g.theme) {
-  g.theme = {
-    fg:-1,bg:0,fgH:-1,bgH:"#008"
-  };
-}
+
+/*
+
+Usage:
+
+var layout = new Layout( layoutObject, btns )
+layout.render(optionalObject);
+
+layoutObject has:
+
+* A `type` field of:
+  * `undefined` - blank, can be used for padding
+  * `"txt"` - a text label, with value `label` and `r` for text rotation
+  * `"btn"` - a button, with value `label` and callback `cb`
+  * `"img"` - an image where the function `src` is called to return an image to draw
+  * `"custom"` - a custom block where `render(layoutObj)` is called to render
+  * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
+  * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
+* A `id` field. If specified the object is added with this name to the
+  returned `layout` object, so can be referenced as `layout.foo`
+* A `font` field, eg `6x8` or `30%` to use a percentage of screen height
+* A `col` field, eg `#f00` for red
+* A `bgCol` field for background color (will automatically fill on render)
+* A `halign` field to set horizontal alignment. `-1`=left, `1`=right, `0`=center
+* A `valign` field to set vertical alignment. `-1`=top, `1`=bottom, `0`=center
+* A `pad` integer field to set pixels padding
+* A `fillx` boolean to choose if the object should fill available space in x
+* A `filly` boolean to choose if the object should fill available space in y
+* `width` and `height` fields to optionally specify minimum size
+
+btns is an array of objects containing:
+
+* `label` - the text on the button
+* `cb` - a callback function
+* `cbl` - a callback function for long presses
+
+Once `layout.update()` is called, the following fields are added
+to each object:
+
+* `x` and `y` for the top left position
+* `w` and `h` for the width and height
+* `_w` and `_h` for the **minimum** width and height
+
+
+Other functions:
+
+* `layout.update()` - update positions of everything if contents have changed
+* `layout.debug(obj)` - draw outlines for objects on screen
+* `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
+
+*/
+
 
 function Layout(layout, buttons) {
   this._l = this.l = layout;
   this.b = buttons;
-  // Do we have physical buttons?
-  this.physBtn = process.env.HWVERSION!=2;
+  // Do we have >1 physical buttons?
+  this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
   this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
 
-  if (buttons) {
-    var btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
-    if (this.physBtn) {
+  if (buttons) {    
+    if (this.physBtns >= buttons.length) {
+      // enough physical buttons
+      var btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
       Bangle.btnWatch = [];
+      if (this.physBtns > 2 && buttons.length==1)
+        buttons.unshift({label:""}); // pad so if we have a button in the middle
+      while (this.physBtns > buttons.length)
+        buttons.push({label:""});
       if (buttons[0]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
       if (buttons[1]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
       if (buttons[2]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
       this._l.width = g.getWidth()-8; // text width
-      this._l = {type:"h", content: [
+      this._l = {type:"h", filly:1, c: [
         this._l,
-        {type:"v", content: buttons.map(b=>(b.type="txt",b.font="6x8",b.height=btnHeight,b.r=1,b))}
+        {type:"v", pad:1, filly:1, c: buttons.map(b=>(b.type="txt",b.font="6x8",b.height=btnHeight,b.r=1,b))}
       ]};
-    } else { // no physical buttons, use touchscreen
+    } else {
+      var btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
       this._l.width = g.getWidth()-20; // button width
-      this._l = {type:"h", content: [
+      this._l = {type:"h", c: [
         this._l,
-        {type:"v", content: buttons.map(b=>(b.type="btn",b.height=btnHeight,b.width=32,b.r=1,b))}
+        {type:"v", c: buttons.map(b=>(b.type="btn",b.h=btnHeight,b.w=32,b.r=1,b))}
       ]};
       Bangle.touchHandler = (_,e) => touchHandler(this._l,e);
       Bangle.on('touch',Bangle.touchHandler);
     }
   }
+  
+  // add IDs
+  var ll = this;
+  function idRecurser(l) {
+    if (l.id) ll[l.id] = l;
+    if (l.c) l.c.forEach(idRecurser);
+  }
+  idRecurser(layout);
+  this.update();
 }
 
 Layout.prototype.remove = function (l) {
@@ -59,7 +121,7 @@ function pressHandler(btn,e) {
 function touchHandler(l,e) {
   if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h)
     l.cb(e);
-  if (l.content) l.content.forEach(n => touchHandler(n,e));
+  if (l.c) l.c.forEach(n => touchHandler(n,e));
 }
 
 
@@ -68,7 +130,13 @@ function updateMin(l) {
     case "txt": {
       if (l.font.endsWith("%"))
         l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      g.setFont(l.font);
+      // Not needed in new firmwares - 'font' is enough
+      if (l.font.includes(":")) {
+        var f = l.font.split(":");
+        l.font = f[0];
+        l.fsz = f[1];
+      }
+      g.setFont(l.font,l.fsz);
       l._h = g.getFontHeight();
       l._w = g.stringWidth(l.label);
       break;
@@ -84,6 +152,7 @@ function updateMin(l) {
       l._w = im.charCodeAt(1);
       break;
     }
+    case undefined:
     case "custom": {
       // size should already be set up in width/height
       l._w = 0;
@@ -91,17 +160,17 @@ function updateMin(l) {
       break;
     }
     case "h": {
-      l.content.forEach(updateMin);
-      l._h = l.content.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
-      l._w = l.content.reduce((a,b)=>a+b._w+(b.pad<<1),0);
-      l.fill |= l.content.some(c=>c.fill);
+      l.c.forEach(updateMin);
+      l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
+      l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
+      l.fillx |= l.c.some(c=>c.fillx);
       break;
     }
     case "v": {
-      l.content.forEach(updateMin);
-      l._h = l.content.reduce((a,b)=>a+b._h+(b.pad<<1),0);
-      l._w = l.content.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
-      l.fill |= l.content.some(c=>c.fill);
+      l.c.forEach(updateMin);
+      l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
+      l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
+      l.filly |= l.c.some(c=>c.filly);
       break;
     }
     default: throw "Unknown item type "+l.type;
@@ -116,9 +185,10 @@ function render(l) {
   if (!l) l = this.l;
   g.reset();
   if (l.col) g.setColor(l.col);
+  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w,l.y+l.h);
   switch (l.type) {
     case "txt":
-      g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+      g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
       break;
     case "btn":
       var poly = [
@@ -141,7 +211,7 @@ function render(l) {
     l.render(l);
     break;
   }
-  if (l.content) l.content.forEach(render);
+  if (l.c) l.c.forEach(render);
 }
 
 Layout.prototype.render = function (l) {
@@ -152,23 +222,24 @@ Layout.prototype.render = function (l) {
 Layout.prototype.layout = function (l) {
   // l = current layout element
   // exw,exh = extra width/height available
-  var fill = l.content.reduce((a,l)=>a+(0|l.fill),0);
+  var fillx = l.c.reduce((a,l)=>a+(0|l.fillx),0);
+  var filly = l.c.reduce((a,l)=>a+(0|l.filly),0);
   switch (l.type) {
     case "h": {
       let x = l.x + (l.w-l._w)/2;
-      if (fill) { x = l.x; }
-      l.content.forEach(c => {
-        c.w = c._w + (c.fill?(l.w-l._w)/fill:0);
-        c.h = c.fill ? l.h : c._h;
+      if (fillx) { x = l.x; }
+      l.c.forEach(c => {
+        c.w = c._w + (c.fillx?(l.w-l._w)/fillx:0);
+        c.h = c.filly ? l.h : c._h;
         c.x = x;
         c.y = l.y + (1+(0|c.valign))*(l.h-c.h)/2;
         x += c.w;
         if (c.pad) {
           x += c.pad*2;
-          c.x += c.pad;
-          c.y += c.pad;
+          c.w += c.pad*2;
+          c.h += c.pad*2;
         }
-        if (c.content) {
+        if (c.c) {
           this.layout(c);
         }
       });
@@ -176,19 +247,19 @@ Layout.prototype.layout = function (l) {
     }
     case "v": {
       let y = l.y + (l.h-l._h)/2;
-      if (fill) { y = l.y; }
-      l.content.forEach(c => {
-        c.w = c.fill ? l.w : c._w;
-        c.h = c._h + (c.fill?(l.h-l._h)/fill:0);
+      if (filly) { y = l.y; }
+      l.c.forEach(c => {
+        c.w = c.fillx ? l.w : c._w;
+        c.h = c._h + (c.filly?(l.h-l._h)/filly:0);
         c.x = l.x + (1+(0|c.halign))*(l.w-c.w)/2;
         c.y = y;
         y += c.h;
         if (c.pad) {
           y += c.pad*2;
-          c.x += c.pad;
-          c.y += c.pad;
+          c.w += c.pad*2;
+          c.h += c.pad*2;
         }
-        if (c.content) this.layout(c);
+        if (c.c) this.layout(c);
       });
       break;
     }
@@ -199,7 +270,7 @@ Layout.prototype.debug = function(l,c) {
   c=c||1;
   g.setColor(c&1,c&2,c&4).drawRect(l.x+c-1, l.y+c-1, l.x+l.w-c, l.y+l.h-c);
   c++;
-  if (l.content) l.content.forEach(n => this.debug(n,c));
+  if (l.c) l.c.forEach(n => this.debug(n,c));
 };
 Layout.prototype.update = function() {
   var l = this._l;
@@ -209,7 +280,7 @@ Layout.prototype.update = function() {
   // update sizes
   updateMin(l);
   // center
-  if (l.fill) {
+  if (l.fillx || l.filly) {
     l.w = w;
     l.h = h;
     l.x = 0;
@@ -226,7 +297,9 @@ Layout.prototype.update = function() {
 
 Layout.prototype.clear = function(l) {
   if (!l) l = this._l;
-  g.reset().clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
+  g.reset();
+  if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
+  g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
 };
 
 exports = Layout;
