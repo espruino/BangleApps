@@ -27,3 +27,5 @@
 0.26: Remove buzz in setUI polyfill (#750)
 0.27: Update polyfill for most recent changes
 0.28: Fix double clock load after settings are changed
+0.29: Update boot0 to avoid code block (faster execution)
+      Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
