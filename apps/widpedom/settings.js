@@ -5,6 +5,7 @@
   let s = {
     'goal': 10000,
     'progress': false,
+    'hide': false
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -38,6 +39,14 @@
       format: () => (s.progress ? 'Yes' : 'No'),
       onchange: () => {
         s.progress = !s.progress
+        save()
+      },
+    },
+    'Hide Widget': {
+      value: s.hide,
+      format: () => (s.hide ? 'Yes' : 'No'),
+      onchange: () => {
+        s.hide = !s.hide
         save()
       },
     },
