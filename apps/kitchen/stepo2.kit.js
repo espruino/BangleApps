@@ -62,12 +62,17 @@
     }
     
     function onButtonLong(btn) {
-      trip.resetTrip(getSteps());
-      infoMode = INFO_TRIP;
-      forceRedraw();
-      draw();
+      if (btn === 1) {
+        trip.resetTrip(getSteps());
+        infoMode = INFO_TRIP;
+        forceRedraw();
+        draw();
+        return;
+      }
+
+      if (btn === 2) Bangle.showLauncher();
     }
-    
+
     function radians(a) {
       return a*Math.PI/180;
     }
@@ -207,7 +212,8 @@
       var midrot = -180 - (360 * percent);
       var endrot = -360  - 180;
 
-      g.setColor(0x07FF);   // light cyan
+      //g.setColor(0x07FF);   // light cyan
+      g.setColor(0xFFC0);  // yellow
 
       // draw guauge
       for (i = startrot; i > midrot; i -= 3) {
@@ -218,8 +224,8 @@
 
       // change the remaining color to RED if battery is below 25%
       if (E.getBattery() > 25) {
-        //g.setColor(0x7BEF); // grey
-        g.setColor(0x000D);   // dark navy
+        g.setColor(0x7BEF); // grey
+        //g.setColor(0x000D);   // dark navy
       } else {
         g.setColor(0xF800); // red
       }
