@@ -14,6 +14,7 @@
     const DEFAULTS = {
       'goal': 10000,
       'progress': false,
+      'large': false,
       'hide': false
     }
     return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -48,6 +49,17 @@
     }
   }
 
+  // show the step count in the widget area in a readable sized font
+  function draw_large(st) {
+    var width = 12 * st.length; 
+    g.reset();
+    g.clearRect(this.x, this.y, this.x + width, this.y + 16); // erase background
+    g.setColor(g.theme.fg);
+    g.setFont("6x8",2);
+    g.setFontAlign(-1, -1);
+    g.drawString(st, this.x + 4, this.y + 2);
+  }
+
   // draw your widget
   function draw() {
     if (setting('hide')) return;
@@ -56,6 +68,10 @@
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
     let stps = stp_today.toString();
+    if (setting('large')) {
+      draw_large.call(this, stps);
+      return;
+    }
     g.reset().clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
     if (setting('progress')){ drawProgress.call(this, stps); }
     g.setColor(g.theme.fg);

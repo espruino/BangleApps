@@ -5,6 +5,7 @@
   let s = {
     'goal': 10000,
     'progress': false,
+    'large': false,
     'hide': false
   }
   // ...and overwrite them with any saved values
@@ -39,6 +40,14 @@
       format: () => (s.progress ? 'Yes' : 'No'),
       onchange: () => {
         s.progress = !s.progress
+        save()
+      },
+    },
+    'Large Digits': {
+      value: s.large,
+      format: () => (s.large ? 'Yes' : 'No'),
+      onchange: () => {
+        s.large = !s.large
         save()
       },
     },
