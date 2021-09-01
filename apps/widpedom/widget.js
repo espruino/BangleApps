@@ -1,6 +1,9 @@
 (() => {
   const PEDOMFILE = "wpedom.json"
+  // Last time Bangle.on('step' was called
   let lastUpdate = new Date();
+  // Last step count when Bangle.on('step' was called
+  var lastStepCount;
   let stp_today = 0;
   let settings;
 
@@ -51,7 +54,7 @@
 
   // show the step count in the widget area in a readable sized font
   function draw_large(st) {
-    var width = 12 * st.length; 
+    var width = 12 * st.length;
     g.reset();
     g.clearRect(this.x, this.y, this.x + width, this.y + 16); // erase background
     g.setColor(g.theme.fg);
@@ -92,13 +95,16 @@
     draw()
   }
 
-  Bangle.on('step', (up) => {
+  Bangle.on('step', stepCount => {
+    var steps = stepCount-lastStepCount;
+    if (lastStepCount===undefined || steps<0) steps=1;
+    lastStepCount = stepCount;
     let date = new Date();
     if (lastUpdate.getDate() == date.getDate()){
-      stp_today ++;
+      stp_today += steps;
     } else {
       // TODO: could save this to PEDOMFILE for lastUpdate's day?
-      stp_today = 1;
+      stp_today = steps;
     }
     if (stp_today === setting('goal')
         && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
