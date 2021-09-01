@@ -5,6 +5,7 @@
 
 const storage = require("Storage");
 const filename = 'beebjson';
+var timeout;
 
 require('FontTeletext10x18Ascii').add(Graphics);
 
@@ -153,15 +154,21 @@ let hours, minutes, seconds, date;
 // Schedule event for calling at the start of the next second
 const inOneSecond = (cb) => {
   let now = new Date();
-  clearTimeout();
-  setTimeout(cb, 1000 - now.getMilliseconds());
+  if (timeout) clearTimeout(timeout);
+  timeout = setTimeout(function() {
+    timeout = undefined;
+    cb();
+  }, 1000 - now.getMilliseconds());
 };
 
 // Schedule event for calling at the start of the next minute
 const inOneMinute = (cb) => {
   let now = new Date();
-  clearTimeout();
-  setTimeout(cb, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()));
+  if (timeout) clearTimeout(timeout);
+  timeout = setTimeout(function() {
+    timeout = undefined;
+    cb();
+  }, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()));
 };
 
 // Draw a fat hour/minute hand
@@ -376,6 +383,7 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     drawAll();
   } else {
-    clearTimeout();
+    if (timeout) clearTimeout(timeout);
+    timeout = undefined;
   }
 });
