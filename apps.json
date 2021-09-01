@@ -2039,7 +2039,7 @@
     "id": "beebclock",
     "name": "Beeb Clock",
     "icon": "beebclock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Clock face that may be coincidentally familiar to BBC viewers",
     "tags": "clock",
     "type": "clock",

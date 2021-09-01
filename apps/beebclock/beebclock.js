@@ -356,6 +356,7 @@ const changeSeconds = () => {
 };
 
 Bangle.loadWidgets();
+// widgets are drawn in drawAll()
 
 // Restore mode
 try {
@@ -373,8 +374,6 @@ drawAll();
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    Bangle.loadWidgets();
-    Bangle.drawWidgets();
     drawAll();
   } else {
     clearTimeout();
