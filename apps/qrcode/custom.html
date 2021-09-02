@@ -34,6 +34,23 @@
     <script src="../../core/lib/imageconverter.js"></script>
 
     <script>
+      var targetWidth = 200;
+      var targetHeight = 200;
+
+      function onInit(device) {
+        if (device && device.info && device.info.g) {
+          targetWidth = device.info.g.width - 20;
+          targetHeight = device.info.g.height - 20;
+        }
+        qrcode = new QRCode("qrcode", {
+          text: document.getElementById("url").value,
+          width: targetWidth,
+          height: targetHeight,
+          colorDark : "#000000",
+          colorLight : "#ffffff",
+        });
+      }
+
       //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
       function escapeString (string) {
         var to_escape = ['\\', ';', ',', ':', '"'];
@@ -70,13 +87,7 @@
             qrcode.makeCode(document.getElementById("url").value);
         }
       }
-      var qrcode = new QRCode("qrcode", {
-        text: document.getElementById("url").value,
-        width: 200,
-        height: 200,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-      });
+      var qrcode;
 
       document.getElementById("url").addEventListener("change", refreshQRCode);
       document.getElementById("ssid").addEventListener("change",refreshQRCode);
@@ -93,13 +104,11 @@
         var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
         var app = `var img = ${img};
 var content = ${JSON.stringify(content)};
-g.setColor(1,1,1);
-g.fillRect(0,0,239,239);
-g.drawImage(img,20,20);
-g.setFontAlign(0,0);
-g.setFont("6x8");
-g.setColor(0,0,0);
-g.drawString(content,120,230);
+g.clear(1).setColor(1,1,1).setBgColor(0,0,0);
+g.fillRect(0,0,g.getWidth()-1,g.getHeight()-1);
+g.drawImage(img,(g.getWidth()-img[0])/2,(g.getHeight()-img[1])/2);
+g.setFontAlign(0,0).setFont("6x8").setColor(0,0,0);
+g.drawString(content,g.getWidth()/2,g.getHeight()-(g.getHeight()-img[1])/4));
 g.setColor(1,1,1);
 `;
         sendCustomizedApp({

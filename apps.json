@@ -814,8 +814,8 @@
     "icon": "app.png",
     "version":"0.02",
     "description": "Use this to upload a customised QR code to Bangle.js",
-    "tags": "qrcode",
-    "custom": "custom.html",
+    "tags": "qrcode,b2",
+    "custom": "custom.html", "customConnect":true,
     "storage": [
       {"name":"qrcode.app.js"},
       {"name":"qrcode.img","url":"app-icon.js","evaluate":true}
@@ -1520,7 +1520,7 @@
     "version":"0.08",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps,b2",
-    "custom": "custom.html",
+    "custom": "custom.html", "customConnect":true,
     "storage": [
       {"name":"openstmap","url":"openstmap.js"},
       {"name":"openstmap.app.js","url":"app.js"},
