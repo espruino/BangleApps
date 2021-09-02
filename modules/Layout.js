@@ -3,14 +3,32 @@
 
 Usage:
 
+```
+var Layout = require("Layout");
 var layout = new Layout( layoutObject, btns )
 layout.render(optionalObject);
+```
+
+For example:
+
+```
+var Layout = require("Layout");
+var layout = new Layout( {
+  type:"v", c: [
+    {type:"txt", font:"20%", label:"12:00" },
+    {type:"txt", font:"6x8", label:"The Date" }
+  ]
+});
+g.clear();
+layout.render();
+```
+
 
 layoutObject has:
 
 * A `type` field of:
   * `undefined` - blank, can be used for padding
-  * `"txt"` - a text label, with value `label` and `r` for text rotation
+  * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
   * `"img"` - an image where the function `src` is called to return an image to draw
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
@@ -83,9 +101,11 @@ function Layout(layout, buttons) {
         this._l,
         {type:"v", c: buttons.map(b=>(b.type="btn",b.h=btnHeight,b.w=32,b.r=1,b))}
       ]};
-      Bangle.touchHandler = (_,e) => touchHandler(this._l,e);
-      Bangle.on('touch',Bangle.touchHandler);
     }
+  }
+  if (process.env.HWVERSION==2) {
+    Bangle.touchHandler = (_,e) => touchHandler(layout,e);
+    Bangle.on('touch',Bangle.touchHandler);    
   }
   
   // add IDs
@@ -130,7 +150,7 @@ function updateMin(l) {
     case "txt": {
       if (l.font.endsWith("%"))
         l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      // Not needed in new firmwares - 'font' is enough
+      // FIXME ':'/fsz not needed in new firmwares - it's handled internally
       if (l.font.includes(":")) {
         var f = l.font.split(":");
         l.font = f[0];
@@ -222,8 +242,8 @@ Layout.prototype.render = function (l) {
 Layout.prototype.layout = function (l) {
   // l = current layout element
   // exw,exh = extra width/height available
-  var fillx = l.c.reduce((a,l)=>a+(0|l.fillx),0);
-  var filly = l.c.reduce((a,l)=>a+(0|l.filly),0);
+  var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
+  var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
   switch (l.type) {
     case "h": {
       let x = l.x + (l.w-l._w)/2;
