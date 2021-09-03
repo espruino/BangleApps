@@ -2735,7 +2735,7 @@
   "name": "Heart Rate Variability monitor",
   "shortName":"HRV monitor",
   "icon": "hrv.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Heart Rate Variability monitor, see Readme for more info",
   "tags": "",
   "readme": "README.md",
