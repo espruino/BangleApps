@@ -1,11 +1,11 @@
 
 const Yoff = 80;
 var pal2color = new Uint16Array([0x0000,0xffff,0x07ff,0xC618],0,2);
-var buf = Graphics.createArrayBuffer(240,50,2,{msb:true});
+var buf = Graphics.createArrayBuffer(240,60,2,{msb:true});
 Bangle.setLCDTimeout(30);
 
 function flip(b,y) {
- g.drawImage({width:240,height:50,bpp:2,buffer:b.buffer, palette:pal2color},0,y);
+ g.drawImage({width:240,height:60,bpp:2,buffer:b.buffer, palette:pal2color},0,y);
  b.clear();
 }
 
@@ -14,7 +14,7 @@ var brg=null;
 
 function drawCompass(course) {
   buf.setColor(1);
-  buf.setFont("Vector",16);
+  buf.setFont("Vector",24);
   var start = course-90;
   if (start<0) start+=360;
   buf.fillRect(28,45,212,49);
@@ -89,7 +89,7 @@ function reading() {
   buf.setFont("6x8",2);
   buf.setFontAlign(-1,-1);
   buf.drawString("o",170,0);
-  buf.setFont("Vector",40);
+  buf.setFont("Vector",54);
   var course = Math.round(heading);
   var cs = course.toString();
   cs = course<10?"00"+cs : course<100 ?"0"+cs : cs;
@@ -163,7 +163,7 @@ var intervalRef;
 function startdraw(){
   g.clear();
   g.setColor(1,0.5,0.5);
-  g.fillPoly([120,Yoff+50,110,Yoff+70,130,Yoff+70]);
+  g.fillPoly([120,Yoff+60,110,Yoff+80,130,Yoff+80]);
   g.setColor(1,1,1);
   Bangle.drawWidgets();
   candraw = true;

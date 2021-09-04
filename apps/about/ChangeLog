@@ -4,3 +4,5 @@
 0.04: Actual pixels as of 9 Mar 2020
 0.05: Actual pixels as of 27 Apr 2020
 0.06: Actual pixels as of 12 Jun 2020
+0.07: Pressing a button now exits immediately (fix #618)
+0.08: Make about (mostly) work on non-240px screens

@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Added options to either run as a one-off reading, or a continuous mode to log data until the watch is reset
+0.03: Add RMSSD recording
+0.04: Modify to work with new heart rate API, but still not sure it's working correctly

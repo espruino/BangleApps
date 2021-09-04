@@ -1,15 +1,19 @@
 let counter = 0;
 let setValue = 0;
-let counterInterval;
+let counterInterval, alarmInterval, buzzInterval;
 let state;
 let saved = require("Storage").readJSON("simpletimer.json",true) || {};
 
 const DEBOUNCE = 50;
 
 function buzzAndBeep() {
+  buzzInterval = -1;
   return Bangle.buzz(1000, 1)
     .then(() => Bangle.beep(200, 3000))
-    .then(() => setTimeout(buzzAndBeep, 5000));
+    .then(() => {
+      if (buzzInterval==-1)
+        buzzInterval = setTimeout(buzzAndBeep, 5000);
+    });
 }
 
 function outOfTime() {
@@ -19,7 +23,8 @@ function outOfTime() {
   g.drawString("Time UP!", 120, 50);
   counter = setValue;
   buzzAndBeep();
-  setInterval(() => {
+  if (alarmInterval) clearInterval(alarmInterval);
+  alarmInterval = setInterval(() => {
     g.clearRect(0, 70, 220, 160);
     setTimeout(draw, 200);
   }, 400);
@@ -55,8 +60,12 @@ function countDown() {
 }
 
 function clearIntervals() {
-  clearInterval();
+  if (alarmInterval) clearInterval(alarmInterval);
+  if (counterInterval) clearInterval(counterInterval);
+  if (buzzInterval>0) clearTimeout(buzzInterval);
+  alarmInterval = undefined;
   counterInterval = undefined;
+  buzzInterval = undefined;
 }
 
 function set(delta) {
@@ -84,29 +93,35 @@ const stateMap = {
     startTimer();
   },
   started: () => {
-    reset(setValue);
+    resetTimer(setValue);
   },
   stopped: () => {
-    reset(setValue);
+    resetTimer(setValue);
   }
 };
 
 function changeState() {
   if (stateMap[state]) stateMap[state]();
+  drawLabels();
+  draw();
 }
 
 function drawLabels() {
   g.clear();
   g.setFontAlign(-1, 0);
   g.setFont("6x8", 7);
-  g.drawString(`+  +`, 35, 180);
+  if (state != "started") // only when not runnung
+    g.drawString(`+  +`, 35, 180);
   g.setFontAlign(0, 0, 3);
   g.setFont("6x8", 1);
-  g.drawString(`reset                   (re)start`, 230, 120);
+  g.drawString("Reset                   (re)start", 230, 120);
+  if (state != "started") // only when not runnung
+    g.drawString("Back", 230, 120);
 }
 
-function reset(value) {
+function resetTimer(value) {
   clearIntervals();
+  VIBRATE.reset(); // turn off vibration (clearIntervals stops the buzz turning off)
   counter = value;
   setValue = value;
   drawLabels();
@@ -129,11 +144,10 @@ function addWatch() {
   {
     repeat: false,
     edge: "falling",
-  },
-  );
+  });
   setWatch(
     () => {
-      reset(0);
+      resetTimer(0);
     },
     BTN3,
     {
@@ -160,8 +174,8 @@ function addWatch() {
   });
 }
 Bangle.on("aiGesture", gesture => {
-  if (gesture === "swipeleft" && state === "stopped") reset(0);
+  if (gesture === "swipeleft" && state === "stopped") resetTimer(0);
 });
 
-reset(saved.counter || 0);
+resetTimer(saved.counter || 0);
 addWatch();

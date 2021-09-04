@@ -1,91 +1,133 @@
-var pos = 0;
-var oldg;
+let oldg;
+let id = null;
+let hideCallback = null;
+
+/**
+ * See notify/notify.js
+ */
+function fitWords(text,rows,width) {
+  // We never need more than rows*width characters anyway, split by any whitespace
+  const words = text.trim().substr(0,rows*width).split(/\s+/);
+  let row=1,len=0,limit=width;
+  let result = "";
+  for (let word of words) {
+    // len==0 means first word of row, after that we also add a space
+    if ((len?len+1:0)+word.length > limit) {
+      if (row>=rows) {
+        result += "...";
+        break;
+      }
+      result += "\n";
+      len=0;
+      row++;
+      if (row===rows) limit -= 3; // last row needs space for "..."
+    }
+    result += (len?" ":"") + word;
+    len += (len?1:0) + word.length;
+  }
+  return result;
+}
+
 
 /**
  options = {
    on : bool // turn screen on, default true
    size : int // height of notification, default 120 (max)
    title : string // optional title
+   id // optional notification ID, used with hide()
    src : string // optional source name
    body : string // optional body text
    icon : string // optional icon (image string)
-   render function(y) // function callback to render
+   render : function(y) // function callback to render
+   bgColor : int/string // optional background color (default black)
+   titleBgColor : int/string // optional background color for title (default black)
+   onHide : function() // callback when notification is hidden
  }
 */
 exports.show = function(options) {
   if (oldg) g=oldg;
   options = options||{};
   if (options.on===undefined) options.on=true;
-  var h = options.size||120;
+  id = ("id" in options)?options.id:null;
+  let size = options.size||120;
+  if (size>120) {size=120}
   Bangle.setLCDMode("direct");
-  var y = 40;
-  var x = 4;
-  // clear area
-  g.clear(1);
+  let x = 0,
+    y = 40,
+    w = 240,
+    h = size;
+  // clear screen
+  g.setColor(options.bgColor||0).fillRect(0,0,g.getWidth(),g.getHeight());
   // top bar
-  var top = 0;
-  if (options.title) {
-    g.setColor(0x39C7).fillRect(0, y, 239, y+30);
+  if (options.title||options.src) {
+    const title = options.title || options.src
+    g.setColor(options.titleBgColor||0x39C7).fillRect(x, y, x+w-1, y+30);
     g.setColor(-1).setFontAlign(-1, -1, 0).setFont("6x8", 3);
-    g.drawString(options.title.trim().substring(0, 13), 5, y+3);
-    y+=30;
-  }
-  if (options.src) {
-    g.setColor(-1).setFontAlign(1, 1, 0).setFont("6x8", 2);
-    g.drawString(options.src.substring(0, 10), 235, y-32);
+    g.drawString(title.trim().substring(0, 13), x+5, y+3);
+    if (options.title && options.src) {
+      g.setColor(-1).setFontAlign(1, 1, 0).setFont("6x8", 2);
+      // above drawing area, but we are fullscreen
+      g.drawString(options.src.substring(0, 10), w-16, y-4);
+    }
+    y += 30;h -= 30;
   }
   if (options.icon) {
-    let i = options.icon;
-    g.drawImage(i, x,y+4);
-    if ("string"==typeof i) x += i.charCodeAt(0);
-    else x += i[0];
+    let i = options.icon, iw,ih;
+    if ("string"==typeof i) {iw=i.charCodeAt(0); ih=i.charCodeAt(1)}
+    else {iw=i[0]; ih=i[1]}
+    const iy=y ? (y+4) : (h-ih)/2; // show below title bar if present, otherwise center vertically
+    g.drawImage(i, x+4,iy);
+    x += iw+4;w -= iw+4;
   }
   // body text
   if (options.body) {
-    var body = options.body;
-    const maxChars = Math.floor((300-x)/16);
-    var limit = maxChars;
-    let row = 1;
-    let words = body.trim().replace("\n", " ").split(" ");
-    body = "";
-    for (var i = 0; i < words.length; i++) {
-      if (body.length + words[i].length + 1 > limit) {
-        if (row>=8) {
-          body += "...";
-          break;
-        }
-        body += "\n " + words[i];
-        row++;
-        limit += maxChars;
-        if (row==8) limit -= 4;
-      } else {
-        body += " " + words[i];
-      }
-    }
-    g.setColor(-1).setFont("6x8", 2).setFontAlign(-1, -1, 0).drawString(body, x-4, y+4);
+    const maxRows = Math.floor((h-4)/16), // font=2*(6x8)
+      maxChars = Math.floor((w-4)/12),
+      text=fitWords(options.body, maxRows, maxChars);
+    g.setColor(-1).setFont("6x8", 2).setFontAlign(-1, -1, 0).drawString(text, x+4, y+4);
   }
 
-  if (options.render) options.render(320 - h);
-
-  if (options.on) Bangle.setLCDPower(1); // light up
+  if (options.render) {
+    const area={x:x, y:y, w:w, h:h}
+    options.render(area);
+  }
+  if (options.on && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.setLCDPower(1); // light up
+  }
   Bangle.on("touch", exports.hide);
+  if (options.onHide)
+    hideCallback = options.onHide;
   // Create a fake graphics to hide draw attempts
   oldg = g;
   g = Graphics.createArrayBuffer(8,8,1);
   g.flip = function() {};
 };
 
-exports.hide = function() {
-  g=oldg;
-  oldg = undefined;
+/**
+ options = {
+   id // optional, only hide if current notification has this ID
+ }
+ */
+exports.hide = function(options) {
+  options = options||{};
+  if ("id" in options && options.id!==id) return;
+  if (hideCallback) hideCallback({id:id});
+  hideCallback = undefined;
+  id = null;
+  if (oldg) {
+    g=oldg;
+    oldg = undefined;
+  }
   Bangle.removeListener("touch", exports.hide);
   g.clear();
   Bangle.drawWidgets();
-  // flipping the screen off then on often triggers a redraw - it may not!
-  Bangle.setLCDPower(0);
-  Bangle.setLCDPower(1);
+  if (Bangle.isLCDOn() || !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    // flipping the screen off then on often triggers a redraw - it may not!
+    Bangle.setLCDPower(0);
+    Bangle.setLCDPower(1);
+  }
   // hack for E.showMenu/showAlert/showPrompt - can force a redraw by faking next/back
-  if (Bangle.btnWatches) {
+  if (!Bangle.CLOCK && Bangle.btnWatches && Bangle.btnWatches.length==3) {
     global["\xff"].watches[Bangle.btnWatches[0]].callback();
     global["\xff"].watches[Bangle.btnWatches[1]].callback();
   }

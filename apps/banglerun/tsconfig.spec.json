@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es2015"
+  },
+  "include": [
+    "test"
+  ]
+}

@@ -1,0 +1,7 @@
+0.01: New App
+0.02: Add different strike intervals and support for quiet time
+0.03: Bug fixes for setting attributes
+0.04: Add more time to strike and the strength
+0.05: Add display for the next strike time
+0.06: Move the next strike time to the first row of display
+0.07: Change the boot function to avoid reloading the entire watch

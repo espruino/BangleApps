@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
     <link rel="stylesheet" href="css/pwa.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
@@ -17,42 +18,6 @@
     <meta name="msapplication-TileColor" content="#5755d9">
     <meta name="theme-color" content="#5755d9">
     <title>Bangle.js App Loader</title>
-    <style>
-		.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
-		.navbar .navbar-brand {
-			color: #fff;
-      font-weight: bold;
-		}
-    .avatar img {
-      border-radius: 5px 5px 5px 5px;
-      background: #ddd;
-    }
-    #toastcontainer {
-      position:fixed;
-      bottom:8px;left:0px;right:0px;
-      z-index: 100;
-    }
-    .hero {
-      padding-bottom: 1rem;
-      padding-top: 1rem;
-      text-align:center;
-    }
-    .chip {
-      cursor: pointer;
-    }
-    .filter-nav {
-      display: inline-block;
-    }
-    .sort-nav {
-      float: right;
-    }
-    .tile-content { position: relative; }
-    .link-github {
-      position:absolute;
-      top: 36px;
-      left: -24px;
-    }
-	</style>
   </head>
   <body>
     <header class="navbar-primary navbar">
@@ -93,7 +58,7 @@
     <div class="container"  id="toastcontainer">
     </div>
 
-    <div class="container bangle-tab" id="librarycontainer">
+    <div class="container apploader-tab" id="librarycontainer">
       <div>
         <div class="filter-nav">
           <label class="chip active" filterid="">Default</label>
@@ -124,7 +89,7 @@
       </div>
     </div>
 
-    <div class="container bangle-tab" id="myappscontainer" style="display:none">
+    <div class="container apploader-tab" id="myappscontainer" style="display:none">
       <div class="panel">
         <div class="panel-header" style="text-align:right">
           <button class="btn refresh">Refresh...</button>
@@ -134,7 +99,7 @@
       </div>
     </div>
 
-    <div class="container bangle-tab" id="aboutcontainer" style="display:none">
+    <div class="container apploader-tab" id="aboutcontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
           <a href="https://banglejs.com" target="_blank"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
@@ -143,6 +108,7 @@
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
+        <p><b>Can't connect?</b> Check out the <a href="https://www.espruino.com/Troubleshooting+Bangle.js" target="_blank">Bangle.js Troubleshooting page</a>
         <p id="apploaderlinks"></p>
         <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
           find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</a></p>
@@ -174,14 +140,15 @@
     </footer>
 
     <script src="https://www.puck-js.com/puck.js"></script>
-    <script src="lib/marked.min.js"></script>
-    <script src="lib/espruinotools.js"></script>
-    <script src="lib/heatshrink.js"></script>    
-    <script src="js/utils.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/comms.js"></script>
-    <script src="js/appinfo.js"></script>
-    <script src="js/index.js"></script>
-    <script src="js/pwa.js" defer></script>
+    <script src="core/lib/marked.min.js"></script>
+    <script src="core/lib/espruinotools.js"></script>
+    <script src="core/lib/heatshrink.js"></script>
+    <script src="core/js/utils.js"></script>
+    <script src="loader.js"></script>
+    <script src="core/js/ui.js"></script>
+    <script src="core/js/comms.js"></script>
+    <script src="core/js/appinfo.js"></script>
+    <script src="core/js/index.js"></script>
+    <script src="core/js/pwa.js" defer></script>
   </body>
 </html>

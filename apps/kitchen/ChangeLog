@@ -1,0 +1,13 @@
+0.01: First version
+0.02: compass disable BTN1,BTN2 while waiting for GPS to reach RUNNING status
+0.03: Don't buzz for GPS fix in Quiet Mode
+0.04: Added stopwatch face
+0.05: Stopwatch, hide hours if 0, fixed flicker when stopped, updated README issues
+0.06: Reduced memory footprint of compass, used direct screen access rather than arrayBuffer
+0.07: Added error codes if dependancies are missing
+0.08: Improved error handling for missing firmware features, added template app.kit.js
+0.09: Added heart rate monitor app
+0.10: Converted Stepo to use direct screen writes, added a Trip Counter feature to stepo
+0.11: Detect when waypoints.json is not present, error E-WPT
+0.12: Added stepo2 as a replacement for stepo and digi
+0.13: Added long press BTN2 toggle gpsrec status in GPS clock

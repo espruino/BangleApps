@@ -13,8 +13,8 @@ for Noble.
 var SETTINGS = {
   pretokenise : true
 };
-var Utils = require("../js/utils.js");
-var AppInfo = require("../js/appinfo.js");
+var Utils = require("../core/js/utils.js");
+var AppInfo = require("../core/js/appinfo.js");
 var noble;
 try {
   noble  = require('@abandonware/noble');
@@ -93,7 +93,7 @@ function cmdInstallApp(appId, deviceAddress) {
   return AppInfo.getFiles(app, {
     fileGetter:function(url) {
       console.log(__dirname+"/"+url);
-      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString());
+      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString("binary"));
     }, settings : SETTINGS}).then(files => {
     //console.log(files);
     var command = files.map(f=>f.cmd).join("\n")+"\n";
@@ -223,7 +223,7 @@ function bangleSend(command, deviceAddress) {
         if (!data.length) return callback();
         var d = data.substr(0,20);
         data = data.substr(20);
-        var buf = new Buffer(d.length);
+        var buf = new Buffer.alloc(d.length);
         progress++;
         if (progress>=10) {
           log("Writing "+amt+"/"+total);

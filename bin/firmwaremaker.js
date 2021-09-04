@@ -19,7 +19,14 @@ var APPS = [ // IDs of apps to install
 var MINIFY = true;
 
 var fs = require("fs");
-var AppInfo = require(ROOTDIR+"/js/appinfo.js");
+global.Const = {
+  /* Are we only putting a single app on a device? If so
+  apps should all be saved as .bootcde and we write info
+  about the current app into app.info */
+  SINGLE_APP_ONLY : false,
+};
+
+var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appjson = JSON.parse(fs.readFileSync(APPJSON).toString());
 var appfiles = [];
 
@@ -39,14 +46,14 @@ function fileGetter(url) {
     if (url.endsWith(".json")) {
       var f = url.slice(0,-5);
       console.log("MINIFYING JSON "+f);
-      var j = eval("("+fs.readFileSync(url).toString()+")");
+      var j = eval("("+fs.readFileSync(url).toString("binary")+")");
       var code = JSON.stringify(j);
       //console.log(code);
       url = f+".min.json";
       fs.writeFileSync(url, code);
     }
   }
-  return Promise.resolve(fs.readFileSync(url).toString());
+  return Promise.resolve(fs.readFileSync(url).toString("binary"));
 }
 
 Promise.all(APPS.map(appid => {

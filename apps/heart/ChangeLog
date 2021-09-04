@@ -1,3 +1,13 @@
 0.01: New App!
 0.02: Don't overwrite existing settings on app update
       Clean up recordings on app removal
+0.03: added graphing feature of 164 latest measurements
+0.04: Fix memory usage when viewing HRM traces
+0.05: Add loading screen for viewRecord
+      List average, minimum & maximum measurement in viewRecord
+      Disable recording only when current recording file is erased
+      Fix timezone offset
+      Draw chart based on height and width of display instead of hard-coded limits
+      Reduce memory usage by ~30%
+      Generate scale based on defined minimum and maximum measurement
+      Added background line on 50% to ease estimation of drawn values

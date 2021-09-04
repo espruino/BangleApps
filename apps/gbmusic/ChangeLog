@@ -1,0 +1,5 @@
+0.01: Initial version
+0.02: Increase text brightness, improve controls, (try to) reduce memory usage
+0.03: Only auto-start if active app is a clock, auto close after 1 hour of inactivity
+0.04: Setting to disable touch controls, minor bugfix
+0.05: Setting to disable double/triple press control, remove touch controls setting, reduce fadeout flicker
