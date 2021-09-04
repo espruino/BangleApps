@@ -1,5 +1,5 @@
 # Car Crazy
-Car crazy is a fun game where you tilt your wrist left and right to avoid incoming cars. If you get hit by a car you lose a heart. In the game you have three hearts, if you get hit 3 times you are sent to the game over screen. Recently levels have been added making the game get harder as you play. Your goal is to try to last as long as you can. Because this game is still in beta please report any bugs here: https://forms.office.com/r/HnwYzG9Sk7.
+Car crazy is a fun game where you tilt your wrist left and right to avoid incoming cars. If you get hit by a car you lose a heart. In the game you have three hearts, if you get hit 3 times you are sent to the game over screen. Recently levels have been added making the game get harder as you play. Your goal is to try to last as long as you can. Because this game is still in production please report any bugs here: https://forms.office.com/r/HnwYzG9Sk7.
 
 ### Images:
 (Coming Soon)
