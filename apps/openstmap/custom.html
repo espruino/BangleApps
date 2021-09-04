@@ -32,7 +32,7 @@
     <div id="map">
     </div>
     <div id="controls">
-      <div style="display:inline-block;text-align:center;vertical-align: top;"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+      <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
       <button id="getmap" class="btn btn-primary">Get Map</button><br/>
       <canvas id="maptiles" style="display:none"></canvas>
       <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
@@ -71,6 +71,16 @@ TODO:
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
+      function onInit(device) {
+        if (device && device.info && device.info.g) {
+          // On 3 bit devices, don't even offer the option. 3 bit is the only way
+          if (device.info.g.bpp==3) {
+            document.getElementById("3bit").checked = true;
+            document.getElementById("3bitdiv").style = "display:none";
+          }
+        }
+      }
 
       var mapFiles = [];
       tileLayer.addTo(map);

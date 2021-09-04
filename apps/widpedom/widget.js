@@ -1,6 +1,9 @@
 (() => {
   const PEDOMFILE = "wpedom.json"
+  // Last time Bangle.on('step' was called
   let lastUpdate = new Date();
+  // Last step count when Bangle.on('step' was called
+  var lastStepCount;
   let stp_today = 0;
   let settings;
 
@@ -14,11 +17,14 @@
     const DEFAULTS = {
       'goal': 10000,
       'progress': false,
+      'large': false,
+      'hide': false
     }
     return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   function drawProgress(stps) {
+    if (setting('hide')) return;
     const width = 24, half = width/2;
     const goal = setting('goal'), left = Math.max(goal-stps,0);
     const c = left ? "#00f" : "#090"; // blue or dark green
@@ -46,13 +52,29 @@
     }
   }
 
+  // show the step count in the widget area in a readable sized font
+  function draw_large(st) {
+    var width = 12 * st.length;
+    g.reset();
+    g.clearRect(this.x, this.y, this.x + width, this.y + 16); // erase background
+    g.setColor(g.theme.fg);
+    g.setFont("6x8",2);
+    g.setFontAlign(-1, -1);
+    g.drawString(st, this.x + 4, this.y + 2);
+  }
+
   // draw your widget
   function draw() {
+    if (setting('hide')) return;
     var width = 24;
     if (stp_today > 99999){
       stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
     }
     let stps = stp_today.toString();
+    if (setting('large')) {
+      draw_large.call(this, stps);
+      return;
+    }
     g.reset().clearRect(this.x, this.y, this.x + width, this.y + 23); // erase background
     if (setting('progress')){ drawProgress.call(this, stps); }
     g.setColor(g.theme.fg);
@@ -73,13 +95,16 @@
     draw()
   }
 
-  Bangle.on('step', (up) => {
+  Bangle.on('step', stepCount => {
+    var steps = stepCount-lastStepCount;
+    if (lastStepCount===undefined || steps<0) steps=1;
+    lastStepCount = stepCount;
     let date = new Date();
     if (lastUpdate.getDate() == date.getDate()){
-      stp_today ++;
+      stp_today += steps;
     } else {
       // TODO: could save this to PEDOMFILE for lastUpdate's day?
-      stp_today = 1;
+      stp_today = steps;
     }
     if (stp_today === setting('goal')
         && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {

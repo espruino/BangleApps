@@ -237,6 +237,11 @@ and which gives information about the app for the Launcher.
                               // like this one with 'storage','name' and 'id' set up
                               // see below for more info
 
+  "customConnect": true,      // if supplied, ensure we are connected to a device
+                              // before the "custom.html" iframe is loaded. An
+                              // onInit function in "custom.html" is then called
+                              // with info on the currently connected device.                 
+
   "interface": "interface.html",   // if supplied, apps/interface.html is loaded in an
                               // iframe, and it may interact with the connected Bangle
                               // to retrieve information from it

@@ -85,14 +85,19 @@
     
     function onButtonLong(btn) {
       log_debug("markWaypoint()");
-      if (btn !== 1) return;
-      if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
-      log_debug("markWaypoint()");
+      if (btn === 1) {
+        if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
+        log_debug("markWaypoint()");
       
-      gpsObject.markWaypoint();
-      resetPrevious();
-      getWaypoint();
-      drawGPSData();
+        gpsObject.markWaypoint();
+        resetPrevious();
+        getWaypoint();
+        drawGPSData();
+        return;
+      }
+
+      if (btn === 2)
+        Bangle.showLauncher();
     }
 
     function getWaypoint() {
