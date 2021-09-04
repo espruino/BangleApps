@@ -1,5 +1,6 @@
 Bangle.setLCDBrightness(1);
 Bangle.setLCDMode("doublebuffered");
+Bangle.setTimeout(0);
 
 let points = 0;
 let level = 1;
