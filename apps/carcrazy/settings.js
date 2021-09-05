@@ -9,7 +9,7 @@
         if (v) {
           delay = 500;
           E.showMessage('Resetting');
-          var f = require('Storage').open('carCrazy.score', 'w');
+          var f = require('Storage').open('CarCrazy.csv', 'w');
           f.write('0\n');
         }
         setTimeout(() => E.showMenu(menu), delay);
