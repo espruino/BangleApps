@@ -13,15 +13,17 @@ Tilting Left-Right:  Tilt your wrist left and right to steer your car and try no
 ### Feautures Coming Soon:
 0.02: Levels are creating making the game get harder as it goes along. (Completed)
 
-0.03: Optional soundtrack in settings. More levels.
+0.03: Setting for reseting high score. (Completed)
 
-0.04: With higher scores you can now unlock different colors of cars. More settings.
+0.04: Optional soundtrack in settings. More levels.
 
-0.05: Car selector at game over screen and start screen.
+0.05: With higher scores you can now unlock different colors of cars. More settings.
 
-0.06 More levels.
+0.06: Car selector at game over screen and start screen.
 
-0.07 More types of Cars.
+0.07 More levels.
+
+0.08 More types of Cars.
 
 ### Levels
 Here is a list of all the levels:
