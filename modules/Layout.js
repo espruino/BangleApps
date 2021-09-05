@@ -167,9 +167,15 @@ function updateMin(l) {
       break;
     }
     case "img": {
-      var im = E.toString(l.src());
-      l._h = im.charCodeAt(0);
-      l._w = im.charCodeAt(1);
+      var src = l.src();
+      if (typeof(src) === 'object') {
+        l._h = ("width" in src) ? src.width : src.getWidth();
+        l._w = ("height" in src) ? src.height : src.getHeight();
+      } else {
+        var im = E.toString(src);
+        l._h = im.charCodeAt(0);
+        l._w = im.charCodeAt(1);
+      }
       break;
     }
     case undefined:
