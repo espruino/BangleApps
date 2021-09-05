@@ -368,7 +368,7 @@ setWatch(() => {
     enemyPositonCenterY = 0 - carHeight/2;
     enemyPositonCenterX2 = 120;
     enemyPositonCenterY2 = 0 - carHeight/2;
-    score = 100;
+    score = 0;
     level = 1;
     checkForNextLevel();
   }else if(gameStatus == GAMEOVER){
