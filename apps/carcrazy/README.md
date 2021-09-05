@@ -55,4 +55,4 @@ A single car are coming at 12 speed and can come from any position at the top of
 
 ### Other
 
--Settings are coming soon for resetting your high score.
+-Settings are now avialable for resetting your high score.
