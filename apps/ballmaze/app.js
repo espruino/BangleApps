@@ -1,5 +1,5 @@
 (() => {  
-  Bangle.setLCDMode(0); 
+  Bangle.setLCDTimeout(0);
   let intervalID;
   let settings = require("Storage").readJSON("ballmaze.json",true) || {};
 
