@@ -3447,8 +3447,8 @@
   "description": "Allows you to see 0xFD6F beacons near you.",
   "tags": "tool",
   "storage": [
-    {"name":"FD6FDetect.app.js","url":"app.js"},
-    {"name":"FD6FDetect.img","url":"app-icon.js","evaluate":true}
+    {"name":"fd6fdetect.app.js","url":"app.js"},
+    {"name":"fd6fdetect.img","url":"app-icon.js","evaluate":true}
   ]
 }
 
