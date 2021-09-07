@@ -2,7 +2,7 @@
 { "id": "fd6fdetect",
   "name": "FD6FDetect",
   "shortName":"fd6fdetect",
-  "icon": "FD6FDetect.img",
+  "icon": "app.png",
   "version":"0.1",
   "description": "Allows you to see 0xFD6F beacons near you.",
   "tags": "",
