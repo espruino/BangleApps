@@ -1,1 +1,14 @@
-{"id":"fd6fdetect","name":"FD6FDetect","src":"FD6FDetect.app.js","icon":"FD6FDetect.img","version":"0.01","files":"FD6FDetect.info,FD6FDetect.img,FD6FDetect.app.js"}
+},
+{ "id": "fd6fdetect",
+  "name": "FD6FDetect",
+  "shortName":"fd6fdetect",
+  "icon": "FD6FDetect.img",
+  "version":"0.1",
+  "description": "Allows you to see 0xFD6F beacons near you.",
+  "tags": "",
+  "storage": [
+    {"name":"FD6FDetect.app.js","url":"FD6FDetect.app.js"},
+    {"name":"FD6FDetect.img","url":"FD6FDetect.img","evaluate":true}
+  ]
+}
+]
