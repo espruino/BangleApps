@@ -1,4 +1,7 @@
 (() => {
+  // Current shown notification, saved for dismissing.
+  var currentNot = null;
+
   // Music handling
   const state = {
     music: "stop",
@@ -151,15 +154,22 @@
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
-      case "notify-":
-        if (event.t === "notify") {
-          require("notify").show(prettifyNotificationEvent(event));
-          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
-            Bangle.buzz();
-          }
-        } else { // notify-
-          require("notify").hide(event);
+        currentNot = prettifyNotificationEvent(event);
+        currentNot.onHide = function() {
+          // when notification hidden, remove from phone
+          gbSend({ t:"notify", n:"DISMISS", id:currentNot.id });
+        };
+        require("notify").show(currentNot);
+        if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+          Bangle.buzz();
         }
+        break;
+      case "notify-":
+        currentNot.t = "notify";
+        currentNot.n = "DISMISS";
+        gbSend(currentNot);
+        currentNot = null;
+        require("notify").hide(event);
         break;
       case "musicinfo":
         state.musicInfo = event;

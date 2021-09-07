@@ -1,4 +1,7 @@
-(() => {
+(function() {
+  // don't show widget if we know we have a clock app running
+  if (Bangle.CLOCK) return;
+
   let intervalRef = null;
   var width = 5 * 6*2
 

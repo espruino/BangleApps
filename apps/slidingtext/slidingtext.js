@@ -635,8 +635,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 startTimers();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");
 
 
 // Handle button 1 being pressed

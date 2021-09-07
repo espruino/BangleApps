@@ -2,6 +2,20 @@
 *
 */
 
+function wdog(handle,timeout){
+ if(handle !== undefined){
+ wdog.handle = handle;
+ wdog.timeout = timeout;
+ }
+ if(wdog.timer){
+   clearTimeout(wdog.timer)
+ }
+ wdog.timer = setTimeout(wdog.handle,wdog.timeout)
+}
+
+// reset after two minutes of inactivity
+wdog(load,120000)
+
 var s = require("Storage");
 var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
 apps.sort((a,b)=>{
@@ -42,6 +56,7 @@ function drawPage(p){
 }
 
 Bangle.on("swipe",(dir)=>{
+    wdog()
     selected = 0;
     oldselected=-1;
     if (dir<0){
@@ -54,6 +69,7 @@ Bangle.on("swipe",(dir)=>{
 });
 
 function nextapp(d){
+    wdog();
     oldselected = selected;
     selected+=d;
     selected = selected<0?5:selected>5?0:selected;

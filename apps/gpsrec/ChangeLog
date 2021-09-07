@@ -21,3 +21,7 @@
 0.17: Disable recording if storage is full (fix #574)
 0.18: Period counter now uses GPS time rather than counting packets (allows use with GPS Setup)
 0.19: Fix memory usage issues inside track viewer app
+0.20: Add documentation to explain time needed for getting a time fix
+0.21: Fix issue where a period of 1s recorded every 2s, 5s every 6s, and so on
+0.22: Ensure Bangle.setGPSPower uses 'gpsrec' as a tag
+0.23: Fix issue where tracks wouldn't record when running from OpenStMap if a period hadn't been set up first

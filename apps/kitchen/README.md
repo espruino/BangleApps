@@ -41,9 +41,25 @@ The following buttons depend on which face is currently in use
   - Waypointer : select next waypoint
 
 
+## Stepo2
+![](screenshot_stepo2.jpg)
+
+- Requires one of the pedominter widgets to be installed
+- Stepo2 is a combination of Stepo and Digi and now replaces them
+- Displays the time in large font
+- Display current step count in a doughnut gauge
+- The gauge show percentage of steps out of a goal of 10000 steps
+- When the battery is less than 25% the doughnut turns red
+- Use BTN1 to switch to the Trip Counter, use long press to reset Trip Counter
+- Use BTN1 to cycle through the displays of Day,Date, Trip Counter, Battery %, Mem % and Firmware
+- Use BTN3 to switch to the next app
+
+
+
 ## Stepo
 ![](screenshot_stepo.jpg)
 
+- now replaced by Stepo2 but still available if you install manually
 - Requires one of the pedominter widgets to be installed 
 - Displays the time in large font
 - Display current step count in a doughnut gauge
@@ -62,10 +78,12 @@ The following buttons depend on which face is currently in use
 
 ## Digi
 ![](screenshot_digi.jpg)
+- now replaced by Stepo2 but still available if you install manually
 - Displays the time in large font
 - Display day and date
 - Use BTN1 to switch between display of battery and memory %.
 - Use BTN3 to switch to the next app.
+
 
 ## Swatch
 ![](screenshot_swatch.jpg)
@@ -254,9 +272,8 @@ The following error codes will be displayed if one of the dependancies is not me
 
 ### Issues / Future enhancements
 
+* Add a settings app so that 'Kitchen' based clocks can be enabled/disabled
 * GPS time display shows GMT and not BST, needs localising
-* Occassional buzzing after 2-3 days of use, seems to disappear after
-  a reset to the launcher menu. Needs investigation
 * Automatically switch the GPS power setting from Super-E to PSMOO 10
   seconds after the LCD goes off.  At present I just rely on using
   the GPSSetup app and set the GPS power mode that I want.

@@ -114,6 +114,7 @@ function showMainMenu() {
     'Select Clock': ()=>showClockMenu(),
     'Set Time': ()=>showSetTimeMenu(),
     'LCD': ()=>showLCDMenu(),
+    'Theme': ()=>showThemeMenu(),
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
     '< Back': ()=>load()
@@ -157,6 +158,41 @@ function showBLEMenu() {
     'Whitelist': {
       value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
+    },
+    '< Back': ()=>showMainMenu()
+  });
+}
+
+function showThemeMenu() {
+  function cl(x) { return g.setColor(x).getColor(); }
+  function upd(th) {
+    g.theme = th;
+    settings.theme = th;
+    updateSettings();
+    delete g.reset;
+    g._reset = g.reset;
+    g.reset = function(n) { return g._reset().setColor(th.fg).setBgColor(th.bg); };
+    g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
+    g.clear(1);
+    Bangle.drawWidgets();
+    m.draw();
+  }
+  var m = E.showMenu({
+    'Dark BW': ()=>{
+      upd({
+        fg:cl("#fff"), bg:cl("#000"),
+        fg2:cl("#0ff"), bg2:cl("#000"),
+        fgH:cl("#fff"), bgH:cl("#00f"),
+        dark:true
+      });
+    },
+    'Light BW': ()=>{
+      upd({
+        fg:cl("#000"), bg:cl("#fff"),
+        fg2:cl("#00f"), bg2:cl("#0ff"),
+        fgH:cl("#000"), bgH:cl("#0ff"),
+        dark:false
+      });
     },
     '< Back': ()=>showMainMenu()
   });
@@ -351,6 +387,7 @@ function showQuietModeMenu() {
         settings.quiet = v%3;
         updateSettings();
         updateOptions();
+        if ("qmsched" in WIDGETS) {WIDGETS["qmsched"].draw();}
       },
     },
     "LCD Brightness": {

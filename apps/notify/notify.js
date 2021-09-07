@@ -1,5 +1,6 @@
 let pos = 0;
 let id = null;
+let hideCallback = undefined;
 
 /**
  * Fit text into area, trying to insert newlines between words
@@ -44,6 +45,7 @@ function fitWords(text,rows,width) {
    render : function(y) // function callback to render
    bgColor : int/string // optional background color (default black)
    titleBgColor : int/string // optional background color for title (default black)
+   onHide : function() // callback when notification is hidden
  }
 */
 /*
@@ -142,6 +144,8 @@ exports.show = function(options) {
   }
   anim();
   Bangle.on("touch", exports.hide);
+  if (options.onHide)
+    hideCallback = options.onHide;
 };
 
 /**
@@ -152,6 +156,8 @@ exports.show = function(options) {
 exports.hide = function(options) {
   options = options||{};
   if ("id" in options && options.id!==id) return;
+  if (hideCallback) hideCallback({id:id});
+  hideCallback = undefined;
   id = null;
   Bangle.removeListener("touch", exports.hide);
   function anim() {

@@ -11,7 +11,7 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v08";
+var RECOMMENDED_VERSION = "2v09";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 (function() {
@@ -22,9 +22,15 @@ var RECOMMENDED_VERSION = "2v08";
 })();
 
 function onFoundDeviceInfo(deviceId, deviceVersion) {
-  if (deviceId != "BANGLEJS") {
+  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
     showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+  }
+  if (deviceId == "BANGLEJS") {
+    Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
+  }
+  if (deviceId == "BANGLEJS2") {
+    Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
 }

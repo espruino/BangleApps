@@ -2,6 +2,9 @@
 
 A configurable, low power GPS widget that runs in the background.
 
+NOTE: This app has been superceded by [gpssetup](https://github.com/espruino/BangleApps/blob/master/apps/gpssetup/README.md)
+
+
 ## Goals
 
 To develop a low power GPS widget that runs in the background and to
