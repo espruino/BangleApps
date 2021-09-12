@@ -3444,13 +3444,14 @@
   ]
 },
 { "id": "schoolCalender",
-  "name": "🏫Calender",
+  "name": "School Calender",
   "shortName":"SCalender",
   "icon": "CalenderLogo.png",
   "version":"0.01",
   "description": "A simple calender that you can see your upcoming events. Keep in note that your events reapeat weekly.",
   "tags": "tool",
   "readme": "README.md",
+  "custom":"interface.html",
   "storage": [
     {"name":"carcrazy.app.js","url":"app.js"},
     {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
