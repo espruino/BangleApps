@@ -1,105 +1,91 @@
-<!DOCTYPE html>
 <html>
-<head>
-<meta charset='utf-8' />
-<link href='../lib/main.css' rel='stylesheet' />
-<script src='../lib/main.js'></script>
-<script>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="records"></div>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var domRecords = document.getElementById("records");
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      headerToolbar: {
-        left: 'prevYear,prev,next,nextYear today',
-        center: 'title',
-        right: 'dayGridMonth,dayGridWeek,dayGridDay'
-      },
-      initialDate: '2020-09-12',
-      navLinks: true, // can click day/week names to navigate views
-      editable: true,
-      dayMaxEvents: true, // allow "more" link when too many events
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2020-09-01'
-        },
-        {
-          title: 'Long Event',
-          start: '2020-09-07',
-          end: '2020-09-10'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2020-09-09T16:00:00'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2020-09-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2020-09-11',
-          end: '2020-09-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2020-09-12T10:30:00',
-          end: '2020-09-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2020-09-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2020-09-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2020-09-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2020-09-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2020-09-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2020-09-28'
-        }
-      ]
+function getLapTimes() {
+  Util.showModal("Loading Lap Times...");
+  domRecords.innerHTML = "";
+  Puck.eval('require("Storage").list(/^swatch.*\.json/).map(fn=>({n:fn,d:require("Storage").readJSON(fn,1)}))',lapData=>{
+    var html = `<div class="container">
+  <div class="columns">\n`;
+    lapData.forEach((lap,lapIndex) => {
+      lap.date = lap.n.substr(7,16).replace("_"," ");
+      lap.elapsed = lap.d.shift(); // remove first item
+      html += `
+        <div class="column col-12">
+          <div class="card-header">
+            <div class="card-title h5">${lap.date}</div>
+            <div class="card-subtitle text-gray">${lap.d.length} Laps, total time ${lap.elapsed}</div>
+          </div>
+          <div class="card-body">
+          <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>lap</th>
+              <th>time</th>
+            </tr>
+          </thead>
+          <tbody>
+          ${ lap.d.map((d,n)=>`<tr><td>${n+1}</td><td>${d}</td></tr>`).join("\n") }
+          </tbody>
+          </table>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary" idx="${lapIndex}" task="download">Download</button>
+            <button class="btn btn-default" idx="${lapIndex}" task="delete">Delete</button>
+          </div>
+        </div>
+      `;
     });
+    if (lapData.length==0) {
+      html += `
+        <div class="column col-12">
+          <div class="card-header">
+            <div class="card-title h5">No record</div>
+            <div class="card-subtitle text-gray">No laps recorded</div>
+          </div>
+        </div>
+        `;
+    }
+    html += `
+    </div>
+  </div>`;
+    domRecords.innerHTML = html;
+    Util.hideModal();
+    var buttons = domRecords.querySelectorAll("button");
+    for (var i=0;i<buttons.length;i++) {
+      buttons[i].addEventListener("click",event => {
+        var button = event.currentTarget;
+        var lapIndex = parseInt(button.getAttribute("idx"));
+        var lap = lapData[lapIndex];
+        if (!lap) throw new Error("Invalid index!");
+        var task = button.getAttribute("task");
+        if (task=="delete") {
+          Util.showModal("Deleting lap time...");
+          Util.eraseStorage(lap.n,()=>{
+            Util.hideModal();
+            getLapTimes();
+          });
+        }
+        if (task=="download") {
+          Util.saveCSV(lap.n.slice(0,-5)+".csv", lap.d.map((d,n)=>[n+1,d].join(",")).join("\n"));
+        }
+      });
+    }
+  })
+}
 
-    calendar.render();
-  });
+function onInit() {
+  getLapTimes();
+}
 
-</script>
-<style>
-
-  body {
-    margin: 40px 10px;
-    padding: 0;
-    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-    font-size: 14px;
-  }
-
-  #calendar {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-</style>
-</head>
-<body>
-
-  <div id='calendar'></div>
-
-</body>
+    </script>
+  </body>
 </html>
