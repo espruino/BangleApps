@@ -3442,5 +3442,22 @@
   "data": [
     {"name":"app.json"}
   ]
+},
+{ "id": "schoolCalender",
+  "name": "School Calender",
+  "shortName":"SCalender",
+  "icon": "carcrash.png",
+  "version":"0.03",
+  "description": "A simple calender that you can see yur upcoming events. Keep in note that your events reapeat weekly.",
+  "tags": "tool",
+  "readme": "README.md",
+  "storage": [
+    {"name":"carcrazy.app.js","url":"app.js"},
+    {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
+    {"name":"carcrazy.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"app.json"}
+  ]
 }
 ]
