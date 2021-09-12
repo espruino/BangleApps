@@ -3448,7 +3448,7 @@
   "shortName":"SCalender",
   "icon": "carcrash.png",
   "version":"0.03",
-  "description": "A simple calender that you can see yur upcoming events. Keep in note that your events reapeat weekly.",
+  "description": "A simple calender that you can see your upcoming events. Keep in note that your events reapeat weekly.",
   "tags": "tool",
   "readme": "README.md",
   "storage": [
