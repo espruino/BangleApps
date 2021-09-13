@@ -1,6 +1,6 @@
 (function() {
   function setup () {
-    var settings = require('Storage').readJSON('hourstrike.json',1)||[];
+    var settings = require('Storage').readJSON('hourstrike.json',1);
     if (!settings) resetSettings();
     var t = new Date();
     var t_min_sec = t.getMinutes()*60+t.getSeconds();
