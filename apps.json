@@ -3442,18 +3442,5 @@
   "data": [
     {"name":"app.json"}
   ]
-},
-{ "id": "schoolCalendar",
-  "name": "School Calendar",
-  "shortName":"SCalender",
-  "icon": "CalenderLogo.png",
-  "version":"0.01",
-  "description": "A simple calendar that you can see your upcoming events. Keep in note that your events reapeat weekly.",
-  "tags": "tool",
-  "readme": "README.md",
-  "custom":"interface.html",
-  "data": [
-    {"name":"app.json"}
-  ]
 }
 ]
