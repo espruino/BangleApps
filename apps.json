@@ -3442,5 +3442,22 @@
   "data": [
     {"name":"app.json"}
   ]
+},
+{ "id": "shortcuts",
+  "name": "Shortcuts",
+  "shortName":"Shortcuts",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Quickly load your favourite apps from (almost) any watch face.",
+  "tags": "tool",
+  "type": "bootloader",
+  "readme": "README.md",
+  "storage": [
+    {"name":"shortcuts.boot.js","url":"boot.js"},
+    {"name":"shortcuts.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"shortcuts.json"}
+  ]
 }
 ]
