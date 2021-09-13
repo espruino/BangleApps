@@ -45,6 +45,7 @@ g.setFontCustom(font, 46, widths, 73+(scale<<8)+(1<<16));
   
 };
 
+var mm_prev = "xx";
 
 function draw() {
   var d = new Date();
@@ -66,16 +67,31 @@ function draw() {
   var y = (g.getHeight()/3);
   
   g.reset();
-  g.clearRect(0, 30, w, h);
 
+  if (process.env.HWVERSION == 1) {
+    // avoid flicker on a bangle 1 by comparing with previous minute
+    if (mm_prev != mm) {
+      mm_prev = mm;
+      g.clearRect(0, 30, w, h);
+    }
+  } else {
+    // on a b2 safe to just clear anyway as there is no flicker
+    g.clearRect(0, 30, w, h);
+  }
+    
   // draw a grid like graph paper
-  g.setColor("#0f0");
-  for (var gx=20; gx <= w; gx += 20)
-    g.drawLine(gx, 30, gx, h); 
-  for (var gy=30; gy <= h; gy += 20)
-    g.drawLine(0, gy, w, gy); 
+  if (process.env.HWVERSION !=1) {
+    g.setColor("#0f0");
+    for (var gx=20; gx <= w; gx += 20)
+      g.drawLine(gx, 30, gx, h); 
+    for (var gy=30; gy <= h; gy += 20)
+      g.drawLine(0, gy, w, gy);
+  }
 
-  g.setColor("#000");
+  if (process.env.HWVERSION ==1)
+    g.setColor("#fff");
+  else
+    g.setColor("#000");
 
   g.setFontLato();
   //g.setFontArchitect();
@@ -88,7 +104,17 @@ function draw() {
 
   // for the colon
   g.setFontAlign(0,-1); // centre aligned
-  if (d.getSeconds()&1) g.drawString(":", x,y);
+
+  if (d.getSeconds()&1) {
+    g.drawString(":", x,y);
+  } else {
+    // on bangle 1, we are not using clearRect(), hide : by printing over it in reverse color
+    if (process.env.HWVERSION ==1) {
+      g.setColor("#000")
+      g.drawString(":", x,y);
+      g.setColor("#fff");
+    }
+  }
   
   g.setFontLatoSmall();
   g.setFontAlign(1, -1);
