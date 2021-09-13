@@ -3442,5 +3442,19 @@
   "data": [
     {"name":"app.json"}
   ]
+},
+{ "id": "pastel",
+  "name": "Pastel Clock",
+  "shortName":"Pastel",
+  "icon": "pastel.png",
+  "version":"0.01",
+  "description": "A nixie tube clock for both Bangle 1 and 2.",
+  "tags": "clock b2",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"pastel.app.js","url":"pastel.app.js"},
+    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true}
+  ]
 }
 ]
