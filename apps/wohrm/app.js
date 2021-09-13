@@ -4,7 +4,7 @@ const Setter = {
   UPPER: 'upper',
   LOWER: 'lower'
 };
-  
+
 const shortBuzzTimeInMs = 80;
 const longBuzzTimeInMs = 400;
 
@@ -164,12 +164,12 @@ function renderPlusMinusIcons() {
   } else {
     g.setColor(1, 1, 1);
   }
-    
+
   g.setFontVector(14);
 
   //+ for Btn1
   g.drawString("+", 222, 50);
-  
+
   //- for Btn3
   g.drawString("-", 222,165);
 
@@ -288,7 +288,7 @@ function resetHighlightTimeout() {
 }
 
 function switchOffApp(){
-  Bangle.setHRMPower(0);
+  Bangle.setHRMPower(0,"wohrm");
   Bangle.showLauncher();
 }
 
@@ -306,7 +306,7 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
-Bangle.setHRMPower(1);
+Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
 setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});

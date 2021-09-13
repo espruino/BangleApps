@@ -128,7 +128,7 @@
     if (activityInterval)
       clearInterval(activityInterval);
     activityInterval = undefined;
-    if (s.hrm) Bangle.setHRMPower(1);
+    if (s.hrm) Bangle.setHRMPower(1,"gbr");
     if (s.hrm) {
       if (realtime) {
         // if realtime reporting, leave HRM on and use that to trigger events
@@ -138,7 +138,7 @@
         hrmTimeout = 5;
         activityInterval = setInterval(function() {
           hrmTimeout = 5;
-          Bangle.setHRMPower(1);
+          Bangle.setHRMPower(1,"gbr");
         }, interval*1000);
       }
     } else {
@@ -281,7 +281,7 @@
     if (hrmTimeout!==undefined) hrmTimeout--;
     if (ok || hrmTimeout<=0) {
       if (hrmTimeout!==undefined)
-        Bangle.setHRMPower(0);
+        Bangle.setHRMPower(0,"gbr");
       sendActivity(hrm.confidence>20 ? hrm.bpm : -1);
     }
   });

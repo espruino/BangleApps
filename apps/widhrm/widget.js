@@ -26,12 +26,12 @@
   // redraw when the LCD turns on
   Bangle.on('lcdPower', function(on) {
     if (on) {
-      Bangle.setHRMPower(1);
+      Bangle.setHRMPower(1,"widhrm");
       firstBPM = true;
       currentBPM = undefined;
       WIDGETS["hrm"].draw();
     } else {
-      Bangle.setHRMPower(0);
+      Bangle.setHRMPower(0,"widhrm");
     }
   });
 
@@ -44,7 +44,7 @@
     }
     WIDGETS["hrm"].draw();
   });
-  Bangle.setHRMPower(Bangle.isLCDOn());
+  Bangle.setHRMPower(Bangle.isLCDOn(),"widhrm");
 
   // add your widget
   WIDGETS["hrm"]={area:"tl",width:24,draw:draw};
