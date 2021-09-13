@@ -3449,7 +3449,7 @@
   "icon": "pastel.png",
   "version":"0.01",
   "description": "A Configurable clock with custom fonts and background",
-  "tags": "clock b2",
+  "tags": "clock,b2",
   "type":"clock",
   "readme": "README.md",
   "storage": [
