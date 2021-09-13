@@ -30,13 +30,7 @@
   function prettifyNotificationEvent(event) {
     switch (event.src) {
       case "ALARMCLOCKRECEIVER":
-        return {
-          id: event.id,
-          title: event.title || "Alarm: "+require('locale').time(new Date(), true),
-          body: event.body,
-          // same icon as apps/alarm/app-icon.js
-          icon: require("heatshrink").decompress(atob("mEwwkGswAhiMRCCAREAo4eHBIQLEAgwYHsIJDiwHB5gACBpIhHCoYZEGA4gFCw4ABGA4HEjgXJ4IXGAwcUB4VEmf//8zogICoJIFAodMBoNDCoIADmgJB4gXIFwXDCwoABngwFC4guB4k/CQXwh4EC+YMCC44iBp4qDC4n/+gNBC41sEIJCEC4v/GAPGC4dhXYRdFC4xhCCYIXCdQRdDC5HzegQXCsxGHC45IDCwQXCUgwXHJAIXGRogXJSIIXcOw4XIPAYXcBwv/mEDBAwXOgtQC65QGC5vzoEAJAx3Nmk/mEABIiPN+dDAQIwFC4zXGFwKRCGAjvMFwQECGAgXI4YuGGAUvAgU8C4/EFwwGCAgdMC4p4EFwobFOwoXDJAIoEAApGBC4xIEABJGHGAapEAAqNBFwwXD4heI+YuBC5BIBVQhdHIw4wD5inFS4IKCCxFmigNCokzCoMzogICoIWIsMRjgPCAA3BiMWC48RBQIXJEgMRFxAJCCw4lEC44IECooOIBAaBJKwhgIAH4ACA==")),
-        };
+        return event.bodyImg;
       default:
         return event;
     }
@@ -153,7 +147,10 @@
       case "notify":
       case "notify-":
         if (event.t === "notify") {
-          require("notify").show(prettifyNotificationEvent(event));
+          
+          //require("notify").show(prettifyNotificationEvent(event));
+          g.drawImage(atob(prettifyNotificationEvent(event)), 0,0)
+          
           if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
             Bangle.buzz();
           }
