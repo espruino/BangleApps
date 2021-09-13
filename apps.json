@@ -3273,6 +3273,9 @@
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
     {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"hourstrike.json"}
   ]
 },
 { "id": "whereworld",
