@@ -90,4 +90,4 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+Bangle.setUI("clock");
