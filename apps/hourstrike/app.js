@@ -7,7 +7,7 @@ function updateSettings() {
 
 function resetSettings() {
   settings = {
-    interval: 3600,
+    interval: -1,
     start: 9,
     end: 21,
     vlevel: 0.5,
