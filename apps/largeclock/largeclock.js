@@ -14,7 +14,7 @@ const settings = require("Storage").readJSON("largeclock.json", 1)||{};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
-const right_hand = (require("Storage").readJSON("largeclock.json",1)||{}).right_hand;
+const right_hand = !!settings.right_hand;
 const rotation = right_hand ? 3 : 1;
 
 function drawMoon(d) {
