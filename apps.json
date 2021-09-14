@@ -3440,7 +3440,7 @@
   ]
 },
 { "id": "fd6fdetect",
-  "name": "FD6FDetect",
+  "name": "fd6fdetect",
   "shortName":"fd6fdetect",
   "icon": "app.png",
   "version":"0.1",
