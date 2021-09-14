@@ -1944,26 +1944,16 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.09",
+    "version": "0.10",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
     "type": "clock",
     "allow_emulator": true,
     "storage": [
-      {
-        "name": "largeclock.app.js",
-        "url": "largeclock.js"
-      },
-      {
-        "name": "largeclock.img",
-        "url": "largeclock-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "largeclock.settings.js",
-        "url": "settings.js"
-      }
+      {"name": "largeclock.app.js", "url": "largeclock.js"},
+      {"name": "largeclock.img", "url": "largeclock-icon.js", "evaluate": true},
+      {"name": "largeclock.settings.js", "url": "settings.js"}
     ],
     "data": [
       {"name":"largeclock.json"}
@@ -3265,14 +3255,15 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "icon": "app-icon.png",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "tags": "tool,alarm",
   "readme": "README.md",
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
-    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true},
+    {"name":"hourstrike.json","url":"hourstrike.json"}
   ]
 },
 { "id": "whereworld",
@@ -3441,6 +3432,36 @@
   ],
   "data": [
     {"name":"app.json"}
+  ]
+},
+{ "id": "shortcuts",
+  "name": "Shortcuts",
+  "shortName":"Shortcuts",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Quickly load your favourite apps from (almost) any watch face.",
+  "tags": "tool",
+  "type": "bootloader",
+  "readme": "README.md",
+  "storage": [
+    {"name":"shortcuts.boot.js","url":"boot.js"},
+    {"name":"shortcuts.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"shortcuts.json"}
+  ]
+},
+{ "id": "vectorclock",
+  "name": "Vector Clock",
+  "icon": "app.png",
+  "version": "0.02",
+  "description": "A digital clock that uses the built-in vector font.",
+  "tags": "clock",
+  "type": "clock",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"vectorclock.app.js","url":"app.js"},
+    {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
   ]
 }
  { "id": "widclkbttm",

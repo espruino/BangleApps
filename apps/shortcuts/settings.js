@@ -4,32 +4,19 @@
     .list(/\.info$/)
     .map(app => {
       var a = s.readJSON(app, 1);
-      return (
-        a && {
-          n: a.name,
-          t: a.type,
-          src: a.src
-        }
-      );
+      return a && (a.type=="app" || a.type=="clock" || !a.type) && {n: a.name, src: a.src};
     })
-    .filter(app => app && (app.t == "app" || app.t == "clock" || !app.t))
-    .map(a => {
-      return { n: a.n, src: a.src };
-    });
+    .filter(Boolean);
   apps.sort((a, b) => {
     if (a.n < b.n) return -1;
     if (a.n > b.n) return 1;
     return 0;
   });
-  apps.push({
-    n: "NONE",
-    src: ""
-  });
+  apps.push({n: "NONE", src: null});
 
-  const settings = s.readJSON("largeclock.json", 1) || {
-    BTN1: "",
-    BTN3: "",
-    right_hand: false
+  const settings = s.readJSON("shortcuts.json", 1) || {
+    BTN1: null,
+    BTN3: null
   };
 
   function showApps(btn) {
@@ -39,7 +26,7 @@
 
     function onchange(v) {
       settings[btn] = v;
-      s.writeJSON("largeclock.json", settings);
+      s.writeJSON("shortcuts.json", settings);
     }
 
     const btnMenu = {
@@ -50,9 +37,9 @@
     };
 
     if (apps.length > 0) {
-      for (let i = 0; i < apps.length; i++) {
-        btnMenu[apps[i].n] = {
-          value: apps[i].src,
+      for (let a of apps) {
+        btnMenu[a.n] = {
+          value: a.src,
           format: format,
           onchange: onchange
         };
@@ -64,23 +51,16 @@
         onchange: () => {}
       };
     }
-    return E.showMenu(btnMenu);
+
+    E.showMenu(btnMenu);
   }
 
   const mainMenu = {
-    "": { title: "Large Clock" },
+    "": { title: "Shortcuts Settings" },
     "< Back": back,
     "BTN1 app": () => showApps("BTN1"),
-    "BTN3 app": () => showApps("BTN3"),
-    "On right hand": {
-      value: !!settings.right_hand,
-      format: v=>v?"Yes":"No",
-      onchange: v=>{
-        settings.right_hand = v;
-        s.writeJSON("largeclock.json", settings);
-      }
-    }
+    "BTN3 app": () => showApps("BTN3")
   };
-
   E.showMenu(mainMenu);
 });
+  
