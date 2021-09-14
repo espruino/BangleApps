@@ -3443,4 +3443,17 @@
     {"name":"app.json"}
   ]
 }
+ { "id": "widclkbttm",
+    "name": "Digital clock (Bottom) widget",
+    "shortName":"Digital clock Bottom Widget",  
+    "icon": "widclkbttm.png",	
+    "version":"0.03",
+    "description": "Displays time in the bottom area.",
+	"readme": "README.md",
+    "tags": "widget",
+    "type": "widget",
+    "storage": [
+      {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
+    ]
+  },
 ]
