@@ -280,7 +280,7 @@ function move(dir) {
 
 
 
-Bangle.on('swipe',move);
+Bangle.on('swipe', dir => move(-dir));
 setWatch(()=>move(1), BTN3, {repeat:true});
 setWatch(()=>{
   // If we're on the last page

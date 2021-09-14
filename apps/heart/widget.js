@@ -31,12 +31,12 @@
     if (settings.isRecording) {
       WIDGETS["heart"].width = 24;
       Bangle.on('HRM',onHRM);
-      Bangle.setHRMPower(1);
+      Bangle.setHRMPower(1,"heart");
       var n = settings.fileNbr.toString(36);
       recFile = require("Storage").open(".heart"+n,"a");
     } else {
       WIDGETS["heart"].width = 0;
-      Bangle.setHRMPower(0);
+      Bangle.setHRMPower(0,"heart");
       recFile = undefined;
     }
   }
