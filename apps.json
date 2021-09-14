@@ -3454,7 +3454,11 @@
   "readme": "README.md",
   "storage": [
     {"name":"pastel.app.js","url":"pastel.app.js"},
-    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true}
+    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true},
+    {"name":"pastel.settings.js","url":"pastel.settings.js"}
+  ],
+  "data": [
+    {"name":"pastel.json"}
   ]
 }
 ]

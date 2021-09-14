@@ -45,6 +45,18 @@ g.setFontCustom(font, 46, widths, 73+(scale<<8)+(1<<16));
   
 };
 
+const SETTINGS_FILE = "pastel.json";
+let settings = undefined;
+
+function loadSettings() {
+  //console.log("loadSettings()");
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.grid = settings.grid||false;
+  settings.date = settings.date||false;
+  settings.font = settings.font||"Lato";
+  //console.log(settings);
+}
+
 var mm_prev = "xx";
 
 function draw() {
@@ -80,7 +92,7 @@ function draw() {
   }
     
   // draw a grid like graph paper
-  if (process.env.HWVERSION !=1) {
+  if (settings.grid && process.env.HWVERSION !=1) {
     g.setColor("#0f0");
     for (var gx=20; gx <= w; gx += 20)
       g.drawLine(gx, 30, gx, h); 
@@ -93,10 +105,15 @@ function draw() {
   else
     g.setColor("#000");
 
-  g.setFontLato();
-  //g.setFontArchitect();
-  //g.setFontGochiHand();
-  //g.setFontCabinSketch();
+  if (settings.font == "Architect")
+    g.setFontArchitect();
+  else if (settings.font == "GochiHand")
+    g.setFontGochiHand();
+  else if (settings.font == "CabinSketch")
+    g.setFontCabinSketch();
+  else
+    g.setFontLato();
+    
   g.setFontAlign(1,-1);  // right aligned
   g.drawString(hh, x - 6, y);
   g.setFontAlign(-1,-1); // left aligned
@@ -115,11 +132,13 @@ function draw() {
       g.setColor("#fff");
     }
   }
-  
-  g.setFontLatoSmall();
-  g.setFontAlign(1, -1);
-  g.drawString(day + "   ", w, h - 24 - 24);
-  g.drawString(month_day + "   ", w, h - 24);
+
+  if (settings.date) {
+    g.setFontLatoSmall();
+    g.setFontAlign(1, -1);
+    g.drawString(day + "   ", w, h - 24 - 24);
+    g.drawString(month_day + "   ", w, h - 24);
+  }
 }
 
 // handle switch display on by pressing BTN1
@@ -130,6 +149,7 @@ Bangle.on('lcdPower', function(on) {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+loadSettings();
 setInterval(draw, 1000); // refresh every second
 draw();
 // Show launcher when button pressed
