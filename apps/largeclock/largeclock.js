@@ -14,6 +14,9 @@ const settings = require("Storage").readJSON("largeclock.json", 1)||{};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
+const right_hand = !!settings.right_hand;
+const rotation = right_hand ? 3 : 1;
+
 function drawMoon(d) {
   const BLACK = 0,
     MOON = 0x41f,
@@ -145,9 +148,9 @@ function drawTime(d) {
     g.setColor(1, 50, 1);
     g.drawString(minutes, 40, 130, true);
     g.setFont("Vector", 20);
-    g.setRotation(3);
-    g.drawString(`${dow} ${day} ${month}`, 60, 10, true);
-    g.drawString(year, is12Hour ? 46 : 75, 205, true);
+    g.setRotation(rotation);
+    g.drawString(`${dow} ${day} ${month}`, 60, right_hand?10:205, true);
+    g.drawString(year, is12Hour?(right_hand?56:120):(right_hand?85:115), right_hand?205:10, true);
     lastMinutes = minutes;
   }
   g.setRotation(0);
