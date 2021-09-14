@@ -22,14 +22,14 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var font_options = ["Lato","Architect","GochiHand","CabinSketch"];
+  var font_options = ["Lato","Architect","GochiHand","CabinSketch","Orbitron"];
   
   E.showMenu({
     '': { 'title': 'Pastel Clock' },
     '< Back': back,
     'Font': {
       value: 0 | font_options.indexOf(s.font),
-      min: 0, max: 3,
+      min: 0, max: 4,
       format: v => font_options[v],
       onchange: v => {
         s.font = font_options[v];
