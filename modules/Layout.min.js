@@ -214,7 +214,7 @@ function render(l) {
   if (!l) l = this.l;
   g.reset();
   if (l.col) g.setColor(l.col);
-  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w,l.y+l.h);
+  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
   switch (l.type) {
     case "txt":
       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
@@ -243,12 +243,15 @@ function render(l) {
   if (l.c) l.c.forEach(render);
 }
 
-function prepareLazyRender(l, rectsToClear, drawList) {
+function prepareLazyRender(l, rectsToClear, drawList, rects) {
   if (l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
     let hash = E.CRC32(E.toJS(l));
-    if (!delete rectsToClear[hash]) drawList.push({hash: hash, l: l});
+    if (!delete rectsToClear[hash]) {
+      drawList.push(l);
+      rects[hash] = [l.x,l.y,l.x+l.w-1,l.y+l.h-1];
+    }
   }
-  else if (l.c) l.c.forEach(l => prepareLazyRender(l, rectsToClear, drawList));
+  else if (l.c) l.c.forEach(l => prepareLazyRender(l, rectsToClear, drawList, rects));
 }
 
 Layout.prototype.render = function (l) {
@@ -260,14 +263,10 @@ Layout.prototype.render = function (l) {
     if (!this.rects) this.rects = {};
     let rectsToClear = Object.assign({}, this.rects);
     let drawList = [];
-    prepareLazyRender(l, rectsToClear, drawList);
+    prepareLazyRender(l, rectsToClear, drawList, this.rects);
     for (let hash in rectsToClear) delete this.rects[hash];
-    for (let rect of rectsToClear) if (rect) g.clearRect(rect.x1, rect.y1, rect.x2, rect.y2);
-    g.getModified(true);
-    for (let d of drawList) {
-      render(d.l);
-      this.rects[d.hash] = g.getModified(true);
-    }
+    for (let rect of rectsToClear) g.clearRect.apply(g, rect);
+    drawList.forEach(render);
   }
   else {
     render(l);
