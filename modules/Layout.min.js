@@ -243,29 +243,39 @@ function render(l) {
   if (l.c) l.c.forEach(render);
 }
 
-function prepareLazyRender(l, rectsToClear, drawList, rects) {
-  if (l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
+function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
+  if ((l.bgCol != null && l.bgCol != bgCol) || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
+    // Hash the layoutObject without including its children
+    let c = l.c;
+    delete l.c;
     let hash = E.CRC32(E.toJS(l));
-    if (!delete rectsToClear[hash]) {
-      drawList.push(l);
-      rects[hash] = [l.x,l.y,l.x+l.w-1,l.y+l.h-1];
+    if (c) l.c = c;
+
+    let i = rectsToClear.findIndex(r => r.h == hash);
+    if (i != -1) rectsToClear.splice(i, 1);
+    else {
+      rects.push({h: hash, bg: bgCol, x1: l.x, y1: l.y, x2: l.x+l.w-1, y2: l.y+l.h-1});
+      if (drawList) {
+        drawList.push(l);
+        drawList = null; // Prevent children from being redundantly added to the drawList
+      }
     }
   }
-  else if (l.c) l.c.forEach(l => prepareLazyRender(l, rectsToClear, drawList, rects));
+
+  if (l.c) for (let ch of l.c) prepareLazyRender(ch, rectsToClear, drawList, rects, l.bgCol == null ? bgCol : l.bgCol);
 }
 
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
 
   if (this.lazy) {
-    // TODO: Handle bg colors
-
-    if (!this.rects) this.rects = {};
-    let rectsToClear = Object.assign({}, this.rects);
+    if (!this.rects) this.rects = [];
+    let rectsToClear = this.rects.slice();
     let drawList = [];
-    prepareLazyRender(l, rectsToClear, drawList, this.rects);
-    for (let hash in rectsToClear) delete this.rects[hash];
-    for (let rect of rectsToClear) g.clearRect.apply(g, rect);
+    prepareLazyRender(l, rectsToClear, drawList, this.rects, g.getBgColor());
+    this.rects = this.rects.filter(r1 => !rectsToClear.some(r2 => r1.h == r2.h));
+    rectsToClear.reverse(); // Rects are cleared in reverse order so that the original bg color is restored
+    for (let r of rectsToClear) g.setBgColor(r.bg).clearRect(r.x1, r.y1, r.x2, r.y2);
     drawList.forEach(render);
   }
   else {
