@@ -3470,6 +3470,7 @@
   "version":"0.01",
   "description": "Choose people or things at random using Bangle.js.",
   "tags": "tool",
+  "readme": "README.md",
   "allow_emulator":true,
   "storage": [
     {"name":"choozi.app.js","url":"app.js"},
