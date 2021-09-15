@@ -248,13 +248,11 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
     // Hash the layoutObject without including its children
     let c = l.c;
     delete l.c;
-    let hash = E.CRC32(E.toJS(l));
+    let hash = "H"+E.CRC32(E.toJS(l)); // String keys maintain insertion order
     if (c) l.c = c;
 
-    let i = rectsToClear.findIndex(r => r.h == hash);
-    if (i != -1) rectsToClear.splice(i, 1);
-    else {
-      rects.push({h: hash, bg: bgCol, x1: l.x, y1: l.y, x2: l.x+l.w-1, y2: l.y+l.h-1});
+    if (!delete rectsToClear[hash]) {
+      rects[hash] = {bg: bgCol, r: [l.x,l.y,l.x+l.w-1,l.y+l.h-1]};
       if (drawList) {
         drawList.push(l);
         drawList = null; // Prevent children from being redundantly added to the drawList
@@ -269,13 +267,13 @@ Layout.prototype.render = function (l) {
   if (!l) l = this._l;
 
   if (this.lazy) {
-    if (!this.rects) this.rects = [];
-    let rectsToClear = this.rects.slice();
+    if (!this.rects) this.rects = {};
+    let rectsToClear = this.rects.clone();
     let drawList = [];
     prepareLazyRender(l, rectsToClear, drawList, this.rects, g.getBgColor());
-    this.rects = this.rects.filter(r1 => !rectsToClear.some(r2 => r1.h == r2.h));
-    rectsToClear.reverse(); // Rects are cleared in reverse order so that the original bg color is restored
-    for (let r of rectsToClear) g.setBgColor(r.bg).clearRect(r.x1, r.y1, r.x2, r.y2);
+    for (let h in rectsToClear) delete this.rects[h];
+    let clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
+    for (let r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
     drawList.forEach(render);
   }
   else {
