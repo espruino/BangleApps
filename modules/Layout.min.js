@@ -1,11 +1,10 @@
-
 /*
 
 Usage:
 
 ```
 var Layout = require("Layout");
-var layout = new Layout( layoutObject, btns )
+var layout = new Layout( layoutObject, btns, options )
 layout.render(optionalObject);
 ```
 
@@ -52,6 +51,13 @@ btns is an array of objects containing:
 * `cb` - a callback function
 * `cbl` - a callback function for long presses
 
+options is an object containing:
+
+* `lazy` - a boolean specifying whether to enable automatic lazy rendering
+
+If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
+determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
+
 Once `layout.update()` is called, the following fields are added
 to each object:
 
@@ -69,12 +75,15 @@ Other functions:
 */
 
 
-function Layout(layout, buttons) {
+function Layout(layout, buttons, options) {
   this._l = this.l = layout;
   this.b = buttons;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
   this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
+
+  options = options || {};
+  this.lazy = options.lazy || false;
 
   if (buttons) {    
     if (this.physBtns >= buttons.length) {
@@ -234,9 +243,35 @@ function render(l) {
   if (l.c) l.c.forEach(render);
 }
 
+function prepareLazyRender(l, rectsToClear, drawList) {
+  if (l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
+    let hash = E.CRC32(E.toJS(l));
+    if (!delete rectsToClear[hash]) drawList.push({hash: hash, l: l});
+  }
+  else if (l.c) l.c.forEach(l => prepareLazyRender(l, rectsToClear, drawList));
+}
+
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
-  render(l);
+
+  if (this.lazy) {
+    // TODO: Handle bg colors
+
+    if (!this.rects) this.rects = {};
+    let rectsToClear = Object.assign({}, this.rects);
+    let drawList = [];
+    prepareLazyRender(l, rectsToClear, drawList);
+    for (let hash in rectsToClear) delete this.rects[hash];
+    for (let rect of rectsToClear) if (rect) g.clearRect(rect.x1, rect.y1, rect.x2, rect.y2);
+    g.getModified(true);
+    for (let d of drawList) {
+      render(d.l);
+      this.rects[d.hash] = g.getModified(true);
+    }
+  }
+  else {
+    render(l);
+  }
 };
 
 Layout.prototype.layout = function (l) {
