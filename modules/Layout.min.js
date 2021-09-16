@@ -41,8 +41,8 @@ layoutObject has:
 * A `halign` field to set horizontal alignment. `-1`=left, `1`=right, `0`=center
 * A `valign` field to set vertical alignment. `-1`=top, `1`=bottom, `0`=center
 * A `pad` integer field to set pixels padding
-* A `fillx` boolean to choose if the object should fill available space in x
-* A `filly` boolean to choose if the object should fill available space in y
+* A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
+* A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 * `width` and `height` fields to optionally specify minimum size
 
 btns is an array of objects containing:
@@ -192,14 +192,16 @@ function updateMin(l) {
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
       l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
-      l.fillx |= l.c.some(c=>c.fillx);
+      if (l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.c.some(c=>c.filly)) l.filly = 1;
       break;
     }
     case "v": {
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
       l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
-      l.filly |= l.c.some(c=>c.filly);
+      if (l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.c.some(c=>c.filly)) l.filly = 1;
       break;
     }
     default: throw "Unknown item type "+l.type;
@@ -291,7 +293,7 @@ Layout.prototype.layout = function (l) {
       let x = l.x + (l.w-l._w)/2;
       if (fillx) { x = l.x; }
       l.c.forEach(c => {
-        c.w = c._w + (c.fillx?(l.w-l._w)/fillx:0);
+        c.w = c._w + ((0|c.fillx)*(l.w-l._w)/(fillx||1));
         c.h = c.filly ? l.h : c._h;
         c.x = x;
         c.y = l.y + (1+(0|c.valign))*(l.h-c.h)/2;
@@ -312,7 +314,7 @@ Layout.prototype.layout = function (l) {
       if (filly) { y = l.y; }
       l.c.forEach(c => {
         c.w = c.fillx ? l.w : c._w;
-        c.h = c._h + (c.filly?(l.h-l._h)/filly:0);
+        c.h = c._h + ((0|c.filly)*(l.h-l._h)/(filly||1));
         c.x = l.x + (1+(0|c.halign))*(l.w-c.w)/2;
         c.y = y;
         y += c.h;
