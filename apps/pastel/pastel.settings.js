@@ -11,7 +11,7 @@
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
-  const settings = storage.readJSON(SETTINGS_FILE, 1) || {}
+  let settings = storage.readJSON(SETTINGS_FILE, 1) || {}
   const saved = settings || {}
   for (const key in saved) {
     s[key] = saved[key]
@@ -26,7 +26,6 @@
   
   E.showMenu({
     '': { 'title': 'Pastel Clock' },
-    '< Back': back,
     'Font': {
       value: 0 | font_options.indexOf(s.font),
       min: 0, max: 4,
