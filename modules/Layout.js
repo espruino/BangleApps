@@ -113,7 +113,7 @@ function Layout(layout, buttons, options) {
     }
   }
   if (process.env.HWVERSION==2) {
-    Bangle.touchHandler = (_,e) => touchHandler(layout,e);
+    Bangle.touchHandler = function(_,e){touchHandler(layout,e)};
     Bangle.on('touch',Bangle.touchHandler);    
   }
   
@@ -121,6 +121,7 @@ function Layout(layout, buttons, options) {
   var ll = this;
   function idRecurser(l) {
     if (l.id) ll[l.id] = l;
+    if (!l.type) l.type="";
     if (l.c) l.c.forEach(idRecurser);
   }
   idRecurser(layout);
@@ -184,7 +185,7 @@ Layout.prototype.render = function (l) {
   }
   
   var cb = {
-    "undefined":function(){},
+    "":function(){},
     "txt":function(l){
        g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
     }, "btn":function(l){
@@ -209,16 +210,18 @@ Layout.prototype.render = function (l) {
   };
 
   if (this.lazy) {
+    // we have to use 'var' here not 'let', otherwise the minifier
+    // renames vars to the same name, which causes problems as Espruino
+    // doesn't yet honour the scoping of 'let'
     if (!this.rects) this.rects = {};
-    let rectsToClear = this.rects.clone();
-    let drawList = [];
+    var rectsToClear = this.rects.clone();
+    var drawList = [];
     prepareLazyRender(l, rectsToClear, drawList, this.rects, g.getBgColor());
-    for (let h in rectsToClear) delete this.rects[h];
-    let clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
-    for (let r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
+    for (var h in rectsToClear) delete this.rects[h];
+    var clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
+    for (var r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
     drawList.forEach(render);
-  }
-  else {
+  } else { // non-lazy
     render(l);
   }
 };
@@ -242,9 +245,7 @@ Layout.prototype.layout = function (l) {
           c.w += c.pad*2;
           c.h += c.pad*2;
         }
-        if (c.c) {
-          this.layout(c);
-        }
+        if (c.c) this.layout(c);
       });
       break;
     }
@@ -310,7 +311,7 @@ Layout.prototype.update = function() {
       var im = E.toString(l.src());
       l._h = im.charCodeAt(0);
       l._w = im.charCodeAt(1);
-    }, "undefined": function(l) {
+    }, "": function(l) {
       // size should already be set up in width/height
       l._w = 0;
       l._h = 0;
