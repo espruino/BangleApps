@@ -85,10 +85,10 @@ function Layout(layout, buttons, options) {
   options = options || {};
   this.lazy = options.lazy || false;
 
-  if (buttons) {    
+  if (buttons) {
     if (this.physBtns >= buttons.length) {
       // enough physical buttons
-      var btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
+      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
       Bangle.btnWatch = [];
       if (this.physBtns > 2 && buttons.length==1)
@@ -104,7 +104,7 @@ function Layout(layout, buttons, options) {
         {type:"v", pad:1, filly:1, c: buttons.map(b=>(b.type="txt",b.font="6x8",b.height=btnHeight,b.r=1,b))}
       ]};
     } else {
-      var btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
+      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
       this._l.width = g.getWidth()-20; // button width
       this._l = {type:"h", c: [
         this._l,
@@ -153,98 +153,6 @@ function touchHandler(l,e) {
   if (l.c) l.c.forEach(n => touchHandler(n,e));
 }
 
-
-function updateMin(l) {
-  switch (l.type) {
-    case "txt": {
-      if (l.font.endsWith("%"))
-        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      // FIXME ':'/fsz not needed in new firmwares - it's handled internally
-      if (l.font.includes(":")) {
-        var f = l.font.split(":");
-        l.font = f[0];
-        l.fsz = f[1];
-      }
-      g.setFont(l.font,l.fsz);
-      l._h = g.getFontHeight();
-      l._w = g.stringWidth(l.label);
-      break;
-    }
-    case "btn": {
-      l._h = 24;
-      l._w = 14 + l.label.length*8;
-      break;
-    }
-    case "img": {
-      var im = E.toString(l.src());
-      l._h = im.charCodeAt(0);
-      l._w = im.charCodeAt(1);
-      break;
-    }
-    case undefined:
-    case "custom": {
-      // size should already be set up in width/height
-      l._w = 0;
-      l._h = 0;
-      break;
-    }
-    case "h": {
-      l.c.forEach(updateMin);
-      l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
-      l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
-      break;
-    }
-    case "v": {
-      l.c.forEach(updateMin);
-      l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
-      l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
-      break;
-    }
-    default: throw "Unknown item type "+l.type;
-  }
-  if (l.r&1) { // rotation
-    var t = l._w;l._w=l._h;l._h=t;
-  }
-  l._w = Math.max(l._w, 0|l.width);
-  l._h = Math.max(l._h, 0|l.height);
-}
-function render(l) {
-  if (!l) l = this.l;
-  g.reset();
-  if (l.col) g.setColor(l.col);
-  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
-  switch (l.type) {
-    case "txt":
-      g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
-      break;
-    case "btn":
-      var poly = [
-        l.x,l.y+4,
-        l.x+4,l.y,
-        l.x+l.w-5,l.y,
-        l.x+l.w-1,l.y+4,
-        l.x+l.w-1,l.y+l.h-5,
-        l.x+l.w-5,l.y+l.h-1,
-        l.x+4,l.y+l.h-1,
-        l.x,l.y+l.h-5,
-        l.x,l.y+4
-      ];
-    g.setColor(g.theme.bgH).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg).drawPoly(poly).setFont("4x6",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
-      break;
-  case "img":
-    g.drawImage(l.src(), l.x, l.y);
-    break;
-  case "custom":
-    l.render(l);
-    break;
-  }
-  if (l.c) l.c.forEach(render);
-}
-
 function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
   if ((l.bgCol != null && l.bgCol != bgCol) || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
     // Hash the layoutObject without including its children
@@ -267,6 +175,38 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
 
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
+  
+  function render(l) {"ram"
+    g.reset();
+    if (l.col) g.setColor(l.col);
+    if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
+    cb[l.type](l);
+  }
+  
+  var cb = {
+    "undefined":function(){},
+    "txt":function(l){
+       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
+    }, "btn":function(l){
+      var poly = [
+        l.x,l.y+4,
+        l.x+4,l.y,
+        l.x+l.w-5,l.y,
+        l.x+l.w-1,l.y+4,
+        l.x+l.w-1,l.y+l.h-5,
+        l.x+l.w-5,l.y+l.h-1,
+        l.x+4,l.y+l.h-1,
+        l.x,l.y+l.h-5,
+        l.x,l.y+4
+      ];
+    g.setColor(g.theme.bgH).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg).drawPoly(poly).setFont("4x6",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+  }, "img":function(l){
+    g.drawImage(l.src(), l.x, l.y);
+  }, "custom":function(l){
+    l.render(l);
+  },"h":function(l) { l.c.forEach(render); },
+    "v":function(l) { l.c.forEach(render); }
+  };
 
   if (this.lazy) {
     if (!this.rects) this.rects = {};
@@ -286,11 +226,10 @@ Layout.prototype.render = function (l) {
 Layout.prototype.layout = function (l) {
   // l = current layout element
   // exw,exh = extra width/height available
-  var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
-  var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
   switch (l.type) {
     case "h": {
       let x = l.x + (l.w-l._w)/2;
+      var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
       if (fillx) { x = l.x; }
       l.c.forEach(c => {
         c.w = c._w + ((0|c.fillx)*(l.w-l._w)/(fillx||1));
@@ -311,6 +250,7 @@ Layout.prototype.layout = function (l) {
     }
     case "v": {
       let y = l.y + (l.h-l._h)/2;
+      var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
       if (filly) { y = l.y; }
       l.c.forEach(c => {
         c.w = c.fillx ? l.w : c._w;
@@ -342,6 +282,56 @@ Layout.prototype.update = function() {
   var y = this.yOffset;
   var h = g.getHeight()-y;
   // update sizes
+  function updateMin(l) {"ram"
+    cb[l.type](l);
+    if (l.r&1) { // rotation
+      var t = l._w;l._w=l._h;l._h=t;
+    }
+    l._w = Math.max(l._w, 0|l.width);
+    l._h = Math.max(l._h, 0|l.height);
+  }
+  var cb = {
+    "txt" : function(l) {
+      if (l.font.endsWith("%"))
+        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
+      // FIXME ':'/fsz not needed in new firmwares - it's handled internally
+      if (l.font.includes(":")) {
+        var f = l.font.split(":");
+        l.font = f[0];
+        l.fsz = f[1];
+      }
+      g.setFont(l.font,l.fsz);
+      l._h = g.getFontHeight();
+      l._w = g.stringWidth(l.label);
+    }, "btn": function(l) {
+      l._h = 24;
+      l._w = 14 + l.label.length*8;
+    }, "img": function(l) {
+      var im = E.toString(l.src());
+      l._h = im.charCodeAt(0);
+      l._w = im.charCodeAt(1);
+    }, "undefined": function(l) {
+      // size should already be set up in width/height
+      l._w = 0;
+      l._h = 0;
+    }, "custom": function(l) {
+      // size should already be set up in width/height
+      l._w = 0;
+      l._h = 0;
+    }, "h": function(l) {
+      l.c.forEach(updateMin);
+      l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
+      l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
+      if (l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.c.some(c=>c.filly)) l.filly = 1;
+    }, "v": function(l) {
+      l.c.forEach(updateMin);
+      l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
+      l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
+      if (l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.c.some(c=>c.filly)) l.filly = 1;
+    }
+  };
   updateMin(l);
   // center
   if (l.fillx || l.filly) {
