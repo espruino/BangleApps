@@ -1,11 +1,10 @@
-
 /*
 
 Usage:
 
 ```
 var Layout = require("Layout");
-var layout = new Layout( layoutObject, btns )
+var layout = new Layout( layoutObject, btns, options )
 layout.render(optionalObject);
 ```
 
@@ -52,6 +51,13 @@ btns is an array of objects containing:
 * `cb` - a callback function
 * `cbl` - a callback function for long presses
 
+options is an object containing:
+
+* `lazy` - a boolean specifying whether to enable automatic lazy rendering
+
+If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
+determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
+
 Once `layout.update()` is called, the following fields are added
 to each object:
 
@@ -69,12 +75,15 @@ Other functions:
 */
 
 
-function Layout(layout, buttons) {
+function Layout(layout, buttons, options) {
   this._l = this.l = layout;
   this.b = buttons;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
   this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
+
+  options = options || {};
+  this.lazy = options.lazy || false;
 
   if (buttons) {    
     if (this.physBtns >= buttons.length) {
@@ -205,7 +214,7 @@ function render(l) {
   if (!l) l = this.l;
   g.reset();
   if (l.col) g.setColor(l.col);
-  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w,l.y+l.h);
+  if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
   switch (l.type) {
     case "txt":
       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
@@ -234,9 +243,42 @@ function render(l) {
   if (l.c) l.c.forEach(render);
 }
 
+function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
+  if ((l.bgCol != null && l.bgCol != bgCol) || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
+    // Hash the layoutObject without including its children
+    let c = l.c;
+    delete l.c;
+    let hash = "H"+E.CRC32(E.toJS(l)); // String keys maintain insertion order
+    if (c) l.c = c;
+
+    if (!delete rectsToClear[hash]) {
+      rects[hash] = {bg: bgCol, r: [l.x,l.y,l.x+l.w-1,l.y+l.h-1]};
+      if (drawList) {
+        drawList.push(l);
+        drawList = null; // Prevent children from being redundantly added to the drawList
+      }
+    }
+  }
+
+  if (l.c) for (let ch of l.c) prepareLazyRender(ch, rectsToClear, drawList, rects, l.bgCol == null ? bgCol : l.bgCol);
+}
+
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
-  render(l);
+
+  if (this.lazy) {
+    if (!this.rects) this.rects = {};
+    let rectsToClear = this.rects.clone();
+    let drawList = [];
+    prepareLazyRender(l, rectsToClear, drawList, this.rects, g.getBgColor());
+    for (let h in rectsToClear) delete this.rects[h];
+    let clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
+    for (let r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
+    drawList.forEach(render);
+  }
+  else {
+    render(l);
+  }
 };
 
 Layout.prototype.layout = function (l) {
