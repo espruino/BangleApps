@@ -1,9 +1,41 @@
 <html>
   <head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+      #controls {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid black;
+        position:absolute;
+        right:0px;bottom:0px;
+        background-color: rgb(255, 255, 255);
+        z-index: 100;
+      }
+    </style>
+    <div id="controls">
+      <p>Create your events on the current week. Keep in note that your events repeat weekly.</p>
+      <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button></p>
+    </div>
     <meta charset='utf-8' />
     <link href='fullcalendar/main.css' rel='stylesheet' />
     <script src='fullcalendar/main.js'></script>
     <script>
+      document.getElementById("upload").addEventListener("click", function() {
+        sendCustomizedApp({
+          id : "schoolCalender",
+          storage:[
+            {"name":"app.json"}
+          ]
+        });
+      });
+      
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -41,31 +73,6 @@
         calendar.render();
       });
     </script>
-    
-    <style>
-      body {
-        padding: 0;
-        margin: 0;
-      }
-      html, body, #map {
-        height: 100%;
-        width: 100%;
-      }
-      #controls {
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid black;
-        position:absolute;
-        right:0px;bottom:0px;
-        background-color: rgb(255, 255, 255);
-        z-index: 100;
-      }
-    </style>
-    <div id="controls">
-      <p>Create your events on the current week. Keep in note that your events repeat weekly.</p>
-      <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button></p>
-    </div>
-    
   </head>
   <body>
     <div id='calendar'></div>
