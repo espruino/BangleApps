@@ -187,7 +187,7 @@ Layout.prototype.render = function (l) {
   var cb = {
     "":function(){},
     "txt":function(l){
-       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1), true/*solid bg*/);
+       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
     }, "btn":function(l){
       var poly = [
         l.x,l.y+4,
