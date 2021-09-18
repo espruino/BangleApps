@@ -12,12 +12,12 @@
   function draw() {
     let w = weather.current;
     g.reset();
-    g.setColor(0).fillRect(0, 24, 239, 239);
+    g.clearRect(0, 24, 239, 239);
 
     weather.drawIcon(w.txt, 65, 90, 55);
     const locale = require("locale");
 
-    g.setColor(-1);
+    g.reset();
 
     const temp = locale.temp(w.temp-273.15).match(/^(\D*\d*)(.*)$/);
     let width = g.setFont("Vector", 40).stringWidth(temp[1]);
@@ -54,8 +54,8 @@
     if (!weather.current || !weather.current.time) return;
     let text = `Last update received ${formatDuration(Date.now() - weather.current.time)} ago`;
     g.reset();
-    g.setColor(0).fillRect(0, 202, 239, 210);
-    g.setColor(-1).setFont("6x8", 1).setFontAlign(0, 0, 0);
+    g.clearRect(0, 202, 239, 210);
+    g.setFont("6x8", 1).setFontAlign(0, 0, 0);
     g.drawString(text, 120, 206);
   }
 
