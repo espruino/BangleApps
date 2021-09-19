@@ -41,15 +41,6 @@
       `;
       }
       
-      document.getElementById("upload").addEventListener("click", function() {
-        sendCustomizedApp({
-          id : "schoolCalender",
-          storage:[
-            {"name":"sCalendar.custom.js", url:"app.js", content:getApp()}
-          ]
-        });
-      });
-      
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -85,6 +76,14 @@
         },
         });
         calendar.render();
+      });
+      document.getElementById("upload").addEventListener("click", function() {
+        sendCustomizedApp({
+          id : "schoolCalender",
+          storage:[
+            {"name":"sCalendar.custom.js", url:"app.js", content:getApp()}
+          ]
+        });
       });
     </script>
   </head>
