@@ -28,12 +28,23 @@
     <link href='fullcalendar/main.css' rel='stylesheet' />
     <script src='fullcalendar/main.js'></script>
     <script>
+      
+    function getApp(){
+      var events = calendar.getEvents()
+      return`(function() {
+        g.drawString(${JSON.stringify(calendar.getEvents().start)},x,y+=20);
+        g.drawString(${JSON.stringify(calendar.getEvents().end)},x,y+=20);
+        g.flip();
+        g.clear();
+        setInterval(draw,50);
+        })();
+      `;
+      }
       document.getElementById("upload").addEventListener("click", function() {
-        var events = calendar.getEvents()
         sendCustomizedApp({
           id : "schoolCalender",
           storage:[
-            {"name":"app.json"}
+            {"name":"sCalendar.custom.js", url:"app.js", content:getApp()}
           ]
         });
       });
