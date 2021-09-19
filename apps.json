@@ -3502,7 +3502,7 @@
       {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
     ]
   },
-  { "id": "schoolCalender",
+{ "id": "schoolCalender",
   "name": "School Calendar",
   "shortName":"SCalender",
   "icon": "CalenderLogo.png",
@@ -3514,6 +3514,23 @@
   "data": [
     {"name":"app.json"}
   ]
+},
+{ "id": "pastel",
+  "name": "Pastel Clock",
+  "shortName": "Pastel",
+  "icon": "pastel.png",
+  "version":"0.01",
+  "description": "A Configurable clock with custom fonts and background",
+  "tags": "clock,b2",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"pastel.app.js","url":"pastel.app.js"},
+    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true},
+    {"name":"pastel.settings.js","url":"pastel.settings.js"}
+  ],
+  "data": [
+    {"name":"pastel.json"}
+  ]
 }
-
 ]
