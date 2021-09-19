@@ -231,6 +231,17 @@ exports.drawIcon = function(cond, x, y, r) {
     if (condition.includes("few clouds")) return drawFewClouds;
     if (condition.includes("scattered clouds")) return drawCloud;
     if (condition.includes("clouds")) return drawBrokenClouds;
+    if (condition.includes("mist") ||
+      condition.includes("smoke") ||
+      condition.includes("haze") ||
+      condition.includes("sand") ||
+      condition.includes("dust") ||
+      condition.includes("fog") ||
+      condition.includes("ash") ||
+      condition.includes("squalls") ||
+      condition.includes("tornado")) {
+      return drawMist;
+    }
     return drawUnknown;
   }
 
