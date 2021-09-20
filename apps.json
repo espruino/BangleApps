@@ -202,7 +202,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget,b2",
     "storage": [
@@ -1184,7 +1184,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.17",
+    "version":"0.18",
     "description": "Daily pedometer widget",
     "tags": "widget,b2",
     "type":"widget",
