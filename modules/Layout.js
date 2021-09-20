@@ -308,9 +308,15 @@ Layout.prototype.update = function() {
       l._h = 24;
       l._w = 14 + l.label.length*8;
     }, "img": function(l) {
-      var im = E.toString(l.src());
-      l._h = im.charCodeAt(0);
-      l._w = im.charCodeAt(1);
+      var src = l.src();
+      if (typeof(src) === 'object') {
+        l._h = ("width" in src) ? src.width : src.getWidth();
+        l._w = ("height" in src) ? src.height : src.getHeight();
+      } else {
+        var im = E.toString(src);
+        l._h = im.charCodeAt(0);
+        l._w = im.charCodeAt(1);
+      }
     }, "": function(l) {
       // size should already be set up in width/height
       l._w = 0;
