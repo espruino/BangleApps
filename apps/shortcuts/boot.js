@@ -4,7 +4,6 @@
     if (mode!="clock") return sui(mode,cb);
     return sui("clockupdown", (dir) => {
       let settings = require("Storage").readJSON("shortcuts.json", 1)||{};
-      console.log(settings);
       if (dir == -1) {
         if (settings.BTN1) load(settings.BTN1);
       } else if (dir == 1) {
