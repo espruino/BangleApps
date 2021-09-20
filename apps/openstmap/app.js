@@ -24,10 +24,7 @@ function drawMarker() {
 var fix;
 Bangle.on('GPS',function(f) {
   fix=f;
-  g.clearRect(0,y1,240,y1+8);
-  g.setColor(1,1,1);
-  g.setFont("6x8");
-  g.setFontAlign(0,0);
+  g.reset().clearRect(0,y1,240,y1+8).setFont("6x8").setFontAlign(0,0);
   var txt = fix.satellites+" satellites";
   if (!fix.fix)
     txt += " - NO FIX";

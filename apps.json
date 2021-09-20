@@ -118,7 +118,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -136,7 +136,7 @@
     "name": "Customised Welcome",
     "shortName": "My Welcome",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
     "tags": "start,welcome",
     "custom":"custom.html",
@@ -153,7 +153,7 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.23",
+    "version":"0.24",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
     "tags": "tool,system,android,widget",
     "readme": "README.md",
@@ -532,7 +532,7 @@
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
@@ -571,7 +571,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.05",
+    "version":"0.07",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -639,10 +639,11 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
-    "tags": "widget,battery",
+    "tags": "widget,battery,b2",
     "type":"widget",
+    "readme": "README.md",
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
       {"name":"widbatpc.settings.js","url":"settings.js"}
@@ -721,7 +722,7 @@
   { "id": "widhrm",
     "name": "Simple Heart Rate widget",
     "icon": "widget.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
     "type": "widget",
@@ -1287,7 +1288,7 @@
   { "id": "wohrm",
     "name": "Workout HRM",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "readme": "README.md",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "tags": "hrm,workout",
@@ -1466,7 +1467,7 @@
     "id": "balltastic",
     "name": "Balltastic",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Simple but fun ball eats dots game.",
     "tags": "game,fun",
     "type": "app",
@@ -1517,7 +1518,7 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps,b2",
     "custom": "custom.html", "customConnect":true,
@@ -1895,7 +1896,7 @@
   { "id": "ballmaze",
     "name": "Ball Maze",
     "icon": "icon.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Navigate a ball through a maze by tilting your watch.",
     "readme": "README.md",
     "tags": "game",
@@ -1944,26 +1945,16 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.09",
+    "version": "0.10",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
     "type": "clock",
     "allow_emulator": true,
     "storage": [
-      {
-        "name": "largeclock.app.js",
-        "url": "largeclock.js"
-      },
-      {
-        "name": "largeclock.img",
-        "url": "largeclock-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "largeclock.settings.js",
-        "url": "settings.js"
-      }
+      {"name": "largeclock.app.js", "url": "largeclock.js"},
+      {"name": "largeclock.img", "url": "largeclock-icon.js", "evaluate": true},
+      {"name": "largeclock.settings.js", "url": "settings.js"}
     ],
     "data": [
       {"name":"largeclock.json"}
@@ -3265,14 +3256,15 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "icon": "app-icon.png",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "tags": "tool,alarm",
   "readme": "README.md",
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
-    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true},
+    {"name":"hourstrike.json","url":"hourstrike.json"}
   ]
 },
 { "id": "whereworld",
@@ -3430,13 +3422,103 @@
   "name": "Car Crazy",
   "shortName":"Car Crazy",
   "icon": "carcrash.png",
-  "version":"0.01",
+  "version":"0.03",
   "description": "A simple car game where you try to avoid the other cars by tilting your wrist left and right. Hold down button 2 to start.",
   "tags": "game",
   "readme": "README.md",
   "storage": [
     {"name":"carcrazy.app.js","url":"app.js"},
-    {"name":"carcrazy.img","url":"app-icon.js","evaluate":true}
+    {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
+    {"name":"carcrazy.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"app.json"}
+  ]
+},
+{ "id": "shortcuts",
+  "name": "Shortcuts",
+  "shortName":"Shortcuts",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Quickly load your favourite apps from (almost) any watch face.",
+  "tags": "tool",
+  "type": "bootloader",
+  "readme": "README.md",
+  "storage": [
+    {"name":"shortcuts.boot.js","url":"boot.js"},
+    {"name":"shortcuts.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"shortcuts.json"}
+  ]
+},
+{ "id": "vectorclock",
+  "name": "Vector Clock",
+  "icon": "app.png",
+  "version": "0.02",
+  "description": "A digital clock that uses the built-in vector font.",
+  "tags": "clock",
+  "type": "clock",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"vectorclock.app.js","url":"app.js"},
+    {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "fd6fdetect",
+  "name": "fd6fdetect",
+  "shortName":"fd6fdetect",
+  "icon": "app.png",
+  "version":"0.1",
+  "description": "Allows you to see 0xFD6F beacons near you.",
+  "tags": "tool",
+  "storage": [
+    {"name":"fd6fdetect.app.js","url":"app.js"},
+    {"name":"fd6fdetect.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "choozi",
+  "name": "Choozi",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Choose people or things at random using Bangle.js.",
+  "tags": "tool",
+  "readme": "README.md",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"choozi.app.js","url":"app.js"},
+    {"name":"choozi.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "widclkbttm",
+  "name": "Digital clock (Bottom) widget",
+  "shortName":"Digital clock Bottom Widget",
+  "icon": "widclkbttm.png",
+  "version":"0.03",
+  "description": "Displays time in the bottom area.",
+  "readme": "README.md",
+  "tags": "widget",
+  "type": "widget",
+  "storage": [
+    {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
+  ]
+},
+{ "id": "pastel",
+  "name": "Pastel Clock",
+  "shortName": "Pastel",
+  "icon": "pastel.png",
+  "version":"0.01",
+  "description": "A Configurable clock with custom fonts and background",
+  "tags": "clock,b2",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"pastel.app.js","url":"pastel.app.js"},
+    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true},
+    {"name":"pastel.settings.js","url":"pastel.settings.js"}
+  ],
+  "data": [
+    {"name":"pastel.json"}
   ]
 }
 ]
