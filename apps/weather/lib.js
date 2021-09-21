@@ -1,6 +1,6 @@
 const storage = require('Storage');
 
-let expiryTimeout = undefined;
+let expiryTimeout;
 function scheduleExpiry(json) {
   if (expiryTimeout) {
     clearTimeout(expiryTimeout);
@@ -9,53 +9,35 @@ function scheduleExpiry(json) {
   let expiry = "expiry" in json ? json.expiry : 2*3600000;
   if (json.weather && json.weather.time && expiry) {
     let t = json.weather.time + expiry - Date.now();
-    expiryTimeout = setTimeout(() => {
-      expiryTimeout = undefined;
-
-      let json = storage.readJSON('weather.json')||{};
-      delete json.weather;
-      storage.write('weather.json', json);
-
-      exports.current = undefined;
-      exports.emit("update");
-    }, t);
+    expiryTimeout = setTimeout(update, t);
   }
-}
-
-/**
- * Convert numeric direction into human-readable label
- *
- * @param {number} deg - Direction in degrees
- * @return {string|null} - Nearest compass point
- */
-function compassRose(deg) {
-  if (typeof deg === 'undefined') return null;
-  while (deg<0 || deg>360) {
-    deg = (deg+360)%360;
-  }
-  return ['n','ne','e','se','s','sw','w','nw','n'][Math.floor((deg+22.5)/45)];
-}
-
-function setCurrentWeather(json) {
-  scheduleExpiry(json);
-  exports.current = json.weather;
 }
 
 function update(weatherEvent) {
-  let weather = Object.assign({}, weatherEvent);
-  weather.time = Date.now();
-  if ('wdir' in weather) {
-    weather.wrose = compassRose(weather.wdir);
-  }
-  delete weather.t;
-
   let json = storage.readJSON('weather.json')||{};
-  json.weather = weather;
+  
+  if (weatherEvent) {
+    let weather = weatherEvent.clone();
+    delete weather.t;
+    weather.time = Date.now();
+    if (weather.wdir != null) {
+      // Convert numeric direction into human-readable label
+      let deg = weather.wdir;
+      while (deg<0 || deg>360) {
+        deg = (deg+360)%360;
+      }
+      weather.wrose = ['n','ne','e','se','s','sw','w','nw','n'][Math.floor((deg+22.5)/45)];
+    }
+
+    json.weather = weather;
+  }
+  else {
+    delete json.weather;
+  }
+
   storage.write('weather.json', json);
-
-  setCurrentWeather(json);
-
-  exports.emit("update");
+  scheduleExpiry(json);
+  exports.emit("update", json.weather);
 }
 
 const _GB = global.GB;
@@ -64,7 +46,11 @@ global.GB = (event) => {
   if (_GB) setTimeout(_GB, 0, event);
 };
 
-setCurrentWeather(storage.readJSON('weather.json')||{});
+exports.get = function() {
+  return storage.readJSON('weather.json').weather;
+}
+
+scheduleExpiry(storage.readJSON('weather.json')||{});
 
 exports.drawIcon = function(cond, x, y, r) {
   function drawSun(x, y, r) {
