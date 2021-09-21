@@ -1,6 +1,6 @@
 # Bangle.js Calendar
 
-School Calender is a calender that you can see your upcoming classes or schedule.
+School Calender is a calender that you can see your upcoming classes or schedule. Keep in note that the events repeat weekly.
 
 ## Versions:
 
