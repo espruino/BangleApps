@@ -54,9 +54,9 @@
 
   // show the step count in the widget area in a readable sized font
   function draw_large(st) {
-    var width = 12 * st.length;
+    this.width = 12 * st.length + 3;
     g.reset();
-    g.clearRect(this.x, this.y, this.x + width, this.y + 16); // erase background
+    g.clearRect(this.x, this.y, this.x + this.width, this.y + 16); // erase background
     g.setColor(g.theme.fg);
     g.setFont("6x8",2);
     g.setFontAlign(-1, -1);
