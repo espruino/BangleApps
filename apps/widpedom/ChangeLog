@@ -14,3 +14,8 @@
 0.15: Settings option to hide the widget icon
 0.16: Settings option to show large digits in widget area
 0.17: Cope with 2v10+ firmware sometimes reporting >1 step
+0.18: Adjust widget width when displaying large text
+0.19: Allow goal in large font mode
+      Stop goal drawing outside widget area
+      Fix issue with widget overwrite in large font mode
+      Memory usage enhancements
