@@ -842,8 +842,8 @@
     "icon": "eightball.png",
     "version": "0.01",
     "description": "Magic eightball simulation using accelerometer data",
-    "tags": "",
-    "allo2_emulator":true,
+    "tags": "app",
+    "allow_emulator":true,
     "storage": [
       {"name":"eightball.app.js","url":"eightball.js"},
       {"name":"eightball.img","url":"eightball-icon.js","evaluate":true}
