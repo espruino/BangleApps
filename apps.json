@@ -3512,6 +3512,10 @@
   "tags": "tool",
   "readme": "README.md",
   "custom":"interface.html",
+  "storage": [
+    {"name":"schoolCalender.app.js","url":"app.js"},
+    {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
+  ],
   "data": [
     {"name":"app.json"}
   ]
