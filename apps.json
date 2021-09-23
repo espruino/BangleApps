@@ -1670,7 +1670,7 @@
     "name": "Calculator",
     "shortName":"Calculator",
     "icon": "calculator.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "tags": "app,tool,b2",
     "storage": [
@@ -3519,6 +3519,28 @@
   ],
   "data": [
     {"name":"pastel.json"}
+  ]
+},
+{ "id": "antonclk",
+  "name": "Anton Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A simple clock using the bold Anton font.",
+  "tags": "clock,b2",
+  "storage": [
+    {"name":"antonclk.app.js","url":"app.js"},
+    {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "waveclk",
+  "name": "Wave Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires a bugfix for #2049 on Bangle.js 1**",
+  "tags": "clock,b2",
+  "storage": [
+    {"name":"waveclk.app.js","url":"app.js"},
+    {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
