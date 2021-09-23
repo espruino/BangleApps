@@ -1,5 +1,4 @@
 #!/bin/bash
 
-cd `dirname $0`
-cd ../tests
-ls *.js | xargs ../bin/runtest.sh 
+cd `dirname $0`/..
+ls tests/*.js | xargs -I{} bin/runtest.sh {}

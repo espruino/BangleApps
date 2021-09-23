@@ -105,7 +105,6 @@ function startRecord(force) {
       showMenu();
     }}
   ]);
-  layout.update();
   layout.render();
 
   // now start writing
