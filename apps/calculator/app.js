@@ -199,8 +199,7 @@ function doMath(x, y, operator) {
 function displayOutput(num) {
   var len;
   var minusMarge = 0;
-  g.setColor(0);
-  g.fillRect(0, 0, g.getWidth(), RESULT_HEIGHT-1);
+  g.setBgColor(0).clearRect(0, 0, g.getWidth(), RESULT_HEIGHT-1);
   g.setColor(-1);
   if (num === Infinity || num === -Infinity || isNaN(num)) {
     // handle division by 0
@@ -244,6 +243,10 @@ function displayOutput(num) {
   }
   g.setFontAlign(1,0);
   g.drawString(num, g.getWidth()-20, RESULT_HEIGHT/2);
+  if (operator) {
+    g.setFont('Vector', 22).setFontAlign(1,0);
+    g.drawString(operator, g.getWidth()-1, RESULT_HEIGHT/2);
+  }
 }
 var wasPressedEquals = false;
 var hasPressedNumber = false;
