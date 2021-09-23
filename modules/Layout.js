@@ -237,14 +237,13 @@ Layout.prototype.layout = function (l) {
       l.c.forEach(c => {
         c.w = c._w + ((0|c.fillx)*(l.w-l._w)/(fillx||1));
         c.h = c.filly ? l.h : c._h;
-        c.x = x;
-        c.y = l.y + (1+(0|c.valign))*(l.h-c.h)/2;
-        x += c.w;
         if (c.pad) {
-          x += c.pad*2;
           c.w += c.pad*2;
           c.h += c.pad*2;
         }
+        c.x = x;
+        c.y = l.y + (1+(0|c.valign))*(l.h-c.h)/2;
+        x += c.w;
         if (c.c) this.layout(c);
       });
       break;
@@ -256,14 +255,13 @@ Layout.prototype.layout = function (l) {
       l.c.forEach(c => {
         c.w = c.fillx ? l.w : c._w;
         c.h = c._h + ((0|c.filly)*(l.h-l._h)/(filly||1));
-        c.x = l.x + (1+(0|c.halign))*(l.w-c.w)/2;
-        c.y = y;
-        y += c.h;
         if (c.pad) {
-          y += c.pad*2;
           c.w += c.pad*2;
           c.h += c.pad*2;
         }
+        c.y = y;
+        c.x = l.x + (1+(0|c.halign))*(l.w-c.w)/2;
+        y += c.h;
         if (c.c) this.layout(c);
       });
       break;
@@ -274,6 +272,8 @@ Layout.prototype.debug = function(l,c) {
   if (!l) l = this._l;
   c=c||1;
   g.setColor(c&1,c&2,c&4).drawRect(l.x+c-1, l.y+c-1, l.x+l.w-c, l.y+l.h-c);
+  if (l.pad)
+    g.drawRect(l.x+l.pad-1, l.y+l.pad-1, l.x+l.w-l.pad, l.y+l.h-l.pad);
   c++;
   if (l.c) l.c.forEach(n => this.debug(n,c));
 };
