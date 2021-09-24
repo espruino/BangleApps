@@ -1,24 +1,9 @@
 const storage = require('Storage');
-let settings;
+var settings = storage.readJSON('hourstrike.json', 1);
 
 function updateSettings() {
   storage.write('hourstrike.json', settings);
 }
-
-function resetSettings() {
-  settings = {
-    interval: 3600,
-    start: 9,
-    end: 21,
-    vlevel: 0.5,
-    next_hour: -1,
-    next_minute: -1,
-  };
-  updateSettings();
-}
-
-settings = storage.readJSON('hourstrike.json', 1);
-if (!settings) resetSettings();
 
 function showMainMenu() {
   var mode_txt = ['Off','1 min','5 min','10 min','1/4 h','1/2 h','1 h'];

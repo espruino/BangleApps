@@ -51,7 +51,7 @@ try{
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
-  'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
+  'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data', 'allow_emulator',
   'dependencies'
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite'];
@@ -100,6 +100,7 @@ apps.forEach((app,appIdx) => {
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
   if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`);
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`);
+  if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`);
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`);
   if (app.dependencies) {
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {

@@ -5,6 +5,8 @@
   let s = {
     'goal': 10000,
     'progress': false,
+    'large': false,
+    'hide': false
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -30,7 +32,7 @@
       onchange: (g) => {
         s.goal = g
         s.progress = !!g
-        save()
+        save();
       },
     },
     'Show Progress': {
@@ -38,7 +40,23 @@
       format: () => (s.progress ? 'Yes' : 'No'),
       onchange: () => {
         s.progress = !s.progress
-        save()
+        save();
+      },
+    },
+    'Large Digits': {
+      value: s.large,
+      format: () => (s.large ? 'Yes' : 'No'),
+      onchange: () => {
+        s.large = !s.large
+        save();
+      },
+    },
+    'Hide Widget': {
+      value: s.hide,
+      format: () => (s.hide ? 'Yes' : 'No'),
+      onchange: () => {
+        s.hide = !s.hide
+        save();
       },
     },
     '< Back': back,

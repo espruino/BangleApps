@@ -12,3 +12,5 @@
       More useful app menu
       BTN2 now goes to menu on release
 0.10: Tweaks to reduce memory usage
+0.11: Fix initial screen fill colour
+0.12: Fix swipe direction (#800)

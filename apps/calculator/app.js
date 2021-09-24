@@ -6,13 +6,11 @@
  */
 
 g.clear();
-Graphics.prototype.setFont7x11Numeric7Seg = function() {
-  this.setFontCustom(atob("ACAB70AYAwBgC94AAAAAAAAAAB7wAAPQhhDCGELwAAAAhDCGEMIXvAAeACAEAIAQPeAA8CEMIYQwhA8AB70IYQwhhCB4AAAIAQAgBAB7wAHvQhhDCGEL3gAPAhDCGEMIXvAAe9CCEEIIQPeAA94EIIQQghA8AB70AYAwBgCAAAAHgQghBCCF7wAHvQhhDCGEIAAAPehBCCEEIAAAAA=="), 46, atob("AgAHBwcHBwcHBwcHAAAAAAAAAAcHBwcHBw=="), 11);
-};
+require("Font7x11Numeric7Seg").add(Graphics);
 
 var DEFAULT_SELECTION = '5';
-var BOTTOM_MARGIN = 10;
 var RIGHT_MARGIN = 20;
+var RESULT_HEIGHT = 40;
 var COLORS = {
   // [normal, selected]
   DEFAULT: ['#7F8183', '#A6A6A7'],
@@ -123,7 +121,7 @@ function drawKey(name, k, selected) {
   var bMargin = 0;
   var color = k.color || COLORS.DEFAULT;
   g.setColor(color[selected ? 1 : 0]);
-  g.setFont('Vector', 20);
+  g.setFont('Vector', 20).setFontAlign(0,0);
   g.fillRect(k.xy[0], k.xy[1], k.xy[2], k.xy[3]);
   g.setColor(-1);
   // correct margins to center the texts
@@ -141,7 +139,7 @@ function drawKey(name, k, selected) {
   } else if (name === '%') {
     rMargin = -3;
   }
-  g.drawString(k.val || name, k.xy[0] + RIGHT_MARGIN + rMargin, k.xy[1] + BOTTOM_MARGIN + bMargin);
+  g.drawString(k.val || name, (k.xy[0] + k.xy[2])/2, (k.xy[1] + k.xy[3])/2);
 }
 
 function getIntWithPrecision(x) {
@@ -201,8 +199,7 @@ function doMath(x, y, operator) {
 function displayOutput(num) {
   var len;
   var minusMarge = 0;
-  g.setColor(0);
-  g.fillRect(0, 0, 240, 39);
+  g.setBgColor(0).clearRect(0, 0, g.getWidth(), RESULT_HEIGHT-1);
   g.setColor(-1);
   if (num === Infinity || num === -Infinity || isNaN(num)) {
     // handle division by 0
@@ -240,17 +237,16 @@ function displayOutput(num) {
           num = num.substr(1);
       }
     }
-
-    len = (num + '').length;
-    if (numNumeric < 0 || (numNumeric === 0 && 1/numNumeric === -Infinity)) {
-      // minus is not available in font 7x11Numeric7Seg, we use Vector
-      g.setFont('Vector', 20);
-      g.drawString('-', 220 - (len * 15), 10);
-      minusMarge = 15;
-    }
+    num = num.toString();
+    num = num.replace("-","- "); // fix padding for '-'
     g.setFont('7x11Numeric7Seg', 2);
   }
-  g.drawString(num, 220 - (len * 15) + minusMarge, 10);
+  g.setFontAlign(1,0);
+  g.drawString(num, g.getWidth()-20, RESULT_HEIGHT/2);
+  if (operator) {
+    g.setFont('Vector', 22).setFontAlign(1,0);
+    g.drawString(operator, g.getWidth()-1, RESULT_HEIGHT/2);
+  }
 }
 var wasPressedEquals = false;
 var hasPressedNumber = false;
@@ -370,14 +366,6 @@ function buttonPress(val) {
   }
 }
 
-for (var k in keys) {
-  if (keys.hasOwnProperty(k)) {
-    drawKey(k, keys[k], k == '5');
-  }
-}
-g.setFont('7x11Numeric7Seg', 2.8);
-g.drawString('0', 205, 10);
-
 function moveDirection(d) {
   drawKey(selected, keys[selected]);
   prevSelected = selected;
@@ -385,8 +373,37 @@ function moveDirection(d) {
   drawKey(selected, keys[selected], true);
 }
 
-setWatch(_ => moveDirection(0), BTN1, {repeat: true, debounce: 100});
-setWatch(_ => moveDirection(2), BTN3, {repeat: true, debounce: 100});
-setWatch(_ => moveDirection(3), BTN4, {repeat: true, debounce: 100});
-setWatch(_ => moveDirection(1), BTN5, {repeat: true, debounce: 100});
-setWatch(_ => buttonPress(selected), BTN2, {repeat: true, debounce: 100});
+if (global.BTN4) {
+  setWatch(_ => moveDirection(0), BTN1, {repeat: true, debounce: 100});
+  setWatch(_ => moveDirection(2), BTN3, {repeat: true, debounce: 100});
+  setWatch(_ => moveDirection(3), BTN4, {repeat: true, debounce: 100});
+  setWatch(_ => moveDirection(1), BTN5, {repeat: true, debounce: 100});
+  setWatch(_ => buttonPress(selected), BTN2, {repeat: true, debounce: 100});
+} else { // touchscreen?
+  selected = "NONE";
+  Bangle.on('touch',(n,e)=>{
+    for (var key in keys) {
+      var r = keys[key].xy;
+      if (e.x>=r[0] && e.y>=r[1] &&
+          e.x<r[2] && e.y<r[3]) {
+        //print("Press "+key);
+        buttonPress(""+key);
+      }
+    }
+  });
+}
+
+// rescale for non-240px screens
+if (g.getWidth()!=240) {
+  RESULT_HEIGHT = RESULT_HEIGHT*g.getWidth()/240;
+  for (var k in keys) {
+    keys[k].xy = keys[k].xy.map(n => n*g.getWidth()/240);
+  }
+}
+// draw keys
+for (var k in keys) {
+  if (keys.hasOwnProperty(k)) {
+    drawKey(k, keys[k], k == selected);
+  }
+}
+displayOutput(0);

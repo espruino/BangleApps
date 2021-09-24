@@ -4,7 +4,7 @@
     "tags": "tool,system,b2",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.28",
+    "version":"0.29",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
@@ -55,7 +55,7 @@
     "name": "Launcher (Bangle.js 2)",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications. It will not work on Bangle.js 1.0.",
     "tags": "tool,system,launcher,b2,bno1",
     "type":"launch",
@@ -94,7 +94,7 @@
     "name": "Notifications (default)",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.09",
+    "version":"0.10",
     "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
     "tags": "widget",
     "type": "notify",
@@ -107,9 +107,9 @@
     "name": "Fullscreen Notifications",
     "shortName":"Notifications",
     "icon": "notify.png",
-    "version":"0.09",
+    "version":"0.11",
     "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
-    "tags": "widget",
+    "tags": "widget,b2",
     "type": "notify",
     "storage": [
       {"name":"notify","url":"notify.js"}
@@ -118,7 +118,7 @@
   { "id": "welcome",
     "name": "Welcome",
     "icon": "app.png",
-    "version":"0.10",
+    "version":"0.12",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "tags": "start,welcome",
     "allow_emulator":true,
@@ -136,7 +136,7 @@
     "name": "Customised Welcome",
     "shortName": "My Welcome",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
     "tags": "start,welcome",
     "custom":"custom.html",
@@ -153,9 +153,9 @@
   { "id": "gbridge",
     "name": "Gadgetbridge",
     "icon": "app.png",
-    "version":"0.23",
+    "version":"0.24",
     "description": "The default notification handler for Gadgetbridge notifications from Android",
-    "tags": "tool,system,android,widget",
+    "tags": "tool,system,android,widget,b2",
     "readme": "README.md",
     "type":"widget",
     "dependencies": { "notify":"type" },
@@ -185,7 +185,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.27",
+    "version":"0.28",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system,b2",
     "readme": "README.md",
@@ -202,7 +202,7 @@
     "name": "Default Alarm",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget,b2",
     "storage": [
@@ -402,9 +402,9 @@
   { "id": "trex",
     "name": "T-Rex",
     "icon": "trex.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "T-Rex game in the style of Chrome's offline game",
-    "tags": "game",
+    "tags": "game,b2",
     "allow_emulator":true,
     "storage": [
       {"name":"trex.app.js","url":"trex.js"},
@@ -418,9 +418,9 @@
   { "id": "astroid",
     "name": "Asteroids!",
     "icon": "asteroids.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Retro asteroids game",
-    "tags": "game",
+    "tags": "game,b2",
     "allow_emulator":true,
     "storage": [
       {"name":"astroid.app.js","url":"asteroids.js"},
@@ -497,7 +497,7 @@
   { "id": "gpsrec",
     "name": "GPS Recorder",
     "icon": "app.png",
-    "version":"0.22",
+    "version":"0.23",
     "interface": "interface.html",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "tags": "tool,outdoors,gps,widget",
@@ -532,7 +532,7 @@
   { "id": "heart",
     "name": "Heart Rate Recorder",
     "icon": "app.png",
-    "version":"0.05",
+    "version":"0.06",
     "interface": "interface.html",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "tags": "tool,health,widget",
@@ -571,7 +571,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.05",
+    "version":"0.08",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -616,7 +616,7 @@
   { "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.07",
+    "version":"0.08",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery,b2",
     "type":"widget",
@@ -639,10 +639,11 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.11",
+    "version":"0.12",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
-    "tags": "widget,battery",
+    "tags": "widget,battery,b2",
     "type":"widget",
+    "readme": "README.md",
     "storage": [
       {"name":"widbatpc.wid.js","url":"widget.js"},
       {"name":"widbatpc.settings.js","url":"settings.js"}
@@ -721,7 +722,7 @@
   { "id": "widhrm",
     "name": "Simple Heart Rate widget",
     "icon": "widget.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "tags": "health,widget",
     "type": "widget",
@@ -814,8 +815,8 @@
     "icon": "app.png",
     "version":"0.02",
     "description": "Use this to upload a customised QR code to Bangle.js",
-    "tags": "qrcode",
-    "custom": "custom.html",
+    "tags": "qrcode,b2",
+    "custom": "custom.html", "customConnect":true,
     "storage": [
       {"name":"qrcode.app.js"},
       {"name":"qrcode.img","url":"app-icon.js","evaluate":true}
@@ -1096,9 +1097,9 @@
   { "id": "flappy",
     "name": "Flappy Bird",
     "icon": "app.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "A Flappy Bird game clone",
-    "tags": "game",
+    "tags": "game,b2",
     "allow_emulator":true,
     "storage": [
       {"name":"flappy.app.js","url":"app.js"},
@@ -1159,7 +1160,7 @@
   { "id": "boldclk",
     "name": "Bold Clock",
     "icon": "bold_clock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Simple, readable and practical clock",
     "tags": "clock,b2",
     "type":"clock",
@@ -1183,7 +1184,7 @@
   { "id": "widpedom",
     "name": "Pedometer widget",
     "icon": "widget.png",
-    "version":"0.14",
+    "version":"0.19",
     "description": "Daily pedometer widget",
     "tags": "widget,b2",
     "type":"widget",
@@ -1287,7 +1288,7 @@
   { "id": "wohrm",
     "name": "Workout HRM",
     "icon": "app.png",
-    "version":"0.07",
+    "version":"0.08",
     "readme": "README.md",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "tags": "hrm,workout",
@@ -1466,7 +1467,7 @@
     "id": "balltastic",
     "name": "Balltastic",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Simple but fun ball eats dots game.",
     "tags": "game,fun",
     "type": "app",
@@ -1517,10 +1518,10 @@
     "name": "OpenStreetMap",
     "shortName":"OpenStMap",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "tags": "outdoors,gps,b2",
-    "custom": "custom.html",
+    "custom": "custom.html", "customConnect":true,
     "storage": [
       {"name":"openstmap","url":"openstmap.js"},
       {"name":"openstmap.app.js","url":"app.js"},
@@ -1669,9 +1670,9 @@
     "name": "Calculator",
     "shortName":"Calculator",
     "icon": "calculator.png",
-    "version":"0.02",
+    "version":"0.04",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
-    "tags": "app,tool",
+    "tags": "app,tool,b2",
     "storage": [
       {"name":"calculator.app.js","url":"app.js"},
       {"name":"calculator.img","url":"calculator-icon.js","evaluate":true}
@@ -1895,7 +1896,7 @@
   { "id": "ballmaze",
     "name": "Ball Maze",
     "icon": "icon.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Navigate a ball through a maze by tilting your watch.",
     "readme": "README.md",
     "tags": "game",
@@ -1944,26 +1945,16 @@
     "id": "largeclock",
     "name": "Large Clock",
     "icon": "largeclock.png",
-    "version": "0.08",
+    "version": "0.10",
     "description": "A readable and informational digital watch, with date, seconds and moon phase",
     "readme": "README.md",
     "tags": "clock",
     "type": "clock",
     "allow_emulator": true,
     "storage": [
-      {
-        "name": "largeclock.app.js",
-        "url": "largeclock.js"
-      },
-      {
-        "name": "largeclock.img",
-        "url": "largeclock-icon.js",
-        "evaluate": true
-      },
-      {
-        "name": "largeclock.settings.js",
-        "url": "settings.js"
-      }
+      {"name": "largeclock.app.js", "url": "largeclock.js"},
+      {"name": "largeclock.img", "url": "largeclock-icon.js", "evaluate": true},
+      {"name": "largeclock.settings.js", "url": "settings.js"}
     ],
     "data": [
       {"name":"largeclock.json"}
@@ -2039,7 +2030,7 @@
     "id": "beebclock",
     "name": "Beeb Clock",
     "icon": "beebclock.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Clock face that may be coincidentally familiar to BBC viewers",
     "tags": "clock",
     "type": "clock",
@@ -2409,10 +2400,10 @@
     "name": "Acceleration Logger",
     "shortName":"Accel Log",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "interface": "interface.html",
     "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
-    "tags": "outdoor",
+    "tags": "outdoor,b2",
     "readme": "README.md",
     "storage": [
       {"name":"accellog.app.js","url":"app.js"},
@@ -2735,7 +2726,7 @@
   "name": "Heart Rate Variability monitor",
   "shortName":"HRV monitor",
   "icon": "hrv.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Heart Rate Variability monitor, see Readme for more info",
   "tags": "",
   "readme": "README.md",
@@ -3208,7 +3199,7 @@
 { "id": "kitchen",
   "name": "Kitchen Combo",
   "icon": "kitchen.png",
-  "version":"0.12",
+  "version":"0.13",
   "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
   "tags": "tool,outdoors,gps",
   "type":"clock",
@@ -3242,18 +3233,19 @@
     ]
  },
 { "id": "qmsched",
-  "name": "Quiet Mode Schedule",
+  "name": "Quiet Mode Schedule and Widget",
   "shortName":"Quiet Mode",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Automatically turn Quiet Mode on or off at set times",
   "readme": "README.md",
-  "tags": "tool",
+  "tags": "tool,widget",
   "storage": [
     {"name":"qmsched","url":"lib.js"},
     {"name":"qmsched.app.js","url":"app.js"},
     {"name":"qmsched.boot.js","url":"boot.js"},
-    {"name":"qmsched.img","url":"icon.js","evaluate":true}
+    {"name":"qmsched.img","url":"icon.js","evaluate":true},
+    {"name":"qmsched.wid.js","url":"widget.js"}
   ],
   "data": [
     {"name":"qmsched.json"}
@@ -3264,14 +3256,15 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "icon": "app-icon.png",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "tags": "tool,alarm",
   "readme": "README.md",
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
-    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true},
+    {"name":"hourstrike.json","url":"hourstrike.json"}
   ]
 },
 { "id": "whereworld",
@@ -3408,6 +3401,146 @@
   "storage": [
     {"name":"thermomF.app.js","url":"app.js"},
     {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "nixie",
+  "name": "Nixie Clock",
+  "shortName":"Nixie",
+  "icon": "nixie.png",
+  "version":"0.01",
+  "description": "A nixie tube clock for both Bangle 1 and 2.",
+  "tags": "clock",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"nixie.app.js","url":"app.js"},
+    {"name":"nixie.img","url":"app-icon.js","evaluate":true},
+    {"name":"m_vatch.js","url":"m_vatch.js"}
+  ]
+},
+{ "id": "carcrazy",
+  "name": "Car Crazy",
+  "shortName":"Car Crazy",
+  "icon": "carcrash.png",
+  "version":"0.03",
+  "description": "A simple car game where you try to avoid the other cars by tilting your wrist left and right. Hold down button 2 to start.",
+  "tags": "game",
+  "readme": "README.md",
+  "storage": [
+    {"name":"carcrazy.app.js","url":"app.js"},
+    {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
+    {"name":"carcrazy.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"app.json"}
+  ]
+},
+{ "id": "shortcuts",
+  "name": "Shortcuts",
+  "shortName":"Shortcuts",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Quickly load your favourite apps from (almost) any watch face.",
+  "tags": "tool",
+  "type": "bootloader",
+  "readme": "README.md",
+  "storage": [
+    {"name":"shortcuts.boot.js","url":"boot.js"},
+    {"name":"shortcuts.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"shortcuts.json"}
+  ]
+},
+{ "id": "vectorclock",
+  "name": "Vector Clock",
+  "icon": "app.png",
+  "version": "0.02",
+  "description": "A digital clock that uses the built-in vector font.",
+  "tags": "clock",
+  "type": "clock",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"vectorclock.app.js","url":"app.js"},
+    {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "fd6fdetect",
+  "name": "fd6fdetect",
+  "shortName":"fd6fdetect",
+  "icon": "app.png",
+  "version":"0.1",
+  "description": "Allows you to see 0xFD6F beacons near you.",
+  "tags": "tool",
+  "storage": [
+    {"name":"fd6fdetect.app.js","url":"app.js"},
+    {"name":"fd6fdetect.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "choozi",
+  "name": "Choozi",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Choose people or things at random using Bangle.js.",
+  "tags": "tool",
+  "readme": "README.md",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"choozi.app.js","url":"app.js"},
+    {"name":"choozi.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "widclkbttm",
+  "name": "Digital clock (Bottom) widget",
+  "shortName":"Digital clock Bottom Widget",
+  "icon": "widclkbttm.png",
+  "version":"0.03",
+  "description": "Displays time in the bottom area.",
+  "readme": "README.md",
+  "tags": "widget",
+  "type": "widget",
+  "storage": [
+    {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
+  ]
+},
+{ "id": "pastel",
+  "name": "Pastel Clock",
+  "shortName": "Pastel",
+  "icon": "pastel.png",
+  "version":"0.01",
+  "description": "A Configurable clock with custom fonts and background",
+  "tags": "clock,b2",
+  "type":"clock",
+  "readme": "README.md",
+  "storage": [
+    {"name":"pastel.app.js","url":"pastel.app.js"},
+    {"name":"pastel.img","url":"pastel.icon.js","evaluate":true},
+    {"name":"pastel.settings.js","url":"pastel.settings.js"}
+  ],
+  "data": [
+    {"name":"pastel.json"}
+  ]
+},
+{ "id": "antonclk",
+  "name": "Anton Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A simple clock using the bold Anton font.",
+  "tags": "clock,b2",
+  "storage": [
+    {"name":"antonclk.app.js","url":"app.js"},
+    {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "waveclk",
+  "name": "Wave Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires a bugfix for #2049 on Bangle.js 1**",
+  "tags": "clock,b2",
+  "storage": [
+    {"name":"waveclk.app.js","url":"app.js"},
+    {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]

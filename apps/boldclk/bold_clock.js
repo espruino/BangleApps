@@ -23,6 +23,10 @@ tick5.fillRect(0,0,tick5.getWidth()-1, tick5.getHeight()-1);
 let tick1 = Graphics.createArrayBuffer(8,4,1,{msb:true});
 tick1.fillRect(0,0,tick1.getWidth()-1, tick1.getHeight()-1);
 
+// Adjust hand lengths to be within 'tick' points
+minute_hand.width=radius-tick1.getWidth()-6;
+hour_hand.width=radius-tick5.getWidth()-6;
+
 function big_wheel_x(angle){
   return clock_center.x + radius * Math.cos(angle*p180);
 }

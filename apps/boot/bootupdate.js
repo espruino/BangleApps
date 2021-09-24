@@ -6,7 +6,7 @@ var s = require('Storage').readJSON('setting.json',1)||{};
 var isB2 = process.env.HWVERSION; // Is Bangle.js 2
 var boot = "";
 var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
-boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))!=${CRC}) { eval(require('Storage').read('bootupdate.js'));} else {\n`;
+boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))!=${CRC}) { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
@@ -133,9 +133,11 @@ else if (mode=="updown") {
 }
 // Append *.boot.js files
 require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
-  boot += "//"+bootFile+"\n"+require('Storage').read(bootFile)+"\n";
+  // we add a semicolon so if the file is wrapped in (function(){ ... }()
+  // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
+  // which would cause an error!
+  boot += require('Storage').read(bootFile)+";\n";
 });
-boot += "}\n";// initial 'if'
 require('Storage').write('.boot0',boot);
 delete boot;
 E.showMessage("Reloading...");

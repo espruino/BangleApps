@@ -47,8 +47,13 @@ Bangle.on('drag',e=>{
   g.reset().setClipRect(0,24,g.getWidth()-1,g.getHeight()-1);
   g.scroll(0,dy);
   menuScroll -= dy;
-  if (e.dy < 0) drawApp(Math.floor((menuScroll+24)/APPH)+n-1);
-  else drawApp(Math.floor((menuScroll+24)/APPH));
+  if (e.dy < 0) {
+    drawApp(Math.floor((menuScroll+24+g.getHeight())/APPH)-1);
+    if (e.dy <= -APPH) drawApp(Math.floor((menuScroll+24+g.getHeight())/APPH)-2);
+  } else {
+    drawApp(Math.floor((menuScroll+24)/APPH));
+    if (e.dy >= APPH) drawApp(Math.floor((menuScroll+24)/APPH)+1);
+  }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
 });
 Bangle.on("touch",(_,e)=>{

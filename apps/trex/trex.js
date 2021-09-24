@@ -8,20 +8,42 @@ function saveHighScore(score) {
   f.write(score + "\n");
 }
 
-greal = g;
 g.clear();
-g = Graphics.createArrayBuffer(120,64,1,{msb:true});
-g.flip = function() {
-  greal.drawImage({
-    width:120,
-    height:64,
-    buffer:g.buffer
-  },0,(240-128)/2,{scale:2});
-};
+
+var BTNL, BTNR, BTNU;
+if (process.env.HWVERSION==2) {
+  var tap = {};
+  // use tapping on screen for left and right
+  Bangle.on('drag',e=>tap=e);
+  BTNL = { read : _=>tap.b && tap.x < 88};
+  BTNR = { read : _=>tap.b && tap.x > 88};
+  // use button for jump
+  BTNU = BTN1;
+  greal = g;
+  g = Graphics.createArrayBuffer(88,64,1,{msb:true});
+  g.flip = function() {
+    greal.drawImage({
+      width:88,
+      height:64,
+      buffer:g.buffer
+    },0,(176-128)/2,{scale:2});
+  };
+} else {
+  // use hard buttons
+  BTNL = BTN2;
+  BTNR = BTN3;
+  BTNU = BTN1;
+  greal = g;
+  g = Graphics.createArrayBuffer(120,64,1,{msb:true});
+  g.flip = function() {
+    greal.drawImage({
+      width:120,
+      height:64,
+      buffer:g.buffer
+    },0,(240-128)/2,{scale:2});
+  };
+}
 var W = g.getWidth();
-var BTNL = BTN2;
-var BTNR = BTN3;
-var BTNU = BTN1;
 
 // Images can be added like this in Espruino v2.00
 var IMG = {
