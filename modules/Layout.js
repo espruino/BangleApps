@@ -329,14 +329,14 @@ Layout.prototype.update = function() {
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
       l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
+      if (l.fillx == null && l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }, "v": function(l) {
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
       l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
+      if (l.fillx == null && l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }
   };
   updateMin(l);
