@@ -156,7 +156,7 @@ class CSCSensor {
         const crankRevs = event.target.value.getUint16(1, true);
         const crankTime = event.target.value.getUint16(3, true);
         if (crankTime > this.lastCrankTime) {
-          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*60000;
+          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
           qChanged = true;
         }
         this.lastCrankRevs = crankRevs;
