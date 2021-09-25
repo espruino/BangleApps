@@ -189,20 +189,24 @@ Layout.prototype.render = function (l) {
     "txt":function(l){
        g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
     }, "btn":function(l){
+      var x = l.x+(0|l.pad);
+      var y = l.y+(0|l.pad);
+      var w = l.w-(l.pad<<1);
+      var h = l.h-(l.pad<<1);
       var poly = [
-        l.x,l.y+4,
-        l.x+4,l.y,
-        l.x+l.w-5,l.y,
-        l.x+l.w-1,l.y+4,
-        l.x+l.w-1,l.y+l.h-5,
-        l.x+l.w-5,l.y+l.h-1,
-        l.x+4,l.y+l.h-1,
-        l.x,l.y+l.h-5,
-        l.x,l.y+4
+        x,y+4,
+        x+4,y,
+        x+w-5,y,
+        x+w-1,y+4,
+        x+w-1,y+h-5,
+        x+w-5,y+h-1,
+        x+4,y+h-1,
+        x,y+h-5,
+        x,y+4
       ];
     g.setColor(g.theme.bgH).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg).drawPoly(poly).setFont("4x6",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage(l.src(), l.x, l.y);
+    g.drawImage(l.src(), l.x + (0|l.pad), l.y + (0|l.pad));
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -231,36 +235,28 @@ Layout.prototype.layout = function (l) {
   // exw,exh = extra width/height available
   switch (l.type) {
     case "h": {
-      let x = l.x + (l.w-l._w)/2;
+      var x = l.x + (0|l.pad);
       var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
-      if (fillx) { x = l.x; }
+      if (!fillx) { x += (l.w-l._w)/2; }
       l.c.forEach(c => {
         c.w = c._w + ((0|c.fillx)*(l.w-l._w)/(fillx||1));
-        c.h = c.filly ? l.h : c._h;
-        if (c.pad) {
-          c.w += c.pad*2;
-          c.h += c.pad*2;
-        }
+        c.h = c.filly ? l.h - (l.pad<<1) : c._h;
         c.x = x;
-        c.y = l.y + (1+(0|c.valign))*(l.h-c.h)/2;
+        c.y = l.y + (0|l.pad) + (1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)/2;
         x += c.w;
         if (c.c) this.layout(c);
       });
       break;
     }
     case "v": {
-      let y = l.y + (l.h-l._h)/2;
+      var y = l.y + (0|l.pad);;
       var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
-      if (filly) { y = l.y; }
+      if (!filly) { y += (l.h-l._h)/2 }
       l.c.forEach(c => {
-        c.w = c.fillx ? l.w : c._w;
+        c.w = c.fillx ? l.w - (l.pad<<1) : c._w;
         c.h = c._h + ((0|c.filly)*(l.h-l._h)/(filly||1));
-        if (c.pad) {
-          c.w += c.pad*2;
-          c.h += c.pad*2;
-        }
         c.y = y;
-        c.x = l.x + (1+(0|c.halign))*(l.w-c.w)/2;
+        c.x = l.x + (0|l.pad) + (1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)/2;
         y += c.h;
         if (c.c) this.layout(c);
       });
@@ -288,8 +284,8 @@ Layout.prototype.update = function() {
     if (l.r&1) { // rotation
       var t = l._w;l._w=l._h;l._h=t;
     }
-    l._w = Math.max(l._w, 0|l.width);
-    l._h = Math.max(l._h, 0|l.height);
+    l._w = Math.max(l._w + (l.pad<<1), 0|l.width);
+    l._h = Math.max(l._h + (l.pad<<1), 0|l.height);
   }
   var cb = {
     "txt" : function(l) {
@@ -327,16 +323,16 @@ Layout.prototype.update = function() {
       l._h = 0;
     }, "h": function(l) {
       l.c.forEach(updateMin);
-      l._h = l.c.reduce((a,b)=>Math.max(a,b._h+(b.pad<<1)),0);
-      l._w = l.c.reduce((a,b)=>a+b._w+(b.pad<<1),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
+      l._h = l.c.reduce((a,b)=>Math.max(a,b._h),0);
+      l._w = l.c.reduce((a,b)=>a+b._w,0);
+      if (l.fillx == null && l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }, "v": function(l) {
       l.c.forEach(updateMin);
-      l._h = l.c.reduce((a,b)=>a+b._h+(b.pad<<1),0);
-      l._w = l.c.reduce((a,b)=>Math.max(a,b._w+(b.pad<<1)),0);
-      if (l.c.some(c=>c.fillx)) l.fillx = 1;
-      if (l.c.some(c=>c.filly)) l.filly = 1;
+      l._h = l.c.reduce((a,b)=>a+b._h,0);
+      l._w = l.c.reduce((a,b)=>Math.max(a,b._w),0);
+      if (l.fillx == null && l.c.some(c=>c.fillx)) l.fillx = 1;
+      if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }
   };
   updateMin(l);
