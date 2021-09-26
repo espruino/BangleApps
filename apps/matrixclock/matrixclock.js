@@ -79,9 +79,11 @@ class TextShard {
 /**
 * random character chooser to be called by the shard when adding characters
 */
-const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+const CHAR_CODE_START = 33;
+const CHAR_CODE_LAST = 126;
+const CHAR_CODE_LENGTH = CHAR_CODE_LAST - CHAR_CODE_START;
 function randomChar(){
-  return chars[Math.floor(Math.random() * chars.length)];
+  return String.fromCharCode(Math.floor(Math.random() * CHAR_CODE_LENGTH)+ CHAR_CODE_START);
 }
 
 // Now set up the shards
@@ -112,13 +114,17 @@ const TIME_X_COORD = 20;
 const TIME_Y_COORD = 100;
 const DATE_X_COORD = 170;
 const DATE_Y_COORD = 30;
+const RESET_PROBABILITY = 0.8;
 /**
 * main loop to draw the clock face
 */
 function draw_clock(){
   // first move all the shards down the screen
   for(var i=0; i<this.shards.length; i++){
-    if(!shards[i].isVisible() && Math.random() > 0.7){
+    var visible = shards[i].isVisible();
+    // once the shard is no longer visible we wait
+    // a random no of loops before reseting
+    if(!visible && Math.random() > RESET_PROBABILITY){
       shards[i].reset();
       shards[i].length = shard_length();
       shards[i].x = shard_x(i);
@@ -126,8 +132,11 @@ function draw_clock(){
         shards[i].y = 50;
       }
     }
-    shards[i].add();
-    shards[i].show();
+    // If its still visble then add to the shard and show to screen
+    if(visible){
+      shards[i].add();
+      shards[i].show();
+    }
   }
   var now = new Date();
   // draw time. Have to draw time on every loop
