@@ -223,12 +223,7 @@ function startTimers(){
         }
       }, 100
     );
-
-    if (shouldRedraw()) {
-      draw_clock();
-    } else {
-      console.log("scheduleDrawClock - skipped redraw");
-    }
+    draw_clock();
   } else {
     console.log("scheduleDrawClock - skipped not visible");
   }
@@ -259,7 +254,6 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 startTimers();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
+Bangle.setUI("clock");
 
 
