@@ -97,7 +97,7 @@ function startRecord(force) {
       {type:"txt", id:"samples", font:"6x8:2", label:"  -  ", pad:5},
       {type:"txt", font:"6x8", label:"Time", pad:2},
       {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5},
-      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:true},
+      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:1},
     ]
   },[ // Buttons...
     {label:"STOP", cb:()=>{
@@ -105,7 +105,6 @@ function startRecord(force) {
       showMenu();
     }}
   ]);
-  layout.update();
   layout.render();
 
   // now start writing
