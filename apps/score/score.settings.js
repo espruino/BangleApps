@@ -15,25 +15,25 @@
         require('Storage').writeJSON(fileName, settings);
     }
 
-    if (!settings.winSets == null) {
+    if (settings.winSets == null) {
         settings.winSets = 1;
     }
-    if (!settings.winScore == null) {
+    if (settings.winScore == null) {
         settings.winScore = 21;
     }
-    if (!settings.enableTwoAhead == null) {
+    if (settings.enableTwoAhead == null) {
         settings.enableTwoAhead = true;
     }
     if (settings.enableMaxScore == null) {
         settings.enableMaxScore = true;
     }
-    if (!settings.maxScore == null) {
+    if (settings.maxScore == null) {
         settings.maxScore = 30;
     }
-    if (!settings.setsPerPage == null) {
+    if (settings.setsPerPage == null) {
         settings.setsPerPage = 5;
     }
-    if (!settings.enableTennisScoring == null) {
+    if (settings.enableTennisScoring == null) {
         settings.enableTennisScoring = false;
     }
 
