@@ -15,22 +15,22 @@
         require('Storage').writeJSON(fileName, settings);
     }
 
-    if (!settings.winSets) {
+    if (!settings.winSets == null) {
         settings.winSets = 1;
     }
-    if (!settings.winScore) {
+    if (!settings.winScore == null) {
         settings.winScore = 21;
     }
-    if (!settings.enableTwoAhead) {
+    if (!settings.enableTwoAhead == null) {
         settings.enableTwoAhead = true;
     }
-    if (!settings.enableMaxScore) {
+    if (settings.enableMaxScore == null) {
         settings.enableMaxScore = true;
     }
-    if (!settings.maxScore) {
+    if (!settings.maxScore == null) {
         settings.maxScore = 30;
     }
-    if (!settings.setsPerPage) {
+    if (!settings.setsPerPage == null) {
         settings.setsPerPage = 5;
     }
 
@@ -61,12 +61,12 @@
         onchange: m => save('winScore', m)
     };
     appMenu['2-point lead'] = {
-        value: settings['enableTwoAhead'],
+        value: settings.enableTwoAhead,
         format: m => offon[~~m],
         onchange: m => save('enableTwoAhead', m)
     };
     appMenu['Maximum score?'] = {
-        value: settings['enableMaxScore'],
+        value: settings.enableMaxScore,
         format: m => offon[~~m],
         onchange: m => save('enableMaxScore', m)
     };
