@@ -18,6 +18,9 @@
     if (settings.winSets == null) {
         settings.winSets = 1;
     }
+    if (settings.setsPerPage == null) {
+        settings.setsPerPage = 5;
+    }
     if (settings.winScore == null) {
         settings.winScore = 21;
     }
@@ -29,9 +32,6 @@
     }
     if (settings.maxScore == null) {
         settings.maxScore = 30;
-    }
-    if (settings.setsPerPage == null) {
-        settings.setsPerPage = 5;
     }
     if (settings.enableTennisScoring == null) {
         settings.enableTennisScoring = false;
