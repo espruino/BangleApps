@@ -72,7 +72,7 @@ function fillSettingsWithDefaults(settings) {
   }
 
   const presetMenu = function () {
-    let ret = function () { E.showMenu(appMenu()); };
+    let ret = function (changed) { E.showMenu(appMenu(changed ? 3 : null)); };
     let m = {
       '': {'title': 'Score Presets'},
       '< Back': ret,
@@ -83,7 +83,7 @@ function fillSettingsWithDefaults(settings) {
           changed = true;
           settings = fillSettingsWithDefaults(presets[presetNames[i]]);
           save(settings);
-          ret();
+          ret(true);
         };
       })(i);
     }
@@ -91,10 +91,13 @@ function fillSettingsWithDefaults(settings) {
     return m;
   };
 
-  const appMenu = function () {
+  const appMenu = function (selected) {
     let m = {};
 
     m[''] = {'title': 'Score Settings'};
+    if (selected != null) {
+      m[''].selected = selected;
+    }
     m['< Back'] = function () { back(settings, changed); };
     if (reset) {
       m['Reset match'] = function () { back(settings, true); };
