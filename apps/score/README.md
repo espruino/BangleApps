@@ -16,6 +16,7 @@ In this mode any score increments will be decrements. To move back a set, reduce
 # Settings
 | Setting                            | Description                                                                                                                  |
 |------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `Presets`                          | Enable a preset for one of the configured sports                                                                             |
 | `Sets to win`                      | How many sets a player has to win before the match is won (Maximum sets: this*2-1)                                           |
 | `Sets per page`                    | How many sets should be shown in the app. Further sets will be available by scrolling (ignored if higher than `Sets to win`) |
 | `Score to win`                     | What score ends a given set                                                                                                  |
