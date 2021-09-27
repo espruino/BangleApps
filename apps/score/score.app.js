@@ -171,7 +171,12 @@ function score(player) {
         }
 
         if (scores[cSet][player] > 0) {
-            scores[cSet][player]--;
+            if (tScores[player] === 0 && tScores[~~!player] === 0) {
+                scores[cSet][player]--;
+            } else {
+                tScores[player] = 0;
+                tScores[~~!player] = 0;
+            }
         }
     } else {
         if (matchEnded()) return;
