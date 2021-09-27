@@ -198,18 +198,6 @@ function format00(num){
         return value.toString();
 }
 
-function button1pressed(){
-  console.log("button 1 pressed");
-}
-
-function button3pressed(){
-  console.log("button 3 pressed");
-}
-
-function load_settings(){
-  console.log("load_settings called");
-}
-
 // The interval reference for updating the clock
 let intervalRef = null;
 
@@ -267,7 +255,6 @@ Bangle.on('faceUp',function(up){
 });
 
 g.clear();
-load_settings();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -275,9 +262,4 @@ startTimers();
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
 
-// Handle button 1 being pressed
-setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
-
-// Handle button 3 being pressed
-setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
 
