@@ -33,6 +33,9 @@
     if (!settings.setsPerPage == null) {
         settings.setsPerPage = 5;
     }
+    if (!settings.enableTennisScoring == null) {
+        settings.enableTennisScoring = false;
+    }
 
     if (ret) {
         return settings;
@@ -74,6 +77,11 @@
         value: settings.maxScore,
         min: 1,
         onchange: m => save('maxScore', m)
+    };
+    appMenu['Tennis scoring'] = {
+        value: settings.enableTennisScoring,
+        format: m => offon[~~m],
+        onchange: m => save('enableTennisScoring', m)
     };
 
     E.showMenu(appMenu)
