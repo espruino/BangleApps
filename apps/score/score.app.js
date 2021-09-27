@@ -182,13 +182,16 @@ function matchScore(player) {
 }
 
 function score(player) {
+    let setFirstShownSet = function () {
+        firstShownSet = currentSet() - Math.floor(setsPerPage() / 2);
+    };
     let updateCurrentSet = function (val) {
         cSet += val;
-        firstShownSet = Math.max(0, currentSet() - settings.setsPerPage + 1);
+        setFirstShownSet();
     };
 
     if (!matchEnded() || correctionMode) {
-        firstShownSet = currentSet() - Math.floor(setsPerPage() / 2);
+        setFirstShownSet();
     }
 
     if (correctionMode) {
