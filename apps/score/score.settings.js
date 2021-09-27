@@ -72,7 +72,7 @@
     };
     appMenu['Maximum score'] = {
         value: settings.maxScore,
-        min: settings.winScore,
+        min: 1,
         onchange: m => save('maxScore', m)
     };
 
