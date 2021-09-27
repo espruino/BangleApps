@@ -108,7 +108,7 @@
     "shortName":"Notifications",
     "icon": "notify.png",
     "version":"0.11",
-    "description": "Provides a replacement for the `Notifications (default)` `notify` module that is used by applications to display notifications fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notify module.",
+    "description": "Provides a replacement for the `Notifications (default)` `notify` module.   This version is used by applications to display notifications fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notify module.",
     "tags": "widget,b2",
     "type": "notify",
     "storage": [
