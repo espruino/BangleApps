@@ -1,1 +1,8 @@
-{}
+{
+  "Badminton": {
+    "winScore": 21,
+    "enableTwoAhead": true,
+    "enableMaxScore": true,
+    "maxScore": 30
+  }
+}
