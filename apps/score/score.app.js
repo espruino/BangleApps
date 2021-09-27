@@ -6,7 +6,10 @@ require('FontTeletext10x18Ascii').add(Graphics);
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
 let settings = settingsMenu(null, true);
 
+let tennisScores = ['00','15','30','40','DC','AD']
+
 let scores = null;
+let tScores = null;
 let cSet = null;
 
 let firstShownSet = null;
@@ -48,6 +51,12 @@ function setupMatch() {
         scores.push([0,0,null]);
     }
     scores.push([0,0,null]);
+
+    if (settings.enableTennisScoring) {
+        tScores = [0,0];
+    } else {
+        tScores = null;
+    }
 
     scores[0][2] = getTime();
 
@@ -170,7 +179,22 @@ function score(player) {
     } else {
         if (matchEnded()) return;
 
-        scores[cSet][player]++;
+        if (settings.enableTennisScoring) {
+            if (tScores[player] === 4 && tScores[~~!player] === 5) { // DC : AD
+                tScores[~~!player]--;
+            } else if (tScores[player] === 2 && tScores[~~!player] === 3) { // 30 : 40
+                tScores[0] = 4;
+                tScores[1] = 4;
+            } else if (tScores[player] === 3 || tScores[player] === 5) { // 40 / AD
+                tScores[0] = 0;
+                tScores[1] = 0;
+                scores[cSet][player]++;
+            } else {
+                tScores[player]++;
+            }
+        } else {
+            scores[cSet][player]++;
+        }
 
         if (setEnded(cSet) && cSet < sets()) {
             updateCurrentSet(1);
@@ -235,9 +259,11 @@ function draw() {
         g.setFont('7x11Numeric7Seg',2);
         g.drawString(setsWon(p), p === 0 ? 10 : w-8, h-5);
 
-        g.setFontAlign(p === 0 ? 1 : -1,1);
-        g.setFont('7x11Numeric7Seg',2);
-        g.drawString(formatNumber(matchScore(p), 3), p === 0 ? w/2 - 8 : w/2 + 11, h-5);
+        if (!settings.enableTennisScoring) {
+            g.setFontAlign(p === 0 ? 1 : -1,1);
+            g.setFont('7x11Numeric7Seg',2);
+            g.drawString(formatNumber(matchScore(p), 3), p === 0 ? w/2 - 8 : w/2 + 11, h-5);
+        }
     }
     g.setFontAlign(0,0);
 
@@ -268,15 +294,33 @@ function draw() {
             g.drawString(dur2, 40, y+10);
         }
 
-        g.setFontAlign(0,0);
-        g.setFont('7x11Numeric7Seg',3);
         for (let p = 0; p < 2; p++) {
             if (!setWon(set, p === 0 ? 1 : 0) || matchEnded()) {
-                g.drawString(
-                    formatNumber(scores[set][p]),
-                    p === 0 ? (w-20)/4+20 : (w-20)/4*3+20,
-                    y
-                );
+                if (settings.enableTennisScoring && set === cSet) {
+                    g.setFontAlign(0,0);
+                    g.setFont('7x11Numeric7Seg',3);
+                    g.drawString(
+                        formatNumber(tennisScores[tScores[p]]),
+                        p === 0 ? (w-20)/4+20 : (w-20)/4*3+2,
+                        y
+                    );
+
+                    g.setFontAlign(p === 0 ? 1 : -1,0);
+                    g.setFont('7x11Numeric7Seg',1);
+                    g.drawString(
+                        formatNumber(scores[set][p]),
+                        p === 0 ? w/2-5 : w/2+6,
+                        y
+                    );
+                } else {
+                    g.setFontAlign(0,0);
+                    g.setFont('7x11Numeric7Seg',3);
+                    g.drawString(
+                        formatNumber(scores[set][p]),
+                        p === 0 ? (w-20)/4+20 : (w-20)/4*3+2,
+                        y
+                    );
+                }
             }
         }
     }
