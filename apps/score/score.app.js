@@ -6,7 +6,7 @@ require('FontTeletext10x18Ascii').add(Graphics);
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
 let settings = settingsMenu(null, true);
 
-let tennisScores = ['00','15','30','40','DC','AD']
+let tennisScores = ['00','15','30','40','DC','AD'];
 
 let scores = null;
 let tScores = null;
@@ -42,7 +42,7 @@ function setupInputWatchers() {
                 handleInput(1);
             }
         }
-    })
+    });
 }
 
 function setupMatch() {
@@ -159,17 +159,14 @@ function score(player) {
     let updateCurrentSet = function (val) {
         cSet += val;
         firstShownSet = Math.max(0, currentSet() - settings.setsPerPage + 1);
-    }
+    };
 
     if (!matchEnded() || correctionMode) {
         firstShownSet = currentSet() - Math.floor(setsPerPage() / 2);
     }
 
     if (correctionMode) {
-        if (
-            scores[cSet][0] === 0 && scores[cSet][1] === 0 &&
-                cSet > 0
-        ) {
+        if (scores[cSet][0] === 0 && scores[cSet][1] === 0 && cSet > 0) {
             updateCurrentSet(-1);
         }
 
