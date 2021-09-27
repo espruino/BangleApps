@@ -91,7 +91,7 @@ function randomChar(){
 // but randomize the x value and length every reset to make it look as if there 
 // are more
 var shards = [];
-const NO_SHARDS = 4;
+const NO_SHARDS = 3;
 const channel_width = g.getWidth()/NO_SHARDS;
 
 function shard_x(i){
@@ -114,7 +114,7 @@ const TIME_X_COORD = 20;
 const TIME_Y_COORD = 100;
 const DATE_X_COORD = 170;
 const DATE_Y_COORD = 30;
-const RESET_PROBABILITY = 0.8;
+const RESET_PROBABILITY = 0.5;
 /**
 * main loop to draw the clock face
 */
@@ -135,8 +135,9 @@ function draw_clock(){
     // If its still visble then add to the shard and show to screen
     if(visible){
       shards[i].add();
-      shards[i].show();
     }
+    // we still have to show the shard even though it may be off the screen to keep the speed constant
+    shards[i].show();
   }
   var now = new Date();
   // draw time. Have to draw time on every loop
@@ -279,3 +280,4 @@ setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
 
 // Handle button 3 being pressed
 setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
+

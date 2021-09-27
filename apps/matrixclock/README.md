@@ -1,12 +1,6 @@
 # Matrix Clock
 
-Inspired by the Matrix, a clock in the same style
-
 ![](app.png)
-
-## Usage
-
-
 
 ## Requests
 
