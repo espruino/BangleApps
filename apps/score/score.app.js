@@ -62,6 +62,8 @@ function setupMatch() {
 
     cSet = 0;
     firstShownSet = 0 - Math.floor(setsPerPage() / 2);
+
+    correctionMode = false;
 }
 
 function showSettingsMenu() {
