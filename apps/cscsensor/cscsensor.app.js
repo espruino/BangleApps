@@ -28,6 +28,10 @@ class CSCSensor {
     this.distFactor = this.qMetric ? 1.609344 : 1;
     this.screenInit = true;
     this.batteryLevel = -1;
+    this.lastCrankTime = 0;
+    this.lastCrankRevs = 0;
+    this.showCadence = false;
+    this.cadence = 0;
   }
 
   reset() {
@@ -37,6 +41,11 @@ class CSCSensor {
     this.movingTime = 0;
     this.lastRevsStart = this.lastRevs;
     this.maxSpeed = 0;
+    this.screenInit = true;
+  }
+
+  toggleDisplayCadence() {
+    this.showCadence = !this.showCadence;
     this.screenInit = true;
   }
 
@@ -62,7 +71,7 @@ class CSCSensor {
     else g.setFontVector(14).setFontAlign(0, 0, 0).setColor(0xffff).drawString("?", 16, 66);
   }
 
-  updateScreen() {
+  updateScreenRevs() {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
@@ -108,45 +117,88 @@ class CSCSensor {
     g.setColor(0).fillRect(88, 209, 238, 238);
     g.setColor(0xffff).drawString(tdist + " " + this.distUnit, 92, 226);
   }
-  
+
+  updateScreenCadence() {
+    if (this.screenInit) {
+      for (var i=0; i<2; ++i) {
+        if ((i&1)==0) g.setColor(0, 0, 0);
+        else g.setColor(0x30cd);
+        g.fillRect(0, 48+i*32, 86, 48+(i+1)*32);
+        if ((i&1)==1) g.setColor(0);
+        else g.setColor(0x30cd);
+        g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
+        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239);//.drawRect(0, 48, 87, 239);
+        g.moveTo(0, 80).lineTo(30, 80).lineTo(30, 48).lineTo(87, 48).lineTo(87, 239).lineTo(0, 239).lineTo(0, 80);
+      }
+      g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
+      g.drawString("Cadence:", 87, 98);
+      this.drawBatteryIcon();
+      this.screenInit = false;
+    }
+    g.setFontAlign(-1, 0, 0).setFontVector(26);
+    g.setColor(0).fillRect(88, 81, 238, 111);
+    g.setColor(0xffff).drawString(Math.round(this.cadence), 92, 98);
+  }
+
+  updateScreen() {
+    if (!this.showCadence) {
+      this.updateScreenRevs();
+    } else {
+      this.updateScreenCadence();
+    }
+  }
+
   updateSensor(event) {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
-      var wheelRevs = event.target.value.getUint32(1, true);
-      var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
-      if (dRevs>0) {
-        qChanged = true;
-        this.totaldist += dRevs*this.wheelCirc/63360.0;
-        if ((this.totaldist-this.settings.totaldist)>0.1) {
-          this.settings.totaldist = this.totaldist;
-          storage.writeJSON(SETTINGS_FILE, this.settings);
+      if (event.target.value.getUint8(0, true) & 0x2) {
+        // crank revolution
+        const crankRevs = event.target.value.getUint16(1, true);
+        const crankTime = event.target.value.getUint16(3, true);
+        if (crankTime > this.lastCrankTime) {
+          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
+          qChanged = true;
         }
-      }
-      this.lastRevs = wheelRevs;
-      if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
-      var wheelTime = event.target.value.getUint16(5, true);
-      var dT = (wheelTime-this.lastTime)/1024;
-      var dBT = (Date.now()-this.lastBangleTime)/1000;
-      this.lastBangleTime = Date.now();
-      if (dT<0) dT+=64;
-      if (Math.abs(dT-dBT)>3) dT = dBT;
-      this.lastTime = wheelTime;
-      this.speed = this.lastSpeed;
-      if (dRevs>0 && dT>0) {
-        this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
-        this.speedFailed = 0;
-        this.movingTime += dT;
-      }
-      else {
-        this.speedFailed++;
-        qChanged = false;
-        if (this.speedFailed>3) {  
-          this.speed = 0;
-          qChanged = (this.lastSpeed>0);
+        this.lastCrankRevs = crankRevs;
+        this.lastCrankTime = crankTime;
+      } else {
+        // wheel revolution
+        var wheelRevs = event.target.value.getUint32(1, true);
+        var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
+        if (dRevs>0) {
+          qChanged = true;
+          this.totaldist += dRevs*this.wheelCirc/63360.0;
+          if ((this.totaldist-this.settings.totaldist)>0.1) {
+            this.settings.totaldist = this.totaldist;
+            storage.writeJSON(SETTINGS_FILE, this.settings);
+          }
         }
+        this.lastRevs = wheelRevs;
+        if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
+        var wheelTime = event.target.value.getUint16(5, true);
+        var dT = (wheelTime-this.lastTime)/1024;
+        var dBT = (Date.now()-this.lastBangleTime)/1000;
+        this.lastBangleTime = Date.now();
+        if (dT<0) dT+=64;
+        if (Math.abs(dT-dBT)>3) dT = dBT;
+        this.lastTime = wheelTime;
+        this.speed = this.lastSpeed;
+        if (dRevs>0 && dT>0) {
+          this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
+          this.speedFailed = 0;
+          this.movingTime += dT;
+        }
+        else {
+          this.speedFailed++;
+          qChanged = false;
+          if (this.speedFailed>3) {
+            this.speed = 0;
+            qChanged = (this.lastSpeed>0);
+          }
+        }
+        this.lastSpeed = this.speed;
+        if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
       }
-      this.lastSpeed = this.speed;
-      if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
@@ -199,6 +251,7 @@ connection_setup();
 setWatch(function() { mySensor.reset(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
 E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
 setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});
+setWatch(function() { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN2, {repeat:true, debounce:20});
 NRF.on('disconnect', connection_setup);
 
 Bangle.loadWidgets();
