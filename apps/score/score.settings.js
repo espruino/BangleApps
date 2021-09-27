@@ -37,6 +37,22 @@
         settings.enableTennisScoring = false;
     }
 
+    if (settings.enableMaxScoreTiebreak == null) {
+        settings.enableMaxScoreTiebreak = false;
+    }
+    if (settings.maxScoreTiebreakWinScore == null) {
+        settings.maxScoreTiebreakWinScore = 6;
+    }
+    if (settings.maxScoreTiebreakEnableTwoAhead == null) {
+        settings.maxScoreTiebreakEnableTwoAhead = true;
+    }
+    if (settings.maxScoreTiebreakEnableMaxScore == null) {
+        settings.maxScoreTiebreakEnableMaxScore = false;
+    }
+    if (settings.maxScoreTiebreakMaxScore == null) {
+        settings.maxScoreTiebreakMaxScore = 15;
+    }
+
     if (ret) {
         return settings;
     }
@@ -83,6 +99,29 @@
         format: m => offon[~~m],
         onchange: m => save('enableTennisScoring', m)
     };
+    appMenu['TB sets?'] = {
+        value: settings.enableMaxScoreTiebreak,
+        format: m => offon[~~m],
+        onchange: m => save('enableMaxScoreTiebreak', m)
+    }
+    appMenu['TB Score to win'] = {
+        value: settings.maxScoreTiebreakWinScore,
+        onchange: m => save('maxScoreTiebreakWinScore', m)
+    }
+    appMenu['TB 2-point lead'] = {
+        value: settings.maxScoreTiebreakEnableTwoAhead,
+        format: m => offon[~~m],
+        onchange: m => save('maxScoreTiebreakEnableTwoAhead', m)
+    }
+    appMenu['TB max score?'] = {
+        value: settings.maxScoreTiebreakEnableMaxScore,
+        format: m => offon[~~m],
+        onchange: m => save('maxScoreTiebreakEnableMaxScore', m)
+    }
+    appMenu['TB max score'] = {
+        value: settings.maxScoreTiebreakMaxScore,
+        onchange: m => save('maxScoreTiebreakMaxScore', m)
+    }
 
     E.showMenu(appMenu)
 
