@@ -154,16 +154,20 @@ function touchHandler(l,e) {
   if (l.c) l.c.forEach(n => touchHandler(n,e));
 }
 
-function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
-  if ((l.bgCol != null && l.bgCol != bgCol) || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
+function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
+  var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
+  if (bgCol != parentBg || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
     // Hash the layoutObject without including its children
-    let c = l.c;
+    var c = l.c;
     delete l.c;
-    let hash = "H"+E.CRC32(E.toJS(l)); // String keys maintain insertion order
+    var hash = "H"+E.CRC32(E.toJS(l)); // String keys maintain insertion order
     if (c) l.c = c;
 
     if (!delete rectsToClear[hash]) {
-      rects[hash] = {bg: bgCol, r: [l.x,l.y,l.x+l.w-1,l.y+l.h-1]};
+      rects[hash] = {
+        bg: parentBg == null ? g.theme.bg : parentBg,
+        r: [l.x,l.y,l.x+l.w-1,l.y+l.h-1]
+      };
       if (drawList) {
         drawList.push(l);
         drawList = null; // Prevent children from being redundantly added to the drawList
@@ -171,7 +175,7 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, bgCol) {
     }
   }
 
-  if (l.c) for (let ch of l.c) prepareLazyRender(ch, rectsToClear, drawList, rects, l.bgCol == null ? bgCol : l.bgCol);
+  if (l.c) for (var ch of l.c) prepareLazyRender(ch, rectsToClear, drawList, rects, bgCol);
 }
 
 Layout.prototype.render = function (l) {
@@ -220,7 +224,7 @@ Layout.prototype.render = function (l) {
     if (!this.rects) this.rects = {};
     var rectsToClear = this.rects.clone();
     var drawList = [];
-    prepareLazyRender(l, rectsToClear, drawList, this.rects, g.getBgColor());
+    prepareLazyRender(l, rectsToClear, drawList, this.rects, null);
     for (var h in rectsToClear) delete this.rects[h];
     var clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
     for (var r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
