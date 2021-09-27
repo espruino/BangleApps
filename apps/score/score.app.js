@@ -227,7 +227,7 @@ function draw() {
             g.drawString(dur1, p === 0 ? w/8 : w/8*5, 10);
 
             g.setFont('Teletext5x9Ascii',1);
-            g.drawString((currentSet()+1) + ' set' + (currentSet() > 1 ? 's' : ''), p === 0 ? w/8*3 : w/8*7, 12);
+            g.drawString((currentSet()+1) + ' set' + (currentSet() > 0 ? 's' : ''), p === 0 ? w/8*3 : w/8*7, 12);
 
         }
 
