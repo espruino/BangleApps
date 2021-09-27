@@ -74,6 +74,10 @@ function showSettingsMenu() {
     });
 }
 
+function maxScore() {
+    return Math.max(settings.maxScore, settings.winScore);
+}
+
 function setsPerPage() {
     return Math.min(settings.setsPerPage, sets());
 }
@@ -117,7 +121,7 @@ function setWon(set, player) {
 
     let winScoreReached = pScore >= settings.winScore;
     let isTwoAhead = !settings.enableTwoAhead || pScore - p2Score >= 2;
-    let reachedMaxScore = settings.enableMaxScore && pScore >= settings.maxScore;
+    let reachedMaxScore = settings.enableMaxScore && pScore >= maxScore();
 
     return reachedMaxScore || (winScoreReached && isTwoAhead);
 }
