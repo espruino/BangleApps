@@ -95,7 +95,7 @@
     "shortName":"Notifications",
     "icon": "notify.png",
     "version":"0.10",
-    "description": "A handler for displaying notifications that displays them in a bar at the top of the screen",
+    "description": "Provides the default `notify` module used by applications to display notifications in a bar at the top of the screen. This module is installed by default by client applications such as the Gadgetbridge app.  Installing `Fullscreen Notifications` replaces this module with a version that displays the notifications using the full screen",
     "tags": "widget",
     "type": "notify",
     "readme": "README.md",
@@ -108,7 +108,7 @@
     "shortName":"Notifications",
     "icon": "notify.png",
     "version":"0.11",
-    "description": "A handler for displaying notifications that displays them fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notifications library.",
+    "description": "Provides a replacement for the `Notifications (default)` `notify` module that is used by applications to display notifications fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notify module.",
     "tags": "widget,b2",
     "type": "notify",
     "storage": [
