@@ -1,7 +1,6 @@
 require('Font5x9Numeric7Seg').add(Graphics);
 require('Font7x11Numeric7Seg').add(Graphics);
 require('FontTeletext5x9Ascii').add(Graphics);
-require('FontTeletext10x18Ascii').add(Graphics);
 
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
 let settings = settingsMenu(null, null, true);
@@ -303,7 +302,7 @@ function draw() {
   for (let p = 0; p < 2; p++) {
     if (matchWon(p)) {
       g.setFontAlign(0,0);
-      g.setFont('Teletext10x18Ascii',1);
+      g.setFont('Teletext5x9Ascii',2);
       g.drawString("WINNER", p === 0 ? w/4 : w/4*3, 15);
     } else if (matchEnded()) {
       g.setFontAlign(0,-1);
@@ -318,7 +317,7 @@ function draw() {
     }
 
     g.setFontAlign(p === 0 ? -1 : 1,1);
-    g.setFont('7x11Numeric7Seg',2);
+    g.setFont('5x9Numeric7Seg',2);
     g.drawString(setsWon(p), p === 0 ? 10 : w-8, h-5);
 
     if (!settings.enableTennisScoring) {
@@ -330,7 +329,7 @@ function draw() {
   g.setFontAlign(0,0);
 
   if (correctionMode) {
-    g.setFont('Teletext10x18Ascii',1);
+    g.setFont('Teletext5x9Ascii',2);
     g.drawString("R", w/2, h-10);
   }
 
