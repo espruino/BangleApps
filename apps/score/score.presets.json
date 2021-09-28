@@ -21,5 +21,10 @@
     "winScore": 9999,
     "enableTwoAhead": false,
     "enableMaxScore": false
+  },
+  "Table Tennis": {
+    "winScore": 11,
+    "enableTwoAhead": true,
+    "enableMaxScore": false
   }
 }
