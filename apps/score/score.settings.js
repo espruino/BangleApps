@@ -114,6 +114,7 @@
       m['Score to win'] = {
         value: settings.winScore,
         min:1,
+        max: 999,
         onchange: m => setAndSave('winScore', m),
       };
       m['2-point lead'] = {
@@ -129,6 +130,7 @@
       m['Maximum score'] = {
         value: settings.maxScore,
         min: 1,
+        max: 999,
         onchange: m => setAndSave('maxScore', m),
       };
       m['Tennis scoring'] = {
