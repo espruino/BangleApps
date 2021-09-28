@@ -87,6 +87,13 @@ function Layout(layout, buttons, options) {
 
   if (buttons) {
     if (this.physBtns >= buttons.length) {
+      // Handler for button watch events
+      function pressHandler(btn,e) {
+        if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
+          this.b[btn].cbl(e);
+        else
+          if (this.b[btn].cb) this.b[btn].cb(e);
+      }
       // enough physical buttons
       let btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
@@ -113,10 +120,16 @@ function Layout(layout, buttons, options) {
     }
   }
   if (process.env.HWVERSION==2) {
+    // Handler for touch events
+    function touchHandler(l,e) {
+      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h)
+        l.cb(e);
+      if (l.c) l.c.forEach(n => touchHandler(n,e));
+    }
     Bangle.touchHandler = function(_,e){touchHandler(layout,e)};
-    Bangle.on('touch',Bangle.touchHandler);    
+    Bangle.on('touch',Bangle.touchHandler);
   }
-  
+
   // add IDs
   var ll = this;
   function idRecurser(l) {
@@ -138,21 +151,6 @@ Layout.prototype.remove = function (l) {
     delete Bangle.touchHandler;
   }
 };
-
-// Handler for button watch events
-function pressHandler(btn,e) {
-  if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
-    this.b[btn].cbl(e);
-  else
-    if (this.b[btn].cb) this.b[btn].cb(e);
-}
-
-// Handler for touch events
-function touchHandler(l,e) {
-  if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h)
-    l.cb(e);
-  if (l.c) l.c.forEach(n => touchHandler(n,e));
-}
 
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
@@ -180,14 +178,14 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
 
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
-  
+
   function render(l) {"ram"
     g.reset();
     if (l.col) g.setColor(l.col);
     if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
     cb[l.type](l);
   }
-  
+
   var cb = {
     "":function(){},
     "txt":function(l){
@@ -241,9 +239,9 @@ Layout.prototype.layout = function (l) {
     case "h": {
       var x = l.x + (0|l.pad);
       var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
-      if (!fillx) { x += (l.w-l._w)/2; }
+      if (!fillx) { x += (l.w-l._w)/2; fillx = 1; }
       l.c.forEach(c => {
-        c.w = c._w + ((0|c.fillx)*(l.w-l._w)/(fillx||1));
+        c.w = c._w + ((0|c.fillx)*(l.w-l._w)/fillx);
         c.h = c.filly ? l.h - (l.pad<<1) : c._h;
         c.x = x;
         c.y = l.y + (0|l.pad) + (1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)/2;
@@ -253,12 +251,12 @@ Layout.prototype.layout = function (l) {
       break;
     }
     case "v": {
-      var y = l.y + (0|l.pad);;
+      var y = l.y + (0|l.pad);
       var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
-      if (!filly) { y += (l.h-l._h)/2 }
+      if (!filly) { y += (l.h-l._h)/2; filly = 1; }
       l.c.forEach(c => {
         c.w = c.fillx ? l.w - (l.pad<<1) : c._w;
-        c.h = c._h + ((0|c.filly)*(l.h-l._h)/(filly||1));
+        c.h = c._h + ((0|c.filly)*(l.h-l._h)/filly);
         c.y = y;
         c.x = l.x + (0|l.pad) + (1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)/2;
         y += c.h;
@@ -349,8 +347,8 @@ Layout.prototype.update = function() {
   } else {
     l.w = l._w;
     l.h = l._h;
-    l.x = (w-l.w)/2;
-    l.y = y+(h-l.h)/2;
+    l.x = Math.round((w-l.w)/2);
+    l.y = y+Math.round((h-l.h)/2);
   }
   // layout children
   this.layout(l);
