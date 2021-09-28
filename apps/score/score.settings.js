@@ -40,7 +40,7 @@ function fillSettingsWithDefaults(settings) {
   return settings;
 }
 
-(function (back, ret) {
+(function (back, inApp, ret) {
 
   const fileName = 'score.json';
   let settings = require('Storage').readJSON(fileName, 1) || {};
@@ -71,8 +71,8 @@ function fillSettingsWithDefaults(settings) {
     return settings;
   }
 
-  const presetMenu = function () {
-    let ret = function (changed) { E.showMenu(appMenu(changed ? 3 : null)); };
+  const presetMenu = function (appMenuBack) {
+    let ret = function (changed) { E.showMenu(appMenu(appMenuBack, changed ? 2 : null)); };
     let m = {
       '': {'title': 'Score Presets'},
       '< Back': ret,
@@ -91,7 +91,7 @@ function fillSettingsWithDefaults(settings) {
     return m;
   };
 
-  const appMenu = function (selected) {
+  const appMenu = function (back, selected) {
     let m = {};
 
     m[''] = {'title': 'Score Settings'};
@@ -99,10 +99,7 @@ function fillSettingsWithDefaults(settings) {
       m[''].selected = selected;
     }
     m['< Back'] = function () { back(settings, changed); };
-    if (reset) {
-      m['Reset match'] = function () { back(settings, true); };
-    }
-    m['Presets'] = function () { E.showMenu(presetMenu()); };
+    m['Presets'] = function () { E.showMenu(presetMenu(back)); };
     m['Sets to win'] = {
       value: settings.winSets,
       min:1,
@@ -166,6 +163,24 @@ function fillSettingsWithDefaults(settings) {
     return m;
   };
 
-  E.showMenu(appMenu());
+  const inAppMenu = function () {
+    let m = {
+      '': {'title': 'Score Menu'},
+      '< Back': function () { back(settings, changed); },
+      'Reset match': function () { back(settings, true); },
+      'End current set': function () { inApp('end_set'); back(settings, changed); },
+      'Configuration': function () { E.showMenu(appMenu(function () {
+        E.showMenu(inAppMenu());
+      })); },
+    };
+
+    return m;
+  };
+
+  if (inApp != null) {
+    E.showMenu(inAppMenu());
+  } else {
+    E.showMenu(appMenu(back));
+  }
 
 });

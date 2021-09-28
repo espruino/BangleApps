@@ -4,7 +4,7 @@ require('FontTeletext5x9Ascii').add(Graphics);
 require('FontTeletext10x18Ascii').add(Graphics);
 
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
-let settings = settingsMenu(null, true);
+let settings = settingsMenu(null, null, true);
 
 let tennisScores = ['00','15','30','40','DC','AD'];
 
@@ -61,7 +61,7 @@ function setupMatch() {
   scores[0][2] = getTime();
 
   cSet = 0;
-  firstShownSet = 0 - Math.floor(setsPerPage() / 2);
+  setFirstShownSet();
 
   correctionMode = false;
 }
@@ -82,6 +82,12 @@ function showSettingsMenu() {
     settingsMenuOpened = null;
 
     draw();
+  }, function (msg) {
+    switch (msg) {
+      case 'end_set':
+        updateCurrentSet(1);
+        break;
+    }
   });
 }
 
@@ -154,10 +160,12 @@ function setWon(set, player) {
   let isTwoAhead = !settings.enableTwoAhead || pScore - p2Score >= 2;
   let tiebreakW = tiebreakWon(set, player);
   let reachedMaxScore = settings.enableMaxScore && pScore >= maxScore();
+  let manuallyEndedWon = cSet > set ? pScore > p2Score : false
 
   return (
     (settings.enableMaxScoreTiebreak ? tiebreakW : reachedMaxScore) ||
-      (winScoreReached && isTwoAhead)
+      (winScoreReached && isTwoAhead) ||
+      manuallyEndedWon
   );
 }
 
@@ -181,15 +189,30 @@ function matchScore(player) {
   return scores.reduce((acc, val) => acc += val[player], 0);
 }
 
-function score(player) {
-  let setFirstShownSet = function () {
-    firstShownSet = currentSet() - Math.floor(setsPerPage() / 2);
-  };
-  let updateCurrentSet = function (val) {
-    cSet += val;
-    setFirstShownSet();
-  };
+function setFirstShownSet() {
+  firstShownSet = Math.max(0, currentSet() - setsPerPage() + 1);
+}
 
+function updateCurrentSet(val) {
+  if (val > 0) {
+    cSet++
+  } else if (val < 0) {
+    cSet--
+  } else {
+    return;
+  }
+  setFirstShownSet();
+
+  if (matchEnded()) {
+    firstShownSet = 0;
+  }
+
+  if (val > 0) {
+    scores[cSet][2] = getTime();
+  }
+}
+
+function score(player) {
   if (!matchEnded() || correctionMode) {
     setFirstShownSet();
   }
@@ -242,11 +265,6 @@ function score(player) {
         scores[cSet][player]++;
       }
       updateCurrentSet(1);
-      scores[cSet][2] = getTime();
-    }
-
-    if (matchEnded()) {
-      firstShownSet = 0;
     }
   }
 }
