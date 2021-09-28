@@ -319,6 +319,20 @@
       {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
     ]
   },
+  { "id": "matrixclock",
+    "name": "Matrix Clock",
+    "icon": "matrixclock.png",
+    "version":"0.01",
+    "description": "inspired by The Matrix, a clock of the same style",
+    "tags": "clock",
+    "type":"clock",
+    "allow_emulator":true,
+     "readme": "README.md",
+    "storage": [
+      {"name":"matrixclock.app.js","url":"matrixclock.js"},
+      {"name":"matrixclock.img","url":"matrixclock-icon.js","evaluate":true}
+    ]
+  },
   { "id": "imgclock",
     "name": "Image background clock",
     "shortName":"Image Clock",
