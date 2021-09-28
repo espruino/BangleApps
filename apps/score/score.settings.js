@@ -1,6 +1,6 @@
 function fillSettingsWithDefaults(settings) {
   if (settings.winSets == null) {
-    settings.winSets = 1;
+    settings.winSets = 2;
   }
   if (settings.setsPerPage == null) {
     settings.setsPerPage = 5;
