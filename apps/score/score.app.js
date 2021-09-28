@@ -316,20 +316,20 @@ function draw() {
         15
       );
     } else if (matchEnded()) {
-      g.setFontAlign(0,-1);
+      g.setFontAlign(1,0);
 
       let dur1 = formatDuration(scores[cSet][2] - scores[0][2]);
       g.setFont('5x9Numeric7Seg',1);
       g.drawString(
         dur1,
-        getXCoord(w => p === 0 ? w/8 : w/8*5),
+        40,
         10
       );
 
       g.setFont('Teletext5x9Ascii',1);
       g.drawString(
         (currentSet()+1) + ' set' + (currentSet() > 0 ? 's' : ''),
-        getXCoord(w => p === 0 ? w/8*3 : w/8*7),
+        40,
         12
       );
 
