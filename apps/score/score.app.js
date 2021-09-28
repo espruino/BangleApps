@@ -22,7 +22,7 @@ let h = g.getHeight();
 function getXCoord(func) {
   let offset = 40;
   return func(w-offset)+offset;
-};
+}
 
 function setupInputWatchers() {
   if (global.BTN4) {
