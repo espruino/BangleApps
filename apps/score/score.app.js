@@ -230,7 +230,10 @@ function score(player) {
         scores[cSet][3+player]--;
       }
     } else if (scores[cSet][player] > 0) {
-      if (tScores[player] === 0 && tScores[~~!player] === 0) {
+      if (
+        !settings.enableTennisScoring ||
+          (tScores[player] === 0 && tScores[~~!player] === 0)
+      ) {
         scores[cSet][player]--;
       } else {
         tScores[player] = 0;
