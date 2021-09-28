@@ -15,5 +15,11 @@
     "maxScoreTiebreakEnableTwoAhead": true,
     "maxScoreTiebreakEnableMaxScore": false,
     "enableTennisScoring": true
+  },
+  "Soccer": {
+    "winSets": 1,
+    "winScore": 9999,
+    "enableTwoAhead": false,
+    "enableMaxScore": false
   }
 }
