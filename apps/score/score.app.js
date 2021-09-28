@@ -275,22 +275,22 @@ function handleInput(button) {
   }
 
   switch (button) {
-      case 0:
-      case 1:
-        score(button);
-        break;
-      case 2:
-        showSettingsMenu();
-        return;
-      case 3:
-      case 4:
-        let hLimit = currentSet();
-        let lLimit = 1 - setsPerPage();
-        let val = (button * 2 - 7);
-        firstShownSet += val;
-        if (firstShownSet > hLimit) firstShownSet = hLimit;
-        if (firstShownSet < lLimit) firstShownSet = lLimit;
-        break;
+    case 0:
+    case 1:
+      score(button);
+      break;
+    case 2:
+      showSettingsMenu();
+      return;
+    case 3:
+    case 4:
+      let hLimit = currentSet() - setsPerPage() + 1;
+      let lLimit = 0;
+      let val = (button * 2 - 7);
+      firstShownSet += val;
+      if (firstShownSet > hLimit) firstShownSet = hLimit;
+      if (firstShownSet < lLimit) firstShownSet = lLimit;
+      break;
   }
 
   draw();
