@@ -24,6 +24,10 @@ function getXCoord(func) {
   return func(w-offset)+offset;
 }
 
+function getSecondsTime() {
+  return Math.floor(getTime() * 1000);
+}
+
 function setupInputWatchers() {
   if (global.BTN4) {
     setWatch(() => handleInput(2), BTN2, { repeat: true });
@@ -62,7 +66,7 @@ function setupMatch() {
     tScores = null;
   }
 
-  scores[0][2] = getTime();
+  scores[0][2] = getSecondsTime();
 
   cSet = 0;
   setFirstShownSet();
@@ -71,7 +75,8 @@ function setupMatch() {
 }
 
 function showSettingsMenu() {
-  settingsMenuOpened = getTime();
+  settingsMenuOpened = getSecondsTime();
+  l = null;
   settingsMenu(function (s, reset) {
     E.showMenu();
 
@@ -79,7 +84,7 @@ function showSettingsMenu() {
 
     if (reset) {
       setupMatch();
-    } else if (getTime() - settingsMenuOpened < 0.5 || correctionMode) {
+    } else if (getSecondsTime() - settingsMenuOpened < 500 || correctionMode) {
       correctionMode = !correctionMode;
     }
 
@@ -125,7 +130,7 @@ function formatNumber(num, length) {
 }
 
 function formatDuration(duration) {
-  let durS = Math.floor(duration);
+  let durS = Math.floor(duration / 1000);
   let durM = Math.floor(durS / 60);
   let durH = Math.floor(durM / 60);
   durS = durS - durM * 60;
@@ -208,7 +213,7 @@ function updateCurrentSet(val) {
   setFirstShownSet();
 
   if (val > 0) {
-    scores[cSet][2] = getTime();
+    scores[cSet][2] = getSecondsTime();
 
     if (matchEnded()) {
       firstShownSet = 0;
