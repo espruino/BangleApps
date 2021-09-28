@@ -319,21 +319,20 @@ function draw() {
     } else if (matchEnded()) {
       g.setFontAlign(1,0);
 
+      g.setFont('Teletext5x9Ascii',1);
+      g.drawString(
+        (currentSet()+1) + ' set' + (currentSet() > 0 ? 's' : ''),
+        40,
+        8
+      );
+
       let dur1 = formatDuration(scores[cSet][2] - scores[0][2]);
       g.setFont('5x9Numeric7Seg',1);
       g.drawString(
         dur1,
         40,
-        10
+        18
       );
-
-      g.setFont('Teletext5x9Ascii',1);
-      g.drawString(
-        (currentSet()+1) + ' set' + (currentSet() > 0 ? 's' : ''),
-        40,
-        12
-      );
-
     }
 
     g.setFontAlign(p === 0 ? -1 : 1,1);
