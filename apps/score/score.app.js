@@ -19,23 +19,28 @@ let correctionMode = false;
 let w = g.getWidth();
 let h = g.getHeight();
 
+function getXCoord(func) {
+  let offset = 40;
+  return func(w-offset)+offset;
+};
+
 function setupInputWatchers() {
   if (global.BTN4) {
     setWatch(() => handleInput(2), BTN2, { repeat: true });
-    setWatch(() => handleInput(3), BTN1, { repeat: true });
-    setWatch(() => handleInput(4), BTN3, { repeat: true });
+    setWatch(() => handleInput(0), BTN1, { repeat: true });
+    setWatch(() => handleInput(1), BTN3, { repeat: true });
   } else {
     setWatch(() => handleInput(2), BTN, { repeat: true });
   }
   Bangle.on('touch', (b, e) => {
     if (b) {
       if (b === 1) {
-        handleInput(0);
+        handleInput(3);
       } else {
-        handleInput(1);
+        handleInput(4);
       }
     } else {
-      if (e.x < w/2) {
+      if (e.x < getXCoord(w => w/2)) {
         handleInput(0);
       } else {
         handleInput(1);
@@ -299,10 +304,6 @@ function handleInput(button) {
 }
 
 function draw() {
-  let getXCoord = function (func) {
-    let offset = 40;
-    return func(w-offset)+offset;
-  };
   g.setFontAlign(0,0);
   g.clear();
 
