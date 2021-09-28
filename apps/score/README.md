@@ -1,17 +1,24 @@
 This app will allow you to keep scores for most kinds of sports.
 
 # Keybinds
-*On Bangle.js 2 BTN is equivalent to BTN2 on Bangle.js 1*
-| Keybinding        | Description                  |
-|-------------------|------------------------------|
-| `BTN1`            | Scroll up                    |
-| `BTN3`            | Scroll down                  |
-| `BTN2`            | Menu                         |
-| tap on left side  | increment left player score  |
-| tap on right side | increment right player score |
-
 To correct a falsely awarded point simply open and close the menu within .5 seconds. This will put the app into correction mode (indicated by the `R`).
 In this mode any score increments will be decrements. To move back a set, reduce both players scores to 0, then decrement one of the scores once again.
+
+## Bangle.js 1
+| Keybinding          | Description                  |
+|---------------------|------------------------------|
+| `BTN1`              | Increment left player score  |
+| `BTN3`              | Increment right player score |
+| `BTN2`              | Menu                         |
+| touch on left side  | Scroll up                    |
+| touch on right side | Scroll down                  |
+
+## Bangle.js 2
+| Keybinding                          | Description                  |
+|-------------------------------------|------------------------------|
+| `BTN1`                              | Menu                         |
+| touch on left side of divider line  | Increment left player score  |
+| touch on right side of divider line | Increment right player score |
 
 # Settings
 | Setting                            | Description                                                                                                                  |
