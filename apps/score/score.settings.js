@@ -1,46 +1,45 @@
-function fillSettingsWithDefaults(settings) {
-  if (settings.winSets == null) {
-    settings.winSets = 2;
-  }
-  if (settings.setsPerPage == null) {
-    settings.setsPerPage = 5;
-  }
-  if (settings.winScore == null) {
-    settings.winScore = 21;
-  }
-  if (settings.enableTwoAhead == null) {
-    settings.enableTwoAhead = true;
-  }
-  if (settings.enableMaxScore == null) {
-    settings.enableMaxScore = true;
-  }
-  if (settings.maxScore == null) {
-    settings.maxScore = 30;
-  }
-  if (settings.enableTennisScoring == null) {
-    settings.enableTennisScoring = false;
-  }
-
-  if (settings.enableMaxScoreTiebreak == null) {
-    settings.enableMaxScoreTiebreak = false;
-  }
-  if (settings.maxScoreTiebreakWinScore == null) {
-    settings.maxScoreTiebreakWinScore = 6;
-  }
-  if (settings.maxScoreTiebreakEnableTwoAhead == null) {
-    settings.maxScoreTiebreakEnableTwoAhead = true;
-  }
-  if (settings.maxScoreTiebreakEnableMaxScore == null) {
-    settings.maxScoreTiebreakEnableMaxScore = false;
-  }
-  if (settings.maxScoreTiebreakMaxScore == null) {
-    settings.maxScoreTiebreakMaxScore = 15;
-  }
-
-  return settings;
-}
-
 (function (back, inApp, ret) {
+  function fillSettingsWithDefaults(settings) {
+    if (settings.winSets == null) {
+      settings.winSets = 2;
+    }
+    if (settings.setsPerPage == null) {
+      settings.setsPerPage = 5;
+    }
+    if (settings.winScore == null) {
+      settings.winScore = 21;
+    }
+    if (settings.enableTwoAhead == null) {
+      settings.enableTwoAhead = true;
+    }
+    if (settings.enableMaxScore == null) {
+      settings.enableMaxScore = true;
+    }
+    if (settings.maxScore == null) {
+      settings.maxScore = 30;
+    }
+    if (settings.enableTennisScoring == null) {
+      settings.enableTennisScoring = false;
+    }
+
+    if (settings.enableMaxScoreTiebreak == null) {
+      settings.enableMaxScoreTiebreak = false;
+    }
+    if (settings.maxScoreTiebreakWinScore == null) {
+      settings.maxScoreTiebreakWinScore = 6;
+    }
+    if (settings.maxScoreTiebreakEnableTwoAhead == null) {
+      settings.maxScoreTiebreakEnableTwoAhead = true;
+    }
+    if (settings.maxScoreTiebreakEnableMaxScore == null) {
+      settings.maxScoreTiebreakEnableMaxScore = false;
+    }
+    if (settings.maxScoreTiebreakMaxScore == null) {
+      settings.maxScoreTiebreakMaxScore = 15;
+    }
+
+    return settings;
+  }
 
   const fileName = 'score.json';
   let settings = require('Storage').readJSON(fileName, 1) || {};
