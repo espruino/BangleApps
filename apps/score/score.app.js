@@ -344,7 +344,7 @@ function draw() {
     g.setFont('5x9Numeric7Seg',2);
     g.drawString(
       setsWon(p),
-      getXCoord(w => p === 0 ? 10 : w-8),
+      getXCoord(w => p === 0 ? 5 : w-3),
       h-5
     );
 
@@ -353,7 +353,7 @@ function draw() {
       g.setFont('7x11Numeric7Seg',2);
       g.drawString(
         formatNumber(matchScore(p), 3),
-        getXCoord(w => p === 0 ? w/2 - 8 : w/2 + 11),
+        getXCoord(w => p === 0 ? w/2 - 3 : w/2 + 6),
         h-5
       );
     }
@@ -383,17 +383,17 @@ function draw() {
 
     let y = (h-15)/(setsOnCurrentPage+1)*(set-firstShownSet+1)+5;
 
-    g.setFontAlign(1,0);
+    g.setFontAlign(-1,0);
     g.setFont('7x11Numeric7Seg',1);
-    g.drawString(set+1, 40, y-10);
+    g.drawString(set+1, 5, y-10);
     if (scores[set+1][2] != null) {
       let dur2 = formatDuration(scores[set+1][2] - scores[set][2]);
-      g.drawString(dur2, 40, y+10);
+      g.drawString(dur2, 5, y+10);
     }
 
     for (let p = 0; p < 2; p++) {
       if (!setWon(set, p === 0 ? 1 : 0) || matchEnded()) {
-        let bigNumX = getXCoord(w => p === 0 ? w/4 : w/4*3+3);
+        let bigNumX = getXCoord(w => p === 0 ? w/4-12 : w/4*3+15);
         let smallNumX = getXCoord(w => p === 0 ? w/2-2 : w/2+3);
 
         if (settings.enableTennisScoring && set === cSet && !shouldTiebreak()) {
