@@ -186,7 +186,7 @@ function matchWon(player) {
 }
 
 function matchEnded() {
-  return matchWon(0) || matchWon(1);
+  return (matchWon(0) || matchWon(1)) && cSet > (setsWon(0) + setsWon(1) - 1);
 }
 
 function matchScore(player) {
@@ -207,17 +207,17 @@ function updateCurrentSet(val) {
   }
   setFirstShownSet();
 
-  if (matchEnded()) {
-    firstShownSet = 0;
-  }
-
   if (val > 0) {
     scores[cSet][2] = getTime();
+
+    if (matchEnded()) {
+      firstShownSet = 0;
+    }
   }
 }
 
 function score(player) {
-  if (!matchEnded() || correctionMode) {
+  if (!matchEnded()) {
     setFirstShownSet();
   }
 
