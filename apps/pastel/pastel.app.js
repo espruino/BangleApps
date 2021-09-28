@@ -73,7 +73,8 @@ function draw() {
   
   // fix hh for 12hr clock
   var h2 = "0" + parseInt(hh) % 12 || 12;
-  hh = h2.substr(h2.length -2);
+  if (parseInt(hh) > 12)
+    hh = h2.substr(h2.length -2);
 
   var w = g.getWidth();
   var h = g.getHeight();
