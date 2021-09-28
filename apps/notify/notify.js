@@ -94,9 +94,8 @@ exports.show = function(options) {
     y = 320-size,
     h = size,
     b = y+h-1, r = x+w-1; // bottom,right
-  g.setClipRect(x,y, r,b);
   // clear area
-  g.reset();
+  g.reset().setClipRect(x,y, r,b);
   if (options.bgColor!==undefined) g.setColor(options.bgColor);
   g.clearRect(x,y, r,b);
   // bottom border
