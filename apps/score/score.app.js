@@ -159,7 +159,7 @@ function setWon(set, player) {
   let isTwoAhead = !settings.enableTwoAhead || pScore - p2Score >= 2;
   let tiebreakW = tiebreakWon(set, player);
   let reachedMaxScore = settings.enableMaxScore && pScore >= maxScore();
-  let manuallyEndedWon = cSet > set ? pScore > p2Score : false
+  let manuallyEndedWon = cSet > set ? pScore > p2Score : false;
 
   return (
     (settings.enableMaxScoreTiebreak ? tiebreakW : reachedMaxScore) ||
@@ -194,9 +194,9 @@ function setFirstShownSet() {
 
 function updateCurrentSet(val) {
   if (val > 0) {
-    cSet++
+    cSet++;
   } else if (val < 0) {
-    cSet--
+    cSet--;
   } else {
     return;
   }
