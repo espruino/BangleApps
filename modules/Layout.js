@@ -162,10 +162,8 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
     if (c) l.c = c;
 
     if (!delete rectsToClear[hash]) {
-      rects[hash] = {
-        bg: parentBg == null ? g.theme.bg : parentBg,
-        r: [l.x,l.y,l.x+l.w-1,l.y+l.h-1]
-      };
+      var r = rects[hash] = [l.x,l.y,l.x+l.w-1,l.y+l.h-1];
+      r.bg = parentBg == null ? g.theme.bg : parentBg;
       if (drawList) {
         drawList.push(l);
         drawList = null; // Prevent children from being redundantly added to the drawList
@@ -225,7 +223,7 @@ Layout.prototype.render = function (l) {
     prepareLazyRender(l, rectsToClear, drawList, this.rects, null);
     for (var h in rectsToClear) delete this.rects[h];
     var clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
-    for (var r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r.r);
+    for (var r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r);
     drawList.forEach(render);
   } else { // non-lazy
     render(l);
