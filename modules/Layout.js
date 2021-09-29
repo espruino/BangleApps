@@ -240,13 +240,13 @@ Layout.prototype.layout = function (l) {
       var acc_w = l.x + (0|l.pad);
       var accfillx = 0;
       var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
-      if (!fillx) { acc_w += (l.w-l._w)>>1; }
+      if (!fillx) { acc_w += (l.w-l._w)>>1; fillx=1; }
       var x = acc_w;
       l.c.forEach(c => {
         c.x = 0|x;
         acc_w += c._w;
         accfillx += 0|c.fillx;
-        x = acc_w + Math.floor(accfillx*(l.w-l._w)/(fillx||1));
+        x = acc_w + Math.floor(accfillx*(l.w-l._w)/fillx);
         c.w = 0|(x - c.x);
         c.h = 0|(c.filly ? l.h - (l.pad<<1) : c._h);
         c.y = 0|(l.y + (0|l.pad) + ((1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)>>1));
@@ -258,13 +258,13 @@ Layout.prototype.layout = function (l) {
       var acc_h = l.y + (0|l.pad);
       var accfilly = 0;
       var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
-      if (!filly) { acc_h += (l.h-l._h)>>1; }
+      if (!filly) { acc_h += (l.h-l._h)>>1; filly=1; }
       var y = acc_h;
       l.c.forEach(c => {
         c.y = 0|y;
         acc_h += c._h;
         accfilly += 0|c.filly;
-        y = acc_h + Math.floor(accfilly*(l.h-l._h)/(filly||1));
+        y = acc_h + Math.floor(accfilly*(l.h-l._h)/filly);
         c.h = 0|(y - c.y);
         c.w = 0|(c.fillx ? l.w - (l.pad<<1) : c._w);
         c.x = 0|(l.x + (0|l.pad) + ((1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)>>1));
