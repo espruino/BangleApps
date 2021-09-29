@@ -4,7 +4,7 @@
     "tags": "tool,system,b2",
     "type":"bootloader",
     "icon": "bootloader.png",
-    "version":"0.29",
+    "version":"0.30",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "storage": [
       {"name":".boot0","url":"boot0.js"},
@@ -258,7 +258,7 @@
   { "id": "slidingtext",
     "name": "Sliding Clock",
     "icon": "slidingtext.png",
-    "version":"0.06",
+    "version":"0.07",
     "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese, Spanish and German are supported",
     "tags": "clock",
     "type":"clock",
@@ -1139,7 +1139,7 @@
     "version":"0.01",
     "description": "Downloads assisted GPS (AGPS) data to Bangle.js for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "custom": "custom.html",
-    "tags": "tool,outdoors,agps",
+    "tags": "tool,outdoors,agps,bno2",
     "type": "RAM",
     "storage": [ ]
   },
@@ -2893,24 +2893,6 @@
     {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
   ]
 },
-{ "id": "gpsservice",
-  "name": "Low power GPS Service",
-  "shortName":"GPS Service",
-  "icon": "gpsservice.png",
-  "version":"0.04",
-  "description": "low power GPS widget",
-  "tags": "gps outdoors navigation",
-  "readme": "README.md",
-  "storage": [
-    {"name":"gpsservice.app.js","url":"app.js"},
-    {"name":"gpsservice.settings.js","url":"settings.js"},
-    {"name":"gpsservice.wid.js","url":"widget.js"},
-    {"name":"gpsservice.img","url":"gpsservice-icon.js","evaluate":true}
-  ],
-  "data": [
-    {"name":"gpsservice.settings.json","url":"settings.json"}
-  ]
-},
 { "id": "mclockplus",
   "name": "Morph Clock+",
   "shortName":"Morph Clock+",
@@ -3000,7 +2982,7 @@
   "icon": "gpssetup.png",
   "version":"0.02",
   "description": "Configure the GPS power options and store them in the GPS nvram",
-  "tags": "gps, tools, outdoors",
+  "tags": "gps,tools,outdoors,bno2",
   "readme": "README.md",
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},
