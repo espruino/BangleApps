@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Display 12 hour clock as 12:xx not 00:xx when just into PM
+0.03: Make it work with Gadgetbridge, Notifications fullscreen on a Bangle 2
