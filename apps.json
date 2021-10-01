@@ -3503,7 +3503,7 @@
   "name": "Pastel Clock",
   "shortName": "Pastel",
   "icon": "pastel.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "A Configurable clock with custom fonts and background",
   "tags": "clock,b2",
   "type":"clock",

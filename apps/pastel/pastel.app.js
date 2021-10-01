@@ -51,7 +51,7 @@ const SETTINGS_FILE = "pastel.json";
 let settings = undefined;
 
 function loadSettings() {
-  //console.log("loadSettings()");
+  //Console.log("loadSettings()");
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
   settings.date = settings.date||false;
@@ -119,7 +119,7 @@ function draw() {
   g.setFontAlign(1,-1);  // right aligned
   g.drawString(hh, x - 6, y);
   g.setFontAlign(-1,-1); // left aligned
-  g.drawString(mm ,x + 6, y);
+  g.drawString(mm, x + 6, y);
 
   // for the colon
   g.setFontAlign(0,-1); // centre aligned
@@ -143,17 +143,22 @@ function draw() {
   }
 }
 
-// handle switch display on by pressing BTN1
+// Only update when display turns on
+if (process.env.BOARD!="SMAQ3") // hack for Q3 which is always-on
 Bangle.on('lcdPower', function(on) {
-  if (on) draw();
+  if (secondInterval)
+    clearInterval(secondInterval);
+  secondInterval = undefined;
+  if (on)
+    secondInterval = setInterval(draw, 1000);
+  draw();
 });
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 loadSettings();
-setInterval(draw, 1000); // refresh every second
+g.clear();
+var secondInterval = setInterval(draw, 1000);
 draw();
 // Show launcher when button pressed
 Bangle.setUI("clock");
-
+Bangle.loadWidgets();
+Bangle.drawWidgets();
