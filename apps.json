@@ -1124,9 +1124,9 @@
     "id": "gpsinfo",
     "name": "GPS Info",
     "icon": "gps-info.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
-    "tags": "gps",
+    "tags": "gps,b2",
     "type": "app",
     "storage": [
       {"name":"gpsinfo.app.js","url": "gps-info.js"},

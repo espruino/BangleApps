@@ -312,14 +312,17 @@ Layout.prototype.update = function() {
       l._h = 24;
       l._w = 14 + l.label.length*8;
     }, "img": function(l) {
-      var src = l.src();
-      if (typeof(src) === 'object') {
-        l._h = ("width" in src) ? src.width : src.getWidth();
-        l._w = ("height" in src) ? src.height : src.getHeight();
+      var src = l.src(); // get width and height out of image
+      if (src[0]) {
+        l._w = src[0];
+        l._h = src[1];
+      } else if ('object'==typeof src) {
+        l._w = ("width" in src) ? src.width : src.getWidth();
+        l._h = ("height" in src) ? src.height : src.getHeight();
       } else {
         var im = E.toString(src);
-        l._h = im.charCodeAt(0);
-        l._w = im.charCodeAt(1);
+        l._w = im.charCodeAt(0);
+        l._h = im.charCodeAt(1);
       }
     }, "": function(l) {
       // size should already be set up in width/height
