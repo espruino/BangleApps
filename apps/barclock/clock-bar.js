@@ -13,46 +13,48 @@ let locale = require("locale");
   locale.dayFirst = /3.*2/.test(localized);
 
   locale.hasMeridian = false;
-  if (typeof locale.meridian==="function") {  // function does not exists if languages  app is not installed
+  if (typeof locale.meridian==="function") {  // function does not exist if languages  app is not installed
     locale.hasMeridian = (locale.meridian(date)!=="");
   }
-
 }
-const screen = {
-  width: g.getWidth(),
-  height: g.getWidth(),
-  middle: g.getWidth()/2,
-  center: g.getHeight()/2,
-};
+Bangle.loadWidgets();
+function renderBar(l) {
+  if (!this.fraction) {
+    // zero-size fillRect stills draws one line of pixels, we don't want that
+    return;
+  }
+  const width = this.fraction*l.w;
+  g.fillRect(l.x, l.y, width-1, l.y+l.height-1);
+}
 
-// hardcoded "settings"
-const settings = {
-  time: {
-    font: "6x8",
-    size: (is12Hour && locale.hasMeridian) ? 6 : 8,
-    middle: screen.middle,
-    center: screen.center,
-    ampm: {
-      color: -1,
-      font: "6x8",
-      size: 2,
+const Layout = require("Layout");
+const layout = new Layout({
+  type: "v", c: [
+    {
+      type: "h", c: [
+        {id: "time", label: "88:88", type: "txt", font: "6x8:5", bgCol: g.theme.bg}, // size updated below
+        {id: "ampm", label: "  ", type: "txt", font: "6x8:2", bgCol: g.theme.bg},
+      ],
     },
-  },
-  date: {
-    font: "Vector",
-    size: 20,
-    middle: screen.height-20, // at bottom of screen
-    center: screen.center,
-  },
-  bar: {
-    top: 155, // just below time
-    thickness: 6, // matches 24h time "pixel" size
-  },
-};
+    {id: "bar", type: "custom", fraction: 0, fillx: 1, height: 6, col: g.theme.fg2, render: renderBar},
+    {height: 40},
+    {id: "date", type: "txt", font: "10%", valign: 1},
+  ],
+}, false, {lazy: true});
+// adjustments based on screen size and whether we display am/pm
+let thickness; // bar thickness, same as time font "pixel block" size
+if (is12Hour) {
+  // Maximum font size = (<screen width> - <ampm: 2chars * (2*6)px>) / (5chars * 6px)
+  thickness = Math.floor((g.getWidth()-24)/(5*6));
+} else {
+  layout.ampm.label = "";
+  thickness = Math.floor(g.getWidth()/(5*6));
+}
+layout.bar.height = thickness+1;
+layout.time.font = "6x8:"+thickness;
+layout.update();
 
-const SECONDS_PER_MINUTE = 60;
-
-const timeText = function(date) {
+function timeText(date) {
   if (!is12Hour) {
     return locale.time(date, true);
   }
@@ -64,81 +66,39 @@ const timeText = function(date) {
     date12.setHours(hours-12);
   }
   return locale.time(date12, true);
-};
-const ampmText = function(date) {
-  return is12Hour ? locale.meridian(date) : "";
-};
-
-const dateText = function(date) {
+}
+function ampmText(date) {
+  return (is12Hour && locale.hasMeridian)? locale.meridian(date) : "";
+}
+function dateText(date) {
   const dayName = locale.dow(date, true),
     month = locale.month(date, true),
     day = date.getDate();
   const dayMonth = locale.dayFirst ? `${day} ${month}` : `${month} ${day}`;
   return `${dayName}  ${dayMonth}`;
-};
+}
 
-const drawDateTime = function(date) {
-  const t = settings.time;
-  g.setFont(t.font, t.size);
-  g.setFontAlign(0, 0); // centered
-  g.drawString(timeText(date), t.center, t.middle, true);
-  if (is12Hour && locale.hasMeridian) {
-    const a = settings.time.ampm;
-    g.setFont(a.font, a.size);
-    g.setFontAlign(1, -1); // right top
-    // at right edge of screen, aligned with time bottom
-    const left = screen.width-a.size*2,
-      top = t.middle+t.size-a.size;
-    g.drawString(ampmText(date), left, top, true);
-  }
-
-  const d = settings.date;
-  g.setFont(d.font, d.size);
-  g.setFontAlign(0, 0); // centered
-  g.drawString(dateText(date), d.center, d.middle, true);
-};
-
-const drawBar = function(date) {
-  const b = settings.bar;
-  const seconds = date.getSeconds();
-  if (seconds===0) {
-    // zero-size rect stills draws one line of pixels, we don't want that
-    return;
-  }
-  const fraction = seconds/SECONDS_PER_MINUTE,
-    width = fraction*screen.width;
-  g.setColor(g.theme.fg2).fillRect(0, b.top, width, b.top+b.thickness);
-};
-
-
-let lastSeconds;
-const draw = function(redraw) {
-  if (!Bangle.isLCDOn()) {return;}
-  g.reset();
+draw = function draw() {
+  if (!Bangle.isLCDOn()) {return;} // no drawing, also no new update scheduled
   const date = new Date();
-  const seconds = date.getSeconds();
-  if (redraw||lastSeconds>seconds) {
-    // force redraw at start of new minute
-    g.clear();
-    Bangle.drawWidgets();
-    drawDateTime(date);
-  }
-  // the bar only gets larger, so drawing on top of the previous one is fine
-  drawBar(date);
-  lastSeconds = seconds;
-  // schedule next update
+  layout.time.label = timeText(date);
+  layout.ampm.label = ampmText(date);
+  layout.date.label = dateText(date);
+  const SECONDS_PER_MINUTE = 60;
+  layout.bar.fraction = date.getSeconds()/SECONDS_PER_MINUTE;
+  layout.render();
+  // schedule update at start of next second
   const millis = date.getMilliseconds();
   setTimeout(draw, 1000-millis);
 };
 
-
-Bangle.loadWidgets();
 // Show launcher when button pressed
 Bangle.setUI("clock");
-
 Bangle.on("lcdPower", function(on) {
   if (on) {
-    draw(true);
+    draw();
   }
 });
-draw(true);
+g.reset().clear();
+Bangle.drawWidgets();
+draw();
