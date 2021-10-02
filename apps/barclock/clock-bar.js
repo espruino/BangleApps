@@ -28,7 +28,6 @@ const screen = {
 // hardcoded "settings"
 const settings = {
   time: {
-    color: -1,
     font: '6x8',
     size: (is12Hour && locale.hasMeridian) ? 6 : 8,
     middle: screen.middle,
@@ -40,14 +39,12 @@ const settings = {
     },
   },
   date: {
-    color: -1,
     font: 'Vector',
     size: 20,
     middle: screen.height - 20, // at bottom of screen
     center: screen.center,
   },
   bar: {
-    color: -1,
     top: 155, // just below time
     thickness: 6, // matches 24h time "pixel" size
   },
@@ -82,13 +79,11 @@ const dateText = function (date) {
 
 const drawDateTime = function (date) {
   const t = settings.time
-  g.setColor(t.color)
   g.setFont(t.font, t.size)
   g.setFontAlign(0, 0) // centered
   g.drawString(timeText(date), t.center, t.middle, true)
   if (is12Hour && locale.hasMeridian) {
     const a = settings.time.ampm
-    g.setColor(a.color)
     g.setFont(a.font, a.size)
     g.setFontAlign(1, -1) // right top
     // at right edge of screen, aligned with time bottom
@@ -98,7 +93,6 @@ const drawDateTime = function (date) {
   }
 
   const d = settings.date
-  g.setColor(d.color)
   g.setFont(d.font, d.size)
   g.setFontAlign(0, 0) // centered
   g.drawString(dateText(date), d.center, d.middle, true)
@@ -113,14 +107,12 @@ const drawBar = function (date) {
   }
   const fraction = seconds / SECONDS_PER_MINUTE,
     width = fraction * screen.width
-  g.setColor(b.color)
-  g.fillRect(0, b.top, width, b.top + b.thickness)
+  g.setColor(g.theme.fg2).fillRect(0, b.top, width, b.top + b.thickness)
 }
 
 const clearScreen = function () {
-  g.setColor(0)
   const timeTop = settings.time.middle - (settings.time.size * 4)
-  g.fillRect(0, timeTop, screen.width, screen.height)
+  g.clearRect(0, timeTop, screen.width, screen.height)
 }
 
 let lastSeconds, tTick
