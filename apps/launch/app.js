@@ -33,8 +33,10 @@ function drawMenu() {
     if (i+menuScroll==selected) {
       g.setColor(g.theme.bgH).fillRect(0,y,w-1,y+63);
       g.setColor(g.theme.fgH).drawRect(0,y,w-1,y+63);
-    } else
-      g.clearRect(0,y,w-1,y+63);
+    } else {
+      g.clearRect(0, y, w-1, y+63);
+      g.setColor(g.theme.fg);
+    }
     g.drawString(app.name,64,y+32);
     var icon=undefined;
     if (app.icon) icon = s.read(app.icon);
