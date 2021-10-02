@@ -19,10 +19,14 @@ function draw() {
   g.flip();
 }
 
+function findPhone(v) {
+  Bluetooth.println(JSON.stringify({t:"findPhone", n:v}));
+}
+
 function find(){
   finding = !finding;
   draw();
-  Bluetooth.println("\n"+JSON.stringify({t:"findPhone", n:finding}));
+  findPhone(finding);
 }
 
 draw();
@@ -43,12 +47,9 @@ if (process.env.HWVERSION == 2) {
     // click top part of the screen to stop start
     if (xy.y < g.getHeight() / 2) {
       find();
-      return;
     } else {
-      // exit app
-      Bluetooth.println("\n"+JSON.stringify({t:"findPhone", n:false}));
-      load();
+      findPhone(false);
+      setTimeout(load, 100); // exit in 100ms
     }
   });
 }
-
