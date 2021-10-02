@@ -110,19 +110,17 @@ const drawBar = function(date) {
   g.setColor(g.theme.fg2).fillRect(0, b.top, width, b.top+b.thickness);
 };
 
-const clearScreen = function() {
-  const timeTop = settings.time.middle-(settings.time.size*4);
-  g.clearRect(0, timeTop, screen.width, screen.height);
-};
 
-let lastSeconds, tTick;
-const tick = function() {
+let lastSeconds;
+const draw = function(redraw) {
+  if (!Bangle.isLCDOn()) {return;}
   g.reset();
   const date = new Date();
   const seconds = date.getSeconds();
-  if (lastSeconds>seconds) {
-    // new minute
-    clearScreen();
+  if (redraw||lastSeconds>seconds) {
+    // force redraw at start of new minute
+    g.clear();
+    Bangle.drawWidgets();
     drawDateTime(date);
   }
   // the bar only gets larger, so drawing on top of the previous one is fine
@@ -130,32 +128,17 @@ const tick = function() {
   lastSeconds = seconds;
   // schedule next update
   const millis = date.getMilliseconds();
-  tTick = setTimeout(tick, 1000-millis);
+  setTimeout(draw, 1000-millis);
 };
 
-const start = function() {
-  lastSeconds = 99; // force redraw
-  tick();
-};
-const stop = function() {
-  if (tTick) {
-    clearTimeout(tTick);
-    tTick = undefined;
-  }
-};
 
-// clean app screen
-g.clear();
 Bangle.loadWidgets();
-Bangle.drawWidgets();
 // Show launcher when button pressed
 Bangle.setUI("clock");
 
 Bangle.on("lcdPower", function(on) {
   if (on) {
-    start();
-  } else {
-    stop();
+    draw(true);
   }
 });
-start();
+draw(true);
