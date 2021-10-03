@@ -29,15 +29,11 @@ function getSecondsTime() {
 }
 
 function setupInputWatchers() {
-  if (global.BTN4) {
-    setWatch(() => handleInput(2), BTN2, { repeat: true });
-    setWatch(() => handleInput(0), BTN1, { repeat: true });
-    setWatch(() => handleInput(1), BTN3, { repeat: true });
-  } else {
-    setWatch(() => handleInput(2), BTN, { repeat: true });
-  }
+  isBangle1 = !!global.BTN4;
+  setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
+  Bangle.setUI('updown', v => v && handleInput(Math.floor((v+2)/2)+(isBangle1 ? 0 : 3)));
   Bangle.on('touch', (b, e) => {
-    if (b) {
+    if (isBangle1) {
       if (b === 1) {
         handleInput(3);
       } else {
