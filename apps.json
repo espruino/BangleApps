@@ -3499,9 +3499,9 @@
       {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
     ]
   },
-{ "id": "schoolCalender",
+{ "id": "schoolCalendar",
   "name": "School Calendar",
-  "shortName":"SCalender",
+  "shortName":"SCalendar",
   "icon": "CalenderLogo.png",
   "version":"0.01",
   "description": "A simple calendar that you can see your upcoming events. Keep in note that your events reapeat weekly.",
@@ -3509,7 +3509,7 @@
   "readme": "README.md",
   "custom":"interface.html",
   "storage": [
-    {"name":"schoolCalender.app.js","url":"app.js"},
+    {"name":"schoolCalendar.app.js","url":"app.js"},
     {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [
