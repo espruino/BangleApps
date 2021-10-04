@@ -140,7 +140,7 @@ function Layout(layout, buttons, options) {
     if (l.c) l.c.forEach(idRecurser);
   }
   idRecurser(layout);
-  this.update();
+  this.updateNeeded = true;
 }
 
 Layout.prototype.remove = function (l) {
@@ -196,6 +196,7 @@ function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
 
 Layout.prototype.render = function (l) {
   if (!l) l = this._l;
+  if (this.updateNeeded) this.update();
 
   function render(l) {"ram"
     g.reset();
@@ -309,6 +310,7 @@ Layout.prototype.debug = function(l,c) {
   if (l.c) l.c.forEach(n => this.debug(n,c));
 };
 Layout.prototype.update = function() {
+  delete this.updateNeeded;
   var l = this._l;
   var w = g.getWidth();
   var y = this.yOffset;
