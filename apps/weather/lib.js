@@ -47,7 +47,7 @@ global.GB = (event) => {
 };
 
 exports.get = function() {
-  return storage.readJSON('weather.json').weather;
+  return (storage.readJSON('weather.json')||{}).weather;
 }
 
 scheduleExpiry(storage.readJSON('weather.json')||{});
