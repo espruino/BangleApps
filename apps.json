@@ -3540,5 +3540,17 @@
     {"name":"waveclk.app.js","url":"app.js"},
     {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "TheBinWatch",
+  "name": "Binary Watch",
+  "shortName":"BinWatch",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Famous binary watch",
+  "tags": "",
+  "storage": [
+    {"name":"binwatch.app.js","url":"app.js"},
+    {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
+  ]
 }
 ]
