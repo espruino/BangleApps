@@ -1,7 +1,7 @@
 let oldg;
 let id = null;
 let hideCallback = null;
-
+const titleFont = g.getWidth() / 8;
 /**
  * See notify/notify.js
  */
@@ -63,8 +63,8 @@ exports.show = function(options) {
   // top bar
   if (options.title||options.src) {
     const title = options.title || options.src;
-    g.setColor(options.titleBgColor||"#333").fillRect(x, y, x+w-1, y+30);
-    g.setColor(g.theme.fg).setFontAlign(-1, -1, 0).setFont("6x8", 3);
+    g.setColor(options.titleBgColor||g.theme.bgH).fillRect(x, y, x+w-1, y+30);
+    g.setColor(g.theme.fgH).setFontAlign(-1, -1, 0).setFont("Vector", titleFont);
     g.drawString(title.trim().substring(0, 13), x+5, y+3);
     if (options.title && options.src) {
       g.setColor(g.theme.fg).setFontAlign(1, 1, 0).setFont("6x8", 2);
