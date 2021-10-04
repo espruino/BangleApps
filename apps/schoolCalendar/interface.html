@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+      #controls {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid black;
+        position:absolute;
+        right:0px;bottom:0px;
+        background-color: rgb(255, 255, 255);
+        z-index: 100;
+      }
+    </style>
+    <div id="controls">
+      <p>Create your events on the current week. Keep in note that your events repeat weekly.</p>
+      <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button></p>
+    </div>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link href='fullcalendar/main.css' rel='stylesheet' />
+    <script src='fullcalendar/main.js'></script>
+    <script>
+      document.getElementById("upload").addEventListener("click", function() {
+        var events = calendar.getEvents()
+        sendCustomizedApp({
+          id : "schoolCalender",
+          storage:[
+            {"name":"app.json"}
+          ]
+        });
+      });
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'timeGridWeek',
+          headerToolbar: {
+            left: '',
+            center: 'title',
+            right: 'timeGridWeek,listWeek'
+          },
+        navLinks: true, // can click day/week names to navigate views
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        nowIndicator: true,
+        editable: true,
+        height: 800,
+        select: function(arg) {
+          var title = prompt('Event Title:');
+          if (title) {
+            calendar.addEvent({
+              title: title,
+              start: arg.start,
+              end: arg.end,
+              allDay: arg.allDay
+            })
+          }
+          calendar.unselect()
+        },
+        eventClick: function(arg) {
+          if (confirm('Are you sure you want to delete this event?')) {
+            arg.event.remove()
+          }
+        },
+        });
+        calendar.render();
+      });
+    </script>
+  </head>
+  <body>
+    <div id='calendar'></div>
+  </body>
+</html>
