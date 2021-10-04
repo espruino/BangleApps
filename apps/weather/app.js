@@ -27,7 +27,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
     ]},
   ]},
   {filly: 1},
-  {type: "txt", font: "9%", id: "cond", label: "Weather line 1"},
+  {type: "txt", font: "9%", wrap: true, height: g.getHeight()*0.18, fillx: 1, id: "cond", label: "Weather condition"},
   {filly: 1},
   {type: "h", c: [
     {type: "txt", font: "6x8", pad: 2, id: "loc", label: "Toronto"},
@@ -54,7 +54,6 @@ function draw() {
   const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
   layout.wind.label = wind[1];
   layout.windUnit.label = wind[2] + " " + current.wrose.toUpperCase();
-  // TODO: split long weather conditions across multiple lines
   layout.cond.label = current.txt.charAt(0).toUpperCase()+current.txt.slice(1);
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`;
