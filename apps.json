@@ -3524,6 +3524,7 @@
   "description": "A simple clock using the bold Anton font.",
   "tags":"clock,b2",
   "type":"clock",
+  "allow_emulator":true,
   "storage": [
     {"name":"antonclk.app.js","url":"app.js"},
     {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
@@ -3536,6 +3537,7 @@
   "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires a bugfix for #2049 on Bangle.js 1**",
   "tags":"clock,b2",
   "type":"clock",
+  "allow_emulator":true,
   "storage": [
     {"name":"waveclk.app.js","url":"app.js"},
     {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
