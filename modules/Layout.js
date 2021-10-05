@@ -36,6 +36,8 @@ layoutObject has:
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
 * A `font` field, eg `6x8` or `30%` to use a percentage of screen height
+* A `wrap` field to enable line wrapping. Requires some combination of `width`/`height`
+  and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
 * A `bgCol` field for background color (will automatically fill on render)
 * A `halign` field to set horizontal alignment. `-1`=left, `1`=right, `0`=center
@@ -152,6 +154,24 @@ Layout.prototype.remove = function (l) {
   }
 };
 
+function wrappedLines(str, maxWidth) {
+  var lines = [];
+  for (var unwrappedLine of str.split("\n")) {
+    var words = unwrappedLine.split(" ");
+    var line = words.shift();
+    for (var word of words) {
+      if (g.stringWidth(line + " " + word) > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line += " " + word;
+      }
+    }
+    lines.push(line);
+  }
+  return lines;
+}
+
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
   if (bgCol != parentBg || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
@@ -187,7 +207,14 @@ Layout.prototype.render = function (l) {
   var cb = {
     "":function(){},
     "txt":function(l){
-       g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+      if (l.wrap) {
+        g.setFont(l.font,l.fsz).setFontAlign(0,-1);
+        var lines = wrappedLines(l.label, l.w);
+        var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
+        lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
+      } else {
+        g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+      }
     }, "btn":function(l){
       var x = l.x+(0|l.pad);
       var y = l.y+(0|l.pad);
@@ -305,9 +332,13 @@ Layout.prototype.update = function() {
         l.font = f[0];
         l.fsz = f[1];
       }
-      g.setFont(l.font,l.fsz);
-      l._h = g.getFontHeight();
-      l._w = g.stringWidth(l.label);
+      if (l.wrap) {
+        l._h = l._w = 0;
+      } else {
+        g.setFont(l.font,l.fsz);
+        l._h = g.getFontHeight();
+        l._w = g.stringWidth(l.label);
+      }
     }, "btn": function(l) {
       l._h = 24;
       l._w = 14 + l.label.length*8;
