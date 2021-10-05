@@ -1,4 +1,5 @@
 require("Font8x12").add(Graphics);
+require("Font8x16").add(Graphics);
 
 Graphics.prototype.setFontAudiowide = function () {
   var widths = atob("BxYfDBkYGhkZFRkZCA==");
@@ -131,7 +132,55 @@ function updateHoursToCurrentTime(currentHourFunction) {
   return currentHourUpdatedFunction;
 }
 
-
+function updateDay(ffunction,day){
+  if(ffunction == 1){
+   switch (day) {
+    case 0:
+      return "Sunday";
+    case 1:
+      day = "Monday";
+      break;
+    case 2:
+      day = "Tuesday";
+      break;
+    case 3:
+      day = "Wednesday";
+      break;
+    case 4:
+      day = "Thursday";
+      break;
+    case 5:
+      day = "Friday";
+      break;
+    case 6:
+      day = "Saturday";
+  return day;
+}
+  }else if(ffunction == 2){
+    switch (day) {
+      case 0:
+        return "Sun";
+      case 1:
+        day = "Mon";
+        break;
+      case 2:
+        day = "Tue";
+        break;
+      case 3:
+        day = "Wed";
+        break;
+      case 4:
+        day = "Thu";
+        break;
+      case 5:
+        day = "Fri";
+        break;
+      case 6:
+        day = "Sat";
+  return day;
+    }
+  }
+}
 
 function RedRectDown() {
   if(currentPositionTable > 0){
@@ -197,8 +246,9 @@ function displayClock() {
     scheduleHourUpdatedEnd = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].eh);
     g.setColor(255,255,255);
     g.reset();
-    g.setFont("8x12");
+    g.setFont("8x16");
     g.drawString(foundSchedule[((foundNumber-2)+currentPositionTable)].cn,13,30);
+    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,50);
   }
   g.flip();
 }
