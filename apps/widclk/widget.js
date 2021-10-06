@@ -8,7 +8,7 @@ if (!Bangle.CLOCK) WIDGETS["wdclk"]={area:"tl",width:52/* g.stringWidth("00:00")
   var time = require("locale").time(new Date(),1);
   g.drawString(time, this.x, this.y+3, true); // 5 * 6*2 = 60
   // queue draw in one minute
-  if (drawTimeout) clearTimeout(drawTimeout);
+  if (this.drawTimeout) clearTimeout(this.drawTimeout);
   this.drawTimeout = setTimeout(()=>{
     this.drawTimeout = undefined;
     this.draw();
