@@ -11,16 +11,35 @@ var SETTINGS = {
   pretokenise : true
 };
 
+var DEVICE = process.argv[2];
+
 var path = require('path');
 var ROOTDIR = path.join(__dirname, '..');
 var APPDIR = ROOTDIR+'/apps';
 var APPJSON = ROOTDIR+'/apps.json';
-var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
-var APPS = [ // IDs of apps to install
-  "boot","launchb2","s7clk","setting",
-  "about","alarm","widlock","widbat","widbt"
-];
 var MINIFY = true;
+var OUTFILE, APPS;
+
+if (DEVICE=="BANGLEJS") {
+  var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs1_storage_default.c');
+  var APPS = [ // IDs of apps to install
+    "boot","launch","mclock","setting",
+    "about","alarm","widbat","widbt","welcome"
+  ];
+} else if (DEVICE=="BANGLEJS2") {
+  var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
+  var APPS = [ // IDs of apps to install
+    "boot","launchb2","s7clk","setting",
+    "about","alarm","widlock","widbat","widbt"
+  ];
+} else {
+  console.log("USAGE:");
+  console.log("  bin/firmwaremaker_c.js BANGLEJS");
+  console.log("  bin/firmwaremaker_c.js BANGLEJS2");
+  process.exit(1);
+}
+console.log("Device = ",DEVICE);
+
 
 var fs = require("fs");
 global.Const = {
