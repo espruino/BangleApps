@@ -75,6 +75,7 @@ function showMainMenu() {
   var beepN = ["Off", "Piezo", "Vibrate"];
   const mainmenu = {
     '': { 'title': 'Settings' },
+    '< Back': ()=>load(),
     'Make Connectable': ()=>makeConnectable(),
     'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': ()=>showBLEMenu(),
@@ -117,7 +118,6 @@ function showMainMenu() {
     'Theme': ()=>showThemeMenu(),
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
-    '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
 }
@@ -126,6 +126,7 @@ function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '< Back': ()=>showMainMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -158,8 +159,7 @@ function showBLEMenu() {
     'Whitelist': {
       value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
-    },
-    '< Back': ()=>showMainMenu()
+    }
   });
 }
 
@@ -178,6 +178,7 @@ function showThemeMenu() {
     m.draw();
   }
   var m = E.showMenu({
+    '< Back': ()=>showMainMenu(),
     'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
@@ -193,13 +194,13 @@ function showThemeMenu() {
         fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
-    },
-    '< Back': ()=>showMainMenu()
+    }
   });
 }
 
 function showPasskeyMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.passkey = undefined;
       updateSettings();
@@ -220,12 +221,12 @@ function showPasskeyMenu() {
       }
     };
   })(i);
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
 function showWhitelistMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.whitelist = undefined;
       updateSettings();
@@ -257,7 +258,6 @@ function showWhitelistMenu() {
       showWhitelistMenu();
     });
   };
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
