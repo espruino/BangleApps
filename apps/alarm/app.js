@@ -49,6 +49,7 @@ function showMainMenu() {
     };
   });
   menu['< Back'] =  ()=>{load();};
+  if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
 }
 

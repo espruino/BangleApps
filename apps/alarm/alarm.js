@@ -18,6 +18,8 @@ function showAlarm(alarm) {
   var buzzCount = 10;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
   E.showPrompt(msg,{
     title:alarm.timer ? "TIMER!" : "ALARM!",
     buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
