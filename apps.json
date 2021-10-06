@@ -1328,14 +1328,13 @@
     "id": "grocery",
     "name": "Grocery",
     "icon": "grocery.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
     "tags": "tool,outdoors,shopping,list",
     "type": "app",
     "custom":"grocery.html",
     "storage": [
-      {"name":"grocery"},
-      {"name":"grocery.app.js"},
+      {"name":"grocery.app.js", "url":"app.js"},
       {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
     ]
   },
