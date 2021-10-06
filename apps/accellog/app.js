@@ -8,6 +8,9 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
+    "Exit" : function() {
+      load();
+    },
     "File No" : {
       value : fileNumber,
       min : 0,
@@ -21,9 +24,6 @@ function showMenu() {
     "View Logs" : function() {
       viewLogs();
     },
-    "Exit" : function() {
-      load();
-    },
   };
   E.showMenu(menu);
 }
@@ -34,7 +34,7 @@ function viewLog(n) {
   var records = 0, l = "", ll="";
   while ((l=f.readLine())!==undefined) {records++;ll=l;}
   var length = 0;
-  if (ll) length = (ll.split(",")[0]|0)/1000;
+  if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
 
   var menu = {
     "" : { title : "Log "+n }
