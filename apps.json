@@ -1187,7 +1187,7 @@
   { "id": "widclk",
     "name": "Digital clock widget",
     "icon": "widget.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A simple digital clock widget",
     "tags": "widget,clock",
     "type":"widget",
