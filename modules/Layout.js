@@ -73,6 +73,7 @@ Other functions:
 * `layout.update()` - update positions of everything if contents have changed
 * `layout.debug(obj)` - draw outlines for objects on screen
 * `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
+* `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
 
 */
 
@@ -257,6 +258,10 @@ Layout.prototype.render = function (l) {
     render(l);
   }
 };
+
+Layout.prototype.forgetLazyState = function () {
+  this.rects = {};
+}
 
 Layout.prototype.layout = function (l) {
   // l = current layout element
