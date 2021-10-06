@@ -207,7 +207,7 @@ function showThemeMenu() {
       if (t==="bg") {
         th['dark'] = (v===cv("#000"));
       }
-      updT(th);
+      upd(th);
     }
     const rgb = {
       black: "#000", white: "#fff",
@@ -224,8 +224,8 @@ function showThemeMenu() {
       return i!== -1 ? names[i] : v; // another color: just show value
     }
     let menu = {
-      '':{title:'Customize Theme'},
-      "< Back"] : () => showThemeMenu();
+      '':{title:'Custom Theme'},
+      "< Back": () => showThemeMenu()
     };
     const labels = {
       fg: 'Foreground', bg: 'Background',
