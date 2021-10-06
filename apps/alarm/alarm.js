@@ -19,7 +19,7 @@ function showAlarm(alarm) {
   if (alarm.msg)
     msg += "\n"+alarm.msg;
   E.showPrompt(msg,{
-    title:"ALARM!",
+    title:alarm.timer ? "TIMER!" : "ALARM!",
     buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;

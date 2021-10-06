@@ -199,11 +199,11 @@
     "sortorder" : -2
   },
   { "id": "alarm",
-    "name": "Default Alarm",
+    "name": "Default Alarm & Timer",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.12",
-    "description": "Set and respond to alarms",
+    "version":"0.13",
+    "description": "Set and respond to alarms and timers",
     "tags": "tool,alarm,widget,b2",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
