@@ -10,7 +10,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {type: "h", filly: 0, c: [
     {type: "custom", width: g.getWidth()/2, height: g.getWidth()/2, valign: -1, txt: "unknown", id: "icon",
       render: l => weather.drawIcon(l.txt, l.x+l.w/2, l.y+l.h/2, l.w/2-5)},
-    {type: "v", c: [
+    {type: "v", fillx: 1, c: [
       {type: "h", pad: 2, c: [
         {type: "txt", font: "18%", id: "temp", label: "000"},
         {type: "txt", font: "12%", valign: -1, id: "tempUnit", label: "°C"},
@@ -30,9 +30,9 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {type: "txt", font: "9%", wrap: true, height: g.getHeight()*0.18, fillx: 1, id: "cond", label: "Weather condition"},
   {filly: 1},
   {type: "h", c: [
-    {type: "txt", font: "6x8", pad: 2, id: "loc", label: "Toronto"},
+    {type: "txt", font: "6x8", pad: 4, id: "loc", label: "Toronto"},
     {fillx: 1},
-    {type: "txt", font: "6x8", pad: 2, id: "updateTime", label: "15 minutes ago"},
+    {type: "txt", font: "6x8", pad: 4, id: "updateTime", label: "15 minutes ago"},
   ]},
   {filly: 1},
 ]}, null, {lazy: true});
@@ -76,9 +76,9 @@ function update() {
   } else {
     layout.forgetLazyState();
     if (NRF.getSecurityStatus().connected) {
-      E.showMessage("Weather unknown\n\nIs Gadgetbridge\nweather reporting\nset up on your\nphone?");
+      E.showMessage("Weather\nunknown\n\nIs Gadgetbridge\nweather\nreporting set\nup on your\nphone?");
     } else {
-      E.showMessage("Weather unknown\n\nGadgetbridge\nnot connected");
+      E.showMessage("Weather\nunknown\n\nGadgetbridge\nnot connected");
       NRF.on("connect", update);
     }
   }
