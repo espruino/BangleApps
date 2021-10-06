@@ -74,7 +74,7 @@ function update() {
   if (current) {
     draw();
   } else {
-    delete layout.rects;
+    layout.forgetLazyState();
     if (NRF.getSecurityStatus().connected) {
       E.showMessage("Weather unknown\n\nIs Gadgetbridge\nweather reporting\nset up on your\nphone?");
     } else {
