@@ -1236,9 +1236,9 @@
   { "id": "demoapp",
     "name": "Demo Loop",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
-    "tags": "",
+    "tags": "bno2",
     "type":"app",
     "allow_emulator":true,
     "storage": [
