@@ -163,26 +163,25 @@ function showBLEMenu() {
   });
 }
 
-let m;
-function updT(th) {
-  g.theme = th;
-  settings.theme = th;
-  updateSettings();
-  delete g.reset;
-  g._reset = g.reset;
-  g.reset = function(n) { return g._reset().setColor(th.fg).setBgColor(th.bg); };
-  g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
-  g.clear(1);
-  Bangle.drawWidgets();
-  m.draw();
-}
 function showThemeMenu() {
   function cl(x) { return g.setColor(x).getColor(); }
-  m = E.showMenu({
+  function upd(th) {
+    g.theme = th;
+    settings.theme = th;
+    updateSettings();
+    delete g.reset;
+    g._reset = g.reset;
+    g.reset = function(n) { return g._reset().setColor(th.fg).setBgColor(th.bg); };
+    g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
+    g.clear(1);
+    Bangle.drawWidgets();
+    m.draw();
+  }
+  var m = E.showMenu({
     '':{title:'Theme'},
-    '< Back': ()=>showMainMenu(),    
+    '< Back': ()=>showMainMenu(),
     'Dark BW': ()=>{
-      updT({
+      upd({
         fg:cl("#fff"), bg:cl("#000"),
         fg2:cl("#0ff"), bg2:cl("#000"),
         fgH:cl("#fff"), bgH:cl("#00f"),
@@ -190,7 +189,7 @@ function showThemeMenu() {
       });
     },
     'Light BW': ()=>{
-      updT({
+      upd({
         fg:cl("#000"), bg:cl("#fff"),
         fg2:cl("#00f"), bg2:cl("#0ff"),
         fgH:cl("#000"), bgH:cl("#0ff"),
@@ -199,58 +198,62 @@ function showThemeMenu() {
     },
     'Customize': ()=>showCustomThemeMenu(),
   });
-}
-function showCustomThemeMenu() {
-  function cv(x) { return g.setColor(x).getColor(); }
-  function setT(t, v) {
-    let th = g.theme;
-    th[t] = v;
-    if (t==="bg") {
-      th['dark'] = (v===cv("#000"));
+
+  function showCustomThemeMenu() {
+    function cv(x) { return g.setColor(x).getColor(); }
+    function setT(t, v) {
+      let th = g.theme;
+      th[t] = v;
+      if (t==="bg") {
+        th['dark'] = (v===cv("#000"));
+      }
+      updT(th);
     }
-    updT(th);
+    const rgb = {
+      black: "#000", white: "#fff",
+      red: "#f00", green: "#0f0", blue: "#00f",
+      cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
+    };
+    let colors = [], names = [];
+    for(const c in rgb) {
+      names.push(c);
+      colors.push(cv(rgb[c]));
+    }
+    function cn(v) {
+      const i = colors.indexOf(v);
+      return i!== -1 ? names[i] : v; // another color: just show value
+    }
+    let menu = {
+      '':{title:'Customize Theme'},
+      "< Back"] : () => showThemeMenu();
+    };
+    const labels = {
+      fg: 'Foreground', bg: 'Background',
+      fg2: 'Foreground 2', bg2: 'Background 2',
+      fgH: 'Highlight FG', bgH: 'Highlight BG',
+    };
+    ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
+      menu[labels[t]] = {
+          value: colors.indexOf(g.theme[t]),
+          format: () => cn(g.theme[t]),
+          onchange: function(v) {
+            // wrap around
+            if (v>=colors.length) {v = 0;}
+            if (v<0) {v = colors.length-1;}
+            this.value = v;
+            const c = colors[v];
+            // if we select the same fg and bg: set the other to the old color
+            // e.g. bg=black;fg=white, user selects fg=black -> bg changes to white automatically
+            // so users don't end up with a black-on-black menu
+            if (t === 'fg' && g.theme.bg === c) setT('bg', g.theme.fg);
+            if (t === 'bg' && g.theme.fg === c) setT('fg', g.theme.bg);
+            setT(t, c);
+          },
+        };
+    });
+    menu["< Back"] = () => showThemeMenu();
+    m = E.showMenu(menu);
   }
-  const rgb = {
-    black: "#000", white: "#fff",
-    red: "#f00", green: "#0f0", blue: "#00f",
-    cyan: "#0ff", magenta: "#f0f", yellow: "#ff0", 
-  };
-  let colors = [], names = [];
-  for(const c in rgb) {
-    names.push(c);
-    colors.push(cv(rgb[c]));
-  }
-  function cn(v) {
-    const i = colors.indexOf(v);
-    return i!== -1 ? names[i] : v; // another color: just show value
-  }
-  let menu = {'':{title:'Customize Theme'}};
-  const labels = {
-    fg: 'Foreground', bg: 'Background',
-    fg2: 'Foreground 2', bg2: 'Background 2',
-    fgH: 'Highlight FG', bgH: 'Highlight BG',
-  };
-  ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
-    menu[labels[t]] = {
-        value: colors.indexOf(g.theme[t]),
-        format: () => cn(g.theme[t]),
-        onchange: function(v) {
-          // wrap around
-          if (v>=colors.length) {v = 0;}
-          if (v<0) {v = colors.length-1;}
-          this.value = v;
-          const c = colors[v];
-          // if we select the same fg and bg: set the other to the old color
-          // e.g. bg=black;fg=white, user selects fg=black -> bg changes to white automatically
-          // so users don't end up with a black-on-black menu
-          if (t === 'fg' && g.theme.bg === c) setT('bg', g.theme.fg);
-          if (t === 'bg' && g.theme.fg === c) setT('fg', g.theme.bg);
-          setT(t, c);
-        },
-      };
-  });
-  menu["< Back"] = () => {delete m;showThemeMenu();};
-  m = E.showMenu(menu);
 }
 
 function showPasskeyMenu() {
@@ -291,7 +294,7 @@ function showWhitelistMenu() {
   if (settings.whitelist) settings.whitelist.forEach(function(d){
     menu[d.substr(0,17)] = function() {
       E.showPrompt('Remove\n'+d).then((v) => {
-        if (v) 
+        if (v) {
           settings.whitelist.splice(settings.whitelist.indexOf(d),1);
           updateSettings();
         }
