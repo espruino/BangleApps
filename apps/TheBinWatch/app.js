@@ -14,21 +14,8 @@ require("Font5x9Numeric7Seg").add(Graphics);
 
 
 /* constants and definitions */
+
 /* Bangle 2: 176 x 176 */
-
-/*
-var x_step = 26;
-var y_step = 34;
-
-var TIME_Y_OFFSET = 30;
-var HX = 35, HY = 0 + TIME_Y_OFFSET;
-var MX = 10, MY = 40 + TIME_Y_OFFSET;
-var SX = 10, SY = 80 + TIME_Y_OFFSET;
-var BT_X = 30, BT_Y = 10;
-var DX = 160, DY = 148;
-var screen_size_x = 176;
-var screen_size_y = 176;
-*/
 
 const V2_X_STEP = 26;
 const V2_Y_STEP = 34;
@@ -78,7 +65,9 @@ const V1_BAT_SIZE_Y = 5;
 const V1_SCREEN_SIZE_X = 240;
 const V1_SCREEN_SIZE_Y = 240;
 const V1_BACKGROUND_IMAGE = "Background240_center.png";
+
 /* runtime settings */
+
 var x_step = 0;
 var y_step = 0;
 
@@ -95,11 +84,6 @@ var screen_size_x = 0;
 var screen_size_y = 0;
 
 /* global variables */
-
-
-//var screen_size_x = 176;
-//var screen_size_y = 176;
-
 
 var showDateTime = 2;    /* show noting, time or date */
 var cg;
@@ -170,8 +154,7 @@ function drawTime(gfx, h, m, s) {
 
   gfx.setFontAlign(0,-1); // align right bottom
   gfx.setFont("5x9Numeric7Seg", 2);
-  gfx.drawString(time, gfx.getWidth() / 2, DY, false /*clear background*/);
-
+  gfx.drawString(time, gfx.getWidth() / 2, dy, false /*clear background*/);
 }
 
 /**
@@ -187,19 +170,11 @@ function drawDate(gfx, d) {
   var dateString = ""
     + ("0" + d.getDate()).substr(-2) + " " 
     + ("0" + d.getMonth()).substr(-2) + " "
-    + ("0" + d.getFullYear()).substr(-4)
-  ;
+    + ("0" + d.getFullYear()).substr(-4);
 
   gfx.setFontAlign(0,-1); // align right bottom
   gfx.setFont("5x9Numeric7Seg",2); /* draw the current time font */
-  gfx.drawString(dateString, gfx.getWidth() / 2, dy, false /*clear background*/);
-
-//  gfx.setFont("6x8",2);
-//   var date = locale.date(d, false);
-//    gfx.drawString(date, DX, DY, false);
-// draw the seconds (2x size 7 segment)
-//  gfx.setFont("7x11Numeric7Seg",1);
-//  gfx.drawString(("0"+s).substr(-2), X+30, Y, false /*clear background*/);
+  gfx.drawString(dateString, gfx.getWidth() / 2, dy, false /* don't clear background*/);
 }
 
 function toggleDateTime() {
@@ -323,13 +298,12 @@ function draw() {
   if (!Bangle.isLCDOn()) {return;} // no drawing, also no new update scheduled 
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-//  gfx2(hour, minute, second);
+  
   drawBinary(cg, h, m, s);
   cg.setColor(0);
  
   switch(showDateTime) {
     case 1:
-//  drawTime(hour, minute, second);
       drawTime(cg, h, m, s);
       break;
     case 2:
