@@ -32,13 +32,15 @@ const V2_BT_Y = 10;
 const V2_DX = 160;
 const V2_DY = 148;
 
-const V2_BAT_POS_X = 150;
-const V2_BAT_POS_Y = 16;
+const V2_BAT_POS_X = 127;
+const V2_BAT_POS_Y = 15;
 const V2_BAT_SIZE_X = 2;
-const V2_BAT_SIZE_Y = 4;
+const V2_BAT_SIZE_Y = 3;
 const V2_SCREEN_SIZE_X = 176;
 const V2_SCREEN_SIZE_Y = 176;
 const V2_BACKGROUND_IMAGE = "Background176_center.png";
+const V2_BG_COLOR = 0;
+const V2_FG_COLOR = 1;
 
 /* Bangle 1: 240 x 240 */
 
@@ -65,6 +67,8 @@ const V1_BAT_SIZE_Y = 5;
 const V1_SCREEN_SIZE_X = 240;
 const V1_SCREEN_SIZE_Y = 240;
 const V1_BACKGROUND_IMAGE = "Background240_center.png";
+const V1_BG_COLOR = 1;
+const V1_FG_COLOR = 0;
 
 /* runtime settings */
 
@@ -82,6 +86,8 @@ var bat_pos_x, bat_pos_y, bat_size_x, bat_size_y;
 var backgroundImage = "";
 var screen_size_x = 0;
 var screen_size_y = 0;
+var bg_color = 0;
+var fg_color = 1;
 
 /* global variables */
 
@@ -127,9 +133,9 @@ function drawSquare(gfx, x, y, data, numOfBits) {
 */
 function drawBinary(gfx, hour, minute, second) {
   gfx.clear(1);
-  gfx.setColor(1);
+  gfx.setColor(bg_color);
   gfx.fillRect(0, 0, screen_size_x, screen_size_y);
-  gfx.setColor(0);
+  gfx.setColor(fg_color);
   
   if(hour > 12) {
     hour -= 12;          /* we use for bit for hours so we only display 12 hours*/
@@ -154,6 +160,8 @@ function drawTime(gfx, h, m, s) {
 
   gfx.setFontAlign(0,-1); // align right bottom
   gfx.setFont("5x9Numeric7Seg", 2);
+  gfx.setColor(fg_color);
+
   gfx.drawString(time, gfx.getWidth() / 2, dy, false /*clear background*/);
 }
 
@@ -174,6 +182,8 @@ function drawDate(gfx, d) {
 
   gfx.setFontAlign(0,-1); // align right bottom
   gfx.setFont("5x9Numeric7Seg",2); /* draw the current time font */
+  gfx.setColor(fg_color);
+
   gfx.drawString(dateString, gfx.getWidth() / 2, dy, false /* don't clear background*/);
 }
 
@@ -220,6 +230,8 @@ function drawBattery(gfx, level) {
     gfx.setColor(4);
   }
 */ 
+  gfx.setColor(fg_color);
+
   for(i = 0; i < stepLevel; i++) {
     pos_x -= bat_size_x + 2;
     gfx.fillRect(pos_x, bat_pos_y, 
@@ -257,8 +269,14 @@ function setRuntimeValues(resolution) {
     screen_size_x = V1_SCREEN_SIZE_X;
     screen_size_y = V1_SCREEN_SIZE_Y;
     backgroundImage = V1_BACKGROUND_IMAGE;
-
-    // TODO: set battery stuff
+    bg_color = V1_BG_COLOR;
+    fg_color = V1_FG_COLOR;
+    
+    bat_pos_x = V1_BAT_POS_X;
+    bat_pos_y = V1_BAT_POS_Y;
+    bat_size_x = V1_BAT_SIZE_X;
+    bat_size_y = V1_BAT_SIZE_Y;
+    
   } else {
     x_step = V2_X_STEP;
     y_step = V2_Y_STEP;
@@ -281,8 +299,14 @@ function setRuntimeValues(resolution) {
     screen_size_x = V2_SCREEN_SIZE_X;
     screen_size_y = V2_SCREEN_SIZE_Y;
     backgroundImage = V2_BACKGROUND_IMAGE;
-    // TODO: set battery stuff
-  }
+    bg_color = V2_BG_COLOR;
+    fg_color = V2_FG_COLOR;
+
+    bat_pos_x = V2_BAT_POS_X;
+    bat_pos_y = V2_BAT_POS_Y;
+    bat_size_x = V2_BAT_SIZE_X;
+    bat_size_y = V2_BAT_SIZE_Y;
+}
   cg = Graphics.createArrayBuffer(
     screen_size_x,screen_size_y, 1, {msb:true});
   
@@ -291,7 +315,7 @@ function setRuntimeValues(resolution) {
 
 }
 var hour = 0, minute = 1, second = 50;
-var batVLevel = 0;
+var batVLevel = 20;
 
 
 function draw() {
@@ -300,7 +324,7 @@ function draw() {
   var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
   
   drawBinary(cg, h, m, s);
-  cg.setColor(0);
+  cg.setColor(fg_color);
  
   switch(showDateTime) {
     case 1:
@@ -312,6 +336,7 @@ function draw() {
     default:
       /* do nothing */
   }
+  cg.setColor(fg_color);
   drawBattery(cg, batVLevel /*E.getBattery()*/);
   drawBT(1);
   
