@@ -1,15 +1,15 @@
 var DateFormatter = require("slidingtext.dtfmt.js");
 
-const germanNumberStr = [ ["ZERO",""], // 0
+const germanNumberStr = [ ["NULL",""], // 0
     ["EINS",""], // 1
     ["ZWEI",""], //2
     ["DREI",''], //3
     ["VIER",''], //4
     ["FÜNF",''], //5
     ["SECHS",''], //6
-    ["SEIBEN",''], //7
+    ["SIEBEN",''], //7
     ["ACHT",''], //8
-    ["NUEN",''], // 9,
+    ["NEUN",''], // 9,
     ["ZEHN",''], // 10
     ["ELF",''], // 11,
     ["ZWÖLF",''], // 12
@@ -22,7 +22,7 @@ const germanNumberStr = [ ["ZERO",""], // 0
     ["NEUN",'ZEHN'], // 19
 ];
 
-const germanTensStr = ["ZERO",//0
+const germanTensStr = ["NULL",//0
     "ZEHN",//10
     "ZWANZIG",//20
     "DREIßIG",//30
@@ -38,7 +38,7 @@ const germanUnit = ["",//0
     "VIERUND", //4
     "FÜNFUND", //5
     "SECHSUND", //6
-    "SEIBENUND", //7
+    "SIEBENUND", //7
     "ACHTUND", //8
     "NEUNUND" //9
 ]
