@@ -3533,13 +3533,26 @@
   "name": "Wave Clock",
   "icon": "app.png",
   "version":"0.02",
-  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires a bugfix for #2049 on Bangle.js 1**",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires firmware 2v11 or later Bangle.js 1**",
   "tags":"clock,b2",
   "type":"clock",
   "allow_emulator":true,
   "storage": [
     {"name":"waveclk.app.js","url":"app.js"},
     {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "floralclk",
+  "name": "Floral Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A clock with a flower background by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires firmware 2v11 or later Bangle.js 1**",
+  "tags":"clock,b2",
+  "type":"clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"floralclk.app.js","url":"app.js"},
+    {"name":"floralclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]
