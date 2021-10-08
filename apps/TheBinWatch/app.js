@@ -94,6 +94,7 @@ var fg_color = 1;
 var showDateTime = 2;    /* show noting, time or date */
 var cg;
 var cgimg;
+var btImage = null;
 
 /* local functions */
 
@@ -186,11 +187,15 @@ function drawDate(gfx, d) {
 
   gfx.drawString(dateString, gfx.getWidth() / 2, dy, false /* don't clear background*/);
 }
-
-function toggleDateTime() {
-  showDateTime++;
+function toggleDateTimeUp() {
+  toggleDateTime(1);
+}
+function toggleDateTime(adder) {
+  showDateTime += adder;
   if(showDateTime > 2){
     showDateTime = 0;
+  } else if(showDateTime < 0) {
+    showDateTime = 2;
   }
   draw();
 }
@@ -221,7 +226,7 @@ function updateVTime() {
 function drawBattery(gfx, level) {
   var pos_x = bat_pos_x + 5 * (bat_size_x + 2);
   var stepLevel = Math.round((level + 10) / 20);
-/*  
+/* 
   if(stepLevel < 2) {
     gfx.setColor(2);
   } else if(stepLevel < 4) {
@@ -247,7 +252,12 @@ function drawBattery(gfx, level) {
  * @param gfx: graphic object
  * @param level: current battery level
 */
-function drawBT(status) {
+function drawBT() {
+  if (NRF.getSecurityStatus().connected) {
+    btImage = "bt-icon.png";
+  }  else {
+    btImage = "nbt-icon.png";
+  }
 }
 function setRuntimeValues(resolution) {
   if(240 == resolution) {
@@ -277,6 +287,9 @@ function setRuntimeValues(resolution) {
     bat_size_x = V1_BAT_SIZE_X;
     bat_size_y = V1_BAT_SIZE_Y;
     
+    /* use button 1 to change date / time / nothing display */
+    setWatch(toggleDateTimeUp, BTN1, { repeat : true, edge: "falling"});
+
   } else {
     x_step = V2_X_STEP;
     y_step = V2_Y_STEP;
@@ -306,7 +319,17 @@ function setRuntimeValues(resolution) {
     bat_pos_y = V2_BAT_POS_Y;
     bat_size_x = V2_BAT_SIZE_X;
     bat_size_y = V2_BAT_SIZE_Y;
-}
+    
+    /* use swipe to change date / time / nothing display */
+    Bangle.on('swipe', function(direction) { toggleDateTime(direction);});
+
+  }
+  
+  dg = Graphics.createArrayBuffer(
+    screen_size_x,screen_size_y, 1, {msb:true});
+  dgimg = {width:screen_size_x, height:screen_size_y, bpp:1,
+             transparent:0, buffer:dg.buffer};
+ 
   cg = Graphics.createArrayBuffer(
     screen_size_x,screen_size_y, 1, {msb:true});
   
@@ -315,7 +338,7 @@ function setRuntimeValues(resolution) {
 
 }
 var hour = 0, minute = 1, second = 50;
-var batVLevel = 20;
+var batVLevel = 20, batLevel = 0;
 
 
 function draw() {
@@ -336,20 +359,28 @@ function draw() {
     default:
       /* do nothing */
   }
-  cg.setColor(fg_color);
-  drawBattery(cg, batVLevel /*E.getBattery()*/);
-  drawBT(1);
   
-  batVLevel += 2;
-  if(batVLevel > 100) {
-    batVLevel = 0;
+  cg.setColor(fg_color);
+  
+  if (Bangle.isCharging()) {
+    batVLevel += 20;
+    if(batVLevel > 100) {
+      batVLevel = 0;
+    }
+    batLevel = batVLevel;
+  } else {
+    batLevel = E.getBattery();
   }
+  
+  drawBattery(cg, batVLevel);
+  drawBT();
+  
   updateVTime();
   g.clear();
   g.drawImages([{image:cgimg},
              {image:require("Storage").read(backgroundImage)},
-             { x:bt_x, y:bt_y, rotate: 0, image:require("Storage").read("bt-icon.png")},
-            ]);
+             { x:bt_x, y:bt_y, rotate: 0, image:require("Storage").read(btImage)}
+        ]);
   const millis = d.getMilliseconds();
   setTimeout(draw, 1000-millis);
 }
@@ -365,7 +396,8 @@ Bangle.on("lcdPower", function(on) {
 g.reset().clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
 //setInterval(draw, 1000);
 //var x_size = g.getWidth();
-setWatch(toggleDateTime, BTN1, { repeat : true, edge: "falling"});
+
 draw();
