@@ -19,7 +19,7 @@ function queueDraw() {
 function draw() {
   var x = g.getWidth()/2;
   var y = g.getHeight()/2;
-  g.reset();  
+  g.reset();
   var date = new Date();
   var timeStr = require("locale").time(date,1);
   var dateStr = require("locale").date(date).toUpperCase();
@@ -33,7 +33,7 @@ function draw() {
   g.clearRect(0,y-8,g.getWidth(),y+8); // clear the background
   g.drawString(dateStr,x,y);
   // queue draw in one minute
-  queueDraw();  
+  queueDraw();
 }
 
 // Clear the screen once, at startup
@@ -49,9 +49,8 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
-

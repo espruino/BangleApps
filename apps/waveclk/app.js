@@ -28,7 +28,7 @@ function queueDraw() {
 function draw() {
   var x = g.getWidth()/2;
   var y = 24+20;
-  
+
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight()-IMAGEHEIGHT);
   if (g.getWidth() == IMAGEWIDTH)
     g.drawImage(getImg(),0,g.getHeight()-IMAGEHEIGHT);
@@ -65,8 +65,8 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

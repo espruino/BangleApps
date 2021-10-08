@@ -185,7 +185,7 @@
   { "id": "setting",
     "name": "Settings",
     "icon": "settings.png",
-    "version":"0.28",
+    "version":"0.30",
     "description": "A menu for setting up Bangle.js",
     "tags": "tool,system,b2",
     "readme": "README.md",
@@ -199,11 +199,11 @@
     "sortorder" : -2
   },
   { "id": "alarm",
-    "name": "Default Alarm",
+    "name": "Default Alarm & Timer",
     "shortName":"Alarms",
     "icon": "app.png",
-    "version":"0.12",
-    "description": "Set and respond to alarms",
+    "version":"0.13",
+    "description": "Set and respond to alarms and timers",
     "tags": "tool,alarm,widget,b2",
     "storage": [
       {"name":"alarm.app.js","url":"app.js"},
@@ -585,7 +585,7 @@
   { "id": "weather",
     "name": "Weather",
     "icon": "icon.png",
-    "version":"0.09",
+    "version":"0.10",
     "description": "Show Gadgetbridge weather report",
     "readme": "readme.md",
     "tags": "widget,outdoors",
@@ -1187,7 +1187,7 @@
   { "id": "widclk",
     "name": "Digital clock widget",
     "icon": "widget.png",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A simple digital clock widget",
     "tags": "widget,clock",
     "type":"widget",
@@ -1236,9 +1236,9 @@
   { "id": "demoapp",
     "name": "Demo Loop",
     "icon": "app.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
-    "tags": "",
+    "tags": "bno2",
     "type":"app",
     "allow_emulator":true,
     "storage": [
@@ -1328,14 +1328,13 @@
     "id": "grocery",
     "name": "Grocery",
     "icon": "grocery.png",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
     "tags": "tool,outdoors,shopping,list",
     "type": "app",
     "custom":"grocery.html",
     "storage": [
-      {"name":"grocery"},
-      {"name":"grocery.app.js"},
+      {"name":"grocery.app.js", "url":"app.js"},
       {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
     ]
   },
@@ -2414,7 +2413,7 @@
     "name": "Acceleration Logger",
     "shortName":"Accel Log",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "interface": "interface.html",
     "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
     "tags": "outdoor,b2",
@@ -3537,10 +3536,11 @@
 { "id": "antonclk",
   "name": "Anton Clock",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A simple clock using the bold Anton font.",
   "tags":"clock,b2",
   "type":"clock",
+  "allow_emulator":true,
   "storage": [
     {"name":"antonclk.app.js","url":"app.js"},
     {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
@@ -3549,13 +3549,27 @@
 { "id": "waveclk",
   "name": "Wave Clock",
   "icon": "app.png",
-  "version":"0.01",
-  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires a bugfix for #2049 on Bangle.js 1**",
+  "version":"0.02",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires firmware 2v11 or later Bangle.js 1**",
   "tags":"clock,b2",
   "type":"clock",
+  "allow_emulator":true,
   "storage": [
     {"name":"waveclk.app.js","url":"app.js"},
     {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{ "id": "floralclk",
+  "name": "Floral Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A clock with a flower background by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: This requires firmware 2v11 or later Bangle.js 1**",
+  "tags":"clock,b2",
+  "type":"clock",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"floralclk.app.js","url":"app.js"},
+    {"name":"floralclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
 ]

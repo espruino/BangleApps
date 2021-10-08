@@ -75,6 +75,7 @@ function showMainMenu() {
   var beepN = ["Off", "Piezo", "Vibrate"];
   const mainmenu = {
     '': { 'title': 'Settings' },
+    '< Back': ()=>load(),
     'Make Connectable': ()=>makeConnectable(),
     'App/Widget Settings': ()=>showAppSettingsMenu(),
     'BLE': ()=>showBLEMenu(),
@@ -117,7 +118,6 @@ function showMainMenu() {
     'Theme': ()=>showThemeMenu(),
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
-    '< Back': ()=>load()
   };
   return E.showMenu(mainmenu);
 }
@@ -126,6 +126,7 @@ function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '< Back': ()=>showMainMenu(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -158,8 +159,7 @@ function showBLEMenu() {
     'Whitelist': {
       value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
-    },
-    '< Back': ()=>showMainMenu()
+    }
   });
 }
 
@@ -178,6 +178,8 @@ function showThemeMenu() {
     m.draw();
   }
   var m = E.showMenu({
+    '':{title:'Theme'},
+    '< Back': ()=>showMainMenu(),
     'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
@@ -194,12 +196,69 @@ function showThemeMenu() {
         dark:false
       });
     },
-    '< Back': ()=>showMainMenu()
+    'Customize': ()=>showCustomThemeMenu(),
   });
+
+  function showCustomThemeMenu() {
+    function cv(x) { return g.setColor(x).getColor(); }
+    function setT(t, v) {
+      let th = g.theme;
+      th[t] = v;
+      if (t==="bg") {
+        th['dark'] = (v===cv("#000"));
+      }
+      upd(th);
+    }
+    const rgb = {
+      black: "#000", white: "#fff",
+      red: "#f00", green: "#0f0", blue: "#00f",
+      cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
+    };
+    let colors = [], names = [];
+    for(const c in rgb) {
+      names.push(c);
+      colors.push(cv(rgb[c]));
+    }
+    function cn(v) {
+      const i = colors.indexOf(v);
+      return i!== -1 ? names[i] : v; // another color: just show value
+    }
+    let menu = {
+      '':{title:'Custom Theme'},
+      "< Back": () => showThemeMenu()
+    };
+    const labels = {
+      fg: 'Foreground', bg: 'Background',
+      fg2: 'Foreground 2', bg2: 'Background 2',
+      fgH: 'Highlight FG', bgH: 'Highlight BG',
+    };
+    ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
+      menu[labels[t]] = {
+          value: colors.indexOf(g.theme[t]),
+          format: () => cn(g.theme[t]),
+          onchange: function(v) {
+            // wrap around
+            if (v>=colors.length) {v = 0;}
+            if (v<0) {v = colors.length-1;}
+            this.value = v;
+            const c = colors[v];
+            // if we select the same fg and bg: set the other to the old color
+            // e.g. bg=black;fg=white, user selects fg=black -> bg changes to white automatically
+            // so users don't end up with a black-on-black menu
+            if (t === 'fg' && g.theme.bg === c) setT('bg', g.theme.fg);
+            if (t === 'bg' && g.theme.fg === c) setT('fg', g.theme.bg);
+            setT(t, c);
+          },
+        };
+    });
+    menu["< Back"] = () => showThemeMenu();
+    m = E.showMenu(menu);
+  }
 }
 
 function showPasskeyMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.passkey = undefined;
       updateSettings();
@@ -220,12 +279,12 @@ function showPasskeyMenu() {
       }
     };
   })(i);
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
 function showWhitelistMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.whitelist = undefined;
       updateSettings();
@@ -257,7 +316,6 @@ function showWhitelistMenu() {
       showWhitelistMenu();
     });
   };
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
