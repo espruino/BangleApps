@@ -28,25 +28,27 @@ function getSecondsTime() {
   return Math.floor(getTime() * 1000);
 }
 
-function setupInputWatchers() {
+function setupInputWatchers(init) {
   isBangle1 = !!global.BTN4;
-  setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
   Bangle.setUI('updown', v => v && handleInput(Math.floor((v+2)/2)+(isBangle1 ? 0 : 3)));
-  Bangle.on('touch', (b, e) => {
-    if (isBangle1) {
-      if (b === 1) {
-        handleInput(3);
+  if (init) {
+    setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
+    Bangle.on('touch', (b, e) => {
+      if (isBangle1) {
+        if (b === 1) {
+          handleInput(3);
+        } else {
+          handleInput(4);
+        }
       } else {
-        handleInput(4);
+        if (e.x < getXCoord(w => w/2)) {
+          handleInput(0);
+        } else {
+          handleInput(1);
+        }
       }
-    } else {
-      if (e.x < getXCoord(w => w/2)) {
-        handleInput(0);
-      } else {
-        handleInput(1);
-      }
-    }
-  });
+    });
+  }
 }
 
 function setupMatch() {
@@ -87,6 +89,8 @@ function showSettingsMenu() {
     settingsMenuOpened = null;
 
     draw();
+
+    setupInputWatchers();
   }, function (msg) {
     switch (msg) {
       case 'end_set':
@@ -445,6 +449,6 @@ function draw() {
   g.flip();
 }
 
-setupInputWatchers();
+setupInputWatchers(true);
 setupMatch();
 draw();
