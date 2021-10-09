@@ -1,0 +1,252 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>li {line-height: 1;}</style>
+  </head>
+  <body>
+<ul>
+<li>Go to <a href="http://google.com/mymaps">http://google.com/mymaps</a></li>
+<li>Create a new map</li>
+<li>Add a line or shape (under search box)</li>
+<li>Click around, double click to end</li>
+<li>Click '...' to the right of 'Untitled Map'</li>
+<li>Export to KML - just 'Untitled Layer' and export as KML</li>
+</ul>
+<p><b>Or...</b></p>
+<ul>
+<li>Go to <a href="https://umap.openstreetmap.fr/en/">https://umap.openstreetmap.fr/en/</a></li>
+<li>Create a map</li>
+<li>Draw a polyline (right hand side)</li>
+<li>Embed and share (leb>ft hand side)</li>
+<li>Download data as KML</li>
+</ul>
+
+<p><b>Upload KML file here:
+<input class="form-input" type="file" id="fileLoader"/></p>
+<p><button id="upload" style="display:none" class="btn btn-primary">Upload</button></p>
+<pre id="log"></pre>
+<script src="../../core/lib/customize.js"></script>
+<script>
+var xmlText = "";
+var xmlDoc;
+var js = "";
+function log(t) {
+  document.getElementById('fileLoader').innerText += t+"\n";
+  console.log(t);
+}
+function project(latlong) {
+  var d = Math.PI / 180,
+      max = 85.0511287798,
+      R = 6378137, // earth radius in m
+      lat = Math.max(Math.min(max, latlong.lat), -max),
+      sin = Math.sin(lat * d);
+  return {x:R * latlong.lon * d,
+          y:R * Math.log((1 + sin) / (1 - sin)) / 2};
+}
+
+function fileLoaded() {
+  // kml -> Document -> Placemark -> LineString -> Coordinates
+  var coordinateNode = xmlDoc.getElementsByTagName("coordinates");
+  if (!coordinateNode) {
+    log("No 'coordinates' node found");
+    return;
+  }
+  var coordinateLine = coordinateNode[0].textContent.trim();
+  var coordinateList = coordinateLine.split(/\s+/);
+  var coords = [];
+  var pmin, pmax;
+  var latitude;
+  coordinateList.forEach(function(c) {
+    c = c.split(",");
+    var latlon = {
+      lat : parseFloat(c[1]),
+      lon : parseFloat(c[0])
+    };
+    if (latitude===undefined)
+      latitude = latlon.lat;
+    var p = project(latlon);
+    p.x = Math.round(p.x);
+    p.y = Math.round(p.y);
+    if (!pmin) pmin = {x:p.x, y:p.y};
+    if (!pmax) pmax = {x:p.x, y:p.y};
+    if (p.x<pmin.x) pmin.x=p.x;
+    if (p.x>pmax.x) pmax.x=p.x;
+    if (p.y<pmin.y) pmin.y=p.y;
+    if (p.y>pmax.y) pmax.y=p.y;
+    coords.push(p.x,p.y);
+  });
+  /* coordScale is a scale factor because the map projection
+stretches anything not on the equator */
+  js = `
+var coordScale = ${Math.cos(latitude*Math.PI/180)};
+var coords = new Int32Array([${coords.join(",")}]);
+var min = ${JSON.stringify(pmin)};
+var max = ${JSON.stringify(pmax)};
+`.trim();
+  console.log(js);
+  document.getElementById("upload").style = "";
+}
+function handleFileSelect(event) {
+  if (event.target.files.length!=1) {
+    log("More than one file selected!");
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    xmlText = event.target.result;
+    var parser = new DOMParser();
+    xmlDoc = parser.parseFromString(xmlText, "application/xml");
+    fileLoaded();
+  };
+  reader.readAsText(event.target.files[0]);
+};
+document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
+
+document.getElementById("upload").addEventListener("click", function() {
+  var app = `${js}
+var gcoords = new Uint8Array(coords.length);
+var coordDistance = new Uint16Array(coords.length/2);
+
+var PT_DISTANCE = 30; // distance to a point before we consider it complete
+
+function toScr(p) {
+  return {
+    x : 10 + (p.x-min.x)*100/(max.x-min.x),
+    y : 230 - (p.y-min.y)*100/(max.y-min.y)
+  };
+}
+
+var last;
+var totalDistance = 0;
+for (var i=0;i<coords.length;i+=2) {
+  var c = {x:coords[i],y:coords[i+1]};
+  var s = toScr(c);
+  gcoords[i  ] = s.x;
+  gcoords[i+1] = s.y;
+  if (last) {
+    var dx = c.x-last.x;
+    var dy = c.y-last.y;
+    totalDistance += Math.sqrt(dx*dx+dy*dy)*coordScale;
+    coordDistance[i/2] = totalDistance;
+  }
+  last = c;
+}
+var fix, lastFix;
+var nextPtIdx = 0; // 2x the number of points
+var nextPt = {x:coords[nextPtIdx], y:coords[nextPtIdx+1]};
+var nextAngle = 0;
+var nextDist = 0;
+var currentDist = 0;
+
+
+
+function drawMap() {
+  g.clearRect(0,0,239,120);
+  g.setFontAlign(0,0);
+  g.setColor(1,1,0);
+  g.setFontVector(40);
+  g.drawString((currentDist===undefined)?"?":(Math.round(currentDist)+"m"), 160, 30);
+  g.setColor(1,1,1);
+  g.setFont("6x8",2);
+  g.drawString(Math.round(totalDistance)+"m", 160, 70);
+  g.drawString((nextPtIdx/2)+"/"+coordDistance.length, 50, 20);
+  if (!fix.fix) {
+    g.setColor(1,1,0);
+    g.drawString("No GPS", 50, 50);
+    g.setFont("6x8",1);
+    g.drawString(fix.satellites+" Sats", 50, 70);
+  }
+
+  if (lastFix && lastFix.fix) {
+    g.setColor(0,0,0);
+    g.drawCircle(lastFix.s.x,lastFix.s.y,10);
+  }
+  var c1 = g.toColor(1,1,0);
+  var c2 = g.toColor(0.7,0.7,0.7);
+  for (var i=0;i<gcoords.length;i+=2)
+    g.setColor((i<=nextPtIdx) ? c1 : c2).fillRect(gcoords[i]-2,gcoords[i+1]-2,gcoords[i]+2,gcoords[i+1]+2);
+  g.setColor(1,1,0); // first part of path
+  g.drawPoly(new Uint8Array(gcoords.buffer, 0, nextPtIdx+2));
+  g.setColor(1,1,1); // remaining part of path
+  g.drawPoly(new Uint8Array(gcoords.buffer, nextPtIdx));
+
+  if (fix && fix.fix) {
+    g.setColor(1,1,0);
+    g.drawCircle(fix.s.x,fix.s.y,10);
+  }
+  lastFix = fix;
+}
+
+function getNextPtInfo() {
+  var dx = nextPt.x - fix.p.x;
+  var dy = nextPt.y - fix.p.y;
+  nextAngle = Math.atan2(dx,dy)*180/Math.PI;
+  nextDist = Math.sqrt(dx*dx+dy*dy)*coordScale;
+}
+
+function onGPS(f) {
+  fix = f;
+  fix.p = Bangle.project(fix);
+  fix.s = toScr(fix.p);
+  getNextPtInfo();
+  if ((nextDist < PT_DISTANCE) &&
+      (nextPtIdx < coords.length)) {
+    nextPtIdx+=2;
+    nextPt = {x:coords[nextPtIdx], y:coords[nextPtIdx+1]};
+    getNextPtInfo();
+  }
+  // work out how far we are (based on distance to next point)
+  if (!fix.fix) {
+    currentDist = undefined
+  } else if (nextPtIdx+2 < coordDistance.length) {
+    currentDist = coordDistance[1+(nextPtIdx/2)] - nextDist;
+  } else if (nextPtIdx+2 == coordDistance.length) {
+    currentDist = totalDistance - nextDist;
+  } else {
+    currentDist = totalDistance;
+  }
+
+  if (!Bangle.isLCDOn()) return;
+  drawMap();
+}
+
+function arrow(r,c) {
+  r=r*Math.PI/180;
+  var p = Math.PI*3/4;
+  g.setColor(c);
+  g.fillPoly([
+    180+40*Math.sin(r), 180-40*Math.cos(r),
+    180+20*Math.sin(r+p), 180-20*Math.cos(r+p),
+    180-10*Math.sin(r), 180+10*Math.cos(r),
+    180+20*Math.sin(r+-p), 180-20*Math.cos(r-p),
+    ]);
+}
+
+function onCompass(m) {
+  if (!Bangle.isLCDOn()) return;
+
+  arrow(oldHeading,0);
+  var heading = m.heading + nextAngle;
+  arrow(heading,0xF800);
+  oldHeading = heading;
+}
+
+
+// draw the heading
+var oldHeading = 0;
+Bangle.on('GPS', onGPS);
+Bangle.on('mag', onCompass);
+Bangle.setGPSPower(1);
+Bangle.setCompassPower(1);
+g.clear();
+`;
+
+sendCustomizedApp({
+  storage:[
+    {name:"route.app.js", url:"app.js", content:app}
+  ]
+});
+});
+
+</script>
+</body>

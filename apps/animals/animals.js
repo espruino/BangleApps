@@ -13,7 +13,7 @@ function next(e) {
   } while (current && current==last);
   g.clear();
   var n = 1 + (0|(Math.random()*3.9));
-  var img = require("Storage").read("*"+current);
+  var img = require("Storage").read("animals-"+current+".img");
   if (n==1)
     g.drawImage(img,120,120,{scale:4,rotate:Math.random()-0.5});
   else

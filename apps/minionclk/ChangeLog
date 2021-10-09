@@ -1,0 +1,5 @@
+0.01: First release
+0.02: Improved date readability, fixed drawing of widgets
+0.03: Fixed rendering for Espruino v2.06
+0.04: Fixed overlapped rendering of dates
+0.05: Use Bangle.setUI for button/launcher handling

@@ -1,6 +1,0 @@
-{
-  "name":"Analog Clock","type":"clock",
-  "icon":"*aclock",
-  "src":"-aclock",
-  "sortorder":-10
-}

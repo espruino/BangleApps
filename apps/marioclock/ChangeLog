@@ -1,0 +1,15 @@
+0.01: Create mario app [Paul Cockrell https://github.com/paulcockrell]
+0.02: Fix day of the week and add padding
+0.03: use short date format from locale, take timeout from settings
+0.04: modify date to display to be more at the original idea but still localized
+0.05: use 12/24 hour clock from settings
+0.06: Performance refactor, and enhanced graphics!
+0.07: Swipe right to change between Mario and Toad characters, swipe left to toggle night mode
+0.08: Update date panel to be info panel toggling between Date, Battery and Temperature. Add Princes Daisy
+0.09: Add GadgetBridge functionality. Mario shows message type in speach bubble, while message scrolls in info panel
+0.10: Swiping left to enable night-mode now also reduces LCD brightness through 3 levels before returning to day-mode.
+0.11: User settings persisted and read to file.
+0.12: Add info banner message when phone (dis)connects. Display low-battery warning (<=10%)
+0.13: Fix drawPyramid function so pyramids are drawn in correct Y position
+0.14: Add jumping frame for characters
+0.15: Disable notification buzz during Quiet Mode

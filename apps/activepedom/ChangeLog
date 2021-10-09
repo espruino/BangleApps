@@ -1,0 +1,9 @@
+0.01: New Widget!
+0.02: Distance calculation and display
+0.03: Data logging and display
+0.04: Steps are set to 0 in log on new day 
+0.05: Fix default step/distance display if it hasn't been set up first
+0.06: Added WIDGETS.activepedom.getSteps()
+0.07: Added settings to be able to hide line1 and line2 so there is no visible widget
+0.08: Fixed zero steps issue caused by 0.07
+0.09: Prettied up user interface, decluttered graphs

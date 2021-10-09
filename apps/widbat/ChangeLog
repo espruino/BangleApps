@@ -1,0 +1,7 @@
+0.02: Now refresh battery monitor every minute if LCD on
+0.03: Tweaks for variable size widget system
+0.04: Ensure redrawing works with variable size widget system
+0.05: Fix regression stopping correct widget updates
+0.06: Use 'g.theme' (requires bootloader 0.23)
+0.07: Move CHARGING variable to more readable string
+0.08: Ensure battery updates every 60s even if LCD was on at boot and stays on

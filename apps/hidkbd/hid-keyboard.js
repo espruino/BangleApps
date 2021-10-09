@@ -1,30 +1,49 @@
 var storage = require('Storage');
 
-const settings = storage.readJSON('@setting') || { HID: false };
+const settings = storage.readJSON('setting.json',1) || { HID: false };
 
 var sendHid, next, prev, toggle, up, down, profile;
 
-if (settings.HID) {
+if (settings.HID=="kb" || settings.HID=="kbmedia") {
   profile = 'Keyboard';
-  sendHid = function (code, cb) {
-    try {
-      NRF.sendHIDReport([2,0,0,code,0,0,0,0,0], () => {
-        NRF.sendHIDReport([2,0,0,0,0,0,0,0,0], () => {
-          if (cb) cb();
+  if (settings.HID=="kbmedia") {
+    sendHid = function (code, cb) {
+      try {
+        NRF.sendHIDReport([2,0,0,code,0,0,0,0,0], () => {
+          NRF.sendHIDReport([2,0,0,0,0,0,0,0,0], () => {
+            if (cb) cb();
+          });
         });
-      });
-    } catch(e) {
-      print(e);
-    }
-  };
+      } catch(e) {
+        print(e);
+      }
+    };
+  } else {
+    sendHid = function (code, cb) {
+      try {
+        NRF.sendHIDReport([0,0,code,0,0,0,0,0], () => {
+          NRF.sendHIDReport([0,0,0,0,0,0,0,0], () => {
+            if (cb) cb();
+          });
+        });
+      } catch(e) {
+        print(e);
+      }
+    };
+  }
   next = function (cb) { sendHid(0x4f, cb); };
   prev = function (cb) { sendHid(0x50, cb); };
   toggle = function (cb) { sendHid(0x2c, cb); };
   up = function (cb) {sendHid(0x52, cb); };
   down = function (cb) { sendHid(0x51, cb); };
 } else {
-  E.showMessage('HID disabled');
-  setTimeout(load, 1000);
+  E.showPrompt("Enable HID?",{title:"HID disabled"}).then(function(enable) {
+    if (enable) {
+      settings.HID = "kb";
+      require("Storage").write('setting.json', settings);
+      setTimeout(load, 1000, "hidkbd.app.js");
+    } else setTimeout(load, 1000);
+  });
 }
 
 function drawApp() {
@@ -49,23 +68,20 @@ function drawApp() {
 }
 
 if (next) {
-
-  if (settings.HIDGestures) {
-    Bangle.on('aiGesture', (v) => {
-      switch (v) {
-        case 'swipeleft':
-          E.showMessage('next');
-          setTimeout(drawApp, 1000);
-          next(() => {});
-          break;
-        case 'swiperight':
-          E.showMessage('prev');
-          setTimeout(drawApp, 1000);
-          prev(() => {});
-          break;
-      }
-    });
-  }
+  Bangle.on('aiGesture', (v) => {
+    switch (v) {
+      case 'swipeleft':
+        E.showMessage('next');
+        setTimeout(drawApp, 1000);
+        next(() => {});
+        break;
+      case 'swiperight':
+        E.showMessage('prev');
+        setTimeout(drawApp, 1000);
+        prev(() => {});
+        break;
+    }
+  });
 
   setWatch(function(e) {
     var len = e.time - e.lastTime;

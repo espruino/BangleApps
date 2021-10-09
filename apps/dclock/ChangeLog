@@ -1,0 +1,10 @@
+0.01: branched from simple clock and added seconds
+0.02: add timestamp (tst)
+0.03: fix timestamp round to whole number
+0.04: add iso datetime and move day of the week (d) / month names (m)
+0.05: add beats (@)
+0.06: tidy up
+0.07: add days in current month (md) and days since new moon (l)
+0.08: update icon
+0.09: Use localised month and day of the week from locale
+0.10: Changed setWatch to Bangle.setUI and allow small screen

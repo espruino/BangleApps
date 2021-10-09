@@ -1,0 +1,10 @@
+0.01: Initial import.
+0.02: Misc development.
+0.03: Enable screen off.
+0.04: Vibrate once on no fix, twice on fix.
+0.05: Add setting to turn vibrate on/off.
+0.06: Tweaks to vibration settings.
+0.07: Switch to BTN1 for Max toggle and reset function.
+1.00: New features. Added waypoints file and distance to selected waypoint display. Added integration with GPS Setup module to switch GPS to low power mode when screen off. Save display settings and restore when app restarted.
+1.01: Add third screen mode with large clock and waypoint selection display to ease visibility in bright daylight.
+1.02: Add Kalman filter to smooth the speed and altitude values. Can be disabled in settings.

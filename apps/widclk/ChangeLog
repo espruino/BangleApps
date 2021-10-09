@@ -1,0 +1,5 @@
+0.02: Now refresh battery monitor every minute if LCD on
+0.03: Ensure redrawing works with variable size widget system
+0.04: Fix regression stopping correct widget updates
+0.05: Don't show clock widget if already showing clock app
+0.06: Use 7 segment font, update *on* the minute, use less memory

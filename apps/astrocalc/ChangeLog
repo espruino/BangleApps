@@ -1,0 +1,2 @@
+0.01: Create astrocalc app
+0.02: Store last GPS lock, can be used instead of waiting for new GPS on start

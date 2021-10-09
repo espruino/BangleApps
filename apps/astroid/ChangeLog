@@ -1,0 +1,2 @@
+0.02: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
+0.03: Bangle 2 support

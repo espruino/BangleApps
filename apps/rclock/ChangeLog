@@ -1,0 +1,7 @@
+0.01: First published version of app
+0.02: Added support for locale and 12H clock
+0.03: Added HR indication to clock
+0.04: Update font size and alignment
+0.05: Changes which circle show minutes and seconds
+0.06: Avoid function wrapper, use setUI for launcher
+      Clock face smaller so no longer breaks widgets

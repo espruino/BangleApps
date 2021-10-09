@@ -1,0 +1,10 @@
+0.01: New Library!
+0.02: Add notification ID option
+0.03: Pass `area{x,y,w,h}` to render callback instead of just `y`
+0.05: Adjust position of notification src text
+0.06: Support background color
+0.07: Auto-calculate height, and pad text down even when there's no title (so it stays on-screen)
+0.08: Don't turn on screen during Quiet Mode
+0.09: Add onHide callback
+0.10: Improvements to help notifications work with themes
+0.11: Fix regression that caused no notifications and corrupted background

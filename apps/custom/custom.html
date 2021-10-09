@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/lint.min.css">
+</head>
+
+<body>
+    <script src="../../core/lib/customize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/javascript-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.11.0/jshint.min.js"></script>
+    <p>Type your javascript code here</p>
+    <p><textarea id="custom-js"></textarea></p>
+    <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
+    <script>
+    const item = "custom.boot.js";
+    const id = "custom-js";
+    const sample = "//Bangle.setOptions({wakeOnBTN2:false});";
+    var localeModule = null;
+    var editor = {};
+
+    if (localStorage.getItem(item) === null) {
+        localStorage.setItem(item, sample);
+    }
+
+    document.getElementById(id).value = localStorage.getItem(item);
+
+    // The code editor
+    var lintFlags = {
+        esversion: 6, // Enable ES6 for literals, arrow fns, binary
+        evil: true, // don't warn on use of strings in setInterval
+        laxbreak: true, // don't warn about newlines in expressions
+        laxcomma: true // don't warn about commas at the start of the line
+    };
+    editor = CodeMirror.fromTextArea(document.getElementById(id), {
+        width: "100%",
+        height: "100%",
+        matchBrackets: true,
+        mode: { name: "javascript", globalVars: false },
+        lineWrapping: true,
+        showTrailingSpace: true,
+        lint: lintFlags,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-lint-markers"],
+        lineNumbers: true
+    });
+
+    document.getElementById("upload").addEventListener("click", function() {
+        if (!editor.state.lint.marked.length) {
+            localeModule = editor.getValue();
+            localStorage.setItem(item, localeModule);
+            sendCustomizedApp({
+                storage: [{ name: item, content: localeModule }]
+            });
+        }
+    });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+0.01: New App!
+0.02: Fix GPS time logging
+0.03: Fix GPS time display in gpsrec app
+0.04: Properly Fix GPS time display in gpsrec app
+0.05: Tweaks for variable size widget system
+0.06: Ensure widget update itself (fix #118) and change to using icons
+0.07: Added @jeffmer's awesome track viewer
+0.08: Don't overwrite existing settings on app update
+      Clean up recorded tracks on app removal
+0.09: Change default GPS period to 10 (1 is overkill for most uses and makes things slow)
+      Added RAM keyword to functions & other tweaks to speed up rendering
+      Going 'back' from track view now doesn't load again
+0.10: Can now graph altitude & speed
+0.11: Ensure we don't turn GPS off if it was previously on (eg from another app/widget)
+0.12: Add option to plot on top of OpenStreetMap tiles (when they are installed on the watch)
+0.13: Increase GPS recording accuracy by one decimal place
+      Ensure default time period is 10
+0.14: Now use the openstmap lib for map plotting
+0.15: Add plotTrack method to allow current track to be plotted on a map (#395)
+0.16: Add gpsrec app to Settings menu
+0.17: Disable recording if storage is full (fix #574)
+0.18: Period counter now uses GPS time rather than counting packets (allows use with GPS Setup)
+0.19: Fix memory usage issues inside track viewer app
+0.20: Add documentation to explain time needed for getting a time fix
+0.21: Fix issue where a period of 1s recorded every 2s, 5s every 6s, and so on
+0.22: Ensure Bangle.setGPSPower uses 'gpsrec' as a tag
+0.23: Fix issue where tracks wouldn't record when running from OpenStMap if a period hadn't been set up first

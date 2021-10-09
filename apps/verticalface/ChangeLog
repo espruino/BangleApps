@@ -1,0 +1,6 @@
+0.04: Fixed day being displayed
+0.05: Stop hours being displayed wrong if moving from 2 digits to 1 (fix #516)
+0.06: Tweak sizing to allow widgets at top, and add widgets (fix #567)
+0.07: Added leading zero to hours and minutes
+0.08: Show step count by calling wpedom.getSteps() or activepedom.getSteps()
+0.09: Fix time when minutes<10 and hours>9 (fix #767)

@@ -1,0 +1,4 @@
+0.01: New Watch!
+0.02: Changed colors for better readability and added current date
+0.03: Added Info to HP (day in year) and LEVEL (day of week / progress bar show day progress)
+0.04: Using setUI, portable colors

@@ -1,0 +1,6 @@
+0.01: Initial commit.  Not very efficient, and widgets not working for some reason.
+0.02: Fixes; widget support
+0.03: Remove hardcoded hour buzz (you can install widchime if you miss it)
+0.04: Update to use Bangle.setUI instead of setWatch
+0.05: Avoid 'loadWidgets' at LCD on, which will cause memory leak
+      Avoid clearTimeout() usage, as it may break other widgets

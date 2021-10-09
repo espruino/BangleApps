@@ -2,40 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8,maximum-scale=0.8, minimum-scale=0.8, shrink-to-fit=no">
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
-    <title>Bangle.js loader</title>
-    <style>
-		.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
-		.navbar .navbar-brand {
-			color: #fff;
-      font-weight: bold;
-		}
-    .avatar img {
-      border-radius: 5px 5px 5px 5px;
-      background: #ddd;
-    }
-    #toastcontainer {
-      position:fixed;
-      bottom:8px;left:0px;right:0px;
-      z-index: 100;
-    }
-    .hero {
-      padding-bottom: 1rem;
-      padding-top: 1rem;
-      text-align:center;
-    }
-    .chip {
-      cursor: pointer;
-    }
-	</style>
+    <link rel="stylesheet" href="css/pwa.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5755d9">
+    <meta name="apple-mobile-web-app-title" content="BangleApps">
+    <meta name="application-name" content="BangleApps">
+    <meta name="msapplication-TileColor" content="#5755d9">
+    <meta name="theme-color" content="#5755d9">
+    <title>Bangle.js App Loader</title>
   </head>
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section">
-        <a href="https://banglejs.com" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
       <section class="navbar-section">
@@ -49,15 +36,23 @@
       </section>-->
     </header>
 
+    <div class="container" style="padding-top:4px">
+      <p id="requireHTTPS" class="hidden">
+        <b>STOP!</b> This page <b>must</b> be served over HTTPS. Please <a>reload this page via HTTPS</a>.
+      </p>
+      <div class="toast toast-success flex-centered" id="bangle2ks">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAgCAYAAAASYli2AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAABuvAAAbrwFeGpEcAAAAB3RJTUUH5QkYBzsUMccQUAAABulJREFUSMeNlmuMXVUZhp912fucvc+ZMz3TmWk7FIotSEOKSFRQ24JGVNRIMDUESzWUi+gPDDGGqH+UxBgkkRIwIdgaIDUgl9LipZAqRYO0pCqiFuiF0pnpHMrczn32Pvuy1vLHGSXREFjJyvqx1nrzvt+33m99gvcwHtn7+NeSJP2BlGpKKXkaIWoWV/v1nn3PPb59x98/9aWv8OzuRwAQ7wa2e++TPP37/fedOlX7hjUG7XkEQUBYLjFx8lQqvYFrnnvq0d2fu+YGnv7VL9DvBtjOrWq3O5dMnpwgTTIcDqkknufj+75fqfDk56/ZelUizG8BI98J6J77twFwZHxi3ZHDr140Mz1Ns16nMV8naneIu13a7RZz8zM0Z6b21I4d3faOku9/8B5uvu5b3HHXj9Yce/3k7omJ0xdMT0/jHIDDZBlJliGFwCmBdAJPFbjgsqvXqP8F2/nEg1y/+WZ2Prb9I4f+evhFr1Rd6QcBfjEkDEOKYQkhJL5fICyX+MSlG8gyQxzFhNXRx/5P8le/fB279j563r59zx8qVIZLSik8z2egUmFgqIpSksqSQYIwYMPG9czONTn66hEKhQLLR0cG32YYjIpLL//0OVuuv3b98ddPPiYL5Qo4HA4lBUop8jQlzwye73H+2nMJSyHjE1OUKwMoLVFCegLgxlu/w8aPfWCFFNnJZ/5wsDCyfJQgKCIQOARCSYyx5FnGQneBer3BuWeNUZttmLiXqKTXI4kiGs2F1/XPH36Yr2/ezIfW/Wy4u9AsPP/cnxhZNkpQChkYqBCWS5TLZfyijxKSLDdoJZiuz1Cf6TSHV4xWhRDSpAntVqsoALbt2HHlOatWPXXWsqU0mg1eO3qEf/7rFSZrNTqtDu12F+0pHKC1ZvnYctZduIZDB44ma85/v+7FsWrNzfHaK8fmxeYbb1rf6yV//uSlG1loNUiSiGihR7PVwBhDGAakeUY3iugudEnThMmJNwmCIme9b21rbPXKYhr3CvXpaV5+6XBb96LkzjiKuPvOO2l3OggBZ69axerVa3A4pqdnGF5aZXRoAGzGxOwccTdm9vQ0c7PtwcGhKsFAEaUkDuf0ksHyR2unJhkeG6PqDGncY77dZurACyRJCs5irENLwbLRpVhnadUbFMIiwhr+dvBFLvvs5QilEM5lemRkRF684RJKxSJnrxyj2e7S7nRpdtrEcUTUjeh2O7RaLVqNBq16E6kkea+HVwioz80QdxdQSuCEiDSSLMlSb7BU5uwzxmClQAiBlJI8NyRpStzrEScpvaRHp9PlxMk32L9vP3ma4/s+vvaIrEPoQlcLhDN5jrEWYy04h3MSIQ1CgKc9vLKiUi6Bc9hllqFqldn5JlPjkyRJSiEoYOZzPK8wroHM5MbHWQTgACkczrFYDCwOgbMWAGcdeZZgjUEIiXACX3vkWQa6+A8tpXTG5FjjcLZvtf5NB0IsojqEBGcszlry3JBlKc5ZrLM4LZmdnWVoZOUB6XDG5P0NKSCKeuRZTm4s1hiMdRhrOfCXw0QLPXAOY/qZd4CSisbcHKUg4IzRwaoGkVubY40lTXNwkKU5UgnacYKS/ZJ54fnnkKcZ1mmMybF5hnUO5WneOHqcen2GsdUXj0uEwBiHM4ZoMZsOh5CCsOhTCgOkVszON7DWInCYvM9cOEeep5TKZcJShUsuu+K4BnJrLUJAGBbxkpwkzdBa0e3GlMIA3/NoNTucMbwUCeTG4BZjrJWmXCkxUAm56coPv6UdWGdtn76U6KDPylnLspGhftmyhnVr17CwEBEU/b5k249jOSyjtKQ+13kZQApB/0k48LVGCNF/KhKcswgl8D2FVpLBcgkpBXlmcM6ipEB7HjOnp8kzuQdAO+u6Djhy4gQTb9YYGRpieKjKcHUJgwNlioUCvu/ha41SEukgz9N+3BeTcuaZq+/Yfu+222/9/h3oJUsqz2Zpdi7OEkcRk3HM5NRU335Kof8ztSIIAoYqg8w3G4sMJUoptt+77XsAd//4u8heL/3JULXadc5hrHnbEc5hjSFNeyxEEc1Wm1rtTV4+fJjxiUkAjDFIqRzAfQ88AID84W23jV900Qc/s2LFilRLjVIKa/tyrLXkucVag13MrHMOu7hKpSgGAzsAvrl1KwBq1+9+ww3Xbpn66UM7t83UalekaVrVSmlE3wVaa5zre9m5/j9ojMXmhqA0UFNab9KFIJ57q/Z2s/TCkaOsX3seJ5wTW7/wxXXO2quw5uosz9fZ3KC1olAooJXE8zwsEEdJXAjD1ft2P/HWXTt28e0bN7237mvLLbeMjh87viGJ4415aj4uJGeaPG8rVXzkpYN/vP2KTVt4Ztcv/3v+303rvJoTmqKuAAAAAElFTkSuQmCC" />
+        &nbsp;Bangle.js 2 is now on KickStarter! &nbsp;<a href="https://www.kickstarter.com/projects/gfw/banglejs-2-the-open-smart-watch" target="_blank">Check it out here</a>
+      </div>
+    </div>
+
+
     <ul class="tab tab-block" id="tab-navigate">
       <li class="tab-item active" id="tab-librarycontainer">
         <a href="javascript:showTab('librarycontainer')">Library</a>
       </li>
       <li class="tab-item" id="tab-myappscontainer">
         <a href="javascript:showTab('myappscontainer')">My Apps</a>
-      </li>
-      <li class="tab-item" id="tab-myfscontainer">
-        <a href="javascript:showTab('myfscontainer')">My files</a>
       </li>
       <li class="tab-item" id="tab-aboutcontainer">
         <a href="javascript:showTab('aboutcontainer')">About</a>
@@ -67,16 +62,27 @@
     <div class="container"  id="toastcontainer">
     </div>
 
-    <div class="container bangle-tab" id="librarycontainer">
-      <div class="filter-nav">
-        <label class="chip active" filterid="">All</label>
-        <label class="chip" filterid="clock">Clocks</label>
-        <label class="chip" filterid="game">Games</label>
-        <label class="chip" filterid="tool">Tools</label>
-        <label class="chip" filterid="widget">Widgets</label>
-        <label class="chip" filterid="bluetooth">Bluetooth</label>
+    <div class="container apploader-tab" id="librarycontainer">
+      <div>
+        <div class="filter-nav">
+          <label class="chip active" filterid="">Default</label>
+          <label class="chip" filterid="clock">Clocks</label>
+          <label class="chip" filterid="game">Games</label>
+          <label class="chip" filterid="tool">Tools</label>
+          <label class="chip" filterid="widget">Widgets</label>
+          <label class="chip" filterid="bluetooth">Bluetooth</label>
+          <label class="chip" filterid="outdoors">Outdoors</label>
+          <label class="chip" filterid="favourites">Favourites</label>
+        </div>
+        <div class="sort-nav hidden">
+          <span>Sort by:</span>
+          <label class="chip active" sortid="">None</label>
+          <label class="chip" sortid="created">New</label>
+          <label class="chip" sortid="modified">Updated</label>
+        </div>
       </div>
-      <div class="panel">
+
+      <div class="panel" style="clear:both">
         <div class="panel-header">
         <div class="input-group" id="searchform">
             <input class="form-input" type="text" placeholder="Keywords...">
@@ -87,54 +93,66 @@
       </div>
     </div>
 
-    <div class="container bangle-tab" id="myappscontainer" style="display:none">
+    <div class="container apploader-tab" id="myappscontainer" style="display:none">
       <div class="panel">
         <div class="panel-header" style="text-align:right">
           <button class="btn refresh">Refresh...</button>
+          <button class="btn btn-primary updateapps hidden">Update X apps</button>
         </div>
         <div class="panel-body columns"><!-- apps go here --></div>
       </div>
     </div>
 
-    <div class="container bangle-tab" id="myfscontainer" style="display:none">
-      <div class="panel">
-        <div class="panel-header column col-12 container">
-          <div class="columns col-gapless">
-            <p class="column col-9">Files currently stored on the watch. Click row to download.</p>
-            <div class="column col-3" style="text-align:right">
-              <button class="btn refresh">Refresh...</button>
-            </div>
-          </div>
-        </div>
-        <table class="table table-striped table-hover panel-body">
-        </table>
-      </div>
-    </div>
-
-    <div class="container bangle-tab" id="aboutcontainer" style="display:none">
+    <div class="container apploader-tab" id="aboutcontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
-          <a href="https://banglejs.com"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
+          <a href="https://banglejs.com" target="_blank"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
           <h2>App Loader</h2>
-          <p>A tool for uploading and removing apps from <a href="https://banglejs.com">Bangle.js Smart Watches</a></p>
+          <p>A tool for uploading and removing apps from <a href="https://banglejs.com" target="_blank">Bangle.js Smart Watches</a></p>
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
-        <p>Using <a href="https://espruino.com/">Espruino</a>, Icons from <a href="https://icons8.com/">icons8.com</a></p>
-        <p>Check out <a href="https://github.com/espruino/BangleApps">the Source on GitHub</a> for more information.</p>
-
+        <p><b>Can't connect?</b> Check out the <a href="https://www.espruino.com/Troubleshooting+Bangle.js" target="_blank">Bangle.js Troubleshooting page</a>
+        <p id="apploaderlinks"></p>
+        <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
+          find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</a></p>
+        <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
         <p><button class="btn" id="settime">Set Bangle.js Time</button>
-          <button class="btn" id="removeall">Remove all Apps</button></p>
+           <button class="btn" id="removeall">Remove all Apps</button>
+           <button class="btn" id="installdefault">Install default apps</button>
+           <button class="btn" id="installfavourite">Install favourite apps</button></p>
+        <h3>Settings</h3>
+        <div class="form-group">
+          <label class="form-switch">
+            <input type="checkbox" id="settings-pretokenise">
+            <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
+          </label>
+          <button class="btn" id="defaultsettings">Default settings</button>
+        </div>
       </div>
     </div>
 
+    <footer class="floating hidden">
+      <!-- Install button, hidden by default -->
+      <div id="installContainer" class="hidden">
+        <button id="butInstall" type="button">
+          Install
+        </button>
+      </div>
+    </footer>
+
     <script src="https://www.puck-js.com/puck.js"></script>
-    <script src="utils.js"></script>
-    <script src="comms.js"></script>
-    <script src="appinfo.js"></script>
-    <script src="index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js" type="application/javascript"></script>
+    <script src="core/lib/marked.min.js"></script>
+    <script src="core/lib/espruinotools.js"></script>
+    <script src="core/lib/heatshrink.js"></script>
+    <script src="core/js/utils.js"></script>
+    <script src="loader.js"></script>
+    <script src="core/js/ui.js"></script>
+    <script src="core/js/comms.js"></script>
+    <script src="core/js/appinfo.js"></script>
+    <script src="core/js/index.js"></script>
+    <script src="core/js/pwa.js" defer></script>
   </body>
 </html>

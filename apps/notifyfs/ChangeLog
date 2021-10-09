@@ -1,0 +1,12 @@
+0.01: New Library!
+0.02: Add notification ID option
+0.03: Fix custom render callback
+0.04: Pass `area{x,y,w,h}` to render callback instead of just `y`
+0.05: Fix `g` corruption issue if .hide gets called twice
+0.06: Adjust position of notification src text and notifications without title
+0.07: Support background color
+0.08: Don't turn on screen during Quiet Mode
+0.09: Add onHide callback
+0.10: Ensure dismissing a notification dismissal doesn't enter launcher if in clock mode
+0.11: Improvements to help notifications work with themes, Bangle.js 2 support
+0.12: More use of themes, title now uses theme highlight colors, font adjusts

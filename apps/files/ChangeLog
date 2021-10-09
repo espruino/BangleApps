@@ -1,0 +1,6 @@
+0.02: Fix deletion of apps - now use files list in app.info (fix #262)
+0.03: Add support for data files
+0.04: Add functionality to sort apps manually or alphabetically ascending/descending.
+0.05: Tweaks to help with memory usage
+0.06: Reduce memory usage
+0.07: Allow negative numbers when manual-sorting

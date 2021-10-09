@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="records"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var domRecords = document.getElementById("records");
+
+function getLapTimes() {
+  Util.showModal("Loading Lap Times...");
+  domRecords.innerHTML = "";
+  Puck.eval('require("Storage").list(/^swatch.*\.json/).map(fn=>({n:fn,d:require("Storage").readJSON(fn,1)}))',lapData=>{
+    var html = `<div class="container">
+  <div class="columns">\n`;
+    lapData.forEach((lap,lapIndex) => {
+      lap.date = lap.n.substr(7,16).replace("_"," ");
+      lap.elapsed = lap.d.shift(); // remove first item
+      html += `
+        <div class="column col-12">
+          <div class="card-header">
+            <div class="card-title h5">${lap.date}</div>
+            <div class="card-subtitle text-gray">${lap.d.length} Laps, total time ${lap.elapsed}</div>
+          </div>
+          <div class="card-body">
+          <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>lap</th>
+              <th>time</th>
+            </tr>
+          </thead>
+          <tbody>
+          ${ lap.d.map((d,n)=>`<tr><td>${n+1}</td><td>${d}</td></tr>`).join("\n") }
+          </tbody>
+          </table>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary" idx="${lapIndex}" task="download">Download</button>
+            <button class="btn btn-default" idx="${lapIndex}" task="delete">Delete</button>
+          </div>
+        </div>
+      `;
+    });
+    if (lapData.length==0) {
+      html += `
+        <div class="column col-12">
+          <div class="card-header">
+            <div class="card-title h5">No record</div>
+            <div class="card-subtitle text-gray">No laps recorded</div>
+          </div>
+        </div>
+        `;
+    }
+    html += `
+    </div>
+  </div>`;
+    domRecords.innerHTML = html;
+    Util.hideModal();
+    var buttons = domRecords.querySelectorAll("button");
+    for (var i=0;i<buttons.length;i++) {
+      buttons[i].addEventListener("click",event => {
+        var button = event.currentTarget;
+        var lapIndex = parseInt(button.getAttribute("idx"));
+        var lap = lapData[lapIndex];
+        if (!lap) throw new Error("Invalid index!");
+        var task = button.getAttribute("task");
+        if (task=="delete") {
+          Util.showModal("Deleting lap time...");
+          Util.eraseStorage(lap.n,()=>{
+            Util.hideModal();
+            getLapTimes();
+          });
+        }
+        if (task=="download") {
+          Util.saveCSV(lap.n.slice(0,-5)+".csv", lap.d.map((d,n)=>[n+1,d].join(",")).join("\n"));
+        }
+      });
+    }
+  })
+}
+
+function onInit() {
+  getLapTimes();
+}
+
+    </script>
+  </body>
+</html>

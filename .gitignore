@@ -1,0 +1,11 @@
+.htaccess
+node_modules
+package-lock.json
+.DS_Store
+*.js.bak
+appdates.csv
+.vscode
+.idea/
+_config.yml
+tests/Layout/bin/tmp.*
+tests/Layout/testresult.bmp

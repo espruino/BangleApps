@@ -1,0 +1,4 @@
+0.02: Modified for use with new bootloader and firmware
+0.03: Added 'reset' so we don't get the font color from widgets
+0.04: Changed name from clck3x2 to clock2x3
+0.05: Use setUI, work with smaller screens and themes

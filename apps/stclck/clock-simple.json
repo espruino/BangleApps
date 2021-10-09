@@ -1,7 +1,0 @@
-{
-  "name": "Simple 12H Clock",
-  "type": "clock",
-  "icon": "*sclock",
-  "src": "-sclock",
-  "sortorder": -10
-}

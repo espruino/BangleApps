@@ -1,0 +1,10 @@
+0.01: Init
+0.02: fix 3/4 moon orientation
+0.03: Change `largeclock.json` to 'data' file to allow settings to be preserved
+0.04: Adjust layout to account for new vector font
+0.05: Add support for 12 hour time
+0.06: Allow to disable BTN1 and BTN3 buttons
+0.07: Don't clear all intervals during initialisation
+0.08: Use Bangle.setUI for button/launcher handling
+0.09: fix font size for latest firmwares
+0.10: Configure the side text direction based on the wrist on which you wear your watch
