@@ -29,7 +29,7 @@ function getSecondsTime() {
 }
 
 function setupInputWatchers(init) {
-  isBangle1 = !!global.BTN4;
+  isBangle1 = process.env.BOARD === 'BANGLEJS';
   Bangle.setUI('updown', v => v && handleInput(Math.floor((v+2)/2)+(isBangle1 ? 0 : 3)));
   if (init) {
     setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
