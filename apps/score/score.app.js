@@ -30,6 +30,18 @@ function getSecondsTime() {
   return Math.floor(getTime() * 1000);
 }
 
+function setupDisplay() {
+  // make sure LCD on Bangle.js 1 stays on
+  if (isBangle1) {
+    if (settings.keepDisplayOn) {
+      Bangle.setLCDTimeout(0);
+      Bangle.setLCDPower(true);
+    } else {
+      Bangle.setLCDTimeout(10);
+    }
+  }
+}
+
 function setupInputWatchers(init) {
   Bangle.setUI('updown', v => {
     if (v) {
@@ -100,6 +112,7 @@ function showSettingsMenu() {
 
     draw();
 
+    setupDisplay();
     setupInputWatchers();
   }, function (msg) {
     switch (msg) {
@@ -459,12 +472,7 @@ function draw() {
   g.flip();
 }
 
-// make sure LCD on Bangle.js 1 stays on
-if (isBangle1) {
-  Bangle.setLCDTimeout(0);
-  Bangle.setLCDPower(true);
-}
-
+setupDisplay();
 setupInputWatchers(true);
 setupMatch();
 draw();

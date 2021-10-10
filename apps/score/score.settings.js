@@ -7,6 +7,9 @@
         if (settings.mirrorScoreButtons == null) {
           settings.mirrorScoreButtons = false;
         }
+        if (settings.keepDisplayOn == null) {
+          settings.keepDisplayOn = true;
+        }
       }
       if (settings.winSets == null) {
         settings.winSets = 2;
@@ -91,10 +94,12 @@
           return function() {
             changed = true;
             let mirrorScoreButtons = settings.mirrorScoreButtons;
+            let keepDisplayOn = settings.keepDisplayOn;
 
             settings = fillSettingsWithDefaults(presets[presetNames[i]]);
 
             settings.mirrorScoreButtons = mirrorScoreButtons;
+            settings.keepDisplayOn = keepDisplayOn;
             save(settings);
             ret(true);
           };
@@ -119,6 +124,11 @@
           format: m => offon[~~m],
           onchange: m => setAndSave('mirrorScoreButtons', m, true),
         };
+        m['Keep display on'] = {
+          value: settings.keepDisplayOn,
+          format: m => offon[~~m],
+          onchange: m => setAndSave('keepDisplayOn', m, true),
+        }
       }
       m['Sets to win'] = {
         value: settings.winSets,
