@@ -1,6 +1,13 @@
 (function () {
   return (function (back, inApp, ret) {
+    const isBangle1 = process.env.BOARD === 'BANGLEJS'
+
     function fillSettingsWithDefaults(settings) {
+      if (isBangle1) {
+        if (settings.mirrorScoreButtons == null) {
+          settings.mirrorScoreButtons = false;
+        }
+      }
       if (settings.winSets == null) {
         settings.winSets = 2;
       }
@@ -100,6 +107,13 @@
       }
       m['< Back'] = function () { back(settings, changed); };
       m['Presets'] = function () { E.showMenu(presetMenu(back)); };
+      if (isBangle1) {
+        m['Mirror Buttons'] = {
+          value: settings.mirrorScoreButtons,
+          format: m => offon[~~m],
+          onchange: m => setAndSave('mirrorScoreButtons', m),
+        };
+      }
       m['Sets to win'] = {
         value: settings.winSets,
         min:1,

@@ -33,9 +33,10 @@ function setupInputWatchers(init) {
   Bangle.setUI('updown', v => {
     if (v) {
       if (isBangle1) {
-        handleInput(Math.floor(((v*-1)+2)/2))
+        let i = settings.mirrorScoreButtons ? v * -1 : v;
+        handleInput(Math.floor((i+2)/2));
       } else {
-        handleInput(Math.floor((v+2)/2)+3)
+        handleInput(Math.floor((v+2)/2)+3);
       }
     }
   });
