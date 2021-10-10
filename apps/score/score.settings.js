@@ -63,8 +63,10 @@
       require('Storage').writeJSON(fileName, settings);
     }
 
-    function setAndSave(key, value) {
-      changed = true;
+    function setAndSave(key, value, notChanged) {
+      if (!notChanged) {
+        changed = true;
+      }
       settings[key] = value;
       if (key === 'winScore' && settings.maxScore < value) {
         settings.maxScore = value;
@@ -111,7 +113,7 @@
         m['Mirror Buttons'] = {
           value: settings.mirrorScoreButtons,
           format: m => offon[~~m],
-          onchange: m => setAndSave('mirrorScoreButtons', m),
+          onchange: m => setAndSave('mirrorScoreButtons', m, true),
         };
       }
       m['Sets to win'] = {
