@@ -90,7 +90,11 @@
         m[presetNames[i]] = (function (i) {
           return function() {
             changed = true;
+            let mirrorScoreButtons = settings.mirrorScoreButtons;
+
             settings = fillSettingsWithDefaults(presets[presetNames[i]]);
+
+            settings.mirrorScoreButtons = mirrorScoreButtons;
             save(settings);
             ret(true);
           };
