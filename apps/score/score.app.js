@@ -30,7 +30,15 @@ function getSecondsTime() {
 
 function setupInputWatchers(init) {
   isBangle1 = process.env.BOARD === 'BANGLEJS';
-  Bangle.setUI('updown', v => v && handleInput(Math.floor((v+2)/2)+(isBangle1 ? 0 : 3)));
+  Bangle.setUI('updown', v => {
+    if (v) {
+      if (isBangle1) {
+        handleInput(Math.floor(((v*-1)+2)/2))
+      } else {
+        handleInput(Math.floor((v+2)/2)+3)
+      }
+    }
+  });
   if (init) {
     setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
     Bangle.on('touch', (b, e) => {
