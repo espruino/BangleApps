@@ -19,6 +19,8 @@ let correctionMode = false;
 let w = g.getWidth();
 let h = g.getHeight();
 
+let isBangle1 = process.env.BOARD === 'BANGLEJS';
+
 function getXCoord(func) {
   let offset = 40;
   return func(w-offset)+offset;
@@ -29,7 +31,6 @@ function getSecondsTime() {
 }
 
 function setupInputWatchers(init) {
-  isBangle1 = process.env.BOARD === 'BANGLEJS';
   Bangle.setUI('updown', v => {
     if (v) {
       if (isBangle1) {
@@ -456,6 +457,12 @@ function draw() {
   g.drawLine(getXCoord(w => w/2), 20, getXCoord(w => w/2), h-25);
 
   g.flip();
+}
+
+// make sure LCD on Bangle.js 1 stays on
+if (isBangle1) {
+  Bangle.setLCDTimeout(0);
+  Bangle.setLCDPower(true);
 }
 
 setupInputWatchers(true);
