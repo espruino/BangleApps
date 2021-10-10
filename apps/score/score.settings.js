@@ -1,0 +1,81 @@
+(function (back, ret) {
+
+    const fileName = 'score.json'
+    let settings = require('Storage').readJSON(fileName, 1) || {};
+    const offon = ['No', 'Yes'];
+
+    let changed = false;
+
+    function save(key, value) {
+        changed = true;
+        settings[key] = value;
+        if (key === 'winScore' && settings.maxScore < value) {
+            settings.maxScore = value;
+        }
+        require('Storage').writeJSON(fileName, settings);
+    }
+
+    if (!settings.winSets) {
+        settings.winSets = 1;
+    }
+    if (!settings.winScore) {
+        settings.winScore = 21;
+    }
+    if (!settings.enableTwoAhead) {
+        settings.enableTwoAhead = true;
+    }
+    if (!settings.enableMaxScore) {
+        settings.enableMaxScore = true;
+    }
+    if (!settings.maxScore) {
+        settings.maxScore = 30;
+    }
+    if (!settings.setsPerPage) {
+        settings.setsPerPage = 5;
+    }
+
+    if (ret) {
+        return settings;
+    }
+
+    const appMenu = {};
+    appMenu[''] = {'title': 'Score Settings'},
+    appMenu['< Back'] = function () { back(settings, changed); };
+    if (reset) {
+        appMenu['Reset match'] = function () { back(settings, true); };
+    }
+    appMenu['Sets to win'] = {
+        value: settings.winSets,
+        min:1,
+        onchange: m => save('winSets', m)
+    };
+    appMenu['Sets per page'] = {
+        value: settings.setsPerPage,
+        min:1,
+        max:5,
+        onchange: m => save('setsPerPage', m)
+    };
+    appMenu['Score to win'] = {
+        value: settings.winScore,
+        min:1,
+        onchange: m => save('winScore', m)
+    };
+    appMenu['2-point lead'] = {
+        value: settings['enableTwoAhead'],
+        format: m => offon[~~m],
+        onchange: m => save('enableTwoAhead', m)
+    };
+    appMenu['Maximum score?'] = {
+        value: settings['enableMaxScore'],
+        format: m => offon[~~m],
+        onchange: m => save('enableMaxScore', m)
+    };
+    appMenu['Maximum score'] = {
+        value: settings.maxScore,
+        min: settings.winScore,
+        onchange: m => save('maxScore', m)
+    };
+
+    E.showMenu(appMenu)
+
+})

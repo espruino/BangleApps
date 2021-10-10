@@ -3554,5 +3554,18 @@
     {"name":"floralclk.app.js","url":"app.js"},
     {"name":"floralclk.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "score",
+  "name": "Score Tracker",
+  "icon": "score.app.png",
+  "version":"0.01",
+  "description": "Score Tracker for sports that use plain numbers. (e.g. Badminton, Volleyball, Soccer, Table Tennis, ...)",
+  "tags": "b2",
+  "type": "app",
+  "storage": [
+    {"name":"score.app.js","url":"score.app.js"},
+    {"name":"score.settings.js","url":"score.settings.js"},
+    {"name":"score.img","url":"score.app-icon.js","evaluate":true}
+  ]
 }
 ]
