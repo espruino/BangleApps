@@ -2,9 +2,9 @@
   function draw() {
     g.reset();
     if (NRF.getSecurityStatus().connected)
-      g.setColor("#07f");
+      g.setColor((g.getBPP()>8) ? "#07f" : (g.theme.dark ? "#0ff" : "#00f"));
     else
-      g.setColor(g.theme.bg ? "#AAA" : "#555");
+      g.setColor(g.theme.dark ? "#666" : "#999");
     g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),2+this.x,2+this.y);
   }
   function changed() {
