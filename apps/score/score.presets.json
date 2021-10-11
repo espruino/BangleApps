@@ -1,0 +1,30 @@
+{
+  "Badminton": {
+    "winScore": 21,
+    "enableTwoAhead": true,
+    "enableMaxScore": true,
+    "maxScore": 30
+  },
+  "Tennis": {
+    "winScore": 6,
+    "enableTwoAhead": true,
+    "enableMaxScore": true,
+    "maxScore": 7,
+    "enableMaxScoreTiebreak": true,
+    "maxScoreTiebreakWinScore": 7,
+    "maxScoreTiebreakEnableTwoAhead": true,
+    "maxScoreTiebreakEnableMaxScore": false,
+    "enableTennisScoring": true
+  },
+  "Soccer": {
+    "winSets": 1,
+    "winScore": 9999,
+    "enableTwoAhead": false,
+    "enableMaxScore": false
+  },
+  "Table Tennis": {
+    "winScore": 11,
+    "enableTwoAhead": true,
+    "enableMaxScore": false
+  }
+}
