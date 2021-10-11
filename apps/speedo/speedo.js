@@ -41,8 +41,7 @@ function onGPS(fix) {
   }
   lastFix = fix;
 
-  if (fix.fix) {
-    print(fix.fix);
+  if (fix.fix && isFinite(fix.speed)) {
     var speed = require("locale").speed(fix.speed);
     var m = speed.match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
     var txt = (fix.speed<20) ? fix.speed.toFixed(1) : Math.round(fix.speed);
@@ -54,7 +53,7 @@ function onGPS(fix) {
 }
 g.clear();
 onGPS({fix:0,satellites:0});
-onGPS({fix:1,satellites:3,speed:200}); // testing
+// onGPS({fix:1,satellites:3,speed:200}); // testing
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
