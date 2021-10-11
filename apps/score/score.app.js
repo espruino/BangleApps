@@ -54,7 +54,7 @@ function setupInputWatchers(init) {
     }
   });
   if (init) {
-    setWatch(() => handleInput(2), isBangle1 != null ? BTN2 : BTN, { repeat: true });
+    setWatch(() => handleInput(2), isBangle1 ? BTN2 : BTN, { repeat: true });
     Bangle.on('touch', (b, e) => {
       if (isBangle1) {
         if (b === 1) {
