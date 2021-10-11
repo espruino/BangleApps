@@ -500,9 +500,9 @@
   { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Show the current speed according to the GPS",
-    "tags": "tool,outdoors,gps",
+    "tags": "tool,outdoors,gps,b2",
     "storage": [
       {"name":"speedo.app.js","url":"speedo.js"},
       {"name":"speedo.img","url":"speedo-icon.js","evaluate":true}
