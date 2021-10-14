@@ -10,6 +10,7 @@
   let s = {
     'color': COLORS[0],
     'percentage': true,
+    'fillbar': false,
     'charger': true,
     'hideifmorethan': 100,
   }
@@ -53,6 +54,11 @@
         s.color = COLORS[newIndex]
         save('color')(s.color)
       }
+    },
+    'Fill Bar': {
+      value: s.fillbar,
+      format: onOffFormat,
+      onchange: save('fillbar'),
     },
     'Hide if >': {
       value: s.hideifmorethan||100,
