@@ -4,5 +4,13 @@ Show the current battery level and charging status in the top right of the clock
         
 Works with Bangle 1 and Bangle 2
 
-![](screenshot.jpg)
+When the fillbar setting is on the level colour will fill the entire
+bar.  This makes for an easier to read dsiplay when the charge is
+below 50%.
+
+![](widbatpc.full.jpg)
+
+When the fillbar setting is off the level colour will follow the battry percentage
+
+![](widbatpc.part.jpg)
 

@@ -653,7 +653,7 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery,b2",
     "type":"widget",
