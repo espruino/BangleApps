@@ -1,4 +1,4 @@
-;//not entirely sure why we need this - related to how bootupdate adds these to .boot0
+"";//not entirely sure why we need this - related to how bootupdate adds these to .boot0
 E.showMenu = function(items) {
   g.clear(1).flip(); // clear screen if no menu supplied
   Bangle.drawWidgets();
