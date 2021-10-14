@@ -67,7 +67,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system,b2",
     "allow_emulator":true,
@@ -3571,6 +3571,17 @@
   ],
   "data": [
     {"name":"score.json"}
+  ]
+},
+{ "id": "menusmall",
+  "name": "Small Menus",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Replace Bangle.js 2's menus with a version that contains smaller text",
+  "tags": "b2,bno1",
+  "type": "boot",
+  "storage": [
+    {"name":"menusmall.boot.js","url":"boot.js"}
   ]
 }
 ]
