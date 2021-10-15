@@ -1,0 +1,61 @@
+const DB_RECORD_LEN = 4;
+const DB_RECORDS_PER_HR = 6;
+const DB_RECORDS_PER_DAY = DB_RECORDS_PER_HR*24;
+const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
+const DB_HEADER_LEN = 8;
+const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
+
+function getRecordFN(d) {
+  return "health-"+d.getFullYear()+"-"+d.getMonth()+".raw";
+}
+function getRecordIdx(d) {
+  return (DB_RECORDS_PER_DAY*(d.getDate()-1)) +
+         (DB_RECORDS_PER_HR*d.getHours()) +
+         (0|(d.getMinutes()*DB_RECORDS_PER_HR/60));
+}
+
+// Read all records from the given month
+exports.readAllRecords = function(d, cb) {
+  var rec = getRecordIdx(d);
+  var fn = getRecordFN(d);
+  var f = require("Storage").read(fn);
+  var idx = DB_HEADER_LEN;
+  for (var day=0;day<31;day++) {
+    for (var hr=0;hr<24;hr++) {
+      for (var m=0;m<DB_RECORDS_PER_HR;m++) {
+        var h = f.substr(idx, DB_RECORD_LEN);
+        if (h!="\xFF\xFF\xFF\xFF") {
+          cb({
+            day:day+1, hr : hr, min:m*10,
+            steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
+            bpm : h.charCodeAt(2),
+            movement : h.charCodeAt(3)
+          });
+        }
+        idx += 4;
+      }
+    }
+  }
+}
+
+// Read all records from the given month
+exports.readDay = function(d, cb) {
+  var rec = getRecordIdx(d);
+  var fn = getRecordFN(d);
+  var f = require("Storage").read(fn);
+  var idx = DB_HEADER_LEN + (DB_RECORD_LEN*DB_RECORDS_PER_DAY*(d.getDate()-1));
+  for (var hr=0;hr<24;hr++) {
+    for (var m=0;m<DB_RECORDS_PER_HR;m++) {
+      var h = f.substr(idx, DB_RECORD_LEN);
+      if (h!="\xFF\xFF\xFF\xFF") {
+        cb({
+          hr : hr, min:m*10,
+          steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
+          bpm : h.charCodeAt(2),
+          movement : h.charCodeAt(3)
+        });
+      }
+      idx += 4;
+    }
+  }
+}
