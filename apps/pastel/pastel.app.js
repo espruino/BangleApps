@@ -87,19 +87,19 @@ function draw() {
     // avoid flicker on a bangle 1 by comparing with previous minute
     if (mm_prev != mm) {
       mm_prev = mm;
-      g.clearRect(0, 30, w, h);
+      g.clearRect(0, 30, w, h - 24);
     }
   } else {
     // on a b2 safe to just clear anyway as there is no flicker
-    g.clearRect(0, 30, w, h);
+    g.clearRect(0, 30, w, h - 24);
   }
     
   // draw a grid like graph paper
   if (settings.grid && process.env.HWVERSION !=1) {
     g.setColor("#0f0");
     for (var gx=20; gx <= w; gx += 20)
-      g.drawLine(gx, 30, gx, h); 
-    for (var gy=30; gy <= h; gy += 20)
+      g.drawLine(gx, 30, gx, h - 24); 
+    for (var gy=30; gy <= h - 24; gy += 20)
       g.drawLine(0, gy, w, gy);
   }
 
