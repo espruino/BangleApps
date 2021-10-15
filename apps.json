@@ -1436,7 +1436,7 @@
     "icon": "chrono.png",
     "version":"0.01",
     "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
-    "tags": "Tools",
+    "tags": "tool",
     "storage": [
       {"name":"chrono.app.js","url":"chrono.js"},
       {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
@@ -1577,7 +1577,7 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "Chronometer (timer) which runs as widget.",
-    "tags": "tools,widget",
+    "tags": "tool,widget,b2",
      "readme": "README.md",
     "storage": [
       {"name":"chronowid.wid.js","url":"widget.js"},
@@ -3517,7 +3517,7 @@
   "name": "Pastel Clock",
   "shortName": "Pastel",
   "icon": "pastel.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A Configurable clock with custom fonts and background",
   "tags": "clock,b2",
   "type":"clock",
