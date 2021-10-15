@@ -1,4 +1,6 @@
 /* jshint esversion: 6 */
+const locale = require("locale");
+
 const timeFontSize = 65;
 const dateFontSize = 20;
 const gmtFontSize = 10;
@@ -18,50 +20,41 @@ function drawSimpleClock() {
   Bangle.drawWidgets();
 
   // get date
-  var d = new Date();
-  var da = d.toString().split(" ");
+  //var d = new Date();
+  var d = new Date(Date.parse('2011-04-11T14:5:30Z'));
 
   g.reset(); // default draw styles
   // drawSting centered
   g.setFontAlign(0, 0);
 
-  // draw time
-  var time = da[4].substr(0, 5).split(":");
-  var hours = time[0],
-    minutes = time[1];
-  var meridian = "";
+  // drawTime
+  var hours;
   if (is12Hour) {
-    hours = parseInt(hours,10);
-    meridian = "AM";
-    if (hours == 0) {
-      hours = 12;
-      meridian = "AM";
-    } else if (hours >= 12) {
-      meridian = "PM";
-      if (hours>12) hours -= 12;
-    }
-    hours = (" "+hours).substr(-2);
+    hours = ("0" + d.getHours()%12).slice(-2);
+  } else {
+    hours = ("0" + d.getHours()).slice(-2);
   }
+  var minutes = ("0" + d.getMinutes()).slice(-2);
 
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
-  g.setFont(font, gmtFontSize);
-  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
+
+  if (is12Hour) {
+    g.setFont(font, gmtFontSize);
+    g.drawString(locale.meridian(d), xyCenter + 102, yposTime + 10, true);
+  }
 
   // draw Day, name of month, Date
-  var date = [da[0], da[1], da[2]].join(" ");
   g.setFont(font, dateFontSize);
-
-  g.drawString(date, xyCenter, yposDate, true);
+  g.drawString([locale.dow(d,1), locale.month(d,1), d.getDate()].join(" "), xyCenter, yposDate, true);
 
   // draw year
   g.setFont(font, dateFontSize);
   g.drawString(d.getFullYear(), xyCenter, yposYear, true);
 
   // draw gmt
-  var gmt = da[5];
   g.setFont(font, gmtFontSize);
-  g.drawString(gmt, xyCenter, yposGMT, true);
+  g.drawString(d.toString().match(/GMT[+-]\d+/), xyCenter, yposGMT, true);
 }
 
 // handle switch display on by pressing BTN1
