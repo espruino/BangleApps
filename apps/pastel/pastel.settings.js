@@ -26,6 +26,7 @@
   
   E.showMenu({
     '': { 'title': 'Pastel Clock' },
+    '< Back': back,
     'Font': {
       value: 0 | font_options.indexOf(s.font),
       min: 0, max: 4,
@@ -50,7 +51,6 @@
         s.date = !s.date
         save()
       },
-    },
-    '< Back': back,
+    }
   })
 })

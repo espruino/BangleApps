@@ -13,6 +13,21 @@
     ],
     "sortorder" : -10
   },
+  { "id": "health",
+    "name": "Health Tracking",
+    "tags": "tool,system,b2",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
+    "readme": "README.md",
+    "storage": [
+      {"name":"health.app.js","url":"app.js"},
+      {"name":"health.img","url":"app-icon.js","evaluate":true},
+      {"name":"health.boot.js","url":"boot.js"},
+      {"name":"health","url":"lib.js"}
+    ],
+    "sortorder" : -10
+  },
   { "id": "moonphase",
     "name": "Moonphase",
     "icon": "app.png",
@@ -55,7 +70,7 @@
     "name": "Launcher (Bangle.js 2)",
     "shortName":"Launcher",
     "icon": "app.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications. It will not work on Bangle.js 1.0.",
     "tags": "tool,system,launcher,b2,bno1",
     "type":"launch",
@@ -67,7 +82,7 @@
   { "id": "about",
     "name": "About",
     "icon": "app.png",
-    "version":"0.08",
+    "version":"0.09",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "tags": "tool,system,b2",
     "allow_emulator":true,
@@ -500,9 +515,9 @@
   { "id": "speedo",
     "name": "Speedo",
     "icon": "speedo.png",
-    "version":"0.04",
+    "version":"0.05",
     "description": "Show the current speed according to the GPS",
-    "tags": "tool,outdoors,gps",
+    "tags": "tool,outdoors,gps,b2",
     "storage": [
       {"name":"speedo.app.js","url":"speedo.js"},
       {"name":"speedo.img","url":"speedo-icon.js","evaluate":true}
@@ -653,7 +668,7 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.12",
+    "version":"0.13",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery,b2",
     "type":"widget",
@@ -1421,7 +1436,7 @@
     "icon": "chrono.png",
     "version":"0.01",
     "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
-    "tags": "Tools",
+    "tags": "tool",
     "storage": [
       {"name":"chrono.app.js","url":"chrono.js"},
       {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
@@ -1562,7 +1577,7 @@
     "icon": "app.png",
     "version":"0.03",
     "description": "Chronometer (timer) which runs as widget.",
-    "tags": "tools,widget",
+    "tags": "tool,widget,b2",
      "readme": "README.md",
     "storage": [
       {"name":"chronowid.wid.js","url":"widget.js"},
@@ -3502,7 +3517,7 @@
   "name": "Pastel Clock",
   "shortName": "Pastel",
   "icon": "pastel.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A Configurable clock with custom fonts and background",
   "tags": "clock,b2",
   "type":"clock",
@@ -3571,6 +3586,17 @@
   ],
   "data": [
     {"name":"score.json"}
+  ]
+},
+{ "id": "menusmall",
+  "name": "Small Menus",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Replace Bangle.js 2's menus with a version that contains smaller text",
+  "tags": "b2,bno1,system",
+  "type": "boot",
+  "storage": [
+    {"name":"menusmall.boot.js","url":"boot.js"}
   ]
 },
 { "id": "ffcniftya",

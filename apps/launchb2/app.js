@@ -14,17 +14,23 @@ var w = g.getWidth();
 var h = g.getHeight();
 var n = Math.ceil((h-24)/APPH);
 var menuScrollMax = APPH*apps.length - (h-24);
+// FIXME: not needed after 2v11
+var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 
 apps.forEach(app=>{
   if (app.icon)
     app.icon = s.read(app.icon); // should just be a link to a memory area
 });
+if (g.wrapString) { // FIXME: check not needed after 2v11
+  g.setFont(font);
+  apps.forEach(app=>app.name = g.wrapString(app.name, g.getWidth()-64).join("\n"));
+}
 
 function drawApp(i) {
   var y = 24+i*APPH-menuScroll;
   var app = apps[i];
   if (!app || y<-APPH || y>=g.getHeight()) return;
-  g.setFont("6x8",2).setFontAlign(-1,0).drawString(app.name,64,y+32);
+  g.setFont(font).setFontAlign(-1,0).drawString(app.name,64,y+32);
   if (app.icon) try {g.drawImage(app.icon,8,y+8);} catch(e){}
 }
 

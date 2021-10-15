@@ -8,6 +8,7 @@ function redraw() {
   m.draw();
   drawMarker();
   if (WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
+    g.flip(); // force immediate draw on double-buffered screens - track will update later
     g.setColor(0.75,0.2,0);
     WIDGETS["gpsrec"].plotTrack(m);
   }
