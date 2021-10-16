@@ -12,6 +12,8 @@ const Locale = require('locale');
 const SHARD_COLOR =[0,1.0,0];
 const SHARD_FONT_SIZE = 12;
 const SHARD_Y_START = 30;
+const w = g.getWidth();
+
 /**
 * The text shard object is responsible for creating the 
 * shards of text that move down the screen. As the 
@@ -111,7 +113,7 @@ var dateStr = "";
 var last_draw_time = null;
 
 const TIME_X_COORD = 20;
-const TIME_Y_COORD = 100;
+const TIME_Y_COORD = g.getHeight() / 2;
 const DATE_X_COORD = 170;
 const DATE_Y_COORD = 30;
 const RESET_PROBABILITY = 0.5;
@@ -141,29 +143,26 @@ function draw_clock(){
   }
   var now = new Date();
   // draw time. Have to draw time on every loop
-  g.setFont("Vector",45);
-  g.setFontAlign(-1,-1,0);
+
+  g.setFont("Vector", g.getWidth() / 5);
+  g.setFontAlign(0,-1);
   if(last_draw_time == null || now.getMinutes() != last_draw_time.getMinutes()){
-    g.setColor(0,0,0);
-    g.drawString(timeStr, TIME_X_COORD, TIME_Y_COORD);
+    g.setColor(g.theme.fg);
+    g.drawString(timeStr, w/2, TIME_Y_COORD);
     timeStr = format_time(now);
   }
-  g.setColor(SHARD_COLOR[0],
-                 SHARD_COLOR[1],
-                 SHARD_COLOR[2]);
-  g.drawString(timeStr, TIME_X_COORD, TIME_Y_COORD); 
+  g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
+  g.drawString(timeStr, w/2, TIME_Y_COORD); 
   //
   // draw date when it changes
   g.setFont("Vector",15);
-  g.setFontAlign(-1,-1,0);
+  g.setFontAlign(0,-1,0);
   if(last_draw_time == null || now.getDate() != last_draw_time.getDate()){
-    g.setColor(0,0,0);
-    g.drawString(dateStr, DATE_X_COORD, DATE_Y_COORD);
+    g.setColor(g.theme.fg);
+    g.drawString(dateStr, w/2, DATE_Y_COORD);
     dateStr = format_date(now);
-    g.setColor(SHARD_COLOR[0],
-                 SHARD_COLOR[1],
-                 SHARD_COLOR[2]);
-    g.drawString(dateStr, DATE_X_COORD, DATE_Y_COORD); 
+    g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
+    g.drawString(dateStr, w/2, DATE_Y_COORD); 
   }
   last_draw_time = now;
 }
@@ -232,10 +231,10 @@ function startTimers(){
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    console.log("lcdPower: on");
+    //console.log("lcdPower: on");
     startTimers();
   } else {
-    console.log("lcdPower: off");
+    //console.log("lcdPower: off");
     clearTimers();
   }
 });
