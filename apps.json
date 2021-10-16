@@ -1482,6 +1482,7 @@
     "description": "Touch enable left to right launcher.",
     "tags": "tool,system,launcher,b2",
     "type":"launch",
+    "readme": "README.md",
     "data": [
       {"name":"toucher.json"}
     ],
