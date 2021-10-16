@@ -1,4 +1,4 @@
-# Toucher - A touch based launcher, swipe left, switch right, tap to launch
+# Toucher - A touch based launcher, swipe left, swipe right, tap to launch
 
 * Designed specifically for Bangle 1 and Bangle 2
 
