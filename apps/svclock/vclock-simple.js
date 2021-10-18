@@ -1,17 +1,39 @@
 /* jshint esversion: 6 */
 const locale = require("locale");
 
-const timeFontSize = 65;
-const dateFontSize = 20;
-const gmtFontSize = 10;
-const font = "Vector";
+var timeFontSize;
+var dateFontSize;
+var gmtFontSize;
+var font = "Vector";
 
-const xyCenter = g.getWidth() / 2;
-const yposTime = 75;
-const yposDate = 130;
-const yposYear = 175;
-const yposGMT = 220;
+var xyCenter = g.getWidth() / 2;
+var yposTime;
+var yposDate;
+var yposYear;
+var yposGMT;
 
+switch (process.env.BOARD) {
+  case "EMSCRIPTEN":
+    timeFontSize = 65;
+    dateFontSize = 20;
+    gmtFontSize = 10;
+
+    yposTime = 75;
+    yposDate = 130;
+    yposYear = 175;
+    yposGMT = 220;
+    break;
+  case "EMSCRIPTEN2":
+    timeFontSize = 48;
+    dateFontSize = 15;
+    gmtFontSize = 10;
+
+    yposTime = 55;
+    yposDate = 95;
+    yposYear = 128;
+    yposGMT = 161;
+    break;
+}
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 
@@ -20,8 +42,7 @@ function drawSimpleClock() {
   Bangle.drawWidgets();
 
   // get date
-  //var d = new Date();
-  var d = new Date(Date.parse('2011-04-11T14:5:30Z'));
+  var d = new Date();
 
   g.reset(); // default draw styles
   // drawSting centered
