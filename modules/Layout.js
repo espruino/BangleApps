@@ -4,7 +4,7 @@ Usage:
 
 ```
 var Layout = require("Layout");
-var layout = new Layout( layoutObject, btns, options )
+var layout = new Layout( layoutObject, options )
 layout.render(optionalObject);
 ```
 
@@ -47,15 +47,13 @@ layoutObject has:
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 * `width` and `height` fields to optionally specify minimum size
 
-btns is an array of objects containing:
-
-* `label` - the text on the button
-* `cb` - a callback function
-* `cbl` - a callback function for long presses
-
 options is an object containing:
 
 * `lazy` - a boolean specifying whether to enable automatic lazy rendering
+* `btns` - array of objects containing:
+  * `label` - the text on the button
+  * `cb` - a callback function
+  * `cbl` - a callback function for long presses
 
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
@@ -78,9 +76,8 @@ Other functions:
 */
 
 
-function Layout(layout, buttons, options) {
+function Layout(layout, options) {
   this._l = this.l = layout;
-  this.b = buttons;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
   this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
@@ -88,7 +85,43 @@ function Layout(layout, buttons, options) {
   options = options || {};
   this.lazy = options.lazy || false;
 
-  if (buttons) {
+  var btnList;
+  if (process.env.HWVERSION!=2) {
+    // no touchscreen, find any buttons in 'layout'
+    btnList = [];
+    function btnRecurser(l) {
+      if (l.type=="btn") btnList.push(l);
+      if (l.c) l.c.forEach(btnRecurser);
+    }
+    btnRecurser(layout);
+    if (btnList.length) { // there are buttons in 'layout'
+      // disable physical buttons - use them for back/next/select
+      this.physBtns = 0;
+      this.buttons = btnList;
+      this.selectedButton = -1;
+      Bangle.setUI("updown", dir=>{
+        var s = this.selectedButton, l=this.buttons.length;
+        if (dir===undefined && this.buttons[s])
+          return this.buttons[s].cb();
+        if (this.buttons[s]) {
+          delete this.buttons[s].selected;
+          this.render(this.buttons[s]);
+        }
+        s += dir;
+        if (s<0) s+=lh;
+        if (s>=l) s-=l;
+        if (this.buttons[s]) {
+          this.buttons[s].selected = 1;
+          this.render(this.buttons[s]);
+        }
+        this.selectedButton = s;
+      });
+    }
+  }
+
+  if (options.btns) {
+    var buttons = options.btns;
+    this.b = buttons;
     if (this.physBtns >= buttons.length) {
       // Handler for button watch events
       function pressHandler(btn,e) {
@@ -114,12 +147,14 @@ function Layout(layout, buttons, options) {
         {type:"v", pad:1, filly:1, c: buttons.map(b=>(b.type="txt",b.font="6x8",b.height=btnHeight,b.r=1,b))}
       ]};
     } else {
-      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
-      this._l.width = g.getWidth()-20; // button width
+      // add 'soft' buttons
+      this._l.width = g.getWidth()-32; // button width
       this._l = {type:"h", c: [
         this._l,
-        {type:"v", c: buttons.map(b=>(b.type="btn",b.h=btnHeight,b.w=32,b.r=1,b))}
+        {type:"v", c: buttons.map(b=>(b.type="btn",b.filly=1,b.width=32,b.r=1,b))}
       ]};
+      // if we're selecting with physical buttons, add these to the list
+      if (btnList) btnList.push.apply(btnList, this._l.c[1].c);
     }
   }
   if (process.env.HWVERSION==2) {
@@ -233,7 +268,7 @@ Layout.prototype.render = function (l) {
         x,y+h-5,
         x,y+4
       ];
-    g.setColor(g.theme.bgH).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg).drawPoly(poly).setFont("4x6",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+    g.setColor(l.selected?g.theme.bgH:g.theme.bg2).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly).setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
     g.drawImage(l.src(), l.x + (0|l.pad), l.y + (0|l.pad));
   }, "custom":function(l){
@@ -347,8 +382,8 @@ Layout.prototype.update = function() {
         l._w = g.stringWidth(l.label);
       }
     }, "btn": function(l) {
-      l._h = 24;
-      l._w = 14 + l.label.length*8;
+      l._h = 32;
+      l._w = 20 + l.label.length*12;
     }, "img": function(l) {
       var src = l.src(); // get width and height out of image
       if (src[0]) {
@@ -407,5 +442,3 @@ Layout.prototype.clear = function(l) {
   if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
   g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
 };
-
-exports = Layout;

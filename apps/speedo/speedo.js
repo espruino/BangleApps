@@ -23,7 +23,7 @@ function onGPS(fix) {
             {type:"txt", font:"10%", label:fix.satellites, pad:2, id:"sat" },
             {type:"txt", font:"6x8", pad:3, label:"Satellites" }
           ]},
-        ]},[],{lazy:true});
+        ]},{lazy:true});
     } else {
       layout = new Layout( {
         type:"v", c: [
@@ -34,7 +34,7 @@ function onGPS(fix) {
             {type:"txt", font:"10%", label:fix.satellites, pad:2, id:"sat" },
             {type:"txt", font:"6x8", pad:3, label:"Satellites" }
           ]},
-        ]},[],{lazy:true});
+        ]},{lazy:true});
     }
     g.clearRect(0,24,g.getWidth(),g.getHeight());
     layout.render();
