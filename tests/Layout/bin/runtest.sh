@@ -1,7 +1,7 @@
 #!/bin/bash
 # Requires Linux x64 (for ./espruino)
 # Also imagemagick for display
- 
+
 cd `dirname $0`/..
 if [ "$#" -ne 1 ]; then
     echo "USAGE:"
@@ -19,7 +19,7 @@ SRCBMP=$SRCDIR/`basename $SRCJS .js`.bmp
 echo "TEST $SRCJS ($SRCBMP)"
 
 cat  ../../modules/Layout.js > $TESTJS
-echo 'Bangle = {};BTN1=0;process.env = process.env;process.env.HWVERSION=2;' >> $TESTJS
+echo 'Bangle = { setUI : function(){} };BTN1=0;process.env = process.env;process.env.HWVERSION=2;' >> $TESTJS
 echo 'g = Graphics.createArrayBuffer(176,176,4);' >> $TESTJS
 cat $SRCJS >> $TESTJS  || exit 1
 echo 'layout.render()' >> $TESTJS
@@ -39,5 +39,3 @@ else
   echo Files are the same
   exit 0
 fi
-
-

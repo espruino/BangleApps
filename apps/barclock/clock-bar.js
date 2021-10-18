@@ -40,7 +40,7 @@ const layout = new Layout({
     {height: 40},
     {id: "date", type: "txt", font: "10%", valign: 1},
   ],
-}, false, {lazy: true});
+}, {lazy: true});
 // adjustments based on screen size and whether we display am/pm
 let thickness; // bar thickness, same as time font "pixel block" size
 if (is12Hour) {

@@ -30,3 +30,4 @@
 0.29: Update boot0 to avoid code block (faster execution)
       Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
 0.30: Remove 'Get GPS time' at boot. Latest firmwares keep time through reboots, so this is not needed now
+0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics

@@ -10,6 +10,7 @@ function menuMain() {
 function menuStepCount() {
   E.showMenu({
     "":{title:"Step Counting"},
+    "< Back":()=>menuMain(),
     "per hour":()=>stepsPerHour()
   });
 }
@@ -17,6 +18,7 @@ function menuStepCount() {
 function menuMovement() {
   E.showMenu({
     "":{title:"Movement"},
+    "< Back":()=>menuMain(),
     "per hour":()=>movementPerHour()
   });
 }
