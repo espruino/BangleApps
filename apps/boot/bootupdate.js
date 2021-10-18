@@ -131,6 +131,41 @@ else if (mode=="updown") {
   throw new Error("Unknown UI mode");
 };\n`;
 }
+if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfill
+  boot += `Graphics.prototype.imageMetrics=function(src) {
+  if (src[0]) return {width:src[0],height:src[1]};
+  else if ('object'==typeof src) return {
+    width:("width" in src) ? src.width : src.getWidth(),
+    height:("height" in src) ? src.height : src.getHeight()};
+  var im = E.toString(src);
+  return {width:im.charCodeAt(0), height:im.charCodeAt(1)};
+};\n`;
+}
+if (!g.stringMetrics) { // added in 2v11 - this is a limited functionality polyfill
+  boot += `Graphics.prototype.stringMetrics=function(txt) {
+  return {width:this.stringWidth(txt), height:this.getFontHeight()};
+};\n`;
+}
+if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
+  boot += `Graphics.prototype.wrapString=function(str, maxWidth) {
+  var lines = [];
+  for (var unwrappedLine of str.split("\n")) {
+    var words = unwrappedLine.split(" ");
+    var line = words.shift();
+    for (var word of words) {
+      if (g.stringWidth(line + " " + word) > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line += " " + word;
+      }
+    }
+    lines.push(line);
+  }
+  return lines;
+};\n`;
+}
+
 // Append *.boot.js files
 require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
