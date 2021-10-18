@@ -29,7 +29,7 @@ layoutObject has:
   * `undefined` - blank, can be used for padding
   * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
-  * `"img"` - an image where the function `src` is called to return an image to draw
+  * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
   * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
@@ -160,11 +160,12 @@ function Layout(layout, options) {
   if (process.env.HWVERSION==2) {
     // Handler for touch events
     function touchHandler(l,e) {
-      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h)
-        l.cb(e);
+      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
+        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
+      }
       if (l.c) l.c.forEach(n => touchHandler(n,e));
     }
-    Bangle.touchHandler = function(_,e){touchHandler(layout,e)};
+    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
     Bangle.on('touch',Bangle.touchHandler);
   }
 
@@ -253,7 +254,7 @@ Layout.prototype.render = function (l) {
       ];
     g.setColor(l.selected?g.theme.bgH:g.theme.bg2).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly).setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage(l.src(), l.x + (0|l.pad), l.y + (0|l.pad));
+    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad));
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -367,7 +368,7 @@ Layout.prototype.update = function() {
       l._h = 32;
       l._w = 20 + l.label.length*12;
     }, "img": function(l) {
-      var m = g.imageMetrics(l.src()); // get width and height out of image
+      var m = g.imageMetrics("function"==typeof l.src?l.src():l.src); // get width and height out of image
       l._w = m.width;
       l._h = m.height;
     }, "": function(l) {
