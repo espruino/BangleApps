@@ -190,24 +190,6 @@ Layout.prototype.remove = function (l) {
   }
 };
 
-function wrappedLines(str, maxWidth) {
-  var lines = [];
-  for (var unwrappedLine of str.split("\n")) {
-    var words = unwrappedLine.split(" ");
-    var line = words.shift();
-    for (var word of words) {
-      if (g.stringWidth(line + " " + word) > maxWidth) {
-        lines.push(line);
-        line = word;
-      } else {
-        line += " " + word;
-      }
-    }
-    lines.push(line);
-  }
-  return lines;
-}
-
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
   if (bgCol != parentBg || l.type == "txt" || l.type == "btn" || l.type == "img" || l.type == "custom") {
@@ -246,8 +228,9 @@ Layout.prototype.render = function (l) {
     "txt":function(l){
       if (l.wrap) {
         g.setFont(l.font,l.fsz).setFontAlign(0,-1);
-        var lines = wrappedLines(l.label, l.w);
+        var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
+        //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
         g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
@@ -377,26 +360,16 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        g.setFont(l.font,l.fsz);
-        l._h = g.getFontHeight();
-        l._w = g.stringWidth(l.label);
+        var m = g.setFont(l.font,l.fsz).stringMetrics(l.label);
+        l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
       l._h = 32;
       l._w = 20 + l.label.length*12;
     }, "img": function(l) {
-      var src = l.src(); // get width and height out of image
-      if (src[0]) {
-        l._w = src[0];
-        l._h = src[1];
-      } else if ('object'==typeof src) {
-        l._w = ("width" in src) ? src.width : src.getWidth();
-        l._h = ("height" in src) ? src.height : src.getHeight();
-      } else {
-        var im = E.toString(src);
-        l._w = im.charCodeAt(0);
-        l._h = im.charCodeAt(1);
-      }
+      var m = g.imageMetrics(l.src()); // get width and height out of image
+      l._w = m.width;
+      l._h = m.height;
     }, "": function(l) {
       // size should already be set up in width/height
       l._w = 0;
