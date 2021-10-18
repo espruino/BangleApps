@@ -140,7 +140,7 @@ function render(){
     g.setColor(g.theme.fg);
 
     if (cycle == 2 && scale > 0.1) {
-      const fontSize = (process.env.HWVERSION == 2) ? 2 : 1;
+      let fontSize = (process.env.HWVERSION == 2) ? 2 : 1;
       if (process.env.HWVERSION == 1) {
         fontSize = (settings.highres) ? 3 : 1;
       }
