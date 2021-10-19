@@ -47,10 +47,9 @@ const activeColorNight = 0xF800 /*red*/ ;
 const activeColorDay = 0xFFFF /* white */;
 
 var hidxPrev;
+var showDigitalTime = false;
 
 function drawWordClock() {
-
-
   // get time
   var t = new Date();
   var h = t.getHours();
@@ -141,7 +140,7 @@ function drawWordClock() {
 
   // Display digital time while button 1 is pressed
   g.clearRect(0, 215, 240, 240);
-  if (BTN1.read()){
+  if (showDigitalTime){
     g.setColor(activeColor);
     g.drawString(time, 120, 215);
   }
@@ -158,8 +157,20 @@ Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
 
-// Show digital time while top button is pressed
-setWatch(drawWordClock, BTN1, {repeat:true,edge:"both"});
+// Show digital time while top button is pressed (if we have physical buttons)
+if (global.BTN3) setWatch(function() {
+  showDigitalTime = BTN1.read();
+  drawWordClock();
+}, BTN1, {repeat:true,edge:"both"});
 
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// If LCD pressed (on Bangle.js 2) draw digital time
+Bangle.on('drag',e=>{
+  var pressed = e.b!=0;
+  if (pressed!=showDigitalTime) {
+    showDigitalTime = pressed;
+    drawWordClock();
+  }
+});
+
+// Show launcher when button pressed
+Bangle.setUI("clock");

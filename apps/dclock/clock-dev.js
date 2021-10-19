@@ -1,17 +1,18 @@
 var locale = require("locale");
 /* jshint esversion: 6 */
-const timeFontSize = 4;
-const dateFontSize = 3;
-const smallFontSize = 2;
+const big = g.getWidth()>200;
+const timeFontSize = big?4:3;
+const dateFontSize = big?3:2;
+const smallFontSize = big?2:1;
 const font = "6x8";
 
 const xyCenter = g.getWidth() / 2;
 const yposTime = 50;
-const yposDate = 85;
-const yposTst = 115;
-const yposDml = 170;
-const yposDayMonth = 195;
-const yposGMT = 220;
+const yposDate = big?85:75;
+const yposTst = big?115:95;
+const yposDml = big?170:130;
+const yposDayMonth = big?195:140;
+const yposGMT = big?220:150;
 
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
@@ -99,6 +100,8 @@ Bangle.on('lcdPower', function(on) {
 
 // clean app screen
 g.clear();
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -107,6 +110,3 @@ setInterval(drawSimpleClock, 100);
 
 // draw now
 drawSimpleClock();
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});

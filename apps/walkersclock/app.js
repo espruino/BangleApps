@@ -34,8 +34,10 @@ const GPS_SATS = "gps_sats";
 const GPS_RUNNING = "gps_running";
 
 const GDISP_OS = "g_osref";
+const GDISP_LATLN = "g_latln";
 const GDISP_SPEED = "g_speed";
 const GDISP_ALT = "g_alt";
+const GDISP_COURSE = "g_course";
 
 const Y_TIME = 40;
 const Y_ACTIVITY = 120;
@@ -46,6 +48,10 @@ let gpsPowerState = false;
 let infoMode = INFO_NONE;
 let functionMode = FN_MODE_OFF;
 let gpsDisplay = GDISP_OS;
+let prevInfoStr = "clear";
+let prevActivityStr = "clear";
+let prevSteps = "clear";
+let clearActivityArea = true;
 
 let last_steps = undefined;
 let firstPress = 0;
@@ -66,7 +72,8 @@ function drawTime() {
   var time = da[4].substr(0,5);
 
   g.reset();
-  g.clearRect(0,24,239,239);
+  g.clearRect(0,Y_TIME, 239, Y_ACTIVITY - 1);
+  
   g.setColor(1,1,1);  // white
   g.setFontAlign(0, -1);
 
@@ -81,15 +88,22 @@ function drawTime() {
   g.drawString(time, g.getWidth()/2, Y_TIME);
 }
 
-function drawSteps() { 
-  g.setColor(0,255,0);  // green
-  g.setFont("Vector", 60);
-  g.drawString(getSteps(), g.getWidth()/2, Y_ACTIVITY);
-}
-
 function drawActivity() {
+  var steps = getSteps();
+  if (!gpsPowerState && steps != prevSteps)
+    clearActivityArea = true;
+
+  prevSteps = steps;
+  
+  if (clearActivityArea) {
+    g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
+    clearActivityArea = false;
+  }
+  
   if (!gpsPowerState) {
-    drawSteps();
+    g.setColor(0,255,0);  // green
+    g.setFont("Vector", 60);
+    g.drawString(getSteps(), g.getWidth()/2, Y_ACTIVITY);
     return;
   }
   
@@ -116,6 +130,7 @@ function drawActivity() {
     let os = OsGridRef.latLongToOsGrid(last_fix);
     let ref = to_map_ref(6, os.easting, os.northing);
     let speed;
+    let activityStr = "";
     
     if (age < 0) age = 0;
     g.setFontVector(40);
@@ -123,18 +138,27 @@ function drawActivity() {
 
     switch(gpsDisplay) {
     case GDISP_OS:
-      g.drawString(ref, 120, Y_ACTIVITY, true);
+      activityStr = ref;
+      break;
+    case GDISP_LATLN:
+      g.setFontVector(26);
+      activityStr = last_fix.lat.toFixed(4) + ", " + last_fix.lon.toFixed(4);
       break;
     case GDISP_SPEED:
       speed = last_fix.speed;
       speed = speed.toFixed(1);
-      g.drawString(speed + "kph", 120, Y_ACTIVITY, true);
+      activityStr = speed + "kph"; 
       break;
     case GDISP_ALT:
-      g.drawString(last_fix.alt + "m" , 120, Y_ACTIVITY, true);
+      activityStr = last_fix.alt + "m";
+      break;
+    case GDISP_COURSE:
+      activityStr = last_fix.course;
       break;
     }
 
+    g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
+    g.drawString(activityStr, 120, Y_ACTIVITY);
     g.setFont("6x8",2);
     g.setColor(1,1,1); 
     g.drawString(age, 120, Y_ACTIVITY + 46);
@@ -174,8 +198,6 @@ function drawInfo() {
   let str = "";
   let col = 0x07E0; // green
 
-  //console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
-
   switch(functionMode) {
   case FN_MODE_OFF:
     break;
@@ -190,11 +212,17 @@ function drawInfo() {
     case GDISP_OS:
       str = "GPS: Grid";
       break;
+    case GDISP_LATLN:
+      str = "GPS: Lat,Lon";
+      break;
     case GDISP_SPEED:
       str = "GPS: Speed";
       break;
     case GDISP_ALT:
       str = "GPS: Alt";
+      break;
+    case GDISP_COURSE:
+      str = "GPS: Course";
       break;
     }
     drawModeLine(str,col);
@@ -213,11 +241,17 @@ function drawInfo() {
   default:
     str = "Battery: " + E.getBattery() + "%";
   }
-
+  
   drawModeLine(str,col);
 }
 
-function drawModeLine(str, col) {
+function drawModeLine(str,col) {
+  // check if we need to draw, avoid flicker
+  if (str == prevInfoStr)
+    return;
+
+  prevInfoStr = str;
+  drawModeLine(str,col);
   g.setFont("6x8", 3);
   g.setColor(col);
   g.fillRect(0, Y_MODELINE - 3, 239, Y_MODELINE + 25);
@@ -249,7 +283,7 @@ function changeInfoMode() {
     }
     functionMode = FN_MODE_OFF;
     infoMode = INFO_NONE;
-    //drawInfo();
+    clearActivityArea = true;
     return;
     
   case FN_MODE_GDISP:
@@ -261,6 +295,12 @@ function changeInfoMode() {
       gpsDisplay = GDISP_ALT;
       break;
     case GDISP_ALT:
+      gpsDisplay = GDISP_COURSE;
+      break;
+    case GDISP_COURSE:
+      gpsDisplay = GDISP_LATLN;
+      break;
+    case GDISP_LATLN:
     default:
       gpsDisplay = GDISP_OS;
       break;
@@ -281,7 +321,8 @@ function changeInfoMode() {
   default:
     infoMode = INFO_NONE;
   }
-  //drawInfo();
+  
+  clearActivityArea = true;
 }
 
 function changeFunctionMode() {
@@ -331,11 +372,18 @@ function resetLastFix() {
 function processFix(fix) {
   last_fix.time = fix.time;
 
-  if (gpsState == GPS_TIME)
+  if (gpsState == GPS_TIME) {
     gpsState = GPS_SATS;
+    clearActivityArea = true;
+  }
   
   if (fix.fix) {
-    if (!last_fix.fix) Bangle.buzz(); // buzz on first position
+    if (!last_fix.fix) {
+      if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+        Bangle.buzz(); // buzz on first position
+      }
+      clearActivityArea = true;
+    }
     gpsState = GPS_RUNNING;
     last_fix = fix;
   }
@@ -508,7 +556,13 @@ drawAll();
 Bangle.on('lcdPower',function(on) {
   functionMode = FN_MODE_OFF;
   infoMode = INFO_NONE;
-  if (on) drawAll();
+  if (on) {
+    prevInfoStr = "on"; // forces are redraw
+    drawAll();
+  } else {
+    prevInfoStr = "off"; // forces are redraw
+    drawInfo();
+  }
 });
 
 var click = setInterval(onTick, 5000);

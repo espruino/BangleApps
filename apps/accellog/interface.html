@@ -46,7 +46,6 @@ function getData() {
           });
           return new Promise(resolve=>{
             Puck.eval(`require("Storage").read(${JSON.stringify(fn)})`,csv=>{
-              fileData[fn] = csv.trim();
               var el = document.querySelector(`.card-body[fn='${fn}']`);
               el.innerHTML = '<canvas width="400" height="100"></canvas>';
               var c = el.firstChild;

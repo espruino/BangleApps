@@ -14,6 +14,9 @@ const settings = require("Storage").readJSON("largeclock.json", 1)||{};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
+const right_hand = !!settings.right_hand;
+const rotation = right_hand ? 3 : 1;
+
 function drawMoon(d) {
   const BLACK = 0,
     MOON = 0x41f,
@@ -140,14 +143,14 @@ function drawTime(d) {
     g.clearRect(0, 24, moonX - moonR - 10, 239);
     g.setColor(1, 1, 1);
     g.setFontAlign(-1, -1);
-    g.setFont("Vector", 100);
+    g.setFont("Vector", 130);
     g.drawString(hours, 40, 24, true);
     g.setColor(1, 50, 1);
-    g.drawString(minutes, 40, 135, true);
+    g.drawString(minutes, 40, 130, true);
     g.setFont("Vector", 20);
-    g.setRotation(3);
-    g.drawString(`${dow} ${day} ${month}`, 50, 10, true);
-    g.drawString(year, is12Hour ? 46 : 75, 205, true);
+    g.setRotation(rotation);
+    g.drawString(`${dow} ${day} ${month}`, 60, right_hand?10:205, true);
+    g.drawString(year, is12Hour?(right_hand?56:120):(right_hand?85:115), right_hand?205:10, true);
     lastMinutes = minutes;
   }
   g.setRotation(0);
@@ -179,9 +182,9 @@ Bangle.on("lcdPower", function(on) {
 
 Bangle.setLCDMode();
 
-// Show launcher when middle button pressed
-clearWatch();
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 if (BTN1app) setWatch(
   function() {
     load(BTN1app);

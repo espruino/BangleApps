@@ -18,8 +18,10 @@ function showAlarm(alarm) {
   var buzzCount = 10;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
   E.showPrompt(msg,{
-    title:"ALARM!",
+    title:alarm.timer ? "TIMER!" : "ALARM!",
     buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;
@@ -38,6 +40,7 @@ function showAlarm(alarm) {
     load();
   });
   function buzz() {
+    if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
     Bangle.buzz(100).then(()=>{
       setTimeout(()=>{
         Bangle.buzz(100).then(function() {

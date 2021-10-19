@@ -1,4 +1,6 @@
-const buf = Graphics.createArrayBuffer(144,200,1,{msb:true});
+let big = g.getHeight() > 200;
+const buf = Graphics.createArrayBuffer(big ? 144 : 120, big ? 180 : 150,1,{msb:true});
+// TODO: convert these to Polys -> much faster and cleaner!
 const NUMBERS = [
   [1,1,1,1,3,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1],//0
   [0,1,1,1,3,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1],//1
@@ -14,8 +16,10 @@ const NUMBERS = [
 let intervalRef = null;
 let digits = [-1,-1,-1,-1,-1,-1];
 function flip() {
-  g.setColor(1,1,1);
-  g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},55,26);
+  g.reset();
+  g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},
+              (g.getWidth() - buf.getWidth())/2,
+              26 + (g.getHeight() - (buf.getHeight()+24))/2);
 }
 function drawPixel(ox,oy,x,y,r,p) {
   let x1 = ox+x*(r*2);
@@ -53,26 +57,31 @@ function redraw() {
 
   let newDigits = [Math.floor(hours/10),hours%10,Math.floor(mins/10),mins%10,Math.floor(secs/10),secs%10];
 
+  let s = big?6:5; // size of main digits
+  let y2 = big?72:55;
+  let y3 = big?144:110;
+
+
   for (var p = 0;p<25;p++) {
     var px = p%5;
     var py = Math.floor(p/5);
     if (digits[0] === -1 || NUMBERS[newDigits[0]][p] !== NUMBERS[digits[0]][p] ) {
-      drawPixel(0,20,px,py,6,NUMBERS[newDigits[0]][p]);
+      drawPixel(0,0,px,py,s,NUMBERS[newDigits[0]][p]);
     }
     if (digits[1] === -1 || NUMBERS[newDigits[1]][p] !== NUMBERS[digits[1]][p] ) {
-      drawPixel(78,20,px,py,6,NUMBERS[newDigits[1]][p]);
+      drawPixel(13*s,0,px,py,s,NUMBERS[newDigits[1]][p]);
     }
     if (digits[2] === -1 || NUMBERS[newDigits[2]][p] !== NUMBERS[digits[2]][p] ) {
-      drawPixel(0,92,px,py,6,NUMBERS[newDigits[2]][p]);
+      drawPixel(0,y2,px,py,s,NUMBERS[newDigits[2]][p]);
     }
     if (digits[3] === -1 || NUMBERS[newDigits[3]][p] !== NUMBERS[digits[3]][p] ) {
-      drawPixel(78,92,px,py,6,NUMBERS[newDigits[3]][p]);
+      drawPixel(13*s,y2,px,py,s,NUMBERS[newDigits[3]][p]);
     }
     if (digits[4] === -1 || NUMBERS[newDigits[4]][p] !== NUMBERS[digits[4]][p] ) {
-      drawPixel(69,164,px,py,3,NUMBERS[newDigits[4]][p]);
+      drawPixel(17*s - 3*12,y3,px,py,3,NUMBERS[newDigits[4]][p]);
     }
     if (digits[5] === -1 || NUMBERS[newDigits[5]][p] !== NUMBERS[digits[5]][p] ) {
-      drawPixel(108,164,px,py,3,NUMBERS[newDigits[5]][p]);
+      drawPixel(17*s,y3,px,py,3,NUMBERS[newDigits[5]][p]);
     }
   }
   digits = newDigits;
@@ -86,9 +95,9 @@ function clearTimers() {
 }
 function startTimers() {
   g.clear();
+  redraw();
   Bangle.drawWidgets();
   intervalRef = setInterval(redraw,1000);
-  redraw();
 }
 Bangle.loadWidgets();
 startTimers();
@@ -99,5 +108,5 @@ Bangle.on('lcdPower',function(on) {
     clearTimers();
   }
 });
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clock");

@@ -4,7 +4,8 @@ require("Font7x11Numeric7Seg").add(Graphics);
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 // position on screen
-const X = 160, Y = 140;
+const big = g.getWidth()>200;
+const X = big?160:135, Y = big?140:100;
 
 function draw() {
   // work out how to display the current time
@@ -23,13 +24,13 @@ function draw() {
   g.drawString(time, X, Y, true /*clear background*/);
   // draw the seconds (2x size 7 segment)
   g.setFont("7x11Numeric7Seg",2);
-  g.drawString(("0"+d.getSeconds()).substr(-2), X+30, Y, true /*clear background*/);
+  g.drawString(("0"+d.getSeconds()).substr(-2), X+35, Y, true /*clear background*/);
   // draw the date, in a normal font
-  g.setFont("6x8");
+  g.setFont("6x8", big?3:2);
   g.setFontAlign(0,1); // align center bottom
   // pad the date - this clears the background if the date were to change length
   var dateStr = "    "+require("locale").date(d)+"    ";
-  g.drawString(dateStr, g.getWidth()/2, Y+15, true /*clear background*/);
+  g.drawString(dateStr, g.getWidth()/2, Y+35, true /*clear background*/);
 }
 
 // Clear the screen once, at startup
@@ -46,11 +47,14 @@ Bangle.on('lcdPower',on=>{
     draw(); // draw immediately
   }
 });
+
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn==0) vibrateTime();
+});
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
 // ====================================== Vibration
 // vibrate 0..9
@@ -92,6 +96,3 @@ function vibrateTime() {
     then(() => vibrateNumber(minutes.toString())).
     then(() => vibrateBusy=false);
 }
-
-// when BTN1 pressed, vibrate
-setWatch(vibrateTime, BTN1, {repeat:true,edge:"rising"});

@@ -57,7 +57,5 @@ on the second line of the watch.
 ![](gps_alt.jpg)
 
 ## Future Enhancements
-* Ability to turn on the Heart Rate monitor
+* Ability to turn on the heart rate monitor and display the rate on the info line
 * Maybe a simple stopwatch capability
-* Fix the screen flicker
-

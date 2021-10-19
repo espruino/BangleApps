@@ -60,8 +60,8 @@ var scenes = [
     };
   },
   function() {
+    Bangle.setLCDMode("120x120");
     var img = require("heatshrink").decompress(atob("oNBxH+5wA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AHGpAAoQKv4ADCBQAeqsrAAejBw9/B4oABqt/IGepHw5CEQspALH5hBC5pAvv4/MAALFkIBWpPI6IHqpAu0Z3GfYOpRYdPQEhALYIp2FBYNVI4JAvvL4LH0yBYAFJAQQQ5Ay1JAFftBAQBYxCDv+qIGiCHIQiGnIBfOv5BJIQRAyIJkrvKEkIBrFBB4qEGIGRCNYsZAQIQV/IZDEiICRCDQVJAUIQVPC4lVIF6yJQYpAZ5t/FYvNIBepqtVIJGjIDoqBDY2pdYo3DfAhBIQLmpvIcDvIrC5oJEIAhTCGQmj5qgEC4t5e7YrBqt5BI6UFBg15v4XHbQwAQb4oAKv7NKABdVRoYATUAwnICqjZFIMdVE4+jXI4XGYCxBFFZN/M5OpCxUrvJ/ZFYmjvNVAAY+KCwpDBC6YAV5vNC9oA/AH4A/AHYA=="));
-
     g.clear();
     y = 0;
     var step = 4;
@@ -70,8 +70,7 @@ var scenes = [
       g.clear();
       g.drawImage(img,60,60,{rotate:Math.sin(y*0.03)*0.5});
       g.flip();
-    }, 20);
-    Bangle.setLCDMode("120x120");
+    }, 20);    
     return function() {
       if (i) clearInterval(i);
     };

@@ -11,3 +11,4 @@
 0.13: Improve icon
 0.14: Switch Icon back to 8bit web palette to fix it
 0.15: Hotfix: Remove var declaration from app image
+0.16: Revert: Change Counter back to button control

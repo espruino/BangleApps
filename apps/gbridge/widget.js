@@ -1,4 +1,7 @@
 (() => {
+  // Current shown notification, saved for dismissing.
+  var currentNot = null;
+
   // Music handling
   const state = {
     music: "stop",
@@ -125,7 +128,7 @@
     if (activityInterval)
       clearInterval(activityInterval);
     activityInterval = undefined;
-    if (s.hrm) Bangle.setHRMPower(1);
+    if (s.hrm) Bangle.setHRMPower(1,"gbr");
     if (s.hrm) {
       if (realtime) {
         // if realtime reporting, leave HRM on and use that to trigger events
@@ -135,7 +138,7 @@
         hrmTimeout = 5;
         activityInterval = setInterval(function() {
           hrmTimeout = 5;
-          Bangle.setHRMPower(1);
+          Bangle.setHRMPower(1,"gbr");
         }, interval*1000);
       }
     } else {
@@ -151,13 +154,22 @@
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
-      case "notify-":
-        if (event.t === "notify") {
-          require("notify").show(prettifyNotificationEvent(event));
+        currentNot = prettifyNotificationEvent(event);
+        currentNot.onHide = function() {
+          // when notification hidden, remove from phone
+          gbSend({ t:"notify", n:"DISMISS", id:currentNot.id });
+        };
+        require("notify").show(currentNot);
+        if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
           Bangle.buzz();
-        } else { // notify-
-          require("notify").hide(event);
         }
+        break;
+      case "notify-":
+        currentNot.t = "notify";
+        currentNot.n = "DISMISS";
+        gbSend(currentNot);
+        currentNot = null;
+        require("notify").hide(event);
         break;
       case "musicinfo":
         state.musicInfo = event;
@@ -174,7 +186,9 @@
                      body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
         if (event.cmd === "incoming") {
           require("notify").show(note);
-          Bangle.buzz();
+          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+            Bangle.buzz();
+          }
         } else if (event.cmd === "start") {
           require("notify").show(Object.assign(note, {
             bgColor : "#008000", titleBgColor : "#00C000",
@@ -194,6 +208,7 @@
           delete state.find;
         }
         if (event.n)
+          // Ignore quiet mode: we always want to find our watch
           state.find = setInterval(_=>{
             Bangle.buzz();
             setTimeout(_=>Bangle.beep(), 1000);
@@ -266,7 +281,7 @@
     if (hrmTimeout!==undefined) hrmTimeout--;
     if (ok || hrmTimeout<=0) {
       if (hrmTimeout!==undefined)
-        Bangle.setHRMPower(0);
+        Bangle.setHRMPower(0,"gbr");
       sendActivity(hrm.confidence>20 ? hrm.bpm : -1);
     }
   });
