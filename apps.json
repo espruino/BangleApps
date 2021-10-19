@@ -961,7 +961,7 @@
   { "id": "svclock",
     "name": "Simple V-Clock",
     "icon": "vclock-simple.png",
-    "version":"0.02",
+    "version":"0.03",
     "description": "Modification of Simple Clock 0.04 to use Vectorfont",
     "tags": "clock",
     "type":"clock",
