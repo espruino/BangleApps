@@ -3,7 +3,7 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 */
-var v = '0.04';
+var v = '0.05';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -264,6 +264,9 @@ function drawScrn(dat) {
   
   g.reset();
   g.drawImage(img,0,40);
+  
+  if ( pwrSav ) LED1.reset();
+  else LED1.set();
 
 }
 
@@ -369,15 +372,6 @@ function onGPS(fix) {
       
   if ( cfg.modeA == 0 )  {
     // Speed
-//    if ( di <= 0 ) 
-//      drawScrn({
-//        val:sp,
-//        unit:cfg.spd_unit,
-//        sats:lf.satellites,
-//        age:age,
-//        fix:lf.fix
-//      }); // No WP selected
-//    else 
     if ( showMax ) 
       drawScrn({
         val:max.spd,
