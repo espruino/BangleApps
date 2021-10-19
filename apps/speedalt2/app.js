@@ -3,7 +3,7 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 */
-var v = '0.01a';
+var v = '0.03a';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -519,7 +519,7 @@ function stopDraw() {
 }
 
 function savSettings() {
-  require("Storage").write('speedalt.json',cfg);
+  require("Storage").write('speedalt2.json',cfg);
 }
 
 function setLpMode(m) {
@@ -531,7 +531,7 @@ function setLpMode(m) {
 // =Main Prog
 
 // Read settings. 
-let cfg = require('Storage').readJSON('speedalt.json',1)||{};
+let cfg = require('Storage').readJSON('speedalt2.json',1)||{};
 
 cfg.spd = cfg.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 cfg.spd_unit = cfg.spd_unit||'';  // Displayed speed unit
