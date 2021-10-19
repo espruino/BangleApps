@@ -1,10 +1,10 @@
 (function(back) {
 
-  let settings = require('Storage').readJSON('speedalt.json',1)||{};
+  let settings = require('Storage').readJSON('speedalt2.json',1)||{};
   //settings.buzz = settings.buzz||1;
   
   function writeSettings() {
-    require('Storage').write('speedalt.json',settings);
+    require('Storage').write('speedalt2.json',settings);
   }
   
    function setUnits(m,u) {
@@ -34,7 +34,7 @@
   const appMenu = {
     '': {'title': 'GPS Speed Alt'},
     '< Back': back,
-    '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
+    '< Load GPS Adv Sport': ()=>{load('speedalt2.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
     'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
