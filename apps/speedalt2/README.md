@@ -1,9 +1,12 @@
 # GPS Speed, Altimeter and Distance to Waypoint
 
-What is the difference between GPS Adventure Sports and GPS Adventure Sports II ?
-GPS Adventure Sports has 3 screens, each of which display different sets of information.
-GPS Adventure Sports II has 4 screens, each of which displays just one of Speed, Altitude, Distance to waypoint or Time.
-Use [BTN3] to cycle through the screens.
+What is the difference between [GPS Adventure Sports] and [GPS Adventure Sports II] ?
+
+[GPS Adventure Sports] has 3 screens, each of which display different sets of information.
+
+[GPS Adventure Sports II] has 4 screens, each of which displays just one of Speed, Altitude, Distance to waypoint or Time.
+
+In all other respect they perform the same functions. Use BTN3 to cycle through the screens.
 
 You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint. 
 
