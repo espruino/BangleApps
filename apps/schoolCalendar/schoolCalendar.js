@@ -1,8 +1,5 @@
 require("Font8x12").add(Graphics);
-require("Font8x16").add(Graphics);
-require("Font6x8").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
-require("FontHaxorNarrow7x17").add(Graphics);
 
 function getBackgroundImage() {return require("heatshrink").decompress(atob("gMwyEgBAsAgQBCgcAggBCgsAgwBCg8AhABChMAhQBChcAhgBChsAhwBCh8AiEAiIBCiUAiYBCikAioBCi0Ai4BCjEAjIBCjUAjYBCjkAjoBCj0Aj4BBA"));}
 
@@ -16,7 +13,7 @@ function getDotIcon() {return require("heatshrink").decompress(atob("iEQyBC/AA0t
 
 Bangle.setLCDMode("doublebuffered");
 g.clear();
-g.setFont("HaxorNarrow7x17");
+g.setFont("8x12");
 g.drawString("Loading...",115,60);
 g.flip();
 
@@ -25,6 +22,7 @@ INFORMATION = 2;
 currentStage = LIST;
 
 var stage = 3;
+
 function getScheduleTable() {
   let schedule = [
     //Sunday
@@ -92,26 +90,35 @@ function getScheduleTable() {
   return schedule;
 }
 
-function processDay() {
-  var schedule = getScheduleTable();
-  var currentDate = new Date();
-  var currentDayOfWeek = currentDate.getDay();
-  var currentHour = currentDate.getHours();
-  var currentMinute = currentDate.getMinutes();
-  var minofDay = (currentHour*60)+currentMinute;
-  var i;
-  var currentPositon;
-  for(i = 0;i<schedule.length;i++){
-    currentPositon = i;
-    if(schedule[i].dow == currentDayOfWeek){
-      if(minofDay >= (schedule[i].sh*60+schedule[i].sm) && minofDay < (schedule[i].eh*60+schedule[i].em) ){
-        return currentPositon;
-      }
+function splitter(str, l){
+    var strs = [];
+    while(str.length > l){
+        var pos = str.substring(0, l).lastIndexOf(' ');
+        pos = pos <= 0 ? l : pos;
+        strs.push(str.substring(0, pos));
+        var i = str.indexOf(' ', pos)+1;
+        if(i < pos || i > pos+l)
+            i = pos;
+        str = str.substring(i);
     }
-  }
-  return null;
+    strs.push(str);
+    return strs;
 }
 
+function findNextScheduleIndex() {
+  var schedule = getScheduleTable();
+  var currentDate = new Date();
+  //var minuteOfWeek = (currentDate.getDay()*3600)+(currentDate.getHours()*60)+currentDate.getMinutes();
+  var minuteOfWeek = (4*3600)+(16*60)+0;
+  var currentPosition;
+  for(currentPosition = 0;currentPosition < schedule.length; currentPosition++){
+    var scheduleItemStartMinuteOfWeek = schedule[currentPosition].dow*3600 + schedule[currentPosition].eh*60+schedule[currentPosition].em;
+    if(scheduleItemStartMinuteOfWeek > minuteOfWeek) {
+      return currentPosition;
+    }
+  }
+  return 0;
+}
 
 var currentPositionTable = 0;
 var numberOfItemsShown = 5;
@@ -186,27 +193,66 @@ function updateDay(ffunction,day){
   }
 }
 
+function minimalDraw(mode) {
+  var foundSchedule = getScheduleTable();
+  var foundNumber = findNextScheduleIndex();
+  if(mode == 1){
+    if(currentStage == LIST){
+      for(var x = 0;x<=numberOfItemsShown;x++){
+        g.setColor(255,255,255);
+        g.drawRect(10,30+(x*20),220,50+(20*x));
+        g.setColor(255,205,0);
+        g.drawRect(10,30+(2*20),220,50+(2*20));
+        g.setColor(255,0,0);
+        g.drawRect(10,30+(currentPositionTable*20),220,50+(20*currentPositionTable));
+        g.setColor(255,255,255);
+      }
+    }
+  }else if(mode == 2){
+    for(var i = 0;i<=240;i++){
+      g.drawImage(getBackgroundImage(),i,120,{scale:5,rotate:0});
+    }
+    g.drawImage(getMenuIcon(),223.5,70);
+    scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].sm);
+    scheduleHourUpdatedStart = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].sh);
+    scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].em);
+    scheduleHourUpdatedEnd = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].eh);
+    schduleDay = updateDay(1,foundSchedule[((foundNumber-2)+currentPositionTable)].dow);
+    g.setColor(255,255,255);
+    g.reset();
+    g.setFont("8x12");
+    g.drawString(foundSchedule[((foundNumber-2)+currentPositionTable)].cn,13,30);
+    g.drawString(schduleDay,13,45);
+    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,60);
+  }
+  g.flip();
+  displayClock();
+}
+
 function RedRectDown() {
   if(currentPositionTable > 0){
     currentPositionTable -= 1;
-    displayClock();
+    minimalDraw(1);
   }
 }
 
 function RedRectUp() {
   if(currentPositionTable < numberOfItemsShown){
     currentPositionTable += 1;
-    displayClock();
+    minimalDraw(1);
   }
 }
 
 function changeScene(){
   if(currentStage == INFORMATION){
     currentStage = LIST;
+    displayClock();
+    setInterval(displayClock,500);
   }else if(currentStage == LIST){
     currentStage = INFORMATION;
   }
-displayClock();
+  minimalDraw(2);
+  Bangle.buzz(1000,1000);
 }
 
 function displayClock() {
@@ -220,8 +266,7 @@ function displayClock() {
   currentHourUpdated = updateHoursToCurrentTime(currentHour);
   g.setColor(255,255,255);
   g.setFont("7x11Numeric7Seg",2);
-  g.clear();
-  var foundNumber = processDay();
+  var foundNumber = findNextScheduleIndex();
   var foundSchedule = getScheduleTable();
   var scheduleHourUpdated;
   var scheduleMinuteUpdated;
@@ -233,23 +278,37 @@ function displayClock() {
   g.drawImage(getUpArrow(),225,5);
   g.drawImage(getDownArrow(),225,140);
   if(currentStage == LIST){
+    var beforeFoundNumber = foundNumber - 2;
     for(var x = 0;x<=numberOfItemsShown;x++){
-      g.drawImage(getDotIcon(),223.5,66);
-      scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+x)].sm);
-      scheduleHourUpdatedStart = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+x)].sh);
-      scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+x)].em);
-      scheduleHourUpdatedEnd = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+x)].eh);
-      schduleDay = updateDay(2,foundSchedule[((foundNumber-2)+x)].dow);
+      var currentNumber = beforeFoundNumber + x;
+      if (beforeFoundNumber + x < 0) {
+        currentNumber = foundSchedule.length + beforeFoundNumber + x;
+      } else if (beforeFoundNumber + x > foundSchedule.length - 1) {
+        currentNumber = beforeFoundNumber + x - foundSchedule.length;
+      }
+
+      g.drawImage(getDotIcon(),223.5,70);
+      scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[currentNumber].sm);
+      scheduleHourUpdatedStart = updateHoursToCurrentTime(foundSchedule[currentNumber].sh);
+      scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[currentNumber].em);
+      scheduleHourUpdatedEnd = updateHoursToCurrentTime(foundSchedule[currentNumber].eh);
+      scheduleDecriptionUpdated = foundSchedule[currentNumber].cn.substring(0, 20);
+      if(foundSchedule[currentNumber].cn.length >= 20){
+        scheduleDecriptionUpdated = foundSchedule[currentNumber].cn.substring(0, 20)+"...";
+      }
+      schduleDay = updateDay(2,foundSchedule[currentNumber].dow);
       g.setColor(255,255,255);
       g.drawRect(10,30+(x*20),220,50+(20*x));
       g.reset();
       g.setFont("8x12");
-      g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+"  "+foundSchedule[((foundNumber-2)+x)].cn,13,35+(x*20));
+      g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+"  "+scheduleDecriptionUpdated,13,35+(x*20));
+      g.setColor(255,205,0);
+      g.drawRect(10,30+(2*20),220,50+(2*20));
       g.setColor(255,0,0);
       g.drawRect(10,30+(currentPositionTable*20),220,50+(20*currentPositionTable));
     }
   }else if(currentStage == INFORMATION){
-    g.drawImage(getMenuIcon(),223.5,66);
+    g.drawImage(getMenuIcon(),223.5,70);
     scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].sm);
     scheduleHourUpdatedStart = updateHoursToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].sh);
     scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[((foundNumber-2)+currentPositionTable)].em);
@@ -257,12 +316,25 @@ function displayClock() {
     schduleDay = updateDay(1,foundSchedule[((foundNumber-2)+currentPositionTable)].dow);
     g.setColor(255,255,255);
     g.reset();
-    g.setFont("HaxorNarrow7x17");
-    g.drawString(foundSchedule[((foundNumber-2)+currentPositionTable)].cn,13,30);
-    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+"  ",13,45);
+    g.setFont("8x12",2);
+
+    var splitClassNames = splitter(foundSchedule[((foundNumber-2)+currentPositionTable)].cn, 15);
+    var currentY = 5;
+    for (var j=0; j < splitClassNames.length; j++) {
+      g.drawString(splitClassNames[j],13,currentY);
+      currentY = currentY + 25;
+    }
+    g.setFont("8x12");
+    g.drawString(schduleDay,13,currentY);
+    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,currentY+15);
   }
   g.flip();
+  g.setColor(255,255,255);
 }
+
+
+
+displayClock();
 
 var currentMinuteUpdatedFunction = "00";
 var currentHourUpdatedFunction = 11;
@@ -271,10 +343,10 @@ var scheduleHourUpdatedStart = 10;
 var scheduleMinuteUpdatedEnd = currentMinuteUpdatedFunction;
 var scheduleHourUpdatedEnd = 11;
 
-setWatch(RedRectUp, D23, { repeat:true, edge:'rising', debounce : 50 });
-setWatch(RedRectDown, D24, { repeat:true, edge:'rising', debounce : 50 });
+setWatch(RedRectUp, BTN3, { repeat:true, edge:'rising', debounce : 50 });
+setWatch(RedRectDown, BTN1, { repeat:true, edge:'rising', debounce : 50 });
 setWatch(changeScene, BTN2, { repeat:true, edge:'rising', debounce : 50 });
 
-displayClock();
+setInterval(displayClock, 20000);
 
-setInterval(displayClock, 5000);
+setTimeout(displayClock,500);
