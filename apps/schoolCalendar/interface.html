@@ -22,12 +22,28 @@
     <div id="controls">
       <p>Create your events on the current week. Keep in note that your events repeat weekly.</p>
       <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button></p>
+      <p>All day events are not supported. A feature that lets you get the calendar from your watch will be added in a future update.</p>
     </div>
     <meta charset='utf-8' />
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link href='fullcalendar/main.css' rel='stylesheet' />
     <script src='fullcalendar/main.js'></script>
     <script>
+      
+      var calendarEvents = calendar.getEvents();
+      let schedule = []
+      
+      for(i=0;i>calendarEvents.length;i++){
+        var calendarEntry = {}
+        calendarEntry['cn'] = calendarEvents[i].title;
+        calendarEntry['dow'] = calendarEvents[i].start.getDate();
+        calendarEntry['sh'] = calendarEvents[i].start.getHours();
+        calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
+        calendarEntry['eh'] = calendarEvents[i].end.getHours();
+        calendarEntry['em'] = calendarEvents[i].end.getMinutes();
+        schedule.push(calendarEntry)
+      }
+      
       document.getElementById("upload").addEventListener("click", function() {
         var events = calendar.getEvents()
         sendCustomizedApp({
@@ -53,7 +69,7 @@
         selectMirror: true,
         nowIndicator: true,
         editable: true,
-        height: 800,
+        height: 600,
         select: function(arg) {
           var title = prompt('Event Title:');
           if (title) {
