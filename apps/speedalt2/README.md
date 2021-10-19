@@ -8,37 +8,19 @@ What is the difference between [GPS Adventure Sports] and [GPS Adventure Sports 
 
 In all other respect they perform the same functions. Use BTN3 to cycle through the screens.
 
-You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint. 
-
-Within the [A]ltitude and [D]istance displays modes one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
-
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
 ## Buttons and Controls
 
-BTN3 : Cycles the modes between Speed+[A]ltitude,  Speed+[D]istance and large Time/Waypoint
+BTN1 ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
 
-### [A]ltitude mode
-
-BTN1 : Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
-
-BTN1 : Long press > 2 secs resets the recorded maximum values.
-
-### [D]istance mode
-
-BTN1 : Select next waypoint. Last fix distance from selected waypoint is displayed.
-
-### Large mode
-
-BTN1 : Select next waypoint.
-
-### All modes
+BTN1 ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
 
 BTN2 : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-BTN3 : Long press exit and return to watch.
+BTN3 : Cycles the modes between Speed, Altitude, Distance to waypoint and Time
 
-BTN4 : Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
+BTN3 : Long press exit and return to watch.
 
 ## App Settings
 
@@ -51,19 +33,6 @@ This filter smooths the altitude and the speed values and reduces these values '
 ## Loss of fix
 
 When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a current fix or not.  
-
-## Screens
-
-Speed and Altitude:<br>
-![](screen1.png)<p>
-Left tap swaps displays:<br>
-![](screen2.png)<p>
-Distance to waypoint DeltaW:<br>
-![](screen5.png)<p>
-MAX Values instead:<br>
-![](screen3.png)<p>
-Settings:<br>
-![](screen4.png)<p>
 
 ## Power Saving
 
