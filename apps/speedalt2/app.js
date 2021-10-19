@@ -3,7 +3,7 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 */
-var v = '0.03a';
+var v = '0.04';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -229,20 +229,21 @@ function drawScrn(dat) {
   var n;
   n = dat.val.toString();
   
-  var s=40;    // Font size
+  var s=50;    // Font size
   var l=n.length;
   
-  if ( l <= 7 ) s=48;
-  if ( l <= 6 ) s=55;
-  if ( l <= 5 ) s=68;
-  if ( l <= 4 ) s=90;
-  if ( l <= 3 ) s=110;
+  if ( l <= 7 ) s=55;
+  if ( l <= 6 ) s=60;
+  if ( l <= 5 ) s=80;
+  if ( l <= 4 ) s=100;
+  if ( l <= 3 ) s=120;
         
-  buf.setFontAlign(0,-1); //Centre 
+  buf.setFontAlign(0,0); //Centre 
   buf.setColor(1);  
   buf.setFontVector(s);
-  buf.drawString(n,110,-0);
- 
+  buf.drawString(n,126,52);
+
+  
   // Primary Units
   buf.setFontAlign(-1,1); //left, bottom
   buf.setColor(2);  
@@ -263,7 +264,7 @@ function drawScrn(dat) {
   
   g.reset();
   g.drawImage(img,0,40);
-  
+
 }
 
 function drawClock() {
