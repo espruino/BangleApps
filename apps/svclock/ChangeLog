@@ -1,2 +1,3 @@
 0.01: Modification of SimpleClock 0.04 to use Vectorfont
 0.02: Use Bangle.setUI for button/launcher handling
+0.03: Scale to BangleJS 2 and add locale
