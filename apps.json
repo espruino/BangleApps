@@ -3142,9 +3142,9 @@
 { "id": "simplest",
   "name": "Simplest Clock",
   "icon": "simplest.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "The simplest working clock, acts as a tutorial piece",
-  "tags": "clock",
+  "tags": "clock,b2",
   "type":"clock",
   "readme": "README.md",
   "storage": [
