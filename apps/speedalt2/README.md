@@ -28,7 +28,7 @@ Select the desired display units. Speed can be as per the default locale, kph, k
 
 ## Kalman Filter
 
-This filter smooths the altitude and the speed values and reduces these values 'jumping around' from one GPS fix to the next. The down side of this is that if these values change rapidly ( eg. a quick change in altitude ) then it can take a few GPS fixes for the values to move to the new vlaues. Disabling the Kalman filter in the settings will cause the raw values to be displayed from each GPS fix as they are found.
+This filter smooths the altitude and the speed values and reduces these values 'jumping around' from one GPS fix to the next. The down side of this is that if these values change rapidly ( eg. a quick change in altitude ) then it can take a few GPS fixes for the values to move to the new values. Disabling the Kalman filter in the settings will cause the raw values to be displayed from each GPS fix as they are found.
 
 ## Loss of fix
 
