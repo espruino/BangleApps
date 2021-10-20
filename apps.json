@@ -3612,5 +3612,18 @@
     {"name":"ffcniftya.app.js","url":"app.js"},
     {"name":"ffcniftya.img","url":"app-icon.js","evaluate":true}
   ]
+},
+{ "id": "stopwatch",
+  "name": "Stopwatch",
+  "shortName":"Stopwatch",
+  "icon": "stopwatch.png",
+  "version":"0.01",
+  "description": "A touch controlled stopwatch for Bangle 2",
+  "readme": "README.md",
+  "tags": "tool, b2",
+  "storage": [
+    {"name":"stopwatch.app.js","url":"stopwatch.js"},
+    {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
+  ]
 }
 ]
