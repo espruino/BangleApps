@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
 */
-var v = '1.00';
+var v = '1.00b';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -174,7 +174,7 @@ var KalmanFilter = (function () {
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
 // Load fonts
-require("Font7x11Numeric7Seg").add(Graphics);
+//require("Font7x11Numeric7Seg").add(Graphics);
 
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
@@ -275,7 +275,6 @@ function drawScrn(dat) {
 function drawPosn(dat) {
   if (!canDraw) return;
   buf.clear();
-  /////////
 
   var x, y;
   x=210;
@@ -283,29 +282,17 @@ function drawPosn(dat) {
   buf.setFontAlign(1,-1); 
   buf.setFontVector(60);
   buf.setColor(1);
-  
-  var lat = dat.lat;
-  var lon = dat.lon;
-  
-  var ns = 'N';
-  if ( lat < 0 ) ns = 'S';
-  lat = Math.abs(lat.toFixed(2)); 
-  
-  var ew = 'E';
-  if ( lon < 0 ) ew = 'W';
-  lon = Math.abs(lon.toFixed(2)); 
-    
-  buf.drawString(lat,x,y);
-  buf.drawString(lon,x,y+70);
+
+  buf.drawString(dat.lat,x,y);
+  buf.drawString(dat.lon,x,y+70);
 
   x = 240;
   buf.setColor(2);
   buf.setFontVector(40);
-  buf.drawString(ns,x,y);
-  buf.drawString(ew,x,y+70);
+  buf.drawString(dat.ns,x,y);
+  buf.drawString(dat.ew,x,y+70);
 
 
-  ////
   //Sats
   if ( dat.sat ) {
     if ( dat.age > 10 ) {
@@ -314,10 +301,10 @@ function drawPosn(dat) {
     }
     else drawSats('Sats:'+dat.sats);
   }
-  
+
   g.reset();
   g.drawImage(img,0,40);
-  
+
   if ( pwrSav ) LED1.reset();
   else LED1.set();
 
@@ -391,6 +378,11 @@ function onGPS(fix) {
   var al = '---';
   var di = '---';
   var age = '---';
+  var lat = '---.--';
+  var ns = '';
+  var ew = '';
+  var lon = '---.--';
+  
 
   if (fix.fix) lf = fix;
 
@@ -403,8 +395,8 @@ function onGPS(fix) {
       lf.smoothed = 1;
       if ( max.n <= 15 ) max.n++;
     }
-  
-    
+
+
     // Speed
     if ( cfg.spd == 0 ) {
       m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
@@ -412,7 +404,7 @@ function onGPS(fix) {
       cfg.spd_unit = m[2];
     }
     else sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
-    
+
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
     if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
@@ -428,8 +420,18 @@ function onGPS(fix) {
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+
+    // Lat / Lon
+    ns = 'N';
+    if ( lf.lat < 0 ) ns = 'S';
+    lat = Math.abs(lf.lat.toFixed(2)); 
+
+    ew = 'E';
+    if ( lf.lon < 0 ) ew = 'W';
+    lon = Math.abs(lf.lon.toFixed(2)); 
+
   }
-      
+
   if ( cfg.modeA == 0 )  {
     // Speed
     if ( showMax ) 
@@ -501,8 +503,10 @@ function onGPS(fix) {
       drawPosn({
         sats:lf.satellites,
         age:age,
-        lat:lf.lat,
-        lon:lf.lon,
+        lat:lat,
+        lon:lon,
+        ns:ns,
+        ew:ew,
         sat:true
       });
   }
