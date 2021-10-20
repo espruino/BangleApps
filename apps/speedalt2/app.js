@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 0.07 : Add swipe to change screens same as BTN3
 0.08 : Add dbl tap on front same as short BTN1 
 */
-var v = '0.08b';
+var v = '0.08d';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -566,12 +566,13 @@ function setButtons(){
   }, BTN3, {repeat:true,edge:"falling"});
   
 /* 
-  // Touch left screen to toggle display
+  // Touch screen same as BTN1 short
   setWatch(function(e){
-    cfg.primSpd = !cfg.primSpd;
-    savSettings();
-    onGPS(lf);  // Update display
+    nextFunc(1);  // Same as BTN1 short
   }, BTN4, {repeat:true,edge:"falling"});
+  setWatch(function(e){
+    nextFunc(1);  // Same as BTN1 short
+  }, BTN5, {repeat:true,edge:"falling"});
 */
 
 }
@@ -673,14 +674,14 @@ dir : "left/right/top/bottom/front/back",
   x : -2 .. 2, // the axis of the tap
   y : -2 .. 2, // the axis of the tap
   z : -2 .. 2 // the axis of the tap
-*/
+
 
 Bangle.on('tap',function(tap) {
  console.log('Tap : '+tap.dir);
   if ( tap.dir == 'front' && tap.double ) nextFunc(1); // Same as short BTN1
 });
 
-//nextFunc(dur)
+*/
 
 var gpssetup;
 try {
