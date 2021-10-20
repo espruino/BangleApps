@@ -2,8 +2,9 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
+0.06 : Add Posn screen
 */
-var v = '0.05';
+var v = '0.06';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -270,17 +271,71 @@ function drawScrn(dat) {
 
 }
 
+function drawPosn(dat) {
+  if (!canDraw) return;
+  buf.clear();
+  /////////
+
+  var x, y;
+  x=210;
+  y=0;
+  buf.setFontAlign(1,-1); 
+  buf.setFontVector(60);
+  buf.setColor(1);
+  
+  var lat = dat.lat;
+  var lon = dat.lon;
+  
+  var ns = 'N';
+  if ( lat < 0 ) ns = 'S';
+  lat = Math.abs(lat.toFixed(2)); 
+  
+  var ew = 'E';
+  if ( lon < 0 ) ew = 'W';
+  lon = Math.abs(lon.toFixed(2)); 
+    
+  buf.drawString(lat,x,y);
+  buf.drawString(lon,x,y+70);
+
+  x = 240;
+  buf.setColor(2);
+  buf.setFontVector(40);
+  buf.drawString(ns,x,y);
+  buf.drawString(ew,x,y+70);
+
+
+  ////
+  //Sats
+  if ( dat.sat ) {
+    if ( dat.age > 10 ) {
+      if ( dat.age > 90 ) dat.age = '>90';
+      drawSats('Age:'+dat.age);
+    }
+    else drawSats('Sats:'+dat.sats);
+  }
+  
+  g.reset();
+  g.drawImage(img,0,40);
+  
+  if ( pwrSav ) LED1.reset();
+  else LED1.set();
+
+}
+
 function drawClock() {
   if (!canDraw) return;
   buf.clear();
   var x, y;
-  x=120;
+  x=185;
   y=0;
-  buf.setFontAlign(0,-1); 
-  buf.setFontVector(80);
+  buf.setFontAlign(1,-1); 
+  buf.setFontVector(94);
   time = require("locale").time(new Date(),1);
-  buf.setColor(3);  
-  buf.drawString(time,x,y);
+  
+  buf.setColor(3);
+  
+  buf.drawString(time.substring(0,2),x,y);
+  buf.drawString(time.substring(3,5),x,y+80);
   
   g.reset();
   g.drawImage(img,0,40);
@@ -378,7 +433,7 @@ function onGPS(fix) {
         unit:cfg.spd_unit,
         sats:lf.satellites,
         age:age,
-        fix:lf.fix,
+ //       fix:lf.fix,
         max:true,
         wp:false,
         sat:true
@@ -389,7 +444,7 @@ function onGPS(fix) {
         unit:cfg.spd_unit,
         sats:lf.satellites,
         age:age,
-        fix:lf.fix,
+//        fix:lf.fix,
         max:false,
         wp:false,
         sat:true
@@ -404,7 +459,7 @@ function onGPS(fix) {
         unit:cfg.alt_unit,
         sats:lf.satellites,
         age:age,
-        fix:lf.fix,
+ //       fix:lf.fix,
         max:true,
         wp:false,
         sat:true
@@ -415,7 +470,7 @@ function onGPS(fix) {
         unit:cfg.alt_unit,
         sats:lf.satellites,
         age:age,
-        fix:lf.fix,
+//        fix:lf.fix,
         max:false,
         wp:false,
         sat:true
@@ -429,14 +484,25 @@ function onGPS(fix) {
         unit:cfg.dist_unit,
         sats:lf.satellites,
         age:age,
-        fix:lf.fix,
+//        fix:lf.fix,
         max:false,
         wp:true,
         sat:true
       });
   }
+
+  if ( cfg.modeA == 3 ) {
+    // Position
+      drawPosn({
+        sats:lf.satellites,
+        age:age,
+        lat:lf.lat,
+        lon:lf.lon,
+        sat:true
+      });
+  }
   
-  if ( cfg.modeA == 3 )  {
+  if ( cfg.modeA == 4 )  {
     // Large clock
     drawClock();
   }
@@ -476,7 +542,7 @@ function setButtons(){
   // BTN3 - next screen
   setWatch(function(e){
     cfg.modeA = cfg.modeA+1;
-    if ( cfg.modeA > 3 ) cfg.modeA = 0;
+    if ( cfg.modeA > 4 ) cfg.modeA = 0;
     savSettings();
     onGPS(lf); 
   }, BTN3, {repeat:true,edge:"falling"});
@@ -536,7 +602,7 @@ cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3=Clock [0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock]
+cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3=Position 4=Clock 
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
