@@ -31,3 +31,6 @@
       Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
 0.30: Remove 'Get GPS time' at boot. Latest firmwares keep time through reboots, so this is not needed now
 0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics
+0.32: Fix single quote error in g.wrapString polyfill
+      improve g.stringMetrics polyfill
+

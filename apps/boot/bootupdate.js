@@ -143,13 +143,14 @@ if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfi
 }
 if (!g.stringMetrics) { // added in 2v11 - this is a limited functionality polyfill
   boot += `Graphics.prototype.stringMetrics=function(txt) {
-  return {width:this.stringWidth(txt), height:this.getFontHeight()};
+  txt = txt.toString().split("\\n");
+  return {width:Math.max.apply(null,txt.map(x=>g.stringWidth(x))), height:this.getFontHeight()*txt.length};
 };\n`;
 }
 if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
   boot += `Graphics.prototype.wrapString=function(str, maxWidth) {
   var lines = [];
-  for (var unwrappedLine of str.split("\n")) {
+  for (var unwrappedLine of str.split("\\n")) {
     var words = unwrappedLine.split(" ");
     var line = words.shift();
     for (var word of words) {
