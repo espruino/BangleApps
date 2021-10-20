@@ -3614,7 +3614,7 @@
   ]
 },
 { "id": "stopwatch",
-  "name": "Stopwatch",
+  "name": "Stopwatch Touch",
   "shortName":"Stopwatch",
   "icon": "stopwatch.png",
   "version":"0.01",
