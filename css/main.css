@@ -23,6 +23,9 @@
 .filter-nav {
   display: inline-block;
 }
+.device-nav {
+  display: inline-block;
+}
 .sort-nav {
   float: right;
 }
