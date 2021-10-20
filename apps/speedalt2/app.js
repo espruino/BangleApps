@@ -3,8 +3,9 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 0.06 : Add Posn screen
+0.07 : Add swipe to change screens
 */
-var v = '0.06';
+var v = '0.07';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -509,6 +510,21 @@ function onGPS(fix) {
 
 }
 
+function prevScrn() {
+    cfg.modeA = cfg.modeA-1;
+    if ( cfg.modeA < 0 ) cfg.modeA = 4;
+    savSettings();
+    onGPS(lf); 
+}
+
+function nextScrn() {
+    cfg.modeA = cfg.modeA+1;
+    if ( cfg.modeA > 4 ) cfg.modeA = 0;
+    savSettings();
+    onGPS(lf); 
+}
+
+
 function setButtons(){
 
   // BTN1 - Max speed/alt or next waypoint
@@ -541,10 +557,7 @@ function setButtons(){
   
   // BTN3 - next screen
   setWatch(function(e){
-    cfg.modeA = cfg.modeA+1;
-    if ( cfg.modeA > 4 ) cfg.modeA = 0;
-    savSettings();
-    onGPS(lf); 
+    nextScrn();
   }, BTN3, {repeat:true,edge:"falling"});
   
 /* 
@@ -641,6 +654,17 @@ Bangle.on('lcdPower',function(on) {
   if (!SCREENACCESS.withApp) return;
   if (on) startDraw(); 
   else stopDraw();
+});
+
+//Bangle.on('swipe', dir => {
+//  if(STATE.settings_open) return;
+//  if(dir == 1) prev();
+//  else next();
+//});
+
+Bangle.on('swipe',function(dir) {
+  if(dir == 1) prevScrn();
+  else nextScrn();
 });
 
 var gpssetup;
