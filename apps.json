@@ -1,4 +1,15 @@
 [
+  { "id": "fwupdate",
+    "name": "Firmware Update",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "Uploads new Espruino firmwares to Bangle.js 2",
+    "custom": "custom.html", "customConnect":true,
+    "tags": "tools,system,b2",
+    "type": "RAM",
+    "storage": [ ],
+    "sortorder" : -20
+  },
   { "id": "boot",
     "name": "Bootloader",
     "tags": "tool,system,b2",
