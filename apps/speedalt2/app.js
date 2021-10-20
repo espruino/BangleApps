@@ -3,9 +3,10 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 0.06 : Add Posn screen
-0.07 : Add swipe to change screens
+0.07 : Add swipe to change screens same as BTN3
+0.08 : Add dbl tap on front same as short BTN1 
 */
-var v = '0.07b';
+var v = '0.07c';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -524,12 +525,8 @@ function nextScrn() {
     onGPS(lf); 
 }
 
-
-function setButtons(){
-
-  // BTN1 - Max speed/alt or next waypoint
-  setWatch(function(e) {
-    var dur = e.time - e.lastTime;
+// Next function on a screen
+nextFunc(dur) {
     if ( cfg.modeA == 0 || cfg.modeA == 1 ) {
       // Spd+Alt mode - Switch between fix and MAX
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
@@ -537,6 +534,14 @@ function setButtons(){
     }
     else  if ( cfg.modeA == 2) nxtWp(1);  // Dist mode - Select next waypoint
     onGPS(lf);
+}
+
+function setButtons(){
+
+  // BTN1 - Max speed/alt or next waypoint
+  setWatch(function(e) {
+    var dur = e.time - e.lastTime;
+    nextFunc(dur);
   }, BTN1, { edge:"falling",repeat:true});
   
   // Power saving on/off 
@@ -660,6 +665,20 @@ Bangle.on('swipe',function(dir) {
   if(dir == 1) prevScrn();
   else nextScrn();
 });
+
+/*
+dir : "left/right/top/bottom/front/back",
+  double : true/false // was this a double-tap?
+  x : -2 .. 2, // the axis of the tap
+  y : -2 .. 2, // the axis of the tap
+  z : -2 .. 2 // the axis of the tap
+*/
+
+Bangle.on('tap',function(tap) {
+  if ( tap.dir == 'front' && tap.double ) nextFunc(1); // Same as short BTN1
+});
+
+//nextFunc(dur)
 
 var gpssetup;
 try {
