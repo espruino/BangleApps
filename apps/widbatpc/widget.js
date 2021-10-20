@@ -76,6 +76,7 @@
   function draw() {
   // if hidden, don't draw
     if (!WIDGETS["batpc"].width) return;
+    if (setting('hidewidget')) return;
     // else...
     var s = 39;
     var x = this.x, y = this.y;

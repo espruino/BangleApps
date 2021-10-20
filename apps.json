@@ -668,7 +668,7 @@
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
     "icon": "widget.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "tags": "widget,battery,b2",
     "type":"widget",
@@ -3622,7 +3622,7 @@
   "readme": "README.md",
   "tags": "tool, b2",
   "storage": [
-    {"name":"stopwatch.app.js","url":"stopwatch.js"},
+    {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
     {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
   ]
 }

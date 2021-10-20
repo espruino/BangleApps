@@ -13,6 +13,7 @@
     'fillbar': false,
     'charger': true,
     'hideifmorethan': 100,
+    'hidewidget': false,
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -31,7 +32,8 @@
     }
   }
 
-  const onOffFormat = b => (b ? 'on' : 'off')
+  const onOffFormat = b => (b ? 'On' : 'Off')
+  const yesNoFormat = b => (b ? 'Yes' : 'No')
   const menu = {
     '': { 'title': 'Battery Widget' },
     '< Back': back,
@@ -67,6 +69,11 @@
       step: 10,
       format: x => x+"%",
       onchange: save('hideifmorethan'),
+    },
+    'Hide Widget': {
+      value: s.hidewidget,
+      format: yesNoFormat,
+      onchange: save('hidewidget'),
     },
   }
   E.showMenu(menu)
