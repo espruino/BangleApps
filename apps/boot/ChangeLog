@@ -33,4 +33,4 @@
 0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics
 0.32: Fix single quote error in g.wrapString polyfill
       improve g.stringMetrics polyfill
-
+      Fix issue where re-running bootupdate could disable existing polyfills
