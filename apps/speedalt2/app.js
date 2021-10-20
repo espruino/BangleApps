@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 0.07 : Add swipe to change screens same as BTN3
 0.08 : Add dbl tap on front same as short BTN1 
 */
-var v = '0.07c';
+var v = '0.08a';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
