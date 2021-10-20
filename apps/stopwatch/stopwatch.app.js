@@ -30,7 +30,7 @@ function timeToText(t) {
   if (hrs === 0) 
     text = ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2) + "." + tnth;
   else
-    text = (""+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2) + "." + tnth;
+    text = ("0"+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
 
   //log_debug(text);
   return text;

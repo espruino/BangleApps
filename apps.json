@@ -3615,7 +3615,7 @@
 },
 { "id": "stopwatch",
   "name": "Stopwatch Touch",
-  "shortName":"Stopwatch",
+  "shortName":"Stopwatch Touch",
   "icon": "stopwatch.png",
   "version":"0.01",
   "description": "A touch controlled stopwatch for Bangle 2",
