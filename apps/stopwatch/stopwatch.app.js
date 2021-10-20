@@ -11,7 +11,6 @@ const iconScale = g.getWidth() / 178; // scale up/down based on Bangle 2 size
 
 // 24 pixel images, scale to watch
 // 1 bit optimal, image string, no E.toArrayBuffer()
-//const reset_img_a = atob("GBiBAf////////////AAD+AAB+AAB+AAB+AAB+D/B+D/B+D/B+D/B+D/B+D/B+D/B+D/B+AAB+AAB+AAB+AAB/AAD////////////w==");
 const pause_img = atob("GBiBAf////////////////wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP////////////////w==");
 const play_img = atob("GBjBAP//AAAAAAAAAAAIAAAOAAAPgAAP4AAP+AAP/AAP/wAP/8AP//AP//gP//gP//AP/8AP/wAP/AAP+AAP4AAPgAAOAAAIAAAAAAAAAAA=");
 const reset_img = atob("GBiBAf////////////AAD+AAB+f/5+f/5+f/5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+f/5+f/5+f/5+AAB/AAD////////////w==");
@@ -51,7 +50,7 @@ function drawButtons() {
 }
 
 function drawTime() {
-  //log_debug("drawTime()");
+  log_debug("drawTime()");
   let Tt = tCurrent-tTotal;
   let Ttxt = timeToText(Tt);
 
@@ -128,7 +127,6 @@ function lapReset() {
     redrawButtons = true;
     Bangle.buzz();
     tStart = tCurrent = tTotal = Date.now();
-    log_debug("lapReset - clear screen");
     g.clearRect(0,24,w,h);
     draw();
   }
