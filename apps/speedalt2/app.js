@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
 */
-var v = '0.08e';
+var v = '0.08f';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -341,6 +341,9 @@ function drawClock() {
   
   g.reset();
   g.drawImage(img,0,40);
+  
+  if ( pwrSav ) LED1.reset();
+  else LED1.set(); 
 }
 
 function drawWP() {
