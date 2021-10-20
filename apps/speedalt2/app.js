@@ -526,7 +526,7 @@ function nextScrn() {
 }
 
 // Next function on a screen
-nextFunc(dur) {
+function nextFunc(dur) {
     if ( cfg.modeA == 0 || cfg.modeA == 1 ) {
       // Spd+Alt mode - Switch between fix and MAX
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
