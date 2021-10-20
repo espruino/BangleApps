@@ -662,6 +662,7 @@ Bangle.on('lcdPower',function(on) {
 });
 
 Bangle.on('swipe',function(dir) {
+ console.log('Swipe : '+dir);
   if(dir == 1) prevScrn();
   else nextScrn();
 });
@@ -675,6 +676,7 @@ dir : "left/right/top/bottom/front/back",
 */
 
 Bangle.on('tap',function(tap) {
+ console.log('Tap : '+tap.dir);
   if ( tap.dir == 'front' && tap.double ) nextFunc(1); // Same as short BTN1
 });
 
