@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 0.01: New App!
 0.02: Fixed issue with wrong device informations
+=======
+0.01: New App!
+0.02: Fixed issue with wrong device informations
+0.03: Ensure manufacturer:undefined doesn't overflow screen
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

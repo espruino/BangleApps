@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 0.02: Modified for use with new bootloader and firmware
 0.03: Localization
 0.04: move jshint to the top
+=======
+0.02: Modified for use with new bootloader and firmware
+0.03: Localization
+0.04: move jshint to the top
+0.05: Use Bangle.setUI for button/launcher handling
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

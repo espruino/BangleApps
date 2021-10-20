@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 0.02: Ensure screen doesn't display garbage at startup
 0.03: Show number of satellites while waiting for fix
+=======
+0.02: Ensure screen doesn't display garbage at startup
+0.03: Show number of satellites while waiting for fix
+0.04: Add Maidenhead readout of GPS location
+0.05: Refactor to use 'layout' library for multi-device support
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

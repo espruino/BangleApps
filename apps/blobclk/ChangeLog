@@ -1,5 +1,15 @@
+<<<<<<< HEAD
 0.02: Improve performance when screen wakes
       Only draw widgets after clearing screen - they update automatically
       Remove 'faceUp' check as it's automatic
 0.03: Modified for use with new bootloader and firmware
 0.04: Modified to account for changes in the behavior of Graphics.fillPoly
+=======
+0.02: Improve performance when screen wakes
+      Only draw widgets after clearing screen - they update automatically
+      Remove 'faceUp' check as it's automatic
+0.03: Modified for use with new bootloader and firmware
+0.04: Modified to account for changes in the behavior of Graphics.fillPoly
+0.05: Slight increase to draw speed after LCD on
+0.06: Update to use Bangle.setUI instead of setWatch, allow themes and different size screens
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

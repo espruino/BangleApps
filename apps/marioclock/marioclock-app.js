@@ -108,7 +108,6 @@ function phoneClearMessage() {
 }
 
 function phoneNewMessage(type, msg) {
-  Bangle.buzz();
 
   phoneClearMessage();
   phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
@@ -116,9 +115,12 @@ function phoneNewMessage(type, msg) {
   phone.messageType = type;
 
   // Notify user and active screen
-  if (!Bangle.isLCDOn()) {
-    clearTimers();
-    Bangle.setLCDPower(true);
+  if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.buzz();
+    if (!Bangle.isLCDOn()) {
+      clearTimers();
+      Bangle.setLCDPower(true);
+    }
   }
 }
 
@@ -190,15 +192,17 @@ function toggleNightMode() {
 }
 
 function incrementTimer() {
-  if (timer > 1000) {
+  if (timer > 100) {
     timer = 0;
   }
   else {
-    timer += 50;
+    timer += 10;
   }
 }
 
 function drawBackground() {
+  "ram"
+
   // Clear screen
   const bgColor = (nightMode) ? NIGHT : LIGHTEST;
   g.setColor(bgColor);
@@ -207,10 +211,10 @@ function drawBackground() {
   // set cloud colors and draw clouds
   const cloudColor = (nightMode) ? DARK : LIGHT;
   g.setColor(cloudColor);
-  g.fillRect(0, 10, g.getWidth(), 15);
-  g.fillRect(0, 17, g.getWidth(), 17);
-  g.fillRect(0, 19, g.getWidth(), 19);
-  g.fillRect(0, 21, g.getWidth(), 21);
+  g.fillRect(0, 10, W, 15);
+  g.fillRect(0, 17, W, 17);
+  g.fillRect(0, 19, W, 19);
+  g.fillRect(0, 21, W, 21);
 
   // Date bar
   g.setColor(DARKEST);
@@ -225,7 +229,9 @@ function drawFloor() {
 }
 
 function drawPyramid() {
-  const pPol = [pyramidSprite.x + 10, H - 6, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 6]; // Pyramid poly
+  "ram"
+
+  const pPol = [pyramidSprite.x + 10, H - 5, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 5]; // Pyramid poly
 
   const color = (nightMode) ? DARK : LIGHT;
   g.setColor(color);
@@ -304,42 +310,57 @@ function drawCoin() {
 }
 
 function drawDaisyFrame(idx, x, y) {
+  var frame;
+
   switch(idx) {
+    case 2:
+      frame = require("heatshrink").decompress(atob("h0UxH+AAkrAIgAH60rAIQNIBQIABDZErAAwMMBwo0CBxQNEHAQGCBpIPCBoQJCDRIXDBpA7DBIQACw5yCJQgZDP4gNErlcJAZ6GAgNcw+HRI4CCDgNcU44ZDDYSYGDIYACB4QaEDYgMFJAg3DFQ5mFBQYA==")); // daisy jumping
+      break;
     case 0:
-      const dFr1 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
-      g.drawImage(dFr1, x, y);
+      frame = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
       break;
     case 1:
     default:
-      const dFr2 = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
-      g.drawImage(dFr2, x, y);
+      frame = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
   }
+
+  g.drawImage(frame, x, y);
 }
 
 function drawMarioFrame(idx, x, y) {
+  var frame;
+
   switch(idx) {
+    case 2:
+      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYFCBo9cAAIEB63WB4gMDB4YOFBowfDw4xDBAYADA4YcDGwYACDoYAEBYYBBw4NDCoYOFDIweFFwoZFAQYIDLAQWGEwqgECI6ECJ4JeGQYS9EB4QTHBwImCBYRtDSAwrFawqkFWY7PEBxoMFKoZaELoYICAAg")); // Mario frame jumping
+      break;
     case 0:
-      const mFr1 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw52FSg2HAAIoDAgIOMB5AAFGQTtKeBLuNcQwOJFwgJFA=")); // Mario Frame 1
-      g.drawImage(mFr1, x, y);
+      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGGQgNCw4ACLwgFBBwgKECQpZCCgRqDFQikEJIriIBgzwIdxjiGBxIuEBIo=")); // Mario Frame 1
       break;
     case 1:
     default:
-      const mFr2 = require("heatshrink").decompress(atob("h8UxH+AAkHAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIdCCgTOIFgiVHFwYCBUhA9FBwz8HAo73GACQA=")); // Mario frame 2
-      g.drawImage(mFr2, x, y);
+      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIeJDAQODSwaVHUhwOLfg4FHe4wASA=")); // Mario frame 2
   }
+
+  g.drawImage(frame, x, y);
 }
 
 function drawToadFrame(idx, x, y) {
+  var frame;
+
   switch(idx) {
+    case 2:
+      frame = require("heatshrink").decompress(atob("iEUxH+ACkrAAoNJrnWAAQRGlfWrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPENwoTEH4crw4EDAAgGDB4YABAYIBDP4YLEAAIPHCAQHCCAQTDD4gHDEA4PFGAY3EbooPECob8IPooPFCATGEf44hFAAYLDA==")); // toad jumping
+      break;
     case 0:
-      const tFr1 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD")); // Toad Frame 1
-      g.drawImage(tFr1, x, y);
+      frame = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD")); // Toad Frame 1
       break;
     case 1:
     default:
-      const tFr2 = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
-      g.drawImage(tFr2, x, y);
+      frame = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
   }
+
+  g.drawImage(frame, x, y);
 }
 
 // Mario speach bubble
@@ -363,6 +384,8 @@ function drawNotice(x, y) {
 }
 
 function drawCharacter(date, character) {
+  "ram"
+
   // calculate jumping
   const seconds = date.getSeconds(),
     milliseconds = date.getMilliseconds();
@@ -386,9 +409,13 @@ function drawCharacter(date, character) {
   }
 
   // calculate animation timing
-  if (timer % 50 === 0) {
+  if (timer % 20 === 0) {
     // shift to next frame
-    characterSprite.frameIdx ^= 1;
+    if (characterSprite.isJumping) {
+      characterSprite.frameIdx = 2;
+    } else {
+      characterSprite.frameIdx = characterSprite.frameIdx == 0 ? 1 : 0;
+    }
   }
 
   switch(characterSprite.character) {

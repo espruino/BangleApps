@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 lib/espruinotools.js
 lib/imageconverter.js
 lib/qrcode.min.js
 lib/heatshrink.js
 lib/marked.min.js
 apps/animclk/V29.LBM.js
+=======
+apps/animclk/V29.LBM.js
+apps/banglerun/rollup.config.js
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

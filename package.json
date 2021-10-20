@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "BangleApps",
   "description": "Bangle.js App Loader (and Apps)",
@@ -16,3 +17,22 @@
     "acorn": "^7.2.0"
   }
 }
+=======
+{
+  "name": "BangleApps",
+  "description": "Bangle.js App Loader (and Apps)",
+  "author": "Gordon Williams <gw@pur3.co.uk> (http://espruino.com)",
+  "version": "0.0.1",
+  "devDependencies": {
+    "eslint": "7.1.0"
+  },
+  "scripts": {
+    "lint-apps": "eslint ./apps --ext .js",
+    "test": "node bin/sanitycheck.js && eslint ./apps --ext .js",
+    "start": "npx http-server -c-1"
+  },
+  "dependencies": {
+    "acorn": "^7.2.0"
+  }
+}
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

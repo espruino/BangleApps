@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="data"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var dataElement = document.getElementById("data");
+
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  dataElement.innerHTML = "";
+  var promise = Promise.resolve();
+  Puck.eval('require("Storage").list(/accellog\\..\\.csv\\x01/)',files=>{
+    if (files.length==0) {
+      dataElement.innerHTML = "<p>No saved data</p>";
+    } else {
+      files.forEach(fn => {
+        fn = fn.slice(0,-1);
+        dataElement.innerHTML += `
+<div class="card">
+  <div class="card-header">
+    <div class="card-title h5">${fn}</div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" fn="${fn}" act="save">Save</button>
+    <button class="btn" fn="${fn}" act="delete">Delete</button>
+  </div>
+</div>`;
+        promise = promise.then(function() {
+          document.querySelector(`.btn[fn='${fn}'][act='save']`).addEventListener("click", function() {
+            Util.readStorageFile(fn, function(data) {
+              Util.saveCSV(fn.slice(0,-4), data);
+            });
+          });
+          document.querySelector(`.btn[fn='${fn}'][act='delete']`).addEventListener("click", function() {
+            Util.showModal("Deleting...");
+            Util.eraseStorageFile(fn, function() {
+              Util.hideModal();
+              getData();
+            });
+          });
+          return new Promise(resolve=>{
+            Puck.eval(`require("Storage").read(${JSON.stringify(fn)})`,csv=>{
+              var el = document.querySelector(`.card-body[fn='${fn}']`);
+              el.innerHTML = '<canvas width="400" height="100"></canvas>';
+              var c = el.firstChild;
+              var ctx = c.getContext("2d");
+              var lines = csv.split("\n");
+              var y = 50, sx = 400/lines.length, sy = 50/8;
+              function plot(n) {
+                var last;
+                ctx.beginPath();
+                lines.map((l,x)=>{
+                  l = l.split(",");
+                  var yc = y + parseFloat(l[n])*sy;
+                  if (!last) {
+                    ctx.moveTo(0, yc);
+                  } else {
+                    ctx.lineTo(x*sx, yc);
+                  }
+                  last = l;
+                });
+                ctx.stroke();
+              };
+              ctx.strokeStyle = 'red';
+              plot(0);
+              ctx.strokeStyle = 'green';
+              plot(1);
+              ctx.strokeStyle = 'blue';
+              plot(2);
+              resolve();
+            });
+          });
+        });
+      });
+    }
+    // remove window
+    Util.hideModal();
+  });
+}
+
+// You can call a utility function to save the data
+/*document.getElementById("btnSave").addEventListener("click", function() {
+  Util.saveCSV("gpsdata", csvData);
+});
+// Or you can also delete the file
+document.getElementById("btnDelete").addEventListener("click", function() {
+  Util.showModal("Deleting...");
+  Util.eraseStorageFile("gpspoilog.csv", function() {
+    Util.hideModal();
+    getData();
+  });
+});*/
+// Called when app starts
+function onInit() {
+  getData();
+}
+
+    </script>
+  </body>
+</html>

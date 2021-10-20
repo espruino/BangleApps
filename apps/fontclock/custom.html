@@ -1,0 +1,210 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+      
+      <p>Please select watch display</p>
+
+      <table>
+          <tr>
+              <td>
+              <select id="display_selection" name="display_selection" onchange="change_image()" >
+        
+              </select>
+              </td>
+              <td>
+                  <img id="selected_image" src="display-01.png">
+              </td>
+          </tr>
+      </table>
+
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+        function change_image() {
+            var idx = document.getElementById("display_selection").selectedIndex;
+            set_image(idx);
+        }
+
+        function set_image(idx){
+            var image = document.getElementById('selected_image');
+            image.src = "display-0" + (idx + 1) + ".png";
+        }
+
+      var displays_choices=[
+              {
+                  name: "Abril FatFace 4",
+                  numerals: [12,3,6,9],
+                  fonts: ["abril_ff50"],
+                  radius: 80,
+                  color_schemes : [
+                      {
+                          name: "black",
+                          background : [0.0,0.0,0.0],
+                          second_hand: [1.0,1.0,0.0]
+                      },
+                      {
+                          name: "red",
+                          background : [1.0,0.0,0.0],
+                          second_hand: [1.0,1.0,0.0]
+                      },
+                      {
+                          name: "grey",
+                          background : [0.5,0.5,0.5],
+                      },
+                      {
+                          name: "purple",
+                          background : [1.0,0.0,1.0]
+                      },
+                      {
+                          name: "blue",
+                          background : [0.4,0.7,1.0]
+                      }
+                  ]
+              },
+              {
+                  name: "Montoon 4",
+                  numerals: [12,3,6,9],
+                  fonts: ["mntn50"],
+                  radius: 80,
+                  color_schemes : [
+                      {
+                          name: "black",
+                          background : [0.0,0.0,0.0],
+                          second_hand: [1.0,1.0,0.0]
+                      },
+                      {
+                          name: "grey",
+                          background : [0.5,0.5,0.5]
+                      }
+                  ]
+              },
+              {
+                name: "Vector 12",
+                numerals: [12,1,2,3,4,5,6,7,8,9,10,11],
+                fonts: ["vector25"],
+                radius: 90,
+                color_schemes : [
+                  {
+                      name: "black",
+                      background : [0.0,0.0,0.0],
+                      second_hand: [1.0,0.0,0.0]
+                  },
+                  {
+                      name: "grey",
+                      background : [0.5,0.5,0.5],
+                      second_hand: [0.0,0.0,0.0]
+                  }
+                ]
+            },
+            {
+                name: "Copaset 4",
+                numerals: [12,3,6,9],
+                fonts: ["cpstc58"],
+                radius: 75,
+                color_schemes : [
+                  {
+                      name: "black",
+                      background : [0.0,0.0,0.0],
+                      second_hand: [1.0,0.0,0.0]
+                  },
+                  {
+                      name: "red",
+                      background : [1.0,0.0,0.0],
+                      second_hand: [1.0,1.0,0.0]
+                  },
+                  {
+                      name: "grey",
+                      background : [0.5,0.5,0.5],
+                      second_hand: [0.0,0.0,0.0]
+                  },
+                  {
+                      name: "purple",
+                      background : [1.0,0.0,1.0]
+                  },
+                  {
+                      name: "blue",
+                      background : [0.4,0.7,1.0]
+                  }
+              ]
+          },
+          {
+              name: "Vector 4",
+              numerals: [12,3,6,9],
+              fonts: ["vector50"],
+              radius: 75,
+              color_schemes : [
+                  {
+                      name: "black",
+                      background : [0.0,0.0,0.0],
+                      second_hand: [1.0,0.0,0.0],
+                  },
+                  {
+                      name: "red",
+                      background : [1.0,0.0,0.0],
+                      second_hand: [1.0,1.0,0.0]
+                  },
+                  {
+                      name: "grey",
+                      background : [0.5,0.5,0.5],
+                      second_hand: [0.0,0.0,0.0]
+                  },
+                  {
+                      name: "purple",
+                      background : [1.0,0.0,1.0]
+                  },
+                  {
+                      name: "blue",
+                      background : [0.4,0.7,1.0]
+                  }
+              ]
+          }
+      ];
+      var selected_choice = "Abril FatFace 4"
+      try{
+          var stored = localStorage.getItem('fontclock.font.json')
+          if(stored) {
+              var selected_config = JSON.parse(stored);
+              selected_choice = selected_config.name;
+          }
+      } catch(e){
+          console.log("failed to load languages:" + e);
+      }
+      console.log("selected choice:" + selected_choice);
+      var selection=document.getElementById("display_selection");
+      for (var i=0; i<displays_choices.length; i++) {
+
+          var option = document.createElement('option');
+          var curr_choice = displays_choices[i];
+          option.name = curr_choice.name;
+          option.text = curr_choice.name;
+          selection.add(option);
+      }
+      selection.value = selected_choice;
+      set_image(selection.selectedIndex)
+          
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+          var new_config;
+          console.log("selection:" + selection.value);
+          for(var i=0; i<displays_choices.length; i++) {
+              if (displays_choices[i].name == selection.value) {
+                  new_config = displays_choices[i];
+                  console.log("new_config:" + JSON.stringify(new_config));
+              }
+          }
+          localStorage.setItem('fontclock.font.json',JSON.stringify(new_config));
+          // send finished app (in addition to contents of app.json)
+          sendCustomizedApp({
+            storage:[
+                {name:"fontclock.font.json", content:JSON.stringify(new_config)},
+            ]
+          });
+      });
+
+    </script>
+  </body>
+</html>

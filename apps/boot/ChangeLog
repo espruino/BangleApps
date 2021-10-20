@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 0.02: Attempt to reset state of the interpreter better before loading an app
 0.03: Fix issue switching clockfaces via menu
 0.04: Add alarm functionality
@@ -18,3 +19,41 @@
 0.17: Don't modify beep/buzz behaviour if firmware does it automatically
 0.18: Fix  'GPS time' checks for western hemisphere
 0.19: Tweaks to simplify code and lower memory usage
+=======
+0.02: Attempt to reset state of the interpreter better before loading an app
+0.03: Fix issue switching clockfaces via menu
+0.04: Add alarm functionality
+0.05: Add Welcome screen on boot
+0.06: Disable GPS time log messages, add (default=1) setting to hide log messages
+0.07: Fix issues with alarm scheduling
+0.08: Fix issues if BLE=off, 'Make Connectable' is chosen, and the loader resets Bangle.js (fix #108)
+0.09: Only check GPS for time after a fresh boot
+0.10: Stop users calling save() (fix #125)
+      If Debug info is set to 'show' don't move to Terminal if connected!
+0.11: Added vibrate as beep workaround
+0.12: Add an event on BTN2 to open launcher when no clock detected (fix #147)
+0.13: Now automatically load *.boot.js at startup
+      Move alarm code into alarm.boot.js
+0.14: Move welcome loaders to *.boot.js
+0.15: Added BLE HID option for Joystick and bare Keyboard
+0.16: Detect out of memory errors and draw them onto the bottom of the screen in red
+0.17: Don't modify beep/buzz behaviour if firmware does it automatically
+0.18: Fix  'GPS time' checks for western hemisphere
+0.19: Tweaks to simplify code and lower memory usage
+0.20: Allow Gadgetbridge to work even with programmable:off
+0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)
+0.22: Stop LCD timeout being disabled on first run (when there is no settings.json)
+0.23: Move to a precalculated .boot0 file which should speed up load time
+0.24: Add Bangle.setUI polyfill
+0.25: Fix error in 'no clock app' message
+0.26: Remove buzz in setUI polyfill (#750)
+0.27: Update polyfill for most recent changes
+0.28: Fix double clock load after settings are changed
+0.29: Update boot0 to avoid code block (faster execution)
+      Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
+0.30: Remove 'Get GPS time' at boot. Latest firmwares keep time through reboots, so this is not needed now
+0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics
+0.32: Fix single quote error in g.wrapString polyfill
+      improve g.stringMetrics polyfill
+      Fix issue where re-running bootupdate could disable existing polyfills
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

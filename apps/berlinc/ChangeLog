@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 0.02: Modified for use with new bootloader and firmware
 0.03: Shrinked size to avoid cut-off edges on the physical device. BTN3: show date. BTN1: show time in decimal.
+=======
+0.02: Modified for use with new bootloader and firmware
+0.03: Shrinked size to avoid cut-off edges on the physical device. BTN3: show date. BTN1: show time in decimal.
+0.04: Update to use Bangle.setUI instead of setWatch
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

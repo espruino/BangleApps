@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 0.02: Add support for 30-minute timezones.
 0.03: Add support for Welcome app
 0.04: Add setting to disable log messages
@@ -22,3 +23,40 @@
 0.18: Don't overwrite existing settings on app update
 0.19: Allow BLE HID settings, add README.md
 0.20: Fix set time menu, allow dates to roll over
+=======
+0.02: Add support for 30-minute timezones.
+0.03: Add support for Welcome app
+0.04: Add setting to disable log messages
+0.05: Fix Settings json
+0.06: Remove distance setting as there's a separate app for Locale now
+0.07: Added vibrate as beep workaround
+0.08: Add support for app/widget settings
+0.09: Move Welcome into App/widget settings
+0.10: Added LCD wake-up settings
+      Adds LCD brightness setting
+0.11: Make LCD brightness work after leaving settings
+0.12: Fix memory leak (#206)
+      Bring App settings nearer the top
+      Move LCD Timeout to wakeup menu
+0.13: Fix memory leak for App settings
+      Make capitalization more consistent
+      Move LCD Brightness menu into more general LCD menu
+0.14: Reduce memory usage when running app settings page
+0.15: Reduce memory usage when running default clock chooser (#294)
+0.16: Reduce memory usage further when running app settings page
+0.17: Remove need for "settings" in appid.info
+0.18: Don't overwrite existing settings on app update
+0.19: Allow BLE HID settings, add README.md
+0.20: Fix set time menu, allow dates to roll over
+0.21: Add passkey pairing option (BETA)
+      Add whitelist option (fix #78)
+0.22: Move HID to BLE menu
+0.23: Change max time offset to 13 for NZ summer daylight time (NZDT)
+0.24: Add Quiet Mode settings
+0.25: Move boot.js code into 'boot' app itself
+0.26: Use Bangle.softOff if available as this keeps the time
+0.27: Add Theme menu
+0.28: Update Quiet Mode widget (if present)
+0.29: Add Customize to Theme menu
+0.30: Move '< Back' to the top of menus
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

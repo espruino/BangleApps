@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 0.01: New App!
 0.02: Fix issues with alarm scheduling
 0.03: More alarm scheduling issues
@@ -7,3 +8,19 @@
 0.07: Don't overwrite existing settings on app update
 0.08: Make alarm scheduling more reliable
 0.09: Add per alarm auto-snooze option
+=======
+0.01: New App!
+0.02: Fix issues with alarm scheduling
+0.03: More alarm scheduling issues
+0.04: Tweaks for variable size widget system
+0.05: Add alarm.boot.js and move code from the bootloader
+0.06: Change 'New Alarm' to 'Save', allow Deletion of Alarms
+0.07: Don't overwrite existing settings on app update
+0.08: Make alarm scheduling more reliable
+0.09: Add per alarm auto-snooze option
+0.10: Fix auto-snooze option (this stopped new alarms being added) (fix #506)
+0.11: Respect Quiet Mode
+0.12: Fix widget for bangle 2, now uses theme
+      Widgets now shown on Alarm screen
+0.13: Alarm widget state now updates when setting/resetting an alarm
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

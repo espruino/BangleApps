@@ -1,0 +1,3 @@
+0.01: New App!
+0.02: Added decrement and touch functions
+0.03: Set color - ensures widgets don't end up coloring the counter's text

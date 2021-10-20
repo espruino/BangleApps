@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // This ALWAYS runs at boot
 E.setFlags({pretokenise:1});
 // Load settings...
@@ -53,3 +54,7 @@ global.save = function() { throw new Error("You can't use save() on Bangle.js wi
 require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   eval(require('Storage').read(bootFile));
 });
+=======
+// Initially this runs and rewrites itself
+eval(require('Storage').read('bootupdate.js'));
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

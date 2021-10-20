@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 0.01: New Widget!
 0.02: Tweaks for variable size widget system
 0.03: Ensure redrawing works with variable size widget system
+=======
+0.01: New Widget!
+0.02: Tweaks for variable size widget system
+0.03: Ensure redrawing works with variable size widget system
+0.04: tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

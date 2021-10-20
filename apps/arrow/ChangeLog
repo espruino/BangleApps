@@ -1,0 +1,4 @@
+0.01: First version
+0.02: Moved arrow image load to global scope
+0.03: faster drawCompass() function, does not cause buttons to become unresponsive
+0.04: removed LCD1.write() as it was keeping LCD on

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* jshint esversion: 6 */
 (() => {
   var icon = require("heatshrink").decompress(atob("jEYwIKHgwCBhwCBh4CEggPCkACBmAXDBwVZ+EB+F4gEsjl8EgMP+EChk/gEMh+ehkA+YIBxwxBnF/4HggH/wEAj0AA=="));
@@ -21,3 +22,27 @@
 
   });
 })();
+=======
+/* jshint esversion: 6 */
+(() => {
+  var color = 0x4A69;
+
+  function draw() {
+    g.reset().setColor(color).drawImage(require("heatshrink").decompress(atob("jEYwIKHgwCBhwCBh4CEggPCkACBmAXDBwVZ+EB+F4gEsjl8EgMP+EChk/gEMh+ehkA+YIBxwxBnF/4HggH/wEAj0AA==")), this.x + 1, 0);
+  }
+
+  WIDGETS["widhwt"] = { area: "tr", width: 26, draw: draw };
+
+  Bangle.on('swipe', function() {
+    color = 0x41f;
+    Bangle.buzz();
+    Bangle.drawWidgets();
+    setTimeout(() => {
+      color = 0x4A69;
+      Bangle.buzz(1E3, 1);
+      Bangle.drawWidgets();
+    }, 35E3);
+
+  });
+})();
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

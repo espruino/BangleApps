@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 0.02: Modified for use with new bootloader and firmware
+=======
+0.02: Modified for use with new bootloader and firmware
+0.03: Tweak for more efficient rendering, and firmware 2v06
+0.04: Work with themes, smaller screens
+0.05: Adjust hand lengths to be within 'tick' points
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324

@@ -1,3 +1,13 @@
+<<<<<<< HEAD
 0.01: New App!
 0.02: Only store relevant app data (saves RAM when many apps)
 0.03: Allow scrolling to wrap around (fix #382)
+=======
+0.01: New App!
+0.02: Only store relevant app data (saves RAM when many apps)
+0.03: Allow scrolling to wrap around (fix #382)
+0.04: Now displays widgets
+0.05: Use g.theme for colours
+0.06: Use Bangle.setUI for buttons
+0.07: Theme colours fix
+>>>>>>> 1cc7674aa7f990f88644e78d9d19cd981ea34324
