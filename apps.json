@@ -1371,7 +1371,7 @@
     "name": "Commandline-Clock",
     "shortName":"CLI-Clock",
     "icon": "app.png",
-    "version":"0.13",
+    "version":"0.14",
     "description": "Simple CLI-Styled Clock",
     "tags": "clock,cli,command,bash,shell,b2",
     "type":"clock",
