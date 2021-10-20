@@ -4,9 +4,8 @@ Mike Bennett mike[at]kereru.com
 0.01 : Initial
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
-0.08 : Add dbl tap on front same as short BTN1 
 */
-var v = '0.08d';
+var v = '0.08e';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -326,6 +325,7 @@ function drawPosn(dat) {
 
 function drawClock() {
   if (!canDraw) return;
+  
   buf.clear();
   var x, y;
   x=185;
@@ -334,7 +334,7 @@ function drawClock() {
   buf.setFontVector(94);
   time = require("locale").time(new Date(),1);
   
-  buf.setColor(3);
+  buf.setColor(1);
   
   buf.drawString(time.substring(0,2),x,y);
   buf.drawString(time.substring(3,5),x,y+80);
@@ -579,9 +579,8 @@ function setButtons(){
 
 function updateClock() {
   if (!canDraw) return;
-//  drawTime(); 
-  g.reset();
-  g.drawImage(img,0,40);
+  if ( cfg.modeA != 4 )  return;
+  drawClock(); 
   if ( emulator ) {max.spd++;max.alt++;}
 }
 
@@ -663,7 +662,6 @@ Bangle.on('lcdPower',function(on) {
 });
 
 Bangle.on('swipe',function(dir) {
- console.log('Swipe : '+dir);
   if(dir == 1) prevScrn();
   else nextScrn();
 });
@@ -674,13 +672,10 @@ dir : "left/right/top/bottom/front/back",
   x : -2 .. 2, // the axis of the tap
   y : -2 .. 2, // the axis of the tap
   z : -2 .. 2 // the axis of the tap
-
-
 Bangle.on('tap',function(tap) {
  console.log('Tap : '+tap.dir);
   if ( tap.dir == 'front' && tap.double ) nextFunc(1); // Same as short BTN1
 });
-
 */
 
 var gpssetup;
