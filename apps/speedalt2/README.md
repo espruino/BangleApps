@@ -4,7 +4,7 @@ What is the difference between [GPS Adventure Sports] and [GPS Adventure Sports 
 
 [GPS Adventure Sports] has 3 screens, each of which display different sets of information.
 
-[GPS Adventure Sports II] has 4 screens, each of which displays just one of Speed, Altitude, Distance to waypoint or Time.
+[GPS Adventure Sports II] has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
 
 In all other respect they perform the same functions. Use BTN3 to cycle through the screens.
 
@@ -18,7 +18,7 @@ BTN1 ( Distance ) Select next waypoint. Last fix distance from selected waypoint
 
 BTN2 : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-BTN3 : Cycles the modes between Speed, Altitude, Distance to waypoint and Time
+BTN3 : Cycles the screens between Speed, Altitude, Distance to waypoint, Position and Time
 
 BTN3 : Long press exit and return to watch.
 
