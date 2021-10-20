@@ -81,9 +81,11 @@ if (s.quiet && s.qmTimeout) boot+=`Bangle.setLCDTimeout(${s.qmTimeout});\n`;
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${s.passkey}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 // Pre-2v10 firmwares without a theme/setUI
+delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!g.theme) {
   boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
 }
+delete Bangle.setUI; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!Bangle.setUI) { // assume this is just for F18 - Q3 should already have it
   boot += `Bangle.setUI=function(mode, cb) {
 if (Bangle.btnWatches) {
@@ -131,6 +133,7 @@ else if (mode=="updown") {
   throw new Error("Unknown UI mode");
 };\n`;
 }
+delete g.imageMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfill
   boot += `Graphics.prototype.imageMetrics=function(src) {
   if (src[0]) return {width:src[0],height:src[1]};
@@ -141,15 +144,18 @@ if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfi
   return {width:im.charCodeAt(0), height:im.charCodeAt(1)};
 };\n`;
 }
+delete g.stringMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!g.stringMetrics) { // added in 2v11 - this is a limited functionality polyfill
   boot += `Graphics.prototype.stringMetrics=function(txt) {
-  return {width:this.stringWidth(txt), height:this.getFontHeight()};
+  txt = txt.toString().split("\\n");
+  return {width:Math.max.apply(null,txt.map(x=>g.stringWidth(x))), height:this.getFontHeight()*txt.length};
 };\n`;
 }
+delete g.wrapString; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
   boot += `Graphics.prototype.wrapString=function(str, maxWidth) {
   var lines = [];
-  for (var unwrappedLine of str.split("\n")) {
+  for (var unwrappedLine of str.split("\\n")) {
     var words = unwrappedLine.split(" ");
     var line = words.shift();
     for (var word of words) {
