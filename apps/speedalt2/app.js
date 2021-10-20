@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens
 */
-var v = '0.07';
+var v = '0.07b';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -655,12 +655,6 @@ Bangle.on('lcdPower',function(on) {
   if (on) startDraw(); 
   else stopDraw();
 });
-
-//Bangle.on('swipe', dir => {
-//  if(STATE.settings_open) return;
-//  if(dir == 1) prev();
-//  else next();
-//});
 
 Bangle.on('swipe',function(dir) {
   if(dir == 1) prevScrn();
