@@ -1,7 +1,7 @@
 // Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
 // https://github.com/eska-muc/BangleApps
 const fields = [4, 4, 11, 4];
-const offset = 20;
+const offset = 24;
 const width = g.getWidth() - 2 * offset;
 const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
@@ -10,11 +10,23 @@ var show_date = false;
 var show_time = false;
 var yy = 0;
 
-rowlights = [];
-time_digit = [];
+var rowlights = [];
+var time_digit = [];
 
-function drawBerlinClock() {
-  g.clear();
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function draw() {
+  g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
   var now = new Date();
 
   // show date below the clock
@@ -24,8 +36,7 @@ function drawBerlinClock() {
     var day = now.getDate();
     var dateString = `${yr}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
     var strWidth = g.stringWidth(dateString);
-    g.setColor(1, 1, 1);
-    g.setFontAlign(-1,-1);
+    g.setColor(g.theme.fg).setFontAlign(-1,-1);
     g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 4);
   }
 
@@ -50,8 +61,7 @@ function drawBerlinClock() {
       x2 = (col + 1) * boxWidth + offset;
       y2 = (row + 1) * rowHeight + offset;
 
-      g.setColor(1, 1, 1);
-      g.drawRect(x1, y1, x2, y2);
+      g.setColor(g.theme.fg).drawRect(x1, y1, x2, y2);
       if (col < rowlights[row]) {
         if (row === 2) {
           if (((col + 1) % 3) === 0) {
@@ -65,46 +75,42 @@ function drawBerlinClock() {
         g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
       }
       if (row == 3 && show_time) {
-        g.setColor(1,1,1);
-        g.setFontAlign(0,0);
+        g.setColor(g.theme.fg).setFontAlign(0,0);
         g.drawString(time_digit[col],(x1+x2)/2,(y1+y2)/2);
       }
     }
   }
+
+  queueDraw();
 }
 
 function toggleDate() {
   show_date = ! show_date;
-  drawBerlinClock();
+  draw();
 }
 
 function toggleTime() {
   show_time = ! show_time;
-  drawBerlinClock();
+  draw();
 }
 
-// special function to handle display switch on
-Bangle.on('lcdPower', (on) => {
-  g.clear();
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
   if (on) {
-    Bangle.drawWidgets();
-    // call your app function here
-    drawBerlinClock();
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
   }
 });
 
-// refesh every 15 sec
-setInterval(drawBerlinClock, 15E3);
+// Show launcher when button pressed, handle up/down
+Bangle.setUI("clockupdown", dir=> {
+  if (dir<0) toggleTime();
+  if (dir>0) toggleDate();
+});
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-drawBerlinClock();
-if (BTN3) {
-  // Toggle date display, when BTN3 is pressed
-  setWatch(toggleTime,BTN1, { repeat : true, edge: "falling"});
-  // Toggle date display, when BTN3 is pressed
-  setWatch(toggleDate,BTN3, { repeat : true, edge: "falling"});
-}
-// Show launcher when button pressed
-Bangle.setUI("clock");
+draw();

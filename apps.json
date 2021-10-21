@@ -79,10 +79,10 @@
   },
   {
     "id": "launch",
-    "name": "Launcher (Default)",
+    "name": "Launcher (Bangle.js 1 default)",
     "shortName": "Launcher",
     "version": "0.07",
-    "description": "This is needed by Bangle.js to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
+    "description": "This is needed by Bangle.js 1.0 to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
@@ -94,10 +94,10 @@
   },
   {
     "id": "launchb2",
-    "name": "Launcher (Bangle.js 2)",
+    "name": "Launcher (Bangle.js 2 default)",
     "shortName": "Launcher",
     "version": "0.03",
-    "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications. It will not work on Bangle.js 1.0.",
+    "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications.",
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
@@ -320,7 +320,7 @@
     "icon": "slidingtext.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "custom": "custom.html",
     "allow_emulator": false,
@@ -537,11 +537,11 @@
   {
     "id": "compass",
     "name": "Compass",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Simple compass that points North",
     "icon": "compass.png",
     "tags": "tool,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"compass.app.js","url":"compass.js"},
       {"name":"compass.img","url":"compass-icon.js","evaluate":true}
@@ -594,7 +594,7 @@
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "interface": "interface.html",
     "storage": [
@@ -624,11 +624,12 @@
   {
     "id": "heart",
     "name": "Heart Rate Recorder",
-    "version": "0.06",
+    "shortName": "HRM Record",
+    "version": "0.07",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "icon": "app.png",
     "tags": "tool,health,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "interface": "interface.html",
     "storage": [
       {"name":"heart.app.js","url":"app.js"},
@@ -818,11 +819,11 @@
   {
     "id": "hrm",
     "name": "Heart Rate Monitor",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Measure your heart rate and see live sensor data",
     "icon": "heartrate.png",
     "tags": "health",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"hrm.app.js","url":"heartrate.js"},
       {"name":"hrm.img","url":"heartrate-icon.js","evaluate":true}
@@ -831,14 +832,29 @@
   {
     "id": "widhrm",
     "name": "Simple Heart Rate widget",
-    "version": "0.04",
+    "version": "0.05",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "icon": "widget.png",
     "type": "widget",
     "tags": "health,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widhrm.wid.js","url":"widget.js"}
+    ]
+  },
+  { "id": "bthrm",
+    "name": "Bluetooth Heart Rate Monitor",
+    "shortName":"BT HRM",
+    "version":"0.01",
+    "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
+    "icon": "app.png",
+    "tags": "health,bluetooth",
+    "type": "boot",
+    "supports" : ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"bthrm.boot.js","url":"boot.js"},
+      {"name":"bthrm.img","url":"app-icon.js","evaluate":true}
     ]
   },
   {
@@ -1026,7 +1042,7 @@
   {
     "id": "sclock",
     "name": "Simple Clock",
-    "version": "0.06",
+    "version": "0.07",
     "description": "A Simple Digital Clock",
     "icon": "clock-simple.png",
     "type": "clock",
@@ -1071,12 +1087,12 @@
   {
     "id": "svclock",
     "name": "Simple V-Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Modification of Simple Clock 0.04 to use Vectorfont",
     "icon": "vclock-simple.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"svclock.app.js","url":"vclock-simple.js"},
@@ -1376,12 +1392,12 @@
   {
     "id": "berlinc",
     "name": "Berlin Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "icon": "berlin-clock.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
@@ -1502,7 +1518,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,address,mac",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
     ]
@@ -2804,12 +2820,12 @@
     "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName": "World Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Current time zone plus up to four others",
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "custom": "custom.html",
     "storage": [
@@ -3334,12 +3350,12 @@
   {
     "id": "widhrt",
     "name": "HRM Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,hrm",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widhrt.wid.js","url":"widget.js"}
@@ -3382,7 +3398,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,compass",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widcom.wid.js","url":"widget.js"}
@@ -3391,7 +3407,7 @@
   {
     "id": "arrow",
     "name": "Arrow Compass",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Moving arrow compass that points North, shows heading, with tilt correction. Based on jeffmer's Navigation Compass",
     "icon": "arrow.png",
     "type": "app",
@@ -3975,5 +3991,20 @@
       {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
       {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
     ]
+  },
+  { "id": "vernierrespirate",
+    "name": "Vernier Go Direct Respiration Belt",
+    "shortName":"Respiration Belt",
+    "version":"0.01",
+    "description": "Connects to a Go Direct Respiration Belt and shows respiration rate",
+    "icon": "app.png",
+    "tags": "health,bluetooth",
+    "supports" : ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"vernierrespirate.app.js","url":"app.js"},
+      {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"vernierrespirate.json"}]
   }
 ]

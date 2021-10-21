@@ -133,8 +133,8 @@ window.addEventListener('load', (event) => {
   });
 });
 
-// Hook onto device chooser dropdown
 window.addEventListener('load', (event) => {
+  // Hook onto device chooser dropdown
   htmlToArray(document.querySelectorAll(".devicetype-nav .menu-item")).forEach(button => {
     button.addEventListener("click", event => {
       var a = event.target;
@@ -142,6 +142,22 @@ window.addEventListener('load', (event) => {
       filterAppsForDevice(deviceId); // also sets the device dropdown
       setSavedDeviceId(undefined); // ask at startup next time
       document.querySelector(".devicetype-nav span").innerText = a.innerText;
+    });
+  });
+
+  // Button to install all default apps in one go
+  document.getElementById("installdefault").addEventListener("click",event=>{
+    getInstalledApps().then(() => {
+      if (device.id == "BANGLEJS")
+        return httpGet("defaultapps_banglejs.json");
+      if (device.id == "BANGLEJS2")
+        return httpGet("defaultapps_banglejs2.json");
+      throw new Error("Unknown device "+device.id);
+    }).then(json=>{
+      return installMultipleApps(JSON.parse(json), "default");
+    }).catch(err=>{
+      Progress.hide({sticky:true});
+      showToast("App Install failed, "+err,"error");
     });
   });
 });
