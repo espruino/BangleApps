@@ -1502,7 +1502,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,address,mac",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widid.wid.js","url":"widget.js"}
     ]
