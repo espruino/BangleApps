@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
 */
-var v = '1.02';
+var v = '1.03';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -407,12 +407,14 @@ function onGPS(fix) {
 
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
-    if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
+    
+    if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = sp;
 
     // Altitude
     al = lf.alt;
     al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
-    if (parseFloat(al) > parseFloat(max.alt) && max.n > 15 ) max.alt = parseFloat(al);
+    
+    if (parseFloat(al) > parseFloat(max.alt) && max.n > 15 ) max.alt = al;
 
     // Distance to waypoint
     di = distance(lf,wp);
@@ -538,6 +540,39 @@ function nextFunc(dur) {
     onGPS(lf);
 }
 
+
+function updateClock() {
+  if (!canDraw) return;
+  if ( cfg.modeA != 4 )  return;
+  drawClock(); 
+  if ( emulator ) {max.spd++;max.alt++;}
+}
+
+function startDraw(){
+  canDraw=true;
+  g.clear();
+  Bangle.drawWidgets();
+  setLpMode('SuperE'); // off
+  onGPS(lf);  // draw app screen
+}
+
+function stopDraw() {
+  canDraw=false;
+  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 10000);   //Drop to low power in 10 secs. Keep lp mode off until we have a  first fix.
+}
+
+function savSettings() {
+  require("Storage").write('speedalt2.json',cfg);
+}
+
+function setLpMode(m) {
+  if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
+  if ( !gpssetup ) return;
+  gpssetup.setPowerMode({power_mode:m});
+}
+
+// == Events
+
 function setButtons(){
 
   // BTN1 - Max speed/alt or next waypoint
@@ -579,37 +614,42 @@ function setButtons(){
 
 }
 
-function updateClock() {
-  if (!canDraw) return;
-  if ( cfg.modeA != 4 )  return;
-  drawClock(); 
-  if ( emulator ) {max.spd++;max.alt++;}
-}
+Bangle.on('lcdPower',function(on) {
+  if (!SCREENACCESS.withApp) return;
+  if (on) startDraw(); 
+  else stopDraw();
+});
 
-function startDraw(){
-  canDraw=true;
-  g.clear();
-  Bangle.drawWidgets();
-  setLpMode('SuperE'); // off
-  onGPS(lf);  // draw app screen
-}
+Bangle.on('swipe',function(dir) {
+  if(dir == 1) {
+console.log('RIGHT');
+    prevScrn();
+  }
+  else {
+console.log('LEFT');
+    nextScrn();
+  }
+});
 
-function stopDraw() {
-  canDraw=false;
-  if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 10000);   //Drop to low power in 10 secs. Keep lp mode off until we have a  first fix.
-}
+Bangle.on('touch', function(button){
+    switch(button){
+    case 1:    // BTN4
+console.log('BTN4');
+        prevScrn();
+      break;
+    case 2:    // BTN5
+console.log('BTN5');
+      nextScrn();
+      break;
+    case 3:
+console.log('MDL');
+      nextFunc(0);  // Centre - same function as short BTN1
+      break;
+    }
+  });
 
-function savSettings() {
-  require("Storage").write('speedalt2.json',cfg);
-}
 
-function setLpMode(m) {
-  if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
-  if ( !gpssetup ) return;
-  gpssetup.setPowerMode({power_mode:m});
-}
-
-// =Main Prog
+// == Main Prog
 
 // Read settings. 
 let cfg = require('Storage').readJSON('speedalt2.json',1)||{};
@@ -656,29 +696,6 @@ var SCREENACCESS = {
       request:function(){this.withApp=false;stopDraw();},
       release:function(){this.withApp=true;startDraw();}
 }; 
-
-Bangle.on('lcdPower',function(on) {
-  if (!SCREENACCESS.withApp) return;
-  if (on) startDraw(); 
-  else stopDraw();
-});
-
-Bangle.on('swipe',function(dir) {
-  if(dir == 1) prevScrn();
-  else nextScrn();
-});
-
-/*
-dir : "left/right/top/bottom/front/back",
-  double : true/false // was this a double-tap?
-  x : -2 .. 2, // the axis of the tap
-  y : -2 .. 2, // the axis of the tap
-  z : -2 .. 2 // the axis of the tap
-Bangle.on('tap',function(tap) {
- console.log('Tap : '+tap.dir);
-  if ( tap.dir == 'front' && tap.double ) nextFunc(1); // Same as short BTN1
-});
-*/
 
 var gpssetup;
 try {
