@@ -588,9 +588,9 @@ function updateClock() {
 
 function startDraw(){
   canDraw=true;
-  setLpMode('SuperE'); // off
   g.clear();
   Bangle.drawWidgets();
+  setLpMode('SuperE'); // off
   onGPS(lf);  // draw app screen
 }
 
