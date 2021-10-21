@@ -4,6 +4,9 @@ This app will allow you to keep scores for most kinds of sports.
 To correct a falsely awarded point simply open and close the menu within .5 seconds. This will put the app into correction mode (indicated by the `R`).
 In this mode any score increments will be decrements. To move back a set, reduce both players scores to 0, then decrement one of the scores once again.
 
+## Screenshot
+![](screenshot_score.png)
+
 ## Bangle.js 1
 | Keybinding          | Description                  |
 |---------------------|------------------------------|
