@@ -142,10 +142,13 @@ function docalibrate(e,first){
       startdraw();
       setTimeout(setButtons,1000);
     }
-  }   
-  if (first===undefined) first=false;
-  stopdraw();
+  }
+
+  if (first === undefined) first = false;
+
+  stopdraw(false);
   clearWatch();
+
   if (first) 
     E.showAlert(msg,title).then(action.bind(null,true));
   else 
@@ -153,16 +156,30 @@ function docalibrate(e,first){
 }
 
 function startdraw(){
+  if (!Bangle.isCompassOn()) {
+    Bangle.setCompassPower(1);
+  }
+
   g.clear();
   g.setColor(1,1,1);
   Bangle.drawWidgets();
   candraw = true;
+  if (intervalRef) clearInterval(intervalRef);
   intervalRef = setInterval(reading,500);
 }
 
-function stopdraw() {
+function stopdraw(powerOffCompass) {
+  if (powerOffCompass === undefined) {
+    powerOffCompass = true;
+  }
   candraw=false;
-  if(intervalRef) {clearInterval(intervalRef);}
+
+  if (powerOffCompass) {
+    Bangle.setCompassPower(0);
+  }
+  if (intervalRef) {
+    clearInterval(intervalRef);
+  }
 }
 
 function setButtons(){
@@ -170,7 +187,7 @@ function setButtons(){
   setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
   setWatch(docalibrate, BTN3, {repeat:false,edge:"falling"});
 }
- 
+
 Bangle.on('lcdPower',function(on) {
   if (on) {
     startdraw();
@@ -182,6 +199,5 @@ Bangle.on('lcdPower',function(on) {
 Bangle.on('kill',()=>{Bangle.setCompassPower(0);});
 
 Bangle.loadWidgets();
-Bangle.setCompassPower(1);
 startdraw();
 setButtons();
