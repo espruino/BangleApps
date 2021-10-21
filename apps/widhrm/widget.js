@@ -2,6 +2,7 @@
   if (!Bangle.isLocked) return; // old firmware
   var currentBPM;
   var lastBPM;
+  var isHRMOn = false;
 
   // turn on sensor when the LCD is unlocked
   Bangle.on('lock', function(isLocked) {
@@ -14,19 +15,24 @@
     }
   });
 
+  var hp = Bangle.setHRMPower;
+  Bangle.setHRMPower = () => {
+    hp.apply(Bangle, arguments);
+    isHRMOn = Bangle.isHRMOn();
+    WIDGETS["hrm"].draw();
+  };
+
   Bangle.on('HRM',function(d) {
     currentBPM = d.bpm;
     lastBPM = currentBPM;
     WIDGETS["hrm"].draw();
   });
-  Bangle.setHRMPower(!Bangle.isLocked(),"widhrm");
 
   // add your widget
   WIDGETS["hrm"]={area:"tl",width:24,draw:function() {
     var width = 24;
     g.reset();
-    g.setFont("6x8", 1);
-    g.setFontAlign(0, 0);
+    g.setFont("6x8", 1).setFontAlign(0, 0);
     g.clearRect(this.x,this.y+15,this.x+width,this.y+23); // erase background
     var bpm = currentBPM, isCurrent = true;
     if (bpm===undefined) {
@@ -37,8 +43,10 @@
       bpm = "--";
     g.setColor(isCurrent ? g.theme.fg : "#808080");
     g.drawString(bpm, this.x+width/2, this.y+19);
-    g.setColor(isCurrent ? "#ff0033" : "#808080");
+    g.setColor(isHRMOn ? "#ff0033" : "#808080");
     g.drawImage(atob("CgoCAAABpaQ//9v//r//5//9L//A/+AC+AAFAA=="),this.x+(width-10)/2,this.y+1);
     g.setColor(-1);
   }};
+
+  Bangle.setHRMPower(!Bangle.isLocked(),"widhrm");
 })();
