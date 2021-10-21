@@ -1026,7 +1026,7 @@
   {
     "id": "sclock",
     "name": "Simple Clock",
-    "version": "0.06",
+    "version": "0.07",
     "description": "A Simple Digital Clock",
     "icon": "clock-simple.png",
     "type": "clock",
@@ -1071,12 +1071,12 @@
   {
     "id": "svclock",
     "name": "Simple V-Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Modification of Simple Clock 0.04 to use Vectorfont",
     "icon": "vclock-simple.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"svclock.app.js","url":"vclock-simple.js"},
@@ -1376,12 +1376,12 @@
   {
     "id": "berlinc",
     "name": "Berlin Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
     "icon": "berlin-clock.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
@@ -2804,12 +2804,12 @@
     "id": "worldclock",
     "name": "World Clock - 4 time zones",
     "shortName": "World Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Current time zone plus up to four others",
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "custom": "custom.html",
     "storage": [
