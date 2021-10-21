@@ -28,7 +28,7 @@
       'color': 'By Level',
       'percentage': true,
       'charger': true,
-      'hideifmorethan': 100,
+      'hideifmorethan': 100
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k]
@@ -76,7 +76,6 @@
   function draw() {
   // if hidden, don't draw
     if (!WIDGETS["batpc"].width) return;
-    if (setting('hidewidget')) return;
     // else...
     var s = 39;
     var x = this.x, y = this.y;
