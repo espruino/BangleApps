@@ -221,9 +221,9 @@ function graphRecord(n) {
     if (tempCount == startLine) {
       // generating rgaph in loop when reaching startLine to keep loading
       // message on screen until graph can be drawn
-      g.clear().
+      g.reset().clearRect(0,24,g.getWidth(),g.getHeight()).
       // Home for Btn2
-        setColor(1, 1, 1).
+        setColor(g.theme.fg).
         drawLine(220, 118, 227, 110).
         drawLine(227, 110, 234, 118).
         drawPoly([222,117,222,125,232,125,232,117], false).
@@ -245,7 +245,7 @@ function graphRecord(n) {
         // scale indicator line for 50%
         drawLine(GraphXZero - GraphMarkerOffset, GraphY100 + (GraphYZero - GraphY100)/2, GraphXZero, GraphY100 + (GraphYZero - GraphY100)/2).
         // background line for 50%
-        setColor(1, 1, 1).
+        setColor(g.theme.fg).
         drawLine(GraphXZero + 1, GraphY100 + (GraphYZero - GraphY100)/2, GraphXMax, GraphY100 + (GraphYZero - GraphY100)/2).
         setFontAlign(1, -1, 0).
         setFont("Vector", 10);

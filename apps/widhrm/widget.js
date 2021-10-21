@@ -1,9 +1,28 @@
 (() => {
-  var currentBPM = undefined;
-  var lastBPM = undefined;
-  var firstBPM = true; // first reading since sensor turned on
+  if (!Bangle.isLocked) return; // old firmware
+  var currentBPM;
+  var lastBPM;
 
-  function draw() {
+  // turn on sensor when the LCD is unlocked
+  Bangle.on('lock', function(isLocked) {
+    if (!isLocked) {
+      Bangle.setHRMPower(1,"widhrm");
+      currentBPM = undefined;
+      WIDGETS["hrm"].draw();
+    } else {
+      Bangle.setHRMPower(0,"widhrm");
+    }
+  });
+
+  Bangle.on('HRM',function(d) {
+    currentBPM = d.bpm;
+    lastBPM = currentBPM;
+    WIDGETS["hrm"].draw();
+  });
+  Bangle.setHRMPower(!Bangle.isLocked(),"widhrm");
+
+  // add your widget
+  WIDGETS["hrm"]={area:"tl",width:24,draw:function() {
     var width = 24;
     g.reset();
     g.setFont("6x8", 1);
@@ -16,36 +35,10 @@
     }
     if (bpm===undefined)
       bpm = "--";
-    g.setColor(isCurrent ? "#ffffff" : "#808080");
+    g.setColor(isCurrent ? g.theme.fg : "#808080");
     g.drawString(bpm, this.x+width/2, this.y+19);
     g.setColor(isCurrent ? "#ff0033" : "#808080");
     g.drawImage(atob("CgoCAAABpaQ//9v//r//5//9L//A/+AC+AAFAA=="),this.x+(width-10)/2,this.y+1);
     g.setColor(-1);
-  }
-
-  // redraw when the LCD turns on
-  Bangle.on('lcdPower', function(on) {
-    if (on) {
-      Bangle.setHRMPower(1,"widhrm");
-      firstBPM = true;
-      currentBPM = undefined;
-      WIDGETS["hrm"].draw();
-    } else {
-      Bangle.setHRMPower(0,"widhrm");
-    }
-  });
-
-  Bangle.on('HRM',function(d) {
-    if (firstBPM)
-      firstBPM=false; // ignore the first one as it's usually rubbish
-    else {
-      currentBPM = d.bpm;
-      lastBPM = currentBPM;
-    }
-    WIDGETS["hrm"].draw();
-  });
-  Bangle.setHRMPower(Bangle.isLCDOn(),"widhrm");
-
-  // add your widget
-  WIDGETS["hrm"]={area:"tl",width:24,draw:draw};
+  }};
 })();

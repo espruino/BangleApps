@@ -624,11 +624,11 @@
   {
     "id": "heart",
     "name": "Heart Rate Recorder",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Application that allows you to record your heart rate. Can run in background",
     "icon": "app.png",
     "tags": "tool,health,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "interface": "interface.html",
     "storage": [
       {"name":"heart.app.js","url":"app.js"},
@@ -818,11 +818,11 @@
   {
     "id": "hrm",
     "name": "Heart Rate Monitor",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Measure your heart rate and see live sensor data",
     "icon": "heartrate.png",
     "tags": "health",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"hrm.app.js","url":"heartrate.js"},
       {"name":"hrm.img","url":"heartrate-icon.js","evaluate":true}
@@ -831,12 +831,12 @@
   {
     "id": "widhrm",
     "name": "Simple Heart Rate widget",
-    "version": "0.04",
+    "version": "0.05",
     "description": "When the screen is on, the widget turns on the heart rate monitor and displays the current heart rate (or last known in grey). For this to work well you'll need at least a 15 second LCD Timeout.",
     "icon": "widget.png",
     "type": "widget",
     "tags": "health,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widhrm.wid.js","url":"widget.js"}
     ]
@@ -3334,12 +3334,12 @@
   {
     "id": "widhrt",
     "name": "HRM Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,hrm",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widhrt.wid.js","url":"widget.js"}
