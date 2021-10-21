@@ -320,7 +320,7 @@
     "icon": "slidingtext.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "custom": "custom.html",
     "allow_emulator": false,
@@ -594,7 +594,7 @@
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "interface": "interface.html",
     "storage": [
