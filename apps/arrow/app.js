@@ -1,5 +1,5 @@
-var pal1color = new Uint16Array([0x0000,0xFFC0],0,1);
-var pal2color = new Uint16Array([0x0000,0xffff],0,1);
+var pal1color = new Uint16Array([g.theme.bg,0xFFC0],0,1);
+var pal2color = new Uint16Array([g.theme.bg,g.theme.fg],0,1);
 var buf1 = Graphics.createArrayBuffer(128,128,1,{msb:true});
 var buf2 = Graphics.createArrayBuffer(80,40,1,{msb:true});
 var intervalRef;
@@ -7,6 +7,7 @@ var bearing=0; // always point north
 var heading = 0;
 var oldHeading = 0;
 var candraw = false;
+var isCalibrating = false;
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 
 function flip1(x,y) {
@@ -29,7 +30,7 @@ function drawCompass(hd) {
   if (Math.abs(hd - oldHeading) < 2) return 0;
   hd=hd*Math.PI/180;
   var p = [0, 1.1071, Math.PI/4, 2.8198, 3.4633, 7*Math.PI/4 , 5.1760];
-  
+
   // using polar cordinates, 64,64 is the offset from the 0,0 origin
   var poly = [
     64+60*Math.sin(hd+p[0]),       64-60*Math.cos(hd+p[0]),
@@ -40,16 +41,16 @@ function drawCompass(hd) {
     64+28.2843*Math.sin(hd+p[5]),  64-28.2843*Math.cos(hd+p[5]),
     64+44.7214*Math.sin(hd+p[6]),  64-44.7214*Math.cos(hd+p[6])
   ];
-      
+
   buf1.fillPoly(poly);
   flip1(56, 56);
 }
 
 // stops violent compass swings and wobbles, takes 3ms
-function newHeading(m,h){ 
+function newHeading(m,h){
     var s = Math.abs(m - h);
     var delta = (m>h)?1:-1;
-    if (s>=180){s=360-s; delta = -delta;} 
+    if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
     var hd = h + delta*(1 + Math.round(s/5));
     if (hd<0) hd+=360;
@@ -76,7 +77,7 @@ function tiltfixread(O,S){
   return psi;
 }
 
-function reading() {
+function reading(m) {
   var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
   heading = newHeading(d,heading);
   var dir = bearing - heading;
@@ -97,18 +98,19 @@ function reading() {
 function calibrate(){
   var max={x:-32000, y:-32000, z:-32000},
       min={x:32000, y:32000, z:32000};
-  var ref = setInterval(()=>{
-      var m = Bangle.getCompass();
+  function onMag(m) {
       max.x = m.x>max.x?m.x:max.x;
       max.y = m.y>max.y?m.y:max.y;
       max.z = m.z>max.z?m.z:max.z;
       min.x = m.x<min.x?m.x:min.x;
       min.y = m.y<min.y?m.y:min.y;
       min.z = m.z<min.z?m.z:min.z;
-  }, 100);
+  }
+  Bangle.on('mag', onMag);
+  Bangle.setCompassPower(1, "app");
   return new Promise((resolve) => {
      setTimeout(()=>{
-       if(ref) clearInterval(ref);
+       Bangle.removeListener('mag', onMag);
        var offset = {x:(max.x+min.x)/2,y:(max.y+min.y)/2,z:(max.z+min.z)/2};
        var delta  = {x:(max.x-min.x)/2,y:(max.y-min.y)/2,z:(max.z-min.z)/2};
        var avg = (delta.x+delta.y+delta.z)/3;
@@ -132,6 +134,7 @@ function docalibrate(e,first){
       flip1(56,56);
 
       calibrate().then((r)=>{
+        isCalibrating = false;
         require("Storage").write("magnav.json",r);
         Bangle.buzz();
         CALIBDATA = r;
@@ -146,39 +149,34 @@ function docalibrate(e,first){
 
   if (first === undefined) first = false;
 
-  stopdraw(false);
+  stopdraw();
   clearWatch();
+  isCalibrating = true;
 
-  if (first) 
+  if (first)
     E.showAlert(msg,title).then(action.bind(null,true));
-  else 
+  else
     E.showPrompt(msg,{title:title,buttons:{"Start":true,"Cancel":false}}).then(action);
 }
 
 function startdraw(){
-  if (!Bangle.isCompassOn()) {
-    Bangle.setCompassPower(1);
-  }
+  Bangle.setCompassPower(1, "app");
 
   g.clear();
   g.setColor(1,1,1);
   Bangle.drawWidgets();
   candraw = true;
   if (intervalRef) clearInterval(intervalRef);
-  intervalRef = setInterval(reading,500);
+  intervalRef = setInterval(reading,200);
 }
 
-function stopdraw(powerOffCompass) {
-  if (powerOffCompass === undefined) {
-    powerOffCompass = true;
-  }
+function stopdraw() {
   candraw=false;
 
-  if (powerOffCompass) {
-    Bangle.setCompassPower(0);
-  }
+  Bangle.setCompassPower(0, "app");
   if (intervalRef) {
     clearInterval(intervalRef);
+    intervalRef = undefined;
   }
 }
 
@@ -189,6 +187,7 @@ function setButtons(){
 }
 
 Bangle.on('lcdPower',function(on) {
+  if (isCalibrating) return;
   if (on) {
     startdraw();
   } else {
@@ -196,8 +195,8 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
-Bangle.on('kill',()=>{Bangle.setCompassPower(0);});
-
 Bangle.loadWidgets();
-startdraw();
 setButtons();
+
+Bangle.setLCDPower(1);
+if (CALIBDATA) startdraw(); else docalibrate({},true);
