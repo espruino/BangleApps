@@ -1,9 +1,10 @@
 (function() {
   var log = function() {};//print
   var gatt;
+  var status;
 
   Bangle.isHRMOn = function() {
-    return gatt!==undefined;
+    return (status=="searching" || status=="connecting") || (gatt!==undefined);
   }
   Bangle.setHRMPower = function(isOn, app) {
     // Do app power handling
@@ -17,10 +18,12 @@
     // so now we know if we're really on
     if (isOn) {
       log("setHRMPower on", app);
-      if (!gatt) {
+      if (!Bangle.isHRMOn()) {
         log("HRM not already on");
+        status = "searching";
         NRF.requestDevice({ filters: [{ services: ['180D'] }] }).then(function(device) {
           log("Found device "+device.id);
+          status = "connecting";
           device.on('gattserverdisconnected', function(reason) {
             gatt = undefined;
           });
@@ -54,16 +57,18 @@
           return characteristic.startNotifications();
         }).then(function() {
           log("Ready");
-          console.log("Done!");
+          status = "ok";
         }).catch(function(err) {
-          console.log("Error",err);
+          log("Error",err);
           gatt = undefined;
+          status = "error";
         });
       }
     } else { // not on
       log("setHRMPower off", app);
       if (gatt) {
         log("HRM connected - disconnecting");
+        status = undefined;
         try {gatt.disconnect();}catch(e) {
           log("HRM disconnect error", e);
         }
