@@ -28,7 +28,7 @@
       'color': 'By Level',
       'percentage': true,
       'charger': true,
-      'hideifmorethan': 100
+      'hideifmorethan': 100,
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k]
