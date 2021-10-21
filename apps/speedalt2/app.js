@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
 */
-var v = '1.01';
+var v = '1.01b';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -440,7 +440,6 @@ function onGPS(fix) {
         unit:cfg.spd_unit,
         sats:lf.satellites,
         age:age,
- //       fix:lf.fix,
         max:true,
         wp:false,
         sat:true
@@ -451,7 +450,6 @@ function onGPS(fix) {
         unit:cfg.spd_unit,
         sats:lf.satellites,
         age:age,
-//        fix:lf.fix,
         max:false,
         wp:false,
         sat:true
@@ -466,7 +464,6 @@ function onGPS(fix) {
         unit:cfg.alt_unit,
         sats:lf.satellites,
         age:age,
- //       fix:lf.fix,
         max:true,
         wp:false,
         sat:true
@@ -477,7 +474,6 @@ function onGPS(fix) {
         unit:cfg.alt_unit,
         sats:lf.satellites,
         age:age,
-//        fix:lf.fix,
         max:false,
         wp:false,
         sat:true
@@ -491,7 +487,6 @@ function onGPS(fix) {
         unit:cfg.dist_unit,
         sats:lf.satellites,
         age:age,
-//        fix:lf.fix,
         max:false,
         wp:true,
         sat:true
@@ -562,7 +557,7 @@ function setButtons(){
     }
     else {
       Bangle.setLCDTimeout(0);
-      Bangle.setLCDPower(1);
+//      Bangle.setLCDPower(1);
       LED1.set();
     }
   }, BTN2, {repeat:true,edge:"falling"});
