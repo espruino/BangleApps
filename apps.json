@@ -537,11 +537,11 @@
   {
     "id": "compass",
     "name": "Compass",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Simple compass that points North",
     "icon": "compass.png",
     "tags": "tool,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"compass.app.js","url":"compass.js"},
       {"name":"compass.img","url":"compass-icon.js","evaluate":true}
@@ -3382,7 +3382,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,compass",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widcom.wid.js","url":"widget.js"}
