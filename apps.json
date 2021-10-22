@@ -2929,7 +2929,6 @@
   "storage": [
     {"name":"speedclock.app.js","url":"app.js"},
     {"name":"speedclock.img","url":"app-icon.js","evaluate":true},
-    {"name":"speedclock.settings.js","url":"settings.js"}
   ],
  "data": [
       {"name":"speedclock.json"}
