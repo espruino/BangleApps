@@ -4009,6 +4009,20 @@
       {"name":"ffcniftya.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  {
+    "id": "stopwatch",
+    "name": "Stopwatch Touch",
+    "version": "0.01",
+    "description": "A touch based stop watch for Bangle JS 2",
+    "icon": "stopwatch.png",
+    "tags": "tools,app,b2",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
+      {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
+    ]
+  },
   { "id": "vernierrespirate",
     "name": "Vernier Go Direct Respiration Belt",
     "shortName":"Respiration Belt",
