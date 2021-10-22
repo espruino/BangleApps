@@ -2928,7 +2928,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"speedclock.app.js","url":"app.js"},
-    {"name":"speedclock.img","url":"app-icon.js","evaluate":true},
+    {"name":"speedclock.img","url":"app-icon.js","evaluate":true}
   ],
  "data": [
       {"name":"speedclock.json"}
