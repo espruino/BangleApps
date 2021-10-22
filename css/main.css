@@ -23,6 +23,9 @@
 .filter-nav {
   display: inline-block;
 }
+.device-nav {
+  display: inline-block;
+}
 .sort-nav {
   float: right;
 }
@@ -32,6 +35,21 @@
   top: 36px;
   left: -24px;
 }
-.btn-favourite {
-  color: red;
+.btn.btn-favourite { color: red; }
+.btn.btn-favourite:hover { color: red; }
+
+.icon.icon-emulator { text-indent: 0px; } /*override spectre*/
+.icon.icon-emulator::before {
+  content: "\01F5B5";
+}
+.icon.icon-favourite { text-indent: 0px; } /*override spectre*/
+.icon.icon-favourite::before {
+  content: "\02661"; /* 0x2661 = empty heart; 0x2606 = empty star */
+}
+.icon.icon-favourite-active::before {
+  content: "\02665"; /* 0x2665 = solid heart; 0x2605 = solid star  */
+}
+.icon.icon-interface {text-indent: 0px;font-size: 130%;vertical-align: -30%;} /*override spectre*/
+.icon.icon-interface::before {
+  content: "\01F5AB";
 }

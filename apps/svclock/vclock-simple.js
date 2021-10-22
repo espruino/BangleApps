@@ -1,4 +1,3 @@
-/* jshint esversion: 6 */
 const locale = require("locale");
 
 var timeFontSize;
@@ -12,8 +11,7 @@ var yposDate;
 var yposYear;
 var yposGMT;
 
-switch (process.env.BOARD) {
-  case "EMSCRIPTEN":
+if (g.getWidth() > 200) {
     timeFontSize = 65;
     dateFontSize = 20;
     gmtFontSize = 10;
@@ -22,8 +20,7 @@ switch (process.env.BOARD) {
     yposDate = 130;
     yposYear = 175;
     yposGMT = 220;
-    break;
-  case "EMSCRIPTEN2":
+} else {
     timeFontSize = 48;
     dateFontSize = 15;
     gmtFontSize = 10;
@@ -32,12 +29,23 @@ switch (process.env.BOARD) {
     yposDate = 95;
     yposYear = 128;
     yposGMT = 161;
-    break;
 }
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 
-function drawSimpleClock() {
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function draw() {
   g.clear();
   Bangle.drawWidgets();
 
@@ -76,23 +84,26 @@ function drawSimpleClock() {
   // draw gmt
   g.setFont(font, gmtFontSize);
   g.drawString(d.toString().match(/GMT[+-]\d+/), xyCenter, yposGMT, true);
+
+  queueDraw();
 }
 
-// handle switch display on by pressing BTN1
-Bangle.on('lcdPower', function(on) {
-  if (on) drawSimpleClock();
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
 // clean app screen
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-// refesh every 15 sec
-setInterval(drawSimpleClock, 15E3);
-
 // draw now
-drawSimpleClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");
+draw();

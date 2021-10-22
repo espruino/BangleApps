@@ -16,7 +16,7 @@ function drawMenu() {
   var w = g.getWidth();
   var h = g.getHeight();
   var m = w/2;
-  var n = (h-48)/64;
+  var n = Math.floor((h-48)/64);
   if (selected>=n+menuScroll) menuScroll = 1+selected-n;
   if (selected<menuScroll) menuScroll = selected;
   // arrows

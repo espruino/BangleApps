@@ -169,14 +169,23 @@ function Layout(layout, options) {
     Bangle.on('touch',Bangle.touchHandler);
   }
 
-  // add IDs
+  // recurse over layout doing some fixing up if needed
   var ll = this;
-  function idRecurser(l) {
+  function recurser(l) {
+    // add IDs
     if (l.id) ll[l.id] = l;
+    // fix type up
     if (!l.type) l.type="";
-    if (l.c) l.c.forEach(idRecurser);
+    // FIXME ':'/fsz not needed in new firmwares - Font:12 is handled internally
+    // fix fonts for pre-2v11 firmware
+    if (l.font && l.font.includes(":")) {
+      var f = l.font.split(":");
+      l.font = f[0];
+      l.fsz = f[1];
+    }
+    if (l.c) l.c.forEach(recurser);
   }
-  idRecurser(layout);
+  recurser(this._l);
   this.updateNeeded = true;
 }
 
@@ -352,12 +361,6 @@ Layout.prototype.update = function() {
     "txt" : function(l) {
       if (l.font.endsWith("%"))
         l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      // FIXME ':'/fsz not needed in new firmwares - it's handled internally
-      if (l.font.includes(":")) {
-        var f = l.font.split(":");
-        l.font = f[0];
-        l.fsz = f[1];
-      }
       if (l.wrap) {
         l._h = l._w = 0;
       } else {

@@ -217,8 +217,9 @@ and which gives information about the app for the Launcher.
 { "id": "appid",              // 7 character app id
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
-  "icon": "icon.png",         // icon in apps/
+  "version": "0v01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
+  "icon": "icon.png",         // icon in apps/
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
                               //   'widget' - a widget
@@ -226,6 +227,7 @@ and which gives information about the app for the Launcher.
                               //   'bootloader' - code that runs at startup only
                               //   'RAM' - code that runs and doesn't upload anything to storage
   "tags": "",                 // comma separated tag list for searching
+  "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
