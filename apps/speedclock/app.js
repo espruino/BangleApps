@@ -1,9 +1,15 @@
+/*
+Simple watch [speedwatch]
+Mike Bennett mike[at]kereru.com
+0.01 : Initial
+*/
 
 var v='0.01';
 
 // timeout used to update every minute
 var drawTimeout;
 var x,y,w,h;
+
 // Variables for the stopwatch
 var counter = -1;  // Counts seconds
 var oldDate = new Date(2020,0,1);   // Initialize to a past date
@@ -11,6 +17,11 @@ var swInterval;   // The interval's id
 var B3 = 0;       // Flag to track BTN3's current function
 var w1;           // watch id for BTN1
 var w3;           // watch id for BTN3
+
+// Colours
+var colTime = 0x4FE0;
+var colDate = 0xEFE0;
+var colSW = 0x1DFD;
 
 // schedule a draw for the next minute
 function queueDraw() {
@@ -23,12 +34,14 @@ function queueDraw() {
 
 function stopWatch(clear) {
 
-  x = 240;
+  x = 120;
   y = 200;
-  w = 110;
-  h = 24;
+  w = 240;
+  h = 25;
 
-  g.clearRect(x-w,y-h,x,y); // clear the background
+  g.reset();
+  g.setColor(colSW);
+  g.clearRect(x-(w/2),y-h,x+(w/2),y); // clear the background
   if (clear) return;
   
   counter++;
@@ -54,10 +67,7 @@ function stopWatch(clear) {
   if (!w1) w1 = setWatch(resetStopWatch, BTN1, {repeat:false,edge:"falling"});
 
   // Draw elapsed time:
-   
-  g.reset();
-  g.setColor(0.0,0.5,1.0);
-  g.setFontAlign(1,1);
+  g.setFontAlign(0,1);
   g.setFont("Vector24");
   
   var swStr = ("0"+parseInt(mins)).substr(-2) + ':' + ("0"+parseInt(secs)).substr(-2);
@@ -78,7 +88,9 @@ function resetStopWatch() {
 
   // Clear the stopwatch:
   stopWatch(true);
-//  g.clearRect(1,180,g.getWidth(),210);
+  
+  // Restore the date
+  drawDate();
 
   // Reset the counter:
   counter = -1;
@@ -99,18 +111,20 @@ function resetStopWatch() {
 
 function drawDate() {
   // draw date
-  x = 0;
+  x = 120;
   y = 200;
-  w = 70;
-  h = 10;
+  w = 240;
+  h = 25;
 
-  var date = new Date();
-  var dateStr = require("locale").date(date);  
   g.reset();
-
-  g.clearRect(x,y-h,x+w,y); // clear the background
+  g.setColor(colDate);
+  g.clearRect(x-(w/2),y-h,x+(w/2),y); // clear the background
   
-  g.setFontAlign(-1,1).setFont("6x8");
+  var date = new Date();
+//  var dateStr = require("locale").date(date,1);  
+  var dateStr = date.getDate() + ' ' +require("locale").month(date,1);  
+  g.setFontAlign(0,1);
+  g.setFont("Vector24");
   g.drawString(dateStr,x,y);
   
 }
@@ -125,42 +139,12 @@ function drawTime() {
   var date = new Date();
   var timeStr = require("locale").time(date,1);
   g.reset();
-  
   g.clearRect(x-(w/2),y-(h/2),x+(w/2),y+(h/2)); // clear the background
-
   g.setFontAlign(0,0);
   g.setFontVector(85);  
-//  g.setColor(0.5,0.5,0.5);
+  g.setColor(colTime);
   g.drawString(timeStr.substring(0,2),x,y-30);
   g.drawString(timeStr.substring(3,5),x,y+38);
-//  g.drawString(timeStr,x,y); 
-}
-
-function resetStopWatch() {
-
-  // Stop the interval if necessary:
-  if (swInterval) {
-    clearInterval(swInterval);
-    swInterval=undefined;
-  }
-
-  // Clear the stopwatch:
-  stopWatch(true);
-
-  // Reset the counter:
-  counter = -1;
-
-  // Set BTN3 to start the stopwatch again:
-  if (!B3) {
-    // In case the stopwatch is reset while still running, the watch on BTN3 is still active, so we need to reset it manually:
-    if (w3) {clearWatch(w3);w3=undefined;}
-    // Set BTN3 to start the watch again:
-    setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
-    B3 = 1;  // BTN3 is bound to start the stopwatch
-  }
-
-  // Reset watch on BTN1:
-  if (w1) {clearWatch(w1);w1=undefined;}
 }
 
 function draw() {
@@ -168,9 +152,8 @@ function draw() {
   y = g.getHeight()/2;
   g.reset();
   
- 
   drawTime();
-  drawDate();
+  if ( counter < 0 ) drawDate(); // Only draw date when SW is not running.
   
   // queue draw in one minute
   queueDraw();
@@ -191,6 +174,7 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
+
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 
