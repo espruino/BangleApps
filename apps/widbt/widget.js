@@ -1,5 +1,3 @@
-NRF.on('connect',WIDGETS["bluetooth"].changed);
-NRF.on('disconnect',WIDGETS["bluetooth"].changed);
 WIDGETS["bluetooth"]={area:"tr",width:15,draw:function() {
   g.reset();
   if (NRF.getSecurityStatus().connected)
@@ -11,3 +9,5 @@ WIDGETS["bluetooth"]={area:"tr",width:15,draw:function() {
   WIDGETS["bluetooth"].draw();
   Bangle.setLCDPower(1); // turn screen on
 }};
+NRF.on('connect',WIDGETS["bluetooth"].changed);
+NRF.on('disconnect',WIDGETS["bluetooth"].changed);
