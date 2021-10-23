@@ -4037,5 +4037,20 @@
       {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"vernierrespirate.json"}]
+  },
+  {
+    "id": "gpstouch",
+    "name": "GPS Touch",
+    "version": "0.01",
+    "description": "A touch based GPS watch, shows OS map reference",
+    "icon": "gpstouch.png",
+    "tags": "tools,app",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"geotools","url":"geotools.js"},
+      {"name":"gpstouch.app.js","url":"gpstouch.app.js"},
+      {"name":"gpstouch.img","url":"gpstouch.icon.js","evaluate":true}
+    ]
   }
 ]
