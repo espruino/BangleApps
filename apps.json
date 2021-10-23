@@ -32,6 +32,23 @@
     "sortorder": -10
   },
   {
+    "id": "messages",
+    "name": "Messages",
+    "version": "0.01",
+    "description": "App to display notifications from iOS and Gadgetbridge (BETA)",
+    "icon": "app.png",
+    "tags": "tool,system",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"messages.app.js","url":"app.js"},
+      {"name":"messages.img","url":"app-icon.js","evaluate":true},
+      {"name":"messages.boot.js","url":"boot.js"},
+      {"name":"messages.wid.js","url":"widget.js"}
+    ],
+    "sortorder": -9
+  },
+  {
     "id": "health",
     "name": "Health Tracking",
     "version": "0.01",
@@ -46,8 +63,9 @@
       {"name":"health.boot.js","url":"boot.js"},
       {"name":"health","url":"lib.js"}
     ],
-    "sortorder": -10
+    "sortorder": -8
   },
+
   {
     "id": "moonphase",
     "name": "Moonphase",
@@ -716,7 +734,7 @@
   {
     "id": "widbat",
     "name": "Battery Level Widget",
-    "version": "0.08",
+    "version": "0.09",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "icon": "widget.png",
     "type": "widget",
@@ -724,6 +742,19 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widbat.wid.js","url":"widget.js"}
+    ]
+  },
+  {
+    "id": "widbatv",
+    "name": "Battery Level Widget (Vertical)",
+    "version": "0.01",
+    "description": "Slim, vertical battery widget that only takes up 14px",
+    "icon": "widget.png",
+    "type": "widget",
+    "tags": "widget,battery",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widbatv.wid.js","url":"widget.js"}
     ]
   },
   {
@@ -777,7 +808,7 @@
   {
     "id": "widbt",
     "name": "Bluetooth Widget",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "icon": "widget.png",
     "type": "widget",
@@ -1617,12 +1648,12 @@
   {
     "id": "widtbat",
     "name": "Tiny Battery Widget",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Tiny blueish battery widget, vibs and changes level color when charging",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tool,system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widtbat.wid.js","url":"widget.js"}
     ]
@@ -3734,7 +3765,7 @@
   {
     "id": "hcclock",
     "name": "Hi-Contrast Clock",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Hi-Contrast Clock : A simple yet very bold clock that aims to be readable in high luninosity environments. Uses big 10x5 pixel digits. Use BTN 1 to switch background and foreground colors.",
     "icon": "hcclock-icon.png",
     "type": "clock",
