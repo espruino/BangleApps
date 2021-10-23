@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 0.01 : Initial
 */
 
-var v='0.01';
+var v='0.02';
 
 // timeout used to update every minute
 var drawTimeout;
@@ -32,6 +32,7 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
+/*
 function stopWatch(clear) {
 
   x = 120;
@@ -108,22 +109,23 @@ function resetStopWatch() {
   if (w1) {clearWatch(w1);w1=undefined;}
 }
 
+*/
 
 function drawDate() {
   // draw date
-  x = 120;
-  y = 200;
-  w = 240;
-  h = 25;
+  x = 240;
+  y = 40;
+  w = 25;
+  h = 90;
 
   g.reset();
   g.setColor(colDate);
-  g.clearRect(x-(w/2),y-h,x+(w/2),y); // clear the background
+  g.clearRect(x-w,y,x,y+h); // clear the background
   
   var date = new Date();
 //  var dateStr = require("locale").date(date,1);  
   var dateStr = date.getDate() + ' ' +require("locale").month(date,1);  
-  g.setFontAlign(0,1);
+  g.setFontAlign(1,1,3);
   g.setFont("Vector24");
   g.drawString(dateStr,x,y);
   
@@ -132,19 +134,30 @@ function drawDate() {
 
 function drawTime() {
   x = 120;
-  y = 107;
-  w = 120;
-  h = 134;
+  y = 120;
+  w = 130;
+  h = 160;
 
   var date = new Date();
   var timeStr = require("locale").time(date,1);
+  var t = parseFloat(timeStr);
+  
+  if ( t < 24 ) colTime = 0x01BD;
+  if ( t < 19 ) colTime = 0x701F;
+  if ( t < 18 ) colTime = 0xEC80;
+  if ( t < 17 ) colTime = 0xF780;
+  if ( t < 12 ) colTime = 0xAEC2;
+  if ( t < 7 ) colTime = 0x1EC2;
+  if ( t < 6 ) colTime = 0x01BD;
+  
+  
   g.reset();
   g.clearRect(x-(w/2),y-(h/2),x+(w/2),y+(h/2)); // clear the background
   g.setFontAlign(0,0);
-  g.setFontVector(85);  
+  g.setFontVector(100);  
   g.setColor(colTime);
-  g.drawString(timeStr.substring(0,2),x,y-30);
-  g.drawString(timeStr.substring(3,5),x,y+38);
+  g.drawString(timeStr.substring(0,2),x,y-35);
+  g.drawString(timeStr.substring(3,5),x,y+49);
 }
 
 function draw() {
@@ -179,8 +192,8 @@ Bangle.on('lcdPower',on=>{
 Bangle.setUI("clock");
 
 // Start stopwatch when BTN3 is pressed
-setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
-B3 = 1;  // BTN3 is bound to start the stopwatch
+//setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
+//B3 = 1;  // BTN3 is bound to start the stopwatch
 
 // Load widgets
 Bangle.loadWidgets();
