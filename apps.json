@@ -458,6 +458,7 @@
     "icon": "clock-analog.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -473,6 +474,7 @@
     "icon": "clock2x3.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -503,6 +505,7 @@
     "description": "T-Rex game in the style of Chrome's offline game",
     "icon": "trex.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1093,6 +1096,7 @@
     "icon": "icon.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1312,6 +1316,7 @@
     "description": "A Flappy Bird game clone",
     "icon": "app.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1386,6 +1391,7 @@
     "icon": "bold_clock.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3941,6 +3947,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3956,6 +3963,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -4002,6 +4010,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
