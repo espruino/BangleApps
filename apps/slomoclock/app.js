@@ -2,145 +2,41 @@
 Simple watch [slomoclock]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
+0.03 : Use Layout library
 */
 
-var v='0.02';
+var v='0.03';
 
-// timeout used to update every minute
-var drawTimeout;
-var x,y,w,h;
+var Layout = require("Layout");
+var layout = new Layout( {
+  type:"v", c: [
+    {type:undefined, height:40 },  // Widgets top
 
-// Variables for the stopwatch
-var counter = -1;  // Counts seconds
-var oldDate = new Date(2020,0,1);   // Initialize to a past date
-var swInterval;   // The interval's id
-var B3 = 0;       // Flag to track BTN3's current function
-var w1;           // watch id for BTN1
-var w3;           // watch id for BTN3
+    {type:"h", c: [
+      {type:"v", c: [
+        {type:"txt", font:"40%", label:"", id:"hour", valign:1},
+        {type:"txt", font:"40%", label:"", id:"min", valign:-1},
+      ]},
+      {type:"v", c: [
+        {type:"txt", font:"10%", label:"", id:"day", col:0xEFE0, halign:1},
+        {type:"txt", font:"10%", label:"", id:"mon", col:0xEFE0, halign:1},
+      ]}
+    ]},
 
-// Colours
-var colTime = 0x4FE0;
-var colDate = 0xEFE0;
-var colSW = 0x1DFD;
+    {type:undefined, height:40 },  // Widgets bottom
 
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-}
-
-/*
-function stopWatch(clear) {
-
-  x = 120;
-  y = 200;
-  w = 240;
-  h = 25;
-
-  g.reset();
-  g.setColor(colSW);
-  g.clearRect(x-(w/2),y-h,x+(w/2),y); // clear the background
-  if (clear) return;
+  ]  
   
-  counter++;
+}, {lazy:true});
 
-  var hrs  = Math.floor(counter/3600);
-  var mins = Math.floor((counter-hrs*3600)/60);
-  var secs = counter - mins*60 - hrs*3600;
-
-  // When starting the stopwatch:
-  if (B3) {
-    // Set BTN3 to stop the stopwatch and bind itself to restart it:
-    w3=setWatch(() => {clearInterval(swInterval);
-                       swInterval=undefined;
-                       if (w3) {clearWatch(w3);w3=undefined;}
-                       setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();},
-                       BTN3, {repeat:false,edge:"falling"});
-                       B3 = 1;},
-                         BTN3, {repeat:false,edge:"falling"});
-    B3 = 0;  // BTN3 is bound to stop the stopwatch
-  }
-  
-  // Bind BTN1 to call the reset function:
-  if (!w1) w1 = setWatch(resetStopWatch, BTN1, {repeat:false,edge:"falling"});
-
-  // Draw elapsed time:
-  g.setFontAlign(0,1);
-  g.setFont("Vector24");
-  
-  var swStr = ("0"+parseInt(mins)).substr(-2) + ':' + ("0"+parseInt(secs)).substr(-2);
-
-  if (hrs>0) swStr = ("0"+parseInt(hrs)).substr(-2) + ':' + swStr;
-
-  g.drawString(swStr, x, y, true);
-
-}
-
-function resetStopWatch() {
-
-  // Stop the interval if necessary:
-  if (swInterval) {
-    clearInterval(swInterval);
-    swInterval=undefined;
-  }
-
-  // Clear the stopwatch:
-  stopWatch(true);
-  
-  // Restore the date
-  drawDate();
-
-  // Reset the counter:
-  counter = -1;
-
-  // Set BTN3 to start the stopwatch again:
-  if (!B3) {
-    // In case the stopwatch is reset while still running, the watch on BTN3 is still active, so we need to reset it manually:
-    if (w3) {clearWatch(w3);w3=undefined;}
-    // Set BTN3 to start the watch again:
-    setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
-    B3 = 1;  // BTN3 is bound to start the stopwatch
-  }
-
-  // Reset watch on BTN1:
-  if (w1) {clearWatch(w1);w1=undefined;}
-}
-
-*/
-
-function drawDate() {
-  // draw date
-  x = 240;
-  y = 40;
-  w = 25;
-  h = 90;
-
-  g.reset();
-  g.setColor(colDate);
-  g.clearRect(x-w,y,x,y+h); // clear the background
-  
+// update the screen
+function draw() {
   var date = new Date();
-//  var dateStr = require("locale").date(date,1);  
-  var dateStr = date.getDate() + ' ' +require("locale").month(date,1);  
-  g.setFontAlign(1,1,3);
-  g.setFont("Vector24");
-  g.drawString(dateStr,x,y);
   
-}
-
-
-function drawTime() {
-  x = 120;
-  y = 120;
-  w = 130;
-  h = 160;
-
-  var date = new Date();
+  // Update time
   var timeStr = require("locale").time(date,1);
   var t = parseFloat(timeStr);
+  var colTime;
   
   if ( t < 24 ) colTime = 0x01BD;
   if ( t < 19 ) colTime = 0x701F;
@@ -148,52 +44,42 @@ function drawTime() {
   if ( t < 17 ) colTime = 0xF780;
   if ( t < 12 ) colTime = 0xAEC2;
   if ( t < 7 ) colTime = 0x1EC2;
-  if ( t < 6 ) colTime = 0x01BD;
+  if ( t < 6 ) colTime = 0x01BD;  
+
+  layout.hour.label = timeStr.substring(0,2);
+  layout.min.label = timeStr.substring(3,5);
+  layout.hour.col = colTime;
+  layout.min.col = colTime;
   
-  
-  g.reset();
-  g.clearRect(x-(w/2),y-(h/2),x+(w/2),y+(h/2)); // clear the background
-  g.setFontAlign(0,0);
-  g.setFontVector(100);  
-  g.setColor(colTime);
-  g.drawString(timeStr.substring(0,2),x,y-35);
-  g.drawString(timeStr.substring(3,5),x,y+49);
+  // Update date
+  layout.day.label = date.getDate();
+  layout.mon.label = require("locale").month(date,1);
+   
+  layout.render();
 }
 
-function draw() {
-  x = g.getWidth()/2;
-  y = g.getHeight()/2;
-  g.reset();
-  
-  drawTime();
-  if ( counter < 0 ) drawDate(); // Only draw date when SW is not running.
-  
-  // queue draw in one minute
-  queueDraw();
-}
-
-// Clear the screen once, at startup
-g.clear();
-
-// draw immediately at first, queue update
-draw();
+// Events
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
+  if (secondInterval) clearInterval(secondInterval);
+  secondInterval = undefined;
   if (on) {
-    draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
+    secondInterval = setInterval(draw, 10000);
+    draw(); // draw immediately
   }
 });
 
+var secondInterval = setInterval(draw, 10000);
+
+
+
+// update time and draw
+g.clear();
+draw();
+
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
-
-// Start stopwatch when BTN3 is pressed
-//setWatch(() => {swInterval=setInterval(stopWatch, 1000);stopWatch();}, BTN3, {repeat:false,edge:"falling"});
-//B3 = 1;  // BTN3 is bound to start the stopwatch
 
 // Load widgets
 Bangle.loadWidgets();
