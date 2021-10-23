@@ -5,19 +5,38 @@ Mike Bennett mike[at]kereru.com
 0.03 : Use Layout library
 */
 
-var v='0.03';
+var v='0.04';
 
-// Read settings. 
-let cfg = require('Storage').readJSON('slomoclock.json',1)||{};
-cfg.widTop = cfg.widTop==undefined?true:cfg.widTop; 
-cfg.widBot = cfg.widBot==undefined?true:cfg.widBot; 
+// Colours
+const col = [];
+col[0]= 0x001F;
+col[1]= 0x023F;
+col[2]= 0x039F;
+col[3]= 0x051F;
+col[4]= 0x067F;
+col[5]= 0x07FD;
+col[6]= 0x07F6;
+col[7]= 0x07EF;
+col[8]= 0x07E8;
+col[9]= 0x07E3;
+col[10]= 0x07E0;
+col[11]= 0x5FE0;
+col[12]= 0x97E0;
+col[13]= 0xCFE0;
+col[14]= 0xFFE0;
+col[15]= 0xFE60;
+col[16]= 0xFC60;
+col[17]= 0xFAA0;
+col[18]= 0xF920;
+col[19]= 0xF803;
+col[20]= 0xF80E;
+col[21]= 0xF817;
+col[22]= 0xE81F;
+col[23]= 0x801F;
 
 var Layout = require("Layout");
 var layout = new Layout( {
-  type:"v", c: [
-    {type:undefined, height:widTop?40:0 },  // Widgets top
-
-    {type:"h", c: [
+  type:"h", c: [
       {type:"v", c: [
         {type:"txt", font:"40%", label:"", id:"hour", valign:1},
         {type:"txt", font:"40%", label:"", id:"min", valign:-1},
@@ -26,12 +45,7 @@ var layout = new Layout( {
         {type:"txt", font:"10%", label:"", id:"day", col:0xEFE0, halign:1},
         {type:"txt", font:"10%", label:"", id:"mon", col:0xEFE0, halign:1},
       ]}
-    ]},
-
-    {type:undefined, height:widBot?40:0  },  // Widgets bottom
-
-  ]  
-  
+    ]
 }, {lazy:true});
 
 // update the screen
@@ -40,21 +54,12 @@ function draw() {
   
   // Update time
   var timeStr = require("locale").time(date,1);
-  var t = parseFloat(timeStr);
-  var colTime;
+  var hh = parseFloat(timeStr.substring(0,2));
   
-  if ( t < 24 ) colTime = 0x01BD;
-  if ( t < 19 ) colTime = 0x701F;
-  if ( t < 18 ) colTime = 0xEC80;
-  if ( t < 17 ) colTime = 0xF780;
-  if ( t < 12 ) colTime = 0xAEC2;
-  if ( t < 7 ) colTime = 0x1EC2;
-  if ( t < 6 ) colTime = 0x01BD;  
-
   layout.hour.label = timeStr.substring(0,2);
   layout.min.label = timeStr.substring(3,5);
-  layout.hour.col = colTime;
-  layout.min.col = colTime;
+  layout.hour.col = col[hh];
+  layout.min.col = col[hh];
   
   // Update date
   layout.day.label = date.getDate();
@@ -76,8 +81,6 @@ Bangle.on('lcdPower',on=>{
 });
 
 var secondInterval = setInterval(draw, 10000);
-
-
 
 // update time and draw
 g.clear();
