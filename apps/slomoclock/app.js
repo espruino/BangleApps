@@ -7,10 +7,15 @@ Mike Bennett mike[at]kereru.com
 
 var v='0.03';
 
+// Read settings. 
+let cfg = require('Storage').readJSON('slomoclock.json',1)||{};
+cfg.widTop = cfg.widTop==undefined?true:cfg.widTop; 
+cfg.widBot = cfg.widBot==undefined?true:cfg.widBot; 
+
 var Layout = require("Layout");
 var layout = new Layout( {
   type:"v", c: [
-    {type:undefined, height:40 },  // Widgets top
+    {type:undefined, height:widTop?40:0 },  // Widgets top
 
     {type:"h", c: [
       {type:"v", c: [
@@ -23,7 +28,7 @@ var layout = new Layout( {
       ]}
     ]},
 
-    {type:undefined, height:40 },  // Widgets bottom
+    {type:undefined, height:widBot?40:0  },  // Widgets bottom
 
   ]  
   
