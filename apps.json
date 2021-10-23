@@ -2916,22 +2916,22 @@
       {"name":"speedalt2.json"}
     ]
 },	
-{ "id": "speedclock",
+{ "id": "slomoclock",
   "name": "SloMo Clock",
   "shortName":"SloMo Clock",
   "icon": "watch.png",
   "version":"0.01",
-  "description": "Simple clock face with large digits hour above minutes.",
+  "description": "Simple 24h clock face with large digits hours above minutes.",
   "tags": "clock",
   "type":"clock",
   "allow_emulator":true,
   "readme": "README.md",
   "storage": [
-    {"name":"speedclock.app.js","url":"app.js"},
-    {"name":"speedclock.img","url":"app-icon.js","evaluate":true}
+    {"name":"slomoclock.app.js","url":"app.js"},
+    {"name":"slomoclock.img","url":"app-icon.js","evaluate":true}
   ],
  "data": [
-      {"name":"speedclock.json"}
+      {"name":"slomoclock.json"}
     ]
 },	
 { "id": "de-stress",
