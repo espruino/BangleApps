@@ -1,5 +1,5 @@
 /*
-Simple watch [speedwatch]
+Simple watch [slomoclock]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 */
