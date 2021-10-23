@@ -1,5 +1,6 @@
 const h = g.getHeight();
 const w = g.getWidth();
+let geo = require("geotools");
 let last_fix;
 
 function resetLastFix() {
@@ -99,7 +100,7 @@ const infoData = {
     calc: () => formatTime(last_fix.time),
   },
   OS_REF: {
-    calc: () => 'NZ 208 987',
+    calc: () => last_fix.lat == 0 ? "Searching.." : geo.gpsToOSMapRef(last_fix),
   },
   GPS_POWER: {
     calc: () => (Bangle.isGPSOn()) ? 'GPS On' : 'GPS Off',
@@ -203,7 +204,6 @@ Bangle.on('lcdPower', on => {
     secondInterval = setInterval(draw, 1000);
   draw();
 });
-
 
 resetLastFix();
 
