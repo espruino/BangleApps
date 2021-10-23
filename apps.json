@@ -2920,7 +2920,7 @@
   "name": "SloMo Clock",
   "shortName":"SloMo Clock",
   "icon": "watch.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Simple 24h clock face with large digits hour above minutes.",
   "tags": "clock",
   "type":"clock",
