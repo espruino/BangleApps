@@ -30,9 +30,9 @@ col[17]= 0xFAA0;
 col[18]= 0xF920;
 col[19]= 0xF803;
 col[20]= 0xF80E;
-col[21]= 0xF817;
-col[22]= 0xE81F;
-col[23]= 0x801F;
+col[21]= 0x981F;
+col[22]= 0x681F;
+col[23]= 0x301F;
 
 var Layout = require("Layout");
 var layout = new Layout( {
