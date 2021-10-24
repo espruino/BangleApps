@@ -22,6 +22,13 @@ BTN3 : Cycles the screens between Speed, Altitude, Distance to waypoint, Positio
 
 BTN3 : Long press exit and return to watch.
 
+[Touch Screen] If the 'Touch' setting is ON then :
+
+Swipe Left/Right cycles between the five screens.
+
+Touch functions as BTN1 short press.
+
+
 ## App Settings
 
 Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
