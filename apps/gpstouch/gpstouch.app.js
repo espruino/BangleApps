@@ -2,6 +2,11 @@ const h = g.getHeight();
 const w = g.getWidth();
 let geo = require("geotools");
 let last_fix;
+let listennerCount = 0;
+
+function log_debug(o) {
+  //console.log(o);
+}
 
 function resetLastFix() {
   last_fix = {
@@ -18,11 +23,12 @@ function resetLastFix() {
 
 function processFix(fix) {
   last_fix.time = fix.time;
-
+  log_debug(fix);
+  
   if (fix.fix) {
     if (!last_fix.fix) {
       // we dont need to suppress this in quiet mode as it is user initiated
-      Bangle.buzz(); // buzz on first position
+      Bangle.buzz(1500); // buzz on first position
     }
     last_fix = fix;
   }
@@ -65,13 +71,13 @@ function drawInfo() {
     if (infoData[infoMode].get_color)
       g.setColor(infoData[infoMode].get_color());
     else
-      g.setColor(g.theme.bgH);
+      g.setColor("#0ff");
     g.fillRect(0, ((h-24)/2) + 24 + 1, w, h);
 
     if (infoData[infoMode].is_control)
       g.setColor("#fff");
     else
-      g.setColor(g.theme.fg);
+      g.setColor("#000");
     
     g.drawString((infoData[infoMode].calc()), w/2, (3*(h-24)/4) + 24);
   }
@@ -100,7 +106,7 @@ const infoData = {
     calc: () => formatTime(last_fix.time),
   },
   OS_REF: {
-    calc: () => last_fix.lat == 0 ? "Searching.." : geo.gpsToOSMapRef(last_fix),
+    calc: () => !last_fix.fix ? "OO 000 000" : geo.gpsToOSMapRef(last_fix),
   },
   GPS_POWER: {
     calc: () => (Bangle.isGPSOn()) ? 'GPS On' : 'GPS Off',
@@ -117,12 +123,24 @@ const infoData = {
 };
 
 function toggleGPS() {
+  if (loggerStatus() == "ON")
+    return;
+
   Bangle.setGPSPower(Bangle.isGPSOn() ? 0 : 1, 'gpstouch');
   // add or remove listenner
-  if (Bangle.isGPSOn())
-    Bangle.on('GPS', processFix);
-  else
-    Bangle.removeListener("GPS", processFix);
+  if (Bangle.isGPSOn()) {
+    if (listennerCount == 0) {
+      Bangle.on('GPS', processFix);
+      listennerCount++;
+      log_debug("listennerCount=" + listennerCount);
+    }
+  } else {
+    if (listennerCount > 0) {
+      Bangle.removeListener("GPS", processFix);
+      listennerCount--;
+      log_debug("listennerCount=" + listennerCount);
+    }
+  }
   resetLastFix();
 }
 
@@ -142,9 +160,11 @@ function toggleLogger() {
   if (WIDGETS["gpsrec"])
     WIDGETS["gpsrec"].reload();
 
-  // not sure if safe to register a listenner again
-  if (Bangle.isGPSOn())
+  if (settings.recording && listennerCount == 0) {
     Bangle.on('GPS', processFix);
+    listennerCount++;
+    log_debug("listennerCount=" + listennerCount);
+  }
 }
 
 function formatTime(now) {
@@ -208,9 +228,13 @@ Bangle.on('lcdPower', on => {
 resetLastFix();
 
 // add listenner if already powered on, plus tag app
-if (Bangle.isGPSOn()) {
+if (Bangle.isGPSOn() || loggerStatus() == "ON") {
   Bangle.setGPSPower(1, 'gpstouch');
-  Bangle.on('GPS', processFix);
+  if (listennerCount == 0) {
+    Bangle.on('GPS', processFix);
+    listennerCount++;
+    log_debug("listennerCount=" + listennerCount);
+  }
 }
 
 g.clear();

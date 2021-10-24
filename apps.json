@@ -3510,7 +3510,7 @@
     "icon": "simplest.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"simplest.app.js","url":"app.js"},
