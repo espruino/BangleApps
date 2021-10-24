@@ -5,34 +5,42 @@ Mike Bennett mike[at]kereru.com
 0.03 : Use Layout library
 */
 
-var v='0.05';
+var v='0.06';
 
 // Colours
 const col = [];
-col[0]= 0x001F;
-col[1]= 0x023F;
-col[2]= 0x039F;
-col[3]= 0x051F;
-col[4]= 0x067F;
-col[5]= 0x07FD;
-col[6]= 0x07F6;
-col[7]= 0x07EF;
-col[8]= 0x07E8;
-col[9]= 0x07E3;
-col[10]= 0x07E0;
-col[11]= 0x5FE0;
-col[12]= 0x97E0;
-col[13]= 0xCFE0;
-col[14]= 0xFFE0;
-col[15]= 0xFE60;
-col[16]= 0xFC60;
-col[17]= 0xFAA0;
-col[18]= 0xF920;
-col[19]= 0xF803;
-col[20]= 0xF80E;
-col[21]= 0x981F;
-col[22]= 0x681F;
-col[23]= 0x301F;
+col[1] = 0xF800;
+col[2] = 0xFAE0;
+col[3] = 0xF7E0;
+col[4] = 0x4FE0;
+col[5] = 0x019F;
+col[6] = 0x681F;
+
+const colH = [];
+colH[0]= 0x001F;
+colH[1]= 0x023F;
+colH[2]= 0x039F;
+colH[3]= 0x051F;
+colH[4]= 0x067F;
+colH[5]= 0x07FD;
+colH[6]= 0x07F6;
+colH[7]= 0x07EF;
+colH[8]= 0x07E8;
+colH[9]= 0x07E3;
+colH[10]= 0x07E0;
+colH[11]= 0x5FE0;
+colH[12]= 0x97E0;
+colH[13]= 0xCFE0;
+colH[14]= 0xFFE0;
+colH[15]= 0xFE60;
+colH[16]= 0xFC60;
+colH[17]= 0xFAA0;
+colH[18]= 0xF920;
+colH[19]= 0xF803;
+colH[20]= 0xF80E;
+colH[21]= 0x981F;
+colH[22]= 0x681F;
+colH[23]= 0x301F;
 
 var Layout = require("Layout");
 var layout = new Layout( {
@@ -58,8 +66,8 @@ function draw() {
   
   layout.hour.label = timeStr.substring(0,2);
   layout.min.label = timeStr.substring(3,5);
-  layout.hour.col = col[hh];
-  layout.min.col = col[hh];
+  layout.hour.col = cfg.colour==0 ? colH[hh] : col[cfg.colour];
+  layout.min.col = cfg.colour==0 ? colH[hh] : col[cfg.colour];
   
   // Update date
   layout.day.label = date.getDate();
@@ -81,6 +89,10 @@ Bangle.on('lcdPower',on=>{
 });
 
 var secondInterval = setInterval(draw, 10000);
+
+// Configuration
+let cfg = require('Storage').readJSON('slomoclock.json',1)||{};
+cfg.colour = cfg.colour||0;  // Colours
 
 // update time and draw
 g.clear();
