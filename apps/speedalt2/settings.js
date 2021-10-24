@@ -37,12 +37,12 @@
     '< Load GPS Adv Sport': ()=>{load('speedalt2.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
-    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
-    'Vibrate' : {
-    value : settings.buzz,
-    format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }*/
+    'Kalman Filter' : function() { E.showMenu(kalMenu); },
+    'Touch' : {
+       value : settings.touch,
+       format : v => v?"On":"Off",
+       onchange : () => { settings.touch = !settings.touch; writeSettings(); }
+    }
   };
   
   const unitsMenu = {
