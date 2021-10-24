@@ -1,10 +1,10 @@
 # GPS Speed, Altimeter and Distance to Waypoint
 
-What is the difference between [GPS Adventure Sports] and [GPS Adventure Sports II] ?
+What is the difference between **GPS Adventure Sports** and **GPS Adventure Sports II** ?
 
-[GPS Adventure Sports] has 3 screens, each of which display different sets of information.
+**GPS Adventure Sports** has 3 screens, each of which display different sets of information.
 
-[GPS Adventure Sports II] has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
+**GPS Adventure Sports II** has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
 
 In all other respect they perform the same functions. Use BTN3 or swipe left/right to cycle through the screens.
 
@@ -12,17 +12,17 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 
 ## Buttons and Controls
 
-BTN1 ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
+**BTN1** ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
 
-BTN1 ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
+**BTN1** ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
 
-BTN2 : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
+**BTN2** : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-BTN3 : Cycles the screens between Speed, Altitude, Distance to waypoint, Position and Time
+**BTN3** : Cycles the screens between Speed, Altitude, Distance to waypoint, Position and Time
 
-BTN3 : Long press exit and return to watch.
+**BTN3** : Long press exit and return to watch.
 
-[Touch Screen] If the 'Touch' setting is ON then :
+**Touch Screen** If the 'Touch' setting is ON then :
 
 Swipe Left/Right cycles between the five screens.
 
