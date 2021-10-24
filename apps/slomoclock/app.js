@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.03 : Use Layout library
 */
 
-var v='0.04';
+var v='0.05';
 
 // Colours
 const col = [];
