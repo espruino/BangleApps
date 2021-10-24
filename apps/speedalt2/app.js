@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.06 : Add Posn screen
 0.07 : Add swipe to change screens same as BTN3
 */
-var v = '1.04';
+var v = '1.05';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -621,11 +621,13 @@ Bangle.on('lcdPower',function(on) {
 });
 
 Bangle.on('swipe',function(dir) {
+  if ( ! cfg.touch ) return;
   if(dir == 1) prevScrn();
   else nextScrn();
 });
 
 Bangle.on('touch', function(button){
+  if ( ! cfg.touch ) return;
   nextFunc(0);  // Same function as short BTN1
 /*  
     switch(button){
@@ -665,6 +667,7 @@ cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
 cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
+cfg.touch = cfg.touch==undefined?true:cfg.touch;
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
 if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
