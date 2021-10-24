@@ -6,7 +6,7 @@ What is the difference between **GPS Adventure Sports** and **GPS Adventure Spor
 
 **GPS Adventure Sports II** has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
 
-In all other respect they perform the same functions. Use BTN3 or swipe left/right to cycle through the screens.
+In all other respect they perform the same functions.
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
