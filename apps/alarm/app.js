@@ -34,7 +34,7 @@ function showMainMenu() {
   };
   alarms.forEach((alarm, idx) => {
     let txt =
-      (alarm.timer ? "TIMER" : "ALARM") +
+      (alarm.timer ? "TIMER " : "ALARM ") +
       (alarm.on ? "on  " : "off ") +
       (alarm.timer ? formatMins(alarm.timer) : formatTime(alarm.hr));
     menu[txt] = function () {

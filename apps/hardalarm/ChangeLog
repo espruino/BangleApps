@@ -1,2 +1,4 @@
 0.01: Add a number to match to turn off alarm
 0.02: Respect Quiet Mode
+0.03: "Hard" option so the counting is optional
+      Days of week options for alarms
