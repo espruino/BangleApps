@@ -3,68 +3,151 @@
 clearInterval();
 
 function formatTime(t) {
-  var hrs = 0|t;
-  var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+  let hrs = 0 | t;
+  let mins = Math.round((t - hrs) * 60);
+  return hrs + ":" + ("0" + mins).substr(-2);
 }
 
 function getCurrentHr() {
-  var time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
+  let time = new Date();
+  return time.getHours() + time.getMinutes() / 60 + time.getSeconds() / 3600;
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function getRandomFromRange(
+  lowerRangeMin,
+  lowerRangeMax,
+  higherRangeMin,
+  higherRangeMax
+) {
+  let lowerRange = lowerRangeMax - lowerRangeMin;
+  let higherRange = higherRangeMax - higherRangeMin;
+  let fullRange = lowerRange + higherRange;
+  let randomNum = getRandomInt(fullRange);
+  if (randomNum <= lowerRangeMax - lowerRangeMin) {
+    return randomNum + lowerRangeMin;
+  } else {
+    return randomNum + (higherRangeMin - lowerRangeMax);
+  }
+}
+
+function showNumberPicker(currentGuess, randomNum) {
+  if (currentGuess == randomNum) {
+    E.showMessage("" + currentGuess + "\n PRESS ENTER", "Get to " + randomNum);
+  } else {
+    E.showMessage("" + currentGuess, "Get to " + randomNum);
+  }
+}
+
+function showPrompt(msg, buzzCount, alarm) {
+  E.showPrompt(msg, {
+    title: alarm.timer ? "TIMER!" : "ALARM!",
+    buttons: { Sleep: true, Ok: false }, // default is sleep so it'll come back in 10 mins
+  }).then(function (sleep) {
+    buzzCount = 0;
+    if (sleep) {
+      if (alarm.ohr === undefined) alarm.ohr = alarm.hr;
+      alarm.hr += 10 / 60; // 10 minutes
+      require("Storage").write("alarm.json", JSON.stringify(alarms));
+      load();
+    } else {
+      alarm.last = new Date().getDate();
+      if (alarm.ohr !== undefined) {
+        alarm.hr = alarm.ohr;
+        delete alarm.ohr;
+      }
+      if (!alarm.rp) alarm.on = false;
+      require("Storage").write("alarm.json", JSON.stringify(alarms));
+      load();
+    }
+  });
 }
 
 function showAlarm(alarm) {
-  var msg = formatTime(alarm.hr);
-  var buzzCount = 10;
-  if (alarm.msg)
-    msg += "\n"+alarm.msg;
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
-  E.showPrompt(msg,{
-    title:alarm.timer ? "TIMER!" : "ALARM!",
-    buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
-  }).then(function(sleep) {
-    buzzCount = 0;
-    if (sleep) {
-      if(alarm.ohr===undefined) alarm.ohr = alarm.hr;
-      alarm.hr += 10/60; // 10 minutes
-    } else {
-      alarm.last = (new Date()).getDate();
-      if (alarm.ohr!==undefined) {
-          alarm.hr = alarm.ohr;
-          delete alarm.ohr;
-      }
-      if (!alarm.rp) alarm.on = false;
-    }
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
-    load();
-  });
+  if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1) return; // total silence
+  let msg = formatTime(alarm.hr);
+  let buzzCount = 20;
+  if (alarm.msg) msg += "\n" + alarm.msg + "!";
+
+  if (alarm.hard) {
+    let okClicked = false;
+    let currentGuess = 10;
+    let randomNum = getRandomFromRange(0, 7, 13, 20);
+    showNumberPicker(currentGuess, randomNum);
+    setWatch(
+      (o) => {
+        if (!okClicked && currentGuess < 20) {
+          currentGuess = currentGuess + 1;
+          showNumberPicker(currentGuess, randomNum);
+        }
+      },
+      BTN1,
+      { repeat: true, edge: "rising" }
+    );
+
+    setWatch(
+      (o) => {
+        if (currentGuess == randomNum) {
+          okClicked = true;
+          showPrompt(msg, buzzCount, alarm);
+        }
+      },
+      BTN2,
+      { repeat: true, edge: "rising" }
+    );
+
+    setWatch(
+      (o) => {
+        if (!okClicked && currentGuess > 0) {
+          currentGuess = currentGuess - 1;
+          showNumberPicker(currentGuess, randomNum);
+        }
+      },
+      BTN3,
+      { repeat: true, edge: "rising" }
+    );
+  } else {
+    showPrompt(msg, buzzCount, alarm);
+  }
+
   function buzz() {
-    if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
-    Bangle.buzz(100).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(100).then(function() {
-          if (buzzCount--)
-            setTimeout(buzz, 3000);
-          else if(alarm.as) { // auto-snooze
-            buzzCount = 10;
-            setTimeout(buzz, 600000);
-          }
+    Bangle.buzz(500).then(() => {
+      setTimeout(() => {
+        Bangle.buzz(500).then(function () {
+          setTimeout(() => {
+            Bangle.buzz(2000).then(function () {
+              if (buzzCount--) setTimeout(buzz, 2000);
+              else if (alarm.as) {
+                // auto-snooze
+                buzzCount = 20;
+                setTimeout(buzz, 600000); // 10 minutes
+              }
+            });
+          }, 100);
         });
-      },100);
+      }, 100);
     });
   }
   buzz();
 }
 
 // Check for alarms
-var day = (new Date()).getDate();
-var hr = getCurrentHr()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
-var active = alarms.filter(a=>a.on&&(a.hr<hr)&&(a.last!=day));
+let time = new Date();
+let hr = getCurrentHr() + 10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
+let alarms = require("Storage").readJSON("alarm.json", 1) || [];
+let active = alarms.filter(
+  (alarm) =>
+    alarm.on &&
+    alarm.hr < hr &&
+    alarm.last != time.getDate() &&
+    alarm.daysOfWeek[time.getDay()]
+);
 if (active.length) {
   // if there's an alarm, show it
-  active = active.sort((a,b)=>a.hr-b.hr);
+  active = active.sort((a, b) => a.hr - b.hr);
   showAlarm(active[0]);
 } else {
   // otherwise just go back to default app
