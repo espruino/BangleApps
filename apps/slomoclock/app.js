@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 0.03 : Use Layout library
 */
 
-var v='0.07';
+var v='0.08';
 
 // Colours
 const col = [];
@@ -45,6 +45,7 @@ colH[23]= 0x301F;
 
 // Colour incremented with every 10 sec timer event
 var colNum = 0;
+var lastMin = -1;
 
 var Layout = require("Layout");
 var layout = new Layout( {
@@ -64,19 +65,21 @@ var layout = new Layout( {
 function draw() {
   var date = new Date();
   
-  // Surprise colours
-  colNum = (colNum+256)%65536;
-  
   // Update time
   var timeStr = require("locale").time(date,1);
   var hh = parseFloat(timeStr.substring(0,2));
+  var mm = parseFloat(timeStr.substring(3,5));
+
+  // Surprise colours
+  if ( lastMin != mm ) colNum = Math.floor(Math.random() * 24);  
+  lastMin = mm;
   
   layout.hour.label = timeStr.substring(0,2);
   layout.min.label = timeStr.substring(3,5);
   
   // Mysterion (0) different colour each hour. Surprise (1) different colour every 10 secs.
-  layout.hour.col = cfg.colour==0 ? colH[hh] : cfg.colour==2 ? colNum : col[cfg.colour];
-  layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==2 ? colNum :col[cfg.colour];
+  layout.hour.col = cfg.colour==0 ? colH[hh] : cfg.colour==2 ? colH[colNum] : col[cfg.colour];
+  layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==2 ? colH[colNum] :col[cfg.colour];
   
   // Update date
   layout.day.label = date.getDate();
