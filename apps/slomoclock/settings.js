@@ -22,13 +22,15 @@
   const colMenu = {
     '': {'title': 'Colours'},
     '< Back': function() { E.showMenu(appMenu); },
+    'Mysterion' : function() { setColour(0); },
     'Surprise' : function() { setColour(0); },
-    'Red' : function() { setColour(1); },
-    'Orange' : function() { setColour(2); },
-    'Yellow' : function() { setColour(3); },
-    'Green' : function() { setColour(4); },
-    'Blue' : function() { setColour(5); },
-    'Violet' : function() { setColour(6); }
+    'Red' : function() { setColour(2); },
+    'Orange' : function() { setColour(3); },
+    'Yellow' : function() { setColour(4); },
+    'Green' : function() { setColour(5); },
+    'Blue' : function() { setColour(6); },
+    'Violet' : function() { setColour(7); },
+    'White' : function() { setColour(8); }\
   };
   
   E.showMenu(appMenu);
