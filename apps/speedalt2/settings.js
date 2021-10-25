@@ -1,10 +1,10 @@
 (function(back) {
 
-  let settings = require('Storage').readJSON('speedalt.json',1)||{};
+  let settings = require('Storage').readJSON('speedalt2.json',1)||{};
   //settings.buzz = settings.buzz||1;
   
   function writeSettings() {
-    require('Storage').write('speedalt.json',settings);
+    require('Storage').write('speedalt2.json',settings);
   }
   
    function setUnits(m,u) {
@@ -32,17 +32,17 @@
 
   
   const appMenu = {
-    '': {'title': 'GPS Adv Sprt'},
+    '': {'title': 'GPS Adv Sprt II'},
     '< Back': back,
-    '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
+    '< Load GPS Adv Sport': ()=>{load('speedalt2.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
-    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
-    'Vibrate' : {
-    value : settings.buzz,
-    format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }*/
+    'Kalman Filter' : function() { E.showMenu(kalMenu); },
+    'Touch' : {
+       value : settings.touch,
+       format : v => v?"On":"Off",
+       onchange : () => { settings.touch = !settings.touch; writeSettings(); }
+    }
   };
   
   const unitsMenu = {
