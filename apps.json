@@ -3223,6 +3223,46 @@
     ],
     "data": [{"name":"speedalt.json"}]
   },
+  { "id": "speedalt2",
+    "name": "GPS Adventure Sports II",
+    "shortName":"GPS Adv Sport II",
+    "icon": "app.png",
+    "version":"0.07",
+    "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
+    "tags": "tool,outdoors",
+    "supports": ["BANGLEJS"],
+    "type":"app",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"speedalt2.app.js","url":"app.js"},
+      {"name":"speedalt2.img","url":"app-icon.js","evaluate":true},
+      {"name":"speedalt2.settings.js","url":"settings.js"}
+    ],
+   "data": [
+      {"name":"speedalt2.json"}
+    ]
+  },	
+  { "id": "slomoclock",
+    "name": "SloMo Clock",
+    "shortName":"SloMo Clock",
+    "icon": "watch.png",
+    "version":"0.10",
+    "description": "Simple 24h clock face with large digits, hour above minute. Uses Layout library.",
+    "tags": "clock",
+    "supports": ["BANGLEJS"],
+    "type":"clock",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"slomoclock.app.js","url":"app.js"},
+      {"name":"slomoclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"slomoclock.settings.js","url":"settings.js"}
+    ],
+   "data": [
+      {"name":"slomoclock.json"}
+    ]
+  },	
   {
     "id": "de-stress",
     "name": "De-Stress",
@@ -3424,7 +3464,7 @@
   {
     "id": "widcom",
     "name": "Compass Widget",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
     "icon": "widget.png",
     "type": "widget",
