@@ -10,6 +10,7 @@ let alarms = require("Storage").readJSON("hardalarm.json", 1) || [];
     rp : true, // repeat
     as : false, // auto snooze
     hard: true, // whether it's "hard" or not
+    daysOfWeek: [true,true,true,true,true,true,true] // What days of the week the alarm is on. First item is Sunday, 2nd is Monday, etc.
   }
 ];*/
 
@@ -27,13 +28,15 @@ function getCurrentHr() {
 function showMainMenu() {
   const menu = {
     "": { title: "Alarms" },
-    "New Alarm": () => editAlarm(-1),
+    "New Alarm": () => showEditMenu(-1),
   };
   alarms.forEach((alarm, idx) => {
-    txt = (alarm.on ? "on  " : "off ") + formatTime(alarm.hr);
-    if (alarm.rp) txt += " (repeat)";
+    let txt =
+      (alarm.on ? "on  " : "off ") +
+      (alarm.msg ? alarm.msg + " " : "") +
+      formatTime(alarm.hr);
     menu[txt] = function () {
-      editAlarm(idx);
+      showEditMenu(idx);
     };
   });
   menu["< Back"] = () => {
@@ -42,25 +45,29 @@ function showMainMenu() {
   return E.showMenu(menu);
 }
 
-function editAlarm(alarmIndex) {
+function showEditMenu(alarmIndex, alarm) {
   const newAlarm = alarmIndex < 0;
-  let hrs = 12;
-  let mins = 0;
-  let en = true;
-  let repeat = true;
-  let as = false;
-  let hard = true;
-  if (!newAlarm) {
-    let alarm = alarms[alarmIndex];
-    hrs = 0 | alarm.hr;
-    mins = Math.round((alarm.hr - hrs) * 60);
-    en = alarm.on;
-    repeat = alarm.rp;
-    as = alarm.as;
-    hard = alarm.hard;
+
+  if (!alarm) {
+    if (newAlarm) {
+      alarm = {
+        hr: 12,
+        on: true,
+        rp: true,
+        as: false,
+        hard: true,
+        daysOfWeek: new Array(7).fill(true),
+      };
+    } else {
+      alarm = Object.assign({}, alarms[alarmIndex]); // Copy object in case we don't save it
+    }
   }
+
+  let hrs = 0 | alarm.hr;
+  let mins = Math.round((alarm.hr - hrs) * 60);
+
   const menu = {
-    "": { title: "Alarms" },
+    "": { title: alarm.msg ? alarm.msg : "Alarms" },
     Hours: {
       value: hrs,
       onchange: function (v) {
@@ -80,47 +87,44 @@ function editAlarm(alarmIndex) {
       }, // no arrow fn -> preserve 'this'
     },
     Enabled: {
-      value: en,
+      value: alarm.on,
       format: (v) => (v ? "On" : "Off"),
-      onchange: (v) => (en = v),
+      onchange: (v) => (alarm.on = v),
     },
     Repeat: {
-      value: en,
+      value: alarm.rp,
       format: (v) => (v ? "Yes" : "No"),
-      onchange: (v) => (repeat = v),
+      onchange: (v) => (alarm.rp = v),
     },
     "Auto snooze": {
-      value: as,
+      value: alarm.as,
       format: (v) => (v ? "Yes" : "No"),
-      onchange: (v) => (as = v),
+      onchange: (v) => (alarm.as = v),
     },
     Hard: {
-      value: hard,
+      value: alarm.hard,
       format: (v) => (v ? "Yes" : "No"),
-      onchange: (v) => (hard = v),
+      onchange: (v) => (alarm.hard = v),
     },
+    "Days of week": () => showDaysMenu(alarmIndex, getAlarm()),
   };
+
   function getAlarm() {
-    let hr = hrs + mins / 60;
-    let day = 0;
+    alarm.hr = hrs + mins / 60;
+    alarm.last = 0;
     // If alarm is for tomorrow not today (eg, in the past), set day
-    if (hr < getCurrentHr()) day = new Date().getDate();
+    if (alarm.hr < getCurrentHr()) alarm.last = new Date().getDate();
     // Save alarm
-    return {
-      on: en,
-      hr: hr,
-      last: day,
-      rp: repeat,
-      as: as,
-      hard: hard,
-    };
+    return alarm;
   }
+
   menu["> Save"] = function () {
     if (newAlarm) alarms.push(getAlarm());
     else alarms[alarmIndex] = getAlarm();
     require("Storage").write("hardalarm.json", JSON.stringify(alarms));
     showMainMenu();
   };
+
   if (!newAlarm) {
     menu["> Delete"] = function () {
       alarms.splice(alarmIndex, 1);
@@ -129,6 +133,31 @@ function editAlarm(alarmIndex) {
     };
   }
   menu["< Back"] = showMainMenu;
+  return E.showMenu(menu);
+}
+
+function showDaysMenu(alarmIndex, alarm) {
+  const menu = {
+    "": { title: alarm.msg ? alarm.msg : "Alarms" },
+    "< Back": () => showEditMenu(alarmIndex, alarm),
+  };
+
+  [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ].forEach((dayOfWeek, i) => {
+    menu[dayOfWeek] = {
+      value: alarm.daysOfWeek[i],
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => (alarm.daysOfWeek[i] = v),
+    };
+  });
+
   return E.showMenu(menu);
 }
 

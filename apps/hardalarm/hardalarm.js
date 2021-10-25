@@ -44,7 +44,6 @@ function showNumberPicker(currentGuess, randomNum) {
 
 function showPrompt(msg, buzzCount, alarm) {
   E.showPrompt(msg, {
-    title: "STAY AWAKE!",
     buttons: { Sleep: 0, Stop: 1 }, // default is sleep so it'll come back in 10 mins
   }).then(function (choice) {
     buzzCount = 0;
@@ -70,7 +69,7 @@ function showAlarm(alarm) {
   if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1) return; // total silence
   let msg = formatTime(alarm.hr);
   let buzzCount = 20;
-  if (alarm.msg) msg += "\n" + alarm.msg;
+  if (alarm.msg) msg += "\n" + alarm.msg + "!";
 
   if (alarm.hard) {
     let okClicked = false;
@@ -135,10 +134,16 @@ function showAlarm(alarm) {
 }
 
 // Check for alarms
-let day = new Date().getDate();
+let time = new Date();
 let hr = getCurrentHr() + 10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
 let alarms = require("Storage").readJSON("hardalarm.json", 1) || [];
-let active = alarms.filter((a) => a.on && a.hr < hr && a.last != day);
+let active = alarms.filter(
+  (alarm) =>
+    alarm.on &&
+    alarm.hr < hr &&
+    alarm.last != time.getDate() &&
+    alarm.daysOfWeek[time.getDay()]
+);
 if (active.length) {
   // if there's an alarm, show it
   active = active.sort((a, b) => a.hr - b.hr);
