@@ -5,16 +5,17 @@ Mike Bennett mike[at]kereru.com
 0.03 : Use Layout library
 */
 
-var v='0.06';
+var v='0.07';
 
 // Colours
 const col = [];
-col[1] = 0xF800;
-col[2] = 0xFAE0;
-col[3] = 0xF7E0;
-col[4] = 0x4FE0;
-col[5] = 0x019F;
-col[6] = 0x681F;
+col[2] = 0xF800;
+col[3] = 0xFAE0;
+col[4] = 0xF7E0;
+col[5] = 0x4FE0;
+col[6] = 0x019F;
+col[7] = 0x681F;
+col[8] = 0xFFFF;
 
 const colH = [];
 colH[0]= 0x001F;
@@ -42,6 +43,9 @@ colH[21]= 0x981F;
 colH[22]= 0x681F;
 colH[23]= 0x301F;
 
+// Colour incremented with every 10 sec timer event
+var colNum = 0;
+
 var Layout = require("Layout");
 var layout = new Layout( {
   type:"h", c: [
@@ -60,14 +64,19 @@ var layout = new Layout( {
 function draw() {
   var date = new Date();
   
+  // Surprise colours
+  colNum = (colNum+256)%65536;
+  
   // Update time
   var timeStr = require("locale").time(date,1);
   var hh = parseFloat(timeStr.substring(0,2));
   
   layout.hour.label = timeStr.substring(0,2);
   layout.min.label = timeStr.substring(3,5);
-  layout.hour.col = cfg.colour==0 ? colH[hh] : col[cfg.colour];
-  layout.min.col = cfg.colour==0 ? colH[hh] : col[cfg.colour];
+  
+  // Mysterion (0) different colour each hour. Surprise (1) different colour every 10 secs.
+  layout.hour.col = cfg.colour==0 ? colH[hh] : cfg.colour==2 ? colNum : col[cfg.colour];
+  layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==2 ? colNum :col[cfg.colour];
   
   // Update date
   layout.day.label = date.getDate();
