@@ -458,6 +458,7 @@
     "icon": "clock-analog.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -473,6 +474,7 @@
     "icon": "clock2x3.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -503,6 +505,7 @@
     "description": "T-Rex game in the style of Chrome's offline game",
     "icon": "trex.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1093,6 +1096,7 @@
     "icon": "icon.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1312,6 +1316,7 @@
     "description": "A Flappy Bird game clone",
     "icon": "app.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1386,6 +1391,7 @@
     "icon": "bold_clock.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3544,7 +3550,7 @@
     "icon": "simplest.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"simplest.app.js","url":"app.js"},
@@ -3981,6 +3987,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3996,6 +4003,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -4042,6 +4050,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -4077,5 +4086,20 @@
       {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"vernierrespirate.json"}]
+  },
+  {
+    "id": "gpstouch",
+    "name": "GPS Touch",
+    "version": "0.01",
+    "description": "A touch based GPS watch, shows OS map reference",
+    "icon": "gpstouch.png",
+    "tags": "tools,app",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"geotools","url":"geotools.js"},
+      {"name":"gpstouch.app.js","url":"gpstouch.app.js"},
+      {"name":"gpstouch.img","url":"gpstouch.icon.js","evaluate":true}
+    ]
   }
 ]
