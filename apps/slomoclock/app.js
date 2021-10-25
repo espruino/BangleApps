@@ -78,8 +78,8 @@ function draw() {
   layout.min.label = timeStr.substring(3,5);
   
   // Mysterion (0) different colour each hour. Surprise (1) different colour every 10 secs.
-  layout.hour.col = cfg.colour==0 ? colH[hh] : cfg.colour==2 ? colH[colNum] : col[cfg.colour];
-  layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==2 ? colH[colNum] :col[cfg.colour];
+  layout.hour.col = cfg.colour==0 ? colH[hh] : cfg.colour==1 ? colH[colNum] : col[cfg.colour];
+  layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==1 ? colH[colNum] :col[cfg.colour];
   
   // Update date
   layout.day.label = date.getDate();
