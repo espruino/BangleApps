@@ -4101,5 +4101,18 @@
       {"name":"gpstouch.app.js","url":"gpstouch.app.js"},
       {"name":"gpstouch.img","url":"gpstouch.icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "swiperclocklaunch",
+    "name": "Swiper Clock Launch",
+    "version": "0.01",
+    "description": "Navigate between clock and launcher with Swipe action",
+    "icon": "swiperclocklaunch.png",
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "storage": [
+      {"name":"swiperclocklaunch.boot.js","url":"boot.js"}
+    ]
   }
 ]
