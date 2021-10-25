@@ -18,7 +18,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.32",
+    "version": "0.33",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -3248,7 +3248,7 @@
    "data": [
       {"name":"speedalt2.json"}
     ]
-  },	
+  },
   { "id": "slomoclock",
     "name": "SloMo Clock",
     "shortName":"SloMo Clock",
@@ -3268,7 +3268,7 @@
    "data": [
       {"name":"slomoclock.json"}
     ]
-  },	
+  },
   {
     "id": "de-stress",
     "name": "De-Stress",
