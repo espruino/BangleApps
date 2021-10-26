@@ -114,7 +114,7 @@
     "id": "launchb2",
     "name": "Launcher (Bangle.js 2 default)",
     "shortName": "Launcher",
-    "version": "0.03",
+    "version": "0.04",
     "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications.",
     "icon": "app.png",
     "type": "launch",

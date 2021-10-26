@@ -7,73 +7,42 @@ apps.sort((a,b)=>{
   if (a.name>b.name) return 1;
   return 0;
 });
-var APPH = 64;
-var menuScroll = 0;
-var menuShowing = false;
-var w = g.getWidth();
-var h = g.getHeight();
-var n = Math.ceil((h-24)/APPH);
-var menuScrollMax = APPH*apps.length - (h-24);
-// FIXME: not needed after 2v11
-var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-
 apps.forEach(app=>{
   if (app.icon)
     app.icon = s.read(app.icon); // should just be a link to a memory area
 });
-if (g.wrapString) { // FIXME: check not needed after 2v11
+// FIXME: not needed after 2v11
+var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
+// FIXME: check not needed after 2v11
+if (g.wrapString) {
   g.setFont(font);
   apps.forEach(app=>app.name = g.wrapString(app.name, g.getWidth()-64).join("\n"));
 }
 
-function drawApp(i) {
-  var y = 24+i*APPH-menuScroll;
-  var app = apps[i];
-  if (!app || y<-APPH || y>=g.getHeight()) return;
-  g.setFont(font).setFontAlign(-1,0).drawString(app.name,64,y+32);
-  if (app.icon) try {g.drawImage(app.icon,8,y+8);} catch(e){}
-}
-
-function drawMenu() {
-  g.reset().clearRect(0,24,w-1,h-1);
-  g.setClipRect(0,24,g.getWidth()-1,g.getHeight()-1);
-  for (var i=0;i<n;i++) drawApp(i);
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-}
-g.clear();
-drawMenu();
-g.flip(); // force an update now to make this snappier
-Bangle.on('drag',e=>{
-  var dy = e.dy;
-  if (menuScroll - dy < 0)
-    dy = menuScroll;
-  if (menuScroll - dy > menuScrollMax)
-    dy = menuScroll - menuScrollMax;
-  if (!dy) return;
-  g.reset().setClipRect(0,24,g.getWidth()-1,g.getHeight()-1);
-  g.scroll(0,dy);
-  menuScroll -= dy;
-  if (e.dy < 0) {
-    drawApp(Math.floor((menuScroll+24+g.getHeight())/APPH)-1);
-    if (e.dy <= -APPH) drawApp(Math.floor((menuScroll+24+g.getHeight())/APPH)-2);
-  } else {
-    drawApp(Math.floor((menuScroll+24)/APPH));
-    if (e.dy >= APPH) drawApp(Math.floor((menuScroll+24)/APPH)+1);
-  }
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-});
-Bangle.on("touch",(_,e)=>{
-  if (e.y<20) return;
-  var i = Math.floor((e.y+menuScroll-24) / APPH);
+function drawApp(i, r) {
   var app = apps[i];
   if (!app) return;
-  if (!app.src || require("Storage").read(app.src)===undefined) {
-    E.showMessage("App Source\nNot found");
-    setTimeout(drawMenu, 2000);
-  } else {
-    E.showMessage("Loading...");
-    load(app.src);
-  }
-});
+  g.clearRect(r.x,r.y,r.x+r.w-1, r.y+r.h-1);
+  g.setFont(font).setFontAlign(-1,0).drawString(app.name,64,r.y+32);
+  if (app.icon) try {g.drawImage(app.icon,8,r.y+8);} catch(e){}
+}
+
+g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
+E.showScroller({
+  h : 64, c : apps.length,
+  draw : drawApp,
+  select : i => {
+    var app = apps[i];
+    if (!app) return;
+    if (!app.src || require("Storage").read(app.src)===undefined) {
+      E.showMessage("App Source\nNot found");
+      setTimeout(drawMenu, 2000);
+    } else {
+      E.showMessage("Loading...");
+      load(app.src);
+    }
+  }
+});
