@@ -18,7 +18,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.32",
+    "version": "0.33",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -458,6 +458,7 @@
     "icon": "clock-analog.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -473,6 +474,7 @@
     "icon": "clock2x3.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -503,6 +505,7 @@
     "description": "T-Rex game in the style of Chrome's offline game",
     "icon": "trex.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1093,6 +1096,7 @@
     "icon": "icon.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1312,6 +1316,7 @@
     "description": "A Flappy Bird game clone",
     "icon": "app.png",
     "tags": "game",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -1386,6 +1391,7 @@
     "icon": "bold_clock.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3223,6 +3229,46 @@
     ],
     "data": [{"name":"speedalt.json"}]
   },
+  { "id": "speedalt2",
+    "name": "GPS Adventure Sports II",
+    "shortName":"GPS Adv Sport II",
+    "icon": "app.png",
+    "version":"0.07",
+    "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
+    "tags": "tool,outdoors",
+    "supports": ["BANGLEJS"],
+    "type":"app",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"speedalt2.app.js","url":"app.js"},
+      {"name":"speedalt2.img","url":"app-icon.js","evaluate":true},
+      {"name":"speedalt2.settings.js","url":"settings.js"}
+    ],
+   "data": [
+      {"name":"speedalt2.json"}
+    ]
+  },
+  { "id": "slomoclock",
+    "name": "SloMo Clock",
+    "shortName":"SloMo Clock",
+    "icon": "watch.png",
+    "version":"0.10",
+    "description": "Simple 24h clock face with large digits, hour above minute. Uses Layout library.",
+    "tags": "clock",
+    "supports": ["BANGLEJS"],
+    "type":"clock",
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"slomoclock.app.js","url":"app.js"},
+      {"name":"slomoclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"slomoclock.settings.js","url":"settings.js"}
+    ],
+   "data": [
+      {"name":"slomoclock.json"}
+    ]
+  },
   {
     "id": "de-stress",
     "name": "De-Stress",
@@ -3424,7 +3470,7 @@
   {
     "id": "widcom",
     "name": "Compass Widget",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
     "icon": "widget.png",
     "type": "widget",
@@ -3504,7 +3550,7 @@
     "icon": "simplest.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"simplest.app.js","url":"app.js"},
@@ -3941,6 +3987,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -3956,6 +4003,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -4002,6 +4050,7 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
@@ -4054,5 +4103,33 @@
       {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"vernierrespirate.json"}]
+  },
+  {
+    "id": "gpstouch",
+    "name": "GPS Touch",
+    "version": "0.01",
+    "description": "A touch based GPS watch, shows OS map reference",
+    "icon": "gpstouch.png",
+    "tags": "tools,app",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"geotools","url":"geotools.js"},
+      {"name":"gpstouch.app.js","url":"gpstouch.app.js"},
+      {"name":"gpstouch.img","url":"gpstouch.icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "swiperclocklaunch",
+    "name": "Swiper Clock Launch",
+    "version": "0.01",
+    "description": "Navigate between clock and launcher with Swipe action",
+    "icon": "swiperclocklaunch.png",
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "storage": [
+      {"name":"swiperclocklaunch.boot.js","url":"boot.js"}
+    ]
   }
 ]

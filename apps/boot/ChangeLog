@@ -34,3 +34,4 @@
 0.32: Fix single quote error in g.wrapString polyfill
       improve g.stringMetrics polyfill
       Fix issue where re-running bootupdate could disable existing polyfills
+0.33: Add E.showScroller polyfill
