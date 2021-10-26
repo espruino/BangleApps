@@ -29,12 +29,26 @@
 .sort-nav {
   float: right;
 }
+
+.app-tile {
+  position: relative;
+  border-bottom: 1px solid #EEE;
+  margin-bottom: 4px;
+}
+
 .tile-content { position: relative; }
 .link-github {
   position:absolute;
   top: 36px;
   left: -24px;
 }
+.tile-screenshot {
+  position:absolute;bottom:1em;right:1em;
+  width:4em;height:4em;
+  padding:2px;border:1px solid black;
+  cursor:pointer;
+}
+
 .btn.btn-favourite { color: red; }
 .btn.btn-favourite:hover { color: red; }
 
@@ -53,4 +67,3 @@
 .icon.icon-interface::before {
   content: "\01F5AB";
 }
-

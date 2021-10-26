@@ -55,20 +55,31 @@ apps = apps.map((app,appIdx) => {
   return app;
 });
 
+// search for screenshots
+apps = apps.map((app,appIdx) => {
+  if (app.screenshots) return app; // already sorted
+
+  var files = require("fs").readdirSync(__dirname+"/../apps/"+app.id);
+  var screenshots = files.filter(fn=>fn.startsWith("screenshot") && fn.endsWith(".png"));
+  if (screenshots.length)
+    app.screenshots = screenshots.map(fn => ({url:fn}));
+  return app;
+});
+
 var KEY_ORDER = [
-  "id","name","shortName","version","description","icon","type","tags","supports",
+  "id","name","shortName","version","description","icon","screenshots","type","tags","supports",
   "dependencies", "readme", "custom", "customConnect", "interface",
   "allow_emulator", "storage", "data", "sortorder"
 ];
 
 var JS = JSON.stringify;
 var json = "[\n  "+apps.map(app=>{
-  /*var keys = KEY_ORDER.filter(k=>k in app);
+  var keys = KEY_ORDER.filter(k=>k in app);
   Object.keys(app).forEach(k=>{
     if (!KEY_ORDER.includes(k))
       throw new Error(`Key named ${k} not known!`);
-  });*/
-  var keys = Object.keys(app); // don't re-order
+  });
+  //var keys = Object.keys(app); // don't re-order
 
   return "{\n    "+keys.map(k=>{
     var js = JS(app[k]);

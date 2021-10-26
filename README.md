@@ -220,6 +220,7 @@ and which gives information about the app for the Launcher.
   "version": "0v01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
+  "screenshots" : [ { url:"screenshot.png" } ], // optional screenshot for app
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
                               //   'widget' - a widget
