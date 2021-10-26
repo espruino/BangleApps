@@ -5,15 +5,22 @@ E.showMessage("Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
 var isB2 = process.env.HWVERSION; // Is Bangle.js 2
 var boot = "";
-var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
-boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))!=${CRC}) { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
+if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/);
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)!=${CRC})`;
+} else {
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))!=${CRC})`;
+}
+boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
+boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
     else if (s.HID=="kb") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBBQcZ4CnnFQAlAXUBlQiBApUBdQiBAZUFdQEFCBkBKQWRApUBdQORAZUGdQgVACVzBQcZAClzgQAJBRUAJv8AdQiVArECwA=="));`
     else /*kbmedia*/boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));`;
-    boot += `NRF.setServices({}, {uart:true, hid:Bangle.HID});\n`;
+    boot += `bleServiceOptions.hid=Bangle.HID;\n`;
   }
 }
 if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
@@ -178,12 +185,16 @@ if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
 }
 
 // Append *.boot.js files
+// These could change bleServices/bleServiceOptions if needed
 require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
   // which would cause an error!
   boot += require('Storage').read(bootFile)+";\n";
 });
+// update ble
+boot += `NRF.setServices(bleServices, bleServiceOptions);delete bleServices,bleServiceOptions;\n`;
+// write file
 require('Storage').write('.boot0',boot);
 delete boot;
 E.showMessage("Reloading...");
