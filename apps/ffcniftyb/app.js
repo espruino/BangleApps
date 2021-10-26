@@ -68,13 +68,13 @@ function draw() {
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
   // render outside text with ellipse
-  buf.clear()
+  buf.clear();
   renderText(buf.setColor(1));
   renderEllipse(buf.setColor(0));
   g.setColor(color).drawImage(img, 0, 24);
 
   // render ellipse with inside text
-  buf.clear()
+  buf.clear();
   renderEllipse(buf.setColor(1));
   renderText(buf.setColor(0));
   g.setColor(color).drawImage(img, 0, 24);
