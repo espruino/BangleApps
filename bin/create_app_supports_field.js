@@ -31,6 +31,7 @@ try{
 }
 
 apps = apps.map((app,appIdx) => {
+  if (app.supports) return app; // already sorted
   var tags = [];
   if (app.tags) tags = app.tags.split(",").map(t=>t.trim());
   var supportsB1 = true;
@@ -62,17 +63,21 @@ var KEY_ORDER = [
 
 var JS = JSON.stringify;
 var json = "[\n  "+apps.map(app=>{
-  var keys = KEY_ORDER.filter(k=>k in app);
+  /*var keys = KEY_ORDER.filter(k=>k in app);
   Object.keys(app).forEach(k=>{
     if (!KEY_ORDER.includes(k))
       throw new Error(`Key named ${k} not known!`);
-  });
-
+  });*/
+  var keys = Object.keys(app); // don't re-order
 
   return "{\n    "+keys.map(k=>{
     var js = JS(app[k]);
-    if (k=="storage")
-      js = "[\n      "+app.storage.map(s=>JS(s)).join(",\n      ")+"\n    ]";
+    if (k=="storage") {
+      if (app.storage.length)
+        js = "[\n      "+app.storage.map(s=>JS(s)).join(",\n      ")+"\n    ]";
+      else
+        js = "[]";
+    }
     return JS(k)+": "+js;
   }).join(",\n    ")+"\n  }";
 }).join(",\n  ")+"\n]\n";
