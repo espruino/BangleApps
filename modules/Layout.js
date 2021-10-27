@@ -80,7 +80,6 @@ function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
-  this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
 
   options = options || {};
   this.lazy = options.lazy || false;
@@ -131,7 +130,7 @@ function Layout(layout, options) {
           if (this.b[btn].cb) this.b[btn].cb(e);
       }
       // enough physical buttons
-      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
+      let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
       Bangle.btnWatch = [];
       if (this.physBtns > 2 && buttons.length==1)
@@ -344,10 +343,6 @@ Layout.prototype.debug = function(l,c) {
 };
 Layout.prototype.update = function() {
   delete this.updateNeeded;
-  var l = this._l;
-  var w = g.getWidth();
-  var y = this.yOffset;
-  var h = g.getHeight()-y;
   // update sizes
   function updateMin(l) {"ram"
     cb[l.type](l);
@@ -396,18 +391,19 @@ Layout.prototype.update = function() {
       if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }
   };
+
+  var l = this._l;
   updateMin(l);
-  // center
-  if (l.fillx || l.filly) {
-    l.w = w;
-    l.h = h;
-    l.x = 0;
-    l.y = y;
-  } else {
+  if (l.fillx || l.filly) { // fill all
+    l.w = Bangle.appRect.w;
+    l.h = Bangle.appRect.h;
+    l.x = Bangle.appRect.x;
+    l.y = Bangle.appRect.y;
+  } else { // or center
     l.w = l._w;
     l.h = l._h;
-    l.x = (w-l.w)>>1;
-    l.y = y+((h-l.h)>>1);
+    l.x = (Bangle.appRect.w-l.w)>>1;
+    l.y = Bangle.appRect.y+((Bangle.appRect.h-l.h)>>1);
   }
   // layout children
   this.layout(l);
