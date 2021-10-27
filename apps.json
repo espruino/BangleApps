@@ -122,6 +122,46 @@
     ],
     "sortorder": -10
   },
+  { 
+	"id": "launchb1sub",
+	"name": "Launcher with Clocks sub-menu (B1)",
+	"shortName":"Launcher w/ Clocks sub-menu",
+	"version":"0.01",
+	"description": "This is needed by Bangle.js 1.0 to display a menu allowing you to choose your own applications and with Clocks grouped together in sub-menu.",
+	"icon": "app.png",
+	"tags": "testing,tool,system,launcher",
+	"supports": ["BANGLEJS"],
+	"type":"launch",
+	"readme": "README.md",
+	"storage": [
+		{"name":"launchb1sub.app.js","url":"app.js"},
+		{"name":"launchb1sub.png","url":"app.png"},
+		{"name":"clocks.info","url":"clocks.info"},
+		{"name":"clocks.app.js","url":"clocks.app.js"},
+		{"name":"clocks.img","url":"clocks-icon.js","evaluate":true}
+	],
+	"sortorder" : 0
+  },
+  { 
+	"id": "launchb2sub",
+	"name": "Launcher with Clocks sub-menu (B2)",
+	"shortName":"Launcher w/ Clocks sub-menu",
+	"version":"0.01",
+	"description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications and with Clocks grouped together in sub-menu. It will not work on Bangle.js 1.0.",
+	"icon": "app.png",
+	"tags": "testing,tool,system,launcher",
+	"supports": ["BANGLEJS2"],
+	"type":"launch",
+	"readme": "README.md",
+	"storage": [
+		{"name":"launchb2sub.app.js","url":"app.js"},
+		{"name":"launchb2sub.png","url":"app.png"},
+		{"name":"clocks.info","url":"clocks.info"},
+		{"name":"clocks.app.js","url":"clocks.app.js"},
+		{"name":"clocks.img","url":"clocks-icon.js","evaluate":true}
+	],
+	"sortorder" : 0
+  },
   {
     "id": "about",
     "name": "About",

@@ -1,0 +1,10 @@
+{ 
+	"id": "launchb1sub",
+    "name": "Launcher with Clocks sub-menu (B1)",
+    "shortName":"Launcher w/ Clocks sub-menu",
+    "icon": "launchb1sub.png",
+    "version":"0.01",
+    "type":"launch",
+	"src":"launchb1sub.app.js",
+	"files":"launchb1sub.info,launchb1sub.app.js,launchb1sub.png,clocks.info,clocks.app.js,clocks.img"
+  }

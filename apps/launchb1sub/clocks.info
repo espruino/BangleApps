@@ -1,0 +1,9 @@
+{
+	"id":"clocks",
+	"name":"Clocks",
+	"type":"app",
+	"src":"clocks.app.js",
+	"icon": "clocks.img",
+	"version":"0.01",
+	"files":"clocks.info,clocks.app.js,clocks.img"
+}
