@@ -1,6 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;
 
@@ -71,8 +72,8 @@ if (!('qmOptions' in settings)) settings.qmOptions = {}; // easier if this alway
 const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
-  var beepV = [false, true, "vib"];
-  var beepN = ["Off", "Piezo", "Vibrate"];
+  var beepV = BANGLEJS2 ? [false,true] : [false, true, "vib"];
+  var beepN = BANGLEJS2 ? ["Off","On"] : ["Off", "Piezo", "Vibrate"];
   const mainmenu = {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
@@ -119,6 +120,7 @@ function showMainMenu() {
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
   };
+
   return E.showMenu(mainmenu);
 }
 
@@ -356,7 +358,10 @@ function showLCDMenu() {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
       }
-    },
+    }
+  };
+  if (!BANGLEJS2)
+    Object.assign(lcdMenu, {
     'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
@@ -372,7 +377,8 @@ function showLCDMenu() {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
       }
-    },
+    }});
+  Object.assign(lcdMenu, {
     'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
       format: boolFormat,
@@ -427,7 +433,7 @@ function showLCDMenu() {
         updateOptions();
       }
     }
-  }
+  });
   return E.showMenu(lcdMenu)
 }
 function showQuietModeMenu() {
