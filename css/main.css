@@ -34,6 +34,7 @@
   position: relative;
   border-bottom: 1px solid #EEE;
   margin-bottom: 4px;
+  min-height: 8em;
 }
 
 .tile-content { position: relative; }
