@@ -1,7 +1,5 @@
 // This file shows the alarm
 
-print("Starting alarm");
-
 function formatTime(t) {
   let hrs = Math.floor(t / 3600000);
   let mins = Math.round((t / 60000) % 60);
@@ -149,8 +147,6 @@ let active = alarms.filter(
     alarm.last != time.getDate() &&
     (alarm.timer || alarm.daysOfWeek[time.getDay()])
 );
-
-print(active);
 
 if (active.length) {
   showAlarm(active.sort((a, b) => a.t - b.t)[0]);
