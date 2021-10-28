@@ -49,7 +49,7 @@ function showMainMenu() {
     };
   }
   const mainmenu = {
-    '': { 'title': 'GPS Record' },
+    '': { 'title': 'Recorder' },
     '< Back': ()=>{load();},
     'RECORD': {
       value: !!settings.recording,
@@ -102,7 +102,7 @@ function showMainMenu() {
 
 function viewTracks() {
   const menu = {
-    '': { 'title': 'GPS Tracks' }
+    '': { 'title': 'Tracks' }
   };
   var found = false;
   require("Storage").list(/^record\.log.*\.csv$/,{sf:true}).forEach(filename=>{
@@ -174,12 +174,12 @@ function asTime(v){
 
 function viewTrack(filename, info) {
   if (!info) {
-    E.showMessage("Loading...","GPS Track "+getTrackNumber(filename));
+    E.showMessage("Loading...","Track "+getTrackNumber(filename));
     info = getTrackInfo(filename);
   }
   console.log(info);
   const menu = {
-    '': { 'title': 'GPS Track '+info.fn }
+    '': { 'title': 'Track '+info.fn }
   };
   if (info.time)
     menu[info.time.toISOString().substr(0,16).replace("T"," ")] = function(){};
@@ -240,7 +240,7 @@ function plotTrack(info) {
   }
 
   E.showMenu(); // remove menu
-  E.showMessage("Drawing...","GPS Track "+info.fn);
+  E.showMessage("Drawing...","Track "+info.fn);
   g.flip(); // on buffered screens, draw a not saying we're busy
   g.clear(1);
   var s = require("Storage");
@@ -318,7 +318,7 @@ function plotTrack(info) {
 function plotGraph(info, style) {
   "ram"
   E.showMenu(); // remove menu
-  E.showMessage("Calculating...","GPS Track "+info.fn);
+  E.showMessage("Calculating...","Track "+info.fn);
   var filename = info.filename;
   var infn = new Float32Array(80);
   var infc = new Uint16Array(80);
