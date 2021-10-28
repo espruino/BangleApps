@@ -33,3 +33,4 @@
 0.28: Update Quiet Mode widget (if present)
 0.29: Add Customize to Theme menu
 0.30: Move '< Back' to the top of menus
+0.31: Remove Bangle 1 settings when running on Bangle 2

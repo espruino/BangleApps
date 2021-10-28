@@ -161,3 +161,25 @@ window.addEventListener('load', (event) => {
     });
   });
 });
+
+function onAppJSONLoaded() {
+  return new Promise(resolve => {
+    httpGet("screenshots.json").then(screenshotJSON=>{
+      var screenshots = [];
+      try {
+        screenshots = JSON.parse(screenshotJSON);
+      } catch(e) {
+        console.error("Screenshot JSON Corrupted", e);
+      }
+      screenshots.forEach(s => {
+        var app = appJSON.find(a=>a.id==s.id);
+        if (!app) return;
+        if (!app.screenshots) app.screenshots = [];
+        app.screenshots.push({url:s.url});
+      })
+    }).catch(err=>{
+      console.log("No screenshots.json found");
+      resolve();
+    });
+  });
+}

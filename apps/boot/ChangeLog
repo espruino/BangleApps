@@ -34,3 +34,8 @@
 0.32: Fix single quote error in g.wrapString polyfill
       improve g.stringMetrics polyfill
       Fix issue where re-running bootupdate could disable existing polyfills
+0.33: Add E.showScroller polyfill
+0.34: Use Storage.hash if available
+      Rearrange NRF.setServices to allow .boot.js files to add services (eg ANCS)
+0.35: Add Bangle.appRect polyfill
+      Don't set beep vibration up on Bangle.js 2 (built in)
