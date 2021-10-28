@@ -262,6 +262,9 @@ and which gives information about the app for the Launcher.
                               // (eg it's evaluated as JS)
      "noOverwrite":true       // if supplied, this file will not be overwritten if it
                               // already exists
+     "supports": ["BANGLEJS2"]// if supplied, this file will ONLY be uploaded to the device
+                              // types named in the array. This allows different versions of
+                              // the app to be uploaded for different platforms
     },
   ]
   "data": [                   // list of files the app writes to

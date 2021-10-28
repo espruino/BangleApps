@@ -29,7 +29,7 @@ if (DEVICE=="BANGLEJS") {
 } else if (DEVICE=="BANGLEJS2") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
   var APPS = [ // IDs of apps to install
-    "boot","launchb2","s7clk","setting",
+    "boot","launch","s7clk","setting",
     "about","alarm","widlock","widbat","widbt","widid"
   ];
 } else {
@@ -132,7 +132,8 @@ Promise.all(APPS.map(appid => {
   if (app===undefined) throw new Error(`App ${appid} not found`);
   return AppInfo.getFiles(app, {
     fileGetter : fileGetter,
-    settings : SETTINGS
+    settings : SETTINGS,
+    device : { id : DEVICE }
   }).then(files => {
     appfiles = appfiles.concat(files);
   });
