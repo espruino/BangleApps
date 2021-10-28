@@ -182,7 +182,7 @@
     if (!writeInterval) return;
     g.reset();    g.drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
     activeRecorders.forEach((recorder,i)=>{
-      recorder.draw(this.y+15+(i>>1)*12, this.y+(i&1)*12);
+      recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
     });
   },getRecorders:getRecorders,reload:function() {
     reload();
