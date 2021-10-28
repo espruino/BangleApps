@@ -196,7 +196,7 @@ function prevInfo() {
 }
 
 Bangle.on('swipe', dir => {
-  if (dir == 1) prevInfo() else nextInfo();
+  if (dir == 1) prevInfo(); else nextInfo();
   draw();
 });
 
