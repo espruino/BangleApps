@@ -29,13 +29,12 @@ let nextAlarms = (require("Storage").readJSON("qalarm.json", 1) || [])
   .sort((a, b) => a.t - b.t);
 
 if (nextAlarms[0]) {
-  print("Found alarm, scheduling...", nextAlarms[0].t - t);
   setTimeout(() => {
-    load("qalarm.js");
     eval(require("Storage").read("qalarmcheck.js"));
-  }, 3600000 * (nextAlarms[0].t - t));
+    load("qalarm.js");
+  }, nextAlarms[0].t - t);
 } else {
-  print("No alarms found. Will re-check at midnight.");
+  // No alarms found: will re-check at midnight
   setTimeout(() => {
     eval(require("Storage").read("qalarmcheck.js"));
   }, 86400000 - t);

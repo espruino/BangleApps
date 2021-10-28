@@ -4148,11 +4148,12 @@
     "version": "0.01",
     "description": "Navigate between clock and launcher with Swipe action",
     "icon": "swiperclocklaunch.png",
-    "type": "boot",
-    "tags": "system",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "type": "bootloader",
+    "tags": "tools, system",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
-      {"name":"swiperclocklaunch.boot.js","url":"boot.js"}
+      {"name":"swiperclocklaunch.boot.js","url":"boot.js"},
+      {"name":"swiperclocklaunch.img","url":"icon.js","evaluate":true}
     ]
   },
   {
@@ -4160,7 +4161,7 @@
     "name": "Q Alarm and Timer",
     "shortName": "Q Alarm",
     "icon": "app.png",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Alarm and timer app with days of week and 'hard' option.",
     "tags": "tool,alarm,widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],

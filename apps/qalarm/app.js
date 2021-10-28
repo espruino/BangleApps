@@ -172,21 +172,14 @@ function showDaysMenu(alarmIndex, alarm) {
     "< Back": () => showEditAlarmMenu(alarmIndex, alarm),
   };
 
-  [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ].forEach((dayOfWeek, i) => {
+  for (let i = 0; i < 7; i++) {
+    let dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: alarm.daysOfWeek[i],
       format: (v) => (v ? "Yes" : "No"),
       onchange: (v) => (alarm.daysOfWeek[i] = v),
     };
-  });
+  }
 
   return E.showMenu(menu);
 }
