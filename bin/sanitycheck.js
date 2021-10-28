@@ -133,9 +133,9 @@ apps.forEach((app,appIdx) => {
     if (isGlob(file.name)) ERROR(`App ${app.id} storage file ${file.name} contains wildcards`);
     let char = file.name.match(FORBIDDEN_FILE_NAME_CHARS)
     if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`)
-    if (fileNames.includes(file.name))
+    if (fileNames.includes(file.name) && !file.supports)  // assume that there aren't duplicates if 'supports' is set
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
-    if (!file.supports) fileNames.push(file.name); // assume that there aren't duplicates if 'supports' is set
+    fileNames.push(file.name);
     allFiles.push({app: app.id, file: file.name});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`);

@@ -290,14 +290,6 @@ setWatch(()=>{
 }, BTN2, {repeat:true,edge:"falling"});
 setWatch(()=>move(-1), BTN1, {repeat:true});
 
-(function migrateSettings(){
-  let global_settings = require('Storage').readJSON('setting.json', 1)
-  if (global_settings) {
-    delete global_settings.welcomed
-    require('Storage').write('setting.json', global_settings)
-  }
-})()
-
 Bangle.setLCDTimeout(0);
 Bangle.setLCDPower(1);
 move(0);
