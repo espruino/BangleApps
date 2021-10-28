@@ -182,7 +182,7 @@ if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
   }
   return lines;
 };\n`;
-};
+}
 delete Bangle.appRect; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
   boot += `Bangle.appRect = ((y,w,h)=>({x:0,y:0,w:w,h:h,x2:w-1,y2:h-1}))(g.getWidth(),g.getHeight());
