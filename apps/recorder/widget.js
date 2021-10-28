@@ -23,9 +23,9 @@
         function onGPS(f) {
           hasFix = f.fix;
           if (!hasFix) return;
-          lat += fix.lat;
-          lon += fix.lon;
-          alt += fix.alt;
+          lat += f.lat;
+          lon += f.lon;
+          alt += f.alt;
           samples++;
         }
         return {
