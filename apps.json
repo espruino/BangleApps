@@ -4193,7 +4193,7 @@
     "description": "Google Authenticator compatible tool.",
     "tags": "",
     "storage": [
-      {"name":"authentiwatch.app.js","url":"authentiwatch.js"},
+      {"name":"authentiwatch.app.js","url":"app.js"},
       {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
     ]
   }
