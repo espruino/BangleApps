@@ -10,7 +10,8 @@ const sha512 = crypto.SHA512;
 var tokens = require("Storage").readJSON("authentiwatch.tokens.json", true) || [
   {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
   {algorithm:"SHA1",digits:6,period:30,secret:"bbbb bbbb bbbb bbbb",label:"BgBgBg"},
-  {algorithm:"SHA1",digits:6,period:30,secret:"6crw upgx ntjb 3wuj",label:"Discord"},
+  {algorithm:"SHA1",digits:6,period:30,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
+  {algorithm:"SHA1",digits:6,period:30,secret:"xxxx xxxx xxxx xxxx",label:"XgXgXg"},
   {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
   {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
 ];
