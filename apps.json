@@ -49,7 +49,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
     "tags": "tool,system",
@@ -61,36 +61,7 @@
       {"name":"health.boot.js","url":"boot.js"},
       {"name":"health","url":"lib.js"}
     ],
-    "sortorder": -8
-  },
-  {
-    "id": "moonphase",
-    "name": "Moonphase",
-    "version": "0.02",
-    "description": "Shows current moon phase. Now with GPS function.",
-    "icon": "app.png",
-    "tags": "",
-    "supports": ["BANGLEJS"],
-    "allow_emulator": true,
-    "storage": [
-      {"name":"moonphase.app.js","url":"app.js"},
-      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
-    ]
-  },
-  {
-    "id": "daysl",
-    "name": "Days left",
-    "version": "0.03",
-    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
-    "icon": "app.png",
-    "tags": "",
-    "supports": ["BANGLEJS"],
-    "allow_emulator": false,
-    "storage": [
-      {"name":"daysl.app.js","url":"app.js"},
-      {"name":"daysl.img","url":"app-icon.js","evaluate":true},
-      {"name":"daysl.wid.js","url":"widget.js"}
-    ]
+    "sortorder": -2
   },
   {
     "id": "launch",
@@ -109,6 +80,22 @@
     "sortorder": -10
   },
   {
+    "id": "setting",
+    "name": "Settings",
+    "version": "0.31",
+    "description": "A menu for setting up Bangle.js",
+    "icon": "settings.png",
+    "tags": "tool,system",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"setting.app.js","url":"settings.js"},
+      {"name":"setting.img","url":"settings-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
+    "sortorder": -5
+  },
+  {
     "id": "about",
     "name": "About",
     "version": "0.10",
@@ -122,6 +109,24 @@
       {"name":"about.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
       {"name":"about.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "alarm",
+    "name": "Default Alarm & Timer",
+    "shortName": "Alarms",
+    "version": "0.13",
+    "description": "Set and respond to alarms and timers",
+    "icon": "app.png",
+    "tags": "tool,alarm,widget",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"alarm.app.js","url":"app.js"},
+      {"name":"alarm.boot.js","url":"boot.js"},
+      {"name":"alarm.js","url":"alarm.js"},
+      {"name":"alarm.img","url":"app-icon.js","evaluate":true},
+      {"name":"alarm.wid.js","url":"widget.js"}
+    ],
+    "data": [{"name":"alarm.json"}]
   },
   {
     "id": "locale",
@@ -240,38 +245,33 @@
     "sortorder": -9
   },
   {
-    "id": "setting",
-    "name": "Settings",
-    "version": "0.31",
-    "description": "A menu for setting up Bangle.js",
-    "icon": "settings.png",
-    "tags": "tool,system",
-    "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
+    "id": "moonphase",
+    "name": "Moonphase",
+    "version": "0.02",
+    "description": "Shows current moon phase. Now with GPS function.",
+    "icon": "app.png",
+    "tags": "",
+    "supports": ["BANGLEJS"],
+    "allow_emulator": true,
     "storage": [
-      {"name":"setting.app.js","url":"settings.js"},
-      {"name":"setting.img","url":"settings-icon.js","evaluate":true}
-    ],
-    "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
-    "sortorder": -2
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+    ]
   },
   {
-    "id": "alarm",
-    "name": "Default Alarm & Timer",
-    "shortName": "Alarms",
-    "version": "0.13",
-    "description": "Set and respond to alarms and timers",
+    "id": "daysl",
+    "name": "Days left",
+    "version": "0.03",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
     "icon": "app.png",
-    "tags": "tool,alarm,widget",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "tags": "",
+    "supports": ["BANGLEJS"],
+    "allow_emulator": false,
     "storage": [
-      {"name":"alarm.app.js","url":"app.js"},
-      {"name":"alarm.boot.js","url":"boot.js"},
-      {"name":"alarm.js","url":"alarm.js"},
-      {"name":"alarm.img","url":"app-icon.js","evaluate":true},
-      {"name":"alarm.wid.js","url":"widget.js"}
-    ],
-    "data": [{"name":"alarm.json"}]
+      {"name":"daysl.app.js","url":"app.js"},
+      {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+      {"name":"daysl.wid.js","url":"widget.js"}
+    ]
   },
   {
     "id": "wclock",
