@@ -1424,7 +1424,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widclk.wid.js","url":"widget.js"}
     ]
@@ -1633,7 +1633,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tool,system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widver.wid.js","url":"widget.js"}
     ]
@@ -1788,7 +1788,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tools",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widmp.wid.js","url":"widget.js"}
     ]
@@ -3439,7 +3439,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,gps",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widgps.wid.js","url":"widget.js"}
@@ -3965,7 +3965,7 @@
     "icon": "widclkbttm.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
