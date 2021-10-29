@@ -66,6 +66,7 @@
     'Default' : function() { setColour(0); },
     'Hi Contrast' : function() { setColour(1); },
     'Night' : function() { setColour(2); }
+    'Inverted' : function() { setColour(3); }
   };
   
   const kalMenu = {
