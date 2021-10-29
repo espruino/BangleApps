@@ -1,9 +1,32 @@
+function getSettings() {
+  return require("Storage").readJSON("health.json",1)||{};
+}
+
+function setSettings(s) {
+  require("Storage").writeJSON("health.json",s);
+}
+
 function menuMain() {
   E.showMenu({
     "":{title:"Health Tracking"},
     "< Back":()=>load(),
     "Step Counting":()=>menuStepCount(),
-    "Movement":()=>menuMovement()
+    "Movement":()=>menuMovement(),
+    "Settings":()=>menuSettings()
+  });
+}
+
+function menuSettings() {
+  var s=getSettings();
+  E.showMenu({
+    "":{title:"Health Tracking"},
+    "< Back":()=>load(),
+    "Heart Rt":{
+      value : 0|s.hrm,
+      min : 0, max : 2,
+      format : v=>["Off","10 mins","Always"][v],
+      onchange : v => { s.hrm=v;setSettings(s); }
+    }
   });
 }
 
