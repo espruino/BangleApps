@@ -1,7 +1,7 @@
 [
   {
     "id": "fwupdate",
-    "name": "Firmware Update",
+    "name": "Firmware Update (BETA)",
     "version": "0.01",
     "description": "Uploads new Espruino firmwares to Bangle.js 2",
     "icon": "app.png",
@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.34",
+    "version": "0.35",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -49,7 +49,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
     "tags": "tool,system",
@@ -61,66 +61,39 @@
       {"name":"health.boot.js","url":"boot.js"},
       {"name":"health","url":"lib.js"}
     ],
-    "sortorder": -8
-  },
-  {
-    "id": "moonphase",
-    "name": "Moonphase",
-    "version": "0.02",
-    "description": "Shows current moon phase. Now with GPS function.",
-    "icon": "app.png",
-    "tags": "",
-    "supports": ["BANGLEJS"],
-    "allow_emulator": true,
-    "storage": [
-      {"name":"moonphase.app.js","url":"app.js"},
-      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
-    ]
-  },
-  {
-    "id": "daysl",
-    "name": "Days left",
-    "version": "0.03",
-    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
-    "icon": "app.png",
-    "tags": "",
-    "supports": ["BANGLEJS"],
-    "allow_emulator": false,
-    "storage": [
-      {"name":"daysl.app.js","url":"app.js"},
-      {"name":"daysl.img","url":"app-icon.js","evaluate":true},
-      {"name":"daysl.wid.js","url":"widget.js"}
-    ]
+    "sortorder": -2
   },
   {
     "id": "launch",
-    "name": "Launcher (Bangle.js 1 default)",
+    "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.07",
-    "description": "This is needed by Bangle.js 1.0 to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
+    "version": "0.08",
+    "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"launch.app.js","url":"app.js"}
+      {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]}
     ],
     "sortorder": -10
   },
   {
-    "id": "launchb2",
-    "name": "Launcher (Bangle.js 2 default)",
-    "shortName": "Launcher",
-    "version": "0.04",
-    "description": "This is needed by Bangle.js 2.0 to display a menu allowing you to choose your own applications.",
-    "icon": "app.png",
-    "type": "launch",
-    "tags": "tool,system,launcher",
-    "supports": ["BANGLEJS2"],
+    "id": "setting",
+    "name": "Settings",
+    "version": "0.31",
+    "description": "A menu for setting up Bangle.js",
+    "icon": "settings.png",
+    "tags": "tool,system",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
     "storage": [
-      {"name":"launchb2.app.js","url":"app.js"}
+      {"name":"setting.app.js","url":"settings.js"},
+      {"name":"setting.img","url":"settings-icon.js","evaluate":true}
     ],
-    "sortorder": -10
+    "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
+    "sortorder": -5
   },
   { 
 	"id": "launchb1sub",
@@ -165,16 +138,35 @@
   {
     "id": "about",
     "name": "About",
-    "version": "0.09",
+    "version": "0.10",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "icon": "app.png",
     "tags": "tool,system",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
-      {"name":"about.app.js","url":"app.js"},
+      {"name":"about.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
+      {"name":"about.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
       {"name":"about.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "alarm",
+    "name": "Default Alarm & Timer",
+    "shortName": "Alarms",
+    "version": "0.13",
+    "description": "Set and respond to alarms and timers",
+    "icon": "app.png",
+    "tags": "tool,alarm,widget",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"alarm.app.js","url":"app.js"},
+      {"name":"alarm.boot.js","url":"boot.js"},
+      {"name":"alarm.js","url":"alarm.js"},
+      {"name":"alarm.img","url":"app-icon.js","evaluate":true},
+      {"name":"alarm.wid.js","url":"widget.js"}
+    ],
+    "data": [{"name":"alarm.json"}]
   },
   {
     "id": "locale",
@@ -224,15 +216,18 @@
   {
     "id": "welcome",
     "name": "Welcome",
-    "version": "0.12",
+    "shortName": "Welcome",
+    "version": "0.13",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot_welcome.png"}],
     "tags": "start,welcome",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"welcome.boot.js","url":"boot.js"},
-      {"name":"welcome.app.js","url":"app.js"},
+      {"name":"welcome.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
+      {"name":"welcome.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
       {"name":"welcome.settings.js","url":"settings.js"},
       {"name":"welcome.img","url":"app-icon.js","evaluate":true}
     ],
@@ -291,38 +286,33 @@
     "sortorder": -9
   },
   {
-    "id": "setting",
-    "name": "Settings",
-    "version": "0.30",
-    "description": "A menu for setting up Bangle.js",
-    "icon": "settings.png",
-    "tags": "tool,system",
-    "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
+    "id": "moonphase",
+    "name": "Moonphase",
+    "version": "0.02",
+    "description": "Shows current moon phase. Now with GPS function.",
+    "icon": "app.png",
+    "tags": "",
+    "supports": ["BANGLEJS"],
+    "allow_emulator": true,
     "storage": [
-      {"name":"setting.app.js","url":"settings.js"},
-      {"name":"setting.img","url":"settings-icon.js","evaluate":true}
-    ],
-    "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
-    "sortorder": -2
+      {"name":"moonphase.app.js","url":"app.js"},
+      {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+    ]
   },
   {
-    "id": "alarm",
-    "name": "Default Alarm & Timer",
-    "shortName": "Alarms",
-    "version": "0.13",
-    "description": "Set and respond to alarms and timers",
+    "id": "daysl",
+    "name": "Days left",
+    "version": "0.03",
+    "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
     "icon": "app.png",
-    "tags": "tool,alarm,widget",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "tags": "",
+    "supports": ["BANGLEJS"],
+    "allow_emulator": false,
     "storage": [
-      {"name":"alarm.app.js","url":"app.js"},
-      {"name":"alarm.boot.js","url":"boot.js"},
-      {"name":"alarm.js","url":"alarm.js"},
-      {"name":"alarm.img","url":"app-icon.js","evaluate":true},
-      {"name":"alarm.wid.js","url":"widget.js"}
-    ],
-    "data": [{"name":"alarm.json"}]
+      {"name":"daysl.app.js","url":"app.js"},
+      {"name":"daysl.img","url":"app-icon.js","evaluate":true},
+      {"name":"daysl.wid.js","url":"widget.js"}
+    ]
   },
   {
     "id": "wclock",
@@ -330,6 +320,7 @@
     "version": "0.03",
     "description": "Display Time as Text",
     "icon": "clock-word.png",
+    "screenshots": [{"url":"screenshot_word.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -443,6 +434,7 @@
     "version": "0.02",
     "description": "inspired by The Matrix, a clock of the same style",
     "icon": "matrixclock.png",
+    "screenshots": [{"url":"screenshot_matrix.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -497,7 +489,6 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
     "allow_emulator": true,
     "storage": [
       {"name":"aclock.app.js","url":"clock-analog.js"},
@@ -561,6 +552,7 @@
     "version": "0.03",
     "description": "Retro asteroids game",
     "icon": "asteroids.png",
+    "screenshots": [{"url":"screenshot_asteroids.png"}],
     "tags": "game",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
@@ -601,6 +593,7 @@
     "version": "0.04",
     "description": "Simple compass that points North",
     "icon": "compass.png",
+    "screenshots": [{"url":"screenshot_compass.png"}],
     "tags": "tool,outdoors",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
@@ -665,6 +658,25 @@
       {"name":"gpsrec.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"gpsrec.json"},{"wildcard":".gpsrc?","storageFile":true}]
+  },
+  {
+    "id": "recorder",
+    "name": "Recorder (BETA)",
+    "shortName": "Recorder",
+    "version": "0.01",
+    "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
+    "icon": "app.png",
+    "tags": "tool,outdoors,gps,widget",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
+    "interface": "interface.html",
+    "storage": [
+      {"name":"recorder.app.js","url":"app.js"},
+      {"name":"recorder.img","url":"app-icon.js","evaluate":true},
+      {"name":"recorder.wid.js","url":"widget.js"},
+      {"name":"recorder.settings.js","url":"settings.js"}
+    ],
+    "data": [{"name":"recorder.json"},{"wildcard":"recorder.log?.csv","storageFile":true}]
   },
   {
     "id": "gpsnav",
@@ -1122,6 +1134,7 @@
     "version": "0.07",
     "description": "A Simple Digital Clock",
     "icon": "clock-simple.png",
+    "screenshots": [{"url":"screenshot_simplec.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -1387,7 +1400,7 @@
     "id": "assistedgps",
     "name": "Assisted GPS Update (AGPS)",
     "version": "0.01",
-    "description": "Downloads assisted GPS (AGPS) data to Bangle.js for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
+    "description": "Downloads assisted GPS (AGPS) data to Bangle.js 1 for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "icon": "app.png",
     "type": "RAM",
     "tags": "tool,outdoors,agps",
@@ -1451,7 +1464,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widclk.wid.js","url":"widget.js"}
     ]
@@ -1642,6 +1655,7 @@
     "version": "0.14",
     "description": "Simple CLI-Styled Clock",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot_cli.png"}],
     "type": "clock",
     "tags": "clock,cli,command,bash,shell",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -1659,7 +1673,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tool,system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widver.wid.js","url":"widget.js"}
     ]
@@ -1814,7 +1828,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tools",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widmp.wid.js","url":"widget.js"}
     ]
@@ -2014,6 +2028,7 @@
     "version": "0.04",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "icon": "calculator.png",
+    "screenshots": [{"url":"screenshot_calculator.png"}],
     "tags": "app,tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
@@ -2255,6 +2270,7 @@
     "version": "0.02",
     "description": "Simple calendar",
     "icon": "calendar.png",
+    "screenshots": [{"url":"screenshot_calendar.png"}],
     "tags": "calendar",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
@@ -2403,6 +2419,7 @@
     "version": "0.02",
     "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
     "icon": "gallifr.png",
+    "screenshots": [{"url":"screenshot_time.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -2905,6 +2922,7 @@
     "version": "0.05",
     "description": "Current time zone plus up to four others",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot_world.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -3461,7 +3479,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,gps",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widgps.wid.js","url":"widget.js"}
@@ -3591,10 +3609,10 @@
     "version": "0.03",
     "description": "The simplest working clock, acts as a tutorial piece",
     "icon": "simplest.png",
+    "screenshots": [{"url":"screenshot_simplest.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
     "storage": [
       {"name":"simplest.app.js","url":"app.js"},
       {"name":"simplest.img","url":"icon.js","evaluate":true}
@@ -3987,7 +4005,7 @@
     "icon": "widclkbttm.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
@@ -4000,6 +4018,7 @@
     "version": "0.05",
     "description": "A Configurable clock with custom fonts and background",
     "icon": "pastel.png",
+    "screenshots": [{"url":"screenshot_pastel.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
@@ -4037,7 +4056,6 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
     "allow_emulator": true,
     "storage": [
       {"name":"waveclk.app.js","url":"app.js"},
@@ -4054,7 +4072,6 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
     "allow_emulator": true,
     "storage": [
       {"name":"floralclk.app.js","url":"app.js"},
@@ -4071,7 +4088,6 @@
     "type": "app",
     "tags": "",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "readme": "README.md",
     "storage": [
       {"name":"score.app.js","url":"score.app.js"},
       {"name":"score.settings.js","url":"score.settings.js"},
@@ -4135,7 +4151,7 @@
     "description": "A touch based stop watch for Bangle JS 2",
     "icon": "stopwatch.png",
     "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"}],
-    "tags": "tools,app,b2",
+    "tags": "tools,app",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
@@ -4181,11 +4197,31 @@
     "version": "0.01",
     "description": "Navigate between clock and launcher with Swipe action",
     "icon": "swiperclocklaunch.png",
-    "type": "boot",
-    "tags": "system",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "type": "bootloader",
+    "tags": "tools, system",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
-      {"name":"swiperclocklaunch.boot.js","url":"boot.js"}
+      {"name":"swiperclocklaunch.boot.js","url":"boot.js"},
+      {"name":"swiperclocklaunch.img","url":"icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "qalarm",
+    "name": "Q Alarm and Timer",
+    "shortName": "Q Alarm",
+    "icon": "app.png",
+    "version": "0.02",
+    "description": "Alarm and timer app with days of week and 'hard' option.",
+    "tags": "tool,alarm,widget",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "storage": [
+      { "name": "qalarm.app.js", "url": "app.js" },
+      { "name": "qalarm.boot.js", "url": "boot.js" },
+      { "name": "qalarm.js", "url": "qalarm.js" },
+      { "name": "qalarmcheck.js", "url": "qalarmcheck.js" },
+      { "name": "qalarm.img", "url": "app-icon.js", "evaluate": true },
+      { "name": "qalarm.wid.js", "url": "widget.js" }
+    ],
+    "data": [{ "name": "qalarm.json" }]
   }
 ]

@@ -1,6 +1,11 @@
 #!/usr/bin/node
 
+/*
+var EMULATOR = "banglejs2";
+var DEVICEID = "BANGLEJS2";
+*/
 var EMULATOR = "banglejs1";
+var DEVICEID = "BANGLEJS";
 
 var singleAppId;
 
@@ -40,6 +45,10 @@ var apps = JSON.parse(require("fs").readFileSync(__dirname+"/../apps.json"));
 /* we factory reset ONCE, get this, then we can use it to reset
 state quickly for each new app */
 var factoryFlashMemory = new Uint8Array(FLASH_SIZE);
+// Log of messages from app
+var appLog = "";
+// List of apps that errored
+var erroredApps = [];
 
 jsRXCallback = function() {};
 jsUpdateGfx = function() {};
@@ -47,6 +56,10 @@ jsUpdateGfx = function() {};
 function ERROR(s) {
   console.error(s);
   process.exit(1);
+}
+
+function onConsoleOutput(txt) {
+  appLog += txt + "\n";
 }
 
 function getThumbnail(appId, imageFn) {
@@ -61,7 +74,10 @@ function getThumbnail(appId, imageFn) {
       fileGetter:function(url) {
         console.log(__dirname+"/"+url);
         return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString("binary"));
-      }, settings : SETTINGS}).then(files => {
+      },
+      settings : SETTINGS,
+      device : { id : DEVICEID }
+      }).then(files => {
         console.log("AppInfo returned");//, files);
         flashMemory.set(factoryFlashMemory);
         jsTransmitString("reset()\n");
@@ -69,6 +85,7 @@ function getThumbnail(appId, imageFn) {
         jsTransmitString("g.clear()\n");
         var command = files.map(f=>f.cmd).join("\n")+"\n";
         command += `load("${appId}.app.js")\n`;
+        appLog = "";
         jsTransmitString(command);
         console.log("Done.");
         jsStopIdle();
@@ -78,6 +95,9 @@ function getThumbnail(appId, imageFn) {
         var rgba32 = new Uint32Array(rgba.buffer);
         var firstPixel = rgba32[0];
         var blankImage = rgba32.every(col=>col==firstPixel)
+
+        if (appLog.indexOf("Uncaught")>=0)
+          erroredApps.push( { id : app.id, log : appLog } );
 
         if (!blankImage) {
           var Jimp = require("jimp");
@@ -113,20 +133,22 @@ setTimeout(function() {
   console.log("Ready!");
 
   if (singleAppId) {
-    getThumbnail(singleAppId, "screenshots/"+singleAppId+".png")
-
+    getThumbnail(singleAppId, "screenshots/"+singleAppId+"-"+EMULATOR+".png");
     return;
   }
 
-  var appList = apps.filter(app => (!app.type || app.type=="clock") && !app.custom).map(app=>app.id);
-  // TODO: Work out about Bangle.js 1 or 2
+  var appList = apps.filter(app => (!app.type || app.type=="clock") && !app.custom);
+  appList = appList.filter(app => !app.screenshots && app.supports.includes(DEVICEID));
+
   var promise = Promise.resolve();
-  appList.forEach(appId => {
+  appList.forEach(app => {
     promise = promise.then(() => {
-      return getThumbnail(appId, "screenshots/"+appId+".png").then(ok => {
+      var imageFile = "screenshots/"+app.id+"-"+EMULATOR+".png";
+      return getThumbnail(app.id, imageFile).then(ok => {
         screenshots.push({
-          id : appId,
-          url : "screenshots/"+appId+".png"
+          id : app.id,
+          url : imageFile,
+          version: app.version
         });
       });
     });
@@ -135,6 +157,7 @@ setTimeout(function() {
   promise.then(function() {
     console.log("Complete!");
     require("fs").writeFileSync("screenshots.json", JSON.stringify(screenshots,null,2));
+    console.log("Errored Apps", erroredApps);
   });
 
 

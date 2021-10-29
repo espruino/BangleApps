@@ -28,7 +28,6 @@ to grab historical health info.
 
 ## TODO
 
-* **Extend file format to include combined data for each day (to make graphs faster)**
 * `interface` page for desktop to allow data to be viewed and exported in common formats
 * More features in app:
   * Step counting goal (ensure pedometers use this)

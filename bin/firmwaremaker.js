@@ -12,6 +12,7 @@ var ROOTDIR = path.join(__dirname, '..');
 var APPDIR = ROOTDIR+'/apps';
 var APPJSON = ROOTDIR+'/apps.json';
 var OUTFILE = ROOTDIR+'/firmware.js';
+var DEVICE = "BANGLEJS";
 var APPS = [ // IDs of apps to install
   "boot","launch","mclock","setting",
   "about","alarm","widbat","widbt","welcome"
@@ -61,7 +62,8 @@ Promise.all(APPS.map(appid => {
   if (app===undefined) throw new Error(`App ${appid} not found`);
   return AppInfo.getFiles(app, {
     fileGetter : fileGetter,
-    settings : SETTINGS
+    settings : SETTINGS,
+    device : { id : DEVICE }
   }).then(files => {
     appfiles = appfiles.concat(files);
   });

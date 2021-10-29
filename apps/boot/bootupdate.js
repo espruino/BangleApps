@@ -3,7 +3,7 @@ recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
 E.showMessage("Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
-var isB2 = process.env.HWVERSION; // Is Bangle.js 2
+var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 var boot = "";
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
   var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/);
@@ -55,7 +55,7 @@ boot += `E.setTimeZone(${s.timezone});`;
 if (!Bangle.F_BEEPSET) {
   if (!s.vibrate) boot += `Bangle.buzz=Promise.resolve;\n`
   if (s.beep===false) boot += `Bangle.beep=Promise.resolve;\n`
-  else if (s.beep=="vib") boot += `Bangle.beep = function (time, freq) {
+  else if (s.beep=="vib" && !BANGLEJS2) boot += `Bangle.beep = function (time, freq) {
     return new Promise(function(resolve) {
       if ((0|freq)<=0) freq=4000;
       if ((0|time)<=0) time=200;
@@ -182,6 +182,11 @@ if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
   }
   return lines;
 };\n`;
+}
+delete Bangle.appRect; // deleting stops us getting confused by our own decl. builtins can't be deleted
+if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
+  boot += `Bangle.appRect = ((y,w,h)=>({x:0,y:0,w:w,h:h,x2:w-1,y2:h-1}))(g.getWidth(),g.getHeight());
+  (lw=>{ Bangle.loadWidgets = () => { lw(); Bangle.appRect = ((y,w,h)=>({x:0,y:y,w:w,h:h-y,x2:w-1,y2:h-(1+h)}))(global.WIDGETS?24:0,g.getWidth(),g.getHeight()); }; })(Bangle.loadWidgets);\n`;
 }
 
 // Append *.boot.js files
