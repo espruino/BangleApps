@@ -321,7 +321,7 @@ function drawClock() {
 }
 
 function drawWP(wp) {
-  buf.setColor(2);  
+  buf.setColor(3);  
   buf.setFontAlign(0,1); //left, bottom
   buf.setFontVector(48);
   buf.drawString(wp,120,140);  
