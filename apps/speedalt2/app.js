@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.06';
+var v = '1.07';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -173,7 +173,7 @@ var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 let LED = // LED as minimal and only definition (as instance / singleton)
 { isOn: false // status on / off, not needed if you don't need to ask for it
 , set: function(v) { // turn on w/ no arg or truey, else off
-   g.setColor((this.isOn=(v===undefined||!!v))?1:0,0,0).fillCircle(10,10,10); }
+   g.setColor((this.isOn=(v===undefined||!!v))?1:0,0,0).fillCircle(20,10,10); }
 , reset: function() { this.set(false); } // turn off
 , write: function(v) { this.set(v); }  // turn on w/ no arg or truey, else off
 , toggle: function() { this.set( ! this.isOn); } // toggle the LED
@@ -390,14 +390,15 @@ if ( emulator ) {
 
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
+    if (isNaN(sp)) sp = '---';
     
     if (parseFloat(sp) > parseFloat(maxSpd) && maxN > 15 ) maxSpd = sp;
 
     // Altitude
     al = lf.alt;
     al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
-     
     if (parseFloat(al) > parseFloat(maxAlt) && maxN > 15 ) maxAlt = al;
+    if (isNaN(al)) al = '---';
 
     // Distance to waypoint
     di = distance(lf,wp);
@@ -422,7 +423,7 @@ if ( emulator ) {
     
     // Sats
     if ( age > 10 ) {
-      sats = 'Age:'+age;
+      sats = 'Age:'+Math.round(age);
       if ( age > 90 ) sats = 'Age:>90';
     }
     else sats = 'Sats:'+lf.satellites;
