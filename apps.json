@@ -1628,7 +1628,7 @@
   {
     "id": "widver",
     "name": "Firmware Version Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Display the version of the installed firmware in the top widget section.",
     "icon": "widget.png",
     "type": "widget",
@@ -1783,7 +1783,7 @@
   {
     "id": "widmp",
     "name": "Moon Phase Widget",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
     "icon": "widget.png",
     "type": "widget",
@@ -3434,7 +3434,7 @@
   {
     "id": "widgps",
     "name": "GPS Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Tiny widget to show the power on/off status of the GPS. Require firmware v2.08.167 or later",
     "icon": "widget.png",
     "type": "widget",
