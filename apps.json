@@ -4198,6 +4198,6 @@
       {"name":"authentiwatch.app.js","url":"app.js"},
       {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
     ],
-    "data": [{"name":"authentiwatch.json"}]
+    "data": [{"name":"authentiwatch.tokens.json"}]
   }
 ]
