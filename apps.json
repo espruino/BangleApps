@@ -4192,6 +4192,7 @@
     "version": "0.01",
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
+    "interface": "interface.html",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
