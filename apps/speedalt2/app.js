@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.07';
+var v = '1.08';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -173,7 +173,7 @@ var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 let LED = // LED as minimal and only definition (as instance / singleton)
 { isOn: false // status on / off, not needed if you don't need to ask for it
 , set: function(v) { // turn on w/ no arg or truey, else off
-   g.setColor((this.isOn=(v===undefined||!!v))?1:0,0,0).fillCircle(20,10,10); }
+   g.setColor((this.isOn=(v===undefined||!!v))?1:0,0,0).fillCircle(40,10,10); }
 , reset: function() { this.set(false); } // turn off
 , write: function(v) { this.set(v); }  // turn on w/ no arg or truey, else off
 , toggle: function() { this.set( ! this.isOn); } // toggle the LED
