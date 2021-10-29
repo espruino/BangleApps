@@ -27,17 +27,22 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 
 // When a device is found, filter the apps accordingly
 function onFoundDeviceInfo(deviceId, deviceVersion) {
-  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
-    showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
-  } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">update with the instructions here</a>` ,"warning", 20000);
-  }
+  var fwURL = "#";
   if (deviceId == "BANGLEJS") {
+    fwURL = "https://www.espruino.com/Bangle.js#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
   }
   if (deviceId == "BANGLEJS2") {
+    fwURL = "https://www.espruino.com/Bangle.js2#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
+
+  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
+    showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
+  } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+  }
+
 
   // check against features shown?
   filterAppsForDevice(deviceId);
@@ -149,7 +154,7 @@ window.addEventListener('load', (event) => {
   document.getElementById("installdefault").addEventListener("click",event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
-        return httpGet("defaultapps_banglejs.json");
+        return httpGet("defaultapps_banglejs1.json");
       if (device.id == "BANGLEJS2")
         return httpGet("defaultapps_banglejs2.json");
       throw new Error("Unknown device "+device.id);
