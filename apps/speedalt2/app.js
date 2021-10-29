@@ -677,7 +677,7 @@ var img = {
 };
 
 if ( cfg.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
-if ( cfg.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xFAE0,0xF813]);
+if ( cfg.colour == 2 ) img.palette = new Uint16Array([0,0xF800,0xFAE0,0xF813]);
 
 var SCREENACCESS = {
       withApp:true,
