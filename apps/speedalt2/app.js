@@ -2,7 +2,7 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 */
-var v = '1.08';
+var v = '1.09';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -365,8 +365,11 @@ if ( emulator ) {
   var ew = '';
   var lon = '---.--';
   var sats = '---';
-  var wpName = '';   // Waypoint name
   
+  // Waypoint name
+  var wpName = wp.name;
+  if ( wpName == undefined || wpName == 'NONE' ) wpName = '';
+  wpName = wpName.substring(0,8);  
 
   if (fix.fix) lf = fix;
   
@@ -403,11 +406,6 @@ if ( emulator ) {
     // Distance to waypoint
     di = distance(lf,wp);
     if (isNaN(di)) di = '--------';
-    
-    // Waypoint name
-    wpName = wp.name;
-    if ( wpName == undefined || wpName == 'NONE' ) wpName = '';
-    wpName = wpName.substring(0,8);
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
