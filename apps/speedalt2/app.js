@@ -1,8 +1,9 @@
 /*
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
+1.10 : add inverted colours
 */
-var v = '1.09';
+var v = '1.10';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -232,7 +233,8 @@ function drawScrn(dat) {
   if (!canDraw) return;
 
   buf.clear();
-
+  buf.setBgColor(0);
+  
   var n;
   n = dat.val.toString();
   
@@ -271,6 +273,7 @@ function drawScrn(dat) {
 function drawPosn(dat) {
   if (!canDraw) return;
   buf.clear();
+  buf.setBgColor(0);
 
   var x, y;
   x=210;
@@ -302,6 +305,8 @@ function drawClock() {
   if (!canDraw) return;
   
   buf.clear();
+  buf.setBgColor(0);
+  
   var x, y;
   x=185;
   y=0;
@@ -678,6 +683,7 @@ var img = {
 
 if ( cfg.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
 if ( cfg.colour == 2 ) img.palette = new Uint16Array([0,0xF800,0xFAE0,0xF813]);
+if ( cfg.colour == 3 ) img.palette = new Uint16Array([0xFFFF,0x007F,0x0054,0x0054]);
 
 var SCREENACCESS = {
       withApp:true,
