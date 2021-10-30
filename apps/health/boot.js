@@ -1,3 +1,20 @@
+(function(){
+   var settings = require("Storage").readJSON("health.json",1)||{};
+   var hrm = 0|settings.hrm;
+   Bangle.setHRMPower(hrm!=0, "health");
+   if (hrm==1) {
+     function onHealth() {
+       Bangle.setHRMPower(1, "health");
+       setTimeout(()=>Bangle.setHRMPower(0, "health"),2*60000); // give it 2 minutes
+     }
+     Bangle.on("health", onHealth);
+     Bangle.on('HRM', h => {
+       if (h.confidence>80) Bangle.setHRMPower(0, "health");
+     });
+     onHealth();
+   }
+})();
+
 Bangle.on("health", health => {
   // ensure we write health info for *last* block
   var d = new Date(Date.now() - 590000);
