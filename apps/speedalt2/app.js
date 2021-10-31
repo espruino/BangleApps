@@ -2,9 +2,9 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
-1.11 : Add VMG screen
+1.14 : Add VMG screen
 */
-var v = '1.11';
+var v = '1.14';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
