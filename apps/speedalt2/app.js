@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.15';
+var v = '1.16';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -195,8 +195,11 @@ var maxAlt = 0;
 var maxN = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
 // Previous values for calculating VMG.
-var lastDist = -1;
-var lastTime = -1;
+var vmgD1 = -1;   // Dist start
+var vmgD2 = -1;   // Dist end
+var vmgT1 = -1;   // Time start
+var vmgT2 = -1;   // Time end
+var vmgSpd = 0;
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 
@@ -205,8 +208,9 @@ var wp = {};        // Waypoint to use for distance from cur position.
 function nxtWp(){
   cfg.wp++;
   loadWp();
-  lastDist = -1;  // Reset VMG calcs
-  lastTime = -1;
+  vmgD1 = -1;  // Reset VMG calcs
+  vmgD2 = -1;
+  vmgT1 = -1;
 }
 
 function loadWp() {
@@ -376,7 +380,6 @@ if ( emulator ) {
   var ew = '';
   var lon = '---.--';
   var sats = '---';
-  var vmg = '---';
   
   // Waypoint name
   var wpName = wp.name;
@@ -408,33 +411,13 @@ if ( emulator ) {
     if (parseFloat(al) > parseFloat(maxAlt) && maxN > 15 ) maxAlt = al;
     if (isNaN(al)) al = '---';
 
-    // Distance to waypoint and vmg
+    // Distance to waypoint
     di = distance(lf,wp);
- 
-//lastDist = 13640;
-//lastTime = (getTime()/1000) - 10;
-    
-    if ( lastDist != -1 && ! isNaN(lastDist)) {
-//console.log('     Distance : '+di);    
-//console.log('last.Distance : '+lastDist);    
-//console.log('last.Time : '+lastTime);    
-
-      // Have two WP distances and a time. Calc speed
-      vmg = ((lastDist-di)/1000)/((getTime()/1000-lastTime)/3600);   // k/h
-      vmg = vmg/parseFloat(cfg.spd); // Calculate for selected units
-//console.log('VMG : '+vmg);    
-    }
-    lastDist = di;
-    lastTime = getTime()/1000;  // secs
-
+    vmgD2 = di;
+    vmgT2 = Math.round(lf.time.getTime()/1000);
     di = (di/parseFloat(cfg.dist)).toFixed(2);
     if ( di >= 100 ) di = parseFloat(di).toFixed(1);
     if ( di >= 1000 ) di = parseFloat(di).toFixed(0);
-
-    if ( Math.abs(vmg) < 10 ) vmg = vmg.toFixed(1);
-    else vmg = Math.round(vmg);
-    
-    if (isNaN(vmg)) vmg = '---';
     if (isNaN(di)) di = '------';
 
     // Age of last fix (secs)
@@ -517,7 +500,7 @@ if ( emulator ) {
   if ( cfg.modeA == 3 ) {
     // VMG
       drawScrn({
-        val:vmg,
+        val:vmgSpd,
         unit:cfg.spd_unit,
         sats:sats,
         age:age,
@@ -543,6 +526,48 @@ if ( emulator ) {
     drawClock();
   }
 
+}
+
+function updateVMG() {
+//console.log('----------');
+//console.log('vmgT1 : '+vmgT1);    
+//console.log('vmgT2 : '+vmgT2);    
+
+  if (!canDraw) return;
+  vmgSpd = '---';
+  
+  if ( ! lf.fix ) return;
+  if ( vmgT1 == vmgT2 ) return;   // No new fix
+
+  
+//vmgD1 = 13640;
+//vmgT1 = (getTime()/1000) - 10;
+
+  
+  
+  
+    if ( vmgD1 != -1 && ! isNaN(vmgD1)) {
+//console.log('     Distance : '+di);    
+//console.log('last.Distance : '+vmgD1);    
+//console.log('last.Time : '+vmgT1);    
+
+      // Have two WP distances and a time. Calc speed
+      vmgSpd = ((vmgD1-vmgD2)/1000)/((vmgT2-vmgT1)/3600);   // k/h
+      
+      vmgSpd = vmgSpd/parseFloat(cfg.spd); // Calculate for selected units
+//console.log('VMG : '+vmg);    
+    }
+    vmgD1 = vmgD2;
+    vmgT1 = vmgT2;  // secs
+  
+
+    if ( Math.abs(vmgSpd) < 10 ) vmgSpd = vmgSpd.toFixed(1);
+    else vmgSpd = Math.round(vmgSpd);
+    
+    if (isNaN(vmgSpd)) vmgSpd = '---';
+
+  console.log('vmgSpd : '+vmgSpd); 
+  
 }
 
 function prevScrn() {
@@ -753,3 +778,4 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 10000);
+setInterval(updateVMG, 10000);
