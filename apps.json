@@ -3233,7 +3233,7 @@
     "name": "GPS Adventure Sports II",
     "shortName":"GPS Adv Sport II",
     "icon": "app.png",
-    "version":"1.12",
+    "version":"1.14",
     "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
     "tags": "tool,outdoors",
     "supports": ["BANGLEJS"],
