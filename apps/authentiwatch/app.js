@@ -7,14 +7,18 @@ const sha256 = crypto.SHA256;
 const sha384 = crypto.SHA384;
 const sha512 = crypto.SHA512;
 
-var tokens = require("Storage").readJSON("authentiwatch.tokens.json", true) || [
+var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
   {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
   {algorithm:"SHA1",digits:6,period:30,secret:"bbbb bbbb bbbb bbbb",label:"BgBgBg"},
   {algorithm:"SHA1",digits:6,period:30,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
-  {algorithm:"SHA1",digits:6,period:30,secret:"xxxx xxxx xxxx xxxx",label:"XgXgXg"},
   {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
   {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
 ];
+
+Graphics.prototype.setFontInconsolata = function(scale) {
+  // Actual height 21 (25 - 5)
+  g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAADgAAADgAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAHwAAAfgAAB+AAAH4AAA/gAAD+AAAPwAAA/AAAB8AAABwAAAAAAAAAAAAAAAAAAAA/gAAH/8AAf//AA+A/gA4BzgAwHhgAwPBgAwcBgA54DgA/wPgAf//AAH/8AAA/gAAAAAAAAAAAAAAAAAIAAAAMAAAAYAAAAYAAAA4AAAA///gA///gA///gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAOABgAeADgA4AHgAwAPgAwAdgAwA5gAwDxgAwHhgA8fBgAf+BgAP4BgADgBgAAAAAAAAAAAAAAAAAADAAYAHAA4EDgAwMBgAwMBgAwMBgAwOBgA4+BgA///gAfz/AAHB+AAAAAAAAAAAAAAAAAAAwAAABwAAAHwAAAPwAAA+wAAB4wAAHwwAAPAwAA///gA///gA///gAAAwAAAAwAAAAQAAAAAAAAAAAAP8GAA/8HAA/8DgAwYBgAwYBgAwYBgAwYBgAwYBgAwcHgAwP/AAwH+AAAD4AAAAAAAAAAAAAHAAAD/8AAP/+AAfufAA8cDgA4YBgAwYBgAwYBgAwYBgAwcHgA4P/AAYH+AAAB4AAAAAAAAAAAAAAAAAwAAAAwAAAAwAAAAwAHgAwA/gAwH/gAwf4AAz/AAA/4AAA/AAAA8AAAAgAAAAAAAAAAAAAAAAcAAHB+AAfj/AA/3DgA4+BgAwcBgAwcBgAwcBgAw+BgA/3DgAfz/AAPB+AAAA8AAAAAAAAAAAABAAAAP4BAAf8DgA8eDgAwGBgAwGBgAwGBgAwGBgA4GDgA+OfAAf/+AAP/4AAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBgAAcDgAAcDgAAYBgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="), 46, 15, 30+(scale<<8)+(1<<16));
+};
 
 // QR Code Text
 //
@@ -32,7 +36,7 @@ function b32decode(seedstr) {
   // RFC4648
   var i, buf = 0, bitcount = 0, retstr = "";
   for (i in seedstr) {
-    let c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(seedstr.charAt(i).toUpperCase(), 0);
+    var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(seedstr.charAt(i).toUpperCase(), 0);
     if (c != -1) {
       buf <<= 5;
       buf |= c;
@@ -83,7 +87,7 @@ function do_hmac(key, message, algo) {
   var istr = new Uint8Array(blksz + message.length);
   var ostr = new Uint8Array(blksz + retsz);
   for (var i = 0; i < blksz; ++i) {
-    let c = (i < key.length) ? key[i] : 0;
+    var c = (i < key.length) ? key[i] : 0;
     istr[i] = c ^ 0x36;
     ostr[i] = c ^ 0x5C;
   }
@@ -125,6 +129,8 @@ function drawToken(id, r) {
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
   var ylabel;
+  g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
+                Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
   if (id == state.curtoken) {
     // current token
     g.setColor(g.theme.fgH);
@@ -145,8 +151,8 @@ function drawToken(id, r) {
   g.drawString(tokens[id].label, x2 / 2, ylabel, false);
   if (id == state.curtoken) {
     // digits just below label
-    g.setFont6x15(2);
-    g.drawString(state.otp, x2 / 2, y1 + 17, false);
+    g.setFontInconsolata(1);
+    g.drawString(state.otp, x2 / 2, y1 + 12, false);
     // draw progress bar
     let xr = Math.floor(g.getWidth() * state.rem / tokens[id].period);
     g.fillRect(x1, y2 - 4, xr, y2 - 1);
@@ -159,6 +165,7 @@ function drawToken(id, r) {
   }
   g.drawLine(x1, y1, x2, y1);
   g.drawLine(x1, y2, x2, y2);
+  g.setClipRect(0, 0, g.getWidth(), g.getHeight());
 }
 
 function draw() {
@@ -180,9 +187,9 @@ function draw() {
   if (tokens.length > 0) {
     var drewcur = false;
     var id = Math.floor(state.listy / tokenentryheight);
-    var y = id * tokenentryheight - state.listy;
+    var y = id * tokenentryheight + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < g.getHeight()) {
-      drawToken(id, {x:0, y:y, w:g.getWidth(), h:tokenentryheight});
+      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenentryheight});
       if (id == state.curtoken && state.nextTime != 0) {
         drewcur = true;
       }
@@ -203,7 +210,7 @@ function draw() {
 }
 
 function onTouch(zone, e) {
-  var id = Math.floor((state.listy + e.y) / tokenentryheight);
+  var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
   if (id == state.curtoken) {
     id = -1;
   }
@@ -215,8 +222,8 @@ function onTouch(zone, e) {
         y = 0;
       }
       y += tokenentryheight;
-      if (y > g.getHeight()) {
-        state.listy += (y - g.getHeight());
+      if (y > Bangle.appRect.h) {
+        state.listy += (y - Bangle.appRect.h);
       }
     }
     state.nextTime = 0;
@@ -228,7 +235,7 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var maxy = tokens.length * tokenentryheight - g.getHeight();
+  var maxy = tokens.length * tokenentryheight - Bangle.appRect.h;
   var newy = state.listy - e.dy;
   if (newy > maxy) {
     newy = maxy;
@@ -248,17 +255,12 @@ function onSwipe(e) {
   }
 }
 
-function tokenSelected(id) {
-  state.curtoken = (id == state.curtoken) ? -1 : id;
-  scroller.drawMenu();
-}
-
 Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
+Bangle.loadWidgets();
 
 // Clear the screen once, at startup
 g.clear();
 draw();
-
-//var scroller = E.showScroller({h:tokenentryheight,c:tokens.length,draw:drawToken,select:tokenSelected});
+Bangle.drawWidgets();
