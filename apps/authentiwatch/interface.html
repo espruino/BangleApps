@@ -1,50 +1,258 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="../../css/spectre.min.css">
-  </head>
-  <body>
-    <div id="data"></div>
-    <button class="btn btn-default" id="btnSave">Save</button>
-    <button class="btn btn-default" id="btnLoad">Load</button>
-
-    <script src="../../core/lib/interface.js"></script>
-    <script>
-var dataElement = document.getElementById("data");
-var csvData = "";
-
-function getData() {
-  // show loading window
-  Util.showModal("Loading...");
-  // get the data
-  dataElement.innerHTML = "";
-  Util.readStorageFile(`authentiwatch.tokens.csv`,data=>{
-    csvData = data.trim();
-    // remove window
-    Util.hideModal();
-    // If no data, report it and exit
-    if (data.length==0) {
-      dataElement.innerHTML = "<b>No data found</b>";
-      return;
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+<link rel="stylesheet" href="../../css/spectre.min.css">
+<style type="text/css">
+body{font-family:sans-serif}
+body div{display:none}
+body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr div#tokenqr{display:block}
+#tokens th,#tokens td{padding:5px}
+#tokens tr:nth-child(odd){background-color:#ccc}
+#tokens tr:nth-child(even){background-color:#eee}
+#qr-canvas{margin:auto;width:calc(100%-20px);max-width:400px}
+#advbtn,#scan,#tokenqr table{text-align:center}
+#edittoken tbody#adv{display:none}
+#edittoken.showadv tbody#adv{display:table-row-group}
+#advbtn button{cursor:pointer}
+#advbtn button:before,#advbtn button:after{content:"\25bc"}
+#edittoken.showadv #advbtn button:before,#edittoken.showadv #advbtn button:after{content:"\25b2"}
+button{height:3em}
+</style>
+<!-- https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js -->
+<script src="qr_packed.js"></script>
+<!-- https://davidshimjs.github.io/qrcodejs/ -->
+<script src="qrcode.min.js"></script>
+<script type="text/javascript">
+var tokens=[];
+function saveEdit(id, forget) {
+  const parseIntValue = function(v, def) {
+    let ret = parseInt(v);
+    return (ret > 0) ? ret : def;
+  };
+  if (forget) {
+    tokens.splice(id, 1);
+  } else {
+    let fe = document.forms["edittoken"].elements;
+    let t = {
+      "algorithm":fe["algorithm"].value,
+      "digits":parseIntValue(fe["digits"].value,6),
+      "period":parseIntValue(fe["period"].value,30),
+      "secret":fe["secret"].value,
+      "label":fe["label"].value
+    };
+    tokens[parseInt(fe["tokenid"].value)] = t;
+  }
+  updateTokens();
+}
+function showQrCode() {
+  var fe = document.forms["edittoken"].elements;
+  var url = "otpauth://totp/";
+  url += fe["label"].value;
+  url += "?secret=" + fe["secret"].value.replaceAll(" ", "");
+  if (parseInt(fe["period"].value) != 30) {
+    url += "&period=" + fe["period"].value;
+  }
+  if (parseInt(fe["digits"].value) != 6) {
+    url += "&digits=" + fe["digits"].value;
+  }
+  if (fe["algorithm"].value != "SHA1") {
+    url += "&algorithm=" + fe["algorithm"].value;
+  }
+  tokenqr.clear();
+  tokenqr.makeCode(url);
+  document.body.className = "showqr";
+}
+function editToken(dir,id) {
+  const selectMarkup = function(name, ary, cur) {
+    var ret = "<select name=\"" + name + "\">";
+    for (let i = 0; i < ary.length; i++) {
+      ret += "<option" + ((ary[i] == cur) ? " selected=selected" : "") + ">" + ary[i] + "</option>";
     }
-    // Otherwise parse the data and output it as a table
-    dataElement.innerHTML = data;
+    return ret + "</select>";
+  };
+  scanning=false;
+  var markup = "<form id=\"edittoken\"><input type=\"hidden\" name=\"tokenid\" value=\"" + id + "\"><table>";
+  markup += "<tr><td>Name:</td><td><input name=\"label\" type=\"text\" value=\"" + tokens[id].label + "\"></td></tr>";
+  markup += "<tr><td>Secret:</td><td><input name=\"secret\" type=\"text\" value=\"" + tokens[id].secret + "\"></td></tr>";
+  markup += "<tbody id=\"adv\"><tr><td>Period:</td><td><input name=\"period\" type=\"text\" value=\"" + tokens[id].period + "\"></td></tr>";
+  markup += "<tr><td>Digits:</td><td>";
+  markup += selectMarkup("digits", ["6","8","10"], tokens[id].digits);
+  markup += "</td></tr><tr><td>Hash:</td><td>";
+  markup += selectMarkup("algorithm", ["SHA1","SHA256","SHA512"], tokens[id].algorithm);
+  markup += "</td></tr></tbody><tr><td id=\"advbtn\" colspan=\"2\">";
+  markup += "<button type=\"button\" onclick=\"document.getElementById('edittoken').classList.toggle('showadv')\">Advanced</button>";
+  markup += "</td></tr></table></form>";
+  markup += "<button type=\"button\" onclick=\"updateTokens()\">Cancel Edit</button>";
+  markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", false)\">Save Changes</button>";
+  if (tokens[id].isnew) {
+    markup += "<button type=\"button\" onclick=\"startScan()\">Scan QR Code</button>";
+  } else {
+    markup += "<button type=\"button\" onclick=\"showQrCode()\">Show QR Code</button>";
+  }
+  markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", true)\">Forget Token</button>";
+  document.getElementById("edit").innerHTML = markup;
+  document.body.className = "editing";
+}
+function addToken() {
+  tokens[tokens.length] = {"algorithm":"SHA1","digits":6,"period":30,"secret":"","label":"","isnew":true};
+  editToken(0,tokens.length - 1);
+}
+function moveToken(dir, id) {
+  tokens.splice(id + dir, 0, tokens.splice(id, 1)[0]);
+  updateTokens();
+}
+function updateTokens() {
+  const tokenButton = function(fn, dir, id, label) {
+    return "<button type=\"button\" onclick=\"" + fn + "(" + dir + "," + id + ")\">" + label + "</button>";
+  };
+  var markup = "<table><tr><th colspan=\"2\">Token</th><th colspan=\"2\">Order</th></tr>";
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i].isnew) {
+      tokens.splice(i, 1);
+    }
+  }
+  for (let i = 0; i < tokens.length; i++) {
+    markup += "<tr><td>";
+    markup += tokens[i].label;
+    markup += "</td><td>";
+    markup += tokenButton("editToken", 0, i, "Edit");
+    markup += "</td><td>";
+    if (i < (tokens.length - 1)) {
+      markup += tokenButton("moveToken",  1, i, "&#x25bc;");
+    }
+    markup += "</td><td>";
+    if (i > 0) {
+      markup += tokenButton("moveToken", -1, i, "&#x25b2;");
+    }
+    markup += "</td></tr>";
+  }
+  markup += "</table>";
+  markup += "<button type=\"button\" onclick=\"addToken()\">Add Token</button>";
+  markup += "<button type=\"button\" onclick=\"saveTokens()\">Save to watch</button>";
+  document.getElementById("tokens").innerHTML = markup;
+  document.body.className = "select";
+}
+/* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
+qrcode.callback = res => {
+  if (res) {
+    console.log(res);
+    res = decodeURIComponent(res);
+    var paramsidx = res.indexOf('?');
+    var otplabel = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
+    var params = res.substr(paramsidx+1).split('&');
+    var t = {
+      "algorithm":"SHA1",
+      "digits":"6",
+      "period":"30",
+      "secret":"",
+      "issuer":""
+    };
+    var otpok = true;
+    for (let pi in params) {
+      var param = params[pi].split('=');
+      if (param[0] in t) {
+        t[param[0]] = param[1];
+      } else {
+        otpok = false;
+      }
+    }
+    if (t["secret"] == "") {
+      otpok = false;
+    }
+    if (otpok) {
+      scanning = false;
+      editToken(0,parseInt(document.forms['edittoken'].elements['tokenid'].value));
+      t["issuer"] = (t["issuer"] == "") ? otplabel : t["issuer"] + " (" + otplabel + ")";
+      var fe = document.forms["edittoken"].elements;
+      fe["algorithm"].value = t["algorithm"];
+      fe["digits"].value = t["digits"];
+      fe["period"].value = t["period"];
+      fe["secret"].value = t["secret"];
+      fe["label"].value = t["issuer"];
+    }
+  }
+};
+function startScan() {
+  document.body.className = "scanning";
+  navigator.mediaDevices
+    .getUserMedia({video:{facingMode:"environment"}})
+    .then(function(stream){
+      scanning=true;
+      video.setAttribute("playsinline",true);
+      video.srcObject = stream;
+      video.play();
+      scanTick();
+      doScan();
+    });
+}
+function scanTick() {
+  canvasElement.height = video.videoHeight;
+  canvasElement.width = video.videoWidth;
+  canvas.drawImage(video,0,0,canvasElement.width,canvasElement.height);
+  if (scanning) {
+    requestAnimationFrame(scanTick);
+  } else {
+    video.srcObject.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+}
+function doScan() {
+  try {
+    qrcode.decode();
+  } catch (e) {
+    setTimeout(doScan,300);
+  }
+}
+function loadTokens() {
+  Util.showModal("Loading...");
+  Util.readStorageFile("authentiwatch.json",data=>{
+    Util.hideModal();
+    try {
+      tokens = JSON.parse(data);
+      updateTokens();
+    } catch {
+      tokens = [];
+    }
   });
 }
-
-// You can call a utility function to save the data
-document.getElementById("btnSave").addEventListener("click", function() {
-  Util.saveCSV("gpsdata", csvData);
-});
-// Or you can also delete the file
-document.getElementById("btnLoad").addEventListener("click", function() {
-  Util.showModal("Loading...");
-  Util.
-});
-// Called when app starts
-function onInit() {
-  getData();
+function saveTokens() {
+  Util.showModal("Saving...");
+  Util.writeStorageFile("authentiwatch.json", JSON.stringify(tokens));
+  Util.hideModal();
 }
-
-    </script>
-  </body>
+function onInit() {
+  loadTokens();
+  updateTokens();
+}
+</script>
+</head>
+<body class="select">
+<h1>Authentiwatch</h1>
+<div id="tokens">
+<p>No watch comms.</p>
+</div>
+<div id="scan">
+<table>
+<tr><td><canvas id="qr-canvas"></canvas></td></tr>
+<tr><td><button type=\"button\" onclick="editToken(0,parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
+</table>
+</div>
+<div id="edit">
+</div>
+<div id="tokenqr">
+<table><tr><td id="qrcode"></td></tr><tr><td>
+<button type=\"button\" onclick="document.body.className='editing'">Back</button>
+</td></tr></table>
+</div>
+<script type="text/javascript">
+const video=document.createElement("video");
+const canvasElement=document.getElementById("qr-canvas");
+const canvas=canvasElement.getContext("2d");
+let scanning=false;
+const tokenqr=new QRCode(document.getElementById("qrcode"), "");
+</script>
+<script src="../../core/lib/interface.js"></script>
+</body>
 </html>
