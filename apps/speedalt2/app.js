@@ -476,7 +476,7 @@ if ( emulator ) {
         unit:cfg.spd_unit,
         sats:sats,
         age:age,
-        max:'',
+        max:'SPD',
         wp:''
       });
   }
@@ -498,7 +498,7 @@ if ( emulator ) {
         unit:cfg.alt_unit,
         sats:sats,
         age:age,
-        max:'',
+        max:'ALT',
         wp:''
       });
   }
@@ -510,7 +510,7 @@ if ( emulator ) {
         unit:cfg.dist_unit,
         sats:sats,
         age:age,
-        max:'',
+        max:'DST',
         wp:wpName
       });
   }
