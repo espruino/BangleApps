@@ -231,10 +231,6 @@ function distance(a,b){
   
   // Distance in metres
   var d = Math.sqrt(x*x + y*y) * 6371000;
-//  d = (d/parseFloat(cfg.dist)).toFixed(2);
-//  if ( d >= 100 ) d = parseFloat(d).toFixed(1);
-//  if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
-
   return d;
 }
 
@@ -529,10 +525,6 @@ if ( emulator ) {
 }
 
 function updateVMG() {
-//console.log('----------');
-//console.log('vmgT1 : '+vmgT1);    
-//console.log('vmgT2 : '+vmgT2);    
-
   if (!canDraw) return;
   vmgSpd = '---';
   
@@ -542,32 +534,19 @@ function updateVMG() {
   
 //vmgD1 = 13640;
 //vmgT1 = (getTime()/1000) - 10;
-
-  
-  
   
     if ( vmgD1 != -1 && ! isNaN(vmgD1)) {
-//console.log('     Distance : '+di);    
-//console.log('last.Distance : '+vmgD1);    
-//console.log('last.Time : '+vmgT1);    
-
       // Have two WP distances and a time. Calc speed
       vmgSpd = ((vmgD1-vmgD2)/1000)/((vmgT2-vmgT1)/3600);   // k/h
-      
       vmgSpd = vmgSpd/parseFloat(cfg.spd); // Calculate for selected units
-//console.log('VMG : '+vmg);    
     }
     vmgD1 = vmgD2;
     vmgT1 = vmgT2;  // secs
-  
 
     if ( Math.abs(vmgSpd) < 10 ) vmgSpd = vmgSpd.toFixed(1);
     else vmgSpd = Math.round(vmgSpd);
     
     if (isNaN(vmgSpd)) vmgSpd = '---';
-
-  console.log('vmgSpd : '+vmgSpd); 
-  
 }
 
 function prevScrn() {
