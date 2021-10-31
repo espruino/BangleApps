@@ -188,7 +188,6 @@ var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var pwrSav = 1;         // 1 = default power saving with watch screen off and GPS to PMOO mode. 0 = screen kept on.
 var canDraw = 1;
-var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 var tmrLP;            // Timer for delay in switching to low power after screen turns off
 
 var maxSpd = 0;
