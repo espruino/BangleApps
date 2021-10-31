@@ -2,9 +2,8 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
-1.14 : Add VMG screen
 */
-var v = '1.16';
+var v = '1.10';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -188,18 +187,12 @@ var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var pwrSav = 1;         // 1 = default power saving with watch screen off and GPS to PMOO mode. 0 = screen kept on.
 var canDraw = 1;
+var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 var tmrLP;            // Timer for delay in switching to low power after screen turns off
 
 var maxSpd = 0;
 var maxAlt = 0;
 var maxN = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
-
-// Previous values for calculating VMG.
-var vmgD1 = -1;   // Dist start
-var vmgD2 = -1;   // Dist end
-var vmgT1 = -1;   // Time start
-var vmgT2 = -1;   // Time end
-var vmgSpd = 0;
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 
@@ -208,9 +201,6 @@ var wp = {};        // Waypoint to use for distance from cur position.
 function nxtWp(){
   cfg.wp++;
   loadWp();
-  vmgD1 = -1;  // Reset VMG calcs
-  vmgD2 = -1;
-  vmgT1 = -1;
 }
 
 function loadWp() {
@@ -229,8 +219,12 @@ function distance(a,b){
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
   
-  // Distance in metres
+  // Distance in selected units
   var d = Math.sqrt(x*x + y*y) * 6371000;
+  d = (d/parseFloat(cfg.dist)).toFixed(2);
+  if ( d >= 100 ) d = parseFloat(d).toFixed(1);
+  if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
+
   return d;
 }
 
@@ -334,8 +328,8 @@ function drawClock() {
 function drawWP(wp) {
   buf.setColor(3);  
   buf.setFontAlign(0,1); //left, bottom
-  buf.setFontVector(40);
-  buf.drawString(wp,120,132);  
+  buf.setFontVector(48);
+  buf.drawString(wp,120,140);  
 }
 
 function drawSats(sats) {
@@ -395,10 +389,17 @@ if ( emulator ) {
     }
 
     // Speed
-    sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
+    if ( cfg.spd == 0 ) {
+      m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
+      sp = parseFloat(m[1]);
+      cfg.spd_unit = m[2];
+    }
+    else sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
+
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
     if (isNaN(sp)) sp = '---';
+    
     if (parseFloat(sp) > parseFloat(maxSpd) && maxN > 15 ) maxSpd = sp;
 
     // Altitude
@@ -409,12 +410,7 @@ if ( emulator ) {
 
     // Distance to waypoint
     di = distance(lf,wp);
-    vmgD2 = di;
-    vmgT2 = Math.round(lf.time.getTime()/1000);
-    di = (di/parseFloat(cfg.dist)).toFixed(2);
-    if ( di >= 100 ) di = parseFloat(di).toFixed(1);
-    if ( di >= 1000 ) di = parseFloat(di).toFixed(0);
-    if (isNaN(di)) di = '------';
+    if (isNaN(di)) di = '--------';
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
@@ -494,18 +490,6 @@ if ( emulator ) {
   }
 
   if ( cfg.modeA == 3 ) {
-    // VMG
-      drawScrn({
-        val:vmgSpd,
-        unit:cfg.spd_unit,
-        sats:sats,
-        age:age,
-        max:'VMG',
-        wp:wpName
-      });
-  }
-
-  if ( cfg.modeA == 4 ) {
     // Position
     drawPosn({
         sats:sats,
@@ -517,48 +501,23 @@ if ( emulator ) {
       });
   }
   
-  if ( cfg.modeA == 5 )  {
+  if ( cfg.modeA == 4 )  {
     // Large clock
     drawClock();
   }
 
 }
 
-function updateVMG() {
-  if (!canDraw) return;
-  vmgSpd = '---';
-  
-  if ( ! lf.fix ) return;
-  if ( vmgT1 == vmgT2 ) return;   // No new fix
-
-  
-//vmgD1 = 13640;
-//vmgT1 = (getTime()/1000) - 10;
-  
-    if ( vmgD1 != -1 && ! isNaN(vmgD1)) {
-      // Have two WP distances and a time. Calc speed
-      vmgSpd = ((vmgD1-vmgD2)/1000)/((vmgT2-vmgT1)/3600);   // k/h
-      vmgSpd = vmgSpd/parseFloat(cfg.spd); // Calculate for selected units
-    }
-    vmgD1 = vmgD2;
-    vmgT1 = vmgT2;  // secs
-
-    if ( Math.abs(vmgSpd) < 10 ) vmgSpd = vmgSpd.toFixed(1);
-    else vmgSpd = Math.round(vmgSpd);
-    
-    if (isNaN(vmgSpd)) vmgSpd = '---';
-}
-
 function prevScrn() {
     cfg.modeA = cfg.modeA-1;
-    if ( cfg.modeA < 0 ) cfg.modeA = 5;
+    if ( cfg.modeA < 0 ) cfg.modeA = 4;
     savSettings();
     onGPS(lf); 
 }
 
 function nextScrn() {
     cfg.modeA = cfg.modeA+1;
-    if ( cfg.modeA > 5 ) cfg.modeA = 0;
+    if ( cfg.modeA > 4 ) cfg.modeA = 0;
     savSettings();
     onGPS(lf); 
 }
@@ -570,14 +529,14 @@ function nextFunc(dur) {
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
       else { maxSpd = 0; maxAlt = 0; }  // Long press resets max values.
     }
-    else  if ( cfg.modeA == 2 || cfg.modeA == 3) nxtWp();  // Dist or VMG mode - Select next waypoint
+    else  if ( cfg.modeA == 2) nxtWp();  // Dist mode - Select next waypoint
     onGPS(lf);
 }
 
 
 function updateClock() {
   if (!canDraw) return;
-  if ( cfg.modeA != 5 )  return;
+  if ( cfg.modeA != 4 )  return;
   drawClock(); 
   if ( emulator ) {maxSpd++;maxAlt++;}
 }
@@ -687,15 +646,15 @@ console.log('MDL');
 // Read settings. 
 let cfg = require('Storage').readJSON('speedalt2.json',1)||{};
 
-cfg.spd = cfg.spd||1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
-cfg.spd_unit = cfg.spd_unit||'kph';  // Displayed speed unit
+cfg.spd = cfg.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd_unit = cfg.spd_unit||'';  // Displayed speed unit
 cfg.alt = cfg.alt||0.3048;// Multiplier for altitude unit conversions.
 cfg.alt_unit = cfg.alt_unit||'feet';  // Displayed altitude units
 cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3 = vmg 4=Position 5=Clock 
+cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3=Position 4=Clock 
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
@@ -757,4 +716,3 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 10000);
-setInterval(updateVMG, 10000);
