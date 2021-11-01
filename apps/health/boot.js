@@ -55,28 +55,29 @@ Bangle.on("health", health => {
   }
   var recordPos = DB_HEADER_LEN+(rec*DB_RECORD_LEN);
   require("Storage").write(fn, getRecordData(health), recordPos, DB_FILE_LEN);
-  if (rec%DB_RECORDS_PER_DAY != DB_RECORDS_PER_DAY-1) return;
+  if (rec%DB_RECORDS_PER_DAY != DB_RECORDS_PER_DAY-2) return;
   // we're at the end of the day. Read in all of the data for the day and sum it up
   var sumPos = recordPos + DB_RECORD_LEN; // record after the current one is the sum
   if (f.substr(sumPos, DB_RECORD_LEN)!="\xFF\xFF\xFF\xFF") {
     print("HEALTH ERR: Daily summary already written!");
     return;
   }
-  health = { steps:0, bpm:0, movement:0, records:0};
+  health = { steps:0, bpm:0, movement:0, movCnt:0, bpmCnt:0};
   var records = DB_RECORDS_PER_HR*24;
   for (var i=0;i<records;i++) {
     var dt = f.substr(recordPos, DB_RECORD_LEN);
     if (dt!="\xFF\xFF\xFF\xFF") {
-      health.records++;
-      health.steps += (dt.charCodeAt(1)<<8)+dt.charCodeAt(1);
-      health.bpm += dt.charCodeAt(2);
+      health.steps += (dt.charCodeAt(0)<<8)+dt.charCodeAt(1);
       health.movement += dt.charCodeAt(2);
+      health.movCnt++;
+      var bpm = dt.charCodeAt(2);
+      health.bpm += bpm;
+      if (bpm) health.bpmCnt++;
     }
     recordPos -= DB_RECORD_LEN;
   }
-  if (health.records) {
-    health.bpm /= health.records;
-    health.movement /= health.records;
-  }
+  if (health.bpmCnt)
+    health.bpm /= health.bpmCnt;
+  if (health.movCnt)
   require("Storage").write(fn, getRecordData(health), sumPos, DB_FILE_LEN);
 });

@@ -49,10 +49,10 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
-    "tags": "tool,system",
+    "tags": "tool,system,health",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
