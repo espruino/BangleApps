@@ -102,7 +102,13 @@ function fileGetter(url) {
       fs.writeFileSync(url, code);
     }
   }
-  return Promise.resolve(fs.readFileSync(url).toString("binary"));
+  var blob = fs.readFileSync(url);
+  var data;
+  if (url.endsWith(".js") || url.endsWith(".json"))
+    data = blob.toString(); // allow JS/etc to be written in UTF-8
+  else
+    data = blob.toString("binary")
+  return Promise.resolve(data);
 }
 
 // If file should be evaluated, try and do it...
