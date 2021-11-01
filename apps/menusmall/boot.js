@@ -1,28 +1,23 @@
 "";//not entirely sure why we need this - related to how bootupdate adds these to .boot0
 E.showMenu = function(items) {
-  g.clear(1).flip(); // clear screen if no menu supplied
-  Bangle.drawWidgets();
+  g.clearRect(Bangle.appRect); // clear screen if no menu supplied
   if (!items) {
     Bangle.setUI();
     return;
   }
-  var w = g.getWidth();
-  var h = g.getHeight();
+
   var menuItems = Object.keys(items);
   var options = items[""];
   if (options) menuItems.splice(menuItems.indexOf(""),1);
   if (!(options instanceof Object)) options = {};
-  options.fontHeight=14;
-  options.x=0;
-  options.x2=w-1;
-  options.y=24;
-  options.y2=h-12;
+  options.fontHeight = options.fontHeight|14;
   if (options.selected === undefined)
     options.selected = 0;
-  var x = 0|options.x;
-  var x2 = options.x2||(g.getWidth()-1);
-  var y = 0|options.y;
-  var y2 = options.y2||(g.getHeight()-1);
+  var ar = Bangle.appRect;
+  var x = ar.x;
+  var x2 = ar.x2;
+  var y = ar.y;
+  var y2 = ar.y2 - 11; // padding at end for arrow
   if (options.title)
     y += 15;
   var loc = require("locale");
@@ -100,8 +95,10 @@ E.showMenu = function(items) {
       if (l.selectEdit) {
         var item = l.selectEdit;
         item.value -= (dir||1)*(item.step||1);
-        if (item.min!==undefined && item.value<item.min) item.value = item.min;
-        if (item.max!==undefined && item.value>item.max) item.value = item.max;
+        if (item.min!==undefined && item.value<item.min)
+          item.value = (item.wrap && item.max!==undefined) ? item.max : item.min;
+        if (item.max!==undefined && item.value>item.max)
+          item.value = (item.wrap && item.min!==undefined) ? item.min : item.max;
         if (item.onchange) item.onchange(item.value);
         l.draw(options.selected,options.selected);
       } else {
