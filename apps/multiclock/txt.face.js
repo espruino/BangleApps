@@ -23,17 +23,17 @@
       var d = new Date();
       g.setColor(g.theme.fg);
       g.setFontAlign(0,0);
-      g.setFont("Vector",44);
+      g.setFont("Vector",F);
       var txt = convert(d.getHours());
       g.setColor(g.theme.fg);
-      g.drawString(txt.top,W/2,H/2-2*F);
+      g.drawString(txt.top,W/2,H/2+24-2*F);
       g.setColor(g.theme.fg2);
-      g.drawString(txt.bot,W/2,H/2-F);
+      g.drawString(txt.bot,W/2,H/2+24-F);
       txt = convert(d.getMinutes());
       g.setColor(g.theme.fg);
-      g.drawString(txt.top,W/2,H/2);
+      g.drawString(txt.top,W/2,H/2+24);
       g.setColor(g.theme.fg2);
-      g.drawString(txt.bot,W/2,H/2+F);
+      g.drawString(txt.bot,W/2,H/2+24+F);
     }
 
 
