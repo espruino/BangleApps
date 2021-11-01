@@ -29,7 +29,7 @@ function startdraw() {
     intervalRefSec = setInterval(face.tick,1000);
   else 
     queueMinuteTick(face.tick);
-  wOS.drawWidgets();
+  Bangle.drawWidgets();
 }
 
 var SCREENACCESS = {

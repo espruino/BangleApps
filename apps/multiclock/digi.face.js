@@ -4,7 +4,7 @@ function getFace(){
 
     var W = g.getWidth();
     var H = g.getHeight();
-    var scale = w/240;
+    var scale = W/240;
 
     var buf = Graphics.createArrayBuffer(W,92,1,{msb:true});
     function flip() {
