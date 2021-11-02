@@ -1,8 +1,14 @@
 (() => {
 
   function getFace(){
-      
-  function drawTime(d) {    
+  
+
+  var W = g.getWidth();
+  var H = g.getHeight();
+  var scale = W/240;
+  var F = 44 * scale;
+
+  function drawTime() {    
       function convert(n){
           var t0 = [" ","one","two","three","four","five","six","seven","eight","nine"];
           var t1 = ["ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
@@ -13,28 +19,25 @@
           return "error";     
       }
       g.reset();
-      g.clearRect(0,40,239,210);
-      g.setColor(1,1,1);
+      g.clearRect(0,24,W-1,H-1);
+      var d = new Date();
+      g.setColor(g.theme.fg);
       g.setFontAlign(0,0);
-      g.setFont("Vector",44);
+      g.setFont("Vector",F);
       var txt = convert(d.getHours());
-      g.drawString(txt.top,120,60);
-      g.drawString(txt.bot,120,100);
+      g.setColor(g.theme.fg);
+      g.drawString(txt.top,W/2,H/2+24-2*F);
+      g.setColor(g.theme.fg2);
+      g.drawString(txt.bot,W/2,H/2+24-F);
       txt = convert(d.getMinutes());
-      g.drawString(txt.top,120,140);
-      g.drawString(txt.bot,120,180);
+      g.setColor(g.theme.fg);
+      g.drawString(txt.top,W/2,H/2+24);
+      g.setColor(g.theme.fg2);
+      g.drawString(txt.bot,W/2,H/2+24+F);
     }
 
-  function onSecond(){
-     var t = new Date();
-     if (t.getSeconds() === 0) drawTime(t);
-  }
 
-  function drawAll(){
-     drawTime(new Date());
-  }
-
-  return {init:drawAll, tick:onSecond};
+  return {init:drawTime, tick:drawTime, tickpersec:false};
   }
 
 return getFace;
