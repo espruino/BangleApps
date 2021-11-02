@@ -55,6 +55,7 @@
     "tags": "tool,system,health",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
+    "interface": "interface.html",
     "storage": [
       {"name":"health.app.js","url":"app.js"},
       {"name":"health.img","url":"app-icon.js","evaluate":true},
