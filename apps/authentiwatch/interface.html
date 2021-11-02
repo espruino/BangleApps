@@ -24,6 +24,14 @@ button{height:3em}
 <script src="../../core/lib/qrcode.min.js"></script>
 <script type="text/javascript">
 var tokens=[];
+function base32clean(val, nows) {
+  var ret = val.replaceAll(/\s+/, " ");
+  ret = ret.replaceAll(/[^A-Za-z2-7 ]/, "");
+  if (nows) {
+    ret = ret.replaceAll(/\s+/, "");
+  }
+  return ret;
+}
 function saveEdit(id, forget) {
   const parseIntValue = function(v, def) {
     let ret = parseInt(v);
@@ -37,7 +45,7 @@ function saveEdit(id, forget) {
       "algorithm":fe["algorithm"].value,
       "digits":parseIntValue(fe["digits"].value,6),
       "period":parseIntValue(fe["period"].value,30),
-      "secret":fe["secret"].value,
+      "secret":base32clean(fe["secret"].value, false),
       "label":fe["label"].value
     };
     tokens[parseInt(fe["tokenid"].value)] = t;
@@ -47,8 +55,8 @@ function saveEdit(id, forget) {
 function showQrCode() {
   var fe = document.forms["edittoken"].elements;
   var url = "otpauth://totp/";
-  url += fe["label"].value;
-  url += "?secret=" + fe["secret"].value.replaceAll(" ", "");
+  url += encodeURIComponent(fe["label"].value);
+  url += "?secret=" + base32clean(fe["secret"].value, true);
   if (parseInt(fe["period"].value) != 30) {
     url += "&period=" + fe["period"].value;
   }
