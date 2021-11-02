@@ -214,7 +214,7 @@ function doScan() {
 }
 function loadTokens() {
   Util.showModal("Loading...");
-  Util.readStorageFile("authentiwatch.json",data=>{
+  Puck.eval(`require("Storage").read(${JSON.stringify("authentiwatch.json")})`,data=>{
     Util.hideModal();
     try {
       tokens = JSON.parse(data);
@@ -226,8 +226,9 @@ function loadTokens() {
 }
 function saveTokens() {
   Util.showModal("Saving...");
-  Util.writeStorageFile("authentiwatch.json", JSON.stringify(tokens));
-  Util.hideModal();
+  Puck.write(`\x10require("Storage").write(${JSON.stringify("authentiwatch.json")},${JSON.stringify(tokens)})\n`,()=>{
+    Util.hideModal();
+  });
 }
 function onInit() {
   loadTokens();
