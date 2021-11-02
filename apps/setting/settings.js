@@ -193,7 +193,7 @@ function showThemeMenu() {
     'Light BW': ()=>{
       upd({
         fg:cl("#000"), bg:cl("#fff"),
-        fg2:cl("#00f"), bg2:cl("#0ff"),
+        fg2:cl("#000"), bg2:cl("#cff"),
         fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
