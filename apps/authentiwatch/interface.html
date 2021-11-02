@@ -25,10 +25,10 @@ button{height:3em}
 <script type="text/javascript">
 var tokens=[];
 function base32clean(val, nows) {
-  var ret = val.replaceAll(/\s+/, " ");
-  ret = ret.replaceAll(/[^A-Za-z2-7 ]/, "");
+  var ret = val.replaceAll(/\s+/g, " ");
+  ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, "");
   if (nows) {
-    ret = ret.replaceAll(/\s+/, "");
+    ret = ret.replaceAll(/\s+/g, "");
   }
   return ret;
 }
