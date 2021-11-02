@@ -3,3 +3,4 @@
 0.03: Settings to turn HRM on
 0.04: Add HRM graph view
       Don't restart HRM when changing apps if we've already got a good BPM value
+0.05: Fix daily summary calculation
