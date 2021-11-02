@@ -154,7 +154,7 @@ function drawToken(id, r) {
     g.setFontInconsolata(1);
     g.drawString(state.otp, x2 / 2, y1 + 12, false);
     // draw progress bar
-    let xr = Math.floor(g.getWidth() * state.rem / tokens[id].period);
+    let xr = Math.floor(Bangle.appRect.w * state.rem / tokens[id].period);
     g.fillRect(x1, y2 - 4, xr, y2 - 1);
   }
   // shaded lines top and bottom
@@ -188,7 +188,7 @@ function draw() {
     var drewcur = false;
     var id = Math.floor(state.listy / tokenentryheight);
     var y = id * tokenentryheight + Bangle.appRect.y - state.listy;
-    while (id < tokens.length && y < g.getHeight()) {
+    while (id < tokens.length && y < Bangle.appRect.y2) {
       drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenentryheight});
       if (id == state.curtoken && state.nextTime != 0) {
         drewcur = true;
@@ -205,7 +205,7 @@ function draw() {
   } else {
     g.setFont6x15(2);
     g.setFontAlign(0, 0, 0);
-    g.drawString("No tokens", g.getWidth() / 2, g.getHeight() / 2, false);
+    g.drawString("No tokens", Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
 }
 
@@ -235,14 +235,8 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var maxy = tokens.length * tokenentryheight - Bangle.appRect.h;
-  var newy = state.listy - e.dy;
-  if (newy > maxy) {
-    newy = maxy;
-  }
-  if (newy < 0) {
-    newy = 0;
-  }
+  var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
+  newy = Math.max(0, newy);
   if (newy != state.listy) {
     state.listy = newy;
     draw();
