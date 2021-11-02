@@ -14,11 +14,12 @@ function stopdraw() {
   g.clear();
 }
 
-function queueMinuteTick(f) {
-  if (tickTimeout) clearTimeout(drawTimeout);
+function queueMinuteTick() {
+  if (tickTimeout) clearTimeout(tickTimeout);
   tickTimeout = setTimeout(function() {
     tickTimeout = undefined;
-    f();
+    face.tick();
+    queueMinuteTick();
   }, 60000 - (Date.now() % 60000));
 }
 
@@ -28,7 +29,7 @@ function startdraw() {
   if (face.tickpersec)
     intervalRefSec = setInterval(face.tick,1000);
   else 
-    queueMinuteTick(face.tick);
+    queueMinuteTick();
   Bangle.drawWidgets();
 }
 
