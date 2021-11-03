@@ -69,6 +69,29 @@
       
       var calendarEvents = calendar.getEvents();
       let schedule = []
+      
+      for(i=0;i>calendarEvents.length;i++){
+        var calendarEntry = {}
+        calendarEntry['cn'] = calendarEvents[i].title;
+        calendarEntry['dow'] = calendarEvents[i].start.getDate();
+        calendarEntry['sh'] = calendarEvents[i].start.getHours();
+        calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
+        calendarEntry['eh'] = calendarEvents[i].end.getHours();
+        calendarEntry['em'] = calendarEvents[i].end.getMinutes();
+        schedule.push(calendarEntry)
+      }
+      
+      content = schedule
+      
+      document.getElementById("upload").addEventListener("click", function() {
+        sendCustomizedApp({
+          id : "schoolCalender",
+          storage:[
+            {"name":"customFile.app.json",url:"app.js",content:content}
+          ]
+        });
+      });
+      
     </script>
   </head>
   <body>
