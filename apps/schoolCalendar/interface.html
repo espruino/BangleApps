@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link href='fullcalendar/main.css' rel='stylesheet' />
     <script src='fullcalendar/main.js'></script>
+    <script src="../../core/lib/customize.js"></script>
     <script>
       
       var calendarEvents = calendar.getEvents();
@@ -44,12 +45,13 @@
         schedule.push(calendarEntry)
       }
       
+      content = schedule
+      
       document.getElementById("upload").addEventListener("click", function() {
-        var events = calendar.getEvents()
         sendCustomizedApp({
           id : "schoolCalender",
           storage:[
-            {"name":"app.json"}
+            {"name":"customFile.app.json",url:"app.js",content:content}
           ]
         });
       });
