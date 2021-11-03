@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link href='fullcalendar/main.css' rel='stylesheet' />
     <script src='fullcalendar/main.js'></script>
+    <script src="../../core/lib/customize.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
@@ -65,6 +66,9 @@
         });
         calendar.render();
       });
+      
+      var calendarEvents = calendar.getEvents();
+      let schedule = []
     </script>
   </head>
   <body>
