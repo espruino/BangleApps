@@ -81,11 +81,10 @@
         schedule.push(calendarEntry)
       }
       
-      content = schedule
       
       document.getElementById("upload").addEventListener("click", function() {
+        content = schedule
         sendCustomizedApp({
-          id : "schoolCalender",
           storage:[
             {"name":"customFile.app.json",url:"app.js",content:content}
           ]
