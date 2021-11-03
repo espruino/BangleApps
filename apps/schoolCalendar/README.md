@@ -1,4 +1,4 @@
-# School Calendar📆 
+# School Calendar
 
 School Calendar is a calendar that you can see your upcoming classes or schedule.
 
