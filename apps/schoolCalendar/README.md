@@ -1,4 +1,4 @@
-# Bangle.js Calendar📆 
+# School Calendar📆 
 
 School Calendar is a calendar that you can see your upcoming classes or schedule.
 
@@ -17,6 +17,7 @@ If you press BTN2 it will go into detail mode, and you can see additional inform
 - [ ] Better Graphics
 - [ ] Scrolling Table
 - [ ] Bangle.js V2 Compatibility
+- [ ] Orginal Calendar
 
 ## Creator
 Ronin0000
