@@ -13,7 +13,7 @@ function loadSettings() {
   var changed = false;
   if (!settings.file) {
     changed = true;
-    settings.file = "record.log0.csv";
+    settings.file = "recorder.log0.csv";
   }
   if (!Array.isArray(settings.record)) {
     settings.record = ["gps"];
@@ -31,7 +31,7 @@ function updateSettings() {
 }
 
 function getTrackNumber(filename) {
-  return parseInt(filename.match(/^record\.log(.*)\.csv$/)[1]||0);
+  return parseInt(filename.match(/^recorder\.log(.*)\.csv$/)[1]||0);
 }
 
 function showMainMenu() {
@@ -73,7 +73,7 @@ function showMainMenu() {
       step: 1,
       onchange: v => {
         settings.recording = false; // stop recording if we change anything
-        settings.file = "record.log"+v+".csv";
+        settings.file = "recorder.log"+v+".csv";
         updateSettings();
       }
     },
@@ -105,7 +105,7 @@ function viewTracks() {
     '': { 'title': 'Tracks' }
   };
   var found = false;
-  require("Storage").list(/^record\.log.*\.csv$/,{sf:true}).forEach(filename=>{
+  require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).forEach(filename=>{
     found = true;
     menu["Track "+getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });

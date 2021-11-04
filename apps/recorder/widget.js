@@ -7,7 +7,7 @@
   function loadSettings() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
     settings.period = settings.period||10;
-    if (!settings.file || !settings.file.startsWith("record.log"))
+    if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
     return settings;
   }

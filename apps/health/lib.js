@@ -16,7 +16,6 @@ function getRecordIdx(d) {
 
 // Read all records from the given month
 exports.readAllRecords = function(d, cb) {
-  var rec = getRecordIdx(d);
   var fn = getRecordFN(d);
   var f = require("Storage").read(fn);
   if (f===undefined) return;
