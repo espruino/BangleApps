@@ -31,7 +31,7 @@ function renderText(g) {
 
   const hour = d02(now.getHours() - (is12Hour && now.getHours() > 12 ? 12 : 0));
   const minutes = d02(now.getMinutes());
-  const day = d02(now.getDay());
+  const day = d02(now.getDate());
   const month = d02(now.getMonth() + 1);
   const year = now.getFullYear();
 
