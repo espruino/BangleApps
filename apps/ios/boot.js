@@ -56,7 +56,9 @@ E.on('notify',msg=>{
   var appNames = {
     "com.netflix.Netflix" : "Netflix",
     "com.google.ios.youtube" : "YouTube",
-    "com.google.hangouts" : "Hangouts"
+    "com.google.hangouts" : "Hangouts",
+    "com.skype.SkypeForiPad": "Skype",
+    "com.atebits.Tweetie2": "Twitter"
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
