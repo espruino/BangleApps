@@ -121,8 +121,8 @@ apps.forEach((app,appIdx) => {
   if (app.dependencies) {
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
-        if (app.dependencies[dependency]!="type")
-          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' right now`);
+        if (!["type","app"].includes(app.dependencies[dependency]))
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`);
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`);
