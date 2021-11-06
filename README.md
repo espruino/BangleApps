@@ -230,6 +230,7 @@ and which gives information about the app for the Launcher.
   "tags": "",                 // comma separated tag list for searching
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+  "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
