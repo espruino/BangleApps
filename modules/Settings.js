@@ -3,50 +3,50 @@
 Usage:
 
 ```
-// open settings for an app
-var appSettings = require('Settings').app(appname);
-// read a single setting
-value = appSettings.get(key, default);
+// read a single app setting
+value = require('Settings').get(appname, key, default);
 // omit key to read all app settings
-value = appSettings.get();
+value = require('Settings').get();
 // write a single app setting
-appSettings.set(key, value)
-// omit key and pass an object as values to overwrite all settings for an app
-appSettings.set(values)
+require('Settings').set(appname, key, value)
+// omit key and pass an object as values to overwrite all settings
+require('Settings').set(appname, values)
 
-// open Bangle settings
-var globalSettings = require('Settings').Bangle();
-value = globalSettings.get(key, default);
+// read Bangle settings by passing the Bangle object instead of an app name
+value = require('Settings').get(Bangle, key, default);
 // read all global settings
-values = globalSettings.get();
+values = require('Settings').get(Bangle);
 // write a global setting
-globalSettings.set(key, value)
-// overwrite all global settings
-globalSettings.set(values)
+require('Settings').set(Bangle, key, value)
 ```
 
 For example:
 ```
-var settings = require('Settings').app('test');
-settings.set('foo', 123);  // writes to 'test.settings.json'
-settings.set('bar', 456);  // updates 'test.settings.json'
+require('Settings').set('test', 'foo', 123);  // writes to 'test.settings.json'
+require('Settings').set('test', 'bar', 456);  // updates 'test.settings.json'
 // 'test.settings.json' now contains  {baz:123,bam:456}
-baz = settings.get('foo');       // baz = 123
-def = settings.get('jkl', 789);  // def = 789
-all = settings.get();            // all = {foo: 123, bar: 456}
-baz = settings.get('baz');       // baz = undefined
+baz = require('Settings').get('test', 'foo');       // baz = 123
+def = require('Settings').get('test', 'jkl', 789);  // def = 789
+all = require('Settings').get('test');              // all = {foo: 123, bar: 456}
+baz = require('Settings').get('test', 'baz');       // baz = undefined
 
-vibrate = require('Settings').Bangle().get('vibrate', true);
+// read global setting
+vibrate = require('Settings').get(Bangle, 'vibrate', true);
+
+// Hint: if your app reads multiple settings, you can create a helper function:
+function s(key, def){return require('Settings').get('myapp', key, def);}
+var foo = s('foo setting', 'default value'), bar = s('bar setting');
 ```
 
 */
 
 /**
+ * Read setting value from file
  *
- * @param{string} file Settings file
- * @param key Setting to get, omit to get all settings as object
- * @param def Default value
- * @return {*} Setting
+ * @param {string} file Settings file
+ * @param {string} key  Setting to get, omit to get all settings as object
+ * @param {*}      def  Default value
+ * @return {*} Setting value (or default if not found)
  */
 function get(file, key, def) {
   var s = require("Storage").readJSON(file);
@@ -61,9 +61,11 @@ function get(file, key, def) {
 }
 
 /**
- * @param {string} file Settings file
- * @param key Setting to change, omit to replace all settings
- * @param value Value to store
+ * Write setting value to file
+ *
+ * @param {string} file  Settings file
+ * @param {string} key   Setting to change, omit to replace all settings
+ * @param {*}      value Value to store
  */
 function set(file, key, value) {
   if (value===undefined && typeof key==="object") {
@@ -71,7 +73,7 @@ function set(file, key, value) {
     require("Storage").writeJSON(file, key);
     return;
   }
-  var s = require("Storage").readJSON(file,1);
+  var s = require("Storage").readJSON(file, 1);
   if (typeof s!=="object") {
     s = {};
   }
@@ -80,37 +82,24 @@ function set(file, key, value) {
 }
 
 /**
- * Open settings file
+ * Read setting value
  *
- * @param {string} file Settings file
- * @return {object} Settings setter and getter
+ * @param {string|object} app App name or Bangle
+ * @param {string}        key Setting to get, omit to get all settings as object
+ * @param {*}             def Default value
+ * @return {*} Setting value (or default if not found)
  */
-function open(file) {
-  return {
-    set: (key, val) => set(file, key, val),
-    get: (key, def) => get(file, key, def),
-  };
-}
+exports.get = function(app, key, def) {
+  return get((app===Bangle) ? setting.json : app+".settings.json", key, def);
+};
 
 /**
- * Open settings file directly
- * Please use require('Settings').app() or require('Settings').Bangle() instead
+ * Write setting value
  *
- * @param {string} file Settings file to open
- * @return Settings object
+ * @param {string|object} app App name or Bangle
+ * @param {string}        key Setting to change, omit to replace all settings
+ * @param {*}             val Value to store
  */
-exports.open = open;
-
-/**
- * Open app settings file
- *
- * @param {string} app App name for which to open settings
- * @return Settings object
- */
-exports.app = (app) => open(app+".settings.json");
-/**
- * Open global settings file
- *
- * @return Settings object
- */
-exports.Bangle = () => open("setting.json");
+exports.set = function(app, key, val) {
+  set((app===Bangle) ? setting.json : app+".settings.json", key, val);
+};
