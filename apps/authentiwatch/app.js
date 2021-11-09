@@ -1,11 +1,11 @@
 const tokenentryheight = 46;
 // Hash functions
 const crypto = require("crypto");
-const sha1   = crypto.SHA1;
-const sha224 = crypto.SHA224;
-const sha256 = crypto.SHA256;
-const sha384 = crypto.SHA384;
-const sha512 = crypto.SHA512;
+const algos = {
+  "SHA512":{sha:crypto.SHA512,retsz:64,blksz:128},
+  "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
+  "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
+};
 
 var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
   {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
@@ -14,11 +14,6 @@ var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
   {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
   {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
 ];
-
-Graphics.prototype.setFontInconsolata = function(scale) {
-  // Actual height 21 (25 - 5)
-  g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAADgAAADgAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAHwAAAfgAAB+AAAH4AAA/gAAD+AAAPwAAA/AAAB8AAABwAAAAAAAAAAAAAAAAAAAA/gAAH/8AAf//AA+A/gA4BzgAwHhgAwPBgAwcBgA54DgA/wPgAf//AAH/8AAA/gAAAAAAAAAAAAAAAAAIAAAAMAAAAYAAAAYAAAA4AAAA///gA///gA///gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAOABgAeADgA4AHgAwAPgAwAdgAwA5gAwDxgAwHhgA8fBgAf+BgAP4BgADgBgAAAAAAAAAAAAAAAAAADAAYAHAA4EDgAwMBgAwMBgAwMBgAwOBgA4+BgA///gAfz/AAHB+AAAAAAAAAAAAAAAAAAAwAAABwAAAHwAAAPwAAA+wAAB4wAAHwwAAPAwAA///gA///gA///gAAAwAAAAwAAAAQAAAAAAAAAAAAP8GAA/8HAA/8DgAwYBgAwYBgAwYBgAwYBgAwYBgAwcHgAwP/AAwH+AAAD4AAAAAAAAAAAAAHAAAD/8AAP/+AAfufAA8cDgA4YBgAwYBgAwYBgAwYBgAwcHgA4P/AAYH+AAAB4AAAAAAAAAAAAAAAAAwAAAAwAAAAwAAAAwAHgAwA/gAwH/gAwf4AAz/AAA/4AAA/AAAA8AAAAgAAAAAAAAAAAAAAAAcAAHB+AAfj/AA/3DgA4+BgAwcBgAwcBgAwcBgAw+BgA/3DgAfz/AAPB+AAAA8AAAAAAAAAAAABAAAAP4BAAf8DgA8eDgAwGBgAwGBgAwGBgAwGBgA4GDgA+OfAAf/+AAP/4AAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBgAAcDgAAcDgAAYBgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="), 46, 15, 30+(scale<<8)+(1<<16));
-};
 
 // QR Code Text
 //
@@ -58,42 +53,21 @@ function b32decode(seedstr) {
   return retbuf;
 }
 function do_hmac(key, message, algo) {
-  var sha, retsz, blksz;
-  if (algo == "SHA512") {
-    sha = sha512;
-    retsz = 64;
-    blksz = 128;
-  } else if (algo == "SHA384") {
-    sha = sha384;
-    retsz = 48;
-    blksz = 128;
-  } else if (algo == "SHA256") {
-    sha = sha256;
-    retsz = 32;
-    blksz = 64;
-  } else if (algo == "SHA224") {
-    sha = sha224;
-    retsz = 28;
-    blksz = 64;
-  } else {
-    sha = sha1;
-    retsz = 20;
-    blksz = 64;
-  }
+  var a = algos[algo];
   // RFC2104
-  if (key.length > blksz) {
-    key = sha(key);
+  if (key.length > a.blksz) {
+    key = a.sha(key);
   }
-  var istr = new Uint8Array(blksz + message.length);
-  var ostr = new Uint8Array(blksz + retsz);
-  for (var i = 0; i < blksz; ++i) {
+  var istr = new Uint8Array(a.blksz + message.length);
+  var ostr = new Uint8Array(a.blksz + a.retsz);
+  for (var i = 0; i < a.blksz; ++i) {
     var c = (i < key.length) ? key[i] : 0;
     istr[i] = c ^ 0x36;
     ostr[i] = c ^ 0x5C;
   }
-  istr.set(message, blksz);
-  ostr.set(sha(istr), blksz);
-  var ret = sha(ostr);
+  istr.set(message, a.blksz);
+  ostr.set(a.sha(istr), a.blksz);
+  var ret = a.sha(ostr);
   // RFC4226 dynamic truncation
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
@@ -135,24 +109,24 @@ function drawToken(id, r) {
     // current token
     g.setColor(g.theme.fgH);
     g.setBgColor(g.theme.bgH);
-    g.setFont6x15(1);
+    g.setFont("Vector", 16);
     // center just below top line
     g.setFontAlign(0, -1, 0);
-    ylabel = y1 + 2;
+    ylabel = y1;
   } else {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
-    g.setFont6x15(2);
+    g.setFont("Vector", 30);
     // center in box
     g.setFontAlign(0, 0, 0);
     ylabel = (y1 + y2) / 2;
   }
   g.clearRect(x1, y1, x2, y2);
-  g.drawString(tokens[id].label, x2 / 2, ylabel, false);
+  g.drawString(tokens[id].label, (x1 + x2) / 2, ylabel, false);
   if (id == state.curtoken) {
     // digits just below label
-    g.setFontInconsolata(1);
-    g.drawString(state.otp, x2 / 2, y1 + 12, false);
+    g.setFont("Vector", 30);
+    g.drawString(state.otp, (x1 + x2) / 2, y1 + 16, false);
     // draw progress bar
     let xr = Math.floor(Bangle.appRect.w * state.rem / tokens[id].period);
     g.fillRect(x1, y2 - 4, xr, y2 - 1);
@@ -203,7 +177,7 @@ function draw() {
       state.drawtimer = setTimeout(draw, 1000);
     }
   } else {
-    g.setFont6x15(2);
+    g.setFont("Vector", 30);
     g.setFontAlign(0, 0, 0);
     g.drawString("No tokens", Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
