@@ -30,7 +30,7 @@ if (DEVICE=="BANGLEJS") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","antonclk","setting",
-    "about","alarm","health","widlock","widbat","widbt","widid"
+    "about","alarm","health","widlock","widbat","widbt","widid","welcome"
   ];
 } else {
   console.log("USAGE:");
