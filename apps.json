@@ -1782,8 +1782,7 @@
       {"name":"toucher.app.js","url":"app.js"},
       {"name":"toucher.settings.js","url":"settings.js"}
     ],
-    "data": [{"name":"toucher.json"}],
-    "sortorder": -10
+    "data": [{"name":"toucher.json"}]
   },
   {
     "id": "balltastic",
@@ -2060,8 +2059,7 @@
       {"name":"dane_tcr.app.js","url":"app.js"},
       {"name":"dane_tcr.settings.js","url":"settings.js"}
     ],
-    "data": [{"name":"dane_tcr.json"}],
-    "sortorder": -10
+    "data": [{"name":"dane_tcr.json"}]
   },
   {
     "id": "buffgym",
