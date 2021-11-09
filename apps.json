@@ -4223,6 +4223,7 @@
     "name": "2FA Authenticator",
     "shortName": "AuthWatch",
     "icon": "app.png",
+    "screenshots": [{url:"screenshot.png"}],
     "version": "0.01",
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
