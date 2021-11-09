@@ -94,8 +94,7 @@
       {"name":"health.img","url":"app-icon.js","evaluate":true},
       {"name":"health.boot.js","url":"boot.js"},
       {"name":"health","url":"lib.js"}
-    ],
-    "sortorder": -2
+    ]
   },
   {
     "id": "launch",
@@ -132,7 +131,7 @@
   {
     "id": "about",
     "name": "About",
-    "version": "0.10",
+    "version": "0.11",
     "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
     "icon": "app.png",
     "tags": "tool,system",
@@ -142,13 +141,14 @@
       {"name":"about.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
       {"name":"about.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
       {"name":"about.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "sortorder": -4
   },
   {
     "id": "alarm",
     "name": "Default Alarm & Timer",
     "shortName": "Alarms",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Set and respond to alarms and timers",
     "icon": "app.png",
     "tags": "tool,alarm,widget",

@@ -33,6 +33,7 @@ function getCurrentHr() {
 function showMainMenu() {
   const menu = {
     '': { 'title': 'Alarm/Timer' },
+    '< Back' : ()=>{load();},
     'New Alarm': ()=>editAlarm(-1),
     'New Timer': ()=>editTimer(-1)
   };
@@ -48,7 +49,7 @@ function showMainMenu() {
       else editAlarm(idx);
     };
   });
-  menu['< Back'] =  ()=>{load();};
+
   if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
 }
@@ -70,6 +71,7 @@ function editAlarm(alarmIndex) {
   }
   const menu = {
     '': { 'title': 'Alarm' },
+    '< Back' : showMainMenu,
     'Hours': {
       value: hrs,
       onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
@@ -119,7 +121,6 @@ function editAlarm(alarmIndex) {
       showMainMenu();
     };
   }
-  menu['< Back'] = showMainMenu;
   return E.showMenu(menu);
 }
 
@@ -174,7 +175,6 @@ function editTimer(alarmIndex) {
       showMainMenu();
     };
   }
-  menu['< Back'] = showMainMenu;
   return E.showMenu(menu);
 }
 
