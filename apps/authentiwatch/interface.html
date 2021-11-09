@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+
 <link rel="stylesheet" href="../../css/spectre.min.css">
 <style type="text/css">
 body{font-family:sans-serif}
@@ -17,13 +18,27 @@ body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr 
 #advbtn button:before,#advbtn button:after{content:"\25bc"}
 #edittoken.showadv #advbtn button:before,#edittoken.showadv #advbtn button:after{content:"\25b2"}
 button{height:3em}
+table button{width:100%}
 </style>
+
 <!-- https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js -->
 <script src="qr_packed.js"></script>
+
 <!-- https://davidshimjs.github.io/qrcodejs/ -->
 <script src="../../core/lib/qrcode.min.js"></script>
+
 <script type="text/javascript">
+
+/* Start of all TOTP URLs */
+const otpAuthUrl = "otpauth://totp/";
+
+/* Array of TOTP tokens */
 var tokens=[];
+
+/* Remove any non-base-32 characters from the given string and collapses
+ * whitespace to a single space. Optionally removes all whitespace from
+ * the string.
+ */
 function base32clean(val, nows) {
   var ret = val.replaceAll(/\s+/g, " ");
   ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, "");
@@ -32,29 +47,39 @@ function base32clean(val, nows) {
   }
   return ret;
 }
+
+/* Save changes to a token to the global tokens[] array.
+ * id is the index into the global tokens[].
+ * forget is a flag indicating if the token should be forgotten.
+ */
 function saveEdit(id, forget) {
   const parseIntValue = function(v, def) {
     let ret = parseInt(v);
     return (ret > 0) ? ret : def;
   };
   if (forget) {
-    tokens.splice(id, 1);
+    if (confirm("Forget token?")) {
+      tokens.splice(id, 1);
+      updateTokens();
+    }
   } else {
     let fe = document.forms["edittoken"].elements;
-    let t = {
+    tokens[id] = {
       "algorithm":fe["algorithm"].value,
       "digits":parseIntValue(fe["digits"].value,6),
       "period":parseIntValue(fe["period"].value,30),
       "secret":base32clean(fe["secret"].value, false),
       "label":fe["label"].value
     };
-    tokens[parseInt(fe["tokenid"].value)] = t;
+    updateTokens();
   }
-  updateTokens();
 }
+
+/* Generate and display a QR-code representing the current token.
+ */
 function showQrCode() {
   var fe = document.forms["edittoken"].elements;
-  var url = "otpauth://totp/";
+  var url = new String(otpAuthUrl);
   url += encodeURIComponent(fe["label"].value);
   url += "?secret=" + base32clean(fe["secret"].value, true);
   if (parseInt(fe["period"].value) != 30) {
@@ -70,7 +95,11 @@ function showQrCode() {
   tokenqr.makeCode(url);
   document.body.className = "showqr";
 }
-function editToken(dir,id) {
+
+/* Generate a form for editing the specified token.
+ * id is the index into the global tokens[].
+ */
+function editToken(id) {
   const selectMarkup = function(name, ary, cur) {
     var ret = "<select name=\"" + name + "\">";
     for (let i = 0; i < ary.length; i++) {
@@ -84,7 +113,7 @@ function editToken(dir,id) {
   markup += "<tr><td>Secret:</td><td><input name=\"secret\" type=\"text\" value=\"" + tokens[id].secret + "\"></td></tr>";
   markup += "<tbody id=\"adv\"><tr><td>Period:</td><td><input name=\"period\" type=\"text\" value=\"" + tokens[id].period + "\"></td></tr>";
   markup += "<tr><td>Digits:</td><td>";
-  markup += selectMarkup("digits", ["6","8","10"], tokens[id].digits);
+  markup += selectMarkup("digits", ["6","8"], tokens[id].digits);
   markup += "</td></tr><tr><td>Hash:</td><td>";
   markup += selectMarkup("algorithm", ["SHA1","SHA256","SHA512"], tokens[id].algorithm);
   markup += "</td></tr></tbody><tr><td id=\"advbtn\" colspan=\"2\">";
@@ -96,41 +125,51 @@ function editToken(dir,id) {
     markup += "<button type=\"button\" onclick=\"startScan()\">Scan QR Code</button>";
   } else {
     markup += "<button type=\"button\" onclick=\"showQrCode()\">Show QR Code</button>";
+    markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", true)\">Forget Token</button>";
   }
-  markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", true)\">Forget Token</button>";
   document.getElementById("edit").innerHTML = markup;
   document.body.className = "editing";
 }
+
+/* Create a new blank token and open the editor for it.
+ */
 function addToken() {
   tokens[tokens.length] = {"algorithm":"SHA1","digits":6,"period":30,"secret":"","label":"","isnew":true};
-  editToken(0,tokens.length - 1);
+  editToken(tokens.length - 1);
 }
-function moveToken(dir, id) {
+
+/* Move the specified token up or down in the global tokens[].
+ * id is the index in the global tokens[] of the token to move.
+ * dir is the direction to move: -1=up, 1=down.
+ */
+function moveToken(id, dir) {
   tokens.splice(id + dir, 0, tokens.splice(id, 1)[0]);
   updateTokens();
 }
+
+/* Update the display listing all the tokens.
+ */
 function updateTokens() {
-  const tokenButton = function(fn, dir, id, label) {
-    return "<button type=\"button\" onclick=\"" + fn + "(" + dir + "," + id + ")\">" + label + "</button>";
+  const tokenButton = function(fn, id, label, dir) {
+    return "<button type=\"button\" onclick=\"" + fn + "(" + id + (dir ? "," + dir : "") + ")\">" + label + "</button>";
   };
-  var markup = "<table><tr><th colspan=\"2\">Token</th><th colspan=\"2\">Order</th></tr>";
+  var markup = "<table><tr><th>Token</th><th colspan=\"2\">Order</th></tr>";
+  /* any tokens marked new are cancelled new additions and must be removed */
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i].isnew) {
-      tokens.splice(i, 1);
+      tokens.splice(i--, 1);
     }
   }
   for (let i = 0; i < tokens.length; i++) {
     markup += "<tr><td>";
-    markup += tokens[i].label;
-    markup += "</td><td>";
-    markup += tokenButton("editToken", 0, i, "Edit");
+    markup += tokenButton("editToken", i, tokens[i].label);
     markup += "</td><td>";
     if (i < (tokens.length - 1)) {
-      markup += tokenButton("moveToken",  1, i, "&#x25bc;");
+      markup += tokenButton("moveToken", i, "&#x25bc;", 1);
     }
     markup += "</td><td>";
     if (i > 0) {
-      markup += tokenButton("moveToken", -1, i, "&#x25b2;");
+      markup += tokenButton("moveToken", i, "&#x25b2;", -1);
     }
     markup += "</td></tr>";
   }
@@ -140,43 +179,45 @@ function updateTokens() {
   document.getElementById("tokens").innerHTML = markup;
   document.body.className = "select";
 }
+
 /* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
 qrcode.callback = res => {
   if (res) {
-    console.log(res);
-    res = decodeURIComponent(res);
-    var paramsidx = res.indexOf('?');
-    var otplabel = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
-    var params = res.substr(paramsidx+1).split('&');
-    var t = {
-      "algorithm":"SHA1",
-      "digits":"6",
-      "period":"30",
-      "secret":"",
-      "issuer":""
-    };
-    var otpok = true;
-    for (let pi in params) {
-      var param = params[pi].split('=');
-      if (param[0] in t) {
-        t[param[0]] = param[1];
-      } else {
+    if (res.startsWith(otpAuthUrl)) {
+      res = decodeURIComponent(res);
+      var paramsidx = res.indexOf('?');
+      var otplabel = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
+      var params = res.substr(paramsidx+1).split('&');
+      var t = {
+        "algorithm":"SHA1",
+        "digits":"6",
+        "period":"30",
+        "secret":"",
+        "issuer":""
+      };
+      var otpok = true;
+      for (let pi in params) {
+        var param = params[pi].split('=');
+        if (param[0] in t) {
+          t[param[0]] = param[1];
+        } else {
+          otpok = false;
+        }
+      }
+      if (t["secret"] == "") {
         otpok = false;
       }
-    }
-    if (t["secret"] == "") {
-      otpok = false;
-    }
-    if (otpok) {
-      scanning = false;
-      editToken(0,parseInt(document.forms['edittoken'].elements['tokenid'].value));
-      t["issuer"] = (t["issuer"] == "") ? otplabel : t["issuer"] + " (" + otplabel + ")";
-      var fe = document.forms["edittoken"].elements;
-      fe["algorithm"].value = t["algorithm"];
-      fe["digits"].value = t["digits"];
-      fe["period"].value = t["period"];
-      fe["secret"].value = t["secret"];
-      fe["label"].value = t["issuer"];
+      if (otpok) {
+        scanning = false;
+        editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
+        t["issuer"] = (t["issuer"] == "") ? otplabel : t["issuer"] + " (" + otplabel + ")";
+        var fe = document.forms["edittoken"].elements;
+        fe["algorithm"].value = t["algorithm"];
+        fe["digits"].value = t["digits"];
+        fe["period"].value = t["period"];
+        fe["secret"].value = t["secret"];
+        fe["label"].value = t["issuer"];
+      }
     }
   }
 };
@@ -212,6 +253,9 @@ function doScan() {
     setTimeout(doScan,300);
   }
 }
+
+/* Load settings JSON file from the watch.
+ */
 function loadTokens() {
   Util.showModal("Loading...");
   Puck.eval(`require("Storage").read(${JSON.stringify("authentiwatch.json")})`,data=>{
@@ -224,6 +268,8 @@ function loadTokens() {
     }
   });
 }
+/* Save settings as a JSON file on the watch.
+ */
 function saveTokens() {
   Util.showModal("Saving...");
   Puck.write(`\x10require("Storage").write(${JSON.stringify("authentiwatch.json")},${JSON.stringify(tokens)})\n`,()=>{
@@ -244,7 +290,7 @@ function onInit() {
 <div id="scan">
 <table>
 <tr><td><canvas id="qr-canvas"></canvas></td></tr>
-<tr><td><button type=\"button\" onclick="editToken(0,parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
+<tr><td><button type=\"button\" onclick="editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
 </table>
 </div>
 <div id="edit">
