@@ -39,3 +39,4 @@
       Rearrange NRF.setServices to allow .boot.js files to add services (eg ANCS)
 0.35: Add Bangle.appRect polyfill
       Don't set beep vibration up on Bangle.js 2 (built in)
+0.36: Add comments to .boot0 to make debugging a bit easier

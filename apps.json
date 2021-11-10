@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.35",
+    "version": "0.36",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -32,7 +32,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.02",
+    "version": "0.03",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
