@@ -55,7 +55,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
 
 var originalAppJSON = undefined;
 function filterAppsForDevice(deviceId) {
-  if (originalAppJSON===undefined)
+  if (originalAppJSON===undefined && appJSON.length)
     originalAppJSON = appJSON;
 
   var device = DEVICEINFO.find(d=>d.id==deviceId);
@@ -97,8 +97,7 @@ function setSavedDeviceId(deviceId) {
 // At boot, show a window to choose which type of device you have...
 window.addEventListener('load', (event) => {
   let deviceId = getSavedDeviceId()
-  if (deviceId !== undefined)
-    return filterAppsForDevice(deviceId);
+  if (deviceId !== undefined) return; // already chosen
 
   var html = `<div class="columns">
     ${DEVICEINFO.map(d=>`
@@ -168,6 +167,10 @@ window.addEventListener('load', (event) => {
 });
 
 function onAppJSONLoaded() {
+  let deviceId = getSavedDeviceId()
+  if (deviceId !== undefined)
+    filterAppsForDevice(deviceId);
+
   return new Promise(resolve => {
     httpGet("screenshots.json").then(screenshotJSON=>{
       var screenshots = [];
