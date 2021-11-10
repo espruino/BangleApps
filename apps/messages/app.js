@@ -20,6 +20,26 @@
 */
 
 var Layout = require("Layout");
+var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
+var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
+var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+var colBg = g.theme.dark ? "#141":"#4f4";
+var colSBg1 = g.theme.dark ? "#121":"#cFc";
+var colSBg2 = g.theme.dark ? "#242":"#9F9";
+// hack for 2v10 firmware's lack of ':size' font handling
+try {
+  g.setFont("6x8:2");
+} catch (e) {
+  g._setFont = g.setFont;
+  g.setFont = function(f,s) {
+    if (f.includes(":")) {
+      f = f.split(":");
+      return g._setFont(f[0],f[1]);
+    }
+    return g._setFont(f,s);
+  };
+}
+
 
 var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
@@ -62,15 +82,15 @@ function showMapMessage(msg) {
     eta = m[2];
   } else target=msg.body;
   layout = new Layout({ type:"v", c: [
-    {type:"txt", font:"6x15", label:target, bgCol:"#0f0", fillx:1, pad:2 },
-    {type:"h", bgCol:"#0f0", fillx:1, c: [
+    {type:"txt", font:fontMedium, label:target, bgCol:colBg, fillx:1, pad:2 },
+    {type:"h", bgCol:colBg, fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
-      {type:"txt", font:"6x15:2", label:street }
+      {type:"txt", font:fontLarge, label:street }
     ]},
     {type:"h",fillx:1, filly:1, c: [
       msg.img?{type:"img",src:atob(msg.img), scale:2}:{},
       {type:"v", fillx:1, c: [
-        {type:"txt", font:"6x15:2", label:distance||"" }
+        {type:"txt", font:fontLarge, label:distance||"" }
       ]},
     ]},
     {type:"txt", font:"6x8:2", label:eta }
@@ -100,14 +120,14 @@ function showMusicMessage(msg) {
     checkMessages();
   }
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:"#0f0",  c: [
+    {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:"6x15:2", label:msg.artist, pad:2 },
-        { type:"txt", font:"6x15", label:msg.album, pad:2 }
+        { type:"txt", font:fontLarge, label:msg.artist, pad:2 },
+        { type:"txt", font:fontMedium, label:msg.album, pad:2 }
       ]}
     ]},
-    {type:"txt", font:"6x15:2", label:msg.track, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
     Bangle.musicControl?{type:"h",fillx:1, c: [
       {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
@@ -125,23 +145,23 @@ function showMessage(msgid) {
   if (msg.src=="Maps") return showMapMessage(msg);
   if (msg.id=="music") return showMusicMessage(msg);
   // Normal text message display
-  var title=msg.title, titleFont = "6x15:2";
+  var title=msg.title, titleFont = fontLarge;
   if (title) {
     var w = g.getWidth()-40;
     if (g.setFont(titleFont).stringWidth(title) > w)
-      titleFont = "6x15";
+      titleFont = fontMedium;
     if (g.setFont(titleFont).stringWidth(title) > w)
       title = g.wrapString(title, w).join("\n");
   }
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:"#0f0",  c: [
+    {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"img", src:getMessageImage(msg), pad:2 },
       { type:"v", fillx:1, c: [
-        {type:"txt", font:"6x15", label:msg.src||"Message", bgCol:"#0f0", fillx:1, pad:2 },
-        title?{type:"txt", font:titleFont, label:title, bgCol:"#0f0", fillx:1, pad:2 }:{},
+        {type:"txt", font:fontMedium, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2 },
+        title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},
-    {type:"txt", font:"6x15", label:msg.body||"", wrap:true, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontMedium, label:msg.body||"", wrap:true, fillx:1, filly:1, pad:2 },
     {type:"h",fillx:1, c: [
       {type:"btn", src:getBackImage(), cb:()=>checkMessages(true)}, // back
       msg.new?{type:"btn", src:atob("HRiBAD///8D///wj///Fj//8bj//x3z//Hvx/8/fx/j+/x+Ad/B4AL8Rh+HxwH+PHwf+cf5/+x/n/PH/P8cf+cx5/84HwAB4fgAD5/AAD/8AAD/wAAD/AAAD8A=="), cb:()=>{
@@ -176,8 +196,8 @@ function checkMessages(forceShowMenu) {
     c : MESSAGES.length+1,
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx-1];
-      if (msg && msg.new) g.setBgColor("#4F4");
-      else g.setBgColor((idx&1) ? "#CFC" : "#9F9");
+      if (msg && msg.new) g.setBgColor(colBg);
+      else g.setBgColor((idx&1) ? colSBg1 : colSBg2);
       g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1).setColor(g.theme.fg);
       if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
@@ -192,8 +212,8 @@ function checkMessages(forceShowMenu) {
         x += 50;
       }
       var m = msg.title+"\n"+msg.body;
-      if (msg.src) g.setFontAlign(1,-1).drawString(msg.src, r.x+r.w-2, r.t+2);
-      if (title) g.setFontAlign(-1,-1).setFont("12x20").drawString(title, x,r.y+2);
+      if (msg.src) g.setFontAlign(1,-1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+2);
+      if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
       if (body) {
         g.setFontAlign(-1,-1).setFont("6x8");
         var l = g.wrapString(body, r.w-14);
@@ -211,6 +231,7 @@ function checkMessages(forceShowMenu) {
   });
 }
 
+g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 checkMessages();

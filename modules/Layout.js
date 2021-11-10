@@ -109,9 +109,7 @@ function Layout(layout, options) {
           delete this.buttons[s].selected;
           this.render(this.buttons[s]);
         }
-        s += dir;
-        if (s<0) s+=lh;
-        if (s>=l) s-=l;
+        s = (s+l+dir) % l;
         if (this.buttons[s]) {
           this.buttons[s].selected = 1;
           this.render(this.buttons[s]);
