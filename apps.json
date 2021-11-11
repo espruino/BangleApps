@@ -2852,7 +2852,7 @@
     "icon": "bluetooth.png",
     "type": "bootloader",
     "tags": "battery,ble,bluetooth,gatt",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"gattbat.boot.js","url":"boot.js"}
