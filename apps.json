@@ -7,7 +7,7 @@
     "icon": "app.png",
     "type": "RAM",
     "tags": "tools,system",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "supports": ["BANGLEJS2"],
     "custom": "custom.html",
     "customConnect": true,
     "storage": [],
