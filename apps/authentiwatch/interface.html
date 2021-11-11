@@ -30,7 +30,7 @@ table button{width:100%}
 <script type="text/javascript">
 
 /* Start of all TOTP URLs */
-const otpAuthUrl = "otpauth://totp/";
+const otpAuthUrl = 'otpauth://totp/';
 
 /* Array of TOTP tokens */
 var tokens=[];
@@ -40,10 +40,10 @@ var tokens=[];
  * the string.
  */
 function base32clean(val, nows) {
-  var ret = val.replaceAll(/\s+/g, " ");
-  ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, "");
+  var ret = val.replaceAll(/\s+/g, ' ');
+  ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
   if (nows) {
-    ret = ret.replaceAll(/\s+/g, "");
+    ret = ret.replaceAll(/\s+/g, '');
   }
   return ret;
 }
@@ -58,18 +58,20 @@ function saveEdit(id, forget) {
     return (ret > 0) ? ret : def;
   };
   if (forget) {
-    if (confirm("Forget token?")) {
+    if (confirm('Forget token?')) {
       tokens.splice(id, 1);
       updateTokens();
     }
   } else {
-    let fe = document.forms["edittoken"].elements;
+    let fe = document.forms['edittoken'].elements;
     tokens[id] = {
-      "algorithm":fe["algorithm"].value,
-      "digits":parseIntValue(fe["digits"].value,6),
-      "period":parseIntValue(fe["period"].value,30),
-      "secret":base32clean(fe["secret"].value, false),
-      "label":fe["label"].value
+      'algorithm':fe['algorithm'].value,
+      'digits':parseIntValue(fe['digits'].value,6),
+      'period':parseIntValue(fe['period'].value,30),
+      'issuer':fe['issuer'].value,
+      'account':fe['account'].value,
+      'secret':base32clean(fe['secret'].value, false),
+      'label':fe['label'].value
     };
     updateTokens();
   }
@@ -78,22 +80,31 @@ function saveEdit(id, forget) {
 /* Generate and display a QR-code representing the current token.
  */
 function showQrCode() {
-  var fe = document.forms["edittoken"].elements;
+  var fe = document.forms['edittoken'].elements;
   var url = new String(otpAuthUrl);
-  url += encodeURIComponent(fe["label"].value);
-  url += "?secret=" + base32clean(fe["secret"].value, true);
-  if (parseInt(fe["period"].value) != 30) {
-    url += "&period=" + fe["period"].value;
+  if (fe['account'].value.length > 0) {
+    url += encodeURIComponent(fe['account'].value);
+  } else {
+    url += encodeURIComponent(fe['label'].value);
   }
-  if (parseInt(fe["digits"].value) != 6) {
-    url += "&digits=" + fe["digits"].value;
+  url += '?';
+  if (fe['issuer'].value.length > 0) {
+    url += 'issuer=' + encodeURIComponent(fe['issuer'].value);
+    url += '&';
   }
-  if (fe["algorithm"].value != "SHA1") {
-    url += "&algorithm=" + fe["algorithm"].value;
+  url += 'secret=' + base32clean(fe['secret'].value, true);
+  if (parseInt(fe['period'].value) != 30) {
+    url += '&period=' + fe['period'].value;
+  }
+  if (parseInt(fe['digits'].value) != 6) {
+    url += '&digits=' + fe['digits'].value;
+  }
+  if (fe['algorithm'].value != 'SHA1') {
+    url += '&algorithm=' + fe['algorithm'].value;
   }
   tokenqr.clear();
   tokenqr.makeCode(url);
-  document.body.className = "showqr";
+  document.body.className = 'showqr';
 }
 
 /* Generate a form for editing the specified token.
@@ -101,40 +112,45 @@ function showQrCode() {
  */
 function editToken(id) {
   const selectMarkup = function(name, ary, cur) {
-    var ret = "<select name=\"" + name + "\">";
+    var ret = '<select name="' + name + '">';
     for (let i = 0; i < ary.length; i++) {
-      ret += "<option" + ((ary[i] == cur) ? " selected=selected" : "") + ">" + ary[i] + "</option>";
+      ret += '<option' + ((ary[i] == cur) ? ' selected=selected' : '') + '>' + ary[i] + '</option>';
     }
-    return ret + "</select>";
+    return ret + '</select>';
   };
   scanning=false;
-  var markup = "<form id=\"edittoken\"><input type=\"hidden\" name=\"tokenid\" value=\"" + id + "\"><table>";
-  markup += "<tr><td>Name:</td><td><input name=\"label\" type=\"text\" value=\"" + tokens[id].label + "\"></td></tr>";
-  markup += "<tr><td>Secret:</td><td><input name=\"secret\" type=\"text\" value=\"" + tokens[id].secret + "\"></td></tr>";
-  markup += "<tbody id=\"adv\"><tr><td>Period:</td><td><input name=\"period\" type=\"text\" value=\"" + tokens[id].period + "\"></td></tr>";
-  markup += "<tr><td>Digits:</td><td>";
-  markup += selectMarkup("digits", ["6","8"], tokens[id].digits);
-  markup += "</td></tr><tr><td>Hash:</td><td>";
-  markup += selectMarkup("algorithm", ["SHA1","SHA256","SHA512"], tokens[id].algorithm);
-  markup += "</td></tr></tbody><tr><td id=\"advbtn\" colspan=\"2\">";
-  markup += "<button type=\"button\" onclick=\"document.getElementById('edittoken').classList.toggle('showadv')\">Advanced</button>";
-  markup += "</td></tr></table></form>";
-  markup += "<button type=\"button\" onclick=\"updateTokens()\">Cancel Edit</button>";
-  markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", false)\">Save Changes</button>";
+  var markup = '<form id="edittoken"><input type="hidden" name="tokenid" value="' + id + '"><table>';
+  markup += '<tr><td>Name:</td><td><input name="label" type="text" value="' + tokens[id].label + '"></td></tr>';
+  markup += '<tr><td>Secret:</td><td><input name="secret" type="text" value="' + tokens[id].secret + '"></td></tr>';
+  markup += '<tbody id="adv">';
+  markup += '<tr><td>Account:</td><td><input name="account" type="text" value="' + tokens[id].account + '"></td></tr>';
+  markup += '<tr><td>Issuer:</td><td><input name="issuer" type="text" value="' + tokens[id].issuer + '"></td></tr>';
+  markup += '<tr><td>Period:</td><td><input name="period" type="text" value="' + tokens[id].period + '"></td></tr>';
+  markup += '<tr><td>Digits:</td><td>';
+  markup += selectMarkup('digits', ['6','8'], tokens[id].digits);
+  markup += '</td></tr>';
+  markup += '<tr><td>Hash:</td><td>';
+  markup += selectMarkup('algorithm', ['SHA1','SHA256','SHA512'], tokens[id].algorithm);
+  markup += '</td></tr>';
+  markup += '</tbody><tr><td id="advbtn" colspan="2">';
+  markup += '<button type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
+  markup += '</td></tr></table></form>';
+  markup += '<button type="button" onclick="updateTokens()">Cancel Edit</button>';
+  markup += '<button type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
   if (tokens[id].isnew) {
-    markup += "<button type=\"button\" onclick=\"startScan()\">Scan QR Code</button>";
+    markup += '<button type="button" onclick="startScan()">Scan QR Code</button>';
   } else {
-    markup += "<button type=\"button\" onclick=\"showQrCode()\">Show QR Code</button>";
-    markup += "<button type=\"button\" onclick=\"saveEdit(" + id + ", true)\">Forget Token</button>";
+    markup += '<button type="button" onclick="showQrCode()">Show QR Code</button>';
+    markup += '<button type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
   }
-  document.getElementById("edit").innerHTML = markup;
-  document.body.className = "editing";
+  document.getElementById('edit').innerHTML = markup;
+  document.body.className = 'editing';
 }
 
 /* Create a new blank token and open the editor for it.
  */
 function addToken() {
-  tokens[tokens.length] = {"algorithm":"SHA1","digits":6,"period":30,"secret":"","label":"","isnew":true};
+  tokens[tokens.length] = {'algorithm':'SHA1','digits':6,'period':30,'issuer':'','account':'','secret':'','label':'','isnew':true};
   editToken(tokens.length - 1);
 }
 
@@ -151,9 +167,9 @@ function moveToken(id, dir) {
  */
 function updateTokens() {
   const tokenButton = function(fn, id, label, dir) {
-    return "<button type=\"button\" onclick=\"" + fn + "(" + id + (dir ? "," + dir : "") + ")\">" + label + "</button>";
+    return '<button type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
   };
-  var markup = "<table><tr><th>Token</th><th colspan=\"2\">Order</th></tr>";
+  var markup = '<table><tr><th>Token</th><th colspan="2">Order</th></tr>';
   /* any tokens marked new are cancelled new additions and must be removed */
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i].isnew) {
@@ -161,23 +177,23 @@ function updateTokens() {
     }
   }
   for (let i = 0; i < tokens.length; i++) {
-    markup += "<tr><td>";
-    markup += tokenButton("editToken", i, tokens[i].label);
-    markup += "</td><td>";
+    markup += '<tr><td>';
+    markup += tokenButton('editToken', i, tokens[i].label);
+    markup += '</td><td>';
     if (i < (tokens.length - 1)) {
-      markup += tokenButton("moveToken", i, "&#x25bc;", 1);
+      markup += tokenButton('moveToken', i, '&#x25bc;', 1);
     }
-    markup += "</td><td>";
+    markup += '</td><td>';
     if (i > 0) {
-      markup += tokenButton("moveToken", i, "&#x25b2;", -1);
+      markup += tokenButton('moveToken', i, '&#x25b2;', -1);
     }
-    markup += "</td></tr>";
+    markup += '</td></tr>';
   }
-  markup += "</table>";
-  markup += "<button type=\"button\" onclick=\"addToken()\">Add Token</button>";
-  markup += "<button type=\"button\" onclick=\"saveTokens()\">Save to watch</button>";
-  document.getElementById("tokens").innerHTML = markup;
-  document.body.className = "select";
+  markup += '</table>';
+  markup += '<button type="button" onclick="addToken()">Add Token</button>';
+  markup += '<button type="button" onclick="saveTokens()">Save to watch</button>';
+  document.getElementById('tokens').innerHTML = markup;
+  document.body.className = 'select';
 }
 
 /* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
@@ -186,14 +202,13 @@ qrcode.callback = res => {
     if (res.startsWith(otpAuthUrl)) {
       res = decodeURIComponent(res);
       var paramsidx = res.indexOf('?');
-      var otplabel = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
       var params = res.substr(paramsidx+1).split('&');
       var t = {
-        "algorithm":"SHA1",
-        "digits":"6",
-        "period":"30",
-        "secret":"",
-        "issuer":""
+        'algorithm':'SHA1',
+        'digits':'6',
+        'period':'30',
+        'secret':'',
+        'issuer':''
       };
       var otpok = true;
       for (let pi in params) {
@@ -204,30 +219,33 @@ qrcode.callback = res => {
           otpok = false;
         }
       }
-      if (t["secret"] == "") {
+      t['account'] = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
+      if ((t['account'] == '') || (t['secret'] == '')) {
         otpok = false;
       }
       if (otpok) {
         scanning = false;
         editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
-        t["issuer"] = (t["issuer"] == "") ? otplabel : t["issuer"] + " (" + otplabel + ")";
-        var fe = document.forms["edittoken"].elements;
-        fe["algorithm"].value = t["algorithm"];
-        fe["digits"].value = t["digits"];
-        fe["period"].value = t["period"];
-        fe["secret"].value = t["secret"];
-        fe["label"].value = t["issuer"];
+        t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
+        var fe = document.forms['edittoken'].elements;
+        fe['algorithm'].value = t['algorithm'];
+        fe['digits'   ].value = t['digits'   ];
+        fe['period'   ].value = t['period'   ];
+        fe['secret'   ].value = t['secret'   ];
+        fe['issuer'   ].value = t['issuer'   ];
+        fe['account'  ].value = t['account'  ];
+        fe['label'    ].value = t['label'    ];
       }
     }
   }
 };
 function startScan() {
-  document.body.className = "scanning";
+  document.body.className = 'scanning';
   navigator.mediaDevices
-    .getUserMedia({video:{facingMode:"environment"}})
+    .getUserMedia({video:{facingMode:'environment'}})
     .then(function(stream){
       scanning=true;
-      video.setAttribute("playsinline",true);
+      video.setAttribute('playsinline',true);
       video.srcObject = stream;
       video.play();
       scanTick();
@@ -257,8 +275,8 @@ function doScan() {
 /* Load settings JSON file from the watch.
  */
 function loadTokens() {
-  Util.showModal("Loading...");
-  Puck.eval(`require("Storage").read(${JSON.stringify("authentiwatch.json")})`,data=>{
+  Util.showModal('Loading...');
+  Puck.eval(`require('Storage').read(${JSON.stringify('authentiwatch.json')})`,data=>{
     Util.hideModal();
     try {
       tokens = JSON.parse(data);
@@ -271,8 +289,8 @@ function loadTokens() {
 /* Save settings as a JSON file on the watch.
  */
 function saveTokens() {
-  Util.showModal("Saving...");
-  Puck.write(`\x10require("Storage").write(${JSON.stringify("authentiwatch.json")},${JSON.stringify(tokens)})\n`,()=>{
+  Util.showModal('Saving...');
+  Puck.write(`\x10require('Storage').write(${JSON.stringify('authentiwatch.json')},${JSON.stringify(tokens)})\n`,()=>{
     Util.hideModal();
   });
 }
@@ -290,22 +308,22 @@ function onInit() {
 <div id="scan">
 <table>
 <tr><td><canvas id="qr-canvas"></canvas></td></tr>
-<tr><td><button type=\"button\" onclick="editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
+<tr><td><button type="button" onclick="editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
 </table>
 </div>
 <div id="edit">
 </div>
 <div id="tokenqr">
 <table><tr><td id="qrcode"></td></tr><tr><td>
-<button type=\"button\" onclick="document.body.className='editing'">Back</button>
+<button type="button" onclick="document.body.className='editing'">Back</button>
 </td></tr></table>
 </div>
 <script type="text/javascript">
-const video=document.createElement("video");
-const canvasElement=document.getElementById("qr-canvas");
-const canvas=canvasElement.getContext("2d");
+const video=document.createElement('video');
+const canvasElement=document.getElementById('qr-canvas');
+const canvas=canvasElement.getContext('2d');
 let scanning=false;
-const tokenqr=new QRCode(document.getElementById("qrcode"), "");
+const tokenqr=new QRCode(document.getElementById('qrcode'), '');
 </script>
 <script src="../../core/lib/interface.js"></script>
 </body>
