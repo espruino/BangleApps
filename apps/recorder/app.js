@@ -140,10 +140,10 @@ function getTrackInfo(filename) {
   }
   // pushed this loop together to try and bump loading speed a little
   while(l!==undefined) {
-    ++nl;c=l.split(",");
+    ++nl;c=l.split(",");l = f.readLine(f);
+    if (c[latIdx]=="")continue;
     n = +c[latIdx];if(n>maxLat)maxLat=n;if(n<minLat)minLat=n;
     n = +c[lonIdx];if(n>maxLong)maxLong=n;if(n<minLong)minLong=n;
-    l = f.readLine(f);
   }
   if (c) duration = parseInt(c[timeIdx]) - starttime;
   var lfactor = Math.cos(minLat*Math.PI/180);
@@ -177,7 +177,7 @@ function viewTrack(filename, info) {
     E.showMessage("Loading...","Track "+getTrackNumber(filename));
     info = getTrackInfo(filename);
   }
-  console.log(info);
+  //console.log(info);
   const menu = {
     '': { 'title': 'Track '+info.fn }
   };
@@ -244,25 +244,18 @@ function plotTrack(info) {
   g.flip(); // on buffered screens, draw a not saying we're busy
   g.clear(1);
   var s = require("Storage");
-  var cx = g.getWidth()/2;
-  var cy = 24 + (g.getHeight()-24)/2;
-  g.setColor(1,0.5,0.5);
-  g.setFont("Vector",16);
-  g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
-  g.setColor(0,0,0);
-  g.fillRect(0,220,239,239);
+  var W = g.getWidth();
+  var H = g.getHeight();
+  var cx = W/2;
+  var cy = 24 + (H-24)/2;
   if (!info.qOSTM) {
-    g.setColor(1, 0, 0);
-    g.fillRect(9,80,11,120);
-    g.fillPoly([9,60,19,80,0,80]);
-    g.setColor(1,1,1);
-    g.drawString("N",2,40);
-    g.setColor(1,1,1);
+    g.setColor("#f00").fillRect(9,80,11,120).fillPoly([9,60,19,80,0,80]);
+    g.setColor(g.theme.fg).setFont("6x8").setFontAlign(0,0).drawString("N",10,50);
   } else {
     osm.lat = info.lat;
     osm.lon = info.lon;
     osm.draw();
-    g.setColor(0, 0, 0);
+    g.setColor("#000");
   }
   var latIdx = info.fields.indexOf("Latitude");
   var lonIdx = info.fields.indexOf("Longitude");
@@ -274,19 +267,26 @@ function plotTrack(info) {
   var ox=0;
   var oy=0;
   var olat,olong,dist=0;
-  var i=0;
-  var c = l.split(",");
+  var i=0, c = l.split(",");
+  // skip until we find our first data
+  while(l!==undefined && c[latIdx]=="") {
+    c = l.split(",");
+    l = f.readLine(f);
+  }
+  // now start plotting
   var lat = +c[latIdx];
   var long = +c[lonIdx];
   var mp = getMapXY(lat, long);
   g.moveTo(mp.x,mp.y);
-  g.setColor(0,1,0);
+  g.setColor("#0f0");
   g.fillCircle(mp.x,mp.y,5);
-  if (info.qOSTM) g.setColor(1,0,0.55);
-  else g.setColor(1,1,1);
+  if (info.qOSTM) g.setColor("#f09");
+  else g.setColor(g.theme.fg);
   l = f.readLine(f);
+  g.flip(); // force update
   while(l!==undefined) {
-    c = l.split(",");
+    c = l.split(",");l = f.readLine(f);
+    if (c[latIdx]=="")continue;
     lat = +c[latIdx];
     long = +c[lonIdx];
     mp = getMapXY(lat, long);
@@ -298,12 +298,12 @@ function plotTrack(info) {
     olong = long;
     ox = mp.x;
     oy = mp.y;
-    l = f.readLine(f);
+    if (++i > 100) { g.flip();i=0; }
   }
-  g.setColor(1,0,0);
+  g.setColor("#f00");
   g.fillCircle(ox,oy,5);
-  if (info.qOSTM) g.setColor(0, 0, 0);
-  else g.setColor(1,1,1);
+  if (info.qOSTM) g.setColor("#000");
+  else g.setColor(g.theme.fg);
   g.drawString(require("locale").distance(dist),120,220);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
@@ -340,16 +340,22 @@ function plotGraph(info, style) {
     title = "Altitude (m)";
     var altIdx = info.fields.indexOf("Altitude");
     while(l!==undefined) {
-      ++nl;c=l.split(",");
+      ++nl;c=l.split(",");l = f.readLine(f);
+      if (c[altIdx]=="") continue;
       i = Math.round(80*(c[timeIdx] - strt)/dur);
       infn[i]+=+c[altIdx];
       infc[i]++;
-      l = f.readLine(f);
     }
   } else if (style=="Speed") {
     title = "Speed (m/s)";
     var latIdx = info.fields.indexOf("Latitude");
     var lonIdx = info.fields.indexOf("Longitude");
+    // skip until we find our first data
+    while(l!==undefined && c[latIdx]=="") {
+      c = l.split(",");
+      l = f.readLine(f);
+    }
+    // now iterate
     var p,lp = Bangle.project({lat:c[1],lon:c[2]});
     var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {

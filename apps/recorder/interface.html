@@ -62,7 +62,7 @@ function saveGPX(track, title) {
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
 <gpx creator="Bangle.js" version="1.1">
   <metadata>
-    <time>${track[0].date.toISOString()}</time>
+    <time>${track[0].Time.toISOString()}</time>
   </metadata>
   <trk>
     <name>${title}</name>
@@ -74,9 +74,7 @@ function saveGPX(track, title) {
         <time>${pt.Time.toISOString()}</time>
         <extensions>
             <gpxtpx:TrackPointExtension>
-                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}
-                ${""/*<gpxtpx:distance>...</gpxtpx:distance>*/}
-                ${""/* <gpxtpx:cad>65</gpxtpx:cad> */}
+                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
             </gpxtpx:TrackPointExtension>
         </extensions>
       </trkpt>`;
@@ -189,7 +187,7 @@ ${trackData.Latitude ? `
                width="100%"
                height="250"
                frameborder="0" style="border:0"
-               src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxTcwrrVOh2piz7EmIs1Xn4FsRxJWeVH4&q=${track.lat},${track.lon}&zoom=10" allowfullscreen>
+               src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxTcwrrVOh2piz7EmIs1Xn4FsRxJWeVH4&q=${trackData.Latitude},${trackData.Longitude}&zoom=10" allowfullscreen>
              </iframe>
            </div><div class="card-body"></div>` : `<div class="card-body">No GPS info</div>`}
            <div class="card-footer">
