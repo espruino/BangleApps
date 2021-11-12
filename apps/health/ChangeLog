@@ -4,3 +4,4 @@
 0.04: Add HRM graph view
       Don't restart HRM when changing apps if we've already got a good BPM value
 0.05: Fix daily summary calculation
+0.06: Fix daily health summary for movement (a line got deleted!)
