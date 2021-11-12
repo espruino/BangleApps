@@ -10,7 +10,7 @@ const algos = {
 var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
   {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
   {algorithm:"SHA1",digits:6,period:30,secret:"bbbb bbbb bbbb bbbb",label:"BgBgBg"},
-  {algorithm:"SHA1",digits:6,period:30,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
+  {algorithm:"SHA1",digits:6,period:-30,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
   {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
   {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
 ];
@@ -72,21 +72,27 @@ function do_hmac(key, message, algo) {
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
-function hotp_timed(seed, digits, period, algo) {
-  // RFC6238
+function hotp(token) {
+  var tick;
   var d = new Date();
-  var seconds = Math.floor(d.getTime() / 1000);
-  var tick = Math.floor(seconds / period);
+  if (token.period > 0) {
+    // RFC6238 - timed
+    var seconds = Math.floor(d.getTime() / 1000);
+    tick = Math.floor(seconds / token.period);
+  } else {
+    // RFC4226 - counter
+    tick = -token.period;
+  }
   var msg = new Uint8Array(8);
   var v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var hash = do_hmac(b32decode(seed), msg, algo.toUpperCase());
-  var ret = "" + hash % Math.pow(10, digits);
-  while (ret.length < digits) {
+  var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
+  var ret = "" + hash % Math.pow(10, token.digits);
+  while (ret.length < token.digits) {
     ret = "0" + ret;
   }
-  return {hotp:ret, next:(tick + 1) * period * 1000};
+  return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
 
 var state = {
@@ -94,7 +100,8 @@ var state = {
   curtoken:-1,
   nextTime:0,
   otp:"",
-  rem:0
+  rem:0,
+  hide:0
 };
 
 function drawToken(id, r) {
@@ -143,17 +150,28 @@ function drawToken(id, r) {
 }
 
 function draw() {
+  var d = new Date();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
-    var d = new Date();
     if (d.getTime() > state.nextTime) {
-      try {
-        var r = hotp_timed(t.secret, t.digits, t.period, t.algorithm);
-        state.nextTime = r.next;
-        state.otp = r.hotp;
-      } catch (err) {
+      if (state.hide == 0) {
+        // auto-hide the current token
+        state.curtoken = -1;
         state.nextTime = 0;
-        state.otp = "Not supported";
+      } else {
+        // time to generate a new token
+        try {
+          var r = hotp(t);
+          state.nextTime = r.next;
+          state.otp = r.hotp;
+          if (t.period <= 0) {
+            state.hide = 1;
+          }
+        } catch (err) {
+          state.nextTime = 0;
+          state.otp = "Not supported";
+        }
+        state.hide--;
       }
     }
     state.rem = Math.max(0, Math.floor((state.nextTime - d.getTime()) / 1000));
@@ -164,17 +182,25 @@ function draw() {
     var y = id * tokenentryheight + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
       drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenentryheight});
-      if (id == state.curtoken && state.nextTime != 0) {
+      if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
       id += 1;
       y += tokenentryheight;
     }
     if (drewcur) {
+      // the current token has been drawn - draw it again in 1sec
       if (state.drawtimer) {
         clearTimeout(state.drawtimer);
       }
-      state.drawtimer = setTimeout(draw, 1000);
+      state.drawtimer = setTimeout(draw, (tokens[state.curtoken].period > 0) ? 1000 : state.nexttime - d.getTime());
+      if (tokens[state.curtoken].period <= 0) {
+        state.hide = 0;
+      }
+    } else {
+      // de-select the current token if it is scrolled out of view
+      state.curtoken = -1;
+      state.nexttime = 0;
     }
   } else {
     g.setFont("Vector", 30);
@@ -202,6 +228,7 @@ function onTouch(zone, e) {
     }
     state.nextTime = 0;
     state.curtoken = id;
+    state.hide = 2;
     draw();
   }
 }
@@ -220,6 +247,13 @@ function onDrag(e) {
 function onSwipe(e) {
   if (e == 1) {
     Bangle.showLauncher();
+  }
+  if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
+    tokens[state.curtoken].period--;
+    require("Storage").writeJSON("authentiwatch.json", tokens);
+    state.nextTime = 0;
+    state.hide = 2;
+    draw();
   }
 }
 
