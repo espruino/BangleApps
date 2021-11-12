@@ -19,6 +19,7 @@ body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr 
 #edittoken.showadv #advbtn button:before,#edittoken.showadv #advbtn button:after{content:"\25b2"}
 button{height:3em}
 table button{width:100%}
+form.totp tr.hotp,form.hotp tr.totp{display:none}
 </style>
 
 <!-- https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js -->
@@ -30,7 +31,9 @@ table button{width:100%}
 <script type="text/javascript">
 
 /* Start of all TOTP URLs */
-const otpAuthUrl = 'otpauth://totp/';
+const otpAuthUrl = 'otpauth://';
+
+const tokentypes = ['TOTP (Timed)', 'HOTP (Counter)'];
 
 /* Array of TOTP tokens */
 var tokens=[];
@@ -53,10 +56,6 @@ function base32clean(val, nows) {
  * forget is a flag indicating if the token should be forgotten.
  */
 function saveEdit(id, forget) {
-  const parseIntValue = function(v, def) {
-    let ret = parseInt(v);
-    return (ret > 0) ? ret : def;
-  };
   if (forget) {
     if (confirm('Forget token?')) {
       tokens.splice(id, 1);
@@ -64,10 +63,17 @@ function saveEdit(id, forget) {
     }
   } else {
     let fe = document.forms['edittoken'].elements;
+    let d = parseInt(fe['digits'].value);
+    let p = parseInt(fe['period'].value);
+    let c = parseInt(fe['count'].value);
+    switch (fe['type'].value) {
+    case tokentypes[1]: p = (c > 0) ? -c : 0; break;
+    default           : p = (p > 0) ? p : 30; break;
+    }
     tokens[id] = {
       'algorithm':fe['algorithm'].value,
-      'digits':parseIntValue(fe['digits'].value,6),
-      'period':parseIntValue(fe['period'].value,30),
+      'digits':((d > 0) ? d : 6),
+      'period':p,
       'issuer':fe['issuer'].value,
       'account':fe['account'].value,
       'secret':base32clean(fe['secret'].value, false),
@@ -82,6 +88,10 @@ function saveEdit(id, forget) {
 function showQrCode() {
   var fe = document.forms['edittoken'].elements;
   var url = new String(otpAuthUrl);
+  switch (fe['type'].value) {
+  case tokentypes[1]: url += 'hotp/'; break;
+  default           : url += 'totp/'; break;
+  }
   if (fe['account'].value.length > 0) {
     url += encodeURIComponent(fe['account'].value);
   } else {
@@ -93,8 +103,17 @@ function showQrCode() {
     url += '&';
   }
   url += 'secret=' + base32clean(fe['secret'].value, true);
-  if (parseInt(fe['period'].value) != 30) {
-    url += '&period=' + fe['period'].value;
+  switch (fe['type'].value) {
+  case tokentypes[1]:
+    if (parseInt(fe['count'].value) != 0) {
+      url += '&counter=' + fe['count'].value;
+    }
+    break;
+  default:
+    if (parseInt(fe['period'].value) != 30) {
+      url += '&period=' + fe['period'].value;
+    }
+    break;
   }
   if (parseInt(fe['digits'].value) != 6) {
     url += '&digits=' + fe['digits'].value;
@@ -107,12 +126,20 @@ function showQrCode() {
   document.body.className = 'showqr';
 }
 
+function onTypeChanged() {
+  var f = document.forms['edittoken'];
+  var fe = f.elements;
+  if (fe['type'].value == tokentypes[0]) { f.classList.add('totp'); f.classList.remove('hotp'); }
+  if (fe['type'].value == tokentypes[1]) { f.classList.add('hotp'); f.classList.remove('totp'); }
+}
+
 /* Generate a form for editing the specified token.
  * id is the index into the global tokens[].
  */
 function editToken(id) {
-  const selectMarkup = function(name, ary, cur) {
-    var ret = '<select name="' + name + '">';
+  var p;
+  const selectMarkup = function(name, ary, cur, onchg) {
+    var ret = '<select name="' + name + '"' + ((typeof onchg == 'string') ? ' onchange="' + onchg + '"' : '') + '>';
     for (let i = 0; i < ary.length; i++) {
       ret += '<option' + ((ary[i] == cur) ? ' selected=selected' : '') + '>' + ary[i] + '</option>';
     }
@@ -125,7 +152,12 @@ function editToken(id) {
   markup += '<tbody id="adv">';
   markup += '<tr><td>Account:</td><td><input name="account" type="text" value="' + tokens[id].account + '"></td></tr>';
   markup += '<tr><td>Issuer:</td><td><input name="issuer" type="text" value="' + tokens[id].issuer + '"></td></tr>';
-  markup += '<tr><td>Period:</td><td><input name="period" type="text" value="' + tokens[id].period + '"></td></tr>';
+  p = parseInt(tokens[id].period);
+  markup += '<tr><td>Type:</td><td>';
+  markup += selectMarkup('type', tokentypes, (tokens[id].period > 0) ? tokentypes[0] : tokentypes[1], 'onTypeChanged()');
+  markup += '</td></tr>';
+  markup += '<tr class="totp"><td>Period:</td><td><input name="period" type="text" value="' + ((p > 0) ? p : 30)  + '"></td></tr>';
+  markup += '<tr class="hotp"><td>Count:</td><td><input name="count" type="text" value="' + ((p >= 0) ? 0 : -p) + '"></td></tr>';
   markup += '<tr><td>Digits:</td><td>';
   markup += selectMarkup('digits', ['6','8'], tokens[id].digits);
   markup += '</td></tr>';
@@ -145,6 +177,7 @@ function editToken(id) {
   }
   document.getElementById('edit').innerHTML = markup;
   document.body.className = 'editing';
+  onTypeChanged();
 }
 
 /* Create a new blank token and open the editor for it.
@@ -206,6 +239,7 @@ qrcode.callback = res => {
       var t = {
         'algorithm':'SHA1',
         'digits':'6',
+        'counter':'0',
         'period':'30',
         'secret':'',
         'issuer':''
@@ -228,13 +262,22 @@ qrcode.callback = res => {
         editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
         t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
         var fe = document.forms['edittoken'].elements;
+        if (res.startsWith(otpAuthUrl + 'hotp/')) {
+          t['period'] = '30';
+          fe['type'].value = tokentypes[1];
+        } else {
+          t['counter'] = '0';
+          fe['type'].value = tokentypes[0];
+        }
         fe['algorithm'].value = t['algorithm'];
         fe['digits'   ].value = t['digits'   ];
+        fe['count'    ].value = t['counter'  ];
         fe['period'   ].value = t['period'   ];
         fe['secret'   ].value = t['secret'   ];
         fe['issuer'   ].value = t['issuer'   ];
         fe['account'  ].value = t['account'  ];
         fe['label'    ].value = t['label'    ];
+        onTypeChanged();
       }
     }
   }
