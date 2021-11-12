@@ -79,5 +79,6 @@ Bangle.on("health", health => {
   if (health.bpmCnt)
     health.bpm /= health.bpmCnt;
   if (health.movCnt)
+    health.movement /= health.movCnt;
   require("Storage").write(fn, getRecordData(health), sumPos, DB_FILE_LEN);
 });
