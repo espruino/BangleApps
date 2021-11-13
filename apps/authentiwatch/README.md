@@ -9,9 +9,9 @@ Supports:
 * Custom periods (default 30s)
 * Between 6 (default) and 10 digits
 * Phone/PC configuration web page:
- * Add/edit/delete/arrange tokens
- * Scan QR codes
- * Produce scannable QR codes
+  * Add/edit/delete/arrange tokens
+  * Scan QR codes
+  * Produce scannable QR codes
 
 ## Usage
 
