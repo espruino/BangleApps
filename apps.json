@@ -4226,7 +4226,8 @@
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
     "interface": "interface.html",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
     "allow_emulator": true,
     "storage": [
       {"name":"authentiwatch.app.js","url":"app.js"},
