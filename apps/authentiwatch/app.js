@@ -87,16 +87,22 @@ function hotp(token) {
   var v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
-  var ret = "" + hash % Math.pow(10, token.digits);
-  while (ret.length < token.digits) {
-    ret = "0" + ret;
+  var ret = "";
+  try {
+    var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
+    ret = "" + hash % Math.pow(10, token.digits);
+    while (ret.length < token.digits) {
+      ret = "0" + ret;
+    }
+  } catch(err) {
+    ret = "Not supported";
   }
   return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
 
 var state = {
   listy: 0,
+  prevcur:0,
   curtoken:-1,
   nextTime:0,
   otp:"",
@@ -143,7 +149,7 @@ function drawToken(id, r) {
       adj = 5;
     }
     // digits just below label
-    g.setFont("Vector", (tokens[id].digits > 8) ? 26 : 30);
+    g.setFont("Vector", (state.otp.length > 8) ? 26 : 30);
     g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
   }
   // shaded lines top and bottom
@@ -160,20 +166,18 @@ function draw() {
     if (d.getTime() > state.nextTime) {
       if (state.hide == 0) {
         // auto-hide the current token
-        state.curtoken = -1;
+        if (state.curtoken != -1) {
+          state.prevcur = state.curtoken;
+          state.curtoken = -1;
+        }
         state.nextTime = 0;
       } else {
         // time to generate a new token
-        try {
-          var r = hotp(t);
-          state.nextTime = r.next;
-          state.otp = r.hotp;
-          if (t.period <= 0) {
-            state.hide = 1;
-          }
-        } catch (err) {
-          state.nextTime = 0;
-          state.otp = "Not supported";
+        var r = hotp(t);
+        state.nextTime = r.next;
+        state.otp = r.hotp;
+        if (t.period <= 0) {
+          state.hide = 1;
         }
         state.hide--;
       }
@@ -203,7 +207,10 @@ function draw() {
       }
     } else {
       // de-select the current token if it is scrolled out of view
-      state.curtoken = -1;
+      if (state.curtoken != -1) {
+        state.prevcur = state.curtoken;
+        state.curtoken = -1;
+      }
       state.nexttime = 0;
     }
   } else {
@@ -214,26 +221,28 @@ function draw() {
 }
 
 function onTouch(zone, e) {
-  var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
-  if (id == state.curtoken) {
-    id = -1;
-  }
-  if (state.curtoken != id) {
-    if (id != -1) {
-      var y = id * tokenentryheight - state.listy;
-      if (y < 0) {
-        state.listy += y;
-        y = 0;
-      }
-      y += tokenentryheight;
-      if (y > Bangle.appRect.h) {
-        state.listy += (y - Bangle.appRect.h);
-      }
+  if (e) {
+    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
+    if (id == state.curtoken) {
+      id = -1;
     }
-    state.nextTime = 0;
-    state.curtoken = id;
-    state.hide = 2;
-    draw();
+    if (state.curtoken != id) {
+      if (id != -1) {
+        var y = id * tokenentryheight - state.listy;
+        if (y < 0) {
+          state.listy += y;
+          y = 0;
+        }
+        y += tokenentryheight;
+        if (y > Bangle.appRect.h) {
+          state.listy += (y - Bangle.appRect.h);
+        }
+      }
+      state.nextTime = 0;
+      state.curtoken = id;
+      state.hide = 2;
+      draw();
+    }
   }
 }
 
@@ -261,9 +270,35 @@ function onSwipe(e) {
   }
 }
 
+function bangle1Btn(e) {
+  if (tokens.length > 0) {
+    if (state.curtoken == -1) {
+      state.nextTime = 0;
+      state.curtoken = state.prevcur;
+    } else {
+      switch (e) {
+        case -1: state.curtoken--; break;
+        case  1: state.curtoken++; break;
+      }
+      state.nextTime = 0;
+    }
+    state.curtoken = Math.max(state.curtoken, 0);
+    state.curtoken = Math.min(state.curtoken, tokens.length - 1);
+    var fakee = {};
+    fakee.y = state.curtoken * tokenentryheight - state.listy + Bangle.appRect.y;
+    state.curtoken = -1;
+    onTouch(0, fakee);
+  }
+}
+
 Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
+if (typeof BTN2 == 'number') {
+  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){   onSwipe(-1);}, BTN2, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
+}
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup
