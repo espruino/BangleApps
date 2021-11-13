@@ -267,20 +267,19 @@ function onSwipe(e) {
 function bangle1Btn(e) {
   if (tokens.length > 0) {
     if (state.curtoken == -1) {
-      state.nextTime = 0;
       state.curtoken = state.prevcur;
     } else {
       switch (e) {
         case -1: state.curtoken--; break;
         case  1: state.curtoken++; break;
       }
-      state.nextTime = 0;
     }
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
     var fakee = {};
     fakee.y = state.curtoken * tokenentryheight - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
+    state.nextTime = 0;
     onTouch(0, fakee);
   }
 }
@@ -289,9 +288,9 @@ Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){   onSwipe(-1);}, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn(-1);       }, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){Bangle.showLauncher();}, BTN2, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn( 1);       }, BTN3, {edge:"rising", debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
 
