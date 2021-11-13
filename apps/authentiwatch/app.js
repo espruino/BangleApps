@@ -7,13 +7,7 @@ const algos = {
   "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
 };
 
-var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
-  {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
-  {algorithm:"SHA1",digits:6,period:30,secret:"bbbb bbbb bbbb bbbb",label:"BgBgBg"},
-  {algorithm:"SHA1",digits:8,period:-3,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
-  {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
-  {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
-];
+var tokens = require("Storage").readJSON("authentiwatch.json", true) || [];
 
 // QR Code Text
 //
@@ -223,7 +217,7 @@ function draw() {
 function onTouch(zone, e) {
   if (e) {
     var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
-    if (id == state.curtoken) {
+    if (id == state.curtoken || tokens.length == 0) {
       id = -1;
     }
     if (state.curtoken != id) {
