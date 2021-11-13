@@ -10,7 +10,7 @@ const algos = {
 var tokens = require("Storage").readJSON("authentiwatch.json", true) || [
   {algorithm:"SHA512",digits:8,period:60,secret:"aaaa aaaa aaaa aaaa",label:"AgAgAg"},
   {algorithm:"SHA1",digits:6,period:30,secret:"bbbb bbbb bbbb bbbb",label:"BgBgBg"},
-  {algorithm:"SHA1",digits:6,period:-30,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
+  {algorithm:"SHA1",digits:8,period:-3,secret:"cccc cccc cccc cccc",label:"CgCgCg"},
   {algorithm:"SHA1",digits:6,period:60,secret:"yyyy yyyy yyyy yyyy",label:"YgYgYg"},
   {algorithm:"SHA1",digits:8,period:30,secret:"zzzz zzzz zzzz zzzz",label:"ZgZgZg"},
 ];
@@ -109,7 +109,7 @@ function drawToken(id, r) {
   var y1 = r.y;
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
-  var ylabel;
+  var adj;
   g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
                 Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
   if (id == state.curtoken) {
@@ -119,31 +119,35 @@ function drawToken(id, r) {
     g.setFont("Vector", 16);
     // center just below top line
     g.setFontAlign(0, -1, 0);
-    ylabel = y1;
+    adj = y1;
   } else {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
     g.setFont("Vector", 30);
     // center in box
     g.setFontAlign(0, 0, 0);
-    ylabel = (y1 + y2) / 2;
+    adj = (y1 + y2) / 2;
   }
   g.clearRect(x1, y1, x2, y2);
-  g.drawString(tokens[id].label, (x1 + x2) / 2, ylabel, false);
+  g.drawString(tokens[id].label, (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
+    if (tokens[id].period > 0) {
+      // timed - draw progress bar
+      let xr = Math.floor(Bangle.appRect.w * state.rem / tokens[id].period);
+      g.fillRect(x1, y2 - 4, xr, y2 - 1);
+      adj = 0;
+    } else {
+      // counter - draw triangle as swipe hint
+      let yc = (y1 + y2) / 2;
+      g.fillPoly([0, yc, 10, yc - 10, 10, yc + 10, 0, yc]);
+      adj = 5;
+    }
     // digits just below label
-    g.setFont("Vector", 30);
-    g.drawString(state.otp, (x1 + x2) / 2, y1 + 16, false);
-    // draw progress bar
-    let xr = Math.floor(Bangle.appRect.w * state.rem / tokens[id].period);
-    g.fillRect(x1, y2 - 4, xr, y2 - 1);
+    g.setFont("Vector", (tokens[id].digits > 8) ? 26 : 30);
+    g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
   }
   // shaded lines top and bottom
-  if (g.theme.dark) {
-    g.setColor(0.25, 0.25, 0.25);
-  } else {
-    g.setColor(0.75, 0.75, 0.75);
-  }
+  g.setColor(0.5, 0.5, 0.5);
   g.drawLine(x1, y1, x2, y1);
   g.drawLine(x1, y2, x2, y2);
   g.setClipRect(0, 0, g.getWidth(), g.getHeight());
