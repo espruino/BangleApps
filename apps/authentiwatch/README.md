@@ -1,13 +1,14 @@
 # Authentiwatch - 2FA Authenticator
 
-Supports Google Authenticator compatible 2-factor authentication.
-
 Supports:
 
-* All RFC6238 hashes: SHA1 (default), SHA256, SHA512
-* Timed (TOTP) (default) and Counter (HOTP) modes
-* Custom periods (default 30s)
-* Between 6 (default) and 10 digits
+* Google Authenticator compatible 2-factor authentication
+* Hash calculations:
+  * Bangle 1: SHA1 only (same as Google Authenticator)
+  * Bangle 2: All (SHA1, SHA256, SHA512)
+* Timed (TOTP) and Counter (HOTP) modes
+* Custom periods
+* Between 6 and 10 digits
 * Phone/PC configuration web page:
   * Add/edit/delete/arrange tokens
   * Scan QR codes
