@@ -4217,7 +4217,7 @@
     "data": [{ "name": "qalarm.json" }]
   },
   {
-    "id": "emojuno",
+    "id": "emojuino",
     "name": "Emoji Broadcaster",
     "shortName": "Emojuino",
     "version": "0.01",
@@ -4227,8 +4227,8 @@
     "supports" : [ "BANGLEJS2" ],  
     "readme": "README.md",
     "storage": [
-      { "name": "emojuno.app.js", "url": "emojuino.js" },
-      { "name": "emojuno.img", "url": "emojuino-icon.js", "evaluate": true }
+      { "name": "emojuino.app.js", "url": "emojuino.js" },
+      { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
     ]
   }
 ]
