@@ -4215,5 +4215,20 @@
       { "name": "qalarm.wid.js", "url": "widget.js" }
     ],
     "data": [{ "name": "qalarm.json" }]
+  },
+  {
+    "id": "emojuno",
+    "name": "Emoji Broadcaster",
+    "shortName": "Emojuino",
+    "version": "0.01",
+    "description": "Emojis & Espruino: advertise Unicode emojis via BLE",
+    "icon": "emojuino.png",
+    "tags": "emoji",
+    "supports" : [ "BANGLEJS2" ],  
+    "readme": "README.md",
+    "storage": [
+      { "name": "emojuno.app.js", "url": "emojuino.js" },
+      { "name": "emojuno.img", "url": "emojuino-icon.js", "evaluate": true }
+    ]
   }
 ]
