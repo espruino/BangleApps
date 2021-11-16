@@ -4218,10 +4218,10 @@
   },
   {
     "id": "emojuino",
-    "name": "Emoji Broadcaster",
+    "name": "Emojuino",
     "shortName": "Emojuino",
     "version": "0.01",
-    "description": "Emojis & Espruino: advertise Unicode emojis via BLE",
+    "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
     "tags": "emoji",
     "supports" : [ "BANGLEJS2" ],  
