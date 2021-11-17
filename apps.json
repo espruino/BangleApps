@@ -4236,7 +4236,7 @@
     "name": "Commandline-Clock JS2 Enhanced",
     "shortName": "CLI-Clock JS2",
     "version": "0.1",
-    "description": "Simple CLI-Styled Clock with enhancements",
+    "description": "Simple CLI-Styled Clock with enhancements, credit to hughbarney for the original code and design",
     "icon": "app.png",
     "screenshots": [{"url":"screengrab.png"}],
     "type": "clock",
