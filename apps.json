@@ -82,7 +82,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
     "tags": "tool,system,health",
@@ -3467,7 +3467,7 @@
     "id": "widgps",
     "name": "GPS Widget",
     "version": "0.03",
-    "description": "Tiny widget to show the power on/off status of the GPS. Require firmware v2.08.167 or later",
+    "description": "Tiny widget to show the power on/off status of the GPS",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,gps",
@@ -3481,7 +3481,7 @@
     "id": "widhrt",
     "name": "HRM Widget",
     "version": "0.03",
-    "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor. Requires firmware v2.08.167 or later",
+    "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,hrm",
@@ -3524,7 +3524,7 @@
     "id": "widcom",
     "name": "Compass Widget",
     "version": "0.02",
-    "description": "Tiny widget to show the power on/off status of the Compass. Requires firmware v2.08.167 or later",
+    "description": "Tiny widget to show the power on/off status of the Compass",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,compass",
@@ -3665,7 +3665,7 @@
     "id": "kitchen",
     "name": "Kitchen Combo",
     "version": "0.13",
-    "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'. Requires firmware v2.08.167 or later",
+    "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'",
     "icon": "kitchen.png",
     "type": "clock",
     "tags": "tool,outdoors,gps",
@@ -4215,5 +4215,20 @@
       { "name": "qalarm.wid.js", "url": "widget.js" }
     ],
     "data": [{ "name": "qalarm.json" }]
+  },
+  {
+    "id": "emojuino",
+    "name": "Emojuino",
+    "shortName": "Emojuino",
+    "version": "0.01",
+    "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
+    "icon": "emojuino.png",
+    "tags": "emoji",
+    "supports" : [ "BANGLEJS2" ],  
+    "readme": "README.md",
+    "storage": [
+      { "name": "emojuino.app.js", "url": "emojuino.js" },
+      { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
+    ]
   }
 ]
