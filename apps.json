@@ -4230,5 +4230,19 @@
       { "name": "emojuino.app.js", "url": "emojuino.js" },
       { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
     ]
-  }
+  },
+  { "id": "clijs2",
+  "name": "Commandline-Clock JS2 Enhanced",
+  "shortName":"CLI Clock JS2",
+  "version":"0.01",
+  "description": "An enchancement of the JS1 CLI clock with a easier to read time line and extra hard-to-use functionality removed",
+  "icon": "app.png",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"clijs2.app.js","url":"app.js"},
+    {"name":"clijs2.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
