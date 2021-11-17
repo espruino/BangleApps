@@ -4232,7 +4232,7 @@
     ]
   },
   {
-    "id": "cliockJS2",
+    "id": "cliclockJS2Enhanced",
     "name": "Commandline-Clock JS2 Enhanced",
     "shortName": "CLI-Clock JS2",
     "version": "0.1",
@@ -4244,8 +4244,8 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
-      {"name":"cliockJS2.app.js","url":"app.js"},
-      {"name":"cliockJS2.img","url":"app-icon.js","evaluate":true}
+      {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
+      {"name":"cliclockJS2Enhanced.img","url":"app-icon.js","evaluate":true}
     ]
 }
 ]
