@@ -210,8 +210,3 @@ Bangle.on('lcdPower',function(on) {
 });
 var click = setInterval(updateTime, 1000);
 // Show launcher when button pressed
-Bangle.setUI("clockupdown", btn=>{
-  if (btn<0) changeInfoMode();
-  if (btn>0) changeFunctionMode();
-  drawAll();
-});
