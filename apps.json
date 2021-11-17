@@ -4231,20 +4231,21 @@
       { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
     ]
   },
-  { "id": "clijs2",
-  "name": "Commandline-Clock JS2 Enhanced",
-  "shortName":"CLI Clock JS2",
-  "version":"0.01",
-  "description": "An enchancement of the JS1 CLI clock with a easier to read time line and extra hard-to-use functionality removed",
-  "icon": "app.png",
-  "type": "clock",
-  "tags": "clock",
-  "supports" : ["BANGLEJS2"],  
-  "readme": "README.md",
-  "allow_emulator": true,
-  "storage": [
-    {"name":"clijs2.app.js","url":"app.js"},
-    {"name":"clijs2.img","url":"app-icon.js","evaluate":true}
-  ]
+  {
+    "id": "cliockJS2",
+    "name": "Commandline-Clock JS2 Enhanced",
+    "shortName": "CLI-Clock JS2",
+    "version": "0.1",
+    "description": "Simple CLI-Styled Clock with enhancements",
+    "icon": "app.png",
+    "screenshots": [{"url":"screengrab.png"}],
+    "type": "clock",
+    "tags": "clock,cli,command,bash,shell",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cliockJS2.app.js","url":"app.js"},
+      {"name":"cliockJS2.img","url":"app-icon.js","evaluate":true}
+    ]
 }
 ]
