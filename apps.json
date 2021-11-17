@@ -4237,9 +4237,11 @@
   "version":"0.01",
   "description": "An enchancement of the JS1 CLI clock with a easier to read time line and extra hard-to-use functionality removed",
   "icon": "app.png",
+  "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
+  "allow_emulator": true,
   "storage": [
     {"name":"clijs2.app.js","url":"app.js"},
     {"name":"clijs2.img","url":"app-icon.js","evaluate":true}
