@@ -58,7 +58,7 @@ function writeLine(str,line){
   var y = marginTop+line*fontheightTime;
   g.setFont("6x8",fontsizeTime);
   g.setColor(textCol).setFontAlign(-1,-1);
-  g.clearRect(0,y,((str.length+1)*20),y+fontheight-1);
+  g.clearRect(0,y,((str.length+1)*40),y+fontheightTime-1);
   writeLineStart(line);
   g.drawString(str,25,y);
   } else {
