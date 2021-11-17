@@ -4245,7 +4245,7 @@
     "allow_emulator": true,
     "storage": [
       {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
-      {"name":"cliclockJS2Enhanced.img","url":"app-icon.js","evaluate":true}
+      {"name":"cliclockJS2Enhanced.img","url":"app.icon.js","evaluate":true}
     ]
 }
 ]
