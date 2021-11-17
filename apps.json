@@ -4216,6 +4216,21 @@
     ],
     "data": [{ "name": "qalarm.json" }]
   },
+  {  
+    "id": "emojuino",
+    "name": "Emojuino",
+    "shortName": "Emojuino",
+    "version": "0.01",
+    "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
+    "icon": "emojuino.png",
+    "tags": "emoji",
+    "supports" : [ "BANGLEJS2" ],  
+    "readme": "README.md",
+    "storage": [
+      { "name": "emojuino.app.js", "url": "emojuino.js" },
+      { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
+    ]
+  },
   {
     "id": "authentiwatch",
     "name": "2FA Authenticator",
