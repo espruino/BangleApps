@@ -3,10 +3,9 @@ var cindex=0;  // index to iterate through colous
 var bpm=60;  // ininital bpm value
 var time_diffs = [1000, 1000, 1000];  //array to calculate mean bpm
 var tindex=0;  //index to iterate through time_diffs
-
-
+// set background colour
+g.setTheme({bg:"#000"});
 Bangle.setLCDTimeout(undefined);  //do not deactivate display while running this app
-
 const storage = require("Storage");
 const SETTINGS_FILE = 'metronome.settings.json';
 
@@ -40,6 +39,12 @@ function changecolor() {
     7: { value: 0xFFFF, name: "White" },
   };
   g.setColor(colors[cindex].value);
+  if ((process.env.HWVERSION==2 )) {
+   g.drawLine(39,0,39,65);
+   g.drawLine(39,135,39,200);
+   g.drawLine(136,0,136,65);
+   g.drawLine(136,135,136,200);
+  }
   if (cindex == setting('beatsperbar')-1) {
     cindex = 0;
   }
@@ -54,7 +59,6 @@ function updateScreen() {
   changecolor();
   try {
     Bangle.buzz(50, setting('buzzintens'));
-    Bangle.beep(); // TODO: make optional
   } catch(err) {
   }
   g.setFont("Vector",40).setFontAlign(0,0);
