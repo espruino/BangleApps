@@ -115,7 +115,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.31",
+    "version": "0.33",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -539,6 +539,21 @@
       {"name":"trex.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"trex.score","storageFile":true}]
+  },
+  {
+    "id": "cubescramble",
+    "name": "Cube Scramble",
+    "version":"0.01",
+    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "icon": "cube-scramble.png",
+    "tags": "",
+    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cubescramble.app.js","url":"cube-scramble.js"},
+      {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "astroid",
@@ -4216,7 +4231,40 @@
     ],
     "data": [{ "name": "qalarm.json" }]
   },
-  { "id": "lcars",
+  {
+    "id": "emojuino",
+    "name": "Emojuino",
+    "shortName": "Emojuino",
+    "version": "0.01",
+    "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
+    "icon": "emojuino.png",
+    "tags": "emoji",
+    "supports" : [ "BANGLEJS2" ],
+    "readme": "README.md",
+    "storage": [
+      { "name": "emojuino.app.js", "url": "emojuino.js" },
+      { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
+    ]
+  },
+  {
+    "id": "cliclockJS2Enhanced",
+    "name": "Commandline-Clock JS2 Enhanced",
+    "shortName": "CLI-Clock JS2",
+    "version": "0.1",
+    "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design",
+    "icon": "app.png",
+    "screenshots": [{"url":"screengrab.png"}],
+    "type": "clock",
+    "tags": "clock,cli,command,bash,shell",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
+      {"name":"cliclockJS2Enhanced.img","url":"app.icon.js","evaluate":true}
+    ]
+  },
+  { 
+    "id": "lcars",
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
