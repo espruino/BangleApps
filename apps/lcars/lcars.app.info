@@ -1,5 +1,0 @@
-require("Storage").write("lcars.info",{
-  "name":"LCARS",
-  "type":"clock",
-  "src":"lcars.app.js"
-});

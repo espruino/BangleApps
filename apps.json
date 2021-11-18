@@ -4215,5 +4215,17 @@
       { "name": "qalarm.wid.js", "url": "widget.js" }
     ],
     "data": [{ "name": "qalarm.json" }]
+  },
+  { "id": "lcars",
+    "name": "LCARS Clock",
+    "shortName":"LCARS",
+    "icon": "lcars.png",
+    "version":"0.01",
+    "description": "Library Computer Access Retrieval System (LCARS) clock.",
+    "tags": "",
+    "storage": [
+      {"name":"lcars-icon.js","url":"app.js"},
+      {"name":"lcars.app.js","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
