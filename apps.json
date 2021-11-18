@@ -4262,5 +4262,20 @@
       {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
       {"name":"cliclockJS2Enhanced.img","url":"app.icon.js","evaluate":true}
     ]
-}
+  },
+  { 
+    "id": "lcars",
+    "name": "LCARS Clock",
+    "shortName":"LCARS",
+    "icon": "lcars.png",
+    "version":"0.01",
+    "supports": ["BANGLEJS2"],
+    "description": "Library Computer Access Retrieval System (LCARS) clock.",
+    "type": "clock",
+    "tags": "clock",
+    "storage": [
+      {"name":"lcars.app.js","url":"lcars.app.js"},
+      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
+    ]
+  }
 ]
