@@ -168,15 +168,9 @@ class DoneState extends State {
 
   setButtons () {
     this.device.setBTN1(() => {
-      const initState = new InitState(this.device);
-      clearTimeout(this.timeout);
-      initState.go();
     });
 
     this.device.setBTN3(() => {
-      const breakState = new BreakState(this.device);
-      clearTimeout(this.timeout);
-      breakState.go();
     });
 
     this.device.setBTN2(() => {
@@ -185,14 +179,15 @@ class DoneState extends State {
 
   draw () {
     g.clear();
-    g.setFont("6x8", 2);
-    g.setFontAlign(0, 0, 3);
-    g.drawString("AGAIN", 230, 50);
-    g.drawString("BREAK", 230, 190);
-    g.setFont("Vector", 45);
-    g.setFontAlign(-1, -1);
-
-    g.drawString('You\nare\na\nhero!', 50, 40);
+    E.showPrompt("You are a hero!", {
+      buttons : {"AGAIN":1,"BREAK":2}
+    }).then((v) => {
+      var nextSate = (v == 1
+                      ? new InitState(this.device)
+                      : new BreakState(this.device));
+      clearTimeout(this.timeout);
+      nextSate.go();
+    });
   }
 
   init () {
