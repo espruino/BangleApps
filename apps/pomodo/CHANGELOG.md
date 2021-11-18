@@ -1,5 +1,9 @@
 # Changelog
 
+## 2021-11-18
+
+- [Feature] Ported to Banglejs2
+
 ## 2019-11-27
 
 - [Feature] App now saves the last interval value
