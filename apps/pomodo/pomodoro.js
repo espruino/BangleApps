@@ -119,7 +119,7 @@ class StartedState extends State {
   }
 
   draw () {
-    drawCounter(this.timeCounter, 120, 120);
+    drawCounter(this.timeCounter, g.getWidth() / 2, g.getHeight() / 2);
   }
 
   init () {
@@ -220,8 +220,8 @@ function drawCounter (currentValue, x, y) {
     return;
   }
 
-  x = x || 120;
-  y = y || 120;
+  x = x || g.getWidth() / 2;
+  y = y || g.getHeight() / 2;
 
   let minutes = 0;
   let seconds = 0;
