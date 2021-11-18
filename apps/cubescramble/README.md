@@ -9,6 +9,10 @@ I'm keen to complete this project with
 * Add a timer
 * Add the ability for times to be stored and exported
 
-## Author
+## Requests
 
-Nathan Lisgo https://github.com/nlisgo
+Please reach out if you have feature requests or notice bugs.
+
+## Creator
+
+Made by [Nathan Lisgo](https://github.com/nlisgo)
