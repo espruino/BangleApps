@@ -4230,5 +4230,22 @@
       { "name": "emojuino.app.js", "url": "emojuino.js" },
       { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
     ]
-  }
+  },
+  {
+    "id": "cliclockJS2Enhanced",
+    "name": "Commandline-Clock JS2 Enhanced",
+    "shortName": "CLI-Clock JS2",
+    "version": "0.1",
+    "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design",
+    "icon": "app.png",
+    "screenshots": [{"url":"screengrab.png"}],
+    "type": "clock",
+    "tags": "clock,cli,command,bash,shell",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
+      {"name":"cliclockJS2Enhanced.img","url":"app.icon.js","evaluate":true}
+    ]
+}
 ]
