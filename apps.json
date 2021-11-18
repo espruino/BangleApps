@@ -246,19 +246,6 @@
     "data": [{"name":"mywelcome.json"}]
   },
   {
-    "id": "cubescramble",
-    "name": "Cube Scramble",
-    "version":"0.01",
-    "description": "A random scramble generator for the 3x3 Rubik's cube",
-    "icon": "cube-scramble.png",
-    "tags": "",
-    "supports" : ["BANGLEJS2"],  
-    "storage": [
-      {"name":"cubescramble.app.js","url":"cube-scramble.js"},
-      {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
-    ]
-  },
-  {
     "id": "gbridge",
     "name": "Gadgetbridge",
     "version": "0.24",
@@ -552,6 +539,19 @@
       {"name":"trex.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"trex.score","storageFile":true}]
+  },
+  {
+    "id": "cubescramble",
+    "name": "Cube Scramble",
+    "version":"0.01",
+    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "icon": "cube-scramble.png",
+    "tags": "",
+    "supports" : ["BANGLEJS2"],  
+    "storage": [
+      {"name":"cubescramble.app.js","url":"cube-scramble.js"},
+      {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "astroid",

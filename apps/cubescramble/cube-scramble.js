@@ -1,1 +1,7 @@
-E.showMessage("Cube\nScramble","3x3");
+g.clear();
+
+function appStart() {
+  E.showMessage("Loading...");
+}
+
+appStart();
