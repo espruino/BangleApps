@@ -235,13 +235,25 @@ class Bangle1 {
 }
 
 class Bangle2 {
-  setBTN1(callback) { }
+  setBTN1(callback) {
+      Bangle.on('touch', function(zone, e) {
+          if (e.y < g.getHeight() / 2) {
+              callback();
+          }
+      });
+  }
 
   setBTN2(callback) {
     setWatch(callback, BTN1, { repeat: true });
   }
 
-  setBTN3(callback) { }
+  setBTN3(callback) {
+      Bangle.on('touch', function(zone, e) {
+          if (e.y > g.getHeight() / 2) {
+              callback();
+          }
+      });
+  }
 
   setBTN4(callback) { }
 
