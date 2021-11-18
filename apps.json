@@ -547,7 +547,9 @@
     "description": "A random scramble generator for the 3x3 Rubik's cube",
     "icon": "cube-scramble.png",
     "tags": "",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "readme": "README.md",
+    "allow_emulator": true,
     "storage": [
       {"name":"cubescramble.app.js","url":"cube-scramble.js"},
       {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
