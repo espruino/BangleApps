@@ -63,9 +63,12 @@ const presentScramble = () => {
   E.showMessage(makeScramble().join(" "));
 };
 
-presentScramble();
-
-setWatch(() => {
-  Bangle.buzz();
+const init = () => {
   presentScramble();
-}, BTN1, {repeat:true});
+
+  setWatch(() => {
+    presentScramble();
+  }, BTN1, {repeat:true});
+};
+
+init();
