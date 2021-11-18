@@ -1,4 +1,4 @@
-# Lazy clock
+# LCARS clock
 
 A simple LCARS inspired clock that shows:
  * Current time
