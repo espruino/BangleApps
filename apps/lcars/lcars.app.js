@@ -1,10 +1,13 @@
+const locale = require('locale');
+
+
 /*
  * Assets: Images, fonts etc.
  */
 var img = {
-  width : 176, height : 176, bpp : 3,
-  transparent : 2,
-  buffer : require("heatshrink").decompress(atob("pNx48cAR1wyVJkgCrrdt23bARvaINyD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4C/AX4C/AVNLlmy5YCN5RBuvPnzwCOvCD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AX4C/AX4C/ASUSCaJBuufPnnzARvyQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/ASkjQf9JkQTRqRBtkqDQ+fSINskxITQpRBuy6DQ5JBuyQTRlJBuriDP58lIN1ICaOUINtJkaDPnnyqRBtkgTSZF2XQZ4Cq6REFoj3uARTvHiaD/AQOJQf4CBpCD/AQdEQfoC/AX4C/pMtmnTpoCIiVJkss2XLAR0qEwO27dtAShBDpVp02aARIRBkvnz15AR3iEwIjLF5pBBqaAJQbW0EZQvNIIJTPQeGUKZ6DwKaCDwLhyDxkqD/F4JTRQd0pQf9JlqD/Qf6D/F4hTRQd5TRQfckKAICyKBXRIOqDJwQ+zQZdEH2iDLH2qDK6JB4QY8JQf80H2yDJ0RB5QY0SQf9pH26D/QZVoQf/TphB6Qf6DHoiD/zVkQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AVUtQYgCdomRGJclkodLiVJlKDEATtky88+fPARE9kodLKIKAgQcCAgQcBdLAWgA=="))
+  width : 176, height : 151, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("gF58+eAR14IN1fvv374CN7yD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AH4A/AH4A/AB1z588+YCN+RBuj158+eARyD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AUhyD/gEDQaHz4BCuQaNAIN0PQaHIIN0BQaF5IN0AQaHPkBBug6DQ8iEvQaE8yBBuhyDPAQNAINsBQaACBkhCuQaACpVo0cQaACo4CFGjyD/AAMPQf4ACQf4ADgiD+AH4A/AH8J02atICIwEAgPnz15AR3gEgM27dt2wCTF4IABgYROgN9+/fAR14ILsaQBKDakwjKF5oABKZ6DwgxTPQeEmQf5cPQeMBLhyDxgJTRQd0JKaKDuhKD/gENQf6D/F4VNQf8AKaKDvKBYnBAGZQKzBB1QZOwIGqDJsBA2QZJA3QZGYIPCDH4CD/0xA4QY+wIPKDGwCD/tpB6Qf6DHthA5QY1oIPSD/QY9gQf/bIPaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AF8JQYgCdsEHnnz54CJgIdLwEAhqDEATtggPnz15ARHkgIdLIIKAgQcCAgQcAA/gAA=="))
 }
 
 Graphics.prototype.setFontMinaSmall = function(scale) {
@@ -36,41 +39,40 @@ function queueDraw() {
  */
 function draw(){
   g.reset();
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
+  g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
   // Draw background image
-  g.drawImage(img, 0,0)
-
-  // work out locale-friendly date/time
-  var date = new Date();
+  g.drawImage(img, 0, 24);
 
   // Write time
-  var timeStr = require("locale").time(date,1);
+  var currentDate = new Date();
+  var timeStr = locale.time(currentDate,1);
   g.setFontAlign(0,0,0);
   g.setFontMinaLarge();
-  g.drawString(timeStr, 115, 40);
+  g.drawString(timeStr, 115, 53);
 
   // Write date
   g.setFontAlign(-1,-1,0);
-  var dateStr = require('locale').date(date,1);
   g.setFontMinaSmall();
-  g.drawString("DAT:", 28, 110);
-  g.drawString(dateStr, 78, 110);
 
-  // Draw steps
-  var steps = Bangle.getStepCount();
-  g.drawString("STEP:", 28, 130);
-  g.drawString(steps, 78, 130);
+  var dayName = locale.dow(currentDate, true).toUpperCase();
+  var day = currentDate.getDate();
+  g.drawString("DATE:", 40, 107);
+  g.drawString(dayName + " " + day, 100, 105);
 
   // Draw battery
   var bat = E.getBattery();
-  g.drawString("BAT:", 28, 150);
-  g.drawString(bat+"%", 78, 150);
+  g.drawString("BAT:", 40, 127);
+  g.drawString(bat+"%", 100, 127);
+
+  // Draw steps
+  var steps = Bangle.getStepCount();
+  g.drawString("STEP:", 40, 147);
+  g.drawString(steps, 100, 147);
 
   // Queue draw in one minute
   queueDraw();
 }
-
 
 // Clear the screen once, at startup
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
@@ -92,6 +94,6 @@ Bangle.on('lcdPower',on=>{
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 
-// Currently we don't load widgets an use the full screen
-// Bangle.loadWidgets();
-// Bangle.drawWidgets();
+// Load widgets
+Bangle.loadWidgets();
+Bangle.drawWidgets();
