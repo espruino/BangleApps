@@ -39,6 +39,8 @@ var month = [
 
 var imgSquid = {width : 88, height : 26, bpp : 1, buffer : require("heatshrink").decompress(atob("gE/AYUYgEH////0B//gBQM8BQgDB/AKHh/A/gKBvwKBAgMOj8AnwKHBAIMBgH/BQgmCAoPnBQl4AoOAgPnwAKDuEAgYKB4YKIgfD4AKDMAMB4EDwIKIg+B8AKIgAKIh8A+AKHh0AuAKHj0AvBMG4EcgE4K458Bnh4HnEAjiOHBwMeBQpKBEgMOXQ/wBwIKDaAZQBg4KDcwT0BAAOHfgoKHgE/wDaBAAL8DA="))};
 
+var imgNoBT = {width : 20, height : 20, bpp : 3, transparent : 0, buffer : require("heatshrink").decompress(atob("///8mSpM/AoP/yUT/8yuYGB5AMB/1MyYUBkmT/P85MP+USBwOT8mQ/8JBwXyoVnyGSv8//Mhk14pMn//8BYNMwmSp/+pFJkgyBDoMkkgODpOSuQOE5M/KgIOCsmfz/JknPhMyof5n+Ss/wzMhn4OBk1+smQLoWTn/mHAM/+VJz4KBwhZBEYJ/CkM8yZVBAAQxBCgP/A="))};
+
 const V2_X_STEP = 26;
 const V2_Y_STEP = 34;
 
@@ -49,7 +51,7 @@ const V2_MX = 10;
 const V2_MY = 51 + V2_TIME_Y_OFFSET;
 const V2_SX = 10;
 const V2_SY = 95 + V2_TIME_Y_OFFSET;
-const V2_BT_X = 135;
+const V2_BT_X = 137; /* 145, 35 */
 const V2_BT_Y = 20;
 const V2_DX = 100;
 const V2_DY = 141;
@@ -262,7 +264,7 @@ function drawBattery(gfx, level) {
 */
 function drawBT(gfx, status) {
   if(!status) {
-    gfx.drawImage(require("Storage").read("bt-icon.png"), bt_x, bt_y);
+    gfx.drawImage(imgNoBT, bt_x, bt_y);
   }
 }
 function setRuntimeValues(resolution) {
