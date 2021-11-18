@@ -64,3 +64,8 @@ const presentScramble = () => {
 };
 
 presentScramble();
+
+setWatch(() => {
+  Bangle.buzz();
+  presentScramble();
+}, BTN1, {repeat:true});
