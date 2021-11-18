@@ -115,7 +115,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.32",
+    "version": "0.33",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -539,6 +539,21 @@
       {"name":"trex.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"trex.score","storageFile":true}]
+  },
+  {
+    "id": "cubescramble",
+    "name": "Cube Scramble",
+    "version":"0.01",
+    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "icon": "cube-scramble.png",
+    "tags": "",
+    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cubescramble.app.js","url":"cube-scramble.js"},
+      {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "astroid",
@@ -4261,6 +4276,21 @@
     "tags": "widget,battery",
     "storage": [
       {"name":"a_battery_widget.wid.js","url":"widget.js"}
+    ]
+  },
+  { 
+    "id": "lcars",
+    "name": "LCARS Clock",
+    "shortName":"LCARS",
+    "icon": "lcars.png",
+    "version":"0.01",
+    "supports": ["BANGLEJS2"],
+    "description": "Library Computer Access Retrieval System (LCARS) clock.",
+    "type": "clock",
+    "tags": "clock",
+    "storage": [
+      {"name":"lcars.app.js","url":"lcars.app.js"},
+      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
     ]
   }
 ]

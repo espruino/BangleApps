@@ -38,7 +38,7 @@ function resetSettings() {
     quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
     timeout: 10,           // Default LCD timeout in seconds
     vibrate: true,         // Vibration enabled by default. App must support
-    beep: "vib",            // Beep enabled by default. App must support
+    beep: BANGLEJS2?true:"vib",            // Beep enabled by default. App must support
     timezone: 0,           // Set the timezone for the device
     HID: false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
@@ -73,9 +73,9 @@ const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
   var beepMenuItem;
-  if (BANGLEJS2) { // Bangle.js 2 is simply on/off
+  if (BANGLEJS2) {
     beepMenuItem = {
-      value: settings.beep,
+      value: settings.beep!=false,
       format: boolFormat,
       onchange: v => {
         settings.beep = v;
@@ -85,8 +85,8 @@ function showMainMenu() {
           setTimeout(()=>VIBRATE.reset(),200);
         } // beep with vibration moter
       }
-    }
-  } else { // Bangle.js 1 has different options
+    };
+  } else { // Bangle.js 1
     var beepV = [false, true, "vib"];
     var beepN = ["Off", "Piezo", "Vibrate"];
     beepMenuItem = {
@@ -121,8 +121,8 @@ function showMainMenu() {
     'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
-      onchange: v => {
-        settings.vibrate = v;
+      onchange: () => {
+        settings.vibrate = !settings.vibrate;
         updateSettings();
         if (settings.vibrate) {
           VIBRATE.write(1);
