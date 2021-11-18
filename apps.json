@@ -4221,8 +4221,10 @@
     "shortName":"LCARS",
     "icon": "lcars.png",
     "version":"0.01",
+    "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
-    "tags": "",
+    "type": "clock",
+    "tags": "clock",
     "storage": [
       {"name":"lcars-icon.js","url":"app.js"},
       {"name":"lcars.app.js","url":"app-icon.js","evaluate":true}
