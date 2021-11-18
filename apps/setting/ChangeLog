@@ -34,3 +34,4 @@
 0.29: Add Customize to Theme menu
 0.30: Move '< Back' to the top of menus
 0.31: Remove Bangle 1 settings when running on Bangle 2
+0.32: Fix 'beep' menu on Bangle.js 2

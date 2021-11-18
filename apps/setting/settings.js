@@ -72,8 +72,37 @@ if (!('qmOptions' in settings)) settings.qmOptions = {}; // easier if this alway
 const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
-  var beepV = BANGLEJS2 ? [false,true] : [false, true, "vib"];
-  var beepN = BANGLEJS2 ? ["Off","On"] : ["Off", "Piezo", "Vibrate"];
+  var beepMenuItem;
+  if (BANGLEJS2) { // Bangle.js 2 is simply on/off
+    beepMenuItem = {
+      value: settings.beep,
+      format: boolFormat,
+      onchange: v => {
+        settings.beep = v;
+        updateSettings();
+        if (settings.beep) {
+          analogWrite(VIBRATE,0.1,{freq:2000});
+          setTimeout(()=>VIBRATE.reset(),200);
+        } // beep with vibration moter
+      }
+    }
+  } else { // Bangle.js 1 has different options
+    var beepV = [false, true, "vib"];
+    var beepN = ["Off", "Piezo", "Vibrate"];
+    beepMenuItem = {
+      value: Math.max(0 | beepV.indexOf(settings.beep),0),
+      min: 0, max: beepV.length-1,
+      format: v => beepN[v],
+      onchange: v => {
+        settings.beep = beepV[v];
+        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo on Bangle.js 1
+        else if (v==2) { analogWrite(VIBRATE,0.1,{freq:2000});setTimeout(()=>VIBRATE.reset(),200); } // vibrate
+        updateSettings();
+      }
+    };
+  }
+
+
   const mainmenu = {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
@@ -88,22 +117,12 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Beep': {
-      value: 0 | beepV.indexOf(settings.beep),
-      min: 0, max: 2,
-      format: v => beepN[v],
-      onchange: v => {
-        settings.beep = beepV[v];
-        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo
-        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200); } // vibrate
-        updateSettings();
-      }
-    },
+    'Beep': beepMenuItem,
     'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
-      onchange: () => {
-        settings.vibrate = !settings.vibrate;
+      onchange: v => {
+        settings.vibrate = v;
         updateSettings();
         if (settings.vibrate) {
           VIBRATE.write(1);
@@ -146,7 +165,7 @@ function showBLEMenu() {
       }
     },
     'HID': {
-      value: 0 | hidV.indexOf(settings.HID),
+      value: Math.max(0,0 | hidV.indexOf(settings.HID)),
       min: 0, max: 3,
       format: v => hidN[v],
       onchange: v => {
