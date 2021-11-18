@@ -8,7 +8,7 @@ Show the current battery level and charging status in the top right of the clock
   *  Blue when charging
 *  40 pixels wide
 
-![](widget.png)
+![](a_battery_widget-pic.jpg)
 
 ## Creator
 [@alainsaas](https://github.com/alainsaas)
