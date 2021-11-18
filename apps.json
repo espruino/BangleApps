@@ -4227,7 +4227,7 @@
     "tags": "clock",
     "storage": [
       {"name":"lcars.app.js","url":"lcars.app.js"},
-      {"name":"lcars.icon.js","url":"lcars.icon.js","evaluate":true}
+      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
     ]
   }
 ]
