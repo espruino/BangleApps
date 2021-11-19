@@ -1420,12 +1420,12 @@
   {
     "id": "pomodo",
     "name": "Pomodoro",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A simple pomodoro timer.",
     "icon": "pomodoro.png",
     "type": "app",
     "tags": "pomodoro,cooking,tools",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"pomodo.app.js","url":"pomodoro.js"},
@@ -4291,6 +4291,21 @@
     "storage": [
       {"name":"lcars.app.js","url":"lcars.app.js"},
       {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
+    ]
+  },
+  { "id": "binwatch",
+    "name": "Binary Watch",
+    "shortName":"BinWatch",
+    "icon": "app.png",
+    "version":"0.02",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator":true,
+    "description": "Famous binary watch",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"binwatch.app.js","url":"app.js"},
+      {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
