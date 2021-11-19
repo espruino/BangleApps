@@ -2639,14 +2639,15 @@
   {
     "id": "magnav",
     "name": "Navigation Compass",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
     "icon": "magnav.png",
     "tags": "tool,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
-      {"name":"magnav.app.js","url":"magnav.min.js"},
+      {"name":"magnav.app.js","url":"magnav-b1.js","supports":"BANGLEJS"},
+      {"name":"magnav.app.js","url":"magnav-b2.js","supports":"BANGLEJS2"},
       {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
     ],
     "data": [{"name":"magnav.json"}]
@@ -2730,7 +2731,7 @@
   {
     "id": "multiclock",
     "name": "Multi Clock",
-    "version": "0.08",
+    "version": "0.09",
     "description": "Clock with multiple faces.  Switch between faces with BTN1 & BTN3 or swipe left-right. For best display set theme Background 2 to cyan or some other bright colour in settings.",
     "icon": "multiclock.png",
     "type": "clock",
