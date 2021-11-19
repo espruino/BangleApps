@@ -4301,6 +4301,7 @@
     "supports": ["BANGLEJS"],
     "allow_emulator":true,
     "description": "Famous binary watch",
+	"screenshots": [{"url":"screenshot.png"}],
     "tags": "clock",
     "type": "clock",
     "storage": [
