@@ -23,10 +23,10 @@ This principle is valid for all the remaining bits.
 
 Mathematically spoken: the value of a digit is the base number of the system (10 for decimal or 2 for binary)
 to the power of the position (from the right, starting with 0).
-that means in numbers: 2^5 = 32, 2^4 = 16, 2^3 = 8, 2^2 = 4, 2^1 = 2, 2^0 = 1
+That means in numbers: 2^5 = 32, 2^4 = 16, 2^3 = 8, 2^2 = 4, 2^1 = 2, 2^0 = 1
 
-The upper row represents the hours with 4 bit (2^4 = 16 possible values in total, 12 are used: 1 to 12)
-2nd row represents the minutes with 6 bit (2^6 = 64 possible values in total, 60 are used: 0 to 59).
+The upper row represents the hours with 4 bit (2^4 = 16 possible values in total, 12 are used: 1 to 12),
+ the 2nd row represents the minutes with 6 bit (2^6 = 64 possible values in total, 60 are used: 0 to 59).
 Same holds for the thrid row: 0-59 seconds
 
 To read the values of a row we summ up the vaules of set bits (black bars).
