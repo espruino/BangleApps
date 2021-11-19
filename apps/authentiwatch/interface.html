@@ -159,7 +159,7 @@ function editToken(id) {
   markup += '<tr class="totp"><td>Period:</td><td><input name="period" type="text" value="' + ((p > 0) ? p : 30)  + '"></td></tr>';
   markup += '<tr class="hotp"><td>Count:</td><td><input name="count" type="text" value="' + ((p >= 0) ? 0 : -p) + '"></td></tr>';
   markup += '<tr><td>Digits:</td><td>';
-  markup += selectMarkup('digits', ['6','8'], tokens[id].digits);
+  markup += selectMarkup('digits', ['6','7','8','9','10'], tokens[id].digits);
   markup += '</td></tr>';
   markup += '<tr><td>Hash:</td><td>';
   markup += selectMarkup('algorithm', ['SHA1','SHA256','SHA512'], tokens[id].algorithm);
