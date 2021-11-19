@@ -2646,8 +2646,8 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
-      {"name":"magnav.app.js","url":"magnav-b1.js","supports":"BANGLEJS"},
-      {"name":"magnav.app.js","url":"magnav-b2.js","supports":"BANGLEJS2"},
+      {"name":"magnav.app.js","url":"magnav_b1.js","supports":"BANGLEJS"},
+      {"name":"magnav.app.js","url":"magnav_b2.js","supports":"BANGLEJS2"},
       {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
     ],
     "data": [{"name":"magnav.json"}]
