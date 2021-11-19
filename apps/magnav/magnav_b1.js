@@ -140,6 +140,7 @@ function docalibrate(first){
           buf.drawString("Calibrate",120,26);
           flip(buf,Yoff);
           calibrate().then((r)=>{
+            CALIBDATA=r;
             require("Storage").write("magnav.json",r);
             restart()
           });
