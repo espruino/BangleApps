@@ -92,7 +92,7 @@ function queueAlarm() {
 function handleAlarm(){
 
     // After n minutes, inform the user.
-    if(alarm == 1){
+    if(alarm <= 1){
       alarm = -1;
 
       var t = 300;
