@@ -1,6 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;
 
@@ -37,7 +38,7 @@ function resetSettings() {
     quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
     timeout: 10,           // Default LCD timeout in seconds
     vibrate: true,         // Vibration enabled by default. App must support
-    beep: "vib",            // Beep enabled by default. App must support
+    beep: BANGLEJS2?true:"vib",            // Beep enabled by default. App must support
     timezone: 0,           // Set the timezone for the device
     HID: false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
@@ -71,8 +72,37 @@ if (!('qmOptions' in settings)) settings.qmOptions = {}; // easier if this alway
 const boolFormat = v => v ? "On" : "Off";
 
 function showMainMenu() {
-  var beepV = [false, true, "vib"];
-  var beepN = ["Off", "Piezo", "Vibrate"];
+  var beepMenuItem;
+  if (BANGLEJS2) {
+    beepMenuItem = {
+      value: settings.beep!=false,
+      format: boolFormat,
+      onchange: v => {
+        settings.beep = v;
+        updateSettings();
+        if (settings.beep) {
+          analogWrite(VIBRATE,0.1,{freq:2000});
+          setTimeout(()=>VIBRATE.reset(),200);
+        } // beep with vibration moter
+      }
+    };
+  } else { // Bangle.js 1
+    var beepV = [false, true, "vib"];
+    var beepN = ["Off", "Piezo", "Vibrate"];
+    beepMenuItem = {
+      value: Math.max(0 | beepV.indexOf(settings.beep),0),
+      min: 0, max: beepV.length-1,
+      format: v => beepN[v],
+      onchange: v => {
+        settings.beep = beepV[v];
+        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo on Bangle.js 1
+        else if (v==2) { analogWrite(VIBRATE,0.1,{freq:2000});setTimeout(()=>VIBRATE.reset(),200); } // vibrate
+        updateSettings();
+      }
+    };
+  }
+
+
   const mainmenu = {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
@@ -87,17 +117,7 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'Beep': {
-      value: 0 | beepV.indexOf(settings.beep),
-      min: 0, max: 2,
-      format: v => beepN[v],
-      onchange: v => {
-        settings.beep = beepV[v];
-        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo
-        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200); } // vibrate
-        updateSettings();
-      }
-    },
+    'Beep': beepMenuItem,
     'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
@@ -119,6 +139,7 @@ function showMainMenu() {
     'Reset Settings': ()=>showResetMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
   };
+
   return E.showMenu(mainmenu);
 }
 
@@ -144,7 +165,7 @@ function showBLEMenu() {
       }
     },
     'HID': {
-      value: 0 | hidV.indexOf(settings.HID),
+      value: Math.max(0,0 | hidV.indexOf(settings.HID)),
       min: 0, max: 3,
       format: v => hidN[v],
       onchange: v => {
@@ -191,7 +212,7 @@ function showThemeMenu() {
     'Light BW': ()=>{
       upd({
         fg:cl("#000"), bg:cl("#fff"),
-        fg2:cl("#00f"), bg2:cl("#0ff"),
+        fg2:cl("#000"), bg2:cl("#cff"),
         fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
@@ -356,7 +377,10 @@ function showLCDMenu() {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
       }
-    },
+    }
+  };
+  if (!BANGLEJS2)
+    Object.assign(lcdMenu, {
     'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
@@ -372,7 +396,8 @@ function showLCDMenu() {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
       }
-    },
+    }});
+  Object.assign(lcdMenu, {
     'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
       format: boolFormat,
@@ -427,7 +452,7 @@ function showLCDMenu() {
         updateOptions();
       }
     }
-  }
+  });
   return E.showMenu(lcdMenu)
 }
 function showQuietModeMenu() {

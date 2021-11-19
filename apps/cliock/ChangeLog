@@ -5,3 +5,5 @@
 0.11: added Heart Rate Monitor status and ability to turn on/off
 0.12: added support for different locales
 0.13: Use setUI, work with smaller screens and themes
+0.14: Fix BTN1 (fix #853)
+      Add light/dark theme support

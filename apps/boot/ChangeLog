@@ -30,3 +30,13 @@
 0.29: Update boot0 to avoid code block (faster execution)
       Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
 0.30: Remove 'Get GPS time' at boot. Latest firmwares keep time through reboots, so this is not needed now
+0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics
+0.32: Fix single quote error in g.wrapString polyfill
+      improve g.stringMetrics polyfill
+      Fix issue where re-running bootupdate could disable existing polyfills
+0.33: Add E.showScroller polyfill
+0.34: Use Storage.hash if available
+      Rearrange NRF.setServices to allow .boot.js files to add services (eg ANCS)
+0.35: Add Bangle.appRect polyfill
+      Don't set beep vibration up on Bangle.js 2 (built in)
+0.36: Add comments to .boot0 to make debugging a bit easier

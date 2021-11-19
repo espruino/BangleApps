@@ -35,7 +35,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
     {type: "txt", font: "6x8", pad: 4, id: "updateTime", label: "15 minutes ago"},
   ]},
   {filly: 1},
-]}, null, {lazy: true});
+]}, {lazy: true});
 
 function formatDuration(millis) {
   let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");

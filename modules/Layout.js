@@ -4,7 +4,7 @@ Usage:
 
 ```
 var Layout = require("Layout");
-var layout = new Layout( layoutObject, btns, options )
+var layout = new Layout( layoutObject, options )
 layout.render(optionalObject);
 ```
 
@@ -29,7 +29,9 @@ layoutObject has:
   * `undefined` - blank, can be used for padding
   * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
-  * `"img"` - an image where the function `src` is called to return an image to draw
+       optional `src` specifies an image (like img) in which case label is ignored
+  * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
+       optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
   * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
@@ -47,15 +49,13 @@ layoutObject has:
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 * `width` and `height` fields to optionally specify minimum size
 
-btns is an array of objects containing:
-
-* `label` - the text on the button
-* `cb` - a callback function
-* `cbl` - a callback function for long presses
-
 options is an object containing:
 
 * `lazy` - a boolean specifying whether to enable automatic lazy rendering
+* `btns` - array of objects containing:
+  * `label` - the text on the button
+  * `cb` - a callback function
+  * `cbl` - a callback function for long presses
 
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
@@ -78,17 +78,50 @@ Other functions:
 */
 
 
-function Layout(layout, buttons, options) {
+function Layout(layout, options) {
   this._l = this.l = layout;
-  this.b = buttons;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
-  this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
 
   options = options || {};
   this.lazy = options.lazy || false;
 
-  if (buttons) {
+  var btnList;
+  Bangle.setUI(); // remove all existing input handlers
+  if (process.env.HWVERSION!=2) {
+    // no touchscreen, find any buttons in 'layout'
+    btnList = [];
+    function btnRecurser(l) {
+      if (l.type=="btn") btnList.push(l);
+      if (l.c) l.c.forEach(btnRecurser);
+    }
+    btnRecurser(layout);
+    if (btnList.length) { // there are buttons in 'layout'
+      // disable physical buttons - use them for back/next/select
+      this.physBtns = 0;
+      this.buttons = btnList;
+      this.selectedButton = -1;
+      Bangle.setUI("updown", dir=>{
+        var s = this.selectedButton, l=this.buttons.length;
+        if (dir===undefined && this.buttons[s])
+          return this.buttons[s].cb();
+        if (this.buttons[s]) {
+          delete this.buttons[s].selected;
+          this.render(this.buttons[s]);
+        }
+        s = (s+l+dir) % l;
+        if (this.buttons[s]) {
+          this.buttons[s].selected = 1;
+          this.render(this.buttons[s]);
+        }
+        this.selectedButton = s;
+      });
+    }
+  }
+
+  if (options.btns) {
+    var buttons = options.btns;
+    this.b = buttons;
     if (this.physBtns >= buttons.length) {
       // Handler for button watch events
       function pressHandler(btn,e) {
@@ -98,7 +131,7 @@ function Layout(layout, buttons, options) {
           if (this.b[btn].cb) this.b[btn].cb(e);
       }
       // enough physical buttons
-      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
+      let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
       Bangle.btnWatch = [];
       if (this.physBtns > 2 && buttons.length==1)
@@ -114,33 +147,46 @@ function Layout(layout, buttons, options) {
         {type:"v", pad:1, filly:1, c: buttons.map(b=>(b.type="txt",b.font="6x8",b.height=btnHeight,b.r=1,b))}
       ]};
     } else {
-      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / buttons.length);
-      this._l.width = g.getWidth()-20; // button width
+      // add 'soft' buttons
+      this._l.width = g.getWidth()-32; // button width
       this._l = {type:"h", c: [
         this._l,
-        {type:"v", c: buttons.map(b=>(b.type="btn",b.h=btnHeight,b.w=32,b.r=1,b))}
+        {type:"v", c: buttons.map(b=>(b.type="btn",b.filly=1,b.width=32,b.r=1,b))}
       ]};
+      // if we're selecting with physical buttons, add these to the list
+      if (btnList) btnList.push.apply(btnList, this._l.c[1].c);
     }
   }
   if (process.env.HWVERSION==2) {
+
     // Handler for touch events
     function touchHandler(l,e) {
-      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h)
-        l.cb(e);
+      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
+        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
+      }
       if (l.c) l.c.forEach(n => touchHandler(n,e));
     }
-    Bangle.touchHandler = function(_,e){touchHandler(layout,e)};
+    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
     Bangle.on('touch',Bangle.touchHandler);
   }
 
-  // add IDs
+  // recurse over layout doing some fixing up if needed
   var ll = this;
-  function idRecurser(l) {
+  function recurser(l) {
+    // add IDs
     if (l.id) ll[l.id] = l;
+    // fix type up
     if (!l.type) l.type="";
-    if (l.c) l.c.forEach(idRecurser);
+    // FIXME ':'/fsz not needed in new firmwares - Font:12 is handled internally
+    // fix fonts for pre-2v11 firmware
+    if (l.font && l.font.includes(":")) {
+      var f = l.font.split(":");
+      l.font = f[0];
+      l.fsz = f[1];
+    }
+    if (l.c) l.c.forEach(recurser);
   }
-  idRecurser(layout);
+  recurser(this._l);
   this.updateNeeded = true;
 }
 
@@ -154,24 +200,6 @@ Layout.prototype.remove = function (l) {
     delete Bangle.touchHandler;
   }
 };
-
-function wrappedLines(str, maxWidth) {
-  var lines = [];
-  for (var unwrappedLine of str.split("\n")) {
-    var words = unwrappedLine.split(" ");
-    var line = words.shift();
-    for (var word of words) {
-      if (g.stringWidth(line + " " + word) > maxWidth) {
-        lines.push(line);
-        line = word;
-      } else {
-        line += " " + word;
-      }
-    }
-    lines.push(line);
-  }
-  return lines;
-}
 
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
@@ -211,17 +239,16 @@ Layout.prototype.render = function (l) {
     "txt":function(l){
       if (l.wrap) {
         g.setFont(l.font,l.fsz).setFontAlign(0,-1);
-        var lines = wrappedLines(l.label, l.w);
+        var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
+        //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
         g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
-      var x = l.x+(0|l.pad);
-      var y = l.y+(0|l.pad);
-      var w = l.w-(l.pad<<1);
-      var h = l.h-(l.pad<<1);
+      var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
+          w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
       var poly = [
         x,y+4,
         x+4,y,
@@ -232,10 +259,12 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ];
-    g.setColor(g.theme.bgH).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg).drawPoly(poly).setFont("4x6",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+      ], bg = l.selected?g.theme.bgH:g.theme.bg2;
+    g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+    if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
+    else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage(l.src(), l.x + (0|l.pad), l.y + (0|l.pad));
+    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad), l.scale?{scale:l.scale}:undefined);
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -316,10 +345,6 @@ Layout.prototype.debug = function(l,c) {
 };
 Layout.prototype.update = function() {
   delete this.updateNeeded;
-  var l = this._l;
-  var w = g.getWidth();
-  var y = this.yOffset;
-  var h = g.getHeight()-y;
   // update sizes
   function updateMin(l) {"ram"
     cb[l.type](l);
@@ -333,35 +358,20 @@ Layout.prototype.update = function() {
     "txt" : function(l) {
       if (l.font.endsWith("%"))
         l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      // FIXME ':'/fsz not needed in new firmwares - it's handled internally
-      if (l.font.includes(":")) {
-        var f = l.font.split(":");
-        l.font = f[0];
-        l.fsz = f[1];
-      }
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        g.setFont(l.font,l.fsz);
-        l._h = g.getFontHeight();
-        l._w = g.stringWidth(l.label);
+        var m = g.setFont(l.font,l.fsz).stringMetrics(l.label);
+        l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
-      l._h = 24;
-      l._w = 14 + l.label.length*8;
+      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont("6x8",2).stringMetrics(l.label);
+      l._h = 16 + m.height;
+      l._w = 20 + m.width;
     }, "img": function(l) {
-      var src = l.src(); // get width and height out of image
-      if (src[0]) {
-        l._w = src[0];
-        l._h = src[1];
-      } else if ('object'==typeof src) {
-        l._w = ("width" in src) ? src.width : src.getWidth();
-        l._h = ("height" in src) ? src.height : src.getHeight();
-      } else {
-        var im = E.toString(src);
-        l._w = im.charCodeAt(0);
-        l._h = im.charCodeAt(1);
-      }
+      var m = g.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
+      l._w = m.width*s;
+      l._h = m.height*s;
     }, "": function(l) {
       // size should already be set up in width/height
       l._w = 0;
@@ -384,18 +394,19 @@ Layout.prototype.update = function() {
       if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }
   };
+
+  var l = this._l;
   updateMin(l);
-  // center
-  if (l.fillx || l.filly) {
-    l.w = w;
-    l.h = h;
-    l.x = 0;
-    l.y = y;
-  } else {
+  if (l.fillx || l.filly) { // fill all
+    l.w = Bangle.appRect.w;
+    l.h = Bangle.appRect.h;
+    l.x = Bangle.appRect.x;
+    l.y = Bangle.appRect.y;
+  } else { // or center
     l.w = l._w;
     l.h = l._h;
-    l.x = (w-l.w)>>1;
-    l.y = y+((h-l.h)>>1);
+    l.x = (Bangle.appRect.w-l.w)>>1;
+    l.y = Bangle.appRect.y+((Bangle.appRect.h-l.h)>>1);
   }
   // layout children
   this.layout(l);

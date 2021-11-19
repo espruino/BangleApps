@@ -1,2 +1,3 @@
 0.03: Fix time output on new firmwares when no GPS time set (fix #104)
 0.04: Fix shown UTC time zone sign
+0.05: Use new 'layout library for Bangle2, fix #764 by adding a back button

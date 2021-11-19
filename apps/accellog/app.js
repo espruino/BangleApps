@@ -99,12 +99,12 @@ function startRecord(force) {
       {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
       {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:1},
     ]
-  },[ // Buttons...
+  },{btns:[ // Buttons...
     {label:"STOP", cb:()=>{
       Bangle.removeListener('accel', accelHandler);
       showMenu();
     }}
-  ]);
+  ]});
   layout.render();
 
   // now start writing
