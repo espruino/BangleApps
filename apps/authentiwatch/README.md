@@ -1,6 +1,6 @@
 # Authentiwatch - 2FA Authenticator
 
-Supports:
+## Supports
 
 * Google Authenticator compatible 2-factor authentication
 * Hash calculations:
@@ -16,14 +16,11 @@ Supports:
 
 ## Usage
 
-Use the Phone/PC web page interface to manage the tokens stored on the watch.
-
-Tokens are stored *ONLY* on the watch.
-
-Swipe right to exit to the app launcher.
-
-Swipe left on selected counter token to advance the counter to the next value.
+* Use the Phone/PC web page interface to manage the tokens stored on the watch.
+* Tokens are stored *ONLY* on the watch.
+* Swipe right to exit to the app launcher.
+* Swipe left on selected counter token to advance the counter to the next value.
 
 ## Creator
 
-Andrew Gregory
+Andrew Gregory (andrew.gregory at gmail)
