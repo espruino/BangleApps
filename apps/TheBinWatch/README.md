@@ -8,3 +8,4 @@ Inspired by the 80's LCD wrist watch from RALtec
 - currently only available for BangeJs2
 - Widgets will not be shown
 - If bluetooth connection is not established an icon will show up
+- ![](app.png)
