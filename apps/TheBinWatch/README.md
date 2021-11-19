@@ -2,6 +2,7 @@
 
 Binary watch to train Your brain
 Inspired by the 80's LCD wrist watch from RALtec
+
 ![](app.png)
 
 ## Usage
@@ -28,3 +29,4 @@ Same holds for the thrid row: 0-59 seconds
 
 To read the values of a row we summ up the vaules of set bits (black bars).
 E.g. 1010 is 1 * 8 + 0 * 4 + 1 * 2 + 0 * 1 = 10
+
