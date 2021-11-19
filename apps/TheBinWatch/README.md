@@ -28,5 +28,14 @@ The upper row represents the hours with 4 bit (16 possible values in total, 12 a
 Same holds for the thrid row: 0-59 seconds
 
 To read the values of a row we summ up the vaules of set bits (black bars).
-E.g. 1010 is 1 * 8 + 0 * 4 + 1 * 2 + 0 * 1 = 10
+E.g. the picture above, 3rd row (seconds):
+101001 
+is 1 * 32 + 0 * 16 + 1 * 8 + 0 * 4 + 0 * 2 + 1 * 1
+is (only the '1' bit): 32 + 8 + 1 = 41
+
+for the minutes we do the same: 32 + 1 = 33
+and the hours: 8 + 2 = 10
+
+So the time is 10:33:41 (that's all)
+
 
