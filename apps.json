@@ -4326,5 +4326,5 @@
       {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"authentiwatch.json"}]
-  },
+  }
 ]
