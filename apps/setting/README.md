@@ -15,6 +15,7 @@ This is Bangle.js's settings menu
   * **NOTE:** on some platforms enabling HID can cause you problems when trying to connect to Bangle.js to upload apps.
 * **Set Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
+* **Theme** Adjust the colour scheme
 * **Reset Settings** Reset the settings to defaults
 * **Turn Off** Turn Bangle.js off
 

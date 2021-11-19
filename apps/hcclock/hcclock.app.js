@@ -174,19 +174,52 @@ function fmtDate(day,month,year,hour)
     let ap = "(AM)";
     if(hour == 0 || hour > 12)
       ap = "(PM)";
-    return months[month] + " " + day + " " + year + " "+ ap;    
+    return months[month] + " " + day + " " + year + " "+ ap;
   }
   else
     return months[month] + ". " + day + " " + year;
 }
 
-// Handles Flipping colors, then refreshes the UI
+
+//////////////////////////////////////////
+//
+//  HANDLE COLORS + SETTINGS
+//
+
+function getColorScheme()
+{
+    let settings = require('Storage').readJSON("hcclock.json", true) || {};
+    if (!("scheme" in settings)) {
+      settings.scheme = 0;
+    }
+    return settings.scheme;
+}
+
+function setColorScheme(value)
+{
+    let settings = require('Storage').readJSON("hcclock.json", true) || {};
+    settings.scheme = value;
+    require('Storage').writeJSON('hcclock.json', settings);
+
+    if(value == 0) // White
+    {
+      bg = 255;
+      fg = 0;
+    }
+    else // Black
+    {
+      bg = 0;
+      fg = 255;
+    }
+    redraw();
+}
+
 function flipColors()
 {
-  let t = bg;
-  bg = fg;
-  fg = t;
-  redraw();
+  if(getColorScheme() == 0)
+      setColorScheme(1);
+  else
+      setColorScheme(0);
 }
 
 //////////////////////////////////////////
@@ -197,7 +230,7 @@ function flipColors()
 // Initialize
 g.clear();
 Bangle.loadWidgets();
-redraw();
+setColorScheme(getColorScheme());
 
 // Define Refresh Interval
 setInterval(updateTime, interval);

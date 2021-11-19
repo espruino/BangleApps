@@ -68,7 +68,7 @@ function onGPS(fix) {
           {type:"txt", font:"6x8", label:"", fillx:true, id:"time" },
           {type:"txt", font:"6x8", label:"", fillx:true, id:"sat" },
           {type:"txt", font:"6x8", label:"", fillx:true, id:"maidenhead" },
-        ]},[],{lazy:true});
+        ]},{lazy:true});
     } else {
       layout = new Layout( {
         type:"v", c: [
@@ -80,9 +80,9 @@ function onGPS(fix) {
             {type:"txt", font:"6x8", pad:3, label:"Satellites" }
           ]},
           {type:"txt", font:"6x8", label:"", id:"progress" }
-        ]},[],{lazy:true});
+        ]},{lazy:true});
     }
-    g.clearRect(0,24,g.getWidth(),g.getHeight());    
+    g.clearRect(0,24,g.getWidth(),g.getHeight());
     layout.render();
   }
   lastFix = fix;
@@ -103,7 +103,7 @@ function onGPS(fix) {
     nofix = (nofix+1) % 4;
     layout.progress.label = ".".repeat(nofix) + " ".repeat(4-nofix);
   }
-  layout.render();  
+  layout.render();
 }
 
 Bangle.loadWidgets();

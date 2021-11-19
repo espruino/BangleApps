@@ -102,7 +102,8 @@ function getTrackInfo(fn) {
   var lfactor = Math.cos(minLat*Math.PI/180);
   var ylen = (maxLat-minLat);
   var xlen = (maxLong-minLong)* lfactor;
-  var scale = xlen>ylen ? 200/xlen : 200/ylen;
+  var screenSize = g.getHeight()-48; // 24 for widgets, plus a border
+  var scale = xlen>ylen ? screenSize/xlen : screenSize/ylen;
   return {
     fn : fn,
     filename : filename,
@@ -110,6 +111,7 @@ function getTrackInfo(fn) {
     records : nl,
     minLat : minLat, maxLat : maxLat,
     minLong : minLong, maxLong : maxLong,
+    lat : (minLat+maxLat)/2, lon : (minLong+maxLong)/2,
     lfactor : lfactor,
     scale : scale,
     duration : Math.round(duration/1000)
@@ -180,16 +182,18 @@ function plotTrack(info) {
     getMapXY = osm.latLonToXY.bind(osm);
   } else {
     getMapXY = function(lat, lon) { "ram"
-      var ix = 30 + Math.round((long - info.minLong)*info.lfactor*info.scale);
-      var iy = 210 - Math.round((lat - info.minLat)*info.scale);
-      return {x:ix, y:iy};
+      return {x:cx + Math.round((long - info.lon)*info.lfactor*info.scale),
+              y:cy + Math.round((info.lat - lat)*info.scale)};
     }
   }
 
   E.showMenu(); // remove menu
+  E.showMessage("Drawing...","GPS Track "+info.fn);
+  g.flip(); // on buffered screens, draw a not saying we're busy
+  g.clear(1);
   var s = require("Storage");
   var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
+  var cy = 24 + (g.getHeight()-24)/2;
   g.setColor(1,0.5,0.5);
   g.setFont("Vector",16);
   g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
@@ -203,8 +207,8 @@ function plotTrack(info) {
     g.drawString("N",2,40);
     g.setColor(1,1,1);
   } else {
-    osm.lat = (info.minLat+info.maxLat)/2;
-    osm.lon = (info.minLong+info.maxLong)/2;
+    osm.lat = info.lat;
+    osm.lon = info.lon;
     osm.draw();
     g.setColor(0, 0, 0);
   }
@@ -251,7 +255,8 @@ function plotTrack(info) {
   g.drawString("Back",230,200);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, BTN3);
+  }, global.BTN3||BTN1);
+  Bangle.drawWidgets();
   g.flip();
 }
 
@@ -260,8 +265,8 @@ function plotGraph(info, style) {
   E.showMenu(); // remove menu
   E.showMessage("Calculating...","GPS Track "+info.fn);
   var filename = getFN(info.fn);
-  var infn = new Float32Array(200);
-  var infc = new Uint16Array(200);
+  var infn = new Float32Array(80);
+  var infc = new Uint16Array(80);
   var title;
   var lt = 0; // last time
   var tn = 0; // count for each time period
@@ -278,7 +283,7 @@ function plotGraph(info, style) {
     title = "Altitude (m)";
     while(l!==undefined) {
       ++nl;c=l.split(",");
-      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      i = Math.round(80*(c[0]/1000 - strt)/dur);
       infn[i]+=+c[3];
       infc[i]++;
       l = f.readLine(f);
@@ -289,7 +294,7 @@ function plotGraph(info, style) {
     var t,dx,dy,d,lt = c[0]/1000;
     while(l!==undefined) {
       ++nl;c=l.split(",");
-      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      i = Math.round(80*(c[0]/1000 - strt)/dur);
       t = c[0]/1000;
       p = Bangle.project({lat:c[1],lon:c[2]});
       dx = p.x-lp.x;
@@ -320,9 +325,9 @@ function plotGraph(info, style) {
   // draw
   g.clear(1).setFont("6x8",1);
   var r = require("graph").drawLine(g, infn, {
-    x:4,y:0,
+    x:4,y:24,
     width: g.getWidth()-24,
-    height: g.getHeight()-8,
+    height: g.getHeight()-(24+8),
     axes : true,
     gridy : grid,
     gridx : 50,
@@ -334,7 +339,7 @@ function plotGraph(info, style) {
   g.drawString("Back",230,200);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, BTN3);
+  }, global.BTN3||BTN1);
   g.flip();
 }
 
