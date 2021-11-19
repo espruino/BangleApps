@@ -4297,11 +4297,11 @@
     "name": "Binary Watch",
     "shortName":"BinWatch",
     "icon": "app.png",
-    "version":"0.02",
+    "screenshots": [{"url":"screenshot.png"}],
+    "version":"0.03",
     "supports": ["BANGLEJS"],
     "allow_emulator":true,
     "description": "Famous binary watch",
-    "screenshots": [{"url":"screenshot.png"}],
     "tags": "clock",
     "type": "clock",
     "storage": [
