@@ -4300,6 +4300,7 @@
     "screenshots": [{"url":"screenshot.png"}],
     "version":"0.03",
     "supports": ["BANGLEJS2"],
+	"readme": "README.md",
     "allow_emulator":true,
     "description": "Famous binary watch",
     "tags": "clock",
