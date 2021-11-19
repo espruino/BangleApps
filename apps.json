@@ -547,7 +547,7 @@
     "description": "A random scramble generator for the 3x3 Rubik's cube",
     "icon": "cube-scramble.png",
     "tags": "",
-    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "supports" : ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
@@ -4278,7 +4278,7 @@
       {"name":"a_battery_widget.wid.js","url":"widget.js"}
     ]
   },
-  { 
+  {
     "id": "lcars",
     "name": "LCARS Clock",
     "shortName":"LCARS",
@@ -4288,6 +4288,7 @@
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
     "type": "clock",
     "tags": "clock",
+    "screenshots": [{"url":"screenshot.png"}],
     "storage": [
       {"name":"lcars.app.js","url":"lcars.app.js"},
       {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}

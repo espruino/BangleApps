@@ -1,9 +1,9 @@
-const locale = require('locale');
-
-
 /*
- * Assets: Images, fonts etc.
+ * Requirements and globals
  */
+const locale = require('locale');
+var alarm = -1;
+
 var img = {
   width : 176, height : 151, bpp : 3,
   transparent : 0,
@@ -22,7 +22,7 @@ Graphics.prototype.setFontMinaLarge = function(scale) {
 
 
 /*
- * Queue drawing every minute
+ * Draw watch face
  */
 var drawTimeout;
 function queueDraw() {
@@ -34,9 +34,6 @@ function queueDraw() {
 }
 
 
-/*
- * Draw watch face
- */
 function draw(){
   g.reset();
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
@@ -66,22 +63,89 @@ function draw(){
   g.drawString(bat+"%", 100, 127);
 
   // Draw steps
-  var steps = Bangle.getStepCount();
-  g.drawString("STEP:", 40, 147);
-  g.drawString(steps, 100, 147);
+  if(alarm < 0){
+    var steps = Bangle.getStepCount();
+    g.drawString("STEP:", 40, 147);
+    g.drawString(steps, 100, 147);
+  } else {
+    g.drawString("ALRM:", 40, 147);
+    g.drawString("T-" + alarm, 100, 147);
+  }
 
   // Queue draw in one minute
   queueDraw();
 }
 
-// Clear the screen once, at startup
-g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 
-// draw immediately at first, queue update
+/*
+ * Handle alarm
+ */
+var alarmTimeout;
+function queueAlarm() {
+  if (alarmTimeout) clearTimeout(alarmTimeout);
+  alarmTimeout = setTimeout(function() {
+    alarmTimeout = undefined;
+    handleAlarm();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function handleAlarm(){
+
+    // If alarm is zero, inform the user.
+    if(alarm == 0){
+      alarm = -1;
+
+      var t = 300;
+      Bangle.buzz(t, 1)
+      .then(() => new Promise(resolve => setTimeout(resolve, t)))
+      .then(() => Bangle.buzz(t, 1))
+      .then(() => new Promise(resolve => setTimeout(resolve, t)))
+      .then(() => Bangle.buzz(t, 1))
+      .then(() => new Promise(resolve => setTimeout(resolve, t)))
+      .then(() => Bangle.buzz(t, 1));
+
+      // Draw watch face again to show data instead of alarm.
+      draw();
+
+    // If we still have to wait, queue alarm again.
+    } else if(alarm > 0){
+      alarm--;
+      queueAlarm();
+      draw();
+    }
+}
+
+
+/*
+ * Swipe to set an alarm
+ */
+Bangle.on('swipe',function(dir) {
+  // Increase alarm
+  if(dir == -1){
+    alarm = alarm < 0 ? 0 : alarm;
+    alarm += 5;
+
+    queueAlarm();
+  }
+
+  // Decrease alarm
+  if(dir == +1){
+    alarm -= 5;
+    alarm = alarm <= 0 ? -1 : alarm;
+  }
+
+  draw();
+});
+
+
+// Clear the screen once, at startup and draw clock
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
 
 
-// Stop updates when LCD is off, restart when on
+/*
+ * Stop updates when LCD is off, restart when on
+ */
 Bangle.on('lcdPower',on=>{
   if (on) {
     draw(); // draw immediately, queue redraw
