@@ -4040,7 +4040,7 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A simple clock using the bold Anton font.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
