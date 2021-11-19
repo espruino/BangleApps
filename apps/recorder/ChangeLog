@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Use 'recorder.log..' rather than 'record.log..'
+      Fix interface.html
+0.03: Fix theme and maps/graphing if no GPS

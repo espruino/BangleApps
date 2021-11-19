@@ -1,30 +1,17 @@
 (function(){
-  //var img = E.toArrayBuffer(atob("FBSBAAAAAAAAA/wAf+AP/wH/2D/zw/w8PwfD9nw+b8Pg/Dw/w8/8G/+A//AH/gA/wAAAAAAA"));
-  //var img = E.toArrayBuffer(atob("GBiBAAB+AAP/wAeB4A4AcBgAGDAADHAADmABhmAHhsAfA8A/A8BmA8BmA8D8A8D4A2HgBmGABnAADjAADBgAGA4AcAeB4AP/wAB+AA=="));
-  var img = E.toArrayBuffer(atob("FBSBAAH4AH/gHAODgBwwAMYABkAMLAPDwPg8CYPBkDwfA8PANDACYABjAAw4AcHAOAf+AB+A"));        
-  
-  function draw() {
+  var cp = Bangle.setCompassPower;
+  Bangle.setCompassPower = () => {
+    cp.apply(Bangle, arguments);
+    WIDGETS.compass.draw();
+  };
+
+  WIDGETS.compass={area:"tr",width:24,draw:function() {
     g.reset();
     if (Bangle.isCompassOn()) {
-      g.setColor(1,0.8,0);     // on = amber
+      g.setColor(g.theme.dark ? "#FC0" : "#F00");
     } else {
-      g.setColor(0.3,0.3,0.3); // off = grey
+      g.setColor(g.theme.dark ? "#333" : "#CCC");
     }
-    g.drawImage(img, 10+this.x, 2+this.var);
-  }
-
-  var timerInterval;
-  Bangle.on('lcdPower', function(on) {
-    if (on) {
-      WIDGETS.compass.draw();
-      if (!timerInterval) timerInterval = setInterval(()=>WIDGETS.compass.draw(), 2000);
-    } else {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = undefined;
-      }
-    }
-  });
-
-  WIDGETS.compass={area:"tr",width:24,draw:draw};
+    g.drawImage(atob("FBSBAAH4AH/gHAODgBwwAMYABkAMLAPDwPg8CYPBkDwfA8PANDACYABjAAw4AcHAOAf+AB+A"), 2+this.x, 2+this.var);
+  }};
 })();

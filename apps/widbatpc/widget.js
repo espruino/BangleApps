@@ -80,7 +80,12 @@
     var s = 39;
     var x = this.x, y = this.y;
     const l = E.getBattery();
-    const xl = x+4+l*(s-12)/100
+    let xl = x+4+l*(s-12)/100;
+
+    // show bar full in the level color, as you cant see the color if the bar is too small
+    if (setting('fillbar'))
+      xl = x+4+100*(s-12)/100;
+    
     c = levelColor(l);
     
     if (Bangle.isCharging() && setting('charger')) {

@@ -1,0 +1,255 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="tracks"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var domTracks = document.getElementById("tracks");
+
+function saveKML(track,title) {
+  var kml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Schema id="schema">
+${track[0].Heartrate!==undefined ? `<gx:SimpleArrayField name="heartrate" type="int">
+      <displayName>Heart Rate</displayName>
+    </gx:SimpleArrayField>`:``}
+${track[0].Steps!==undefined ? `<gx:SimpleArrayField name="steps" type="int">
+      <displayName>Step Count</displayName>`:``}
+    </gx:SimpleArrayField>
+    </Schema>
+    <Folder>
+      <name>Tracks</name>
+      <Placemark>
+        <name>${title}</name>
+        <gx:Track>
+${track.map(pt=>`            <when>${pt.Time.toISOString()}</when>\n`).join("")}
+${track.map(pt=>`            <gx:coord>${pt.Longitude} ${pt.Latitude} ${pt.Altitude}</gx:coord>\n`).join("")}
+          <ExtendedData>
+            <SchemaData schemaUrl="#schema">
+
+${track[0].Heartrate!==undefined ? `<gx:SimpleArrayData name="heartrate">
+${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+${track[0].Steps!==undefined ? `<gx:SimpleArrayData name="steps">
+${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+            </SchemaData>
+          </ExtendedData>
+        </gx:Track>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>`;
+  var a = document.createElement("a"),
+      file = new Blob([kml], {type: "application/vnd.google-earth.kml+xml"});
+  var url = URL.createObjectURL(file);
+  a.href = url;
+  a.download = title+".kml";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+  }, 0);
+}
+
+function saveGPX(track, title) {
+  var gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
+<gpx creator="Bangle.js" version="1.1">
+  <metadata>
+    <time>${track[0].Time.toISOString()}</time>
+  </metadata>
+  <trk>
+    <name>${title}</name>
+    <trkseg>`;
+  track.forEach(pt=>{
+    gpx += `
+      <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
+        <ele>${pt.Altitude}</ele>
+        <time>${pt.Time.toISOString()}</time>
+        <extensions>
+            <gpxtpx:TrackPointExtension>
+                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
+            </gpxtpx:TrackPointExtension>
+        </extensions>
+      </trkpt>`;
+  });
+  // https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd
+  gpx += `
+    </trkseg>
+  </trk>
+</gpx>`;
+  var a = document.createElement("a"),
+      file = new Blob([gpx], {type: "application/gpx+xml"});
+  var url = URL.createObjectURL(file);
+  a.href = url;
+  a.download = title+".gpx";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+  }, 0);
+}
+
+function saveCSV(track, title) {
+  var headers = Object.keys(track[0]);
+  var csv = headers.join(",")+"\n";
+  track.forEach(t=>{
+    csv += headers.map(k=>{
+      if (t[k] instanceof Date) return t[k].toISOString();
+      return t[k];
+    }).join(",")+"\n";
+  });
+  Util.saveCSV(title, csv);
+}
+
+function trackLineToObject(headers, l) {
+  var t = l.trim().split(",");
+  var o = {};
+  headers.forEach((header,i) => o[header] = t[i]);
+  if (o.Time) o.Time = new Date(o.Time*1000);
+  return o;
+}
+
+function downloadTrack(filename, callback) {
+  Util.showModal("Downloading Track...");
+  Util.readStorageFile(filename,data=>{
+    Util.hideModal();
+    var lines = data.trim().split("\n");
+    var headers = lines.shift().split(",");
+    var track = lines.map(l=>trackLineToObject(headers, l));
+    callback(track);
+  });
+}
+
+function getTrackList() {
+  Util.showModal("Loading Track List...");
+  domTracks.innerHTML = "";
+  Puck.eval(`require("Storage").list(/^recorder\\.log.*\\.csv$/,{sf:1})`,files=>{
+    var trackList = [];
+    var promise = Promise.resolve();
+    /* For each file ask Bangle.js for info. Since we now start recording even
+    before we have a GPS trace, we get the Bangle to do a *quick* search for us
+    to see if it found any data first. */
+    files.forEach(filename => {
+      promise = promise.then(()=>new Promise(resolve => {
+        var trackNo = filename.match(/^recorder\.log(.*)\.csv$/)[1];
+        Util.showModal(`Loading Track ${trackNo}...`);
+        Puck.eval(`(function(fn) {
+  var f = require("Storage").open(fn,"r");
+  var headers = f.readLine();
+  var data = f.readLine();
+  var lIdx = headers.split(",").indexOf("Latitude");
+  if (lIdx >= 0) {
+    var tries = 100;
+    var l = data;
+    while (l && l.split(",")[lIdx]=="" && tries++)
+      l = f.readLine();
+    if (l) data = l;
+  }
+  return {headers:headers,l:data};
+})(${JSON.stringify(filename)})`, trackInfo=>{
+          console.log(filename," => ",trackInfo);
+          trackInfo.headers = trackInfo.headers.split(",");
+          trackList.push({
+            filename : filename,
+            number : trackNo,
+            info : trackInfo
+          });
+          resolve();
+        });
+      }));
+    });
+    // ================================================
+    // When 'promise' completes we now have all the info in trackList
+    promise.then(() => {
+      var html = `<div class="container">
+      <div class="columns">\n`;
+      trackList.forEach(track => {
+        var trackData = trackLineToObject(track.info.headers, track.info.l);
+        console.log("track", track);
+        console.log("trackData", trackData);
+        html += `
+         <div class="column col-12">
+           <div class="card-header">
+             <div class="card-title h5">Track ${track.number}</div>
+             <div class="card-subtitle text-gray">${trackData.Time.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+           </div>
+${trackData.Latitude ? `
+           <div class="card-image">
+             <iframe
+               width="100%"
+               height="250"
+               frameborder="0" style="border:0"
+               src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxTcwrrVOh2piz7EmIs1Xn4FsRxJWeVH4&q=${trackData.Latitude},${trackData.Longitude}&zoom=10" allowfullscreen>
+             </iframe>
+           </div><div class="card-body"></div>` : `<div class="card-body">No GPS info</div>`}
+           <div class="card-footer">
+${trackData.Latitude ? `
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
+` : ``}
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
+             <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
+           </div>
+         </div>
+        `;
+        });
+        if (trackList.length==0) {
+        html += `
+         <div class="column col-12">
+           <div class="card-header">
+             <div class="card-title h5">No tracks</div>
+             <div class="card-subtitle text-gray">No GPS tracks found</div>
+           </div>
+         </div>
+         `;
+        }
+        html += `
+        </div>
+        </div>`;
+        domTracks.innerHTML = html;
+        Util.hideModal();
+        var buttons = domTracks.querySelectorAll("button");
+        for (var i=0;i<buttons.length;i++) {
+        buttons[i].addEventListener("click",event => {
+         var button = event.currentTarget;
+         var filename = button.getAttribute("filename");
+         var trackid = parseInt(button.getAttribute("trackid"));
+         if (!filename || trackid===undefined) return;
+         var task = button.getAttribute("task");
+         if (task=="delete") {
+           Util.showModal("Deleting Track...");
+           Util.eraseStorageFile(filename,()=>{
+             Util.hideModal();
+             getTrackList();
+           });
+         }
+         if (task=="downloadkml") {
+           downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+         }
+         if (task=="downloadgpx") {
+           downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+         }
+         if (task=="downloadcsv") {
+           downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+         }
+        });
+      }
+    });
+  });
+}
+
+function onInit() {
+  getTrackList();
+}
+
+    </script>
+  </body>
+</html>
