@@ -115,7 +115,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.31",
+    "version": "0.33",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -539,6 +539,21 @@
       {"name":"trex.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"trex.score","storageFile":true}]
+  },
+  {
+    "id": "cubescramble",
+    "name": "Cube Scramble",
+    "version":"0.02",
+    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "icon": "cube-scramble.png",
+    "tags": "",
+    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"cubescramble.app.js","url":"cube-scramble.js"},
+      {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "astroid",
@@ -1405,12 +1420,12 @@
   {
     "id": "pomodo",
     "name": "Pomodoro",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A simple pomodoro timer.",
     "icon": "pomodoro.png",
     "type": "app",
     "tags": "pomodoro,cooking,tools",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"pomodo.app.js","url":"pomodoro.js"},
@@ -4216,7 +4231,7 @@
     ],
     "data": [{ "name": "qalarm.json" }]
   },
-  {  
+  {
     "id": "emojuino",
     "name": "Emojuino",
     "shortName": "Emojuino",
@@ -4224,7 +4239,7 @@
     "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
     "tags": "emoji",
-    "supports" : [ "BANGLEJS2" ],  
+    "supports" : [ "BANGLEJS2" ],
     "readme": "README.md",
     "storage": [
       { "name": "emojuino.app.js", "url": "emojuino.js" },
@@ -4232,22 +4247,65 @@
     ]
   },
   {
-    "id": "authentiwatch",
-    "name": "2FA Authenticator",
-    "shortName": "AuthWatch",
+    "id": "cliclockJS2Enhanced",
+    "name": "Commandline-Clock JS2 Enhanced",
+    "shortName": "CLI-Clock JS2",
+    "version": "0.1",
+    "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design",
     "icon": "app.png",
-    "screenshots": [{"url":"screenshot.png"}],
-    "version": "0.01",
-    "description": "Google Authenticator compatible tool.",
-    "tags": "tool",
-    "interface": "interface.html",
-    "supports": ["BANGLEJS", "BANGLEJS2"],
-    "readme": "README.md",
+    "screenshots": [{"url":"screengrab.png"}],
+    "type": "clock",
+    "tags": "clock,cli,command,bash,shell",
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
-      {"name":"authentiwatch.app.js","url":"app.js"},
-      {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
-    ],
-    "data": [{"name":"authentiwatch.json"}]
+      {"name":"cliclockJS2Enhanced.app.js","url":"app.js"},
+      {"name":"cliclockJS2Enhanced.img","url":"app.icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "a_battery_widget",
+    "name": "A Battery Widget (with percentage)",
+    "shortName":"A Battery Widget",
+    "icon": "widget.png",
+    "version":"1.0",
+    "type": "widget",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Simple and slim battery widget with charge status and percentage",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"a_battery_widget.wid.js","url":"widget.js"}
+    ]
+  },
+  { 
+    "id": "lcars",
+    "name": "LCARS Clock",
+    "shortName":"LCARS",
+    "icon": "lcars.png",
+    "version":"0.01",
+    "supports": ["BANGLEJS2"],
+    "description": "Library Computer Access Retrieval System (LCARS) clock.",
+    "type": "clock",
+    "tags": "clock",
+    "storage": [
+      {"name":"lcars.app.js","url":"lcars.app.js"},
+      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
+    ]
+  },
+  { "id": "binwatch",
+    "name": "Binary Watch",
+    "shortName":"BinWatch",
+    "icon": "app.png",
+    "version":"0.02",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator":true,
+    "description": "Famous binary watch",
+    "tags": "clock",
+    "type": "clock",
+    "storage": [
+      {"name":"binwatch.app.js","url":"app.js"},
+      {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
