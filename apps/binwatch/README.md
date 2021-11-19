@@ -3,7 +3,7 @@
 Binary watch to train Your brain
 Inspired by the 80's LCD wrist watch from RALtec
 
-![](app.png)
+![](screenshot.png)
 
 ## Usage
 
