@@ -768,11 +768,11 @@
   {
     "id": "chargeanim",
     "name": "Charge Animation",
-    "version": "0.01",
+    "version": "0.02",
     "description": "When charging, show a sideways charging animation and keep the screen on. When removed from the charger load the clock again.",
     "icon": "icon.png",
     "tags": "battery",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"chargeanim.app.js","url":"app.js"},
