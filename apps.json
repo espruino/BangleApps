@@ -4299,7 +4299,7 @@
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
     "version":"0.03",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS2"],
     "allow_emulator":true,
     "description": "Famous binary watch",
     "tags": "clock",
