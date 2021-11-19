@@ -49,25 +49,25 @@ easily distinguish between file types, we use the following:
 
 ## Adding your app to the menu
 
-* Come up with a unique (all lowercase, no spaces) name, we'll assume `7chname`. Bangle.js
+* Come up with a unique (all lowercase, no spaces) name, we'll assume `myappid`. Bangle.js
 is limited to 28 char filenames and appends a file extension (eg `.js`) so please
 try and keep filenames short to avoid overflowing the buffer.
-* Create a folder called `apps/<id>`, lets assume `apps/7chname`
+* Create a folder called `apps/<id>`, lets assume `apps/myappid`
 * We'd recommend that you copy files from 'Example Applications' (below) as a base, or...
-* `apps/7chname/app.png` should be a 48px icon
-* Use http://www.espruino.com/Image+Converter to create `apps/7chname/app-icon.js`, using a 1 bit, 4 bit or 8 bit Web Palette "Image String"
+* `apps/myappid/app.png` should be a 48px icon
+* Use http://www.espruino.com/Image+Converter to create `apps/myappid/app-icon.js`, using a 1 bit, 4 bit or 8 bit Web Palette "Image String"
 * Create an entry in `apps.json` as follows:
 
 ```
-{ "id": "7chname",
+{ "id": "myappid",
   "name": "My app's human readable name",
   "shortName" : "Short Name",
   "icon": "app.png",
   "description": "A detailed description of my great app",
   "tags": "",
   "storage": [
-    {"name":"7chname.app.js","url":"app.js"},
-    {"name":"7chname.img","url":"app-icon.js","evaluate":true}
+    {"name":"myappid.app.js","url":"app.js"},
+    {"name":"myappid.img","url":"app-icon.js","evaluate":true}
   ],
 },
 ```
@@ -95,12 +95,12 @@ Be aware of the delay between commits and updates on github.io - it can take a f
 Using the 'Storage' icon in [the Web IDE](https://www.espruino.com/ide/)
 (4 discs), upload your files into the places described in your JSON:
 
-* `app-icon.js` -> `7chname.img`
+* `app-icon.js` -> `myappid.img`
 
 Now load `app.js` up in the editor, and click the down-arrow to the bottom
 right of the `Send to Espruino` icon. Click `Storage` and then either choose
-`7chname.app.js` (if you'd uploaded your app previously), or `New File`
-and then enter `7chname.app.js` as the name.
+`myappid.app.js` (if you'd uploaded your app previously), or `New File`
+and then enter `myappid.app.js` as the name.
 
 Now, clicking the `Send to Espruino` icon will load the app directly into
 Espruino **and** will automatically run it.
@@ -115,9 +115,12 @@ and set it to `Load default application`.
 ## Example Applications
 
 To make the process easier we've come up with some example applications that you can use as a base
-when creating your own. Just come up with a unique 7 character name, copy `apps/_example_app`
-or `apps/_example_widget` to `apps/7chname`, and add `apps/_example_X/add_to_apps.json` to
+when creating your own. Just come up with a unique name (ideally lowercase, under 20 chars), copy `apps/_example_app`
+or `apps/_example_widget` to `apps/myappid`, and add `apps/_example_X/add_to_apps.json` to
 `apps.json`.
+
+**Note:** the max filename length is 28 chars, so we suggest an app ID of under
+20 so that when `.app.js`/etc gets added to the end the filename isn't cropped.
 
 **If you're making a widget** please start the name with `wid` to make
 it easy to find!
@@ -192,8 +195,8 @@ and which gives information about the app for the Launcher.
 ```
 {
   "name":"Short Name", // for Bangle.js menu
-  "icon":"*7chname", // for Bangle.js menu
-  "src":"-7chname", // source file
+  "icon":"*myappid", // for Bangle.js menu
+  "src":"-myappid", // source file
   "type":"widget/clock/app/bootloader", // optional, default "app"
      // if this is 'widget' then it's not displayed in the menu  
      // if it's 'clock' then it'll be loaded by default at boot time
@@ -313,10 +316,10 @@ version of what's in `apps.json`:
     <script>
       document.getElementById("upload").addEventListener("click", function() {
         sendCustomizedApp({
-          id : "7chname",
+          id : "myappid",
           storage:[
-            {name:"7chname.app.js", url:"app.js", content:app_source_code},
-            {name:"7chname.img", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
+            {name:"myappid.app.js", url:"app.js", content:app_source_code},
+            {name:"myappid.img", content:'require("heatshrink").decompress(atob("mEwg...4"))', evaluate:true},
           ]
         });
       });
@@ -442,7 +445,7 @@ from the IDE.
 
 ### Misc Notes
 
-- Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `7chname.json`, then load it at startup.
+- Need to save state? Use the `E.on('kill',...)` event to save JSON to a file called `myappid.json`, then load it at startup.
 
 - 'Alarm' apps define a file called `alarm.js` which handles the actual alarm window.
 
