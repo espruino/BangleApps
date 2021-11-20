@@ -29,12 +29,12 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    draw();
+    draw(true);
   }, 60000 - (Date.now() % 60000));
 }
 
 
-function draw(){
+function draw(queue){
   g.reset();
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
@@ -73,7 +73,9 @@ function draw(){
   }
 
   // Queue draw in one minute
-  queueDraw();
+  if(queue){
+    queueDraw();
+  }
 }
 
 
@@ -91,8 +93,14 @@ function queueAlarm() {
 
 function handleAlarm(){
 
-    // After n minutes, inform the user.
-    if(alarm <= 1){
+    // Check each minute
+    if(alarm > 0){
+      alarm--;
+      queueAlarm();
+    }
+
+    // After n minutes, inform the user
+    if(alarm == 0){
       alarm = -1;
 
       var t = 300;
@@ -103,16 +111,10 @@ function handleAlarm(){
       .then(() => Bangle.buzz(t, 1))
       .then(() => new Promise(resolve => setTimeout(resolve, t)))
       .then(() => Bangle.buzz(t, 1));
-
-      // Draw watch face again to show data instead of alarm.
-      draw();
-
-    // If we still have to wait, queue alarm again.
-    } else if(alarm > 0){
-      alarm--;
-      queueAlarm();
-      draw();
     }
+
+    // Update UI
+    draw(false);
 }
 
 
@@ -124,7 +126,6 @@ Bangle.on('swipe',function(dir) {
   if(dir == -1){
     alarm = alarm < 0 ? 0 : alarm;
     alarm += 5;
-
     queueAlarm();
   }
 
@@ -134,13 +135,14 @@ Bangle.on('swipe',function(dir) {
     alarm = alarm <= 0 ? -1 : alarm;
   }
 
-  draw();
+  // Update UI
+  draw(false);
 });
 
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
-draw();
+draw(true);
 
 
 /*
@@ -148,7 +150,7 @@ draw();
  */
 Bangle.on('lcdPower',on=>{
   if (on) {
-    draw(); // draw immediately, queue redraw
+    draw(true); // draw immediately, queue redraw
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
