@@ -1,16 +1,17 @@
 /*
+- Read/write app settings, stored in <appid>.json
+- Read/write global settings (stored in setting.json)
 
 Usage:
-
 ```
 // read a single app setting
-value = require('Settings').get(appname, key, default);
+value = require('Settings').get(appid, key, default);
 // omit key to read all app settings
 value = require('Settings').get();
 // write a single app setting
-require('Settings').set(appname, key, value)
+require('Settings').set(appid, key, value)
 // omit key and pass an object as values to overwrite all settings
-require('Settings').set(appname, values)
+require('Settings').set(appid, values)
 
 // read Bangle settings by passing the Bangle object instead of an app name
 value = require('Settings').get(Bangle, key, default);
@@ -22,9 +23,9 @@ require('Settings').set(Bangle, key, value)
 
 For example:
 ```
-require('Settings').set('test', 'foo', 123);  // writes to 'test.settings.json'
-require('Settings').set('test', 'bar', 456);  // updates 'test.settings.json'
-// 'test.settings.json' now contains  {baz:123,bam:456}
+require('Settings').set('test', 'foo', 123);        // writes to 'test.json'
+require('Settings').set('test', 'bar', 456);        // updates 'test.json'
+// 'test.json' now contains  {baz:123,bam:456}
 baz = require('Settings').get('test', 'foo');       // baz = 123
 def = require('Settings').get('test', 'jkl', 789);  // def = 789
 all = require('Settings').get('test');              // all = {foo: 123, bar: 456}
@@ -34,7 +35,7 @@ baz = require('Settings').get('test', 'baz');       // baz = undefined
 vibrate = require('Settings').get(Bangle, 'vibrate', true);
 
 // Hint: if your app reads multiple settings, you can create a helper function:
-function s(key, def){return require('Settings').get('myapp', key, def);}
+function s(key, def) { return require('Settings').get('myapp', key, def); }
 var foo = s('foo setting', 'default value'), bar = s('bar setting');
 ```
 
@@ -54,10 +55,7 @@ function get(file, key, def) {
     // get(file) or get(file, def): get all settings
     return (s!==undefined) ? s : key;
   }
-  if (typeof s!=="object" || !(key in s)) {
-    return def;
-  }
-  return s[key];
+  return ((typeof s==="object") && (key in s)) ? s[key] : def;
 }
 
 /**
@@ -74,9 +72,7 @@ function set(file, key, value) {
     return;
   }
   var s = require("Storage").readJSON(file, 1);
-  if (typeof s!=="object") {
-    s = {};
-  }
+  if (typeof s!=="object") s = {};
   s[key] = value;
   require("Storage").write(file, s);
 }
@@ -90,7 +86,7 @@ function set(file, key, value) {
  * @return {*} Setting value (or default if not found)
  */
 exports.get = function(app, key, def) {
-  return get((app===Bangle) ? setting.json : app+".settings.json", key, def);
+  return get((app===Bangle) ? 'setting.json' : app+".json", key, def);
 };
 
 /**
@@ -101,5 +97,5 @@ exports.get = function(app, key, def) {
  * @param {*}             val Value to store
  */
 exports.set = function(app, key, val) {
-  set((app===Bangle) ? setting.json : app+".settings.json", key, val);
+  set((app===Bangle) ? 'setting.json' : app+".json", key, val);
 };
