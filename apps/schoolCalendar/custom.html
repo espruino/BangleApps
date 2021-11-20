@@ -1,115 +1,35 @@
-@@ -1,99 +1,35 @@
 <html>
-  <head>
-    <style>
-      body {
-        padding: 0;
-        margin: 0;
-      }
-      html, body, #map {
-        height: 100%;
-        width: 100%;
-      }
-      #controls {
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid black;
-        position:absolute;
-        right:0px;bottom:0px;
-        background-color: rgb(255, 255, 255);
-        z-index: 100;
-      }
-    </style>
-    <div id="controls">
-      <p>Create your events on the current week. Keep in note that your events repeat weekly.</p>
-      <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button></p>
-      <p>All day events are not supported. A feature that lets you get the calendar from your watch will be added in a future update.</p>
-    </div>
-    <meta charset='utf-8' />
+<head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
-    <link href='fullcalendar/main.css' rel='stylesheet' />
-    <script src='fullcalendar/main.js'></script>
+</head>
+<body>
+
+    <p>Some text: <input type="text" id="mytext" class="form-input" value="http://espruino.com"></p>
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+
     <script src="../../core/lib/customize.js"></script>
-  </head>
-  <body>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'timeGridWeek',
-          headerToolbar: {
-            left: '',
-            center: 'title',
-            right: 'timeGridWeek,listWeek'
-          },
-        navLinks: true, // can click day/week names to navigate views
-        editable: true,
-        selectable: true,
-        selectMirror: true,
-        nowIndicator: true,
-        editable: true,
-        height: 600,
-        select: function(arg) {
-          var title = prompt('Event Title:');
-          if (title) {
-            calendar.addEvent({
-              title: title,
-              start: arg.start,
-              end: arg.end,
-              allDay: arg.allDay
-            })
-          }
-          calendar.unselect()
-        },
-        eventClick: function(arg) {
-          if (confirm('Are you sure you want to delete this event?')) {
-            arg.event.remove()
-          }
-        },
-        });
-        calendar.render();
-      });
-      
-      var calendarEvents = calendar.getEvents();
-      let schedule = []
-
-      for(i=0;i>calendarEvents.length;i++){
-        var calendarEntry = {}
-        calendarEntry['cn'] = calendarEvents[i].title;
-        calendarEntry['dow'] = calendarEvents[i].start.getDate();
-        calendarEntry['sh'] = calendarEvents[i].start.getHours();
-        calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
-        calendarEntry['eh'] = calendarEvents[i].end.getHours();
-        calendarEntry['em'] = calendarEvents[i].end.getMinutes();
-        schedule.push(calendarEntry)
-      }
 
     <script>
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
-        content = schedule
-        // get the text to add
-        var text = document.getElementById("mytext").value;
-        // build the app's text using a templated String
-        var app = `
+        // When the 'upload' button is clicked...
+        document.getElementById("upload").addEventListener("click", function () {
+            // get the text to add
+            var text = document.getElementById("mytext").value;
+            // build the app's text using a templated String
+            var app = `
 var txt = ${JSON.stringify(text)};
 g.clear(1);
 g.setFontAlign(0,0);
 g.setFont("6x8");
 g.drawString(txt,120,120);
 `;
-        // send finished app (in addition to contents of app.json)
-        sendCustomizedApp({
-          storage:[
-            {"name":"customFile.app.json",url:"app.js",content:content}
-            {name:"myapp.app.js", url:"app.js", content:app},
-          ]
+            // send finished app (in addition to contents of app.json)
+            sendCustomizedApp({
+                storage: [
+                    { name: "myapp.app.js", url: "app.js", content: app },
+                ]
+            });
         });
-      });
 
     </script>
-  </head>
-  <body>
-    <div id='calendar'></div>
-  </body>
+</body>
 </html>
