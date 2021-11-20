@@ -74,8 +74,6 @@ if (next) {
       next(() => {});
     } else if(lastx==0 && lasty==0){
     writeLine('play/pause', 3);
-    Bluetooth.println(JSON.stringify({t: "music", n: next}));
-
       //setTimeout(drawApp, 1000);
       toggle(() => {});
     }
