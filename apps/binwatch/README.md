@@ -4,7 +4,7 @@ Binary watch to train Your brain
 Inspired by the LCD wrist watch from TecRAL from 1989
 
 ![](screenshot.png) 
-![](screenshot_2.png)
+![](screenshot2.png)
 
 ## Usage
 
