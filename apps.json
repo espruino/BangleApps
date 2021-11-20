@@ -3518,10 +3518,10 @@
   "shortName":"SCalendar",
   "icon": "CalenderLogo.png",
   "version":"0.01",
-  "description": "A simple calendar that you can see your upcoming events. Keep in note that your events reapeat weekly.",
+  "description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
   "tags": "tool",
   "readme": "README.md",
-  "custom":"custom.html",
+  "custom":"interface.html",
   "storage": [
     {"name":"schoolCalendar.app.js","url":"app.js"},
     {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
