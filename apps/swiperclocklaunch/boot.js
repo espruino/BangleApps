@@ -1,10 +1,10 @@
 // clock -> launcher
 (function() {
     var sui = Bangle.setUI;
-    Bangle.setUI = function(type, cb) {
-        var mode = type;
+    Bangle.setUI = function(mode, cb) {
         sui(type,cb);
         console.log(mode);
+        if (typeof mode == 'undefined') return;
         if (!(mode.startsWith("clock"))) return;
         Bangle.swipeHandler = dir => { if (dir<0) Bangle.showLauncher(); };
         Bangle.on("swipe", Bangle.swipeHandler);
