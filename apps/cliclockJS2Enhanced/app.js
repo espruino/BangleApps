@@ -28,8 +28,6 @@ let textCol = g.theme.dark ? "#0f0" : "#080";
 function drawAll(){
   updateTime();
   updateRest(new Date());
-   if(Bangle.isLocked()==false) E.showMessage('Swipe', 'Music');
-  else E.showMessage('Locked', 'Music');
 }
 
 function updateRest(now){
