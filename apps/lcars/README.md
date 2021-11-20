@@ -1,6 +1,8 @@
 # LCARS clock
 
-A simple LCARS inspired clock
+A simple LCARS inspired clock.
+Note: To display the steps, its necessary to install
+the [Pedometer widget](https://banglejs.com/apps/#pedometer%20widget).
 
 ## Features
  * Shows the time
