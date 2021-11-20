@@ -2,3 +2,4 @@
 0.02: Show text if uncalibrated
 0.03: Eliminate flickering
 0.04: Fix for Bangle.js 2 and themes
+0.05: Fix bearing not clearing correctly (visible in single or double digit bearings)
