@@ -64,7 +64,7 @@ function draw(queue){
 
   // Draw steps
   if(alarm < 0){
-    var steps = Bangle.getStepCount();
+    var steps = getSteps();
     g.drawString("STEP:", 40, 147);
     g.drawString(steps, 100, 147);
   } else {
@@ -78,6 +78,23 @@ function draw(queue){
   }
 }
 
+/*
+ * Step counter via widget
+ */
+function getSteps() {
+  if (stepsWidget() !== undefined)
+    return stepsWidget().getSteps();
+  return "???";
+}
+
+function stepsWidget() {
+  if (WIDGETS.activepedom !== undefined) {
+    return WIDGETS.activepedom;
+  } else if (WIDGETS.wpedom !== undefined) {
+    return WIDGETS.wpedom;
+  }
+  return undefined;
+}
 
 /*
  * Handle alarm
@@ -140,11 +157,6 @@ Bangle.on('swipe',function(dir) {
 });
 
 
-// Clear the screen once, at startup and draw clock
-g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
-draw(true);
-
-
 /*
  * Stop updates when LCD is off, restart when on
  */
@@ -160,6 +172,12 @@ Bangle.on('lcdPower',on=>{
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 
-// Load widgets
+// Load widgets - needed by draw
 Bangle.loadWidgets();
+
+// Clear the screen once, at startup and draw clock
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
+draw(true);
+
+// After drawing the watch face, we can draw the widgets
 Bangle.drawWidgets();
