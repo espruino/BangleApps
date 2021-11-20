@@ -3523,8 +3523,7 @@
   "readme": "README.md",
   "custom":"custom.html",
   "storage": [
-    {"name":"schoolCalendar.app.js","url":"app.js"},
-    {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
+    {"name":"schoolCalendar.app.js"}
   ],
   "data": [
     {"name":"app.json"}
