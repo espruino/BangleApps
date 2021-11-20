@@ -59,8 +59,9 @@ function draw(queue){
 
   // Draw battery
   var bat = E.getBattery();
+  var charging = Bangle.isCharging() ? "*" : "";
   g.drawString("BAT:", 40, 127);
-  g.drawString(bat+"%", 100, 127);
+  g.drawString(charging + bat+ "%", 100, 127);
 
   // Draw steps
   if(alarm < 0){
