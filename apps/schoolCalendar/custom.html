@@ -105,7 +105,7 @@ g.drawString(txt,120,120);
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {"name":"customFile.app.json",url:"app.js",content:content}
+            {"name":"customFile.app.json",url:"app.js",content:content},
             {name:"myapp.app.js", url:"app.js", content:app},
           ]
         });
