@@ -7,6 +7,7 @@ var locale = require("locale");
 var marginTop = 25;
 var flag = false;
 
+
 var storage = require('Storage');
 
 const settings = storage.readJSON('setting.json',1) || { HID: false };
@@ -73,6 +74,8 @@ if (next) {
       next(() => {});
     } else if(lastx==0 && lasty==0){
     writeLine('play/pause', 3);
+    Bluetooth.println(JSON.stringify({t: "music", n: next}));
+
       //setTimeout(drawApp, 1000);
       toggle(() => {});
     }
