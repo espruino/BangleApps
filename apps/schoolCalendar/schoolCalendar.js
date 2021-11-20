@@ -152,8 +152,8 @@ function getScheduleTable() {
 function findNextScheduleIndex() {
   var schedule = getScheduleTable();
   var currentDate = new Date();
-  //var minuteOfWeek = (currentDate.getDay()*3600)+(currentDate.getHours()*60)+currentDate.getMinutes();
-  var minuteOfWeek = (4*3600)+(16*60)+0;
+  var minuteOfWeek = (currentDate.getDay()*3600)+(currentDate.getHours()*60)+currentDate.getMinutes();
+  //var minuteOfWeek = (4*3600)+(16*60)+0;
   var currentPosition;
   for(currentPosition = 0;currentPosition < schedule.length; currentPosition++){
     var scheduleItemStartMinuteOfWeek = schedule[currentPosition].dow*3600 + schedule[currentPosition].eh*60+schedule[currentPosition].em;
