@@ -908,7 +908,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widram.wid.js","url":"widget.js"}
     ]
