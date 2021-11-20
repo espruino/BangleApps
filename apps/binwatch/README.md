@@ -1,9 +1,9 @@
 # TheBinWatch
 
 Binary watch to train Your brain
-Inspired by the 80's LCD wrist watch from RALtec
+Inspired by the LCD wrist watch from TecRAL from 1989
 
-![](screenshot.png)
+![](screenshot.png) ![](screenshot_2.png)
 
 ## Usage
 
@@ -42,3 +42,5 @@ So the time is 10:33:41 (that's all)
 
 ## TRAIN YOUR BRAIN
 
+Remark: more infos about the original watch including manual can be found here:
+https://timeartpiece.com/watches/tech-ral-binary
