@@ -13,10 +13,13 @@ Note: Charging your Bangle due to the magnetic connector clamp seems to require 
 ## Controls
 
 *BTN1* - marks the current heading with a blue circle - see screen shot. This can be used to take a bearing and then follow it..
+(Swipe UP on Bangle 2)
 
 *BTN2* - invokes calibration ( can be cancelled if pressed accidentally).
+(*BTN1* on Bangle 2)
 
 *BTN3* - cancels the marker (blue circle not displayed)
+(swipe DOWN on Bangle 2)
 
 
 ## Support

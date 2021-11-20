@@ -1,5 +1,5 @@
 const Yoff = 80;
-var pal2color = new Uint16Array([0x0000,0xffff,0x07ff,0xC618],0,2);
+var pal2color = new Uint16Array([g.theme.bg,g.theme.fg,g.theme.fg2,0xC618],0,2);
 var buf = Graphics.createArrayBuffer(240,60,2,{msb:true});
 Bangle.setLCDTimeout(30);
 
