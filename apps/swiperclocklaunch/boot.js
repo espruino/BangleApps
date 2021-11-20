@@ -2,7 +2,7 @@
 (function() {
     var sui = Bangle.setUI;
     Bangle.setUI = function(mode, cb) {
-        sui(type,cb);
+        sui(mode,cb);
         console.log(mode);
         if (typeof mode == 'undefined') return;
         if (!(mode.startsWith("clock"))) return;
