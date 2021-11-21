@@ -78,7 +78,6 @@
             let schedule = []
             //--------------------
             console.log = console.log || function(){};
-            console.log(calendar.getEvents()[0].title);
             //--------------------
             if(calendarEvents){
               for(i=0;i>calendarEvents.length;i++){
@@ -90,6 +89,7 @@
                 calendarEntry['eh'] = calendarEvents[i].end.getHours();
                 calendarEntry['em'] = calendarEvents[i].end.getMinutes();
                 schedule.push(calendarEntry)
+                consle.log(schedule);
               }
             }else{
                alert("Add some events!");                                               
