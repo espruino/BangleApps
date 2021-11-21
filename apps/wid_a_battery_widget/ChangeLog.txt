@@ -1,0 +1,1 @@
+1.0: Release for Bangle 2 (2021/11/18)
