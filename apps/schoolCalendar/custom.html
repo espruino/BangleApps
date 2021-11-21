@@ -88,7 +88,12 @@
               calendarEntry['eh'] = calendarEvents[i].end.getHours();
               calendarEntry['em'] = calendarEvents[i].end.getMinutes();
               schedule.push(calendarEntry)
-              console.log(schedule+" lets go");
+              console.log(schedule[0].cn);
+              console.log(schedule[0].dow);
+              console.log(schedule[0].sh);
+              console.log(schedule[0].sm);
+              console.log(schedule[0].eh);
+              console.log(schedule[0].em);
             }
             // build the app's text using a templated String
             var app = `
