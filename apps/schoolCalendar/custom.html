@@ -79,20 +79,16 @@
             //--------------------
             console.log = console.log || function(){};
             //--------------------
-            if(calendarEvents){
-              for(i=0;i>calendarEvents.length;i++){
-                var calendarEntry = {}
-                calendarEntry['cn'] = calendarEvents[i].title;
-                calendarEntry['dow'] = calendarEvents[i].start.getDate();
-                calendarEntry['sh'] = calendarEvents[i].start.getHours();
-                calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
-                calendarEntry['eh'] = calendarEvents[i].end.getHours();
-                calendarEntry['em'] = calendarEvents[i].end.getMinutes();
-                schedule.push(calendarEntry)
-                console.log(schedule);
-              }
-            }else{
-               alert("Add some events!");                                               
+            for(i=0;i>calendarEvents.length;i++){
+              var calendarEntry = {}
+              calendarEntry['cn'] = calendarEvents[i].title;
+              calendarEntry['dow'] = calendarEvents[i].start.getDate();
+              calendarEntry['sh'] = calendarEvents[i].start.getHours();
+              calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
+              calendarEntry['eh'] = calendarEvents[i].end.getHours();
+              calendarEntry['em'] = calendarEvents[i].end.getMinutes();
+              schedule.push(calendarEntry)
+              console.log(schedule+" lets go");
             }
             // build the app's text using a templated String
             var app = `
