@@ -3517,7 +3517,7 @@
   "name": "School Calendar",
   "shortName":"SCalendar",
   "icon": "CalenderLogo.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
   "tags": "tool",
   "readme": "README.md",
