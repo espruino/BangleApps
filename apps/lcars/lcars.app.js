@@ -62,18 +62,6 @@ function draw(queue){
   var alrmText = alarm >= 0 ? "T-"+alarm : "OFF";
   g.drawString(alrmText, 70, 107);
 
-  // GPS
-  var gpsText = Bangle.isGPSOn() ? "GPS-ON" : "GPS-OFF";
-  g.drawString(gpsText, 120, 107);
-
-  // HRM
-  var gpsText = Bangle.isHRMOn() ? "HRS-ON" : "HRS-OFF";
-  g.drawString(gpsText, 120, 127);
-
-  // CMP
-  var compassText = Bangle.isCompassOn() ? "CMP-ON" : "CMP-OFF";
-  g.drawString(compassText, 120, 147);
-
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
@@ -84,6 +72,18 @@ function draw(queue){
   var steps = getSteps();
   g.drawString("STEP:", 30, 147);
   g.drawString(steps, 70, 147);
+
+  // GPS
+  var gpsText = Bangle.isGPSOn() ? "GPS-ON" : "GPS-OFF";
+  g.drawString(gpsText, 115, 107);
+
+  // HRM
+  var gpsText = Bangle.isHRMOn() ? "HRS-ON" : "HRS-OFF";
+  g.drawString(gpsText, 115, 127);
+
+  // CMP
+  var compassText = Bangle.isCompassOn() ? "CMP-ON" : "CMP-OFF";
+  g.drawString(compassText, 115, 147);
 
   // Queue draw in one minute
   if(queue){
