@@ -50,6 +50,7 @@
         nowIndicator: true,
         editable: true,
         height: 600,
+        initialDate: '2018-06-01', // will be parsed as local
         select: function(arg) {
           var title = prompt('Event Title:');
           if (title) {
@@ -61,6 +62,7 @@
             })
           }
           calendar.unselect()
+         
         },
         eventClick: function(arg) {
           if (confirm('Are you sure you want to delete this event?')) {
@@ -69,7 +71,6 @@
         },
         });
         calendar.render();
-        calendar.gotoDate(2021-01-10);
       });
       
         // When the 'upload' button is clicked...
