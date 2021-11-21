@@ -80,7 +80,7 @@
             console.log = console.log || function(){};
             console.log(calendar.getEvents()[0].title());
             //--------------------
-            if(calendarEvents)
+            if(calendarEvents){
               for(i=0;i>calendarEvents.length;i++){
                 var calendarEntry = {}
                 calendarEntry['cn'] = calendarEvents[i].title();
@@ -91,9 +91,9 @@
                 calendarEntry['em'] = calendarEvents[i].end.getMinutes();
                 schedule.push(calendarEntry)
               }
-          }else{
-             alert("Add some events!");                                               
-          }
+            }else{
+               alert("Add some events!");                                               
+            }
             // build the app's text using a templated String
             var app = `
 require("Font8x12").add(Graphics);
