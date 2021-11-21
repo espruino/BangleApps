@@ -78,12 +78,12 @@
             let schedule = []
             //--------------------
             console.log = console.log || function(){};
-            console.log(calendar.getEvents()[0].title());
+            console.log(calendar.getEvents()[0].title);
             //--------------------
             if(calendarEvents){
               for(i=0;i>calendarEvents.length;i++){
                 var calendarEntry = {}
-                calendarEntry['cn'] = calendarEvents[i].title();
+                calendarEntry['cn'] = calendarEvents[i].title;
                 calendarEntry['dow'] = calendarEvents[i].start.getDate();
                 calendarEntry['sh'] = calendarEvents[i].start.getHours();
                 calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
