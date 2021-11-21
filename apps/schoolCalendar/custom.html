@@ -79,7 +79,7 @@
             //--------------------
             console.log = console.log || function(){};
             //--------------------
-            for(i=0;i>calendarEvents.length;i++){
+            for(i=0;i<calendarEvents.length;i++){
               var calendarEntry = {}
               calendarEntry['cn'] = calendarEvents[i].title;
               calendarEntry['dow'] = calendarEvents[i].start.getDate();
