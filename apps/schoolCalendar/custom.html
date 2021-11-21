@@ -33,10 +33,10 @@
     <script src="../../core/lib/customize.js"></script>
 
     <script>
-      
+      var calendar;
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: 'timeGridWeek',
           headerToolbar: {
             left: '',
