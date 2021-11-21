@@ -77,6 +77,9 @@
             var calendarEvents = calendar.getEvents();
             let schedule = []
             //--------------------
+            console.log = console.log || function(){};
+            console.log(calendar.getEvents()[0].title());
+            //--------------------
             if(calendarEvents)
               for(i=0;i>calendarEvents.length;i++){
                 var calendarEntry = {}
@@ -89,11 +92,8 @@
                 schedule.push(calendarEntry)
               }
           }else{
-             console.log = console.log || function(){};
-             console.log(calendar.getEvents()[0].title());
              alert("Add some events!");                                               
-          //}
-          //---------------------
+          }
             // build the app's text using a templated String
             var app = `
 require("Font8x12").add(Graphics);
