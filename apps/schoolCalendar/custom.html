@@ -184,69 +184,7 @@ function updateDay(ffunction,day){
 }
 
 function getScheduleTable() {
-  let schedule = [
-    //Sunday
-
-    //Monday:
-    {cn: "Biblical Theology", dow:1, sh: 8, sm: 10, eh:9, em: 5, r:"207", t:"Mr. Besaw"},
-    {cn: "English", dow:1, sh: 9, sm: 5, eh:10, em: 0, t:"Dr. Wong"},
-    {cn: "Break", dow:1, sh: 10, sm: 0, eh:10, em: 10, t:""},
-    {cn: "MS Robotics", dow:1, sh: 10, sm: 10, eh:11, em: 0, r:"211", t:"Mr. Broyles"},
-    {cn: "MS Physical Education Boys", dow:1, sh: 11, sm: 0, eh:11, em: 50, r:"GYM", t:"Mr. Mendezona"},
-    {cn: "Office Hours Besaw/Nunez", dow:1, sh: 11, sm: 50, eh:12, em: 25, r:"203", t:"Besaw/Nunez"},
-    {cn: "Lunch", dow:1, sh: 12, sm: 25, eh:12, em: 50, r:"Commence or Advisory", t:""},
-    {cn: "Activity Period", dow:1, sh: 12, sm: 50, eh:13, em: 0, r:"Outside", t:""},
-    {cn: "Latin", dow:1, sh: 13, sm: 5, eh:14, em: 0, r:"208", t:"Mrs.Scrivner"},
-    {cn: "Algebra 1", dow:1, sh: 14, sm: 0, eh:15, em: 0, r:"204", t:"Mr. Benson"},
-
-    //Tuesday:
-    {cn: "Logic", dow:2, sh: 8, sm: 10, eh:9, em: 0, r:"208", t:"Mrs.Scrivner"},
-    {cn: "Algebra 1", dow:2, sh: 9, sm: 0, eh:10, em: 0, r:"204", t:"Mr. Benson"},
-    {cn: "Chapel", dow:2, sh: 10, sm: 0, eh:10, em: 25, r:"Advisory", t:""},
-    {cn: "Break", dow:2, sh: 10, sm: 25, eh:10, em: 35, r:"Outside", t:""},
-    {cn: "Advisory Besaw", dow:2, sh: 10, sm: 35, eh:11, em: 0, r:"207", t:"Mr. Besaw"},
-    {cn: "MS Robotics", dow:2, sh: 11, sm: 0, eh:11, em: 50, r:"211", t:"Mr. Broyles"},
-    {cn: "Office Hours Besaw/Nunez", dow:2, sh: 11, sm: 50, eh:12, em: 25, r:"203", t:" Besaw/Nunez"},
-    {cn: "Lunch", dow:2, sh: 12, sm: 25, eh:12, em: 50, r:"Commence or Advisory", t:""},
-    {cn: "Activity Period", dow:2, sh: 12, sm: 50, eh:13, em: 5, r:"Outside", t:""},
-    {cn: "Medieval Western Civilization", dow:2, sh: 13, sm: 5, eh:14, em: 0, r:"205", t:"Mr. Khule"},
-    {cn: "Introductory Biology and Epidemiology", dow:2, sh: 14, sm: 0, eh:15, em: 0, r:"202", t:"Mrs. Brown"},
-
-    //Wensday:
-    {cn: "English", dow:3, sh: 9, sm: 0, eh:9, em: 55, r:"206", t:"Dr. Wong"},
-    {cn: "Biblical Theology", dow:3, sh: 9, sm: 55, eh:10, em: 50, r:"207", t:"Mr. Besaw"},
-    {cn: "Break", dow:3, sh: 10, sm: 50, eh:11, em: 0, r:"Outside", t:"_"},
-    {cn: "MS Physical Education Boys", dow:3, sh: 11, sm: 0, eh:11, em: 50, r:"GYM", t:"Mr. Mendezona"},
-    {cn: "Office Hours Besaw/Nunez", dow:3, sh: 11, sm: 50, eh:12, em: 25, r:"203", t:" Besaw/Nunez"},
-    {cn: "Lunch", dow:3, sh: 12, sm: 25, eh:12, em: 50, r:"Commence or Advisory", t:""},
-    {cn: "Activity Period", dow:2, sh: 12, sm: 50, eh:13, em: 0, r:"Outside", t:""},
-    {cn: "Introductory Biology and Epidemiology", dow:3, sh: 13, sm: 0, eh:14, em: 0, r:"202", t:"Mrs. Brown"},
-    {cn: "Medieval Western Civilization", dow:3, sh: 14, sm: 0, eh:15, em: 0, r:"205", t:"Mr. Khule"},
-
-
-    //Thursday:
-    {cn: "Algebra 1", dow:4, sh: 8, sm: 10, eh:9, em: 5, r:"204", t:"Mr. Benson"},
-    {cn: "Latin", dow:4, sh: 9, sm: 5, eh:10, em: 0, r:"208", t:"Mrs.Scrivner"},
-    {cn: "Break", dow:4, sh: 10, sm: 0, eh:10, em: 10, r:"Outside", t:""},
-    {cn: "MS Robotics", dow:4, sh: 10, sm: 10, eh:11, em: 0, r:"211", t:"Mr. Broyles"},
-    {cn: "Advisory Besaw", dow:4, sh: 11, sm: 50, eh:12, em: 25, r:"207", t:"Mr. Besaw"},
-    {cn: "Lunch", dow:4, sh: 12, sm: 25, eh:12, em: 50, r:"Commence or Advisory", t:""},
-    {cn: "Activity Period", dow:4, sh: 12, sm: 50, eh:13, em: 0, r:"Outside", t:""},
-    {cn: "Biblical Theology", dow:4, sh: 13, sm: 5, eh:14, em: 0, r:"207", t:"Mr. Besaw"},
-    {cn: "English", dow:4, sh: 14, sm: 0, eh:15, em: 0, r:"206", t:"Dr. Wong"},
-
-    //Friday:
-    {cn: "Medieval Western Civilization", dow:5, sh: 8, sm: 10, eh:9, em: 5, r:"205", t:"Mr. Khule"},
-    {cn: "Introductory Biology and Epidemiology", dow:5, sh: 9, sm: 5, eh:10, em: 0, r:"202", t:"Mrs. Brown"},
-    {cn: "Break", dow:5, sh: 10, sm: 0, eh:10, em: 10, dr:"Outside", t:""},
-    {cn: "MS Robotics", dow:5, sh: 10, sm: 10, eh:11, em: 0, r:"211", t:"Mr. Broyles"},
-    {cn: "Office Hours Besaw/Nunez", dow:5, sh: 11, sm: 50, eh:12, em: 25, r:"203", t:" Besaw/Nunez"},
-    {cn: "Lunch", dow:5, sh: 12, sm: 25, eh:12, em: 50, r:"Commence or Advisory", t:""},
-    {cn: "Activity Period", dow:5, sh: 12, sm: 50, eh:13, em: 0, r:"Outside", t:""},
-    {cn: "Algebra 1", dow:5, sh: 13, sm: 5, eh:14, em: 0, r:"204", t:"Mr. Benson"},
-    {cn: "Logic", dow:5, sh: 14, sm: 0, eh:15, em: 0, r:"208", t:"Mrs.Scrivner"},
-    //Sataturday:
-  ];
+  let schedule = ${schedule};
   return schedule;
 }
 
