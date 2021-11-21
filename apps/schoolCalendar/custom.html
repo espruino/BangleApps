@@ -74,10 +74,10 @@
         // When the 'upload' button is clicked...
         document.getElementById("upload").addEventListener("click", function () {
             //Cacultate data:
-            var calendarEvents = calendar.getEvents();
+            //var calendarEvents = calendar.getEvents();
             let schedule = []
             //--------------------
-            if(calendarEvents)
+            /*if(calendarEvents)
               for(i=0;i>calendarEvents.length;i++){
                 var calendarEntry = {}
                 calendarEntry['cn'] = calendarEvents[i].title;
@@ -88,9 +88,9 @@
                 calendarEntry['em'] = calendarEvents[i].end.getMinutes();
                 schedule.push(calendarEntry)
               }
-          }else{
+          }else{*/
              alert("Add some events!");                                               
-          }
+          //}
           //---------------------
             // build the app's text using a templated String
             var app = `
