@@ -61,6 +61,8 @@ function loadSettings() {
   //console.log(settings);
 }
 
+loadSettings();
+
 // load font files based on settings.font
 if (settings.font == "Architect")
   require("f_artitect").add(Graphics);
@@ -176,7 +178,6 @@ Bangle.on('lcdPower', function(on) {
   draw();
 });
 
-loadSettings();
 g.clear();
 var secondInterval = setInterval(draw, 1000);
 draw();
