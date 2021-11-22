@@ -20,6 +20,8 @@ const HRT_FN_MODE = "fn_hrt";
 let infoMode = NONE_MODE;
 let functionMode = NONE_FN_MODE;
 
+let textCol = g.theme.dark ? "#0f0" : "#080";
+
 function drawAll(){
   updateTime();
   updateRest(new Date());
@@ -45,9 +47,7 @@ function writeLineStart(line){
 function writeLine(str,line){
   var y = marginTop+line*fontheight;
   g.setFont("6x8",fontsize);
-  //g.setColor(0,1,0);
-  g.setColor("#0f0");
-  g.setFontAlign(-1,-1);
+  g.setColor(textCol).setFontAlign(-1,-1);
   g.clearRect(0,y,((str.length+1)*20),y+fontheight-1);
   writeLineStart(line);
   g.drawString(str,25,y);
@@ -56,7 +56,7 @@ function writeLine(str,line){
 function drawInfo(line) {
   let val;
   let str = "";
-  let col = "#0f0"; // green
+  let col = textCol; // green
 
   //console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
 
@@ -64,7 +64,7 @@ function drawInfo(line) {
   case NONE_FN_MODE:
     break;
   case HRT_FN_MODE:
-    col = "#0ff"; // cyan
+    col = g.theme.dark ? "#0ff": "#088"; // cyan
     str = "HRM: " + (hrtOn ? "ON" : "OFF");
     drawModeLine(line,str,col);
     return;
@@ -72,7 +72,7 @@ function drawInfo(line) {
 
   switch(infoMode) {
   case NONE_MODE:
-    col = "#fff";
+    col = g.theme.bg;
     str = "";
     break;
   case HRT_MODE:
@@ -104,9 +104,8 @@ function drawModeLine(line, str, col) {
   g.setColor(col);
   var y = marginTop+line*fontheight;
   g.fillRect(0, y, 239, y+fontheight-1);
-  g.setColor(0);
-  g.setFontAlign(0, -1);
-  g.drawString(str, g.getWidth()/2, y);
+  g.setColor(g.theme.bg).setFontAlign(0, 0);
+  g.drawString(str, g.getWidth()/2, y+fontheight/2);
 }
 
 function changeInfoMode() {
@@ -193,7 +192,7 @@ Bangle.on('lcdPower',function(on) {
 var click = setInterval(updateTime, 1000);
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", btn=>{
-  if (btn==0) changeInfoMode();
-  if (btn==1) changeFunctionMode();
+  if (btn<0) changeInfoMode();
+  if (btn>0) changeFunctionMode();
   drawAll();
 });

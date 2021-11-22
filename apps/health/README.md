@@ -14,9 +14,17 @@ To view data, run the `Health` app from your watch.
 
 Stores:
 
-* Heart rate (TODO)
+* Heart rate
 * Step count
 * Movement
+
+## Settings
+
+* **Heart Rt** - Whether to monitor heart rate or not
+  * **Off** - Don't turn HRM on, but record heart rate if the HRM was turned on by another app/widget
+  * **10 Min** - Turn HRM on every 10 minutes (for each heath entry) and turn it off after 2 minutes, or when a good reading is found
+  * **Always** - Keep HRM on all the time (more accurate recording, but reduces battery life to ~36 hours)
+
 
 ## Technical Info
 
@@ -28,7 +36,6 @@ to grab historical health info.
 
 ## TODO
 
-* **Extend file format to include combined data for each day (to make graphs faster)**
 * `interface` page for desktop to allow data to be viewed and exported in common formats
 * More features in app:
   * Step counting goal (ensure pedometers use this)
