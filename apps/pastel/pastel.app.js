@@ -78,7 +78,8 @@ function loadFonts() {
   else if (settings.font == "Elite")
     require("f_elite").add(Graphics);
   else
-    require("f_lato").add(Graphics);
+    //require("f_lato").add(Graphics);
+    require("f_orbitron").add(Graphics);
 }
 
 var mm_prev = "xx";
@@ -140,7 +141,8 @@ function draw() {
   else if (settings.font == "Elite")
     g.setFontSpecialElite();
   else
-    g.setFontLato();
+    //g.setFontLato();
+    g.setFontOrbitron();
     
   g.setFontAlign(1,-1);  // right aligned
   g.drawString(hh, x - 6, y);
