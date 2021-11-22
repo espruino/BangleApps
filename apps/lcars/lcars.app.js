@@ -6,8 +6,30 @@ var alarm = -1;
 
 var img = {
   width : 176, height : 151, bpp : 3,
-  transparent : 0,
-  buffer : require("heatshrink").decompress(atob("gF58+eAR14IN1fvv374CN7yD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AH4A/AH4A/AB1z588+YCN+RBuj158+eARyD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AUhyD/gEDQaHz4BCuQaNAIN0PQaHIIN0BQaF5IN0AQaHPkBBug6DQ8iEvQaE8yBBuhyDPAQNAINsBQaACBkhCuQaACpVo0cQaACo4CFGjyD/AAMPQf4ACQf4ADgiD+AH4A/AH8J02atICIwEAgPnz15AR3gEgM27dt2wCTF4IABgYROgN9+/fAR14ILsaQBKDakwjKF5oABKZ6DwgxTPQeEmQf5cPQeMBLhyDxgJTRQd0JKaKDuhKD/gENQf6D/F4VNQf8AKaKDvKBYnBAGZQKzBB1QZOwIGqDJsBA2QZJA3QZGYIPCDH4CD/0xA4QY+wIPKDGwCD/tpB6Qf6DHthA5QY1oIPSD/QY9gQf/bIPaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AF8JQYgCdsEHnnz54CJgIdLwEAhqDEATtggPnz15ARHkgIdLIIKAgQcCAgQcAA/gAA=="))
+  buffer : require("heatshrink").decompress(atob("gFz588+YCbEYdx48cATMHz1584CcIAUCpMkyQCZQDqDjQDqD/QdOatOmATKDDhEgwQCZNAZmDAHKDC8hB9Qf6DE8CD/55A9QYegQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/ABthw0YsCD9ps06dIQftp02aQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6Dojlx46D+AGaDNAGaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qc9hw0YAQgJBg8cuPHASfAEoUaPQQCIQZkE6ZTCAQgLBnPnz15ASd4E4UTEw4CDQZcBLJILBp88+fPASfIQbcNLJKDqoBBKLJSDpzBAKgZZKQboAXLJaDdAC+TQf8AQBCD4QBCD/Qf6D/Qf6D/Qf6D/Qf6DKDzQAiPQWYIPqDC4CD/fwKD/mhB+Qf6D/AAcYsOGIPwA/AH4A/AH4AHyVJkhB+jlx46D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DlwCD/48UQf8kyVIkGChACeFAImBFIQCSkCDCAUXEgEB02atICVLKxoPQYM06dNASqD/Qf6D/Qf6D/Qf6D/ARo="))
+}
+
+var iconPlanet = {
+  width : 60, height : 60, bpp : 3,
+  buffer : require("heatshrink").decompress(atob("AA8Dhkw4YCB4AVOoMEiACEChgpEAQcckAWLiEAwgsDAoMwoAUJFIwsDuJcJkGCgEBFIImBhEgwky7YtIFI4sE48cFhSACAoIsC2XbtuwQZwsGuAWFEYOCQYIFCwAvBggsC2hyEbQoCFFIIsCRIsCFgQCEcAUs2wsB23QWBsMmIsKFIoCBkLmBpctFga2EFhQpDAQawEFgmAAQMCiHLFgtsbphZHcYYsGwkQgACBoaGEAQIVBuAsKWYwsCmSGGFINBWYbgCFgWwfYIsihmy5dsF4QsO4YsGnmyFgwpCAQcy5ckcwIsQcYK5EFhACBgIvGXIWQFh6MFFhUhgDjBFglAggsUAQIsBoAsHXJEAwEAFi2wLJACDwAsEBAMcFKIsDgApJAQcAFgQICFKQCDFJYCEgAFDDopfQJob+BRhosEjlxfwNxFhpHCwmy5csAQJ9BdJUADQIpCAQosLgEhFIQCFQAgsFgExFhHHFhcztgsHljsHwAsMXJAVBgEDtu27YsG2AsJgIsKuAsNAQJcHF4gVCgEHFhJcG4AsDposDLg+QFgQrDCwIsQCwgABFga5GWwQUGhjjOCwykCmwvBFgkCWAgAG4YsHWAwAGgQsCRgfYFgQVJgcMFhIVJAAMEFgvQKxIAEFg4VNcwRcCmnQBw4A=="))
+}
+
+var iconGps = {
+  width : 60, height : 60, bpp : 3,
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("pMkyQCHy8pBZICJpe+6QURAQOPnmkFiVJ3//CiUl589+wIElMiC5dN2///oIDymSogsKkYsB+/aBAdJk4sLtu+///+gICzgsMufPnn379pBANc/JZLyYsB/YtBWwMm/YaCa4UcFhHz7990mXnhHDyVIMIQXDzdvFgPvFoNJ336VQnHglwDonzFgXPvv3RgI7EDIYsIcYP/3xQEuAsBuPCFhC2B75QExLTFFgy2GUINwoMciHHhIsHWwoXBWQtSFg62EB4MciJZC4a2DWYa2FBYLiHcAQsFWwYsEhgsBhi2CFgy2B+xZIWwWTtosFWwP9PoVwoccmHHjkxWwMjFgy2B7QnByIsFWwQsGWwshLILjBFgK2BkIsGWwtEFguSqmRFgy2Fw8MmKGCWwNJg4sGWwsSFgtkyUWFgy2GLIkeUAIsHWwJxCWwuW/ioBrYsG3/6CQS2BFgc8/NkyDjHE4i2Dk3O7fyBINvFgntYwshQwNxsmc+fny0kx4sDKwYCDWwVypM79/JSAW7FgIUGWwUcufEzxWBjgOGAQ8Stdv5Mk94HBChgCByQpBj1548EuAsNAYOv38kdYUlFhgQCPoNxFgNx4QsLpQDBye+/IKDygsLBgN5888uFBjkQ48JFhVIxIDBpwKFqQsKoKDB88ciJZC4a2LAIdCSJAXHkFBhlZ8QsChgsBhi2KRAWRkgNGWxVDhp0CuFDjkw48cmK2JpD3BAoIuBVI77MkJZBuAsCWxgCCogHGWxYCCw8MmKGC4cdFhtJiQsUyUcLIgsPWwwUOWwQsDChy2G0gsPWwKGBuPSFiC2DlIUQWwUcugURWwSwGA="))
+}
+
+var iconHrm = {
+  width : 60, height : 60, bpp : 3,
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("pMkyQCTwArTiVMmHDhgCRkhYUgQstmPHjlxARws/FikeFikLlmy5YsSz158+cFlEeFikAFgPAWaYsBQx8P5AEC2CzQ/jgUv/4cCkf+IsMgfwAon/Fh3/EYn/Fh0f/wyFn4sOQAgsP/4sCh/4j+An/ggACCFg9/VoYCBL4cf/4sIgf8h/AQYX/wEHFgX8Fg4gEKwIFCGoP/AoP/+IsEgP/8BWB/6DBEwIsBGQS5DcAwpFAQZfDQwwvDXAKACR4UDwCzIFgKtFv7pFFg59BkAGEL4LgLARAsOABwsOAQos/Fg0wFlgaBASIsskv/ACf6rnz588ASOlFitIFic9kmSpICFMQf6BYwCKrjaCCiAsXjgsCugsQv5+D9IsPw4sDuPSChuXVg3+Fhi5IVpICD37aHIhgsWAR4A="))
+}
+
+var iconCompass = {
+  width : 60, height : 60, bpp : 3,
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("pMkyQCFr//AAOkBYwUMC6FLCgoAB/osLl4VHAAIsK34OClmy5cs+YHC6RWL8gKEkofCLhF///8FIWz/YvCn4WB9JBI/1JsuWrN/21Zsp5DIgxBBEwOzFgRcC54FCIgyDB/mSrN9FglnAoMnRI2X//yFIXbQweyAoXPKALFF/ckEYJZCAQtkEoLOE36DDARSJBOIZuB5JWCFhFnySrBOIRuB9myVoYCGR4RxE//2WAKtCFg9ty1J//0boZWLF4jjCOoKwBEwYvGkIFCn6eBTYIpL5+QmQsDTwKbBFghQBAodmpMJkrjD6QsM2MkigyE/sl//kz/5EwNbbQeWpmSpCXBy3/sv//Vf/wsJiVJgkMAoM8FgP/0osBKYfZFgeJYAMCpJZCsm/FgPyVRFkyVBgaMF/+v/5QBVotJaoMkyBFBGoeffIIsICgVBhYLFCoP/JQQsEvmTC4OEGAILDFgfPEAs///fiFAGog+BFgTOBQYcky4JB/MkQ4IsCeoIsD//8Jovx48QqQIDl7yBv5ZC2wsDagP/9/5kLdBMQTsBQxKnB+4sBmSSGQxFnBIX+Q4KSFFhGzMoIKBXgwsC+rgGMQX9QYI4Fsm//VfFgu3/9/dJBlC0v/8mWvJ6CWIbdFy3Zsn/FgP+5d8EATdBXIrpDeQP/0m/9ggDLAO2QY44BSQPSpbOBagf3KxACCPQMk359BEAOXRgJWBFg9ZfAPSpN//YgCngpJX4fpkgnB2QgCFIIyCFg7pBHIIwBUgRWKAQO//4kCDQNJt4gBKxF9y1f//0dQX//mzQZf7lrIBFgSeB/MlFI4CDHoKbBSYRIB+QsLcAKbCC4TcB8hQDrNtAQlkEoKbBFgQzBcYRcC2a8CAQXfNwYXCOIP/WAImCv+2rNnAQI6BNwZxEWwTXDAoYLBNwgCCcYP/7KzCv6GDBQLdCC4pECRI3PBIJBGIgv/2wHCrYHCII6JFAASABAASDFAQyoBAAzFEARBcCAAZWJC5QUJA=="))
 }
 
 Graphics.prototype.setFontAntonioMedium = function(scale) {
@@ -45,7 +67,7 @@ function draw(queue){
   var timeStr = locale.time(currentDate,1);
   g.setFontAlign(0,0,0);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 100, 50);
+  g.drawString(timeStr, 57, 57);
 
   // Write date
   g.setFontAlign(1,-1, 0);
@@ -53,41 +75,34 @@ function draw(queue){
 
   var dayName = locale.dow(currentDate, true).toUpperCase();
   var day = currentDate.getDate();
-  g.drawString(day, 170, 30);
-  g.drawString(dayName, 170, 50);
+  g.drawString(day, 133, 37);
+  g.drawString(dayName, 133, 57);
 
   // Alarm
   g.setFontAlign(-1,-1,0);
-  g.drawString("TMR:", 30, 107);
+  g.drawString("ALRM:", 20, 104);
   var alrmText = alarm >= 0 ? "T-"+alarm : "OFF";
-  g.drawString(alrmText, 65, 107);
+  g.drawString(alrmText, 60, 104);
 
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
-  g.drawString("BAT:", 30, 127);
-  g.drawString(charging + bat+ "%", 65, 127);
+  g.drawString("BAT:", 20, 124);
+  g.drawString(charging + bat+ "%", 60, 124);
 
   // Draw steps
   var steps = getSteps();
-  g.drawString("STEP:", 30, 147);
-  g.drawString(steps, 65, 147);
+  g.drawString("STEP:", 20, 144);
+  g.drawString(steps, 60, 144);
 
-  // GPS
-  var gpsText = Bangle.isGPSOn() ? "ON" : "OFF";
-  g.drawString("GPS:", 115, 107);
-  g.drawString(gpsText, 149, 107);
+  // Draw symbol
+  var iconImg =
+    Bangle.isGPSOn() ? iconGps :
+    Bangle.isHRMOn() ? iconHrm :
+    Bangle.isCompassOn() ? iconCompass :
+    iconPlanet;
 
-
-  // HRM
-  var gpsText = Bangle.isHRMOn() ? "ON" : "OFF";
-  g.drawString("HRM:", 115, 127);
-  g.drawString(gpsText, 149, 127);
-
-  // CMP
-  var compassText = Bangle.isCompassOn() ? "ON" : "OFF";
-  g.drawString("CMP:", 115, 147);
-  g.drawString(compassText, 149, 147);
+  g.drawImage(iconImg, 110, 95);
 
   // Queue draw in one minute
   if(queue){
