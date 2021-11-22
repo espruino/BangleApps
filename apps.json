@@ -112,7 +112,7 @@
       {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
     "data": [
-      {"name":"launch.json","supports":["BANGLEJS2"]}
+      {"name":"launch.json"}
     ]
     ,
     "sortorder": -10
