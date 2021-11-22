@@ -4250,7 +4250,7 @@
     "id": "cliclockJS2Enhanced",
     "name": "Commandline-Clock JS2 Enhanced",
     "shortName": "CLI-Clock JS2",
-    "version": "0.1",
+    "version": "0.2",
     "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design",
     "icon": "app.png",
     "screenshots": [{"url":"screengrab.png"}],
