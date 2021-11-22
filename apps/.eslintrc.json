@@ -152,6 +152,8 @@
         "no-prototype-builtins": "off",
         "no-redeclare": "off",
         "no-unreachable": "warn",
+        "no-cond-assign": "warn",
+        "no-useless-catch": "warn",
         // TODO: "no-undef": "warn",
         "no-undef": "off",
         "no-unused-vars": "off",
