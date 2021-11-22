@@ -82,7 +82,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
     "tags": "tool,system,health",
