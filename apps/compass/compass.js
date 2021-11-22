@@ -48,7 +48,7 @@ Bangle.on('mag', function(m) {
     }
     g.setFontAlign(0,0).setFont("6x8",3);
     var y = 36;
-    g.clearRect(M-40,y,M+40,y+24);
+    g.clearRect(M-40,24,M+40,48);
     g.drawString(Math.round(m.heading),M,y,true);
   }
 

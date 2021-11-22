@@ -39,7 +39,7 @@
   }
 
   Bangle.on('charging',function(charging) { draw(); });
-  setInterval(()=>WIDGETS["a_battery_widget"].draw(), 60000);
+  setInterval(()=>WIDGETS["wid_a_battery_widget"].draw(), 60000);
 
-  WIDGETS["a_battery_widget"]={area:"tr",width:30,draw:draw};
+  WIDGETS["wid_a_battery_widget"]={area:"tr",width:30,draw:draw};
 })();
