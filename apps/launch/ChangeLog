@@ -6,4 +6,4 @@
 0.06: Use Bangle.setUI for buttons
 0.07: Theme colours fix
 0.08: Merge Bangle.js 1 and 2 launchers
-0.09: Added Scaling factor to settings and changed to vector font
+0.09: Added Scaling factor to settings and changed to vector font for Bangle.js2
