@@ -109,10 +109,10 @@
     "storage": [
       {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
       {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
-      {"name":"launch.settings.js","url":"settings.js"}
+      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
     "data": [
-      {"name":"launch.json"}
+      {"name":"launch.json","supports":["BANGLEJS2"]}
     ]
     ,
     "sortorder": -10
