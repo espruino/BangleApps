@@ -22,8 +22,8 @@ var iconGps = {
 
 var iconHrm = {
   width : 60, height : 60, bpp : 3,
-  transparent : 2,
-  buffer : require("heatshrink").decompress(atob("pMkyQCTwArTiVMmHDhgCRkhYUgQstmPHjlxARws/FikeFikLlmy5YsSz158+cFlEeFikAFgPAWaYsBQx8P5AEC2CzQ/jgUv/4cCkf+IsMgfwAon/Fh3/EYn/Fh0f/wyFn4sOQAgsP/4sCh/4j+An/ggACCFg9/VoYCBL4cf/4sIgf8h/AQYX/wEHFgX8Fg4gEKwIFCGoP/AoP/+IsEgP/8BWB/6DBEwIsBGQS5DcAwpFAQZfDQwwvDXAKACR4UDwCzIFgKtFv7pFFg59BkAGEL4LgLARAsOABwsOAQos/Fg0wFlgaBASIsskv/ACf6rnz588ASOlFitIFic9kmSpICFMQf6BYwCKrjaCCiAsXjgsCugsQv5+D9IsPw4sDuPSChuXVg3+Fhi5IVpICD37aHIhgsWAR4A="))
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AH4A/AH4ANgmACqcCpIsUkmQCqcSpMgCqUBkmSFlMJFiuSpMkSSQUByVASSMEFhZlBFhEgFhKSJBAJxBMpSSGMQWSpCSQGoOQBYOAMqBiCiQsEQAaSIFgOAAQR3EMpZWCFghTDMoKSBHAhKDLgQRDEwRlEOgRKEdggIDMoh0DO4gsDCIJiEHAQUEKAjaEKYJlDFIxrGBwRWCBYbjJBAIRBwVJKYJlDKAbXGR4VAEwoFCCozFDHwRlEAoQsKHwSVCBYjLEFggpCF4YmDUgQsIKwRcCeQosIEwKJDZAQLEFg6DDHwUCTYILEFhLIBBY4yBBI4gBSRIAKEAJlJABRBBMpIsMMpAsNCqQsWZAYASeoYspZCQACZCYA/AH4A/AAo="))
 }
 
 var iconCompass = {
@@ -103,7 +103,7 @@ function draw(queue){
 
   // Draw symbol
   var iconImg =
-    alarm >= 0 ? iconAlarm :
+    alarm >= 0 ? iconHrm :
     Bangle.isGPSOn() ? iconGps :
     Bangle.isHRMOn() ? iconHrm :
     Bangle.isCompassOn() ? iconCompass :
