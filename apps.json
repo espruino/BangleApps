@@ -892,7 +892,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widchime.wid.js","url":"widget.js"},
       {"name":"widchime.settings.js","url":"settings.js"}
