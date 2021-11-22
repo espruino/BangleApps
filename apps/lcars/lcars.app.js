@@ -33,9 +33,8 @@ var iconCompass = {
 }
 
 var iconAlarm = {
-  width : 60, height : 60, bpp : 3,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("kmSpICdmUSC6eTgIRPzAsIpgXLiAsIoQsKzMhFg2TkgsLmAjCFgkQOhlkwgIF5MJOJnABAtMgieQyRrLAQ1MAgdIbqAHFcZ3JAgX//wHBO4yGHAgWf///+VJQxhBFC4PkIhmZA43//LgLQYgCDn/+RJUmBRFv8mQFhGTAgNp02aAQekz/pgKwPAQe/OJJuBFIgCDyf5gghILwvbtoFCk/yoTdJEwWbvv27QFByV/4kETZm3//t2gICTxIsLp/kFhlN34sF//IZBIsJpP8iAsGsgsE2yGBFgef5MJFhlt2wsSpIsVAQoNBggsNknbAogsLyQpCsPAFgOkLKEkgAlEFhgCCoPABonkFigCBFiiGPFitAgAsvyFBFj0kEAQCCFgIFDFhEAACAXDo8cuPHARhLFFipRBAB4sEzu27YKChoFBtgGCm3btu0ghxEBAJQC4wFB2xWCj4FB7UAQwgsB4AkBgYOBGQ1twAsGPoYOCw4sCGQQjBFguwEoQOEGQlggAsF7AVCBwkAgIyC0AGBFgmYPooyDzYdB6AFBFglGBwUYsOGjAGCoIFBsKzHcFgsVAVQA="))
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AAUPA43wByn/A4v/A4s/A4PAEYYGB/4GCgIGC/AVFCwcP/tfq4WCCoPq/W/CwU/6tfqt/CwMD/2q/Wr/gOBv9VBwNf8AkB/WogWqEoMB/tVgEVq4lBj/qwEAlW/wED+tQCQNVEoM/1QoBgW/4EH+tAA4NVvwzB1AOC1/gg/VBwUVBwN+0BsCBwMP6oGCit/gH+Bwer+AOEgtfBwsr+CZEg6RCNYJ0CAwP+BxgsOBxhKBNAJZDNAR3CNASGEBwSGGUgaVBUgsKUgLCBqg6BqrCDHgMq/7GB/9VqNVq/wNYP6d4R0CfwdffwX/BwOvfwUf+oOBEgQlB/X6/4kBCwXfr4VCCwKZCCoQWBAAIVCCwX/CocAh7FEA4YGEA4IGFgAjDBxw"))
 }
 
 Graphics.prototype.setFontAntonioMedium = function(scale) {
@@ -68,6 +67,15 @@ function draw(queue){
   // Draw background image
   g.drawImage(img, 0, 24);
 
+  // Draw symbol
+  var iconImg =
+  alarm >= 0 ? iconAlarm :
+  Bangle.isGPSOn() ? iconGps :
+  Bangle.isHRMOn() ? iconHrm :
+  Bangle.isCompassOn() ? iconCompass :
+  iconPlanet;
+  g.drawImage(iconImg, 110, 95);
+
   // Write time
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
@@ -86,9 +94,16 @@ function draw(queue){
 
   // Alarm
   g.setFontAlign(-1,-1,0);
-  g.drawString("ALRM:", 20, 104);
-  var alrmText = alarm >= 0 ? "T-"+alarm : "OFF";
-  g.drawString(alrmText, 60, 104);
+  g.drawString("TEMP:", 20, 104);
+  var tempText = E.getTemperature() + "C";
+  g.drawString(tempText, 60, 104);
+
+  // Alarm within symbol
+  if(alarm > 0){
+    g.setFontAlign(0,0,0);
+    g.drawString(alarm, 110+30, 95+30);
+    g.setFontAlign(-1,-1,0);
+  }
 
   // Draw battery
   var bat = E.getBattery();
@@ -100,16 +115,6 @@ function draw(queue){
   var steps = getSteps();
   g.drawString("STEP:", 20, 144);
   g.drawString(steps, 60, 144);
-
-  // Draw symbol
-  var iconImg =
-    alarm >= 0 ? iconAlarm :
-    Bangle.isGPSOn() ? iconGps :
-    Bangle.isHRMOn() ? iconHrm :
-    Bangle.isCompassOn() ? iconCompass :
-    iconPlanet;
-
-  g.drawImage(iconImg, 110, 95);
 
   // Queue draw in one minute
   if(queue){
