@@ -254,30 +254,31 @@ function renderBackground(l) {
 }
 
 function renderTable(l) {
+  var foundNumber = findNextScheduleIndex();
+  var yellowIndex = 3;
+  if (foundNumber < 3) { yellowIndex = foundNumber; }
   for(var x = 0;x<=numberOfItemsShown;x++){
     g.setColor(255,255,255);
     g.drawRect(rectStartX,rectStart+(x*20),rectEndX,rectEnd+(20*x));
-    g.setColor(255,205,0);
-    g.drawRect(rectStartX,rectStart+(2*20),rectEndX,rectEnd+(2*20));
-    g.setColor(255,0,0);
-    g.drawRect(rectStartX,rectStart+(currentPositionTable*20),rectEndX,rectEnd+(20*currentPositionTable));
   }
+  g.setColor(255,205,0);
+  g.drawRect(rectStartX,rectStart+(yellowIndex*20),rectEndX,rectEnd+(20*yellowIndex));
+  g.setColor(255,0,0);
+  g.drawRect(rectStartX,rectStart+(currentPositionTable*20),rectEndX,rectEnd+(20*currentPositionTable));
 }
 
-function renderTableText(l){
-  var foundNumber = findNextScheduleIndex();
+function renderTableText(l) {
   var foundSchedule = getScheduleTable();
+  var foundNumber = findNextScheduleIndex();
+  var startNumber = foundNumber - 2;
+  if (startNumber < 0) { startNumber = 0; }
+  var endNumber = startNumber + 8 - (foundNumber - startNumber);
+  if (endNumber > foundSchedule.length-1) { endNumber = foundSchedule.length-1; }
+
+
   var scheduleHourUpdated;
   var scheduleMinuteUpdated;
-  var beforeFoundNumber = foundNumber - 2;
-  for(var x = 0;x<=numberOfItemsShown;x++){
-    var currentNumber = beforeFoundNumber + x;
-    if (beforeFoundNumber + x < 0) {
-      currentNumber = foundSchedule.length + beforeFoundNumber + x;
-    } else if (beforeFoundNumber + x > foundSchedule.length - 1) {
-      currentNumber = beforeFoundNumber + x - foundSchedule.length;
-    }
-
+  for(var currentNumber = startNumber; currentNumber<=endNumber; currentNumber++){
     scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[currentNumber].sm);
     scheduleHourUpdatedStart = foundSchedule[currentNumber].sh;
     scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[currentNumber].em);
@@ -288,7 +289,7 @@ function renderTableText(l){
     }
     schduleDay = updateDay(3,foundSchedule[currentNumber].dow);
     g.setFont("8x12");
-    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+" "+scheduleDecriptionUpdated,13,50+(x*20));
+    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+" "+scheduleDecriptionUpdated,13,50+(currentNumber*20));
   }
 }
 
@@ -364,22 +365,27 @@ function renderLoading(l){
 function renderInformation(l){
   var foundNumber = findNextScheduleIndex();
   var foundSchedule = getScheduleTable();
-  scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[foundNumber].sm);
-  scheduleHourUpdatedStart = foundSchedule[foundNumber].sh;
-  scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[foundNumber].em);
-  scheduleHourUpdatedEnd = foundSchedule[foundNumber].eh;
-  scheduleDay = updateDay(1,foundSchedule[((foundNumber-2)+currentPositionTable)].dow);
-  g.setColor(255,255,255);
-  g.setFont("8x12",2);
-  var splitClassNames = splitter(foundSchedule[((foundNumber-2)+currentPositionTable)].cn, 15);
-  var currentY = 5;
-  for (var j=0; j < splitClassNames.length; j++) {
-    g.drawString(splitClassNames[j],13,currentY+50);
-    currentY = currentY + 25;
+  var startNumber = foundNumber - 2;
+  if (startNumber < 0) { startNumber = 0; }
+
+  if ((startNumber+currentPositionTable) <= foundSchedule.length-1) {
+    scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[foundNumber].sm);
+    scheduleHourUpdatedStart = foundSchedule[foundNumber].sh;
+    scheduleMinuteUpdatedEnd = updateMinutesToCurrentTime(foundSchedule[foundNumber].em);
+    scheduleHourUpdatedEnd = foundSchedule[foundNumber].eh;
+    scheduleDay = updateDay(1,foundSchedule[(startNumber+currentPositionTable)].dow);
+    g.setColor(255,255,255);
+    g.setFont("8x12",2);
+    var splitClassNames = splitter(foundSchedule[(startNumber+currentPositionTable)].cn, 15);
+    var currentY = 5;
+    for (var j=0; j < splitClassNames.length; j++) {
+      g.drawString(splitClassNames[j],13,currentY+50);
+      currentY = currentY + 25;
+    }
+    g.setFont("8x12");
+    g.drawString(schduleDay,13,currentY+50);
+    g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,currentY+15+50);
   }
-  g.setFont("8x12");
-  g.drawString(schduleDay,13,currentY+50);
-  g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,currentY+15+50);
 }
 
 var Layout = require("Layout");
