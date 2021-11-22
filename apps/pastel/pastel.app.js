@@ -61,23 +61,23 @@ function loadSettings() {
   //console.log(settings);
 }
 
-loadSettings();
-
-// load font files based on settings.font
-if (settings.font == "Architect")
-  require("f_artitect").add(Graphics);
-else if (settings.font == "GochiHand")
-  require("f_gochihand").add(Graphics);
-else if (settings.font == "CabinSketch")
-  require("f_cabin").add(Graphics);
-else if (settings.font == "Orbitron")
-  require("f_orbitron").add(Graphics);
-else if (settings.font == "Monoton")
-  require("f_monoton").add(Graphics);
-else if (settings.font == "Elite")
-  require("f_elite").add(Graphics);
-else
-  require("f_lato").add(Graphics);
+function loadFonts() {
+  // load font files based on settings.font
+  if (settings.font == "Architect")
+    require("f_artitect").add(Graphics);
+  else if (settings.font == "GochiHand")
+    require("f_gochihand").add(Graphics);
+  else if (settings.font == "CabinSketch")
+    require("f_cabin").add(Graphics);
+  else if (settings.font == "Orbitron")
+    require("f_orbitron").add(Graphics);
+  else if (settings.font == "Monoton")
+    require("f_monoton").add(Graphics);
+  else if (settings.font == "Elite")
+    require("f_elite").add(Graphics);
+  else
+    require("f_lato").add(Graphics);
+}
 
 var mm_prev = "xx";
 
@@ -178,6 +178,8 @@ Bangle.on('lcdPower', function(on) {
   draw();
 });
 
+loadSettings();
+loadFonts();
 g.clear();
 var secondInterval = setInterval(draw, 1000);
 draw();
