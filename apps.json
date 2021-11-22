@@ -4036,7 +4036,14 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
+      {"name":"f_architect","url":"f_architect.js"},
+      {"name":"f_gochihand","url":"f_gochihand.js"},
+      {"name":"f_cabin","url":"f_cabin.js"},
       {"name":"f_orbitron","url":"f_orbitron.js"},
+      {"name":"f_monoton","url":"f_monoton.js"},
+      {"name":"f_elite","url":"f_elite.js"},
+      {"name":"f_lato","url":"f_lato.js"},
+      {"name":"f_latosmall","url":"f_latosmall.js"},
       {"name":"pastel.app.js","url":"pastel.app.js"},
       {"name":"pastel.img","url":"pastel.icon.js","evaluate":true},
       {"name":"pastel.settings.js","url":"pastel.settings.js"}
