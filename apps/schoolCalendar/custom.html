@@ -94,14 +94,14 @@
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg", 2).add(Graphics);
 
-let nIntervId;
+var file = require("Storage").open("calendarItems.csv","w");
 
+let nIntervId;
 function redrawScreen() {
   layout.render(layout.background);
   layout.render(layout.buttons);
   draw();
 }
-
 function updateDay(ffunction,day){
   if(ffunction == 1){
     switch (day) {
@@ -174,11 +174,12 @@ function updateDay(ffunction,day){
     return day;
   }
 }
-
 function getScheduleTable() {
   let schedule = ${JSON.stringify(schedule)};
   return schedule;
 }
+
+file.write(JSON.stringify(schedule));
 
 function findNextScheduleIndex() {
   var schedule = getScheduleTable();
@@ -194,16 +195,10 @@ function findNextScheduleIndex() {
   }
   return 0;
 }
-
-
 function getUpArrow() {return require("heatshrink").decompress(atob("hkOyANKmv9AIIjRCoYZRlvdAI8U3YVK3oBJC4Mc7YVRC4sc7gVCzoBNC4oZDGowXGR58lvoBFC9FcAIoXongBFC58dngBFC6EcAIoPHA"));}
-
 function getDownArrow() {return require("heatshrink").decompress(atob("hkOyALImv9AIojPmvdAIoXPlvdAIoXQ3oBFC9GdAIoXnkt9AIoPPAI8U3cc7cc7gBBDIVcAJYXFGYwXOLpU8AI4XBO5sdjgBFR54ZFBpIA=="));}
-
 function getMenuIcon() {return require("heatshrink").decompress(atob("iEQyBC/AEU+rwBEn02js17st3stvklrkljkc/cc3cUzYBBD5AdUD4oA/P/4A/P/4A/ADoA=="));}
-
 function getDotIcon() {return require("heatshrink").decompress(atob("iEQyBC/AA0t3oBBA4ndAIIPGA4gAFkt9lt9AYIHEzoBBBIwRED41cks8AYIJGA44RGP8xtGP44RJBYh1CAIIHHBJJ/KroBBPoqBFB4YRDAA8dngHHBJKdq3oBDBI4RNP4l9AIYHHBJJBJks8AIIHTAH4ABA="));}
-
 var currentPositionTable = 0;
 var numberOfItemsShown = 8;
 //Table Positions:
@@ -215,7 +210,6 @@ var rectEndX = 210;
 LIST = 1;
 INFORMATION = 2;
 currentStage = LIST;
-
 function splitter(str, l){
     var strs = [];
     while(str.length > l){
@@ -230,7 +224,6 @@ function splitter(str, l){
     strs.push(str);
     return strs;
 }
-
 function updateMinutesToCurrentTime(currentMinuteFunction) {
   if (currentMinuteFunction<10){
    currentMinuteUpdatedFunction = "0"+currentMinuteFunction;
@@ -239,12 +232,10 @@ function updateMinutesToCurrentTime(currentMinuteFunction) {
   }
   return currentMinuteUpdatedFunction;
 }
-
 function renderBackground(l) {
   g.clearRect(0,0,240,20);
   g.drawImage(getBackgroundImage(),110,130,{scale:9,rotate:0});
 }
-
 function renderTable(l) {
   var foundNumber = findNextScheduleIndex();
   var yellowIndex = 3;
@@ -258,7 +249,6 @@ function renderTable(l) {
   g.setColor(255,0,0);
   g.drawRect(rectStartX,rectStart+(currentPositionTable*20),rectEndX,rectEnd+(20*currentPositionTable));
 }
-
 function renderTableText(l) {
   var foundSchedule = getScheduleTable();
   var foundNumber = findNextScheduleIndex();
@@ -266,8 +256,6 @@ function renderTableText(l) {
   if (startNumber < 0) { startNumber = 0; }
   var endNumber = startNumber + 8 - (foundNumber - startNumber);
   if (endNumber > foundSchedule.length-1) { endNumber = foundSchedule.length-1; }
-
-
   var scheduleHourUpdated;
   var scheduleMinuteUpdated;
   for(var currentNumber = startNumber; currentNumber<=endNumber; currentNumber++){
@@ -284,7 +272,6 @@ function renderTableText(l) {
     g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd+" "+schduleDay+" "+scheduleDecriptionUpdated,13,50+(currentNumber*20));
   }
 }
-
 function buttonsF(l){
   if(currentStage == LIST){
     g.drawImage(getDotIcon(),223.5,115);
@@ -294,7 +281,6 @@ function buttonsF(l){
   g.drawImage(getUpArrow(),225,30);
   g.drawImage(getDownArrow(),225,215);
 }
-
 function draw() {
   var currentDate = new Date();
   var currentDayOfWeek = currentDate.getDay();
@@ -320,7 +306,6 @@ function draw() {
     layout.render(layout.time);
   }
 }
-
 function RedRectDown() {
   if(currentPositionTable > 0){
     currentPositionTable -= 1;
@@ -331,7 +316,6 @@ function RedRectDown() {
     }
   }
 }
-
 function RedRectUp() {
   if(currentPositionTable < numberOfItemsShown){
     currentPositionTable += 1;
@@ -342,24 +326,20 @@ function RedRectUp() {
     }
   }
 }
-
 function renderMiniBackground(l){
   for(var i = 233;i<=240;i++){
     g.drawImage(getBackgroundImage(),i,123,{scale:10,rotate:0});
   }
 }
-
 function renderLoading(l){
   g.setFont("8x12");
   g.drawString("Loading...",240/2-20,240/2-20);
 }
-
 function renderInformation(l){
   var foundNumber = findNextScheduleIndex();
   var foundSchedule = getScheduleTable();
   var startNumber = foundNumber - 2;
   if (startNumber < 0) { startNumber = 0; }
-
   if ((startNumber+currentPositionTable) <= foundSchedule.length-1) {
     scheduleMinuteUpdatedStart = updateMinutesToCurrentTime(foundSchedule[foundNumber].sm);
     scheduleHourUpdatedStart = foundSchedule[foundNumber].sh;
@@ -379,7 +359,6 @@ function renderInformation(l){
     g.drawString(scheduleHourUpdatedStart+":"+scheduleMinuteUpdatedStart+"-"+scheduleHourUpdatedEnd+":"+scheduleMinuteUpdatedEnd,13,currentY+15+50);
   }
 }
-
 var Layout = require("Layout");
 var layout = new Layout(
   {type:"h", c: [
@@ -399,12 +378,8 @@ var layout = new Layout(
     {label:"", cb: l=>print("Two")},
     {label:"", cb: RedRectDown()}
 ]});
-
-
 function getBackgroundImage() {return require("heatshrink").decompress(atob("j0ZyEKIf4A4gIB6gQB6gYB6ggB6goB6gwB6g4B6hAABAYIBHBZIVLAK8IhIBXgAThhQB6hYB6hgB6hoB6hwB6h4B6iAB6iIB6iQBHiAJOB54XSiYB6igB6ioB6iwB6i4B5A="));}
-
 function logDebug(message) {console.log(message);}
-
 function changeScene(){
   layout.render(layout.buttons);
   if(currentStage == INFORMATION){
@@ -418,17 +393,12 @@ function changeScene(){
   layout.render(layout.buttons);
   draw();
 }
-
 // timeout used to update every minute
 var drawTimeout;
-
 setInterval(draw, 15000);
-
-
 setWatch(RedRectUp, BTN3, { repeat:true, edge:'rising', debounce : 50 });
 setWatch(RedRectDown, BTN1, { repeat:true, edge:'rising', debounce : 50 });
 setWatch(changeScene, BTN2, { repeat:true, edge:'rising', debounce : 50 });
-
 layout.update();
 layout.render(layout.loading);
 layout.render(layout.background);
