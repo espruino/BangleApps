@@ -35,7 +35,7 @@ var iconCompass = {
 var iconAlarm = {
   width : 60, height : 60, bpp : 3,
   transparent : 1,
-  buffer : require("heatshrink").decompress(atob("kmSpICGyehBZICK7diCiUk9OmFidOFn4sRyexFhgOGpOaBwosHBw3t23EFhYOHzVpxIODzIsFs2atAdEzu27cScBM7tu2JQs6tKAKGQOaEYgCBu3bti5KtpQEQAmEXJQLIFhjmIyYsL0L4OmAONAQscuPnz1yCh8mA4mQFh2R44sDvPnFhtMA41IFhtxFg2cCheTAgNN////IKCkKDN44VB/4sCRJnJFwIVC/4KDahOSp4sBCoYsDvARFu3EWAgUC+YyBWxE6tL+Co8cv///iGEAQIbBzOmzUd23biVJmVJm5WFAQYOB7dt22aFgWT48eFgKzFAQPhFgdjFgs//5WEFg+xk1oZAXHj//84sJTw4sOBI2RFgXHFiIBBFiqGBFikk+QiHFhYpBFioCJFn4s1rFhw0YAQtjx048YCGhM8EwYCQiwpGFhs4FKQCCuws/Fn4s/FhM8FikSrAsThI="))
+  buffer : require("heatshrink").decompress(atob("kmSpICdmUSC6eTgIRPzAsIpgXLiAsIoQsKzMhFg2TkgsLmAjCFgkQOhlkwgIF5MJOJnABAtMgieQyRrLAQ1MAgdIbqAHFcZ3JAgX//wHBO4yGHAgWf///+VJQxhBFC4PkIhmZA43//LgLQYgCDn/+RJUmBRFv8mQFhGTAgNp02aAQekz/pgKwPAQe/OJJuBFIgCDyf5gghILwvbtoFCk/yoTdJEwWbvv27QFByV/4kETZm3//t2gICTxIsLp/kFhlN34sF//IZBIsJpP8iAsGsgsE2yGBFgef5MJFhlt2wsSpIsVAQoNBggsNknbAogsLyQpCsPAFgOkLKEkgAlEFhgCCoPABonkFigCBFiiGPFitAgAsvyFBFj0kEAQCCFgIFDFhEAACAXDo8cuPHARhLFFipRBAB4sEzu27YKChoFBtgGCm3btu0ghxEBAJQC4wFB2xWCj4FB7UAQwgsB4AkBgYOBGQ1twAsGPoYOCw4sCGQQjBFguwEoQOEGQlggAsF7AVCBwkAgIyC0AGBFgmYPooyDzYdB6AFBFglGBwUYsOGjAGCoIFBsKzHcFgsVAVQA="))
 }
 
 Graphics.prototype.setFontAntonioMedium = function(scale) {
