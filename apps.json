@@ -4201,7 +4201,7 @@
   {
     "id": "swiperclocklaunch",
     "name": "Swiper Clock Launch",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Navigate between clock and launcher with Swipe action",
     "icon": "swiperclocklaunch.png",
     "type": "bootloader",
