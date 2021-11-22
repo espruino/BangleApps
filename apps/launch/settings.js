@@ -9,7 +9,7 @@
     '': {'title': 'Launcher Settings'},
     '< Back': back,
     'Scale Value': {
-      value: settings.scaleval,
+      value: settings.scaleval || 1,
       min:0.1,max:2,step:0.05,wrap:true,
       onchange: (m) => {save('scaleval', m)}
     }   
