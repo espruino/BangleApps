@@ -749,12 +749,12 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.10",
+    "version": "0.11",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
     "tags": "widget,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "readme.md",
     "storage": [
       {"name":"weather.app.js","url":"app.js"},
