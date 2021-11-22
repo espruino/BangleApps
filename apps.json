@@ -599,7 +599,7 @@
   {
     "id": "compass",
     "name": "Compass",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Simple compass that points North",
     "icon": "compass.png",
     "screenshots": [{"url":"screenshot_compass.png"}],
