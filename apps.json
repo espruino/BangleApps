@@ -100,7 +100,7 @@
     "id": "launch",
     "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.08",
+    "version": "0.09",
     "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
@@ -108,8 +108,13 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]}
+      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
+      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
+    "data": [
+      {"name":"launch.json"}
+    ]
+    ,
     "sortorder": -10
   },
   {
@@ -4316,7 +4321,9 @@
       {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
     ]
   },
+
   {
+
     "id": "hidmsicswipe",
     "name": "Bluetooth Music Swipe Controls",
     "shortName": "Swipe Control",
@@ -4329,6 +4336,7 @@
       {"name":"hidmsicswipe.app.js","url":"hidmsicswipe.js"},
       {"name":"hidmsicswipe.img","url":"hidmsicswipe-icon.js","evaluate":true}
     ]
+
   },
   {
     "id": "authentiwatch",
@@ -4348,5 +4356,7 @@
       {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"authentiwatch.json"}]
+
+
   }
 ]
