@@ -82,7 +82,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Logs health data and provides an app to view it (BETA - requires firmware 2v11)",
     "icon": "app.png",
     "tags": "tool,system,health",
@@ -543,11 +543,11 @@
   {
     "id": "cubescramble",
     "name": "Cube Scramble",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A random scramble generator for the 3x3 Rubik's cube",
     "icon": "cube-scramble.png",
     "tags": "",
-    "supports" : ["BANGLEJS","BANGLEJS2"],  
+    "supports" : ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
@@ -599,7 +599,7 @@
   {
     "id": "compass",
     "name": "Compass",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Simple compass that points North",
     "icon": "compass.png",
     "screenshots": [{"url":"screenshot_compass.png"}],
@@ -749,12 +749,12 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.10",
+    "version": "0.11",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
     "tags": "widget,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "readme.md",
     "storage": [
       {"name":"weather.app.js","url":"app.js"},
@@ -768,11 +768,11 @@
   {
     "id": "chargeanim",
     "name": "Charge Animation",
-    "version": "0.01",
+    "version": "0.02",
     "description": "When charging, show a sideways charging animation and keep the screen on. When removed from the charger load the clock again.",
     "icon": "icon.png",
     "tags": "battery",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"chargeanim.app.js","url":"app.js"},
@@ -892,7 +892,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widchime.wid.js","url":"widget.js"},
       {"name":"widchime.settings.js","url":"settings.js"}
@@ -908,7 +908,7 @@
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widram.wid.js","url":"widget.js"}
     ]
@@ -2639,14 +2639,16 @@
   {
     "id": "magnav",
     "name": "Navigation Compass",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
+    "screenshots": [{"url":"screenshot-b2.png"},{"url":"screenshot-light-b2.png"}],
     "icon": "magnav.png",
     "tags": "tool,outdoors",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
-      {"name":"magnav.app.js","url":"magnav.min.js"},
+      {"name":"magnav.app.js","url":"magnav_b1.js","supports":["BANGLEJS"]},
+      {"name":"magnav.app.js","url":"magnav_b2.js","supports":["BANGLEJS2"]},
       {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
     ],
     "data": [{"name":"magnav.json"}]
@@ -2730,8 +2732,9 @@
   {
     "id": "multiclock",
     "name": "Multi Clock",
-    "version": "0.08",
-    "description": "Clock with multiple faces.  Switch between faces with BTN1 & BTN3 or swipe left-right. For best display set theme Background 2 to cyan or some other bright colour in settings.",
+    "version": "0.09",
+    "description": "Clock with multiple faces.  Switch between faces with BTN1 & BTN3 (Bangle 2 touch top-right, bottom right). For best display set theme Background 2 to cyan or some other bright colour in settings.",
+    "screenshots": [{"url":"screen-ana.png"},{"url":"screen-big.png"},{"url":"screen-td.png"},{"url":"screen-nifty.png"},{"url":"screen-word.png"},{"url":"screen-sec.png"}],
     "icon": "multiclock.png",
     "type": "clock",
     "tags": "clock",
@@ -3127,15 +3130,17 @@
   {
     "id": "dtlaunch",
     "name": "Desktop Launcher",
-    "version": "0.04",
-    "description": "Desktop style App Launcher with six apps per page - fast access if you have lots of apps installed.",
+    "version": "0.05",
+    "description": "Desktop style App Launcher with six (four for Bangle 2) apps per page - fast access if you have lots of apps installed.",
+    "screenshots": [{"url":"shot1.png"},{"url":"shot2.png"},{"url":"shot3.png"}],
     "icon": "icon.png",
     "type": "launch",
     "tags": "tool,system,launcher",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
-      {"name":"dtlaunch.app.js","url":"app.js"},
+      {"name":"dtlaunch.app.js","url":"app-b1.js", "supports": ["BANGLEJS"]},
+      {"name":"dtlaunch.app.js","url":"app-b2.js", "supports": ["BANGLEJS2"]},
       {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -3644,15 +3649,15 @@
     "id": "gbmusic",
     "name": "Gadgetbridge Music Controls",
     "shortName": "Music Controls",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Control the music on your Gadgetbridge-connected phone",
     "icon": "icon.png",
-    "screenshots": [{"url":"screenshot.png"},{"url":"screenshot_2.png"}],
+    "screenshots": [{"url":"screenshot_v1.png"},{"url":"screenshot_v2.png"}],
     "type": "app",
     "tags": "tools,bluetooth,gadgetbridge,music",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
-    "allow_emulator": false,
+    "allow_emulator": true,
     "storage": [
       {"name":"gbmusic.app.js","url":"app.js"},
       {"name":"gbmusic.settings.js","url":"settings.js"},
@@ -3718,12 +3723,12 @@
     "id": "qmsched",
     "name": "Quiet Mode Schedule and Widget",
     "shortName": "Quiet Mode",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Automatically turn Quiet Mode on or off at set times",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_edit.png"},{"url":"screenshot_main.png"},{"url":"screenshot_widget_alarms.png"},{"url":"screenshot_widget_silent.png"}],
     "tags": "tool,widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"qmsched","url":"lib.js"},
@@ -4040,7 +4045,7 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A simple clock using the bold Anton font.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -4201,7 +4206,7 @@
   {
     "id": "swiperclocklaunch",
     "name": "Swiper Clock Launch",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Navigate between clock and launcher with Swipe action",
     "icon": "swiperclocklaunch.png",
     "type": "bootloader",
@@ -4264,30 +4269,31 @@
     ]
   },
   {
-    "id": "a_battery_widget",
+    "id": "wid_a_battery_widget",
     "name": "A Battery Widget (with percentage)",
     "shortName":"A Battery Widget",
     "icon": "widget.png",
-    "version":"1.0",
+    "version":"1.01",
     "type": "widget",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "description": "Simple and slim battery widget with charge status and percentage",
     "tags": "widget,battery",
     "storage": [
-      {"name":"a_battery_widget.wid.js","url":"widget.js"}
+      {"name":"wid_a_battery_widget.wid.js","url":"widget.js"}
     ]
   },
-  { 
+  {
     "id": "lcars",
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.01",
+    "version":"0.02",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
     "type": "clock",
     "tags": "clock",
+    "screenshots": [{"url":"screenshot.png"}],
     "storage": [
       {"name":"lcars.app.js","url":"lcars.app.js"},
       {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
@@ -4297,15 +4303,50 @@
     "name": "Binary Watch",
     "shortName":"BinWatch",
     "icon": "app.png",
-    "version":"0.02",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
+    "version":"0.03",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
     "allow_emulator":true,
     "description": "Famous binary watch",
     "tags": "clock",
     "type": "clock",
-    "storage": [
+	"storage": [
       {"name":"binwatch.app.js","url":"app.js"},
       {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "hidmsicswipe",
+    "name": "Bluetooth Music Swipe Controls",
+    "shortName": "Swipe Control",
+    "version": "0.01",
+    "description": "Based on the original Bluetooth Music Controls. Swipe up/down for volume, left/right for previous and next, tap for play/pause and btn1 to lock and unlock the controls. Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+    "icon": "hidmsicswipe.png",
+    "tags": "bluetooth",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"hidmsicswipe.app.js","url":"hidmsicswipe.js"},
+      {"name":"hidmsicswipe.img","url":"hidmsicswipe-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "authentiwatch",
+    "name": "2FA Authenticator",
+    "shortName": "AuthWatch",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "version": "0.01",
+    "description": "Google Authenticator compatible tool.",
+    "tags": "tool",
+    "interface": "interface.html",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"authentiwatch.app.js","url":"app.js"},
+      {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"authentiwatch.json"}]
   }
 ]
