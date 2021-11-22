@@ -67,7 +67,7 @@ function setButtons(){
       startdraw();
     }
   }
-  Bangle.setUI("leftright", newFace);
+  Bangle.setUI("clockupdown", newFace);
 }
 
 E.on('kill',()=>{

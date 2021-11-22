@@ -7,3 +7,4 @@
 0.08: Refactor and reduce widget ram usage.
 0.09: Fix crash when weather.json is absent.
 0.10: Use new Layout library
+0.11: Bangle.js 2 support
