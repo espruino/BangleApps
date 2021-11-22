@@ -70,6 +70,15 @@ function draw(queue){
   // Draw background image
   g.drawImage(backgroundImage, 0, 24);
 
+  // Draw raster
+  for(var x=0; x<6; x++){
+    g.drawLine(115+x*10, 100, 115+x*10, 160);
+  }
+
+  for(var y=0; y<6; y++){
+    g.drawLine(110, 105+y*10, 170, 105+y*10);
+  }
+
   // Draw symbol
   var iconImg =
   alarm >= 0 ? iconAlarm :
