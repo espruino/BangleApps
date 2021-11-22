@@ -4,9 +4,10 @@
 const locale = require('locale');
 var alarm = -1;
 
-var img = {
+var backgroundImage = {
   width : 176, height : 151, bpp : 3,
-  buffer : require("heatshrink").decompress(atob("gFz588+YCbEYdx48cATMHz1584CcIAUCpMkyQCZQDqDjQDqD/QdOatOmATKDDhEgwQCZNAZmDAHKDC8hB9Qf6DE8CD/55A9QYegQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/ABthw0YsCD9ps06dIQftp02aQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6Dojlx46D+AGaDNAGaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qc9hw0YAQgJBg8cuPHASfAEoUaPQQCIQZkE6ZTCAQgLBnPnz15ASd4E4UTEw4CDQZcBLJILBp88+fPASfIQbcNLJKDqoBBKLJSDpzBAKgZZKQboAXLJaDdAC+TQf8AQBCD4QBCD/Qf6D/Qf6D/Qf6D/Qf6DKDzQAiPQWYIPqDC4CD/fwKD/mhB+Qf6D/AAcYsOGIPwA/AH4A/AH4AHyVJkhB+jlx46D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DlwCD/48UQf8kyVIkGChACeFAImBFIQCSkCDCAUXEgEB02atICVLKxoPQYM06dNASqD/Qf6D/Qf6D/Qf6D/ARo="))
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("gFx48cATgiCC6fAIBGDx048YCcEYXnz15ASCCJQDqDEgM8+fPASCDJQDqD/Qf6DrBpIAzMoXgIPqD/Qf6DGIHqD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4ASsOGjFgQftNmnTpCD9tOmzSD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DqAGaDNAGaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qc9x48cAQkAgMHBAoCQ4AlCjFhwwCGQaH3799AQl4BQM27dt2wCT2AmCiZ6CARCDLgJrJBYOnz1584CT8AoCjR6CARCDLh6AFQd1AIJTvKQdOYIBUDQAyDhAC6AIQcAAXy6D/Qf4ACQA6D/Qf6D/Qf6D/Qf6D/Qf6DLwANIkGChACVQbweaAESDCUTYAifwaD/vpB+Qf6D/Qf4A/AH4A/AH4ANyVJkBB+jlx46D/pMkQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DjwCD/48cQf8kyVIkGChACeFAMo0WKAQ+IDRiDDAUPEgEBDrCDDAUKDCnv3799ASd8Qf6D/Qf6D/Qf6D/Qf4CN"))
 }
 
 var iconPlanet = {
@@ -65,7 +66,7 @@ function draw(queue){
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
   // Draw background image
-  g.drawImage(img, 0, 24);
+  g.drawImage(backgroundImage, 0, 24);
 
   // Draw symbol
   var iconImg =
