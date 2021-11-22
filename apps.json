@@ -4317,6 +4317,7 @@
   "tags": "tool",
   "readme": "README.md",
   "custom":"custom.html",
+  "supports": ["BANGLEJS"],
   "storage": [
     {"name":"schoolCalendar.app.js"},
     {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
