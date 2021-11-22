@@ -32,17 +32,16 @@ function formatTime(t) {
 }
 
 function showMainMenu() {
-  const menu = {
-    "": {"title": "Quiet Mode"},
-    "Current Mode": {
-      value: (require("Storage").readJSON("setting.json", 1) || {}).quiet|0,
-      format: v => modeNames[v],
-      onchange: function(v) {
-        if (v<0) {v = 2;}
-        if (v>2) {v = 0;}
-        require("qmsched").setMode(v);
-        this.value = v;
-      },
+  let menu = {"": {"title": "Quiet Mode"}};
+  // "Current Mode""Silent" won't fit on Bangle.js 2
+  menu["Current" + ((process.env.HWVERSION===2)?"":" Mode")]= {
+    value: (require("Storage").readJSON("setting.json", 1) || {}).quiet|0,
+    format: v => modeNames[v],
+    onchange: function(v) {
+      if (v<0) {v = 2;}
+      if (v>2) {v = 0;}
+      require("qmsched").setMode(v);
+      this.value = v;
     },
   };
   scheds.sort((a, b) => (a.hr-b.hr));
