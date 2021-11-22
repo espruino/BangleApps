@@ -53,15 +53,17 @@ const SETTINGS_FILE = "pastel.json";
 let settings = undefined;
 
 function loadSettings() {
-  //Console.log("loadSettings()");
+  console.log("loadSettings()");
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
   settings.date = settings.date||false;
   settings.font = settings.font||"Lato";
-  //console.log(settings);
+  console.log(settings);
 }
 
 function loadFonts() {
+  console.log("loadFonts()");
+  console.log(settings);
   // load font files based on settings.font
   if (settings.font == "Architect")
     require("f_artitect").add(Graphics);
