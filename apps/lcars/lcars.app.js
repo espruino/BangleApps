@@ -103,7 +103,7 @@ function draw(queue){
 
   // Draw symbol
   var iconImg =
-    alarm >= 0 ? iconHrm :
+    alarm >= 0 ? iconAlarm :
     Bangle.isGPSOn() ? iconGps :
     Bangle.isHRMOn() ? iconHrm :
     Bangle.isCompassOn() ? iconCompass :
