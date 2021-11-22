@@ -1,6 +1,6 @@
 require("f_latosmall").add(Graphics);
 const SETTINGS_FILE = "pastel.json";
-let settings = undefined;
+let settings;
 
 function loadSettings() {
   //console.log("loadSettings()");
@@ -13,11 +13,11 @@ function loadSettings() {
 
 function loadFonts() {
   //console.log("loadFonts()");
-  //console.log(settings);
+  console.log(settings);
   
   // load font files based on settings.font
   if (settings.font == "Architect")
-    require("f_artitect").add(Graphics);
+    require("f_architect").add(Graphics);
   else if (settings.font == "GochiHand")
     require("f_gochihand").add(Graphics);
   else if (settings.font == "CabinSketch")
@@ -91,8 +91,7 @@ function draw() {
   else if (settings.font == "Elite")
     g.setFontSpecialElite();
   else
-    //g.setFontLato();
-    g.setFontOrbitron();
+    g.setFontLato();
     
   g.setFontAlign(1,-1);  // right aligned
   g.drawString(hh, x - 6, y);
