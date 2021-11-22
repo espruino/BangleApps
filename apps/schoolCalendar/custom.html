@@ -90,12 +90,12 @@
               calendarEntry['eh'] = calendarEvents[i].end.getHours();
               calendarEntry['em'] = calendarEvents[i].end.getMinutes();
               schedule.push(calendarEntry)
-              console.log(schedule[0].cn);
-              console.log(schedule[0].dow);
-              console.log(schedule[0].sh);
-              console.log(schedule[0].sm);
-              console.log(schedule[0].eh);
-              console.log(schedule[0].em);
+              console.log(schedule[i].cn);
+              console.log(schedule[i].dow);
+              console.log(schedule[i].sh);
+              console.log(schedule[i].sm);
+              console.log(schedule[i].eh);
+              console.log(schedule[i].em);
             }
             // build the app's text using a templated String
             var app = `
@@ -184,7 +184,7 @@ function updateDay(ffunction,day){
 }
 
 function getScheduleTable() {
-  let schedule = ${schedule};
+  let schedule = ${JSON.stringify(schedule)};
   return schedule;
 }
 
