@@ -32,7 +32,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.04",
+    "version": "0.05",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -45,12 +45,13 @@
       {"name":"messages.wid.js","url":"widget.js"},
       {"name":"messages","url":"lib.js"}
     ],
+    "data": [{"name":"messages.json"}],
     "sortorder": -9
   },
   {
     "id": "android",
     "name": "Android Integration",
-    "version": "0.02",
+    "version": "0.03",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
@@ -66,7 +67,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.02",
+    "version": "0.03",
     "description": "(BETA) App to display notifications from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
