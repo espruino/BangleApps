@@ -303,7 +303,7 @@ function drawControls() {
     l.up.col = cc("volumeup" in tCommand);
     l.down.col = cc("volumedown" in tCommand);
   }
-  l.prev.icon = (stat==="play") ? "pause" : "prev";
+  l.prev.icon = (stat==="play") ? "pause" : "previous";
   l.prev.col = cc("prev" in tCommand || "pause" in tCommand);
   l.next.icon = (stat==="play") ? "next" : "play";
   l.next.col = cc("next" in tCommand || "play" in tCommand);
