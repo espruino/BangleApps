@@ -53,8 +53,8 @@ function draw() {
   layout.hum.label = current.hum+"%";
   const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
   layout.wind.label = wind[1];
-  layout.windUnit.label = wind[2] + " " + current.wrose.toUpperCase();
-  layout.cond.label = current.txt.charAt(0).toUpperCase()+current.txt.slice(1);
+  layout.windUnit.label = wind[2] + " " + (current.wrose||'').toUpperCase();
+  layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`;
   layout.update();
