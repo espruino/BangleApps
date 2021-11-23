@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Add 'messages' library
 0.03: Fixes for Bangle.js 1
+0.04: Add require("messages").clearAll()

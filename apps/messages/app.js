@@ -16,7 +16,8 @@
 {"t":"add","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"}
 // maps
 {"t":"add","id":1,"src":"Maps","title":"0 yd - High St","body":"Campton - 11:48 ETA","img":"GhqBAAAMAAAHgAAD8AAB/gAA/8AAf/gAP/8AH//gD/98B//Pg/4B8f8Afv+PP//n3/f5//j+f/wfn/4D5/8Aef+AD//AAf/gAD/wAAf4AAD8AAAeAAADAAA="}
-
+// call
+{"t:"add","id:"call","name":"Bob","number":"12421312"}
 */
 
 var Layout = require("Layout");

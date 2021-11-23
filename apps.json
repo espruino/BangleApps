@@ -32,7 +32,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.03",
+    "version": "0.04",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -50,7 +50,7 @@
   {
     "id": "android",
     "name": "Android Integration",
-    "version": "0.01",
+    "version": "0.02",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
@@ -61,12 +61,12 @@
       {"name":"android.img","url":"app-icon.js","evaluate":true},
       {"name":"android.boot.js","url":"boot.js"}
     ],
-    "sortorder": -9
+    "sortorder": -8
   },
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.01",
+    "version": "0.02",
     "description": "(BETA) App to display notifications from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -77,7 +77,7 @@
       {"name":"ios.img","url":"app-icon.js","evaluate":true},
       {"name":"ios.boot.js","url":"boot.js"}
     ],
-    "sortorder": -9
+    "sortorder": -8
   },
   {
     "id": "health",
