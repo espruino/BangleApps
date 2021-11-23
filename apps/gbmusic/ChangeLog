@@ -3,3 +3,5 @@
 0.03: Only auto-start if active app is a clock, auto close after 1 hour of inactivity
 0.04: Setting to disable touch controls, minor bugfix
 0.05: Setting to disable double/triple press control, remove touch controls setting, reduce fadeout flicker
+0.06: Bangle.js 2 support
+0.07: Fix "previous" button image

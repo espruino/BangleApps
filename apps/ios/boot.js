@@ -95,7 +95,8 @@ E.on('AMS',a=>{
 Bangle.musicControl = cmd => {
   // play, pause, playpause, next, prev, volup, voldown, repeat, shuffle, skipforward, skipback, like, dislike, bookmark
   NRF.amsCommand(cmd);
-}
+};
+NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
 
 /*
 // For testing...

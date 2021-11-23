@@ -33,7 +33,13 @@
       // {t:"musicinfo", artist,album,track,dur,c(track count),n(track num}
       "musicinfo" : function() {
         require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
-      }
+      },
+      // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
+      "call" : function() {
+        event.t=t.cmd=="incoming"?"add":"remove";
+        event.id="call";
+        require("messages").pushMessage(event);
+      },
     };
     var h = HANDLERS[event.t];
     if (h) h(); else console.log("GB Unknown",event);
@@ -42,6 +48,7 @@
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery() }); }
   NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
   setInterval(sendBattery, 10*60*1000);
   // Health tracking
   Bangle.on('health', health=>{
@@ -50,6 +57,6 @@
   // Music control
   Bangle.musicControl = cmd => {
     // play/pause/next/previous/volumeup/volumedown
-    gbSend({ t: "music", m:cmd });
+    gbSend({ t: "music", n:cmd });
   }
 })();

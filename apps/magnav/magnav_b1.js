@@ -1,6 +1,5 @@
-
 const Yoff = 80;
-var pal2color = new Uint16Array([0x0000,0xffff,0x07ff,0xC618],0,2);
+var pal2color = new Uint16Array([g.theme.bg,g.theme.fg,g.theme.fg2,0xC618],0,2);
 var buf = Graphics.createArrayBuffer(240,60,2,{msb:true});
 Bangle.setLCDTimeout(30);
 
@@ -13,6 +12,7 @@ const labels = ["N","NE","E","SE","S","SW","W","NW"];
 var brg=null;
 
 function drawCompass(course) {
+  "ram"
   buf.setColor(1);
   buf.setFont("Vector",24);
   var start = course-90;
@@ -63,7 +63,7 @@ var candraw = false;
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 
 function tiltfixread(O,S){
-  var start = Date.now();
+  "ram"
   var m = Bangle.getCompass();
   var g = Bangle.getAccel();
   m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
@@ -117,13 +117,20 @@ function calibrate(){
        var avg = (delta.x+delta.y+delta.z)/3;
        var scale = {x:avg/delta.x, y:avg/delta.y, z:avg/delta.z};
        resolve({offset:offset,scale:scale});
-     },30000);
+     },20000);
   });
 }
 
-function docalibrate(e,first){
+var calibrating=false;
+function docalibrate(first){
+    calibrating=true;
     const title = "Calibrate";
-    const msg = "takes 30 seconds";
+    const msg = "takes 20 seconds";
+    function restart() {
+        calibrating=false;
+        setButtons();
+        startdraw();
+    }
     function action(b){
         if (b) {
           buf.setColor(1);
@@ -133,30 +140,21 @@ function docalibrate(e,first){
           buf.drawString("Calibrate",120,26);
           flip(buf,Yoff);
           calibrate().then((r)=>{
+            CALIBDATA=r;
             require("Storage").write("magnav.json",r);
-            CALIBDATA = r;
-            startdraw();
-            setButtons();
+            restart()
           });
         } else {
-          startdraw();
-          setTimeout(setButtons,1000);
-        }
+          restart()
+        } 
     }   
     if (first===undefined) first=false;
     stopdraw();
-    clearWatch();
     if (first) 
         E.showAlert(msg,title).then(action.bind(null,true));
     else 
         E.showPrompt(msg,{title:title,buttons:{"Start":true,"Cancel":false}}).then(action);
 }
-
-Bangle.on('touch', function(b) { 
-    if(!candraw) return;
-    if(b==1) brg=heading;
-    if(b==2) brg=null;
- });
 
 var intervalRef;
 
@@ -176,29 +174,17 @@ function stopdraw() {
 }
 
 function setButtons(){
-  setWatch(()=>{load();}, BTN1, {repeat:false,edge:"falling"});
-  setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-  setWatch(docalibrate, BTN3, {repeat:false,edge:"falling"});
+  function actions(v){
+    if (!v) docalibrate(false);
+    else if (v==1) brg=null;
+    else brg=heading;
+  }
+  Bangle.setUI("updown",actions);
 }
 
-var SCREENACCESS = {
-      withApp:true,
-      request:function(){
-        this.withApp=false;
-        stopdraw();
-        clearWatch();
-      },
-      release:function(){
-        this.withApp=true;
-        startdraw(); 
-        setButtons();
-      }
-};
- 
 Bangle.on('lcdPower',function(on) {
-  if (!SCREENACCESS.withApp) return;
   if (on) {
-    startdraw();
+    if (!calibrating) startdraw();
   } else {
     stopdraw();
   }
@@ -209,12 +195,11 @@ Bangle.on('kill',()=>{Bangle.setCompassPower(0);});
 Bangle.loadWidgets();
 Bangle.setCompassPower(1);
 if (!CALIBDATA) 
-  docalibrate({},true);
+  docalibrate(true);
 else {  
   startdraw();
   setButtons();
 }
-
 
 
 

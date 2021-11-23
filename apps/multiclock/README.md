@@ -5,7 +5,9 @@ This is a clock app that supports multiple clock faces. The user can switch betw
 
 
 ## Controls
-Swipe left and right on both the Bangle and Bangle 2 switch between faces. BTN1 & BTH3 also switch faces on the Bangle.
+Uses `setUI("clockupdown")`
+BTN1 & BTH3  switch faces on the Bangle.
+Touch upper right and lower right quadrant switch faces on the Bangle 2.
 
 ## Adding a new face
 Clock faces are described in javascript storage files named `name.face.js`. For example, the Analog Clock Face is described in `ana.face.js`. These files have the following structure:
