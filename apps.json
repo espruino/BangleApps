@@ -4305,7 +4305,7 @@
     "description": "Famous binary watch",
     "tags": "clock",
     "type": "clock",
-	"storage": [
+    "storage": [
       {"name":"binwatch.app.js","url":"app.js"},
       {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
     ]
