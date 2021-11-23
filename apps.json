@@ -4364,7 +4364,7 @@
     ],
     "data": [{"name":"authentiwatch.json"}]
   },
-		{ "id": "schoolCalendar",
+	{ "id": "schoolCalendar",
 		"name": "School Calendar",
 		"shortName":"SCalendar",
 		"icon": "CalenderLogo.png",
