@@ -3649,7 +3649,7 @@
     "id": "gbmusic",
     "name": "Gadgetbridge Music Controls",
     "shortName": "Music Controls",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Control the music on your Gadgetbridge-connected phone",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot_v1.png"},{"url":"screenshot_v2.png"}],
@@ -4240,11 +4240,18 @@
     "id": "emojuino",
     "name": "Emojuino",
     "shortName": "Emojuino",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
+    "screenshots": [
+      { "url": "screenshot-tx.png" },
+      { "url": "screenshot-swipe.png" },
+      { "url": "screenshot-welcome.png" }
+    ],
+    "type": "app",
     "tags": "emoji",
     "supports" : [ "BANGLEJS2" ],
+    "allow_emulator": true,
     "readme": "README.md",
     "storage": [
       { "name": "emojuino.app.js", "url": "emojuino.js" },
@@ -4255,8 +4262,8 @@
     "id": "cliclockJS2Enhanced",
     "name": "Commandline-Clock JS2 Enhanced",
     "shortName": "CLI-Clock JS2",
-    "version": "0.1",
-    "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design",
+    "version": "0.2",
+    "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design. Also added HID media controlls, just swipe on the clock face to controll the media! Gadgetbride support coming soon(hopefully) Thanks to t0m1o1 for media controls!",
     "icon": "app.png",
     "screenshots": [{"url":"screengrab.png"}],
     "type": "clock",
@@ -4288,7 +4295,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.02",
+    "version":"0.03",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
     "type": "clock",
@@ -4348,5 +4355,24 @@
       {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"name":"authentiwatch.json"}]
+  },
+		{ "id": "schoolCalendar",
+		"name": "School Calendar",
+		"shortName":"SCalendar",
+		"icon": "CalenderLogo.png",
+		"version": "0.01",
+		"description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
+		"tags": "tool",
+		"readme":"README.md",
+		"custom":"custom.html",
+		"supports": ["BANGLEJS"],
+		"screenshots": [{"url":"screenshot_basic.png"},{"url":"screenshot_info.png"}],
+		"storage": [
+			{"name":"schoolCalendar.app.js"},
+			{"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
+		],
+		"data": [
+			{"name":"app.json"}
+		]
   }
 ]
