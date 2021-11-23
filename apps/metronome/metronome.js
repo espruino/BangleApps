@@ -40,10 +40,8 @@ function changecolor() {
   };
   g.setColor(colors[cindex].value);
   if ((process.env.HWVERSION==2 )) {
-   g.drawLine(39,0,39,65);
-   g.drawLine(39,135,39,200);
-   g.drawLine(136,0,136,65);
-   g.drawLine(136,135,136,200);
+   g.drawLine(39,0,39,g.getWidth()/3);
+   g.drawLine(136,0,136,g.getWidth()/3);
   }
   if (cindex == setting('beatsperbar')-1) {
     cindex = 0;
@@ -55,14 +53,27 @@ function changecolor() {
 }
 
 function updateScreen() {
-  g.reset().clearRect(0, 50, 250, 150);
+  g.reset().clearRect(0, 50, 250, 120);
   changecolor();
   try {
     Bangle.buzz(50, setting('buzzintens'));
   } catch(err) {
   }
   g.setFont("Vector",40).setFontAlign(0,0);
-  g.drawString(Math.floor(bpm)+"bpm", g.getWidth()/2, 100);
+  g.drawString(Math.floor(bpm)+"bpm", g.getWidth()/2,  g.getWidth()/2);
+}
+
+//Write user instructuins to screen
+function printInstructions() {
+ g.clear(1).setFont("4x6");
+ g.setColor(-1);  //set color to white
+ g.drawString('Drum the beat on the center\nof the screen to set tempo.', 30, g.getWidth()/3*2+15);
+ if(process.env.HWVERSION==1) {
+   g.drawString('Use BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 30, g.getWidth()/3*2+30);
+ }
+ else {
+   g.drawString('Touch left part of the screen\nto decrease, or the right site\nto increase bpm value by 1.', 30, g.getWidth()/3*2+30);
+ }
 }
 
 Bangle.on('touch', function(zone, e) {
@@ -106,8 +117,8 @@ Bangle.on('touch', function(zone, e) {
   }}
 });
 
-// enable bpm finetuning via 
 
+// enable bpm finetuning
 if ((process.env.HWVERSION==1)) {
 setWatch(() => {
   bpm += 1;
@@ -125,9 +136,8 @@ setWatch(() => {
 
 }
 interval = setInterval(updateScreen, 60000 / bpm);
+printInstructions();
 
- g.clear(1).setFont("6x8");
- g.drawString('Touch the screen to set tempo.\nUse BTN1 to increase, and\nBTN3 to decrease bpm value by 1.', 25, 200);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
