@@ -173,11 +173,7 @@ function updateDay(ffunction,day){
   }
 }
 function getScheduleTable() {
-  let schedule = [//Monday:
-    {cn: "Biblical Theology", dow:1, sh: 8, sm: 10, eh:9, em: 5, r:"207", t:"Mr. Besaw"},
-    {cn: "English", dow:1, sh: 9, sm: 5, eh:10, em: 0, t:"Dr. Wong"},
-    {cn: "Break", dow:1, sh: 10, sm: 0, eh:10, em: 10, t:""},
-    {cn: "MS Robotics", dow:1, sh: 10, sm: 10, eh:11, em: 0, r:"211", t:"Mr. Broyles"}];//${JSON.stringify(schedule)};
+  let schedule = ${JSON.stringify(schedule)};
   logDebug(JSON.stringify(schedule));
   return schedule;
 }
