@@ -78,13 +78,7 @@ boot += `E.on('errorFlag', function(errorFlags) {
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
-if (s.quiet && s.qmOptions) boot+=`Bangle.setOptions(${E.toJS(s.qmOptions)});\n`;
-if (s.quiet && s.qmBrightness) {
-  if (s.qmBrightness!=1) boot+=`Bangle.setLCDBrightness(${s.qmBrightness});\n`;
-} else {
-  if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
-}
-if (s.quiet && s.qmTimeout) boot+=`Bangle.setLCDTimeout(${s.qmTimeout});\n`;
+if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${s.passkey}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 // Pre-2v10 firmwares without a theme/setUI
