@@ -1690,7 +1690,7 @@
   {
     "id": "barclock",
     "name": "Bar Clock",
-    "version": "0.08",
+    "version": "0.09",
     "description": "A simple digital clock showing seconds as a bar",
     "icon": "clock-bar.png",
     "screenshots": [{"url":"screenshot.png"},{"url":"screenshot_pm.png"}],
