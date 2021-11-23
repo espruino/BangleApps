@@ -62,7 +62,7 @@ const V2_BAT_SIZE_Y = 2;
 
 const V2_SCREEN_SIZE_X = 176;
 const V2_SCREEN_SIZE_Y = 176;
-const V2_BACKGROUND_IMAGE = "Background176_center.png";
+const V2_BACKGROUND_IMAGE = "binwatch.Background176_center.img";
 const V2_BG_COLOR = 0;
 const V2_FG_COLOR = 1;
 
@@ -90,7 +90,7 @@ const V1_BAT_SIZE_X = 3;
 const V1_BAT_SIZE_Y = 5;
 const V1_SCREEN_SIZE_X = 240;
 const V1_SCREEN_SIZE_Y = 240;
-const V1_BACKGROUND_IMAGE = "Background240_center.png";
+const V1_BACKGROUND_IMAGE = "binwatch.Background240_center.img";
 const V1_BG_COLOR = 1;
 const V1_FG_COLOR = 0;
 
@@ -361,8 +361,7 @@ function draw() {
   updateVTime();
   g.clear();
   g.drawImages([{image:cgimg},
-            {image:require("Storage").read(backgroundImage)},
-//             { x:bt_x, y:bt_y, rotate: 0, image:require("Storage").read("bt-icon.png")},
+            {image:require("Storage").read(backgroundImage)}
             ]);
   drawBT(g, NRF.getSecurityStatus().connected);
 //  Bangle.drawWidgets();
