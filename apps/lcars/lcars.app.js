@@ -113,7 +113,7 @@ function draw(queue){
 
   // Temperature
   g.setFontAlign(-1,-1,0);
-  g.drawString("Temp:", 20, 104);
+  g.drawString("TEMP:", 20, 104);
   g.drawString(E.getTemperature() + "C", 60, 104);
 
   // Draw battery
