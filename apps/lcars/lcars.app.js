@@ -3,11 +3,42 @@
  */
 const locale = require('locale');
 var alarm = -1;
+var hrmStr = "-"
 
-var img = {
+var backgroundImage = {
   width : 176, height : 151, bpp : 3,
-  transparent : 0,
-  buffer : require("heatshrink").decompress(atob("gF58+eAR14IN1fvv374CN7yD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AH4A/AH4A/AB1z588+YCN+RBuj158+eARyD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AUhyD/gEDQaHz4BCuQaNAIN0PQaHIIN0BQaF5IN0AQaHPkBBug6DQ8iEvQaE8yBBuhyDPAQNAINsBQaACBkhCuQaACpVo0cQaACo4CFGjyD/AAMPQf4ACQf4ADgiD+AH4A/AH8J02atICIwEAgPnz15AR3gEgM27dt2wCTF4IABgYROgN9+/fAR14ILsaQBKDakwjKF5oABKZ6DwgxTPQeEmQf5cPQeMBLhyDxgJTRQd0JKaKDuhKD/gENQf6D/F4VNQf8AKaKDvKBYnBAGZQKzBB1QZOwIGqDJsBA2QZJA3QZGYIPCDH4CD/0xA4QY+wIPKDGwCD/tpB6Qf6DHthA5QY1oIPSD/QY9gQf/bIPaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AF8JQYgCdsEHnnz54CJgIdLwEAhqDEATtggPnz15ARHkgIdLIIKAgQcCAgQcAA/gAA=="))
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("AEcEiFBASFADpETps06YCcEYXnz15ASBBJzVp0wCdEYU8+fPASHAIJCAdQf6DpoUIkGCATCDWIBCDDzANJAGaDC6BB9QYWAQf804CD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/QbhA9Qf6D2oMEiFAQfoyB6ZBKQeYyBzVgQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6Dnz1586D+AGaDNAGaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qc8Bg8euPv337ASHwDQNz588+YCC5AlCjR6CARCDN+/fvoCV6AbBj158+eAQV4EwUTPQQCIQZcB859SQdkPQCyDpvaAWQbmYIBUDQC6DQAC8eQC6DQAC8XQf6D/AASAYQdCAYQf6DHAESDeAESD/Qf6D/Qf6DK+2LtmXQfu8FEiDb8BB9QYRA9QYZB+Qf6D/AAccuPHIPwA/AH4A/AH4AHyVJkhB+zVp0yD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DlwCD/02QQf8kyVIkGChACeFAMo0WKAQOIC56/CQYQCi0kAgMv33794CUQYYChQYU9+/fvoCTviD/Qf6D/Qf6D/Qf6DLjSD/94="))
+}
+
+var iconPlanet = {
+  width : 50, height : 50, bpp : 3,
+  transparent : 5,
+  buffer : require("heatshrink").decompress(atob("23btoCD6PHjlx9oLGAQuGiVJkmSpIRK2lxEYQCDCJOGjEhEYNBwUI5drEw/xEYwCB8oRGDoMhwmSsAFBkGM237NZICGj15OgnaDoOGI4cgwUa5dv332EwdHEZACB8+evYRCtAdBEAQpDscs3379+9HAW8EZPHz158+WSQQjFwUYsMs2QjBEwPrSRZuCJQN5TAJuCEYkhwUS5cvJQRxCNxZKDOIXgJQkh0mYtMk2XLJQXv1u0EZSVDOIWsJQsSpMkyVJljgB9gmB7YjLOgtq4BKEsIjCAQNLlgCBt+9EZwCCj8sJQpxB00aJoYCB5cBEZ4CB+RKFJoeGjAjCoOGzBKaAQeGJQQFBwJKSsAjIcweSBwRKRjojKOgYFCxZKRtAaBjHrlm4FJUN3hKQi3ShAjB2XLAQQmI7dHJR97tsh9gjEAQLpHlu2+PnExvF23an3794mF2BKFm3btsevImMjwRB23v3wmB3xNF5BuDCIPb8+eEwOeExIRCtojCJo5uEEwRxBEwRuJHAdI+YmCTYlgJQIREtrjCEwLdHCIiYBhF7OgnJSQgmFjhxCOgiSDAQvSX4QmB90IkQRIX4gmCEZICDvwmCBY3QA"))
+}
+
+var iconGps = {
+  width : 50, height : 50, bpp : 3,
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("pMkyQCFpH0BAwCJv/6CJ8l589CJ0kyf//wIDpVEChM8+/fBAdZ8QRIp++///0gIBlMkxI4IuZKB+/SKAPHzpKJ/YkB//pKAP2BYeXhIFDx88+fPvqYBnibEkmUAofv34lC/RQBBYdcmPCXIYjBEwPfvnzJoILBQoUlHAUuJQYmCDodw48cuBKGTA0WEYIEBJQ6YEQwMMuImBJQyYEkmZFAVkyVSJQ6YCyUcmPDjgmBTAJKETAlJiS4ETANPJQpxCJQtxTALgBEwnfvohBI4NZkmWpNlcAgAD/wzBEYaYCy8cJQiYEyIjCTAWS3wlGTAVIEwkerJKFTAkmOIclToK8GAAIPBIgImCufHyxxG59pEIS8DvfypMr968HEwOHEwfx8+cEYkpCIeSoiYByVf/uSkmTEQP7ZIiYDnl5AQNwBYgCGyOn38k2+2pIRKyVeuPPj1x4ccCJVKSgP/5cJA4NSExMps+cSoMMKAIVCCg7SBpd7TANZkmUHBMevPnjlwcwXCCJFEzYDBA4WWKIIRHpEw4+eNwUxEwKYIkVJk1IyIKFHA+DR4VcJQYCBJRBoCkxHBAgNkyyYKkmXEYaYMAQMSEYKYNAQOHEwnSfBYjBAgVaCJdJJSMkTAK8KYQyVKAQ4jBNxiYEcBCYJXIkgA="))
+}
+
+var iconHrm =  {
+  width : 50, height : 50, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("kmSpIC/AX4CT+PHjlxARfBkmGjFhAR2REZwCC7AjPAQIjQ48dw0//4ANsOB49/CJv8JQNjEh32JQN3BY/5AwpKLkhKQ8+eBIhKK/jZBJR/+vPnJR/JkmTJR3xJQN5JRPypMkz5uByfJk5KI/zXCFQMev/nC4JKIkhrBn4pB/+Sp5KJfwnnOIqVHSQS5CFgaVIDQPHj4FBOIJNCSo/9EAI/CFIJNCSo/njiSC/KYDcBH6IgQAFcBHx44RGcBYAHcBIAHJRAAJJRAAJJSrdEARfYsOGjACOngjP48EyQdHx04BAtkyTnCAQYsCDoILGAQ2OnfvCJ2TIgNwCJuSpHj335CJnxNYvBChU48ZKC3378gRJp6SGiQ4JkaSBJQP7EwIOEyA"))
+}
+
+var iconCompass = {
+  width : 50, height : 50, bpp : 3,
+  transparent : 2,
+  buffer : require("heatshrink").decompress(atob("pMkyQCDl//AAPSBYwCFv4RCAAOkCJNLCAgACCJm2rNn34FB+g1Jvny5cs2XPn///QRI9uWEYP2rNly5NHNYN82YjB/4mC5YmBOgkl//9y1bsuW/4CB/Nlz//9I4D3/8I4M8EAICB55NCL4g/BIgRKBAQtnL4lf+QdCI4YCD2Y4DSQPZtojHsuerI4Dv/flnzEZB3CHAJuB8ojIAQY4CNwJHI2XHTAY4B/4gJrGBAoSqBpf2EZMQmRxEv/5Nw9YyVCAoO+rf/0v/Nw/PjFB4ZxCn/+y7dBJQyNBkAIDz/6/7dBJQsYsMEhgsE//+7IjFsTYBwAIE/4ABEYs8uPEiFyF4gRBXIImEBAPSpAjDtuX//9+YmERgMcuODBAU9+xKCr68Ev4lBNwm//IJCnhxDDQPx4xuFJQhBDDQXwTwpKBSos8//HjlwYQyVG34aB2zCG//1Nw6SFAQTgD/JuD+wjFrbgCr/yMQI+B/lxEY08UgPpl4jCNwP+I4wCBUgOk3/8DoXxI44CBn/0yREDzx0EAQlndANJv4gJAQf3/VJkq8CJoZuGXIPpkg4BOIZuI5/9CII4BEZAmDNwIRBHAJxDNxH+CII4CSQW+NALgBtomBt5uCHAbjB2ZoCAQPyJQP/NwIRCkm//4gBIgP/SQn/CImSYALjDviSDQAYUDL4ImEEYYRGL4X/76PCI4P/SQYCFl4MBAAgRJEwYRPOgZrHpMgA"))
+}
+
+var iconAlarm = {
+  width : 50, height : 50, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("kmSpICEp//BAwCJn/+CJ8k//5CKAABCJs8uPH//x48EI5YjCAARNKEYUcv//jgFBExEnEYoAC+QmHIgIgC/gpCuPBCI2fIgU4AQXjA4P8CIuTEYZKBAolwHApXBEAWP//jxwpBAALaFDoYCIiQmDDIP4EAT+CEwnJEwYjLAQLaFEYomDKALmDNwoCIOIZuD8AkFgCYDHAQjMAQTdDNwOAEg0Dx0/cYeREZtxQYOTHgJuHOIvkXJy8DNwIACJQ8Ah4NDAAfxEZARHOIIkHg4jQAQb1CQ4KVJgEOnDIBSoIjNAQPBcAaVJcAKVBcDGOcD7OBMQM48BuH8f//JKCnhKNggRBkmfTQJxBEwhuD/gRCyVHJRlyCIVJXgYmB8ZQBAoIKBXIQmCOIt/NxAUCOIImCIgIpCBAJuDAQZEE/huIAQWTDgImBTYQGC8gRFcYpKFCI8kDwQAFCJBfBEAX/+IjBiQRIEw4jJAQc8v//NYwCIOgJrIJpA1OcwbaFAQWQA="))
 }
 
 Graphics.prototype.setFontAntonioMedium = function(scale) {
@@ -38,14 +69,32 @@ function draw(queue){
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
   // Draw background image
-  g.drawImage(img, 0, 24);
+  g.drawImage(backgroundImage, 0, 24);
+
+  // Draw raster
+  for(var x=0; x<6; x++){
+    g.drawLine(115+x*10, 100, 115+x*10, 160);
+  }
+
+  for(var y=0; y<6; y++){
+    g.drawLine(110, 105+y*10, 170, 105+y*10);
+  }
+
+  // Draw symbol
+  var iconImg =
+  alarm >= 0 ? iconAlarm :
+  Bangle.isGPSOn() ? iconGps :
+  Bangle.isHRMOn() ? iconHrm :
+  Bangle.isCompassOn() ? iconCompass :
+  iconPlanet;
+  g.drawImage(iconImg, 115, 105);
 
   // Write time
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAlign(0,0,0);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 100, 50);
+  g.drawString(timeStr, 57, 57);
 
   // Write date
   g.setFontAlign(1,-1, 0);
@@ -53,41 +102,32 @@ function draw(queue){
 
   var dayName = locale.dow(currentDate, true).toUpperCase();
   var day = currentDate.getDate();
-  g.drawString(day, 170, 30);
-  g.drawString(dayName, 170, 50);
+  g.drawString(day, 133, 37);
+  g.drawString(dayName, 133, 57);
 
-  // Alarm
+  // Alarm within symbol
+  if(alarm > 0){
+    g.setFontAlign(0,0,0);
+    g.drawString(alarm, 115+25, 105+25);
+    g.setFontAlign(-1,-1,0);
+  }
+
+  // HRM
   g.setFontAlign(-1,-1,0);
-  g.drawString("TMR:", 30, 107);
-  var alrmText = alarm >= 0 ? "T-"+alarm : "OFF";
-  g.drawString(alrmText, 65, 107);
+  g.drawString("HRM:", 20, 104);
+  g.drawString(hrmStr, 60, 104);
+
+  // Draw steps
+  var steps = getSteps();
+  g.drawString("STEP:", 20, 124);
+  g.drawString(steps, 60, 124);
 
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
-  g.drawString("BAT:", 30, 127);
-  g.drawString(charging + bat+ "%", 65, 127);
+  g.drawString("BAT:", 20, 144);
+  g.drawString(charging + bat+ "%", 60, 144);
 
-  // Draw steps
-  var steps = getSteps();
-  g.drawString("STEP:", 30, 147);
-  g.drawString(steps, 65, 147);
-
-  // GPS
-  var gpsText = Bangle.isGPSOn() ? "ON" : "OFF";
-  g.drawString("GPS:", 115, 107);
-  g.drawString(gpsText, 149, 107);
-
-
-  // HRM
-  var gpsText = Bangle.isHRMOn() ? "ON" : "OFF";
-  g.drawString("HRM:", 115, 127);
-  g.drawString(gpsText, 149, 127);
-
-  // CMP
-  var compassText = Bangle.isCompassOn() ? "ON" : "OFF";
-  g.drawString("CMP:", 115, 147);
-  g.drawString(compassText, 149, 147);
 
   // Queue draw in one minute
   if(queue){
@@ -171,6 +211,14 @@ Bangle.on('swipe',function(dir) {
 
   // Update UI
   draw(false);
+});
+
+
+/*
+ * Measure heart rate
+ */
+Bangle.on('HRM', function(hrm) {
+  hrmStr = hrm.bpm;
 });
 
 
