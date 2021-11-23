@@ -550,6 +550,7 @@
     "supports" : ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-cube-scrable-screenshot"},{"url":"bangle1-cube-scramble-screenshot"}],
     "storage": [
       {"name":"cubescramble.app.js","url":"cube-scramble.js"},
       {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
@@ -774,6 +775,7 @@
     "tags": "battery",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
+	  "screenshots": [{"url":"bangle2-charge-animation-screenshot"},{"url":"bangle-charge-animation-screenshot"}],
     "storage": [
       {"name":"chargeanim.app.js","url":"app.js"},
       {"name":"chargeanim.boot.js","url":"boot.js"},
@@ -1195,6 +1197,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-simple-v-clock-screenshot"}],
     "storage": [
       {"name":"svclock.app.js","url":"vclock-simple.js"},
       {"name":"svclock.img","url":"vclock-simple-icon.js","evaluate":true}
@@ -1210,6 +1213,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-dev-clock-screenshot"},{"url":"bangle1-dev-clock-screenshot"}],
     "storage": [
       {"name":"dclock.app.js","url":"clock-dev.js"},
       {"name":"dclock.img","url":"clock-dev-icon.js","evaluate":true}
@@ -1427,6 +1431,7 @@
     "tags": "pomodoro,cooking,tools",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-pomodoro-screenshot"}],
     "storage": [
       {"name":"pomodo.app.js","url":"pomodoro.js"},
       {"name":"pomodo.img","url":"pomodoro-icon.js","evaluate":true}
@@ -1443,6 +1448,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-large-digit-blob-clock-screenshot"},{"url":"bangle1-large-digit-blob-clock-screenshot"}],
     "storage": [
       {"name":"blobclk.app.js","url":"clock-blob.js"},
       {"name":"blobclk.img","url":"clock-blob-icon.js","evaluate":true}
@@ -1502,6 +1508,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
+    "screenshots": [{"url":"berlin-clock-screenshot"}],
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
       {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true}
@@ -1714,6 +1721,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
+		"screenshots": [{"url":"bangle2-dot-clock-screenshot"},{"url":"bangle1-dot-clock-screenshot"}],
     "storage": [
       {"name":"dotclock.app.js","url":"clock-dot.js"},
       {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
