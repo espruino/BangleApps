@@ -219,10 +219,6 @@ Bangle.on('swipe',function(dir) {
  */
 Bangle.on('HRM', function(hrm) {
   hrmStr = hrm.bpm;
-
-  if(hrm.confidence < 50){
-    hrmStr = "~" + hrmStr;
-  }
 });
 
 
