@@ -550,7 +550,7 @@
     "supports" : ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-cube-scrable-screenshot.png"},{"url":"bangle1-cube-scramble-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-cube-scramble-screenshot.png"},{"url":"bangle1-cube-scramble-screenshot.png"}],
     "storage": [
       {"name":"cubescramble.app.js","url":"cube-scramble.js"},
       {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
@@ -1721,7 +1721,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-dot-clock-screenshot.png"},{"url":"bangle1-dot-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-dot-clcok-screenshot.png"},{"url":"bangle1-dot-clock-screenshot.png"}],
     "storage": [
       {"name":"dotclock.app.js","url":"clock-dot.js"},
       {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
