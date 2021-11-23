@@ -4243,6 +4243,11 @@
     "version": "0.01",
     "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
+    "screenshots": [
+      { "url": "screenshot-tx.png" },
+      { "url": "screenshot-swipe.png" },
+      { "url": "screenshot-welcome.png" }
+    ],
     "type": "app",
     "tags": "emoji",
     "supports" : [ "BANGLEJS2" ],
