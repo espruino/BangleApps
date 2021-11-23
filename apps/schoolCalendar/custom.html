@@ -93,9 +93,7 @@
             var app = `
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg", 2).add(Graphics);
-
 var file = require("Storage").open("calendarItems.csv","w");
-
 let nIntervId;
 function redrawScreen() {
   layout.render(layout.background);
@@ -175,11 +173,14 @@ function updateDay(ffunction,day){
   }
 }
 function getScheduleTable() {
-  let schedule = ${JSON.stringify(schedule)};
+  let schedule = [//Monday:
+    {cn: "Biblical Theology", dow:1, sh: 8, sm: 10, eh:9, em: 5, r:"207", t:"Mr. Besaw"},
+    {cn: "English", dow:1, sh: 9, sm: 5, eh:10, em: 0, t:"Dr. Wong"},
+    {cn: "Break", dow:1, sh: 10, sm: 0, eh:10, em: 10, t:""},
+    {cn: "MS Robotics", dow:1, sh: 10, sm: 10, eh:11, em: 0, r:"211", t:"Mr. Broyles"}];//${JSON.stringify(schedule)};
+  logDebug(JSON.stringify(schedule));
   return schedule;
 }
-
-file.write(JSON.stringify(schedule));
 
 function findNextScheduleIndex() {
   var schedule = getScheduleTable();
@@ -403,8 +404,8 @@ layout.update();
 layout.render(layout.loading);
 layout.render(layout.background);
 layout.render(layout.buttons);
-
 draw();
+file.write(JSON.stringify(schedule));
 `;
             // send finished app (in addition to contents of app.json)
             sendCustomizedApp({
