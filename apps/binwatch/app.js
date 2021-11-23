@@ -11,7 +11,7 @@
 /* reuqirements */
 require("Font7x11Numeric7Seg").add(Graphics);
 require("Font5x7Numeric7Seg").add(Graphics);
-
+require("Background176_center.png");
 
 /* constants and definitions */
 
