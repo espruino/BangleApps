@@ -35,7 +35,7 @@
         require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
       },
       // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
-      "notify" : function() {
+      "call" : function() {
         event.t=t.cmd=="incoming"?"add":"remove";
         event.id="call";
         require("messages").pushMessage(event);
