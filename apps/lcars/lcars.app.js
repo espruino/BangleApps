@@ -8,7 +8,7 @@ var hrmValue = "-";
 var backgroundImage = {
   width : 176, height : 151, bpp : 3,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("AEcEiFBASFADpETps06YCcEYXnz15ASBBJzVp0wCdEYU8+fPASHAIJCAdQf6DpoUIkGCATCDWIBCDDzANJAGaDC6BB9QYWAQf804CD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/QbhA9Qf6D2oMEiFAQfoyB6ZBKQeYyBzVgQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6Dnz1586D+AGaDNAGaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qc8Bg8euPv337ASHwDQNz588+YCC5AlCjR6CARCDN+/fvoCV6AbBj158+eAQV4EwUTPQQCIQZcB859SQdkPQCyDpvaAWQbmYIBUDQC6DQAC8eQC6DQAC8XQf6D/AASAYQdCAYQf6DHAESDeAESD/Qf6D/Qf6DK+2LtmXQfu8FEiDb8BB9QYRA9QYZB+Qf6D/AAccuPHIPwA/AH4A/AH4AHyVJkhB+zVp0yD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DlwCD/02QQf8kyVIkGChACeFAMo0WKAQOIC56/CQYQCi0kAgMv33794CUQYYChQYU9+/fvoCTviD/Qf6D/Qf6D/Qf6DLjSD/94="))
+  buffer : require("heatshrink").decompress(atob("jlx44CdEQMHnnz54Ca/+OnHjAThlC8+evICaQf4CBQDqD/Qf6DruAlCAHJlC8BA8gCDDIPqD/Qf6D/QZEUQf6D/QYUEG+cHQf8An41IQe0B//8Qf0PIJKD/QfX/wCD9v5BB+CD9IIX+QfcHjhBC+P/jiD4h4+BAAuAQYzCygY+C/0Hj/x4CD1gf+AQJBDAoX4Qesf+ACBYYaABgP/Qer+CII0An47CQeMH/iGCIIwLDQeJ3DIAf//AMCIISDwfYiDEBAccQeUBPQZAEIIf/wCD1g5BIj5BBQfxBCQeJBCQf5BIHASD0PQRBDjl///8BIMcAQKDwgE/AQTCDh5BD/6DyQAKDE4CMCIIMHIgSDxg4vBQYRBBAoI+Bn47CQeQ4C//xIIQIBQwIPCQeL7B+BBB+BKD/+P/AGCQeIyBv7EBIIrLDQecAIIWARgmOKAiDxgD+B/g1BHAP/j6JDAGhBBAAxB6gCDD4CD6/AHFgZB54AIGuBB3AH4A/AH4A/AH4A/AH4A/AEEcuPHAQoLLARvADQUYsOGASgZBkv/AA39EwUbtu27YCSwAaC6dNmgCUgEBNZImCj158+eASSDDjVp02aAScAh6CHQfDvKQesTQRCD3QBCD4QRKD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DNxkgwUIAQYmCiZoVDIUAyaDaD4YA5QQXgIPr+FQfxB+Qf6DD/qD/Qf4A/AH4A/AH4A/AH4A/AB0cuPHIP3z588Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DbwCD/Qf6DC8CD/48cQf88+fNmnTpoCdFIf3799AQIsBF4QCMnCDDAUPAVowCTKaACUQYf/ACv9Qf6D/Qf6D/Qf6D/Qf4CNA"))
 }
 
 var iconPlanet = {
@@ -66,12 +66,13 @@ function draw(queue){
   g.drawImage(backgroundImage, 0, 24);
 
   // Draw raster
-  for(var x=0; x<6; x++){
-    g.drawLine(115+x*10, 100, 115+x*10, 160);
+  g.drawLine(112, 100, 112, 165);
+  for(var x=1; x<7; x++){
+    g.drawLine(115+x*10, 100, 115+x*10, 165);
   }
 
   for(var y=0; y<6; y++){
-    g.drawLine(110, 105+y*10, 170, 105+y*10);
+    g.drawLine(113, 105+y*10, 180, 105+y*10);
   }
 
   // Draw symbol
@@ -80,30 +81,31 @@ function draw(queue){
     Bangle.isGPSOn() ? iconGps :
     Bangle.isCompassOn() ? iconCompass :
     iconPlanet;
-  g.drawImage(iconImg, 115, 105);
+  g.drawImage(iconImg, 120, 107);
+
+  // Alarm within symbol
+  g.setFontAntonioMedium();
+  if(alarm > 0){
+    g.setFontAlign(0,0,0);
+    g.drawString(alarm, 120+25, 107+25);
+    g.setFontAlign(-1,-1,0);
+  }
 
   // Write time
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAlign(0,0,0);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 57, 57);
+  g.drawString(timeStr, 55, 57);
 
   // Write date
-  g.setFontAlign(1,-1, 0);
+  g.setFontAlign(-1,-1, 0);
   g.setFontAntonioMedium();
 
   var dayName = locale.dow(currentDate, true).toUpperCase();
   var day = currentDate.getDate();
-  g.drawString(day, 133, 37);
-  g.drawString(dayName, 133, 57);
-
-  // Alarm within symbol
-  if(alarm > 0){
-    g.setFontAlign(0,0,0);
-    g.drawString(alarm, 115+25, 105+25);
-    g.setFontAlign(-1,-1,0);
-  }
+  g.drawString(day, 100, 37);
+  g.drawString(dayName, 100, 57);
 
   // Temperature
   g.setFontAlign(-1,-1,0);
