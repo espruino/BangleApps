@@ -218,7 +218,9 @@ Bangle.on('swipe',function(dir) {
  * Measure heart rate
  */
 Bangle.on('HRM', function(hrm) {
-  hrmStr = hrm.bpm;
+  if(hrm.confidence > 80){
+    hrmStr = hrm.bpm;
+  }
 });
 
 
