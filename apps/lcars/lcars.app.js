@@ -3,6 +3,7 @@
  */
 const locale = require('locale');
 var alarm = -1;
+var hrmValue = "-";
 
 var backgroundImage = {
   width : 176, height : 151, bpp : 3,
@@ -20,12 +21,6 @@ var iconGps = {
   width : 50, height : 50, bpp : 3,
   transparent : 2,
   buffer : require("heatshrink").decompress(atob("pMkyQCFpH0BAwCJv/6CJ8l589CJ0kyf//wIDpVEChM8+/fBAdZ8QRIp++///0gIBlMkxI4IuZKB+/SKAPHzpKJ/YkB//pKAP2BYeXhIFDx88+fPvqYBnibEkmUAofv34lC/RQBBYdcmPCXIYjBEwPfvnzJoILBQoUlHAUuJQYmCDodw48cuBKGTA0WEYIEBJQ6YEQwMMuImBJQyYEkmZFAVkyVSJQ6YCyUcmPDjgmBTAJKETAlJiS4ETANPJQpxCJQtxTALgBEwnfvohBI4NZkmWpNlcAgAD/wzBEYaYCy8cJQiYEyIjCTAWS3wlGTAVIEwkerJKFTAkmOIclToK8GAAIPBIgImCufHyxxG59pEIS8DvfypMr968HEwOHEwfx8+cEYkpCIeSoiYByVf/uSkmTEQP7ZIiYDnl5AQNwBYgCGyOn38k2+2pIRKyVeuPPj1x4ccCJVKSgP/5cJA4NSExMps+cSoMMKAIVCCg7SBpd7TANZkmUHBMevPnjlwcwXCCJFEzYDBA4WWKIIRHpEw4+eNwUxEwKYIkVJk1IyIKFHA+DR4VcJQYCBJRBoCkxHBAgNkyyYKkmXEYaYMAQMSEYKYNAQOHEwnSfBYjBAgVaCJdJJSMkTAK8KYQyVKAQ4jBNxiYEcBCYJXIkgA="))
-}
-
-var iconHrm =  {
-  width : 50, height : 50, bpp : 3,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("kmSpIC/AX4CT+PHjlxARfBkmGjFhAR2REZwCC7AjPAQIjQ48dw0//4ANsOB49/CJv8JQNjEh32JQN3BY/5AwpKLkhKQ8+eBIhKK/jZBJR/+vPnJR/JkmTJR3xJQN5JRPypMkz5uByfJk5KI/zXCFQMev/nC4JKIkhrBn4pB/+Sp5KJfwnnOIqVHSQS5CFgaVIDQPHj4FBOIJNCSo/9EAI/CFIJNCSo/njiSC/KYDcBH6IgQAFcBHx44RGcBYAHcBIAHJRAAJJRAAJJSrdEARfYsOGjACOngjP48EyQdHx04BAtkyTnCAQYsCDoILGAQ2OnfvCJ2TIgNwCJuSpHj335CJnxNYvBChU48ZKC3378gRJp6SGiQ4JkaSBJQP7EwIOEyA"))
 }
 
 var iconCompass = {
@@ -81,11 +76,10 @@ function draw(queue){
 
   // Draw symbol
   var iconImg =
-  alarm >= 0 ? iconAlarm :
-  Bangle.isGPSOn() ? iconGps :
-  Bangle.isHRMOn() ? iconHrm :
-  Bangle.isCompassOn() ? iconCompass :
-  iconPlanet;
+    alarm >= 0 ? iconAlarm :
+    Bangle.isGPSOn() ? iconGps :
+    Bangle.isCompassOn() ? iconCompass :
+    iconPlanet;
   g.drawImage(iconImg, 115, 105);
 
   // Write time
@@ -113,19 +107,19 @@ function draw(queue){
 
   // Temperature
   g.setFontAlign(-1,-1,0);
-  g.drawString("TEMP:", 20, 104);
-  g.drawString(E.getTemperature() + "C", 60, 104);
+  g.drawString("HRM:", 20, 104);
+  g.drawString(hrmValue, 60, 104);
+
+  // Draw steps
+  var steps = getSteps();
+  g.drawString("STEP:", 20, 124);
+  g.drawString(steps, 60, 124);
 
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
-  g.drawString("BAT:", 20, 124);
-  g.drawString(charging + bat+ "%", 60, 124);
-
-  // Draw steps
-  var steps = getSteps();
-  g.drawString("STEP:", 20, 144);
-  g.drawString(steps, 60, 144);
+  g.drawString("BAT:", 20, 144);
+  g.drawString(charging + bat+ "%", 60, 144);
 
   // Queue draw in one minute
   if(queue){
@@ -150,6 +144,13 @@ function stepsWidget() {
   }
   return undefined;
 }
+
+/*
+ * HRM
+ */
+Bangle.on('HRM',function(hrm) {
+  hrmValue = hrm.bpm;
+});
 
 /*
  * Handle alarm
