@@ -1508,7 +1508,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-    "screenshots": [{"url":"berlin-clock-screenshot"}],
+    "screenshots": [{"url":"berlin-clock-screenshot.png"}],
     "storage": [
       {"name":"berlinc.app.js","url":"berlin-clock.js"},
       {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true}
