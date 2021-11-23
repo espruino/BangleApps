@@ -3,7 +3,6 @@
  */
 const locale = require('locale');
 var alarm = -1;
-var hrmStr = "-"
 
 var backgroundImage = {
   width : 176, height : 151, bpp : 3,
@@ -112,22 +111,21 @@ function draw(queue){
     g.setFontAlign(-1,-1,0);
   }
 
-  // HRM
+  // Temperature
   g.setFontAlign(-1,-1,0);
-  g.drawString("HRM:", 20, 104);
-  g.drawString(hrmStr, 60, 104);
-
-  // Draw steps
-  var steps = getSteps();
-  g.drawString("STEP:", 20, 124);
-  g.drawString(steps, 60, 124);
+  g.drawString("Temp:", 20, 104);
+  g.drawString(E.getTemperature() + "C", 60, 104);
 
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
-  g.drawString("BAT:", 20, 144);
-  g.drawString(charging + bat+ "%", 60, 144);
+  g.drawString("BAT:", 20, 124);
+  g.drawString(charging + bat+ "%", 60, 124);
 
+  // Draw steps
+  var steps = getSteps();
+  g.drawString("STEP:", 20, 144);
+  g.drawString(steps, 60, 144);
 
   // Queue draw in one minute
   if(queue){
@@ -211,14 +209,6 @@ Bangle.on('swipe',function(dir) {
 
   // Update UI
   draw(false);
-});
-
-
-/*
- * Measure heart rate
- */
-Bangle.on('HRM', function(hrm) {
-  hrmStr = hrm.bpm;
 });
 
 
