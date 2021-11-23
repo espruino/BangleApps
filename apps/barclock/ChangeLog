@@ -6,3 +6,4 @@
 0.06: Improve accuracy
 0.07: Update to use Bangle.setUI instead of setWatch
 0.08: Use theme colors, Layout library
+0.09: Fix time/date disappearing after fullscreen notification
