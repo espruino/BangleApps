@@ -4320,8 +4320,8 @@
     "type": "clock",
     "storage": [
       {"name":"binwatch.app.js","url":"app.js"},
-      {"name":"binwatch.Background176_center.img","url":"Background176_center.img"},
-      {"name":"binwatch.Background240_center.img","url":"Background240_center.img"},
+      {"name":"binwatch.bg176.img","url":"Background176_center.img"},
+      {"name":"binwatch.bg240.img","url":"Background240_center.img"},
       {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
     ]
   },
