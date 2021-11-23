@@ -236,6 +236,9 @@ Bangle.on('swipe', dir => {
 
 // use setWatch() as Bangle.setUI("updown",..) interacts with swipes
 function setButton(fn) {
+  // cancel callback, otherwise a slight up down movement will show the E.showMenu()
+  Bangle.setUI("updown", undefined);
+  
   if (process.env.HWVERSION == 1)
     btn = setWatch(fn, BTN2);
   else
