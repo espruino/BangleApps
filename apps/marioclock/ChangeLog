@@ -12,3 +12,4 @@
 0.12: Add info banner message when phone (dis)connects. Display low-battery warning (<=10%)
 0.13: Fix drawPyramid function so pyramids are drawn in correct Y position
 0.14: Add jumping frame for characters
+0.15: Disable notification buzz during Quiet Mode

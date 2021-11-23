@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+      
+      <p>Please select watch locations</p>
+      
+      <table id="location_selection">
+          <tr>
+          <th>Enabled</th>
+          <th>Name</th>
+          </tr>
+      </table>
+
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+        
+      var locations=[
+          {name:"GPS Location", shortname:"local"},
+          {name:"Hong Kong", shortname:"Hong_Kong"},
+          {name:"Honolulu", shortname:"Honolulu"},
+          {name: "Reykjavik", shortname:"Reykjavik"},
+          {name: "Rio", shortname:"Rio"},
+          {name:"Tokyo", shortname:"Tokyo"},
+          {name:"Seoul", shortname:"Seoul"}
+      ];
+      var selected_locations = ["local"];
+      try{
+          var stored = localStorage.getItem('solar_locations')
+          if(stored) selected_locations = JSON.parse(stored);
+      } catch(e){
+          console.log("failed to load languages:" + e);
+      }
+      console.log("selected locations:" + selected_locations);
+      var tbl=document.getElementById("location_selection");
+      for (var i=0; i<locations.length; i++) {
+          var curr_location = locations[i];
+          var  language_selected = selected_locations.includes(curr_location["shortname"])
+          var $offset = document.createElement('tr')
+        $offset.innerHTML = `
+            <td><input type="checkbox" id="enabled_${i}" ${language_selected? "checked" : ""}></td>
+            <td>${curr_location['name']}</td>`
+        tbl.append($offset);
+      }
+          
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+          var new_selected_locations=[];
+          for (var i=0; i<locations.length; i++) {
+              var curr_language = locations[i];
+              var checked=document.getElementById("enabled_"+i).checked;
+              if (checked ) {
+                  new_selected_locations.push(curr_language.shortname);
+              }
+          }
+          console.log("new selected locations:" + new_selected_locations);
+          localStorage.setItem('solar_locations',JSON.stringify(new_selected_locations));
+          sendCustomizedApp({
+              storage:[
+                  {name:"solar_locations.json", content:JSON.stringify(new_selected_locations)},
+              ]
+          });
+      });
+
+    </script>
+  </body>
+</html>

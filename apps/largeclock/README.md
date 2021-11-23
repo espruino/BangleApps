@@ -7,6 +7,7 @@ A readable and informational digital watch, with date, seconds and moon phase an
 - Readable
 - Informative: hours, minutes, secondsa, date, year and moon phase
 - Pairs nicely with any other apps: in setting > large clock any installed app can be assigned to BTN1 and BTN3 in order to open it easily directly from the watch, without the hassle of passing trough the launcher. For example BTN1 can be assigned to alarm and BTN3 to chronometer.
+- Configure the text direction on the side depending on the wrist on which you wear your watch.
 
 ## How to use it
 

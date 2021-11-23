@@ -7,3 +7,15 @@
 0.08: Ensure redrawing works with variable size widget system
 0.09: Add daily goal
 0.10: Fix daily goal, don't store settings in separate file
+0.11: added getSteps() method for apps to retrieve step count
+0.12: Respect Quiet Mode
+0.13: Now use system color theme
+0.14: Improve memory usage
+0.15: Settings option to hide the widget icon
+0.16: Settings option to show large digits in widget area
+0.17: Cope with 2v10+ firmware sometimes reporting >1 step
+0.18: Adjust widget width when displaying large text
+0.19: Allow goal in large font mode
+      Stop goal drawing outside widget area
+      Fix issue with widget overwrite in large font mode
+      Memory usage enhancements

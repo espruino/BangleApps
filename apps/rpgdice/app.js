@@ -14,12 +14,18 @@ function getDie() {
 }
 
 function setColors(lastBounce) {
-  if (lastBounce) {
-    bgColor = 0xFFFF;
+  if (lastBounce && face == getDie()) {
+    bgColor = 0x0000; // Critical Hit
+    fgColor = 0xF800;
+  } else if (lastBounce && face == 1){
+    bgColor = 0xF800; // Critical Miss
     fgColor = 0x0000;
-  } else {
-    bgColor = 0x0000
+  } else if (lastBounce){
+    bgColor = 0x0000; // Other Result
     fgColor = 0xFFFF;
+  } else {
+    bgColor = 0x0000; // Still Rolling
+    fgColor = 0x7BEF;
   }
 }
 

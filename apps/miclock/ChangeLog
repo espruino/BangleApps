@@ -1,3 +1,4 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: Localization
 0.04: move jshint to the top
+0.05: Use Bangle.setUI for button/launcher handling

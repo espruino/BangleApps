@@ -96,6 +96,8 @@ exports = { name : "en_GB", currencySym:"£",
         // If we have a 2 char ISO country code, use it to get the unicode flag
         if (localeParts[1] && localeParts[1].length==2)
           icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
+        if (localeParts[1]=="NAV")
+          icon = "&#9973;&#9992;&#65039; ";
         return `<option value="${l}">${icon}${l}</option>`
       }).join("\n");
 

@@ -1,6 +1,7 @@
 const storage = require('Storage');
+const B2 = process.env.HWVERSION===2;
 
-let expiryTimeout = undefined;
+let expiryTimeout;
 function scheduleExpiry(json) {
   if (expiryTimeout) {
     clearTimeout(expiryTimeout);
@@ -9,36 +10,35 @@ function scheduleExpiry(json) {
   let expiry = "expiry" in json ? json.expiry : 2*3600000;
   if (json.weather && json.weather.time && expiry) {
     let t = json.weather.time + expiry - Date.now();
-    expiryTimeout = setTimeout(() => {
-      expiryTimeout = undefined;
-
-      let json = storage.readJSON('weather.json')||{};
-      delete json.weather;
-      storage.write('weather.json', json);
-
-      exports.current = undefined;
-      exports.emit("update");
-    }, t);
+    expiryTimeout = setTimeout(update, t);
   }
 }
 
-function setCurrentWeather(json) {
-  scheduleExpiry(json);
-  exports.current = json.weather;
-}
-
 function update(weatherEvent) {
-  let weather = Object.assign({}, weatherEvent);
-  weather.time = Date.now();
-  delete weather.t;
-
   let json = storage.readJSON('weather.json')||{};
-  json.weather = weather;
+  
+  if (weatherEvent) {
+    let weather = weatherEvent.clone();
+    delete weather.t;
+    weather.time = Date.now();
+    if (weather.wdir != null) {
+      // Convert numeric direction into human-readable label
+      let deg = weather.wdir;
+      while (deg<0 || deg>360) {
+        deg = (deg+360)%360;
+      }
+      weather.wrose = ['n','ne','e','se','s','sw','w','nw','n'][Math.floor((deg+22.5)/45)];
+    }
+
+    json.weather = weather;
+  }
+  else {
+    delete json.weather;
+  }
+
   storage.write('weather.json', json);
-
-  setCurrentWeather(json);
-
-  exports.emit("update");
+  scheduleExpiry(json);
+  exports.emit("update", json.weather);
 }
 
 const _GB = global.GB;
@@ -47,17 +47,21 @@ global.GB = (event) => {
   if (_GB) setTimeout(_GB, 0, event);
 };
 
-setCurrentWeather(storage.readJSON('weather.json')||{});
+exports.get = function() {
+  return (storage.readJSON('weather.json')||{}).weather;
+}
+
+scheduleExpiry(storage.readJSON('weather.json')||{});
 
 exports.drawIcon = function(cond, x, y, r) {
   function drawSun(x, y, r) {
-    g.setColor("#FF7700");
+    g.setColor(B2 ? '#FF0' : (g.theme.dark ? "#FE0" : "#FC0"));
     g.fillCircle(x, y, r);
   }
 
   function drawCloud(x, y, r, c) {
     const u = r/12;
-    if (c==null) c = "#EEEEEE";
+    if (c==null) c = B2 ? '#FFF': (g.theme.dark ? "#BBB" : "#AAA");
     g.setColor(c);
     g.fillCircle(x-8*u, y+3*u, 4*u);
     g.fillCircle(x-4*u, y-2*u, 5*u);
@@ -74,7 +78,7 @@ exports.drawIcon = function(cond, x, y, r) {
   }
 
   function drawBrokenClouds(x, y, r) {
-    drawCloud(x+1/8*r, y-1/8*r, 7/8*r, "#777777");
+    drawCloud(x+1/8*r, y-1/8*r, 7/8*r, "#777"); // dithers on B2, but that's ok
     drawCloud(x-1/8*r, y+1/8*r, 7/8*r);
   }
 
@@ -84,24 +88,25 @@ exports.drawIcon = function(cond, x, y, r) {
   }
 
   function drawRainLines(x, y, r) {
-    g.setColor("#FFFFFF");
+    g.setColor(B2 ? '#0FF' : (g.theme.dark ? "#0CF" : "#07F"));
     const y1 = y+1/2*r;
     const y2 = y+1*r;
-    g.fillPoly([
-      x-6/12*r+1, y1,
-      x-8/12*r+1, y2,
+    const poly = g.fillPolyAA ? p => g.fillPolyAA(p) : p => g.fillPoly(p);
+    poly([
+      x-6/12*r, y1,
+      x-8/12*r, y2,
       x-7/12*r, y2,
       x-5/12*r, y1,
     ]);
-    g.fillPoly([
-      x-2/12*r+1, y1,
-      x-4/12*r+1, y2,
+    poly([
+      x-2/12*r, y1,
+      x-4/12*r, y2,
       x-3/12*r, y2,
       x-1/12*r, y1,
     ]);
-    g.fillPoly([
-      x+2/12*r+1, y1,
-      x+0/12*r+1, y2,
+    poly([
+      x+2/12*r, y1,
+      x+0/12*r, y2,
       x+1/12*r, y2,
       x+3/12*r, y1,
     ]);
@@ -119,7 +124,7 @@ exports.drawIcon = function(cond, x, y, r) {
 
   function drawThunderstorm(x, y, r) {
     function drawLightning(x, y, r) {
-      g.setColor("#FF7700");
+      g.setColor(B2 ? '#FF0' : (g.theme.dark ? "#FE0" : "#FC0"));
       g.fillPoly([
         x-2/6*r, y-r,
         x-4/6*r, y+1/6*r,
@@ -147,7 +152,7 @@ exports.drawIcon = function(cond, x, y, r) {
       }
     }
 
-    g.setColor("#FFFFFF");
+    g.setColor(B2 ? '#FFF' : (g.theme.dark ? "#FFF" : "#CCC"));
     const w = 1/12*r;
     for(let i = 0; i<=6; ++i) {
       const points = [
@@ -182,13 +187,18 @@ exports.drawIcon = function(cond, x, y, r) {
       [-0.2, 0.3],
     ];
 
-    g.setColor("#FFFFFF");
+    g.setColor(B2 ? '#FFF' : (g.theme.dark ? "#FFF" : "#CCC"));
     for(let i = 0; i<5; ++i) {
       g.fillRect(x+layers[i][0]*r, y+(0.4*i-0.9)*r, x+layers[i][1]*r,
         y+(0.4*i-0.7)*r-1);
       g.fillCircle(x+layers[i][0]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
       g.fillCircle(x+layers[i][1]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
     }
+  }
+
+  function drawUnknown(x, y, r) {
+    drawCloud(x, y, r, "#777"); // dithers on B2, but that's ok
+    g.setColor(g.theme.fg).setFontAlign(0, 0).setFont('Vector', r*2).drawString("?", x+r/10, y+r/6);
   }
 
   function chooseIcon(condition) {
@@ -208,7 +218,18 @@ exports.drawIcon = function(cond, x, y, r) {
     if (condition.includes("few clouds")) return drawFewClouds;
     if (condition.includes("scattered clouds")) return drawCloud;
     if (condition.includes("clouds")) return drawBrokenClouds;
-    return drawMist;
+    if (condition.includes("mist") ||
+      condition.includes("smoke") ||
+      condition.includes("haze") ||
+      condition.includes("sand") ||
+      condition.includes("dust") ||
+      condition.includes("fog") ||
+      condition.includes("ash") ||
+      condition.includes("squalls") ||
+      condition.includes("tornado")) {
+      return drawMist;
+    }
+    return drawUnknown;
   }
 
   chooseIcon(cond)(x, y, r);

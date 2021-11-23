@@ -6,13 +6,13 @@ let currentHRM = "CALC";
 function drawTimeDate() {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
-  
+
   if (h < 10) {
     h = "0" + h;
   }
-  
+
   if (m < 10) {
-    m = "0" + h;
+    m = "0" + m;
   }
 
   var daysOfWeek = ["SUN", "MON", "TUE","WED","THU","FRI","SAT"];
@@ -40,6 +40,7 @@ function drawTimeDate() {
 //We will create custom "Widgets" for our face.
 
 function drawSteps() {
+  var steps = "-";
   //Reset to defaults.
   g.reset();
   // draw the date (2x size 7 segment)
@@ -48,7 +49,12 @@ function drawSteps() {
   g.setFontAlign(-1,0); // align right bottom
   g.drawString("STEPS", 145, 40, true /*clear background*/);
   g.setColor('#bdc3c7');
-  g.drawString("-", 145, 65, true /*clear background*/);
+  if (WIDGETS.activepedom !== undefined) {
+    steps = WIDGETS.activepedom.getSteps();
+  } else if (WIDGETS.wpedom !== undefined) {
+    steps = WIDGETS.wpedom.getSteps();
+  }
+  g.drawString(steps, 145, 65, true /*clear background*/);
 }
 
 function drawBPM(on) {
@@ -114,6 +120,7 @@ Bangle.on('lcdPower',on=>{
     //Screen on
     drawBPM(HRMstate);
     drawTimeDate();
+    drawSteps();
     drawBattery();
   } else {
     //Screen off
@@ -121,26 +128,19 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-
-Bangle.on('touch', function(button) {
-  if(button == 1 || button == 2){
-    Bangle.showLauncher();
-  }
-});
-
-//HRM Controller.
-setWatch(function(){
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn!=0) return;
+  //HRM Controller.
   if(!HRMstate){
-    console.log("Toggled HRM");
+    //console.log("Toggled HRM");
     //Turn on.
     Bangle.buzz();
     Bangle.setHRMPower(1);
     currentHRM = "CALC";
     HRMstate = true;
   } else if(HRMstate){
-    console.log("Toggled HRM");
+    //console.log("Toggled HRM");
     //Turn off.
     Bangle.buzz();
     Bangle.setHRMPower(0);
@@ -148,12 +148,18 @@ setWatch(function(){
     currentHRM = [];
   }
   drawBPM(HRMstate);
-}, BTN1, { repeat: true, edge: "falling" });
+});
+
+Bangle.on('touch', function(button) {
+  if(button == 1 || button == 2){
+    Bangle.showLauncher();
+  }
+});
 
 Bangle.on('HRM', function(hrm) {
   if(hrm.confidence > 90){
     /*Do more research to determine effect algorithm for heartrate average.*/
-    console.log(hrm.bpm);
+    //console.log(hrm.bpm);
     currentHRM = hrm.bpm;
     drawBPM(HRMstate);
   }

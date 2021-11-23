@@ -7,3 +7,4 @@
 0.07: add days in current month (md) and days since new moon (l)
 0.08: update icon
 0.09: Use localised month and day of the week from locale
+0.10: Changed setWatch to Bangle.setUI and allow small screen

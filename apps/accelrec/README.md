@@ -1,7 +1,8 @@
 # Acceleration Recorder
 
-This app records a short period of acceleration data from the accelerometer
-and
+This app records a short period of acceleration data from the accelerometer at
+100Hz (starting when acceleration happens) and graphs it, working out max acceleration
+and max velocity. Data can also be downloaded to your PC.
 
 ## Usage
 

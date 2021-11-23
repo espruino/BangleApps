@@ -88,28 +88,40 @@
     times = undefined;
 
     //steps
-    var csvFile = storage.open(filename, "r");
+    csvFile = storage.open(filename, "r");
     steps = getArrayFromCSV(csvFile, 1);
     first = first + " " + steps[0] + "/" + setting('stepGoal');
     last = last + " " + steps[steps.length-1] + "/" + setting('stepGoal');
 
     //define y-axis grid labels
     stepsLastEntry = steps[steps.length-1];
-    if (stepsLastEntry < 1000) gridyValue = 100;
-    if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 1000;
-    if (stepsLastEntry > 10000) gridyValue = 5000;
+    // the labels on the y axis are fairly unreadable so minimise them
+    if (stepsLastEntry < 1000) gridyValue = 500;
+    if (stepsLastEntry >= 1000 && stepsLastEntry < 2000) gridyValue = 1000;
+    if (stepsLastEntry >= 2000 && stepsLastEntry < 5000) gridyValue = 2000;
+    if (stepsLastEntry >= 5000 && stepsLastEntry < 10000) gridyValue = 5000; 
+    if (stepsLastEntry >= 10000 && stepsLastEntry < 20000) gridyValue = 10000;
+    if (stepsLastEntry > 20000) gridyValue = 20000;
 
-    //draw
-    drawMenu();
-    g.drawString("First: " + first, 10, 30);
-    g.drawString(" Last: " + last, 10, 40);
+    // draw the chart
+    g.clear();
+    g.setFont("6x8", 2);
+    g.setColor(1,1,1);
     require("graph").drawLine(g, steps, {
-      //title: "Steps Counted",
+      //title: "Steps",
       axes : true,
       gridy : gridyValue,
       y : 60, //offset on screen
       x : 5, //offset on screen
     });
+
+    // show steps and duration of the chart
+    g.setFont("6x8", 2);
+    g.setColor(0,1,0);
+    g.drawString("steps", 30, 24);
+    g.drawString(stepsLastEntry, 30, 44);
+    g.drawString((history/3600000) + " hrs",  30, 64);
+
     //free memory from big variables
     allData = undefined;
     allDataFile = undefined;
@@ -117,13 +129,48 @@
     times = undefined;
   }
 
-  function drawMenu () {
-    g.clear();
-    g.setFont("6x8", 1);
-    g.drawString("BTN1:Timespan | BTN2:Draw", 20, 10);
-    g.drawString("Timespan: " + history/1000/60/60 + " hours", 20, 20);
+  function getImage() {
+    return require("heatshrink").decompress(atob("mEwwIGDvAEDgP+ApMD/4FVEZY1FABcP8AFDn/wAod/AocB//4AoUHAokPAokf5/8AocfAoc+j5HDvgFEvEf7+AAoP4AoJCC+E/54qCsE/wYkDn+AAos8AohZDj/AAohrEp4FEs5xEuJfDgF5Aon4GgYFBGgZOBnyJD+EeYgfgj4FEh6VD4AFDh+AAIJMCBoIFFLQQtBgYFCHIIFDjA3BC4I="));
   }
 
+  function drawMenu() {
+    var x = 100;
+    var y = 24;
+    var stps ="-";
+    var y_inc = 25;
+    
+    g.clear();
+    g.setColor(1,1,1);
+    g.drawImage(getImage(),0 ,60 , {scale:2} );
+    g.setFont("6x8",2);
+
+    // timespan
+    g.setColor('#7f8c8d');
+    g.setFontAlign(-1,0);
+    g.drawString("Timespan", x, y, true);
+    y += y_inc;
+    g.setColor('#bdc3c7');
+    g.drawString(history/1000/60/60 + " hrs" , x, y, true);
+
+    // BTN1 info
+    y += 2*y_inc;
+    g.setColor('#7f8c8d');
+    g.setFontAlign(-1,0);
+    g.drawString("BTN1", x, y, true);
+    y += y_inc;
+    g.setColor('#bdc3c7');
+    g.drawString("Timespan", x, y, true);
+
+    // BTN2 info
+    y += 2*y_inc;
+    g.setColor('#7f8c8d');
+    g.setFontAlign(-1,0);
+    g.drawString("BTN2", x, y, true);
+    y += y_inc;
+    g.setColor('#bdc3c7');
+    g.drawString("Draw", x, y, true);
+  }
+  
   setWatch(function() { //BTN1
     switch(history) {
       case 3600000 : //1h
@@ -140,7 +187,9 @@
   }, BTN1, {edge:"rising", debounce:50, repeat:true});
 
   setWatch(function() { //BTN2
-    g.setFont("6x8", 2);
+    g.clear();
+    g.setColor(1,1,1);
+    g.setFont("6x8", 3);
     g.drawString ("Drawing...",30,60);
     drawGraph();
   }, BTN2, {edge:"rising", debounce:50, repeat:true});
@@ -161,5 +210,4 @@
   }
 
   drawMenu();
-
 })();

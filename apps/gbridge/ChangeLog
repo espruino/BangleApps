@@ -17,3 +17,10 @@
 0.16: Handle dismissing notifications on the phone
       Nicer display of alarm clock notifications
 0.17: Modified music notification for updated 'notify' library
+0.18: Added reporting of step count and HRM (new Gadgetbridges can now log this)
+0.19: Support for call incoming/start/end
+0.20: Reduce memory usage
+0.21: Fix HRM setting
+0.22: Respect Quiet Mode
+0.23: Allow notification dismiss to remove from phone too
+0.24: tag HRM power requests to allow this to work alongside other widgets/apps (fix #799)

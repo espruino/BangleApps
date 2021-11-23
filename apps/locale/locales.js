@@ -4,13 +4,15 @@ const distanceUnits = { // how many meters per X?
   "yd": 0.9144,
   "mi": 1609.34,
   "km": 1000,
-  "kmi": 1000
+  "kmi": 1000,
+  "nm": 1852
 };
 const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
-  "mph": 1.60934
+  "mph": 1.60934,
+  "kts": 1.852
 };
 
 /*
@@ -87,12 +89,30 @@ var locales = {
     currency_symbol: "Rs.",
     currency_first: true,
     int_curr_symbol: "INR",
-    speed: 'kms',
+    speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
     datePattern: { 0: "%d %b %Y", 1: "%d/%m/%Y" }, // 28 Feb 2020" // "28/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "en_NAV": { // navigation units nautical miles and knots
+    lang: "en_NAV",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "£", currency_first: true,
+    int_curr_symbol: "GBP",
+    speed: 'kts',
+    distance: { "0": "m", "1": "nm" },
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
@@ -224,6 +244,24 @@ var locales = {
     abday: "sön,mån,tis,ons,tors,fre,lör",
     day: "söndag,måndag,tisdag,onsdag,torsdag,fredag,lördag",
     trans: { yes: "ja", Yes: "Ja", no: "nej", No: "Nej", ok: "ok", on: "on", off: "off" }
+  },
+  "en_NZ": {
+    lang: "en_NZ",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "$",
+    int_curr_symbol: "NZD",
+    speed: "kph",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%A, %B %d, %Y", "1": "%d/%m/%y" }, //  Sunday, 1 March 2020  // 1/3/20
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
   },
   "en_AU": {
     lang: "en_AU",
@@ -458,6 +496,24 @@ var locales = {
     day: "Vasárnap,Hétfő,Kedd,Szerda,Csütörtök,Péntek,Szombat",
     trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }
   },
+  "oc_FR": {
+    lang: "oc_FR",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "km/h",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%A %d %B de %Y", "1": "%d/%m/%Y" }, // dimenge 1 de març de 2020 //  01/03/2020
+    abmonth: "gen.,febr.,març,abril,mai,junh,julh,ago.,set.,oct.,nov.,dec.",
+    month: "genièr,febrièr,març,abril,mai,junh,julhet,agost,setembre,octòbre,novembre,decembre",
+    abday: "dg,dl,dm,dc,dj,dv,ds",
+    day: "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
+    trans: { yes: "òc", Yes: "Òc", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
+  },  
   "pt_BR": {
     lang: "pt_BR",
     decimal_point: ",",
@@ -511,7 +567,26 @@ var locales = {
     abday: "ned.,pon.,tor.,sre.,čet.,pet.,sob.",
     day: "nedelja,ponedeljek,torek,sreda,četrtek,petek,sobota",
     trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "Vklj.", off: "Izklj.", "< Back": "< Nazaj" }
-  }/*,
+  },
+  "pt_PT": {
+    lang: "pt_PT",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%d %b %Y", 1: "%d/%m/%y" },
+    abmonth: "Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez",
+    month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
+    abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
+    day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
+    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "ok", on: "on", off: "off" }
+  },
+/*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",
     lang: "he_IL",

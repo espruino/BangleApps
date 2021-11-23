@@ -1,22 +1,25 @@
 # Notifications (default)
 
-A handler for displaying notifications that displays them in a bar at the top of the screen
+The default version of the `notify` module for displaying notifications in a bar at the top of the screen
 
-This is not an app, but instead it is a library that can be used by
-other applications or widgets to display messages.
+This module is installed by default by client applications such as Gadgetbridge.
+
+**Note:** There are other implementations of this library available such
+as `notifyfs` (Fullscreen Notifications). These can be used in the exact
+same way from code, but they look different to the user.
 
 ## Usage
 
 ```JS
 options = {
-  on : bool, // turn screen on, default true
-  size : int, // height of notification, default 80 (max)  
+  on : bool, // turn screen on, default true (But not if Quiet Mode is enabled)
+  size : int, // height of notification, default is fit to height (80 max)  
   title : string, // optional title
   id // optional notification ID, used with hide()
   src : string, // optional source name
   body : string, // optional body text
   icon : string, // optional icon (image string)
-  render function(area) {} // function callback to render in area{x,y,w,h} 
+  render function(area) {} // function callback to render in area{x,y,w,h}
 };
 // eg... show notification
 require("notify").show({title:"Test", body:"Hello"});

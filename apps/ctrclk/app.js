@@ -46,26 +46,25 @@ function drawSegment (align, base, str) {
     point = base + (maxSegmentWidth / 2) -
       (g.stringWidth(str) / 2);
   }
-  g.setColor(1, 1, 1);
+  g.setColor(g.theme.fg);
   g.drawString(str, point, middleY - 4, false);
 }
 
 function drawDots (center) {
-  g.setColor(0xFD20);
+  g.setColor("#FA0");
   g.fillCircle(center, middleY + 10, 2);
   g.fillCircle(center, middleY + 40, 2);
 }
 
 function drawLines () {
-  g.setColor(0.5, 0.5, 0.5);
+  g.setColor("#777");
   g.drawLine(middleX - lineLength, lineY1, middleX + lineLength, lineY1);
   g.drawLine(middleX - lineLength, lineY2, middleX + lineLength, lineY2);
 }
 
 function drawDate (str) {
   let maxSegmentWidth = 236;
-  g.setColor(0.5, 0.5, 0.5);
-  g.setColor(0.5, 0.5, 0.5);
+  g.setColor("#777");
   g.drawString(str, (maxSegmentWidth) - (g.stringWidth(str)), middleY - 22,
     false);
 }
@@ -149,6 +148,9 @@ function start () {
 }
 
 start();
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.on('lcdPower', function (on) {
@@ -158,6 +160,3 @@ Bangle.on('lcdPower', function (on) {
     stop();
   }
 });
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});

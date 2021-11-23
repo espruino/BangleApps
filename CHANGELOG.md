@@ -29,3 +29,4 @@ Changed for individual apps are listed in `apps/appname/ChangeLog`
 * Added progress bar on Bangle.js for uploads
 * Provide a proper error message in case JSON decode fails
 * Check you're connecting with a Bangle.js of the correct version
+* Allow 'data' style app files to be uploaded with the app (and switch over settings files for various apps)

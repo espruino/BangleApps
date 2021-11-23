@@ -8,3 +8,8 @@
 0.08: Make alarm scheduling more reliable
 0.09: Add per alarm auto-snooze option
 0.10: Fix auto-snooze option (this stopped new alarms being added) (fix #506)
+0.11: Respect Quiet Mode
+0.12: Fix widget for bangle 2, now uses theme
+      Widgets now shown on Alarm screen
+0.13: Alarm widget state now updates when setting/resetting an alarm
+0.14: Order of 'back' menu item

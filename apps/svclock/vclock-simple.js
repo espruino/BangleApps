@@ -1,84 +1,109 @@
-/* jshint esversion: 6 */
-const timeFontSize = 65;
-const dateFontSize = 20;
-const gmtFontSize = 10;
-const font = "Vector";
+const locale = require("locale");
 
-const xyCenter = g.getWidth() / 2;
-const yposTime = 75;
-const yposDate = 130;
-const yposYear = 175;
-const yposGMT = 220;
+var timeFontSize;
+var dateFontSize;
+var gmtFontSize;
+var font = "Vector";
 
+var xyCenter = g.getWidth() / 2;
+var yposTime;
+var yposDate;
+var yposYear;
+var yposGMT;
+
+if (g.getWidth() > 200) {
+    timeFontSize = 65;
+    dateFontSize = 20;
+    gmtFontSize = 10;
+
+    yposTime = 75;
+    yposDate = 130;
+    yposYear = 175;
+    yposGMT = 220;
+} else {
+    timeFontSize = 48;
+    dateFontSize = 15;
+    gmtFontSize = 10;
+
+    yposTime = 55;
+    yposDate = 95;
+    yposYear = 128;
+    yposGMT = 161;
+}
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 
-function drawSimpleClock() {
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function draw() {
   g.clear();
   Bangle.drawWidgets();
 
   // get date
   var d = new Date();
-  var da = d.toString().split(" ");
 
   g.reset(); // default draw styles
   // drawSting centered
   g.setFontAlign(0, 0);
 
-  // draw time
-  var time = da[4].substr(0, 5).split(":");
-  var hours = time[0],
-    minutes = time[1];
-  var meridian = "";
+  // drawTime
+  var hours;
   if (is12Hour) {
-    hours = parseInt(hours,10);
-    meridian = "AM";
-    if (hours == 0) {
-      hours = 12;
-      meridian = "AM";
-    } else if (hours >= 12) {
-      meridian = "PM";
-      if (hours>12) hours -= 12;
-    }
-    hours = (" "+hours).substr(-2);
+    hours = ("0" + d.getHours()%12).slice(-2);
+  } else {
+    hours = ("0" + d.getHours()).slice(-2);
   }
+  var minutes = ("0" + d.getMinutes()).slice(-2);
 
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
-  g.setFont(font, gmtFontSize);
-  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
+
+  if (is12Hour) {
+    g.setFont(font, gmtFontSize);
+    g.drawString(locale.meridian(d), xyCenter + 102, yposTime + 10, true);
+  }
 
   // draw Day, name of month, Date
-  var date = [da[0], da[1], da[2]].join(" ");
   g.setFont(font, dateFontSize);
-
-  g.drawString(date, xyCenter, yposDate, true);
+  g.drawString([locale.dow(d,1), locale.month(d,1), d.getDate()].join(" "), xyCenter, yposDate, true);
 
   // draw year
   g.setFont(font, dateFontSize);
   g.drawString(d.getFullYear(), xyCenter, yposYear, true);
 
   // draw gmt
-  var gmt = da[5];
   g.setFont(font, gmtFontSize);
-  g.drawString(gmt, xyCenter, yposGMT, true);
+  g.drawString(d.toString().match(/GMT[+-]\d+/), xyCenter, yposGMT, true);
+
+  queueDraw();
 }
 
-// handle switch display on by pressing BTN1
-Bangle.on('lcdPower', function(on) {
-  if (on) drawSimpleClock();
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
 // clean app screen
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-// refesh every 15 sec
-setInterval(drawSimpleClock, 15E3);
-
 // draw now
-drawSimpleClock();
-
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
+draw();

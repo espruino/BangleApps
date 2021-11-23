@@ -1,2 +1,6 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: Shrinked size to avoid cut-off edges on the physical device. BTN3: show date. BTN1: show time in decimal.
+0.04: Update to use Bangle.setUI instead of setWatch
+0.05: Update *on* the minute rather than every 15 secs
+      Now show widgets
+      Make compatible with themes, and Bangle.js 2

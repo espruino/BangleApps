@@ -2,47 +2,50 @@ const EMPTY_LAP = '--:--:---';
 const EMPTY_H = '00:00:000';
 const MAX_LAPS = 6;
 const XY_CENTER = g.getWidth() / 2;
+const big = g.getWidth()>200;
 const Y_CHRONO = 40;
-const Y_HEADER = 80;
-const Y_LAPS = 125;
-const Y_BTN3 = 225;
+const Y_HEADER = big?80:60;
+const Y_LAPS = big?125:90;
+const H_LAPS = big?15:8;
+const Y_BTN3 = big?225:165;
 const FONT = '6x8';
 const CHRONO = '/* C H R O N O */';
 
-var laps = [EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP];
-var started = false;
+
 var reset = false;
-var whenStarted;
-var whenStartedTotal;
-var currentLapIndex = 1;
 var currentLap = '';
 var chronoInterval;
 
-// Set laps.
-setWatch(() => {
+// Read state from storage or create default state if it doesn't exist
+var state = require("Storage").readJSON("devstopwatch.state.json",1) || {
+  started: false,
+  whenStarted: null,
+  whenStartedTotal: null,
+  currentLapIndex: 1,
+  laps: [EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP],
+};
 
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn==0) {
   reset = false;
-  
-  if (started) {
+
+  if (state.started) {
     changeLap();
   } else {
     if (!reset) {
       chronoInterval = setInterval(chronometer, 10);
     }
   }
-}, BTN1, { repeat: true, edge: 'rising' });
-
-// Reset chronometre.
-setWatch(() => { resetChrono(); }, BTN3, { repeat: true, edge: 'rising' });
-
-// Show launcher when middle button pressed.
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: 'falling' });
+}
+  if (btn==1) resetChrono();
+});
 
 function resetChrono() {
-  laps = [EMPTY_H, EMPTY_H, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP];
-  started = false;
+  state.laps = [EMPTY_H, EMPTY_H, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP];
+  state.started = false;
   reset = true;
-  currentLapIndex = 1;
+  state.currentLapIndex = 1;
   currentLap = '';
 
   if (chronoInterval !== undefined) {
@@ -54,32 +57,32 @@ function resetChrono() {
 
 function chronometer() {
 
-  if (!started) {
+  if (!state.started) {
     var rightNow = Date.now();
-    whenStarted = rightNow;
-    whenStartedTotal = rightNow;
-    started = true;
+    state.whenStarted = rightNow;
+    state.whenStartedTotal = rightNow;
+    state.started = true;
     reset = false;
   }
 
-  currentLap = calculateLap(whenStarted);
-  total = calculateLap(whenStartedTotal);
+  currentLap = calculateLap(state.whenStarted);
+  total = calculateLap(state.whenStartedTotal);
 
-  laps[0] = total;
-  laps[1] = currentLap;
+  state.laps[0] = total;
+  state.laps[1] = currentLap;
   printChrono();
 }
 
 function changeLap() {
 
-  currentLapIndex++;
+  state.currentLapIndex++;
 
-  if ((currentLapIndex) > MAX_LAPS) {
-    currentLapIndex = 2;
+  if ((state.currentLapIndex) > MAX_LAPS) {
+    state.currentLapIndex = 2;
   }
 
-  laps[currentLapIndex] = currentLap;
-  whenStarted = Date.now();
+  state.laps[state.currentLapIndex] = currentLap;
+  state.whenStarted = Date.now();
 }
 
 function calculateLap(whenStarted) {
@@ -102,33 +105,33 @@ function printChrono() {
 
   var print = '';
 
-  g.setFont(FONT, 2);
+  g.setFont(FONT, big?2:1);
   print = CHRONO;
   g.drawString(print, XY_CENTER, Y_CHRONO, true);
 
-  g.setColor(0, 220, 0);
-  g.setFont(FONT, 3);
-  print = ` T ${laps[0]}\n`;
-  print += ` C ${laps[1]}\n`;
+  g.setColor("#0e0");
+  g.setFont(FONT, big?3:2);
+  print = ` T ${state.laps[0]}\n`;
+  print += ` C ${state.laps[1]}\n`;
   g.drawString(print, XY_CENTER, Y_HEADER, true);
 
-  g.setColor(255, 255, 255);
-  g.setFont(FONT, 2);
+  g.setColor(g.theme.fg);
+  g.setFont(FONT, big?2:1);
 
   for (var i = 2; i < MAX_LAPS + 1; i++) {
 
-    g.setColor(255, 255, 255);
+    g.setColor(g.theme.fg);
     let suffix = ' ';
-    if (currentLapIndex === i) {
+    if (state.currentLapIndex === i) {
       let suffix = '*';
-      g.setColor(255, 200, 0);
+      g.setColor("#f70");
     }
 
-    const lapLine = `L${i - 1} ${laps[i]} ${suffix}\n`;
-    g.drawString(lapLine, XY_CENTER, Y_LAPS + (15 * (i - 1)), true);
+    const lapLine = `L${i - 1} ${state.laps[i]} ${suffix}\n`;
+    g.drawString(lapLine, XY_CENTER, Y_LAPS + (H_LAPS * (i - 1)), true);
   }
 
-  g.setColor(255, 255, 255);
+  g.setColor(g.theme.fg);
   g.setFont(FONT, 1);
   print = 'Press 3 to reset';
   g.drawString(print, XY_CENTER, Y_BTN3, true);
@@ -156,4 +159,13 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-resetChrono();
+// Write the current state to storage
+E.on('kill', function(){
+  require("Storage").writeJSON("devstopwatch.state.json", state);
+});
+
+if(state.started){
+  chronoInterval = setInterval(chronometer, 10);
+} else {
+  resetChrono();
+}

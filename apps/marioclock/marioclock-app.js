@@ -108,7 +108,6 @@ function phoneClearMessage() {
 }
 
 function phoneNewMessage(type, msg) {
-  Bangle.buzz();
 
   phoneClearMessage();
   phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
@@ -116,9 +115,12 @@ function phoneNewMessage(type, msg) {
   phone.messageType = type;
 
   // Notify user and active screen
-  if (!Bangle.isLCDOn()) {
-    clearTimers();
-    Bangle.setLCDPower(true);
+  if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.buzz();
+    if (!Bangle.isLCDOn()) {
+      clearTimers();
+      Bangle.setLCDPower(true);
+    }
   }
 }
 

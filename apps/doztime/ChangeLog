@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: added emulator capability and display of widgets
+0.03: bug of advancing time fixed; doztime now correct within ca. 1 second
+0.04: changed time colour from slightly off white to pure white

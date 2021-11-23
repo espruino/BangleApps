@@ -14,15 +14,14 @@ interface AppState {
   dop: number;
   gpsValid: boolean;
 
-  // GPS Kalman data
+  // Absolute position data
   x: number;
   y: number;
   z: number;
-  v: number;
+  // Last fix time
   t: number;
-  dt: number;
-  pError: number;
-  vError: number;
+  // Last time we saved log info
+  timeSinceLog : number;
 
   // HRM data
   hr: number,
@@ -30,6 +29,7 @@ interface AppState {
 
   // Logger data
   file: File;
+  fileWritten: boolean;
 
   // Drawing data
   drawing: boolean;
@@ -62,16 +62,14 @@ function initState(): AppState {
     x: NaN,
     y: NaN,
     z: NaN,
-    v: NaN,
     t: NaN,
-    dt: NaN,
-    pError: NaN,
-    vError: NaN,
+    timeSinceLog : 0,
 
     hr: 60,
     hrError: 100,
 
     file: null,
+    fileWritten: false,
 
     drawing: false,
 

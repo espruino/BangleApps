@@ -50,12 +50,13 @@ try{
 }
 
 const APP_KEYS = [
-  'id', 'name', 'shortName', 'version', 'icon', 'description', 'tags', 'type',
-  'sortorder', 'readme', 'custom', 'interface', 'storage', 'data', 'allow_emulator',
+  'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
+  'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
+  'supports', 'allow_emulator',
   'dependencies'
 ];
-const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate'];
-const DATA_KEYS = ['name', 'wildcard', 'storageFile'];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
+const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 
@@ -81,6 +82,14 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`);
   var isApp = !app.type || app.type=="app";
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`);
+  if (!Array.isArray(app.supports)) ERROR(`App ${app.id} has no 'supports' field or it's not an array`);
+  else {
+    app.supports.forEach(dev => {
+      if (!["BANGLEJS","BANGLEJS2"].includes(dev))
+        ERROR(`App ${app.id} has unknown device in 'supports' field - ${dev}`);
+    });
+  }
+
   if (!app.version) WARN(`App ${app.id} has no version`);
   else {
     if (!fs.existsSync(appDir+"ChangeLog")) {
@@ -98,14 +107,22 @@ apps.forEach((app,appIdx) => {
   if (!app.description) ERROR(`App ${app.id} has no description`);
   if (!app.icon) ERROR(`App ${app.id} has no icon`);
   if (!fs.existsSync(appDir+app.icon)) ERROR(`App ${app.id} icon doesn't exist`);
+  if (app.screenshots) {
+    if (!Array.isArray(app.screenshots)) ERROR(`App ${app.id} screenshots is not an array`);
+    app.screenshots.forEach(screenshot => {
+      if (!fs.existsSync(appDir+screenshot.url))
+        ERROR(`App ${app.id} screenshot file ${screenshot.url} not found`);
+    });
+  }
   if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`);
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`);
+  if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`);
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`);
   if (app.dependencies) {
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
-        if (app.dependencies[dependency]!="type")
-          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' right now`);
+        if (!["type","app"].includes(app.dependencies[dependency]))
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`);
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`);
@@ -116,7 +133,7 @@ apps.forEach((app,appIdx) => {
     if (isGlob(file.name)) ERROR(`App ${app.id} storage file ${file.name} contains wildcards`);
     let char = file.name.match(FORBIDDEN_FILE_NAME_CHARS)
     if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`)
-    if (fileNames.includes(file.name))
+    if (fileNames.includes(file.name) && !file.supports)  // assume that there aren't duplicates if 'supports' is set
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
     fileNames.push(file.name);
     allFiles.push({app: app.id, file: file.name});
@@ -125,6 +142,7 @@ apps.forEach((app,appIdx) => {
     var fileContents = "";
     if (file.content) fileContents = file.content;
     if (file.url) fileContents = fs.readFileSync(appDir+file.url).toString();
+    if (file.supports && !Array.isArray(file.supports)) ERROR(`App ${app.id} file ${file.name} supports field is not an array`);
     if (file.evaluate) {
       try {
         acorn.parse("("+fileContents+")");
@@ -155,7 +173,7 @@ apps.forEach((app,appIdx) => {
       }
     }
     for (const key in file) {
-      if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id}'s ${file.name} has unknown key ${key}`);
+      if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`);
     }
   });
   let dataNames = [];
@@ -191,6 +209,8 @@ apps.forEach((app,appIdx) => {
   // prefer "appid.json" over "appid.settings.json" (TODO: change to ERROR once all apps comply?)
   if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
     WARN(`App ${app.id} uses data file ${app.id+'.settings.json'} instead of ${app.id+'.json'}`)
+  else if (dataNames.includes(app.id+".settings.json"))
+    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'}`)
   // settings files should be listed under data, not storage (TODO: change to ERROR once all apps comply?)
   if (fileNames.includes(app.id+".settings.json"))
     WARN(`App ${app.id} uses storage file ${app.id+'.settings.json'} instead of data file`)
@@ -229,7 +249,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
-      else ERROR(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+      else WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
     }
   })
 }

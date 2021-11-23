@@ -60,6 +60,17 @@
 
     <div class="container apploader-tab" id="librarycontainer">
       <div>
+        <div class="dropdown devicetype-nav">
+          <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+            <span>All apps</span><i class="icon icon-caret"></i>
+          </a>
+          <!-- menu component -->
+          <ul class="menu">
+            <li class="menu-item"><a>All apps</a></li>
+            <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
+            <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
+          </ul>
+        </div>
         <div class="filter-nav">
           <label class="chip active" filterid="">Default</label>
           <label class="chip" filterid="clock">Clocks</label>
@@ -108,6 +119,7 @@
         </div>
       </div>
       <div class="container" style="padding-top: 8px;">
+        <p><b>Can't connect?</b> Check out the <a href="https://www.espruino.com/Troubleshooting+Bangle.js" target="_blank">Bangle.js Troubleshooting page</a>
         <p id="apploaderlinks"></p>
         <p>Check out <a href="https://github.com/espruino/BangleApps" target="_blank">the Source on GitHub</a>, or
           find out <a href="https://www.espruino.com/Bangle.js+App+Loader" target="_blank">how to add your own app</a></p>
@@ -123,6 +135,10 @@
           <label class="form-switch">
             <input type="checkbox" id="settings-pretokenise">
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
+          </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-settime">
+            <i class="form-icon"></i> Always update time when we connect
           </label>
           <button class="btn" id="defaultsettings">Default settings</button>
         </div>

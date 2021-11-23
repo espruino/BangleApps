@@ -1,12 +1,24 @@
-Bangle.setLCDMode("doublebuffered");
-
+var BTNL, BTNR, BTNU, BTNA;
+if (process.env.HWVERSION==2) {
+  var tap = {};
+  // use tapping on screen for left,right,accel
+  Bangle.on('drag',e=>tap=e);
+  BTNL = { read : _=>tap.b && tap.x < 58};
+  BTNR = { read : _=>tap.b && tap.x > 117};
+  BTNU = { read : _=>tap.b && tap.x > 58 && tap.x < 117};
+  // use button for fire
+  BTNA = BTN1;
+} else {
+  // use hard buttons
+  BTNL = BTN4;
+  BTNR = BTN5;
+  BTNU = BTN1;
+  BTNA = BTN2;
+  Bangle.setLCDMode("doublebuffered");
+}
 var W = g.getWidth();
 var H = g.getHeight();
-g.setFontAlign(0,-1);
-var BTNL = BTN4;
-var BTNR = BTN5;
-var BTNU = BTN1;
-var BTNA = BTN2;
+g.clear().setFontAlign(0,-1);
 
 function newAst(x,y) {
   var a = {
@@ -92,8 +104,7 @@ function onFrame() {
   }
 
   g.clear();
-
-  g.drawString(score,120,0);
+  g.drawString(score,W-20,0);
   var rs = Math.PI*0.8;
   g.drawPoly([
     ship.x+Math.cos(ship.r)*4, ship.y+Math.sin(ship.r)*4,

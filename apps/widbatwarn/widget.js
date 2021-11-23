@@ -39,7 +39,10 @@
           .setColor(0xF800).drawString(`${E.getBattery()}%`, a.x+8+100, a.y+a.h/2);
       },
     });
-    if (setting("buzz")) Bangle.buzz();
+    if (setting("buzz")
+      && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+      Bangle.buzz();
+    }
   }
 
   Bangle.on("charging", check);

@@ -2,7 +2,10 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var settings = require("Storage").readJSON("gpsrec.json",1)||{};
-var qOpenStMap = (require("Storage").list("openstmap.json")>0);
+var osm;
+try { // if it's installed, use the OpenStreetMap module
+  osm = require("openstmap");
+} catch (e) {}
 
 function getFN(n) {
   return ".gpsrc"+n.toString(36);
@@ -37,17 +40,18 @@ function showMainMenu() {
       }
     },
     'Time Period': {
-      value: settings.period||1,
+      value: settings.period||10,
       min: 1,
-      max: 60,
+      max: 120,
       step: 1,
+      format: v=>v+"s",
       onchange: v => {
         settings.recording = false;
         settings.period = v;
         updateSettings();
       }
     },
-    'View Tracks': viewTracks,
+    'View Tracks': ()=>{viewTracks();},
     '< Back': ()=>{load();}
   };
   return E.showMenu(mainmenu);
@@ -61,13 +65,13 @@ function viewTracks() {
   for (var n=0;n<36;n++) {
     var f = require("Storage").open(getFN(n),"r");
     if (f.readLine()!==undefined) {
-      menu["Track "+n] = viewTrack.bind(null,n,false);
+      menu["Track "+n] = (n=>viewTrack(n)).bind(null,n,false);
       found = true;
     }
   }
   if (!found)
     menu["No Tracks found"] = function(){};
-  menu['< Back'] = showMainMenu;
+  menu['< Back'] = () => { showMainMenu(); };
   return E.showMenu(menu);
 }
 
@@ -98,7 +102,8 @@ function getTrackInfo(fn) {
   var lfactor = Math.cos(minLat*Math.PI/180);
   var ylen = (maxLat-minLat);
   var xlen = (maxLong-minLong)* lfactor;
-  var scale = xlen>ylen ? 200/xlen : 200/ylen;
+  var screenSize = g.getHeight()-48; // 24 for widgets, plus a border
+  var scale = xlen>ylen ? screenSize/xlen : screenSize/ylen;
   return {
     fn : fn,
     filename : filename,
@@ -106,6 +111,7 @@ function getTrackInfo(fn) {
     records : nl,
     minLat : minLat, maxLat : maxLat,
     minLong : minLong, maxLong : maxLong,
+    lat : (minLat+maxLat)/2, lon : (minLong+maxLong)/2,
     lfactor : lfactor,
     scale : scale,
     duration : Math.round(duration/1000)
@@ -134,7 +140,7 @@ function viewTrack(n, info) {
     info.qOSTM = false;
     plotTrack(info);
   };
-  if (qOpenStMap)
+  if (osm)
     menu['Plot OpenStMap'] = function() {
       info.qOSTM = true;
       plotTrack(info);
@@ -157,62 +163,37 @@ function viewTrack(n, info) {
         viewTrack(n, info);
     });
   };
-  menu['< Back'] = viewTracks;
+  menu['< Back'] = () => { viewTracks(); };
   return E.showMenu(menu);
-}
-
-function drawopenstmap(lat, lon, map) {
-  var s = require("Storage");
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
-  var p = Bangle.project({lat:lat,lon:lon});
-  var ix = (p.x-map.center.x)*4096/map.scale + (map.imgx/2) - cx;
-  var iy = (map.center.y-p.y)*4096/map.scale + (map.imgy/2) - cy;
-  var tx = 0|(ix/map.tilesize);
-  var ty = 0|(iy/map.tilesize);
-  var ox = (tx*map.tilesize)-ix;
-  var oy = (ty*map.tilesize)-iy;
-  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
-    for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
-      var img = s.read("openstmap-"+ttx+"-"+tty+".img");
-      if (img) g.drawImage(img,x,y);
-      else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1);
-    }
-  }
 }
 
 function plotTrack(info) {
   "ram"
 
-  function radians(a) {
-    return a*Math.PI/180;
+  function distance(lat1,long1,lat2,long2) { "ram"
+    var x = (long1-long2) * Math.cos((lat1+lat2)*Math.PI/360);
+    var y = lat2 - lat1;
+    return Math.sqrt(x*x + y*y) * 6371000 * Math.PI / 180;
   }
 
-  function distance(lat1,long1,lat2,long2){
-    var x = radians(long1-long2) * Math.cos(radians((lat1+lat2)/2));
-    var y = radians(lat2-lat1);
-    return Math.sqrt(x*x + y*y) * 6371000;
-  }
-
-  function getMapXY(mylat, mylon) {
-    if (info.qOSTM) {
-      var q = Bangle.project({lat:mylat,lon:mylon});
-      var p = Bangle.project({lat:clat,lon:clon});
-      var ix = (q.x-p.x)*4096/map.scale + cx;
-      var iy = cy - (q.y-p.y)*4096/map.scale;
-      return {x:ix, y:iy};
-    }
-    else {
-      var ix = 30 + Math.round((long-info.minLong)*info.lfactor*info.scale);
-      var iy = 210 - Math.round((lat - info.minLat)*info.scale);
-      return {x:ix, y:iy};
+  // Function to convert lat/lon to XY
+  var getMapXY;
+  if (info.qOSTM) {
+    getMapXY = osm.latLonToXY.bind(osm);
+  } else {
+    getMapXY = function(lat, lon) { "ram"
+      return {x:cx + Math.round((long - info.lon)*info.lfactor*info.scale),
+              y:cy + Math.round((info.lat - lat)*info.scale)};
     }
   }
 
   E.showMenu(); // remove menu
+  E.showMessage("Drawing...","GPS Track "+info.fn);
+  g.flip(); // on buffered screens, draw a not saying we're busy
+  g.clear(1);
   var s = require("Storage");
   var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
+  var cy = 24 + (g.getHeight()-24)/2;
   g.setColor(1,0.5,0.5);
   g.setFont("Vector",16);
   g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
@@ -225,13 +206,10 @@ function plotTrack(info) {
     g.setColor(1,1,1);
     g.drawString("N",2,40);
     g.setColor(1,1,1);
-  }
-  else {  
-    var map = s.readJSON("openstmap.json");
-    map.center = Bangle.project({lat:map.lat,lon:map.lon});
-    var clat = (info.minLat+info.maxLat)/2;
-    var clon = (info.minLong+info.maxLong)/2;
-    drawopenstmap(clat, clon, map);
+  } else {
+    osm.lat = info.lat;
+    osm.lon = info.lon;
+    osm.draw();
     g.setColor(0, 0, 0);
   }
   g.drawString(asTime(info.duration),10,220);
@@ -258,7 +236,7 @@ function plotTrack(info) {
     long = +c[2];
     mp = getMapXY(lat, long);
     g.lineTo(mp.x,mp.y);
-    if (info.qOSTM) g.fillCircle(mp.x, mp.y, 1);
+    if (info.qOSTM) g.fillCircle(mp.x,mp.y,2); // make the track more visible
     var d = distance(olat,olong,lat,long);
     if (!isNaN(d)) dist+=d;
     olat = lat;
@@ -277,7 +255,8 @@ function plotTrack(info) {
   g.drawString("Back",230,200);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, BTN3);
+  }, global.BTN3||BTN1);
+  Bangle.drawWidgets();
   g.flip();
 }
 
@@ -286,8 +265,8 @@ function plotGraph(info, style) {
   E.showMenu(); // remove menu
   E.showMessage("Calculating...","GPS Track "+info.fn);
   var filename = getFN(info.fn);
-  var infn = new Float32Array(200);
-  var infc = new Uint16Array(200);
+  var infn = new Float32Array(80);
+  var infc = new Uint16Array(80);
   var title;
   var lt = 0; // last time
   var tn = 0; // count for each time period
@@ -304,7 +283,7 @@ function plotGraph(info, style) {
     title = "Altitude (m)";
     while(l!==undefined) {
       ++nl;c=l.split(",");
-      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      i = Math.round(80*(c[0]/1000 - strt)/dur);
       infn[i]+=+c[3];
       infc[i]++;
       l = f.readLine(f);
@@ -315,7 +294,7 @@ function plotGraph(info, style) {
     var t,dx,dy,d,lt = c[0]/1000;
     while(l!==undefined) {
       ++nl;c=l.split(",");
-      i = Math.round(200*(c[0]/1000 - strt)/dur);
+      i = Math.round(80*(c[0]/1000 - strt)/dur);
       t = c[0]/1000;
       p = Bangle.project({lat:c[1],lon:c[2]});
       dx = p.x-lp.x;
@@ -346,9 +325,9 @@ function plotGraph(info, style) {
   // draw
   g.clear(1).setFont("6x8",1);
   var r = require("graph").drawLine(g, infn, {
-    x:4,y:0,
+    x:4,y:24,
     width: g.getWidth()-24,
-    height: g.getHeight()-8,
+    height: g.getHeight()-(24+8),
     axes : true,
     gridy : grid,
     gridx : 50,
@@ -360,7 +339,7 @@ function plotGraph(info, style) {
   g.drawString("Back",230,200);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, BTN3);
+  }, global.BTN3||BTN1);
   g.flip();
 }
 

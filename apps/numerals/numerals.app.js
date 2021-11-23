@@ -22,16 +22,17 @@ var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||fal
 var _hCol = ["#ff5555","#ffff00","#FF9901","#2F00FF"];
 var _mCol = ["#55ff55","#ffffff","#00EFEF","#FFBF00"];
 var _rCol = 0;
+var scale = g.getWidth()/240;
 var interval = 0;
 const REFRESH_RATE = 10E3;
 var drawFuncs = {
   fill : function(poly,isHole){
-    if (isHole) g.setColor(0);
+    if (isHole) g.setColor(g.theme.bg);
     g.fillPoly(poly,true);
   },
   framefill : function(poly,isHole){
     var c = g.getColor();
-    g.setColor(isHole ? 0 : ((c&0b1111011111011110)>>1)); // 16 bit half bright
+    g.setColor(isHole ? g.theme.bg : ((c&0b1111011111011110)>>1)); // 16 bit half bright
     g.fillPoly(poly,true);
     g.setColor(c);
     g.drawPoly(poly,true);
@@ -48,7 +49,8 @@ var drawFuncs = {
 };
 
 function translate(tx, ty, p){
-  return p.map((x, i)=> x+((i&1)?ty:tx));
+  //return p.map((x, i)=> x+((i&1)?ty:tx));
+  return g.transformVertices(p, {x:tx,y:ty,scale:scale});
 }
 
 
@@ -57,15 +59,14 @@ if (!settings) {
   settings = {
     color:0,
     drawMode:"fill",
-    menuButton:24,
     showDate:0
   };
 }
 
 function drawNum(num,col,x,y,func,funcName){
   g.setColor(col);
-  let tx = x*100+25;
-  let ty = y*104+32;
+  let tx = (x*100+25) * scale;
+  let ty = (y*104+32) * scale;
   for (let i=0;i<numerals[num].length;i++){
     g.setColor(col);
     func(translate(tx,ty,numerals[num][i]), i>0);
@@ -98,9 +99,9 @@ function setUpdateInt(set){
   if (set) interval=setInterval(draw, REFRESH_RATE);
 }
 
-Bangle.setLCDMode();
-g.reset().clear();
-setWatch(Bangle.showLauncher, settings.menuButton, {repeat:false,edge:"falling"});
+g.clear(1);
+// Show launcher when button pressed
+Bangle.setUI("clock");
 if (settings.color>0) _rCol=settings.color-1;
 setUpdateInt(1);
 draw();

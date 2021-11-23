@@ -1,0 +1,6 @@
+0.01: New App! 2021-01-07
+0.02: Faster algorithm, hours and minutes are now displayable whenever, using the upper button 2021-01-14
+0.03: Ah yes. Some people prefer the 12 hour system 2021-01-14
+0.04: Fixed a bug, doesn't run while display's on now 2021-01-18
+0.05: Fixed a bug, doesn't count the time it was asleep when calculating the update time 2021-01-19
+0.06: Use Bangle.set UI, change to unminified upload to ensure this works ok on Bangle.js

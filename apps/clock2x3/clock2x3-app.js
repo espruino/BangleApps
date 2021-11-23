@@ -1,8 +1,10 @@
+
+const big = g.getWidth()>200;
 const ox=10; // x offset
-const oy=80;
-const pw=20; // pixel width
-const ps=5; // pixel spacing
-const ds=10; // digit spacing
+const oy=big ? 80 : 70;
+const pw=big ? 20 : 14; // pixel width
+const ps=big ? 5 : 3; // pixel spacing
+const ds=big ? 10 : 8; // digit spacing
 const ms=20; // middle space
 
 const x00=ox; // digit 0, pixel 0, x position
@@ -90,7 +92,7 @@ Bangle.on('lcdPower', function(on){
   }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 drawTime();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
