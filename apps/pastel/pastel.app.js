@@ -3,18 +3,12 @@ const SETTINGS_FILE = "pastel.json";
 let settings;
 
 function loadSettings() {
-  //console.log("loadSettings()");
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
-  settings.date = settings.date||false;
   settings.font = settings.font||"Lato";
-  //console.log(settings);
 }
 
 function loadFonts() {
-  //console.log("loadFonts()");
-  console.log(settings);
-  
   // load font files based on settings.font
   if (settings.font == "Architect")
     require("f_architect").add(Graphics);
@@ -70,11 +64,6 @@ function prevInfo() {
     else infoMode = infoList[idx - 1];
   }
 }
-
-Bangle.on('swipe', dir => {
-  if (dir == 1) prevInfo(); else nextInfo();
-  draw();
-});
 
 var mm_prev = "xx";
 
@@ -174,12 +163,17 @@ Bangle.on('lcdPower', function(on) {
   draw();
 });
 
+Bangle.setUI("clockupdown", btn=> {
+  if (btn<0) prevInfo();
+  if (btn>0) nextInfo();
+  draw();
+});
+
 loadSettings();
 loadFonts();
 g.clear();
 var secondInterval = setInterval(draw, 1000);
 draw();
-// Show launcher when button pressed
-Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
