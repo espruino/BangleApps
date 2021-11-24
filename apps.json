@@ -1958,7 +1958,7 @@
     "icon": "custom.png",
     "type": "bootloader",
     "tags": "tool,system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "custom": "custom.html",
     "storage": [
       {"name":"custom"}
