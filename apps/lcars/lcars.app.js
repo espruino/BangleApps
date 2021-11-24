@@ -125,17 +125,17 @@ function draw(queue){
 
   // HRM
   g.setFontAlign(-1,-1,0);
-  g.drawString("HRM:", 30, 102);
-  g.drawString(hrmValue, 65, 102);
+  g.drawString("HRM:", 28, 102);
+  g.drawString(hrmValue, 63, 102);
 
   // Draw steps
   var steps = getSteps();
-  g.drawString("STEP:", 30, 122);
-  g.drawString(steps, 65, 122);
+  g.drawString("STEP:", 28, 122);
+  g.drawString(steps, 63, 122);
 
   // Draw battery
-  g.drawString("BAT:", 30, 142);
-  g.drawString(bat+ "%", 65, 142);
+  g.drawString("BAT:", 28, 142);
+  g.drawString(bat+ "%", 63, 142);
 
   // Queue draw in one minute
   if(queue){
