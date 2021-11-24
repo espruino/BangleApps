@@ -2151,12 +2151,12 @@
   {
     "id": "metronome",
     "name": "Metronome",
-    "version": "0.06",
+    "version": "0.07",
+    "readme": "README.md",
     "description": "Makes the watch blinking and vibrating with a given rate",
     "icon": "metronome_icon.png",
     "tags": "tool",
     "supports": ["BANGLEJS"],
-    "readme": "README.md",
     "allow_emulator": true,
 		"screenshots": [{"url":"bangle1-metronome-screenshot.png"}],
     "storage": [
