@@ -2156,7 +2156,7 @@
     "description": "Makes the watch blinking and vibrating with a given rate",
     "icon": "metronome_icon.png",
     "tags": "tool",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
 		"screenshots": [{"url":"bangle1-metronome-screenshot.png"}],
     "storage": [
