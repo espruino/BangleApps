@@ -110,18 +110,18 @@ function draw(queue){
   // Temperature
   g.setFontAlign(-1,-1,0);
   g.drawString("HRM:", 20, 104);
-  g.drawString(hrmValue, 60, 104);
+  g.drawString(hrmValue, 55, 104);
 
   // Draw steps
   var steps = getSteps();
   g.drawString("STEP:", 20, 124);
-  g.drawString(steps, 60, 124);
+  g.drawString(steps, 55, 124);
 
   // Draw battery
   var bat = E.getBattery();
   var charging = Bangle.isCharging() ? "*" : "";
   g.drawString("BAT:", 20, 144);
-  g.drawString(charging + bat+ "%", 60, 144);
+  g.drawString(charging + bat+ "%", 55, 144);
 
   // Queue draw in one minute
   if(queue){
