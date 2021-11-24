@@ -1,4 +1,3 @@
-
 // Scramble code from: https://raw.githubusercontent.com/bjcarlson42/blog-post-sample-code/master/Rubik's%20Cube%20JavaScript%20Scrambler/part_two.js
 const makeScramble = () => {
   const options = ["F", "F2", "F'", "R", "R2", "R'", "U", "U2", "U'", "B", "B2", "B'", "L", "L2", "L'", "D", "D2", "D'"];
@@ -59,16 +58,32 @@ const getRandomInt = max => Math.floor(Math.random() * Math.floor(max)); // retu
 const getRandomIntBetween = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 const presentScramble = () => {
-  g.clear();
-  E.showMessage(makeScramble().join(" "));
+  E.showPrompt(makeScramble().join(" "), {
+    title: "cube scramble",
+    buttons: {"solve": true, "reset": false}
+  }).then((v) => {
+    if (v) {
+      const start = new Date();
+      E.showPrompt(" ", {
+        title: "cube scramble",
+        buttons: {"stop": true}
+      }).then(() => {
+        const time = parseFloat(((new Date()).getTime() - start.getTime()) / 1000);
+        E.showPrompt(String(time.toFixed(3)), {
+          title: "cube scramble",
+          buttons: {"next": true}
+        }).then(() => {
+          presentScramble();
+        });
+      });
+    } else {
+      presentScramble();
+    }
+  });
 };
 
 const init = () => {
   presentScramble();
-
-  setWatch(() => {
-    presentScramble();
-  }, BTN1, {repeat:true});
 };
 
 init();

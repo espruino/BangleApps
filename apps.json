@@ -551,7 +551,7 @@
   {
     "id": "cubescramble",
     "name": "Cube Scramble",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A random scramble generator for the 3x3 Rubik's cube",
     "icon": "cube-scramble.png",
     "tags": "",
