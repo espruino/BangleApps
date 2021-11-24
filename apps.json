@@ -4431,5 +4431,18 @@
 		"data": [
 			{"name":"app.json"}
 		]
+  },
+  { "id": "timecal",
+    "name": "TimeCal",
+    "shortName":"TimeCal",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "TimeCal shows the Time along with a 3 week calendar",
+    "tags": "clock",
+    "type": "clock",
+    "supports":["BANGLEJS2"],
+    "storage": [
+      {"name":"timecal.app.js","url":"timecal.app.js"}
+    ]
   }
 ]
