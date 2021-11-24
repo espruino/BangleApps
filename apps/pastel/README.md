@@ -10,13 +10,33 @@
 
 I came up with the name Pastel due to the shade of the grid background.
 
-![](screenshot_lato.jpg)
-![](screenshot_architech.jpg)
-![](screenshot_gochi.jpg)
+## Creator
+[Hugh Barney](https://github.com/hughbarney)
 
-![](screenshot_b1_light.jpg)
-![](screenshot_b2_dark.jpg)
+## Lato
+![](screenshot_lato.png)
 
-![](screenshot_monoton.jpg)
-![](screenshot_elite.jpg)
+
+## Architect
+![](screenshot_architect.png)
+
+
+## Gochihand
+![](screenshot_gochihand.png)
+
+
+## Monoton
+![](screenshot_monoton.png)
+
+
+## Elite
+![](screenshot_elite.png)
+
+
+## Cabin Sketch
+![](screenshot_cabinsketch.png)
+
+
+## Orbitron
+![](screenshot_orbitron.png)
 
