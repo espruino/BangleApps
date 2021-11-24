@@ -96,7 +96,7 @@ function draw(queue){
   var timeStr = locale.time(currentDate,1);
   g.setFontAlign(0,0,0);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 55, 57);
+  g.drawString(timeStr, 50, 57);
 
   // Write date
   g.setFontAlign(-1,-1, 0);
@@ -104,8 +104,8 @@ function draw(queue){
 
   var dayName = locale.dow(currentDate, true).toUpperCase();
   var day = currentDate.getDate();
-  g.drawString(day, 100, 37);
-  g.drawString(dayName, 100, 57);
+  g.drawString(day, 93, 37);
+  g.drawString(dayName, 93, 57);
 
   // Temperature
   g.setFontAlign(-1,-1,0);
