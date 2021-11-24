@@ -171,7 +171,9 @@ function onAppJSONLoaded() {
   if (deviceId !== undefined)
     filterAppsForDevice(deviceId);
 
-  return new Promise(resolve => {
+  /* Disable external screenshot loading - seems we probably have enough
+  screenshots added manually in apps.json */
+  /*return new Promise(resolve => {
     httpGet("screenshots.json").then(screenshotJSON=>{
       var screenshots = [];
       try {
@@ -189,5 +191,5 @@ function onAppJSONLoaded() {
       console.log("No screenshots.json found");
       resolve();
     });
-  });
+  });*/
 }

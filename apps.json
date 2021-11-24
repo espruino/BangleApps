@@ -51,6 +51,7 @@
   {
     "id": "android",
     "name": "Android Integration",
+    "shortName": "Android",
     "version": "0.03",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
@@ -137,7 +138,7 @@
     "icon": "app.png",
     "tags": "tool,system",
     "supports": ["BANGLEJS","BANGLEJS2"],
-		"screenshots": [{"url":"bangle1-about-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-about-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"about.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
@@ -213,7 +214,7 @@
     "id": "welcome",
     "name": "Welcome",
     "shortName": "Welcome",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_welcome.png"}],
@@ -239,7 +240,7 @@
     "tags": "start,welcome",
     "supports": ["BANGLEJS"],
     "custom": "custom.html",
-		"screenshots": [{"url":"bangle1-customized-welcome-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-customized-welcome-screenshot.png"}],
     "storage": [
       {"name":"mywelcome.boot.js","url":"boot.js"},
       {"name":"mywelcome.app.js","url":"app.js"},
@@ -291,7 +292,7 @@
     "icon": "app.png",
     "tags": "",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-moon-phase-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-moon-phase-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"moonphase.app.js","url":"app.js"},
@@ -422,7 +423,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-sweep-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-sweep-clock-screenshot.png"}],
     "storage": [
       {"name":"sweepclock.app.js","url":"sweepclock.js"},
       {"name":"sweepclock.img","url":"sweepclock-icon.js","evaluate":true}
@@ -473,7 +474,7 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-impercise-word-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-impercise-word-clock-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"impwclock.app.js","url":"clock-impword.js"},
@@ -782,7 +783,7 @@
     "tags": "battery",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
-	  "screenshots": [{"url":"bangle2-charge-animation-screenshot.png"},{"url":"bangle-charge-animation-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-charge-animation-screenshot.png"},{"url":"bangle-charge-animation-screenshot.png"}],
     "storage": [
       {"name":"chargeanim.app.js","url":"app.js"},
       {"name":"chargeanim.boot.js","url":"boot.js"},
@@ -988,7 +989,7 @@
     "readme": "README.md",
     "interface": "interface.html",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-stopwatch-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-stopwatch-screenshot.png"}],
     "storage": [
       {"name":"swatch.app.js","url":"stopwatch.js"},
       {"name":"swatch.img","url":"stopwatch-icon.js","evaluate":true}
@@ -1190,7 +1191,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-vibrate-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-vibrate-clock-screenshot.png"}],
     "storage": [
       {"name":"vibrclock.app.js","url":"app.js"},
       {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
@@ -1206,7 +1207,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-simple-v-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-simple-v-clock-screenshot.png"}],
     "storage": [
       {"name":"svclock.app.js","url":"vclock-simple.js"},
       {"name":"svclock.img","url":"vclock-simple-icon.js","evaluate":true}
@@ -1222,7 +1223,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-dev-clock-screenshot.png"},{"url":"bangle1-dev-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-dev-clock-screenshot.png"},{"url":"bangle1-dev-clock-screenshot.png"}],
     "storage": [
       {"name":"dclock.app.js","url":"clock-dev.js"},
       {"name":"dclock.img","url":"clock-dev-icon.js","evaluate":true}
@@ -1254,7 +1255,7 @@
     "tags": "party,parrot,lol",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-party-parrot-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-party-parrot-screenshot.png"}],
     "storage": [
       {"name":"pparrot.app.js","url":"party-parrot.js"},
       {"name":"pparrot.img","url":"party-parrot-icon.js","evaluate":true}
@@ -1270,7 +1271,7 @@
     "tags": "rings,hypnosis,psychadelic",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-hypno-rings-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-hypno-rings-screenshot.png"}],
     "storage": [
       {"name":"hrings.app.js","url":"hypno-rings.js"},
       {"name":"hrings.img","url":"hypno-rings-icon.js","evaluate":true}
@@ -1338,7 +1339,7 @@
     "icon": "show-color.png",
     "type": "app",
     "tags": "tool",
-		"screenshots": [{"url":"bangle1-view-color-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-view-color-screenshot.png"}],
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
     "storage": [
@@ -1354,7 +1355,7 @@
     "icon": "clock-mixed.png",
     "type": "clock",
     "tags": "clock",
-		"screenshots": [{"url":"bangle1-mixed-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-mixed-clock-screenshot.png"}],
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
     "storage": [
@@ -1446,7 +1447,7 @@
     "tags": "pomodoro,cooking,tools",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-pomodoro-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-pomodoro-screenshot.png"}],
     "storage": [
       {"name":"pomodo.app.js","url":"pomodoro.js"},
       {"name":"pomodo.img","url":"pomodoro-icon.js","evaluate":true}
@@ -1463,7 +1464,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle2-large-digit-blob-clock-screenshot.png"},{"url":"bangle1-large-digit-blob-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle2-large-digit-blob-clock-screenshot.png"},{"url":"bangle1-large-digit-blob-clock-screenshot.png"}],
     "storage": [
       {"name":"blobclk.app.js","url":"clock-blob.js"},
       {"name":"blobclk.img","url":"clock-blob-icon.js","evaluate":true}
@@ -1538,7 +1539,7 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-center-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-center-clock-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"ctrclk.app.js","url":"app.js"},
@@ -1553,7 +1554,7 @@
     "icon": "app.png",
     "type": "app",
     "tags": "",
-		"screenshots": [{"url":"bangle1-demo-loop-screenshot1.png"},{"url":"bangle1-demo-loop-screenshot2.png"},{"url":"bangle1-demo-loop-screenshot3.png"},{"url":"bangle1-demo-loop-screenshot4.png"}],
+    "screenshots": [{"url":"bangle1-demo-loop-screenshot1.png"},{"url":"bangle1-demo-loop-screenshot2.png"},{"url":"bangle1-demo-loop-screenshot3.png"},{"url":"bangle1-demo-loop-screenshot4.png"}],
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
     "storage": [
@@ -1586,7 +1587,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-pipboy-themed-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-pipboy-themed-clock-screenshot.png"}],
     "storage": [
       {"name":"pipboy.app.js","url":"app.js"},
       {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
@@ -1633,7 +1634,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-workout-HRM-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-workout-HRM-screenshot.png"}],
     "storage": [
       {"name":"wohrm.app.js","url":"app.js"},
       {"name":"wohrm.img","url":"app-icon.js","evaluate":true}
@@ -1678,7 +1679,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": false,
-		"screenshots": [{"url":"bangle1-mario-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-mario-clock-screenshot.png"}],
     "storage": [
       {"name":"marioclock.app.js","url":"marioclock-app.js"},
       {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
@@ -1851,7 +1852,7 @@
     "tags": "game,fun",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-rpg-dice-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-rpg-dice-screenshot.png"}],
     "storage": [
       {"name":"rpgdice.app.js","url":"app.js"},
       {"name":"rpgdice.img","url":"app-icon.js","evaluate":true}
@@ -1880,7 +1881,7 @@
     "tags": "clock,minion",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-minion-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-minion-clock-screenshot.png"}],
     "storage": [
       {"name":"minionclk.app.js","url":"app.js"},
       {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
@@ -1973,7 +1974,7 @@
     "icon": "app.png",
     "tags": "stopwatch,chrono,timer,chronometer",
     "supports": ["BANGLEJS","BANGLEJS2"],
-		"screenshots": [{"url":"bangle1-dev-stopwatch-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-dev-stopwatch-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"devstopwatch.app.js","url":"app.js"},
@@ -2007,7 +2008,7 @@
     "tags": "app,learn,visual",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-NATO-alphabet-screenshot.png"},{"url":"bangle1-NATO-alphabet-screenshot2.png"}],
+    "screenshots": [{"url":"bangle1-NATO-alphabet-screenshot.png"},{"url":"bangle1-NATO-alphabet-screenshot2.png"}],
     "storage": [
       {"name":"nato.app.js","url":"nato.js"},
       {"name":"nato.img","url":"nato-icon.js","evaluate":true}
@@ -2024,7 +2025,7 @@
     "tags": "numerals,clock",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-numerals-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-numerals-screenshot.png"}],
     "storage": [
       {"name":"numerals.app.js","url":"numerals.app.js"},
       {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
@@ -2158,7 +2159,7 @@
     "tags": "tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-metronome-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-metronome-screenshot.png"}],
     "storage": [
       {"name":"metronome.app.js","url":"metronome.js"},
       {"name":"metronome.img","url":"metronome-icon.js","evaluate":true},
@@ -2174,7 +2175,7 @@
     "icon": "blackjack.png",
     "tags": "game",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-black-jack-game-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-black-jack-game-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"blackjack.app.js","url":"blackjack.app.js"},
@@ -2208,7 +2209,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-SWL-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-SWL-clock-screenshot.png"}],
     "storage": [
       {"name":"swlclk.app.js","url":"app.js"},
       {"name":"swlclk.img","url":"app-icon.js","evaluate":true}
@@ -2286,7 +2287,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-pong-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-pong-screenshot.png"}],
     "storage": [
       {"name":"pong.app.js","url":"app.js"},
       {"name":"pong.img","url":"app-icon.js","evaluate":true}
@@ -2349,7 +2350,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-large-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-large-clock-screenshot.png"}],
     "storage": [
       {"name":"largeclock.app.js","url":"largeclock.js"},
       {"name":"largeclock.img","url":"largeclock-icon.js","evaluate":true},
@@ -2401,7 +2402,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-timer-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-timer-screenshot.png"}],
     "storage": [
       {"name":"simpletimer.app.js","url":"app.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -2418,7 +2419,7 @@
     "icon": "beebclock.png",
     "type": "clock",
     "tags": "clock",
-		"screenshots": [{"url":"bangle1-beeb-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-beeb-clock-screenshot.png"}],
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
     "storage": [
@@ -2452,7 +2453,7 @@
     "tags": "tools,health",
     "supports": ["BANGLEJS"],
     "readme": "README.md",
-		"screenshots": [{"url":"bangle1-get-up-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-get-up-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"getup.app.js","url":"app.js"},
@@ -2531,7 +2532,7 @@
     "version": "0.01",
     "description": "La palla predice il futuro",
     "icon": "app.png",
-		"screenshots": [{"url":"bangle1-magic-8-ball-italiano-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-magic-8-ball-italiano-screenshot.png"}],
     "tags": "game",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
@@ -2645,7 +2646,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-vertical-watch-face-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-vertical-watch-face-screenshot.png"}],
     "storage": [
       {"name":"verticalface.app.js","url":"app.js"},
       {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
@@ -2673,7 +2674,7 @@
     "icon": "life.png",
     "tags": "game",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-game-of-life-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-game-of-life-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"life.app.js","url":"life.min.js"},
@@ -2721,7 +2722,7 @@
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-mixed-clock-2-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-mixed-clock-2-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"miclock2.app.js","url":"clock-mixed.js"},
@@ -2857,7 +2858,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-CPR-assist-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-CPR-assist-screenshot.png"}],
     "storage": [
       {"name":"cprassist.app.js","url":"cprassist.js"},
       {"name":"cprassist.img","url":"cprassist-icon.js","evaluate":true},
@@ -2901,7 +2902,7 @@
     "icon": "counter_icon.png",
     "tags": "tool",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-counter-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-counter-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"counter.app.js","url":"counter.js"},
@@ -3281,7 +3282,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS"],
     "readme": "README.md",
-		"screenshots": [{"url":"bangle1-lazy-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-lazy-clock-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
@@ -3723,7 +3724,7 @@
     "icon": "battleship-icon.png",
     "tags": "game",
     "supports": ["BANGLEJS"],
-		"screenshots": [{"url":"bangle1-battle-ship-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-battle-ship-screenshot.png"}],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
@@ -3944,7 +3945,7 @@
     "icon": "hcclock-icon.png",
     "type": "clock",
     "tags": "clock",
-		"screenshots": [{"url":"bangle1-high-contrast-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-high-contrast-clock-screenshot.png"}],
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
     "storage": [
@@ -4026,7 +4027,7 @@
     "tags": "clock",
     "supports": ["BANGLEJS"],
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-vector-clock-screenshot.png"}],
+    "screenshots": [{"url":"bangle1-vector-clock-screenshot.png"}],
     "storage": [
       {"name":"vectorclock.app.js","url":"app.js"},
       {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
@@ -4056,7 +4057,7 @@
     "supports": ["BANGLEJS"],
     "readme": "README.md",
     "allow_emulator": true,
-		"screenshots": [{"url":"bangle1-choozi-screenshot1.png"},{"url":"bangle1-choozi-screenshot2.png"}],
+    "screenshots": [{"url":"bangle1-choozi-screenshot1.png"},{"url":"bangle1-choozi-screenshot2.png"}],
     "storage": [
       {"name":"choozi.app.js","url":"app.js"},
       {"name":"choozi.img","url":"app-icon.js","evaluate":true}
@@ -4413,23 +4414,36 @@
     ],
     "data": [{"name":"authentiwatch.json"}]
   },
-	{ "id": "schoolCalendar",
-		"name": "School Calendar",
-		"shortName":"SCalendar",
-		"icon": "CalenderLogo.png",
-		"version": "0.01",
-		"description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
-		"tags": "tool",
-		"readme":"README.md",
-		"custom":"custom.html",
-		"supports": ["BANGLEJS"],
-		"screenshots": [{"url":"screenshot_basic.png"},{"url":"screenshot_info.png"}],
-		"storage": [
-			{"name":"schoolCalendar.app.js"},
-			{"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
-		],
-		"data": [
-			{"name":"app.json"}
-		]
+  { "id": "schoolCalendar",
+    "name": "School Calendar",
+    "shortName":"SCalendar",
+    "icon": "CalenderLogo.png",
+    "version": "0.01",
+    "description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
+    "tags": "tool",
+    "readme":"README.md",
+    "custom":"custom.html",
+    "supports": ["BANGLEJS"],
+    "screenshots": [{"url":"screenshot_basic.png"},{"url":"screenshot_info.png"}],
+    "storage": [
+      {"name":"schoolCalendar.app.js"},
+      {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"app.json"}
+    ]
+  },
+  { "id": "timecal",
+    "name": "TimeCal",
+    "shortName":"TimeCal",
+    "icon": "icon.png",
+    "version":"0.01",
+    "description": "TimeCal shows the Time along with a 3 week calendar",
+    "tags": "clock",
+    "type": "clock",
+    "supports":["BANGLEJS2"],
+    "storage": [
+      {"name":"timecal.app.js","url":"timecal.app.js"}
+    ]
   }
 ]
