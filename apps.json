@@ -552,7 +552,7 @@
     "id": "cubescramble",
     "name": "Cube Scramble",
     "version":"0.04",
-    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "description": "A random scramble generator for the 3x3 Rubik's cube with a basic timer",
     "icon": "cube-scramble.png",
     "tags": "",
     "supports" : ["BANGLEJS","BANGLEJS2"],
