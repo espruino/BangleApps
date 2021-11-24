@@ -1,4 +1,6 @@
-# Pastel Clock - a configurable clock with custom fonts and background
+# Pastel Clock
+
+   *a configurable clock with custom fonts and background*
 
 * Designed specifically for Bangle 1 and Bangle 2
 * A choice of 7 different custom fonts
