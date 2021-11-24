@@ -32,6 +32,50 @@ function loadFonts() {
     require("f_lato").add(Graphics);
 }
 
+function stepsWidget() {
+  if (WIDGETS.activepedom !== undefined) {
+    return WIDGETS.activepedom;
+  } else if (WIDGETS.wpedom !== undefined) {
+    return WIDGETS.wpedom;
+  }
+  return undefined;
+}
+
+const infoData = {
+  ID_BLANK: { calc: () => '' },
+  ID_DATE:  { calc: () => {var d = (new Date).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
+  ID_DAY:   { calc: () => {var d = require("locale").dow(new Date).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
+  ID_STEP:  { calc: () => 'Steps: ' + stepsWidget().getSteps() },
+  ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
+  ID_MEM:   { calc: () => {var val = process.memory(); return 'Ram: ' + Math.round(val.usage*100/val.total) + '%';} },
+  ID_ID:    { calc: () => {var val = NRF.getAddress().split(':'); return 'Id: ' + val[4] + val[5];} },
+  ID_FW:    { calc: () => 'Fw: ' + process.env.VERSION }
+};
+
+const infoList = Object.keys(infoData).sort();
+let infoMode = infoList[0];
+
+function nextInfo() {
+  let idx = infoList.indexOf(infoMode);
+  if (idx > -1) {
+    if (idx === infoList.length - 1) infoMode = infoList[0];
+    else infoMode = infoList[idx + 1];
+  }
+}
+
+function prevInfo() {
+  let idx = infoList.indexOf(infoMode);
+  if (idx > -1) {
+    if (idx === 0) infoMode = infoList[infoList.length - 1];
+    else infoMode = infoList[idx - 1];
+  }
+}
+
+Bangle.on('swipe', dir => {
+  if (dir == 1) prevInfo(); else nextInfo();
+  draw();
+});
+
 var mm_prev = "xx";
 
 function draw() {
@@ -114,9 +158,8 @@ function draw() {
 
   if (settings.date) {
     g.setFontLatoSmall();
-    g.setFontAlign(1, -1);
-    g.drawString(day + "   ", w, h - 24 - 24);
-    g.drawString(month_day + "   ", w, h - 24);
+    g.setFontAlign(0, -1);
+    g.drawString((infoData[infoMode].calc()), w/2, h - 24 - 24);
   }
 }
 
