@@ -145,11 +145,9 @@ function draw() {
     }
   }
 
-  if (settings.date) {
-    g.setFontLatoSmall();
-    g.setFontAlign(0, -1);
-    g.drawString((infoData[infoMode].calc()), w/2, h - 24 - 24);
-  }
+  g.setFontLatoSmall();
+  g.setFontAlign(0, -1);
+  g.drawString((infoData[infoMode].calc()), w/2, h - 24 - 24);
 }
 
 // Only update when display turns on
