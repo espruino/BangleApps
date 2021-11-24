@@ -51,6 +51,7 @@
   {
     "id": "android",
     "name": "Android Integration",
+    "shortName": "Android",
     "version": "0.03",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
@@ -213,7 +214,7 @@
     "id": "welcome",
     "name": "Welcome",
     "shortName": "Welcome",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Appears at first boot and explains how to use Bangle.js",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_welcome.png"}],
