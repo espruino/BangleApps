@@ -52,7 +52,7 @@
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.03",
+    "version": "0.04",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
@@ -60,6 +60,7 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"android.app.js","url":"app.js"},
+      {"name":"android.settings.js","url":"settings.js"},
       {"name":"android.img","url":"app-icon.js","evaluate":true},
       {"name":"android.boot.js","url":"boot.js"}
     ],
