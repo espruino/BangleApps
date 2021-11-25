@@ -83,6 +83,8 @@ const presentScramble = () => {
 };
 
 const init = () => {
+  Bangle.setLCDTimeout(0);
+  Bangle.setLCDPower(1);
   presentScramble();
 };
 
