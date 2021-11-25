@@ -28,10 +28,25 @@ exports.pushMessage = function(event) {
   // otherwise load after a delay, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
-    exports.messageTimeout = undefined;  
+    exports.messageTimeout = undefined;
     // if we're in a clock or it's important, go straight to messages app
     if (Bangle.CLOCK || event.important) return load("messages.app.js");
     if (!global.WIDGETS || !WIDGETS.messages) return Bangle.buzz(); // no widgets - just buzz to let someone know
-    WIDGETS.messages.newMessage();
+    WIDGETS.messages.show();
   }, 500);
+}
+exports.clearAll = function(event) {
+  var messages, inApp = "undefined"!=typeof MESSAGES;
+  if (inApp) {
+    MESSAGES = [];
+    messages = MESSAGES; // we're in an app that has already loaded messages
+  } else   // no app - empty messages
+    messages = [];
+  // Save all messages
+  require("Storage").writeJSON("messages.json",messages);
+  // update app if in app
+  if (inApp) return onMessagesModified();
+  // if we have a widget, update it
+  if (global.WIDGETS && WIDGETS.messages)
+    WIDGETS.messages.hide();
 }

@@ -10,11 +10,15 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
     Bangle.buzz(); // buzz every 4 seconds
   }
   setTimeout(()=>WIDGETS["messages"].draw(), 1000);
-},newMessage:function() {
+},show:function() {
   WIDGETS["messages"].t=Date.now(); // first time
   WIDGETS["messages"].l=Date.now()-10000; // last buzz
-  if (WIDGETS["messages"].c!==undefined) return; // already called
   WIDGETS["messages"].width=64;
   Bangle.drawWidgets();
   Bangle.setLCDPower(1);// turns screen on
+},hide:function() {
+  delete WIDGETS["messages"].t;
+  delete WIDGETS["messages"].l;
+  WIDGETS["messages"].width=0;
+  Bangle.drawWidgets();
 }};

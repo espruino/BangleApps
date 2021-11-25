@@ -24,7 +24,7 @@ function renderBar(l) {
     return;
   }
   const width = this.fraction*l.w;
-  g.fillRect(l.x, l.y, width-1, l.y+l.height-1);
+  g.fillRect(l.x, l.y, l.x+width-1, l.y+l.height-1);
 }
 
 const Layout = require("Layout");
@@ -78,7 +78,7 @@ function dateText(date) {
   return `${dayName}  ${dayMonth}`;
 }
 
-draw = function draw() {
+draw = function draw(force) {
   if (!Bangle.isLCDOn()) {return;} // no drawing, also no new update scheduled
   const date = new Date();
   layout.time.label = timeText(date);
@@ -86,6 +86,10 @@ draw = function draw() {
   layout.date.label = dateText(date);
   const SECONDS_PER_MINUTE = 60;
   layout.bar.fraction = date.getSeconds()/SECONDS_PER_MINUTE;
+  if (force) {
+    Bangle.drawWidgets();
+    layout.forgetLazyState();
+  }
   layout.render();
   // schedule update at start of next second
   const millis = date.getMilliseconds();
@@ -96,7 +100,7 @@ draw = function draw() {
 Bangle.setUI("clock");
 Bangle.on("lcdPower", function(on) {
   if (on) {
-    draw();
+    draw(true);
   }
 });
 g.reset().clear();
