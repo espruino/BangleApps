@@ -17,7 +17,10 @@ exports.pushMessage = function(event) {
     mIdx=-1;
   } else { // add/modify
     if (event.t=="add") event.new=true; // new message
-    if (mIdx<0) mIdx=messages.push(event)-1;
+    if (mIdx<0) {
+      mIdx=0;
+      messages.unshift(event); // add new messages to the beginning
+    }
     else Object.assign(messages[mIdx], event);
   }
   require("Storage").writeJSON("messages.json",messages);

@@ -4,7 +4,6 @@
   // initialize with default settings...
   let s = {
     'grid': false,
-    'date': false,
     'font': "Lato"
   }
 
@@ -41,14 +40,6 @@
       format: () => (s.grid ? 'Yes' : 'No'),
       onchange: () => {
         s.grid = !s.grid
-        save()
-      },
-    },
-    'Show Date': {
-      value: s.date,
-      format: () => (s.date ? 'Yes' : 'No'),
-      onchange: () => {
-        s.date = !s.date
         save()
       },
     }
