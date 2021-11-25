@@ -3984,7 +3984,7 @@
     "id": "fd6fdetect",
     "name": "fd6fdetect",
     "shortName": "fd6fdetect",
-    "version": "0.1",
+    "version": "0.2",
     "description": "Allows you to see 0xFD6F beacons near you.",
     "icon": "app.png",
     "tags": "tool",
