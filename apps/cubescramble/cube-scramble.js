@@ -58,19 +58,16 @@ const getRandomInt = max => Math.floor(Math.random() * Math.floor(max)); // retu
 const getRandomIntBetween = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 const presentScramble = () => {
-  E.showPrompt(makeScramble().join(" "), {
-    title: "cube scramble",
+  showPrompt(makeScramble().join(" "), {
     buttons: {"solve": true, "reset": false}
   }).then((v) => {
     if (v) {
       const start = new Date();
-      E.showPrompt(" ", {
-        title: "cube scramble",
+      showPrompt(" ", {
         buttons: {"stop": true}
       }).then(() => {
         const time = parseFloat(((new Date()).getTime() - start.getTime()) / 1000);
-        E.showPrompt(String(time.toFixed(3)), {
-          title: "cube scramble",
+        showPrompt(String(time.toFixed(3)), {
           buttons: {"next": true}
         }).then(() => {
           presentScramble();
@@ -80,6 +77,11 @@ const presentScramble = () => {
       presentScramble();
     }
   });
+};
+
+const showPrompt = (text, options = {}) => {
+  options.title = options.title || "cube scramble";
+  return E.showPrompt(text, options);
 };
 
 const init = () => {
