@@ -1,2 +1,2 @@
-# ![fd6fdetectlogo](https://user-images.githubusercontent.com/37220586/143490430-980b1cf3-1de7-4ad3-9ff9-e3d31a67e215.png)
+![fd6fdetectlogo](https://user-images.githubusercontent.com/37220586/143490833-a88e4666-dcca-4613-bcee-bb2a33af67c0.png)
 An app dedicated to letting you know how many Exposure Notification beacons are near you.
