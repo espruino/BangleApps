@@ -32,7 +32,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.05",
+    "version": "0.06",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
