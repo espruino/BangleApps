@@ -46,7 +46,10 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg.new) Bangle.buzz();
+  if (msg.new) {
+    if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
+    else Bangle.buzz();
+  }
   showMessage(msg.id);
 };
 function saveMessages() {
@@ -111,7 +114,7 @@ function showMapMessage(msg) {
     msg.new = false;
     saveMessages();
     layout = undefined;
-    checkMessages();
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   });
 }
 
@@ -126,7 +129,7 @@ function showMusicMessage(msg) {
     msg.new = false;
     saveMessages();
     layout = undefined;
-    checkMessages();
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
@@ -148,6 +151,22 @@ function showMusicMessage(msg) {
   layout.render();
 }
 
+function showMessageSettings(msg) {
+  E.showMenu({"":{"title":"Message"},
+    "< Back" : () => showMessage(msg.id),
+    "Delete" : () => {
+      MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+    },
+    "Mark Unread" : () => {
+      msg.new = true;
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+    },
+  });
+}
+
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
   if (!msg) return checkMessages(); // go home if no message found
@@ -163,30 +182,30 @@ function showMessage(msgid) {
       title = g.wrapString(title, w).join("\n");
   }
   var buttons = [
-    {type:"btn", src:getBackImage(), cb:()=>checkMessages(true)}, // back
-    msg.new?{type:"btn", src:atob("HRiBAD///8D///wj///Fj//8bj//x3z//Hvx/8/fx/j+/x+Ad/B4AL8Rh+HxwH+PHwf+cf5/+x/n/PH/P8cf+cx5/84HwAB4fgAD5/AAD/8AAD/wAAD/AAAD8A=="), cb:()=>{
+    {type:"btn", src:getBackImage(), cb:()=>{
       msg.new = false; // read mail
       saveMessages();
-      checkMessages();
-    }}:{}
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:1});
+    }} // back
   ];
   if (msg.positive) {
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
       msg.new = false; saveMessages();
       Bangle.messageResponse(msg,true);
-      checkMessages();
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
   if (msg.negative) {
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
+      console.log("Response");
       msg.new = false; saveMessages();
-      Bangle.messageResponse(msg,true);
-      checkMessages();
+      Bangle.messageResponse(msg,false);
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"img", src:getMessageImage(msg), pad:2 },
+      { type:"btn", src:getMessageImage(msg), cb:()=>showMessageSettings(msg) },
       { type:"v", fillx:1, c: [
         {type:"txt", font:fontMedium, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2 },
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
@@ -199,28 +218,37 @@ function showMessage(msgid) {
   layout.render();
 }
 
-function checkMessages(forceShowMenu) {
+
+/* options = {
+  clockIfNoMsg : bool
+  clockIfAllRead : bool
+  showMsgIfUnread : bool
+}
+*/
+function checkMessages(options) {
+  options=options||{};
   // If no messages, just show 'no messages' and return
   if (!MESSAGES.length) {
-    if (forceShowMenu) return E.showPrompt("No Messages",{
+    if (!options.clockIfNoMsg) return E.showPrompt("No Messages",{
       title:"Messages",
       img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
       buttons : {"Ok":1}
     }).then(() => { load() });
-    load();
-    return;
+    return load();
   }
   // we have >0 messages
+  var newMessages = MESSAGES.filter(m=>m.new);
   // If we have a new message, show it
-  if (!forceShowMenu) {
-    var newMessages = MESSAGES.filter(m=>m.new);
-    if (newMessages.length)
-      return showMessage(newMessages[0].id);
-  }
+  if (options.showMsgIfUnread && newMessages.length)
+    return showMessage(newMessages[0].id);
+  // no new messages - go to clock?
+  if (options.clockIfAllRead && newMessages.length==0)
+    return load();
+
   // Otherwise show a menu
   E.showScroller({
     h : 48,
-    c : Math.min(MESSAGES.length+1,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
+    c : Math.max(MESSAGES.length+1,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx-1];
       if (msg && msg.new) g.setBgColor(colBg);
@@ -239,7 +267,7 @@ function checkMessages(forceShowMenu) {
         x += 50;
       }
       var m = msg.title+"\n"+msg.body;
-      if (msg.src) g.setFontAlign(1,-1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+2);
+      if (msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
       if (body) {
         g.setFontAlign(-1,-1).setFont("6x8");
@@ -261,4 +289,6 @@ function checkMessages(forceShowMenu) {
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-checkMessages(true); // force showing a menu
+setTimeout(() => {
+  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
+},10); // if checkMessages wants to 'load', do that

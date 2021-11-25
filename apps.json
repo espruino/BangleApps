@@ -32,7 +32,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.05",
+    "version": "0.07",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -41,18 +41,19 @@
     "readme": "README.md",
     "storage": [
       {"name":"messages.app.js","url":"app.js"},
+      {"name":"messages.settings.js","url":"settings.js"},
       {"name":"messages.img","url":"app-icon.js","evaluate":true},
       {"name":"messages.wid.js","url":"widget.js"},
       {"name":"messages","url":"lib.js"}
     ],
-    "data": [{"name":"messages.json"}],
+    "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
     "sortorder": -9
   },
   {
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.03",
+    "version": "0.04",
     "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
@@ -60,6 +61,7 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"android.app.js","url":"app.js"},
+      {"name":"android.settings.js","url":"settings.js"},
       {"name":"android.img","url":"app-icon.js","evaluate":true},
       {"name":"android.boot.js","url":"boot.js"}
     ],
@@ -551,8 +553,8 @@
   {
     "id": "cubescramble",
     "name": "Cube Scramble",
-    "version":"0.03",
-    "description": "A random scramble generator for the 3x3 Rubik's cube",
+    "version":"0.04",
+    "description": "A random scramble generator for the 3x3 Rubik's cube with a basic timer",
     "icon": "cube-scramble.png",
     "tags": "",
     "supports" : ["BANGLEJS","BANGLEJS2"],
