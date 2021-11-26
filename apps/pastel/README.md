@@ -8,6 +8,7 @@
 * Has a settings menu, change font, enable/disable the grid
 * On Bangle 1 use BTN1,BTN3 to cycle through the info display (Date, ID, Batt %, Ram % etc)
 * On Bangle 2 touch the top right/top left to cycle through the info display (Date, ID, Batt %, Ram % etc)
+* Uses mylocation.json from MyLocation app to calculate sunrise and sunset times for your location
 
 
 I came up with the name Pastel due to the shade of the grid background.
