@@ -2,10 +2,6 @@ g.clear();
 var old = {x:0,y:0};
 var W = g.getWidth();
 var H = g.getHeight();
-var fontS = 1;
-if (process.env.HWVERSION==1) {
-  fontS = 2;
-}
 Bangle.on('accel',function(v) {
   var max = Math.max(Math.abs(v.x),Math.abs(v.y),Math.abs(v.z));
   if (Math.abs(v.y)==max) {
@@ -18,7 +14,7 @@ Bangle.on('accel',function(v) {
   var ang = Math.atan2(d,Math.abs(v.z))*180/Math.PI;
   
   g.setColor(1,1,1);
-  g.setFont("6x8",fontS);
+  g.setFont("6x8",2);
   g.setFontAlign(0,-1);
   g.clearRect(W*(1/4),0,W*(3/4),H*(1/16));
   g.drawString(ang.toFixed(1),W/2,0);
