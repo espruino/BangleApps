@@ -16,9 +16,9 @@ WIDGETS["qmsched"] = {
     }
     let x = this.x, y = this.y;
     g.clearRect(x, y, x+23, y+23);
-    // quiet mode: draw dim red one-way-street sign
+    // quiet mode: draw red one-way-street sign (dim red on Bangle.js 1)
     x = this.x+11;y = this.y+11; // center of widget
-    g.setColor(0.8, 0, 0).fillCircle(x, y, 8);
+    g.setColor(process.env.HWVERSION===2 ? 1 : 0.8, 0, 0).fillCircle(x, y, 8);
     g.setColor(g.theme.bg).fillRect(x-6, y-2, x+6, y+2);
     if (mode>1) {return;} // no alarms
     // alarms still on: draw alarm icon in bottom-right corner
