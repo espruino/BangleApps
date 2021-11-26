@@ -9,3 +9,4 @@
 0.07: Improve handling of non-ASCII characters (fix #469)
 0.08: Added Mavigation units and en_NAV
 0.09: Added New Zealand en_NZ
+0.10: Apply 12hour setting to time

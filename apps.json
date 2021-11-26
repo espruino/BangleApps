@@ -170,7 +170,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.09",
+    "version": "0.10",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",
