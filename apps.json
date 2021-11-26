@@ -4456,5 +4456,20 @@
     "storage": [
       {"name":"timecal.app.js","url":"timecal.app.js"}
     ]
+  },
+  { "id": "mylocation",
+    "name": "My Location",
+    "shortName":"My Location",
+    "icon": "mylocation.png",
+    "screenshots": [{"url":"screenshot_1.png"}],
+    "version":"0.01",
+    "description": "My Locations adds a menu in the Settings app to set your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
+    "readme": "README.md",
+    "tags": "tool,utility",
+    "type": "app",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "storage": [
+      {"name":"mylocation.settings.js","url":"mylocation.settings.js"}
+    ]
   }
 ]

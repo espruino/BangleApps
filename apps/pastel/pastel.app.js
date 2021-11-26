@@ -1,11 +1,36 @@
+var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 require("f_latosmall").add(Graphics);
 const SETTINGS_FILE = "pastel.json";
+const LOCATION_FILE = "mylocation.json";
 let settings;
+let location;
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
   settings.font = settings.font||"Lato";
+}
+
+// requires the myLocation app
+function loadLocation() {
+  location = require("Storage").readJSON(LOCATION_FILE,1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+}
+
+function extractTime(d){
+  var h = d.getHours(), m = d.getMinutes();
+  return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
+}
+
+var sunRise = "00:00";
+var sunSet = "00:00";
+
+function updateSunRiseSunSet(now, lat, lon, line){
+  // get today's sunlight times for lat/lon
+  var times = SunCalc.getTimes(new Date(), lat, lon);
+
+  // format sunrise time from the Date object
+  sunRise = extractTime(times.sunrise);
+  sunSet = extractTime(times.sunset);
 }
 
 function loadFonts() {
@@ -39,6 +64,8 @@ const infoData = {
   ID_BLANK: { calc: () => '' },
   ID_DATE:  { calc: () => {var d = (new Date).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
   ID_DAY:   { calc: () => {var d = require("locale").dow(new Date).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
+  ID_SR:    { calc: () => 'Sunrise: ' + sunRise },
+  ID_SS:    { calc: () => 'Sunset: ' + sunSet },
   ID_STEP:  { calc: () => 'Steps: ' + stepsWidget().getSteps() },
   ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
   ID_MEM:   { calc: () => {var val = process.memory(); return 'Ram: ' + Math.round(val.usage*100/val.total) + '%';} },
@@ -169,6 +196,9 @@ Bangle.setUI("clockupdown", btn=> {
 
 loadSettings();
 loadFonts();
+loadLocation();
+updateSunRiseSunSet(new Date(), location.lat, location.lon);
+
 g.clear();
 var secondInterval = setInterval(draw, 1000);
 draw();
