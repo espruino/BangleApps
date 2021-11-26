@@ -16,7 +16,7 @@
       format: v => fonts[v]
      },
     'Vector font size': {
-      value: settings.vectorsize || 1,
+      value: settings.vectorsize || 10,
       min:10, max: 20,step:1,wrap:true,
       onchange: (m) => {save('vectorsize', m)}
     }
