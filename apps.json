@@ -4456,5 +4456,15 @@
     "storage": [
       {"name":"timecal.app.js","url":"timecal.app.js"}
     ]
+  },
+  { "id": "93dub",
+   "name": "93 Dub",
+   "shortName":"93 Dub",
+   "version":"0.01",
+   "description": "Fan recreation of 91 Dub app for the Pebble smartwatch",
+   "tags": "",
+   "storage": [
+     {"name":"93dub.app.js","url":"app.js"},
+   ]
   }
 ]
