@@ -1,14 +1,19 @@
 /*The following code was made by Brandon Abbott and used many portions from Espruino documentation, example watchfaces, and the waveclk app (Gordon Williams). It also sourced from Jon Barlow's 91 Dub v2.0 source code and resources. Time and date keeping functions, and AFAIK the battery display works too. I cut off the top of the original background with a black rectangle to make room for the widgets. It is not pixel perfect. I am using the MIT license for this work.
+
 MIT License
+
 Copyright (c) 2021 Brandon Abbott
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +30,7 @@ var imgBg = require("heatshrink").decompress(atob("yGogIqn4EwhgR/AAMN4Hw7k3hk8BQ
 I took the number bitmaps, added two columns to each digit (for spacing), and combined them for the Espruino Bitmap Font Generator. Here's the commands I used for processing the original 26 by 41 px font:
 mogrify -gravity east -extent 28x41 *.png
 montage num_[0-9].png -geometry +0+0 numcat.png
+
 I then put numcat.png into the generator. 
 */
 
@@ -73,6 +79,7 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
+function drawBackground() {
 // set background
 g.setBgColor(0,0,0);
 g.setColor(1,1,1);
@@ -81,8 +88,11 @@ g.drawImage(imgBg,g.getWidth()/2 - 144/2 ,0);
 // this covers the part of the background with branding, makes room for widgets
 g.setColor(0,0,0);
 g.fillRect(0,0,g.getWidth(),30);
+g.reset();
+}
 
 function draw(){
+drawBackground();
 var date = new Date();
 var h = date.getHours(), m = date.getMinutes();
 var d = date.getDate(), w = date.getDay();
@@ -149,6 +159,8 @@ g.setFontCustom(fontTiny, 48, 6, 8);
 if (batPercent < 10) {batPercent = " " + batPercent;} //makes sure zero is next to percent sign
 if (batPercent < 100) {g.drawString(batPercent, 105, 42, true);}
   else {g.drawString(batPercent, 99, 42, true);}
+// widget redraw
+Bangle.drawWidgets();
 queueDraw();
 }
 
