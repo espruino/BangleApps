@@ -23,6 +23,7 @@ function extractTime(d){
 
 var sunRise = "00:00";
 var sunSet = "00:00";
+var drawCount = 0;
 
 function updateSunRiseSunSet(now, lat, lon, line){
   // get today's sunlight times for lat/lon
@@ -175,6 +176,10 @@ function draw() {
   g.setFontLatoSmall();
   g.setFontAlign(0, -1);
   g.drawString((infoData[infoMode].calc()), w/2, h - 24 - 24);
+
+  if (drawCount % 3600 == 0)
+    updateSunRiseSunSet(new Date(), location.lat, location.lon);
+  drawCount++;
 }
 
 // Only update when display turns on
@@ -197,7 +202,6 @@ Bangle.setUI("clockupdown", btn=> {
 loadSettings();
 loadFonts();
 loadLocation();
-updateSunRiseSunSet(new Date(), location.lat, location.lon);
 
 g.clear();
 var secondInterval = setInterval(draw, 1000);

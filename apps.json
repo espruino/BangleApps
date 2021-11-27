@@ -4086,7 +4086,7 @@
     "name": "Pastel Clock",
     "shortName": "Pastel",
     "version": "0.08",
-    "description": "A Configurable clock with custom fonts and background",
+    "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"widget"},
     "screenshots": [{"url":"screenshot_pastel.png"}],
