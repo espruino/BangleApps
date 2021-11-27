@@ -4463,6 +4463,8 @@
    "version":"0.01",
    "description": "Fan recreation of 91 Dub app for the Pebble smartwatch",
    "tags": "",
+   "type": "clock",
+   "supports":["BANGLEJS2"],
    "storage": [
      {"name":"93dub.app.js","url":"app.js"},
    ]
