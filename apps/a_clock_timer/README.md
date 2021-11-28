@@ -9,7 +9,7 @@
 * World Map
   *  The yellow line shows the position of the sun
 
-![](screenshot.jpg)
+![](screenshot.png)
 
 ## Creator
 [@alainsaas](https://github.com/alainsaas)
