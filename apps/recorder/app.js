@@ -401,6 +401,8 @@ function plotGraph(info, style) {
     gridy : grid,
     gridx : infn.length / 3,
     title: title,
+    miny: min,
+    maxy: max,
     xlabel : x=>Math.round(x*dur/(60*infn.length))+" min" // minutes
   });
   g.setFont("6x8",2);
