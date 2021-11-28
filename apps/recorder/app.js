@@ -399,7 +399,7 @@ function plotGraph(info, style) {
     height: g.getHeight()-(24+8),
     axes : true,
     gridy : grid,
-    gridx : 50,
+    gridx : infn.length / 3,
     title: title,
     xlabel : x=>Math.round(x*dur/(60*infn.length))+" min" // minutes
   });
