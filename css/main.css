@@ -1,8 +1,49 @@
-.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
+.navbar { background-color: #5755d9; padding: 1em 1em 1em 1em; }
 .navbar .navbar-brand {
   color: #fff;
   font-weight: bold;
 }
+
+.container.apploader-tab, ul.tab.tab-block {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-bottom: 0px;
+}
+
+.panel-body.columns {
+  margin: 1px;
+}
+
+ .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+  border: solid 1px #fafafa;
+ 
+  margin: 0;
+  min-height: 150px;
+  padding-top: 10px;
+}
+
+.tab.tab-block .tab-item  {
+  border-bottom: solid 1px #dadee4;
+}
+
+a.mr-2{
+  display: flex; 
+  align-items: center;
+}
+
+.navbar-section > a > div {
+   margin-left: 12px;
+}
+
+.dropdown-container {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+a.btn.btn-link.dropdown-toggle {
+  padding-left: 0.01em;
+}
+
 .avatar img {
   border-radius: 5px 5px 5px 5px;
   background: #fff;
