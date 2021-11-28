@@ -1,3 +1,6 @@
+// get 12 hour status, code from barclock
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
+
 // define background
 var imgBg = require("heatshrink").decompress(atob("2GwgJC/AH4A/AH4A/AH4A/AH4A/ACcGAhAV/Cp3gvdug+Gj0AgeABYMBAQMIggVEg/w/9/h/Gn8As3ACpk559zznmseAs0B13nq/Rie+uodCIIUZw9hzFmv+AgcCmco7MRilow1ACpN8gFhwMilFRCoMowgVEIIVhIINhwFg4GiCpfw/dhx/mn4uBCoXRhWktAVFTIVhw9mj8YseDkUnqPEoeuugVEAAlgSgICBACAVC8AUQCQQVSAEsD/4ASeYgA/ACkHNiK5Cj4VR/AVBng+RCQVwCqMOAQPhIKOHgEB44VR8YVBx4VR+eAgOfCqPxwEDCqX5CoKvS/PAgc/YqQVU/gV/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/CsMfCqP4CoOfCqP54EBx4VR+OAgPPCqPzwEA44VR4cAgHhCqMHCoNwAQIAPjwCBngVRvgCBV6XwCoMHCqPAHyIA/AEigEf4IAOkAEDoAPJWAtA+PHv+Al6uPCofAGAgALoHz51/8AVT+IVS+4VPpMR73woH27n/8Eh8+ZmadIqsoyGICofAkMUktJFZAVBzgVBv34YgMhi8RkIVJnGQIIN8/H34FB8kJiIVIkVEyGQkF8/Pj4GBkhBKCoOexEQvHx8fBgMXzMxTJkICoXCVx8AggDGABsD/4AB/AVQAH4APA"));
 
@@ -38,7 +41,7 @@ var imgPM = E.toArrayBuffer(atob("EwgB+HOfdnPu1X3ar4dV9+q+/bfftg=="));
 
 //vars
 var separator = true;
-var is24hr = true; //assumed true until can find API to check
+var is24hr = !is12Hour;
 var leadingZero = true;
 
 //the following 2 sections are used from waveclk to schedule minutely updates
