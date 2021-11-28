@@ -68,13 +68,14 @@ g.setBgColor(0,0,0);
 g.setColor(1,1,1);
 // draw battery indicator
 var batPercent = E.getBattery();
-if (Bangle.isCharging()) {selBattery = imgBattery_Charge;}
+if (Bangle.isCharging()) {
+g.drawImage(imgBattery_Charge,127,59);
+}
 else {
-selBattery=imgBattery;
+g.drawImage(imgBattery,127,59);
 g.setColor(0,0,0);
 g.fillRect(129,61,(129 + batPercent / 10),65);
 g.setColor(1,1,1);}
-g.drawImage(selBattery,127,59);
 if (batPercent != null) {
 g.drawImage(imgPercent, 118,60);
 }
