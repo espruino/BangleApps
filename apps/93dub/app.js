@@ -1,28 +1,3 @@
-/*The following code was made by Brandon Abbott and used many portions from Espruino documentation, example watchfaces, and the waveclk app (Gordon Williams). It also sourced from Jon Barlow's 91 Dub v2.0 source code and resources. Time and date keeping functions, and AFAIK the battery display works too. I cut off the top of the original background with a black rectangle to make room for the widgets. It is not pixel perfect. I am using the MIT license for this work.
-
-MIT License
-
-Copyright (c) 2021 Brandon Abbott
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 // define background
 var imgBg = require("heatshrink").decompress(atob("2GwgJC/AH4A/AH4A/AH4A/AH4A/ACcGAhAV/Cp3gvdug+Gj0AgeABYMBAQMIggVEg/w/9/h/Gn8As3ACpk559zznmseAs0B13nq/Rie+uodCIIUZw9hzFmv+AgcCmco7MRilow1ACpN8gFhwMilFRCoMowgVEIIVhIINhwFg4GiCpfw/dhx/mn4uBCoXRhWktAVFTIVhw9mj8YseDkUnqPEoeuugVEAAlgSgICBACAVC8AUQCQQVSAEsD/4ASeYgA/ACkHNiK5Cj4VR/AVBng+RCQVwCqMOAQPhIKOHgEB44VR8YVBx4VR+eAgOfCqPxwEDCqX5CoKvS/PAgc/YqQVU/gV/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/CsMfCqP4CoOfCqP54EBx4VR+OAgPPCqPzwEA44VR4cAgHhCqMHCoNwAQIAPjwCBngVRvgCBV6XwCoMHCqPAHyIA/AEigEf4IAOkAEDoAPJWAtA+PHv+Al6uPCofAGAgALoHz51/8AVT+IVS+4VPpMR73woH27n/8Eh8+ZmadIqsoyGICofAkMUktJFZAVBzgVBv34YgMhi8RkIVJnGQIIN8/H34FB8kJiIVIkVEyGQkF8/Pj4GBkhBKCoOexEQvHx8fBgMXzMxTJkICoXCVx8AggDGABsD/4AB/AVQAH4APA"));
 
