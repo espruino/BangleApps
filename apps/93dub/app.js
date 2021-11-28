@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 // define background
-var imgBg = require("heatshrink").decompress(atob("yGogIqn4EwhgR/AAMN4Hw7k3hk8BQeAgEEgQGCh/h/H+n+MvwRKh1zjnnnPM48A69z1foxPfnXgCIMMmf84cw5n/gMZylsxGKmlDkARD8ARC/EAyMUlARBilCCIQ1Bhg1C4cAqIRILIP8LIV/CIVowtSmgRDPoP4PoU+gORieo8Uh686I4bmQCMYAig//AB3AIuYAUpGcxeAMxE8+lEgEB5GixIdIgmiwlHCwPI0H5CJXiw/ACIOmEZI1BwQRBGpskCIIFBp2eCJUi+MEVP4AJh//ABngCIM/CJv4CIN4GRs8AQImCABcOdIPDGpqzBgePCJvjCIMfCJvzwEDNZ3xwEHCJ35wEGCJ/Ag1/UJwRQ/gR/CP4R/CP4R/CP4R/CP4R/CP4R/CP4R/CP4R/CP4R/CP4R/CP4R/CP4Rhn4RN/HAg4RO/PAgcfCJvxwEDz4RN+eAgOPCJvDgEB4YRNg8AgHgAQIALjwCBvARNvgCBPp3wCIMPCJvAGRoA/AA8Bi+l4gROykYw4ROq4RBPxsBqgRQmkkGp8X0mERFUfcgeACJcgAgdABYsHDof/oHx49/wEvBQh9GCIfAFAgAHoHz51/8ARP+IRO+4RLpMR73woH27n/8Eh8+ZmaBEqsoyGICIfAkMUktJEYgRBzgRBv34UAMhi8RkIRFnGQGoN8/H34FB8kJiIREkVEyGQkF8/Pj4GBkg1GCIOexEQvHx8fBgMXzMxPpEICIXCfZkEAYwAJgbiC/ARMAH4ABA=="));
+var imgBg = require("heatshrink").decompress(atob("2GwgJC/AH4A/AH4A/AH4A/AH4A/ACcGAhAV/Cp3gvdug+Gj0AgeABYMBAQMIggVEg/w/9/h/Gn8As3ACpk559zznmseAs0B13nq/Rie+uodCIIUZw9hzFmv+AgcCmco7MRilow1ACpN8gFhwMilFRCoMowgVEIIVhIINhwFg4GiCpfw/dhx/mn4uBCoXRhWktAVFTIVhw9mj8YseDkUnqPEoeuugVEAAlgSgICBACAVC8AUQCQQVSAEsD/4ASeYgA/ACkHNiK5Cj4VR/AVBng+RCQVwCqMOAQPhIKOHgEB44VR8YVBx4VR+eAgOfCqPxwEDCqX5CoKvS/PAgc/YqQVU/gV/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/Cv4V/CsMfCqP4CoOfCqP54EBx4VR+OAgPPCqPzwEA44VR4cAgHhCqMHCoNwAQIAPjwCBngVRvgCBV6XwCoMHCqPAHyIA/AEigEf4IAOkAEDoAPJWAtA+PHv+Al6uPCofAGAgALoHz51/8AVT+IVS+4VPpMR73woH27n/8Eh8+ZmadIqsoyGICofAkMUktJFZAVBzgVBv34YgMhi8RkIVJnGQIIN8/H34FB8kJiIVIkVEyGQkF8/Pj4GBkhBKCoOexEQvHx8fBgMXzMxTJkICoXCVx8AggDGABsD/4AB/AVQAH4APA"));
 
 /*
 I took the number bitmaps, added two columns to each digit (for spacing), and combined them for the Espruino Bitmap Font Generator. Here's the commands I used for processing the original 26 by 41 px font:
@@ -84,10 +84,7 @@ function drawBackground() {
 g.setBgColor(0,0,0);
 g.setColor(1,1,1);
 g.clear();
-g.drawImage(imgBg,g.getWidth()/2 - 144/2 ,0);
-// this covers the part of the background with branding, makes room for widgets
-g.setColor(0,0,0);
-g.fillRect(0,0,g.getWidth(),30);
+g.drawImage(imgBg,0,0);
 g.reset();
 }
 
@@ -103,15 +100,15 @@ g.setColor(1,1,1);
 var batPercent = E.getBattery();
 if (Bangle.isCharging()) {selBattery = imgBattery_Charge;}
 else {selBattery=imgBattery;}
-g.drawImage(selBattery,127,42);
+g.drawImage(selBattery,127,59);
 if (batPercent != null) {
-g.drawImage(imgPercent, 118,43);
+g.drawImage(imgPercent, 118,60);
 
 }
 
 //draw 24 hr indicator and 12 hr specific behavior
 if (is24hr){
-g.drawImage(img24hr,32, 70);
+g.drawImage(img24hr,32, 82);
 if (leadingZero){
                    h = ("0"+h).substr(-2);}}
 else if (h > 12) {g.drawImage(imgPM,40, 70);
@@ -124,7 +121,7 @@ else if (h > 12) {g.drawImage(imgPM,40, 70);
 
 //draw separator
 if (separator){
-g.drawImage(imgSep, 85,96);}
+g.drawImage(imgSep, 85,108);}
 
 //draw day of week
 var imgW = null;
@@ -135,7 +132,7 @@ if (w == 3) {imgW = imgWed;}
 if (w == 4) {imgW = imgThr;}
 if (w == 5) {imgW = imgFri;}
 if (w == 6) {imgW = imgSat;}
-g.drawImage(imgW, 85, 66);
+g.drawImage(imgW, 85, 78);
 
 
 // draw nums
@@ -149,16 +146,16 @@ if (h<10) {
     }
   else {h = " " + h;}
 }
-g.drawString(h, 25, 88, true);
-g.drawString(("0"+m).substr(-2), 92, 88, true);
+g.drawString(h, 25, 100, true);
+g.drawString(("0"+m).substr(-2), 92, 100, true);
 // draw date
 g.setFontCustom(fontDate, 48, 12, 15);
-g.drawString(("0"+d).substr(-2), 123,66, true);
+g.drawString(("0"+d).substr(-2), 123,78, true);
 // draw battery
 g.setFontCustom(fontTiny, 48, 6, 8);
 if (batPercent < 10) {batPercent = " " + batPercent;} //makes sure zero is next to percent sign
-if (batPercent < 100) {g.drawString(batPercent, 105, 42, true);}
-  else {g.drawString(batPercent, 99, 42, true);}
+if (batPercent < 100) {g.drawString(batPercent, 105, 59, true);}
+  else {g.drawString(batPercent, 99, 59, true);}
 // widget redraw
 Bangle.drawWidgets();
 queueDraw();
