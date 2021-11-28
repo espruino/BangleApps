@@ -4460,7 +4460,7 @@
   { "id": "93dub",
    "name": "93 Dub",
    "shortName":"93 Dub",
-   "icon": "icon.png",
+   "icon": "93dub.png",
    "version":"0.01",
    "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
    "tags": "clock",
