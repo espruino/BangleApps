@@ -360,6 +360,10 @@ function plotGraph(info, style) {
     var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {
       ++nl;c=l.split(",");
+      l = f.readLine(f);
+      if (c[latIdx] == "") {
+        continue;
+      };
       t = c[timeIdx];
       i = Math.round(80*(t - strt)/dur);
       p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
@@ -372,7 +376,6 @@ function plotGraph(info, style) {
       }
       lp = p;
       lt = t;
-      l = f.readLine(f);
     }
   } else throw new Error("Unknown type "+style);
   var min=100000,max=-100000;
