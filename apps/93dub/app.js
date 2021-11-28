@@ -25,8 +25,6 @@ var imgSun = E.toArrayBuffer(atob("Ig8BwHf7D7Ac/MHD/z8wMP/PzMQ/8/M/D/z8z8QPf7f6A
 
 // define icons
 var imgSep = E.toArrayBuffer(atob("BhsBAAAAAA///////////////AAAAAAA"));
-var imgBattery = E.toArrayBuffer(atob("EAkBAAF//X/8f/x//H/8f/x//QAB"));
-var imgBattery_Charge = E.toArrayBuffer(atob("EAkBAAF//UEERwRf9EHEQQR//QAB"));
 var imgPercent = E.toArrayBuffer(atob("BwcBuq7ffbqugA=="));
 var img24hr = E.toArrayBuffer(atob("EwgBj7vO53na73tcDtu9uDev7vA93g=="));
 var imgPM = E.toArrayBuffer(atob("EwgB+HOfdnPu1X3ar4dV9+q+/bfftg=="));
@@ -66,23 +64,10 @@ var d = date.getDate(), w = date.getDay();
 g.reset();
 g.setBgColor(0,0,0);
 g.setColor(1,1,1);
-// draw battery indicator
-var batPercent = E.getBattery();
-if (Bangle.isCharging()) {
-g.drawImage(imgBattery_Charge,127,59);
-}
-else {
-g.drawImage(imgBattery,127,59);
-g.setColor(0,0,0);
-g.fillRect(129,61,(129 + batPercent / 10),65);
-g.setColor(1,1,1);}
-if (batPercent != null) {
-g.drawImage(imgPercent, 118,60);
-}
 
 //draw 24 hr indicator and 12 hr specific behavior
 if (is24hr){
-g.drawImage(img24hr,32, 82);
+g.drawImage(img24hr,32, 65);
 if (leadingZero){
                    h = ("0"+h).substr(-2);}}
 else if (h > 12) {g.drawImage(imgPM,40, 70);
@@ -95,7 +80,7 @@ else if (h > 12) {g.drawImage(imgPM,40, 70);
 
 //draw separator
 if (separator){
-g.drawImage(imgSep, 85,108);}
+g.drawImage(imgSep, 85,98);}
 
 //draw day of week
 var imgW = null;
@@ -106,7 +91,7 @@ if (w == 3) {imgW = imgWed;}
 if (w == 4) {imgW = imgThr;}
 if (w == 5) {imgW = imgFri;}
 if (w == 6) {imgW = imgSat;}
-g.drawImage(imgW, 85, 78);
+g.drawImage(imgW, 85, 63);
 
 
 // draw nums
@@ -120,16 +105,12 @@ if (h<10) {
     }
   else {h = " " + h;}
 }
-g.drawString(h, 25, 100, true);
-g.drawString(("0"+m).substr(-2), 92, 100, true);
+g.drawString(h, 25, 90, true);
+g.drawString(("0"+m).substr(-2), 92, 90, true);
 // draw date
 g.setFontCustom(fontDate, 48, 12, 15);
-g.drawString(("0"+d).substr(-2), 123,78, true);
-// draw battery
-g.setFontCustom(fontTiny, 48, 6, 8);
-if (batPercent < 10) {batPercent = " " + batPercent;} //makes sure zero is next to percent sign
-if (batPercent < 100) {g.drawString(batPercent, 105, 59, true);}
-  else {g.drawString(batPercent, 99, 59, true);}
+g.drawString(("0"+d).substr(-2), 123,63, true);
+
 // widget redraw
 Bangle.drawWidgets();
 queueDraw();
