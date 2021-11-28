@@ -10,11 +10,15 @@
   border-bottom: 0px;
 }
 
+.navbar-brand.mr-2 > img {
+  margin-left: 0.2rem;
+}
+
 .panel-body.columns {
   margin: 1px;
 }
 
- .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+.tile.column.col-6.col-sm-12.col-xs-12.app-tile {
   border: solid 1px #fafafa;
   margin: 0;
   min-height: 150px;
