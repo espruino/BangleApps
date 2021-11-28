@@ -304,10 +304,10 @@ function plotTrack(info) {
   g.fillCircle(ox,oy,5);
   if (info.qOSTM) g.setColor("#000");
   else g.setColor(g.theme.fg);
-  g.drawString(require("locale").distance(dist),120,220);
+  g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
-  g.drawString("Back",230,200);
+  g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
   setWatch(function() {
     viewTrack(info.fn, info);
   }, global.BTN3||BTN1);
@@ -402,7 +402,7 @@ function plotGraph(info, style) {
   });
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
-  g.drawString("Back",230,200);
+  g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
   setWatch(function() {
     viewTrack(info.filename, info);
   }, global.BTN3||BTN1);
