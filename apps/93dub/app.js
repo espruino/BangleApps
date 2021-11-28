@@ -48,72 +48,75 @@ function queueDraw() {
 }
 
 function drawBackground() {
-// set background
-g.setBgColor(0,0,0);
-g.setColor(1,1,1);
-g.clear();
-g.drawImage(imgBg,0,0);
-g.reset();
+  g.setBgColor(0,0,0);
+  g.setColor(1,1,1);
+  g.clear();
+  g.drawImage(imgBg,0,0);
+  g.reset();
 }
 
 function draw(){
-drawBackground();
-var date = new Date();
-var h = date.getHours(), m = date.getMinutes();
-var d = date.getDate(), w = date.getDay();
-g.reset();
-g.setBgColor(0,0,0);
-g.setColor(1,1,1);
+  drawBackground();
+  var date = new Date();
+  var h = date.getHours(), m = date.getMinutes();
+  var d = date.getDate(), w = date.getDay();
+  g.reset();
+  g.setBgColor(0,0,0);
+  g.setColor(1,1,1);
 
-//draw 24 hr indicator and 12 hr specific behavior
-if (is24hr){
-g.drawImage(img24hr,32, 65);
-if (leadingZero){
-                   h = ("0"+h).substr(-2);}}
-else if (h > 12) {g.drawImage(imgPM,40, 70);
-                 h = h - 12;
-                  if (leadingZero){
-                   h = ("0"+h).substr(-2);}
-                    else
-                   {h = " " + h;}
-                 }
-
-//draw separator
-if (separator){
-g.drawImage(imgSep, 85,98);}
-
-//draw day of week
-var imgW = null;
-if (w == 0) {imgW = imgSun;}
-if (w == 1) {imgW = imgMon;}
-if (w == 2) {imgW = imgTue;}
-if (w == 3) {imgW = imgWed;}
-if (w == 4) {imgW = imgThr;}
-if (w == 5) {imgW = imgFri;}
-if (w == 6) {imgW = imgSat;}
-g.drawImage(imgW, 85, 63);
-
-
-// draw nums
-// draw time
-g.setColor(0,0,0);
-g.setBgColor(1,1,1);
-g.setFontCustom(fontNum, 48, 28, 41);
-if (h<10) {
-  if (leadingZero) {
-    h = ("0"+h).substr(-2);
+  //draw 24 hr indicator and 12 hr specific behavior
+  if (is24hr){
+    g.drawImage(img24hr,32, 65);
+    if (leadingZero){
+      h = ("0"+h).substr(-2);
+      }
+  } else if (h > 12) {
+    g.drawImage(imgPM,40, 70);
+    h = h - 12;
+    if (leadingZero){
+      h = ("0"+h).substr(-2);
+    } else {
+      h = " " + h;
     }
-  else {h = " " + h;}
-}
-g.drawString(h, 25, 90, true);
-g.drawString(("0"+m).substr(-2), 92, 90, true);
-// draw date
-g.setFontCustom(fontDate, 48, 12, 15);
-g.drawString(("0"+d).substr(-2), 123,63, true);
+  }
 
-// widget redraw
-Bangle.drawWidgets();
-queueDraw();
+  //draw separator
+  if (separator){
+  g.drawImage(imgSep, 85,98);}
+
+  //draw day of week
+  var imgW = null;
+  if (w == 0) {imgW = imgSun;}
+  if (w == 1) {imgW = imgMon;}
+  if (w == 2) {imgW = imgTue;}
+  if (w == 3) {imgW = imgWed;}
+  if (w == 4) {imgW = imgThr;}
+  if (w == 5) {imgW = imgFri;}
+  if (w == 6) {imgW = imgSat;}
+  g.drawImage(imgW, 85, 63);
+
+
+  // draw nums
+  // draw time
+  g.setColor(0,0,0);
+  g.setBgColor(1,1,1);
+  g.setFontCustom(fontNum, 48, 28, 41);
+  if (h<10) {
+    if (leadingZero) {
+      h = ("0"+h).substr(-2);
+    } else {
+      h = " " + h;
+    }
+  }
+  g.drawString(h, 25, 90, true);
+  g.drawString(("0"+m).substr(-2), 92, 90, true);
+  // draw date
+  g.setFontCustom(fontDate, 48, 12, 15);
+  g.drawString(("0"+d).substr(-2), 123,63, true);
+
+  // widget redraw
+  Bangle.drawWidgets();
+  queueDraw();
 }
 
 
