@@ -664,7 +664,7 @@
   {
     "id": "gpsrec",
     "name": "GPS Recorder",
-    "version": "0.25",
+    "version": "0.26",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -683,7 +683,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
