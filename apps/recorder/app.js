@@ -363,7 +363,7 @@ function plotGraph(info, style) {
       l = f.readLine(f);
       if (c[latIdx] == "") {
         continue;
-      };
+      }
       t = c[timeIdx];
       i = Math.round(80*(t - strt)/dur);
       p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
