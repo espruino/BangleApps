@@ -7,7 +7,7 @@ Usage:
 // read a single app setting
 value = require('Settings').get(appid, key, default);
 // omit key to read all app settings
-value = require('Settings').get();
+value = require('Settings').get(appid);
 // write a single app setting
 require('Settings').set(appid, key, value)
 // omit key and pass an object as values to overwrite all settings
