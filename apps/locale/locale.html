@@ -181,7 +181,7 @@ function round(n) {
 var is12;
 function getHours(d) {
   var h = d.getHours();
-  if (is12==undefined) is12 = (require('Storage',1).readJSON('setting.json')||{})["12hour"];
+  if (is12===undefined) is12 = (require('Storage').readJSON('setting.json',1)||{})["12hour"];
   if (!is12) return h;
   return (h%12==0) ? 12 : h%12;
 }
