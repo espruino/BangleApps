@@ -4543,5 +4543,21 @@
     "storage": [
       {"name":"mylocation.settings.js","url":"mylocation.settings.js"}
     ]
-  }
+  },
+  {
+    "id": "pebble",
+    "name": "Pebble Clock",
+    "shortName": "Pebble",
+    "version": "0.01",
+    "description": "A pebble style clock to keep the rebellion going",
+    "icon": "pebble.png",
+    "dependencies": {"widpedom":"app"},
+    "screenshots": [{"url":"screenshot_pebble.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"pebble.app.js","url":"pebble.app.js"},
+      {"name":"pebble.img","url":"pebble.icon.js","evaluate":true},
+    }
 ]
