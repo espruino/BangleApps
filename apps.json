@@ -449,6 +449,27 @@
     ]
   },
   {
+    "id": "mandlebrotclock",
+    "name": "Mandlebrot Clock",
+    "version": "0.01",
+    "description": "A mandlebrot set themed clock cool",
+    "icon": "mandlebrotclock.png",
+    "screenshots": [{ "url": "screenshot_mandlebrotclock.png" }],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      { "name": "mandlebrotclock.app.js", "url": "mandlebrotclock.js" },
+      {
+        "name": "mandlebrotclock.img",
+        "url": "mandlebrotclock-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "imgclock",
     "name": "Image background clock",
     "shortName": "Image Clock",
