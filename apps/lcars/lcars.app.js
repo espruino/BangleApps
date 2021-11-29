@@ -1,53 +1,78 @@
+const filename = "lcars.setting.json";
+const Storage = require("Storage");
+let settings = Storage.readJSON(filename,1) || {
+  alarm: -1,
+};
+
 /*
  * Requirements and globals
  */
 const locale = require('locale');
-var alarm = -1;
-var hrmValue = "-";
 
 var backgroundImage = {
   width : 176, height : 151, bpp : 3,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("AAdx48cATojCufPnnzASocCyVJkgCdyAkCh158+eASsAgMHQDyDggKAeQcKAgQYodZgRoFpAkCAG0QJQtwIPMSQYtAIPLOGQfSADAQRA5Qf6D6g/gQf8H/iD/n//wCD9gP/Qf5BBQf5BC+CD9h5BB/yD8jl/IIPx46D6g4/BQYU//+AQe8B/6DD//Hj/x4CD2v/4AQJBC4ED/4IBQegvBPQJBERgSD1j/wgB9BAASACn/gQepECIIaACg/8QeY1DQYjCD/+AQeUHQZSPDwUIkACDQdT7DIJEfQYIAxg44DIJHwIOU/fwYAERgUDIOUBPQhBE/hB1QZRBFjlx44CDuBBpg4CCHwdxIIcfIIPnz15AQeAQdT+CIIXgZwJBDHAM8+fPAQbOqQY0AIIkcAQKDxg44BIIX4RgX/GoICCQeR3BIIXARIfwJoSDyfYI4B//+BAaABn/gAoKDxfYNx459BJQnx/4FCQeUAv7EBIIv//AFCQeUAgPH/lwAwUHQYPAQe0An6EBAAfj/wMDQeZ9B/jIC//HgCJDQe3gAYICCgF+Qe8B/4IGIIiD0nAHGhyD3ABqD0ABiD/Qf4ADjiD/gEnQYuQQf6D7gaDFzxB5gFzQYnz4JB5hyDFATfkEwUN23btoCVgEBQYoCcIIRhZDYMJQf4ABjiD/AH4A/AH4AGiFx48cATokCufPnnzASocCyVJkgCdyAkCj158+eASsAgKAfQcEJQDyDhNA8QoMEAQIqCACweEASkCNAtIHbIAfdI1wIPMSQYtAQf6D7QAYCCIHKD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/AH4A/AH4A/AH4Asjlx44CDsBB57dt2wCDQfWevPnAQaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4Akjlx44CDQfQA/AH4A/AH4A/ABM8+fPAQfwIPPnz15AQeAQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AZjiD/gEHQYuQQf6D7gaDFzxB5gFzQYnz48cuICZEwQdZgECQYoCb8hBChMkyVJASsAgPHQYgCcQboABQf4ABfzACIQbg="))
+  buffer : require("heatshrink").decompress(atob("AAUEufPnnzATkAg4daIIXnz15ATvkwEDDrUAgPHQDyDghyAeQcNzJQ0cuPHATCDBDrUDJQ1AgAA3jjOF+BA4T4KDFyBB5Qf4ABQAaD9QAaD/QesH8CD/n/8Qf8//+AQfsB///GQ6D2h5BJQf6D7/yD8jl/IIIABjiD5n4/DAAWAQe8B//8QYfH//x4CD2HwMDQIf4AoP4Qesf/56BQYYFBuP/Qev//0AQYoKBn/gQecH/lwQwQADBYaDzGoZBHR4OAQehBKj5BBsuWrICDBAIAofYZBFBAZ6qIJJ6DQZBB3IAiDDgZBygJ6EIIn8IOqDKIIscuPHAQdwINkHIJEfIIPnz15AQeAINT+CHwcPAYI1BIIU8+fPAQbOqg56BQYcAgKD4IIv4RgSDCAQSD34AIC//wBYSDyO4P+IIoIB+E/8AFBQeL7B//HHYJKE+P/AoSDygF/QQJBF//4AoSDygEBQYgFBj/xZYaDzgE/PoIAE/wMDQeZBB/jICAAMcuAMDQevgQwR0CvyD3gP/BAxBEQek4A40OQe4ANQegAMQf6D/AAccQf8Ak6DFyCD/QfcDQYueIPMAuaDE+fBIPMOQYoCb8glB7dt2wCW2EAgKDFATkAg2atOmAS5eBhKDigyDZ2zHCjiD/AAMChEgwQCcQb4AiQb5BiQbscuPHATyDfyfPnnzATnwQbsBQD6DghKAeQcJoHiFBggCYQYVhdwQATgOmgVPNAnOECwAGQYIZXgM2dI1wIL2aoCDYibsF4CD/QcGYILGmyaDFwCD/QfaADQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D4jCD/ADKDnILSD/Qf6DEHO6DJIP6D/Qf6D/QY8cuPHAQdAQfPz588AQeAQf8cuCD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DqoCD5HO6DJIP6D/Qf6D/QY8cuPHAQdwE7sGzCDZ+fPngCDwBBe7aD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/QfcTQYvAQf6DgzVAQbECp6DE5yD5gCDFATqDCsOAIKtB00AhKDEATnwQYVt2wCXQwKDltOmAS6IC2aD82BBCQccaQbGAA=="))
 }
 
-var iconPlanet = {
+var iconEarth = {
+  text: "EARTH",
   width : 50, height : 50, bpp : 3,
-  transparent : 5,
-  buffer : require("heatshrink").decompress(atob("23btoCD6PHjlx9oLGAQuGiVJkmSpIRK2lxEYQCDCJOGjEhEYNBwUI5drEw/xEYwCB8oRGDoMhwmSsAFBkGM237NZICGj15OgnaDoOGI4cgwUa5dv332EwdHEZACB8+evYRCtAdBEAQpDscs3379+9HAW8EZPHz158+WSQQjFwUYsMs2QjBEwPrSRZuCJQN5TAJuCEYkhwUS5cvJQRxCNxZKDOIXgJQkh0mYtMk2XLJQXv1u0EZSVDOIWsJQsSpMkyVJljgB9gmB7YjLOgtq4BKEsIjCAQNLlgCBt+9EZwCCj8sJQpxB00aJoYCB5cBEZ4CB+RKFJoeGjAjCoOGzBKaAQeGJQQFBwJKSsAjIcweSBwRKRjojKOgYFCxZKRtAaBjHrlm4FJUN3hKQi3ShAjB2XLAQQmI7dHJR97tsh9gjEAQLpHlu2+PnExvF23an3794mF2BKFm3btsevImMjwRB23v3wmB3xNF5BuDCIPb8+eEwOeExIRCtojCJo5uEEwRxBEwRuJHAdI+YmCTYlgJQIREtrjCEwLdHCIiYBhF7OgnJSQgmFjhxCOgiSDAQvSX4QmB90IkQRIX4gmCEZICDvwmCBY3QA"))
+  buffer : require("heatshrink").decompress(atob("AFtx48ECBsDwU5k/yhARLjgjBjlzAQMQEZcIkOP/fn31IEZgCBnlz58cEpM4geugEgwU/8+WNZJHDuHHvgmBCQ8goEOnVgJoMnyV58mACItHI4X8uAFBuVHnnz4BuGxk4////Egz3IkmWvPgNw8f/prB//BghTC+AjE7848eMjNnzySBwUJkmf/BuGuPDAQIjBiPHhhTCSQnjMo0ITANJn44Dg8MuFBggCCiFBcAJ0Bv5xEh+ITo2OhHkyf/OIQdBWwVHhgjBNwUE+fP/5EEgePMoYLBhMgyVJk/+BQQdC688I4XxOIc8v//NAvr+QEBj/5NwKVBy1/QYUciPBhk1EAJrC+KeC489QYaMBgU/8BNB9+ChEjz1Jkn/QYMBDQIgCcYTCCiP/nlzJQmenMAgV4//uy/9wRaB/1J8iVCcAfHjt9TYYICnhKCgRKBw159/v//r927OIeeoASBDQccvv3791KYVDBYPLJQeCnPnz//AAP6ocEjEkXgMgJQtz79fLAP8KYkccAcJ8Gf/f/xu/cAMQ4eP5MlyQRCMolx40YsOGBAPfnnzU4KVDpKMBvz8Dh0/8me7IICgkxJQXPIgZTD58sEgcJk+eNoONnFBhk4/5uB/pcDg5KD+4mEv4CBXISVDhEn31/8/+mH7x//JQK5CAAMB4JBCnnxJQf/+fJEgkAa4L+CAQOOjMn/1bXIRxDJQXx58f//Hhlz/88EgsChMgz/Zs/+nfkyV/8huDOI6SD498NwoACi1Z8+S/Plz17/+QCI7jC+ZxBmfPnojIAAMDcYWSp//2wRJEwq2GABECjMgNYwAmA="))
 }
 
-var iconGps = {
+var iconSaturn = {
+  text: "SATURN",
+  width : 50, height : 50, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("AH4A/AEkQuPHCJ0ChEAwARNjAjBjgjOhs06Q2OEYVx4ARMhEggUMkANIDoIgBoEEgEBNxJEC6ZrBAAMwNxAjDNYcHNxIjB7dtEwIHBwRoKj158+cuPEjlwCRAjC23bpu0wRNDAAsHEYWeEwaSJ6YjCAQUNSRQjEzxQBWZMNEYlsmg2JWAIjCz95SoJuJggjDtuw6dMG5JKCz998wFBJRVNEYW0yaVBJRNhJQN9+4pCzhKJmBKC4YpB/fINxIgCzFxSoQ3J4ENm3CAQPb98wbpEcAQMYWwKYBNxMDXgc2/fv3g2IEAOAgAjBjy5CEhEMfYICBgfPnjdLjj+CgMHiC3JknDhhoINw4jCAB0IJQIANR4QjPAH4A/AFA"))
+}
+
+var iconMoon = {
+  text: "MOON",
+  width : 50, height : 50, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("AH4AQjlx44CCCZsg8eOkHDwAQKEYgmPhEgEQM48AOIgMHEYoCB4ATI8UAmH/x04JoRuJsImHuBKLn37EwZuIgEQOI8cEpXj/yYBhE8+YNGgkYoJxITBUPnAaC///nC+FjBuIOJZEB8YeCh/8AoYACoMEEAnEjhQDPQJKJ/DCDAoi5DoLdHAoMQgLjFWYPOnngh02IwXzwDjEgPGEYS8BI4MBYoSVG4fP/nghkAgZrDkngJQqSG4gvBg4sBQgkImHihEAWwP8ZBMBEYl5/+cSoVAGQIUFh04weJn///0gj/OEw5KEz45BzhuCTYQAEgePB4IACAoJuBnAQEa4XHjxKB//xFgWHJQsCRgMDEonipwjENwUBDQNx8+evvn/hTDLw3igE+EgZxB8UOXIvEJQUfEYOfv53DEQkgga5BJQvzx84cAj+CDoNh8/eEYJKDuCSEcocnEon+/7xEgFBIIcfB4Mf/IICXI2DgDdBAAn758gCIq5Dv4zBvJuIOIfjEgvP/ARHgwdCB4P3AoTdFAAk4EYk8SQgAFTALaDSQwAGh08//vnDmBABYmEEZYAzA=="))
+}
+
+var iconMars = {
+  text: "MARS",
+  width : 50, height : 50, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("AH4ATjlwCJ+Dh0wwAQMg0cuPHjFhCZkDps0yVJkmQCBMEjFx42atOmzQmLhMkEYQCCCREQoOGEYmmzB0IEY4CBkARGoJKBEYQCEzgSGkGSpAjDyYCCphuGiFhJQgCD8ASFgRHGAQKbB6BuHJRGeOIsINxEk6dNmARDgMEjQjHAQPnVQojIyZKB6YSDNwK5FAQt54BuDXJIjBEwK5EgxKKXgq5BJRdgXIojJAQJKMcAM0EwM2JUApDoCVFExa7FkGCgAmIkAREEwUEjAmHCIgABhEggQmFpACBCIojBEwRQCzVhwkQU4YADgQmBwQCCI4IFBCAojFAQojGJQQjDAQgRGEZICBEo4gFyUIkilFJQUYEAZrBAQMYNw5KDSQSbCNwwABgOGEwgCBsPACQ5xGwdNnARJcAVh48evvnCJK8Chs+/fv33gCRcB48cuPHCBYA/ADAA=="))
+}
+
+var iconSatellite =  {
+  text: "GPS ON",
   width : 50, height : 50, bpp : 3,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("pMkyQCFpH0BAwCJv/6CJ8l589CJ0kyf//wIDpVEChM8+/fBAdZ8QRIp++///0gIBlMkxI4IuZKB+/SKAPHzpKJ/YkB//pKAP2BYeXhIFDx88+fPvqYBnibEkmUAofv34lC/RQBBYdcmPCXIYjBEwPfvnzJoILBQoUlHAUuJQYmCDodw48cuBKGTA0WEYIEBJQ6YEQwMMuImBJQyYEkmZFAVkyVSJQ6YCyUcmPDjgmBTAJKETAlJiS4ETANPJQpxCJQtxTALgBEwnfvohBI4NZkmWpNlcAgAD/wzBEYaYCy8cJQiYEyIjCTAWS3wlGTAVIEwkerJKFTAkmOIclToK8GAAIPBIgImCufHyxxG59pEIS8DvfypMr968HEwOHEwfx8+cEYkpCIeSoiYByVf/uSkmTEQP7ZIiYDnl5AQNwBYgCGyOn38k2+2pIRKyVeuPPj1x4ccCJVKSgP/5cJA4NSExMps+cSoMMKAIVCCg7SBpd7TANZkmUHBMevPnjlwcwXCCJFEzYDBA4WWKIIRHpEw4+eNwUxEwKYIkVJk1IyIKFHA+DR4VcJQYCBJRBoCkxHBAgNkyyYKkmXEYaYMAQMSEYKYNAQOHEwnSfBYjBAgVaCJdJJSMkTAK8KYQyVKAQ4jBNxiYEcBCYJXIkgA="))
-}
-
-var iconCompass = {
-  width : 50, height : 50, bpp : 3,
-  transparent : 2,
-  buffer : require("heatshrink").decompress(atob("pMkyQCDl//AAPSBYwCFv4RCAAOkCJNLCAgACCJm2rNn34FB+g1Jvny5cs2XPn///QRI9uWEYP2rNly5NHNYN82YjB/4mC5YmBOgkl//9y1bsuW/4CB/Nlz//9I4D3/8I4M8EAICB55NCL4g/BIgRKBAQtnL4lf+QdCI4YCD2Y4DSQPZtojHsuerI4Dv/flnzEZB3CHAJuB8ojIAQY4CNwJHI2XHTAY4B/4gJrGBAoSqBpf2EZMQmRxEv/5Nw9YyVCAoO+rf/0v/Nw/PjFB4ZxCn/+y7dBJQyNBkAIDz/6/7dBJQsYsMEhgsE//+7IjFsTYBwAIE/4ABEYs8uPEiFyF4gRBXIImEBAPSpAjDtuX//9+YmERgMcuODBAU9+xKCr68Ev4lBNwm//IJCnhxDDQPx4xuFJQhBDDQXwTwpKBSos8//HjlwYQyVG34aB2zCG//1Nw6SFAQTgD/JuD+wjFrbgCr/yMQI+B/lxEY08UgPpl4jCNwP+I4wCBUgOk3/8DoXxI44CBn/0yREDzx0EAQlndANJv4gJAQf3/VJkq8CJoZuGXIPpkg4BOIZuI5/9CII4BEZAmDNwIRBHAJxDNxH+CII4CSQW+NALgBtomBt5uCHAbjB2ZoCAQPyJQP/NwIRCkm//4gBIgP/SQn/CImSYALjDviSDQAYUDL4ImEEYYRGL4X/76PCI4P/SQYCFl4MBAAgRJEwYRPOgZrHpMgA"))
+  buffer : require("heatshrink").decompress(atob("pMkyQC/ATGXhIRPyNl0gmPjlwCJ9ly1aCJ1c+fHJR1Hy1ZJR1I+fPnlx6QRLpe+/JKBr5KMuYjBJQMdCJce/fvJQW0CJUlEYQCBSpvvJQbXJjl0NwnzNxGQwEOnHhgF78+WqQyIrFx48cAQXz4ShJgAABh0+8cP//9LJEhg4jDuP3//0LhGQgYlBgeAn///5cIy8MuAmDCIP/9I4HkmCEYMOgHfCQWkCI0cuBuDgF/CIP+CI1Ny1IkeAgHANwIAB/QRFrj7BhkxEwQRC/4RFpbXDgSVBg4RCSorXDI4MJAQMfCIP8cwImDn37fwN58+kwHgLgSVFub7CI4NyBAJKDLgkuEYX78+evKtCLg0jEYRKC58JMoRcFkwjDJQTFDl65EkojEAQMdcwn/+gFC3YjEJQLXEpYRDWwQmEdI6SHAQO0CJUkx4jDF4gCIJQgRMXIjCEARIjCCJ2XEYPKCJqJBJQIROcAUpCJ0kybaDARtdCKAC2kAA="))
 }
 
 var iconAlarm = {
+  text: "TIMER",
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("kmSpICEp//BAwCJn/+CJ8k//5CKAABCJs8uPH//x48EI5YjCAARNKEYUcv//jgFBExEnEYoAC+QmHIgIgC/gpCuPBCI2fIgU4AQXjA4P8CIuTEYZKBAolwHApXBEAWP//jxwpBAALaFDoYCIiQmDDIP4EAT+CEwnJEwYjLAQLaFEYomDKALmDNwoCIOIZuD8AkFgCYDHAQjMAQTdDNwOAEg0Dx0/cYeREZtxQYOTHgJuHOIvkXJy8DNwIACJQ8Ah4NDAAfxEZARHOIIkHg4jQAQb1CQ4KVJgEOnDIBSoIjNAQPBcAaVJcAKVBcDGOcD7OBMQM48BuH8f//JKCnhKNggRBkmfTQJxBEwhuD/gRCyVHJRlyCIVJXgYmB8ZQBAoIKBXIQmCOIt/NxAUCOIImCIgIpCBAJuDAQZEE/huIAQWTDgImBTYQGC8gRFcYpKFCI8kDwQAFCJBfBEAX/+IjBiQRIEw4jJAQc8v//NYwCIOgJrIJpA1OcwbaFAQWQA="))
 }
 
 var iconCharging =   {
+  text: "CHARGE",
   width : 50, height : 50, bpp : 3,
   transparent : 5,
   buffer : require("heatshrink").decompress(atob("23btugAwUBtoICARG0h048eODQYCJ6P/AAUCCJfbo4SDxYRLtEcuPHjlwgoRJ7RnIloUHoYjDAQfAExEAwUIkACEkSAIEYwCBhZKH6EIJI0CJRFHEY0BJRWBSgf//0AJRYSE4BKLj4SE8BKLv4RD/hK/JS2AXY0gXwRKG4cMmACCJQMAg8csEFJQsBAwfasEAm379u0gFbcBfHzgFBz1xMQZKBjY/D0E2+BOChu26yVEEYdww+cgAFCg+cgIfB6RKF4HbgEIkGChEAthfCJQ0eEAIjBBAMxk6GCJQtgtyVBwRKBAQMbHAJKGXIIFCgACBhl54qVG2E+EAJKBJoWAm0WJQ6SCXgdxFgMLJQvYjeAEAUwFIUitEtJQ14NwUHgEwKYZKGwOwNYX7XgWCg3CJQ5rB4MevPnAoPDJRJrCgEG/ECAoNsJRUwoEesIIBiJKI3CVDti/CJRKVDiJHBSo0YsOGjED8AjBcAcIgdhcAXAPIUAcAYIBcA4dBAQUG8BrBgBuCgOwcBEeXIK2BBAIFBgRqBGoYAChq8CcYUE4FbUYOACQsHzgjDgwFBCIImBAQsDtwYD7cAloRI22B86YBw5QBgoRJ7dAgYEDCJaeBJoMcsARMAQNoJIIRE6A"))
 }
 
 var iconNoBattery = {
+  text: "NO BAT",
   width : 50, height : 50, bpp : 3,
-  transparent : 2,
-  buffer : require("heatshrink").decompress(atob("pMkyQCoycMmHDhgLEqVECg1Bw0YsOGBAdKpMSEwwjCmHCBAYDBHA4jCjFpBAUpkmJJR0lkmRL49Fy1ZsuWBAWkyQRGxcs2XLAQe0ymSNw9t23bAQnSyVICI1IEYoCBqSAIkwjF7dupMiQA5KH/KSIJQ+5SRBKH2fkSRBKH8iSHJRHPSRBKIH4PSCJBKFn1JhYRIJQqSBkdtJRscSQLgBJRliAwONcAJKM9MkyAFBJRm/AwM2AoJKMUgNCFIJKM7A8BOgRKMmVJg8MJRqSBAwMGJRqSBzVpJRu5kmTpMhJRmz8mQ2emJRqABm3cyK/BJRWPSQUauRKMSQVmpFbJRdSpMLOIODX4JKJpVJkYgB+gCBJRQDBEAQCDJREpkmNEAQCDJQ8lkmQEYpKJ0mScAIjEJRGUyVEcAJKNSQLgBJRqSBiVIJRqSBkTgBJRoDBAIJKNSQOJAoJKN0mRAoJKOyQFCSp4CikAA="))
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("kmSpIC/AWMyoQIFsmECJFJhMmA4QXByVICIwODAQ4RRFIQGD5JVLkIGDzJqMyAGDph8MiRKGyApEAoZKFyYIDQwMkSQNkQZABBhIIOOJRuEL5gRIAUKACVQMhmUSNYNDQYJTBBwYFByGTkOE5FJWYNMknCAQKYCiaSCpmGochDoSYBhMwTAZrChILBhmEzKPBF4ImBTAREBDoMmEwJVDoYjBycJFgWEJQRuLJQ1kmQCCjJlCBYbjCagaDBwyDBmBuBF4TjJAUQKINBChCDQxZBcZIIQF4NIgEAgKSDiQmEVQKMBoARBAAMCSQLLBVoxqKL4gaCChVCNwoRKOIo4CJIgABBoSMHpIRFgDdJOIJUBCAUJRgJuEAQb+DIIgRIAX4C/ASOQA"))
 }
 
-Graphics.prototype.setFontAntonioMedium = function(scale) {
+// Font to use:
+// <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
+Graphics.prototype.setFontAntonioSmall = function(scale) {
   // Actual height 18 (17 - 0)
   g.setFontCustom(atob("AAAAAAAAAAAAAAAf4Mf/sYAMAAAAAAfgAfAAAAAfgAeAAAAAAiAAj8H/4fyEAv8f/gfiAAgAAAAD54H98eOPHn8Hz8AhwAAAP8Af+AYGAYCAf+AP8MAB8AHwA+AD4AfAAcf4A/8AwMAwMA/8Af4AAAAAwGD8f/8f8MY/cfz4PD8AHMAAAfAAeAAAAAAAAP/+f//YADAAAQABYADf//P/+AAAAAANAAPAAfwAfgAPAANAAAAAAEAAEAA/AA/AAEAAEAAAAAAZAAfAAYAAAAIAAIAAIAAIAAAAAAAAAMAAMAAAAAAAAEAB8Af4H+AfwAcAAAAAP/4f/8YAMf/8f/8H/wAAAAAAEAAMAAf/8f/8f/8AAAAAAAAAHgcfh8cH8YPMf8MPwEAAAAAAOB4eB8YYMY4Mf/8Pn4AAAAAgAHwA/wPwwf/8f/8AAwAAgAAAf54f58ZwMZwMY/8Qf4AAAAAAP/4f/8YYMYYMff8HP4AAAQAAYAAYD8Y/8f/AfgAcAAAAAAAAPv4f/8YYMY8Mf/8Pn4AAAAAAP94f98YGMcMMf/8H/wAAAAAABgwBgwAAAAAABgABg/Bg8AAAAEAAOAAbAA7gAxgBwwASAAbAAbAAbAAbAASAAAAAxwA5gAbAAPAAOAAAAPAAfHcYPcf8Af4AHgAAAAAAAB/gH/wOA4Y/MZ/sbAsbBkb/MZ/sOBsH/AAAAAAMAP8f/4fwwf4wH/8AH8AAMAAAf/8f/8YYMYYMf/8P/4ADgAAAP/4f/8YAMYAMfj8Pj4AAAAAAf/8f/8YAMYAMf/8P/4B/AAAAf/8f/8YMMYMMYIMAAAAAAf/8f/8YYAYYAYYAAAAAAAP/4f/8YAMYIMfP8Pv8AAAAAAf/8f/8AMAAMAf/8f/8f/8AAAAAAf/8f/8AAAAAAAD4AB8AAMf/8f/4f/gAAAAAAf/8f/8A+AD/gfj4eA8QAEAAAf/8f/8AAMAAMAAMAAAf/8f/8f8AB/wAB8AP8P/Af/8f/8AAAAAAf/8f/8HwAA+AAPwf/8f/8AAAAAAP/4f/8YAMYAMf/8P/4AAAAAAf/8f/8YGAYGAf8AP8ABAAAAAf/w//4wAYwAc//+f/yAAAAAAf/8f/8YMAYMAf/8f/8DA8CAAPj4fz8Y4MeeMfP8HD4YAAYAAf/8f/8YAAQAAAAAf/4f/8AAMAAMf/8f/4AAAYAAf4AP/4AP8AP8f/4fwAQAAYAAf8AP/8AD8D/8f8Af8AD/8AD8f/8f8AAAAQAEeB8P/4B/AP/4fA8QAEYAAfAAP4AB/8H/8fwAcAAAAMYD8Y/8f/MfwMcAMAAAf/+f//YADYADAAAAAAfAAf8AB/wAH8AAMQACYADf//f//AAAAA"), 32, atob("BAUHCAcTCAQFBQgGBAYFBggICAgICAgICAgEBQYGBggNCAgICAcHCAkECAgGCwkICAgIBwYICAwHBwYGBgY="), 18+(scale<<8)+(1<<16));
 }
@@ -65,46 +90,44 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    draw(true);
+    draw();
   }, 60000 - (Date.now() % 60000));
 }
 
 
-function draw(queue){
+function draw(){
+
+  // First handle alarm to show this correctly afterwards
+  handleAlarm();
+
+  // Next draw the watch face
   g.reset();
   g.clearRect(0, 24, g.getWidth(), g.getHeight());
 
   // Draw background image
   g.drawImage(backgroundImage, 0, 24);
 
-  // Draw raster
-  // g.drawLine(112, 100, 112, 165);
-  for(var x=1; x<7; x++){
-    g.drawLine(110+x*10, 100, 110+x*10, 160);
-  }
-
-  for(var y=0; y<6; y++){
-    g.drawLine(113, 105+y*10, 175, 105+y*10);
-  }
-
   // Draw symbol
   var bat = E.getBattery();
+  var timeInMinutes = getCurrentTimeInMinutes();
 
   var iconImg =
-    alarm >= 0 ? iconAlarm :
+      isAlarmEnabled() ? iconAlarm :
       Bangle.isCharging() ? iconCharging :
       bat < 30 ? iconNoBattery :
-      Bangle.isGPSOn() ? iconGps :
-      Bangle.isCompassOn() ? iconCompass :
-      iconPlanet;
-  g.drawImage(iconImg, 120, 107);
+      Bangle.isGPSOn() ? iconSatellite :
+      timeInMinutes % 4 == 0 ? iconSaturn :
+      timeInMinutes % 4 == 1 ? iconMars :
+      timeInMinutes % 4 == 2 ? iconMoon :
+      iconEarth;
+  g.drawImage(iconImg, 115, 115);
 
   // Alarm within symbol
-  g.setFontAntonioMedium();
-  if(alarm > 0){
-    g.setFontAlign(0,0,0);
-    g.drawString(alarm, 120+25, 107+25);
-    g.setFontAlign(-1,-1,0);
+  g.setFontAlign(0,0,0);
+  g.setFontAntonioSmall();
+  g.drawString(iconImg.text, 115+25, 102);
+  if(isAlarmEnabled() > 0){
+    g.drawString(getAlarmMinutes(), 115+25, 115+25);
   }
 
   // Write time
@@ -116,31 +139,29 @@ function draw(queue){
 
   // Write date
   g.setFontAlign(-1,-1, 0);
-  g.setFontAntonioMedium();
+  g.setFontAntonioSmall();
 
   var dayName = locale.dow(currentDate, true).toUpperCase();
   var day = currentDate.getDate();
   g.drawString(day, 100, 35);
   g.drawString(dayName, 100, 55);
 
-  // HRM
-  g.setFontAlign(-1,-1,0);
-  g.drawString("HRM:", 28, 102);
-  g.drawString(hrmValue, 63, 102);
+  // Draw battery
+  g.drawString("BAT:", 25, 98);
+  g.drawString(bat+ "%", 62, 98);
 
   // Draw steps
   var steps = getSteps();
-  g.drawString("STEP:", 28, 122);
-  g.drawString(steps, 63, 122);
+  g.drawString("STEP:", 25, 121);
+  g.drawString(steps, 62, 121);
 
-  // Draw battery
-  g.drawString("BAT:", 28, 142);
-  g.drawString(bat+ "%", 63, 142);
+  // Temperature
+  g.setFontAlign(-1,-1,0);
+  g.drawString("TEMP:", 25, 144);
+  g.drawString(Math.floor(E.getTemperature()) + "C", 62, 144);
 
   // Queue draw in one minute
-  if(queue){
-    queueDraw();
-  }
+  queueDraw();
 }
 
 /*
@@ -161,49 +182,45 @@ function stepsWidget() {
   return undefined;
 }
 
-/*
- * HRM
- */
-Bangle.on('HRM',function(hrm) {
-  hrmValue = hrm.bpm;
-});
 
 /*
  * Handle alarm
  */
-var alarmTimeout;
-function queueAlarm() {
-  if (alarmTimeout) clearTimeout(alarmTimeout);
-  alarmTimeout = setTimeout(function() {
-    alarmTimeout = undefined;
-    handleAlarm();
-  }, 60000 - (Date.now() % 60000));
+function getCurrentTimeInMinutes(){
+  return Math.floor(Date.now() / (1000*60));
+}
+
+function isAlarmEnabled(){
+ return settings.alarm > 0;
+}
+
+function getAlarmMinutes(){
+  var currentTime = getCurrentTimeInMinutes();
+  return settings.alarm - currentTime;
 }
 
 function handleAlarm(){
+  if(!isAlarmEnabled()){
+    return;
+  }
 
-    // Check each minute
-    if(alarm > 0){
-      alarm--;
-      queueAlarm();
-    }
+  if(getAlarmMinutes() > 0){
+    return;
+  }
 
-    // After n minutes, inform the user
-    if(alarm == 0){
-      alarm = -1;
+  // Alarm
+  var t = 300;
+  Bangle.buzz(t, 1)
+  .then(() => new Promise(resolve => setTimeout(resolve, t)))
+  .then(() => Bangle.buzz(t, 1))
+  .then(() => new Promise(resolve => setTimeout(resolve, t)))
+  .then(() => Bangle.buzz(t, 1))
+  .then(() => new Promise(resolve => setTimeout(resolve, t)))
+  .then(() => Bangle.buzz(t, 1));
 
-      var t = 300;
-      Bangle.buzz(t, 1)
-      .then(() => new Promise(resolve => setTimeout(resolve, t)))
-      .then(() => Bangle.buzz(t, 1))
-      .then(() => new Promise(resolve => setTimeout(resolve, t)))
-      .then(() => Bangle.buzz(t, 1))
-      .then(() => new Promise(resolve => setTimeout(resolve, t)))
-      .then(() => Bangle.buzz(t, 1));
-    }
-
-    // Update UI
-    draw(false);
+  // Update alarm state to disabled
+  settings.alarm = -1;
+  Storage.writeJSON(filename, settings);
 }
 
 
@@ -213,19 +230,27 @@ function handleAlarm(){
 Bangle.on('swipe',function(dir) {
   // Increase alarm
   if(dir == -1){
-    alarm = alarm < 0 ? 0 : alarm;
-    alarm += 5;
-    queueAlarm();
+    if(isAlarmEnabled()){
+      settings.alarm += 5;
+    } else {
+      settings.alarm = getCurrentTimeInMinutes() + 5;
+    }
   }
 
   // Decrease alarm
   if(dir == +1){
-    alarm -= 5;
-    alarm = alarm <= 0 ? -1 : alarm;
+    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
+      settings.alarm -= 5;
+    } else {
+      settings.alarm = -1;
+    }
   }
 
   // Update UI
-  draw(false);
+  draw();
+
+  // Update alarm state
+  Storage.writeJSON(filename, settings);
 });
 
 
@@ -234,7 +259,7 @@ Bangle.on('swipe',function(dir) {
  */
 Bangle.on('lcdPower',on=>{
   if (on) {
-    draw(true); // draw immediately, queue redraw
+    draw(); // draw immediately, queue redraw
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
@@ -249,7 +274,7 @@ Bangle.loadWidgets();
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
-draw(true);
+draw();
 
 // After drawing the watch face, we can draw the widgets
 Bangle.drawWidgets();
