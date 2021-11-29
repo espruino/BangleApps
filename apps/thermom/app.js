@@ -5,7 +5,7 @@ function onTemperature(p) {
   var y = g.getHeight()/2 + 10;
   g.drawString("Temperature:", x, y - 45);
   g.setFontVector(70).setFontAlign(0,0);
-  g.drawString(p.temperature.toFixed(1) + "°C", x, y);
+  g.drawString(p.temperature.toFixed(1) + " °C", x, y);
 }
 
 function drawTemperature() {
