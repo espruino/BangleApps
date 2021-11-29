@@ -1,5 +1,3 @@
-// inspired by
-//https://apps.rebble.io/en_US/application/55cf75fc61e031bb4b000025?dev_settings=true&section=watchfaces
 
 Graphics.prototype.setFontQahiri = function(scale) {
   // Actual height 60 (60 - 1)
@@ -21,12 +19,25 @@ const ha = 2*h/5 - 8;
 const h2 = 3*h/5 - 10;
 const h3 = 7*h/8;
 
+let batterWarning = false;
+
 function draw() {
-  var date = new Date();
-  var da = date.toString().split(" ");
-  //var timeStr = require("locale").time(date,1);  // causes screen corruption ???
-  var timeStr = da[4].substr(0,5);
+  let date = new Date();
+  let da = date.toString().split(" ");
+  //let timeStr = require("locale").time(date,1);  // causes screen corruption ???
+  let timeStr = da[4].substr(0,5);
   const t = 6;
+
+  // turn the warning on once we have dipped below 30%
+  if (E.getBattery() < 30)
+    batterWarning = true;
+  
+  // turn the warning off once we have dipped above 40%
+  if (E.getBattery() > 40)
+    batterWarning = false;
+
+  // for testing only
+  batterWarning = true;
 
   g.reset();
   g.setColor(settings.bg);
@@ -37,14 +48,18 @@ function draw() {
   g.fillRect(0, h2 - t, w, h2);
 
   // day and steps
-  g.setColor('#000'); // really needs to be black regardless of theme
+  if (settings.color == 'Blue' || settings.color == 'Red')
+    g.setColor('#fff'); // white on blue or red best contrast
+  else
+    g.setColor('#000'); // otherwise black regardless of theme
+
   g.setFont('Vector', 22);
   g.setFontAlign(0, -1);
   g.drawString(da[0], w/4, ha); // day of week
   g.drawString(getSteps(), 3*w/4, ha);
   
   // time
-  g.setColor(g.theme.bg);
+  g.setColor(!batteryWarning ? g.theme.bg ? '#f00');
   g.fillRect(0, h2, w, h3);
   g.setFontQahiri();
   g.setFontAlign(0, -1);
@@ -72,7 +87,7 @@ function drawCalendar(x,y,wi,th,str) {
   g.fillRect(x + th, y + th, x + wi - th, y + wi - th);
   g.setColor(g.theme.fg);
 
-  var hook_t = 6;
+  let hook_t = 6;
   // first calendar hook, one third in
   g.fillRect(x + (wi/3) - (th/2), y - hook_t, x + wi/3 + th - (th/2), y + hook_t);
   // second calendar hook, two thirds in
@@ -96,7 +111,7 @@ Bangle.loadWidgets();
  * we are not drawing the widgets as we are taking over the whole screen
  * so we will blank out the draw() functions of each widget
  */
-for (var wd of WIDGETS) {wd.draw=()=>{};}
+for (let wd of WIDGETS) {wd.draw=()=>{};}
 loadSettings();
 setInterval(draw, 15000); // refresh every 15s
 draw();
