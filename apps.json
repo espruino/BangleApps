@@ -3893,8 +3893,8 @@
   {
     "id": "thermom",
     "name": "Thermometer",
-    "version": "0.02",
-    "description": "Displays the current temperature, updated every 20 seconds",
+    "version": "0.03",
+    "description": "Displays the current temperature in degree Celsius, updated every 20 seconds",
     "icon": "app.png",
     "tags": "tool",
     "supports": ["BANGLEJS"],
