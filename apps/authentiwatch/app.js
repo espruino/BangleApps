@@ -8,6 +8,7 @@ const algos = {
 };
 
 var tokens = require("Storage").readJSON("authentiwatch.json", true) || [];
+tokens = tokens.data;
 
 // QR Code Text
 //
