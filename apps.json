@@ -4533,7 +4533,7 @@
   "version":"0.01",
   "description": "Simple app to power off your Bangle.js",
   "icon": "app.png",
-  "tags": "",
+  "tags": "poweroff, shutdown",
   "supports" : ["BANGLEJS", "BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
