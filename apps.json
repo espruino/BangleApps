@@ -4571,6 +4571,7 @@
     "type": "app",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
+      {"name":"mylocation.apps.js","url":"mylocation.app.js"},
       {"name":"mylocation.settings.js","url":"mylocation.settings.js"},
       {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
     ]
