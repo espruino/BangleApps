@@ -322,7 +322,8 @@ function loadTokens() {
   Puck.eval(`require('Storage').read(${JSON.stringify('authentiwatch.json')})`,data=>{
     Util.hideModal();
     try {
-      tokens = JSON.parse(data);
+      let saved = JSON.parse(data);
+      tokens = saved.data;
       updateTokens();
     } catch {
       tokens = [];
