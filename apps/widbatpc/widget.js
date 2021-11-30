@@ -79,20 +79,20 @@
     // else...
     var s = 39;
     var x = this.x, y = this.y;
-    const l = E.getBattery();
-    let xl = x+4+l*(s-12)/100;
+    const l = E.getBattery(),
+          c = levelColor(l);
 
-    // show bar full in the level color, as you cant see the color if the bar is too small
-    if (setting('fillbar'))
-      xl = x+4+100*(s-12)/100;
-    
-    c = levelColor(l);
-    
     if (Bangle.isCharging() && setting('charger')) {
       g.setColor(chargerColor()).drawImage(atob(
         "DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
       x+=16;
     }
+
+    let xl = x+4+l*(s-12)/100;
+    // show bar full in the level color, as you can't see the color if the bar is too small
+    if (setting('fillbar'))
+      xl = x+4+100*(s-12)/100;
+
     g.setColor(g.theme.fg);
     g.fillRect(x,y+2,x+s-4,y+21);
     g.clearRect(x+2,y+4,x+s-6,y+19);

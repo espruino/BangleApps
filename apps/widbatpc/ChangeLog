@@ -10,3 +10,4 @@
 0.11: Don't overwrite existing settings on app update
 0.12: Fixed for Bangle 2
 0.13: Fillbar setting added, see README
+0.14: Fix drawing the bar when charging
