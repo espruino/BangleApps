@@ -304,10 +304,10 @@ function plotTrack(info) {
   g.fillCircle(ox,oy,5);
   if (info.qOSTM) g.setColor("#000");
   else g.setColor(g.theme.fg);
-  g.drawString(require("locale").distance(dist),120,220);
+  g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
-  g.drawString("Back",230,200);
+  g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
   setWatch(function() {
     viewTrack(info.fn, info);
   }, global.BTN3||BTN1);
@@ -360,6 +360,10 @@ function plotGraph(info, style) {
     var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {
       ++nl;c=l.split(",");
+      l = f.readLine(f);
+      if (c[latIdx] == "") {
+        continue;
+      }
       t = c[timeIdx];
       i = Math.round(80*(t - strt)/dur);
       p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
@@ -372,7 +376,6 @@ function plotGraph(info, style) {
       }
       lp = p;
       lt = t;
-      l = f.readLine(f);
     }
   } else throw new Error("Unknown type "+style);
   var min=100000,max=-100000;
@@ -396,13 +399,15 @@ function plotGraph(info, style) {
     height: g.getHeight()-(24+8),
     axes : true,
     gridy : grid,
-    gridx : 50,
+    gridx : infn.length / 3,
     title: title,
+    miny: min,
+    maxy: max,
     xlabel : x=>Math.round(x*dur/(60*infn.length))+" min" // minutes
   });
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
-  g.drawString("Back",230,200);
+  g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
   setWatch(function() {
     viewTrack(info.filename, info);
   }, global.BTN3||BTN1);
