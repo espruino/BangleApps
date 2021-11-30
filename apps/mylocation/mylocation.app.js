@@ -1,6 +1,5 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-console.log("myloc start");
 
 const SETTINGS_FILE = "mylocation.json";
 let settings;
@@ -13,7 +12,6 @@ let s = {
 }
 
 function loadSettings() {
-  console.log("loadSettings()");
   settings = require('Storage').readJSON(SETTINGS_FILE, 1) || s;
 }
 
@@ -27,7 +25,6 @@ const lats = [51.5072 ,54.9783 ,55.9533 ,48.8566 ,40.7128 ,35.6762, 0.0];
 const lons = [-0.1276  ,-1.6178  ,-3.1883  ,2.3522  , -74.0060 ,139.6503, 0.0];
 
 function setFromGPS() {
-  console.log("set from GPS");
   Bangle.on('GPS', (gps) => {
     //console.log(".");
     if (gps.fix === 0) return;
@@ -71,12 +68,8 @@ function showMainMenu() {
     },
     'Set From GPS': ()=>{ setFromGPS(); }
   }
-
-  console.log("showMainMenu 2");
-
   return E.showMenu(mainmenu);
 }
 
 loadSettings();
 showMainMenu();
-console.log("myloc end");
