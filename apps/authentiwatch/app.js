@@ -258,7 +258,8 @@ function onSwipe(e) {
   }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
-    require("Storage").writeJSON("authentiwatch.json", tokens);
+    let save={data:tokens,count:tokens.length};
+    require("Storage").writeJSON("authentiwatch.json", save);
     state.nextTime = 0;
     state.hide = 2;
     draw();
