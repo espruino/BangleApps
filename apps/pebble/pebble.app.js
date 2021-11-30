@@ -19,7 +19,7 @@ const ha = 2*h/5 - 8;
 const h2 = 3*h/5 - 10;
 const h3 = 7*h/8;
 
-let batterWarning = false;
+let batteryWarning = false;
 
 function draw() {
   let date = new Date();
@@ -30,14 +30,11 @@ function draw() {
 
   // turn the warning on once we have dipped below 30%
   if (E.getBattery() < 30)
-    batterWarning = true;
+    batteryWarning = true;
   
   // turn the warning off once we have dipped above 40%
   if (E.getBattery() > 40)
-    batterWarning = false;
-
-  // for testing only
-  batterWarning = true;
+    batteryWarning = false;
 
   g.reset();
   g.setColor(settings.bg);
@@ -59,11 +56,12 @@ function draw() {
   g.drawString(getSteps(), 3*w/4, ha);
   
   // time
-  g.setColor(!batteryWarning ? g.theme.bg ? '#f00');
+  // white on red for battery warning
+  g.setColor(!batteryWarning ? g.theme.bg : '#f00');
   g.fillRect(0, h2, w, h3);
   g.setFontQahiri();
   g.setFontAlign(0, -1);
-  g.setColor(g.theme.fg);
+  g.setColor(!batteryWarning ? g.theme.fg : '#fff');
   g.drawString(timeStr, w/2, h2 - 8);
 
   // contrast bar

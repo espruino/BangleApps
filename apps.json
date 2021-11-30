@@ -4581,6 +4581,7 @@
     "shortName": "Pebble",
     "version": "0.01",
     "description": "A pebble style clock to keep the rebellion going",
+    "readme": "README.md",
     "icon": "pebble.png",
     "dependencies": {"widpedom":"app"},
     "screenshots": [{"url":"screenshot_pebble.png"}],
