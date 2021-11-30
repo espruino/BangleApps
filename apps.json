@@ -4568,12 +4568,14 @@
     "description": "My Locations adds a menu in the Settings app to set your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
     "readme": "README.md",
     "tags": "tool,utility",
-    "type": "app",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
-      {"name":"mylocation.apps.js","url":"mylocation.app.js"},
+      {"name":"mylocation.app.js","url":"mylocation.app.js"},
       {"name":"mylocation.settings.js","url":"mylocation.settings.js"},
       {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
+    ]
+    "data": [
+      {"name":"mylocation.json"}
     ]
   },
   {
