@@ -1,4 +1,4 @@
-# PowerOff
+# Poweroff
 
 Simple app to power off your Bangle.js
 
