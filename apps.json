@@ -4110,7 +4110,6 @@
     "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"app"},
-    "dependencies": {"widpedom":"app"},
     "screenshots": [{"url":"screenshot_pastel.png"}],
     "type": "clock",
     "tags": "clock",
@@ -4572,7 +4571,8 @@
     "type": "app",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
-      {"name":"mylocation.settings.js","url":"mylocation.settings.js"}
+      {"name":"mylocation.settings.js","url":"mylocation.settings.js"},
+      {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
     ]
   },
   {
@@ -4583,7 +4583,6 @@
     "description": "A pebble style clock to keep the rebellion going",
     "readme": "README.md",
     "icon": "pebble.png",
-    "dependencies": {"widpedom":"app"},
     "screenshots": [{"url":"pebble_screenshot.png"}],
     "type": "clock",
     "tags": "clock",
