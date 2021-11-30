@@ -6,6 +6,7 @@
   const SETTINGS_FILE = 'cscsensor.json'
   // initialize with default settings...
   let s = {
+    'autoconnect': true,
     'wheelcirc': 2230,
   }
   // ...and overwrite them with any saved values
@@ -31,6 +32,11 @@
       max: 2400,
       step: 5,
       onchange: save('wheelcirc'),
+    },
+    'Auto connect': {
+      value: s.autoconnect,
+      format: boolFormat,
+      onchange: save('autoconnect'),
     },
     'Reset total distance': function() {
       E.showPrompt("Zero total distance?", {buttons: {"No":false, "Yes":true}}).then(function(v) {

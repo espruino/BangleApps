@@ -165,10 +165,10 @@ function getSensorBatteryLevel(gatt) {
 
 function parseDevice(d) {
   device = d;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
+  g.clearRect(0, 24, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
   device.gatt.connect().then(function(ga) {
   gatt = ga;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
+  g.clearRect(0, 24, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
   return gatt.getPrimaryService("1816");
 }).then(function(s) {
   service = s;
@@ -179,26 +179,52 @@ function parseDevice(d) {
   return characteristic.startNotifications();
 }).then(function() {
   console.log("Done!");
-  g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
-  getSensorBatteryLevel(gatt);
+  g.clearRect(0, 24, 239, 239).setColor(1, 1, 1).flip();
+  setWatch(function() { mySensor.reset(); g.clearRect(0, 24, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
+  E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist;  storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
+  setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});     getSensorBatteryLevel(gatt);
   mySensor.updateScreen();
 }).catch(function(e) {
-  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
+  g.clearRect(0, 24, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
   console.log(e);
 })}
 
+function scan() {
+  menu = {
+    "": { "title": "Select sensor" },
+    "re-scan":  () => scan()
+  };
+  waitMessage();
+  NRF.findDevices(devices => {
+    devices.forEach(device =>{
+      let deviceName = device.id.substring(0,17);
+      if (device.name) {
+        deviceName = device.name;
+      }
+      if (device.services!=undefined && device.services.find(e => e=="1816")) deviceName = "* "+deviceName;
+      menu[deviceName] = () => { E.showMenu(); parseDevice(device); }
+    });
+    E.showMenu(menu);
+  }, { active: true });
+}
+
+function waitMessage() {
+  E.showMenu();
+  E.showMessage("scanning");
+}
+
 function connection_setup() {
-  NRF.setScan();
-  mySensor.screenInit = true;
-  NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-  g.clearRect(0, 48, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
-  g.drawString("Scanning for CSC sensor...", 120, 120);
+  if (mySensor.settings.autoconnect) {
+    NRF.setScan();
+    mySensor.screenInit = true;
+    NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
+    g.clearRect(0, 24, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
+    g.drawString("Scanning for CSC sensor...", 120, 120);
+  }
+  else scan();
 }
 
 connection_setup();
-setWatch(function() { mySensor.reset(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
-E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
-setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});
 NRF.on('disconnect', connection_setup);
 
 Bangle.loadWidgets();

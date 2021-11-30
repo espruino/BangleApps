@@ -78,10 +78,27 @@ function parseDevice(d) {
 })}
 
 function connection_setup() {
-  NRF.setScan();
-  NRF.setScan(parseDevice, { filters: [{services:["FFE0"]}], timeout: 2000});
-  g.clearRect(0, 60, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
-  g.drawString("Scanning for relay...", 120, 120);
+  menu = {
+    "": { "title": "Select relay board" },
+    "re-scan":  () => connection_setup()
+  };
+  waitMessage();
+  NRF.findDevices(devices => {
+    devices.forEach(device =>{
+      let deviceName = device.id.substring(0,17);
+      if (device.name) {
+        deviceName = device.name;
+      }
+      if (device.services!=undefined && device.services.find(e => e.toLowerCase()=="ffe0")) deviceName = "* "+deviceName;
+      menu[deviceName] = () => { E.showMenu(); parseDevice(device); }
+    });
+    E.showMenu(menu);
+  }, { active: true });
+}
+
+function waitMessage() {
+  E.showMenu();
+  E.showMessage("scanning");
 }
 
 function moveChannelFrame(oldc, newc) {
