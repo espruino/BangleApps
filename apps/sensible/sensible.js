@@ -10,8 +10,15 @@ const APP_ID = 'sensible';
 
 // Global variables
 let acc, bar, hrm, mag;
-let isAccMenu, isBarMenu, isGpsMenu, isHrmMenu, isMagMenu = false;
-let barEnabled, gpsEnabled, hrmEnabled, magEnabled = true;
+let isAccMenu = false;
+let isBarMenu = false;
+let isGpsMenu = false;
+let isHrmMenu = false;
+let isMagMenu = false;
+let isBarEnabled = true;
+let isGpsEnabled = true;
+let isHrmEnabled = true;
+let isMagEnabled = true;
 
 
 // Menus
@@ -34,9 +41,9 @@ let accMenu = {
 let barMenu = {
   "": { "title" : "-  Barometer   -" },
   "State": {
-    value: barEnabled,
+    value: isBarEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { barEnabled = v; Bangle.setBarometerPower(v, APP_ID); }
+    onchange: v => { isBarEnabled = v; Bangle.setBarometerPower(v, APP_ID); }
   },
   "Altitude": { value: null },
   "Press": { value: null },
@@ -46,9 +53,9 @@ let barMenu = {
 let gpsMenu = {
   "": { "title" : "-      GPS     -" },
   "State": {
-    value: gpsEnabled,
+    value: isGpsEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { gpsEnabled = v; Bangle.setGPSPower(v, APP_ID); }
+    onchange: v => { isGpsEnabled = v; Bangle.setGPSPower(v, APP_ID); }
   },
   "Lat": { value: null },
   "Lon": { value: null },
@@ -60,9 +67,9 @@ let gpsMenu = {
 let hrmMenu = {
   "": { "title" : "-  Heart Rate  -" },
   "State": {
-    value: hrmEnabled,
+    value: isHrmEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { hrmEnabled = v; Bangle.setHRMPower(v, APP_ID); }
+    onchange: v => { isHrmEnabled = v; Bangle.setHRMPower(v, APP_ID); }
   },
   "BPM": { value: null },
   "Confidence": { value: null },
@@ -71,9 +78,9 @@ let hrmMenu = {
 let magMenu = {
   "": { "title" : "- Magnetometer -" },
   "State": {
-    value: magEnabled,
+    value: isMagEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { magEnabled = v; Bangle.setCompassPower(v, APP_ID); }
+    onchange: v => { isMagEnabled = v; Bangle.setCompassPower(v, APP_ID); }
   },
   "x": { value: null },
   "y": { value: null },
@@ -146,18 +153,10 @@ Bangle.on('mag', function(newMag) {
 });
 
 
-// Special function to handle display switch on
-//Bangle.on('lcdPower', (on) => {
-//  if(on) {
-//    E.showMenu(mainMenu);
-//  }
-//});
-
-
-// On start:
+// On start: enable sensors and display main menu
 g.clear();
-Bangle.setBarometerPower(true, APP_ID);
-Bangle.setGPSPower(true, APP_ID);
-Bangle.setHRMPower(true, APP_ID);
-Bangle.setCompassPower(true, APP_ID);
+Bangle.setBarometerPower(isBarEnabled, APP_ID);
+Bangle.setGPSPower(isGpsEnabled, APP_ID);
+Bangle.setHRMPower(isHrmEnabled, APP_ID);
+Bangle.setCompassPower(isMagEnabled, APP_ID);
 E.showMenu(mainMenu);
