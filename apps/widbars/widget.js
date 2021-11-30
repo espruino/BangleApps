@@ -3,22 +3,27 @@
         w=3,  // width of single bar
         bars=3; // number of bars
 
-  // We show HRM if available, but don't turn it on
-  let bpm,rst,con=10; // always ignore HRM with confidence below 10%
-  function noHrm() { // last value is no longer valid
-    if (rst) clearTimeout(rst);
-    rst=bpm=undefined; con=10;
-    WIDGETS["bars"].draw();
-  }
-  Bangle.on('HRM', hrm=>{
-    if (hrm.confidence>con || hrm.confidence>=80) {
-      bpm=hrm.confidence;
-      con=hrm.confidence;
-      WIDGETS["bars"].draw();
-      if (rst) clearTimeout(rst);
-      rst = setTimeout(noHrm, 10*60*1000); // forget HRM after 10 minutes
-    }
-  });
+  // Note: HRM/temperature are commented out (they didn't seem very useful)
+  //       If re-adding them, also adjust `bars`
+
+  // ==HRM start==
+  // // We show HRM if available, but don't turn it on
+  // let bpm,rst,con=10; // always ignore HRM with confidence below 10%
+  // function noHrm() { // last value is no longer valid
+  //   if (rst) clearTimeout(rst);
+  //   rst=bpm=undefined; con=10;
+  //   WIDGETS["bars"].draw();
+  // }
+  // Bangle.on('HRM', hrm=>{
+  //   if (hrm.confidence>con || hrm.confidence>=80) {
+  //     bpm=hrm.confidence;
+  //     con=hrm.confidence;
+  //     WIDGETS["bars"].draw();
+  //     if (rst) clearTimeout(rst);
+  //     rst = setTimeout(noHrm, 10*60*1000); // forget HRM after 10 minutes
+  //   }
+  // });
+  // ==HRM end==
 
   /**
    * Draw a bar
@@ -42,8 +47,8 @@
     const x = this.x, y = this.y,
       m = process.memory();
     let b=0;
-    bar(x+(w*b++),y,'#f00'/*red    */,bpm/200); // >200 seems very unhealthy; if we have no valid bpm this will just be empty space
-    bar(x+(w*b++),y,'#ff0'/*yellow */,E.getTemperature()/50); // you really don't want to wear a watch that's hotter than 50°C
+    // ==HRM==         bar(x+(w*b++),y,'#f00'/*red    */,bpm/200); // >200 seems very unhealthy; if we have no valid bpm this will just be empty space
+    // ==Temperature== bar(x+(w*b++),y,'#ff0'/*yellow */,E.getTemperature()/50); // you really don't want to wear a watch that's hotter than 50°C
     bar(x+(w*b++),y,g.theme.dark?'#0ff':'#00f'/*cyan/blue*/,1-(require('Storage').getFree() / process.env.STORAGE));
     bar(x+(w*b++),y,'#f0f'/*magenta*/,m.usage/m.total);
     bar(x+(w*b++),y,'#0f0'/*green  */,E.getBattery()/100);
