@@ -8,6 +8,9 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
+    "Exit" : function() {
+      load();
+    },
     "File No" : {
       value : fileNumber,
       min : 0,
@@ -21,9 +24,6 @@ function showMenu() {
     "View Logs" : function() {
       viewLogs();
     },
-    "Exit" : function() {
-      load();
-    },
   };
   E.showMenu(menu);
 }
@@ -34,7 +34,7 @@ function viewLog(n) {
   var records = 0, l = "", ll="";
   while ((l=f.readLine())!==undefined) {records++;ll=l;}
   var length = 0;
-  if (ll) length = (ll.split(",")[0]|0)/1000;
+  if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
 
   var menu = {
     "" : { title : "Log "+n }
@@ -94,18 +94,17 @@ function startRecord(force) {
   var Layout = require("Layout");
   var layout = new Layout({ type: "v", c: [
       {type:"txt", font:"6x8", label:"Samples", pad:2},
-      {type:"txt", id:"samples", font:"6x8:2", label:"  -  ", pad:5},
+      {type:"txt", id:"samples", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
       {type:"txt", font:"6x8", label:"Time", pad:2},
-      {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5},
-      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:true},
+      {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
+      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:1},
     ]
-  },[ // Buttons...
+  },{btns:[ // Buttons...
     {label:"STOP", cb:()=>{
       Bangle.removeListener('accel', accelHandler);
       showMenu();
     }}
-  ]);
-  layout.update();
+  ]});
   layout.render();
 
   // now start writing

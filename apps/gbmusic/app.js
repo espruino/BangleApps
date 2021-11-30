@@ -4,77 +4,9 @@
  **/
 let auto = false; // auto close if opened automatically
 let stat = "";
-let info = {
-  artist: "",
-  album: "",
-  track: "",
-  n: 0,
-  c: 0,
-};
 const POUT = 300000; // auto close timeout when paused: 5 minutes (in ms)
 const IOUT = 3600000; // auto close timeout for inactivity: 1 hour (in ms)
-
-///////////////////////
-// Self-repeating timeouts
-///////////////////////
-
-// Clock
-let tock = -1;
-function tick() {
-  if (!Bangle.isLCDOn()) {
-    return;
-  }
-  const now = new Date;
-  if (now.getHours()*60+now.getMinutes()!==tock) {
-    drawDateTime();
-    tock = now.getHours()*60+now.getMinutes();
-  }
-  setTimeout(tick, 1000); // we only show minute precision anyway
-}
-
-// Fade out while paused and auto closing
-let fade = null;
-function fadeOut() {
-  if (!Bangle.isLCDOn() || !fade) {
-    return;
-  }
-  drawMusic(false); // don't clear: draw over existing text to prevent flicker
-  setTimeout(fadeOut, 500);
-}
-function brightness() {
-  if (!fade) {
-    return 1;
-  }
-  return Math.max(0, 1-((Date.now()-fade)/POUT));
-}
-
-// Scroll long track names
-// use an interval to get smooth movement
-let offset = null, // scroll Offset: null = no scrolling
-  iScroll;
-function scroll() {
-  offset += 10;
-  drawScroller();
-}
-function scrollStart() {
-  if (offset!==null) {
-    return; // already started
-  }
-  offset = 0;
-  if (Bangle.isLCDOn()) {
-    if (!iScroll) {
-      iScroll = setInterval(scroll, 200);
-    }
-    drawScroller();
-  }
-}
-function scrollStop() {
-  if (iScroll) {
-    clearInterval(iScroll);
-    iScroll = null;
-  }
-  offset = null;
-}
+const BANGLE2 = process.env.HWVERSION===2;
 
 /**
  * @param {string} text
@@ -85,21 +17,22 @@ function fitText(text) {
     return Infinity;
   }
   // make a guess, then shrink/grow until it fits
-  const test = (s) => g.setFont("Vector", s).stringWidth(text);
-  let best = Math.floor(24000/test(100));
-  if (test(best)===240) { // good guess!
+  const w = Bangle.appRect.w,
+    test = (s) => g.setFont("Vector", s).stringWidth(text);
+  let best = Math.floor(100*w/test(100));
+  if (test(best)===w) { // good guess!
     return best;
   }
-  if (test(best)<240) {
+  if (test(best)<w) {
     do {
       best++;
-    } while(test(best)<=240);
+    } while(test(best)<=w);
     return best-1;
   }
-  // width > 240
+  // width > w
   do {
     best--;
-  } while(test(best)>240);
+  } while(test(best)>w);
   return best;
 }
 
@@ -115,14 +48,6 @@ function textCode(text) {
   }
   return code%360;
 }
-// dark magic
-function hsv2rgb(h, s, v) {
-  const f = (n) => {
-    const k = (n+h/60)%6;
-    return v-v*s*Math.max(Math.min(k, 4-k, 1), 0);
-  };
-  return {r: f(5), g: f(3), b: f(1)};
-}
 function f2hex(f) {
   return ("00"+(Math.round(f*255)).toString(16)).substr(-2);
 }
@@ -131,38 +56,218 @@ function f2hex(f) {
  * @return {string} Semi-random color to use for given info
  */
 function infoColor(name) {
-  let h, s, v;
-  if (name==="num") {
-    // always white
-    h = 0;
-    s = 0;
-  } else {
-    // make color depend deterministically on info
-    let code = textCode(info[name]);
-    switch(name) {
-      case "track": // also use album
-        code += textCode(info.album);
-      // fallthrough
-      case "album": // also use artist
-        code += textCode(info.artist);
-    }
-    h = code%360;
-    s = 0.7;
+  // make color depend deterministically on info
+  let code = textCode(layout[name].label);
+  switch(name) {
+    case "title": // also use album and artist
+      code += textCode(layout.album.label);
+    // fallthrough
+    case "album": // also use artist
+      code += textCode(layout.artist.label);
   }
-  v = brightness();
-  const rgb = hsv2rgb(h, s, v);
-  return "#"+f2hex(rgb.r)+f2hex(rgb.g)+f2hex(rgb.b);
+  let rgb;
+  if (g.getBPP()===3) {
+    // only pick 3-bit colors, always at full brightness
+    rgb = [code&1, (code&2)/2, (code&4)/4];
+    if (g.setColor(rgb[0], rgb[1], rgb[2]).getColor()===g.theme.bg) {
+      // avoid picking the bg color
+      rgb = rgb.map(c => 1-c);
+    }
+    return "#"+f2hex(rgb[0])+f2hex(rgb[1])+f2hex(rgb[2]);
+  } else {
+    // pick any hue, adjust for brightness
+    const h = code%360, s = 0.7, b = brightness();
+    return E.HSBtoRGB(h/360, s, b);
+  }
+}
+
+/**
+ * Render scrolling title
+ * @param l
+ */
+function rScroller(l) {
+  g.setFont("Vector", Math.round(g.getHeight()*l.fsz.slice(0, -1)/100));
+  const w = g.stringWidth(l.label)+40,
+    y = l.y+l.h/2;
+  l.offset = l.offset%w;
+  g.setClipRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
+    .setColor(l.col)
+    .setFontAlign(-1, 0) // left center
+    .clearRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
+    .drawString(l.label, l.x-l.offset+40, y)
+    .drawString(l.label, l.x-l.offset+40+w, y);
 }
 /**
- * Remember track color until info changes
- * Because we need this every time we move the scroller
- * @return {string}
+ * Render title
+ * @param l
  */
-function trackColor() {
-  if (!("track_color" in info) || fade) {
-    info.track_color = infoColor("track");
+function rTitle(l) {
+  if (l.offset!==null) {
+    rScroller(l); // already scrolling
+    return;
   }
-  return info.track_color;
+  let size = fitText(l.label);
+  if (size<l.h/2) {
+    // the title is too long: start the scroller
+    scrollStart();
+  } else {
+    rInfo(l);
+  }
+}
+/**
+ * Render info field
+ * @param l
+ */
+function rInfo(l) {
+  let size = fitText(l.label);
+  if (size>l.h) {
+    size = l.h;
+  }
+  g.setFont("Vector", size)
+    .setFontAlign(0, -1) // center top
+    .drawString(l.label, l.x+l.w/2, l.y);
+}
+/**
+ * Render icon
+ * @param l
+ */
+function rIcon(l) {
+  const x2 = l.x+l.w-1,
+    y2 = l.y+l.h-1;
+  switch(l.icon) {
+    case "pause":
+      const w13 = l.w/3;
+      g.drawRect(l.x, l.y, l.x+w13, y2);
+      g.drawRect(l.x+l.w-w13, l.y, x2, y2);
+      break;
+    case "play":
+      g.drawPoly([
+        l.x, l.y,
+        x2, l.y+l.h/2,
+        l.x, y2,
+      ], true);
+      break;
+    case "previous":
+      const w15 = l.w*1/5;
+      g.drawPoly([
+        x2, l.y,
+        l.x+w15, l.y+l.h/2,
+        x2, y2,
+      ], true);
+      g.drawRect(l.x, l.y, l.x+w15, y2);
+      break;
+    case "next":
+      const w45 = l.w*4/5;
+      g.drawPoly([
+        l.x, l.y,
+        l.x+w45, l.y+l.h/2,
+        l.x, y2,
+      ], true);
+      g.drawRect(l.x+w45, l.y, x2, y2);
+      break;
+    default: // red X
+      console.log(`Unknown icon: ${l.icon}`);
+      g.setColor("#f00")
+        .drawRect(l.x, l.y, x2, y2)
+        .drawLine(l.x, l.y, x2, y2)
+        .drawLine(l.x, y2, x2, l.y);
+  }
+}
+let layout;
+function makeUI() {
+  global.gbmusic_active = true; // we don't need our widget (needed for <2.09 devices)
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  delete (global.gbmusic_active);
+  const Layout = require("Layout");
+  layout = new Layout({
+    type: "v", c: [
+      {
+        type: "h", fillx: 1, c: [
+          {id: "time", type: "txt", label: "88:88", valign: -1, halign: -1, font: "8%", bgCol: g.theme.bg},
+          {fillx: 1},
+          {id: "num", type: "txt", label: "88:88", valign: -1, halign: 1, font: "12%", bgCol: g.theme.bg},
+          BANGLE2 ? {} : {id: "up", type: "txt", label: " +", font: "6x8:2"},
+        ],
+      },
+      {id: "title", type: "custom", label: "", fillx: 1, filly: 2, offset: null, font: "Vector:20%", render: rTitle, bgCol: g.theme.bg},
+      {id: "artist", type: "custom", label: "", fillx: 1, filly: 1, size: 30, render: rInfo, bgCol: g.theme.bg},
+      {id: "album", type: "custom", label: "", fillx: 1, filly: 1, size: 20, render: rInfo, bgCol: g.theme.bg},
+      {height: 10},
+      {
+        type: "h", c: [
+          {width: 3},
+          {id: "prev", type: "custom", height: 15, width: 15, icon: "previous", render: rIcon, bgCol: g.theme.bg},
+          {id: "date", type: "txt", halign: 0, valign: 1, label: "", font: "8%", fillx: 1, bgCol: g.theme.bg},
+          {id: "next", type: "custom", height: 15, width: 15, icon: "next", render: rIcon, bgCol: g.theme.bg},
+          BANGLE2 ? {width: 3} : {id: "down", type: "txt", label: " -", font: "6x8:2"},
+        ],
+      },
+      {height: 10},
+    ],
+  }, {lazy: true});
+  layout.render();
+}
+
+///////////////////////
+// Self-repeating timeouts
+///////////////////////
+
+// Clock
+let tock = -1;
+function tick() {
+  if (!BANGLE2 && !Bangle.isLCDOn()) {
+    return;
+  }
+  const now = new Date();
+  if (now.getHours()*60+now.getMinutes()!==tock) {
+    drawDateTime();
+    tock = now.getHours()*60+now.getMinutes();
+  }
+  setTimeout(tick, 1000); // we only show minute precision anyway
+}
+
+// Fade out while paused and auto closing
+let fade = null;
+function fadeOut() {
+  if (BANGLE2 || !Bangle.isLCDOn() || !fade) {
+    return;
+  }
+  layout.render();
+  setTimeout(fadeOut, 500);
+}
+function brightness() {
+  if (!fade) {
+    return 1;
+  }
+  return Math.max(0, 1-((Date.now()-fade)/POUT));
+}
+
+// Scroll long track names
+// use an interval to get smooth movement
+let iScroll;
+function scroll() {
+  layout.title.offset += 10;
+  rScroller(layout.title);
+}
+function scrollStart() {
+  if (layout.title.offset!==null) {
+    return; // already started
+  }
+  layout.title.offset = 0;
+  if (BANGLE2 || Bangle.isLCDOn()) {
+    if (!iScroll) {
+      iScroll = setInterval(scroll, 200);
+    }
+    rScroller(layout.title);
+  }
+}
+function scrollStop() {
+  if (iScroll) {
+    clearInterval(iScroll);
+    iScroll = null;
+  }
+  layout.title.offset = null;
 }
 
 ////////////////////
@@ -172,10 +277,9 @@ function trackColor() {
  * Draw date and time
  */
 function drawDateTime() {
-  const now = new Date;
+  const now = new Date();
   const l = require("locale");
   const is12 = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-  let time;
   if (is12) {
     const d12 = new Date(now.getTime());
     const hour = d12.getHours();
@@ -184,29 +288,35 @@ function drawDateTime() {
     } else if (hour>12) {
       d12.setHours(hour-12);
     }
-    time = l.time(d12, true)+l.meridian(now);
+    layout.time.label = l.time(d12, true)+l.meridian(now);
   } else {
-    time = l.time(now, true);
+    layout.time.label = l.time(now, true);
   }
-  g.reset();
-  g.setFont("Vector", 24)
-    .setFontAlign(-1, -1) // top left
-    .clearRect(10, 30, 119, 54)
-    .drawString(time, 10, 30);
-
-  const date = require("locale").date(now, true);
-  g.setFont("Vector", 16)
-    .setFontAlign(0, 1) // bottom center
-    .setClipRect(35, 198, 199, 214)
-    .clearRect(31, 198, 199, 214)
-    .drawString(date, 119, 240-26);
+  layout.date.label = require("locale").date(now, true);
+  layout.render();
 }
 
+function drawControls() {
+  let l = layout;
+  const cc = a => (a ? "#f00" : "#0f0"); // control color: red for active, green for inactive
+  if (!BANGLE2) {
+    l.up.col = cc("volumeup" in tCommand);
+    l.down.col = cc("volumedown" in tCommand);
+  }
+  l.prev.icon = (stat==="play") ? "pause" : "previous";
+  l.prev.col = cc("prev" in tCommand || "pause" in tCommand);
+  l.next.icon = (stat==="play") ? "next" : "play";
+  l.next.col = cc("next" in tCommand || "play" in tCommand);
+  layout.render();
+}
+
+////////////////////////
+// GB event handlers
+///////////////////////
 /**
- * Draw track number and total count
- * @param {boolean} clr - Clear area before redrawing?
+ * Mangle track number and total count for display
  */
-function drawNum(clr) {
+function formatNum(info) {
   let num = "";
   if ("n" in info && info.n>0) {
     num = "#"+info.n;
@@ -214,198 +324,26 @@ function drawNum(clr) {
       num += "/"+info.c;
     }
   }
-  g.reset();
-  g.setFont("Vector", 30)
-    .setFontAlign(1, -1); // top right
-  if (clr) {
-    g.clearRect(225, 30, 120, 60);
-  }
-  g.drawString(num, 225, 30);
-}
-/**
- * Clear rectangle used by track title
- */
-function clearTrack() {
-  g.clearRect(0, 60, 239, 119);
-}
-/**
- * Draw track title
- * @param {boolean} clr - Clear area before redrawing?
- */
-function drawTrack(clr) {
-  let size = fitText(info.track);
-  if (size<25) {
-    // the title is too long: start the scroller
-    scrollStart();
-    return;
-  } else {
-    scrollStop();
-  }
-  // stationary track
-  if (size>40) {
-    size = 40;
-  }
-  g.reset();
-  g.setFont("Vector", size)
-    .setFontAlign(0, 1) // center bottom
-    .setColor(trackColor());
-  if (clr) {
-    clearTrack();
-  }
-  g.drawString(info.track, 119, 109);
-}
-/**
- * Draw scrolling track title
- */
-function drawScroller() {
-  g.reset();
-  g.setFont("Vector", 40);
-  const w = g.stringWidth(info.track)+40;
-  offset = offset%w;
-  g.setFontAlign(-1, 1) // left bottom
-    .setColor(trackColor());
-  clearTrack();
-  g.drawString(info.track, -offset+40, 109)
-    .drawString(info.track, -offset+40+w, 109);
+  return num;
 }
 
-/**
- * Draw track artist and album
- * @param {boolean} clr - Clear area before redrawing?
- */
-function drawArtistAlbum(clr) {
-  // we just use small enough fonts to make these always fit
-  // calculate stuff before clear+redraw
-  const aCol = infoColor("artist");
-  const bCol = infoColor("album");
-  let aSiz = fitText(info.artist);
-  if (aSiz>30) {
-    aSiz = 30;
-  }
-  let bSiz = fitText(info.album);
-  if (bSiz>20) {
-    bSiz = 20;
-  }
-  g.reset();
-  if (clr) {
-    g.clearRect(0, 120, 240, 189);
-  }
-  let top = 124;
-  if (info.artist) {
-    g.setFont("Vector", aSiz)
-      .setFontAlign(0, -1) // center top
-      .setColor(aCol)
-      .drawString(info.artist, 119, top);
-    top += aSiz+4; // fit album neatly under artist
-  }
-  if (info.album) {
-    g.setFont("Vector", bSiz)
-      .setFontAlign(0, -1) // center top
-      .setColor(bCol)
-      .drawString(info.album, 119, top);
-  }
-}
-
-/**
- *
- * @param {string} icon Icon name
- * @param {number} x
- * @param {number} y
- * @param {number} s Icon size
- */
-function drawIcon(icon, x, y, s) {
-  ({
-    pause: function(x, y, s) {
-      const w1 = s/3;
-      g.drawRect(x, y, x+w1, y+s);
-      g.drawRect(x+s-w1, y, x+s, y+s);
-    },
-    play: function(x, y, s) {
-      g.drawPoly([
-        x, y,
-        x+s, y+s/2,
-        x, y+s,
-      ], true);
-    },
-    previous: function(x, y, s) {
-      const w2 = s*1/5;
-      g.drawPoly([
-        x+s, y,
-        x+w2, y+s/2,
-        x+s, y+s,
-      ], true);
-      g.drawRect(x, y, x+w2, y+s);
-    },
-    next: function(x, y, s) {
-      const w2 = s*4/5;
-      g.drawPoly([
-        x, y,
-        x+w2, y+s/2,
-        x, y+s,
-      ], true);
-      g.drawRect(x+w2, y, x+s, y+s);
-    },
-  })[icon](x, y, s);
-}
-function controlColor(ctrl) {
-  return (ctrl in tCommand) ? "#ff0000" : "#008800";
-}
-function drawControl(ctrl, x, y) {
-  g.setColor(controlColor(ctrl));
-  const s = 20;
-  if (stat!==controlState) {
-    g.clearRect(x, y, x+s, y+s);
-  }
-  drawIcon(ctrl, x, y, s);
-}
-let controlState;
-function drawControls() {
-  g.reset();
-  if (stat==="play") {
-    // left touch
-    drawControl("pause", 10, 190);
-    // right touch
-    drawControl("next", 200, 190);
-  } else {
-    drawControl("previous", 10, 190);
-    drawControl("play", 200, 190);
-  }
-  g.setFont("6x8", 2);
-  // BTN1
-  g.setFontAlign(1, -1);
-  g.setColor(controlColor("volumeup"));
-  g.drawString("+", 240, 30);
-  // BTN2
-  g.setFontAlign(1, 1);
-  g.setColor(controlColor("volumedown"));
-  g.drawString("-", 240, 210);
-  controlState = stat;
-}
-
-/**
- * @param {boolean} [clr=true] Clear area before redrawing?
- */
-function drawMusic(clr) {
-  clr = !(clr===false); // undefined means yes
-  drawNum(clr);
-  drawTrack(clr);
-  drawArtistAlbum(clr);
-}
-
-////////////////////////
-// GB event handlers
-///////////////////////
 /**
  * Update music info
- * @param {Object} e - Gadgetbridge musicinfo event
+ * @param {Object} info - Gadgetbridge musicinfo event
  */
-function musicInfo(e) {
-  info = e;
-  delete (info.t);
-  offset = null;
-  if (Bangle.isLCDOn()) {
-    drawMusic();
-  }
+function musicInfo(info) {
+  scrollStop();
+  layout.title.label = info.track || "";
+  layout.album.label = info.album || "";
+  layout.artist.label = info.artist || "";
+  // color depends on all labels
+  layout.title.col = infoColor("title");
+  layout.album.col = infoColor("album");
+  layout.artist.col = infoColor("artist");
+  layout.num.label = formatNum(info);
+  layout.render();
+  rTitle(layout.title); // force redraw of title, or scroller might break
+  // reset auto exit interval
   if (tIxt) {
     clearTimeout(tIxt);
     tIxt = null;
@@ -435,7 +373,6 @@ function musicState(e) {
     tIxt = null;
   }
   fade = null;
-  delete info.track_color;
   if (auto) { // auto opened -> auto close
     switch(stat) {
       case "stop": // never actually happens with my phone :-(
@@ -444,7 +381,7 @@ function musicState(e) {
       case "play":
         // if inactive for double song duration (or an hour if unknown), load the clock
         // i.e. phone finished playing without bothering to notify the watch
-        tIxt = setTimeout(load, (info.dur*2000) || IOUT);
+        tIxt = setTimeout(load, (e.dur*2000) || IOUT);
         break;
       case "pause":
       default:
@@ -456,8 +393,7 @@ function musicState(e) {
         break;
     }
   }
-  if (Bangle.isLCDOn()) {
-    drawMusic(false); // redraw in case we were fading out but resumed play
+  if (BANGLE2 || Bangle.isLCDOn()) {
     drawControls();
   }
 }
@@ -473,30 +409,34 @@ function musicState(e) {
  */
 let tPress, nPress = 0;
 function startButtonWatches() {
-  // BTN1/3: volume control
-  // Wait for falling edge to avoid messing with volume while long-pressing BTN3
-  // to reload the watch (and same for BTN2 for consistency)
-  setWatch(() => { sendCommand("volumeup"); }, BTN1, {repeat: true, edge: "falling"});
-  setWatch(() => { sendCommand("volumedown"); }, BTN3, {repeat: true, edge: "falling"});
+  let btn = BTN1;
+  if (!BANGLE2) {
+    // BTN1/3: volume control
+    // Wait for falling edge to avoid messing with volume while long-pressing BTN3
+    // to reload the watch (and same for BTN2 for consistency)
+    setWatch(() => { sendCommand("volumeup"); }, BTN1, {repeat: true, edge: "falling"});
+    setWatch(() => { sendCommand("volumedown"); }, BTN3, {repeat: true, edge: "falling"});
+    btn = BTN2;
+  }
 
-  // BTN2: long-press for launcher, otherwise depends on number of presses
+  // middle button: long-press for launcher, otherwise depends on number of presses
   setWatch(() => {
     if (nPress===0) {
       tPress = setTimeout(() => {Bangle.showLauncher();}, 3000);
     }
-  }, BTN2, {repeat: true, edge: "rising"});
+  }, btn, {repeat: true, edge: "rising"});
   const s = require("Storage").readJSON("gbmusic.json", 1) || {};
   if (s.simpleButton) {
     setWatch(() => {
       clearTimeout(tPress);
       togglePlay();
-    }, BTN2, {repeat: true, edge: "falling"});
+    }, btn, {repeat: true, edge: "falling"});
   } else {
     setWatch(() => {
       nPress++;
       clearTimeout(tPress);
       tPress = setTimeout(handleButton2Press, 500);
-    }, BTN2, {repeat: true, edge: "falling"});
+    }, btn, {repeat: true, edge: "falling"});
   }
 }
 function handleButton2Press() {
@@ -524,7 +464,7 @@ let tCommand = {};
  */
 function sendCommand(command) {
   Bluetooth.println(JSON.stringify({t: "music", n: command}));
-  // for controlColor
+  // for control color
   if (command in tCommand) {
     clearTimeout(tCommand[command]);
   }
@@ -539,18 +479,29 @@ function sendCommand(command) {
 function togglePlay() {
   sendCommand(stat==="play" ? "pause" : "play");
 }
-function startTouchWatches() {
+function pausePrev() {
+  sendCommand(stat==="play" ? "pause" : "previous");
+}
+function nextPlay() {
+  sendCommand(stat==="play" ? "next" : "play");
+}
+
+/**
+ * Setup touch+swipe for Bangle.js 1
+ */
+function touch1() {
   Bangle.on("touch", side => {
     if (!Bangle.isLCDOn()) {return;} // for <2v10 firmware
     switch(side) {
       case 1:
-        sendCommand(stat==="play" ? "pause" : "previous");
+        pausePrev();
         break;
       case 2:
-        sendCommand(stat==="play" ? "next" : "play");
+        nextPlay();
         break;
-      case 3:
+      default:
         togglePlay();
+        break;
     }
   });
   Bangle.on("swipe", dir => {
@@ -558,16 +509,56 @@ function startTouchWatches() {
     sendCommand(dir===1 ? "previous" : "next");
   });
 }
+/**
+ * Setup touch+swipe for Bangle.js 2
+ */
+function touch2() {
+  Bangle.on("touch", (side, xy) => {
+    const ar = Bangle.appRect;
+    if (xy.x<ar.x+ar.w/3) {
+      pausePrev();
+    } else if (xy.x>ar.x+ar.w*2/3) {
+      nextPlay();
+    } else {
+      togglePlay();
+    }
+  });
+  // swiping
+  let drag;
+  Bangle.on("drag", e => {
+    if (!drag) { // start dragging
+      drag = {x: e.x, y: e.y};
+    } else if (!e.b) { // released
+      const dx = e.x-drag.x, dy = e.y-drag.y;
+      drag = null;
+      if (Math.abs(dx)>Math.abs(dy)+10) {
+        // horizontal
+        sendCommand(dx>0 ? "previous" : "next");
+      } else if (Math.abs(dy)>Math.abs(dx)+10) {
+        // vertical
+        sendCommand(dy>0 ? "volumedown" : "volumeup");
+      }
+    }
+  });
+}
+function startTouchWatches() {
+  if (BANGLE2) {
+    touch2();
+  } else {
+    touch1();
+  }
+}
 function startLCDWatch() {
+  if (BANGLE2) {
+    return; // always keep drawing
+  }
   Bangle.on("lcdPower", (on) => {
     if (on) {
       // redraw and resume scrolling
       tick();
-      drawMusic();
-      drawControls();
+      layout.render();
       fadeOut();
-      if (offset!==null) {
-        drawScroller();
+      if (offset.offset!==null) {
         if (!iScroll) {
           iScroll = setInterval(scroll, 200);
         }
@@ -585,15 +576,10 @@ function startLCDWatch() {
 /////////////////////
 // Startup
 /////////////////////
-// check for saved music stat (by widget) to load
 g.clear();
-global.gbmusic_active = true; // we don't need our widget (needed for <2.09 devices)
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-delete (global.gbmusic_active);
 
 function startEmulator() {
-  if (typeof Bluetooth==="undefined") { // emulator!
+  if (typeof Bluetooth==="undefined" || typeof Bluetooth.println==="undefined") { // emulator!
     Bluetooth = {
       println: (line) => {console.log("Bluetooth:", line);},
     };
@@ -609,6 +595,7 @@ function startWatches() {
 }
 
 function start() {
+  makeUI();
   // start listening for music updates
   const _GB = global.GB;
   global.GB = (event) => {
@@ -628,43 +615,39 @@ function start() {
         return;
     }
   };
-  drawMusic();
-  drawControls();
   startWatches();
   tick();
   startEmulator();
 }
 
 function init() {
+  // check for saved music status (by widget) to load
   let saved = require("Storage").readJSON("gbmusic.load.json", true);
   require("Storage").erase("gbmusic.load.json");
   if (saved) {
     // autoloaded: load state was saved by widget
-    info = saved.info;
-    stat = saved.state;
-    delete saved;
     auto = true;
     start();
-  } else {
-    delete saved;
-    let s = require("Storage").readJSON("gbmusic.json", 1) || {};
-    if (!("autoStart" in s)) {
-      // user opened the app, but has not picked a setting yet
-      // ask them about autoloading now
-      E.showPrompt(
-        "Automatically load\n"+
-        "when playing music?\n",
-      ).then(choice => {
-        s.autoStart = choice;
-        require("Storage").writeJSON("gbmusic.json", s);
-        delete s;
-        setTimeout(start, 0);
-      });
-    } else {
-      delete s;
-      start();
-    }
+    musicInfo(saved.info);
+    musicState(saved.state);
+    return;
   }
+
+  let s = require("Storage").readJSON("gbmusic.json", 1) || {};
+  if ("autoStart" in s) {
+    start();
+    return;
+  }
+
+  // user opened the app, but has not picked a autoStart setting yet
+  // ask them about autoloading now
+  E.showPrompt(
+    "Automatically load\n"+
+    "when playing music?\n"
+  ).then(choice => {
+    s.autoStart = choice;
+    require("Storage").writeJSON("gbmusic.json", s);
+    setTimeout(start, 0);
+  });
 }
 init();
-

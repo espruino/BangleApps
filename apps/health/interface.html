@@ -1,0 +1,133 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="table"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+const DB_RECORD_LEN = 4;
+const DB_RECORDS_PER_HR = 6;
+const DB_RECORDS_PER_DAY = DB_RECORDS_PER_HR*24 + 1/*summary*/;
+const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
+const DB_HEADER_LEN = 8;
+const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
+
+var domTable = document.getElementById("table");
+
+function saveCSV(data, date, title) {
+  // date = "2021-9"/ etc
+  var csv = "Date,Time,Steps,Heartrate,Movement\n";
+  var f = data;
+
+  var idx = DB_HEADER_LEN;
+  for (var day=0;day<31;day++) {
+    for (var hr=0;hr<24;hr++) { // actually 25, see below
+      for (var m=0;m<DB_RECORDS_PER_HR;m++) {
+        var h = f.substr(idx, DB_RECORD_LEN);
+        if (h!="\xFF\xFF\xFF\xFF") {
+          var h = {
+            day:day+1, hr : hr, min:m*10,
+            steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
+            bpm : h.charCodeAt(2),
+            movement : h.charCodeAt(3)
+          };
+          csv += [
+            date + "-" + h.day,
+            h.hr+":"+h.min.toString().padStart(2,0),
+            h.steps,
+            h.bpm||"",
+            h.movement
+          ].join(",")+"\n";
+        }
+        idx += DB_RECORD_LEN;
+      }
+    }
+    idx += DB_RECORD_LEN; // +1 because we have an extra record with totals for the end of the day
+  }
+
+  Util.saveCSV(title, csv);
+}
+
+function downloadHealth(filename, callback) {
+  Util.showModal("Downloading Track...");
+  Util.readStorage(filename, data => {
+    Util.hideModal();
+    callback(data);
+  });
+}
+function getMonthList() {
+  Util.showModal("Loading...");
+  domTable.innerHTML = "";
+  Puck.eval(`require("Storage").list(/^health-.*\\.raw$/)`,files=>{
+    files = files.map(f => {
+      var m = f.match(/^health-([^\.]+)\.raw$/);
+      return {
+        filename : f,
+        date : m[1], // eg 2021-9
+        str : new Date(m[1]).toLocaleString(undefined, {month:'long',year:'numeric'})
+      }
+    })
+    var html = `<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Month</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>\n`;
+    files.forEach(f => {
+      html += `
+      <tr>
+        <td>${f.str}</td>
+        <td>
+          <button class="btn btn-primary" filename="${f.filename}" date="${f.date}" task="downloadcsv">Download CSV</button>
+          <button class="btn btn-default" filename="${f.filename}" date="${f.date}" task="delete">Delete</button>
+        </td>
+      </tr>
+      `;
+    });
+    if (files.length==0) {
+      html += `
+    <tr>
+      <td>No data recorded</td>
+      <td></td>
+    </tr>
+        `;
+    }
+    html += `
+    </tbody>
+</table>`;
+    domTable.innerHTML = html;
+    Util.hideModal();
+    var buttons = domTable.querySelectorAll("button");
+    for (var i=0;i<buttons.length;i++) {
+      buttons[i].addEventListener("click",event => {
+        var button = event.currentTarget;
+        var filename = button.getAttribute("filename");
+        var date = button.getAttribute("date");
+        if (!filename || !date) return;
+        var task = button.getAttribute("task");
+        if (task=="delete") {
+          Util.showModal("Deleting...");
+          Util.eraseStorage(filename,()=>{
+            Util.hideModal();
+            getTrackList();
+          });
+        }
+        if (task=="downloadcsv") {
+          downloadHealth(filename, data => saveCSV(data, date, `Bangle.js Health ${date}`));
+        }
+      });
+    }
+  })
+}
+
+function onInit() {
+  getMonthList();
+}
+
+    </script>
+  </body>
+</html>

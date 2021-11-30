@@ -21,8 +21,9 @@
   </head>
   <body>
     <header class="navbar-primary navbar">
-      <section class="navbar-section">
-        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-sml.png" alt="Bangle.js">&nbsp;&nbsp;App Loader</a>
+      <section class="navbar-section" >
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2" ><img src="img/banglejs-logo-sml.png" alt="Bangle.js">
+        <div>App Loader</div></a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
       <section class="navbar-section">
@@ -59,7 +60,18 @@
     </div>
 
     <div class="container apploader-tab" id="librarycontainer">
-      <div>
+      <div class="dropdown-container">
+        <div class="dropdown devicetype-nav">
+          <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+            <span>All apps</span><i class="icon icon-caret"></i>
+          </a>
+          <!-- menu component -->
+          <ul class="menu">
+            <li class="menu-item"><a>All apps</a></li>
+            <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
+            <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
+          </ul>
+        </div>
         <div class="filter-nav">
           <label class="chip active" filterid="">Default</label>
           <label class="chip" filterid="clock">Clocks</label>
@@ -124,6 +136,10 @@
           <label class="form-switch">
             <input type="checkbox" id="settings-pretokenise">
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
+          </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-settime">
+            <i class="form-icon"></i> Always update time when we connect
           </label>
           <button class="btn" id="defaultsettings">Default settings</button>
         </div>

@@ -496,6 +496,24 @@ var locales = {
     day: "Vasárnap,Hétfő,Kedd,Szerda,Csütörtök,Péntek,Szombat",
     trans: { yes: "igen", Yes: "Igen", no: "nem", No: "Nem", ok: "ok", on: "be", off: "ki" }
   },
+  "oc_FR": {
+    lang: "oc_FR",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "km/h",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%A %d %B de %Y", "1": "%d/%m/%Y" }, // dimenge 1 de març de 2020 //  01/03/2020
+    abmonth: "gen.,febr.,març,abril,mai,junh,julh,ago.,set.,oct.,nov.,dec.",
+    month: "genièr,febrièr,març,abril,mai,junh,julhet,agost,setembre,octòbre,novembre,decembre",
+    abday: "dg,dl,dm,dc,dj,dv,ds",
+    day: "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
+    trans: { yes: "òc", Yes: "Òc", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
+  },  
   "pt_BR": {
     lang: "pt_BR",
     decimal_point: ",",

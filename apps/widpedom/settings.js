@@ -32,7 +32,7 @@
       onchange: (g) => {
         s.goal = g
         s.progress = !!g
-        save()
+        save();
       },
     },
     'Show Progress': {
@@ -40,7 +40,7 @@
       format: () => (s.progress ? 'Yes' : 'No'),
       onchange: () => {
         s.progress = !s.progress
-        save()
+        save();
       },
     },
     'Large Digits': {
@@ -48,7 +48,7 @@
       format: () => (s.large ? 'Yes' : 'No'),
       onchange: () => {
         s.large = !s.large
-        save()
+        save();
       },
     },
     'Hide Widget': {
@@ -56,7 +56,7 @@
       format: () => (s.hide ? 'Yes' : 'No'),
       onchange: () => {
         s.hide = !s.hide
-        save()
+        save();
       },
     },
     '< Back': back,

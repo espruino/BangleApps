@@ -2,4 +2,6 @@
 0.02: Add wheel circumference settings dialog
 0.03: Save total distance traveled
 0.04: Add sensor battery level indicator
-
+0.05: Add cadence sensor support
+0.06: Now read wheel rev as well as cadence sensor
+      Improve connection code

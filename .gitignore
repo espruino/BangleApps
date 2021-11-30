@@ -7,4 +7,5 @@ appdates.csv
 .vscode
 .idea/
 _config.yml
-
+tests/Layout/bin/tmp.*
+tests/Layout/testresult.bmp

@@ -7,7 +7,7 @@ const spanishNumberStr = [ ["ZERO"], // 0
     ["CUATRO",''], //4
     ["CINCO",''], //5
     ["SEIS",''], //6
-    ["SEITO",''], //7
+    ["SIETE",''], //7
     ["OCHO",''], //8
     ["NUEVE",''], // 9,
     ["DIEZ",''], // 10
@@ -20,7 +20,7 @@ const spanishNumberStr = [ ["ZERO"], // 0
     ["DIECI",'SIETE'], // 17
     ["DIECI",'OCHO'], // 18
     ["DIECI",'NEUVE'], // 19
-    ["VEINTA",''], // 20
+    ["VEINTE",''], // 20
     ["VEINTI",'UNO'], // 21
     ["VEINTI",'DOS'], // 22
     ["VEINTI",'TRES'], // 23

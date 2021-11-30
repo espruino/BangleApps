@@ -5,11 +5,15 @@ The advantage is, that you can still see your normal watchface and other widgets
 The widget is always active, but only shown when the timer is on.
 Hours, minutes, seconds and timer status can be set with an app.
 
-Depending on when you start the timer, it may alert up to 0,999 seconds early. This is because it checks only for full seconds. When there is less than one seconds left, it buzzes. This cannot be avoided without checking more than every second, which I would like to avoid.
+When there is less than one seconds left on the timer it buzzes.
+
+The widget has been tested on Bangle 1 and Bangle 2
 
 ## Screenshots
 
-TBD
+![](chrono_with_wave.jpg)
+![](chrono_with_pastel.jpg)
+
 
 ## Features
 
