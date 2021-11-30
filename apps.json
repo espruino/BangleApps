@@ -4584,7 +4584,7 @@
     "readme": "README.md",
     "icon": "pebble.png",
     "dependencies": {"widpedom":"app"},
-    "screenshots": [{"url":"screenshot_pebble.png"}],
+    "screenshots": [{"url":"pebble_screenshot.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS2"],
