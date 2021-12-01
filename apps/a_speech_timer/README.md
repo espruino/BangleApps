@@ -5,6 +5,7 @@
   *  Example for a 5 to 7 minutes speech: vibrates once at 5:00 (green), twice at 6:00 (yellow), thrice at 7:00 (red).
 * Use the buttons to start a timer
 * Swipe left or right to choose different target times
+* Touching the timer on the upper part of the screen locks (or unlocks) the buttons to prevent accidental changes
 
 ![](screenshot0.png)
 ![](screenshot1.png)
