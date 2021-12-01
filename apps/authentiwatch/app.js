@@ -6,8 +6,11 @@ const algos = {
   "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
   "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
 };
+const calculating = "Calculating";
+const notokens = "No tokens";
+const notsupported = "Not supported";
 
-var tokens = require("Storage").readJSON("authentiwatch.json", true) || [];
+var tokens = require("Storage").readJSON("authentiwatch.json", true) || {data:[],count:0};
 tokens = tokens.data;
 
 // QR Code Text
@@ -67,9 +70,8 @@ function do_hmac(key, message, algo) {
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
-function hotp(token) {
+function hotp(d, token, dohmac) {
   var tick;
-  var d = new Date();
   if (token.period > 0) {
     // RFC6238 - timed
     var seconds = Math.floor(d.getTime() / 1000);
@@ -82,15 +84,17 @@ function hotp(token) {
   var v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var ret = "";
-  try {
-    var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
-    ret = "" + hash % Math.pow(10, token.digits);
-    while (ret.length < token.digits) {
-      ret = "0" + ret;
+  var ret = calculating;
+  if (dohmac) {
+    try {
+      var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
+      ret = "" + hash % Math.pow(10, token.digits);
+      while (ret.length < token.digits) {
+        ret = "0" + ret;
+      }
+    } catch(err) {
+      ret = notsupported;
     }
-  } catch(err) {
-    ret = "Not supported";
   }
   return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
@@ -158,6 +162,9 @@ function draw() {
   var d = new Date();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
+    if (state.otp == calculating) {
+      state.otp = hotp(d, t, true).hotp;
+    }
     if (d.getTime() > state.nextTime) {
       if (state.hide == 0) {
         // auto-hide the current token
@@ -168,7 +175,7 @@ function draw() {
         state.nextTime = 0;
       } else {
         // time to generate a new token
-        var r = hotp(t);
+        var r = hotp(d, t, state.otp != "");
         state.nextTime = r.next;
         state.otp = r.hotp;
         if (t.period <= 0) {
@@ -196,7 +203,13 @@ function draw() {
       if (state.drawtimer) {
         clearTimeout(state.drawtimer);
       }
-      state.drawtimer = setTimeout(draw, (tokens[state.curtoken].period > 0) ? 1000 : state.nexttime - d.getTime());
+      var dly;
+      if (tokens[state.curtoken].period > 0) {
+        dly = (state.otp == calculating) ? 1 : 1000;
+      } else {
+        dly = state.nexttime - d.getTime();
+      }
+      state.drawtimer = setTimeout(draw, dly);
       if (tokens[state.curtoken].period <= 0) {
         state.hide = 0;
       }
@@ -211,7 +224,7 @@ function draw() {
   } else {
     g.setFont("Vector", 30);
     g.setFontAlign(0, 0, 0);
-    g.drawString("No tokens", Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
 }
 
@@ -232,6 +245,7 @@ function onTouch(zone, e) {
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
+        state.otp = "";
       }
       state.nextTime = 0;
       state.curtoken = id;
@@ -261,6 +275,7 @@ function onSwipe(e) {
     let save={data:tokens,count:tokens.length};
     require("Storage").writeJSON("authentiwatch.json", save);
     state.nextTime = 0;
+    state.otp = "";
     state.hide = 2;
     draw();
   }
