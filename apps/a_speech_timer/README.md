@@ -6,7 +6,10 @@
 * Use the buttons to start a timer
 * Swipe left or right to choose different target times
 
-![](screenshot.png)
+![](screenshot0.png)
+![](screenshot1.png)
+![](screenshot2.png)
+![](screenshot3.png)
 
 ## Creator
 [@alainsaas](https://github.com/alainsaas)
