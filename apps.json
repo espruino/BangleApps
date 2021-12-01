@@ -4628,7 +4628,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A pebble style clock to keep the rebellion going",
     "readme": "README.md",
     "icon": "pebble.png",
@@ -4638,6 +4638,7 @@
     "supports": ["BANGLEJS2"],
     "storage": [
       {"name":"pebble.app.js","url":"pebble.app.js"},
+      {"name":"pebble.settings.js","url":"pebble.settings.js"},
       {"name":"pebble.img","url":"pebble.icon.js","evaluate":true}
     ]
   }
