@@ -4560,7 +4560,7 @@
 },
 {
   "id":"a_speech_timer",
-  "name":"A Speech TImer",
+  "name":"A Speech Timer",
   "icon": "app.png",
   "version":"1.00",
   "description": "A timer designed to help keeping your speeches and presentations to time.",
