@@ -20,7 +20,7 @@
 
 ### Select one of the Preset Cities
 
-* The presets are London, Newcastle, Edinbrough, Paris, New York, Tokyo
+* The presets are London, Newcastle, Edinburgh, Paris, New York, Tokyo
 
 ![](screenshot_1.png)
 
