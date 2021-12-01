@@ -115,7 +115,7 @@ function drawToken(id, r) {
   var y1 = r.y;
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
-  var adj;
+  var adj, sz;
   g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
                 Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
   if (id == state.curtoken) {
@@ -135,7 +135,7 @@ function drawToken(id, r) {
     adj = (y1 + y2) / 2;
   }
   g.clearRect(x1, y1, x2, y2);
-  g.drawString(tokens[id].label, (x1 + x2) / 2, adj, false);
+  g.drawString(tokens[id].label.substr(0, 10), (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
@@ -149,7 +149,10 @@ function drawToken(id, r) {
       adj = 5;
     }
     // digits just below label
-    g.setFont("Vector", (state.otp.length > 8) ? 26 : 30);
+    sz = 30;
+    do {
+      g.setFont("Vector", sz--);
+    } while (g.stringWidth(state.otp) > r.w);
     g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
   }
   // shaded lines top and bottom
