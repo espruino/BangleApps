@@ -10,8 +10,9 @@ const calculating = "Calculating";
 const notokens = "No tokens";
 const notsupported = "Not supported";
 
-var tokens = require("Storage").readJSON("authentiwatch.json", true) || {data:[],count:0};
-tokens = tokens.data;
+var settings = require("Storage").readJSON("authentiwatch.json", true) || {tokens:[],misc:{}};
+if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
+if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 // QR Code Text
 //
@@ -272,8 +273,8 @@ function onSwipe(e) {
   }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
-    let save={data:tokens,count:tokens.length};
-    require("Storage").writeJSON("authentiwatch.json", save);
+    let newsettings={tokens:tokens,misc:settings.misc};
+    require("Storage").writeJSON("authentiwatch.json", newsettings);
     state.nextTime = 0;
     state.otp = "";
     state.hide = 2;
