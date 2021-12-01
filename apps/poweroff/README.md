@@ -10,4 +10,4 @@ Start the app to shutdown your Bangle.js watch after a short delay.
 Marco ([myxor](https://github.com/myxor))
 
 ## Icon
-Icon taken from https://materialdesignicons.com/ Apache License 2.0
+Icon taken from [materialdesignicons](https://materialdesignicons.com) under Apache License 2.0
