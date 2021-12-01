@@ -3,7 +3,7 @@
    *a Pebble style clock with configurable background color, to keep the revolution going*      
 
 * Designed specifically for Bangle 2
-* A choice of 6 different background colous through its setting menu
+* A choice of 6 different background colous through its setting menu. Goto Settings, App/Widget settings, Pebble.
 * Supports the Light and Dark themes
 * Uses pedometer widget to get latest step count
 * Dependant apps are installed when Pebble installs
