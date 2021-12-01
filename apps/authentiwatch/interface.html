@@ -262,6 +262,7 @@ qrcode.callback = res => {
         scanning = false;
         editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
         t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
+        t['label'] = t['label'].substr(0, 10);
         var fe = document.forms['edittoken'].elements;
         if (res.startsWith(otpAuthUrl + 'hotp/')) {
           t['period'] = '30';
