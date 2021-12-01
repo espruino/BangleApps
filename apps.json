@@ -449,6 +449,27 @@
     ]
   },
   {
+    "id": "mandlebrotclock",
+    "name": "Mandlebrot Clock",
+    "version": "0.01",
+    "description": "A mandlebrot set themed clock cool",
+    "icon": "mandlebrotclock.png",
+    "screenshots": [{ "url": "screenshot_mandlebrotclock.png" }],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      { "name": "mandlebrotclock.app.js", "url": "mandlebrotclock.js" },
+      {
+        "name": "mandlebrotclock.img",
+        "url": "mandlebrotclock-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "imgclock",
     "name": "Image background clock",
     "shortName": "Image Clock",
@@ -664,7 +685,7 @@
   {
     "id": "gpsrec",
     "name": "GPS Recorder",
-    "version": "0.25",
+    "version": "0.26",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -683,7 +704,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -851,7 +872,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -4085,9 +4106,10 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.07",
-    "description": "A Configurable clock with custom fonts and background",
+    "version": "0.08",
+    "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
+    "dependencies": {"mylocation":"app"},
     "screenshots": [{"url":"screenshot_pastel.png"}],
     "type": "clock",
     "tags": "clock",
@@ -4412,7 +4434,7 @@
     "shortName": "AuthWatch",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
-    "version": "0.01",
+    "version": "0.02",
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
     "interface": "interface.html",
@@ -4458,6 +4480,23 @@
     ]
   },
   {
+    "id": "a_clock_timer",
+    "name": "A Clock with Timer",
+    "version": "0.01",
+    "description": "A Clock with Timer, Map and Time Zones",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"a_clock_timer.app.js","url":"app.js"},
+      {"name":"a_clock_timer.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
     "id":"intervalTimer",
     "name":"Interval Timer",
     "shortName":"Interval Timer",
@@ -4488,5 +4527,118 @@
      {"name":"93dub.app.js","url":"app.js"},
      {"name":"93dub.img","url":"app-icon.js","evaluate":true}
    ]
+  },
+  { "id": "poweroff",
+  "name": "Poweroff",
+  "shortName":"Poweroff",
+  "version":"0.01",
+  "description": "Simple app to power off your Bangle.js",
+  "icon": "app.png",
+  "tags": "poweroff, shutdown",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"poweroff.app.js","url":"app.js"},
+    {"name":"poweroff.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+{
+  "id": "sensible",
+  "name": "SensiBLE",
+  "shortName": "SensiBLE",
+  "version": "0.02",
+  "description": "Collect, display and advertise real-time sensor data.",
+  "icon": "sensible.png",
+  "type": "app",
+  "tags": "tool,sensors",
+  "supports" : [ "BANGLEJS2" ],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "sensible.app.js", "url": "sensible.js" },
+    { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
+  ]
+},
+  {
+    "id": "widbars",
+    "name": "Bars Widget",
+    "version": "0.01",
+    "description": "Display several measurements as vertical bars.",
+    "icon": "icon.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "readme": "README.md",
+    "type": "widget",
+    "tags": "widget",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widbars.wid.js","url":"widget.js"}
+  ]
+},
+{
+  "id":"a_speech_timer",
+  "name":"A Speech Timer",
+  "icon": "app.png",
+  "version":"1.00",
+  "description": "A timer designed to help keeping your speeches and presentations to time.",
+  "tags": "tool,timer",
+  "readme":"README.md",
+  "supports":["BANGLEJS2"],
+  "storage": [
+    {"name":"a_speech_timer.app.js","url":"app.js"},
+    {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
+  ]
+},
+  {
+    "id": "sensible",
+    "name": "SensiBLE",
+    "shortName": "SensiBLE",
+    "version": "0.02",
+    "description": "Collect, display and advertise real-time sensor data.",
+    "icon": "sensible.png",
+    "type": "app",
+    "tags": "tool,sensors",
+    "supports" : [ "BANGLEJS2" ],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      { "name": "sensible.app.js", "url": "sensible.js" },
+      { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
+    ]
+  },
+  { "id": "mylocation",
+    "name": "My Location",
+    "shortName":"My Location",
+    "icon": "mylocation.png",
+    "type": "app",
+    "screenshots": [{"url":"screenshot_1.png"}],
+    "version":"0.01",
+    "description": "Sets and stores the lat and long of your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
+    "readme": "README.md",
+    "tags": "tool,utility",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "storage": [
+      {"name":"mylocation.app.js","url":"mylocation.app.js"},
+      {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
+    ],
+    "data": [
+      {"name":"mylocation.json"}
+    ]
+  },
+  {
+    "id": "pebble",
+    "name": "Pebble Clock",
+    "shortName": "Pebble",
+    "version": "0.01",
+    "description": "A pebble style clock to keep the rebellion going",
+    "readme": "README.md",
+    "icon": "pebble.png",
+    "screenshots": [{"url":"pebble_screenshot.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"pebble.app.js","url":"pebble.app.js"},
+      {"name":"pebble.img","url":"pebble.icon.js","evaluate":true}
+    ]
   }
 ]

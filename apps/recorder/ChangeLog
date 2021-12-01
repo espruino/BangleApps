@@ -2,3 +2,4 @@
 0.02: Use 'recorder.log..' rather than 'record.log..'
       Fix interface.html
 0.03: Fix theme and maps/graphing if no GPS
+0.04: Multiple bugfixes
