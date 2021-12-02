@@ -35,8 +35,9 @@ const otpAuthUrl = 'otpauth://';
 
 const tokentypes = ['TOTP (Timed)', 'HOTP (Counter)'];
 
-/* Array of TOTP tokens */
-var tokens=[];
+/* Settings */
+var settings = {tokens:[], misc:{}};
+var tokens = settings.tokens;
 
 /* Remove any non-base-32 characters from the given string and collapses
  * whitespace to a single space. Optionally removes all whitespace from
@@ -261,6 +262,7 @@ qrcode.callback = res => {
         scanning = false;
         editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
         t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
+        t['label'] = t['label'].substr(0, 10);
         var fe = document.forms['edittoken'].elements;
         if (res.startsWith(otpAuthUrl + 'hotp/')) {
           t['period'] = '30';
@@ -319,23 +321,21 @@ function doScan() {
  */
 function loadTokens() {
   Util.showModal('Loading...');
-  Puck.eval(`require('Storage').read(${JSON.stringify('authentiwatch.json')})`,data=>{
+  Puck.eval(`require('Storage').readJSON(${JSON.stringify('authentiwatch.json')})`,data=>{
     Util.hideModal();
-    try {
-      let load = JSON.parse(data);
-      tokens = load.data;
-      updateTokens();
-    } catch {
-      tokens = [];
-    }
+    if (data.data  ) settings.tokens = data.data  ; /* v0.02 settings */
+    if (data.tokens) settings.tokens = data.tokens; /* v0.03+ settings */
+    if (data.misc  ) settings.misc   = data.misc  ; /* v0.03+ settings */
+    tokens = settings.tokens;
+    updateTokens();
   });
 }
 /* Save settings as a JSON file on the watch.
  */
 function saveTokens() {
   Util.showModal('Saving...');
-  let save={data:tokens,count:tokens.length};
-  Puck.write(`\x10require('Storage').write(${JSON.stringify('authentiwatch.json')},${JSON.stringify(save)})\n`,()=>{
+  let newsettings={tokens:tokens,misc:settings.misc};
+  Puck.write(`\x10require('Storage').writeJSON(${JSON.stringify('authentiwatch.json')},${JSON.stringify(newsettings)})\n`,()=>{
     Util.hideModal();
   });
 }
