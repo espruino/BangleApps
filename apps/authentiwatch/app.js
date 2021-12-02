@@ -164,6 +164,10 @@ function drawToken(id, r) {
 
 function draw() {
   var d = new Date();
+  if (state.idletimer) {
+    clearTimeout(state.idletimer);
+  }
+  state.idletimer = setTimeout(_=>load(), 10000);
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
     if (state.otp == calculating) {
@@ -203,7 +207,8 @@ function draw() {
       y += tokenentryheight;
     }
     if (drewcur) {
-      // the current token has been drawn - draw it again in 1sec
+      // the current token has been drawn - schedule a redraw
+      clearTimeout(state.idletimer);
       if (state.drawtimer) {
         clearTimeout(state.drawtimer);
       }
