@@ -46,3 +46,16 @@ E.showScroller({
     }
   }
 });
+
+// pressing button goes back
+setWatch(_=>load(), BTN1, {edge:"falling"});
+
+// 10s of inactivity goes back to clock
+Bangle.setLocked(false); // unlock initially
+var lockTimeout;
+Bangle.on('lock', locked => {
+  if (lockTimeout) clearTimeout(lockTimeout);
+  lockTimeout = undefined;
+  if (locked)
+    lockTimeout = setTimeout(_=>load(), 10000);
+});
