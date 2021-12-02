@@ -32,7 +32,7 @@
     <div id="map">
     </div>
     <div id="controls">
-      <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+      <div style="display:inline-block;text-align:center;vertical-align: top;"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
       <button id="getmap" class="btn btn-primary">Get Map</button><br/>
       <canvas id="maptiles" style="display:none"></canvas>
       <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
@@ -50,16 +50,16 @@
 
 TODO:
 
+* Allow a larger tilesize. Currently we use 'evaluate:true' which means we can only send 64x64x8 bit, but with some tweaking we could send 128x128 which would reduce the number of files and make things a bit snappier
 * Could maybe use palettised output?
 * Could potentially use a custom 16 color palette?
 * Allow user to choose size of map area to be uploaded (small/med/large)
 * What is faster? Storing as a compressed image and decompressing, or storing decompressed?
 
     */
-      var TILESIZE = 96; // Size of our tiles
-      var OSMTILESIZE = 256; // Size of openstreetmap tiles
-      var MAPSIZE = TILESIZE*5; ///< 480 - Size of map we download
-      var OSMTILECOUNT = 3; // how many tiles do we download in each direction (Math.floor(MAPSIZE / OSMTILESIZE)+1)
+      var TILESIZE = 64;
+      var OSMTILESIZE = 256;
+      var OSMSUBTILES = OSMTILESIZE / TILESIZE;
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
       var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
@@ -72,28 +72,17 @@ TODO:
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
 
-      function onInit(device) {
-        if (device && device.info && device.info.g) {
-          // On 3 bit devices, don't even offer the option. 3 bit is the only way
-          if (device.info.g.bpp==3) {
-            document.getElementById("3bit").checked = true;
-            document.getElementById("3bitdiv").style = "display:none";
-          }
-        }
-      }
-
       var mapFiles = [];
       tileLayer.addTo(map);
 
       function tilesLoaded(ctx, width, height) {
-        var options = {
-          compression:false, output:"raw",
-          mode:"web"
-        };
+        var options = { compression:true, mode:"web", output:"string"};
         if (document.getElementById("3bit").checked) {
           options = {
-            compression:false, output:"raw",
+            compression:true,
+            //mode:"web",
             mode:"3bit", brightness:-64,
+            output:"string"
           };
         }
         console.log("Compression options", options);
@@ -114,7 +103,8 @@ TODO:
             imgstr = imgstr.slice(compress.length,-1);*/
             tiles.push({
               name:"openstmap-"+x+"-"+y+".img",
-              content:imgstr
+              content:imgstr,
+              evaluate:true
             });
           }
         }
@@ -135,10 +125,10 @@ TODO:
         var canvas = document.getElementById("maptiles");
         canvas.style.display="";
         var ctx = canvas.getContext('2d');
-        canvas.width = MAPSIZE;
-        canvas.height = MAPSIZE;
-        for (var i = 0; i < OSMTILECOUNT; i++) {
-            for (var j = 0; j < OSMTILECOUNT; j++) {
+        canvas.width = OSMTILESIZE*2;
+        canvas.height = OSMTILESIZE*2;
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
               (function(i,j){
                 var coords = new L.Point(center.x+i-1, center.y+j-1);
                 coords.z = zoom;
