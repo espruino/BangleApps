@@ -6,3 +6,5 @@
 0.06: Use Bangle.setUI for buttons
 0.07: Theme colours fix
 0.08: Merge Bangle.js 1 and 2 launchers
+0.09: Bangle.js 2 - pressing the button goes back to clock (fix #971)
+      After 10s of being locked, the launcher goes back to the clock screen

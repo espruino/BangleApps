@@ -64,3 +64,12 @@ Bangle.setUI("updown",dir=>{
 });
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+// 10s of inactivity goes back to clock
+if (Bangle.setLocked) Bangle.setLocked(false); // unlock initially
+var lockTimeout;
+Bangle.on('lock', locked => {
+  if (lockTimeout) clearTimeout(lockTimeout);
+  lockTimeout = undefined;
+  if (locked)
+    lockTimeout = setTimeout(_=>load(), 10000);
+});
