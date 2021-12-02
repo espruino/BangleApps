@@ -4656,6 +4656,9 @@
     "storage": [
       {"name":"pooqroman.app.js","url":"app.js"},
       {"name":"pooqroman.img","url":"app-icon.js","evaluate":true}
+     ],
+     "data": [
+       {"name":"pooqroman.json"}
      ]
   }
 ]
