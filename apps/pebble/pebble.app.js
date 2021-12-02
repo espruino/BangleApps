@@ -15,7 +15,7 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green'};
 }
 
-var img = require("heatshrink").decompress(atob("oFAwkGswA/AH4A/AH4A/AH4A/AFEAD74gdsAfBELlggMhD70iILsAiUAIKQRBgxAHgUiIKQQJUAMSD4JBQsBVBIAq/DEAJBCJ45VHkAxEDwKfDIIUREBq2BmcQCAQeCkczmRBEiAgND4MxSoYGBAAQgCAAohKDARhBG4IeDEAQ8BAA5fJABgpBgFDgEiQgJEHT4IeMmMBkMFAYJJDEQaYDiYfMkECiEEoEDBAX//8ykJsBD4MAWwIALiBeCqAyDn//BoYgBgAeMYAMhgE0CRIOBD58BkEEmCRKkEGD5szkUQqdASJUxD4MAgKBKmUigFEGJZgBAATODFw0CkEBmoOJAAQdB7owBOBDdCgbdED5fd6pRIgDdCeBkxD4fdeAgNEkMFmheLdgIfE6BgGmDdCoDdKDwYfD6gzGiBeBrpLHXYUQXIMgD4NND4SAFZgMRgAKBPwroBBYIeBIAL/CADESL4VmsAcWgMRkQeDAAMAkQAWMAQeCD4MSDqqdBDwgfBAC8GDwiAXDowA/AH4A/AH4A/AH4A/AEA"));
+var img = require("heatshrink").decompress(atob("oFAwkEogA/AH4A/AH4A/AH4A/AE8AAAoeXoAfeDQUBmcyD7A+Dh///8QD649CiAfaHwUvD4sEHy0DDYIfEICg+Cn4fHICY+DD4nxcgojOHwgfEIAYfRCIQaDD4ZAFD5r7DH4//kAfRCIZ/GAAnwD5p9DX44fTHgYSBf4ofVDAQEBl4fFUAgfOXoQzBgIfFBAIfPP4RAEAoYAB+cRiK/SG4h/WIBAfXIA7CBAAswD55AHn6fUIBMCD65AHl4gCmcziAfQQJqfQQJpiDgk0IDXxQLRAEECaBM+QgRYRYgUIA0CD4ggSQJiDCiAKBICszAAswD55AHABKBVD7BAFABIqBD5pAFABPxD55AOD6BADiIAJQAyxLABwf/gaAPAH4A/AH4ARA=="));
 
 const h = g.getHeight();
 const w = g.getWidth();
@@ -66,7 +66,6 @@ function draw() {
   g.setFontLECO1976Regular42();
   g.setFontAlign(0, -1);
   g.setColor(!batteryWarning ? g.theme.fg : '#fff');
-  //g.drawString(timeStr, w/2, h2 - 8);
   g.drawString(timeStr, w/2, h2 + 8);
 
   // contrast bar
@@ -78,8 +77,8 @@ function draw() {
   g.fillRect(0, h3 + t, w, h);
 
   g.setColor(settings.bg);
-  g.drawImage(img, w/2 + ((w/2) - 64)/2, 10, { scale: 1 });
-  drawCalendar(((w/2) - 48)/2, 10, 48, 4, da[2]);
+  g.drawImage(img, w/2 + ((w/2) - 64)/2, 1, { scale: 1 });
+  drawCalendar(((w/2) - 42)/2, 14, 42, 4, da[2]);
 }
 
 // at x,y width:wi thicknes:th
@@ -96,9 +95,9 @@ function drawCalendar(x,y,wi,th,str) {
   // second calendar hook, two thirds in
   g.fillRect(x + (2*wi/3) -(th/2), y - hook_t, x + 2*wi/3 + th - (th/2), y + hook_t);
 
-  g.setFont('Vector', 22);
+  g.setFontLECO1976Regular22();
   g.setFontAlign(0, 0);
-  g.drawString(str, x + wi/2 + th/2, y + wi/2 + th/2);
+  g.drawString(str, x + wi/2, y + wi/2 + th);
 }
 
 function getSteps() {
