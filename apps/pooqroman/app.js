@@ -52,7 +52,7 @@ class Options {
     // Only fields named in the defaults will be saved.
     constructor() {
 	this.id = this.constructor.id;
-	this.file = `${this.id}.opt`;
+	this.file = `${this.id}.json`;
 	this.backing = storage.readJSON(this.file, true) || {};
 	this.defaults = this.constructor.defaults;
 	Object.keys(this.defaults).forEach(k => this.bless(k));
