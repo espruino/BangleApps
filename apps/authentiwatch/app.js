@@ -235,7 +235,7 @@ function draw() {
 function onTouch(zone, e) {
   if (e) {
     var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
-    if (id == state.curtoken || tokens.length == 0) {
+    if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
