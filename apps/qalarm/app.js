@@ -41,6 +41,7 @@ function getCurrentTime() {
 function showMainMenu() {
   const menu = {
     "": { title: "Alarms" },
+    "< Back" : () => load(),
     "New Alarm": () => showEditAlarmMenu(-1),
     "New Timer": () => showEditTimerMenu(-1),
   };
@@ -54,9 +55,7 @@ function showMainMenu() {
       else showEditAlarmMenu(idx);
     };
   });
-  menu["< Back"] = () => {
-    load();
-  };
+  menu
 
   if (WIDGETS["qalarm"]) WIDGETS["qalarm"].reload();
   return E.showMenu(menu);
@@ -86,6 +85,7 @@ function showEditAlarmMenu(alarmIndex, alarm) {
 
   const menu = {
     "": { title: alarm.msg ? alarm.msg : "Alarms" },
+    "< Back" : showMainMenu,
     Hours: {
       value: hrs,
       onchange: function (v) {
@@ -162,7 +162,6 @@ function showEditAlarmMenu(alarmIndex, alarm) {
       showMainMenu();
     };
   }
-  menu["< Back"] = showMainMenu;
   return E.showMenu(menu);
 }
 
@@ -206,6 +205,7 @@ function showEditTimerMenu(timerIndex) {
 
   const menu = {
     "": { title: "Timer" },
+    "< Back" : showMainMenu,
     Hours: {
       value: hrs,
       onchange: function (v) {
@@ -264,7 +264,7 @@ function showEditTimerMenu(timerIndex) {
       showMainMenu();
     };
   }
-  menu["< Back"] = showMainMenu;
+
   return E.showMenu(menu);
 }
 
