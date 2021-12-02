@@ -110,6 +110,13 @@ var state = {
   hide:0
 };
 
+function resetIdle() {
+  if (state.idletimer) {
+    clearTimeout(state.idletimer);
+  }
+  state.idletimer = setTimeout(_=>load(), 10000);
+}
+
 function drawToken(id, r) {
   var x1 = r.x;
   var y1 = r.y;
@@ -164,10 +171,7 @@ function drawToken(id, r) {
 
 function draw() {
   var d = new Date();
-  if (state.idletimer) {
-    clearTimeout(state.idletimer);
-  }
-  state.idletimer = setTimeout(_=>load(), 10000);
+  resetIdle();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
     if (state.otp == calculating) {
@@ -238,6 +242,7 @@ function draw() {
 }
 
 function onTouch(zone, e) {
+  resetIdle();
   if (e) {
     var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
@@ -265,6 +270,7 @@ function onTouch(zone, e) {
 }
 
 function onDrag(e) {
+  resetIdle();
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
   var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
@@ -276,6 +282,7 @@ function onDrag(e) {
 }
 
 function onSwipe(e) {
+  resetIdle();
   if (e == 1) {
     Bangle.showLauncher();
   }
@@ -291,6 +298,7 @@ function onSwipe(e) {
 }
 
 function bangle1Btn(e) {
+  resetIdle();
   if (tokens.length > 0) {
     if (state.curtoken == -1) {
       state.curtoken = state.prevcur;
