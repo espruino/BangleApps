@@ -1,4 +1,4 @@
-# pooq Roman—a classic watch face with amusing dynamicity
+# pooq Roman: a classic watch face with amusing dynamicity
 
 This is a normal watch face for telling the time.
 It is unusual in that it supports the 24 hour clock by dynamically updating the labels on the face
@@ -26,7 +26,7 @@ can watch as your doom approaches.
 Since this is intended as a design exercise, it does not and will probably never support the Bangle's standard widgets.
 Sorry about that, but control of all the pixels was just too important to me.
 
-There's also no support for internationalisation at present. This irks me, but… well, talk to me about it if there's a language you'd like.
+There's also no support for internationalisation at present. This irks me, but... well, talk to me about it if there's a language you'd like.
 
 ## The future
 
