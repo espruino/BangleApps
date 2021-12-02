@@ -152,7 +152,7 @@ function drawToken(id, r) {
     sz = 30;
     do {
       g.setFont("Vector", sz--);
-    } while (g.stringWidth(state.otp) > r.w);
+    } while (g.stringWidth(state.otp) > (r.w - adj));
     g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
   }
   // shaded lines top and bottom
@@ -228,7 +228,7 @@ function draw() {
   } else {
     g.setFont("Vector", 30);
     g.setFontAlign(0, 0, 0);
-    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
 }
 
