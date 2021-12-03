@@ -43,11 +43,11 @@
     "readme": "README.md",
     "storage": [
       {
-        "name": "hebrewCalendar.app.js",
+        "name": "hebrew_calendar.app.js",
         "url": "app.js"
       },
       {
-        "name": "hebrewCalendar.img",
+        "name": "hebrew_calendar.img",
         "url": "app-icon.js",
         "evaluate": true
       }
