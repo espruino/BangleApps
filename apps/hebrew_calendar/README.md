@@ -9,7 +9,7 @@ Open the app, and it shows a menu with the date components
 
 ## Features
 
-Name the function
+Shows the hebrew date, month, and year; alongside the gregorian date
 
 ## Controls
 
