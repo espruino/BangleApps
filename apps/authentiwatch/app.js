@@ -165,7 +165,7 @@ function drawToken(id, r) {
 }
 
 function draw() {
-  var timerfn = load;
+  var timerfn = exitApp;
   var timerdly = 10000;
   var d = new Date();
   if (state.curtoken != -1) {
@@ -305,12 +305,16 @@ function bangle1Btn(e) {
   }
 }
 
+function exitApp() {
+  Bangle.showLauncher();
+}
+
 Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
   setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){load();        }, BTN2, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){exitApp();     }, BTN2, {edge:"rising", debounce:50, repeat:true});
   setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
