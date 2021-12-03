@@ -206,10 +206,6 @@ function draw() {
     }
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
-      clearTimeout(state.idletimer);
-      if (state.drawtimer) {
-        clearTimeout(state.drawtimer);
-      }
       if (tokens[state.curtoken].period > 0) {
         timerdly = (state.otp == calculating) ? 1 : 1000; // timed
       } else {
