@@ -1928,7 +1928,7 @@
     "id": "openstmap",
     "name": "OpenStreetMap",
     "shortName": "OpenStMap",
-    "version": "0.09",
+    "version": "0.10",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "icon": "app.png",
     "tags": "outdoors,gps",

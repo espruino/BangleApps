@@ -34,8 +34,8 @@ exports.draw = function() {
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var ix = (p.x-map.center.x)*4096/map.scale + (map.imgx/2) - cx;
-  var iy = (map.center.y-p.y)*4096/map.scale + (map.imgy/2) - cy;
+  var ix = (p.x-map.center.x)/map.scale + (map.imgx/2) - cx;
+  var iy = (map.center.y-p.y)/map.scale + (map.imgy/2) - cy;
   //console.log(ix,iy);
   var tx = 0|(ix/map.tilesize);
   var ty = 0|(iy/map.tilesize);
@@ -57,8 +57,8 @@ exports.latLonToXY = function(lat, lon) {
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   return {
-    x : (q.x-p.x)*4096/map.scale + cx,
-    y : cy - (q.y-p.y)*4096/map.scale
+    x : (q.x-p.x)/map.scale + cx,
+    y : cy - (q.y-p.y)/map.scale
   };
 };
 
@@ -66,6 +66,6 @@ exports.latLonToXY = function(lat, lon) {
 exports.scroll = function(x,y) {
   var a = Bangle.project({lat:this.lat,lon:this.lon});
   var b = Bangle.project({lat:this.lat+1,lon:this.lon+1});
-  this.lon += x * this.map.scale / ((a.x-b.x) * 4096);
-  this.lat -= y * this.map.scale / ((a.y-b.y) * 4096);
+  this.lon += x * this.map.scale / (a.x-b.x);
+  this.lat -= y * this.map.scale / (a.y-b.y);
 };
