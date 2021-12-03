@@ -51,47 +51,46 @@ class Options {
     // Protocol: subclasses must have static id and defaults fields.
     // Only fields named in the defaults will be saved.
     constructor() {
-	this.id = this.constructor.id;
-	this.file = `${this.id}.json`;
-	this.backing = storage.readJSON(this.file, true) || {};
-	this.defaults = this.constructor.defaults;
-	Object.keys(this.defaults).forEach(k => this.bless(k));
+        this.id = this.constructor.id;
+        this.file = `${this.id}.json`;
+        this.backing = storage.readJSON(this.file, true) || {};
+        this.defaults = this.constructor.defaults;
+        Object.keys(this.defaults).forEach(k => this.bless(k));
     }
 
     writeBack(delay) {
-	if (this.timeout) clearTimeout(this.timeout);
-	this.timeout = setTimeout(
-	    () => {
-		this.timeout = null;
-		storage.writeJSON(this.file, this.backing);
-	    },
-	    delay
-	);
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(
+            () => {
+                this.timeout = null;
+                storage.writeJSON(this.file, this.backing);
+            },
+            delay
+        );
     }
     
     bless(k) {
-	Object.defineProperty(this, k, {
-	    get: () => this.backing[k] == null ? this.defaults[k] : this.backing[k],
-	    set: v => {
-		this.backing[k] = v;
-		// Ten second writeback delay, since the user will roll values up and down.
-		this.writeBack(10000);
-		return v;
-	    }
-	});
-    }		     
+        Object.defineProperty(this, k, {
+            get: () => this.backing[k] == null ? this.defaults[k] : this.backing[k],
+            set: v => {
+                this.backing[k] = v;
+                // Ten second writeback delay, since the user will roll values up and down.
+                this.writeBack(10000);
+            }
+        });
+    }                     
 
     showMenu(m) {
-	if (m) {
-	    for (const k in m) if ('init' in m[k]) m[k].value = m[k].init();
-	    m[''].selected = -1; // Workaround for self-selection bug.
-	}
-	E.showMenu(m);
+        if (m) {
+            for (const k in m) if ('init' in m[k]) m[k].value = m[k].init();
+            m[''].selected = -1; // Workaround for self-selection bug.
+        }
+        E.showMenu(m);
     }
 
     reset() {
-	this.backing = {};
-	this.writeBack(0);
+        this.backing = {};
+        this.writeBack(0);
     }
     
     interact() {this.showMenu(this.menu);}
@@ -99,34 +98,34 @@ class Options {
 
 class RomanOptions extends Options {
     constructor() {
-	super();
-	this.menu = {
-	    '': {title: '* face options *'},
-	    '< Back': _ => {this.showMenu(); this.emit('done');},
-	    Ticks: {
-		init: _ => this.resolution,
-		min: 0, max: 3,
-		onchange: x => this.resolution = x,
-		format: x => ['seconds', 'seconds (up)', 'minutes', 'hours'][x]
-	    },
-	    'Display': {
-		init: _ => this.o24h == null ? 0 : 1 + this.o24h,
-		min: 0, max: 2,
-		onchange: x => this.o24h = [null, 0, 1][x],
-		format: x => ['system', '12h', '24h'][x]
-	    },
-	    'Day of Week': {
-		init: _ => this.dow,
-		onchange: x => this.dow = x
-	    },
-	    Calendar: {
-		init: _ => this.calendric,
-		min: 0, max: 2,
-		onchange: x => this.calendric = x,
-		format: x => ['none', 'day', 'date'][x]
-	    },
-	    Defaults: _ => {this.reset();}
-	};
+        super();
+        this.menu = {
+            '': {title: '* face options *'},
+            '< Back': _ => {this.showMenu(); this.emit('done');},
+            Ticks: {
+                init: _ => this.resolution,
+                min: 0, max: 3,
+                onchange: x => this.resolution = x,
+                format: x => ['seconds', 'seconds (up)', 'minutes', 'hours'][x]
+            },
+            'Display': {
+                init: _ => this.o24h == null ? 0 : 1 + this.o24h,
+                min: 0, max: 2,
+                onchange: x => this.o24h = [null, 0, 1][x],
+                format: x => ['system', '12h', '24h'][x]
+            },
+            'Day of Week': {
+                init: _ => this.dow,
+                onchange: x => this.dow = x
+            },
+            Calendar: {
+                init: _ => this.calendric,
+                min: 0, max: 2,
+                onchange: x => this.calendric = x,
+                format: x => ['none', 'day', 'date'][x]
+            },
+            Defaults: _ => {this.reset();}
+        };
     }
 }
 
@@ -196,24 +195,24 @@ class Formattable {
 
 class Fixed extends Formattable {
     constructor(text) {
-	super();
-	this.text = text;
+        super();
+        this.text = text;
     }
     squeeze() {return false;}
 }
 
 class Squeezable extends Formattable {
     constructor(named, index) {
-	super();
-	this.named = named;
-	this.index = index;
-	this.end = index + named.forms;
+        super();
+        this.named = named;
+        this.index = index;
+        this.end = index + named.forms;
     }
     squeeze() {
-	if (this.index >= this.end) return false;
-	this.index++;
-	this.w = null;
-	return true;
+        if (this.index >= this.end) return false;
+        this.index++;
+        this.w = null;
+        return true;
     }
     get text() {return this.named.table[this.index];}
 }
@@ -319,82 +318,82 @@ const events = {
     wall: [{time: Number.POSITIVE_INFINITY}], // indexed by nominal ms + TZ ms
     
     clean: function(now, l) {
-	let o = now.getTimezoneOffset() * 60000;
-	let tf = now.getTime() + l, tw = tf - o;
-	// Discard stale events:
-	while (this.wall[0].time <= tw) this.wall.shift();
-	while (this.fixed[0].time <= tf) this.fixed.shift();
+        let o = now.getTimezoneOffset() * 60000;
+        let tf = now.getTime() + l, tw = tf - o;
+        // Discard stale events:
+        while (this.wall[0].time <= tw) this.wall.shift();
+        while (this.fixed[0].time <= tf) this.fixed.shift();
     },
     
     scan: function(now, from, to, f) {
-	result = Infinity;
-	let o = now.getTimezoneOffset() * 60000;
-	let t = now.getTime() - o;
-	let c, p, i, l = from - o, h = to - o;
-	for (i = 0; (c = this.wall[i]).time < l; i++) ;
-	for (; (c = this.wall[i]).time < h; i++) {
-	    if ((p = c.time < t) ? c.past : c.future)
-		result = Math.min(result, f(c, new Date(c.time + o), p));
-	}
-	l += o; h += o; t += o;
-	for (i = 0; (c = this.fixed[i]).time < l; i++) ;
-	for (; (c = this.fixed[i]).time < h; i++) {
-	    if ((p = c.time < t) ? c.past : c.future)
-		result = Math.min(f(c, new Date(c.time), p));
-	}
-	return result;
+        result = Infinity;
+        let o = now.getTimezoneOffset() * 60000;
+        let t = now.getTime() - o;
+        let c, p, i, l = from - o, h = to - o;
+        for (i = 0; (c = this.wall[i]).time < l; i++) ;
+        for (; (c = this.wall[i]).time < h; i++) {
+            if ((p = c.time < t) ? c.past : c.future)
+                result = Math.min(result, f(c, new Date(c.time + o), p));
+        }
+        l += o; h += o; t += o;
+        for (i = 0; (c = this.fixed[i]).time < l; i++) ;
+        for (; (c = this.fixed[i]).time < h; i++) {
+            if ((p = c.time < t) ? c.past : c.future)
+                result = Math.min(f(c, new Date(c.time), p));
+        }
+        return result;
     },
 
     span: function(now, from, to, width) {
-	let o = now.getTimezoneOffset() * 60000;
-	let t = now.getTime() - o;
-	let lfence = [], rfence = [];
-	this.scan(now, from, to, (e, d, p) => {
-	    if (p) {
-		for (let j = 0; j <= e.priority; j++) {
-		    if (d < (lfence[e.priority] || t)) lfence[e.priority] = d;
-		}
-	    } else {
-		for (let j = 0; j <= e.priority; j++) {
-		    if (d > (rfence[e.priority] || t)) rfence[e.priority] = d;
-		}
-	    }
-	});
-	for (let j = 0; ; j += 0.5) {
-	    if ((rfence[Math.ceil(j)] - lfence[Math.floor(j)] || 0) <= width) {
-		return [lfence[Math.floor(j)] || now, rfence[Math.ceil(j)] || now];
-	    }
-	}
+        let o = now.getTimezoneOffset() * 60000;
+        let t = now.getTime() - o;
+        let lfence = [], rfence = [];
+        this.scan(now, from, to, (e, d, p) => {
+            if (p) {
+                for (let j = 0; j <= e.priority; j++) {
+                    if (d < (lfence[e.priority] || t)) lfence[e.priority] = d;
+                }
+            } else {
+                for (let j = 0; j <= e.priority; j++) {
+                    if (d > (rfence[e.priority] || t)) rfence[e.priority] = d;
+                }
+            }
+        });
+        for (let j = 0; ; j += 0.5) {
+            if ((rfence[Math.ceil(j)] - lfence[Math.floor(j)] || 0) <= width) {
+                return [lfence[Math.floor(j)] || now, rfence[Math.ceil(j)] || now];
+            }
+        }
     },
 
     insert: function(t, wall, e) {
-	let v = wall ? this.wall : this.fixed;
-	e.time = t = t - (wall ? t.getTimezoneOffset() * 60000 : 0);
-	v.splice(v.findIndex(x => x.time > t), 0, e);
+        let v = wall ? this.wall : this.fixed;
+        e.time = t = t - (wall ? t.getTimezoneOffset() * 60000 : 0);
+        v.splice(v.findIndex(x => x.time > t), 0, e);
     },
 
     loadFromSystem: function(options) {
-	alarms.forEach(x => {
-	    if (x.on) {
-		const t = new Date();
-		let h = x.hr;
-		let m = h % 1 * 60;
-		let s = m % 1 * 60;
-		let ms = s % 1 * 1000;
-		t.setHours(h - h % 1, m - m % 1, s - s % 1, ms);
-		// There's a race condition here, but I'm not sure what we can do about it.
-		if (t < Date.now() || x.last === t.getDate()) t.setDate(t.getDate() + 1);
-		this.insert(t, true, {
-		    priority: 0,
-		    past: false, // System alarms seem uninteresting if past?
-		    future: true,
-		    precision: x.timer ? 1000 : 60000,
-		    colour: x.timer ? options.timerFg : options.alarmFg,
-		    event: x
-		});
-	    }
-	});
-	return this;
+        alarms.forEach(x => {
+            if (x.on) {
+                const t = new Date();
+                let h = x.hr;
+                let m = h % 1 * 60;
+                let s = m % 1 * 60;
+                let ms = s % 1 * 1000;
+                t.setHours(h - h % 1, m - m % 1, s - s % 1, ms);
+                // There's a race condition here, but I'm not sure what we can do about it.
+                if (t < Date.now() || x.last === t.getDate()) t.setDate(t.getDate() + 1);
+                this.insert(t, true, {
+                    priority: 0,
+                    past: false, // System alarms seem uninteresting if past?
+                    future: true,
+                    precision: x.timer ? 1000 : 60000,
+                    colour: x.timer ? options.timerFg : options.alarmFg,
+                    event: x
+                });
+            }
+        });
+        return this;
     },
 };
 
@@ -403,82 +402,82 @@ const events = {
 
 class Sidebar {
     constructor(g, x, y, w, h, options) {
-	this.g = g;
-	this.options = options;
-	this.x = x;
-	this.y = this.initY = y;
-	this.h = h;
-	this.rate = Infinity;
-	this.doLocked = Sidebar.status(_ => Bangle.isLocked(), lockI);
-	this.doHRM = Sidebar.status(_ => Bangle.isHRMOn(), HRMI);
-	this.doGPS = Sidebar.status(_ => Bangle.isGPSOn(), GPSI, Sidebar.gpsColour(options));
+        this.g = g;
+        this.options = options;
+        this.x = x;
+        this.y = this.initY = y;
+        this.h = h;
+        this.rate = Infinity;
+        this.doLocked = Sidebar.status(_ => Bangle.isLocked(), lockI);
+        this.doHRM = Sidebar.status(_ => Bangle.isHRMOn(), HRMI);
+        this.doGPS = Sidebar.status(_ => Bangle.isGPSOn(), GPSI, Sidebar.gpsColour(options));
     }
     reset(rate) {this.y = this.initY; this.rate = rate; return this;}
     print(t) {
-	this.y += 4 + t.print(
-	    this.g.setColor(this.options.barFg).setFontAlign(-1, 1, 1),
-	    this.x + 3, this.y + 4
-	);
-	return this;
+        this.y += 4 + t.print(
+            this.g.setColor(this.options.barFg).setFontAlign(-1, 1, 1),
+            this.x + 3, this.y + 4
+        );
+        return this;
     }
     pad(n) {this.y += n; return this;}
     free() {return this.h - this.y;}
     static status(p, i, c) {
-	return function() {
-	    if (p()) {
-		this.g.setColor(c ? c() : this.options.barFg)
-		    .drawImage(i, this.x + 4, this.y += 4);
-		this.y += imageHeight(i);
-	    }
-	    return this;
-	};
+        return function() {
+            if (p()) {
+                this.g.setColor(c ? c() : this.options.barFg)
+                    .drawImage(i, this.x + 4, this.y += 4);
+                this.y += imageHeight(i);
+            }
+            return this;
+        };
     }
     static gpsColour(o) {
-	const fix = Bangle.getGPSFix();
-	return fix && fix.fix ? o.active : o.barFg;
+        const fix = Bangle.getGPSFix();
+        return fix && fix.fix ? o.active : o.barFg;
     }
     doPower() {
-	const c = Bangle.isCharging();
-	const b = E.getBattery();
-	if (c || b < 50) {
-	    let g = this.g, x = this.x, y = this.y, options = this.options;
-	    g.setColor(options.barFg).drawImage(batteryI, x + 4, y + 4);
-	    g.setColor(b <= 10 ? '#f00' : b <= 30 ? '#ff0' : '#0f0');
-	    const h = 13 * (100 - b) / 100;
-	    g.fillRect(x + 8, y + 7 + h, x + 17, y + 20);
-	    // Espruino disallows blank leading rows in icons, for some reason.
-	    if (c) g.setColor(options.barBg).drawImage(chargeI, x + 4, y + 8);
-	    this.y = y + imageHeight(batteryI) + 4;
-	}
-	return this;
+        const c = Bangle.isCharging();
+        const b = E.getBattery();
+        if (c || b < 50) {
+            let g = this.g, x = this.x, y = this.y, options = this.options;
+            g.setColor(options.barFg).drawImage(batteryI, x + 4, y + 4);
+            g.setColor(b <= 10 ? '#f00' : b <= 30 ? '#ff0' : '#0f0');
+            const h = 13 * (100 - b) / 100;
+            g.fillRect(x + 8, y + 7 + h, x + 17, y + 20);
+            // Espruino disallows blank leading rows in icons, for some reason.
+            if (c) g.setColor(options.barBg).drawImage(chargeI, x + 4, y + 8);
+            this.y = y + imageHeight(batteryI) + 4;
+        }
+        return this;
     }
     doCompass() {
-	if (Bangle.isCompassOn()) {
-	    const c = Bangle.getCompass();
-	    const a = c && this.rate <= 1000;
-	    this.g.setColor(a ? this.options.active : this.options.barFg).drawImage(
-		compassI,
-		this.x + 4 + imageWidth(compassI) / 2,
-		this.y + 4 + imageHeight(compassI) / 2,
-		a ? {rotate: c.heading / 180 * Math.PI} : undefined
-	    );
-	    this.y += 4 + imageHeight(compassI);
-	}
-	return this;
+        if (Bangle.isCompassOn()) {
+            const c = Bangle.getCompass();
+            const a = c && this.rate <= 1000;
+            this.g.setColor(a ? this.options.active : this.options.barFg).drawImage(
+                compassI,
+                this.x + 4 + imageWidth(compassI) / 2,
+                this.y + 4 + imageHeight(compassI) / 2,
+                a ? {rotate: c.heading / 180 * Math.PI} : undefined
+            );
+            this.y += 4 + imageHeight(compassI);
+        }
+        return this;
     }
 }
 
 class Roman {
     constructor(g, events) {
-	this.g = g;
-	this.state = {};
-	const options = this.options = new RomanOptions();
-	this.events = events.loadFromSystem(this.options);
-	this.timescales  = [1000, [1000, 60000], 60000, 3600000];
-	this.sidebar = new Sidebar(g, barX, barY, barW, barH, options);
-	this.hours = Roman.hand(g, 3, 0.5, 12, _ => options.hourFg);
-	this.minutes = Roman.hand(g, 2, 0.9, 60, _ => options.minuteFg);
-	this.seconds = Roman.hand(g, 1, 0.9, 60, _ => options.secondFg);
+        this.g = g;
+        this.state = {};
+        const options = this.options = new RomanOptions();
+        this.events = events.loadFromSystem(this.options);
+        this.timescales  = [1000, [1000, 60000], 60000, 3600000];
+        this.sidebar = new Sidebar(g, barX, barY, barW, barH, options);
+        this.hours = Roman.hand(g, 3, 0.5, 12, _ => options.hourFg);
+        this.minutes = Roman.hand(g, 2, 0.9, 60, _ => options.minuteFg);
+        this.seconds = Roman.hand(g, 1, 0.9, 60, _ => options.secondFg);
     }
 
     reset() {this.state = {}; this.g.clear(true);}
@@ -488,150 +487,150 @@ class Roman {
     // Watch hands. These could be improved, graphically.
     // If we restricted them to 60 positions, we could feasibly hand-draw them?
     static hand(g, w, l, d, c) {
-	return p => {
-	    g.setColor(c());
-	    p = ((12 * p / d) + 1) % 12;
-	    let h = l * rectW / 2;
-	    let v = l * rectH / 2;
-	    let poly =
-		p <= 2 ? [faceCX + w, faceCY, faceCX - w, faceCY,
-			  faceCX + h * (p - 1), faceCY - v,
-			  faceCX + h * (p - 1) + 1, faceCY - v]
-		: p < 6 ? [faceCX + 1, faceCY + w, faceCX + 1, faceCY - w,
-			   faceCX + h, faceCY + v / 2 * (p - 4),
-			   faceCX + h, faceCY + v / 2 * (p - 4) + 1]
-		: p <= 8 ? [faceCX - w, faceCY + 1, faceCX + w, faceCY + 1,
-			    faceCX - h * (p - 7), faceCY + v,
-			    faceCX - h * (p - 7) - 1, faceCY + v]
-		: [faceCX, faceCY - w, faceCX, faceCY + w,
-		   faceCX - h, faceCY - v / 2 * (p - 10),
-		   faceCX - h, faceCY - v / 2 * (p - 10) - 1];
-	    g.fillPoly(poly);
-	};
+        return p => {
+            g.setColor(c());
+            p = ((12 * p / d) + 1) % 12;
+            let h = l * rectW / 2;
+            let v = l * rectH / 2;
+            let poly =
+                p <= 2 ? [faceCX + w, faceCY, faceCX - w, faceCY,
+                          faceCX + h * (p - 1), faceCY - v,
+                          faceCX + h * (p - 1) + 1, faceCY - v]
+                : p < 6 ? [faceCX + 1, faceCY + w, faceCX + 1, faceCY - w,
+                           faceCX + h, faceCY + v / 2 * (p - 4),
+                           faceCX + h, faceCY + v / 2 * (p - 4) + 1]
+                : p <= 8 ? [faceCX - w, faceCY + 1, faceCX + w, faceCY + 1,
+                            faceCX - h * (p - 7), faceCY + v,
+                            faceCX - h * (p - 7) - 1, faceCY + v]
+                : [faceCX, faceCY - w, faceCX, faceCY + w,
+                   faceCX - h, faceCY - v / 2 * (p - 10),
+                   faceCX - h, faceCY - v / 2 * (p - 10) - 1];
+            g.fillPoly(poly);
+        };
     }
 
     static pos(p, r) {
-	let h = r * rectW / 2;
-	let v = r * rectH / 2;
-	p = (p + 1) % 12;  
-	return p <= 2 ? [faceCX + h * (p - 1), faceCY - v]
-	    : p < 6 ? [faceCX + h, faceCY + v / 2 * (p - 4)]
-	    : p <= 8 ? [faceCX - h * (p - 7), faceCY + v]
-	    : [faceCX - h, faceCY - v / 2 * (p - 10)];
+        let h = r * rectW / 2;
+        let v = r * rectH / 2;
+        p = (p + 1) % 12;  
+        return p <= 2 ? [faceCX + h * (p - 1), faceCY - v]
+            : p < 6 ? [faceCX + h, faceCY + v / 2 * (p - 4)]
+            : p <= 8 ? [faceCX - h * (p - 7), faceCY + v]
+            : [faceCX - h, faceCY - v / 2 * (p - 10)];
     }
     
     alert(e, date, now, past) {
-	const g = this.g;
-	g.setColor(e.colour);
-	const dt = date - now;
-	if (e.precision < 60000 && dt >= 0 && e.future && dt <= 59000) { // Seconds away
-	    const p = Roman.pos(date.getSeconds() / 5, 0.95);
-	    g.drawLine(faceCX, faceCY, p[0], p[1]);
-	    return 1000;
-	} else if (e.precision < 3600000 && dt >= 0 && e.future && dt <= 3540000) { // Minutes away
-	    const p = Roman.pos(date.getMinutes() / 5 + date.getSeconds() / 300, 0.8);
-	    g.drawLine(p[0] - 5, p[1], p[0] + 5, p[1]);
-	    g.drawLine(p[0], p[1] - 5, p[0], p[1] + 5);
-	    return dt < 119000 ? 1000 : 60000; // Turn on second hand two minutes up.
-	} else if (e.precision < 43200000 && dt >= 0 ? e.future : e.past) { // Hours away
-	    const p = Roman.pos(date.getHours() + date.getMinutes() / 60, 0.6);
-	    const poly = [p[0] - 4, p[1], p[0], p[1] - 4, p[0] + 4, p[1], p[0], p[1] + 4];
-	    if (date >= now) g.fillPoly(poly);
-	    else g.drawPoly(poly, true);
-	    return 3600000;
-	}
-	return Infinity;
+        const g = this.g;
+        g.setColor(e.colour);
+        const dt = date - now;
+        if (e.precision < 60000 && dt >= 0 && e.future && dt <= 59000) { // Seconds away
+            const p = Roman.pos(date.getSeconds() / 5, 0.95);
+            g.drawLine(faceCX, faceCY, p[0], p[1]);
+            return 1000;
+        } else if (e.precision < 3600000 && dt >= 0 && e.future && dt <= 3540000) { // Minutes away
+            const p = Roman.pos(date.getMinutes() / 5 + date.getSeconds() / 300, 0.8);
+            g.drawLine(p[0] - 5, p[1], p[0] + 5, p[1]);
+            g.drawLine(p[0], p[1] - 5, p[0], p[1] + 5);
+            return dt < 119000 ? 1000 : 60000; // Turn on second hand two minutes up.
+        } else if (e.precision < 43200000 && dt >= 0 ? e.future : e.past) { // Hours away
+            const p = Roman.pos(date.getHours() + date.getMinutes() / 60, 0.6);
+            const poly = [p[0] - 4, p[1], p[0], p[1] - 4, p[0] + 4, p[1], p[0], p[1] + 4];
+            if (date >= now) g.fillPoly(poly);
+            else g.drawPoly(poly, true);
+            return 3600000;
+        }
+        return Infinity;
     }
     
     render(d, rate) {
-	const g = this.g;
-	const state = this.state;
-	const options = this.options;
-	const events = this.events;
-	events.clean(d, -39600000); // 11h
+        const g = this.g;
+        const state = this.state;
+        const options = this.options;
+        const events = this.events;
+        events.clean(d, -39600000); // 11h
 
-	// Sidebar: icons and date
-	if (d.getDate() !== state.date || !state.iconsOk) {
-	    const sidebar = this.sidebar;
-	    state.date = d.getDate();
-	    state.iconsOk = true;
-	    g.setColor(options.barBg).fillRect(barX, barY, barX + barW, barY + barH);
+        // Sidebar: icons and date
+        if (d.getDate() !== state.date || !state.iconsOk) {
+            const sidebar = this.sidebar;
+            state.date = d.getDate();
+            state.iconsOk = true;
+            g.setColor(options.barBg).fillRect(barX, barY, barX + barW, barY + barH);
 
-	    sidebar.reset(rate).doLocked().doPower().doGPS().doHRM().doCompass();
-	    g.setFontCustom.apply(g, fontF);
-	    let formatters = [];
-	    let month, dom, dow;
-	    if (options.calendric > 1) {
-		formatters.push(month = formatMonth.on(d.getMonth()));
-	    }
-	    if (options.calendric > 0) {
-		formatters.push(dom = formatDom.on(d.getDate()));
-	    }
-	    if (options.dow) {
-		formatters.push(dow = formatDow.on(d.getDay()));
-	    }
-	    // Obnoxiously inefficient iterative method :(
-	    let ava = sidebar.free() - 3, use, i = 0, j = 0;
-	    while ((use = formatters.reduce((l, f) => l + f.width(g) + 4, 0)) > ava &&
-		   j < formatters.length)
-		for (j = 0;
-		     !formatters[i++ % formatters.length].squeeze() &&
-		     j < formatters.length;
-		     j++) ;
-	    if (dow) sidebar.print(dow);
-	    sidebar.pad(ava - use);
-	    if (month) sidebar.print(month);
-	    if (dom) sidebar.print(dom);
-	}
+            sidebar.reset(rate).doLocked().doPower().doGPS().doHRM().doCompass();
+            g.setFontCustom.apply(g, fontF);
+            let formatters = [];
+            let month, dom, dow;
+            if (options.calendric > 1) {
+                formatters.push(month = formatMonth.on(d.getMonth()));
+            }
+            if (options.calendric > 0) {
+                formatters.push(dom = formatDom.on(d.getDate()));
+            }
+            if (options.dow) {
+                formatters.push(dow = formatDow.on(d.getDay()));
+            }
+            // Obnoxiously inefficient iterative method :(
+            let ava = sidebar.free() - 3, use, i = 0, j = 0;
+            while ((use = formatters.reduce((l, f) => l + f.width(g) + 4, 0)) > ava &&
+                   j < formatters.length)
+                for (j = 0;
+                     !formatters[i++ % formatters.length].squeeze() &&
+                     j < formatters.length;
+                     j++) ;
+            if (dow) sidebar.print(dow);
+            sidebar.pad(ava - use);
+            if (month) sidebar.print(month);
+            if (dom) sidebar.print(dom);
+        }
 
-	// Hour labels and (purely aesthetic) box; clear inner face.
-	let keyHour = d.getHours() < 12 ? 1 : 13;
-	let alertSpan = events.span(d, hceil(d) - 39600000, hfloor(d) + 39600000, 39600000);
-	let l = alertSpan[0].getHours(), h = alertSpan[1].getHours();
-	if ((l - keyHour + 24) % 24 >= 12 || (h - keyHour + 24) % 24 >= 12) keyHour = l;
-	if (keyHour !== state.keyHour) {
-	    state.keyHour = keyHour;
-	    g.setColor(options.bg)
-		.fillRect(faceX, faceY, faceX + faceW, faceY + faceH)
-		.setFontCustom.apply(g, romanPartsF)
-		.setFontAlign(0, 1)
-		.setColor(options.fg);
-	    // In order to deal with timezone changes more logic will be required,
-	    // since the labels may be in unusual locations (even offset when
-	    // a non-integral zone is involved). The value of keyHour can be
-	    // anything in [hr-12, hr] mod 24.
-	    for (let h = keyHour; h < keyHour + 12; h++) {
-		g.drawString(
-		    numeral(h % 24, options),
-		    faceX + layout[h % 12 * 2], 
-		    faceY + layout[h % 12 * 2 + 1]
-		);
-	    }
-	    g.setColor(options.rectFg)
-		.drawRect(rectX, rectY, rectX + rectW - 1, rectY + rectH - 1);
-	} else {
-	    g.setColor(options.bg)
-		.fillRect(rectX + 1, rectY + 1, rectX + rectW - 2, rectY + rectH - 2)
-		.setColor(options.fg);
-	}
+        // Hour labels and (purely aesthetic) box; clear inner face.
+        let keyHour = d.getHours() < 12 ? 1 : 13;
+        let alertSpan = events.span(d, hceil(d) - 39600000, hfloor(d) + 39600000, 39600000);
+        let l = alertSpan[0].getHours(), h = alertSpan[1].getHours();
+        if ((l - keyHour + 24) % 24 >= 12 || (h - keyHour + 24) % 24 >= 12) keyHour = l;
+        if (keyHour !== state.keyHour) {
+            state.keyHour = keyHour;
+            g.setColor(options.bg)
+                .fillRect(faceX, faceY, faceX + faceW, faceY + faceH)
+                .setFontCustom.apply(g, romanPartsF)
+                .setFontAlign(0, 1)
+                .setColor(options.fg);
+            // In order to deal with timezone changes more logic will be required,
+            // since the labels may be in unusual locations (even offset when
+            // a non-integral zone is involved). The value of keyHour can be
+            // anything in [hr-12, hr] mod 24.
+            for (let h = keyHour; h < keyHour + 12; h++) {
+                g.drawString(
+                    numeral(h % 24, options),
+                    faceX + layout[h % 12 * 2], 
+                    faceY + layout[h % 12 * 2 + 1]
+                );
+            }
+            g.setColor(options.rectFg)
+                .drawRect(rectX, rectY, rectX + rectW - 1, rectY + rectH - 1);
+        } else {
+            g.setColor(options.bg)
+                .fillRect(rectX + 1, rectY + 1, rectX + rectW - 2, rectY + rectH - 2)
+                .setColor(options.fg);
+        }
 
-	// Alerts
-	let requestedRate = events.scan(
-	    d, hfloor(alertSpan[0] + 0), hceil(alertSpan[1] + 0) + 1,
-	    (e, t, p) => this.alert(e, t, d, p)
-	);
-	if (rate > requestedRate) rate = requestedRate;
-	
-	// Hands
-	// Here we are using incremental hands for hours and minutes.
-	// If we quantised, we could use hand-crafted bitmaps, though.
-	this.hours(d.getHours() + d.getMinutes() / 60);
-	if (rate < 3600000) {
-	    this.minutes(d.getMinutes() + d.getSeconds() / 60);
-	}
-	if (rate < 60000) this.seconds(d.getSeconds());
-	g.setColor(options.hubFg).fillCircle(faceCX, faceCY, 3);
-	return requestedRate;
+        // Alerts
+        let requestedRate = events.scan(
+            d, hfloor(alertSpan[0] + 0), hceil(alertSpan[1] + 0) + 1,
+            (e, t, p) => this.alert(e, t, d, p)
+        );
+        if (rate > requestedRate) rate = requestedRate;
+        
+        // Hands
+        // Here we are using incremental hands for hours and minutes.
+        // If we quantised, we could use hand-crafted bitmaps, though.
+        this.hours(d.getHours() + d.getMinutes() / 60);
+        if (rate < 3600000) {
+            this.minutes(d.getMinutes() + d.getSeconds() / 60);
+        }
+        if (rate < 60000) this.seconds(d.getSeconds());
+        g.setColor(options.hubFg).fillCircle(faceCX, faceCY, 3);
+        return requestedRate;
     }
 }
 
@@ -640,119 +639,119 @@ class Roman {
 
 class Clock {
     constructor(face) {
-	this.face = face;
-	this.timescales = face.timescales;
-	this.options = face.options;
-	this.rates = {};
+        this.face = face;
+        this.timescales = face.timescales;
+        this.options = face.options;
+        this.rates = {};
 
-	this.options.on('done', () => this.start());
-	
-	this.listeners = {
-	    lcdPower: on => on ? this.active() : this.inactive(),
-	    charging: () => {face.doIcons('charging'); this.active();},
-	    lock: () => {face.doIcons('locked'); this.active();},
-	    faceUp: up => {this.conservative = !up; this.active();},
-	    drag: e => {
-		if (this.t0) {
-		    if (e.b) {
-			e.x > this.xN && (this.xN = e.x) || e.x > this.xX && (this.xX = e.x);
-			e.y > this.yN && (this.yN = e.y) || e.y > this.yX && (this.xY = e.y);
-		    } else if (this.xX - this.xN < 20) {
-			if (e.y - this.e0.y < -50) {
-			    this.options.resolution > 0 && this.options.resolution--;
-			    this.rates.clock = this.timescales[this.options.resolution];
-			    this.active();
-			} else if (e.y - this.e0.y > 50) {
-			    this.options.resolution < this.timescales.length - 1 &&
-				this.options.resolution++;
-			    this.rates.clock = this.timescales[this.options.resolution];
-			    this.active();
-			} else if (this.yX - this.yN < 20 && Date.now() - this.t0 > 500) {
-			    this.stop();
-			    this.options.interact();
-			}
-			this.t0 = null;
-		    }
-		} else if (e.b) {
-		    this.t0 = Date.now(); this.e0 = e;
-		    this.xN = this.xX = e.x; this.yN = this.yX = e.y;
-		}
-	    }
-	};
+        this.options.on('done', () => this.start());
+        
+        this.listeners = {
+            lcdPower: on => on ? this.active() : this.inactive(),
+            charging: () => {face.doIcons('charging'); this.active();},
+            lock: () => {face.doIcons('locked'); this.active();},
+            faceUp: up => {this.conservative = !up; this.active();},
+            drag: e => {
+                if (this.t0) {
+                    if (e.b) {
+                        e.x > this.xN && (this.xN = e.x) || e.x > this.xX && (this.xX = e.x);
+                        e.y > this.yN && (this.yN = e.y) || e.y > this.yX && (this.xY = e.y);
+                    } else if (this.xX - this.xN < 20) {
+                        if (e.y - this.e0.y < -50) {
+                            this.options.resolution > 0 && this.options.resolution--;
+                            this.rates.clock = this.timescales[this.options.resolution];
+                            this.active();
+                        } else if (e.y - this.e0.y > 50) {
+                            this.options.resolution < this.timescales.length - 1 &&
+                                this.options.resolution++;
+                            this.rates.clock = this.timescales[this.options.resolution];
+                            this.active();
+                        } else if (this.yX - this.yN < 20 && Date.now() - this.t0 > 500) {
+                            this.stop();
+                            this.options.interact();
+                        }
+                        this.t0 = null;
+                    }
+                } else if (e.b) {
+                    this.t0 = Date.now(); this.e0 = e;
+                    this.xN = this.xX = e.x; this.yN = this.yX = e.y;
+                }
+            }
+        };
     }
 
     redraw(rate) {
-	const now = this.updated = new Date();
-	if (this.refresh) this.face.reset();
-	this.refresh = false;
-	rate = this.face.render(now, rate);
-	if (rate !== this.rates.face) {
-	    this.rates.face = rate;
-	    this.active();
-	}
-	return this;
+        const now = this.updated = new Date();
+        if (this.refresh) this.face.reset();
+        this.refresh = false;
+        rate = this.face.render(now, rate);
+        if (rate !== this.rates.face) {
+            this.rates.face = rate;
+            this.active();
+        }
+        return this;
     }
 
     inactive() {
-	this.timeout && clearTimeout(this.timeout);
-	this.exception && clearTimeout(this.exception);
-	this.interval && clearInterval(this.interval);
-	this.timeout = this.exception = this.interval = this.rate = null;
-	return this;
+        this.timeout && clearTimeout(this.timeout);
+        this.exception && clearTimeout(this.exception);
+        this.interval && clearInterval(this.interval);
+        this.timeout = this.exception = this.interval = this.rate = null;
+        return this;
     }
     
     active() {
-	const prev = this.rate;
-	const now = Date.now();
-	let rate = Infinity;
-	for (const k in this.rates) {
-	    let r = this.rates[k];
-	    r === +r || (r = r[+this.conservative])
-	    r < rate && (rate = r);
-	}
-	const delay = rate - now % rate + 1;
-	this.refresh = true;
-	
-	if (rate !== prev) {
-	    this.inactive();
-	    this.redraw(rate);
-	    if (rate < 31622400000) { // A year!
-		this.timeout = setTimeout(
-		    () => {
-			this.inactive();
-			this.interval = setInterval(() => this.redraw(rate), rate);
-			if (delay > 1000) this.redraw(rate);
-			this.rate = rate;
-		    }, delay
-		);
-	    }
-	} else if (rate > 1000) {
-	    if (!this.exception) this.exception = setTimeout(() => {
-		this.redraw(rate);
-		this.exception = null;
-	    }, this.updated + 1000 - Date.now());
-	}
-	return this;
+        const prev = this.rate;
+        const now = Date.now();
+        let rate = Infinity;
+        for (const k in this.rates) {
+            let r = this.rates[k];
+            r === +r || (r = r[+this.conservative])
+            r < rate && (rate = r);
+        }
+        const delay = rate - now % rate + 1;
+        this.refresh = true;
+        
+        if (rate !== prev) {
+            this.inactive();
+            this.redraw(rate);
+            if (rate < 31622400000) { // A year!
+                this.timeout = setTimeout(
+                    () => {
+                        this.inactive();
+                        this.interval = setInterval(() => this.redraw(rate), rate);
+                        if (delay > 1000) this.redraw(rate);
+                        this.rate = rate;
+                    }, delay
+                );
+            }
+        } else if (rate > 1000) {
+            if (!this.exception) this.exception = setTimeout(() => {
+                this.redraw(rate);
+                this.exception = null;
+            }, this.updated + 1000 - Date.now());
+        }
+        return this;
     }
 
     stop() {
-	this.inactive();
-	for (const l in this.listeners) {
-	    Bangle.removeListener(l, this.listeners[l]);
-	}
-	return this;
+        this.inactive();
+        for (const l in this.listeners) {
+            Bangle.removeListener(l, this.listeners[l]);
+        }
+        return this;
     }
 
     start() {
-	this.inactive(); // Reset to known state.
-	this.conservative = false;
-	this.rates.clock = this.timescales[this.options.resolution];
-	this.active();
-	for (const l in this.listeners) {
-	    Bangle.on(l, this.listeners[l]);
-	}
-	Bangle.setUI('clock');
-	return this;
+        this.inactive(); // Reset to known state.
+        this.conservative = false;
+        this.rates.clock = this.timescales[this.options.resolution];
+        this.active();
+        for (const l in this.listeners) {
+            Bangle.on(l, this.listeners[l]);
+        }
+        Bangle.setUI('clock');
+        return this;
     }
 }
 
