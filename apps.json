@@ -30,7 +30,7 @@
     "sortorder": -10
   },
   {
-    "id": "hebrewCalendar",
+    "id": "hebrew_calendar",
     "name": "Hebrew Calendar",
     "shortName": "HebCal",
     "version": "0.01",
