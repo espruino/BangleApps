@@ -17,7 +17,7 @@ Name the buttons and what they are used for
 
 ## Requests
 
-Name who should be contacted for support/update requests
+Michael Salaverry (github.com/barakplasma)
 
 ## Creator
 
