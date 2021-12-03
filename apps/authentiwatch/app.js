@@ -10,6 +10,8 @@ const calculating = "Calculating";
 const notokens = "No tokens";
 const notsupported = "Not supported";
 
+// sample settings:
+// {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
 var settings = require("Storage").readJSON("authentiwatch.json", true) || {tokens:[],misc:{}};
 if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
