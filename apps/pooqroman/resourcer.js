@@ -63,27 +63,27 @@ const prepFont = (name, data) => {
       if (m = /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) || /^(<*)(-)(.)(-*)(>*)$/.exec(line)) {
         const h = m[2] == '=';
         if (m[1].length > desc || h && m[1].length != desc)
-	  throw new Error('Invalid descender height at ' + l);
-	if (m[2].length + m[3].length + m[4].length != body)
-	  throw new Error('Invalid body height at ' + l);
-	if (m[5].length > asc || h && m[5].length != asc)
-	  throw new Error('Invalid ascender height at ' + l);
-	if (c != null) {
-	  lengths[c] = l - o;
-	  if (width !== null && width !== lengths[c])
-	    throw new Error(
-	      `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
-	    );
-	  c = null
-	}
-	if (!h) {
-	  c = m[3].charCodeAt(0);
-	  if (c < min) min = c;
-	  if (c > max) max = c;
-	  o = l + 1;
-	  offsets[c] = l;
-	  adjustments[c] = m[1].length
-	}
+          throw new Error('Invalid descender height at ' + l);
+        if (m[2].length + m[3].length + m[4].length != body)
+          throw new Error('Invalid body height at ' + l);
+        if (m[5].length > asc || h && m[5].length != asc)
+          throw new Error('Invalid ascender height at ' + l);
+        if (c != null) {
+          lengths[c] = l - o;
+          if (width !== null && width !== lengths[c])
+            throw new Error(
+              `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
+            );
+          c = null
+        }
+        if (!h) {
+          c = m[3].charCodeAt(0);
+          if (c < min) min = c;
+          if (c > max) max = c;
+          o = l + 1;
+          offsets[c] = l;
+          adjustments[c] = m[1].length
+        }
       }
     });
     const xoffs = Uint8Array(lines.length);
@@ -92,16 +92,16 @@ const prepFont = (name, data) => {
     const w0 = lengths[min];
     let widths = '';
     for (c = min, o = 0; c <= max; c++) {
-	for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
-	    xoffs[j] = asc + body + adjustments[c] - 1;
-	    ypos[j++] = o++;
-	}
-	widths += String.fromCharCode(lengths[c]);
+        for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
+            xoffs[j] = asc + body + adjustments[c] - 1;
+            ypos[j++] = o++;
+        }
+        widths += String.fromCharCode(lengths[c]);
     }
     const raster = Graphics.createArrayBuffer(h, o, 1, {msb: true});
     const writer = Graphics.createCallback(
-	image.width, image.height, 1,
-	(x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
+        image.width, image.height, 1,
+        (x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
     );
     writer.drawImage(image);
     if (width === null) width = `dec(${enc(widths)})`;
