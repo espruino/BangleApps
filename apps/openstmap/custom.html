@@ -63,10 +63,17 @@ TODO:
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
       var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
-      //var TILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
+
       var map = L.map('map').locate({setView: true, maxZoom: 16});
-      var tileLayer = L.tileLayer(TILELAYER, {
+      // Tiles used for Bangle.js itself
+      var bangleTileLayer = L.tileLayer(TILELAYER, {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+      });
+      // Tiles used for the may the user sees (faster)
+      var previewTileLayer = L.tileLayer(PREVIEWTILELAYER, {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
@@ -83,7 +90,7 @@ TODO:
       }
 
       var mapFiles = [];
-      tileLayer.addTo(map);
+      previewTileLayer.addTo(map);
 
       function tilesLoaded(ctx, width, height) {
         var options = {
@@ -122,16 +129,35 @@ TODO:
       }
 
       document.getElementById("getmap").addEventListener("click", function() {
-        var bounds = map.getBounds();
         var zoom = map.getZoom();
-        var centerlatlon = bounds.getCenter();
-        var center = map.project(centerlatlon, zoom).divideBy(256);
+        var centerlatlon = map.getBounds().getCenter();
+        var center = map.project(centerlatlon, zoom).divideBy(OSMTILESIZE);
         var ox = Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE);
         var oy = Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE);
-        center = center.floor();
+        center = center.floor(); // make sure we're in the middle of a tile
+        // JS version of Bangle.js's projection
+        function bproject(lat, lon) {
+          const degToRad = Math.PI / 180; // degree to radian conversion
+          const latMax = 85.0511287798; // clip latitude to sane values
+          const R = 6378137; // earth radius in m
+          if (lat > latMax) lat=latMax;
+          if (lat < -latMax) lat=-latMax;
+          var s = Math.sin(lat * degToRad);
+          return new L.Point(
+            (R * lon * degToRad),
+            (R * Math.log((1 + s) / (1 - s)) / 2)
+          );
+        }
+        // Work out scale factors (how much from Bangle.project does one pixel equate to?)
+        var pc = map.unproject(center.multiplyBy(OSMTILESIZE), zoom);
+        var pd = map.unproject(center.multiplyBy(OSMTILESIZE).add({x:1,y:0}), zoom);
+        var bc = bproject(pc.lat, pc.lng)
+        var bd = bproject(pd.lat, pd.lng)
+        var scale = bc.distanceTo(bd);
+
         var tileGetters = [];
 
-        // Render everything to a canvas - 512 x 512 px
+        // Render everything to a canvas...
         var canvas = document.getElementById("maptiles");
         canvas.style.display="";
         var ctx = canvas.getContext('2d');
@@ -150,7 +176,8 @@ TODO:
                     resolve();
                   };
                 }));
-                img.src = tileLayer.getTileUrl(coords);
+                bangleTileLayer._tileZoom = previewTileLayer._tileZoom;
+                img.src = bangleTileLayer.getTileUrl(coords);
               })(i,j);
             }
         }
@@ -163,7 +190,7 @@ TODO:
             imgx : canvas.width,
             imgy : canvas.height,
             tilesize : TILESIZE,
-            scale : 10000*Math.pow(2,16-zoom), // FIXME - this is probably wrong
+            scale : scale, // how much of Bangle.project(latlon) does one pixel equate to?
             lat : centerlatlon.lat,
             lon : centerlatlon.lng
           })});
