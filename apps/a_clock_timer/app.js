@@ -102,20 +102,19 @@ function queueNextDraw() {
 function draw() {
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight()-IMAGEHEIGHT);
   g.drawImage(getImg(),0,g.getHeight()-IMAGEHEIGHT);
-  
+
   var x_sun = 176 - (getGmt().getHours() / 24 * 176 + 4);
   g.setColor('#ff0').drawLine(x_sun, g.getHeight()-IMAGEHEIGHT, x_sun, g.getHeight());
   g.reset();
 
   var locale = require("locale");
-  
+
   var date = new Date();
   g.setFontAlign(0,0);
   g.setFont("Michroma36").drawString(locale.time(date,1), g.getWidth()/2, 46);
   g.setFont("6x8");
   g.drawString(locale.date(new Date(),1), 125, 68);
-  g.drawString("PAR "+locale.time(getTimeFromTimezone(1),1), 125, 80);
-  g.drawString("TYO "+locale.time(getTimeFromTimezone(9),1), 125, 88);
+  g.drawString("SFO "+locale.time(getTimeFromTimezone(-8),1), 125, 80);
 
   queueNextDraw();
 }
