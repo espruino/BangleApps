@@ -305,6 +305,8 @@ const formatDow = new Named(4, [
   'Saturday',  'Sat.',   'Sat', 'Sa'
 ]);
 
+const hceil = x => Math.ceil(x / 3600000) * 3600000;
+const hfloor = x => Math.floor(x / 3600000) * 3600000;
 const isString = x => typeof x == 'string';
 const imageWidth = i => isString(i) ? i.charCodeAt(0) : i.width;
 const imageHeight = i => isString(i) ? i.charCodeAt(1) : i.height;
@@ -343,24 +345,24 @@ const events = {
 	return result;
     },
 
-    span: function(now, width) {
+    span: function(now, from, to, width) {
 	let o = now.getTimezoneOffset() * 60000;
 	let t = now.getTime() - o;
 	let lfence = [], rfence = [];
-	this.scan(now, now - width, now + width, (e, d, p) => {
+	this.scan(now, from, to, (e, d, p) => {
 	    if (p) {
 		for (let j = 0; j <= e.priority; j++) {
-		    if (e.time < (lfence[e.priority] || t)) lfence[e.priority] = e.time;
+		    if (d < (lfence[e.priority] || t)) lfence[e.priority] = d;
 		}
 	    } else {
 		for (let j = 0; j <= e.priority; j++) {
-		    if (e.time > (rfence[e.priority] || t)) rfence[e.priority] = e.time;
+		    if (d > (rfence[e.priority] || t)) rfence[e.priority] = d;
 		}
 	    }
 	});
 	for (let j = 0; ; j += 0.5) {
 	    if ((rfence[Math.ceil(j)] - lfence[Math.floor(j)] || 0) <= width) {
-		return [lfence[Math.floor(j)] || t, rfence[Math.ceil(j)] || t];
+		return [lfence[Math.floor(j)] || now, rfence[Math.ceil(j)] || now];
 	    }
 	}
     },
@@ -584,11 +586,9 @@ class Roman {
 
 	// Hour labels and (purely aesthetic) box; clear inner face.
 	let keyHour = d.getHours() < 12 ? 1 : 13;
-	let alertSpan = events.span(d, 43200000);
-	let l = Math.floor(alertSpan[0] / 3600000) % 24;
-	let h = Math.ceil(alertSpan[1] / 3600000) % 24;
-	if ((l - keyHour + 24) % 24 >= 12) keyHour = l;
-	else if ((h - keyHour + 24) % 24 >= 12) keyHour = (h + 13) % 24;
+	let alertSpan = events.span(d, hceil(d) - 39600000, hfloor(d) + 39600000, 39600000);
+	let l = alertSpan[0].getHours(), h = alertSpan[1].getHours();
+	if ((l - keyHour + 24) % 24 >= 12 || (h - keyHour + 24) % 24 >= 12) keyHour = l;
 	if (keyHour !== state.keyHour) {
 	    state.keyHour = keyHour;
 	    g.setColor(options.bg)
@@ -616,11 +616,9 @@ class Roman {
 	}
 
 	// Alerts
-	let b = new Date(d.getTime());
-	b.setHours(keyHour, 0, 0, 0);
-	if (b > d) b.setDate(b.getDate() - 1);
 	let requestedRate = events.scan(
-	    d, b, b + 43200000, (e, t, p) => this.alert(e, t, d, p)
+	    d, hfloor(alertSpan[0] + 0), hceil(alertSpan[1] + 0) + 1,
+	    (e, t, p) => this.alert(e, t, d, p)
 	);
 	if (rate > requestedRate) rate = requestedRate;
 	
