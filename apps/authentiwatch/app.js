@@ -166,7 +166,6 @@ function draw() {
   var timerfn = load;
   var timerdly = 10000;
   var d = new Date();
-  resetIdle();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
     if (state.otp == calculating) {
