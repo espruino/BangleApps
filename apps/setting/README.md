@@ -44,6 +44,4 @@ The exact effects depend on the app.  In general the watch will not wake up by i
   - Off: Normal operation
   - Alarms: Stops notifications, but "alarm" apps will still work
   - Silent: Blocks even alarms
-* **LCD Brightness**, **LCD Timeout**, **Wake on X**:
-  Override default settings while Quit Mode is active (either as *Alarms* or *Silent*)
   

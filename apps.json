@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.36",
+    "version": "0.37",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -119,7 +119,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.33",
+    "version": "0.34",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -268,6 +268,20 @@
       {"name":"gbridge.wid.js","url":"widget.js"}
     ],
     "data": [{"name":"gbridge.json"}]
+  },
+  { "id": "gbdebug",
+    "name": "Gadgetbridge Debug",
+    "shortName":"GB Debug",
+    "version":"0.01",
+    "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
+    "icon": "app.png",
+    "tags": "",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"gbdebug.app.js","url":"app.js"},
+      {"name":"gbdebug.img","url":"app-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "mclock",
@@ -1914,7 +1928,7 @@
     "id": "openstmap",
     "name": "OpenStreetMap",
     "shortName": "OpenStMap",
-    "version": "0.09",
+    "version": "0.10",
     "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
     "icon": "app.png",
     "tags": "outdoors,gps",
@@ -3797,10 +3811,11 @@
     "id": "qmsched",
     "name": "Quiet Mode Schedule and Widget",
     "shortName": "Quiet Mode",
-    "version": "0.03",
-    "description": "Automatically turn Quiet Mode on or off at set times",
+    "version": "0.04",
+    "description": "Automatically turn Quiet Mode on or off at set times, and change LCD options while Quiet Mode is active.",
     "icon": "app.png",
-    "screenshots": [{"url":"screenshot_edit.png"},{"url":"screenshot_main.png"},{"url":"screenshot_widget_alarms.png"},{"url":"screenshot_widget_silent.png"}],
+    "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
+                    {"url":"screenshot_b2_main.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_lcd.png"}],
     "tags": "tool,widget",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
@@ -4628,7 +4643,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A pebble style clock to keep the rebellion going",
     "readme": "README.md",
     "icon": "pebble.png",
@@ -4641,5 +4656,24 @@
       {"name":"pebble.settings.js","url":"pebble.settings.js"},
       {"name":"pebble.img","url":"pebble.icon.js","evaluate":true}
     ]
+  },
+  { "id": "pooqroman",
+    "name": "pooq Roman watch face",
+    "shortName":"pooq Roman",
+    "version":"0.0.0",
+    "description": "A classic watch face with a certain dynamicity. Most amusing in 24h mode. Slide up to show more hands, down for less(!). By design does not support standard widgets, sorry!",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"pooqroman.app.js","url":"app.js"},
+      {"name":"pooqroman.img","url":"app-icon.js","evaluate":true}
+     ],
+     "data": [
+       {"name":"pooqroman.json"}
+     ]
   }
 ]
