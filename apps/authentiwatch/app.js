@@ -110,13 +110,6 @@ var state = {
   hide:0
 };
 
-function resetIdle() {
-  if (state.idletimer) {
-    clearTimeout(state.idletimer);
-  }
-  state.idletimer = setTimeout(_=>load(), 10000);
-}
-
 function drawToken(id, r) {
   var x1 = r.x;
   var y1 = r.y;
@@ -153,14 +146,14 @@ function drawToken(id, r) {
       // counter - draw triangle as swipe hint
       let yc = (y1 + y2) / 2;
       g.fillPoly([0, yc, 10, yc - 10, 10, yc + 10, 0, yc]);
-      adj = 5;
+      adj = 10;
     }
     // digits just below label
     sz = 30;
     do {
       g.setFont("Vector", sz--);
     } while (g.stringWidth(state.otp) > (r.w - adj));
-    g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
+    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + 16, false);
   }
   // shaded lines top and bottom
   g.setColor(0.5, 0.5, 0.5);
@@ -170,6 +163,8 @@ function drawToken(id, r) {
 }
 
 function draw() {
+  var timerfn = load;
+  var timerdly = 10000;
   var d = new Date();
   resetIdle();
   if (state.curtoken != -1) {
@@ -216,13 +211,12 @@ function draw() {
       if (state.drawtimer) {
         clearTimeout(state.drawtimer);
       }
-      var dly;
       if (tokens[state.curtoken].period > 0) {
-        dly = (state.otp == calculating) ? 1 : 1000;
+        timerdly = (state.otp == calculating) ? 1 : 1000; // timed
       } else {
-        dly = state.nexttime - d.getTime();
+        timerdly = state.nexttime - d.getTime(); // counter
       }
-      state.drawtimer = setTimeout(draw, dly);
+      timerfn = draw;
       if (tokens[state.curtoken].period <= 0) {
         state.hide = 0;
       }
@@ -239,10 +233,13 @@ function draw() {
     g.setFontAlign(0, 0, 0);
     g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
+  if (state.drawtimer) {
+    clearTimeout(state.drawtimer);
+  }
+  state.drawtimer = setTimeout(timerfn, timerdly);
 }
 
 function onTouch(zone, e) {
-  resetIdle();
   if (e) {
     var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
@@ -264,28 +261,20 @@ function onTouch(zone, e) {
       state.nextTime = 0;
       state.curtoken = id;
       state.hide = 2;
-      draw();
     }
   }
+  draw();
 }
 
 function onDrag(e) {
-  resetIdle();
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
   var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
-  newy = Math.max(0, newy);
-  if (newy != state.listy) {
-    state.listy = newy;
-    draw();
-  }
+  state.listy = Math.max(0, newy);
+  draw();
 }
 
 function onSwipe(e) {
-  resetIdle();
-  if (e == 1) {
-    Bangle.showLauncher();
-  }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
     let newsettings={tokens:tokens,misc:settings.misc};
@@ -293,12 +282,11 @@ function onSwipe(e) {
     state.nextTime = 0;
     state.otp = "";
     state.hide = 2;
-    draw();
   }
+  draw();
 }
 
 function bangle1Btn(e) {
-  resetIdle();
   if (tokens.length > 0) {
     if (state.curtoken == -1) {
       state.curtoken = state.prevcur;
@@ -315,6 +303,8 @@ function bangle1Btn(e) {
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
+  } else {
+    draw(); // resets idle timer
   }
 }
 
@@ -322,9 +312,9 @@ Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);       }, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){Bangle.showLauncher();}, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);       }, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){load();        }, BTN2, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
 
