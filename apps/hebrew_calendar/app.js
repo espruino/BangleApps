@@ -384,7 +384,6 @@ var mainmenu = {
   year: {
     value : today.year,
     onchange : () => {}
-  },
-  "Exit" : function() { E.showMenu(); },
+  }
 };
 E.showMenu(mainmenu);
