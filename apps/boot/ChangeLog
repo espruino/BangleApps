@@ -40,3 +40,4 @@
 0.35: Add Bangle.appRect polyfill
       Don't set beep vibration up on Bangle.js 2 (built in)
 0.36: Add comments to .boot0 to make debugging a bit easier
+0.37: Remove Quiet Mode settings: now handled by Quiet Mode Schedule app
