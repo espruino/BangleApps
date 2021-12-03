@@ -23,3 +23,4 @@ Name who should be contacted for support/update requests
 
 Michael Salaverry
 with help from https://github.com/IonicaBizau/hebrew-date (MIT license)
+<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
