@@ -370,7 +370,7 @@ var mainmenu = {
     "title" : "Hebrew Date"
   },
   cal: {
-    value : now.getDay()+"/"+now.getMonth()+"/"+now.getFullYear(),
+    value: now.getDate() + "/" + Number(now.getMonth() + 1) + "/" + now.getFullYear(),
     onchange : () => {}
   },
   date: {
