@@ -4676,11 +4676,11 @@
        {"name":"pooqroman.json"}
      ]
   },
-  { "id": "chargingStatus",
+  { "id": "widChargingStatus",
     "name": "Charging Status",
-    "shortName":"Charging",
+    "shortName":"ChargingStatus",
     "icon": "widget.png",
-    "version":"0.1.3",    
+    "version":"0.1.4",    
     "type": "widget",
     "description": "A simple widget that shows up whenever the watch starts charging.",
     "tags": "widget,battery",
