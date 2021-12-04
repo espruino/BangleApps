@@ -18,9 +18,10 @@
 	function draw() {
 		g.reset();
 		g.setColor("#FD0");
+		g.setFontVector(16);
 		//if (Bangle.isCharging()) {
-		g.drawImage(chargingSymbol, this.x /* + 2 */ , this.y);
-		//g.drawString('X',this.x,this.y)
+		// g.drawImage(chargingIcon, this.x /* + 2 */ , this.y);
+		g.drawString('X',this.x,this.y)
 		//}
 	}
 
