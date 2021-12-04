@@ -8,26 +8,25 @@
 	});
 
 	const chargingIcon = {
-		width: 16,
-		height: 16,
+		width: 32,
+		height: 32,
 		bpp: 1,
-		transparent: 0,
-		buffer: require("heatshrink").decompress(atob("gGAAIMBwEDAIMAg4BB/EP+ABBj/ggABB4EBAIIXBgABB"))
+		transparent: 1,
+		buffer: require("heatshrink").decompress(atob("///34CB/8/AYv+AYX8AYd/AYP4AY3wAY3gAYXAAYcAEAOAAYgMBHwYDC/0AgIyBAYkDIYQDDg4DGh4DCj4DGL45DCAYhyC/oCBA="))
 	}
 
 	function draw() {
 		g.reset();
 		g.setColor("#FD0");
-		g.setFontVector(16);
 		//if (Bangle.isCharging()) {
-		// g.drawImage(chargingIcon, this.x /* + 2 */ , this.y);
-		g.drawString('X',this.x,this.y)
+		g.drawImage(chargingIcon, this.x /* + 2 */ , this.y);
+		//g.drawString('X',this.x,this.y)
 		//}
 	}
 
 	WIDGETS.chargingStatus = {
 		area: 'tr',
-		width: 20,
+		width: 32,
 		draw: draw,
 	};
 
