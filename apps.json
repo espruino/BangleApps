@@ -4680,7 +4680,7 @@
     "name": "Charging Status",
     "shortName":"Charging",
     "icon": "widget.png",
-    "version":"0.1",    
+    "version":"0.1.1",    
     "type": "widget",
     "description": "A simple widget that shows up whenever the watch starts charging.",
     "tags": "widget,battery",
