@@ -19,7 +19,8 @@
 		g.reset();
 		g.setColor("#FD0");
 		//if (Bangle.isCharging()) {
-		g.drawImage(chargingSymbol, this.x + 2, this.y);
+		// g.drawImage(chargingSymbol, this.x + 2, this.y);
+		g.drawString('X',this.x,this.y)
 		//}
 	}
 
