@@ -4675,5 +4675,18 @@
      "data": [
        {"name":"pooqroman.json"}
      ]
+  },
+  { "id": "chargingStatus",
+    "name": "Charging Status",
+    "shortName":"Charging",
+    "icon": "widget.png",
+    "version":"0.1",    
+    "type": "widget",
+    "description": "A simple widget that shows up whenever the watch starts charging.",
+    "tags": "widget,battery",
+        "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"chargingStatus.wid.js","url":"widget.js"}
+    ]
   }
 ]
