@@ -1,5 +1,5 @@
 (() => {
-	const icon = require("heatshrink").decompress(atob("kEggIEBoAIC4ADFgIDCgYDDwADBg4DGh4DGj4DCn4DD/4gBv4DEBgP//4PBAYUB//+GQIDE/hDCAYf4AY3wAYXgAYxfHIYQDEOQUCAQI"));
+	const icon = require("heatshrink").decompress(atob("ikggMAiEAgYIBmEAg4EB+EAh0AgPggEeCAIEBnwQBAgP+gEP//x///j//8f//k///H//4BYOP/4lBv4bDvwEB4EAvAEBwEAuA7DCAI7BgAQBhEAA"));
 
 	function draw() {
 		g.reset();
@@ -13,14 +13,14 @@
 
 	WIDGETS.chargingStatus = {
 		area: 'tr',
-		width: 22,
+		width: Bangle.isCharging() ? 20 : 0,
 		draw: draw,
 	};
 
 	Bangle.on('charging', (charging) => {
 		if (charging) {
 			Bangle.buzz();
-			WIDGETS.chargingStatus.width = 22;
+			WIDGETS.chargingStatus.width = 20;
 		} else {
 			WIDGETS.chargingStatus.width = 0;
 		}
