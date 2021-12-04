@@ -6,7 +6,9 @@ declare var require: any;
 g.clear();
 
 let now = new Date();
-let today = require("hebrewDate")(now);
+import { hebrewDate } from "./hebrewDate";
+
+let today = hebrewDate(now);
 
 var mainmenu = {
   "" : {

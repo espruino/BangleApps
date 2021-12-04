@@ -66,7 +66,7 @@ function gregmontharr(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11) {
     this[11] = m11;
 }
 
-function hebrewmontharr(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13) {
+function hebrewmontharr(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13?: any) {
     this[0] = m0;
     this[1] = m1;
     this[2] = m2;
@@ -117,8 +117,6 @@ var gWeekday = new weekdayarr("Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "S
  * @name hebrewDate
  * @function
  * @param {Date|Number} inputDate The date object (representing the Gregorian date) or the year.
- * @param {Number?} inputMonth The Gregorian month (**one-indexed**, January being `1`!).
- * @param {Number?} inputDate The Gregorian date.
  * @return {Object} An object containing:
  *
  *  - `year`: The Hebrew year.
@@ -126,7 +124,8 @@ var gWeekday = new weekdayarr("Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "S
  *  - `month_name`: The Hebrew month name.
  *  - `date`: The Hebrew date.
  */
-const hebrewDate = function (inputDateOrYear, inputMonth, inputDate) {
+export const hebrewDate = function (inputDateOrYear: Date) {
+    var inputMonth, inputDate;
 
     var hebrewMonth = 0,
         hebrewDate = 0,
@@ -340,7 +339,7 @@ const hebrewDate = function (inputDateOrYear, inputMonth, inputDate) {
         return tishri1;
     }
 
-    var inputYear = inputDateOrYear;
+    var inputYear: Date | number = inputDateOrYear;
 
     if ((typeof inputYear === "undefined" ? "undefined" : _typeof(inputYear)) === "object") {
         inputMonth = inputDateOrYear.getMonth() + 1;
