@@ -7,13 +7,15 @@
 		g.flip();
 	});
 
+	const icon = require("heatshrink").decompress(atob("kEgwMB///34CB/8/AYv+AYX8AYd/AYP4AY3wAY3gAYXAAYcAEAOAAYgMBIQIPBAYX+gBGB/gDEgZDCAYcHAY0PAYUfAYxfHIYQDEOQX9AQI="))
+
 	function draw() {
 		g.reset();
-		g.setColor("#FD0"); 
-		g.setFont("Vector", 26);
+		g.setColor("#FD0");
+		//g.setFont("Vector", 26);
 		//if (Bangle.isCharging()) {
-		// g.drawImage(atob("kEgwMB///34CB/8/AYv+AYX8AYd/AYP4AY3wAY3gAYXAAYcAEAOAAYgMBIQIPBAYX+gBGB/gDEgZDCAYcHAY0PAYUfAYxfHIYQDEOQX9AQI="), this.x, this.y);
-		g.drawString('PWR',this.x,this.y)
+		g.drawImage(icon, this.x, this.y);
+		//g.drawString('PWR', this.x, this.y)
 		//}
 	}
 
