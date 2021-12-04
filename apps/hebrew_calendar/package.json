@@ -1,6 +1,6 @@
 {
   "name": "hebrew_calendar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Bangle.js app for seeing hebrew calendar",
   "main": "app.js",
   "types": "app.d.ts",
