@@ -2100,6 +2100,19 @@
       {"name":"snake.img","url":"snake-icon.js","evaluate":true}
     ]
   },
+  { "id": "snek",
+    "name": "The snek game",
+    "shortName":"Snek",
+    "version": "0.01",
+    "description": "A snek game where you control a snek to eat all the apples!",
+    "icon": "snek-icon.js",
+    "supports": ["BANGLEJS2"],
+    "tags": "game,fun",
+    "storage": [
+      {"name":"snek.app.js","url":"snek.js"},
+      {"name":"snek.img","url":"snek-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "calculator",
     "name": "Calculator",
