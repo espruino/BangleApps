@@ -7,17 +7,17 @@
 		g.flip();
 	});
 
-	const chargingSymbol = {
+	const chargingIcon = {
 		width: 16,
 		height: 16,
 		bpp: 1,
-		transparent: 1,
-		buffer: require("heatshrink").decompress(atob("/9/AIP+v/8AIP//ABBg/wh4BB8Ef/4BBn/+AIIXB/4BB"))
-	};
+		transparent: 0,
+		buffer: require("heatshrink").decompress(atob("gGAAIMBwEDAIMAg4BB/EP+ABBj/ggABB4EBAIIXBgABB"))
+	}
 
 	function draw() {
 		g.reset();
-		//g.setColor("#FD0");
+		g.setColor("#FD0");
 		//if (Bangle.isCharging()) {
 		g.drawImage(chargingSymbol, this.x /* + 2 */ , this.y);
 		//g.drawString('X',this.x,this.y)
