@@ -33,11 +33,12 @@
     "id": "hebrew_calendar",
     "name": "Hebrew Calendar",
     "shortName": "HebCal",
-    "version": "0.02",
+    "version": "0.03",
     "description": "lists the date according to the hebrew calendar",
     "icon": "app.png",
     "tags": "",
     "supports": [
+      "BANGLEJS",
       "BANGLEJS2"
     ],
     "readme": "README.md",
