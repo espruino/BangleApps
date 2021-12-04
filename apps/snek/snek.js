@@ -150,7 +150,7 @@ function init() {
 
         g.drawImage(head[0], head[1], head[2]);
       } else {
-        g.fillCircle(props.x,props.y,10);
+        g.fillCircle(props.x, props.y, 10);
       }
     });
     if (this.currentPosition[totalItems].x === this.applePosition.x && this.currentPosition[totalItems].y === this.applePosition.y) {
@@ -277,11 +277,17 @@ function init() {
       152, 70,
       159, 79,
       21, 71 ]);
-    g.setFont('Vector', 12);
-    g.setColor(1, 0, 1);
-    g.drawString("by: Jason de Belle", 30, 80, "solid");
-    
-    
+    g.setColor(this.textColor, this.textColor, this.textColor); 
+    g.setFont('Vector', 15);
+    g.drawString("Tilt to turn", 20, 100, "solid");
+    g.drawString("Tap to start", 20, 120, "solid");
+
+    g.setColor(0, 1, 0);
+   
+    g.setFont('4x6', 3);
+    g.drawString("Jason de Belle", 5, 145, "solid");
+ 
+   
 
   };
 
