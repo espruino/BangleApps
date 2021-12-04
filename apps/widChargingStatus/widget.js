@@ -7,7 +7,7 @@
 		g.flip();
 	});
 
-	const icon = require("heatshrink").decompress(atob("kEgwMB///34CB/8/AYv+AYX8AYd/AYP4AY3wAY3gAYXAAYcAEAOAAYgMBIQIPBAYX+gBGB/gDEgZDCAYcHAY0PAYUfAYxfHIYQDEOQX9AQI="))
+	const icon = require("heatshrink").decompress(atob("kEggIEBoAIC4ADFgIDCgYDDwADBg4DGh4DGj4DCn4DD/4gBv4DEBgP//4PBAYUB//+GQIDE/hDCAYf4AY3wAYXgAYxfHIYQDEOQUCAQI"));
 
 	function draw() {
 		g.reset();
