@@ -12,16 +12,16 @@
 	function draw() {
 		g.reset();
 		g.setColor("#FD0");
-		//g.setFont("Vector", 26);
 		//if (Bangle.isCharging()) {
-		g.drawImage(icon, this.x, this.y);
-		//g.drawString('PWR', this.x, this.y)
+		g.drawImage(icon, this.x, this.y + 2, {
+			scale: 0.8125
+		});
 		//}
 	}
 
 	WIDGETS.chargingStatus = {
 		area: 'tr',
-		width: 32,
+		width: 26,
 		draw: draw,
 	};
 
