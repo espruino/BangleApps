@@ -105,7 +105,7 @@ function draw() {
   clockLayout.date.label = locale.date(date, 1).toUpperCase();
   clockLayout.dow.label = locale.dow(date, 1).toUpperCase();
   var weatherJson = getWeather();
-  if(weatherJson){
+  if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
       const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
       clockLayout.temp.label = temp[1];
