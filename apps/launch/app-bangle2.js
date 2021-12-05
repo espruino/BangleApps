@@ -1,8 +1,21 @@
 var s = require("Storage");
+let fonts = g.getFonts();
 var scaleval = 1;
+var vectorval = 20;
+var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = require('Storage').readJSON("launch.json", true) || {};
-if ("scaleval" in settings) {
-    scaleval = settings.scaleval;
+if ("vectorsize" in settings) {
+    vectorval = settings.vectorsize;
+}
+if ("font" in settings){
+    if(settings.font == "vector"){
+        scaleval = vectorval/20;
+        font = "Vector"+(20*scaleval).toString();
+    }
+    else{
+        font = settings.font;
+        scaleval = (font.split('x')[0])/20;
+    }
 }
 var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
 apps.sort((a,b)=>{
@@ -16,9 +29,6 @@ apps.forEach(app=>{
   if (app.icon)
     app.icon = s.read(app.icon); // should just be a link to a memory area
 });
-// FIXME: not needed after 2v11
-//var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-var font = "Vector"+(20*scaleval).toString();
 // FIXME: check not needed after 2v11
 if (g.wrapString) {
   g.setFont(font);
