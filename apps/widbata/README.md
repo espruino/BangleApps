@@ -1,6 +1,6 @@
 # Battery Level Widget (Themed)
 
-Show the current battery level status in the top right using the clocks colour theme
+Shows the current battery level status in the top right using the clocks colour theme
 
 * Works with Bangle 2
 * Simple design, no settings
