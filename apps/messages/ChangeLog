@@ -1,3 +1,10 @@
 0.01: New App!
 0.02: Add 'messages' library
 0.03: Fixes for Bangle.js 1
+0.04: Add require("messages").clearAll()
+0.05: Handling of message actions (ok/clear)
+0.06: New messages now go at the start (fix #898)
+      Answering true/false now exits the messages app if no new messages
+      Back now marks a message as read
+      Clicking top-left opens a menu which allows you to delete a message or mark unread
+0.07: Added settings menu with option to choose vibrate pattern and frequency (fix #909)

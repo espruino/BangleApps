@@ -95,7 +95,14 @@ E.on('AMS',a=>{
 Bangle.musicControl = cmd => {
   // play, pause, playpause, next, prev, volup, voldown, repeat, shuffle, skipforward, skipback, like, dislike, bookmark
   NRF.amsCommand(cmd);
-}
+};
+// Message response
+Bangle.messageResponse = (msg,response) => {
+  if (isFinite(msg.id)) return NRF.sendANCSAction(msg.id, response);//true/false
+  // error/warn here?
+};
+// remove all messages on disconnect
+NRF.on("disconnect", () => require("messages").clearAll());
 
 /*
 // For testing...

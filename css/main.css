@@ -1,8 +1,52 @@
-.navbar { background-color: #5755d9; padding: 0.5em 1em 0.5em 1em; }
+.navbar { background-color: #5755d9; padding: 1em 1em 1em 1em; }
 .navbar .navbar-brand {
   color: #fff;
   font-weight: bold;
 }
+
+.container.apploader-tab, ul.tab.tab-block {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-bottom: 0px;
+}
+
+.navbar-brand.mr-2 > img {
+  margin-left: 0.3rem;
+}
+
+.panel-body.columns {
+  margin: 1px;
+}
+
+.tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+  border: solid 1px #fafafa;
+  margin: 0;
+  min-height: 150px;
+  padding-top: 0.5rem;
+}
+
+.tab.tab-block .tab-item  {
+  border-bottom: solid 1px #dadee4;
+}
+
+a.mr-2{
+  display: flex; 
+  align-items: center;
+}
+
+.navbar-section > a > div {
+   margin-left: 0.75rem;
+}
+
+.dropdown-container {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+a.btn.btn-link.dropdown-toggle {
+  padding-left: 0.01em;
+}
+
 .avatar img {
   border-radius: 5px 5px 5px 5px;
   background: #fff;
@@ -64,7 +108,9 @@
 .icon.icon-favourite-active::before {
   content: "\02665"; /* 0x2665 = solid heart; 0x2605 = solid star  */
 }
-.icon.icon-interface {text-indent: 0px;font-size: 130%;vertical-align: -30%;} /*override spectre*/
+.icon.icon-interface {text-indent: 0px;} /*override spectre*/
 .icon.icon-interface::before {
-  content: "\01F5AB";
+  position: absolute; left: 50%; top: 70%;
+  transform: translate(-50%,-50%);
+  content: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='2 2 28 28' width='1.5em' height='1.5em'%3E%3Cpath d='M 6 4 C 4.895 4 4 4.895 4 6 L 4 24 C 4 25.105 4.895 26 6 26 L 24 26 C 25.105 26 26 25.105 26 24 L 26 8 L 22 4 L 20 4 L 20 10 C 20 10.552 19.552 11 19 11 L 10 11 C 9.448 11 9 10.552 9 10 L 9 4 L 6 4 z M 16 4 L 16 9 L 18 9 L 18 4 L 16 4 z M 10 16 L 20 16 C 21.105 16 22 16.895 22 18 L 22 24 L 8 24 L 8 18 C 8 16.895 8.895 16 10 16 z'/%3E%3C/svg%3E");
 }

@@ -1,4 +1,3 @@
-
 // Scramble code from: https://raw.githubusercontent.com/bjcarlson42/blog-post-sample-code/master/Rubik's%20Cube%20JavaScript%20Scrambler/part_two.js
 const makeScramble = () => {
   const options = ["F", "F2", "F'", "R", "R2", "R'", "U", "U2", "U'", "B", "B2", "B'", "L", "L2", "L'", "D", "D2", "D'"];
@@ -59,16 +58,36 @@ const getRandomInt = max => Math.floor(Math.random() * Math.floor(max)); // retu
 const getRandomIntBetween = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 const presentScramble = () => {
-  g.clear();
-  E.showMessage(makeScramble().join(" "));
+  showPrompt(makeScramble().join(" "), {
+    buttons: {"solve": true, "reset": false}
+  }).then((v) => {
+    if (v) {
+      const start = new Date();
+      showPrompt(" ", {
+        buttons: {"stop": true}
+      }).then(() => {
+        const time = parseFloat(((new Date()).getTime() - start.getTime()) / 1000);
+        showPrompt(String(time.toFixed(3)), {
+          buttons: {"next": true}
+        }).then(() => {
+          presentScramble();
+        });
+      });
+    } else {
+      presentScramble();
+    }
+  });
+};
+
+const showPrompt = (text, options = {}) => {
+  options.title = options.title || "cube scramble";
+  return E.showPrompt(text, options);
 };
 
 const init = () => {
+  Bangle.setLCDTimeout(0);
+  Bangle.setLCDPower(1);
   presentScramble();
-
-  setWatch(() => {
-    presentScramble();
-  }, BTN1, {repeat:true});
 };
 
 init();

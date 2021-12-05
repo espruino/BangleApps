@@ -3,3 +3,6 @@
 0.03: Make it work with Gadgetbridge, Notifications fullscreen on a Bangle 2
 0.04: Leave space at the bottom for Chrono widget, set back option at first option
 0.05: Added 2 new fonts
+0.06: Converted fonts to font modules
+0.07: Added info line that cycles on BTN1/BTN3 (or vitual buttons on a bangle 2)
+0.08: Added dependancy on MyLocation
