@@ -8,13 +8,13 @@ if ("vectorsize" in settings) {
     vectorval = parseInt(settings.vectorsize);
 }
 if ("font" in settings){
-    if(settings.font == "vector"){
+    if(settings.font == "Vector"){
         scaleval = vectorval/20;
         font = "Vector"+(vectorval).toString();
     }
     else{
         font = settings.font;
-        scaleval = (font.split('x')[0])/12;
+        scaleval = (font.split('x')[1])/20;
     }
 }
 var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
