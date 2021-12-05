@@ -10,9 +10,9 @@ Standard widgets are displayed.
 
 See the [Bangle.js Gadgetbridge documentation](https://www.espruino.com/Gadgetbridge) for instructions on setting up Gadgetbridge and weather.
 
-![Screenshot](screens/screenshot1.png)
+![Screenshot](screens/screen1.png)
 
-![Screenshot2](screens/screenshot2.png)
+![Screenshot2](screens/screen2.png)
 
 ## Creator
 

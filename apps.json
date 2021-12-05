@@ -4682,7 +4682,7 @@
     "version": "0.01",
     "description": "A clock which displays current weather conditions (requires Gadgetbridge and Weather apps).",
     "icon": "app.png",
-    "screenshots": [{"url":"screens/screenshot1.png"}],
+    "screenshots": [{"url":"screens/screen1.png"}],
     "type": "clock",
     "tags": "clock, weather",
     "supports": ["BANGLEJS","BANGLEJS2"],
