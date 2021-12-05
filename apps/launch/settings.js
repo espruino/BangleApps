@@ -1,5 +1,5 @@
 // make sure to enclose the function in parentheses
-
+(function(back) {
   let settings = require('Storage').readJSON('launch.json',1)||{};
   let fonts = g.getFonts();
   function save(key, value) {
@@ -21,4 +21,5 @@
       onchange: (m) => {save('vectorsize', m)}
     }
   };
-  E.showMenu(appMenu)
+  E.showMenu(appMenu);
+});
