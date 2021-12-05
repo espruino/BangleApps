@@ -5,7 +5,7 @@ var vectorval = 20;
 var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = require('Storage').readJSON("launch.json", true) || {};
 if ("vectorsize" in settings) {
-    vectorval = settings.vectorsize;
+    vectorval = parseInt(settings.vectorsize);
 }
 if ("font" in settings){
     if(settings.font == "vector"){
