@@ -4677,7 +4677,7 @@
      ]
   },
   {
-    "id": "weatherclk",
+    "id": "weatherClock",
     "name": "Weather Clock",
     "version": "0.01",
     "description": "A clock which displays current weather conditions.",
