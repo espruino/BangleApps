@@ -1,3 +1,4 @@
 0.01: First version
 0.02: Add widget
 0.03: Bangle.js 2 support
+0.04: Move Quiet Mode LCD options from global settings to this app
