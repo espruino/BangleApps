@@ -113,7 +113,7 @@
     "storage": [
       {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
       {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
-      {"name":"launch.setting.app.js","url":"settings.js","supports":["BANGLEJS2"]}
+      {"name":"launch.settings.app.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
     "data": [{"name":"launch.json"}],
     "sortorder": -10
