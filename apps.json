@@ -4675,5 +4675,21 @@
      "data": [
        {"name":"pooqroman.json"}
      ]
+  },
+  {
+    "id": "widbata",
+    "name": "Battery Level Widget (Themed)",
+    "shortName":"Battery Theme",
+    "icon": "widbata.png",
+    "screenshots": [{"url":"screenshot_widbat_1.png"}],
+    "version":"0.01",
+    "type": "widget",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Show the current battery level status in the top right using the clocks colour theme",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"widbat.wid.js","url":"widbata.wid.js"}
+    ]
   }
 ]
