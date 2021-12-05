@@ -10,7 +10,7 @@ if ("vectorsize" in settings) {
 if ("font" in settings){
     if(settings.font == "vector"){
         scaleval = vectorval/20;
-        font = "Vector"+(20*scaleval).toString();
+        font = "Vector"+(vectorval).toString();
     }
     else{
         font = settings.font;
