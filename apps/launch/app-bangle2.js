@@ -14,7 +14,7 @@ if ("font" in settings){
     }
     else{
         font = settings.font;
-        scaleval = (font.split('x')[0])/20;
+        scaleval = (font.split('x')[0])/12;
     }
 }
 var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
