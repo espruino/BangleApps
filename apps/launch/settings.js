@@ -10,7 +10,7 @@
     '': {'title': 'Launcher Settings'},
     '< Back': false,
     'Font': {
-      value: settings.font || 2,
+      value: fonts.indexOf(settings.font) || fonts.indexOf("12x20"),
       min:0, max:fonts.length-1, step:1,wrap:true,
       onchange: (m) => {save('font', fonts[m])},
       format: v => fonts[v]
