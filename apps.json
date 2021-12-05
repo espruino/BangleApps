@@ -4689,8 +4689,8 @@
     "allow_emulator": true,
     "readme": "README.md",
     "storage": [
-      {"name":"weatherclk.app.js","url":"app.js"},
-      {"name":"weatherclk.img","url":"app-icon.js","evaluate":true}
+      {"name":"weatherClock.app.js","url":"app.js"},
+      {"name":"weatherClock.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
