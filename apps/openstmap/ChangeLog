@@ -7,3 +7,4 @@
 0.07: Move to 96px tiles - less files (64 -> 25) and speed up rendering
 0.08: Update for drag event refactor
 0.09: Use current theme cols when drawing GPS info
+0.10: Improve scale factor calculation to fix scaling issues (#984)

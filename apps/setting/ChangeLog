@@ -36,3 +36,4 @@
 0.31: Remove Bangle 1 settings when running on Bangle 2
 0.32: Fix 'beep' menu on Bangle.js 2
 0.33: Really fix 'beep' menu on Bangle.js 2 this time
+0.34: Remove Quiet Mode LCD settings: now handled by Quiet Mode Schedule app
