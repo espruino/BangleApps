@@ -4688,9 +4688,9 @@
     "storage": [
       {"name":"fweather.app.js","url":"app.js"},
       {"name":"fweather.wid.js","url":"widget.js"},
-      {"name":"fweather","url":"lib.js"},
+      {"name":"weather","url":"lib.js"},
       {"name":"fweather.img","url":"icon.js","evaluate":true},
-      {"name":"fweather.settings.js","url":"settings.js"}
+      {"name":"weather.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"weather.json"}]
   },
