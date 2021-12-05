@@ -4686,25 +4686,25 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "readme.md",
     "storage": [
-      {"name":"weather.app.js","url":"app.js"},
-      {"name":"weather.wid.js","url":"widget.js"},
-      {"name":"weather","url":"lib.js"},
-      {"name":"weather.img","url":"icon.js","evaluate":true},
-      {"name":"weather.settings.js","url":"settings.js"}
+      {"name":"fweather.app.js","url":"app.js"},
+      {"name":"fweather.wid.js","url":"widget.js"},
+      {"name":"fweather","url":"lib.js"},
+      {"name":"fweather.img","url":"icon.js","evaluate":true},
+      {"name":"fweather.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"weather.json"}]
   },
 {
     "id": "thermof2",
-    "name": "Fahrenheit Temp (b.js2 port)",
+    "name": "Fahrenheit Temp",
     "version": "0.01",
     "description": "A modification of the Thermometer App to display temprature in Fahrenheit, ported to the bangle.js 2.",
     "icon": "thermf.png",
     "tags": "tool",
     "supports": ["BANGLEJS2"],
     "storage": [
-      {"name":"thermomF.app.js","url":"app.js"},
-      {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
+      {"name":"thermof2.app.js","url":"app.js"},
+      {"name":"thermof2.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
