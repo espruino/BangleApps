@@ -4689,7 +4689,7 @@
     "description": "Shows the current battery level status in the top right using the clocks colour theme",
     "tags": "widget,battery",
     "storage": [
-      {"name":"widbat.wid.js","url":"widbata.wid.js"}
+      {"name":"widbata.wid.js","url":"widbata.wid.js"}
     ]
   }
 ]
