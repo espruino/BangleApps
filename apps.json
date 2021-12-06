@@ -70,7 +70,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.03",
+    "version": "0.04",
     "description": "(BETA) App to display notifications from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -170,7 +170,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.10",
+    "version": "0.11",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",
