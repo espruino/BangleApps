@@ -1,6 +1,6 @@
 // MIT License - James Milner 2021
 
-const mandlebrotBmp = {
+const mandelbrotBmp = {
   width: 176,
   height: 176,
   bpp: 8,
@@ -13,7 +13,7 @@ const mandlebrotBmp = {
 };
 
 function draw() {
-  g.drawImage(mandlebrotBmp);
+  g.drawImage(mandelbrotBmp);
   // work out how to display the current time
   const d = new Date();
   const h = d.getHours(),

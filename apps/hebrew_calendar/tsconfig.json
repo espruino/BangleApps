@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "es2015",
+    "noImplicitAny": false,
+    "target": "es2015"
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -28,12 +28,17 @@ exports.pushMessage = function(event) {
   if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
   // ok, saved now - we only care if it's new
   if (event.t!="add") return;
-  // otherwise load after a delay, to ensure we have all the messages
+  // otherwise load messages/show widget
+  var loadMessages = Bangle.CLOCK || event.important;
+  // first, buzz
+  if (loadMessages && global.WIDGETS && WIDGETS.messages)
+      WIDGETS.messages.buzz();
+  // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
     exports.messageTimeout = undefined;
     // if we're in a clock or it's important, go straight to messages app
-    if (Bangle.CLOCK || event.important) return load("messages.app.js");
+    if (loadMessages) return load("messages.app.js");
     if (!global.WIDGETS || !WIDGETS.messages) return Bangle.buzz(); // no widgets - just buzz to let someone know
     WIDGETS.messages.show();
   }, 500);

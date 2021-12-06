@@ -78,6 +78,9 @@ function draw(){
     } else {
       h = " " + h;
     }
+  } else if (h === 0) {
+    // display 12:00 instead of 00:00 for 12 hr mode
+    h = "12";
   }
 
   //draw separator

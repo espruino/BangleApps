@@ -21,6 +21,7 @@
 */
 
 var Layout = require("Layout");
+var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
@@ -173,13 +174,15 @@ function showMessage(msgid) {
   if (msg.src=="Maps") return showMapMessage(msg);
   if (msg.id=="music") return showMusicMessage(msg);
   // Normal text message display
-  var title=msg.title, titleFont = fontLarge;
+  var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
-    var w = g.getWidth()-40;
+    var w = g.getWidth()-48;
     if (g.setFont(titleFont).stringWidth(title) > w)
       titleFont = fontMedium;
-    if (g.setFont(titleFont).stringWidth(title) > w)
-      title = g.wrapString(title, w).join("\n");
+    if (g.setFont(titleFont).stringWidth(title) > w) {
+      lines = g.wrapString(title, w);
+      title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
+    }
   }
   var buttons = [
     {type:"btn", src:getBackImage(), cb:()=>{
@@ -203,15 +206,17 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
+  lines = g.wrapString(msg.body, g.getWidth()-10);
+  var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getMessageImage(msg), cb:()=>showMessageSettings(msg) },
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontMedium, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2 },
+        {type:"txt", font:fontSmall, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},
-    {type:"txt", font:fontMedium, label:msg.body||"", wrap:true, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontMedium, label:body, fillx:1, filly:1, pad:2 },
     {type:"h",fillx:1, c: buttons}
   ]});
   g.clearRect(Bangle.appRect);
