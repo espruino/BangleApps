@@ -1989,11 +1989,12 @@
     "id": "chronowid",
     "name": "Chrono Widget",
     "shortName": "Chrono Widget",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Chronometer (timer) which runs as widget.",
     "icon": "app.png",
     "tags": "tool,widget",
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
     "readme": "README.md",
     "storage": [
       {"name":"chronowid.wid.js","url":"widget.js"},
