@@ -1,4 +1,22 @@
 var s = require("Storage");
+let fonts = g.getFonts();
+var scaleval = 1;
+var vectorval = 20;
+var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
+let settings = require('Storage').readJSON("launch.json", true) || {};
+if ("vectorsize" in settings) {
+    vectorval = parseInt(settings.vectorsize);
+}
+if ("font" in settings){
+    if(settings.font == "Vector"){
+        scaleval = vectorval/20;
+        font = "Vector"+(vectorval).toString();
+    }
+    else{
+        font = settings.font;
+        scaleval = (font.split('x')[1])/20;
+    }
+}
 var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
@@ -11,8 +29,6 @@ apps.forEach(app=>{
   if (app.icon)
     app.icon = s.read(app.icon); // should just be a link to a memory area
 });
-// FIXME: not needed after 2v11
-var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 // FIXME: check not needed after 2v11
 if (g.wrapString) {
   g.setFont(font);
@@ -22,9 +38,9 @@ if (g.wrapString) {
 function drawApp(i, r) {
   var app = apps[i];
   if (!app) return;
-  g.clearRect(r.x,r.y,r.x+r.w-1, r.y+r.h-1);
-  g.setFont(font).setFontAlign(-1,0).drawString(app.name,64,r.y+32);
-  if (app.icon) try {g.drawImage(app.icon,8,r.y+8);} catch(e){}
+  g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
+  g.setFont(font).setFontAlign(-1,0).drawString(app.name,64*scaleval,r.y+(32*scaleval));
+  if (app.icon) try {g.drawImage(app.icon,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
 }
 
 g.clear();
@@ -32,7 +48,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 E.showScroller({
-  h : 64, c : apps.length,
+  h : 64*scaleval, c : apps.length,
   draw : drawApp,
   select : i => {
     var app = apps[i];

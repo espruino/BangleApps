@@ -63,7 +63,7 @@ function countDown() {
 
 Bangle.on('touch',(touchside, touchdata)=>{
   if (!islocked && istimeron && touchdata.y > (100+10)) {
-    Bangle.buzz(40);  
+    Bangle.buzz(40);
     istimeron = false;
     clearInterval(timerinterval);
   } else if (touchdata.y > 24 && touchdata.y < (100-10)) {
@@ -134,20 +134,20 @@ function draw() {
   else if (current_value >= current_from) { g.setBgColor("#8F8"); }
   g.clearRect(0,24,176,176);
 
-  g.reset();
-  g.setFontAlign(0, 0);
-
+  g.reset().setFontAlign(0, 0).setColor(istimeron ? "#000" : "#444");
   g.setFont("Michroma36").drawString(timeToString(current_value), 88, 62);
+
+  g.reset().setFontAlign(0, 0);
 
   g.setFont("HaxorNarrow7x17");
   g.drawString(timeToString(current_from), 44, 62+26);
   g.drawString(timeToString(current_mid), 88, 62+26);
   g.drawString(timeToString(current_to), 132, 62+26);
-  
+
   if (current_value >= current_from) { g.drawRect(44-1,62+26+9,44+1,62+26+9+1); }
   if (current_value >= current_mid) { g.drawRect(88-1,62+26+9,88+1,62+26+9+1); }
   if (current_value >= current_to) { g.drawRect(132-1,62+26+9,132+1,62+26+9+1); }
-  
+
   if (showInstructions) {
     g.setFont("6x8").drawString("Tapping timer locks buttons", 88, 100+5);
     g.setFont("6x8").drawString("<= Swipe to change time =>", 88, 168);
@@ -159,7 +159,7 @@ function draw() {
   g.drawString(timeToString(newtimer_left_to), 44, 138+9);
   g.drawString(timeToString(newtimer_right_from), 132, 138-9);
   g.drawString(timeToString(newtimer_right_to), 132, 138+9);
-  
+
   g.drawRect(0+8,138-24, 88-9+1, 138+22+1);
   g.drawRect(0+8,138-24, 88-9, 138+22);
   g.drawRect(88+8,138-24, 176-10+1, 138+22+1);
