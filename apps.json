@@ -104,7 +104,7 @@
     "id": "launch",
     "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.09",
+    "version": "0.10",
     "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
@@ -112,8 +112,10 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]}
+      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
+      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
+    "data": [{"name":"launch.json"}],
     "sortorder": -10
   },
   {
@@ -4449,7 +4451,7 @@
     "shortName": "AuthWatch",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
-    "version": "0.03",
+    "version": "0.04",
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
     "interface": "interface.html",
@@ -4687,6 +4689,21 @@
         "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widChargingStatus.wid.js","url":"widget.js"}
+     ]
+  },
+  {
+    "id": "flow",
+    "name": "FLOW",
+    "shortName": "FLOW",
+    "version": "0.01",
+    "description": "A game where you have to help a flow avoid white obstacles thing by tapping! This is a demake of an app which I forgot the name of. Press BTN(1) to restart. See if you can get to 2500 score!",
+    "icon": "app.png",
+    "tags": "game",
+    "supports" : ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name": "flow.app.js", "url": "app.js" },
+      {"name": "flow.img", "url": "app-icon.js","evaluate": true }
     ]
   }
 ]
