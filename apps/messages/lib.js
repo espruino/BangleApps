@@ -1,10 +1,10 @@
+/* Push a new message onto messages queue, event is:
+  {t:"add",id:int, src,title,subject,body,sender,tel, important:bool} // add new
+  {t:"add",id:int, id:"music", state, artist, track, etc} // add new
+  {t:"remove-",id:int} // remove
+  {t:"modify",id:int, title:string} // modified
+*/
 exports.pushMessage = function(event) {
-  /* event is:
-    {t:"add",id:int, src,title,subject,body,sender,tel, important:bool} // add new
-    {t:"add",id:int, id:"music", state, artist, track, etc} // add new
-    {t:"remove-",id:int} // remove
-    {t:"modify",id:int, title:string} // modified
-  */
   var messages, inApp = "undefined"!=typeof MESSAGES;
   if (inApp)
     messages = MESSAGES; // we're in an app that has already loaded messages
@@ -43,6 +43,7 @@ exports.pushMessage = function(event) {
     WIDGETS.messages.show();
   }, 500);
 }
+/// Remove all messages
 exports.clearAll = function(event) {
   var messages, inApp = "undefined"!=typeof MESSAGES;
   if (inApp) {
