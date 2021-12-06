@@ -9,3 +9,4 @@ Leer10
 Orviwan (original watchface and assets)
 Gordon Williams (Bangle.js, watchapps for reference code and documentation)
 DiscoMinotaur (adjustments)
+Ray Holder (minor 12 hour time rendering adjustment)
