@@ -189,7 +189,7 @@ var locales = {
     day: "zondag,maandag,dinsdag,woensdag,donderdag,vrijdag,zaterdag",
     abmonth: "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
     month: "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december",
-    // No translation for english...
+    trans: { yes: "ja", Yes: "Ja", no: "nee", No: "Nee", ok: "ok", on: "aan", off: "uit", "< Back": "< Terug" }
   },
   "en_CA": {
     lang: "en_CA",
