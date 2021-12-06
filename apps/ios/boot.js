@@ -54,11 +54,26 @@ E.on('notify',msg=>{
   "name" : string,
 */
   var appNames = {
-    "com.netflix.Netflix" : "Netflix",
-    "com.google.ios.youtube" : "YouTube",
+    "nl.ah.Appie": "Albert Heijn",
+    "com.apple.mobilecal": "Calendar",
+    "com.apple.mobilemail": "Mail",
+    "com.apple.reminders": "Reminders",
+    "com.apple.shortcuts": "Shortcuts",
+    "com.atebits.Tweetie2": "Twitter",
+    "com.burbn.instagram" : "Instagram",
+    "com.facebook.Facebook": "Facebook",
+    "com.facebook.Messenger": "FB Messenger",
+    "com.google.Gmail" : "GMail",
     "com.google.hangouts" : "Hangouts",
+    "com.google.ios.youtube" : "YouTube",
+    "com.jumbo.app" : "Jumbo",
+    "com.netflix.Netflix" : "Netflix",
+    "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
-    "com.atebits.Tweetie2": "Twitter"
+    "com.spotify.client": "Spotify",
+    "net.whatsapp.WhatsApp": "WhatsApp",
+    "com.wordfeud.free": "WordFeud",
+
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
