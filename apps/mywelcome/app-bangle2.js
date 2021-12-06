@@ -25,9 +25,14 @@ function fade(col, callback) {
 }
 
 
-var SCENE_COUNT=10;
+var SCENE_COUNT=11;
 function getScene(n) {
   if (n==0) return function() {
+    console.log("Start app");
+    g.clear(1);
+    eval(require("Storage").read("mywelcome.custom.js"));
+  }
+  if (n==1) return function() {
     g.reset().setBgColor(0).clearRect(0,0,176,176);
     g.setFont("6x15");
     var n=0;
@@ -45,7 +50,7 @@ function getScene(n) {
       }
     },50);
   };
-  if (n==1) return function() {
+  if (n==2) return function() {
     var img = require("heatshrink").decompress(atob("ptR4n/j/4gH+8H5wl+jOukVVoHZ8dt/n//n37OtgH9sHhwHp4H5xmkGiH72MRje/LL/7iIAEE7sPEgoAC+AlagIlIiMQErPxDwUYxAABwIHCj8N7nOl3uEqa6BEggnFjfM5nCkUil3gEq5KDAAQmC6QmBE4JxSEhIABiQmB8QmSXoQlCYRMdEwIlCAAIlNhYlOiO85nNEyMPEoZwIAAcsYIYmPXoYlMiKaFExX/u9VEqLBBOYrCH+czmtVqJyDEpiaCOYsgSYszmc3qtTEqMR7hzG8AlGmd1OQglOOY6aEgYlCmmZoJMCTBrnD6SaIEoU/zOUuolSjbnBJgqaCEoU5zOXX4RyQYBBzCS4X5zNDqqZCJiERJg5zBEoVJEoM1JgYlQjhMHc4JLEmZMEEp6ZIJgPzS4WTmZMVTILmFYAK+BmglCmd1JgUYJiPNEorABEIOZygDBm5MCiJMQlhMH8ByBXwIlBJgUxJiMd5nOTIzlBTAK+BAANVq4jPAAS/HJgJyCTATAEACC/B4S/IJgIlCYAgAPiS/Kn5yEYANTEyPc5niOQxMB/LlCOapyJJgbpBYAZzROQK/Gl0ATIWfEoZzBc6IlB6SYGgBJBJgpzSlhyH8EAh5MBTIjnCuIlOjjlHTAJzC/LmDTSSYIEoTABOYIlETSKYHXwIABOYM0yYmETSCYHEobnDOYqaBExu8TAwlEc4U5EoiaCmK+NTAolFEwX0TQzBMXwXiEpTBCAAomNEoS+EEo4mIYIImKEoS+EEpDoBEyUbEo3gEo4mJdAImIJY4lJEycdEoPOOBYmPuIlE+HcJYhKKTZ1fhYkB2EAhnNcYMuEhomMr8A3YABEoJyB5gjOAAYmHm9VgELEoJMBEoXAEyXzE45YBJgXwEqx1I+ByDOYJyVJw5yCgEB3cQGgJMWJwQnCu6/CgFBigDB13S/glVAAf1qomCglEoADB1QDBADEPEoNVqEAolEgEKolKErJMDYAJMD0lE0AmaEoNaAgJMCFIYAahV/IgIiDOTgABNYJMEOToiCIoJMCOTzfCN4RMBOTxsDJIRyfIwZMBKQZzfJgRyfOYZMBOUBzCJgNKOT5zDJgLoCADxKBOAIABOT6aCAARyfOYRyjOYRyjOYlKEsBzEEsBzEOUJzDOUIABOUiaDOURzCOUZzCEscKCiY"));
     var im = g.imageMetrics(img);
     g.reset();
@@ -76,7 +81,7 @@ function getScene(n) {
     },3500);
 
   };
-  if (n==2) return function() {
+  if (n==3) return function() {
     g.reset();
     g.setBgColor("#ffff00").setColor(0).clear();
     g.setFont("12x20").setFontAlign(0,0);
@@ -89,7 +94,7 @@ function getScene(n) {
       ()=>{g.setFont("12x20:2").setFontAlign(0,0,1).drawString("HERE!",150,88);}
     ],200);
   };
-  if (n==3) return function() {
+  if (n==4) return function() {
     g.reset();
     g.setBgColor("#00ffff").setColor(0).clear();
     g.setFontAlign(0,0).setFont("6x15:2");
@@ -97,7 +102,7 @@ function getScene(n) {
     g.setFont("12x20");
     g.drawString("To wake the\nscreen up, or to\nselect", 88,60);
   };
-  if (n==4) return function() {
+  if (n==5) return function() {
     g.reset();
     g.setBgColor("#00ffff").setColor(0).clear();
     g.setFontAlign(0,0).setFont("6x15:2");
@@ -105,13 +110,13 @@ function getScene(n) {
     g.setFont("12x20");
     g.drawString("To go back to\nthe clock", 88,60);
   };
-  if (n==5) return function() {
+  if (n==6) return function() {
     g.reset();
     g.setBgColor("#ff0000").setColor(0).clear();
     g.setFontAlign(0,0).setFont("12x20");
     g.drawString("If Bangle.js ever\nstops, hold the\nbutton for\nten seconds.\n\nBangle.js will\nthen reboot.", 88,78);
   };
-  if (n==6) return function() {
+  if (n==7) return function() {
     g.reset();
     g.setBgColor("#0000ff").setColor(-1).clear();
     g.setFont("12x20").setFontAlign(0,0);
@@ -122,7 +127,7 @@ function getScene(n) {
       ()=>{g.drawString("Drag up and down\nto scroll and\ntap to select",x,y+=h);},
     ],300);
   };
-  if (n==7) return function() {
+  if (n==8) return function() {
     g.reset();
     g.setBgColor("#00ff00").setColor(0).clear();
     g.setFont("12x20").setFontAlign(0,0);
@@ -133,7 +138,7 @@ function getScene(n) {
       ()=>{g.drawString("To add more, visit\nbanglejs.com/apps",x,y+=h);},
     ],400);
   };
-  if (n==8) return function() {
+  if (n==9) return function() {
     g.reset();
     g.setBgColor("#ff0000").setColor(0).clear();
     g.setFont("12x20").setFontAlign(0,0);
@@ -190,7 +195,7 @@ function getScene(n) {
 
     setInterval(draw,50);
   };
-  if (n==9) return function() {
+  if (n==10) return function() {
     g.reset();
     g.setBgColor("#ffffff");g.clear();
     g.setFontAlign(0,0);
@@ -230,7 +235,7 @@ function move(dir) {
   if (sceneNumber < SCENE_COUNT-1)
     setTimeout(function() {
       move(1);
-    }, 5000);
+    }, (sceneNumber==0) ? 20000 : 5000);
 }
 
 
