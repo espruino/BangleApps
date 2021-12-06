@@ -30,6 +30,31 @@
     "sortorder": -10
   },
   {
+    "id": "hebrew_calendar",
+    "name": "Hebrew Calendar",
+    "shortName": "HebCal",
+    "version": "0.03",
+    "description": "lists the date according to the hebrew calendar",
+    "icon": "app.png",
+    "tags": "",
+    "supports": [
+      "BANGLEJS",
+      "BANGLEJS2"
+    ],
+    "readme": "README.md",
+    "storage": [
+      {
+        "name": "hebrew_calendar.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "hebrew_calendar.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
+  },
+  {
     "id": "messages",
     "name": "Messages",
     "version": "0.07",
@@ -104,7 +129,7 @@
     "id": "launch",
     "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.09",
+    "version": "0.10",
     "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
@@ -112,8 +137,10 @@
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]}
+      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
+      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
     ],
+    "data": [{"name":"launch.json"}],
     "sortorder": -10
   },
   {
@@ -463,22 +490,22 @@
     ]
   },
   {
-    "id": "mandlebrotclock",
-    "name": "Mandlebrot Clock",
+    "id": "mandelbrotclock",
+    "name": "Mandelbrot Clock",
     "version": "0.01",
-    "description": "A mandlebrot set themed clock cool",
-    "icon": "mandlebrotclock.png",
-    "screenshots": [{ "url": "screenshot_mandlebrotclock.png" }],
+    "description": "A mandelbrot set themed clock cool",
+    "icon": "mandelbrotclock.png",
+    "screenshots": [{ "url": "screenshot_mandelbrotclock.png" }],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      { "name": "mandlebrotclock.app.js", "url": "mandlebrotclock.js" },
+      { "name": "mandelbrotclock.app.js", "url": "mandelbrotclock.js" },
       {
-        "name": "mandlebrotclock.img",
-        "url": "mandlebrotclock-icon.js",
+        "name": "mandelbrotclock.img",
+        "url": "mandelbrotclock-icon.js",
         "evaluate": true
       }
     ]
@@ -2098,6 +2125,19 @@
     "storage": [
       {"name":"snake.app.js","url":"snake.js"},
       {"name":"snake.img","url":"snake-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "snek",
+    "name": "The snek game",
+    "shortName":"Snek",
+    "version": "0.01",
+    "description": "A snek game where you control a snek to eat all the apples!",
+    "icon": "snek-icon.js",
+    "supports": ["BANGLEJS2"],
+    "tags": "game,fun",
+    "storage": [
+      {"name":"snek.app.js","url":"snek.js"},
+      {"name":"snek.img","url":"snek-icon.js","evaluate":true}
     ]
   },
   {
@@ -4449,7 +4489,7 @@
     "shortName": "AuthWatch",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
-    "version": "0.03",
+    "version": "0.04",
     "description": "Google Authenticator compatible tool.",
     "tags": "tool",
     "interface": "interface.html",
@@ -4531,7 +4571,7 @@
    "shortName":"93 Dub",
    "icon": "93dub.png",
    "screenshots": [{"url":"screenshot.png"}],
-   "version":"0.03",
+   "version":"0.04",
    "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
    "tags": "clock",
    "type": "clock",
@@ -4591,9 +4631,9 @@
 },
 {
   "id":"a_speech_timer",
-  "name":"A Speech Timer",
+  "name":"Speech Timer",
   "icon": "app.png",
-  "version":"1.00",
+  "version":"1.01",
   "description": "A timer designed to help keeping your speeches and presentations to time.",
   "tags": "tool,timer",
   "readme":"README.md",
@@ -4691,6 +4731,52 @@
     "storage": [
       {"name":"weatherClock.app.js","url":"app.js"},
       {"name":"weatherClock.img","url":"app-icon.js","evaluate":true}
+     ]
+  },
+  {
+    "id": "menuwheel",
+    "name": "Wheel Menus",
+    "version": "0.01",
+    "description": "Replace Bangle.js 2's menus with a version that contains variable-size text and a back button",
+    "readme": "README.md",
+    "icon": "icon.png",
+    "screenshots": [
+      {"url":"screenshot_b1_dark.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_light.png"},
+      {"url":"screenshot_b2_dark.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_light.png"}
+    ],
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"menuwheel.boot.js","url":"boot.js"}
+     ]
+  },
+  { "id": "widChargingStatus",
+    "name": "Charging Status",
+    "shortName":"ChargingStatus",
+    "icon": "widget.png",
+    "version":"0.1",    
+    "type": "widget",
+    "description": "A simple widget that shows a yellow lightning icon to indicate whenever the watch is charging. This way one can see the charging status at a glance, no matter which battery widget is being used.",
+    "tags": "widget",
+        "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widChargingStatus.wid.js","url":"widget.js"}
+     ]
+  },
+  {
+    "id": "flow",
+    "name": "FLOW",
+    "shortName": "FLOW",
+    "version": "0.01",
+    "description": "A game where you have to help a flow avoid white obstacles thing by tapping! This is a demake of an app which I forgot the name of. Press BTN(1) to restart. See if you can get to 2500 score!",
+    "icon": "app.png",
+    "tags": "game",
+    "supports" : ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name": "flow.app.js", "url": "app.js" },
+      {"name": "flow.img", "url": "app-icon.js","evaluate": true }
     ]
   }
 ]
