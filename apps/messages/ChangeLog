@@ -11,3 +11,4 @@
 0.08: Fix rendering of long messages (fix #969)
       buzz on new message (fix #999)
 0.09: Message now disappears after 60s if no action taken and clock loads (fix 922)
+      Fix phone icon (#1014)
