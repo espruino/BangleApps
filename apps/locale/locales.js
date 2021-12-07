@@ -197,7 +197,7 @@ var locales = {
     thousands_sep: ".",
     currency_symbol: "€",
     int_curr_symbol: "EUR",
-    speed: "km/h",
+    speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
     ampm: { 0: "am", 1: "pm" },
