@@ -19,15 +19,15 @@ const font_height = 2;
 const global_font = "Dennis8";
 require("FontDennis8").add(Graphics);
 
-const editable_buf = "hello";
+const editable_buf = "Scribble";
 
-const left = 4;
+const left = 3;
 const _screen_mid = g.getWidth() / 2;
 const right = 176 - 4;
 
 const box_size = {
   w: _screen_mid - 6,
-  h: 45,
+  h: 46,
 };
 
 const spacing = 4;
