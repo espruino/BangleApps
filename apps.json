@@ -4795,6 +4795,9 @@
     "storage": [
       {"name":"scribble.app.js","url":"app.js"},
       {"name":"scribble.img","url":"app-icon.js","evaluate":true}
+    ],
+    "screenshots":[
+      { "url":"screenshot.png" }
     ]
   }
   
