@@ -42,21 +42,19 @@
     <script src="../../core/lib/imageconverter.js"></script>
 
     <script>
-      var targetWidth = 200;
-      var targetHeight = 200;
+      var targetSize = 200;
 
       function onInit(device) {
         if (device && device.info && device.info.g) {
-          targetWidth = device.info.g.width - 20;
-          targetHeight = device.info.g.height - 20;
+          border = 4;
+          targetSize = Math.min(device.info.g.width - border, device.info.g.height - border);
         }
         qrcode = new QRCode("qrcode", {
           text: document.getElementById("url").value,
-          width: targetWidth,
-          height: targetHeight,
           colorDark : "#000000",
           colorLight : "#ffffff",
         });
+        refreshQRCode();
       }
 
       //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
@@ -84,16 +82,32 @@
       }
       function refreshQRCode(){
         qrcode.clear(); // clear the code.
+        var qrText = "";
         if(document.getElementById("useWIFI").checked){
             const ssid = document.getElementById("ssid").value;
             const password = document.getElementById("password").value;
             const encryption = document.getElementById("encryption").value;
             const hidden = document.getElementById("hidden").checked;
             const wifiString = generateWifiString(ssid, password, hidden, encryption);
-            qrcode.makeCode(wifiString);
+            qrText= wifiString;
         }else{
-            qrcode.makeCode(document.getElementById("url").value);
+            qrText = document.getElementById("url").value;
         }
+        qrcode._htOption.text = qrText;
+        qrcode.makeCode(qrText);
+        
+        var integerScale = Math.max(Math.floor(targetSize / (qrcode._oQRCode.moduleCount + 1)),1);
+        
+        finalSizeQr = integerScale * (qrcode._oQRCode.moduleCount + 1);
+        finalSizeCanvas = finalSizeQr - 1;
+        
+        qrcode._htOption.width = finalSizeQr;
+        qrcode._htOption.height = finalSizeQr;
+        
+        document.getElementsByTagName("canvas")[0].width = finalSizeCanvas;
+        document.getElementsByTagName("canvas")[0].height = finalSizeCanvas;
+        
+        qrcode.makeCode(qrText);
       }
       var qrcode;
 
