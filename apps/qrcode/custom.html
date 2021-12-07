@@ -28,7 +28,11 @@
     </div>
     <hr>
     <p>Additional options:</p>
-    <input type="checkbox" id="hideDescription" name="minimize"/>
+    <input type="checkbox" id="boostBacklight" name="boostBacklight"/>
+    <label for="boostBacklight">Set backlight to max. while QR is shown</label></br>
+    <input type="checkbox" id="stayOn" name="stayOn"/>
+    <label for="stayOn">Do not lock or dim while showing QR</label></br>
+    <input type="checkbox" id="hideDescription" name="hideDescription"/>
     <label for="hideDescription">Hide Description</label></br>
     <label for="description">Replace default description:</label>
     <input type="text" id="description" class="form-input" value="">
@@ -129,7 +133,9 @@
         }
         var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
         var app = `var img = ${img};
-${ document.getElementById("hideDescription").checked ? '' : `var content = ${JSON.stringify(content)};`}
+${document.getElementById("boostBacklight").checked ? 'Bangle.setLCDBrightness(1);' : ''}
+${document.getElementById("stayOn").checked ? 'Bangle.setLCDTimeout(0);' : ''}
+${document.getElementById("hideDescription").checked ? '' : `var content = ${JSON.stringify(content)};`}
 g.clear(1).setColor(1,1,1).setBgColor(0,0,0);
 g.fillRect(0,0,g.getWidth()-1,g.getHeight()-1);
 g.drawImage(img,(g.getWidth()-img[0])/2,(g.getHeight()-img[1])/2);
