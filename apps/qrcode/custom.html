@@ -36,6 +36,15 @@
     <label for="hideDescription">Hide Description</label></br>
     <label for="description">Replace default description:</label>
     <input type="text" id="description" class="form-input" value="">
+    <label for="correction">Error correction level:</label>
+    <div class="input-group">
+        <select name="correction" id="correction" class="form-control">
+            <option value="1">L - Low - 7%</option>
+            <option value="0">M - Medium - 15%</option>
+            <option value="3">Q - Quartile - 25%</option>
+            <option value="2">H - High - 30%</option>
+        </select>
+    </div>
     
     <hr>
     <p>Try your QR Code: <div id="qrcode"></div></p>
@@ -99,6 +108,7 @@
             qrText = document.getElementById("text").value;
         }
         qrcode._htOption.text = qrText;
+        qrcode._htOption.correctLevel = parseInt(document.getElementById("correction").value);
         qrcode.makeCode(qrText);
         
         var integerScale = Math.max(Math.floor(targetSize / (qrcode._oQRCode.moduleCount + 1)),1);
@@ -123,6 +133,7 @@
       document.getElementById("hidden").addEventListener("change",refreshQRCode);
       document.getElementById("useTEXT").addEventListener("change",refreshQRCode);
       document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
+      document.getElementById("correction").addEventListener("change",refreshQRCode);
       document.getElementById("upload").addEventListener("click", function() {
         var content = document.getElementById("text").value;
         if(document.getElementById("useWIFI").checked){
