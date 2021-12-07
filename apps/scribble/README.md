@@ -1,25 +1,15 @@
-# App Name
+# Scribble
 
-Describe the app...
+A tree-based keyboard, inspired by Tertiary Text on Pebble.
 
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
+![](screenshot.png)
 
 ## Usage
 
-Describe how to use it
-
-## Features
-
-Name the function
-
-## Controls
-
-Name the buttons and what they are used for
-
-## Requests
-
-Name who should be contacted for support/update requests
+Tap a button to select text. 
+Swipe left to right for enter space.
+Swipe right to left to delete.
 
 ## Creator
 
-Your name
+enricorov
