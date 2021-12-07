@@ -7,8 +7,7 @@ Eat apples and don't bite your tail.
 
 ## Controls
 
-- UP: BTN1
-- DOWN: BTN3
-- LEFT: BTN4
-- RIGHT: BTN5
-- PAUSE: BTN2
+- BTN1: turn to left
+- BTN2: pause
+- BTN3: turn to right
+

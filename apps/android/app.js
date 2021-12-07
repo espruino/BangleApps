@@ -1,2 +1,3 @@
-// Config app not implemented yet
-setTimeout(()=>load("messages.app.js"),10);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+eval(require("Storage").read("android.settings.js"))(()=>load());

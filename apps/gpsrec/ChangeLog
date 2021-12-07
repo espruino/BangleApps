@@ -26,3 +26,5 @@
 0.22: Ensure Bangle.setGPSPower uses 'gpsrec' as a tag
 0.23: Fix issue where tracks wouldn't record when running from OpenStMap if a period hadn't been set up first
 0.24: Better support for Bangle.js 2, avoid widget area for Graphs, smooth graphs more
+0.25: Fix issue where if Bangle.js 2 got a GPS fix but no reported time, errors could be caused by the widget (fix #935)
+0.26: Multiple bugfixes

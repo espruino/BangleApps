@@ -5,6 +5,8 @@ var characteristic;
 
 const SETTINGS_FILE = 'cscsensor.json';
 const storage = require('Storage');
+const W = g.getWidth();
+const H = g.getHeight();
 
 class CSCSensor {
   constructor() {
@@ -75,7 +77,7 @@ class CSCSensor {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
-    var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
+    var dspeed = Math.round(10*this.distFactor*this.speed)/10;
     var dmins = Math.floor(this.movingTime/60).toString();
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
@@ -152,7 +154,7 @@ class CSCSensor {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
       if (event.target.value.getUint8(0, true) & 0x2) {
-        // crank revolution
+        // crank revolution - if enabled
         const crankRevs = event.target.value.getUint16(1, true);
         const crankTime = event.target.value.getUint16(3, true);
         if (crankTime > this.lastCrankTime) {
@@ -161,44 +163,43 @@ class CSCSensor {
         }
         this.lastCrankRevs = crankRevs;
         this.lastCrankTime = crankTime;
-      } else {
-        // wheel revolution
-        var wheelRevs = event.target.value.getUint32(1, true);
-        var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
-        if (dRevs>0) {
-          qChanged = true;
-          this.totaldist += dRevs*this.wheelCirc/63360.0;
-          if ((this.totaldist-this.settings.totaldist)>0.1) {
-            this.settings.totaldist = this.totaldist;
-            storage.writeJSON(SETTINGS_FILE, this.settings);
-          }
-        }
-        this.lastRevs = wheelRevs;
-        if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
-        var wheelTime = event.target.value.getUint16(5, true);
-        var dT = (wheelTime-this.lastTime)/1024;
-        var dBT = (Date.now()-this.lastBangleTime)/1000;
-        this.lastBangleTime = Date.now();
-        if (dT<0) dT+=64;
-        if (Math.abs(dT-dBT)>3) dT = dBT;
-        this.lastTime = wheelTime;
-        this.speed = this.lastSpeed;
-        if (dRevs>0 && dT>0) {
-          this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
-          this.speedFailed = 0;
-          this.movingTime += dT;
-        }
-        else {
-          this.speedFailed++;
-          qChanged = false;
-          if (this.speedFailed>3) {
-            this.speed = 0;
-            qChanged = (this.lastSpeed>0);
-          }
-        }
-        this.lastSpeed = this.speed;
-        if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
       }
+      // wheel revolution
+      var wheelRevs = event.target.value.getUint32(1, true);
+      var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
+      if (dRevs>0) {
+        qChanged = true;
+        this.totaldist += dRevs*this.wheelCirc/63360.0;
+        if ((this.totaldist-this.settings.totaldist)>0.1) {
+          this.settings.totaldist = this.totaldist;
+          storage.writeJSON(SETTINGS_FILE, this.settings);
+        }
+      }
+      this.lastRevs = wheelRevs;
+      if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
+      var wheelTime = event.target.value.getUint16(5, true);
+      var dT = (wheelTime-this.lastTime)/1024;
+      var dBT = (Date.now()-this.lastBangleTime)/1000;
+      this.lastBangleTime = Date.now();
+      if (dT<0) dT+=64;
+      if (Math.abs(dT-dBT)>3) dT = dBT;
+      this.lastTime = wheelTime;
+      this.speed = this.lastSpeed;
+      if (dRevs>0 && dT>0) {
+        this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
+        this.speedFailed = 0;
+        this.movingTime += dT;
+      }
+      else {
+        this.speedFailed++;
+        qChanged = false;
+        if (this.speedFailed>3) {
+          this.speed = 0;
+          qChanged = (this.lastSpeed>0);
+        }
+      }
+      this.lastSpeed = this.speed;
+      if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
     }
     if (qChanged && this.qUpdateScreen) this.updateScreen();
   }
@@ -215,44 +216,47 @@ function getSensorBatteryLevel(gatt) {
   });
 }
 
-function parseDevice(d) {
-  device = d;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
-  device.gatt.connect().then(function(ga) {
-  gatt = ga;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
-  return gatt.getPrimaryService("1816");
-}).then(function(s) {
-  service = s;
-  return service.getCharacteristic("2a5b");
-}).then(function(c) {
-  characteristic = c;
-  characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
-  return characteristic.startNotifications();
-}).then(function() {
-  console.log("Done!");
-  g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
-  getSensorBatteryLevel(gatt);
-  mySensor.updateScreen();
-}).catch(function(e) {
-  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
-  console.log(e);
-})}
-
 function connection_setup() {
-  NRF.setScan();
   mySensor.screenInit = true;
-  NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-  g.clearRect(0, 48, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
-  g.drawString("Scanning for CSC sensor...", 120, 120);
+  E.showMessage("Scanning for CSC sensor...");
+  NRF.requestDevice({ filters: [{services:["1816"]}]}).then(function(d) {
+    device = d;
+    E.showMessage("Found device");
+    return device.gatt.connect();
+  }).then(function(ga) {
+    gatt = ga;
+    E.showMessage("Connected");
+    return gatt.getPrimaryService("1816");
+  }).then(function(s) {
+    service = s;
+    return service.getCharacteristic("2a5b");
+  }).then(function(c) {
+    characteristic = c;
+    characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
+    return characteristic.startNotifications();
+  }).then(function() {
+    console.log("Done!");
+    g.reset().clearRect(Bangle.appRect).flip();
+    getSensorBatteryLevel(gatt);
+    mySensor.updateScreen();
+  }).catch(function(e) {
+    E.showMessage(e.toString(), "ERROR");
+    console.log(e);
+  });
 }
 
 connection_setup();
-setWatch(function() { mySensor.reset(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
-E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
-setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});
-setWatch(function() { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN2, {repeat:true, debounce:20});
-NRF.on('disconnect', connection_setup);
+E.on('kill',()=>{
+  if (gatt!=undefined) gatt.disconnect();
+  mySensor.settings.totaldist = mySensor.totaldist;
+  storage.writeJSON(SETTINGS_FILE, mySensor.settings);
+});
+NRF.on('disconnect', connection_setup); // restart if disconnected
+Bangle.setUI("updown", d=>{
+  if (d<0) { mySensor.reset(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
+  if (d==0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
+  if (d>0) { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
+});
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

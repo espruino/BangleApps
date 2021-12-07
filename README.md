@@ -377,40 +377,41 @@ that handles configuring the app.
 When the app settings are opened, this function is called with one
 argument, `back`: a callback to return to the settings menu.
 
-Usually it will save any information in `app.json` where `app` is the name
+Usually it will save any information in `myappid.json` where `myappid` is the name
 of your app - so you should change the example accordingly.
 
 Example `settings.js`
 ```js
 // make sure to enclose the function in parentheses
 (function(back) {
-  let settings = require('Storage').readJSON('app.json',1)||{};
+  let settings = require('Storage').readJSON('myappid.json',1)||{};
+  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value 
   function save(key, value) {
     settings[key] = value;
-    require('Storage').write('app.json',settings);
+    require('Storage').write('myappid.json', settings);
   }
   const appMenu = {
     '': {'title': 'App Settings'},
     '< Back': back,
     'Monkeys': {
-      value: settings.monkeys||12,
+      value: settings.monkeys,
       onchange: (m) => {save('monkeys', m)}
     }   
   };
   E.showMenu(appMenu)
 })
 ```
-In this example the app needs to add `app.settings.js` to `storage` in `apps.json`.   
-It should also add `app.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
+In this example the app needs to add `myappid.settings.js` to `storage` in `apps.json`.   
+It should also add `myappid.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
 ```json
-  { "id": "app",
+  { "id": "myappid",
     ...
     "storage": [
       ...
-      {"name":"app.settings.js","url":"settings.js"},
+      {"name":"myappid.settings.js","url":"settings.js"}
     ],
     "data": [
-      {"name":"app.json"}
+      {"name":"myappid.json"}
     ]
   },
 ```

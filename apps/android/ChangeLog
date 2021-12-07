@@ -1,1 +1,5 @@
 0.01: New App!
+0.02: Remove messages on disconnect
+      Fix music control
+0.03: Handling of message actions (ok/clear)
+0.04: Android icon now goes to settings page with 'find phone'
