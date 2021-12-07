@@ -101,7 +101,7 @@ function draw() {
   var date = new Date();
   clockLayout.time.label = locale.time(date, 1);
   clockLayout.date.label = locale.date(date, 1).toUpperCase();
-  clockLayout.dow.label = locale.dow(date, 1).toUpperCase();
+  clockLayout.dow.label = locale.dow(date, 1).toUpperCase() + " ";
   var weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
