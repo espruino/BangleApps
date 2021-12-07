@@ -8,7 +8,7 @@ const distanceUnits = { // how many meters per X?
   "nm": 1852
 };
 const speedUnits = { // how many kph per X?
-  "kmh": 1,
+  "kmh": 1.00,
   "kph": 1,
   "km/h": 1,
   "mph": 1.60934,
