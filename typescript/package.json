@@ -5,8 +5,8 @@
   "main": "app.js",
   "types": "app.d.ts",
   "scripts": {
-    "build:testapp": "tsc ./src/app.ts --outDir ./dist",
-    "build:types": "tsc ./src/bangle.d.ts"
+    "build:example": "tsc ../apps/widChargingStatus/widget.ts --outDir ../apps/widChargingStatus/dist",
+    "build:types": "tsc ./globals.d.ts"
   },
   "author": {
     "name": "Sebastian Di Luzio",
