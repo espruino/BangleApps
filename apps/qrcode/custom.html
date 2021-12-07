@@ -3,10 +3,11 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <input type="radio" id="useURL" name="mode" checked/>
-    <label for="useURL">Use URL:</label>
-    <input type="text" id="url" class="form-input" value="http://espruino.com">
+    <input type="radio" id="useTEXT" name="mode" checked/>
+    <label for="useTEXT">Use text (for example an URL):</label>
+    <input type="text" id="text" class="form-input" value="www.espruino.com">
     <hr>
+    
     <input type="radio" id="useWIFI" name="mode"/>
     <label for="useWIFI">Use Wifi Credentials:</label>
     <input type="text" id="ssid" class="form-input" value="">
@@ -50,7 +51,7 @@
           targetSize = Math.min(device.info.g.width - border, device.info.g.height - border);
         }
         qrcode = new QRCode("qrcode", {
-          text: document.getElementById("url").value,
+          text: document.getElementById("text").value,
           colorDark : "#000000",
           colorLight : "#ffffff",
         });
@@ -90,8 +91,8 @@
             const hidden = document.getElementById("hidden").checked;
             const wifiString = generateWifiString(ssid, password, hidden, encryption);
             qrText= wifiString;
-        }else{
-            qrText = document.getElementById("url").value;
+        } else {
+            qrText = document.getElementById("text").value;
         }
         qrcode._htOption.text = qrText;
         qrcode.makeCode(qrText);
@@ -111,15 +112,15 @@
       }
       var qrcode;
 
-      document.getElementById("url").addEventListener("change", refreshQRCode);
       document.getElementById("ssid").addEventListener("change",refreshQRCode);
+      document.getElementById("text").addEventListener("change",refreshQRCode);
       document.getElementById("password").addEventListener("change",refreshQRCode);
       document.getElementById("encryption").addEventListener("change",refreshQRCode);
       document.getElementById("hidden").addEventListener("change",refreshQRCode);
-      document.getElementById("useURL").addEventListener("change",refreshQRCode);
+      document.getElementById("useTEXT").addEventListener("change",refreshQRCode);
       document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
       document.getElementById("upload").addEventListener("click", function() {
-        var content = document.getElementById("url").value;
+        var content = document.getElementById("text").value;
         if(document.getElementById("useWIFI").checked){
             content = document.getElementById("ssid").value
         }
