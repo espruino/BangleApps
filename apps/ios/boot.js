@@ -86,7 +86,7 @@ E.on('notify',msg=>{
     "com.zhiliaoapp.musically": "TikTok",
     "net.whatsapp.WhatsApp": "WhatsApp",
     "nl.ah.Appie": "Albert Heijn",
-    "nl.postnl.postnl": "PostNL",
+    "nl.postnl.TrackNTrace": "PostNL",
     "ph.telegra.Telegraph": "Telegram",
 
     // could also use NRF.ancsGetAppInfo(msg.appId) here
