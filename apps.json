@@ -4785,6 +4785,7 @@
     "name": "Scribble",
     "shortName":"Scribble",
     "version":"0.01",
+    "type": "app",
     "description": "A keyboard on your wrist! Swipe right for space, left for delete.",
     "icon": "app.png",
     "allow_emulator": true,
