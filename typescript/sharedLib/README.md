@@ -1,10 +1,11 @@
 # BangleTS
 
 A generic project setup for compiling apps from Typescript to Bangle.js ready, readable Javascript.
-It includes types for *some* of the modules and globals that are exposed for apps to use.
+It includes types for _some_ of the modules and globals that are exposed for apps to use.
 The goal is to have types for everything, but that will take some time. Feel free to help out by contributing!
 
 ## Using the types
+
 TODO
 
 ## Compilation
@@ -21,7 +22,7 @@ npm ci
 to install the project's build tools, and:
 
 ```
-npm run build:app pathToYourApp.ts
+npx tsc ./relativePathToYourApp/app.ts --outDir ./relativePathToYourApp/dist
 ```
 
 To build your app. The last command will generate the `app.js` file containing the transpiled code for the BangleJS.

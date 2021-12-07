@@ -5,9 +5,8 @@
   "main": "app.js",
   "types": "app.d.ts",
   "scripts": {
-    "build:testapp": "tsc src/app.ts",
-    "build:types": "tsc src/bangle.d.ts",
-    "build:app": "tsc"
+    "build:testapp": "tsc ./src/app.ts --outDir ./dist",
+    "build:types": "tsc ./src/bangle.d.ts"
   },
   "author": {
     "name": "Sebastian Di Luzio",
