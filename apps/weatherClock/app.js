@@ -110,7 +110,7 @@ function draw() {
       clockLayout.tempUnit.label = temp[2];
       clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + "  ";
+      clockLayout.wind.label = wind[1] + "   ";
       clockLayout.windUnit.label = wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
   }
   else{
