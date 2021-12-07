@@ -1,0 +1,20 @@
+{
+  "name": "bangle.ts",
+  "version": "0.1.0",
+  "description": "Typescript configuration and typings for Bangle.js",
+  "main": "app.js",
+  "types": "app.d.ts",
+  "scripts": {
+    "build:testapp": "tsc src/app.ts",
+    "build:types": "tsc src/bangle.d.ts",
+    "build:app": "tsc"
+  },
+  "author": {
+    "name": "Sebastian Di Luzio",
+    "email": "sebastian@diluz.io"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.2"
+  }
+}
