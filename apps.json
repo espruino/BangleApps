@@ -4646,23 +4646,6 @@
     {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
   ]
 },
-  {
-    "id": "sensible",
-    "name": "SensiBLE",
-    "shortName": "SensiBLE",
-    "version": "0.02",
-    "description": "Collect, display and advertise real-time sensor data.",
-    "icon": "sensible.png",
-    "type": "app",
-    "tags": "tool,sensors",
-    "supports" : [ "BANGLEJS2" ],
-    "allow_emulator": true,
-    "readme": "README.md",
-    "storage": [
-      { "name": "sensible.app.js", "url": "sensible.js" },
-      { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
-    ]
-  },
   { "id": "mylocation",
     "name": "My Location",
     "shortName":"My Location",
