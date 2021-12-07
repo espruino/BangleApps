@@ -28,6 +28,8 @@
     </div>
     <hr>
     <p>Additional options:</p>
+    <input type="checkbox" id="preventIntegerScaling" name="preventIntegerScaling"/>
+    <label for="preventIntegerScaling">Prevent integer scaling</label></br>
     <input type="checkbox" id="boostBacklight" name="boostBacklight"/>
     <label for="boostBacklight">Set backlight to max. while QR is shown</label></br>
     <input type="checkbox" id="stayOn" name="stayOn"/>
@@ -119,13 +121,18 @@
             console.error(error);
         }
         
+        var finalSizeQr=targetSize;
+        var finalSizeCanvas=targetSize;
+        
         var integerScale = Math.max(Math.floor(targetSize / (qrcode._oQRCode.moduleCount + 1)),1);
-        
         if (integerScale == 1) document.getElementById("errors").innerText = "Warning, QR will probably be too small to properly scan. Try less data or less error correction.";
-        
-        finalSizeQr = integerScale * (qrcode._oQRCode.moduleCount + 1);
-        finalSizeCanvas = finalSizeQr - 1;
-        
+            
+        if (!document.getElementById("preventIntegerScaling").checked){
+            
+            finalSizeQr = integerScale * (qrcode._oQRCode.moduleCount + 1);
+            finalSizeCanvas = finalSizeQr - 1;
+        }
+         
         qrcode._htOption.width = finalSizeQr;
         qrcode._htOption.height = finalSizeQr;
         
@@ -147,6 +154,7 @@
       document.getElementById("hidden").addEventListener("change",refreshQRCode);
       document.getElementById("useTEXT").addEventListener("change",refreshQRCode);
       document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
+      document.getElementById("preventIntegerScaling").addEventListener("change",refreshQRCode);
       document.getElementById("correction").addEventListener("change",refreshQRCode);
       document.getElementById("upload").addEventListener("click", function() {
         var content = document.getElementById("text").value;
