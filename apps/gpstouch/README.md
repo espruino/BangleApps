@@ -8,6 +8,8 @@
 - Displays the GPS time in the bottom half of the screen when the GPS is powered on, otherwise 00:00:00 
 - Select display of Course, Speed, Altitude, Longitude, Latitude, Ordinance Servey Grid Reference
 
+Written by: [Hugh Barney](https://github.com/hughbarney)  For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)
+
 ## Screenshots
 
 ![](screenshot1.png)
