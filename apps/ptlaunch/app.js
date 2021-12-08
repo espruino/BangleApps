@@ -43,7 +43,7 @@ var showMainMenu = () => {
 
         var confirmPromise = new Promise((resolve) => resolve(true));
 
-        if (!!storedPatterns[pattern]) {
+        if (storedPatterns[pattern]) {
           log("pattern already exists. show confirmation prompt");
           confirmPromise = E.showPrompt("Pattern already exists\nOverwrite?", {
             title: "Confirm",
@@ -360,8 +360,8 @@ var getStoredPatternViaApp = (storedPatterns) => {
     log(patterns);
 
     patterns.forEach((pattern) => {
-      if (!!pattern) {
-        if (!!storedPatterns[pattern]) {
+      if (pattern) {
+        if (storedPatterns[pattern]) {
           var app = storedPatterns[pattern].app;
           if (!!app && !!app.name) {
             var appName = app.name;

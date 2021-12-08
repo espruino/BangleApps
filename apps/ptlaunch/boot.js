@@ -131,8 +131,8 @@ var dragHandler = (position) => {
 
     pattern = pattern.join("");
 
-    if (!!pattern) {
-      if (!!storedPatterns[pattern]) {
+    if (pattern) {
+      if (storedPatterns[pattern]) {
         var app = storedPatterns[pattern].app;
         if (!!app && !!app.src) {
           Bangle.removeListener("drag", dragHandler);
