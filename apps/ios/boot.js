@@ -91,14 +91,6 @@ E.on('notify',msg=>{
 
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
-
-  var aName = '';
-  NRF.ancsGetAppInfo( msg.appId ).then( ai => {
-    aName = ai.title;
-  }).catch(error => {
-    aName = appNames[msg.appId] || msg.appId;
-  });
-
   var unicodeRemap = {
     '2019':"'"
   };
@@ -107,7 +99,7 @@ E.on('notify',msg=>{
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
-    src : aName,
+    src : appNames[msg.appId] || msg.appId,
     title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
     subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
     body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer)
