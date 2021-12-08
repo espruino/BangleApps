@@ -57,7 +57,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.09",
+    "version": "0.10",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -95,7 +95,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.04",
+    "version": "0.06",
     "description": "(BETA) App to display notifications from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -197,7 +197,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.11",
+    "version": "0.12",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",
@@ -731,6 +731,7 @@
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
+    "screenshots": [{"url":"screenshot.png"}],
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "interface": "interface.html",
@@ -1126,7 +1127,7 @@
   {
     "id": "qrcode",
     "name": "Custom QR Code",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Use this to upload a customised QR code to Bangle.js",
     "icon": "app.png",
     "tags": "qrcode",
@@ -4339,7 +4340,7 @@
     "version": "0.01",
     "description": "A touch based GPS watch, shows OS map reference",
     "icon": "gpstouch.png",
-    "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"}],
+    "screenshots": [{"url":"screenshot4.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot1.png"}],
     "tags": "tools,app",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
@@ -4780,5 +4781,25 @@
       {"name": "flow.app.js", "url": "app.js" },
       {"name": "flow.img", "url": "app-icon.js","evaluate": true }
     ]
+  },
+  { "id": "scribble",
+    "name": "Scribble",
+    "shortName":"Scribble",
+    "version":"0.01",
+    "type": "app",
+    "description": "A keyboard on your wrist! Swipe right for space, left for delete.",
+    "icon": "app.png",
+    "allow_emulator": true,
+    "tags": "tools, keyboard, text, scribble",
+    "supports" : ["BANGLEJS2"],  
+    "readme": "README.md",
+    "storage": [
+      {"name":"scribble.app.js","url":"app.js"},
+      {"name":"scribble.img","url":"app-icon.js","evaluate":true}
+    ],
+    "screenshots":[
+      { "url":"screenshot.png" }
+    ]
   }
+  
 ]
