@@ -184,7 +184,7 @@
       case "call":
         var note = { size: 55, title: event.name, id: "call",
                      body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
-        if (event.cmd === "incoming") {
+        if (event.cmd === "incoming" || event.cmd === "") {
           require("notify").show(note);
           if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
             Bangle.buzz();
