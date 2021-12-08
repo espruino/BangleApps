@@ -12,3 +12,4 @@
       buzz on new message (fix #999)
 0.09: Message now disappears after 60s if no action taken and clock loads (fix 922)
       Fix phone icon (#1014)
+0.10: Respect the 'new' attribute if it was set from iOS integrations

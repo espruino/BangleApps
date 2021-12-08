@@ -1,5 +1,5 @@
 /* Push a new message onto messages queue, event is:
-  {t:"add",id:int, src,title,subject,body,sender,tel, important:bool} // add new
+  {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
   {t:"remove-",id:int} // remove
   {t:"modify",id:int, title:string} // modified
@@ -16,7 +16,11 @@ exports.pushMessage = function(event) {
     if (mIdx>=0) messages.splice(mIdx, 1); // remove item
     mIdx=-1;
   } else { // add/modify
-    if (event.t=="add") event.new=true; // new message
+    if (event.t=="add"){
+      if(event.new === undefined ) { // If 'new' has not been set yet, set it
+        event.new=true; // Assume it should be new
+      }
+    }
     if (mIdx<0) {
       mIdx=0;
       messages.unshift(event); // add new messages to the beginning
@@ -27,7 +31,11 @@ exports.pushMessage = function(event) {
   // if in app, process immediately
   if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
   // ok, saved now - we only care if it's new
-  if (event.t!="add") return;
+  if (event.t!="add") {
+    return;
+  } else if(event.new == false) {
+    return;
+  }
   // otherwise load messages/show widget
   var loadMessages = Bangle.CLOCK || event.important;
   // first, buzz
