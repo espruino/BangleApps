@@ -5,6 +5,24 @@ const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;
 
+// Load launcher settings and respect font value:
+let fonts = g.getFonts();
+var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
+let launchersettings = require('Storage').readJSON("launch.json", true) || {};
+if ("vectorsize" in launchersettings) {
+    vectorval = parseInt(launchersettings.vectorsize);
+}
+if ("font" in launchersettings){
+    if(launchersettings.font == "Vector"){
+        scaleval = vectorval/20;
+        font = "Vector"+(vectorval).toString();
+    }
+    else{
+        font = launchersettings.font;
+        scaleval = (font.split('x')[1])/20;
+    }
+}
+
 function updateSettings() {
   //storage.erase('setting.json'); // - not needed, just causes extra writes if settings were the same
   storage.write('setting.json', settings);
@@ -12,7 +30,7 @@ function updateSettings() {
 
 function updateOptions() {
   updateSettings();
-  Bangle.setOptions(settings.options)
+  Bangle.setOptions(settings.options);
 }
 
 function gToInternal(g) {
@@ -22,7 +40,7 @@ function gToInternal(g) {
 
 function internalToG(u) {
   // converts Espruino internal unit to g
-  return u / 8192
+  return u / 8192;
 }
 
 function resetSettings() {
@@ -90,10 +108,11 @@ function showMainMenu() {
       }
     };
   }
-
+  
 
   const mainmenu = {
-    '': { 'title': 'Settings' },
+    '': { 'title': 'Settings',
+         'predraw': function(gfx) { gfx.setFont(font);} },
     '< Back': ()=>load(),
     'Make Connectable': ()=>makeConnectable(),
     'App Settings': ()=>showAppSettingsMenu(),
@@ -145,6 +164,7 @@ function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '': {'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
     'BLE': {
       value: settings.ble,
@@ -197,7 +217,7 @@ function showThemeMenu() {
     m.draw();
   }
   var m = E.showMenu({
-    '':{title:'Theme'},
+    '':{title:'Theme', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
     'Dark BW': ()=>{
       upd({
@@ -243,7 +263,7 @@ function showThemeMenu() {
       return i!== -1 ? names[i] : v; // another color: just show value
     }
     let menu = {
-      '':{title:'Custom Theme'},
+      '':{title:'Custom Theme', 'predraw': function(gfx) { gfx.setFont(font);}},
       "< Back": () => showThemeMenu()
     };
     const labels = {
@@ -277,6 +297,7 @@ function showThemeMenu() {
 
 function showPasskeyMenu() {
   var menu = {
+    'predraw': function(gfx) { gfx.setFont(font);},
     "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.passkey = undefined;
@@ -303,6 +324,7 @@ function showPasskeyMenu() {
 
 function showWhitelistMenu() {
   var menu = {
+    '': {'predraw': function(gfx) { gfx.setFont(font);}},
     "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.whitelist = undefined;
@@ -319,7 +341,7 @@ function showWhitelistMenu() {
         }
         setTimeout(showWhitelistMenu, 50);
       });
-    }
+    };
   });
   menu['Add Device']=function() {
     E.showAlert("Connect device\nto add to\nwhitelist","Whitelist").then(function() {
@@ -340,7 +362,7 @@ function showWhitelistMenu() {
 
 function showLCDMenu() {
   const lcdMenu = {
-    '': { 'title': 'LCD' },
+    '': { 'title': 'LCD', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
     'LCD Brightness': {
       value: settings.brightness,
@@ -447,12 +469,12 @@ function showLCDMenu() {
       }
     }
   });
-  return E.showMenu(lcdMenu)
+  return E.showMenu(lcdMenu);
 }
 
 function showLocaleMenu() {
   const localemenu = {
-    '': { 'title': 'Locale' },
+    '': { 'title': 'Locale', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
     'Time Zone': {
       value: settings.timezone,
@@ -478,7 +500,7 @@ function showLocaleMenu() {
 
 function showResetMenu() {
   const resetmenu = {
-    '': { 'title': 'Reset' },
+    '': { 'title': 'Reset', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
     'Reset Settings': () => {
       E.showPrompt('Reset Settings?').then((v) => {
@@ -514,6 +536,7 @@ function showClockMenu() {
   const clockMenu = {
     '': {
       'title': 'Select Clock',
+      'predraw': function(gfx) { gfx.setFont(font);}
     },
     '< Back': ()=>showMainMenu(),
   };
@@ -539,7 +562,7 @@ function showClockMenu() {
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
-    '': { 'title': 'Set Time' },
+    '': { 'title': 'Set Time', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': function () {
       setTime(d.getTime() / 1000);
       showMainMenu();
@@ -593,9 +616,9 @@ function showSetTimeMenu() {
 
 function showAppSettingsMenu() {
   let appmenu = {
-    '': { 'title': 'App Settings' },
+    '': { 'title': 'App Settings', 'predraw': function(gfx) { gfx.setFont(font);}},
     '< Back': ()=>showMainMenu(),
-  }
+  };
   const apps = storage.list(/\.settings\.js$/)
     .map(s => s.substr(0, s.length-12))
     .map(id => {
@@ -608,25 +631,25 @@ function showAppSettingsMenu() {
       if (a.name<b.name) return -1;
       if (a.name>b.name) return 1;
       return 0;
-    })
+    });
   if (apps.length === 0) {
     appmenu['No app has settings'] = () => { };
   }
   apps.forEach(function (app) {
-    appmenu[app.name] = () => { showAppSettings(app) };
-  })
-  E.showMenu(appmenu)
+    appmenu[app.name] = () => { showAppSettings(app); };
+  });
+  E.showMenu(appmenu);
 }
 function showAppSettings(app) {
   const showError = msg => {
     E.showMessage(`${app.name}:\n${msg}!\n\nBTN1 to go back`);
     setWatch(showAppSettingsMenu, BTN1, { repeat: false });
-  }
+  };
   let appSettings = storage.read(app.id+'.settings.js');
   try {
     appSettings = eval(appSettings);
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError('Error in settings');
   }
   if (typeof appSettings !== "function") {
@@ -636,7 +659,7 @@ function showAppSettings(app) {
     // pass showAppSettingsMenu as "back" argument
     appSettings(()=>showAppSettingsMenu());
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError('Error in settings');
   }
 }
