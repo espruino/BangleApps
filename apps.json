@@ -13,7 +13,7 @@
     "storage": [],
     "sortorder": -20
   },
-  {a
+  {
     "id": "boot",
     "name": "Bootloader",
     "version": "0.37",
