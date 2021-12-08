@@ -8,3 +8,5 @@
 0.08: Update for drag event refactor
 0.09: Use current theme cols when drawing GPS info
 0.10: Improve scale factor calculation to fix scaling issues (#984)
+0.11: Add slight offset to OSM data to align it properly (fix #984)
+      Fix alignment of satellite info text

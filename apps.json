@@ -57,7 +57,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.09",
+    "version": "0.10",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -146,7 +146,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.34",
+    "version": "0.35",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -263,16 +263,17 @@
     "id": "mywelcome",
     "name": "Customised Welcome",
     "shortName": "My Welcome",
-    "version": "0.12",
+    "version": "0.13",
     "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting",
     "icon": "app.png",
     "tags": "start,welcome",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "custom": "custom.html",
     "screenshots": [{"url":"bangle1-customized-welcome-screenshot.png"}],
     "storage": [
       {"name":"mywelcome.boot.js","url":"boot.js"},
-      {"name":"mywelcome.app.js","url":"app.js"},
+      {"name":"mywelcome.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
+      {"name":"mywelcome.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
       {"name":"mywelcome.settings.js","url":"settings.js"},
       {"name":"mywelcome.img","url":"app-icon.js","evaluate":true}
     ],
@@ -1955,11 +1956,12 @@
     "id": "openstmap",
     "name": "OpenStreetMap",
     "shortName": "OpenStMap",
-    "version": "0.10",
-    "description": "[BETA] Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are",
+    "version": "0.11",
+    "description": "Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are. Once installed this also adds map functionality to `GPS Recorder` and `Recorder` apps",
     "icon": "app.png",
-    "tags": "outdoors,gps",
+    "tags": "outdoors,gps,osm",
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
     "custom": "custom.html",
     "customConnect": true,
     "storage": [
@@ -1989,11 +1991,12 @@
     "id": "chronowid",
     "name": "Chrono Widget",
     "shortName": "Chrono Widget",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Chronometer (timer) which runs as widget.",
     "icon": "app.png",
     "tags": "tool,widget",
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
     "readme": "README.md",
     "storage": [
       {"name":"chronowid.wid.js","url":"widget.js"},
@@ -4643,23 +4646,6 @@
     {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
   ]
 },
-  {
-    "id": "sensible",
-    "name": "SensiBLE",
-    "shortName": "SensiBLE",
-    "version": "0.02",
-    "description": "Collect, display and advertise real-time sensor data.",
-    "icon": "sensible.png",
-    "type": "app",
-    "tags": "tool,sensors",
-    "supports" : [ "BANGLEJS2" ],
-    "allow_emulator": true,
-    "readme": "README.md",
-    "storage": [
-      { "name": "sensible.app.js", "url": "sensible.js" },
-      { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
-    ]
-  },
   { "id": "mylocation",
     "name": "My Location",
     "shortName":"My Location",
@@ -4735,7 +4721,7 @@
   {
     "id": "weatherClock",
     "name": "Weather Clock",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A clock which displays current weather conditions (requires Gadgetbridge and Weather apps).",
     "icon": "app.png",
     "screenshots": [{"url":"screens/screen1.png"}],

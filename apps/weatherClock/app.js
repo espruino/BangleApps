@@ -69,22 +69,20 @@ var clockLayout = new Layout( {
         {type:"txt", font:"10%", label:"01/01/1970", id:"date" }
       ]
     },
-    {type: "v", fillx: 1, c: [
-      {type: "h", valign : 1, fillx:1, c: [
-        {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
-        {type: "v", fillx:1, c: [
-            {type: "h", c: [
-              {type: "txt", font: "10%", id: "temp", label: "000"},
-              {type: "txt", font: "10%", id: "tempUnit", label: "°C"},
-            ]},
-            {type: "h", c: [
-              {type: "txt", font: "10%", id: "wind",  label: "00"},
-              {type: "txt", font: "10%", id: "windUnit", label: "km/h"},
-            ]}
-          ]
-        },
-      ]},
-      ]}]
+    {type: "h", valign : 1, fillx:1, c: [
+      {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
+      {type: "v", fillx:1, c: [
+          {type: "h", c: [
+            {type: "txt", font: "10%", id: "temp", label: "000"},
+            {type: "txt", font: "10%", id: "tempUnit", label: "°C"},
+          ]},
+          {type: "h", c: [
+            {type: "txt", font: "10%", id: "wind",  label: "00"},
+            {type: "txt", font: "10%", id: "windUnit", label: "km/h"},
+          ]}
+        ]
+      },
+    ]}]
 });
 
 // timeout used to update every minute

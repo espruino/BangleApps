@@ -96,7 +96,7 @@ function showMainMenu() {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
     'Make Connectable': ()=>makeConnectable(),
-    'App/Widget Settings': ()=>showAppSettingsMenu(),
+    'App Settings': ()=>showAppSettingsMenu(),
     'BLE': ()=>showBLEMenu(),
     'Debug Info': {
       value: settings.log,
