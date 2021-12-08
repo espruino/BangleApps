@@ -4763,7 +4763,7 @@
     "tags": "widget",
         "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"widChargingStatus.wid.js","url":"widget.js"}
+      {"name":"widChargingStatus.wid.js","url":"./dist/widget.js"}
      ]
   },
   {

@@ -1,33 +1,19 @@
 // TODO all of these globals (copied from eslintrc need to be typed at some point)
 /* "globals": {
     // Methods and Fields at https://banglejs.com/reference
-    "Array": "readonly",
-    "ArrayBuffer": "readonly",
-    "ArrayBufferView": "readonly",
-    "Bangle": "readonly",
     "BluetoothDevice": "readonly",
     "BluetoothRemoteGATTCharacteristic": "readonly",
     "BluetoothRemoteGATTServer": "readonly",
     "BluetoothRemoteGATTService": "readonly",
-    "Boolean": "readonly",
-    "console": "readonly",
     "DataView": "readonly",
-    "Date": "readonly",
     "E": "readonly",
     "Error": "readonly",
     "Flash": "readonly",
-    "Float32Array": "readonly",
-    "Float64Array": "readonly",
     "fs": "readonly",
     "Function": "readonly",
-    "Graphics": "readonly",
     "heatshrink": "readonly",
     "I2C": "readonly",
-    "Int16Array": "readonly",
-    "Int32Array": "readonly",
-    "Int8Array": "readonly",
     "InternalError": "readonly",
-    "JSON": "readonly",
     "Math": "readonly",
     "Modules": "readonly",
     "NRF": "readonly",
@@ -122,24 +108,53 @@
     "Terminal": "readonly",
     "trace": "readonly",
     "VIBRATE": "readonly",
-    // Aliases and not defined at https://banglejs.com/reference
-    "g": "readonly",
  */
 
-declare const Bangle: {
-  // functions
-  buzz: () => void;
-  drawWidgets: () => void;
-  isCharging: () => boolean;
-  // events
-  on(event: 'charging', listener: (charging: boolean) => void): void;
-  // TODO add more
-};
+export type loadGlobals = {};
 
-type Widget = {
-  area: 'tr' | 'tl';
-  width: number;
-  draw: () => void;
-};
+declare global {
+  const Bangle: {
+    // functions
+    buzz: () => void;
+    drawWidgets: () => void;
+    isCharging: () => boolean;
+    // events
+    on(event: 'charging', listener: (charging: boolean) => void): void;
+    // TODO add more
+  };
 
-declare const WIDGETS: { [key: string]: Widget };
+  type Image = {
+    width: number;
+    height: number;
+    bpp?: number;
+    buffer: ArrayBuffer | string;
+    transparent?: number;
+    palette?: Uint16Array;
+  };
+
+  type GraphicsApi = {
+    reset: () => void;
+    flip: () => void;
+    setColor: (color: string) => void; // TODO we can most likely type color more usefully than this
+    drawImage: (
+      image: string | Image | ArrayBuffer,
+      xOffset: number,
+      yOffset: number,
+      options?: {
+        rotate?: number;
+        scale?: number;
+      }
+    ) => void;
+    // TODO add more
+  };
+
+  const Graphics: GraphicsApi;
+  const g: GraphicsApi;
+
+  type Widget = {
+    area: 'tr' | 'tl';
+    width: number;
+    draw: () => void;
+  };
+  const WIDGETS: { [key: string]: Widget };
+}
