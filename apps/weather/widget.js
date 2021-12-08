@@ -1,9 +1,26 @@
 (() => {
   const weather = require('weather');
-
+  
   var dirty = false;
+  
+  let settings;
+
+  function loadSettings() {
+    const d = require('Storage').readJSON('weather.json', 1) || {};
+    settings = d.settings || {};
+  }
+
+  function setting(key) {
+    if (!settings) { loadSettings(); }
+    const DEFAULTS = {
+      'expiry': 2*3600000,
+      'hide': false
+    };
+    return (key in settings) ? settings[key] : DEFAULTS[key];
+  }
 
   weather.on("update", w => {
+    if (setting('hide')) return;
     if (w) {
       if (!WIDGETS["weather"].width) {
         WIDGETS["weather"].width = 20;
@@ -21,27 +38,11 @@
   });
 
   Bangle.on('lcdPower', on => {
-    if (on && dirty) {
+    if (on && dirty && !setting('hide')) {
       WIDGETS["weather"].draw();
       dirty = false;
     }
   });
-  
-  let settings;
-
-  function loadSettings() {
-    const d = require('Storage').readJSON('weather.json', 1) || {};
-    settings = d.settings || {};
-  }
-
-  function setting(key) {
-    if (!settings) { loadSettings(); }
-    const DEFAULTS = {
-      'expiry': 2*3600000,
-      'hide': false
-    };
-    return (key in settings) ? settings[key] : DEFAULTS[key];
-  }
 
   WIDGETS["weather"] = {
     area: "tl",
@@ -62,6 +63,10 @@
         g.setFont('6x8', 1);
         g.drawString(t, this.x+10, this.y+24);
       }
+    },
+    reload:function() {
+      loadSettings();
+      WIDGETS["weather"].redraw();
     },
   };
 })();
