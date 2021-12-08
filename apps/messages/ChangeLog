@@ -10,3 +10,4 @@
 0.07: Added settings menu with option to choose vibrate pattern and frequency (fix #909)
 0.08: Fix rendering of long messages (fix #969) 
       buzz on new message (fix #999)
+0.09: Respect the 'new' attribute if it was set from iOS integrations

@@ -16,7 +16,11 @@ exports.pushMessage = function(event) {
     if (mIdx>=0) messages.splice(mIdx, 1); // remove item
     mIdx=-1;
   } else { // add/modify
-    if (event.t=="add") event.new=true; // new message
+    if (event.t=="add"){
+      if(event.new === undefined ) { // If 'new' has not been set yet, set it
+        event.new=true; // Assume it should be new
+      }
+    }
     if (mIdx<0) {
       mIdx=0;
       messages.unshift(event); // add new messages to the beginning

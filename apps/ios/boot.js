@@ -26,6 +26,13 @@ E.on('ANCS',msg=>{
   function ancsHandler() {
     var msg = Bangle.ancsMessageQueue[0];
     NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
+
+      if(msg.preExisting){
+        info.new = false;
+      } else {
+        info.new = true;
+      }
+
       E.emit("notify", Object.assign(msg, info));
       Bangle.ancsMessageQueue.shift();
       if (Bangle.ancsMessageQueue.length)
@@ -100,6 +107,7 @@ E.on('notify',msg=>{
     t : msg.event,
     id : msg.uid,
     src : appNames[msg.appId] || msg.appId,
+    new : msg.new,
     title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
     subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
     body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer)
