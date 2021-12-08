@@ -1,6 +1,6 @@
 exports.pushMessage = function(event) {
   /* event is:
-    {t:"add",id:int, src,title,subject,body,sender,tel, important:bool} // add new
+    {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool} // add new
     {t:"add",id:int, id:"music", state, artist, track, etc} // add new
     {t:"remove-",id:int} // remove
     {t:"modify",id:int, title:string} // modified
@@ -31,7 +31,11 @@ exports.pushMessage = function(event) {
   // if in app, process immediately
   if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
   // ok, saved now - we only care if it's new
-  if (event.t!="add") return;
+  if (event.t!="add") {
+    return;
+  } else if(event.new == false) {
+    return;
+  }
   // otherwise load messages/show widget
   var loadMessages = Bangle.CLOCK || event.important;
   // first, buzz
