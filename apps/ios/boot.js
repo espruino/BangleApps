@@ -27,7 +27,7 @@ E.on('ANCS',msg=>{
     var msg = Bangle.ancsMessageQueue[0];
     NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
 
-      if(msg.preExisting){
+      if(msg.preExisting === true){
         info.new = false;
       } else {
         info.new = true;
