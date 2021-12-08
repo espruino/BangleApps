@@ -3,7 +3,6 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const storage = require('Storage');
-const boolFormat = v => v ? "On" : "Off";
 let settingsChronowid;
 
 function updateSettings() {
@@ -12,6 +11,7 @@ function updateSettings() {
     now.getHours() + settingsChronowid.hours, now.getMinutes() + settingsChronowid.minutes, now.getSeconds() + settingsChronowid.seconds);
   settingsChronowid.goal = goal.getTime();
   storage.writeJSON('chronowid.json', settingsChronowid);
+  if (WIDGETS["chronowid"]) WIDGETS["chronowid"].reload();
 }
 
 function resetSettings() {
@@ -44,6 +44,7 @@ function showMenu() {
         timerMenu.started.value = settingsChronowid.started;
       }
     },
+    '< Back' :  ()=>{load();},
     'Reset values': function() {
       settingsChronowid.hours = 0;
       settingsChronowid.minutes = 0;
@@ -84,14 +85,14 @@ function showMenu() {
     },
     'Timer on': {
       value: settingsChronowid.started,
-      format: boolFormat,
+      format: v => v ? "On" : "Off",
       onchange: v => {
         settingsChronowid.started = v;
         updateSettings();
       }
     },
   };
-  timerMenu['-Exit-'] =  ()=>{load();};
+
   return E.showMenu(timerMenu);
 }
 

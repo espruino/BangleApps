@@ -42,7 +42,12 @@ try {
   };
 }
 
-
+/** this is a timeout if the app has started and is showing a single message
+but the user hasn't seen it (eg no user input) - in which case
+we should start a timeout for settings.unreadTimeout to return
+to the clock. */
+var unreadTimeout;
+/// List of all our messages
 var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
@@ -171,8 +176,14 @@ function showMessageSettings(msg) {
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
   if (!msg) return checkMessages(); // go home if no message found
-  if (msg.src=="Maps") return showMapMessage(msg);
-  if (msg.id=="music") return showMusicMessage(msg);
+  if (msg.src=="Maps") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMapMessage(msg);
+  }
+  if (msg.id=="music") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMusicMessage(msg);
+  }
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
@@ -186,14 +197,15 @@ function showMessage(msgid) {
   }
   var buttons = [
     {type:"btn", src:getBackImage(), cb:()=>{
-      msg.new = false; // read mail
-      saveMessages();
+      msg.new = false; saveMessages(); // read mail
+      cancelReloadTimeout(); // don't auto-reload to clock now
       checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:1});
     }} // back
   ];
   if (msg.positive) {
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
       msg.new = false; saveMessages();
+      cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
@@ -202,6 +214,7 @@ function showMessage(msgid) {
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
       console.log("Response");
       msg.new = false; saveMessages();
+      cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
@@ -210,7 +223,10 @@ function showMessage(msgid) {
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getMessageImage(msg), cb:()=>showMessageSettings(msg) },
+      { type:"btn", src:getMessageImage(msg), cb:()=>{
+        cancelReloadTimeout(); // don't auto-reload to clock now
+        showMessageSettings(msg);
+      }},
       { type:"v", fillx:1, c: [
         {type:"txt", font:fontSmall, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
@@ -249,7 +265,8 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-
+  // we don't have to time out of this screen...
+  cancelReloadTimeout();
   // Otherwise show a menu
   E.showScroller({
     h : 48,
@@ -291,9 +308,23 @@ function checkMessages(options) {
   });
 }
 
+function cancelReloadTimeout() {
+  if (!unreadTimeout) return;
+  clearTimeout(unreadTimeout);
+  unreadTimeout = undefined;
+}
+
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setTimeout(() => {
+  var unreadTimeoutSecs = (require('Storage').readJSON("messages.settings.json", true) || {}).unreadTimeout;
+  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
+  if (unreadTimeoutSecs)
+    unreadTimeout = setTimeout(function() {
+      print("Message not seen - reloading");
+      load();
+    }, unreadTimeoutSecs*1000);
   checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
 },10); // if checkMessages wants to 'load', do that
