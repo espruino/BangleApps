@@ -282,7 +282,7 @@
   {
     "id": "gbridge",
     "name": "Gadgetbridge",
-    "version": "0.24",
+    "version": "0.25",
     "description": "The default notification handler for Gadgetbridge notifications from Android. This will eventually be replaced by the 'Android' app.",
     "icon": "app.png",
     "type": "widget",
