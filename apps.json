@@ -823,7 +823,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.11",
+    "version": "0.12",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
