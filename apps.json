@@ -4605,9 +4605,17 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
+  "screenshots": [
+    { "url": "screenshot-top.png" },
+    { "url": "screenshot-acc.png" },
+    { "url": "screenshot-bar.png" },
+    { "url": "screenshot-gps.png" },
+    { "url": "screenshot-hrm.png" },
+    { "url": "screenshot-mag.png" }
+  ],
   "type": "app",
   "tags": "tool,sensors",
   "supports" : [ "BANGLEJS2" ],
