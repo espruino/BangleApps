@@ -26,10 +26,26 @@
       dirty = false;
     }
   });
+  
+  let settings;
+
+  function loadSettings() {
+    const d = require('Storage').readJSON('weather.json', 1) || {};
+    settings = d.settings || {};
+  }
+
+  function setting(key) {
+    if (!settings) { loadSettings(); }
+    const DEFAULTS = {
+      'expiry': 2*3600000,
+      'hide': false
+    };
+    return (key in settings) ? settings[key] : DEFAULTS[key];
+  }
 
   WIDGETS["weather"] = {
     area: "tl",
-    width: weather.get() ? 20 : 0,
+    width: weather.get() && !setting('hide') ? 20 : 0,
     draw: function() {
       const w = weather.get();
       if (!w) return;
