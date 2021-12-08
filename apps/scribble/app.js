@@ -12,7 +12,7 @@ const transp = -1;
 const abc = "abcdefghijklmnopqrstuvwxyz1234567890";
 // const abc_up = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 const uppercase = 1;
-const last_layer = false;   // set to true at the last layer of the tree
+var last_layer = false;   // set to true at the last layer of the tree
 let chunk_size = 6;
 
 const font_height = 2;
@@ -156,7 +156,7 @@ class Layer {
 class BTN_layer extends Layer {
 
   constructor(label, layout) {
-
+    super();
     Layer.call(this, label)
 
     this.alphabet = (uppercase) ? abc.toUpperCase() : abc;
