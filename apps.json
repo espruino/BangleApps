@@ -4387,7 +4387,7 @@
     "id": "emojuino",
     "name": "Emojuino",
     "shortName": "Emojuino",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
     "screenshots": [
