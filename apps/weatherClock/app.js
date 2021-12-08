@@ -101,7 +101,7 @@ function draw() {
   var date = new Date();
   clockLayout.time.label = locale.time(date, 1);
   clockLayout.date.label = locale.date(date, 1).toUpperCase();
-  clockLayout.dow.label = locale.dow(date, 1).toUpperCase();
+  clockLayout.dow.label = locale.dow(date, 1).toUpperCase() + " ";
   var weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
@@ -110,7 +110,7 @@ function draw() {
       clockLayout.tempUnit.label = temp[2];
       clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + " ";
+      clockLayout.wind.label = wind[1] + " ".repeat(wind[2].length-1);
       clockLayout.windUnit.label = wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
   }
   else{
