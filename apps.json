@@ -2086,6 +2086,7 @@
     "id": "numerals",
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
+    "version": "0.10",
     "description": "A simple big numerals clock",
     "icon": "numerals.png",
     "type": "clock",
