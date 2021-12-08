@@ -13,7 +13,7 @@
     "test": "node bin/sanitycheck.js && eslint ./apps --ext .js",
     "start": "npx http-server -c-1",
     "build:example": "tsc ./apps/widChargingStatus/widget.ts --outDir ./apps/widChargingStatus/dist",
-    "build:types": "tsc .typescript/types/globals.d.ts"
+    "build:types": "tsc ./typescript/types/globals.d.ts"
   },
   "dependencies": {
     "acorn": "^7.2.0"
