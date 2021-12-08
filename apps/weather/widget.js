@@ -6,8 +6,7 @@
   let settings;
 
   function loadSettings() {
-    const d = require('Storage').readJSON('weather.json', 1) || {};
-    settings = d.settings || {};
+    settings = require('Storage').readJSON('weather.json', 1) || {};
   }
 
   function setting(key) {
@@ -48,6 +47,7 @@
     area: "tl",
     width: weather.get() && !setting('hide') ? 20 : 0,
     draw: function() {
+      if (setting('hide')) return;
       const w = weather.get();
       if (!w) return;
       g.reset();
