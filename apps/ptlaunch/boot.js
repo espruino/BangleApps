@@ -186,8 +186,10 @@ var cloneCirclesArray = () => {
     storedPatterns = storage.readJSON("ptlaunch.patterns.json", 1) || {};
     if (Object.keys(storedPatterns).length > 0) {
       Bangle.on("drag", dragHandler);
-      if (storedPatterns.settings.lockDisabled) {
-        Bangle.setOptions({ lockTimeout: 1000 * 60 * 60 * 24 * 365 });
+      if (storedPatterns.settings) {
+        if (storedPatterns.settings.lockDisabled) {
+          Bangle.setOptions({ lockTimeout: 1000 * 60 * 60 * 24 * 365 });
+        }
       }
     }
   };
