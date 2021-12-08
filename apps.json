@@ -1126,7 +1126,7 @@
   {
     "id": "qrcode",
     "name": "Custom QR Code",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Use this to upload a customised QR code to Bangle.js",
     "icon": "app.png",
     "tags": "qrcode",
