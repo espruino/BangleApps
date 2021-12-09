@@ -4828,7 +4828,7 @@
   },
   { "id": "clicompleteclk",
   "name": "Command line complete clock",
-  "shortName":"Command line complete clock",
+  "shortName":"Cli cmplt clk",
   "version":"0.01",
   "description": "Command line styled clock with lots of information",
   "icon": "app.png",
