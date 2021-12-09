@@ -7,3 +7,4 @@
 0.07: Add date on touch and some improvements (see settings and readme)
 0.08: Add new draw styles, tidy up draw functionality
 0.09: Tweak for faster rendering
+0.10: Enhance for use with Bangle2, insert new draw mode 'thickfill'

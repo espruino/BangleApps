@@ -197,15 +197,14 @@ function plotTrack(info) {
   g.setColor(1,0.5,0.5);
   g.setFont("Vector",16);
   g.drawString("Track"+info.fn.toString()+" - Loading",10,220);
-  g.setColor(0,0,0);
+  g.setColor(g.theme.bg);
   g.fillRect(0,220,239,239);
   if (!info.qOSTM) {
     g.setColor(1, 0, 0);
     g.fillRect(9,80,11,120);
     g.fillPoly([9,60,19,80,0,80]);
-    g.setColor(1,1,1);
+    g.setColor(g.theme.fg);
     g.drawString("N",2,40);
-    g.setColor(1,1,1);
   } else {
     osm.lat = info.lat;
     osm.lon = info.lon;
@@ -228,7 +227,7 @@ function plotTrack(info) {
   g.setColor(0,1,0);
   g.fillCircle(mp.x,mp.y,5);
   if (info.qOSTM) g.setColor(1,0,0.55);
-  else g.setColor(1,1,1);
+  else g.setColor(g.theme.fg);
   l = f.readLine(f);
   while(l!==undefined) {
     c = l.split(",");
@@ -248,11 +247,11 @@ function plotTrack(info) {
   g.setColor(1,0,0);
   g.fillCircle(ox,oy,5);
   if (info.qOSTM) g.setColor(0, 0, 0);
-  else g.setColor(1,1,1);
+  else g.setColor(g.theme.fg);
   g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
-  g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
+  g.drawString("Back",g.getWidth() - 10, g.getHeight()/2);
   setWatch(function() {
     viewTrack(info.fn, info);
   }, global.BTN3||BTN1);
