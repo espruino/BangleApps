@@ -4825,5 +4825,20 @@
       { "name": "ptlaunch.img", "url": "app-icon.js", "evaluate": true }
     ],
     "data": [{"name":"ptlaunch.patterns.json"}]
-  }
+  },
+  { "id": "clicompleteclk",
+  "name": "Command line complete clock",
+  "shortName":"Command line complete clock",
+  "version":"0.01",
+  "description": "Command line styled clock with lots of information",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock,cli,command,bash,shell,weather,hrt",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"clicompleteclk.app.js","url":"app.js"},
+    {"name":"clicompleteclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
