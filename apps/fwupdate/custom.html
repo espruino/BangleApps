@@ -3,29 +3,44 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p><b>THIS IS CURRENTLY BETA - PLEASE USE THE NORMAL FIRMWARE UPDATE
-    INSTRUCTIONS FOR <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">BANGLE.JS</a> 1 AND <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">BANGLE.JS 2</a></b></p>
     <div id="fw-unknown">
-    <p>Firmware updates using the App Loader are only possible on
+    <p><b>Firmware updates using the App Loader are only possible on
     Bangle.js 2. For firmware updates on Bangle.js 1 please
-    <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">see the Bangle.js 1 instructions</a></p>
+    <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">see the Bangle.js 1 instructions</a></b></p>
   </div>
+    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span></p>
     <div id="fw-ok" style="display:none">
-      <p>Please upload a hex file here. This file should be the <code>.app_hex</code>
+      <div id="latest-firmware" style="display:none">
+        <p>The currently available Espruino firmware releases are:</p>
+        <ul id="latest-firmware-list">
+        </ul>
+        <p>To update, click the link and then click the 'Upload' button that appears.</p>
+      </div>
+
+      <p>Or you can upload a hex or zip file here. This file should be an <code>.app_hex</code>
       file, *not* the normal <code>.hex</code> (as that contains the bootloader as well).</p>
 
-      <input class="form-input" type="file" id="fileLoader" accept=".hex,.app_hex"/><br>
-      <p><button id="upload" class="btn btn-primary">Upload</button></p>
+      <input class="form-input" type="file" id="fileLoader" accept=".hex,.app_hex,.zip"/><br>
+      <p><button id="upload" class="btn btn-primary" style="display:none">Upload</button></p>
     </div>
+
+    <p>Firmware updates via this tool work differently to the NRF Connect method mentioned on
+    <a href="https://www.espruino.com/Bangle.js2#firmware-updates">the Bangle.js page</a>. Firmware
+    is uploaded to a file on the Bangle. Once complete the Bangle reboots and the bootloader copies
+    the new firmware into internal Storage.</p>
 
     <pre id="log"></pre>
 
     <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/espruinotools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
 
     <script>
 var hex;
 var hexJS; // JS to upload hex
 var HEADER_LEN = 16; // size of app flash header
+var APP_START = 0x26000;
+var APP_MAX_LENGTH = 0xda000; // from linker file - the max size the app can be, for sanity check!
 var MAX_ADDRESS = 0x1000000; // discount anything in hex file above this
 var VERSION = 0x12345678; // VERSION! Use this to test firmware in JS land
 var DEBUG = false;
@@ -37,6 +52,8 @@ function log(t) {
 
 function onInit(device) {
   console.log(device);
+  if (device && device.version)
+    document.getElementById("fw-version").innerText = device.version;
   if (device && device.id=="BANGLEJS2") {
     document.getElementById("fw-unknown").style = "display:none";
     document.getElementById("fw-ok").style = "";
@@ -44,7 +61,7 @@ function onInit(device) {
 }
 
 function checkForFileOnServer() {
-  /*function getURL(url, callback) {
+  function getURL(url, callback) {
   	var xhr = new XMLHttpRequest();
     xhr.onload = callback;
     baseURL = url;
@@ -55,6 +72,7 @@ function checkForFileOnServer() {
 
   function getFilesFromURL(url, regex, callback) {
   	getURL(url, function() {
+      console.log(this.responseXML)
   		var files = [];
   		var elements = this.responseXML.getElementsByTagName("a");
   		for (var i=0;i<elements.length;i++) {
@@ -67,35 +85,78 @@ function checkForFileOnServer() {
   	});
   }
 
-  var regex = new RegExp("_bangle2");
+  var regex = new RegExp("_banglejs2");
 
-	var domFirmware = document.getElementById("latest-firmware");
+	var domFirmwareList = document.getElementById("latest-firmware-list");
+  var domFirmware = document.getElementById("latest-firmware");
+  console.log("Checking server...");
+
 	getFilesFromURL("https://www.espruino.com/binaries/", regex, function(releaseFiles) {
-		releaseFiles.sort().reverse().forEach(function(f) {
+    releaseFiles.sort().reverse().forEach(function(f) {
 			var name = f.substr(f.substr(0,f.length-1).lastIndexOf('/')+1);
-			domFirmware.innerHTML += 'Release: <a href="'+f+'">'+name+'</a><br/>';
+      console.log("Found "+name);
+			domFirmwareList.innerHTML += '<li>Release: <a href="'+f+'" class="fw-link">'+name+'</a></li>';
+      domFirmware.style = "";
 		});
 		getFilesFromURL("https://www.espruino.com/binaries/travis/master/",regex, function(travisFiles) {
 			travisFiles.forEach(function(f) {
 				var name = f.substr(f.lastIndexOf('/')+1);
-				domFirmware.innerHTML += 'Cutting Edge build: <a href="'+f+'">'+name+'</a><br/>';
+        console.log("Found "+name);
+				domFirmwareList.innerHTML += '<li>Cutting Edge build: <a href="'+f+'" class="fw-link">'+name+'</a></li>';
+        domFirmware.style = "";
 			});
-      document.getElementById("checking-server").style = "display:none";
-      document.getElementById("main-ui").style = "";
+      console.log("Finished check for firmware files...");
+      var fwlinks = document.querySelectorAll(".fw-link");
+      for (var i=0;i<fwlinks.length;fwlinks++)
+        fwlinks[i].addEventListener("click", e => {
+          e.preventDefault();
+          var url = e.target.href;
+          downloadZipFile(url).then(info=>{
+            document.getElementById("upload").style = ""; // show upload
+          });
+        });
 		});
-	});*/
+	});
 }
 
-function downloadFile() {
-  /*response = await fetch(APP_HEX_PATH+"readlink.php?link="+APP_HEX_FILE, {
-    method: 'GET',
-    cache: 'no-cache',
-  });
-  if (response.ok) {
-    blob = await response.blob();
-    data = await blob.text();
-    document.getElementById("latest-firmware").innerHTML="(<b>"+data.toString()+"</b>)";
-  }*/
+function downloadZipFile(url) {
+  return new Promise((resolve,reject) => {
+    Espruino.Core.Utils.getBinaryURL(url, (err, binary) => {
+      if (err) return reject("Unable to download "+url);
+      resolve(binary);
+    });
+  }).then(convertZipFile);
+}
+
+function convertZipFile(binary) {
+  var info = {};
+  Promise.resolve(binary).then(binary => {
+    info.binary = binary;
+    return JSZip.loadAsync(binary)
+  }).then(function(zipFile) {
+    info.zipFile = zipFile;
+    return info.zipFile.file("manifest.json").async("string");
+  }).then(function(content) {
+    info.manifest = JSON.parse(content).manifest;
+  }).then(function(content) {
+    console.log(info.manifest);
+    return info.zipFile.file(info.manifest.application.dat_file).async("arraybuffer");
+  }).then(function(content) {
+    info.dat_file = content;
+  }).then(function(content) {
+    console.log(info.manifest);
+    return info.zipFile.file(info.manifest.application.bin_file).async("arraybuffer");
+  }).then(function(content) {
+    info.bin_file = content;
+    if (info.bin_file.byteLength > APP_MAX_LENGTH) throw new Error("Firmware file is too big!");
+    info.storageContents = new Uint8Array(info.bin_file.byteLength + HEADER_LEN)
+    info.storageContents.set(new Uint8Array(info.bin_file), HEADER_LEN);
+    createJS_app(info.storageContents, APP_START, APP_START+info.bin_file.byteLength);
+    log("Download complete");
+    console.log("Download complete",info);
+    document.getElementById("upload").style = ""; // show upload
+    return info;
+  }).catch(err => log("ERROR:" + err));
 }
 
 function handleFileSelect(event) {
@@ -103,13 +164,24 @@ function handleFileSelect(event) {
     log("More than one file selected!");
     return;
   }
+  var file = event.target.files[0];
+
   var reader = new FileReader();
-  reader.onload = function(event) {
-    hex = event.target.result.split("\n");
-    document.getElementById("upload").style = ""; // show upload
-    fileLoaded();
-  };
-  reader.readAsText(event.target.files[0]);
+  if (file.name.endsWith(".hex") || file.name.endsWith(".app_hex")) {
+    reader.onload = function(event) {
+      hex = event.target.result.split("\n");
+      document.getElementById("upload").style = ""; // show upload
+      fileLoaded();
+    };
+    reader.readAsText(event.target.files[0]);
+  } else if (file.name.endsWith(".zip")) {
+    reader.onload = function(event) {
+      convertZipFile(event.target.result);
+    };
+    reader.readAsArrayBuffer(event.target.files[0]);
+  } else {
+    log("Unknown file extension for "+file.name);
+  }
 };
 
 
@@ -174,14 +246,16 @@ function btoa(input) {
   return out;
 }
 
-// To upload the app, we write to external flash
-function createJS_app(binary, bin32, startAddress, endAddress, HEADER_LEN) {
+/* To upload the app, we write to external flash,
+binary = Uint8Array of data to flash. Should include HEADER_LEN header, then bytes to flash */
+function createJS_app(binary, startAddress, endAddress) {
   /* typedef struct {
     uint32_t address;
     uint32_t size;
     uint32_t CRC;
     uint32_t version;
   } FlashHeader; */
+  var bin32 = new Uint32Array(binary.buffer);
   bin32[0] = startAddress;
   bin32[1] = endAddress - startAddress;
   bin32[2] = CRC32(new Uint8Array(binary.buffer, HEADER_LEN));
@@ -189,7 +263,8 @@ function createJS_app(binary, bin32, startAddress, endAddress, HEADER_LEN) {
   console.log("CRC 0x"+bin32[2].toString(16));
   hexJS = "";//`\x10if (E.CRC32(E.memoryArea(${startAddress},${endAddress-startAddress}))==${bin32[2]}) { print("FIRMWARE UP TO DATE!"); load();}\n`;
   hexJS += '\x10var s = require("Storage");\n';
-  var CHUNKSIZE = 1024;
+  hexJS += '\x10s.erase(".firmware");\n';
+  var CHUNKSIZE = 2048;
   for (var i=0;i<binary.length;i+=CHUNKSIZE) {
     var l = binary.length-i;
     if (l>CHUNKSIZE) l=CHUNKSIZE;
@@ -243,10 +318,8 @@ function fileLoaded() {
   });
   console.log(`// Data from 0x${startAddress.toString(16)} to 0x${endAddress.toString(16)} (${endAddress-startAddress} bytes)`);
   // Work out data
-  var HEADER_LEN = 16;
   var binary = new Uint8Array(HEADER_LEN + endAddress-startAddress);
   binary.fill(0); // actually seems to assume a block is filled with 0 if not complete
-  var bin32 = new Uint32Array(binary.buffer);
   parseLines(function(addr, data) {
     if (addr>MAX_ADDRESS) return; // ignore data out of range
     var binAddr = HEADER_LEN + addr - startAddress;
@@ -260,7 +333,7 @@ function fileLoaded() {
     createJS_bootloader(new Uint8Array(binary.buffer, HEADER_LEN), startAddress, endAddress);
   } else {
     console.log("App - Writing to external flash");
-    createJS_app(binary, bin32, startAddress, endAddress);
+    createJS_app(binary, startAddress, endAddress);
   }
 
 }
@@ -279,7 +352,7 @@ function handleUpload() {
 
 document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
 document.getElementById("upload").addEventListener("click", handleUpload);
-checkForFileOnServer();
+setTimeout(checkForFileOnServer, 10);
 
     </script>
   </body>
