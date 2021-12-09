@@ -135,6 +135,12 @@ var dragHandler = (position) => {
       if (storedPatterns[pattern]) {
         var app = storedPatterns[pattern].app;
         if (!!app && !!app.src) {
+          if (storedPatterns.settings) {
+            if (storedPatterns.settings.lockDisabled) {
+              Bangle.setLCDPower(true);
+            }
+          }
+
           Bangle.removeListener("drag", dragHandler);
           load(app.src);
         }
