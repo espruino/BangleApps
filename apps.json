@@ -4827,8 +4827,8 @@
     "data": [{"name":"ptlaunch.patterns.json"}]
   },
   { "id": "clicompleteclk",
-  "name": "CLI cmplt clock",
-  "shortName":"CLI cmplt clk",
+  "name": "CLI complete clock",
+  "shortName":"CLI cmplt clock",
   "version":"0.01",
   "description": "Command line styled clock with lots of information",
   "icon": "app.png",
