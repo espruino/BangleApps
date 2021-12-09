@@ -1,0 +1,2 @@
+0.01: Initial creation of the pattern launch app
+0.02: Turn on lcd when launching an app if the lock screen was disabled in the settings
