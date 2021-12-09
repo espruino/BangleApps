@@ -727,7 +727,7 @@
   {
     "id": "gpsrec",
     "name": "GPS Recorder",
-    "version": "0.26",
+    "version": "0.27",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -4791,7 +4791,7 @@
     "icon": "app.png",
     "allow_emulator": true,
     "tags": "tools, keyboard, text, scribble",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"scribble.app.js","url":"app.js"},
@@ -4801,5 +4801,5 @@
       { "url":"screenshot.png" }
     ]
   }
-  
+
 ]

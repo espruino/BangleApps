@@ -28,3 +28,4 @@
 0.24: Better support for Bangle.js 2, avoid widget area for Graphs, smooth graphs more
 0.25: Fix issue where if Bangle.js 2 got a GPS fix but no reported time, errors could be caused by the widget (fix #935)
 0.26: Multiple bugfixes
+0.27: Map drawing with light theme (fix #1023) 
