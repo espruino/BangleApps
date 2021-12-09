@@ -2660,7 +2660,7 @@
     "icon": "eye.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS","BANGLESJ2"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
