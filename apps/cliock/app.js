@@ -183,9 +183,6 @@ Bangle.on('HRM', function(hrm) {
 });
 
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-drawAll();
 Bangle.on('lcdPower',function(on) {
   if (on) drawAll();
 });
@@ -196,3 +193,6 @@ Bangle.setUI("clockupdown", btn=>{
   if (btn>0) changeFunctionMode();
   drawAll();
 });
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+drawAll();
