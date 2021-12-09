@@ -4095,7 +4095,7 @@
       {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
       {"name":"carcrazy.settings.js","url":"settings.js"}
     ],
-    "data": [{"name":"app.json"}]
+    "data": [{"name":"CarCrazy.csv"}]
   },
   {
     "id": "shortcuts",
@@ -4537,7 +4537,7 @@
       {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [
-      {"name":"app.json"}
+      {"name":"calendarItems.csv"}
     ]
   },
   { "id": "timecal",
