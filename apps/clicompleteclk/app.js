@@ -104,9 +104,11 @@ function drawInfo(now) {
 }
 
 function drawHeartRate(i) {
+  writeLineTopic("HRTM", i);
   if (hrtValue != undefined) {
-    writeLineTopic("HRTM", i);
     writeLine(hrtValue,i);
+  } else {
+    writeLine("-",i);
   }
   lastHeartRateRowIndex = i;
 }
@@ -129,6 +131,15 @@ function writeLine(str,line){
 }
 
 
+// turn on HRM when the LCD is unlocked
+Bangle.on('lock', function(isLocked) {
+  if (!isLocked) {
+    Bangle.setHRMPower(1,"clicompleteclk");
+    hrtValue = undefined;
+  } else {
+    Bangle.setHRMPower(0,"clicompleteclk");
+  }
+});
 Bangle.on('HRM', function(hrm) {
   //if(hrm.confidence > 90){
     hrtValue = hrm.bpm + " bpm";
@@ -173,6 +184,7 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawAll(true);
+
 Bangle.on('lcdPower',function(on) {
   if (on) {
     drawAll(true);
