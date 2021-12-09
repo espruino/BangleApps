@@ -93,7 +93,7 @@ function draw(){
   if (w == 1) {imgW = imgMon;}
   if (w == 2) {imgW = imgTue;}
   if (w == 3) {imgW = imgWed;}
-  if (w == 4) {imgW = imgThr;}
+  if (w == 4) {imgW = imgThu;}
   if (w == 5) {imgW = imgFri;}
   if (w == 6) {imgW = imgSat;}
   g.drawImage(imgW, 85, 63);

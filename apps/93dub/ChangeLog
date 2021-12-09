@@ -2,3 +2,4 @@
 0.02: DiscoMinotaur's adjustments (removed battery and adjusted spacing)
 0.03: Code style cleanup
 0.04: Set 00:00 to 12:00 for 12 hour time
+0.05: Display time, even on Thursday
