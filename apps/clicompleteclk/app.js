@@ -13,6 +13,7 @@ const topicColor = g.theme.dark ? "#fff" : "#000";
 const textColor = g.theme.dark ? "#0f0" : "#080";
 
 let hrtValue;
+let hrtValueIsOld = false;
 let localTempValue;
 let weatherTempString;
 let lastHeartRateRowIndex;
@@ -76,19 +77,9 @@ function drawInfo(now) {
     writeLineTopic("WTHR", i);
     writeLine(currentWeather.txt,i);
     i++;
-  }
 
-  // temperatures (local & weather)
-  if (localTempValue != undefined || weatherTempString != undefined) {
     writeLineTopic("TEMP", i);
-    let tempString = "";
-    if (localTempValue != undefined)
-      tempString += "l: " + localTempValue;
-    if (tempString != "")
-      tempString += ", ";
-    if (weatherTempString != undefined)
-      tempString += weatherTempString;
-    writeLine(tempString,i);
+    writeLine(weatherTempValue,i);
     i++;
   }
 
@@ -104,11 +95,16 @@ function drawInfo(now) {
 }
 
 function drawHeartRate(i) {
+  if (i == undefined)
+    i = lastHeartRateRowIndex;
   writeLineTopic("HRTM", i);
   if (hrtValue != undefined) {
-    writeLine(hrtValue,i);
+    if (!hrtValueIsOld)
+      writeLine(hrtValue,i);
+    else
+      writeLine(hrtValue,i, topicColor);
   } else {
-    writeLine("-",i);
+    writeLine("...",i);
   }
   lastHeartRateRowIndex = i;
 }
@@ -123,46 +119,53 @@ function writeLineTopic(str, line) {
   g.drawString("[" + str + "]",marginLeftTopic,y);
 }
 
-function writeLine(str,line){
+function writeLine(str,line,pColor){
+  if (pColor == undefined)
+    pColor = textColor;
   var y = marginTop+line*fontheight;
   g.setFont(font,fontsize);
-  g.setColor(textColor).setFontAlign(-1,-1);
+  g.setColor(pColor).setFontAlign(-1,-1);
   g.drawString(str,marginLeftData,y);
 }
 
+// EVENTS:
 
 // turn on HRM when the LCD is unlocked
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
     Bangle.setHRMPower(1,"clicompleteclk");
-    hrtValue = undefined;
+    if (hrtValue == undefined)
+      hrtValue = "...";
+    else
+      hrtValueIsOld = true;
+    drawHeartRate();
   } else {
+    hrtValueIsOld = true;
     Bangle.setHRMPower(0,"clicompleteclk");
   }
 });
+
+Bangle.on('lcdPower',function(on) {
+  if (on) {
+    drawAll(true);
+  } else {
+    hrtValueIsOld = true;
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
+});
+
 Bangle.on('HRM', function(hrm) {
   //if(hrm.confidence > 90){
-    hrtValue = hrm.bpm + " bpm";
+    hrtValueIsOld = false;
+    hrtValue = hrm.bpm;
     if (Bangle.isLCDOn())
-      drawHeartRate(lastHeartRateRowIndex);
+      drawHeartRate();
   //} else {
   //  hrtValue = undefined;
   //}
 });
 
-
-function getTemperature() {
-  if (Bangle.getPressure) {
-    Bangle.getPressure().then(onTemperature);
-  } else {
-    onTemperature({
-      temperature : E.getTemperature()
-    });
-  }
-}
-function onTemperature(p) {
-  localTempValue = locale.temp(p.temperature.toFixed(1));
-}
 
 function stepsWidget() {
   if (WIDGETS.activepedom !== undefined) {
@@ -172,7 +175,6 @@ function stepsWidget() {
   }
   return undefined;
 }
-
 
 function getWeather() {
   let jsonWeather = storage.readJSON('weather.json');
@@ -184,12 +186,3 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawAll(true);
-
-Bangle.on('lcdPower',function(on) {
-  if (on) {
-    drawAll(true);
-  } else {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
-});
