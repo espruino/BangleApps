@@ -2419,7 +2419,7 @@
       {"name":"calendar.settings.js","url":"settings.js"},
       {"name":"calendar.img","url":"calendar-icon.js","evaluate":true}
     ],
-    "data": [{"name":"messages.json"}]
+    "data": [{"name":"calendar.json"}]
   },
   {
     "id": "hidjoystick",
