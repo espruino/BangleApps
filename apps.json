@@ -2642,12 +2642,12 @@
     "id": "widviz",
     "name": "Widget Visibility Widget",
     "shortName": "Viz Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Swipe left to hide top bar widgets, swipe right to redisplay.",
     "icon": "eye.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLESJ2"],
     "storage": [
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
@@ -4670,7 +4670,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A pebble style clock to keep the rebellion going",
     "readme": "README.md",
     "icon": "pebble.png",
