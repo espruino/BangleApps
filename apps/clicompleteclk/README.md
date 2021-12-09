@@ -9,7 +9,12 @@ It can show the following (depending on availability) information:
 * Weather condition (requires weather app)
 * Temperature (requires weather app)
 * Steps (requires a step widget)
-* Heart rate
+* Heart rate (when screen is on and unlocked)
+
+## TODO
+* Make time font bigger
+* Show progress of steps (if any goal is set)
+* Show trend of HRM out of history data
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
