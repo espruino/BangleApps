@@ -262,7 +262,7 @@
   // Send a summary of activity to Gadgetbridge
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
-    lastSentSteps = 0;
+    lastSentSteps = currentSteps;
     gbSend({ t: "act", stp: steps, hrm:hrm });
   }
 
