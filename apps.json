@@ -57,7 +57,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.10",
+    "version": "0.11",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
