@@ -178,6 +178,6 @@ declare const g: GraphicsApi;
 declare type Widget = {
   area: 'tr' | 'tl';
   width: number;
-  draw: () => void;
+  draw: (this: { x: number; y: number }) => void;
 };
 declare const WIDGETS: { [key: string]: Widget };

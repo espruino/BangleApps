@@ -16,14 +16,17 @@
         draw: draw
     };
     Bangle.on('charging', function (charging) {
-        if (charging) {
-            Bangle.buzz();
-            WIDGETS.chargingStatus.width = iconWidth;
+        var widget = WIDGETS.chargingStatus;
+        if (widget) {
+            if (charging) {
+                Bangle.buzz();
+                widget.width = iconWidth;
+            }
+            else {
+                widget.width = 0;
+            }
+            Bangle.drawWidgets(); // re-layout widgets
+            g.flip();
         }
-        else {
-            WIDGETS.chargingStatus.width = 0;
-        }
-        Bangle.drawWidgets(); // re-layout widgets
-        g.flip();
     });
 })();
