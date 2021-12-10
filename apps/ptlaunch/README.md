@@ -8,11 +8,18 @@ Create patterns and link them to apps in the Pattern Launcher app.
 
 Then launch the linked apps directly from the clock screen by simply drawing the desired pattern.
 
-## Screenshots and detailed steps
+## Add Pattern Screenshots
 
-![](main_menu.png)
+![](main_menu_add.png)
 ![](add_pattern.png)
 ![](select_app.png)
+
+## Manage Pattern Screenshots
+
+![](main_menu_manage.png)
+![](manage_patterns.png)
+
+## Detailed Steps
 
 From the main menu you can:
 - Add a new pattern and link it to an app (first entry)
@@ -23,11 +30,10 @@ From the main menu you can:
     - If you are happy with the pattern tap on screen or press the button to continue
     - Now select the app you want to launch with the pattern.
     - Note, you can bind multiple patterns to the same app.
-- Remove linked patterns (second entry)
-    - To remove a pattern first select "Remove Pattern"
-    - You will now see a list of apps that have patterns linked to them
-    - Simply select the app that you want to unlink. This will remove the saved pattern, but not the app itself!
-    - Note, that you can not actually preview the patterns. This makes removing patterns that are linked to the same app annoying. sorry!
+- Manage created patterns (second entry)
+    - To manage your patterns first select "Manage Patterns"
+    - You will now see a scrollabe list of patterns + linked apps
+    - If you want to deletion a pattern (and unlink the app) simply tap on it, and confirm the deletion
 - Disable the lock screen on the clock screen from the settings (third entry)
     - To launch the app from the pattern on the clock screen the watch must be unlocked.
     - If this annoys you, you can disable the lock on the clock screen from the setting here
