@@ -1,8 +1,8 @@
 [
   {
     "id": "fwupdate",
-    "name": "Firmware Update (BETA)",
-    "version": "0.01",
+    "name": "Firmware Update",
+    "version": "0.02",
     "description": "Uploads new Espruino firmwares to Bangle.js 2",
     "icon": "app.png",
     "type": "RAM",
@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.37",
+    "version": "0.38",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -57,7 +57,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.11",
+    "version": "0.12",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -79,7 +79,7 @@
     "name": "Android Integration",
     "shortName": "Android",
     "version": "0.04",
-    "description": "(BETA) App to display notifications from Gadgetbridge on Android. This will eventually replace the Gadgetbridge widget.",
+    "description": "Display notifications/music/etc from Gadgetbridge on Android. This replaces the old Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
     "dependencies": {"messages":"app"},
@@ -96,7 +96,7 @@
     "id": "ios",
     "name": "iOS Integration",
     "version": "0.07",
-    "description": "(BETA) App to display notifications from iOS devices",
+    "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
     "dependencies": {"messages":"app"},
@@ -146,7 +146,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.35",
+    "version": "0.36",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -283,7 +283,7 @@
     "id": "gbridge",
     "name": "Gadgetbridge",
     "version": "0.24",
-    "description": "The default notification handler for Gadgetbridge notifications from Android. This will eventually be replaced by the 'Android' app.",
+    "description": "(NOT RECOMMENDED) Handles Gadgetbridge notifications from Android. This is now replaced by the 'Android' app.",
     "icon": "app.png",
     "type": "widget",
     "tags": "tool,system,android,widget",
@@ -727,7 +727,7 @@
   {
     "id": "gpsrec",
     "name": "GPS Recorder",
-    "version": "0.26",
+    "version": "0.27",
     "description": "Application that allows you to record a GPS track. Can run in background",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -1755,7 +1755,7 @@
     "id": "cliock",
     "name": "Commandline-Clock",
     "shortName": "CLI-Clock",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Simple CLI-Styled Clock",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_cli.png"}],
@@ -1938,6 +1938,19 @@
     ]
   },
   {
+    "id": "widmpsh",
+    "name": "Moon Phase Widget Southern Hemisphere",
+    "version": "0.01",
+    "description": "Display the current moon phase in blueish for the southern hemisphere in eight phases",
+    "icon": "widget.png",
+    "type": "widget",
+    "tags": "widget,tools",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widmpsh.wid.js","url":"widget.js"}
+    ]
+  },
+  {
     "id": "minionclk",
     "name": "Minion clock",
     "version": "0.05",
@@ -2086,12 +2099,12 @@
     "id": "numerals",
     "name": "Numerals Clock",
     "shortName": "Numerals Clock",
-    "version": "0.09",
+    "version": "0.10",
     "description": "A simple big numerals clock",
     "icon": "numerals.png",
     "type": "clock",
     "tags": "numerals,clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-numerals-screenshot.png"}],
     "storage": [
@@ -2393,7 +2406,7 @@
   {
     "id": "calendar",
     "name": "Calendar",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Simple calendar",
     "icon": "calendar.png",
     "screenshots": [{"url":"screenshot_calendar.png"}],
@@ -2403,8 +2416,10 @@
     "allow_emulator": true,
     "storage": [
       {"name":"calendar.app.js","url":"calendar.js"},
+      {"name":"calendar.settings.js","url":"settings.js"},
       {"name":"calendar.img","url":"calendar-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"calendar.json"}]
   },
   {
     "id": "hidjoystick",
@@ -2642,12 +2657,12 @@
     "id": "widviz",
     "name": "Widget Visibility Widget",
     "shortName": "Viz Widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Swipe left to hide top bar widgets, swipe right to redisplay.",
     "icon": "eye.png",
     "type": "widget",
     "tags": "widget",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widviz.wid.js","url":"widget.js"}
     ]
@@ -3780,7 +3795,7 @@
     "id": "gbmusic",
     "name": "Gadgetbridge Music Controls",
     "shortName": "Music Controls",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Control the music on your Gadgetbridge-connected phone",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot_v1.png"},{"url":"screenshot_v2.png"}],
@@ -4080,7 +4095,7 @@
       {"name":"carcrazy.img","url":"app-icon.js","evaluate":true},
       {"name":"carcrazy.settings.js","url":"settings.js"}
     ],
-    "data": [{"name":"app.json"}]
+    "data": [{"name":"CarCrazy.csv"}]
   },
   {
     "id": "shortcuts",
@@ -4387,7 +4402,7 @@
     "id": "emojuino",
     "name": "Emojuino",
     "shortName": "Emojuino",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
     "icon": "emojuino.png",
     "screenshots": [
@@ -4409,7 +4424,7 @@
     "id": "cliclockJS2Enhanced",
     "name": "Commandline-Clock JS2 Enhanced",
     "shortName": "CLI-Clock JS2",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design. Also added HID media controlls, just swipe on the clock face to controll the media! Gadgetbride support coming soon(hopefully) Thanks to t0m1o1 for media controls!",
     "icon": "app.png",
     "screenshots": [{"url":"screengrab.png"}],
@@ -4522,7 +4537,7 @@
       {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [
-      {"name":"app.json"}
+      {"name":"calendarItems.csv"}
     ]
   },
   { "id": "timecal",
@@ -4575,7 +4590,7 @@
    "shortName":"93 Dub",
    "icon": "93dub.png",
    "screenshots": [{"url":"screenshot.png"}],
-   "version":"0.04",
+   "version":"0.05",
    "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
    "tags": "clock",
    "type": "clock",
@@ -4593,9 +4608,10 @@
   "version":"0.01",
   "description": "Simple app to power off your Bangle.js",
   "icon": "app.png",
-  "tags": "poweroff, shutdown",
+  "tags": "tool, poweroff, shutdown",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "allow_emulator": true,
   "storage": [
     {"name":"poweroff.app.js","url":"app.js"},
     {"name":"poweroff.img","url":"app-icon.js","evaluate":true}
@@ -4605,9 +4621,17 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
+  "screenshots": [
+    { "url": "screenshot-top.png" },
+    { "url": "screenshot-acc.png" },
+    { "url": "screenshot-bar.png" },
+    { "url": "screenshot-gps.png" },
+    { "url": "screenshot-hrm.png" },
+    { "url": "screenshot-mag.png" }
+  ],
   "type": "app",
   "tags": "tool,sensors",
   "supports" : [ "BANGLEJS2" ],
@@ -4670,7 +4694,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A pebble style clock to keep the rebellion going",
     "readme": "README.md",
     "icon": "pebble.png",
@@ -4791,7 +4815,7 @@
     "icon": "app.png",
     "allow_emulator": true,
     "tags": "tools, keyboard, text, scribble",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"scribble.app.js","url":"app.js"},
@@ -4800,6 +4824,38 @@
     "screenshots":[
       { "url":"screenshot.png" }
     ]
-  }
-  
+  },
+  {
+    "id": "ptlaunch",
+    "name": "Pattern Launcher",
+    "shortName": "Pattern Launcher",
+    "version": "0.02",
+    "description": "Directly launch apps from the clock screen with custom patterns.",
+    "icon": "app.png",
+    "tags": "tools",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      { "name": "ptlaunch.app.js", "url": "app.js" },
+      { "name": "ptlaunch.boot.js", "url": "boot.js" },
+      { "name": "ptlaunch.img", "url": "app-icon.js", "evaluate": true }
+    ],
+    "data": [{"name":"ptlaunch.patterns.json"}]
+  },
+  { "id": "clicompleteclk",
+  "name": "CLI complete clock",
+  "shortName":"CLI cmplt clock",
+  "version":"0.02",
+  "description": "Command line styled clock with lots of information",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "type": "clock",
+  "tags": "clock,cli,command,bash,shell,weather,hrt",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"clicompleteclk.app.js","url":"app.js"},
+    {"name":"clicompleteclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]

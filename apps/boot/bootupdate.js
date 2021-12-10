@@ -23,8 +23,14 @@ if (s.ble!==false) {
     boot += `bleServiceOptions.hid=Bangle.HID;\n`;
   }
 }
-if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
-  if (s.log) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
+if (s.log==2) { // logging to file
+    boot += `_DBGLOG=require("Storage").open("log.txt","a");
+`;
+} if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
+  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+LoopbackA.setConsole(true);\n`;
+  else if (s.log) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
   else boot += `E.setConsole(null,{force:true});\n`; // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
   /* If not programmable add our own handler for Bluetooth data
   to allow Gadgetbridge commands to be received*/
@@ -41,7 +47,10 @@ Bluetooth.on('line',function(l) {
     try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
 });\n`;
 } else {
-  if (s.log) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
+  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
+  else if (s.log) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
   else boot += `Bluetooth.setConsole(true);\n`; // else if no debug, force REPL to Bluetooth
 }
 // we just reset, so BLE should be on.

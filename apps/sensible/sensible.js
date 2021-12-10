@@ -6,6 +6,7 @@
 
 // Non-user-configurable constants
 const APP_ID = 'sensible';
+const ESPRUINO_COMPANY_CODE = 0x0590;
 
 
 // Global variables
@@ -90,6 +91,19 @@ let magMenu = {
 };
 
 
+// Transmit the app name under the Espruino company code to facilitate discovery
+function transmitAppName() {
+  let options = {
+      showName: false,
+      manufacturer: ESPRUINO_COMPANY_CODE,
+      manufacturerData: JSON.stringify({ name: APP_ID }),
+      interval: 2000
+  }
+
+  NRF.setAdvertising({}, options);
+}
+
+
 // Update acceleration
 Bangle.on('accel', function(newAcc) {
   acc = newAcc;
@@ -155,6 +169,7 @@ Bangle.on('mag', function(newMag) {
 
 // On start: enable sensors and display main menu
 g.clear();
+transmitAppName();
 Bangle.setBarometerPower(isBarEnabled, APP_ID);
 Bangle.setGPSPower(isGpsEnabled, APP_ID);
 Bangle.setHRMPower(isHrmEnabled, APP_ID);

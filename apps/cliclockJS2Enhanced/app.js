@@ -50,7 +50,7 @@ if (next) {
       setTimeout(drawApp, 1000);
       Bangle.setLocked(true);
   }, BTN1, { edge:"falling",repeat:true,debounce:50});
-  Bangle.on('drag', function(e) {  
+  Bangle.on('drag', function(e) {
     if(!e.b){
       console.log(lasty);
       console.log(lastx);
@@ -91,7 +91,7 @@ if (next) {
             lasty = lasty + e.dy;
   }
   });
-  
+
 }
 
 
@@ -144,14 +144,15 @@ function writeLine(str,line){
 }
 
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-drawAll();
+
 Bangle.on('lcdPower',function(on) {
   if (on) drawAll();
 });
 var click = setInterval(updateTime, 1000);
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", btn=>{
-  drawAll();
+  drawAll(); // why do we redraw here??
 });
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+drawAll();

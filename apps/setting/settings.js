@@ -95,17 +95,8 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
-    'Make Connectable': ()=>makeConnectable(),
     'App Settings': ()=>showAppSettingsMenu(),
     'BLE': ()=>showBLEMenu(),
-    'Debug Info': {
-      value: settings.log,
-      format: v => v ? "Show" : "Hide",
-      onchange: () => {
-        settings.log = !settings.log;
-        updateSettings();
-      }
-    },
     'Beep': beepMenuItem,
     'Vibration': {
       value: settings.vibrate,
@@ -134,7 +125,7 @@ function showMainMenu() {
     'Set Time': ()=>showSetTimeMenu(),
     'LCD': ()=>showLCDMenu(),
     'Theme': ()=>showThemeMenu(),
-    'Reset Settings': ()=>showResetMenu(),
+    'Utils': ()=>showUtilMenu(),
     'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
   };
 
@@ -146,6 +137,7 @@ function showBLEMenu() {
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
     '< Back': ()=>showMainMenu(),
+    'Make Connectable': ()=>makeConnectable(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -476,21 +468,63 @@ function showLocaleMenu() {
   return E.showMenu(localemenu);
 }
 
-function showResetMenu() {
-  const resetmenu = {
-    '': { 'title': 'Reset' },
+function showUtilMenu() {
+  var menu = {
+    '': { 'title': 'Utilities' },
     '< Back': ()=>showMainMenu(),
+    'Debug Info': {
+      value: E.clip(0|settings.log,0,2),
+      format: v => ["Hide","Show","Log"][E.clip(0|v,0,2)],
+      onchange: v => {
+        settings.log = v;
+        updateSettings();
+      }
+    },
+    'Compact Storage': () => {
+      E.showMessage("Compacting...\nTakes approx\n1 minute",{title:"Storage"});
+      require("Storage").compact();
+      showUtilMenu();
+    },
+    'Rewrite Settings': () => {
+      require("Storage").write(".boot0","eval(require('Storage').read('bootupdate.js'));");
+      load("setting.app.js");
+    },
+    'Flatten Battery': () => {
+      E.showMessage('Flattening battery - this can take hours.\nLong-press button to cancel.');
+      Bangle.setLCDTimeout(0);
+      Bangle.setLCDPower(1);
+      if (Bangle.setGPSPower) Bangle.setGPSPower(1,"flat");
+      if (Bangle.setHRMPower) Bangle.setHRMPower(1,"flat");
+      if (Bangle.setCompassPower) Bangle.setCompassPower(1,"flat");
+      if (Bangle.setBarometerPower) Bangle.setBarometerPower(1,"flat");
+      if (Bangle.setHRMPower) Bangle.setGPSPower(1,"flat");
+      setInterval(function() {
+        var i=1000;while (i--);
+      }, 1);
+    },
     'Reset Settings': () => {
-      E.showPrompt('Reset Settings?').then((v) => {
+      E.showPrompt('Reset to Defaults?',{title:"Settings"}).then((v) => {
         if (v) {
           E.showMessage('Resetting');
           resetSettings();
-        }
-        setTimeout(showMainMenu, 50);
+          setTimeout(showMainMenu, 50);
+        } else showUtilMenu();
       });
     }
   };
-  return E.showMenu(resetmenu);
+  if (Bangle.factoryReset) {
+    menu['Factory Reset'] = ()=>{
+      E.showPrompt('This will remove everything!',{title:"Factory Reset"}).then((v) => {
+        if (v) {
+          E.showMessage();
+          Terminal.setConsole();
+          Bangle.factoryReset();
+        } else showUtilMenu();
+      });
+    }
+  }
+
+  return E.showMenu(menu);
 }
 
 function makeConnectable() {
