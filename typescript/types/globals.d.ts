@@ -1,10 +1,12 @@
-// TODO all of these globals (copied from eslintrc need to be typed at some point)
-/* {
+// TODO all of these globals (copied from eslintrc) need to be typed at some point
+/* The typing status is listed on the left of the attribute, e.g.:
+status  "Attribute"
+
         // Methods and Fields at https://banglejs.com/reference
         "Array": "readonly",
         "ArrayBuffer": "readonly",
         "ArrayBufferView": "readonly",
-        "Bangle": "readonly",
+started "Bangle": "readonly",
         "BluetoothDevice": "readonly",
         "BluetoothRemoteGATTCharacteristic": "readonly",
         "BluetoothRemoteGATTServer": "readonly",
@@ -20,8 +22,8 @@
         "Float64Array": "readonly",
         "fs": "readonly",
         "Function": "readonly",
-        "Graphics": "readonly", // partly done
-        "heatshrink": "readonly",
+started "Graphics": "readonly",
+done    "heatshrink": "readonly",
         "I2C": "readonly",
         "Int16Array": "readonly",
         "Int32Array": "readonly",
@@ -107,7 +109,7 @@
         "poke32": "readonly",
         "poke8": "readonly",
         "print": "readonly",
-        "require": "readonly",
+started "require": "readonly",
         "reset": "readonly",
         "save": "readonly",
         "Serial1": "readonly",
@@ -123,9 +125,8 @@
         "trace": "readonly",
         "VIBRATE": "readonly",
         // Aliases and not defined at https://banglejs.com/reference
-        "g": "readonly", // done
-        "WIDGETS": "readonly" // done
-    }
+done    "g": "readonly",
+done    "WIDGETS": "readonly"
  */
 
 // ambient JS definitions
