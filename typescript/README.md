@@ -13,7 +13,7 @@ TODO
 Install [npm](https://www.npmjs.com/get-npm) if you haven't already.
 Make sure you are using version ^8 by running `npm -v`. If the version is incorrect, run `npm i -g npm@^8`.
 
-After having installed npm for your platform, open a terminal, and navigate into the `/typescript/sharedLib` folder. Then run:
+After having installed npm for your platform, open a terminal, and navigate into the `/typescript` folder. Then run:
 
 ```
 npm ci
@@ -22,7 +22,7 @@ npm ci
 to install the project's build tools, and:
 
 ```
-npx tsc ./relativePathToYourApp/app.ts --outDir ./relativePathToYourApp/dist
+npx tsc ../apps/relativePathToYourApp/app.ts --outDir ../apps/relativePathToYourApp/dist
 ```
 
 To build your app. The last command will generate the `app.js` file containing the transpiled code for the BangleJS.
