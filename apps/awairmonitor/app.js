@@ -79,10 +79,11 @@ function draw() {
     g.drawLine(45+i*2, 150-(Math.min(Math.max(bt_voc_history[i],0), 1440)-0)/45, 45+i*2, 150);
     g.drawLine(80+i*2, 150-(Math.min(Math.max(bt_pm25_history[i],0), 32)-0)/1, 80+i*2, 150);
     g.drawLine(115+i*2, 150-(Math.min(Math.max(bt_humi_history[i],20), 60)-20)/1.25, 115+i*2, 150);
-    g.drawLine(150+i*2, 150-(Math.min(Math.max(bt_temp_history[i],16), 32)-16)*2, 150+i*2, 150);
+    g.drawLine(150+i*2, 150-(Math.min(Math.max(bt_temp_history[i],19), 27)-19)*4, 150+i*2, 150);
 
     // target humidity level
     g.setColor("#00F").drawLine(115, 150-(40-20)/1.25, 115+18, 150-(40-20)/1.25);
+    g.reset();
   }
 
   if (internal_last_update != -1) { internal_last_update++; }
