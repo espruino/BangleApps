@@ -7,12 +7,9 @@
 // Non-user-configurable constants
 const APP_ID = 'sensible';
 const ESPRUINO_COMPANY_CODE = 0x0590;
-const DEFAULT_ADVERTISING_OPTIONS = {
-    showName: false,
-    manufacturer: ESPRUINO_COMPANY_CODE,
-    manufacturerData: JSON.stringify({ name: APP_ID }),
-    interval: 2000
-};
+const APP_ADVERTISING_DATA = [ 0x16, 0xff, 0x90, 0x05, 0x7b, 0x22, 0x6e, 0x61,
+                               0x6d, 0x65, 0x22, 0x3a, 0x22, 0x73, 0x65, 0x6e,
+                               0x73, 0x69, 0x62, 0x6c, 0x65, 0x22, 0x7d ];
 
 
 // Global variables
@@ -105,7 +102,7 @@ let magMenu = {
 
 // Check for new sensor data and update the advertising sequence
 function transmitUpdatedSensorData() {
-  let data = [];
+  let data = [ APP_ADVERTISING_DATA ]; // Always advertise at least app name
 
   if(isNewBarData) {
     data.push({ 0x2a6e: encodeTemperature(bar.temperature) });
@@ -115,10 +112,6 @@ function transmitUpdatedSensorData() {
   if(isNewHrmData) {
     data.push({ 0x2a37: [ 0, hrm.bpm ] });
     isNewHrmData = false;
-  }
-
-  if(data.length === 0) {
-    return NRF.setAdvertising({}, DEFAULT_ADVERTISING_OPTIONS);
   }
 
   NRF.setAdvertising(data, { showName: false, interval: 200 });
@@ -203,7 +196,6 @@ Bangle.on('mag', function(newMag) {
 
 // On start: enable sensors and display main menu
 g.clear();
-NRF.setAdvertising({}, DEFAULT_ADVERTISING_OPTIONS);
 Bangle.setBarometerPower(isBarEnabled, APP_ID);
 Bangle.setGPSPower(isGpsEnabled, APP_ID);
 Bangle.setHRMPower(isHrmEnabled, APP_ID);
