@@ -13,7 +13,7 @@
     WIDGETS.chargingStatus = {
         area: 'tr',
         width: Bangle.isCharging() ? iconWidth : 0,
-        draw,
+        draw: draw,
     };
     Bangle.on('charging', (charging) => {
         const widget = WIDGETS.chargingStatus;
