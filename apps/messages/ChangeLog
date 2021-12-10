@@ -13,3 +13,4 @@
 0.09: Message now disappears after 60s if no action taken and clock loads (fix 922)
       Fix phone icon (#1014)
 0.10: Respect the 'new' attribute if it was set from iOS integrations
+0.11: Open app when touching the widget (Bangle.js 2 only)
