@@ -147,13 +147,26 @@ var createPattern = () => {
     setWatch(() => finishHandler(), BTN);
     setTimeout(() => Bangle.on("tap", finishHandler), 250);
 
+    positions = [];
     var dragHandler = (position) => {
+      log(position);
       positions.push(position);
 
       debounce().then(() => {
         if (isFinished) {
           return;
         }
+
+        // This might actually be a 'tap' event.
+        // Use this check in addition to the actual tap handler to make it more reliable
+        if (pattern.length > 0 && positions.length === 2) {
+          if (positions[0].x === positions[1].x && positions[0].y === positions[1].y) {
+            finishHandler();
+            positions = [];
+            return;
+          }
+        }
+        
         E.showMessage("Calculating...");
         var t0 = Date.now();
 
