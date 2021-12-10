@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "es2015",
+    "noImplicitAny": true,
+    "target": "es2015",
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true
+  },
+  "include": ["../apps/**/*", "./**/*"],
+  // these apps have been excluded because they were built before this configuration was created and are using their own
+  "exclude": ["../apps/banglerun", "../apps/hebrew_calendar"]
+}
