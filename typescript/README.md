@@ -22,7 +22,7 @@ npm ci
 to install the project's build tools, and:
 
 ```
-npx tsc ../apps/relativePathToYourApp/app.ts --outDir ../apps/relativePathToYourApp/dist
+npm run build:apps
 ```
 
-To build your app. The last command will generate the `app.js` file containing the transpiled code for the BangleJS.
+To build all Typescript apps. The last command will generate the `app.js` files containing the transpiled code for the BangleJS.
