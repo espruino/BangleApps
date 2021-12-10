@@ -14,5 +14,6 @@
     "strict": true
   },
   "include": ["../apps/**/*", "./**/*"],
+  // these apps have been excluded because they were built before this configuration was created and are using their own
   "exclude": ["../apps/banglerun", "../apps/hebrew_calendar"]
 }
