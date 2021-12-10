@@ -6,9 +6,8 @@ It can show the following (depending on availability) information:
 * Time
 * Day of week
 * Date
-* Weather condition (requires weather app)
-* Temperature (requires weather app)
-* Steps (requires a step widget)
+* Weather conditions and temperature (requires app [Weather](https://banglejs.com/apps/#weather))
+* Steps (requires app [Health Tracking](https://banglejs.com/apps/#health%20tracking) or a step widget)
 * Heart rate (when screen is on and unlocked)
 
 ## TODO
