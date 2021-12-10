@@ -68,7 +68,7 @@ function drawInfo(now) {
   */
 
   // weather
-  var weatherJson = getWeather();
+  const weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
     const currentWeather = weatherJson.weather;
 
@@ -84,9 +84,9 @@ function drawInfo(now) {
   }
 
   // steps
-  if (stepsWidget() != undefined) {
+  const steps = getSteps();
+  if (steps != undefined) {
     writeLineTopic("STEP", i);
-    const steps = stepsWidget().getSteps();
     writeLine(steps, i);
     i++;
   }
@@ -103,8 +103,6 @@ function drawHeartRate(i) {
       writeLine(hrtValue,i);
     else
       writeLine(hrtValue,i, topicColor);
-  } else {
-    writeLine("...",i);
   }
   lastHeartRateRowIndex = i;
 }
@@ -128,6 +126,30 @@ function writeLine(str,line,pColor){
   g.drawString(str,marginLeftData,y);
 }
 
+
+function getSteps() {
+  var steps = 0;
+  let health;
+  try {
+    health = require("health");
+  } catch (e) {
+    // Module health not found
+  }
+  if (health != undefined) {
+    health.readDay(new Date(), h=>steps+=h.steps);
+  } else if (WIDGETS.wpedom !== undefined) {
+    return WIDGETS.wpedom.getSteps();
+  } else if (WIDGETS.activepedom !== undefined) {
+    return WIDGETS.activepedom.getSteps();
+  }
+  return steps;
+}
+
+function getWeather() {
+  let jsonWeather = storage.readJSON('weather.json');
+  return jsonWeather;
+}
+
 // EVENTS:
 
 // turn on HRM when the LCD is unlocked
@@ -138,11 +160,11 @@ Bangle.on('lock', function(isLocked) {
       hrtValue = "...";
     else
       hrtValueIsOld = true;
-    drawHeartRate();
   } else {
     hrtValueIsOld = true;
     Bangle.setHRMPower(0,"clicompleteclk");
   }
+  drawHeartRate();
 });
 
 Bangle.on('lcdPower',function(on) {
@@ -165,21 +187,6 @@ Bangle.on('HRM', function(hrm) {
   //  hrtValue = undefined;
   //}
 });
-
-
-function stepsWidget() {
-  if (WIDGETS.activepedom !== undefined) {
-    return WIDGETS.activepedom;
-  } else if (WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom;
-  }
-  return undefined;
-}
-
-function getWeather() {
-  let jsonWeather = storage.readJSON('weather.json');
-  return jsonWeather;
-}
 
 g.clear();
 Bangle.setUI("clock");
