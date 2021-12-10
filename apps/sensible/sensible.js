@@ -103,26 +103,12 @@ let magMenu = {
 };
 
 
-// Transmit the app name under the Espruino company code to facilitate discovery
-function transmitAppName() {
-  let options = {
-      showName: false,
-      manufacturer: ESPRUINO_COMPANY_CODE,
-      manufacturerData: JSON.stringify({ name: APP_ID }),
-      interval: 2000
-  }
-
-  NRF.setAdvertising({}, options);
-}
-
-
 // Check for new sensor data and update the advertising sequence
 function transmitUpdatedSensorData() {
   let data = [];
 
   if(isNewBarData) {
-    let encT = Math.round(bar.temperature * 100); // TODO: signed int16
-    data.push({ 0x2a6e: [ encT & 0xff, (encT >> 8) & 0xff  ] });
+    data.push({ 0x2a6e: encodeTemperature(bar.temperature) });
     isNewBarData = false;
   }
 
@@ -136,6 +122,14 @@ function transmitUpdatedSensorData() {
   }
 
   NRF.setAdvertising(data, { showName: false, interval: 200 });
+}
+
+
+// Convert temperature to signed 16-bit integer byte array
+// TODO: implement negative temperature as signed int
+function encodeTemperature(temperature) {
+  return [ Math.round(bar.temperature * 100) & 0xff,
+           (Math.round(bar.temperature * 100) >> 8) & 0xff ];
 }
 
 
