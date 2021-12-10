@@ -7,6 +7,12 @@
 // Non-user-configurable constants
 const APP_ID = 'sensible';
 const ESPRUINO_COMPANY_CODE = 0x0590;
+const DEFAULT_ADVERTISING_OPTIONS = {
+    showName: false,
+    manufacturer: ESPRUINO_COMPANY_CODE,
+    manufacturerData: JSON.stringify({ name: APP_ID }),
+    interval: 2000
+};
 
 
 // Global variables
@@ -20,6 +26,12 @@ let isBarEnabled = true;
 let isGpsEnabled = true;
 let isHrmEnabled = true;
 let isMagEnabled = true;
+let isNewAccData = false;
+let isNewBarData = false;
+let isNewGpsData = false;
+let isNewHrmData = false;
+let isNewMagData = false;
+
 
 
 // Menus
@@ -104,9 +116,33 @@ function transmitAppName() {
 }
 
 
+// Check for new sensor data and update the advertising sequence
+function transmitUpdatedSensorData() {
+  let data = [];
+
+  if(isNewBarData) {
+    let encT = Math.round(bar.temperature * 100); // TODO: signed int16
+    data.push({ 0x2a6e: [ encT & 0xff, (encT >> 8) & 0xff  ] });
+    isNewBarData = false;
+  }
+
+  if(isNewHrmData) {
+    data.push({ 0x2a37: [ 0, hrm.bpm ] });
+    isNewHrmData = false;
+  }
+
+  if(data.length === 0) {
+    return NRF.setAdvertising({}, DEFAULT_ADVERTISING_OPTIONS);
+  }
+
+  NRF.setAdvertising(data, { showName: false, interval: 200 });
+}
+
+
 // Update acceleration
 Bangle.on('accel', function(newAcc) {
   acc = newAcc;
+  isNewAccData = true;
 
   if(isAccMenu) {
     accMenu.x.value = acc.x.toFixed(2);
@@ -119,6 +155,7 @@ Bangle.on('accel', function(newAcc) {
 // Update barometer
 Bangle.on('pressure', function(newBar) {
   bar = newBar;
+  isNewBarData = true;
 
   if(isBarMenu) {
     barMenu.Altitude.value = bar.altitude.toFixed(1) + 'm';
@@ -131,6 +168,7 @@ Bangle.on('pressure', function(newBar) {
 // Update GPS
 Bangle.on('GPS', function(newGps) {
   gps = newGps;
+  isNewGpsData = true;
 
   if(isGpsMenu) {
     gpsMenu.Lat.value = gps.lat.toFixed(4);
@@ -145,6 +183,7 @@ Bangle.on('GPS', function(newGps) {
 // Update heart rate monitor
 Bangle.on('HRM', function(newHrm) {
   hrm = newHrm;
+  isNewHrmData = true;
 
   if(isHrmMenu) {
     hrmMenu.BPM.value = hrm.bpm;
@@ -156,6 +195,7 @@ Bangle.on('HRM', function(newHrm) {
 // Update magnetometer
 Bangle.on('mag', function(newMag) {
   mag = newMag;
+  isNewMagData = true;
 
   if(isMagMenu) {
     magMenu.x.value = mag.x;
@@ -169,9 +209,10 @@ Bangle.on('mag', function(newMag) {
 
 // On start: enable sensors and display main menu
 g.clear();
-transmitAppName();
+NRF.setAdvertising({}, DEFAULT_ADVERTISING_OPTIONS);
 Bangle.setBarometerPower(isBarEnabled, APP_ID);
 Bangle.setGPSPower(isGpsEnabled, APP_ID);
 Bangle.setHRMPower(isHrmEnabled, APP_ID);
 Bangle.setCompassPower(isMagEnabled, APP_ID);
 E.showMenu(mainMenu);
+setInterval(transmitUpdatedSensorData, 1000);
