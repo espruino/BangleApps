@@ -4845,7 +4845,7 @@
   { "id": "clicompleteclk",
   "name": "CLI complete clock",
   "shortName":"CLI cmplt clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Command line styled clock with lots of information",
   "icon": "app.png",
   "allow_emulator": true,
