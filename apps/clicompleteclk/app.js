@@ -103,8 +103,6 @@ function drawHeartRate(i) {
       writeLine(hrtValue,i);
     else
       writeLine(hrtValue,i, topicColor);
-  } else {
-    writeLine("...",i);
   }
   lastHeartRateRowIndex = i;
 }
@@ -162,11 +160,11 @@ Bangle.on('lock', function(isLocked) {
       hrtValue = "...";
     else
       hrtValueIsOld = true;
-    drawHeartRate();
   } else {
     hrtValueIsOld = true;
     Bangle.setHRMPower(0,"clicompleteclk");
   }
+  drawHeartRate();
 });
 
 Bangle.on('lcdPower',function(on) {
