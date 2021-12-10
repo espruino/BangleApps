@@ -4832,7 +4832,7 @@
     "version": "0.10",
     "description": "Directly launch apps from the clock screen with custom patterns.",
     "icon": "app.png",
-    "screenshots": [{"url":"manage_patterns.png"}],
+    "screenshots": [{"url":"main_menu_add.png"}, {"url":"add_pattern.png"}, {"url":"select_app.png"}, {"url":"main_menu_manage.png"}, {"url":"manage_patterns.png"}],
     "tags": "tools",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
