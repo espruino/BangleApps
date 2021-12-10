@@ -7,7 +7,7 @@
     "typescript": "4.5.2"
   },
   "scripts": {
-    "build:example": "tsc ../apps/widChargingStatus/widget.ts --outDir ../apps/widChargingStatus/dist",
+    "build:apps": "tsc",
     "build:types": "tsc ./types/globals.d.ts"
   }
 }

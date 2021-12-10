@@ -13,5 +13,6 @@
     "noUnusedParameters": true,
     "strict": true
   },
-  "include": ["../apps/**/*", "./**/*"]
+  "include": ["../apps/**/*", "./**/*"],
+  "exclude": ["../apps/banglerun", "../apps/hebrew_calendar"]
 }

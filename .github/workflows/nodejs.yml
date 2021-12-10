@@ -16,7 +16,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm i
-        run: npm i
+      - name: npm ci
+        working-directory: ./typescript
+        run: npm ci
       - name: build types
+        working-directory: ./typescript
+        run: npm run build:types
+      - name: build all TS apps
+        working-directory: ./typescript
         run: npm run build:types
