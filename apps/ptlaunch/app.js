@@ -1,9 +1,4 @@
 var DEBUG = false;
-var log = (message) => {
-  if (DEBUG) {
-    console.log(JSON.stringify(message));
-  }
-};
 
 var storage = require("Storage");
 
@@ -21,7 +16,7 @@ var showMainMenu = () => {
     },
     "Add Pattern": () => {
       log("creating pattern");
-      createPattern().then((pattern) => {
+      recognizeAndDrawPattern().then((pattern) => {
         log("got pattern");
         log(pattern);
         log(pattern.length);
@@ -119,10 +114,8 @@ var showMainMenu = () => {
   E.showMenu(mainmenu);
 };
 
-showMainMenu();
-
 var positions = [];
-var createPattern = () => {
+var recognizeAndDrawPattern = () => {
   return new Promise((resolve) => {
     E.showMenu();
     g.clear();
@@ -283,18 +276,7 @@ var createPattern = () => {
 
         log("redrawing");
         g.clear();
-        g.setColor(0, 0, 0);
-        CIRCLES.forEach((circle) => drawCircle(circle));
-
-        g.setColor(1, 1, 1);
-        g.setFontAlign(0, 0);
-        g.setFont("6x8", 4);
-        pattern.forEach((circleIndex, patternIndex) => {
-          var circle = CIRCLES[circleIndex];
-          g.drawString(patternIndex + 1, circle.x, circle.y);
-        });
-        var t2 = Date.now();
-        log(t2 - t0);
+        drawCirclesWithPattern(pattern);
       });
     };
 
@@ -381,13 +363,23 @@ var drawAppWithPattern = (i, r, storedPatterns) => {
 
   g.drawLine(r.x, r.y, 176, r.y);
 
-  drawCirclesWithPattern(pattern, 0.33, { x: 1, y: 3 + r.y });
+  drawCirclesWithPattern(pattern, {
+    enableCaching: true,
+    scale: 0.33,
+    offset: { x: 1, y: 3 + r.y },
+  });
 
   g.setColor(0, 0, 0);
-  var appName = g.wrapString(app.name, g.getWidth() - 64).join("\n");
+  if (!storedPattern.wrappedAppName) {
+    storedPattern.wrappedAppName = g
+      .wrapString(app.name, g.getWidth() - 64)
+      .join("\n");
+  }
+  log(g.getWidth());
+  log(storedPattern.wrappedAppName);
   g.setFont(scrollerFont)
     .setFontAlign(-1, 0)
-    .drawString(appName, 64, r.y + 32);
+    .drawString(storedPattern.wrappedAppName, 64, r.y + 32);
 };
 
 var showScrollerContainingAppsWithPatterns = () => {
@@ -422,6 +414,7 @@ var showScrollerContainingAppsWithPatterns = () => {
           pattern = storedPattern.pattern.join("");
           appName = storedPattern.app.name;
         }
+        clearCircleDrawingCache();
         resolve({ pattern: pattern, appName: appName });
       },
     });
@@ -501,9 +494,23 @@ var drawCircle = (circle, drawBuffer, scale) => {
 };
 
 var cachedCirclesDrawings = {};
-var drawCirclesWithPattern = (pattern, scale, offset) => {
+
+var clearCircleDrawingCache = () => {
+  cachedCirclesDrawings = {};
+};
+
+var drawCirclesWithPattern = (pattern, options) => {
   if (!pattern || pattern.length === 0) {
     pattern = [];
+  }
+  if (!options) {
+    options = {};
+  }
+  var enableCaching = options.enableCaching;
+  var scale = options.scale;
+  var offset = options.offset;
+  if (!enableCaching) {
+    enableCaching = false;
   }
   if (!scale) {
     scale = 1;
@@ -520,6 +527,7 @@ var drawCirclesWithPattern = (pattern, scale, offset) => {
   // cache drawn patterns. especially useful for the manage pattern menu
   var image = cachedCirclesDrawings[pattern.join("")];
   if (!image) {
+    log("circle image not cached");
     var drawBuffer = Graphics.createArrayBuffer(
       g.getWidth() * scale,
       g.getHeight() * scale,
@@ -548,7 +556,12 @@ var drawCirclesWithPattern = (pattern, scale, offset) => {
       bpp: 1,
       buffer: drawBuffer.buffer,
     };
-    cachedCirclesDrawings[pattern.join("")] = image;
+
+    if (enableCaching) {
+      cachedCirclesDrawings[pattern.join("")] = image;
+    }
+  } else {
+    log("using cached circle image");
   }
 
   g.drawImage(image, offset.x, offset.y);
@@ -568,6 +581,12 @@ var cloneCirclesArray = () => {
 // misc lib functions
 //////
 
+var log = (message) => {
+  if (DEBUG) {
+    console.log(JSON.stringify(message));
+  }
+};
+
 var debounceTimeoutId;
 var debounce = (delay) => {
   if (debounceTimeoutId) {
@@ -581,3 +600,9 @@ var debounce = (delay) => {
     }, delay || 500);
   });
 };
+
+//////
+// run main function
+//////
+
+showMainMenu();
