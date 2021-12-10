@@ -1,5 +1,3 @@
-import { loadGlobals } from '../../typescript/types/globals'; // TODO find a nicer way to load ambient type definitions than this
-
 (() => {
   const icon = require('heatshrink').decompress(
     atob(
