@@ -15,7 +15,7 @@
         save('battery', settings.battery);
       },
     },
-    'Battery warn level': {
+    'Battery warn': {
       value: "batteryLvl" in settings ? settings.batteryLvl : 30,
       min: 0,
       max : 100,
@@ -27,7 +27,7 @@
     },
     'Show weather': {
       value: "weather" in settings ? settings.weather : false,
-      format: () => (settings.batweathertery ? 'Yes' : 'No'),
+      format: () => (settings.weather ? 'Yes' : 'No'),
       onchange: () => {
         settings.weather = !settings.weather;
         save('weather', settings.weather);
