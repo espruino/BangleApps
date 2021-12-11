@@ -1,6 +1,6 @@
 # Awair Monitor
 
-Display the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.
+Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.
 
 * What you need:
   * A BangleJS 2
