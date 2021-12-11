@@ -34,14 +34,16 @@ const timeOfDay = {
 };
 
 
-// offsets and increments
-const xs = 35;
-const ys = 31;
-const dy = 22;
-const dx = 25;
+var big = g.getWidth()>200;
+// offsets and incerments
+const xs = big ? 35 : 20;
+const ys = big ? 31 : 28;
+const dx = big ? 25 : 20;
+const dy = big ? 22 : 16;
+
 
 // font size and color
-const fontSize = 3;  // "6x8"
+const fontSize = big ? 3 : 2;  // "6x8"
 const passivColor = 0x3186 /*grey*/ ;
 const activeColorNight = 0xF800 /*red*/ ;
 const activeColorDay = 0xFFFF /* white */;
