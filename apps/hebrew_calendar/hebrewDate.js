@@ -93,7 +93,7 @@ var gWeekday = new weekdayarr("Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "S
  *  - `month_name`: The Hebrew month name.
  *  - `date`: The Hebrew date.
  */
-export const hebrewDate = function (inputDateOrYear) {
+function hebrewDate(inputDateOrYear) {
     var inputMonth, inputDate;
     var hebrewMonth = 0, hebrewDate = 0, hebrewYear = 0, metonicCycle = 0, metonicYear = 0, moladDay = 0, moladHalakim = 0;
     function GregorianToSdn(inputYear, inputMonth, inputDay) {
@@ -307,3 +307,5 @@ export const hebrewDate = function (inputDateOrYear) {
         month_name: hMonth[hebrewMonth - 1]
     };
 };
+
+exports.hebrewDate = hebrewDate;
