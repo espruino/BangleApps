@@ -2,13 +2,13 @@ const storage = require('Storage');
 const locale = require("locale");
 
 const font12 = g.getFonts().includes("12x20");
-const font = font12 ? "12x20" : "6x8:2";
+const font = font12 ? "12x20" : "6x8";
 const fontsize = font12 ? 1: 2;
 const fontheight = 19;
 
-const marginTop = 10;
+const marginTop = 5;
 const marginLeftTopic = 3; // margin of topics
-const marginLeftData = font12 ? 62 : 75; // margin of data values
+const marginLeftData = font12 ? 64 : 75; // margin of data values
 
 const topicColor = g.theme.dark ? "#fff" : "#000";
 const textColor = g.theme.dark ? "#0f0" : "#080";
