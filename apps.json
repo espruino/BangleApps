@@ -33,7 +33,7 @@
     "id": "hebrew_calendar",
     "name": "Hebrew Calendar",
     "shortName": "HebCal",
-    "version": "0.03",
+    "version": "0.04",
     "description": "lists the date according to the hebrew calendar",
     "icon": "app.png",
     "tags": "",
