@@ -54,6 +54,20 @@
       }
     ]
   },
+  { "id": "golfscore",
+    "name": "Golf Score",
+    "shortName":"golfscore",
+    "version":"0.01",
+    "description": "keeps track of strokes during a golf game",
+    "icon": "app.png",
+    "tags": "outdoors",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"golfscore.app.js","url":"app.js"},
+      {"name":"golfscore.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "messages",
     "name": "Messages",
