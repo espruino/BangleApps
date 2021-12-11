@@ -4862,6 +4862,7 @@
     "id":"awairmonitor",
     "name":"Awair Monitor",
     "icon": "app.png",
+    "allow_emulator": true,
     "version":"0.01",
     "description": "Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.",
     "tags": "tool,health",
