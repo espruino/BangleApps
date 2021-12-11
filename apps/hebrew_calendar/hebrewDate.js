@@ -306,6 +306,6 @@ function hebrewDate(inputDateOrYear) {
         date: hebrewDate,
         month_name: hMonth[hebrewMonth - 1]
     };
-};
+}
 
 exports.hebrewDate = hebrewDate;
