@@ -1,13 +1,14 @@
 const storage = require('Storage');
 const locale = require("locale");
 
-const font = "12x20";
-const fontsize = 1;
+const font12 = g.getFonts().includes("12x20");
+const font = font12 ? "12x20" : "6x8:2";
+const fontsize = font12 ? 1: 2;
 const fontheight = 19;
 
 const marginTop = 10;
 const marginLeftTopic = 3; // margin of topics
-const marginLeftData = 68; // margin of data values
+const marginLeftData = font12 ? 62 : 75; // margin of data values
 
 const topicColor = g.theme.dark ? "#fff" : "#000";
 const textColor = g.theme.dark ? "#0f0" : "#080";
@@ -17,6 +18,7 @@ let hrtValueIsOld = false;
 let localTempValue;
 let weatherTempString;
 let lastHeartRateRowIndex;
+let lastStepsRowIndex;
 
 // timeout used to update every minute
 var drawTimeout;
@@ -60,12 +62,10 @@ function drawInfo(now) {
   writeLine(locale.date(now,1),i);
   i++;
 
-  /*
-  writeLineTopic("BAT", i);
+  writeLineTopic("BATT", i);
   const b = E.getBattery();
-  writeLine(b + "%", i); // TODO make bars
+  writeLine(b + "%", i);
   i++;
-  */
 
   // weather
   const weatherJson = getWeather();
@@ -83,15 +83,20 @@ function drawInfo(now) {
     i++;
   }
 
-  // steps
+  drawSteps(i);
+
+  drawHeartRate(i);
+}
+
+function drawSteps(i) {
+  if (i == undefined)
+    i = lastStepsRowIndex;
   const steps = getSteps();
   if (steps != undefined) {
     writeLineTopic("STEP", i);
     writeLine(steps, i);
-    i++;
   }
-
-  drawHeartRate(i);
+  lastStepsRowIndex = i;
 }
 
 function drawHeartRate(i) {
@@ -164,6 +169,8 @@ Bangle.on('lock', function(isLocked) {
     hrtValueIsOld = true;
     Bangle.setHRMPower(0,"clicompleteclk");
   }
+  // Update steps and heart rate
+  drawSteps();
   drawHeartRate();
 });
 
