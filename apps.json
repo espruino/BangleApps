@@ -48,6 +48,10 @@
         "url": "app.js"
       },
       {
+        "name": "hebrewDate",
+        "url": "hebrewDate.js"
+      },
+      {
         "name": "hebrew_calendar.img",
         "url": "app-icon.js",
         "evaluate": true
