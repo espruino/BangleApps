@@ -2,7 +2,7 @@
 A remix of word clock
 by Gordon Williams https://github.com/gfwilliams
 - Changes the representation of time to be more general
-- Shows accurate digital time when button 1 is pressed
+- Shows accurate digital time when button 1 is pressed or 
 */
 /* jshint esversion: 6 */
 
@@ -35,7 +35,7 @@ const timeOfDay = {
 
 
 var big = g.getWidth()>200;
-// offsets and incerments
+// offsets and increments
 const xs = big ? 35 : 20;
 const ys = big ? 31 : 28;
 const dx = big ? 25 : 20;
@@ -140,14 +140,13 @@ function drawWordClock() {
     hidxPrev = hidx;
   }
 
-  // Display digital time while button 1 is pressed
-  g.clearRect(0, 215, 240, 240);
+  // Display digital time when button is pressed or screen touched
+  g.clearRect(0, big ? 215 : 160, big ? 240 : 176, big ? 240 : 176);
   if (showDigitalTime){
     g.setColor(activeColor);
-    g.drawString(time, 120, 215);
+    g.drawString(time, big ? 120 : 90, big ? 215 : 160);
   }
 }
-
 
 Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
@@ -166,10 +165,13 @@ if (global.BTN3) setWatch(function() {
 }, BTN1, {repeat:true,edge:"both"});
 
 // If LCD pressed (on Bangle.js 2) draw digital time
-Bangle.on('drag',e=>{
+Bangle.on('touch',e=>{
   var pressed = e.b!=0;
-  if (pressed!=showDigitalTime) {
-    showDigitalTime = pressed;
+  if (showDigitalTime){
+    showDigitalTime = false;
+    drawWordClock();
+  } else {
+    showDigitalTime = true;
     drawWordClock();
   }
 });
