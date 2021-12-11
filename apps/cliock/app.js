@@ -36,7 +36,10 @@ function updateTime(){
   if (!Bangle.isLCDOn()) return;
   let now = new Date();
   writeLine(locale.time(now,1),0);
-  writeLine(flag?" ":"_",3);
+  if(!Bangle.isLocked())
+    writeLine(flag?" ":"_",3);
+  else
+    writeLine("_",3);
   flag = !flag;
   if(now.getMinutes() == 0)
     updateRest(now);
