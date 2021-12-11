@@ -538,7 +538,7 @@
     "icon": "clock-impword.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "screenshots": [{"url":"bangle1-impercise-word-clock-screenshot.png"}],
     "allow_emulator": true,
     "storage": [
