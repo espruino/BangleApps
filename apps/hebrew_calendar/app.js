@@ -2,7 +2,7 @@ g.clear();
 
 let now = new Date();
 
-let today = require('hebrewDate').hebrewDate(now);
+let today = require('./hebrewDate').hebrewDate(now);
 
 var mainmenu = {
   "": {
