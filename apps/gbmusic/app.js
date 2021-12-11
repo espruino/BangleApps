@@ -91,7 +91,7 @@ function rScroller(l) {
     y = l.y+l.h/2;
   l.offset = l.offset%w;
   g.setClipRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
-    .setColor(l.col)
+    .setColor(l.col).setBgColor(l.bgCol) // need to set colors: iScroll calls this function outside Layout
     .setFontAlign(-1, 0) // left center
     .clearRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
     .drawString(l.label, l.x-l.offset+40, y)
