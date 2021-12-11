@@ -5,6 +5,7 @@
 * Designed specifically for Bangle 2
 * A choice of 6 different background colous through its setting menu. Goto Settings, App/Widget settings, Rebble.
 * Supports the Light and Dark themes
+* Low power drain, only redraws once per minute
 * Has 3 sidebars that cycle including steps, day, date, sunrise, sunset
 * Tap top or bottom right to instantly cycle to the next sidebar
 * Uses pedometer widget to get latest step count

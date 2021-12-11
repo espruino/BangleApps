@@ -50,7 +50,7 @@ function updateSunRiseSunSet(lat, lon){
   sunSet = extractTime(times.sunset);
 }
 
-// wrapper to save changing the font all over the code
+// wrapper, makes it easier if we want to switch to a different font later
 function setSmallFont() {
   g.setFont('Vector', 20);
 }
@@ -81,9 +81,9 @@ function draw() {
   let da = date.toString().split(" ");
   let hh = da[4].substr(0,2);
   let mm = da[4].substr(3,2);
-  const t = 6;
+  //const t = 6;
 
-  if (drawCount % 120 == 0)
+  if (drawCount % 60 == 0)
     updateSunRiseSunSet(location.lat, location.lon);
   
   g.reset();
@@ -112,6 +112,7 @@ function draw() {
   }
   
   drawCount++;
+  queueDraw();
 }
 
 function drawSideBar1() {
@@ -236,16 +237,26 @@ function prevSidebar() {
   log_debug("prev: " + sideBar);
 }
 
-function nextAndDraw() {
-  nextSidebar();
-  draw();
-}
-
 Bangle.setUI("clockupdown", btn=> {
   if (btn<0) prevSidebar();
   if (btn>0) nextSidebar();
   draw();
 });
+
+
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    nextSidebar();
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
 
 log_debug("starting..");
 g.clear();
@@ -257,5 +268,4 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};}
 loadSettings();
 loadLocation();
-setInterval(nextAndDraw, 30000); // refresh every 30s
-draw();
+draw();  // queues the next draw for a minutes time
