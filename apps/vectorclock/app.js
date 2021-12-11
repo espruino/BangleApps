@@ -5,9 +5,10 @@ function padNum(n, l) {
   return ("0".repeat(l)+n).substr(-l);
 }
 
-let rects = {};
-let rectsToClear = {};
-let commands = [];
+var rects = {};
+var rectsToClear = {};
+var commands = [];
+var showSeconds = true;
 
 function pushCommand(command) {
   let hash = E.CRC32(E.toJS(arguments));
@@ -20,17 +21,20 @@ function executeCommands() {
   "ram";
   for (let hash in rectsToClear) delete rects[hash];
   for (let r of rectsToClear) if (r) g.clearRect(r.x1, r.y1, r.x2, r.y2);
-  g.getModified(true);
-  for (let c of commands) {
-    c.command();
-    rects[c.hash] = g.getModified(true);
-  }
+  for (let c of commands) rects[c.hash] = c.command();
   rectsToClear = Object.assign({}, rects);
   commands = [];
 }
 
 function drawVectorText(text, size, x, y, alignX, alignY) {
   g.setFont("Vector", size).setFontAlign(alignX, alignY).drawString(text, x, y);
+  var m = g.stringMetrics(text);
+  return {
+    x1: x - m.width * (alignX / 2 + 0.5),
+    y1: y - m.height * (alignY / 2 + 0.5),
+    x2: x - m.width * (alignX / 2 - 0.5),
+    y2: y - m.height * (alignY / 2 - 0.5)
+  };
 }
 
 function draw() {
@@ -60,7 +64,7 @@ function draw() {
   
   pushCommand(drawVectorText, timeText, timeFontSize, 0, y, -1, -1);
   pushCommand(drawVectorText, meridian, timeFontSize*9/20, g.getWidth(), y, 1, -1);
-  pushCommand(drawVectorText, secondsText, timeFontSize*9/20, g.getWidth(), y + timeHeight, 1, 1);
+  if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, g.getWidth(), y + timeHeight, 1, 1);
   y += timeHeight + spacer;
   
   pushCommand(drawVectorText, dowText, dowFontSize, g.getWidth()/2, y, 0, -1);
@@ -71,17 +75,25 @@ function draw() {
   executeCommands();
 }
 
-let timeout;
+var timeout;
 
 function tick() {
   draw();
-  timeout = setTimeout(tick, 1000 - getTime() % 1 * 1000);
+  var period = showSeconds ? 1000 : 60 * 1000;
+  timeout = setTimeout(tick, period - getTime() * 1000 % period);
 }
 
 Bangle.on('lcdPower', function(on) {
   if (timeout) clearTimeout(timeout);
   timeout = null;
   if (on) tick();
+});
+
+Bangle.on('lock', function(locked) {
+  if (timeout) clearTimeout(timeout);
+  timeout = null;
+  showSeconds = !locked;
+  tick();
 });
 
 g.clear();
