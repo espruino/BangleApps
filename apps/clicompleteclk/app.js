@@ -26,7 +26,7 @@ let i = 2;
 let settings;
 
 function loadSettings() {
-  settings = storage.readJSON('weather.json', 1) || {};
+  settings = storage.readJSON('clicompleteclk.json', 1) || {};
 }
 
 function setting(key) {
@@ -246,4 +246,5 @@ g.clear();
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+loadSettings();
 drawAll(true);
