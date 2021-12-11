@@ -207,10 +207,10 @@ apps.forEach((app,appIdx) => {
     }
   });
   // prefer "appid.json" over "appid.settings.json" (TODO: change to ERROR once all apps comply?)
-  if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
+ /* if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
     WARN(`App ${app.id} uses data file ${app.id+'.settings.json'} instead of ${app.id+'.json'}`)
   else if (dataNames.includes(app.id+".settings.json"))
-    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'}`)
+    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'}`)*/
   // settings files should be listed under data, not storage (TODO: change to ERROR once all apps comply?)
   if (fileNames.includes(app.id+".settings.json"))
     WARN(`App ${app.id} uses storage file ${app.id+'.settings.json'} instead of data file`)

@@ -18,6 +18,10 @@ const gray2 = "#888888";
 const gray3 = "#bbbbbb";
 const red = "#d41706";
 
+let settings = require('Storage').readJSON("calendar.json", true) || {};
+if (settings.startOnSun === undefined)
+  settings.startOnSun = false;
+
 function drawCalendar(date) {
   g.setBgColor(color4);
   g.clearRect(0, 0, maxX, maxY);
@@ -61,13 +65,18 @@ function drawCalendar(date) {
   );
 
   g.setFont("6x8", fontSize);
-  const dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  let dowLbls;
+  if (settings.startOnSun) {
+    dowLbls = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  } else {
+    dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  }
   dowLbls.forEach((lbl, i) => {
     g.drawString(lbl, i * colW + colW / 2, headerH + rowH / 2);
   });
 
   date.setDate(1);
-  const dow = date.getDay();
+  const dow = date.getDay() + (settings.startOnSun ? 1 : 0);
   const dowNorm = dow === 0 ? 7 : dow;
 
   const monthMaxDayMap = {

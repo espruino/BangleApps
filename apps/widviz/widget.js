@@ -6,16 +6,21 @@
     if (!Bangle.isLCDOn() || saved) return;
     saved = [];
     for (var wd of WIDGETS) {
-      saved.push(wd.draw);
+      saved.push({d:wd.draw,a:wd.area});
       wd.draw=()=>{};
+      wd.area="";
     }
     g.setColor(0,0,0);
-    g.fillRect(0,0,239,23);
+    g.fillRect(0,0,g.getWidth(),23);
   }
 
   function reveal(){
     if (!Bangle.isLCDOn() || !saved) return;
-    for (var wd of WIDGETS) wd.draw = saved.shift();
+    for (var wd of WIDGETS) {
+      var o = saved.shift();
+      wd.draw = o.d;
+      wd.area = o.a;
+    }
     Bangle.drawWidgets();
     saved=null;
   }
