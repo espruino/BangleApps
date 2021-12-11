@@ -62,7 +62,7 @@ function draw() {
   
   let y = 24 + spacer;
   
-  pushCommand(drawVectorText, timeText, timeFontSize, 0, y, -1, -1);
+  pushCommand(drawVectorText, timeText, timeFontSize, 2, y, -1, -1);
   pushCommand(drawVectorText, meridian, timeFontSize*9/20, g.getWidth(), y, 1, -1);
   if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, g.getWidth(), y + timeHeight, 1, 1);
   y += timeHeight + spacer;
