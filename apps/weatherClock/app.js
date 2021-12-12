@@ -102,13 +102,12 @@ function draw() {
   clockLayout.dow.label = locale.dow(date, 1).toUpperCase() + " ";
   var weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
-	  var currentWeather = weatherJson.weather;
+      var currentWeather = weatherJson.weather;
       const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
       clockLayout.temp.label = temp[1] + " " + temp[2];
       clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
       clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
-      var currentWeather = weatherJson.weather;
   }
   else{
       clockLayout.temp.label = "Err";
