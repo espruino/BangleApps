@@ -66,10 +66,10 @@ function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
 }
 function getNotificationImage() {
-  return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
+  return atob("EBCBAAAAAAABgAGAp+WH5Yfhj/GP8a/1D/AP8AAAAYAAAAAA");
 }
 function getFBIcon() {
-  return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
+  return atob("AAABgA/wH/g/HD4cPnx+fngePBw+fD58HngOcAAAAAA=");
 }
 function getMailIcon() {
   return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
@@ -89,11 +89,12 @@ function getMessageImage(msg) {
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
-  if (s=="slack") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
+  if (s=="slack") return atob("AAAAwADAGPgZ+B/gf2B8cA4+Bv4H+B+YHxgDAAMAAAA=");
   if (s=="facebook") return getFBIcon();
-  if (s=="fb messenger") return getFBIcon();
+  if (s=="messenger") return getFBIcon();
   if (s=="mail") return getMailIcon();
   if (s=="gmail") return getMailIcon();
+  if (s=="sms message") return getMailIcon();
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
   if (msg.id=="back") return getBackImage();
   return getNotificationImage();
@@ -161,7 +162,7 @@ function showMusicMessage(msg) {
     ]},
     {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
     Bangle.musicControl?{type:"h",fillx:1, c: [
-      {type:"btn", pad:8, label:"\0"+atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA="), cb:()=>Bangle.musicControl("play")}, // play
+      {type:"btn", pad:8, label:"\0"+atob("AAAQADwAPwA/wD/wP/g//D/8P/g/8D/APwA8ABAAAAA="), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
       {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
     ]}:{},

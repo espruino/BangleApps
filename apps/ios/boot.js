@@ -65,6 +65,7 @@ E.on('notify',msg=>{
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
+    "com.apple.mobilephone": "Phone",
     "com.apple.MobileSMS": "SMS Message",
     "com.apple.Passbook": "iOS Wallet",
     "com.apple.podcasts": "Podcasts",
@@ -73,7 +74,7 @@ E.on('notify',msg=>{
     "com.atebits.Tweetie2": "Twitter",
     "com.burbn.instagram" : "Instagram",
     "com.facebook.Facebook": "Facebook",
-    "com.facebook.Messenger": "FB Messenger",
+    "com.facebook.Messenger": "Messenger",
     "com.google.Chromecast" : "Google Home",
     "com.google.Gmail" : "GMail",
     "com.google.hangouts" : "Hangouts",
@@ -127,7 +128,7 @@ E.on('AMS',a=>{
   function push(m) {
     var msg = { t : "modify", id : "music", title:"Music" };
     if (a.id=="artist")  msg.artist = m;
-    else if (a.id=="album")  msg.artist = m;
+    else if (a.id=="album")  msg.album = m;
     else if (a.id=="title")  msg.tracl = m;
     else return; // duration? need to reformat
     require("messages").pushMessage(msg);
