@@ -21,6 +21,7 @@
 */
 
 var Layout = require("Layout");
+var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
@@ -41,7 +42,12 @@ try {
   };
 }
 
-
+/** this is a timeout if the app has started and is showing a single message
+but the user hasn't seen it (eg no user input) - in which case
+we should start a timeout for settings.unreadTimeout to return
+to the clock. */
+var unreadTimeout;
+/// List of all our messages
 var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
@@ -68,7 +74,7 @@ function getNegImage() {
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
-  if (s=="Phone") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
+  if (s=="phone") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
   if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
   if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
@@ -170,27 +176,36 @@ function showMessageSettings(msg) {
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
   if (!msg) return checkMessages(); // go home if no message found
-  if (msg.src=="Maps") return showMapMessage(msg);
-  if (msg.id=="music") return showMusicMessage(msg);
+  if (msg.src=="Maps") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMapMessage(msg);
+  }
+  if (msg.id=="music") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMusicMessage(msg);
+  }
   // Normal text message display
-  var title=msg.title, titleFont = fontLarge;
+  var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
-    var w = g.getWidth()-40;
+    var w = g.getWidth()-48;
     if (g.setFont(titleFont).stringWidth(title) > w)
       titleFont = fontMedium;
-    if (g.setFont(titleFont).stringWidth(title) > w)
-      title = g.wrapString(title, w).join("\n");
+    if (g.setFont(titleFont).stringWidth(title) > w) {
+      lines = g.wrapString(title, w);
+      title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
+    }
   }
   var buttons = [
     {type:"btn", src:getBackImage(), cb:()=>{
-      msg.new = false; // read mail
-      saveMessages();
+      msg.new = false; saveMessages(); // read mail
+      cancelReloadTimeout(); // don't auto-reload to clock now
       checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:1});
     }} // back
   ];
   if (msg.positive) {
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
       msg.new = false; saveMessages();
+      cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
@@ -199,19 +214,25 @@ function showMessage(msgid) {
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
       console.log("Response");
       msg.new = false; saveMessages();
+      cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
+  lines = g.wrapString(msg.body, g.getWidth()-10);
+  var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getMessageImage(msg), cb:()=>showMessageSettings(msg) },
+      { type:"btn", src:getMessageImage(msg), cb:()=>{
+        cancelReloadTimeout(); // don't auto-reload to clock now
+        showMessageSettings(msg);
+      }},
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontMedium, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2 },
+        {type:"txt", font:fontSmall, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},
-    {type:"txt", font:fontMedium, label:msg.body||"", wrap:true, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontMedium, label:body, fillx:1, filly:1, pad:2 },
     {type:"h",fillx:1, c: buttons}
   ]});
   g.clearRect(Bangle.appRect);
@@ -244,7 +265,8 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-
+  // we don't have to time out of this screen...
+  cancelReloadTimeout();
   // Otherwise show a menu
   E.showScroller({
     h : 48,
@@ -286,9 +308,23 @@ function checkMessages(options) {
   });
 }
 
+function cancelReloadTimeout() {
+  if (!unreadTimeout) return;
+  clearTimeout(unreadTimeout);
+  unreadTimeout = undefined;
+}
+
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setTimeout(() => {
+  var unreadTimeoutSecs = (require('Storage').readJSON("messages.settings.json", true) || {}).unreadTimeout;
+  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
+  if (unreadTimeoutSecs)
+    unreadTimeout = setTimeout(function() {
+      print("Message not seen - reloading");
+      load();
+    }, unreadTimeoutSecs*1000);
   checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
 },10); // if checkMessages wants to 'load', do that

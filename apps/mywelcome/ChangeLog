@@ -14,3 +14,4 @@
 0.10: Add birthday style
 0.11: Skip double buffering, use 240x240 size
 0.12: Fix swipe direction (#800)
+0.13: Bangle.js 2 support

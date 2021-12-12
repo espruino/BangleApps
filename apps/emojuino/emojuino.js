@@ -32,6 +32,7 @@ const CYCLE_BUZZ_MILLISECONDS = 50;
 const WELCOME_MESSAGE = 'Emojuino:\r\n\r\n< Swipe >\r\nto select\r\n\r\nTap\r\nto transmit';
 
 // Non-user-configurable constants
+const APP_ID = 'emojuino';
 const IMAGE_INDEX = 0;
 const CODE_POINT_INDEX = 1;
 const EMOJI_PX = 96;
@@ -40,10 +41,9 @@ const EMOJI_Y = (g.getHeight() - EMOJI_PX) / 2;
 const TX_X = 68;
 const TX_Y = 12;
 const FONT_SIZE = 24;
-const BTN_WATCH_OPTIONS = { repeat: true, debounce: 20, edge: "falling" };
+const ESPRUINO_COMPANY_CODE = 0x0590;
 const UNICODE_CODE_POINT_ELIDED_UUID = [ 0x49, 0x6f, 0x49, 0x44, 0x55,
                                          0x54, 0x46, 0x2d, 0x33, 0x32 ];
-
 
 
 // Global variables
@@ -100,9 +100,22 @@ function transmitEmoji(image, codePoint, duration) {
 }
 
 
+// Transmit the app name under the Espruino company code to facilitate discovery
+function transmitAppName() {
+  let options = {
+      showName: false,
+      manufacturer: ESPRUINO_COMPANY_CODE,
+      manufacturerData: JSON.stringify({ name: APP_ID }),
+      interval: 2000
+  }
+
+  NRF.setAdvertising({}, options);
+}
+
+
 // Terminate the emoji transmission
 function terminateEmoji(displayIntervalId) {
-  NRF.setAdvertising({ });
+  transmitAppName();
   isTransmitting = false;
   clearInterval(displayIntervalId);
   drawImage(EMOJIS[emojiIndex][IMAGE_INDEX], false);
@@ -169,3 +182,4 @@ g.setFontAlign(0, 0);
 g.drawString(WELCOME_MESSAGE, g.getWidth() / 2, g.getHeight() / 2);
 Bangle.on('touch', handleTouch);
 Bangle.on('drag', handleDrag);
+transmitAppName();
