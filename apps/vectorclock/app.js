@@ -47,11 +47,12 @@ function draw() {
   let secondsText = padNum(d.getSeconds(), 2);
   let dowText = locale.dow(d);
   let dateText = locale.date(d, true);
+  let width = g.getWidth() - 2;
 
   g.setFont("Vector", 256);
-  let timeFontSize = g.getWidth() / ((g.stringWidth(timeText) / 256) + (Math.max(g.stringWidth(meridian), g.stringWidth(secondsText)) / 512 * 9 / 10));
-  let dowFontSize = g.getWidth() / (g.stringWidth(dowText) / 256);
-  let dateFontSize = g.getWidth() / (g.stringWidth(dateText) / 256);
+  let timeFontSize = width / ((g.stringWidth(timeText) / 256) + (Math.max(g.stringWidth(meridian), g.stringWidth(secondsText)) / 512 * 9 / 10));
+  let dowFontSize = width / (g.stringWidth(dowText) / 256);
+  let dateFontSize = width / (g.stringWidth(dateText) / 256);
   
   let timeHeight = g.setFont("Vector", timeFontSize).getFontHeight() * 9 / 10;
   let dowHeight = g.setFont("Vector", dowFontSize).getFontHeight();
@@ -60,17 +61,18 @@ function draw() {
   let remainingHeight = g.getHeight() - 24 - timeHeight - dowHeight - dateHeight;
   let spacer = remainingHeight / 4;
   
+  let x = 2;
   let y = 24 + spacer;
   
-  pushCommand(drawVectorText, timeText, timeFontSize, 2, y, -1, -1);
-  pushCommand(drawVectorText, meridian, timeFontSize*9/20, g.getWidth(), y, 1, -1);
-  if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, g.getWidth(), y + timeHeight, 1, 1);
+  pushCommand(drawVectorText, timeText, timeFontSize, x, y, -1, -1);
+  pushCommand(drawVectorText, meridian, timeFontSize*9/20, x + width, y, 1, -1);
+  if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, x + width, y + timeHeight, 1, 1);
   y += timeHeight + spacer;
   
-  pushCommand(drawVectorText, dowText, dowFontSize, g.getWidth()/2, y, 0, -1);
+  pushCommand(drawVectorText, dowText, dowFontSize, x + width/2, y, 0, -1);
   y += dowHeight + spacer;
   
-  pushCommand(drawVectorText, dateText, dateFontSize, g.getWidth()/2, y, 0, -1);
+  pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1);
   
   executeCommands();
 }
