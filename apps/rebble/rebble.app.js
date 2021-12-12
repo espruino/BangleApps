@@ -263,9 +263,10 @@ g.clear();
 Bangle.loadWidgets();
 /*
  * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget
+ * so we will blank out the draw() functions of each widget and change the
+ * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};}
+for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 loadLocation();
 draw();  // queues the next draw for a minutes time
