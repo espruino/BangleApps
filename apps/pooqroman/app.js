@@ -75,9 +75,9 @@ class Options {
         Object.defineProperty(this, k, {
             get: () => this.backing[k],
             set: v => {
+                this.backing[k] = v;
                 // Ten second writeback delay, since the user will roll values up and down.
                 this.writeBack(10000);
-                return this.backing[k] = v;
             }
         });
     }
