@@ -8,8 +8,8 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   g.setFont("6x8:1x2").setFontAlign(0,0).drawString("MESSAGES", this.x+this.width/2, this.y+12);
   */
     var c = parseInt(Date.now()/1000);
-    g.reset().clearRect(this.x,this.y,this.x+this.width+2,this.y+this.width+2);
-    g.drawImage((c&1) ? atob("FBSBAAGAABwAA/gAf8AP/AD/wA/8AP/gD/8Af/AP/4D//A//4f//H//x//w//gP8gAA4AAOA") : atob("FBSBAAAYAAOAAfwAP+AD/wA/8AP/AH/wD/8A/+Af/wP/8H//D//4//+D//gH/8AT/AHAABwA"), this.x+2, this.y+2);
+    g.reset().clearRect(this.x,this.y,this.x+this.width,this.y+23);
+    g.drawImage((c&1) ? atob("FBSBAAGAABwAA/gAf8AP/AD/wA/8AP/gD/8Af/AP/4D//A//4f//H//x//w//gP8gAA4AAOA") : atob("FBSBAAAYAAOAAfwAP+AD/wA/8AP/AH/wD/8A/+Af/wP/8H//D//4//+D//gH/8AT/AHAABwA"), this.x, this.y);
 
 
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute

@@ -66,7 +66,7 @@ function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
 }
 function getNotificationImage() {
-  return atob("EBCBAAAAAAABgAGAp+WH5Yfhj/GP8a/1D/AP8AAAAYAAAAAA");
+  return atob("mEwyBC/AH4A/AH4A/AEnztgBHJP5ZZAJZV/LbZh/LsZh/LoVMJpv9if+3X0l5h/XrP/rv///9+7D/Lq5fCvpfB/0XC6Jf/L/5dUphf/Xt5fZMOZf/L/5f/L/dmqlmmgBdvvTL6kcL4P92xfdLL4BFt009eMIqP0h/9mnzxpfbLsoBD4lvI6YBVLuIBBytyJKWt/mRL7JdrAIfUhxHP/9d////v3Xv4BHwuzL6G+L4P+rC9h59b+/fAMf2JZ30l/9qnz1q9ft1UQoIAnVoWMV55ddAIeW2+/nQBn41X9kOLq1MLo5fCqhhNANdummdmPUMZnrxnT9pbJX6IBzuvzytyM4Ok+ADBxuSOIKvBL/7TfL/4BeX7l+y2m/IBtz3Yu1VIJZdNMJtuqn3/4Ax59cL9E08+9L+O3jRfdKoLBLdoIBtt1VLrrBNAP5fVMP5dfMP5dhMP5dhMfVULcp5vKP5hdJv5fdJf5hfJP5hdIv5fdIf4A/AH4A/AH4A/AFoA==");
 }
 function getFBIcon() {
   return atob("AAABgA/wH/g/HD4cPnx+fngePBw+fD58HngOcAAAAAA=");
@@ -156,13 +156,13 @@ function showMusicMessage(msg) {
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:fontLarge, label:msg.artist, pad:2 },
+        { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
         { type:"txt", font:fontMedium, label:msg.album, pad:2 }
       ]}
     ]},
     {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
     Bangle.musicControl?{type:"h",fillx:1, c: [
-      {type:"btn", pad:8, label:"\0"+atob("AAAQADwAPwA/wD/wP/g//D/8P/g/8D/APwA8ABAAAAA="), cb:()=>Bangle.musicControl("play")}, // play
+      {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
       {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
     ]}:{},
