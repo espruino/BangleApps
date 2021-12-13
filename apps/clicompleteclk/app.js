@@ -1,31 +1,60 @@
 const storage = require('Storage');
 const locale = require("locale");
 
-const font = "12x20";
-const fontsize = 1;
+const font12 = g.getFonts().includes("12x20");
+const font = font12 ? "12x20" : "6x8";
+const fontsize = font12 ? 1: 2;
 const fontheight = 19;
 
-const marginTop = 10;
+const marginTop = 5;
 const marginLeftTopic = 3; // margin of topics
-const marginLeftData = 68; // margin of data values
+const marginLeftData = font12 ? 64 : 75; // margin of data values
 
 const topicColor = g.theme.dark ? "#fff" : "#000";
 const textColor = g.theme.dark ? "#0f0" : "#080";
+const textColorRed = g.theme.dark ? "#FF0000" : "#FF0000";
 
 let hrtValue;
 let hrtValueIsOld = false;
+
 let localTempValue;
 let weatherTempString;
 let lastHeartRateRowIndex;
+let lastStepsRowIndex;
+let i = 2;
 
-// timeout used to update every minute
+let settings;
+
+function loadSettings() {
+  settings = storage.readJSON('clicompleteclk.json', 1) || {};
+}
+
+function setting(key) {
+  if (!settings) { loadSettings(); }
+  const DEFAULTS = {
+    'battery': true,
+    'batteryLvl': 30,
+    'weather': true,
+    'steps': true,
+    'heartrate': true
+  };
+  return (key in settings) ? settings[key] : DEFAULTS[key];
+}
+
+
+let showBattery = setting('battery');
+let batteryWarnLevel = setting('batteryLvl');
+let showWeather = setting('weather');
+let showSteps = setting('steps');
+let showHeartRate = setting('heartrate');
+
+
 var drawTimeout;
-// schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    drawAll(false);
+    drawAll(true);
   }, 60000 - (Date.now() % 60000));
 }
 
@@ -42,15 +71,13 @@ function updateTime(now){
   if (!Bangle.isLCDOn()) return;
   writeLineTopic("TIME", 1);
   writeLine(locale.time(now,1),1);
-  if(now.getMinutes() == 0)
-    drawInfo(now);
 }
 
 function drawInfo(now) {
-  if (now == undefined) 
+  if (now == undefined)
     now = new Date();
 
-  let i = 2;
+  i = 2;
 
   writeLineTopic("DOWK", i);
   writeLine(locale.dow(now),i);
@@ -60,14 +87,28 @@ function drawInfo(now) {
   writeLine(locale.date(now,1),i);
   i++;
 
-  /*
-  writeLineTopic("BAT", i);
-  const b = E.getBattery();
-  writeLine(b + "%", i); // TODO make bars
-  i++;
-  */
+  if (showBattery) {
+    writeLineTopic("BATT", i);
+    const b = E.getBattery();
+    writeLine(b + "%", i, b < batteryWarnLevel ? textColorRed : textColor);
+    i++;
+  }
 
-  // weather
+  if (showWeather) {
+    drawWeather();
+  }
+
+  if (showSteps) {
+    drawSteps(i);
+    i++;
+  }
+
+  if (showHeartRate) {
+    drawHeartRate(i);
+  }
+}
+
+function drawWeather() {
   const weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
     const currentWeather = weatherJson.weather;
@@ -82,19 +123,22 @@ function drawInfo(now) {
     writeLine(weatherTempValue,i);
     i++;
   }
+}
 
-  // steps
+function drawSteps(i) {
+  if (!showSteps) return;
+  if (i == undefined)
+    i = lastStepsRowIndex;
   const steps = getSteps();
   if (steps != undefined) {
     writeLineTopic("STEP", i);
     writeLine(steps, i);
-    i++;
   }
-
-  drawHeartRate(i);
+  lastStepsRowIndex = i;
 }
 
 function drawHeartRate(i) {
+  if (!showHeartRate) return;
   if (i == undefined)
     i = lastHeartRateRowIndex;
   writeLineTopic("HRTM", i);
@@ -155,15 +199,21 @@ function getWeather() {
 // turn on HRM when the LCD is unlocked
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
-    Bangle.setHRMPower(1,"clicompleteclk");
-    if (hrtValue == undefined)
-      hrtValue = "...";
-    else
-      hrtValueIsOld = true;
+    if (showHeartRate) {
+      Bangle.setHRMPower(1,"clicompleteclk");
+      if (hrtValue == undefined)
+        hrtValue = "...";
+      else
+        hrtValueIsOld = true;
+    }
   } else {
-    hrtValueIsOld = true;
-    Bangle.setHRMPower(0,"clicompleteclk");
+    if (showHeartRate) {
+      hrtValueIsOld = true;
+      Bangle.setHRMPower(0,"clicompleteclk");
+    }
   }
+  // Update steps and heart rate
+  drawSteps();
   drawHeartRate();
 });
 
@@ -171,25 +221,30 @@ Bangle.on('lcdPower',function(on) {
   if (on) {
     drawAll(true);
   } else {
-    hrtValueIsOld = true;
+    if (showHeartRate) {
+      hrtValueIsOld = true;
+    }
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
 });
 
-Bangle.on('HRM', function(hrm) {
-  //if(hrm.confidence > 90){
-    hrtValueIsOld = false;
-    hrtValue = hrm.bpm;
-    if (Bangle.isLCDOn())
-      drawHeartRate();
-  //} else {
-  //  hrtValue = undefined;
-  //}
-});
+if (showHeartRate) {
+  Bangle.on('HRM', function(hrm) {
+    //if(hrm.confidence > 90){
+      hrtValueIsOld = false;
+      hrtValue = hrm.bpm;
+      if (Bangle.isLCDOn())
+        drawHeartRate();
+    //} else {
+    //  hrtValue = undefined;
+    //}
+  });
+}
 
 g.clear();
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+loadSettings();
 drawAll(true);
