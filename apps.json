@@ -282,7 +282,7 @@
   {
     "id": "gbridge",
     "name": "Gadgetbridge",
-    "version": "0.24",
+    "version": "0.25",
     "description": "(NOT RECOMMENDED) Handles Gadgetbridge notifications from Android. This is now replaced by the 'Android' app.",
     "icon": "app.png",
     "type": "widget",
