@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Add posibillity to generate Wifi code.
 0.03: Forces integer scaling and adds more configuration (error correction, description, display)
+0.04: Allow scanning of QR codes from camera or file
