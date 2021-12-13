@@ -4862,7 +4862,7 @@
   "name": "Snaky",
   "shortName":"Snaky",
   "version":"0.01",
-  "description": "The classic snake game. Eat apples and don't bite your tail. Controle the snake with the touch screen.",
+  "description": "The classic snake game. Eat apples and don't bite your tail. Control the snake with the touch screen.",
   "tags": "game,fun",
   "icon": "snaky.png",
   "supports" : ["BANGLEJS2"],
