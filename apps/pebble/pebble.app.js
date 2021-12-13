@@ -34,7 +34,7 @@ function draw() {
   // turn the warning on once we have dipped below 30%
   if (E.getBattery() < 30)
     batteryWarning = true;
-  
+
   // turn the warning off once we have dipped above 40%
   if (E.getBattery() > 40)
     batteryWarning = false;
@@ -57,7 +57,7 @@ function draw() {
   g.setFontAlign(0, -1);
   g.drawString(da[0].toUpperCase(), w/4, ha); // day of week
   g.drawString(getSteps(), 3*w/4, ha);
-  
+
   // time
   // white on red for battery warning
   g.setColor(!batteryWarning ? g.theme.bg : '#f00');
@@ -71,7 +71,7 @@ function draw() {
   // contrast bar
   g.setColor(g.theme.fg);
   g.fillRect(0, h3, w, h3 + t);
-  
+
   // the bottom
   g.setColor(settings.bg);
   g.fillRect(0, h3 + t, w, h);
@@ -111,9 +111,10 @@ g.clear();
 Bangle.loadWidgets();
 /*
  * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget
+ * so we will blank out the draw() functions of each widget and change the
+ * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};}
+for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 setInterval(draw, 15000); // refresh every 15s
 draw();

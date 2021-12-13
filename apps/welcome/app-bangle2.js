@@ -244,5 +244,6 @@ setWatch(()=>{
 }, BTN1, {repeat:true});
 
 Bangle.setLCDTimeout(0);
+Bangle.setLocked(0);
 Bangle.setLCDPower(1);
 move(0);

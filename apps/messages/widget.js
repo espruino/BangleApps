@@ -1,5 +1,5 @@
-
 WIDGETS["messages"]={area:"tl",width:0,draw:function() {
+  Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
   g.reset().setBgColor((c&1) ? "#0f0" : "#030").setColor((c&1) ? "#000" : "#fff");
@@ -13,9 +13,11 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
   setTimeout(()=>WIDGETS["messages"].draw(), 1000);
-},show:function() {
+  if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
+},show:function(quiet) {
   WIDGETS["messages"].t=Date.now(); // first time
   WIDGETS["messages"].l=Date.now()-10000; // last buzz
+  if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
   WIDGETS["messages"].width=64;
   Bangle.drawWidgets();
   Bangle.setLCDPower(1);// turns screen on
@@ -33,4 +35,15 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
     if (c=="-") Bangle.buzz(500).then(()=>setTimeout(b,100));
   }
   b();
+},touch:function(b,c) {
+  var w=WIDGETS["messages"];
+  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+23) return;
+  load("messages.app.js");
 }};
+/* We might have returned here if we were in the Messages app for a
+message but then the watch was never viewed. In that case we don't
+want to buzz but should still show that there are unread messages. */
+if (global.MESSAGES===undefined) (function() {
+  var messages = require("Storage").readJSON("messages.json",1)||[];
+  if (messages.some(m=>m.new)) WIDGETS["messages"].show(true);
+})();

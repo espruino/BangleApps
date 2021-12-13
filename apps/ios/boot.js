@@ -26,6 +26,13 @@ E.on('ANCS',msg=>{
   function ancsHandler() {
     var msg = Bangle.ancsMessageQueue[0];
     NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
+
+      if(msg.preExisting === true){
+        info.new = false;
+      } else {
+        info.new = true;
+      }
+
       E.emit("notify", Object.assign(msg, info));
       Bangle.ancsMessageQueue.shift();
       if (Bangle.ancsMessageQueue.length)
@@ -49,16 +56,48 @@ E.on('notify',msg=>{
   "message" : string,
   "messageSize" : string,
   "date" : string,
+  "new" : boolean,
   "posAction" : string,
   "negAction" : string,
   "name" : string,
 */
   var appNames = {
-    "com.netflix.Netflix" : "Netflix",
-    "com.google.ios.youtube" : "YouTube",
+    "com.apple.facetime": "FaceTime",
+    "com.apple.mobilecal": "Calendar",
+    "com.apple.mobilemail": "Mail",
+    "com.apple.MobileSMS": "SMS Message",
+    "com.apple.Passbook": "iOS Wallet",
+    "com.apple.reminders": "Reminders",
+    "com.apple.shortcuts": "Shortcuts",
+    "com.atebits.Tweetie2": "Twitter",
+    "com.burbn.instagram" : "Instagram",
+    "com.facebook.Facebook": "Facebook",
+    "com.facebook.Messenger": "FB Messenger",
+    "com.google.Chromecast" : "Google Home",
+    "com.google.Gmail" : "GMail",
     "com.google.hangouts" : "Hangouts",
+    "com.google.ios.youtube" : "YouTube",
+    "com.hammerandchisel.discord" : "Discord",
+    "com.ifttt.ifttt" : "IFTTT",
+    "com.jumbo.app" : "Jumbo",
+    "com.linkedin.LinkedIn" : "LinkedIn",
+    "com.nestlabs.jasper.release" : "Nest",
+    "com.netflix.Netflix" : "Netflix",
+    "com.reddit.Reddit" : "Reddit",
+    "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
-    "com.atebits.Tweetie2": "Twitter"
+    "com.spotify.client": "Spotify",
+    "com.tinyspeck.chatlyio": "Slack",
+    "com.toyopagroup.picaboo": "Snapchat",
+    "com.ubercab.UberClient": "Uber",
+    "com.ubercab.UberEats": "UberEats",
+    "com.wordfeud.free": "WordFeud",
+    "com.zhiliaoapp.musically": "TikTok",
+    "net.whatsapp.WhatsApp": "WhatsApp",
+    "nl.ah.Appie": "Albert Heijn",
+    "nl.postnl.TrackNTrace": "PostNL",
+    "ph.telegra.Telegraph": "Telegram",
+
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
@@ -70,6 +109,7 @@ E.on('notify',msg=>{
     t : msg.event,
     id : msg.uid,
     src : appNames[msg.appId] || msg.appId,
+    new : msg.new,
     title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
     subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
     body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer)
