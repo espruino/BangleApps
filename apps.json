@@ -4868,7 +4868,7 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"snaky.app.js","url":"app.js"},
+    {"name":"snaky.app.js","url":"snaky.js"},
     {"name":"snaky.img","url":"snaky-icon.js","evaluate":true}
   ]
 }
