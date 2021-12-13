@@ -4876,7 +4876,6 @@
     "readme": "README.md",
     "icon": "rebble.png",
     "dependencies": {"mylocation":"app"},
-    "dependencies": {"widpedom":"widget"},
     "screenshots": [{"url":"screenshot_rebble.png"}],
     "type": "clock",
     "tags": "clock",
