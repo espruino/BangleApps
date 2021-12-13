@@ -18,7 +18,7 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var color_options = ['Green','Orange','Cyan','Perple','Red','Blue'];
+  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   
   E.showMenu({
