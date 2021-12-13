@@ -3,34 +3,71 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
+    <b>Datasource: </b></br>
     <input type="radio" id="useTEXT" name="mode" checked/>
-    <label for="useTEXT">Use text (for example an URL):</label>
-    <input type="text" id="text" class="form-input" value="www.espruino.com">
-    <hr>
-    
+    <label for="useTEXT">Text</label></br>
     <input type="radio" id="useWIFI" name="mode"/>
-    <label for="useWIFI">Use Wifi Credentials:</label>
-    <input type="text" id="ssid" class="form-input" value="">
-    <p>Wifi password: <input type="password" id="password" class="form-input" value=""></p>
-    <div class="form-group">
-            <label for="encryption" class="control-label">Encryption</label>
-            <div class="input-group">
-                <select name="encryption" id="encryption" class="form-control">
-                    <option value="WPA">WPA/WPA2</option>
-                    <option value="WEP">WEP</option>
-                    <option value="nopass">None</option>
-                </select>
-            </div>
+    <label for="useWIFI">Wifi Credentials</label></br>
+    <input type="radio" id="useFILE" name="mode"/>
+    <label for="useFILE">QR image</label></br>
+    <input type="radio" id="useCAM" name="mode"/>
+    <label for="useCAM">QR scan</label></br>
+    <hr>
+
+    <div id="srcText">
+        <p>Text/URL: <input type="text" id="text" class="form-input" value="http://www.espruino.com"></p>
     </div>
-    <div>
-      <input type="checkbox" id="hidden" name="hidden"/>
-      <label for="hidden">Wifi is hidden</label>
+
+    <div id="srcScanCam">
+        <div>
+            <video id="qrVideo" align="center" width="50%"></video>
+        </div>
+        <div>
+            <select id="camList">
+            </select>
+        </div>
+        <div>
+            <button id="flashToggle">Flash: <span id="flashState">off</span></button>
+        </div>
+        <br>
+        Detected QR code:
+        <span id="camQrResult">None</span>
+        <br>
+        <button id="startButton" class="btn btn-primary">Start</button>
+        <button id="stopButton" class="btn btn-primary">Stop</button>
     </div>
-    
+
+    <div id="srcScanFile">
+        <input type="file" id="fileSelector">
+        <br>
+        Detected QR code:
+        <span id="fileQrResult">None</span>
+    </div>
+
+    <div id="srcWifi">
+        <p>Wifi name: <input type="text" id="ssid" class="form-input" value=""></p>
+        <p>Wifi password: <input type="password" id="password" class="form-input" value=""></p>
+        <div class="form-group">
+                <label for="encryption" class="control-label">Encryption</label>
+                <div class="input-group">
+                    <select name="encryption" id="encryption" class="form-control">
+                        <option value="WPA">WPA/WPA2</option>
+                        <option value="WEP">WEP</option>
+                        <option value="nopass">None</option>
+                    </select>
+                </div>
+
+        </div>
+        <div>
+          <input type="checkbox" id="hidden" name="hidden"/>
+          <label for="hidden">Wifi is hidden</label>
+        </div>
+    </div>
+
     <hr>
     <p id="errors" style="color:Tomato;"></p>
     <p>Try your QR Code: <div id="qrcode"></div></p>
-    
+
     <hr>
     <p>Additional options:</p>
     <input type="checkbox" id="preventIntegerScaling" name="preventIntegerScaling"/>
@@ -51,7 +88,7 @@
             <option value="3">Q - Quartile - 25%</option>
             <option value="2">H - High - 30%</option>
         </select>
-    </div>    
+    </div>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
 
@@ -59,25 +96,75 @@
     <script src="../../core/lib/qrcode.min.js"></script><!-- https://davidshimjs.github.io/qrcodejs/ -->
     <script src="../../core/lib/heatshrink.js"></script>
     <script src="../../core/lib/imageconverter.js"></script>
-
+    <script src="./qr-scanner.umd.min.js"></script><!-- https://github.com/nimiq/qr-scanner -->
     <script>
-      var targetSize = 200;
-
-      function onInit(device) {
-        if (device && device.info && device.info.g) {
-          border = 4;
-          targetSize = Math.min(device.info.g.width - border, device.info.g.height - border);
+        var targetSize = 200;
+        var deviceWidth = targetSize;
+        var deviceHeight = targetSize;
+        var border = 4;
+        
+        var scanner = null;
+        var qrcode = null;
+        
+        
+        function onInit(device) {
+            console.info("onInit" + device);
+            if (device && device.info && device.info.g) {
+                deviceWidth = device.info.g.width;
+                deviceHeight = device.info.g.height;
+            }
+            refreshQRCode();
         }
-        qrcode = new QRCode("qrcode", {
-          text: document.getElementById("text").value,
-          colorDark : "#000000",
-          colorLight : "#ffffff",
-        });
-        refreshQRCode();
-      }
 
-      //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
-      function escapeString (string) {
+        const updateFlashAvailability = () => {
+            scanner.hasFlash().then(hasFlash => {
+                document.getElementById('flashToggle').style.display = hasFlash ? 'inline-block' : 'none';
+            });
+        };
+
+        function setResult(label, result) {
+            console.info("setResult " + result);
+            label.textContent = result;
+            scanner.stop();
+            refreshQRCode();
+        }
+
+        function initQrScanner() {
+            console.info("initQrScanner");
+            QrScanner.WORKER_PATH = './qr-scanner-worker.min.js';
+            if (scanner == null) {
+                scanner = new QrScanner(document.getElementById('qrVideo'), result => setResult(document.getElementById('camQrResult'), result), error => {
+                    document.getElementById('camQrResult').textContent = error;
+                    document.getElementById('camQrResult').style.color = 'inherit';
+                });
+            }
+        }
+
+        function initQrCam(){
+            scanner.start().then(() => {
+            updateFlashAvailability();
+            QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => {
+                const option = document.createElement('option');
+                option.value = camera.id;
+                option.text = camera.label;
+                document.getElementById('camList').add(option);
+                }));
+            });
+        }
+
+        function toggleVis(id){
+            console.info("Got id", id);
+            ["srcScanFile", "srcText", "srcWifi", "srcScanCam"].forEach(function (item){
+              document.getElementById(item).style.display = "none";
+            });
+            if (id != undefined && id != null) document.getElementById(id).style.display = "block";
+            refreshQRCode();
+        }
+
+        toggleVis("srcText");
+
+        //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L168
+        function escapeString (string) {
         var to_escape = ['\\', ';', ',', ':', '"'];
         var hex_only = /^[0-9a-f]+$/i;
         var output = "";
@@ -90,83 +177,116 @@
             }
         }
         return output;
-      }
-      function generateWifiString(ssid, password, hidden,encryption){
-        //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L198
-        var qrstring = 'WIFI:S:'+escapeString(ssid)+';T:'+encryption+';P:'+escapeString(password)+';';
-        if (hidden) {
-            qrstring += 'H:true';
         }
-        return qrstring;
-      }
-      function refreshQRCode(){
-        document.getElementById("errors").innerText="";
-        qrcode.clear(); // clear the code.
-        var qrText = "";
-        if(document.getElementById("useWIFI").checked){
-            const ssid = document.getElementById("ssid").value;
-            const password = document.getElementById("password").value;
-            const encryption = document.getElementById("encryption").value;
-            const hidden = document.getElementById("hidden").checked;
-            const wifiString = generateWifiString(ssid, password, hidden, encryption);
-            qrText= wifiString;
-        } else {
-            qrText = document.getElementById("text").value;
+        function generateWifiString(ssid, password, hidden,encryption){
+            //https://github.com/evgeni/qifi/blob/gh-pages/index.html#L198
+            var qrstring = 'WIFI:S:'+escapeString(ssid)+';T:'+encryption+';P:'+escapeString(password)+';';
+            if (hidden) {
+                qrstring += 'H:true';
+            }
+            return qrstring;
         }
-        qrcode._htOption.text = qrText;
-        qrcode._htOption.correctLevel = parseInt(document.getElementById("correction").value);
-        try {
-            qrcode.makeCode(qrText);
-        } catch (error) {
-            document.getElementById("errors").innerText="Error: QR could not be created.";
-            console.error(error);
-        }
-        
-        var finalSizeQr=targetSize;
-        var finalSizeCanvas=targetSize;
-        
-        var integerScale = Math.max(Math.floor(targetSize / (qrcode._oQRCode.moduleCount + 1)),1);
-        if (integerScale == 1) document.getElementById("errors").innerText = "Warning, QR will probably be too small to properly scan. Try less data or less error correction.";
-            
-        if (!document.getElementById("preventIntegerScaling").checked){
-            
-            finalSizeQr = integerScale * (qrcode._oQRCode.moduleCount + 1);
-            finalSizeCanvas = finalSizeQr - 1;
-        }
-         
-        qrcode._htOption.width = finalSizeQr;
-        qrcode._htOption.height = finalSizeQr;
-        
-        document.getElementsByTagName("canvas")[0].width = finalSizeCanvas;
-        document.getElementsByTagName("canvas")[0].height = finalSizeCanvas;
-        try {
-            qrcode.makeCode(qrText);
-        } catch (error) {
-            document.getElementById("errors").innerText="Error: QR could not be created.";
-            console.error(error);
-        }
-      }
-      var qrcode;
+        function refreshQRCode(){
+            if (qrcode == null){
+                qrcode = new QRCode("qrcode", {
+                    text: document.getElementById("text").value,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff"
+                });
+            }
+            document.getElementById("errors").innerText="";
+            qrcode.clear(); // clear the code.
+            var qrText = "";
+            if(document.getElementById("useWIFI").checked){
+                const ssid = document.getElementById("ssid").value;
+                const password = document.getElementById("password").value;
+                const encryption = document.getElementById("encryption").value;
+                const hidden = document.getElementById("hidden").checked;
+                const wifiString = generateWifiString(ssid, password, hidden, encryption);
+                qrText= wifiString;
+            } else if (document.getElementById("useCAM").checked) {
+                qrText= document.getElementById("camQrResult").innerText;
+            } else if (document.getElementById("useFILE").checked) {
+                qrText= document.getElementById("fileQrResult").innerText;
+            } else {
+                qrText = document.getElementById("text").value;
+            }
 
-      document.getElementById("ssid").addEventListener("change",refreshQRCode);
-      document.getElementById("text").addEventListener("change",refreshQRCode);
-      document.getElementById("password").addEventListener("change",refreshQRCode);
-      document.getElementById("encryption").addEventListener("change",refreshQRCode);
-      document.getElementById("hidden").addEventListener("change",refreshQRCode);
-      document.getElementById("useTEXT").addEventListener("change",refreshQRCode);
-      document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
-      document.getElementById("preventIntegerScaling").addEventListener("change",refreshQRCode);
-      document.getElementById("correction").addEventListener("change",refreshQRCode);
-      document.getElementById("upload").addEventListener("click", function() {
-        var content = document.getElementById("text").value;
-        if(document.getElementById("useWIFI").checked){
-            content = document.getElementById("ssid").value
+
+
+            console.info("Given qrtext was: " + qrText);
+            qrcode._htOption.text = qrText;
+            qrcode._htOption.correctLevel = parseInt(document.getElementById("correction").value);
+            try {
+                qrcode.makeCode(qrText);
+            } catch (error) {
+                document.getElementById("errors").innerText="Error: QR could not be created.";
+                console.error(error);
+            }
+
+            targetSize = Math.min(deviceWidth - border, deviceHeight - border);
+            console.info("Targetsize: " + targetSize);
+            var finalSizeQr=targetSize;
+            var finalSizeCanvas=targetSize;
+
+            var integerScale = Math.max(Math.floor(targetSize / (qrcode._oQRCode.moduleCount + 1)),1);
+            if (integerScale == 1) document.getElementById("errors").innerText = "Warning, QR will probably be too small to properly scan. Try less data or less error correction.";
+
+            console.info("IntegerScale: " + integerScale);
+
+            if (!document.getElementById("preventIntegerScaling").checked){
+                finalSizeQr = integerScale * (qrcode._oQRCode.moduleCount + 1);
+                finalSizeCanvas = finalSizeQr - 1;
+            }
+            
+            console.info("FinalSizeQr: " + finalSizeQr);
+            console.info("FinalSizeCanvas: " + finalSizeCanvas);
+
+            qrcode._htOption.width = finalSizeQr;
+            qrcode._htOption.height = finalSizeQr;
+
+            document.getElementsByTagName("canvas")[0].width = finalSizeCanvas;
+            document.getElementsByTagName("canvas")[0].height = finalSizeCanvas;
+            try {
+                qrcode.makeCode(qrText);
+            } catch (error) {
+                document.getElementById("errors").innerText="Error: QR could not be created.";
+                console.error(error);
+            }
         }
-        if(!(document.getElementById("description").value === "")){
-            content = document.getElementById("description").value;
-        }
-        var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
-        var app = `var img = ${img};
+
+        document.getElementById("useTEXT").addEventListener("change",function(){toggleVis("srcText");});
+        document.getElementById("useCAM").addEventListener("change",function(){
+            initQrScanner();
+            initQrCam();
+            toggleVis("srcScanCam");
+        });
+        document.getElementById("useFILE").addEventListener("change",function(){
+            initQrScanner();
+            toggleVis("srcScanFile");
+        });
+        document.getElementById("useWIFI").addEventListener("change",function(){toggleVis("srcWifi");});
+        document.getElementById("ssid").addEventListener("change",refreshQRCode);
+        document.getElementById("text").addEventListener("change",refreshQRCode);
+        document.getElementById("password").addEventListener("change",refreshQRCode);
+        document.getElementById("encryption").addEventListener("change",refreshQRCode);
+        document.getElementById("hidden").addEventListener("change",refreshQRCode);
+        document.getElementById("useTEXT").addEventListener("change",refreshQRCode);
+        document.getElementById("useCAM").addEventListener("change",refreshQRCode);
+        document.getElementById("useFILE").addEventListener("change",refreshQRCode);
+        document.getElementById("useWIFI").addEventListener("change",refreshQRCode);
+        document.getElementById("preventIntegerScaling").addEventListener("change",refreshQRCode);
+        document.getElementById("correction").addEventListener("change",refreshQRCode);
+        document.getElementById("upload").addEventListener("click", function() {
+            var content = document.getElementById("text").value;
+            if(document.getElementById("useWIFI").checked){
+                content = document.getElementById("ssid").value
+            }
+            if(!(document.getElementById("description").value === "")){
+                content = document.getElementById("description").value;
+            }
+            var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
+            var app = `var img = ${img};
 ${document.getElementById("boostBacklight").checked ? 'Bangle.setLCDBrightness(1);' : ''}
 ${document.getElementById("stayOn").checked ? 'Bangle.setLCDTimeout(0);' : ''}
 ${document.getElementById("hideDescription").checked ? '' : `var content = ${JSON.stringify(content)};`}
@@ -178,14 +298,40 @@ g.drawString(content,g.getWidth()/2,g.getHeight()-(g.getHeight()-img[1])/4));
 `}
 g.setColor(1,1,1);
 `;
-        sendCustomizedApp({
-          storage:[
-            {name:"qrcode.app.js", url:"app.js", content:app},
-          ]
+            sendCustomizedApp({
+                storage:[{name:"qrcode.app.js", url:"app.js", content:app},]
+            });
+
         });
 
-      });
+
+        document.getElementById('camList').addEventListener('change', event => {
+            scanner.setCamera(event.target.value).then(updateFlashAvailability);
+        });
+
+        document.getElementById('flashToggle').addEventListener('click', () => {
+            scanner.toggleFlash().then(() => document.getElementById('flashState').textContent = scanner.isFlashOn() ? 'on' : 'off');
+        });
+
+        document.getElementById('startButton').addEventListener('click', () => {
+            scanner.start();
+        });
+
+        document.getElementById('stopButton').addEventListener('click', () => {
+            scanner.stop();
+        });
+
+        document.getElementById('fileSelector').addEventListener('change', event => {
+            const file = document.getElementById('fileSelector').files[0];
+            if (!file) {
+                return;
+            }
+            QrScanner.scanImage(file)
+                .then(result => setResult(document.getElementById('fileQrResult'), result))
+                .catch(e => setResult(document.getElementById('fileQrResult'), e || 'No QR code found.'));
+        });
 
     </script>
+
   </body>
 </html>

@@ -1,9 +1,9 @@
 (function(){
   let COLORS = {
-    'white':    "#fff",
-    'black':    "#000",
+    'white':    g.theme.dark ? "#000" : "#fff",
+    'black':    g.theme.dark ? "#fff" : "#000",
     'charging': "#08f",
-    'high':     "#000",
+    'high':     g.theme.dark ? "#fff" : "#000",
     'low':      "#f00",
   };
 
