@@ -3,7 +3,8 @@
   
   var settings = Object.assign({
     showClocks: true,
-    showLaunchers: true
+    showLaunchers: true,
+    direct: false
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -29,5 +30,13 @@
         writeSettings();
       }
     },
+    'Direct launch': {
+      value: settings.direct,
+      format: v => v?"On":"Off",
+      onchange: v => {
+        settings.direct = v;
+        writeSettings();
+      }
+    }
   });
 })

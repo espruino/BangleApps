@@ -5,6 +5,7 @@
 var settings = Object.assign({
   showClocks: true,
   showLaunchers: true,
+  direct: false,
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 var s = require("Storage");
@@ -63,7 +64,7 @@ function drawPage(p){
     }
     for (var i=0;i<4;i++) {
         if (!apps[p*4+i]) return i;
-        draw_icon(p,i,selected==i);
+        draw_icon(p,i,selected==i && !settings.direct);
     }
     g.flip();
 }
@@ -92,9 +93,9 @@ Bangle.on("touch",(_,p)=>{
     for (i=0;i<4;i++){
         if((page*4+i)<Napps){
             if (isTouched(p,i)) {
-                draw_icon(page,i,true);
-                if (selected>=0) {
-                    if (selected!=i){
+                draw_icon(page,i,true && !settings.direct);
+                if (selected>=0 || settings.direct) {
+                    if (selected!=i && !settings.direct){
                         draw_icon(page,selected,false);
                     } else {
                         load(apps[page*4+i].src);
