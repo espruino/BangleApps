@@ -85,7 +85,7 @@ function checkForFileOnServer() {
   	});
   }
 
-  var regex = new RegExp("_banglejs2");
+  var regex = new RegExp("_banglejs2.*zip$");
 
 	var domFirmwareList = document.getElementById("latest-firmware-list");
   var domFirmware = document.getElementById("latest-firmware");
@@ -107,7 +107,7 @@ function checkForFileOnServer() {
 			});
       console.log("Finished check for firmware files...");
       var fwlinks = document.querySelectorAll(".fw-link");
-      for (var i=0;i<fwlinks.length;fwlinks++)
+      for (var i=0;i<fwlinks.length;i++)
         fwlinks[i].addEventListener("click", e => {
           e.preventDefault();
           var url = e.target.href;
