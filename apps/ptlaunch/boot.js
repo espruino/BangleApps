@@ -5,21 +5,6 @@ var log = (message) => {
   }
 };
 
-var CIRCLE_RADIUS = 25;
-var CIRCLE_RADIUS_2 = CIRCLE_RADIUS * CIRCLE_RADIUS;
-
-var CIRCLES = [
-  { x: 25, y: 25, i: 0 },
-  { x: 87, y: 25, i: 1 },
-  { x: 150, y: 25, i: 2 },
-  { x: 25, y: 87, i: 3 },
-  { x: 87, y: 87, i: 4 },
-  { x: 150, y: 87, i: 5 },
-  { x: 25, y: 150, i: 6 },
-  { x: 87, y: 150, i: 7 },
-  { x: 150, y: 150, i: 8 },
-];
-
 var storedPatterns;
 var positions = [];
 var dragHandler = (position) => {
@@ -28,7 +13,20 @@ var dragHandler = (position) => {
   debounce().then(() => {
     log(positions.length);
 
-    var circlesClone = cloneCirclesArray();
+    var CIRCLE_RADIUS = 25;
+    var CIRCLE_RADIUS_2 = CIRCLE_RADIUS * CIRCLE_RADIUS;
+
+    var circles = [
+      { x: 25, y: 25, i: 0 },
+      { x: 87, y: 25, i: 1 },
+      { x: 150, y: 25, i: 2 },
+      { x: 25, y: 87, i: 3 },
+      { x: 87, y: 87, i: 4 },
+      { x: 150, y: 87, i: 5 },
+      { x: 25, y: 150, i: 6 },
+      { x: 87, y: 150, i: 7 },
+      { x: 150, y: 150, i: 8 },
+    ];
     var pattern = [];
 
     var step = Math.floor(positions.length / 100) + 1;
@@ -38,92 +36,92 @@ var dragHandler = (position) => {
     for (var i = 0; i < positions.length; i += step) {
       p = positions[i];
 
-      circle = circlesClone[0];
+      circle = circles[0];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(0, 1);
+          circles.splice(0, 1);
         }
       }
 
-      circle = circlesClone[1];
+      circle = circles[1];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(1, 1);
+          circles.splice(1, 1);
         }
       }
 
-      circle = circlesClone[2];
+      circle = circles[2];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(2, 1);
+          circles.splice(2, 1);
         }
       }
 
-      circle = circlesClone[3];
+      circle = circles[3];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(3, 1);
+          circles.splice(3, 1);
         }
       }
 
-      circle = circlesClone[4];
+      circle = circles[4];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(4, 1);
+          circles.splice(4, 1);
         }
       }
 
-      circle = circlesClone[5];
+      circle = circles[5];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(5, 1);
+          circles.splice(5, 1);
         }
       }
 
-      circle = circlesClone[6];
+      circle = circles[6];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(6, 1);
+          circles.splice(6, 1);
         }
       }
-      circle = circlesClone[7];
+      circle = circles[7];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(7, 1);
+          circles.splice(7, 1);
         }
       }
 
-      circle = circlesClone[8];
+      circle = circles[8];
       if (circle) {
         a = p.x - circle.x;
         b = p.y - circle.y;
         if (CIRCLE_RADIUS_2 - (a * a + b * b) >= 0) {
           pattern.push(circle.i);
-          circlesClone.splice(8, 1);
+          circles.splice(8, 1);
         }
       }
     }
@@ -161,16 +159,6 @@ var debounce = (delay) => {
       resolve();
     }, delay || 500);
   });
-};
-
-var cloneCirclesArray = () => {
-  var circlesClone = Array(CIRCLES.length);
-
-  for (var i = 0; i < CIRCLES.length; i++) {
-    circlesClone[i] = CIRCLES[i];
-  }
-
-  return circlesClone;
 };
 
 (function () {
