@@ -4862,8 +4862,9 @@
   "name": "Snaky",
   "shortName":"Snaky",
   "version":"0.01",
-  "description": "Like snike",
-  "icon": "app.png",
+  "description": "The classic snake game. Eat apples and don't bite your tail. Controle the snake with the touch screen.",
+  "tags": "game,fun",
+  "icon": "snaky.png",
   "tags": "game",
   "supports" : ["BANGLEJS2"],
   "storage": [
