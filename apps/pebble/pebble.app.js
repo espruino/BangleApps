@@ -101,7 +101,17 @@ function drawCalendar(x,y,wi,th,str) {
 }
 
 function getSteps() {
-  if (WIDGETS.wpedom !== undefined) {
+  var steps = 0;
+  let health;
+  try {
+    health = require("health");
+  } catch (e) {
+    // Module health not found
+  }
+  if (health != undefined) {
+    health.readDay(new Date(), h=>steps+=h.steps);
+    return steps;
+  } else if (WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
   }
   return '????';
