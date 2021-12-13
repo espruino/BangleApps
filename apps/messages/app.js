@@ -66,7 +66,7 @@ function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
 }
 function getNotificationImage() {
-  return atob("mEwyBC/AH4A/AH4A/AEnztgBHJP5ZZAJZV/LbZh/LsZh/LoVMJpv9if+3X0l5h/XrP/rv///9+7D/Lq5fCvpfB/0XC6Jf/L/5dUphf/Xt5fZMOZf/L/5f/L/dmqlmmgBdvvTL6kcL4P92xfdLL4BFt009eMIqP0h/9mnzxpfbLsoBD4lvI6YBVLuIBBytyJKWt/mRL7JdrAIfUhxHP/9d////v3Xv4BHwuzL6G+L4P+rC9h59b+/fAMf2JZ30l/9qnz1q9ft1UQoIAnVoWMV55ddAIeW2+/nQBn41X9kOLq1MLo5fCqhhNANdummdmPUMZnrxnT9pbJX6IBzuvzytyM4Ok+ADBxuSOIKvBL/7TfL/4BeX7l+y2m/IBtz3Yu1VIJZdNMJtuqn3/4Ax59cL9E08+9L+O3jRfdKoLBLdoIBtt1VLrrBNAP5fVMP5dfMP5dhMP5dhMfVULcp5vKP5hdJv5fdJf5hfJP5hdIv5fdIf4A/AH4A/AH4A/AFoA==");
+  return atob("GBiBAAAAAAf/4AZ+YAQAIAQAIAQAAAQ//AR//gR+fgR+fgR8PgR8PgR8PgR4HgR//gR//gQ//AQcAAQQIAQAIAQAIAYAYAf/4AAAAA==");
 }
 function getFBIcon() {
   return atob("AAABgA/wH/g/HD4cPnx+fngePBw+fD58HngOcAAAAAA=");
@@ -89,7 +89,7 @@ function getMessageImage(msg) {
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
-  if (s=="slack") return atob("AAAAwADAGPgZ+B/gf2B8cA4+Bv4H+B+YHxgDAAMAAAA=");
+  if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
   if (s=="facebook") return getFBIcon();
   if (s=="messenger") return getFBIcon();
   if (s=="mail") return getMailIcon();

@@ -129,7 +129,7 @@ E.on('AMS',a=>{
     var msg = { t : "modify", id : "music", title:"Music" };
     if (a.id=="artist")  msg.artist = m;
     else if (a.id=="album")  msg.album = m;
-    else if (a.id=="title")  msg.tracl = m;
+    else if (a.id=="title")  msg.track = m;
     else return; // duration? need to reformat
     require("messages").pushMessage(msg);
   }
