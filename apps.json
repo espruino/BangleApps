@@ -3305,8 +3305,10 @@
     "storage": [
       {"name":"dtlaunch.app.js","url":"app-b1.js", "supports": ["BANGLEJS"]},
       {"name":"dtlaunch.app.js","url":"app-b2.js", "supports": ["BANGLEJS2"]},
+      {"name":"dtlaunch.settings.js","url":"settings.js"},
       {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"dtlaunch.json"}]
   },
   {
     "id": "HRV",
