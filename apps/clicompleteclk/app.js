@@ -90,7 +90,7 @@ function drawInfo(now) {
   if (showBattery) {
     writeLineTopic("BATT", i);
     const b = E.getBattery();
-    writeLine(b + "%", i, b > batteryWarnLevel ? textColor : textColorRed);
+    writeLine(b + "%", i, b < batteryWarnLevel ? textColorRed : textColor);
     i++;
   }
 
