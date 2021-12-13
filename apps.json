@@ -4936,10 +4936,11 @@
     "id": "coretemp",
     "name": "Core Temp Display",
     "version": "0.01",
-    "description": "Display CoreTemp sensor data",
+    "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
     "type": "app",
     "tags": "health",
+    "readme": "README.md"
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"coretemp.boot.js","url":"boot.js"},
