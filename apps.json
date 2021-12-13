@@ -4861,6 +4861,7 @@
     ]
   },
   {
+    "id": "clicompleteclk",
     "name": "CLI complete clock",
     "shortName":"CLI cmplt clock",
     "version":"0.03",
