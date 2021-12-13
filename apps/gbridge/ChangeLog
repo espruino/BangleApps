@@ -24,3 +24,5 @@
 0.22: Respect Quiet Mode
 0.23: Allow notification dismiss to remove from phone too
 0.24: tag HRM power requests to allow this to work alongside other widgets/apps (fix #799)
+0.25: workaround call notification
+	  Fix inflated step number

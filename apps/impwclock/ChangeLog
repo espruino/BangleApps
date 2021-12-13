@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Stopped watchface from flashing every interval
 0.03: Move to Bangle.setUI to launcher support
+0.04: Tweaks for compatibility with BangleJS2
