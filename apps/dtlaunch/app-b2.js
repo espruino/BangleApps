@@ -28,7 +28,7 @@ const YOFF = 30;
 function draw_icon(p,n,selected) {
     var x = (n%2)*72+XOFF; 
     var y = n>1?72+YOFF:YOFF;
-    (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+10,y+2,x+60,y+52);
+    (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+11,y+3,x+60,y+52);
     g.clearRect(x+12,y+4,x+59,y+51);
     g.setColor(g.theme.fg);
     try{g.drawImage(apps[p*4+n].icon,x+12,y+4);} catch(e){}
