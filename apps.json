@@ -4868,7 +4868,7 @@
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"snaky.app.js","url":"app.js"},
-    {"name":"snaky.img","url":"app-icon.js","evaluate":true}
+    {"name":"snaky.img","url":"snaky-icon.js","evaluate":true}
   ]
 }
 ]
