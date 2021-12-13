@@ -98,7 +98,7 @@
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Display notifications/music/etc from Gadgetbridge on Android. This replaces the old Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
