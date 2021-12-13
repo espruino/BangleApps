@@ -4846,7 +4846,21 @@
     ],
     "data": [{"name":"ptlaunch.patterns.json"}]
   },
-  { "id": "clicompleteclk",
+  { "id": "snaky",
+    "name": "Snaky",
+    "shortName":"Snaky",
+    "version":"0.01",
+    "description": "The classic snake game. Eat apples and don't bite your tail. Control the snake with the touch screen.",
+    "tags": "game,fun",
+    "icon": "snaky.png",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"snaky.app.js","url":"snaky.js"},
+      {"name":"snaky.img","url":"snaky-icon.js","evaluate":true}
+    ]
+  },
+  {
     "name": "CLI complete clock",
     "shortName":"CLI cmplt clock",
     "version":"0.03",
