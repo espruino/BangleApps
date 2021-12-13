@@ -1,7 +1,5 @@
 # Messages app
 
-**THIS APP IS CURRENTLY BETA**
-
 This app handles the display of messages and message notifications. It stores
 a list of currently received messages and allows them to be listed, viewed,
 and responded to.
@@ -17,7 +15,7 @@ and `Messages`:
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
 * `Unread Timer` - when a new message is received we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
-to the clock where `MESSAGES` will be shown in the Widget bar.
+to the clock where a ringing bell will be shown in the Widget bar.
 
 
 ## Requests

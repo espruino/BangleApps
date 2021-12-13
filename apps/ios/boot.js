@@ -110,7 +110,7 @@ E.on('notify',msg=>{
     '2019':"'"
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
-  if (appNames[msg.appId]) msg.a
+  //if (appNames[msg.appId]) msg.a
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
@@ -130,6 +130,7 @@ E.on('AMS',a=>{
     if (a.id=="artist")  msg.artist = m;
     else if (a.id=="album")  msg.album = m;
     else if (a.id=="title")  msg.track = m;
+    else if (a.id=="duration")  msg.track = m;
     else return; // duration? need to reformat
     require("messages").pushMessage(msg);
   }

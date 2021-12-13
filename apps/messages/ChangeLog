@@ -15,3 +15,7 @@
 0.10: Respect the 'new' attribute if it was set from iOS integrations
 0.11: Open app when touching the widget (Bangle.js 2 only)
 0.12: New notification icons, more app icons
+0.13: New animated widget bell icon (instead of large blinking 'MESSAGES')
+      New app icon
+      Added screenshot
+      Extra app-specific notification icons
