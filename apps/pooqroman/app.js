@@ -769,7 +769,7 @@ class Clock {
         this.rates.clock = this.timescales[this.options.resolution];
         this.active();
         for (const l in this.listeners) {
-            this.listeners[l] && Bangle.on(l, this.listeners[l]);
+            Bangle.on(l, this.listeners[l]);
         }
         Bangle.setUI('clock');
         return this;
