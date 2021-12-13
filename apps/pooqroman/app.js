@@ -668,10 +668,10 @@ class Clock {
         this.options.on('done', () => this.start());
         
         this.listeners = {
-            lcdPower: on => on ? this.active() : this.inactive(),
             charging: _ => {face.doIcons('charging'); this.active();},
             lock: _ => {face.doIcons('locked'); this.active();},
             faceUp: up => {this.conservative = !up; this.active();},
+            twist: _ => this.options.autolight && Bangle.setLCDPower(true),
             drag: e => {
                 if (this.t0) {
                     if (e.b) {
@@ -699,8 +699,6 @@ class Clock {
                 }
             }
         };
-        this.options.autolight && 
-          (this.listeners.twist = _ => Bangle.setLCDBrightness(1));
     }
 
     redraw(rate) {
@@ -771,7 +769,7 @@ class Clock {
         this.rates.clock = this.timescales[this.options.resolution];
         this.active();
         for (const l in this.listeners) {
-            Bangle.on(l, this.listeners[l]);
+            this.listeners[l] && Bangle.on(l, this.listeners[l]);
         }
         Bangle.setUI('clock');
         return this;
