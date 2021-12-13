@@ -138,6 +138,10 @@ class RomanOptions extends Options {
                 onchange: x => this.calendric = x,
                 format: x => ['none', 'day', 'date'][x]
             },
+            'Auto-Illum.': {
+                init: _ => this.autolight,
+                onchange: x => this.autolight = x
+            },
             Defaults: _ => {this.reset(); this.interact();}
         };
     }
@@ -164,6 +168,7 @@ RomanOptions.defaults = {
     alarmFg: '#f00',
     timerFg: '#0f0',
     activeFg: g.theme.fg2,
+    autolight: true,
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -664,8 +669,8 @@ class Clock {
         
         this.listeners = {
             lcdPower: on => on ? this.active() : this.inactive(),
-            charging: () => {face.doIcons('charging'); this.active();},
-            lock: () => {face.doIcons('locked'); this.active();},
+            charging: _ => {face.doIcons('charging'); this.active();},
+            lock: _ => {face.doIcons('locked'); this.active();},
             faceUp: up => {this.conservative = !up; this.active();},
             drag: e => {
                 if (this.t0) {
@@ -694,6 +699,8 @@ class Clock {
                 }
             }
         };
+        this.options.autolight && 
+          (this.listeners.twist = _ => Bangle.setLCDBrightness(1));
     }
 
     redraw(rate) {
@@ -728,7 +735,6 @@ class Clock {
         }
         const delay = rate - now % rate + 1;
         this.refresh = true;
-        
         if (rate !== prev) {
             this.inactive();
             this.redraw(rate);
