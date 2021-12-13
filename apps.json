@@ -4117,14 +4117,17 @@
   {
     "id": "vectorclock",
     "name": "Vector Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A digital clock that uses the built-in vector font.",
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
-    "screenshots": [{"url":"bangle1-vector-clock-screenshot.png"}],
+    "screenshots": [
+      {"url":"bangle2-vector-clock-screenshot.png"},
+      {"url":"bangle1-vector-clock-screenshot.png"}
+    ],
     "storage": [
       {"name":"vectorclock.app.js","url":"app.js"},
       {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
