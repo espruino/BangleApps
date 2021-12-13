@@ -4940,7 +4940,7 @@
     "icon": "coretemp.png",
     "type": "app",
     "tags": "health",
-    "readme": "README.md"
+    "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"coretemp.boot.js","url":"boot.js"},
