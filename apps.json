@@ -4931,5 +4931,21 @@
       {"name":"awairmonitor.app.js","url":"app.js"},
       {"name":"awairmonitor.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "coretemp",
+    "name": "Core Temp Display",
+    "version": "0.01",
+    "description": "Display CoreTemp device sensor data",
+    "icon": "coretemp.png",
+    "type": "app",
+    "tags": "health",
+    "readme": "README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"coretemp.boot.js","url":"boot.js"},
+      {"name":"coretemp.app.js","url":"coretemp.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
+    ]
   }
 ]
