@@ -65,14 +65,16 @@ E.on('notify',msg=>{
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
+    "com.apple.mobilephone": "Phone",
     "com.apple.MobileSMS": "SMS Message",
     "com.apple.Passbook": "iOS Wallet",
+    "com.apple.podcasts": "Podcasts",
     "com.apple.reminders": "Reminders",
     "com.apple.shortcuts": "Shortcuts",
     "com.atebits.Tweetie2": "Twitter",
     "com.burbn.instagram" : "Instagram",
     "com.facebook.Facebook": "Facebook",
-    "com.facebook.Messenger": "FB Messenger",
+    "com.facebook.Messenger": "Messenger",
     "com.google.Chromecast" : "Google Home",
     "com.google.Gmail" : "GMail",
     "com.google.hangouts" : "Hangouts",
@@ -81,22 +83,26 @@ E.on('notify',msg=>{
     "com.ifttt.ifttt" : "IFTTT",
     "com.jumbo.app" : "Jumbo",
     "com.linkedin.LinkedIn" : "LinkedIn",
+    "com.microsoft.Office.Outlook" : "Outlook Mail",
     "com.nestlabs.jasper.release" : "Nest",
     "com.netflix.Netflix" : "Netflix",
     "com.reddit.Reddit" : "Reddit",
     "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
+    "com.strava.stravaride": "Strava",
     "com.tinyspeck.chatlyio": "Slack",
     "com.toyopagroup.picaboo": "Snapchat",
     "com.ubercab.UberClient": "Uber",
     "com.ubercab.UberEats": "UberEats",
+    "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
     "com.zhiliaoapp.musically": "TikTok",
     "net.whatsapp.WhatsApp": "WhatsApp",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
     "ph.telegra.Telegraph": "Telegram",
+    "tv.twitch": "Twitch",
 
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
@@ -104,7 +110,7 @@ E.on('notify',msg=>{
     '2019':"'"
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
-  if (appNames[msg.appId]) msg.a
+  //if (appNames[msg.appId]) msg.a
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
@@ -122,9 +128,10 @@ E.on('AMS',a=>{
   function push(m) {
     var msg = { t : "modify", id : "music", title:"Music" };
     if (a.id=="artist")  msg.artist = m;
-    else if (a.id=="album")  msg.artist = m;
-    else if (a.id=="title")  msg.tracl = m;
-    else return; // duration? need to reformat
+    else if (a.id=="album")  msg.album = m;
+    else if (a.id=="title")  msg.track = m;
+    else if (a.id=="duration")  msg.dur = m;
+    else return;
     require("messages").pushMessage(msg);
   }
   if (a.truncated) NRF.amsGetMusicInfo(a.id).then(push)
