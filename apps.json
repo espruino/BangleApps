@@ -4013,11 +4013,11 @@
   {
     "id": "thermom",
     "name": "Thermometer",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Displays the current temperature in degree Celsius, updated every 20 seconds",
     "icon": "app.png",
     "tags": "tool",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"thermom.app.js","url":"app.js"},
