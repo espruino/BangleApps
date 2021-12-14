@@ -209,6 +209,18 @@ function drawBattery(x,y,wi,hi) {
 function getSteps() {
   if (WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
+  } else {
+    var steps = 0;
+    let health;
+    try {
+      health = require("health");
+      if (health != undefined) {
+        health.readDay(new Date(), h=>steps+=h.steps);
+        return steps;
+      }
+    } catch (e) {
+      // Module health not found
+    }
   }
   return '????';
 }
