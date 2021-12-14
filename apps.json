@@ -4875,7 +4875,7 @@
     "id": "rebble",
     "name": "Rebble Clock",
     "shortName": "Rebble",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
     "readme": "README.md",
     "icon": "rebble.png",
