@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Fix dependancies, fix type to Purple
+0.03: Load steps from health app (as fallback)
