@@ -120,10 +120,28 @@ function transmitUpdatedSensorData() {
 
 // Encode the bar service data to fit in a Bluetooth PDU
 function encodeBarServiceData() {
-  // TODO: implement negative temperature as signed int
-  let encodedTemperature = [ Math.round(bar.temperature * 100) & 0xff,
-                             (Math.round(bar.temperature * 100) >> 8) & 0xff ];
-  return { 0x2a6e: encodedTemperature };
+  let tEncoded = Math.round(bar.temperature * 100);
+  let pEncoded = Math.round(bar.pressure * 100);
+  let eEncoded = Math.round(bar.altitude * 100);
+
+  if(bar.temperature < 0) {
+    tEncoded += 0x10000;
+  }
+  if(bar.altitude < 0) {
+    eEncoded += 0x1000000;
+  }
+
+  let t = [ tEncoded & 0xff, (tEncoded >> 8) & 0xff ];
+  let p = [ pEncoded & 0xff, (pEncoded >> 8) & 0xff, (pEncoded >> 16) & 0xff,
+            (pEncoded >> 24) & 0xff ];
+  let e = [ eEncoded & 0xff, (eEncoded >> 8) & 0xff, (eEncoded >> 16) & 0xff ];
+
+  return [
+      0x02, 0x01, 0x06,                               // Flags
+      0x05, 0x16, 0x6e, 0x2a, t[0], t[1],             // Temperature
+      0x07, 0x16, 0x6d, 0x2a, p[0], p[1], p[2], p[3], // Pressure
+      0x06, 0x16, 0x6c, 0x2a, e[0], e[1], e[2]        // Elevation
+  ];
 }
 
 
