@@ -323,12 +323,9 @@ var getSelectedApp = () => {
       },
     };
 
-    var appList = getAppList();
-    appList.forEach((app) => {
-      selectAppMenu[app.name] = () => {
+    [].forEach((app) => {
+      selectAppMenu[app] = () => {
         log("app selected");
-        log(app);
-        resolve(app);
       };
     });
 
