@@ -2,9 +2,8 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  g.reset().setBgColor((c&1) ? "#0f0" : "#030").setColor((c&1) ? "#000" : "#fff");
-  g.clearRect(this.x,this.y,this.x+this.width,this.y+23);
-  g.setFont("6x8:1x2").setFontAlign(0,0).drawString("MESSAGES", this.x+this.width/2, this.y+12);
+  g.reset().clearRect(this.x,this.y,this.x+this.width,this.y+23);
+  g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
