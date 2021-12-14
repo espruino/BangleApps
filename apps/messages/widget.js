@@ -9,7 +9,8 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   */
     var c = parseInt(Date.now()/1000);
     g.reset().clearRect(this.x,this.y,this.x+this.width,this.y+23);
-    g.drawImage((c&1) ? atob("FBSBAAGAABwAA/gAf8AP/AD/wA/8AP/gD/8Af/AP/4D//A//4f//H//x//w//gP8gAA4AAOA") : atob("FBSBAAAYAAOAAfwAP+AD/wA/8AP/AH/wD/8A/+Af/wP/8H//D//4//+D//gH/8AT/AHAABwA"), this.x, this.y);
+    //g.drawImage((c&1) ? atob("FBSBAAGAABwAA/gAf8AP/AD/wA/8AP/gD/8Af/AP/4D//A//4f//H//x//w//gP8gAA4AAOA") : atob("FBSBAAAYAAOAAfwAP+AD/wA/8AP/AH/wD/8A/+Af/wP/8H//D//4//+D//gH/8AT/AHAABwA"), this.x, this.y);
+    g.drawImage((c&1) ? atob("HBgBAAAAAAAAAAAAAAAAAAAABgAAAPAAAB+AAAH4AAAfgAAD/AAAP8AAA/wAAH/gAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : atob("HBiBAcAAADgAAAGAAAAQAGAAAAYAAADwAAAfgAAD/AAAP8AAA/wAAD/AAAf+AAB/4AAAAAAAAAAAAGAAgAAAGAAAAYAAAB8AAA/4P///j///+f///7///w=="), this.x, this.y);
 
 
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute

@@ -92,6 +92,7 @@
       {"name":"messages","url":"lib.js"}
     ],
     "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
+    "screenshots": [{"url":"screenshot.jpg"},{"url":"screen-notification.gif"}],
     "sortorder": -9
   },
   {
@@ -217,7 +218,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",

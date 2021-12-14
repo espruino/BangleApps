@@ -17,6 +17,16 @@ and `Messages`:
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
 
+## Images
+_1. Screenshot of a notification_
+
+![](screenshot.jpg)
+
+_2. What the notify icon looks like (it's touchable on Bangle.js2!)_
+
+![](screen-notification.gif)
+
+
 
 ## Requests
 
@@ -25,3 +35,11 @@ Please file any issues on https://github.com/espruino/BangleApps/issues/new?titl
 ## Creator
 
 Gordon Williams
+
+## Contributors
+
+[Jeroen Peters](https://github.com/jeroenpeters1986)
+
+## Attributions
+
+Icons used in this app are from https://icons8.com

@@ -21,6 +21,7 @@
 */
 
 var Layout = require("Layout");
+var locale = require("locale");
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
@@ -66,7 +67,7 @@ function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
 }
 function getNotificationImage() {
-  return atob("GBiBAf////wA//AAf/AAf/AAf/f/f/f/f/fgA/fv/ffvPffuPffuPffuHffv/ffmA/f4f/fxf/f/f/f/f/AAf/Bwf/AAf/wA/////w==");
+  return atob("FBSBAH//7//////////////////////////////////////////////3//4PgADgAA4AAAAA");
 }
 function getFBIcon() {
   return atob("GBiBAAAAAAAAAAAYAAD/AAP/wAf/4A/48A/g8B/g+B/j+B/n+D/n/D8A/B8A+B+B+B/n+A/n8A/n8Afn4APnwADnAAAAAAAAAAAAAA==");
@@ -99,7 +100,7 @@ function getMessageImage(msg) {
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
-  if (s=="wordfeud") return atob("GBgBP//8f//+////////////+/5X+/73+/7/+/7/+f7/+c7//Y7//a7//az//bX//XX//XX//Hn//nn//vn/////////f//+AB6A");
+  if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
   if (msg.id=="back") return getBackImage();
   return getNotificationImage();
@@ -177,14 +178,17 @@ function showMusicMessage(msg) {
 }
 
 function showMessageSettings(msg) {
+  var delete_txt = locale.translate("Delete");
+  var unread_txt = locale.translate("Mark Unread");
+  var back_txt = locale.translate("< Back");
   E.showMenu({"":{"title":"Message"},
-    "< Back" : () => showMessage(msg.id),
-    "Delete" : () => {
+    back_txt : () => showMessage(msg.id),
+    delete_txt : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
     },
-    "Mark Unread" : () => {
+    unread_txt : () => {
       msg.new = true;
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
@@ -242,7 +246,7 @@ function showMessage(msgid) {
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getMessageImage(msg), cb:()=>{
+      { type:"btn", src:getMessageImage(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
@@ -271,7 +275,7 @@ function checkMessages(options) {
   if (!MESSAGES.length) {
     if (!options.clockIfNoMsg) return E.showPrompt("No Messages",{
       title:"Messages",
-      img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
+      img:require("heatshrink").decompress(atob("k0swQEB1QAC1AND1f/AAWgBAUrBAf+wAIBgW//2uCoP4CQUvCQYcDCQIID/QSClQ4D1QSDDYn+EpHgCQ4lDCQfqFAeiBAX7FAgSDIoniCQn61QSH3/vCQ3rBQISF/wMCCQoaBCQ+qCQ+vAIISFBQInBCQpDB94SFKgJVBCQv+YAJeG/RxHQiAZCAgSqE1Y5CwS9E3+AaA379DQD/fv9++3TQEQQP79T2IcY4ABCRkqeQeqErBwCCQcrAwLEB/5nCgSKEM4UAhQJDDYYJBIIYbCgA")),
       buttons : {"Ok":1}
     }).then(() => { load() });
     return load();
