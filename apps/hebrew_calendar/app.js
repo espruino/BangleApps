@@ -1,17 +1,26 @@
-!function(){"use strict";
-/*!
-     *      This script was taked from this page and ported to Node.js by Ionic Bizu
-     *      http://www.shamash.org/help/javadate.shtml
-     *
-     *      This script was adapted from C sources written by
-     *      Scott E. Lee, which contain the following copyright notice:
-     *
-     *      Copyright 1993-1995, Scott E. Lee, all rights reserved.
-     *      Permission granted to use, copy, modify, distribute and sell so long as
-     *      the above copyright and this permission statement are retained in all
-     *      copies.  THERE IS NO WARRANTY - USE AT YOUR OWN RISK.
-     *
-     *      Bill Hastings
-     *      RBI Software Systems
-     *      bhastings@rbi.com
-     */var t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t};var i=new function(t,i,e,o,r,n,h,a,s,f,u,l,v,c){this[0]=t,this[1]=i,this[2]=e,this[3]=o,this[4]=r,this[5]=n,this[6]=h,this[7]=a,this[8]=s,this[9]=f,this[10]=u,this[11]=l,this[12]=v,this[13]=c}("Tishri","Heshvan","Kislev","Tevet","Shevat","AdarI","AdarII","Nisan","Iyyar","Sivan","Tammuz","Av","Elul"),e=new function(t,i,e,o,r,n,h,a,s,f,u,l,v,c,y,d,m,M,b){this[0]=t,this[1]=i,this[2]=e,this[3]=o,this[4]=r,this[5]=n,this[6]=h,this[7]=a,this[8]=s,this[9]=f,this[10]=u,this[11]=l,this[12]=v,this[13]=c,this[14]=y,this[15]=d,this[16]=m,this[17]=M,this[18]=b}(12,12,13,12,12,13,12,13,12,12,13,12,12,13,12,12,13,12,13);g.clear();let o=new Date,r=function(o){var r,n,h=0,a=0,s=0,f=0,u=0,l=0,v=0;function c(t){var i,o,r,n;for(f=Math.floor((t+310)/6940),r=void 0,n=void 0,r=31524,n=(r+=45971*f)>>16,n+=2744*f,o=Math.floor(n/25920),r=(n-=25920*o)<<16|65535&r,i=Math.floor(r/25920),l=o<<16|i,v=r-=25920*i;l<t-6940+310;)f++,v+=179876755,l+=Math.floor(v/25920),v%=25920;for(u=0;u<18&&!(l>t-74);u++)v+=765433*e[u],l+=Math.floor(v/25920),v%=25920}function y(t,i,e){var o=i,r=o%7;return(e>=19440||!(2==t||5==t||7==t||10==t||13==t||16==t||18==t)&&2==r&&e>=9924||(3==t||6==t||8==t||11==t||14==t||17==t||0==t)&&1==r&&e>=16789)&&(o++,7==++r&&(r=0)),3!=r&&5!=r&&0!=r||o++,o}var d=o;return"object"===(void 0===d?"undefined":t(d))&&(r=o.getMonth()+1,n=o.getDate(),d=o.getFullYear()),function(t){var i,o=0,r=0,n=t-347997;if(c(n),n>=(o=y(u,l,v))){if(s=19*f+u+1,n<o+59)return void(n<o+30?(h=1,a=n-o+1):(h=2,a=n-o-29));v+=765433*e[u],l+=Math.floor(v/25920),r=y((u+1)%19,l,v%=25920)}else{if(s=19*f+u,n>=o-177)return void(n>o-30?(h=13,a=n-o+30):n>o-60?(h=12,a=n-o+60):n>o-89?(h=11,a=n-o+89):n>o-119?(h=10,a=n-o+119):n>o-148?(h=9,a=n-o+148):(h=8,a=n-o+178));if(13==e[(s-1)%19]){if(h=7,(a=n-o+207)>0)return;if(h--,(a+=30)>0)return;h--,a+=30}else{if(h=6,(a=n-o+207)>0)return;h--,a+=30}if(a>0)return;if(h--,(a+=29)>0)return;r=o,c(l-365),o=y(u,l,v)}if(l=n-o-29,355==(i=r-o)||385==i){if(l<=30)return h=2,void(a=l);l-=30}else{if(l<=29)return h=2,void(a=l);l-=29}h=3,a=l}(function(t,i,e){var o=0,r=0,n=void 0;return o=t<0?t+4801:t+4800,i>2?r=i-3:(r=i+9,o--),n=Math.floor(146097*Math.floor(o/100)/4),n+=Math.floor(o%100*1461/4),n+=Math.floor((153*r+2)/5),n+=e-32045}(d,r,n)),{year:s,month:h,date:a,month_name:i[h-1]}}(o);var n={"":{title:"Hebrew Date"},cal:{value:require("locale").date(o,1),onchange:()=>{}},date:{value:r.date,onchange:()=>{}},month:{value:r.month_name,onchange:()=>{}},year:{value:r.year,onchange:()=>{}}};E.showMenu(n)}();
+g.clear();
+
+let now = new Date();
+
+let today = require('hebrewDate').hebrewDate(now);
+
+var mainmenu = {
+  "": {
+    "title": "Hebrew Date"
+  },
+  greg: {
+    // @ts-ignore
+    value: require('locale').date(now, 1),
+  },
+  date: {
+    value: today.date,
+  },
+  month: {
+    value: today.month_name,
+  },
+  year: {
+    value: today.year,
+  }
+};
+// @ts-ignore
+E.showMenu(mainmenu);

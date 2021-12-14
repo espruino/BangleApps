@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
+    <p><b>THIS IS CURRENTLY BETA - PLEASE USE THE NORMAL FIRMWARE UPDATE
+    INSTRUCTIONS FOR <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">BANGLE.JS</a> 1 AND <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">BANGLE.JS 2</a></b>. For usage on Bangle.js 2 you'll likely need to have an updated bootloader.</p>
     <div id="fw-unknown">
     <p><b>Firmware updates using the App Loader are only possible on
     Bangle.js 2. For firmware updates on Bangle.js 1 please
@@ -85,7 +87,7 @@ function checkForFileOnServer() {
   	});
   }
 
-  var regex = new RegExp("_banglejs2");
+  var regex = new RegExp("_banglejs2.*zip$");
 
 	var domFirmwareList = document.getElementById("latest-firmware-list");
   var domFirmware = document.getElementById("latest-firmware");
@@ -107,7 +109,7 @@ function checkForFileOnServer() {
 			});
       console.log("Finished check for firmware files...");
       var fwlinks = document.querySelectorAll(".fw-link");
-      for (var i=0;i<fwlinks.length;fwlinks++)
+      for (var i=0;i<fwlinks.length;i++)
         fwlinks[i].addEventListener("click", e => {
           e.preventDefault();
           var url = e.target.href;
