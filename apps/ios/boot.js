@@ -110,7 +110,7 @@ E.on('notify',msg=>{
     '2019':"'"
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
-  if (appNames[msg.appId]) msg.a
+  //if (appNames[msg.appId]) msg.a
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
@@ -123,14 +123,20 @@ E.on('notify',msg=>{
   // TODO: posaction/negaction?
 });
 
-
 // Apple media service
 E.on('AMS',a=>{
+  function format_song_time(song_seconds) {
+    var minutes = (new Array(3).join("0")+(Math.floor(song_seconds / 60))).slice(-2);
+    var seconds = (new Array(3).join("0")+(parseInt(song_seconds) - minutes * 60)).slice(-2);
+    return minutes + ":" + seconds;
+  }
+
   function push(m) {
     var msg = { t : "modify", id : "music", title:"Music" };
     if (a.id=="artist")  msg.artist = m;
     else if (a.id=="album")  msg.album = m;
     else if (a.id=="title")  msg.track = m;
+    else if (a.id=="duration")  msg.duration = format_song_time(m);
     else return;
     require("messages").pushMessage(msg);
   }
