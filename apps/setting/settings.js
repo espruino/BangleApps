@@ -58,7 +58,7 @@ function resetSettings() {
 settings = storage.readJSON('setting.json', 1);
 if (!settings) resetSettings();
 
-const boolFormat = v => v ? "On" : "Off";
+const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
 function showMainMenu() {
   var beepMenuItem;
@@ -77,7 +77,7 @@ function showMainMenu() {
     };
   } else { // Bangle.js 1
     var beepV = [false, true, "vib"];
-    var beepN = ["Off", "Piezo", "Vibrate"];
+    var beepN = [/*LANG*/"Off", /*LANG*/"Piezo", /*LANG*/"Vibrate"];
     beepMenuItem = {
       value: Math.max(0 | beepV.indexOf(settings.beep),0),
       min: 0, max: beepV.length-1,
@@ -95,10 +95,10 @@ function showMainMenu() {
   const mainmenu = {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
-    'App Settings': ()=>showAppSettingsMenu(),
-    'BLE': ()=>showBLEMenu(),
-    'Beep': beepMenuItem,
-    'Vibration': {
+    /*LANG*/'App Settings': ()=>showAppSettingsMenu(),
+    /*LANG*/'BLE': ()=>showBLEMenu(),
+    /*LANG*/'Beep': beepMenuItem,
+    /*LANG*/'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
       onchange: () => {
@@ -110,7 +110,7 @@ function showMainMenu() {
         }
       }
     },
-    "Quiet Mode": {
+    /*LANG*/"Quiet Mode": {
       value: settings.quiet|0,
       format: v => ["Off", "Alarms", "Silent"][v%3],
       onchange: v => {
@@ -120,13 +120,13 @@ function showMainMenu() {
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
       },
     },
-    'Locale': ()=>showLocaleMenu(),
-    'Select Clock': ()=>showClockMenu(),
-    'Set Time': ()=>showSetTimeMenu(),
-    'LCD': ()=>showLCDMenu(),
-    'Theme': ()=>showThemeMenu(),
-    'Utils': ()=>showUtilMenu(),
-    'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
+    /*LANG*/'Locale': ()=>showLocaleMenu(),
+    /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Set Time': ()=>showSetTimeMenu(),
+    /*LANG*/'LCD': ()=>showLCDMenu(),
+    /*LANG*/'Theme': ()=>showThemeMenu(),
+    /*LANG*/'Utils': ()=>showUtilMenu(),
+    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
   };
 
   return E.showMenu(mainmenu);
