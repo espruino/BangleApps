@@ -323,9 +323,12 @@ var getSelectedApp = () => {
       },
     };
 
-    [].forEach((app) => {
-      selectAppMenu[app] = () => {
+    var appList = getAppList();
+    appList.forEach((app) => {
+      selectAppMenu[app.name] = () => {
         log("app selected");
+        log(app);
+        resolve(app);
       };
     });
 
@@ -537,12 +540,12 @@ var drawCirclesWithPattern = (pattern, options) => {
 
     drawBuffer.setColor(1);
     drawBuffer.setFontAlign(0, 0);
-    drawBuffer.setFont("Vector", scale === 1 ? 40 : 20);
+    drawBuffer.setFont("Vector", 40 * scale);
     pattern.forEach((circleIndex, patternIndex) => {
       var circle = CIRCLES[circleIndex];
       drawBuffer.drawString(
         patternIndex + 1,
-        (circle.x + 5) * scale,
+        (circle.x + (scale === 1 ? 1 : 5)) * scale,
         circle.y * scale
       );
     });
