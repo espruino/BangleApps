@@ -184,7 +184,7 @@
       case "call":
         var note = { size: 55, title: event.name, id: "call",
                      body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
-        if (event.cmd === "incoming") {
+        if (event.cmd === "incoming" || event.cmd === "") {
           require("notify").show(note);
           if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
             Bangle.buzz();
@@ -262,7 +262,7 @@
   // Send a summary of activity to Gadgetbridge
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
-    lastSentSteps = 0;
+    lastSentSteps = currentSteps;
     gbSend({ t: "act", stp: steps, hrm:hrm });
   }
 

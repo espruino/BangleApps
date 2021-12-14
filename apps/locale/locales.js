@@ -40,7 +40,16 @@ const charFallbacks = {
   "č":"c",
   "ř":"r",
   "ő":"o",
-  "ě":"e"
+  "ě":"e",
+  "ę":"e",
+  "ą":"a",
+  "ó":"o",
+  "ż":"z",
+  "ź":"z",
+  "ń":"n",
+  "ł":"l",
+  "ś":"s",
+  "ć":"c",
 };
 
 /*
@@ -602,6 +611,24 @@ var locales = {
     abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
     trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "ok", on: "on", off: "off" }
+  },
+  "pl_PL": {
+    lang: "pl_PL",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "zł",
+    int_curr_symbol: "PLN",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2021 // 01.03.2021
+    abmonth: "Sty,Lut,Mar,Kwi,Maj,Cze,Lip,Sie,Wrz,Paź,Lis,Gru",
+    month: "Styczeń,Luty,Marzec,Kwiecień,Maj,Czerwiec,Lipiec,Sierpień,Wrzesień,Październik,Listopad,Grudzień",
+    abday: "Ndz,Pon,Wt,Śr,Czw,Pt,Sob",
+    day: "Niedziela,Poniedziałek,Wtorek,Środa,Czwartek,Piątek,Sobota",
+    trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "on", off: "off", "< Back": "< Wstecz" }
   },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399

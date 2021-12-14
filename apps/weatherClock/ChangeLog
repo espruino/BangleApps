@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Minor layout format tweak so it uses less memory and draws ok on Bangle.js 1 (#1012)
 0.03: Minor layout extra spaces.
+0.04: Layout now compatible with Bangle.js 2
