@@ -136,7 +136,7 @@ E.on('AMS',a=>{
     if (a.id=="artist")  msg.artist = m;
     else if (a.id=="album")  msg.album = m;
     else if (a.id=="title")  msg.track = m;
-    else if (a.id=="duration")  msg.duration = format_song_time(m);
+    else if (a.id=="duration")  msg.dur = format_song_time(m);
     else return;
     require("messages").pushMessage(msg);
   }

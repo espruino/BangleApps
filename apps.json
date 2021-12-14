@@ -92,7 +92,7 @@
       {"name":"messages","url":"lib.js"}
     ],
     "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
-    "screenshots": [{"url":"screenshot.jpg"},{"url":"screen-notification.gif"}],
+    "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-notify.gif"}],
     "sortorder": -9
   },
   {

@@ -21,7 +21,6 @@
 */
 
 var Layout = require("Layout");
-var locale = require("locale");
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
@@ -178,17 +177,14 @@ function showMusicMessage(msg) {
 }
 
 function showMessageSettings(msg) {
-  var delete_txt = locale.translate("Delete");
-  var unread_txt = locale.translate("Mark Unread");
-  var back_txt = locale.translate("< Back");
   E.showMenu({"":{"title":"Message"},
-    back_txt : () => showMessage(msg.id),
-    delete_txt : () => {
+    "< Back" : () => showMessage(msg.id),
+    "Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
     },
-    unread_txt : () => {
+    "Mark Unread" : () => {
       msg.new = true;
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});

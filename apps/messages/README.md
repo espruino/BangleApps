@@ -20,11 +20,11 @@ to the clock where a ringing bell will be shown in the Widget bar.
 ## Images
 _1. Screenshot of a notification_
 
-![](screenshot.jpg)
+![](screenshot.png)
 
 _2. What the notify icon looks like (it's touchable on Bangle.js2!)_
 
-![](screen-notification.gif)
+![](screenshot-notify.gif)
 
 
 
