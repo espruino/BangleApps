@@ -105,7 +105,7 @@ function transmitUpdatedSensorData() {
   let data = [ APP_ADVERTISING_DATA ]; // Always advertise at least app name
 
   if(isNewBarData) {
-    data.push({ 0x2a6e: encodeTemperature(bar.temperature) });
+    data.push(encodeBarServiceData());
     isNewBarData = false;
   }
 
@@ -118,11 +118,12 @@ function transmitUpdatedSensorData() {
 }
 
 
-// Convert temperature to signed 16-bit integer byte array
-// TODO: implement negative temperature as signed int
-function encodeTemperature(temperature) {
-  return [ Math.round(bar.temperature * 100) & 0xff,
-           (Math.round(bar.temperature * 100) >> 8) & 0xff ];
+// Encode the bar service data to fit in a Bluetooth PDU
+function encodeBarServiceData() {
+  // TODO: implement negative temperature as signed int
+  let encodedTemperature = [ Math.round(bar.temperature * 100) & 0xff,
+                             (Math.round(bar.temperature * 100) >> 8) & 0xff ];
+  return { 0x2a6e: encodedTemperature };
 }
 
 
