@@ -4972,18 +4972,19 @@
       {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
     ]
   },
-  { "id": "showimg",
-  "name": "simple image viewer",
-  "shortName":"showImage",
-  "version":"1",
-  "description": "Displays the image file in showimage.user.img. Returns to watch face after 60s or button push.",
-  "icon": "app.png",
-  "tags": "",
-  "supports" : ["BANGLEJS2"],  
-  "readme": "README.md",
-  "storage": [
-    {"name":"showimg.app.js","url":"app.js"},
-    {"name":"showimg.img","url":"app-icon.js","evaluate":true}
-  ]
-}
+  { 
+    "id": "showimg",
+    "name": "simple image viewer",
+    "shortName":"showImage",
+    "version":"1",
+    "description": "Displays the image file in showimage.user.img. Returns to watch face after 60s or button push.",
+    "icon": "app.png",
+    "tags": "",
+    "supports" : ["BANGLEJS2"],  
+    "readme": "README.md",
+    "storage": [
+      {"name":"showimg.app.js","url":"app.js"},
+      {"name":"showimg.img","url":"app-icon.js","evaluate":true}
+    ]
+  }
 ]
