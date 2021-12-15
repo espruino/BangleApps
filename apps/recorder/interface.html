@@ -19,6 +19,9 @@ ${track[0].Heartrate!==undefined ? `<gx:SimpleArrayField name="heartrate" type="
     </gx:SimpleArrayField>`:``}
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayField name="steps" type="int">
       <displayName>Step Count</displayName>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayField name="temp" type="int">
+      <displayName>Core Temp</displayName>
+    </gx:SimpleArrayField>`:``}      
     </gx:SimpleArrayField>
     </Schema>
     <Folder>
@@ -36,6 +39,9 @@ ${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")
               </gx:SimpleArrayData>`:``}
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayData name="steps">
 ${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayData name="temp">
+${track.map(pt=>`            <gx:value>${0|pt.Core}</gx:value>\n`).join("")}
               </gx:SimpleArrayData>`:``}
             </SchemaData>
           </ExtendedData>

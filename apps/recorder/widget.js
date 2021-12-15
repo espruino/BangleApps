@@ -82,6 +82,34 @@
           draw : (x,y) => g.setColor(hasBPM?"#f00":"#888").drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="),x,y)
         };
       },
+
+      temp:function() {
+        var temp = 0;
+        var hasCore = false;
+        function onCore(c) {
+            temp=c.core;
+            hasCore = true;
+        }
+        return {
+          name : "Core",
+          fields : ["Core"],
+          getValues : () => {
+            var r = temp;
+            return r;
+          },
+          start : () => {
+            hasCore = false;
+            Bangle.on('CoreTemp', onCore);
+//            Bangle.setHRMPower(1,"recorder");
+          },
+          stop : () => {
+            hasCore = false;
+            Bangle.removeListener('CoreTemp', onCore);
+//            Bangle.setHRMPower(0,"recorder");
+          },
+          draw : (x,y) => g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="),x,y)
+        };
+      }, 
       steps:function() {
         var lastSteps = 0;
         return {
