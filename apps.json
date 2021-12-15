@@ -4977,7 +4977,7 @@
     "name": "simple image viewer",
     "shortName":"showImage",
     "version":"0.1",
-    "description": "Displays the image file in showimage.user.img. Returns to watch face after 60s or button push. I currently use it to display my vaccination certificate.",
+    "description": "Displays the image file in showimage.user.img. Returns to watch face after 60s or button push. I use it to display my vaccination certificate.",
     "icon": "app.png",
     "tags": "tool",
     "supports" : ["BANGLEJS2"],  
