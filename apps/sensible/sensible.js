@@ -119,6 +119,11 @@ function transmitUpdatedSensorData() {
     isNewHrmData = false;
   }
 
+  if(isNewMagData) {
+    data.push(encodeMagServiceData());
+    isNewMagData = false;
+  }
+
   NRF.setAdvertising(data, { showName: false, interval: 200 });
 }
 
@@ -175,6 +180,33 @@ function encodeGpsServiceData() {
       0x02, 0x01, 0x06,                                  // Flags
       0x11, 0x16, 0x67, 0x2a, 0x95, 0x02, s[0], s[1], lat[0], lat[1], lat[2],
       lat[3], lon[0], lon[1], lon[2], lon[3], h[0], h[1] // Location and Speed
+  ];
+}
+
+
+// Encode the mag service data using the magnetic flux density 3D characteristic
+function encodeMagServiceData() {
+  let xEncoded = mag.x; // TODO: units???
+  let yEncoded = mag.y;
+  let zEncoded = mag.z;
+
+  if(xEncoded < 0) {
+    xEncoded += 0x10000;
+  }
+  if(yEncoded < 0) {
+    yEncoded += 0x10000;
+  }
+  if(yEncoded < 0) {
+    yEncoded += 0x10000;
+  }
+
+  let x = [ xEncoded & 0xff, (xEncoded >> 8) & 0xff ];
+  let y = [ yEncoded & 0xff, (yEncoded >> 8) & 0xff ];
+  let z = [ zEncoded & 0xff, (zEncoded >> 8) & 0xff ];
+
+  return [
+      0x02, 0x01, 0x06,                                          // Flags
+      0x09, 0x16, 0xa1, 0x2a, x[0], x[1], y[0], y[1], z[0], z[1] // Mag 3D
   ];
 }
 
