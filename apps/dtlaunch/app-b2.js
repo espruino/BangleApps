@@ -2,8 +2,20 @@
 *
 */
 
+var settings = Object.assign({
+  showClocks: true,
+  showLaunchers: true,
+  direct: false,
+}, require('Storage').readJSON("dtlaunch.json", true) || {});
+
 var s = require("Storage");
-var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
+var apps = s.list(/\.info$/).map(app=>{
+  var a=s.readJSON(app,1);
+  return a && {
+    name:a.name, type:a.type, icon:a.icon, sortorder:a.sortorder, src:a.src
+  };}).filter(
+    app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type));
+
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -28,7 +40,7 @@ const YOFF = 30;
 function draw_icon(p,n,selected) {
     var x = (n%2)*72+XOFF; 
     var y = n>1?72+YOFF:YOFF;
-    (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+10,y+2,x+60,y+52);
+    (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+11,y+3,x+60,y+52);
     g.clearRect(x+12,y+4,x+59,y+51);
     g.setColor(g.theme.fg);
     try{g.drawImage(apps[p*4+n].icon,x+12,y+4);} catch(e){}
@@ -52,7 +64,7 @@ function drawPage(p){
     }
     for (var i=0;i<4;i++) {
         if (!apps[p*4+i]) return i;
-        draw_icon(p,i,selected==i);
+        draw_icon(p,i,selected==i && !settings.direct);
     }
     g.flip();
 }
@@ -81,9 +93,9 @@ Bangle.on("touch",(_,p)=>{
     for (i=0;i<4;i++){
         if((page*4+i)<Napps){
             if (isTouched(p,i)) {
-                draw_icon(page,i,true);
-                if (selected>=0) {
-                    if (selected!=i){
+                draw_icon(page,i,true && !settings.direct);
+                if (selected>=0 || settings.direct) {
+                    if (selected!=i && !settings.direct){
                         draw_icon(page,selected,false);
                     } else {
                         load(apps[page*4+i].src);

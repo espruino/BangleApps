@@ -1,0 +1,12 @@
+[
+  {"code":"en_GB","name":"British English","url":"en_GB.json"},
+  {"code":"de_DE","name":"German","url":"de_DE.json"},
+  {"code":"es_ES","name":"Spanish","url":"es_ES.json"},
+  {"code":"fi_FI","name":"Finnish","url":"fi_FI.json"},
+  {"code":"fr_FR","name":"French","url":"fr_FR.json"},
+  {"code":"hu_HU","name":"Hungarian","url":"hu_HU.json"},
+  {"code":"it_IT","name":"Italian","url":"it_IT.json"},
+  {"code":"nl_NL","name":"Dutch","url":"nl_NL.json"},
+  {"code":"sv_SE","name":"Swedish","url":"sv_SE.json"},
+  {"code":"tr_TR","name":"Turkish","url":"tr_TR.json"}
+]
