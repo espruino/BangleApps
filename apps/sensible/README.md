@@ -17,7 +17,7 @@ Currently implements:
 - Heart Rate Monitor
 - Magnetometer
 
-in the menu display but NOT YET in Bluetooth Low Energy advertising (which will be implemented in a subsequent version).
+in the menu display, and broadcasts all sensor data readings _except_ acceleration in Bluetooth Low Energy advertising packets as GATT characteristic services.
 
 
 ## Controls
