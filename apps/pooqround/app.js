@@ -83,7 +83,6 @@ class Options {
             Bangle.removeListener('drag', this.reactivator);
             this.emit('done');
         }
-        g.clear(true);
         E.showMenu(m);
     }
 
@@ -309,7 +308,7 @@ class Round {
             buffer: this.c.buffer, transparent: 0
         };
         this.options = new RoundOptions();
-        this.timescales = [1000, 0, 60000, 900000];
+        this.timescales = [1000, [1000, 60000], 60000, 900000];
         this.state = {};
         // Precomputed polygons for the border areas.
         this.tl = [0, 0, 58, 0, 0, 58];
@@ -323,7 +322,7 @@ class Round {
         this.r = this.xc - this.minR;
     }
 
-    reset() {this.state = {}; this.g.clear(true);}
+    reset(clear) {this.state = {}; clear && this.g.clear(true);}
 
     doIcons(which) {
       this.state[which] = null;
@@ -478,7 +477,6 @@ class Clock {
         this.timescales = face.timescales;
         this.options = face.options;
         this.rates = {};
-        this.faceUp = null;
 
         this.options.on('done', () => this.start());
         
@@ -488,7 +486,6 @@ class Clock {
             lock: () => {face.doIcons('locked'); this.active();},
             faceUp: up => {
                 this.conservative = !up;
-                this.faceUp = up;
                 this.active();
             },
             twist: _ => this.options.autolight && Bangle.setLCDPower(true),
@@ -529,7 +526,7 @@ class Clock {
 
     redraw(rate) {
         const now = this.updated = new Date();
-        if (this.refresh) this.face.reset();
+        if (this.refresh) this.face.reset(true);
         this.refresh = false;
         rate = this.face.render(now, rate);
         if (rate !== this.rates.face) {
@@ -544,7 +541,7 @@ class Clock {
         this.exception && clearTimeout(this.exception);
         this.interval && clearInterval(this.interval);
         this.timeout = this.exception = this.interval = this.rate = null;
-        this.face.reset(); // Cancel any ongoing background rendering
+        this.face.reset(false); // Cancel any ongoing background rendering
         return this;
     }
     
