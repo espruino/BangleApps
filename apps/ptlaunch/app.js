@@ -488,9 +488,6 @@ var drawCircle = (circle, drawBuffer, scale) => {
   log("drawing circle");
   log({ x: x, y: y, r: r });
 
-  drawBuffer.setColor(0);
-  drawBuffer.fillCircle(x, y, r);
-  drawBuffer.setColor(1);
   drawBuffer.drawCircle(x, y, r);
 };
 
@@ -538,7 +535,6 @@ var drawCirclesWithPattern = (pattern, options) => {
 
     CIRCLES.forEach((circle) => drawCircle(circle, drawBuffer, scale));
 
-    drawBuffer.setColor(1);
     drawBuffer.setFontAlign(0, 0);
     drawBuffer.setFont("Vector", 40 * scale);
     pattern.forEach((circleIndex, patternIndex) => {
