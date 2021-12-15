@@ -109,6 +109,11 @@ function transmitUpdatedSensorData() {
     isNewBarData = false;
   }
 
+  if(isNewGpsData && gps.lat && gps.lon) {
+    data.push(encodeGpsServiceData());
+    isNewGpsData = false;
+  }
+
   if(isNewHrmData) {
     data.push({ 0x2a37: [ 0, hrm.bpm ] });
     isNewHrmData = false;
@@ -141,6 +146,35 @@ function encodeBarServiceData() {
       0x05, 0x16, 0x6e, 0x2a, t[0], t[1],             // Temperature
       0x07, 0x16, 0x6d, 0x2a, p[0], p[1], p[2], p[3], // Pressure
       0x06, 0x16, 0x6c, 0x2a, e[0], e[1], e[2]        // Elevation
+  ];
+}
+
+
+// Encode the GPS service data using the Location and Speed characteristic
+function encodeGpsServiceData() {
+  let latEncoded = Math.round(gps.lat * 10000000);
+  let lonEncoded = Math.round(gps.lon * 10000000);
+  let hEncoded = Math.round(gps.course * 100);
+  let sEncoded = Math.round(1000 * gps.speed / 36);
+
+  if(gps.lat < 0) {
+    latEncoded += 0x100000000;
+  }
+  if(gps.lon < 0) {
+    lonEncoded += 0x100000000;
+  }
+
+  let s = [ sEncoded & 0xff, (sEncoded >> 8) & 0xff ];
+  let lat = [ latEncoded & 0xff, (latEncoded >> 8) & 0xff,
+              (latEncoded >> 16) & 0xff, (latEncoded >> 24) & 0xff ];
+  let lon = [ lonEncoded & 0xff, (lonEncoded >> 8) & 0xff,
+              (lonEncoded >> 16) & 0xff, (lonEncoded >> 24) & 0xff ];
+  let h = [ hEncoded & 0xff, (hEncoded >> 8) & 0xff ];
+
+  return [
+      0x02, 0x01, 0x06,                                  // Flags
+      0x11, 0x16, 0x67, 0x2a, 0x95, 0x02, s[0], s[1], lat[0], lat[1], lat[2],
+      lat[3], lon[0], lon[1], lon[2], lon[3], h[0], h[1] // Location and Speed
   ];
 }
 
