@@ -4971,5 +4971,18 @@
       {"name":"coretemp.app.js","url":"coretemp.js"},
       {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
     ]
+  },
+  { 
+    "id": "dashhound",
+    "name": "Dash Hound",
+    "shortName":"Dash Hound",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "This app has an opening screen with some text and a dog",
+    "tags": "",
+    "storage": [
+      {"name":"dashhound.app.js","url":"app.js"},
+      {"name":"dashhound.img","url":"app-icon.js","evaluate":true}
+   ]
   }
 ]
