@@ -5008,7 +5008,7 @@
     "id": "pebbleDistance",
     "name": "Pebble Clock with distance",
     "shortName": "Pebble with distance",
-    "version": "0.11",
+    "version": "0.12",
     "description": "Fork of pebble clock with distance",
     "readme": "README.md",
     "icon": "pebble.png",
