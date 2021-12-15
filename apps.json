@@ -4977,9 +4977,9 @@
     "name": "simple image viewer",
     "shortName":"showImage",
     "version":"0.1",
-    "description": "Displays the image file in showimage.user.img. Returns to watch face after 60s or button push.",
+    "description": "Displays the image file in ""showimage.user.img"". Returns to watch face after 60s or button push.",
     "icon": "app.png",
-    "tags": "",
+    "tags": "tool",
     "supports" : ["BANGLEJS2"],  
     "readme": "README.md",
     "storage": [
