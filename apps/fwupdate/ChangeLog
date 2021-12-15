@@ -1,1 +1,4 @@
 0.01: Initial version
+0.02: Add support for ZIPs
+      Find and download ZIPs direct from the Espruino website
+      Take 'beta' tag off

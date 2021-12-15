@@ -1,5 +1,8 @@
 # Authentiwatch - 2FA Authenticator
 
+* GitHub: https://github.com/andrewgoz/Authentiwatch <-- Report bugs here
+* Bleeding edge AppLoader: https://andrewgoz.github.io/Authentiwatch/
+
 ## Supports
 
 * Google Authenticator compatible 2-factor authentication

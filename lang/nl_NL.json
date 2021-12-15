@@ -1,0 +1,21 @@
+{
+  "//":"Dutch language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Alarmen",
+    "Hours" : "Uren",
+    "Minutes" : "Minuten",
+    "Enabled" : "Geactiveerd",
+    "New Alarm" : "Nieuw alarm",
+    "Save" : "Opslaan",
+    "Back" : "Terug",
+    "Repeat" : "Herhalen",
+    "Delete" : "Verwijderen",
+    "ALARM!" : "ALARV.",
+    "Sleep" : "Stand-by"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "herhalen"
+  }
+}

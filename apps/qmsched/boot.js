@@ -1,7 +1,13 @@
 // apply Quiet Mode schedules
 (function qm() {
-  let scheds = require("Storage").readJSON("qmsched.json", 1) || [];
-  if (!scheds.length) { return;}
+  let bSettings = require('Storage').readJSON('setting.json',true)||{};
+  const curr = 0|bSettings.quiet;
+  delete bSettings;
+  if (curr) require("qmsched").applyOptions(curr); // no need to re-apply default options
+
+  let settings = require('Storage').readJSON('qmsched.json',true)||{};
+  let scheds = settings.scheds||[];
+  if (!scheds.length) {return;}
   const now = new Date(),
     hr = now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600); // current (decimal) hour
   scheds.sort((a, b) => a.hr-b.hr);

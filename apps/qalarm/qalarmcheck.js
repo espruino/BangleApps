@@ -4,7 +4,10 @@
 
 print("Checking for alarms...");
 
-clearInterval();
+if (Bangle.QALARM) {
+  clearInterval(Bangle.QALARM);
+  Bangle.QALARM = undefined;
+}
 
 function getCurrentTime() {
   let time = new Date();
@@ -29,13 +32,13 @@ let nextAlarms = (require("Storage").readJSON("qalarm.json", 1) || [])
   .sort((a, b) => a.t - b.t);
 
 if (nextAlarms[0]) {
-  setTimeout(() => {
+  Bangle.QALARM = setTimeout(() => {
     eval(require("Storage").read("qalarmcheck.js"));
     load("qalarm.js");
   }, nextAlarms[0].t - t);
 } else {
   // No alarms found: will re-check at midnight
-  setTimeout(() => {
+  Bangle.QALARM = setTimeout(() => {
     eval(require("Storage").read("qalarmcheck.js"));
   }, 86400000 - t);
 }

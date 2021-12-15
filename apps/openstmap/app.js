@@ -25,11 +25,11 @@ function drawMarker() {
 var fix;
 Bangle.on('GPS',function(f) {
   fix=f;
-  g.reset().clearRect(0,y1,240,y1+8).setFont("6x8").setFontAlign(0,0);
+  g.reset().clearRect(0,y1,g.getWidth()-1,y1+8).setFont("6x8").setFontAlign(0,0);
   var txt = fix.satellites+" satellites";
   if (!fix.fix)
     txt += " - NO FIX";
-  g.drawString(txt,120,y1 + 4);
+  g.drawString(txt,g.getWidth()/2,y1 + 4);
   drawMarker();
 });
 Bangle.setGPSPower(1, "app");

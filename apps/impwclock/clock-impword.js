@@ -2,7 +2,7 @@
 A remix of word clock
 by Gordon Williams https://github.com/gfwilliams
 - Changes the representation of time to be more general
-- Shows accurate digital time when button 1 is pressed
+- Toggles showing of accurate digital time when screen touched. 
 */
 /* jshint esversion: 6 */
 
@@ -34,14 +34,16 @@ const timeOfDay = {
 };
 
 
+var big = g.getWidth()>200;
 // offsets and increments
-const xs = 35;
-const ys = 31;
-const dy = 22;
-const dx = 25;
+const xs = big ? 35 : 20;
+const ys = big ? 31 : 28;
+const dx = big ? 25 : 20;
+const dy = big ? 22 : 16;
+
 
 // font size and color
-const fontSize = 3;  // "6x8"
+const fontSize = big ? 3 : 2;  // "6x8"
 const passivColor = 0x3186 /*grey*/ ;
 const activeColorNight = 0xF800 /*red*/ ;
 const activeColorDay = 0xFFFF /* white */;
@@ -115,6 +117,8 @@ function drawWordClock() {
 
   // check whether we need to redraw the watchface
   if (hidx !== hidxPrev) {
+    // Turn off showDigitalTime
+    showDigitalTime = false;
     // draw allWords
     var c;
     var y = ys;
@@ -138,14 +142,13 @@ function drawWordClock() {
     hidxPrev = hidx;
   }
 
-  // Display digital time while button 1 is pressed
-  g.clearRect(0, 215, 240, 240);
+  // Display digital time when button is pressed or screen touched
+  g.clearRect(0, big ? 215 : 160, big ? 240 : 176, big ? 240 : 176);
   if (showDigitalTime){
     g.setColor(activeColor);
-    g.drawString(time, 120, 215);
+    g.drawString(time, big ? 120 : 90, big ? 215 : 160);
   }
 }
-
 
 Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
@@ -157,17 +160,14 @@ Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
 
-// Show digital time while top button is pressed (if we have physical buttons)
-if (global.BTN3) setWatch(function() {
-  showDigitalTime = BTN1.read();
-  drawWordClock();
-}, BTN1, {repeat:true,edge:"both"});
 
-// If LCD pressed (on Bangle.js 2) draw digital time
-Bangle.on('drag',e=>{
-  var pressed = e.b!=0;
-  if (pressed!=showDigitalTime) {
-    showDigitalTime = pressed;
+// If LCD pressed, toggle drawing digital time
+Bangle.on('touch',e=>{
+  if (showDigitalTime){
+    showDigitalTime = false;
+    drawWordClock();
+  } else {
+    showDigitalTime = true;
     drawWordClock();
   }
 });

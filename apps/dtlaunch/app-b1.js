@@ -2,6 +2,11 @@
 *
 */
 
+var settings = Object.assign({
+  showClocks: true,
+  showLaunchers: true,
+}, require('Storage').readJSON("dtlaunch.json", true) || {});
+
 function wdog(handle,timeout){
  if(handle !== undefined){
  wdog.handle = handle;
@@ -17,7 +22,13 @@ function wdog(handle,timeout){
 wdog(load,120000)
 
 var s = require("Storage");
-var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
+var apps = s.list(/\.info$/).map(app=>{
+  var a=s.readJSON(app,1);
+  return a && {
+    name:a.name, type:a.type, icon:a.icon, sortorder:a.sortorder, src:a.src
+  };}).filter(
+    app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type));
+
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first

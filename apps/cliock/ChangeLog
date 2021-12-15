@@ -7,3 +7,4 @@
 0.13: Use setUI, work with smaller screens and themes
 0.14: Fix BTN1 (fix #853)
       Add light/dark theme support
+0.15: Load widgets after Bangle.setUI to ensure widgets know if they're on a clock or not (fix #970)
