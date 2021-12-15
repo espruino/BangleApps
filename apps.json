@@ -2251,8 +2251,8 @@
   },
   {
     "id": "banglerun",
-    "name": "BangleRunning",
-    "shortName": "BangleRunningShort",
+    "name": "BangleRun",
+    "shortName": "BangleRun",
     "version": "0.10",
     "description": "An app for running sessions. Displays info and logs your run for later viewing.",
     "icon": "banglerun.png",
