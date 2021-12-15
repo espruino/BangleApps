@@ -5005,16 +5005,16 @@
     ]
   },
   {
-    "id": "pebbleDistance",
+    "id": "pebbled",
     "name": "Pebble Clock with distance",
     "shortName": "Pebble with distance",
-    "version": "0.12",
-    "description": "Fork of pebble clock with distance",
+    "version": "0.1",
+    "description": "Fork of pebble clock with distance in KM",
     "readme": "README.md",
     "icon": "pebble.png",
     "screenshots": [{"url":"pebble_screenshot.png"}],
     "type": "clock",
-    "tags": "clock, distance, pebble",
+    "tags": "clock,distance",
     "supports": ["BANGLEJS2"],
     "storage": [
       {"name":"pebble.app.js","url":"pebble.app.js"},
