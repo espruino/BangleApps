@@ -4971,7 +4971,7 @@
       {"name":"coretemp.app.js","url":"coretemp.js"},
       {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
     ]
-  }
+  },
   { "id": "showimg",
   "name": "simple image viewer",
   "shortName":"showImage",
