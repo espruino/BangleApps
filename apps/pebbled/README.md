@@ -7,4 +7,9 @@
 ![](pebble_screenshot.png)
 
 Written by: [Hugh Barney](https://github.com/hughbarney)  For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)
+
 Forked and changed by [RomanistHere](https://github.com/RomanistHere)
+
+## Plans
+
+Make step length depend on height/sex/age.

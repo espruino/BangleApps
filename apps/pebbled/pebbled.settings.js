@@ -1,5 +1,5 @@
 (function(back) {
-    const SETTINGS_FILE = "pbd.json";
+    const SETTINGS_FILE = "pebbleDistance.json";
 
     // initialize with default settings...
     let s = {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75};
