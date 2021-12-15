@@ -37,20 +37,30 @@ const codePages = {
 /* When it's not in the codepage, try and use
 these conversions */
 const charFallbacks = {
+  "ą":"a",
+  "ā":"a",
   "č":"c",
-  "ř":"r",
-  "ő":"o",
+  "ć":"c",
   "ě":"e",
   "ę":"e",
-  "ą":"a",
+  "ē":"e",
+  "ģ":"g",
+  "i":"ī",
+  "ķ":"k",
+  "ļ":"l",
+  "ł":"l",
+  "ń":"n",
+  "ņ":"n",
+  "ő":"o",
   "ó":"o",
+  "ř":"r",
+  "ś":"s",
+  "š":"s",
+  "ū":"u",
   "ż":"z",
   "ź":"z",
-  "ń":"n",
-  "ł":"l",
-  "ś":"s",
-  "ć":"c",
-};
+  "ž":"z",
+ };
 
 /*
 timePattern / datePattern:
@@ -630,6 +640,24 @@ var locales = {
     abday: "Ndz,Pon,Wt,Śr,Czw,Pt,Sob",
     day: "Niedziela,Poniedziałek,Wtorek,Środa,Czwartek,Piątek,Sobota",
     trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "on", off: "off", "< Back": "< Wstecz" }
+  },
+  "lv_LV": { // Using charfallbacks
+    lang: "lv_LV",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
+    abmonth: "Jan,Feb,Mar,Apr,Mai,Jūn,Jūl,Aug,Sep,Okt,Nov,Dec",
+    month: "Janvāris,Februāris,Marts,Aprīlis,Maijs,Jūnijs,Jūlijs,Augusts,Septemberis,Oktobris,Novembris,Decembris",
+    abday: "Pr,Ot,Tr,Ce,Pk,Se,Sv",
+    day: "Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena,Svētdiena",
+    trans: { yes: "jā", Yes: "Jā", no: "nē", No: "Nē", ok: "labi", on: "Ieslēgt", off: "Izslēgt", "< Back": "< Atpakaļ" }
   },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
