@@ -106,7 +106,7 @@ function getSteps() {
   if (WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
   }
-  return '375';
+  return '0';
 }
 
 g.clear();
