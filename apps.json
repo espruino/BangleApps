@@ -4212,7 +4212,7 @@
     "version": "0.08",
     "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
-    "dependencies": {"mylocation":"app"},
+    "dependencies": {"mylocation":"app", "widpedom":"app"},
     "screenshots": [{"url":"screenshot_pastel.png"}],
     "type": "clock",
     "tags": "clock",
