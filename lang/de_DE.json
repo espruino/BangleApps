@@ -1,0 +1,15 @@
+{
+  "//":"German language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarm" : "Wecker",
+    "Hours" : "Stunden",
+    "Minutes" : "Minuten",
+    "Enabled" : "Aktiviert",
+    "Settings" : "Einstellungen"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "Alarm" : "Alarm"
+  }
+}

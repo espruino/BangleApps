@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.11",
+    "version": "0.12",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -92,13 +92,14 @@
       {"name":"messages","url":"lib.js"}
     ],
     "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
+    "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-notify.gif"}],
     "sortorder": -9
   },
   {
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Display notifications/music/etc from Gadgetbridge on Android. This replaces the old Gadgetbridge widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
@@ -115,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -217,7 +218,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",
@@ -2167,14 +2168,15 @@
   { "id": "snek",
     "name": "The snek game",
     "shortName":"Snek",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A snek game where you control a snek to eat all the apples!",
-    "icon": "snek-icon.js",
+    "screenshots": [{"url":"screenshot_snek.png"}],
+    "icon": "snek.png",
     "supports": ["BANGLEJS2"],
     "tags": "game,fun",
     "storage": [
       {"name":"snek.app.js","url":"snek.js"},
-      {"name":"snek.img","url":"snek-icon.js","evaluate":true}
+      {"name":"snek.img","url":"snek.icon.js","evaluate":true}
     ]
   },
   {
@@ -3294,7 +3296,7 @@
   {
     "id": "dtlaunch",
     "name": "Desktop Launcher",
-    "version": "0.05",
+    "version": "0.07",
     "description": "Desktop style App Launcher with six (four for Bangle 2) apps per page - fast access if you have lots of apps installed.",
     "screenshots": [{"url":"shot1.png"},{"url":"shot2.png"},{"url":"shot3.png"}],
     "icon": "icon.png",
@@ -3305,8 +3307,11 @@
     "storage": [
       {"name":"dtlaunch.app.js","url":"app-b1.js", "supports": ["BANGLEJS"]},
       {"name":"dtlaunch.app.js","url":"app-b2.js", "supports": ["BANGLEJS2"]},
+      {"name":"dtlaunch.settings.js","url":"settings-b1.js", "supports": ["BANGLEJS"]},
+      {"name":"dtlaunch.settings.js","url":"settings-b2.js", "supports": ["BANGLEJS2"]},
       {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"dtlaunch.json"}]
   },
   {
     "id": "HRV",
@@ -4008,11 +4013,11 @@
   {
     "id": "thermom",
     "name": "Thermometer",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Displays the current temperature in degree Celsius, updated every 20 seconds",
     "icon": "app.png",
     "tags": "tool",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"thermom.app.js","url":"app.js"},
@@ -4734,7 +4739,7 @@
   { "id": "pooqroman",
     "name": "pooq Roman watch face",
     "shortName":"pooq Roman",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A classic watch face with a certain dynamicity. Most amusing in 24h mode. Slide up to show more hands, down for less(!). By design does not support standard widgets, sorry!",
     "icon": "app.png",
     "type": "clock",
@@ -4870,7 +4875,7 @@
     "id": "rebble",
     "name": "Rebble Clock",
     "shortName": "Rebble",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
     "readme": "README.md",
     "icon": "rebble.png",
@@ -4930,6 +4935,41 @@
     "storage": [
       {"name":"awairmonitor.app.js","url":"app.js"},
       {"name":"awairmonitor.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "pooqround",
+    "name": "pooq Round watch face",
+    "shortName":"pooq Round",
+    "version":"0.00",
+    "description": "A 24 hour analogue watchface with high legibility and a novel style.",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"pooqround.app.js","url":"app.js"},
+      {"name":"pooqround.img","url":"app-icon.js","evaluate":true}
+     ],
+     "data": [
+       {"name":"pooqround.json"}
+     ]
+  },
+  {
+    "id": "coretemp",
+    "name": "Core Temp Display",
+    "version": "0.01",
+    "description": "Display CoreTemp device sensor data",
+    "icon": "coretemp.png",
+    "type": "app",
+    "tags": "health",
+    "readme": "README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"coretemp.boot.js","url":"boot.js"},
+      {"name":"coretemp.app.js","url":"coretemp.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
     ]
   }
 ]
