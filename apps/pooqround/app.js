@@ -330,6 +330,8 @@ class Round {
       this.render(new Date()); // Not quite right, I think.
     }
 
+    enhanceUntil(t) {this.enhance = t;}
+
     pie(f, a0, a1, invert) {
         if (!invert) return this.pie(f, a1, a0 + 1, true);
         let t0 = Math.tan(a0 * 2 * Math.PI), t1 = Math.tan(a1 * 2 * Math.PI);
@@ -369,17 +371,18 @@ class Round {
         const g = this.g;
         const b = this.b, bI = this.bI;
         const c = this.c, cI = this.cI;
+        const e = d < this.enhance;
         const state = this.state;
         const options = this.options;
         const cal = options.calendric;
         const res = options.resolution;
-        const dow = (cal == 1 || cal > 2) && d.getDay();
+        const dow = (e || cal == 1 || cal > 2) && d.getDay();
         const ts = res < 2 && d.getSeconds();
-        const tm = res < 3 && d.getMinutes() + ts / 60;
+        const tm = (e || res < 3) && d.getMinutes() + ts / 60;
         const th = d.getHours() + d.getMinutes() / 60;
-        const dd = cal > 1 && d.getDate();
-        const dm = cal > 3 && d.getMonth();
-        const dy = cal > 4 && d.getFullYear();
+        const dd = (e || cal > 1) && d.getDate();
+        const dm = (e || cal > 3) && d.getMonth();
+        const dy = (e || cal > 4) && d.getFullYear();
         const xc = this.xc, yc = this.yc, r = this.r;
         const dlr = xc * 3/4, dlw = 8, dlhw = 4;
 
@@ -504,9 +507,15 @@ class Clock {
                                 this.options.resolution++;
                             this.rates.clock = this.timescales[this.options.resolution];
                             this.active();
-                        } else if (this.yX - this.yN < 20 && Date.now() - this.t0 > 500) {
-                            this.stop();
-                            this.options.interact();
+                        } else if (this.yX - this.yN < 20) {
+                            const now = new Date();
+                            if (now - this.t0 < 250) {
+                                face.enhanceUntil(now + 30000);
+                                face.render(now);
+                            } else if (now - this.t0 > 500) {
+                                this.stop();
+                                this.options.interact();
+                            }
                         }
                         this.t0 = null;
                     }
