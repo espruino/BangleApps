@@ -276,8 +276,10 @@ function showPasskeyMenu() {
       showBLEMenu();
     }
   };
-  if (!settings.passkey || settings.passkey.length!=6)
+  if (!settings.passkey || settings.passkey.length!=6) {
     settings.passkey = "123456";
+    updateSettings();
+  }
   for (var i=0;i<6;i++) (function(i){
     menu[`Digit ${i+1}`] = {
       value : 0|settings.passkey[i],
