@@ -768,7 +768,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -4960,7 +4960,7 @@
   {
     "id": "coretemp",
     "name": "Core Temp Display",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
     "type": "app",
