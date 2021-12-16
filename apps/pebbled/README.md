@@ -4,10 +4,8 @@
 - Added distance in km (kilometers) based on step length (can be changed in settings and is equal 0.75m by default)
 - Battery warning changed to 15% instead of 30%
 
-<div class="flex">
-    <img src="pebble_screenshot.png" alt="screenshot" title="Web IDE screenshot" style="width: 45%"/>
-    <img src="photo.jpg" alt="photo" title="real photo" style="width: 45%"/>
-</div>
+![](pebble_screenshot.png)
+![](photo.jpg)
 
 Written by: [Hugh Barney](https://github.com/hughbarney)  For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)
 
