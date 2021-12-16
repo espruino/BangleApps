@@ -154,7 +154,8 @@ var locales = {
     month: "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     abday: "So,Mo,Di,Mi,Do,Fr,Sa",
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
-    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", "< Back": "< Zurück" }
+    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", 
+			"< Back": "< Zurück", "Delete": "Löschen", "Mark Unread": "Als ungelesen markieren" }
   },
   "en_US": {
     lang: "en_US",
@@ -333,7 +334,8 @@ var locales = {
     month: "Jänner,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     abday: "So,Mo,Di,Mi,Do,Fr,Sa",
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
-    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus" }
+    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", 
+			"< Back": "< Zurück", "Delete": "Löschen", "Mark Unread": "Als ungelesen markieren" }
   },
   "en_IL": {
     lang: "en_IL",
@@ -369,7 +371,8 @@ var locales = {
     month: "enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre",
     abday: "dom,lun,mar,mié,jue,vie,sáb",
     day: "domingo,lunes,martes,miércoles,jueves,viernes,sábado",
-    trans: { yes: "sí", Yes: "Sí", no: "no", No: "No", ok: "ok", on: "on", off: "off" }
+    trans: { yes: "sí", Yes: "Sí", no: "no", No: "No", ok: "ok", on: "on", off: "off",
+			"< Back": "< Atrás", "Delete": "Borrar ", "Mark Unread": "Marcar como no leído" }
   },
   "fr_BE": {
     lang: "fr_BE",
