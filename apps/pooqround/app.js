@@ -83,7 +83,6 @@ class Options {
             Bangle.removeListener('drag', this.reactivator);
             this.emit('done');
         }
-        g.clear(true);
         E.showMenu(m);
     }
 
@@ -309,7 +308,7 @@ class Round {
             buffer: this.c.buffer, transparent: 0
         };
         this.options = new RoundOptions();
-        this.timescales = [1000, 0, 60000, 900000];
+        this.timescales = [1000, [1000, 60000], 60000, 900000];
         this.state = {};
         // Precomputed polygons for the border areas.
         this.tl = [0, 0, 58, 0, 0, 58];
@@ -323,12 +322,14 @@ class Round {
         this.r = this.xc - this.minR;
     }
 
-    reset() {this.state = {}; this.g.clear(true);}
+    reset(clear) {this.state = {}; clear && this.g.clear(true);}
 
     doIcons(which) {
       this.state[which] = null;
       this.render(new Date()); // Not quite right, I think.
     }
+
+    enhanceUntil(t) {this.enhance = t;}
 
     pie(f, a0, a1, invert) {
         if (!invert) return this.pie(f, a1, a0 + 1, true);
@@ -369,17 +370,18 @@ class Round {
         const g = this.g;
         const b = this.b, bI = this.bI;
         const c = this.c, cI = this.cI;
+        const e = d < this.enhance;
         const state = this.state;
         const options = this.options;
         const cal = options.calendric;
         const res = options.resolution;
-        const dow = (cal == 1 || cal > 2) && d.getDay();
+        const dow = (e || cal == 1 || cal > 2) && d.getDay();
         const ts = res < 2 && d.getSeconds();
-        const tm = res < 3 && d.getMinutes() + ts / 60;
+        const tm = (e || res < 3) && d.getMinutes() + ts / 60;
         const th = d.getHours() + d.getMinutes() / 60;
-        const dd = cal > 1 && d.getDate();
-        const dm = cal > 3 && d.getMonth();
-        const dy = cal > 4 && d.getFullYear();
+        const dd = (e || cal > 1) && d.getDate();
+        const dm = (e || cal > 3) && d.getMonth();
+        const dy = (e || cal > 4) && d.getFullYear();
         const xc = this.xc, yc = this.yc, r = this.r;
         const dlr = xc * 3/4, dlw = 8, dlhw = 4;
 
@@ -475,7 +477,6 @@ class Clock {
         this.timescales = face.timescales;
         this.options = face.options;
         this.rates = {};
-        this.faceUp = null;
 
         this.options.on('done', () => this.start());
         
@@ -485,7 +486,6 @@ class Clock {
             lock: () => {face.doIcons('locked'); this.active();},
             faceUp: up => {
                 this.conservative = !up;
-                this.faceUp = up;
                 this.active();
             },
             twist: _ => this.options.autolight && Bangle.setLCDPower(true),
@@ -504,9 +504,15 @@ class Clock {
                                 this.options.resolution++;
                             this.rates.clock = this.timescales[this.options.resolution];
                             this.active();
-                        } else if (this.yX - this.yN < 20 && Date.now() - this.t0 > 500) {
-                            this.stop();
-                            this.options.interact();
+                        } else if (this.yX - this.yN < 20) {
+                            const now = new Date();
+                            if (now - this.t0 < 250) {
+                                face.enhanceUntil(now + 30000);
+                                face.render(now);
+                            } else if (now - this.t0 > 500) {
+                                this.stop();
+                                this.options.interact();
+                            }
                         }
                         this.t0 = null;
                     }
@@ -520,7 +526,7 @@ class Clock {
 
     redraw(rate) {
         const now = this.updated = new Date();
-        if (this.refresh) this.face.reset();
+        if (this.refresh) this.face.reset(true);
         this.refresh = false;
         rate = this.face.render(now, rate);
         if (rate !== this.rates.face) {
@@ -535,7 +541,7 @@ class Clock {
         this.exception && clearTimeout(this.exception);
         this.interval && clearInterval(this.interval);
         this.timeout = this.exception = this.interval = this.rate = null;
-        this.face.reset(); // Cancel any ongoing background rendering
+        this.face.reset(false); // Cancel any ongoing background rendering
         return this;
     }
     
