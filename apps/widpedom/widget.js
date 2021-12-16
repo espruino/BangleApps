@@ -53,7 +53,7 @@
   E.on('kill', () => {
     if (!settings) { loadSettings() }
     let d = {
-      lastUpdate : lastUpdate.toISOString(),
+      lastUpdate : lastUpdate.valueOf(),
       stepsToday : stp_today,
       settings   : settings,
     };
