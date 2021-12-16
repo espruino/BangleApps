@@ -65,7 +65,7 @@
   // Message response
   Bangle.messageResponse = (msg,response) => {
     if (msg.id=="call") return gbSend({ t: "call", n:response?"ACCEPT":"REJECT" });
-    if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS" });
+    if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
 })();

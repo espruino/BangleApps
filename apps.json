@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.38",
+    "version": "0.39",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.11",
+    "version": "0.13",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -92,14 +92,15 @@
       {"name":"messages","url":"lib.js"}
     ],
     "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
+    "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-notify.gif"}],
     "sortorder": -9
   },
   {
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.04",
-    "description": "Display notifications/music/etc from Gadgetbridge on Android. This replaces the old Gadgetbridge widget.",
+    "version": "0.05",
+    "description": "Display notifications/music/etc sent from the Gadgetbridge app on Android. This replaces the old 'Gadgetbridge' Bangle.js widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
     "dependencies": {"messages":"app"},
@@ -115,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -166,7 +167,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.36",
+    "version": "0.37",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -217,7 +218,7 @@
   {
     "id": "locale",
     "name": "Languages",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Translations for different countries",
     "icon": "locale.png",
     "type": "locale",
@@ -303,7 +304,7 @@
     "id": "gbridge",
     "name": "Gadgetbridge",
     "version": "0.25",
-    "description": "(NOT RECOMMENDED) Handles Gadgetbridge notifications from Android. This is now replaced by the 'Android' app.",
+    "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android' Bangle.js app instead.",
     "icon": "app.png",
     "type": "widget",
     "tags": "tool,system,android,widget",
@@ -1589,7 +1590,7 @@
   {
     "id": "widpedom",
     "name": "Pedometer widget",
-    "version": "0.19",
+    "version": "0.20",
     "description": "Daily pedometer widget",
     "icon": "widget.png",
     "type": "widget",
@@ -1698,14 +1699,15 @@
     "id": "rtorch",
     "name": "Red Torch",
     "shortName": "RedTorch",
-    "version": "0.01",
-    "description": "Turns screen RED to help you see in the dark without breaking your night vision. Select from the launcher or press BTN3,BTN1,BTN3,BTN1 quickly to start when in any app that shows widgets",
+    "version": "0.02",
+    "description": "Turns screen RED to help you see in the dark without breaking your night vision. Select from the launcher or on Bangle 1 press BTN3,BTN1,BTN3,BTN1 quickly to start when in any app that shows widgets",
     "icon": "app.png",
     "tags": "tool,torch",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "allow_emulator": true,
     "storage": [
       {"name":"rtorch.app.js","url":"app.js"},
-      {"name":"rtorch.wid.js","url":"widget.js"},
+      {"name":"rtorch.wid.js","url":"widget.js", "supports": ["BANGLEJS"]},
       {"name":"rtorch.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -2167,14 +2169,15 @@
   { "id": "snek",
     "name": "The snek game",
     "shortName":"Snek",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A snek game where you control a snek to eat all the apples!",
-    "icon": "snek-icon.js",
+    "screenshots": [{"url":"screenshot_snek.png"}],
+    "icon": "snek.png",
     "supports": ["BANGLEJS2"],
     "tags": "game,fun",
     "storage": [
       {"name":"snek.app.js","url":"snek.js"},
-      {"name":"snek.img","url":"snek-icon.js","evaluate":true}
+      {"name":"snek.img","url":"snek.icon.js","evaluate":true}
     ]
   },
   {
@@ -3294,7 +3297,7 @@
   {
     "id": "dtlaunch",
     "name": "Desktop Launcher",
-    "version": "0.05",
+    "version": "0.07",
     "description": "Desktop style App Launcher with six (four for Bangle 2) apps per page - fast access if you have lots of apps installed.",
     "screenshots": [{"url":"shot1.png"},{"url":"shot2.png"},{"url":"shot3.png"}],
     "icon": "icon.png",
@@ -3305,8 +3308,11 @@
     "storage": [
       {"name":"dtlaunch.app.js","url":"app-b1.js", "supports": ["BANGLEJS"]},
       {"name":"dtlaunch.app.js","url":"app-b2.js", "supports": ["BANGLEJS2"]},
+      {"name":"dtlaunch.settings.js","url":"settings-b1.js", "supports": ["BANGLEJS"]},
+      {"name":"dtlaunch.settings.js","url":"settings-b2.js", "supports": ["BANGLEJS2"]},
       {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"dtlaunch.json"}]
   },
   {
     "id": "HRV",
@@ -3472,8 +3478,8 @@
   {
     "id": "speedalt2",
     "name": "GPS Adventure Sports II",
-    "shortName": "GPS Adv Sport II",
-    "version": "0.07",
+    "shortName":"GPS Adv Sport II",
+    "version":"1.10",
     "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
     "icon": "app.png",
     "type": "app",
@@ -4008,11 +4014,11 @@
   {
     "id": "thermom",
     "name": "Thermometer",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Displays the current temperature in degree Celsius, updated every 20 seconds",
     "icon": "app.png",
     "tags": "tool",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"thermom.app.js","url":"app.js"},
@@ -4203,10 +4209,10 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.08",
+    "version": "0.09",
     "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
-    "dependencies": {"mylocation":"app"},
+    "dependencies": {"mylocation":"app", "widpedom":"app"},
     "screenshots": [{"url":"screenshot_pastel.png"}],
     "type": "clock",
     "tags": "clock",
@@ -4644,7 +4650,7 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
   "screenshots": [
@@ -4717,8 +4723,9 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.04",
+    "version": "0.06",
     "description": "A pebble style clock to keep the rebellion going",
+    "dependencies": {"widpedom":"app"},
     "readme": "README.md",
     "icon": "pebble.png",
     "screenshots": [{"url":"pebble_screenshot.png"}],
@@ -4852,10 +4859,10 @@
     "id": "ptlaunch",
     "name": "Pattern Launcher",
     "shortName": "Pattern Launcher",
-    "version": "0.10",
+    "version": "0.11",
     "description": "Directly launch apps from the clock screen with custom patterns.",
     "icon": "app.png",
-    "screenshots": [{"url":"main_menu_add.png"}, {"url":"add_pattern.png"}, {"url":"select_app.png"}, {"url":"main_menu_manage.png"}, {"url":"manage_patterns.png"}],
+    "screenshots": [{"url":"manage_patterns_light.png"}],
     "tags": "tools",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
@@ -4870,11 +4877,11 @@
     "id": "rebble",
     "name": "Rebble Clock",
     "shortName": "Rebble",
-    "version": "0.01",
+    "version": "0.03",
     "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
     "readme": "README.md",
     "icon": "rebble.png",
-    "dependencies": {"mylocation":"app"},
+    "dependencies": {"mylocation":"app", "widpedom":"app"},
     "screenshots": [{"url":"screenshot_rebble.png"}],
     "type": "clock",
     "tags": "clock",
@@ -4912,6 +4919,7 @@
     "supports" : ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "storage": [
+      {"name":"clicompleteclk.app.js","url":"app.js"},
       {"name":"clicompleteclk.img","url":"app-icon.js","evaluate":true},
       {"name":"clicompleteclk.settings.js","url":"settings.js"}
      ],
@@ -4931,5 +4939,92 @@
       {"name":"awairmonitor.app.js","url":"app.js"},
       {"name":"awairmonitor.img","url":"app-icon.js","evaluate":true}
     ]
-  }
+  },
+  { "id": "pooqround",
+    "name": "pooq Round watch face",
+    "shortName":"pooq Round",
+    "version":"0.01",
+    "description": "A 24 hour analogue watchface with high legibility and a novel style.",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"pooqround.app.js","url":"app.js"},
+      {"name":"pooqround.img","url":"app-icon.js","evaluate":true}
+     ],
+     "data": [
+       {"name":"pooqround.json"}
+     ]
+  },
+  {
+    "id": "coretemp",
+    "name": "Core Temp Display",
+    "version": "0.01",
+    "description": "Display CoreTemp device sensor data",
+    "icon": "coretemp.png",
+    "type": "app",
+    "tags": "health",
+    "readme": "README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"coretemp.boot.js","url":"boot.js"},
+      {"name":"coretemp.app.js","url":"coretemp.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "showimg",
+    "name": "simple image viewer",
+    "shortName":"showImage",
+    "version":"0.2",
+    "description": "Displays the image in \"showimage.user.img\". The file has to be uploaded via the espruino IDE. Returns to watch face after 60s or button push. I use it to display my vaccination certificate.",
+    "icon": "app.png",
+    "tags": "tool",
+    "supports" : ["BANGLEJS2"],
+    "storage": [
+      {"name":"showimg.app.js","url":"app.js"},
+      {"name":"showimg.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "lapcounter",
+    "name": "Lap Counter",
+    "version": "0.01",
+    "description": "Click button to count laps. Shows count and total time snapshot (like a stopwatch, but laid back).",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "tool,outdoors",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"lapcounter.app.js","url":"app.js"},
+      {"name":"lapcounter.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "circlesclock",
+      "name": "Circles clock",
+      "shortName":"Circles clock",
+      "version":"0.01",
+      "description": "A clock with circles for different data at the bottom in a probably familiar style",
+      "icon": "app.png",
+      "dependencies": {"widpedom":"app"},
+      "type": "clock",
+      "tags": "clock",
+      "supports" : ["BANGLEJS2"],
+      "allow_emulator":true,
+      "readme": "README.md",
+      "storage": [
+        {"name":"circlesclock.app.js","url":"app.js"},
+        {"name":"circlesclock.img","url":"app-icon.js","evaluate":true},
+        {"name":"circlesclock.settings.js","url":"settings.js"}
+       ],
+       "data": [
+         {"name":"circlesclock.json"}
+       ]
+    }
 ]

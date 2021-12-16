@@ -14,6 +14,8 @@ Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awai
 
 ![](screenshot.png)
 
+![](awair-monitor-photo.jpg)
+
 ## Creator
 [@alainsaas](https://github.com/alainsaas)
 

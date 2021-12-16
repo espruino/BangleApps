@@ -1,0 +1,21 @@
+{
+  "//":"Turkish language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Alarmlar",
+    "Hours" : "Saat",
+    "Minutes" : "Dakika",
+    "Enabled" : "Etkinleştirildi",
+    "New Alarm" : "Yeni alarm",
+    "Save" : "Sakla",
+    "Back" : "Geriye",
+    "Repeat" : "Yineleme",
+    "Delete" : "Sil",
+    "ALARM!" : "ALARM!",
+    "Sleep" : "Uyku"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "yineleme"
+  }
+}

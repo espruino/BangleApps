@@ -5,3 +5,6 @@
 0.05: Added more bundleId's (app-id's which can be used to
       determine a friendly app name in the notifications)
 0.06: Fix (not) popupping up old messages
+0.07: Added more details from music (instead of Undefined)
+      Added more app identifiers
+
