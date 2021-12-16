@@ -1,1 +1,3 @@
 0.01: New App!
+0.02: Fix position and overdraw bugs
+      Better memory usage, theme support

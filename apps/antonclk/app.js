@@ -23,6 +23,7 @@ function draw() {
   var date = new Date();
   var timeStr = require("locale").time(date,1);
   var dateStr = require("locale").date(date).toUpperCase();
+  var dowStr = require("locale").dow(date).toUpperCase();
   // draw time
   g.setFontAlign(0,0).setFont("Anton");
   g.clearRect(0,y-40,g.getWidth(),y+35); // clear the background
@@ -32,6 +33,10 @@ function draw() {
   g.setFontAlign(0,0).setFont("6x8",2);
   g.clearRect(0,y-8,g.getWidth(),y+8); // clear the background
   g.drawString(dateStr,x,y);
+  //draw day of week
+  y += 16;
+  g.clearRect(0,y-8,g.getWidth(),y+8); // clear the background
+  g.drawString(dowStr,x,y);
   // queue draw in one minute
   queueDraw();
 }

@@ -1,93 +1,79 @@
 (() => {
-  const storage = require('Storage');
-  settingsChronowid = storage.readJSON("chronowid.json",1)||{}; //read settingsChronowid from file
-  var height = 23;
-  var width = 58;
+  var settingsChronowid;
   var interval =  0; //used for the 1 second interval timer
-  var now = new Date();
+  var diff;
 
-  var time = 0;
-  var diff = settingsChronowid.goal - now;
-    
   //Convert ms to time
   function getTime(t)  {
     var milliseconds = parseInt((t % 1000) / 100),
       seconds = Math.floor((t / 1000) % 60),
       minutes = Math.floor((t / (1000 * 60)) % 60),
       hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-      
-    return hours + ":" + minutes + ":" + seconds;
+    return hours.toString().padStart(2,0) + ":" + minutes.toString().padStart(2,0) + ":" + seconds.toString().padStart(2,0);
   }
 
-  function printDebug() {
-    print ("Nowtime: " + getTime(now));
-    print ("Now: " + now);
+  /*function printDebug() {
     print ("Goaltime: " + getTime(settingsChronowid.goal));
     print ("Goal: " + settingsChronowid.goal);
     print("Difftime: " + getTime(diff));
     print("Diff: " + diff);
     print ("Started: " + settingsChronowid.started);
     print ("----");
-  }
+  }*/
 
   //counts down, calculates and displays
   function countDown() {
-    now = new Date();
+    var now = new Date();
     diff = settingsChronowid.goal - now; //calculate difference
-    WIDGETS["chronowid"].draw();
-    //time is up
+    // time is up
     if (settingsChronowid.started && diff < 1000) {
       Bangle.buzz(1500);
       //write timer off to file
       settingsChronowid.started = false;
-      storage.writeJSON('chronowid.json', settingsChronowid);
+      require('Storage').writeJSON('chronowid.json', settingsChronowid);
       clearInterval(interval); //stop interval
+      interval = undefined;
     }
-    //printDebug();
+    // calculates width and redraws accordingly
+    WIDGETS["chronowid"].redraw();
   }
-
-  // draw your widget
-  function draw() {
-    if (!settingsChronowid.started) {
-      width = 0;
-      return; //do not draw anything if timer is not started
-    }
-    g.reset();
-    if (diff >= 0) {
-      if (diff < 3600000) { //less than 1 hour left
-        width = 58;
-        g.clearRect(this.x,this.y,this.x+width,this.y+height);
-        g.setFont("6x8", 2);
-        g.drawString(getTime(diff).substring(3), this.x+1, this.y+5); //remove hour part 00:00:00 -> 00:00
-      }
-      if (diff >= 3600000) { //one hour or more left
-        width = 48;
-        g.clearRect(this.x,this.y,this.x+width,this.y+height);
-        g.setFont("6x8", 1);
-        g.drawString(getTime(diff), this.x+1, this.y+((height/2)-4)); //display hour 00:00:00
-      }
-    }
-    // not needed anymoe, because we check if diff < 1000 now, so 00:00 is displayed.
-    // else {
-    //     width = 58;
-    //     g.clearRect(this.x,this.y,this.x+width,this.y+height);
-    //     g.setFont("6x8", 2);
-    //     g.drawString("END", this.x+15, this.y+5);
-    // }
-  }
-
-  if (settingsChronowid.started) interval = setInterval(countDown, 1000); //start countdown each second
 
   // add the widget
-  WIDGETS["chronowid"]={area:"bl",width:width,draw:draw,reload:function() {
-    reload();
-    Bangle.drawWidgets(); // relayout all widgets
+  WIDGETS["chronowid"]={area:"tl",width:0,draw:function() {
+    if (!this.width) return;
+    g.reset().setFontAlign(0,0).clearRect(this.x,this.y,this.x+this.width,this.y+23);
+    //g.drawRect(this.x,this.y,this.x+this.width-1, this.y+23);
+    var scale;
+    var timeStr;
+    if (diff < 3600000) { //less than 1 hour left
+      width = 58;
+      scale = 2;
+      timeStr = getTime(diff).substring(3); // remove hour part 00:00:00 -> 00:00
+    } else { //one hour or more left
+      width = 48;
+      scale = 1;
+      timeStr = getTime(diff); //display hour 00:00:00 but small
+    }
+    // Font5x9Numeric7Seg - just build this in as it's tiny
+    g.setFontCustom(atob("AAAAAAAAAAIAAAQCAQAAAd0BgMBdwAAAAAAAdwAB0RiMRcAAAERiMRdwAcAQCAQdwAcERiMRBwAd0RiMRBwAAEAgEAdwAd0RiMRdwAcERiMRdwAFAAd0QiEQdwAdwRCIRBwAd0BgMBAAABwRCIRdwAd0RiMRAAAd0QiEQAAAAAAAAAA="), 32, atob("BgAAAAAAAAAAAAAAAAYCAAYGBgYGBgYGBgYCAAAAAAAABgYGBgYG"), 9 + (scale<<8));
+    g.drawString(timeStr, this.x+this.width/2, this.y+12);
+  }, redraw:function() {
+    var last = this.width;
+    if (!settingsChronowid.started) this.width = 0;
+    else this.width = (diff < 3600000) ? 58 : 48;
+    if (last != this.width) Bangle.drawWidgets();
+    else this.draw();
+  }, reload:function() {
+    settingsChronowid = require('Storage').readJSON("chronowid.json",1)||{};
+    if (interval) clearInterval(interval);
+    interval = undefined;
+    // start countdown each second
+    if (settingsChronowid.started) interval = setInterval(countDown, 1000);
+    // reset everything
+    countDown();
   }};
 
   //printDebug();
-  countDown();
+  // set width correctly, start countdown each second
+  WIDGETS["chronowid"].reload();
 })();

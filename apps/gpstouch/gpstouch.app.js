@@ -24,7 +24,7 @@ function resetLastFix() {
 function processFix(fix) {
   last_fix.time = fix.time;
   log_debug(fix);
-  
+
   if (fix.fix) {
     if (!last_fix.fix) {
       // we dont need to suppress this in quiet mode as it is user initiated
@@ -78,7 +78,7 @@ function drawInfo() {
       g.setColor("#fff");
     else
       g.setColor("#000");
-    
+
     g.drawString((infoData[infoMode].calc()), w/2, (3*(h-24)/4) + 24);
   }
 }
@@ -196,7 +196,7 @@ function prevInfo() {
 }
 
 Bangle.on('swipe', dir => {
-  if (dir == 1) prevInfo() else nextInfo();
+  if (dir == 1) prevInfo(); else nextInfo();
   draw();
 });
 

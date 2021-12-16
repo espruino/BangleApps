@@ -27,17 +27,22 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 
 // When a device is found, filter the apps accordingly
 function onFoundDeviceInfo(deviceId, deviceVersion) {
-  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
-    showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
-  } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">update with the instructions here</a>` ,"warning", 20000);
-  }
+  var fwURL = "#";
   if (deviceId == "BANGLEJS") {
+    fwURL = "https://www.espruino.com/Bangle.js#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
   }
   if (deviceId == "BANGLEJS2") {
+    fwURL = "https://www.espruino.com/Bangle.js2#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
+
+  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
+    showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
+  } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+  }
+
 
   // check against features shown?
   filterAppsForDevice(deviceId);
@@ -50,7 +55,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
 
 var originalAppJSON = undefined;
 function filterAppsForDevice(deviceId) {
-  if (originalAppJSON===undefined)
+  if (originalAppJSON===undefined && appJSON.length)
     originalAppJSON = appJSON;
 
   var device = DEVICEINFO.find(d=>d.id==deviceId);
@@ -92,8 +97,7 @@ function setSavedDeviceId(deviceId) {
 // At boot, show a window to choose which type of device you have...
 window.addEventListener('load', (event) => {
   let deviceId = getSavedDeviceId()
-  if (deviceId !== undefined)
-    return filterAppsForDevice(deviceId);
+  if (deviceId !== undefined) return; // already chosen
 
   var html = `<div class="columns">
     ${DEVICEINFO.map(d=>`
@@ -149,7 +153,7 @@ window.addEventListener('load', (event) => {
   document.getElementById("installdefault").addEventListener("click",event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
-        return httpGet("defaultapps_banglejs.json");
+        return httpGet("defaultapps_banglejs1.json");
       if (device.id == "BANGLEJS2")
         return httpGet("defaultapps_banglejs2.json");
       throw new Error("Unknown device "+device.id);
@@ -161,3 +165,31 @@ window.addEventListener('load', (event) => {
     });
   });
 });
+
+function onAppJSONLoaded() {
+  let deviceId = getSavedDeviceId()
+  if (deviceId !== undefined)
+    filterAppsForDevice(deviceId);
+
+  /* Disable external screenshot loading - seems we probably have enough
+  screenshots added manually in apps.json */
+  /*return new Promise(resolve => {
+    httpGet("screenshots.json").then(screenshotJSON=>{
+      var screenshots = [];
+      try {
+        screenshots = JSON.parse(screenshotJSON);
+      } catch(e) {
+        console.error("Screenshot JSON Corrupted", e);
+      }
+      screenshots.forEach(s => {
+        var app = appJSON.find(a=>a.id==s.id);
+        if (!app) return;
+        if (!app.screenshots) app.screenshots = [];
+        app.screenshots.push({url:s.url});
+      })
+    }).catch(err=>{
+      console.log("No screenshots.json found");
+      resolve();
+    });
+  });*/
+}

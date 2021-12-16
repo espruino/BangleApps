@@ -1,30 +1,13 @@
 # Multiclock
 
-This is a clock app that supports multiple clock faces. The user can switch between faces while retaining widget state which makes the switch fast and preserves state such as bluetooth connections. Currently there are four clock faces as shown below. To my eye, these faces look better when widgets are hidden using **widviz**. 
-
+This is a clock app that supports multiple clock faces. The user can switch between faces while retaining widget state which makes the switch fast. Currently there are four clock faces as shown below. There are currently an anlog, digital, text, big digit, time and date, and a clone of the Nifty-A-Clock faces.
 ### Analog Clock Face
-![](anaface.jpg)
-
-### Digital Clock Face
-![](digiface.jpg)
-
-### Big Digit Clock Face
-![](bigface.jpg)
-
-### Text Clock Face
-![](txtface.jpg)
-
-### Time and Date Clock Face
 
 
 ## Controls
-Clock faces are kept in a circular list.
-
-*BTN1* - switches to the next clock face.
-
-*BTN2* - switches to the app launcher.
-
-*BTN3* - switches to the previous clock face.
+Uses `setUI("clockupdown")`
+BTN1 & BTH3  switch faces on the Bangle.
+Touch upper right and lower right quadrant switch faces on the Bangle 2.
 
 ## Adding a new face
 Clock faces are described in javascript storage files named `name.face.js`. For example, the Analog Clock Face is described in `ana.face.js`. These files have the following structure:
@@ -38,7 +21,7 @@ Clock faces are described in javascript storage files named `name.face.js`. For 
 	    function drawAll(){
 	       //draw background + initial state of digits, hands etc
 	    }
-    	return {init:drawAll, tick:onSecond};
+    	return {init:drawAll, tick:onSecond, tickpersec:true};
     }
     return getFace;
 })();
@@ -47,6 +30,5 @@ For those familiar with the structure of widgets, this is similar, however, ther
 
 The app at start up loads all files `*.face.js`. The simplest way of adding a face is thus to load it into `Storage` using the WebIDE. Similarly, to remove an unwanted face, simply delete it from `Storage` using the WebIDE.
 
-## Support
+If `tickpersec` is false then `tick` is only called each minute as this is more power effcient - especially on the BAngle 2.
 
-Please report bugs etc. by raising an issue [here](https://github.com/jeffmer/JeffsBangleAppsDev).

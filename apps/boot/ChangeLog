@@ -35,3 +35,11 @@
       improve g.stringMetrics polyfill
       Fix issue where re-running bootupdate could disable existing polyfills
 0.33: Add E.showScroller polyfill
+0.34: Use Storage.hash if available
+      Rearrange NRF.setServices to allow .boot.js files to add services (eg ANCS)
+0.35: Add Bangle.appRect polyfill
+      Don't set beep vibration up on Bangle.js 2 (built in)
+0.36: Add comments to .boot0 to make debugging a bit easier
+0.37: Remove Quiet Mode settings: now handled by Quiet Mode Schedule app
+0.38: Option to log to file if settings.log==2
+0.39: Fix passkey support (fix https://github.com/espruino/Espruino/issues/2035)

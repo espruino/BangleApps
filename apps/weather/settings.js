@@ -19,6 +19,14 @@
       },
       onchange: x => save('expiry', x),
     },
+    'Hide Widget': {
+      value: "hide" in settings ? settings.hide : false,
+      format: () => (settings.hide ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.hide = !settings.hide
+        save('hide', settings.hide);
+      },
+    },
     '< Back': back,
   });
 })

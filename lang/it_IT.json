@@ -1,0 +1,21 @@
+{
+  "//":"Italian language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Allarmi",
+    "Hours" : "Ore",
+    "Minutes" : "Minuti",
+    "Enabled" : "Attivato",
+    "New Alarm" : "Nuovo allarme",
+    "Save" : "Salvare",
+    "Back" : "Indietro",
+    "Repeat" : "Ripetere",
+    "Delete" : "Cancellare",
+    "ALARM!" : "ALARM!",
+    "Sleep" : "Dormire"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "ripetere"
+  }
+}

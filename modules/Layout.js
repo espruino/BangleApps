@@ -29,7 +29,9 @@ layoutObject has:
   * `undefined` - blank, can be used for padding
   * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
-  * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw
+       optional `src` specifies an image (like img) in which case label is ignored
+  * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
+       optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
   * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
@@ -80,12 +82,12 @@ function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
-  this.yOffset = Object.keys(global.WIDGETS).length ? 24 : 0;
 
   options = options || {};
   this.lazy = options.lazy || false;
 
   var btnList;
+  Bangle.setUI(); // remove all existing input handlers
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
@@ -107,9 +109,7 @@ function Layout(layout, options) {
           delete this.buttons[s].selected;
           this.render(this.buttons[s]);
         }
-        s += dir;
-        if (s<0) s+=lh;
-        if (s>=l) s-=l;
+        s = (s+l+dir) % l;
         if (this.buttons[s]) {
           this.buttons[s].selected = 1;
           this.render(this.buttons[s]);
@@ -131,7 +131,7 @@ function Layout(layout, options) {
           if (this.b[btn].cb) this.b[btn].cb(e);
       }
       // enough physical buttons
-      let btnHeight = Math.floor((g.getHeight()-this.yOffset) / this.physBtns);
+      let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
       if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
       Bangle.btnWatch = [];
       if (this.physBtns > 2 && buttons.length==1)
@@ -158,6 +158,7 @@ function Layout(layout, options) {
     }
   }
   if (process.env.HWVERSION==2) {
+
     // Handler for touch events
     function touchHandler(l,e) {
       if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
@@ -246,10 +247,8 @@ Layout.prototype.render = function (l) {
         g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
-      var x = l.x+(0|l.pad);
-      var y = l.y+(0|l.pad);
-      var w = l.w-(l.pad<<1);
-      var h = l.h-(l.pad<<1);
+      var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
+          w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
       var poly = [
         x,y+4,
         x+4,y,
@@ -260,10 +259,12 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ];
-    g.setColor(l.selected?g.theme.bgH:g.theme.bg2).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly).setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+      ], bg = l.selected?g.theme.bgH:g.theme.bg2;
+    g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+    if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
+    else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad));
+    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad), l.scale?{scale:l.scale}:undefined);
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -344,10 +345,6 @@ Layout.prototype.debug = function(l,c) {
 };
 Layout.prototype.update = function() {
   delete this.updateNeeded;
-  var l = this._l;
-  var w = g.getWidth();
-  var y = this.yOffset;
-  var h = g.getHeight()-y;
   // update sizes
   function updateMin(l) {"ram"
     cb[l.type](l);
@@ -368,12 +365,13 @@ Layout.prototype.update = function() {
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
-      l._h = 32;
-      l._w = 20 + l.label.length*12;
+      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont("6x8",2).stringMetrics(l.label);
+      l._h = 16 + m.height;
+      l._w = 20 + m.width;
     }, "img": function(l) {
-      var m = g.imageMetrics("function"==typeof l.src?l.src():l.src); // get width and height out of image
-      l._w = m.width;
-      l._h = m.height;
+      var m = g.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
+      l._w = m.width*s;
+      l._h = m.height*s;
     }, "": function(l) {
       // size should already be set up in width/height
       l._w = 0;
@@ -396,18 +394,19 @@ Layout.prototype.update = function() {
       if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
     }
   };
+
+  var l = this._l;
   updateMin(l);
-  // center
-  if (l.fillx || l.filly) {
-    l.w = w;
-    l.h = h;
-    l.x = 0;
-    l.y = y;
-  } else {
+  if (l.fillx || l.filly) { // fill all
+    l.w = Bangle.appRect.w;
+    l.h = Bangle.appRect.h;
+    l.x = Bangle.appRect.x;
+    l.y = Bangle.appRect.y;
+  } else { // or center
     l.w = l._w;
     l.h = l._h;
-    l.x = (w-l.w)>>1;
-    l.y = y+((h-l.h)>>1);
+    l.x = (Bangle.appRect.w-l.w)>>1;
+    l.y = Bangle.appRect.y+((Bangle.appRect.h-l.h)>>1);
   }
   // layout children
   this.layout(l);

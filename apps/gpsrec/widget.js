@@ -26,6 +26,7 @@
     fixToggle = !fixToggle;
     WIDGETS["gpsrec"].draw();
     if (hasFix) {
+      if (fix.time===undefined) fix.time = new Date(); // Bangle.js 2 can provide a fix before time it seems
       var period = fix.time.getTime() - lastFixTime;
       if (period+500 > settings.period*1000) { // round up
         lastFixTime = fix.time.getTime();

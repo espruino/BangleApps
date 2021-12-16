@@ -31,6 +31,7 @@ try{
 }
 
 apps = apps.map((app,appIdx) => {
+  if (app.supports) return app; // already sorted
   var tags = [];
   if (app.tags) tags = app.tags.split(",").map(t=>t.trim());
   var supportsB1 = true;
@@ -54,8 +55,19 @@ apps = apps.map((app,appIdx) => {
   return app;
 });
 
+// search for screenshots
+apps = apps.map((app,appIdx) => {
+  if (app.screenshots) return app; // already sorted
+
+  var files = require("fs").readdirSync(__dirname+"/../apps/"+app.id);
+  var screenshots = files.filter(fn=>fn.startsWith("screenshot") && fn.endsWith(".png"));
+  if (screenshots.length)
+    app.screenshots = screenshots.map(fn => ({url:fn}));
+  return app;
+});
+
 var KEY_ORDER = [
-  "id","name","shortName","version","description","icon","type","tags","supports",
+  "id","name","shortName","version","description","icon","screenshots","type","tags","supports",
   "dependencies", "readme", "custom", "customConnect", "interface",
   "allow_emulator", "storage", "data", "sortorder"
 ];
@@ -67,12 +79,16 @@ var json = "[\n  "+apps.map(app=>{
     if (!KEY_ORDER.includes(k))
       throw new Error(`Key named ${k} not known!`);
   });
-
+  //var keys = Object.keys(app); // don't re-order
 
   return "{\n    "+keys.map(k=>{
     var js = JS(app[k]);
-    if (k=="storage")
-      js = "[\n      "+app.storage.map(s=>JS(s)).join(",\n      ")+"\n    ]";
+    if (k=="storage") {
+      if (app.storage.length)
+        js = "[\n      "+app.storage.map(s=>JS(s)).join(",\n      ")+"\n    ]";
+      else
+        js = "[]";
+    }
     return JS(k)+": "+js;
   }).join(",\n    ")+"\n  }";
 }).join(",\n  ")+"\n]\n";
