@@ -80,6 +80,12 @@ function draw() {
   g.setColor(settings.bg);
   g.drawImage(img, w/2 + ((w/2) - 64)/2, -2, { scale: 1 });
   drawCalendar(((w/2) - 42)/2, 11, 42, 4, da[2]);
+  
+  // distance 
+  if (settings.color == 'Blue' || settings.color == 'Red')
+    g.setColor('#fff'); // white on blue or red best contrast
+  else
+    g.setColor('#000'); // otherwise black regardless of theme
   g.drawString((stps / 1000 * settings.avStep).toFixed(2) + ' KM', w/2, ha + 107);
 }
 
