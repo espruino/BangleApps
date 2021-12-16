@@ -24,7 +24,7 @@
     E.showMenu({
         '': { 'title': 'Pebble Clock' },
         '< Back': back,
-        'Colour': {
+        'Color': {
             value: 0 | color_options.indexOf(s.color),
             min: 0, max: 5,
             format: v => color_options[v],
@@ -38,7 +38,7 @@
             value: 0.75 || s.avStep,
             min: 0.2,
             max: 1.5,
-            step: 0.05,
+            step: 0.01,
             onchange : v => {
                 s.avStep = v;
                 save();
