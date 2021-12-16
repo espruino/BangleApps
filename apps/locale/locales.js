@@ -328,6 +328,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
+    ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
     datePattern: { 0: "%A, %d. %B %Y", "1": "%d.%m.%y" }, // Sonntag, 1. März 2020 // 01.03.20
     abmonth: "Jän,Feb,März,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
