@@ -94,7 +94,7 @@
           name : "Core",
           fields : ["Core"],
           getValues : () => {
-            var r = temp;
+            var r = [temp];
             return r;
           },
           start : () => {
