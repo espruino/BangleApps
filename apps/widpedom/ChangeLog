@@ -19,3 +19,4 @@
       Stop goal drawing outside widget area
       Fix issue with widget overwrite in large font mode
       Memory usage enhancements
+0.20: Fix issue where step count would randomly reset
