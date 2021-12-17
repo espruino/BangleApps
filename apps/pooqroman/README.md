@@ -16,8 +16,8 @@ the ability to check the _exact_ time, hands free, without the impact on battery
 Although we generally obey the system-wide theming, you can long press on the display for a menu of additional options specific to the face.
 You can also override the system 12/24 hour setting just for this face here, since it's, well, a rather different experience than with numeric displays.
 
-By default, there is a backlight that comes on when you twist your wrist. This, of course, somewhat increases power draw and could be
-annoying in an intentionally dark environment, so there is an option to disable it.
+In some previous versions of the Bangle.js firmware, the backlight doesn't come on automatically when you twist your wrist. There's currently a
+workaround for this integrated into the watchface; you can disable it in the menu, if you prefer.
 
 One other thing: there's some integration with system timers and alarms; they will show as small pips at the appropriate places
 in the day around the display. When they come within an hour, the pips turn to crosses relating to the minute hand, and the minute
