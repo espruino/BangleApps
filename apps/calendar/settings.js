@@ -17,7 +17,7 @@
   E.showMenu({
     "": { "title": "Calendar" },
     "< Back": () => back(),
-    'Start on Sunday': {
+    'Start Sunday': {
       value: settings.startOnSun,
       format: v => v ? "Yes" : "No",
       onchange: v => {
@@ -25,7 +25,7 @@
         writeSettings();
       }
     },
-    'Non-dithering colors': {
+    'B2 Colors': {
       value: settings.ndColors,
       format: v => v ? "Yes" : "No",
       onchange: v => {
