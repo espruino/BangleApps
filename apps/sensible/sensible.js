@@ -132,7 +132,7 @@ function transmitUpdatedSensorData() {
 // Encode the bar service data to fit in a Bluetooth PDU
 function encodeBarServiceData() {
   let t = toByteArray(Math.round(bar.temperature * 100), 2, true);
-  let p = toByteArray(Math.round(bar.pressure * 10), 4, false);
+  let p = toByteArray(Math.round(bar.pressure * 1000), 4, false);
   let e = toByteArray(Math.round(bar.altitude * 100), 3, true);
 
   return [
