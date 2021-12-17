@@ -1,9 +1,11 @@
 const locale = require("locale");
 const heatshrink = require("heatshrink");
 
-var shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
-var heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
-var powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
+const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
+const heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
+const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
+const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
+const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
 const SETTINGS_FILE = "circlesclock.json";
 let settings;
@@ -20,6 +22,7 @@ const colorFg = '#fff';
 const colorBg = '#000';
 const colorGrey = '#808080';
 const colorRed = '#ff0000';
+const colorGreen = '#00ff00';
 
 let hrtValue;
 
@@ -130,10 +133,23 @@ function drawBattery() {
 
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
-  g.setColor(settings.batteryWarn == undefined || battery > settings.batteryWarn ? colorFg : colorRed);
+
+  let icon = powerIcon;
+  let color = colorFg;
+  if (Bangle.isCharging()) {
+    color = colorGreen;
+    icon = powerIconGreen;
+  }
+  else {
+    if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
+      color = colorRed;
+      icon = powerIconRed;
+    }
+  }
+  g.setColor(color);
   g.drawString(battery + '%', w3, h3);
 
-  g.drawImage(powerIcon, w3 - 6, h3 + radiusOuter - 6);
+  g.drawImage(icon, w3 - 6, h3 + radiusOuter - 6);
 }
 
 function radians(a) {
