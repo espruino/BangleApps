@@ -1,4 +1,4 @@
-0.04: Fix tapping at very bottom of list, exit on inactivity
-0.03: Add "Calculating" placeholder, update JSON save format
-0.02: Fix JSON save format
 0.01: First release
+0.02: Fix JSON save format
+0.03: Add "Calculating" placeholder, update JSON save format
+0.04: Fix tapping at very bottom of list, exit on inactivity
