@@ -130,21 +130,9 @@ function transmitUpdatedSensorData() {
 
 // Encode the bar service data to fit in a Bluetooth PDU
 function encodeBarServiceData() {
-  let tEncoded = Math.round(bar.temperature * 100);
-  let pEncoded = Math.round(bar.pressure * 100);
-  let eEncoded = Math.round(bar.altitude * 100);
-
-  if(bar.temperature < 0) {
-    tEncoded += 0x10000;
-  }
-  if(bar.altitude < 0) {
-    eEncoded += 0x1000000;
-  }
-
-  let t = [ tEncoded & 0xff, (tEncoded >> 8) & 0xff ];
-  let p = [ pEncoded & 0xff, (pEncoded >> 8) & 0xff, (pEncoded >> 16) & 0xff,
-            (pEncoded >> 24) & 0xff ];
-  let e = [ eEncoded & 0xff, (eEncoded >> 8) & 0xff, (eEncoded >> 16) & 0xff ];
+  let t = toByteArray(Math.round(bar.temperature * 100), 2, true);
+  let p = toByteArray(Math.round(bar.pressure * 100), 4, false);
+  let e = toByteArray(Math.round(bar.altitude * 100), 3, true);
 
   return [
       0x02, 0x01, 0x06,                               // Flags
@@ -157,24 +145,10 @@ function encodeBarServiceData() {
 
 // Encode the GPS service data using the Location and Speed characteristic
 function encodeGpsServiceData() {
-  let latEncoded = Math.round(gps.lat * 10000000);
-  let lonEncoded = Math.round(gps.lon * 10000000);
-  let hEncoded = Math.round(gps.course * 100);
-  let sEncoded = Math.round(1000 * gps.speed / 36);
-
-  if(gps.lat < 0) {
-    latEncoded += 0x100000000;
-  }
-  if(gps.lon < 0) {
-    lonEncoded += 0x100000000;
-  }
-
-  let s = [ sEncoded & 0xff, (sEncoded >> 8) & 0xff ];
-  let lat = [ latEncoded & 0xff, (latEncoded >> 8) & 0xff,
-              (latEncoded >> 16) & 0xff, (latEncoded >> 24) & 0xff ];
-  let lon = [ lonEncoded & 0xff, (lonEncoded >> 8) & 0xff,
-              (lonEncoded >> 16) & 0xff, (lonEncoded >> 24) & 0xff ];
-  let h = [ hEncoded & 0xff, (hEncoded >> 8) & 0xff ];
+  let s = toByteArray(Math.round(1000 * gps.speed / 36), 2, false);
+  let lat = toByteArray(Math.round(gps.lat * 10000000), 4, true);
+  let lon = toByteArray(Math.round(gps.lon * 10000000), 4, true);
+  let h = toByteArray(Math.round(gps.course * 100), 2, false);
 
   return [
       0x02, 0x01, 0x06,                                  // Flags
@@ -186,28 +160,30 @@ function encodeGpsServiceData() {
 
 // Encode the mag service data using the magnetic flux density 3D characteristic
 function encodeMagServiceData() {
-  let xEncoded = mag.x; // TODO: units???
-  let yEncoded = mag.y;
-  let zEncoded = mag.z;
-
-  if(xEncoded < 0) {
-    xEncoded += 0x10000;
-  }
-  if(yEncoded < 0) {
-    yEncoded += 0x10000;
-  }
-  if(zEncoded < 0) {
-    zEncoded += 0x10000;
-  }
-
-  let x = [ xEncoded & 0xff, (xEncoded >> 8) & 0xff ];
-  let y = [ yEncoded & 0xff, (yEncoded >> 8) & 0xff ];
-  let z = [ zEncoded & 0xff, (zEncoded >> 8) & 0xff ];
+  let x = toByteArray(mag.x, 2, true);
+  let y = toByteArray(mag.y, 2, true);
+  let z = toByteArray(mag.z, 2, true);
 
   return [
       0x02, 0x01, 0x06,                                          // Flags
       0x09, 0x16, 0xa1, 0x2a, x[0], x[1], y[0], y[1], z[0], z[1] // Mag 3D
   ];
+}
+
+
+// Convert the given value to a little endian byte array
+function toByteArray(value, numberOfBytes, isSigned) {
+  let byteArray = new Array(numberOfBytes);
+
+  if(isSigned && (value < 0)) {
+    value += 1 << (numberOfBytes * 8);
+  }
+
+  for(let index = 0; index < numberOfBytes; index++) {
+    byteArray[index] = (value >> (index * 8)) & 0xff;
+  }
+
+  return byteArray;
 }
 
 
