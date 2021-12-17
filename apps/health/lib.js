@@ -6,7 +6,7 @@ const DB_HEADER_LEN = 8;
 const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
 
 function getRecordFN(d) {
-  return "health-"+d.getFullYear()+"-"+d.getMonth()+".raw";
+  return "health-"+d.getFullYear()+"-"+(d.getMonth()+1)+".raw";
 }
 function getRecordIdx(d) {
   return (DB_RECORDS_PER_DAY*(d.getDate()-1)) +
