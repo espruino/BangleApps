@@ -20,10 +20,14 @@ const yellow = "#ffff00";
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 if (settings.startOnSun === undefined)
   settings.startOnSun = false;
-if (settings.ndColor === undefined)
-  settings.ndColor = true;
+if (settings.ndColors === undefined)
+  if (process.env.HWVERSION == 2) {
+    settings.ndColors = true;
+  } else {
+    settings.ndColors = false;
+  }
 
-if (settings.ndColor === true) {
+if (settings.ndColors === true) {
   let bgColor = white;
   let bgColorMonth = blue;
   let bgColorDow = black;

@@ -4,7 +4,11 @@
   if (settings.startOnSun === undefined)
     settings.startOnSun = false;
   if (settings.ndColors === undefined)
-    settings.ndColors = true;
+    if (process.env.HWVERSION == 2) {
+      settings.ndColors = true;
+    } else {
+      settings.ndColors = false;
+    }
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, settings);
