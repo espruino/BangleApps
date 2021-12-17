@@ -1,8 +1,21 @@
-const filename = "lcars.setting.json";
+const SETTINGS_FILE = "lcars.setting.json";
 const Storage = require("Storage");
-let settings = Storage.readJSON(filename,1) || {
+
+
+// ...and overwrite them with any saved values
+// This way saved values are preserved if a new version adds more settings
+const storage = require('Storage')
+let settings = {
   alarm: -1,
+  dataRow1: "Battery",
+  dataRow2: "Steps",
+  dataRow3: "Temp."
 };
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
+let hrmValue = 0;
 
 /*
  * Requirements and globals
@@ -95,6 +108,33 @@ function queueDraw() {
 }
 
 
+function printData(key, y){
+  g.setFontAlign(-1,-1,0);
+
+  if(key == "Battery"){
+    var bat = E.getBattery();
+    g.drawString("BAT:", 30, y);
+    g.drawString(bat+ "%", 68, y);
+
+  } else if(key == "Steps"){
+    var steps = getSteps();
+    g.drawString("STEP:", 30, y);
+    g.drawString(steps, 68, y);
+
+  } else if(key == "Temp."){
+    var temperature = Math.floor(E.getTemperature());
+    g.drawString("TEMP:", 30, y);
+    g.drawString(temperature + "C", 69, y);
+
+  } else if(key == "HRM"){
+    g.drawString("HRM:", 30, y);
+    g.drawString(hrmValue, 69, y);
+
+  } else {
+    g.drawString("NOT FOUND", 30, y);
+  }
+}
+
 function draw(){
 
   // First handle alarm to show this correctly afterwards
@@ -147,19 +187,9 @@ function draw(){
   g.drawString(dayName, 100, 55);
 
   // Draw battery
-  g.drawString("BAT:", 30, 98);
-  g.drawString(bat+ "%", 68, 98);
-
-  // Draw steps
-  var steps = getSteps();
-  g.drawString("STEP:", 30, 121);
-  g.drawString(steps, 68, 121);
-
-  // Temperature
-  var temperature = Math.floor(E.getTemperature());
-  g.setFontAlign(-1,-1,0);
-  g.drawString("TEMP:", 30, 144);
-  g.drawString(temperature + "C", 69, 144);
+  printData(settings.dataRow1, 98);
+  printData(settings.dataRow2, 121);
+  printData(settings.dataRow3, 144);
 
   // Queue draw in one minute
   queueDraw();
@@ -183,6 +213,12 @@ function stepsWidget() {
   return undefined;
 }
 
+/*
+ * HRM Listener
+ */
+Bangle.on('HRM', function (hrm) {
+  hrmValue = hrm.bpm;
+});
 
 /*
  * Handle alarm
@@ -221,7 +257,7 @@ function handleAlarm(){
 
   // Update alarm state to disabled
   settings.alarm = -1;
-  Storage.writeJSON(filename, settings);
+  Storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 
@@ -251,7 +287,7 @@ Bangle.on('swipe',function(dir) {
   draw();
 
   // Update alarm state
-  Storage.writeJSON(filename, settings);
+  Storage.writeJSON(SETTINGS_FILE, settings);
 });
 
 
