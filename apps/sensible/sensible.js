@@ -124,7 +124,8 @@ function transmitUpdatedSensorData() {
     isNewMagData = false;
   }
 
-  NRF.setAdvertising(data, { showName: false, interval: 200 });
+  let interval = 1000 / data.length;
+  NRF.setAdvertising(data, { showName: false, interval: interval });
 }
 
 
