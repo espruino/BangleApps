@@ -1,3 +1,4 @@
 0.01: Basic calendar
 0.02: Make Bangle 2 compatible
 0.03: Add setting to start week on Sunday
+0.04: Add setting to switch color schemes. On Bangle 2 non-dithering colors will be used by default. Use localized names for months and days of the week (Language app needed).
