@@ -5056,6 +5056,7 @@
     "tags": "tool",
     "supports": ["BANGLEJS2"],
     "allow_emulator": true,
+    "readme": "README.md",
     "storage": [
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
