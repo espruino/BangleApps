@@ -60,6 +60,7 @@ const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'suppo
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
+const GRANDFATHERED_ICONS = ["hebrew_calendar", "fontclock", "slidingtext", "solarclock", "sweepclock", "matrixclock", "speedo", "s7clk", "mmonday", "bclock", "snek", "dane", "fclock", "digiclock", "astral", "alpinenav", "slomoclock", "tapelauncher", "arrow", "doztime", "swiperclocklaunch", "pebble", "rebble"];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -187,7 +188,10 @@ apps.forEach((app,appIdx) => {
           else ERROR(`JS icon ${file.name} does not match the pattern 'require("heatshrink").decompress(atob("..."))'`);
         }
         if (match) {
-          if (icon[0] != 48 || icon[1] != 48) WARN(`JS icon ${file.name} should be 48x48px but is instead ${icon[0]}x${icon[1]}px`);
+          if (icon[0] != 48 || icon[1] != 48) {
+            if (GRANDFATHERED_ICONS.includes(app.id)) WARN(`JS icon ${file.name} should be 48x48px but is instead ${icon[0]}x${icon[1]}px`);
+            else ERROR(`JS icon ${file.name} should be 48x48px but is instead ${icon[0]}x${icon[1]}px`);
+          }
         }
     }
   });
