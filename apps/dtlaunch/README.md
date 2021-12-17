@@ -4,6 +4,8 @@ Bangle 1:
 
 ![](screenshot.jpg)
 
+In the picture above, the Settings app is selected.
+
 Bangle 2:
 
 ![shot1](https://user-images.githubusercontent.com/89286474/146471756-ec6d16de-6916-4fde-b991-ba88c2c8fa1a.png)
@@ -11,7 +13,6 @@ Bangle 2:
 ![shot3](https://user-images.githubusercontent.com/89286474/146471760-5497fd1b-8e82-4fd5-a4e3-4734701a7dbd.png)
 
 
-In the picture above, the Settings app is selected.
 ## Controls- Bangle
 
 **BTN1** - move backward through app icons on a page
