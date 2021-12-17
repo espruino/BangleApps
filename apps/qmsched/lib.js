@@ -19,5 +19,5 @@ exports.setMode = function(mode) {
     {quiet:mode}
   ));
   exports.applyOptions(mode);
-  if (WIDGETS && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+  if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
 };
