@@ -21,7 +21,7 @@
   var data_options = ['Battery', 'Steps', 'Temp.', "HRM"];
 
   E.showMenu({
-    '': { 'title': 'Rebble Clock' },
+    '': { 'title': 'LCARS Clock' },
     '< Back': back,
     'Row 1': {
       value: 0 | data_options.indexOf(settings.dataRow1),

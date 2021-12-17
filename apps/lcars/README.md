@@ -5,10 +5,9 @@ Note: To display the steps, its necessary to install
 the [Pedometer widget](https://banglejs.com/apps/#pedometer%20widget).
 
 ## Features
- * Shows the time
- * Shows the date
- * Shows the current battery level in %
- * Shows the number of daily steps
+ * LCARS Style watch face
+ * Shows satate (charging, out of battery etc.)
+ * SHows data that can be configured (steps, HRM, temperature etc.)
  * Swipe left/right to activate an alarm
 
 ## Icons
