@@ -148,12 +148,14 @@ function encodeGpsServiceData() {
   let s = toByteArray(Math.round(1000 * gps.speed / 36), 2, false);
   let lat = toByteArray(Math.round(gps.lat * 10000000), 4, true);
   let lon = toByteArray(Math.round(gps.lon * 10000000), 4, true);
+  let e = toByteArray(Math.round(gps.alt * 100), 3, true);
   let h = toByteArray(Math.round(gps.course * 100), 2, false);
 
   return [
-      0x02, 0x01, 0x06,                                  // Flags
-      0x11, 0x16, 0x67, 0x2a, 0x95, 0x02, s[0], s[1], lat[0], lat[1], lat[2],
-      lat[3], lon[0], lon[1], lon[2], lon[3], h[0], h[1] // Location and Speed
+      0x02, 0x01, 0x06, // Flags
+      0x14, 0x16, 0x67, 0x2a, 0x9d, 0x02, s[0], s[1], lat[0], lat[1], lat[2],
+      lat[3], lon[0], lon[1], lon[2], lon[3], e[0], e[1], e[2], h[0], h[1]
+                        // Location and Speed
   ];
 }
 
