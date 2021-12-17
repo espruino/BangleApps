@@ -3,6 +3,7 @@
 */
 
 var fs = require("fs");
+var heatshrink = require("../core/lib/heatshrink");
 var acorn;
 try {
   acorn = require("acorn");
@@ -174,6 +175,20 @@ apps.forEach((app,appIdx) => {
     }
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`);
+    }
+    // warn if JS icon is the wrong size
+    if (file.name == app.id+".img") {
+        let icon;
+        let match = fileContents.match(/E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)/);
+        if (match) icon = Buffer.from(match[1], 'base64');
+        else {
+          match = fileContents.match(/require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)/);
+          if (match) icon = heatshrink.decompress(Buffer.from(match[1], 'base64'));
+          else ERROR(`JS icon ${file.name} does not match the pattern 'require("heatshrink").decompress(atob("..."))'`);
+        }
+        if (match) {
+          if (icon[0] != 48 || icon[1] != 48) WARN(`JS icon ${file.name} should be 48x48px but is instead ${icon[0]}x${icon[1]}px`);
+        }
     }
   });
   let dataNames = [];
