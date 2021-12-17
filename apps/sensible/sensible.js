@@ -196,8 +196,8 @@ function encodeMagServiceData() {
   if(yEncoded < 0) {
     yEncoded += 0x10000;
   }
-  if(yEncoded < 0) {
-    yEncoded += 0x10000;
+  if(zEncoded < 0) {
+    zEncoded += 0x10000;
   }
 
   let x = [ xEncoded & 0xff, (xEncoded >> 8) & 0xff ];
