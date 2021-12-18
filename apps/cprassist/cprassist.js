@@ -43,7 +43,7 @@ function drawHeart() {
 
 function updateScreen() {
   const colors = [0xFFFF-g.getBgColor(), 0x9492];
-  g.reset().clearRect(0, 0, 250, g.getHeight()*5/6);
+  g.reset().clearRect(0, 24, g.getWidth(), g.getHeight()*5/6);
   if (counter > 0) {
     g.setFont("Vector", 40).setFontAlign(0, 0);
     g.setColor(colors[counter%2]);
