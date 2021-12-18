@@ -1,8 +1,21 @@
-const filename = "lcars.setting.json";
+const SETTINGS_FILE = "lcars.setting.json";
 const Storage = require("Storage");
-let settings = Storage.readJSON(filename,1) || {
+
+
+// ...and overwrite them with any saved values
+// This way saved values are preserved if a new version adds more settings
+const storage = require('Storage')
+let settings = {
   alarm: -1,
+  dataRow1: "Battery",
+  dataRow2: "Steps",
+  dataRow3: "Temp."
 };
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
+let hrmValue = 0;
 
 /*
  * Requirements and globals
@@ -12,7 +25,7 @@ const locale = require('locale');
 var backgroundImage = {
   width : 176, height : 151, bpp : 3,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("AAUEufPnnzATkAg4daIIXnz15ATvkwEDDrUAgPHQDyDghyAeQcNzJQ0cuPHATCDBDrUDJQ1AgAA3jjOF+BA4T4KDFyBB5Qf4ABQAaD9QAaD/QesH8CD/n/8Qf8//+AQfsB///GQ6D2h5BJQf6D7/yD8jl/IIIABjiD5n4/DAAWAQe8B//8QYfH//x4CD2HwMDQIf4AoP4Qesf/56BQYYFBuP/Qev//0AQYoKBn/gQecH/lwQwQADBYaDzGoZBHR4OAQehBKj5BBsuWrICDBAIAofYZBFBAZ6qIJJ6DQZBB3IAiDDgZBygJ6EIIn8IOqDKIIscuPHAQdwINkHIJEfIIPnz15AQeAINT+CHwcPAYI1BIIU8+fPAQbOqg56BQYcAgKD4IIv4RgSDCAQSD34AIC//wBYSDyO4P+IIoIB+E/8AFBQeL7B//HHYJKE+P/AoSDygF/QQJBF//4AoSDygEBQYgFBj/xZYaDzgE/PoIAE/wMDQeZBB/jICAAMcuAMDQevgQwR0CvyD3gP/BAxBEQek4A40OQe4ANQegAMQf6D/AAccQf8Ak6DFyCD/QfcDQYueIPMAuaDE+fBIPMOQYoCb8glB7dt2wCW2EAgKDFATkAg2atOmAS5eBhKDigyDZ2zHCjiD/AAMChEgwQCcQb4AiQb5BiQbscuPHATyDfyfPnnzATnwQbsBQD6DghKAeQcJoHiFBggCYQYVhdwQATgOmgVPNAnOECwAGQYIZXgM2dI1wIL2aoCDYibsF4CD/QcGYILGmyaDFwCD/QfaADQf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D4jCD/ADKDnILSD/Qf6DEHO6DJIP6D/Qf6D/QY8cuPHAQdAQfPz588AQeAQf8cuCD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6DqoCD5HO6DJIP6D/Qf6D/QY8cuPHAQdwE7sGzCDZ+fPngCDwBBe7aD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/QfcTQYvAQf6DgzVAQbECp6DE5yD5gCDFATqDCsOAIKtB00AhKDEATnwQYVt2wCXQwKDltOmAS6IC2aD82BBCQccaQbGAA=="))
+  buffer : require("heatshrink").decompress(atob("AAdx48cATsAg4daIAX3799ATv2wEFDrUAgNHQDyDghaAeQcJKG86D4gRKGgAA4jxKFuBB5iaDF6BB5ZwyD6QAYCC4CD/Qf6Dzg/gQf8H/iD/n//wCD9gP///wQfpBKQf6D4h5BB/yD8jl/IIIABjiD5n4/DAAWAQe8B//8QYfHj//PAaDzHwICCAAP4gYCBQep6DIIYFBRgKD1j/+gB9BQYYKBn/gQen/+BBFQAUH/iDzGoZBHJoOAQeRBDj5BHj6PB0WKlACDJQIAofYZBFBAZBBAGMHPQZB8QYZAEIIcDIOiDI/hB3QZBBFjlx44CDuBBpg4DCIJEfIIPnz15AQeAQeH8gIDBGoJBCnnz54CDZ1UHPQMHIIUAIIKD3II6MBQYQCCQeI1B+BBC/BKCBASGCQeK5B/xBC4BKEn/gAoKDyj//45BFj/xZYSDzgF/IAP+JQrLCQecAgKDBF4cHQYKJDQecAn6EBAAiJEQeZBB/jICAAMcvwMDQevgQwR0CIIiDzgP/BA1/4CD3nAHGhyD3ABqD0ABiD/Qf4ADjiD/gEnQYuQQf6D7gaDFzxB5gFzQYnz4BB5hyDFATfkEoIdagEBQYoCcgEHDrReBhKDhwEBQbYABjiD/AH4A/AH4AGiFx48cATsAg4daIIWSpMkATuQEbkAgJfbQckJQDyDhZxQA1gRKFpBA4gEQQYtwIPMSQYtAIPKADQfqADAQRA5Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4A/AH4A/AH4A/AFkcuPHAQdAIPOSpMkAQaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4A/AH4A/AH4A/AGUcuPHAQdwIPOSpMkAQaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AciSDFoCD/QfcCQYtIIPMAQYoC6gEJQYgC6gEBQf7HCQf4ABiiD9"))
 }
 
 var iconEarth = {
@@ -95,6 +108,33 @@ function queueDraw() {
 }
 
 
+function printData(key, y){
+  g.setFontAlign(-1,-1,0);
+
+  if(key == "Battery"){
+    var bat = E.getBattery();
+    g.drawString("BAT:", 30, y);
+    g.drawString(bat+ "%", 68, y);
+
+  } else if(key == "Steps"){
+    var steps = getSteps();
+    g.drawString("STEP:", 30, y);
+    g.drawString(steps, 68, y);
+
+  } else if(key == "Temp."){
+    var temperature = Math.floor(E.getTemperature());
+    g.drawString("TEMP:", 30, y);
+    g.drawString(temperature + "C", 69, y);
+
+  } else if(key == "HRM"){
+    g.drawString("HRM:", 30, y);
+    g.drawString(hrmValue, 69, y);
+
+  } else {
+    g.drawString("NOT FOUND", 30, y);
+  }
+}
+
 function draw(){
 
   // First handle alarm to show this correctly afterwards
@@ -125,7 +165,7 @@ function draw(){
   // Alarm within symbol
   g.setFontAlign(0,0,0);
   g.setFontAntonioSmall();
-  g.drawString(iconImg.text, 115+25, 102);
+  g.drawString(iconImg.text, 115+25, 105);
   if(isAlarmEnabled() > 0){
     g.drawString(getAlarmMinutes(), 115+25, 115+25);
   }
@@ -147,18 +187,9 @@ function draw(){
   g.drawString(dayName, 100, 55);
 
   // Draw battery
-  g.drawString("BAT:", 25, 98);
-  g.drawString(bat+ "%", 62, 98);
-
-  // Draw steps
-  var steps = getSteps();
-  g.drawString("STEP:", 25, 121);
-  g.drawString(steps, 62, 121);
-
-  // Temperature
-  g.setFontAlign(-1,-1,0);
-  g.drawString("TEMP:", 25, 144);
-  g.drawString(Math.floor(E.getTemperature()) + "C", 62, 144);
+  printData(settings.dataRow1, 98);
+  printData(settings.dataRow2, 121);
+  printData(settings.dataRow3, 144);
 
   // Queue draw in one minute
   queueDraw();
@@ -182,6 +213,12 @@ function stepsWidget() {
   return undefined;
 }
 
+/*
+ * HRM Listener
+ */
+Bangle.on('HRM', function (hrm) {
+  hrmValue = hrm.bpm;
+});
 
 /*
  * Handle alarm
@@ -220,7 +257,7 @@ function handleAlarm(){
 
   // Update alarm state to disabled
   settings.alarm = -1;
-  Storage.writeJSON(filename, settings);
+  Storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 
@@ -250,7 +287,7 @@ Bangle.on('swipe',function(dir) {
   draw();
 
   // Update alarm state
-  Storage.writeJSON(filename, settings);
+  Storage.writeJSON(SETTINGS_FILE, settings);
 });
 
 
