@@ -7,15 +7,19 @@ const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbB
 const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
-const SETTINGS_FILE = "circlesclock.json";
 let settings;
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {
+  settings = require("Storage").readJSON("circlesclock.json", 1) || {
     'maxHR': 200,
     'stepGoal': 10000,
     'batteryWarn': 30
   };
+  // Load step goal from pedometer widget as fallback
+  if (settings.stepGoal == undefined) {
+    const d = require('Storage').readJSON("wpedom.json", 1) || {};
+    settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+  }
 }
 
 const colorFg = g.theme.dark ? '#fff' : '#000';
