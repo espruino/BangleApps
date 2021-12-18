@@ -2,7 +2,9 @@
 // with our own message
 g.clearRect(38, 68, 138, 108);
 g.drawRect(38, 68, 138, 108);
-g.setFontVector(13).drawString("Wash...", 60, 82);
+g.setFontVector(13).setFontAlign(0, 0, 0).drawString("Wash...",
+                                                     g.getWidth()/2,
+                                                     g.getHeight()/2);
 
 Bangle.buzz();
 setTimeout(() => {
