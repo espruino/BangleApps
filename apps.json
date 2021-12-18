@@ -4970,6 +4970,7 @@
     "storage": [
       {"name":"coretemp.boot.js","url":"boot.js"},
       {"name":"coretemp.app.js","url":"coretemp.js"},
+      {"name":"coretemp.settings.js","url":"settings.js"},
       {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
     ]
   },

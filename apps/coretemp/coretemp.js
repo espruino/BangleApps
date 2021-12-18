@@ -1,4 +1,4 @@
-
+// Simply listen for core events and show
 
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
@@ -23,3 +23,4 @@ Bangle.drawWidgets();
 
 g.reset().setFont("6x8", 2).setFontAlign(0, 0);
 g.drawString("Please wait...", g.getWidth() / 2, g.getHeight() / 2 - 16);
+
