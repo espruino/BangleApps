@@ -1889,7 +1889,7 @@
   {
     "id": "widhwt",
     "name": "Hand Wash Timer",
-    "version": "0.02-rc9",
+    "version": "0.02-rc10",
     "description": "On Bangle.js 1 swipe your wrist over the watch face to start your personal Bangle.js 1 hand wash timer. On Bangle.js2 the Pattern Launcher is recommended to start the timer. Start washing after the short buzz and stop after the long buzz 35sec. later.",
     "icon": "widget.png",
     "type": "widget",
@@ -1897,6 +1897,7 @@
     "allow_emulator": true,
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
+      {"name":"widhwt.app.js","url":"app.js"},
       {"name":"widhwt.wid.js","url":"widget.js"}
     ]
   },
