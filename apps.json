@@ -3195,18 +3195,3 @@
   ]
 }
 ]
-},
-{ "id": "doztime2",
-  "name": "Dozenal Time 2",
-  "shortName":"Dozenal Time 2",
-  "icon": "app.png",
-  "version":"0.01",
-  "description": "A dozenal Holocene calendar and dozenal diurnal clock for Bangle.js2",
-  "tags": "clock",
- "type":"clock"
-  "storage": [
-    {"name":"doztime2.app.js","url":"app.js"},
-    {"name":"doztime2.img","url":"app2-icon.js","evaluate":true}
-  ]
-}
-]
