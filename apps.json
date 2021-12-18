@@ -5027,14 +5027,14 @@
          {"name":"circlesclock.json"}
        ]
     },
-  { "id": "miniclock",
-  "name": "Minimalist Clock",
-  "shortName" : "Minimalist Clock",
+  { "id": "contourclock",
+  "name": "Contour Clock",
+  "shortName" : "Contour Clock",
   "icon": "app.png",
-  "description": "A Minimalist clockface with large Digits.",
+  "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
   "tags": "clock",
   "storage": [
-    {"name":"myappid.app.js","url":"app.js"},
-    {"name":"myappid.img","url":"app-icon.js","evaluate":true}
+    {"name":"contourclock.app.js","url":"app.js"},
+    {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
   ]}
 ]
