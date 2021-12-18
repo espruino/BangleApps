@@ -5032,7 +5032,7 @@
     "shortName" : "Contour Clock",
     "icon": "app.png",
     "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
-    "screenshots" : [ { url:"screenshot.png" } ]
+    "screenshots" : [{"url":"screenshot.png"}]
     "tags": "clock",
     "storage": [
       {"name":"contourclock.app.js","url":"app.js"},
