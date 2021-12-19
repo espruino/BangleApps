@@ -350,6 +350,8 @@ if (typeof(BTN5) !== typeof(undefined)) {
   setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
 
   setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
+} else {
+  setWatch(switchOffApp, BTN1, {edge:"falling", debounce:50, repeat:true});
 }
 
 setInterval(drawTrainingHeartRate, 1000);
