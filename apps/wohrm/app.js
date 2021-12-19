@@ -53,6 +53,11 @@ const centerBar = {
   maxX: 165
 };
 
+const fontSizes = {
+    limits: 13,
+    heartRate: 24
+};
+
 function fillEllipse(x, y, x2, y2) {
   g.fillEllipse(Math.min(x, x2),
                 Math.min(y, y2),
@@ -131,7 +136,7 @@ function renderUpperLimit() {
   } else {
     g.setColor(g.theme.fg);
   }
-  g.setFontVector(13).setFontAlign(-1, 0, 0);
+  g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
   g.drawString("Upper: " + upperLimit,
                upperLshape.minX,
                upperLshape.minY+upperLshape.rectWidth/2);
@@ -147,7 +152,7 @@ function renderCurrentHeartRate() {
              centerBar.maxX, centerBar.maxY);
 
   g.setColor(g.theme.bg);
-  g.setFontVector(24);
+  g.setFontVector(fontSizes.heartRate);
   g.setFontAlign(1, 0, 0);
   g.drawString(currentHeartRate,
                upperLshape.minX+upperLshape.cornerRoundness,
@@ -169,7 +174,7 @@ function renderLowerLimit() {
   } else {
     g.setColor(g.theme.fg);
   }
-  g.setFontVector(13).setFontAlign(-1, 0, 0);
+  g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
   g.drawString("Lower: " + lowerLimit,
                lowerLshape.maxX + lowerLshape.rectWidth/2,
                lowerLshape.minY - lowerLshape.rectWidth/2);
