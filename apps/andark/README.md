@@ -8,4 +8,4 @@
 
 no widgets
 
-![image](image url "/andark_screen.png")
+![logo](https://github.com/HeiLaut/BangleApps/edit/master/apps/andark/andark_screen.png)
