@@ -36,7 +36,7 @@ const upperLshape = isB1 ? {
 } : {
   minX: Bangle.appRect.x2-100,
   maxX: Bangle.appRect.x2,
-  minY: Bangle.appRect.y,
+  minY: 24,
   maxY: Bangle.appRect.y2,
   rectWidth: 26,
   cornerRoundness: 4,
@@ -368,7 +368,7 @@ Bangle.on('lcdPower', (on) => {
 Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
-g.clear();
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
