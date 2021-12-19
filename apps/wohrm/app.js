@@ -320,11 +320,13 @@ function switchOffApp(){
 }
 
 Bangle.on('lcdPower', (on) => {
-  g.clear();
   if (on) {
+    g.clear();
     Bangle.drawWidgets();
 
-    renderHomeIcon();
+    if (typeof(BTN5) !== typeof(undefined)) {
+      renderHomeIcon();
+    }
     renderLshape(lowerLshape);
     renderLshape(upperLshape);
     lowerLimitChanged = true;
