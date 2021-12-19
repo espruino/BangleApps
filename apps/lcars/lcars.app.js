@@ -170,7 +170,7 @@ function drawState(){
       timeInMinutes % 4 == 1 ? iconMars :
       timeInMinutes % 4 == 2 ? iconMoon :
       iconEarth;
-  g.drawImage(iconImg, 120, 120);
+  g.drawImage(iconImg, 120, 118);
 
   // Alarm within symbol
   g.setFontAlign(-1, -1, 0);
@@ -179,7 +179,7 @@ function drawState(){
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
-    g.drawString(getAlarmMinutes(), 120+25, 120+25+1);
+    g.drawString(getAlarmMinutes(), 120+25, 118+25+1);
   }
 }
 
@@ -200,7 +200,7 @@ function draw(){
   drawHoriztonatlBgLine(cPurple, 120, 176, 81, 3);
   drawHoriztonatlBgLine(cOrange, 35, 110, 87, 3);
   drawHoriztonatlBgLine(cOrange, 120, 176, 87, 3);
-  drawHoriztonatlBgLine(cOrange, 20, 176, 172, 4);
+  drawHoriztonatlBgLine(cOrange, 20, 176, 171, 5);
 
   // Draw logo
   drawLock();
@@ -218,7 +218,7 @@ function draw(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 28, 60);
+  g.drawString(dayStr, 28, 58);
 
   // Draw data
   g.setColor(cWhite);
