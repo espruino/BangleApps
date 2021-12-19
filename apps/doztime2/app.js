@@ -134,8 +134,8 @@ function writeDozTime(text,def){
 	g_t.clear();
   g_t.setFont("Vector",def.size);
 	for(let i in text){
-		if(text[i]=="a"){ g_t.setFontAlign(0,0,2); g_t.drawString("2",x+1+def.dx,y+1+def.dy); } //+1s are new
-		else if(text[i]=="b"){ g_t.setFontAlign(0,0,2); g_t.drawString("3",x+1+def.dx,y+1+def.dy); } //+1s are new
+		if(text[i]=="a"){ g_t.setFontAlign(0,0,2); g_t.drawString("2",x+2+def.dx,y+1+def.dy); } //+1s are new
+		else if(text[i]=="b"){ g_t.setFontAlign(0,0,2); g_t.drawString("3",x+2+def.dx,y+1+def.dy); } //+1s are new
 		else{ g_t.setFontAlign(0,0,0); g_t.drawString(text[i],x,y); }
 		x = x+def.step[0];
 		y = y+def.step[1];
