@@ -5073,7 +5073,7 @@
   "supports" : ["BANGLEJS","BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
-    {"name":"anrark.app.js","url":"app.js"},
+    {"name":"andark.app.js","url":"app.js"},
     {"name":"andark.img","url":"app_icon.js ","evaluate":true}
   ]
   }
