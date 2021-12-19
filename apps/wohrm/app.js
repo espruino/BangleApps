@@ -23,46 +23,49 @@ let confidenceChanged = true;
 
 let setterHighlightTimeout;
 
-function renderUpperLimitBackground() {
-  var minX=125;
-  var maxX=210;
-  var minY=40;
-  var maxY=210;
-  var rectWidth=30;
-  var cornerRoundness=5;
-  var bgColor = 0;
-  var fgColor = '#f00';
-  g.setColor(fgColor);
+const upperLshape = {
+  minX: 125,
+  maxX: 210,
+  minY: 40,
+  maxY: 210,
+  rectWidth: 30,
+  cornerRoundness: 5,
+  bgColor: 0,
+  fgColor: '#f00'
+};
 
-  g.fillRect(minX,minY, maxX, minY+rectWidth);
-  g.fillRect(maxX-rectWidth, minY+rectWidth, maxX, maxY-cornerRoundness*2);
+function renderLshape(p) {
+  g.setColor(p.fgColor);
+
+  g.fillRect(p.minX,p.minY, p.maxX, p.minY+p.rectWidth);
+  g.fillRect(p.maxX-p.rectWidth, p.minY+p.rectWidth, p.maxX, p.maxY-p.cornerRoundness*2);
 
   //Round top left corner
-  g.fillEllipse(minX-cornerRoundness*2,
-                minY,
-                minX+cornerRoundness*2,
-                minY+rectWidth);
+  g.fillEllipse(p.minX-p.cornerRoundness*2,
+                p.minY,
+                p.minX+p.cornerRoundness*2,
+                p.minY+p.rectWidth);
 
   //Round top right corner
-  g.setColor(bgColor);
-  g.fillRect(maxX-cornerRoundness,minY, maxX, minY+cornerRoundness);
-  g.setColor(fgColor);
-  g.fillEllipse(maxX-cornerRoundness*4,minY,maxX,minY+cornerRoundness*2);
+  g.setColor(p.bgColor);
+  g.fillRect(p.maxX-p.cornerRoundness,p.minY, p.maxX, p.minY+p.cornerRoundness);
+  g.setColor(p.fgColor);
+  g.fillEllipse(p.maxX-p.cornerRoundness*4,p.minY,p.maxX,p.minY+p.cornerRoundness*2);
 
   //Round inner corner
-  g.fillRect(maxX-rectWidth-cornerRoundness-1,
-             minY+rectWidth+1,
-             maxX-rectWidth-1,
-             minY+rectWidth+cornerRoundness-1);
-  g.setColor(bgColor);
-  g.fillEllipse(maxX-rectWidth-cornerRoundness*4,
-                minY+rectWidth+1,
-                maxX-rectWidth-1,
-                minY+rectWidth+cornerRoundness*3-1);
+  g.fillRect(p.maxX-p.rectWidth-p.cornerRoundness-1,
+             p.minY+p.rectWidth+1,
+             p.maxX-p.rectWidth-1,
+             p.minY+p.rectWidth+p.cornerRoundness-1);
+  g.setColor(p.bgColor);
+  g.fillEllipse(p.maxX-p.rectWidth-p.cornerRoundness*4,
+                p.minY+p.rectWidth+1,
+                p.maxX-p.rectWidth-1,
+                p.minY+p.rectWidth+p.cornerRoundness*3-1);
 
   //Round bottom
-  g.setColor(fgColor);
-  g.fillEllipse(maxX-rectWidth,maxY-cornerRoundness*4, maxX, maxY);
+  g.setColor(p.fgColor);
+  g.fillEllipse(p.maxX-p.rectWidth,p.maxY-p.cornerRoundness*4, p.maxX, p.maxY);
 }
 
 function renderLowerLimitBackground() {
@@ -317,7 +320,7 @@ Bangle.on('lcdPower', (on) => {
 
     renderHomeIcon();
     renderLowerLimitBackground();
-    renderUpperLimitBackground();
+    renderLshape(upperLshape);
     lowerLimitChanged = true;
     upperLimitChanged = true;
     drawTrainingHeartRate();
@@ -331,7 +334,7 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 renderLowerLimitBackground();
-renderUpperLimitBackground();
+renderLshape(upperLshape);
 
 if (typeof(BTN5) !== typeof(undefined)) {
   renderHomeIcon();
