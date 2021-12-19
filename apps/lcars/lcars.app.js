@@ -114,25 +114,25 @@ function printData(key, y){
 
   if(key == "Battery"){
     var bat = E.getBattery();
-    g.drawString("BAT:", 30, y);
+    g.drawString("BAT:", 28, y);
     g.drawString(bat+ "%", 70, y);
 
   } else if(key == "Steps"){
     var steps = getSteps();
-    g.drawString("STEP:", 30, y);
+    g.drawString("STEP:", 28, y);
     g.drawString(steps, 70, y);
 
   } else if(key == "Temp."){
     var temperature = Math.floor(E.getTemperature());
-    g.drawString("TEMP:", 30, y);
+    g.drawString("TMP:", 28, y);
     g.drawString(temperature + "C", 70, y);
 
   } else if(key == "HRM"){
-    g.drawString("HRM:", 30, y);
+    g.drawString("HRM:", 28, y);
     g.drawString(hrmValue, 70, y);
 
   } else {
-    g.drawString("NOT FOUND", 30, y);
+    g.drawString("NOT FOUND", 28, y);
   }
 }
 
@@ -147,12 +147,13 @@ function drawHoriztonatlBgLine(color, x1, x2, y, h){
 
 function drawLock(){
   g.setFontAntonioSmall();
-  g.setColor(cWhite);
-  if(Bangle.isLocked()){
-    g.setColor(cOrange);
-  }
+  g.setColor(cOrange);
+  g.clearRect(120, 10, g.getWidth(), 80);
   g.drawString("LCARS", 130, 15);
-  g.drawString("BJS-2", 130, 35);
+  g.drawString("B-JS2", 130, 35);
+  if(Bangle.isLocked()){
+    g.drawString("LOCK", 130, 55);
+  }
 }
 
 function drawState(){
@@ -206,11 +207,10 @@ function draw(){
 
   // Write time
   g.setColor(cWhite);
-  g.setFontAlign(-1,-1, 0);
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 28, 12);
+  g.drawString(timeStr, 25, 12);
 
   // Write date
   g.setColor(cWhite);
@@ -218,7 +218,7 @@ function draw(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 35, 60);
+  g.drawString(dayStr, 28, 60);
 
   // Draw data
   g.setColor(cWhite);
