@@ -30,68 +30,74 @@ const upperLshape = {
   maxY: 210,
   rectWidth: 30,
   cornerRoundness: 5,
+  orientation: -1,
   bgColor: 0,
   fgColor: '#f00'
 };
 
+const lowerLshape = {
+  maxX: 10,
+  minX: 100,
+  minY: 210,
+  maxY: 40,
+  rectWidth: 30,
+  cornerRoundness: 5,
+  orientation: 1,
+  bgColor: 0,
+  fgColor: '#00f'
+};
+
+function fillEllipse(x, y, x2, y2) {
+  g.fillEllipse(Math.min(x, x2),
+                Math.min(y, y2),
+                Math.max(x, x2),
+                Math.max(y, y2));
+}
+
 function renderLshape(p) {
   g.setColor(p.fgColor);
 
-  g.fillRect(p.minX,p.minY, p.maxX, p.minY+p.rectWidth);
-  g.fillRect(p.maxX-p.rectWidth, p.minY+p.rectWidth, p.maxX, p.maxY-p.cornerRoundness*2);
+  g.fillRect(p.minX, p.minY, p.maxX, p.minY-p.orientation*p.rectWidth);
+  g.fillRect(p.maxX+p.orientation*p.rectWidth,
+             p.minY-p.orientation*p.rectWidth,
+             p.maxX,
+             p.maxY+p.orientation*p.cornerRoundness*2);
 
-  //Round top left corner
-  g.fillEllipse(p.minX-p.cornerRoundness*2,
-                p.minY,
-                p.minX+p.cornerRoundness*2,
-                p.minY+p.rectWidth);
+  //Round end of small line
+  fillEllipse(p.minX+p.orientation*p.cornerRoundness*2,
+              p.minY,
+              p.minX-p.orientation*p.cornerRoundness*2,
+              p.minY-p.orientation*p.rectWidth);
 
-  //Round top right corner
+  //Round outer corner
   g.setColor(p.bgColor);
-  g.fillRect(p.maxX-p.cornerRoundness,p.minY, p.maxX, p.minY+p.cornerRoundness);
+  g.fillRect(p.maxX+p.orientation*p.cornerRoundness,
+             p.minY,
+             p.maxX,
+             p.minY-p.orientation*p.cornerRoundness);
   g.setColor(p.fgColor);
-  g.fillEllipse(p.maxX-p.cornerRoundness*4,p.minY,p.maxX,p.minY+p.cornerRoundness*2);
+  fillEllipse(p.maxX+p.orientation*p.cornerRoundness*4,
+              p.minY,
+              p.maxX,
+              p.minY-p.orientation*p.cornerRoundness*2);
 
   //Round inner corner
-  g.fillRect(p.maxX-p.rectWidth-p.cornerRoundness-1,
-             p.minY+p.rectWidth+1,
-             p.maxX-p.rectWidth-1,
-             p.minY+p.rectWidth+p.cornerRoundness-1);
+  g.fillRect(p.maxX+p.orientation*(p.rectWidth+p.cornerRoundness+1),
+             p.minY-p.orientation*(p.rectWidth+1),
+             p.maxX+p.orientation*(p.rectWidth+1),
+             p.minY-p.orientation*(p.rectWidth+p.cornerRoundness-1));
   g.setColor(p.bgColor);
-  g.fillEllipse(p.maxX-p.rectWidth-p.cornerRoundness*4,
-                p.minY+p.rectWidth+1,
-                p.maxX-p.rectWidth-1,
-                p.minY+p.rectWidth+p.cornerRoundness*3-1);
+  fillEllipse(p.maxX+p.orientation*(p.rectWidth+p.cornerRoundness*4),
+              p.minY-p.orientation*(p.rectWidth+1),
+              p.maxX+p.orientation*(p.rectWidth+1),
+              p.minY-p.orientation*(p.rectWidth+p.cornerRoundness*3-1));
 
-  //Round bottom
+  //Round end of long line
   g.setColor(p.fgColor);
-  g.fillEllipse(p.maxX-p.rectWidth,p.maxY-p.cornerRoundness*4, p.maxX, p.maxY);
-}
-
-function renderLowerLimitBackground() {
-  g.setColor(0,0,1);
-  g.fillRect(10, 180, 100, 210);
-  g.fillRect(10, 50, 40, 180);
-
-  //Rounded top
-  g.setColor(0,0,1);
-  g.fillEllipse(10,40, 40, 60);
-
-  //Round bottom right corner
-  g.setColor(0,0,1);
-  g.fillEllipse(90,180,110,210);
-
-  //Round inner corner
-  g.setColor(0,0,1);
-  g.fillRect(40,175,45,180);
-  g.setColor(0,0,0);
-  g.fillEllipse(41,170,60,179);
-
-  //Round bottom left corner
-  g.setColor(0,0,0);
-  g.fillRect(10,205, 15, 210);
-  g.setColor(0,0,1);
-  g.fillEllipse(10,200,30,210);
+  fillEllipse(p.maxX+p.orientation*p.rectWidth,
+              p.maxY+p.orientation*p.cornerRoundness*4,
+              p.maxX,
+              p.maxY);
 }
 
 function drawTrainingHeartRate() {
@@ -319,7 +325,7 @@ Bangle.on('lcdPower', (on) => {
     Bangle.drawWidgets();
 
     renderHomeIcon();
-    renderLowerLimitBackground();
+    renderLshape(lowerLshape);
     renderLshape(upperLshape);
     lowerLimitChanged = true;
     upperLimitChanged = true;
@@ -333,7 +339,7 @@ Bangle.on('HRM', onHrm);
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-renderLowerLimitBackground();
+renderLshape(lowerLshape);
 renderLshape(upperLshape);
 
 if (typeof(BTN5) !== typeof(undefined)) {
