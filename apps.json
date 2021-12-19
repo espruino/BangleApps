@@ -5068,9 +5068,8 @@
   "shortName":"AnDark",
   "version":"0.01",
   "description": "analog clock face without disturbing widgets",
-  "icon": "andark_icon.png",
   "type": "clock",
-  "tags": "cloc",
+  "tags": "clock",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
