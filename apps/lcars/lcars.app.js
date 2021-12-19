@@ -17,10 +17,7 @@ for (const key in saved_settings) {
 }
 
 var stepsData = new Array(24).fill(0);
-var hrmData = new Array(24).fill(0);
 let hrmValue = 0;
-var hrmValueAvg = 0;
-var hrmValueCount = 0;
 
 /*
  * Colors to use
@@ -260,29 +257,43 @@ function drawPosition1(){
 
   // Draw steps bars
   g.setColor(cWhite);
+  let health;
 
-  // HRM
-  var maxHrm = Math.max.apply(Math, hrmData);
-  var gridy = (parseInt(maxHrm / 50)-1) * 50;
-  gridy = gridy <= 0 ? 50 : gridy;
-  require("graph").drawBar(g, hrmData, {
+  try {
+    health = require("health");
+  } catch(ex) {
+    g.setFontAntonioMedium();
+    g.drawString("MODULE HEALTH", 20, 110);
+    g.drawString("REQUIRED.", 20, 130);
+    g.drawString("MODULE HEALTH", 20, 20);
+    g.drawString("REQUIRED.", 20, 40);
+    return;
+  }
+
+  // Plot HRM graph
+  var data = new Uint16Array(31);
+  var cnt = new Uint8Array(31);
+  health.readDailySummaries(new Date(), h=>{
+    data[h.day]+=h.bpm;
+    if (h.bpm) cnt[h.day]++;
+  });
+  require("graph").drawBar(g, data, {
     axes : true,
     gridx : 4,
-    gridy : gridy,
+    gridy : 100,
     width : 140,
     height : 50,
     x: 5,
     y: 25
   });
 
-  // Steps
-  var maxSteps = Math.max.apply(Math, stepsData);
-  var gridy = (parseInt(maxSteps / 1000)-1) * 1000;
-  gridy = gridy <= 0 ? 1000 : gridy;
-  require("graph").drawBar(g, stepsData, {
+  // Plot step graph
+  var data = new Uint16Array(31);
+  health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
+  require("graph").drawBar(g, data, {
     axes : true,
     gridx : 4,
-    gridy : gridy,
+    gridy : 5,
     width : 140,
     height : 50,
     x: 5,
@@ -290,8 +301,10 @@ function drawPosition1(){
   });
 
   g.setFontAntonioMedium();
+  g.setColor(cWhite);
   g.drawString("HRM", 122, 9);
-  g.drawString("STEPS", 114, 96);
+  g.drawString("STEPS [K]", 90, 96);
+
 }
 
 function draw(){
@@ -414,17 +427,7 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('HRM', function (hrm) {
-  var current = new Date();
-
   hrmValue = hrm.bpm;
-  hrmValueAvg += hrmValue;
-  hrmValueCount += 1;
-  hrmData[current.getHours()] = hrmValueAvg / hrmValueCount;
-
-  if(current.getMinutes() == 0){
-    hrmValueAvg = 0;
-    hrmValueCount = 0;
-  }
 });
 
 
