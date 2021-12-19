@@ -3205,7 +3205,6 @@
   "tags":"clock",
   "type":"clock",
   "allow_emulator":true,
-  "readme": "README.md",
   "storage": [
     {"name":"doztime2.app.js","url":"app.js"},
     {"name":"doztime2.img","url":"app-icon.js","evaluate":true}
