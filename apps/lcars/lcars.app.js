@@ -293,6 +293,13 @@ function draw(){
   // Handle steps for graph data
   handleSteps();
 
+  // Clear data
+  var current = new Date();
+  if(current.getHours() == 0 && current.getMinutes() == 0){
+    stepsData = new Array(24).fill(0);
+    hrmData = new Array(24).fill(0);
+  }
+
   // Next draw the watch face
   g.reset();
   g.clearRect(0, 0, g.getWidth(), g.getHeight());
