@@ -125,8 +125,10 @@ function renderUpperLimit() {
   } else {
     g.setColor(255,255,255);
   }
-  g.setFontVector(13);
-  g.drawString("Upper: " + upperLimit, 125, 50);
+  g.setFontVector(13).setFontAlign(-1, 0, 0);
+  g.drawString("Upper: " + upperLimit,
+               upperLshape.minX,
+               upperLshape.minY+upperLshape.rectWidth/2);
 
   upperLimitChanged = false;
 }
@@ -158,8 +160,10 @@ function renderLowerLimit() {
   } else {
     g.setColor(255,255,255);
   }
-  g.setFontVector(13);
-  g.drawString("Lower: " + lowerLimit, 20,190);
+  g.setFontVector(13).setFontAlign(-1, 0, 0);
+  g.drawString("Lower: " + lowerLimit,
+               lowerLshape.maxX + lowerLshape.rectWidth/2,
+               lowerLshape.minY - lowerLshape.rectWidth/2);
 
   lowerLimitChanged = false;
 }
