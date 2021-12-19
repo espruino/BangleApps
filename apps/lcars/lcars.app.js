@@ -263,7 +263,7 @@ function drawPosition1(){
   require("graph").drawBar(g, hrmData, {
     axes : true,
     gridx : 4,
-    gridy : 50,
+    gridy : 100,
     width : 140,
     height : 50,
     x: 5,
