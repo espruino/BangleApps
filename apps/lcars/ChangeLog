@@ -5,4 +5,4 @@
 0.05: Additional icons for (1) charging and (2) bat < 30%.
 0.06: Fix - Alarm disabled, if clock was closed.
 0.07: Added settings to adjust data that is shown for each row.
-0.08: Smaller background for faster rendering. Full screen mode.
+0.08: Support for multiple screens. 24h graph for steps + HRM. Fullscreen Mode.
