@@ -36,12 +36,6 @@ var backgroundImage =  {
   buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
 }
 
-var logo = {
-  width : 56, height : 56, bpp : 1,
-  transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AAUEAwsOAwseAwsfAws/AwtzwAGEuIGF8PgAocH8H4AwcP4H+FAnAv4cDveAufAAwXzwFxEYUB4cAmFwAwMDw8AnE4F4UGgEYjBmCM4McjgGEhhxCBQUMC4IYBAwMOg4GBnAfBgwGCmAtBg8DAwxUBuEwIIIGDJIMDwYGCsAGBwIGBsAGBgIGDMoMB4IGIuB6C4YGBuIGJ8YGBmOAgPgsYJBAwMH+AGCneAh84u4GBjeAPAIGCcgM4hk+YQQ5BhwGE8EHninCgPAgYGCgxzBge4AwSPBgLnCVwQGEU4MH/gGCn+An98AwV///+AwUMuP/+AwChngJwIGCh52CjxaCPIIfBAxICBJIIXEAAb+CACA"))
-}
-
 var iconEarth = {
   width : 50, height : 50, bpp : 3,
   buffer : require("heatshrink").decompress(atob("AFtx48ECBsDwU5k/yhARLjgjBjlzAQMQEZcIkOP/fn31IEZgCBnlz58cEpM4geugEgwU/8+WNZJHDuHHvgmBCQ8goEOnVgJoMnyV58mACItHI4X8uAFBuVHnnz4BuGxk4////Egz3IkmWvPgNw8f/prB//BghTC+AjE7848eMjNnzySBwUJkmf/BuGuPDAQIjBiPHhhTCSQnjMo0ITANJn44Dg8MuFBggCCiFBcAJ0Bv5xEh+ITo2OhHkyf/OIQdBWwVHhgjBNwUE+fP/5EEgePMoYLBhMgyVJk/+BQQdC688I4XxOIc8v//NAvr+QEBj/5NwKVBy1/QYUciPBhk1EAJrC+KeC489QYaMBgU/8BNB9+ChEjz1Jkn/QYMBDQIgCcYTCCiP/nlzJQmenMAgV4//uy/9wRaB/1J8iVCcAfHjt9TYYICnhKCgRKBw159/v//r927OIeeoASBDQccvv3791KYVDBYPLJQeCnPnz//AAP6ocEjEkXgMgJQtz79fLAP8KYkccAcJ8Gf/f/xu/cAMQ4eP5MlyQRCMolx40YsOGBAPfnnzU4KVDpKMBvz8Dh0/8me7IICgkxJQXPIgZTD58sEgcJk+eNoONnFBhk4/5uB/pcDg5KD+4mEv4CBXISVDhEn31/8/+mH7x//JQK5CAAMB4JBCnnxJQf/+fJEgkAa4L+CAQOOjMn/1bXIRxDJQXx58f//Hhlz/88EgsChMgz/Zs/+nfkyV/8huDOI6SD498NwoACi1Z8+S/Plz17/+QCI7jC+ZxBmfPnojIAAMDcYWSp//2wRJEwq2GABECjMgNYwAmA="))
@@ -151,17 +145,18 @@ function drawHoriztonatlBgLine(color, x1, x2, y, h){
 }
 
 
-function drawLogo(){
+function drawLock(){
+  g.setFontAntonioSmall();
+  g.setColor(cWhite);
   if(Bangle.isLocked()){
-    g.setColor(cWhite);
-  } else {
-    g.setColor(cBlue);
+    g.setColor(cOrange);
   }
-  g.drawImage(logo, 120, 10);
+  g.drawString("LCARS", 130, 15);
+  g.drawString("BJS-2", 130, 35);
 }
 
 function drawState(){
-  g.setColor(cOrange);
+  g.setColor(cWhite);
   var bat = E.getBattery();
   var timeInMinutes = getCurrentTimeInMinutes();
 
@@ -207,7 +202,7 @@ function draw(){
   drawHoriztonatlBgLine(cOrange, 20, 176, 172, 4);
 
   // Draw logo
-  drawLogo();
+  drawLock();
 
   // Write time
   g.setColor(cWhite);
@@ -218,7 +213,7 @@ function draw(){
   g.drawString(timeStr, 28, 12);
 
   // Write date
-  g.setColor(cPurple);
+  g.setColor(cWhite);
   g.setFontAntonioSmall();
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
@@ -312,7 +307,7 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('lock', function(isLocked) {
-  drawLogo();
+  drawLock();
 });
 
 Bangle.on('charging',function(charging) {
