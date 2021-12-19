@@ -16,6 +16,9 @@ for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
 let hrmValue = 0;
+var stepsData = new Array(24).fill(0);
+var hrmData = new Array(24).fill(0);
+
 
 /*
  * Colors to use
@@ -26,14 +29,26 @@ let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 
 /*
+ * Position in lcars
+ */
+let lcarsViewPos = 0;
+let drag;
+
+/*
  * Requirements and globals
  */
 const locale = require('locale');
 
-var backgroundImage =  {
+var bgLeft =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
+}
+
+var bgRight =  {
+  width : 27, height : 176, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAnUP7y/KH4yGeVYAJrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgAA="))
 }
 
 var iconEarth = {
@@ -86,7 +101,7 @@ var iconNoBattery = {
 
 // Font to use:
 // <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap" rel="stylesheet">
-Graphics.prototype.setFontAntonioSmall = function(scale) {
+Graphics.prototype.setFontAntonioMedium = function(scale) {
   // Actual height 20 (19 - 0)
   g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAA//mP/5gAAAAAAAAAAAAA/gAMAAAAAA/gAPAAAEIIBP+H/8D+IYBP+H/8D+IABCAAwIAfnwP8+PHh448eP3+B4fAAAAAAAH/AD/4AwGAMBgD/4Af8GAAPgAPgAfgAfAAfAA+AAOP/AH/4BgGAYBgH/4A/8AAAAAAAAAQAA/B+f4/+GMPhjv/4/h8Dg/gAcYwAAPwADgAAAAAAAAB//8///sAAaAACAAAMAAb//+f//AAAAAAAbAAGwAA4AA/wADgABsAAbAAAAAAAgAAMAAPwAD8AAMAADAAAAAAAAAAHAAB/AAOAAAAAAAAMAADAAAwAAMAACAAAAAAAAAABgAAYAAAAAAAAA4AD+AP+A/4A/gAOAAAAAAAAAH//j//8wADMAAz//8f/+AAAAAAAMAADAABgAA//+P//gAAAAAAAAAAAAAfgfP4fzAfswfDP/gx/gMAAAHgPj4D8wMDMHAz//8f3+AAEAAAAADwAH8APzA/AwP//j//4AAwAAAD/Hw/x+MwBjOAYz/+Mf/AAAAAAAH//j//8wYDMGAz9/8fP+AAcDAAAwAAMAfjB/4z/wP+AD4AAwAAAAOB/f4///MHAzBwM///H9/gAAAAAAH/Pj/78wGDMBgz//8f/+AAAAAAADhwA4cAAAAAAAAAAAAAADh/A4fgAAAAOAAHwABsAA7gAccAGDAAAAANgADYAA2AANgADYAA2AAAAAAAABgwAccADuAAbAAHwAA4AAAAHwAD8c4/POMHAD/wAfwAAAAAAAAD/wD//B4B4Y/HMf8zMBMyATMwczP+M4BzHwcgf+AA+AAAAAAD4A/+P/8D+DA/4wH/+AB/4AAeAAAAAAA//+P//jBgYwYGP//j//4PH4AAAAAAAf/+P//zgAcwADP4fz+P4Ph8AAAAAAA//+P//jAAYwAGPADj//4P/4AAAAAAA//+P//jBgYwYGMGBgAAAAAAP//j//4wYAMGADBgAAAAAAAA//w///PAHzAQM4MHP7/x+/8AAAAAAD//4//+AGAABgAAYAP//j//4AAAAAAAAAA//+P//gAAAAAAAAAAAHwAB+AABgAAY//+P//AAAAAAAAAAD//4//+APgAf+Afj8PgPjAAYAAAAAAD//4//+AABgAAYAAGAAAAAAA//+P//j/gAD/wAB/gAP4B/4P/AD//4//+AAAAAAAAAAP//j//4P4AAfwAA/g//+P//gAAAAAAAAAA//g//+PAHjAAY4AOP//h//wAAAAAAD//4//+MDADAwA4cAP/AB/gAAAAAAAA//g//+PAHjAAc4APv//5//yAAAAAAD//4//+MGADBgA48AP//h+f4AAAAAAB+Pw/z+MOBjBwY/P+Hx/AAHgwAAMAAD//4//+MAADAAAAAAP//D//4AAOAABgAA4//+P//AAAAwAAP8AD//AA/+AAfgP/4//gPwAAAAA+AAP/4Af/4AD+A//j/wA/wAD/+AA/4B/+P/+D+AAAAAMADj8P4P/4A/4B//w+A+MABgAAA4AAPwAB/gAB/+A//j/gA+AAMAAAAAYwB+MH/jf+Y/8GPwBjAAAAAAP//7//+wABsAAYAAAAAAPAAD/gAH/gAD/gAD4AACAAADAAGwABv//7//+AAAA=="), 32, atob("BQUHCAgVCQQFBQkHBQcFBwgICAgICAgICAgFBQcHBwgPCQkJCQcHCQoFCQkHDQoJCQkJCAYJCQ0ICAcGBwY="), 20+(scale<<8)+(1<<16));
 }
@@ -146,9 +161,9 @@ function drawHoriztonatlBgLine(color, x1, x2, y, h){
 
 
 function drawLock(){
-  g.setFontAntonioSmall();
+  g.setFontAntonioMedium();
   g.setColor(cOrange);
-  g.clearRect(120, 10, g.getWidth(), 80);
+  g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 130, 15);
   g.drawString("B-JS2", 130, 35);
   if(Bangle.isLocked()){
@@ -174,7 +189,7 @@ function drawState(){
 
   // Alarm within symbol
   g.setFontAlign(-1, -1, 0);
-  g.setFontAntonioSmall();
+  g.setFontAntonioMedium();
   g.drawString("STATUS", 123, 97);
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
@@ -183,23 +198,16 @@ function drawState(){
   }
 }
 
-function draw(){
 
-  // First handle alarm to show this correctly afterwards
-  handleAlarm();
-
-  // Next draw the watch face
-  g.reset();
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
-
+function drawPosition0(){
   // Draw background image
-  g.drawImage(backgroundImage, 0, 0);
-  drawHoriztonatlBgLine(cBlue, 35, 120, 0, 4);
+  g.drawImage(bgLeft, 0, 0);
+  drawHoriztonatlBgLine(cBlue, 25, 120, 0, 4);
   drawHoriztonatlBgLine(cBlue, 130, 176, 0, 4);
-  drawHoriztonatlBgLine(cPurple, 35, 110, 81, 3);
-  drawHoriztonatlBgLine(cPurple, 120, 176, 81, 3);
-  drawHoriztonatlBgLine(cOrange, 35, 110, 87, 3);
-  drawHoriztonatlBgLine(cOrange, 120, 176, 87, 3);
+  drawHoriztonatlBgLine(cPurple, 20, 70, 80, 4);
+  drawHoriztonatlBgLine(cPurple, 80, 176, 80, 4);
+  drawHoriztonatlBgLine(cOrange, 35, 110, 87, 4);
+  drawHoriztonatlBgLine(cOrange, 120, 176, 87, 4);
   drawHoriztonatlBgLine(cOrange, 20, 176, 171, 5);
 
   // Draw logo
@@ -214,7 +222,7 @@ function draw(){
 
   // Write date
   g.setColor(cWhite);
-  g.setFontAntonioSmall();
+  g.setFontAntonioMedium();
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
@@ -228,6 +236,65 @@ function draw(){
 
   // Draw state
   drawState();
+}
+
+function drawPosition1(){
+  // Draw background image
+  g.drawImage(bgRight, 149, 0);
+  drawHoriztonatlBgLine(cBlue, 0, 140, 0, 4);
+  drawHoriztonatlBgLine(cPurple, 0, 80, 80, 4);
+  drawHoriztonatlBgLine(cPurple, 90, 150, 80, 4);
+  drawHoriztonatlBgLine(cOrange, 0, 50, 87, 4);
+  drawHoriztonatlBgLine(cOrange, 60, 140, 87, 4);
+  drawHoriztonatlBgLine(cOrange, 0, 150, 171, 5);
+
+  // Draw steps bars
+  g.setColor(cWhite);
+
+  // HRM
+  require("graph").drawBar(g, hrmData, {
+    axes : true,
+    gridx : 4,
+    gridy : 50,
+    width : 140,
+    height : 50,
+    x: 5,
+    y: 25
+  });
+
+  // Steps
+  require("graph").drawBar(g, stepsData, {
+    axes : true,
+    gridx : 4,
+    gridy : 2500,
+    width : 140,
+    height : 50,
+    x: 5,
+    y: 115
+  });
+
+  g.setFontAntonioMedium();
+  g.drawString("HRM", 123, 7);
+  g.drawString("STEPS", 116, 94);
+}
+
+function draw(){
+  // First handle alarm to show this correctly afterwards
+  handleAlarm();
+
+  // Handle steps for graph data
+  handleSteps();
+
+  // Next draw the watch face
+  g.reset();
+  g.clearRect(0, 0, g.getWidth(), g.getHeight());
+
+  // Draw current lcars position
+  if(lcarsViewPos == 0){
+    drawPosition0();
+  } else if (lcarsViewPos == 1) {
+    drawPosition1();
+  }
 
   // Queue draw in one minute
   queueDraw();
@@ -240,7 +307,7 @@ function draw(){
 function getSteps() {
   if (stepsWidget() !== undefined)
     return stepsWidget().getSteps();
-  return "???";
+  return 0;
 }
 
 function stepsWidget() {
@@ -250,6 +317,15 @@ function stepsWidget() {
     return WIDGETS.wpedom;
   }
   return undefined;
+}
+
+function handleSteps(){
+  var current_h = (new Date()).getHours();
+  if(current_h == 0){
+    stepsData[current_h] = getSteps();
+  } else {
+    stepsData[current_h] = getSteps() - stepsData[current_h-1];
+  }
 }
 
 
@@ -315,18 +391,67 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('HRM', function (hrm) {
+  var current_h = (new Date()).getHours();
+
   hrmValue = hrm.bpm;
+  hrmData[current_h] =  (hrmData[current_h] + hrmValue) / 2
 });
 
-Bangle.on('swipe',function(dir) {
-  // Increase alarm
-  if(dir == -1){
-    if(isAlarmEnabled()){
-      settings.alarm += 5;
-    } else {
-      settings.alarm = getCurrentTimeInMinutes() + 5;
-    }
+
+function increaseAlarm(){
+  if(isAlarmEnabled()){
+    settings.alarm += 5;
+  } else {
+    settings.alarm = getCurrentTimeInMinutes() + 5;
   }
+
+  Storage.writeJSON(SETTINGS_FILE, settings);
+}
+
+
+function decreaseAlarm(){
+  if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
+    settings.alarm -= 5;
+  } else {
+    settings.alarm = -1;
+  }
+
+  Storage.writeJSON(SETTINGS_FILE, settings);
+}
+
+
+// Thanks to the app "gbmusic" for this code to detect swipes in all 4 directions.
+Bangle.on("drag", e => {
+  if (!drag) { // start dragging
+    drag = {x: e.x, y: e.y};
+  } else if (!e.b) { // released
+    const dx = e.x-drag.x, dy = e.y-drag.y;
+    drag = null;
+
+    // Horizontal swipe
+    if (Math.abs(dx)>Math.abs(dy)+10) {
+      if(dx > 0){
+        lcarsViewPos = 0;
+      } else {
+        lcarsViewPos = 1;
+      }
+
+    // Vertical swipe
+    } else if (Math.abs(dy)>Math.abs(dx)+10) {
+      if(dy > 0){
+        decreaseAlarm();
+      } else {
+        increaseAlarm();
+      }
+    }
+
+    draw();
+  }
+});
+
+
+/*Bangle.on('swipe',function(dir) {
+
 
   // Decrease alarm
   if(dir == +1){
@@ -342,7 +467,7 @@ Bangle.on('swipe',function(dir) {
 
   // Update alarm state
   Storage.writeJSON(SETTINGS_FILE, settings);
-});
+});*/
 
 /*
  * Lets start widgets, listen for btn etc.
