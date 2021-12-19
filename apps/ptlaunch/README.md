@@ -58,3 +58,10 @@ Make sure the watch is unlocked before you start drawing. If this bothers you, y
 3) I have done all that and still nothing happens!
 
 Please note that drawing on the clock screen will not visually show the pattern you drew. It will start the app as soon as the pattern was recognized - this might take 1 or 2 seconds! If still nothing happens, that might be a bug, sorry!
+
+
+## Authors
+
+Initial creation: [crazysaem](https://github.com/crazysaem)
+
+Improve pattern detection code readability: [PaddeK](http://forum.espruino.com/profiles/117930/)
