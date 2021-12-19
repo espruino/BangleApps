@@ -35,10 +35,10 @@ function draw(){
  // g.drawString(d.getDate(),1.4*c.x,c.y,true);
   g.drawString(Math.round(E.getBattery()/5)*5+"%",c.x,c.y+40,true);
   drawlet();
-  g.setColor(1,0,0);
+  //g.setColor(1,0,0);
   const hz = zeiger(100,5,h);
   g.fillPoly(hz,true);
-  g.setColor(1,1,1);
+ // g.setColor(1,1,1);
   const minz = zeiger(150,5,m);
   g.fillPoly(minz,true);
   const sekz = zeiger(150,2,s);
