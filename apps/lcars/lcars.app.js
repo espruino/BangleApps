@@ -16,9 +16,6 @@ for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
 
-var stepsData = new Array(24).fill(0);
-let hrmValue = 0;
-
 /*
  * Colors to use
  */
@@ -28,10 +25,11 @@ let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 
 /*
- * Position in lcars
+ * Global lcars variables
  */
 let lcarsViewPos = 0;
 let drag;
+let hrmValue = 0;
 
 /*
  * Requirements and globals
@@ -313,9 +311,6 @@ function draw(){
   // First handle alarm to show this correctly afterwards
   handleAlarm();
 
-  // Handle steps for graph data
-  handleSteps();
-
   // Clear data
   var current = new Date();
   if(current.getHours() == 0 && current.getMinutes() == 0){
@@ -352,24 +347,6 @@ function getSteps() {
 
   health.readDay(new Date(), h=>steps+=h.steps);
   return steps;
-}
-
-function stepsWidget() {
-  if (WIDGETS.activepedom !== undefined) {
-    return WIDGETS.activepedom;
-  } else if (WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom;
-  }
-  return undefined;
-}
-
-function handleSteps(){
-  var current_h = (new Date()).getHours();
-  if(current_h == 0){
-    stepsData[current_h] = getSteps();
-  } else {
-    stepsData[current_h] = getSteps() - stepsData[current_h-1];
-  }
 }
 
 
