@@ -119,8 +119,7 @@ var recognizeAndDrawPattern = () => {
   return new Promise((resolve) => {
     E.showMenu();
     g.clear();
-    g.setColor(0, 0, 0);
-    CIRCLES.forEach((circle) => drawCircle(circle));
+    drawCirclesWithPattern([]);
 
     var pattern = [];
 
@@ -369,7 +368,6 @@ var drawAppWithPattern = (i, r, storedPatterns) => {
     offset: { x: 1, y: 3 + r.y },
   });
 
-  g.setColor(0, 0, 0);
   if (!storedPattern.wrappedAppName) {
     storedPattern.wrappedAppName = g
       .wrapString(app.name, g.getWidth() - 64)
@@ -490,7 +488,7 @@ var drawCircle = (circle, drawBuffer, scale) => {
   log("drawing circle");
   log({ x: x, y: y, r: r });
 
-  drawBuffer.fillCircle(x, y, r);
+  drawBuffer.drawCircle(x, y, r);
 };
 
 var cachedCirclesDrawings = {};
@@ -535,17 +533,15 @@ var drawCirclesWithPattern = (pattern, options) => {
       { msb: true }
     );
 
-    drawBuffer.setColor(1);
     CIRCLES.forEach((circle) => drawCircle(circle, drawBuffer, scale));
 
-    drawBuffer.setColor(0);
     drawBuffer.setFontAlign(0, 0);
-    drawBuffer.setFont("6x8", 4 * scale);
+    drawBuffer.setFont("Vector", 40 * scale);
     pattern.forEach((circleIndex, patternIndex) => {
       var circle = CIRCLES[circleIndex];
       drawBuffer.drawString(
         patternIndex + 1,
-        circle.x * scale,
+        (circle.x + (scale === 1 ? 1 : 5)) * scale,
         circle.y * scale
       );
     });
