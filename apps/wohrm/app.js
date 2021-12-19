@@ -4,14 +4,16 @@ const Setter = {
   UPPER: 'upper',
   LOWER: 'lower'
 };
+const SETTINGS_FILE = "wohrm.setting.json";
+var settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {
+  upperLimit: 130,
+  lowerLimit: 100
+};
 
 const shortBuzzTimeInMs = 80;
 const longBuzzTimeInMs = 400;
 
-let upperLimit = 130;
 let upperLimitChanged = true;
-
-let lowerLimit = 100;
 let lowerLimitChanged = true;
 
 let limitSetter = Setter.NONE;
@@ -150,7 +152,7 @@ function renderUpperLimit() {
     g.setColor(g.theme.fg);
   }
   g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
-  g.drawString("Upper: " + upperLimit,
+  g.drawString("Upper: " + settings.upperLimit,
                upperLshape.minX,
                upperLshape.minY+upperLshape.rectWidth/2);
 
@@ -189,7 +191,7 @@ function renderLowerLimit() {
     g.setColor(g.theme.fg);
   }
   g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
-  g.drawString("Lower: " + lowerLimit,
+  g.drawString("Lower: " + settings.lowerLimit,
                lowerLshape.maxX + lowerLshape.rectWidth/2,
                lowerLshape.minY - lowerLshape.rectWidth/2);
 
@@ -247,13 +249,13 @@ function buzz() {
   // Do not buzz if not confident
   if(hrConfidence < 85) { return; }
 
-  if(currentHeartRate > upperLimit)
+  if(currentHeartRate > settings.upperLimit)
   {
     Bangle.buzz(shortBuzzTimeInMs);
     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs * 2);
   }
 
-  if(currentHeartRate < lowerLimit)
+  if(currentHeartRate < settings.lowerLimit)
   {
     Bangle.buzz(longBuzzTimeInMs);
   }
@@ -312,11 +314,11 @@ function incrementLimit() {
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
-    upperLimit++;
+    settings.upperLimit++;
     renderUpperLimit();
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
-    lowerLimit++;
+    settings.lowerLimit++;
     renderLowerLimit();
     lowerLimitChanged = true;
   }
@@ -326,11 +328,11 @@ function decrementLimit(){
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
-    upperLimit--;
+    settings.upperLimit--;
     renderUpperLimit();
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
-    lowerLimit--;
+    settings.lowerLimit--;
     renderLowerLimit();
     lowerLimitChanged = true;
   }
@@ -368,7 +370,7 @@ Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
 g.setTheme({bg:"#000",fg:"#fff",dark:true});
-g.reset()
+g.reset();
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();

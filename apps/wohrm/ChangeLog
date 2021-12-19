@@ -8,3 +8,4 @@
 0.08: tag HRM power requests to allow this to work alongside other widgets/apps (fix #799)
 0.09: Ported to Bangle.js2
       Home returns to clock, instead of menu
+      Add settings
