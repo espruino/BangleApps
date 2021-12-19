@@ -351,7 +351,6 @@ function switchOffApp(){
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    g.clear();
     Bangle.drawWidgets();
 
     if (typeof(BTN5) !== typeof(undefined)) {
@@ -368,7 +367,9 @@ Bangle.on('lcdPower', (on) => {
 Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
-g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
+g.setTheme({bg:"#000",fg:"#fff",dark:true});
+g.reset()
+g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
