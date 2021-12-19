@@ -35,7 +35,7 @@ From the main menu you can:
   - Now draw any pattern you like, this will later launch the linked app from the clock screen
   - You can also draw a single-circle pattern (meaning a single tap on one circle) instead of drawing a 'complex' pattern
   - If you don't like the pattern, simply re-draw it. The previous pattern will be discarded.
-  - If you are happy with the pattern tap on screen or press the button to continue
+  - If you are happy with the pattern press the button to continue
   - Now select the app you want to launch with the pattern.
   - Note, you can bind multiple patterns to the same app.
 - Manage created patterns (second entry)

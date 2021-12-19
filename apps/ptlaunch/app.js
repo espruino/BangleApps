@@ -134,7 +134,7 @@ var recognizeAndDrawPattern = () => {
       resolve(pattern.join(""));
     };
     setWatch(() => finishHandler(), BTN);
-    setTimeout(() => Bangle.on("tap", finishHandler), 250);
+    // setTimeout(() => Bangle.on("tap", finishHandler), 250);
 
     var positions = [];
     var getPattern = (positions) => {
