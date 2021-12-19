@@ -161,6 +161,10 @@ function drawHoriztonatlBgLine(color, x1, x2, y, h){
 
 
 function drawLock(){
+  if(lcarsViewPos != 0){
+    return;
+  }
+
   g.setFontAntonioMedium();
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
@@ -172,6 +176,10 @@ function drawLock(){
 }
 
 function drawState(){
+  if(lcarsViewPos != 0){
+    return;
+  }
+
   g.setColor(cWhite);
   var bat = E.getBattery();
   var timeInMinutes = getCurrentTimeInMinutes();
@@ -438,6 +446,10 @@ Bangle.on("drag", e => {
 
     // Vertical swipe
     } else if (Math.abs(dy)>Math.abs(dx)+10) {
+      if(lcarsViewPos != 0){
+        return;
+      }
+
       if(dy > 0){
         decreaseAlarm();
       } else {
