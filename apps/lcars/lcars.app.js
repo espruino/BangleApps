@@ -15,10 +15,12 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
-let hrmValue = 0;
+
 var stepsData = new Array(24).fill(0);
 var hrmData = new Array(24).fill(0);
-
+let hrmValue = 0;
+var hrmValueAvg = 0;
+var hrmValueCount = 0;
 
 /*
  * Colors to use
@@ -406,10 +408,17 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('HRM', function (hrm) {
-  var current_h = (new Date()).getHours();
+  var current = new Date();
 
   hrmValue = hrm.bpm;
-  hrmData[current_h] =  (hrmData[current_h] + hrmValue) / 2
+  hrmValueAvg += hrmValue;
+  hrmValueCount += 1;
+  hrmData[current_h.getHours()] = hrmValueAvg / hrmValueCount;
+
+  if(current.getMinutes() == 0){
+    hrmValueAvg = 0;
+    hrmValueCount = 0;
+  }
 });
 
 
