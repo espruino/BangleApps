@@ -5068,6 +5068,7 @@
   "shortName":"AnDark",
   "version":"0.01",
   "description": "analog clock face without disturbing widgets",
+  "icon" "andark_icon.png",
   "type": "clock",
   "tags": "cloc",
   "supports" : ["BANGLEJS2"],  
