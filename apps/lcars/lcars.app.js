@@ -18,14 +18,28 @@ for (const key in saved_settings) {
 let hrmValue = 0;
 
 /*
+ * Colors to use
+ */
+let cBlue = "#0094FF";
+let cOrange = "#FF9900";
+let cPurple = "#FF00DC";
+let cWhite = "#FFFFFF";
+
+/*
  * Requirements and globals
  */
 const locale = require('locale');
 
-var backgroundImage = {
-  width : 176, height : 151, bpp : 3,
-  transparent : 2,
-  buffer : require("heatshrink").decompress(atob("AAdx48cATsAg4daIAX3799ATv2wEFDrUAgNHQDyDghaAeQcJKG86D4gRKGgAA4jxKFuBB5iaDF6BB5ZwyD6QAYCC4CD/Qf6Dzg/gQf8H/iD/n//wCD9gP///wQfpBKQf6D4h5BB/yD8jl/IIIABjiD5n4/DAAWAQe8B//8QYfHj//PAaDzHwICCAAP4gYCBQep6DIIYFBRgKD1j/+gB9BQYYKBn/gQen/+BBFQAUH/iDzGoZBHJoOAQeRBDj5BHj6PB0WKlACDJQIAofYZBFBAZBBAGMHPQZB8QYZAEIIcDIOiDI/hB3QZBBFjlx44CDuBBpg4DCIJEfIIPnz15AQeAQeH8gIDBGoJBCnnz54CDZ1UHPQMHIIUAIIKD3II6MBQYQCCQeI1B+BBC/BKCBASGCQeK5B/xBC4BKEn/gAoKDyj//45BFj/xZYSDzgF/IAP+JQrLCQecAgKDBF4cHQYKJDQecAn6EBAAiJEQeZBB/jICAAMcvwMDQevgQwR0CIIiDzgP/BA1/4CD3nAHGhyD3ABqD0ABiD/Qf4ADjiD/gEnQYuQQf6D7gaDFzxB5gFzQYnz4BB5hyDFATfkEoIdagEBQYoCcgEHDrReBhKDhwEBQbYABjiD/AH4A/AH4AGiFx48cATsAg4daIIWSpMkATuQEbkAgJfbQckJQDyDhZxQA1gRKFpBA4gEQQYtwIPMSQYtAIPKADQfqADAQRA5Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4A/AH4A/AH4A/AFkcuPHAQdAIPOSpMkAQaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4A/AH4A/AH4A/AGUcuPHAQdwIPOSpMkAQaD/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf6D/Qf4AciSDFoCD/QfcCQYtIIPMAQYoC6gEJQYgC6gEBQf7HCQf4ABiiD9"))
+var backgroundImage =  {
+  width : 27, height : 176, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
+}
+
+var logo = {
+  width : 56, height : 56, bpp : 1,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AAUEAwsOAwseAwsfAws/AwtzwAGEuIGF8PgAocH8H4AwcP4H+FAnAv4cDveAufAAwXzwFxEYUB4cAmFwAwMDw8AnE4F4UGgEYjBmCM4McjgGEhhxCBQUMC4IYBAwMOg4GBnAfBgwGCmAtBg8DAwxUBuEwIIIGDJIMDwYGCsAGBwIGBsAGBgIGDMoMB4IGIuB6C4YGBuIGJ8YGBmOAgPgsYJBAwMH+AGCneAh84u4GBjeAPAIGCcgM4hk+YQQ5BhwGE8EHninCgPAgYGCgxzBge4AwSPBgLnCVwQGEU4MH/gGCn+An98AwV///+AwUMuP/+AwChngJwIGCh52CjxaCPIIfBAxICBJIIXEAAb+CACA"))
 }
 
 var iconEarth = {
@@ -91,10 +105,10 @@ Graphics.prototype.setFontAntonioSmall = function(scale) {
 }
 
 Graphics.prototype.setFontAntonioLarge = function(scale) {
-  // Actual height 34 (34 - 1)
-  g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAADwAAAAAeAAAAADwAAAAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAD+AAAAH/wAAAP/+AAAf/+AAA//8AAB//4AAD//wAAD//gAAAf/AAAAD+AAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAB////gA/////AP////8D/////wfAAAA+DwAAADweAAAAeDwAAADwf////+D/////wP////8Af///+AAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAOAAAAADwAAAAAeAAAAAHgAAAAB/////wf////+D/////wf////+D/////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAPwH/4AP+B//AH/wf/4D/+D4AB/9weAAf4ODwAP8BweAP/AOD///gBwP//wAOA//4ABwB/4AAOAAAAAAAAAAAAAAAAAAAAB8AA/gA/gAH/AP8AA/8D/gAH/wfAHAA+DwA4ADweAHgAeDwB8ADwf7/+H+D/////gP/9//8A//H/+AA/AH/AAAAAAAAAAAAAAAAAABwAAAAD+AAAAD/wAAAH/+AAAH/5wAAH/wOAAP/gBwAP/gAOAD/////wf////+D/////wf////+AAAABwAAAAAOAAAAABwAAAAAAAAAAAAAAAAAAeAD//4D/Af//Af8D//4D/wf//Af+DwPAADweB4AAeDwPAADweB///+DwP///weA///8DwD//+AAAA/8AAAAAAAAAAAAAAAAAAAAAA////AA/////AP////8D/////wfgPAB+DwB4ADweAOAAeDwBwADwf+PAA+D/x///wP+H//8A/wf//AAAA//gAAAAAAAAAAAAADgAAAAAeAAAAADwAAAAAeAAAD+DwAAP/weAA//+DwA///weB///8Dx//8AAf//wAAD//gAAAf/AAAAD/AAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAD/wf/wB//v//AP////8D/////weAPwAeDwA8ADwcAHAAeDwB8ADwf////+D/////wP/9//8A//H//AA/AD/AAAAAAAAAAAAAAAAAAAAAD//gfAA///D/AP//8f8D///j/weAA8A+DwADgDweAAcAeDwAHgDwf////+B/////gP////8Af///+AAP//4AAAAAAAAAAAAAAAAAAAAAAD4AfAAAfAD4AAD4AfAAAfAD4AAD4AfAAAAAAAAAAAAAA=="), 46, atob("Cg4QEBAQEBAQEBAQCQ=="), 39+(scale<<8)+(1<<16));
-}
+  // Actual height 39 (39 - 1)
+  g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAPgAAAAAB8AAAAAAHgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAD8AAAAAH/gAAAAP/8AAAAf//gAAA///AAAB//+AAAD//8AAAH//4AAAP//wAAAB//gAAAAP/AAAAAB+AAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH///AAAf////8AP/////4B//////Af/////8D8AAAAfgeAAAAA8DwAAAAHgeAAAAA8D//////gf/////8B//////AP/////wAf////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAHgAAAAAA8AAAAAAPgAAAAAB4AAAAAAf/////gP/////8B//////gP/////8B//////gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAAD/+AAP8A//wAP/gP/+AH/8D//wD//gfgAA//8DwAAf+HgeAAP/A8DwAH/gHgfgP/wA8D///4AHgP//+AA8A///AAHgB//AAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AA/gAD/AAH/gA/4AA/+AP/AAH/4D/4AA//gfgA4AB8DwAPAAHgeAB4AA8DwAPgAHgfAD+AB8D//////gP/////4B//5//+AD/+H//gAH/AH/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP4AAAAAP/AAAAAP/4AAAAP//AAAAP/x4AAAf/wPAAAf/gB4AAf/AAPAAP/AAB4AB//////gP/////8B//////gP/////8AAAAAPAAAAAAB4AAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//wD/AB///Af+AP//4D/4B///Af/gP//4B/8B4D4AAPgPAeAAA8B4DwAAHgPAfAAB8B4D////gPAf///4B4B////APAD///gAAAD//gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///AAAP////4AH/////wB//////Af/////8D8APAA/geADwAB8DwAeAAHgeADwAA8D4AeAAPgf/j+AH8B/8f///gP/h///4Af8H//+AAPgP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAPAAAAAAB4AAAABgPAAAA/8B4AAB//gPAAD//8B4AH///gPAH///8B4P//+AAPH//wAAB///gAAAP//AAAAB/+AAAAAP+AAAAAB+AAAAAAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/4A/+AAf/w//+AP//v//4B//////Af/////8D4AfwAPgeAB8AA8DwAHAAHgeAB8AA8D4Af4APgf/////8B//////AP//v//4A//4//8AA/4A/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/+AAAAD//+D/gB///4f+AP///j/4D///8f/gfAAHgB8DwAA8AHgeAAHgA8DwAA8AHgfgAHgB8D//////gP/////4A/////+AD/////gAD////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAfgAAB+AD8AAAPwAfgAAB+AD8AAAPwAfgAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DBATExMTExMTExMTCw=="), 45+(scale<<8)+(1<<16));
 
+}
 /*
  * Draw watch face
  */
@@ -135,6 +149,25 @@ function printData(key, y){
   }
 }
 
+function drawHoriztonatlBgLine(color, x1, x2, y, h){
+  g.setColor(color);
+
+  for(var i=0; i<h; i++){
+    g.drawLine(x1, y+i, x2,y+i);
+  }
+}
+
+
+Bangle.on('lock', function(isLocked) {
+  if(Bangle.isLocked()){
+    g.setColor(cPurple);
+  } else {
+    g.setColor(cBlue);
+  }
+  g.drawImage(logo, 120, 10);
+});
+
+
 function draw(){
 
   // First handle alarm to show this correctly afterwards
@@ -142,12 +175,52 @@ function draw(){
 
   // Next draw the watch face
   g.reset();
-  g.clearRect(0, 24, g.getWidth(), g.getHeight());
+  g.clearRect(0, 0, g.getWidth(), g.getHeight());
 
   // Draw background image
-  g.drawImage(backgroundImage, 0, 24);
+  g.drawImage(backgroundImage, 0, 0);
+  drawHoriztonatlBgLine(cBlue, 35, 120, 0, 4);
+  drawHoriztonatlBgLine(cBlue, 130, 176, 0, 4);
+  drawHoriztonatlBgLine(cPurple, 35, 120, 81, 3);
+  drawHoriztonatlBgLine(cPurple, 130, 176, 81, 3);
+  drawHoriztonatlBgLine(cOrange, 35, 120, 87, 3);
+  drawHoriztonatlBgLine(cOrange, 130, 176, 87, 3);
+  drawHoriztonatlBgLine(cOrange, 35, 176, 173, 3);
+
+  // Draw logo
+  if(Bangle.isLocked()){
+    g.setColor(cPurple);
+  } else {
+    g.setColor(cBlue);
+  }
+  g.drawImage(logo, 120, 10);
+
+
+  // Write time
+  g.setColor(cBlue);
+  g.setFontAlign(-1,-1, 0);
+  var currentDate = new Date();
+  var timeStr = locale.time(currentDate,1);
+  g.setFontAntonioLarge();
+  g.drawString(timeStr, 25, 12);
+
+  // Write date
+  g.setColor(cPurple);
+  g.setFontAntonioSmall();
+  var dayStr = locale.dow(currentDate, true).toUpperCase();
+  dayStr += " " + currentDate.getDate();
+  dayStr += " " + currentDate.getFullYear();
+  g.drawString(dayStr, 30, 60);
+  g.setColor("#FFFFFF");
+
+  // Draw data
+  g.setColor(cOrange);
+  printData(settings.dataRow1, 98);
+  printData(settings.dataRow2, 121);
+  printData(settings.dataRow3, 144);
 
   // Draw symbol
+  g.setColor(cOrange);
   var bat = E.getBattery();
   var timeInMinutes = getCurrentTimeInMinutes();
 
@@ -169,27 +242,6 @@ function draw(){
   if(isAlarmEnabled() > 0){
     g.drawString(getAlarmMinutes(), 115+25, 115+25);
   }
-
-  // Write time
-  var currentDate = new Date();
-  var timeStr = locale.time(currentDate,1);
-  g.setFontAlign(0,0,0);
-  g.setFontAntonioLarge();
-  g.drawString(timeStr, 60, 55);
-
-  // Write date
-  g.setFontAlign(-1,-1, 0);
-  g.setFontAntonioSmall();
-
-  var dayName = locale.dow(currentDate, true).toUpperCase();
-  var day = currentDate.getDate();
-  g.drawString(day, 100, 35);
-  g.drawString(dayName, 100, 55);
-
-  // Draw battery
-  printData(settings.dataRow1, 98);
-  printData(settings.dataRow2, 121);
-  printData(settings.dataRow3, 144);
 
   // Queue draw in one minute
   queueDraw();
@@ -306,12 +358,17 @@ Bangle.on('lcdPower',on=>{
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 
-// Load widgets - needed by draw
 Bangle.loadWidgets();
+/*
+ * we are not drawing the widgets as we are taking over the whole screen
+ * so we will blank out the draw() functions of each widget and change the
+ * area to the top bar doesn't get cleared.
+ */
+for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets
-Bangle.drawWidgets();
+// Bangle.drawWidgets();
