@@ -1,11 +1,8 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, its necessary to install
-the [Pedometer widget](https://banglejs.com/apps/#pedometer%20widget).
-To display the month graphs on screen 2, the health app is required.
-Nevertheless, lcars can also be used, with limited functionality, without
-installing those apps.
+Note: To display the steps, the health app is required.
+If this app is not installed, the data will not be shown.
 
 
 ## Features

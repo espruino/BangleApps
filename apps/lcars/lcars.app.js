@@ -271,14 +271,15 @@ function drawPosition1(){
   }
 
   // Plot HRM graph
-  var data = new Uint16Array(31);
-  var cnt = new Uint8Array(31);
+  var data = new Uint16Array(32);
+  var cnt = new Uint8Array(32);
   health.readDailySummaries(new Date(), h=>{
     data[h.day]+=h.bpm;
     if (h.bpm) cnt[h.day]++;
   });
   require("graph").drawBar(g, data, {
     axes : true,
+    minx: 1,
     gridx : 4,
     gridy : 100,
     width : 140,
@@ -288,10 +289,11 @@ function drawPosition1(){
   });
 
   // Plot step graph
-  var data = new Uint16Array(31);
+  var data = new Uint16Array(32);
   health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
   require("graph").drawBar(g, data, {
     axes : true,
+    minx: 1,
     gridx : 4,
     gridy : 5,
     width : 140,
@@ -341,9 +343,15 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
-  if (stepsWidget() !== undefined)
-    return stepsWidget().getSteps();
-  return 0;
+  var steps = 0
+  try {
+    health = require("health");
+  } catch(ex) {
+    return steps;
+  }
+
+  health.readDay(new Date(), h=>steps+=h.steps);
+  return steps;
 }
 
 function stepsWidget() {
