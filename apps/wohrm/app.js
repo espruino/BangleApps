@@ -37,10 +37,10 @@ const upperLshape = {
 const lowerLshape = {
   maxX: 10,
   minX: 100,
-  minY: 210,
-  maxY: 40,
-  rectWidth: 30,
-  cornerRoundness: 5,
+  minY: upperLshape.maxY,
+  maxY: upperLshape.minY,
+  rectWidth: upperLshape.rectWidth,
+  cornerRoundness: upperLshape.cornerRoundness,
   orientation: 1,
   color: '#00f'
 };
