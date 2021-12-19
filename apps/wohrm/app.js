@@ -31,8 +31,7 @@ const upperLshape = {
   rectWidth: 30,
   cornerRoundness: 5,
   orientation: -1,
-  bgColor: 0,
-  fgColor: '#f00'
+  color: '#f00'
 };
 
 const lowerLshape = {
@@ -43,8 +42,7 @@ const lowerLshape = {
   rectWidth: 30,
   cornerRoundness: 5,
   orientation: 1,
-  bgColor: 0,
-  fgColor: '#00f'
+  color: '#00f'
 };
 
 const centerBar = {
@@ -63,7 +61,7 @@ function fillEllipse(x, y, x2, y2) {
 }
 
 function renderLshape(p) {
-  g.setColor(p.fgColor);
+  g.setColor(p.color);
 
   g.fillRect(p.minX, p.minY, p.maxX, p.minY-p.orientation*p.rectWidth);
   g.fillRect(p.maxX+p.orientation*p.rectWidth,
@@ -78,12 +76,12 @@ function renderLshape(p) {
               p.minY-p.orientation*p.rectWidth);
 
   //Round outer corner
-  g.setColor(p.bgColor);
+  g.setColor(g.theme.bg);
   g.fillRect(p.maxX+p.orientation*p.cornerRoundness,
              p.minY,
              p.maxX,
              p.minY-p.orientation*p.cornerRoundness);
-  g.setColor(p.fgColor);
+  g.setColor(p.color);
   fillEllipse(p.maxX+p.orientation*p.cornerRoundness*4,
               p.minY,
               p.maxX,
@@ -94,14 +92,14 @@ function renderLshape(p) {
              p.minY-p.orientation*(p.rectWidth+1),
              p.maxX+p.orientation*(p.rectWidth+1),
              p.minY-p.orientation*(p.rectWidth+p.cornerRoundness-1));
-  g.setColor(p.bgColor);
+  g.setColor(g.theme.bg);
   fillEllipse(p.maxX+p.orientation*(p.rectWidth+p.cornerRoundness*4),
               p.minY-p.orientation*(p.rectWidth+1),
               p.maxX+p.orientation*(p.rectWidth+1),
               p.minY-p.orientation*(p.rectWidth+p.cornerRoundness*3-1));
 
   //Round end of long line
-  g.setColor(p.fgColor);
+  g.setColor(p.color);
   fillEllipse(p.maxX+p.orientation*p.rectWidth,
               p.maxY+p.orientation*p.cornerRoundness*4,
               p.maxX,
@@ -129,9 +127,9 @@ function renderUpperLimit() {
   renderLshape(upperLshape);
 
   if(limitSetter === Setter.UPPER){
-    g.setColor(255,255, 0);
+    g.setColor(1,1,0);
   } else {
-    g.setColor(255,255,255);
+    g.setColor(g.theme.fg);
   }
   g.setFontVector(13).setFontAlign(-1, 0, 0);
   g.drawString("Upper: " + upperLimit,
@@ -144,11 +142,11 @@ function renderUpperLimit() {
 function renderCurrentHeartRate() {
   if(!hrChanged) { return; }
 
-  g.setColor(1, 1, 1);
+  g.setColor(g.theme.fg);
   g.fillRect(centerBar.minX, centerBar.minY,
              centerBar.maxX, centerBar.maxY);
 
-  g.setColor(0,0,0);
+  g.setColor(g.theme.bg);
   g.setFontVector(24);
   g.setFontAlign(1, 0, 0);
   g.drawString(currentHeartRate,
@@ -167,9 +165,9 @@ function renderLowerLimit() {
   renderLshape(lowerLshape);
 
   if(limitSetter === Setter.LOWER){
-    g.setColor(255,255, 0);
+    g.setColor(1,1,0);
   } else {
-    g.setColor(255,255,255);
+    g.setColor(g.theme.fg);
   }
   g.setFontVector(13).setFontAlign(-1, 0, 0);
   g.drawString("Lower: " + lowerLimit,
@@ -183,13 +181,13 @@ function renderConfidenceBars(){
   if(!confidenceChanged) { return; }
 
   if(hrConfidence >= 85){
-    g.setColor(0, 255, 0);
+    g.setColor(0, 1, 0);
   } else if (hrConfidence >= 50) {
-    g.setColor(255, 255, 0);
+    g.setColor(1, 1, 0);
   } else if(hrConfidence >= 0){
-    g.setColor(255, 0, 0);
+    g.setColor(1, 0, 0);
   } else {
-    g.setColor(255, 255, 255);
+    g.setColor(g.theme.fg);
   }
 
   g.fillRect(centerBar.minX-centerBar.confidenceWidth, centerBar.minY, centerBar.minX, centerBar.maxY);
@@ -200,9 +198,9 @@ function renderConfidenceBars(){
 
 function renderPlusMinusIcons() {
   if (limitSetter === Setter.NONE) {
-    g.setColor(0, 0, 0);
+    g.setColor(g.theme.bg);
   } else {
-    g.setColor(1, 1, 1);
+    g.setColor(g.theme.fg);
   }
 
   g.setFontVector(14);
