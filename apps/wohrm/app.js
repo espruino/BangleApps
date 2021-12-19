@@ -23,7 +23,8 @@ let confidenceChanged = true;
 
 let setterHighlightTimeout;
 
-const upperLshape = {
+const isB1 = process.env.HWVERSION==1;
+const upperLshape = isB1 ? {
   minX: 125,
   maxX: 210,
   minY: 40,
@@ -32,10 +33,19 @@ const upperLshape = {
   cornerRoundness: 5,
   orientation: -1,
   color: '#f00'
+} : {
+  minX: Bangle.appRect.x2-100,
+  maxX: Bangle.appRect.x2,
+  minY: Bangle.appRect.y,
+  maxY: Bangle.appRect.y2,
+  rectWidth: 26,
+  cornerRoundness: 4,
+  orientation: -1,
+  color: '#f00'
 };
 
 const lowerLshape = {
-  maxX: 10,
+  maxX: isB1 ? 10 : Bangle.appRect.x,
   minX: 100,
   minY: upperLshape.maxY,
   maxY: upperLshape.minY,
@@ -48,14 +58,17 @@ const lowerLshape = {
 const centerBar = {
   minY: (upperLshape.minY + upperLshape.maxY - upperLshape.rectWidth)/2,
   maxY: (upperLshape.minY + upperLshape.maxY + upperLshape.rectWidth)/2,
-  confidenceWidth: 10,
-  minX: 55,
-  maxX: 165
+  confidenceWidth: isB1 ? 10 : 8,
+  minX: isB1 ? 55 : upperLshape.rectWidth + 14,
+  maxX: isB1 ? 165 : Bangle.appRect.x2 - upperLshape.rectWidth - 14
 };
 
-const fontSizes = {
-    limits: 13,
-    heartRate: 24
+const fontSizes = isB1 ? {
+  limits: 13,
+  heartRate: 24
+} : {
+  limits: 12,
+  heartRate: 20
 };
 
 function fillEllipse(x, y, x2, y2) {
@@ -155,7 +168,8 @@ function renderCurrentHeartRate() {
   g.setFontVector(fontSizes.heartRate);
   g.setFontAlign(1, 0, 0);
   g.drawString(currentHeartRate,
-               upperLshape.minX+upperLshape.cornerRoundness,
+               Math.max(upperLshape.minX+upperLshape.cornerRoundness,
+                        lowerLshape.minX-lowerLshape.cornerRoundness),
                (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults
