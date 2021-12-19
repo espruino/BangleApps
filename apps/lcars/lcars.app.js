@@ -262,10 +262,13 @@ function drawPosition1(){
   g.setColor(cWhite);
 
   // HRM
+  var maxHrm = Math.max.apply(Math, hrmData);
+  var gridy = (parseInt(maxHrm / 50)-1) * 50;
+  gridy = gridy <= 0 ? 50 : gridy;
   require("graph").drawBar(g, hrmData, {
     axes : true,
     gridx : 4,
-    gridy : 100,
+    gridy : gridy,
     width : 140,
     height : 50,
     x: 5,
@@ -273,10 +276,13 @@ function drawPosition1(){
   });
 
   // Steps
+  var maxSteps = Math.max.apply(Math, stepsData);
+  var gridy = (parseInt(maxSteps / 1000)-1) * 1000;
+  gridy = gridy <= 0 ? 1000 : gridy;
   require("graph").drawBar(g, stepsData, {
     axes : true,
     gridx : 4,
-    gridy : 2500,
+    gridy : gridy,
     width : 140,
     height : 50,
     x: 5,
@@ -284,8 +290,8 @@ function drawPosition1(){
   });
 
   g.setFontAntonioMedium();
-  g.drawString("HRM", 123, 7);
-  g.drawString("STEPS", 116, 94);
+  g.drawString("HRM", 122, 9);
+  g.drawString("STEPS", 114, 96);
 }
 
 function draw(){
@@ -413,7 +419,7 @@ Bangle.on('HRM', function (hrm) {
   hrmValue = hrm.bpm;
   hrmValueAvg += hrmValue;
   hrmValueCount += 1;
-  hrmData[current_h.getHours()] = hrmValueAvg / hrmValueCount;
+  hrmData[current.getHours()] = hrmValueAvg / hrmValueCount;
 
   if(current.getMinutes() == 0){
     hrmValueAvg = 0;
