@@ -469,25 +469,6 @@ Bangle.on("drag", e => {
 });
 
 
-/*Bangle.on('swipe',function(dir) {
-
-
-  // Decrease alarm
-  if(dir == +1){
-    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-      settings.alarm -= 5;
-    } else {
-      settings.alarm = -1;
-    }
-  }
-
-  // Update UI
-  draw();
-
-  // Update alarm state
-  Storage.writeJSON(SETTINGS_FILE, settings);
-});*/
-
 /*
  * Lets start widgets, listen for btn etc.
  */
