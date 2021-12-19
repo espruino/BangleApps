@@ -149,8 +149,6 @@ function getWeather() {
   return jsonWeather;
 }
 
-var mm_prev = "xx";
-
 function draw() {
   var d = new Date();
   var da = d.toString().split(" ");
@@ -190,18 +188,8 @@ function draw() {
   }
 
   g.reset();
-
-  if (process.env.HWVERSION == 1) {
-    // avoid flicker on a bangle 1 by comparing with previous minute
-    if (mm_prev != mm) {
-      mm_prev = mm;
-      g.clearRect(0, 30, w, h - 24);
-    }
-  } else {
-    // on a b2 safe to just clear anyway as there is no flicker
-    g.clearRect(0, 30, w, h - 24);
-  }
-    
+  g.clearRect(0, 30, w, h - 24);
+  
   // draw a grid like graph paper
   if (settings.grid && process.env.HWVERSION !=1) {
     g.setColor("#0f0");
