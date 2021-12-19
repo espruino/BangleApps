@@ -309,19 +309,20 @@ Bangle.on('lcdPower', (on) => {
 Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
-setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
-setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
-setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
-setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
-
-setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
-
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-renderHomeIcon();
 renderLowerLimitBackground();
 renderUpperLimitBackground();
+
+if (typeof(BTN5) !== typeof(undefined)) {
+  renderHomeIcon();
+  setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
+  setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
+
+  setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
+}
 
 setInterval(drawTrainingHeartRate, 1000);
