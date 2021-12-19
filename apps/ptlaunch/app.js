@@ -365,6 +365,18 @@ var getStoredPatternsArray = () => {
 var CIRCLE_RADIUS = 25;
 var CIRCLE_RADIUS_2 = CIRCLE_RADIUS * CIRCLE_RADIUS;
 
+var CIRCLES = [
+  { x: 25, y: 25, i: 0 },
+  { x: 87, y: 25, i: 1 },
+  { x: 150, y: 25, i: 2 },
+  { x: 25, y: 87, i: 3 },
+  { x: 87, y: 87, i: 4 },
+  { x: 150, y: 87, i: 5 },
+  { x: 25, y: 150, i: 6 },
+  { x: 87, y: 150, i: 7 },
+  { x: 150, y: 150, i: 8 },
+];
+
 var drawCircle = (circle, drawBuffer, scale) => {
   if (!drawBuffer) {
     drawBuffer = g;
@@ -380,7 +392,8 @@ var drawCircle = (circle, drawBuffer, scale) => {
   log("drawing circle");
   log({ x: x, y: y, r: r });
 
-  drawBuffer.drawCircle(x, y, r);
+  drawBuffer.setColor(0);
+  drawBuffer.fillCircle(x, y, r);
 };
 
 var cachedCirclesDrawings = {};
@@ -425,8 +438,11 @@ var drawCirclesWithPattern = (pattern, options) => {
       { msb: true }
     );
 
-    CIRCLES.forEach((circle) => drawCircle(circle, drawBuffer, scale));
+    drawBuffer.setColor(1);
+    drawBuffer.fillRect(0, 0, drawBuffer.getWidth(), drawBuffer.getHeight());
 
+    CIRCLES.forEach((circle) => drawCircle(circle, drawBuffer, scale));
+    drawBuffer.setColor(1);
     drawBuffer.setFontAlign(0, 0);
     drawBuffer.setFont("Vector", 40 * scale);
     pattern.forEach((circleIndex, patternIndex) => {
@@ -437,12 +453,12 @@ var drawCirclesWithPattern = (pattern, options) => {
         circle.y * scale
       );
     });
-
     image = {
       width: drawBuffer.getWidth(),
       height: drawBuffer.getHeight(),
       bpp: 1,
       buffer: drawBuffer.buffer,
+      palette: new Uint16Array([g.theme.fg, g.theme.bg], 0, 1),
     };
 
     if (enableCaching) {
