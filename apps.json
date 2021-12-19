@@ -5069,6 +5069,7 @@
   "version":"0.02",
   "description": "analog clock face without disturbing widgets",
   "icon": "andark_icon.png",
+  "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
   "readme": "README.md",
