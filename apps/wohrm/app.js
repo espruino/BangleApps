@@ -118,8 +118,7 @@ function drawTrainingHeartRate() {
 function renderUpperLimit() {
   if(!upperLimitChanged) { return; }
 
-  g.setColor(1,0,0);
-  g.fillRect(125,40, 210, 70);
+  renderLshape(upperLshape);
 
   if(limitSetter === Setter.UPPER){
     g.setColor(255,255, 0);
@@ -152,8 +151,7 @@ function renderCurrentHeartRate() {
 function renderLowerLimit() {
   if(!lowerLimitChanged) { return; }
 
-  g.setColor(0,0,1);
-  g.fillRect(10, 180, 100, 210);
+  renderLshape(lowerLshape);
 
   if(limitSetter === Setter.LOWER){
     g.setColor(255,255, 0);
@@ -341,8 +339,6 @@ Bangle.on('HRM', onHrm);
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-renderLshape(lowerLshape);
-renderLshape(upperLshape);
 
 if (typeof(BTN5) !== typeof(undefined)) {
   renderHomeIcon();
