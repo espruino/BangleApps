@@ -24,27 +24,45 @@ let confidenceChanged = true;
 let setterHighlightTimeout;
 
 function renderUpperLimitBackground() {
-  g.setColor(1,0,0);
-  g.fillRect(125,40, 210, 70);
-  g.fillRect(180,70, 210, 200);
+  var minX=125;
+  var maxX=210;
+  var minY=40;
+  var maxY=210;
+  var rectWidth=30;
+  var cornerRoundness=5;
+  var bgColor = 0;
+  var fgColor = '#f00';
+  g.setColor(fgColor);
+
+  g.fillRect(minX,minY, maxX, minY+rectWidth);
+  g.fillRect(maxX-rectWidth, minY+rectWidth, maxX, maxY-cornerRoundness*2);
 
   //Round top left corner
-  g.fillEllipse(115,40,135,70);
+  g.fillEllipse(minX-cornerRoundness*2,
+                minY,
+                minX+cornerRoundness*2,
+                minY+rectWidth);
 
   //Round top right corner
-  g.setColor(0,0,0);
-  g.fillRect(205,40, 210, 45);
-  g.setColor(1,0,0);
-  g.fillEllipse(190,40,210,50);
+  g.setColor(bgColor);
+  g.fillRect(maxX-cornerRoundness,minY, maxX, minY+cornerRoundness);
+  g.setColor(fgColor);
+  g.fillEllipse(maxX-cornerRoundness*4,minY,maxX,minY+cornerRoundness*2);
 
   //Round inner corner
-  g.fillRect(174,71, 179, 76);
-  g.setColor(0,0,0);
-  g.fillEllipse(160,71,179,82);
+  g.fillRect(maxX-rectWidth-cornerRoundness-1,
+             minY+rectWidth+1,
+             maxX-rectWidth-1,
+             minY+rectWidth+cornerRoundness-1);
+  g.setColor(bgColor);
+  g.fillEllipse(maxX-rectWidth-cornerRoundness*4,
+                minY+rectWidth+1,
+                maxX-rectWidth-1,
+                minY+rectWidth+cornerRoundness*3-1);
 
   //Round bottom
-  g.setColor(1,0,0);
-  g.fillEllipse(180,190, 210, 210);
+  g.setColor(fgColor);
+  g.fillEllipse(maxX-rectWidth,maxY-cornerRoundness*4, maxX, maxY);
 }
 
 function renderLowerLimitBackground() {
