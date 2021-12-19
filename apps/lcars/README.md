@@ -1,24 +1,28 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, its necessary (but still optional) to install
+Note: To display the steps, its necessary to install
 the [Pedometer widget](https://banglejs.com/apps/#pedometer%20widget).
+To display the month graphs on screen 2, the health app is required.
+Nevertheless, lcars can also be used, with limited functionality, without
+installing those apps.
+
 
 ## Features
  * LCARS Style watch face
  * Shows different states (charging, out of battery, GPS on etc.)
  * Shows customizable data (steps, HRM, battery, temperature etc.)
  * Change between multiple screens via swipe left/right.
- * Display 24h graphs for steps + hrm.
+ * Display month graphs for steps + hrm on screen 2.
  * Swipe up/down to activate an alarm.
  * Full-screen mode.
 
-## Screenshot of multiple screens
-Access via swipe left/ right
+
+## Multiple screens support
+Access different screens via swipe left/ right
 
 ![](screenshot.png)
 ![](screenshot_2.png)
-
 
 
 ## Icons
