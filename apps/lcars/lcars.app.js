@@ -165,10 +165,10 @@ function drawLock(){
   g.setFontAntonioMedium();
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
-  g.drawString("LCARS", 130, 15);
-  g.drawString("B-JS2", 130, 35);
+  g.drawString("LCARS", 130, 12);
+  g.drawString("B-JS2", 130, 32);
   if(Bangle.isLocked()){
-    g.drawString("LOCK", 130, 55);
+    g.drawString("LOCK", 130, 52);
   }
 }
 
@@ -223,7 +223,7 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 25, 12);
+  g.drawString(timeStr, 25, 10);
 
   // Write date
   g.setColor(cWhite);
@@ -231,7 +231,7 @@ function drawPosition0(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 28, 58);
+  g.drawString(dayStr, 28, 56);
 
   // Draw data
   g.setColor(cWhite);
