@@ -47,6 +47,14 @@ const lowerLshape = {
   fgColor: '#00f'
 };
 
+const centerBar = {
+  minY: (upperLshape.minY + upperLshape.maxY - upperLshape.rectWidth)/2,
+  maxY: (upperLshape.minY + upperLshape.maxY + upperLshape.rectWidth)/2,
+  confidenceWidth: 10,
+  minX: 55,
+  maxX: 165
+};
+
 function fillEllipse(x, y, x2, y2) {
   g.fillEllipse(Math.min(x, x2),
                 Math.min(y, y2),
@@ -136,13 +144,16 @@ function renderUpperLimit() {
 function renderCurrentHeartRate() {
   if(!hrChanged) { return; }
 
-  g.setColor(255,255,255);
-  g.fillRect(55, 110, 165, 150);
+  g.setColor(1, 1, 1);
+  g.fillRect(centerBar.minX, centerBar.minY,
+             centerBar.maxX, centerBar.maxY);
 
   g.setColor(0,0,0);
   g.setFontVector(24);
-  g.setFontAlign(1, -1, 0);
-  g.drawString(currentHeartRate, 130, 117);
+  g.setFontAlign(1, 0, 0);
+  g.drawString(currentHeartRate,
+               upperLshape.minX+upperLshape.cornerRoundness,
+               (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults
   g.setFontAlign(-1, -1, 0);
@@ -181,8 +192,8 @@ function renderConfidenceBars(){
     g.setColor(255, 255, 255);
   }
 
-  g.fillRect(45, 110, 55, 150);
-  g.fillRect(165, 110, 175, 150);
+  g.fillRect(centerBar.minX-centerBar.confidenceWidth, centerBar.minY, centerBar.minX, centerBar.maxY);
+  g.fillRect(centerBar.maxX, centerBar.minY, centerBar.maxX+centerBar.confidenceWidth, centerBar.maxY);
 
   confidenceChanged = false;
 }
