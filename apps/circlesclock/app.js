@@ -1,9 +1,11 @@
 const locale = require("locale");
 const heatshrink = require("heatshrink");
 
-var shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
-var heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
-var powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
+const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
+const heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
+const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
+const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
+const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
 const SETTINGS_FILE = "circlesclock.json";
 let settings;
@@ -11,13 +13,16 @@ let settings;
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {
     'maxHR': 200,
-    'stepGoal': 10000
+    'stepGoal': 10000,
+    'batteryWarn': 30
   };
 }
 
 const colorFg = '#fff';
 const colorBg = '#000';
 const colorGrey = '#808080';
+const colorRed = '#ff0000';
+const colorGreen = '#00ff00';
 
 let hrtValue;
 
@@ -89,13 +94,12 @@ function drawSteps() {
 }
 
 function drawHeartRate() {
-  const red = '#ff0000';
   g.setColor(colorGrey);
   g.fillCircle(w2, h3, radiusOuter);
 
   if (hrtValue != undefined) {
     const percent = hrtValue / settings.maxHR;
-    drawGauge(w2, h3, percent, red);
+    drawGauge(w2, h3, percent, colorRed);
   }
 
   g.setColor(colorBg);
@@ -106,7 +110,7 @@ function drawHeartRate() {
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
-  g.drawString(hrtValue != undefined ? hrtValue : 0, w2, h3);
+  g.drawString(hrtValue != undefined ? hrtValue : "-", w2, h3);
 
   g.drawImage(heartIcon, w2 - 6, h3 + radiusOuter - 6);
 }
@@ -129,10 +133,23 @@ function drawBattery() {
 
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
-  g.setColor(colorFg);
+
+  let icon = powerIcon;
+  let color = colorFg;
+  if (Bangle.isCharging()) {
+    color = colorGreen;
+    icon = powerIconGreen;
+  }
+  else {
+    if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
+      color = colorRed;
+      icon = powerIconRed;
+    }
+  }
+  g.setColor(color);
   g.drawString(battery + '%', w3, h3);
 
-  g.drawImage(powerIcon, w3 - 6, h3 + radiusOuter - 6);
+  g.drawImage(icon, w3 - 6, h3 + radiusOuter - 6);
 }
 
 function radians(a) {

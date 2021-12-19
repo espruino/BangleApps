@@ -1,0 +1,3 @@
+0.01: New watch face
+0.02: Use Bangle.setUI for button/launcher handling
+0.03: Bangle.js 2 support
