@@ -346,7 +346,7 @@ function resetHighlightTimeout() {
 
 function switchOffApp(){
   Bangle.setHRMPower(0,"wohrm");
-  Bangle.showLauncher();
+  load();
 }
 
 Bangle.on('lcdPower', (on) => {
