@@ -21,3 +21,25 @@
 0.20: Allow Gadgetbridge to work even with programmable:off
 0.21: Handle echo off char from Gadgetbridge app when programmable:off (fix #558)
 0.22: Stop LCD timeout being disabled on first run (when there is no settings.json)
+0.23: Move to a precalculated .boot0 file which should speed up load time
+0.24: Add Bangle.setUI polyfill
+0.25: Fix error in 'no clock app' message
+0.26: Remove buzz in setUI polyfill (#750)
+0.27: Update polyfill for most recent changes
+0.28: Fix double clock load after settings are changed
+0.29: Update boot0 to avoid code block (faster execution)
+      Fix issues where 'Uncaught Error: Function not found' could happen with multiple .boot.js
+0.30: Remove 'Get GPS time' at boot. Latest firmwares keep time through reboots, so this is not needed now
+0.31: Add polyfills for g.wrapString, g.imageMetrics, g.stringMetrics
+0.32: Fix single quote error in g.wrapString polyfill
+      improve g.stringMetrics polyfill
+      Fix issue where re-running bootupdate could disable existing polyfills
+0.33: Add E.showScroller polyfill
+0.34: Use Storage.hash if available
+      Rearrange NRF.setServices to allow .boot.js files to add services (eg ANCS)
+0.35: Add Bangle.appRect polyfill
+      Don't set beep vibration up on Bangle.js 2 (built in)
+0.36: Add comments to .boot0 to make debugging a bit easier
+0.37: Remove Quiet Mode settings: now handled by Quiet Mode Schedule app
+0.38: Option to log to file if settings.log==2
+0.39: Fix passkey support (fix https://github.com/espruino/Espruino/issues/2035)

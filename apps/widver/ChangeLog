@@ -1,1 +1,3 @@
 0.01: New Widget
+0.02: Display "Rel" (Release) instead of 'undefined' when there is no Build number.
+0.03: Add theme support, lower memory usage

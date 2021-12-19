@@ -8,6 +8,9 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
+    "Exit" : function() {
+      load();
+    },
     "File No" : {
       value : fileNumber,
       min : 0,
@@ -21,9 +24,6 @@ function showMenu() {
     "View Logs" : function() {
       viewLogs();
     },
-    "Exit" : function() {
-      load();
-    },
   };
   E.showMenu(menu);
 }
@@ -34,7 +34,7 @@ function viewLog(n) {
   var records = 0, l = "", ll="";
   while ((l=f.readLine())!==undefined) {records++;ll=l;}
   var length = 0;
-  if (ll) length = (ll.split(",")[0]|0)/1000;
+  if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
 
   var menu = {
     "" : { title : "Log "+n }
@@ -90,16 +90,25 @@ function startRecord(force) {
   // display
   g.clear(1);
   Bangle.drawWidgets();
-  var w = g.getWidth();
-  var h = g.getHeight();
-  g.setColor("#ff0000").fillRect(0,h-48,w,h);
-  g.setColor("#ffffff").setFont("6x8",2).setFontAlign(0,0).drawString("RECORDING", w/2,h-24);
-  g.setFont("6x8").drawString("Samples:",w/2,h/3 - 20);
-  g.setFont("6x8").drawString("Time:",w/2,h*2/3 - 20);
-  g.setFont("6x8",2).setFontAlign(0,0,1).drawString("STOP",w-10,h/2);
+
+  var Layout = require("Layout");
+  var layout = new Layout({ type: "v", c: [
+      {type:"txt", font:"6x8", label:"Samples", pad:2},
+      {type:"txt", id:"samples", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
+      {type:"txt", font:"6x8", label:"Time", pad:2},
+      {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
+      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:1},
+    ]
+  },{btns:[ // Buttons...
+    {label:"STOP", cb:()=>{
+      Bangle.removeListener('accel', accelHandler);
+      showMenu();
+    }}
+  ]});
+  layout.render();
 
   // now start writing
-  f = require("Storage").open(getFileName(fileNumber), "w");
+  var f = require("Storage").open(getFileName(fileNumber), "w");
   f.write("Time (ms),X,Y,Z\n");
   var start = getTime();
   var sampleCount = 0;
@@ -113,17 +122,14 @@ function startRecord(force) {
       accel.z*8192].map(n=>Math.round(n)).join(",")+"\n");
 
     sampleCount++;
-    g.reset().setFont("6x8",2).setFontAlign(0,0);
-    g.drawString("  "+sampleCount+"  ",w/2,h/3,true);
-    g.drawString("  "+Math.round(t)+"s  ",w/2,h*2/3,true);
+    layout.samples.label = sampleCount;
+    layout.time.label = Math.round(t)+"s";
+    layout.render(layout.samples);
+    layout.render(layout.time);
   }
 
-  Bangle.setPollInterval(80); // 12.5 Hz
+  Bangle.setPollInterval(80); // 12.5 Hz - the default
   Bangle.on('accel', accelHandler);
-  setWatch(()=>{
-    Bangle.removeListener('accel', accelHandler);
-    showMenu();
-  }, BTN2);
 }
 
 

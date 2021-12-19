@@ -146,12 +146,6 @@ class ShiftText {
     //console.log("bgcolor:" + this.bg_color);
     g.setColor(this.bg_color[0],this.bg_color[1],this.bg_color[2]);
     g.drawString(this.txt, this.x, this.y);
-    /*g.fillPoly([this.x - 1, this.y,
-              240, this.y,
-              240, this.y + this.font_size,
-              this.x -1 , this.y + this.font_size,
-             ]);
-             */
   }
   setText(txt){
     this.txt = txt;
@@ -239,13 +233,21 @@ class ShiftText {
 
 const CLOCK_TEXT_SPEED_X = 10;
 // a list of display rows
-let row_displays = [
-  new ShiftText(240,50,'',"Vector",40,CLOCK_TEXT_SPEED_X,1,10,main_color(),bg_color()),
-  new ShiftText(240,90,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
-  new ShiftText(240,120,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
-  new ShiftText(240,150,'',"Vector",30,CLOCK_TEXT_SPEED_X,1,10,other_color(),bg_color()),
-  new ShiftText(240,180,'',"Vector",40,CLOCK_TEXT_SPEED_X,1,10,main_color(),bg_color())
-];
+let row_displays;
+function setRowDisplays(y, heights) {
+  var cols = [
+    main_color(), other_color(), other_color(), other_color(), main_color()
+  ];
+  row_displays = [];
+  for (var i=0;i<heights.length;i++) {
+    row_displays.push(new ShiftText(g.getWidth(),y,'',"Vector",heights[i],CLOCK_TEXT_SPEED_X,1,10,cols[i],bg_color()));
+    y += heights[i];
+  }
+}
+if (g.getHeight()>200)
+  setRowDisplays(50, [40,30,30,30,40]);
+else
+  setRowDisplays(34, [35,25,25,25,35]);
 
 function nextColorTheme(){
   //console.log("next color theme");
@@ -274,11 +276,7 @@ function setColor(main_color,other_color,bg_color){
   row_displays[row_displays.length - 1].setColor(main_color);
   row_displays[row_displays.length - 1].setBgColor(bg_color);
   g.setColor(bg_color[0],bg_color[1],bg_color[2]);
-  g.fillPoly([0,25,
-    0,240,
-    240,240,
-    240,25
-  ]);
+  g.fillRect(0,24, g.getWidth(), g.getHeight());
 }
 
 // load the date formats and laguages required
@@ -510,12 +508,14 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
  * Called on startup to set the watch to the last preference settings
  */
 function load_settings(){
+  var setScheme = false;
   try{
     settings = require("Storage").readJSON(PREFERENCE_FILE);
     if(settings != null){
       console.log("loaded:" + JSON.stringify(settings));
       if(settings.color_scheme != null){
         set_colorscheme(settings.color_scheme);
+        setScheme = true;
       }
       if(settings.date_format != null){
         set_dateformat(settings.date_format);
@@ -526,6 +526,9 @@ function load_settings(){
   } catch(e){
     console.log("failed to load settings:" + e);
   }
+  // just set up as default
+  if (!setScheme)
+    setColorScheme(color_schemes[color_scheme_index]);
 }
 
 /**
@@ -635,12 +638,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 startTimers();
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2,{repeat:false,edge:"falling"});
-
-
-// Handle button 1 being pressed
-setWatch(button1pressed, BTN1,{repeat:true,edge:"falling"});
-
-// Handle button 3 being pressed
-setWatch(button3pressed, BTN3,{repeat:true,edge:"falling"});
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", d=>{
+  if (d<0) button1pressed();
+  if (d>0) button3pressed();
+});

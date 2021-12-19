@@ -5,11 +5,14 @@ The advantage is, that you can still see your normal watchface and other widgets
 The widget is always active, but only shown when the timer is on.
 Hours, minutes, seconds and timer status can be set with an app.
 
-Depending on when you start the timer, it may alert up to 0,999 seconds early. This is because it checks only for full seconds. When there is less than one seconds left, it buzzes. This cannot be avoided without checking more than every second, which I would like to avoid.
+When there is less than one second left on the timer it buzzes.
+
+The widget has been tested on Bangle 1 and Bangle 2
 
 ## Screenshots
 
-TBD
+![](screenshot.png)
+
 
 ## Features
 
@@ -24,12 +27,12 @@ There are no settings section in the settings app, timer can be set using an app
 * Hours: Set the hours for the timer
 * Minutes: Set the minutes for the timer
 * Seconds: Set the seconds for the timer
-* Timer on: Starts the timer and displays the widget when set to 'On'. You have to leave the app to load the widget which starts the timer. The widget is always there, but only visible when timer is on. 
+* Timer on: Starts the timer and displays the widget when set to 'On'. You have to leave the app to load the widget which starts the timer. The widget is always there, but only visible when timer is on.
 
 
 ## Releases
 
-* Offifical app loader: https://github.com/espruino/BangleApps/tree/master/apps/chronowid (https://banglejs.com/apps/)
+* Official app loader: https://github.com/espruino/BangleApps/tree/master/apps/chronowid (https://banglejs.com/apps/)
 * Forked app loader: https://github.com/Purple-Tentacle/BangleApps/tree/master/apps/chronowid (https://purple-tentacle.github.io/BangleApps/index.html#)
 * Development: https://github.com/Purple-Tentacle/BangleAppsDev/tree/master/apps/chronowid
 

@@ -1,0 +1,23 @@
+{
+  "name": "Vector 4",
+  "numerals": [12,3,6,9],
+  "fonts": ["vector50"],
+  "radius": 75,
+  "color_schemes" : [
+    {
+      "name": "black",
+      "background" : [0.0,0.0,0.0],
+      "second_hand": [1.0,0.0,0.0],
+    },
+    {
+      "name": "red",
+      "background" : [1.0,0.0,0.0],
+      "second_hand": [1.0,1.0,0.0]
+    },
+    {
+      "name": "grey",
+      "background" : [0.5,0.5,0.5],
+      "second_hand": [0.0,0.0,0.0]
+    }
+  ]
+}

@@ -32,7 +32,7 @@
 
   
   const appMenu = {
-    '': {'title': 'GPS Speed Alt'},
+    '': {'title': 'GPS Adv Sprt'},
     '< Back': back,
     '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },

@@ -36,6 +36,10 @@ charge.
 *BTN3* - invokes calibration ( can be cancelled if pressed accidentally)
 
 
+## Issues
+* detect when calibration data is missing
+
 ## Acknowledgement
 
 This app is based in the work done by [jeffmer](https://github.com/jeffmer/JeffsBangleAppsDev)
+

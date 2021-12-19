@@ -9,7 +9,7 @@
       highres: true,
       animation : true,
       frame : 3,
-      debug: true
+      debug: false
     };
   }
   

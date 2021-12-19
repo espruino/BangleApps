@@ -7,8 +7,11 @@ let settings = Storage.readJSON(filename,1) || {
   debug: false
 };
 
-if(!settings.highres) Bangle.setLCDMode("80x80");
-else Bangle.setLCDMode();
+// this means that setFont('6x8',1) is actually setFont('6x8',3)
+if (process.env.HWVERSION == 1) {
+  if(!settings.highres) Bangle.setLCDMode("80x80");
+  else Bangle.setLCDMode();
+}
 
 g.clear();
 g.flip();
@@ -23,7 +26,7 @@ const ORIGINAL_ICON_SIZE = 48;
 const STATE = {
   settings_open: false,
   index: 0,
-  target: 240,
+  target: g.getWidth(),
   offset: 0
 };
 
@@ -63,7 +66,7 @@ const APPS = getApps();
 
 function noIcon(x, y, scale){
   if(scale < 0.2) return;
-  g.setColor(scale, scale, scale);
+  g.setColor(g.theme.fg);
   g.setFontAlign(0,0);
   g.setFont('6x8',settings.highres ? 6:3);
   g.drawString('x_x', x+1.5, y);
@@ -81,23 +84,24 @@ function render(){
   g.clear();
   const visibleApps = APPS.filter(app => app.x >= STATE.offset-HALF && app.x <= STATE.offset+WIDTH-HALF );
 
+  let cycle = 0;
+  let lastCycle = visibleApps.length;
+  
   visibleApps.forEach(app => {
-
-    const x = app.x+HALF-STATE.offset;
-    const y = HALF - (HALF*0.3);
+    cycle++;
+    const x = app.x + HALF - STATE.offset;
+    const y = HALF;
 
     let dist = HALF - x;
     if(dist < 0) dist *= -1;
-
     const scale = 1 - (dist / HALF);
 
     if(!scale) return;
 
     if(app.special){
-      const font = settings.highres ? '6x8' : '4x6';
-      const fontSize = settings.highres ? 2 : 1;
-      g.setFont(font, fontSize);
-      g.setColor(scale,scale,scale);
+      const fontSize = (process.env.HWVERSION == 2) ? 4 : (settings.highres ? 6 : 2);
+      g.setFont('6x8', fontSize);
+      g.setColor(g.theme.fg);
       g.setFontAlign(0,0);
       g.drawString(app.name, HALF, HALF);
       return;
@@ -111,26 +115,69 @@ function render(){
     if(icon){
       icons[app.name] = icon;
       try {
-        const rescale = settings.highres ? scale*ORIGINAL_ICON_SIZE : (scale*(ORIGINAL_ICON_SIZE/2));
-        const imageScale = settings.highres ? scale*2 : scale;
+        let rescale;
+        let imageScale;
+
+        if (process.env.HWVERSION == 1) {
+          // on a bangle 1 !highres means 80x80
+          rescale = settings.highres ? scale*ORIGINAL_ICON_SIZE : (scale*(ORIGINAL_ICON_SIZE/2));
+          imageScale = settings.highres ? scale*2 : scale;
+        } else {
+          // !highres mode is meaningless on a bangle 2 at present
+          rescale = 1.25*scale*ORIGINAL_ICON_SIZE;
+          imageScale = 2.5*scale;
+        }
+
         g.drawImage(icon, x-rescale, y-rescale, { scale: imageScale });
-      } catch(e){
+      } catch(e) {
         noIcon(x, y, scale);
       }
-    }else{
+    } else {
       noIcon(x, y, scale);
     }
 
     //draw text
-    g.setColor(scale,scale,scale);
-    if(scale > 0.1){
-      const font = settings.highres ? '6x8': '4x6';
-      const fontSize = settings.highres ? 2 : 1;
-      g.setFont(font, fontSize);
-      g.setFontAlign(0,0);
-      g.drawString(app.name, HALF, HEIGHT/4*3);
-    }
+    g.setColor(g.theme.fg);
 
+    if (cycle == 2 && scale > 0.1) {
+      let fontSize = (process.env.HWVERSION == 2) ? 2 : 1;
+      if (process.env.HWVERSION == 1) {
+        fontSize = (settings.highres) ? 3 : 1;
+      }
+      
+      if (app.name.length <= 12) {
+        g.setFont("6x8", fontSize);
+        g.setFontAlign(0,1);
+        g.drawString(app.name, HALF, HEIGHT);
+      } else {
+        // some app names are too long for one line
+        var name = app.name;
+        var first = name.substring(0, name.indexOf(" "));
+        var last = name.substring(name.indexOf(" ") + 1, name.length);
+
+        // all this to handle long names like
+        // Simple 7 Segment Clock
+        if (last.length > 12 && process.env.HWVERSION == 1) {
+          g.setFont((settings.highres ? "6x8" : "4x6"),(settings.highres ? 2 : 1) ); 
+        } else {
+          g.setFont("6x8", fontSize);
+        }
+        
+        g.setFontAlign(0,-1);
+        g.drawString(first, HALF, 0);
+
+        if (last.length > 12 && process.env.HWVERSION == 1) {
+          g.setFont((settings.highres ? "6x8" : "4x6"),(settings.highres ? 2 : 1) );
+        } else {
+          g.setFont("6x8", fontSize);
+        }
+
+        g.setFontAlign(0,1);
+        g.drawString(last, HALF, HEIGHT);
+      }
+    }
+    
+    /*
     if(settings.highres){
       const type = app.type ? app.type : 'App';
       const version = app.version ? app.version : '0.00';
@@ -138,18 +185,21 @@ function render(){
       g.setFontAlign(0,1);
       g.setFont('6x8', 1.5);
       g.setColor(scale,scale,scale);
-      g.drawString(info, HALF, 215, { scale: scale });
+      g.drawString(info, HALF, HEIGHT/8*7, { scale: scale });
     }
+    */
 
   });
 
   const duration = Math.floor(Date.now()-start);
   if(settings.debug){
     g.setFontAlign(0,1);
-    g.setColor(0, 1, 0);
-    const fontSize = settings.highres ? 2 : 1;
-    g.setFont('4x6',fontSize);
-    g.drawString('Render: '+duration+'ms', HALF, HEIGHT);
+    g.setColor(g.theme.fgH);   
+    const fontSize = (process.env.HWVERSION == 2) ? 2 : (settings.highres ? 2 : 1);
+    g.setFont(((process.env.HWVERSION == 2) ? '6x8' : (settings.highres ? '6x8' :'4x6')), fontSize);
+    // steal the bottom line, and print the duration
+    g.clearRect(0, HEIGHT - (process.env.HWVERSION == 1 && !settings.highres ? 8 : 24), WIDTH, HEIGHT);
+    g.drawString('Render: '+duration+' ms', HALF, HEIGHT);
   }
   g.flip();
   if(STATE.offset == STATE.target) return;
@@ -202,7 +252,7 @@ function run(){
     E.showMessage("App Source\nNot found");
     setTimeout(render, 2000);
   } else {
-    Bangle.setLCDMode();
+    if (process.env.HWVERSION == 1) Bangle.setLCDMode();
     g.clear();
     g.flip();
     E.showMessage("Loading...");
@@ -211,10 +261,11 @@ function run(){
 
 }
 
-// Screen event
-Bangle.on('touch', function(button){
-  if(STATE.settings_open) return;
-  switch(button){
+if (process.env.HWVERSION == 1) {
+  // Screen event
+  Bangle.on('touch', function(button){
+    if(STATE.settings_open) return;
+    switch(button){
     case 1:
       prev();
       break;
@@ -224,8 +275,17 @@ Bangle.on('touch', function(button){
     case 3:
       run();
       break;
-  }
-});
+    }
+  });
+}
+
+if (process.env.HWVERSION == 2) {
+  // tap at top 1/3 of screen to launch app
+  Bangle.on('touch', function(button, xy) {
+    if (xy.y < HEIGHT / 3)
+      run();
+  });
+}
 
 Bangle.on('swipe', dir => {
   if(STATE.settings_open) return;
@@ -233,14 +293,17 @@ Bangle.on('swipe', dir => {
   else next();
 });
 
-// close launcher when lcd is off
-Bangle.on('lcdPower', on => {
-  if(!on) return load();
+// close launcher when screen is locked
+Bangle.on('lock', on => {
+  if(on) return load();
 });
 
-
-setWatch(prev, BTN1, { repeat: true });
-setWatch(next, BTN3, { repeat: true });
-setWatch(run, BTN2, { repeat:true });
+if (process.env.HWVERSION == 1) {
+  setWatch(prev, BTN1, { repeat: true });
+  setWatch(next, BTN3, { repeat: true });
+  setWatch(run, BTN2, { repeat:true });
+} else {
+  setWatch(run, BTN1, { repeat:true });
+}
 
 jumpTo(1);

@@ -19,11 +19,16 @@
     }
 
     function onButtonLong(btn) {
-      trip.resetTrip(getSteps());
-      trip.setTripState(true);
-      drawStepText();
+      if (btn === 1) {
+        trip.resetTrip(getSteps());
+        trip.setTripState(true);
+        drawStepText();
+        return;
+      }
+
+      if (btn === 2) Bangle.showLauncher();
     }
-    
+
     function radians(a) {
       return a*Math.PI/180;
     }

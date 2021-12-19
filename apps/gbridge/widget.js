@@ -1,4 +1,7 @@
 (() => {
+  // Current shown notification, saved for dismissing.
+  var currentNot = null;
+
   // Music handling
   const state = {
     music: "stop",
@@ -125,7 +128,7 @@
     if (activityInterval)
       clearInterval(activityInterval);
     activityInterval = undefined;
-    if (s.hrm) Bangle.setHRMPower(1);
+    if (s.hrm) Bangle.setHRMPower(1,"gbr");
     if (s.hrm) {
       if (realtime) {
         // if realtime reporting, leave HRM on and use that to trigger events
@@ -135,7 +138,7 @@
         hrmTimeout = 5;
         activityInterval = setInterval(function() {
           hrmTimeout = 5;
-          Bangle.setHRMPower(1);
+          Bangle.setHRMPower(1,"gbr");
         }, interval*1000);
       }
     } else {
@@ -151,15 +154,22 @@
   global.GB = (event) => {
     switch (event.t) {
       case "notify":
-      case "notify-":
-        if (event.t === "notify") {
-          require("notify").show(prettifyNotificationEvent(event));
-          if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
-            Bangle.buzz();
-          }
-        } else { // notify-
-          require("notify").hide(event);
+        currentNot = prettifyNotificationEvent(event);
+        currentNot.onHide = function() {
+          // when notification hidden, remove from phone
+          gbSend({ t:"notify", n:"DISMISS", id:currentNot.id });
+        };
+        require("notify").show(currentNot);
+        if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+          Bangle.buzz();
         }
+        break;
+      case "notify-":
+        currentNot.t = "notify";
+        currentNot.n = "DISMISS";
+        gbSend(currentNot);
+        currentNot = null;
+        require("notify").hide(event);
         break;
       case "musicinfo":
         state.musicInfo = event;
@@ -174,7 +184,7 @@
       case "call":
         var note = { size: 55, title: event.name, id: "call",
                      body: event.number, icon:require("heatshrink").decompress(atob("jEYwIMJj4CCwACJh4CCCIMOAQMGAQMHAQMDAQMBCIMB4PwgHz/EAn4CBj4CBg4CBgACCAAw="))}
-        if (event.cmd === "incoming") {
+        if (event.cmd === "incoming" || event.cmd === "") {
           require("notify").show(note);
           if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
             Bangle.buzz();
@@ -252,7 +262,7 @@
   // Send a summary of activity to Gadgetbridge
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
-    lastSentSteps = 0;
+    lastSentSteps = currentSteps;
     gbSend({ t: "act", stp: steps, hrm:hrm });
   }
 
@@ -271,7 +281,7 @@
     if (hrmTimeout!==undefined) hrmTimeout--;
     if (ok || hrmTimeout<=0) {
       if (hrmTimeout!==undefined)
-        Bangle.setHRMPower(0);
+        Bangle.setHRMPower(0,"gbr");
       sendActivity(hrm.confidence>20 ? hrm.bpm : -1);
     }
   });

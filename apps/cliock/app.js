@@ -1,8 +1,8 @@
-var fontsize = 3;
+var fontsize = g.getWidth()>200 ? 3 : 2;
+var fontheight = 10*fontsize;
 var locale = require("locale");
 var marginTop = 40;
 var flag = false;
-var WeekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 var hrtOn = false;
 var hrtStr = "Hrt: ??? bpm";
@@ -20,47 +20,43 @@ const HRT_FN_MODE = "fn_hrt";
 let infoMode = NONE_MODE;
 let functionMode = NONE_FN_MODE;
 
+let textCol = g.theme.dark ? "#0f0" : "#080";
+
 function drawAll(){
   updateTime();
   updateRest(new Date());
 }
 
 function updateRest(now){
-  let date = locale.date(now,false);
-  writeLine(WeekDays[now.getDay()],1);
-  writeLine(date,2);
+  writeLine(locale.dow(now),1);
+  writeLine(locale.date(now,1),2);
   drawInfo(5);
 }
 function updateTime(){
   if (!Bangle.isLCDOn()) return;
   let now = new Date();
-  let h = now.getHours();
-  let m = now.getMinutes();
-  h = h>=10?h:"0"+h;
-  m = m>=10?m:"0"+m;
-  writeLine(h+":"+m,0);
+  writeLine(locale.time(now,1),0);
   writeLine(flag?" ":"_",3);
   flag = !flag;
   if(now.getMinutes() == 0)
     updateRest(now);
 }
 function writeLineStart(line){
-  g.drawString(">",4,marginTop+line*30);
+  g.drawString(">",4,marginTop+line*fontheight);
 }
 function writeLine(str,line){
+  var y = marginTop+line*fontheight;
   g.setFont("6x8",fontsize);
-  //g.setColor(0,1,0);
-  g.setColor(0,0x07E0,0);
-  g.setFontAlign(-1,-1);
-  g.clearRect(0,marginTop+line*30,((str.length+1)*20),marginTop+25+line*30);
+  g.setColor(textCol).setFontAlign(-1,-1);
+  g.clearRect(0,y,((str.length+1)*20),y+fontheight-1);
   writeLineStart(line);
-  g.drawString(str,25,marginTop+line*30);
-} 
+  g.drawString(str,25,y);
+}
 
 function drawInfo(line) {
   let val;
   let str = "";
-  let col = 0x07E0; // green
+  let col = textCol; // green
 
   //console.log("drawInfo(), infoMode=" + infoMode + " funcMode=" + functionMode);
 
@@ -68,15 +64,15 @@ function drawInfo(line) {
   case NONE_FN_MODE:
     break;
   case HRT_FN_MODE:
-    col = 0x07FF; // cyan
+    col = g.theme.dark ? "#0ff": "#088"; // cyan
     str = "HRM: " + (hrtOn ? "ON" : "OFF");
     drawModeLine(line,str,col);
     return;
   }
-  
+
   switch(infoMode) {
   case NONE_MODE:
-    col = 0x0000;
+    col = g.theme.bg;
     str = "";
     break;
   case HRT_MODE:
@@ -106,10 +102,10 @@ function drawInfo(line) {
 
 function drawModeLine(line, str, col) {
   g.setColor(col);
-  g.fillRect(0, marginTop-3+line*30, 239, marginTop+25+line*30);
-  g.setColor(0,0,0);
-  g.setFontAlign(0, -1);
-  g.drawString(str, g.getWidth()/2, marginTop+line*30);
+  var y = marginTop+line*fontheight;
+  g.fillRect(0, y, 239, y+fontheight-1);
+  g.setColor(g.theme.bg).setFontAlign(0, 0);
+  g.drawString(str, g.getWidth()/2, y+fontheight/2);
 }
 
 function changeInfoMode() {
@@ -166,7 +162,7 @@ function changeFunctionMode() {
     functionMode = NONE_FN_MODE;
   }
   //console.log(functionMode);
-  
+
 }
 
 function stepsWidget() {
@@ -187,14 +183,16 @@ Bangle.on('HRM', function(hrm) {
 });
 
 g.clear();
+Bangle.on('lcdPower',function(on) {
+  if (on) drawAll();
+});
+var click = setInterval(updateTime, 1000);
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn<0) changeInfoMode();
+  if (btn>0) changeFunctionMode();
+  drawAll();
+});
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawAll();
-Bangle.on('lcdPower',function(on) {
-  if (on)
-    drawAll();
-});
-var click = setInterval(updateTime, 1000);
-setWatch(Bangle.showLauncher, BTN2, {repeat:false,edge:"falling"});
-setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
-setWatch(() => { changeFunctionMode(); drawAll(); }, BTN3, {repeat: true});

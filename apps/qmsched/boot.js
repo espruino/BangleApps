@@ -1,24 +1,25 @@
 // apply Quiet Mode schedules
 (function qm() {
-  let scheds = require("Storage").readJSON("qmsched.json", 1) || [];
-  if (!scheds.length) return;
-  let next,idx;
-  scheds.forEach(function(s, i) {
-    if (!next || (s.hr+s.last*24)<(next.hr+next.last*24)) {
-      next = s;
-      idx = i;
-    }
-  });
+  let bSettings = require('Storage').readJSON('setting.json',true)||{};
+  const curr = 0|bSettings.quiet;
+  delete bSettings;
+  if (curr) require("qmsched").applyOptions(curr); // no need to re-apply default options
+
+  let settings = require('Storage').readJSON('qmsched.json',true)||{};
+  let scheds = settings.scheds||[];
+  if (!scheds.length) {return;}
   const now = new Date(),
-    hr = now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600);
-  let t = 3600000*(next.hr-hr);
-  if (next.last===now.getDate()) t += 86400000;
+    hr = now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600); // current (decimal) hour
+  scheds.sort((a, b) => a.hr-b.hr);
+  const tday = scheds.filter(s => s.hr>hr),  // scheduled for today
+    tmor = scheds.filter(s => s.hr<=hr); // scheduled for tomorrow
+  const next = tday.length ? tday[0] : tmor[0],
+    mode = next.mode;
+  let t = 3600000*(next.hr-hr); // timeout in milliseconds
+  if (t<0) {t += 86400000;} // scheduled for tomorrow: add a day
   /* update quiet mode at the correct time. */
-  setTimeout(function() {
-    let scheds = require("Storage").readJSON("qmsched.json", 1) || [];
-    require("qmsched").setMode(scheds[idx].mode);
-    scheds[idx].last = (new Date()).getDate();
-    require("Storage").writeJSON("qmsched.json", scheds);
+  setTimeout(() => {
+    require("qmsched").setMode(mode);
     qm(); // schedule next update
   }, t);
 })();

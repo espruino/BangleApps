@@ -7,13 +7,9 @@ function showMainMenu() {
     '': {
       'title': 'App Manager',
     },
-    'Free': {
-      value: undefined,
-      format: (v) => {
-        return store.getFree();
-      },
-      onchange: () => {}
-    },
+    '< Back': ()=> {load();},
+    'Sort Apps': () => showSortAppsMenu(),
+    'Manage Apps': ()=> showApps(),
     'Compact': () => {
       E.showMessage('Compacting...');
       try {
@@ -22,9 +18,13 @@ function showMainMenu() {
       }
       showMainMenu();
     },
-    'Apps': ()=> showApps(),
-    'Sort Apps': () => showSortAppsMenu(),
-    '< Back': ()=> {load();}
+    'Free': {
+      value: undefined,
+      format: (v) => {
+        return store.getFree();
+      },
+      onchange: () => {}
+    },
   };
   E.showMenu(mainmenu);
 }
@@ -180,7 +180,7 @@ function showSortAppsManually() {
     appList.reduce((menu, app) => {
       menu[app.name] = {
         value: app.sortorder || 0,
-        min: 0,
+        min: -appList.length,
         max: appList.length,
         step: 1,
         onchange: val => setSortorder(app, val)

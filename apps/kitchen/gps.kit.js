@@ -45,7 +45,15 @@
     }
 
     function onButtonLong(btn) {
-      if (btn === 1) toggleGPSPower();
+      switch(btn) {
+      case 1:
+        toggleGPSPower();
+        return;
+      case 2:
+        if (gpsObject.getState() === gpsObject.GPS_RUNNING)
+          gpsObject.toggleGpsLogging();
+        return;
+      }
     }
 
     function draw(){
@@ -142,8 +150,9 @@
         g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
         g.drawString(activityStr, 120, Y_ACTIVITY);
         g.setFont("6x8",2);
-        g.setColor(1,1,1); 
-        g.drawString(age, 120, Y_ACTIVITY + 46);
+        g.setColor(1,1,1);
+        var age_and_logging = age + " logging " + gpsObject.loggingStatus();
+        g.drawString(age_and_logging, 120, Y_ACTIVITY + 46);
       }
     }
 

@@ -41,9 +41,25 @@ The following buttons depend on which face is currently in use
   - Waypointer : select next waypoint
 
 
+## Stepo2
+![](screenshot_stepo2.jpg)
+
+- Requires one of the pedominter widgets to be installed
+- Stepo2 is a combination of Stepo and Digi and now replaces them
+- Displays the time in large font
+- Display current step count in a doughnut gauge
+- The gauge show percentage of steps out of a goal of 10000 steps
+- When the battery is less than 25% the doughnut turns red
+- Use BTN1 to switch to the Trip Counter, use long press to reset Trip Counter
+- Use BTN1 to cycle through the displays of Day,Date, Trip Counter, Battery %, Mem % and Firmware
+- Use BTN3 to switch to the next app
+
+
+
 ## Stepo
 ![](screenshot_stepo.jpg)
 
+- now replaced by Stepo2 but still available if you install manually
 - Requires one of the pedominter widgets to be installed 
 - Displays the time in large font
 - Display current step count in a doughnut gauge
@@ -62,10 +78,12 @@ The following buttons depend on which face is currently in use
 
 ## Digi
 ![](screenshot_digi.jpg)
+- now replaced by Stepo2 but still available if you install manually
 - Displays the time in large font
 - Display day and date
 - Use BTN1 to switch between display of battery and memory %.
 - Use BTN3 to switch to the next app.
+
 
 ## Swatch
 ![](screenshot_swatch.jpg)
@@ -76,6 +94,9 @@ The following buttons depend on which face is currently in use
 ## Heart
 ![](screenshot_heart.jpg)
 - A simple heart rate monitor, at present the app is just showing the raw value from HRM.bpm
+- This is an experimental app and not installed by default. The
+  heart.kit.js file can be uploaded via the Espruino IDE if you want
+  to try it out.  Then reload the App.
 - BTN1, long press, turn heart rate monitor on / off
 
 ## Waypointer
@@ -226,12 +247,12 @@ I have settled on directly writing to the screen using the Graphics
 object (g.) for the compass App.  This creates a bit of flicker when
 the arrow moves but is more reliable than using the ArrayBuffer.
 
-v0.09: Since adding the heart rate monitor I have noticed that I can
-sometimes can a memory error when switch through the Apps back to the
-Stepo App.  I think this can be cured by statically allocating the
-ArrayBuffer for stepo rather than using new everytime you switch back
-into the stepo watch face.  The problem is that the bangle memory
-management / defragmentation is quite slow to run.
+v0.09: Since adding the heart rate monitor I have sometimes observed
+a low memory error when switching through the Apps back to the Stepo
+App.  I think this can be cured by statically allocating the
+ArrayBuffer for stepo rather than using 'new' everytime you switch
+back into the stepo watch face.  The problem is that the bangle
+memory management / defragmentation is quite slow to run.
 
 v0.10: Revisited having a display buffer for the stepo part of the App.
 Now use direct screen writing as it means less memory allocation and
@@ -241,16 +262,21 @@ reduces chance of getting a memory error on switching watch faces.
 
 The following error codes will be displayed if one of the dependancies is not met.
 
-* E-STEPS - no pedomintor widget has been installed, please install the widpedom or the activepedom widgets
-* E-CALIB - no compass calibration data was found, see 'Compass Calibration'
-* E-FW    - require firmware 2v08.187 or later to detect gps and compass power status
+* E-STEPS - no pedomintor widget has been installed, please install
+  the widpedom or the activepedom widgets
+* E-CALIB - no compass calibration data was found, see 'Compass
+  Calibration'
+* E-FW - require firmware 2v08.187 or later to detect gps and compass
+  power status
+* E-WPT - missing waypoints.json file
 
 ### Issues / Future enhancements
 
+* Add a settings app so that 'Kitchen' based clocks can be enabled/disabled
 * GPS time display shows GMT and not BST, needs localising
-* Occassional buzzing after 2-3 days of use, seems to disappear after
-  a reset to the launcher menu. Needs investigation
 * Automatically switch the GPS power setting from Super-E to PSMOO 10
   seconds after the LCD goes off.  At present I just rely on using
   the GPSSetup app and set the GPS power mode that I want.
 * Add a small graph to the heart rate monitor app
+* Add a facility to call the Arrow calibration process
+* Maybe create waypoints.json file if missing

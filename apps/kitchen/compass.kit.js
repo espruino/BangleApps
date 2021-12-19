@@ -17,13 +17,12 @@
     }
 
     function init(gps,sw, hrm) {
-      showMem("compass init() START");
       gpsObject = gps;
       intervalRefSec = undefined;
       bearing = 0; // always point north if GPS is off
       heading = 0;
       oldHeading = 0;
-      previous = {hding:"-", bs:"-", dst:"-", wp_name:"-", course:999};
+      resetPrevious();
       loc = require("locale");
       CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
       getWaypoint();
@@ -34,12 +33,9 @@
        */
       if (!Bangle.isCompassOn()) Bangle.setCompassPower(1);
       gps.determineGPSState();
-
-      showMem("compass init() END");
     }
 
     function freeResources() {
-      showMem("compass freeResources() START");
       gpsObject = undefined;
       intervalRefSec = undefined;
       previous = undefined;
@@ -50,7 +46,6 @@
       CALIBDATA = undefined;
       wp = undefined;
       if (Bangle.isCompassOn !== undefined && Bangle.isCompassOn()) Bangle.setCompassPower(0);
-      showMem("compass freeResources() END");
     }
     
     function startTimer() {
@@ -65,12 +60,6 @@
       log_debug("stopTimer()");
       if (intervalRefSec) {intervalRefSec=clearInterval(intervalRefSec);}
       if (Bangle.isCompassOn !== undefined && Bangle.isCompassOn()) Bangle.setCompassPower(0);
-    }
-
-    function showMem(msg) {
-      var val = process.memory();
-      var str = msg + " " + Math.round(val.usage*100/val.total) + "%";
-      log_debug(str);
     }
 
     function onButtonShort(btn) {
@@ -96,14 +85,19 @@
     
     function onButtonLong(btn) {
       log_debug("markWaypoint()");
-      if (btn !== 1) return;
-      if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
-      log_debug("markWaypoint()");
+      if (btn === 1) {
+        if (gpsObject.getState() !== gpsObject.GPS_RUNNING) return;
+        log_debug("markWaypoint()");
       
-      gpsObject.markWaypoint();
-      resetPrevious();
-      getWaypoint();
-      drawGPSData();
+        gpsObject.markWaypoint();
+        resetPrevious();
+        getWaypoint();
+        drawGPSData();
+        return;
+      }
+
+      if (btn === 2)
+        Bangle.showLauncher();
     }
 
     function getWaypoint() {
@@ -206,12 +200,12 @@
         drawCompass(dir, 0xFFC0); // yellow
         oldHeading = dir;
       }
-      
+
       if (gpsObject.getState() === gpsObject.GPS_RUNNING) {
         drawGPSData();
       } else {
         drawCompassHeading();
-      }      
+      }
     }
 
     // only used when acting as compass with GPS off

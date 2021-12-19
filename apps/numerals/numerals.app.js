@@ -6,7 +6,7 @@
  * + see README.md for details
  */
 
-var numerals = {
+ var numerals = {
   0:[[9,1,82,1,90,9,90,92,82,100,9,100,1,92,1,9],[30,25,61,25,69,33,69,67,61,75,30,75,22,67,22,33]],
   1:[[50,1,82,1,90,9,90,92,82,100,73,100,65,92,65,27,50,27,42,19,42,9]],
   2:[[9,1,82,1,90,9,90,53,82,61,21,61,21,74,82,74,90,82,90,92,82,100,9,100,1,92,1,48,9,40,70,40,70,27,9,27,1,19,1,9]],
@@ -19,19 +19,20 @@ var numerals = {
   9:[[9,1,82,1,90,9,90,92,82,100,9,100,1,92,1,82,9,74,69,74,69,61,9,61,1,53,1,9],[22,27,69,27,69,41,22,41]],
 };
 var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
-var _hCol = ["#ff5555","#ffff00","#FF9901","#2F00FF"];
-var _mCol = ["#55ff55","#ffffff","#00EFEF","#FFBF00"];
+var _hCol = [];
+var _mCol = [];
 var _rCol = 0;
+var scale = g.getWidth()/240;
 var interval = 0;
 const REFRESH_RATE = 10E3;
 var drawFuncs = {
   fill : function(poly,isHole){
-    if (isHole) g.setColor(0);
+    if (isHole) g.setColor(g.theme.bg);
     g.fillPoly(poly,true);
   },
   framefill : function(poly,isHole){
     var c = g.getColor();
-    g.setColor(isHole ? 0 : ((c&0b1111011111011110)>>1)); // 16 bit half bright
+    g.setColor(isHole ? g.theme.bg : ((c&0b1111011111011110)>>1)); // 16 bit half bright
     g.fillPoly(poly,true);
     g.setColor(c);
     g.drawPoly(poly,true);
@@ -41,14 +42,23 @@ var drawFuncs = {
   },
   thickframe : function(poly,isHole){
     g.drawPoly(poly,true);
-    g.drawPoly(translate(1,0,poly),true);
-    g.drawPoly(translate(1,1,poly),true);
-    g.drawPoly(translate(0,1,poly),true);
+    g.drawPoly(translate(1,0,poly,1),true);
+    g.drawPoly(translate(1,1,poly,1),true);
+    g.drawPoly(translate(0,1,poly,1),true);
+  },
+  thickfill : function(poly,isHole){
+    if (isHole) g.setColor(g.theme.bg);
+    g.fillPoly(poly,true);
+    g.setColor(g.theme.fg);
+    g.drawPoly(translate(1,0,poly,1),true);
+    g.drawPoly(translate(1,1,poly,1),true);
+    g.drawPoly(translate(0,1,poly,1),true);
   }
 };
 
-function translate(tx, ty, p){
-  return p.map((x, i)=> x+((i&1)?ty:tx));
+function translate(tx, ty, p, ascale){
+  //return p.map((x, i)=> x+((i&1)?ty:tx));
+  return g.transformVertices(p, {x:tx,y:ty,scale:ascale==undefined?scale:ascale});
 }
 
 
@@ -57,15 +67,14 @@ if (!settings) {
   settings = {
     color:0,
     drawMode:"fill",
-    menuButton:24,
     showDate:0
   };
 }
 
 function drawNum(num,col,x,y,func,funcName){
   g.setColor(col);
-  let tx = x*100+25;
-  let ty = y*104+32;
+  let tx = (x*100+25) * scale;
+  let ty = (y*104+32) * scale;
   for (let i=0;i<numerals[num].length;i++){
     g.setColor(col);
     func(translate(tx,ty,numerals[num][i]), i>0);
@@ -98,9 +107,21 @@ function setUpdateInt(set){
   if (set) interval=setInterval(draw, REFRESH_RATE);
 }
 
-Bangle.setLCDMode();
-g.reset().clear();
-setWatch(Bangle.showLauncher, settings.menuButton, {repeat:false,edge:"falling"});
+function setUp(){
+  if (process.env.HWVERSION==1){
+    _hCol = ["#ff5555","#ffff00","#FF9901","#2F00FF"];
+    _mCol = ["#55ff55","#ffffff","#00EFEF","#FFBF00"];
+  } else {
+    _hCol = ["#ff0000","#00ff00","#ff0000","#ff00ff"];
+    _mCol = ["#00ff00","#0000ff","#00ffff","#00ff00"];
+  }
+  if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
+}
+
+setUp();
+g.clear(1);
+// Show launcher when button pressed
+Bangle.setUI("clock");
 if (settings.color>0) _rCol=settings.color-1;
 setUpdateInt(1);
 draw();
@@ -110,11 +131,12 @@ if (settings.showDate) {
 }
 Bangle.on('lcdPower', function(on){
   if (on){
-    if (settings.color==0) _rCol = Math.floor(Math.random()*_hCol.length);
+    setUp();
     draw();
     setUpdateInt(1);
   } else setUpdateInt(0);
 });
+Bangle.on('lock', () => setUp());
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

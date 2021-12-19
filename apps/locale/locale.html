@@ -146,7 +146,7 @@ exports = { name : "en_GB", currencySym:"£",
           "%-m": "d.getMonth()+1",
           "%d":  "('0'+d.getDate()).slice(-2)",
           "%-d": "d.getDate()",
-          "%HH": "('0'+d.getHours()).slice(-2)",
+          "%HH": "('0'+getHours(d)).slice(-2)",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
           "%A":  "day.split(',')[d.getDay()]",
@@ -177,6 +177,13 @@ var day = ${js(locale.day + ',' + locale.abday)};
 var month = ${js(locale.month + ',' + locale.abmonth)};
 function round(n) {
   return n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+}
+var is12;
+function getHours(d) {
+  var h = d.getHours();
+  if (is12===undefined) is12 = (require('Storage').readJSON('setting.json',1)||{})["12hour"];
+  if (!is12) return h;
+  return (h%12==0) ? 12 : h%12;
 }
 exports = {
   name: ${js(locale.lang)},

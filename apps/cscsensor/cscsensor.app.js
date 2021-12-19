@@ -5,6 +5,8 @@ var characteristic;
 
 const SETTINGS_FILE = 'cscsensor.json';
 const storage = require('Storage');
+const W = g.getWidth();
+const H = g.getHeight();
 
 class CSCSensor {
   constructor() {
@@ -28,6 +30,10 @@ class CSCSensor {
     this.distFactor = this.qMetric ? 1.609344 : 1;
     this.screenInit = true;
     this.batteryLevel = -1;
+    this.lastCrankTime = 0;
+    this.lastCrankRevs = 0;
+    this.showCadence = false;
+    this.cadence = 0;
   }
 
   reset() {
@@ -37,6 +43,11 @@ class CSCSensor {
     this.movingTime = 0;
     this.lastRevsStart = this.lastRevs;
     this.maxSpeed = 0;
+    this.screenInit = true;
+  }
+
+  toggleDisplayCadence() {
+    this.showCadence = !this.showCadence;
     this.screenInit = true;
   }
 
@@ -62,11 +73,11 @@ class CSCSensor {
     else g.setFontVector(14).setFontAlign(0, 0, 0).setColor(0xffff).drawString("?", 16, 66);
   }
 
-  updateScreen() {
+  updateScreenRevs() {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
-    var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
+    var dspeed = Math.round(10*this.distFactor*this.speed)/10;
     var dmins = Math.floor(this.movingTime/60).toString();
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
@@ -108,10 +119,52 @@ class CSCSensor {
     g.setColor(0).fillRect(88, 209, 238, 238);
     g.setColor(0xffff).drawString(tdist + " " + this.distUnit, 92, 226);
   }
-  
+
+  updateScreenCadence() {
+    if (this.screenInit) {
+      for (var i=0; i<2; ++i) {
+        if ((i&1)==0) g.setColor(0, 0, 0);
+        else g.setColor(0x30cd);
+        g.fillRect(0, 48+i*32, 86, 48+(i+1)*32);
+        if ((i&1)==1) g.setColor(0);
+        else g.setColor(0x30cd);
+        g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
+        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239);//.drawRect(0, 48, 87, 239);
+        g.moveTo(0, 80).lineTo(30, 80).lineTo(30, 48).lineTo(87, 48).lineTo(87, 239).lineTo(0, 239).lineTo(0, 80);
+      }
+      g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
+      g.drawString("Cadence:", 87, 98);
+      this.drawBatteryIcon();
+      this.screenInit = false;
+    }
+    g.setFontAlign(-1, 0, 0).setFontVector(26);
+    g.setColor(0).fillRect(88, 81, 238, 111);
+    g.setColor(0xffff).drawString(Math.round(this.cadence), 92, 98);
+  }
+
+  updateScreen() {
+    if (!this.showCadence) {
+      this.updateScreenRevs();
+    } else {
+      this.updateScreenCadence();
+    }
+  }
+
   updateSensor(event) {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
+      if (event.target.value.getUint8(0, true) & 0x2) {
+        // crank revolution - if enabled
+        const crankRevs = event.target.value.getUint16(1, true);
+        const crankTime = event.target.value.getUint16(3, true);
+        if (crankTime > this.lastCrankTime) {
+          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
+          qChanged = true;
+        }
+        this.lastCrankRevs = crankRevs;
+        this.lastCrankTime = crankTime;
+      }
+      // wheel revolution
       var wheelRevs = event.target.value.getUint32(1, true);
       var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
       if (dRevs>0) {
@@ -140,7 +193,7 @@ class CSCSensor {
       else {
         this.speedFailed++;
         qChanged = false;
-        if (this.speedFailed>3) {  
+        if (this.speedFailed>3) {
           this.speed = 0;
           qChanged = (this.lastSpeed>0);
         }
@@ -163,43 +216,47 @@ function getSensorBatteryLevel(gatt) {
   });
 }
 
-function parseDevice(d) {
-  device = d;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
-  device.gatt.connect().then(function(ga) {
-  gatt = ga;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
-  return gatt.getPrimaryService("1816");
-}).then(function(s) {
-  service = s;
-  return service.getCharacteristic("2a5b");
-}).then(function(c) {
-  characteristic = c;
-  characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
-  return characteristic.startNotifications();
-}).then(function() {
-  console.log("Done!");
-  g.clearRect(0, 60, 239, 239).setColor(1, 1, 1).flip();
-  getSensorBatteryLevel(gatt);
-  mySensor.updateScreen();
-}).catch(function(e) {
-  g.clearRect(0, 60, 239, 239).setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
-  console.log(e);
-})}
-
 function connection_setup() {
-  NRF.setScan();
   mySensor.screenInit = true;
-  NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
-  g.clearRect(0, 48, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
-  g.drawString("Scanning for CSC sensor...", 120, 120);
+  E.showMessage("Scanning for CSC sensor...");
+  NRF.requestDevice({ filters: [{services:["1816"]}]}).then(function(d) {
+    device = d;
+    E.showMessage("Found device");
+    return device.gatt.connect();
+  }).then(function(ga) {
+    gatt = ga;
+    E.showMessage("Connected");
+    return gatt.getPrimaryService("1816");
+  }).then(function(s) {
+    service = s;
+    return service.getCharacteristic("2a5b");
+  }).then(function(c) {
+    characteristic = c;
+    characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
+    return characteristic.startNotifications();
+  }).then(function() {
+    console.log("Done!");
+    g.reset().clearRect(Bangle.appRect).flip();
+    getSensorBatteryLevel(gatt);
+    mySensor.updateScreen();
+  }).catch(function(e) {
+    E.showMessage(e.toString(), "ERROR");
+    console.log(e);
+  });
 }
 
 connection_setup();
-setWatch(function() { mySensor.reset(); g.clearRect(0, 48, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
-E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist; storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
-setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});
-NRF.on('disconnect', connection_setup);
+E.on('kill',()=>{
+  if (gatt!=undefined) gatt.disconnect();
+  mySensor.settings.totaldist = mySensor.totaldist;
+  storage.writeJSON(SETTINGS_FILE, mySensor.settings);
+});
+NRF.on('disconnect', connection_setup); // restart if disconnected
+Bangle.setUI("updown", d=>{
+  if (d<0) { mySensor.reset(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
+  if (d==0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
+  if (d>0) { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
+});
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

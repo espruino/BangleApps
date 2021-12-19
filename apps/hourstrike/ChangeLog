@@ -5,3 +5,4 @@
 0.05: Add display for the next strike time
 0.06: Move the next strike time to the first row of display
 0.07: Change the boot function to avoid reloading the entire watch
+0.08: Default to no strikes. Fix file-not-found issue during the first boot. Add data file.

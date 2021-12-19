@@ -28,7 +28,8 @@
 
   const settings = s.readJSON("largeclock.json", 1) || {
     BTN1: "",
-    BTN3: ""
+    BTN3: "",
+    right_hand: false
   };
 
   function showApps(btn) {
@@ -67,10 +68,19 @@
   }
 
   const mainMenu = {
-    "": { title: "Large Clock Settings" },
+    "": { title: "Large Clock" },
     "< Back": back,
     "BTN1 app": () => showApps("BTN1"),
-    "BTN3 app": () => showApps("BTN3")
+    "BTN3 app": () => showApps("BTN3"),
+    "On right hand": {
+      value: !!settings.right_hand,
+      format: v=>v?"Yes":"No",
+      onchange: v=>{
+        settings.right_hand = v;
+        s.writeJSON("largeclock.json", settings);
+      }
+    }
   };
+
   E.showMenu(mainMenu);
 });

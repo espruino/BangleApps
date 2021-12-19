@@ -1,3 +1,5 @@
 0.01: New Widget!
 0.02: Tweaks for variable size widget system
 0.03: Ensure redrawing works with variable size widget system
+0.04: tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
+0.05: Use new 'lock' event, not LCD (so it works on Bangle.js 2)

@@ -55,7 +55,10 @@
       if (btn === 1) cycleInfoMode();
     }
     
-    function onButtonLong(btn) {}
+    function onButtonLong(btn) {
+      if (btn === 2) Bangle.showLauncher();
+    }
+    
     function getGPSfix() { return undefined; }
     function setGPSfix(f) {}
    

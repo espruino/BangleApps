@@ -102,5 +102,5 @@ if (g.drawImages) {
 } else {
   E.showMessage("Please update\nBangle.js firmware\nto use this clock","animclk");
 }
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+// Show launcher when button pressed
+Bangle.setUI("clock");

@@ -1,0 +1,21 @@
+{
+  "//":"Finnish language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Hälytykset",
+    "Hours" : "Tunnit",
+    "Minutes" : "Minuutit",
+    "Enabled" : "Aktivoitu",
+    "New Alarm" : "Uusi hälytys",
+    "Save" : "Tallenna",
+    "Back" : "Paluu",
+    "Repeat" : "Toista",
+    "Delete" : "Poista",    
+    "ALARM!" : "ALARM",
+    "Sleep" : "Nukkuminen"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "toistaa"
+  }
+}

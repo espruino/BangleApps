@@ -6,13 +6,13 @@ let currentHRM = "CALC";
 function drawTimeDate() {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes(), day = d.getDate(), month = d.getMonth(), weekDay = d.getDay();
-  
+
   if (h < 10) {
     h = "0" + h;
   }
-  
+
   if (m < 10) {
-    m = "0" + h;
+    m = "0" + m;
   }
 
   var daysOfWeek = ["SUN", "MON", "TUE","WED","THU","FRI","SAT"];
@@ -128,17 +128,10 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-// Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-
-Bangle.on('touch', function(button) {
-  if(button == 1 || button == 2){
-    Bangle.showLauncher();
-  }
-});
-
-//HRM Controller.
-setWatch(function(){
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn!=0) return;
+  //HRM Controller.
   if(!HRMstate){
     //console.log("Toggled HRM");
     //Turn on.
@@ -155,7 +148,13 @@ setWatch(function(){
     currentHRM = [];
   }
   drawBPM(HRMstate);
-}, BTN1, { repeat: true, edge: "falling" });
+});
+
+Bangle.on('touch', function(button) {
+  if(button == 1 || button == 2){
+    Bangle.showLauncher();
+  }
+});
 
 Bangle.on('HRM', function(hrm) {
   if(hrm.confidence > 90){

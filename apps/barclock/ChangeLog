@@ -3,3 +3,7 @@
 0.03: Fix dates drawing over each other at midnight
 0.04: Small bugfix
 0.05: Clock does not start if app Languages is not installed
+0.06: Improve accuracy
+0.07: Update to use Bangle.setUI instead of setWatch
+0.08: Use theme colors, Layout library
+0.09: Fix time/date disappearing after fullscreen notification

@@ -221,22 +221,13 @@ function addEvents() {
     }
   });
 
-  setWatch(switchMode, BTN1, {
-    repeat: true,
-    edge: "falling"
-  });
-
-  setWatch(Bangle.showLauncher, BTN2, {
-    repeat: false,
-    edge: "falling"
-  });
-
-  setWatch(() => {
-    currentFormatter = null;
-    refreshTime();
-  }, BTN3, {
-    repeat: true,
-    edge: "falling"
+  // Show launcher when button pressed
+  Bangle.setUI("clockupdown", btn=>{
+    if (btn<0) switchMode();
+    if (btn>0) {
+      currentFormatter = null;
+      refreshTime();
+    }
   });
 }
 
@@ -245,7 +236,7 @@ function init() {
 
   startClock();
   Bangle.loadWidgets();
-  Bangle.drawWidgets();  
+  Bangle.drawWidgets();
 
   addEvents();
 }

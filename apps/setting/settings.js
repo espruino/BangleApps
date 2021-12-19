@@ -1,22 +1,18 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;
 
 function updateSettings() {
   //storage.erase('setting.json'); // - not needed, just causes extra writes if settings were the same
-  if (Object.keys(settings.qmOptions).length === 0) delete settings.qmOptions;
   storage.write('setting.json', settings);
-  if (!('qmOptions' in settings)) settings.qmOptions = {};  // easier if this always exists in this file
 }
 
 function updateOptions() {
   updateSettings();
   Bangle.setOptions(settings.options)
-  if (settings.quiet) {
-    Bangle.setOptions(settings.qmOptions)
-  }
 }
 
 function gToInternal(g) {
@@ -37,7 +33,7 @@ function resetSettings() {
     quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
     timeout: 10,           // Default LCD timeout in seconds
     vibrate: true,         // Vibration enabled by default. App must support
-    beep: "vib",            // Beep enabled by default. App must support
+    beep: BANGLEJS2?true:"vib",            // Beep enabled by default. App must support
     timezone: 0,           // Set the timezone for the device
     HID: false,           // BLE HID mode, off by default
     clock: null,           // a string for the default clock's name
@@ -55,49 +51,82 @@ function resetSettings() {
       twistMaxY: -800,
       twistTimeout: 1000
     },
-    // Quiet Mode options:
-    // we only set these if we want to override the default value
-    // qmOptions: {},
-    // qmBrightness: undefined,
-    // qmTimeout: undefined,
   };
   updateSettings();
 }
 
 settings = storage.readJSON('setting.json', 1);
 if (!settings) resetSettings();
-if (!('qmOptions' in settings)) settings.qmOptions = {}; // easier if this always exists in here
 
-const boolFormat = v => v ? "On" : "Off";
+const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
 function showMainMenu() {
-  var beepV = [false, true, "vib"];
-  var beepN = ["Off", "Piezo", "Vibrate"];
+
   const mainmenu = {
     '': { 'title': 'Settings' },
-    'Make Connectable': ()=>makeConnectable(),
-    'App/Widget Settings': ()=>showAppSettingsMenu(),
-    'BLE': ()=>showBLEMenu(),
-    'Debug Info': {
-      value: settings.log,
-      format: v => v ? "Show" : "Hide",
-      onchange: () => {
-        settings.log = !settings.log;
+    '< Back': ()=>load(),
+    /*LANG*/'Apps': ()=>showAppSettingsMenu(),
+    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
+    /*LANG*/'System': ()=>showSystemMenu(),
+    /*LANG*/'Alerts': ()=>showAlertsMenu(),
+    /*LANG*/'Utils': ()=>showUtilMenu(),
+    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showSystemMenu() {
+
+  const mainmenu = {
+    '': { 'title': 'System' },
+    '< Back': ()=>showMainMenu(),
+    /*LANG*/'Theme': ()=>showThemeMenu(),
+    /*LANG*/'LCD': ()=>showLCDMenu(),
+    /*LANG*/'Locale': ()=>showLocaleMenu(),
+    /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Set Time': ()=>showSetTimeMenu()
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showAlertsMenu() {
+  var beepMenuItem;
+  if (BANGLEJS2) {
+    beepMenuItem = {
+      value: settings.beep!=false,
+      format: boolFormat,
+      onchange: v => {
+        settings.beep = v;
         updateSettings();
+        if (settings.beep) {
+          analogWrite(VIBRATE,0.1,{freq:2000});
+          setTimeout(()=>VIBRATE.reset(),200);
+        } // beep with vibration moter
       }
-    },
-    'Beep': {
-      value: 0 | beepV.indexOf(settings.beep),
-      min: 0, max: 2,
+    };
+  } else { // Bangle.js 1
+    var beepV = [false, true, "vib"];
+    var beepN = [/*LANG*/"Off", /*LANG*/"Piezo", /*LANG*/"Vibrate"];
+    beepMenuItem = {
+      value: Math.max(0 | beepV.indexOf(settings.beep),0),
+      min: 0, max: beepV.length-1,
       format: v => beepN[v],
       onchange: v => {
         settings.beep = beepV[v];
-        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo
-        else if (v==2) { analogWrite(D13,0.1,{freq:2000});setTimeout(()=>D13.reset(),200); } // vibrate
+        if (v==1) { analogWrite(D18,0.5,{freq:2000});setTimeout(()=>D18.reset(),200); } // piezo on Bangle.js 1
+        else if (v==2) { analogWrite(VIBRATE,0.1,{freq:2000});setTimeout(()=>VIBRATE.reset(),200); } // vibrate
         updateSettings();
       }
-    },
-    'Vibration': {
+    };
+  }
+
+  const mainmenu = {
+    '': { 'title': 'Alerts' },
+    '< Back': ()=>showMainMenu(),
+    /*LANG*/'Beep': beepMenuItem,
+    /*LANG*/'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
       onchange: () => {
@@ -109,22 +138,29 @@ function showMainMenu() {
         }
       }
     },
-    "Quiet Mode": ()=>showQuietModeMenu(),
-    'Locale': ()=>showLocaleMenu(),
-    'Select Clock': ()=>showClockMenu(),
-    'Set Time': ()=>showSetTimeMenu(),
-    'LCD': ()=>showLCDMenu(),
-    'Reset Settings': ()=>showResetMenu(),
-    'Turn Off': ()=>Bangle.off(),
-    '< Back': ()=>load()
+    /*LANG*/"Quiet Mode": {
+      value: settings.quiet|0,
+      format: v => ["Off", "Alarms", "Silent"][v%3],
+      onchange: v => {
+        settings.quiet = v%3;
+        updateSettings();
+        updateOptions();
+        if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+      },
+    }
   };
+
   return E.showMenu(mainmenu);
 }
+
 
 function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '': { 'title': 'Bluetooth' },
+    '< Back': ()=>showMainMenu(),
+    'Make Connectable': ()=>makeConnectable(),
     'BLE': {
       value: settings.ble,
       format: boolFormat,
@@ -142,7 +178,7 @@ function showBLEMenu() {
       }
     },
     'HID': {
-      value: 0 | hidV.indexOf(settings.HID),
+      value: Math.max(0,0 | hidV.indexOf(settings.HID)),
       min: 0, max: 3,
       format: v => hidN[v],
       onchange: v => {
@@ -157,21 +193,116 @@ function showBLEMenu() {
     'Whitelist': {
       value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
-    },
-    '< Back': ()=>showMainMenu()
+    }
   });
+}
+
+function showThemeMenu() {
+  function cl(x) { return g.setColor(x).getColor(); }
+  function upd(th) {
+    g.theme = th;
+    settings.theme = th;
+    updateSettings();
+    delete g.reset;
+    g._reset = g.reset;
+    g.reset = function(n) { return g._reset().setColor(th.fg).setBgColor(th.bg); };
+    g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
+    g.clear(1);
+    Bangle.drawWidgets();
+    m.draw();
+  }
+  var m = E.showMenu({
+    '':{title:'Theme'},
+    '< Back': ()=>showSystemMenu(),
+    'Dark BW': ()=>{
+      upd({
+        fg:cl("#fff"), bg:cl("#000"),
+        fg2:cl("#0ff"), bg2:cl("#000"),
+        fgH:cl("#fff"), bgH:cl("#00f"),
+        dark:true
+      });
+    },
+    'Light BW': ()=>{
+      upd({
+        fg:cl("#000"), bg:cl("#fff"),
+        fg2:cl("#000"), bg2:cl("#cff"),
+        fgH:cl("#000"), bgH:cl("#0ff"),
+        dark:false
+      });
+    },
+    'Customize': ()=>showCustomThemeMenu(),
+  });
+
+  function showCustomThemeMenu() {
+    function cv(x) { return g.setColor(x).getColor(); }
+    function setT(t, v) {
+      let th = g.theme;
+      th[t] = v;
+      if (t==="bg") {
+        th['dark'] = (v===cv("#000"));
+      }
+      upd(th);
+    }
+    const rgb = {
+      black: "#000", white: "#fff",
+      red: "#f00", green: "#0f0", blue: "#00f",
+      cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
+    };
+    let colors = [], names = [];
+    for(const c in rgb) {
+      names.push(c);
+      colors.push(cv(rgb[c]));
+    }
+    function cn(v) {
+      const i = colors.indexOf(v);
+      return i!== -1 ? names[i] : v; // another color: just show value
+    }
+    let menu = {
+      '':{title:'Custom Theme'},
+      "< Back": () => showThemeMenu()
+    };
+    const labels = {
+      fg: 'Foreground', bg: 'Background',
+      fg2: 'Foreground 2', bg2: 'Background 2',
+      fgH: 'Highlight FG', bgH: 'Highlight BG',
+    };
+    ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
+      menu[labels[t]] = {
+          value: colors.indexOf(g.theme[t]),
+          format: () => cn(g.theme[t]),
+          onchange: function(v) {
+            // wrap around
+            if (v>=colors.length) {v = 0;}
+            if (v<0) {v = colors.length-1;}
+            this.value = v;
+            const c = colors[v];
+            // if we select the same fg and bg: set the other to the old color
+            // e.g. bg=black;fg=white, user selects fg=black -> bg changes to white automatically
+            // so users don't end up with a black-on-black menu
+            if (t === 'fg' && g.theme.bg === c) setT('bg', g.theme.fg);
+            if (t === 'bg' && g.theme.fg === c) setT('fg', g.theme.bg);
+            setT(t, c);
+          },
+        };
+    });
+    menu["< Back"] = () => showThemeMenu();
+    m = E.showMenu(menu);
+  }
 }
 
 function showPasskeyMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.passkey = undefined;
       updateSettings();
       showBLEMenu();
     }
   };
-  if (!settings.passkey || settings.passkey.length!=6)
+  if (!settings.passkey || settings.passkey.length!=6) {
     settings.passkey = "123456";
+    updateSettings();
+  }
   for (var i=0;i<6;i++) (function(i){
     menu[`Digit ${i+1}`] = {
       value : 0|settings.passkey[i],
@@ -184,12 +315,12 @@ function showPasskeyMenu() {
       }
     };
   })(i);
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
 function showWhitelistMenu() {
   var menu = {
+    "< Back" : ()=>showBLEMenu(),
     "Disable" : () => {
       settings.whitelist = undefined;
       updateSettings();
@@ -221,14 +352,13 @@ function showWhitelistMenu() {
       showWhitelistMenu();
     });
   };
-  menu['< Back']=()=>showBLEMenu();
   E.showMenu(menu);
 }
 
 function showLCDMenu() {
   const lcdMenu = {
     '': { 'title': 'LCD' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'LCD Brightness': {
       value: settings.brightness,
       min: 0.1,
@@ -237,9 +367,7 @@ function showLCDMenu() {
       onchange: v => {
         settings.brightness = v || 1;
         updateSettings();
-        if (!(settings.quiet && "qmBrightness" in settings)) {
-          Bangle.setLCDBrightness(settings.brightness);
-        }
+        Bangle.setLCDBrightness(settings.brightness);
       }
     },
     'LCD Timeout': {
@@ -250,9 +378,7 @@ function showLCDMenu() {
       onchange: v => {
         settings.timeout = 0 | v;
         updateSettings();
-        if (!(settings.quiet && "qmTimeout" in settings)) {
-          Bangle.setLCDTimeout(settings.timeout);
-        }
+        Bangle.setLCDTimeout(settings.timeout);
       }
     },
     'Wake on BTN1': {
@@ -262,7 +388,10 @@ function showLCDMenu() {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
       }
-    },
+    }
+  };
+  if (!BANGLEJS2)
+    Object.assign(lcdMenu, {
     'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       format: boolFormat,
@@ -278,7 +407,8 @@ function showLCDMenu() {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
       }
-    },
+    }});
+  Object.assign(lcdMenu, {
     'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
       format: boolFormat,
@@ -333,112 +463,14 @@ function showLCDMenu() {
         updateOptions();
       }
     }
-  }
+  });
   return E.showMenu(lcdMenu)
-}
-function showQuietModeMenu() {
-  // we always keep settings.quiet and settings.qmOptions
-  // other qm values are deleted when not set
-  const modes = ["Off", "Alarms", "Silent"];
-  const qmDisabledFormat = v => v ? "Off" : "-";
-  const qmMenu = {
-    "": {"title": "Quiet Mode"},
-    "< Back": () => showMainMenu(),
-    "Quiet Mode": {
-      value: settings.quiet|0,
-      format: v => modes[v%3],
-      onchange: v => {
-        settings.quiet = v%3;
-        updateSettings();
-        updateOptions();
-      },
-    },
-    "LCD Brightness": {
-      value: settings.qmBrightness || 0,
-      min: 0, // 0 = use default
-      max: 1,
-      step: 0.1,
-      format: v => (v>0.05) ? v : "-",
-      onchange: v => {
-        if (v>0.05) { // prevent v=0.000000000000001 bugs
-          settings.qmBrightness = v;
-        } else {
-          delete settings.qmBrightness;
-        }
-        updateSettings();
-        if (settings.qmBrightness) { // show result, even if not quiet right now
-          Bangle.setLCDBrightness(v);
-        } else {
-          Bangle.setLCDBrightness(settings.brightness);
-        }
-      },
-    },
-    "LCD Timeout": {
-      value: settings.qmTimeout || 0,
-      min: 0, // 0 = use default  (no constant on for quiet mode)
-      max: 60,
-      step: 5,
-      format: v => v>1 ? v : "-",
-      onchange: v => {
-        if (v>1) {
-          settings.qmTimeout = v;
-        } else {
-          delete settings.qmTimeout;
-        }
-        updateSettings();
-        if (settings.quiet && v>1) {
-          Bangle.setLCDTimeout(v);
-        } else {
-          Bangle.setLCDTimeout(settings.timeout);
-        }
-      },
-    },
-    // we disable wakeOn* events by overwriting them as false in qmOptions
-    // not disabled = not present in qmOptions at all
-    "Wake on FaceUp": {
-      value: "wakeOnFaceUp" in settings.qmOptions,
-      format: qmDisabledFormat,
-      onchange: () => {
-        if ("wakeOnFaceUp" in settings.qmOptions) {
-          delete settings.qmOptions.wakeOnFaceUp;
-        } else {
-          settings.qmOptions.wakeOnFaceUp = false;
-        }
-        updateOptions();
-      },
-    },
-    "Wake on Touch": {
-      value: "wakeOnTouch" in settings.qmOptions,
-      format: qmDisabledFormat,
-      onchange: () => {
-        if ("wakeOnTouch" in settings.qmOptions) {
-          delete settings.qmOptions.wakeOnTouch;
-        } else {
-          settings.qmOptions.wakeOnTouch = false;
-        }
-        updateOptions();
-      },
-    },
-    "Wake on Twist": {
-      value: "wakeOnTwist" in settings.qmOptions,
-      format: qmDisabledFormat,
-      onchange: () => {
-        if ("wakeOnTwist" in settings.qmOptions) {
-          delete settings.qmOptions.wakeOnTwist;
-        } else {
-          settings.qmOptions.wakeOnTwist = false;
-        }
-        updateOptions();
-      },
-    },
-  };
-  return E.showMenu(qmMenu);
 }
 
 function showLocaleMenu() {
   const localemenu = {
     '': { 'title': 'Locale' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -461,21 +493,63 @@ function showLocaleMenu() {
   return E.showMenu(localemenu);
 }
 
-function showResetMenu() {
-  const resetmenu = {
-    '': { 'title': 'Reset' },
+function showUtilMenu() {
+  var menu = {
+    '': { 'title': 'Utilities' },
     '< Back': ()=>showMainMenu(),
+    'Debug Info': {
+      value: E.clip(0|settings.log,0,2),
+      format: v => ["Hide","Show","Log"][E.clip(0|v,0,2)],
+      onchange: v => {
+        settings.log = v;
+        updateSettings();
+      }
+    },
+    'Compact Storage': () => {
+      E.showMessage("Compacting...\nTakes approx\n1 minute",{title:"Storage"});
+      require("Storage").compact();
+      showUtilMenu();
+    },
+    'Rewrite Settings': () => {
+      require("Storage").write(".boot0","eval(require('Storage').read('bootupdate.js'));");
+      load("setting.app.js");
+    },
+    'Flatten Battery': () => {
+      E.showMessage('Flattening battery - this can take hours.\nLong-press button to cancel.');
+      Bangle.setLCDTimeout(0);
+      Bangle.setLCDPower(1);
+      if (Bangle.setGPSPower) Bangle.setGPSPower(1,"flat");
+      if (Bangle.setHRMPower) Bangle.setHRMPower(1,"flat");
+      if (Bangle.setCompassPower) Bangle.setCompassPower(1,"flat");
+      if (Bangle.setBarometerPower) Bangle.setBarometerPower(1,"flat");
+      if (Bangle.setHRMPower) Bangle.setGPSPower(1,"flat");
+      setInterval(function() {
+        var i=1000;while (i--);
+      }, 1);
+    },
     'Reset Settings': () => {
-      E.showPrompt('Reset Settings?').then((v) => {
+      E.showPrompt('Reset to Defaults?',{title:"Settings"}).then((v) => {
         if (v) {
           E.showMessage('Resetting');
           resetSettings();
-        }
-        setTimeout(showMainMenu, 50);
+          setTimeout(showMainMenu, 50);
+        } else showUtilMenu();
       });
     }
   };
-  return E.showMenu(resetmenu);
+  if (Bangle.factoryReset) {
+    menu['Factory Reset'] = ()=>{
+      E.showPrompt('This will remove everything!',{title:"Factory Reset"}).then((v) => {
+        if (v) {
+          E.showMessage();
+          Terminal.setConsole();
+          Bangle.factoryReset();
+        } else showUtilMenu();
+      });
+    }
+  }
+
+  return E.showMenu(menu);
 }
 
 function makeConnectable() {
@@ -500,7 +574,7 @@ function showClockMenu() {
     '': {
       'title': 'Select Clock',
     },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -527,7 +601,7 @@ function showSetTimeMenu() {
     '': { 'title': 'Set Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
-      showMainMenu();
+      showSystemMenu();
     },
     'Hour': {
       value: d.getHours(),

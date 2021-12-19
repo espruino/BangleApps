@@ -27,3 +27,17 @@
 0.22: Move HID to BLE menu
 0.23: Change max time offset to 13 for NZ summer daylight time (NZDT)
 0.24: Add Quiet Mode settings
+0.25: Move boot.js code into 'boot' app itself
+0.26: Use Bangle.softOff if available as this keeps the time
+0.27: Add Theme menu
+0.28: Update Quiet Mode widget (if present)
+0.29: Add Customize to Theme menu
+0.30: Move '< Back' to the top of menus
+0.31: Remove Bangle 1 settings when running on Bangle 2
+0.32: Fix 'beep' menu on Bangle.js 2
+0.33: Really fix 'beep' menu on Bangle.js 2 this time
+0.34: Remove Quiet Mode LCD settings: now handled by Quiet Mode Schedule app
+0.35: Change App/Widget settings to 'App Settings' so it fits on Bangle screen
+0.36: Added 'Utils' menu with helpful utilities for restoring Bangle.js
+0.37: Going into passkey menu now saves settings with passkey
+0.38: Restructed menus as per forum discussion

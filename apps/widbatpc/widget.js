@@ -1,10 +1,23 @@
 (function(){
-  const COLORS = {
-    'white': -1,
-    'charging': 0x07E0, // "Green"
-    'high':  0x05E0, // slightly darker green
-    'ok': 0xFD20, // "Orange"
-    'low':0xF800, // "Red"
+  let COLORS = {};
+  
+  if (process.env.HWVERSION == 1) {
+    COLORS = {
+      'white':    -1,     // White
+      'charging': 0x07E0, // Green
+      'high':     0x05E0, // lightly darker green
+      'ok':       0xFD20, // Orange
+      'low':      0xF800, // Red
+    };
+  } else {
+    // bangle 2 is only 7 bit colors
+    COLORS = {
+      'white':    "#fff", // White
+      'charging': "#0f0", // Green
+      'high':     "#0f0", // Green
+      'ok':       "#ff0", // Orange
+      'low':      "#f00", // Red
+    };   
   }
   const SETTINGS_FILE = 'widbatpc.json'
 
@@ -67,28 +80,32 @@
     var s = 39;
     var x = this.x, y = this.y;
     const l = E.getBattery(),
-      c = levelColor(l);
-    const xl = x+4+l*(s-12)/100
+          c = levelColor(l);
 
     if (Bangle.isCharging() && setting('charger')) {
       g.setColor(chargerColor()).drawImage(atob(
         "DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
       x+=16;
     }
-    g.setColor(-1);
+
+    let xl = x+4+l*(s-12)/100;
+    // show bar full in the level color, as you can't see the color if the bar is too small
+    if (setting('fillbar'))
+      xl = x+4+100*(s-12)/100;
+
+    g.setColor(g.theme.fg);
     g.fillRect(x,y+2,x+s-4,y+21);
     g.clearRect(x+2,y+4,x+s-6,y+19);
     g.fillRect(x+s-3,y+10,x+s,y+14);
-
     g.setColor(c).fillRect(x+4,y+6,xl,y+17);
-    g.setColor(-1);
+    g.setColor(g.theme.fg);
     if (!setting('percentage')) {
       return;
     }
     let gfx = g
     if (setting('color') === 'Monochrome') {
     // draw text inverted on battery level
-      gfx = Graphics.createCallback(240, 240, 1,
+      gfx = Graphics.createCallback(g.getWidth(),g.getHeight(), 1,
         (x,y) => {g.setPixel(x,y,x<=xl?0:-1)})
     }
     gfx.setFontAlign(-1,-1);

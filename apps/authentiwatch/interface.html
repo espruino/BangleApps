@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+
+<link rel="stylesheet" href="../../css/spectre.min.css">
+<style type="text/css">
+body{font-family:sans-serif}
+body div{display:none}
+body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr div#tokenqr{display:block}
+#tokens th,#tokens td{padding:5px}
+#tokens tr:nth-child(odd){background-color:#ccc}
+#tokens tr:nth-child(even){background-color:#eee}
+#qr-canvas{margin:auto;width:calc(100%-20px);max-width:400px}
+#advbtn,#scan,#tokenqr table{text-align:center}
+#edittoken tbody#adv{display:none}
+#edittoken.showadv tbody#adv{display:table-row-group}
+#advbtn button:before,#advbtn button:after{content:"\25bc"}
+#edittoken.showadv #advbtn button:before,#edittoken.showadv #advbtn button:after{content:"\25b2"}
+button{height:3em}
+table button{width:100%}
+form.totp tr.hotp,form.hotp tr.totp{display:none}
+</style>
+
+<!-- https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js -->
+<script src="qr_packed.js"></script>
+
+<!-- https://davidshimjs.github.io/qrcodejs/ -->
+<script src="../../core/lib/qrcode.min.js"></script>
+
+<script type="text/javascript">
+
+/* Start of all TOTP URLs */
+const otpAuthUrl = 'otpauth://';
+
+const tokentypes = ['TOTP (Timed)', 'HOTP (Counter)'];
+
+/* Settings */
+var settings = {tokens:[], misc:{}};
+var tokens = settings.tokens;
+
+/* Remove any non-base-32 characters from the given string and collapses
+ * whitespace to a single space. Optionally removes all whitespace from
+ * the string.
+ */
+function base32clean(val, nows) {
+  var ret = val.replaceAll(/\s+/g, ' ');
+  ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
+  if (nows) {
+    ret = ret.replaceAll(/\s+/g, '');
+  }
+  return ret;
+}
+
+/* Save changes to a token to the global tokens[] array.
+ * id is the index into the global tokens[].
+ * forget is a flag indicating if the token should be forgotten.
+ */
+function saveEdit(id, forget) {
+  if (forget) {
+    if (confirm('Forget token?')) {
+      tokens.splice(id, 1);
+      updateTokens();
+    }
+  } else {
+    let fe = document.forms['edittoken'].elements;
+    let d = parseInt(fe['digits'].value);
+    let p = parseInt(fe['period'].value);
+    let c = parseInt(fe['count'].value);
+    switch (fe['type'].value) {
+    case tokentypes[1]: p = (c > 0) ? -c : 0; break;
+    default           : p = (p > 0) ? p : 30; break;
+    }
+    tokens[id] = {
+      'algorithm':fe['algorithm'].value,
+      'digits':((d > 0) ? d : 6),
+      'period':p,
+      'issuer':fe['issuer'].value,
+      'account':fe['account'].value,
+      'secret':base32clean(fe['secret'].value, false),
+      'label':fe['label'].value
+    };
+    updateTokens();
+  }
+}
+
+/* Generate and display a QR-code representing the current token.
+ */
+function showQrCode() {
+  var fe = document.forms['edittoken'].elements;
+  var url = new String(otpAuthUrl);
+  switch (fe['type'].value) {
+  case tokentypes[1]: url += 'hotp/'; break;
+  default           : url += 'totp/'; break;
+  }
+  if (fe['account'].value.length > 0) {
+    url += encodeURIComponent(fe['account'].value);
+  } else {
+    url += encodeURIComponent(fe['label'].value);
+  }
+  url += '?';
+  if (fe['issuer'].value.length > 0) {
+    url += 'issuer=' + encodeURIComponent(fe['issuer'].value);
+    url += '&';
+  }
+  url += 'secret=' + base32clean(fe['secret'].value, true);
+  switch (fe['type'].value) {
+  case tokentypes[1]:
+    if (parseInt(fe['count'].value) != 0) {
+      url += '&counter=' + fe['count'].value;
+    }
+    break;
+  default:
+    if (parseInt(fe['period'].value) != 30) {
+      url += '&period=' + fe['period'].value;
+    }
+    break;
+  }
+  if (parseInt(fe['digits'].value) != 6) {
+    url += '&digits=' + fe['digits'].value;
+  }
+  if (fe['algorithm'].value != 'SHA1') {
+    url += '&algorithm=' + fe['algorithm'].value;
+  }
+  tokenqr.clear();
+  tokenqr.makeCode(url);
+  document.body.className = 'showqr';
+}
+
+function onTypeChanged() {
+  var f = document.forms['edittoken'];
+  var fe = f.elements;
+  if (fe['type'].value == tokentypes[0]) { f.classList.add('totp'); f.classList.remove('hotp'); }
+  if (fe['type'].value == tokentypes[1]) { f.classList.add('hotp'); f.classList.remove('totp'); }
+}
+
+/* Generate a form for editing the specified token.
+ * id is the index into the global tokens[].
+ */
+function editToken(id) {
+  var p;
+  const selectMarkup = function(name, ary, cur, onchg) {
+    var ret = '<select name="' + name + '"' + ((typeof onchg == 'string') ? ' onchange="' + onchg + '"' : '') + '>';
+    for (let i = 0; i < ary.length; i++) {
+      ret += '<option' + ((ary[i] == cur) ? ' selected=selected' : '') + '>' + ary[i] + '</option>';
+    }
+    return ret + '</select>';
+  };
+  scanning=false;
+  var markup = '<form id="edittoken"><input type="hidden" name="tokenid" value="' + id + '"><table>';
+  markup += '<tr><td>Name:</td><td><input name="label" type="text" value="' + tokens[id].label + '"></td></tr>';
+  markup += '<tr><td>Secret:</td><td><input name="secret" type="text" value="' + tokens[id].secret + '"></td></tr>';
+  markup += '<tbody id="adv">';
+  markup += '<tr><td>Account:</td><td><input name="account" type="text" value="' + tokens[id].account + '"></td></tr>';
+  markup += '<tr><td>Issuer:</td><td><input name="issuer" type="text" value="' + tokens[id].issuer + '"></td></tr>';
+  p = parseInt(tokens[id].period);
+  markup += '<tr><td>Type:</td><td>';
+  markup += selectMarkup('type', tokentypes, (tokens[id].period > 0) ? tokentypes[0] : tokentypes[1], 'onTypeChanged()');
+  markup += '</td></tr>';
+  markup += '<tr class="totp"><td>Period:</td><td><input name="period" type="text" value="' + ((p > 0) ? p : 30)  + '"></td></tr>';
+  markup += '<tr class="hotp"><td>Count:</td><td><input name="count" type="text" value="' + ((p >= 0) ? 0 : -p) + '"></td></tr>';
+  markup += '<tr><td>Digits:</td><td>';
+  markup += selectMarkup('digits', ['6','7','8','9','10'], tokens[id].digits);
+  markup += '</td></tr>';
+  markup += '<tr><td>Hash:</td><td>';
+  markup += selectMarkup('algorithm', ['SHA1','SHA256','SHA512'], tokens[id].algorithm);
+  markup += '</td></tr>';
+  markup += '</tbody><tr><td id="advbtn" colspan="2">';
+  markup += '<button type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
+  markup += '</td></tr></table></form>';
+  markup += '<button type="button" onclick="updateTokens()">Cancel Edit</button>';
+  markup += '<button type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
+  if (tokens[id].isnew) {
+    markup += '<button type="button" onclick="startScan()">Scan QR Code</button>';
+  } else {
+    markup += '<button type="button" onclick="showQrCode()">Show QR Code</button>';
+    markup += '<button type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
+  }
+  document.getElementById('edit').innerHTML = markup;
+  document.body.className = 'editing';
+  onTypeChanged();
+}
+
+/* Create a new blank token and open the editor for it.
+ */
+function addToken() {
+  tokens[tokens.length] = {'algorithm':'SHA1','digits':6,'period':30,'issuer':'','account':'','secret':'','label':'','isnew':true};
+  editToken(tokens.length - 1);
+}
+
+/* Move the specified token up or down in the global tokens[].
+ * id is the index in the global tokens[] of the token to move.
+ * dir is the direction to move: -1=up, 1=down.
+ */
+function moveToken(id, dir) {
+  tokens.splice(id + dir, 0, tokens.splice(id, 1)[0]);
+  updateTokens();
+}
+
+/* Update the display listing all the tokens.
+ */
+function updateTokens() {
+  const tokenButton = function(fn, id, label, dir) {
+    return '<button type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
+  };
+  var markup = '<table><tr><th>Token</th><th colspan="2">Order</th></tr>';
+  /* any tokens marked new are cancelled new additions and must be removed */
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i].isnew) {
+      tokens.splice(i--, 1);
+    }
+  }
+  for (let i = 0; i < tokens.length; i++) {
+    markup += '<tr><td>';
+    markup += tokenButton('editToken', i, tokens[i].label);
+    markup += '</td><td>';
+    if (i < (tokens.length - 1)) {
+      markup += tokenButton('moveToken', i, '&#x25bc;', 1);
+    }
+    markup += '</td><td>';
+    if (i > 0) {
+      markup += tokenButton('moveToken', i, '&#x25b2;', -1);
+    }
+    markup += '</td></tr>';
+  }
+  markup += '</table>';
+  markup += '<button type="button" onclick="addToken()">Add Token</button>';
+  markup += '<button type="button" onclick="saveTokens()">Save to watch</button>';
+  document.getElementById('tokens').innerHTML = markup;
+  document.body.className = 'select';
+}
+
+/* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
+qrcode.callback = res => {
+  if (res) {
+    if (res.startsWith(otpAuthUrl)) {
+      res = decodeURIComponent(res);
+      var paramsidx = res.indexOf('?');
+      var params = res.substr(paramsidx+1).split('&');
+      var t = {
+        'algorithm':'SHA1',
+        'digits':'6',
+        'counter':'0',
+        'period':'30',
+        'secret':'',
+        'issuer':''
+      };
+      var otpok = true;
+      for (let pi in params) {
+        var param = params[pi].split('=');
+        if (param[0] in t) {
+          t[param[0]] = param[1];
+        } else {
+          otpok = false;
+        }
+      }
+      t['account'] = res.substring(res.lastIndexOf('/', paramsidx)+1, paramsidx);
+      if ((t['account'] == '') || (t['secret'] == '')) {
+        otpok = false;
+      }
+      if (otpok) {
+        scanning = false;
+        editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
+        t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
+        t['label'] = t['label'].substr(0, 10);
+        var fe = document.forms['edittoken'].elements;
+        if (res.startsWith(otpAuthUrl + 'hotp/')) {
+          t['period'] = '30';
+          fe['type'].value = tokentypes[1];
+        } else {
+          t['counter'] = '0';
+          fe['type'].value = tokentypes[0];
+        }
+        fe['algorithm'].value = t['algorithm'];
+        fe['digits'   ].value = t['digits'   ];
+        fe['count'    ].value = t['counter'  ];
+        fe['period'   ].value = t['period'   ];
+        fe['secret'   ].value = t['secret'   ];
+        fe['issuer'   ].value = t['issuer'   ];
+        fe['account'  ].value = t['account'  ];
+        fe['label'    ].value = t['label'    ];
+        onTypeChanged();
+      }
+    }
+  }
+};
+function startScan() {
+  document.body.className = 'scanning';
+  navigator.mediaDevices
+    .getUserMedia({video:{facingMode:'environment'}})
+    .then(function(stream){
+      scanning=true;
+      video.setAttribute('playsinline',true);
+      video.srcObject = stream;
+      video.play();
+      scanTick();
+      doScan();
+    });
+}
+function scanTick() {
+  canvasElement.height = video.videoHeight;
+  canvasElement.width = video.videoWidth;
+  canvas.drawImage(video,0,0,canvasElement.width,canvasElement.height);
+  if (scanning) {
+    requestAnimationFrame(scanTick);
+  } else {
+    video.srcObject.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+}
+function doScan() {
+  try {
+    qrcode.decode();
+  } catch (e) {
+    setTimeout(doScan,300);
+  }
+}
+
+/* Load settings JSON file from the watch.
+ */
+function loadTokens() {
+  Util.showModal('Loading...');
+  Puck.eval(`require('Storage').readJSON(${JSON.stringify('authentiwatch.json')})`,data=>{
+    Util.hideModal();
+    if (data.data  ) settings.tokens = data.data  ; /* v0.02 settings */
+    if (data.tokens) settings.tokens = data.tokens; /* v0.03+ settings */
+    if (data.misc  ) settings.misc   = data.misc  ; /* v0.03+ settings */
+    tokens = settings.tokens;
+    updateTokens();
+  });
+}
+/* Save settings as a JSON file on the watch.
+ */
+function saveTokens() {
+  Util.showModal('Saving...');
+  let newsettings={tokens:tokens,misc:settings.misc};
+  Puck.write(`\x10require('Storage').writeJSON(${JSON.stringify('authentiwatch.json')},${JSON.stringify(newsettings)})\n`,()=>{
+    Util.hideModal();
+  });
+}
+function onInit() {
+  loadTokens();
+  updateTokens();
+}
+</script>
+</head>
+<body class="select">
+<h1>Authentiwatch</h1>
+<div id="tokens">
+<p>No watch comms.</p>
+</div>
+<div id="scan">
+<table>
+<tr><td><canvas id="qr-canvas"></canvas></td></tr>
+<tr><td><button type="button" onclick="editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
+</table>
+</div>
+<div id="edit">
+</div>
+<div id="tokenqr">
+<table><tr><td id="qrcode"></td></tr><tr><td>
+<button type="button" onclick="document.body.className='editing'">Back</button>
+</td></tr></table>
+</div>
+<script type="text/javascript">
+const video=document.createElement('video');
+const canvasElement=document.getElementById('qr-canvas');
+const canvas=canvasElement.getContext('2d');
+let scanning=false;
+const tokenqr=new QRCode(document.getElementById('qrcode'), '');
+</script>
+<script src="../../core/lib/interface.js"></script>
+</body>
+</html>

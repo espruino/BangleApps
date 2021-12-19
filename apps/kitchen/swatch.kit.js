@@ -31,7 +31,9 @@
       }
     }
     
-    function onButtonLong(btn) {}
+    function onButtonLong(btn) {
+      if (btn === 2) Bangle.showLauncher();
+    }
 
     return {init:init, freeResources:freeResources, startTimer:startTimer, stopTimer:stopTimer,
             onButtonShort:onButtonShort, onButtonLong:onButtonLong};

@@ -1,3 +1,6 @@
 0.01: First try
 0.02: Update custom.html for refactor; add README
 0.03: Update for larger secondary timezone display (#610)
+0.04: setUI, different screen sizes
+0.05: Now update *on* the minute rather than every 15 secs
+      Fix rendering of single extra timezone on Bangle.js 2

@@ -1,3 +1,6 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: Actually make into 24h clock since there's a 12h variant
 0.04: Make this clock do 12h and 24h
+0.05: setUI, screen size changes
+0.06: Use Bangle.setUI for button/launcher handling
+0.07: Update *on* the minute rather than every 15 secs

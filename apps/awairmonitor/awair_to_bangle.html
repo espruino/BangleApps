@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="https://puck-js.com/puck.js"></script>
+<script type="text/javascript">
+
+// Don't forget to enable the Local API on your Awair before using this
+// https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
+
+const awair_ip_1 = "192.168.2.2"; // <- INPUT YOUR AWAIR IP ADDRESS HERE
+const awair_name_1 = "Awair";
+
+var bt_connection;
+var is_connected = false;
+var reconnect_counter = 5;
+var reconnect_attempt_counter = 1;
+
+window.onload = function() {
+	var chart_co2;
+	var chart_voc;
+	var chart_pm;
+	var chart_temperature;
+	var chart_humidity;
+	var dataPoints_1 = [];
+	var posx = 0;
+	
+	$.getJSON("http://"+awair_ip_1+"/air-data/latest", function(data) {
+		$.each(data, function(key, value){
+			if (dataPoints_1[key] === undefined) { dataPoints_1[key] = []; }
+			if (key === "temp" || key === "humid") { dataPoints_1[key].push({x: posx, y: parseFloat(value)}); }
+			else { dataPoints_1[key].push({x: posx, y: parseInt(value)}); }
+		});
+
+		posx++;
+		
+		chart_co2 = new CanvasJS.Chart("chartContainer_co2",{
+			title:{ text:"CO2", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.co2 }]
+		});
+		chart_voc = new CanvasJS.Chart("chartContainer_voc",{
+			title:{ text:"VOC", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.voc }]
+		});
+		chart_pm = new CanvasJS.Chart("chartContainer_pm",{
+			title:{ text:"PM", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.pm25 }]
+		});
+		chart_humidity = new CanvasJS.Chart("chartContainer_humidity",{
+			title:{ text:"Humidity", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.humid }]
+		});
+		chart_temperature = new CanvasJS.Chart("chartContainer_temperature",{
+			title:{ text:"Temperature", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.temp }]
+		});
+
+		chart_co2.set("backgroundColor", "#1A202C");
+		chart_voc.set("backgroundColor", "#1A202C");
+		chart_pm.set("backgroundColor", "#1A202C");
+		chart_humidity.set("backgroundColor", "#1A202C");
+		chart_temperature.set("backgroundColor", "#1A202C");
+
+		updateChart();
+	});
+
+	function updateChart() {
+		$.getJSON("http://"+awair_ip_1+"/air-data/latest", function(data) {
+			$.each(data, function(key, value){
+				if (dataPoints_1[key] === undefined) { dataPoints_1[key] = []; }
+				if (key === "temp" || key === "humid") { dataPoints_1[key].push({x: posx, y: parseFloat(value)}); }
+				else { dataPoints_1[key].push({x: posx, y: parseInt(value)}); }
+			});
+
+			posx++;
+			chart_co2.render();
+			chart_voc.render();
+			chart_pm.render();
+			chart_temperature.render();
+			chart_humidity.render();
+			
+			chart_co2.title.set("text", "CO2 level (ppm)");				
+			chart_voc.title.set("text", "VOC level (ppb)");
+			chart_pm.title.set("text", "PM2.5 level (ug/m³)");
+			chart_humidity.title.set("text", "Humidity level (%)");
+			chart_temperature.title.set("text", "Temperature level (°C)");
+			
+			let current_co2 = dataPoints_1['co2'][dataPoints_1['co2'].length-1].y;
+			let current_voc = dataPoints_1['voc'][dataPoints_1['voc'].length-1].y;
+			let current_pm25 = dataPoints_1['pm25'][dataPoints_1['pm25'].length-1].y;
+			let current_humi = dataPoints_1['humid'][dataPoints_1['humid'].length-1].y;
+			let current_temp = dataPoints_1['temp'][dataPoints_1['temp'].length-1].y;
+			let last_update = dataPoints_1['temp'].length-1;
+			if (is_connected && bt_connection.isOpen) {
+				bt_connection.write('\x10bt_current_co2='+current_co2+';bt_current_voc='+current_voc+';bt_current_pm25='+current_pm25+';bt_current_humi='+current_humi+';bt_current_temp='+current_temp+';bt_last_update='+last_update+';\n');
+
+				console.log("Sent data through Bluetooth");
+			} else if (is_connected && !bt_connection.isOpen) {
+				console.log("Disconnected - Next attempt to reconnect in " + reconnect_counter);
+				reconnect_counter--;
+
+				if (reconnect_counter <= 0) {
+					reconnect_counter = 10 * reconnect_attempt_counter;
+					reconnect_attempt_counter++;
+
+					console.log("Trying to reconnect");
+					bt_connection.reconnect(function(c) {
+						console.log("Reconnect callback");
+						if (!c) {
+					      console.log("Couldn't reconnect");
+					      return;
+					    }
+						bt_connection = c;
+		    			is_connected = true;
+		    			reconnect_attempt_counter = 1;
+					});					
+				}
+			}
+			
+
+			setTimeout(function(){updateChart()}, 1000);
+		});
+	}
+}
+
+function connectBT() {
+	console.log("Connect BT");
+	Puck.connect(function(c) {
+		console.log("Connect callback");
+	    if (!c) {
+	      console.log("Couldn't connect");
+	      return;
+	    }
+	    bt_connection = c;
+	    is_connected = true;
+	    reconnect_attempt_counter = 1;
+	});
+}
+
+function disconnectBT() {
+	if (is_connected && bt_connection) {
+		bt_connection.close();
+		is_connected = false;
+		console.log("Closed Bluetooth connection");
+	}
+}
+
+</script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body style="background-color:#1A202C;">
+
+<p style="color: #F7FAFC">
+<b>How to use</b>
+<br/><br/>
+Step 1: Enable the Local API on your Awair: https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
+<br/><br/>
+Step 2: Modify this HTML file to input the IP address of your Awair on top (const awair_ip_1 = "192.168.xx.xx")
+<br/><br/>
+Step 3: Launch the Awair Monitor app on your BangleJS
+<br/><br/>
+Step 4: Click "Connect BangleJS"
+<br/><br/>
+Step 5: Optionally, open the web inspector's console (Right click > Inspector > Console) to read the bluetooth logs
+</p>
+
+<center>
+	<button onclick="connectBT();">Connect BangleJS</button>
+	<button onclick="disconnectBT();">Disconnect BangleJS</button>
+</center>
+
+<br/><br/>
+
+<div id="chartContainer_co2" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_voc" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_pm" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_humidity" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_temperature" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+</body>
+</html>

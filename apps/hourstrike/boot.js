@@ -1,6 +1,6 @@
 (function() {
   function setup () {
-    var settings = require('Storage').readJSON('hourstrike.json',1)||[];
+    var settings = require('Storage').readJSON('hourstrike.json',1);
     var t = new Date();
     var t_min_sec = t.getMinutes()*60+t.getSeconds();
     var wait_msec = settings.interval>0?(settings.interval-t_min_sec%settings.interval)*1000:-1;

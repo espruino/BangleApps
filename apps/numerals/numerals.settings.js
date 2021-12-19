@@ -6,16 +6,14 @@
     numeralsSettings = {
       color:0,
       drawMode:"fill",
-      menuButton:22,
       showDate:0
     };
     updateSettings();
   }
   let numeralsSettings = storage.readJSON('numerals.json',1);
   if (!numeralsSettings) resetSettings();
-  if (numeralsSettings.menuButton===undefined) numeralsSettings.menuButton=22;
-  let dm = ["fill","frame","framefill","thickframe"];
-  let col = ["rnd","r/g","y/w","o/c","b/y"];
+  let dm = ["fill","frame","framefill","thickframe","thickfill"];
+  let col = process.env.HWVERSION==1?["rnd","r/g","y/w","o/c","b/y"]:["rnd","r/g","g/b","r/c","m/g"];
   let btn = [[24,"BTN1"],[22,"BTN2"],[23,"BTN3"],[11,"BTN4"],[16,"BTN5"]];
   var menu={
     "" : { "title":"Numerals"},
@@ -30,12 +28,6 @@
       min:0,max:dm.length-1,
       format: v=>dm[v],
       onchange: v=> { numeralsSettings.drawMode=dm[v]; updateSettings();}
-    },
-    "Menu button": {
-      value: btn.findIndex(e=>e[0]==numeralsSettings.menuButton),
-      min:0,max:btn.length-1,
-      format: v=>btn[v][1],
-      onchange: v=> { numeralsSettings.menuButton=btn[v][0]; updateSettings();}
     },
     "Date on touch": {
       value: 0|numeralsSettings.showDate,
