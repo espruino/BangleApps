@@ -10,14 +10,21 @@ Then launch the linked apps directly from the clock screen by simply drawing the
 
 ## Add Pattern Screenshots
 
-![](main_menu_add.png)
-![](add_pattern.png)
-![](select_app.png)
+![](main_menu_add_light.png)
+![](add_pattern_light.png)
+![](select_app_light.png)
+
+![](main_menu_add_dark.png)
+![](add_pattern_dark.png)
+![](select_app_dark.png)
 
 ## Manage Pattern Screenshots
 
-![](main_menu_manage.png)
-![](manage_patterns.png)
+![](main_menu_manage_light.png)
+![](manage_patterns_light.png)
+
+![](main_menu_manage_dark.png)
+![](manage_patterns_dark.png)
 
 ## Detailed Steps
 

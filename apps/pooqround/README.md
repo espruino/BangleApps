@@ -10,16 +10,18 @@ Either you'll like that, or you won't.
 
 ## Options
 
-Because sometimes I don't want to burn what I'm cooking and others I'm lazy and just want to know if it's afternoon yet,
-you can alter the number of ‘hands’ on the display. When the watch is unlocked, slide up to add dots representing the minute and second,
-or down to remove the distraction. There's also a setting that displays the second hand, but only if the watch is perfectly face-to-the-sky,
-in case you want the ability to check the _exact_ time, hands free, without the impact on battery life this usually entails.
-
 Although we generally obey the system-wide theming, you can long press on the display for a menu of additional options specific to the face.
 We don't observe the system 12/24 setting, since it the design of the face is equally good in either interpretation.
 
-By default, there is a backlight that comes on when you twist your wrist. This, of course, somewhat increases power draw and could be
-annoying in an intentionally dark environment, so there is an option to disable it.
+If you like an uncluttered display style, you can still bring up the day, date and minute hand transiently with a tap on the watchface (when unlocked).
+
+Similarly, because sometimes I don't want to burn what I'm cooking and others I'm lazy and just want to know if it's afternoon yet,
+you can quickly alter the number of ‘hands’ on the display. When the watch is unlocked, slide up to add dots representing the minute and second,
+or down to remove the distraction. There's also a setting that displays the second hand, but only if the watch is perfectly face-to-the-sky,
+in case you want the ability to check the _exact_ time, hands free, without the impact on battery life this usually entails.
+
+In some versions of the Bangle.js firmware, the backlight doesn't come on automatically when you twist your wrist. There's currently a workaround 
+for this integrated into the watchface; you can disable it in the menu, if you prefer.
 
 ## Limitations
 
