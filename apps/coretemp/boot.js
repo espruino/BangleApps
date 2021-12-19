@@ -1,5 +1,8 @@
+//If enabled run in the background continuously.
+
 (function() {
 
+var settings = {};
 var device;
 var gatt;
 var service;
@@ -51,11 +54,11 @@ function getSensorBatteryLevel(gatt) {
 }
 
 function connection_setup() {
-  E.showMessage("Scanning for CoreTemp sensor...");
+  console.log("Scanning for CoreTemp sensor...");
   NRF.requestDevice({timeout : 20000, filters : [ {namePrefix : 'CORE'} ]})
       .then(function(d) {
         device = d;
-        E.showMessage("Found device");
+        console.log("Found device");
         return device.gatt.connect();
       })
       .then(function(g) {
@@ -76,10 +79,10 @@ function connection_setup() {
       .then(function() {
         console.log("Done!");
 //        getSensorBatteryLevel(gatt);
-        g.reset().clearRect(Bangle.appRect).flip();
+//        g.reset().clearRect(Bangle.appRect).flip();
       })
       .catch(function(e) {
-        E.showMessage(e.toString(), "ERROR");
+        console.log(e.toString(), "ERROR");
         console.log(e);
       });
 }
@@ -88,12 +91,16 @@ function connection_end() {
   if (gatt != undefined) gatt.disconnect();
 }
 
-connection_setup();
+settings = require("Storage").readJSON("coretemp.json",1)||{};
+console.log("Settings:");
+console.log(settings);
+
+if (settings.enabled) {
+    connection_setup();
+    NRF.on('disconnect', connection_setup);
+}
 
 E.on('kill', () => { connection_end(); });
-
-// move into setup
-NRF.on('disconnect', connection_setup);  // restart if disconnected
 
 // Bangle.loadWidgets();
 // Bangle.drawWidgets();

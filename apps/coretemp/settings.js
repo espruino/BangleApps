@@ -22,7 +22,14 @@
       storage.write(SETTINGS_FILE, s);
     }
   }
-  
+
+  function updateSettings() {
+  require("Storage").write("coretemp.json", settings);
+  if (WIDGETS["sensors"])
+    WIDGETS["sensors"].reload();
+  return;
+} 
+
 const menu = {
   '' : {'title' : 'CoreTemp sensor'},
   '< Back' : back,

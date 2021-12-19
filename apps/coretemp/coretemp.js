@@ -1,4 +1,4 @@
-// Simply listen for core events and show
+// Simply listen for core events and show data
 
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
