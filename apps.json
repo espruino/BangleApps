@@ -5062,5 +5062,18 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "promenu",
+    "name": "Pro Menu",
+    "version": "0.01",
+    "description": "Replace Bangle.js 1's built in show message.",
+    "icon": "app.png",
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS"],
+    "storage": [
+      {"name":"promenu.boot.js","url":"boot.js"}
+    ]
   }
 ]
