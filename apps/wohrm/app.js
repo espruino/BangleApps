@@ -27,30 +27,30 @@ let setterHighlightTimeout;
 
 const isB1 = process.env.HWVERSION==1;
 const upperLshape = isB1 ? {
-  minX: 125,
-  maxX: 210,
-  minY: 40,
-  maxY: 210,
+  right: 125,
+  left: 210,
+  bottom: 40,
+  top: 210,
   rectWidth: 30,
   cornerRoundness: 5,
   orientation: -1,
   color: '#f00'
 } : {
-  minX: Bangle.appRect.x2-100,
-  maxX: Bangle.appRect.x2,
-  minY: 24,
-  maxY: Bangle.appRect.y2,
+  right: Bangle.appRect.x2-100,
+  left: Bangle.appRect.x2,
+  bottom: 24,
+  top: Bangle.appRect.y2,
   rectWidth: 26,
   cornerRoundness: 4,
-  orientation: -1,
+  orientation: -1,   // rotated 180°
   color: '#f00'
 };
 
 const lowerLshape = {
-  maxX: isB1 ? 10 : Bangle.appRect.x,
-  minX: 100,
-  minY: upperLshape.maxY,
-  maxY: upperLshape.minY,
+  left: isB1 ? 10 : Bangle.appRect.x,
+  right: 100,
+  bottom: upperLshape.top,
+  top: upperLshape.bottom,
   rectWidth: upperLshape.rectWidth,
   cornerRoundness: upperLshape.cornerRoundness,
   orientation: 1,
@@ -58,8 +58,8 @@ const lowerLshape = {
 };
 
 const centerBar = {
-  minY: (upperLshape.minY + upperLshape.maxY - upperLshape.rectWidth)/2,
-  maxY: (upperLshape.minY + upperLshape.maxY + upperLshape.rectWidth)/2,
+  minY: (upperLshape.bottom + upperLshape.top - upperLshape.rectWidth)/2,
+  maxY: (upperLshape.bottom + upperLshape.top + upperLshape.rectWidth)/2,
   confidenceWidth: isB1 ? 10 : 8,
   minX: isB1 ? 55 : upperLshape.rectWidth + 14,
   maxX: isB1 ? 165 : Bangle.appRect.x2 - upperLshape.rectWidth - 14
@@ -80,50 +80,60 @@ function fillEllipse(x, y, x2, y2) {
                 Math.max(y, y2));
 }
 
+/**
+ * @param p.left: the X coordinate of the left side of the L in its orientation
+ * @param p.right: the X coordinate of the right side of the L in its orientation
+ * @param p.top: the Y coordinate of the top side of the L in its orientation
+ * @param p.bottom: the Y coordinate of the bottom side of the L in its orientation
+ * @param p.strokeWidth: how thick we draw the letter.
+ * @param p.cornerRoundness: how much the corners should be rounded
+ * @param p.orientation: 1 == turned 0°; -1 == turned 180°
+ * @param p.color: the color to draw the shape
+ */
 function renderLshape(p) {
   g.setColor(p.color);
 
-  g.fillRect(p.minX, p.minY, p.maxX, p.minY-p.orientation*p.rectWidth);
-  g.fillRect(p.maxX+p.orientation*p.rectWidth,
-             p.minY-p.orientation*p.rectWidth,
-             p.maxX,
-             p.maxY+p.orientation*p.cornerRoundness*2);
+  g.fillRect(p.right, p.bottom, p.left, p.bottom-p.orientation*p.rectWidth);
+  g.fillRect(p.left+p.orientation*p.rectWidth,
+             p.bottom-p.orientation*p.rectWidth,
+             p.left,
+             p.top+p.orientation*p.cornerRoundness*2);
 
   //Round end of small line
-  fillEllipse(p.minX+p.orientation*p.cornerRoundness*2,
-              p.minY,
-              p.minX-p.orientation*p.cornerRoundness*2,
-              p.minY-p.orientation*p.rectWidth);
+  fillEllipse(p.right+p.orientation*p.cornerRoundness*2,
+              p.bottom,
+              p.right-p.orientation*p.cornerRoundness*2,
+              p.bottom-p.orientation*p.rectWidth);
 
   //Round outer corner
   g.setColor(g.theme.bg);
-  g.fillRect(p.maxX+p.orientation*p.cornerRoundness,
-             p.minY,
-             p.maxX,
-             p.minY-p.orientation*p.cornerRoundness);
+  g.fillRect(p.left+p.orientation*p.cornerRoundness,
+             p.bottom,
+             p.left,
+             p.bottom-p.orientation*p.cornerRoundness);
   g.setColor(p.color);
-  fillEllipse(p.maxX+p.orientation*p.cornerRoundness*4,
-              p.minY,
-              p.maxX,
-              p.minY-p.orientation*p.cornerRoundness*2);
+  fillEllipse(p.left+p.orientation*p.cornerRoundness*4,
+              p.bottom,
+              p.left,
+              p.bottom-p.orientation*p.cornerRoundness*2);
 
   //Round inner corner
-  g.fillRect(p.maxX+p.orientation*(p.rectWidth+p.cornerRoundness+1),
-             p.minY-p.orientation*(p.rectWidth+1),
-             p.maxX+p.orientation*(p.rectWidth+1),
-             p.minY-p.orientation*(p.rectWidth+p.cornerRoundness-1));
+  g.fillRect(p.left+p.orientation*(p.rectWidth+p.cornerRoundness+1),
+             p.bottom-p.orientation*(p.rectWidth+1),
+             p.left+p.orientation*(p.rectWidth+1),
+             p.bottom-p.orientation*(p.rectWidth+p.cornerRoundness-1));
   g.setColor(g.theme.bg);
-  fillEllipse(p.maxX+p.orientation*(p.rectWidth+p.cornerRoundness*4),
-              p.minY-p.orientation*(p.rectWidth+1),
-              p.maxX+p.orientation*(p.rectWidth+1),
-              p.minY-p.orientation*(p.rectWidth+p.cornerRoundness*3-1));
+  fillEllipse(p.left+p.orientation*(p.rectWidth+p.cornerRoundness*4),
+              p.bottom-p.orientation*(p.rectWidth+1),
+              p.left+p.orientation*(p.rectWidth+1),
+              p.bottom-p.orientation*(p.rectWidth+p.cornerRoundness*3-1));
 
   //Round end of long line
   g.setColor(p.color);
-  fillEllipse(p.maxX+p.orientation*p.rectWidth,
-              p.maxY+p.orientation*p.cornerRoundness*4,
-              p.maxX,
-              p.maxY);
+  fillEllipse(p.left+p.orientation*p.rectWidth,
+              p.top+p.orientation*p.cornerRoundness*4,
+              p.left,
+              p.top);
 }
 
 function drawTrainingHeartRate() {
@@ -153,8 +163,8 @@ function renderUpperLimit() {
   }
   g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
   g.drawString("Upper: " + settings.upperLimit,
-               upperLshape.minX,
-               upperLshape.minY+upperLshape.rectWidth/2);
+               upperLshape.right,
+               upperLshape.bottom+upperLshape.rectWidth/2);
 
   upperLimitChanged = false;
 }
@@ -170,8 +180,8 @@ function renderCurrentHeartRate() {
   g.setFontVector(fontSizes.heartRate);
   g.setFontAlign(1, 0, 0);
   g.drawString(currentHeartRate,
-               Math.max(upperLshape.minX+upperLshape.cornerRoundness,
-                        lowerLshape.minX-lowerLshape.cornerRoundness),
+               Math.max(upperLshape.right+upperLshape.cornerRoundness,
+                        lowerLshape.right-lowerLshape.cornerRoundness),
                (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults
@@ -192,8 +202,8 @@ function renderLowerLimit() {
   }
   g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
   g.drawString("Lower: " + settings.lowerLimit,
-               lowerLshape.maxX + lowerLshape.rectWidth/2,
-               lowerLshape.minY - lowerLshape.rectWidth/2);
+               lowerLshape.left + lowerLshape.rectWidth/2,
+               lowerLshape.bottom - lowerLshape.rectWidth/2);
 
   lowerLimitChanged = false;
 }
