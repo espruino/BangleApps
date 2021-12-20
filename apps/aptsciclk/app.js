@@ -20,7 +20,7 @@ function getImg(img){
   buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOZFIQOD4EABwnwgEDBwf8g/4h4ODwYQBv4OC+AbDAIP+j/HAQIOC4Hwj4RBBwP8o8B/+PBwWOkEP/l/BwP4+JCB44OCj+Ih/+n4OB+PEoP38YOB/0YkUXGgIOB8cBi9f+IOCkEI+XvBwXigFG64OEg0/t4OEuP7BwkHx/PBwWigF8voOC+Uwg/ig4OCkMgv8QsIOB+cfSoOGLIUR/E/4ljBwPxx/B/0kO4UI/0P+J3C/HHVQOISoWEn+D/iPBBwIwC8IOCwcP84IBBwU4TAMHBwfAv+AcARBBgD3CBwX8gDnBBwfwewIODAgIABBwYHDB3oAEBwIHFByyDBABg"))
 }
   }
-  else if (img == "w1"){//cube
+  else if (img == "w1"){//cube dispenser
     return {
   width : 60, height : 60, bpp : 1,
   buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOI/3/+fvBwYEBnwO/By3APgN/O6IeBh4OF8AOcwADCBwX8g4dM/8fBwt774OE+/9Bwt/BxodH3oOcFgyVG8BhCBwX8hRwCBwXA0C6BBwc/w4OE41MBwtEo6VF84sE/1/54OLDo4sHHYxKHLIxoGO44AD/kAABo"))
@@ -38,7 +38,37 @@ function getImg(img){
   buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOi+IOGh4OF8AOF/UNBwthx4OE+0YBwtBh4OE6mQBwn7rEfBwl22IOE99gBwn99UzBwUc/+90YsC8HH+++n98n/+g0++2Z+4OB4Fz73T74OCg877d8/YdC+d7u/v3gsBjEvt/+O4X+gvtIgI7CwG934OD8E326kD/0A+yzEwEO74OD/EArYOEgEDv4OD+PAl4OEnkBaInz0EPBwk3iAdE+XwSIYDBj2Oj4OD/fYvIOEvdHz4OD99unIOD/vt44OE3u4Dou3h4OE+3x/IOE70/Bwn78/9Bwl4LAQ7Dx75DBwP4Awb+EBwgAEBz0AABo="))
     }
   }
-  else if (img == "w4"){//cake
+  else if (img == "w4"){//falling cube
+    return {
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOC+YOF/0PBwvgv4OE/kFBwvAyIdFnYeBBwYeDDofng4OE8vYDonx7uPBwkf/+/Bwfh+czBwf+g/5z4OD+FevIdEhMDDon/0E3BwgeBJQgeB+5ZFvAEBBwfzgYOEw/XLInwn3BBwf8gH4LYIOCwUHDonwmE4HYkHwKkE8P4XYQOCv7dCYQkBWYsAWYvAiAsE/EDJQn/wF+CwJZDg/gBwgrBXYIOC8D+FNAL+F4eDBwn4nh2BBweHFYJ3EFYQOC/0P/AOECgIOE/E/BwsHBwvACAIODWAQOEJAIOFAgIOEQ4QsEAAOfBwoACBwgACBw8AABo"))
+}
+  }
+  else if (img == "w5"){//ball
+    return {
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOiv4OF8YOFAgQOEyYdGBw3zBw0BBwv4j4OB+EAgOD84OE+/ev4dD/3+BwvcugsE/u7t0f4aRC7e2sF8Bwlxg4dEu8YBwYsB/HDHYsMngOB8EDweHDon//PADoYABz0PBwfwnJKE/0OjZZC/kB4Hxz4OCwEYh+wBwXwgeA/+HBwUP8EP/0/BwPj/0DCQIOB/l/4DQBw4OBDIMPUoJKB+H/wY+B44OBj/4CoJKC+P/g7+FBAL+Fj4OFbwIOEI4IOF8YO6JQwAEaIgORgAANA"))
+    }
+  }
+  else if (img == "w6"){//ball recviver
+    return {
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOR/YOG34Ob/e7Bwu7CwQOhGgQOD34OF/0LBwvfv4dMuPfBwn29oOFtwONDowsHHY3+h7CNj4OF+IOc4A7NDo7gGJQ4ACBwX+//vBwnvBAIOK8EH/kBBwd+v/PSwIOB/fnjiWBBwXesHPLQIOB/2AgEvBwfgh0AFgf8gAuBLKQObgAANA=="))
+    }
+  }
+  else if (img == "w7"){//falling portals
+    return {
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AB0//4AE4YFE/H8BwtvBwvvvgOE/33Bwvf3gOE/v7Bxn5Bw2fHYv7/oOF3/cB118JQQOC4ODJQn8jEfLInBjBoE/0jO4pjD953CwCVF/EH5//+ykCwA8Cp4OB/MDz4DBEQUYjPzaIfn5k/74xC/l44f+BwePz1595ADDYPvv7vDMAN3Bwf4CAIOE4//BYIOB/0On47E8AFCBwcPTwYOCAgPAgE8Bwf8gEDBwOAGIJZDBwX9DofhUYRKDKIIOEAAQOD8EABwgcB+IODnoKB84OD37tCBwUzZ4QODZ4QdDnIFB/YODZwP+v47DJIIBBJQcAAwZyBABoA=="))
+    }
+  }
+  else if (img == "w8"){//flying portals
+    return {
+  width : 60, height : 60, bpp : 1,
+  buffer : require("heatshrink").decompress(atob("AB0//4AE4YFE/H8BwtvBwvvvgOE/33Bwvf3gdF/YOF/4OF/IOGgA7F8ENBwn8gHcBw/5AoOAg4OCh4sD/vD+AFB45KBBwfwv//BwMJgEIFAXcnvggF4kEBBwPMSIIYBz/8nAEBw5ZD4IhBO48AhpoG953FSo/2Ugv/p4OF/LCGaIyIBB34OH4EAngODbAMDBwnfDoqeCBy7RBBwnh//xBwc9BQPnBwe/AYO/BwUzFYQODGgYOCnIFB/YOD57WBv47Dj//AIJKDgAGDOQIANA"))
+    }
+  }
+  else if (img == "w9"){//cake
     return {
   width : 60, height : 60, bpp : 1,
   buffer : require("heatshrink").decompress(atob("AB0//4AE4YGF/gOY/oOG94OF/1/Bwv3FgwKCBwfnFhn8HY0LAQPwvgOB8EP/5uBBwP2gF4j+PBwP+sEEj/x44OB90Ao/8Dodwg8/nkH4ZXBgHnx8ABwPv/k98+ABwZEB+EAJQPj/3+nkAv4OB5+fz0Aj4OB98Ag+Ah/nBwJXB4EDHYSTB/EA/wsCSoJfBwAODNIPgBwgcBHYQOCC4QODn8Ah4ODGgMH+47D8EB/A7KTYMf4A7Eg/wHYgcBHZx3DcAPggbRBFgQcBcAQOB/iUBBwgcBBwgcCd4V/HYL+D/YOBDgIOC8/+DgIOC/+HfwIOD/4cCBwYAEBwQADBz0AABoA="))
@@ -71,7 +101,7 @@ function getImg(img){
    return {
   width : 176, height : 176, bpp : 4,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+/4A/AH4A/AH4A/AD0SkQASkIVViIrqK/5X/K/5X/CqPd6EAAA8BiAKIABUBiIVUFZMIxBX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5Xal////yK/5XTKwIABK4URAA3/+Pd6ILHAG8YxADBj5XD+ISIBwRX/K4pWDAAIHBiS6CAAMvBYXd6DbTeJcRCqgrJhGIJIJXFkUhK4oLDK/5XSBYhX/K6MvBIQDBK/5XD+RXMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XF+SuEK4yuCK/5XHWAZOCK4cvKwhX/K45MFK4YAGK/5XGLApX/K6X/K5svK/5XIWAZXJ/5X/K6svK/5XPAoauDK/5XJ/5XDj5eEVwRX/K5y2FVwRX/K4/yK44GDVwRX/K50fWAi9DK/5XGUYRQCkMSK4auDK/5XGJgZXGMQJWDK/5XGKQKkCK4arEK/5XIVQRQDK/5XQKwIABJYXyK4IGDAAReBK/5XDVwSwFK44QBK/5XJLAhXBAoa/Cl5X/K4ZHCAAZXEAoZnCK/5XLVQRXFBgZX/K4igCLAnxK4RdBBohX/K5cikJXCAAxX/K4j5EK/5X/K9fyK/5X/K93/K/5X/KxQABK78vK4PyK/5XWWApXq+JXC+BXeKwRXPl5Xdh//K4Y1BK+H/K7n//GIK4g5BWR5XP+RXNl5Xch+IGQJXFA4JXeJwpXICAJXah/4x4fBKwURj5XBBIJXcVwpXBFoYwDK4XRBYwAR/CtFAAZXCBQ4AQjBXCCRxXcUoJLDjnMhnMBgTqCK7RzIiS3FkRXC6DbTAAf4UYIoB5gABK4PM4KBD+AcLFZUIK4JNGkUhK44ABK7EPQwZWCK4ZYCWARXY+RXrVwccK4/MWB5XMJhBXkVwJWEK4pYBK/4AGh+IVwJQEK43BWARX/VwmP+JXNWBpX5VwMcK5fMiKwBK9YAKCphXCJ4pXH4JXB+QrWCtUvxHxK58R///K/5XCx/xjhPFdAJYGK/5XN4ACEK/4AIIYMRK4qsDWAsRj//+RX/iIACVw6wH4ITCEJBXlxGCARxXIVQoFEK+MoxGIARgQBK/5XbgAADK4oKEgJX/V/4AJxGCARxX/Cq5XI4AEIV+wVO///iMcVRC0FiMf//yTNIADlABCCp0v//xK4qrCVwpXB/+PeNRXf5kAgCuFK/5XIiJOF5hWG4MR/BXvkWIwQVQ///K58f/HyK94VSK4UcK5kRj+IK8I1BADhXE+KwGK4vBiP4x5XhEJQASl4DDWARXMj/4NwZX/WAkcK5UR/+IGgbeXK9awBLAhXEiKuBx40DHCYuEK9EvWAURK4/BVwSWEK/6wGLAZXCKwKuGK/6wIiMcK4QFBVw5X/WA2IwJSCAAYJBVwpX/WA2IJwJVDj///GPVwpX/A434K4PxVoYHBKwxX/AAynCK4ZWCGA5X/BI//V4itHK/4LKK4YtKK/4qJK4QOKK/5X/K8BYCBpZX/K/5XVfYQAWK6gedK/5XiBhchiINLK6grJK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5Xu/4AYV/4AXK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K6v/ADCv/ABMhiKv/K/5X/K/5X/K/5X/K/5X6/4AdiIAYFzw="))
+  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+/4A/AH4A/AH4A/AD0RkQASkMSCqgrqiJX/K/5X/K/5XR7vQgAAHgMQBRAAKgMRCqgrJhGIK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K7Uv///+RX/K6ZWBAAJXDAA3/+Pd6IMIAG0YxADBj5XD+ISIBwRX/K4pWDAAIMCXQQABl4LC7vQbabxLiIVUFZMIxBJBK4siK4wLDK/5XSBYhX/K6MvBIQDBK/5XD+RXMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XF+SuEK4yuCK/5XHWAZOCK4cvKwhX/K45MFK4YAGK/5XGLApX/K6X/K5svK/5XIWAZXJ/5X/K6svK/5XPAoauDK/5XJ/5XDj5eEVwRX/K5y2FVwRX/K4/yK44GDVwRX/K50fWAi9DK/5XGUYRQCiKwCAwKuDK/5XGJgZXGMQJWDK/5XGKQKkCK4arEK/5XIVQRQDK/5XQKwIABJYXyK4IGDAAReBK/5XDVwSwFK44QBK/5XJLAoFEX4UvK/5XDI4QADK4gFDM4RX/K5aqCK4oMDK/5XEUARYE+JXCLoINEK/5XLkURK4QAGK/5XEfIhX/K/5Xr+RX/K/5Xu/5X/K/5WKAAJXfl5XB+RX/K6ywFK9XxK4XwK7xWCK58vK7sP/5XDGoJXw/5Xc//4xBXEHIKyPK5/yK5svK7kPxAyBK4oHBK7xOFK5AQBK7UP/GPD4JWCiMfK4IJBK7iuFK4QAFj5XC6IMHACH4VooADK4QKHACEYK4QSOK7ilBJYcc5kM5gMCdQRXaOZK3FkRXC6DbTAAf4UYInB5gABK4PM4KBD+AcLFZUIK4JNGkRXIAAJXYh6GDKwRXDLASwCK7HyK9auDjhXH5iwPK5hMIK8iuBKwhXFLAJX/AA0PxCuBKAhXG4KwCK/6uEx/xK5qwNK/KuBjhXL5kRWAJXrABUhiQMKK4RPFK4/BK4PyFaxXql+I+JXPiP//5X/K4WP+McJ4roBLAxX/K5vAAQhX/ABBDBiJXFVgawFiMf//yK/4gBAAKuHWA/BCYQhIK8uIwQCOK5CqFAohXxlGIxACMCAJX/K7cAAAZXFBQkBK/6v/ABOIwQCOK/4AMFZRXI4AEIV+wrO///iMcVRC0FiMf//yQaZXZlABCFZ0v//xK4qrCVwpXB/+PbahX15kAgCuFK/5XIiJOF5hWG4MR/BXvkWIwQrQ///K58f/HyK94rSK4UcK5kRj+IK8I1BADhXE+KwGK4vBiP4x5XhEJQASl4DDWARXMj/4NwZX/WAkcK5TiBxA0Dby5XrWAJYEK4kRVwOPGgY4TFwhXol6wCiJXH4KuCSwhX/WAxYDK4RWBVwxX/WBERjhXCAoKuHK/6wGxGBKQQADBIKuFK/6wGxBOBKocf//4x6uFK/4HG/BXB+KtDA4JWGK/4AGU4RXDKwQwHK/4JH/6vEVo5X/BZRXDFpRX/ABEhK4QOKK/5X/K8BYCBpZX/K/5XVfYQAWK6gedK/5XiBhchiINLK6gJIK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5Xv/4AYV/4AXK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K6v/ADCv/ABMhiKv/K/5X/K/5X/K/5X/K/5X6/4AdiIAYFzwA="))
     }
   }
 }
@@ -84,8 +114,6 @@ function drawStart(){
   g.drawImage(apSciLab, xyCenter-apSciLab.width/2, xyCenter-apSciLab.height/2);
 }
 
-drawStart();
-
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 
@@ -94,7 +122,7 @@ var drawTimeout;
 
 //warnings
 var curWarning = -1;
-var maxWarning = 4;
+var maxWarning = 9;
 
 function buttonPressed(){
   if (curWarning < maxWarning) curWarning += 1;
@@ -155,7 +183,7 @@ function draw() {
   }
 
   g.setFont(font, timeFontSize);
-  g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, false);
+  g.drawString(`${hours}:${minutes}`, xyCenter+2, yposTime, false);
   g.setFont(font, gmtFontSize);
   g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
 
@@ -193,14 +221,18 @@ Bangle.on('touch',(n,e)=>{
   }
 });
 
-// clean app screen
-g.clear();
-// Show launcher when button pressed
-Bangle.setUI("clock");
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+//show Apeture laboritories
+drawStart();
 
-buttonPressed();//update warning image
-
-// draw now
-draw();
+setTimeout(function() {
+    // clean app screen
+    g.clear();
+    // Show launcher when button pressed
+    Bangle.setUI("clock");
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
+    //update warning image
+    buttonPressed();
+    // draw now
+    draw();
+  }, 1000);
