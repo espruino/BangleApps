@@ -4716,8 +4716,6 @@
     {"name":"doztime.app.js","url":"app.js"},
     {"name":"doztime.img","url":"app-icon.js","evaluate":true}
   ]
-}
-]
 },
 { "id":"doztime2",
   "name":"Dozenal Time 2",
@@ -4732,7 +4730,7 @@
     {"name":"doztime2.app.js","url":"app.js"},
     {"name":"doztime2.img","url":"app-icon.js","evaluate":true}
   ]
-}
+},
   { "id": "mylocation",
     "name": "My Location",
     "shortName":"My Location",
