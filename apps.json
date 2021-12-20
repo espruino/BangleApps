@@ -5068,12 +5068,13 @@
     "name": "Pro Menu",
     "version": "0.01",
     "description": "Replace Bangle.js 1's built in show message.",
-    "icon": "promenuIcon.png",
+    "icon": "icons8-menu-48 (1).png",
     "type": "boot",
     "tags": "system",
     "supports": ["BANGLEJS"],
     "storage": [
       {"name":"promenu.boot.js","url":"boot.js"}
+      {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
     ]
   }
 ]
