@@ -5068,7 +5068,7 @@
     "name": "Pro Menu",
     "version": "0.01",
     "description": "Replace Bangle.js 1's built in show message.",
-    "icon": "app.png",
+    "icon": "promenuIcon.png",
     "type": "boot",
     "tags": "system",
     "supports": ["BANGLEJS"],
