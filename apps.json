@@ -4710,6 +4710,7 @@
   "description":"A dozenal Holocene calendar and dozenal diurnal clock",
   "tags":"clock",
   "type":"clock",
+  "supports":["BANGLEJS"],
   "allow_emulator":true,
   "readme": "README.md",
   "storage": [
@@ -4725,6 +4726,7 @@
   "description":"A dozenal Holocene calendar and dozenal diurnal clock for Bangle.js 2",
   "tags":"clock",
   "type":"clock",
+  "supports":["BANGLEJS2"],
   "allow_emulator":true,
   "storage": [
     {"name":"doztime2.app.js","url":"app.js"},
