@@ -5047,21 +5047,6 @@
        {"name":"circlesclock.json"}
      ]
   },
-  { "id": "aptsciclk",
-    "name": "Apeture Science clock",
-    "shortName":"AptSci clock",
-    "version":"0.01",
-    "description": "A clock based on the Portal series,
-    "icon": "app.png",
-    "type": "clock",
-    "tags": "clock",
-    "supports" : ["BANGLEJS2"],
-    "allow_emulator":true,
-    "storage": [
-      {"name":"aptsciclk.app.js","url":"app.js"},
-      {"name":"aptsciclk.img","url":"app-icon.js","evaluate":true},
-     ]
-  },
   {
     "id": "ltherm",
     "name": "Localized Thermometer",
@@ -5077,5 +5062,19 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
-  }
+  },
+  },
+{ "id": "aptsciclk",
+  "name": "Apeture Science Clock",
+  "shortName":"Apeture",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A clock made in the style of the Portal series",
+  "tags": "clock",
+  "type":"clock",
+  "storage": [
+    {"name":"aptsciclk.app.js","url":"app.js"},
+    {"name":"aptsciclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}
 ]
