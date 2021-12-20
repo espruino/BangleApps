@@ -2,12 +2,12 @@
 {
     "id": "aptsciclk",
     "name": "Apeture Science Clock",
-    "version": "0.1",
+    "version": "0.2",
     "description": "A clock based on the portal series",
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2"],
+    "supports": ["BANGLEJS2"],
     "allow_emulator": true,
     "storage": [
       {"name":"aptsciclk.app.js","url":"app.js"},
