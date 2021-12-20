@@ -150,8 +150,8 @@ function writeDozDate(text,def,colour){
 	g_d.clear();
 	g_d.setFont("Vector",def.size);
 	for(let i in text){
-		if(text[i]=="a"){ g_d.setFontAlign(0,0,2); g_d.drawString("2",x+1+def.dx,y+1+def.dy); } //+1s new
-		else if(text[i]=="b"){ g_d.setFontAlign(0,0,2); g_d.drawString("3",x+1+def.dx,y+1+def.dy); } //+1s new
+		if(text[i]=="a"){ g_d.setFontAlign(0,0,2); g_d.drawString("2",x+2+def.dx,y+1+def.dy); } //+1s new
+		else if(text[i]=="b"){ g_d.setFontAlign(0,0,2); g_d.drawString("3",x+2+def.dx,y+1+def.dy); } //+1s new
 		else{ g_d.setFontAlign(0,0,0); g_d.drawString(text[i],x,y); }
 		x = x+def.step[0];
 		y = y+def.step[1];
