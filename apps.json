@@ -5063,7 +5063,6 @@
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
   },
-  },
 { "id": "aptsciclk",
   "name": "Apeture Science Clock",
   "shortName":"Apeture",
