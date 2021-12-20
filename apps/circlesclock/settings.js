@@ -28,6 +28,16 @@
       },
       onchange: x => save('stepGoal', x),
     },
+    'battery warn lvl': {
+      value: "batteryWarn" in settings ? settings.batteryWarn : 30,
+      min: 10,
+      max : 100,
+      step: 10,
+      format: x => {
+        return x + '%';
+      },
+      onchange: x => save('batteryWarn', x),
+    },
     '< Back': back,
   });
 });
