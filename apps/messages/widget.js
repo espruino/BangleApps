@@ -1,9 +1,10 @@
-WIDGETS["messages"]={area:"tl",width:0,draw:function() {
+WIDGETS["messages"]={area:"tl", width:0, ICONS:[atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA=="),atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA==")], //icons should be equal size or first larger
+draw:function() {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  g.reset().clearRect(this.x,this.y,this.x+this.width,this.y+23);
-  g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
+  g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+this.ICONS[0].charCodeAt(1));
+  g.drawImage(this.ICONS[c&1], this.x, this.y);
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
@@ -17,7 +18,7 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   WIDGETS["messages"].t=Date.now(); // first time
   WIDGETS["messages"].l=Date.now()-10000; // last buzz
   if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
-  WIDGETS["messages"].width=64;
+  WIDGETS["messages"].width=this.ICONS[0].charCodeAt(0);
   Bangle.drawWidgets();
   Bangle.setLCDPower(1);// turns screen on
 },hide:function() {
@@ -37,7 +38,7 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   b();
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
-  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+23) return;
+  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.ICONS[0].charCodeAt(1)) return;
   load("messages.app.js");
 }};
 /* We might have returned here if we were in the Messages app for a
