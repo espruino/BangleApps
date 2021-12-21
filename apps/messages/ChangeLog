@@ -21,3 +21,4 @@
       Add 'Delete All' option to message options
       Now update correctly when 'require("messages").clearAll()' is called
 0.14: Hide widget when all unread notifications are dismissed from phone
+0.15: Fix: Dims of notification icon (v0.12) are retrieved from icon header (no more hardcoded width=64px)
