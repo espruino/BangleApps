@@ -221,7 +221,7 @@ function fight() {
       slimeHP -= dmgDealt;
     }else{
       critChance = Math.floor(Math.random() * 100);
-      if (critChance >= 100-critStat) {
+      if (critChance >= 100-statCrit) {
         slimeHP = 0;
         dmgDealt = 99;
       }else{
