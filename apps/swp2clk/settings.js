@@ -21,7 +21,7 @@
         },
       },
       "White List": () => showWhiteListMenu(),
-      "Black List": () => {},
+      "Black List": () => showBlackListMenu(),
     });
   };
 
@@ -33,7 +33,7 @@
       "< Back": () => showMainMenu(),
       "_Add App_": () => {
         var addAppMenu = {
-          "": { title: "Add to WL" },
+          "": { title: "Add app to WL" },
           "< Back": () => showWhiteListMenu(),
         };
 
@@ -71,6 +71,54 @@
 
     log("Loading white list menu");
     E.showMenu(whiteListMenu);
+  };
+
+  var showBlackListMenu = () => {
+    var appList = getAppList();
+
+    var blackListMenu = {
+      "": { title: "Black List" },
+      "< Back": () => showMainMenu(),
+      "_Add App_": () => {
+        var addAppMenu = {
+          "": { title: "Add app to BL" },
+          "< Back": () => showBlackListMenu(),
+        };
+
+        appList.forEach((app) => {
+          if (settings.blackList.indexOf(app.src) < 0) {
+            addAppMenu[app.name] = () => {
+              settings.blackList.push(app.src);
+              writeSettings(settings);
+              showBlackListMenu();
+            };
+          }
+        });
+
+        E.showMenu(addAppMenu);
+      },
+    };
+
+    appList.forEach((app) => {
+      if (settings.blackList.indexOf(app.src) >= 0) {
+        blackListMenu[app.name] = () => {
+          E.showPrompt("Delete from BL?", {
+            title: "Delete from BL?",
+            buttons: { Yes: true, No: false },
+          }).then(function (flag) {
+            if (flag) {
+              settings.blackList.splice(index, 1);
+              writeSettings(settings);
+            }
+
+            showBlackListMenu();
+          });
+        };
+      }
+    });
+
+    log("Loading black list menu");
+    E.showMenu(blackListMenu);
   };
 
   // lib functions
