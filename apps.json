@@ -5073,7 +5073,7 @@
     "tags": "system",
     "supports": ["BANGLEJS"],
     "storage": [
-      {"name":"promenu.boot.js","url":"boot.js"}
+      {"name":"promenu.boot.js","url":"boot.js"},
       {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
     ]
   }
