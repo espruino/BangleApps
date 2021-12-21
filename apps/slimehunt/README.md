@@ -2,6 +2,8 @@
 
 Slime Hunt is a RPG turn-based style combat game where you fight slimes until your HP runs out.
 
+The main goal is to beat your personal highscore!
+
 During each fight the player has 3 options,
 
 BTN1) FIGHT - Attacks the slime, dealing 1 hp worth of damage.
