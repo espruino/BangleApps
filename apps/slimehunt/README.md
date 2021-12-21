@@ -28,20 +28,15 @@ ERACTIC - Slime deals 0-5 damage on it's next attack.
 
 ============================<><>-ITEMS-<><>============================
 
-Attack Up
-+1 damage next battle.
+Attack Up - +1 damage next battle.
 
-Defence Up
-+1 defence next battle, stacks with block. Setting defence to 4 when using DEFEND, and 1 otherwise.
+Defence Up - +1 defence next battle, stacks with block. Setting defence to 4 when using DEFEND, and 1 otherwise.
 
-HP Up
-+3 HP.
+HP Up - +3 HP.
 
-Block Up
-+2 block on DEFEND next battle, setting Defence to 5 when using DEFEND command.
+Block Up - +2 block on DEFEND next battle, setting Defence to 5 when using DEFEND command.
 
-Critical Up
-20% chance to crit next battle on each attack, instantly defeating the Slime.
+Critical Up - 20% chance to crit next battle on each attack, instantly defeating the Slime.
 
 *****Using the RUN command causes you to lose your item!*****
 
