@@ -52,11 +52,11 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg.new) {
+  if (msg && msg.new) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
   }
-  showMessage(msg.id);
+  showMessage(msg&&msg.id);
 };
 function saveMessages() {
   require("Storage").writeJSON("messages.json",MESSAGES)
@@ -64,6 +64,12 @@ function saveMessages() {
 
 function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
+}
+function getNotificationImage() {
+  return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
+}
+function getFBIcon() {
+  return atob("GBiBAAAAAAAAAAAYAAD/AAP/wAf/4A/48A/g8B/g+B/j+B/n+D/n/D8A/B8A+B+B+B/n+A/n8A/n8Afn4APnwADnAAAAAAAAAAAAAA==");
 }
 function getPosImage() {
   return atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA==");
@@ -74,17 +80,27 @@ function getNegImage() {
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
+  if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
+  if (s=="facebook") return getFBIcon();
+  if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
+  if (s=="instagram") return atob("GBiBAf////////////////wAP/n/n/P/z/f/b/eB7/c87/d+7/d+7/d+7/d+7/c87/eB7/f/7/P/z/n/n/wAP////////////////w==");
+  if (s=="gmail") return getNotificationImage();
+  if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA==");
+  if (s=="mail") return getNotificationImage();
+  if (s=="messenger") return getFBIcon();
+  if (s=="outlook mail") return getNotificationImage();
   if (s=="phone") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
   if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
-  if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
-  if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
-  if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
+  if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
+  if (s=="sms message") return getNotificationImage();
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
+  if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
+  if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
+  if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
   if (msg.id=="back") return getBackImage();
-  return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
+  return getNotificationImage();
 }
-
 
 function showMapMessage(msg) {
   var m;
@@ -127,7 +143,7 @@ function showMapMessage(msg) {
 function showMusicMessage(msg) {
   function fmtTime(s) {
     var m = Math.floor(s/60);
-    s = (s%60).toString().padStart(2,0);
+    s = (parseInt(s%60)).toString().padStart(2,0);
     return m+":"+s;
   }
 
@@ -141,7 +157,7 @@ function showMusicMessage(msg) {
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:fontLarge, label:msg.artist, pad:2 },
+        { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
         { type:"txt", font:fontMedium, label:msg.album, pad:2 }
       ]}
     ]},
@@ -158,24 +174,33 @@ function showMusicMessage(msg) {
 }
 
 function showMessageSettings(msg) {
-  E.showMenu({"":{"title":"Message"},
+  E.showMenu({"":{"title":/*LANG*/"Message"},
     "< Back" : () => showMessage(msg.id),
-    "Delete" : () => {
+    /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
     },
-    "Mark Unread" : () => {
+    /*LANG*/"Mark Unread" : () => {
       msg.new = true;
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+    },
+    /*LANG*/"Delete all messages" : () => {
+      E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
+        if (isYes) {
+          MESSAGES = [];
+          saveMessages();
+        }
+        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+      });
     },
   });
 }
 
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
-  if (!msg) return checkMessages(); // go home if no message found
+  if (!msg) return checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0}); // go home if no message found
   if (msg.src=="Maps") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
@@ -212,7 +237,6 @@ function showMessage(msgid) {
   }
   if (msg.negative) {
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
-      console.log("Response");
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
@@ -223,7 +247,7 @@ function showMessage(msgid) {
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getMessageImage(msg), cb:()=>{
+      { type:"btn", src:getMessageImage(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
@@ -250,10 +274,10 @@ function checkMessages(options) {
   options=options||{};
   // If no messages, just show 'no messages' and return
   if (!MESSAGES.length) {
-    if (!options.clockIfNoMsg) return E.showPrompt("No Messages",{
-      title:"Messages",
+    if (!options.clockIfNoMsg) return E.showPrompt(/*LANG*/"No Messages",{
+      title:/*LANG*/"Messages",
       img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
-      buttons : {"Ok":1}
+      buttons : {/*LANG*/"Ok":1}
     }).then(() => { load() });
     return load();
   }
@@ -281,7 +305,7 @@ function checkMessages(options) {
       var x = r.x+2, title = msg.title, body = msg.body;
       var img = getMessageImage(msg);
       if (msg.id=="music") {
-        title = msg.artist || "Music";
+        title = msg.artist || /*LANG*/"Music";
         body = msg.track;
       }
       if (img) {

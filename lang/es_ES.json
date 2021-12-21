@@ -1,0 +1,21 @@
+{
+  "//":"Spanish language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Alarmas",
+    "Hours" : "Horas",
+    "Minutes" : "Minutos",
+    "Enabled" : "Activados",
+    "New Alarm" : "Alarma nueva",
+    "Save" : "Grabar",
+    "Back" : "Atrás",
+    "Repeat" : "Repetición",
+    "Delete" : "Borrar",
+    "ALARM!" : "ALARM",
+    "Sleep" : "Dormir"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "rep."
+  }
+}

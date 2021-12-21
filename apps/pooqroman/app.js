@@ -1,3 +1,4 @@
+/* -*- mode: Javascript; c-basic-offset: 2; indent-tabs-mode: nil; coding: latin-1 -*- */
 // pooqRoman
 //
 // Copyright (c) 2021 Stephen P Spackman
@@ -54,8 +55,9 @@ class Options {
         this.id = this.constructor.id;
         this.file = `${this.id}.json`;
         this.backing = storage.readJSON(this.file, true) || {};
-        this.defaults = this.constructor.defaults;
-        Object.keys(this.defaults).forEach(k => this.bless(k));
+        Object.setPrototypeOf(this.backing, this.constructor.defaults);
+        this.reactivator = _ => this.active();
+        Object.keys(this.constructor.defaults).forEach(k => this.bless(k));
     }
 
     writeBack(delay) {
@@ -71,29 +73,41 @@ class Options {
     
     bless(k) {
         Object.defineProperty(this, k, {
-            get: () => this.backing[k] == null ? this.defaults[k] : this.backing[k],
+            get: () => this.backing[k],
             set: v => {
                 this.backing[k] = v;
                 // Ten second writeback delay, since the user will roll values up and down.
                 this.writeBack(10000);
             }
         });
-    }                     
+    }
 
     showMenu(m) {
+        if (m instanceof Function) m = m();
         if (m) {
             for (const k in m) if ('init' in m[k]) m[k].value = m[k].init();
             m[''].selected = -1; // Workaround for self-selection bug.
+            Bangle.on('drag', this.reactivator);
+            this.active();
+        } else {
+            if (this.bored) clearTimeout(this.bored);
+            this.bored = null;
+            Bangle.removeListener('drag', this.reactivator);
+            this.emit('done');
         }
+        g.clear(true);
         E.showMenu(m);
     }
 
-    reset() {
-        this.backing = {};
-        this.writeBack(0);
+    active() {
+        if (this.bored) clearTimeout(this.bored);
+        this.bored = setTimeout(_ => this.showMenu(), 15000);
     }
     
-    interact() {this.showMenu(this.menu);}
+    reset() {
+        this.backing = {__proto__: this.constructor.defaults};
+        this.writeBack(0);
+    }
 }
 
 class RomanOptions extends Options {
@@ -101,7 +115,7 @@ class RomanOptions extends Options {
         super();
         this.menu = {
             '': {title: '* face options *'},
-            '< Back': _ => {this.showMenu(); this.emit('done');},
+            '< Back': _ => this.showMenu(),
             Ticks: {
                 init: _ => this.resolution,
                 min: 0, max: 3,
@@ -124,9 +138,15 @@ class RomanOptions extends Options {
                 onchange: x => this.calendric = x,
                 format: x => ['none', 'day', 'date'][x]
             },
-            Defaults: _ => {this.reset();}
+            'Auto-Illum.': {
+                init: _ => this.autolight,
+                onchange: x => this.autolight = x
+            },
+            Defaults: _ => {this.reset(); this.interact();}
         };
     }
+        
+    interact() {this.showMenu(this.menu);}
 }
 
 RomanOptions.id = 'pooqroman';
@@ -147,7 +167,8 @@ RomanOptions.defaults = {
     hubFg: g.theme.fg,
     alarmFg: '#f00',
     timerFg: '#0f0',
-    active: g.theme.fg2,
+    activeFg: g.theme.fg2,
+    autolight: true,
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -434,7 +455,7 @@ class Sidebar {
     }
     static gpsColour(o) {
         const fix = Bangle.getGPSFix();
-        return fix && fix.fix ? o.active : o.barFg;
+        return fix && fix.fix ? o.activeFg : o.barFg;
     }
     doPower() {
         const c = Bangle.isCharging();
@@ -455,7 +476,7 @@ class Sidebar {
         if (Bangle.isCompassOn()) {
             const c = Bangle.getCompass();
             const a = c && this.rate <= 1000;
-            this.g.setColor(a ? this.options.active : this.options.barFg).drawImage(
+            this.g.setColor(a ? this.options.activeFg : this.options.barFg).drawImage(
                 compassI,
                 this.x + 4 + imageWidth(compassI) / 2,
                 this.y + 4 + imageHeight(compassI) / 2,
@@ -470,7 +491,7 @@ class Sidebar {
 class Roman {
     constructor(g, events) {
         this.g = g;
-        this.state = {};
+        this.state = null;
         const options = this.options = new RomanOptions();
         this.events = events.loadFromSystem(this.options);
         this.timescales  = [1000, [1000, 60000], 60000, 3600000];
@@ -480,7 +501,7 @@ class Roman {
         this.seconds = Roman.hand(g, 1, 0.9, 60, _ => options.secondFg);
     }
 
-    reset() {this.state = {}; this.g.clear(true);}
+    reset() {this.state = null;}
 
     doIcons(which) {this.state.iconsOk = null;}
 
@@ -544,7 +565,7 @@ class Roman {
     
     render(d, rate) {
         const g = this.g;
-        const state = this.state;
+        const state = this.state || (g.clear(true), this.state = {});
         const options = this.options;
         const events = this.events;
         events.clean(d, -39600000); // 11h
@@ -647,15 +668,15 @@ class Clock {
         this.options.on('done', () => this.start());
         
         this.listeners = {
-            lcdPower: on => on ? this.active() : this.inactive(),
-            charging: () => {face.doIcons('charging'); this.active();},
-            lock: () => {face.doIcons('locked'); this.active();},
+            charging: _ => {face.doIcons('charging'); this.active();},
+            lock: _ => {face.doIcons('locked'); this.active();},
             faceUp: up => {this.conservative = !up; this.active();},
+            twist: _ => this.options.autolight && Bangle.setLCDPower(true),
             drag: e => {
                 if (this.t0) {
                     if (e.b) {
-                        e.x > this.xN && (this.xN = e.x) || e.x > this.xX && (this.xX = e.x);
-                        e.y > this.yN && (this.yN = e.y) || e.y > this.yX && (this.xY = e.y);
+                        e.x < this.xN && (this.xN = e.x) || e.x > this.xX && (this.xX = e.x);
+                        e.y < this.yN && (this.yN = e.y) || e.y > this.yX && (this.yX = e.y);
                     } else if (this.xX - this.xN < 20) {
                         if (e.y - this.e0.y < -50) {
                             this.options.resolution > 0 && this.options.resolution--;
@@ -697,6 +718,7 @@ class Clock {
         this.exception && clearTimeout(this.exception);
         this.interval && clearInterval(this.interval);
         this.timeout = this.exception = this.interval = this.rate = null;
+        this.face.reset(); // Cancel any ongoing background rendering
         return this;
     }
     
@@ -711,7 +733,6 @@ class Clock {
         }
         const delay = rate - now % rate + 1;
         this.refresh = true;
-        
         if (rate !== prev) {
             this.inactive();
             this.redraw(rate);

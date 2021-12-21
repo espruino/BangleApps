@@ -73,12 +73,10 @@ var clockLayout = new Layout( {
       {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "temp", label: "000"},
-            {type: "txt", font: "10%", id: "tempUnit", label: "°C"},
+            {type: "txt", font: "10%", id: "temp", label: "000 °C"},
           ]},
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "wind",  label: "00"},
-            {type: "txt", font: "10%", id: "windUnit", label: "km/h"},
+            {type: "txt", font: "10%", id: "wind", label: "00 km/h"},
           ]}
         ]
       },
@@ -106,18 +104,14 @@ function draw() {
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
       const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-      clockLayout.temp.label = temp[1];
-      clockLayout.tempUnit.label = temp[2];
+      clockLayout.temp.label = temp[1] + " " + temp[2];
       clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + " ".repeat(wind[2].length-1);
-      clockLayout.windUnit.label = wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
+      clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
   }
   else{
       clockLayout.temp.label = "Err";
-      clockLayout.tempUnit.label = "";
       clockLayout.wind.label = "No Data";
-      clockLayout.windUnit.label = "";
       clockLayout.weatherIcon.src = errIcon;
   }
   clockLayout.clear();

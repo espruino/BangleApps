@@ -1,2 +1,5 @@
 0.01: Initial creation of the pattern launch app
 0.02: Turn on lcd when launching an app if the lock screen was disabled in the settings
+0.03: Make tap to confirm new pattern more reliable. Also allow for easier creation of single circle patterns.
+0.10: Improve the management of existing patterns: Draw the linked pattern on the left hand side of the app name within a scroller, similar to the default launcher. Slighlty clean up the code to make it less horrible.
+0.11: Respect theme colors. Fix: Do not pollute global space with internal variables ans functions in boot.js

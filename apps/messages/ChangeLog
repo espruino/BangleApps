@@ -14,3 +14,10 @@
       Fix phone icon (#1014)
 0.10: Respect the 'new' attribute if it was set from iOS integrations
 0.11: Open app when touching the widget (Bangle.js 2 only)
+0.12: Extra app-specific notification icons
+      New animated notifcationicon (instead of large blinking 'MESSAGES')
+      Added screenshots
+0.13: Add /*LANG*/ comments for internationalisation
+      Add 'Delete All' option to message options
+      Now update correctly when 'require("messages").clearAll()' is called
+0.14: Hide widget when all unread notifications are dismissed from phone

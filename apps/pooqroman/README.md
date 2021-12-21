@@ -13,8 +13,11 @@ you can alter the number of hands on the display. When the watch is unlocked, sl
 There's also a setting that displays the second hand, but only if the watch is perfectly face-to-the-sky, in case you want
 the ability to check the _exact_ time, hands free, without the impact on battery life this usually entails.
 
-Although we genrally obey the system-wide theming, you can long press on the display for a menu of additional options specific to the face.
+Although we generally obey the system-wide theming, you can long press on the display for a menu of additional options specific to the face.
 You can also override the system 12/24 hour setting just for this face here, since it's, well, a rather different experience than with numeric displays.
+
+In some previous versions of the Bangle.js firmware, the backlight doesn't come on automatically when you twist your wrist. There's currently a
+workaround for this integrated into the watchface; you can disable it in the menu, if you prefer.
 
 One other thing: there's some integration with system timers and alarms; they will show as small pips at the appropriate places
 in the day around the display. When they come within an hour, the pips turn to crosses relating to the minute hand, and the minute
