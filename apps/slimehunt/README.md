@@ -1,9 +1,10 @@
-<><><><>-SLIME HUNT-<><><><>
+=========================<><><><>-SLIME HUNT-<><><><>========================
 
 Slime Hunt is a RPG turn-based style combat game where you fight slimes until your HP runs out.
 
 The main goal is to beat your personal highscore!
 
+===========================================================================
 
 During each fight the player has 3 options,
 
@@ -13,11 +14,11 @@ BTN2) DEFEND - Defends against the slime, blocking 3 damage from the next slime 
 
 BTN3) RUN - Find a new slime to fight against. (This could change in the future!)
 
-
+===========================================================================
 
 There are currently 5 types of slime each with unique behavior.
 
-<><>-BEHAVIORS-<><>
+============================<><>-BEHAVIORS-<><>============================
 
 NEUTRAL - Slime deals 0-1 damage on it's next attack.
 
@@ -26,7 +27,7 @@ ANGRY - Slime deals 3-5 damage on it's next attack.
 ERACTIC - Slime deals 0-5 damage on it's next attack.
 
 
-<><>-SLIMES-<><>
+============================<><>-SLIMES-<><>============================
 
 1. GREEN SLIME - Is always neutral.
 
@@ -38,6 +39,6 @@ ERACTIC - Slime deals 0-5 damage on it's next attack.
 
 5. PURPLE SLIME - Is always angry.
 
-
+===========================================================================
 
 Created by Colton LaChance!
