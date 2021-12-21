@@ -4864,7 +4864,7 @@
     "icon": "app.png",
     "version":"0.01",
     "description": "Fight against slimes in turn based combat, try to get the highscore!",
-    "tags": "rpg",
+    "tags": "rpg,slime",
     "supports" : ["BANGLEJS"], 
     "storage": [
       {"name":"slimehunt.app.js","url":"app.js"},
