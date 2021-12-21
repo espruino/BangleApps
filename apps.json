@@ -5061,6 +5061,8 @@
     "storage": [
       {"name":"contourclock.app.js","url":"app.js"},
       {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
+      ]
+  },
   {
     "id": "ltherm",
     "name": "Localized Thermometer",
