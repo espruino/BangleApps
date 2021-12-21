@@ -1,6 +1,6 @@
 # Four Twenty Clock
 
-A clock that tells when and where it's going to be [4:20](https://en.wikipedia.org/wiki/420_(cannabis_culture%29) next
+A clock that tells when and where it's going to be [4:20](https://en.wikipedia.org/wiki/420_%28cannabis_culture%29) next
 
 ![screensot](screenshot.png) ![screenshot at 4:20](screenshot1.png)
 
