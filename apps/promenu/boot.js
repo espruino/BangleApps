@@ -1,3 +1,6 @@
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
 E.showMenu = function(items) {
   function RectRnd(x1,y1,x2,y2,r) {
     pp = [];
@@ -72,6 +75,8 @@ E.showMenu = function(items) {
         g.setFontAlign(-1,-1);
         if(loc.translate(name).length >= 15){
           g.drawString(loc.translate(name).substring(0, 15)+"...",x+8,iy+4);
+        }else if(loc.translate(name).length >= 10 && "object" == typeof item){
+          g.drawString(loc.translate(name).substring(0, 10)+"...",x+8,iy+4);
         }else{
           g.drawString(loc.translate(name),x+8,iy+4);
         }
