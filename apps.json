@@ -5062,5 +5062,22 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "supf",
+    "name": "supf Simple Clock with seconds and Date in custom language",
+    "shortName": "supf Clock",
+    "version": "0.01",
+    "description": "Displays the current temperature in localized units.",
+    "icon": "thermf.png",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"supf.app.js","url":"app.js"},
+      {"name":"supf.img","url":"app-icon.js","evaluate":true},
+      {"name":"supf.info","url":"supf.info","evaluate":true}
+    ]
   }
 ]
