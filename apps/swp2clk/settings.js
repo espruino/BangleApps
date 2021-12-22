@@ -1,5 +1,5 @@
 (function (back) {
-  var DEBUG = true;
+  var DEBUG = false;
   var FILE = "swp2clk.data.json";
 
   var settings = {};
