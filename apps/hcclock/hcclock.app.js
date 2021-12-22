@@ -258,16 +258,16 @@ function drawMessages()
 {
   if(!had_messages && hasMessages()) {
       g.setColor(255,255,255);
-      g.drawImage(msg, 200, 206);
+      g.drawImage(msg, 184, 212);
       g.setFont("6x8", 2);
       g.setFontAlign(0, -1, 0);
-      g.drawString(">", 224, 210);
+      g.drawString(">", 224, 216);
       had_messages = true;
   } 
   else if (had_messages && !hasMessages())
   {
-      g.setColor(255,0,0);
-      g.fillRect(200, 200, 240, 240);
+      g.setColor(0,0,0);
+      g.fillRect(180, 210, 240, 240);
       had_messages = false;
   }
 }
