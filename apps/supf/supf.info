@@ -1,1 +1,1 @@
-{"id":"supf","name":"Simple Clock with seconds and Date in custom language","type":"clock","src":"supf.app.js","icon":"supf.img","version":"0.01","tags":"clock","files":"supf.info,supf.app.js,app-icon.js"}
+{"id":"supf","name":"Simple Clock with Date","type":"clock","src":"supf.app.js","icon":"supf.img","version":"0.01","tags":"clock","files":"supf.info,supf.app.js,app-icon.js"}
