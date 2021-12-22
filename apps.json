@@ -5066,7 +5066,7 @@
     {
     "id": "supf",
     "name": "Simple Clock with Date",
-    "shortName": "supf",
+    "shortName": "supf Clock",
     "version": "0.01",
     "description": "Simple Clock with seconds and Date in custom language. Install 'Languages' to get localized names.",
     "icon": "icon.png",
