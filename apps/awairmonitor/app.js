@@ -30,6 +30,8 @@ var bt_temp_history = new Array(10).fill(0);
 
 var internal_last_update = -1;
 
+var display_frozen = false;
+
 function draw() {
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
 
@@ -47,14 +49,8 @@ function draw() {
   g.drawString("Humi", 125, 100);
   g.drawString("Temp", 160, 100);
 
-  g.setFont("HaxorNarrow7x17");
-  g.drawString(""+bt_current_co2, 18, 110);
-  g.drawString(""+bt_current_voc, 53, 110);
-  g.drawString(""+bt_current_pm25, 88, 110);
-  g.drawString(""+bt_current_humi, 123, 110);
-  g.drawString(""+bt_current_temp, 158, 110);
-
   if (last_update != bt_last_update) {
+    display_frozen = false;
     last_update = bt_last_update;
     internal_last_update = last_update;
     if (last_update % 10 == 0) {
@@ -65,16 +61,29 @@ function draw() {
       bt_temp_history.shift(); bt_temp_history.push(bt_current_temp);
     }
   }
-  
+
   if (internal_last_update == -1) {
     g.drawString("Waiting for connection", 88, 164);
-  } else if (internal_last_update > last_update + 5) {
+  } else if ((internal_last_update > last_update + 5) && (internal_last_update < last_update + 60)) {
     g.drawString("Trying to reconnect since " + (internal_last_update - last_update), 88, 164);
+  } else if (internal_last_update > last_update + 5) {
+    display_frozen = true;
+    g.drawString("Waiting for connection", 88, 164);
   }
 
+  if (display_frozen) { g.setColor("#888"); }
+
+  g.setFont("HaxorNarrow7x17");
+  g.drawString(""+bt_current_co2, 18, 110);
+  g.drawString(""+bt_current_voc, 53, 110);
+  g.drawString(""+bt_current_pm25, 88, 110);
+  g.drawString(""+bt_current_humi, 123, 110);
+  g.drawString(""+bt_current_temp, 158, 110);
 
   for (i = 0; i < 10; i++) {
-     // max height = 32
+    if (display_frozen) { g.setColor("#888"); }
+
+    // max height = 32
     g.drawLine(10+i*2, 150-(Math.min(Math.max(bt_co2_history[i],400), 1200)-400)/25, 10+i*2, 150);
     g.drawLine(45+i*2, 150-(Math.min(Math.max(bt_voc_history[i],0), 1440)-0)/45, 45+i*2, 150);
     g.drawLine(80+i*2, 150-(Math.min(Math.max(bt_pm25_history[i],0), 32)-0)/1, 80+i*2, 150);
@@ -91,6 +100,7 @@ function draw() {
 }
 
 // init
+Bangle.setUI("clock");
 require("FontHaxorNarrow7x17").add(Graphics);
 g.clear();
 Bangle.loadWidgets();
