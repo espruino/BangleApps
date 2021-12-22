@@ -5072,6 +5072,7 @@
     "icon": "eye.png",
     "type": "widget",
     "tags": "widget",
+    "readme":"README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"widviztime.wid.js","url":"widget.js"}
