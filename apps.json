@@ -5078,7 +5078,7 @@
     "readme": "README.md",
     "storage": [
       {"name":"supf.app.js","url":"app.js"},
-      {"name":"supf.img","url":"icon.js","evaluate":true},
+      {"name":"supf.img","url":"icon.js","evaluate":true}
     ]
   }
 ]
