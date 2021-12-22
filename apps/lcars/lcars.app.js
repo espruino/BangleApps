@@ -30,6 +30,7 @@ let cWhite = "#FFFFFF";
 let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
+var connected = NRF.getSecurityStatus().connected;
 
 /*
  * Requirements and globals
@@ -311,13 +312,6 @@ function draw(){
   // First handle alarm to show this correctly afterwards
   handleAlarm();
 
-  // Clear data
-  var current = new Date();
-  if(current.getHours() == 0 && current.getMinutes() == 0){
-    stepsData = new Array(24).fill(0);
-    hrmData = new Array(24).fill(0);
-  }
-
   // Next draw the watch face
   g.reset();
   g.clearRect(0, 0, g.getWidth(), g.getHeight());
@@ -396,7 +390,13 @@ function handleAlarm(){
  */
 Bangle.on('lcdPower',on=>{
   if (on) {
-    draw(); // draw immediately, queue redraw
+    // Whenever we connect to Gadgetbridge, reading data from
+    // health failed. Therefore, we update and read data from
+    // health iff the connection state did not change.
+    if(connected == NRF.getSecurityStatus().connected) {
+      draw(); // draw immediately, queue redraw
+    }
+    connected = NRF.getSecurityStatus().connected
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
