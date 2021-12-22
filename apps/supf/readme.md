@@ -1,2 +1,4 @@
-Simple Clock with seconds and Date in custom language
+# Simple Clock with seconds and Date in custom language
 ATTENTION: requires Languages app
+
+![](screenshot_supf.png)
