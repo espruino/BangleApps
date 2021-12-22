@@ -31,6 +31,7 @@ let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
 var connected = NRF.getSecurityStatus().connected;
+var plotWeek = false;
 
 /*
  * Requirements and globals
@@ -270,36 +271,71 @@ function drawPosition1(){
   }
 
   // Plot HRM graph
-  var data = new Uint16Array(32);
-  var cnt = new Uint8Array(32);
-  health.readDailySummaries(new Date(), h=>{
-    data[h.day]+=h.bpm;
-    if (h.bpm) cnt[h.day]++;
-  });
-  require("graph").drawBar(g, data, {
-    axes : true,
-    minx: 1,
-    gridx : 4,
-    gridy : 100,
-    width : 140,
-    height : 50,
-    x: 5,
-    y: 25
-  });
+  if(plotWeek){
+    var data = new Uint16Array(32);
+    var cnt = new Uint8Array(32);
+    health.readDailySummaries(new Date(), h=>{
+      data[h.day]+=h.bpm;
+      if (h.bpm) cnt[h.day]++;
+    });
+    require("graph").drawBar(g, data, {
+      axes : true,
+      minx: 1,
+      gridx : 5,
+      gridy : 100,
+      width : 140,
+      height : 50,
+      x: 5,
+      y: 25
+    });
 
-  // Plot step graph
-  var data = new Uint16Array(32);
-  health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
-  require("graph").drawBar(g, data, {
-    axes : true,
-    minx: 1,
-    gridx : 4,
-    gridy : 5,
-    width : 140,
-    height : 50,
-    x: 5,
-    y: 115
-  });
+    // Plot step graph
+    var data = new Uint16Array(32);
+    health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
+    require("graph").drawBar(g, data, {
+      axes : true,
+      minx: 1,
+      gridx : 5,
+      gridy : 5,
+      width : 140,
+      height : 50,
+      x: 5,
+      y: 115
+    });
+
+  // Plot day
+  } else {
+    var data = new Uint16Array(24);
+    var cnt = new Uint8Array(24);
+    health.readDay(new Date(), h=>{
+      data[h.hr]+=h.bpm;
+      if (h.bpm) cnt[h.hr]++;
+    });
+    require("graph").drawBar(g, data, {
+      axes : true,
+      minx: 1,
+      gridx : 4,
+      gridy : 100,
+      width : 140,
+      height : 50,
+      x: 5,
+      y: 25
+    });
+
+    // Plot step graph
+    var data = new Uint16Array(24);
+    health.readDay(new Date(), h=>data[h.hr]+=h.steps);
+    require("graph").drawBar(g, data, {
+      axes : true,
+      minx: 1,
+      gridx : 4,
+      gridy : 1000,
+      width : 140,
+      height : 50,
+      x: 5,
+      y: 115
+    });
+  }
 
   g.setFontAntonioMedium();
   g.setColor(cWhite);
@@ -394,13 +430,14 @@ Bangle.on('lcdPower',on=>{
     // health failed. Therefore, we update and read data from
     // health iff the connection state did not change.
     if(connected == NRF.getSecurityStatus().connected) {
-      draw(); // draw immediately, queue redraw
+      draw();
     }
-    connected = NRF.getSecurityStatus().connected
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
+
+  connected = NRF.getSecurityStatus().connected
 });
 
 Bangle.on('lock', function(isLocked) {
@@ -456,14 +493,16 @@ Bangle.on("drag", e => {
 
     // Vertical swipe
     } else if (Math.abs(dy)>Math.abs(dx)+10) {
-      if(lcarsViewPos != 0){
-        return;
+      if(lcarsViewPos == 0){
+        if(dy > 0){
+          decreaseAlarm();
+        } else {
+          increaseAlarm();
+        }
       }
 
-      if(dy > 0){
-        decreaseAlarm();
-      } else {
-        increaseAlarm();
+      if(lcarsViewPos == 1){
+        plotWeek = dy < 0
       }
     }
 
