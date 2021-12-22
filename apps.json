@@ -5068,7 +5068,7 @@
     "name": "Simple Clock with Date",
     "shortName": "supf",
     "version": "0.01",
-    "description": "Simple Clock with seconds and Date in custom language. \nATTENTION: requires Languages app",
+    "description": "Simple Clock with seconds and Date in custom language. Install 'Languages' to get localized names.",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot_supf.png"}],
     "type": "clock",
