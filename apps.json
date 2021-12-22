@@ -5062,5 +5062,21 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "touchtimer",
+    "name": "Touch Timer",
+    "shortName": "Touch Timer",
+    "version": "0.01",
+    "description": "Quickly and easily create a timer touch-only.",
+    "icon": "app.png",
+    "tags": "tools",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      { "name": "touchtimer.app.js", "url": "app.js" },
+      { "name": "touchtimer.boot.js", "url": "boot.js" },
+      { "name": "touchtimer.img", "url": "app-icon.js", "evaluate": true }
+    ]
   }
 ]
