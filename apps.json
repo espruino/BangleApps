@@ -5071,7 +5071,7 @@
   "icon": "andark_icon.png",
   "type": "clock",
   "tags": "clock",
-  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
     {"name":"andark.app.js","url":"app.js"},
