@@ -1,5 +1,6 @@
 const c={"x":g.getWidth()/2,"y":g.getHeight()/2};
 let zahlpos=[];
+let unlock = true;
 
 function zeiger(len,dia,tim){
   const x =c.x+ Math.cos(tim)*len/2,
@@ -41,9 +42,11 @@ function draw(){
  // g.setColor(1,1,1);
   const minz = zeiger(150,5,m);
   g.fillPoly(minz,true);
+  if (unlock){
   const sekz = zeiger(150,2,s);
   g.fillPoly(sekz,true);
   g.fillCircle(c.x,c.y,4);
+  }
 
 
 }
@@ -90,6 +93,7 @@ g.setBgColor(0,0,0);
 g.clear();
 drawScale();
 draw();
+
 let secondInteraval= setInterval(draw, 1000);
 // Stop updates when LCD is off, restart when on
 
@@ -102,6 +106,19 @@ Bangle.on('lcdPower',on=>{
   }else{
   }
 });
+Bangle.on('lock',on=>{
+  if (secondInterval) clearInterval(secondInterval);
+  secondInterval = undefined;
+  if (!on) {
+      secondInterval = setInterval(draw, 1000);
+      unlock = true;
+      draw(); // draw immediately
+  }else{
+     secondInterval = setInterval(draw, 60000);
+     unlock = false;
+     draw();
+  }
+ });
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
