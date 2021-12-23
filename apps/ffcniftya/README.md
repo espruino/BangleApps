@@ -1,9 +1,9 @@
 # Nifty-A Clock
 
-## This is the clock
+##This is the clock
 ![](screenshot_nifty.png)
 
-## The week number can be turned On/Off via settings
+##And the week number can be turned On/Off via settings
 ![](screenshot_settings_nifty.png)
 default is "On"
 
