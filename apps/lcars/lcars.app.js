@@ -168,7 +168,11 @@ function drawLock(){
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 130, 12);
-  g.drawString("B-JS2", 130, 32);
+  if(connected){
+    g.drawString("BT-CO", 130, 32);
+  } else {
+    g.drawString("BT-NC", 130, 32);
+  }
   if(Bangle.isLocked()){
     g.drawString("LOCK", 130, 52);
   }
@@ -502,7 +506,7 @@ Bangle.on("drag", e => {
       }
 
       if(lcarsViewPos == 1){
-        plotWeek = dy < 0
+        plotWeek = dy < 0 ? true : false;
       }
     }
 
