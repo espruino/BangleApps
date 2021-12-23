@@ -329,7 +329,7 @@ function drawPosition1(){
       axes : true,
       minx: 1,
       gridx : 4,
-      gridy : 1000,
+      gridy : 2000,
       width : 140,
       height : 50,
       x: 5,
