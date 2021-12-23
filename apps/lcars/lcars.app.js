@@ -307,6 +307,11 @@ function drawPosition1(){
       y: 115
     });
 
+    g.setFontAntonioMedium();
+    g.setColor(cWhite);
+    g.drawString("HRM", 122, 9);
+    g.drawString("STEPS [K]", 90, 96);
+
   // Plot day
   } else {
     var data = new Uint16Array(24);
@@ -339,13 +344,12 @@ function drawPosition1(){
       x: 5,
       y: 115
     });
+
+    g.setFontAntonioMedium();
+    g.setColor(cWhite);
+    g.drawString("HRM [24]", 90, 9);
+    g.drawString("STEPS [24]", 82, 96);
   }
-
-  g.setFontAntonioMedium();
-  g.setColor(cWhite);
-  g.drawString("HRM", 122, 9);
-  g.drawString("STEPS [K]", 90, 96);
-
 }
 
 function draw(){
