@@ -201,7 +201,7 @@ function drawState(){
 
   // Alarm within symbol
   g.setFontAntonioMedium();
-  if(isAlarmEnabled() > 0){
+  if(isAlarmEnabled()){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
     g.drawString(getAlarmMinutes(), 115+25, 107+25+1);
@@ -404,7 +404,7 @@ function getCurrentTimeInMinutes(){
 }
 
 function isAlarmEnabled(){
- return settings.alarm > 0;
+ return settings.alarm >= 0;
 }
 
 function getAlarmMinutes(){
@@ -429,11 +429,13 @@ function handleAlarm(){
   .then(() => new Promise(resolve => setTimeout(resolve, t)))
   .then(() => Bangle.buzz(t, 1))
   .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1));
-
-  // Update alarm state to disabled
-  settings.alarm = -1;
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  .then(() => Bangle.buzz(t, 1))
+  .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
+  .then(() => {
+    // Update alarm state to disabled
+    settings.alarm = -1;
+    Storage.writeJSON(SETTINGS_FILE, settings);
+  });
 }
 
 
