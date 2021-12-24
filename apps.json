@@ -4977,8 +4977,8 @@
     "name": "Dash Hound",
     "shortName":"Dash Hound",
     "icon": "app.png",
-    "version":"0.01",
-    "description": "This app has an opening screen with some text and a dog",
+    "version":"1.00",
+    "description": "A runner game of a dog jumping over cacti! Meet Dash the dachshund! Press Btn1 to jump over the cacti. Make sure not to hit them or land on them or Dash will explode!",
     "tags": "",
     "storage": [
       {"name":"dashhound.app.js","url":"app.js"},
