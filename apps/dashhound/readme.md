@@ -13,3 +13,6 @@ You can always exit the game by holding BTN3.
 
 Track your score in the top right corner.
 If you want to make things trick try using the touchscreen to move left and right!
+
+This screenshot is on the emulator, but gameplay is optimised for the device. The emulator runs too quickly.
+![This is an image](./dashhound_gameplay.png)
