@@ -3,4 +3,5 @@
 0.03: New design with different icons if gps, hrm or compass is on.
 0.04: Inluded LCARS Logo.
 0.05: Additional icons for (1) charging and (2) bat < 30%.
-0.06: Fix - Alarm disabled, if clock was closed
+0.06: Fix - Alarm disabled, if clock was closed.
+0.07: Added settings to adjust data that is shown for each row.

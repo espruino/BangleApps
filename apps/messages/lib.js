@@ -30,6 +30,10 @@ exports.pushMessage = function(event) {
   require("Storage").writeJSON("messages.json",messages);
   // if in app, process immediately
   if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
+  // if we've removed the last new message, hide the widget
+  if (event.t=="remove" && !messages.some(m=>m.new)) {
+    if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.hide();
+  }
   // ok, saved now - we only care if it's new
   if (event.t!="add") {
     return;

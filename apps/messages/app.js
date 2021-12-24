@@ -52,11 +52,11 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg.new) {
+  if (msg && msg.new) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
   }
-  showMessage(msg.id);
+  showMessage(msg&&msg.id);
 };
 function saveMessages() {
   require("Storage").writeJSON("messages.json",MESSAGES)
@@ -174,24 +174,33 @@ function showMusicMessage(msg) {
 }
 
 function showMessageSettings(msg) {
-  E.showMenu({"":{"title":"Message"},
+  E.showMenu({"":{"title":/*LANG*/"Message"},
     "< Back" : () => showMessage(msg.id),
-    "Delete" : () => {
+    /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
     },
-    "Mark Unread" : () => {
+    /*LANG*/"Mark Unread" : () => {
       msg.new = true;
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+    },
+    /*LANG*/"Delete all messages" : () => {
+      E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
+        if (isYes) {
+          MESSAGES = [];
+          saveMessages();
+        }
+        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+      });
     },
   });
 }
 
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
-  if (!msg) return checkMessages(); // go home if no message found
+  if (!msg) return checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0}); // go home if no message found
   if (msg.src=="Maps") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
@@ -228,7 +237,6 @@ function showMessage(msgid) {
   }
   if (msg.negative) {
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
-      console.log("Response");
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
@@ -266,10 +274,10 @@ function checkMessages(options) {
   options=options||{};
   // If no messages, just show 'no messages' and return
   if (!MESSAGES.length) {
-    if (!options.clockIfNoMsg) return E.showPrompt("No Messages",{
-      title:"Messages",
+    if (!options.clockIfNoMsg) return E.showPrompt(/*LANG*/"No Messages",{
+      title:/*LANG*/"Messages",
       img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
-      buttons : {"Ok":1}
+      buttons : {/*LANG*/"Ok":1}
     }).then(() => { load() });
     return load();
   }
@@ -297,7 +305,7 @@ function checkMessages(options) {
       var x = r.x+2, title = msg.title, body = msg.body;
       var img = getMessageImage(msg);
       if (msg.id=="music") {
-        title = msg.artist || "Music";
+        title = msg.artist || /*LANG*/"Music";
         body = msg.track;
       }
       if (img) {

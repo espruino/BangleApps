@@ -1,0 +1,21 @@
+{
+  "//":"Spanish language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Riasztások",
+    "Hours" : "Óra",
+    "Minutes" : "Perc",
+    "Enabled" : "Aktiválva",
+    "New Alarm" : "Új riasztás",
+    "Save" : "Mentés",
+    "Back" : "Vissza",
+    "Repeat" : "Ismétlés",
+    "Delete" : "Törlés",
+    "ALARM!" : "ALARM!",
+    "Sleep" : "Alvás"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "ismétlés"
+  }
+}

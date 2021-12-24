@@ -42,3 +42,4 @@
 0.36: Add comments to .boot0 to make debugging a bit easier
 0.37: Remove Quiet Mode settings: now handled by Quiet Mode Schedule app
 0.38: Option to log to file if settings.log==2
+0.39: Fix passkey support (fix https://github.com/espruino/Espruino/issues/2035)

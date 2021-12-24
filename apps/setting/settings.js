@@ -61,6 +61,37 @@ if (!settings) resetSettings();
 const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
 function showMainMenu() {
+
+  const mainmenu = {
+    '': { 'title': 'Settings' },
+    '< Back': ()=>load(),
+    /*LANG*/'Apps': ()=>showAppSettingsMenu(),
+    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
+    /*LANG*/'System': ()=>showSystemMenu(),
+    /*LANG*/'Alerts': ()=>showAlertsMenu(),
+    /*LANG*/'Utils': ()=>showUtilMenu(),
+    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showSystemMenu() {
+
+  const mainmenu = {
+    '': { 'title': 'System' },
+    '< Back': ()=>showMainMenu(),
+    /*LANG*/'Theme': ()=>showThemeMenu(),
+    /*LANG*/'LCD': ()=>showLCDMenu(),
+    /*LANG*/'Locale': ()=>showLocaleMenu(),
+    /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Set Time': ()=>showSetTimeMenu()
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showAlertsMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -91,12 +122,9 @@ function showMainMenu() {
     };
   }
 
-
   const mainmenu = {
-    '': { 'title': 'Settings' },
-    '< Back': ()=>load(),
-    /*LANG*/'App Settings': ()=>showAppSettingsMenu(),
-    /*LANG*/'BLE': ()=>showBLEMenu(),
+    '': { 'title': 'Alerts' },
+    '< Back': ()=>showMainMenu(),
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
       value: settings.vibrate,
@@ -119,23 +147,18 @@ function showMainMenu() {
         updateOptions();
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
       },
-    },
-    /*LANG*/'Locale': ()=>showLocaleMenu(),
-    /*LANG*/'Select Clock': ()=>showClockMenu(),
-    /*LANG*/'Set Time': ()=>showSetTimeMenu(),
-    /*LANG*/'LCD': ()=>showLCDMenu(),
-    /*LANG*/'Theme': ()=>showThemeMenu(),
-    /*LANG*/'Utils': ()=>showUtilMenu(),
-    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
+    }
   };
 
   return E.showMenu(mainmenu);
 }
 
+
 function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '': { 'title': 'Bluetooth' },
     '< Back': ()=>showMainMenu(),
     'Make Connectable': ()=>makeConnectable(),
     'BLE': {
@@ -190,7 +213,7 @@ function showThemeMenu() {
   }
   var m = E.showMenu({
     '':{title:'Theme'},
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
@@ -276,8 +299,10 @@ function showPasskeyMenu() {
       showBLEMenu();
     }
   };
-  if (!settings.passkey || settings.passkey.length!=6)
+  if (!settings.passkey || settings.passkey.length!=6) {
     settings.passkey = "123456";
+    updateSettings();
+  }
   for (var i=0;i<6;i++) (function(i){
     menu[`Digit ${i+1}`] = {
       value : 0|settings.passkey[i],
@@ -333,7 +358,7 @@ function showWhitelistMenu() {
 function showLCDMenu() {
   const lcdMenu = {
     '': { 'title': 'LCD' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'LCD Brightness': {
       value: settings.brightness,
       min: 0.1,
@@ -445,7 +470,7 @@ function showLCDMenu() {
 function showLocaleMenu() {
   const localemenu = {
     '': { 'title': 'Locale' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -549,7 +574,7 @@ function showClockMenu() {
     '': {
       'title': 'Select Clock',
     },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -576,7 +601,7 @@ function showSetTimeMenu() {
     '': { 'title': 'Set Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
-      showMainMenu();
+      showSystemMenu();
     },
     'Hour': {
       value: d.getHours(),

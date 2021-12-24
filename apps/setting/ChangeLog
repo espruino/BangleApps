@@ -39,3 +39,5 @@
 0.34: Remove Quiet Mode LCD settings: now handled by Quiet Mode Schedule app
 0.35: Change App/Widget settings to 'App Settings' so it fits on Bangle screen
 0.36: Added 'Utils' menu with helpful utilities for restoring Bangle.js
+0.37: Going into passkey menu now saves settings with passkey
+0.38: Restructed menus as per forum discussion
