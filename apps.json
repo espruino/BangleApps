@@ -1749,8 +1749,9 @@
     "icon": "grocery.png",
     "type": "app",
     "tags": "tool,outdoors,shopping,list",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "custom": "grocery.html",
+    "allow_emulator": true,
     "storage": [
       {"name":"grocery.app.js","url":"app.js"},
       {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
