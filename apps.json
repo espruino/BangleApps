@@ -4214,9 +4214,9 @@
     "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
-    "screenshots": [{"url":"screenshot_pastel.png"}],
+    "screenshots": [{"url":"screenshot_pastel.png"}, {"url":"weather_icons.png"}],
     "type": "clock",
-    "tags": "clock",
+    "tags": "clock, weather, tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
