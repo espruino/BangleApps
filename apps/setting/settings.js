@@ -499,10 +499,9 @@ function showUtilMenu() {
     '< Back': ()=>showMainMenu(),
     'Debug Info': {
       value: E.clip(0|settings.log,0,2),
-      format: v => ["Hide","Show","Log"][E.clip(0|v,0,2)],
       min: 0,
       max: 2,
-      step: 1,
+      format: v => ["Hide","Show","Log"][E.clip(0|v,0,2)],
       onchange: v => {
         settings.log = v;
         updateSettings();
