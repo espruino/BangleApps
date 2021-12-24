@@ -8,10 +8,13 @@
 * Has a settings menu, change font, enable/disable the grid, weather icons
 * On Bangle 1 use BTN1,BTN3 to cycle through the info display (Date, ID, Batt %, Ram % etc)
 * On Bangle 2 touch the top right/top left to cycle through the info display (Date, ID, Batt %, Ram % etc)
+* The information display will cycle on each screen update
 * Uses mylocation.json from MyLocation app to calculate sunrise and sunset times for your location
 * Uses pedometer widget to get latest step count
-* Use the wesather widget to get weather status
+* Use the weather widget to get weather status
 * Dependant apps are installed when Pastel installs
+* The screen is updated every minute to save battery power
+* The weather display will display temperature and wind speed on alternate screen refreshes
 
 I came up with the name Pastel due to the shade of the grid background.
 
@@ -70,4 +73,11 @@ disable weather updates to pastel through the settings app.
 
 ### Orbitron
 ![](screenshot_orbitron.png)
+
+### The Grid
+
+Setting the grid on provides a graph paper style background to the App.
+The grid is not supported on a Bangle 1 due to flicker issues.
+
+![](screenshot_grid.png)
 
