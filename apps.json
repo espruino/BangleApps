@@ -5072,7 +5072,6 @@
     "readme":"README.md",
     "supports":["BANGLEJS2"],
     "allow_emulator":true,
-    "src":"colorwheel.app.js",
     "icon":"colorwheel.png",
     "storage": [
       {"name":"colorwheel.app.js","url":"app.js"},
