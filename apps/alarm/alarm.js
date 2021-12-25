@@ -39,20 +39,28 @@ function showAlarm(alarm) {
     require("Storage").write("alarm.json",JSON.stringify(alarms));
     load();
   });
+  function vibrate(counter) {
+    VIBRATE.write(1);
+    setTimeout(() => VIBRATE.write(0), 100);
+    if (--counter) setTimeout(() => vibrate(counter), 250);
+  }
   function buzz() {
     if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
-    Bangle.buzz(100).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(100).then(function() {
-          if (buzzCount--)
-            setTimeout(buzz, 3000);
-          else if(alarm.as) { // auto-snooze
-            buzzCount = 10;
-            setTimeout(buzz, 600000);
-          }
-        });
-      },100);
-    });
+    if (process.env.HWVERSION==2) {
+      vibrate(4);
+    } else {
+      Bangle.buzz(100).then(()=>{
+        setTimeout(()=>{
+          Bangle.buzz(100);
+        },100);
+      });
+    }
+    if (buzzCount--)
+      setTimeout(buzz, 3000);
+    else if(alarm.as) { // auto-snooze
+      buzzCount = 10;
+      setTimeout(buzz, 600000);
+    }
   }
   buzz();
 }
