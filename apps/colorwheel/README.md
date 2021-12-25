@@ -9,4 +9,4 @@ Please note: you may also tap outside the wheel (for black) or inside it (for wh
 
 ## License ##
 
-[MIT License](LICENSE.md)
+[MIT License](LICENSE)
