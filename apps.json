@@ -5072,7 +5072,7 @@
     "supports":["BANGLEJS2"],
     "allow_emulator":true,
     "src":"colorwheel.app.js",
-    "icon":"colorwheel.img",
+    "icon":"colorwheel.png",
     "storage": [
       {"name":"colorwheel.app.js","url":"app.js"},
       {"name":"colorwheel.img","url":"colorwheel-icon.js","evaluate":true}
