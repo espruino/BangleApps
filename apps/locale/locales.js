@@ -589,7 +589,7 @@ var locales = {
     month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
     abday: "ne,po,út,st,čt,pá,so",
     day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
-    trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }
+    trans: { yes: "ano", Yes: "Ano", no: "ne", No: "Ne", ok: "ok", on: "zap", off: "vyp" }
   },
   "sl_SI": {
     lang: "sl_SI",
