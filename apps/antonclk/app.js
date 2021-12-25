@@ -1,6 +1,6 @@
 // Clock with large digits using the "Anton" bold font
 
-var SETTINGSFILE="antonclk.json";
+var SETTINGSFILE = "antonclk.json";
 
 Graphics.prototype.setFontAnton = function(scale) {
 // Actual height 69 (68 - 0)
@@ -10,44 +10,56 @@ Graphics.prototype.setFontAnton = function(scale) {
 // variables defined from settings
 var secondsOnUnlock;
 var secondsAlways;
+var secondsColoured;
 var dateAsISO;
+var dateOnSecs;
 var longDate;
 var weekDay;
 var upperCase;
 
 // dynamic variables
 var drawTimeout;
-var queueMillis=1000;
-var withSeconds=true;
+var queueMillis = 1000;
+var secondsScreen = true;
 
-var isBangle1=(g.getWidth()==240);
+var isBangle1 = (g.getWidth() == 240);
 
 /* For development purposes
 require('Storage').writeJSON(SETTINGSFILE, {
   secondsOnUnlock: false,
   secondsAlways: false,
+  secondsColoured: true,
   dateAsISO: false,
+  dateOnSecs: true,
   longDate: true,
   weekDay: true,
-  upperCase: true
+  upperCase: false,
 });
-*/
+/* */
 
-function def(value,def) {
-  return (value!==undefined?value:def);
+/* OR (also for development purposes)
+require('Storage').erase(SETTINGSFILE);
+/* */
+
+// Helper method for loading the settings
+function def(value, def) {
+  return (value !== undefined ? value : def);
 }
 
+// Load settings
 function loadSettings() {
   var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
-  secondsOnUnlock = def(settings.secondsOnUnlock,true);
-  secondsAlways = def(settings.secondsAlways,false);
-  dateAsISO = def(settings.dateAsISO,true);
-  longDate = def(settings.longDate,true);
-  weekDay = def(settings.weekDay,true);
-  upperCase = def(settings.upperCase,false);
+  secondsOnUnlock = def(settings.secondsOnUnlock, false);
+  secondsAlways = def(settings.secondsAlways, false);
+  secondsColoured = def(settings.secondsColoured, false);
+  dateAsISO = def(settings.dateAsISO, false);
+  dateOnSecs = def(settings.dateOnSecs, true);
+  longDate = def(settings.longDate, true);
+  weekDay = def(settings.weekDay, true);
+  upperCase = def(settings.upperCase, true);
 }
 
-// schedule a draw for the next minute
+// schedule a draw for the next second or minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -59,11 +71,11 @@ function queueDraw() {
 function updateState() {
   if (Bangle.isLCDOn()) {
     if ((secondsOnUnlock && !Bangle.isLocked()) || secondsAlways) {
-      withSeconds=true;
-      queueMillis=1000;
+      secondsScreen = true;
+      queueMillis = 1000;
     } else {
-      withSeconds=false;
-      queueMillis=60000;
+      secondsScreen = false;
+      queueMillis = 60000;
     }
     draw(); // draw immediately, queue redraw
   } else { // stop draw timer
@@ -73,71 +85,70 @@ function updateState() {
 }
 
 function isoStr(date) {
-  return date.getFullYear()+"-"+("0" + (date.getMonth()+1)).substr(-2)+"-"+("0" + date.getDate()).substr(-2);
+  return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
 }
 
 function doColor() {
-  return !isBangle1 && !Bangle.isLocked();
+  return !isBangle1 && !Bangle.isLocked() && secondsColoured;
 }
 
 function draw() {
-  var x = g.getWidth()/2;
-  var y = g.getHeight()/2;
-  if (secondsOnUnlock || secondsAlways)
-    y-= 25;
+  var x = g.getWidth() / 2;
+  var y = g.getHeight() / 2 - (secondsOnUnlock || secondsAlways ? 24 : 12);
   g.reset();
-  g.clearRect(0,24,g.getWidth(),g.getHeight());  // clear whole background
+  g.clearRect(0, 24, g.getWidth(), g.getHeight()); // clear whole background
   var date = new Date();
-  var timeStr = require("locale").time(date,1);
+  var timeStr = require("locale").time(date, 1);
   // draw time
-  g.setFontAlign(0,0).setFont("Anton");
-  g.drawString(timeStr,x,y);
-  if (withSeconds) {
-    y+=77;
-    var secStr = ":"+("0" + date.getSeconds()).substr(-2);
-    g.setFontAlign(1,0).setFont("Anton");
+  g.setFontAlign(0, 0).setFont("Anton");
+  g.drawString(timeStr, x, y);
+  if (secondsScreen) {
+    y += 76;
+    var secStr = ":" + ("0" + date.getSeconds()).substr(-2);
     if (doColor())
-      g.setColor(0,0,1);
-    g.drawString(secStr,g.getWidth()-(isBangle1?32:2),y);
-    y-=77;
-    y+=60;
-    x=g.getWidth()/4+(isBangle1?12:-4);
-    var dateStr2=(dateAsISO?isoStr(date):require("locale").date(date,1));
-    var year;
-    var md;
-    var yearfirst;
-    if (dateStr2.match(/\d\d\d\d$/)) {
-      year=dateStr2.slice(-4);
-      md=dateStr2.slice(0,-4);
-      if (!md.endsWith("."))
-        md=md.slice(0,-1);
-      yearfirst=false;
+      g.setColor(0, 0, 1);
+    g.setFont("Anton");
+    if (dateOnSecs) {
+      g.setFontAlign(1, 0).drawString(secStr, g.getWidth() - (isBangle1 ? 32 : 2), y);
+      y -= 16;
+      x = g.getWidth() / 4 + (isBangle1 ? 12 : -4);
+      var dateStr2 = (dateAsISO ? isoStr(date) : require("locale").date(date, 1));
+      var year;
+      var md;
+      var yearfirst;
+      if (dateStr2.match(/\d\d\d\d$/)) {
+        year = dateStr2.slice(-4);
+        md = dateStr2.slice(0, -4);
+        if (!md.endsWith("."))
+          md = md.slice(0, -1);
+        yearfirst = false;
+      } else {
+        if (!dateStr2.match(/^\d\d\d\d/))
+          dateStr2 = isoStr(date);
+        year = dateStr2.slice(0, 4);
+        md = dateStr2.slice(5);
+        yearfirst = true;
+      }
+      g.setFontAlign(0, 0).setFont("Vector", 24);
+      if (doColor())
+        g.setColor(1, 0, 0);
+      g.drawString(md, x, (yearfirst ? y + 28 : y));
+      g.drawString(year, x, (yearfirst ? y : y + 28));
+    } else {
+      g.setFontAlign(0, 0).drawString(secStr, x, y);
     }
-    else {
-      if (!dateStr2.match(/^\d\d\d\d/))
-        dateStr2=isoStr(date);
-      year=dateStr2.slice(0,4);
-      md=dateStr2.slice(5);
-      yearfirst=true;
-    }
-    g.setFontAlign(0,0).setFont("Vector",24);
-    if (doColor())
-      g.setColor(1,0,0);
-    g.drawString(md,x,(yearfirst?y+28:y));
-    g.drawString(year,x,(yearfirst?y:y+28));
-  }
-  else {
-    y+=52;
-    var dateStr = (dateAsISO?isoStr(date):require("locale").date(date,(longDate?0:1)));
+  } else { // No seconds screen
+    y += 50;
+    var dateStr = (dateAsISO ? isoStr(date) : require("locale").date(date, (longDate ? 0 : 1)));
     if (upperCase)
-      dateStr=dateStr.toUpperCase();
-    g.setFontAlign(0,0).setFont("Vector",24);
-    g.drawString(dateStr,x,y);
+      dateStr = dateStr.toUpperCase();
+    g.setFontAlign(0, 0).setFont("Vector", 24);
+    g.drawString(dateStr, x, y);
     if (weekDay) {
       var dowStr = require("locale").dow(date);
       if (upperCase)
-        dowStr=dowStr.toUpperCase();
-      g.drawString(dowStr,x,y+28);
+        dowStr = dowStr.toUpperCase();
+      g.drawString(dowStr, x, y + 26);
     }
   }
 
@@ -152,8 +163,12 @@ g.clear();
 // Set dynamic state and perform initial drawing
 updateState();
 // Register hooks for LCD on/off event and screen lock on/off event
-Bangle.on('lcdPower',on=>{ updateState(); });
-Bangle.on('lock',on=>{ updateState(); });
+Bangle.on('lcdPower', on => {
+  updateState();
+});
+Bangle.on('lock', on => {
+  updateState();
+});
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 // Load widgets

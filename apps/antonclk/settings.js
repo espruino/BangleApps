@@ -4,7 +4,7 @@
   var FILE = "antonclk.json";
   // Load settings
   var settings = Object.assign({
-    secondsOnUnlock: true,
+    secondsOnUnlock: false,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -57,23 +57,35 @@
       "title": "Show seconds..."
     },
     "< Back": () => E.showMenu(mainmenu),
-    "If unlocked": {
-      value: (settings.secondsOnUnlock !== undefined ? settings.secondsOnUnlock : true),
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settings.secondsOnUnlock = v;
-        if (v)
-          settings.secondsAlways = false;
-        writeSettings();
-      }
-    },
     "Always": {
       value: (settings.secondsAlways !== undefined ? settings.secondsAlways : false),
       format: v => v ? "On" : "Off",
       onchange: v => {
         settings.secondsAlways = v;
-        if (v)
-          settings.secondsOnUnlock = false;
+        writeSettings();
+      }
+    },
+    "If unlocked": {
+      value: (settings.secondsOnUnlock !== undefined ? settings.secondsOnUnlock : false),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.secondsOnUnlock = v;
+        writeSettings();
+      }
+    },
+    "Coloured": {
+      value: (settings.secondsColoured !== undefined ? settings.secondsColoured : false),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.secondsColoured = v;
+        writeSettings();
+      }
+    },
+    "With date": {
+      value: (settings.dateOnSecs !== undefined ? settings.dateOnSecs : false),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.dateOnSecs = v;
         writeSettings();
       }
     }
