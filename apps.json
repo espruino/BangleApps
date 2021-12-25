@@ -5069,6 +5069,7 @@
     "tags":"app,tool",
     "version":"0.01",
     "description":"a tappable wheel of good-looking colors",
+    "readme":"README.md",
     "supports":["BANGLEJS2"],
     "allow_emulator":true,
     "src":"colorwheel.app.js",
