@@ -4240,6 +4240,7 @@
     "name": "Anton Clock",
     "version": "0.04",
     "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
+    "readme":"README.md",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
     "type": "clock",
