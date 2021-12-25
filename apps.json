@@ -5062,5 +5062,20 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
+  },
+  {
+    "id":"colorwheel",
+    "name":"Color Wheel",
+    "tags":"tool",
+    "version":"0.01",
+    "description":"a tappable wheel of good-looking colors",
+    "supports":["BANGLEJS2"],
+    "allow_emulator":true,
+    "src":"colorwheel.app.js",
+    "icon":"colorwheel.img",
+    "storage": [
+      {"name":"colorwheel.app.js","url":"app.js"},
+      {"name":"colorwheel.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
