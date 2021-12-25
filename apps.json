@@ -5066,7 +5066,7 @@
   {
     "id":"colorwheel",
     "name":"Color Wheel",
-    "tags":"tool",
+    "tags":"app,tool",
     "version":"0.01",
     "description":"a tappable wheel of good-looking colors",
     "supports":["BANGLEJS2"],
