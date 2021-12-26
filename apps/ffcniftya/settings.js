@@ -3,7 +3,7 @@
   // Load settings
   var cfg = Object.assign({
     showWeekNum: true,
-  }, require('Storage').readJSON(FILE, true) || {});
+  }, require('Storage').readJSON(FILE, 1) || {});
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, cfg);
