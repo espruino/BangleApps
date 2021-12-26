@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
