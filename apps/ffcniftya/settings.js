@@ -1,9 +1,7 @@
 (function(back) {
-  var FILE = "\ffcniftya.json";
+  var FILE = "ffcniftya.json";
   // Load settings
-  var cfg = Object.assign({
-    showWeekNum: true,
-  }, require('Storage').readJSON(FILE, true) || {});
+  var cfg = require('Storage').readJSON(FILE, 1) || { showWeekNum: true };
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, cfg);
