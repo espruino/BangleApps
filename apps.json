@@ -4940,6 +4940,7 @@
     "type": "clock",
     "tags": "clock,tool,health",
     "readme":"README.md",
+    "custom": "awair_to_bangle.html",
     "supports":["BANGLEJS2"],
     "storage": [
       {"name":"awairmonitor.app.js","url":"app.js"},
