@@ -10,7 +10,7 @@ Colors are black/white - photos have non correct camera color "blue"
 *photo*
 
 ## The week number can be turned of in settings
-(default is [b]"On"[/b])
+(default is **"On"**)
 
 ![](screenshot_settings_nifty.png)
 *emulated*
