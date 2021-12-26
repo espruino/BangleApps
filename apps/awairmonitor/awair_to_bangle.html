@@ -1,124 +1,204 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<!-- For unknown reasons, when this page is opened through the app store, puck.js is loaded via HTTP (not HTTPS) which causes the request to be blocked. -->
-<!--<script src="https://puck-js.com/puck.js"></script>-->
-<!-- So instead, let's embed the code of puck.js below (2021/12/27) -->
-<script>
-/*
---------------------------------------------------------------------
-Puck.js BLE Interface library for Nordic UART
-                      Copyright 2021 Gordon Williams (gw@pur3.co.uk)
-                      https://github.com/espruino/EspruinoWebTools
---------------------------------------------------------------------
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
---------------------------------------------------------------------
-This creates a 'Puck' object that can be used from the Web Browser.
+<script src="https://puck-js.com/puck.js"></script>
+<script type="text/javascript">
 
-Simple usage:
+// Don't forget to enable the Local API on your Awair before using this
+// https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
 
-  Puck.write("LED1.set()\n")
+const awair_name_1 = "Awair";
 
-Execute expression and return the result:
+var bt_connection;
+var is_connected = false;
+var reconnect_counter = 5;
+var reconnect_attempt_counter = 1;
+var is_chart_started = false;
 
-  Puck.eval("BTN.read()", function(d) {
-    alert(d);
-  });
+function initChart() {
+	var chart_co2;
+	var chart_voc;
+	var chart_pm;
+	var chart_temperature;
+	var chart_humidity;
+	var dataPoints_1 = [];
+	var posx = 0;
 
-Or write and wait for a result - this will return all characters,
-including echo and linefeed from the REPL so you may want to send
-`echo(0)` and use `console.log` when doing this.
+	var awair_ip_1 = document.getElementById('inputawairip').value;
+	
+	$.getJSON("http://"+awair_ip_1+"/air-data/latest", function(data) {
+		$.each(data, function(key, value){
+			if (dataPoints_1[key] === undefined) { dataPoints_1[key] = []; }
+			if (key === "temp" || key === "humid") { dataPoints_1[key].push({x: posx, y: parseFloat(value)}); }
+			else { dataPoints_1[key].push({x: posx, y: parseInt(value)}); }
+		});
 
-  Puck.write("1+2\n", function(d) {
-    alert(d);
-  });
+		posx++;
+		
+		chart_co2 = new CanvasJS.Chart("chartContainer_co2",{
+			title:{ text:"CO2", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.co2 }]
+		});
+		chart_voc = new CanvasJS.Chart("chartContainer_voc",{
+			title:{ text:"VOC", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.voc }]
+		});
+		chart_pm = new CanvasJS.Chart("chartContainer_pm",{
+			title:{ text:"PM", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ minimum: 0, labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.pm25 }]
+		});
+		chart_humidity = new CanvasJS.Chart("chartContainer_humidity",{
+			title:{ text:"Humidity", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.humid }]
+		});
+		chart_temperature = new CanvasJS.Chart("chartContainer_temperature",{
+			title:{ text:"Temperature", fontFamily: "helvetica", fontColor: "#F7FAFC", fontSize: 16, horizontalAlign: "left", padding: { left: 30 } },
+			axisX:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			axisY:{ labelFontColor: "#F7FAFC", gridColor: "#2D3748", lineColor: "#2D3748", tickColor: "#2D3748" },
+			legend: { fontColor: "#F7FAFC", horizontalAlign: "center", verticalAlign: "bottom" },
+			data: [	{ type: "line", lineColor: "#6648FF", showInLegend: true, legendText: awair_name_1, dataPoints : dataPoints_1.temp }]
+		});
 
-Both `eval` and `write` will return a promise if no callback
-function is given as an argument.
+		chart_co2.set("backgroundColor", "#1A202C");
+		chart_voc.set("backgroundColor", "#1A202C");
+		chart_pm.set("backgroundColor", "#1A202C");
+		chart_humidity.set("backgroundColor", "#1A202C");
+		chart_temperature.set("backgroundColor", "#1A202C");
 
-  alert( await Puck.eval("BTN.read()") )
+		updateChart();
+	});
 
-  alert( await Puck.write("1+2\n") )
+	function updateChart() {
+		$.getJSON("http://"+awair_ip_1+"/air-data/latest", function(data) {
+			$.each(data, function(key, value){
+				if (dataPoints_1[key] === undefined) { dataPoints_1[key] = []; }
+				if (key === "temp" || key === "humid") { dataPoints_1[key].push({x: posx, y: parseFloat(value)}); }
+				else { dataPoints_1[key].push({x: posx, y: parseInt(value)}); }
+			});
 
+			posx++;
+			chart_co2.render();
+			chart_voc.render();
+			chart_pm.render();
+			chart_temperature.render();
+			chart_humidity.render();
+			
+			chart_co2.title.set("text", "CO2 level (ppm)");				
+			chart_voc.title.set("text", "VOC level (ppb)");
+			chart_pm.title.set("text", "PM2.5 level (ug/m³)");
+			chart_humidity.title.set("text", "Humidity level (%)");
+			chart_temperature.title.set("text", "Temperature level (°C)");
+			
+			let current_co2 = dataPoints_1['co2'][dataPoints_1['co2'].length-1].y;
+			let current_voc = dataPoints_1['voc'][dataPoints_1['voc'].length-1].y;
+			let current_pm25 = dataPoints_1['pm25'][dataPoints_1['pm25'].length-1].y;
+			let current_humi = dataPoints_1['humid'][dataPoints_1['humid'].length-1].y;
+			let current_temp = dataPoints_1['temp'][dataPoints_1['temp'].length-1].y;
+			let last_update = dataPoints_1['temp'].length-1;
 
-Or more advanced usage with control of the connection
- - allows multiple connections
+			if (is_connected && bt_connection && bt_connection.isOpen) {
+				bt_connection.write('\x10bt_current_co2='+current_co2+';bt_current_voc='+current_voc+';bt_current_pm25='+current_pm25+';bt_current_humi='+current_humi+';bt_current_temp='+current_temp+';bt_last_update='+last_update+';\n');
 
-  Puck.connect(function(connection) {
-    if (!connection) throw "Error!";
-    connection.on('data', function(d) { ... });
-    connection.on('close', function() { ... });
-    connection.write("1+2\n", function() {
-      connection.close();
-    });
-  });
+				console.log("Sent data through Bluetooth");
+			} else if (is_connected && bt_connection && !bt_connection.isOpen) {
+				console.log("Disconnected - Next attempt to reconnect in " + reconnect_counter);
+				reconnect_counter--;
 
-ChangeLog:
+				if (reconnect_counter <= 0) {
+					reconnect_counter = 10 * reconnect_attempt_counter;
+					reconnect_attempt_counter++;
 
-...
-1v00 : Added Promises to write/eval
-1v01 : Raise default Chunk Size to 20
-       Auto-adjust chunk size up if we receive >20 bytes in a packet
+					console.log("Trying to reconnect");
+					bt_connection.reconnect(function(c) {
+						console.log("Reconnect callback");
+						if (!c) {
+					      console.log("Couldn't reconnect");
+					      return;
+					    }
+						bt_connection = c;
+		    			is_connected = true;
+		    			reconnect_attempt_counter = 1;
+					});					
+				}
+			}
+			
+			setTimeout(function(){updateChart()}, 1000);
+		});
+	}
+}
 
-*/
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory();
-    } else {
-        // Browser globals (root is window)
-        root.Puck = factory();
-    }
-}(typeof self !== 'undefined' ? self : this, function () {
+function connectBT() {
+	console.log("Connect BT");
+	Puck.connect(function(c) {
+		console.log("Connect callback");
+	    if (!c) {
+	      console.log("Couldn't connect");
+	      return;
+	    }
+	    bt_connection = c;
+	    is_connected = true;
+	    reconnect_attempt_counter = 1;
+	    if (!is_chart_started) {
+	    	initChart();
+	    	is_chart_started = true;
+	    }
+	});
+}
 
-  if (typeof navigator == "undefined") return;
+function disconnectBT() {
+	console.log("Disconnect Bluetooth button pressed. bt_connection value below.")
+	console.log(bt_connection);
+	if (is_connected && bt_connection) {
+		bt_connection.close();
+		is_connected = false;
+		console.log("Closed Bluetooth connection");
+	}
+}
 
-  var isBusy;
-  var queue = [];
+</script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body style="background-color:#1A202C;">
 
-  function checkIfSupported() {
-    // Hack for windows
-    if (navigator.platform.indexOf("Win")>=0 &&
-        (navigator.userAgent.indexOf("Chrome/54")>=0 ||
-         navigator.userAgent.indexOf("Chrome/55")>=0 ||
-         navigator.userAgent.indexOf("Chrome/56")>=0)
-        ) {
-      console.warn("Chrome <56 in Windows has navigator.bluetooth but it's not implemented properly");
-      if (confirm("Web Bluetooth on Windows is not yet available.\nPlease click Ok to see other options for using Web Bluetooth"))
-        window.location = "https://www.espruino.com/Puck.js+Quick+Start";
-      return false;
-    }
-    if (navigator.bluetooth) return true;
-    console.warn("No Web Bluetooth on this platform");
-    var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (iOS) {
-      if (confirm("To use Web Bluetooth on iOS you'll need the WebBLE App.\nPlease click Ok to go to the App Store and download it."))
-        window.location = "https://itunes.apple.com/us/app/webble/id1193531073";
-    } else {
-      if (confirm("This Web Browser doesn't support Web Bluetooth.\nPlease click Ok to see instructions for enabling it."))
-        window.location = "https://www.espruino.com/Quick+Start+BLE#with-web-bluetooth";
-    }
-    return false;
-  }
+<p style="color: #F7FAFC">
+<b>How to use</b>
+<br><br>
+Step 1: Enable the Local API on your Awair: https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
+<br><br>
+Step 2: Launch the Awair Monitor app on your BangleJS
+<br><br>
+Step 3: Input your Awair IP address and click the Connect button:
+<input type="text" id="inputawairip" value="192.168.2.1">
+<input type="button" value="Connect BangleJS" onclick="connectBT();">
+<br><br>
+Step 4: Optionally, open the web inspector's console (Right click &gt; Inspector &gt; Console) to read the Bluetooth logs
+<br><br>
+Step 5: Once you are done, click the Disconnect button to properly close the Blutooth connection
+<center><button onclick="disconnectBT();">Disconnect BangleJS</button></center>
+</p>
 
-  var NORDIC_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-  var NORDIC_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-  var NORDIC_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-  var DEFAULT_CHUNKSIZE = 20;
+<br/><br/>
 
-  function log(level, s) {
-    if (puck.log) puck.log(level, s);
-  }
-
-  function ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
+<div id="chartContainer_co2" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_voc" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_pm" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_humidity" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+<div id="chartContainer_temperature" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
+</body>
+</html>(buf));
   }
 
   function str2ab(str) {
@@ -590,93 +670,4 @@ function initChart() {
 			let last_update = dataPoints_1['temp'].length-1;
 
 			if (is_connected && bt_connection && bt_connection.isOpen) {
-				bt_connection.write('\x10bt_current_co2='+current_co2+';bt_current_voc='+current_voc+';bt_current_pm25='+current_pm25+';bt_current_humi='+current_humi+';bt_current_temp='+current_temp+';bt_last_update='+last_update+';\n');
-
-				console.log("Sent data through Bluetooth");
-			} else if (is_connected && bt_connection && !bt_connection.isOpen) {
-				console.log("Disconnected - Next attempt to reconnect in " + reconnect_counter);
-				reconnect_counter--;
-
-				if (reconnect_counter <= 0) {
-					reconnect_counter = 10 * reconnect_attempt_counter;
-					reconnect_attempt_counter++;
-
-					console.log("Trying to reconnect");
-					bt_connection.reconnect(function(c) {
-						console.log("Reconnect callback");
-						if (!c) {
-					      console.log("Couldn't reconnect");
-					      return;
-					    }
-						bt_connection = c;
-		    			is_connected = true;
-		    			reconnect_attempt_counter = 1;
-					});					
-				}
-			}
-			
-			setTimeout(function(){updateChart()}, 1000);
-		});
-	}
-}
-
-function connectBT() {
-	console.log("Connect BT");
-	Puck.connect(function(c) {
-		console.log("Connect callback");
-	    if (!c) {
-	      console.log("Couldn't connect");
-	      return;
-	    }
-	    bt_connection = c;
-	    is_connected = true;
-	    reconnect_attempt_counter = 1;
-	    if (!is_chart_started) {
-	    	initChart();
-	    	is_chart_started = true;
-	    }
-	});
-}
-
-function disconnectBT() {
-	console.log("Disconnect Bluetooth button pressed. bt_connection value below.")
-	console.log(bt_connection);
-	if (is_connected && bt_connection) {
-		bt_connection.close();
-		is_connected = false;
-		console.log("Closed Bluetooth connection");
-	}
-}
-
-</script>
-<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-</head>
-<body style="background-color:#1A202C;">
-
-<p style="color: #F7FAFC">
-<b>How to use</b>
-<br><br>
-Step 1: Enable the Local API on your Awair: https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
-<br><br>
-Step 2: Launch the Awair Monitor app on your BangleJS
-<br><br>
-Step 3: Input your Awair IP address and click the Connect button:
-<input type="text" id="inputawairip" value="192.168.2.1">
-<input type="button" value="Connect BangleJS" onclick="connectBT();">
-<br><br>
-Step 4: Optionally, open the web inspector's console (Right click &gt; Inspector &gt; Console) to read the Bluetooth logs
-<br><br>
-Step 5: Once you are done, click the Disconnect button to properly close the Blutooth connection
-<center><button onclick="disconnectBT();">Disconnect BangleJS</button></center>
-</p>
-
-<br/><br/>
-
-<div id="chartContainer_co2" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
-<div id="chartContainer_voc" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
-<div id="chartContainer_pm" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
-<div id="chartContainer_humidity" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
-<div id="chartContainer_temperature" style="height: 300px; max-width: 920px; margin: 0px auto; margin-bottom: 64px;"></div>
-</body>
-</html>
+				bt_connection.write('\x10bt_current_co2='+current_co2+';bt_current_voc='+current_voc+';bt_current_pm25='+current_pm25+';bt_current_humi='+current_humi+';bt_current_temp='+current_temp+';bt_
