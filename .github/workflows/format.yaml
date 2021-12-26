@@ -9,4 +9,4 @@ jobs:
       - name: Check code formatting
         uses: actionsx/prettier@v2
         with:
-          args: --check **/*.js
+          args: --check .
