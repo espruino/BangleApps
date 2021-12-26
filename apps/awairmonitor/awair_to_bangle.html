@@ -7,7 +7,6 @@
 // Don't forget to enable the Local API on your Awair before using this
 // https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
 
-const awair_ip_1 = "192.168.2.2"; // <- INPUT YOUR AWAIR IP ADDRESS HERE
 const awair_name_1 = "Awair";
 
 var bt_connection;
@@ -15,7 +14,7 @@ var is_connected = false;
 var reconnect_counter = 5;
 var reconnect_attempt_counter = 1;
 
-window.onload = function() {
+function initChart() {
 	var chart_co2;
 	var chart_voc;
 	var chart_pm;
@@ -23,6 +22,8 @@ window.onload = function() {
 	var chart_humidity;
 	var dataPoints_1 = [];
 	var posx = 0;
+
+	var awair_ip_1 = document.getElementById('inputawairip').value;
 	
 	$.getJSON("http://"+awair_ip_1+"/air-data/latest", function(data) {
 		$.each(data, function(key, value){
@@ -105,11 +106,13 @@ window.onload = function() {
 			let current_humi = dataPoints_1['humid'][dataPoints_1['humid'].length-1].y;
 			let current_temp = dataPoints_1['temp'][dataPoints_1['temp'].length-1].y;
 			let last_update = dataPoints_1['temp'].length-1;
-			if (is_connected && bt_connection.isOpen) {
+			console.log(is_connected);
+			console.log(bt_connection);
+			if (is_connected && bt_connection && bt_connection.isOpen) {
 				bt_connection.write('\x10bt_current_co2='+current_co2+';bt_current_voc='+current_voc+';bt_current_pm25='+current_pm25+';bt_current_humi='+current_humi+';bt_current_temp='+current_temp+';bt_last_update='+last_update+';\n');
 
 				console.log("Sent data through Bluetooth");
-			} else if (is_connected && !bt_connection.isOpen) {
+			} else if (is_connected && bt_connection && !bt_connection.isOpen) {
 				console.log("Disconnected - Next attempt to reconnect in " + reconnect_counter);
 				reconnect_counter--;
 
@@ -148,10 +151,13 @@ function connectBT() {
 	    bt_connection = c;
 	    is_connected = true;
 	    reconnect_attempt_counter = 1;
+	    initChart();
 	});
 }
 
 function disconnectBT() {
+	console.log("Disconnect Bluetooth button pressed. bt_connection value below.")
+	console.log(bt_connection);
 	if (is_connected && bt_connection) {
 		bt_connection.close();
 		is_connected = false;
@@ -167,22 +173,20 @@ function disconnectBT() {
 
 <p style="color: #F7FAFC">
 <b>How to use</b>
-<br/><br/>
+<br><br>
 Step 1: Enable the Local API on your Awair: https://support.getawair.com/hc/en-us/articles/360049221014-Awair-Local-API-Feature
-<br/><br/>
-Step 2: Modify this HTML file to input the IP address of your Awair on top (const awair_ip_1 = "192.168.xx.xx")
-<br/><br/>
-Step 3: Launch the Awair Monitor app on your BangleJS
-<br/><br/>
-Step 4: Click "Connect BangleJS"
-<br/><br/>
-Step 5: Optionally, open the web inspector's console (Right click > Inspector > Console) to read the bluetooth logs
+<br><br>
+Step 2: Launch the Awair Monitor app on your BangleJS
+<br><br>
+Step 3: Input your Awair IP address and click the Connect button:
+<input type="text" id="inputawairip" value="192.168.2.1">
+<input type="button" value="Connect BangleJS" onclick="connectBT();">
+<br><br>
+Step 4: Optionally, open the web inspector's console (Right click &gt; Inspector &gt; Console) to read the Bluetooth logs
+<br><br>
+Step 5: Once you are done, click the Disconnect button to properly close the Blutooth connection
+<center><button onclick="disconnectBT();">Disconnect BangleJS</button></center>
 </p>
-
-<center>
-	<button onclick="connectBT();">Connect BangleJS</button>
-	<button onclick="disconnectBT();">Disconnect BangleJS</button>
-</center>
 
 <br/><br/>
 
