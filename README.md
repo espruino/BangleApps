@@ -516,7 +516,9 @@ BangleApps uses [Prettier](https://prettier.io/) for code formatting, with defau
 You can use it [online](https://prettier.io/playground.html) or on your computer:
 
 1. Install Prettier with `npm install prettier --global`.
-2. Run `prettier . --write` to format your code. You can change the `.` to specify different files.
+2. Run `prettier **/*.js --write` to format your code.
+You can change the `**/*.js` to specify different files, if you aren't running the app from the root.
+Also, you may need to run `shopt -s globstar` to enable the `**/*` globbing on Linux.
 
 ## 'Testing' folder
 
