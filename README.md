@@ -509,6 +509,15 @@ You can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bi
 
 [Graphics Class](https://banglejs.com/reference#Graphics)
 
+## Code Formatting
+
+BangleApps uses [Prettier](https://prettier.io/) for code formatting, with default settings.
+
+You can use it [online](https://prettier.io/playground.html) or on your computer:
+
+1. Install Prettier with `npm install prettier --global`.
+2. Run `prettier . --write` to format your code. You can change the `.` to specify different files.
+
 ## 'Testing' folder
 
 The [`testing`](testing) folder contains snippets of code that might be useful for your apps.
