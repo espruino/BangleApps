@@ -5,8 +5,8 @@
   var writeInterval;
 
   function loadSettings() {
-    var settings = require("Storage").readJSON("recorder.json",1)||{};
-    settings.period = settings.period||10;
+    var settings = require("Storage").readJSON("recorder.json", 1) || {};
+    settings.period = settings.period || 10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
     return settings;
@@ -14,7 +14,7 @@
 
   function getRecorders() {
     var recorders = {
-      gps:function() {
+      gps: function () {
         var lat = 0;
         var lon = 0;
         var alt = 0;
@@ -29,30 +29,41 @@
           samples++;
         }
         return {
-          name : "GPS",
-          fields : ["Latitude","Longitude","Altitude"],
-          getValues : () => {
-            var r = ["","",""];
+          name: "GPS",
+          fields: ["Latitude", "Longitude", "Altitude"],
+          getValues: () => {
+            var r = ["", "", ""];
             if (samples)
-              r = [(lat/samples).toFixed(6),(lon/samples).toFixed(6),Math.round(alt/samples)];
-            samples = 0; lat = 0; lon = 0; alt = 0;
+              r = [
+                (lat / samples).toFixed(6),
+                (lon / samples).toFixed(6),
+                Math.round(alt / samples),
+              ];
+            samples = 0;
+            lat = 0;
+            lon = 0;
+            alt = 0;
             return r;
           },
-          start : () => {
+          start: () => {
             hasFix = false;
-            Bangle.on('GPS', onGPS);
-            Bangle.setGPSPower(1,"recorder");
+            Bangle.on("GPS", onGPS);
+            Bangle.setGPSPower(1, "recorder");
           },
-          stop : () => {
+          stop: () => {
             hasFix = false;
-            Bangle.removeListener('GPS', onGPS);
-            Bangle.setGPSPower(0,"recorder");
+            Bangle.removeListener("GPS", onGPS);
+            Bangle.setGPSPower(0, "recorder");
           },
-          draw : (x,y) => g.setColor(hasFix?"#f00":"#888").drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="),x,y)
+          draw: (x, y) =>
+            g
+              .setColor(hasFix ? "#f00" : "#888")
+              .drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="), x, y),
         };
       },
-      hrm:function() {
-        var bpm = 0, bpmConfidence = 0;
+      hrm: function () {
+        var bpm = 0,
+          bpmConfidence = 0;
         var hasBPM = false;
         function onHRM(h) {
           if (h.confidence >= bpmConfidence) {
@@ -62,41 +73,49 @@
           }
         }
         return {
-          name : "HR",
-          fields : ["Heartrate"],
-          getValues : () => {
-            var r = [bpmConfidence?bpm:""];
-            bpm = 0; bpmConfidence = 0;
+          name: "HR",
+          fields: ["Heartrate"],
+          getValues: () => {
+            var r = [bpmConfidence ? bpm : ""];
+            bpm = 0;
+            bpmConfidence = 0;
             return r;
           },
-          start : () => {
+          start: () => {
             hasBPM = false;
-            Bangle.on('HRM', onHRM);
-            Bangle.setHRMPower(1,"recorder");
+            Bangle.on("HRM", onHRM);
+            Bangle.setHRMPower(1, "recorder");
           },
-          stop : () => {
+          stop: () => {
             hasBPM = false;
-            Bangle.removeListener('HRM', onHRM);
-            Bangle.setHRMPower(0,"recorder");
+            Bangle.removeListener("HRM", onHRM);
+            Bangle.setHRMPower(0, "recorder");
           },
-          draw : (x,y) => g.setColor(hasBPM?"#f00":"#888").drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="),x,y)
+          draw: (x, y) =>
+            g
+              .setColor(hasBPM ? "#f00" : "#888")
+              .drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="), x, y),
         };
       },
-      steps:function() {
+      steps: function () {
         var lastSteps = 0;
         return {
-          name : "Steps",
-          fields : ["Steps"],
-          getValues : () => {
-            var c = Bangle.getStepCount(), r=[c-lastSteps];
+          name: "Steps",
+          fields: ["Steps"],
+          getValues: () => {
+            var c = Bangle.getStepCount(),
+              r = [c - lastSteps];
             lastSteps = c;
             return r;
           },
-          start : () => { lastSteps = Bangle.getStepCount(); },
-          stop : () => {},
-          draw : (x,y) => g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="),x,y)
+          start: () => {
+            lastSteps = Bangle.getStepCount();
+          },
+          stop: () => {},
+          draw: (x, y) =>
+            g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="), x, y),
         };
-      }
+      },
       // TODO: recAltitude from pressure sensor
     };
     /* eg. foobar.recorder.js
@@ -111,7 +130,9 @@
       }
     })
     */
-    require("Storage").list(/^.*\.recorder\.js$/).forEach(fn=>eval(fn)(recorders));
+    require("Storage")
+      .list(/^.*\.recorder\.js$/)
+      .forEach((fn) => eval(fn)(recorders));
     return recorders;
   }
 
@@ -120,9 +141,11 @@
     WIDGETS["recorder"].draw();
     try {
       var fields = [Math.round(getTime())];
-      activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
-      if (storageFile) storageFile.write(fields.join(",")+"\n");
-    } catch(e) {
+      activeRecorders.forEach((recorder) =>
+        fields.push.apply(fields, recorder.getValues())
+      );
+      if (storageFile) storageFile.write(fields.join(",") + "\n");
+    } catch (e) {
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       console.log("recorder: error", e);
@@ -139,17 +162,17 @@
     if (writeInterval) clearInterval(writeInterval);
     writeInterval = undefined;
 
-    activeRecorders.forEach(rec => rec.stop());
+    activeRecorders.forEach((rec) => rec.stop());
     activeRecorders = [];
     entriesWritten = 0;
 
     if (settings.recording) {
       // set up recorders
       var recorders = getRecorders(); // TODO: order??
-      settings.record.forEach(r => {
+      settings.record.forEach((r) => {
         var recorder = recorders[r];
         if (!recorder) {
-          console.log("Recorder for "+E.toJS(r)+"+not found");
+          console.log("Recorder for " + E.toJS(r) + "+not found");
           return;
         }
         var activeRecorder = recorder();
@@ -157,50 +180,72 @@
         activeRecorders.push(activeRecorder);
         // TODO: write field names?
       });
-      WIDGETS["recorder"].width = 15 + ((activeRecorders.length+1)>>1)*12; // 12px per recorder
+      WIDGETS["recorder"].width = 15 + ((activeRecorders.length + 1) >> 1) * 12; // 12px per recorder
       // open/create file
-      if (require("Storage").list(settings.file).length) { // Append
-        storageFile = require("Storage").open(settings.file,"a");
+      if (require("Storage").list(settings.file).length) {
+        // Append
+        storageFile = require("Storage").open(settings.file, "a");
         // TODO: what if loaded modules are different??
       } else {
-        storageFile = require("Storage").open(settings.file,"w");
+        storageFile = require("Storage").open(settings.file, "w");
         // New file - write headers
         var fields = ["Time"];
-        activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.fields));
-        storageFile.write(fields.join(",")+"\n");
+        activeRecorders.forEach((recorder) =>
+          fields.push.apply(fields, recorder.fields)
+        );
+        storageFile.write(fields.join(",") + "\n");
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000);
+      writeInterval = setInterval(writeLog, settings.period * 1000);
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
     }
   }
   // add the widget
-  WIDGETS["recorder"]={area:"tl",width:0,draw:function() {
-    if (!writeInterval) return;
-    g.reset();    g.drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
-    activeRecorders.forEach((recorder,i)=>{
-      recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
-    });
-  },getRecorders:getRecorders,reload:function() {
-    reload();
-    Bangle.drawWidgets(); // relayout all widgets
-  },setRecording:function(isOn) {
-    var settings = loadSettings();
-    if (isOn && !settings.recording && require("Storage").list(settings.file).length)
-      return E.showPrompt("Overwrite\nLog 0?",{title:"Recorder",buttons:{Yes:"yes",No:"no"}}).then(selection=>{
-        if (selection=="no") return false; // just cancel
-        if (selection=="yes") require("Storage").open(settings.file,"r").erase();
-        // TODO: Add 'new file' option
-        return WIDGETS["recorder"].setRecording(1);
+  WIDGETS["recorder"] = {
+    area: "tl",
+    width: 0,
+    draw: function () {
+      if (!writeInterval) return;
+      g.reset();
+      g.drawImage(
+        atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),
+        this.x + 1,
+        this.y + 2
+      );
+      activeRecorders.forEach((recorder, i) => {
+        recorder.draw(this.x + 15 + (i >> 1) * 12, this.y + (i & 1) * 12);
       });
-    settings.recording = isOn;
-    require("Storage").write("recorder.json", settings);
-    WIDGETS["recorder"].reload();
-    return Promise.resolve(settings.recording);
-  }/*,plotTrack:function(m) { // m=instance of openstmap module
+    },
+    getRecorders: getRecorders,
+    reload: function () {
+      reload();
+      Bangle.drawWidgets(); // relayout all widgets
+    },
+    setRecording: function (isOn) {
+      var settings = loadSettings();
+      if (
+        isOn &&
+        !settings.recording &&
+        require("Storage").list(settings.file).length
+      )
+        return E.showPrompt("Overwrite\nLog 0?", {
+          title: "Recorder",
+          buttons: { Yes: "yes", No: "no" },
+        }).then((selection) => {
+          if (selection == "no") return false; // just cancel
+          if (selection == "yes")
+            require("Storage").open(settings.file, "r").erase();
+          // TODO: Add 'new file' option
+          return WIDGETS["recorder"].setRecording(1);
+        });
+      settings.recording = isOn;
+      require("Storage").write("recorder.json", settings);
+      WIDGETS["recorder"].reload();
+      return Promise.resolve(settings.recording);
+    } /*,plotTrack:function(m) { // m=instance of openstmap module
     // if we're here, settings was already loaded
     var f = require("Storage").open(settings.file,"r");
     var l = f.readLine(f);
@@ -216,7 +261,8 @@
       g.fillCircle(mp.x,mp.y,2); // make the track more visible
       l = f.readLine(f);
     }
-  }*/};
+  }*/,
+  };
   // load settings, set correct widget width
   reload();
-})()
+})();

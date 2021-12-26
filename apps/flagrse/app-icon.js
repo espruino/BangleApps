@@ -1,1 +1,5 @@
-require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AJmUyF/4Adstl1ovvAAIvvGNQvGGNAvIGMwvKGMgvMGMQvOGMAvQGLwvSGLgvUGLQvWGLAvYGKwv/R+zvtFrAvUFrQvSFrgvQFrwvOFsAvMFsQvKFsgvIFswvGFtAvEFtQABmUyF1gv/F/4v/F/4v/F/4v/F/4A/AH4A/AAwA="))
+require("heatshrink").decompress(
+  atob(
+    "mEwxH+AH4A/AH4AJmUyF/4Adstl1ovvAAIvvGNQvGGNAvIGMwvKGMgvMGMQvOGMAvQGLwvSGLgvUGLQvWGLAvYGKwv/R+zvtFrAvUFrQvSFrgvQFrwvOFsAvMFsQvKFsgvIFswvGFtAvEFtQABmUyF1gv/F/4v/F/4v/F/4v/F/4A/AH4A/AAwA="
+  )
+);

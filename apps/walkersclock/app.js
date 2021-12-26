@@ -8,7 +8,7 @@
  *    - two function menus at present
  *      GPS Power   = On/Off
  *      GPS Display = Grid | Speed Alt
- *      when the modeline in CYAN use button BTN1 to switch between options 
+ *      when the modeline in CYAN use button BTN1 to switch between options
  *  - display the current steps if one of the steps widgets is installed
  *  - ensures that BTN2 requires a 1.5 second press in order to switch to the launcher
  *    this is so you dont accidently switch out of the GPS/watch display with you coat sleeve
@@ -63,18 +63,18 @@ let last_fix = {
   lon: 0,
   speed: 0,
   time: 0,
-  satellites: 0
+  satellites: 0,
 };
 
-function drawTime() {  
+function drawTime() {
   var d = new Date();
   var da = d.toString().split(" ");
-  var time = da[4].substr(0,5);
+  var time = da[4].substr(0, 5);
 
   g.reset();
-  g.clearRect(0,Y_TIME, 239, Y_ACTIVITY - 1);
-  
-  g.setColor(1,1,1);  // white
+  g.clearRect(0, Y_TIME, 239, Y_ACTIVITY - 1);
+
+  g.setColor(1, 1, 1); // white
   g.setFontAlign(0, -1);
 
   if (gpsState == GPS_SATS || gpsState == GPS_RUNNING) {
@@ -84,42 +84,41 @@ function drawTime() {
   } else {
     g.setFont("Vector", 80);
   }
-  
-  g.drawString(time, g.getWidth()/2, Y_TIME);
+
+  g.drawString(time, g.getWidth() / 2, Y_TIME);
 }
 
 function drawActivity() {
   var steps = getSteps();
-  if (!gpsPowerState && steps != prevSteps)
-    clearActivityArea = true;
+  if (!gpsPowerState && steps != prevSteps) clearActivityArea = true;
 
   prevSteps = steps;
-  
+
   if (clearActivityArea) {
     g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
     clearActivityArea = false;
   }
-  
+
   if (!gpsPowerState) {
-    g.setColor(0,255,0);  // green
+    g.setColor(0, 255, 0); // green
     g.setFont("Vector", 60);
-    g.drawString(getSteps(), g.getWidth()/2, Y_ACTIVITY);
+    g.drawString(getSteps(), g.getWidth() / 2, Y_ACTIVITY);
     return;
   }
-  
+
   g.setFont("6x8", 3);
-  g.setColor(1,1,1);
+  g.setColor(1, 1, 1);
   g.setFontAlign(0, -1);
 
   if (gpsState == GPS_TIME) {
-    g.drawString("Waiting for", g.getWidth()/2, Y_ACTIVITY);
-    g.drawString("GPS", g.getWidth()/2, Y_ACTIVITY + 30);
+    g.drawString("Waiting for", g.getWidth() / 2, Y_ACTIVITY);
+    g.drawString("GPS", g.getWidth() / 2, Y_ACTIVITY + 30);
     return;
   }
 
   if (gpsState == GPS_SATS) {
-    g.drawString("Satellites", g.getWidth()/2, Y_ACTIVITY);
-    g.drawString(last_fix.satellites, g.getWidth()/2, Y_ACTIVITY + 30);
+    g.drawString("Satellites", g.getWidth() / 2, Y_ACTIVITY);
+    g.drawString(last_fix.satellites, g.getWidth() / 2, Y_ACTIVITY + 30);
     return;
   }
 
@@ -131,44 +130,43 @@ function drawActivity() {
     let ref = to_map_ref(6, os.easting, os.northing);
     let speed;
     let activityStr = "";
-    
+
     if (age < 0) age = 0;
     g.setFontVector(40);
-    g.setColor(0xFFC0); 
+    g.setColor(0xffc0);
 
-    switch(gpsDisplay) {
-    case GDISP_OS:
-      activityStr = ref;
-      break;
-    case GDISP_LATLN:
-      g.setFontVector(26);
-      activityStr = last_fix.lat.toFixed(4) + ", " + last_fix.lon.toFixed(4);
-      break;
-    case GDISP_SPEED:
-      speed = last_fix.speed;
-      speed = speed.toFixed(1);
-      activityStr = speed + "kph"; 
-      break;
-    case GDISP_ALT:
-      activityStr = last_fix.alt + "m";
-      break;
-    case GDISP_COURSE:
-      activityStr = last_fix.course;
-      break;
+    switch (gpsDisplay) {
+      case GDISP_OS:
+        activityStr = ref;
+        break;
+      case GDISP_LATLN:
+        g.setFontVector(26);
+        activityStr = last_fix.lat.toFixed(4) + ", " + last_fix.lon.toFixed(4);
+        break;
+      case GDISP_SPEED:
+        speed = last_fix.speed;
+        speed = speed.toFixed(1);
+        activityStr = speed + "kph";
+        break;
+      case GDISP_ALT:
+        activityStr = last_fix.alt + "m";
+        break;
+      case GDISP_COURSE:
+        activityStr = last_fix.course;
+        break;
     }
 
     g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
     g.drawString(activityStr, 120, Y_ACTIVITY);
-    g.setFont("6x8",2);
-    g.setColor(1,1,1); 
+    g.setFont("6x8", 2);
+    g.setColor(1, 1, 1);
     g.drawString(age, 120, Y_ACTIVITY + 46);
   }
 }
 
 function onTick() {
-  if (!Bangle.isLCDOn())
-    return;
-  
+  if (!Bangle.isLCDOn()) return;
+
   if (gpsPowerState) {
     drawAll();
     return;
@@ -187,141 +185,138 @@ function onTick() {
   }
 }
 
-function drawAll(){
+function drawAll() {
   drawTime();
-  drawActivity();  // steps, hrt or gps
+  drawActivity(); // steps, hrt or gps
   drawInfo();
 }
 
 function drawInfo() {
   let val;
   let str = "";
-  let col = 0x07E0; // green
+  let col = 0x07e0; // green
 
-  switch(functionMode) {
-  case FN_MODE_OFF:
-    break;
-  case FN_MODE_GPS:
-    col = 0x07FF; // cyan
-    str = "GPS: " + (gpsPowerState ? "ON" : "OFF");
-    drawModeLine(str,col);
-    return;
-  case FN_MODE_GDISP:
-    col = 0x07FF; // cyan
-    switch(gpsDisplay) {
-    case GDISP_OS:
-      str = "GPS: Grid";
+  switch (functionMode) {
+    case FN_MODE_OFF:
       break;
-    case GDISP_LATLN:
-      str = "GPS: Lat,Lon";
-      break;
-    case GDISP_SPEED:
-      str = "GPS: Speed";
-      break;
-    case GDISP_ALT:
-      str = "GPS: Alt";
-      break;
-    case GDISP_COURSE:
-      str = "GPS: Course";
-      break;
-    }
-    drawModeLine(str,col);
-    return;
+    case FN_MODE_GPS:
+      col = 0x07ff; // cyan
+      str = "GPS: " + (gpsPowerState ? "ON" : "OFF");
+      drawModeLine(str, col);
+      return;
+    case FN_MODE_GDISP:
+      col = 0x07ff; // cyan
+      switch (gpsDisplay) {
+        case GDISP_OS:
+          str = "GPS: Grid";
+          break;
+        case GDISP_LATLN:
+          str = "GPS: Lat,Lon";
+          break;
+        case GDISP_SPEED:
+          str = "GPS: Speed";
+          break;
+        case GDISP_ALT:
+          str = "GPS: Alt";
+          break;
+        case GDISP_COURSE:
+          str = "GPS: Course";
+          break;
+      }
+      drawModeLine(str, col);
+      return;
   }
-  
-  switch(infoMode) {
-  case INFO_NONE:
-    col = 0x0000;
-    str = "";
-    break;
-  case INFO_STEPS:
-    str = "Steps: " + getSteps();
-    break;
-  case INFO_BATT:
-  default:
-    str = "Battery: " + E.getBattery() + "%";
+
+  switch (infoMode) {
+    case INFO_NONE:
+      col = 0x0000;
+      str = "";
+      break;
+    case INFO_STEPS:
+      str = "Steps: " + getSteps();
+      break;
+    case INFO_BATT:
+    default:
+      str = "Battery: " + E.getBattery() + "%";
   }
-  
-  drawModeLine(str,col);
+
+  drawModeLine(str, col);
 }
 
-function drawModeLine(str,col) {
+function drawModeLine(str, col) {
   // check if we need to draw, avoid flicker
-  if (str == prevInfoStr)
-    return;
+  if (str == prevInfoStr) return;
 
   prevInfoStr = str;
-  drawModeLine(str,col);
+  drawModeLine(str, col);
   g.setFont("6x8", 3);
   g.setColor(col);
   g.fillRect(0, Y_MODELINE - 3, 239, Y_MODELINE + 25);
-  g.setColor(0,0,0);
+  g.setColor(0, 0, 0);
   g.setFontAlign(0, -1);
-  g.drawString(str, g.getWidth()/2, Y_MODELINE);
+  g.drawString(str, g.getWidth() / 2, Y_MODELINE);
 }
 
 function changeInfoMode() {
-  switch(functionMode) {
-  case FN_MODE_OFF:
-    break;
-  case FN_MODE_GPS:
-    gpsPowerState = !gpsPowerState;
-    Bangle.buzz();
-    Bangle.setGPSPower(gpsPowerState ? 1 : 0);
-    if (gpsPowerState) {
-      gpsState = GPS_TIME; // waiting first response so we can display time
-      Bangle.on('GPS', processFix);
-    } else {
-      Bangle.removeListener("GPS", processFix);
-      gpsState = GPS_OFF;
-    }
-    resetLastFix();
+  switch (functionMode) {
+    case FN_MODE_OFF:
+      break;
+    case FN_MODE_GPS:
+      gpsPowerState = !gpsPowerState;
+      Bangle.buzz();
+      Bangle.setGPSPower(gpsPowerState ? 1 : 0);
+      if (gpsPowerState) {
+        gpsState = GPS_TIME; // waiting first response so we can display time
+        Bangle.on("GPS", processFix);
+      } else {
+        Bangle.removeListener("GPS", processFix);
+        gpsState = GPS_OFF;
+      }
+      resetLastFix();
 
-    // poke the gps widget indicator to change
-    if (WIDGETS.gps !== undefined) {
-      WIDGETS.gps.draw();
-    }
-    functionMode = FN_MODE_OFF;
-    infoMode = INFO_NONE;
-    clearActivityArea = true;
-    return;
-    
-  case FN_MODE_GDISP:
-    switch (gpsDisplay) {
-    case GDISP_OS:
-      gpsDisplay = GDISP_SPEED;
-      break;
-    case GDISP_SPEED:
-      gpsDisplay = GDISP_ALT;
-      break;
-    case GDISP_ALT:
-      gpsDisplay = GDISP_COURSE;
-      break;
-    case GDISP_COURSE:
-      gpsDisplay = GDISP_LATLN;
-      break;
-    case GDISP_LATLN:
-    default:
-      gpsDisplay = GDISP_OS;
-      break;
-    }
+      // poke the gps widget indicator to change
+      if (WIDGETS.gps !== undefined) {
+        WIDGETS.gps.draw();
+      }
+      functionMode = FN_MODE_OFF;
+      infoMode = INFO_NONE;
+      clearActivityArea = true;
+      return;
+
+    case FN_MODE_GDISP:
+      switch (gpsDisplay) {
+        case GDISP_OS:
+          gpsDisplay = GDISP_SPEED;
+          break;
+        case GDISP_SPEED:
+          gpsDisplay = GDISP_ALT;
+          break;
+        case GDISP_ALT:
+          gpsDisplay = GDISP_COURSE;
+          break;
+        case GDISP_COURSE:
+          gpsDisplay = GDISP_LATLN;
+          break;
+        case GDISP_LATLN:
+        default:
+          gpsDisplay = GDISP_OS;
+          break;
+      }
   }
-  
-  switch(infoMode) {
-  case INFO_NONE:
-    if (stepsWidget() !== undefined)
-      infoMode = INFO_STEPS;
-    else
+
+  switch (infoMode) {
+    case INFO_NONE:
+      if (stepsWidget() !== undefined) infoMode = INFO_STEPS;
+      else infoMode = INFO_BATT;
+      break;
+    case INFO_STEPS:
       infoMode = INFO_BATT;
-    break;
-  case INFO_STEPS:
-    infoMode = INFO_BATT;
-    break;
-  case INFO_BATT:
-  default:
-    infoMode = INFO_NONE;
+      break;
+    case INFO_BATT:
+    default:
+      infoMode = INFO_NONE;
   }
-  
+
   clearActivityArea = true;
 }
 
@@ -329,31 +324,31 @@ function changeFunctionMode() {
   //console.log("changeFunctionMode()");
 
   if (gpsState != GPS_RUNNING) {
-    switch(functionMode) {
-    case FN_MODE_OFF:
-      functionMode = FN_MODE_GPS;
-      break;
-    case FN_MODE_GPS:
-    default:
-      functionMode = FN_MODE_OFF;
-      break;
+    switch (functionMode) {
+      case FN_MODE_OFF:
+        functionMode = FN_MODE_GPS;
+        break;
+      case FN_MODE_GPS:
+      default:
+        functionMode = FN_MODE_OFF;
+        break;
     }
   } else {
     // if GPS is RUNNING then we want the GPS display options first
-    switch(functionMode) {
-    case FN_MODE_OFF:
-      functionMode = FN_MODE_GDISP;
-      break;
-    case FN_MODE_GDISP:
-      functionMode = FN_MODE_GPS;
-      break;
-    case FN_MODE_GPS:
-    default:
-      functionMode = FN_MODE_OFF;
-      break;
+    switch (functionMode) {
+      case FN_MODE_OFF:
+        functionMode = FN_MODE_GDISP;
+        break;
+      case FN_MODE_GDISP:
+        functionMode = FN_MODE_GPS;
+        break;
+      case FN_MODE_GPS:
+      default:
+        functionMode = FN_MODE_OFF;
+        break;
     }
   }
-  
+
   infoMode = INFO_NONE; // function mode overrides info mode
 }
 
@@ -365,7 +360,7 @@ function resetLastFix() {
     lon: 0,
     speed: 0,
     time: 0,
-    satellites: 0
+    satellites: 0,
   };
 }
 
@@ -376,10 +371,10 @@ function processFix(fix) {
     gpsState = GPS_SATS;
     clearActivityArea = true;
   }
-  
+
   if (fix.fix) {
     if (!last_fix.fix) {
-      if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+      if (!(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
         Bangle.buzz(); // buzz on first position
       }
       clearActivityArea = true;
@@ -390,8 +385,7 @@ function processFix(fix) {
 }
 
 function getSteps() {
-  if (stepsWidget() !== undefined)
-    return stepsWidget().getSteps();
+  if (stepsWidget() !== undefined) return stepsWidget().getSteps();
   return "-";
 }
 
@@ -403,7 +397,6 @@ function stepsWidget() {
   }
   return undefined;
 }
-  
 
 /*************     GPS  / OSREF Code **************************/
 
@@ -415,63 +408,85 @@ function formatTime(now) {
 function timeSince(t) {
   var hms = t.split(":");
   var now = new Date();
-  
-  var sn = 3600*(now.getHours()) + 60*(now.getMinutes()) + 1*(now.getSeconds());
-  var st = 3600*(hms[0]) + 60*(hms[1]) + 1*(hms[2]);
-  
-  return (sn - st);
+
+  var sn = 3600 * now.getHours() + 60 * now.getMinutes() + 1 * now.getSeconds();
+  var st = 3600 * hms[0] + 60 * hms[1] + 1 * hms[2];
+
+  return sn - st;
 }
 
-Number.prototype.toRad = function() { return this*Math.PI/180; };
+Number.prototype.toRad = function () {
+  return (this * Math.PI) / 180;
+};
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Ordnance Survey Grid Reference functions  (c) Chris Veness 2005-2014                          */
 /*   - www.movable-type.co.uk/scripts/gridref.js                                                  */
 /*   - www.movable-type.co.uk/scripts/latlon-gridref.html                                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 function OsGridRef(easting, northing) {
-  this.easting = 0|easting;
-  this.northing = 0|northing;
+  this.easting = 0 | easting;
+  this.northing = 0 | northing;
 }
-OsGridRef.latLongToOsGrid = function(point) {
+OsGridRef.latLongToOsGrid = function (point) {
   var lat = point.lat.toRad();
   var lon = point.lon.toRad();
 
-  var a = 6377563.396, b = 6356256.909;          // Airy 1830 major & minor semi-axes
-  var F0 = 0.9996012717;                         // NatGrid scale factor on central meridian
-  var lat0 = (49).toRad(), lon0 = (-2).toRad();  // NatGrid true origin is 49Ã¯Â¿Â½N,2Ã¯Â¿Â½W
-  var N0 = -100000, E0 = 400000;                 // northing & easting of true origin, metres
-  var e2 = 1 - (b*b)/(a*a);                      // eccentricity squared
-  var n = (a-b)/(a+b), n2 = n*n, n3 = n*n*n;
+  var a = 6377563.396,
+    b = 6356256.909; // Airy 1830 major & minor semi-axes
+  var F0 = 0.9996012717; // NatGrid scale factor on central meridian
+  var lat0 = (49).toRad(),
+    lon0 = (-2).toRad(); // NatGrid true origin is 49Ã¯Â¿Â½N,2Ã¯Â¿Â½W
+  var N0 = -100000,
+    E0 = 400000; // northing & easting of true origin, metres
+  var e2 = 1 - (b * b) / (a * a); // eccentricity squared
+  var n = (a - b) / (a + b),
+    n2 = n * n,
+    n3 = n * n * n;
 
-  var cosLat = Math.cos(lat), sinLat = Math.sin(lat);
-  var nu = a*F0/Math.sqrt(1-e2*sinLat*sinLat);              // transverse radius of curvature
-  var rho = a*F0*(1-e2)/Math.pow(1-e2*sinLat*sinLat, 1.5);  // meridional radius of curvature
-  var eta2 = nu/rho-1;
+  var cosLat = Math.cos(lat),
+    sinLat = Math.sin(lat);
+  var nu = (a * F0) / Math.sqrt(1 - e2 * sinLat * sinLat); // transverse radius of curvature
+  var rho = (a * F0 * (1 - e2)) / Math.pow(1 - e2 * sinLat * sinLat, 1.5); // meridional radius of curvature
+  var eta2 = nu / rho - 1;
 
-  var Ma = (1 + n + (5/4)*n2 + (5/4)*n3) * (lat-lat0);
-  var Mb = (3*n + 3*n*n + (21/8)*n3) * Math.sin(lat-lat0) * Math.cos(lat+lat0);
-  var Mc = ((15/8)*n2 + (15/8)*n3) * Math.sin(2*(lat-lat0)) * Math.cos(2*(lat+lat0));
-  var Md = (35/24)*n3 * Math.sin(3*(lat-lat0)) * Math.cos(3*(lat+lat0));
-  var M = b * F0 * (Ma - Mb + Mc - Md);              // meridional arc
+  var Ma = (1 + n + (5 / 4) * n2 + (5 / 4) * n3) * (lat - lat0);
+  var Mb =
+    (3 * n + 3 * n * n + (21 / 8) * n3) *
+    Math.sin(lat - lat0) *
+    Math.cos(lat + lat0);
+  var Mc =
+    ((15 / 8) * n2 + (15 / 8) * n3) *
+    Math.sin(2 * (lat - lat0)) *
+    Math.cos(2 * (lat + lat0));
+  var Md =
+    (35 / 24) * n3 * Math.sin(3 * (lat - lat0)) * Math.cos(3 * (lat + lat0));
+  var M = b * F0 * (Ma - Mb + Mc - Md); // meridional arc
 
-  var cos3lat = cosLat*cosLat*cosLat;
-  var cos5lat = cos3lat*cosLat*cosLat;
-  var tan2lat = Math.tan(lat)*Math.tan(lat);
-  var tan4lat = tan2lat*tan2lat;
+  var cos3lat = cosLat * cosLat * cosLat;
+  var cos5lat = cos3lat * cosLat * cosLat;
+  var tan2lat = Math.tan(lat) * Math.tan(lat);
+  var tan4lat = tan2lat * tan2lat;
 
   var I = M + N0;
-  var II = (nu/2)*sinLat*cosLat;
-  var III = (nu/24)*sinLat*cos3lat*(5-tan2lat+9*eta2);
-  var IIIA = (nu/720)*sinLat*cos5lat*(61-58*tan2lat+tan4lat);
-  var IV = nu*cosLat;
-  var V = (nu/6)*cos3lat*(nu/rho-tan2lat);
-  var VI = (nu/120) * cos5lat * (5 - 18*tan2lat + tan4lat + 14*eta2 - 58*tan2lat*eta2);
+  var II = (nu / 2) * sinLat * cosLat;
+  var III = (nu / 24) * sinLat * cos3lat * (5 - tan2lat + 9 * eta2);
+  var IIIA = (nu / 720) * sinLat * cos5lat * (61 - 58 * tan2lat + tan4lat);
+  var IV = nu * cosLat;
+  var V = (nu / 6) * cos3lat * (nu / rho - tan2lat);
+  var VI =
+    (nu / 120) *
+    cos5lat *
+    (5 - 18 * tan2lat + tan4lat + 14 * eta2 - 58 * tan2lat * eta2);
 
-  var dLon = lon-lon0;
-  var dLon2 = dLon*dLon, dLon3 = dLon2*dLon, dLon4 = dLon3*dLon, dLon5 = dLon4*dLon, dLon6 = dLon5*dLon;
+  var dLon = lon - lon0;
+  var dLon2 = dLon * dLon,
+    dLon3 = dLon2 * dLon,
+    dLon4 = dLon3 * dLon,
+    dLon5 = dLon4 * dLon,
+    dLon6 = dLon5 * dLon;
 
-  var N = I + II*dLon2 + III*dLon4 + IIIA*dLon6;
-  var E = E0 + IV*dLon + V*dLon3 + VI*dLon5;
+  var N = I + II * dLon2 + III * dLon4 + IIIA * dLon6;
+  var E = E0 + IV * dLon + V * dLon3 + VI * dLon5;
 
   return new OsGridRef(E, N);
 };
@@ -485,38 +500,47 @@ OsGridRef.latLongToOsGrid = function(point) {
  *
  */
 function to_map_ref(digits, easting, northing) {
-  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`); // eslint-disable-line comma-spacing
+  if (![0, 2, 4, 6, 8, 10, 12, 14, 16].includes(Number(digits)))
+    throw new RangeError(`invalid precision '${digits}'`); // eslint-disable-line comma-spacing
 
   let e = easting;
   let n = northing;
 
   // use digits = 0 to return numeric format (in metres) - note northing may be >= 1e7
   if (digits == 0) {
-    const format = { useGrouping: false,  minimumIntegerDigits: 6, maximumFractionDigits: 3 };
-    const ePad = e.toLocaleString('en', format);
-    const nPad = n.toLocaleString('en', format);
+    const format = {
+      useGrouping: false,
+      minimumIntegerDigits: 6,
+      maximumFractionDigits: 3,
+    };
+    const ePad = e.toLocaleString("en", format);
+    const nPad = n.toLocaleString("en", format);
     return `${ePad},${nPad}`;
   }
 
   // get the 100km-grid indices
-  const e100km = Math.floor(e / 100000), n100km = Math.floor(n / 100000);
+  const e100km = Math.floor(e / 100000),
+    n100km = Math.floor(n / 100000);
 
   // translate those into numeric equivalents of the grid letters
-  let l1 = (19 - n100km) - (19 - n100km) % 5 + Math.floor((e100km + 10) / 5);
-  let l2 = (19 - n100km) * 5 % 25 + e100km % 5;
+  let l1 = 19 - n100km - ((19 - n100km) % 5) + Math.floor((e100km + 10) / 5);
+  let l2 = (((19 - n100km) * 5) % 25) + (e100km % 5);
 
   // compensate for skipped 'I' and build grid letter-pairs
   if (l1 > 7) l1++;
   if (l2 > 7) l2++;
-  const letterPair = String.fromCharCode(l1 + 'A'.charCodeAt(0), l2 + 'A'.charCodeAt(0));
+  const letterPair = String.fromCharCode(
+    l1 + "A".charCodeAt(0),
+    l2 + "A".charCodeAt(0)
+  );
 
   // strip 100km-grid indices from easting & northing, and reduce precision
   e = Math.floor((e % 100000) / Math.pow(10, 5 - digits / 2));
   n = Math.floor((n % 100000) / Math.pow(10, 5 - digits / 2));
 
   // pad eastings & northings with leading zeros
-  e = e.toString().padStart(digits/2, '0');
-  n = n.toString().padStart(digits/2, '0');
+  e = e.toString().padStart(digits / 2, "0");
+  n = n.toString().padStart(digits / 2, "0");
 
   return `${letterPair} ${e} ${n}`;
 }
@@ -534,7 +558,7 @@ function thenReleased() {
     clearInterval(pressTimer);
     pressTimer = undefined;
   }
-  if ( dur >= 1.5 ) Bangle.showLauncher();
+  if (dur >= 1.5) Bangle.showLauncher();
 }
 
 // when you feel the buzzer you know you have done a long press
@@ -553,7 +577,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawAll();
 
-Bangle.on('lcdPower',function(on) {
+Bangle.on("lcdPower", function (on) {
   functionMode = FN_MODE_OFF;
   infoMode = INFO_NONE;
   if (on) {
@@ -567,10 +591,23 @@ Bangle.on('lcdPower',function(on) {
 
 var click = setInterval(onTick, 5000);
 
-setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
-setWatch(() => { changeFunctionMode(); drawAll(); }, BTN3, {repeat: true});
+setWatch(
+  () => {
+    changeInfoMode();
+    drawAll();
+  },
+  BTN1,
+  { repeat: true }
+);
+setWatch(
+  () => {
+    changeFunctionMode();
+    drawAll();
+  },
+  BTN3,
+  { repeat: true }
+);
 
 // make BTN require a long press (1.5 seconds) to switch to launcher
-setWatch(firstPressed, BTN2,{repeat:true,edge:"rising"});
-setWatch(thenReleased, BTN2,{repeat:true,edge:"falling"});
-
+setWatch(firstPressed, BTN2, { repeat: true, edge: "rising" });
+setWatch(thenReleased, BTN2, { repeat: true, edge: "falling" });

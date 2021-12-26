@@ -2,22 +2,22 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-(function(back) {
-  const SETTINGS_FILE = 'widbatpc.json'
-  const COLORS = ['By Level', 'Green', 'Monochrome']
+(function (back) {
+  const SETTINGS_FILE = "widbatpc.json";
+  const COLORS = ["By Level", "Green", "Monochrome"];
 
   // initialize with default settings...
   let s = {
-    'color': COLORS[0],
-    'percentage': true,
-    'fillbar': false,
-    'charger': true,
-    'hideifmorethan': 100,
-  }
+    color: COLORS[0],
+    percentage: true,
+    fillbar: false,
+    charger: true,
+    hideifmorethan: 100,
+  };
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
-  const storage = require('Storage')
-  const saved = storage.readJSON(SETTINGS_FILE, 1) || {}
+  const storage = require("Storage");
+  const saved = storage.readJSON(SETTINGS_FILE, 1) || {};
   for (const key in saved) {
     s[key] = saved[key];
   }
@@ -28,46 +28,46 @@
       s[key] = value;
       storage.write(SETTINGS_FILE, s);
       WIDGETS["batpc"].reload();
-    }
+    };
   }
 
-  const onOffFormat = b => (b ? 'on' : 'off')
+  const onOffFormat = (b) => (b ? "on" : "off");
   const menu = {
-    '': { 'title': 'Battery Widget' },
-    '< Back': back,
-    'Percentage': {
+    "": { title: "Battery Widget" },
+    "< Back": back,
+    Percentage: {
       value: s.percentage,
       format: onOffFormat,
-      onchange: save('percentage'),
+      onchange: save("percentage"),
     },
-    'Charging Icon': {
+    "Charging Icon": {
       value: s.charger,
       format: onOffFormat,
-      onchange: save('charger'),
+      onchange: save("charger"),
     },
-    'Color': {
+    Color: {
       format: () => s.color,
       onchange: function () {
         // cycles through options
-        const oldIndex = COLORS.indexOf(s.color)
-        const newIndex = (oldIndex + 1) % COLORS.length
-        s.color = COLORS[newIndex]
-        save('color')(s.color)
-      }
+        const oldIndex = COLORS.indexOf(s.color);
+        const newIndex = (oldIndex + 1) % COLORS.length;
+        s.color = COLORS[newIndex];
+        save("color")(s.color);
+      },
     },
-    'Fill Bar': {
+    "Fill Bar": {
       value: s.fillbar,
       format: onOffFormat,
-      onchange: save('fillbar'),
+      onchange: save("fillbar"),
     },
-    'Hide if >': {
-      value: s.hideifmorethan||100,
+    "Hide if >": {
+      value: s.hideifmorethan || 100,
       min: 10,
-      max : 100,
+      max: 100,
       step: 10,
-      format: x => x+"%",
-      onchange: save('hideifmorethan'),
+      format: (x) => x + "%",
+      onchange: save("hideifmorethan"),
     },
-  }
-  E.showMenu(menu)
-})
+  };
+  E.showMenu(menu);
+});

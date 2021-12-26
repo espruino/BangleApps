@@ -17,9 +17,8 @@ const red = "#d41706";
 const blue = "#0000ff";
 const yellow = "#ffff00";
 
-let settings = require('Storage').readJSON("calendar.json", true) || {};
-if (settings.startOnSun === undefined)
-  settings.startOnSun = false;
+let settings = require("Storage").readJSON("calendar.json", true) || {};
+if (settings.startOnSun === undefined) settings.startOnSun = false;
 if (settings.ndColors === undefined)
   if (process.env.HWVERSION == 2) {
     settings.ndColors = true;
@@ -123,7 +122,7 @@ function drawCalendar(date) {
 
   const month = date.getMonth();
   const year = date.getFullYear();
-  const localeMonth = require('locale').month(date);
+  const localeMonth = require("locale").month(date);
   g.setFontAlign(0, 0);
   g.setFont("6x8", fontSize);
   g.setColor(white);
@@ -135,7 +134,7 @@ function drawCalendar(date) {
   );
 
   g.setFont("6x8", fontSize);
-  let dowLbls = getDowLbls(require('locale').name);
+  let dowLbls = getDowLbls(require("locale").name);
   dowLbls.forEach((lbl, i) => {
     g.drawString(lbl, i * colW + colW / 2, headerH + rowH / 2);
   });
@@ -156,7 +155,7 @@ function drawCalendar(date) {
     8: 30,
     9: 31,
     10: 30,
-    11: 31
+    11: 31,
   };
 
   let days = [];
@@ -190,12 +189,7 @@ function drawCalendar(date) {
         let x2 = x * colW + colW;
         let y2 = y * rowH + headerH + rowH + rowH;
         g.drawRect(x1, y1, x2, y2);
-        g.drawRect(
-          x1 + 1,
-          y1 + 1,
-          x2 - 1,
-          y2 - 1
-        );
+        g.drawRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
       }
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
       g.drawString(
@@ -211,11 +205,11 @@ const date = new Date();
 const today = {
   day: date.getDate(),
   month: date.getMonth(),
-  year: date.getFullYear()
+  year: date.getFullYear(),
 };
 drawCalendar(date);
 clearWatch();
-Bangle.on("touch", area => {
+Bangle.on("touch", (area) => {
   const month = date.getMonth();
   let prevMonth;
   if (area == 1) {

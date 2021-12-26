@@ -2,15 +2,15 @@ g.clear();
 
 let now = new Date();
 
-let today = require('hebrewDate').hebrewDate(now);
+let today = require("hebrewDate").hebrewDate(now);
 
 var mainmenu = {
   "": {
-    "title": "Hebrew Date"
+    title: "Hebrew Date",
   },
   greg: {
     // @ts-ignore
-    value: require('locale').date(now, 1),
+    value: require("locale").date(now, 1),
   },
   date: {
     value: today.date,
@@ -20,7 +20,7 @@ var mainmenu = {
   },
   year: {
     value: today.year,
-  }
+  },
 };
 // @ts-ignore
 E.showMenu(mainmenu);

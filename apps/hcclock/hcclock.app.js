@@ -1,78 +1,99 @@
-
 //////////////////////////////////////////////////////
 // Numbers Rect order (left, top, right, bottom)
 // Each number defines a set of rects to draw
 
-const numbers = 
-[
-  [// Zero
+const numbers = [
+  [
+    // Zero
     [0, 0, 1, 0.2],
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 1],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// One
+  [
+    // One
     [0.7, 0, 1, 0.2],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// Two
+  [
+    // Two
     [0, 0, 1, 0.2],
     [0, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
     [0, 0.4, 0.1, 1],
-    [0.9, 0, 1, 0.6]
+    [0.9, 0, 1, 0.6],
   ],
-  [// Three
+  [
+    // Three
     [0, 0, 1, 0.2],
     [0.5, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// Four
+  [
+    // Four
     [0, 0.4, 1, 0.6],
     [0, 0, 0.1, 0.6],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// Five
+  [
+    // Five
     [0, 0, 1, 0.2],
     [0, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 0.6],
-    [0.9, 0.4, 1, 1]
+    [0.9, 0.4, 1, 1],
   ],
-  [// Six
+  [
+    // Six
     [0, 0, 1, 0.2],
     [0, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 1.0],
-    [0.9, 0.4, 1, 1]
+    [0.9, 0.4, 1, 1],
   ],
-  [// Seven
+  [
+    // Seven
     [0.0, 0, 1, 0.2],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// Eight
+  [
+    // Eight
     [0, 0, 1, 0.2],
     [0, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 1],
-    [0.9, 0, 1, 1]
+    [0.9, 0, 1, 1],
   ],
-  [// Nine
+  [
+    // Nine
     [0, 0, 1, 0.2],
     [0, 0.4, 1, 0.6],
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 0.6],
-    [0.9, 0, 1, 1]
-  ] 
+    [0.9, 0, 1, 1],
+  ],
 ];
 
-const months = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
+const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
 
 const interval = 1000; // in ms
 const top = 32;
 
-let ampm = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+let ampm = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 
 let bg = 255;
 let fg = 0;
@@ -89,137 +110,115 @@ function redraw() {
 }
 
 function refresh() {
-  g.setColor(bg,bg,bg);
-  g.fillRect(0,45,240,210);
+  g.setColor(bg, bg, bg);
+  g.fillRect(0, 45, 240, 210);
   Bangle.drawWidgets();
   updateTime();
 }
 
-function updateTime()
-{
+function updateTime() {
   let now = new Date();
   let m = now.getMinutes();
   let h = now.getHours();
   let mo = now.getMonth();
   let y = now.getFullYear();
   let d = now.getDate();
-  
-  if(h != hour)
-  {
+
+  if (h != hour) {
     hour = h;
-    g.setColor(bg,bg,bg);
-    g.fillRect(0,60,240,110);
-    g.setColor(fg,fg,fg);
-    if(ampm)
-      h = h%12;
+    g.setColor(bg, bg, bg);
+    g.fillRect(0, 60, 240, 110);
+    g.setColor(fg, fg, fg);
+    if (ampm) h = h % 12;
     drawDigits(60, h);
   }
-  if(m != mins)
-  {
+  if (m != mins) {
     mins = m;
-    g.setColor(bg,bg,bg);
-    g.fillRect(0,145,240,195);
-    g.setColor(fg,fg,fg);
+    g.setColor(bg, bg, bg);
+    g.fillRect(0, 145, 240, 195);
+    g.setColor(fg, fg, fg);
     drawDigits(145, mins);
   }
-  if(d != day)
-  {
+  if (d != day) {
     day = d;
     g.setFont("6x8", 2);
     g.setFontAlign(0, -1, 0);
-    g.drawString(fmtDate(d,mo,y,hour), 120, 120); 
+    g.drawString(fmtDate(d, mo, y, hour), 120, 120);
   }
 }
 
-function drawDigits(x, value)
-{
-  if(!Bangle.isLCDOn()) // No need to draw when LCD Off
+function drawDigits(x, value) {
+  if (!Bangle.isLCDOn())
+    // No need to draw when LCD Off
     return;
-  
-  drawChar(Math.floor(value/10),  15, x, 115, x+50);
-  if(value%10 == 1)
-    drawChar(value%10, 55, x, 155, x+50);
-  else
-    drawChar(value%10, 125, x, 225, x+50);
+
+  drawChar(Math.floor(value / 10), 15, x, 115, x + 50);
+  if (value % 10 == 1) drawChar(value % 10, 55, x, 155, x + 50);
+  else drawChar(value % 10, 125, x, 225, x + 50);
 }
 
-function drawChar(i, xMin, yMin, xMax, yMax)
-{
-   numbers[i].forEach(rect => {
-     r = place(rect, xMin, yMin, xMax, yMax);
-     g.setColor(fg,fg,fg);
-     g.fillRect(r[0], r[1], r[2], r[3]);
-    });
+function drawChar(i, xMin, yMin, xMax, yMax) {
+  numbers[i].forEach((rect) => {
+    r = place(rect, xMin, yMin, xMax, yMax);
+    g.setColor(fg, fg, fg);
+    g.fillRect(r[0], r[1], r[2], r[3]);
+  });
 }
 
-function place(array, xMin, yMin, xMax, yMax)
-{
+function place(array, xMin, yMin, xMax, yMax) {
   return [
-   lerp(xMin,xMax,array[0]),
-   lerp(yMin,yMax,array[1]),
-   lerp(xMin,xMax,array[2]),
-   lerp(yMin,yMax,array[3])
+    lerp(xMin, xMax, array[0]),
+    lerp(yMin, yMax, array[1]),
+    lerp(xMin, xMax, array[2]),
+    lerp(yMin, yMax, array[3]),
   ];
 }
 
-function lerp(a,b,t)
-{
-  return a + t*(b-a);
+function lerp(a, b, t) {
+  return a + t * (b - a);
 }
 
-function fmtDate(day,month,year,hour)
-{
-  if(ampm)
-  {
+function fmtDate(day, month, year, hour) {
+  if (ampm) {
     let ap = "(AM)";
-    if(hour == 0 || hour > 12)
-      ap = "(PM)";
-    return months[month] + " " + day + " " + year + " "+ ap;
-  }
-  else
-    return months[month] + ". " + day + " " + year;
+    if (hour == 0 || hour > 12) ap = "(PM)";
+    return months[month] + " " + day + " " + year + " " + ap;
+  } else return months[month] + ". " + day + " " + year;
 }
-
 
 //////////////////////////////////////////
 //
 //  HANDLE COLORS + SETTINGS
 //
 
-function getColorScheme()
-{
-    let settings = require('Storage').readJSON("hcclock.json", true) || {};
-    if (!("scheme" in settings)) {
-      settings.scheme = 0;
-    }
-    return settings.scheme;
+function getColorScheme() {
+  let settings = require("Storage").readJSON("hcclock.json", true) || {};
+  if (!("scheme" in settings)) {
+    settings.scheme = 0;
+  }
+  return settings.scheme;
 }
 
-function setColorScheme(value)
-{
-    let settings = require('Storage').readJSON("hcclock.json", true) || {};
-    settings.scheme = value;
-    require('Storage').writeJSON('hcclock.json', settings);
+function setColorScheme(value) {
+  let settings = require("Storage").readJSON("hcclock.json", true) || {};
+  settings.scheme = value;
+  require("Storage").writeJSON("hcclock.json", settings);
 
-    if(value == 0) // White
-    {
-      bg = 255;
-      fg = 0;
-    }
-    else // Black
-    {
-      bg = 0;
-      fg = 255;
-    }
-    redraw();
+  if (value == 0) {
+    // White
+    bg = 255;
+    fg = 0;
+  } // Black
+  else {
+    bg = 0;
+    fg = 255;
+  }
+  redraw();
 }
 
-function flipColors()
-{
-  if(getColorScheme() == 0)
-      setColorScheme(1);
-  else
-      setColorScheme(0);
+function flipColors() {
+  if (getColorScheme() == 0) setColorScheme(1);
+  else setColorScheme(0);
 }
 
 //////////////////////////////////////////
@@ -240,4 +239,6 @@ setWatch(flipColors, BTN1, true);
 setWatch(Bangle.showLauncher, BTN2, false);
 
 // Handle redraw on LCD on / fullscreen notifications dismissed
-Bangle.on('lcdPower', (on) => { if(on) redraw(); });
+Bangle.on("lcdPower", (on) => {
+  if (on) redraw();
+});

@@ -3,7 +3,9 @@ class Ring {
     this.alive = true;
     this.radius = 0;
     this.color = [
-      Math.random() > 0.5 ? 1 : 0, Math.random() > 0.5 ? 1 : 0, Math.random() > 0.5 ? 1 : 0
+      Math.random() > 0.5 ? 1 : 0,
+      Math.random() > 0.5 ? 1 : 0,
+      Math.random() > 0.5 ? 1 : 0,
     ];
   }
 }
@@ -17,7 +19,7 @@ let BUFFER_SPREAD = 20;
 
 const animate = () => {
   if (pool.length < LIMIT && BUFFER === 0) {
-    const available = pool.filter(ring => !ring.alive);
+    const available = pool.filter((ring) => !ring.alive);
     const newRing = available.length ? available[0] : new Ring();
     pool.push(newRing);
     BUFFER = BUFFER_SPREAD;
@@ -34,11 +36,11 @@ const animate = () => {
       g.drawCircle(120, 120, ring.radius++);
     }
   }
-  setTimeout(animate, 1000/60);
+  setTimeout(animate, 1000 / 60);
 };
 
-setWatch(() => (BUFFER_SPREAD += 5), BTN1, {repeat: true});
-setWatch(() => (RANDOM = !RANDOM), BTN2, {repeat: true});
-setWatch(() => (BUFFER_SPREAD -= 5), BTN3, {repeat: true});
+setWatch(() => (BUFFER_SPREAD += 5), BTN1, { repeat: true });
+setWatch(() => (RANDOM = !RANDOM), BTN2, { repeat: true });
+setWatch(() => (BUFFER_SPREAD -= 5), BTN3, { repeat: true });
 
 animate();

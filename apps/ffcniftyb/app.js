@@ -1,9 +1,9 @@
 const locale = require("locale");
-const storage = require('Storage');
+const storage = require("Storage");
 
 const is12Hour = (storage.readJSON("setting.json", 1) || {})["12hour"];
-const color = (storage.readJSON("ffcniftyb.json", 1) || {})["color"] || 63488 /* red */;
-
+const color =
+  (storage.readJSON("ffcniftyb.json", 1) || {})["color"] || 63488; /* red */
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
@@ -19,11 +19,16 @@ const center = {
 };
 
 function d02(value) {
-  return ('0' + value).substr(-2);
+  return ("0" + value).substr(-2);
 }
 
 function renderEllipse(g) {
-  g.fillEllipse(center.x - 5 * scale, center.y - 70 * scale, center.x + 160 * scale, center.y + 90 * scale);
+  g.fillEllipse(
+    center.x - 5 * scale,
+    center.y - 70 * scale,
+    center.x + 160 * scale,
+    center.y + 90 * scale
+  );
 }
 
 function renderText(g) {
@@ -51,17 +56,16 @@ function renderText(g) {
 }
 
 const buf = Graphics.createArrayBuffer(screen.width, screen.height, 1, {
-  msb: true
+  msb: true,
 });
 
 function draw() {
-
   const img = {
     width: screen.width,
     height: screen.height,
     transparent: 0,
     bpp: 1,
-    buffer: buf.buffer
+    buffer: buf.buffer,
   };
 
   // cleat screen area
@@ -79,7 +83,6 @@ function draw() {
   renderText(buf.setColor(0));
   g.setColor(color).drawImage(img, 0, 24);
 }
-
 
 /* Minute Ticker *************************************/
 
@@ -104,7 +107,7 @@ function startTick(run) {
 g.clear();
 startTick(draw);
 
-Bangle.on('lcdPower', (on) => {
+Bangle.on("lcdPower", (on) => {
   if (on) {
     startTick(draw);
   } else {

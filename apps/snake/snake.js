@@ -13,32 +13,48 @@ const defaultTailSize = 3;
 let tailSize = defaultTailSize;
 const snakeTrail = [];
 const snake = { x: 10, y: 10 };
-const apple = { x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) };
+const apple = {
+  x: Math.floor(Math.random() * gridSize),
+  y: Math.floor(Math.random() * gridSize),
+};
 
-function drawBackground(){
+function drawBackground() {
   g.setColor("#000000");
   g.fillRect(0, 0, H, W);
 }
 
-function drawApple(){
+function drawApple() {
   g.setColor("#FF0000");
-  g.fillCircle((apple.x * tileSize) + tileSize/2, (apple.y * tileSize) + tileSize/2, tileSize/2);
+  g.fillCircle(
+    apple.x * tileSize + tileSize / 2,
+    apple.y * tileSize + tileSize / 2,
+    tileSize / 2
+  );
 }
 
-function drawSnake(){
+function drawSnake() {
   g.setColor("#008000");
   for (let i = 0; i < snakeTrail.length; i++) {
-    g.fillRect(snakeTrail[i].x * tileSize, snakeTrail[i].y * tileSize, snakeTrail[i].x * tileSize + tileSize, snakeTrail[i].y * tileSize + tileSize);
+    g.fillRect(
+      snakeTrail[i].x * tileSize,
+      snakeTrail[i].y * tileSize,
+      snakeTrail[i].x * tileSize + tileSize,
+      snakeTrail[i].y * tileSize + tileSize
+    );
 
     //snake bites it's tail
-    if (snakeTrail[i].x === snake.x && snakeTrail[i].y === snake.y && tailSize > defaultTailSize) {
+    if (
+      snakeTrail[i].x === snake.x &&
+      snakeTrail[i].y === snake.y &&
+      tailSize > defaultTailSize
+    ) {
       Bangle.buzz(1000);
       gameOver();
     }
   }
 }
 
-function drawScore(){
+function drawScore() {
   g.setColor("#FFFFFF");
   g.setFont("6x8");
   g.setFontAlign(0, 0);
@@ -112,39 +128,64 @@ function draw() {
 }
 
 // input
-setWatch(() => {// Up
-  if (d !== 'd') {
-    nextX = 0;
-    nextY = -1;
-    d = 'u';
-  }
-}, BTN1, { repeat: true });
-setWatch(() => {// Down
-  if (d !== 'u') {
-    nextX = 0;
-    nextY = 1;
-    d = 'd';
-  }
-}, BTN3, { repeat: true });
-setWatch(() => {// Left
-  if (d !== 'r') {
-    nextX = -1;
-    nextY = 0;
-    d = 'l';
-  }
-}, BTN4, { repeat: true });
-setWatch(() => {// Right
-  if (d !== 'l') {
-    nextX = 1;
-    nextY = 0;
-    d = 'r';
-  }
-}, BTN5, { repeat: true });
-setWatch(() => {// Pause
-  running = !running;
-}, BTN2, { repeat: true });
+setWatch(
+  () => {
+    // Up
+    if (d !== "d") {
+      nextX = 0;
+      nextY = -1;
+      d = "u";
+    }
+  },
+  BTN1,
+  { repeat: true }
+);
+setWatch(
+  () => {
+    // Down
+    if (d !== "u") {
+      nextX = 0;
+      nextY = 1;
+      d = "d";
+    }
+  },
+  BTN3,
+  { repeat: true }
+);
+setWatch(
+  () => {
+    // Left
+    if (d !== "r") {
+      nextX = -1;
+      nextY = 0;
+      d = "l";
+    }
+  },
+  BTN4,
+  { repeat: true }
+);
+setWatch(
+  () => {
+    // Right
+    if (d !== "l") {
+      nextX = 1;
+      nextY = 0;
+      d = "r";
+    }
+  },
+  BTN5,
+  { repeat: true }
+);
+setWatch(
+  () => {
+    // Pause
+    running = !running;
+  },
+  BTN2,
+  { repeat: true }
+);
 
-Bangle.on('touch', button => {
+Bangle.on("touch", (button) => {
   if (!running) {
     gameStart();
   }

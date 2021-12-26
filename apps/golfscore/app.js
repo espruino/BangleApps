@@ -19,9 +19,11 @@ let course = new Array(holes_count).map(() => new Array(player_count).fill(0));
 
 const main_menu = {
   "": {
-    "title": "-- Golf --"
+    title: "-- Golf --",
   },
-  "Setup": function () { E.showMenu(setup_menu); },
+  Setup: function () {
+    E.showMenu(setup_menu);
+  },
   "Score Card": function () {
     calculate_score();
     E.showMenu(score_card);
@@ -31,21 +33,23 @@ const main_menu = {
 function calculate_score() {
   let scores = course.reduce((acc, hole) => {
     hole.forEach((stroke_count, player) => {
-      acc[player] = acc[player]+stroke_count;
+      acc[player] = acc[player] + stroke_count;
     });
     return acc;
   }, new Array(player_count).fill(0));
 
   score_card = {
     "": {
-      "title": "score card"
+      title: "score card",
     },
-    "< Back": function () { E.showMenu(main_menu); },
+    "< Back": function () {
+      E.showMenu(main_menu);
+    },
   };
 
   for (let player = 0; player < player_count; player++) {
     score_card["Player - " + (player + 1)] = {
-      value: scores[player]
+      value: scores[player],
     };
   }
 }
@@ -54,22 +58,39 @@ let score_card = {};
 
 const setup_menu = {
   "": {
-    "title": "-- Golf Setup --"
+    title: "-- Golf Setup --",
   },
-  "Holes": {
+  Holes: {
     value: holes_count,
-    min: 1, max: 20, step: 1, wrap: true,
-    onchange: v => { holes_count = v; add_holes(); }
+    min: 1,
+    max: 20,
+    step: 1,
+    wrap: true,
+    onchange: (v) => {
+      holes_count = v;
+      add_holes();
+    },
   },
-  "Players": {
+  Players: {
     value: player_count,
-    min: 1, max: 10, step: 1, wrap: true,
-    onchange: v => { player_count = v; }
+    min: 1,
+    max: 10,
+    step: 1,
+    wrap: true,
+    onchange: (v) => {
+      player_count = v;
+    },
   },
-  "< Back": function () { E.showMenu(main_menu); },
+  "< Back": function () {
+    E.showMenu(main_menu);
+  },
 };
 
-function inc_hole(i, player) { return function (v) { course[i][player] = v; }; }
+function inc_hole(i, player) {
+  return function (v) {
+    course[i][player] = v;
+  };
+}
 
 function add_holes() {
   for (let j = 0; j < 20; j++) {
@@ -91,17 +112,22 @@ function goto_hole_menu(i) {
 function hole_menu(i) {
   let menu = {
     "": {
-      "title": `-- Hole ${i + 1}--`
+      title: `-- Hole ${i + 1}--`,
     },
     "Next hole": goto_hole_menu(i + 1),
-    "< Back": function () { E.showMenu(main_menu); },
+    "< Back": function () {
+      E.showMenu(main_menu);
+    },
   };
 
   for (let player = 0; player < player_count; player++) {
     menu[`player - ${player + 1}`] = {
       value: course[i][player],
-      min: 1, max: 20, step: 1, wrap: true,
-      onchange: inc_hole(i, player)
+      min: 1,
+      max: 20,
+      step: 1,
+      wrap: true,
+      onchange: inc_hole(i, player),
     };
   }
 

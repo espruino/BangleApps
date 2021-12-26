@@ -6,36 +6,36 @@ const STATES = {
   INIT: 1,
   STARTED: 2,
   DONE: 3,
-  BREAK: 4
+  BREAK: 4,
 };
 var counterInterval;
 
 class State {
-  constructor (state, device) {
+  constructor(state, device) {
     this.state = state;
     this.device = device;
     this.next = null;
   }
 
-  setNext (next) {
+  setNext(next) {
     this.next = next;
   }
 
-  setButtons () {}
+  setButtons() {}
 
-  clear () {
+  clear() {
     clearWatch();
     g.clear();
     g.setFontAlign(0, 0);
   }
 
-  draw () {
+  draw() {
     g.clear();
   }
 
-  init () { }
+  init() {}
 
-  go (nextState) {
+  go(nextState) {
     if (nextState) {
       this.next = nextState;
     }
@@ -48,17 +48,17 @@ class State {
 }
 
 class InitState extends State {
-  constructor (device) {
+  constructor(device) {
     super(STATES.INIT, device);
 
     this.timeCounter = parseInt(storage.read(".pomodo") || DEFAULT_TIME, 10);
   }
 
-  saveTime () {
-    storage.write('.pomodo', '' + this.timeCounter);
+  saveTime() {
+    storage.write(".pomodo", "" + this.timeCounter);
   }
 
-  setButtons () {
+  setButtons() {
     this.device.setBTN1(() => {
       if (this.timeCounter + 300 > 3599) {
         this.timeCounter = 3599;
@@ -67,7 +67,6 @@ class InitState extends State {
       }
 
       this.draw();
-
     });
 
     this.device.setBTN3(() => {
@@ -92,7 +91,6 @@ class InitState extends State {
       }
 
       this.draw();
-
     });
 
     this.device.setBTN2(() => {
@@ -104,7 +102,7 @@ class InitState extends State {
     });
   }
 
-  draw () {
+  draw() {
     g.clear();
     g.setFontAlign(0, 0); // center font
     g.setFont("Vector", 50); // vector font, 80px
@@ -113,18 +111,18 @@ class InitState extends State {
 }
 
 class StartedState extends State {
-  constructor (timeCounter, buttons) {
+  constructor(timeCounter, buttons) {
     super(STATES.STARTED, buttons);
 
     this.timeCounter = timeCounter;
   }
 
-  draw () {
+  draw() {
     drawCounter(this.timeCounter, g.getWidth() / 2, g.getHeight() / 2);
   }
 
-  init () {
-    function countDown () {
+  init() {
+    function countDown() {
       this.timeCounter--;
 
       // Out of time
@@ -145,15 +143,15 @@ class StartedState extends State {
 }
 
 class BreakState extends State {
-  constructor (buttons) {
+  constructor(buttons) {
     super(STATES.BREAK, buttons);
   }
 
-  draw () {
+  draw() {
     g.setFontAlign(0, 0);
   }
 
-  init () {
+  init() {
     const startedState = new StartedState(TIME_BREAK, this.device);
 
     this.setNext(startedState);
@@ -162,47 +160,42 @@ class BreakState extends State {
 }
 
 class DoneState extends State {
-  constructor (device) {
+  constructor(device) {
     super(STATES.DONE, device);
   }
 
-  setButtons () {
-    this.device.setBTN1(() => {
-    });
+  setButtons() {
+    this.device.setBTN1(() => {});
 
-    this.device.setBTN3(() => {
-    });
+    this.device.setBTN3(() => {});
 
-    this.device.setBTN2(() => {
-    });
+    this.device.setBTN2(() => {});
   }
 
-  draw () {
+  draw() {
     g.clear();
     E.showPrompt("You are a hero!", {
-      buttons : {"AGAIN":1,"BREAK":2}
+      buttons: { AGAIN: 1, BREAK: 2 },
     }).then((v) => {
-      var nextSate = (v == 1
-                      ? new InitState(this.device)
-                      : new BreakState(this.device));
+      var nextSate =
+        v == 1 ? new InitState(this.device) : new BreakState(this.device);
       clearTimeout(this.timeout);
       nextSate.go();
     });
   }
 
-  init () {
-
-    function buzz () {
+  init() {
+    function buzz() {
       Bangle.buzz();
       Bangle.beep(200, 4000)
-        .then(() => new Promise(resolve => setTimeout(resolve, 50)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 50)))
         .then(() => Bangle.beep(200, 3000))
-        .then(() => new Promise(resolve => setTimeout(resolve, 200)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 200)))
         .then(() => Bangle.beep(200, 3000))
-        .then(() => new Promise(resolve => setTimeout(resolve, 300)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 300)))
         .then(() => {
           Bangle.beep(200, 3000);
-          Bangle.buzz()
+          Bangle.buzz();
         });
     }
 
@@ -236,11 +229,11 @@ class Bangle1 {
 
 class Bangle2 {
   setBTN1(callback) {
-      Bangle.on('touch', function(zone, e) {
-          if (e.y < g.getHeight() / 2) {
-              callback();
-          }
-      });
+    Bangle.on("touch", function (zone, e) {
+      if (e.y < g.getHeight() / 2) {
+        callback();
+      }
+    });
   }
 
   setBTN2(callback) {
@@ -248,19 +241,19 @@ class Bangle2 {
   }
 
   setBTN3(callback) {
-      Bangle.on('touch', function(zone, e) {
-          if (e.y > g.getHeight() / 2) {
-              callback();
-          }
-      });
+    Bangle.on("touch", function (zone, e) {
+      if (e.y > g.getHeight() / 2) {
+        callback();
+      }
+    });
   }
 
-  setBTN4(callback) { }
+  setBTN4(callback) {}
 
-  setBTN5(callback) { }
+  setBTN5(callback) {}
 }
 
-function drawCounter (currentValue, x, y) {
+function drawCounter(currentValue, x, y) {
   if (currentValue < 0) {
     return;
   }
@@ -278,25 +271,23 @@ function drawCounter (currentValue, x, y) {
     seconds = currentValue;
   }
 
-  let minutesString = '' + minutes;
-  let secondsString = '' + seconds;
+  let minutesString = "" + minutes;
+  let secondsString = "" + seconds;
 
   if (minutes < 10) {
-    minutesString = '0' + minutes;
+    minutesString = "0" + minutes;
   }
 
   if (seconds < 10) {
-    secondsString = '0' + seconds;
+    secondsString = "0" + seconds;
   }
 
   g.clear();
-  g.drawString(minutesString + ':' + secondsString, x, y);
+  g.drawString(minutesString + ":" + secondsString, x, y);
 }
 
-function init () {
-  device = (process.env.HWVERSION==1
-             ? new Bangle1()
-             : new Bangle2());
+function init() {
+  device = process.env.HWVERSION == 1 ? new Bangle1() : new Bangle2();
   const initState = new InitState(device);
   initState.go();
 }

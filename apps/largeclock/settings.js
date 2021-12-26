@@ -1,19 +1,19 @@
-(function(back) {
+(function (back) {
   const s = require("Storage");
   const apps = s
     .list(/\.info$/)
-    .map(app => {
+    .map((app) => {
       var a = s.readJSON(app, 1);
       return (
         a && {
           n: a.name,
           t: a.type,
-          src: a.src
+          src: a.src,
         }
       );
     })
-    .filter(app => app && (app.t == "app" || app.t == "clock" || !app.t))
-    .map(a => {
+    .filter((app) => app && (app.t == "app" || app.t == "clock" || !app.t))
+    .map((a) => {
       return { n: a.n, src: a.src };
     });
   apps.sort((a, b) => {
@@ -23,13 +23,13 @@
   });
   apps.push({
     n: "NONE",
-    src: ""
+    src: "",
   });
 
   const settings = s.readJSON("largeclock.json", 1) || {
     BTN1: "",
     BTN3: "",
-    right_hand: false
+    right_hand: false,
   };
 
   function showApps(btn) {
@@ -44,9 +44,9 @@
 
     const btnMenu = {
       "": {
-        title: `Apps for ${btn}`
+        title: `Apps for ${btn}`,
       },
-      "< Back": () => E.showMenu(mainMenu)
+      "< Back": () => E.showMenu(mainMenu),
     };
 
     if (apps.length > 0) {
@@ -54,14 +54,14 @@
         btnMenu[apps[i].n] = {
           value: apps[i].src,
           format: format,
-          onchange: onchange
+          onchange: onchange,
         };
       }
     } else {
       btnMenu["...No Apps..."] = {
         value: undefined,
         format: () => "",
-        onchange: () => {}
+        onchange: () => {},
       };
     }
     return E.showMenu(btnMenu);
@@ -74,12 +74,12 @@
     "BTN3 app": () => showApps("BTN3"),
     "On right hand": {
       value: !!settings.right_hand,
-      format: v=>v?"Yes":"No",
-      onchange: v=>{
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => {
         settings.right_hand = v;
         s.writeJSON("largeclock.json", settings);
-      }
-    }
+      },
+    },
   };
 
   E.showMenu(mainMenu);

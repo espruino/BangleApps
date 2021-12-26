@@ -14,46 +14,76 @@ const defaultTailSize = 3;
 let tailSize = defaultTailSize;
 const snakeTrail = [];
 const snake = { x: 10, y: 10 };
-const apple = { x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) };
+const apple = {
+  x: Math.floor(Math.random() * gridSize),
+  y: Math.floor(Math.random() * gridSize),
+};
 
-function drawBackground(){
+function drawBackground() {
   g.setColor("#000000");
   g.fillRect(0, 0, H, W);
 }
 
-function drawBackgroundSuccess(){
+function drawBackgroundSuccess() {
   g.setColor("#00FFFF");
   g.fillRect(0, 0, H, W);
 }
 
-function drawApple(){
+function drawApple() {
   g.setColor("#FF0000");
-  g.fillCircle((apple.x * tileSize) + tileSize/2, (apple.y * tileSize) + tileSize/2, tileSize/2);
+  g.fillCircle(
+    apple.x * tileSize + tileSize / 2,
+    apple.y * tileSize + tileSize / 2,
+    tileSize / 2
+  );
 }
 
-function drawSnake(){
+function drawSnake() {
   g.setColor("#008000");
   for (let i = 0; i < snakeTrail.length; i++) {
-    g.fillRect(snakeTrail[i].x * tileSize, snakeTrail[i].y * tileSize, snakeTrail[i].x * tileSize + tileSize, snakeTrail[i].y * tileSize + tileSize); 
+    g.fillRect(
+      snakeTrail[i].x * tileSize,
+      snakeTrail[i].y * tileSize,
+      snakeTrail[i].x * tileSize + tileSize,
+      snakeTrail[i].y * tileSize + tileSize
+    );
 
     //snake bites it's tail
-    if (snakeTrail[i].x === snake.x && snakeTrail[i].y === snake.y && tailSize > defaultTailSize) {
+    if (
+      snakeTrail[i].x === snake.x &&
+      snakeTrail[i].y === snake.y &&
+      tailSize > defaultTailSize
+    ) {
       Bangle.buzz(1000);
       gameOver();
     }
   }
-    g.setColor("#FFFFFF");
-    g.fillRect(snake.x*tileSize, snake.y*tileSize, snake.x*tileSize+ tileSize, snake.y*tileSize + tileSize);
-  
-    g.setColor("#0000ff");
-    g.fillRect((snake.x*tileSize)+1, (snake.y*tileSize)+2, (snake.x*tileSize)+2, (snake.y*tileSize)+4);
-  
-      g.setColor("#0000ff");
-    g.fillRect((snake.x*tileSize)+tileSize-1, (snake.y*tileSize)+2, (snake.x*tileSize)+tileSize-2, (snake.y*tileSize)+4);
+  g.setColor("#FFFFFF");
+  g.fillRect(
+    snake.x * tileSize,
+    snake.y * tileSize,
+    snake.x * tileSize + tileSize,
+    snake.y * tileSize + tileSize
+  );
 
+  g.setColor("#0000ff");
+  g.fillRect(
+    snake.x * tileSize + 1,
+    snake.y * tileSize + 2,
+    snake.x * tileSize + 2,
+    snake.y * tileSize + 4
+  );
+
+  g.setColor("#0000ff");
+  g.fillRect(
+    snake.x * tileSize + tileSize - 1,
+    snake.y * tileSize + 2,
+    snake.x * tileSize + tileSize - 2,
+    snake.y * tileSize + 4
+  );
 }
 
-function drawScore(){
+function drawScore() {
   g.setColor("#555555");
   g.setFont("Vector20");
   g.setFontAlign(0, 0);
@@ -130,55 +160,49 @@ function draw() {
 
 let dDiff = 10;
 
-Bangle.on('drag', function(a) {
-  
-  if (a.dx > dDiff ) { // right
-      if (d !== 'l')
-      {
-        nextX = 1;
-        nextY = 0;
-        d = 'r';
-      }
-  }
-
-  if (a.dx < -dDiff ) { // left
-      if (d !== 'r')
-      {
-        nextX = -1;
-        nextY = 0;
-        d = 'l';
-      }
-  }
-
-  if (a.dy < -dDiff) { // Up
-  if (d !== 'd') {
-    nextX = 0;
-    nextY = -1;
-    d = 'u';
-  }
-  }
-  
-
-  if (a.dy > dDiff) { // Down
-    if (d !== 'u') 
-    {
-      nextX = 0;
-      nextY = 1;
-      d = 'd';
+Bangle.on("drag", function (a) {
+  if (a.dx > dDiff) {
+    // right
+    if (d !== "l") {
+      nextX = 1;
+      nextY = 0;
+      d = "r";
     }
   }
-  
+
+  if (a.dx < -dDiff) {
+    // left
+    if (d !== "r") {
+      nextX = -1;
+      nextY = 0;
+      d = "l";
+    }
+  }
+
+  if (a.dy < -dDiff) {
+    // Up
+    if (d !== "d") {
+      nextX = 0;
+      nextY = -1;
+      d = "u";
+    }
+  }
+
+  if (a.dy > dDiff) {
+    // Down
+    if (d !== "u") {
+      nextX = 0;
+      nextY = 1;
+      d = "d";
+    }
+  }
 });
 
-
-
-
-Bangle.on('touch', button => {
+Bangle.on("touch", (button) => {
   if (!running) {
     gameStart();
   }
 });
-
 
 // render X times per second
 const x = 5;

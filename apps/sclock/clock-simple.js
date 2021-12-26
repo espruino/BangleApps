@@ -1,17 +1,17 @@
-const big = g.getWidth()>200;
-const timeFontSize = big?6:5;
-const dateFontSize = big?3:2;
+const big = g.getWidth() > 200;
+const timeFontSize = big ? 6 : 5;
+const dateFontSize = big ? 3 : 2;
 const gmtFontSize = 2;
 const font = "6x8";
 
 const xyCenter = g.getWidth() / 2;
-const yposTime = xyCenter*0.6;
-const yposDate = xyCenter*1.1;
-const yposYear = xyCenter*1.4;
-const yposGMT = xyCenter*1.9;
+const yposTime = xyCenter * 0.6;
+const yposDate = xyCenter * 1.1;
+const yposYear = xyCenter * 1.4;
+const yposGMT = xyCenter * 1.9;
 
 // Check settings for what type our clock should be
-var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 
 // timeout used to update every minute
 var drawTimeout;
@@ -19,7 +19,7 @@ var drawTimeout;
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
+  drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
@@ -40,16 +40,16 @@ function draw() {
     minutes = time[1];
   var meridian = "";
   if (is12Hour) {
-    hours = parseInt(hours,10);
+    hours = parseInt(hours, 10);
     meridian = "AM";
     if (hours == 0) {
       hours = 12;
       meridian = "AM";
     } else if (hours >= 12) {
       meridian = "PM";
-      if (hours>12) hours -= 12;
+      if (hours > 12) hours -= 12;
     }
-    hours = (" "+hours).substr(-2);
+    hours = (" " + hours).substr(-2);
   }
 
   g.setFont(font, timeFontSize);
@@ -76,10 +76,11 @@ function draw() {
 }
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+Bangle.on("lcdPower", (on) => {
   if (on) {
     draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
+  } else {
+    // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }

@@ -25,92 +25,107 @@
 //////////////////////////////////////////////////////////////////////////////
 /*                              ==ASSETS==                                  */
 
-const heatshrink = require('heatshrink');
+const heatshrink = require("heatshrink");
 
-const enc = x => {
-    const d = btoa(require("heatshrink").compress(x));
-    var r = "'" + d.substr(0, 64);
-    for (let i = 64; i < d.length; i += 64) r += "' +\n    '" + d.substr(i, 64);
-    return r + "'";
+const enc = (x) => {
+  const d = btoa(require("heatshrink").compress(x));
+  var r = "'" + d.substr(0, 64);
+  for (let i = 64; i < d.length; i += 64) r += "' +\n    '" + d.substr(i, 64);
+  return r + "'";
 };
 
 const prepBitmap = (name, data) => {
-    const image = Graphics.createImage(data);
-    const raw = String.fromCharCode(image.width, image.height, 0x81, 0) + image.buffer;
-    const x = `
+  const image = Graphics.createImage(data);
+  const raw =
+    String.fromCharCode(image.width, image.height, 0x81, 0) + image.buffer;
+  const x = `
 const ${name}I = dec(${enc(raw)});
 `;
-    return x;
+  return x;
 };
 
 const prepFont = (name, data) => {
-    const image = Graphics.createImage(data);
-    const lengths = Uint8Array(256);
-    const offsets = Uint16Array(256);
-    const adjustments = Uint16Array(256);
-    let min = Infinity, max = -Infinity;
-    const lines = data.split('\n');
-    let m;
-    // This regexp is clearly suboptimal, but Espruino's regexp engine is really wonky
-    // and doesn't process nested parentheses or alternation correctly.
-    for (let i = 0; i < 5 && !(m = /^(<*)=([*\d]+)(=*)(>*)$/.exec(lines[i])); i++);
-    if (!m) throw new Error('Missing or incorrect header');
-    const desc = m[1].length, body = 1 + m[2].length + m[3].length, asc = m[4].length;
-    const h = desc + body + asc;
-    let width = m[2] == '*' ? null : +m[2];
-    let c = null, o = 0;
-    lines.forEach((line, l) => {
-      if (m = /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) || /^(<*)(-)(.)(-*)(>*)$/.exec(line)) {
-        const h = m[2] == '=';
-        if (m[1].length > desc || h && m[1].length != desc)
-          throw new Error('Invalid descender height at ' + l);
-        if (m[2].length + m[3].length + m[4].length != body)
-          throw new Error('Invalid body height at ' + l);
-        if (m[5].length > asc || h && m[5].length != asc)
-          throw new Error('Invalid ascender height at ' + l);
-        if (c != null) {
-          lengths[c] = l - o;
-          if (width !== null && width !== lengths[c])
-            throw new Error(
-              `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
-            );
-          c = null
-        }
-        if (!h) {
-          c = m[3].charCodeAt(0);
-          if (c < min) min = c;
-          if (c > max) max = c;
-          o = l + 1;
-          offsets[c] = l;
-          adjustments[c] = m[1].length
-        }
+  const image = Graphics.createImage(data);
+  const lengths = Uint8Array(256);
+  const offsets = Uint16Array(256);
+  const adjustments = Uint16Array(256);
+  let min = Infinity,
+    max = -Infinity;
+  const lines = data.split("\n");
+  let m;
+  // This regexp is clearly suboptimal, but Espruino's regexp engine is really wonky
+  // and doesn't process nested parentheses or alternation correctly.
+  for (
+    let i = 0;
+    i < 5 && !(m = /^(<*)=([*\d]+)(=*)(>*)$/.exec(lines[i]));
+    i++
+  );
+  if (!m) throw new Error("Missing or incorrect header");
+  const desc = m[1].length,
+    body = 1 + m[2].length + m[3].length,
+    asc = m[4].length;
+  const h = desc + body + asc;
+  let width = m[2] == "*" ? null : +m[2];
+  let c = null,
+    o = 0;
+  lines.forEach((line, l) => {
+    if (
+      (m =
+        /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) ||
+        /^(<*)(-)(.)(-*)(>*)$/.exec(line))
+    ) {
+      const h = m[2] == "=";
+      if (m[1].length > desc || (h && m[1].length != desc))
+        throw new Error("Invalid descender height at " + l);
+      if (m[2].length + m[3].length + m[4].length != body)
+        throw new Error("Invalid body height at " + l);
+      if (m[5].length > asc || (h && m[5].length != asc))
+        throw new Error("Invalid ascender height at " + l);
+      if (c != null) {
+        lengths[c] = l - o;
+        if (width !== null && width !== lengths[c])
+          throw new Error(
+            `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
+          );
+        c = null;
       }
-    });
-    const xoffs = Uint8Array(lines.length);
-    const ypos = Uint16Array(lines.length);
-    ypos.fill(0xffff);
-    const w0 = lengths[min];
-    let widths = '';
-    for (c = min, o = 0; c <= max; c++) {
-        for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
-            xoffs[j] = asc + body + adjustments[c] - 1;
-            ypos[j++] = o++;
-        }
-        widths += String.fromCharCode(lengths[c]);
+      if (!h) {
+        c = m[3].charCodeAt(0);
+        if (c < min) min = c;
+        if (c > max) max = c;
+        o = l + 1;
+        offsets[c] = l;
+        adjustments[c] = m[1].length;
+      }
     }
-    const raster = Graphics.createArrayBuffer(h, o, 1, {msb: true});
-    const writer = Graphics.createCallback(
-        image.width, image.height, 1,
-        (x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
-    );
-    writer.drawImage(image);
-    if (width === null) width = `dec(${enc(widths)})`;
-    const x = `const ${name}F = [
+  });
+  const xoffs = Uint8Array(lines.length);
+  const ypos = Uint16Array(lines.length);
+  ypos.fill(0xffff);
+  const w0 = lengths[min];
+  let widths = "";
+  for (c = min, o = 0; c <= max; c++) {
+    for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
+      xoffs[j] = asc + body + adjustments[c] - 1;
+      ypos[j++] = o++;
+    }
+    widths += String.fromCharCode(lengths[c]);
+  }
+  const raster = Graphics.createArrayBuffer(h, o, 1, { msb: true });
+  const writer = Graphics.createCallback(
+    image.width,
+    image.height,
+    1,
+    (x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
+  );
+  writer.drawImage(image);
+  if (width === null) width = `dec(${enc(widths)})`;
+  const x = `const ${name}F = [
   dec(
     ${enc(raster.buffer)}
   ), ${min}, ${width}, ${h}
 ];`;
-    return x;
+  return x;
 };
 
 res = `
@@ -118,7 +133,9 @@ const heatshrink = require('heatshrink');
 const dec = x => E.toString(heatshrink.decompress(atob(x)));
 `;
 
-res += prepFont('romanParts', `
+res += prepFont(
+  "romanParts",
+  `
 <=*==============
 -a--------------
 x              x
@@ -211,9 +228,12 @@ xxxx        xxxx
   xxxxxxxxxxxx
     xxxxxxxx
 <=*==============
-`);
+`
+);
 
-res += prepFont('font', `
+res += prepFont(
+  "font",
+  `
 <<<<=*======>>>>
 - ------
 
@@ -600,9 +620,12 @@ xxx xxx
    xxxxxxxxx
 
 <<<<=*======>>>>
-`);
+`
+);
 
-res += prepBitmap('lock', `
+res += prepBitmap(
+  "lock",
+  `
       xxxxxx
      xxxxxxxx
     xxx    xxx
@@ -621,9 +644,12 @@ res += prepBitmap('lock', `
  xxx          xxx
  xxxxxxxxxxxxxxxx
  xxxxxxxxxxxxxxxx
-`);
+`
+);
 
-res += prepBitmap('battery', `
+res += prepBitmap(
+  "battery",
+  `
        xxxx
        xxxx
    xxxxxxxxxxxx
@@ -642,9 +668,12 @@ res += prepBitmap('battery', `
    xxxxxxxxxxxx
    xxxxxxxxxxxx
    xxxxxxxxxxxx
-`);
+`
+);
 
-res += prepBitmap('charge', `
+res += prepBitmap(
+  "charge",
+  `
           x
          xx
         xx
@@ -657,9 +686,12 @@ res += prepBitmap('charge', `
         xx
        xx
        x
-`);
+`
+);
 
-res += prepBitmap('GPS', `
+res += prepBitmap(
+  "GPS",
+  `
     x
    x x
   x   x
@@ -676,9 +708,12 @@ res += prepBitmap('GPS', `
   x  xxx       x
    x
     xxx
-`);
+`
+);
 
-res += prepBitmap('HRM', `
+res += prepBitmap(
+  "HRM",
+  `
   xxxx     xxxx
  xxxxxx   xxxxxx
  xx xxxx xxx xxx
@@ -696,9 +731,12 @@ xx  xx xxxx  xx x
       xxxxx
        xxx
         x
-`);
+`
+);
 
-res += prepBitmap('compass', `
+res += prepBitmap(
+  "compass",
+  `
       xxxxx
     xxxxxxxxx
    xxx  x  xxx
@@ -716,6 +754,7 @@ xx    xx xx    xx
    xxx     xxx
     xxxxxxxxx
       xxxxx
-`);
+`
+);
 
 print(res);

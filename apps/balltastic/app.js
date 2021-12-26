@@ -109,8 +109,8 @@ function drawCounter() {
   g.setColor("#000000");
   g.fillRect(g.getWidth() - counterWidth, 0, g.getWidth(), gHeight);
 
-  if(counter < 40 ) g.setColor("#fc0303");
-  else if (counter < 80 ) g.setColor("#fc9803");
+  if (counter < 40) g.setColor("#fc0303");
+  else if (counter < 80) g.setColor("#fc9803");
   else g.setColor("#0318fc");
 
   g.fillRect(
@@ -152,7 +152,9 @@ function count() {
   if (counter <= 0) {
     running = false;
     clearInterval(drawInterval);
-    setTimeout(function(){ E.showMessage("Press Button 1\nto restart.", "Gameover!");},50);
+    setTimeout(function () {
+      E.showMessage("Press Button 1\nto restart.", "Gameover!");
+    }, 50);
   }
 }
 
@@ -177,7 +179,7 @@ setTimeout(() => {
 
   setWatch(
     () => {
-      if(!running) reset();
+      if (!running) reset();
     },
     BTN1,
     { repeat: true }

@@ -1,7 +1,7 @@
-const big = g.getWidth()>200;
+const big = g.getWidth() > 200;
 // Font for primary time and date
-const primaryTimeFontSize = big?6:5;
-const primaryDateFontSize = big?3:2;
+const primaryTimeFontSize = big ? 6 : 5;
+const primaryDateFontSize = big ? 3 : 2;
 
 // Font for single secondary time
 const secondaryTimeFontSize = 4;
@@ -16,7 +16,6 @@ const font = "6x8";
 
 /* TODO: we could totally use 'Layout' here and
 avoid a whole bunch of hard-coded offsets */
-
 
 const xyCenter = g.getWidth() / 2;
 const yposTime = big ? 75 : 60;
@@ -73,7 +72,7 @@ var drawTimeout;
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
+  drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
@@ -158,10 +157,11 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+Bangle.on("lcdPower", (on) => {
   if (on) {
     draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
+  } else {
+    // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }

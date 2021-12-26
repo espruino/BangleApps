@@ -1,14 +1,14 @@
 (() => {
   let recordingInterval = null;
   const Storage = require("Storage");
-  
+
   const switchableConsumers = {
     none: 0,
     lcd: 1,
     compass: 2,
     bluetooth: 4,
     gps: 8,
-    hrm: 16
+    hrm: 16,
   };
 
   var batChartFile; // file for battery percentage recording
@@ -44,15 +44,15 @@
     // Wait for an event from each of the devices to see if they are switched on
     var enabledConsumers = switchableConsumers.none;
 
-    Bangle.on('mag', batteryChartOnMag);
-    Bangle.on('GPS', batterChartOnGps);
-    Bangle.on('HRM', batteryChartOnHrm);
+    Bangle.on("mag", batteryChartOnMag);
+    Bangle.on("GPS", batterChartOnGps);
+    Bangle.on("HRM", batteryChartOnHrm);
 
     // Wait two seconds, that should be enough for each of the events to get raised once
     setTimeout(() => {
-      Bangle.removeListener('mag', batteryChartOnMag);
-      Bangle.removeListener('GPS', batterChartOnGps);
-      Bangle.removeListener('HRM', batteryChartOnHrm);
+      Bangle.removeListener("mag", batteryChartOnMag);
+      Bangle.removeListener("GPS", batterChartOnGps);
+      Bangle.removeListener("HRM", batteryChartOnHrm);
     }, 2000);
 
     if (Bangle.isLCDOn())
@@ -78,7 +78,9 @@
 
   function logBatteryData() {
     const previousWriteLogName = "bcprvday";
-    const previousWriteDay = parseInt(Storage.open(previousWriteLogName, "r").readLine());
+    const previousWriteDay = parseInt(
+      Storage.open(previousWriteLogName, "r").readLine()
+    );
     const currentWriteDay = new Date().getDay();
 
     const logFileName = "bclog" + currentWriteDay;
@@ -96,9 +98,11 @@
       let logPercent = E.getBattery();
       let logTemperature = E.getTemperature();
       let logConsumers = getEnabledConsumersValue();
-      
-      let logString = [logTime, logPercent, logTemperature, logConsumers].join(",");
-      
+
+      let logString = [logTime, logPercent, logTemperature, logConsumers].join(
+        ","
+      );
+
       bcLogFileA.write(logString + "\n");
     }
   }
@@ -117,7 +121,10 @@
 
   // add the widget
   WIDGETS["batchart"] = {
-    area: "tl", width: 0, draw: draw, reload: reload
+    area: "tl",
+    width: 0,
+    draw: draw,
+    reload: reload,
   };
 
   reload();

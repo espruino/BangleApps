@@ -1,59 +1,60 @@
-(function(back) {
-
+(function (back) {
   const Storage = require("Storage");
-  const filename = 'dane_tcr.json';
-  let settings = Storage.readJSON(filename,1)|| null;
+  const filename = "dane_tcr.json";
+  let settings = Storage.readJSON(filename, 1) || null;
 
-  function getSettings(){
+  function getSettings() {
     return {
       highres: true,
-      animation : true,
-      frame : 3,
-      debug: false
+      animation: true,
+      frame: 3,
+      debug: false,
     };
   }
-  
+
   function updateSettings() {
     require("Storage").writeJSON(filename, settings);
     Bangle.buzz();
   }
-  
-  if(!settings){
+
+  if (!settings) {
     settings = getSettings();
     updateSettings();
   }
 
-  function saveChange(name){
-    return function(v){
+  function saveChange(name) {
+    return function (v) {
       settings[name] = v;
       updateSettings();
-    }
+    };
   }
 
   E.showMenu({
-    '': { 'title': 'DANE Toucher settings' },
-    "Resolution" : {
-      value : settings.highres,
-      format : v => v?"High":"Low",
-      onchange: v => {
-        saveChange('highres')(!settings.highres);
-      }
+    "": { title: "DANE Toucher settings" },
+    Resolution: {
+      value: settings.highres,
+      format: (v) => (v ? "High" : "Low"),
+      onchange: (v) => {
+        saveChange("highres")(!settings.highres);
+      },
     },
-    "Animation" : {
-      value : settings.animation,
-      format : v => v?"On":"Off",
-      onchange : saveChange('animation')
+    Animation: {
+      value: settings.animation,
+      format: (v) => (v ? "On" : "Off"),
+      onchange: saveChange("animation"),
     },
-    "Frame rate" : {
-      value : settings.frame,
-      min: 1, max: 10, step: 1,
-      onchange : saveChange('frame')
+    "Frame rate": {
+      value: settings.frame,
+      min: 1,
+      max: 10,
+      step: 1,
+      onchange: saveChange("frame"),
     },
-    "Debug" : {
-      value : settings.debug,
-      format : v => v?"On":"Off",
-      onchange : saveChange('debug')
+    Debug: {
+      value: settings.debug,
+      format: (v) => (v ? "On" : "Off"),
+      onchange: saveChange("debug"),
     },
-    '< Back': back
+    "< Back": back,
   });
 });

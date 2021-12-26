@@ -54,14 +54,14 @@ function drawSet(exercise) {
   g.fillRect(15, 42, W - 15, 80);
   g.setColor(WHITE);
   g.setFont("6x8", 5);
-  g.drawString(set.reps, (W / 2) + 2, (H / 2) + 1);
+  g.drawString(set.reps, W / 2 + 2, H / 2 + 1);
   g.setFont("6x8", 1);
   const note = `Target reps: ${set.maxReps}`;
   g.drawString(note, W / 2, H - 24);
   // Draw sets monitor
   g.drawString(exercise.subTitle, W / 2, H - 12);
 
-  drawMenu({showBTN1: true, showBTN2: true, showBTN3: true});
+  drawMenu({ showBTN1: true, showBTN2: true, showBTN3: true });
 
   g.flip();
 }
@@ -69,11 +69,12 @@ function drawSet(exercise) {
 function drawWorkoutDone() {
   const title1 = "You did";
   const title2 = "GREAT!";
-  const msg = "That's the workout\ncompleted. Now eat\nsome food and\nget plenty of rest.";
+  const msg =
+    "That's the workout\ncompleted. Now eat\nsome food and\nget plenty of rest.";
 
   clearWatch();
-  setWatch(Bangle.showLauncher, BTN2, {repeat: false});
-  drawMenu({showBTN2: true});
+  setWatch(Bangle.showLauncher, BTN2, { repeat: false });
+  drawMenu({ showBTN2: true });
 
   g.setFontAlign(0, -1);
   g.setColor(WHITE);
@@ -81,33 +82,33 @@ function drawWorkoutDone() {
   g.drawString(title1, W / 2, 10);
   g.drawString(title2, W / 2, 30);
   g.setFont("6x8", 1);
-  g.drawString(msg, (W / 2) + 3, 70);
+  g.drawString(msg, W / 2 + 3, 70);
   g.flip();
 }
 
 function drawSetComp(exercise) {
   const title = "Good work";
-  const msg1= "No need to rest\nmove straight on\nto the next\nexercise.";
-  const msg2 = exercise.canProgress()?
-    "Your\nweight has been\nincreased for\nnext time!":
-    "You'll\nsmash it next\ntime!";
+  const msg1 = "No need to rest\nmove straight on\nto the next\nexercise.";
+  const msg2 = exercise.canProgress()
+    ? "Your\nweight has been\nincreased for\nnext time!"
+    : "You'll\nsmash it next\ntime!";
 
   g.clear();
-  drawMenu({showBTN2: true});
+  drawMenu({ showBTN2: true });
 
   g.setFontAlign(0, -1);
   g.setColor(WHITE);
   g.setFont("6x8", 2);
   g.drawString(title, W / 2, 10);
   g.setFont("6x8", 1);
-  g.drawString(msg1 + msg2, (W / 2) - 2, 45);
+  g.drawString(msg1 + msg2, W / 2 - 2, 45);
 
   g.flip();
 }
 
 function drawRestTimer(exercise) {
   g.clear();
-  drawMenu({showBTN2: true});
+  drawMenu({ showBTN2: true });
   g.setFontAlign(0, -1);
   g.setColor(PINK);
   g.fillRect(15, 42, W - 15, 80);
@@ -115,7 +116,7 @@ function drawRestTimer(exercise) {
   g.setFont("6x8", 1);
   g.drawString("Have a short\nrest period.", W / 2, 10);
   g.setFont("6x8", 5);
-  g.drawString(exercise.restPeriod, (W / 2) + 2, (H / 2) - 19);
+  g.drawString(exercise.restPeriod, W / 2 + 2, H / 2 - 19);
   g.flip();
 }
 
@@ -153,7 +154,7 @@ function drawWorkoutMenu(workouts, selWorkoutIdx) {
   g.setFontAlign(-1, -1);
   let selectedWorkout = workouts[selWorkoutIdx].title;
   let yPos = 50;
-  workouts.forEach(workout => {
+  workouts.forEach((workout) => {
     g.setColor("#f05a56");
     g.fillRect(0, yPos, W, yPos + 11);
     g.setColor("#ffffff");
@@ -172,22 +173,35 @@ function setupMenu() {
   let selWorkoutIdx = 0;
   drawWorkoutMenu(workouts, selWorkoutIdx);
 
-  setWatch(()=>{
-    selWorkoutIdx--;
-    if (selWorkoutIdx< 0) selWorkoutIdx = 0;
-    drawWorkoutMenu(workouts, selWorkoutIdx);
-  }, BTN1, {repeat: true});
+  setWatch(
+    () => {
+      selWorkoutIdx--;
+      if (selWorkoutIdx < 0) selWorkoutIdx = 0;
+      drawWorkoutMenu(workouts, selWorkoutIdx);
+    },
+    BTN1,
+    { repeat: true }
+  );
 
-  setWatch(()=>{
-    const workout = buildWorkout(workouts[selWorkoutIdx].file);
-    workout.next();
-  }, BTN2, {repeat: false});
+  setWatch(
+    () => {
+      const workout = buildWorkout(workouts[selWorkoutIdx].file);
+      workout.next();
+    },
+    BTN2,
+    { repeat: false }
+  );
 
-  setWatch(()=>{
-    selWorkoutIdx++;
-    if (selWorkoutIdx > workouts.length - 1) selWorkoutIdx = workouts.length - 1;
-    drawWorkoutMenu(workouts, selWorkoutIdx);
-  }, BTN3, {repeat: true});
+  setWatch(
+    () => {
+      selWorkoutIdx++;
+      if (selWorkoutIdx > workouts.length - 1)
+        selWorkoutIdx = workouts.length - 1;
+      drawWorkoutMenu(workouts, selWorkoutIdx);
+    },
+    BTN3,
+    { repeat: true }
+  );
 }
 
 function drawSplash() {
@@ -195,14 +209,18 @@ function drawSplash() {
   g.setBgColor(RED);
   g.clear();
   g.setColor(WHITE);
-  g.setFontAlign(0,-1);
+  g.setFontAlign(0, -1);
   g.setFont("6x8", 2);
   g.drawString("BuffGym", W / 2, 10);
   g.setFont("6x8", 1);
   g.drawString("5x5", W / 2, 42);
   g.drawString("training app", W / 2, 55);
   g.drawRect(19, 38, 100, 99);
-  const img = require("heatshrink").decompress(atob("lkdxH+AB/I5ASQACwpB5vNFkwpBAIfNFdZZkFYwskFZAsiFZBZiVYawEFf6ETFUwsIFUYmB54ADAwIskFYoRKBoIroB4grV58kkgCDFRotWFZwqHFiwYMFZIsTC5wLDFjGlCoWlkgJDRQIABCRAsLCwodCFAIABCwIOCFQYABr4RCCQIrMC4gqEAAwpFFZosFC5ArHFQ4rFNYQrGEgosMBxIrFLQwrLAB4sFSw4rFFjYrQFi4rNbASeEFjIoJFQYsGMAgAPEQgAIGwosCRoorbA="));
+  const img = require("heatshrink").decompress(
+    atob(
+      "lkdxH+AB/I5ASQACwpB5vNFkwpBAIfNFdZZkFYwskFZAsiFZBZiVYawEFf6ETFUwsIFUYmB54ADAwIskFYoRKBoIroB4grV58kkgCDFRotWFZwqHFiwYMFZIsTC5wLDFjGlCoWlkgJDRQIABCRAsLCwodCFAIABCwIOCFQYABr4RCCQIrMC4gqEAAwpFFZosFC5ArHFQ4rFNYQrGEgosMBxIrFLQwrLAB4sFSw4rFFjYrQFi4rNbASeEFjIoJFQYsGMAgAPEQgAIGwosCRoorbA="
+    )
+  );
   g.drawImage(img, 40, 70);
   g.flip();
 
@@ -224,20 +242,32 @@ function drawSplash() {
     g.flip();
   }, 250);
 
-  setWatch(()=>{
-    clearInterval(i);
-    setupMenu();
-  }, BTN1, {repeat: false});
+  setWatch(
+    () => {
+      clearInterval(i);
+      setupMenu();
+    },
+    BTN1,
+    { repeat: false }
+  );
 
-  setWatch(()=>{
-    clearInterval(i);
-    setupMenu();
-  }, BTN2, {repeat: false});
+  setWatch(
+    () => {
+      clearInterval(i);
+      setupMenu();
+    },
+    BTN2,
+    { repeat: false }
+  );
 
-  setWatch(()=>{
-    clearInterval(i);
-    setupMenu();
-  }, BTN3, {repeat: false});
+  setWatch(
+    () => {
+      clearInterval(i);
+      setupMenu();
+    },
+    BTN3,
+    { repeat: false }
+  );
 }
 
 function getWorkoutIndex() {
@@ -254,7 +284,7 @@ function buildWorkout(fName) {
 }
 
 function saveWorkout(workout) {
-  const fName = getWorkoutIndex().find(w => w.title === workout.title).file;
+  const fName = getWorkoutIndex().find((w) => w.title === workout.title).file;
   require("Storage").writeJSON(fName, workout.toJSON());
 }
 

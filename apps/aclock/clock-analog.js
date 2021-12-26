@@ -1,14 +1,14 @@
 // http://forum.espruino.com/conversations/345155/#comment15172813
-const locale = require('locale');
+const locale = require("locale");
 const p = Math.PI / 2;
 const pRad = Math.PI / 180;
-const faceWidth = g.getWidth()/2 - 20; // watch face radius (240/2 - 24px for widget area)
-const widgetHeight=24+1;
+const faceWidth = g.getWidth() / 2 - 20; // watch face radius (240/2 - 24px for widget area)
+const widgetHeight = 24 + 1;
 let timer = null;
 let currentDate = new Date();
 const centerX = g.getWidth() / 2;
-const centerY = (g.getWidth() / 2) + widgetHeight/2;
-g.theme.dark=false;
+const centerY = g.getWidth() / 2 + widgetHeight / 2;
+g.theme.dark = false;
 let colSecA = g.theme.dark ? "#00A" : "#58F"; // before the second
 let colSecB = g.theme.dark ? "#58F" : "#00A"; // after the second
 let colSec1 = g.theme.dark ? "#F83" : "#000"; // ON the second
@@ -19,7 +19,7 @@ const seconds = (angle) => {
   const y = centerY - Math.cos(a) * faceWidth;
 
   // if 15 degrees, make hour marker larger
-  const radius = (angle % 15) ? 2 : 4;
+  const radius = angle % 15 ? 2 : 4;
   g.fillCircle(x, y, radius);
 };
 
@@ -35,7 +35,7 @@ const hand = (angle, r1, r2) => {
     Math.round(centerX + Math.sin(a) * r2),
     Math.round(centerY - Math.cos(a) * r2),
     Math.round(centerX + Math.sin(a - p) * r3),
-    Math.round(centerY - Math.cos(a - p) * r3)
+    Math.round(centerY - Math.cos(a - p) * r3),
   ]);
 };
 
@@ -49,7 +49,7 @@ const drawAll = () => {
   // draw all secs
 
   for (let i = 0; i < 60; i++) {
-    g.setColor((i > currentSec) ? colSecA : colSecB);
+    g.setColor(i > currentSec ? colSecA : colSecB);
     seconds((360 * i) / 60);
   }
   onSecond();
@@ -78,16 +78,16 @@ const onSecond = () => {
 const drawDate = () => {
   g.reset();
   g.setColor("#f00");
-  g.setFont('6x8', 2);
+  g.setFont("6x8", 2);
 
   const dayString = locale.dow(currentDate, true);
   // pad left date
-  const dateString = ("0"+currentDate.getDate().toString()).substr(-2);
+  const dateString = ("0" + currentDate.getDate().toString()).substr(-2);
   const dateDisplay = `${dayString}-${dateString}`;
   // console.log(`${dayString}|${dateString}`);
   // center date
   const l = (g.getWidth() - g.stringWidth(dateDisplay)) / 2;
-  const t = centerY + faceWidth*0.37;
+  const t = centerY + faceWidth * 0.37;
   g.drawString(dateDisplay, l, t, true);
   // console.log(l, t);
 };
@@ -99,7 +99,11 @@ const onMinute = () => {
   // clear existing hands
   g.setColor(g.theme.bg);
   // Hour
-  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
+  hand(
+    (360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12,
+    -8,
+    faceWidth - 35
+  );
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
 
@@ -107,7 +111,11 @@ const onMinute = () => {
   currentDate = new Date();
   g.setColor(g.theme.fg);
   // Hour
-  hand((360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12, -8, faceWidth - 35);
+  hand(
+    (360 * (currentDate.getHours() + currentDate.getMinutes() / 60)) / 12,
+    -8,
+    faceWidth - 35
+  );
   g.setColor(g.theme.fg);
   // Minute
   hand((360 * currentDate.getMinutes()) / 60, -8, faceWidth - 10);
@@ -118,7 +126,7 @@ const startTimers = () => {
   timer = setInterval(onSecond, 1000);
 };
 
-Bangle.on('lcdPower', (on) => {
+Bangle.on("lcdPower", (on) => {
   if (on) {
     // g.clear();
     drawAll();

@@ -1,3 +1,3 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-eval(require("Storage").read("android.settings.js"))(()=>load());
+eval(require("Storage").read("android.settings.js"))(() => load());

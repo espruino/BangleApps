@@ -7,7 +7,7 @@ const allWords = [
   "FIVEIGHT",
   "SIXTHREE",
   "TWELEVEN",
-  "FOURNINE"
+  "FOURNINE",
 ];
 const hours = {
   0: ["", 0, 0],
@@ -22,7 +22,7 @@ const hours = {
   9: ["NINE", 47, 57, 67, 77],
   10: ["TEN", 74, 75, 76],
   11: ["ELEVEN", 26, 36, 46, 56, 66, 76],
-  12: ["TWELVE", 06, 16, 26, 36, 56, 66]
+  12: ["TWELVE", 06, 16, 26, 36, 56, 66],
 };
 
 const mins = {
@@ -33,10 +33,10 @@ const mins = {
   4: ["TWENTY", 10, 20, 30, 40, 50, 60],
   5: ["HALF", 42, 52, 62, 72],
   6: ["PAST", 13, 23, 33, 43],
-  7: ["TO", 43, 53]
+  7: ["TO", 43, 53],
 };
 
-var big = g.getWidth()>200
+var big = g.getWidth() > 200;
 // offsets and incerments
 const xs = big ? 35 : 20;
 const ys = big ? 31 : 28;
@@ -44,13 +44,12 @@ const dx = big ? 25 : 20;
 const dy = big ? 22 : 16;
 
 // font size and color
-const fontSize = big ? 3 : 2;  // "6x8"
-const lowBPP = g.getBPP && (g.getBPP()<12);
-const passivColor = lowBPP ? "#788" : "#333" /*grey*/ ;
-const activeColor = lowBPP ? "#F00" : "#F00" /*red*/ ;
+const fontSize = big ? 3 : 2; // "6x8"
+const lowBPP = g.getBPP && g.getBPP() < 12;
+const passivColor = lowBPP ? "#788" : "#333"; /*grey*/
+const activeColor = lowBPP ? "#F00" : "#F00"; /*red*/
 
 function drawWordClock() {
-
   // get time
   var t = new Date();
   var h = t.getHours();
@@ -61,7 +60,7 @@ function drawWordClock() {
   var midx;
   var midxA = [];
 
-  g.setFont("6x8",fontSize);
+  g.setFont("6x8", fontSize);
   g.setColor(passivColor);
   g.setFontAlign(0, -1, 0);
 
@@ -81,9 +80,13 @@ function drawWordClock() {
   // calc indexes
   midx = Math.round(m / 5);
   hidx = h % 12;
-  if (hidx === 0) { hidx = 12; }
+  if (hidx === 0) {
+    hidx = 12;
+  }
   if (midx > 6) {
-    if (midx == 12) { midx = 0; }
+    if (midx == 12) {
+      midx = 0;
+    }
     hidx++;
   }
   if (midx !== 0) {
@@ -96,17 +99,17 @@ function drawWordClock() {
 
   // write hour in active color
   g.setColor(activeColor);
-  hours[hidx][0].split('').forEach((c, pos) => {
-    x = xs + (hours[hidx][pos + 1] / 10 | 0) * dx;
+  hours[hidx][0].split("").forEach((c, pos) => {
+    x = xs + ((hours[hidx][pos + 1] / 10) | 0) * dx;
     y = ys + (hours[hidx][pos + 1] % 10) * dy;
 
     g.drawString(c, x, y);
   });
 
   // write min words in active color
-  midxA.forEach(idx => {
-    mins[idx][0].split('').forEach((c, pos) => {
-      x = xs + (mins[idx][pos + 1] / 10 | 0) * dx;
+  midxA.forEach((idx) => {
+    mins[idx][0].split("").forEach((c, pos) => {
+      x = xs + ((mins[idx][pos + 1] / 10) | 0) * dx;
       y = ys + (mins[idx][pos + 1] % 10) * dy;
       g.drawString(c, x, y);
     });
@@ -114,18 +117,18 @@ function drawWordClock() {
 
   // display digital time
   g.setColor(activeColor);
-  g.clearRect(0, g.getHeight()-fontSize*8, g.getWidth(), g.getHeight());
-  g.drawString(time, g.getWidth()/2, g.getHeight()-fontSize*8);
+  g.clearRect(0, g.getHeight() - fontSize * 8, g.getWidth(), g.getHeight());
+  g.drawString(time, g.getWidth() / 2, g.getHeight() - fontSize * 8);
 }
 
-Bangle.on('lcdPower', function(on) {
+Bangle.on("lcdPower", function (on) {
   if (on) drawWordClock();
 });
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-setInterval(drawWordClock, 1E4);
+setInterval(drawWordClock, 1e4);
 drawWordClock();
 
 // Show launcher when button pressed

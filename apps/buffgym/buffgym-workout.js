@@ -7,15 +7,18 @@ exports = class Workout {
   }
 
   addExercises(exercises) {
-    exercises.forEach(exercise => this.exercises.push(exercise));
+    exercises.forEach((exercise) => this.exercises.push(exercise));
   }
 
   currentExercise() {
-    return this.exercises.filter(exercise => !exercise.isCompleted())[0];
+    return this.exercises.filter((exercise) => !exercise.isCompleted())[0];
   }
 
   canComplete() {
-    return this.exercises.filter(exercise => exercise.isCompleted()).length === this.exercises.length;
+    return (
+      this.exercises.filter((exercise) => exercise.isCompleted()).length ===
+      this.exercises.length
+    );
   }
 
   setCompleted() {
@@ -34,7 +37,7 @@ exports = class Workout {
       title: workoutJSON.title,
       redraw: redraw,
     });
-    const exercises = workoutJSON.exercises.map(exerciseJSON => {
+    const exercises = workoutJSON.exercises.map((exerciseJSON) => {
       const exercise = new Exercise({
         title: exerciseJSON.title,
         weight: exerciseJSON.weight,
@@ -42,7 +45,7 @@ exports = class Workout {
         unit: exerciseJSON.unit,
         restPeriod: exerciseJSON.restPeriod,
       });
-      exerciseJSON.sets.forEach(setJSON => {
+      exerciseJSON.sets.forEach((setJSON) => {
         exercise.addSet(new Set(setJSON));
       });
 
@@ -57,13 +60,13 @@ exports = class Workout {
   toJSON() {
     return {
       title: this.title,
-      exercises: this.exercises.map(exercise => {
+      exercises: this.exercises.map((exercise) => {
         return {
           title: exercise.title,
           weight: exercise.weight,
           weightIncrement: exercise.weightIncrement,
           unit: exercise.unit,
-          sets: exercise.sets.map(set => set.maxReps),
+          sets: exercise.sets.map((set) => set.maxReps),
           restPeriod: exercise.restPeriod,
         };
       }),

@@ -3,13 +3,14 @@ var seconds;
 var hours;
 var date;
 var first = true;
-var locale = require('locale');
-var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
+var locale = require("locale");
+var _12hour =
+  (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
 //HR variables
 var id = 0;
 var grow = true;
-var size=10;
+var size = 10;
 
 //Screen dimensions
 const screen = {
@@ -22,33 +23,33 @@ const screen = {
 // Settings
 const settings = {
   time: {
-    color: '#D6ED17',
-    font: 'Vector',
+    color: "#D6ED17",
+    font: "Vector",
     size: 60,
     middle: screen.middle,
     center: screen.center,
   },
   date: {
-    color: '#D6ED17',
-    font: 'Vector',
+    color: "#D6ED17",
+    font: "Vector",
     size: 15,
-    middle: screen.height-17, // at bottom of screen
+    middle: screen.height - 17, // at bottom of screen
     center: screen.center,
   },
   circle: {
-    colormin: '#ffffff',
-    colorsec: '#ffffff',
+    colormin: "#ffffff",
+    colorsec: "#ffffff",
     width: 10,
     middle: screen.middle,
     center: screen.center,
-    height: screen.height-24
+    height: screen.height - 24,
   },
   hr: {
-    color: '#333333',
+    color: "#333333",
     size: 10,
     x: screen.center,
-    y: screen.middle + 45
-  }
+    y: screen.middle + 45,
+  },
 };
 
 const dateStr = function (date) {
@@ -56,8 +57,9 @@ const dateStr = function (date) {
 };
 
 const getArcXY = function (centerX, centerY, radius, angle) {
-  var s, r = [];
-  s = 2 * Math.PI * angle / 360;
+  var s,
+    r = [];
+  s = (2 * Math.PI * angle) / 360;
   r.push(centerX + Math.round(Math.cos(s) * radius));
   r.push(centerY + Math.round(Math.sin(s) * radius));
 
@@ -66,26 +68,54 @@ const getArcXY = function (centerX, centerY, radius, angle) {
 
 const drawMinArc = function (sections, color) {
   g.setColor(color);
-  var rad = (settings.circle.height / 2) - 40;
-  var r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
+  var rad = settings.circle.height / 2 - 40;
+  var r1 = getArcXY(
+    settings.circle.middle,
+    settings.circle.center,
+    rad,
+    sections * (360 / 60) - 90
+  );
   //g.setPixel(r[0],r[1]);
-  var r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
+  var r2 = getArcXY(
+    settings.circle.middle,
+    settings.circle.center,
+    rad - settings.circle.width,
+    sections * (360 / 60) - 90
+  );
   //g.setPixel(r[0],r[1]);
   g.drawLine(r1[0], r1[1], r2[0], r2[1]);
-  g.setColor('#333333');
-  g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
+  g.setColor("#333333");
+  g.drawCircle(
+    settings.circle.middle,
+    settings.circle.center,
+    rad - settings.circle.width - 4
+  );
 };
 
 const drawSecArc = function (sections, color) {
   g.setColor(color);
-  var rad = (settings.circle.height / 2) - 20;
-  var r1 = getArcXY(settings.circle.middle, settings.circle.center, rad, sections * (360 / 60) - 90);
+  var rad = settings.circle.height / 2 - 20;
+  var r1 = getArcXY(
+    settings.circle.middle,
+    settings.circle.center,
+    rad,
+    sections * (360 / 60) - 90
+  );
   //g.setPixel(r[0],r[1]);
-  var r2 = getArcXY(settings.circle.middle, settings.circle.center, rad - settings.circle.width, sections * (360 / 60) - 90);
+  var r2 = getArcXY(
+    settings.circle.middle,
+    settings.circle.center,
+    rad - settings.circle.width,
+    sections * (360 / 60) - 90
+  );
   //g.setPixel(r[0],r[1]);
   g.drawLine(r1[0], r1[1], r2[0], r2[1]);
-  g.setColor('#333333');
-  g.drawCircle(settings.circle.middle, settings.circle.center, rad - settings.circle.width - 4);
+  g.setColor("#333333");
+  g.drawCircle(
+    settings.circle.middle,
+    settings.circle.center,
+    rad - settings.circle.width - 4
+  );
 };
 
 const drawClock = function () {
@@ -108,8 +138,12 @@ const drawClock = function () {
 
   // Reset
   if (seconds == 59) {
-    g.setColor('#000000');
-    g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
+    g.setColor("#000000");
+    g.fillCircle(
+      settings.circle.middle,
+      settings.circle.center,
+      settings.circle.height / 2
+    );
     for (count = 0; count <= minutes; count++) {
       drawMinArc(count, settings.circle.colormin);
     }
@@ -202,7 +236,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 //manage when things should be enabled and not
-Bangle.on('lcdPower', function (on) {
+Bangle.on("lcdPower", function (on) {
   if (on) {
     Bangle.setHRMPower(1);
   } else {
@@ -211,11 +245,11 @@ Bangle.on('lcdPower', function (on) {
 });
 
 // refesh every second
-setInterval(drawClock, 1E3);
+setInterval(drawClock, 1e3);
 
 //start HR monitor and update frequency of update
 Bangle.setHRMPower(1);
-Bangle.on('HRM', function (d) {
+Bangle.on("HRM", function (d) {
   newBeats(d);
 });
 

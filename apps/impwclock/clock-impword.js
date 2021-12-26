@@ -14,9 +14,8 @@ const allWords = [
   "AFTERDAY",
   "OFDZTHEC",
   "EVENINGR",
-  "ORMNIGHT"
+  "ORMNIGHT",
 ];
-
 
 const timeOfDay = {
   0: ["", 0, 0],
@@ -30,23 +29,39 @@ const timeOfDay = {
   8: ["EARLYEVENING", 10, 20, 30, 40, 50, 06, 16, 26, 36, 46, 56, 66],
   9: ["EVENING", 06, 16, 26, 36, 46, 56, 66],
   10: ["NIGHT", 37, 47, 57, 67, 77],
-  11: ["MIDDLEOFTHENIGHT", 13, 23, 33, 43, 53, 63, 05, 15, 45, 55, 65, 37,47,57,67,77 ],
+  11: [
+    "MIDDLEOFTHENIGHT",
+    13,
+    23,
+    33,
+    43,
+    53,
+    63,
+    05,
+    15,
+    45,
+    55,
+    65,
+    37,
+    47,
+    57,
+    67,
+    77,
+  ],
 };
 
-
-var big = g.getWidth()>200;
+var big = g.getWidth() > 200;
 // offsets and increments
 const xs = big ? 35 : 20;
 const ys = big ? 31 : 28;
 const dx = big ? 25 : 20;
 const dy = big ? 22 : 16;
 
-
 // font size and color
-const fontSize = big ? 3 : 2;  // "6x8"
-const passivColor = 0x3186 /*grey*/ ;
-const activeColorNight = 0xF800 /*red*/ ;
-const activeColorDay = 0xFFFF /* white */;
+const fontSize = big ? 3 : 2; // "6x8"
+const passivColor = 0x3186; /*grey*/
+const activeColorNight = 0xf800; /*red*/
+const activeColorDay = 0xffff; /* white */
 
 var hidxPrev;
 var showDigitalTime = false;
@@ -62,55 +77,46 @@ function drawWordClock() {
   var hidx;
 
   var activeColor = activeColorDay;
-  if(h < 7 || h > 19) {activeColor = activeColorNight;}
+  if (h < 7 || h > 19) {
+    activeColor = activeColorNight;
+  }
 
-  g.setFont("6x8",fontSize);
+  g.setFont("6x8", fontSize);
   g.setColor(passivColor);
   g.setFontAlign(0, -1, 0);
 
-
   // Switch case isn't good for this in Js apparently so...
-  if(h < 3){
+  if (h < 3) {
     // Middle of the Night
     hidx = 11;
-  }
-  else if (h < 7){
+  } else if (h < 7) {
     // Early Morning
     hidx = 1;
-  }
-  else if (h < 10){
+  } else if (h < 10) {
     // Morning
     hidx = 2;
-  }
-  else if (h < 12){
+  } else if (h < 12) {
     // Late Morning
     hidx = 3;
-  }
-  else if (h < 13){
+  } else if (h < 13) {
     // Midday
     hidx = 4;
-  }
-  else if (h < 14){
+  } else if (h < 14) {
     // Early afternoon
     hidx = 5;
-  }
-  else if (h < 16){
+  } else if (h < 16) {
     // Afternoon
     hidx = 6;
-  }
-  else if (h < 17){
+  } else if (h < 17) {
     // Late Afternoon
     hidx = 7;
-  }
-  else if (h < 19){
+  } else if (h < 19) {
     // Early evening
     hidx = 8;
-  }
-  else if (h < 21){
+  } else if (h < 21) {
     // evening
     hidx = 9;
-  }
-  else if (h < 24){
+  } else if (h < 24) {
     // Night
     hidx = 10;
   }
@@ -134,8 +140,8 @@ function drawWordClock() {
 
     // write hour in active color
     g.setColor(activeColor);
-    timeOfDay[hidx][0].split('').forEach((c, pos) => {
-      x = xs + (timeOfDay[hidx][pos + 1] / 10 | 0) * dx;
+    timeOfDay[hidx][0].split("").forEach((c, pos) => {
+      x = xs + ((timeOfDay[hidx][pos + 1] / 10) | 0) * dx;
       y = ys + (timeOfDay[hidx][pos + 1] % 10) * dy;
       g.drawString(c, x, y);
     });
@@ -144,26 +150,25 @@ function drawWordClock() {
 
   // Display digital time when button is pressed or screen touched
   g.clearRect(0, big ? 215 : 160, big ? 240 : 176, big ? 240 : 176);
-  if (showDigitalTime){
+  if (showDigitalTime) {
     g.setColor(activeColor);
     g.drawString(time, big ? 120 : 90, big ? 215 : 160);
   }
 }
 
-Bangle.on('lcdPower', function(on) {
+Bangle.on("lcdPower", function (on) {
   if (on) drawWordClock();
 });
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-setInterval(drawWordClock, 1E4);
+setInterval(drawWordClock, 1e4);
 drawWordClock();
 
-
 // If LCD pressed, toggle drawing digital time
-Bangle.on('touch',e=>{
-  if (showDigitalTime){
+Bangle.on("touch", (e) => {
+  if (showDigitalTime) {
     showDigitalTime = false;
     drawWordClock();
   } else {

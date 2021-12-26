@@ -2,9 +2,9 @@ const tokenentryheight = 46;
 // Hash functions
 const crypto = require("crypto");
 const algos = {
-  "SHA512":{sha:crypto.SHA512,retsz:64,blksz:128},
-  "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
-  "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
+  SHA512: { sha: crypto.SHA512, retsz: 64, blksz: 128 },
+  SHA256: { sha: crypto.SHA256, retsz: 32, blksz: 64 },
+  SHA1: { sha: crypto.SHA1, retsz: 20, blksz: 64 },
 };
 const calculating = "Calculating";
 const notokens = "No tokens";
@@ -12,8 +12,11 @@ const notsupported = "Not supported";
 
 // sample settings:
 // {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
-var settings = require("Storage").readJSON("authentiwatch.json", true) || {tokens:[],misc:{}};
-if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
+var settings = require("Storage").readJSON("authentiwatch.json", true) || {
+  tokens: [],
+  misc: {},
+};
+if (settings.data) tokens = settings.data; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 // QR Code Text
@@ -30,16 +33,22 @@ if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 function b32decode(seedstr) {
   // RFC4648
-  var i, buf = 0, bitcount = 0, retstr = "";
+  var i,
+    buf = 0,
+    bitcount = 0,
+    retstr = "";
   for (i in seedstr) {
-    var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(seedstr.charAt(i).toUpperCase(), 0);
+    var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(
+      seedstr.charAt(i).toUpperCase(),
+      0
+    );
     if (c != -1) {
       buf <<= 5;
       buf |= c;
       bitcount += 5;
       if (bitcount >= 8) {
         retstr += String.fromCharCode(buf >> (bitcount - 8));
-        buf &= (0xFF >> (16 - bitcount));
+        buf &= 0xff >> (16 - bitcount);
         bitcount -= 8;
       }
     }
@@ -62,16 +71,16 @@ function do_hmac(key, message, algo) {
   var istr = new Uint8Array(a.blksz + message.length);
   var ostr = new Uint8Array(a.blksz + a.retsz);
   for (var i = 0; i < a.blksz; ++i) {
-    var c = (i < key.length) ? key[i] : 0;
+    var c = i < key.length ? key[i] : 0;
     istr[i] = c ^ 0x36;
-    ostr[i] = c ^ 0x5C;
+    ostr[i] = c ^ 0x5c;
   }
   istr.set(message, a.blksz);
   ostr.set(a.sha(istr), a.blksz);
   var ret = a.sha(ostr);
   // RFC4226 dynamic truncation
-  var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
-  return v.getUint32(0) & 0x7FFFFFFF;
+  var v = new DataView(ret, ret[ret.length - 1] & 0x0f, 4);
+  return v.getUint32(0) & 0x7fffffff;
 }
 function hotp(d, token, dohmac) {
   var tick;
@@ -85,31 +94,39 @@ function hotp(d, token, dohmac) {
   }
   var msg = new Uint8Array(8);
   var v = new DataView(msg.buffer);
-  v.setUint32(0, tick >> 16 >> 16);
-  v.setUint32(4, tick & 0xFFFFFFFF);
+  v.setUint32(0, (tick >> 16) >> 16);
+  v.setUint32(4, tick & 0xffffffff);
   var ret = calculating;
   if (dohmac) {
     try {
-      var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
-      ret = "" + hash % Math.pow(10, token.digits);
+      var hash = do_hmac(
+        b32decode(token.secret),
+        msg,
+        token.algorithm.toUpperCase()
+      );
+      ret = "" + (hash % Math.pow(10, token.digits));
       while (ret.length < token.digits) {
         ret = "0" + ret;
       }
-    } catch(err) {
+    } catch (err) {
       ret = notsupported;
     }
   }
-  return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
+  return {
+    hotp: ret,
+    next:
+      token.period > 0 ? (tick + 1) * token.period * 1000 : d.getTime() + 30000,
+  };
 }
 
 var state = {
   listy: 0,
-  prevcur:0,
-  curtoken:-1,
-  nextTime:0,
-  otp:"",
-  rem:0,
-  hide:0
+  prevcur: 0,
+  curtoken: -1,
+  nextTime: 0,
+  otp: "",
+  rem: 0,
+  hide: 0,
 };
 
 function drawToken(id, r) {
@@ -118,8 +135,12 @@ function drawToken(id, r) {
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
   var adj, sz;
-  g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
-                Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
+  g.setClipRect(
+    Math.max(x1, Bangle.appRect.x),
+    Math.max(y1, Bangle.appRect.y),
+    Math.min(x2, Bangle.appRect.x2),
+    Math.min(y2, Bangle.appRect.y2)
+  );
   if (id == state.curtoken) {
     // current token
     g.setColor(g.theme.fgH);
@@ -141,7 +162,7 @@ function drawToken(id, r) {
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
-      let xr = Math.floor(Bangle.appRect.w * state.rem / tokens[id].period);
+      let xr = Math.floor((Bangle.appRect.w * state.rem) / tokens[id].period);
       g.fillRect(x1, y2 - 4, xr, y2 - 1);
       adj = 0;
     } else {
@@ -154,7 +175,7 @@ function drawToken(id, r) {
     sz = 30;
     do {
       g.setFont("Vector", sz--);
-    } while (g.stringWidth(state.otp) > (r.w - adj));
+    } while (g.stringWidth(state.otp) > r.w - adj);
     g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + 16, false);
   }
   // shaded lines top and bottom
@@ -199,8 +220,16 @@ function draw() {
     var id = Math.floor(state.listy / tokenentryheight);
     var y = id * tokenentryheight + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
-      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenentryheight});
-      if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
+      drawToken(id, {
+        x: Bangle.appRect.x,
+        y: y,
+        w: Bangle.appRect.w,
+        h: tokenentryheight,
+      });
+      if (
+        id == state.curtoken &&
+        (tokens[id].period <= 0 || state.nextTime != 0)
+      ) {
         drewcur = true;
       }
       id += 1;
@@ -209,7 +238,7 @@ function draw() {
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
       if (tokens[state.curtoken].period > 0) {
-        timerdly = (state.otp == calculating) ? 1 : 1000; // timed
+        timerdly = state.otp == calculating ? 1 : 1000; // timed
       } else {
         timerdly = state.nexttime - d.getTime(); // counter
       }
@@ -228,7 +257,12 @@ function draw() {
   } else {
     g.setFont("Vector", 30);
     g.setFontAlign(0, 0, 0);
-    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.drawString(
+      notokens,
+      Bangle.appRect.x + Bangle.appRect.w / 2,
+      Bangle.appRect.y + Bangle.appRect.h / 2,
+      false
+    );
   }
   if (state.drawtimer) {
     clearTimeout(state.drawtimer);
@@ -238,7 +272,9 @@ function draw() {
 
 function onTouch(zone, e) {
   if (e) {
-    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
+    var id = Math.floor(
+      (state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight
+    );
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
@@ -251,7 +287,7 @@ function onTouch(zone, e) {
         }
         y += tokenentryheight;
         if (y > Bangle.appRect.h) {
-          state.listy += (y - Bangle.appRect.h);
+          state.listy += y - Bangle.appRect.h;
         }
         state.otp = "";
       }
@@ -266,7 +302,10 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
+  var newy = Math.min(
+    state.listy - e.dy,
+    tokens.length * tokenentryheight - Bangle.appRect.h
+  );
   state.listy = Math.max(0, newy);
   draw();
 }
@@ -274,7 +313,7 @@ function onDrag(e) {
 function onSwipe(e) {
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
-    let newsettings={tokens:tokens,misc:settings.misc};
+    let newsettings = { tokens: tokens, misc: settings.misc };
     require("Storage").writeJSON("authentiwatch.json", newsettings);
     state.nextTime = 0;
     state.otp = "";
@@ -289,14 +328,19 @@ function bangle1Btn(e) {
       state.curtoken = state.prevcur;
     } else {
       switch (e) {
-        case -1: state.curtoken--; break;
-        case  1: state.curtoken++; break;
+        case -1:
+          state.curtoken--;
+          break;
+        case 1:
+          state.curtoken++;
+          break;
       }
     }
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
     var fakee = {};
-    fakee.y = state.curtoken * tokenentryheight - state.listy + Bangle.appRect.y;
+    fakee.y =
+      state.curtoken * tokenentryheight - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
@@ -309,13 +353,31 @@ function exitApp() {
   Bangle.showLauncher();
 }
 
-Bangle.on('touch', onTouch);
-Bangle.on('drag' , onDrag );
-Bangle.on('swipe', onSwipe);
-if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){exitApp();     }, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
+Bangle.on("touch", onTouch);
+Bangle.on("drag", onDrag);
+Bangle.on("swipe", onSwipe);
+if (typeof BTN2 == "number") {
+  setWatch(
+    function () {
+      bangle1Btn(-1);
+    },
+    BTN1,
+    { edge: "rising", debounce: 50, repeat: true }
+  );
+  setWatch(
+    function () {
+      exitApp();
+    },
+    BTN2,
+    { edge: "rising", debounce: 50, repeat: true }
+  );
+  setWatch(
+    function () {
+      bangle1Btn(1);
+    },
+    BTN3,
+    { edge: "rising", debounce: 50, repeat: true }
+  );
 }
 Bangle.loadWidgets();
 

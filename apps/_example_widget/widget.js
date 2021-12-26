@@ -8,9 +8,9 @@ currently-running apps */
   }
 
   // add your widget
-  WIDGETS["mywidget"]={
-    area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
+  WIDGETS["mywidget"] = {
+    area: "tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
     width: 28, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
-    draw:draw // called to draw the widget
+    draw: draw, // called to draw the widget
   };
-})()
+})();

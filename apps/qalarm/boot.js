@@ -1,1 +1,3 @@
-(function() { eval(require("Storage").read("qalarmcheck.js")); })()
+(function () {
+  eval(require("Storage").read("qalarmcheck.js"));
+})();

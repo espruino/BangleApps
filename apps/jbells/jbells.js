@@ -2,7 +2,7 @@ E.showMessage("Jingle Bells");
 
 var eventEmitter = new Object();
 
-function strofa(notes, times, current, next){
+function strofa(notes, times, current, next) {
   eventEmitter.on(current, () => {
     if (notes.length == 0) {
       eventEmitter.emit(next);
@@ -21,7 +21,9 @@ function strofa(notes, times, current, next){
 var one = [2637, 2637, 2637, 2637, 2637, 2637, 2637, 3135, 2093, 2349, 2637];
 var one_t = [160, 160, 320, 160, 160, 320, 160, 160, 160, 160, 320];
 
-var two = [2793, 2793, 2793, 2637, 2637, 2637, 2349, 2349, 2349, 2637, 2349, 3135];
+var two = [
+  2793, 2793, 2793, 2637, 2637, 2637, 2349, 2349, 2349, 2637, 2349, 3135,
+];
 var two_t = [160, 160, 320, 160, 160, 320, 160, 160, 160, 160, 320, 320];
 
 var three = [2637, 2637, 2637, 2637, 2637, 2637, 2637, 3135, 2093, 2349, 2637];

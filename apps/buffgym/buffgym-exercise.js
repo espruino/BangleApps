@@ -19,8 +19,10 @@ exports = class Exercise {
 
   get subTitle() {
     const totalSets = this.sets.length;
-    const uncompletedSets = this.sets.filter((set) => !set.isCompleted()).length;
-    const currentSet = (totalSets - uncompletedSets) + 1;
+    const uncompletedSets = this.sets.filter(
+      (set) => !set.isCompleted()
+    ).length;
+    const currentSet = totalSets - uncompletedSets + 1;
     return `Set ${currentSet} of ${totalSets}`;
   }
 
@@ -33,11 +35,11 @@ exports = class Exercise {
   }
 
   currentSet() {
-    return this.sets.filter(set => !set.isCompleted())[0];
+    return this.sets.filter((set) => !set.isCompleted())[0];
   }
 
   isLastSet() {
-    return this.sets.filter(set => !set.isCompleted()).length === 1;
+    return this.sets.filter((set) => !set.isCompleted()).length === 1;
   }
 
   isCompleted() {
@@ -45,7 +47,9 @@ exports = class Exercise {
   }
 
   canSetCompleted() {
-    return this.sets.filter(set => set.isCompleted()).length === this.sets.length;
+    return (
+      this.sets.filter((set) => set.isCompleted()).length === this.sets.length
+    );
   }
 
   setCompleted() {
@@ -57,10 +61,10 @@ exports = class Exercise {
   canProgress() {
     let completedRepsTotalSum = 0;
     let targetRepsTotalSum = 0;
-    this.sets.forEach(set => completedRepsTotalSum += set.reps);
-    this.sets.forEach(set => targetRepsTotalSum += set.maxReps);
+    this.sets.forEach((set) => (completedRepsTotalSum += set.reps));
+    this.sets.forEach((set) => (targetRepsTotalSum += set.maxReps));
 
-    return (targetRepsTotalSum - completedRepsTotalSum) === 0;
+    return targetRepsTotalSum - completedRepsTotalSum === 0;
   }
 
   startRestTimer(workout) {
@@ -79,7 +83,7 @@ exports = class Exercise {
       }
 
       workout.emit("redraw");
-    }, 1000 );
+    }, 1000);
   }
 
   resetRestTimer() {
@@ -97,22 +101,30 @@ exports = class Exercise {
   setupStartedButtons(workout) {
     clearWatch();
 
-    setWatch(() => {
-      this.currentSet().incReps();
-      workout.emit("redraw");
-    }, BTN1, {repeat: true});
+    setWatch(
+      () => {
+        this.currentSet().incReps();
+        workout.emit("redraw");
+      },
+      BTN1,
+      { repeat: true }
+    );
 
-    setWatch(workout.next.bind(workout), BTN2, {repeat: false});
+    setWatch(workout.next.bind(workout), BTN2, { repeat: false });
 
-    setWatch(() => {
-      this.currentSet().decReps();
-      workout.emit("redraw");
-    }, BTN3, {repeat: true});
+    setWatch(
+      () => {
+        this.currentSet().decReps();
+        workout.emit("redraw");
+      },
+      BTN3,
+      { repeat: true }
+    );
   }
 
   setupRestingButtons(workout) {
     clearWatch();
-    setWatch(workout.next.bind(workout), BTN2, {repeat: false});
+    setWatch(workout.next.bind(workout), BTN2, { repeat: false });
   }
 
   next(workout) {
@@ -120,7 +132,7 @@ exports = class Exercise {
     const RESTING = 2;
     const COMPLETED = 3;
 
-    switch(this._state) {
+    switch (this._state) {
       case null:
         this._state = STARTED;
         this.setupStartedButtons(workout);

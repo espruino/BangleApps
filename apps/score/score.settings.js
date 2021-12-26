@@ -1,6 +1,6 @@
 (function () {
-  return (function (back, inApp, ret) {
-    const isBangle1 = process.env.BOARD === 'BANGLEJS'
+  return function (back, inApp, ret) {
+    const isBangle1 = process.env.BOARD === "BANGLEJS";
 
     function fillSettingsWithDefaults(settings) {
       if (isBangle1) {
@@ -52,18 +52,18 @@
       return settings;
     }
 
-    const fileName = 'score.json';
-    let settings = require('Storage').readJSON(fileName, 1) || {};
-    const offon = ['No', 'Yes'];
+    const fileName = "score.json";
+    let settings = require("Storage").readJSON(fileName, 1) || {};
+    const offon = ["No", "Yes"];
 
-    let presetsFileName = 'score.presets.json';
-    let presets = require('Storage').readJSON(presetsFileName);
+    let presetsFileName = "score.presets.json";
+    let presets = require("Storage").readJSON(presetsFileName);
     let presetNames = Object.keys(presets);
 
     let changed = false;
 
     function save(settings) {
-      require('Storage').writeJSON(fileName, settings);
+      require("Storage").writeJSON(fileName, settings);
     }
 
     function setAndSave(key, value, notChanged) {
@@ -71,7 +71,7 @@
         changed = true;
       }
       settings[key] = value;
-      if (key === 'winScore' && settings.maxScore < value) {
+      if (key === "winScore" && settings.maxScore < value) {
         settings.maxScore = value;
       }
       save(settings);
@@ -84,14 +84,16 @@
     }
 
     const presetMenu = function (appMenuBack) {
-      let ret = function (changed) { E.showMenu(appMenu(appMenuBack, changed ? 2 : null)); };
+      let ret = function (changed) {
+        E.showMenu(appMenu(appMenuBack, changed ? 2 : null));
+      };
       let m = {
-        '': {'title': 'Score Presets'},
-        '< Back': ret,
+        "": { title: "Score Presets" },
+        "< Back": ret,
       };
       for (let i = 0; i < presetNames.length; i++) {
         m[presetNames[i]] = (function (i) {
-          return function() {
+          return function () {
             changed = true;
             let mirrorScoreButtons = settings.mirrorScoreButtons;
             let keepDisplayOn = settings.keepDisplayOn;
@@ -112,84 +114,88 @@
     const appMenu = function (back, selected) {
       let m = {};
 
-      m[''] = {'title': 'Score Settings'};
+      m[""] = { title: "Score Settings" };
       if (selected != null) {
-        m[''].selected = selected;
+        m[""].selected = selected;
       }
-      m['< Back'] = function () { back(settings, changed); };
-      m['Presets'] = function () { E.showMenu(presetMenu(back)); };
+      m["< Back"] = function () {
+        back(settings, changed);
+      };
+      m["Presets"] = function () {
+        E.showMenu(presetMenu(back));
+      };
       if (isBangle1) {
-        m['Mirror Buttons'] = {
+        m["Mirror Buttons"] = {
           value: settings.mirrorScoreButtons,
-          format: m => offon[~~m],
-          onchange: m => setAndSave('mirrorScoreButtons', m, true),
+          format: (m) => offon[~~m],
+          onchange: (m) => setAndSave("mirrorScoreButtons", m, true),
         };
-        m['Keep display on'] = {
+        m["Keep display on"] = {
           value: settings.keepDisplayOn,
-          format: m => offon[~~m],
-          onchange: m => setAndSave('keepDisplayOn', m, true),
-        }
+          format: (m) => offon[~~m],
+          onchange: (m) => setAndSave("keepDisplayOn", m, true),
+        };
       }
-      m['Sets to win'] = {
+      m["Sets to win"] = {
         value: settings.winSets,
-        min:1,
-        onchange: m => setAndSave('winSets', m),
+        min: 1,
+        onchange: (m) => setAndSave("winSets", m),
       };
-      m['Sets per page'] = {
+      m["Sets per page"] = {
         value: settings.setsPerPage,
-        min:1,
-        max:5,
-        onchange: m => setAndSave('setsPerPage', m),
+        min: 1,
+        max: 5,
+        onchange: (m) => setAndSave("setsPerPage", m),
       };
-      m['Score to win'] = {
+      m["Score to win"] = {
         value: settings.winScore,
-        min:1,
+        min: 1,
         max: 999,
-        onchange: m => setAndSave('winScore', m),
+        onchange: (m) => setAndSave("winScore", m),
       };
-      m['2-point lead'] = {
+      m["2-point lead"] = {
         value: settings.enableTwoAhead,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('enableTwoAhead', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("enableTwoAhead", m),
       };
-      m['Maximum score?'] = {
+      m["Maximum score?"] = {
         value: settings.enableMaxScore,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('enableMaxScore', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("enableMaxScore", m),
       };
-      m['Maximum score'] = {
+      m["Maximum score"] = {
         value: settings.maxScore,
         min: 1,
         max: 999,
-        onchange: m => setAndSave('maxScore', m),
+        onchange: (m) => setAndSave("maxScore", m),
       };
-      m['Tennis scoring'] = {
+      m["Tennis scoring"] = {
         value: settings.enableTennisScoring,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('enableTennisScoring', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("enableTennisScoring", m),
       };
-      m['TB sets?'] = {
+      m["TB sets?"] = {
         value: settings.enableMaxScoreTiebreak,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('enableMaxScoreTiebreak', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("enableMaxScoreTiebreak", m),
       };
-      m['TB Score to win'] = {
+      m["TB Score to win"] = {
         value: settings.maxScoreTiebreakWinScore,
-        onchange: m => setAndSave('maxScoreTiebreakWinScore', m),
+        onchange: (m) => setAndSave("maxScoreTiebreakWinScore", m),
       };
-      m['TB 2-point lead'] = {
+      m["TB 2-point lead"] = {
         value: settings.maxScoreTiebreakEnableTwoAhead,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('maxScoreTiebreakEnableTwoAhead', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("maxScoreTiebreakEnableTwoAhead", m),
       };
-      m['TB max score?'] = {
+      m["TB max score?"] = {
         value: settings.maxScoreTiebreakEnableMaxScore,
-        format: m => offon[~~m],
-        onchange: m => setAndSave('maxScoreTiebreakEnableMaxScore', m),
+        format: (m) => offon[~~m],
+        onchange: (m) => setAndSave("maxScoreTiebreakEnableMaxScore", m),
       };
-      m['TB max score'] = {
+      m["TB max score"] = {
         value: settings.maxScoreTiebreakMaxScore,
-        onchange: m => setAndSave('maxScoreTiebreakMaxScore', m),
+        onchange: (m) => setAndSave("maxScoreTiebreakMaxScore", m),
       };
 
       return m;
@@ -197,13 +203,24 @@
 
     const inAppMenu = function () {
       let m = {
-        '': {'title': 'Score Menu'},
-        '< Back': function () { back(settings, changed); },
-        'Reset match': function () { back(settings, true); },
-        'End current set': function () { inApp('end_set'); back(settings, changed); },
-        'Configuration': function () { E.showMenu(appMenu(function () {
-          E.showMenu(inAppMenu());
-        })); },
+        "": { title: "Score Menu" },
+        "< Back": function () {
+          back(settings, changed);
+        },
+        "Reset match": function () {
+          back(settings, true);
+        },
+        "End current set": function () {
+          inApp("end_set");
+          back(settings, changed);
+        },
+        Configuration: function () {
+          E.showMenu(
+            appMenu(function () {
+              E.showMenu(inAppMenu());
+            })
+          );
+        },
       };
 
       return m;
@@ -214,6 +231,5 @@
     } else {
       E.showMenu(appMenu(back));
     }
-
-  });
+  };
 })();

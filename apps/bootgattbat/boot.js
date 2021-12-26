@@ -1,6 +1,6 @@
 (() => {
   function advertiseBattery() {
-    Bangle.bleAdvert[0x180F] = [E.getBattery()];
+    Bangle.bleAdvert[0x180f] = [E.getBattery()];
     NRF.setAdvertising(Bangle.bleAdvert);
   }
 

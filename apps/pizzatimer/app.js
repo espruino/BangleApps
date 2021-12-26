@@ -15,7 +15,7 @@ var drawInterval;
 
 /* STATE GLOBALS */
 
-var menuTime = new Uint8Array([0,0,0]);
+var menuTime = new Uint8Array([0, 0, 0]);
 var countdownTime = menuTime.slice(0);
 var show = [true, true, true];
 
@@ -34,15 +34,17 @@ function setCountdownTime() {
 }
 
 function countDownFinished() {
-  return countdownTime[HOUR_INDEX] <= 0 &&
-         countdownTime[MIN_INDEX] <= 0 &&
-         countdownTime[SEC_INDEX] <= 0;
+  return (
+    countdownTime[HOUR_INDEX] <= 0 &&
+    countdownTime[MIN_INDEX] <= 0 &&
+    countdownTime[SEC_INDEX] <= 0
+  );
 }
 
 function alertCountdownFinished() {
   if (drawInterval) return;
   Bangle.buzz()
-    .then(() => new Promise(resolve => setTimeout(resolve, 200)))
+    .then(() => new Promise((resolve) => setTimeout(resolve, 200)))
     .then(() => Bangle.buzz());
   setTimeout(alertCountdownFinished, 2000);
 }
@@ -55,7 +57,7 @@ function unsetDrawInterval() {
 function decrementCountdownTime() {
   const allZero = countDownFinished();
 
-  if(allZero) {
+  if (allZero) {
     return;
   }
 
@@ -111,19 +113,19 @@ function drawArrows() {
       width: 8,
       height: a.length,
       bpp: 1,
-      buffer: (new Uint8Array(a)).buffer
+      buffer: new Uint8Array(a).buffer,
     };
   }
   const d = g.getWidth() - 18;
-  g.drawImage(c([16,56,124,254,16,16,16,16]),d,40);
-  g.drawImage(c([16,16,16,16,254,124,56,16]),d,194);
-  g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
+  g.drawImage(c([16, 56, 124, 254, 16, 16, 16, 16]), d, 40);
+  g.drawImage(c([16, 16, 16, 16, 254, 124, 56, 16]), d, 194);
+  g.drawImage(c([0, 8, 12, 14, 255, 14, 12, 8]), d, 116);
 }
 
 function drawTime(input) {
   g.clear();
-  g.setFontAlign(0,0);
-  g.setFont("4x6",5);
+  g.setFontAlign(0, 0);
+  g.setFont("4x6", 5);
   g.drawString(input, g.getWidth() / 2, g.getHeight() / 2);
 }
 
@@ -164,7 +166,7 @@ function incrementFlashIndex() {
 }
 
 function showAll() {
-  for(var i = 0; i < show.length; i++) {
+  for (var i = 0; i < show.length; i++) {
     show[i] = true;
   }
 }
@@ -203,14 +205,14 @@ function decrementMenuTime() {
 
 function setupMenuWatches() {
   clearWatch();
-  btn1Watch = setWatch(incrementMenuTime, BTN1, {repeat: true});
-  btn2Watch = setWatch(next, BTN2, {repeat: true});
-  btn3Watch = setWatch(decrementMenuTime, BTN3, {repeat: true});
+  btn1Watch = setWatch(incrementMenuTime, BTN1, { repeat: true });
+  btn2Watch = setWatch(next, BTN2, { repeat: true });
+  btn3Watch = setWatch(decrementMenuTime, BTN3, { repeat: true });
 }
 
 function setupCountdownWatches() {
   clearWatch();
-  btn2Watch = setWatch(main, BTN2, {repeat: true});
+  btn2Watch = setWatch(main, BTN2, { repeat: true });
 }
 
 /* scenes */

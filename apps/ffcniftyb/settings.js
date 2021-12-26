@@ -1,23 +1,23 @@
 (function (back) {
-  const storage = require('Storage');
+  const storage = require("Storage");
   const SETTINGS_FILE = "ffcniftyb.json";
 
   const colors = {
-    65535: 'White',
-    63488: 'Red',
-    65504: 'Yellow',
-    2047: 'Cyan',
-    2016: 'Green',
-    31: 'Blue',
-    0: 'Black',
-  }
+    65535: "White",
+    63488: "Red",
+    65504: "Yellow",
+    2047: "Cyan",
+    2016: "Green",
+    31: "Blue",
+    0: "Black",
+  };
 
   function load(settings) {
     return Object.assign(settings, storage.readJSON(SETTINGS_FILE, 1) || {});
   }
 
   function save(settings) {
-    storage.write(SETTINGS_FILE, settings)
+    storage.write(SETTINGS_FILE, settings);
   }
 
   const settings = load({
@@ -31,8 +31,8 @@
   };
 
   function showMenu(items, opt) {
-    items[''] = opt || {};
-    items['< Back'] = back;
+    items[""] = opt || {};
+    items["< Back"] = back;
     E.showMenu(items);
   }
 
@@ -42,8 +42,8 @@
       return menu;
     }, {}),
     {
-      title: 'Color',
-      selected: Object.keys(colors).indexOf(settings.color)
+      title: "Color",
+      selected: Object.keys(colors).indexOf(settings.color),
     }
   );
 });

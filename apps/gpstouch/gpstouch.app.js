@@ -17,7 +17,7 @@ function resetLastFix() {
     speed: 0,
     time: 0,
     course: 0,
-    satellites: 0
+    satellites: 0,
   };
 }
 
@@ -37,100 +37,96 @@ function processFix(fix) {
 function draw() {
   var d = new Date();
   var da = d.toString().split(" ");
-  var time = da[4].substr(0,5);
-  var hh = da[4].substr(0,2);
-  var mm = da[4].substr(3,2);
+  var time = da[4].substr(0, 5);
+  var hh = da[4].substr(0, 2);
+  var mm = da[4].substr(3, 2);
 
   g.reset();
-  drawTop(d,hh,mm);
+  drawTop(d, hh, mm);
   drawInfo();
 }
 
-function drawTop(d,hh,mm) {
-  g.setFont("Vector", w/3);
+function drawTop(d, hh, mm) {
+  g.setFont("Vector", w / 3);
   g.setFontAlign(0, 0);
   g.setColor(g.theme.bg);
-  g.fillRect(0, 24, w, ((h-24)/2) + 24);
+  g.fillRect(0, 24, w, (h - 24) / 2 + 24);
   g.setColor(g.theme.fg);
 
-  g.setFontAlign(1,0);  // right aligned
-  g.drawString(hh, (w/2) - 6, ((h-24)/4) + 24);
-  g.setFontAlign(-1,0); // left aligned
-  g.drawString(mm, (w/2) + 6, ((h-24)/4) + 24);
+  g.setFontAlign(1, 0); // right aligned
+  g.drawString(hh, w / 2 - 6, (h - 24) / 4 + 24);
+  g.setFontAlign(-1, 0); // left aligned
+  g.drawString(mm, w / 2 + 6, (h - 24) / 4 + 24);
 
   // for the colon
-  g.setFontAlign(0,0); // centre aligned
-  if (d.getSeconds()&1) g.drawString(":", w/2, ((h-24)/4) + 24);
+  g.setFontAlign(0, 0); // centre aligned
+  if (d.getSeconds() & 1) g.drawString(":", w / 2, (h - 24) / 4 + 24);
 }
 
 function drawInfo() {
   if (infoData[infoMode] && infoData[infoMode].calc) {
-    g.setFont("Vector", w/7);
+    g.setFont("Vector", w / 7);
     g.setFontAlign(0, 0);
 
     if (infoData[infoMode].get_color)
       g.setColor(infoData[infoMode].get_color());
-    else
-      g.setColor("#0ff");
-    g.fillRect(0, ((h-24)/2) + 24 + 1, w, h);
+    else g.setColor("#0ff");
+    g.fillRect(0, (h - 24) / 2 + 24 + 1, w, h);
 
-    if (infoData[infoMode].is_control)
-      g.setColor("#fff");
-    else
-      g.setColor("#000");
+    if (infoData[infoMode].is_control) g.setColor("#fff");
+    else g.setColor("#000");
 
-    g.drawString((infoData[infoMode].calc()), w/2, (3*(h-24)/4) + 24);
+    g.drawString(infoData[infoMode].calc(), w / 2, (3 * (h - 24)) / 4 + 24);
   }
 }
 
 const infoData = {
   ID_LAT: {
-    calc: () => 'Lat: ' + last_fix.lat.toFixed(4),
+    calc: () => "Lat: " + last_fix.lat.toFixed(4),
   },
   ID_LON: {
-    calc: () => 'Lon: ' + last_fix.lon.toFixed(4),
+    calc: () => "Lon: " + last_fix.lon.toFixed(4),
   },
   ID_SPEED: {
-    calc: () => 'Speed: ' + last_fix.speed.toFixed(1),
+    calc: () => "Speed: " + last_fix.speed.toFixed(1),
   },
   ID_ALT: {
-    calc: () => 'Alt: ' + last_fix.alt.toFixed(0),
+    calc: () => "Alt: " + last_fix.alt.toFixed(0),
   },
   ID_COURSE: {
-    calc: () => 'Course: '+ last_fix.course.toFixed(0),
+    calc: () => "Course: " + last_fix.course.toFixed(0),
   },
   ID_SATS: {
-    calc: () => 'Satelites: ' + last_fix.satellites,
+    calc: () => "Satelites: " + last_fix.satellites,
   },
   ID_TIME: {
     calc: () => formatTime(last_fix.time),
   },
   OS_REF: {
-    calc: () => !last_fix.fix ? "OO 000 000" : geo.gpsToOSMapRef(last_fix),
+    calc: () => (!last_fix.fix ? "OO 000 000" : geo.gpsToOSMapRef(last_fix)),
   },
   GPS_POWER: {
-    calc: () => (Bangle.isGPSOn()) ? 'GPS On' : 'GPS Off',
+    calc: () => (Bangle.isGPSOn() ? "GPS On" : "GPS Off"),
     action: () => toggleGPS(),
-    get_color: () => Bangle.isGPSOn() ? '#f00' : '#00f',
+    get_color: () => (Bangle.isGPSOn() ? "#f00" : "#00f"),
     is_control: true,
   },
   GPS_LOGGER: {
-    calc: () => 'Logger ' + loggerStatus(),
+    calc: () => "Logger " + loggerStatus(),
     action: () => toggleLogger(),
-    get_color: () => loggerStatus() == "ON" ? '#f00' : '#00f',
+    get_color: () => (loggerStatus() == "ON" ? "#f00" : "#00f"),
     is_control: true,
   },
 };
 
 function toggleGPS() {
-  if (loggerStatus() == "ON")
-    return;
+  if (loggerStatus() == "ON") return;
 
-  Bangle.setGPSPower(Bangle.isGPSOn() ? 0 : 1, 'gpstouch');
+  Bangle.setGPSPower(Bangle.isGPSOn() ? 0 : 1, "gpstouch");
   // add or remove listenner
   if (Bangle.isGPSOn()) {
     if (listennerCount == 0) {
-      Bangle.on('GPS', processFix);
+      Bangle.on("GPS", processFix);
       listennerCount++;
       log_debug("listennerCount=" + listennerCount);
     }
@@ -145,23 +141,22 @@ function toggleGPS() {
 }
 
 function loggerStatus() {
-  var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+  var settings = require("Storage").readJSON("gpsrec.json", 1) || {};
   if (settings == {}) return "Install";
   return settings.recording ? "ON" : "OFF";
 }
 
 function toggleLogger() {
-  var settings = require("Storage").readJSON("gpsrec.json",1)||{};
+  var settings = require("Storage").readJSON("gpsrec.json", 1) || {};
   if (settings == {}) return;
 
   settings.recording = !settings.recording;
   require("Storage").write("gpsrec.json", settings);
 
-  if (WIDGETS["gpsrec"])
-    WIDGETS["gpsrec"].reload();
+  if (WIDGETS["gpsrec"]) WIDGETS["gpsrec"].reload();
 
   if (settings.recording && listennerCount == 0) {
-    Bangle.on('GPS', processFix);
+    Bangle.on("GPS", processFix);
     listennerCount++;
     log_debug("listennerCount=" + listennerCount);
   }
@@ -195,18 +190,19 @@ function prevInfo() {
   }
 }
 
-Bangle.on('swipe', dir => {
-  if (dir == 1) prevInfo(); else nextInfo();
+Bangle.on("swipe", (dir) => {
+  if (dir == 1) prevInfo();
+  else nextInfo();
   draw();
 });
 
 let prevTouch = 0;
 
-Bangle.on('touch', function(button, xy) {
-  let dur = 1000*(getTime() - prevTouch);
+Bangle.on("touch", function (button, xy) {
+  let dur = 1000 * (getTime() - prevTouch);
   prevTouch = getTime();
 
-  if (dur <= 1000 && xy.y < h/2 && infoData[infoMode].is_control) {
+  if (dur <= 1000 && xy.y < h / 2 && infoData[infoMode].is_control) {
     Bangle.buzz();
     if (infoData[infoMode] && infoData[infoMode].action) {
       infoData[infoMode].action();
@@ -216,12 +212,10 @@ Bangle.on('touch', function(button, xy) {
 });
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower', on => {
-  if (secondInterval)
-    clearInterval(secondInterval);
+Bangle.on("lcdPower", (on) => {
+  if (secondInterval) clearInterval(secondInterval);
   secondInterval = undefined;
-  if (on)
-    secondInterval = setInterval(draw, 1000);
+  if (on) secondInterval = setInterval(draw, 1000);
   draw();
 });
 
@@ -229,9 +223,9 @@ resetLastFix();
 
 // add listenner if already powered on, plus tag app
 if (Bangle.isGPSOn() || loggerStatus() == "ON") {
-  Bangle.setGPSPower(1, 'gpstouch');
+  Bangle.setGPSPower(1, "gpstouch");
   if (listennerCount == 0) {
-    Bangle.on('GPS', processFix);
+    Bangle.on("GPS", processFix);
     listennerCount++;
     log_debug("listennerCount=" + listennerCount);
   }

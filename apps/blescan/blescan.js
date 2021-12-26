@@ -3,47 +3,46 @@
 // Using the menu feature, display a scrollable list of BLE devices on the watch
 
 // Dummy menu item to display until we find something
-const NODEVICE = 'No devices found';
+const NODEVICE = "No devices found";
 
 const SCAN_INTERVAL = 3000;
 
-const menu = {
-};
+const menu = {};
 
 menu[NODEVICE] = {
-  value : "",
-  onchange : () => {}
+  value: "",
+  onchange: () => {},
 };
-
 
 function draw() {
   E.showMenu(menu);
 }
 
 function scan() {
-  NRF.findDevices(devices => {
-    for (let device of devices) {
+  NRF.findDevices(
+    (devices) => {
+      for (let device of devices) {
+        // Only display devices that advertise a name
 
-      // Only display devices that advertise a name
-
-      if (device.name) {
-        // Remove no devices found message if it is present
-        if (menu[NODEVICE]) {
-          delete menu[NODEVICE];
+        if (device.name) {
+          // Remove no devices found message if it is present
+          if (menu[NODEVICE]) {
+            delete menu[NODEVICE];
+          }
+          menu[device.name] = {
+            value: device.rssi,
+            onchange: () => {},
+          };
         }
-        menu[device.name] = {
-          value : device.rssi,
-          onchange : () => {}
-        };
       }
-    }
-    draw();
-  }, { active: true });
+      draw();
+    },
+    { active: true }
+  );
 }
 
-
 function waitMessage() {
-  E.showMessage('scanning');
+  E.showMessage("scanning");
 }
 
 scan();

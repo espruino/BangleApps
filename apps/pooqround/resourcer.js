@@ -25,92 +25,107 @@
 //////////////////////////////////////////////////////////////////////////////
 /*                              ==ASSETS==                                  */
 
-const heatshrink = require('heatshrink');
+const heatshrink = require("heatshrink");
 
-const enc = x => {
-    const d = btoa(require("heatshrink").compress(x));
-    var r = "'" + d.substr(0, 64);
-    for (let i = 64; i < d.length; i += 64) r += "' +\n    '" + d.substr(i, 64);
-    return r + "'";
+const enc = (x) => {
+  const d = btoa(require("heatshrink").compress(x));
+  var r = "'" + d.substr(0, 64);
+  for (let i = 64; i < d.length; i += 64) r += "' +\n    '" + d.substr(i, 64);
+  return r + "'";
 };
 
 const prepBitmap = (name, data) => {
-    const image = Graphics.createImage(data);
-    const raw = String.fromCharCode(image.width, image.height, 0x81, 0) + image.buffer;
-    const x = `
+  const image = Graphics.createImage(data);
+  const raw =
+    String.fromCharCode(image.width, image.height, 0x81, 0) + image.buffer;
+  const x = `
 const ${name}I = dec(${enc(raw)});
 `;
-    return x;
+  return x;
 };
 
 const prepFont = (name, data) => {
-    const image = Graphics.createImage(data);
-    const lengths = Uint8Array(256);
-    const offsets = Uint16Array(256);
-    const adjustments = Uint16Array(256);
-    let min = Infinity, max = -Infinity;
-    const lines = data.split('\n');
-    let m;
-    // This regexp is clearly suboptimal, but Espruino's regexp engine is really wonky
-    // and doesn't process nested parentheses or alternation correctly.
-    for (let i = 0; i < 5 && !(m = /^(<*)=([*\d]+)(=*)(>*)$/.exec(lines[i])); i++);
-    if (!m) throw new Error('Missing or incorrect header');
-    const desc = m[1].length, body = 1 + m[2].length + m[3].length, asc = m[4].length;
-    const h = desc + body + asc;
-    let width = m[2] == '*' ? null : +m[2];
-    let c = null, o = 0;
-    lines.forEach((line, l) => {
-      if (m = /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) || /^(<*)(-)(.)(-*)(>*)$/.exec(line)) {
-        const h = m[2] == '=';
-        if (m[1].length > desc || h && m[1].length != desc)
-          throw new Error('Invalid descender height at ' + l);
-        if (m[2].length + m[3].length + m[4].length != body)
-          throw new Error('Invalid body height at ' + l);
-        if (m[5].length > asc || h && m[5].length != asc)
-          throw new Error('Invalid ascender height at ' + l);
-        if (c != null) {
-          lengths[c] = l - o;
-          if (width !== null && width !== lengths[c])
-            throw new Error(
-              `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
-            );
-          c = null
-        }
-        if (!h) {
-          c = m[3].charCodeAt(0);
-          if (c < min) min = c;
-          if (c > max) max = c;
-          o = l + 1;
-          offsets[c] = l;
-          adjustments[c] = m[1].length
-        }
+  const image = Graphics.createImage(data);
+  const lengths = Uint8Array(256);
+  const offsets = Uint16Array(256);
+  const adjustments = Uint16Array(256);
+  let min = Infinity,
+    max = -Infinity;
+  const lines = data.split("\n");
+  let m;
+  // This regexp is clearly suboptimal, but Espruino's regexp engine is really wonky
+  // and doesn't process nested parentheses or alternation correctly.
+  for (
+    let i = 0;
+    i < 5 && !(m = /^(<*)=([*\d]+)(=*)(>*)$/.exec(lines[i]));
+    i++
+  );
+  if (!m) throw new Error("Missing or incorrect header");
+  const desc = m[1].length,
+    body = 1 + m[2].length + m[3].length,
+    asc = m[4].length;
+  const h = desc + body + asc;
+  let width = m[2] == "*" ? null : +m[2];
+  let c = null,
+    o = 0;
+  lines.forEach((line, l) => {
+    if (
+      (m =
+        /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) ||
+        /^(<*)(-)(.)(-*)(>*)$/.exec(line))
+    ) {
+      const h = m[2] == "=";
+      if (m[1].length > desc || (h && m[1].length != desc))
+        throw new Error("Invalid descender height at " + l);
+      if (m[2].length + m[3].length + m[4].length != body)
+        throw new Error("Invalid body height at " + l);
+      if (m[5].length > asc || (h && m[5].length != asc))
+        throw new Error("Invalid ascender height at " + l);
+      if (c != null) {
+        lengths[c] = l - o;
+        if (width !== null && width !== lengths[c])
+          throw new Error(
+            `Character has width ${lengths[c]} != ${width} at ${offsets[c]}`
+          );
+        c = null;
       }
-    });
-    const xoffs = Uint8Array(lines.length);
-    const ypos = Uint16Array(lines.length);
-    ypos.fill(0xffff);
-    const w0 = lengths[min];
-    let widths = '';
-    for (c = min, o = 0; c <= max; c++) {
-        for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
-            xoffs[j] = asc + body + adjustments[c] - 1;
-            ypos[j++] = o++;
-        }
-        widths += String.fromCharCode(lengths[c]);
+      if (!h) {
+        c = m[3].charCodeAt(0);
+        if (c < min) min = c;
+        if (c > max) max = c;
+        o = l + 1;
+        offsets[c] = l;
+        adjustments[c] = m[1].length;
+      }
     }
-    const raster = Graphics.createArrayBuffer(h, o, 1, {msb: true});
-    const writer = Graphics.createCallback(
-        image.width, image.height, 1,
-        (x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
-    );
-    writer.drawImage(image);
-    if (width === null) width = `dec(${enc(widths)})`;
-    const x = `const ${name}F = [
+  });
+  const xoffs = Uint8Array(lines.length);
+  const ypos = Uint16Array(lines.length);
+  ypos.fill(0xffff);
+  const w0 = lengths[min];
+  let widths = "";
+  for (c = min, o = 0; c <= max; c++) {
+    for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
+      xoffs[j] = asc + body + adjustments[c] - 1;
+      ypos[j++] = o++;
+    }
+    widths += String.fromCharCode(lengths[c]);
+  }
+  const raster = Graphics.createArrayBuffer(h, o, 1, { msb: true });
+  const writer = Graphics.createCallback(
+    image.width,
+    image.height,
+    1,
+    (x, y, col) => raster.setPixel(xoffs[y] - x, ypos[y], col)
+  );
+  writer.drawImage(image);
+  if (width === null) width = `dec(${enc(widths)})`;
+  const x = `const ${name}F = [
   dec(
     ${enc(raster.buffer)}
   ), ${min}, ${width}, ${h}
 ];`;
-    return x;
+  return x;
 };
 
 res = `
@@ -118,7 +133,9 @@ const heatshrink = require('heatshrink');
 const dec = x => E.toString(heatshrink.decompress(atob(x)));
 `;
 
-res += prepFont('y10', `
+res += prepFont(
+  "y10",
+  `
 =*================================
 -0--------------------------------
              xxxxxxxxxxxxxxxx
@@ -251,9 +268,12 @@ xxxx              xxxxxxxxxx
              xxxxxxxxxxxxxxxxxxx
                 xxxxxxxxxxxxxx
 =*================================
-`);
+`
+);
 
-res += prepFont('y1', `
+res += prepFont(
+  "y1",
+  `
 =*==============================================
 -0----------------------------------------------
              xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -386,9 +406,12 @@ xxxx                    xxxxxxxxxxxxxx
                xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                    xxxxxxxxxxxxxxxxxxxxxxx
 =*==============================================
-`);
+`
+);
 
-res += prepFont('y10s', `
+res += prepFont(
+  "y10s",
+  `
 =*====================
 -0--------------------
        xxxxxxxxxxxx
@@ -481,9 +504,12 @@ xx           xxxxx
          xxxxxxxxxx
 
 =*====================
-`);
+`
+);
 
-res += prepFont('y1s', `
+res += prepFont(
+  "y1s",
+  `
 =*=============================
 -0-----------------------------
         xxxxxxxxxxxxxxxxxxxx
@@ -575,9 +601,12 @@ xx               xxxxxxxx
            xxxxxxxxxxxxxxxxxxx
                xxxxxxxxxxxxx
 =*=============================
-`);
+`
+);
 
-res += prepFont('d10', `
+res += prepFont(
+  "d10",
+  `
 =*=========================
 -1-------------------------
 xxx
@@ -617,9 +646,12 @@ xxxx    xxxx   xxxxxxxxx
   xxxxxxxx           xxxxx
    xxxxxx               xxx
 =*=========================
-`);
+`
+);
 
-res += prepFont('d1', `
+res += prepFont(
+  "d1",
+  `
 =*==============================================
 -0----------------------------------------------
 
@@ -827,9 +859,12 @@ xxxx             xxxx          xxxx
             xxxxxxxxxxxxxxxxxx
                 xxxxxxxxxxxx
 =*==============================================
-`);
+`
+);
 
-res += prepFont('dow', `
+res += prepFont(
+  "dow",
+  `
 =*==============================================
 -1----------------------------------------------
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -1074,9 +1109,12 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                                 xxxxxxxxxxxxxxxx
                                 xxxxxxxxxxxxxxxx
 =*==============================================
-`);
+`
+);
 
-res += prepFont('m', `
+res += prepFont(
+  "m",
+  `
 <<<<=*==============================================
 -1----------------------------------------------
    xxxx                                    xxxxx
@@ -1529,9 +1567,12 @@ xxx        xxx
  xxx      xxx
   xx      xx
 <<<<=*==============================================
-`);
+`
+);
 
-res += prepBitmap('lock', `
+res += prepBitmap(
+  "lock",
+  `
    xxxx
   xxxxxx
  xxx  xxx
@@ -1549,9 +1590,12 @@ x  xxxx  x
 x        x
 x        x
 xxxxxxxxxx
-`);
+`
+);
 
-res += prepBitmap('lockS', `
+res += prepBitmap(
+  "lockS",
+  `
    xxx
   xxxxx
  xx   xx
@@ -1565,9 +1609,12 @@ x       x
 x  xxx  x
 x       x
 xxxxxxxxx
-`);
+`
+);
 
-res += prepBitmap('battery', `
+res += prepBitmap(
+  "battery",
+  `
    xx
 xxxxxxxx
 xxxxxxxx
@@ -1585,9 +1632,12 @@ xxxxxxxx
 xxxxxxxx
 xxxxxxxx
 xxxxxxxx
-`);
+`
+);
 
-res += prepBitmap('charge', `
+res += prepBitmap(
+  "charge",
+  `
      x
     xx
    xx
@@ -1601,9 +1651,12 @@ res += prepBitmap('charge', `
    xx
   xx
   x
-`);
+`
+);
 
-res += prepBitmap('HRM', `
+res += prepBitmap(
+  "HRM",
+  `
    xxx    xxx
   x xxx  xxx x
  xx xxxxxxxx xx
@@ -1621,9 +1674,12 @@ xx x xxxxxx x xx
      xxxxxx
       xxxx
        xx
-`);
+`
+);
 
-res += prepBitmap('compass', `
+res += prepBitmap(
+  "compass",
+  `
     x
     x
    xxx
@@ -1633,9 +1689,12 @@ res += prepBitmap('compass', `
  xxx xxx
  xx   xx
 xx     xx
-`);
+`
+);
 
-res += prepBitmap('y100', `
+res += prepBitmap(
+  "y100",
+  `
  xxxxx    xxx
 xxxxxxx  xxxxx
 x   xxx  xx xx
@@ -1653,9 +1712,12 @@ xxxxx   xx   xx
          xx xx
          xxxxx
           xxx
-`);
+`
+);
 
-res += prepBitmap('y100s', `
+res += prepBitmap(
+  "y100s",
+  `
  xx    xx
 x xx  xxxx
   xx xx  xx
@@ -1666,6 +1728,7 @@ xxx  xx  xx
      xx  xx
       xxxx
        xx
-`);
+`
+);
 
 print(res);

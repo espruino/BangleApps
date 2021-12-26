@@ -31,10 +31,10 @@ function updateSettings() {
 
 function loadSettings() {
   log_debug("loadSettings()");
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-  settings.update = settings.update||120;
-  settings.search = settings.search||5;
-  settings.power_mode = settings.power_mode||"SuperE";
+  settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
+  settings.update = settings.update || 120;
+  settings.search = settings.search || 5;
+  settings.power_mode = settings.power_mode || "SuperE";
   log_debug(settings);
 }
 
@@ -42,50 +42,55 @@ function loadSettings() {
 
 function setupGPS() {
   Bangle.setGPSPower(1);
-  setTimeout(function() {
-    require("gpssetup").setPowerMode().then(function() {
-      Bangle.setGPSPower(0);
-    });
+  setTimeout(function () {
+    require("gpssetup")
+      .setPowerMode()
+      .then(function () {
+        Bangle.setGPSPower(0);
+      });
   }, 100);
 }
 
 /***********  GPS Setup Menu App  *****************************/
 
 function showMainMenu() {
-  var power_options = ["SuperE","PSMOO"];
+  var power_options = ["SuperE", "PSMOO"];
 
   const mainmenu = {
-    '': { 'title': 'GPS Setup' },
-    '< Back': ()=>{exitSetup();},
-    'Power Mode': {
+    "": { title: "GPS Setup" },
+    "< Back": () => {
+      exitSetup();
+    },
+    "Power Mode": {
       value: 0 | power_options.indexOf(settings.power_mode),
-      min: 0, max: 1,
-      format: v => power_options[v],
-      onchange: v => {
+      min: 0,
+      max: 1,
+      format: (v) => power_options[v],
+      onchange: (v) => {
         settings.power_mode = power_options[v];
         updateSettings();
       },
     },
-    'Update (s)': {
+    "Update (s)": {
       value: settings.update,
       min: 10,
       max: 1800,
       step: 10,
-      onchange: v => {
+      onchange: (v) => {
         settings.update = v;
         updateSettings();
-      }
+      },
     },
-    'Search (s)': {
+    "Search (s)": {
       value: settings.search,
       min: 1,
       max: 65,
       step: 1,
-      onchange: v => {
+      onchange: (v) => {
         settings.search = v;
         updateSettings();
-      }
-    }
+      },
+    },
   };
 
   return E.showMenu(mainmenu);
@@ -96,9 +101,11 @@ function exitSetup() {
   if (settings_changed) {
     log_debug(settings);
     E.showMessage("Configuring GPS");
-    setTimeout(function() {
+    setTimeout(function () {
       setupGPS();
-      setTimeout(function() { load() }, 750);
+      setTimeout(function () {
+        load();
+      }, 750);
     }, 500);
   } else {
     load();

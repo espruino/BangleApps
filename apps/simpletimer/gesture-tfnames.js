@@ -1,1 +1,1 @@
-"swipeleft,swiperight,upup,waggle,clap2"
+"swipeleft,swiperight,upup,waggle,clap2";

@@ -1,8 +1,7 @@
 (function (back) {
   var FILE = "calendar.json";
-  var settings = require('Storage').readJSON(FILE, true) || {};
-  if (settings.startOnSun === undefined)
-    settings.startOnSun = false;
+  var settings = require("Storage").readJSON(FILE, true) || {};
+  if (settings.startOnSun === undefined) settings.startOnSun = false;
   if (settings.ndColors === undefined)
     if (process.env.HWVERSION == 2) {
       settings.ndColors = true;
@@ -11,28 +10,27 @@
     }
 
   function writeSettings() {
-    require('Storage').writeJSON(FILE, settings);
+    require("Storage").writeJSON(FILE, settings);
   }
 
   E.showMenu({
-    "": { "title": "Calendar" },
+    "": { title: "Calendar" },
     "< Back": () => back(),
-    'Start Sunday': {
+    "Start Sunday": {
       value: settings.startOnSun,
-      format: v => v ? "Yes" : "No",
-      onchange: v => {
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => {
         settings.startOnSun = v;
         writeSettings();
-      }
+      },
     },
-    'B2 Colors': {
+    "B2 Colors": {
       value: settings.ndColors,
-      format: v => v ? "Yes" : "No",
-      onchange: v => {
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => {
         settings.ndColors = v;
         writeSettings();
-      }
+      },
     },
   });
-})
-
+});

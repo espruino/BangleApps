@@ -2,7 +2,7 @@ let counter = 0;
 let setValue = 0;
 let counterInterval, alarmInterval, buzzInterval;
 let state;
-let saved = require("Storage").readJSON("simpletimer.json",true) || {};
+let saved = require("Storage").readJSON("simpletimer.json", true) || {};
 
 const DEBOUNCE = 50;
 
@@ -11,8 +11,7 @@ function buzzAndBeep() {
   return Bangle.buzz(1000, 1)
     .then(() => Bangle.beep(200, 3000))
     .then(() => {
-      if (buzzInterval==-1)
-        buzzInterval = setTimeout(buzzAndBeep, 5000);
+      if (buzzInterval == -1) buzzInterval = setTimeout(buzzAndBeep, 5000);
     });
 }
 
@@ -62,7 +61,7 @@ function countDown() {
 function clearIntervals() {
   if (alarmInterval) clearInterval(alarmInterval);
   if (counterInterval) clearInterval(counterInterval);
-  if (buzzInterval>0) clearTimeout(buzzInterval);
+  if (buzzInterval > 0) clearTimeout(buzzInterval);
   alarmInterval = undefined;
   counterInterval = undefined;
   buzzInterval = undefined;
@@ -97,7 +96,7 @@ const stateMap = {
   },
   stopped: () => {
     resetTimer(setValue);
-  }
+  },
 };
 
 function changeState() {
@@ -110,12 +109,14 @@ function drawLabels() {
   g.clear();
   g.setFontAlign(-1, 0);
   g.setFont("6x8", 7);
-  if (state != "started") // only when not runnung
+  if (state != "started")
+    // only when not runnung
     g.drawString(`+  +`, 35, 180);
   g.setFontAlign(0, 0, 3);
   g.setFont("6x8", 1);
   g.drawString("Reset                   (re)start", 230, 120);
-  if (state != "started") // only when not runnung
+  if (state != "started")
+    // only when not runnung
     g.drawString("Back", 230, 120);
 }
 
@@ -134,17 +135,20 @@ function addWatch() {
   setWatch(changeState, BTN1, {
     debounce: DEBOUNCE,
     repeat: true,
-    edge: "falling"
-  });
-  setWatch(() => {
-    if (state !== "started") {
-      Bangle.showLauncher();
-    }},
-  BTN2,
-  {
-    repeat: false,
     edge: "falling",
   });
+  setWatch(
+    () => {
+      if (state !== "started") {
+        Bangle.showLauncher();
+      }
+    },
+    BTN2,
+    {
+      repeat: false,
+      edge: "falling",
+    }
+  );
   setWatch(
     () => {
       resetTimer(0);
@@ -153,7 +157,7 @@ function addWatch() {
     {
       debounce: DEBOUNCE,
       repeat: true,
-      edge: "falling"
+      edge: "falling",
     }
   );
   setWatch(
@@ -164,16 +168,16 @@ function addWatch() {
     {
       debounce: DEBOUNCE,
       repeat: true,
-      edge: "falling"
+      edge: "falling",
     }
   );
   setWatch(() => set(1), BTN5, {
     debounce: DEBOUNCE,
     repeat: true,
-    edge: "falling"
+    edge: "falling",
   });
 }
-Bangle.on("aiGesture", gesture => {
+Bangle.on("aiGesture", (gesture) => {
   if (gesture === "swipeleft" && state === "stopped") resetTimer(0);
 });
 

@@ -13,7 +13,7 @@ Written by Richard Hopkins, May 2020
 declare global variables for watch button statuses */
 top_btn = false;
 middle_btn = false;
-left_btn= false; // the left side of the touch screen
+left_btn = false; // the left side of the touch screen
 right_btn = false; // the right side of the touch screen
 bottom_btn = false;
 
@@ -28,10 +28,10 @@ declare global variables for the toggle button
 statuses; if you add an additional toggle button
 you should declare it and initiase it here */
 
-var status_printer = {value: false};
-var status_tv = {value: false};
-var status_light_hall = {value: false};
-var status_light_study = {value: false};
+var status_printer = { value: false };
+var status_tv = { value: false };
+var status_light_hall = { value: false };
+var status_light_study = { value: false };
 
 /* trsnsmit message
 where
@@ -40,19 +40,23 @@ o = first three character of object name
 v = value of state.object
 */
 
-const transmit = (state,object,status) => {
-  msgNum ++;
+const transmit = (state, object, status) => {
+  msgNum++;
   msg = {
     n: msgNum.toString().slice(-4),
-    s: state.substr(0,4),
-    o: object.substr(0,4),
-    v: status.substr(0,4),
+    s: state.substr(0, 4),
+    o: object.substr(0, 4),
+    v: status.substr(0, 4),
   };
-  message= msg.n + "," + msg.s + "," + msg.o + "," + msg.v;
-  NRF.setAdvertising({},{
-    showName: false,
-    manufacturer: 0x0590,
-    manufacturerData: JSON.stringify(message)});
+  message = msg.n + "," + msg.s + "," + msg.o + "," + msg.v;
+  NRF.setAdvertising(
+    {},
+    {
+      showName: false,
+      manufacturer: 0x0590,
+      manufacturerData: JSON.stringify(message),
+    }
+  );
 };
 
 /*
@@ -72,29 +76,32 @@ with a unique name and the data from the Image Object
 const icons = [
   {
     name: "switch",
-    data: "gEBAP4B/AP4B/AP4B/AMgA3HPJdlVvI7/Hf47/Hf47/Hf47/Hf47/Hf4AvIPKRXAP4B/AP4B/AP4B/AJgA=="
+    data: "gEBAP4B/AP4B/AP4B/AMgA3HPJdlVvI7/Hf47/Hf47/Hf47/Hf47/Hf4AvIPKRXAP4B/AP4B/AP4B/AJgA==",
   },
   {
     name: "light",
-    data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA=="
+    data: "gEBAP4B/APi/Na67lfACZ/nNaI9lE6o9jEbI9hD7Y7dDsJZ3D6YRJHdIJHHfaz7Hf5Z/Hf4hZHMIjFEqIVVHsY5hDpI7TEqL1jVsqlTdM55THOJvHOuY7/HfI9JHOI9HHOoBgA==",
   },
   {
     name: "back",
-    data:  "gEBAP4B/AP4B/AKgADHPI71HP45/HP45/HP45/HP45/Hf49/Hv49/Hv49/Hv49/Hv497He4B/AP4B/AJAA=="
-  }
-  ];
+    data: "gEBAP4B/AP4B/AKgADHPI71HP45/HP45/HP45/HP45/Hf49/Hv49/Hv49/Hv49/Hv497He4B/AP4B/AJAA==",
+  },
+];
 
 /* finds icon data by name in the icon array and returns an image object*/
 const drawIcon = (name) => {
   for (var icon of icons) {
     if (icon.name == name) {
       image = {
-        width : 30, height : 30, bpp : 16,
-        transparent : 1,
-        buffer: require("heatshrink").decompress(atob(icon.data))
-        };
-      return image;}
+        width: 30,
+        height: 30,
+        bpp: 16,
+        transparent: 1,
+        buffer: require("heatshrink").decompress(atob(icon.data)),
+      };
+      return image;
     }
+  }
 };
 
 /*
@@ -111,59 +118,59 @@ format to ensure it is clear.
 */
 
 var lightBtn = {
-  primary_colour: 0x653E,
-  primary_text: 'Lights',
-  primary_icon: 'light',
-  };
+  primary_colour: 0x653e,
+  primary_text: "Lights",
+  primary_icon: "light",
+};
 
 var socketsBtn = {
-  primary_colour: 0x33F9,
-  primary_text: 'Sockets',
-  primary_icon: 'switch',
-  };
+  primary_colour: 0x33f9,
+  primary_text: "Sockets",
+  primary_icon: "switch",
+};
 
 var lightHallBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Hall Off',
-  primary_icon: 'light',
+  primary_colour: 0xe9c7,
+  primary_text: "Hall Off",
+  primary_icon: "light",
   toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'Hall On',
-  secondary_icon : 'light',
-  value: status_light_hall
-  };
+  secondary_colour: 0x3f48,
+  secondary_text: "Hall On",
+  secondary_icon: "light",
+  value: status_light_hall,
+};
 
 var lightStudyBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Study Off',
-  primary_icon: 'light',
+  primary_colour: 0xe9c7,
+  primary_text: "Study Off",
+  primary_icon: "light",
   toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'Study On',
-  secondary_icon : 'light',
-  value: status_light_study
+  secondary_colour: 0x3f48,
+  secondary_text: "Study On",
+  secondary_icon: "light",
+  value: status_light_study,
 };
 
 var socketTVBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'TV Off',
-  primary_icon: 'switch',
+  primary_colour: 0xe9c7,
+  primary_text: "TV Off",
+  primary_icon: "switch",
   toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'TV On',
-  secondary_icon : 'switch',
-  value: status_tv
-  };
+  secondary_colour: 0x3f48,
+  secondary_text: "TV On",
+  secondary_icon: "switch",
+  value: status_tv,
+};
 
 var socketPrinterBtn = {
-  primary_colour: 0xE9C7,
-  primary_text: 'Printer Off',
-  primary_icon: 'switch',
+  primary_colour: 0xe9c7,
+  primary_text: "Printer Off",
+  primary_icon: "switch",
   toggle: true,
-  secondary_colour: 0x3F48,
-  secondary_text: 'Printer On',
-  secondary_icon : 'switch',
-  value: status_printer
+  secondary_colour: 0x3f48,
+  secondary_text: "Printer On",
+  secondary_icon: "switch",
+  value: status_printer,
 };
 
 /*
@@ -184,13 +191,13 @@ const homeScreen = {
 const lightsScreen = {
   left: lightHallBtn,
   right: lightStudyBtn,
-  btn3: "back"
+  btn3: "back",
 };
 
 const socketsScreen = {
   left: socketTVBtn,
   right: socketPrinterBtn,
-  btn3: "back"
+  btn3: "back",
 };
 
 /* base state definition
@@ -236,67 +243,66 @@ const Home = new State({
   state: "Home",
   screen: homeScreen,
   events: (event) => {
-    if ((event.object == "right") && (event.status == "end")) {
+    if (event.object == "right" && event.status == "end") {
       return SocketsMenu;
-      }
-    if ((event.object == "left") && (event.status == "end")) {
+    }
+    if (event.object == "left" && event.status == "end") {
       return LightsMenu;
-      }
+    }
     transmit(this.state, event.object, event.status);
     return this;
-    }
+  },
 });
 
 const LightsMenu = new State({
   state: "LightsMenu",
   screen: lightsScreen,
   events: (event) => {
-    if ((event.object == "bottom") && (event.status == "end")) {
+    if (event.object == "bottom" && event.status == "end") {
       return Home;
-      }
-    if ((event.object == "right") && (event.status == "end")) {
+    }
+    if (event.object == "right" && event.status == "end") {
       status_light_study.value = !status_light_study.value;
       transmit(this.state, "study", onOff(status_light_study.value));
       return this;
-      }
-    if ((event.object == "left") && (event.status == "end")) {
+    }
+    if (event.object == "left" && event.status == "end") {
       status_light_hall.value = !status_light_hall.value;
       transmit(this.state, "hall", onOff(status_light_hall.value));
       return this;
-      }
+    }
     transmit(this.state, event.object, event.status);
     return this;
-    }
+  },
 });
 
 const SocketsMenu = new State({
   state: "SocketsMenu",
   screen: socketsScreen,
   events: (event) => {
-    if ((event.object == "bottom") && (event.status == "end")) {
+    if (event.object == "bottom" && event.status == "end") {
       return Home;
-      }
-    if ((event.object == "right") && (event.status == "end")) {
+    }
+    if (event.object == "right" && event.status == "end") {
       status_printer.value = !status_printer.value;
       transmit(this.state, "printer", onOff(status_printer.value));
       return this;
-      }
-    if ((event.object == "left") && (event.status == "end")) {
+    }
+    if (event.object == "left" && event.status == "end") {
       status_tv.value = !status_tv.value;
       transmit(this.state, "tv", onOff(status_tv.value));
       return this;
-      }
+    }
     transmit(this.state, event.object, event.status);
     return this;
-    }
+  },
 });
 
 /* translate button status into english */
-const startEnd = status => status ? "start" : "end";
+const startEnd = (status) => (status ? "start" : "end");
 
 /* translate status into english */
-const onOff= status => status ? "on" : "off";
-
+const onOff = (status) => (status ? "on" : "off");
 
 /* create watching functions that will change the global
 button status when pressed or released
@@ -311,56 +317,70 @@ chsnging, which is why the screen is redrswn after each
 button press.
 */
 const setMyWatch = (params) => {
-  setWatch(() => {
-  params.bool=!params.bool;
-  machine = machine.events({object: params.label, status: startEnd(params.bool)});
-  drawScreen(machine.screen);
-  }, params.btn, {repeat:true, edge:"both"});
+  setWatch(
+    () => {
+      params.bool = !params.bool;
+      machine = machine.events({
+        object: params.label,
+        status: startEnd(params.bool),
+      });
+      drawScreen(machine.screen);
+    },
+    params.btn,
+    { repeat: true, edge: "both" }
+  );
 };
 
 /* object array used to set up the watching functions
-*/
+ */
 const buttons = [
-  {bool : bottom_btn, label : "bottom",btn : BTN3},
-  {bool : middle_btn, label : "middle",btn : BTN2},
-  {bool : top_btn, label : "top",btn : BTN1},
-  {bool : left_btn, label : "left",btn : BTN4},
-  {bool : right_btn, label : "right",btn : BTN5}
-  ];
+  { bool: bottom_btn, label: "bottom", btn: BTN3 },
+  { bool: middle_btn, label: "middle", btn: BTN2 },
+  { bool: top_btn, label: "top", btn: BTN1 },
+  { bool: left_btn, label: "left", btn: BTN4 },
+  { bool: right_btn, label: "right", btn: BTN5 },
+];
 
 /* set up watchers for buttons */
-for (var button of buttons)
-  {setMyWatch(button);}
+for (var button of buttons) {
+  setMyWatch(button);
+}
 
 /* Draw various kinds of buttons */
-const drawButton = (params,side) => {
-    g.setFontAlign(0,1);
-    icon = drawIcon(params.primary_icon);
-    text = params.primary_text;
-    g.setColor(params.primary_colour);
-    const x = (side == "left") ? 0 : 120;
-    if ((params.toggle) && (params.value.value)) {
-        g.setColor(params.secondary_colour);
-        text = params.secondary_text;
-        icon = drawIcon(params.secondary_icon);
-    }
-    g.fillRect(0+x,28,119+x, 239);
-    g.setColor(0x000);
-    g.setFont("Vector",15);
-    g.setFontAlign(0,0.0);
-    g.drawString(text,60+x,160);
-    options = {rotate: 0, scale:2};
-    g.drawImage(icon,x+60,120,options);
+const drawButton = (params, side) => {
+  g.setFontAlign(0, 1);
+  icon = drawIcon(params.primary_icon);
+  text = params.primary_text;
+  g.setColor(params.primary_colour);
+  const x = side == "left" ? 0 : 120;
+  if (params.toggle && params.value.value) {
+    g.setColor(params.secondary_colour);
+    text = params.secondary_text;
+    icon = drawIcon(params.secondary_icon);
+  }
+  g.fillRect(0 + x, 28, 119 + x, 239);
+  g.setColor(0x000);
+  g.setFont("Vector", 15);
+  g.setFontAlign(0, 0.0);
+  g.drawString(text, 60 + x, 160);
+  options = { rotate: 0, scale: 2 };
+  g.drawImage(icon, x + 60, 120, options);
 };
 
 /* Draw the pages corresponding to the states */
 const drawScreen = (params) => {
-  drawButton(params.left,'left');
-  drawButton(params.right,'right');
+  drawButton(params.left, "left");
+  drawButton(params.right, "right");
   g.setColor(0x000);
-  if (params.btn1) {g.drawImage(drawIcon(params.btn1),210,40);}
-  if (params.btn2) {g.drawImage(drawIcon(params.btn2),210,125);}
-  if (params.btn3) {g.drawImage(drawIcon(params.btn3),210,195);}
+  if (params.btn1) {
+    g.drawImage(drawIcon(params.btn1), 210, 40);
+  }
+  if (params.btn2) {
+    g.drawImage(drawIcon(params.btn2), 210, 125);
+  }
+  if (params.btn3) {
+    g.drawImage(drawIcon(params.btn3), 210, 195);
+  }
 };
 
 machine = Home; // instantiate the state machine at Home

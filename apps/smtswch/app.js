@@ -1,4 +1,3 @@
-
 // Learn more!
 // https://www.espruino.com/Reference#l_NRF_setAdvertising
 // https://www.espruino.com/Bangle.js#buttons
@@ -17,13 +16,14 @@ let pages = [
   {
     name: "Downstairs",
     icon: "light",
-    state: false
+    state: false,
   },
   {
     name: "Upstairs",
     icon: "switch",
-    state: false
-  }];
+    state: false,
+  },
+];
 
 function loadPage(page) {
   const icon = page.state ? page.icon + "-on" : page.icon + "-off";
@@ -36,7 +36,11 @@ function loadPage(page) {
   g.drawString(page.name, g.getWidth() / 2, 200);
   g.setFont("Vector", 40);
   g.drawString(page.state ? "On" : "Off", g.getWidth() / 2, g.getHeight() / 2);
-  g.drawImage(storage.read(`${icon}.img`), g.getWidth() / 2 - 24, g.getHeight() / 2 - 24 - 50);
+  g.drawImage(
+    storage.read(`${icon}.img`),
+    g.getWidth() / 2 - 24,
+    g.getHeight() / 2 - 24 - 50
+  );
 }
 
 function prevPage() {
@@ -54,13 +58,12 @@ function nextPage() {
 }
 
 function swipe(dir) {
-
   const page = pages[currentPage];
 
   page.state = dir == 1;
 
   NRF.setAdvertising({
-    0xFFFF: [currentPage, page.state]
+    0xffff: [currentPage, page.state],
   });
 
   loadPage(page);
@@ -71,9 +74,9 @@ function swipe(dir) {
   Bangle.buzz();
 }
 
-Bangle.on('swipe', swipe);
+Bangle.on("swipe", swipe);
 
-setWatch(prevPage, BTN, {edge: "rising", debounce: 50, repeat: true});
-setWatch(nextPage, BTN3, {edge: "rising", debounce: 50, repeat: true});
+setWatch(prevPage, BTN, { edge: "rising", debounce: 50, repeat: true });
+setWatch(nextPage, BTN3, { edge: "rising", debounce: 50, repeat: true });
 
 loadPage(pages[currentPage]);

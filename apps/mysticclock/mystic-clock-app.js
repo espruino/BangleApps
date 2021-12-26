@@ -18,13 +18,13 @@ const yposDate = 125;
 const yposSymbol = 160;
 const yposInfo = 220;
 
-const settings = require('Storage').readJSON('mysticclock.json', 1) || {};
-const colors = ['white', 'blue', 'green', 'purple', 'red', 'teal', 'other'];
+const settings = require("Storage").readJSON("mysticclock.json", 1) || {};
+const colors = ["white", "blue", "green", "purple", "red", "teal", "other"];
 const color = settings.color ? colors[settings.color] : 0;
 
 const infoData = {
-  '*GMT_MODE': {
-    calc: () => (new Date()).toString().split(" ")[5],
+  "*GMT_MODE": {
+    calc: () => new Date().toString().split(" ")[5],
   },
   BATT_MODE: {
     calc: () => `BATT: ${E.getBattery()}%`,
@@ -38,7 +38,7 @@ const infoData = {
   MEM_MODE: {
     calc: () => {
       const val = process.memory();
-      return `MEM: ${Math.round(val.usage * 100 / val.total)}%`;
+      return `MEM: ${Math.round((val.usage * 100) / val.total)}%`;
     },
   },
   VER_MODE: {
@@ -56,7 +56,7 @@ function setColor() {
     purple: () => g.setColor(1, 0, 1),
     red: () => g.setColor(1, 0, 0),
     teal: () => g.setColor(0, 1, 1),
-    other: () => g.setColor(1, 1, 0)
+    other: () => g.setColor(1, 1, 0),
   };
 
   // default if value unknown
@@ -65,11 +65,10 @@ function setColor() {
 }
 
 function getLocale() {
-  return require('locale');
+  return require("locale");
 }
 
 function drawClock() {
-
   // default draw styles
   g.reset();
 
@@ -85,46 +84,53 @@ function drawClock() {
 
   const useLocale = !settings.useLocale;
 
-  const minutes = (`0${d.getMinutes()}`).substr(-2);
-  const seconds = (`0${d.getSeconds()}`).substr(-2);
+  const minutes = `0${d.getMinutes()}`.substr(-2);
+  const seconds = `0${d.getSeconds()}`.substr(-2);
 
-  let hours = (`0${d.getHours()}`).substr(-2);
+  let hours = `0${d.getHours()}`.substr(-2);
   let meridian = "";
 
   if (settings.use12Hour) {
     hours = parseInt(hours, 10);
-    meridian = 'AM';
+    meridian = "AM";
     if (hours === 0) {
       hours = 12;
-    }
-    else if (hours >= 12) {
-      meridian = 'PM';
+    } else if (hours >= 12) {
+      meridian = "PM";
       if (hours > 12) hours -= 12;
     }
-    hours = (' ' + hours).substr(-2);
+    hours = (" " + hours).substr(-2);
   }
 
   g.setFont(font, timeFontSize);
-  g.drawString(`${hours}${(d.getSeconds() % 2) ? ' ' : ':'}${minutes}`, xyCenter - 15, yposTime, true);
+  g.drawString(
+    `${hours}${d.getSeconds() % 2 ? " " : ":"}${minutes}`,
+    xyCenter - 15,
+    yposTime,
+    true
+  );
   g.setFont(font, dataFontSize);
 
   if (settings.use12Hour) {
     g.drawString(seconds, xyCenter + 97, yposTime - 10, true);
     g.drawString(meridian, xyCenter + 97, yposTime + 10, true);
-  }
-  else {
+  } else {
     g.drawString(seconds, xyCenter + 97, yposTime + 10, true);
   }
 
   // draw DoW, name of month, date, year
   g.setFont(font, dataFontSize);
-  g.drawString([
-    useLocale ? getLocale().dow(d, 1) : dLocal[0],
-    useLocale ? getLocale().month(d, 1) : dLocal[1],
-    d.getDate(),
-    d.getFullYear()
-  ].join(" "), xyCenter, yposDate, true);
-
+  g.drawString(
+    [
+      useLocale ? getLocale().dow(d, 1) : dLocal[0],
+      useLocale ? getLocale().month(d, 1) : dLocal[1],
+      d.getDate(),
+      d.getFullYear(),
+    ].join(" "),
+    xyCenter,
+    yposDate,
+    true
+  );
 }
 
 function drawInfo() {
@@ -136,13 +142,23 @@ function drawInfo() {
     // draw info
     g.setFont(font, dataFontSize);
     setColor();
-    g.drawString((infoData[infoMode].calc()), xyCenter, yposInfo, true);
+    g.drawString(infoData[infoMode].calc(), xyCenter, yposInfo, true);
   }
 }
 
 function drawImage() {
   setColor();
-  g.drawPoly([xyCenter - 100, yposSymbol, xyCenter + 100, yposSymbol, xyCenter, yposSymbol + 30], true);
+  g.drawPoly(
+    [
+      xyCenter - 100,
+      yposSymbol,
+      xyCenter + 100,
+      yposSymbol,
+      xyCenter,
+      yposSymbol + 30,
+    ],
+    true
+  );
 }
 
 function drawAll() {
@@ -167,12 +183,10 @@ function prevInfo() {
   }
 }
 
-
 let secondInterval;
 
 // handle LCD power state change
-Bangle.on('lcdPower', on => {
-
+Bangle.on("lcdPower", (on) => {
   // stop running when screen turns off
   if (secondInterval) clearInterval(secondInterval);
   secondInterval = undefined;
@@ -185,7 +199,7 @@ Bangle.on('lcdPower', on => {
 });
 
 // cover screen to put it to sleep
-Bangle.on('touch', (button) => {
+Bangle.on("touch", (button) => {
   if (button === 3 && Bangle.isLCDOn()) Bangle.setLCDPower(false);
 });
 
@@ -201,8 +215,8 @@ if (Bangle.isLCDOn()) {
 }
 
 // Show launcher when button pressed
-Bangle.setUI("clockupdown", btn=>{
-  if (btn<0) prevInfo();
-  if (btn>0) nextInfo();
+Bangle.setUI("clockupdown", (btn) => {
+  if (btn < 0) prevInfo();
+  if (btn > 0) nextInfo();
   drawAll();
 });

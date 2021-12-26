@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
+var alarms = require("Storage").readJSON("alarm.json", 1) || [];
 /*alarms = [
   { on : true,
     hr : 6.5, // hours + minutes/60
@@ -14,37 +14,45 @@ var alarms = require("Storage").readJSON("alarm.json",1)||[];
 ];*/
 
 function formatTime(t) {
-  var hrs = 0|t;
-  var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+  var hrs = 0 | t;
+  var mins = Math.round((t - hrs) * 60);
+  return hrs + ":" + ("0" + mins).substr(-2);
 }
 
 function formatMins(t) {
-  mins = (0|t)%60;
-  hrs = 0|(t/60);
-  return hrs+":"+("0"+mins).substr(-2);
+  mins = (0 | t) % 60;
+  hrs = 0 | (t / 60);
+  return hrs + ":" + ("0" + mins).substr(-2);
 }
 
 function getCurrentHr() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
+  return time.getHours() + time.getMinutes() / 60 + time.getSeconds() / 3600;
 }
 
 function showMainMenu() {
   const menu = {
-    '': { 'title': 'Alarm/Timer' },
-    /*LANG*/'< Back' : ()=>{load();},
-    /*LANG*/'New Alarm': ()=>editAlarm(-1),
-    /*LANG*/'New Timer': ()=>editTimer(-1)
+    "": { title: "Alarm/Timer" },
+    /*LANG*/ "< Back": () => {
+      load();
+    },
+    /*LANG*/ "New Alarm": () => editAlarm(-1),
+    /*LANG*/ "New Timer": () => editTimer(-1),
   };
-  alarms.forEach((alarm,idx)=>{
+  alarms.forEach((alarm, idx) => {
     if (alarm.timer) {
-      txt = /*LANG*/"TIMER "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatMins(alarm.timer);
+      txt =
+        /*LANG*/ "TIMER " +
+        (alarm.on ? /*LANG*/ "on  " : /*LANG*/ "off ") +
+        formatMins(alarm.timer);
     } else {
-      txt = /*LANG*/"ALARM "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatTime(alarm.hr);
-      if (alarm.rp) txt += /*LANG*/" (repeat)";
+      txt =
+        /*LANG*/ "ALARM " +
+        (alarm.on ? /*LANG*/ "on  " : /*LANG*/ "off ") +
+        formatTime(alarm.hr);
+      if (alarm.rp) txt += /*LANG*/ " (repeat)";
     }
-    menu[txt] = function() {
+    menu[txt] = function () {
       if (alarm.timer) editTimer(idx);
       else editAlarm(idx);
     };
@@ -55,7 +63,7 @@ function showMainMenu() {
 }
 
 function editAlarm(alarmIndex) {
-  var newAlarm = alarmIndex<0;
+  var newAlarm = alarmIndex < 0;
   var hrs = 12;
   var mins = 0;
   var en = true;
@@ -63,61 +71,73 @@ function editAlarm(alarmIndex) {
   var as = false;
   if (!newAlarm) {
     var a = alarms[alarmIndex];
-    hrs = 0|a.hr;
-    mins = Math.round((a.hr-hrs)*60);
+    hrs = 0 | a.hr;
+    mins = Math.round((a.hr - hrs) * 60);
     en = a.on;
     repeat = a.rp;
     as = a.as;
   }
   const menu = {
-    '': { 'title': /*LANG*/'Alarm' },
-    /*LANG*/'< Back' : showMainMenu,
-    /*LANG*/'Hours': {
+    "": { title: /*LANG*/ "Alarm" },
+    /*LANG*/ "< Back": showMainMenu,
+    /*LANG*/ Hours: {
       value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+      onchange: function (v) {
+        if (v < 0) v = 23;
+        if (v > 23) v = 0;
+        hrs = v;
+        this.value = v;
+      }, // no arrow fn -> preserve 'this'
     },
-    /*LANG*/'Minutes': {
+    /*LANG*/ Minutes: {
       value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+      onchange: function (v) {
+        if (v < 0) v = 59;
+        if (v > 59) v = 0;
+        mins = v;
+        this.value = v;
+      }, // no arrow fn -> preserve 'this'
     },
-    /*LANG*/'Enabled': {
+    /*LANG*/ Enabled: {
       value: en,
-      format: v=>v?"On":"Off",
-      onchange: v=>en=v
+      format: (v) => (v ? "On" : "Off"),
+      onchange: (v) => (en = v),
     },
-    /*LANG*/'Repeat': {
+    /*LANG*/ Repeat: {
       value: en,
-      format: v=>v?"Yes":"No",
-      onchange: v=>repeat=v
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => (repeat = v),
     },
-    /*LANG*/'Auto snooze': {
+    /*LANG*/ "Auto snooze": {
       value: as,
-      format: v=>v?"Yes":"No",
-      onchange: v=>as=v
-    }
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => (as = v),
+    },
   };
   function getAlarm() {
-    var hr = hrs+(mins/60);
+    var hr = hrs + mins / 60;
     var day = 0;
     // If alarm is for tomorrow not today (eg, in the past), set day
-    if (hr < getCurrentHr())
-      day = (new Date()).getDate();
+    if (hr < getCurrentHr()) day = new Date().getDate();
     // Save alarm
     return {
-      on : en, hr : hr,
-      last : day, rp : repeat, as: as
+      on: en,
+      hr: hr,
+      last: day,
+      rp: repeat,
+      as: as,
     };
   }
-  menu[/*LANG*/"> Save"] = function() {
+  menu[/*LANG*/ "> Save"] = function () {
     if (newAlarm) alarms.push(getAlarm());
     else alarms[alarmIndex] = getAlarm();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
+    require("Storage").write("alarm.json", JSON.stringify(alarms));
     showMainMenu();
   };
   if (!newAlarm) {
-    menu[/*LANG*/"> Delete"] = function() {
-      alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
+    menu[/*LANG*/ "> Delete"] = function () {
+      alarms.splice(alarmIndex, 1);
+      require("Storage").write("alarm.json", JSON.stringify(alarms));
       showMainMenu();
     };
   }
@@ -125,53 +145,64 @@ function editAlarm(alarmIndex) {
 }
 
 function editTimer(alarmIndex) {
-  var newAlarm = alarmIndex<0;
+  var newAlarm = alarmIndex < 0;
   var hrs = 0;
   var mins = 5;
   var en = true;
   if (!newAlarm) {
     var a = alarms[alarmIndex];
-    mins = (0|a.timer)%60;
-    hrs = 0|(a.timer/60);
+    mins = (0 | a.timer) % 60;
+    hrs = 0 | (a.timer / 60);
     en = a.on;
   }
   const menu = {
-    '': { 'title': /*LANG*/'Timer' },
-    /*LANG*/'Hours': {
+    "": { title: /*LANG*/ "Timer" },
+    /*LANG*/ Hours: {
       value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+      onchange: function (v) {
+        if (v < 0) v = 23;
+        if (v > 23) v = 0;
+        hrs = v;
+        this.value = v;
+      }, // no arrow fn -> preserve 'this'
     },
-    /*LANG*/'Minutes': {
+    /*LANG*/ Minutes: {
       value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+      onchange: function (v) {
+        if (v < 0) v = 59;
+        if (v > 59) v = 0;
+        mins = v;
+        this.value = v;
+      }, // no arrow fn -> preserve 'this'
     },
-    /*LANG*/'Enabled': {
+    /*LANG*/ Enabled: {
       value: en,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
-      onchange: v=>en=v
-    }
+      format: (v) => (v ? /*LANG*/ "On" : /*LANG*/ "Off"),
+      onchange: (v) => (en = v),
+    },
   };
   function getTimer() {
-    var d = new Date(Date.now() + ((hrs*60)+mins)*60000);
-    var hr = d.getHours() + (d.getMinutes()/60) + (d.getSeconds()/3600);
+    var d = new Date(Date.now() + (hrs * 60 + mins) * 60000);
+    var hr = d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
     // Save alarm
     return {
-      on : en,
-      timer : (hrs*60)+mins,
-      hr : hr,
-      rp : false, as: false
+      on: en,
+      timer: hrs * 60 + mins,
+      hr: hr,
+      rp: false,
+      as: false,
     };
   }
-  menu["> Save"] = function() {
+  menu["> Save"] = function () {
     if (newAlarm) alarms.push(getTimer());
     else alarms[alarmIndex] = getTimer();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
+    require("Storage").write("alarm.json", JSON.stringify(alarms));
     showMainMenu();
   };
   if (!newAlarm) {
-    menu["> Delete"] = function() {
-      alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
+    menu["> Delete"] = function () {
+      alarms.splice(alarmIndex, 1);
+      require("Storage").write("alarm.json", JSON.stringify(alarms));
       showMainMenu();
     };
   }

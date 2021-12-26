@@ -3,13 +3,14 @@ var seconds;
 var hours;
 var date;
 var first = true;
-var locale = require('locale');
-var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
+var locale = require("locale");
+var _12hour =
+  (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
 //HR variables
 var id = 0;
 var grow = true;
-var size=10;
+var size = 10;
 
 //Screen dimensions
 const screen = {
@@ -22,77 +23,91 @@ const screen = {
 // Ssettings
 const settings = {
   time: {
-    color: '#dddddd',
-    font: 'Vector',
+    color: "#dddddd",
+    font: "Vector",
     size: 100,
     middle: screen.middle,
     center: screen.center,
   },
   date: {
-    color: '#dddddd',
-    font: 'Vector',
+    color: "#dddddd",
+    font: "Vector",
     size: 15,
-    middle: screen.height-17, // at bottom of screen
+    middle: screen.height - 17, // at bottom of screen
     center: screen.center,
   },
   circle: {
-    colormin: '#ffffff',
-    colorsec: '#ffffff',
+    colormin: "#ffffff",
+    colorsec: "#ffffff",
     width: 10,
     middle: screen.middle,
     center: screen.center,
-    height: screen.height
+    height: screen.height,
   },
   hr: {
-    color: '#333333',
+    color: "#333333",
     size: 20,
     x: screen.center,
-    y: screen.middle + 65
-  }
+    y: screen.middle + 65,
+  },
 };
 
 const dateStr = function (date) {
   return locale.date(new Date(), 1);
 };
 
-const getFormated = function(val) {
-  if (val<10) {
-    val='0'+val;
+const getFormated = function (val) {
+  if (val < 10) {
+    val = "0" + val;
   }
 
   return val;
 };
 
 const drawMin = function (sections, color) {
-
   g.setFontAlign(0, 0, 0);
-  g.setColor('#000000');
-  g.setFont(settings.time.font, settings.time.size/2);
-  g.drawString(getFormated(sections-1), settings.time.center+50, settings.time.middle);
+  g.setColor("#000000");
+  g.setFont(settings.time.font, settings.time.size / 2);
+  g.drawString(
+    getFormated(sections - 1),
+    settings.time.center + 50,
+    settings.time.middle
+  );
   g.setColor(settings.time.color);
-  g.setFont(settings.time.font, settings.time.size/2);
-  g.drawString(getFormated(sections), settings.time.center+50, settings.time.middle);
+  g.setFont(settings.time.font, settings.time.size / 2);
+  g.drawString(
+    getFormated(sections),
+    settings.time.center + 50,
+    settings.time.middle
+  );
 };
 
 const drawSec = function (sections, color) {
   g.setFontAlign(0, 0, 0);
-  g.setColor('#000000');
-  g.setFont(settings.time.font, settings.time.size/4);
-  g.drawString(getFormated(sections-1), settings.time.center+100, settings.time.middle);
+  g.setColor("#000000");
+  g.setFont(settings.time.font, settings.time.size / 4);
+  g.drawString(
+    getFormated(sections - 1),
+    settings.time.center + 100,
+    settings.time.middle
+  );
   g.setColor(settings.time.color);
-  g.setFont(settings.time.font, settings.time.size/4);
-  g.drawString(getFormated(sections), settings.time.center+100, settings.time.middle);
+  g.setFont(settings.time.font, settings.time.size / 4);
+  g.drawString(
+    getFormated(sections),
+    settings.time.center + 100,
+    settings.time.middle
+  );
 };
 
 const drawClock = function () {
-
   currentTime = new Date();
 
   //Get date as a string
   date = dateStr(currentTime);
 
-  if(seconds==59) {
-      g.clear();
+  if (seconds == 59) {
+    g.clear();
   }
 
   // Update minutes when needed
@@ -131,7 +146,7 @@ const drawClock = function () {
   g.setFontAlign(0, 0, 0);
   g.setColor(settings.time.color);
   g.setFont(settings.time.font, settings.time.size);
-  g.drawString(timestr, settings.time.center-40, settings.time.middle);
+  g.drawString(timestr, settings.time.center - 40, settings.time.middle);
 
   //Write the date as configured in the settings
   g.setColor(settings.date.color);
@@ -179,7 +194,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 //manage when things should be enabled and not
-Bangle.on('lcdPower', function (on) {
+Bangle.on("lcdPower", function (on) {
   if (on) {
     Bangle.setHRMPower(1);
   } else {
@@ -188,11 +203,11 @@ Bangle.on('lcdPower', function (on) {
 });
 
 // refesh every second
-setInterval(drawClock, 1E3);
+setInterval(drawClock, 1e3);
 
 //start HR monitor and update frequency of update
 Bangle.setHRMPower(1);
-Bangle.on('HRM', function (d) {
+Bangle.on("HRM", function (d) {
   newBeats(d);
 });
 

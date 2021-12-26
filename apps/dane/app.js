@@ -1,7 +1,6 @@
 var d = require("dane_arwes");
 var Arwes = d.default();
 
-
 const font = "6x8";
 const timeFontSize = 4;
 const unixTimeFontSize = 2;
@@ -17,16 +16,14 @@ const yposCounter = 58 + yOffset + 35 + 40;
 
 let count = 100;
 
-
-
 function drawTimeText(d) {
   const da = d.toString().split(" ");
   // var dutc = getUTCTime(d);
 
   const time = da[4].split(":");
   const hours = time[0],
-      minutes = time[1],
-      seconds = time[2];
+    minutes = time[1],
+    seconds = time[2];
   g.setColor(Arwes.C.color.primary.base);
   g.setFont(font, timeFontSize);
   g.drawString(`${hours}:${minutes}:${seconds}`, xyCenter, yposTime, true);
@@ -41,7 +38,12 @@ function drawTimeText(d) {
 function drawDateText(d) {
   g.setColor(Arwes.C.color.primary.base);
   g.setFont(font, dateFontSize);
-  g.drawString(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`, xyCenter, yposDate, true);
+  g.drawString(
+    `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`,
+    xyCenter,
+    yposDate,
+    true
+  );
 }
 
 function drawCounterText() {
@@ -53,8 +55,6 @@ function drawCounterText() {
   g.setColor(Arwes.C.color.alert.base);
   g.setFont(font, 8);
   g.drawString(`${count}`, xyCenter, yposCounter, true);
-
-
 }
 
 function levelColor(l) {
@@ -66,9 +66,10 @@ function levelColor(l) {
 }
 
 function drawBattery() {
-  const l = E.getBattery(), c = levelColor(l);
+  const l = E.getBattery(),
+    c = levelColor(l);
   // count = l;
-  const xl = 45 + l * (194 - 46) / 100;
+  const xl = 45 + (l * (194 - 46)) / 100;
   g.clearRect(46, 58 + 80 + yOffset + 37, 193, height - 5);
   g.setColor(c).fillRect(46, 58 + 80 + yOffset + 37, xl, height - 5);
 }
@@ -87,11 +88,15 @@ function drawClock() {
   Arwes.drawFrameBottomCorners(28, 58 + yOffset, 212, 58 + yOffset + 35);
 
   // counter frame
-  Arwes.drawFrameBottomCorners(36, 58 + yOffset + 35, 204, 58 + 80 + yOffset + 35);
+  Arwes.drawFrameBottomCorners(
+    36,
+    58 + yOffset + 35,
+    204,
+    58 + 80 + yOffset + 35
+  );
 
   // battery frame
   Arwes.drawFrameNoCorners(44, 58 + 80 + yOffset + 35, 196, height - 3);
-
 
   updateCounter();
   updateClock();
@@ -105,13 +110,10 @@ function updateClock() {
   const date = new Date();
   drawTimeText(date);
   drawDateText(date);
-
 }
 
-
-Bangle.on('lcdPower', function (on) {
+Bangle.on("lcdPower", function (on) {
   if (on) drawClock();
-
 });
 
 g.clear();
@@ -121,20 +123,25 @@ Bangle.drawWidgets();
 
 drawClock();
 
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 
-setWatch(Bangle.showLauncher, BTN2, {repeat: false, edge: "falling"});
-
-setWatch(function () {
-  count++;
-  drawCounterText();
-}, BTN1, {repeat: true, edge: "falling"});
-setWatch(function () {
-  count--;
-  drawCounterText();
-}, BTN3, {repeat: true, edge: "falling"});
+setWatch(
+  function () {
+    count++;
+    drawCounterText();
+  },
+  BTN1,
+  { repeat: true, edge: "falling" }
+);
+setWatch(
+  function () {
+    count--;
+    drawCounterText();
+  },
+  BTN3,
+  { repeat: true, edge: "falling" }
+);
 
 // refesh every 100 milliseconds
 setInterval(updateClock, 500);
 setInterval(updateCounter, 1000);
-
-

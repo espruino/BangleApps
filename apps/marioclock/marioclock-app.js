@@ -9,8 +9,8 @@
  */
 
 const locale = require("locale");
-const storage = require('Storage');
-const settings = (storage.readJSON('setting.json', 1) || {});
+const storage = require("Storage");
+const settings = storage.readJSON("setting.json", 1) || {};
 const timeout = settings.timeout || 10;
 const is12Hour = settings["12hour"] || false;
 
@@ -19,7 +19,8 @@ let W, H;
 // Screen brightness
 let brightness = 1;
 
-let intervalRef, displayTimeoutRef = null;
+let intervalRef,
+  displayTimeoutRef = null;
 
 // Colours
 const LIGHTEST = "#effedd";
@@ -84,7 +85,7 @@ const phone = {
 const SETTINGS_FILE = "marioclock.json";
 
 function readSettings() {
-  return require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+  return require("Storage").readJSON(SETTINGS_FILE, 1) || {};
 }
 
 function writeSettings(newSettings) {
@@ -108,14 +109,16 @@ function phoneClearMessage() {
 }
 
 function phoneNewMessage(type, msg) {
-
   phoneClearMessage();
-  phone.messageTimeout = setTimeout(() => phone.message = null, ONE_SECOND * 30);
+  phone.messageTimeout = setTimeout(
+    () => (phone.message = null),
+    ONE_SECOND * 30
+  );
   phone.message = msg;
   phone.messageType = type;
 
   // Notify user and active screen
-  if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+  if (!(require("Storage").readJSON("setting.json", 1) || {}).quiet) {
     Bangle.buzz();
     if (!Bangle.isLCDOn()) {
       clearTimers();
@@ -126,19 +129,19 @@ function phoneNewMessage(type, msg) {
 
 function truncStr(str, max) {
   if (str.length > max) {
-    return str.substr(0, max) + '...';
+    return str.substr(0, max) + "...";
   }
   return str;
 }
 
 function phoneInbound(evt) {
   switch (evt.t) {
-    case 'notify':
+    case "notify":
       const sender = truncStr(evt.sender, 10);
       const subject = truncStr(evt.subject, 15);
       phoneNewMessage("notify", `${sender} - '${subject}'`);
       break;
-    case 'call':
+    case "call":
       if (evt.cmd === "accept") {
         let nameOrNumber = "Unknown";
         if (evt.name !== null || evt.name !== "") {
@@ -162,11 +165,11 @@ function switchCharacter() {
   const curChar = characterSprite.character;
 
   let newChar;
-  switch(curChar) {
+  switch (curChar) {
     case DAISY:
       newChar = MARIO;
       break;
-    case  TOAD:
+    case TOAD:
       newChar = DAISY;
       break;
     case MARIO:
@@ -183,7 +186,7 @@ function toggleNightMode() {
     return;
   }
 
-  brightness -= 0.30;
+  brightness -= 0.3;
   if (brightness <= 0) {
     brightness = 1;
     nightMode = false;
@@ -194,22 +197,21 @@ function toggleNightMode() {
 function incrementTimer() {
   if (timer > 100) {
     timer = 0;
-  }
-  else {
+  } else {
     timer += 10;
   }
 }
 
 function drawBackground() {
-  "ram"
+  "ram";
 
   // Clear screen
-  const bgColor = (nightMode) ? NIGHT : LIGHTEST;
+  const bgColor = nightMode ? NIGHT : LIGHTEST;
   g.setColor(bgColor);
   g.fillRect(0, 10, W, H);
 
   // set cloud colors and draw clouds
-  const cloudColor = (nightMode) ? DARK : LIGHT;
+  const cloudColor = nightMode ? DARK : LIGHT;
   g.setColor(cloudColor);
   g.fillRect(0, 10, W, 15);
   g.fillRect(0, 17, W, 17);
@@ -229,34 +231,48 @@ function drawFloor() {
 }
 
 function drawPyramid() {
-  "ram"
+  "ram";
 
-  const pPol = [pyramidSprite.x + 10, H - 5, pyramidSprite.x + 50, pyramidSprite.height, pyramidSprite.x + 90, H - 5]; // Pyramid poly
+  const pPol = [
+    pyramidSprite.x + 10,
+    H - 5,
+    pyramidSprite.x + 50,
+    pyramidSprite.height,
+    pyramidSprite.x + 90,
+    H - 5,
+  ]; // Pyramid poly
 
-  const color = (nightMode) ? DARK : LIGHT;
+  const color = nightMode ? DARK : LIGHT;
   g.setColor(color);
   g.fillPoly(pPol);
 
   pyramidSprite.x -= 1;
   // Reset and randomize pyramid if off-screen
-  if (pyramidSprite.x < - 100) {
+  if (pyramidSprite.x < -100) {
     pyramidSprite.x = 90;
     pyramidSprite.height = genRanNum(25, 60);
   }
 }
 
 function drawTreesFrame(x, y) {
-  const tImg = require("heatshrink").decompress(atob("h8GxH+AAMHAAIFCAxADEBYgDCAQYAFCwobOAZAEFBxo=")); // Tree image
+  const tImg = require("heatshrink").decompress(
+    atob("h8GxH+AAMHAAIFCAxADEBYgDCAQYAFCwobOAZAEFBxo=")
+  ); // Tree image
 
   g.drawImage(tImg, x, y);
   g.setColor(DARKEST);
-  g.drawLine(x + 6 /* Match stalk to palm tree */, y + 6 /* Match stalk to palm tree */, x + 6, H - 6);
+  g.drawLine(
+    x + 6 /* Match stalk to palm tree */,
+    y + 6 /* Match stalk to palm tree */,
+    x + 6,
+    H - 6
+  );
 }
 
 function generateTreeSprite() {
   return {
     x: 90,
-    y: genRanNum(30, 60)
+    y: genRanNum(30, 60),
   };
 }
 
@@ -276,7 +292,7 @@ function drawTrees() {
   }
 
   // add random sprites
-  if (backgroundArr.length < 2 && lastBackgroundSprite.x < (16 * 7)) {
+  if (backgroundArr.length < 2 && lastBackgroundSprite.x < 16 * 7) {
     const randIdx = Math.floor(Math.random() * 25);
     if (randIdx < 2) {
       const newSprite = generateTreeSprite();
@@ -292,7 +308,11 @@ function drawTrees() {
 }
 
 function drawCoinFrame(x, y) {
-  const cImg = require("heatshrink").decompress(atob("hkPxH+AAcHAAQIEBIXWAAQNEBIWHAAdcBgQLBA4IODBYQKEBAQMDBelcBaJUBM4QRBNYx1EBQILDR4QHBBISdIBIoA==")); // Coin image
+  const cImg = require("heatshrink").decompress(
+    atob(
+      "hkPxH+AAcHAAQIEBIXWAAQNEBIWHAAdcBgQLBA4IODBYQKEBAQMDBelcBaJUBM4QRBNYx1EBQILDR4QHBBISdIBIoA=="
+    )
+  ); // Coin image
   g.drawImage(cImg, x, y);
 }
 
@@ -300,7 +320,7 @@ function drawCoin() {
   if (!coinSprite.isAnimating) return;
 
   coinSprite.y -= 8;
-  if (coinSprite.y < (0 - 15 /*Coin sprite height*/)) {
+  if (coinSprite.y < 0 - 15 /*Coin sprite height*/) {
     coinSprite.isAnimating = false;
     coinSprite.y = coinSprite.yDefault;
     return;
@@ -312,16 +332,28 @@ function drawCoin() {
 function drawDaisyFrame(idx, x, y) {
   var frame;
 
-  switch(idx) {
+  switch (idx) {
     case 2:
-      frame = require("heatshrink").decompress(atob("h0UxH+AAkrAIgAH60rAIQNIBQIABDZErAAwMMBwo0CBxQNEHAQGCBpIPCBoQJCDRIXDBpA7DBIQACw5yCJQgZDP4gNErlcJAZ6GAgNcw+HRI4CCDgNcU44ZDDYSYGDIYACB4QaEDYgMFJAg3DFQ5mFBQYA==")); // daisy jumping
+      frame = require("heatshrink").decompress(
+        atob(
+          "h0UxH+AAkrAIgAH60rAIQNIBQIABDZErAAwMMBwo0CBxQNEHAQGCBpIPCBoQJCDRIXDBpA7DBIQACw5yCJQgZDP4gNErlcJAZ6GAgNcw+HRI4CCDgNcU44ZDDYSYGDIYACB4QaEDYgMFJAg3DFQ5mFBQYA=="
+        )
+      ); // daisy jumping
       break;
     case 0:
-      frame = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="));
+      frame = require("heatshrink").decompress(
+        atob(
+          "h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgWHw6TIAQXWrlcWZAqBDQIeBBxQaBDxIcCHIQ8JDAIAFWJLPHA=="
+        )
+      );
       break;
     case 1:
     default:
-      frame = require("heatshrink").decompress(atob("h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="));
+      frame = require("heatshrink").decompress(
+        atob(
+          "h8UxH+AAsHAIgAI60HAIQOJBYIABDpMHAAwNNB4wOJB4gIEHgQBBBxYQCBwYLDDhIaEBxApEw4qDAgIOHDwiIEBwtcFIRWIUgQvBSZACCBwNcWZQcCAAIPIDgYACFw4YBDYIOCD4waEDYI+HaBQ="
+        )
+      );
   }
 
   g.drawImage(frame, x, y);
@@ -330,16 +362,28 @@ function drawDaisyFrame(idx, x, y) {
 function drawMarioFrame(idx, x, y) {
   var frame;
 
-  switch(idx) {
+  switch (idx) {
     case 2:
-      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYFCBo9cAAIEB63WB4gMDB4YOFBowfDw4xDBAYADA4YcDGwYACDoYAEBYYBBw4NDCoYOFDIweFFwoZFAQYIDLAQWGEwqgECI6ECJ4JeGQYS9EB4QTHBwImCBYRtDSAwrFawqkFWY7PEBxoMFKoZaELoYICAAg")); // Mario frame jumping
+      frame = require("heatshrink").decompress(
+        atob(
+          "h8UxH+AAkrAAYFCBo9cAAIEB63WB4gMDB4YOFBowfDw4xDBAYADA4YcDGwYACDoYAEBYYBBw4NDCoYOFDIweFFwoZFAQYIDLAQWGEwqgECI6ECJ4JeGQYS9EB4QTHBwImCBYRtDSAwrFawqkFWY7PEBxoMFKoZaELoYICAAg"
+        )
+      ); // Mario frame jumping
       break;
     case 0:
-      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGGQgNCw4ACLwgFBBwgKECQpZCCgRqDFQikEJIriIBgzwIdxjiGBxIuEBIo=")); // Mario Frame 1
+      frame = require("heatshrink").decompress(
+        atob(
+          "h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGGQgNCw4ACLwgFBBwgKECQpZCCgRqDFQikEJIriIBgzwIdxjiGBxIuEBIo="
+        )
+      ); // Mario Frame 1
       break;
     case 1:
     default:
-      frame = require("heatshrink").decompress(atob("h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIeJDAQODSwaVHUhwOLfg4FHe4wASA=")); // Mario frame 2
+      frame = require("heatshrink").decompress(
+        atob(
+          "h8UxH+AAkrAAYKFBolcAAIPIBgYPDBpgfGFIY7EA4YcEBIPWAAYdDC4gLDAII5ECoYOFDogODFgoJCBwYZCAQYOFBAhAFFwZKGHQpMDw+HCQYEBSowOBBQIeJDAQODSwaVHUhwOLfg4FHe4wASA="
+        )
+      ); // Mario frame 2
   }
 
   g.drawImage(frame, x, y);
@@ -348,16 +392,28 @@ function drawMarioFrame(idx, x, y) {
 function drawToadFrame(idx, x, y) {
   var frame;
 
-  switch(idx) {
+  switch (idx) {
     case 2:
-      frame = require("heatshrink").decompress(atob("iEUxH+ACkrAAoNJrnWAAQRGlfWrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPENwoTEH4crw4EDAAgGDB4YABAYIBDP4YLEAAIPHCAQHCCAQTDD4gHDEA4PFGAY3EbooPECob8IPooPFCATGEf44hFAAYLDA==")); // toad jumping
+      frame = require("heatshrink").decompress(
+        atob(
+          "iEUxH+ACkrAAoNJrnWAAQRGlfWrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPENwoTEH4crw4EDAAgGDB4YABAYIBDP4YLEAAIPHCAQHCCAQTDD4gHDEA4PFGAY3EbooPECob8IPooPFCATGEf44hFAAYLDA=="
+        )
+      ); // toad jumping
       break;
     case 0:
-      frame = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD")); // Toad Frame 1
+      frame = require("heatshrink").decompress(
+        atob(
+          "iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYYrCCAwbFFwgQEM4gAEeA4OIH4ghFAAYLD"
+        )
+      ); // Toad Frame 1
       break;
     case 1:
     default:
-      frame = require("heatshrink").decompress(atob("iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA")); // Mario frame 2
+      frame = require("heatshrink").decompress(
+        atob(
+          "iEUxH+ACkHAAoNJrnWAAQRGg/WrgACB4QEBCAYOBB44QFB4QICAg4QBBAQbDEgwPCHpAGCGAQ9KAYQPKCYg/EJAoADAwaKFw4BEP4YQCBIIABB468EB4QADYIoQGDwQOGBYQrDb4wcGFxYLDMoYgHRYgwKABAMBA"
+        )
+      ); // Mario frame 2
   }
 
   g.drawImage(frame, x, y);
@@ -370,13 +426,25 @@ function drawNotice(x, y) {
   let img;
   switch (phone.messageType) {
     case "call":
-      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="));
+      img = require("heatshrink").decompress(
+        atob(
+          "h8PxH+AAMHABIND6wAJB4INEw9cAAIPFBxAPEBw/WBxYACDrQ7QLI53OSpApDBoQAHB4INLByANNAwo="
+        )
+      );
       break;
     case "notify":
-      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="));
+      img = require("heatshrink").decompress(
+        atob(
+          "h8PxH+AAMHABIND6wAJB4INCrgAHB4QOEDQgOIAIQFGBwovDA4gOGFooOVLJR3OSpApDBoQAHB4INLByANNAwoA="
+        )
+      );
       break;
     case "lowBatt":
-      img = require("heatshrink").decompress(atob("h8PxH+AAMHABIND6wAJB4INFrgABB4oOEBoQPFBwwDGB0uHAAIOLJRB3OSpApDBoQAHB4INLByANNAwo"));
+      img = require("heatshrink").decompress(
+        atob(
+          "h8PxH+AAMHABIND6wAJB4INFrgABB4oOEBoQPFBwwDGB0uHAAIOLJRB3OSpApDBoQAHB4INLByANNAwo"
+        )
+      );
       break;
   }
 
@@ -384,7 +452,7 @@ function drawNotice(x, y) {
 }
 
 function drawCharacter(date, character) {
-  "ram"
+  "ram";
 
   // calculate jumping
   const seconds = date.getSeconds(),
@@ -395,10 +463,15 @@ function drawCharacter(date, character) {
   }
 
   if (characterSprite.isJumping) {
-    characterSprite.y = (Math.sin(characterSprite.jumpCounter) * -12) + 50 /* Character Y base value */;
+    characterSprite.y =
+      Math.sin(characterSprite.jumpCounter) * -12 +
+      50 /* Character Y base value */;
     characterSprite.jumpCounter += characterSprite.jumpIncrement;
 
-    if (parseInt(characterSprite.jumpCounter) === 2 && !coinSprite.isAnimating) {
+    if (
+      parseInt(characterSprite.jumpCounter) === 2 &&
+      !coinSprite.isAnimating
+    ) {
       coinSprite.isAnimating = true;
     }
 
@@ -418,21 +491,35 @@ function drawCharacter(date, character) {
     }
   }
 
-  switch(characterSprite.character) {
+  switch (characterSprite.character) {
     case DAISY:
-      drawDaisyFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      drawDaisyFrame(
+        characterSprite.frameIdx,
+        characterSprite.x,
+        characterSprite.y
+      );
       break;
     case TOAD:
-      drawToadFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      drawToadFrame(
+        characterSprite.frameIdx,
+        characterSprite.x,
+        characterSprite.y
+      );
       break;
     case MARIO:
     default:
-      drawMarioFrame(characterSprite.frameIdx, characterSprite.x, characterSprite.y);
+      drawMarioFrame(
+        characterSprite.frameIdx,
+        characterSprite.x,
+        characterSprite.y
+      );
   }
 }
 
 function drawBrickFrame(x, y) {
-  const brk = require("heatshrink").decompress(atob("ikQxH+/0HACASB6wAQCoPWw4AOrgT/Cf4T/Cb1cAB8H/wVBAB/+A"));
+  const brk = require("heatshrink").decompress(
+    atob("ikQxH+/0HACASB6wAQCoPWw4AOrgT/Cf4T/Cb1cAB8H/wVBAB/+A")
+  );
   g.drawImage(brk, x, y);
 }
 
@@ -443,7 +530,7 @@ function drawTime(date) {
   drawBrickFrame(42, 25);
 
   const h = date.getHours();
-  const hours = ("0" + ((is12Hour && h > 12) ? h - 12 : h)).substr(-2);
+  const hours = ("0" + (is12Hour && h > 12 ? h - 12 : h)).substr(-2);
   const mins = ("0" + date.getMinutes()).substr(-2);
 
   g.setFont("6x8");
@@ -454,7 +541,7 @@ function drawTime(date) {
 
 function buildDateStr(date) {
   let dateStr = locale.date(date, true);
-  dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i,"");
+  dateStr = dateStr.replace(date.getFullYear(), "").trim().replace(/\/$/i, "");
   dateStr = locale.dow(date, true) + " " + dateStr;
 
   return dateStr;
@@ -505,7 +592,10 @@ function drawInfo(date) {
     str = phone.message;
     const strLen = g.stringWidth(str);
     if (strLen > W) {
-      if (phone.messageScrollX === null || (phone.messageScrollX <= (strLen * -1))) {
+      if (
+        phone.messageScrollX === null ||
+        phone.messageScrollX <= strLen * -1
+      ) {
         phone.messageScrollX = W;
         resetDisplayTimeout();
       } else {
@@ -516,7 +606,7 @@ function drawInfo(date) {
       xPos = (W - g.stringWidth(str)) / 2;
     }
   } else {
-    switch(infoMode) {
+    switch (infoMode) {
       case PHON_MODE:
         str = buildPhonStr();
         break;
@@ -541,7 +631,7 @@ function drawInfo(date) {
 function changeInfoMode() {
   phoneClearMessage();
 
-  switch(infoMode) {
+  switch (infoMode) {
     case BATT_MODE:
       infoMode = TEMP_MODE;
       break;
@@ -578,13 +668,13 @@ function redraw() {
   g.flip();
 }
 
-function clearTimers(){
-  if(intervalRef) {
+function clearTimers() {
+  if (intervalRef) {
     clearInterval(intervalRef);
     intervalRef = null;
   }
 
-  if(displayTimeoutRef) {
+  if (displayTimeoutRef) {
     clearInterval(displayTimeoutRef);
     displayTimeoutRef = null;
   }
@@ -599,8 +689,8 @@ function resetDisplayTimeout() {
   }, ONE_SECOND * timeout);
 }
 
-function startTimers(){
-  if(intervalRef) clearTimers();
+function startTimers() {
+  if (intervalRef) clearTimers();
   intervalRef = setInterval(redraw, 50);
 
   resetDisplayTimeout();
@@ -651,36 +741,49 @@ function init() {
   H = g.getHeight();
 
   // Get Mario to jump!
-  setWatch(() => {
-    if (intervalRef && !characterSprite.isJumping) characterSprite.isJumping = true;
-    resetDisplayTimeout();
-    phoneClearMessage(); // Clear any phone messages and message timers
-  }, BTN3, {repeat: true});
+  setWatch(
+    () => {
+      if (intervalRef && !characterSprite.isJumping)
+        characterSprite.isJumping = true;
+      resetDisplayTimeout();
+      phoneClearMessage(); // Clear any phone messages and message timers
+    },
+    BTN3,
+    { repeat: true }
+  );
 
   // Close watch and load launcher app
-  setWatch(() => {
-    Bangle.setLCDMode();
-    Bangle.showLauncher();
-  }, BTN2, {repeat: false, edge: "falling"});
+  setWatch(
+    () => {
+      Bangle.setLCDMode();
+      Bangle.showLauncher();
+    },
+    BTN2,
+    { repeat: false, edge: "falling" }
+  );
 
   // Change info mode
-  setWatch(() => {
-    changeInfoMode();
-  }, BTN1, {repeat: true});
+  setWatch(
+    () => {
+      changeInfoMode();
+    },
+    BTN1,
+    { repeat: true }
+  );
 
-  Bangle.on('lcdPower', (on) => on ? startTimers() : clearTimers());
+  Bangle.on("lcdPower", (on) => (on ? startTimers() : clearTimers()));
 
-  Bangle.on('faceUp', (up) => {
+  Bangle.on("faceUp", (up) => {
     if (up && !Bangle.isLCDOn()) {
       clearTimers();
       Bangle.setLCDPower(true);
     }
   });
 
-  Bangle.on('swipe', (sDir) => {
+  Bangle.on("swipe", (sDir) => {
     resetDisplayTimeout();
 
-    switch(sDir) {
+    switch (sDir) {
       // Swipe right (1) - change character (on a loop)
       case 1:
         switchCharacter();
@@ -695,13 +798,15 @@ function init() {
   });
 
   // Phone connectivity
-  try { NRF.wake(); } catch (e) {}
+  try {
+    NRF.wake();
+  } catch (e) {}
 
-  NRF.on('disconnect', () => {
+  NRF.on("disconnect", () => {
     phoneNewMessage(null, "Phone disconnected");
   });
 
-  NRF.on('connect', () => {
+  NRF.on("connect", () => {
     setTimeout(() => {
       phoneOutbound({ t: "status", bat: E.getBattery() });
     }, ONE_SECOND * 2);

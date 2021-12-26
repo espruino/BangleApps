@@ -19,14 +19,14 @@ var drawTimeout;
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
+  drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
 }
 
 function draw() {
-  g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
+  g.reset().clearRect(0, 24, g.getWidth(), g.getHeight());
   var now = new Date();
 
   // show date below the clock
@@ -34,10 +34,16 @@ function draw() {
     var yr = now.getFullYear();
     var month = now.getMonth() + 1;
     var day = now.getDate();
-    var dateString = `${yr}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+    var dateString = `${yr}-${month < 10 ? "0" : ""}${month}-${
+      day < 10 ? "0" : ""
+    }${day}`;
     var strWidth = g.stringWidth(dateString);
-    g.setColor(g.theme.fg).setFontAlign(-1,-1);
-    g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 4);
+    g.setColor(g.theme.fg).setFontAlign(-1, -1);
+    g.drawString(
+      dateString,
+      (g.getWidth() - strWidth) / 2,
+      height + offset + 4
+    );
   }
 
   rowlights[0] = Math.floor(now.getHours() / 5);
@@ -64,7 +70,7 @@ function draw() {
       g.setColor(g.theme.fg).drawRect(x1, y1, x2, y2);
       if (col < rowlights[row]) {
         if (row === 2) {
-          if (((col + 1) % 3) === 0) {
+          if ((col + 1) % 3 === 0) {
             g.setColor(1, 0, 0);
           } else {
             g.setColor(1, 1, 0);
@@ -75,8 +81,8 @@ function draw() {
         g.fillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
       }
       if (row == 3 && show_time) {
-        g.setColor(g.theme.fg).setFontAlign(0,0);
-        g.drawString(time_digit[col],(x1+x2)/2,(y1+y2)/2);
+        g.setColor(g.theme.fg).setFontAlign(0, 0);
+        g.drawString(time_digit[col], (x1 + x2) / 2, (y1 + y2) / 2);
       }
     }
   }
@@ -85,29 +91,30 @@ function draw() {
 }
 
 function toggleDate() {
-  show_date = ! show_date;
+  show_date = !show_date;
   draw();
 }
 
 function toggleTime() {
-  show_time = ! show_time;
+  show_time = !show_time;
   draw();
 }
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+Bangle.on("lcdPower", (on) => {
   if (on) {
     draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
+  } else {
+    // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
 });
 
 // Show launcher when button pressed, handle up/down
-Bangle.setUI("clockupdown", dir=> {
-  if (dir<0) toggleTime();
-  if (dir>0) toggleDate();
+Bangle.setUI("clockupdown", (dir) => {
+  if (dir < 0) toggleTime();
+  if (dir > 0) toggleDate();
 });
 
 g.clear();

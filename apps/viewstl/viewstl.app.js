@@ -2,11 +2,11 @@
 var u = [0, 1, 0]; // axis of rotation
 var aux = new Float32Array(12);
 var p_aux = E.getAddressOf(aux, true);
-var a = 0.5;       // angle of rotation
+var a = 0.5; // angle of rotation
 var light = new Float32Array(12);
 var p_light = E.getAddressOf(light, true);
-light[0] = 1/Math.sqrt(2);
-light[1] = 1/Math.sqrt(2);
+light[0] = 1 / Math.sqrt(2);
+light[1] = 1 / Math.sqrt(2);
 light[2] = 0;
 var filex = new Float32Array(6);
 var p_filex = E.getAddressOf(filex, true);
@@ -198,50 +198,69 @@ int findSlot(float *p, float *x, int len) {
 `);
 
 function initNormals() {
-  var i = faces.length/3;
+  var i = faces.length / 3;
   while (i--) {
-    normals[i*3+0] = (points[faces[3*i+1]*3+1]-points[faces[3*i+0]*3+1])*(points[faces[3*i+2]*3+2]-points[faces[3*i+0]*3+2]) - (points[faces[3*i+1]*3+2]-points[faces[3*i+0]*3+2])*(points[faces[3*i+2]*3+1]-points[faces[3*i+0]*3+1]);
-    normals[i*3+1] = (points[faces[3*i+1]*3+2]-points[faces[3*i+0]*3+2])*(points[faces[3*i+2]*3+0]-points[faces[3*i+0]*3+0]) - (points[faces[3*i+1]*3+0]-points[faces[3*i+0]*3+0])*(points[faces[3*i+2]*3+2]-points[faces[3*i+0]*3+2]);
-    normals[i*3+2] = (points[faces[3*i+1]*3+0]-points[faces[3*i+0]*3+0])*(points[faces[3*i+2]*3+1]-points[faces[3*i+0]*3+1]) - (points[faces[3*i+1]*3+1]-points[faces[3*i+0]*3+1])*(points[faces[3*i+2]*3+0]-points[faces[3*i+0]*3+0]);
-    var n = Math.sqrt(normals[i*3]*normals[i*3]+normals[i*3+1]*normals[i*3+1]+normals[i*3+2]*normals[i*3+2]);
-    if (n>0) {
-      normals[i*3] /= -n;
-      normals[i*3+1] /= -n;
-      normals[i*3+2] /= -n;
+    normals[i * 3 + 0] =
+      (points[faces[3 * i + 1] * 3 + 1] - points[faces[3 * i + 0] * 3 + 1]) *
+        (points[faces[3 * i + 2] * 3 + 2] - points[faces[3 * i + 0] * 3 + 2]) -
+      (points[faces[3 * i + 1] * 3 + 2] - points[faces[3 * i + 0] * 3 + 2]) *
+        (points[faces[3 * i + 2] * 3 + 1] - points[faces[3 * i + 0] * 3 + 1]);
+    normals[i * 3 + 1] =
+      (points[faces[3 * i + 1] * 3 + 2] - points[faces[3 * i + 0] * 3 + 2]) *
+        (points[faces[3 * i + 2] * 3 + 0] - points[faces[3 * i + 0] * 3 + 0]) -
+      (points[faces[3 * i + 1] * 3 + 0] - points[faces[3 * i + 0] * 3 + 0]) *
+        (points[faces[3 * i + 2] * 3 + 2] - points[faces[3 * i + 0] * 3 + 2]);
+    normals[i * 3 + 2] =
+      (points[faces[3 * i + 1] * 3 + 0] - points[faces[3 * i + 0] * 3 + 0]) *
+        (points[faces[3 * i + 2] * 3 + 1] - points[faces[3 * i + 0] * 3 + 1]) -
+      (points[faces[3 * i + 1] * 3 + 1] - points[faces[3 * i + 0] * 3 + 1]) *
+        (points[faces[3 * i + 2] * 3 + 0] - points[faces[3 * i + 0] * 3 + 0]);
+    var n = Math.sqrt(
+      normals[i * 3] * normals[i * 3] +
+        normals[i * 3 + 1] * normals[i * 3 + 1] +
+        normals[i * 3 + 2] * normals[i * 3 + 2]
+    );
+    if (n > 0) {
+      normals[i * 3] /= -n;
+      normals[i * 3 + 1] /= -n;
+      normals[i * 3 + 2] /= -n;
     }
   }
 }
 
 function readSTL(fn) {
   var fb = require("Storage").read(fn);
-  var nverts=0,i=0; while((i=fb.indexOf("vertex",i)+1)!=0) nverts++;
+  var nverts = 0,
+    i = 0;
+  while ((i = fb.indexOf("vertex", i) + 1) != 0) nverts++;
   points = new Float32Array(nverts);
   p_points = E.getAddressOf(points, true);
   faces = new Uint16Array(nverts);
   p_faces = E.getAddressOf(faces, true);
-  edges = new Uint8Array(Math.max(faces.length/3,24))
+  edges = new Uint8Array(Math.max(faces.length / 3, 24));
   p_edges = E.getAddressOf(edges, true);
-  var fp=0, p=0;
+  var fp = 0,
+    p = 0;
   var nf = 0;
   g.setColor(0.9, 0.9, 0.9);
   g.drawRect(20, 140, 220, 160);
   g.setColor(0.6, 0.6, 0.9);
-  while (p<fb.length) {
-    var line = '';
-    while (fb[p]!="\n") line += fb[p++];
+  while (p < fb.length) {
+    var line = "";
+    while (fb[p] != "\n") line += fb[p++];
     p++;
     if (line.toLowerCase().includes("vertex")) {
       var v = line.trim().split(/\s+/);
       filex[0] = v[1];
       filex[1] = v[3];
       filex[2] = v[2];
-      var slot = 0|c.findSlot(p_points, p_filex, npoints);
-      if (slot==npoints) npoints++;
+      var slot = 0 | c.findSlot(p_points, p_filex, npoints);
+      if (slot == npoints) npoints++;
       faces[fp++] = slot;
-      if (fp%3 == 0) g.fillRect(21, 141, 21+198*fp/nverts, 159);
+      if (fp % 3 == 0) g.fillRect(21, 141, 21 + (198 * fp) / nverts, 159);
     }
   }
-  vpoints = new Uint16Array(Math.max(12,2*npoints));
+  vpoints = new Uint16Array(Math.max(12, 2 * npoints));
   p_vpoints = E.getAddressOf(vpoints, true);
   normals = new Float32Array(faces.length);
   p_normals = E.getAddressOf(normals, true);
@@ -250,42 +269,53 @@ function readSTL(fn) {
   p_rnormals = E.getAddressOf(rnormals, true);
   rpoints = new Float32Array(points.length);
   p_rpoints = E.getAddressOf(rpoints, true);
-  zbuf = new Int32Array(Math.max(12,faces.length/3));
+  zbuf = new Int32Array(Math.max(12, faces.length / 3));
   p_zbuf = E.getAddressOf(zbuf, true);
   addr[0] = p_faces;
   addr[1] = p_rnormals;
   addr[2] = p_vpoints;
-  addr[3] = p_polyp; 
-  addr[4] = p_light; 
+  addr[3] = p_polyp;
+  addr[4] = p_light;
   addr[5] = p_edges;
   addr[6] = p_polyedge;
   addr[7] = p_normals;
-  c.initEdges(p_addr, faces.length/3);
+  c.initEdges(p_addr, faces.length / 3);
 }
 
-function rotV(v, u, c, s) { 
-  "ram"
-  return [v[0]*(c+u[0]*u[0]*(1-c)) + v[1]*(u[0]*u[1]*(1-c)-u[2]*s) + v[2]*(u[0]*u[2]*(1-c)+u[1]*s),
-          v[0]*(u[1]*u[0]*(1-c)+u[2]*s) + v[1]*(c+u[1]*u[1]*(1-c)) + v[2]*(u[1]*u[2]*(1-c)-u[0]*s),
-          v[0]*(u[2]*u[0]*(1-c)-u[1]*s) + v[1]*(u[2]*u[1]*(1-c)+u[0]*s) + v[2]*(c+u[2]*u[2]*(1-c))]; 
+function rotV(v, u, c, s) {
+  "ram";
+  return [
+    v[0] * (c + u[0] * u[0] * (1 - c)) +
+      v[1] * (u[0] * u[1] * (1 - c) - u[2] * s) +
+      v[2] * (u[0] * u[2] * (1 - c) + u[1] * s),
+    v[0] * (u[1] * u[0] * (1 - c) + u[2] * s) +
+      v[1] * (c + u[1] * u[1] * (1 - c)) +
+      v[2] * (u[1] * u[2] * (1 - c) - u[0] * s),
+    v[0] * (u[2] * u[0] * (1 - c) - u[1] * s) +
+      v[1] * (u[2] * u[1] * (1 - c) + u[0] * s) +
+      v[2] * (c + u[2] * u[2] * (1 - c)),
+  ];
 }
 
 function largestExtent(pts) {
   var x = 0;
-  var i = pts.length/3;
+  var i = pts.length / 3;
   while (i--) {
-    var e = pts[3*i]*pts[3*i]+pts[3*i+1]*pts[3*i+1]+pts[3*i+2]*pts[3*i+2];
-    if (e>x) x = e;
+    var e =
+      pts[3 * i] * pts[3 * i] +
+      pts[3 * i + 1] * pts[3 * i + 1] +
+      pts[3 * i + 2] * pts[3 * i + 2];
+    if (e > x) x = e;
   }
   return Math.sqrt(x);
 }
 
 function draw() {
-  "ram"
+  "ram";
   const n = [1, 0, 0];
-  if (qZrot>0) {
+  if (qZrot > 0) {
     var ca, sa, cb, sb;
-    if (qZrot==2) {
+    if (qZrot == 2) {
       var acc = Bangle.getAccel();
       zBeta = -Math.atan2(acc.z, -acc.y);
       var comp = Bangle.getCompass();
@@ -295,58 +325,67 @@ function draw() {
         var rm = rotV(m, [1, 0, 0], Math.cos(zBeta), Math.sin(zBeta));
         a = -Math.atan2(rm[0], rm[2]);
         //console.log("heading="+a*180/Math.PI, "zBeta="+zBeta);
-      }
-      else a = 0;
+      } else a = 0;
     }
-    ca=Math.cos(a); sa=Math.sin(a); cb=Math.cos(zBeta); sb=Math.sin(zBeta);
-    var ul = Math.sqrt(sb*sb+ca*ca*sb*sb+2*sa*sa*cb+2*ca*sb*sb+2*sa*sa);
-    u = [(sb+ca*sb)/ul, (-sa-sa*cb)/ul, (-sa*sb)/ul];
-    var ra = Math.acos((ca+cb+ca*cb-1)/2);
-    if (ra<0) ra += Math.PI;
+    ca = Math.cos(a);
+    sa = Math.sin(a);
+    cb = Math.cos(zBeta);
+    sb = Math.sin(zBeta);
+    var ul = Math.sqrt(
+      sb * sb +
+        ca * ca * sb * sb +
+        2 * sa * sa * cb +
+        2 * ca * sb * sb +
+        2 * sa * sa
+    );
+    u = [(sb + ca * sb) / ul, (-sa - sa * cb) / ul, (-sa * sb) / ul];
+    var ra = Math.acos((ca + cb + ca * cb - 1) / 2);
+    if (ra < 0) ra += Math.PI;
     aux[3] = Math.cos(ra);
     aux[4] = Math.sin(ra);
-  }
-  else{
+  } else {
     u = rotV(u, n, c05, s05);
     aux[3] = Math.cos(a);
     aux[4] = Math.sin(a);
   }
   a += 0.08;
-  aux[0] = u[0]; aux[1]=u[1]; aux[2]=u[2];
+  aux[0] = u[0];
+  aux[1] = u[1];
+  aux[2] = u[2];
   c.rotatePoints(p_points, p_rpoints, npoints, p_aux);
-  c.rotatePoints(p_normals, p_rnormals, faces.length/3, p_aux);
-  c.projectPoints(p_rpoints, p_vpoints, npoints, 0|zDist*100);
-  c.popZBuf(p_rpoints, p_faces, p_zbuf, faces.length/3);
+  c.rotatePoints(p_normals, p_rnormals, faces.length / 3, p_aux);
+  c.projectPoints(p_rpoints, p_vpoints, npoints, 0 | (zDist * 100));
+  c.popZBuf(p_rpoints, p_faces, p_zbuf, faces.length / 3);
   g.clear();
   var z, shade;
-  if (qWireframe>0) {
-    var i = faces.length/3;
+  if (qWireframe > 0) {
+    var i = faces.length / 3;
     while (i--) {
       z = zbuf[i];
-      shade = 0|c.processFace(p_addr, z, 1);
+      shade = 0 | c.processFace(p_addr, z, 1);
       if (shade > 0) {
-        if (qWireframe==1) g.setColor(shade).fillPoly(polyp).setColor(0).drawPoly(polyedge);
+        if (qWireframe == 1)
+          g.setColor(shade).fillPoly(polyp).setColor(0).drawPoly(polyedge);
         else {
           g.setColor(0).fillPoly(polyp).setColor(shade);
-          if (qWireframe==2) g.drawPoly(polyedge);
+          if (qWireframe == 2) g.drawPoly(polyedge);
           else g.drawPoly(polyp, true);
         }
       }
-    } 
-  }
-  else {
-    var i = faces.length/3;
+    }
+  } else {
+    var i = faces.length / 3;
     while (i--) {
       z = zbuf[i];
-      shade = 0|c.processFace(p_addr, z, 0);
+      shade = 0 | c.processFace(p_addr, z, 0);
       if (shade > 0) g.setColor(shade).fillPoly(polyp);
     }
   }
   nFrames++;
-  var fps = Math.round(nFrames*100000/(Date.now()-lastTime))/100;
+  var fps = Math.round((nFrames * 100000) / (Date.now() - lastTime)) / 100;
   g.setColor(0.7, 0.7, 0.7);
   g.setFont("6x8", 1);
-  g.drawString("fps:"+fps.toString(), 20, 0);
+  g.drawString("fps:" + fps.toString(), 20, 0);
   g.flip();
 }
 
@@ -356,62 +395,81 @@ function loadFile(fn) {
   E.showMenu();
   E.showMessage("Loading...", fn);
   readSTL(fn);
-  zDist = 5*largestExtent(points);
+  zDist = 5 * largestExtent(points);
   g.clear();
   g.setColor(1, 1, 1);
   g.setFont("6x8", 2);
   g.setFontAlign(-1, -1);
   g.setColor(1, 0.5, 0.5);
-  g.drawString("Model info",15, 40);
+  g.drawString("Model info", 15, 40);
   g.setColor(1, 1, 1);
-  g.drawString("# faces: "+faces.length/3, 15, 80);
-  g.drawString("# vertices: "+npoints, 15, 110);
-  g.drawString("max extent: "+Math.round(100*(zDist/5))/100, 15, 140);
+  g.drawString("# faces: " + faces.length / 3, 15, 80);
+  g.drawString("# vertices: " + npoints, 15, 110);
+  g.drawString("max extent: " + Math.round(100 * (zDist / 5)) / 100, 15, 140);
   g.flip();
-  setWatch(function() {
-    if (interv) { 
-      interv = clearInterval(interv);
-      load();
-    }
-    else {
-      Bangle.setLCDMode("doublebuffered");
-      lastTime = Date.now();
-      nFrames = 0;
-      interv = setInterval(function() { draw();}, 30);
-    } }, BTN2, {repeat:true, debounce:50});
-  setWatch(function() {
-    if (qZrot==1) {
-      if (zBeta<2*Math.PI/2-0.08) zBeta += 0.08;
-    } else zDist *= 0.9;
-  }, BTN1, {repeat:true});
-  setWatch(function() {
-    if (qZrot==1) {
-      if (zBeta>-2*Math.PI/2-0.08) zBeta -= 0.08;
-    } else zDist /= 0.9;
-  }, BTN3, {repeat:true});
-  Bangle.on('swipe', function(direction){
-    switch(direction){
+  setWatch(
+    function () {
+      if (interv) {
+        interv = clearInterval(interv);
+        load();
+      } else {
+        Bangle.setLCDMode("doublebuffered");
+        lastTime = Date.now();
+        nFrames = 0;
+        interv = setInterval(function () {
+          draw();
+        }, 30);
+      }
+    },
+    BTN2,
+    { repeat: true, debounce: 50 }
+  );
+  setWatch(
+    function () {
+      if (qZrot == 1) {
+        if (zBeta < (2 * Math.PI) / 2 - 0.08) zBeta += 0.08;
+      } else zDist *= 0.9;
+    },
+    BTN1,
+    { repeat: true }
+  );
+  setWatch(
+    function () {
+      if (qZrot == 1) {
+        if (zBeta > (-2 * Math.PI) / 2 - 0.08) zBeta -= 0.08;
+      } else zDist /= 0.9;
+    },
+    BTN3,
+    { repeat: true }
+  );
+  Bangle.on("swipe", function (direction) {
+    switch (direction) {
       case 1:
-        qZrot = (qZrot+1)%3;
+        qZrot = (qZrot + 1) % 3;
         break;
       case -1:
-        qWireframe = (qWireframe+1)%4;
+        qWireframe = (qWireframe + 1) % 4;
         break;
-  }});
+    }
+  });
 }
 
 function drawMenu() {
   const menu = {
-    '': { 'title': 'STL files' }
+    "": { title: "STL files" },
   };
   var files = require("Storage").list(".stl");
-  for (var i=0; i<files.length; ++i) {
+  for (var i = 0; i < files.length; ++i) {
     menu[files[i]] = loadFile.bind(null, files[i]);
   }
-  menu['Exit'] = function() { load(); };
+  menu["Exit"] = function () {
+    load();
+  };
   E.showMenu(menu);
 }
 
-Bangle.on('kill',()=>{Bangle.setCompassPower(0);});
+Bangle.on("kill", () => {
+  Bangle.setCompassPower(0);
+});
 Bangle.setCompassPower(1);
 drawMenu();

@@ -4,13 +4,15 @@ let interval;
 let lastMoonPhase;
 let lastMinutes;
 
-const is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
+  "12hour"
+];
 
 const moonR = 12;
 const moonX = 215;
 const moonY = is12Hour ? 90 : 50;
 
-const settings = require("Storage").readJSON("largeclock.json", 1)||{};
+const settings = require("Storage").readJSON("largeclock.json", 1) || {};
 const BTN1app = settings.BTN1 || "";
 const BTN3app = settings.BTN3 || "";
 
@@ -98,7 +100,7 @@ function drawMoon(d) {
         moonX + moonR / 2,
         moonY + moonR
       );
-    }
+    },
   };
 
   function moonPhase(d) {
@@ -128,7 +130,9 @@ function drawTime(d) {
   const month = da[1];
   const day = da[2];
   const year = da[3];
-  const hours = is12Hour ? ("0" + (((d.getHours() + 11) % 12) + 1)).substr(-2) : time[0];
+  const hours = is12Hour
+    ? ("0" + (((d.getHours() + 11) % 12) + 1)).substr(-2)
+    : time[0];
   const meridian = d.getHours() < 12 ? "AM" : "PM";
   const minutes = time[1];
   const seconds = time[2];
@@ -149,8 +153,13 @@ function drawTime(d) {
     g.drawString(minutes, 40, 130, true);
     g.setFont("Vector", 20);
     g.setRotation(rotation);
-    g.drawString(`${dow} ${day} ${month}`, 60, right_hand?10:205, true);
-    g.drawString(year, is12Hour?(right_hand?56:120):(right_hand?85:115), right_hand?205:10, true);
+    g.drawString(`${dow} ${day} ${month}`, 60, right_hand ? 10 : 205, true);
+    g.drawString(
+      year,
+      is12Hour ? (right_hand ? 56 : 120) : right_hand ? 85 : 115,
+      right_hand ? 205 : 10,
+      true
+    );
     lastMinutes = minutes;
   }
   g.setRotation(0);
@@ -167,7 +176,7 @@ function drawClockFace() {
   drawMoon(d);
 }
 
-Bangle.on("lcdPower", function(on) {
+Bangle.on("lcdPower", function (on) {
   if (on) {
     g.clear();
     Bangle.drawWidgets();
@@ -185,20 +194,22 @@ Bangle.setLCDMode();
 // Show launcher when button pressed
 Bangle.setUI("clock");
 
-if (BTN1app) setWatch(
-  function() {
-    load(BTN1app);
-  },
-  BTN1,
-  { repeat: false, edge: "rising" }
-);
-if (BTN3app) setWatch(
-  function() {
-    load(BTN3app);
-  },
-  BTN3,
-  { repeat: false, edge: "rising" }
-);
+if (BTN1app)
+  setWatch(
+    function () {
+      load(BTN1app);
+    },
+    BTN1,
+    { repeat: false, edge: "rising" }
+  );
+if (BTN3app)
+  setWatch(
+    function () {
+      load(BTN3app);
+    },
+    BTN3,
+    { repeat: false, edge: "rising" }
+  );
 
 g.clear();
 drawClockFace();

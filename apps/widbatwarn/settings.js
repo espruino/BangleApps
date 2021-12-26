@@ -1,7 +1,7 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-(function(back) {
+(function (back) {
   const SETTINGS_FILE = "widbatwarn.json",
     storage = require("Storage"),
     translate = require("locale").translate;
@@ -14,13 +14,13 @@
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const saved = storage.readJSON(SETTINGS_FILE, 1) || {};
-  for(const key in saved) {
+  for (const key in saved) {
     s[key] = saved[key];
   }
 
   // creates a function to safe a specific setting, e.g.  save('buzz')(true)
   function save(key) {
-    return function(value) {
+    return function (value) {
       s[key] = value;
       storage.write(SETTINGS_FILE, s);
       WIDGETS["batwarn"].reload();
@@ -28,18 +28,18 @@
   }
 
   const menu = {
-    "": {"title": "Battery Warning"},
+    "": { title: "Battery Warning" },
     "< Back": back,
-    "Percentage": {
+    Percentage: {
       value: s.percentage,
       min: 5,
       max: 100,
       step: 5,
       onchange: save("percentage"),
     },
-    "Buzz": {
+    Buzz: {
       value: s.buzz,
-      format: b => translate(b?"Yes":"No"),
+      format: (b) => translate(b ? "Yes" : "No"),
       onchange: save("buzz"),
     },
   };

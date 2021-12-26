@@ -3,23 +3,23 @@ Bangle.setLCDTimeout(0);
 g.reset();
 c = 1;
 
-function setColor(delta){
-  c+=delta;
-  c = Math.max(c,0);
-  c = Math.min(c,2);
-  if (c<1){
-    g.setColor(c,0,0);
+function setColor(delta) {
+  c += delta;
+  c = Math.max(c, 0);
+  c = Math.min(c, 2);
+  if (c < 1) {
+    g.setColor(c, 0, 0);
     Bangle.setLCDBrightness(c >= 0.1 ? c : 0.1);
-  }else{
-    g.setColor(1,c-1,c-1);
+  } else {
+    g.setColor(1, c - 1, c - 1);
     Bangle.setLCDBrightness(1);
   }
-  g.fillRect(0,0,g.getWidth(),g.getHeight());
+  g.fillRect(0, 0, g.getWidth(), g.getHeight());
 }
 
-function updownHandler(direction){
-  if (direction == undefined){
-    c=1;
+function updownHandler(direction) {
+  if (direction == undefined) {
+    c = 1;
     setColor(0);
   } else {
     setColor(-direction * 0.1);
