@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check code formatting
-        uses: actionsx/prettier@v2
-        with:
-          args: --check .
+      - uses: actions/setup-node@v2
+      - run: |
+          shopt -s globstar
+          npx prettier --check **/*.js
