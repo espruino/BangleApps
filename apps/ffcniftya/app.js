@@ -1,6 +1,6 @@
 const locale = require("locale");
 const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-const CFG = require('Storage').readJSON("ffcniftya.json", true) || {showWeek: true};
+const CFG = require('Storage').readJSON("ffcniftya.json", 1) || {showWeek: true};
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
