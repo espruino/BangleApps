@@ -1,6 +1,6 @@
 const locale = require("locale");
 const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-const CFG = require('Storage').readJSON("ffcniftya.json", true) || {showWeek: true};
+const CFG = require('Storage').readJSON("ffcniftya.json", 1) || {showWeek: true};
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
@@ -43,6 +43,7 @@ function draw() {
   const day = d02(now.getDate());
   const month = d02(now.getMonth() + 1);
   const year = now.getFullYear(now);
+  const weekNum = d02(ISO8601_week_no(now));
   const monthName = locale.month(now, 3);
   const dayName = locale.dow(now, 3);
 
