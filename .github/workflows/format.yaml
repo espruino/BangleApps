@@ -7,6 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check code formatting
-        uses: actions/prettier@v2
+        uses: actionsx/prettier@v2
         with:
-          files: "**/*.js"
+          args: --check **/*.js
