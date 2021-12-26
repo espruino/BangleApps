@@ -49,6 +49,14 @@
         writeSettings();
       }
     },
+    "Vector font": {
+      value: (settings.vectorFont !== undefined ? settings.vectorFont : false),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.vectorFont = v;
+        writeSettings();
+      }
+    },
   };
 
   // Submenu

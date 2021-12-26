@@ -41,6 +41,9 @@ Weekday name depends on the current locale.
 If seconds are shown, the weekday is never shown as there is not enough space on the watch face.
 * **Uppercase** - Weekday name and month name in the long format are converted to upper case letters.
 This can improve readability.
+* **Vector font** - Use the built-in vector font for dates and weekday.
+This can improve readability.
+Otherwise, a scaled version of the built-in 6x8 pixels font is used.
 
 ### The "Seconds" submenu
 

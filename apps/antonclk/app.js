@@ -16,6 +16,7 @@ var dateOnSecs;
 var longDate;
 var weekDay;
 var upperCase;
+var vectorFont;
 
 // dynamic variables
 var drawTimeout;
@@ -34,6 +35,7 @@ require('Storage').writeJSON(SETTINGSFILE, {
   longDate: true,
   weekDay: true,
   upperCase: false,
+  vectorFont: false,
 });
 /* */
 
@@ -57,6 +59,7 @@ function loadSettings() {
   longDate = def(settings.longDate, true);
   weekDay = def(settings.weekDay, true);
   upperCase = def(settings.upperCase, true);
+  vectorFont = def(settings.vectorFont, false);
 }
 
 // schedule a draw for the next second or minute
@@ -92,63 +95,70 @@ function doColor() {
   return !isBangle1 && !Bangle.isLocked() && secondsColoured;
 }
 
+// Actually draw the watch face
 function draw() {
   var x = g.getWidth() / 2;
-  var y = g.getHeight() / 2 - (secondsOnUnlock || secondsAlways ? 24 : 12);
+  var y = g.getHeight() / 2 - (secondsOnUnlock || secondsAlways ? 24 : (vectorFont ? 12 : 0));
   g.reset();
   g.clearRect(0, 24, g.getWidth(), g.getHeight()); // clear whole background
-  var date = new Date();
-  var timeStr = require("locale").time(date, 1);
-  // draw time
-  g.setFontAlign(0, 0).setFont("Anton");
-  g.drawString(timeStr, x, y);
+  var date = new Date(); // Actually the current date, this one is shown
+  var timeStr = require("locale").time(date, 1); // Hour and minute
+  g.setFontAlign(0, 0).setFont("Anton").drawString(timeStr, x, y); // draw time
   if (secondsScreen) {
     y += 76;
     var secStr = ":" + ("0" + date.getSeconds()).substr(-2);
     if (doColor())
       g.setColor(0, 0, 1);
     g.setFont("Anton");
-    if (dateOnSecs) {
-      g.setFontAlign(1, 0).drawString(secStr, g.getWidth() - (isBangle1 ? 32 : 2), y);
-      y -= 16;
-      x = g.getWidth() / 4 + (isBangle1 ? 12 : -4);
+    if (dateOnSecs) { // A bit of a complex drawing with seconds on the right and date on the left
+      g.setFontAlign(1, 0).drawString(secStr, g.getWidth() - (isBangle1 ? 32 : 2), y); // seconds
+      y -= (vectorFont ? 20 : 16);
+      x = g.getWidth() / 4 + (isBangle1 ? 12 : -6);
       var dateStr2 = (dateAsISO ? isoStr(date) : require("locale").date(date, 1));
       var year;
       var md;
       var yearfirst;
-      if (dateStr2.match(/\d\d\d\d$/)) {
+      if (dateStr2.match(/\d\d\d\d$/)) { // formatted date ends with year
         year = dateStr2.slice(-4);
         md = dateStr2.slice(0, -4);
-        if (!md.endsWith("."))
+        if (!md.endsWith(".")) // keep separator before the year only if it is a dot (31.12. but 31/12)
           md = md.slice(0, -1);
         yearfirst = false;
-      } else {
-        if (!dateStr2.match(/^\d\d\d\d/))
-          dateStr2 = isoStr(date);
+      } else { // formatted date begins with year
+        if (!dateStr2.match(/^\d\d\d\d/)) // if year position cannot be detected...
+          dateStr2 = isoStr(date); // ...use ISO date format instead
         year = dateStr2.slice(0, 4);
-        md = dateStr2.slice(5);
+        md = dateStr2.slice(5); // never keep separator directly after year
         yearfirst = true;
       }
-      g.setFontAlign(0, 0).setFont("Vector", 24);
+      g.setFontAlign(0, 0);
+      if (vectorFont)
+        g.setFont("Vector", 24);
+      else
+        g.setFont("6x8", 2);
       if (doColor())
         g.setColor(1, 0, 0);
-      g.drawString(md, x, (yearfirst ? y + 28 : y));
-      g.drawString(year, x, (yearfirst ? y : y + 28));
+      g.drawString(md, x, (yearfirst ? y + (vectorFont ? 26 : 16) : y));
+      g.drawString(year, x, (yearfirst ? y : y + (vectorFont ? 26 : 16)));
     } else {
-      g.setFontAlign(0, 0).drawString(secStr, x, y);
+      g.setFontAlign(0, 0).drawString(secStr, x, y); // Just the seconds centered
     }
-  } else { // No seconds screen
-    y += 50;
+  } else { // No seconds screen: Show date and optionally day of week
+    y += (vectorFont ? 50 : (secondsOnUnlock || secondsAlways) ? 52 : 40);
     var dateStr = (dateAsISO ? isoStr(date) : require("locale").date(date, (longDate ? 0 : 1)));
     if (upperCase)
       dateStr = dateStr.toUpperCase();
-    g.setFontAlign(0, 0).setFont("Vector", 24);
+    g.setFontAlign(0, 0);
+    if (vectorFont)
+      g.setFont("Vector", 24);
+    else
+      g.setFont("6x8", 2);
     g.drawString(dateStr, x, y);
     if (weekDay) {
       var dowStr = require("locale").dow(date);
       if (upperCase)
         dowStr = dowStr.toUpperCase();
-      g.drawString(dowStr, x, y + 26);
+      g.drawString(dowStr, x, y + (vectorFont ? 26 : 16));
     }
   }
 
