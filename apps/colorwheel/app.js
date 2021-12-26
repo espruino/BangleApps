@@ -49,7 +49,7 @@
   g.setColor(0,0,0);
 
   g.drawString('Tap',   CenterX,CenterY-20);
-  g.drawString('on',    CenterX,CenterY);
+  g.drawString('on a',  CenterX,CenterY);
   g.drawString('Color', CenterX,CenterY+20);
 
   Bangle.on('touch', function (Button,Position) {
