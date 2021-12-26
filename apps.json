@@ -5070,7 +5070,7 @@
     "description": "Use your Bangle to present!",
     "icon": "app.png",
     "type": "app",
-    "tags": "tool,outdoors",
+    "tags": "tool,bluetooth",
     "interface": "interface.html",
     "readme":"README.md",
     "supports": ["BANGLEJS", "BANGLEJS2"],
