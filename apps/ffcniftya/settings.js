@@ -1,5 +1,5 @@
 (function(back) {
-  var FILE = "\ffcniftya.json";
+  var FILE = "ffcniftya.json";
   // Load settings
   var cfg = Object.assign({
     showWeekNum: true,
