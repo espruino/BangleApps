@@ -5076,6 +5076,12 @@
     "storage": [
       {"name":"teatimer.app.js","url":"app.js"},
       {"name":"teatimer.img","url":"app-icon.js","evaluate":true}
+    ],
+    "screenshots": [
+      {"url":"TeatimerStart.jpg"},
+      {"url":"TeatimerHelp.jpg"},
+      {"url":"TeatimerHelp.jpg"},
+      {"url":"TeatimerUp.jpg"}
     ]
   }
 ]
