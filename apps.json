@@ -5062,19 +5062,5 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
-  },
-  { 
-    "id": "teatimer",
-    "name": "Tea Timer",
-    "shortName" : "Tea Timer",
-    "version": "1.00",
-    "icon": "teatimer.png",
-    "description": "A simple timer. You can easyly set up the time.",
-    "supports": ["BANGLEJS2"],
-    "tags": "",
-    "storage": [
-      {"name":"teatimer.app.js","url":"app.js"},
-      {"name":"teatimer.img","url":"app-icon.js","evaluate":true}
-    ]
   }
 ]
