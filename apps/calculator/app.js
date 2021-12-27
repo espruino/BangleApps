@@ -410,7 +410,7 @@ if (process.env.HWVERSION==1) {
   drawNumbers();
   Bangle.on('touch',(n,e)=>{
     for (var key in screen) {
-    	if (typeof screen[key] == "undefined") break;
+      if (typeof screen[key] == "undefined") break;
       var r = screen[key].xy;
       if (e.x>=r[0] && e.y>=r[1] &&
           e.x<r[2] && e.y<r[3]) {
