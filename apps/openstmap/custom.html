@@ -1,24 +1,31 @@
 <html>
   <head>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-    <link rel="stylesheet" href="../../css/spectre.min.css">
-  </head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
     <style>
       body {
         padding: 0;
         margin: 0;
       }
-      html, body, #map {
+      html,
+      body,
+      #map {
         height: 100%;
         width: 100%;
       }
-      #map { z-index: 1; }
+      #map {
+        z-index: 1;
+      }
       #controls {
         padding: 10px;
         margin: 10px;
         border: 1px solid black;
-        position:absolute;
-        right:0px;top:0px;
+        position: absolute;
+        right: 0px;
+        top: 0px;
         background-color: rgb(255, 255, 255);
         z-index: 100;
       }
@@ -29,14 +36,20 @@
     </style>
   </head>
   <body>
-    <div id="map">
-    </div>
+    <div id="map"></div>
     <div id="controls">
-      <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
-      <button id="getmap" class="btn btn-primary">Get Map</button><br/>
-      <canvas id="maptiles" style="display:none"></canvas>
-      <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
-      <button id="cancel" class="btn">Cancel</button></div>
+      <div
+        style="display: inline-block; text-align: center; vertical-align: top"
+        id="3bitdiv"
+      >
+        <input type="checkbox" id="3bit" /><br /><span>3 bit</span>
+      </div>
+      <button id="getmap" class="btn btn-primary">Get Map</button><br />
+      <canvas id="maptiles" style="display: none"></canvas>
+      <div id="uploadbuttons" style="display: none">
+        <button id="upload" class="btn btn-primary">Upload</button>
+        <button id="cancel" class="btn">Cancel</button>
+      </div>
     </div>
 
     <script src="../../core/lib/customize.js"></script>
@@ -46,7 +59,7 @@
     <script src="../../core/lib/imageconverter.js"></script>
 
     <script>
-    /*
+      /*
 
 TODO:
 
@@ -58,31 +71,34 @@ TODO:
     */
       var TILESIZE = 96; // Size of our tiles
       var OSMTILESIZE = 256; // Size of openstreetmap tiles
-      var MAPSIZE = TILESIZE*5; ///< 480 - Size of map we download
+      var MAPSIZE = TILESIZE * 5; ///< 480 - Size of map we download
       var OSMTILECOUNT = 3; // how many tiles do we download in each direction (Math.floor(MAPSIZE / OSMTILESIZE)+1)
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
-      var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
-      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var TILELAYER = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"; // simple, high contrast
+      var PREVIEWTILELAYER =
+        "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
 
-      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      var map = L.map("map").locate({ setView: true, maxZoom: 16 });
       // Tiles used for Bangle.js itself
       var bangleTileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+        attribution:
+          'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>',
       });
       // Tiles used for the may the user sees (faster)
       var previewTileLayer = L.tileLayer(PREVIEWTILELAYER, {
         maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+        attribution:
+          'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>',
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
 
       function onInit(device) {
         if (device && device.info && device.info.g) {
           // On 3 bit devices, don't even offer the option. 3 bit is the only way
-          if (device.info.g.bpp==3) {
+          if (device.info.g.bpp == 3) {
             document.getElementById("3bit").checked = true;
             document.getElementById("3bitdiv").style = "display:none";
           }
@@ -94,67 +110,80 @@ TODO:
 
       function tilesLoaded(ctx, width, height) {
         var options = {
-          compression:false, output:"raw",
-          mode:"web"
+          compression: false,
+          output: "raw",
+          mode: "web",
         };
         if (document.getElementById("3bit").checked) {
           options = {
-            compression:false, output:"raw",
-            mode:"3bit", brightness:-64,
+            compression: false,
+            output: "raw",
+            mode: "3bit",
+            brightness: -64,
           };
         }
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);
         var tiles = [];
-        for (var y=0;y<h;y++) {
-          for (var x=0;x<w;x++) {
-            var imageData = ctx.getImageData(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            var imageData = ctx.getImageData(
+              x * TILESIZE,
+              y * TILESIZE,
+              TILESIZE,
+              TILESIZE
+            );
             var rgba = imageData.data;
             options.rgbaOut = rgba;
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE);
+            ctx.putImageData(imageData, x * TILESIZE, y * TILESIZE);
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/
             tiles.push({
-              name:"openstmap-"+x+"-"+y+".img",
-              content:imgstr
+              name: "openstmap-" + x + "-" + y + ".img",
+              content: imgstr,
             });
           }
         }
         return tiles;
       }
 
-      document.getElementById("getmap").addEventListener("click", function() {
+      document.getElementById("getmap").addEventListener("click", function () {
         var zoom = map.getZoom();
         var centerlatlon = map.getBounds().getCenter();
         var center = map.project(centerlatlon, zoom).divideBy(OSMTILESIZE);
         // Reason for 16px adjustment below not 100% known, but it seems to
         // align everything perfectly: https://github.com/espruino/BangleApps/issues/984
-        var ox = Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE) + 16;
-        var oy = Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE) + 16;
+        var ox =
+          Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE) + 16;
+        var oy =
+          Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE) + 16;
         center = center.floor(); // make sure we're in the middle of a tile
         // JS version of Bangle.js's projection
         function bproject(lat, lon) {
           const degToRad = Math.PI / 180; // degree to radian conversion
           const latMax = 85.0511287798; // clip latitude to sane values
           const R = 6378137; // earth radius in m
-          if (lat > latMax) lat=latMax;
-          if (lat < -latMax) lat=-latMax;
+          if (lat > latMax) lat = latMax;
+          if (lat < -latMax) lat = -latMax;
           var s = Math.sin(lat * degToRad);
           return new L.Point(
-            (R * lon * degToRad),
-            (R * Math.log((1 + s) / (1 - s)) / 2)
+            R * lon * degToRad,
+            (R * Math.log((1 + s) / (1 - s))) / 2
           );
         }
         // Work out scale factors (how much from Bangle.project does one pixel equate to?)
         var pc = map.unproject(center.multiplyBy(OSMTILESIZE), zoom);
-        var pd = map.unproject(center.multiplyBy(OSMTILESIZE).add({x:1,y:0}), zoom);
-        var bc = bproject(pc.lat, pc.lng)
-        var bd = bproject(pd.lat, pd.lng)
+        var pd = map.unproject(
+          center.multiplyBy(OSMTILESIZE).add({ x: 1, y: 0 }),
+          zoom
+        );
+        var bc = bproject(pc.lat, pc.lng);
+        var bd = bproject(pd.lat, pd.lng);
         var scale = bc.distanceTo(bd);
 
         // test
@@ -168,20 +197,25 @@ TODO:
         var tileGetters = [];
         // Render everything to a canvas...
         var canvas = document.getElementById("maptiles");
-        canvas.style.display="";
-        var ctx = canvas.getContext('2d');
+        canvas.style.display = "";
+        var ctx = canvas.getContext("2d");
         canvas.width = MAPSIZE;
         canvas.height = MAPSIZE;
         for (var i = 0; i < OSMTILECOUNT; i++) {
-            for (var j = 0; j < OSMTILECOUNT; j++) {
-              (function(i,j){
-                var coords = new L.Point(center.x+i-1, center.y+j-1);
-                coords.z = zoom;
-                var img = new Image();
-                img.crossOrigin = "Anonymous";
-                tileGetters.push(new Promise(function(resolve,reject) {
-                  img.onload = function(){
-                    ctx.drawImage(img,i*OSMTILESIZE - ox, j*OSMTILESIZE - oy);
+          for (var j = 0; j < OSMTILECOUNT; j++) {
+            (function (i, j) {
+              var coords = new L.Point(center.x + i - 1, center.y + j - 1);
+              coords.z = zoom;
+              var img = new Image();
+              img.crossOrigin = "Anonymous";
+              tileGetters.push(
+                new Promise(function (resolve, reject) {
+                  img.onload = function () {
+                    ctx.drawImage(
+                      img,
+                      i * OSMTILESIZE - ox,
+                      j * OSMTILESIZE - oy
+                    );
                     /*if (testPt) {
                       ctx.fillStyle="green";
                       ctx.fillRect(testPt.x-1, testPt.y-5, 3,10);
@@ -189,40 +223,42 @@ TODO:
                     }*/
                     resolve();
                   };
-                }));
-                bangleTileLayer._tileZoom = previewTileLayer._tileZoom;
-                img.src = bangleTileLayer.getTileUrl(coords);
-              })(i,j);
-            }
+                })
+              );
+              bangleTileLayer._tileZoom = previewTileLayer._tileZoom;
+              img.src = bangleTileLayer.getTileUrl(coords);
+            })(i, j);
+          }
         }
 
-
         Promise.all(tileGetters).then(() => {
-          document.getElementById("uploadbuttons").style.display="";
+          document.getElementById("uploadbuttons").style.display = "";
           mapFiles = tilesLoaded(ctx, canvas.width, canvas.height);
-          mapFiles.unshift({name:"openstmap.json",content:JSON.stringify({
-            imgx : canvas.width,
-            imgy : canvas.height,
-            tilesize : TILESIZE,
-            scale : scale, // how much of Bangle.project(latlon) does one pixel equate to?
-            lat : centerlatlon.lat,
-            lon : centerlatlon.lng
-          })});
+          mapFiles.unshift({
+            name: "openstmap.json",
+            content: JSON.stringify({
+              imgx: canvas.width,
+              imgy: canvas.height,
+              tilesize: TILESIZE,
+              scale: scale, // how much of Bangle.project(latlon) does one pixel equate to?
+              lat: centerlatlon.lat,
+              lon: centerlatlon.lng,
+            }),
+          });
           console.log(mapFiles);
         });
       });
 
-      document.getElementById("upload").addEventListener("click", function() {
+      document.getElementById("upload").addEventListener("click", function () {
         sendCustomizedApp({
-          storage:mapFiles
+          storage: mapFiles,
         });
       });
 
-      document.getElementById("cancel").addEventListener("click", function() {
-        document.getElementById("maptiles").style.display="none";
-        document.getElementById("uploadbuttons").style.display="none";
+      document.getElementById("cancel").addEventListener("click", function () {
+        document.getElementById("maptiles").style.display = "none";
+        document.getElementById("uploadbuttons").style.display = "none";
       });
-
     </script>
   </body>
 </html>

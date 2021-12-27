@@ -1,109 +1,131 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../../css/spectre.min.css">
-    <style>li {line-height: 1;}</style>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+    <style>
+      li {
+        line-height: 1;
+      }
+    </style>
   </head>
   <body>
-<ul>
-<li>Go to <a href="http://google.com/mymaps">http://google.com/mymaps</a></li>
-<li>Create a new map</li>
-<li>Add a line or shape (under search box)</li>
-<li>Click around, double click to end</li>
-<li>Click '...' to the right of 'Untitled Map'</li>
-<li>Export to KML - just 'Untitled Layer' and export as KML</li>
-</ul>
-<p><b>Or...</b></p>
-<ul>
-<li>Go to <a href="https://umap.openstreetmap.fr/en/">https://umap.openstreetmap.fr/en/</a></li>
-<li>Create a map</li>
-<li>Draw a polyline (right hand side)</li>
-<li>Embed and share (leb>ft hand side)</li>
-<li>Download data as KML</li>
-</ul>
+    <ul>
+      <li>
+        Go to <a href="http://google.com/mymaps">http://google.com/mymaps</a>
+      </li>
+      <li>Create a new map</li>
+      <li>Add a line or shape (under search box)</li>
+      <li>Click around, double click to end</li>
+      <li>Click '...' to the right of 'Untitled Map'</li>
+      <li>Export to KML - just 'Untitled Layer' and export as KML</li>
+    </ul>
+    <p><b>Or...</b></p>
+    <ul>
+      <li>
+        Go to
+        <a href="https://umap.openstreetmap.fr/en/"
+          >https://umap.openstreetmap.fr/en/</a
+        >
+      </li>
+      <li>Create a map</li>
+      <li>Draw a polyline (right hand side)</li>
+      <li>Embed and share (leb>ft hand side)</li>
+      <li>Download data as KML</li>
+    </ul>
 
-<p><b>Upload KML file here:
-<input class="form-input" type="file" id="fileLoader"/></p>
-<p><button id="upload" style="display:none" class="btn btn-primary">Upload</button></p>
-<pre id="log"></pre>
-<script src="../../core/lib/customize.js"></script>
-<script>
-var xmlText = "";
-var xmlDoc;
-var js = "";
-function log(t) {
-  document.getElementById('fileLoader').innerText += t+"\n";
-  console.log(t);
-}
-function project(latlong) {
-  var d = Math.PI / 180,
-      max = 85.0511287798,
-      R = 6378137, // earth radius in m
-      lat = Math.max(Math.min(max, latlong.lat), -max),
-      sin = Math.sin(lat * d);
-  return {x:R * latlong.lon * d,
-          y:R * Math.log((1 + sin) / (1 - sin)) / 2};
-}
+    <p>
+      <b
+        >Upload KML file here:
+        <input class="form-input" type="file" id="fileLoader"
+      /></b>
+    </p>
+    <p>
+      <button id="upload" style="display: none" class="btn btn-primary">
+        Upload
+      </button>
+    </p>
+    <pre id="log"></pre>
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+      var xmlText = "";
+      var xmlDoc;
+      var js = "";
+      function log(t) {
+        document.getElementById("fileLoader").innerText += t + "\n";
+        console.log(t);
+      }
+      function project(latlong) {
+        var d = Math.PI / 180,
+          max = 85.0511287798,
+          R = 6378137, // earth radius in m
+          lat = Math.max(Math.min(max, latlong.lat), -max),
+          sin = Math.sin(lat * d);
+        return {
+          x: R * latlong.lon * d,
+          y: (R * Math.log((1 + sin) / (1 - sin))) / 2,
+        };
+      }
 
-function fileLoaded() {
-  // kml -> Document -> Placemark -> LineString -> Coordinates
-  var coordinateNode = xmlDoc.getElementsByTagName("coordinates");
-  if (!coordinateNode) {
-    log("No 'coordinates' node found");
-    return;
-  }
-  var coordinateLine = coordinateNode[0].textContent.trim();
-  var coordinateList = coordinateLine.split(/\s+/);
-  var coords = [];
-  var pmin, pmax;
-  var latitude;
-  coordinateList.forEach(function(c) {
-    c = c.split(",");
-    var latlon = {
-      lat : parseFloat(c[1]),
-      lon : parseFloat(c[0])
-    };
-    if (latitude===undefined)
-      latitude = latlon.lat;
-    var p = project(latlon);
-    p.x = Math.round(p.x);
-    p.y = Math.round(p.y);
-    if (!pmin) pmin = {x:p.x, y:p.y};
-    if (!pmax) pmax = {x:p.x, y:p.y};
-    if (p.x<pmin.x) pmin.x=p.x;
-    if (p.x>pmax.x) pmax.x=p.x;
-    if (p.y<pmin.y) pmin.y=p.y;
-    if (p.y>pmax.y) pmax.y=p.y;
-    coords.push(p.x,p.y);
-  });
-  /* coordScale is a scale factor because the map projection
+      function fileLoaded() {
+        // kml -> Document -> Placemark -> LineString -> Coordinates
+        var coordinateNode = xmlDoc.getElementsByTagName("coordinates");
+        if (!coordinateNode) {
+          log("No 'coordinates' node found");
+          return;
+        }
+        var coordinateLine = coordinateNode[0].textContent.trim();
+        var coordinateList = coordinateLine.split(/\s+/);
+        var coords = [];
+        var pmin, pmax;
+        var latitude;
+        coordinateList.forEach(function (c) {
+          c = c.split(",");
+          var latlon = {
+            lat: parseFloat(c[1]),
+            lon: parseFloat(c[0]),
+          };
+          if (latitude === undefined) latitude = latlon.lat;
+          var p = project(latlon);
+          p.x = Math.round(p.x);
+          p.y = Math.round(p.y);
+          if (!pmin) pmin = { x: p.x, y: p.y };
+          if (!pmax) pmax = { x: p.x, y: p.y };
+          if (p.x < pmin.x) pmin.x = p.x;
+          if (p.x > pmax.x) pmax.x = p.x;
+          if (p.y < pmin.y) pmin.y = p.y;
+          if (p.y > pmax.y) pmax.y = p.y;
+          coords.push(p.x, p.y);
+        });
+        /* coordScale is a scale factor because the map projection
 stretches anything not on the equator */
-  js = `
-var coordScale = ${Math.cos(latitude*Math.PI/180)};
+        js = `
+var coordScale = ${Math.cos((latitude * Math.PI) / 180)};
 var coords = new Int32Array([${coords.join(",")}]);
 var min = ${JSON.stringify(pmin)};
 var max = ${JSON.stringify(pmax)};
 `.trim();
-  console.log(js);
-  document.getElementById("upload").style = "";
-}
-function handleFileSelect(event) {
-  if (event.target.files.length!=1) {
-    log("More than one file selected!");
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(event) {
-    xmlText = event.target.result;
-    var parser = new DOMParser();
-    xmlDoc = parser.parseFromString(xmlText, "application/xml");
-    fileLoaded();
-  };
-  reader.readAsText(event.target.files[0]);
-};
-document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
+        console.log(js);
+        document.getElementById("upload").style = "";
+      }
+      function handleFileSelect(event) {
+        if (event.target.files.length != 1) {
+          log("More than one file selected!");
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          xmlText = event.target.result;
+          var parser = new DOMParser();
+          xmlDoc = parser.parseFromString(xmlText, "application/xml");
+          fileLoaded();
+        };
+        reader.readAsText(event.target.files[0]);
+      }
+      document
+        .getElementById("fileLoader")
+        .addEventListener("change", handleFileSelect, false);
 
-document.getElementById("upload").addEventListener("click", function() {
-  var app = `${js}
+      document.getElementById("upload").addEventListener("click", function () {
+        var app = `${js}
 var gcoords = new Uint8Array(coords.length);
 var coordDistance = new Uint16Array(coords.length/2);
 
@@ -241,12 +263,10 @@ Bangle.setCompassPower(1);
 g.clear();
 `;
 
-sendCustomizedApp({
-  storage:[
-    {name:"route.app.js", url:"app.js", content:app}
-  ]
-});
-});
-
-</script>
-</body>
+        sendCustomizedApp({
+          storage: [{ name: "route.app.js", url: "app.js", content: app }],
+        });
+      });
+    </script>
+  </body>
+</html>
