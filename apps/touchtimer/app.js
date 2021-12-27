@@ -1,4 +1,4 @@
-var DEBUG = true;
+var DEBUG = false;
 
 var main = () => {
   var button1 = new Button({ x1: 1, y1: 35, x2: 58, y2: 70 }, 1);
