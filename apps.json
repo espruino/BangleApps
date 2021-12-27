@@ -5072,6 +5072,7 @@
     "type": "app",
     "tags": "tool",
     "supports": ["BANGLEJS2"],
+    "readme": "README.md",
     "storage": [
       {"name":"teatimer.app.js","url":"app.js"},
       {"name":"teatimer.img","url":"app-icon.js","evaluate":true}
