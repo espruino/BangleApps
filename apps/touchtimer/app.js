@@ -13,7 +13,7 @@ var main = () => {
   var button8 = new Button({ x1: 60, y1: 107, x2: 116, y2: 140 }, 8);
   var button9 = new Button({ x1: 118, y1: 107, x2: 174, y2: 140 }, 9);
 
-  var buttonStart = new Button({ x1: 1, y1: 142, x2: 58, y2: 174 }, "GO");
+  var buttonOK = new Button({ x1: 1, y1: 142, x2: 58, y2: 174 }, "OK");
   var button0 = new Button({ x1: 60, y1: 142, x2: 116, y2: 174 }, 0);
   var buttonDelete = new Button({ x1: 118, y1: 142, x2: 174, y2: 174 }, "<-");
 
@@ -40,18 +40,18 @@ var main = () => {
     button7,
     button8,
     button9,
-    buttonStart,
+    buttonOK,
     button0,
     buttonDelete,
   ];
 
-  var buttonPauseContinue = new Button(
+  var buttonStartPause = new Button(
     { x1: 1, y1: 35, x2: 174, y2: 105 },
-    "PAUSE"
+    "START"
   );
   var buttonStop = new Button({ x1: 1, y1: 107, x2: 174, y2: 174 }, "STOP");
 
-  var timerRunningButtons = [buttonPauseContinue, buttonStop];
+  var timerRunningButtons = [buttonStartPause, buttonStop];
 
   var timeStr = "";
   timerNumberButtons.forEach((numberButton) => {
@@ -78,7 +78,11 @@ var main = () => {
     drawTimer(timeStr);
   });
 
-  buttonStart.setOnClick(() => {
+  buttonOK.setOnClick(() => {
+    if (timeStr.length === 0) {
+      return;
+    }
+
     g.clear();
     drawTimer(timeStr);
 
@@ -90,7 +94,80 @@ var main = () => {
     });
   });
 
+  var timerIntervalId = undefined;
+  var buzzIntervalId = undefined;
+  buttonStartPause.setOnClick(() => {
+    if (buttonStartPause.value === "PAUSE") {
+      buttonStartPause.value = "START";
+      buttonStartPause.draw();
+
+      if (timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = undefined;
+      }
+
+      if (buzzIntervalId) {
+        clearInterval(buzzIntervalId);
+        buzzIntervalId = undefined;
+      }
+
+      return;
+    }
+
+    if (buttonStartPause.value === "START") {
+      buttonStartPause.value = "PAUSE";
+      buttonStartPause.draw();
+
+      var time = timeStrToTime(timeStr);
+
+      timerIntervalId = setInterval(() => {
+        time = time - 1;
+
+        timeStr = timeToTimeStr(time);
+        drawTimer(timeStr);
+
+        if (time === 0) {
+          buttonStartPause.value = "FINISHED!";
+          buttonStartPause.draw();
+
+          if (timerIntervalId) {
+            clearInterval(timerIntervalId);
+            timerIntervalId = undefined;
+          }
+
+          var buzzCount = 0;
+          Bangle.buzz(1000, 1);
+          buzzIntervalId = setInterval(() => {
+            if (buzzCount >= 10) {
+              clearInterval(buzzIntervalId);
+              buzzIntervalId = undefined;
+              return;
+            } else {
+              Bangle.buzz(1000, 1);
+              buzzCount++;
+            }
+          }, 5000);
+        }
+      }, 1000);
+
+      return;
+    }
+  });
+
   buttonStop.setOnClick(() => {
+    if (timerIntervalId) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = undefined;
+    }
+
+    if (buzzIntervalId) {
+      clearInterval(buzzIntervalId);
+      buzzIntervalId = undefined;
+    }
+
+    buttonStartPause.value = "START";
+    buttonStartPause.draw();
+
     g.clear();
     timeStr = "";
     drawTimer(timeStr);
@@ -234,6 +311,51 @@ class Button {
     }
   }
 }
+
+var timeToTimeStr = (time) => {
+  var hours = Math.floor(time / 3600);
+  time = time - hours * 3600;
+  var minutes = Math.floor(time / 60);
+  time = time - minutes * 60;
+  var seconds = time;
+
+  if (hours === 0) {
+    hours = "";
+  } else {
+    hours = hours.toString();
+  }
+
+  if (hours.length === 0) {
+    if (minutes === 0) {
+      minutes = "";
+    } else {
+      minutes = minutes.toString();
+    }
+  } else {
+    minutes = minutes.toString().padStart(2, "0");
+  }
+
+  if (hours.length === 0 && minutes.length === 0) {
+    if (seconds === 0) {
+      seconds = "";
+    } else {
+      seconds = seconds.toString();
+    }
+  } else {
+    seconds = seconds.toString().padStart(2, "0");
+  }
+
+  return hours + minutes + seconds;
+};
+
+var timeStrToTime = (timeStr) => {
+  timeStr = timeStr.padStart(6, "0");
+  return (
+    parseInt(timeStr.slice(0, 2), 10) * 3600 +
+    parseInt(timeStr.slice(2, 4), 10) * 60 +
+    parseInt(timeStr.slice(4, 6), 10)
+  );
+};
 
 // start main function
 
