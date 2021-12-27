@@ -10,4 +10,4 @@ jobs:
       - name: Check formatting
         run: |
           shopt -s globstar
-          npx prettier --check **/*.js
+          npx prettier --check .

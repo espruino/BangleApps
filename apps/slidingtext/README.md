@@ -10,18 +10,19 @@ Inspired by the Pebble sliding clock, old times are scrolled off the screen and 
 
 Use Button 1 (the top right button) to change the language
 
-|   English   |  English (Traditional)    |  French    | Japanese (Romanji) |
-| ---- | ---- | ---- | ---- |
-|   ![](./format-01.jpg)   | ![](format-02.jpg)     |  ![](format-03.jpg) |![](format-04.jpg)    |
-|   **German**   |  **Spanish**    |      |  |
-|   ![](./format-05.jpg)   | ![](format-06.jpg)     | |    |
+| English              | English (Traditional) | French             | Japanese (Romanji) |
+| -------------------- | --------------------- | ------------------ | ------------------ |
+| ![](./format-01.jpg) | ![](format-02.jpg)    | ![](format-03.jpg) | ![](format-04.jpg) |
+| **German**           | **Spanish**           |                    |                    |
+| ![](./format-05.jpg) | ![](format-06.jpg)    |                    |                    |
 
 ### Button 3
+
 Button 3 (bottom right button) is used to change the colour
 
-|  Black   |  Red    |  Gray    |  Purple    |
-| ---- | ---- | ---- | ---- |
-|   ![](./color-01.jpg) | ![](color-02.jpg) |  ![](color-03.jpg)   | ![](color-04.jpg)   |
+| Black               | Red               | Gray              | Purple            |
+| ------------------- | ----------------- | ----------------- | ----------------- |
+| ![](./color-01.jpg) | ![](color-02.jpg) | ![](color-03.jpg) | ![](color-04.jpg) |
 
 ## Further Details
 

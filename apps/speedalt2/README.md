@@ -12,7 +12,7 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 
 ## Buttons and Controls
 
-**BTN1** ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
+**BTN1** ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded. Long press > 2 secs resets the recorded maximum values.
 
 **BTN1** ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
 
@@ -28,10 +28,9 @@ Swipe Left/Right cycles between the five screens.
 
 Touch functions as BTN1 short press.
 
-
 ## App Settings
 
-Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
+Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ).
 
 ## Kalman Filter
 
@@ -39,7 +38,7 @@ This filter smooths the altitude and the speed values and reduces these values '
 
 ## Loss of fix
 
-When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats'  or 'Age' indicates whether the GPS has a current fix or not.  
+When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. When unable to obtain a fix then the last known fix is used and the age of that fix in seconds is displayed as 'Age:nn'. Seeing 'Sats' or 'Age' indicates whether the GPS has a current fix or not.
 
 ## Power Saving
 
@@ -49,7 +48,7 @@ This app will work quite happily on its own but will use the [GPS Setup App](htt
 
 When using the GPS Setup App this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PSMOO mode and will only attempt to get a fix every two minutes. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
-The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
+The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode.
 
 ## Waypoints
 
@@ -131,4 +130,3 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 Many thanks to Gordon Williams. Awesome job.
 
 Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development and Wouter Bulten for the Kalman filter code.
-

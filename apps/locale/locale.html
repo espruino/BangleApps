@@ -1,22 +1,22 @@
 <html>
   <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
   </head>
   <body>
-
     <p>Please choose a language from the following list:</p>
     <div class="form-group">
-    <select id="languages" class="form-select">
-    </select>
+      <select id="languages" class="form-select"></select>
     </div>
-    <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
+    <p>
+      Then click <button id="upload" class="btn btn-primary">Upload</button>
+    </p>
 
     <script src="../../core/lib/customize.js"></script>
     <script src="locales.js" charset="utf-8"></script>
 
     <script>
-/*
+      /*
 eg. the built-in en_GB is:
 
 exports = { name : "en_GB", currencySym:"£",
@@ -48,62 +48,84 @@ exports = { name : "en_GB", currencySym:"£",
 */
       function codePageLookup(lang, codePage, ch) {
         var chCode = ch.charCodeAt();
-        if (chCode>=32 && chCode<128) return ch; // ASCII - copy it
+        if (chCode >= 32 && chCode < 128) return ch; // ASCII - copy it
         // not normal ASCII
         var n; // default is a space
-        if (codePage.map.indexOf(ch)>=0)  // look up in char map, escape that
-          n = 128+codePage.map.indexOf(ch);
+        if (codePage.map.indexOf(ch) >= 0)
+          // look up in char map, escape that
+          n = 128 + codePage.map.indexOf(ch);
         /*else if (chCode<256) // it's non-ascii, but <256 - just escape it
-          n = chCode;*/
-        else {
+          n = chCode;*/ else {
           if (charFallbacks[ch]) return charFallbacks[ch];
-          console.error(`Locale ${lang}: Character ${ch} (${chCode}) is not in Code Page ${codePage.name}`);
+          console.error(
+            `Locale ${lang}: Character ${ch} (${chCode}) is not in Code Page ${codePage.name}`
+          );
           return undefined;
         }
         // escape the char
-        return '\\x'+(n+256).toString(16).slice(-2);
+        return "\\x" + (n + 256).toString(16).slice(-2);
       }
 
       // do some sanity checks
-      Object.keys(locales).forEach(function(localeName) {
+      Object.keys(locales).forEach(function (localeName) {
         var locale = locales[localeName];
-        if (locale.trans && !locale.trans.on) console.error(localeName+": If translations are provided, 'on' *must* be included");
-        if (distanceUnits[locale.distance[0]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[0]);
-        if (distanceUnits[locale.distance[1]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[1]);
-        if (speedUnits[locale.speed]===undefined) console.error(localeName+": Unknown speed unit "+locale.speed);
-        if (locale.temperature!='°C' && locale.temperature!='°F')
-          console.error(localeName+": Unknown temperature unit "+locale.temperature);
+        if (locale.trans && !locale.trans.on)
+          console.error(
+            localeName +
+              ": If translations are provided, 'on' *must* be included"
+          );
+        if (distanceUnits[locale.distance[0]] === undefined)
+          console.error(
+            localeName + ": Unknown distance unit " + locale.distance[0]
+          );
+        if (distanceUnits[locale.distance[1]] === undefined)
+          console.error(
+            localeName + ": Unknown distance unit " + locale.distance[1]
+          );
+        if (speedUnits[locale.speed] === undefined)
+          console.error(localeName + ": Unknown speed unit " + locale.speed);
+        if (locale.temperature != "°C" && locale.temperature != "°F")
+          console.error(
+            localeName + ": Unknown temperature unit " + locale.temperature
+          );
         // Now check that codepage is ok and all chars in translation are in that codepage
         const codePageName = "ISO8859-1";
         if (locale.codePage) codePageName = locale.codePage;
         const codePage = codePages[codePageName];
-        if (codePage===undefined) console.error(localeName+": Unknown codePage "+codePageName);
-        function checkChars(v,path) {
-          if ("object"==typeof v)
-            Object.keys(v).forEach(k=>checkChars(v[k], path+"."+k));
-          else if ("string"==typeof v)
-            for (var i=0;i<v.length;i++)
-              if (codePageLookup(localeName, codePage, v[i])===undefined)
+        if (codePage === undefined)
+          console.error(localeName + ": Unknown codePage " + codePageName);
+        function checkChars(v, path) {
+          if ("object" == typeof v)
+            Object.keys(v).forEach((k) => checkChars(v[k], path + "." + k));
+          else if ("string" == typeof v)
+            for (var i = 0; i < v.length; i++)
+              if (codePageLookup(localeName, codePage, v[i]) === undefined)
                 console.error(` ... in ${path}[${i}]`);
         }
-        checkChars(locale,localeName);
+        checkChars(locale, localeName);
       });
 
       var languageSelector = document.getElementById("languages");
-      languageSelector.innerHTML = Object.keys(locales).map(l=>{
-        var localeParts = l.split("_"); // en_GB -> ["en","GB"]
-        var icon = "";
-        // If we have a 2 char ISO country code, use it to get the unicode flag
-        if (localeParts[1] && localeParts[1].length==2)
-          icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
-        if (localeParts[1]=="NAV")
-          icon = "&#9973;&#9992;&#65039; ";
-        return `<option value="${l}">${icon}${l}</option>`
-      }).join("\n");
+      languageSelector.innerHTML = Object.keys(locales)
+        .map((l) => {
+          var localeParts = l.split("_"); // en_GB -> ["en","GB"]
+          var icon = "";
+          // If we have a 2 char ISO country code, use it to get the unicode flag
+          if (localeParts[1] && localeParts[1].length == 2)
+            icon =
+              localeParts[1]
+                .toUpperCase()
+                .replace(/./g, (char) =>
+                  String.fromCodePoint(char.charCodeAt(0) + 127397)
+                ) + " ";
+          if (localeParts[1] == "NAV") icon = "&#9973;&#9992;&#65039; ";
+          return `<option value="${l}">${icon}${l}</option>`;
+        })
+        .join("\n");
 
-      document.getElementById("upload").addEventListener("click", function() {
-
-        const lang = languageSelector.options[languageSelector.selectedIndex].value;
+      document.getElementById("upload").addEventListener("click", function () {
+        const lang =
+          languageSelector.options[languageSelector.selectedIndex].value;
         console.log(`Language ${lang}`);
 
         const locale = locales[lang];
@@ -113,8 +135,7 @@ exports = { name : "en_GB", currencySym:"£",
         }
 
         const codePageName = "ISO8859-1";
-        if (locale.codePage)
-          codePageName = locale.codePage;
+        if (locale.codePage) codePageName = locale.codePage;
         const codePage = codePages[codePageName];
         if (!codePage) {
           alert(`Code Page ${codePageName} not found!`);
@@ -127,54 +148,58 @@ exports = { name : "en_GB", currencySym:"£",
           x = JSON.stringify(x);
           /* assume any out of bounds character is going to
           be inside a quoted string */
-          var s = '';
-          for (var i=0;i<x.length;i++) {
+          var s = "";
+          for (var i = 0; i < x.length; i++) {
             var ch = codePageLookup(lang, codePage, x[i]);
-            s += (ch===undefined) ? "?" : ch;
+            s += ch === undefined ? "?" : ch;
           }
           return s;
         }
 
         function unitConv(x) {
-          return x === 1 ? 'n' : 'n/' + x
+          return x === 1 ? "n" : "n/" + x;
         }
 
-        var replaceList  = {
-          "%Y":  "d.getFullYear()",
-          "%y":  "(d.getFullYear().toString()).slice(-2)",
-          "%m":  "('0'+(d.getMonth()+1).toString()).slice(-2)",
+        var replaceList = {
+          "%Y": "d.getFullYear()",
+          "%y": "(d.getFullYear().toString()).slice(-2)",
+          "%m": "('0'+(d.getMonth()+1).toString()).slice(-2)",
           "%-m": "d.getMonth()+1",
-          "%d":  "('0'+d.getDate()).slice(-2)",
+          "%d": "('0'+d.getDate()).slice(-2)",
           "%-d": "d.getDate()",
           "%HH": "('0'+getHours(d)).slice(-2)",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
-          "%A":  "day.split(',')[d.getDay()]",
-          "%a":  "day.split(',')[d.getDay() + 7]",
-          "%B":  "month.split(',')[d.getMonth()]",
-          "%b":  "month.split(',')[d.getMonth() + 12]",
-          "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
-          "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
+          "%A": "day.split(',')[d.getDay()]",
+          "%a": "day.split(',')[d.getDay() + 7]",
+          "%B": "month.split(',')[d.getMonth()]",
+          "%b": "month.split(',')[d.getMonth() + 12]",
+          "%p": `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(
+            locale.ampm[1].toUpperCase()
+          )}`,
+          "%P": `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(
+            locale.ampm[1].toLowerCase()
+          )}`,
         };
 
         var timeN = locale.timePattern[0];
         var timeS = locale.timePattern[1];
         var dateN = locale.datePattern[0];
         var dateS = locale.datePattern[1];
-        Object.keys(replaceList).forEach(e => {
-          timeN = timeN.replace(e,"${"+replaceList[e]+"}");
-          timeS = timeS.replace(e,"${"+replaceList[e]+"}");
-          dateN = dateN.replace(e,"${"+replaceList[e]+"}");
-          dateS = dateS.replace(e,"${"+replaceList[e]+"}");
+        Object.keys(replaceList).forEach((e) => {
+          timeN = timeN.replace(e, "${" + replaceList[e] + "}");
+          timeS = timeS.replace(e, "${" + replaceList[e] + "}");
+          dateN = dateN.replace(e, "${" + replaceList[e] + "}");
+          dateS = dateS.replace(e, "${" + replaceList[e] + "}");
         });
-        var currency = locale.currency_first ?
-          `${js(locale.currency_symbol)} + exports.number(n)`:
-          `exports.number(n) + ${js(locale.currency_symbol)}`;
-        var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
+        var currency = locale.currency_first
+          ? `${js(locale.currency_symbol)} + exports.number(n)`
+          : `exports.number(n) + ${js(locale.currency_symbol)}`;
+        var temperature = locale.temperature == "°F" ? "(t*9/5)+32" : "t";
 
         var localeModule = `
-var day = ${js(locale.day + ',' + locale.abday)};
-var month = ${js(locale.month + ',' + locale.abmonth)};
+var day = ${js(locale.day + "," + locale.abday)};
+var month = ${js(locale.month + "," + locale.abmonth)};
 function round(n) {
   return n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
 }
@@ -206,21 +231,33 @@ exports = {
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
   currency: n => ${currency},
-  distance: n => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
-  speed: n => round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
+  distance: n => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(
+          distanceUnits[locale.distance[0]]
+        )}) + ${js(locale.distance[0])} : round(${unitConv(
+          distanceUnits[locale.distance[1]]
+        )}) + ${js(locale.distance[1])},
+  speed: n => round(${unitConv(speedUnits[locale.speed])}) + ${js(
+          locale.speed
+        )},
   temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
-  translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
+  translate: s => ${
+    locale.trans
+      ? `{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`
+      : `s`
+  },
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
-  meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
+  meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(
+          locale.ampm[1]
+        )},
 };
 `.trim();
 
-        console.log("Locale Module is:",localeModule);
+        console.log("Locale Module is:", localeModule);
         sendCustomizedApp({
-          storage:[
-            {name:"locale", url:"locale.js", content:localeModule}
-          ]
+          storage: [
+            { name: "locale", url: "locale.js", content: localeModule },
+          ],
         });
       });
     </script>

@@ -29,7 +29,7 @@ The value is changed with the first recording operation of the new day.
 
 ### Events
 
-The app charts the last 144 (6/h * 24h) datapoints that have been recorded.
+The app charts the last 144 (6/h \* 24h) datapoints that have been recorded.
 
 If for the current day the 144 events have not been reached the list is padded with
 
@@ -53,7 +53,7 @@ You can download the `bclog` files for your own analysis. They are `CSV` files w
 timestamp,batteryPercentage,temperatureInDegreeC,deviceStates
 ```
 
-with the `deviceStates` resembling a flag set consisting of 
+with the `deviceStates` resembling a flag set consisting of
 
 ```
 const switchableConsumers = {

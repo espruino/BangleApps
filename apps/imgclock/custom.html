@@ -1,11 +1,10 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
   </head>
   <body>
     <div class="container">
-      <div class="columns">
-      </div>
+      <div class="columns"></div>
     </div>
 
     <script src="../../core/lib/customize.js"></script>
@@ -13,13 +12,60 @@
 
     <script>
       var faces = [
-        { img:"122240.png", bpp : 8, x:56, y:20, align: 1, col:"#FFFFFF", name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
-        { img:"122271.png", bpp : 8, x:10, y:125, align: -1, col:"#FFFFFF", name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
-        { img:"thisisfine.png", bpp : 8, x:53, y:5, align: 0, col:"#000000", name:"This is fine.", attrib:"Gunshow #648", attribLink:"https://knowyourmeme.com/memes/this-is-fine", description:"" },
-        { img:"explode.png", bpp : 8, x:0, y:145, align: 0, col:"#FFFFFF", name:"Boom.", attrib:"", attribLink:"", description:"" },
+        {
+          img: "122240.png",
+          bpp: 8,
+          x: 56,
+          y: 20,
+          align: 1,
+          col: "#FFFFFF",
+          name: "Cityscape",
+          attrib: "getwallpapers.com",
+          attribLink: "http://getwallpapers.com/collection/8-bit-wallpaper",
+          description: "",
+        },
+        {
+          img: "122271.png",
+          bpp: 8,
+          x: 10,
+          y: 125,
+          align: -1,
+          col: "#FFFFFF",
+          name: "Sunset",
+          attrib: "getwallpapers.com",
+          attribLink: "http://getwallpapers.com/collection/8-bit-wallpaper",
+          description: "",
+        },
+        {
+          img: "thisisfine.png",
+          bpp: 8,
+          x: 53,
+          y: 5,
+          align: 0,
+          col: "#000000",
+          name: "This is fine.",
+          attrib: "Gunshow #648",
+          attribLink: "https://knowyourmeme.com/memes/this-is-fine",
+          description: "",
+        },
+        {
+          img: "explode.png",
+          bpp: 8,
+          x: 0,
+          y: 145,
+          align: 0,
+          col: "#FFFFFF",
+          name: "Boom.",
+          attrib: "",
+          attribLink: "",
+          description: "",
+        },
       ];
 
-      document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
+      document.querySelector(".columns").innerHTML =
+        faces
+          .map(
+            (face, facenumber) => `
 <div class="column col-6 col-xs-12">
   <div class="card">
     <div class="card-image">
@@ -34,7 +80,10 @@
       <button class="btn btn-primary uploadbutton" face="${facenumber}">Upload</button>
     </div>
   </div>
-</div>`).join("\n")+`
+</div>`
+          )
+          .join("\n") +
+        `
 <div class="column col-6 col-xs-12">
   <div class="card">
     <div class="card-image">
@@ -84,59 +133,67 @@
 `;
 
       var btns = document.getElementsByClassName("uploadbutton");
-      for (var i=0;i<btns.length;i++) {
-      // When the 'upload' button is clicked...
-        btns[i].addEventListener("click", function(btn) {
+      for (var i = 0; i < btns.length; i++) {
+        // When the 'upload' button is clicked...
+        btns[i].addEventListener("click", function (btn) {
           // build app text
           var facenumber = btn.target.getAttribute("face");
           var face;
-          if (facenumber=="custom") {
+          if (facenumber == "custom") {
             var select = document.getElementById("customlocation");
-            var pos = select.options[select.selectedIndex].value.split(",").map(x=>parseInt(x));
+            var pos = select.options[select.selectedIndex].value
+              .split(",")
+              .map((x) => parseInt(x));
             select = document.getElementById("customcolor");
             var col = select.options[select.selectedIndex].value;
             face = {
-              x : pos[0],
-              y : pos[1],
+              x: pos[0],
+              y: pos[1],
               align: pos[2],
-              bpp : document.getElementById('cusom16bit').checked ? 16 : 8,
-              col : col
+              bpp: document.getElementById("cusom16bit").checked ? 16 : 8,
+              col: col,
             };
           } else {
             face = faces[facenumber];
           }
           var faceInfo = {
-            bpp : face.bpp,
-            x : face.x,
-            y : face.y,
-            align : face.align,
-            col : face.col
+            bpp: face.bpp,
+            x: face.x,
+            y: face.y,
+            align: face.align,
+            col: face.col,
           };
-          var imgMode = faceInfo.bpp==16 ? "rgb565" : "web";
+          var imgMode = faceInfo.bpp == 16 ? "rgb565" : "web";
           var img = document.querySelector(`img[face='${facenumber}']`);
-          var imgString = imageconverter.imagetoString(img, {mode:imgMode, output:"raw", compression:false});
+          var imgString = imageconverter.imagetoString(img, {
+            mode: imgMode,
+            output: "raw",
+            compression: false,
+          });
           // send finished app
           sendCustomizedApp({
-            storage:[
-              {name:"imgclock.face.img", content:imgString},
-              {name:"imgclock.face.json", content:JSON.stringify(faceInfo)},
-            ]
+            storage: [
+              { name: "imgclock.face.img", content: imgString },
+              { name: "imgclock.face.json", content: JSON.stringify(faceInfo) },
+            ],
           });
         });
       }
       // Custom image upload
-      document.getElementById('customfile').onchange = function (evt) {
-        var tgt = evt.target || window.event.srcElement, files = tgt.files;
+      document.getElementById("customfile").onchange = function (evt) {
+        var tgt = evt.target || window.event.srcElement,
+          files = tgt.files;
         if (FileReader && files && files.length) {
           var fr = new FileReader();
           fr.onload = function () {
             document.getElementById("customimage").src = fr.result;
-            document.getElementById('customupload').classList.remove("disabled");
-          }
+            document
+              .getElementById("customupload")
+              .classList.remove("disabled");
+          };
           fr.readAsDataURL(files[0]);
         }
-    }
-
+      };
     </script>
   </body>
 </html>

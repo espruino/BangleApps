@@ -18,9 +18,9 @@ This implements the [Bluetooth Time Service](https://www.bluetooth.org/docman/ha
 
 The Bluetooth docs are verbose and hard to read, so here's a rundown of how it works.
 
-* The Bangle advertises service `0x1805`
-* You connect to it, and request service `0x1805` and characteristic `0x2A2B`
-* A 10 byte array is returned:
+- The Bangle advertises service `0x1805`
+- You connect to it, and request service `0x1805` and characteristic `0x2A2B`
+- A 10 byte array is returned:
 
 ```
 [

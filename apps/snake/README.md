@@ -10,4 +10,3 @@ Eat apples and don't bite your tail.
 - BTN1: turn to left
 - BTN2: pause
 - BTN3: turn to right
-

@@ -7,8 +7,8 @@ Also shows total duration snapshot (like a stopwatch, but laid back).
 
 ## Usage
 
-* Click BTN1 to start counting. Counter becomes `0`, duration becomes `00:00.0`
-* Each time you click BTN1, counter is incremented, and you see duration between first and last clicks.
+- Click BTN1 to start counting. Counter becomes `0`, duration becomes `00:00.0`
+- Each time you click BTN1, counter is incremented, and you see duration between first and last clicks.
 
 ## Features
 

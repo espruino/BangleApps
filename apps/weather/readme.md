@@ -2,8 +2,8 @@
 
 This allows your Bangle.js to display weather reports from the Gadgetbridge app on an Android phone.
 
-It adds a widget with a weather pictogram and the temperature.   
-You can view the full report through the app:   
+It adds a widget with a weather pictogram and the temperature.  
+You can view the full report through the app:  
 ![Screenshot](screenshot.png)
 
 ## Setup
@@ -13,8 +13,8 @@ You can view the full report through the app:
 
 ## Settings
 
-* Expiration timespan can be set after which the local weather data is considered as invalid
-* Widget can be hidden
+- Expiration timespan can be set after which the local weather data is considered as invalid
+- Widget can be hidden
 
 ## Controls
 

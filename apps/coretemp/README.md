@@ -9,11 +9,11 @@ The app simply displays these readings on screen.
 
 ## TODO
 
-* Integrate with other tracking/sports apps to log data.
-* Add device selection
-* Provide enable/disable option
-* Check status, add Retry/reconnect
-* Also provide skin temp reading
+- Integrate with other tracking/sports apps to log data.
+- Add device selection
+- Provide enable/disable option
+- Check status, add Retry/reconnect
+- Also provide skin temp reading
 
 ## Creator
 

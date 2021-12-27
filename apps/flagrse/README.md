@@ -46,13 +46,13 @@ to the name of the pin that's connected to the servo motor.
 
 However, as designed:
 
-* Get an [MDBT42Q Breakout board](http://www.espruino.com/MDBT42Q)
-* Connect `GND` to GND (black) of a 3.7v LiPo battery
-* Connect `Vin` to positive (red) of the battery
-* Take a servo motor and:
-  * Connect the Black wire to `GND` (LiPo GND)
-  * Connect the Red wire to `Vin` (LiPo 3.7v)
-  * Connect the White wire to `D14` on the MDBT42Q
+- Get an [MDBT42Q Breakout board](http://www.espruino.com/MDBT42Q)
+- Connect `GND` to GND (black) of a 3.7v LiPo battery
+- Connect `Vin` to positive (red) of the battery
+- Take a servo motor and:
+  - Connect the Black wire to `GND` (LiPo GND)
+  - Connect the Red wire to `Vin` (LiPo 3.7v)
+  - Connect the White wire to `D14` on the MDBT42Q
 
 ## How does it work?
 

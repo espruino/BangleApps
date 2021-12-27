@@ -1,5 +1,4 @@
-App Modules
-===========
+# App Modules
 
 These are modules used by apps - you can use them with:
 

@@ -6,10 +6,9 @@ In addition to the main clock and date in your current location, you can add up 
 
 ## Usage
 
-Provide names and the UTC offsets for up to four other timezones in the app store. These are stored in a json file on your watch. UTC offsets can be decimal (e.g., 5.5 for India). 
+Provide names and the UTC offsets for up to four other timezones in the app store. These are stored in a json file on your watch. UTC offsets can be decimal (e.g., 5.5 for India).
 
 The clock does not handle summer time / daylight saving time changes automatically. If one of your four locations changes its UTC offset, you can simply change the setting in the app store and update. Currently the clock only supports 24 hour time format.
-
 
 ## Requests
 

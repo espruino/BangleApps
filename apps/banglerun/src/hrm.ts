@@ -1,4 +1,4 @@
-import { AppState } from './state';
+import { AppState } from "./state";
 
 interface HrmData {
   bpm: number;
@@ -9,7 +9,7 @@ interface HrmData {
 declare var Bangle: any;
 
 function initHrm(state: AppState) {
-  Bangle.on('HRM', (hrm: HrmData) => updateHrm(state, hrm));
+  Bangle.on("HRM", (hrm: HrmData) => updateHrm(state, hrm));
   Bangle.setHRMPower(1);
 }
 
@@ -20,7 +20,7 @@ function updateHrm(state: AppState, hrm: HrmData) {
 
   const dHr = hrm.bpm - state.hr;
   const hrError = Math.abs(dHr) + 101 - hrm.confidence;
-  const hrGain = (state.hrError / (state.hrError + hrError)) || 0;
+  const hrGain = state.hrError / (state.hrError + hrError) || 0;
 
   state.hr += dHr * hrGain;
   state.hrError += (hrError - state.hrError) * hrGain;

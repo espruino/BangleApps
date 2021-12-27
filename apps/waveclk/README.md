@@ -1,4 +1,3 @@
 # Wave Clock
 
 ![](screenshot.png)
-

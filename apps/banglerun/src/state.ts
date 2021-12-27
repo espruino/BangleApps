@@ -1,7 +1,7 @@
 enum ActivityStatus {
-  Stopped = 'STOP',
-  Paused = 'PAUSE',
-  Running = 'RUN',
+  Stopped = "STOP",
+  Paused = "PAUSE",
+  Running = "RUN",
 }
 
 interface AppState {
@@ -21,11 +21,11 @@ interface AppState {
   // Last fix time
   t: number;
   // Last time we saved log info
-  timeSinceLog : number;
+  timeSinceLog: number;
 
   // HRM data
-  hr: number,
-  hrError: number,
+  hr: number;
+  hrError: number;
 
   // Logger data
   file: File;
@@ -63,7 +63,7 @@ function initState(): AppState {
     y: NaN,
     z: NaN,
     t: NaN,
-    timeSinceLog : 0,
+    timeSinceLog: 0,
 
     hr: 60,
     hrError: 100,
@@ -79,7 +79,7 @@ function initState(): AppState {
     speed: 0,
     steps: 0,
     cadence: 0,
-  }
+  };
 }
 
 export { ActivityStatus, AppState, File, initState };

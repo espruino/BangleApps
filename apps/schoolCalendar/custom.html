@@ -5,7 +5,9 @@
         padding: 0;
         margin: 0;
       }
-      html, body, #map {
+      html,
+      body,
+      #map {
         height: 100%;
         width: 100%;
       }
@@ -13,84 +15,93 @@
         padding: 10px;
         margin: 10px;
         border: 1px solid black;
-        position:absolute;
-        right:0px;bottom:0px;
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
         background-color: rgb(255, 255, 255);
         z-index: 100;
       }
     </style>
-     <link href='fullcalendar/main.css' rel='stylesheet' />
-     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link href="fullcalendar/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
   </head>
   <body>
     <div>
-      <p>Create your events on the week shown. Keep in note that your events repeat weekly.</p>
-      <p>One you have created your events, Click <button id="upload" class="btn btn-primary">Upload</button>.</p>
-      <p>All day events are not supported. A feature that lets you get the calendar from your watch will be added in a future update.</p>
+      <p>
+        Create your events on the week shown. Keep in note that your events
+        repeat weekly.
+      </p>
+      <p>
+        One you have created your events, Click
+        <button id="upload" class="btn btn-primary">Upload</button>.
+      </p>
+      <p>
+        All day events are not supported. A feature that lets you get the
+        calendar from your watch will be added in a future update.
+      </p>
     </div>
-    
-    <script src='fullcalendar/main.js'></script>
+
+    <script src="fullcalendar/main.js"></script>
     <script src="../../core/lib/customize.js"></script>
 
     <script>
       var calendar;
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+      document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
         calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'timeGridWeek',
+          initialView: "timeGridWeek",
           headerToolbar: {
-            left: '',
-            center: 'title',
-            right: 'timeGridWeek,listWeek'
+            left: "",
+            center: "title",
+            right: "timeGridWeek,listWeek",
           },
-        navLinks: true, // can click day/week names to navigate views
-        editable: true,
-        selectable: true,
-        selectMirror: true,
-        nowIndicator: true,
-        editable: true,
-        height: 600,
-        initialDate: '2018-06-03', // will be parsed as local
-        select: function(arg) {
-          var title = prompt('Event Title:');
-          if (title) {
-            calendar.addEvent({
-              title: title,
-              start: arg.start,
-              end: arg.end,
-              allDay: arg.allDay
-            })
-          }
-          calendar.unselect()
-         
-        },
-        eventClick: function(arg) {
-          if (confirm('Are you sure you want to delete this event?')) {
-            arg.event.remove()
-          }
-        },
+          navLinks: true, // can click day/week names to navigate views
+          editable: true,
+          selectable: true,
+          selectMirror: true,
+          nowIndicator: true,
+          editable: true,
+          height: 600,
+          initialDate: "2018-06-03", // will be parsed as local
+          select: function (arg) {
+            var title = prompt("Event Title:");
+            if (title) {
+              calendar.addEvent({
+                title: title,
+                start: arg.start,
+                end: arg.end,
+                allDay: arg.allDay,
+              });
+            }
+            calendar.unselect();
+          },
+          eventClick: function (arg) {
+            if (confirm("Are you sure you want to delete this event?")) {
+              arg.event.remove();
+            }
+          },
         });
         calendar.render();
       });
-      
-        // When the 'upload' button is clicked...
-        document.getElementById("upload").addEventListener("click", function () {
-            //Cacultate data:
-            var calendarEvents = calendar.getEvents();
-            let schedule = []
-            //--------------------
-            for(i=0;i<calendarEvents.length;i++){
-              var calendarEntry = {}
-              calendarEntry['cn'] = calendarEvents[i].title;
-              calendarEntry['dow'] = calendarEvents[i].start.getDate()-3;
-              calendarEntry['sh'] = calendarEvents[i].start.getHours();
-              calendarEntry['sm'] = calendarEvents[i].start.getMinutes();
-              calendarEntry['eh'] = calendarEvents[i].end.getHours();
-              calendarEntry['em'] = calendarEvents[i].end.getMinutes();
-              schedule.push(calendarEntry)
-            }
-            // build the app's text using a templated String
-            var app = `
+
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function () {
+        //Cacultate data:
+        var calendarEvents = calendar.getEvents();
+        let schedule = [];
+        //--------------------
+        for (i = 0; i < calendarEvents.length; i++) {
+          var calendarEntry = {};
+          calendarEntry["cn"] = calendarEvents[i].title;
+          calendarEntry["dow"] = calendarEvents[i].start.getDate() - 3;
+          calendarEntry["sh"] = calendarEvents[i].start.getHours();
+          calendarEntry["sm"] = calendarEvents[i].start.getMinutes();
+          calendarEntry["eh"] = calendarEvents[i].end.getHours();
+          calendarEntry["em"] = calendarEvents[i].end.getMinutes();
+          schedule.push(calendarEntry);
+        }
+        // build the app's text using a templated String
+        var app = `
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg", 2).add(Graphics);
 var file = require("Storage").open("calendarItems.csv","w");
@@ -403,14 +414,14 @@ layout.render(layout.buttons);
 draw();
 file.write(JSON.stringify(schedule));
 `;
-            // send finished app (in addition to contents of app.json)
-            sendCustomizedApp({
-                storage: [
-                    { name: "schoolCalendar.app.js", url: "app.js", content: app },
-                ]
-            });
+        // send finished app (in addition to contents of app.json)
+        sendCustomizedApp({
+          storage: [
+            { name: "schoolCalendar.app.js", url: "app.js", content: app },
+          ],
         });
+      });
     </script>
-    <div id='calendar'></div>
+    <div id="calendar"></div>
   </body>
 </html>

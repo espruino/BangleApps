@@ -1,9 +1,9 @@
 {
-  "//":"British English language translations - the default strings in apps are all english anyway, so no need to have translations for most things",
+  "//": "British English language translations - the default strings in apps are all english anyway, so no need to have translations for most things",
   "GLOBAL": {
-    "//":"Translations that apply for all apps",
+    "//": "Translations that apply for all apps"
   },
   "alarm": {
-    "//":"App-specific overrides",
+    "//": "App-specific overrides"
   }
 }

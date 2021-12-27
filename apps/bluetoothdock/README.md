@@ -10,9 +10,9 @@ highlighted red.
 
 Currently supported devices:
 
-* Mi Flora/other Xiaomi
-* Bluetooth 0x1809 (eg. [Espruino Apps](https://espruino.github.io/EspruinoApps/#bletemp))
-* Espruino Manufacturer Data (0x0590)
+- Mi Flora/other Xiaomi
+- Bluetooth 0x1809 (eg. [Espruino Apps](https://espruino.github.io/EspruinoApps/#bletemp))
+- Espruino Manufacturer Data (0x0590)
 
 In the future it'd be nice to support more types of device in the future!
 
@@ -31,5 +31,5 @@ NRF.setAdvertising({},{
 
 Currently:
 
-* `t` is the temperature (if defined)
-* `t` is the alert status (1 or 0)
+- `t` is the temperature (if defined)
+- `t` is the alert status (1 or 0)

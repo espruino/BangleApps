@@ -1,9 +1,9 @@
-import { ActivityStatus, AppState } from './state';
+import { ActivityStatus, AppState } from "./state";
 
 declare var Bangle: any;
 
 function initStep(state: AppState) {
-  Bangle.on('step', () => updateStep(state));
+  Bangle.on("step", () => updateStep(state));
 }
 
 function updateStep(state: AppState) {

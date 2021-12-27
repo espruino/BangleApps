@@ -20,7 +20,6 @@ When in interactive display mode, the bottom line rotates between the following 
 - Memory usage
 - Firmware version
 
-
 ## Inspirations
 
 - [Bluetooth Dock](https://github.com/espruino/BangleApps/tree/master/apps/bluetoothdock)
@@ -32,11 +31,9 @@ When in interactive display mode, the bottom line rotates between the following 
 
 Icon adapted from [this one](https://publicdomainvectors.org/en/free-clipart/Digital-clock-display-vector-image/10845.html) and [this one](https://publicdomainvectors.org/en/free-clipart/Vector-image-of-power-manager-icon/20141.html) from [Public Domain Vectors](https://publicdomainvectors.org).
 
-
 ## Changelog
 
 - 1.00: First published version. (June 2021)
-
 
 ## Author
 

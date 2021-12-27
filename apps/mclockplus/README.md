@@ -18,4 +18,4 @@ Please leave bug reports and requests by raising an issue [here](https://github.
 
 ## Creator
 
-Sebastian Kauertz  https://github.com/skauertz
+Sebastian Kauertz https://github.com/skauertz

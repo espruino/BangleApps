@@ -25,5 +25,5 @@ See https://www.espruino.com/Bangle.js+Locale for full examples.
 
 Bangle.js has a `locale` library built in that is just a standard
 British English (`en_GB`) localisation - so you can use `locale`
-in your apps without requiring users to have this Language library 
+in your apps without requiring users to have this Language library
 installed.

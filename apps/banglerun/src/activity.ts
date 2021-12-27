@@ -1,6 +1,6 @@
-import { draw } from './display';
-import { initLog } from './log';
-import { ActivityStatus, AppState } from './state';
+import { draw } from "./display";
+import { initLog } from "./log";
+import { ActivityStatus, AppState } from "./state";
 
 function startActivity(state: AppState): void {
   if (state.status === ActivityStatus.Stopped) {

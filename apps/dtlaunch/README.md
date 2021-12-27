@@ -3,6 +3,7 @@
 ![](screenshot.jpg)
 
 In the picture above, the Settings app is selected.
+
 ## Controls- Bangle
 
 **BTN1** - move backward through app icons on a page
@@ -11,7 +12,7 @@ In the picture above, the Settings app is selected.
 
 **BTN3** - move forward through app icons
 
-**Swipe Left** -  move to next page of app icons
+**Swipe Left** - move to next page of app icons
 
 **Swipe Right** - move to previous page of app icons
 
@@ -19,6 +20,6 @@ In the picture above, the Settings app is selected.
 
 **Touch** - icon to select, scond touch launches app
 
-**Swipe Left** -  move to next page of app icons
+**Swipe Left** - move to next page of app icons
 
 **Swipe Right** - move to previous page of app icons

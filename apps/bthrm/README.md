@@ -6,8 +6,8 @@ HRM is requested it searches on Bluetooth for a heart rate monitor, connects, an
 
 This means it's compatible with many Bangle.js apps including:
 
-* [Heart Rate Widget](https://banglejs.com/apps/#widhrt)
-* [Heart Rate Recorder](https://banglejs.com/apps/#heart)
+- [Heart Rate Widget](https://banglejs.com/apps/#widhrt)
+- [Heart Rate Recorder](https://banglejs.com/apps/#heart)
 
 It it NOT COMPATIBLE with [Heart Rate Monitor](https://banglejs.com/apps/#hrm)
 as that requires live sensor data (rather than just BPM readings).
@@ -28,7 +28,7 @@ Heart Rate Service (`180D`) and characteristic (`2A37`).
 
 So far it has been tested on:
 
-* CooSpo Bluetooth Heart Rate Monitor
+- CooSpo Bluetooth Heart Rate Monitor
 
 ## Internals
 
@@ -36,9 +36,9 @@ This replaces `Bangle.setHRMPower` with its own implementation.
 
 ## TODO
 
-* Maybe a `bthrm.settings.js` and app (that calls it) to enable it to be turned on and off
-* A widget to show connection state?
-* Specify a specific device by address?
+- Maybe a `bthrm.settings.js` and app (that calls it) to enable it to be turned on and off
+- A widget to show connection state?
+- Specify a specific device by address?
 
 ## Creator
 

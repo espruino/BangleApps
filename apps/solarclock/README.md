@@ -49,11 +49,7 @@ Around dawn the black sun will turn into the dawn sun with a blue sky background
 
 Around midday the corona will surround the sun
 
-
-
 ![05-midday-view](05-midday-view.png)
-
-
 
 ##### Sunset
 
@@ -66,16 +62,19 @@ At sunset the sun will go sunset red and the surrounding sky with a sunset sky
 Location Change: The clock will change to the appropriate timezone and GPS of the next location by pressing button 3. After all the locations have been selected the first item will be returned to.
 
 ### Button 4 and 5
+
 Button 4 (left side of screen) will move the sun backwards in time and button 5 will move the sun forwards in time
 
 ![07-offsetting-time](07-offsetting-time.png)
 
 ### Button 1
+
 A short press of Button 1 by itself will change the time offset back to 0, making the sun go back to its current position
 A long press (3 seconds+) of Button 1 will request a GPS update to your current position
 
 ## Further Details
-For further details of design and working please visit [The Project Page]( https://adrianwkirk.notion.site/Solar-Clock-a2b6268075a6481686b86ecc2094dc14)
+
+For further details of design and working please visit [The Project Page](https://adrianwkirk.notion.site/Solar-Clock-a2b6268075a6481686b86ecc2094dc14)
 
 ## Requests
 

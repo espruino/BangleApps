@@ -13,10 +13,10 @@ and you can start and stop recordings.
 
 You can record
 
-* **Time** The current time
-* **GPS** GPS Latitude, Longitude and Altitude
-* **Steps** Steps counted by the step counter
-* **HR** Heart rate
+- **Time** The current time
+- **GPS** GPS Latitude, Longitude and Altitude
+- **Steps** Steps counted by the step counter
+- **HR** Heart rate
 
 **Note:** It is possible for other apps to record information using this app
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`

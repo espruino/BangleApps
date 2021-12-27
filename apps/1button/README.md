@@ -1,6 +1,6 @@
 # The One Button tracker
 
-A simple widget that turns the `BTN1` of your Bangle.js into a one-button-tracker that can be used right from the clock face and everywhere else. Record when you're sneezing, yawning, eating, or whatever you think the button should track for you.  
+A simple widget that turns the `BTN1` of your Bangle.js into a one-button-tracker that can be used right from the clock face and everywhere else. Record when you're sneezing, yawning, eating, or whatever you think the button should track for you.
 
 ![](one-button.GIF)
 

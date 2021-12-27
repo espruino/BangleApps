@@ -6,8 +6,8 @@ Get a notification when your battery runs low.
 
 ## Settings:
 
-* Percentage: Warn when battery reaches this level
-* Buzz: Enable/disable buzzer
+- Percentage: Warn when battery reaches this level
+- Buzz: Enable/disable buzzer
 
 ## Creator
 

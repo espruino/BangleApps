@@ -2,22 +2,22 @@
 
 This app allows you to remotely control devices (or anything else you like!) with:
 
-* [Bangle.js](https://www.espruino.com/Bangle.js) (Hackable JavaScript Smartwatch)
-* [EspruinoHub](https://github.com/espruino/EspruinoHub) (Bluetooth Low Energy -> MQTT bridge)
-* [Node-RED](https://nodered.org) (Flow-based programming tool)
+- [Bangle.js](https://www.espruino.com/Bangle.js) (Hackable JavaScript Smartwatch)
+- [EspruinoHub](https://github.com/espruino/EspruinoHub) (Bluetooth Low Energy -> MQTT bridge)
+- [Node-RED](https://nodered.org) (Flow-based programming tool)
 
 ![Demo of Smart Switch app in action](https://raw.githubusercontent.com/wdmtech/BangleApps/add-video/apps/smtswch/demo.gif)
 
-* Swipe right to turn a device ON
-* Swipe left to turn a device OFF
-* BTN1 (top-right) - Previous device (page)
-* BTN3 (bottom-right) - Next device (page)
+- Swipe right to turn a device ON
+- Swipe left to turn a device OFF
+- BTN1 (top-right) - Previous device (page)
+- BTN3 (bottom-right) - Next device (page)
 
-> Currently, devices can only be added/removed/changed by editing them in the app's source code. 
+> Currently, devices can only be added/removed/changed by editing them in the app's source code.
 
 # How to use
 
-First, you'll need a device that supports BLE. 
+First, you'll need a device that supports BLE.
 
 Install EspruinoHub following the directions at [https://github.com/espruino/EspruinoHub](https://github.com/espruino/EspruinoHub)
 
@@ -35,7 +35,7 @@ Replace the topic of the MQTT IN node to use the ID of your Bangle.js device, e.
 
 `/ble/advertise/ec:5a:c1:a7:fc:91/data`
 
-Once you see the MQTT IN node is configured correctly (it says `connected` below the node itself), try swiping in the Smart Switch app, and 
+Once you see the MQTT IN node is configured correctly (it says `connected` below the node itself), try swiping in the Smart Switch app, and
 you should see some data in the Debug node.
 
 The possibilities for switching things on and off via Bangle.js are now endless. Have fun!
@@ -55,7 +55,7 @@ NRF.setAdvertising({
 If you can't see any data in Node-RED after swiping, check to see if your device is advertising by visiting port 1888 of your EspruinoHub instance:
 
 You should see something like the following:
-  
+
 ```
 ec:5a:c1:a7:fc:91 - Bangle.js fc91 (RSSI -83)
     ffff => {"data":"1,1"}
@@ -63,11 +63,11 @@ ec:5a:c1:a7:fc:91 - Bangle.js fc91 (RSSI -83)
 
 # Any comments?
 
-[Tweet me!](https://twitter.com/BillyWhizzkid) 
+[Tweet me!](https://twitter.com/BillyWhizzkid)
 
-# Future 
+# Future
 
 PRs welcome!
 
 [ ] Add an HTML GUI for configuring devices inside the Bangle.js App Loader
-[ ] Allow enable/disable of buzz/beep on change of device state 
+[ ] Allow enable/disable of buzz/beep on change of device state

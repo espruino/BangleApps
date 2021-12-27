@@ -8,18 +8,18 @@ Connects to a [Go Direct Respiration Belt](https://www.vernier.com/product/go-di
 
 In the main menu:
 
-* `Connect` - connect and start displaying respiration
-* `Vib` - Should we vibrate if the breaths per minute (BPM) is above a certain value?
-  * `No`   - don't vibrate
-  * `Calculated`   - vibrate if the app's reading is high. This is based on raw
-  sensor data and it responds quickly but may not be accurate.
-  * `Vernier`   - vibrate if the Vernier sensor's own reading is high. This is
-  more accurate but responds very slowly.
-* `Connect` - connect and start displaying respiration
+- `Connect` - connect and start displaying respiration
+- `Vib` - Should we vibrate if the breaths per minute (BPM) is above a certain value?
+  - `No` - don't vibrate
+  - `Calculated` - vibrate if the app's reading is high. This is based on raw
+    sensor data and it responds quickly but may not be accurate.
+  - `Vernier` - vibrate if the Vernier sensor's own reading is high. This is
+    more accurate but responds very slowly.
+- `Connect` - connect and start displaying respiration
 
 ## TODO
 
-* Logging to a file?
+- Logging to a file?
 
 ## Creator
 

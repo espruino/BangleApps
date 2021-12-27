@@ -2,7 +2,7 @@
 
 A simple widget that shows the on/off status of the compass.
 
-The compass draws around 1mA when on.  Whilst this is not a big draw
+The compass draws around 1mA when on. Whilst this is not a big draw
 on the battery it is still easy to have it switched on and not be
 aware.
 

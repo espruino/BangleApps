@@ -13,7 +13,8 @@ Before uploading the upload page will ask which clock face you like to choose. P
 Once you have chosen your watch face press the upload button and the selection will be uploaded to the watch
 
 ### Button 3
-Button 3 (bottom right button) is used to change the background colour. 
+
+Button 3 (bottom right button) is used to change the background colour.
 
 ## Further Details
 

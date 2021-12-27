@@ -6,9 +6,10 @@ Small app to control DSD Tech BLE relay boards from the watch. I have seen them 
 ![](dsdrelay-pic.jpg)
 
 ## Controls
+
 - buttons 1 and 3 cycle the selection of the currently active channel
-- swipe right turns the selected channel's relay *on*
-- swipe left turns the selected channel's relay *off*
+- swipe right turns the selected channel's relay _on_
+- swipe left turns the selected channel's relay _off_
 
 I only own a 1-relay board, so only the "Ch 1" functionality was tested; the other channels were implemented per the manufacturer's documentation.
 In particular, the method for determining the relay states on app startup for channels 2-4 was mostly an educated guess.

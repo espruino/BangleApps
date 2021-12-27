@@ -4,10 +4,9 @@ A High-contrast, black-on-white or white-on-black clock displaying huge pixel di
 
 ## Usage
 
-* BTN 1 switches between the two modes : black-on-white or white-on-black
-* That's it!
+- BTN 1 switches between the two modes : black-on-white or white-on-black
+- That's it!
 
 ## Issues and Requests
 
 If you have issues, feel free to contact me at https://github.com/peeweek/
-

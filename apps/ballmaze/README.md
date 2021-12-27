@@ -7,7 +7,7 @@ Navigate a ball through a maze by tilting your watch.
 
 ## Usage
 
-Select a maze size to begin the game.   
+Select a maze size to begin the game.  
 Tilt your watch to steer the ball towards the target and advance to the next level.
 
 ## Creator

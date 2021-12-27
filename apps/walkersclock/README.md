@@ -3,7 +3,7 @@
 A larg font watch, displays steps, can switch GPS on/off, displays grid reference
 
 The watch works well with GPSsetup, the Activepedom or Widpedom
-wdigets.  A tiny GPS power widget is waiting in the wings for when
+wdigets. A tiny GPS power widget is waiting in the wings for when
 the v2.09 firware is released.
 
 ## Features
@@ -11,13 +11,13 @@ the v2.09 firware is released.
 - Displays the time in large font
 - Uses BTN1 to select modeline display (eg battery status or switch between setting when in a function mode
 - Uses BTN3 to select the function mode (eg turn on/off GPS, or change GPS display)
-    - two function menus at present
-      GPS Power   = On/Off
-      GPS Display = Grid | Speed Alt
-      when the modeline in CYAN use button BTN1 to switch between options 
+  - two function menus at present
+    GPS Power = On/Off
+    GPS Display = Grid | Speed Alt
+    when the modeline in CYAN use button BTN1 to switch between options
 - Display the current steps if one of the steps widgets is installed
 - Ensures that BTN2 requires a 1.5 second press in order to switch to the launcher
- this is so you dont accidently switch out of the GPS/watch display with you coat sleeve
+  this is so you dont accidently switch out of the GPS/watch display with you coat sleeve
 - Displays the timestamp of the last GPS fix when the GPS is on
 - Buzzes when the GPS aquires a positional satellite fix
 - Displays the current OS map grid reference in a large font
@@ -57,5 +57,6 @@ on the second line of the watch.
 ![](gps_alt.jpg)
 
 ## Future Enhancements
-* Ability to turn on the heart rate monitor and display the rate on the info line
-* Maybe a simple stopwatch capability
+
+- Ability to turn on the heart rate monitor and display the rate on the info line
+- Maybe a simple stopwatch capability

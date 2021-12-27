@@ -12,6 +12,6 @@ Reminiscent of a Telegram or Turing machine tape.
 
 **BTN3** - move forward to the next app icon
 
-**Swipe Left** -  move forward to the next app icon
+**Swipe Left** - move forward to the next app icon
 
 **Swipe Right** - move backwards (to the left) to the previous app

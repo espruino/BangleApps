@@ -6,7 +6,7 @@ A tree-based keyboard, inspired by Tertiary Text on Pebble.
 
 ## Usage
 
-Tap a button to select text. 
+Tap a button to select text.
 Swipe left to right for enter space.
 Swipe right to left to delete.
 

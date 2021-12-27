@@ -18,7 +18,6 @@ The interactive line rotates between the following items:
 - Memory usage
 - Firmware version
 
-
 ## Inspirations
 
 - [CLI Clock](https://github.com/espruino/BangleApps/tree/master/apps/cliock)
@@ -29,11 +28,9 @@ The interactive line rotates between the following items:
 
 Icon adapted from [Public Domain Vectors](https://publicdomainvectors.org/en/free-clipart/Digital-clock-display-vector-image/10845.html).
 
-
 ## Changelog
 
 - 1.00: First published version. (June 2021)
-
 
 ## Author
 

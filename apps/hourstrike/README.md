@@ -22,4 +22,3 @@ This app is slightly different from [Hour Chime](https://github.com/espruino/Ban
 ## Creator
 
 [Weiming Hu](https://weiming-hu.github.io/), using coding from the [Default Alarm](https://github.com/espruino/BangleApps/tree/master/apps/alarm).
-

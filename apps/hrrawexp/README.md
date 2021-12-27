@@ -1,5 +1,4 @@
-Extract hrm raw signal data to CSV file
-=======================================
+# Extract hrm raw signal data to CSV file
 
 Simple app that will run the heart rate monitor for a defined period of time you set at the start.
 

@@ -24,16 +24,16 @@ You are then presented with the workouts menu, use BTN1 to move up the list, and
 
 ### Recording your training
 
-You will now begin moving through the exercises in the workout. You will see the exercise information on the display. 
+You will now begin moving through the exercises in the workout. You will see the exercise information on the display.
 
 ![](buffgym-scrn3.png)
 
 1. At the top is the exercise name, e.g 'Squats'
 2. Next is the weight you must train
-3. In the center is where you record the number of *reps* you completed (more on that shortly)
-4. Below the *reps* value, is the target reps you must try to reach.
+3. In the center is where you record the number of _reps_ you completed (more on that shortly)
+4. Below the _reps_ value, is the target reps you must try to reach.
 5. Below the target reps is the current set you are training, out of the total sets for the exercise.
-6. The *reps* value is used to store what you achieved for the current set, you enter this after you have trained on your current set. To alter this value, use BTN1 to increase the value (it will stop at the maximum required reps) and BTN3 to decreas the value to a minimum of 0 (this is the default value). Pressing BTN2 will confirm your reps
+6. The _reps_ value is used to store what you achieved for the current set, you enter this after you have trained on your current set. To alter this value, use BTN1 to increase the value (it will stop at the maximum required reps) and BTN3 to decreas the value to a minimum of 0 (this is the default value). Pressing BTN2 will confirm your reps
 
 ### Rest timers
 
@@ -50,10 +50,10 @@ Once all exercises are done, you are presented with a pat-on-the-back screen to 
 
 ## Features
 
-* If you successfully complete all reps and sets for an exercise, it will automatically update your weights for next time
-* Has a neat rest timer to make sure you are training optimally
-* Doesn't require a mobile phone, most 'smart watches' are just a visual presentation of the mobile phone app, this runs purley on the watch. So why not leave your phone and its distractions out of the gym!
-* Clear and simple user interface
+- If you successfully complete all reps and sets for an exercise, it will automatically update your weights for next time
+- Has a neat rest timer to make sure you are training optimally
+- Doesn't require a mobile phone, most 'smart watches' are just a visual presentation of the mobile phone app, this runs purley on the watch. So why not leave your phone and its distractions out of the gym!
+- Clear and simple user interface
 
 ## Created by
 

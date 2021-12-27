@@ -23,4 +23,5 @@ Michael Salaverry (github.com/barakplasma)
 
 Michael Salaverry
 with help from https://github.com/IonicaBizau/hebrew-date (MIT license)
+
 <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">[www.flaticon.com](https://www.flaticon.com/premium-icon/calendar_3130060?term=jewish&page=1&position=10&page=1&position=10&related_id=3130060&origin=tag)</a></div>

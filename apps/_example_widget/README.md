@@ -2,7 +2,7 @@
 
 Describe the app...
 
-Add screen shots (if possible) to the app folder and link then  into this file with ![](<name>.png)
+Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
 
 ## Usage
 

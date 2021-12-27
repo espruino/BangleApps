@@ -19,6 +19,6 @@ Values displayed are imperial or metric (depending on locale), cadence is in RPM
 
 # TODO
 
-* Use Layout Library to provide proper Bangle.js 2 support
-* Turn CSC sensor support into a library
-* Support for `Recorder` app, to allow CSC readings to be logged alongside GPS
+- Use Layout Library to provide proper Bangle.js 2 support
+- Turn CSC sensor support into a library
+- Support for `Recorder` app, to allow CSC readings to be logged alongside GPS

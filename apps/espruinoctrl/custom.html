@@ -1,31 +1,37 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../../css/spectre.min.css">
-    <link rel="stylesheet" href="../../css/spectre-exp.min.css">
-    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+    <link rel="stylesheet" href="../../css/spectre-exp.min.css" />
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css" />
     <style>
-    .badgeerror[data-badge]::after { background-color: red; }
+      .badgeerror[data-badge]::after {
+        background-color: red;
+      }
     </style>
   </head>
   <body>
-    <p>Enter the menu items you'd like to see appear in the app below. <code>MAC Address</code> is the MAC address
-    of the device to use. If it isn't specified then a menu will be presented showing available devices.</p>
-    <div style="overflow-x:scroll">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Command</th>
-          <th>MAC Address</th>
-          <th>RX</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-      </tbody>
-    </table>
-  </div>
-    <p><button id="upload" class="btn btn-primary">Upload to Bangle.js</button></p>
+    <p>
+      Enter the menu items you'd like to see appear in the app below.
+      <code>MAC Address</code> is the MAC address of the device to use. If it
+      isn't specified then a menu will be presented showing available devices.
+    </p>
+    <div style="overflow-x: scroll">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Command</th>
+            <th>MAC Address</th>
+            <th>RX</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p>
+      <button id="upload" class="btn btn-primary">Upload to Bangle.js</button>
+    </p>
 
     <script src="../../core/lib/customize.js"></script>
 
@@ -34,30 +40,50 @@
       try {
         options = JSON.parse(localStorage.getItem("espruinoctrl"));
       } catch (e) {}
-      if (!Array.isArray(options))
-        setDefaults();
+      if (!Array.isArray(options)) setDefaults();
 
       function setDefaults() {
         options = [
-          {"title":"Blink LED",cmd:"digitalPulse(LED1,1,100)",mac:"",rx:false},
-          {"title":"Restart",cmd:"load()",mac:"",rx:false},
-          {"title":"process.env",cmd:"print(process.env)",mac:"",rx:true},
-          {"title":"Battery",cmd:"print(`Battery ${E.getBattery()}%`)",mac:"",rx:true},
+          {
+            title: "Blink LED",
+            cmd: "digitalPulse(LED1,1,100)",
+            mac: "",
+            rx: false,
+          },
+          { title: "Restart", cmd: "load()", mac: "", rx: false },
+          {
+            title: "process.env",
+            cmd: "print(process.env)",
+            mac: "",
+            rx: true,
+          },
+          {
+            title: "Battery",
+            cmd: "print(`Battery ${E.getBattery()}%`)",
+            mac: "",
+            rx: true,
+          },
         ];
       }
 
       function changed() {
-        localStorage.setItem("espruinoctrl",JSON.stringify(options));
+        localStorage.setItem("espruinoctrl", JSON.stringify(options));
       }
 
       function isMACValid(mac) {
-        return mac.trim().match(/^[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]$/)!=null;
+        return (
+          mac
+            .trim()
+            .match(
+              /^[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]:[A-Fa-f0-9][A-Fa-f0-9]$/
+            ) != null
+        );
       }
 
       function refresh() {
         var tbody = document.getElementById("tbody");
         tbody.innerHTML = "";
-        options.forEach((option,idx)=>{
+        options.forEach((option, idx) => {
           var tr = document.createElement("tr");
           tr.innerHTML = `
             <td><input type="text" name="title"></td>
@@ -68,20 +94,20 @@
           `;
           var titleInput = tr.children[0].firstChild;
           titleInput.value = option.title;
-          titleInput.addEventListener("change", function(e) {
+          titleInput.addEventListener("change", function (e) {
             option.title = titleInput.value;
             changed();
           });
           var cmdInput = tr.children[1].firstChild;
           cmdInput.value = option.cmd;
-          cmdInput.addEventListener("change", function(e) {
+          cmdInput.addEventListener("change", function (e) {
             option.cmd = cmdInput.value;
             changed();
           });
           var warningspan = tr.children[2].firstChild;
           var macInput = warningspan.firstChild;
           macInput.value = option.mac;
-          macInput.addEventListener("change", function(e) {
+          macInput.addEventListener("change", function (e) {
             if (isMACValid(macInput.value)) {
               warningspan.classList.remove("badge");
               warningspan.classList.remove("badgeerror");
@@ -94,12 +120,12 @@
           });
           var cmdRX = tr.children[3].firstChild.firstChild;
           cmdRX.checked = option.rx;
-          cmdRX.addEventListener("change", function(e) {
+          cmdRX.addEventListener("change", function (e) {
             option.rx = cmdRX.checked;
             changed();
           });
-          tr.children[4].firstChild.addEventListener("click", function() {
-            options.splice(idx,1);
+          tr.children[4].firstChild.addEventListener("click", function () {
+            options.splice(idx, 1);
             changed();
             refresh();
           });
@@ -113,28 +139,33 @@
           <td></td>
           <td><button class="btn btn-action"><i class="icon icon-plus"></i></button></td>
         `;
-        tr.children[2].firstChild.addEventListener("click", function() {
+        tr.children[2].firstChild.addEventListener("click", function () {
           setDefaults();
           changed();
           refresh();
         });
-        tr.children[4].firstChild.addEventListener("click", function() {
-          options.push({"title":"",cmd:"",mac:""});
+        tr.children[4].firstChild.addEventListener("click", function () {
+          options.push({ title: "", cmd: "", mac: "" });
           changed();
           refresh();
         });
         tbody.appendChild(tr);
       }
 
-
       refresh();
-      document.getElementById("upload").addEventListener("click", function() {
+      document.getElementById("upload").addEventListener("click", function () {
         var app = `
 var menu = {
   "" : {title:"Espruino Ctrl"},
-  ${options.filter(o=>o.title.trim()!="").map(o=>
-      `${JSON.stringify(o.title)} : ()=>cmd(${JSON.stringify(o.cmd.trim())},${JSON.stringify(isMACValid(o.mac)?o.mac:undefined)},${!!o.rx})`
-    ).join(",\n  ")},
+  ${options
+    .filter((o) => o.title.trim() != "")
+    .map(
+      (o) =>
+        `${JSON.stringify(o.title)} : ()=>cmd(${JSON.stringify(
+          o.cmd.trim()
+        )},${JSON.stringify(isMACValid(o.mac) ? o.mac : undefined)},${!!o.rx})`
+    )
+    .join(",\n  ")},
   "< Back" : () => load()
 };
 
@@ -265,9 +296,9 @@ function sendCommand(device, text, callback) {
 }
 `;
         sendCustomizedApp({
-          storage:[
-            {name:"espruinoctrl.app.js", url:"app.js", content:app},
-          ]
+          storage: [
+            { name: "espruinoctrl.app.js", url: "app.js", content: app },
+          ],
         });
       });
     </script>

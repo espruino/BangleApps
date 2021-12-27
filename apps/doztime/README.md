@@ -1,5 +1,4 @@
-Dozenal Time
-============
+# Dozenal Time
 
 A dozenal Holocene calendar and a dozenal diurnal clock. For information about them, go to https://dozenal.ae-web.ca/pdf/dozenal-calendar.pdf and https://dozenal.ae-web.ca/pdf/about-short.pdf. They've been in use for some years.
 

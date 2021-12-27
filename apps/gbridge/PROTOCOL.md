@@ -14,8 +14,8 @@ t can be one of "info", "warn", "error"
 { "t": "status", "bat": 30, "volt": 30 }
 ```
 
-* bat is in range 0 to 100
-* volt is optional and should be greater than 0
+- bat is in range 0 to 100
+- volt is optional and should be greater than 0
 
 ## find phone
 
@@ -44,19 +44,19 @@ n can be one of "accept", "end", "incoming", "outcoming", "reject", "start", "ig
 ## react to notifications
 
 Send a response to a notification from phone
- 
+
 ```
-{ 
-  "t": "notify", 
-  "n": "dismiss", 
+{
+  "t": "notify",
+  "n": "dismiss",
   "id": 2,
-  "tel": "+491234", 
+  "tel": "+491234",
   "msg": "message",
 }
 ```
 
-* n can be one of "dismiss", "dismiss all", "open", "mute", "reply"
-* id, tel and message are optional
+- n can be one of "dismiss", "dismiss all", "open", "mute", "reply"
+- id, tel and message are optional
 
 # Phone -> Watch
 
@@ -86,8 +86,8 @@ This event is send when the user skipped a notification
 ## set alarm
 
 ```
-{ 
-  "t": "alarm", 
+{
+  "t": "alarm",
   "d": [
     { "h": 13, "m": 37 },
     { "h": 8, "m": 0 }
@@ -134,9 +134,9 @@ cmd can be one of "", "undefined", "accept", "incoming", "outgoing", "reject", "
 }
 ```
 
-* dur is the duration of the track
-* c is the track count
-* n is the track number
+- dur is the duration of the track
+- c is the track count
+- n is the track number
 
 ## find device
 
@@ -173,6 +173,6 @@ n is the intensity
 }
 ```
 
-* hum is the humidity
-* txt is the weather condition
-* loc is the location
+- hum is the humidity
+- txt is the weather condition
+- loc is the location
