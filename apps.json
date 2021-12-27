@@ -5069,7 +5069,7 @@
     "shortName" : "Tea Timer",
     "version": "1.00",
     "icon": "teatimer.png",
-    "description": "description": "A simple timer. You can easyly set up the time.",
+    "description": "A simple timer. You can easyly set up the time.",
     "supports": ["BANGLEJS2"],
     "tags": "",
     "storage": [
