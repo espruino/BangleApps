@@ -5068,7 +5068,7 @@
     "name": "Time and Life",
     "shortName":"Time and Lfie",
     "icon": "app.png",
-    "version":"0.0.1",
+    "version":"0.1",
     "description": "A simple watchface which displays the time when the screen is tapped and decays according to the rules of Conway's game of life.",
     "type": "clock",
     "tags": "clock",
