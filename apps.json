@@ -5068,7 +5068,7 @@
     "name": "Touch Timer",
     "shortName": "Touch Timer",
     "version": "0.01",
-    "description": "Quickly and easily create a timer with touch-only input. The time caan be easily set with a number pad.",
+    "description": "Quickly and easily create a timer with touch-only input. The time can be easily set with a number pad.",
     "icon": "app.png",
     "tags": "tools",
     "supports": ["BANGLEJS2"],

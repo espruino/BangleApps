@@ -1,6 +1,6 @@
 # Touch Timer
 
-Quickly and easily create a timer with touch-only input. The time caan be easily set with a number pad.
+Quickly and easily create a timer with touch-only input. The time can be easily set with a number pad.
 
 ## How to
 
