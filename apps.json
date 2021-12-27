@@ -5069,6 +5069,7 @@
     "version": "1.00",
     "description": "A simple timer. You can easyly set up the time.",
     "icon": "teatimer.png",
+    "type": "app",
     "tags": "tool",
     "supports": ["BANGLEJS2"],
     "storage": [
