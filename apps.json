@@ -5077,5 +5077,22 @@
       {"name":"colorwheel.app.js","url":"app.js"},
       {"name":"colorwheel.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  { "id": "minimal_clock",
+    "name": "a minimal analog clock",
+    "shortName":"Minimal Clock",
+    "version":"0.01",
+    "description": "a minimal analog clock - just with some hands and no further clock face",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"minimal_clock.app.js","url":"app.js"},
+      {"name":"minimal_clock.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
