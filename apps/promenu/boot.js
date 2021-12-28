@@ -1,6 +1,3 @@
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
 E.showMenu = function(items) {
   function RectRnd(x1,y1,x2,y2,r) {
     pp = [];
@@ -30,7 +27,7 @@ E.showMenu = function(items) {
   var options = items[""];
   if (options) menuItems.splice(menuItems.indexOf(""),1);
   if (!(options instanceof Object)) options = {};
-  options.fontHeight = options.fontHeight||27;
+  options.fontHeight = options.fontHeight||35;
   if (options.selected === undefined)
     options.selected = 0;
   if (!options.fontHeight)
@@ -50,11 +47,11 @@ E.showMenu = function(items) {
       var idx = E.clip(options.selected-(rows>>1),0,menuItems.length-rows);
       if (idx!=l.lastIdx) rowmin=undefined; // redraw all if we scrolled
       l.lastIdx = idx;
-      var iy = y;
+      var iy = y-5;
       g.reset().setFont('6x8',2).setFontAlign(0,-1,0);
       if (options.predraw) options.predraw(g);
       if (rowmin===undefined && options.title) {
-        g.drawString(options.title,(x+x2)/2,y-options.fontHeight);
+        g.drawString(options.title,(x+x2)/2,y-options.fontHeight+5);
         g.drawLine(x,y-7,x2,y-7);
       }
       if (rowmin!==undefined) {
@@ -73,12 +70,18 @@ E.showMenu = function(items) {
         fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : 255,255,255);
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
-        if(loc.translate(name).length >= 15){
-          g.drawString(loc.translate(name).substring(0, 15)+"...",x+8,iy+4);
-        }else if(loc.translate(name).length >= 15 && "object" == typeof item){
-          g.drawString(loc.translate(name).substring(0, 10)+"...",x+8,iy+4);
+        if(loc.translate(name).length >= 10 && "object" == typeof item){
+          var v = item.value;
+          if (item.format) v=item.format(v);
+          v = loc.translate(""+v);
+          g.drawString(loc.translate(name).substring(0, 13-v.length)+"...",x+8,iy+7);
+          console.log("gippo");
         }else{
-          g.drawString(loc.translate(name),x+8,iy+4);
+          if(loc.translate(name).length >= 15){
+            g.drawString(loc.translate(name).substring(0, 15)+"...",x+8,iy+7);
+          }else{
+            g.drawString(loc.translate(name),x+8,iy+7);
+          }
         }
         if ("object" == typeof item) {
           var xo = x2;
@@ -90,7 +93,7 @@ E.showMenu = function(items) {
             g.setColor(g.theme.fgH).drawImage("\x0c\x05\x81\x00 \x07\x00\xF9\xF0\x0E\x00@",xo,iy+(options.fontHeight-10)/2,{scale:2});
           }
           g.setFontAlign(1,-1);
-          g.drawString(v,xo-6,iy+4);
+          g.drawString(v,xo-4,iy+8.5);
         }
         g.setColor(g.theme.fg);
         iy += options.fontHeight;
