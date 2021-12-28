@@ -128,25 +128,25 @@ function printData(key, y){
 
   if(key == "Battery"){
     var bat = E.getBattery();
-    g.drawString("BAT:", 28, y);
-    g.drawString(bat+ "%", 70, y);
+    g.drawString("BAT:", 26, y);
+    g.drawString(bat+ "%", 68, y);
 
   } else if(key == "Steps"){
     var steps = getSteps();
-    g.drawString("STEP:", 28, y);
-    g.drawString(steps, 70, y);
+    g.drawString("STEP:", 26, y);
+    g.drawString(steps, 68, y);
 
   } else if(key == "Temp."){
     var temperature = Math.floor(E.getTemperature());
-    g.drawString("TMP:", 28, y);
-    g.drawString(temperature + "C", 70, y);
+    g.drawString("TMP:", 26, y);
+    g.drawString(temperature + "C", 68, y);
 
   } else if(key == "HRM"){
-    g.drawString("HRM:", 28, y);
-    g.drawString(hrmValue, 70, y);
+    g.drawString("HRM:", 26, y);
+    g.drawString(hrmValue, 68, y);
 
   } else {
-    g.drawString("NOT FOUND", 28, y);
+    g.drawString("NOT FOUND", 26, y);
   }
 }
 
@@ -167,14 +167,14 @@ function drawLock(){
   g.setFontAntonioMedium();
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
-  g.drawString("LCARS", 130, 12);
+  g.drawString("LCARS", 128, 13);
   if(connected){
-    g.drawString("BT-CO", 130, 32);
+    g.drawString("BT-CO", 128, 33);
   } else {
-    g.drawString("BT-NC", 130, 32);
+    g.drawString("BT-NC", 128, 33);
   }
   if(Bangle.isLocked()){
-    g.drawString("LOCK", 130, 52);
+    g.drawString("LOCK", 128, 53);
   }
 }
 
@@ -196,16 +196,15 @@ function drawState(){
       timeInMinutes % 4 == 1 ? iconMars :
       timeInMinutes % 4 == 2 ? iconMoon :
       iconEarth;
-  g.drawImage(iconImg, 120, 118);
+  g.drawImage(iconImg, 118, 107);
 
   // Alarm within symbol
   g.setFontAlign(-1, -1, 0);
   g.setFontAntonioMedium();
-  g.drawString("STATUS", 123, 97);
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
-    g.drawString(getAlarmMinutes(), 120+25, 118+25+1);
+    g.drawString(getAlarmMinutes(), 118+25, 107+25+1);
   }
 }
 
@@ -225,11 +224,12 @@ function drawPosition0(){
   drawLock();
 
   // Write time
+  g.setFontAlign(0, -1, 0);
   g.setColor(cWhite);
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 25, 10);
+  g.drawString(timeStr, 70, 10);
 
   // Write date
   g.setColor(cWhite);
@@ -237,9 +237,10 @@ function drawPosition0(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 28, 56);
+  g.drawString(dayStr, 70, 56);
 
   // Draw data
+  g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
   printData(settings.dataRow1, 97);
   printData(settings.dataRow2, 122);
@@ -296,21 +297,24 @@ function drawPosition1(){
     // Plot step graph
     var data = new Uint16Array(32);
     health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
+    var gridY = parseInt(Math.max.apply(Math, data))-1;
+    gridY = gridY <= 0 ? 1 : gridY;
     require("graph").drawBar(g, data, {
       axes : true,
       minx: 1,
       gridx : 5,
-      gridy : 5,
+      gridy : gridY,
       width : 140,
       height : 50,
       x: 5,
       y: 115
     });
 
+    g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("HRM", 122, 9);
-    g.drawString("STEPS [K]", 90, 96);
+    g.drawString("WEEK HRM", 154, 27);
+    g.drawString("WEEK STEPS [K]", 154, 115);
 
   // Plot day
   } else {
@@ -334,21 +338,23 @@ function drawPosition1(){
     // Plot step graph
     var data = new Uint16Array(24);
     health.readDay(new Date(), h=>data[h.hr]+=h.steps);
+    var gridY = parseInt(Math.max.apply(Math, data)/100)*100;
     require("graph").drawBar(g, data, {
       axes : true,
       minx: 1,
       gridx : 4,
-      gridy : 2000,
+      gridy : gridY,
       width : 140,
       height : 50,
       x: 5,
       y: 115
     });
 
+    g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("HRM [24]", 90, 9);
-    g.drawString("STEPS [24]", 82, 96);
+    g.drawString("DAY HRM", 154, 27);
+    g.drawString("DAY STEPS", 154, 115);
   }
 }
 
