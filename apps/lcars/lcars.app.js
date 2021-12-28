@@ -197,7 +197,7 @@ function drawState(){
       hours % 4 == 1 ? iconMars :
       hours % 4 == 2 ? iconMoon :
       iconEarth;
-  g.drawImage(iconImg, 118, 107);
+  g.drawImage(iconImg, 115, 107);
 
   // Alarm within symbol
   g.setFontAlign(-1, -1, 0);
@@ -205,7 +205,7 @@ function drawState(){
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
-    g.drawString(getAlarmMinutes(), 118+25, 107+25+1);
+    g.drawString(getAlarmMinutes(), 115+25, 107+25+1);
   }
 }
 
