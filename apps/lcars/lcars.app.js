@@ -314,7 +314,7 @@ function drawPosition1(){
     g.setFontAntonioMedium();
     g.setColor(cWhite);
     g.drawString("WEEK HRM", 154, 27);
-    g.drawString("WEEK STEPS [k]", 154, 115);
+    g.drawString("WEEK STEPS [K]", 154, 115);
 
   // Plot day
   } else {
