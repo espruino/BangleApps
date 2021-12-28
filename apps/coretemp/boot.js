@@ -1,5 +1,6 @@
-//If enabled run in the background continuously.
-
+//
+// If enabled in settings run constantly in background
+//
 (function() {
 
 var settings = {};

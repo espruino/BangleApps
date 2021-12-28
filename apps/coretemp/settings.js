@@ -24,9 +24,9 @@
   }
 
   function updateSettings() {
-  require("Storage").write("coretemp.json", settings);
-  if (WIDGETS["sensors"])
-    WIDGETS["sensors"].reload();
+  require("Storage").write("coretemp.json", s);
+  if (WIDGETS["coretemp"])
+    WIDGETS["coretemp"].reload();
   return;
 } 
 
@@ -34,10 +34,10 @@ const menu = {
   '' : {'title' : 'CoreTemp sensor'},
   '< Back' : back,
   'Enabled' : {
-    value : !!settings.enabled,
+    value : !!s.enabled,
     format : v => v ? "Yes" : "No",
     onchange : v => {
-      settings.enabled = v;
+      s.enabled = v;
       updateSettings();
     }
   }

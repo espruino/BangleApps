@@ -31,7 +31,7 @@
     g.reset();
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
-    g.drawImage((count & 1) img1: img0, this.x, this.y);
+    g.drawImage((count & 1) ? img1: img0, this.x, this.y);
   }
 
   // Set a listener to 'blink'

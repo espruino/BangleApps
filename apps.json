@@ -4963,7 +4963,7 @@
   },
   {
     "id": "coretemp",
-    "name": "Core Temp Display",
+    "name": "CoreTemp",
     "version": "0.03",
     "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
