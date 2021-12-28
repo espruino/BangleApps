@@ -67,7 +67,7 @@ E.showMenu = function(items) {
         var name = menuItems[idx];
         var item = items[name];
         var hl = (idx==options.selected && !l.selectEdit);
-        fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : 255,255,255);
+        fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+20);
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
         if(loc.translate(name).length >= 10 && "object" == typeof item){
