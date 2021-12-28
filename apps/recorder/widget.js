@@ -48,7 +48,7 @@
             Bangle.removeListener('GPS', onGPS);
             Bangle.setGPSPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasFix?"#f00":"#888").drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="),x,y)
+          draw : (x,y) => g.setColor(hasFix?"#0ff":"#888").drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="),x,y)
         };
       },
       hrm:function() {
@@ -84,30 +84,29 @@
       },
 
       temp:function() {
-        var temp = 0;
+        var core = 0, skin = 0;
         var hasCore = false;
         function onCore(c) {
-            temp=c.core;
+            core=c.core;
+            skin=c.skin;
             hasCore = true;
         }
         return {
           name : "Core",
-          fields : ["Core"],
+          fields : ["Core","Skin"],
           getValues : () => {
-            var r = [temp];
+            var r = [core,skin];
             return r;
           },
           start : () => {
             hasCore = false;
             Bangle.on('CoreTemp', onCore);
-//            Bangle.setHRMPower(1,"recorder");
           },
           stop : () => {
             hasCore = false;
             Bangle.removeListener('CoreTemp', onCore);
-//            Bangle.setHRMPower(0,"recorder");
           },
-          draw : (x,y) => g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="),x,y)
+          draw : (x,y) => g.setColor(hasCore?"#0f0":"#888").drawImage(atob("DAyBAAHh0js3EuDMA8A8AWBnDj9A8A=="),x,y)
         };
       }, 
       steps:function() {
