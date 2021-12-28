@@ -1,6 +1,6 @@
 # Minimal Analog Clock #
 
-This app probably displays the most basic analog clock one can think of - just
+This app displays the perhaps most basic analog clock one can think of - just
 some clock hands and no clock face.
 
 ![](app-screenshot.png)
