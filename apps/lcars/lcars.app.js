@@ -297,7 +297,7 @@ function drawPosition1(){
     // Plot step graph
     var data = new Uint16Array(32);
     health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
-    var gridY = parseInt(Math.max.apply(Math, data))-1;
+    var gridY = parseInt(Math.max.apply(Math, data)/2);
     gridY = gridY <= 0 ? 1 : gridY;
     require("graph").drawBar(g, data, {
       axes : true,
@@ -314,7 +314,7 @@ function drawPosition1(){
     g.setFontAntonioMedium();
     g.setColor(cWhite);
     g.drawString("WEEK HRM", 154, 27);
-    g.drawString("WEEK STEPS [K]", 154, 115);
+    g.drawString("WEEK STEPS [k]", 154, 115);
 
   // Plot day
   } else {
@@ -338,7 +338,8 @@ function drawPosition1(){
     // Plot step graph
     var data = new Uint16Array(24);
     health.readDay(new Date(), h=>data[h.hr]+=h.steps);
-    var gridY = parseInt(Math.max.apply(Math, data)/100)*100;
+    var gridY = parseInt(Math.max.apply(Math, data)/1000)*1000;
+    gridY = gridY <= 0 ? 1000 : gridY;
     require("graph").drawBar(g, data, {
       axes : true,
       minx: 1,
