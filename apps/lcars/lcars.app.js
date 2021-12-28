@@ -200,13 +200,13 @@ function drawState(){
   g.drawImage(iconImg, 115, 107);
 
   // Alarm within symbol
-  g.setFontAlign(-1, -1, 0);
   g.setFontAntonioMedium();
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
     g.drawString(getAlarmMinutes(), 115+25, 107+25+1);
   }
+  g.setFontAlign(-1, -1, 0);
 }
 
 
@@ -447,6 +447,9 @@ Bangle.on('lcdPower',on=>{
     // health iff the connection state did not change.
     if(connected == NRF.getSecurityStatus().connected) {
       draw();
+    } else {
+      connected = NRF.getSecurityStatus().connected
+      drawLock();
     }
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
