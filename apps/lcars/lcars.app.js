@@ -185,16 +185,17 @@ function drawState(){
 
   g.setColor(cWhite);
   var bat = E.getBattery();
-  var timeInMinutes = getCurrentTimeInMinutes();
+  var current = new Date();
+  var hours = current.getHours();
 
   var iconImg =
       isAlarmEnabled() ? iconAlarm :
       Bangle.isCharging() ? iconCharging :
       bat < 30 ? iconNoBattery :
       Bangle.isGPSOn() ? iconSatellite :
-      timeInMinutes % 4 == 0 ? iconSaturn :
-      timeInMinutes % 4 == 1 ? iconMars :
-      timeInMinutes % 4 == 2 ? iconMoon :
+      hours % 4 == 0 ? iconSaturn :
+      hours % 4 == 1 ? iconMars :
+      hours % 4 == 2 ? iconMoon :
       iconEarth;
   g.drawImage(iconImg, 118, 107);
 
