@@ -72,8 +72,10 @@
     <p>Additional options:</p>
     <input type="checkbox" id="preventIntegerScaling" name="preventIntegerScaling"/>
     <label for="preventIntegerScaling">Prevent integer scaling</label></br>
+    <input type="checkbox" id="preventBrightnessChangeOnTouch" name="preventBrightnessChangeOnTouch"/>
+    <label for="preventBrightnessChangeOnTouch">Prevent brightness change on touch</label></br>
     <input type="checkbox" id="boostBacklight" name="boostBacklight"/>
-    <label for="boostBacklight">Set backlight to max. while QR is shown</label></br>
+    <label for="boostBacklight">Set initial backlight to max. while QR is shown</label></br>
     <input type="checkbox" id="stayOn" name="stayOn"/>
     <label for="stayOn">Do not lock or dim while showing QR</label></br>
     <input type="checkbox" id="hideDescription" name="hideDescription"/>
@@ -287,6 +289,14 @@
             }
             var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
             var app = `var img = ${img};
+${ document.getElementById("preventBrightnessChangeOnTouch").checked ? '' : `var backlight = 0;
+Bangle.on('touch', function(button, xy) {
+  backlight += 0.3;
+  if (backlight > 1) backlight = 0;
+  Bangle.setLCDBrightness(backlight);
+});
+`}
+
 ${document.getElementById("boostBacklight").checked ? 'Bangle.setLCDBrightness(1);' : ''}
 ${document.getElementById("stayOn").checked ? 'Bangle.setLCDTimeout(0);' : ''}
 ${document.getElementById("hideDescription").checked ? '' : `var content = ${JSON.stringify(content)};`}
