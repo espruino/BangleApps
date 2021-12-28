@@ -169,9 +169,9 @@ function drawLock(){
   g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 128, 13);
   if(connected){
-    g.drawString("BT-CO", 128, 33);
+    g.drawString("CONN", 128, 33);
   } else {
-    g.drawString("BT-NC", 128, 33);
+    g.drawString("NOCON", 128, 33);
   }
   if(Bangle.isLocked()){
     g.drawString("LOCK", 128, 53);
