@@ -20,9 +20,9 @@ var corelogo = {
 
 function onCore(c) {
   g.setFontAlign(0, 0);
-  g.clearRect(0, 48 + 48, g.getWidth(), 48 + 48 + 24 * 2);
+  g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 3);
   g.setColor(0xC618); // Light gray
-  g.setFont("6x8", 3).drawString("Core: " + c.core + c.unit, px, 48 + 48);
+  g.setFont("6x8", 3).drawString("Core: " + ((c.core<327)?(c.core + c.unit):'n/a'), px, 48 + 48);
   g.setFont("6x8", 3).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
 }
 

@@ -28,8 +28,16 @@ class CoreSensor {
         this.unit = "C";
       }
 
-      if (flags & 1) this.skin = (dv.buffer[4] * 256 + dv.buffer[3]) / 100;
-      if (flags & 2) this.core = (dv.buffer[2] * 256 + dv.buffer[1]) / 100;
+      if (flags & 1) {
+        this.skin = (dv.buffer[4] * 256 + dv.buffer[3]) / 100;
+      } else {
+        this.skin = 0;
+      }
+      if (flags & 2) {
+        this.core = (dv.buffer[2] * 256 + dv.buffer[1]) / 100;
+      } else {
+        this.core = 0;
+      }
 
       Bangle.emit('CoreTemp',
                   {core : this.core, skin : this.skin, unit : this.unit});
@@ -79,8 +87,8 @@ function connection_setup() {
       })
       .then(function() {
         console.log("Done!");
-//        getSensorBatteryLevel(gatt);
-//        g.reset().clearRect(Bangle.appRect).flip();
+        //        getSensorBatteryLevel(gatt);
+        //        g.reset().clearRect(Bangle.appRect).flip();
       })
       .catch(function(e) {
         console.log(e.toString(), "ERROR");
@@ -89,16 +97,17 @@ function connection_setup() {
 }
 
 function connection_end() {
-  if (gatt != undefined) gatt.disconnect();
+  if (gatt != undefined)
+    gatt.disconnect();
 }
 
-settings = require("Storage").readJSON("coretemp.json",1)||{};
+settings = require("Storage").readJSON("coretemp.json", 1) || {};
 console.log("Settings:");
 console.log(settings);
 
 if (settings.enabled) {
-    connection_setup();
-    NRF.on('disconnect', connection_setup);
+  connection_setup();
+  NRF.on('disconnect', connection_setup);
 }
 
 E.on('kill', () => { connection_end(); });

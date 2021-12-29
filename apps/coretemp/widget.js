@@ -21,12 +21,11 @@
     }
 
     g.drawImage(
-        atob(
-            "GBgBAAHwAHP4A+f8B+4cH+4MH84cPwYcfAf4eAP4+AHi+AAO8AAe8AAe8AAe+AAG+AA4eAA8fAB8PgD4P8b4H/7wB/9gA/8AAP4A"),
-        this.x, this.y);
+        atob("DAyBAAHh0js3EuDMA8A8AWBnDj9A8A=="),
+        this.x+(24-12)/2,this.y+1);
 
     g.setColor(g.theme.fg);
-    g.drawString(core, this.x + 24 / 2, this.y + 19);
+    g.drawString(parseInt(core)+"\n."+parseInt((core*100)%100), this.x + 24 / 2, this.y + 18);
 
     g.setColor(-1);
   }
