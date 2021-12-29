@@ -19,11 +19,15 @@ var corelogo = {
 };
 
 function onCore(c) {
+
+  sz = (process.env.HWVERSION == 1) ? 3 : 2;
+
   g.setFontAlign(0, 0);
   g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 3);
   g.setColor(g.theme.dark ? "#CCC" : "#333"); // gray
-  g.setFont("6x8", 3).drawString("Core: " + ((c.core<327)?(c.core + c.unit):'n/a'), px, 48 + 48);
-  g.setFont("6x8", 3).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
+  g.setFont("6x8", sz).drawString(
+      "Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
+  g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
 }
 
 // Background task will activate once settings are enabled.
@@ -43,10 +47,12 @@ function enableSensor() {
 function drawBackground() {
   g.reset().setFont("6x8", 2).setFontAlign(0, 0);
 
-  g.clearRect(0, 24, g.getWidth(), g.getHeight() - 24);
+  g.setBgColor('#000'); // Put logo on black bg
+  g.clearRect(0, 28, g.getWidth(), 32 + 48);
   g.drawImage(corelogo, px - 146 / 2, 30);
+  g.setBgColor(-1);
 
-  g.drawString("Please wait...\nWaiting for data", g.getWidth() / 2,
+  g.drawString("Please wait...\nWaiting for\ndata", g.getWidth() / 2,
                g.getHeight() / 2 + 16);
 }
 
@@ -66,4 +72,4 @@ if (!settings.enabled) {
   drawBackground();
 }
 
-setWatch(() => { enableSensor(); }, BTN2, {repeat : false});
+setWatch(() => { enableSensor(); }, BTN1, {repeat : false});
