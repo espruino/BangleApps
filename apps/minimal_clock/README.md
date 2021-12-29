@@ -7,6 +7,9 @@ some clock hands and no clock face.
 
 But actually it is almost "stylish" again just because of this simplicity.
 
+This clock also acts as an example for the building blocks found in the author's
+[GitHub repository](https://github.com/rozek/banglejs-2-activities)
+
 ## License ##
 
 [MIT License](LICENSE)
