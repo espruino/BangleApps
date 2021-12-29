@@ -1,6 +1,8 @@
 # Colorful Analog Clock #
 
-This app displays an analog clock with a colorful face.
+This app displays an analog clock with a colorful face. It considers the
+currently configured "theme" (and may therefore look different on your watch
+than shown in the screenshot depending on which theme you prefer).
 
 ![](app-screenshot.png)
 
