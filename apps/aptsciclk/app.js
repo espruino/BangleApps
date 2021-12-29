@@ -121,8 +121,8 @@ var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var drawTimeout;
 
 //warnings
-var curWarning = -1;
 var maxWarning = 9;
+var curWarning = Math.floor(Math.random() * (maxWarning+1));
 
 function buttonPressed(){
   if (curWarning < maxWarning) curWarning += 1;
@@ -235,4 +235,4 @@ setTimeout(function() {
     buttonPressed();
     // draw now
     draw();
-  }, 1000);
+  }, 500);
