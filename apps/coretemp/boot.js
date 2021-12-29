@@ -2,7 +2,7 @@
 // If enabled in settings run constantly in background
 //
 (function() {
-
+var log = function() {};//print
 var settings = {};
 var device;
 var gatt;
@@ -28,8 +28,16 @@ class CoreSensor {
         this.unit = "C";
       }
 
-      if (flags & 1) this.skin = (dv.buffer[4] * 256 + dv.buffer[3]) / 100;
-      if (flags & 2) this.core = (dv.buffer[2] * 256 + dv.buffer[1]) / 100;
+      if (flags & 1) {
+        this.skin = (dv.buffer[4] * 256 + dv.buffer[3]) / 100;
+      } else {
+        this.skin = 0;
+      }
+      if (flags & 2) {
+        this.core = (dv.buffer[2] * 256 + dv.buffer[1]) / 100;
+      } else {
+        this.core = 0;
+      }
 
       Bangle.emit('CoreTemp',
                   {core : this.core, skin : this.skin, unit : this.unit});
@@ -55,11 +63,11 @@ function getSensorBatteryLevel(gatt) {
 }
 
 function connection_setup() {
-  console.log("Scanning for CoreTemp sensor...");
+  log("Scanning for CoreTemp sensor...");
   NRF.requestDevice({timeout : 20000, filters : [ {namePrefix : 'CORE'} ]})
       .then(function(d) {
         device = d;
-        console.log("Found device");
+        log("Found device");
         return device.gatt.connect();
       })
       .then(function(g) {
@@ -78,27 +86,28 @@ function connection_setup() {
         return characteristic.startNotifications();
       })
       .then(function() {
-        console.log("Done!");
-//        getSensorBatteryLevel(gatt);
-//        g.reset().clearRect(Bangle.appRect).flip();
+        log("Done!");
+        //        getSensorBatteryLevel(gatt);
+        //        g.reset().clearRect(Bangle.appRect).flip();
       })
       .catch(function(e) {
-        console.log(e.toString(), "ERROR");
-        console.log(e);
+        log(e.toString(), "ERROR");
+        log(e);
       });
 }
 
 function connection_end() {
-  if (gatt != undefined) gatt.disconnect();
+  if (gatt != undefined)
+    gatt.disconnect();
 }
 
-settings = require("Storage").readJSON("coretemp.json",1)||{};
-console.log("Settings:");
-console.log(settings);
+settings = require("Storage").readJSON("coretemp.json", 1) || {};
+log("Settings:");
+log(settings);
 
 if (settings.enabled) {
-    connection_setup();
-    NRF.on('disconnect', connection_setup);
+  connection_setup();
+  NRF.on('disconnect', connection_setup);
 }
 
 E.on('kill', () => { connection_end(); });
