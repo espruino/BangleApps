@@ -84,16 +84,16 @@
         p.c++;
       }
 
-      g.reset();
+      g.reset();                                 // also loads the current theme
 
       if (pos.tl.c || pos.tr.c) {
         g.setClipRect(0,h-24,w-1,h-1);
-        g.reset();
+        g.reset();                           // also (re)loads the current theme
       }
 
       if (pos.bl.c || pos.br.c) {
         g.setClipRect(0,h-24,w-1,h-1);
-        g.reset();
+        g.reset();                           // also (re)loads the current theme
       }
 
       try {
@@ -199,7 +199,7 @@
     let MinutesAngle = (Minutes/60)            * twoPi - Pi;
     let SecondsAngle = (Seconds/60)            * twoPi - Pi;
 
-    g.setColor('#FFFFFF');
+    g.setColor(g.theme.fg);
 
     transformPolygon(HourHandPolygon, CenterX,CenterY, HoursAngle);
     g.fillPoly(transformedPolygon);
@@ -222,12 +222,8 @@
 
   let Timer;
   function refreshDisplay () {
-    g.clear();
+    g.clear(true);                                   // also loads current theme
 
-    g.setColor(0,0,0);
-    g.fillRect(0,0, ScreenWidth,ScreenHeight);
-
-    g.setBgColor(1,1,1);
     Bangle.drawWidgets();
 
     drawClockFace();
