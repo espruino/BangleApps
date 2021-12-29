@@ -67,7 +67,13 @@ E.showMenu = function(items) {
         var name = menuItems[idx];
         var item = items[name];
         var hl = (idx==options.selected && !l.selectEdit);
-        fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+24);
+        if(g.theme.dark){
+          fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+20);
+          console.log("yippe!o");
+        }else{
+          fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+40);
+          console.log("yippe!");
+        }
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
         if(loc.translate(name).length >= 11 && "object" == typeof item){
@@ -170,4 +176,21 @@ E.showMenu = function(items) {
     else l.select();
   });
   return l;
-}:
+};
+
+E.showMenu({
+    "" : { "title" : "Sample Pro Menu" },
+    "< Back" : () => back(),
+    'On or off?': {
+      value:100,  // !! converts undefined to false
+      format: v => v?"On":"Off",
+      onchange: v => {
+      }
+    },
+    'How Many?': {
+      min: 0, max: 10,
+      format: v => v?"On":"Off",
+      onchange: v => {
+      }
+    },
+  });
