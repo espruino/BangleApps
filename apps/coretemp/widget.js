@@ -1,42 +1,40 @@
-// TODO Change to generic multiple sensor
+// TODO Change to a generic multiple sensor widget?
+
 (() => {
   var settings = {};
   var count = 0;
-
-  var img0 = {
-    width : 24,
-    height : 24,
-    bpp : 4,
-    transparent : 0,
-    buffer :
-        require("heatshrink")
-            .decompress(atob(
-                "AA0IxGIBAtms0ABQOIwAKFsAWCDAkGBYQUCBwIKEBYgmBBYoHBC4oKDBAILECwRSFDQQLBsBLDBYg4CNYoKBwALGDQYLCQpALaF45jBBZBfJMIZ3GZgwkGZYibCDIMGWoILDWYbBDd4gMFWoTvFYYgAFEYYHDA=="))
-  };
-  var img1 = {
-    width : 24,
-    height : 24,
-    bpp : 3,
-    transparent : 0,
-    buffer :
-        require("heatshrink")
-            .decompress(atob(
-                "AAkCpMgAwYFBiVJkgHCAoMAyQIBwAIBAoMEyEABAUkBAkEBAdICIkBBAIdBBAcJEwo1BBAI4EAoJBEKAMAiAIEAAIvBLgosBBCYjFJQIIFKwJHFBARZFBwRrCNAKbCC4J0CpApFR4REGBAWShIxDPQSSCYogvEA="))
-  };
+  var core = 0;
 
   // draw your widget
   function draw() {
     if (!settings.enabled)
       return;
     g.reset();
+    g.setFont("6x8", 1).setFontAlign(0, 0);
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
-    g.drawImage((count & 1) ? img1: img0, this.x, this.y);
+
+    if (count & 1) {
+      g.setColor("#0f0"); // green
+    } else {
+      g.setColor(g.theme.dark ? "#333" : "#CCC"); // off = grey
+    }
+
+    g.drawImage(
+        atob(
+            "GBgBAAHwAHP4A+f8B+4cH+4MH84cPwYcfAf4eAP4+AHi+AAO8AAe8AAe8AAe+AAG+AA4eAA8fAB8PgD4P8b4H/7wB/9gA/8AAP4A"),
+        this.x, this.y);
+
+    g.setColor(g.theme.fg);
+    g.drawString(core, this.x + 24 / 2, this.y + 19);
+
+    g.setColor(-1);
   }
 
   // Set a listener to 'blink'
   function onTemp(temp) {
     count = count + 1;
+    core = temp.core;
     WIDGETS["coretemp"].draw();
   }
 
