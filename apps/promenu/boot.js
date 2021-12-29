@@ -69,10 +69,8 @@ E.showMenu = function(items) {
         var hl = (idx==options.selected && !l.selectEdit);
         if(g.theme.dark){
           fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+20);
-          console.log("yippe!o");
         }else{
           fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+40);
-          console.log("yippe!");
         }
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
@@ -81,7 +79,6 @@ E.showMenu = function(items) {
           if (item.format) v=item.format(v);
           v = loc.translate(""+v);
           g.drawString(loc.translate(name).substring(0, 15-v.length)+"...",x+8,iy+7);
-          console.log("gippo");
         }else{
           if(loc.translate(name).length >= 15){
             g.drawString(loc.translate(name).substring(0, 15)+"...",x+8,iy+7);
@@ -177,20 +174,3 @@ E.showMenu = function(items) {
   });
   return l;
 };
-
-E.showMenu({
-    "" : { "title" : "Sample Pro Menu" },
-    "< Back" : () => back(),
-    'On or off?': {
-      value:100,  // !! converts undefined to false
-      format: v => v?"On":"Off",
-      onchange: v => {
-      }
-    },
-    'How Many?': {
-      min: 0, max: 10,
-      format: v => v?"On":"Off",
-      onchange: v => {
-      }
-    },
-  });
