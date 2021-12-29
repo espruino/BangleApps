@@ -1,8 +1,8 @@
 # Simple Analog Clock #
 
 This app displays a simple, yet stylish, analog clock. It considers the
-currently configured "theme" (and may therefore look different on your watch
-than shown in the screenshot depending on which theme you prefer).
+currently configured "theme" (and may therefore look different than shown in
+the screenshot on your watch depending on which theme you prefer).
 
 ![](app-screenshot.png)
 
