@@ -5079,8 +5079,8 @@
     ]
   },
   { "id": "minimal_clock",
-    "name": "minimal Analog Clock",
-    "shortName":"Minimal Analog Clock",
+    "name": "Minimal Analog Clock",
+    "shortName":"Minimal Clock",
     "version":"0.01",
     "description": "a minimal analog clock - just with some hands and no further clock face",
     "icon": "app-icon.png",
