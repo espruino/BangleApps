@@ -67,14 +67,14 @@ E.showMenu = function(items) {
         var name = menuItems[idx];
         var item = items[name];
         var hl = (idx==options.selected && !l.selectEdit);
-        fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+30);
+        fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+24);
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
-        if(loc.translate(name).length >= 10 && "object" == typeof item){
+        if(loc.translate(name).length >= 11 && "object" == typeof item){
           var v = item.value;
           if (item.format) v=item.format(v);
           v = loc.translate(""+v);
-          g.drawString(loc.translate(name).substring(0, 13-v.length)+"...",x+8,iy+7);
+          g.drawString(loc.translate(name).substring(0, 15-v.length)+"...",x+8,iy+7);
           console.log("gippo");
         }else{
           if(loc.translate(name).length >= 15){
@@ -170,4 +170,4 @@ E.showMenu = function(items) {
     else l.select();
   });
   return l;
-};
+}:
