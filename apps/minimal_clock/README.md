@@ -1,11 +1,11 @@
 # Minimal Analog Clock #
 
 This app displays the perhaps most basic analog clock one can think of - just
-some clock hands and no clock face.
+some clock hands and no clock face. It considers the currently configured
+"theme" (and may therefore look different on your watch than shown in the
+screenshot depending on which theme you prefer).
 
 ![](app-screenshot.png)
-
-But actually it is almost "stylish" again just because of this simplicity.
 
 This clock also acts as an example for the building blocks found in the author's
 [GitHub repository](https://github.com/rozek/banglejs-2-activities)
