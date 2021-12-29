@@ -2,7 +2,7 @@
 // If enabled in settings run constantly in background
 //
 (function() {
-
+var log = function() {};//print
 var settings = {};
 var device;
 var gatt;
@@ -63,11 +63,11 @@ function getSensorBatteryLevel(gatt) {
 }
 
 function connection_setup() {
-  console.log("Scanning for CoreTemp sensor...");
+  log("Scanning for CoreTemp sensor...");
   NRF.requestDevice({timeout : 20000, filters : [ {namePrefix : 'CORE'} ]})
       .then(function(d) {
         device = d;
-        console.log("Found device");
+        log("Found device");
         return device.gatt.connect();
       })
       .then(function(g) {
@@ -86,13 +86,13 @@ function connection_setup() {
         return characteristic.startNotifications();
       })
       .then(function() {
-        console.log("Done!");
+        log("Done!");
         //        getSensorBatteryLevel(gatt);
         //        g.reset().clearRect(Bangle.appRect).flip();
       })
       .catch(function(e) {
-        console.log(e.toString(), "ERROR");
-        console.log(e);
+        log(e.toString(), "ERROR");
+        log(e);
       });
 }
 
@@ -102,8 +102,8 @@ function connection_end() {
 }
 
 settings = require("Storage").readJSON("coretemp.json", 1) || {};
-console.log("Settings:");
-console.log(settings);
+log("Settings:");
+log(settings);
 
 if (settings.enabled) {
   connection_setup();
