@@ -70,7 +70,7 @@ E.showMenu = function(items) {
         if(g.theme.dark){
           fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+20);
         }else{
-          fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+40);
+          fillRectRnd(x+2,iy+1,x2,iy+options.fontHeight-3,7,hl ? g.theme.bgH  : g.theme.bg+10);
         }
         g.setColor(hl ? g.theme.fgH : g.theme.fg);
         g.setFontAlign(-1,-1);
