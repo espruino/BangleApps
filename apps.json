@@ -5072,6 +5072,7 @@
     "type": "boot",
     "tags": "system",
     "supports": ["BANGLEJS"],
+    "screenshots": [{"url":"pro-menu-screenshot.png"}],
     "storage": [
       {"name":"promenu.boot.js","url":"boot.js"},
       {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
