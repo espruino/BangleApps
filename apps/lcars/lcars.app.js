@@ -129,21 +129,21 @@ function printData(key, y){
   if(key == "Battery"){
     var bat = E.getBattery();
     g.drawString("BAT:", 26, y);
-    g.drawString(bat+ "%", 68, y);
+    g.drawString(bat+ "%", 65, y);
 
   } else if(key == "Steps"){
     var steps = getSteps();
     g.drawString("STEP:", 26, y);
-    g.drawString(steps, 68, y);
+    g.drawString(steps, 65, y);
 
   } else if(key == "Temp."){
     var temperature = Math.floor(E.getTemperature());
     g.drawString("TMP:", 26, y);
-    g.drawString(temperature + "C", 68, y);
+    g.drawString(temperature + "C", 65, y);
 
   } else if(key == "HRM"){
     g.drawString("HRM:", 26, y);
-    g.drawString(hrmValue, 68, y);
+    g.drawString(hrmValue, 65, y);
 
   } else {
     g.drawString("NOT FOUND", 26, y);
@@ -197,14 +197,14 @@ function drawState(){
       hours % 4 == 1 ? iconMars :
       hours % 4 == 2 ? iconMoon :
       iconEarth;
-  g.drawImage(iconImg, 115, 107);
+  g.drawImage(iconImg, 117, 107);
 
   // Alarm within symbol
   g.setFontAntonioMedium();
   if(isAlarmEnabled() > 0){
     g.setFontAlign(0, 0, 0);
     g.setColor(cWhite);
-    g.drawString(getAlarmMinutes(), 115+25, 107+25+1);
+    g.drawString(getAlarmMinutes(), 117+25, 107+25+1);
   }
   g.setFontAlign(-1, -1, 0);
 }
