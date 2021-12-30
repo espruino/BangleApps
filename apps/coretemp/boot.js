@@ -64,7 +64,7 @@ function getSensorBatteryLevel(gatt) {
 
 function connection_setup() {
   log("Scanning for CoreTemp sensor...");
-  NRF.requestDevice({timeout : 20000, filters : [ {namePrefix : 'CORE'} ]})
+  NRF.requestDevice({active:true,timeout : 20000, filters : [ {namePrefix : 'CORE'} ]})
       .then(function(d) {
         device = d;
         log("Found device");
@@ -88,7 +88,6 @@ function connection_setup() {
       .then(function() {
         log("Done!");
         //        getSensorBatteryLevel(gatt);
-        //        g.reset().clearRect(Bangle.appRect).flip();
       })
       .catch(function(e) {
         log(e.toString(), "ERROR");
@@ -112,6 +111,4 @@ if (settings.enabled) {
 
 E.on('kill', () => { connection_end(); });
 
-// Bangle.loadWidgets();
-// Bangle.drawWidgets();
 })();
