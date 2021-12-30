@@ -1,17 +1,17 @@
 // Simply listen for core events and show data
 
-Bangle.setLCDPower(1);
-Bangle.setLCDTimeout(0);
-
 var btm = g.getHeight() - 1;
 var px = g.getWidth() / 2;
+
+// Dark or light logo
+var col = (process.env.HWVERSION == 1) ? 65535 : 0;
 
 var corelogo = {
   width : 146,
   height : 48,
   bpp : 4,
   transparent : 0,
-  palette : new Uint16Array([ 65535, 65535, 2854, 1419 ]),
+  palette : new Uint16Array([ col, col, 2854, 1419 ]),
   buffer :
       require("heatshrink")
           .decompress(atob(
@@ -19,12 +19,12 @@ var corelogo = {
 };
 
 function onCore(c) {
-
+  // Large or small font
   sz = (process.env.HWVERSION == 1) ? 3 : 2;
 
   g.setFontAlign(0, 0);
-  g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 3);
-  g.setColor(g.theme.dark ? "#CCC" : "#333"); // gray
+  g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 4);
+  g.setColor(g.theme.dark ? "#CCC" : "#333");  // gray
   g.setFont("6x8", sz).drawString(
       "Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
   g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
@@ -38,38 +38,29 @@ function enableSensor() {
     settings.enabled = true;
     require("Storage").write("coretemp.json", settings);
 
-    drawBackground();
-    Bangle.loadWidgets();
-    Bangle.drawWidgets();
+    drawBackground("Waiting for\ndata...");
   }
 }
 
-function drawBackground() {
+function drawBackground(message) {
+  g.clear();
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
   g.reset().setFont("6x8", 2).setFontAlign(0, 0);
-
-  g.setBgColor('#000'); // Put logo on black bg
-  g.clearRect(0, 28, g.getWidth(), 32 + 48);
   g.drawImage(corelogo, px - 146 / 2, 30);
-  g.setBgColor(-1);
-
-  g.drawString("Please wait...\nWaiting for\ndata", g.getWidth() / 2,
-               g.getHeight() / 2 + 16);
+  g.drawString(message, g.getWidth() / 2, g.getHeight() / 2 + 16);
 }
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 Bangle.on('CoreTemp', onCore);
 
 settings = require("Storage").readJSON("coretemp.json", 1) || {};
-g.clearRect(0, 24, g.getWidth(), g.getHeight() - 24);
 
 if (!settings.enabled) {
-  g.reset().setFont("6x8", 2).setFontAlign(0, 0);
-  g.drawString("Sensor disabled,\nBTN2 to enable.", g.getWidth() / 2,
-               g.getHeight() / 2 - 16);
+  drawBackground("Sensor disabled\nBTN" +
+                 ((process.env.HWVERSION == 1) ? '2' : '1') + " to enable");
 } else {
-  drawBackground();
+  drawBackground("Waiting for\ndata...");
 }
 
-setWatch(() => { enableSensor(); }, BTN1, {repeat : false});
+setWatch(() => { enableSensor(); }, (process.env.HWVERSION == 1) ? BTN2 : BTN1,
+         {repeat : false});
