@@ -272,17 +272,17 @@
 
   ScreenSet['MainScreen'] = new Layout({
     type:'v', c:[
-      Label('Current Theme', { font:'12x20', pad:8, bold:true, filly:1 }),
+      Label('Current Theme', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
-        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'NormalDemo' }),
       ] },
       { type:'h', c:[
-        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'AccentedDemo' }),
       ] },
       { type:'h', c:[
-        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'HilitedDemo' }),
       ] },
       { height:4 },
@@ -303,36 +303,36 @@
 
   ScreenSet['DetailSelectionScreen'] = new Layout({
     type:'v', c:[
-      Label('Configure Detail', { font:'12x20', pad:8, bold:true, filly:1 }),
+      Label('Configure Detail', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
-        Label('fg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('fg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('fg') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fgView',
           onTouch:() => configureDetail('fg') }),
         { width:20 },
-        Label('bg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('bg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('bg') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bgView',
           onTouch:() => configureDetail('bg') }),
       ] },
       { type:'h', c:[
-        Label('fg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('fg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('fg2') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fg2View',
           onTouch:() => configureDetail('fg2') }),
         { width:20 },
-        Label('bg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('bg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('bg2') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bg2View',
           onTouch:() => configureDetail('bg2') }),
       ] },
       { type:'h', c:[
-        Label('fgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('fgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('fgH') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fgHView',
           onTouch:() => configureDetail('fgH') }),
         { width:20 },
-        Label('bgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth,
+        Label('bgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
           onTouch:() => configureDetail('bgH') }),
         ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bgHView',
           onTouch:() => configureDetail('bgH') }),
@@ -348,7 +348,7 @@
 
   ScreenSet['ColorSelectionScreen'] = new Layout({
     type:'v', c:[
-      Label('Choose Color', { font:'12x20', pad:8, bold:true, filly:1 }),
+      Label('Choose Color', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
         ColorSelectionView('#000000',{ width:40, height:40, pad:2, id:'black',
           onTouch:() => selectColor(0,0,0) }),
@@ -381,17 +381,17 @@
 
   ScreenSet['ThemePreviewScreen'] = new Layout({
     type:'v', c:[
-      Label('Theme Preview', { font:'12x20', pad:8, bold:true, filly:1 }),
+      Label('Theme Preview', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
-        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Test ',{ font:'12x20', pad:2, id:'NormalTest' }),
       ] },
       { type:'h', c:[
-        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Test ',{ font:'12x20', pad:2, id:'AccentedTest' }),
       ] },
       { type:'h', c:[
-        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0 }),
+        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
         ColorDemo(' Test ',{ font:'12x20', pad:2, id:'HilitedTest' }),
       ] },
       { height:4 },
