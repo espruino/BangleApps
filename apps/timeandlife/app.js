@@ -145,15 +145,6 @@ const nextDataAddr = E.getAddressOf(nextData, true);
 
 let lastPaused = new Date();
 
-const forAllElements = fn => {
-  let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
-  numbers.forEach(i => {
-    numbers.forEach(j => {
-      fn(i, j);
-    });
-  });
-};
-
 // Conway's game of life
 // if < 2 neighbours, set off
 // if 2 or 3 neighbours, set on
