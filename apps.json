@@ -5135,7 +5135,7 @@
     "version":"0.01",
     "description": "a comfortable way to configure theme colors",
     "icon": "app-icon.png",
-    "type": "tool",
+    "type": "app",
     "tags": "tool",
     "supports" : ["BANGLEJS2"],
     "allow_emulator": true,
