@@ -20,7 +20,11 @@ var corelogo = {
 
 function onCore(c) {
   // Large or small font
+<<<<<<< HEAD
   var sz = ((process.env.HWVERSION == 1) ? 3 : 2);
+=======
+  sz = (process.env.HWVERSION == 1) ? 3 : 2;
+>>>>>>> 9acf9c89e2a1e1bef8716d44661cf6dcf3ff232b
 
   g.setFontAlign(0, 0);
   g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 4);
@@ -56,7 +60,11 @@ Bangle.on('CoreTemp', onCore);
 settings = require("Storage").readJSON("coretemp.json", 1) || {};
 
 if (!settings.enabled) {
+<<<<<<< HEAD
   drawBackground("Sensor off\nBTN" +
+=======
+  drawBackground("Sensor disabled\nBTN" +
+>>>>>>> 9acf9c89e2a1e1bef8716d44661cf6dcf3ff232b
                  ((process.env.HWVERSION == 1) ? '2' : '1') + " to enable");
 } else {
   drawBackground("Waiting for\ndata...");
