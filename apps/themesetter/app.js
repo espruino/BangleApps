@@ -52,48 +52,38 @@
     return Result;
   }
 
-/**** drawRoundedRect ****/
+  if (g.drawRoundedRect == null) {
+    g.drawRoundedRect = function drawRoundedRect (x1,y1, x2,y2, r) {
+      let x,y;
+      if (x1 > x2) { x = x1; x1 = x2; x2 = x; }
+      if (y1 > y2) { y = y1; y1 = y2; y2 = y; }
 
-  const roundedRectSines = [
-    0, Math.sin(15*Math.PI/180), Math.sin(30*Math.PI/180),
-    Math.sin(45*Math.PI/180), Math.sin(60*Math.PI/180),
-    Math.sin(75*Math.PI/180), 1
-  ];
-  const roundedRectPoly = Array(56);
+      r = Math.min(r || 0, (x2-x1)/2, (y2-y1)/2);
 
-  function prepareRoundedRect (x1,y1, x2,y2, r) {
-    r = Math.min(r || 0, Math.abs(x1-x2), Math.abs(y1-y2));
+      let cx1 = x1+r, cx2 = x2-r;
+      let cy1 = y1+r, cy2 = y2-r;
 
-    for (let i = 0, j = 0; i <= 6; i++, j += 2) {
-      roundedRectPoly[j]   = x1 + r - r*roundedRectSines[6-i];
-      roundedRectPoly[j+1] = y1 + r - r*roundedRectSines[i];
-    }
+      this.drawLine(cx1,y1, cx2,y1);
+      this.drawLine(cx1,y2, cx2,y2);
+      this.drawLine(x1,cy1, x1,cy2);
+      this.drawLine(x2,cy1, x2,cy2);
 
-    for (let i = 0, j = 14; i <= 6; i++, j += 2) {
-      roundedRectPoly[j]   = x2 - r + r*roundedRectSines[i];
-      roundedRectPoly[j+1] = y1 + r - r*roundedRectSines[6-i];
-    }
+      x = r; y = 0;
 
-    for (let i = 0, j = 28; i <= 6; i++, j += 2) {
-      roundedRectPoly[j]   = x2 - r + r*roundedRectSines[6-i];
-      roundedRectPoly[j+1] = y2 - r + r*roundedRectSines[i];
-    }
+      let dx,dy, Error = 0;
+      while (y <= x) {
+        dy = 1 + 2*y; y++; Error -= dy;
+        if (Error < 0) {
+          dx = 1 - 2*x; x--; Error -= dx;
+        }
 
-    for (let i = 0, j = 42; i <= 6; i++, j += 2) {
-      roundedRectPoly[j]   = x1 + r - r*roundedRectSines[i];
-      roundedRectPoly[j+1] = y2 - r + r*roundedRectSines[6-i];
-    }
+        this.setPixel(cx1 - x, cy1 - y);  this.setPixel(cx1 - y, cy1 - x);
+        this.setPixel(cx2 + x, cy1 - y);  this.setPixel(cx2 + y, cy1 - x);
+        this.setPixel(cx2 + x, cy2 + y);  this.setPixel(cx2 + y, cy2 + x);
+        this.setPixel(cx1 - x, cy2 + y);  this.setPixel(cx1 - y, cy2 + x);
+      }
+    };
   }
-
-  g.drawRoundedRect = function drawRoundedRect (x1,y1, x2,y2, r) {
-    prepareRoundedRect(x1,y1, x2,y2, r);
-    this.drawPoly(roundedRectPoly,true);
-  };
-
-  g.fillRoundedRect = function fillRoundedRect (x1,y1, x2,y2, r) {
-    prepareRoundedRect(x1,y1, x2,y2, r);
-    this.fillPoly(roundedRectPoly,true);
-  };
 
 
 /**** Button ****/
@@ -297,7 +287,9 @@
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Configure', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:4,
+        Button('Exit',   { font:'12x20', col:'#000000', bgCol:'#FFFFFF', width:halfWidth, pad:4,
+          onTouch:() => load() }),
+        Button('Config', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', width:halfWidth, pad:4,
           onTouch:() => gotoScreen('DetailSelectionScreen') })
       ], filly:1 }
     ]
