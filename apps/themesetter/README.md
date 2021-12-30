@@ -1,8 +1,8 @@
 # Theme Setter #
 
 This little tool allows you to configure the global theme of all Bangle.js apps
-(provided that they do not override the global settings) in a more comfortable
-way than through the settings menu.
+(provided that they do not override global settings) in a more comfortable way
+than through the settings menu.
 
 ![](ThemeSetter-MainScreen.png)
 ![](ThemeSetter-DetailSelectionScreen.png)
