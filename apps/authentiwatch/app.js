@@ -1,4 +1,5 @@
-const tokenentryheight = 46;
+const tokenextraheight = 16;
+var tokendigitsheight = 30;
 // Hash functions
 const crypto = require("crypto");
 const algos = {
@@ -43,9 +44,6 @@ function b32decode(seedstr) {
         bitcount -= 8;
       }
     }
-  }
-  if (bitcount > 0) {
-    retstr += String.fromCharCode(buf << (8 - bitcount));
   }
   var retbuf = new Uint8Array(retstr.length);
   for (i in retstr) {
@@ -117,27 +115,31 @@ function drawToken(id, r) {
   var y1 = r.y;
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
-  var adj, sz;
+  var adj, lbl, sz;
   g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
                 Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
+  lbl = tokens[id].label.substr(0, 10);
   if (id == state.curtoken) {
     // current token
     g.setColor(g.theme.fgH);
     g.setBgColor(g.theme.bgH);
-    g.setFont("Vector", 16);
+    g.setFont("Vector", tokenextraheight);
     // center just below top line
     g.setFontAlign(0, -1, 0);
     adj = y1;
   } else {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
-    g.setFont("Vector", 30);
+    sz = tokendigitsheight;
+    do {
+      g.setFont("Vector", sz--);
+    } while (g.stringWidth(lbl) > r.w);
     // center in box
     g.setFontAlign(0, 0, 0);
     adj = (y1 + y2) / 2;
   }
   g.clearRect(x1, y1, x2, y2);
-  g.drawString(tokens[id].label.substr(0, 10), (x1 + x2) / 2, adj, false);
+  g.drawString(lbl, (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
@@ -148,14 +150,14 @@ function drawToken(id, r) {
       // counter - draw triangle as swipe hint
       let yc = (y1 + y2) / 2;
       g.fillPoly([0, yc, 10, yc - 10, 10, yc + 10, 0, yc]);
-      adj = 10;
+      adj = 12;
     }
     // digits just below label
-    sz = 30;
+    sz = tokendigitsheight;
     do {
       g.setFont("Vector", sz--);
     } while (g.stringWidth(state.otp) > (r.w - adj));
-    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + 16, false);
+    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
   }
   // shaded lines top and bottom
   g.setColor(0.5, 0.5, 0.5);
@@ -196,15 +198,15 @@ function draw() {
   }
   if (tokens.length > 0) {
     var drewcur = false;
-    var id = Math.floor(state.listy / tokenentryheight);
-    var y = id * tokenentryheight + Bangle.appRect.y - state.listy;
+    var id = Math.floor(state.listy / (tokendigitsheight + tokenextraheight));
+    var y = id * (tokendigitsheight + tokenextraheight) + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
-      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenentryheight});
+      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:(tokendigitsheight + tokenextraheight)});
       if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
       id += 1;
-      y += tokenentryheight;
+      y += (tokendigitsheight + tokenextraheight);
     }
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
@@ -226,7 +228,7 @@ function draw() {
       state.nexttime = 0;
     }
   } else {
-    g.setFont("Vector", 30);
+    g.setFont("Vector", tokendigitsheight);
     g.setFontAlign(0, 0, 0);
     g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
@@ -238,18 +240,18 @@ function draw() {
 
 function onTouch(zone, e) {
   if (e) {
-    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
+    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / (tokendigitsheight + tokenextraheight));
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
       if (id != -1) {
-        var y = id * tokenentryheight - state.listy;
+        var y = id * (tokendigitsheight + tokenextraheight) - state.listy;
         if (y < 0) {
           state.listy += y;
           y = 0;
         }
-        y += tokenentryheight;
+        y += (tokendigitsheight + tokenextraheight);
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
@@ -266,12 +268,15 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
+  var newy = Math.min(state.listy - e.dy, tokens.length * (tokendigitsheight + tokenextraheight) - Bangle.appRect.h);
   state.listy = Math.max(0, newy);
   draw();
 }
 
 function onSwipe(e) {
+  if (e == 1) {
+    Bangle.showLauncher();
+  }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
     let newsettings={tokens:tokens,misc:settings.misc};
@@ -296,7 +301,7 @@ function bangle1Btn(e) {
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
     var fakee = {};
-    fakee.y = state.curtoken * tokenentryheight - state.listy + Bangle.appRect.y;
+    fakee.y = state.curtoken * (tokendigitsheight + tokenextraheight) - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
