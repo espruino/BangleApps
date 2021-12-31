@@ -11,6 +11,7 @@
 * Uses pedometer widget to get latest step count
 * Dependant apps are installed when Rebble installs
 * Uses the whole screen, widgets are made invisible but still run in the background
+* The icon is James Dean - 'Rebel Without a Cause'
 
 ![](screenshot_rebble.png)
 ![](screenshot_rebble2.png)
