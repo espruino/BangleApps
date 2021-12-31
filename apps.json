@@ -5062,5 +5062,21 @@
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
+  },
+  { "id": "sleepwid",
+    "name": "Sleep Widget",
+    "shortName": "Sleep",
+    "version":"0.01",
+    "description": "Completely clears the screen when locked. May save battery life.",
+    "icon": "widget.png",  
+    "type": "app",
+    "tags": "widget",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"sleepwid.wid.js","url":"widget.js"},
+      {"name":"sleepwid.app.js","url":"app.js"},
+      {"name":"sleepwid.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]
