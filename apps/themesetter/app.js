@@ -38,17 +38,19 @@
       }
     }
 
-    let Result = Object.assign({}, Options || {}, {
+    let Result = Object.assign((
+      Options == null ? {} : Object.assign({}, Options.common || {}, Options)
+    ), {
       type:'custom', render:renderLabel, label:Text || ''
     });
       let TextMetrics;
-      if (! Options.width || ! Options.height) {
-        if (Options.font != null) { g.setFont(Options.font); }
+      if (! Result.width || ! Result.height) {
+        if (Result.font != null) { g.setFont(Result.font); }
         TextMetrics = g.stringMetrics(Result.label);
       }
 
-      Result.width  = Options.width  || TextMetrics.width  + 2*(Options.pad || 0);
-      Result.height = Options.height || TextMetrics.height + 2*(Options.pad || 0);
+      Result.width  = Result.width  || TextMetrics.width  + 2*(Result.pad || 0);
+      Result.height = Result.height || TextMetrics.height + 2*(Result.pad || 0);
     return Result;
   }
 
@@ -106,17 +108,19 @@
       g.drawString(Details.label, x+halfWidth+1,y+halfHeight+1);
     }
 
-    let Result = Object.assign({}, Options || {}, {
+    let Result = Object.assign((
+      Options == null ? {} : Object.assign({}, Options.common || {}, Options)
+    ), {
       type:'custom', render:renderButton, label:Text || 'Tap'
     });
       let TextMetrics;
-      if (! Options.width || ! Options.height) {
+      if (! Result.width || ! Result.height) {
         if (Options.font != null) { g.setFont(Options.font); }
         TextMetrics = g.stringMetrics(Result.label);
       }
 
-      Result.width  = Options.width  || TextMetrics.width  + 2*10 + 2*(Options.pad || 0);
-      Result.height = Options.height || TextMetrics.height + 2*5 + 2*(Options.pad || 0);
+      Result.width  = Result.width  || TextMetrics.width + 2*10 + 2*(Result.pad || 0);
+      Result.height = Result.height || TextMetrics.height + 2*5 + 2*(Result.pad || 0);
     return Result;
   }
 
@@ -138,17 +142,19 @@
       g.drawString(Details.label, x+halfWidth,y+halfHeight);
     }
 
-    let Result = Object.assign({}, Options || {}, {
+    let Result = Object.assign((
+      Options == null ? {} : Object.assign({}, Options.common || {}, Options)
+    ), {
       type:'custom', render:renderDemo, label:Text || 'Test'
     });
       let TextMetrics;
-      if (! Options.width || ! Options.height) {
-        if (Options.font != null) { g.setFont(Options.font); }
+      if (! Result.width || ! Result.height) {
+        if (Result.font != null) { g.setFont(Result.font); }
         TextMetrics = g.stringMetrics(Result.label);
       }
 
-      Result.width  = Options.width  || TextMetrics.width  + 2*2 + 2*(Options.pad || 0);
-      Result.height = Options.height || TextMetrics.height + 2*2 + 2*(Options.pad || 0);
+      Result.width  = Result.width  || TextMetrics.width  + 2*2 + 2*(Result.pad || 0);
+      Result.height = Result.height || TextMetrics.height + 2*2 + 2*(Result.pad || 0);
     return Result;
   }
 
@@ -168,11 +174,13 @@
       g.fillRect(x+Padding+2, y+Padding+2, x+Width-Padding-3, y+Height-Padding-3);
     }
 
-    let Result = Object.assign({}, Options || {}, {
+    let Result = Object.assign((
+      Options == null ? {} : Object.assign({}, Options.common || {}, Options)
+    ), {
       type:'custom', render:renderColorView, col:Color
     });
-      Result.width  = Math.max(10, Options.width  || 10) + 2*(Options.pad || 0);
-      Result.height = Math.max(10, Options.height || 10) + 2*(Options.pad || 0);
+      Result.width  = Math.max(10, Result.width  || 10) + 2*(Result.pad || 0);
+      Result.height = Math.max(10, Result.height || 10) + 2*(Result.pad || 0);
     return Result;
   }
 
@@ -200,11 +208,13 @@
       g.fillRect(x+Padding+5, y+Padding+5, x+Width-Padding-6, y+Height-Padding-6);
     }
 
-    let Result = Object.assign({}, Options || {}, {
+    let Result = Object.assign((
+      Options == null ? {} : Object.assign({}, Options.common || {}, Options)
+    ), {
       type:'custom', render:renderColorView, col:Color
     });
-      Result.width  = Math.max(10, Options.width  || 10) + 2*(Options.pad || 0);
-      Result.height = Math.max(10, Options.height || 10) + 2*(Options.pad || 0);
+      Result.width  = Math.max(10, Result.width  || 10) + 2*(Result.pad || 0);
+      Result.height = Math.max(10, Result.height || 10) + 2*(Result.pad || 0);
     return Result;
   }
 
@@ -270,27 +280,31 @@
     g.stringWidth('Normal '), g.stringWidth('Accented '), g.stringWidth('Hilighted ')
   );
 
+  let StdFont         = { font:'12x20' };
+  let legible         = Object.assign({ col:'#000000', bgCol:'#FFFFFF' }, StdFont);
+  let leftAligned     = Object.assign({ halign:-1, valign:0 }, legible);
+  let MainLabel       = Object.assign({ pad:4, width:leftColumnWidth }, leftAligned);
+  let halfWidthButton = Object.assign({ pad:4, width:halfWidth }, legible);
+
   ScreenSet['MainScreen'] = new Layout({
     type:'v', c:[
-      Label('Current Theme', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
+      Label('Current Theme', { common:legible, pad:8, bold:true, filly:1 }),
       { type:'h', c:[
-        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'NormalDemo' }),
+        Label('Normal',    { common:MainLabel }),
+        ColorDemo(' Demo ',{ common:StdFont, pad:2, id:'NormalDemo' }),
       ] },
       { type:'h', c:[
-        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'AccentedDemo' }),
+        Label('Accented',  { common:MainLabel }),
+        ColorDemo(' Demo ',{ common:StdFont, pad:2, id:'AccentedDemo' }),
       ] },
       { type:'h', c:[
-        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Demo ',{ font:'12x20', pad:2, id:'HilitedDemo' }),
+        Label('Hilighted', { common:MainLabel }),
+        ColorDemo(' Demo ',{ common:StdFont, pad:2, id:'HilitedDemo' }),
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Exit',   { font:'12x20', col:'#000000', bgCol:'#FFFFFF', width:halfWidth, pad:4,
-          onTouch:() => load() }),
-        Button('Config', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', width:halfWidth, pad:4,
-          onTouch:() => gotoScreen('DetailSelectionScreen') })
+        Button('Exit',   { common:halfWidthButton, onTouch:() => load() }),
+        Button('Config', { common:halfWidthButton, onTouch:() => gotoScreen('DetailSelectionScreen') })
       ], filly:1 }
     ]
   });
@@ -301,103 +315,91 @@
   );
   let LabelHeight = g.stringMetrics('FgH').height;
 
+  let DetailLabel  = Object.assign({ pad:4, width:LabelWidth }, leftAligned);
+  let DetailView   = { width:30, height:LabelHeight, pad:2 };
+
   ScreenSet['DetailSelectionScreen'] = new Layout({
     type:'v', c:[
       Label('Configure Detail', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
-        Label('fg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('fg') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fgView',
-          onTouch:() => configureDetail('fg') }),
+        Label('fg',  { common:DetailLabel, onTouch:() => configureDetail('fg') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('fg'), id:'fgView' }),
         { width:20 },
-        Label('bg',  { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('bg') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bgView',
-          onTouch:() => configureDetail('bg') }),
+        Label('bg',  { common:DetailLabel, onTouch:() => configureDetail('bg') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('bg'), id:'bgView' }),
       ] },
       { type:'h', c:[
-        Label('fg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('fg2') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fg2View',
-          onTouch:() => configureDetail('fg2') }),
+        Label('fg2', { common:DetailLabel, onTouch:() => configureDetail('fg2') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('fg2'), id:'fg2View' }),
         { width:20 },
-        Label('bg2', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('bg2') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bg2View',
-          onTouch:() => configureDetail('bg2') }),
+        Label('bg2', { common:DetailLabel, onTouch:() => configureDetail('bg2') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('bg2'), id:'bg2View' }),
       ] },
       { type:'h', c:[
-        Label('fgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('fgH') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'fgHView',
-          onTouch:() => configureDetail('fgH') }),
+        Label('fgH', { common:DetailLabel, onTouch:() => configureDetail('fgH') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('fgH'), id:'fgHView' }),
         { width:20 },
-        Label('bgH', { halign:-1, valign:0, font:'12x20', pad:4, width:LabelWidth, col:'#000000', bgCol:'#FFFFFF',
-          onTouch:() => configureDetail('bgH') }),
-        ColorView(0, { width:30, height:LabelHeight, pad:2, id:'bgHView',
-          onTouch:() => configureDetail('bgH') }),
+        Label('bgH', { common:DetailLabel, onTouch:() => configureDetail('bgH') }),
+        ColorView(0, { common:DetailView,  onTouch:() => configureDetail('bgH'), id:'bgHView' }),
       ] },
       { type:'h', c:[
-        Button('Save',   { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:4, width:halfWidth,
-          onTouch:() => { applyChanges(); gotoScreen('MainScreen'); } }),
-        Button('Cancel', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:4, width:halfWidth,
-          onTouch:() => gotoScreen('MainScreen') })
+        Button('Save',   { common:halfWidthButton, onTouch:() => { applyChanges(); gotoScreen('MainScreen'); } }),
+        Button('Cancel', { common:halfWidthButton, onTouch:() => gotoScreen('MainScreen') })
       ], filly:1 },
     ]
   });
+
+  let StdSelectionView = { width:40, height:40, pad:2 };
 
   ScreenSet['ColorSelectionScreen'] = new Layout({
     type:'v', c:[
       Label('Choose Color', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
       { type:'h', c:[
-        ColorSelectionView('#000000',{ width:40, height:40, pad:2, id:'black',
+        ColorSelectionView('#000000',{ common:StdSelectionView, id:'black',
           onTouch:() => selectColor(0,0,0) }),
-        ColorSelectionView('#FF0000',{ width:40, height:40, pad:2, id:'red',
+        ColorSelectionView('#FF0000',{ common:StdSelectionView, id:'red',
           onTouch:() => selectColor(1,0,0) }),
-        ColorSelectionView('#00FF00',{ width:40, height:40, pad:2, id:'green',
+        ColorSelectionView('#00FF00',{ common:StdSelectionView, id:'green',
           onTouch:() => selectColor(0,1,0) }),
-        ColorSelectionView('#0000FF',{ width:40, height:40, pad:2, id:'blue',
+        ColorSelectionView('#0000FF',{ common:StdSelectionView, id:'blue',
           onTouch:() => selectColor(0,0,1) }),
       ] },
       { type:'h', c:[
-        ColorSelectionView('#FFFFFF',{ width:40, height:40, pad:2, id:'white',
+        ColorSelectionView('#FFFFFF',{ common:StdSelectionView, id:'white',
           onTouch:() => selectColor(1,1,1) }),
-        ColorSelectionView('#FFFF00',{ width:40, height:40, pad:2, id:'yellow',
+        ColorSelectionView('#FFFF00',{ common:StdSelectionView, id:'yellow',
           onTouch:() => selectColor(1,1,0) }),
-        ColorSelectionView('#FF00FF',{ width:40, height:40, pad:2, id:'magenta',
+        ColorSelectionView('#FF00FF',{ common:StdSelectionView, id:'magenta',
           onTouch:() => selectColor(1,0,1) }),
-        ColorSelectionView('#00FFFF',{ width:40, height:40, pad:2, id:'cyan',
+        ColorSelectionView('#00FFFF',{ common:StdSelectionView, id:'cyan',
           onTouch:() => selectColor(0,1,1) }),
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Back',    { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:2, width:halfWidth,
-          onTouch:() => gotoScreen('DetailSelectionScreen') }),
-        Button('Preview', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:2, width:halfWidth,
-          onTouch:() => gotoScreen('ThemePreviewScreen') })
+        Button('Back',    { common:halfWidthButton, onTouch:() => gotoScreen('DetailSelectionScreen') }),
+        Button('Preview', { common:halfWidthButton, onTouch:() => gotoScreen('ThemePreviewScreen') })
       ], filly:1 },
     ]
   });
 
   ScreenSet['ThemePreviewScreen'] = new Layout({
     type:'v', c:[
-      Label('Theme Preview', { font:'12x20', pad:8, col:'#000000', bgCol:'#FFFFFF', bold:true, filly:1 }),
+      Label('Theme Preview', { common:legible, bold:true, filly:1 }),
       { type:'h', c:[
-        Label('Normal',    { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Test ',{ font:'12x20', pad:2, id:'NormalTest' }),
+        Label('Normal',    { common:MainLabel }),
+        ColorDemo(' Test ',{ common:StdFont, pad:2, id:'NormalTest' }),
       ] },
       { type:'h', c:[
-        Label('Accented',  { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Test ',{ font:'12x20', pad:2, id:'AccentedTest' }),
+        Label('Accented',  { common:MainLabel }),
+        ColorDemo(' Test ',{ common:StdFont, pad:2, id:'AccentedTest' }),
       ] },
       { type:'h', c:[
-        Label('Hilighted', { font:'12x20', pad:4, width:leftColumnWidth, halign:-1, valign:0, col:'#000000', bgCol:'#FFFFFF' }),
-        ColorDemo(' Test ',{ font:'12x20', pad:2, id:'HilitedTest' }),
+        Label('Hilighted', { common:MainLabel }),
+        ColorDemo(' Test ',{ common:StdFont, pad:2, id:'HilitedTest' }),
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Back', { font:'12x20', col:'#000000', bgCol:'#FFFFFF', pad:4,
-          onTouch:() => gotoScreen('ColorSelectionScreen') })
+        Button('Back', { common:legible, pad:4, onTouch:() => gotoScreen('ColorSelectionScreen') })
       ], filly:1 }
     ]
   });
