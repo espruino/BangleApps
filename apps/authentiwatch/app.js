@@ -277,6 +277,9 @@ function onDrag(e) {
 }
 
 function onSwipe(e) {
+  if (e == 1) {
+    Bangle.showLauncher();
+  }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
     let newsettings={tokens:tokens,misc:settings.misc};
