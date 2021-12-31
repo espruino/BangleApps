@@ -45,9 +45,6 @@ function b32decode(seedstr) {
       }
     }
   }
-  if (bitcount > 0) {
-    retstr += String.fromCharCode(buf << (8 - bitcount));
-  }
   var retbuf = new Uint8Array(retstr.length);
   for (i in retstr) {
     retbuf[i] = retstr.charCodeAt(i);
