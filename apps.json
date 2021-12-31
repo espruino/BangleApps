@@ -4382,7 +4382,7 @@
   {
     "id": "gpstouch",
     "name": "GPS Touch",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A touch based GPS watch, shows OS map reference",
     "icon": "gpstouch.png",
     "screenshots": [{"url":"screenshot4.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot1.png"}],
