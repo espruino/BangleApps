@@ -16,3 +16,7 @@ See [GitHub](https://github.com/rozek/banglejs-2-activities) for details.
 ## License ##
 
 [MIT License](LICENSE)
+
+## Credits ##
+
+The icon for this app was taken from [icons8.com](https://icons8.com/).
