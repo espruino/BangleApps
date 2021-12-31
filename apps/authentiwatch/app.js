@@ -275,7 +275,7 @@ function onDrag(e) {
 
 function onSwipe(e) {
   if (e == 1) {
-    Bangle.showLauncher();
+    exitApp();
   }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
