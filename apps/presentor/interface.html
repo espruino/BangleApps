@@ -149,6 +149,7 @@
         for (let i = 0; i < jparts.length; i++) {
           addFormPPart(jparts[i]);
         }
+        addFormPPart(); // add empty element on startup
       }
 
       function load() {
@@ -255,7 +256,6 @@
 
       function onInit() {
         load();
-        addFormPPart(); // add empty element on startup
       }
       // load from watch first.
       // let qq = `[{"subject":"Hello","minutes":55,"seconds":4,"notes":""},{"subject":"dsfafds","minutes":4,"seconds":33,"notes":"fdasdfsafasfsd"},{"subject":"dsadsf","minutes":0,"seconds":4,"notes":""},{"subject":"sdasf","minutes":0,"seconds":0,"notes":""}]`;
