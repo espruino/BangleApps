@@ -5067,7 +5067,7 @@
     "id": "slash",
     "name": "Slash Watch",
     "shortName":"Slash",
-    "icon": "app.png",
+    "icon": "slash.png",
     "version":"0.01",
     "description": "Slash Watch based on Pebble watch face by Nikki.",
     "tags": "clock",
