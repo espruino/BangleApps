@@ -49,7 +49,7 @@
         width: 45%;
       }
       .pp-order {
-        width: calc(100% / 14);
+        width: calc(150% / 14);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -65,7 +65,7 @@
         width: calc(200% / 14);
       }
       .pp-notes {
-        width: calc(750% / 14);
+        width: calc(700% / 14);
       }
       input {
         height: 1.5rem;
@@ -253,11 +253,15 @@
 
       document.getElementById('loader').style.display = 'none';
 
+      function onInit() {
+        load();
+        addFormPPart(); // add empty element on startup
+      }
       // load from watch first.
       // let qq = `[{"subject":"Hello","minutes":55,"seconds":4,"notes":""},{"subject":"dsfafds","minutes":4,"seconds":33,"notes":"fdasdfsafasfsd"},{"subject":"dsadsf","minutes":0,"seconds":4,"notes":""},{"subject":"sdasf","minutes":0,"seconds":0,"notes":""}]`;
       // loadJSON(qq);
-      load();
-      addFormPPart(); // load empty element on startup
+      
+
 
     </script>
   </body>
