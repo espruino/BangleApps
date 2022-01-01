@@ -61,7 +61,9 @@ function draw() {
   // Convert to 12hr time mode
   if (is12Hour && hour > 12) {
     hour = hour - 12;
-    hour = "0" + hour;
+    if (hour < 10) {
+      hour = "0" + hour;
+    }
   } else if (hour == 0) {
     hour = 12;
   }
