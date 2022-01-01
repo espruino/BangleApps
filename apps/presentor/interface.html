@@ -119,7 +119,11 @@
       }
 
       function getJSON() {
-        let ret = [];
+        let ret = {
+          pparts: [],
+          sversion: 2.2
+        }
+        let jparts = [];
         let pparts = subber.children;
         for (let i = 0; i < pparts.length; i++) {
           let rpart = {};
@@ -129,8 +133,9 @@
           rpart.minutes = ppart.getElementsByClassName('pp-timer')[0].children[0].value | 0;
           rpart.seconds = ppart.getElementsByClassName('pp-timer')[0].children[2].value | 0;
           rpart.notes   = ppart.getElementsByClassName('pp-notes')[0].value;
-          ret.push(rpart);
+          jparts.push(rpart);
         }
+        ret.pparts = jparts;
         return JSON.stringify(ret);
       }
 
@@ -145,7 +150,8 @@
 
       function loadJSON(str) {
         cmpStr = str;
-        let jparts = JSON.parse(str);
+        let settings = JSON.parse(str);
+        let jparts = settings.pparts;
         for (let i = 0; i < jparts.length; i++) {
           addFormPPart(jparts[i]);
         }
