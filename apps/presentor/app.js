@@ -1,8 +1,7 @@
-// Presentor by 7kasper
-// Licensed under MIT.
-// Version 2.1
+// Presentor by 7kasper (Kasper Müller)
+// Version 2.2
 
-const MouseReport = new Uint8Array([
+const SpecialReport = new Uint8Array([
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x02,                    // USAGE (Mouse)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -74,17 +73,28 @@ const MouseButton = {
 
 const kb = require("ble_hid_keyboard");
 
-function drawMain() {
-  g.clear();
-  E.showMessage('Presentor');
-}
+const Layout = require("Layout");
+const Locale = require("locale");
+let mainLayout = new Layout( {
+  type:"v", c: [
+    {type: "h", c: [
+      {type:"txt", font:"10%", label:"12:00", id:"time" },
+      {type:"txt", font:"10%", label:"99:99", id:"timer" },
+    ]},
+    {type:"txt", font:"6x8", label:"The Date", id:"date" }
+  ]
+}, {lazy:true});
 
-let HIDenabled = true;
+let settings = require("Storage").readJSON('presentor.json');
+let HIDenabled = false;
+
+// Application variables
 let lastx = 0;
 let lasty = 0;
 let timeoutId = -1;
 let holding = false;
 let timeoutHolding = -1;
+let timeoutDraw = -1;
 
 let homeRoll = 0;
 let homePitch = 0;
@@ -97,7 +107,31 @@ let clearToSend = true;
 let mttl = 0;
 let cttl = 0;
 
-NRF.setServices(undefined, { hid : MouseReport });
+
+function drawMainFrame() {
+  var d = new Date();
+  // update time and date
+  mainLayout.time.label = require("locale").time(d,1);
+  mainLayout.date.label = require("locale").date(d);
+  mainLayout.render();
+  // schedule a draw for the next minute
+  if (timeoutDraw != -1) clearTimeout(timeoutDraw);
+  timeoutDraw = setTimeout(function() {
+    timeoutDraw = -1;
+    drawMainFrame();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function drawMain() {
+  g.clear();
+  mainLayout.forgetLazyState();
+  drawMainFrame();
+  // mainLayout.render();
+  // E.showMessage('Presentor');
+}
+
+NRF.setServices(undefined, { hid : SpecialReport });
+// TODO: figure out how to detect HID.
 NRF.on('HID', function() {
   HIDenabled = true;
 });
@@ -112,9 +146,9 @@ function moveMouse(x,y,b,wheel,hwheel,callback) {
   });
 }
 
-function getSign(x) {
-  return ((x > 0) - (x < 0)) || +x;
-}
+// function getSign(x) {
+//   return ((x > 0) - (x < 0)) || +x;
+// }
 
 function scroll(wheel,hwheel,callback) {
   moveMouse(0,0,0,wheel,hwheel,callback);
