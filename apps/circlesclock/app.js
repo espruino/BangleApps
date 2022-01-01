@@ -102,7 +102,8 @@ function drawHeartRate() {
   g.fillCircle(w2, h3, radiusOuter);
 
   if (hrtValue != undefined && hrtValue > 0) {
-    const percent = hrtValue / settings.maxHR;
+    const minHR = 40;
+    const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
     drawGauge(w2, h3, percent, colorRed);
   }
 
@@ -166,6 +167,7 @@ function drawGauge(cx, cy, percent, color) {
   var i = 0;
   var r = radiusInner + 3;
 
+  if (percent <= 0) return;
   if (percent > 1) percent = 1;
 
   var startrot = -offset;
