@@ -135,7 +135,12 @@
       }
 
       function save() {
-        cmpStr = getJSON();
+        let savestr = getJSON();
+        Util.showModal('Saving...');
+        Puck.write(`\x10require('Storage').writeJSON(${JSON.stringify('presentor.json')},${savestr})\n`,()=>{
+          Util.hideModal();
+        });
+        cmpStr = savestr;
       }
 
       function loadJSON(str) {
@@ -144,6 +149,14 @@
         for (let i = 0; i < jparts.length; i++) {
           addFormPPart(jparts[i]);
         }
+      }
+
+      function load() {
+        Util.showModal('Loading...');
+        Puck.eval(`require('Storage').readJSON(${JSON.stringify('presentor.json')})`,data => {
+          Util.hideModal();
+          loadJSON(data);
+        });
       }
 
       function addFormPPart(partData = {}) {
@@ -241,8 +254,9 @@
       document.getElementById('loader').style.display = 'none';
 
       // load from watch first.
-      let qq = `[{"subject":"Hello","minutes":55,"seconds":4,"notes":""},{"subject":"dsfafds","minutes":4,"seconds":33,"notes":"fdasdfsafasfsd"},{"subject":"dsadsf","minutes":0,"seconds":4,"notes":""},{"subject":"sdasf","minutes":0,"seconds":0,"notes":""}]`;
-      loadJSON(qq);
+      // let qq = `[{"subject":"Hello","minutes":55,"seconds":4,"notes":""},{"subject":"dsfafds","minutes":4,"seconds":33,"notes":"fdasdfsafasfsd"},{"subject":"dsadsf","minutes":0,"seconds":4,"notes":""},{"subject":"sdasf","minutes":0,"seconds":0,"notes":""}]`;
+      // loadJSON(qq);
+      load();
       addFormPPart(); // load empty element on startup
 
     </script>
