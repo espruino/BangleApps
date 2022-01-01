@@ -106,37 +106,50 @@
   };
 
   let HourHandLength = outerRadius * 0.5;
-  let HourHandWidth  = 2*3, halfHourHandWidth = HourHandWidth/2;
+  let HourHandWidth  = 2*5, halfHourHandWidth = HourHandWidth/2;
 
   let MinuteHandLength = outerRadius * 0.7;
-  let MinuteHandWidth  = 2*2, halfMinuteHandWidth = MinuteHandWidth/2;
+  let MinuteHandWidth  = 2*3, halfMinuteHandWidth = MinuteHandWidth/2;
 
   let SecondHandLength = outerRadius * 0.9;
-  let SecondHandOffset = 6;
+  let SecondHandOffset = halfHourHandWidth + 10;
 
-  let twoPi  = 2*Math.PI;
+  let outerBoltRadius = halfHourHandWidth + 2, innerBoltRadius = outerBoltRadius - 4;
+  let HandOffset = outerBoltRadius + 4;
+
+  let twoPi  = 2*Math.PI, deg2rad = Math.PI/180;
   let Pi     = Math.PI;
   let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 
-  let HourHandPolygon = [
-    -halfHourHandWidth,halfHourHandWidth,
-    -halfHourHandWidth,halfHourHandWidth-HourHandLength,
-     halfHourHandWidth,halfHourHandWidth-HourHandLength,
-     halfHourHandWidth,halfHourHandWidth,
+  let sine = [0, sin(30*deg2rad), sin(60*deg2rad), 1];
+
+  let HandPolygon = [
+    -sine[3],-sine[0], -sine[2],-sine[1], -sine[1],-sine[2], -sine[0],-sine[3],
+     sine[0],-sine[3],  sine[1],-sine[2],  sine[2],-sine[1],  sine[3],-sine[0],
+     sine[3], sine[0],  sine[2], sine[1],  sine[1], sine[2],  sine[0], sine[3],
+    -sine[0], sine[3], -sine[1], sine[2], -sine[2], sine[1], -sine[3], sine[0],
   ];
 
-  let MinuteHandPolygon = [
-    -halfMinuteHandWidth,halfMinuteHandWidth,
-    -halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-     halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-     halfMinuteHandWidth,halfMinuteHandWidth,
-  ];
+  let HourHandPolygon = new Array(HandPolygon.length);
+    for (let i = 0, l = HandPolygon.length; i < l; i+=2) {
+      HourHandPolygon[i]   = halfHourHandWidth*HandPolygon[i];
+      HourHandPolygon[i+1] = halfHourHandWidth*HandPolygon[i+1];
+      if (i < l/2) { HourHandPolygon[i+1] -= HourHandLength; }
+      if (i > l/2) { HourHandPolygon[i+1] += HandOffset; }
+    }
+  let MinuteHandPolygon = new Array(HandPolygon.length);
+    for (let i = 0, l = HandPolygon.length; i < l; i+=2) {
+      MinuteHandPolygon[i]   = halfMinuteHandWidth*HandPolygon[i];
+      MinuteHandPolygon[i+1] = halfMinuteHandWidth*HandPolygon[i+1];
+      if (i < l/2) { MinuteHandPolygon[i+1] -= MinuteHandLength; }
+      if (i > l/2) { MinuteHandPolygon[i+1] += HandOffset; }
+    }
 
 /**** transforme polygon ****/
 
-  let transformedPolygon = new Array(HourHandPolygon.length);
+  let transformedPolygon = new Array(HandPolygon.length);
 
   function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
     let sPhi = sin(Phi), cPhi = cos(Phi), x,y;
@@ -180,6 +193,13 @@
       CenterX - SecondHandLength*sPhi,
       CenterY + SecondHandLength*cPhi
     );
+
+    g.setColor(g.theme.fg);
+    g.fillCircle(CenterX,CenterY, outerBoltRadius);
+
+    g.setColor(g.theme.bg);
+    g.drawCircle(CenterX,CenterY, outerBoltRadius);
+    g.fillCircle(CenterX,CenterY, innerBoltRadius);
   }
 
 /**** refreshDisplay ****/
