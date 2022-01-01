@@ -1,6 +1,9 @@
+<!-- Presentor by Kasper Müller -->
+<!DOCTYPE html>
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -81,6 +84,13 @@
       .draghandle {
         cursor: grab;
       }
+      footer {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        font-size: 0.6rem;
+        color: grey;
+      }
     </style>
   </head>
   <body>
@@ -104,6 +114,7 @@
       <button class="btn btn-default" id="btnSave">Save</button>
       <button class="btn btn-error" id="btnClear">Clear</button>
     </div>
+    <footer>Presentor by <a href="https://kaspermuller.nl" target="_blank">Kasper Müller</a></footer>
 
     <script src="../../core/lib/interface.js"></script>
     <script>
