@@ -209,7 +209,7 @@
 
     let sPhi = Math.sin(SecondsAngle), cPhi = Math.cos(SecondsAngle);
 
-    g.setColor('#FF0000');
+    g.setColor(g.theme.fg2);
     g.drawLine(
       CenterX + SecondHandOffset*sPhi,
       CenterY - SecondHandOffset*cPhi,
