@@ -226,6 +226,10 @@ Bangle.on('HRM', function(hrm) {
   //}
 });
 
+Bangle.on('charging', function(charging) {
+  drawBattery();
+});
+
 g.clear();
 Bangle.loadWidgets();
 /*
