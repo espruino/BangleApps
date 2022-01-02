@@ -53,38 +53,29 @@ var main = () => {
 
   var timerRunningButtons = [buttonStartPause, buttonStop];
 
-  var timeStr = "";
+  var timerEdit = new TimerEdit();
   timerNumberButtons.forEach((numberButton) => {
-    numberButton.setOnClick((value) => {
+    numberButton.setOnClick((number) => {
       log("number button clicked");
-      log(value);
-      log(timeStr);
-      if (value === 0 && timeStr.length === 0) {
-        return;
-      }
-
-      if (timeStr.length <= 6) {
-        timeStr = timeStr + value;
-      }
-      log(timeStr);
-      drawTimer(timeStr);
+      log(number);
+      timerEdit.appendNumber(number);
+      timerEdit.draw();
     });
   });
 
   buttonDelete.setOnClick(() => {
     log("delete button clicked");
-    timeStr = timeStr.slice(0, -1);
-    log(timeStr);
-    drawTimer(timeStr);
+    timerEdit.removeNumber();
+    timerEdit.draw();
   });
 
   buttonOK.setOnClick(() => {
-    if (timeStr.length === 0) {
+    if (timerEdit.timeStr.length === 0) {
       return;
     }
 
     g.clear();
-    drawTimer(timeStr);
+    timerEdit.draw();
 
     timerInputButtons.forEach((button) => button.disable());
 
@@ -96,8 +87,13 @@ var main = () => {
 
   var timerIntervalId = undefined;
   var buzzIntervalId = undefined;
+  var timerCountDown = undefined;
   buttonStartPause.setOnClick(() => {
     if (buttonStartPause.value === "PAUSE") {
+      if (timerCountDown) {
+        timerCountDown.pause();
+      }
+
       buttonStartPause.value = "START";
       buttonStartPause.draw();
 
@@ -115,18 +111,19 @@ var main = () => {
     }
 
     if (buttonStartPause.value === "START") {
+      if (!timerCountDown) {
+        timerCountDown = new TimerCountDown(timerEdit.timeStr);
+      } else {
+        timerCountDown.unpause();
+      }
+
       buttonStartPause.value = "PAUSE";
       buttonStartPause.draw();
 
-      var time = timeStrToTime(timeStr);
-
       timerIntervalId = setInterval(() => {
-        time = time - 1;
+        timerCountDown.draw();
 
-        timeStr = timeToTimeStr(time);
-        drawTimer(timeStr);
-
-        if (time === 0) {
+        if (timerCountDown.isFinished()) {
           buttonStartPause.value = "FINISHED!";
           buttonStartPause.draw();
 
@@ -138,7 +135,7 @@ var main = () => {
           var buzzCount = 0;
           Bangle.buzz(1000, 1);
           buzzIntervalId = setInterval(() => {
-            if (buzzCount >= 10) {
+            if (buzzCount >= 5) {
               clearInterval(buzzIntervalId);
               buzzIntervalId = undefined;
               return;
@@ -155,6 +152,10 @@ var main = () => {
   });
 
   buttonStop.setOnClick(() => {
+    if (timerCountDown) {
+      timerCountDown = undefined;
+    }
+
     if (timerIntervalId) {
       clearInterval(timerIntervalId);
       timerIntervalId = undefined;
@@ -169,8 +170,8 @@ var main = () => {
     buttonStartPause.draw();
 
     g.clear();
-    timeStr = "";
-    drawTimer(timeStr);
+    timerEdit.reset();
+    timerEdit.draw();
 
     timerRunningButtons.forEach((button) => button.disable());
 
@@ -182,7 +183,7 @@ var main = () => {
 
   // initalize
   g.clear();
-  drawTimer(timeStr);
+  timerEdit.draw();
   timerInputButtons.forEach((button) => {
     button.enable();
     button.draw();
@@ -195,24 +196,6 @@ var log = (message) => {
   if (DEBUG) {
     console.log(JSON.stringify(message));
   }
-};
-
-var drawTimer = (timeStr) => {
-  timeStr = timeStr.padStart(6, "0");
-  var timeStrDisplay =
-    "" +
-    timeStr.slice(0, 2) +
-    "h " +
-    timeStr.slice(2, 4) +
-    "m " +
-    timeStr.slice(4, 6) +
-    "s";
-
-  g.clearRect(0, 0, 176, 34);
-  g.setColor(g.theme.fg);
-  g.setFontAlign(-1, -1);
-  g.setFont("Vector:26x40");
-  g.drawString(timeStrDisplay, 2, 0);
 };
 
 var touchHandlers = [];
@@ -312,50 +295,147 @@ class Button {
   }
 }
 
-var timeToTimeStr = (time) => {
-  var hours = Math.floor(time / 3600);
-  time = time - hours * 3600;
-  var minutes = Math.floor(time / 60);
-  time = time - minutes * 60;
-  var seconds = time;
-
-  if (hours === 0) {
-    hours = "";
-  } else {
-    hours = hours.toString();
+class TimerEdit {
+  constructor() {
+    this.timeStr = "";
   }
 
-  if (hours.length === 0) {
-    if (minutes === 0) {
-      minutes = "";
-    } else {
-      minutes = minutes.toString();
+  appendNumber(number) {
+    if (number === 0 && this.timeStr.length === 0) {
+      return;
     }
-  } else {
-    minutes = minutes.toString().padStart(2, "0");
-  }
 
-  if (hours.length === 0 && minutes.length === 0) {
-    if (seconds === 0) {
-      seconds = "";
-    } else {
-      seconds = seconds.toString();
+    if (this.timeStr.length <= 6) {
+      this.timeStr = this.timeStr + number;
     }
-  } else {
-    seconds = seconds.toString().padStart(2, "0");
   }
 
-  return hours + minutes + seconds;
-};
+  removeNumber() {
+    if (this.timeStr.length > 0) {
+      this.timeStr = this.timeStr.slice(0, -1);
+    }
+  }
 
-var timeStrToTime = (timeStr) => {
-  timeStr = timeStr.padStart(6, "0");
-  return (
-    parseInt(timeStr.slice(0, 2), 10) * 3600 +
-    parseInt(timeStr.slice(2, 4), 10) * 60 +
-    parseInt(timeStr.slice(4, 6), 10)
-  );
-};
+  reset() {
+    this.timeStr = "";
+  }
+
+  draw() {
+    log("drawing timer edit");
+    var timeStrPadded = this.timeStr.padStart(6, "0");
+    var timeStrDisplay =
+      "" +
+      timeStrPadded.slice(0, 2) +
+      "h " +
+      timeStrPadded.slice(2, 4) +
+      "m " +
+      timeStrPadded.slice(4, 6) +
+      "s";
+    log(timeStrPadded);
+    log(timeStrDisplay);
+
+    g.clearRect(0, 0, 176, 34);
+    g.setColor(g.theme.fg);
+    g.setFontAlign(-1, -1);
+    g.setFont("Vector:26x40");
+    g.drawString(timeStrDisplay, 2, 0);
+  }
+}
+
+class TimerCountDown {
+  constructor(timeStr) {
+    log("creating timer");
+    this.timeStr = timeStr;
+    log(this.timeStr);
+    this.start = Math.floor(Date.now() / 1000);
+    log(this.start);
+    this.pausedTime = undefined;
+  }
+
+  getAdjustedTime() {
+    var elapsedTime = Math.floor(Date.now() / 1000) - this.start;
+
+    var timeStrPadded = this.timeStr.padStart(6, "0");
+    var timeStrHours = parseInt(timeStrPadded.slice(0, 2), 10);
+    var timeStrMinutes = parseInt(timeStrPadded.slice(2, 4), 10);
+    var timeStrSeconds = parseInt(timeStrPadded.slice(4, 6), 10);
+
+    var hours = timeStrHours;
+    var minutes = timeStrMinutes;
+    var seconds = timeStrSeconds - elapsedTime;
+
+    if (seconds < 0) {
+      var neededMinutes = Math.ceil(Math.abs(seconds) / 60);
+
+      seconds = seconds + neededMinutes * 60;
+      minutes = minutes - neededMinutes;
+
+      if (minutes < 0) {
+        var neededHours = Math.ceil(Math.abs(minutes) / 60);
+
+        minutes = minutes + neededHours * 60;
+        hours = hours - neededHours;
+      }
+    }
+
+    if (hours < 0 || minutes < 0 || seconds < 0) {
+      hours = 0;
+      minutes = 0;
+      seconds = 0;
+    }
+
+    return { hours: hours, minutes: minutes, seconds: seconds };
+  }
+
+  pause() {
+    this.pausedTime = Math.floor(Date.now() / 1000);
+  }
+
+  unpause() {
+    if (this.pausedTime) {
+      this.start += Math.floor(Date.now() / 1000) - this.pausedTime;
+    }
+
+    this.pausedTime = undefined;
+  }
+
+  draw() {
+    log("drawing timer count down");
+    var adjustedTime = this.getAdjustedTime();
+    var hours = adjustedTime.hours;
+    var minutes = adjustedTime.minutes;
+    var seconds = adjustedTime.seconds;
+
+    var timeStrDisplay =
+      "" +
+      hours.toString().padStart(2, "0") +
+      "h " +
+      minutes.toString().padStart(2, "0") +
+      "m " +
+      seconds.toString().padStart(2, "0") +
+      "s";
+    log(timeStrDisplay);
+
+    g.clearRect(0, 0, 176, 34);
+    g.setColor(g.theme.fg);
+    g.setFontAlign(-1, -1);
+    g.setFont("Vector:26x40");
+    g.drawString(timeStrDisplay, 2, 0);
+  }
+
+  isFinished() {
+    var adjustedTime = this.getAdjustedTime();
+    var hours = adjustedTime.hours;
+    var minutes = adjustedTime.minutes;
+    var seconds = adjustedTime.seconds;
+
+    if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 
 // start main function
 
