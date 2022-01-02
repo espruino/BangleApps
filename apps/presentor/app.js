@@ -140,7 +140,7 @@ let mainLayout = new Layout({
 }, {lazy:true});
 
 let settings = {pparts: [], sversion: 0};
-let HIDenabled = false;
+let HIDenabled = true;
 
 // Application variables
 let pparti = -1;
