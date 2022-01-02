@@ -1,6 +1,9 @@
 var DEBUG = false;
+var FILE = "touchtimer.data.json";
 
 var main = () => {
+  var settings = readSettings();
+
   var button1 = new Button({ x1: 1, y1: 35, x2: 58, y2: 70 }, 1);
   var button2 = new Button({ x1: 60, y1: 35, x2: 116, y2: 70 }, 2);
   var button3 = new Button({ x1: 118, y1: 35, x2: 174, y2: 70 }, 3);
@@ -132,18 +135,18 @@ var main = () => {
             timerIntervalId = undefined;
           }
 
-          var buzzCount = 0;
-          Bangle.buzz(1000, 1);
+          var buzzCount = 1;
+          Bangle.buzz(settings.buzzDuration * 1000, 1);
           buzzIntervalId = setInterval(() => {
-            if (buzzCount >= 5) {
+            if (buzzCount >= settings.buzzCount) {
               clearInterval(buzzIntervalId);
               buzzIntervalId = undefined;
               return;
             } else {
-              Bangle.buzz(1000, 1);
+              Bangle.buzz(settings.buzzDuration * 1000, 1);
               buzzCount++;
             }
-          }, 5000);
+          }, settings.buzzDuration * 1000 + settings.pauseBetween * 1000);
         }
       }, 1000);
 
@@ -436,6 +439,17 @@ class TimerCountDown {
     }
   }
 }
+
+var readSettings = () => {
+  log("reading settings");
+  var settings = require("Storage").readJSON(FILE, 1) || {
+    buzzCount: 3,
+    buzzDuration: 1,
+    pauseBetween: 1,
+  };
+  log(settings);
+  return settings;
+};
 
 // start main function
 
