@@ -76,12 +76,67 @@ const kb = require("ble_hid_keyboard");
 const Layout = require("Layout");
 const Locale = require("locale");
 let mainLayout = new Layout( {
-  type:"v", c: [
-    {type: "h", c: [
-      {type:"txt", font:"10%", label:"12:00", id:"time" },
-      {type:"txt", font:"10%", label:"99:99", id:"timer" },
-    ]},
-    {type:"txt", font:"6x8", label:"The Date", id:"date" }
+  'type': 'v', 
+  filly: 1, 
+  c: [
+    {
+      type: 'txt', 
+      font: '6x8', 
+      label: 'Presentor', 
+      valign: -1,
+      halign: 0,
+      col: g.theme.fg1, 
+      // bgCol: g.theme.bg2,
+      bgCol: '#00F',
+      fillx: 1,
+    }, {
+      type: 'h',
+      fillx: 1,
+      c: [
+        {
+          type: 'txt',
+          font: '15%',
+          label: '00:00',
+          id: 'Time',
+          halign: -1,
+          pad: 3
+        }, {
+          fillx: 1
+        }, {
+          type: 'txt',
+          font: '15%',
+          label: '00:00',
+          id: 'Timer',
+          halign: 1,
+          pad: 3
+        }
+      ]
+    }, {
+      type: 'txt',
+      font: '10%',
+      label: '+00:00',
+      id: 'RestTime',
+      col: '#fff'
+    }, {
+      type: 'txt',
+      font: '10%',
+      label: '--------------'
+    }, {
+      type: 'txt',
+      font: '15%',
+      label: 'Subject',
+      id: 'Subject'
+    }, {
+      type: 'txt',
+      font: '6x8',
+      label: 'Notes...',
+      id: 'Notes',
+      col: '#ff0',
+      fillx: 1,
+      filly: 1,
+      valign: 1
+    }
+    
   ]
 }, {lazy:true});
 
@@ -89,6 +144,8 @@ let settings = require("Storage").readJSON('presentor.json');
 let HIDenabled = false;
 
 // Application variables
+let pparti = 0;
+
 let lastx = 0;
 let lasty = 0;
 let timeoutId = -1;
@@ -110,9 +167,8 @@ let cttl = 0;
 
 function drawMainFrame() {
   var d = new Date();
-  // update time and date
-  mainLayout.time.label = require("locale").time(d,1);
-  mainLayout.date.label = require("locale").date(d);
+  // update time
+  mainLayout.Time.label = Locale.time(d,1);
   mainLayout.render();
   // schedule a draw for the next minute
   if (timeoutDraw != -1) clearTimeout(timeoutDraw);
