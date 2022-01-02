@@ -5063,17 +5063,19 @@
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
   },
-  { "id": "mmind",
-  "name": "Classic Mind Game",
-  "shortName":"Master Mind",
-  "icon": "app.png",
-  "version":"0.01",
-  "description": "This is a classic mind game for bangles 2",
-  "tags": "masterminf, game",
-  "storage": [
-    {"name":"timer.app.js","url":"app.js"},
-    {"name":"mmind.img","url":"app-icon.js","evaluate":true}
+  {
+    "id": "mmind",
+    "name": "Classic Mind Game",
+    "shortName":"Master Mind",
+    "icon": "app.png",
+    "version":"0.01",
+    "description": "This is a classic mind game",
+    "type": "game",
+    "tags": "mastermind, game, bangle 2",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"mmind.app.js","url":"app.js"},
+      {"name":"mmind.img","url":"app-icon.js","evaluate":true}
     ]
   }
 ]
- 
