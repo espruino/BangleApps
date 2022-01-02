@@ -144,6 +144,7 @@ let HIDenabled = false;
 
 // Application variables
 let pparti = -1;
+let ppartBuzzed = false;
 
 let lastx = 0;
 let lasty = 0;
@@ -171,12 +172,19 @@ let clearToSend = true;
 // Presentation Timers
 let ptimers = [];
 
+function delay(t, v) {
+  return new Promise(function(resolve) { 
+      setTimeout(resolve.bind(null, v), t)
+  });
+}
+
 function formatTimePart(time) {
   time = Math.floor(Math.abs(time));
   return time < 10 ? `0${time}` : `${time}`;
 }
 
 function formatTime(time, doPlus) {
+  if (time == Infinity) return ' --:-- ';
   return `${time < 0 ? '-' : (doPlus ? '+' : '')}${formatTimePart(time/60)}:${formatTimePart(time%60)}`;
 }
 
@@ -192,12 +200,18 @@ function loadSettings() {
 }
 
 function getCurrentTimer() {
-  if (pparti < 0) return '00:00';
-  if (!settings.pparts || pparti >= settings.pparts.length) return '00:00';
-  if (ptimers[pparti].tracked == -1) return '00:00';
+  if (pparti < 0) return Infinity;
+  if (!settings.pparts || pparti >= settings.pparts.length) return Infinity;
+  if (ptimers[pparti].tracked == -1) return Infinity;
   ptimers[pparti].left -= (getTime() - ptimers[pparti].tracked);
   ptimers[pparti].tracked = getTime();
-  return formatTime(ptimers[pparti].left);
+  // if we haven't buzzed yet and timer became negative just buzz here.
+  // TODO better place?
+  if (ptimers[pparti].left <= 0 && !ppartBuzzed) {
+    Bangle.buzz().then(() => delay(500)).then(() => Bangle.buzz());
+    ppartBuzzed = true;
+  }
+  return ptimers[pparti].left;
 }
 
 function getRestTime() {
@@ -206,7 +220,10 @@ function getRestTime() {
   for (let i = 0; i < pparti; i++) {
     rem += ptimers[i].left;
   }
-  return formatTime(rem, true);
+  if (pparti > 0 && pparti < ptimers.length && ptimers[pparti].left < 0) {
+    rem += ptimers[pparti].left;
+  }
+  return rem;
 }
 
 function drawMainFrame() {
@@ -214,8 +231,10 @@ function drawMainFrame() {
   // update time
   mainLayout.Time.label = Locale.time(d,1);
   // update timer
-  mainLayout.Timer.label = getCurrentTimer();
-  mainLayout.RestTime.label = getRestTime();
+  mainLayout.Timer.label = formatTime(getCurrentTimer());
+  let restTime = getRestTime();
+  mainLayout.RestTime.label = formatTime(restTime, true);
+  mainLayout.RestTime.col = restTime < 0 ? '#f00' : (restTime > 0 ? '#0f0' : '#fff');
   mainLayout.render();
   // schedule a draw for the next minute
   if (timeoutDraw != -1) clearTimeout(timeoutDraw);
@@ -241,6 +260,8 @@ function doPPart(r) {
   mainLayout.Subject.label = ppart.subject;
   mainLayout.Notes.label = ppart.notes;
   ptimers[pparti].tracked = getTime();
+  // We haven't buzzed if there was time left.
+  ppartBuzzed = ptimers[pparti].left <= 0;
   drawMainFrame();
 }
 
