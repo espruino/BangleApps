@@ -1,5 +1,5 @@
 // Presentor by 7kasper (Kasper Müller)
-// Version 2.2
+// Version 3.0
 
 const SpecialReport = new Uint8Array([
   0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
