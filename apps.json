@@ -5065,7 +5065,7 @@
   },
 
   { "id": "mmind",
-  "name": "Clasic Mind Game",
+  "name": "Classic Mind Game",
   "shortName":"Master Mind",
   "icon": "app.png",
   "version":"0.01",
