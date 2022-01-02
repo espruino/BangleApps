@@ -5063,7 +5063,6 @@
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
   },
-
   { "id": "mmind",
   "name": "Classic Mind Game",
   "shortName":"Master Mind",
@@ -5074,8 +5073,7 @@
   "storage": [
     {"name":"timer.app.js","url":"app.js"},
     {"name":"mmind.img","url":"app-icon.js","evaluate":true}
-  ]
-}
+    ]
+  }
 ]
-  
-]
+ 
