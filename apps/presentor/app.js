@@ -129,7 +129,7 @@ let mainLayout = new Layout({
     }, {
       type: 'txt',
       font: '6x8',
-      label: 'Swipe down to start the time.',
+      label: 'Swipe up to start the time.',
       id: 'Notes',
       col: '#ff0',
       fillx: 1,
@@ -145,6 +145,7 @@ let HIDenabled = false;
 // Application variables
 let pparti = -1;
 let ppartBuzzed = false;
+let restBuzzed = false;
 
 let lastx = 0;
 let lasty = 0;
@@ -157,7 +158,6 @@ let trackPadMode = false;
 let timeoutId = -1;
 let timeoutHolding = -1;
 let timeoutDraw = -1;
-let timeoutDrawTimer = -1;
 
 
 let homeRoll = 0;
@@ -173,8 +173,8 @@ let clearToSend = true;
 let ptimers = [];
 
 function delay(t, v) {
-  return new Promise(function(resolve) { 
-      setTimeout(resolve.bind(null, v), t)
+  return new Promise((resolve) => { 
+      setTimeout(resolve, t)
   });
 }
 
@@ -208,7 +208,9 @@ function getCurrentTimer() {
   // if we haven't buzzed yet and timer became negative just buzz here.
   // TODO better place?
   if (ptimers[pparti].left <= 0 && !ppartBuzzed) {
-    Bangle.buzz().then(() => delay(500)).then(() => Bangle.buzz());
+    Bangle.buzz(400)
+      .then(() => delay(400))
+      .then(() => Bangle.buzz(400));
     ppartBuzzed = true;
   }
   return ptimers[pparti].left;
@@ -220,8 +222,18 @@ function getRestTime() {
   for (let i = 0; i < pparti; i++) {
     rem += ptimers[i].left;
   }
-  if (pparti > 0 && pparti < ptimers.length && ptimers[pparti].left < 0) {
+  if (pparti >= 0 && pparti < ptimers.length && ptimers[pparti].left < 0) {
     rem += ptimers[pparti].left;
+  }
+  // if we haven't buzzed yet and timer became negative just buzz here.
+  // TODO better place?
+  if (rem < 0 && !restBuzzed) {
+    Bangle.buzz(200)
+      .then(() => delay(400))
+      .then(() => Bangle.buzz(200))
+      .then(() => delay(400))
+      .then(() => Bangle.buzz(200));
+    restBuzzed = true;
   }
   return rem;
 }
@@ -254,14 +266,26 @@ function drawMain() {
 
 function doPPart(r) {
   pparti += r;
-  if (pparti < 0) return;
-  if (!settings.pparts || pparti >= settings.pparts.length) return;
+  if (pparti < 0) {
+    pparti = -1;
+    mainLayout.Subject.label = 'PAUSED';
+    mainLayout.Notes.label = 'Swipe up to start again.';
+    return;
+  }
+  if (!settings.pparts || pparti >= settings.pparts.length) {
+    pparti = settings.pparts.length;
+    mainLayout.Subject.label = 'FINISHED';
+    mainLayout.Notes.label = 'Good Job!';
+    return;
+  }
   let ppart = settings.pparts[pparti];
   mainLayout.Subject.label = ppart.subject;
   mainLayout.Notes.label = ppart.notes;
   ptimers[pparti].tracked = getTime();
   // We haven't buzzed if there was time left.
   ppartBuzzed = ptimers[pparti].left <= 0;
+  // Always reset buzzstate for the rest timer.
+  restBuzzed = getRestTime() < 0;
   drawMainFrame();
 }
 
@@ -398,21 +422,21 @@ Bangle.on('drag', function(e) {
     if(!e.b){
       Bangle.buzz(100);
       if(lasty >  40){
-        doPPart(1);
-        E.showMessage('down');
-      } else if(lasty < -40){
         doPPart(-1);
-        E.showMessage('up');
+        // E.showMessage('down');
+      } else if(lasty < -40){
+        doPPart(1);
+        // E.showMessage('up');
       } else if(lastx > 40){
-        E.showMessage('right');
+        // E.showMessage('right');
         //kb.tap(kb.KEY.RIGHT, 0);
         scroll(-1);
       } else if(lastx < -40){
-        E.showMessage('left');
+        // E.showMessage('left');
         //kb.tap(kb.KEY.LEFT, 0);
         scroll(1);
       } else if(lastx==0 && lasty==0 && holding == false){
-        E.showMessage('press');
+        // E.showMessage('press');
         clickMouse(MouseButton.LEFT);
       }
       stopHolding();
