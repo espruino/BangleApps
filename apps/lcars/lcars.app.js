@@ -173,6 +173,7 @@ function drawLock(){
     g.drawString("NOCON", 128, 33);
   }
   if(Bangle.isLocked()){
+    g.setColor(cPurple);
     g.drawString("LOCK", 128, 53);
   }
 }
@@ -201,7 +202,7 @@ function drawState(){
     // Alarm within symbol
     g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
-    g.setColor(cPurple);
+    g.setColor(cOrange);
     g.drawString("ALARM", 117+25, 107);
     g.setFontAntonioLarge();
     g.drawString(getAlarmMinutes(), 117+25, 107+35);
