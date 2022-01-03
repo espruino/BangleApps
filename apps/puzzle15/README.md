@@ -1,18 +1,27 @@
 # Puzzle15 - A 15-puzzle for the Bangle.js 2
 
-Puzzle15 implements a 15-puzzle on the screen of the Bangle.js 2 smart watch.
-A "15-puzzle" is a single-player game. 15 "stones" are numbered from 1 to 15 and placed randomly on a 4 by 4 playing field.
-So, one place on the field is free.
-The target of the game is to move the stones around (using the "gap" on the playing field) to bring them in natural order.
+This is a Bangle.js 2 adoption of the famous 15 puzzle.
 
-_This is work in progress!_
+## The game
+
+A board of n x n fields is filled with n²-1 numbered stones.
+Bring them in the correct order so that the gap is finally at the bottom right of the playing field.
+The less moves you need, the better you are.
 
 ## How to play
 
-After starting the game, the playing field is shown with the stones in the corrct order.
-Push the stones around with drag gestures (left to right, right to left, top to bottom, bottom to top) to shuffle them.
-Then, use the same gestures to restore the order.
+Select whether you want to play on a board with 3 x 3, 4 x 4, or 5 x 5 fields.
+Move the stones with drag gestures on the screen.
+If you want to move the stone below the gap upward, drag from the bottom of the screen upward.
+The drag gestures can be performed anywhere on the screen, there is no need to start or end them on the stone to be moved.
 
-So far, there are no other capabililties or options.
+If you managed to order the stones correctly, a success message appears.
+You can continue with another game, go to the game's main menu, or quit the game entirely.
+
+There is a menu button right of the board. It opens the game's main menu.
+
+## Implemenation notes
+
+The game engine always generates 15 puzzles which can be solved.
 
 Have fun!

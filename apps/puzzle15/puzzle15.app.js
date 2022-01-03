@@ -5,6 +5,8 @@
 // *** Global settings
 // Note: These could be changed by settings later...
 
+const introscreen = E.toArrayBuffer(atob("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"));
+
 // Minimum number of pixels to interpret it as drag gesture
 const dragThreshold = 10;
 
@@ -322,28 +324,42 @@ class Board {
     for (i = 0; i < buttonsPerBoard; i++)
       this.fields[i] = Field.forIndex(i);
     this.setShuffled();
+    //this.setAlmostSolved(); // to test the game end
   }
-  // Set the board into the "solved" position
+  // Set the board into the "solved" position. Useful for showcasing
   setSolved() {
     this.buttons = [];
     for (i = 0; i < buttonsPerBoard; i++)
       this.buttons[i] = new Stone((i + 1) % buttonsPerBoard, i);
     this.moveCount = 0;
   }
+  // Initialize an almost solved playing field. Useful for tests and development
+  setAlmostSolved() {
+    this.setSolved();
+    b = this.buttons[this.buttons.length - 1];
+    this.buttons[this.buttons.length - 1] = this.buttons[this.buttons.length - 2];
+    this.buttons[this.buttons.length - 2] = b;
+  }
+  // Initialize a shuffled field. The fields are always solvable.
   setShuffled() {
-    let nrs = [];
+    let nrs = []; // numbers of the stones
     for (i = 0; i < buttonsPerBoard; i++)
       nrs[i] = i;
     this.buttons = [];
     let count = buttonsPerBoard;
     for (i = 0; i < buttonsPerBoard; i++) {
+      // Take a random number of the (remaining) numbers
       let curridx = Math.floor(Math.random() * count);
       let currnr = nrs[curridx];
+      // Initialize the next button with that random number
       this.buttons[i] = new Stone(currnr, (currnr + (buttonsPerBoard - 1)) % buttonsPerBoard);
+      // Remove the number just taken from the list of numbers
       for (j = curridx + 1; j < count; j++)
         nrs[j - 1] = nrs[j];
       count -= 1;
     }
+    // not solvable: Swap the first and second stone which are not the gap.
+    // This will always result in a solvable board.
     if (!this.isSolvable()) {
       let a = (this.buttons[0].number === 0 ? 2 : 0);
       let b = (this.buttons[1].number === 0 ? 2 : 1);
@@ -457,7 +473,8 @@ class Board {
   // draw the result field, pass null as argument if not called from worker
   drawResult(worker) {
     let field = this.resultField;
-    if (this.isSolved())
+    let solved = this.isSolved();
+    if (solved)
       g.setColor(0, 1, 0);
     else
       g.setColor(1, 0, 0);
@@ -467,6 +484,10 @@ class Board {
     g.setFont("Vector", 14).setFontAlign(0, 0).drawString(this.moveCount, field.centerx, field.centery);
     if (worker !== null)
       worker.endTask();
+    if (solved)
+      setTimeout(() => {
+        gameEnd(this.moveCount);
+      }, 500);
   }
   // draws the menu button
   drawMenu() {
@@ -479,21 +500,38 @@ class Board {
     let r = field.left + buttonsize - 8;
     let t = field.top + 5;
     for (i = 0; i < 3; i++)
-      g.fillRect(l, t + (i * 7), r, t + (i * 7) + 3);
+      g.fillRect(l, t + (i * 6), r, t + (i * 6) + 2);
   }
 }
 
-/*
-// Main class, containing the complete game logic
-class Puzzle15 {
-  constructor() {
-    this.worker=new Worker();
-    this.board=new Board();
-  }
+function framedText(text, x, y, textcol, framecol) {
+  g.setColor(framecol);
+  for (i = -2; i < 3; i++)
+    for (j = -2; j < 3; j++) {
+      if (i === 0 && j === 0)
+        continue;
+      g.drawString(text, x + i, y + j);
+    }
+  g.setColor(textcol).drawString(text, x, y);
 }
-*/
+
+function showSplash(afterSplash) {
+  g.reset();
+  g.drawImage(introscreen, 0, 0);
+  setTimeout(() => {
+    g.setFont("Vector", 40).setFontAlign(0, 0);
+    framedText("15", g.getWidth() / 2, g.getHeight() / 2 - g.getFontHeight() * 0.66, "#f00", "#fff");
+    setTimeout(() => {
+      g.setFont("Vector", 40).setFontAlign(0, 0);
+      framedText("Puzzle", g.getWidth() / 2, g.getHeight() / 2 + g.getFontHeight() * 0.66, "#f00", "#fff");
+      setTimeout(afterSplash, 2000);
+    }, 1000);
+  }, 2000);
+}
 
 // *** Main program
+
+g.reset();
 
 // We need a worker...
 var worker = new Worker();
@@ -504,48 +542,61 @@ var board = new Board();
 
 var dragger;
 
+// Initialize the game with an explicit number of stones per line
 function initGame(bpl) {
   setButtonsPerLine(bpl);
+  newGame();
+}
+
+// Start a new game with the same number of stones per line as before
+function newGame() {
   board = new Board();
+  continueGame();
+}
+
+// Continue the currently running game
+function continueGame() {
+  E.showMenu();
   board.draw();
   dragger.setEnabled(true);
 }
 
-function showMenu() {
+// Show message on game end, allows to restart new game
+function gameEnd(moveCount) {
+  dragger.setEnabled(false);
+  E.showPrompt("You solved the\n" + buttonsPerLine + "x" + buttonsPerLine + " puzzle in\n" + moveCount + " move" + (moveCount === 1 ? "" : "s") + ".", {
+    title: "Puzzle solved",
+    buttons: {
+      "Again": newGame,
+      "Menu": () => showMenu(false),
+      "Exit": load
+    }
+  }).then(v => {
+    E.showPrompt();
+    setTimeout(v, 10);
+  });
+}
+
+function showMenu(withContinue) {
   var mainmenu = {
     "": {
       "title": "15 Puzzle"
-    },
-    "< Back": () => {
-      E.showMenu();
-      dragger.setEnabled(true);
-      board.draw();
-    }, // remove the menu
-    "Start 3x3": function() {
-      E.showMenu();
-      initGame(3);
-    },
-    "Start 4x4": function() {
-      E.showMenu();
-      initGame(4);
-    },
-    "Start 5x5": function() {
-      E.showMenu();
-      initGame(5);
     }
   };
+  if (withContinue)
+    mainmenu.Continue = continueGame;
+  mainmenu["Start 3x3"] = () => initGame(3);
+  mainmenu["Start 4x4"] = () => initGame(4);
+  mainmenu["Start 5x5"] = () => initGame(5);
+  mainmenu.Exit = () => load();
   dragger.setEnabled(false);
-
+  g.clear(true);
   E.showMenu(mainmenu);
 }
 
 function handleclick(e) {
-  if (board.menuField.contains(e.x, e.y)) {
-    console.log("GGG - handleclick, dragger: " + dragger);
-    g.reset();
-    showMenu();
-    console.log("showing menu ended");
-  }
+  if (board.menuField.contains(e.x, e.y))
+    setTimeout(() => showMenu(true), 10);
 }
 
 // Handle a drag event
@@ -556,24 +607,18 @@ function handledrag(e) {
   worker.addTask(e => board.drawResult(e));
 }
 
-// Clear the screen once, at startup
-g.clear();
-
-// Clock mode allows short-press on button to exit
-Bangle.setUI("clock");
-// Load widgets
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
-// Draw the board initially
-board.draw();
-
 dragger = new Dragger(handleclick, handledrag, clickThreshold, dragThreshold);
 
-showMenu();
 // Start the interaction
 dragger.attach();
 
-console.log("GGG - main program, dragger: " + dragger);
+showSplash(() => {
+  // Clock mode allows short-press on button to exit
+  Bangle.setUI("clock");
+  // Load widgets
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  showMenu(false);
+}, 5000);
 
 // end of file
