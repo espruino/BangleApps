@@ -23,7 +23,6 @@ let cBlue = "#0094FF";
 let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
-let cRed = "#FF0000";
 
 /*
  * Global lcars variables
@@ -202,7 +201,7 @@ function drawState(){
     // Alarm within symbol
     g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
-    g.setColor(cRed);
+    g.setColor(cPurple);
     g.drawString("ALARM", 117+25, 107);
     g.setFontAntonioLarge();
     g.drawString(getAlarmMinutes(), 117+25, 107+35);
