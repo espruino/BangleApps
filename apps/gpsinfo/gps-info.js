@@ -113,8 +113,8 @@ function onGPSraw(nmea) {
   var nofGP = 0;
   if (nmea.slice(3,6) == "GSV") {
     // console.log(nmea);
-    if (nmea.slice(0,7) == "$BDGSV,") nofBD = nmea.slice(11,13);
-    if (nmea.slice(0,7) == "$GPGSV,") nofGP = nmea.slice(11,13);
+    if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
     SATinView = nofBD + nofGP;
   }
 }
