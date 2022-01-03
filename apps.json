@@ -5069,9 +5069,9 @@
     "shortName":"Master Mind",
     "icon": "mmind.png",
     "version":"0.01",
-    "description": "This is a classic mind game",
+    "description": "This is the classic game for masterminds",
     "type": "game",
-    "tags": "master mind, game, classic",
+    "tags": "mastermind, game, classic",
     "supports": ["BANGLEJS2"],
     "storage": [
       {"name":"mmind.app.js","url":"mmind.app.js"},
