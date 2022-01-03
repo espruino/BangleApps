@@ -183,6 +183,7 @@ function drawState(){
     return;
   }
 
+  g.clearRect(110, 90, g.getWidth(), 170);
   g.setColor(cWhite);
   var bat = E.getBattery();
   var current = new Date();
@@ -197,7 +198,7 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 117, 107);
+    g.drawImage(iconImg, 117, 104);
   } else {
     // Alarm within symbol
     g.setFontAntonioMedium();
@@ -522,6 +523,11 @@ Bangle.on("drag", e => {
         } else {
           increaseAlarm();
         }
+
+        // Only update the state and return to
+        // avoid a full draw as this is much faster.
+        drawState();
+        return;
       }
 
       if(lcarsViewPos == 1){
