@@ -1,9 +1,8 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, the health app is required.
-If this app is not installed, the data will not be shown.
-
+Note: To display the steps, the health app is required. If this app is not installed, the data will not be shown.
+To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerdavid/BangleApps)
 
 ## Features
  * LCARS Style watch face.
@@ -28,5 +27,6 @@ Access different screens via swipe left/ right
 <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>, <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 
-## Creator
-Made by [David Peer](https://github.com/peerdavid)
+## Contributors
+- Creator: [David Peer](https://github.com/peerdavid).
+- Improvements: [Adam Schmalhofer](https://github.com/adamschmalhofer).
