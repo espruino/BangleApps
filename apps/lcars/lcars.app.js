@@ -23,6 +23,7 @@ let cBlue = "#0094FF";
 let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
+let cRed = "#FF0000";
 
 /*
  * Global lcars variables
@@ -77,12 +78,6 @@ var iconSatellite =  {
   width : 50, height : 50, bpp : 3,
   transparent : 2,
   buffer : require("heatshrink").decompress(atob("pMkyQC/ATGXhIRPyNl0gmPjlwCJ9ly1aCJ1c+fHJR1Hy1ZJR1I+fPnlx6QRLpe+/JKBr5KMuYjBJQMdCJce/fvJQW0CJUlEYQCBSpvvJQbXJjl0NwnzNxGQwEOnHhgF78+WqQyIrFx48cAQXz4ShJgAABh0+8cP//9LJEhg4jDuP3//0LhGQgYlBgeAn///5cIy8MuAmDCIP/9I4HkmCEYMOgHfCQWkCI0cuBuDgF/CIP+CI1Ny1IkeAgHANwIAB/QRFrj7BhkxEwQRC/4RFpbXDgSVBg4RCSorXDI4MJAQMfCIP8cwImDn37fwN58+kwHgLgSVFub7CI4NyBAJKDLgkuEYX78+evKtCLg0jEYRKC58JMoRcFkwjDJQTFDl65EkojEAQMdcwn/+gFC3YjEJQLXEpYRDWwQmEdI6SHAQO0CJUkx4jDF4gCIJQgRMXIjCEARIjCCJ2XEYPKCJqJBJQIROcAUpCJ0kybaDARtdCKAC2kAA="))
-};
-
-var iconAlarm = {
-  width : 50, height : 50, bpp : 3,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("kmSpICEp//BAwCJn/+CJ8k//5CKAABCJs8uPH//x48EI5YjCAARNKEYUcv//jgFBExEnEYoAC+QmHIgIgC/gpCuPBCI2fIgU4AQXjA4P8CIuTEYZKBAolwHApXBEAWP//jxwpBAALaFDoYCIiQmDDIP4EAT+CEwnJEwYjLAQLaFEYomDKALmDNwoCIOIZuD8AkFgCYDHAQjMAQTdDNwOAEg0Dx0/cYeREZtxQYOTHgJuHOIvkXJy8DNwIACJQ8Ah4NDAAfxEZARHOIIkHg4jQAQb1CQ4KVJgEOnDIBSoIjNAQPBcAaVJcAKVBcDGOcD7OBMQM48BuH8f//JKCnhKNggRBkmfTQJxBEwhuD/gRCyVHJRlyCIVJXgYmB8ZQBAoIKBXIQmCOIt/NxAUCOIImCIgIpCBAJuDAQZEE/huIAQWTDgImBTYQGC8gRFcYpKFCI8kDwQAFCJBfBEAX/+IjBiQRIEw4jJAQc8v//NYwCIOgJrIJpA1OcwbaFAQWQA="))
 };
 
 var iconCharging =   {
@@ -193,24 +188,26 @@ function drawState(){
   var current = new Date();
   var hours = current.getHours();
 
-  var iconImg =
-      isAlarmEnabled() ? iconAlarm :
-      Bangle.isCharging() ? iconCharging :
-      bat < 30 ? iconNoBattery :
-      Bangle.isGPSOn() ? iconSatellite :
-      hours % 4 == 0 ? iconSaturn :
-      hours % 4 == 1 ? iconMars :
-      hours % 4 == 2 ? iconMoon :
-      iconEarth;
-  g.drawImage(iconImg, 117, 107);
-
-  // Alarm within symbol
-  g.setFontAntonioMedium();
-  if(isAlarmEnabled()){
+  if(!isAlarmEnabled()){
+    var iconImg =
+        Bangle.isCharging() ? iconCharging :
+        bat < 30 ? iconNoBattery :
+        Bangle.isGPSOn() ? iconSatellite :
+        hours % 4 == 0 ? iconSaturn :
+        hours % 4 == 1 ? iconMars :
+        hours % 4 == 2 ? iconMoon :
+        iconEarth;
+    g.drawImage(iconImg, 117, 107);
+  } else {
+    // Alarm within symbol
+    g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
-    g.setColor(cWhite);
-    g.drawString(getAlarmMinutes(), 117+25, 107+25+1);
+    g.setColor(cRed);
+    g.drawString("ALARM", 117+25, 107);
+    g.setFontAntonioLarge();
+    g.drawString(getAlarmMinutes(), 117+25, 107+35);
   }
+
   g.setFontAlign(-1, -1, 0);
 }
 
