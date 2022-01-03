@@ -17,6 +17,8 @@ var lastFix = {
   satellites: 0
 };
 var SATinView = 0;
+var nofBD = 0;
+var nofGP = 0;
 
 function formatTime(now) {
   if (now == undefined) {
@@ -109,8 +111,6 @@ function onGPS(fix) {
 }
 
 function onGPSraw(nmea) {
-  var nofBD = 0;
-  var nofGP = 0;
   if (nmea.slice(3,6) == "GSV") {
     // console.log(nmea);
     if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
