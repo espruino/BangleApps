@@ -68,8 +68,11 @@
     var w = 40;
     if (Bangle.isCharging() && setting('charger'))
       w += 16;
-    if ((setting('alwaysoncharge') == false && Bangle.isCharging()) && E.getBattery() > setting('hideifmorethan'))
+    if (E.getBattery() > setting('hideifmorethan')) {
       w = 0;
+      if( Bangle.isCharging() && setting('alwaysoncharge') === true)
+        w = 56;
+    }
     var changed = WIDGETS["batpc"].width != w;
     WIDGETS["batpc"].width = w;
     return changed;
