@@ -29,6 +29,7 @@
       'percentage': true,
       'charger': true,
       'hideifmorethan': 100,
+      'alwaysoncharge': false,
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k]
@@ -67,7 +68,7 @@
     var w = 40;
     if (Bangle.isCharging() && setting('charger'))
       w += 16;
-    if (E.getBattery() > setting('hideifmorethan'))
+    if (setting('alwaysoncharge') == false && E.getBattery() > setting('hideifmorethan'))
       w = 0;
     var changed = WIDGETS["batpc"].width != w;
     WIDGETS["batpc"].width = w;
