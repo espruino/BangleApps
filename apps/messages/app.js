@@ -243,6 +243,7 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
+  g.setFont(fontMedium);
   lines = g.wrapString(msg.body, g.getWidth()-10);
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
