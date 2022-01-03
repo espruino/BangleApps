@@ -145,6 +145,11 @@ function printData(key, y){
     g.drawString("HRM:", 26, y);
     g.drawString(hrmValue, 65, y);
 
+  } else if (key == "VREF"){
+    var voltage = E.getAnalogVRef().toFixed(2);
+    g.drawString("VREF:", 26, y);
+    g.drawString(voltage + "V", 65, y);
+
   } else {
     g.drawString("NOT FOUND", 26, y);
   }
