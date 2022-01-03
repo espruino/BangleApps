@@ -1,0 +1,21 @@
+{
+  "//":"Swedish language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Larm",
+    "Hours" : "Timmar",
+    "Minutes" : "Minuter",
+    "Enabled" : "Aktiverad",
+    "New Alarm" : "Ny alarm",
+    "Save" : "Spara",
+    "Back" : "Tillbaka",
+    "Repeat" : "Upprepning",
+    "Delete" : "Radera",
+    "ALARM!" : "ALURH!",
+    "Sleep" : "Sömn"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "uppr."
+  }
+}

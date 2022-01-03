@@ -58,9 +58,40 @@ function resetSettings() {
 settings = storage.readJSON('setting.json', 1);
 if (!settings) resetSettings();
 
-const boolFormat = v => v ? "On" : "Off";
+const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
 function showMainMenu() {
+
+  const mainmenu = {
+    '': { 'title': 'Settings' },
+    '< Back': ()=>load(),
+    /*LANG*/'Apps': ()=>showAppSettingsMenu(),
+    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
+    /*LANG*/'System': ()=>showSystemMenu(),
+    /*LANG*/'Alerts': ()=>showAlertsMenu(),
+    /*LANG*/'Utils': ()=>showUtilMenu(),
+    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showSystemMenu() {
+
+  const mainmenu = {
+    '': { 'title': 'System' },
+    '< Back': ()=>showMainMenu(),
+    /*LANG*/'Theme': ()=>showThemeMenu(),
+    /*LANG*/'LCD': ()=>showLCDMenu(),
+    /*LANG*/'Locale': ()=>showLocaleMenu(),
+    /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Set Time': ()=>showSetTimeMenu()
+  };
+
+  return E.showMenu(mainmenu);
+}
+
+function showAlertsMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -77,7 +108,7 @@ function showMainMenu() {
     };
   } else { // Bangle.js 1
     var beepV = [false, true, "vib"];
-    var beepN = ["Off", "Piezo", "Vibrate"];
+    var beepN = [/*LANG*/"Off", /*LANG*/"Piezo", /*LANG*/"Vibrate"];
     beepMenuItem = {
       value: Math.max(0 | beepV.indexOf(settings.beep),0),
       min: 0, max: beepV.length-1,
@@ -91,14 +122,11 @@ function showMainMenu() {
     };
   }
 
-
   const mainmenu = {
-    '': { 'title': 'Settings' },
-    '< Back': ()=>load(),
-    'App Settings': ()=>showAppSettingsMenu(),
-    'BLE': ()=>showBLEMenu(),
-    'Beep': beepMenuItem,
-    'Vibration': {
+    '': { 'title': 'Alerts' },
+    '< Back': ()=>showMainMenu(),
+    /*LANG*/'Beep': beepMenuItem,
+    /*LANG*/'Vibration': {
       value: settings.vibrate,
       format: boolFormat,
       onchange: () => {
@@ -110,7 +138,7 @@ function showMainMenu() {
         }
       }
     },
-    "Quiet Mode": {
+    /*LANG*/"Quiet Mode": {
       value: settings.quiet|0,
       format: v => ["Off", "Alarms", "Silent"][v%3],
       onchange: v => {
@@ -119,23 +147,18 @@ function showMainMenu() {
         updateOptions();
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
       },
-    },
-    'Locale': ()=>showLocaleMenu(),
-    'Select Clock': ()=>showClockMenu(),
-    'Set Time': ()=>showSetTimeMenu(),
-    'LCD': ()=>showLCDMenu(),
-    'Theme': ()=>showThemeMenu(),
-    'Utils': ()=>showUtilMenu(),
-    'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() },
+    }
   };
 
   return E.showMenu(mainmenu);
 }
 
+
 function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "joy"];
   var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
   E.showMenu({
+    '': { 'title': 'Bluetooth' },
     '< Back': ()=>showMainMenu(),
     'Make Connectable': ()=>makeConnectable(),
     'BLE': {
@@ -190,7 +213,7 @@ function showThemeMenu() {
   }
   var m = E.showMenu({
     '':{title:'Theme'},
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
@@ -276,8 +299,10 @@ function showPasskeyMenu() {
       showBLEMenu();
     }
   };
-  if (!settings.passkey || settings.passkey.length!=6)
+  if (!settings.passkey || settings.passkey.length!=6) {
     settings.passkey = "123456";
+    updateSettings();
+  }
   for (var i=0;i<6;i++) (function(i){
     menu[`Digit ${i+1}`] = {
       value : 0|settings.passkey[i],
@@ -333,7 +358,7 @@ function showWhitelistMenu() {
 function showLCDMenu() {
   const lcdMenu = {
     '': { 'title': 'LCD' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'LCD Brightness': {
       value: settings.brightness,
       min: 0.1,
@@ -445,7 +470,7 @@ function showLCDMenu() {
 function showLocaleMenu() {
   const localemenu = {
     '': { 'title': 'Locale' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
     'Time Zone': {
       value: settings.timezone,
       min: -11,
@@ -549,7 +574,7 @@ function showClockMenu() {
     '': {
       'title': 'Select Clock',
     },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>showSystemMenu(),
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -576,7 +601,7 @@ function showSetTimeMenu() {
     '': { 'title': 'Set Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
-      showMainMenu();
+      showSystemMenu();
     },
     'Hour': {
       value: d.getHours(),
