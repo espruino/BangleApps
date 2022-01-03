@@ -116,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
