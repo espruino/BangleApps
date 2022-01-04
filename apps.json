@@ -5107,7 +5107,7 @@
     "name": "Pro Menu",
     "version": "0.01",
     "description": "Replace Bangle.js 1's built in menu function.",
-    "icon": "icons8-menu-48 (1).png",
+    "icon": "icon.png",
     "type": "boot",
     "tags": "system",
     "supports": ["BANGLEJS"],
