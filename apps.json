@@ -5099,6 +5099,89 @@
     ]
   },
   {
+    "id":"colorwheel",
+    "name":"Color Wheel",
+    "tags":"app,tool",
+    "version":"0.01",
+    "description":"a tappable wheel of good-looking colors",
+    "readme":"README.md",
+    "supports":["BANGLEJS2"],
+    "allow_emulator":true,
+    "icon":"colorwheel.png",
+    "storage": [
+      {"name":"colorwheel.app.js","url":"app.js"},
+      {"name":"colorwheel.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "minimal_clock",
+    "name": "Minimal Analog Clock",
+    "shortName":"Minimal Clock",
+    "version":"0.03",
+    "description": "a minimal analog clock - just with some hands and no clock face",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"minimal_clock.app.js","url":"app.js"},
+      {"name":"minimal_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "simple_clock",
+    "name": "Simple Analog Clock",
+    "shortName":"Simple Clock",
+    "version":"0.02",
+    "description": "a simple, yet stylish, analog clock",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"simple_clock.app.js","url":"app.js"},
+      {"name":"simple_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "colorful_clock",
+    "name": "Colorful Analog Clock",
+    "shortName":"Colorful Clock",
+    "version":"0.02",
+    "description": "a colorful analog clock",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"colorful_clock.app.js","url":"app.js"},
+      {"name":"colorful_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "themesetter",
+    "name": "Theme Setter",
+    "shortName":"Theme Setter",
+    "version":"0.04",
+    "description": "a comfortable way to configure theme colors",
+    "icon": "app-icon.png",
+    "type": "app",
+    "tags": "tool",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"themesetter.app.js","url":"app.js"},
+      {"name":"themesetter.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
     "id": "widviztime",
     "name": "Widget Autohide Widget",
     "shortName": "Viz Time Widget",
