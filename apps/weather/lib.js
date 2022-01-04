@@ -291,6 +291,7 @@ exports.drawIcon = function(cond, x, y, r) {
       case 3: return drawRain;
       case 5:
         switch (code) {
+          case 511: return drawSnow;
           case 520: return drawShowerRain;
           case 521: return drawShowerRain;
           case 522: return drawShowerRain;
@@ -312,7 +313,9 @@ exports.drawIcon = function(cond, x, y, r) {
     }
   }
 
-  if (cond.code > 0) {
+  console.log("weather cond", cond);
+
+  if (cond.code && cond.code > 0) {
     chooseIconByCode(cond.code)(x, y, r);
   } else {
     chooseIcon(cond.txt)(x, y, r);
