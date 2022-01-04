@@ -8,7 +8,7 @@
 g.clear();
 require("Font7x11Numeric7Seg").add(Graphics);
 
-var DEFAULT_SELECTION = '5';
+var DEFAULT_SELECTION_NUMBERS = '5', DEFAULT_SELECTION_OPERATORS = '=', DEFAULT_SELECTION_SPECIALS = 'R';
 var RIGHT_MARGIN = 20;
 var RESULT_HEIGHT = 40;
 var COLORS = {
@@ -18,103 +18,72 @@ var COLORS = {
   SPECIAL: ['#65686C', '#7F8183']
 };
 
-var keys = {
-  '0': {
-    xy: [0, 200, 120, 240],
-    trbl: '2.00'
-  },
-  '.': {
-    xy: [120, 200, 180, 240],
-    trbl: '3=.0'
-  },
-  '=': {
-    xy: [181, 200, 240, 240],
-    trbl: '+==.',
-    color: COLORS.OPERATOR
-  },
-  '1': {
-    xy: [0, 160, 60, 200],
-    trbl: '4201'
-  },
-  '2': {
-    xy: [60, 160, 120, 200],
-    trbl: '5301'
-  },
-  '3': {
-    xy: [120, 160, 180, 200],
-    trbl: '6+.2'
-  },
-  '+': {
-    xy: [181, 160, 240, 200],
-    trbl: '-+=3',
-    color: COLORS.OPERATOR
-  },
-  '4': {
-    xy: [0, 120, 60, 160],
-    trbl: '7514'
-  },
-  '5': {
-    xy: [60, 120, 120, 160],
-    trbl: '8624'
-  },
-  '6': {
-    xy: [120, 120, 180, 160],
-    trbl: '9-35'
-  },
-  '-': {
-    xy: [181, 120, 240, 160],
-    trbl: '*-+6',
-    color: COLORS.OPERATOR
-  },
-  '7': {
-    xy: [0, 80, 60, 120],
-    trbl: 'R847'
-  },
-  '8': {
-    xy: [60, 80, 120, 120],
-    trbl: 'N957'
-  },
-  '9': {
-    xy: [120, 80, 180, 120],
-    trbl: '%*68'
-  },
-  '*': {
-    xy: [181, 80, 240, 120],
-    trbl: '/*-9',
-    color: COLORS.OPERATOR
-  },
-  'R': {
-    xy: [0, 40, 60, 79],
-    trbl: 'RN7R',
-    color: COLORS.SPECIAL,
-    val: 'AC'
-  },
-  'N': {
-    xy: [60, 40, 120, 79],
-    trbl: 'N%8R',
-    color: COLORS.SPECIAL,
-    val: '+/-'
-  },
-  '%': {
-    xy: [120, 40, 180, 79],
-    trbl: '%/9N',
-    color: COLORS.SPECIAL
-  },
-  '/': {
-    xy: [181, 40, 240, 79],
-    trbl: '//*%',
-    color: COLORS.OPERATOR
-  }
+var KEY_AREA = [0, RESULT_HEIGHT, g.getWidth(), g.getHeight()];
+
+var screen, screenColor;
+var globalGrid = [4, 5];
+var swipeEnabled;
+
+var numbersGrid = [3, 4];
+var numbers = {
+  '0': {grid: [1, 3], globalGrid: [1, 4], trbl: '2.00'},
+  '.': {grid: [2, 3], globalGrid: [2, 4], trbl: '3=.0'},
+  '1': {grid: [0, 2], globalGrid: [0, 3], trbl: '4201'},
+  '2': {grid: [1, 2], globalGrid: [1, 3], trbl: '5301'},
+  '3': {grid: [2, 2], globalGrid: [2, 3], trbl: '6+.2'},
+  '4': {grid: [0, 1], globalGrid: [0, 2], trbl: '7514'},
+  '5': {grid: [1, 1], globalGrid: [1, 2], trbl: '8624'},
+  '6': {grid: [2, 1], globalGrid: [2, 2], trbl: '9-35'},
+  '7': {grid: [0, 0], globalGrid: [0, 1], trbl: 'R847'},
+  '8': {grid: [1, 0], globalGrid: [1, 1], trbl: 'N957'},
+  '9': {grid: [2, 0], globalGrid: [2, 1], trbl: '%*68'},
 };
 
-var selected = DEFAULT_SELECTION;
-var prevSelected = DEFAULT_SELECTION;
+var operatorsGrid = [2, 3];
+var operators = {
+  '+': {grid: [0, 0], globalGrid: [3, 3], trbl: '-+=3'},
+  '-': {grid: [1, 0], globalGrid: [3, 2], trbl: '*-+6'},
+  '*': {grid: [0, 1], globalGrid: [3, 1], trbl: '/*-9'},
+  '/': {grid: [1, 1], globalGrid: [3, 0], trbl: '//*%'},
+  '=': {grid: [1, 2], globalGrid: [3, 4], trbl: '+==.'},
+};
+
+var specialsGrid = [2, 2];
+var specials = {
+  'R': {grid: [0, 0], globalGrid: [0, 0], trbl: 'RN7R', val: 'AC'},
+  'N': {grid: [1, 0], globalGrid: [1, 0], trbl: 'N%8R', val: '+/-'},
+  '%': {grid: [0, 1], globalGrid: [2, 0], trbl: '%/9N'},
+};
+
+var selected = DEFAULT_SELECTION_NUMBERS;
+var prevSelected = DEFAULT_SELECTION_NUMBERS;
 var prevNumber  = null;
 var currNumber = null;
 var operator = null;
 var results = null;
 var isDecimal = false;
 var hasPressedEquals = false;
+
+function prepareScreen(screen, grid, defaultColor) {
+  for (var k in screen) {
+    if (screen.hasOwnProperty(k)) {
+      screen[k].color = screen[k].color || defaultColor;
+      var position = [];
+      var xGrid = (KEY_AREA[2]-KEY_AREA[0])/grid[0];
+      var yGrid = (KEY_AREA[3]-KEY_AREA[1])/grid[1];
+      if (swipeEnabled) {
+        position[0] = KEY_AREA[0]+xGrid*screen[k].grid[0];
+        position[1] = KEY_AREA[1]+yGrid*screen[k].grid[1];
+      } else {
+        position[0] = KEY_AREA[0]+xGrid*screen[k].globalGrid[0];
+        position[1] = KEY_AREA[1]+yGrid*screen[k].globalGrid[1];
+      }
+      position[2] = position[0]+xGrid-1;
+      position[3] = position[1]+yGrid-1;
+      screen[k].xy = position;
+    }
+  }
+}
 
 function drawKey(name, k, selected) {
   var rMargin = 0;
@@ -140,6 +109,56 @@ function drawKey(name, k, selected) {
     rMargin = -3;
   }
   g.drawString(k.val || name, (k.xy[0] + k.xy[2])/2, (k.xy[1] + k.xy[3])/2);
+}
+
+function drawKeys() {
+  g.setColor(screenColor[0]);
+  g.fillRect(KEY_AREA[0], KEY_AREA[1], KEY_AREA[2], KEY_AREA[3]);
+  for (var k in screen) {
+    if (screen.hasOwnProperty(k)) {
+      drawKey(k, screen[k], k == selected);
+    }
+  }
+}
+function drawGlobal() {
+  screen = {};
+  screenColor = COLORS.DEFAULT;
+  prepareScreen(numbers, globalGrid, COLORS.DEFAULT);
+  for (var k in numbers) {
+    screen[k] = numbers[k];
+  }
+  prepareScreen(operators, globalGrid, COLORS.OPERATOR);
+  for (var k in operators) {
+    screen[k] = operators[k];
+  }
+  prepareScreen(specials, globalGrid, COLORS.SPECIAL);
+  for (var k in specials) {
+    screen[k] = specials[k];
+  }
+  drawKeys();
+  var selected = DEFAULT_SELECTION_NUMBERS;
+  var prevSelected = DEFAULT_SELECTION_NUMBERS;
+}
+function drawNumbers() {
+  screen = numbers;
+  screenColor = COLORS.DEFAULT;
+  drawKeys();
+  var selected = DEFAULT_SELECTION_NUMBERS;
+  var prevSelected = DEFAULT_SELECTION_NUMBERS;
+}
+function drawOperators() {
+  screen = operators;
+  screenColor =COLORS.OPERATOR;
+  drawKeys();
+  var selected = DEFAULT_SELECTION_OPERATORS;
+  var prevSelected = DEFAULT_SELECTION_OPERATORS;
+}
+function drawSpecials() {
+  screen = specials;
+  screenColor = COLORS.SPECIAL;
+  drawKeys();
+  var selected = DEFAULT_SELECTION_SPECIALS;
+  var prevSelected = DEFAULT_SELECTION_SPECIALS;
 }
 
 function getIntWithPrecision(x) {
@@ -218,8 +237,8 @@ function displayOutput(num) {
     hasPressedEquals = false;
     prevNumber = null;
     operator = null;
-    keys.R.val = 'AC';
-    drawKey('R', keys.R);
+    specials.R.val = 'AC';
+    if (!swipeEnabled) drawKey('R', specials.R);
     g.setFont('Vector', 22);
   } else {
     // might not be a number due to display of dot "."
@@ -299,12 +318,12 @@ function buttonPress(val) {
       results = null;
       isDecimal = false;
       hasPressedEquals = false;
-      if (keys.R.val == 'AC') {
+      if (specials.R.val == 'AC') {
         prevNumber = null;
         operator = null;
       } else {
-        keys.R.val = 'AC';
-        drawKey('R', keys.R, true);
+        specials.R.val = 'AC';
+        drawKey('R', specials.R, true);
       }
       wasPressedEquals = false;
       hasPressedNumber = false;
@@ -331,10 +350,11 @@ function buttonPress(val) {
     case '+':
       calculatorLogic(val);
       hasPressedNumber = false;
+      if (swipeEnabled) drawNumbers();
       break;
     case '.':
-      keys.R.val = 'C';
-      drawKey('R', keys.R);
+      specials.R.val = 'C';
+      if (!swipeEnabled) drawKey('R', specials.R);
       isDecimal = true;
       displayOutput(currNumber == null ? 0 + '.' : currNumber + '.');
       break;
@@ -348,8 +368,8 @@ function buttonPress(val) {
       hasPressedNumber = false;
       break;
     default:
-      keys.R.val = 'C';
-      drawKey('R', keys.R);
+      specials.R.val = 'C';
+      if (!swipeEnabled) drawKey('R', specials.R);
       const is0Negative = (currNumber === 0 && 1/currNumber === -Infinity);
       if (isDecimal) {
         currNumber = currNumber == null || hasPressedEquals === 1 ? 0 + '.' + val : currNumber + '.' + val;
@@ -367,23 +387,31 @@ function buttonPress(val) {
 }
 
 function moveDirection(d) {
-  drawKey(selected, keys[selected]);
+  drawKey(selected, screen[selected]);
   prevSelected = selected;
-  selected = (d === 0 && selected == '0' && prevSelected === '1') ? '1' : keys[selected].trbl[d];
-  drawKey(selected, keys[selected], true);
+  selected = (d === 0 && selected == '0' && prevSelected === '1') ? '1' : screen[selected].trbl[d];
+  drawKey(selected, screen[selected], true);
 }
 
-if (global.BTN4) {
+if (process.env.HWVERSION==1) {
   setWatch(_ => moveDirection(0), BTN1, {repeat: true, debounce: 100});
   setWatch(_ => moveDirection(2), BTN3, {repeat: true, debounce: 100});
   setWatch(_ => moveDirection(3), BTN4, {repeat: true, debounce: 100});
   setWatch(_ => moveDirection(1), BTN5, {repeat: true, debounce: 100});
   setWatch(_ => buttonPress(selected), BTN2, {repeat: true, debounce: 100});
+  swipeEnabled = false;
+  drawGlobal();
 } else { // touchscreen?
   selected = "NONE";
+  swipeEnabled = true;
+  prepareScreen(numbers, numbersGrid, COLORS.DEFAULT);
+  prepareScreen(operators, operatorsGrid, COLORS.OPERATOR);
+  prepareScreen(specials, specialsGrid, COLORS.SPECIAL);
+  drawNumbers();
   Bangle.on('touch',(n,e)=>{
-    for (var key in keys) {
-      var r = keys[key].xy;
+    for (var key in screen) {
+      if (typeof screen[key] == "undefined") break;
+      var r = screen[key].xy;
       if (e.x>=r[0] && e.y>=r[1] &&
           e.x<r[2] && e.y<r[3]) {
         //print("Press "+key);
@@ -391,19 +419,26 @@ if (global.BTN4) {
       }
     }
   });
+  var lastX = 0, lastY = 0;
+  Bangle.on('drag', (e) => {
+    if (!e.b) {
+      if (lastX > 50) { // right
+        drawSpecials();
+      } else if (lastX < -50) { // left
+        drawOperators();
+      } else if (lastY > 50) { // down
+        drawNumbers();
+      } else if (lastY < -50) { // up
+        drawNumbers();
+      }
+      lastX = 0;
+      lastY = 0;
+    } else {
+      lastX = lastX + e.dx;
+      lastY = lastY + e.dy;
+    }
+  });
 }
 
-// rescale for non-240px screens
-if (g.getWidth()!=240) {
-  RESULT_HEIGHT = RESULT_HEIGHT*g.getWidth()/240;
-  for (var k in keys) {
-    keys[k].xy = keys[k].xy.map(n => n*g.getWidth()/240);
-  }
-}
-// draw keys
-for (var k in keys) {
-  if (keys.hasOwnProperty(k)) {
-    drawKey(k, keys[k], k == selected);
-  }
-}
+
 displayOutput(0);
