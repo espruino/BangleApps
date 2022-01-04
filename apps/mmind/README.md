@@ -13,6 +13,7 @@ The game makes use of touch features.
 
 
 ## Play
+The screen needs to be unlocked.
 Select one of the dots, the color menu will show, select a colour for the pin.
 If all pins are choosen with a color the red button will turn green.
 Hit the green button and your play will be scored and listed from the top.
@@ -25,9 +26,10 @@ The blue button will start a new game.
 ## Requests
 
 This is the first version, things to add:
-Add menu to change game options number of colors, 5 pins per row.
-Add feature to drag screen up and down to see more scores
-
+...
+Add a menu to change game options like the number of colors, allow double colors, 5 pins per row.
+Add feature to drag screen up and down to see more scores.
+Times and high score
 
 ## Creator
 
