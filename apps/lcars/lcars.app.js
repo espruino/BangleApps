@@ -148,12 +148,13 @@ function printData(key, y, c){
 
   g.setColor(c);
   g.fillRect(133, y-2, 165 ,y+18);
-  g.fillCircle(164, y+8, 10);
+  g.fillCircle(161, y+8, 10);
   g.setColor(cBlack);
   g.drawString(text, 135, y);
 
   g.setColor(c);
-  g.drawString(value, 88, y);
+  g.setFontAlign(1,-1,0);
+  g.drawString(value, 130, y);
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
