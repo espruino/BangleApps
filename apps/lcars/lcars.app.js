@@ -191,7 +191,7 @@ function drawState(){
     return;
   }
 
-  g.clearRect(20, 93, 77, 170);
+  g.clearRect(20, 93, 80, 170);
   g.setColor(cWhite);
   var bat = E.getBattery();
   var current = new Date();
@@ -206,16 +206,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 29, 104);
+    g.drawImage(iconImg, 31, 104);
   } else {
     // Alarm within symbol
     g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 29+25, 107);
+    g.drawString("ALARM", 31+25, 107);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 29+25, 107+35);
+    g.drawString(getAlarmMinutes(), 31+25, 107+35);
   }
 
   g.setFontAlign(-1, -1, 0);
