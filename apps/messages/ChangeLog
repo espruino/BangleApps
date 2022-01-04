@@ -21,3 +21,4 @@
       Add 'Delete All' option to message options
       Now update correctly when 'require("messages").clearAll()' is called
 0.14: Hide widget when all unread notifications are dismissed from phone
+0.15: Don't buzz when Quiet Mode is active
