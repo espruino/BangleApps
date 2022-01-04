@@ -80,7 +80,7 @@ timePattern / datePattern:
     %S	second (00..60)
     %p	locale's equivalent of either AM or PM; blank if not known
     %P  like %p, but lower case
-*/
+*/ 
 
 var locales = {
   "en_GB": { // this is default
@@ -457,12 +457,12 @@ var locales = {
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "", 1: "" },
-    timePattern: { 0: "%HH.%MM.%SS ", 1: "%HH.%MM" }, // 17.00.00  // 17.00
-    datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%Y" }, // sunnuntai 1. maaliskuuta 2020 // 1.3.2020
+    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00                 
+    datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     month: "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
     abday: "dom,lun,mar,mer,gio,ven,sab",
-    day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì, sabato",
+    day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì,sabato",
     trans: { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }
   },
   "it_IT": {
@@ -475,12 +475,12 @@ var locales = {
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "", 1: "" },
-    timePattern: { 0: "%HH.%MM.%SS ", 1: "%HH.%MM" }, // 17.00.00  // 17.00
-    datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%Y" }, // sunnuntai 1. maaliskuuta 2020 // 1.3.2020
+    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00                 
+    datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     month: "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
     abday: "dom,lun,mar,mer,gio,ven,sab",
-    day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì, sabato",
+    day: "domenica,lunedì,martedì,mercoledì,giovedì,venerdì,sabato",
     trans: { yes: "sì", Yes: "Sì", no: "no", No: "No", ok: "ok", on: "on", off: "off" }
   },
   "wae_CH": {
@@ -589,7 +589,7 @@ var locales = {
     month: "leden,únor,březen,duben,květen,červen,červenec,srpen,září,říjen,listopad,prosinec",
     abday: "ne,po,út,st,čt,pá,so",
     day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
-    trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "na", off: "poza" }
+    trans: { yes: "ano", Yes: "Ano", no: "ne", No: "Ne", ok: "ok", on: "zap", off: "vyp" }
   },
   "sl_SI": {
     lang: "sl_SI",

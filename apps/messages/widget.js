@@ -27,6 +27,7 @@ draw:function() {
   WIDGETS["messages"].width=0;
   Bangle.drawWidgets();
 },buzz:function() {
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
   let v = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ".";
   function b() {
     var c = v[0];
