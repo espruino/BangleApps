@@ -2,6 +2,8 @@
 
 A redesign of the built-in `E.showMenu()` to take advantage of the full touch screen on the Bangle.js 2.
 
+![screenshot](touchmenu.gif)
+
 ## Features
 
 - All of the features of the built-in `E.showMenu()`
