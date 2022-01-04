@@ -25,11 +25,10 @@ The blue button will start a new game.
 
 ## Requests
 
-This is the first version, things to add:
-...
-Add a menu to change game options like the number of colors, allow double colors, 5 pins per row.
-Add feature to drag screen up and down to see more scores.
-Times and high score
+This is the first version, things to add are:/
+Add a menu to change game options like the number of colors, allow double colors, 5 pins per row./
+Add feature to drag screen up and down to see more scores./
+Timer and high score./
 
 ## Creator
 
