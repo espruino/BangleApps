@@ -2429,7 +2429,7 @@
   {
     "id": "calendar",
     "name": "Calendar",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Simple calendar",
     "icon": "calendar.png",
     "screenshots": [{"url":"screenshot_calendar.png"}],
