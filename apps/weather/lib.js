@@ -313,8 +313,6 @@ exports.drawIcon = function(cond, x, y, r) {
     }
   }
 
-  console.log("weather cond", cond);
-
   if (cond.code && cond.code > 0) {
     chooseIconByCode(cond.code)(x, y, r);
   } else {
