@@ -5103,6 +5103,21 @@
     ]
   },
   {
+    "id": "promenu",
+    "name": "Pro Menu",
+    "version": "0.01",
+    "description": "Replace Bangle.js 1's built in menu function.",
+    "icon": "icons8-menu-48 (1).png",
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS"],
+    "screenshots": [{"url":"pro-menu-screenshot.png"}],
+    "storage": [
+      {"name":"promenu.boot.js","url":"boot.js"},
+      {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
+    ]
+  },
+  {
     "id": "touchtimer",
     "name": "Touch Timer",
     "shortName": "Touch Timer",
