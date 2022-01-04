@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.14",
+    "version": "0.15",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -167,7 +167,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.38",
+    "version": "0.39",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -1501,7 +1501,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.05",
+    "version": "0.06",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
@@ -4064,7 +4064,7 @@
   {
     "id": "hcclock",
     "name": "Hi-Contrast Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Hi-Contrast Clock : A simple yet very bold clock that aims to be readable in high luninosity environments. Uses big 10x5 pixel digits. Use BTN 1 to switch background and foreground colors.",
     "icon": "hcclock-icon.png",
     "type": "clock",
@@ -4487,7 +4487,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.07",
+    "version":"0.08",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -4652,7 +4652,7 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
   "screenshots": [
@@ -4697,6 +4697,8 @@
   "tags": "tool,timer",
   "readme":"README.md",
   "supports":["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"}],
+  "allow_emulator": true,
   "storage": [
     {"name":"a_speech_timer.app.js","url":"app.js"},
     {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
@@ -4861,7 +4863,7 @@
     "id": "ptlaunch",
     "name": "Pattern Launcher",
     "shortName": "Pattern Launcher",
-    "version": "0.11",
+    "version": "0.13",
     "description": "Directly launch apps from the clock screen with custom patterns.",
     "icon": "app.png",
     "screenshots": [{"url":"manage_patterns_light.png"}],
@@ -4874,6 +4876,20 @@
       { "name": "ptlaunch.img", "url": "app-icon.js", "evaluate": true }
     ],
     "data": [{"name":"ptlaunch.patterns.json"}]
+  },
+  { "id": "slimehunt",
+    "name": "Slime Hunt",
+    "shortName":"SlimeHunt",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Fight against slimes in turn based combat, try to get the highscore!",
+    "tags": "rpg,slime",
+    "supports" : ["BANGLEJS"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"slimehunt.app.js","url":"app.js"},
+      {"name":"slimehunt.img","url":"app-icon.js","evaluate":true}
+  ]
   },
   {
     "id": "rebble",
@@ -4931,10 +4947,12 @@
     "id":"awairmonitor",
     "name":"Awair Monitor",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "allow_emulator": true,
-    "version":"0.01",
+    "version":"0.03",
     "description": "Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.",
-    "tags": "tool,health",
+    "type": "clock",
+    "tags": "clock,tool,health",
     "readme":"README.md",
     "supports":["BANGLEJS2"],
     "storage": [
@@ -5029,9 +5047,10 @@
   { "id": "circlesclock",
     "name": "Circles clock",
     "shortName":"Circles clock",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A clock with circles for different data at the bottom in a probably familiar style",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "dependencies": {"widpedom":"app"},
     "type": "clock",
     "tags": "clock",
@@ -5046,6 +5065,22 @@
      "data": [
        {"name":"circlesclock.json"}
      ]
+  },
+  { "id": "contourclock",
+    "name": "Contour Clock",
+    "shortName" : "Contour Clock",
+    "version":"0.01",
+    "icon": "app.png",
+    "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
+    "screenshots" : [{"url":"screenshot.png"}],
+    "tags": "clock",
+    "allow_emulator":true,
+    "supports" : ["BANGLEJS2"],
+    "type": "clock",  
+    "storage": [
+      {"name":"contourclock.app.js","url":"app.js"},
+      {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
+      ]
   },
   {
     "id": "ltherm",
@@ -5144,6 +5179,71 @@
     "storage": [
       {"name":"themesetter.app.js","url":"app.js"},
       {"name":"themesetter.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "widviztime",
+    "name": "Widget Autohide Widget",
+    "shortName": "Viz Time Widget",
+    "version": "0.01",
+    "description": "The widgets will be shown for four seconds after the device is unlocked.",
+    "icon": "eye.png",
+    "type": "widget",
+    "tags": "widget",
+    "readme":"README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widviztime.wid.js","url":"widget.js"}
+    ]
+  },
+  {
+    "id": "supf",
+    "name": "Simple Clock with Date",
+    "shortName": "supf Clock",
+    "version": "0.01",
+    "description": "Simple Clock with seconds and date in custom language. Install 'Languages' to get localized names.",
+    "icon": "icon.png",
+    "screenshots": [{"url":"screenshot_supf.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"supf.app.js","url":"app.js"},
+      {"name":"supf.img","url":"icon.js","evaluate":true}
+    ]
+  },
+  { "id": "andark",
+    "name": "Analog Dark",
+    "shortName":"AnDark",
+    "version":"0.04",
+    "description": "analog clock face without disturbing widgets",
+    "icon": "andark_icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],  
+    "readme": "README.md",
+    "storage": [
+      {"name":"andark.app.js","url":"app.js"},
+      {"name":"andark.img","url":"app_icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "diract",
+    "name": "DirAct",
+    "shortName": "DirAct",
+    "version": "0.01",
+    "description": "Proximity interaction detection.",
+    "icon": "diract.png",
+    "type": "app",
+    "tags": "tool,sensors",
+    "supports" : [ "BANGLEJS2" ],
+    "allow_emulator": false,
+    "readme": "README.md",
+    "storage": [
+      { "name": "diract.app.js", "url": "diract.js" },
+      { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
     ]
   }
 ]
