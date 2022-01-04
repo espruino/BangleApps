@@ -971,7 +971,7 @@
   {
     "id": "widbt",
     "name": "Bluetooth Widget",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "icon": "widget.png",
     "type": "widget",
@@ -2184,7 +2184,7 @@
     "id": "calculator",
     "name": "Calculator",
     "shortName": "Calculator",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "icon": "calculator.png",
     "screenshots": [{"url":"screenshot_calculator.png"}],
