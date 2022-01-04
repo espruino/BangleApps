@@ -312,14 +312,11 @@ exports.drawIcon = function(cond, x, y, r) {
     }
   }
 
-  const code = cond.code || -1;
-  if (code > 0) {
-    chooseIconByCode(code.code)(x, y, r);
+  if (cond.code > 0) {
+    chooseIconByCode(cond.code)(x, y, r);
   } else {
     chooseIcon(cond.txt)(x, y, r);
   }
-
-  console.log(cond);
 
 
 };
