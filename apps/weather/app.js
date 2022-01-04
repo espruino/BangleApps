@@ -9,7 +9,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {filly: 1},
   {type: "h", filly: 0, c: [
     {type: "custom", width: g.getWidth()/2, height: g.getWidth()/2, valign: -1, txt: "unknown", id: "icon",
-      render: l => weather.drawIcon(l.txt, l.x+l.w/2, l.y+l.h/2, l.w/2-5)},
+      render: l => weather.drawIcon(l, l.x+l.w/2, l.y+l.h/2, l.w/2-5)},
     {type: "v", fillx: 1, c: [
       {type: "h", pad: 2, c: [
         {type: "txt", font: "18%", id: "temp", label: "000"},
@@ -47,6 +47,7 @@ function formatDuration(millis) {
 
 function draw() {
   layout.icon.txt = current.txt;
+  layout.icon.code = current.code;
   const temp = locale.temp(current.temp-273.15).match(/^(\D*\d*)(.*)$/);
   layout.temp.label = temp[1];
   layout.tempUnit.label = temp[2];

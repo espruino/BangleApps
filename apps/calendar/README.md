@@ -9,5 +9,6 @@ Basic calendar
 
 ## Settings
 
-- Starts on Sunday: whether the calendar should start on Sunday (default is Monday).
+- Starts Sunday: whether the calendar should start on Sunday (default is Monday).
+- B2 Colors: use non-dithering colors (default, recommended for Bangle 2) or the original color scheme.
 

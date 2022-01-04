@@ -293,9 +293,9 @@ Bangle.on('swipe', dir => {
   else next();
 });
 
-// close launcher when lcd is off
-Bangle.on('lcdPower', on => {
-  if(!on) return load();
+// close launcher when screen is locked
+Bangle.on('lock', on => {
+  if(on) return load();
 });
 
 if (process.env.HWVERSION == 1) {
