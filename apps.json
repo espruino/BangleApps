@@ -5064,6 +5064,21 @@
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
     ]
   },
+  { "id": "andark",
+    "name": "Analog Dark",
+    "shortName":"AnDark",
+    "version":"0.04",
+    "description": "analog clock face without disturbing widgets",
+    "icon": "app_icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],  
+    "readme": "README.md",
+    "storage": [
+      {"name":"andark.app.js","url":"app.js"},
+      {"name":"andark.img","url":"app_icon.js ","evaluate":true}
+    ]
+  },
   {
     "id": "diract",
     "name": "DirAct",
