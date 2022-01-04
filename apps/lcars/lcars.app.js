@@ -23,6 +23,7 @@ let cBlue = "#0094FF";
 let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
+let cBlack = "#000000";
 
 /*
  * Global lcars variables
@@ -104,6 +105,7 @@ Graphics.prototype.setFontAntonioLarge = function(scale) {
   g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAPgAAAAAB8AAAAAAHgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAD8AAAAAH/gAAAAP/8AAAAf//gAAA///AAAB//+AAAD//8AAAH//4AAAP//wAAAB//gAAAAP/AAAAAB+AAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH///AAAf////8AP/////4B//////Af/////8D8AAAAfgeAAAAA8DwAAAAHgeAAAAA8D//////gf/////8B//////AP/////wAf////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAHgAAAAAA8AAAAAAPgAAAAAB4AAAAAAf/////gP/////8B//////gP/////8B//////gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAAD/+AAP8A//wAP/gP/+AH/8D//wD//gfgAA//8DwAAf+HgeAAP/A8DwAH/gHgfgP/wA8D///4AHgP//+AA8A///AAHgB//AAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AA/gAD/AAH/gA/4AA/+AP/AAH/4D/4AA//gfgA4AB8DwAPAAHgeAB4AA8DwAPgAHgfAD+AB8D//////gP/////4B//5//+AD/+H//gAH/AH/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP4AAAAAP/AAAAAP/4AAAAP//AAAAP/x4AAAf/wPAAAf/gB4AAf/AAPAAP/AAB4AB//////gP/////8B//////gP/////8AAAAAPAAAAAAB4AAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//wD/AB///Af+AP//4D/4B///Af/gP//4B/8B4D4AAPgPAeAAA8B4DwAAHgPAfAAB8B4D////gPAf///4B4B////APAD///gAAAD//gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///AAAP////4AH/////wB//////Af/////8D8APAA/geADwAB8DwAeAAHgeADwAA8D4AeAAPgf/j+AH8B/8f///gP/h///4Af8H//+AAPgP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAPAAAAAAB4AAAABgPAAAA/8B4AAB//gPAAD//8B4AH///gPAH///8B4P//+AAPH//wAAB///gAAAP//AAAAB/+AAAAAP+AAAAAB+AAAAAAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/4A/+AAf/w//+AP//v//4B//////Af/////8D4AfwAPgeAB8AA8DwAHAAHgeAB8AA8D4Af4APgf/////8B//////AP//v//4A//4//8AA/4A/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/+AAAAD//+D/gB///4f+AP///j/4D///8f/gfAAHgB8DwAA8AHgeAAHgA8DwAA8AHgfgAHgB8D//////gP/////4A/////+AD/////gAD////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAfgAAB+AD8AAAPwAfgAAB+AD8AAAPwAfgAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DBATExMTExMTExMTCw=="), 45+(scale<<8)+(1<<16));
 };
 
+
 /*
  * Draw watch face
  */
@@ -117,36 +119,41 @@ function queueDraw() {
 }
 
 
-function printData(key, y){
+function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
+  var text = "ERR";
+  var value = "NOT FOUND";
 
   if(key == "Battery"){
-    var bat = E.getBattery();
-    g.drawString("BAT:", 26, y);
-    g.drawString(bat+ "%", 65, y);
+    text = "BAT";
+    value = E.getBattery() + "%";
 
   } else if(key == "Steps"){
-    var steps = getSteps();
-    g.drawString("STEP:", 26, y);
-    g.drawString(steps, 65, y);
+    text = "STEP";
+    value = getSteps();
 
   } else if(key == "Temp."){
-    var temperature = Math.floor(E.getTemperature());
-    g.drawString("TMP:", 26, y);
-    g.drawString(temperature + "C", 65, y);
+    text = "TEMP";
+    value = Math.floor(E.getTemperature()) + "C";
 
   } else if(key == "HRM"){
-    g.drawString("HRM:", 26, y);
-    g.drawString(hrmValue, 65, y);
+    text = "HRM";
+    value = hrmValue;
 
   } else if (key == "VREF"){
-    var voltage = E.getAnalogVRef().toFixed(2);
-    g.drawString("VREF:", 26, y);
-    g.drawString(voltage + "V", 65, y);
+    text = "VREF";
+    value = E.getAnalogVRef().toFixed(2) + "V";
 
-  } else {
-    g.drawString("NOT FOUND", 26, y);
   }
+
+  g.setColor(c);
+  g.fillRect(133, y-2, 165 ,y+18);
+  g.fillCircle(164, y+8, 10);
+  g.setColor(cBlack);
+  g.drawString(text, 135, y);
+
+  g.setColor(c);
+  g.drawString(value, 88, y);
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
@@ -183,7 +190,7 @@ function drawState(){
     return;
   }
 
-  g.clearRect(110, 90, g.getWidth(), 170);
+  g.clearRect(20, 93, 77, 170);
   g.setColor(cWhite);
   var bat = E.getBattery();
   var current = new Date();
@@ -198,16 +205,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 117, 104);
+    g.drawImage(iconImg, 29, 104);
   } else {
     // Alarm within symbol
     g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 117+25, 107);
+    g.drawString("ALARM", 29+25, 107);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 117+25, 107+35);
+    g.drawString(getAlarmMinutes(), 29+25, 107+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -252,9 +259,9 @@ function drawPosition0(){
   // Draw data
   g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
-  printData(settings.dataRow1, 97);
-  printData(settings.dataRow2, 122);
-  printData(settings.dataRow3, 147);
+  printData(settings.dataRow1, 97, cOrange);
+  printData(settings.dataRow2, 122, cPurple);
+  printData(settings.dataRow3, 147, cBlue);
 
   // Draw state
   drawState();
