@@ -2,3 +2,5 @@
 0.02: Add widget
 0.03: Bangle.js 2 support
 0.04: Move Quiet Mode LCD options from global settings to this app
+0.05: Avoid immediately redrawing widgets on load
+0.06: Fix: don't try to redraw widget when widgets not loaded

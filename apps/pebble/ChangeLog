@@ -2,3 +2,5 @@
 0.02: included deployment of pebble.settings.js in apps.json
 0.03: Changed time+calendar font to LECO1976Regular, changed to slanting boot
 0.04: Fix widget hiding code (fix #1046)
+0.05: Fix typo in settings - Purple
+0.06: Added dependancy on Pedometer Widget

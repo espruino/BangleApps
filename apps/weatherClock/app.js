@@ -53,6 +53,29 @@ function chooseIcon(condition) {
   return cloudIcon;
 }
 
+/*
+* Choose weather icon to display based on weather conditition code
+* https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+*/
+function chooseIconByCode(code) {
+  const codeGroup = Math.round(code / 100);
+  switch (codeGroup) {
+    case 2: return stormIcon;
+    case 3: return rainIcon;
+    case 5: return rainIcon;
+    case 6: return snowIcon;
+    case 7: return cloudIcon;
+    case 8:
+      switch (code) {
+        case 800: return sunIcon;
+        case 801: return partSunIcon;
+        default: return cloudIcon;
+      }
+      break;
+    default: return cloudIcon;
+  }
+}
+
 /**
 Get weather stored in json file by weather app.
 */
@@ -73,12 +96,10 @@ var clockLayout = new Layout( {
       {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "temp", label: "000"},
-            {type: "txt", font: "10%", id: "tempUnit", label: "°C"},
+            {type: "txt", font: "10%", id: "temp", label: "000 °C"},
           ]},
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "wind",  label: "00"},
-            {type: "txt", font: "10%", id: "windUnit", label: "km/h"},
+            {type: "txt", font: "10%", id: "wind", label: "00 km/h"},
           ]}
         ]
       },
@@ -106,18 +127,19 @@ function draw() {
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
       const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-      clockLayout.temp.label = temp[1];
-      clockLayout.tempUnit.label = temp[2];
-      clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
+      clockLayout.temp.label = temp[1] + " " + temp[2];
+      const code = currentWeather.code || -1;
+      if (code > 0) {
+        clockLayout.weatherIcon.src = chooseIconByCode(code);
+      } else {
+        clockLayout.weatherIcon.src = chooseIcon(currentWeather.txt);
+      }
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + " ".repeat(wind[2].length-1);
-      clockLayout.windUnit.label = wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
+      clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
   }
   else{
       clockLayout.temp.label = "Err";
-      clockLayout.tempUnit.label = "";
       clockLayout.wind.label = "No Data";
-      clockLayout.windUnit.label = "";
       clockLayout.weatherIcon.src = errIcon;
   }
   clockLayout.clear();

@@ -3,3 +3,5 @@
 0.03: cycle thru pages
 0.04: reset to clock after 2 mins of inactivity
 0.05: add Bangle 2 version
+0.06: Adds settings page (hide clocks or launchers)
+0.07: Adds setting for directly launching app on touch for Bangle 2

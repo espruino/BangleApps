@@ -1,2 +1,6 @@
 0.02: New App!
 0.03: Improved messages and added Celsius sign
+0.04: Make temperature value readable on smaller screens
+0.05: Use temperature from current locale
+      Update every 10s, average last 5 readings
+      Changes based on #1092

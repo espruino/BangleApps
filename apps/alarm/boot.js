@@ -7,7 +7,7 @@
     active = active.sort((a,b)=>(a.hr-b.hr)+(a.last-b.last)*24);
     var hr = time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
     if (!require('Storage').read("alarm.js")) {
-      console.log("No alarm app!");
+      console.log(/*LANG*/"No alarm app!");
       require('Storage').write('alarm.json',"[]");
     } else {
       var t = 3600000*(active[0].hr-hr);

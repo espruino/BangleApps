@@ -88,7 +88,7 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
-if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${s.passkey}, mitm:1, display:1});\n`;
+if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 // Pre-2v10 firmwares without a theme/setUI
 delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
