@@ -106,11 +106,12 @@ const timeout = 200;
 let currentSpeed = 0;
 let currentSonic = -1;
 
-let drawTimeout, drawInterval;
+let drawTimeout, drawInterval, waitTimeout;
 let bgScroll = [0, null];
 
 const start = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
+  if (waitTimeout) clearTimeout(waitTimeout);
   if (drawInterval) clearInterval(drawInterval);
 
   drawInterval = setInterval(() => {
@@ -147,7 +148,7 @@ const wait = () => {
 
   drawInterval = setInterval(() => draw("wait"), timeout);
 
-  setTimeout(() => {
+  waitTimeout = setTimeout(() => {
     clearInterval(drawInterval);
     currentSonic = -1;
     draw("reset");
@@ -215,7 +216,7 @@ const drawTime = () => {
   const y = 24 + 25;
 
   const date = new Date();
-  const timeStr = require("locale").time(date, 1);
+  const timeStr = require("locale").time(date, 1).trim();
   const dateStr = require("locale").date(date).toUpperCase();
 
   g.setColor("#000");
@@ -266,6 +267,7 @@ Bangle.on("twist", () => wait());
 Bangle.setOptions({
   lockTimeout: 10000,
   backlightTimeout: 12000,
+  twistThreshold: 1600,
 });
 
 Bangle.setUI("clock");
