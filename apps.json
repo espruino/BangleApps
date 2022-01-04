@@ -4875,6 +4875,20 @@
     ],
     "data": [{"name":"ptlaunch.patterns.json"}]
   },
+  { "id": "slimehunt",
+    "name": "Slime Hunt",
+    "shortName":"SlimeHunt",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Fight against slimes in turn based combat, try to get the highscore!",
+    "tags": "rpg,slime",
+    "supports" : ["BANGLEJS"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"slimehunt.app.js","url":"app.js"},
+      {"name":"slimehunt.img","url":"app-icon.js","evaluate":true}
+  ]
+  },
   {
     "id": "rebble",
     "name": "Rebble Clock",
