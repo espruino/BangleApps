@@ -7,19 +7,23 @@ const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbB
 const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
-const SETTINGS_FILE = "circlesclock.json";
 let settings;
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {
+  settings = require("Storage").readJSON("circlesclock.json", 1) || {
     'maxHR': 200,
     'stepGoal': 10000,
     'batteryWarn': 30
   };
+  // Load step goal from pedometer widget as fallback
+  if (settings.stepGoal == undefined) {
+    const d = require('Storage').readJSON("wpedom.json", 1) || {};
+    settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+  }
 }
 
-const colorFg = '#fff';
-const colorBg = '#000';
+const colorFg = g.theme.dark ? '#fff' : '#000';
+const colorBg = g.theme.dark ? '#000' : '#fff';
 const colorGrey = '#808080';
 const colorRed = '#ff0000';
 const colorGreen = '#00ff00';
@@ -73,7 +77,7 @@ function drawSteps() {
   g.setColor(colorGrey);
   g.fillCircle(w1, h3, radiusOuter);
 
-  const stepGoal = settings.stepGoal;
+  const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
     let percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
@@ -97,8 +101,9 @@ function drawHeartRate() {
   g.setColor(colorGrey);
   g.fillCircle(w2, h3, radiusOuter);
 
-  if (hrtValue != undefined) {
-    const percent = hrtValue / settings.maxHR;
+  if (hrtValue != undefined && hrtValue > 0) {
+    const minHR = 40;
+    const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
     drawGauge(w2, h3, percent, colorRed);
   }
 
@@ -156,25 +161,26 @@ function radians(a) {
   return a * Math.PI / 180;
 }
 
-
 function drawGauge(cx, cy, percent, color) {
   let offset = 30;
   let end = 300;
   var i = 0;
   var r = radiusInner + 3;
 
+  if (percent <= 0) return;
   if (percent > 1) percent = 1;
 
   var startrot = -offset;
-  var endrot = startrot - ((end - offset) * percent);
+  var endrot = startrot - ((end - offset) * percent) - 15;
 
   g.setColor(color);
 
+  const size = 4;
   // draw gauge
-  for (i = startrot; i > endrot; i -= 4) {
+  for (i = startrot; i > endrot - size; i -= size) {
     x = cx + r * Math.sin(radians(i));
     y = cy + r * Math.cos(radians(i));
-    g.fillCircle(x, y, 4);
+    g.fillCircle(x, y, size);
   }
 }
 
@@ -201,6 +207,10 @@ function getSteps() {
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
     Bangle.setHRMPower(1, "watch");
+    if (hrtValue == undefined) {
+      hrtValue = '...';
+      drawHeartRate();
+    }
   } else {
     Bangle.setHRMPower(0, "watch");
   }
@@ -218,6 +228,10 @@ Bangle.on('HRM', function(hrm) {
   //}
 });
 
+Bangle.on('charging', function(charging) {
+  drawBattery();
+});
+
 g.clear();
 Bangle.loadWidgets();
 /*
@@ -225,9 +239,11 @@ Bangle.loadWidgets();
  * so we will blank out the draw() functions of each widget and change the
  * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {
-  wd.draw = () => {};
-  wd.area = "";
+if (typeof WIDGETS === "object") {
+  for (let wd of WIDGETS) {
+    wd.draw = () => {};
+    wd.area = "";
+  }
 }
 loadSettings();
 setInterval(draw, 60000);
