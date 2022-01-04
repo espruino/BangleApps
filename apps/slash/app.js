@@ -54,19 +54,22 @@ function convertDate(date) {
 function draw() {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
-  var hour = (" "+h).substr(-2);
   var minutes = ("0"+m).substr(-2);
   g.reset();
   
   // Convert to 12hr time mode
-  if (is12Hour && hour > 12) {
-    hour = hour - 12;
-    if (hour < 10) {
-      hour = "0" + hour;
+  if (is12Hour && h > 12) {
+    h = h - 12;
+    if (h < 10) {
+      h = "0" + h;
     }
-  } else if (hour == 0) {
-    hour = 12;
+  } else if (h < 12) {
+    h = "0" + h;
+  } else if (h == 0) {
+    h = 12;
   }
+  
+  var hour = (" "+h).substr(-2);
   
   // Draw the time, vector font
   g.setFont("Vector", 50);
