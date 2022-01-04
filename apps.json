@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.14",
+    "version": "0.15",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -4487,7 +4487,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.07",
+    "version":"0.08",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -4652,7 +4652,7 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
   "screenshots": [
@@ -5029,9 +5029,10 @@
   { "id": "circlesclock",
     "name": "Circles clock",
     "shortName":"Circles clock",
-    "version":"0.02",
+    "version":"0.03",
     "description": "A clock with circles for different data at the bottom in a probably familiar style",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "dependencies": {"widpedom":"app"},
     "type": "clock",
     "tags": "clock",
@@ -5064,18 +5065,35 @@
     ]
   },
   { "id": "andark",
-  "name": "Analog Dark",
-  "shortName":"AnDark",
-  "version":"0.04",
-  "description": "analog clock face without disturbing widgets",
-  "icon": "andark_icon.png",
-  "type": "clock",
-  "tags": "clock",
-  "supports" : ["BANGLEJS2"],  
-  "readme": "README.md",
-  "storage": [
-    {"name":"andark.app.js","url":"app.js"},
-    {"name":"andark.img","url":"app_icon.js ","evaluate":true}
-  ]
+    "name": "Analog Dark",
+    "shortName":"AnDark",
+    "version":"0.04",
+    "description": "analog clock face without disturbing widgets",
+    "icon": "app_icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],  
+    "readme": "README.md",
+    "storage": [
+      {"name":"andark.app.js","url":"app.js"},
+      {"name":"andark.img","url":"app_icon.js ","evaluate":true}
+    ]
+  },
+  {
+    "id": "diract",
+    "name": "DirAct",
+    "shortName": "DirAct",
+    "version": "0.01",
+    "description": "Proximity interaction detection.",
+    "icon": "diract.png",
+    "type": "app",
+    "tags": "tool,sensors",
+    "supports" : [ "BANGLEJS2" ],
+    "allow_emulator": false,
+    "readme": "README.md",
+    "storage": [
+      { "name": "diract.app.js", "url": "diract.js" },
+      { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
+    ]
   }
 ]
