@@ -5,6 +5,7 @@ A High-contrast, black-on-white or white-on-black clock displaying huge pixel di
 ## Usage
 
 * BTN 1 switches between the two modes : black-on-white or white-on-black
+* BTN 3 opens the messages (if installed, and there are new messages) 
 * That's it!
 
 ## Issues and Requests
