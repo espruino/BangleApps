@@ -52,7 +52,7 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg && msg.new) {
+  if (msg && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
   }
@@ -243,8 +243,8 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  g.setFont(fontMedium);
-  lines = g.wrapString(msg.body, g.getWidth()-10);
+  var bodyFont = fontMedium;
+  lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
@@ -257,7 +257,7 @@ function showMessage(msgid) {
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},
-    {type:"txt", font:fontMedium, label:body, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2 },
     {type:"h",fillx:1, c: buttons}
   ]});
   g.clearRect(Bangle.appRect);

@@ -21,4 +21,6 @@
       Add 'Delete All' option to message options
       Now update correctly when 'require("messages").clearAll()' is called
 0.14: Hide widget when all unread notifications are dismissed from phone
-0.15: Fix: Get dynamic dimensions of notify icon, fixed notification font
+0.15: Don't buzz when Quiet Mode is active
+0.16: Fix text wrapping so it fits the screen even if title is big (fix #1147)
+0.17: Fix: Get dynamic dimensions of notify icon, fixed notification font

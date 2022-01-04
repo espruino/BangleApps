@@ -16,10 +16,17 @@ function saveKML(track,title) {
     <Schema id="schema">
 ${track[0].Heartrate!==undefined ? `<gx:SimpleArrayField name="heartrate" type="int">
       <displayName>Heart Rate</displayName>
-    </gx:SimpleArrayField>`:``}
+    </gx:SimpleArrayField>`:``}    
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayField name="steps" type="int">
-      <displayName>Step Count</displayName>`:``}
-    </gx:SimpleArrayField>
+      <displayName>Step Count</displayName>
+    </gx:SimpleArrayField>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayField name="core" type="int">
+      <displayName>Core Temp</displayName>
+    </gx:SimpleArrayField>`:``}
+${track[0].Skin!==undefined ? `<gx:SimpleArrayField name="skin" type="int">
+      <displayName>Skin Temp</displayName>
+    </gx:SimpleArrayField>`:``}      
+
     </Schema>
     <Folder>
       <name>Tracks</name>
@@ -37,6 +44,12 @@ ${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayData name="steps">
 ${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
               </gx:SimpleArrayData>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayData name="core">
+${track.map(pt=>`            <gx:value>${0|pt.Core}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+${track[0].Skin!==undefined ? `<gx:SimpleArrayData name="skin">
+${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}              
             </SchemaData>
           </ExtendedData>
         </gx:Track>
