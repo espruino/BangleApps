@@ -1,0 +1,5 @@
+require("Storage").write("mmind.info",{
+  "id":"mmind",
+  "name":"Master Mindr",
+  "src":"mmind.app.js"
+});
