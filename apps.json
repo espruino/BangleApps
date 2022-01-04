@@ -2027,7 +2027,7 @@
     "id": "chronowid",
     "name": "Chrono Widget",
     "shortName": "Chrono Widget",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Chronometer (timer) which runs as widget.",
     "icon": "app.png",
     "tags": "tool,widget",
