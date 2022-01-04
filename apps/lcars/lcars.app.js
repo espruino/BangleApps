@@ -149,7 +149,7 @@ function printData(key, y){
   }
 }
 
-function drawHoriztonatlBgLine(color, x1, x2, y, h){
+function drawHorizontalBgLine(color, x1, x2, y, h){
   g.setColor(color);
 
   for(var i=0; i<h; i++){
@@ -205,6 +205,7 @@ function drawState(){
     g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
     g.drawString("ALARM", 117+25, 107);
+    g.setColor(cWhite);
     g.setFontAntonioLarge();
     g.drawString(getAlarmMinutes(), 117+25, 107+35);
   }
@@ -216,13 +217,18 @@ function drawState(){
 function drawPosition0(){
   // Draw background image
   g.drawImage(bgLeft, 0, 0);
-  drawHoriztonatlBgLine(cBlue, 25, 120, 0, 4);
-  drawHoriztonatlBgLine(cBlue, 130, 176, 0, 4);
-  drawHoriztonatlBgLine(cPurple, 20, 70, 80, 4);
-  drawHoriztonatlBgLine(cPurple, 80, 176, 80, 4);
-  drawHoriztonatlBgLine(cOrange, 35, 110, 87, 4);
-  drawHoriztonatlBgLine(cOrange, 120, 176, 87, 4);
-  drawHoriztonatlBgLine(cOrange, 20, 176, 171, 5);
+  drawHorizontalBgLine(cBlue, 25, 120, 0, 4);
+  drawHorizontalBgLine(cBlue, 130, 176, 0, 4);
+  drawHorizontalBgLine(cPurple, 20, 70, 80, 4);
+  drawHorizontalBgLine(cPurple, 80, 176, 80, 4);
+  drawHorizontalBgLine(cOrange, 35, 110, 87, 4);
+  drawHorizontalBgLine(cOrange, 120, 176, 87, 4);
+
+  // The last line is a battery indicator too
+  var bat = E.getBattery() / 100.0;
+  var batX2 = parseInt((172 - 35) * bat + 35);
+  drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
+  drawHorizontalBgLine(cPurple, batX2+10, 172, 171, 5);
 
   // Draw logo
   drawLock();
@@ -257,12 +263,12 @@ function drawPosition0(){
 function drawPosition1(){
   // Draw background image
   g.drawImage(bgRight, 149, 0);
-  drawHoriztonatlBgLine(cBlue, 0, 140, 0, 4);
-  drawHoriztonatlBgLine(cPurple, 0, 80, 80, 4);
-  drawHoriztonatlBgLine(cPurple, 90, 150, 80, 4);
-  drawHoriztonatlBgLine(cOrange, 0, 50, 87, 4);
-  drawHoriztonatlBgLine(cOrange, 60, 140, 87, 4);
-  drawHoriztonatlBgLine(cOrange, 0, 150, 171, 5);
+  drawHorizontalBgLine(cBlue, 0, 140, 0, 4);
+  drawHorizontalBgLine(cPurple, 0, 80, 80, 4);
+  drawHorizontalBgLine(cPurple, 90, 150, 80, 4);
+  drawHorizontalBgLine(cOrange, 0, 50, 87, 4);
+  drawHorizontalBgLine(cOrange, 60, 140, 87, 4);
+  drawHorizontalBgLine(cOrange, 0, 150, 171, 5);
 
   // Draw steps bars
   g.setColor(cWhite);
