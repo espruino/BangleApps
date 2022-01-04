@@ -3,7 +3,7 @@ draw:function() {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+(atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==").charCodeAt(1));
+  g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+(atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==").charCodeAt(1)));
   g.drawImage([atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA=="),atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA==")][c&1], this.x, this.y);
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
