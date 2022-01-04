@@ -1,5 +1,6 @@
 const locale = require("locale");
 const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
+const CFG = require('Storage').readJSON("ffcniftya.json", 1) || {showWeekNum: true};
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
@@ -58,7 +59,7 @@ function draw() {
   g.drawString(year, centerDatesScaleX, center.y - 62 * scale);
   g.drawString(month, centerDatesScaleX, center.y - 44 * scale);
   g.drawString(day, centerDatesScaleX, center.y - 26 * scale);
-  g.drawString(weekNum, centerDatesScaleX, center.y + 15 * scale);
+  if (CFG.showWeekNum) g.drawString(d02(ISO8601_week_no(now)), centerDatesScaleX, center.y + 15 * scale);
   g.drawString(monthName, centerDatesScaleX, center.y + 48 * scale);
   g.drawString(dayName, centerDatesScaleX, center.y + 66 * scale);
 }

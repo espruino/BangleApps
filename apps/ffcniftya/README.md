@@ -1,9 +1,18 @@
 # Nifty-A Clock
 
-##This is the clock
-![](screenshot_nifty.png)
+Colors are black/white - photos have non correct camera color "blue"
 
-##And the week number can be turned On/Off via settings
-![](screenshot_settings_nifty.png)
-default is "On"
+## This is the clock
+![](screenshot_nifty.png) (*emulated*)
+
+
+![](photo_nifty.png) (*photo*)
+
+## The week number can be turned of in settings
+(default is **"On"**)
+
+![](screenshot_settings_nifty.png) (*emulated*)
+
+![](photo_settings_nifty.png) (*photo*)
+
 
