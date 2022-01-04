@@ -5099,6 +5099,21 @@
     ]
   },
   {
+    "id": "widviztime",
+    "name": "Widget Autohide Widget",
+    "shortName": "Viz Time Widget",
+    "version": "0.01",
+    "description": "The widgets will be shown for four seconds after the device is unlocked.",
+    "icon": "eye.png",
+    "type": "widget",
+    "tags": "widget",
+    "readme":"README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widviztime.wid.js","url":"widget.js"}
+    ]
+  },
+  {
     "id": "supf",
     "name": "Simple Clock with Date",
     "shortName": "supf Clock",
