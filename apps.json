@@ -4780,7 +4780,7 @@
   {
     "id": "weatherClock",
     "name": "Weather Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "A clock which displays current weather conditions (requires Gadgetbridge and Weather apps).",
     "icon": "app.png",
     "screenshots": [{"url":"screens/screen1.png"}],
