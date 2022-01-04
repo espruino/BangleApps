@@ -17,6 +17,7 @@ You can record
 * **GPS** GPS Latitude, Longitude and Altitude
 * **Steps** Steps counted by the step counter
 * **HR** Heart rate
+* **Core** CoreTemp body temperature
 
 **Note:** It is possible for other apps to record information using this app
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`

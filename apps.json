@@ -768,7 +768,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -4981,8 +4981,8 @@
   },
   {
     "id": "coretemp",
-    "name": "Core Temp Display",
-    "version": "0.01",
+    "name": "CoreTemp",
+    "version": "0.02",
     "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
     "type": "app",
@@ -4990,10 +4990,14 @@
     "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"coretemp.boot.js","url":"boot.js"},
+      {"name":"coretemp.wid.js","url":"widget.js"},
       {"name":"coretemp.app.js","url":"coretemp.js"},
-      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
-    ]
+      {"name":"coretemp.settings.js","url":"settings.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
+      {"name":"coretemp.boot.js","url":"boot.js"}
+    ],
+    "data": [{"name":"coretemp.json","url":"app-settings.json"}],
+    "screenshots": [{"url":"screenshot.png"}]
   },
   {
     "id": "showimg",
