@@ -41,4 +41,5 @@
 0.36: Added 'Utils' menu with helpful utilities for restoring Bangle.js
 0.37: Going into passkey menu now saves settings with passkey
 0.38: Restructed menus as per forum discussion
-0.39: Moved off into Utils, put System after Apps
+0.39: Fix misbehaving debug info option
+0.40: Moved off into Utils, put System after Apps
