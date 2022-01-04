@@ -2970,7 +2970,7 @@
   {
     "id": "cprassist",
     "name": "CPR Assist",
-    "version": "0.02-rc1",
+    "version": "0.02",
     "description": "Provides assistance while performing a CPR",
     "icon": "cprassist-icon.png",
     "tags": "tool,firstaid",
