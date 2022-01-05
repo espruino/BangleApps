@@ -206,7 +206,7 @@ function modeTime()
 {
 	timeActiveUntil = new Date();
 	timeActiveUntil.setDate(timeActiveUntil.getDate());
-	timeActiveUntil.setSeconds(timeActiveUntil.getSeconds()+15);
+	timeActiveUntil.setSeconds(timeActiveUntil.getSeconds()+86400);
 	if (typeof drawtime_timeout !== 'undefined')
 	{
 		clearTimeout(drawtime_timeout);
