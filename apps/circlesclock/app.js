@@ -8,12 +8,13 @@ const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmA
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
 let settings;
-
 function loadSettings() {
   settings = require("Storage").readJSON("circlesclock.json", 1) || {
+    'minHR': 40,
     'maxHR': 200,
     'stepGoal': 10000,
-    'batteryWarn': 30
+    'batteryWarn': 30,
+    'showWidgets': false
   };
   // Load step goal from pedometer widget as fallback
   if (settings.stepGoal == undefined) {
@@ -21,18 +22,21 @@ function loadSettings() {
     settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
   }
 }
+loadSettings();
+const showWidgets = settings.showWidgets || false;
 
+let hrtValue;
+
+// layout values:
 const colorFg = g.theme.dark ? '#fff' : '#000';
 const colorBg = g.theme.dark ? '#000' : '#fff';
 const colorGrey = '#808080';
 const colorRed = '#ff0000';
 const colorGreen = '#00ff00';
-
-let hrtValue;
-
-const h = g.getHeight();
+const widgetOffset = showWidgets ? 12 : 0;
+const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
-const hOffset = 30;
+const hOffset = 30 - widgetOffset;
 const h1 = Math.round(1 * h / 5 - hOffset);
 const h2 = Math.round(3 * h / 5 - hOffset);
 const h3 = Math.round(8 * h / 8 - hOffset);
@@ -102,7 +106,7 @@ function drawHeartRate() {
   g.fillCircle(w2, h3, radiusOuter);
 
   if (hrtValue != undefined && hrtValue > 0) {
-    const minHR = 40;
+    const minHR = settings.minHR || 40;
     const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
     drawGauge(w2, h3, percent, colorRed);
   }
@@ -233,19 +237,24 @@ Bangle.on('charging', function(charging) {
 });
 
 g.clear();
+
+
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-if (typeof WIDGETS === "object") {
-  for (let wd of WIDGETS) {
-    wd.draw = () => {};
-    wd.area = "";
+if (!showWidgets) {
+  /*
+  * we are not drawing the widgets as we are taking over the whole screen
+  * so we will blank out the draw() functions of each widget and change the
+  * area to the top bar doesn't get cleared.
+  */
+  if (WIDGETS && typeof WIDGETS === "object") {
+    for (let wd of WIDGETS) {
+      wd.draw = () => {};
+      wd.area = "";
+    }
   }
 }
-loadSettings();
+
+
 setInterval(draw, 60000);
 draw();
 Bangle.setUI("clock");

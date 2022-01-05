@@ -8,6 +8,16 @@
   }
   E.showMenu({
     '': { 'title': 'circlesclock' },
+    'min heartrate': {
+      value: "minHR" in settings ? settings.minHR : 40,
+      min: 0,
+      max : 250,
+      step: 10,
+      format: x => {
+        return x;
+      },
+      onchange: x => save('minHR', x),
+    },
     'max heartrate': {
       value: "maxHR" in settings ? settings.maxHR : 200,
       min: 20,
@@ -37,6 +47,14 @@
         return x + '%';
       },
       onchange: x => save('batteryWarn', x),
+    },
+    'show widgets': {
+      value: "showWidgets" in settings ? settings.showWidgets : false,
+      format: () => (settings.showWidgets ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.showWidgets = !settings.showWidgets;
+        save('showWidgets', settings.showWidgets);
+      },
     },
     '< Back': back,
   });
