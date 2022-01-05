@@ -14,6 +14,8 @@ function loadSettings() {
     'minHR': 40,
     'maxHR': 200,
     'stepGoal': 10000,
+    'stepDistanceGoal': 8000,
+    'stepLength': 0.8,
     'batteryWarn': 30,
     'showWidgets': false,
     'circle1': 'hr',
@@ -135,13 +137,13 @@ function drawSteps(w) {
 function drawStepsDistance(w) {
   if (!w) w = getCirclePosition("steps", w1);
   const steps = getSteps();
-  const stepDistance = 0.8; // TODO make configurable
+  const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = steps * stepDistance;
 
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
-  const stepDistanceGoal = settings.stepDistanceGoal || 5;
+  const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
     let percent = stepsDistance / stepDistanceGoal;
     if (stepDistanceGoal < stepsDistance) percent = 1;

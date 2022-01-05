@@ -40,6 +40,26 @@
       },
       onchange: x => save('stepGoal', x),
     },
+    'step length': {
+      value: "stepLength" in settings ? settings.stepLength : 0.8,
+      min: 0.1,
+      max : 1.5,
+      step: 0.01,
+      format: x => {
+        return x;
+      },
+      onchange: x => save('stepLength', x),
+    },
+    'step dist goal': {
+      value: "stepDistanceGoal" in settings ? settings.stepDistanceGoal : 8000,
+      min: 2000,
+      max : 30000,
+      step: 1000,
+      format: x => {
+        return x;
+      },
+      onchange: x => save('stepDistanceGoal', x),
+    },
     'battery warn': {
       value: "batteryWarn" in settings ? settings.batteryWarn : 30,
       min: 10,
@@ -53,37 +73,25 @@
     'show widgets': {
       value: "showWidgets" in settings ? settings.showWidgets : false,
       format: () => (settings.showWidgets ? 'Yes' : 'No'),
-      onchange: () => {
-        settings.showWidgets = !settings.showWidgets;
-        save('showWidgets', settings.showWidgets);
-      },
+      onchange: x => save('showWidgets', x),
     },
     'left': {
       value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle1)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: v => {
-        settings.circle1 = valuesCircleTypes[v];
-        save('circle1', settings.circle1);
-      }
+      onchange: x => save('circle1', x),
     },
     'middle': {
       value: Math.max(0,2 | valuesCircleTypes.indexOf(settings.circle2)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: v => {
-        settings.circle2 = valuesCircleTypes[v];
-        save('circle2', settings.circle2);
-      }
+      onchange: x => save('circle2', x),
     },
     'right': {
       value: Math.max(0,3 | valuesCircleTypes.indexOf(settings.circle3)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: v => {
-        settings.circle3 = valuesCircleTypes[v];
-        save('circle3', settings.circle3);
-      }
+      onchange: x => save('circle3', x),
     },
     '< Back': back,
   });
