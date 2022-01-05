@@ -79,19 +79,19 @@
       value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle1)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: x => save('circle1', x),
+      onchange: x => save('circle1', valuesCircleTypes[x]),
     },
     'middle': {
       value: Math.max(0,2 | valuesCircleTypes.indexOf(settings.circle2)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: x => save('circle2', x),
+      onchange: x => save('circle2', valuesCircleTypes[x]),
     },
     'right': {
       value: Math.max(0,3 | valuesCircleTypes.indexOf(settings.circle3)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
-      onchange: x => save('circle3', x),
+      onchange: x => save('circle3', valuesCircleTypes[x]),
     },
     '< Back': back,
   });
