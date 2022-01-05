@@ -66,11 +66,10 @@ function showMainMenu() {
     '': { 'title': 'Settings' },
     '< Back': ()=>load(),
     /*LANG*/'Apps': ()=>showAppSettingsMenu(),
-    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
     /*LANG*/'System': ()=>showSystemMenu(),
+    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
     /*LANG*/'Alerts': ()=>showAlertsMenu(),
-    /*LANG*/'Utils': ()=>showUtilMenu(),
-    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
+    /*LANG*/'Utils': ()=>showUtilMenu()
   };
 
   return E.showMenu(mainmenu);
@@ -499,6 +498,8 @@ function showUtilMenu() {
     '< Back': ()=>showMainMenu(),
     'Debug Info': {
       value: E.clip(0|settings.log,0,2),
+      min: 0,
+      max: 2,
       format: v => ["Hide","Show","Log"][E.clip(0|v,0,2)],
       onchange: v => {
         settings.log = v;
@@ -535,7 +536,8 @@ function showUtilMenu() {
           setTimeout(showMainMenu, 50);
         } else showUtilMenu();
       });
-    }
+    },
+    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
   };
   if (Bangle.factoryReset) {
     menu['Factory Reset'] = ()=>{

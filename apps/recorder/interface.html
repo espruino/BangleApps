@@ -18,8 +18,15 @@ ${track[0].Heartrate!==undefined ? `<gx:SimpleArrayField name="heartrate" type="
       <displayName>Heart Rate</displayName>
     </gx:SimpleArrayField>`:``}
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayField name="steps" type="int">
-      <displayName>Step Count</displayName>`:``}
-    </gx:SimpleArrayField>
+      <displayName>Step Count</displayName>
+    </gx:SimpleArrayField>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayField name="core" type="int">
+      <displayName>Core Temp</displayName>
+    </gx:SimpleArrayField>`:``}
+${track[0].Skin!==undefined ? `<gx:SimpleArrayField name="skin" type="int">
+      <displayName>Skin Temp</displayName>
+    </gx:SimpleArrayField>`:``}
+
     </Schema>
     <Folder>
       <name>Tracks</name>
@@ -36,6 +43,12 @@ ${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")
               </gx:SimpleArrayData>`:``}
 ${track[0].Steps!==undefined ? `<gx:SimpleArrayData name="steps">
 ${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+${track[0].Core!==undefined ? `<gx:SimpleArrayData name="core">
+${track.map(pt=>`            <gx:value>${0|pt.Core}</gx:value>\n`).join("")}
+              </gx:SimpleArrayData>`:``}
+${track[0].Skin!==undefined ? `<gx:SimpleArrayData name="skin">
+${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
               </gx:SimpleArrayData>`:``}
             </SchemaData>
           </ExtendedData>
@@ -59,8 +72,7 @@ ${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
 
 function saveGPX(track, title) {
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
-<gpx creator="Bangle.js" version="1.1">
+<gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata>
     <time>${track[0].Time.toISOString()}</time>
   </metadata>

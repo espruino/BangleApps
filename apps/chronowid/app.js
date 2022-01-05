@@ -36,13 +36,7 @@ E.on('kill', () => {
 function showMenu() {
   const timerMenu = {
     '': {
-      'title': 'Set timer',
-      'predraw': function() {
-        timerMenu.hours.value = settingsChronowid.hours;
-        timerMenu.minutes.value = settingsChronowid.minutes;
-        timerMenu.seconds.value = settingsChronowid.seconds;
-        timerMenu.started.value = settingsChronowid.started;
-      }
+      'title': 'Set timer'
     },
     '< Back' :  ()=>{load();},
     'Reset values': function() {

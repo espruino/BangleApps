@@ -40,7 +40,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
   }
 
 
