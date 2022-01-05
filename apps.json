@@ -5163,7 +5163,7 @@
     "id": "promenu",
     "name": "Pro Menu",
     "version": "0.01",
-    "description": "Replace Bangle.js 1's built in menu function.",
+    "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
     "icon": "icon.png",
     "type": "boot",
     "tags": "system",
