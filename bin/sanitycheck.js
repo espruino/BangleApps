@@ -76,8 +76,11 @@ function globToRegex(pattern) {
 const isGlob = f => /[?*]/.test(f)
 // All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
 let allFiles = [];
+let existingApps = [];
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
+  if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`);
+  existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
