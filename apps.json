@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.16",
+    "version": "0.17",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -116,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -936,7 +936,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -5099,7 +5099,7 @@
     "tags": "clock",
     "allow_emulator":true,
     "supports" : ["BANGLEJS2"],
-    "type": "clock",  
+    "type": "clock",
     "storage": [
       {"name":"contourclock.app.js","url":"app.js"},
       {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
@@ -5334,7 +5334,7 @@
     "icon": "andark_icon.png",
     "type": "clock",
     "tags": "clock",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"andark.app.js","url":"app.js"},
