@@ -5139,6 +5139,7 @@
       {"name":"fourTwenty","url":"fourTwenty.js"},
       {"name":"fourTwentyTz","url":"fourTwentyTz.js"},
       {"name":"ftclock.img","url":"app-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "slash",
