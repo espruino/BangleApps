@@ -1,0 +1,14 @@
+---
+layout: none
+---
+{%- assign apps = site.static_files | where: "name", "metadata.json" -%}
+
+[
+
+{%- include_relative {{ apps.first.path }} -%}
+
+{%- for app in apps offset:1 -%}
+,{%- include_relative {{ app.path }} -%}
+{%- endfor -%}
+
+]
