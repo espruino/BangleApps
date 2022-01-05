@@ -41,7 +41,7 @@ const colorRed = '#ff0000';
 const colorGreen = '#008000';
 const colorBlue = '#0000ff';
 const colorYellow = '#ffff00';
-const widgetOffset = showWidgets ? 12 : 0;
+const widgetOffset = showWidgets ? 14 : 0;
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
 const hOffset = 30 - widgetOffset;
@@ -55,9 +55,9 @@ const radiusOuter = 22;
 const radiusInner = 16;
 
 function draw() {
-  g.reset();
+  g.clear(true);
   g.setColor(colorBg);
-  g.fillRect(0, 0, w, h);
+  g.fillRect(0, widgetOffset, w, h);
 
   // time
   g.setFont("Vector:50");
@@ -265,7 +265,7 @@ function shortValue(v) {
 }
 
 function getSteps() {
-  if (WIDGETS.wpedom !== undefined) {
+  if (WIDGETS && WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
   }
   return 0;
@@ -306,8 +306,6 @@ if (isCircleEnabled("battery")) {
     drawBattery();
   });
 }
-
-g.clear();
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
