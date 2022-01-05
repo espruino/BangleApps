@@ -195,12 +195,13 @@ function drawState(){
   }
 
   g.clearRect(20, 93, 75, 170);
-  g.setColor(cWhite);
-  var bat = E.getBattery();
-  var current = new Date();
-  var hours = current.getHours();
+  g.setFontAlign(0, 0, 0);
+  g.setFontAntonioMedium();
 
   if(!isAlarmEnabled()){
+    var bat = E.getBattery();
+    var current = new Date();
+    var hours = current.getHours();
     var iconImg =
         Bangle.isCharging() ? iconCharging :
         bat < 30 ? iconNoBattery :
@@ -209,18 +210,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-
-    // g.drawRect(25, 104, 25+50, 104+50);
-    g.drawImage(iconImg, 24, 104);
+    g.drawImage(iconImg, 23, 118);
+    g.setColor(cWhite);
+    g.drawString("STATUS", 23+25, 108);
   } else {
     // Alarm within symbol
-    g.setFontAntonioMedium();
-    g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 24+25, 108);
+    g.drawString("ALARM", 23+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 24+25, 108+35);
+    g.drawString(getAlarmMinutes(), 23+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
