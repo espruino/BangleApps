@@ -1,0 +1,285 @@
+<!-- Presentor by 7kasper (Kasper Müller) -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+      .qcent {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+      }
+      h1 {
+        margin-bottom: 0;
+      }
+      .iwrap {
+        max-height: 100%;
+      }
+      .iwrap img {
+        height: 100%;
+        padding: 10%;
+      }
+      hr {
+        border: 0; 
+        height: 2px; 
+        background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0); 
+      }
+      .fullbtn button {
+        flex-grow: 1;
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+      .ppartrow {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        font-weight: bolder;
+      }
+      .timerselector {
+        display: flex;
+        justify-content: space-between;
+        inset: 1px solid black;
+        height: 1.5rem;
+      }
+      .timerselector input {
+        width: 45%;
+      }
+      .pp-order {
+        width: calc(150% / 14);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pp-order-r {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+      }
+      .pp-subject {
+        width: calc(300% / 14);
+      }
+      .pp-timer {
+        width: calc(250% / 14);
+      }
+      .pp-notes {
+        width: calc(700% / 14);
+      }
+      input {
+        height: 1.5rem;
+      }
+      .icon-cross {
+        color: #e85600;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+      }
+      .icon-cross:hover {
+        transform: scale(1.1);
+      }
+      .draghandle {
+        cursor: grab;
+      }
+      footer {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        font-size: 0.6rem;
+        color: grey;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="qcent">
+      <h1>Presentor</h1>
+      <div class="iwrap"><img src="app.png"/></div>
+    </header>
+    <hr/>
+    <div class="form-group" id="subber">
+      <div id="pparthdr" class="ppartrow">
+        <div class="pp-order">#</div>
+        <div class="pp-subject">Subject</div>
+        <div class="pp-timer">Time</div>
+        <div class="pp-notes">Notes</div>
+      </div>
+      <div id="loader">Loading...</div>
+      <div id="subber-data"></div>
+    </div>
+    <hr/>
+    <div class="qcent fullbtn">
+      <button class="btn btn-default" id="btnSave">Save</button>
+      <button class="btn btn-error" id="btnClear">Clear</button>
+    </div>
+    <footer>Presentor by <a href="https://kaspermuller.nl" target="_blank">Kasper Müller</a></footer>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      const subber = document.getElementById('subber-data');
+      let cmpStr = ''; //compare string to see if there are changes with previous save.
+
+      function ppartsAreFilled() {
+        let pparts = subber.children;
+        for (let i = 0; i < pparts.length; i++) {
+          if (!pparts[i].getElementsByClassName('pp-subject')[0].value) return false;
+        }
+        return true;
+      }
+
+      function getJSON() {
+        let ret = {
+          pparts: [],
+          sversion: 2.2
+        }
+        let jparts = [];
+        let pparts = subber.children;
+        for (let i = 0; i < pparts.length; i++) {
+          let rpart = {};
+          let ppart = pparts[i];
+          rpart.subject = ppart.getElementsByClassName('pp-subject')[0].value;
+          if (!rpart.subject) continue;
+          rpart.minutes = ppart.getElementsByClassName('pp-timer')[0].children[0].value | 0;
+          rpart.seconds = ppart.getElementsByClassName('pp-timer')[0].children[2].value | 0;
+          rpart.notes   = ppart.getElementsByClassName('pp-notes')[0].value;
+          jparts.push(rpart);
+        }
+        ret.pparts = jparts;
+        return JSON.stringify(ret);
+      }
+
+      function save() {
+        let savestr = getJSON();
+        Util.showModal('Saving...');
+        Puck.write(`\x10require('Storage').writeJSON(${JSON.stringify('presentor.json')},${savestr})\n`,()=>{
+          Util.hideModal();
+        });
+        cmpStr = savestr;
+      }
+
+      function loadJSON(str) {
+        cmpStr = str;
+        let settings = JSON.parse(str);
+        let jparts = settings.pparts;
+        for (let i = 0; i < jparts.length; i++) {
+          addFormPPart(jparts[i]);
+        }
+        addFormPPart(); // add empty element on startup
+      }
+
+      function load() {
+        Util.showModal('Loading...');
+        Puck.eval(`require('Storage').read(${JSON.stringify('presentor.json')})`,data => {
+          Util.hideModal();
+          loadJSON(data);
+        });
+      }
+
+      function addFormPPart(partData = {}) {
+        let part = document.createElement('div');
+        part.classList.add('ppartrow');
+
+        let orderThing = document.createElement('div');
+        orderThing.classList.add('pp-order', 'pp-order-r');
+        let orderItem = document.createElement('i');
+        orderItem.classList.add('icon', 'icon-menu', 'draghandle');
+        orderThing.appendChild(orderItem);
+        let deleteItem = document.createElement('i');
+        deleteItem.classList.add('icon', 'icon-cross');
+        deleteItem.onclick = () => {
+          subber.removeChild(part);
+          // Make sure there stays one form thing left.
+          if (!subber.hasChildNodes()) addFormPPart();
+        }
+        orderThing.appendChild(deleteItem);
+        part.appendChild(orderThing);
+
+        let subjectField = document.createElement('input');
+        subjectField.classList.add('pp-subject');
+        subjectField.type = 'text';
+        subjectField.placeholder = 'Subject';
+        if (partData.subject) subjectField.value = partData.subject;
+        part.appendChild(subjectField);
+
+        let timeField = document.createElement('div');
+        timeField.classList.add('pp-timer', 'timerselector');
+        let minSelector = document.createElement('input');
+        minSelector.type = 'number';
+        minSelector.min = 0;
+        minSelector.step = 1
+        minSelector.placeholder = 'mm';
+        if (partData.minutes !== undefined) minSelector.value = partData.minutes; 
+        let colon = document.createElement('p');
+        colon.innerText = ':';
+        let secSelector = document.createElement('input');
+        secSelector.type = 'number';
+        secSelector.min = 0;
+        secSelector.max = 59;
+        secSelector.step = 1
+        secSelector.placeholder = 'ss';
+        if (partData.seconds !== undefined) secSelector.value = partData.seconds; 
+        timeField.appendChild(minSelector);
+        timeField.appendChild(colon);
+        timeField.appendChild(secSelector);
+        part.appendChild(timeField);
+
+        let notesField = document.createElement('input');
+        notesField.classList.add('pp-notes');
+        notesField.type = 'text';
+        notesField.placeholder = 'Notes (optional)';
+        if (partData.notes !== undefined) notesField.value = partData.notes; 
+        part.appendChild(notesField);
+
+        subber.appendChild(part);
+      }
+
+      Sortable.create(subber, {
+        handle: '.draghandle',
+        animation: 150
+      });
+    
+      document.getElementById('btnSave').onclick = () => {
+        save();
+        alert(getJSON());
+      }
+
+      document.getElementById('btnClear').onclick = () => {
+        while (subber.firstChild) {
+          subber.removeChild(subber.lastChild);
+        }
+        addFormPPart();
+      }
+
+      document.addEventListener('keyup', () => {
+        if (ppartsAreFilled()) {
+          addFormPPart();
+        }
+      });
+
+      // Simple thing to check if we need to save (TODO optimise me in the future?)
+      setInterval(() => {
+        if (cmpStr == getJSON()) {
+          document.getElementById('btnSave').classList.remove('btn-primary');
+          document.getElementById('btnSave').classList.add('btn-default');
+        } else {
+          document.getElementById('btnSave').classList.remove('btn-default');
+          document.getElementById('btnSave').classList.add('btn-primary');
+        }
+      }, 1000);
+
+      document.getElementById('loader').style.display = 'none';
+
+      function onInit() {
+        load();
+      }
+      // load from watch first.
+      // let qq = `[{"subject":"Hello","minutes":55,"seconds":4,"notes":""},{"subject":"dsfafds","minutes":4,"seconds":33,"notes":"fdasdfsafasfsd"},{"subject":"dsadsf","minutes":0,"seconds":4,"notes":""},{"subject":"sdasf","minutes":0,"seconds":0,"notes":""}]`;
+      // loadJSON(qq);
+      
+
+
+    </script>
+  </body>
+</html>

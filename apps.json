@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.39",
+    "version": "0.40",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.16",
+    "version": "0.17",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -116,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -167,7 +167,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.39",
+    "version": "0.40",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -936,7 +936,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -1749,8 +1749,9 @@
     "icon": "grocery.png",
     "type": "app",
     "tags": "tool,outdoors,shopping,list",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "custom": "grocery.html",
+    "allow_emulator": true,
     "storage": [
       {"name":"grocery.app.js","url":"app.js"},
       {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
@@ -2970,11 +2971,11 @@
   {
     "id": "cprassist",
     "name": "CPR Assist",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Provides assistance while performing a CPR",
     "icon": "cprassist-icon.png",
     "tags": "tool,firstaid",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-CPR-assist-screenshot.png"}],
@@ -3532,7 +3533,7 @@
     "id": "mclockplus",
     "name": "Morph Clock+",
     "shortName": "Morph Clock+",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
     "icon": "mclockplus.png",
     "type": "clock",
@@ -3986,11 +3987,12 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      {"name":"doztime.app.js","url":"app.js"},
+      {"name":"doztime.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+      {"name":"doztime.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
       {"name":"doztime.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -4210,13 +4212,13 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.09",
-    "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
+    "version": "0.10",
+    "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
-    "dependencies": {"mylocation":"app", "widpedom":"app"},
-    "screenshots": [{"url":"screenshot_pastel.png"}],
+    "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
+    "screenshots": [{"url":"screenshot_pastel.png"}, {"url":"weather_icons.png"}],
     "type": "clock",
-    "tags": "clock",
+    "tags": "clock, weather, tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
@@ -4382,7 +4384,7 @@
   {
     "id": "gpstouch",
     "name": "GPS Touch",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A touch based GPS watch, shows OS map reference",
     "icon": "gpstouch.png",
     "screenshots": [{"url":"screenshot4.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot1.png"}],
@@ -4487,7 +4489,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.08",
+    "version":"0.09",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -4621,7 +4623,7 @@
    "shortName":"93 Dub",
    "icon": "93dub.png",
    "screenshots": [{"url":"screenshot.png"}],
-   "version":"0.05",
+   "version":"0.06",
    "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
    "tags": "clock",
    "type": "clock",
@@ -4710,7 +4712,7 @@
     "icon": "mylocation.png",
     "type": "app",
     "screenshots": [{"url":"screenshot_1.png"}],
-    "version":"0.01",
+    "version":"0.02",
     "description": "Sets and stores the lat and long of your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
     "readme": "README.md",
     "tags": "tool,utility",
@@ -4727,7 +4729,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.06",
+    "version": "0.07",
     "description": "A pebble style clock to keep the rebellion going",
     "dependencies": {"widpedom":"app"},
     "readme": "README.md",
@@ -4735,7 +4737,7 @@
     "screenshots": [{"url":"pebble_screenshot.png"}],
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS2"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"pebble.app.js","url":"pebble.app.js"},
       {"name":"pebble.settings.js","url":"pebble.settings.js"},
@@ -4769,7 +4771,7 @@
     "screenshots": [{"url":"screenshot_widbata_1.png"}],
     "version":"0.01",
     "type": "widget",
-    "supports": ["BANGLEJS2"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "description": "Shows the current battery level status in the top right using the clocks colour theme",
     "tags": "widget,battery",
@@ -4914,7 +4916,7 @@
     "id": "rebble",
     "name": "Rebble Clock",
     "shortName": "Rebble",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
     "readme": "README.md",
     "icon": "rebble.png",
@@ -5099,7 +5101,7 @@
     "tags": "clock",
     "allow_emulator":true,
     "supports" : ["BANGLEJS2"],
-    "type": "clock",  
+    "type": "clock",
     "storage": [
       {"name":"contourclock.app.js","url":"app.js"},
       {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
@@ -5119,6 +5121,24 @@
     "storage": [
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "presentor",
+    "name": "Presentor",
+    "version": "3.0",
+    "description": "Use your Bangle to present!",
+    "icon": "app.png",
+    "type": "app",
+    "tags": "tool,bluetooth",
+    "interface": "interface.html",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"presentor.app.js","url":"app.js"},
+      {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+      {"name":"presentor.json","url":"settings.json"}
     ]
   },
   {
@@ -5335,7 +5355,7 @@
     "icon": "andark_icon.png",
     "type": "clock",
     "tags": "clock",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"andark.app.js","url":"app.js"},
@@ -5358,5 +5378,55 @@
       { "name": "diract.app.js", "url": "diract.js" },
       { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
     ]
+  },
+  {
+    "id": "sonicclk",
+    "name": "Sonic Clock",
+    "version": "1.01",
+    "description": "A classic sonic clock featuring run, stop and wait animations.",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"sonicclk.app.js","url":"app.js"},
+      {"name":"sonicclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "touchmenu",
+    "name": "TouchMenu",
+    "version": "0.01",
+    "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
+    "screenshots": [{"url":"touchmenu.gif"}],
+    "icon": "touchmenu.png",
+    "type": "bootloader",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
+    ]
+  },
+  {
+    "id": "puzzle15",
+    "name": "15 puzzle",
+    "version": "0.05",
+    "description": "A 15 puzzle game with drag gesture interface",
+    "readme":"README.md",
+    "icon": "puzzle15.app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"puzzle15.app.js","url":"puzzle15.app.js"},
+      {"name":"puzzle15.settings.js","url":"puzzle15.settings.js"},
+      {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"puzzle15.json"}]
   }
 ]
