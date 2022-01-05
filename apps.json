@@ -5167,7 +5167,7 @@
     "icon": "icon.png",
     "type": "boot",
     "tags": "system",
-    "supports": ["BANGLEJS","BANGLEJS2"]
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "screenshots": [{"url":"pro-menu-screenshot.png"}],
     "storage": [
       {"name":"promenu.boot.js","url":"boot.js","supports": ["BANGLEJS"]},
