@@ -148,10 +148,10 @@ function printData(key, y, c){
   }
 
   g.setColor(c);
-  g.fillRect(79, y-2, 87 ,y+18);
+  g.fillRect(79, y-2, 85 ,y+18);
 
-  g.setFontAlign(1,-1,0);
-  g.drawString(value, 131, y);
+  g.setFontAlign(0,-1,0);
+  g.drawString(value, 110, y);
 
   g.setColor(c);
   g.setFontAlign(-1,-1,0);
