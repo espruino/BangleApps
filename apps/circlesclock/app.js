@@ -2,6 +2,7 @@ const locale = require("locale");
 const heatshrink = require("heatshrink");
 
 const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
+const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
 const heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
 const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
 const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
@@ -96,7 +97,7 @@ function drawCircle(index, defaultType) {
 function getCirclePosition(type, defaultPos) {
   for (let i = 1; i <= 3; i++) {
     const setting = settings['circle' + i];
-    if (setting == type) return i;
+    if (setting == type) return i == 1 ? w1: i == 2 ? w2 : w3;
   }
   return defaultPos;
 }
@@ -157,7 +158,7 @@ function drawStepsDistance(w) {
   g.setColor(colorFg);
   g.drawString(shortValue(stepsDistance), w + 2, h3);
 
-  g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
 }
 
 function drawHeartRate(w) {

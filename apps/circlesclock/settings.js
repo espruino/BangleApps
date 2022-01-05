@@ -7,7 +7,7 @@
     storage.write(SETTINGS_FILE, settings);
   }
   var valuesCircleTypes = ["steps", "stepsDist", "hr", "battery"];
-  var namesCircleTypes = ["steps", "step distance", "heart", "battery"];
+  var namesCircleTypes = ["steps", "distance", "heart", "battery"];
   E.showMenu({
     '': { 'title': 'circlesclock' },
     'min heartrate': {
@@ -40,7 +40,7 @@
       },
       onchange: x => save('stepGoal', x),
     },
-    'battery warn lvl': {
+    'battery warn': {
       value: "batteryWarn" in settings ? settings.batteryWarn : 30,
       min: 10,
       max : 100,
@@ -58,7 +58,7 @@
         save('showWidgets', settings.showWidgets);
       },
     },
-    'Left circle': {
+    'left': {
       value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle1)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
@@ -67,8 +67,8 @@
         save('circle1', settings.circle1);
       }
     },
-    'Middle circle': {
-      value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle2)),
+    'middle': {
+      value: Math.max(0,2 | valuesCircleTypes.indexOf(settings.circle2)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
       onchange: v => {
@@ -76,8 +76,8 @@
         save('circle2', settings.circle2);
       }
     },
-    'Right circle': {
-      value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle3)),
+    'right': {
+      value: Math.max(0,3 | valuesCircleTypes.indexOf(settings.circle3)),
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
       onchange: v => {
