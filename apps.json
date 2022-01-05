@@ -5387,7 +5387,7 @@
     "tags": "tool",
     "supports": ["BANGLEJS2"],
     "storage": [
-      {"name":"touchmenu.boot.js","url":"touchmenu.js"},
+      {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
     ]
   }
 ]
