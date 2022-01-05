@@ -4,6 +4,7 @@
   // initialize with default settings...
   let s = {
     'grid': false,
+    'weather': false,
     'font': "Lato"
   }
 
@@ -39,8 +40,16 @@
       value: s.grid,
       format: () => (s.grid ? 'Yes' : 'No'),
       onchange: () => {
-        s.grid = !s.grid
-        save()
+        s.grid = !s.grid;
+        save();
+      },
+    },
+    'Show Weather': {
+      value: s.weather,
+      format: () => (s.weather ? 'Yes' : 'No'),
+      onchange: () => {
+        s.weather = !s.weather;
+        save();
       },
     }
   })
