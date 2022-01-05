@@ -10,6 +10,7 @@
   var namesCircleTypes = ["steps", "distance", "heart", "battery"];
   E.showMenu({
     '': { 'title': 'circlesclock' },
+    '< Back': back,
     'min heartrate': {
       value: "minHR" in settings ? settings.minHR : 40,
       min: 0,
@@ -76,23 +77,22 @@
       onchange: x => save('showWidgets', x),
     },
     'left': {
-      value: Math.max(0,0 | valuesCircleTypes.indexOf(settings.circle1)),
+      value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle1', valuesCircleTypes[x]),
     },
     'middle': {
-      value: Math.max(0,2 | valuesCircleTypes.indexOf(settings.circle2)),
+      value: settings.circle2 ? valuesCircleTypes.indexOf(settings.circle2) : 2,
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle2', valuesCircleTypes[x]),
     },
     'right': {
-      value: Math.max(0,3 | valuesCircleTypes.indexOf(settings.circle3)),
+      value: settings.circle3 ? valuesCircleTypes.indexOf(settings.circle3) : 3,
       min: 0, max: 3,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle3', valuesCircleTypes[x]),
-    },
-    '< Back': back,
+    }
   });
 });
