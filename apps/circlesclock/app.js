@@ -14,7 +14,10 @@ function loadSettings() {
     'maxHR': 200,
     'stepGoal': 10000,
     'batteryWarn': 30,
-    'showWidgets': false
+    'showWidgets': false,
+    'circle1': 'hr',
+    'circle2': 'steps',
+    'circle3': 'battery'
   };
   // Load step goal from pedometer widget as fallback
   if (settings.stepGoal == undefined) {
@@ -32,7 +35,9 @@ const colorFg = g.theme.dark ? '#fff' : '#000';
 const colorBg = g.theme.dark ? '#000' : '#fff';
 const colorGrey = '#808080';
 const colorRed = '#ff0000';
-const colorGreen = '#00ff00';
+const colorGreen = '#008000';
+const colorBlue = '#0000ff';
+const colorYellow = '#ffff00';
 const widgetOffset = showWidgets ? 12 : 0;
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
@@ -63,82 +68,137 @@ function draw() {
   g.drawString(locale.date(new Date()), w / 10, h2);
   g.drawString(locale.dow(new Date()), w / 10, h2 + 22);
 
-  // Steps circle
-  drawSteps();
-
-  // Heart circle
-  drawHeartRate();
-
-  // Battery circle
-  drawBattery();
+  drawCircle(1, "steps");
+  drawCircle(2, "hr");
+  drawCircle(3, "battery");
 }
 
 
+function drawCircle(index, defaultType) {
+  const type = settings['circle' + index] || defaultType;
+  const w = index == 1 ? w1: index == 2 ? w2 : w3;
 
-function drawSteps() {
+  switch (type) {
+    case "steps":
+      drawSteps(w);
+      break;
+    case "stepsDist":
+      drawStepsDistance(w);
+      break;
+    case "hr":
+      drawHeartRate(w);
+      break;
+    case "battery":
+      drawBattery(w);
+      break;
+  }
+}
+function getCirclePosition(type, defaultPos) {
+  for (let i = 1; i <= 3; i++) {
+    const setting = settings['circle' + i];
+    if (setting == type) return i;
+  }
+  return defaultPos;
+}
+
+function isCircleEnabled(type) {
+  return getCirclePosition(type) != undefined;
+}
+
+function drawSteps(w) {
+  if (!w) w = getCirclePosition("steps", w1);
   const steps = getSteps();
-  const blue = '#0000ff';
   g.setColor(colorGrey);
-  g.fillCircle(w1, h3, radiusOuter);
+  g.fillCircle(w, h3, radiusOuter);
 
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
     let percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
-    drawGauge(w1, h3, percent, blue);
+    drawGauge(w, h3, percent, colorBlue);
   }
 
   g.setColor(colorBg);
-  g.fillCircle(w1, h3, radiusInner);
+  g.fillCircle(w, h3, radiusInner);
 
-  g.fillPoly([w1, h3, w1 - 15, h3 + radiusOuter + 5, w1 + 15, h3 + radiusOuter + 5]);
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
-  g.drawString(shortValue(steps), w1 + 2, h3);
+  g.drawString(shortValue(steps), w + 2, h3);
 
-  g.drawImage(shoesIcon, w1 - 6, h3 + radiusOuter - 6);
+  g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
 }
 
-function drawHeartRate() {
+function drawStepsDistance(w) {
+  if (!w) w = getCirclePosition("steps", w1);
+  const steps = getSteps();
+  const stepDistance = 0.8; // TODO make configurable
+  const stepsDistance = steps * stepDistance;
+
   g.setColor(colorGrey);
-  g.fillCircle(w2, h3, radiusOuter);
+  g.fillCircle(w, h3, radiusOuter);
+
+  const stepDistanceGoal = settings.stepDistanceGoal || 5;
+  if (stepDistanceGoal > 0) {
+    let percent = stepsDistance / stepDistanceGoal;
+    if (stepDistanceGoal < stepsDistance) percent = 1;
+    drawGauge(w, h3, percent, colorGreen);
+  }
+
+  g.setColor(colorBg);
+  g.fillCircle(w, h3, radiusInner);
+
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
+
+  g.setFont("Vector:12");
+  g.setFontAlign(0, 0);
+  g.setColor(colorFg);
+  g.drawString(shortValue(stepsDistance), w + 2, h3);
+
+  g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
+}
+
+function drawHeartRate(w) {
+  if (!w) w = getCirclePosition("hr", w2);
+  g.setColor(colorGrey);
+  g.fillCircle(w, h3, radiusOuter);
 
   if (hrtValue != undefined && hrtValue > 0) {
     const minHR = settings.minHR || 40;
     const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
-    drawGauge(w2, h3, percent, colorRed);
+    drawGauge(w, h3, percent, colorRed);
   }
 
   g.setColor(colorBg);
-  g.fillCircle(w2, h3, radiusInner);
+  g.fillCircle(w, h3, radiusInner);
 
-  g.fillPoly([w2, h3, w2 - 15, h3 + radiusOuter + 5, w2 + 15, h3 + radiusOuter + 5]);
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
-  g.drawString(hrtValue != undefined ? hrtValue : "-", w2, h3);
+  g.drawString(hrtValue != undefined ? hrtValue : "-", w, h3);
 
-  g.drawImage(heartIcon, w2 - 6, h3 + radiusOuter - 6);
+  g.drawImage(heartIcon, w - 6, h3 + radiusOuter - 6);
 }
 
-function drawBattery() {
+function drawBattery(w) {
+  if (!w) w = getCirclePosition("battery", w3);
   const battery = E.getBattery();
-  const yellow = '#ffff00';
   g.setColor(colorGrey);
-  g.fillCircle(w3, h3, radiusOuter);
+  g.fillCircle(w, h3, radiusOuter);
 
   if (battery > 0) {
     const percent = battery / 100;
-    drawGauge(w3, h3, percent, yellow);
+    drawGauge(w, h3, percent, colorYellow);
   }
 
   g.setColor(colorBg);
-  g.fillCircle(w3, h3, radiusInner);
+  g.fillCircle(w, h3, radiusInner);
 
-  g.fillPoly([w3, h3, w3 - 15, h3 + radiusOuter + 5, w3 + 15, h3 + radiusOuter + 5]);
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
@@ -156,9 +216,9 @@ function drawBattery() {
     }
   }
   g.setColor(color);
-  g.drawString(battery + '%', w3, h3);
+  g.drawString(battery + '%', w, h3);
 
-  g.drawImage(icon, w3 - 6, h3 + radiusOuter - 6);
+  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
 }
 
 function radians(a) {
@@ -210,30 +270,37 @@ function getSteps() {
 
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
-    Bangle.setHRMPower(1, "watch");
-    if (hrtValue == undefined) {
-      hrtValue = '...';
-      drawHeartRate();
+    if (isCircleEnabled("hr")) {
+      Bangle.setHRMPower(1, "watch");
+      if (hrtValue == undefined) {
+        hrtValue = '...';
+        drawHeartRate();
+      }
     }
   } else {
-    Bangle.setHRMPower(0, "watch");
+    if (isCircleEnabled("hr")) {
+      Bangle.setHRMPower(0, "watch");
+    }
   }
-  drawHeartRate();
-  drawSteps();
+  if (isCircleEnabled("hr")) drawHeartRate();
+  if (isCircleEnabled("steps")) drawSteps();
+  if (isCircleEnabled("stepsDistance")) drawStepsDistance();
 });
 
 Bangle.on('HRM', function(hrm) {
-  //if(hrm.confidence > 90){
-  hrtValue = hrm.bpm;
-  if (Bangle.isLCDOn())
-    drawHeartRate();
-  //} else {
-  //  hrtValue = undefined;
-  //}
+  if (isCircleEnabled("hr")) {
+    //if(hrm.confidence > 90){
+    hrtValue = hrm.bpm;
+    if (Bangle.isLCDOn())
+      drawHeartRate();
+    //} else {
+    //  hrtValue = undefined;
+    //}
+  }
 });
 
 Bangle.on('charging', function(charging) {
-  drawBattery();
+  if (isCircleEnabled("battery")) drawBattery();
 });
 
 g.clear();
