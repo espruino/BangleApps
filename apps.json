@@ -4487,7 +4487,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.08",
+    "version":"0.09",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -5099,7 +5099,7 @@
     "tags": "clock",
     "allow_emulator":true,
     "supports" : ["BANGLEJS2"],
-    "type": "clock",  
+    "type": "clock",
     "storage": [
       {"name":"contourclock.app.js","url":"app.js"},
       {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
@@ -5334,7 +5334,7 @@
     "icon": "andark_icon.png",
     "type": "clock",
     "tags": "clock",
-    "supports" : ["BANGLEJS2"],  
+    "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"andark.app.js","url":"app.js"},
