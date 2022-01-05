@@ -122,7 +122,13 @@ function draw(){
   queueDraw();
 }
 
-
+/**
+ * This watch is mostly dark, it does not make sense to respect the
+ * light theme as you end up with a white strip at the top for the
+ * widgets and black watch. So set the colours to the dark theme.
+ *
+ */
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
 
 //the following section is also from waveclk
