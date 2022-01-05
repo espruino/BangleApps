@@ -129,6 +129,7 @@ function updateTime()
     g.setFontAlign(0, -1, 0);
     g.drawString(fmtDate(d,mo,y,hour), 120, 120); 
   }
+  drawMessages();
 }
 
 function drawDigits(x, value)
@@ -224,6 +225,55 @@ function flipColors()
 
 //////////////////////////////////////////
 //
+//  MESSAGE HANDLING()
+//
+
+let messages_installed = require("Storage").read("messages.app.js") != undefined;
+
+function handleMessages()
+{
+  if(messages_installed && hasMessages() > 0)
+  {
+    E.showMessage("Loading Messages...");
+    load("messages.app.js");
+  }
+}
+
+function hasMessages()
+{
+  if(!messages_installed)
+    return false;
+
+  var messages = require("Storage").readJSON("messages.json",1)||[];
+  if (messages.some(m=>m.new))
+    return true;
+  else
+    return false;
+}
+
+let msg = atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==");
+let had_messages = false;
+
+function drawMessages()
+{
+  if(!had_messages && hasMessages()) {
+      g.setColor(255,255,255);
+      g.drawImage(msg, 184, 212);
+      g.setFont("6x8", 2);
+      g.setFontAlign(0, -1, 0);
+      g.drawString(">", 224, 216);
+      had_messages = true;
+  } 
+  else if (had_messages && !hasMessages())
+  {
+      g.setColor(0,0,0);
+      g.fillRect(180, 210, 240, 240);
+      had_messages = false;
+  }
+}
+
+//////////////////////////////////////////
+//
 //   MAIN FUNCTION()
 //
 
@@ -238,6 +288,7 @@ setInterval(updateTime, interval);
 // Handle Button Press
 setWatch(flipColors, BTN1, true);
 setWatch(Bangle.showLauncher, BTN2, false);
+setWatch(handleMessages, BTN3, true);
 
 // Handle redraw on LCD on / fullscreen notifications dismissed
 Bangle.on('lcdPower', (on) => { if(on) redraw(); });
