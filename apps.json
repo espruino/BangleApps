@@ -3987,11 +3987,12 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      {"name":"doztime.app.js","url":"app.js"},
+      {"name":"doztime.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+      {"name":"doztime.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
       {"name":"doztime.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -4703,37 +4704,6 @@
   "storage": [
     {"name":"a_speech_timer.app.js","url":"app.js"},
     {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
-  ]
-},
-{ "id":"doztime",
-  "name":"Dozenal Time",
-  "shortName":"Dozenal Time",
-  "icon":"app.png",
-  "version":"0.01",
-  "description":"A dozenal Holocene calendar and dozenal diurnal clock",
-  "tags":"clock",
-  "type":"clock",
-  "supports":["BANGLEJS"],
-  "allow_emulator":true,
-  "readme": "README.md",
-  "storage": [
-    {"name":"doztime.app.js","url":"app.js"},
-    {"name":"doztime.img","url":"app-icon.js","evaluate":true}
-  ]
-},
-{ "id":"doztime2",
-  "name":"Dozenal Time 2",
-  "shortName":"Dozenal Time 2",
-  "icon":"app.png",
-  "version":"0.01",
-  "description":"A dozenal Holocene calendar and dozenal diurnal clock for Bangle.js 2",
-  "tags":"clock",
-  "type":"clock",
-  "supports":["BANGLEJS2"],
-  "allow_emulator":true,
-  "storage": [
-    {"name":"doztime2.app.js","url":"app.js"},
-    {"name":"doztime2.img","url":"app-icon.js","evaluate":true}
   ]
 },
   { "id": "mylocation",
