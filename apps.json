@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
