@@ -1,5 +1,4 @@
 ---
-layout: none
 ---
 {%- assign apps = site.static_files | where: "name", "metadata.json" -%}
 
