@@ -280,31 +280,32 @@ Bangle.on('lock', function(isLocked) {
         drawHeartRate();
       }
     }
+    if (isCircleEnabled("steps")) drawSteps();
+    if (isCircleEnabled("stepsDistance")) drawStepsDistance();
   } else {
     if (isCircleEnabled("hr")) {
       Bangle.setHRMPower(0, "watch");
     }
   }
-  if (isCircleEnabled("hr")) drawHeartRate();
-  if (isCircleEnabled("steps")) drawSteps();
-  if (isCircleEnabled("stepsDistance")) drawStepsDistance();
 });
 
-Bangle.on('HRM', function(hrm) {
-  if (isCircleEnabled("hr")) {
-    //if(hrm.confidence > 90){
-    hrtValue = hrm.bpm;
-    if (Bangle.isLCDOn())
-      drawHeartRate();
-    //} else {
-    //  hrtValue = undefined;
-    //}
-  }
-});
+if (isCircleEnabled("hr")) {
+  Bangle.on('HRM', function(hrm) {
+      //if(hrm.confidence > 90){
+      hrtValue = hrm.bpm;
+      if (Bangle.isLCDOn())
+        drawHeartRate();
+      //} else {
+      //  hrtValue = undefined;
+      //}
+  });
+}
 
-Bangle.on('charging', function(charging) {
-  if (isCircleEnabled("battery")) drawBattery();
-});
+if (isCircleEnabled("battery")) {
+  Bangle.on('charging', function(charging) {
+    drawBattery();
+  });
+}
 
 g.clear();
 
