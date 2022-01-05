@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -4489,7 +4489,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.08",
+    "version":"0.09",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -5124,6 +5124,24 @@
     ]
   },
   {
+    "id": "presentor",
+    "name": "Presentor",
+    "version": "3.0",
+    "description": "Use your Bangle to present!",
+    "icon": "app.png",
+    "type": "app",
+    "tags": "tool,bluetooth",
+    "interface": "interface.html",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"presentor.app.js","url":"app.js"},
+      {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+      {"name":"presentor.json","url":"settings.json"}
+    ]
+  },
+  {
     "id": "slash",
     "name": "Slash Watch",
     "shortName":"Slash",
@@ -5390,5 +5408,24 @@
     "storage": [
       {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
     ]
+  },
+  {
+    "id": "puzzle15",
+    "name": "15 puzzle",
+    "version": "0.05",
+    "description": "A 15 puzzle game with drag gesture interface",
+    "readme":"README.md",
+    "icon": "puzzle15.app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"puzzle15.app.js","url":"puzzle15.app.js"},
+      {"name":"puzzle15.settings.js","url":"puzzle15.settings.js"},
+      {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"puzzle15.json"}]
   }
 ]
