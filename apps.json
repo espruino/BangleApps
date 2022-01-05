@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -5120,6 +5120,24 @@
     "storage": [
       {"name":"ltherm.app.js","url":"app.js"},
       {"name":"ltherm.img","url":"icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "presentor",
+    "name": "Presentor",
+    "version": "3.0",
+    "description": "Use your Bangle to present!",
+    "icon": "app.png",
+    "type": "app",
+    "tags": "tool,bluetooth",
+    "interface": "interface.html",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"presentor.app.js","url":"app.js"},
+      {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+      {"name":"presentor.json","url":"settings.json"}
     ]
   },
   {
