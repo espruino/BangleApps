@@ -251,7 +251,7 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 28, 10);
+  g.drawString(timeStr, 29, 10);
 
   // Write date
   g.setColor(cWhite);
@@ -259,7 +259,7 @@ function drawPosition0(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 29, 56);
+  g.drawString(dayStr, 32, 56);
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
