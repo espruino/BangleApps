@@ -5147,10 +5147,11 @@
     "icon": "icon.png",
     "type": "boot",
     "tags": "system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"]
     "screenshots": [{"url":"pro-menu-screenshot.png"}],
     "storage": [
-      {"name":"promenu.boot.js","url":"boot.js"},
+      {"name":"promenu.boot.js","url":"boot.js","supports": ["BANGLEJS"]},
+      {"name":"promenu.bootb2.js","url":"boot.js","supports": ["BANGLEJS2"]},
       {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
     ]
   },
