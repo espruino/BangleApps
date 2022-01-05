@@ -308,7 +308,7 @@ Bangle.on('charging', function(charging) {
 
 g.clear();
 
-
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 if (!showWidgets) {
   /*
@@ -324,7 +324,5 @@ if (!showWidgets) {
   }
 }
 
-
-setInterval(draw, 60000);
 draw();
-Bangle.setUI("clock");
+setInterval(draw, 60000);
