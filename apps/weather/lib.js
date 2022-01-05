@@ -16,7 +16,7 @@ function scheduleExpiry(json) {
 
 function update(weatherEvent) {
   let json = storage.readJSON('weather.json')||{};
-  
+
   if (weatherEvent) {
     let weather = weatherEvent.clone();
     delete weather.t;
@@ -55,7 +55,7 @@ scheduleExpiry(storage.readJSON('weather.json')||{});
 
 exports.drawIcon = function(cond, x, y, r) {
   var palette;
-  
+
   if (B2) {
     if (g.theme.dark) {
       palette = {
@@ -101,7 +101,7 @@ exports.drawIcon = function(cond, x, y, r) {
       };
     }
   }
-  
+
   function drawSun(x, y, r) {
     g.setColor(palette.sun);
     g.fillCircle(x, y, r);
@@ -280,5 +280,44 @@ exports.drawIcon = function(cond, x, y, r) {
     return drawUnknown;
   }
 
-  chooseIcon(cond)(x, y, r);
+  /*
+  * Choose weather icon to display based on weather conditition code
+  * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+  */
+  function chooseIconByCode(code) {
+    const codeGroup = Math.round(code / 100);
+    switch (codeGroup) {
+      case 2: return drawThunderstorm;
+      case 3: return drawRain;
+      case 5:
+        switch (code) {
+          case 511: return drawSnow;
+          case 520: return drawShowerRain;
+          case 521: return drawShowerRain;
+          case 522: return drawShowerRain;
+          case 531: return drawShowerRain;
+          default: return drawRain;
+        }
+        break;
+      case 6: return drawSnow;
+      case 7: return drawMist;
+      case 8:
+        switch (code) {
+          case 800: return drawSun;
+          case 801: return drawFewClouds;
+          case 802: return drawCloud;
+          default: return drawBrokenClouds;
+        }
+        break;
+      default: return drawUnknown;
+    }
+  }
+
+  if (cond.code && cond.code > 0) {
+    chooseIconByCode(cond.code)(x, y, r);
+  } else {
+    chooseIcon(cond.txt)(x, y, r);
+  }
+
+
 };

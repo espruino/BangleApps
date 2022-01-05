@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.13",
+    "version": "0.14",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -5373,6 +5373,20 @@
     "storage": [
       {"name":"sonicclk.app.js","url":"app.js"},
       {"name":"sonicclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "touchmenu",
+    "name": "TouchMenu",
+    "version": "0.01",
+    "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
+    "screenshots": [{"url":"touchmenu.gif"}],
+    "icon": "touchmenu.png",
+    "type": "bootloader",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"touchmenu.boot.js","url":"touchmenu.js"},
     ]
   }
 ]
