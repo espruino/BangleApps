@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.39",
+    "version": "0.40",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -3533,7 +3533,7 @@
     "id": "mclockplus",
     "name": "Morph Clock+",
     "shortName": "Morph Clock+",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
     "icon": "mclockplus.png",
     "type": "clock",
@@ -3987,11 +3987,12 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      {"name":"doztime.app.js","url":"app.js"},
+      {"name":"doztime.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+      {"name":"doztime.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
       {"name":"doztime.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -5123,6 +5124,24 @@
     ]
   },
   {
+    "id": "presentor",
+    "name": "Presentor",
+    "version": "3.0",
+    "description": "Use your Bangle to present!",
+    "icon": "app.png",
+    "type": "app",
+    "tags": "tool,bluetooth",
+    "interface": "interface.html",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"presentor.app.js","url":"app.js"},
+      {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+      {"name":"presentor.json","url":"settings.json"}
+    ]
+  },
+  {
     "id": "slash",
     "name": "Slash Watch",
     "shortName":"Slash",
@@ -5389,5 +5408,24 @@
     "storage": [
       {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
     ]
+  },
+  {
+    "id": "puzzle15",
+    "name": "15 puzzle",
+    "version": "0.05",
+    "description": "A 15 puzzle game with drag gesture interface",
+    "readme":"README.md",
+    "icon": "puzzle15.app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"puzzle15.app.js","url":"puzzle15.app.js"},
+      {"name":"puzzle15.settings.js","url":"puzzle15.settings.js"},
+      {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"puzzle15.json"}]
   }
 ]
