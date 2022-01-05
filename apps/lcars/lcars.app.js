@@ -24,6 +24,7 @@ let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
+let cGrey = "#9E9E9E";
 
 /*
  * Global lcars variables
@@ -240,7 +241,7 @@ function drawPosition0(){
   var bat = E.getBattery() / 100.0;
   var batX2 = parseInt((172 - 35) * bat + 35);
   drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
-  drawHorizontalBgLine(cPurple, batX2+10, 172, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2+10, 172, 171, 5);
 
   // Draw logo
   drawLock();
