@@ -11,28 +11,34 @@
     require('Storage').writeJSON(FILE, settings);
   }
 
+  // Helper method which uses int-based menu item for set of string values
+  function stringItems(startvalue, writer, values) {
+    return {
+      value: (startvalue === undefined ? 0 : values.indexOf(startvalue)),
+      format: v => values[v],
+      min: 0,
+      max: values.length - 1,
+      wrap: true,
+      step: 1,
+      onchange: v => {
+        writer(values[v]);
+        writeSettings();
+      }
+    };
+  }
+
+  // Helper method which breaks string set settings down to local settings object
+  function stringInSettings(name, values) {
+    return stringItems(settings[name], v => settings[name] = v, values);
+  }
+
   var mainmenu = {
     "": {
       "title": "Anton clock"
     },
     "< Back": () => back(),
     "Seconds...": () => E.showMenu(secmenu),
-    "ISO8601 date": {
-      value: (settings.dateAsISO !== undefined ? settings.dateAsISO : false),
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settings.dateAsISO = v;
-        writeSettings();
-      }
-    },
-    "Long date": {
-      value: (settings.longDate !== undefined ? settings.longDate : true),
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settings.longDate = v;
-        writeSettings();
-      }
-    },
+    "Date": stringInSettings("dateOnMain", ["Short", "Long", "ISO8601"]),
     "Show Weekday": {
       value: (settings.weekDay !== undefined ? settings.weekDay : true),
       format: v => v ? "On" : "Off",
@@ -65,23 +71,16 @@
       "title": "Show seconds..."
     },
     "< Back": () => E.showMenu(mainmenu),
-    "Always": {
-      value: (settings.secondsAlways !== undefined ? settings.secondsAlways : false),
+    "Show": stringInSettings("secondsMode", ["Never", "Unlocked", "Always"]),
+    "With \":\"": {
+      value: (settings.secondsWithColon !== undefined ? settings.secondsWithColon : false),
       format: v => v ? "On" : "Off",
       onchange: v => {
-        settings.secondsAlways = v;
+        settings.secondsWithColon = v;
         writeSettings();
       }
     },
-    "If unlocked": {
-      value: (settings.secondsOnUnlock !== undefined ? settings.secondsOnUnlock : false),
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settings.secondsOnUnlock = v;
-        writeSettings();
-      }
-    },
-    "Coloured": {
+    "Color": {
       value: (settings.secondsColoured !== undefined ? settings.secondsColoured : false),
       format: v => v ? "On" : "Off",
       onchange: v => {
@@ -89,14 +88,7 @@
         writeSettings();
       }
     },
-    "With date": {
-      value: (settings.dateOnSecs !== undefined ? settings.dateOnSecs : false),
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settings.dateOnSecs = v;
-        writeSettings();
-      }
-    }
+    "Date": stringInSettings("dateOnSecs", ["No", "Year", "Weekday"])
   };
 
   // Actually display the menu
