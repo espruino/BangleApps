@@ -5357,22 +5357,5 @@
       { "name": "diract.app.js", "url": "diract.js" },
       { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
     ]
-  },
-  {
-    "id": "recentapp",
-    "name": "recentApp",
-    "shortName": "recentApp",
-    "version": "0.01",
-    "description": "Tiny boot script to access the recent/active app info data as object with: require(\"recentapp\")",
-    "icon": "app.png",
-    "type": "boot",
-    "tags": "boot",
-    "supports" : ["BANGLEJS", "BANGLEJS2"],
-    "allow_emulator": false,
-    "readme": "README.md",
-    "storage": [
-      { "name": "recentapp.boot.js", "url": "boot.js" },
-      { "name": "recentapp", "url": "recentapp.js" }
-    ]
   }
 ]
