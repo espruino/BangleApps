@@ -391,23 +391,23 @@ class Board {
     //this.setAlmostSolved(); // to test the game end
   }
 
-  /*
-  // Set the board into the "solved" position. Useful for showcasing
+  /* Set the board into the "solved" position. Useful for showcasing and development
   setSolved() {
     this.stones = [];
     for (i = 0; i < stonesPerBoard; i++)
       this.stones[i] = new Stone((i + 1) % stonesPerBoard, i);
     this.moveCount = 0;
   }
+  /* */
 
-  // Initialize an almost solved playing field. Useful for tests and development
+  /* Initialize an almost solved playing field. Useful for tests and development
   setAlmostSolved() {
     this.setSolved();
     b = this.stones[this.stones.length - 1];
     this.stones[this.stones.length - 1] = this.stones[this.stones.length - 2];
     this.stones[this.stones.length - 2] = b;
   }
-  */
+  /* */
 
   // Initialize a shuffled field. The fields are always solvable.
   setShuffled() {
@@ -671,7 +671,7 @@ function gameEnd(moveCount) {
     buttons: {
       "Again": newGame,
       "Menu": () => showMenu(false),
-      "Exit": load
+      "Exit": exitGame
     }
   }).then(v => {
     E.showPrompt();
@@ -702,7 +702,7 @@ function showMenu(withContinue) {
   mainmenu["Start 4x4"] = () => initGame(4);
   mainmenu["Start 5x5"] = () => initGame(5);
   mainmenu.About = () => showAbout(withContinue);
-  mainmenu.Exit = () => load();
+  mainmenu.Exit = exitGame;
   dragger.setEnabled(false);
   g.clear(true);
   E.showMenu(mainmenu);
@@ -720,6 +720,12 @@ function handledrag(e) {
     (e.dx > 0 ? e => board.moveRight(e) : e => board.moveLeft(e)) :
     (e.dy > 0 ? e => board.moveDown(e) : e => board.moveUp(e)));
   worker.addTask(e => board.drawResult(e));
+}
+
+// exit the game, clear screen first to prevent ghost images
+function exitGame() {
+  g.clear(true);
+  setTimeout(load, 300);
 }
 
 
