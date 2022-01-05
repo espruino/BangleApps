@@ -56,6 +56,23 @@ const radiusInner = 16;
 
 function draw() {
   g.clear(true);
+
+  if (!showWidgets) {
+    /*
+    * we are not drawing the widgets as we are taking over the whole screen
+    * so we will blank out the draw() functions of each widget and change the
+    * area to the top bar doesn't get cleared.
+    */
+    if (WIDGETS && typeof WIDGETS === "object") {
+      for (let wd of WIDGETS) {
+        wd.draw = () => {};
+        wd.area = "";
+      }
+    }
+  } else {
+    Bangle.drawWidgets();
+  }
+
   g.setColor(colorBg);
   g.fillRect(0, widgetOffset, w, h);
 
@@ -280,8 +297,7 @@ Bangle.on('lock', function(isLocked) {
         drawHeartRate();
       }
     }
-    if (isCircleEnabled("steps")) drawSteps();
-    if (isCircleEnabled("stepsDistance")) drawStepsDistance();
+    draw();
   } else {
     if (isCircleEnabled("hr")) {
       Bangle.setHRMPower(0, "watch");
@@ -309,19 +325,6 @@ if (isCircleEnabled("battery")) {
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-if (!showWidgets) {
-  /*
-  * we are not drawing the widgets as we are taking over the whole screen
-  * so we will blank out the draw() functions of each widget and change the
-  * area to the top bar doesn't get cleared.
-  */
-  if (WIDGETS && typeof WIDGETS === "object") {
-    for (let wd of WIDGETS) {
-      wd.draw = () => {};
-      wd.area = "";
-    }
-  }
-}
 
 draw();
 setInterval(draw, 60000);
