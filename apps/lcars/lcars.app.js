@@ -558,6 +558,10 @@ Bangle.on("drag", e => {
   }
 });
 
+Bangle.on("touch", e => {
+  Bangle.showLauncher();
+});
+
 
 /*
  * Lets start widgets, listen for btn etc.
