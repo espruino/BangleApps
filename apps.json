@@ -5432,7 +5432,7 @@
     "id": "flipper",
     "name": "flipper",
     "version": "0.01",
-    "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip."
+    "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
     "icon": "flipper.png",
     "type": "app",
     "tags": "game",
