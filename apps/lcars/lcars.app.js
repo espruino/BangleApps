@@ -210,16 +210,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 23, 118);
+    g.drawImage(iconImg, 24, 118);
     g.setColor(cWhite);
-    g.drawString("STATUS", 23+25, 108);
+    g.drawString("STATUS", 24+25, 108);
   } else {
     // Alarm within symbol
     g.setColor(cOrange);
-    g.drawString("ALARM", 23+25, 108);
+    g.drawString("ALARM", 24+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 23+25, 108+35);
+    g.drawString(getAlarmMinutes(), 24+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
