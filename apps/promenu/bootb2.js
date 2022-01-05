@@ -74,7 +74,7 @@ E.showMenu = function(items) {
         g.setFontAlign(-1,-1);
         var v = item.value;
         v = loc.translate(""+v);
-        if(loc.translate(name).length >= 19-v.length && "object" == typeof item){
+        if(loc.translate(name).length >= 17-v.length && "object" == typeof item){
           if (item.format) v=item.format(v);
           g.drawString(loc.translate(name).substring(0, 12-v.length)+"...",x+3.7,iy+2.7);
         }else{
