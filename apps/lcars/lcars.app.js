@@ -147,14 +147,17 @@ function printData(key, y, c){
   }
 
   g.setColor(c);
+  g.fillRect(79, y-2, 85 ,y+18);
+
+  g.setFontAlign(0,-1,0);
+  g.drawString(value, 109, y);
+
+  g.setColor(c);
+  g.setFontAlign(-1,-1,0);
   g.fillRect(133, y-2, 165 ,y+18);
   g.fillCircle(161, y+8, 10);
   g.setColor(cBlack);
   g.drawString(text, 135, y);
-
-  g.setColor(c);
-  g.setFontAlign(1,-1,0);
-  g.drawString(value, 130, y);
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
@@ -191,7 +194,7 @@ function drawState(){
     return;
   }
 
-  g.clearRect(20, 93, 80, 170);
+  g.clearRect(20, 93, 75, 170);
   g.setColor(cWhite);
   var bat = E.getBattery();
   var current = new Date();
@@ -206,16 +209,18 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 31, 104);
+
+    // g.drawRect(25, 104, 25+50, 104+50);
+    g.drawImage(iconImg, 24, 104);
   } else {
     // Alarm within symbol
     g.setFontAntonioMedium();
     g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 31+25, 107);
+    g.drawString("ALARM", 24+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 31+25, 107+35);
+    g.drawString(getAlarmMinutes(), 24+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -401,7 +406,7 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
-  var steps = 0
+  var steps = 0;
   try {
     health = require("health");
   } catch(ex) {
