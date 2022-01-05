@@ -5357,5 +5357,19 @@
       { "name": "diract.app.js", "url": "diract.js" },
       { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
     ]
+  },
+  {
+    "id": "touchmenu",
+    "name": "TouchMenu",
+    "version": "0.01",
+    "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
+    "screenshots": [{"url":"touchmenu.gif"}],
+    "icon": "touchmenu.png",
+    "type": "bootloader",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"touchmenu.boot.js","url":"touchmenu.js"},
+    ]
   }
 ]
