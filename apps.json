@@ -5448,5 +5448,20 @@
       {"name":"flipper.app.js","url":"flipper.app.js"},
       {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "limelight",
+    "name": "Limelight Clock",
+    "version": "0.01",
+    "description": " Simple configurable analogue clock based on the work of @Andreas_Rozek (Simple_Clock)",
+    "icon": "limelight.png",
+    "screenshots": [{"url":"screenshot_limelight.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"limelight.app.js","url":"app.js"},
+      {"name":"limelight.img","url":"icon.js","evaluate":true}
+    ]
   }
 ]
