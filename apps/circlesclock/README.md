@@ -10,8 +10,9 @@ It can show the following information (this can be configured):
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
 
-## Screenshot
-![Screenshot](screenshot.png)
+## Screenshots
+![Screenshot dark theme](screenshot-dark.png)
+![Screenshot light theme](screenshot-light.png)
 
 ## TODO
 * Show weather information

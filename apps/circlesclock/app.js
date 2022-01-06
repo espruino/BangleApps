@@ -47,12 +47,13 @@ const w = g.getWidth();
 const hOffset = 30 - widgetOffset;
 const h1 = Math.round(1 * h / 5 - hOffset);
 const h2 = Math.round(3 * h / 5 - hOffset);
-const h3 = Math.round(8 * h / 8 - hOffset);
+const h3 = Math.round(8 * h / 8 - hOffset - 3);
 const w1 = Math.round(w / 6);
 const w2 = Math.round(3 * w / 6);
 const w3 = Math.round(5 * w / 6);
-const radiusOuter = 22;
-const radiusInner = 16;
+const radiusOuter = 25;
+const radiusInner = 18;
+const circleFont = "Vector:15";
 
 function draw() {
   g.clear(true);
@@ -83,7 +84,7 @@ function draw() {
   g.drawString(locale.time(new Date(), 1), w / 10, h1 + 8);
 
   // date & dow
-  g.setFont("Vector:20");
+  g.setFont("Vector:21");
   g.setFontAlign(-1, 0);
   g.drawString(locale.date(new Date()), w / 10, h2);
   g.drawString(locale.dow(new Date()), w / 10, h2 + 22);
@@ -143,7 +144,7 @@ function drawSteps(w) {
 
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
-  g.setFont("Vector:12");
+  g.setFont(circleFont);
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
   g.drawString(shortValue(steps), w + 2, h3);
@@ -172,7 +173,7 @@ function drawStepsDistance(w) {
 
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
-  g.setFont("Vector:12");
+  g.setFont(circleFont);
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
   g.drawString(shortValue(stepsDistance), w + 2, h3);
@@ -196,7 +197,7 @@ function drawHeartRate(w) {
 
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
-  g.setFont("Vector:12");
+  g.setFont(circleFont);
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
   g.drawString(hrtValue != undefined ? hrtValue : "-", w, h3);
@@ -220,7 +221,7 @@ function drawBattery(w) {
 
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
-  g.setFont("Vector:12");
+  g.setFont(circleFont);
   g.setFontAlign(0, 0);
 
   let icon = powerIcon;
@@ -259,7 +260,7 @@ function drawGauge(cx, cy, percent, color) {
 
   g.setColor(color);
 
-  const size = 4;
+  const size = radiusOuter - radiusInner - 2;
   // draw gauge
   for (i = startrot; i > endrot - size; i -= size) {
     x = cx + r * Math.sin(radians(i));
