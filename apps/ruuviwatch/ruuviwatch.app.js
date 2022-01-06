@@ -123,6 +123,7 @@ require("Storage").write("ruuviwatch.info",{
     }, {timeout : 2000, filters : [{ manufacturerData:{0x0499:{}} }] });
   }
   
+  g.clear();
   g.drawImage(require("Storage").read("ruuviwatch.img"), g.getWidth()/2-24, g.getHeight()/2-24);
   
   var drawInterval = setInterval(redraw, 1000);
