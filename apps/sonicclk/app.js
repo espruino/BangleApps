@@ -113,7 +113,7 @@ const fullReset = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
   if (waitTimeout) clearTimeout(waitTimeout);
   if (drawInterval) clearInterval(drawInterval);
-}
+};
 
 const start = () => {
   fullReset();
