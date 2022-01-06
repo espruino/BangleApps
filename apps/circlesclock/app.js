@@ -155,7 +155,7 @@ function drawStepsDistance(w) {
   if (!w) w = getCirclePosition("steps", w1);
   const steps = getSteps();
   const stepDistance = settings.stepLength || 0.8;
-  const stepsDistance = steps * stepDistance;
+  const stepsDistance = Math.round(steps * stepDistance);
 
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
@@ -175,7 +175,7 @@ function drawStepsDistance(w) {
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
-  g.drawString(Math.round(shortValue(stepsDistance)), w + 2, h3);
+  g.drawString(shortValue(stepsDistance), w + 2, h3);
 
   g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
 }
