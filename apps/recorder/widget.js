@@ -53,33 +53,29 @@
       },
       hrm:function() {
         var bpm = 0, bpmConfidence = 0;
-        var hasBPM = false;
         function onHRM(h) {
           if (h.confidence >= bpmConfidence) {
             bpmConfidence = h.confidence;
             bpm = h.bpm;
-            if (bpmConfidence) hasBPM = true;
           }
         }
         return {
           name : "HR",
-          fields : ["Heartrate"],
+          fields : ["Heartrate", "Confidence"],
           getValues : () => {
-            var r = [bpmConfidence?bpm:""];
+            var r = [bpm,bpmConfidence];
             bpm = 0; bpmConfidence = 0;
             return r;
           },
           start : () => {
-            hasBPM = false;
             Bangle.on('HRM', onHRM);
             Bangle.setHRMPower(1,"recorder");
           },
           stop : () => {
-            hasBPM = false;
             Bangle.removeListener('HRM', onHRM);
             Bangle.setHRMPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasBPM?"#f00":"#f88").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+          draw : (x,y) => g.setColor(Bangle.isHRMOn()?"#f00":"#f88").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
         };
       },
       bat:function() {
