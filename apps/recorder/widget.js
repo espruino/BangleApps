@@ -48,7 +48,7 @@
             Bangle.removeListener('GPS', onGPS);
             Bangle.setGPSPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasFix?"#0ff":"#888").drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="),x,y)
+          draw : (x,y) => g.setColor(hasFix?"#0f0":"#f88").drawImage(atob("DAwBEAKARAKQE4DwHkPqPRGKAEAA"),x,y)
         };
       },
       hrm:function() {
@@ -79,7 +79,7 @@
             Bangle.removeListener('HRM', onHRM);
             Bangle.setHRMPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasBPM?"#f00":"#888").drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="),x,y)
+          draw : (x,y) => g.setColor(hasBPM?"#f00":"#f88").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
         };
       },
       bat:function() {
@@ -119,7 +119,7 @@
             hasCore = false;
             Bangle.removeListener('CoreTemp', onCore);
           },
-          draw : (x,y) => g.setColor(hasCore?"#0f0":"#888").drawImage(atob("DAyBAAHh0js3EuDMA8A8AWBnDj9A8A=="),x,y)
+          draw : (x,y) => g.setColor(hasCore?"#0f0":"#8f8").drawImage(atob("DAwBAAAOAKPOfgZgZgZgZgfgPAAA"),x,y)
         };
       }, 
       steps:function() {
@@ -134,7 +134,7 @@
           },
           start : () => { lastSteps = Bangle.getStepCount(); },
           stop : () => {},
-          draw : (x,y) => g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="),x,y)
+          draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
         };
       }
       // TODO: recAltitude from pressure sensor
