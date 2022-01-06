@@ -82,7 +82,20 @@
           draw : (x,y) => g.setColor(hasBPM?"#f00":"#888").drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="),x,y)
         };
       },
-
+      bat:function() {
+        return {
+          name : "BAT",
+          fields : ["Battery Percentage", "Battery Voltage", "Charging"],
+          getValues : () => {
+            return [E.getBattery(), NRF.getBattery(), Bangle.isCharging()];
+          },
+          start : () => {
+          },
+          stop : () => {
+          },
+          draw : (x,y) => g.setColor(Bangle.isCharging() ? "#0f0" : "#ff0").drawImage(atob("DAwBAABgH4G4EYG4H4H4H4GIH4AA"),x,y)
+        };
+      },
       temp:function() {
         var core = 0, skin = 0;
         var hasCore = false;
