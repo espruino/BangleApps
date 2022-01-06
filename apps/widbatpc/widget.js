@@ -1,6 +1,9 @@
 (function(){
+  const intervalLow = 60000; // update time when not charging
+  const intervalHigh = 2000; // update time when charging
+
   let COLORS = {};
-  
+
   if (process.env.HWVERSION == 1) {
     COLORS = {
       'white':    -1,     // White
@@ -17,13 +20,13 @@
       'high':     "#0f0", // Green
       'ok':       "#ff0", // Orange
       'low':      "#f00", // Red
-    };   
+    };
   }
-  const SETTINGS_FILE = 'widbatpc.json'
+  const SETTINGS_FILE = 'widbatpc.json';
 
-  let settings
+  let settings;
   function loadSettings() {
-    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {}
+    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
     const DEFAULTS = {
       'color': 'By Level',
       'percentage': true,
@@ -32,17 +35,17 @@
       'alwaysoncharge': false,
     };
     Object.keys(DEFAULTS).forEach(k=>{
-      if (settings[k]===undefined) settings[k]=DEFAULTS[k]
+      if (settings[k]===undefined) settings[k]=DEFAULTS[k];
     });
   }
   function setting(key) {
-    if (!settings) { loadSettings() }
+    if (!settings) { loadSettings(); }
     return settings[key];
   }
 
   const levelColor = (l) => {
   // "charging" is very bright -> percentage is hard to read, "high" is ok(ish)
-    const green = setting('percentage') ? COLORS.high : COLORS.charging
+    const green = setting('percentage') ? COLORS.high : COLORS.charging;
     switch (setting('color')) {
       case 'Monochrome': return COLORS.white; // no chance of reading the percentage here :-(
       case 'Green': return green;
@@ -59,10 +62,11 @@
         if (l >= 15) return COLORS.ok;
         return COLORS.low;
     }
-  }
+  };
   const chargerColor = () => {
-    return (setting('color') === 'Monochrome') ? COLORS.white : COLORS.charging
-  }
+    return (setting('color') === 'Monochrome') ? COLORS.white : COLORS.charging;
+  };
+
   // sets width, returns true if it changed
   function setWidth() {
     var w = 40;
@@ -77,6 +81,7 @@
     WIDGETS["batpc"].width = w;
     return changed;
   }
+
   function draw() {
   // if hidden, don't draw
     if (!WIDGETS["batpc"].width) return;
@@ -106,11 +111,11 @@
     if (!setting('percentage')) {
       return;
     }
-    let gfx = g
+    let gfx = g;
     if (setting('color') === 'Monochrome') {
     // draw text inverted on battery level
       gfx = Graphics.createCallback(g.getWidth(),g.getHeight(), 1,
-        (x,y) => {g.setPixel(x,y,x<=xl?0:-1)})
+        (x,y) => {g.setPixel(x,y,x<=xl?0:-1);});
     }
     gfx.setFontAlign(-1,-1);
     if (l >= 100) {
@@ -122,19 +127,24 @@
       gfx.drawString(l, x + 6, y + 4);
     }
   }
+
   // reload widget, e.g. when settings have changed
   function reload() {
-    loadSettings()
+    loadSettings();
     // need to redraw all widgets, because changing the "charger" setting
     // can affect the width and mess with the whole widget layout
-    setWidth()
+    setWidth();
     g.clear();
     Bangle.drawWidgets();
   }
+
   // update widget - redraw just widget, or all widgets if size changed
   function update() {
     if (setWidth()) Bangle.drawWidgets();
     else WIDGETS["batpc"].draw();
+
+    if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+      else                   changeInterval(id, intervalLow);
   }
 
   Bangle.on('charging',function(charging) {
@@ -142,20 +152,13 @@
     update();
     g.flip();
   });
-  var batteryInterval;
+
   Bangle.on('lcdPower', function(on) {
-    if (on) {
-      update();
-      // refresh once a minute if LCD on
-      if (!batteryInterval)
-        batteryInterval = setInterval(update, 60000);
-    } else {
-      if (batteryInterval) {
-        clearInterval(batteryInterval);
-        batteryInterval = undefined;
-      }
-    }
+    if (on) update();
   });
+
+  var id = setInterval(()=>WIDGETS["batpc"].draw(), intervalLow);
+
   WIDGETS["batpc"]={area:"tr",width:40,draw:draw,reload:reload};
   setWidth();
-})()
+})();
