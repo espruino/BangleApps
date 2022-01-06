@@ -53,6 +53,16 @@ exports.get = function() {
 
 scheduleExpiry(storage.readJSON('weather.json')||{});
 
+/**
+ *
+ * @param cond Weather condition, as one of:
+ *             {number} code: (Preferred form) https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+ *             {string} weather description (in English: breaks for other languages!)
+ *             {object} use cond.code if present, or fall back to cond.txt
+ * @param x Left
+ * @param y Top
+ * @param r Icon Size
+ */
 exports.drawIcon = function(cond, x, y, r) {
   var palette;
 
@@ -249,32 +259,35 @@ exports.drawIcon = function(cond, x, y, r) {
     g.setColor(g.theme.fg).setFontAlign(0, 0).setFont('Vector', r*2).drawString("?", x+r/10, y+r/6);
   }
 
-  function chooseIcon(condition) {
-    if (!condition) return () => {};
-    condition = condition.toLowerCase();
-    if (condition.includes("thunderstorm")) return drawThunderstorm;
-    if (condition.includes("freezing")||condition.includes("snow")||
-      condition.includes("sleet")) {
+  /*
+  * Choose weather icon to display based on weather description
+  */
+  function chooseIconByTxt(txt) {
+    if (!txt) return () => {};
+    txt = txt.toLowerCase();
+    if (txt.includes("thunderstorm")) return drawThunderstorm;
+    if (txt.includes("freezing")||txt.includes("snow")||
+      txt.includes("sleet")) {
       return drawSnow;
     }
-    if (condition.includes("drizzle")||
-      condition.includes("shower")) {
+    if (txt.includes("drizzle")||
+      txt.includes("shower")) {
       return drawRain;
     }
-    if (condition.includes("rain")) return drawShowerRain;
-    if (condition.includes("clear")) return drawSun;
-    if (condition.includes("few clouds")) return drawFewClouds;
-    if (condition.includes("scattered clouds")) return drawCloud;
-    if (condition.includes("clouds")) return drawBrokenClouds;
-    if (condition.includes("mist") ||
-      condition.includes("smoke") ||
-      condition.includes("haze") ||
-      condition.includes("sand") ||
-      condition.includes("dust") ||
-      condition.includes("fog") ||
-      condition.includes("ash") ||
-      condition.includes("squalls") ||
-      condition.includes("tornado")) {
+    if (txt.includes("rain")) return drawShowerRain;
+    if (txt.includes("clear")) return drawSun;
+    if (txt.includes("few clouds")) return drawFewClouds;
+    if (txt.includes("scattered clouds")) return drawCloud;
+    if (txt.includes("clouds")) return drawBrokenClouds;
+    if (txt.includes("mist") ||
+      txt.includes("smoke") ||
+      txt.includes("haze") ||
+      txt.includes("sand") ||
+      txt.includes("dust") ||
+      txt.includes("fog") ||
+      txt.includes("ash") ||
+      txt.includes("squalls") ||
+      txt.includes("tornado")) {
       return drawMist;
     }
     return drawUnknown;
@@ -298,7 +311,6 @@ exports.drawIcon = function(cond, x, y, r) {
           case 531: return drawShowerRain;
           default: return drawRain;
         }
-        break;
       case 6: return drawSnow;
       case 7: return drawMist;
       case 8:
@@ -308,16 +320,21 @@ exports.drawIcon = function(cond, x, y, r) {
           case 802: return drawCloud;
           default: return drawBrokenClouds;
         }
-        break;
       default: return drawUnknown;
     }
   }
 
-  if (cond.code && cond.code > 0) {
-    chooseIconByCode(cond.code)(x, y, r);
-  } else {
-    chooseIcon(cond.txt)(x, y, r);
+  function chooseIcon(cond) {
+    if (typeof (cond)==="object") {
+      if ("code" in cond) return chooseIconByCode(cond.code);
+      if ("txt" in cond) return chooseIconByTxt(cond.txt);
+    } else if (typeof (cond)==="number") {
+      return chooseIconByCode(cond.code);
+    } else if (typeof (cond)==="string") {
+      return chooseIconByTxt(cond.txt);
+    }
+    return drawUnknown;
   }
-
+  chooseIcon(cond)(x, y, r);
 
 };
