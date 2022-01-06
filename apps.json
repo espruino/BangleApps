@@ -936,7 +936,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.15",
+    "version": "0.16",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -1501,7 +1501,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.06",
+    "version": "0.07",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
