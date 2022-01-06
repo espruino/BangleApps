@@ -46,7 +46,7 @@ const CenterY = (g.getHeight()/2) + (Bangle.appRect.y/2);
 const outerRadius = (g.getHeight() - Bangle.appRect.y)/2;
 
 function debug(o) {
-  //console.log(o);
+  console.log(o);
 }
 
 debug("limelight.app.js");
@@ -55,6 +55,7 @@ debug("CenterY=" + CenterY);
 debug("outerRadius=" + outerRadius);
 debug("y12=" + (CenterY - outerRadius));
 debug("y6=" + (CenterY + outerRadius));
+debug("appRect=" + Bangle.appRect);
 
 const HourHandLength = outerRadius * 0.5;
 const HourHandWidth  = 2*3, halfHourHandWidth = HourHandWidth/2;

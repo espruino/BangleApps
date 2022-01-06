@@ -5453,7 +5453,7 @@
     "id": "limelight",
     "name": "Limelight Clock",
     "version": "0.01",
-    "description": " Simple configurable analogue clock based on the work of @Andreas_Rozek (Simple_Clock)",
+    "description": "Simple configurable analogue clock based on the work of @Andreas_Rozek (Simple_Clock)",
     "icon": "limelight.png",
     "screenshots": [{"url":"screenshot_limelight.png"}],
     "type": "clock",
