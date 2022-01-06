@@ -5448,5 +5448,18 @@
       {"name":"flipper.app.js","url":"flipper.app.js"},
       {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
     ]
+  },
+  { "id": "ruuviwatch",
+    "name": "Ruuvi Watch",
+    "shortName":"Ruuvi Watch",
+    "icon": "ruuviwatch.png",
+    "version":"1.00",
+    "description": "Keep an eye on RuuviTag devices (https://ruuvi.com). Only shows RuuviTags using the v5 format.",
+    "readme":"README.md",
+    "tags": "bluetooth",
+    "storage": [
+      {"name":"ruuviwatch.app.js","url":"ruuviwatch.app.js"},
+      {"name":"ruuviwatch.img","url":"ruuviwatch.app-icon.js","evaluate":true}
+    ]
   }
 ]
