@@ -1,0 +1,16 @@
+{
+  "id": "gpstouch",
+  "name": "GPS Touch",
+  "version": "0.02",
+  "description": "A touch based GPS watch, shows OS map reference",
+  "icon": "gpstouch.png",
+  "screenshots": [{"url":"screenshot4.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot1.png"}],
+  "tags": "tools,app",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"geotools","url":"geotools.js"},
+    {"name":"gpstouch.app.js","url":"gpstouch.app.js"},
+    {"name":"gpstouch.img","url":"gpstouch.icon.js","evaluate":true}
+  ]
+}

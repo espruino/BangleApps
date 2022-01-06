@@ -1,0 +1,13 @@
+{
+  "id": "horsey",
+  "name": "Horse Race!",
+  "version": "0.01",
+  "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
+  "icon": "horse-race.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"horsey.app.js","url":"horse-race.js"},
+    {"name":"horsey.img","url":"horse-race-icon.js","evaluate":true}
+  ]
+}

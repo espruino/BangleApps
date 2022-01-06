@@ -1,0 +1,15 @@
+{
+  "id": "omnitrix",
+  "name": "Omnitrix",
+  "version": "0.01",
+  "description": "An Omnitrix Showpiece",
+  "icon": "omnitrix.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"omnitrix.app.js","url":"omnitrix.app.js"},
+    {"name":"omnitrix.img","url":"omnitrix.icon.js","evaluate":true}
+  ]
+}

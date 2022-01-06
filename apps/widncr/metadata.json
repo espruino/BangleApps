@@ -1,0 +1,13 @@
+{
+  "id": "widncr",
+  "name": "NCR Logo Widget",
+  "version": "0.01",
+  "description": "Show the NodeConf Remote logo in the top left",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"widncr.wid.js","url":"widget.js"}
+  ]
+}

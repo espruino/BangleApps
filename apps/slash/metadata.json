@@ -1,0 +1,18 @@
+{
+  "id": "slash",
+  "name": "Slash Watch",
+  "shortName":"Slash",
+  "icon": "slash.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "version":"0.01",
+  "description": "Slash Watch based on Pebble watch face by Nikki.",
+  "tags": "clock",
+  "type": "clock",
+  "supports":["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"slash.app.js","url":"app.js"},
+    {"name":"slash.img","url":"app-icon.js","evaluate":true}
+  ]
+}

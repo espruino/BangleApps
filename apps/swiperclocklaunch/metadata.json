@@ -1,0 +1,14 @@
+{
+  "id": "swiperclocklaunch",
+  "name": "Swiper Clock Launch",
+  "version": "0.02",
+  "description": "Navigate between clock and launcher with Swipe action",
+  "icon": "swiperclocklaunch.png",
+  "type": "bootloader",
+  "tags": "tools, system",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"swiperclocklaunch.boot.js","url":"boot.js"},
+    {"name":"swiperclocklaunch.img","url":"icon.js","evaluate":true}
+  ]
+}

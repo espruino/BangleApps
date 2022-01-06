@@ -1,0 +1,18 @@
+{
+  "id": "ffcniftyb",
+  "name": "Nifty-B Clock",
+  "version": "0.02",
+  "description": "A nifty clock (series B) with time, date and color configuration",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"ffcniftyb.app.js","url":"app.js"},
+    {"name":"ffcniftyb.img","url":"app-icon.js","evaluate":true},
+    {"name":"ffcniftyb.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"ffcniftyb.json"}]
+}

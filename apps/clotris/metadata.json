@@ -1,0 +1,16 @@
+{
+  "id": "clotris",
+  "name": "Clock-Tris",
+  "version": "0.01",
+  "description": "A fully functional clone of a classic game of falling blocks",
+  "icon": "clock-tris.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-clock-tris-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"clotris.app.js","url":"clock-tris.js"},
+    {"name":"clotris.img","url":"clock-tris-icon.js","evaluate":true},
+    {"name":".trishig","url":"clock-tris-high"}
+  ]
+}

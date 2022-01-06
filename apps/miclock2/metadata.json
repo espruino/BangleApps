@@ -1,0 +1,16 @@
+{
+  "id": "miclock2",
+  "name": "Mixed Clock 2",
+  "version": "0.01",
+  "description": "White color variant of the Mixed Clock with thicker clock hands for better readability in the bright sunlight, extra space under the clock for widgets and seconds in the digital clock.",
+  "icon": "clock-mixed.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-mixed-clock-2-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"miclock2.app.js","url":"clock-mixed.js"},
+    {"name":"miclock2.img","url":"clock-mixed-icon.js","evaluate":true}
+  ]
+}

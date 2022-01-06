@@ -1,0 +1,14 @@
+{
+  "id": "intervals",
+  "name": "Intervals App",
+  "shortName": "Intervals",
+  "version": "0.01",
+  "description": "Intervals for training. It is possible to configure work time and rest time and number of sets.",
+  "icon": "intervals.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"intervals.app.js","url":"intervals.app.js"},
+    {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "cliock",
+  "name": "Commandline-Clock",
+  "shortName": "CLI-Clock",
+  "version": "0.15",
+  "description": "Simple CLI-Styled Clock",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_cli.png"}],
+  "type": "clock",
+  "tags": "clock,cli,command,bash,shell",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"cliock.app.js","url":"app.js"},
+    {"name":"cliock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

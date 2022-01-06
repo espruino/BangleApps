@@ -1,0 +1,16 @@
+{
+  "id": "ltherm",
+  "name": "Localized Thermometer",
+  "shortName": "Thermometer",
+  "version": "0.01",
+  "description": "Displays the current temperature in localized units.",
+  "icon": "thermf.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"ltherm.app.js","url":"app.js"},
+    {"name":"ltherm.img","url":"icon.js","evaluate":true}
+  ]
+}

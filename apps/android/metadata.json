@@ -1,0 +1,18 @@
+{
+  "id": "android",
+  "name": "Android Integration",
+  "shortName": "Android",
+  "version": "0.05",
+  "description": "Display notifications/music/etc sent from the Gadgetbridge app on Android. This replaces the old 'Gadgetbridge' Bangle.js widget.",
+  "icon": "app.png",
+  "tags": "tool,system,messages,notifications",
+  "dependencies": {"messages":"app"},
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"android.app.js","url":"app.js"},
+    {"name":"android.settings.js","url":"settings.js"},
+    {"name":"android.img","url":"app-icon.js","evaluate":true},
+    {"name":"android.boot.js","url":"boot.js"}
+  ],
+  "sortorder": -8
+}

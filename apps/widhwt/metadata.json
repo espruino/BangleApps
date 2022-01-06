@@ -1,0 +1,13 @@
+{
+  "id": "widhwt",
+  "name": "Hand Wash Timer",
+  "version": "0.01",
+  "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,tool",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"widhwt.wid.js","url":"widget.js"}
+  ]
+}

@@ -19,6 +19,7 @@ var lastFix = {
 var SATinView = 0;
 var nofBD = 0;
 var nofGP = 0;
+var listenerGPSraw = 1;
 
 function formatTime(now) {
   if (now == undefined) {
@@ -93,6 +94,10 @@ function onGPS(fix) {
   }
   lastFix = fix;
   if (fix.fix) {
+    if (listenerGPSraw == 1) {
+      Bangle.removeListener('GPS-raw', onGPSraw);
+      listenerGPSraw = 0;
+    }
     var locale = require("locale");
     var satellites = fix.satellites;
     var maidenhead = getMaidenHead(fix.lat,fix.lon);
@@ -104,6 +109,10 @@ function onGPS(fix) {
     layout.sat.label = "Satellites: "+satellites;
     layout.maidenhead.label = "Maidenhead: "+maidenhead;
   } else {
+    if (listenerGPSraw == 0) {
+      Bangle.on('GPS-raw', onGPSraw);
+      listenerGPSraw = 1;
+    }
     layout.sat.label = fix.satellites;
     layout.progress.label = "in view: " + SATinView;
   }
@@ -111,15 +120,26 @@ function onGPS(fix) {
 }
 
 function onGPSraw(nmea) {
-  if (nmea.slice(3,6) == "GSV") {
-    // console.log(nmea);
-    if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
-    if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
-    SATinView = nofBD + nofGP;
-  }
+  if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
+  if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
+  SATinView = nofBD + nofGP;
 }
+
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.on('GPS', onGPS);
 Bangle.on('GPS-raw', onGPSraw);
+
+function  exitApp() {
+  Bangle.setGPSPower(0, "app");
+  Bangle.removeListener('GPS-raw', onGPSraw);
+  Bangle.removeListener('GPS', onGPS);
+  load();
+}
+
+setWatch(_=>exitApp(), BTN1);
+if (global.BTN2) {
+  setWatch(_=>exitApp(), BTN2);
+  setWatch(_=>exitApp(), BTN3);
+}

@@ -1,0 +1,16 @@
+{
+  "id": "flappy",
+  "name": "Flappy Bird",
+  "version": "0.05",
+  "description": "A Flappy Bird game clone",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1_flappy.png"},{"url":"screenshot2_flappy.png"}],
+  "tags": "game",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"flappy.app.js","url":"app.js"},
+    {"name":"flappy.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mysticclock",
+  "name": "Mystic Clock",
+  "version": "1.01",
+  "description": "A retro-inspired watchface featuring time, date, and an interactive data display line.",
+  "icon": "mystic-clock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-mystic-clock-screenshot.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"mysticclock.app.js","url":"mystic-clock-app.js"},
+    {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
+    {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
+  ]
+}

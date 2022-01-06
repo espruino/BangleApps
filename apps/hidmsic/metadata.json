@@ -1,0 +1,14 @@
+{
+  "id": "hidmsic",
+  "name": "Bluetooth Music Controls",
+  "shortName": "Music Control",
+  "version": "0.02",
+  "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+  "icon": "hid-music.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"hidmsic.app.js","url":"hid-music.js"},
+    {"name":"hidmsic.img","url":"hid-music-icon.js","evaluate":true}
+  ]
+}

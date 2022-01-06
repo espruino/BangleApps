@@ -1,0 +1,21 @@
+{
+  "id": "animals",
+  "name": "Animals Game",
+  "version": "0.01",
+  "description": "Simple toddler's game - displays a different number of animals each time the screen is pressed",
+  "icon": "animals.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"animals.app.js","url":"animals.js"},
+    {"name":"animals.img","url":"animals-icon.js","evaluate":true},
+    {"name":"animals-snake.img","url":"animals-snake.js","evaluate":true},
+    {"name":"animals-duck.img","url":"animals-duck.js","evaluate":true},
+    {"name":"animals-swan.img","url":"animals-swan.js","evaluate":true},
+    {"name":"animals-fox.img","url":"animals-fox.js","evaluate":true},
+    {"name":"animals-camel.img","url":"animals-camel.js","evaluate":true},
+    {"name":"animals-pig.img","url":"animals-pig.js","evaluate":true},
+    {"name":"animals-sheep.img","url":"animals-sheep.js","evaluate":true},
+    {"name":"animals-mouse.img","url":"animals-mouse.js","evaluate":true}
+  ]
+}

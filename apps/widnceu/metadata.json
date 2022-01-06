@@ -1,0 +1,13 @@
+{
+  "id": "widnceu",
+  "name": "NCEU Logo Widget",
+  "version": "0.02",
+  "description": "Show the NodeConf EU logo in the top left",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"widnceu.wid.js","url":"widget.js"}
+  ]
+}

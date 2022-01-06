@@ -1,0 +1,17 @@
+{ "id": "93dub",
+ "name": "93 Dub",
+ "shortName":"93 Dub",
+ "icon": "93dub.png",
+ "screenshots": [{"url":"screenshot.png"}],
+ "version":"0.06",
+ "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
+ "tags": "clock",
+ "type": "clock",
+ "supports":["BANGLEJS2"],
+ "readme": "README.md",
+ "allow_emulator": true,
+ "storage": [
+   {"name":"93dub.app.js","url":"app.js"},
+   {"name":"93dub.img","url":"app-icon.js","evaluate":true}
+ ]
+}

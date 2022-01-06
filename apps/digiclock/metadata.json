@@ -1,0 +1,15 @@
+{
+  "id": "digiclock",
+  "name": "Digital Clock Face",
+  "shortName": "Digi Clock",
+  "version": "0.02",
+  "description": "A simple digital clock with the time, day, month, and year",
+  "icon": "digiclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"digiclock.app.js","url":"digiclock.js"},
+    {"name":"digiclock.img","url":"digiclock-icon.js","evaluate":true}
+  ]
+}
