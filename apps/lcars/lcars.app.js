@@ -24,6 +24,7 @@ let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
+let cGrey = "#9E9E9E";
 
 /*
  * Global lcars variables
@@ -147,14 +148,17 @@ function printData(key, y, c){
   }
 
   g.setColor(c);
+  g.fillRect(79, y-2, 87 ,y+18);
+
+  g.setFontAlign(1,-1,0);
+  g.drawString(value, 131, y);
+
+  g.setColor(c);
+  g.setFontAlign(-1,-1,0);
   g.fillRect(133, y-2, 165 ,y+18);
   g.fillCircle(161, y+8, 10);
   g.setColor(cBlack);
   g.drawString(text, 135, y);
-
-  g.setColor(c);
-  g.setFontAlign(1,-1,0);
-  g.drawString(value, 130, y);
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
@@ -191,13 +195,14 @@ function drawState(){
     return;
   }
 
-  g.clearRect(20, 93, 77, 170);
-  g.setColor(cWhite);
-  var bat = E.getBattery();
-  var current = new Date();
-  var hours = current.getHours();
+  g.clearRect(20, 93, 75, 170);
+  g.setFontAlign(0, 0, 0);
+  g.setFontAntonioMedium();
 
   if(!isAlarmEnabled()){
+    var bat = E.getBattery();
+    var current = new Date();
+    var hours = current.getHours();
     var iconImg =
         Bangle.isCharging() ? iconCharging :
         bat < 30 ? iconNoBattery :
@@ -206,16 +211,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 29, 104);
+    g.drawImage(iconImg, 24, 118);
+    g.setColor(cWhite);
+    g.drawString("STATUS", 24+25, 108);
   } else {
     // Alarm within symbol
-    g.setFontAntonioMedium();
-    g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 29+25, 107);
+    g.drawString("ALARM", 24+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 29+25, 107+35);
+    g.drawString(getAlarmMinutes(), 24+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -236,7 +241,7 @@ function drawPosition0(){
   var bat = E.getBattery() / 100.0;
   var batX2 = parseInt((172 - 35) * bat + 35);
   drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
-  drawHorizontalBgLine(cPurple, batX2+10, 172, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2+10, 172, 171, 5);
 
   // Draw logo
   drawLock();
@@ -247,7 +252,7 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 28, 10);
+  g.drawString(timeStr, 29, 10);
 
   // Write date
   g.setColor(cWhite);
@@ -255,7 +260,7 @@ function drawPosition0(){
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
   dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 29, 56);
+  g.drawString(dayStr, 32, 56);
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
@@ -401,7 +406,7 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
-  var steps = 0
+  var steps = 0;
   try {
     health = require("health");
   } catch(ex) {
@@ -551,6 +556,10 @@ Bangle.on("drag", e => {
 
     draw();
   }
+});
+
+Bangle.on("touch", e => {
+  Bangle.showLauncher();
 });
 
 

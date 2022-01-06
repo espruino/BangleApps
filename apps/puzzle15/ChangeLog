@@ -1,0 +1,5 @@
+0.01: Initial version, UI mechanics ready, no real game play so far
+0.02: Lots of enhancements, menu system not yet functional, but packaging should be now...
+0.03: Menu logic now generally functioning, splash screen added. The first really playable version!
+0.04: Settings dialog, about screen
+0.05: Central game end function
