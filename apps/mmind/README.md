@@ -1,6 +1,6 @@
 # Mastermind
 
-Play the classic mind game mastermind on your Bangles 2.
+Play the classic mind game mastermind on your Bangle 2.
 
 ![](screenshot_mmind.png)
 
