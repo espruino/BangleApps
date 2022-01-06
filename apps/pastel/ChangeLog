@@ -7,3 +7,4 @@
 0.07: Added info line that cycles on BTN1/BTN3 (or vitual buttons on a bangle 2)
 0.08: Added dependancy on MyLocation
 0.09: Added dependancy on Pedometer Widget
+0.10: Added Weather line, fixed issues on a Bangle 1, update every minute

@@ -110,10 +110,19 @@ function drawCalendar(date) {
   g.clearRect(0, 0, maxX, maxY);
   g.setBgColor(bgColorMonth);
   g.clearRect(0, 0, maxX, headerH);
-  g.setBgColor(bgColorDow);
-  g.clearRect(0, headerH, maxX, headerH + rowH);
-  g.setBgColor(bgColorWeekend);
-  g.clearRect(colW * 5, headerH + rowH, maxX, maxY);
+  if (settings.startOnSun){
+    g.setBgColor(bgColorWeekend);
+    g.clearRect(0, headerH + rowH, colW, maxY);
+    g.setBgColor(bgColorDow);
+    g.clearRect(0, headerH, maxX, headerH + rowH);
+    g.setBgColor(bgColorWeekend);
+    g.clearRect(colW * 6, headerH + rowH, maxX, maxY);
+  } else {
+    g.setBgColor(bgColorDow);
+    g.clearRect(0, headerH, maxX, headerH + rowH);
+    g.setBgColor(bgColorWeekend);
+    g.clearRect(colW * 5, headerH + rowH, maxX, maxY);
+  }
   for (let y = headerH; y < maxY; y += rowH) {
     g.drawLine(0, y, maxX, y);
   }
@@ -197,6 +206,8 @@ function drawCalendar(date) {
           y2 - 1
         );
       }
+      require("Font8x12").add(Graphics);
+      g.setFont("8x12", fontSize);
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
       g.drawString(
         (day > 50 ? day - 50 : day).toString(),
