@@ -95,7 +95,7 @@ function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
   }
 }
 
-function setHandsFont() {
+function setNumbersFont() {
   if (settings.vector) {
     g.setFont('Vector', settings.vector_size);
     return;
