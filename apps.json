@@ -936,7 +936,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.15",
+    "version": "0.16",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -1501,7 +1501,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.06",
+    "version": "0.07",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
@@ -2430,7 +2430,7 @@
   {
     "id": "calendar",
     "name": "Calendar",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Simple calendar",
     "icon": "calendar.png",
     "screenshots": [{"url":"screenshot_calendar.png"}],
@@ -4239,8 +4239,9 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.03",
-    "description": "A simple clock using the bold Anton font.",
+    "version": "0.04",
+    "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
+    "readme":"README.md",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
     "type": "clock",
@@ -4249,8 +4250,10 @@
     "allow_emulator": true,
     "storage": [
       {"name":"antonclk.app.js","url":"app.js"},
+      {"name":"antonclk.settings.js","url":"settings.js"},
       {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"antonclk.json"}]
   },
   {
     "id": "waveclk",
@@ -5162,15 +5165,16 @@
   {
     "id": "promenu",
     "name": "Pro Menu",
-    "version": "0.01",
-    "description": "Replace Bangle.js 1's built in menu function.",
+    "version": "0.02",
+    "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
     "icon": "icon.png",
     "type": "boot",
     "tags": "system",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "screenshots": [{"url":"pro-menu-screenshot.png"}],
     "storage": [
-      {"name":"promenu.boot.js","url":"boot.js"},
+      {"name":"promenu.boot.js","url":"boot.js","supports": ["BANGLEJS"]},
+      {"name":"promenu.boot.js","url":"bootb2.js","supports": ["BANGLEJS2"]},
       {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
     ]
   },
@@ -5427,5 +5431,22 @@
       {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
     ],
     "data": [{"name":"puzzle15.json"}]
+  },
+  {
+    "id": "flipper",
+    "name": "flipper",
+    "version": "0.01",
+    "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
+    "readme":"README.md",
+    "screenshots": [{"url":"flipper.png"}],
+    "icon": "flipper.png",
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"flipper.app.js","url":"flipper.app.js"},
+      {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
+    ]
   }
 ]

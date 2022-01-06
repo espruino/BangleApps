@@ -14,11 +14,11 @@ const A1 = [30,30,30,30,31,31,31,31,31,31,30,30];
 const B1 = [30,30,30,30,30,31,31,31,31,31,30,30];
 const B2 = [30,30,30,30,31,31,31,31,31,30,30,30];
 const timeColour = "#ffffff";
-const dateColours = ["#ff0000","#ff8000","#ffff00","#00ff00","#0080ff","#ff00ff","#ffffff"];
+const dateColours = ["#ff0000","#ffa500","#ffff00","#00b800","#8383ff","#ff00ff","#ff0080"]; //blue was 0000ff
 const calen10 = {"size":26,"pt0":[18-g_x_off,16],"step":[16,0],"dx":-4.5,"dy":-4.5}; // positioning for usual calendar line ft w 32, 32-g, step 20
 const calen7 = {"size":26,"pt0":[48-g_x_off,16],"step":[16,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line ft w 32, 62-g, step 20
-const time5 = {"size":36,"pt0":[46-g_x_off,24],"step":[22,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line ft w 48, 64-g, step 30
-const time6 = {"size":36,"pt0":[36-g_x_off,24],"step":[22,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line ft w 48, 48-g, step 30
+const time5 = {"size":42,"pt0":[39-g_x_off,24],"step":[26,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line ft w 48, 64-g, step 30
+const time6 = {"size":42,"pt0":[26-g_x_off,24],"step":[26,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line ft w 48, 48-g, step 30
 const baseYear = 11584;
 const baseDate = Date(2020,11,21); // month values run from 0 to 11
 let accum = new Date(baseDate.getTime());
@@ -206,7 +206,7 @@ function modeTime()
 {
 	timeActiveUntil = new Date();
 	timeActiveUntil.setDate(timeActiveUntil.getDate());
-	timeActiveUntil.setSeconds(timeActiveUntil.getSeconds()+15);
+	timeActiveUntil.setSeconds(timeActiveUntil.getSeconds()+86400);
 	if (typeof drawtime_timeout !== 'undefined')
 	{
 		clearTimeout(drawtime_timeout);
