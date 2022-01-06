@@ -1,2 +1,3 @@
 1.00 Added sonic clock app
 1.01 Fixed text alignment issue; Increased acceleration required to activate twist;
+1.10 Added settings menu to control twist threshold and LCD Activity

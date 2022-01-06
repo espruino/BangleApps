@@ -109,10 +109,14 @@ let currentSonic = -1;
 let drawTimeout, drawInterval, waitTimeout;
 let bgScroll = [0, null];
 
-const start = () => {
+const fullReset = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
   if (waitTimeout) clearTimeout(waitTimeout);
   if (drawInterval) clearInterval(drawInterval);
+}
+
+const start = () => {
+  fullReset();
 
   drawInterval = setInterval(() => {
     draw("start");
@@ -252,22 +256,75 @@ const draw = (action) => {
   if (action === "reset") queueDraw();
 };
 
+// Settings
+const settings = require("Storage").readJSON("sonicclk-settings") || {
+  activeMode: false,
+  twistThreshold: 1600,
+};
+let isSettings = false;
+
+const settingsMenu = {
+  "": { "title": "Settings" },
+  "Active Mode": {
+    value: settings.activeMode,
+    format: v => v ? "On" : "Off",
+    onchange: v => settings.activeMode = v,
+  },
+  "Twist Thresh" : {
+    value: settings.twistThreshold,
+    min: 800, max: 4000, step: 200,
+    onchange: v => settings.twistThreshold = v,
+  },
+  "Exit" : () => {
+    isSettings = false;
+
+    require("Storage").writeJSON("sonicclk-settings", settings);
+    Bangle.setOptions({
+      lockTimeout: 10000,
+      backlightTimeout: 12000,
+      twistThreshold: settings.twistThreshold,
+    });
+
+    E.showMenu();
+    draw("reset");
+    start();
+  }
+};
+
 g.setTheme({ bg: "#0099ff", fg: "#fff", dark: true }).clear();
 
 Bangle.on("lock", (locked) => {
-  if (locked) {
-    stop();
-  } else {
-    start();
+  if (!isSettings) {
+    if (locked) {
+      stop();
+    } else {
+      start();
+    }
   }
 });
 
-Bangle.on("twist", () => wait());
+Bangle.on("twist", () => {
+  if (settings.activeMode) {
+    fullReset();
+    draw("reset");
+  } else {
+    wait();
+  }
+});
+
+Bangle.on("tap", (d) => {
+  if (d.double && d.dir === "right") {
+    fullReset();
+    isSettings = true;
+    Bangle.setLocked(false);
+    E.showMenu(settingsMenu);
+  }
+});
 
 Bangle.setOptions({
   lockTimeout: 10000,
   backlightTimeout: 12000,
-  twistThreshold: 1600,
+  twistThreshold: settings.twistThreshold,
 });
 
 Bangle.setUI("clock");
