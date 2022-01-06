@@ -206,6 +206,8 @@ function drawCalendar(date) {
           y2 - 1
         );
       }
+      require("Font8x12").add(Graphics);
+      g.setFont("8x12", fontSize);
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
       g.drawString(
         (day > 50 ? day - 50 : day).toString(),

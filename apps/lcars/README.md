@@ -8,13 +8,15 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
  * LCARS Style watch face.
  * Full screen mode - widgets are still loaded.
  * Supports multiple screens with different data.
+ * Tab anywhere to open the launcher.
  * [Screen 1] Date + Time + Lock status.
  * [Screen 1] Shows randomly images of real planets.
  * [Screen 1] Shows different states such as (charging, out of battery, GPS on etc.)
  * [Screen 1] Swipe up/down to activate an alarm.
  * [Screen 1] Shows 3 customizable datapoints on the first screen.
  * [Screen 1] The lower orange line indicates the battery level.
- * [Screen 2] Display month graphs for steps + hrm on the second screen.
+ * [Screen 2] Display graphs for steps + hrm on the second screen.
+ * [Screen 2] Switch between day/month via swipe up/down.
 
 
 ## Multiple screens support

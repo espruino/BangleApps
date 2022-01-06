@@ -1,0 +1,8 @@
+0.1: Start of app.
+0.5: BLE keyboard functionality.
+1.0: BLE mouse functionality to scroll back/forward.
+1.5: Added accelerator style mouse.
+2.0: Added touchpad style mouse.
+2.1: Initial internal git(hub) release. Added icon and such.
+2.2: Begin work on presentation parts.
+3.0: Presentation parts!
