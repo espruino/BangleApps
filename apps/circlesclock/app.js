@@ -79,15 +79,15 @@ function draw() {
 
   // time
   g.setFont("Vector:50");
-  g.setFontAlign(-1, -1);
+  g.setFontAlign(0, -1);
   g.setColor(colorFg);
-  g.drawString(locale.time(new Date(), 1), w / 10, h1 + 8);
+  g.drawString(locale.time(new Date(), 1), w / 2, h1 + 8);
 
   // date & dow
   g.setFont("Vector:21");
   g.setFontAlign(-1, 0);
-  g.drawString(locale.date(new Date()), w / 10, h2);
-  g.drawString(locale.dow(new Date()), w / 10, h2 + 22);
+  g.drawString(locale.date(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2);
+  g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + 22);
 
   drawCircle(1, "steps");
   drawCircle(2, "hr");
