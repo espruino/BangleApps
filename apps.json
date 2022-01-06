@@ -5460,8 +5460,8 @@
     "tags": "clock",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"limelight.app.js","url":"app.js"},
-      {"name":"limelight.img","url":"icon.js","evaluate":true}
+      {"name":"limelight.app.js","url":"limelight.app.js"},
+      {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
     ]
   }
 ]
