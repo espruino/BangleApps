@@ -175,7 +175,7 @@ function drawStepsDistance(w) {
   g.setFont("Vector:12");
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
-  g.drawString(shortValue(stepsDistance), w + 2, h3);
+  g.drawString(Math.round(shortValue(stepsDistance)), w + 2, h3);
 
   g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
 }
