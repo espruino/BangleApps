@@ -2,7 +2,7 @@
   {
     "id": "fwupdate",
     "name": "Firmware Update",
-    "version": "0.02",
+    "version": "0.03",
     "description": "[BETA] Uploads new Espruino firmwares to Bangle.js 2. For now, please use the instructions under https://www.espruino.com/Bangle.js2#firmware-updates",
     "icon": "app.png",
     "type": "RAM",
@@ -1501,7 +1501,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.07",
+    "version": "0.08",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
