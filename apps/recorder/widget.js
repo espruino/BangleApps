@@ -151,7 +151,7 @@
       }
     })
     */
-    require("Storage").list(/^.*\.recorder\.js$/).forEach(fn=>eval(fn)(recorders));
+    require("Storage").list(/^.*\.recorder\.js$/).forEach(fn=>eval(require("Storage").read(fn))(recorders));
     return recorders;
   }
 
