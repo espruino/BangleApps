@@ -132,9 +132,6 @@ Bangle.on('GPS', onGPS);
 Bangle.on('GPS-raw', onGPSraw);
 
 function  exitApp() {
-  Bangle.setGPSPower(0, "app");
-  Bangle.removeListener('GPS-raw', onGPSraw);
-  Bangle.removeListener('GPS', onGPS);
   load();
 }
 
