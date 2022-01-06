@@ -1147,16 +1147,22 @@
       Label('Settings', { common:legible, bold:true, filly:1 }),
       { height:4 },
       { type:'h', c:[
+        { width:4 },
         Label('Faces', { common:leftAligned, fillx:1 }),
         Image(Caret,   { common:leftAligned }),
+        { width:4 },
       ], filly:1, onTouch:openFacesScreen },
       { type:'h', c:[
+        { width:4 },
         Label('Hands', { common:leftAligned, fillx:1 }),
         Image(Caret,   { common:leftAligned }),
+        { width:4 },
       ], filly:1, onTouch:openHandsScreen },
       { type:'h', c:[
+        { width:4 },
         Label('Colors', { common:leftAligned, fillx:1 }),
         Image(Caret,    { common:leftAligned }),
+        { width:4 },
       ], filly:1, onTouch:openColorsScreen },
       { height:4 },
       { type:'h', c:[
@@ -1175,14 +1181,17 @@
       Label('Clock Faces', { common:legible, bold:true, filly:1 }),
       { height:4 },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'none', GroupName:'Faces', common:legible, onChange:chooseFace }),
         Label(' no Face', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'3,6,9,12', GroupName:'Faces', common:legible, onChange:chooseFace }),
         Label(' 3, 6, 9 and 12', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'1-12', GroupName:'Faces', common:legible, onChange:chooseFace }),
         Label(' numbers 1...12', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
@@ -1208,18 +1217,22 @@
       Label('Clock Hands', { common:legible, bold:true, filly:1 }),
       { height:4 },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'simple', GroupName:'Faces', common:legible, onChange:chooseHand }),
         Label(' simple', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'rounded', GroupName:'Faces', common:legible, onChange:chooseHand }),
         Label(' rounded + Bolt', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
       { type:'h', c:[
+        { width:4 },
         Radiobutton({ id:'hollow', GroupName:'Faces', common:legible, onChange:chooseHand }),
         Label(' hollow + Bolt', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:checkInnerRadiobutton },
       { type:'h', c:[
+        { width:4 },
         Checkbox({ id:'withSeconds', common:legible, onChange:toggleSeconds }),
         Label(' show Seconds', { common:leftAligned, pad:4, fillx:1 }),
       ], filly:1, onTouch:toggleInnerCheckbox },
@@ -1240,16 +1253,22 @@
       Label('Clock Colors', { common:legible, bold:true, filly:1 }),
       { height:4 },
       { type:'h', c:[
+        { width:4 },
         Label('Foreground', { common:leftAligned, pad:4, fillx:1 }),
         Label('', { id:'Foreground', common:ColorView, bgCol:Theme.fg }),
+        { width:4 },
       ], filly:1, onTouch:selectForegroundColor },
       { type:'h', c:[
+        { width:4 },
         Label('Background', { common:leftAligned, pad:4, fillx:1 }),
         Label('', { id:'Background', common:ColorView, bgCol:Theme.bg }),
+        { width:4 },
       ], filly:1, onTouch:selectBackgroundColor },
       { type:'h', c:[
+        { width:4 },
         Label('Seconds',    { common:leftAligned, pad:4, fillx:1 }),
         Label('', { id:'Seconds', common:ColorView, bgCol:Theme.fgH }),
+        { width:4 },
       ], filly:1, onTouch:selectSecondsColor },
       { height:4 },
       { type:'h', c:[
