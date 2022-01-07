@@ -114,7 +114,7 @@ let drawCalendar = function () {
 drawCalendar();
 
 Bangle.on("touch", function (button, xy) {
-  if (xy.y <= 40) {
+  if (xy.y <= 60) {
     // Prev month
     if (xy.x < 60) currentDate.setMonth(currentDate.getMonth() - 1);
 

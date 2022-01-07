@@ -5,7 +5,7 @@
     "shortName": "SPH Calendar",
     "type": "app",
     "supports": ["BANGLEJS2"],
-    "version": "0.1",
+    "version": "0.2",
     "description": "Vintage menu style calendar app",
     "icon": "icon.png",
     "readme": "README.MD",
