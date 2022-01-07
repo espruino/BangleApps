@@ -199,9 +199,10 @@ function viewTrack(filename, info) {
     menu['Plot Alt.'] = function() {
       plotGraph(info, "Altitude");
     };
-  menu['Plot Speed'] = function() {
-    plotGraph(info, "Speed");
-  };
+  if (info.fields.includes("Latitude"))
+    menu['Plot Speed'] = function() {
+      plotGraph(info, "Speed");
+    };
   // TODO: steps, heart rate?
   menu['Erase'] = function() {
     E.showPrompt("Delete Track?").then(function(v) {
