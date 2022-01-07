@@ -9,6 +9,7 @@ const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmA
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
 let settings;
+
 function loadSettings() {
   settings = require("Storage").readJSON("circlesclock.json", 1) || {
     'minHR': 40,
@@ -60,10 +61,10 @@ function draw() {
 
   if (!showWidgets) {
     /*
-    * we are not drawing the widgets as we are taking over the whole screen
-    * so we will blank out the draw() functions of each widget and change the
-    * area to the top bar doesn't get cleared.
-    */
+     * we are not drawing the widgets as we are taking over the whole screen
+     * so we will blank out the draw() functions of each widget and change the
+     * area to the top bar doesn't get cleared.
+     */
     if (WIDGETS && typeof WIDGETS === "object") {
       for (let wd of WIDGETS) {
         wd.draw = () => {};
@@ -97,7 +98,7 @@ function draw() {
 
 function drawCircle(index, defaultType) {
   const type = settings['circle' + index] || defaultType;
-  const w = index == 1 ? w1: index == 2 ? w2 : w3;
+  const w = index == 1 ? w1 : index == 2 ? w2 : w3;
 
   switch (type) {
     case "steps":
@@ -114,12 +115,13 @@ function drawCircle(index, defaultType) {
       break;
   }
 }
+
 function getCirclePosition(type, defaultPos) {
   for (let i = 1; i <= 3; i++) {
     const setting = settings['circle' + i];
-    if (setting == type) return i == 1 ? w1: i == 2 ? w2 : w3;
+    if (setting == type) return i == 1 ? w1 : i == 2 ? w2 : w3;
   }
-  return defaultPos;
+  return defaultPos || undefined;
 }
 
 function isCircleEnabled(type) {
@@ -229,8 +231,7 @@ function drawBattery(w) {
   if (Bangle.isCharging()) {
     color = colorGreen;
     icon = powerIconGreen;
-  }
-  else {
+  } else {
     if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
       color = colorRed;
       icon = powerIconRed;
@@ -289,39 +290,41 @@ function getSteps() {
   return 0;
 }
 
+function enableHRMSensor() {
+  Bangle.setHRMPower(1, "circleclock");
+  if (hrtValue == undefined) {
+    hrtValue = '...';
+    drawHeartRate();
+  }
+}
+
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
     if (isCircleEnabled("hr")) {
-      Bangle.setHRMPower(1, "watch");
-      if (hrtValue == undefined) {
-        hrtValue = '...';
-        drawHeartRate();
-      }
+      enableHRMSensor();
     }
     draw();
   } else {
-    if (isCircleEnabled("hr")) {
-      Bangle.setHRMPower(0, "watch");
-    }
+    Bangle.setHRMPower(0, "circleclock");
   }
 });
 
-if (isCircleEnabled("hr")) {
-  Bangle.on('HRM', function(hrm) {
-      //if(hrm.confidence > 90){
-      hrtValue = hrm.bpm;
-      if (Bangle.isLCDOn())
-        drawHeartRate();
-      //} else {
-      //  hrtValue = undefined;
-      //}
-  });
-}
 
-if (isCircleEnabled("battery")) {
-  Bangle.on('charging', function(charging) {
-    drawBattery();
-  });
+Bangle.on('HRM', function(hrm) {
+  if (isCircleEnabled("hr")) {
+    hrtValue = hrm.bpm;
+    if (Bangle.isLCDOn())
+      drawHeartRate();
+  }
+});
+
+
+Bangle.on('charging', function(charging) {
+  if (isCircleEnabled("battery")) drawBattery();
+});
+
+if (isCircleEnabled("hr")) {
+  enableHRMSensor();
 }
 
 Bangle.setUI("clock");
