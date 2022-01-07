@@ -2783,7 +2783,7 @@
     "description": "Uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments (ESS, see https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en). This app will read the next alarm from the alarm application and will wake you up to 30 minutes early at the best guessed time when you are almost already awake.",
     "icon": "app.png",
     "tags": "alarm",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"sleepphasealarm.app.js","url":"app.js"},
       {"name":"sleepphasealarm.img","url":"app-icon.js","evaluate":true}
