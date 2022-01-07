@@ -2,7 +2,7 @@
   {
     "id": "fwupdate",
     "name": "Firmware Update",
-    "version": "0.02",
+    "version": "0.03",
     "description": "[BETA] Uploads new Espruino firmwares to Bangle.js 2. For now, please use the instructions under https://www.espruino.com/Bangle.js2#firmware-updates",
     "icon": "app.png",
     "type": "RAM",
@@ -768,7 +768,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -1040,16 +1040,19 @@
     "id": "bthrm",
     "name": "Bluetooth Heart Rate Monitor",
     "shortName": "BT HRM",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
     "icon": "app.png",
-    "type": "boot",
+    "type": "app",
     "tags": "health,bluetooth",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
+      {"name":"bthrm.app.js","url":"bthrm.js"},
+      {"name":"bthrm.recorder.js","url":"recorder.js"},
       {"name":"bthrm.boot.js","url":"boot.js"},
-      {"name":"bthrm.img","url":"app-icon.js","evaluate":true}
+      {"name":"bthrm.img","url":"app-icon.js","evaluate":true},
+      {"name":"bthrm.settings.js","url":"settings.js"}
     ]
   },
   {
@@ -1501,7 +1504,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.07",
+    "version": "0.08",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
@@ -1590,7 +1593,7 @@
   {
     "id": "widpedom",
     "name": "Pedometer widget",
-    "version": "0.20",
+    "version": "0.22",
     "description": "Daily pedometer widget",
     "icon": "widget.png",
     "type": "widget",
@@ -4477,7 +4480,7 @@
     "name": "A Battery Widget (with percentage)",
     "shortName":"A Battery Widget",
     "icon": "widget.png",
-    "version":"1.02",
+    "version":"1.03",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
@@ -4987,7 +4990,7 @@
   { "id": "pooqround",
     "name": "pooq Round watch face",
     "shortName":"pooq Round",
-    "version":"0.01",
+    "version":"0.02",
     "description": "A 24 hour analogue watchface with high legibility and a novel style.",
     "icon": "app.png",
     "type": "clock",
@@ -5447,6 +5450,20 @@
     "storage": [
       {"name":"flipper.app.js","url":"flipper.app.js"},
       {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
+    ]
+  },
+  { "id": "ruuviwatch",
+    "name": "Ruuvi Watch",
+    "shortName":"Ruuvi Watch",
+    "icon": "ruuviwatch.png",
+    "version":"1.01",
+    "description": "Keep an eye on RuuviTag devices (https://ruuvi.com). Only shows RuuviTags using the v5 format.",
+    "readme":"README.md",
+    "tags": "bluetooth",
+    "supports": ["BANGLEJS"],
+    "storage": [
+      {"name":"ruuviwatch.app.js","url":"ruuviwatch.app.js"},
+      {"name":"ruuviwatch.img","url":"ruuviwatch.app-icon.js","evaluate":true}
     ]
   }
 ]

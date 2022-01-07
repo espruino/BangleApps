@@ -25,8 +25,8 @@
 //
 // This only works for Bangle 2.
 
-const isString = x => typeof x === 'string';
-const imageWidth = i => isString(i) ? i.charCodeAt(0) : i.width;
+const isString = x => typeof x === 'string',
+      imageWidth = i => isString(i) ? i.charCodeAt(0) : i.width;
 
 //////////////////////////////////////////////////////////////////////////////
 /*                           System integration                             */
@@ -115,9 +115,9 @@ class RoundOptions extends Options {
                 onchange: x => this.calendric = x,
                 format: x => ['none', 'day', 'date', 'both', 'month', 'full'][x],
             },
-            'Auto-Illum.': {
-                init: _ => this.autolight,
-                onchange: x => this.autolight = x
+            'Autorotate': {
+                init: _ => this.autorotate,
+                onchange: x => this.autorotate = x
             },
             Defaults: _ => {this.reset(); this.interact();}
         });
@@ -133,7 +133,7 @@ RoundOptions.defaults = {
     calendric: 5,
     dayFg: '#fff',
     nightFg: '#000',
-    autolight: true,
+    autorotate: true,
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -144,29 +144,29 @@ const dec = x => E.toString(heatshrink.decompress(atob(x)));
 const y10F = [
   dec(
     'g///EAh////AA4IIBgPwgE+gAOBg/AngXB+EPAYM8gfggEfgF8D4OAj4dB8EDAYI' +
-    'fBBAISBAAMOAYUB4AECnEAkAuBgEQBAPgIYX8IYX/wYDCEwIiMMgUYgECCIZlBAY' +
-    'N4CoRUBIoMP8AZBge8CgMB8+BCAPw+F/gf8jxDB/0D4BGBEQMPAYIeBoAfBnEwge' +
-    'Ah0cB4MDx4PBgHn4EB8E7LQM8h/eJ4MDBgIpB+H+g/wnE/WwMMO4P8LwM/XAJLBT' +
-    'gY7BAAN/wC9CQwV+jwDB/4pBgP/EQKYBBIIxBPQP+SATfCIYIiCO4I9BBwM//hlB' +
-    'PQJlCwYGBTAPgIgM4CYM8hwKBMoODegPA8F+gZlBewP4hz/BE4QrBGgM/LAV//4+' +
-    'BAYJyBPwM/KQMeGQMPFwM8H4UHBIPwGQNwn4yBnhxBGQJxBGQK5BGQKWDOwUACAM' +
-    'D/BDCNYPg///8E5HwR2BIwMDSgK0FSocMAYTLBAAYpBQAPnDwJGBEwK+B/hlB+F8' +
-    'TARABTAJABTAPBMoR+BMoKXBDoX5DwIuBMoUPS4THCGwJbBhAaBvh5B+EHwPAOwP' +
-    'guA1BvCcB4E8nxlBn1/VoIyBwDKBO4SGCgA='
+    'fBBAISBAAMOAYUB4AECnEAkAuBgEQBAPgIYX8IYX/wYDCEwIiMMgUcgECCIZlBAY' +
+    'N4CoRUBIoMP8AZBge8MoMB8+B8B4B+E/gf4jw/B/kD4ADBEQMPSYXgoAfBnEwgeA' +
+    'hw7BvEDx4PBgHn4EB8E7LQM8h/eJ4MDBgIpB+H+g/wnE/WwMMG4ReBn4zBJYKcDH' +
+    '4IABv+AXoSGCv0eAYP/FIMB/4iBTAIJBGIJ6B/yQCb4RDBEQTlBHoIOBn51BwC+B' +
+    'MoWDAwKYBRgKYBCYM8hwKBMoODegPA8F+gZlBewP4hz/BE4QrBGgM/LAV//4+BAY' +
+    'JyBPwM/KQMeGQMPFwM8H4UHBIPwGQNwZgPwnhxBGQJxBGQK5BGQKWDOwUACALlBI' +
+    'YRrB8H///gnI+COwJGBgaUBWgqVDhgDCZYIADFIKAB84eBIwImBXwP8MoPwviYCI' +
+    'AKYBIAKYB4JlCPwJlBS4IdC/IeBFwJlCh6XCY4Q2BLYMIDQN8PIPwg+B4B2B8FwG' +
+    'oN4TgPAnk+MoM+v6tBGQOAZQJ3CQwUAA'
   ), 48, dec('hgAI'), 34
 ];const y1F = [
   dec(
-    'g//AAPggE/AoX8gF/AoX+gF8CoU+gHwAoUPgAZBEIQFGCIodFFIo1FIIoADnAFEj' +
-    'gFEh0AhA1EiAFCgeAFIf/4A1DFQIED/5MDGB6OEjAECHIIYDhkAuAFCjwFEj6DEn' +
-    '+AAod74AFD/PgvAtC+Hwv/wgZSBvEfLwc8RISOBGAJsBVAXgggEBE4PgIgJLC8E8' +
-    'I4fgXQS/B8IhBGwOA8YFCgfA9+eAoMB4H/j/ACIPA/kPCQJCB/DMDMoMBboYVBKo' +
-    'IDBSYeAAoYlCAATpEg/4Xwc/QIcPFoJcBQIP8GILXCDYLXBbId//BeCL4QwDgIwD' +
-    'AAIXBDAQfCEYSPBAoaPCPQKPCAoZgBAoYvBAoIXBBAIFB/ALDEoJHBAoaPDaQSPB' +
-    'AoKcBJgY9DTQX/EoKmCC4SyCYYJJB+CHBj+Aj8ASYJNBBINwIIOAM4ILDAYN/wAB' +
-    'BB4JBBI45vCRYgADApEHL4pHB8AECFIPhAYLCCAggFBAgaNCYwgFEbAkAwAFEc4S' +
-    'PCj/+LIKPBv6PEAoRnBFIMDFYLXCKoTLDa4YRDBYIdDh4FDMoQ1DK4ZBBMQIDBJY' +
-    'bWBFIMEIIQpBgxxBgZRBh8AAYN8AoQVBjgbBAoTZBvwRCvEBF4IdB+E/OIp9CJgZ' +
-    'BCQQUAA='
+    'g//AAPggE/AoX8gF/AoX+gF8CoU+gHwAoUPgAZBEIQFGCIodFFIo1FIIoADnEAgQ' +
+    'FCjkAgwFCh0Ahg1EBoIABgeAFIf/4A1DFQIED/5MDGAYADEQYwDRwgMDhAYEH4Nw' +
+    'AoUeAok/QYl/wAFD/fAHgUD+PgvAFBj/g+E/4EBLAN4j5SCgE8h4EB/AwCAoOAVA' +
+    'PgggeBFoPgQgRLB8E8I4fgXQS/B8KwBMgOA8YFCgfA9+eAoMB4H/j/ACIPA/kPCQ' +
+    'JIB/DMDMoJSBboQVBKoIDBSYZOBAAQlCAATpEg/4Xwc/QIZyBwBcBgf//gxBa4Qb' +
+    'Ba4LZDv/4LwRfCGAcBGAYABC4IYCD4QjCR4IFDR4R6BR4QFDMAIFDF4IFBC4IIBA' +
+    'oLEBBYQlBI4IFDR4ZrBR4QFBTgJMDHoaaCdQSmCC4SyCYYJJB+CHBj+Aj8ASYJNB' +
+    'BINwIIOAM4ILDAYN/wABBB4JBBI45vCRYgADApEHL4pHB8AECFIPhAYLCCAggFBA' +
+    'gaNCYwgFEbAkAwAFEc4SPCj/+LIKPBv6PEAoRnBFIMDFYLXCKoTLDa4YRDBYIdDh' +
+    '4FDMoQ1DK4ZBBMQIDBJYbWBFIMEIIQpBgxxBgZRBh8AAYN8AoQVBjgbBAoTZBvwR' +
+    'CvEBF4IdB+E/OIp9CJgZBCQQUAA='
   ), 48, dec('hgAI'), 48
 ];const y10sF = [
   dec(
@@ -194,20 +194,20 @@ const y10F = [
 ];const d1F = [
   dec(
     'AB1/+AECj///4FCAgP/8EAgf/4F//EAg4CBgf8gEPwAUBn0AhwaCAYMeAoUPgEcA' +
-    'oUHAowRFDoopFGopBFJopZGBgIKCABlAIIcA4AFDgIFEgZBCAoMHAohVBAoY6CHg' +
-    'U/Aol/AogADGoQFUABEMAQM/AQN8bIRZBRgJ5BLILhBgP3LIcD84rDg/HWYcPw4F' +
-    'Dj4PBAoU+Aol8Aon4PocB+CJDgfgAoXgh/ATYX4v+AU4X//w/DbYQFCCwJ3PvDIE' +
-    'NYQCCdoJ6CgfAiCGCI4NwgEeFwISCLoMeJwJdCnkfHYd4v4FD+f5AoUB9/BAoUD/' +
-    '4jCh8HG4IpCh5DBAIMeE4Q/BvjMCfoP8Z4Uf//wCgInB/5lCABs+AoicBAAUDAok' +
-    'P9wFDv+OCAjUCHQP4AoY5BAoUHEIIFCv5JBAoLQBLQYqEApQpDArIAJv5IBnBTCV' +
-    '4McJAQFBcYLvBB4IkBd4N4cYQBBeoLdBCYIFDngFECoIFDOwIdCc4QpCFwIZCjwu' +
-    'BEoU8FwIxCvAIBEIPB+AUBJIP/8AmBLYWAd4RnBdx4XCcYf/Dgn//AuEP4LjBXoJ' +
-    'AC//vQYT0BBIKDC+CZBOIM/wAFDVYIFCgIrBAoUDPoIdCO4QnBaQYnBGoQVBIIZI' +
-    'CJoTNCLIY4CAYIaDAAKRCAASRDAAIaEYAQtDYAI5DRgZFCAAYuCQoQuBAgIFBvEH' +
-    'AgIFB+CgBAAMB86lE76EBFwX/GocPNoYmBIwk/HQl8LpIAQRId/SoYDB4ZJCUoPn' +
-    'VoUHwP3Y4YYBY4k+Y4h5BdILhBd4YFFCIodFFIo1FIIpNFLIplGAArMFn6oBHYMA' +
-    'DYQFBgP5E4IFBgfgUgIFCwBZBEAL1BPYZbDA4Z7DLYRtCBYYlDBoIxCEYMBHoIvC' +
-    'HAI7Dh5PBI4X/LIX//7+Dn52Eh4QCA=='
+    'oUHAowRFDoopFGopBFJopZGBgIKCAB5BBgA1CAoMBAokDCIgTCAYRTDAoI6CHgU/' +
+    'Aol/Aog1GAqgAIhgCBn4CBvjZCLIKMBPIJZBcIMB+4lBMoMD84rDg/HL4cPw4FDj' +
+    '5rEnwFEvgFE/AFBaYMB+CJCwED8AFC8EP4CbC/F/wCnC//+H4bbCAoQWBO594EAI' +
+    'TBgBrCAQTtBPQUD4EQQwRHBuEAjwuBCQRdBjxOBLoU8j47DvF/Aofz/IFCgPv4IF' +
+    'Cgf/EYUPg43BFIUPIYIBBjwnCH4N8ZgT9B/jPCj//+AUBE4P/MoQANnwFETgIACg' +
+    'YFEh/uAod/xwQEagQ6B/AFDHIIFCg4hBAoV/JIIFBaAJaDFQgFKFIYFZABN/JAM4' +
+    'KYSvBjhICAoLjBd4IPBEgLvBvDjCAIL1BboITBAoc8AogVBAoZ2BDoTnCFIQuBDI' +
+    'UeFwIlCnguBGIV4BAIhB4PwCgJJB//gEwJbCwDvCM4LuPC4TjD/4cE//4Fwh/BcY' +
+    'K9BIAX/96DCegIJBQYXwTIJxBn+AAoarBAoUBFYIFCgZ9BDoR3CE4LSDE4I1CCoJ' +
+    'BDJARNCZoRZDHAQDBDQYABSIQACSIYABDQjACFobABHIaMDIoQADFwSFCFwIEBAo' +
+    'N4g4EBAoPwUAIABgPnUonfQgIuC/41Dh5tDEwJGEn46EvhdJACCJDv6VDAYPDJIS' +
+    'lB86tCg+B+7HDDALHEnzHEPILpBcILvDAooRFDoopFGopBFJopZFMowAFZgs/VAI' +
+    '7BgAbCAoMB/InBAoMD8CkBAoWALIIgBeoJ7DLYYHDPYZbCNoQLDEoYNBGIQjBgI9' +
+    'BF4Q4BHYcPJ4JHC/5ZC///fwc/OwkPCAQA=='
   ), 48, dec('ikPigAGA'), 48
 ];const dowF = [
   dec(
@@ -220,10 +220,10 @@ const y10F = [
     'kDMIgeBFIQEBBYRTBCAZ3FAggAMg4zEj7LEn7LEv++AodzxwFD+ePAofjw4FVDoo' +
     'pFv+eIImcJomYLImAAoZeEAtTyBAAQFEVYIFDSQIvhAojaCFwgABh4YEngFEuAqJ' +
     'gPAAocDApYuEgP/fgl/+B9HAAv+Aon8HQMOIAkeAokcAohaDAoM4Aol4AohmDAoJ' +
-    'BDAoJsDAo7vhABbJDAo9/AojEFMYbKMArCBDFI41FWIYABggFEgbuCDYMPLIQbBj' +
-    '//wBdCn0H4DZCvEBb4YZBdYZBBAofgCIQFDDoIFFDoPggYFBF4IFBGoI7B+AFCE4' +
-    'NwCIIlCuAdBIYU4gPwn5VBjC7B/y0Dv/4YwcPCwMAjJlCAAM584FDufDCAUA8eBA' +
-    'p/zC4n5EYj1BAoc//4RDU4IFDA=='
+    'BDAoJsDAo7vhABZuBQYoFDv4FEYgpjDZRgFYGYYpHGoqxDAAMEAokDdwQbBh//DY' +
+    'cf/+ALoU+g/AbIV4gLfDDILrDIIIFD8ARCAoYdBAoodB8EDAoIvBAoI1BHYPwAoQ' +
+    'nBuARBEoVwDoJDCnEB+E/KoMYXYP+Wgd//DGDh4WBgEZMoQABnPnAodz4YQCgHjw' +
+    'IFP+YXE/IjEeoIFDn//CIanBAoY='
   ), 48, dec('kElkMljsljw='), 48
 ];const mF = [
   dec(
@@ -322,21 +322,20 @@ class Round {
         this.r = this.xc - this.minR;
     }
 
-    reset(clear) {this.state = {}; clear && this.g.clear(true);}
+    reset(clear) {this.state = {}; clear == null || this.g.clear(true).setRotation(clear);}
 
     doIcons(which) {
       this.state[which] = null;
-      this.render(new Date()); // Not quite right, I think.
     }
 
     enhanceUntil(t) {this.enhance = t;}
 
     pie(f, a0, a1, invert) {
         if (!invert) return this.pie(f, a1, a0 + 1, true);
-        let t0 = Math.tan(a0 * 2 * Math.PI), t1 = Math.tan(a1 * 2 * Math.PI);
+        const t0 = Math.tan(a0 * 2 * Math.PI), t1 = Math.tan(a1 * 2 * Math.PI);
         let i0 = Math.floor(a0 * 4 + 0.5), i1 = Math.floor(a1 * 4 + 0.5);
-        let x = f.getWidth() / 2, y = f.getHeight() / 2;
-        let poly = [
+        const x = f.getWidth() / 2, y = f.getHeight() / 2;
+        const poly = [
             x + (i1 & 2 ? -x : x) * (i1 & 1 ? 1 : t1),
             y + (i1 & 2 ? y : -y) / (i1 & 1 ? t1 : 1),
             x,
@@ -348,16 +347,17 @@ class Round {
         for (i0++; i0 <= i1; i0++) poly.push(
             3 * i0 & 2 ? f.getWidth() : 0, i0 & 2 ? f.getHeight() : 0
         );
-        f.setColor(0).fillPoly(poly);
+        return f.setColor(0).fillPoly(poly);
     }
     
     hand(t, d, c0, r0, c1, r1) {
+        const g = this.g;
         t *= Math.PI / 30;
-        const r = this.r;
-        const z = 2 * r0 + 1;
-        const x = this.xc + r * Math.sin(t), y = this.yc - r * Math.cos(t);
-        const x0 = x - r0, y0 = y - r0;
-        d = d ? d[0] : Graphics.createArrayBuffer(z, z, 16, {msb: true});
+        const r = this.r,
+              z = 2 * r0 + 1,
+              x = this.xc + r * Math.sin(t), y = this.yc - r * Math.cos(t),
+              x0 = x - r0, y0 = y - r0;
+        d = d ? d[0] : Graphics.createArrayBuffer(z, z, 4, {msb: true});
         for (let i = 0; i < z; i++) for (let j = 0; j < z; j++) {
           d.setPixel(i, j, g.getPixel(x0 + i, y0 + j));
         }
@@ -366,24 +366,20 @@ class Round {
         return [d, x0, y0];
     }
 
-    render(d) {
-        const g = this.g;
-        const b = this.b, bI = this.bI;
-        const c = this.c, cI = this.cI;
-        const e = d < this.enhance;
-        const state = this.state;
-        const options = this.options;
-        const cal = options.calendric;
-        const res = options.resolution;
-        const dow = (e || cal == 1 || cal > 2) && d.getDay();
-        const ts = res < 2 && d.getSeconds();
-        const tm = (e || res < 3) && d.getMinutes() + ts / 60;
-        const th = d.getHours() + d.getMinutes() / 60;
-        const dd = (e || cal > 1) && d.getDate();
-        const dm = (e || cal > 3) && d.getMonth();
-        const dy = (e || cal > 4) && d.getFullYear();
-        const xc = this.xc, yc = this.yc, r = this.r;
-        const dlr = xc * 3/4, dlw = 8, dlhw = 4;
+    render(d, rate) {
+        const g = this.g, b = this.b, bI = this.bI, c = this.c, cI = this.cI,
+              e = d < this.enhance,
+              state = this.state, options = this.options,
+              cal = options.calendric, res = options.resolution,
+              dow = (e || cal === 1 || cal > 2) && d.getDay(),
+              ts = res < 2 && d.getSeconds(),
+              tm = (e || res < 3) && d.getMinutes() + ts / 60,
+              th = d.getHours() + d.getMinutes() / 60,
+              dd = (e || cal > 1) && d.getDate(),
+              dm = (e || cal > 3) && d.getMonth(),
+              dy = (e || cal > 4) && d.getFullYear();
+        const xc = this.xc, yc = this.yc, r = this.r,
+              dlr = xc * 3/4, dlw = 8, dlhw = 4;
 
         // Restore saveunders for fast-moving, overdrawing indicators.
         if (state.sd) g.drawImage.apply(g, state.sd);
@@ -397,10 +393,10 @@ class Round {
             state.dow = dow;
         }
 
-        const locked = Bangle.isLocked();
-        const charging = Bangle.isCharging();
-        const battery = E.getBattery();
-        const HRMOn = Bangle.isHRMOn();
+        const locked = Bangle.isLocked(),
+              charging = Bangle.isCharging(),
+              battery = E.getBattery(),
+              HRMOn = Bangle.isHRMOn();
         if (dy !== state.dy ||
             locked !== state.locked ||
             charging !== state.charging ||
@@ -463,6 +459,7 @@ class Round {
             this.hand(tm, state.md, g.theme.bg, this.minR, g.theme.fg, this.minR - 1) :
             null;
         state.sd = ts === +ts ?
+            rate > 1000 ? this.hand(ts, state.sd, g.theme.fg2, this.secR, g.theme.bg, 2) :
             this.hand(ts, state.sd, g.theme.fg2, this.secR) :
             null;
     }
@@ -482,13 +479,23 @@ class Clock {
         
         this.listeners = {
             lcdPower: on => on ? this.active() : this.inactive(),
-            charging: () => {face.doIcons('charging'); this.active();},
+            charging: on => {
+                face.doIcons('charging');
+                if (on) {
+                    this.listeners.accel =
+                        a => this.orientation(a) === this.attitude || this.active();
+                    Bangle.on('accel', this.listeners.accel);
+                } else {
+                    Bangle.removeListener('accel', this.listeners.accel);
+                    delete this.listeners.accel;
+                }
+                this.active();
+            },
             lock: () => {face.doIcons('locked'); this.active();},
             faceUp: up => {
                 this.conservative = !up;
                 this.active();
             },
-            twist: _ => this.options.autolight && Bangle.setLCDPower(true),
             drag: e => {
                 if (this.t0) {
                     if (e.b) {
@@ -498,20 +505,23 @@ class Clock {
                         if (e.y - this.e0.y < -50) {
                             this.options.resolution > 0 && this.options.resolution--;
                             this.rates.clock = this.timescales[this.options.resolution];
+                            this.ack();
                             this.active();
                         } else if (e.y - this.e0.y > 50) {
                             this.options.resolution < this.timescales.length - 1 &&
                                 this.options.resolution++;
                             this.rates.clock = this.timescales[this.options.resolution];
+                            this.ack();
                             this.active();
                         } else if (this.yX - this.yN < 20) {
                             const now = new Date();
                             if (now - this.t0 < 250) {
+                                this.ack();
                                 face.enhanceUntil(now + 30000);
-                                face.render(now);
+                                this.active();
                             } else if (now - this.t0 > 500) {
                                 this.stop();
-                                this.options.interact();
+                                this.ack().then(_ => this.options.interact());
                             }
                         }
                         this.t0 = null;
@@ -524,9 +534,25 @@ class Clock {
         };
     }
 
+    ack() {
+        return Bangle.buzz(33);
+    }
+
+    orientation(a) {
+        return Math.abs(a.z) < 0.85 ?
+            Math.abs(a.y) > Math.abs(a.x) ? a.y < 0 ? 0 : 2 : a.x > 0 ? 1 : 3 :
+        0;
+    }
+    
+    rotation() {
+        return this.options.autorotate && Bangle.isCharging() ?
+            this.orientation(Bangle.getAccel()) :
+            0;
+    }
+    
     redraw(rate) {
         const now = this.updated = new Date();
-        if (this.refresh) this.face.reset(true);
+        if (this.refresh) this.face.reset(this.attitude = this.rotation());
         this.refresh = false;
         rate = this.face.render(now, rate);
         if (rate !== this.rates.face) {
@@ -541,13 +567,13 @@ class Clock {
         this.exception && clearTimeout(this.exception);
         this.interval && clearInterval(this.interval);
         this.timeout = this.exception = this.interval = this.rate = null;
-        this.face.reset(false); // Cancel any ongoing background rendering
+        this.face.reset(); // Cancel any ongoing background rendering
         return this;
     }
     
     active() {
-        const prev = this.rate;
-        const now = Date.now();
+        const prev = this.rate,
+              now = Date.now();
         let rate = Infinity;
         for (const k in this.rates) {
             let r = this.rates[k];

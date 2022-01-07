@@ -1,1 +1,4 @@
 0.01: New App!
+0.02: Make overriding the HRM event optional
+      Emit BTHRM event for external sensor
+      Add recorder app plugin

@@ -2,11 +2,19 @@
 
 Directly launch apps from the clock screen with custom patterns.
 
-## Usage
+## Installation and Usage
+
+Install Pattern Launcher alongside your main laucher app.
+_Do not delete that launcher!_
+Pattern Launcher is designed as an additional app launching utility, not as a replacement for the main launcher.
+
+In the main launcher, start Pattern Launcher in the app menu to assign the pattern configuration (see below).
+Note that this actually among the applications, _not_ in the application settings!
 
 Create patterns and link them to apps in the Pattern Launcher app.
 
 Then launch the linked apps directly from the clock screen by simply drawing the desired pattern.
+Note that this does only work in the clock screen, not if other applications run.
 
 ## Add Pattern Screenshots
 
@@ -28,7 +36,8 @@ Then launch the linked apps directly from the clock screen by simply drawing the
 
 ## Detailed Steps
 
-From the main menu you can:
+The main menu of Pattern Launcher is accessible from the _application_ starter of the main launcher.
+From there you can:
 
 - Add a new pattern and link it to an app (first entry)
   - To create a new pattern first select "Add Pattern"
@@ -60,6 +69,16 @@ Make sure the watch is unlocked before you start drawing. If this bothers you, y
 
 Please note that drawing on the clock screen will not visually show the pattern you drew. It will start the app as soon as the pattern was recognized - this might take 1 or 2 seconds! If still nothing happens, that might be a bug, sorry!
 
+4. Where can I configure the patterns?
+
+You have to start the "Pattern Launcher" app from the main app launcher's app selection.
+
+5. Do I have to delete my former app launcher so that Pattern Launcher is the only installed launcher?
+
+No! Pattern Launcher works alongside another "main" launcher.
+If you have deleted that one, you do not have a general purpose app launcher any more and cannot access Pattern Launcher's configuration.
+If you already have deleted your main launcher accidentially, just reinstall it from the app loader.
+
 ## Authors
 
 Initial creation: [crazysaem](https://github.com/crazysaem)
@@ -67,3 +86,5 @@ Initial creation: [crazysaem](https://github.com/crazysaem)
 Improve pattern detection code readability: [PaddeK](http://forum.espruino.com/profiles/117930/)
 
 Improve pattern rendering: [HughB](http://forum.espruino.com/profiles/167235/)
+
+Doc additions: [dirkhillbrecht](http://forum.espruino.com/profiles/182498/)
