@@ -11,7 +11,7 @@ I wanted to click on the date at the clock and see the calendar, so there it is.
 - Localization via Languages app
 - Can go forward or back on months by clicking on the lines at the side of the month name
 - Click on calendar to close
-- On lock, returns to calendar
+- On lock, returns to clock
 
 **TODO**
 
