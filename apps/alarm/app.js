@@ -137,6 +137,7 @@ function editTimer(alarmIndex) {
   }
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
+    /*LANG*/'< Back' : showMainMenu,
     /*LANG*/'Hours': {
       value: hrs,
       onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'

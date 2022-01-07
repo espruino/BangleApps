@@ -13,3 +13,4 @@
       Widgets now shown on Alarm screen
 0.13: Alarm widget state now updates when setting/resetting an alarm
 0.14: Order of 'back' menu item
+0.15: Added missing menu 'back' in timer
