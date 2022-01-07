@@ -201,7 +201,7 @@
     "id": "alarm",
     "name": "Default Alarm & Timer",
     "shortName": "Alarms",
-    "version": "0.14",
+    "version": "0.15",
     "description": "Set and respond to alarms and timers",
     "icon": "app.png",
     "tags": "tool,alarm,widget",
