@@ -5451,9 +5451,9 @@
   },
   {
     "id": "limelight",
-    "name": "Limelight Clock",
+    "name": "Limelight",
     "version": "0.01",
-    "description": "Simple configurable analogue clock based on the work of @Andreas_Rozek (Simple_Clock)",
+    "description": "Simple analogue clock (with configurable fonts) based on the work of @Andreas_Rozek (Simple_Clock)",
     "icon": "limelight.png",
     "readme":"README.md",
     "screenshots": [{"url":"screenshot_limelight.png"}],
