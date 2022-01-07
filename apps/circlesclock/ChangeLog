@@ -1,4 +1,7 @@
 0.01: New clock
 0.02: Fix icon & add battery warn functionality
 0.03: Theming support & minor fixes
-0.04: Make configurable what to show in each circle; add step distance circle; allow switching visibility of widgets
+0.04: Make configurable what to show in each circle
+      Add step distance circle
+      Allow switching visibility of widgets
+      Make circles and text slightly bigger
