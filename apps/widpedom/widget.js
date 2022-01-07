@@ -55,6 +55,7 @@
   // add your widget
   WIDGETS["wpedom"]={area:"tl",width:0,
     getWidth:function() {
+      let stps = stp_today.toString();
       let newWidth = 24;
       if (settings.hide)
         newWidth = 0;
@@ -68,7 +69,6 @@
       return newWidth;
     },
     redraw:function() { // work out the width, and queue a full redraw if needed
-      let stps = stp_today.toString();
       let newWidth = this.getWidth();
       if (newWidth!=this.width) {
         // width has changed, re-layout all widgets
