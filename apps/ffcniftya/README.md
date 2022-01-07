@@ -8,7 +8,7 @@ Colors are black/white - photos have non correct camera color "blue"
 
 ![](photo_nifty.png) (*photo*)
 
-## The week number can be turned of in settings
+## The week number (ISO8601) can be turned of in settings
 (default is **"On"**)
 
 ![](screenshot_settings_nifty.png) (*emulated*)
