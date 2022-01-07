@@ -131,6 +131,11 @@ function isCircleEnabled(type) {
 function drawSteps(w) {
   if (!w) w = getCirclePosition("steps", w1);
   const steps = getSteps();
+
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
@@ -160,6 +165,10 @@ function drawStepsDistance(w) {
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
 
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
@@ -185,6 +194,11 @@ function drawStepsDistance(w) {
 
 function drawHeartRate(w) {
   if (!w) w = getCirclePosition("hr", w2);
+
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
@@ -210,6 +224,11 @@ function drawHeartRate(w) {
 function drawBattery(w) {
   if (!w) w = getCirclePosition("battery", w3);
   const battery = E.getBattery();
+
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
@@ -319,6 +338,12 @@ Bangle.on('HRM', function(hrm) {
 });
 
 
+Bangle.setUI("clock");
+Bangle.loadWidgets();
+
+draw();
+setInterval(draw, 60000);
+
 Bangle.on('charging', function(charging) {
   if (isCircleEnabled("battery")) drawBattery();
 });
@@ -326,9 +351,3 @@ Bangle.on('charging', function(charging) {
 if (isCircleEnabled("hr")) {
   enableHRMSensor();
 }
-
-Bangle.setUI("clock");
-Bangle.loadWidgets();
-
-draw();
-setInterval(draw, 60000);
