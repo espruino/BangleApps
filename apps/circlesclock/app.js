@@ -292,7 +292,7 @@ function drawWeather(w) {
   g.fillCircle(w, h3, radiusOuter);
 
   g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner + 1); // the weather circle is thinner
+  g.fillCircle(w, h3, radiusInner);
 
   g.fillPoly([w, h3, w - 25, h3 + radiusOuter + 5, w + 25, h3 + radiusOuter + 5]);
 
