@@ -6,11 +6,11 @@ var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 var boot = "";
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)!=${CRC})`;
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 } else {
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))!=${CRC})`;
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 }
 boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
 boot += `E.setFlags({pretokenise:1});\n`;

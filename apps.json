@@ -2,7 +2,7 @@
   {
     "id": "fwupdate",
     "name": "Firmware Update",
-    "version": "0.02",
+    "version": "0.03",
     "description": "[BETA] Uploads new Espruino firmwares to Bangle.js 2. For now, please use the instructions under https://www.espruino.com/Bangle.js2#firmware-updates",
     "icon": "app.png",
     "type": "RAM",
@@ -16,7 +16,7 @@
   {
     "id": "boot",
     "name": "Bootloader",
-    "version": "0.39",
+    "version": "0.40",
     "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
     "icon": "bootloader.png",
     "type": "bootloader",
@@ -77,7 +77,7 @@
   {
     "id": "messages",
     "name": "Messages",
-    "version": "0.13",
+    "version": "0.17",
     "description": "App to display notifications from iOS and Gadgetbridge",
     "icon": "app.png",
     "type": "app",
@@ -116,7 +116,7 @@
   {
     "id": "ios",
     "name": "iOS Integration",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Display notifications/music/etc from iOS devices",
     "icon": "app.png",
     "tags": "tool,system,ios,apple,messages,notifications",
@@ -132,7 +132,7 @@
   {
     "id": "health",
     "name": "Health Tracking",
-    "version": "0.08",
+    "version": "0.09",
     "description": "Logs health data and provides an app to view it (requires firmware 2v10.100 or later)",
     "icon": "app.png",
     "tags": "tool,system,health",
@@ -167,7 +167,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.37",
+    "version": "0.40",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -554,7 +554,7 @@
   {
     "id": "impwclock",
     "name": "Imprecise Word Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Imprecise word clock for vacations, weekends, and those who never need accurate time.",
     "icon": "clock-impword.png",
     "type": "clock",
@@ -768,7 +768,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -845,7 +845,7 @@
   {
     "id": "weather",
     "name": "Weather",
-    "version": "0.13",
+    "version": "0.15",
     "description": "Show Gadgetbridge weather report",
     "icon": "icon.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -936,7 +936,7 @@
     "id": "widbatpc",
     "name": "Battery Level Widget (with percentage)",
     "shortName": "Battery Widget",
-    "version": "0.14",
+    "version": "0.16",
     "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
     "icon": "widget.png",
     "type": "widget",
@@ -971,7 +971,7 @@
   {
     "id": "widbt",
     "name": "Bluetooth Widget",
-    "version": "0.07",
+    "version": "0.08",
     "description": "Show the current Bluetooth connection status in the top right of the clock",
     "icon": "widget.png",
     "type": "widget",
@@ -1148,7 +1148,7 @@
   {
     "id": "qrcode",
     "name": "Custom QR Code",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Use this to upload a customised QR code to Bangle.js",
     "icon": "app.png",
     "tags": "qrcode",
@@ -1324,7 +1324,7 @@
     "icon": "gesture.png",
     "type": "app",
     "tags": "gesture,ai",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"gesture.app.js","url":"gesture.js"},
       {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
@@ -1501,7 +1501,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.05",
+    "version": "0.08",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
@@ -1590,7 +1590,7 @@
   {
     "id": "widpedom",
     "name": "Pedometer widget",
-    "version": "0.20",
+    "version": "0.21",
     "description": "Daily pedometer widget",
     "icon": "widget.png",
     "type": "widget",
@@ -1749,8 +1749,9 @@
     "icon": "grocery.png",
     "type": "app",
     "tags": "tool,outdoors,shopping,list",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "custom": "grocery.html",
+    "allow_emulator": true,
     "storage": [
       {"name":"grocery.app.js","url":"app.js"},
       {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
@@ -2027,7 +2028,7 @@
     "id": "chronowid",
     "name": "Chrono Widget",
     "shortName": "Chrono Widget",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Chronometer (timer) which runs as widget.",
     "icon": "app.png",
     "tags": "tool,widget",
@@ -2184,7 +2185,7 @@
     "id": "calculator",
     "name": "Calculator",
     "shortName": "Calculator",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
     "icon": "calculator.png",
     "screenshots": [{"url":"screenshot_calculator.png"}],
@@ -2429,7 +2430,7 @@
   {
     "id": "calendar",
     "name": "Calendar",
-    "version": "0.03",
+    "version": "0.06",
     "description": "Simple calendar",
     "icon": "calendar.png",
     "screenshots": [{"url":"screenshot_calendar.png"}],
@@ -2970,11 +2971,11 @@
   {
     "id": "cprassist",
     "name": "CPR Assist",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Provides assistance while performing a CPR",
     "icon": "cprassist-icon.png",
     "tags": "tool,firstaid",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-CPR-assist-screenshot.png"}],
@@ -3532,7 +3533,7 @@
     "id": "mclockplus",
     "name": "Morph Clock+",
     "shortName": "Morph Clock+",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
     "icon": "mclockplus.png",
     "type": "clock",
@@ -3896,7 +3897,7 @@
     "id": "qmsched",
     "name": "Quiet Mode Schedule and Widget",
     "shortName": "Quiet Mode",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Automatically turn Quiet Mode on or off at set times, and change LCD options while Quiet Mode is active.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
@@ -3986,11 +3987,12 @@
     "icon": "app.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      {"name":"doztime.app.js","url":"app.js"},
+      {"name":"doztime.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+      {"name":"doztime.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
       {"name":"doztime.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -4014,11 +4016,12 @@
   {
     "id": "thermom",
     "name": "Thermometer",
-    "version": "0.04",
-    "description": "Displays the current temperature in degree Celsius, updated every 20 seconds",
+    "version": "0.05",
+    "description": "Displays the current temperature in degree Celsius/Fahrenheit (depending on locale), updates every 10 seconds with average of last 5 readings.",
     "icon": "app.png",
     "tags": "tool",
     "supports": ["BANGLEJS", "BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
     "allow_emulator": true,
     "storage": [
       {"name":"thermom.app.js","url":"app.js"},
@@ -4063,7 +4066,7 @@
   {
     "id": "hcclock",
     "name": "Hi-Contrast Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Hi-Contrast Clock : A simple yet very bold clock that aims to be readable in high luninosity environments. Uses big 10x5 pixel digits. Use BTN 1 to switch background and foreground colors.",
     "icon": "hcclock-icon.png",
     "type": "clock",
@@ -4080,7 +4083,7 @@
     "id": "thermomF",
     "name": "Fahrenheit Temp",
     "version": "0.01",
-    "description": "A modification of the Thermometer App to display temprature in Fahrenheit",
+    "description": "[NOT RECOMMENDED] A modification of the Thermometer App to display temprature in Fahrenheit. Please use the 'Thermometer App' and install 'Languages' to get the temperature in the correct format for your locale.",
     "icon": "thermf.png",
     "tags": "tool",
     "supports": ["BANGLEJS"],
@@ -4209,13 +4212,13 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.09",
-    "description": "A Configurable clock with custom fonts and background. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
+    "version": "0.10",
+    "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
-    "dependencies": {"mylocation":"app", "widpedom":"app"},
-    "screenshots": [{"url":"screenshot_pastel.png"}],
+    "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
+    "screenshots": [{"url":"screenshot_pastel.png"}, {"url":"weather_icons.png"}],
     "type": "clock",
-    "tags": "clock",
+    "tags": "clock, weather, tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
     "storage": [
@@ -4236,8 +4239,9 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.03",
-    "description": "A simple clock using the bold Anton font.",
+    "version": "0.04",
+    "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
+    "readme":"README.md",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
     "type": "clock",
@@ -4246,8 +4250,10 @@
     "allow_emulator": true,
     "storage": [
       {"name":"antonclk.app.js","url":"app.js"},
+      {"name":"antonclk.settings.js","url":"settings.js"},
       {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data": [{"name":"antonclk.json"}]
   },
   {
     "id": "waveclk",
@@ -4381,7 +4387,7 @@
   {
     "id": "gpstouch",
     "name": "GPS Touch",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A touch based GPS watch, shows OS map reference",
     "icon": "gpstouch.png",
     "screenshots": [{"url":"screenshot4.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot1.png"}],
@@ -4471,7 +4477,7 @@
     "name": "A Battery Widget (with percentage)",
     "shortName":"A Battery Widget",
     "icon": "widget.png",
-    "version":"1.02",
+    "version":"1.03",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
@@ -4486,7 +4492,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.06",
+    "version":"0.09",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -4495,7 +4501,8 @@
     "screenshots": [{"url":"screenshot.png"}],
     "storage": [
       {"name":"lcars.app.js","url":"lcars.app.js"},
-      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true}
+      {"name":"lcars.img","url":"lcars.icon.js","evaluate":true},
+      {"name":"lcars.settings.js","url":"lcars.settings.js"}
     ]
   },
   { "id": "binwatch",
@@ -4619,7 +4626,7 @@
    "shortName":"93 Dub",
    "icon": "93dub.png",
    "screenshots": [{"url":"screenshot.png"}],
-   "version":"0.05",
+   "version":"0.06",
    "description": "Fan recreation of orviwan's 91 Dub app for the Pebble smartwatch. Uses assets from his 91-Dub-v2.0 repo",
    "tags": "clock",
    "type": "clock",
@@ -4650,7 +4657,7 @@
   "id": "sensible",
   "name": "SensiBLE",
   "shortName": "SensiBLE",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
   "screenshots": [
@@ -4695,6 +4702,8 @@
   "tags": "tool,timer",
   "readme":"README.md",
   "supports":["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"}],
+  "allow_emulator": true,
   "storage": [
     {"name":"a_speech_timer.app.js","url":"app.js"},
     {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
@@ -4706,7 +4715,7 @@
     "icon": "mylocation.png",
     "type": "app",
     "screenshots": [{"url":"screenshot_1.png"}],
-    "version":"0.01",
+    "version":"0.02",
     "description": "Sets and stores the lat and long of your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
     "readme": "README.md",
     "tags": "tool,utility",
@@ -4723,7 +4732,7 @@
     "id": "pebble",
     "name": "Pebble Clock",
     "shortName": "Pebble",
-    "version": "0.06",
+    "version": "0.07",
     "description": "A pebble style clock to keep the rebellion going",
     "dependencies": {"widpedom":"app"},
     "readme": "README.md",
@@ -4731,7 +4740,7 @@
     "screenshots": [{"url":"pebble_screenshot.png"}],
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS2"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
       {"name":"pebble.app.js","url":"pebble.app.js"},
       {"name":"pebble.settings.js","url":"pebble.settings.js"},
@@ -4765,7 +4774,7 @@
     "screenshots": [{"url":"screenshot_widbata_1.png"}],
     "version":"0.01",
     "type": "widget",
-    "supports": ["BANGLEJS2"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "description": "Shows the current battery level status in the top right using the clocks colour theme",
     "tags": "widget,battery",
@@ -4776,7 +4785,7 @@
   {
     "id": "weatherClock",
     "name": "Weather Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "A clock which displays current weather conditions (requires Gadgetbridge and Weather apps).",
     "icon": "app.png",
     "screenshots": [{"url":"screens/screen1.png"}],
@@ -4836,6 +4845,25 @@
       {"name": "flow.img", "url": "app-icon.js","evaluate": true }
     ]
   },
+  { "id": "tinydraw",
+    "name": "TinyDraw",
+    "shortName":"TinyDraw",
+    "version":"0.01",
+    "type": "app",
+    "description": "Draw stuff in your wrist",
+    "icon": "app.png",
+    "allow_emulator": true,
+    "tags": "tools, keyboard, text, scribble",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"tinydraw.app.js","url":"app.js"},
+      {"name":"tinydraw.img","url":"app-icon.js","evaluate":true}
+    ],
+    "screenshots":[
+      { "url":"screenshot.png" }
+    ]
+  },
   { "id": "scribble",
     "name": "Scribble",
     "shortName":"Scribble",
@@ -4859,7 +4887,7 @@
     "id": "ptlaunch",
     "name": "Pattern Launcher",
     "shortName": "Pattern Launcher",
-    "version": "0.11",
+    "version": "0.13",
     "description": "Directly launch apps from the clock screen with custom patterns.",
     "icon": "app.png",
     "screenshots": [{"url":"manage_patterns_light.png"}],
@@ -4873,11 +4901,25 @@
     ],
     "data": [{"name":"ptlaunch.patterns.json"}]
   },
+  { "id": "slimehunt",
+    "name": "Slime Hunt",
+    "shortName":"SlimeHunt",
+    "icon": "app.png",
+    "version":"0.02",
+    "description": "Fight against slimes in turn based combat, try to get the highscore!",
+    "tags": "rpg,slime",
+    "supports" : ["BANGLEJS"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"slimehunt.app.js","url":"app.js"},
+      {"name":"slimehunt.img","url":"app-icon.js","evaluate":true}
+  ]
+  },
   {
     "id": "rebble",
     "name": "Rebble Clock",
     "shortName": "Rebble",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
     "readme": "README.md",
     "icon": "rebble.png",
@@ -4929,10 +4971,12 @@
     "id":"awairmonitor",
     "name":"Awair Monitor",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "allow_emulator": true,
-    "version":"0.01",
+    "version":"0.03",
     "description": "Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.",
-    "tags": "tool,health",
+    "type": "clock",
+    "tags": "clock,tool,health",
     "readme":"README.md",
     "supports":["BANGLEJS2"],
     "storage": [
@@ -4961,8 +5005,8 @@
   },
   {
     "id": "coretemp",
-    "name": "Core Temp Display",
-    "version": "0.01",
+    "name": "CoreTemp",
+    "version": "0.02",
     "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
     "type": "app",
@@ -4970,17 +5014,21 @@
     "readme": "README.md",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"coretemp.boot.js","url":"boot.js"},
+      {"name":"coretemp.wid.js","url":"widget.js"},
       {"name":"coretemp.app.js","url":"coretemp.js"},
-      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
-    ]
+      {"name":"coretemp.settings.js","url":"settings.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
+      {"name":"coretemp.boot.js","url":"boot.js"}
+    ],
+    "data": [{"name":"coretemp.json","url":"app-settings.json"}],
+    "screenshots": [{"url":"screenshot.png"}]
   },
   {
     "id": "showimg",
     "name": "simple image viewer",
     "shortName":"showImage",
     "version":"0.2",
-    "description": "Displays the image in \"showimage.user.img\". The file has to be uploaded via the espruino IDE. Returns to watch face after 60s or button push. I use it to display my vaccination certificate.",
+    "description": "Displays the image in \"showimg.user.img\". The file has to be uploaded via the espruino IDE. Returns to watch face after 60s or button push. I use it to display my vaccination certificate.",
     "icon": "app.png",
     "tags": "tool",
     "supports" : ["BANGLEJS2"],
@@ -5006,25 +5054,399 @@
       {"name":"lapcounter.img","url":"app-icon.js","evaluate":true}
     ]
   },
+  {
+    "id": "pebbled",
+    "name": "Pebble Clock with distance",
+    "shortName": "Pebble + distance",
+    "version": "0.1",
+    "description": "Fork of Pebble Clock with distance in KM. Both step count and the distance are on the main screen. Default step length = 0.75m (can be changed in settings).",
+    "readme": "README.md",
+    "icon": "pebbled.png",
+    "screenshots": [{"url":"pebble_screenshot.png"}],
+    "type": "clock",
+    "tags": "clock,distance",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"pebbled.app.js","url":"pebbled.app.js"},
+      {"name":"pebbled.settings.js","url":"pebbled.settings.js"},
+      {"name":"pebbled.img","url":"pebbled.icon.js","evaluate":true}
+    ]
+  },
   { "id": "circlesclock",
-      "name": "Circles clock",
-      "shortName":"Circles clock",
-      "version":"0.01",
-      "description": "A clock with circles for different data at the bottom in a probably familiar style",
-      "icon": "app.png",
-      "dependencies": {"widpedom":"app"},
-      "type": "clock",
-      "tags": "clock",
-      "supports" : ["BANGLEJS2"],
-      "allow_emulator":true,
-      "readme": "README.md",
-      "storage": [
-        {"name":"circlesclock.app.js","url":"app.js"},
-        {"name":"circlesclock.img","url":"app-icon.js","evaluate":true},
-        {"name":"circlesclock.settings.js","url":"settings.js"}
-       ],
-       "data": [
-         {"name":"circlesclock.json"}
-       ]
-    }
+    "name": "Circles clock",
+    "shortName":"Circles clock",
+    "version":"0.03",
+    "description": "A clock with circles for different data at the bottom in a probably familiar style",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "dependencies": {"widpedom":"app"},
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"circlesclock.app.js","url":"app.js"},
+      {"name":"circlesclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"circlesclock.settings.js","url":"settings.js"}
+     ],
+     "data": [
+       {"name":"circlesclock.json"}
+     ]
+  },
+  { "id": "contourclock",
+    "name": "Contour Clock",
+    "shortName" : "Contour Clock",
+    "version":"0.01",
+    "icon": "app.png",
+    "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
+    "screenshots" : [{"url":"screenshot.png"}],
+    "tags": "clock",
+    "allow_emulator":true,
+    "supports" : ["BANGLEJS2"],
+    "type": "clock",
+    "storage": [
+      {"name":"contourclock.app.js","url":"app.js"},
+      {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
+      ]
+  },
+  {
+    "id": "ltherm",
+    "name": "Localized Thermometer",
+    "shortName": "Thermometer",
+    "version": "0.01",
+    "description": "Displays the current temperature in localized units.",
+    "icon": "thermf.png",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"ltherm.app.js","url":"app.js"},
+      {"name":"ltherm.img","url":"icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "presentor",
+    "name": "Presentor",
+    "version": "3.0",
+    "description": "Use your Bangle to present!",
+    "icon": "app.png",
+    "type": "app",
+    "tags": "tool,bluetooth",
+    "interface": "interface.html",
+    "readme":"README.md",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"presentor.app.js","url":"app.js"},
+      {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+      {"name":"presentor.json","url":"settings.json"}
+    ]
+  },
+  {
+    "id": "slash",
+    "name": "Slash Watch",
+    "shortName":"Slash",
+    "icon": "slash.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "version":"0.01",
+    "description": "Slash Watch based on Pebble watch face by Nikki.",
+    "tags": "clock",
+    "type": "clock",
+    "supports":["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"slash.app.js","url":"app.js"},
+      {"name":"slash.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "promenu",
+    "name": "Pro Menu",
+    "version": "0.02",
+    "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
+    "icon": "icon.png",
+    "type": "boot",
+    "tags": "system",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"pro-menu-screenshot.png"}],
+    "storage": [
+      {"name":"promenu.boot.js","url":"boot.js","supports": ["BANGLEJS"]},
+      {"name":"promenu.boot.js","url":"bootb2.js","supports": ["BANGLEJS2"]},
+      {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "touchtimer",
+    "name": "Touch Timer",
+    "shortName": "Touch Timer",
+    "version": "0.02",
+    "description": "Quickly and easily create a timer with touch-only input. The time can be easily set with a number pad.",
+    "icon": "app.png",
+    "tags": "tools",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "screenshots": [{"url":"0_light_timer_edit.png"},{"url":"1_light_timer_ready.png"},{"url":"2_light_timer_running.png"},{"url":"3_light_timer_finished.png"}],
+    "storage": [
+      { "name": "touchtimer.app.js", "url": "app.js" },
+      { "name":"touchtimer.settings.js", "url":"settings.js"},
+      { "name": "touchtimer.img", "url": "app-icon.js", "evaluate": true }
+    ],
+    "data": [{"name":"touchtimer.data.json"}]
+  },
+  {
+    "id": "teatimer",
+    "name": "Tea Timer",
+    "version": "1.00",
+    "description": "A simple timer. You can easyly set up the time.",
+    "icon": "teatimer.png",
+    "type": "app",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"teatimer.app.js","url":"app.js"},
+      {"name":"teatimer.img","url":"app-icon.js","evaluate":true}
+    ],
+    "screenshots": [
+      {"url":"TeatimerStart.jpg"},
+      {"url":"TeatimerHelp.jpg"},
+      {"url":"TeatimerRun.jpg"},
+      {"url":"TeatimerUp.jpg"}
+    ]
+  },
+  {
+    "id": "swp2clk",
+    "name": "Swipe back to the Clock",
+    "shortName": "Swipe to Clock",
+    "version": "0.01",
+    "description": "Let's you swipe from left to right on any app to return back to the clock face. Please configure in the settings app after installing to activate, since its disabled by default.",
+    "icon": "app.png",
+    "type": "boot",
+    "tags": "tools",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      { "name": "swp2clk.boot.js", "url": "boot.js" },
+      {"name":"swp2clk.settings.js","url":"settings.js"}
+    ],
+    "data": [{"name":"swp2clk.data.json"}]
+  },
+  {
+    "id":"colorwheel",
+    "name":"Color Wheel",
+    "tags":"app,tool",
+    "version":"0.01",
+    "description":"a tappable wheel of good-looking colors",
+    "readme":"README.md",
+    "supports":["BANGLEJS2"],
+    "allow_emulator":true,
+    "icon":"colorwheel.png",
+    "storage": [
+      {"name":"colorwheel.app.js","url":"app.js"},
+      {"name":"colorwheel.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "minimal_clock",
+    "name": "Minimal Analog Clock",
+    "shortName":"Minimal Clock",
+    "version":"0.03",
+    "description": "a minimal analog clock - just with some hands and no clock face",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"minimal_clock.app.js","url":"app.js"},
+      {"name":"minimal_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "simple_clock",
+    "name": "Simple Analog Clock",
+    "shortName":"Simple Clock",
+    "version":"0.02",
+    "description": "a simple, yet stylish, analog clock",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"simple_clock.app.js","url":"app.js"},
+      {"name":"simple_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "colorful_clock",
+    "name": "Colorful Analog Clock",
+    "shortName":"Colorful Clock",
+    "version":"0.02",
+    "description": "a colorful analog clock",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"colorful_clock.app.js","url":"app.js"},
+      {"name":"colorful_clock.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "themesetter",
+    "name": "Theme Setter",
+    "shortName":"Theme Setter",
+    "version":"0.04",
+    "description": "a comfortable way to configure theme colors",
+    "icon": "app-icon.png",
+    "type": "app",
+    "tags": "tool",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": true,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"themesetter.app.js","url":"app.js"},
+      {"name":"themesetter.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "widviztime",
+    "name": "Widget Autohide Widget",
+    "shortName": "Viz Time Widget",
+    "version": "0.01",
+    "description": "The widgets will be shown for four seconds after the device is unlocked.",
+    "icon": "eye.png",
+    "type": "widget",
+    "tags": "widget",
+    "readme":"README.md",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"widviztime.wid.js","url":"widget.js"}
+    ]
+  },
+  {
+    "id": "supf",
+    "name": "Simple Clock with Date",
+    "shortName": "supf Clock",
+    "version": "0.01",
+    "description": "Simple Clock with seconds and date in custom language. Install 'Languages' to get localized names.",
+    "icon": "icon.png",
+    "screenshots": [{"url":"screenshot_supf.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"supf.app.js","url":"app.js"},
+      {"name":"supf.img","url":"icon.js","evaluate":true}
+    ]
+  },
+  { "id": "andark",
+    "name": "Analog Dark",
+    "shortName":"AnDark",
+    "version":"0.04",
+    "description": "analog clock face without disturbing widgets",
+    "icon": "andark_icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {"name":"andark.app.js","url":"app.js"},
+      {"name":"andark.img","url":"app_icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "diract",
+    "name": "DirAct",
+    "shortName": "DirAct",
+    "version": "0.01",
+    "description": "Proximity interaction detection.",
+    "icon": "diract.png",
+    "type": "app",
+    "tags": "tool,sensors",
+    "supports" : [ "BANGLEJS2" ],
+    "allow_emulator": false,
+    "readme": "README.md",
+    "storage": [
+      { "name": "diract.app.js", "url": "diract.js" },
+      { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
+    ]
+  },
+  {
+    "id": "sonicclk",
+    "name": "Sonic Clock",
+    "version": "1.01",
+    "description": "A classic sonic clock featuring run, stop and wait animations.",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"sonicclk.app.js","url":"app.js"},
+      {"name":"sonicclk.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "touchmenu",
+    "name": "TouchMenu",
+    "version": "0.01",
+    "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
+    "screenshots": [{"url":"touchmenu.gif"}],
+    "icon": "touchmenu.png",
+    "type": "bootloader",
+    "tags": "tool",
+    "supports": ["BANGLEJS2"],
+    "storage": [
+      {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
+    ]
+  },
+  {
+    "id": "puzzle15",
+    "name": "15 puzzle",
+    "version": "0.05",
+    "description": "A 15 puzzle game with drag gesture interface",
+    "readme":"README.md",
+    "icon": "puzzle15.app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"puzzle15.app.js","url":"puzzle15.app.js"},
+      {"name":"puzzle15.settings.js","url":"puzzle15.settings.js"},
+      {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
+    ],
+    "data": [{"name":"puzzle15.json"}]
+  },
+  {
+    "id": "flipper",
+    "name": "flipper",
+    "version": "0.01",
+    "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
+    "readme":"README.md",
+    "screenshots": [{"url":"flipper.png"}],
+    "icon": "flipper.png",
+    "type": "app",
+    "tags": "game",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"flipper.app.js","url":"flipper.app.js"},
+      {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
+    ]
+  }
 ]

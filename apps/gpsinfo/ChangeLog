@@ -2,3 +2,6 @@
 0.03: Show number of satellites while waiting for fix
 0.04: Add Maidenhead readout of GPS location
 0.05: Refactor to use 'layout' library for multi-device support
+0.06: Add number of satellites in view and fix crash with GPS time
+0.07: Resolve one FIFO_FULL case and exit App with button press
+0.08: Leave GPS power switched on on exit (will switch off after 0.5 seconds anyway)

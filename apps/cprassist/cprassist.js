@@ -35,23 +35,24 @@ function provideFeedback() {
 }
 
 function drawHeart() {
-  g.fillCircle(40, 92, 12);
-  g.fillCircle(60, 92, 12);
-  g.fillPoly([29, 98, 50, 120, 71, 98]);
+  var lowestPoint = g.getHeight()*3/5;
+  g.fillCircle(40, lowestPoint-29, 12);
+  g.fillCircle(60, lowestPoint-29, 12);
+  g.fillPoly([29, lowestPoint-22, 50, lowestPoint, 71, lowestPoint-22]);
 }
 
 function updateScreen() {
-  const colors = [0xFFFF, 0x9492];
-  g.reset().clearRect(0, 50, 250, 150);
+  const colors = [0xFFFF-g.getBgColor(), 0x9492];
+  g.reset().clearRect(0, 24, g.getWidth(), g.getHeight()*5/6);
   if (counter > 0) {
     g.setFont("Vector", 40).setFontAlign(0, 0);
     g.setColor(colors[counter%2]);
     drawHeart();
-    g.drawString(counter + "", g.getWidth()/2, 100);
+    g.drawString(counter, 120, g.getHeight()*3/5-20);
   } else {
     g.setFont("Vector", 20).setFontAlign(0, 0);
-    g.drawString("RESCUE", g.getWidth()/2, 70);
-    g.drawString("BREATHS", g.getWidth()/2, 120);
+    g.drawString("RESCUE", g.getWidth()/2, g.getHeight()/3);
+    g.drawString("BREATHS", g.getWidth()/2, g.getHeight()*3/5);
   }
 }
 
@@ -73,7 +74,7 @@ function tick() {
 interval = setInterval(tick, 60000/setting('compression_rpm'));
 
 g.clear(1).setFont("6x8");
-g.drawString(setting('compression_count') + ' / ' + setting('breath_count'), 30, 200);
+g.drawString(setting('compression_count') + ' / ' + setting('breath_count'), 30, g.getHeight()*5/6);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

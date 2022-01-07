@@ -52,8 +52,8 @@
       if (!w) return;
       g.reset();
       g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
-      if (w.txt) {
-        weather.drawIcon(w.txt, this.x+10, this.y+8, 7.5);
+      if (w.code||w.txt) {
+        weather.drawIcon(w, this.x+10, this.y+8, 7.5);
       }
       if (w.temp) {
         let t = require('locale').temp(w.temp-273.15);  // applies conversion

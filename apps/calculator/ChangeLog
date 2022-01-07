@@ -2,3 +2,4 @@
 0.02: fix precision rounding issue + no reset when equals pressed
 0.03: Support for different screen sizes and touchscreen
 0.04: Display current operation on LHS
+0.05: Grid positioning and swipe controls to switch between numbers, operators and special (for Bangle.js 2)
