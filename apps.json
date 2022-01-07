@@ -2,15 +2,23 @@
   {
     "id": "sphcalendar",
     "name": "SPH Calendar",
-    "src": "sphcalendar.app.js",
     "shortName": "SPH Calendar",
-    "type": "app"
-  },
-  {
-    "id": "sphclock",
-    "name": "SPH Clock",
-    "src": "sphclock.app.js",
-    "shortName": "SPH Clock",
-    "type": "clock"
+    "type": "app",
+    "supports": ["BANGLEJS2"],
+    "version": "0.1",
+    "description": "Vintage menu style calendar app",
+    "icon": "icon.png",
+    "readme": "README.MD",
+    "screenshots": [{ "url": "screenshot.png" }],
+    "storage": [
+      { "name": "sphcalendar.app.js", "url": "sphcalendar.app.js" },
+      {
+        "name": "sphcalendar.img",
+        "url": "sphcalendar.app-icon.js",
+        "evaluate": true
+      }
+    ],
+    "tags": "calendar",
+    "allow_emulator": true
   }
 ]
