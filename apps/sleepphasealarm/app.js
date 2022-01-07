@@ -1,4 +1,4 @@
-const alarms = require("Storage").readJSON("alarm.json",1)||[];
+const alarms = require("Storage").readJSON("alarm.json",1)||require("Storage").readJSON("qalarm.json",1)||[];
 const active = alarms.filter(a=>a.on);
 
 // Sleep/Wake detection with Estimation of Stationary Sleep-segments (ESS):
