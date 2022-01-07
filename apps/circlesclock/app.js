@@ -1,5 +1,6 @@
 const locale = require("locale");
 const heatshrink = require("heatshrink");
+const storage = require("Storage");
 
 const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
 const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
@@ -8,10 +9,19 @@ const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbB
 const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
+const weatherCloudy = heatshrink.decompress(atob("h0OwYPMgfwAgU//4FCv///+Ag4DB//gh4EC//jAgYAK+IED8EBAgXAHpQA=="));
+const weatherSunny = heatshrink.decompress(atob("h0OwYKHhuAAYM2AQkA7AOD2wFCgdt20AgOA7dtwHAC4PbsAUGgFt2ApIAAgIIA=="));
+const weatherPartlyCloudy = heatshrink.decompress(atob("h0OwYOLg4FEn/8AgV+g/gAgMcgE48EB48f/wJBgP/gfwgEDBAIRBC4UH/kB4AmC8F+C4X4gf/AAIaBAAgA=="));
+const weatherRainy = heatshrink.decompress(atob("h0OwYKHh/AAgX8AoUB/EAuEAj/wgEDwEHCIX/wIXD8ARB/kAnED+P/8f+BgNwnARCjkOAgUH/+AAoU/IQ4A="));
+const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
+const weatherSnowy = heatshrink.decompress(atob("h0OwYKHh/AAgUD+AKD/gIDn4LC/4ABBYX8DQYODgYPCAoIOCEAgpGDQRCHA="));
+const weatherFoggy = heatshrink.decompress(atob("h0OwYPMj/+AgU4gFwgED+ACBwEH8AMB/kB4AEBBAYAHg////H/+ABQl+n4LB/A9K"));
+const weatherStormy = heatshrink.decompress(atob("h0OwYKHh/AAgX8AoUB/EAuEAj/wgEDwEHCIX/wIRBBwPgAQMcgE4gfwn8D/wpGCgQAQA"));
+
 let settings;
 
 function loadSettings() {
-  settings = require("Storage").readJSON("circlesclock.json", 1) || {
+  settings = storage.readJSON("circlesclock.json", 1) || {
     'minHR': 40,
     'maxHR': 200,
     'stepGoal': 10000,
@@ -48,13 +58,12 @@ const w = g.getWidth();
 const hOffset = 30 - widgetOffset;
 const h1 = Math.round(1 * h / 5 - hOffset);
 const h2 = Math.round(3 * h / 5 - hOffset);
-const h3 = Math.round(8 * h / 8 - hOffset - 3);
-const w1 = Math.round(w / 6);
-const w2 = Math.round(3 * w / 6);
-const w3 = Math.round(5 * w / 6);
+const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
+const circlePosX = [Math.round(w / 6), Math.round(3 * w / 6), Math.round(5 * w / 6)]; // cirle x positions
 const radiusOuter = 25;
 const radiusInner = 18;
 const circleFont = "Vector:15";
+const circleFontSmall = "Vector:13";
 
 function draw() {
   g.clear(true);
@@ -90,16 +99,17 @@ function draw() {
   g.drawString(locale.date(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2);
   g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + 22);
 
-  drawCircle(1, "steps");
-  drawCircle(2, "hr");
-  drawCircle(3, "battery");
+  drawCircle(1);
+  drawCircle(2);
+  drawCircle(3);
 }
 
+const defaultCircleTypes = ["steps", "hr", "battery"];
 
-function drawCircle(index, defaultType) {
-  const type = settings['circle' + index] || defaultType;
-  const w = index == 1 ? w1 : index == 2 ? w2 : w3;
-
+function drawCircle(index) {
+  let type = settings['circle' + index];
+  if (!type) type = defaultCircleTypes[index - 1];
+  const w = getCirclePosition(type);
   switch (type) {
     case "steps":
       drawSteps(w);
@@ -113,15 +123,21 @@ function drawCircle(index, defaultType) {
     case "battery":
       drawBattery(w);
       break;
+    case "weather":
+      drawWeather(w);
+      break;
   }
 }
 
-function getCirclePosition(type, defaultPos) {
+function getCirclePosition(type) {
   for (let i = 1; i <= 3; i++) {
     const setting = settings['circle' + i];
-    if (setting == type) return i == 1 ? w1 : i == 2 ? w2 : w3;
+    if (setting == type) return circlePosX[i - 1];
   }
-  return defaultPos || undefined;
+  for (let i = 0; i < defaultCircleTypes.length; i++) {
+    if (type == defaultCircleTypes[i]) return circlePosX[i];
+  }
+  return undefined;
 }
 
 function isCircleEnabled(type) {
@@ -129,7 +145,7 @@ function isCircleEnabled(type) {
 }
 
 function drawSteps(w) {
-  if (!w) w = getCirclePosition("steps", w1);
+  if (!w) w = getCirclePosition("steps");
   const steps = getSteps();
 
   // Draw rectangle background:
@@ -160,7 +176,7 @@ function drawSteps(w) {
 }
 
 function drawStepsDistance(w) {
-  if (!w) w = getCirclePosition("steps", w1);
+  if (!w) w = getCirclePosition("steps");
   const steps = getSteps();
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
@@ -193,7 +209,7 @@ function drawStepsDistance(w) {
 }
 
 function drawHeartRate(w) {
-  if (!w) w = getCirclePosition("hr", w2);
+  if (!w) w = getCirclePosition("hr");
 
   // Draw rectangle background:
   g.setColor(colorBg);
@@ -222,7 +238,7 @@ function drawHeartRate(w) {
 }
 
 function drawBattery(w) {
-  if (!w) w = getCirclePosition("battery", w3);
+  if (!w) w = getCirclePosition("battery");
   const battery = E.getBattery();
 
   // Draw rectangle background:
@@ -260,6 +276,85 @@ function drawBattery(w) {
   g.drawString(battery + '%', w, h3);
 
   g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+}
+
+function drawWeather(w) {
+  if (!w) w = getCirclePosition("weather");
+  const weather = getWeather();
+  const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
+  const code = weather ? weather.code : -1;
+
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+
+  g.setColor(colorGrey);
+  g.fillCircle(w, h3, radiusOuter);
+
+  g.setColor(colorBg);
+  g.fillCircle(w, h3, radiusInner);
+
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
+
+  const content = tempString ? tempString : "?";
+  g.setFont(content.length < 4 ? circleFont : circleFontSmall);
+  g.setFontAlign(0, 0);
+  g.setColor(colorFg);
+  g.drawString(content, w, h3);
+
+  if (code > 0) {
+    const icon = getWeatherIconByCode(code);
+    if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+  }
+}
+
+/*
+ * Choose weather icon to display based on weather conditition code
+ * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+ */
+function getWeatherIconByCode(code) {
+  const codeGroup = Math.round(code / 100);
+  switch (codeGroup) {
+    case 2:
+      return weatherStormy;
+    case 3:
+      return weatherCloudy;
+    case 5:
+      switch (code) {
+        case 511:
+          return weatherSnowy;
+        case 520:
+          return weatherPartlyRainy;
+        case 521:
+          return weatherPartlyRainy;
+        case 522:
+          return weatherPartlyRainy;
+        case 531:
+          return weatherPartlyRainy;
+        default:
+          return weatherRainy;
+      }
+      break;
+    case 6:
+      return weatherSnowy;
+    case 7:
+      return weatherFoggy;
+    case 8:
+      switch (code) {
+        case 800:
+          return weatherSunny;
+        case 801:
+          return weatherPartlyCloudy;
+        case 802:
+          return weatherPartlyCloudy;
+        default:
+          return weatherCloudy;
+      }
+      break;
+    default:
+      return undefined;
+  }
+  return undefined;
 }
 
 function radians(a) {
@@ -307,6 +402,11 @@ function getSteps() {
     return WIDGETS.wpedom.getSteps();
   }
   return 0;
+}
+
+function getWeather() {
+  const jsonWeather = storage.readJSON('weather.json');
+  return jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
 }
 
 function enableHRMSensor() {

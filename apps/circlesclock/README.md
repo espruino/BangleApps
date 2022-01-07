@@ -9,13 +9,11 @@ It can show the following information (this can be configured):
   * Steps distance (depending on steps)
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
+  * Weather (requires [weather app](https://banglejs.com/apps/#weather))
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
-
-## TODO
-* Show weather information
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
