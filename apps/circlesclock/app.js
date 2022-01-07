@@ -9,14 +9,14 @@ const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbB
 const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
 const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
 
-const weatherCloudy = heatshrink.decompress(atob("h0OwYPMgfwAgU//4FCv///+Ag4DB//gh4EC//jAgYAK+IED8EBAgXAHpQA=="));
-const weatherSunny = heatshrink.decompress(atob("h0OwYKHhuAAYM2AQkA7AOD2wFCgdt20AgOA7dtwHAC4PbsAUGgFt2ApIAAgIIA=="));
-const weatherPartlyCloudy = heatshrink.decompress(atob("h0OwYOLg4FEn/8AgV+g/gAgMcgE48EB48f/wJBgP/gfwgEDBAIRBC4UH/kB4AmC8F+C4X4gf/AAIaBAAgA=="));
-const weatherRainy = heatshrink.decompress(atob("h0OwYKHh/AAgX8AoUB/EAuEAj/wgEDwEHCIX/wIXD8ARB/kAnED+P/8f+BgNwnARCjkOAgUH/+AAoU/IQ4A="));
+const weatherCloudy = heatshrink.decompress(atob("iEQwYWTgP//+AAoMPAoPwAoN/AocfAgP//0AAgQAB/AFEABgdDAAMDDohMRA"));
+const weatherSunny = heatshrink.decompress(atob("iEQwYLIg3AAgVgAQMMAo8Am3YAgUB23bAoUNAoIUBjYFCsOwBYoFDDpFgHYI1JI4gFGAAYA="));
+const weatherPartlyCloudy = heatshrink.decompress(atob("iEQwYQNv0AjgGDn4EDh///gFChwREC4MfxwIBv0//+AC4X4j4FCv/AgfwgED/wIBuAaBBwgFDgP4gf/AAXABwIEBDQQAEA=="));
+const weatherRainy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AocAnAFBFIU4EAM//gRBEAIOBhw1C/AmDAosAC4JNIAAg"));
 const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
-const weatherSnowy = heatshrink.decompress(atob("h0OwYKHh/AAgUD+AKD/gIDn4LC/4ABBYX8DQYODgYPCAoIOCEAgpGDQRCHA="));
-const weatherFoggy = heatshrink.decompress(atob("h0OwYPMj/+AgU4gFwgED+ACBwEH8AMB/kB4AEBBAYAHg////H/+ABQl+n4LB/A9K"));
-const weatherStormy = heatshrink.decompress(atob("h0OwYKHh/AAgX8AoUB/EAuEAj/wgEDwEHCIX/wIRBBwPgAQMcgE4gfwn8D/wpGCgQAQA"));
+const weatherSnowy = heatshrink.decompress(atob("iEQwYROn/8AocH8AECuAFBh0Agf+CIN/4EDx/4j/x4EAgIIBwAXBAogRFDoopFGoxBGABIA="));
+const weatherFoggy = heatshrink.decompress(atob("iEQwYROn/8AgUB/EfwAFBh/AgfwgED/wIBuEABwd/4EcDQgFDgE4Fosf///8f//A/Lj/xCQIRNA="));
+const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AoX8gE4AoQpBnAdBF4IRBDQMH/kOHgY7DAo4AOA=="));
 
 let settings;
 
@@ -61,7 +61,7 @@ const h2 = Math.round(3 * h / 5 - hOffset);
 const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
 const circlePosX = [Math.round(w / 6), Math.round(3 * w / 6), Math.round(5 * w / 6)]; // cirle x positions
 const radiusOuter = 25;
-const radiusInner = 18;
+const radiusInner = 20;
 const circleFont = "Vector:15";
 const circleFontSmall = "Vector:13";
 
@@ -292,9 +292,9 @@ function drawWeather(w) {
   g.fillCircle(w, h3, radiusOuter);
 
   g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  g.fillCircle(w, h3, radiusInner + 1); // the weather circle is thinner
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
+  g.fillPoly([w, h3, w - 25, h3 + radiusOuter + 5, w + 25, h3 + radiusOuter + 5]);
 
   const content = tempString ? tempString : "?";
   g.setFont(content.length < 4 ? circleFont : circleFontSmall);
@@ -304,7 +304,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+    if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 10);
   }
 }
 
@@ -375,7 +375,7 @@ function drawGauge(cx, cy, percent, color) {
 
   g.setColor(color);
 
-  const size = radiusOuter - radiusInner - 2;
+  const size = radiusOuter - radiusInner - 3;
   // draw gauge
   for (i = startrot; i > endrot - size; i -= size) {
     x = cx + r * Math.sin(radians(i));
