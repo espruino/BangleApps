@@ -5134,7 +5134,7 @@
     "version":"0.01",
     "description": "This is the classic game for masterminds",
     "type": "game",
-    "tags": "mastermind, game, classic",
+    "tags": "game,app",
     "readme":"README.md",
     "supports": ["BANGLEJS2"],
     "allow_emulator": true,
