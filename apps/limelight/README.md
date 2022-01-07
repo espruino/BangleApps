@@ -1,5 +1,5 @@
 # Limelight
- * Simple configurable analogue clock based on the work of @Andreas_Rozek [Simple_Clock](https://github.com/espruino/BangleApps/tree/master/apps/simple_clock)*
+ *Simple configurable analogue clock based on the work of @Andreas_Rozek [Simple_Clock](https://github.com/espruino/BangleApps/tree/master/apps/simple_clock)*
 
 ![](screenshot_limelight.png)
 
