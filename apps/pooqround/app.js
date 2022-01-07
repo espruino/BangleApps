@@ -496,7 +496,6 @@ class Clock {
                 this.conservative = !up;
                 this.active();
             },
-            twist: _ => this.options.autolight && Bangle.setLCDPower(true),
             drag: e => {
                 if (this.t0) {
                     if (e.b) {
