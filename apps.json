@@ -5133,6 +5133,7 @@
     "icon": "mmind.png",
     "version":"0.01",
     "description": "This is the classic game for masterminds",
+    "screenshots": [{"url":"screenshot_mmind.png"}],
     "type": "game",
     "tags": "game,app",
     "readme":"README.md",
