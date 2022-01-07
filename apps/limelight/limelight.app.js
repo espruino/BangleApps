@@ -1,6 +1,27 @@
+
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+
+const SETTINGS_FILE = "limelight.json";
+var UPDATE_PERIOD;
+var drawTimeout;
+
+function loadSettings() {
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.secondhand = settings.secondhand||false;
+  settings.font = settings.font||"Limelight";
+  settings.vector = settings.vector||false;
+  settings.fullscreen = settings.fullscreen||false;
+  settings.vector_size = settings.vector_size||42;
+  UPDATE_PERIOD = (settings.secondhand ? 1000 : 60000);
+}
+
+loadSettings();
+
+// if we are not full screen then load and draw the widgets so that Bangle.appRect gets set
+if (!settings.fullscreen) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}
 
 // fonts.google.com
 Graphics.prototype.setFontLimelight = function(scale) {
@@ -27,33 +48,34 @@ Graphics.prototype.setFontMonoton = function(scale) {
   g.setFontCustom(atob("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"), 46, atob("ChIiERcYGRwfGSAfCw=="), 40+(scale<<8)+(1<<16));
 }
 
-const SETTINGS_FILE = "limelight.json";
-
-function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-  settings.secondhand = settings.secondhand||false;
-  settings.font = settings.font||"Limelight";
-  settings.vector = settings.vector||false;
-  settings.vector_size = settings.vector_size||42;
-  UPDATE_PERIOD = (settings.secondhand ? 1000 : 60000);
-}
-
-var UPDATE_PERIOD;
-var drawTimeout;
-
-
 /*
- * This calculation assumes that there will never be widgets on the
- * bottom but it could just as easily be adjusted.  If only 1 widget
- * is loaded at the top Bangle.appRect changes to report as if
- * widgets were loaded at the bottom as well.  The other option would
- * be for Bangle.appRect to adjust for different combinations EG: no
- * widgets, wigets on top, widgets on bottom and widgets on top and
- * bottom areas.
+ * If only 1 widget is loaded at the top, then Bangle.appRect changes
+ * to report as if widgets were loaded at the bottom as well.  The
+ * other option would be for Bangle.appRect to adjust for different
+ * combinations EG: no widgets, wigets on top, widgets on bottom and
+ * widgets on top and bottom areas, but it does not at present.
+ *
+ * Example of Bangle.appRect with 3 widges on the top, note h = 152, not 176
+ * ={ x: 0, y: 24, w: 176, h: 152, x2: 175, y2: 175 }
+ *
+ * With the example below we are going assume that the bottom widget
+ * space is not used.
+ *
  */
 const CenterX = g.getWidth()/2;
 const CenterY = (g.getHeight()/2) + (Bangle.appRect.y/2); 
 const outerRadius = (g.getHeight() - Bangle.appRect.y)/2;
+
+if (settings.fullscreen) {
+  Bangle.loadWidgets();
+  /*
+   * We load the widgets as some like widpedom accumualte the step count.
+   * we are not drawing the widgets as we are taking over the whole screen
+   * so we will blank out the draw() functions of each widget and change the
+   * widgets area to the top bar doesn't get cleared.
+   */
+  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+}
 
 function debug(o) {
   console.log(o);
@@ -65,7 +87,6 @@ debug("CenterY=" + CenterY);
 debug("outerRadius=" + outerRadius);
 debug("y12=" + (CenterY - outerRadius));
 debug("y6=" + (CenterY + outerRadius));
-debug("appRect=" + Bangle.appRect);
 
 const HourHandLength = outerRadius * 0.5;
 const HourHandWidth  = 2*3, halfHourHandWidth = HourHandWidth/2;
@@ -104,23 +125,6 @@ function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
     transformedPolygon[i]   = OriginX + x*cPhi + y*sPhi;
     transformedPolygon[i+1] = OriginY + x*sPhi - y*cPhi;
   }
-}
-
-function drawNumbers() {
-  g.setColor(g.theme.fg);
-  setNumbersFont();
-
-  g.setFontAlign(0,-1);
-  g.drawString('12', CenterX, CenterY - outerRadius);
-
-  g.setFontAlign(1,0);
-  g.drawString('3', CenterX + outerRadius, CenterY);
-
-  g.setFontAlign(0,1);
-  g.drawString('6', CenterX, CenterY + outerRadius);
-
-  g.setFontAlign(-1,0);
-  g.drawString('9', CenterX - outerRadius,CenterY);
 }
 
 function drawHands () {
@@ -165,6 +169,23 @@ function setNumbersFont() {
     g.setFontMonoton();
   else
     g.setFontLimelight();
+}
+
+function drawNumbers() {
+  g.setColor(g.theme.fg);
+  setNumbersFont();
+
+  g.setFontAlign(0,-1);
+  g.drawString('12', CenterX, CenterY - outerRadius);
+
+  g.setFontAlign(1,0);
+  g.drawString('3', CenterX + outerRadius, CenterY);
+
+  g.setFontAlign(0,1);
+  g.drawString('6', CenterX, CenterY + outerRadius);
+
+  g.setFontAlign(-1,0);
+  g.drawString('9', CenterX - outerRadius,CenterY);
 }
 
 function draw() {

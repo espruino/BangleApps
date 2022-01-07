@@ -6,7 +6,8 @@
     'vector_size': 42,
     'vector': false,
     'font': "Limelight",
-    'secondhand': false
+    'secondhand': false,
+    'fullscreen': false
   }
 
   // ...and overwrite them with any saved values
@@ -30,6 +31,14 @@
   E.showMenu({
     '': { 'title': 'Limelight Clock' },
     '< Back': back,
+    'Full Screen': {
+      value: s.fullscreen,
+      format: () => (s.fullscreen ? 'Yes' : 'No'),
+      onchange: () => {
+        s.fullscreen = !s.fullscreen;
+        save();
+      },
+    },
     'Font': {
       value: 0 | font_options.indexOf(s.font),
       min: 0, max: 3,
