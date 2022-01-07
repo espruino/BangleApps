@@ -15,7 +15,7 @@
       value: "minHR" in settings ? settings.minHR : 40,
       min: 0,
       max : 250,
-      step: 10,
+      step: 5,
       format: x => {
         return x;
       },
@@ -25,7 +25,7 @@
       value: "maxHR" in settings ? settings.maxHR : 200,
       min: 20,
       max : 250,
-      step: 10,
+      step: 5,
       format: x => {
         return x;
       },
