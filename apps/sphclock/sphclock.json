@@ -1,0 +1,149 @@
+{
+  "schedule": [{ "data": "2022-01-15T09:00:00Z", "descricao": "SAMPLE DATA" }],
+  "weather": [
+    {
+      "hourly": [
+        {
+          "tempC": 21,
+          "chanceofrain": 72,
+          "weatherDesc": "Light rain shower"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 71,
+          "weatherDesc": "Light rain shower"
+        },
+        {
+          "tempC": 19,
+          "chanceofrain": 0,
+          "weatherDesc": "Fog"
+        },
+        {
+          "tempC": 22,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 27,
+          "chanceofrain": 61,
+          "weatherDesc": "Patchy rain possible"
+        },
+        {
+          "tempC": 27,
+          "chanceofrain": 86,
+          "weatherDesc": "Light rain shower"
+        },
+        {
+          "tempC": 26,
+          "chanceofrain": 0,
+          "weatherDesc": "Partly cloudy"
+        },
+        {
+          "tempC": 21,
+          "chanceofrain": 67,
+          "weatherDesc": "Patchy rain possible"
+        }
+      ],
+      "date": "2022-01-05",
+      "mintempC": 19,
+      "maxtempC": 28,
+      "avgtempC": 23
+    },
+    {
+      "hourly": [
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Partly cloudy"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 74,
+          "weatherDesc": "Patchy rain possible"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Cloudy"
+        },
+        {
+          "tempC": 22,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 26,
+          "chanceofrain": 0,
+          "weatherDesc": "Cloudy"
+        },
+        {
+          "tempC": 26,
+          "chanceofrain": 62,
+          "weatherDesc": "Light rain shower"
+        },
+        {
+          "tempC": 23,
+          "chanceofrain": 0,
+          "weatherDesc": "Cloudy"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        }
+      ],
+      "date": "2022-01-06",
+      "mintempC": 20,
+      "maxtempC": 26,
+      "avgtempC": 22
+    },
+    {
+      "hourly": [
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 87,
+          "weatherDesc": "Patchy rain possible"
+        },
+        {
+          "tempC": 21,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 21,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        },
+        {
+          "tempC": 20,
+          "chanceofrain": 0,
+          "weatherDesc": "Overcast"
+        }
+      ],
+      "date": "2022-01-07",
+      "mintempC": 19,
+      "maxtempC": 21,
+      "avgtempC": 20
+    }
+  ]
+}
