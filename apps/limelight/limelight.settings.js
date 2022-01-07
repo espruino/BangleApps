@@ -14,6 +14,8 @@
   const storage = require('Storage')
   let settings = storage.readJSON(SETTINGS_FILE, 1) || {}
   const saved = settings || {}
+
+  // copy settings into variable
   for (const key in saved) {
     s[key] = saved[key]
   }
@@ -46,12 +48,12 @@
       },
     },
     'Vector Size': {
-      value: settings.vector_size,
+      value: s.vector_size,
       min: 24,
       max: 56,
       step: 6,
       onchange: v => {
-        settings.vector_size = v;
+        s.vector_size = v;
         save();
       }
     },

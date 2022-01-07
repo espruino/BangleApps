@@ -41,6 +41,16 @@ function loadSettings() {
 var UPDATE_PERIOD;
 var drawTimeout;
 
+
+/*
+ * This calculation assumes that there will never be widgets on the
+ * bottom but it could just as easily be adjusted.  If only 1 widget
+ * is loaded at the top Bangle.appRect changes to report as if
+ * widgets were loaded at the bottom as well.  The other option would
+ * be for Bangle.appRect to adjust for different combinations EG: no
+ * widgets, wigets on top, widgets on bottom and widgets on top and
+ * bottom areas.
+ */
 const CenterX = g.getWidth()/2;
 const CenterY = (g.getHeight()/2) + (Bangle.appRect.y/2); 
 const outerRadius = (g.getHeight() - Bangle.appRect.y)/2;
@@ -96,22 +106,6 @@ function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
   }
 }
 
-function setNumbersFont() {
-  if (settings.vector) {
-    g.setFont('Vector', settings.vector_size);
-    return;
-  }
-
-  if (settings.font == "GochiHand")
-    g.setFontGochiHand();
-  else if (settings.font == "Grenadier")
-    g.setFontCabinSketch();
-  else if (settings.font == "Monoton")
-    g.setFontMonoton();
-  else
-    g.setFontLimelight();
-}
-
 function drawNumbers() {
   g.setColor(g.theme.fg);
   setNumbersFont();
@@ -155,6 +149,22 @@ function drawHands () {
       CenterY + SecondHandLength*cPhi
     );
   }
+}
+
+function setNumbersFont() {
+  if (settings.vector) {
+    g.setFont('Vector', settings.vector_size);
+    return;
+  }
+
+  if (settings.font == "GochiHand")
+    g.setFontGochiHand();
+  else if (settings.font == "Grenadier")
+    g.setFontGrenadierNF();
+  else if (settings.font == "Monoton")
+    g.setFontMonoton();
+  else
+    g.setFontLimelight();
 }
 
 function draw() {
