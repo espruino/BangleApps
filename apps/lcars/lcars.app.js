@@ -32,8 +32,8 @@ let cGrey = "#9E9E9E";
 let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
-var connected = NRF.getSecurityStatus().connected;
 var plotWeek = false;
+var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
  * Requirements and globals
@@ -170,7 +170,7 @@ function drawHorizontalBgLine(color, x1, x2, y, h){
 }
 
 
-function drawLock(){
+function drawInfo(){
   if(lcarsViewPos != 0){
     return;
   }
@@ -179,7 +179,8 @@ function drawLock(){
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 128, 13);
-  if(connected){
+
+  if(NRF.getSecurityStatus().connected){
     g.drawString("CONN", 128, 33);
   } else {
     g.drawString("NOCON", 128, 33);
@@ -243,8 +244,8 @@ function drawPosition0(){
   drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
   drawHorizontalBgLine(cGrey, batX2+10, 172, 171, 5);
 
-  // Draw logo
-  drawLock();
+  // Draw Infos
+  drawInfo();
 
   // Write time
   g.setFontAlign(-1, -1, 0);
@@ -467,24 +468,17 @@ function handleAlarm(){
 Bangle.on('lcdPower',on=>{
   if (on) {
     // Whenever we connect to Gadgetbridge, reading data from
-    // health failed. Therefore, we update and read data from
-    // health iff the connection state did not change.
-    if(connected == NRF.getSecurityStatus().connected) {
-      draw();
-    } else {
-      connected = NRF.getSecurityStatus().connected
-      drawLock();
-    }
+    // health failed. Therefore, we update only partially...
+    drawInfo();
+    drawState();
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
-
-  connected = NRF.getSecurityStatus().connected
 });
 
 Bangle.on('lock', function(isLocked) {
-  drawLock();
+  drawInfo();
 });
 
 Bangle.on('charging',function(charging) {
