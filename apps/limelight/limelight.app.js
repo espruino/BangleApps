@@ -1,3 +1,14 @@
+/*
+ * Limelight analoguce clock with bolted hands
+ * Based on the work of @Andreas_Rozek
+ * [Simple_Clock](https://github.com/espruino/BangleApps/tree/master/apps/simple_clock)
+ *
+ * . Demonstrates simpler approach to establishing the available size of the appRect in relation
+ *   to widgets, avoids having to take on the responsibility for managing the widget draw.
+ * . Demonstrates a settings menu and various configuration options
+ * . Demonstrates fullscreen verses, widgets and app area.
+ *
+ */
 
 g.clear();
 
@@ -78,7 +89,7 @@ if (settings.fullscreen) {
 }
 
 function debug(o) {
-  console.log(o);
+  //console.log(o);
 }
 
 debug("limelight.app.js");
@@ -88,35 +99,54 @@ debug("outerRadius=" + outerRadius);
 debug("y12=" + (CenterY - outerRadius));
 debug("y6=" + (CenterY + outerRadius));
 
-const HourHandLength = outerRadius * 0.5;
-const HourHandWidth  = 2*3, halfHourHandWidth = HourHandWidth/2;
-const MinuteHandLength = outerRadius * 0.7;
-const MinuteHandWidth  = 2*2, halfMinuteHandWidth = MinuteHandWidth/2;
-const SecondHandLength = outerRadius * 0.9;
-const SecondHandOffset = 6;
+let HourHandLength = outerRadius * 0.5;
+let HourHandWidth  = 2*5, halfHourHandWidth = HourHandWidth/2;
 
-const twoPi  = 2*Math.PI;
-const Pi     = Math.PI;
-const halfPi = Math.PI/2;
+let MinuteHandLength = outerRadius * 0.7;
+let MinuteHandWidth  = 2*3, halfMinuteHandWidth = MinuteHandWidth/2;
 
-let HourHandPolygon = [
-  -halfHourHandWidth,halfHourHandWidth,
-  -halfHourHandWidth,halfHourHandWidth-HourHandLength,
-  halfHourHandWidth,halfHourHandWidth-HourHandLength,
-  halfHourHandWidth,halfHourHandWidth,
+let SecondHandLength = outerRadius * 0.9;
+let SecondHandOffset = halfHourHandWidth + 10;
+
+let outerBoltRadius = halfHourHandWidth + 2, innerBoltRadius = outerBoltRadius - 4;
+let HandOffset = outerBoltRadius + 4;
+
+let twoPi  = 2*Math.PI, deg2rad = Math.PI/180;
+let Pi     = Math.PI;
+let halfPi = Math.PI/2;
+
+let sin = Math.sin, cos = Math.cos;
+
+let sine = [0, sin(30*deg2rad), sin(60*deg2rad), 1];
+
+let HandPolygon = [
+  -sine[3],-sine[0], -sine[2],-sine[1], -sine[1],-sine[2], -sine[0],-sine[3],
+  sine[0],-sine[3],  sine[1],-sine[2],  sine[2],-sine[1],  sine[3],-sine[0],
+  sine[3], sine[0],  sine[2], sine[1],  sine[1], sine[2],  sine[0], sine[3],
+  -sine[0], sine[3], -sine[1], sine[2], -sine[2], sine[1], -sine[3], sine[0],
 ];
 
-let MinuteHandPolygon = [
-  -halfMinuteHandWidth,halfMinuteHandWidth,
-  -halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-  halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-  halfMinuteHandWidth,halfMinuteHandWidth,
-];
+let HourHandPolygon = new Array(HandPolygon.length);
+for (let i = 0, l = HandPolygon.length; i < l; i+=2) {
+  HourHandPolygon[i]   = halfHourHandWidth*HandPolygon[i];
+  HourHandPolygon[i+1] = halfHourHandWidth*HandPolygon[i+1];
+  if (i < l/2) { HourHandPolygon[i+1] -= HourHandLength; }
+  if (i > l/2) { HourHandPolygon[i+1] += HandOffset; }
+}
+let MinuteHandPolygon = new Array(HandPolygon.length);
+for (let i = 0, l = HandPolygon.length; i < l; i+=2) {
+  MinuteHandPolygon[i]   = halfMinuteHandWidth*HandPolygon[i];
+  MinuteHandPolygon[i+1] = halfMinuteHandWidth*HandPolygon[i+1];
+  if (i < l/2) { MinuteHandPolygon[i+1] -= MinuteHandLength; }
+  if (i > l/2) { MinuteHandPolygon[i+1] += HandOffset; }
+}
 
-let transformedPolygon = new Array(HourHandPolygon.length);
+/**** transforme polygon ****/
+
+let transformedPolygon = new Array(HandPolygon.length);
 
 function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
-  let sPhi = Math.sin(Phi), cPhi = Math.cos(Phi), x,y;
+  let sPhi = sin(Phi), cPhi = cos(Phi), x,y;
 
   for (let i = 0, l = originalPolygon.length; i < l; i+=2) {
     x = originalPolygon[i];
@@ -127,8 +157,11 @@ function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
   }
 }
 
-function drawHands () {
+/**** draw clock hands ****/
+
+function drawClockHands () {
   let now = new Date();
+
   let Hours   = now.getHours() % 12;
   let Minutes = now.getMinutes();
   let Seconds = now.getSeconds();
@@ -138,14 +171,17 @@ function drawHands () {
   let SecondsAngle = (Seconds/60)            * twoPi - Pi;
 
   g.setColor(g.theme.fg);
+
   transformPolygon(HourHandPolygon, CenterX,CenterY, HoursAngle);
   g.fillPoly(transformedPolygon);
+
   transformPolygon(MinuteHandPolygon, CenterX,CenterY, MinutesAngle);
   g.fillPoly(transformedPolygon);
 
+  let sPhi = Math.sin(SecondsAngle), cPhi = Math.cos(SecondsAngle);
+
   if (settings.secondhand) {
-    let sPhi = Math.sin(SecondsAngle), cPhi = Math.cos(SecondsAngle);
-    g.setColor('#FF0000');
+    g.setColor(g.theme.fg2);
     g.drawLine(
       CenterX + SecondHandOffset*sPhi,
       CenterY - SecondHandOffset*cPhi,
@@ -153,6 +189,13 @@ function drawHands () {
       CenterY + SecondHandLength*cPhi
     );
   }
+  
+  g.setColor(g.theme.fg);
+  g.fillCircle(CenterX,CenterY, outerBoltRadius);
+
+  g.setColor(g.theme.bg);
+  g.drawCircle(CenterX,CenterY, outerBoltRadius);
+  g.fillCircle(CenterX,CenterY, innerBoltRadius);
 }
 
 function setNumbersFont() {
@@ -192,7 +235,7 @@ function draw() {
   g.setColor(g.theme.bg);
   g.fillRect(Bangle.appRect);
 
-  drawHands();
+  drawClockHands();
   drawNumbers();
   queueDraw();
 }
@@ -216,6 +259,5 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-loadSettings();
 Bangle.setUI('clock');
 draw();

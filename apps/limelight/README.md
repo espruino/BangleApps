@@ -6,6 +6,7 @@
 * Selection of different fonts
 * Settings menu where you can select font, or switch to Vector font and try a range of sizes
 * 100 less lines of code, demonstrating that there is no need for a custom widget draw method
+* Full screen options (widgets loaded but not displayed)
 
 ![](screenshot_gochihand.png)
 ![](screenshot_monoton.png)
