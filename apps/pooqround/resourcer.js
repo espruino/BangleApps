@@ -1,6 +1,6 @@
 // pooqRoman resource maker
 //
-// Copyright (c) 2021 Stephen P Spackman
+// Copyright (c) 2021, 2022 Stephen P Spackman
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -147,18 +147,18 @@ res += prepFont('y10', `
  xxx
 xxx
 -2--------------------------------
-           x                 xx
+           x                xxx
           xx                 xxx
          xxxx                 xxx
         xxxxx                 xxx
        xxxxxxx                 xxx
       xxxx xxx                 xxx
-     xxxx  xxxx                xxx
-    xxxx    xxxx              xxx
-   xxxx     xxxxxxxx      xxxxxxx
-  xxxx       xxxxxxxxxxxxxxxxxxx
+     xxxx  xxxx               xxxx
+    xxxx    xxxxx            xxxx
+   xxxx      xxxxxxx      xxxxxx
+  xxxx        xxxxxxxxxxxxxxxxx
  xxxx           xxxxxxxxxxxxxx
-xxxx              xxxxxxxxxx
+xxxx               xxxxxxxxx
 -3--------------------------------
              xxx        x      xxx
            xxx          xx     xxx
@@ -270,10 +270,10 @@ res += prepFont('y1', `
              xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 -1----------------------------------------------
            xxx
-          xxx
-         xxx
-        xxx                                x
-       xxx                                  x
+          xxx                            x
+         xxx                             xx
+        xxx                               xx
+       xxx                                xxx
       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
      xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -282,18 +282,18 @@ res += prepFont('y1', `
  xxx
 xxx
 -2----------------------------------------------
-           x                               xx
+           x                              xxx
           xx                               xxx
          xxxx                               xxx
-        xxxxx                               xxx
-       xxxxxxx                               xxx
-      xxxx xxxx                              xxx
-     xxxx  xxxxx                             xxx
-    xxxx    xxxxxxx                        xxxx
-   xxxx      xxxxxxxxxxxxx          xxxxxxxxxxx
-  xxxx        xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- xxxx             xxxxxxxxxxxxxxxxxxxxxxxxx
-xxxx                    xxxxxxxxxxxxxx
+        xxxxxx                              xxx
+       xxxxxxxx                              xxx
+      xxxx xxxxx                             xxx
+     xxxx   xxxxxx                          xxxx
+    xxxx     xxxxxxxx                      xxxx
+   xxxx       xxxxxxxxxxx             xxxxxxxx
+  xxxx          xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxx              xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxx                   xxxxxxxxxxxxxxxxx
 -3----------------------------------------------
              xxx                  x          xxx
            xxx                    xx         xxx
@@ -645,12 +645,12 @@ xxxx                             xxxx
 -1----------------------------------------------
 
 
-xxx                           x
-xxx                           xx
-xxx                           xxx
-xxx                            xxx
-xxx                            xxxx
-xxx                             xxxx
+xxx
+xxx                            x
+xxx                            xx
+xxx                             xx
+xxx                             xxx
+xxx                              xxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -993,9 +993,9 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                                              xxx
 
 
-                                xxxxxxxxxxxxxxxx
-                                xxxxxxxxxxxxxxxx
-                                xxxxxxxxxxxxxxx
+                            xxxxxxxxxxxxxxxxxxxx
+                            xxxxxxxxxxxxxxxxxxxx
+                            xxxxxxxxxxxxxxxxxxx
                                           xxxx
                                            xxxx
                                             xxx
