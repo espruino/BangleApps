@@ -255,7 +255,7 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    nextInfo();
+    prevInfo();
     draw();
   }, 60000 - (Date.now() % 60000));
 }

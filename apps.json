@@ -3794,7 +3794,7 @@
   {
     "id": "simplest",
     "name": "Simplest Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "The simplest working clock, acts as a tutorial piece",
     "icon": "simplest.png",
     "screenshots": [{"url":"screenshot_simplest.png"}],
@@ -4215,7 +4215,7 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.10",
+    "version": "0.11",
     "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
