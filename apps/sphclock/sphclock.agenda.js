@@ -2,7 +2,12 @@
 
 exports.drawCalendar = function (date) {
   let dateStr = date.getDate();
-  let dowStr = require("locale").dow(date).substr(0, 3).toUpperCase();
+  let dowStr = require("locale")
+    .dow(date)
+    .replace("á", "a")
+    .replace("ç", "c")
+    .substr(0, 3)
+    .toUpperCase();
 
   require("sphclock.background.js").drawBannerLeft(7, 26, 60);
 
