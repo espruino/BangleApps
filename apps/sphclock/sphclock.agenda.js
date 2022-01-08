@@ -17,7 +17,7 @@ exports.drawCalendar = function (date) {
   g.setColor("#000");
   g.drawString(dowStr, 25, 44);
 
-  g.setFontLECO1976Regular12();
+  g.setFontLECO1976sph12();
 
   // Carrega a agenda pro próximo dia com eventos
   let schedules = require("Storage").readJSON("sphclock.json", false).schedule;

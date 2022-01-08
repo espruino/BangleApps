@@ -3,11 +3,9 @@ exports.drawBattery = function (x, y, steps, step_size) {
   step_size = step_size || 4;
   // Battery
   battery = E.getBattery();
-  g.setFont("6x8");
-  if (Bangle.isCharging())
-  g.setColor("#00F");
-  else
-  g.setColor("#000");
+  g.setFontLECO1976sph11();
+  if (Bangle.isCharging()) g.setColor("#00F");
+  else g.setColor("#000");
   g.drawPoly(
     [
       x,
@@ -36,11 +34,9 @@ exports.drawBattery = function (x, y, steps, step_size) {
   g.setColor("#F00");
   step = 100 / (steps + 1);
   for (i = steps; i >= 0; i--) {
-    if (battery > i * step) 
-      if (Bangle.isCharging())
-        g.setColor("#00F");
-      else
-        g.setColor("#F00");
+    if (battery > i * step)
+      if (Bangle.isCharging()) g.setColor("#00F");
+      else g.setColor("#F00");
     else g.setColor("#888");
     if (i > 0) {
       g.fillPoly(

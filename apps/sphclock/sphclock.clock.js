@@ -7,11 +7,11 @@ exports.drawClock = function (date, y) {
   g.setFontLECO1976Regular42();
   g.setFontAlign(0, 0);
   g.setColor("#f88");
-  g.drawString(timeStr, 90, 100);
+  g.drawString(timeStr, 90, 99);
   g.setColor("#400");
-  g.drawString(timeStr, 88, 98);
+  g.drawString(timeStr, 88, 97);
   g.setColor("#F00"); 
-  g.drawString(timeStr, 86, 96);
+  g.drawString(timeStr, 86, 95);
 };
 
 exports.drawClockBackground = function(y) {
