@@ -42,8 +42,8 @@ layoutObject has:
   and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
 * A `bgCol` field for background color (will automatically fill on render)
-* A `halign` field to set horizontal alignment. `-1`=left, `1`=right, `0`=center
-* A `valign` field to set vertical alignment. `-1`=top, `1`=bottom, `0`=center
+* A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
+* A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
 * A `pad` integer field to set pixels padding
 * A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
