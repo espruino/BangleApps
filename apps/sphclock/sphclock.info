@@ -1,7 +1,0 @@
-{
-  "id":"sphclock",
-  "name":"SPH Clock",
-  "src":"sphclock.app.js",
-  "shortName":"SPH Clock",
-  "type":"clock"
-}

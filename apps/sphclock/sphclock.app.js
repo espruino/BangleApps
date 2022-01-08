@@ -20,11 +20,10 @@ let queueDraw = function () {
 
 let draw = function (condition) {
   var date = new Date();
-  console.log(`Draw with conditions: ${condition}`);
 
   g.reset();
 
-  if (condition == INIT) {
+  if (condition == INIT || condition == undefined) {
     require("sphclock.background.js").drawBackground();
     require("sphclock.clock.js").drawClockBackground(53);
     require("sphclock.agenda.js").drawCalendar(date);
@@ -61,6 +60,11 @@ Bangle.on("touch", function (button, xy) {
   // Touch on date
   if (xy.x < 88 && xy.y < 53) {
     Bangle.buzz(100, 0.1).then(() => load("sphcalendar.app.js"));
+  }
+
+  // Touch on weather
+  if (xy.x > 88 && xy.y < 53) {
+    Bangle.buzz(100, 0.1).then(() => load("sphweather.app.js"));
   }
 
   // Touch on alarm

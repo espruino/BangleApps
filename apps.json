@@ -18,18 +18,18 @@
         "evaluate": true
       }
     ],
-    "tags": "calendar",
+    "tags": "calendar, sph, vintage, menu",
     "allow_emulator": true
   },
   {
     "id": "sphclock",
     "name": "SPH Clock",
     "shortName": "SPH Clock",
-    "type": "app",
+    "type": "clock",
     "supports": ["BANGLEJS2"],
     "version": "0.1",
     "dependencies": { "sphcalendar": "app" },
-    "description": "[WIP] Vintage menu style clock with weather graph and schedule",
+    "description": "[WIP] Vintage menu style clock with weather icons and schedule",
     "icon": "icon.png",
     "readme": "README.MD",
     "screenshots": [{ "url": "screenshot.png" }],
@@ -55,7 +55,30 @@
         "url": "sphclock.json"
       }
     ],
-    "tags": "calendar",
+    "tags": "clock, sph, vintage, menu",
+    "allow_emulator": true
+  },
+  {
+    "id": "sphweather",
+    "name": "SPH Weather",
+    "shortName": "SPH Weather",
+    "type": "app",
+    "supports": ["BANGLEJS2"],
+    "version": "0.1",
+    "description": "Vintage menu style weather app, with data from json",
+    "icon": "icon.png",
+    "readme": "README.MD",
+    "screenshots": [{ "url": "screenshot.png" }],
+    "storage": [
+      { "name": "sphweather.app.js", "url": "sphweather.app.js" },
+      {
+        "name": "sphweather.img",
+        "url": "sphweather.app-icon.js",
+        "evaluate": true
+      }
+    ],
+    "tags": "weather, graph, forecast, sph, vintage, menu",
     "allow_emulator": true
   }
+
 ]
