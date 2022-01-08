@@ -63,6 +63,7 @@ const circlePosX = [Math.round(w / 6), Math.round(3 * w / 6), Math.round(5 * w /
 const radiusOuter = 25;
 const radiusInner = 20;
 const circleFont = "Vector:15";
+const circleFontBig = "Vector:16";
 const circleFontSmall = "Vector:13";
 
 function draw() {
@@ -229,7 +230,7 @@ function drawHeartRate(w) {
 
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
 
-  g.setFont(circleFont);
+  g.setFont(circleFontBig);
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
   g.drawString(hrtValue != undefined ? hrtValue : "-", w, h3);
