@@ -376,7 +376,7 @@ function drawGauge(cx, cy, percent, color) {
 
   g.setColor(color);
 
-  const size = radiusOuter - radiusInner - 3;
+  const size = radiusOuter - radiusInner - 2;
   // draw gauge
   for (i = startrot; i > endrot - size; i -= size) {
     x = cx + r * Math.sin(radians(i));
