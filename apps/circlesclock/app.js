@@ -372,7 +372,7 @@ function drawGauge(cx, cy, percent, color) {
   if (percent > 1) percent = 1;
 
   var startrot = -offset;
-  var endrot = startrot - ((end - offset) * percent) - 15;
+  var endrot = startrot - ((end - offset) * percent) - 35;
 
   g.setColor(color);
 
