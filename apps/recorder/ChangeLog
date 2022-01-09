@@ -3,3 +3,8 @@
       Fix interface.html
 0.03: Fix theme and maps/graphing if no GPS
 0.04: Multiple bugfixes
+0.05: Add recording for coresensor
+0.06: Add recording for battery stats
+      Fix execution of other recorders (*.recorder.js)
+      Modified icons and colors for better visibility
+      Only show plotting speed if Latitude is available

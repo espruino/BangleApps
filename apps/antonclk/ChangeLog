@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Load widgets after setUI so widclk knows when to hide
 0.03: Clock now shows day of week under date.
+0.04: Clock can optionally show seconds, date optionally in ISO-8601 format, weekdays and uppercase configurable, too.
