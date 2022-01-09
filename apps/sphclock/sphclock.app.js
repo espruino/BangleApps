@@ -20,10 +20,11 @@ let queueDraw = function () {
 
 let draw = function (condition) {
   var date = new Date();
+  if (condition == undefined) condition = INIT;
 
   g.reset();
 
-  if (condition == INIT || condition == undefined) {
+  if (condition == INIT) {
     require("sphclock.background.js").drawBackground();
     require("sphclock.clock.js").drawClockBackground(53);
     require("sphclock.agenda.js").drawCalendar(date);
