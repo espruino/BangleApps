@@ -294,7 +294,7 @@ var locales = {
     temperature: '°C',
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%A %B %d %Y", "1": "%Y-%m-%d" }, // Sunday 1 March 2020 //  2020-03-01
+    datePattern: { 0: "%B %d %Y", "1": "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
