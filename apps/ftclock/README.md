@@ -4,12 +4,20 @@ A clock that tells when and where it's going to be [4:20](https://en.wikipedia.o
 
 ![screensot](screenshot.png) ![screenshot at 4:20](screenshot1.png)
 
-## Note
+## Generating `fourTwentyTz.js`
 
-Once in a while, there'd be updates to the [timezone database](https://timezonedb.com/download) which
-would require updating `fourTwentyTz.js`. I'll do my best to release a new version every time this happens,
-but if you ever need to do this yourself, just run `python mkFourTwentyTz.py` (after downloading the timezone CSV files.
-See comment at the top of the script).
+Once in a while we need to regenerate it for 2 reasons:
+
+* One or more places got in or out of daylight saving time (DST) mode.
+* The database saying _when_ places enter/exit DST mode got updated.
+
+I'll do my best to release a new version every time this happens,
+but if you ever need to do this yourself, here's how:
+
+* `cd` to the `ftclock` folder
+* If you haven't done so yet, run `npm install` there (this would create the `node_modules` folder).
+* Get and unzip the latest `timezone.csv.zip` from https://timezonedb.com/download
+* Run `npm run make`
 
 ## Creator
 

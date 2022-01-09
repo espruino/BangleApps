@@ -1,0 +1,15 @@
+{
+  "name": "mkfourtwentytz",
+  "version": "1.0.0",
+  "description": "Convert timezonedb.com CSV to fourTwentyTz.js for BangleJS ftclock app",
+  "main": "mkFourTwentyTz.js",
+  "scripts": {
+    "make": "node mkFourTwentyTz.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "csv": "^6.0.5"
+  }
+}
