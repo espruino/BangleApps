@@ -66,6 +66,7 @@ E.on('notify',msg=>{
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
     "com.apple.mobilephone": "Phone",
+    "com.apple.mobileslideshow": "Pictures",
     "com.apple.MobileSMS": "SMS Message",
     "com.apple.Passbook": "iOS Wallet",
     "com.apple.podcasts": "Podcasts",
@@ -83,6 +84,7 @@ E.on('notify',msg=>{
     "com.ifttt.ifttt" : "IFTTT",
     "com.jumbo.app" : "Jumbo",
     "com.linkedin.LinkedIn" : "LinkedIn",
+    "com.marktplaats.iphone": "Marktplaats",
     "com.microsoft.Office.Outlook" : "Outlook Mail",
     "com.nestlabs.jasper.release" : "Nest",
     "com.netflix.Netflix" : "Netflix",
@@ -90,6 +92,7 @@ E.on('notify',msg=>{
     "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
+    "com.storytel.iphone": "Storytel",
     "com.strava.stravaride": "Strava",
     "com.tinyspeck.chatlyio": "Slack",
     "com.toyopagroup.picaboo": "Snapchat",
@@ -98,6 +101,8 @@ E.on('notify',msg=>{
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
     "com.zhiliaoapp.musically": "TikTok",
+    "io.robbie.HomeAssistant": "Home Assistant",
+    "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
@@ -118,7 +123,7 @@ E.on('notify',msg=>{
     new : msg.new,
     title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
     subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
-    body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer)
+    body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer) || "Cannot display"
   });
   // TODO: posaction/negaction?
 });

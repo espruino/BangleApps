@@ -16,7 +16,9 @@ You can record
 * **Time** The current time
 * **GPS** GPS Latitude, Longitude and Altitude
 * **Steps** Steps counted by the step counter
-* **HR** Heart rate
+* **HR** Heart rate and confidence
+* **BAT** Battery percentage and voltage
+* **Core** CoreTemp body temperature
 
 **Note:** It is possible for other apps to record information using this app
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`
@@ -24,4 +26,4 @@ function in `widget.js` for more information.
 
 ## Tips
 
-When recording GPS, it usually takes several minutes for the watch to get a [GPS fix](https://en.wikipedia.org/wiki/Time_to_first_fix). There is a grey satellite symbol, which you will see turn red when you get an actual GPS Fix. You can [upload assistant files](https://banglejs.com/apps/#assisted%20gps%20update) to speed up the time spent on getting a GPS fix.
+When recording GPS, it usually takes several minutes for the watch to get a [GPS fix](https://en.wikipedia.org/wiki/Time_to_first_fix). There is a red satellite symbol, which you will see turn green when you get an actual GPS Fix. You can [upload assistant files](https://banglejs.com/apps/#assisted%20gps%20update) to speed up the time spent on getting a GPS fix.

@@ -16,7 +16,7 @@ function scheduleExpiry(json) {
 
 function update(weatherEvent) {
   let json = storage.readJSON('weather.json')||{};
-  
+
   if (weatherEvent) {
     let weather = weatherEvent.clone();
     delete weather.t;
@@ -53,9 +53,19 @@ exports.get = function() {
 
 scheduleExpiry(storage.readJSON('weather.json')||{});
 
+/**
+ *
+ * @param cond Weather condition, as one of:
+ *             {number} code: (Preferred form) https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+ *             {string} weather description (in English: breaks for other languages!)
+ *             {object} use cond.code if present, or fall back to cond.txt
+ * @param x Left
+ * @param y Top
+ * @param r Icon Size
+ */
 exports.drawIcon = function(cond, x, y, r) {
   var palette;
-  
+
   if (B2) {
     if (g.theme.dark) {
       palette = {
@@ -101,7 +111,7 @@ exports.drawIcon = function(cond, x, y, r) {
       };
     }
   }
-  
+
   function drawSun(x, y, r) {
     g.setColor(palette.sun);
     g.fillCircle(x, y, r);
@@ -249,36 +259,82 @@ exports.drawIcon = function(cond, x, y, r) {
     g.setColor(g.theme.fg).setFontAlign(0, 0).setFont('Vector', r*2).drawString("?", x+r/10, y+r/6);
   }
 
-  function chooseIcon(condition) {
-    if (!condition) return () => {};
-    condition = condition.toLowerCase();
-    if (condition.includes("thunderstorm")) return drawThunderstorm;
-    if (condition.includes("freezing")||condition.includes("snow")||
-      condition.includes("sleet")) {
+  /*
+  * Choose weather icon to display based on weather description
+  */
+  function chooseIconByTxt(txt) {
+    if (!txt) return () => {};
+    txt = txt.toLowerCase();
+    if (txt.includes("thunderstorm")) return drawThunderstorm;
+    if (txt.includes("freezing")||txt.includes("snow")||
+      txt.includes("sleet")) {
       return drawSnow;
     }
-    if (condition.includes("drizzle")||
-      condition.includes("shower")) {
+    if (txt.includes("drizzle")||
+      txt.includes("shower")) {
       return drawRain;
     }
-    if (condition.includes("rain")) return drawShowerRain;
-    if (condition.includes("clear")) return drawSun;
-    if (condition.includes("few clouds")) return drawFewClouds;
-    if (condition.includes("scattered clouds")) return drawCloud;
-    if (condition.includes("clouds")) return drawBrokenClouds;
-    if (condition.includes("mist") ||
-      condition.includes("smoke") ||
-      condition.includes("haze") ||
-      condition.includes("sand") ||
-      condition.includes("dust") ||
-      condition.includes("fog") ||
-      condition.includes("ash") ||
-      condition.includes("squalls") ||
-      condition.includes("tornado")) {
+    if (txt.includes("rain")) return drawShowerRain;
+    if (txt.includes("clear")) return drawSun;
+    if (txt.includes("few clouds")) return drawFewClouds;
+    if (txt.includes("scattered clouds")) return drawCloud;
+    if (txt.includes("clouds")) return drawBrokenClouds;
+    if (txt.includes("mist") ||
+      txt.includes("smoke") ||
+      txt.includes("haze") ||
+      txt.includes("sand") ||
+      txt.includes("dust") ||
+      txt.includes("fog") ||
+      txt.includes("ash") ||
+      txt.includes("squalls") ||
+      txt.includes("tornado")) {
       return drawMist;
     }
     return drawUnknown;
   }
 
+  /*
+  * Choose weather icon to display based on weather conditition code
+  * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+  */
+  function chooseIconByCode(code) {
+    const codeGroup = Math.round(code / 100);
+    switch (codeGroup) {
+      case 2: return drawThunderstorm;
+      case 3: return drawRain;
+      case 5:
+        switch (code) {
+          case 511: return drawSnow;
+          case 520: return drawShowerRain;
+          case 521: return drawShowerRain;
+          case 522: return drawShowerRain;
+          case 531: return drawShowerRain;
+          default: return drawRain;
+        }
+      case 6: return drawSnow;
+      case 7: return drawMist;
+      case 8:
+        switch (code) {
+          case 800: return drawSun;
+          case 801: return drawFewClouds;
+          case 802: return drawCloud;
+          default: return drawBrokenClouds;
+        }
+      default: return drawUnknown;
+    }
+  }
+
+  function chooseIcon(cond) {
+    if (typeof (cond)==="object") {
+      if ("code" in cond) return chooseIconByCode(cond.code);
+      if ("txt" in cond) return chooseIconByTxt(cond.txt);
+    } else if (typeof (cond)==="number") {
+      return chooseIconByCode(cond.code);
+    } else if (typeof (cond)==="string") {
+      return chooseIconByTxt(cond.txt);
+    }
+    return drawUnknown;
+  }
   chooseIcon(cond)(x, y, r);
+
 };

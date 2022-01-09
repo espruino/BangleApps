@@ -3,3 +3,4 @@
 0.03: Display only minutes:seconds when less than 1 hour left
 0.04: Change to 7 segment font, move to top widget bar
       Better auto-update behaviour, less RAM used
+0.05: Fix error running app on new firmwares (fix #1140)

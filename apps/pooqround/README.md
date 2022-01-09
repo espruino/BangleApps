@@ -20,8 +20,7 @@ you can quickly alter the number of ‘hands’ on the display. When the watch i
 or down to remove the distraction. There's also a setting that displays the second hand, but only if the watch is perfectly face-to-the-sky,
 in case you want the ability to check the _exact_ time, hands free, without the impact on battery life this usually entails.
 
-In some versions of the Bangle.js firmware, the backlight doesn't come on automatically when you twist your wrist. There's currently a workaround 
-for this integrated into the watchface; you can disable it in the menu, if you prefer.
+While charging the main display automatically rotates so that noon is up. This can be disabled.
 
 ## Limitations
 

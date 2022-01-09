@@ -2,24 +2,43 @@
   var log = function() {};//print
   var gatt;
   var status;
-
-  Bangle.isHRMOn = function() {
+  
+  var origIsHRMOn = Bangle.isHRMOn;
+  
+  Bangle.isBTHRMOn = function(){
     return (status=="searching" || status=="connecting") || (gatt!==undefined);
   }
-  Bangle.setHRMPower = function(isOn, app) {
+  
+  Bangle.isHRMOn = function() {
+    var settings = require('Storage').readJSON("bthrm.json", true) || {};
+
+    print(settings);
+    if (settings.enabled && !settings.replace){
+        return origIsHRMOn();
+    } else if (settings.enabled && settings.replace){
+        return Bangle.isBTHRMOn();
+    }
+    return origIsHRMOn() || Bangle.isBTHRMOn();
+  }
+  
+  Bangle.setBTHRMPower = function(isOn, app) {
+    
+
+    var settings = require('Storage').readJSON("bthrm.json", true) || {};
+  
     // Do app power handling
     if (!app) app="?";
-    log("setHRMPower ->", isOn, app);
+    log("setBTHRMPower ->", isOn, app);
     if (Bangle._PWR===undefined) Bangle._PWR={};
-    if (Bangle._PWR.HRM===undefined) Bangle._PWR.HRM=[];
-    if (isOn && !Bangle._PWR.HRM.includes(app)) Bangle._PWR.HRM.push(app);
-    if (!isOn && Bangle._PWR.HRM.includes(app)) Bangle._PWR.HRM = Bangle._PWR.HRM.filter(a=>a!=app);
-    isOn = Bangle._PWR.HRM.length;
+    if (Bangle._PWR.BTHRM===undefined) Bangle._PWR.BTHRM=[];
+    if (isOn && !Bangle._PWR.BTHRM.includes(app)) Bangle._PWR.BTHRM.push(app);
+    if (!isOn && Bangle._PWR.BTHRM.includes(app)) Bangle._PWR.BTHRM = Bangle._PWR.BTHRM.filter(a=>a!=app);
+    isOn = Bangle._PWR.BTHRM.length;
     // so now we know if we're really on
     if (isOn) {
-      log("setHRMPower on", app);
-      if (!Bangle.isHRMOn()) {
-        log("HRM not already on");
+      log("setBTHRMPower on", app);
+      if (!Bangle.isBTHRMOn()) {
+        log("BTHRM not already on");
         status = "searching";
         NRF.requestDevice({ filters: [{ services: ['180D'] }] }).then(function(device) {
           log("Found device "+device.id);
@@ -49,7 +68,11 @@
             if (flags&16) {
               var interval = dv.getUint16(idx,1); // in milliseconds
             }*/
-            Bangle.emit('HRM',{
+            
+            
+            var eventName = settings.replace ? "HRM" : "BTHRM";
+            
+            Bangle.emit(eventName, {
               bpm:bpm,
               confidence:100
             });
@@ -65,15 +88,27 @@
         });
       }
     } else { // not on
-      log("setHRMPower off", app);
+      log("setBTHRMPower off", app);
       if (gatt) {
-        log("HRM connected - disconnecting");
+        log("BTHRM connected - disconnecting");
         status = undefined;
         try {gatt.disconnect();}catch(e) {
-          log("HRM disconnect error", e);
+          log("BTHRM disconnect error", e);
         }
         gatt = undefined;
       }
     }
   };
+  
+  var origSetHRMPower = Bangle.setHRMPower;
+    
+  Bangle.setHRMPower = function(isOn, app) {
+    var settings = require('Storage').readJSON("bthrm.json", true) || {};
+    if (settings.enabled || !isOn){
+      Bangle.setBTHRMPower(isOn, app);
+    }
+    if (settings.enabled && !settings.replace || !isOn){
+      origSetHRMPower(isOn, app);
+    }
+  }
 })();
