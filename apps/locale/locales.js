@@ -283,6 +283,24 @@ var locales = {
     day: "söndag,måndag,tisdag,onsdag,torsdag,fredag,lördag",
     trans: { yes: "ja", Yes: "Ja", no: "nej", No: "Nej", ok: "ok", on: "on", off: "off" }
   },
+  "en_SE": { // Swedish localisation with English text
+    lang: "en_SE",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "kr",
+    int_curr_symbol: "SKR",
+    speed: 'kmh',
+    distance: { "0": "m", "1": "km" },
+    temperature: '°C',
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%B %d %Y", "1": "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
   "en_NZ": {
     lang: "en_NZ",
     decimal_point: ".",
