@@ -1,4 +1,4 @@
-exports.wwoCodeToIcon = function (code) {
+wwoCodeToIcon = function (code) {
   switch (code) {
     case 113:
       return 0; // Clear
@@ -60,7 +60,7 @@ exports.wwoCodeToIcon = function (code) {
   }
 };
 
-exports.getIcon = function (icon, night) {
+getIcon = function (icon, night) {
   switch (icon) {
     case 0:
       return icon_clear(night);
@@ -161,7 +161,7 @@ function icon_unknown() {
   );
 }
 
-exports.getDayWeather = function (json) {
+getDayWeather = function (json) {
   let codes = json.hourly.map((v) => wwoCodeToIcon(v.weatherCode));
   return mode(codes);
 };
@@ -177,3 +177,7 @@ function mode(a) {
     [0, null]
   )[1];
 }
+
+exports.wwoCodeToIcon = wwoCodeToIcon
+exports.getIcon = getIcon
+exports.getDayWeather = getDayWeather
