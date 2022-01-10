@@ -53,5 +53,4 @@ exports.drawBattery = function (x, y, steps, step_size) {
   g.setColor("#000");
   g.setFontAlign(0, 0);
   g.drawString(`${battery == 100 ? "**" : battery}`, x + 4, y + 8);
-  queueDraw();
 };
