@@ -1,7 +1,7 @@
 {
   "id": "menuwheel",
   "name": "Wheel Menus",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Replace Bangle.js 2's menus with a version that contains variable-size text and a back button",
   "readme": "README.md",
   "icon": "icon.png",

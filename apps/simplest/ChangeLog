@@ -1,3 +1,6 @@
 0.01: Modified for use with new bootloader and firmware
 0.02: Use Bangle.setUI for button/launcher handling
 0.03: Fix display for Bangle 2
+0.04: Use queueDraw(), update every minute, respect theme, use Lato font
+0.05: Decided against custom font as it inceases the code size
+      minimalism is useful when narrowing down issues
