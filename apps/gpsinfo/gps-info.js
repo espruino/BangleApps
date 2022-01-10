@@ -110,12 +110,16 @@ function onGPS(fix) {
     layout.maidenhead.label = "Maidenhead: "+maidenhead;
     layout.render();
   } else {
-    if (listenerGPSraw == 0) {
-      Bangle.on('GPS-raw', onGPSraw);
-      listenerGPSraw = 1;
+    if (fix.satelites != lastFix.satelites) {
+      layout.clear(layout.sat);
+      layout.sat.label = fix.satellites;
+      layout.render(layout.sat);
     }
-    layout.sat.label = fix.satellites;
-    layout.progress.label = "in view: " + SATinView;
+    if (SATinView != lastFix.SATinView) {
+      layout.clear(layout.progress);
+      layout.progress.label = "in view: " + SATinView;
+      layout.render(layout.progress);
+    }
   }
   //layout.render();
 
