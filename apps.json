@@ -1717,17 +1717,18 @@
   {
     "id": "wohrm",
     "name": "Workout HRM",
-    "version": "0.08",
+    "version": "0.09",
     "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
     "icon": "app.png",
     "type": "app",
     "tags": "hrm,workout",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-workout-HRM-screenshot.png"}],
     "storage": [
       {"name":"wohrm.app.js","url":"app.js"},
+      {"name":"wohrm.settings.js","url":"settings.js"},
       {"name":"wohrm.img","url":"app-icon.js","evaluate":true}
     ]
   },
@@ -1893,13 +1894,15 @@
   {
     "id": "widhwt",
     "name": "Hand Wash Timer",
-    "version": "0.01",
-    "description": "Swipe your wrist over the watch face to start your personal Bangle.js hand wash timer for 35 sec. Start washing after the short buzz and stop after the long buzz.",
+    "version": "0.02",
+    "description": "On Bangle.js 1 swipe your wrist over the watch face to start your personal Bangle.js 1 hand wash timer. On Bangle.js2 the Pattern Launcher is recommended to start the timer. Start washing after the short buzz and stop after the long buzz 35sec. later.",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,tool",
-    "supports": ["BANGLEJS"],
+    "allow_emulator": true,
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "storage": [
+      {"name":"widhwt.app.js","url":"app.js"},
       {"name":"widhwt.wid.js","url":"widget.js"}
     ]
   },
@@ -3794,7 +3797,7 @@
   {
     "id": "simplest",
     "name": "Simplest Clock",
-    "version": "0.03",
+    "version": "0.05",
     "description": "The simplest working clock, acts as a tutorial piece",
     "icon": "simplest.png",
     "screenshots": [{"url":"screenshot_simplest.png"}],
@@ -4215,7 +4218,7 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.10",
+    "version": "0.11",
     "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
@@ -4242,7 +4245,7 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.04",
+    "version": "0.05",
     "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
     "readme":"README.md",
     "icon": "app.png",
@@ -4805,7 +4808,7 @@
   {
     "id": "menuwheel",
     "name": "Wheel Menus",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Replace Bangle.js 2's menus with a version that contains variable-size text and a back button",
     "readme": "README.md",
     "icon": "icon.png",
@@ -5437,7 +5440,7 @@
   },
   {
     "id": "flipper",
-    "name": "flipper",
+    "name": "Flipper",
     "version": "0.01",
     "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
     "readme":"README.md",
@@ -5464,6 +5467,23 @@
     "storage": [
       {"name":"ruuviwatch.app.js","url":"ruuviwatch.app.js"},
       {"name":"ruuviwatch.img","url":"ruuviwatch.app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "limelight",
+    "name": "Limelight",
+    "version": "0.01",
+    "description": "Simple analogue clock (with configurable fonts) based on the work of @Andreas_Rozek (Simple_Clock)",
+    "icon": "limelight.png",
+    "readme":"README.md",
+    "screenshots": [{"url":"screenshot_limelight.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"limelight.app.js","url":"limelight.app.js"},
+      {"name":"limelight.settings.js","url":"limelight.settings.js"},
+      {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
     ]
   }
 ]
