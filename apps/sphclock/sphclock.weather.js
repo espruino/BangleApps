@@ -4,9 +4,6 @@
 
 // Source: http://www.worldweatheronline.com/feed/wwoConditionCodes.txt
 
-require("FontLECO1976Regular").add20(Graphics);
-require("FontLECO1976Regular").add12(Graphics);
-
 exports.drawWeather = function () {
   let hoje = new Date();
 

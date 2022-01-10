@@ -6,6 +6,7 @@
     "type": "app",
     "supports": ["BANGLEJS2"],
     "version": "0.2",
+    "dependencies": { "leco1976": "app" },
     "description": "Vintage menu style calendar app",
     "icon": "icon.png",
     "readme": "README.MD",
@@ -28,7 +29,11 @@
     "type": "clock",
     "supports": ["BANGLEJS2"],
     "version": "0.1",
-    "dependencies": { "sphcalendar": "app", "sphweather": "app" },
+    "dependencies": {
+      "sphcalendar": "app",
+      "sphweather": "app",
+      "leco1976": "app"
+    },
     "description": "[WIP] Vintage menu style clock with weather icons and schedule",
     "icon": "icon.png",
     "readme": "README.MD",
@@ -64,6 +69,7 @@
     "type": "app",
     "supports": ["BANGLEJS2"],
     "version": "0.1",
+    "dependencies": { "leco1976": "app" },
     "description": "Vintage menu style weather app, with data from json",
     "icon": "icon.png",
     "readme": "README.MD",
@@ -79,6 +85,21 @@
     ],
     "tags": "weather, graph, forecast, sph, vintage, menu",
     "allow_emulator": true
+  },
+  {
+    "id": "leco1976",
+    "name": "Font LECO 1976 Regular",
+    "shortName": "Font LECO 1976 Regular",
+    "type": "widget",
+    "supports": ["BANGLEJS2"],
+    "version": "0.1",
+    "description": "Font LECO 1976 Regular with minor adjustments",
+    "icon": "icon.png",
+    "screenshots": [{ "url": "FontLECO1976Regular.png" }],
+    "readme": "README.MD",
+    "storage": [
+      { "name": "FontLECO1976Regular.js", "url": "FontLECO1976Regular.js" }
+    ],
+    "tags": "font"
   }
-
 ]

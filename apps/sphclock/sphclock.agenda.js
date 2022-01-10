@@ -1,9 +1,5 @@
 "use strict";
 
-require("FontLECO1976Regular").add20(Graphics);
-require("FontLECO1976Regular").add14(Graphics);
-require("FontLECO1976Regular").add12(Graphics);
-
 exports.drawCalendar = function (date) {
   let dateStr = date.getDate();
   let dowStr = require("locale")

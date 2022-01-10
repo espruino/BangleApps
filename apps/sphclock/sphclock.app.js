@@ -6,6 +6,12 @@ const TIMER = 1;
 const CHARGE_CHANGE = 2;
 const LOCK_CHANGE = 3;
 
+require("FontLECO1976Regular.js").add42(Graphics);
+require("FontLECO1976Regular.js").add20(Graphics);
+require("FontLECO1976Regular.js").add14(Graphics);
+require("FontLECO1976Regular.js").add12(Graphics);
+require("FontLECO1976Regular.js").add11(Graphics);
+
 // schedule a draw for the next minute
 let queueDraw = function () {
   if (drawTimeout) clearTimeout(drawTimeout);

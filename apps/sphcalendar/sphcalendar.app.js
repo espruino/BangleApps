@@ -1,4 +1,4 @@
-require("FontLECO1976Regular").add14(Graphics);
+require("FontLECO1976Regular.js").add14(Graphics);
 
 let getDows = function () {
   let date = new Date();

@@ -5,7 +5,7 @@ Based on LECO 1976 with a small variation on really small numbers (removed serif
 Usage:
 
 ```
-require("FontLECO1976Regular").add14(Graphics);
+require("FontLECO1976Regular.js").add14(Graphics);
 g.setFontLECO1976Regular14();
 g.drawString("0123456789");
 ```
