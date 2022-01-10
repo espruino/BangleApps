@@ -40,7 +40,10 @@ The main menu contains several settings covering Anton clock in general.
 * **Show Weekday** - Weekday is shown in the time presentation without seconds.
 Weekday name depends on the current locale.
 If seconds are shown, the weekday is never shown as there is not enough space on the watch face.
-**Show Weeknumber** - Weeknumber (ISO-8601) is shown.
+* **Show Weeknumber** - Week-number (ISO-8601) is shown. (default: Off)
+when weekday name "Off" it displays week #:<num>
+when weekday name "On": weekday name is cut at 6th position and .#<week num> is added
+If seconds are shown, the week number is never shown as there is not enough space on the watch face.
 * **Vector font** - Use the built-in vector font for dates and weekday.
 This can improve readability.
 Otherwise, a scaled version of the built-in 6x8 pixels font is used.
