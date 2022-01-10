@@ -1,8 +1,5 @@
 E.showMenu = function(items) {
   g.clearRect(Bangle.appRect); // clear screen if no menu supplied
-  // clean up back button listener
-  if (Bangle.backHandler) Bangle.removeListener('touch', Bangle.backHandler)
-  delete Bangle.backHandler;
   if (!items) {
     Bangle.setUI();
     return;
@@ -206,8 +203,13 @@ E.showMenu = function(items) {
         if (b===1) back();
       }
     }
-    // note: backHandler is cleaned up at the top of this file
     Bangle.on('touch', Bangle.backHandler);
   }
   return l;
 };
+// setUI now also needs to clear up our back button touch handler
+Bangle.setUI = (old => function() {
+  if (Bangle.backHandler) Bangle.removeListener("touch", Bangle.backHandler);
+  delete Bangle.backHandler;
+  return old.apply(this, arguments);
+})(Bangle.setUI);
