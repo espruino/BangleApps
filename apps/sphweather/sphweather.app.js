@@ -10,6 +10,9 @@ drawBackground = function () {
 function draw() {
   drawBackground();
 
+  let hoje = dateToISO(new Date());
+  let hora = new Date().getHours();
+
   g.setColor("#000");
   g.setFontAlign(0, 0);
 
@@ -25,7 +28,6 @@ function draw() {
   });
 
   let weather = require("Storage").readJSON("sphclock.json", false).weather;
-  let hour = new Date().getHours();
 
   if (weather) {
     g.setColor("#000");
@@ -91,19 +93,19 @@ function draw() {
 
         g.drawRect(x, y, x + 4, max_y);
       }
-    }
 
-    // Marcação da hora atual
-    g.setColor("#000");
-    g.drawLine(min_x + hour * 2, max_y, min_x + hour * 2, min_y);
-    g.setFontAlign(0, -1);
-    g.setFont("4x6");
+      if (weather[d].date == hoje) {
+        // Marcação da hora atual
+        g.setColor("#000");
+        g.drawLine(min_x + hora * 2 + d * 48, max_y, min_x + hora * 2 + d * 48, min_y);
+        g.setFontAlign(0, -1);
+        g.setFont("4x6");
+      }
+    }
 
     // Forecast icons
     counter = 0;
     let ic = require("sphweather.icons.js");
-    let hoje = dateToISO(new Date());
-    let hora = new Date().getHours();
 
     for (let d = 0; d < 3 && counter <= 5; d++) {
       if (weather[d].date < hoje) continue;
