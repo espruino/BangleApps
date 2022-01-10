@@ -4425,7 +4425,7 @@
     "name": "Q Alarm and Timer",
     "shortName": "Q Alarm",
     "icon": "app.png",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Alarm and timer app with days of week and 'hard' option.",
     "tags": "tool,alarm,widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
@@ -5081,10 +5081,10 @@
   { "id": "circlesclock",
     "name": "Circles clock",
     "shortName":"Circles clock",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A clock with circles for different data at the bottom in a probably familiar style",
     "icon": "app.png",
-    "screenshots": [{"url":"screenshot.png"}],
+    "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}],
     "dependencies": {"widpedom":"app"},
     "type": "clock",
     "tags": "clock",
@@ -5133,6 +5133,24 @@
     ]
   },
   {
+    "id": "mmind",
+    "name": "Classic Mind Game",
+    "shortName":"Master Mind",
+    "icon": "mmind.png",
+    "version":"0.01",
+    "description": "This is the classic game for masterminds",
+    "screenshots": [{"url":"screenshot_mmind.png"}],
+    "type": "app",
+    "tags": "game",
+    "readme":"README.md",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"mmind.app.js","url":"mmind.app.js"},
+      {"name":"mmind.img","url":"mmind.icon.js","evaluate":true}
+     ]
+   }, 
+   {
     "id": "presentor",
     "name": "Presentor",
     "version": "3.0",
