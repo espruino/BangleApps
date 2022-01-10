@@ -25,7 +25,7 @@
     '< Back': back,
     'Row 1': {
       value: 0 | data_options.indexOf(settings.dataRow1),
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow1 = data_options[v];
@@ -34,7 +34,7 @@
     },
     'Row 2': {
       value: 0 | data_options.indexOf(settings.dataRow2),
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow2 = data_options[v];
@@ -43,7 +43,7 @@
     },
     'Row 3': {
       value: 0 | data_options.indexOf(settings.dataRow3),
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow3 = data_options[v];
