@@ -42,7 +42,7 @@ let drawCalendar = function () {
   g.setColor("#000");
   g.setFontAlign(0, 0);
 
-  let firstDay = new Date(year, month).getDay();
+  let firstDay = new Date(year, month, 1).getDay();
 
   // Mês
   g.fillRect(0, 0, 176, 25);
@@ -104,10 +104,19 @@ drawCalendar();
 Bangle.on("touch", function (button, xy) {
   if (xy.y <= 60) {
     // Prev month
-    if (xy.x < 60) currentDate.setMonth(currentDate.getMonth() - 1);
+    if (xy.x < 60) {
+      if (currentDate.getMonth() == 0)
+        currentDate.setFullYear(currentDate.getFullYear() - 1);
+      currentDate.setMonth(currentDate.getMonth() - 1);
+    }
 
     // Next month
-    if (xy.x > 116) currentDate.setMonth(currentDate.getMonth() + 1);
+    if (xy.x > 116) {
+      if (currentDate.getMonth() == 11)
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
 
     if (xy.x < 60 || xy.x > 116) {
       Bangle.buzz(100, 0.1);
