@@ -171,10 +171,4 @@ Bangle.on("touch", function (button, xy) {
   Bangle.buzz(100, 0.1).then(() => load());
 });
 
-Bangle.on("lock", function () {
-  if (Bangle.isLocked()) {
-    load();
-  }
-});
-
 draw();
