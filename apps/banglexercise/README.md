@@ -1,4 +1,4 @@
-# Banglexercise
+# BanglExercise
 
 Can automatically track exercises while wearing the Bangle.js watch.
 
