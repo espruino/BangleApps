@@ -4,12 +4,20 @@
 
 // Source: http://www.worldweatheronline.com/feed/wwoConditionCodes.txt
 
+function dateToISO(date) {
+  ano = date.getFullYear();
+  mes = ("00" + date.getMonth() + 1).slice(-2);
+  dia = ("00" + date.getDate()).slice(-2);
+  return ano + "-" + mes + "-" + dia;
+}
+
 exports.drawWeather = function () {
   let hoje = new Date();
+  hoje = dateToISO(date);
 
   let weather = require("Storage").readJSON("sphclock.json", false).weather;
   if (weather) {
-    weather = weather.filter((v) => v.date >= hoje.toISOString().split("T")[0]);
+    weather = weather.filter((v) => v.date >= hoje);
 
     g.setColor("#000");
     g.drawRect(65, 7, 152, 49);
@@ -23,7 +31,7 @@ exports.drawWeather = function () {
 
     g.setFontLECO1976Regular12();
     g.setFontAlign(0, -1);
-    sphweather = require("sphweather.icons.js")
+    sphweather = require("sphweather.icons.js");
     for (let i = 0; i < 3; i++) {
       if (i < weather.length) {
         let icon = sphweather.getIcon(sphweather.getDayWeather(weather[i]));

@@ -102,17 +102,14 @@ function draw() {
     // Forecast icons
     counter = 0;
     let ic = require("sphweather.icons.js");
-    let hoje = new Date();
+    let hoje = dateToISO(new Date());
+    let hora = new Date().getHours();
 
     for (let d = 0; d < 3 && counter <= 5; d++) {
-      if (weather[d].date < hoje.toISOString().split("T")[0]) continue;
+      if (weather[d].date < hoje) continue;
 
       for (let i = 0; i < 8 && counter <= 5; i++) {
-        if (
-          weather[d].date == hoje.toISOString().split("T")[0] &&
-          i * 3 < hoje.getHours() - 2
-        )
-          continue;
+        if (weather[d].date == hoje && i * 3 < hora - 2) continue;
 
         g.drawImage(
           ic.getIcon(
@@ -158,6 +155,13 @@ function drawStringWithFullBorder(text, color, border, x, y) {
   g.drawString(text, x + 1, y + 1);
   g.setColor(color);
   g.drawString(text, x, y);
+}
+
+function dateToISO(date) {
+  ano = date.getFullYear();
+  mes = ("00" + date.getMonth() + 1).slice(-2);
+  dia = ("00" + date.getDate()).slice(-2);
+  return ano + "-" + mes + "-" + dia;
 }
 
 Bangle.on("touch", function (button, xy) {
