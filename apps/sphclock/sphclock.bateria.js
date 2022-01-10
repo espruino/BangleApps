@@ -1,11 +1,9 @@
-require("FontLECO1976Regular").add11(Graphics);
-
 exports.drawBattery = function (x, y, steps, step_size) {
   steps = steps || 6;
   step_size = step_size || 4;
   // Battery
-  battery = E.getBattery();
-  g.setFontLECO1976sph11();
+  let battery = E.getBattery();
+  g.setFontLECO1976Regular11();
   if (Bangle.isCharging()) g.setColor("#00F");
   else g.setColor("#000");
   g.drawPoly(
@@ -54,6 +52,6 @@ exports.drawBattery = function (x, y, steps, step_size) {
 
   g.setColor("#000");
   g.setFontAlign(0, 0);
-  g.drawString(`${battery}`, x + 4, y + 8);
+  g.drawString(`${battery == 100 ? "**" : battery}`, x + 4, y + 8);
   queueDraw();
 };
