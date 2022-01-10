@@ -28,7 +28,7 @@
     "type": "clock",
     "supports": ["BANGLEJS2"],
     "version": "0.1",
-    "dependencies": { "sphcalendar": "app" },
+    "dependencies": { "sphcalendar": "app", "sphweather": "app" },
     "description": "[WIP] Vintage menu style clock with weather icons and schedule",
     "icon": "icon.png",
     "readme": "README.MD",
@@ -39,7 +39,6 @@
       { "name": "sphclock.background.js", "url": "sphclock.background.js" },
       { "name": "sphclock.bateria.js", "url": "sphclock.bateria.js" },
       { "name": "sphclock.clock.js", "url": "sphclock.clock.js" },
-      { "name": "sphclock.fonts.js", "url": "sphclock.fonts.js" },
       { "name": "sphclock.lock.js", "url": "sphclock.lock.js" },
       { "name": "sphclock.weather.js", "url": "sphclock.weather.js" },
       {
@@ -71,6 +70,7 @@
     "screenshots": [{ "url": "screenshot.png" }],
     "storage": [
       { "name": "sphweather.app.js", "url": "sphweather.app.js" },
+      { "name": "sphweather.icons.js", "url": "sphweather.icons.js" },
       {
         "name": "sphweather.img",
         "url": "sphweather.app-icon.js",
