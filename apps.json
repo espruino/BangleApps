@@ -3797,7 +3797,7 @@
   {
     "id": "simplest",
     "name": "Simplest Clock",
-    "version": "0.03",
+    "version": "0.05",
     "description": "The simplest working clock, acts as a tutorial piece",
     "icon": "simplest.png",
     "screenshots": [{"url":"screenshot_simplest.png"}],
@@ -4218,7 +4218,7 @@
     "id": "pastel",
     "name": "Pastel Clock",
     "shortName": "Pastel",
-    "version": "0.10",
+    "version": "0.11",
     "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
     "icon": "pastel.png",
     "dependencies": {"mylocation":"app", "widpedom":"app","weather":"app"},
@@ -5440,7 +5440,7 @@
   },
   {
     "id": "flipper",
-    "name": "flipper",
+    "name": "Flipper",
     "version": "0.01",
     "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
     "readme":"README.md",
@@ -5467,6 +5467,23 @@
     "storage": [
       {"name":"ruuviwatch.app.js","url":"ruuviwatch.app.js"},
       {"name":"ruuviwatch.img","url":"ruuviwatch.app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "limelight",
+    "name": "Limelight",
+    "version": "0.01",
+    "description": "Simple analogue clock (with configurable fonts) based on the work of @Andreas_Rozek (Simple_Clock)",
+    "icon": "limelight.png",
+    "readme":"README.md",
+    "screenshots": [{"url":"screenshot_limelight.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"limelight.app.js","url":"limelight.app.js"},
+      {"name":"limelight.settings.js","url":"limelight.settings.js"},
+      {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
     ]
   }
 ]
