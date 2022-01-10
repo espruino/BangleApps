@@ -6,6 +6,8 @@ const TIMER = 1;
 const CHARGE_CHANGE = 2;
 const LOCK_CHANGE = 3;
 
+let lastDate;
+
 require("FontLECO1976Regular.js").add42(Graphics);
 require("FontLECO1976Regular.js").add20(Graphics);
 require("FontLECO1976Regular.js").add14(Graphics);
@@ -22,16 +24,17 @@ let queueDraw = function () {
 };
 
 let draw = function (condition) {
-  var date = new Date();
-  if (condition == undefined) condition = INIT;
+  date = new Date();
+  var currentDate = require("locale").date(date, 1);
 
   g.reset();
 
-  if (condition == INIT) {
+  if (condition == INIT || lastDate != currentDate) {
     require("sphclock.background.js").drawBackground();
     require("sphclock.clock.js").drawClockBackground(53);
     require("sphclock.agenda.js").drawCalendar(date);
     require("sphclock.weather.js").drawWeather();
+    lastDate = currentDate;
   }
 
   if (condition == INIT || condition == TIMER || condition == LOCK_CHANGE) {
