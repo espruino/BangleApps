@@ -5,9 +5,6 @@ const INIT = 0;
 const TIMER = 1;
 const CHARGE_CHANGE = 2;
 const LOCK_CHANGE = 3;
-const CALENDAR = 4;
-
-require("sphclock.fonts.js");
 
 // schedule a draw for the next minute
 let queueDraw = function () {

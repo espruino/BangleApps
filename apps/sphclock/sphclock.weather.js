@@ -4,6 +4,9 @@
 
 // Source: http://www.worldweatheronline.com/feed/wwoConditionCodes.txt
 
+require("FontLECO1976Regular").add20(Graphics);
+require("FontLECO1976Regular").add12(Graphics);
+
 function wwoCodeToIcon(code) {
   switch (code) {
     case 113:
@@ -187,7 +190,7 @@ exports.drawWeather = function () {
     g.setColor("#F00");
     g.fillRect(67, 33, 150, 47);
 
-    g.setFontLECO1976sph12();
+    g.setFontLECO1976Regular12();
     g.setFontAlign(0, -1);
     for (let i = 0; i < 3; i++) {
       if (i < weather.length) {
@@ -200,7 +203,7 @@ exports.drawWeather = function () {
         g.setColor("#888");
         g.drawString("?", 67 + i * 30 + 12, 13);
         let temp = "-";
-        g.setFontLECO1976sph12();
+        g.setFontLECO1976Regular12();
       }
 
       g.setColor("#000");

@@ -1,3 +1,5 @@
+require("FontLECO1976Regular").add42(Graphics);
+
 exports.drawClock = function (date, y) {
   var timeStr = require("locale").time(date, 1);
 

@@ -1,5 +1,9 @@
 "use strict";
 
+require("FontLECO1976Regular").add20(Graphics);
+require("FontLECO1976Regular").add14(Graphics);
+require("FontLECO1976Regular").add12(Graphics);
+
 exports.drawCalendar = function (date) {
   let dateStr = date.getDate();
   let dowStr = require("locale")
@@ -22,7 +26,7 @@ exports.drawCalendar = function (date) {
   g.setColor("#000");
   g.drawString(dowStr, 25, 44);
 
-  g.setFontLECO1976sph12();
+  g.setFontLECO1976Regular12();
 
   // Carrega a agenda pro próximo dia com eventos
   let schedules = require("Storage").readJSON("sphclock.json", false).schedule;

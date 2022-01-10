@@ -1,3 +1,5 @@
+require("FontLECO1976Regular").add11(Graphics);
+
 exports.drawBattery = function (x, y, steps, step_size) {
   steps = steps || 6;
   step_size = step_size || 4;

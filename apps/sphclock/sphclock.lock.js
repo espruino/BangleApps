@@ -1,3 +1,5 @@
+require("FontLECO1976Regular").add14(Graphics);
+
 exports.drawLocked1 = function () {
   x = 128;
   y = 5;
