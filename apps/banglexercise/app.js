@@ -9,10 +9,11 @@ let historyAvgZ = [];
 let historySlopeY = [];
 let historySlopeZ = [];
 
-let lastZeroPassType;
+let lastZeroPassCameFromPositive;
 let lastZeroPassTime = 0;
 
-let lastExerciseCmpltTime = 0;
+let lastExerciseCompletionTime = 0;
+let lastExerciseHalfCompletionTime = 0;
 
 let exerciseType = {
   "id": "",
@@ -22,19 +23,23 @@ let exerciseType = {
 // add new exercises here:
 const exerciseTypes = [{
     "id": "pushup",
-    "name": "Push ups",
+    "name": "push ups",
     "useYaxe": true,
     "useZaxe": false,
     "thresholdY": 2500,
-    "thresholdTime": 1400 // mininmal time between two push ups
+    "thresholdMinTime": 1400, // mininmal time between two push ups in ms
+    "thresholdMaxTime": 5000, // maximal time between two push ups in ms
+    "thresholdMinDurationTime": 700, // mininmal duration of half a push ups in ms
   },
   {
     "id": "curl",
-    "name": "Curls",
+    "name": "curls",
     "useYaxe": true,
     "useZaxe": false,
     "thresholdY": 2500,
-    "thresholdTime": 1000 // mininmal time between two curls
+    "thresholdMinTime": 1000, // mininmal time between two curls in ms
+    "thresholdMaxTime": 5000, // maximal time between two curls in ms
+    "thresholdMinDurationTime": 500, // mininmal duration of half a push ups in ms
   }
 ];
 let exerciseCounter = 0;
@@ -46,6 +51,10 @@ let recordActive = false;
 const avgSize = 6;
 
 let hrtValue;
+
+let settings = storage.readJSON("banglexercise.json", 1) || {
+  'buzz': true
+};
 
 function showMainMenu() {
   let menu;
@@ -64,7 +73,7 @@ function showMainMenu() {
   });
 
   if (exerciseCounter > 0) {
-    menu["----"] = {
+    menu["--------"] = {
       value: ""
     };
     menu["Last:"] = {
@@ -91,6 +100,8 @@ function accelHandler(accel) {
     if (historyY.length > avgSize / 2) {
       const avgY = E.sum(historyY) / historyY.length;
       historyAvgY.push([t, avgY]);
+      while (historyAvgY.length > avgSize)
+        historyAvgY.shift();
     }
   }
 
@@ -103,6 +114,8 @@ function accelHandler(accel) {
     if (historyZ.length > avgSize / 2) {
       const avgZ = E.sum(historyZ) / historyZ.length;
       historyAvgZ.push([t, avgZ]);
+      while (historyAvgZ.length > avgSize)
+        historyAvgZ.shift();
     }
   }
 
@@ -113,7 +126,6 @@ function accelHandler(accel) {
       const p1 = historyAvgY[l - 2];
       const p2 = historyAvgY[l - 1];
       const slopeY = (p2[1] - p1[1]) / (p2[0] / 1000 - p1[0] / 1000);
-
       // we use this data for exercises which can be detected by using Y axis data
       switch (exerciseType.id) {
         case "pushup":
@@ -154,7 +166,9 @@ function isValidYAxisExercise(slopeY, t) {
   if (!exerciseType) return;
 
   const thresholdY = exerciseType.thresholdY;
-  const thresholdTime = exerciseType.thresholdTime;
+  const thresholdMinTime = exerciseType.thresholdMinTime;
+  const thresholdMaxTime = exerciseType.thresholdMaxTime;
+  const thresholdMinDurationTime = exerciseType.thresholdMinDurationTime;
   const exerciseName = exerciseType.name;
 
   if (Math.abs(slopeY) >= thresholdY) {
@@ -164,43 +178,61 @@ function isValidYAxisExercise(slopeY, t) {
 
     const lSlopeY = historySlopeY.length;
     if (lSlopeY > 1) {
-      const p1 = historySlopeY[lSlopeY - 2][1];
-      const p2 = historySlopeY[lSlopeY - 1][1];
+      const p1 = historySlopeY[lSlopeY - 1][1];
+      const p2 = historySlopeY[lSlopeY - 2][1];
       if (p1 > 0 && p2 < 0) {
-        if (lastZeroPassType == "-+") {
+        if (lastZeroPassCameFromPositive == false) {
+          lastExerciseHalfCompletionTime = t;
           console.log(t, exerciseName + " half complete...");
 
-          layout.progress.label = "*";
+          layout.progress.label = "½";
           layout.render();
         }
 
-        lastZeroPassType = "+-";
+        lastZeroPassCameFromPositive = true;
         lastZeroPassTime = t;
       }
       if (p2 > 0 && p1 < 0) {
-        if (lastZeroPassType == "+-") {
-          // potential complete exercise. Let's check the time difference...
-          const tDiffLastPushUp = t - lastExerciseCmpltTime;
+        if (lastZeroPassCameFromPositive == true) {
+          const tDiffLastExercise = t - lastExerciseCompletionTime;
           const tDiffStart = t - tStart;
-          console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastPushUp), Math.round(tDiffStart));
+          console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastExercise), Math.round(tDiffStart));
 
-          if ((lastExerciseCmpltTime <= 0 && tDiffStart >= thresholdTime) || tDiffLastPushUp >= thresholdTime) {
-            console.log(t, exerciseName + " complete!!!");
+          // check minimal time between exercises:
+          if ((lastExerciseCompletionTime <= 0 && tDiffStart >= thresholdMinTime) || tDiffLastExercise >= thresholdMinTime) {
 
-            lastExerciseCmpltTime = t;
-            exerciseCounter++;
+            // check maximal time between exercises:
+            if (lastExerciseCompletionTime <= 0 || tDiffLastExercise <= thresholdMaxTime) {
 
-            layout.count.label = exerciseCounter;
-            layout.progress.label = "";
-            layout.render();
+              // check minimal duration of exercise:
+              const tDiffExerciseHalfCompletion = t - lastExerciseHalfCompletionTime;
+              if (tDiffExerciseHalfCompletion > thresholdMinDurationTime) {
+                console.log(t, exerciseName + " complete!!!");
 
-            Bangle.buzz(100, 0.4); // TODO make configurable
+                lastExerciseCompletionTime = t;
+                exerciseCounter++;
+
+                layout.count.label = exerciseCounter;
+                layout.progress.label = "";
+                layout.render();
+
+                if (settings.buzz)
+                  Bangle.buzz(100, 0.4);
+              } else {
+                console.log(t, exerciseName + " to quick for duration time threshold!");
+                lastExerciseCompletionTime = t;
+              }
+            } else {
+              console.log(t, exerciseName + " to slow for time threshold!");
+              lastExerciseCompletionTime = t;
+            }
           } else {
             console.log(t, exerciseName + " to quick for time threshold!");
+            lastExerciseCompletionTime = t;
           }
         }
 
-        lastZeroPassType = "-+";
+        lastZeroPassCameFromPositive = false;
         lastZeroPassTime = t;
       }
     }
@@ -216,9 +248,10 @@ function reset() {
   historySlopeY = [];
   historySlopeZ = [];
 
-  lastZeroPassType = "";
+  lastZeroPassCameFromPositive = undefined;
   lastZeroPassTime = 0;
-  lastExerciseCmpltTime = 0;
+  lastExerciseHalfCompletionTime = 0;
+  lastExerciseCompletionTime = 0;
   exerciseCounter = 0;
   tStart = 0;
 }
@@ -300,18 +333,18 @@ function startRecording() {
 
   Bangle.setPollInterval(80); // 12.5 Hz
   Bangle.on('accel', accelHandler);
-  Bangle.buzz(200, 1);
   tStart = new Date().getTime();
   recordActive = true;
+  if (settings.buzz)
+    Bangle.buzz(200, 1);
 }
 
 function stopRecording() {
   if (!recordActive) return;
+
   g.clear(1);
-
-  Bangle.setHRMPower(0, "banglexercise");
-
   Bangle.removeListener('accel', accelHandler);
+  Bangle.setHRMPower(0, "banglexercise");
   showMainMenu();
   recordActive = false;
 }
