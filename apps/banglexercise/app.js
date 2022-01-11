@@ -15,26 +15,35 @@ let lastZeroPassTime = 0;
 let lastExerciseCmpltTime = 0;
 
 let exerciseType = {
+  "id": "",
   "name": ""
 };
+
+// add new exercises here:
 const exerciseTypes = [{
     "id": "pushup",
     "name": "Push ups",
     "useYaxe": true,
-    "useZaxe": false
-  } // add other exercises here
+    "useZaxe": false,
+    "thresholdY": 2500,
+    "thresholdTime": 1400 // mininmal time between two push ups
+  },
+  {
+    "id": "curl",
+    "name": "Curls",
+    "useYaxe": true,
+    "useZaxe": false,
+    "thresholdY": 2500,
+    "thresholdTime": 1000 // mininmal time between two curls
+  }
 ];
 let exerciseCounter = 0;
 
 let layout;
 let recordActive = false;
 
-/**
- * Thresholds
- */
+// Size of average window for data analysis
 const avgSize = 6;
-const pushUpThresholdY = 2500;
-const pushUpThresholdTime = 1400; // mininmal time between two push ups
 
 let hrtValue;
 
@@ -55,7 +64,9 @@ function showMainMenu() {
   });
 
   if (exerciseCounter > 0) {
-    menu["----"] = {};
+    menu["----"] = {
+      value: ""
+    };
     menu["Last:"] = {
       value: exerciseCounter + " " + exerciseType.name
     };
@@ -101,19 +112,18 @@ function accelHandler(accel) {
     if (l > 1) {
       const p1 = historyAvgY[l - 2];
       const p2 = historyAvgY[l - 1];
-      const mY = (p2[1] - p1[1]) / (p2[0] / 1000 - p1[0] / 1000);
-      if (Math.abs(mY) >= pushUpThresholdY) {
-        historyAvgY.shift();
-        historySlopeY.push([t, mY]);
-        //console.log(t, Math.abs(mY));
+      const slopeY = (p2[1] - p1[1]) / (p2[0] / 1000 - p1[0] / 1000);
 
-        const lMY = historySlopeY.length;
-        if (lMY > 1) {
-          const pMY1 = historySlopeY[lMY - 2][1];
-          const pMY2 = historySlopeY[lMY - 1][1];
-          isValidPushUp(pMY1, pMY2, t);
-        }
+      // we use this data for exercises which can be detected by using Y axis data
+      switch (exerciseType.id) {
+        case "pushup":
+          isValidYAxisExercise(slopeY, t);
+          break;
+        case "curl":
+          isValidYAxisExercise(slopeY, t);
+          break;
       }
+
     }
   }
 
@@ -123,54 +133,80 @@ function accelHandler(accel) {
     if (l > 1) {
       const p1 = historyAvgZ[l - 2];
       const p2 = historyAvgZ[l - 1];
-      const mZ = (p2[1] - p1[1]) / (p2[0] - p1[0]);
+      const slopeZ = (p2[1] - p1[1]) / (p2[0] - p1[0]);
       historyAvgZ.shift();
-      historySlopeZ.push([p2[0] - p1[0], mZ]);
+      historySlopeZ.push([p2[0] - p1[0], slopeZ]);
+
+      // TODO: we can use this data for some exercises which can be detected by using Z axis data
     }
   }
 }
 
-function isValidPushUp(p1, p2, t) {
-  if (p1 > 0 && p2 < 0) {
+/*
+ * Check if slope value of Y-axis data looks like an exercise
+ *
+ * In detail we look for slop values which are bigger than the configured Y threshold for the current exercise
+ * Then we look for two consecutive slope values of which one is above 0 and the other is below zero.
+ * If we find one pair of these values this could be part of one exercise.
+ * Then we look for a pair of values which cross the zero from the otherwise direction
+ */
+function isValidYAxisExercise(slopeY, t) {
+  if (!exerciseType) return;
 
-    if (lastZeroPassType == "-+") {
-      console.log(t, "Push up half complete...");
+  const thresholdY = exerciseType.thresholdY;
+  const thresholdTime = exerciseType.thresholdTime;
+  const exerciseName = exerciseType.name;
 
-      layout.progress.label = "*";
-      layout.render();
-    }
+  if (Math.abs(slopeY) >= thresholdY) {
+    historyAvgY.shift();
+    historySlopeY.push([t, slopeY]);
+    //console.log(t, Math.abs(slopeY));
 
-    lastZeroPassType = "+-";
-    lastZeroPassTime = t;
-  }
-  if (p2 > 0 && p1 < 0) {
+    const lSlopeY = historySlopeY.length;
+    if (lSlopeY > 1) {
+      const p1 = historySlopeY[lSlopeY - 2][1];
+      const p2 = historySlopeY[lSlopeY - 1][1];
+      if (p1 > 0 && p2 < 0) {
+        if (lastZeroPassType == "-+") {
+          console.log(t, exerciseName + " half complete...");
 
-    if (lastZeroPassType == "+-") {
-      // potential complete push up. Let's check the time difference...
-      const tDiffLastPushUp = t - lastExerciseCmpltTime;
-      const tDiffStart = t - tStart;
-      console.log(t, "Push up maybe complete?", Math.round(tDiffLastPushUp), Math.round(tDiffStart));
+          layout.progress.label = "*";
+          layout.render();
+        }
 
-      if ((lastExerciseCmpltTime <= 0 && tDiffStart >= pushUpThresholdTime) || tDiffLastPushUp >= pushUpThresholdTime) {
-        console.log(t, "Push up complete!!!");
+        lastZeroPassType = "+-";
+        lastZeroPassTime = t;
+      }
+      if (p2 > 0 && p1 < 0) {
+        if (lastZeroPassType == "+-") {
+          // potential complete exercise. Let's check the time difference...
+          const tDiffLastPushUp = t - lastExerciseCmpltTime;
+          const tDiffStart = t - tStart;
+          console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastPushUp), Math.round(tDiffStart));
 
-        lastExerciseCmpltTime = t;
-        exerciseCounter++;
+          if ((lastExerciseCmpltTime <= 0 && tDiffStart >= thresholdTime) || tDiffLastPushUp >= thresholdTime) {
+            console.log(t, exerciseName + " complete!!!");
 
-        layout.count.label = exerciseCounter;
-        layout.progress.label = "";
-        layout.render();
+            lastExerciseCmpltTime = t;
+            exerciseCounter++;
 
-        Bangle.buzz(100, 0.3); // TODO make configurable
-      } else {
-        console.log(t, "Push up to quick for threshold!");
+            layout.count.label = exerciseCounter;
+            layout.progress.label = "";
+            layout.render();
+
+            Bangle.buzz(100, 0.4); // TODO make configurable
+          } else {
+            console.log(t, exerciseName + " to quick for time threshold!");
+          }
+        }
+
+        lastZeroPassType = "-+";
+        lastZeroPassTime = t;
       }
     }
-
-    lastZeroPassType = "-+";
-    lastZeroPassTime = t;
   }
 }
+
 
 function reset() {
   historyY = [];
@@ -252,14 +288,12 @@ function startRecording() {
       },
     ]
   }, {
-    btns: [
-      {
-        label: "STOP",
-        cb: () => {
-          stopRecording();
-        }
+    btns: [{
+      label: "STOP",
+      cb: () => {
+        stopRecording();
       }
-    ],
+    }],
     lazy: true
   });
   layout.render();
