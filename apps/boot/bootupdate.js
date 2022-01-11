@@ -18,6 +18,7 @@ boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
+    else if (s.HID=="com") boot += `Bangle.HID = E.toUint8Array(atob("BQEJAqEBhQEJAaEABQkZASkFFQAlAZUFdQGBApUBdQOBAwUBCTAJMQk4FYElf3UIlQOBBgUMCjgCFYElf3UIlQGBBsDABQEJBqEBhQIFBxngKecVACUBdQGVCIECdQiVAYEBGQApcxUAJXOVBXUIgQDA"));`
     else if (s.HID=="kb") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBBQcZ4CnnFQAlAXUBlQiBApUBdQiBAZUFdQEFCBkBKQWRApUBdQORAZUGdQgVACVzBQcZAClzgQAJBRUAJv8AdQiVArECwA=="));`
     else /*kbmedia*/boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));`;
     boot += `bleServiceOptions.hid=Bangle.HID;\n`;

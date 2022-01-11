@@ -19,6 +19,7 @@ var secondsWithColon;
 var dateOnMain;
 var dateOnSecs;
 var weekDay;
+var calWeek;
 var upperCase;
 var vectorFont;
 
@@ -29,22 +30,25 @@ var secondsScreen = true;
 
 var isBangle1 = (g.getWidth() == 240);
 
-/* For development purposes
+//For development purposes
+/*
 require('Storage').writeJSON(SETTINGSFILE, {
-  secondsMode: "Always", // "Never", "Unlocked", "Always"
+  secondsMode: "Unlocked", // "Never", "Unlocked", "Always"
   secondsColoured: true,
   secondsWithColon: true,
   dateOnMain: "Long", // "Short", "Long", "ISO8601"
   dateOnSecs: "Year", // "No", "Year", "Weekday", LEGACY: true/false
   weekDay: true,
+  calWeek: true,
   upperCase: true,
   vectorFont: true,
 });
-/* */
+*/
 
-/* OR (also for development purposes)
+// OR (also for development purposes)
+/*
 require('Storage').erase(SETTINGSFILE);
-/* */
+*/ 
 
 // Helper method for loading the settings
 function def(value, def) {
@@ -60,6 +64,7 @@ function loadSettings() {
   dateOnMain = def(settings.dateOnMain, "Long");
   dateOnSecs = def(settings.dateOnSecs, "Year");
   weekDay = def(settings.weekDay, true);
+  calWeek = def(settings.calWeek, false);
   upperCase = def(settings.upperCase, true);
   vectorFont = def(settings.vectorFont, false);
 
@@ -97,6 +102,18 @@ function updateState() {
 
 function isoStr(date) {
   return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
+}
+
+function ISO8601calWeek(date) { //copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
+  var tdt = new Date(date.valueOf());
+  var dayn = (date.getDay() + 6) % 7;
+  tdt.setDate(tdt.getDate() - dayn + 3);
+  var firstThursday = tdt.valueOf();
+  tdt.setMonth(0, 1);
+  if (tdt.getDay() !== 4) {
+      tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+  }
+  return 1 + Math.ceil((firstThursday - tdt) / 604800000);
 }
 
 function doColor() {
@@ -169,11 +186,14 @@ function draw() {
     else
       g.setFont("6x8", 2);
     g.drawString(dateStr, x, y);
-    if (weekDay) {
-      var dowStr = require("locale").dow(date);
+    if (weekDay || calWeek) {
+      var dowwumStr = require("locale").dow(date);
+      dowwumStr = "thursday";
+      if (calWeek)
+        dowwumStr = (weekDay ? dowwumStr.substr(0,Math.min(dowwumStr.length,6)) + (dowwumStr.length>=6 ? "." : "") : "week ") + "#" + ISO8601calWeek(date);
       if (upperCase)
-        dowStr = dowStr.toUpperCase();
-      g.drawString(dowStr, x, y + (vectorFont ? 26 : 16));
+        dowwumStr = dowwumStr.toUpperCase();
+      g.drawString(dowwumStr, x, y + (vectorFont ? 26 : 16));
     }
   }
 

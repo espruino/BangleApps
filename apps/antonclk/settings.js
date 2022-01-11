@@ -47,6 +47,14 @@
         writeSettings();
       }
     },
+    "Show Weeknumber": {
+      value: (settings.weekNum !== undefined ? settings.weekNum : true),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.weekNum = v;
+        writeSettings();
+      }
+    },
     "Uppercase": {
       value: (settings.upperCase !== undefined ? settings.upperCase : false),
       format: v => v ? "On" : "Off",
