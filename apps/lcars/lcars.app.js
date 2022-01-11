@@ -1,5 +1,6 @@
 const SETTINGS_FILE = "lcars.setting.json";
 const Storage = require("Storage");
+const weather = require('weather');
 
 
 // ...and overwrite them with any saved values
@@ -145,6 +146,14 @@ function printData(key, y, c){
     text = "VREF";
     value = E.getAnalogVRef().toFixed(2) + "V";
 
+  } else if (key == "Weather"){
+    text = "TEMP";
+    const w = weather.get();
+    if (!w) {
+      value = "ERR";
+    } else {
+      value = require('locale').temp(w.temp-273.15);  // applies conversion
+    }
   }
 
   g.setColor(c);

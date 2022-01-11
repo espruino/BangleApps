@@ -8,3 +8,4 @@
 0.08: Support for multiple screens. 24h graph for steps + HRM. Fullscreen Mode.
 0.09: Tab anywhere to open the launcher.
 0.10: Fix - Clock is unresponsive, if gadgetbridge connects.
+0.11: Added getting the gadgetbridge weather
