@@ -8,6 +8,9 @@ and will notify you with a buzz whenever your heart rate falls below or jumps ab
 [Try it out](https://www.espruino.com/ide/emulator.html?codeurl=https://raw.githubusercontent.com/msdeibel/BangleApps/master/apps/wohrm/app.js&upload) using the [online Espruino emulator](https://www.espruino.com/ide/emulator.html).
 
 ## Setting the limits
+
+Use the settings menu to set the limits. On the Bangle.js1 these can in addition be set with the buttons:
+
 For setting the lower limit press button 4 (left part of the watch's touch screen).
 Then adjust the value with the buttons 1 (top) and 3 (bottom) of the watch.
 
@@ -22,7 +25,7 @@ the received value: For 85% and above the bars are green, between 84% and 50% th
 and below 50% they turn red.
 
 ## Closing the app
-Pressing button 2 (middle) will switch off the HRM of the watch and return you to the launcher.
+Pressing middle button will switch off the HRM of the watch and return you to the launcher.
 
 # HRM usage
 The HRM is switched on when the app is started. It stays switch on while the app is running, even

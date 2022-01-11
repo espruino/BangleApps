@@ -1,3 +1,7 @@
 0.01: New App!
 0.02: Load widgets after setUI so widclk knows when to hide
 0.03: Clock now shows day of week under date.
+0.04: Clock can optionally show seconds, date optionally in ISO-8601 format, weekdays and uppercase configurable, too.
+0.05: Clock can optionally show ISO-8601 calendar weeknumber (default: Off)
+      when weekday name "Off": week #:<num>
+      when weekday name "On": weekday name is cut at 6th position and .#<week num> is added
