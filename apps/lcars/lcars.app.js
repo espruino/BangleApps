@@ -470,7 +470,7 @@ function handleAlarm(){
   .then(() => {
     // Update alarm state to disabled
     settings.alarm = -1;
-    Storage.writeJSON(SETTINGS_FILE, settings);
+    storage.writeJSON(SETTINGS_FILE, settings);
   });
 }
 
@@ -510,7 +510,7 @@ function increaseAlarm(){
     settings.alarm = getCurrentTimeInMinutes() + 5;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 
@@ -521,7 +521,7 @@ function decreaseAlarm(){
     settings.alarm = -1;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 function feedback(){
