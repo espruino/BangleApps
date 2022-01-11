@@ -253,6 +253,7 @@ function showMessage(msgid) {
     }} // back
   ];
   if (msg.positive) {
+    buttons.push({fillx:1});
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
@@ -261,6 +262,7 @@ function showMessage(msgid) {
     }});
   }
   if (msg.negative) {
+    buttons.push({fillx:1});
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
