@@ -241,8 +241,8 @@ function drawPosition0(){
   // The last line is a battery indicator too
   var bat = E.getBattery() / 100.0;
   var batX2 = parseInt((172 - 35) * bat + 35);
-  drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
-  drawHorizontalBgLine(cGrey, batX2+10, 172, 171, 5);
+  drawHorizontalBgLine(cOrange, 35, batX2-5, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2+5, 172, 171, 5);
 
   // Draw Infos
   drawInfo();
@@ -253,15 +253,15 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 29, 10);
+  g.drawString(timeStr, 27, 10);
 
   // Write date
   g.setColor(cWhite);
   g.setFontAntonioMedium();
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
-  dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 32, 56);
+  dayStr += " " + locale.month(currentDate, 1).toUpperCase();
+  g.drawString(dayStr, 30, 56);
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
@@ -408,6 +408,7 @@ function draw(){
  */
 function getSteps() {
   var steps = 0;
+  let health;
   try {
     health = require("health");
   } catch(ex) {
@@ -511,49 +512,53 @@ function decreaseAlarm(){
   Storage.writeJSON(SETTINGS_FILE, settings);
 }
 
+function feedback(){
+  Bangle.buzz(40, 0.3);
+}
 
-// Thanks to the app "gbmusic" for this code to detect swipes in all 4 directions.
-Bangle.on("drag", e => {
-  if (!drag) { // start dragging
-    drag = {x: e.x, y: e.y};
-  } else if (!e.b) { // released
-    const dx = e.x-drag.x, dy = e.y-drag.y;
-    drag = null;
+// Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
+Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.2);
+  var right = g.getWidth() - left;
+  var upper = parseInt(g.getHeight() * 0.2);
+  var lower = g.getHeight() - upper;
 
-    // Horizontal swipe
-    if (Math.abs(dx)>Math.abs(dy)+10) {
-      if(dx > 0){
-        lcarsViewPos = 0;
-      } else {
-        lcarsViewPos = 1;
-      }
+  var is_left = e.x < left;
+  var is_right = e.x > right;
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
 
-    // Vertical swipe
-    } else if (Math.abs(dy)>Math.abs(dx)+10) {
-      if(lcarsViewPos == 0){
-        if(dy > 0){
-          decreaseAlarm();
-        } else {
-          increaseAlarm();
-        }
-
-        // Only update the state and return to
-        // avoid a full draw as this is much faster.
-        drawState();
-        return;
-      }
-
-      if(lcarsViewPos == 1){
-        plotWeek = dy < 0 ? true : false;
-      }
-    }
-
+  if(is_left && lcarsViewPos == 1){
+    feedback();
+    lcarsViewPos = 0;
     draw();
-  }
-});
+    return;
 
-Bangle.on("touch", e => {
-  Bangle.showLauncher();
+  } else if(is_right  && lcarsViewPos == 0){
+    feedback();
+    lcarsViewPos = 1;
+    draw();
+    return;
+  }
+
+  if(lcarsViewPos == 0){
+    if(is_upper){
+      feedback();
+      increaseAlarm();
+      drawState();
+      return;
+    } if(is_lower){
+      feedback();
+      decreaseAlarm();
+      drawState();
+      return;
+    }
+  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotWeek != is_lower){
+    feedback();
+    plotWeek = is_lower;
+    draw();
+    return;
+  }
 });
 
 
