@@ -188,9 +188,8 @@ function draw() {
     g.drawString(dateStr, x, y);
     if (weekDay || calWeek) {
       var dowwumStr = require("locale").dow(date);
-      dowwumStr = "thursday";
       if (calWeek)
-        dowwumStr = (weekDay ? dowwumStr.substr(0,Math.min(dowwumStr.length,6)) + (dowwumStr.length>=6 ? "." : "") : "week ") + "#" + ISO8601calWeek(date);
+        dowwumStr = (weekDay ? dowwumStr.substr(0,Math.min(dowwumStr.length,6)) + (dowwumStr.length>=6 ? "." : "") : "week ") + "#" + ISO8601calWeek(date); //TODO: locale for "week"
       if (upperCase)
         dowwumStr = dowwumStr.toUpperCase();
       g.drawString(dowwumStr, x, y + (vectorFont ? 26 : 16));
