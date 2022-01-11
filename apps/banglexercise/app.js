@@ -1,5 +1,6 @@
 const Layout = require("Layout");
 const heatshrink = require('heatshrink');
+const storage = require('Storage');
 
 let tStart;
 let historyY = [];
