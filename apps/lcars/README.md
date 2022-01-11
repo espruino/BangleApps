@@ -24,6 +24,7 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
  * VREF - Voltage of battery
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
+ * Humidity - Humidity loaded via the weather module + gadgetbridge
  * CoreT - Temperature of device
 
 ## Multiple screens support

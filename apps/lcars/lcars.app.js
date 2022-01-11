@@ -3,9 +3,9 @@ const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
-  dataRow1: "Battery",
-  dataRow2: "Steps",
-  dataRow3: "Temp."
+  dataRow1: "Steps",
+  dataRow2: "Temp",
+  dataRow3: "Battery"
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -139,6 +139,11 @@ function printData(key, y, c){
   } else if (key == "TEMP"){
     var weather = getWeather();
     value = locale.temp(parseInt(weather.temp-273.15));
+
+  } else if (key == "HUMIDITY"){
+    text = "HUM";
+    var weather = getWeather();
+    value = parseInt(weather.hum) + "%";
 
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
@@ -418,17 +423,22 @@ function getSteps() {
 
 
 function getWeather(){
-  let weather;
+  var weather = {
+    temp: 0,
+    hum: 0,
+    txt: "",
+    wind: 0,
+    wdir: 0,
+    wrose: ""
+  };
 
   try {
-    weather = require('weather');
+    weather = require('weather').get();
   } catch(ex) {
-    return {
-      temp: 0.0
-    };
+    // Return default
   }
 
-  return weather.get();
+  return weather;
 }
 
 
