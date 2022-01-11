@@ -249,7 +249,7 @@ function showMessage(msgid) {
     {type:"btn", src:getBackImage(), cb:()=>{
       msg.new = false; saveMessages(); // read mail
       cancelReloadTimeout(); // don't auto-reload to clock now
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:1});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0});
     }} // back
   ];
   if (msg.positive) {
