@@ -1,10 +1,5 @@
 const SETTINGS_FILE = "lcars.setting.json";
-const Storage = require("Storage");
-const weather = require('weather');
-
-
-// ...and overwrite them with any saved values
-// This way saved values are preserved if a new version adds more settings
+const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
@@ -39,7 +34,7 @@ var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot b
 /*
  * Requirements and globals
  */
-const locale = require('locale');
+
 
 var bgLeft =  {
   width : 27, height : 176, bpp : 3,
@@ -124,7 +119,7 @@ function queueDraw() {
 function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
   var text = "ERR";
-  var value = "NOT FOUND";
+  var value = "ERR";
 
   if(key == "Battery"){
     text = "BAT";
@@ -136,7 +131,7 @@ function printData(key, y, c){
 
   } else if(key == "Temp."){
     text = "TEMP";
-    value = Math.floor(E.getTemperature()) + "C";
+    value = locale.temp(parseInt(E.getTemperature()));
 
   } else if(key == "HRM"){
     text = "HRM";
@@ -148,12 +143,8 @@ function printData(key, y, c){
 
   } else if (key == "Weather"){
     text = "TEMP";
-    const w = weather.get();
-    if (!w) {
-      value = "ERR";
-    } else {
-      value = require('locale').temp(w.temp-273.15);  // applies conversion
-    }
+    var weather = getWeather();
+    value = locale.temp(parseInt(weather.temp-273.15));
   }
 
   g.setColor(c);
@@ -426,6 +417,21 @@ function getSteps() {
 
   health.readDay(new Date(), h=>steps+=h.steps);
   return steps;
+}
+
+
+function getWeather(){
+  let weather;
+
+  try {
+    weather = require('weather');
+  } catch(ex) {
+    return {
+      temp: 0.0
+    };
+  }
+
+  return weather.get();
 }
 
 
