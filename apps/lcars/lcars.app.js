@@ -28,7 +28,7 @@ let cGrey = "#9E9E9E";
 let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
-var plotWeek = false;
+var plotMonth = false;
 var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
@@ -118,33 +118,30 @@ function queueDraw() {
 
 function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
-  var text = "ERR";
+  key = key.toUpperCase()
+  var text = key;
   var value = "ERR";
 
-  if(key == "Battery"){
-    text = "BAT";
-    value = E.getBattery() + "%";
-
-  } else if(key == "Steps"){
+  if(key == "STEPS"){
     text = "STEP";
     value = getSteps();
 
-  } else if(key == "Temp."){
-    text = "TEMP";
-    value = locale.temp(parseInt(E.getTemperature()));
-
-  } else if(key == "HRM"){
-    text = "HRM";
-    value = hrmValue;
+  } else if(key == "BATTERY"){
+    text = "BAT";
+    value = E.getBattery() + "%";
 
   } else if (key == "VREF"){
-    text = "VREF";
     value = E.getAnalogVRef().toFixed(2) + "V";
 
-  } else if (key == "Weather"){
-    text = "TEMP";
+  } else if(key == "HRM"){
+    value = hrmValue;
+
+  } else if (key == "TEMP"){
     var weather = getWeather();
     value = locale.temp(parseInt(weather.temp-273.15));
+
+  } else if(key == "CORET"){
+    value = locale.temp(parseInt(E.getTemperature()));
   }
 
   g.setColor(c);
@@ -300,7 +297,7 @@ function drawPosition1(){
   }
 
   // Plot HRM graph
-  if(plotWeek){
+  if(plotMonth){
     var data = new Uint16Array(32);
     var cnt = new Uint8Array(32);
     health.readDailySummaries(new Date(), h=>{
@@ -337,8 +334,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("WEEK HRM", 154, 27);
-    g.drawString("WEEK STEPS [K]", 154, 115);
+    g.drawString("M-HRM", 154, 27);
+    g.drawString("M-STEPS [K]", 154, 115);
 
   // Plot day
   } else {
@@ -378,8 +375,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("DAY HRM", 154, 27);
-    g.drawString("DAY STEPS", 154, 115);
+    g.drawString("D-HRM", 154, 27);
+    g.drawString("D-STEPS", 154, 115);
   }
 }
 
@@ -568,9 +565,9 @@ Bangle.on('touch', function(btn, e){
       drawState();
       return;
     }
-  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotWeek != is_lower){
+  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
     feedback();
-    plotWeek = is_lower;
+    plotMonth = is_lower;
     draw();
     return;
   }

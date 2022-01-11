@@ -18,7 +18,7 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var data_options = ["Battery", "Steps", "Temp.", "HRM", "VREF", "Weather"];
+  var data_options = ["Steps", "Battery", "VREF", "HRM", "Temp", "CoreT"];
 
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
