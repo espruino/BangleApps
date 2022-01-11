@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" style="width:100%; height:100%">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+  <meta name="apple-mobile-web-app-capable"          content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="format-detection"                      content="telephone=no">
+
+  <style type="text/css">
+    html {
+      text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      -o-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+  </style>
+
+  <style>
+    html, body {
+      overflow:hidden;
+
+      background-color: #627AC6;
+      background-image: url(/common/BinaryTexture.png);
+      background-repeat:repeat;
+
+      font-family:'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:14px; font-weight:400; color:white;
+      line-height:150%;
+    }
+
+    * {
+      -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box;
+    }
+  </style>
+
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+
+  <script src="../../core/lib/customize.js"></script>
+
+  <script>
+  </script>
+ </head>
+ <body>
+
+  <h1>A Configurable Analog Clock</h1>
+
+  Please customize your analog clock for the Bangle.js 2 according to your needs.
+  When finished, click on "Upload".
+
+  <h2>Clock Size Calculation</h2>
+
+  <input type="checkbox" id="clock-size-simple"><br>
+  <input type="checkbox" id="clock-size-smart"><br>
+  <input type="checkbox" id="clock-size-custom">
+    &nbsp; <input type="url" id="clock-size-url"> <br>
+
+  <h2>Clock Face</h2>
+
+  <input type="checkbox" id="clock-face-none"><br>
+  <input type="checkbox" id="clock-face-four-fold"><br>
+    &nbsp; <input type="checkbox" id="clock-face-four-fold-roman"><br>
+  <input type="checkbox" id="clock-face-twelve-fold"><br>
+    &nbsp; <input type="checkbox" id="clock-face-twelve-fold-dots"><br>
+  <input type="checkbox" id="clock-face-rainbow"><br>
+    &nbsp; <input type="checkbox" id="clock-face-rainbow-dots"><br>
+
+  <h2>Clock Hands</h2>
+
+  <input type="checkbox" id="clock-hands-simple"><br>
+  <input type="checkbox" id="clock-hands-rounded"><br>
+  <input type="checkbox" id="clock-hands-hollow"><br>
+    &nbsp; Hand Fill Color<br>
+
+  <h2>Complications</h2>
+
+  <h2>Settings</h2>
+
+  Foreground Color: <br>
+
+  Background Color: <br>
+
+  Second Hand Color: <br>
+
+  <button>Upload</button>
+ </body>
+</html>
+
