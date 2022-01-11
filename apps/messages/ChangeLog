@@ -24,3 +24,4 @@
 0.15: Don't buzz when Quiet Mode is active
 0.16: Fix text wrapping so it fits the screen even if title is big (fix #1147)
 0.17: Fix: Get dynamic dimensions of notify icon, fixed notification font
+0.18: Use app-specific icon colors

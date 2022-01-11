@@ -101,6 +101,31 @@ function getMessageImage(msg) {
   if (msg.id=="back") return getBackImage();
   return getNotificationImage();
 }
+function getMessageImageCol(msg,def) {
+  return {
+    // generic colors, using B2-safe colors
+    "calendar": "#f00",
+    "mail": "#ff0",
+    "music": "#f0f",
+    "phone": "#0f0",
+    "sms message": "#0ff",
+    // brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
+    // all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
+    "facebook": "#4267b2",
+    "gmail": "#ea4335",
+    "google home": "#fbbc05",
+    "hangouts": "#1ba261",
+    "instagram": "#dd2a7b",
+    "messenger": "#0078ff",
+    "outlook mail": "#0072c6",
+    "skype": "#00aff0",
+    "slack": "#e51670",
+    "telegram": "#0088cc",
+    "twitter": "#1da1f2",
+    "whatsapp": "#4fce5d",
+    "wordfeud": "#dcc8bd",
+  }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
+}
 
 function showMapMessage(msg) {
   var m;
@@ -248,7 +273,7 @@ function showMessage(msgid) {
   var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getMessageImage(msg), pad: 3, cb:()=>{
+      { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
@@ -310,7 +335,9 @@ function checkMessages(options) {
         body = msg.track;
       }
       if (img) {
-        g.drawImage(img, x+24, r.y+24, {rotate:0}); // force centering
+        var fg = g.getColor();
+        g.setColor(getMessageImageCol(msg,fg)).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
+         .setColor(fg); // only color the icon
         x += 50;
       }
       var m = msg.title+"\n"+msg.body;
