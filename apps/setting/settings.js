@@ -154,8 +154,8 @@ function showAlertsMenu() {
 
 
 function showBLEMenu() {
-  var hidV = [false, "kbmedia", "kb", "joy"];
-  var hidN = ["Off", "Kbrd & Media", "Kbrd","Joystick"];
+  var hidV = [false, "kbmedia", "kb", "com", "joy"];
+  var hidN = ["Off", "Kbrd & Media", "Kbrd", "Kbrd & Mouse" ,"Joystick"];
   E.showMenu({
     '': { 'title': 'Bluetooth' },
     '< Back': ()=>showMainMenu(),
