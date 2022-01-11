@@ -363,22 +363,21 @@ function radians(a) {
 }
 
 function drawGauge(cx, cy, percent, color) {
-  let offset = 30;
-  let end = 300;
-  var i = 0;
-  var r = radiusInner + 3;
+  const offset = 15;
+  const end = 345;
+  const r = radiusInner + 3;
 
   if (percent <= 0) return;
   if (percent > 1) percent = 1;
 
-  var startrot = -offset;
-  var endrot = startrot - ((end - offset) * percent) - 35;
+  const startrot = -offset;
+  const endrot = startrot - ((end - offset) * percent);
 
   g.setColor(color);
 
   const size = radiusOuter - radiusInner - 2;
   // draw gauge
-  for (i = startrot; i > endrot - size; i -= size) {
+  for (let i = startrot; i > endrot - size; i -= size) {
     x = cx + r * Math.sin(radians(i));
     y = cy + r * Math.cos(radians(i));
     g.fillCircle(x, y, size);
