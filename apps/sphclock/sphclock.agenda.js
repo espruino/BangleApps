@@ -25,7 +25,9 @@ exports.drawCalendar = function (date) {
   g.setFontLECO1976Regular12();
 
   // Carrega a agenda pro próximo dia com eventos
-  let schedules = require("Storage").readJSON("sphclock.json", false).schedule;
+  let schedules = require("Storage").readJSON("sphclock.json", false);
+  if (schedules) schedules = schedules.schedule;
+  else schedules = [];
   // Parse da data
   schedules.forEach((s) => (s.data = new Date(s.data)));
   schedules = schedules

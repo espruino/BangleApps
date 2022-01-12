@@ -52,13 +52,6 @@
         "evaluate": true
       }
     ],
-    "data": [
-      {
-        "name": "sphclock.json",
-        "storageFile": false,
-        "url": "sphclock.json"
-      }
-    ],
     "tags": "clock, sph, vintage, menu",
     "allow_emulator": true
   },
@@ -81,6 +74,12 @@
         "name": "sphweather.img",
         "url": "sphweather.app-icon.js",
         "evaluate": true
+      }
+    ],
+    "data": [
+      {
+        "name": "weather.json",
+        "storageFile": false
       }
     ],
     "tags": "weather, graph, forecast, sph, vintage, menu",
