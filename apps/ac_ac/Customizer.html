@@ -95,29 +95,6 @@
     label.ColorPatch > input[type="radio"]:checked + span {
       border:solid 3px red;
     }
-
-
-/*
-    input.labelled {
-      display:none; position:relative;
-      -webkit-appearance:none; -moz-appearance:none; appearance:none;
-      width:0px; height:0px;
-    }
-    input + img {
-      display:inline-block; positon:relative;
-      margin:0px; padding:0px;
-      border:solid 3px white;
-      box-shadow:inset 0px 0px 1px 1px black;
-    }
-    input:checked + div > label {
-      border:solid 3px red;
-    }
-
-
-    label > input[type="radio"] {
-      display:none;
-    }
-*/
   </style>
 
 
@@ -235,17 +212,17 @@
         switch (ClockSize) {
           case 'simple': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clock-size/main/ClockSize.js')"
           case 'smart':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-smart-clock-size/main/ClockSize.js')"
-          case 'custom': return 'require(' + ClockSizeURL + ')'
+          case 'custom': return "require('" + ClockSizeURL + "')"
         }
       }
 
       function chosenClockFace () {
         switch (ClockFace) {
-          case 'none':        return undefined
+          case 'none':        return "undefined"
           case 'four-fold':   return "require('https://raw.githubusercontent.com/rozek/banglejs-2-four-fold-clock-face/main/ClockFace.js')"
           case 'twelve-fold': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-twelve-fold-clock-face/main/ClockFace.js')"
           case 'rainbow':     return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rainbow-clock-face/main/ClockFace.js')"
-          case 'custom':      return 'require(' + ClockFaceURL + ')'
+          case 'custom':      return "require('" + ClockFaceURL + "')"
         }
       }
 
@@ -254,18 +231,18 @@
           case 'simple':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simpled-clock-hands/main/ClockHands.js')"
           case 'rounded': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rounded-clock-hands/main/ClockHands.js')"
           case 'hollow':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-hollow-clock-hands/main/ClockHands.js')"
-          case 'custom':  return 'require(' + ClockHandsURL + ')'
+          case 'custom':  return "require('" + ClockHandsURL + "')"
         }
       }
 
       function chosenComplication (Complication, customURL) {
         switch (Complication) {
-          case 'none':          return undefined
+          case 'none':          return "undefined"
           case 'date':          return "require('https://raw.githubusercontent.com/rozek/banglejs-2-date-complication/main/Complication.js')"
           case 'weekday':       return "require('https://raw.githubusercontent.com/rozek/banglejs-2-weekday-complication/main/Complication.js')"
           case 'calendar-week': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-calendar-week-complication/main/Complication.js')"
           case 'moon-phase':    return "require('https://raw.githubusercontent.com/rozek/banglejs-2-moon-phase-complication/main/Complication.js')"
-          case 'custom':        return 'require(' + customURL + ')'
+          case 'custom':        return "require('" + customURL + "')"
         }
       }
       function chosenComplicationAt (Position) {
@@ -282,7 +259,7 @@
       }
 
       function chosenColor (ColorChoice) {
-        return (ColorChoice === 'none' ? undefined : ColorChoice)
+        return (ColorChoice === 'none' ? 'undefined' : "'" + ColorChoice + '"')
       }
 
       function chosenForeground () { return chosenColor(Foreground) }
@@ -290,7 +267,7 @@
       function chosenSecondHand () { return chosenColor(SecondHand) }
       function chosenFillColor ()  { return chosenColor(FillColor) }
 
-      function chosenDots () { return (ClockFaceDots === 'with-dots') }
+      function chosenDots () { return (ClockFaceDots === 'with-dots' ? 'true' : 'false') }
 
       let AppSource = `
 let Clockwork = require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clockwork/main/Clockwork.js');
