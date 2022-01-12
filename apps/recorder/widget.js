@@ -133,8 +133,38 @@
           draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
         };
       }
-      // TODO: recAltitude from pressure sensor
     };
+    if (Bangle.getPressure){
+      recorders['baro'] = function() {
+        var temp="",press="",alt="";
+        function onPress(c) {
+            temp=c.temperature;
+            press=c.pressure;
+            alt=c.altitude;
+        }
+        return {
+          name : "Baro",
+          fields : ["Barometer Temperature", "Barometer Pressure", "Barometer Altitude"],
+          getValues : () => {
+              var r = [temp,press,alt];
+              temp="";
+              press="";
+              alt="";
+              return r;
+          },
+          start : () => {
+            Bangle.setBarometerPower(1,"recorder");
+            Bangle.on('pressure', onPress);
+          },
+          stop : () => {
+            Bangle.setBarometerPower(0,"recorder");
+            Bangle.removeListener('pressure', onPress);
+          },
+          draw : (x,y) => g.setColor("#0f0").drawImage(atob("DAwBAAH4EIHIEIHIEIHIEIEIH4AA"),x,y)
+        };
+      }
+    }
+    
     /* eg. foobar.recorder.js
     (function(recorders) {
       recorders.foobar = {
