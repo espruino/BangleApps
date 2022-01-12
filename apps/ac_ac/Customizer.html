@@ -335,6 +335,7 @@ Clockwork.windUp({
     $('input[type="radio"]').on('change',retrieveAndValidateInputs)
     $('input[type="url"]').  on('change',retrieveAndValidateInputs)
     $('select').             on('change',retrieveAndValidateInputs)
+    $('#UploadButton').on('click',createAndUploadApp)
   })
   </script>
 
@@ -499,6 +500,7 @@ Clockwork.windUp({
 </p><p>
   Hollow clock hands may optionally be filled with a given color. If you have
   chosen hollow hands, please specify the desired fill mode and color below:
+</p><p>
   <b>Hollow Hand Fill Color:</b>
 </p><p>
   <label class="ColorPatch">
