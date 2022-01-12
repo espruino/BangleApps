@@ -99,18 +99,20 @@
     "id": "android",
     "name": "Android Integration",
     "shortName": "Android",
-    "version": "0.05",
+    "version": "0.06",
     "description": "Display notifications/music/etc sent from the Gadgetbridge app on Android. This replaces the old 'Gadgetbridge' Bangle.js widget.",
     "icon": "app.png",
     "tags": "tool,system,messages,notifications",
     "dependencies": {"messages":"app"},
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "readme": "README.md",
     "storage": [
       {"name":"android.app.js","url":"app.js"},
       {"name":"android.settings.js","url":"settings.js"},
       {"name":"android.img","url":"app-icon.js","evaluate":true},
       {"name":"android.boot.js","url":"boot.js"}
     ],
+    "data": [{"name":"android.settings.json"}],
     "sortorder": -8
   },
   {
@@ -167,7 +169,7 @@
   {
     "id": "setting",
     "name": "Settings",
-    "version": "0.40",
+    "version": "0.41",
     "description": "A menu for setting up Bangle.js",
     "icon": "settings.png",
     "tags": "tool,system",
@@ -1534,13 +1536,14 @@
   {
     "id": "assistedgps",
     "name": "Assisted GPS Update (AGPS)",
-    "version": "0.01",
-    "description": "Downloads assisted GPS (AGPS) data to Bangle.js 1 for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
+    "version": "0.02",
+    "description": "Downloads assisted GPS (AGPS) data to Bangle.js 1 or 2 for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "icon": "app.png",
     "type": "RAM",
     "tags": "tool,outdoors,agps",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS","BANGLEJS2"],
     "custom": "custom.html",
+    "customConnect": true,
     "storage": []
   },
   {
@@ -4515,7 +4518,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.11",
+    "version":"0.12",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -5540,21 +5543,25 @@
       {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
     ]
   },
-  { "id": "configurable_clock",
-    "name": "Configurable Analog Clock",
-    "shortName":"Configurable Clock",
-    "version":"0.02",
-    "description": "an analog clock with several kinds of faces, hands and colors to choose from",
-    "icon": "app-icon.png",
-    "type": "clock",
-    "tags": "clock",
+  { "id": "banglexercise",
+    "name": "BanglExercise",
+    "shortName":"BanglExercise",
+    "version":"0.01",
+    "description": "Can automatically track exercises while wearing the Bangle.js watch.",
+    "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "type": "app",
+    "tags": "sport",
     "supports" : ["BANGLEJS2"],
-    "allow_emulator": true,
-    "screenshots": [{"url":"app-screenshot.png"}],
+    "allow_emulator":true,
     "readme": "README.md",
     "storage": [
-      {"name":"configurable_clock.app.js","url":"app.js"},
-      {"name":"configurable_clock.img","url":"app-icon.js","evaluate":true}
-    ]
+      {"name":"banglexercise.app.js","url":"app.js"},
+      {"name":"banglexercise.img","url":"app-icon.js","evaluate":true},
+      {"name":"banglexercise.settings.js","url":"settings.js"}
+     ],
+     "data": [
+       {"name":"banglexercise.json"}
+     ]
   }
 ]

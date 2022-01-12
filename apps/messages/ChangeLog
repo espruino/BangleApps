@@ -27,3 +27,4 @@
 0.18: Use app-specific icon colors
       Spread message action buttons out
       Back button now goes back to list of messages
+      If showMessage called with no message (eg all messages deleted) now return to the clock (fix #1267)
