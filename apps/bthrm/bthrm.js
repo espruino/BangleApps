@@ -35,7 +35,6 @@ Bangle.on('BTHRM', onBtHrm);
 Bangle.on('HRM', onHrm);
 
 Bangle.setHRMPower(1,'bthrm')
-Bangle.setBTHRMPower(1,'bthrm')
 
 g.clear();
 Bangle.loadWidgets();
