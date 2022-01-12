@@ -26,13 +26,10 @@
     default-src 'self' 'unsafe-inline' 'unsafe-eval' file: https:;
   ">
 
-  <script src="jquery-3.6.0.min.js"></script>
-  <!--script src="https://code.jquery.com/jquery-3.6.0.min.js"></script-->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <link rel="stylesheet" href=""https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.4.5/spectre.min.css">
-  <!--link rel="stylesheet" href="../../css/spectre.min.css"-->
-  <script src="customize.js"></script>
-  <!--script src="../../core/lib/customize.js"></script-->
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <script src="../../core/lib/customize.js"></script>
 
   <style>
     body { background:white; color:black }
@@ -125,17 +122,220 @@
 
 
   <script>
+  $(function () {
+    let ClockSize, ClockSizeURL
+    let ClockFace, ClockFaceDots, ClockFaceURL
+    let ClockHands, SecondHand, ClockHandsURL, FillColor
+    let ComplicationTL, ComplicationTLURL
+    let ComplicationT, ComplicationTURL
+    let ComplicationTR, ComplicationTRURL
+    let ComplicationL, ComplicationLURL
+    let ComplicationR, ComplicationRURL
+    let ComplicationBL, ComplicationBLURL
+    let ComplicationB, ComplicationBURL
+    let ComplicationBR, ComplicationBRURL
+    let Foreground, Background
 
+  /**** retrieveInputs ****/
 
-/*
-    let AppSource = ''
+    function retrieveInputs () {
+      ClockSize    = $('input[name="clock-size"]:checked').val()
+      ClockSizeURL = ($('#clock-size-custom-url').val() || '').trim()
 
-    sendCustomizedApp({
-      storage:[
-        {name:'ac-ac.app.js', url:'app.js', content:app},
-      ]
-    });
-*/
+      ClockFace     = $('input[name="clock-face"]:checked').val()
+      ClockFaceDots = $('input[name="clock-face-dots"]:checked').val()
+      ClockFaceURL  = ($('#clock-face-custom-url').val() || '').trim()
+
+      ClockHands    = $('input[name="clock-hands"]:checked').val()
+      FillColor     = $('input[name="fill-color"]:checked').val()
+      SecondHand    = $('input[name="second-hand"]:checked').val()
+      ClockHandsURL = ($('#clock-hands-custom-url').val() || '').trim()
+
+      ComplicationTL    = $('#complication-tl').val()
+      ComplicationTLURL = ($('#complication-tl-custom-url').val() || '').trim()
+
+      ComplicationT    = $('#complication-t').val()
+      ComplicationTURL = ($('#complication-t-custom-url').val() || '').trim()
+
+      ComplicationTR    = $('#complication-tr').val()
+      ComplicationTRURL = ($('#complication-tr-custom-url').val() || '').trim()
+
+      ComplicationL    = $('#complication-l').val()
+      ComplicationLURL = ($('#complication-l-custom-url').val() || '').trim()
+
+      ComplicationR    = $('#complication-r').val()
+      ComplicationRURL = ($('#complication-r-custom-url').val() || '').trim()
+
+      ComplicationBL    = $('#complication-bl').val()
+      ComplicationBLURL = ($('#complication-bl-custom-url').val() || '').trim()
+
+      ComplicationB    = $('#complication-b').val()
+      ComplicationBURL = ($('#complication-b-custom-url').val() || '').trim()
+
+      ComplicationBR    = $('#complication-br').val()
+      ComplicationBRURL = ($('#complication-br-custom-url').val() || '').trim()
+
+      Foreground = $('input[name="foreground"]:checked').val()
+      Background = $('input[name="background"]:checked').val()
+    }
+    retrieveInputs()
+
+  /**** validateInputs ****/
+
+    function validateInputs () {
+      function withError (Message) {
+        showMessage(Message)
+        $('#UploadButton').attr('disabled',true)
+      }
+
+      switch (true) {
+        case (ClockSize === 'custom') && (ClockSizeURL === ''):
+          return withError('please enter the URL of your custom "Clock Size Calculator"')
+
+        case (ClockFace === 'custom') && (ClockFaceURL === ''):
+          return withError('please enter the URL of your custom clock face')
+
+        case (ClockHands === 'custom') && (ClockHandsURL === ''):
+          return withError('please enter the URL of your custom clock hands')
+
+        case (ComplicationTL === 'custom') && (ComplicationTLURL === ''):
+          return withError('please enter the URL of your custom complication in the top-left corner')
+        case (ComplicationT === 'custom') && (ComplicationTURL === ''):
+          return withError('please enter the URL of your custom complication at the top edge')
+        case (ComplicationTR === 'custom') && (ComplicationTRURL === ''):
+          return withError('please enter the URL of your custom complication in the top-right corner')
+        case (ComplicationL === 'custom') && (ComplicationLURL === ''):
+          return withError('please enter the URL of your custom complication at the left edge')
+        case (ComplicationR === 'custom') && (ComplicationRURL === ''):
+          return withError('please enter the URL of your custom complication at the right edge')
+        case (ComplicationBL === 'custom') && (ComplicationBLURL === ''):
+          return withError('please enter the URL of your custom complication in the bottom-left corner')
+        case (ComplicationB === 'custom') && (ComplicationBURL === ''):
+          return withError('please enter the URL of your custom complication at the bottom edge')
+        case (ComplicationBR === 'custom') && (ComplicationBRURL === ''):
+          return withError('please enter the URL of your custom complication in the bottom-right corner')
+      }
+
+      hideMessage()
+      $('#UploadButton').removeAttr('disabled')
+    }
+
+  /**** hide/showMesssage ****/
+
+    function hideMessage () { $('#MessageView').hide() }
+
+    function showMessage (Message) {
+      $('#MessageView').text(Message).show()
+    }
+
+  /**** createAndUploadApp ****/
+
+    function createAndUploadApp () {
+      function chosenClockSize () {
+        switch (ClockSize) {
+          case 'simple': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clock-size/main/ClockSize.js')"
+          case 'smart':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-smart-clock-size/main/ClockSize.js')"
+          case 'custom': return 'require(' + ClockSizeURL + ')'
+        }
+      }
+
+      function chosenClockFace () {
+        switch (ClockFace) {
+          case 'none':        return undefined
+          case 'four-fold':   return "require('https://raw.githubusercontent.com/rozek/banglejs-2-four-fold-clock-face/main/ClockFace.js')"
+          case 'twelve-fold': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-twelve-fold-clock-face/main/ClockFace.js')"
+          case 'rainbow':     return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rainbow-clock-face/main/ClockFace.js')"
+          case 'custom':      return 'require(' + ClockFaceURL + ')'
+        }
+      }
+
+      function chosenClockHands () {
+        switch (ClockHands) {
+          case 'simple':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simpled-clock-hands/main/ClockHands.js')"
+          case 'rounded': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rounded-clock-hands/main/ClockHands.js')"
+          case 'hollow':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-hollow-clock-hands/main/ClockHands.js')"
+          case 'custom':  return 'require(' + ClockHandsURL + ')'
+        }
+      }
+
+      function chosenComplication (Complication, customURL) {
+        switch (Complication) {
+          case 'none':          return undefined
+          case 'date':          return "require('https://raw.githubusercontent.com/rozek/banglejs-2-date-complication/main/Complication.js')"
+          case 'weekday':       return "require('https://raw.githubusercontent.com/rozek/banglejs-2-weekday-complication/main/Complication.js')"
+          case 'calendar-week': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-calendar-week-complication/main/Complication.js')"
+          case 'moon-phase':    return "require('https://raw.githubusercontent.com/rozek/banglejs-2-moon-phase-complication/main/Complication.js')"
+          case 'custom':        return 'require(' + customURL + ')'
+        }
+      }
+      function chosenComplicationAt (Position) {
+        switch (Position) {
+          case 'tl': return chosenComplication(ComplicationTL, ComplicationTLURL)
+          case 't':  return chosenComplication(ComplicationT,  ComplicationTURL)
+          case 'tr': return chosenComplication(ComplicationTR, ComplicationTRURL)
+          case 'l':  return chosenComplication(ComplicationL,  ComplicationLURL)
+          case 'r':  return chosenComplication(ComplicationR,  ComplicationRURL)
+          case 'bl': return chosenComplication(ComplicationBL, ComplicationBLURL)
+          case 'b':  return chosenComplication(ComplicationB,  ComplicationBURL)
+          case 'br': return chosenComplication(ComplicationBR, ComplicationBRURL)
+        }
+      }
+
+      function chosenColor (ColorChoice) {
+        return (ColorChoice === 'none' ? undefined : ColorChoice)
+      }
+
+      function chosenForeground () { return chosenColor(Foreground) }
+      function chosenBackground () { return chosenColor(Background) }
+      function chosenSecondHand () { return chosenColor(SecondHand) }
+      function chosenFillColor ()  { return chosenColor(FillColor) }
+
+      function chosenDots () { return (ClockFaceDots === 'with-dots') }
+
+      let AppSource = `
+let Clockwork = require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clockwork/main/Clockwork.js');
+
+Clockwork.windUp({
+  size:      ${chosenClockSize()},
+  background:null,
+  face:      ${chosenClockFace()},
+  hands:     ${chosenClockHands()},
+  complications:{
+    tl:${chosenComplicationAt('tl')},
+    t: ${chosenComplicationAt('t')},
+    tr:${chosenComplicationAt('tr')},
+    l: ${chosenComplicationAt('l')},
+    r: ${chosenComplicationAt('r')},
+    bl:${chosenComplicationAt('bl')},
+    b: ${chosenComplicationAt('b')},
+    br:${chosenComplicationAt('br')},
+  }
+},{
+  Foreground:${chosenForeground()},
+  Background:${chosenBackground()},
+  Seconds:   ${chosenSecondHand()},
+  withDots:  ${chosenDots()},
+  FillColor: ${chosenFillColor()}
+});
+`
+      sendCustomizedApp({
+        storage:[
+          {name:'ac-ac.app.js', url:'app.js', content:AppSource},
+        ]
+      })
+    }
+
+  /**** register event handlers ****/
+
+    function retrieveAndValidateInputs () {
+      retrieveInputs ()
+      validateInputs ()
+    }
+
+    $('input[type="radio"]').on('change',retrieveAndValidateInputs)
+    $('input[type="url"]').  on('change',retrieveAndValidateInputs)
+    $('select').             on('change',retrieveAndValidateInputs)
+  })
   </script>
 
 
@@ -167,7 +367,7 @@
 
      <td>
        <label class="Preview">
-         <input type="radio" name="clock-size" value="smart">
+         <input type="radio" name="clock-size" value="smart" checked>
          <img src="smartClockSize.png"/>
        </label><br>
        smart
@@ -186,7 +386,7 @@
   If you prefer a "custom" clock size calculator, please enter the URL
   of its JavaScript module below:
 </p><p>
-  custom URL: <input type="url" id="clock-size-custom-url" size="30">
+  custom URL: <input type="url" id="clock-size-custom-url" size="50">
 </p>
 
   <h3>Clock Face</h3>
@@ -198,7 +398,7 @@
    <tr>
      <td>
        <label class="Preview">
-         <input type="radio" name="clock-face" value="none">
+         <input type="radio" name="clock-face" value="none" checked>
          <img src="none.png"/>
        </label><br>
        none
@@ -244,13 +444,13 @@
   The "twelve-fold" and "rainbow"-colored faces may be drawn with or without
   dots marking the position of every minute. Which variant do you prefer?
 </p><p>
-  <input type="radio" name="clock-face-dots" value="without-dots"> without dots <br>
+  <input type="radio" name="clock-face-dots" value="without-dots" checked> without dots <br>
   <input type="radio" name="clock-face-dots" value="with-dots"> with dots
 </p><p>
   If you prefer a "custom" clock face, please enter the URL
   of its JavaScript module below:
 </p><p>
-  custom URL: <input type="url" id="clock-face-custom-url" size="30">
+  custom URL: <input type="url" id="clock-face-custom-url" size="50">
 </p>
 
   <h3>Clock Hands</h3>
@@ -270,7 +470,7 @@
 
      <td>
        <label class="Preview">
-         <input type="radio" name="clock-hands" value="rounded">
+         <input type="radio" name="clock-hands" value="rounded" checked>
          <img src="roundedClockHands.png"/>
        </label><br>
        rounded
@@ -297,6 +497,27 @@
   Clock hands are drawn in the configured foreground and background colors
   (you may select them at the end of this form)
 </p><p>
+  Hollow clock hands may optionally be filled with a given color. If you have
+  chosen hollow hands, please specify the desired fill mode and color below:
+  <b>Hollow Hand Fill Color:</b>
+</p><p>
+  <label class="ColorPatch">
+    <input type="radio" name="fill-color" value="none" checked/>
+    <span>none</span>
+  </label>
+  <label class="ColorPatch">
+    <input type="radio" name="fill-color" value="Theme"/>
+    <span>themed</span>
+  </label>
+  <input type="radio" name="fill-color" value="#000000" class="ColorPatch" style="background:#000000"/>
+  <input type="radio" name="fill-color" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+  <input type="radio" name="fill-color" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+  <input type="radio" name="fill-color" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+  <input type="radio" name="fill-color" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+  <input type="radio" name="fill-color" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+  <input type="radio" name="fill-color" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+  <input type="radio" name="fill-color" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
   Additionally, all clock hands may be drawn with or without second hands.
   If you want them to be drawn, please click on their desired color below
   (or choose "themed" to use your Bangle's configured theme) - if not, just
@@ -305,7 +526,7 @@
   <b>Second Hand Color:</b>
 </p><p>
   <label class="ColorPatch">
-    <input type="radio" name="second-hand" value="(null)"/>
+    <input type="radio" name="second-hand" value="none" checked/>
     <span>none</span>
   </label>
   <label class="ColorPatch">
@@ -324,7 +545,7 @@
   If you prefer "custom" clock hands, please enter the URL
   of their JavaScript module below:
 </p><p>
-  custom URL: <input type="url" id="clock-hands-custom-url" size="30">
+  custom URL: <input type="url" id="clock-hands-custom-url" size="50">
 </p>
 
   <h3>Complications</h3>
@@ -347,7 +568,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-tl">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -359,7 +580,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-tl-custom-url"></td>
+      <td><input type="url" id="complication-tl-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -369,7 +590,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-t">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -381,7 +602,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-t-custom-url"></td>
+      <td><input type="url" id="complication-t-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -391,7 +612,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-tr">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -403,7 +624,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-tr-custom-url"></td>
+      <td><input type="url" id="complication-tr-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -413,7 +634,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-l">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -425,7 +646,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-l-custom-url"></td>
+      <td><input type="url" id="complication-l-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -435,7 +656,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-r">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -447,7 +668,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-r-custom-url"></td>
+      <td><input type="url" id="complication-r-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -457,7 +678,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-bl">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -469,7 +690,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-bl-custom-url"></td>
+      <td><input type="url" id="complication-bl-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -479,7 +700,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-b">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -491,7 +712,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-b-custom-url"></td>
+      <td><input type="url" id="complication-b-custom-url" size="50"></td>
     </tr>
 
     <tr>
@@ -501,7 +722,7 @@
       <td> Complication:</td>
       <td>
         <select id="complication-br">
-          <option value="none">         (none)</option>
+          <option value="none" selected>(none)</option>
           <option value="date">         date</option>
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
@@ -513,7 +734,7 @@
     <tr>
       <td></td>
       <td>custom URL:</td>
-      <td><input type="url" id="complication-br-custom-url"></td>
+      <td><input type="url" id="complication-br-custom-url" size="50"></td>
     </tr>
   </tbody></table>
 </p>
@@ -528,25 +749,10 @@
   "themed" if you want the clock to use the currently configured theme on
   your Bangle.js 2:
 </p><p>
-  <b>Foreground Color:</b>
-</p><p>
-  <label class="ColorPatch">
-    <input type="radio" name="foreground" value="Theme"/>
-    <span>themed</span>
-  </label>
-  <input type="radio" name="foreground" value="#000000" class="ColorPatch" style="background:#000000"/>
-  <input type="radio" name="foreground" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
-  <input type="radio" name="foreground" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
-  <input type="radio" name="foreground" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
-  <input type="radio" name="foreground" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
-  <input type="radio" name="foreground" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
-  <input type="radio" name="foreground" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
-  <input type="radio" name="foreground" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
-</p><p>
   <b>Background Color:</b>
 </p><p>
   <label class="ColorPatch">
-    <input type="radio" name="background" value="Theme"/>
+    <input type="radio" name="background" value="Theme" checked/>
     <span>themed</span>
   </label>
   <input type="radio" name="background" value="#000000" class="ColorPatch" style="background:#000000"/>
@@ -558,11 +764,28 @@
   <input type="radio" name="background" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
   <input type="radio" name="background" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
 </p><p>
+  <b>Foreground Color:</b>
+</p><p>
+  <label class="ColorPatch">
+    <input type="radio" name="foreground" value="Theme" checked/>
+    <span>themed</span>
+  </label>
+  <input type="radio" name="foreground" value="#000000" class="ColorPatch" style="background:#000000"/>
+  <input type="radio" name="foreground" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+  <input type="radio" name="foreground" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+  <input type="radio" name="foreground" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+  <input type="radio" name="foreground" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+  <input type="radio" name="foreground" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+  <input type="radio" name="foreground" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+  <input type="radio" name="foreground" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
   When you are satisfied with your configuration, just click on "Upload" in
   order to generate the specified clock and upload it to your Bangle.js 2:
-</p><p>
-  <button>Upload</button>
 </p>
+  <p id="MessageView" style="display:none; color:red"></p>
+
+  <button id="UploadButton">Upload</button>
+</p><p> &nbsp; </p>
  </body>
 </html>
 
