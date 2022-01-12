@@ -51,18 +51,17 @@ function clearState() {
   layout.steps.label=0;
   layout.cadence.label= "0";
   layout.status.bgCol = "#f00";
-  layout.gps.bgCol = "#f00";
 }
 
 function onStartStop() {
   running = !running;
-  layout.button.label = running ? "STOP" : "START";
-  layout.status.label = running ? "RUN" : "STOP";
-  layout.status.bgCol = running ? "#0f0" : "#f00";
   if (running) {
     clearState();
     startTime = Date.now();
   }
+  layout.button.label = running ? "STOP" : "START";
+  layout.status.label = running ? "RUN" : "STOP";
+  layout.status.bgCol = running ? "#0f0" : "#f00";
   // if stopping running, don't clear state
   // so we can at least refer to what we've done
   layout.render();
@@ -89,7 +88,7 @@ var layout = new Layout( {
       {type:"txt", font:fontValue, label:"0", id:"steps", fillx:1 },
       {type:"txt", font:fontValue, label:"0", id:"cadence", fillx:1 }
     ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1 },
+      {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
       {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
       {type:"txt", font:fontHeading, label:"STOP", id:"status", fillx:1 }
     ]},
