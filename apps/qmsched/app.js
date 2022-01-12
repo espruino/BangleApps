@@ -155,31 +155,19 @@ function showEditMenu(index) {
     "< Cancel": () => showMainMenu(),
     "Hours": {
       value: hrs,
-      onchange: function(v) {
-        if (v<0) {v = 23;}
-        if (v>23) {v = 0;}
-        hrs = v;
-        this.value = v;
-      }, // no arrow fn -> preserve 'this'
+      min:0, max:23, wrap:true,
+      onchange: v => {hrs = v;},
     },
     "Minutes": {
       value: mins,
-      onchange: function(v) {
-        if (v<0) {v = 59;}
-        if (v>59) {v = 0;}
-        mins = v;
-        this.value = v;
-      }, // no arrow fn -> preserve 'this'
+      min:0, max:55, step:5, wrap:true,
+      onchange: v => {mins = v;},
     },
     "Switch to": {
       value: mode,
+      min:0, max:2, wrap:true,
       format: v => modeNames[v],
-      onchange: function(v) {
-        if (v<0) {v = 2;}
-        if (v>2) {v = 0;}
-        mode = v;
-        this.value = v;
-      }, // no arrow fn -> preserve 'this'
+      onchange: v => {mode = v;},
     },
   };
   function getSched() {
