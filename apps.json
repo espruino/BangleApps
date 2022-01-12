@@ -2295,6 +2295,20 @@
       {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
     ]
   },
+  { "id": "run",
+    "name": "Run",
+    "version":"0.01",
+    "description": "Displays distance, time, steps, cadence, pace and more for runners.",
+    "icon": "app.png",
+    "tags": "run,running,fitness,outdoors,gps",
+    "supports" : ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
+    "readme": "README.md",
+    "storage": [
+      {"name":"run.app.js","url":"app.js"},
+      {"name":"run.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "banglerun",
     "name": "BangleRun",
