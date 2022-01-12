@@ -74,11 +74,12 @@ fs.createReadStream(__dirname+'/country.csv')
               fs.write(fd, ";\n", handleWrite);
               fs.write(fd, "exports.timezones = function(offs) {\n", handleWrite);
               fs.write(fd, "  switch (offs) {\n", handleWrite);
-              for (o in offsdict) {
+              for (i=0; i<offsets.length; i++) {
+                let o = offsets[i].toString();
                 fs.write(fd, `    case ${o}: return ${JSON.stringify(offsdict[o])};\n`, handleWrite);
               }
               fs.write(fd, "    default: return [\"Houston, we have a bug.\"];\n", handleWrite);
-              fs.write(fd, "  };\n", handleWrite);
+              fs.write(fd, "  }\n", handleWrite);
               fs.write(fd, "};\n", handleWrite);
               console.log('Done.');
             });
