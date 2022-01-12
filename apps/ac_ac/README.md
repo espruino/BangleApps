@@ -22,10 +22,10 @@ Additionally, you may use the currently configured global theme or configure
 your own colors for clock fore- and background and second hands.
 
 Consequently, even without external modules you already have the choice between
-87552 combinations!
+102144 combinations!
 
 <!--
-  1 + (8 Fg colors * 7 Bg colors) * 2 sizes * 4(6) faces * 3(4) hands *
+  1 + (8 Fg colors * 7 Bg colors) * 2 sizes * 4(7) faces * 3(4) hands *
   8 positions * 4 complications (w/o placeholder)
 -->
 
