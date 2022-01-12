@@ -18,7 +18,7 @@
         return; // drawWidgets will call draw again
       }
       let x = this.x, y = this.y;
-      g.clearRect(x, y, x+23, y+23);
+      g.reset().clearRect(x, y, x+23, y+23);
       // quiet mode: draw red one-way-street sign (dim red on Bangle.js 1)
       x = this.x+11;y = this.y+11; // center of widget
       g.setColor(process.env.HWVERSION===2 ? 1 : 0.8, 0, 0).fillCircle(x, y, 8);

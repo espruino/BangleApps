@@ -3,7 +3,7 @@ Bangle.drawWidgets();
 
 const modeNames = ["Off", "Alarms", "Silent"];
 
-// load global brightness setting
+// load global settings
 let bSettings = require('Storage').readJSON('setting.json',true)||{};
 let current = 0|bSettings.quiet;
 delete bSettings; // we don't need any other global settings
@@ -18,6 +18,7 @@ delete bSettings; // we don't need any other global settings
  */
 function save() {
   require('Storage').writeJSON('qmsched.json', settings);
+  eval(require('Storage').read('qmsched.boot.js')); // apply new schedules right away
 }
 function get(key, def) {
   return (key in settings) ? settings[key] : def;
@@ -77,37 +78,66 @@ function formatTime(t) {
   const mins = Math.round((t-hrs)*60);
   return (" "+hrs).substr(-2)+":"+("0"+mins).substr(-2);
 }
+/**
+ * Apply theme
+ */
+function applyTheme() {
+  const theme = (require("Storage").readJSON("setting.json", 1) || {}).theme;
+  if (theme && theme.dark===g.theme.dark) return; // already correct
+  g.theme = theme;
+  delete g.reset;
+  g._reset = g.reset;
+  g.reset = function(n) { return g._reset().setColor(g.theme.fg).setBgColor(g.theme.bg); };
+  g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
+  g.clear(1);
+  Bangle.drawWidgets();
+  delete m.lastIdx; // force redraw
+  m.draw();
+}
 
+/**
+ * Library uses this to make the app update itself
+ * @param {int} mode New Quite Mode
+ */
+function setAppMode(mode) {
+  if (mode === current) return;
+  current = mode;
+  delete m.lastIdx; // force redraw
+  applyTheme();
+  if (m.lastIdx===undefined) m.draw(); // applyTheme didn't redraw menu, but we need to show updated mode
+}
+
+let m;
 function showMainMenu() {
-  let _m, menu = {
+  let menu = {
     "": {"title": "Quiet Mode"},
     "< Exit": () => load()
   };
   // "Current Mode""Silent" won't fit on Bangle.js 2
   menu["Current"+((process.env.HWVERSION===2) ? "" : " Mode")] = {
     value: current,
-    format: v => modeNames[v],
-    onchange: function(v) {
-      if (v<0) {v = 2;}
-      if (v>2) {v = 0;}
-      require("qmsched").setMode(v);
-      current = v;
-      this.value = v;
-    },
+    min:0, max:2, wrap: true,
+    format: () => modeNames[current],
+    onchange: require("qmsched").setMode, // library calls setAppMode(), which updates `current`
   };
   scheds.sort((a, b) => (a.hr-b.hr));
   scheds.forEach((sched, idx) => {
     menu[formatTime(sched.hr)] = {
       format: () => modeNames[sched.mode], // abuse format to right-align text
-      onchange: function() {
-        _m.draw = ()=> {}; // prevent redraw of main menu over edit menu
+      onchange: () => {
+        m.draw = ()=> {}; // prevent redraw of main menu over edit menu (needed because we abuse format/onchange)
         showEditMenu(idx);
       }
     };
   });
   menu["Add Schedule"] = () => showEditMenu(-1);
+  menu["Switch Theme"] = {
+    value: !!get("switchTheme"),
+    format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+    onchange: v => v ? set("switchTheme", v) : unset("switchTheme"),
+  };
   menu["LCD Settings"] = () => showOptionsMenu();
-  _m = E.showMenu(menu);
+  m = E.showMenu(menu);
 }
 
 function showEditMenu(index) {
@@ -174,7 +204,7 @@ function showEditMenu(index) {
       showMainMenu();
     };
   }
-  return E.showMenu(menu);
+  m = E.showMenu(menu);
 }
 
 function showOptionsMenu() {
@@ -244,7 +274,7 @@ function showOptionsMenu() {
       onchange: () => {toggle("wakeOnTwist");},
     },
   };
-  return E.showMenu(oMenu);
+  m = E.showMenu(oMenu);
 }
 
 loadSettings();
