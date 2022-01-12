@@ -90,32 +90,6 @@
           draw : (x,y) => g.setColor(Bangle.isCharging() ? "#0f0" : "#ff0").drawImage(atob("DAwBAABgH4G4EYG4H4H4H4GIH4AA"),x,y)
         };
       },
-      temp:function() {
-        var core = 0, skin = 0;
-        var hasCore = false;
-        function onCore(c) {
-            core=c.core;
-            skin=c.skin;
-            hasCore = true;
-        }
-        return {
-          name : "Core",
-          fields : ["Core","Skin"],
-          getValues : () => {
-            var r = [core,skin];
-            return r;
-          },
-          start : () => {
-            hasCore = false;
-            Bangle.on('CoreTemp', onCore);
-          },
-          stop : () => {
-            hasCore = false;
-            Bangle.removeListener('CoreTemp', onCore);
-          },
-          draw : (x,y) => g.setColor(hasCore?"#0f0":"#8f8").drawImage(atob("DAwBAAAOAKPOfgZgZgZgZgfgPAAA"),x,y)
-        };
-      }, 
       steps:function() {
         var lastSteps = 0;
         return {
