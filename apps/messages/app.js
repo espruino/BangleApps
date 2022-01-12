@@ -225,7 +225,7 @@ function showMessageSettings(msg) {
 
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
-  if (!msg) return checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0}); // go home if no message found
+  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0}); // go home if no message found
   if (msg.src=="Maps") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
