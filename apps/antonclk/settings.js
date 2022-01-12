@@ -47,7 +47,7 @@
         writeSettings();
       }
     },
-    "Show Weeknumber": {
+    "Show CalWeek": {
       value: (settings.calWeek !== undefined ? settings.calWeek : false),
       format: v => v ? "On" : "Off",
       onchange: v => {
