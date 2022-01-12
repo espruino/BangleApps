@@ -27,7 +27,7 @@ function draw() {
     }
   });
 
-  let weather = require("Storage").readJSON("sphclock.json", false).weather;
+  let weather = require("Storage").readJSON("weather.json", false);
 
   if (weather) {
     g.setColor("#000");
@@ -38,7 +38,7 @@ function draw() {
 
     weather.forEach((v1) => {
       v1.hourly.forEach((v2) => {
-        if (!minC || v2.tempC < minC + 1) minC = v2.tempC + 1;
+        if (!minC || v2.tempC < minC - 1) minC = v2.tempC - 1;
         if (!maxC || v2.tempC > maxC + 1) maxC = v2.tempC + 1;
       });
     });

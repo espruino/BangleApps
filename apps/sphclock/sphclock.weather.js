@@ -15,7 +15,7 @@ exports.drawWeather = function () {
   let hoje = new Date();
   hoje = dateToISO(date);
 
-  let weather = require("Storage").readJSON("sphclock.json", false).weather;
+  let weather = require("Storage").readJSON("weather.json", false);
   if (weather) {
     weather = weather.filter((v) => v.date >= hoje);
 
