@@ -81,6 +81,9 @@ function showMainMenu() {
       value: exerciseCounter + " " + exerciseType.name
     };
   }
+  menu.Exit = function() {
+     load();
+  };
 
   E.showMenu(menu);
 }
@@ -187,6 +190,7 @@ function isValidYAxisExercise(slopeY, t) {
           console.log(t, exerciseName + " half complete...");
 
           layout.progress.label = "½";
+          g.clear();
           layout.render();
         }
 
@@ -215,6 +219,7 @@ function isValidYAxisExercise(slopeY, t) {
 
                 layout.count.label = exerciseCounter;
                 layout.progress.label = "";
+                g.clear();
                 layout.render();
 
                 if (settings.buzz)
@@ -279,10 +284,9 @@ function startRecording() {
         c: [{
             type: "txt",
             id: "count",
-            font: "6x8:10",
-            label: exerciseCounter,
-            pad: 5,
-            bgCol: g.theme.bg
+            font: exerciseCounter < 100 ? "6x8:9" : "6x8:8",
+            label: 10,
+            pad: 5
           },
           {
             type: "txt",
@@ -328,7 +332,7 @@ function startRecording() {
         stopRecording();
       }
     }],
-    lazy: true
+    lazy: false
   });
   layout.render();
 

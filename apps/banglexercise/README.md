@@ -6,7 +6,7 @@ Currently only push ups and curls are supported.
 
 ## Disclaimer
 
-This app is very experimental.
+This app is experimental but it seems to work quiet reliable for me.
 It could be and is likely that the threshold values for detecting exercises do not work for everyone.
 Therefore it would be great if we could improve this app together :-)
 
@@ -25,8 +25,8 @@ Press stop to end your exercise.
    * Rope jumps
    * Sit ups
    * ...
-* Save exercises to file system
-* Add settings (vibration, beep, ...)
+* Save exercise summaries to file system
+* Configure daily goal for exercises
 * Find a nicer icon
 
 
