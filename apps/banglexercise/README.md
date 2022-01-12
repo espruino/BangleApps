@@ -13,7 +13,7 @@ Therefore it would be great if we could improve this app together :-)
 
 ## Usage
 
-Select the exercise type you want to practive and go for it!
+Select the exercise type you want to practice and go for it!
 Press stop to end your exercise.
 
 

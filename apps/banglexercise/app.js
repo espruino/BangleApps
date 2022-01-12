@@ -187,7 +187,7 @@ function isValidYAxisExercise(slopeY, t) {
       if (p1 > 0 && p2 < 0) {
         if (lastZeroPassCameFromPositive == false) {
           lastExerciseHalfCompletionTime = t;
-          console.log(t, exerciseName + " half complete...");
+          //console.log(t, exerciseName + " half complete...");
 
           layout.progress.label = "½";
           g.clear();
@@ -201,7 +201,7 @@ function isValidYAxisExercise(slopeY, t) {
         if (lastZeroPassCameFromPositive == true) {
           const tDiffLastExercise = t - lastExerciseCompletionTime;
           const tDiffStart = t - tStart;
-          console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastExercise), Math.round(tDiffStart));
+          //console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastExercise), Math.round(tDiffStart));
 
           // check minimal time between exercises:
           if ((lastExerciseCompletionTime <= 0 && tDiffStart >= thresholdMinTime) || tDiffLastExercise >= thresholdMinTime) {
@@ -212,7 +212,7 @@ function isValidYAxisExercise(slopeY, t) {
               // check minimal duration of exercise:
               const tDiffExerciseHalfCompletion = t - lastExerciseHalfCompletionTime;
               if (tDiffExerciseHalfCompletion > thresholdMinDurationTime) {
-                console.log(t, exerciseName + " complete!!!");
+                //console.log(t, exerciseName + " complete!!!");
 
                 lastExerciseCompletionTime = t;
                 exerciseCounter++;
@@ -225,15 +225,15 @@ function isValidYAxisExercise(slopeY, t) {
                 if (settings.buzz)
                   Bangle.buzz(100, 0.4);
               } else {
-                console.log(t, exerciseName + " to quick for duration time threshold!");
+                //console.log(t, exerciseName + " to quick for duration time threshold!");
                 lastExerciseCompletionTime = t;
               }
             } else {
-              console.log(t, exerciseName + " to slow for time threshold!");
+              //console.log(t, exerciseName + " to slow for time threshold!");
               lastExerciseCompletionTime = t;
             }
           } else {
-            console.log(t, exerciseName + " to quick for time threshold!");
+            //console.log(t, exerciseName + " to quick for time threshold!");
             lastExerciseCompletionTime = t;
           }
         }
