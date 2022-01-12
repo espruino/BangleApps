@@ -52,7 +52,7 @@
         };
       },
       hrm:function() {
-        var bpm = 0, bpmConfidence = 0;
+        var bpm = "", bpmConfidence = "";
         function onHRM(h) {
           if (h.confidence >= bpmConfidence) {
             bpmConfidence = h.confidence;
@@ -64,7 +64,7 @@
           fields : ["Heartrate", "Confidence"],
           getValues : () => {
             var r = [bpm,bpmConfidence];
-            bpm = 0; bpmConfidence = 0;
+            bpm = ""; bpmConfidence = "";
             return r;
           },
           start : () => {
