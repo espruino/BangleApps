@@ -54,10 +54,8 @@
       hrm:function() {
         var bpm = "", bpmConfidence = "";
         function onHRM(h) {
-          if (h.confidence >= bpmConfidence) {
-            bpmConfidence = h.confidence;
-            bpm = h.bpm;
-          }
+          bpmConfidence = h.confidence;
+          bpm = h.bpm;
         }
         return {
           name : "HR",
