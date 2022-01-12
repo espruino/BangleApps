@@ -118,6 +118,10 @@
 
           // Disable BDS, use just GPS (supposedly improve lock time)
           js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,1")}")\n`; // set GPS-only mode
+          // What about:
+          // NAV-TIMEUTC (0x01 0x10)
+          // NAV-PV (0x01 0x03)
+          // or AGPS.zip uses AID-INI (0x0B 0x01)
         }
 
         for (var i=0;i<bin.length;i+=chunkSize) {
