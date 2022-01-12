@@ -69,7 +69,7 @@ function showMainMenu() {
     menu["Do " + et.name] = function() {
       exerciseType = et;
       E.showMenu();
-      startRecording();
+      startTraining();
     };
   });
 
@@ -263,7 +263,7 @@ function reset() {
 }
 
 
-function startRecording() {
+function startTraining() {
   if (recordActive) return;
   g.clear(1);
   reset();
@@ -319,7 +319,7 @@ function startRecording() {
         type: "txt",
         id: "recording",
         font: "6x8:2",
-        label: "RECORDING",
+        label: "TRAINING",
         bgCol: "#f00",
         pad: 5,
         fillx: 1
@@ -329,7 +329,7 @@ function startRecording() {
     btns: [{
       label: "STOP",
       cb: () => {
-        stopRecording();
+        stopTraining();
       }
     }],
     lazy: false
@@ -344,7 +344,7 @@ function startRecording() {
     Bangle.buzz(200, 1);
 }
 
-function stopRecording() {
+function stopTraining() {
   if (!recordActive) return;
 
   g.clear(1);
