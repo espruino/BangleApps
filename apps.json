@@ -1357,7 +1357,7 @@
   "shortName":"HR Alarm",
   "version":"0.01",
   "description": "This invisible widget vibrates whenever the heart rate gets close to the upper limit or goes over or under the configured limits",
-  "icon": "widget.png",  
+  "icon": "widget.png",
   "type": "widget",
   "tags": "widget",
   "supports" : ["BANGLEJS2"],
@@ -4514,7 +4514,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.11",
+    "version":"0.12",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -5184,7 +5184,7 @@
       {"name":"mmind.app.js","url":"mmind.app.js"},
       {"name":"mmind.img","url":"mmind.icon.js","evaluate":true}
      ]
-   }, 
+   },
    {
     "id": "presentor",
     "name": "Presentor",
