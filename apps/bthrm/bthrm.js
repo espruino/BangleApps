@@ -9,13 +9,14 @@ function draw(y, event, type, counter) {
   var px = g.getWidth()/2;
   g.reset();
   g.setFontAlign(0,0);
-  g.clearRect(0,y,g.getWidth(),y+80);
+  g.clearRect(0,y,g.getWidth(),y+75);
   if (type == null || event == null || counter == 0) return;
   var str = event.bpm + "";
   g.setFontVector(40).drawString(str,px,y+20);
   str = "Confidence: " + event.confidence;
   g.setFontVector(12).drawString(str,px,y+50);
   str = "Event: " + type;
+  if (type == "HRM") str += " Source: " + (event.src ? event.src : "internal");
   g.setFontVector(12).drawString(str,px,y+60);
 }
 
