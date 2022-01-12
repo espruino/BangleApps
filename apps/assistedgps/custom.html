@@ -27,6 +27,31 @@
       </div>
     </div>
     <div id="banglejs2-info" style="display:none">
+      <p>Using fewer GNSS systems may decrease the time to fix. (If unsure, select only GPS)</p>
+      <div class="form-group">
+        <label class="form-label">Select which GNSS system you want.</label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="1" checked><i class="form-icon"></i> GPS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="2"><i class="form-icon"></i> BDS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="3"><i class="form-icon"></i> GPS+BDS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="4"><i class="form-icon"></i> GLONASS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="5"><i class="form-icon"></i> GPS+GLONASS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="6"><i class="form-icon"></i> BDS+GLONASS
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="gnss_select" value="6"><i class="form-icon"></i> GPS+BDS+GLONASS
+        </label>
+      </div>
     </div>
     <p id="upload-wrap" style="display:none">Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
@@ -53,11 +78,11 @@
         //var text = document.getElementById("agpsperiod").value;
         get(url, function(b64) {
           var js = jsFromBase64(b64);
-          sendCustomizedApp({
-            storage:[
-              {name:"RAM", content:js},
-            ]
-          });
+          //sendCustomizedApp({
+          //  storage:[
+          //    {name:"RAM", content:js},
+          //  ]
+          //});
         });
       });
 
@@ -116,8 +141,14 @@
         }
         if (isB2) { // CASIC
 
-          // Disable BDS, use just GPS (supposedly improve lock time)
-          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,1")}")\n`; // set GPS-only mode
+          // Select what GNSS System to use for decreased fix time.
+          var radios = document.getElementsByName('gnss_select');
+	  var gnss_select="1";
+          for (var i=0; i<radios.length; i++)
+            if (radios[i].checked)
+              gnss_select=radios[i].value;
+          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`; // set GNSS mode
+          console.log(`\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`);
           // What about:
           // NAV-TIMEUTC (0x01 0x10)
           // NAV-PV (0x01 0x03)
