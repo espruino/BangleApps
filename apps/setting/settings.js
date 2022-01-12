@@ -11,8 +11,18 @@ function updateSettings() {
 }
 
 function updateOptions() {
+  var o = settings.options;
+  // Check to make sure nobody disabled all wakeups and locked themselves out!
+  if (BANGLEJS2) {
+    if (!(o.wakeOnBTN1||o.wakeOnFaceUp||o.wakeOnTouch||o.wakeOnTwist)) {
+      o.wakeOnBTN1 = true;
+    }
+  } else {
+    if (!(o.wakeOnBTN1||o.wakeOnBTN2||o.wakeOnBTN3||o.wakeOnFaceUp||o.wakeOnTouch||o.wakeOnTwist))
+      o.wakeOnBTN2 = true;
+  }
   updateSettings();
-  Bangle.setOptions(settings.options)
+  Bangle.setOptions(o)
 }
 
 function gToInternal(g) {
