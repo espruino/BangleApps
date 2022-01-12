@@ -208,6 +208,14 @@
   /**** createAndUploadApp ****/
 
     function createAndUploadApp () {
+      function WidgetsOnBackground () {
+        return (
+          ClockSize === 'smart'
+          ? "require('https://raw.githubusercontent.com/rozek/banglejs-2-widgets-on-background/main/drawWidgets.js');"
+          : ''
+        )
+      }
+
       function chosenClockSize () {
         switch (ClockSize) {
           case 'simple': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clock-size/main/ClockSize.js')"
@@ -270,6 +278,8 @@
       function chosenDots () { return (ClockFaceDots === 'with-dots' ? 'true' : 'false') }
 
       let AppSource = `
+${WidgetsOnBackground()}
+
 let Clockwork = require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clockwork/main/Clockwork.js');
 
 Clockwork.windUp({
