@@ -295,6 +295,9 @@ Clockwork.windUp({
   FillColor: ${chosenFillColor()}
 });
 `
+console.log('the configured AC-AC app looks as follows:')
+console.log(AppSource)
+
       sendCustomizedApp({
         storage:[
           {name:'ac-ac.app.js', url:'app.js', content:AppSource},
