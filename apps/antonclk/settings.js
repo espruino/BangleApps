@@ -48,10 +48,10 @@
       }
     },
     "Show Weeknumber": {
-      value: (settings.weekNum !== undefined ? settings.weekNum : true),
+      value: (settings.calWeek !== undefined ? settings.calWeek : false),
       format: v => v ? "On" : "Off",
       onchange: v => {
-        settings.weekNum = v;
+        settings.calWeek = v;
         writeSettings();
       }
     },
