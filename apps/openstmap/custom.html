@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.0/dist/geosearch.css"/>
   </head>
     <style>
       body {
@@ -44,6 +45,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../../core/lib/heatshrink.js"></script>
     <script src="../../core/lib/imageconverter.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.6.0/dist/bundle.min.js"></script>
 
     <script>
     /*
@@ -66,7 +68,8 @@ TODO:
       var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
 
-      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      // Create map and try and set the location to where the browser thinks we are
+      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       // Tiles used for Bangle.js itself
       var bangleTileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
@@ -78,6 +81,19 @@ TODO:
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
+      // Search box:
+      const searchProvider = new window.GeoSearch.OpenStreetMapProvider();
+      const searchControl = new GeoSearch.GeoSearchControl({
+        provider: searchProvider,
+        style: 'button',
+        updateMap: true,
+        autoClose: true,
+        showMarker: false,
+        keepResult: true,
+        autoComplete: false
+      });
+      map.addControl(searchControl);
 
       function onInit(device) {
         if (device && device.info && device.info.g) {

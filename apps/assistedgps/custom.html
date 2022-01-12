@@ -8,34 +8,47 @@
     <p>GPS can take a long time (~5 minutes) to get an accurate position the first time it is used.
     AGPS uploads a few hints to the GPS receiver about satellite positions that allow it
     to get a faster, more accurate fix - however they are only valid for a short period of time.</p>
-    <p>You can upload data that covers a longer period of time, but the upload will take longer.</p>
-    <div class="form-group">
-      <label class="form-label">AGPS Validity time</label>
-      <label class="form-radio">
-        <input type="radio" name="agpsperiod" value="1d"><i class="form-icon"></i> 1 day (8kB)
-      </label>
-      <label class="form-radio">
-        <input type="radio" name="agpsperiod" value="2d" checked><i class="form-icon"></i> 2 days (14kB)
-      </label>
-      <label class="form-radio">
-        <input type="radio" name="agpsperiod" value="3d"><i class="form-icon"></i> 3 days (20kB)
-      </label>
-      <label class="form-radio">
-        <input type="radio" name="agpsperiod" value="1wk"><i class="form-icon"></i> 1 week (46kB)
-      </label>
+    <div id="banglejs1-info" style="display:none">
+      <p>You can upload data that covers a longer period of time, but the upload will take longer.</p>
+      <div class="form-group">
+        <label class="form-label">AGPS Validity time</label>
+        <label class="form-radio">
+          <input type="radio" name="agpsperiod" value="1d"><i class="form-icon"></i> 1 day (8kB)
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="agpsperiod" value="2d" checked><i class="form-icon"></i> 2 days (14kB)
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="agpsperiod" value="3d"><i class="form-icon"></i> 3 days (20kB)
+        </label>
+        <label class="form-radio">
+          <input type="radio" name="agpsperiod" value="1wk"><i class="form-icon"></i> 1 week (46kB)
+        </label>
+      </div>
     </div>
-    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+    <div id="banglejs2-info" style="display:none">
+    </div>
+    <p id="upload-wrap" style="display:none">Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
 
     <script>
+      var isB1; // is Bangle.js 1?
+      var isB2; // is Bangle.js 2?
+
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
-        var radios = document.getElementsByName('agpsperiod');
-        var url = "https://www.espruino.com/agps/assistnow_1d.base64";
-        for (var i=0; i<radios.length; i++)
-          if (radios[i].checked)
-            url = "https://www.espruino.com/agps/assistnow_"+radios[i].value+".base64";
+        var url;
+        if (isB1) {
+          var radios = document.getElementsByName('agpsperiod');
+          url = "https://www.espruino.com/agps/assistnow_1d.base64";
+          for (var i=0; i<radios.length; i++)
+            if (radios[i].checked)
+              url = "https://www.espruino.com/agps/assistnow_"+radios[i].value+".base64";
+        }
+        if (isB2) {
+          url = "https://www.espruino.com/agps/casic.base64";
+        }
         console.log("Sending...");
         //var text = document.getElementById("agpsperiod").value;
         get(url, function(b64) {
@@ -47,6 +60,8 @@
           });
         });
       });
+
+// =================================================== Bangle.js 1 UBLOX
 
       function UBX_CMD(cmd) {
         var d = [0xB5,0x62]; // sync chars
@@ -79,13 +94,35 @@
         return UBX_CMD([].slice.call(a));
       }
 
+// =================================================== Bangle.js 2 CASIC
+
+    function CASIC_CHECKSUM(cmd) {
+      var cs = 0;
+      for (var i=1;i<cmd.length;i++)
+        cs = cs ^ cmd.charCodeAt(i);
+      return cmd+"*"+cs.toString(16).toUpperCase().padStart(2, '0');
+    }
+
+// ===================================================
+
       function jsFromBase64(b64) {
         var bin = atob(b64);
         var chunkSize = 128;
         var js = "\x10Bangle.setGPSPower(1);\n"; // turn GPS on
-        //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
-        //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
-        js += `\x10Serial1.write(atob("${btoa(String.fromCharCode.apply(null,UBX_MGA_INI_TIME_UTC()))}"))\n`; // set GPS time
+        if (isB1) { // UBLOX
+          //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
+          //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
+          js += `\x10Serial1.write(atob("${btoa(String.fromCharCode.apply(null,UBX_MGA_INI_TIME_UTC()))}"))\n`; // set GPS time
+        }
+        if (isB2) { // CASIC
+
+          // Disable BDS, use just GPS (supposedly improve lock time)
+          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,1")}")\n`; // set GPS-only mode
+          // What about:
+          // NAV-TIMEUTC (0x01 0x10)
+          // NAV-PV (0x01 0x03)
+          // or AGPS.zip uses AID-INI (0x0B 0x01)
+        }
 
         for (var i=0;i<bin.length;i+=chunkSize) {
           var chunk = bin.substr(i,chunkSize);
@@ -104,6 +141,15 @@
         });
         oReq.open("GET", url);
         oReq.send();
+      }
+
+      // Called when we know what device we're using
+      function onInit(device) {
+        isB2 = (device && device.id=="BANGLEJS2");
+        isB1 = !isB2;
+        document.getElementById("banglejs1-info").style = isB1?"":"display:none";
+        document.getElementById("banglejs2-info").style = isB2?"":"display:none";
+        document.getElementById("upload-wrap").style = "";
       }
 
     </script>
