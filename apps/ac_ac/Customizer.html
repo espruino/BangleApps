@@ -19,73 +19,524 @@
     }
   </style>
 
+  <meta http-equiv="Content-Security-Policy"   content="
+    default-src 'self' 'unsafe-inline' 'unsafe-eval' file: https:;
+  ">
+  <meta http-equiv="X-Content-Security-Policy" content="
+    default-src 'self' 'unsafe-inline' 'unsafe-eval' file: https:;
+  ">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href=""https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.4.5/spectre.min.css">
+  <!--link rel="stylesheet" href="../../css/spectre.min.css"-->
+  <script src="https://raw.githubusercontent.com/espruino/EspruinoAppLoaderCore/b05af96b2522a7a7225a56d804faf9383f8a8f97/lib/customize.js"></script>
+  <!--script src="../../core/lib/customize.js"></script-->
+
   <style>
-    html, body {
-      overflow:hidden;
+    body { background:white; color:black }
 
-      background-color: #627AC6;
-      background-image: url(/common/BinaryTexture.png);
-      background-repeat:repeat;
-
-      font-family:'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
-      font-size:14px; font-weight:400; color:white;
-      line-height:150%;
+    table.centered td {
+      text-align:center; vertical-align:top;
     }
 
-    * {
-      -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box;
+    input.labelled {
+      display:none; position:relative;
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      width:0px; height:0px;
+    }
+    input + div {
+      display:inline-block; positon:relative;
+      margin:0px; padding:0px;
+      border:none;
+    }
+    input:checked + div > label {
+      border:solid 3px red;
+    }
+
+
+
+    label.Preview {
+      display:inline-block; position:relative;
+      border:solid 3px white;
+      margin:0px; padding:0px;
+      vertical-align:top;
+    }
+    label.Preview:checked {
+      border:solid 3px red;
+    }
+
+    label.Preview > img {
+      display:inline-block; position:relative;
+      width:88px; height:88px;
+      border:solid 1px black;
+    }
+
+    label.ColorPatch {
+      width:70px;
+      font-size:16px; line-height:24px;
+      text-align:center;
+    }
+    label.ColorPatch:checked {
+      border:solid 3px red;
+    }
+
+    label > input[type="radio"] {
+      display:none;
+    }
+
+    .ColorPatch {
+      display:inline-block; position:relative;
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      width:30px; height:30px; box-sizing:border-box;
+      border:solid 3px white;
+      margin:0px; padding:0px;
+      box-shadow:inset 0px 0px 1px 1px black;
+      vertical-align:top;
+    }
+
+    .ColorPatch:checked {
+      border:solid 3px red;
     }
   </style>
 
-  <link rel="stylesheet" href="../../css/spectre.min.css">
-
-  <script src="../../core/lib/customize.js"></script>
 
   <script>
+
+
+/*
+    let AppSource = ''
+
+    sendCustomizedApp({
+      storage:[
+        {name:'ac-ac.app.js', url:'app.js', content:app},
+      ]
+    });
+*/
   </script>
+
+
+
  </head>
  <body>
 
-  <h1>A Configurable Analog Clock</h1>
-
+<p>
   Please customize your analog clock for the Bangle.js 2 according to your needs.
-  When finished, click on "Upload".
+  When finished, click on "Upload" at the bottom of this form.
+</p>
 
-  <h2>Clock Size Calculation</h2>
+  <h3>Clock Size Calculation</h3>
 
-  <input type="checkbox" id="clock-size-simple"><br>
-  <input type="checkbox" id="clock-size-smart"><br>
-  <input type="checkbox" id="clock-size-custom">
-    &nbsp; <input type="url" id="clock-size-url"> <br>
+<p>
+  Click on the desired clock size calculator (if you installed some widgets
+  on your Bangle.js 2, the smart one may produce larger clock faces than the
+  simple one):
+</p><p>
+  <table class="centered"><tbody>
+   <tr>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-size" value="simple">
+         <img src="simpleClockSize.png"/>
+       </label><br>
+       simple
+     </td>
 
-  <h2>Clock Face</h2>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-size" value="smart">
+         <img src="smartClockSize.png"/>
+       </label><br>
+       smart
+     </td>
 
-  <input type="checkbox" id="clock-face-none"><br>
-  <input type="checkbox" id="clock-face-four-fold"><br>
-    &nbsp; <input type="checkbox" id="clock-face-four-fold-roman"><br>
-  <input type="checkbox" id="clock-face-twelve-fold"><br>
-    &nbsp; <input type="checkbox" id="clock-face-twelve-fold-dots"><br>
-  <input type="checkbox" id="clock-face-rainbow"><br>
-    &nbsp; <input type="checkbox" id="clock-face-rainbow-dots"><br>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-size" value="custom">
+         <img src="custom.png"/>
+       </label><br>
+       (custom)
+     </td>
+   </tr>
+  </tbody></table>
+</p><p>
+  If you prefer a "custom" clock size calculator, please enter the URL
+  of its JavaScript module below:
+</p><p>
+  custom URL: <input type="url" id="clock-size-custom-url" size="30">
+</p>
 
-  <h2>Clock Hands</h2>
+  <h3>Clock Face</h3>
 
-  <input type="checkbox" id="clock-hands-simple"><br>
-  <input type="checkbox" id="clock-hands-rounded"><br>
-  <input type="checkbox" id="clock-hands-hollow"><br>
-    &nbsp; Hand Fill Color<br>
+<p>
+  Click on the desired clock face:
+</p><p>
+  <table class="centered"><tbody>
+   <tr>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-face" value="none">
+         <img src="none.png"/>
+       </label><br>
+       none
+     </td>
 
-  <h2>Complications</h2>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-face" value="four-fold">
+         <img src="fourfoldClockFace.png"/>
+       </label><br>
+       four-fold
+     </td>
 
-  <h2>Settings</h2>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-face" value="twelve-fold">
+         <img src="twelvefoldClockFace.png"/>
+       </label><br>
+       twelve-fold
+     </td>
 
-  Foreground Color: <br>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-face" value="rainbow">
+         <img src="RainbowClockFace.png"/>
+       </label><br>
+       "rainbow"<br>colored
+     </td>
 
-  Background Color: <br>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-face" value="custom">
+         <img src="custom.png"/>
+       </label><br>
+       (custom)
+     </td>
+   </tr>
+  </tbody></table>
+</p><p>
+  Clock faces are drawn in the configured foreground and background colors
+  (you may select them at the end of this form)
+</p><p>
+  The "twelve-fold" and "rainbow"-colored faces may be drawn with or without
+  dots marking the position of every minute. Which variant do you prefer?
+</p><p>
+  <input type="radio" name="clock-face-dots" value="without-dots"> without dots <br>
+  <input type="radio" name="clock-face-dots" value="with-dots"> with dots
+</p><p>
+  If you prefer a "custom" clock face, please enter the URL
+  of its JavaScript module below:
+</p><p>
+  custom URL: <input type="url" id="clock-face-custom-url" size="30">
+</p>
 
-  Second Hand Color: <br>
+  <h3>Clock Hands</h3>
 
+<p>
+  Click on the desired clock hands:
+</p><p>
+  <table class="centered"><tbody>
+   <tr>
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-hands" value="simple">
+         <img src="simpleClockHands.png"/>
+       </label><br>
+       simple
+     </td>
+
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-hands" value="rounded">
+         <img src="roundedClockHands.png"/>
+       </label><br>
+       rounded
+     </td>
+
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-hands" value="hollow">
+         <img src="hollowClockHands.png"/>
+       </label><br>
+       hollow
+     </td>
+
+     <td>
+       <label class="Preview">
+         <input type="radio" name="clock-hands" value="custom">
+         <img src="custom.png"/>
+       </label><br>
+       (custom)
+     </td>
+   </tr>
+  </tbody></table>
+</p><p>
+  Clock hands are drawn in the configured foreground and background colors
+  (you may select them at the end of this form)
+</p><p>
+  Additionally, all clock hands may be drawn with or without second hands.
+  If you want them to be drawn, please click on their desired color below
+  (or choose "themed" to use your Bangle's configured theme) - if not, just
+  select "none":
+</p><p>
+  <b>Second Hand Color:</b> <br>
+    <label class="ColorPatch">
+      <input type="radio" name="second-hand" value="(null)"/>
+      none
+    </label>
+    <label class="ColorPatch">
+      <input type="radio" name="second-hand" value="Theme"/>
+      themed
+    </label>
+    <input type="radio" name="second-hand" value="#000000" class="ColorPatch" style="background:#000000"/>
+    <input type="radio" name="second-hand" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+    <input type="radio" name="second-hand" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+    <input type="radio" name="second-hand" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+    <input type="radio" name="second-hand" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+    <input type="radio" name="second-hand" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+    <input type="radio" name="second-hand" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+    <input type="radio" name="second-hand" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
+  If you prefer "custom" clock hands, please enter the URL
+  of their JavaScript module below:
+</p><p>
+  custom URL: <input type="url" id="clock-hands-custom-url" size="30">
+</p>
+
+  <h3>Complications</h3>
+
+<p>
+  Complications are small displays for additional information. If you want
+  one or multiple complications to be added to your clock, you'll have to
+  specify which one to be loaded and where it should be placed.
+</p><p>
+  Up to 6 possible positions exist (top-left, top-right, left, right,
+  bottom-left and bottom-right). Alternatively, the positions "top-left" and
+  "top-right" may be traded for a slightly larger complication at position
+  "top" or "bottom-left" and "bottom-right" for one at the "bottom".
+</p><p>
+  <table><tbody>
+    <tr>
+      <td colspan="3"><b>top-left:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-tl">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-tl-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>top:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-t">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-t-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>top-right:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-tr">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-tr-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>left:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-l">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-l-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>right:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-r">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-r-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>bottom-left:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-bl">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-bl-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>bottom:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-b">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-b-custom-url"></td>
+    </tr>
+
+    <tr>
+      <td colspan="3"><b>bottom-right:</b></td>
+    </tr><tr>
+      <td> &nbsp; </td>
+      <td> Complication:</td>
+      <td>
+        <select id="complication-br">
+          <option value="none">         (none)</option>
+          <option value="date">         date</option>
+          <option value="weekday">      weekday</option>
+          <option value="calendar-week">calendar week</option>
+          <option value="moon-phase">   moon phase</option>
+          <option value="custom">       (custom)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>custom URL:</td>
+      <td><input type="url" id="complication-br-custom-url"></td>
+    </tr>
+  </tbody></table>
+</p>
+
+  <h3>Settings</h3>
+
+<p>
+  Color faces, hands and complications are often drawn using configurable
+  foreground and background colors.
+</p><p>
+  Here you may specify these colors. Click on a color to select it - or on
+  "themed" if you want the clock to use the currently configured theme on
+  your Bangle.js 2:
+</p><p>
+  <b>Foreground Color:</b> <br>
+    <input type="radio" id="foreground-themed" class="labelled" name="foreground" value="Theme"/>
+    <div>
+      <label for="foreground-themed" class="ColorPatch">themed</label>
+    </div>
+    <input type="radio" name="foreground" value="#000000" class="ColorPatch" style="background:#000000"/>
+    <input type="radio" name="foreground" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+    <input type="radio" name="foreground" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+    <input type="radio" name="foreground" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+    <input type="radio" name="foreground" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+    <input type="radio" name="foreground" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+    <input type="radio" name="foreground" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+    <input type="radio" name="foreground" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
+  <b>Background Color:</b> <br>
+    <label class="ColorPatch">
+      <input type="radio" name="background" value="Theme"/>
+      themed
+    </label>
+    <input type="radio" name="background" value="#000000" class="ColorPatch" style="background:#000000"/>
+    <input type="radio" name="background" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+    <input type="radio" name="background" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+    <input type="radio" name="background" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+    <input type="radio" name="background" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+    <input type="radio" name="background" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+    <input type="radio" name="background" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+    <input type="radio" name="background" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
+  When you are satisfied with your configuration, just click on "Upload" in
+  order to generate the specified clock and upload it to your Bangle.js 2:
+</p><p>
   <button>Upload</button>
+</p>
  </body>
 </html>
 
