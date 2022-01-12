@@ -68,7 +68,8 @@ TODO:
       var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
 
-      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      // Create map and try and set the location to where the browser thinks we are
+      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       // Tiles used for Bangle.js itself
       var bangleTileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
