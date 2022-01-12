@@ -26,11 +26,12 @@
     default-src 'self' 'unsafe-inline' 'unsafe-eval' file: https:;
   ">
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="jquery-3.6.0.min.js"></script>
+  <!--script src="https://code.jquery.com/jquery-3.6.0.min.js"></script-->
 
   <link rel="stylesheet" href=""https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.4.5/spectre.min.css">
   <!--link rel="stylesheet" href="../../css/spectre.min.css"-->
-  <script src="https://raw.githubusercontent.com/espruino/EspruinoAppLoaderCore/b05af96b2522a7a7225a56d804faf9383f8a8f97/lib/customize.js"></script>
+  <script src="customize.js"></script>
   <!--script src="../../core/lib/customize.js"></script-->
 
   <style>
@@ -40,50 +41,25 @@
       text-align:center; vertical-align:top;
     }
 
-    input.labelled {
+    label.Preview {
+      display:inline-block; position:relative;
+    }
+    label.Preview > input[type="radio"] {
       display:none; position:relative;
       -webkit-appearance:none; -moz-appearance:none; appearance:none;
       width:0px; height:0px;
     }
-    input + div {
-      display:inline-block; positon:relative;
-      margin:0px; padding:0px;
-      border:none;
-    }
-    input:checked + div > label {
-      border:solid 3px red;
-    }
-
-
-
-    label.Preview {
-      display:inline-block; position:relative;
-      border:solid 3px white;
-      margin:0px; padding:0px;
-      vertical-align:top;
-    }
-    label.Preview:checked {
-      border:solid 3px red;
-    }
-
-    label.Preview > img {
+    label.Preview > input[type="radio"] + img {
       display:inline-block; position:relative;
       width:88px; height:88px;
-      border:solid 1px black;
+      margin:0px; padding:0px;
+      border:solid 3px white;
+      box-shadow:0px 0px 1px 1px lightgray;
     }
-
-    label.ColorPatch {
-      width:70px;
-      font-size:16px; line-height:24px;
-      text-align:center;
-    }
-    label.ColorPatch:checked {
+    label.Preview > input[type="radio"]:checked + img {
       border:solid 3px red;
     }
 
-    label > input[type="radio"] {
-      display:none;
-    }
 
     .ColorPatch {
       display:inline-block; position:relative;
@@ -94,10 +70,57 @@
       box-shadow:inset 0px 0px 1px 1px black;
       vertical-align:top;
     }
-
     .ColorPatch:checked {
       border:solid 3px red;
     }
+
+
+    label.ColorPatch {
+      display:inline-block; position:relative;
+      width:70px;
+      border:none;
+      box-shadow:none;
+    }
+    label.ColorPatch > input[type="radio"] {
+      display:none; position:relative;
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      width:0px; height:0px;
+    }
+    label.ColorPatch > input[type="radio"] + span {
+      display:inline-block; position:absolute;
+      left:0px; top:0px; right:0px; bottom:0px;
+      margin:0px; padding:0px;
+      border:solid 3px white;
+      box-shadow:inset 0px 0px 1px 1px black;
+      font-size:16px; line-height:24px;
+      text-align:center;
+    }
+    label.ColorPatch > input[type="radio"]:checked + span {
+      border:solid 3px red;
+    }
+
+
+/*
+    input.labelled {
+      display:none; position:relative;
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      width:0px; height:0px;
+    }
+    input + img {
+      display:inline-block; positon:relative;
+      margin:0px; padding:0px;
+      border:solid 3px white;
+      box-shadow:inset 0px 0px 1px 1px black;
+    }
+    input:checked + div > label {
+      border:solid 3px red;
+    }
+
+
+    label > input[type="radio"] {
+      display:none;
+    }
+*/
   </style>
 
 
@@ -279,23 +302,24 @@
   (or choose "themed" to use your Bangle's configured theme) - if not, just
   select "none":
 </p><p>
-  <b>Second Hand Color:</b> <br>
-    <label class="ColorPatch">
-      <input type="radio" name="second-hand" value="(null)"/>
-      none
-    </label>
-    <label class="ColorPatch">
-      <input type="radio" name="second-hand" value="Theme"/>
-      themed
-    </label>
-    <input type="radio" name="second-hand" value="#000000" class="ColorPatch" style="background:#000000"/>
-    <input type="radio" name="second-hand" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
-    <input type="radio" name="second-hand" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
-    <input type="radio" name="second-hand" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
-    <input type="radio" name="second-hand" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
-    <input type="radio" name="second-hand" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
-    <input type="radio" name="second-hand" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
-    <input type="radio" name="second-hand" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+  <b>Second Hand Color:</b>
+</p><p>
+  <label class="ColorPatch">
+    <input type="radio" name="second-hand" value="(null)"/>
+    <span>none</span>
+  </label>
+  <label class="ColorPatch">
+    <input type="radio" name="second-hand" value="Theme"/>
+    <span>themed</span>
+  </label>
+  <input type="radio" name="second-hand" value="#000000" class="ColorPatch" style="background:#000000"/>
+  <input type="radio" name="second-hand" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+  <input type="radio" name="second-hand" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+  <input type="radio" name="second-hand" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+  <input type="radio" name="second-hand" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+  <input type="radio" name="second-hand" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+  <input type="radio" name="second-hand" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+  <input type="radio" name="second-hand" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
 </p><p>
   If you prefer "custom" clock hands, please enter the URL
   of their JavaScript module below:
@@ -504,33 +528,35 @@
   "themed" if you want the clock to use the currently configured theme on
   your Bangle.js 2:
 </p><p>
-  <b>Foreground Color:</b> <br>
-    <input type="radio" id="foreground-themed" class="labelled" name="foreground" value="Theme"/>
-    <div>
-      <label for="foreground-themed" class="ColorPatch">themed</label>
-    </div>
-    <input type="radio" name="foreground" value="#000000" class="ColorPatch" style="background:#000000"/>
-    <input type="radio" name="foreground" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
-    <input type="radio" name="foreground" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
-    <input type="radio" name="foreground" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
-    <input type="radio" name="foreground" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
-    <input type="radio" name="foreground" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
-    <input type="radio" name="foreground" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
-    <input type="radio" name="foreground" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+  <b>Foreground Color:</b>
 </p><p>
-  <b>Background Color:</b> <br>
-    <label class="ColorPatch">
-      <input type="radio" name="background" value="Theme"/>
-      themed
-    </label>
-    <input type="radio" name="background" value="#000000" class="ColorPatch" style="background:#000000"/>
-    <input type="radio" name="background" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
-    <input type="radio" name="background" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
-    <input type="radio" name="background" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
-    <input type="radio" name="background" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
-    <input type="radio" name="background" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
-    <input type="radio" name="background" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
-    <input type="radio" name="background" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+  <label class="ColorPatch">
+    <input type="radio" name="foreground" value="Theme"/>
+    <span>themed</span>
+  </label>
+  <input type="radio" name="foreground" value="#000000" class="ColorPatch" style="background:#000000"/>
+  <input type="radio" name="foreground" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+  <input type="radio" name="foreground" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+  <input type="radio" name="foreground" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+  <input type="radio" name="foreground" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+  <input type="radio" name="foreground" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+  <input type="radio" name="foreground" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+  <input type="radio" name="foreground" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
+</p><p>
+  <b>Background Color:</b>
+</p><p>
+  <label class="ColorPatch">
+    <input type="radio" name="background" value="Theme"/>
+    <span>themed</span>
+  </label>
+  <input type="radio" name="background" value="#000000" class="ColorPatch" style="background:#000000"/>
+  <input type="radio" name="background" value="#FF0000" class="ColorPatch" style="background:#FF0000"/>
+  <input type="radio" name="background" value="#00FF00" class="ColorPatch" style="background:#00FF00"/>
+  <input type="radio" name="background" value="#0000FF" class="ColorPatch" style="background:#0000FF"/>
+  <input type="radio" name="background" value="#FFFF00" class="ColorPatch" style="background:#FFFF00"/>
+  <input type="radio" name="background" value="#FF00FF" class="ColorPatch" style="background:#FF00FF"/>
+  <input type="radio" name="background" value="#00FFFF" class="ColorPatch" style="background:#00FFFF"/>
+  <input type="radio" name="background" value="#FFFFFF" class="ColorPatch" style="background:#FFFFFF"/>
 </p><p>
   When you are satisfied with your configuration, just click on "Upload" in
   order to generate the specified clock and upload it to your Bangle.js 2:
