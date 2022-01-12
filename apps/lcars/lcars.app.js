@@ -1,16 +1,11 @@
 const SETTINGS_FILE = "lcars.setting.json";
-const Storage = require("Storage");
-const weather = require('weather');
-
-
-// ...and overwrite them with any saved values
-// This way saved values are preserved if a new version adds more settings
+const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
-  dataRow1: "Battery",
-  dataRow2: "Steps",
-  dataRow3: "Temp."
+  dataRow1: "Steps",
+  dataRow2: "Temp",
+  dataRow3: "Battery"
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -33,13 +28,13 @@ let cGrey = "#9E9E9E";
 let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
-var plotWeek = false;
+var plotMonth = false;
 var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
  * Requirements and globals
  */
-const locale = require('locale');
+
 
 var bgLeft =  {
   width : 27, height : 176, bpp : 3,
@@ -123,37 +118,35 @@ function queueDraw() {
 
 function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
-  var text = "ERR";
-  var value = "NOT FOUND";
+  key = key.toUpperCase()
+  var text = key;
+  var value = "ERR";
 
-  if(key == "Battery"){
-    text = "BAT";
-    value = E.getBattery() + "%";
-
-  } else if(key == "Steps"){
+  if(key == "STEPS"){
     text = "STEP";
     value = getSteps();
 
-  } else if(key == "Temp."){
-    text = "TEMP";
-    value = Math.floor(E.getTemperature()) + "C";
-
-  } else if(key == "HRM"){
-    text = "HRM";
-    value = hrmValue;
+  } else if(key == "BATTERY"){
+    text = "BAT";
+    value = E.getBattery() + "%";
 
   } else if (key == "VREF"){
-    text = "VREF";
     value = E.getAnalogVRef().toFixed(2) + "V";
 
-  } else if (key == "Weather"){
-    text = "TEMP";
-    const w = weather.get();
-    if (!w) {
-      value = "ERR";
-    } else {
-      value = require('locale').temp(w.temp-273.15);  // applies conversion
-    }
+  } else if(key == "HRM"){
+    value = hrmValue;
+
+  } else if (key == "TEMP"){
+    var weather = getWeather();
+    value = weather.temp;
+
+  } else if (key == "HUMIDITY"){
+    text = "HUM";
+    var weather = getWeather();
+    value = parseInt(weather.hum) + "%";
+
+  } else if(key == "CORET"){
+    value = locale.temp(parseInt(E.getTemperature()));
   }
 
   g.setColor(c);
@@ -309,7 +302,7 @@ function drawPosition1(){
   }
 
   // Plot HRM graph
-  if(plotWeek){
+  if(plotMonth){
     var data = new Uint16Array(32);
     var cnt = new Uint8Array(32);
     health.readDailySummaries(new Date(), h=>{
@@ -346,8 +339,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("WEEK HRM", 154, 27);
-    g.drawString("WEEK STEPS [K]", 154, 115);
+    g.drawString("M-HRM", 154, 27);
+    g.drawString("M-STEPS [K]", 154, 115);
 
   // Plot day
   } else {
@@ -387,8 +380,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("DAY HRM", 154, 27);
-    g.drawString("DAY STEPS", 154, 115);
+    g.drawString("D-HRM", 154, 27);
+    g.drawString("D-STEPS", 154, 115);
   }
 }
 
@@ -426,6 +419,32 @@ function getSteps() {
 
   health.readDay(new Date(), h=>steps+=h.steps);
   return steps;
+}
+
+
+function getWeather(){
+  var weather;
+
+  try {
+    weather = require('weather').get();
+  } catch(ex) {
+    // Return default
+  }
+
+  if (weather === undefined){
+    weather = {
+      temp: "-",
+      hum: "-",
+      txt: "-",
+      wind: "-",
+      wdir: "-",
+      wrose: "-"
+    };
+  } else {
+    weather.temp = locale.temp(parseInt(weather.temp-273.15))
+  }
+
+  return weather;
 }
 
 
@@ -467,7 +486,7 @@ function handleAlarm(){
   .then(() => {
     // Update alarm state to disabled
     settings.alarm = -1;
-    Storage.writeJSON(SETTINGS_FILE, settings);
+    storage.writeJSON(SETTINGS_FILE, settings);
   });
 }
 
@@ -507,7 +526,7 @@ function increaseAlarm(){
     settings.alarm = getCurrentTimeInMinutes() + 5;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 
@@ -518,7 +537,7 @@ function decreaseAlarm(){
     settings.alarm = -1;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 function feedback(){
@@ -562,9 +581,9 @@ Bangle.on('touch', function(btn, e){
       drawState();
       return;
     }
-  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotWeek != is_lower){
+  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
     feedback();
-    plotWeek = is_lower;
+    plotMonth = is_lower;
     draw();
     return;
   }
