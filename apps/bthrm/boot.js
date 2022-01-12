@@ -68,13 +68,11 @@
               var interval = dv.getUint16(idx,1); // in milliseconds
             }*/
             
-            
-            var eventName = settings.replace ? "HRM" : "BTHRM";
-            
-            Bangle.emit(eventName, {
+            Bangle.emit(settings.replace?"HRM":"BTHRM", {
               bpm:bpm,
-              confidence:100
-            });
+              confidence:100,
+              src:settings.replace?"bthrm":undefined
+            });            
           });
           return characteristic.startNotifications();
         }).then(function() {
