@@ -5556,23 +5556,5 @@
       {"name":"configurable_clock.app.js","url":"app.js"},
       {"name":"configurable_clock.img","url":"app-icon.js","evaluate":true}
     ]
-  },
-  { "id": "ac_ac",
-    "name": "A Configurable Analog Clock",
-    "shortName":"Configurable Clock",
-    "version":"0.01",
-    "description": "a highly customizable analog clock",
-    "icon": "app-icon.png",
-    "type": "clock",
-    "tags": "clock",
-    "supports" : ["BANGLEJS2"],
-    "allow_emulator": true,
-    "screenshots": [{"url":"app-screenshot.png"}],
-    "readme": "README.md",
-    "custom": "Customizer.html",
-    "storage": [
-      {"name":"ac_ac.app.js","url":"app.js"},
-      {"name":"ac_ac.img","url":"app-icon.js","evaluate":true}
-    ]
   }
 ]
