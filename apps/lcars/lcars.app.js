@@ -138,7 +138,7 @@ function printData(key, y, c){
 
   } else if (key == "TEMP"){
     var weather = getWeather();
-    value = locale.temp(parseInt(weather.temp-273.15));
+    value = weather.temp;
 
   } else if (key == "HUMIDITY"){
     text = "HUM";
@@ -423,19 +423,25 @@ function getSteps() {
 
 
 function getWeather(){
-  var weather = {
-    temp: 0,
-    hum: 0,
-    txt: "",
-    wind: 0,
-    wdir: 0,
-    wrose: ""
-  };
+  var weather;
 
   try {
     weather = require('weather').get();
   } catch(ex) {
     // Return default
+  }
+
+  if (weather === undefined){
+    weather = {
+      temp: "-",
+      hum: "-",
+      txt: "-",
+      wind: "-",
+      wdir: "-",
+      wrose: "-"
+    };
+  } else {
+    weather.temp = locale.temp(parseInt(weather.temp-273.15))
   }
 
   return weather;
