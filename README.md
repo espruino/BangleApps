@@ -41,7 +41,7 @@ Menu replacement with small text, doesn't work well with widgets. [Code](apps/sp
 
 # Font LECO 1976 Regular
 
-Module for font LECO 1976 Regular, with a small adaptation on small sizes, removed serif for better legibility [Code](modules/FontLECO1976Regular.js).
+Module for font LECO 1976 Regular, with a small adaptation on small sizes, removed serif for better legibility [Code](apps/leco1976/FontLECO1976Regular.js).
 
 Available sizes: 42, 20, 14, 12, 11, 8
 
