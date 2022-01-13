@@ -5,3 +5,6 @@
 0.05: Clock can optionally show ISO-8601 calendar weeknumber (default: Off)
       when weekday name "Off": week #:<num>
       when weekday name "On": weekday name is cut at 6th position and .#<week num> is added
+0.06: fixes #1271 - wrong settings name
+      when weekday name and calendar weeknumber are on then display is <weekday short> #<calweek>
+      week is buffered until date or timezone changes

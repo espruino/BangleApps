@@ -12,7 +12,6 @@
   Bangle.isHRMOn = function() {
     var settings = require('Storage').readJSON("bthrm.json", true) || {};
 
-    print(settings);
     if (settings.enabled && !settings.replace){
         return origIsHRMOn();
     } else if (settings.enabled && settings.replace){
@@ -69,13 +68,11 @@
               var interval = dv.getUint16(idx,1); // in milliseconds
             }*/
             
-            
-            var eventName = settings.replace ? "HRM" : "BTHRM";
-            
-            Bangle.emit(eventName, {
+            Bangle.emit(settings.replace?"HRM":"BTHRM", {
               bpm:bpm,
-              confidence:100
-            });
+              confidence:100,
+              src:settings.replace?"bthrm":undefined
+            });            
           });
           return characteristic.startNotifications();
         }).then(function() {
@@ -107,8 +104,20 @@
     if (settings.enabled || !isOn){
       Bangle.setBTHRMPower(isOn, app);
     }
-    if (settings.enabled && !settings.replace || !isOn){
+    if ((settings.enabled && !settings.replace) || !settings.enabled || !isOn){
       origSetHRMPower(isOn, app);
     }
   }
+  
+  var settings = require('Storage').readJSON("bthrm.json", true) || {};
+  if (settings.enabled && settings.replace){
+  if (!(Bangle._PWR===undefined) && !(Bangle._PWR.HRM===undefined)){
+    for (var i = 0; i < Bangle._PWR.HRM.length; i++){
+      var app = Bangle._PWR.HRM[i];
+      origSetHRMPower(0, app);
+      Bangle.setBTHRMPower(1, app);
+      if (Bangle._PWR.HRM===undefined) break;
+    }
+  }
+}
 })();
