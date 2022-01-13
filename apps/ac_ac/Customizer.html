@@ -130,9 +130,12 @@
         ComplicationBR, ComplicationBRURL,
         Foreground, Background
       }
+      
       try {
         localstorage.setItem('ac_ac',JSON.stringify(Configuration))
-      } catch (Signal) { /* nop */ }
+      } catch (Signal) {
+        console.error('could not backup clock configuration, reason',Signal)
+      }
     }
 
   /**** restoreConfiguration - warning: no input validations yet! ****/
