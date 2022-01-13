@@ -1,5 +1,10 @@
 const is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 const locale = require("locale");
+var settings = require('Storage').readJSON("vectorclock.json", true) || {};
+var dowcol = settings.dowcol || 0xFFE0;
+var timecol = settings.timecol || 0xFFFF;
+var datecol = settings.datecol || 0xFFFF;
+
 
 function padNum(n, l) {
   return ("0".repeat(l)+n).substr(-l);
@@ -26,8 +31,8 @@ function executeCommands() {
   commands = [];
 }
 
-function drawVectorText(text, size, x, y, alignX, alignY) {
-  g.setFont("Vector", size).setFontAlign(alignX, alignY).drawString(text, x, y);
+function drawVectorText(text, size, x, y, alignX, alignY, color) {
+  g.setFont("Vector", size).setColor(color).setFontAlign(alignX, alignY).drawString(text, x, y);
   var m = g.stringMetrics(text);
   return {
     x1: x - m.width * (alignX / 2 + 0.5),
@@ -64,15 +69,15 @@ function draw() {
   let x = 2;
   let y = 24 + spacer;
   
-  pushCommand(drawVectorText, timeText, timeFontSize, x, y, -1, -1);
-  pushCommand(drawVectorText, meridian, timeFontSize*9/20, x + width, y, 1, -1);
-  if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, x + width, y + timeHeight, 1, 1);
+  pushCommand(drawVectorText, timeText, timeFontSize, x, y, -1, -1, timecol);
+  pushCommand(drawVectorText, meridian, timeFontSize*9/20, x + width, y, 1, -1, timecol);
+  if (showSeconds) pushCommand(drawVectorText, secondsText, timeFontSize*9/20, x + width, y + timeHeight, 1, 1, timecol);
   y += timeHeight + spacer;
   
-  pushCommand(drawVectorText, dowText, dowFontSize, x + width/2, y, 0, -1);
+  pushCommand(drawVectorText, dowText, dowFontSize, x + width/2, y, 0, -1, dowcol);
   y += dowHeight + spacer;
   
-  pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1);
+  pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1, datecol);
   
   executeCommands();
 }
