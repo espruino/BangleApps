@@ -19,7 +19,7 @@
       min: 0, max: colvalues.length-1,
       format: v => colnames[v],
       onchange: v => {
-        settings.timecol = v;
+        settings.timecol = colvalues[v];
         writeSettings();
       }
     },
@@ -28,7 +28,7 @@
       min: 0, max: colvalues.length-1,
       format: v => colnames[v],
       onchange: v => {
-        settings.dowcol = v;
+        settings.dowcol = colvalues[v];
         writeSettings();
       }
     },
@@ -37,7 +37,7 @@
       min: 0, max: colvalues.length-1,
       format: v => colnames[v],
       onchange: v => {
-        settings.datecol = v;
+        settings.datecol = colvalues[v];
         writeSettings();
       }
     },
