@@ -11,6 +11,7 @@ New content
 - SPH Clock [clock]
 - SPH Weather [app]
 - SPH Calendar [app]
+- SPH 2FA [app]
 - SPH Menu [menu]
 - Font LECO 1976 Regular [font]
 
@@ -31,6 +32,16 @@ Simple weather forecast app with graphs for temperature and prob. of rain. [Code
 Simple calendar with a vintage menu style. [Code](apps/sphcalendar).
 
 ![Screenshot](apps/sphcalendar/screenshot.png)
+
+# SPH 2FA
+
+2FA TOTP generator. Forked and drop-in replacement for the authentiwatch. [Code](apps/sph2fa).
+
+![Screenshot](apps/sph2fa/screenshot1.png)
+![Screenshot](apps/sph2fa/screenshot2.png)
+![Screenshot](apps/sph2fa/screenshot3.png)
+![Screenshot](apps/sph2fa/screenshot4.png)
+
 
 # SPH Menu
 
