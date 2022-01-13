@@ -132,7 +132,7 @@
       }
       
       try {
-        localstorage.setItem('ac_ac',JSON.stringify(Configuration))
+        localStorage.setItem('ac_ac',JSON.stringify(Configuration))
       } catch (Signal) {
         console.error('could not backup clock configuration, reason',Signal)
       }
@@ -143,7 +143,7 @@
     function restoreConfiguration () {
       let Configuration = {}
         try {
-          Configuration = JSON.parse(localstorage.getItem('ac_ac') || '')
+          Configuration = JSON.parse(localStorage.getItem('ac_ac') || '')
         } catch (Signal) { /* nop */ }
       for (let Key in Configuration) {
         if (Configuration.hasOwnProperty(Key)) {
