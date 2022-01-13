@@ -102,7 +102,7 @@
     "version": "0.06",
     "description": "Display notifications/music/etc sent from the Gadgetbridge app on Android. This replaces the old 'Gadgetbridge' Bangle.js widget.",
     "icon": "app.png",
-    "tags": "tool,system,messages,notifications",
+    "tags": "tool,system,messages,notifications,gadgetbridge",
     "dependencies": {"messages":"app"},
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
@@ -309,7 +309,7 @@
     "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android' Bangle.js app instead.",
     "icon": "app.png",
     "type": "widget",
-    "tags": "tool,system,android,widget",
+    "tags": "tool,system,android,widget,gadgetbridge",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "dependencies": {"notify":"type"},
     "readme": "README.md",
@@ -326,7 +326,7 @@
     "version":"0.01",
     "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
     "icon": "app.png",
-    "tags": "",
+    "tags": "tool,debug,gadgetbridge",
     "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
@@ -3007,6 +3007,20 @@
       {"name":"accellog.img","url":"app-icon.js","evaluate":true}
     ],
     "data": [{"wildcard":"accellog.?.csv"}]
+  },
+  { "id": "accelgraph",
+    "name": "Accelerometer Graph",
+    "shortName":"Accel Graph",
+    "version":"0.01",
+    "description": "A simple app to draw a graph of data from the accelerometer on the screen",
+    "icon": "app.png",
+    "tags": "tool,debug",
+    "supports" : ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"bangle1-counter-screenshot.png"}],
+    "storage": [
+      {"name":"accelgraph.app.js","url":"app.js"},
+      {"name":"accelgraph.img","url":"app-icon.js","evaluate":true}
+    ]
   },
   {
     "id": "cprassist",
