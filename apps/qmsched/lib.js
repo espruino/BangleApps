@@ -21,14 +21,8 @@ function switchTheme(mode) {
     dark: false
   };
   require("Storage").writeJSON("setting.json", s);
-  if (typeof __FILE__ === 'string') { // undefined means it loaded the default clock
-    const info = require("Storage").readJSON(__FILE__.split(".")[0]+".info", 1);
-    if (info && info.type!=="clock") { // info can have no type (but then it isn't a clock)
-      return; // not a clock: wait for user to switch apps
-    }
-  }
-  // current app is a clock: reload it with new theme
-  load(global.__FILE__);
+  // reload clocks with new theme, otherwise just wait for user to switch apps
+  if (Bangle.CLOCK) load(global.__FILE__);
 }
 /**
  * Apply LCD options and theme for given mode
@@ -53,5 +47,5 @@ exports.setMode = function(mode) {
   ));
   exports.applyOptions(mode);
   if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
-  if (global.__FILE__ === "qmsched.app.js") setAppMode(mode);
+  if (global.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
 };
