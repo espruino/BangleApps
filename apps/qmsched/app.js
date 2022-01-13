@@ -99,7 +99,7 @@ function applyTheme() {
  * Library uses this to make the app update itself
  * @param {int} mode New Quite Mode
  */
-function setAppMode(mode) {
+function setAppQuietMode(mode) {
   if (mode === current) return;
   current = mode;
   delete m.lastIdx; // force redraw
