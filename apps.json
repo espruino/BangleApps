@@ -100,5 +100,17 @@
       { "name": "FontLECO1976Regular.js", "url": "FontLECO1976Regular.js" }
     ],
     "tags": "font"
+  },
+  {
+    "id": "sphmenu",
+    "name": "SPH Menu",
+    "version": "0.1",
+    "description": "Replace Bangle.js 2's menus with a version that contains smaller text",
+    "icon": "icon.png",
+    "type": "boot",
+    "tags": "system",
+    "screenshots": [{ "url": "screenshot.png" }],
+    "supports": ["BANGLEJS2"],
+    "storage": [{ "name": "sphmenu.boot.js", "url": "sphmenu.boot.js" }]
   }
 ]
