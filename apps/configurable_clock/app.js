@@ -13,7 +13,7 @@
     CenterX = ScreenWidth/2;
     CenterY = ScreenHeight/2;
 
-    outerRadius = Math.min(CenterX,CenterY) * 0.9;
+    outerRadius = Math.min(CenterX,CenterY);
 
     if (global.WIDGETS == null) { return; }
 
@@ -39,25 +39,25 @@
 
     x = WidgetLayouts.tl.x; y = WidgetLayouts.tl.y+24; dx = x - cx; dy = y - cy;
     if (dx*dx + dy*dy < r2) {
-      cy = CenterY + 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.sqrt(r2);
+      cy = CenterY + 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.min(Math.sqrt(r2),cy-24);
     }
 
     x = WidgetLayouts.tr.x; y = WidgetLayouts.tr.y+24; dx = x - cx; dy = y - cy;
     if (dx*dx + dy*dy < r2) {
-      cy = CenterY + 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.sqrt(r2);
+      cy = CenterY + 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.min(Math.sqrt(r2),cy-24);
     }
 
     x = WidgetLayouts.bl.x; y = WidgetLayouts.bl.y; dx = x - cx; dy = y - cy;
     if (dx*dx + dy*dy < r2) {
-      cy = CenterY - 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.sqrt(r2);
+      cy = CenterY - 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.min(Math.sqrt(r2),cy);
     }
 
     x = WidgetLayouts.br.x; y = WidgetLayouts.br.y; dx = x - cx; dy = y - cy;
     if (dx*dx + dy*dy < r2) {
-      cy = CenterY - 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.sqrt(r2);
+      cy = CenterY - 12; dy = y - cy; r2 = dx*dx + dy*dy; r = Math.min(Math.sqrt(r2),cy);
     }
 
-    CenterX = cx; CenterY = cy; outerRadius = r * 0.9;
+    CenterX = cx; CenterY = cy; outerRadius = r - 4;
   }
 
   updateClockFaceSize();
@@ -198,8 +198,9 @@
         g.setColor(BorderColor || Details.col || g.theme.fg);
 
         switch (Border) {
-          case 2:  g.drawRect(x+1,y+1, x+Width-2,y+Height-2);// no break here!
           case 1:  g.drawRect(x,y,     x+Width-1,y+Height-1); break;
+          case 2:  g.drawRect(x,y,     x+Width-1,y+Height-1);
+                   g.drawRect(x+1,y+1, x+Width-2,y+Height-2); break;
           default: g.fillPoly([
             x,y, x+Width,y, x+Width,y+Height, x,y+Height, x,y,
             x+Border,y+Border, x+Border,y+Height-Border,
@@ -280,8 +281,9 @@
         g.setColor(BorderColor || Details.col || g.theme.fg);
 
         switch (Border) {
-          case 2:  g.drawRect(x+1,y+1, x+Width-2,y+Height-2);// no break here!
           case 1:  g.drawRect(x,y,     x+Width-1,y+Height-1); break;
+          case 2:  g.drawRect(x,y,     x+Width-1,y+Height-1);
+                   g.drawRect(x+1,y+1, x+Width-2,y+Height-2); break;
           default: g.fillPoly([
             x,y, x+Width,y, x+Width,y+Height, x,y+Height, x,y,
             x+Border,y+Border, x+Border,y+Height-Border,
@@ -361,8 +363,9 @@
         g.setColor(BorderColor || Details.col || g.theme.fg);
 
         switch (Border) {
-          case 2:  g.drawRect(x+1,y+1, x+Width-2,y+Height-2);// no break here!
           case 1:  g.drawRect(x,y,     x+Width-1,y+Height-1); break;
+          case 2:  g.drawRect(x,y,     x+Width-1,y+Height-1);
+                   g.drawRect(x+1,y+1, x+Width-2,y+Height-2); break;
           default: g.fillPoly([
             x,y, x+Width,y, x+Width,y+Height, x,y+Height, x,y,
             x+Border,y+Border, x+Border,y+Height-Border,
@@ -893,6 +896,11 @@
       case '1-12':
         let innerRadius = outerRadius * 0.9 - 10;
 
+        let dark = g.theme.dark;
+
+        let Saturations  = [0.8,1.0,1.0,1.0,1.0,1.0,1.0,0.9,0.7,0.7,0.9,0.9];
+        let Brightnesses = [1.0,0.9,0.6,0.6,0.8,0.8,0.7,1.0,1.0,1.0,1.0,1.0,];
+
         for (let i = 0; i < 60; i++) {
           let Phi = i * twoPi/60;
 
@@ -900,7 +908,11 @@
           let y = CenterY - outerRadius * cos(Phi);
 
           if (Settings.colored) {
-            let Color = E.HSBtoRGB(i/60,1,1, true);
+            let j = Math.floor(i / 5);
+            let Saturation = (dark ? Saturations[j] : 1.0);
+            let Brightness = (dark ? 1.0 : Brightnesses[j]);
+
+            let Color = E.HSBtoRGB(i/60,Saturation,Brightness, true);
             g.setColor(Color[0]/255,Color[1]/255,Color[2]/255);
           }
 
@@ -920,7 +932,10 @@
           let y = CenterY - Radius * cos(Phi);
 
           if (Settings.colored) {
-            let Color = E.HSBtoRGB(i/12,1,1, true);
+            let Saturation = (dark ? Saturations[i] : 1.0);
+            let Brightness = (dark ? 1.0 : Brightnesses[i]);
+
+            let Color = E.HSBtoRGB(i/12,Saturation,Brightness, true);
             g.setColor(Color[0]/255,Color[1]/255,Color[2]/255);
           }
 
@@ -1001,6 +1016,8 @@
     if (Timer   != null) { clearTimeout(Timer); Timer = undefined; }
     if (AppRect == null) { AppRect = Bangle.appRect; Bangle.appRect = fullScreen; }
 
+    Bangle.buzz();
+
     KeysToChange = 'Face colored Hands withSeconds Foreground Background Seconds';
 
     g.setTheme({ fg:'#000000', bg:'#FFFFFF' });
@@ -1009,12 +1026,14 @@
     (activeLayout = MainScreen).render();
   }
 
-  function applySettings ()    { saveSettings(); Bangle.appRect = AppRect; refreshClock(); }
-  function withdrawSettings () { readSettings(); Bangle.appRect = AppRect; refreshClock(); }
+  function applySettings ()    { Bangle.buzz(); saveSettings(); Bangle.appRect = AppRect; refreshClock(); }
+  function withdrawSettings () { Bangle.buzz(); readSettings(); Bangle.appRect = AppRect; refreshClock(); }
 
 /**** FacesScreen Logic ****/
 
   function openFacesScreen () {
+    Bangle.buzz();
+
     KeysToChange   = 'Face colored';
     Bangle.appRect = fullScreen;
     refreshFacesScreen();
@@ -1029,12 +1048,14 @@
     activeLayout.render();
   }
 
-  function chooseFace (Control) { Changes.Face    = Control.id;        refreshFacesScreen(); }
-  function toggleColored ()     { Changes.colored = ! Changes.colored; refreshFacesScreen(); }
+  function chooseFace (Control) { Bangle.buzz(); Changes.Face    = Control.id;        refreshFacesScreen(); }
+  function toggleColored ()     { Bangle.buzz(); Changes.colored = ! Changes.colored; refreshFacesScreen(); }
 
 /**** HandsScreen Logic ****/
 
   function openHandsScreen () {
+    Bangle.buzz();
+
     KeysToChange   = 'Hands withSeconds';
     Bangle.appRect = fullScreen;
     refreshHandsScreen();
@@ -1049,12 +1070,14 @@
     activeLayout.render();
   }
 
-  function chooseHand (Control) { Changes.Hands = Control.id;                  refreshHandsScreen(); }
-  function toggleSeconds ()     { Changes.withSeconds = ! Changes.withSeconds; refreshHandsScreen(); }
+  function chooseHand (Control) { Bangle.buzz(); Changes.Hands = Control.id;                  refreshHandsScreen(); }
+  function toggleSeconds ()     { Bangle.buzz(); Changes.withSeconds = ! Changes.withSeconds; refreshHandsScreen(); }
 
 /**** ColorsScreen Logic ****/
 
   function openColorsScreen () {
+    Bangle.buzz();
+
     KeysToChange   = 'Foreground Background Seconds';
     Bangle.appRect = fullScreen;
     refreshColorsScreen();
@@ -1081,6 +1104,8 @@
   let ColorToChange, chosenColor;
 
   function openColorChoiceScreen () {
+    Bangle.buzz();
+
     chosenColor = (
       Changes[ColorToChange] == null ? Settings[ColorToChange] : Changes[ColorToChange]
     );
@@ -1102,8 +1127,8 @@
     activeLayout.render();
   }
 
-  function chooseColor (Control) { chosenColor = Control.id; refreshColorChoiceScreen(); }
-  function chooseThemeColor ()   { chosenColor = 'Theme';    refreshColorChoiceScreen(); }
+  function chooseColor (Control) { Bangle.buzz(); chosenColor = Control.id; refreshColorChoiceScreen(); }
+  function chooseThemeColor ()   { Bangle.buzz(); chosenColor = 'Theme';    refreshColorChoiceScreen(); }
 
   function applyColor () {
     Changes[ColorToChange] = chosenColor;
