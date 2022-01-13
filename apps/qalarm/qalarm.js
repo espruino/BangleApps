@@ -143,7 +143,7 @@ let alarms = require("Storage").readJSON("qalarm.json", 1) || [];
 let active = alarms.filter(
   (alarm) =>
     alarm.on &&
-    alarm.t < t &&
+    alarm.t <= t &&
     alarm.last != time.getDate() &&
     (alarm.timer || alarm.daysOfWeek[time.getDay()])
 );

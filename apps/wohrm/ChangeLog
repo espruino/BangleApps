@@ -5,4 +5,7 @@
 0.05: Improved buzz timing and rendering
 0.06: Removed debug outputs, fixed rendering for upper limit, improved rendering for +/- icons, changelog version order fixed
 0.07: Home button fixed and README added
-0.08: tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
+0.08: tag HRM power requests to allow this to work alongside other widgets/apps (fix #799)
+0.09: Ported to Bangle.js2
+      Home returns to clock, instead of menu
+      Add settings

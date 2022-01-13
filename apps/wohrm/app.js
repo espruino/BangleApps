@@ -4,14 +4,16 @@ const Setter = {
   UPPER: 'upper',
   LOWER: 'lower'
 };
+const SETTINGS_FILE = "wohrm.setting.json";
+var settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {
+  upperLimit: 130,
+  lowerLimit: 100
+};
 
 const shortBuzzTimeInMs = 80;
 const longBuzzTimeInMs = 400;
 
-let upperLimit = 130;
 let upperLimitChanged = true;
-
-let lowerLimit = 100;
 let lowerLimitChanged = true;
 
 let limitSetter = Setter.NONE;
@@ -23,54 +25,115 @@ let confidenceChanged = true;
 
 let setterHighlightTimeout;
 
-function renderUpperLimitBackground() {
-  g.setColor(1,0,0);
-  g.fillRect(125,40, 210, 70);
-  g.fillRect(180,70, 210, 200);
+const isB1 = process.env.HWVERSION==1;
+const upperLshape = isB1 ? {
+  right: 125,
+  left: 210,
+  bottom: 40,
+  top: 210,
+  rectWidth: 30,
+  cornerRoundness: 5,
+  orientation: -1,
+  color: '#f00'
+} : {
+  right: Bangle.appRect.x2-100,
+  left: Bangle.appRect.x2,
+  bottom: 24,
+  top: Bangle.appRect.y2,
+  rectWidth: 26,
+  cornerRoundness: 4,
+  orientation: -1,   // rotated 180°
+  color: '#f00'
+};
 
-  //Round top left corner
-  g.fillEllipse(115,40,135,70);
+const lowerLshape = {
+  left: isB1 ? 10 : Bangle.appRect.x,
+  right: 100,
+  bottom: upperLshape.top,
+  top: upperLshape.bottom,
+  rectWidth: upperLshape.rectWidth,
+  cornerRoundness: upperLshape.cornerRoundness,
+  orientation: 1,
+  color: '#00f'
+};
 
-  //Round top right corner
-  g.setColor(0,0,0);
-  g.fillRect(205,40, 210, 45);
-  g.setColor(1,0,0);
-  g.fillEllipse(190,40,210,50);
+const centerBar = {
+  minY: (upperLshape.bottom + upperLshape.top - upperLshape.rectWidth)/2,
+  maxY: (upperLshape.bottom + upperLshape.top + upperLshape.rectWidth)/2,
+  confidenceWidth: isB1 ? 10 : 8,
+  minX: isB1 ? 55 : upperLshape.rectWidth + 14,
+  maxX: isB1 ? 165 : Bangle.appRect.x2 - upperLshape.rectWidth - 14
+};
 
-  //Round inner corner
-  g.fillRect(174,71, 179, 76);
-  g.setColor(0,0,0);
-  g.fillEllipse(160,71,179,82);
+const fontSizes = isB1 ? {
+  limits: 13,
+  heartRate: 24
+} : {
+  limits: 12,
+  heartRate: 20
+};
 
-  //Round bottom
-  g.setColor(1,0,0);
-  g.fillEllipse(180,190, 210, 210);
+function fillEllipse(x, y, x2, y2) {
+  g.fillEllipse(Math.min(x, x2),
+                Math.min(y, y2),
+                Math.max(x, x2),
+                Math.max(y, y2));
 }
 
-function renderLowerLimitBackground() {
-  g.setColor(0,0,1);
-  g.fillRect(10, 180, 100, 210);
-  g.fillRect(10, 50, 40, 180);
+/**
+ * @param p.left: the X coordinate of the left side of the L in its orientation
+ * @param p.right: the X coordinate of the right side of the L in its orientation
+ * @param p.top: the Y coordinate of the top side of the L in its orientation
+ * @param p.bottom: the Y coordinate of the bottom side of the L in its orientation
+ * @param p.strokeWidth: how thick we draw the letter.
+ * @param p.cornerRoundness: how much the corners should be rounded
+ * @param p.orientation: 1 == turned 0°; -1 == turned 180°
+ * @param p.color: the color to draw the shape
+ */
+function renderLshape(p) {
+  g.setColor(p.color);
 
-  //Rounded top
-  g.setColor(0,0,1);
-  g.fillEllipse(10,40, 40, 60);
+  g.fillRect(p.right, p.bottom, p.left, p.bottom-p.orientation*p.rectWidth);
+  g.fillRect(p.left+p.orientation*p.rectWidth,
+             p.bottom-p.orientation*p.rectWidth,
+             p.left,
+             p.top+p.orientation*p.cornerRoundness*2);
 
-  //Round bottom right corner
-  g.setColor(0,0,1);
-  g.fillEllipse(90,180,110,210);
+  //Round end of small line
+  fillEllipse(p.right+p.orientation*p.cornerRoundness*2,
+              p.bottom,
+              p.right-p.orientation*p.cornerRoundness*2,
+              p.bottom-p.orientation*p.rectWidth);
+
+  //Round outer corner
+  g.setColor(g.theme.bg);
+  g.fillRect(p.left+p.orientation*p.cornerRoundness,
+             p.bottom,
+             p.left,
+             p.bottom-p.orientation*p.cornerRoundness);
+  g.setColor(p.color);
+  fillEllipse(p.left+p.orientation*p.cornerRoundness*4,
+              p.bottom,
+              p.left,
+              p.bottom-p.orientation*p.cornerRoundness*2);
 
   //Round inner corner
-  g.setColor(0,0,1);
-  g.fillRect(40,175,45,180);
-  g.setColor(0,0,0);
-  g.fillEllipse(41,170,60,179);
+  g.fillRect(p.left+p.orientation*(p.rectWidth+p.cornerRoundness+1),
+             p.bottom-p.orientation*(p.rectWidth+1),
+             p.left+p.orientation*(p.rectWidth+1),
+             p.bottom-p.orientation*(p.rectWidth+p.cornerRoundness-1));
+  g.setColor(g.theme.bg);
+  fillEllipse(p.left+p.orientation*(p.rectWidth+p.cornerRoundness*4),
+              p.bottom-p.orientation*(p.rectWidth+1),
+              p.left+p.orientation*(p.rectWidth+1),
+              p.bottom-p.orientation*(p.rectWidth+p.cornerRoundness*3-1));
 
-  //Round bottom left corner
-  g.setColor(0,0,0);
-  g.fillRect(10,205, 15, 210);
-  g.setColor(0,0,1);
-  g.fillEllipse(10,200,30,210);
+  //Round end of long line
+  g.setColor(p.color);
+  fillEllipse(p.left+p.orientation*p.rectWidth,
+              p.top+p.orientation*p.cornerRoundness*4,
+              p.left,
+              p.top);
 }
 
 function drawTrainingHeartRate() {
@@ -91,16 +154,17 @@ function drawTrainingHeartRate() {
 function renderUpperLimit() {
   if(!upperLimitChanged) { return; }
 
-  g.setColor(1,0,0);
-  g.fillRect(125,40, 210, 70);
+  renderLshape(upperLshape);
 
   if(limitSetter === Setter.UPPER){
-    g.setColor(255,255, 0);
+    g.setColor(1,1,0);
   } else {
-    g.setColor(255,255,255);
+    g.setColor(g.theme.fg);
   }
-  g.setFontVector(13);
-  g.drawString("Upper: " + upperLimit, 125, 50);
+  g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
+  g.drawString("Upper: " + settings.upperLimit,
+               upperLshape.right,
+               upperLshape.bottom+upperLshape.rectWidth/2);
 
   upperLimitChanged = false;
 }
@@ -108,13 +172,17 @@ function renderUpperLimit() {
 function renderCurrentHeartRate() {
   if(!hrChanged) { return; }
 
-  g.setColor(255,255,255);
-  g.fillRect(55, 110, 165, 150);
+  g.setColor(g.theme.fg);
+  g.fillRect(centerBar.minX, centerBar.minY,
+             centerBar.maxX, centerBar.maxY);
 
-  g.setColor(0,0,0);
-  g.setFontVector(24);
-  g.setFontAlign(1, -1, 0);
-  g.drawString(currentHeartRate, 130, 117);
+  g.setColor(g.theme.bg);
+  g.setFontVector(fontSizes.heartRate);
+  g.setFontAlign(1, 0, 0);
+  g.drawString(currentHeartRate,
+               Math.max(upperLshape.right+upperLshape.cornerRoundness,
+                        lowerLshape.right-lowerLshape.cornerRoundness),
+               (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults
   g.setFontAlign(-1, -1, 0);
@@ -125,16 +193,17 @@ function renderCurrentHeartRate() {
 function renderLowerLimit() {
   if(!lowerLimitChanged) { return; }
 
-  g.setColor(0,0,1);
-  g.fillRect(10, 180, 100, 210);
+  renderLshape(lowerLshape);
 
   if(limitSetter === Setter.LOWER){
-    g.setColor(255,255, 0);
+    g.setColor(1,1,0);
   } else {
-    g.setColor(255,255,255);
+    g.setColor(g.theme.fg);
   }
-  g.setFontVector(13);
-  g.drawString("Lower: " + lowerLimit, 20,190);
+  g.setFontVector(fontSizes.limits).setFontAlign(-1, 0, 0);
+  g.drawString("Lower: " + settings.lowerLimit,
+               lowerLshape.left + lowerLshape.rectWidth/2,
+               lowerLshape.bottom - lowerLshape.rectWidth/2);
 
   lowerLimitChanged = false;
 }
@@ -143,26 +212,26 @@ function renderConfidenceBars(){
   if(!confidenceChanged) { return; }
 
   if(hrConfidence >= 85){
-    g.setColor(0, 255, 0);
+    g.setColor(0, 1, 0);
   } else if (hrConfidence >= 50) {
-    g.setColor(255, 255, 0);
+    g.setColor(1, 1, 0);
   } else if(hrConfidence >= 0){
-    g.setColor(255, 0, 0);
+    g.setColor(1, 0, 0);
   } else {
-    g.setColor(255, 255, 255);
+    g.setColor(g.theme.fg);
   }
 
-  g.fillRect(45, 110, 55, 150);
-  g.fillRect(165, 110, 175, 150);
+  g.fillRect(centerBar.minX-centerBar.confidenceWidth, centerBar.minY, centerBar.minX, centerBar.maxY);
+  g.fillRect(centerBar.maxX, centerBar.minY, centerBar.maxX+centerBar.confidenceWidth, centerBar.maxY);
 
   confidenceChanged = false;
 }
 
 function renderPlusMinusIcons() {
   if (limitSetter === Setter.NONE) {
-    g.setColor(0, 0, 0);
+    g.setColor(g.theme.bg);
   } else {
-    g.setColor(1, 1, 1);
+    g.setColor(g.theme.fg);
   }
 
   g.setFontVector(14);
@@ -190,13 +259,13 @@ function buzz() {
   // Do not buzz if not confident
   if(hrConfidence < 85) { return; }
 
-  if(currentHeartRate > upperLimit)
+  if(currentHeartRate > settings.upperLimit)
   {
     Bangle.buzz(shortBuzzTimeInMs);
     setTimeout(() => { Bangle.buzz(shortBuzzTimeInMs); }, shortBuzzTimeInMs * 2);
   }
 
-  if(currentHeartRate < lowerLimit)
+  if(currentHeartRate < settings.lowerLimit)
   {
     Bangle.buzz(longBuzzTimeInMs);
   }
@@ -255,11 +324,11 @@ function incrementLimit() {
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
-    upperLimit++;
+    settings.upperLimit++;
     renderUpperLimit();
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
-    lowerLimit++;
+    settings.lowerLimit++;
     renderLowerLimit();
     lowerLimitChanged = true;
   }
@@ -269,11 +338,11 @@ function decrementLimit(){
   resetHighlightTimeout();
 
   if (limitSetter === Setter.UPPER) {
-    upperLimit--;
+    settings.upperLimit--;
     renderUpperLimit();
     upperLimitChanged = true;
   } else if(limitSetter === Setter.LOWER) {
-    lowerLimit--;
+    settings.lowerLimit--;
     renderLowerLimit();
     lowerLimitChanged = true;
   }
@@ -289,17 +358,18 @@ function resetHighlightTimeout() {
 
 function switchOffApp(){
   Bangle.setHRMPower(0,"wohrm");
-  Bangle.showLauncher();
+  load();
 }
 
 Bangle.on('lcdPower', (on) => {
-  g.clear();
   if (on) {
     Bangle.drawWidgets();
 
-    renderHomeIcon();
-    renderLowerLimitBackground();
-    renderUpperLimitBackground();
+    if (typeof(BTN5) !== typeof(undefined)) {
+      renderHomeIcon();
+    }
+    renderLshape(lowerLshape);
+    renderLshape(upperLshape);
     lowerLimitChanged = true;
     upperLimitChanged = true;
     drawTrainingHeartRate();
@@ -309,19 +379,22 @@ Bangle.on('lcdPower', (on) => {
 Bangle.setHRMPower(1,"wohrm");
 Bangle.on('HRM', onHrm);
 
-setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
-setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
-setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
-setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
-
-setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
-
+g.setTheme({bg:"#000",fg:"#fff",dark:true});
+g.reset();
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-renderHomeIcon();
-renderLowerLimitBackground();
-renderUpperLimitBackground();
+if (typeof(BTN5) !== typeof(undefined)) {
+  renderHomeIcon();
+  setWatch(incrementLimit, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(decrementLimit, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(setLimitSetterToLower, BTN4, {edge:"rising", debounce:50, repeat:true});
+  setWatch(setLimitSetterToUpper, BTN5, { edge: "rising", debounce: 50, repeat: true });
+
+  setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
+} else {
+  setWatch(switchOffApp, BTN1, {edge:"falling", debounce:50, repeat:true});
+}
 
 setInterval(drawTrainingHeartRate, 1000);
