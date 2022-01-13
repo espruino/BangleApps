@@ -38,10 +38,13 @@ function draw() {
 
     weather.forEach((v1) => {
       v1.hourly.forEach((v2) => {
-        if (!minC || v2.tempC < minC - 1) minC = v2.tempC - 1;
-        if (!maxC || v2.tempC > maxC + 1) maxC = v2.tempC + 1;
+        if (!minC || v2.tempC < minC) minC = v2.tempC;
+        if (!maxC || v2.tempC > maxC) maxC = v2.tempC;
       });
     });
+
+    minC--;
+    maxC++;
 
     minC = Math.floor(minC / 5) * 5;
     maxC = Math.ceil(maxC / 5) * 5;
@@ -97,7 +100,12 @@ function draw() {
       if (weather[d].date == hoje) {
         // Marcação da hora atual
         g.setColor("#000");
-        g.drawLine(min_x + hora * 2 + d * 48, max_y, min_x + hora * 2 + d * 48, min_y);
+        g.drawLine(
+          min_x + hora * 2 + d * 48,
+          max_y,
+          min_x + hora * 2 + d * 48,
+          min_y
+        );
         g.setFontAlign(0, -1);
         g.setFont("4x6");
       }
