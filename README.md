@@ -1,6 +1,8 @@
 Bangle.js App Loader (and Apps)
 ================================
-Fork to host my apps.
+Fork to host my apps. 
+
+Loader instance [here](https://diesphink.github.io/BangleApps/).
 
 Original readme [here](README_ORIGINAL.md).
 
