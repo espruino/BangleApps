@@ -101,7 +101,7 @@
   <script>
   $(function () {
     let ClockSize, ClockSizeURL
-    let ClockFace, ClockFaceDots, ClockFaceURL
+    let ClockFace, ClockFaceNumerals, ClockFaceDots, ClockFaceURL
     let ClockHands, SecondHand, ClockHandsURL, FillColor
     let ComplicationTL, ComplicationTLURL
     let ComplicationT, ComplicationTURL
@@ -119,9 +119,10 @@
       ClockSize    = $('input[name="clock-size"]:checked').val()
       ClockSizeURL = ($('#clock-size-custom-url').val() || '').trim()
 
-      ClockFace     = $('input[name="clock-face"]:checked').val()
-      ClockFaceDots = $('input[name="clock-face-dots"]:checked').val()
-      ClockFaceURL  = ($('#clock-face-custom-url').val() || '').trim()
+      ClockFace         = $('input[name="clock-face"]:checked').val()
+      ClockFaceNumerals = $('input[name="clock-face-numerals"]:checked').val()
+      ClockFaceDots     = $('input[name="clock-face-dots"]:checked').val()
+      ClockFaceURL      = ($('#clock-face-custom-url').val() || '').trim()
 
       ClockHands    = $('input[name="clock-hands"]:checked').val()
       FillColor     = $('input[name="fill-color"]:checked').val()
@@ -275,7 +276,8 @@
       function chosenSecondHand () { return chosenColor(SecondHand) }
       function chosenFillColor ()  { return chosenColor(FillColor) }
 
-      function chosenDots () { return (ClockFaceDots === 'with-dots' ? 'true' : 'false') }
+      function chosenNumerals () { return (ClockFaceNumerals === 'roman' ? 'true' : 'false') }
+      function chosenDots ()     { return (ClockFaceDots === 'with-dots' ? 'true' : 'false') }
 
       let AppSource = `
 ${WidgetsOnBackground()}
@@ -298,11 +300,12 @@ Clockwork.windUp({
     br:${chosenComplicationAt('br')},
   }
 },{
-  Foreground:${chosenForeground()},
-  Background:${chosenBackground()},
-  Seconds:   ${chosenSecondHand()},
-  withDots:  ${chosenDots()},
-  FillColor: ${chosenFillColor()}
+  Foreground:   ${chosenForeground()},
+  Background:   ${chosenBackground()},
+  Seconds:      ${chosenSecondHand()},
+  withDots:     ${chosenDots()},
+  romanNumerals:${chosenNumerals()},
+  FillColor:    ${chosenFillColor()}
 });
 `
 console.log('the configured AC-AC app looks as follows:')
@@ -431,6 +434,11 @@ console.log(AppSource)
 </p><p>
   Clock faces are drawn in the configured foreground and background colors
   (you may select them at the end of this form)
+</p><p>
+  "Four-fold" clock faces may draw indian-arabic or roman numerals. Which do you prefer?
+</p><p>
+  <input type="radio" name="clock-face-numerals" value="indian" checked> indian-arabic (3, 6, 9, 12)<br>
+  <input type="radio" name="clock-face-numerals" value="roman"> roman (III, VI, IX, XII)
 </p><p>
   The "twelve-fold" and "rainbow"-colored faces may be drawn with or without
   dots marking the position of every minute. Which variant do you prefer?
