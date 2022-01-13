@@ -11,6 +11,7 @@ New content
 - SPH Clock [clock]
 - SPH Weather [app]
 - SPH Calendar [app]
+- SPH Menu [menu]
 - Font LECO 1976 Regular [font]
 
 # SPH Clock
@@ -30,6 +31,13 @@ Simple weather forecast app with graphs for temperature and prob. of rain. [Code
 Simple calendar with a vintage menu style. [Code](apps/sphcalendar).
 
 ![Screenshot](apps/sphcalendar/screenshot.png)
+
+# SPH Menu
+
+Menu replacement with small text, doesn't work well with widgets. [Code](apps/sphmenu).
+
+![Screenshot](apps/sphmenu/screenshot.png)
+
 
 # Font LECO 1976 Regular
 
