@@ -45,4 +45,4 @@ Module for font LECO 1976 Regular, with a small adaptation on small sizes, remov
 
 Available sizes: 42, 20, 14, 12, 11, 8
 
-![Screenshot](modules/FontLECO1976Regular.png)
+![Screenshot](apps/leco1976/FontLECO1976Regular.png)
