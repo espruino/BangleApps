@@ -29,6 +29,24 @@
     ],
     "sortorder": -10
   },
+  { "id": "ac_ac",
+    "name": "A Configurable Analog Clock",
+    "shortName":"Configurable Clock",
+    "version":"0.03",
+    "description": "AC-AC, a highly customizable analog clock with several clock faces, hands and complications to choose from",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": false,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "custom": "Customizer.html",
+    "storage": [
+      {"name":"ac_ac.app.js","url":"app.js"},
+      {"name":"ac_ac.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "hebrew_calendar",
     "name": "Hebrew Calendar",
@@ -5377,7 +5395,7 @@
   { "id": "colorful_clock",
     "name": "Colorful Analog Clock",
     "shortName":"Colorful Clock",
-    "version":"0.02",
+    "version":"0.03",
     "description": "a colorful analog clock",
     "icon": "app-icon.png",
     "type": "clock",
