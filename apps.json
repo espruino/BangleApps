@@ -1042,7 +1042,7 @@
     "id": "bthrm",
     "name": "Bluetooth Heart Rate Monitor",
     "shortName": "BT HRM",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
     "icon": "app.png",
     "type": "app",
@@ -3951,8 +3951,8 @@
     "id": "qmsched",
     "name": "Quiet Mode Schedule and Widget",
     "shortName": "Quiet Mode",
-    "version": "0.06",
-    "description": "Automatically turn Quiet Mode on or off at set times, and change LCD options while Quiet Mode is active.",
+    "version": "0.07",
+    "description": "Automatically turn Quiet Mode on or off at set times, change theme and LCD options while Quiet Mode is active.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
                     {"url":"screenshot_b2_main.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_lcd.png"}],
@@ -4293,7 +4293,7 @@
   {
     "id": "antonclk",
     "name": "Anton Clock",
-    "version": "0.05",
+    "version": "0.06",
     "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
     "readme":"README.md",
     "icon": "app.png",
@@ -5183,14 +5183,13 @@
   {
     "id": "ftclock",
     "name": "Four Twenty Clock",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A clock that tells when and where it's going to be 4:20 next",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot1.png"}],
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2"],
-    "allow_emulator": true,
+    "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"ftclock.app.js","url":"app.js"},
@@ -5590,6 +5589,38 @@
      ],
      "data": [
        {"name":"banglexercise.json"}
+     ]
+  },
+  {
+    "id": "widpa",
+    "name": "Simple Pedometer",
+    "shortName":"Simple Pedometer",
+    "icon": "screenshot_widpa.png",
+    "screenshots": [{"url":"screenshot_widpa.png"}],
+    "version":"0.01",
+    "type": "widget",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in 12x16 font, requires firmware v2.11.21 or later",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"widpa.wid.js","url":"widpa.wid.js"}
+     ]
+  },
+  {
+    "id": "widpb",
+    "name": "Lato Pedometer",
+    "shortName":"Lato Pedometer",
+    "icon": "screenshot_widpb.png",
+    "screenshots": [{"url":"screenshot_widpb.png"}],
+    "version":"0.01",
+    "type": "widget",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"widpb.wid.js","url":"widpb.wid.js"}
      ]
   }
 ]
