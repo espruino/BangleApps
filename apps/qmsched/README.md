@@ -9,6 +9,11 @@ Automatically turn Quiet Mode on or off at set times, and display a widget when 
 | ![Edit Schedule menu](screenshot_b1_edit.png) | ![Edit Schedule menu](screenshot_b2_edit.png) |
 |  ![LCD Options menu](screenshot_b1_lcd.png)   |  ![LCD Options menu](screenshot_b2_lcd.png)   |
 
+### Switch Theme:
+
+Switch to dark theme during Quiet Mode.
+ * **NOTE**: This switches between the default "Dark BW" and "Light BW" themes, so custom theme settings will be lost.
+
 ### LCD Settings:
 
 If set, these override the default LCD settings while Quiet Mode is active.

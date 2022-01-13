@@ -136,8 +136,10 @@ function getCirclePosition(type) {
     if (setting == type) return circlePosX[i - 1];
   }
   for (let i = 0; i < defaultCircleTypes.length; i++) {
-    if (type == defaultCircleTypes[i]) return circlePosX[i];
-  }
+   if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
+     return circlePosX[i];
+   }
+ }
   return undefined;
 }
 
