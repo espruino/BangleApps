@@ -23,6 +23,36 @@
     "allow_emulator": true
   },
   {
+    "id": "sph2fa",
+    "name": "SPH 2FA",
+    "shortName": "SPH 2FA",
+    "type": "app",
+    "supports": ["BANGLEJS2"],
+    "version": "0.1",
+    "interface": "interface.html",
+    "dependencies": { "leco1976": "app" },
+    "description": "2FA TOTP generator. Forked and drop-in replacement for the authentiwatch.",
+    "icon": "icon.png",
+    "readme": "README.MD",
+    "screenshots": [
+      { "url": "screenshot1.png" },
+      { "url": "screenshot2.png" },
+      { "url": "screenshot3.png" },
+      { "url": "screenshot4.png" }
+    ],
+    "storage": [
+      { "name": "sph2fa.app.js", "url": "sph2fa.app.js" },
+      {
+        "name": "sph2fa.img",
+        "url": "sph2fa.app-icon.js",
+        "evaluate": true
+      }
+    ],
+    "data": [{ "name": "sph2fa.json" }],
+    "tags": "calendar, sph, vintage, menu",
+    "allow_emulator": true
+  },
+  {
     "id": "sphclock",
     "name": "SPH Clock",
     "shortName": "SPH Clock",
