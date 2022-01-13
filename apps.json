@@ -5169,14 +5169,13 @@
   {
     "id": "ftclock",
     "name": "Four Twenty Clock",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A clock that tells when and where it's going to be 4:20 next",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot1.png"}],
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2"],
-    "allow_emulator": true,
+    "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"ftclock.app.js","url":"app.js"},
