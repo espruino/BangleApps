@@ -1,3 +1,5 @@
+// gcalcli agenda --tsv | jq -rRs 'split("\n")[1:-1] | map([split("\t")[]|split(",")] | { "data":(.[0][0] + "T" + .[1][0] + ":00Z"), "data_fim":(.[2][0] + "T" + .[3][0] + ":00Z"), "descricao":.[4][0]})' | iconv -f UTF-8 -t ISO-8859-1 - > agenda.json
+
 "use strict";
 
 exports.drawCalendar = function (date) {
@@ -22,12 +24,8 @@ exports.drawCalendar = function (date) {
   g.setColor("#000");
   g.drawString(dowStr, 25, 44);
 
-  g.setFontLECO1976Regular12();
-
   // Carrega a agenda pro próximo dia com eventos
-  let schedules = require("Storage").readJSON("sphclock.json", false);
-  if (schedules) schedules = schedules.schedule;
-  else schedules = [];
+  let schedules = require("Storage").readJSON("agenda.json", false) || [];
   // Parse da data
   schedules.forEach((s) => (s.data = new Date(s.data)));
   schedules = schedules
@@ -83,24 +81,28 @@ exports.drawCalendar = function (date) {
     // g.setFont("Vector",10);
 
     g.setColor("#FFF");
+    g.setFontLECO1976Regular12();
     g.drawString(data, 88, 116);
 
+    g.setFont("Vector", 12);
     g.setFontAlign(1, -1);
     g.setColor("#000");
     let text = schedules.reduce(function (acumulador, v) {
       return (
         acumulador +
-        `${v.data.getHours()}:${v.data
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}\n`
+        `${v.data.getHours()}h${
+          v.data.getMinutes() > 0
+            ? v.data.getMinutes().toString().padStart(2, "0")
+            : ""
+        }\n`
       );
     }, "");
     g.drawString(text, 45, 136);
 
     g.setFontAlign(-1, -1);
+
     text = schedules.reduce(function (acumulador, v) {
-      return acumulador + `${E.decodeUTF8(v.descricao).toUpperCase()}\n`;
+      return acumulador + `${v.descricao}\n`;
     }, "");
     g.drawString(text, 50, 136);
   } else {
