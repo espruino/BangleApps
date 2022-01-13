@@ -100,6 +100,15 @@
 
   <script>
   $(function () {
+    try {
+      let Key = Math.random();
+      localStorage.setItem(Key, 'works!');
+      localStorage.removeItem(Key);
+      console.log('>>>> "localstorage" seems to be supported')
+    } catch (Signal) {
+      console.log('>>>> "localstorage" does NOT seem to be supported')
+    }
+    
     let ClockSize, ClockSizeURL
     let ClockFace, ClockFaceNumerals, ClockFaceDots, ClockFaceURL
     let ClockHands, SecondHand, ClockHandsURL, FillColor
