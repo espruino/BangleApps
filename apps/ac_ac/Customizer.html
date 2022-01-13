@@ -100,15 +100,6 @@
 
   <script>
   $(function () {
-    try {
-      let Key = Math.random();
-      localStorage.setItem(Key, 'works!');
-      localStorage.removeItem(Key);
-      console.log('>>>> "localstorage" seems to be supported')
-    } catch (Signal) {
-      console.log('>>>> "localstorage" does NOT seem to be supported')
-    }
-    
     let ClockSize, ClockSizeURL
     let ClockFace, ClockFaceNumerals, ClockFaceDots, ClockFaceURL
     let ClockHands, SecondHand, ClockHandsURL, FillColor
@@ -121,6 +112,87 @@
     let ComplicationB, ComplicationBURL
     let ComplicationBR, ComplicationBRURL
     let Foreground, Background
+
+  /**** backupConfiguration ****/
+
+    function backupConfiguration () {
+      let Configuration = {
+        ClockSize, ClockSizeURL,
+        ClockFace, ClockFaceNumerals, ClockFaceDots, ClockFaceURL,
+        ClockHands, SecondHand, ClockHandsURL, FillColor,
+        ComplicationTL, ComplicationTLURL,
+        ComplicationT, ComplicationTURL,
+        ComplicationTR, ComplicationTRURL,
+        ComplicationL, ComplicationLURL,
+        ComplicationR, ComplicationRURL,
+        ComplicationBL, ComplicationBLURL,
+        ComplicationB, ComplicationBURL,
+        ComplicationBR, ComplicationBRURL,
+        Foreground, Background
+      }
+      try {
+        localstorage.setItem('ac_ac',JSON.stringify(Configuration))
+      } catch (Signal) { /* nop */ }
+    }
+
+  /**** restoreConfiguration - warning: no input validations yet! ****/
+
+    function restoreConfiguration () {
+      let Configuration = {}
+        try {
+          Configuration = JSON.parse(localstorage.getItem('ac_ac') || '')
+        } catch (Signal) { /* nop */ }
+      for (let Key in Configuration) {
+        if (Configuration.hasOwnProperty(Key)) {
+          if ((Key == null) || (typeof Configuration[Key] !== 'string')) {
+            Configuration[Key] = ''
+          } else {
+            Configuration[Key] = Configuration[Key].trim()
+          }
+        }
+      }
+
+      $('input[name="clock-size"][value="' + Configuration.ClockSize + '"]').attr('checked','checked')
+      $('#clock-size-custom-url').val(Configuration.ClockSizeURL)
+
+      $('input[name="clock-face"]')[value="'          + Configuration.ClockFace         + '"]').attr('checked','checked')
+      $('input[name="clock-face-numerals"]')[value="' + Configuration.ClockFaceNumerals + '"]').attr('checked','checked')
+      $('input[name="clock-face-dots"]')[value="'     + Configuration.ClockFaceDots     + '"]').attr('checked','checked')
+      $('#clock-face-custom-url').val(Configuration.ClockFaceURL)
+
+      $('input[name="clock-hands"][value="' + Configuration.ClockHands + '"]').attr('checked','checked')
+      $('input[name="fill-color"][value="'  + Configuration.FillColor  + '"]').attr('checked','checked')
+      $('input[name="second-hand"][value="' + Configuration.SecondHand + '"]').attr('checked','checked')
+      $('#clock-hands-custom-url').val(Configuration.ClockHandsURL)
+
+      $('#complication-tl').val(Configuration.ComplicationTL)
+      $('#complication-tl-custom-url').val(Configuration.ComplicationTLURL)
+
+      $('#complication-t').val(Configuration.ComplicationT)
+      $('#complication-t-custom-url').val(Configuration.ComplicationTURL)
+
+      $('#complication-tr').val(Configuration.ComplicationTR)
+      $('#complication-tr-custom-url').val(Configuration.ComplicationTRURL)
+
+      $('#complication-l').val(Configuration.ComplicationL)
+      $('#complication-l-custom-url').val(Configuration.ComplicationLURL)
+
+      $('#complication-r').val(Configuration.ComplicationR)
+      $('#complication-r-custom-url').val(Configuration.ComplicationRURL)
+
+      $('#complication-bl').val(Configuration.ComplicationBL)
+      $('#complication-bl-custom-url').val(Configuration.ComplicationBLURL)
+
+      $('#complication-b').val(Configuration.ComplicationB)
+      $('#complication-b-custom-url').val(Configuration.ComplicationBURL)
+
+      $('#complication-br').val(Configuration.ComplicationBR)
+      $('#complication-br-custom-url').val(Configuration.ComplicationBRURL)
+
+      $('input[name="foreground"][value="' + Configuration.Foreground + '"]').attr('checked','checked')
+      $('input[name="background"][value="' + Configuration.Background + '"]').attr('checked','checked')
+    }
+    restoreConfiguration();
 
   /**** retrieveInputs ****/
 
@@ -319,6 +391,8 @@ Clockwork.windUp({
 `
 console.log('the configured AC-AC app looks as follows:')
 console.log(AppSource)
+
+      backupConfiguration()
 
       sendCustomizedApp({
         storage:[
