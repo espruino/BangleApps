@@ -3016,7 +3016,7 @@
     "icon": "app.png",
     "tags": "tool,debug",
     "supports" : ["BANGLEJS","BANGLEJS2"],
-    "screenshots": [{"url":"bangle1-counter-screenshot.png"}],
+    "screenshots": [{"url":"screenshot.png"}],
     "storage": [
       {"name":"accelgraph.app.js","url":"app.js"},
       {"name":"accelgraph.img","url":"app-icon.js","evaluate":true}
