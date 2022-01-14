@@ -12,6 +12,7 @@ const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSA
 
 const weatherCloudy = heatshrink.decompress(atob("iEQwYWTgP//+AAoMPAoPwAoN/AocfAgP//0AAgQAB/AFEABgdDAAMDDohMRA"));
 const weatherSunny = heatshrink.decompress(atob("iEQwYLIg3AAgVgAQMMAo8Am3YAgUB23bAoUNAoIUBjYFCsOwBYoFDDpFgHYI1JI4gFGAAYA="));
+const weatherMoon = heatshrink.decompress(atob("iEQwIFCgOAh/wj/4n/8AId//wBBBIoRBCoIZBDoI"));
 const weatherPartlyCloudy = heatshrink.decompress(atob("iEQwYQNv0AjgGDn4EDh///gFChwREC4MfxwIBv0//+AC4X4j4FCv/AgfwgED/wIBuAaBBwgFDgP4gf/AAXABwIEBDQQAEA=="));
 const weatherRainy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AocAnAFBFIU4EAM//gRBEAIOBhw1C/AmDAosAC4JNIAAg"));
 const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
@@ -379,7 +380,7 @@ function getWeatherIconByCode(code) {
     case 8:
       switch (code) {
         case 800:
-          return weatherSunny;
+          return isDay() ? weatherSunny : weatherMoon;
         case 801:
           return weatherPartlyCloudy;
         case 802:
@@ -394,6 +395,16 @@ function getWeatherIconByCode(code) {
   return undefined;
 }
 
+
+function isDay() {
+  const times = getSunData();
+  if (times == undefined) return true;
+  const sunRise = Math.round(times.sunrise.getTime() / 1000);
+  const sunSet = Math.round(times.sunset.getTime() / 1000);
+  const now = Math.round(new Date().getTime() / 1000);
+
+  return (now > sunRise && now < sunSet);
+}
 
 function formatSeconds(s) {
   if (s > 60 * 60) { // hours
