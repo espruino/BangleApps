@@ -1,5 +1,7 @@
 // apply Quiet Mode schedules
 (function qm() {
+  if (Bangle.qmTimeout) clearTimeout(Bangle.qmTimeout); // so the app can eval() this file to apply changes right away
+  delete Bangle.qmTimeout;
   let bSettings = require('Storage').readJSON('setting.json',true)||{};
   const curr = 0|bSettings.quiet;
   delete bSettings;
@@ -18,7 +20,7 @@
   let t = 3600000*(next.hr-hr); // timeout in milliseconds
   if (t<0) {t += 86400000;} // scheduled for tomorrow: add a day
   /* update quiet mode at the correct time. */
-  setTimeout(() => {
+  Bangle.qmTimeout=setTimeout(() => {
     require("qmsched").setMode(mode);
     qm(); // schedule next update
   }, t);
