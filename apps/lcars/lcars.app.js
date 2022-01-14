@@ -131,11 +131,23 @@ function printRow(text, value, y, c){
   g.drawString(text, 135, y);
 }
 
+
 function printData(key, y, c){
+  try{
+    _printData(key, y, c);
+  } catch(ex){
+    var text = key.toUpperCase();
+    var value = "ERR-2";
+    printRow(text, value, y, c);
+  }
+}
+
+
+function _printData(key, y, c){
   g.setFontAlign(-1,-1,0);
   key = key.toUpperCase()
   var text = key;
-  var value = "ERR";
+  var value = "ERR-1";
   var should_print= true;
 
   if(key == "STEPS"){
@@ -164,12 +176,13 @@ function printData(key, y, c){
   } else if (key == "ALTITUDE"){
     should_print= false;
     text = "ALT";
+
+    // Immediately print something - avoid that its empty
+    printRow(text, "", y, c);
     Bangle.getPressure().then(function(data){
       if(data && data.altitude){
         value = data.altitude.toFixed(0);
         printRow(text, value, y, c);
-      } else {
-        printRow(text, "-", y, c);
       }
     })
 
