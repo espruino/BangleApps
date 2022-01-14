@@ -133,16 +133,33 @@ function drawCircle(index) {
   }
 }
 
+// serves as cache for quicker lookup of circle positions
+let circlePositionsCache = [];
+/*
+ * Looks in the following order if a circle with the given type is somewhere visible/configured
+ * 1. circlePositionsCache
+ * 2. settings
+ * 3. defaultCircleTypes
+ *
+ * In case 2 and 3 the circlePositionsCache will be updated
+ */
 function getCirclePosition(type) {
+  if (circlePositionsCache[type] >= 0) {
+    return circlePosX[circlePositionsCache[type]];
+  }
   for (let i = 1; i <= 3; i++) {
     const setting = settings['circle' + i];
-    if (setting == type) return circlePosX[i - 1];
+    if (setting == type) {
+      circlePositionsCache[type] = i - 1;
+      return circlePosX[i - 1];
+    }
   }
   for (let i = 0; i < defaultCircleTypes.length; i++) {
-   if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
-     return circlePosX[i];
-   }
- }
+    if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
+      circlePositionsCache[type] = i;
+      return circlePosX[i];
+    }
+  }
   return undefined;
 }
 
