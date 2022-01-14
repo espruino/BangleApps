@@ -1,4 +1,4 @@
-# Bold Clock
+# Crow Clock
 
-![](screenshot_bold.png)
+![](screenshot_crow.png)
 
