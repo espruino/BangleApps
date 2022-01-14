@@ -1,9 +1,9 @@
 const is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 const locale = require("locale");
 var settings = require('Storage').readJSON("vectorclock.json", true) || {};
-var dowcol = settings.dowcol || 0xFFFF;
-var timecol = settings.timecol || 0xFFFF;
-var datecol = settings.datecol || 0xFFFF;
+var dowcol = settings.dowcol || g.theme.fg;
+var timecol = settings.timecol || g.theme.fg;
+var datecol = settings.datecol || g.theme.fg;
 
 
 function padNum(n, l) {
