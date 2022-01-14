@@ -136,9 +136,7 @@ function printData(key, y, c){
   try{
     _printData(key, y, c);
   } catch(ex){
-    var text = key.toUpperCase();
-    var value = "ERR-2";
-    printRow(text, value, y, c);
+    // Show last error - next try hopefully works.
   }
 }
 
@@ -147,7 +145,7 @@ function _printData(key, y, c){
   g.setFontAlign(-1,-1,0);
   key = key.toUpperCase()
   var text = key;
-  var value = "ERR-1";
+  var value = "ERR";
   var should_print= true;
 
   if(key == "STEPS"){
