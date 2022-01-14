@@ -127,6 +127,9 @@ function drawCircle(index) {
     case "weather":
       drawWeather(w);
       break;
+    case "empty":
+      // we do nothing here
+      return;
   }
 }
 
@@ -221,7 +224,7 @@ function drawHeartRate(w) {
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
-  if (hrtValue != undefined && hrtValue > 0) {
+  if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
     const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
     drawGauge(w, h3, percent, colorRed);

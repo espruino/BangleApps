@@ -6,8 +6,9 @@
     settings[key] = value;
     storage.write(SETTINGS_FILE, settings);
   }
-  var valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather"];
-  var namesCircleTypes = ["steps", "distance", "heart", "battery", "weather"];
+
+  var valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "empty"];
+  var namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "empty"];
   E.showMenu({
     '': { 'title': 'circlesclock' },
     '< Back': back,
@@ -78,19 +79,19 @@
     },
     'left': {
       value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle1', valuesCircleTypes[x]),
     },
     'middle': {
       value: settings.circle2 ? valuesCircleTypes.indexOf(settings.circle2) : 2,
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle2', valuesCircleTypes[x]),
     },
     'right': {
       value: settings.circle3 ? valuesCircleTypes.indexOf(settings.circle3) : 3,
-      min: 0, max: 4,
+      min: 0, max: 5,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle3', valuesCircleTypes[x]),
     }

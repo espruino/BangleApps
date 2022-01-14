@@ -7,3 +7,4 @@
       Make circles and text slightly bigger
 0.05: Show correct percentage values in circles
       Show humidity as weather circle data
+0.06: Allow settings empty circles
