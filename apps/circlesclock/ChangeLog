@@ -9,3 +9,4 @@
       Show humidity as weather circle data
 0.06: Allow settings empty circles
       Support to choose between humidity and wind speed for weather circle progress
+      Support to show time and progress until next sunrise or sunset

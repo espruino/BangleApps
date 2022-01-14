@@ -1,6 +1,7 @@
 const locale = require("locale");
 const heatshrink = require("heatshrink");
 const storage = require("Storage");
+const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
 const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
 const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
@@ -17,6 +18,9 @@ const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FC
 const weatherSnowy = heatshrink.decompress(atob("iEQwYROn/8AocH8AECuAFBh0Agf+CIN/4EDx/4j/x4EAgIIBwAXBAogRFDoopFGoxBGABIA="));
 const weatherFoggy = heatshrink.decompress(atob("iEQwYROn/8AgUB/EfwAFBh/AgfwgED/wIBuEABwd/4EcDQgFDgE4Fosf///8f//A/Lj/xCQIRNA="));
 const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AoX8gE4AoQpBnAdBF4IRBDQMH/kOHgY7DAo4AOA=="));
+
+const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfACoo"));
+const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
 
 let settings;
 
@@ -127,8 +131,11 @@ function drawCircle(index) {
     case "weather":
       drawWeather(w);
       break;
+    case "sunprogress":
+      drawSunProgress(w);
+      break;
     case "empty":
-      // we do nothing here
+      // we draw nothing here
       return;
   }
 }
@@ -295,6 +302,49 @@ function drawWeather(w) {
   }
 }
 
+
+function drawSunProgress(w) {
+  if (!w) w = getCirclePosition("sunprogress");
+  const percent = getSunProgress();
+
+  drawCircleBackground(w);
+
+  drawGauge(w, h3, percent, colorYellow);
+
+  drawInnerCircleAndTriangle(w);
+
+  let icon = powerIcon;
+  let color = colorFg;
+  if (percent < 1) { // it is before sunset
+    color = colorFg;
+    icon = sunSetUp;
+  } else {
+    color = colorGrey;
+    icon = sunSetDown;
+  }
+
+  const times = getSunData();
+  if (times != undefined) {
+    const sunRise = Math.round(times.sunrise.getTime() / 1000);
+    const sunSet = Math.round(times.sunset.getTime() / 1000);
+    const now = Math.round(new Date().getTime() / 1000);
+    let text;
+    if (now > sunRise && now < sunSet) {
+      text = formatSeconds(sunSet - now);
+    } else {
+      // approx sunrise tomorrow:
+      const upcomingSunRise = sunRise + 60 * 60 * 24;
+      text = formatSeconds(upcomingSunRise - now);
+    }
+  }
+
+  writeCircleText(w, text);
+
+  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+
+}
+
+
 /*
  * Choose weather icon to display based on weather conditition code
  * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
@@ -342,6 +392,58 @@ function getWeatherIconByCode(code) {
       return undefined;
   }
   return undefined;
+}
+
+
+function formatSeconds(s) {
+  if (s > 60 * 60) { // hours
+    return Math.round(s / (60 * 60)) + "h";
+  }
+  if (s > 60) { // minutes
+    return Math.round(s / (60)) + "m";
+  }
+  return s + "s";
+}
+
+/*
+ * Read location from myLocation app
+ */
+function getLocation() {
+  return storage.readJSON("mylocation.json", 1) || {
+    "lat": 51.5072,
+    "lon": 8.1276,
+    "location": "London"
+  };
+}
+
+function getSunData() {
+  const location = getLocation();
+  if (location != undefined && location.lat != undefined) {
+    // get today's sunlight times for lat/lon
+    return SunCalc.getTimes(new Date(), location.lat, location.lon);
+  }
+  return undefined;
+}
+
+/*
+ * Calculated progress of the sun between sunrise and sunset in percent
+ *
+ * Taken from rebble app and modified
+ */
+function getSunProgress() {
+  const times = getSunData();
+  const sunRise = Math.round(times.sunrise.getTime() / 1000);
+  const sunSet = Math.round(times.sunset.getTime() / 1000);
+  const now = Math.round(new Date().getTime() / 1000);
+
+  if (now > sunRise && now < sunSet) {
+    // during day, progress until sunSet
+    return (now - sunRise) / (sunSet - sunRise);
+  } else {
+    // during night, progress until approx sunrise tomorrow:
+    const upcomingSunRise = sunRise + 60 * 60 * 24;
+    return ((upcomingSunRise - now) / (upcomingSunRise - sunSet));
+  }
 }
 
 /*

@@ -13,13 +13,13 @@ It can show the following information (this can be configured):
        * Humidity or wind speed as circle progress
        * Temperature inside circle
        * Condition as icon below circle
+  * Time and progress until next sunrise or sunset
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
 
 # TODO
-* Add sunrise and sunset
 * Display moon instead of sun during night on weather circle
 
 ## Creator
