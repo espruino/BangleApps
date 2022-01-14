@@ -217,7 +217,8 @@ function drawHeartRate(w) {
 
   if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
-    const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
+    const maxHR = settings.maxHR || 200;
+    const percent = (hrtValue - minHR) / (maxHR - minHR);
     drawGauge(w, h3, percent, colorRed);
   }
 
