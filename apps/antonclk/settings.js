@@ -47,6 +47,14 @@
         writeSettings();
       }
     },
+    "Show CalWeek": {
+      value: (settings.calWeek !== undefined ? settings.calWeek : false),
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.calWeek = v;
+        writeSettings();
+      }
+    },
     "Uppercase": {
       value: (settings.upperCase !== undefined ? settings.upperCase : false),
       format: v => v ? "On" : "Off",

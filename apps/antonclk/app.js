@@ -1,6 +1,6 @@
 // Clock with large digits using the "Anton" bold font
 
-var SETTINGSFILE = "antonclk.json";
+const SETTINGSFILE = "antonclk.json";
 
 Graphics.prototype.setFontAnton = function(scale) {
   // Actual height 69 (68 - 0)
@@ -19,6 +19,7 @@ var secondsWithColon;
 var dateOnMain;
 var dateOnSecs;
 var weekDay;
+var calWeek;
 var upperCase;
 var vectorFont;
 
@@ -27,32 +28,33 @@ var drawTimeout;
 var queueMillis = 1000;
 var secondsScreen = true;
 
-var isBangle1 = (g.getWidth() == 240);
+var isBangle1 = (process.env.HWVERSION == 1);
 
-/* For development purposes
+//For development purposes
+/*
 require('Storage').writeJSON(SETTINGSFILE, {
-  secondsMode: "Always", // "Never", "Unlocked", "Always"
+  secondsMode: "Unlocked", // "Never", "Unlocked", "Always"
   secondsColoured: true,
   secondsWithColon: true,
   dateOnMain: "Long", // "Short", "Long", "ISO8601"
   dateOnSecs: "Year", // "No", "Year", "Weekday", LEGACY: true/false
   weekDay: true,
+  calWeek: true,
   upperCase: true,
   vectorFont: true,
 });
-/* */
+*/
 
-/* OR (also for development purposes)
+// OR (also for development purposes)
+/*
 require('Storage').erase(SETTINGSFILE);
-/* */
-
-// Helper method for loading the settings
-function def(value, def) {
-  return (value !== undefined ? value : def);
-}
+*/ 
 
 // Load settings
 function loadSettings() {
+  // Helper function default setting
+  function def (value, def) {return value !== undefined ? value : def;}
+
   var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
   secondsMode = def(settings.secondsMode, "Never");
   secondsColoured = def(settings.secondsColoured, true);
@@ -60,6 +62,7 @@ function loadSettings() {
   dateOnMain = def(settings.dateOnMain, "Long");
   dateOnSecs = def(settings.dateOnSecs, "Year");
   weekDay = def(settings.weekDay, true);
+  calWeek = def(settings.calWeek, false);
   upperCase = def(settings.upperCase, true);
   vectorFont = def(settings.vectorFont, false);
 
@@ -97,6 +100,24 @@ function updateState() {
 
 function isoStr(date) {
   return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
+}
+
+var calWeekBuffer = [false,false,false]; //buffer tz, date, week no (once calculated until other tz or date is requested)
+function ISO8601calWeek(date) { //copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
+  dateNoTime = date; dateNoTime.setHours(0,0,0,0);
+  if (calWeekBuffer[0] === date.getTimezoneOffset() && calWeekBuffer[1] === dateNoTime) return calWeekBuffer[2];
+  calWeekBuffer[0] = date.getTimezoneOffset();
+  calWeekBuffer[1] = dateNoTime;
+  var tdt = new Date(date.valueOf());
+  var dayn = (date.getDay() + 6) % 7;
+  tdt.setDate(tdt.getDate() - dayn + 3);
+  var firstThursday = tdt.valueOf();
+  tdt.setMonth(0, 1);
+  if (tdt.getDay() !== 4) {
+      tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+  }
+  calWeekBuffer[2] = 1 + Math.ceil((firstThursday - tdt) / 604800000);
+  return calWeekBuffer[2];
 }
 
 function doColor() {
@@ -169,11 +190,17 @@ function draw() {
     else
       g.setFont("6x8", 2);
     g.drawString(dateStr, x, y);
-    if (weekDay) {
-      var dowStr = require("locale").dow(date);
+    if (calWeek || weekDay) {
+      var dowcwStr = "";
+      if (calWeek)
+        dowcwStr = " #" + ("0" + ISO8601calWeek(date)).substring(-2);
+      if (weekDay) 
+        dowcwStr = require("locale").dow(date, calWeek ? 1 : 0) + dowcwStr;  //weekDay e.g. Monday or weekDayShort #<calWeek> e.g. Mon #01
+      else //week #01
+        dowcwStr = /*LANG*/"week" + dowcwStr;
       if (upperCase)
-        dowStr = dowStr.toUpperCase();
-      g.drawString(dowStr, x, y + (vectorFont ? 26 : 16));
+      dowcwStr = dowcwStr.toUpperCase();
+      g.drawString(dowcwStr, x, y + (vectorFont ? 26 : 16));
     }
   }
 

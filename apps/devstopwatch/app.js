@@ -3,11 +3,11 @@ const EMPTY_H = '00:00:000';
 const MAX_LAPS = 6;
 const XY_CENTER = g.getWidth() / 2;
 const big = g.getWidth()>200;
-const Y_CHRONO = 40;
-const Y_HEADER = big?80:60;
-const Y_LAPS = big?125:90;
+const Y_CHRONO = big?40:30;
+const Y_HEADER = big?95:65;
+const Y_LAPS = big?125:80;
 const H_LAPS = big?15:8;
-const Y_BTN3 = big?225:165;
+const Y_HELP = big?225:135;
 const FONT = '6x8';
 const CHRONO = '/* C H R O N O */';
 
@@ -27,18 +27,17 @@ var state = require("Storage").readJSON("devstopwatch.state.json",1) || {
 
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", btn=>{
-  if (btn==0) {
-  reset = false;
-
-  if (state.started) {
-    changeLap();
-  } else {
-    if (!reset) {
-      chronoInterval = setInterval(chronometer, 10);
-    }
+  switch (btn) {
+    case -1:
+      if (state.started) {
+        changeLap();
+      } else {
+        chronoInterval = setInterval(chronometer, 10);
+      }
+      break;
+    case 1: resetChrono(); break;
+    default: Bangle.showLauncher(); break; //launcher handeled by ROM
   }
-}
-  if (btn==1) resetChrono();
 });
 
 function resetChrono() {
@@ -105,6 +104,7 @@ function printChrono() {
 
   var print = '';
 
+  g.setColor(g.theme.fg);
   g.setFont(FONT, big?2:1);
   print = CHRONO;
   g.drawString(print, XY_CENTER, Y_CHRONO, true);
@@ -124,7 +124,8 @@ function printChrono() {
     let suffix = ' ';
     if (state.currentLapIndex === i) {
       let suffix = '*';
-      g.setColor("#f70");
+      if (process.env.HWVERSION==2) g.setColor("#0ee");
+      else g.setColor("#f70");
     }
 
     const lapLine = `L${i - 1} ${state.laps[i]} ${suffix}\n`;
@@ -133,8 +134,17 @@ function printChrono() {
 
   g.setColor(g.theme.fg);
   g.setFont(FONT, 1);
-  print = 'Press 3 to reset';
-  g.drawString(print, XY_CENTER, Y_BTN3, true);
+  //help for model 2 or 1
+  if (process.env.HWVERSION==2) {
+    print = /*LANG*/'TAP right top/bottom';
+    g.drawString(print, XY_CENTER, Y_HELP, true);
+    print = /*LANG*/'start&lap/reset, BTN1: EXIT';
+    g.drawString(print, XY_CENTER, Y_HELP+10, true);
+  }
+  else {
+    print = /*LANG*/'BTNs 1:startlap 2:exit 3:reset';
+    g.drawString(print, XY_CENTER, Y_HELP, true);
+  }
 
   g.flip();
 }
