@@ -5676,5 +5676,22 @@
       {"name":"acmaze.app.js","url":"app.js"},
       {"name":"acmaze.img","url":"app-icon.js","evaluate":true}
     ]
+  },
+  {
+    "id": "crowclk",
+    "name": "Crow Clock",
+    "version": "0.01",
+    "description": "MST3K Crow T. Robot clock",
+    "icon": "crow_clock.png",
+    "screenshots": [{"url":"screenshot_crow.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"crowclk.app.js","url":"crow_clock.js"},
+      {"name":"crowclk.img","url":"crow_clock-icon.js","evaluate":true}
+    ]
   }
 ]
