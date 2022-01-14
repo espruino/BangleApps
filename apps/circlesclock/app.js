@@ -409,11 +409,7 @@ function formatSeconds(s) {
  * Read location from myLocation app
  */
 function getLocation() {
-  return storage.readJSON("mylocation.json", 1) || {
-    "lat": 51.5072,
-    "lon": 8.1276,
-    "location": "London"
-  };
+  return storage.readJSON("mylocation.json", 1) || undefined;
 }
 
 function getSunData() {
@@ -432,6 +428,7 @@ function getSunData() {
  */
 function getSunProgress() {
   const times = getSunData();
+  if (times == undefined) return 0;
   const sunRise = Math.round(times.sunrise.getTime() / 1000);
   const sunSet = Math.round(times.sunset.getTime() / 1000);
   const now = Math.round(new Date().getTime() / 1000);
