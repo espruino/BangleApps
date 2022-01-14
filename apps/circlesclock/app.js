@@ -65,7 +65,6 @@ const radiusOuter = 25;
 const radiusInner = 20;
 const circleFont = "Vector:15";
 const circleFontBig = "Vector:16";
-const circleFontSmall = "Vector:13";
 
 function draw() {
   g.clear(true);
@@ -168,16 +167,12 @@ function isCircleEnabled(type) {
   return getCirclePosition(type) != undefined;
 }
 
+
 function drawSteps(w) {
   if (!w) w = getCirclePosition("steps");
   const steps = getSteps();
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
@@ -186,15 +181,9 @@ function drawSteps(w) {
     drawGauge(w, h3, percent, colorBlue);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(shortValue(steps), w + 2, h3);
+  writeCircleText(w, shortValue(steps));
 
   g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
 }
@@ -205,12 +194,7 @@ function drawStepsDistance(w) {
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
@@ -219,15 +203,9 @@ function drawStepsDistance(w) {
     drawGauge(w, h3, percent, colorGreen);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(shortValue(stepsDistance), w + 2, h3);
+  writeCircleText(w, shortValue(stepsDistance));
 
   g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
 }
@@ -235,12 +213,7 @@ function drawStepsDistance(w) {
 function drawHeartRate(w) {
   if (!w) w = getCirclePosition("hr");
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
@@ -248,15 +221,9 @@ function drawHeartRate(w) {
     drawGauge(w, h3, percent, colorRed);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFontBig);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(hrtValue != undefined ? hrtValue : "-", w, h3);
+  writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
   g.drawImage(heartIcon, w - 6, h3 + radiusOuter - 6);
 }
@@ -265,25 +232,14 @@ function drawBattery(w) {
   if (!w) w = getCirclePosition("battery");
   const battery = E.getBattery();
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   if (battery > 0) {
     const percent = battery / 100;
     drawGauge(w, h3, percent, colorYellow);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
-
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
+  drawInnerCircleAndTriangle(w);
 
   let icon = powerIcon;
   let color = colorFg;
@@ -296,8 +252,7 @@ function drawBattery(w) {
       icon = powerIconRed;
     }
   }
-  g.setColor(color);
-  g.drawString(battery + '%', w, h3);
+  writeCircleText(w, battery + '%');
 
   g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
 }
@@ -308,12 +263,7 @@ function drawWeather(w) {
   const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
   const code = weather ? weather.code : -1;
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   const data = settings.weatherCircleData || "humidity";
   switch (data) {
@@ -334,16 +284,9 @@ function drawWeather(w) {
       break;
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 25, h3 + radiusOuter + 5, w + 25, h3 + radiusOuter + 5]);
-
-  const content = tempString ? tempString : "?";
-  g.setFont(content.length < 4 ? circleFont : circleFontSmall);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(content, w, h3);
+  writeCircleText(w, tempString ? tempString : "?");
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
@@ -400,30 +343,61 @@ function getWeatherIconByCode(code) {
   return undefined;
 }
 
+/*
+ * Draws the background and the grey circle
+ */
+function drawCircleBackground(w) {
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  // Draw grey background circle:
+  g.setColor(colorGrey);
+  g.fillCircle(w, h3, radiusOuter);
+}
+
+function drawInnerCircleAndTriangle(w) {
+  // Draw inner circle
+  g.setColor(colorBg);
+  g.fillCircle(w, h3, radiusInner);
+  // Draw triangle which covers the bottom of the circle
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
+}
+
 function radians(a) {
   return a * Math.PI / 180;
 }
 
+/*
+ * This draws the actual gauge consisting out of lots of little filled circles
+ */
 function drawGauge(cx, cy, percent, color) {
   const offset = 15;
   const end = 345;
-  const r = radiusInner + 3;
+  const radius = radiusInner + 3;
+  const size = radiusOuter - radiusInner - 2;
 
   if (percent <= 0) return;
   if (percent > 1) percent = 1;
 
-  const startrot = -offset;
-  const endrot = startrot - ((end - offset) * percent);
+  const startRotation = -offset;
+  const endRotation = startRotation - ((end - offset) * percent);
 
   g.setColor(color);
 
-  const size = radiusOuter - radiusInner - 2;
-  // draw gauge
-  for (let i = startrot; i > endrot - size; i -= size) {
-    x = cx + r * Math.sin(radians(i));
-    y = cy + r * Math.cos(radians(i));
+  for (let i = startRotation; i > endRotation - size; i -= size) {
+    x = cx + radius * Math.sin(radians(i));
+    y = cy + radius * Math.cos(radians(i));
     g.fillCircle(x, y, size);
   }
+}
+
+function writeCircleText(w, content) {
+  if (content == undefined) return;
+  g.setFont(content.length < 4 ? circleFontBig : circleFont);
+
+  g.setFontAlign(0, 0);
+  g.setColor(colorFg);
+  g.drawString(content, w, h3);
 }
 
 function shortValue(v) {
