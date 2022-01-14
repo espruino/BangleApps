@@ -1,4 +1,4 @@
-// gcalcli agenda --tsv | jq -rRs 'split("\n")[1:-1] | map([split("\t")[]|split(",")] | { "data":(.[0][0] + "T" + .[1][0] + ":00Z"), "data_fim":(.[2][0] + "T" + .[3][0] + ":00Z"), "descricao":.[4][0]})' | iconv -f UTF-8 -t ISO-8859-1 - > agenda.json
+// gcalcli agenda --tsv | jq -rRs 'split("\n")[0:-1] | map([split("\t")[]|split(",")] | { "data":(.[0][0] + "T" + .[1][0] + ":00Z"), "data_fim":(.[2][0] + "T" + .[3][0] + ":00Z"), "descricao":.[4][0]})' | iconv -f UTF-8 -t ISO-8859-1 - > agenda.json
 
 "use strict";
 
