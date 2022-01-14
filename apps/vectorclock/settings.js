@@ -8,8 +8,8 @@
     require('Storage').writeJSON(FILE, settings);
   }
 
-  var colnames = ["white", "yellow", "green", "cyan", "red", "orange"];
-  var colvalues = [0xFFFF, 0xFFE0, 0x07E0, 0x07FF, 0xF800, 0xFD20];
+  var colnames = ["white", "yellow", "green", "cyan", "red", "orange", "magenta", "black"];
+  var colvalues = [0xFFFF, 0xFFE0, 0x07E0, 0x07FF, 0xF800, 0xFD20, 0xF81F, 0x0000];
   // Show the menu
   E.showMenu({
     "" : { "title" : "VectorClock colours" },
