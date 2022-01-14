@@ -942,12 +942,13 @@
   {
     "id": "widlock",
     "name": "Lock Widget",
-    "version": "0.03",
+    "version": "0.04",
     "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,lock",
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "sortorder": -1,
     "storage": [
       {"name":"widlock.wid.js","url":"widget.js"}
     ]
@@ -5618,7 +5619,7 @@
     "shortName":"Simple Pedometer",
     "icon": "screenshot_widpa.png",
     "screenshots": [{"url":"screenshot_widpa.png"}],
-    "version":"0.01",
+    "version":"0.02",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
@@ -5634,7 +5635,7 @@
     "shortName":"Lato Pedometer",
     "icon": "screenshot_widpb.png",
     "screenshots": [{"url":"screenshot_widpb.png"}],
-    "version":"0.01",
+    "version":"0.02",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",

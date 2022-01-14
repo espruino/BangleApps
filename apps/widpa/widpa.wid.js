@@ -6,7 +6,7 @@ WIDGETS["widpa"]={area:"tl",width:13,draw:function() {
   if (!Bangle.isLCDOn()) return; // dont redraw if LCD is off
   var steps = Bangle.getHealthStatus("day").steps;
   var w = 1 + (steps.toString().length)*12;
-  if (w > this.width) {this.width = w; setTimeout(() => Bangle.drawWidgets(),10); return;}
+  if (w != this.width) {this.width = w; setTimeout(() => Bangle.drawWidgets(),10); return;}
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(this.x, this.y, this.x + this.width, this.y + 23);
