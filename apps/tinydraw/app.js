@@ -1,7 +1,7 @@
 (function () {
   var pen = 'circle';
   var discard = null;
-  var kule = [255, 255, 255];
+  var kule = [0, 255, 255];  // cyan, magenta, yellow
   var oldLock = false;
 
   setInterval(() => {
