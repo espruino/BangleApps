@@ -1,4 +1,6 @@
-let timezones = require("fourTwentyTz").timezones;
+let ftz = require("fourTwentyTz"),
+    offsets = ftz.offsets,
+    timezones = ftz.timezones;
 
 function get420offset() {
   let current_time = Math.floor((Date.now()%(24*3600*1000))/60000);
@@ -24,10 +26,10 @@ function makeFourTwentyText(minutes, places) {
 
 function getNextFourTwenty() {
   let offs = get420offset();
-  for (let i=0; i<timezones.length; i++) {
-    if (timezones[i][0]<=offs) {
-      let minutes = offs-timezones[i][0];
-      let places = timezones[i][1];
+  for (let i=0; i<offsets.length; i++) {
+    if (offsets[i]<=offs) {
+      let minutes = offs-offsets[i];
+      let places = timezones(offsets[i]);
       return {
         minutes: minutes,
         places: places,

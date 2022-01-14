@@ -52,19 +52,17 @@
         };
       },
       hrm:function() {
-        var bpm = 0, bpmConfidence = 0;
+        var bpm = "", bpmConfidence = "";
         function onHRM(h) {
-          if (h.confidence >= bpmConfidence) {
-            bpmConfidence = h.confidence;
-            bpm = h.bpm;
-          }
+          bpmConfidence = h.confidence;
+          bpm = h.bpm;
         }
         return {
           name : "HR",
           fields : ["Heartrate", "Confidence"],
           getValues : () => {
             var r = [bpm,bpmConfidence];
-            bpm = 0; bpmConfidence = 0;
+            bpm = ""; bpmConfidence = "";
             return r;
           },
           start : () => {
@@ -92,32 +90,6 @@
           draw : (x,y) => g.setColor(Bangle.isCharging() ? "#0f0" : "#ff0").drawImage(atob("DAwBAABgH4G4EYG4H4H4H4GIH4AA"),x,y)
         };
       },
-      temp:function() {
-        var core = 0, skin = 0;
-        var hasCore = false;
-        function onCore(c) {
-            core=c.core;
-            skin=c.skin;
-            hasCore = true;
-        }
-        return {
-          name : "Core",
-          fields : ["Core","Skin"],
-          getValues : () => {
-            var r = [core,skin];
-            return r;
-          },
-          start : () => {
-            hasCore = false;
-            Bangle.on('CoreTemp', onCore);
-          },
-          stop : () => {
-            hasCore = false;
-            Bangle.removeListener('CoreTemp', onCore);
-          },
-          draw : (x,y) => g.setColor(hasCore?"#0f0":"#8f8").drawImage(atob("DAwBAAAOAKPOfgZgZgZgZgfgPAAA"),x,y)
-        };
-      }, 
       steps:function() {
         var lastSteps = 0;
         return {
@@ -133,8 +105,38 @@
           draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
         };
       }
-      // TODO: recAltitude from pressure sensor
     };
+    if (Bangle.getPressure){
+      recorders['baro'] = function() {
+        var temp="",press="",alt="";
+        function onPress(c) {
+            temp=c.temperature;
+            press=c.pressure;
+            alt=c.altitude;
+        }
+        return {
+          name : "Baro",
+          fields : ["Barometer Temperature", "Barometer Pressure", "Barometer Altitude"],
+          getValues : () => {
+              var r = [temp,press,alt];
+              temp="";
+              press="";
+              alt="";
+              return r;
+          },
+          start : () => {
+            Bangle.setBarometerPower(1,"recorder");
+            Bangle.on('pressure', onPress);
+          },
+          stop : () => {
+            Bangle.setBarometerPower(0,"recorder");
+            Bangle.removeListener('pressure', onPress);
+          },
+          draw : (x,y) => g.setColor("#0f0").drawImage(atob("DAwBAAH4EIHIEIHIEIHIEIEIH4AA"),x,y)
+        };
+      }
+    }
+    
     /* eg. foobar.recorder.js
     (function(recorders) {
       recorders.foobar = {
