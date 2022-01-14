@@ -116,11 +116,27 @@ function queueDraw() {
 }
 
 
+function printRow(text, value, y, c){
+  g.setColor(c);
+  g.fillRect(79, y-2, 85 ,y+18);
+
+  g.setFontAlign(0,-1,0);
+  g.drawString(value, 110, y);
+
+  g.setColor(c);
+  g.setFontAlign(-1,-1,0);
+  g.fillRect(133, y-2, 165 ,y+18);
+  g.fillCircle(161, y+8, 10);
+  g.setColor(cBlack);
+  g.drawString(text, 135, y);
+}
+
 function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
   key = key.toUpperCase()
   var text = key;
   var value = "ERR";
+  var should_print= true;
 
   if(key == "STEPS"){
     text = "STEP";
@@ -145,22 +161,22 @@ function printData(key, y, c){
     var weather = getWeather();
     value = weather.hum + "%";
 
+  } else if (key == "ALTITUDE"){
+    should_print= false;
+    text = "ALT";
+    Bangle.getPressure().then(function(data){
+      value = data.altitude.toFixed(0);
+      printRow(text, value, y, c);
+    })
+
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
   }
 
-  g.setColor(c);
-  g.fillRect(79, y-2, 85 ,y+18);
-
-  g.setFontAlign(0,-1,0);
-  g.drawString(value, 110, y);
-
-  g.setColor(c);
-  g.setFontAlign(-1,-1,0);
-  g.fillRect(133, y-2, 165 ,y+18);
-  g.fillCircle(161, y+8, 10);
-  g.setColor(cBlack);
-  g.drawString(text, 135, y);
+  // Print for all datapoints that are not async
+  if(should_print){
+    printRow(text, value, y, c);
+  }
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
