@@ -165,8 +165,12 @@ function printData(key, y, c){
     should_print= false;
     text = "ALT";
     Bangle.getPressure().then(function(data){
-      value = data.altitude.toFixed(0);
-      printRow(text, value, y, c);
+      if(data && data.altitude){
+        value = data.altitude.toFixed(0);
+        printRow(text, value, y, c);
+      } else {
+        printRow(text, "-", y, c);
+      }
     })
 
   } else if(key == "CORET"){
