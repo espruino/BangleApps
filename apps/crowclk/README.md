@@ -1,7 +1,7 @@
 # Crow Clock
 
 Crow Clock features the face of Mystery Science Theater's Crow T. Robot.
-The code is almost entirely based on Bold Clock.
+The code is based almost entirely on Bold Clock.
 
 ## Features
 
