@@ -25,22 +25,32 @@ let exerciseType = {
 const exerciseTypes = [{
     "id": "pushup",
     "name": "push ups",
-    "useYaxe": true,
-    "useZaxe": false,
-    "thresholdY": 2500,
-    "thresholdMinTime": 1400, // mininmal time between two push ups in ms
+    "useYaxis": true,
+    "useZaxis": false,
+    "threshold": 2500,
+    "thresholdMinTime": 800, // mininmal time between two push ups in ms
     "thresholdMaxTime": 5000, // maximal time between two push ups in ms
-    "thresholdMinDurationTime": 700, // mininmal duration of half a push ups in ms
+    "thresholdMinDurationTime": 600, // mininmal duration of half a push up in ms
   },
   {
     "id": "curl",
     "name": "curls",
-    "useYaxe": true,
-    "useZaxe": false,
-    "thresholdY": 2500,
-    "thresholdMinTime": 1000, // mininmal time between two curls in ms
+    "useYaxis": true,
+    "useZaxis": false,
+    "threshold": 2500,
+    "thresholdMinTime": 800, // mininmal time between two curls in ms
     "thresholdMaxTime": 5000, // maximal time between two curls in ms
-    "thresholdMinDurationTime": 500, // mininmal duration of half a push ups in ms
+    "thresholdMinDurationTime": 500, // mininmal duration of half a curl in ms
+  },
+  {
+    "id": "situp",
+    "name": "sit ups",
+    "useYaxis": false,
+    "useZaxis": true,
+    "threshold": 3500,
+    "thresholdMinTime": 800, // mininmal time between two sit ups in ms
+    "thresholdMaxTime": 5000, // maximal time between two sit ups in ms
+    "thresholdMinDurationTime": 500, // mininmal duration of half a sit up in ms
   }
 ];
 let exerciseCounter = 0;
@@ -66,7 +76,7 @@ function showMainMenu() {
   };
 
   exerciseTypes.forEach(function(et) {
-    menu["Do " + et.name] = function() {
+    menu[et.name] = function() {
       exerciseType = et;
       E.showMenu();
       startTraining();
@@ -81,8 +91,8 @@ function showMainMenu() {
       value: exerciseCounter + " " + exerciseType.name
     };
   }
-  menu.Exit = function() {
-     load();
+  menu.exit = function() {
+    load();
   };
 
   E.showMenu(menu);
@@ -91,11 +101,11 @@ function showMainMenu() {
 function accelHandler(accel) {
   if (!exerciseType) return;
   const t = Math.round(new Date().getTime()); // time in ms
-  const y = exerciseType.useYaxe ? accel.y * 8192 : 0;
-  const z = exerciseType.useZaxe ? accel.z * 8192 : 0;
+  const y = exerciseType.useYaxis ? accel.y * 8192 : 0;
+  const z = exerciseType.useZaxis ? accel.z * 8192 : 0;
   //console.log(t, y, z);
 
-  if (exerciseType.useYaxe) {
+  if (exerciseType.useYaxis) {
     while (historyY.length > avgSize)
       historyY.shift();
 
@@ -109,7 +119,7 @@ function accelHandler(accel) {
     }
   }
 
-  if (exerciseType.useYaxe) {
+  if (exerciseType.useZaxis) {
     while (historyZ.length > avgSize)
       historyZ.shift();
 
@@ -124,72 +134,64 @@ function accelHandler(accel) {
   }
 
   // slope for Y
-  if (exerciseType.useYaxe) {
+  if (exerciseType.useYaxis) {
     let l = historyAvgY.length;
     if (l > 1) {
       const p1 = historyAvgY[l - 2];
       const p2 = historyAvgY[l - 1];
       const slopeY = (p2[1] - p1[1]) / (p2[0] / 1000 - p1[0] / 1000);
       // we use this data for exercises which can be detected by using Y axis data
-      switch (exerciseType.id) {
-        case "pushup":
-          isValidYAxisExercise(slopeY, t);
-          break;
-        case "curl":
-          isValidYAxisExercise(slopeY, t);
-          break;
-      }
-
+      isValidExercise(slopeY, t);
     }
   }
 
   // slope for Z
-  if (exerciseType.useZaxe) {
+  if (exerciseType.useZaxis) {
     l = historyAvgZ.length;
     if (l > 1) {
       const p1 = historyAvgZ[l - 2];
       const p2 = historyAvgZ[l - 1];
-      const slopeZ = (p2[1] - p1[1]) / (p2[0] - p1[0]);
-      historyAvgZ.shift();
-      historySlopeZ.push([p2[0] - p1[0], slopeZ]);
-
-      // TODO: we can use this data for some exercises which can be detected by using Z axis data
+      const slopeZ = (p2[1] - p1[1]) / (p2[0] / 1000 - p1[0] / 1000);
+      // we use this data for some exercises which can be detected by using Z axis data
+      isValidExercise(slopeZ, t);
     }
   }
 }
 
 /*
- * Check if slope value of Y-axis data looks like an exercise
+ * Check if slope value of Y-axis or Z-axis data (depending on exercise type) looks like an exercise
  *
- * In detail we look for slop values which are bigger than the configured Y threshold for the current exercise
+ * In detail we look for slop values which are bigger than the configured threshold for the current exercise type
  * Then we look for two consecutive slope values of which one is above 0 and the other is below zero.
  * If we find one pair of these values this could be part of one exercise.
  * Then we look for a pair of values which cross the zero from the otherwise direction
  */
-function isValidYAxisExercise(slopeY, t) {
+function isValidExercise(slope, t) {
   if (!exerciseType) return;
 
-  const thresholdY = exerciseType.thresholdY;
+  const threshold = exerciseType.threshold;
+  const historySlopeValues = exerciseType.useYaxis ? historySlopeY : historySlopeZ;
   const thresholdMinTime = exerciseType.thresholdMinTime;
   const thresholdMaxTime = exerciseType.thresholdMaxTime;
   const thresholdMinDurationTime = exerciseType.thresholdMinDurationTime;
   const exerciseName = exerciseType.name;
 
-  if (Math.abs(slopeY) >= thresholdY) {
-    historyAvgY.shift();
-    historySlopeY.push([t, slopeY]);
-    //console.log(t, Math.abs(slopeY));
 
-    const lSlopeY = historySlopeY.length;
-    if (lSlopeY > 1) {
-      const p1 = historySlopeY[lSlopeY - 1][1];
-      const p2 = historySlopeY[lSlopeY - 2][1];
+  if (Math.abs(slope) >= threshold) {
+    historySlopeValues.push([t, slope]);
+    //console.log(t, Math.abs(slope));
+
+    const lSlopeHistory = historySlopeValues.length;
+    if (lSlopeHistory > 1) {
+      const p1 = historySlopeValues[lSlopeHistory - 1][1];
+      const p2 = historySlopeValues[lSlopeHistory - 2][1];
       if (p1 > 0 && p2 < 0) {
         if (lastZeroPassCameFromPositive == false) {
           lastExerciseHalfCompletionTime = t;
-          //console.log(t, exerciseName + " half complete...");
+          console.log(t, exerciseName + " half complete...");
 
           layout.progress.label = "½";
+          layout.recording.label = "TRAINING";
           g.clear();
           layout.render();
         }
@@ -201,7 +203,7 @@ function isValidYAxisExercise(slopeY, t) {
         if (lastZeroPassCameFromPositive == true) {
           const tDiffLastExercise = t - lastExerciseCompletionTime;
           const tDiffStart = t - tStart;
-          //console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastExercise), Math.round(tDiffStart));
+          console.log(t, exerciseName + " maybe complete?", Math.round(tDiffLastExercise), Math.round(tDiffStart));
 
           // check minimal time between exercises:
           if ((lastExerciseCompletionTime <= 0 && tDiffStart >= thresholdMinTime) || tDiffLastExercise >= thresholdMinTime) {
@@ -219,22 +221,36 @@ function isValidYAxisExercise(slopeY, t) {
 
                 layout.count.label = exerciseCounter;
                 layout.progress.label = "";
+                layout.recording.label = "Good!";
+
                 g.clear();
                 layout.render();
 
                 if (settings.buzz)
-                  Bangle.buzz(100, 0.4);
+                  Bangle.buzz(200, 0.5);
               } else {
-                //console.log(t, exerciseName + " to quick for duration time threshold!");
+                console.log(t, exerciseName + " too quick for duration time threshold!"); // thresholdMinDurationTime
                 lastExerciseCompletionTime = t;
+
+                layout.recording.label = "Go slower!";
+                g.clear();
+                layout.render();
               }
             } else {
-              //console.log(t, exerciseName + " to slow for time threshold!");
+              console.log(t, exerciseName + " top slow for time threshold!"); // thresholdMaxTime
               lastExerciseCompletionTime = t;
+
+              layout.recording.label = "Go faster!";
+              g.clear();
+              layout.render();
             }
           } else {
-            //console.log(t, exerciseName + " to quick for time threshold!");
+            console.log(t, exerciseName + " too quick for time threshold!"); // thresholdMinTime
             lastExerciseCompletionTime = t;
+
+            layout.recording.label = "Go slower!";
+            g.clear();
+            layout.render();
           }
         }
 
@@ -267,6 +283,7 @@ function startTraining() {
   if (recordActive) return;
   g.clear(1);
   reset();
+  Bangle.setLCDTimeout(0); // force LCD on
   Bangle.setHRMPower(1, "banglexercise");
   if (!hrtValue) hrtValue = "...";
 
@@ -285,7 +302,7 @@ function startTraining() {
             type: "txt",
             id: "count",
             font: exerciseCounter < 100 ? "6x8:9" : "6x8:8",
-            label: 10,
+            label: exerciseCounter,
             pad: 5
           },
           {
@@ -337,11 +354,16 @@ function startTraining() {
   layout.render();
 
   Bangle.setPollInterval(80); // 12.5 Hz
-  Bangle.on('accel', accelHandler);
+
   tStart = new Date().getTime();
   recordActive = true;
   if (settings.buzz)
     Bangle.buzz(200, 1);
+
+  // delay start a little bit
+  setTimeout(() => {
+    Bangle.on('accel', accelHandler);
+  }, 1000);
 }
 
 function stopTraining() {
