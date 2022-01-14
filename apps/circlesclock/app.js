@@ -29,6 +29,7 @@ function loadSettings() {
     'stepLength': 0.8,
     'batteryWarn': 30,
     'showWidgets': false,
+    'weatherCircleData': 'humidity',
     'circle1': 'hr',
     'circle2': 'steps',
     'circle3': 'battery'
@@ -305,7 +306,6 @@ function drawWeather(w) {
   if (!w) w = getCirclePosition("weather");
   const weather = getWeather();
   const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
-  const humidity = weather ? weather.hum : undefined;
   const code = weather ? weather.code : -1;
 
   // Draw rectangle background:
@@ -315,8 +315,23 @@ function drawWeather(w) {
   g.setColor(colorGrey);
   g.fillCircle(w, h3, radiusOuter);
 
-  if (humidity >= 0) {
-    drawGauge(w, h3, humidity / 100, colorYellow);
+  const data = settings.weatherCircleData || "humidity";
+  switch (data) {
+    case "humidity":
+      const humidity = weather ? weather.hum : undefined;
+      if (humidity >= 0) {
+        drawGauge(w, h3, humidity / 100, colorYellow);
+      }
+      break;
+    case "wind":
+      const wind = weather ? weather.wind : undefined;
+      if (wind >= 0) {
+        // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+        drawGauge(w, h3, wind / 12, colorYellow);
+      }
+      break;
+    case "empty":
+      break;
   }
 
   g.setColor(colorBg);

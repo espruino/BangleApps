@@ -7,8 +7,11 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  var valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "empty"];
-  var namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "empty"];
+  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "empty"];
+  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "empty"];
+
+  const weatherData = ["humidity", "wind", "empty"];
+
   E.showMenu({
     '': { 'title': 'circlesclock' },
     '< Back': back,
@@ -76,6 +79,12 @@
       value: "showWidgets" in settings ? settings.showWidgets : false,
       format: () => (settings.showWidgets ? 'Yes' : 'No'),
       onchange: x => save('showWidgets', x),
+    },
+    'weather circle': {
+      value: settings.weatherCircleData ? weatherData.indexOf(settings.weatherCircleData) : 0,
+      min: 0, max: 2,
+      format: v => weatherData[v],
+      onchange: x => save('weatherCircleData', weatherData[x]),
     },
     'left': {
       value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,

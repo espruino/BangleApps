@@ -10,7 +10,7 @@ It can show the following information (this can be configured):
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
   * Weather (requires [weather app](https://banglejs.com/apps/#weather))
-       * Humidity as circle progress
+       * Humidity or wind speed as circle progress
        * Temperature inside circle
        * Condition as icon below circle
 
