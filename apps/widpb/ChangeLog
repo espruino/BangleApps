@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Fixed widget id to wibpb, Size widget after step count is reset
+0.03: Fixed widget id in onStep() come on get it right!
