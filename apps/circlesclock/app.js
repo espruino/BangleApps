@@ -324,12 +324,12 @@ function drawSunProgress(w) {
     icon = sunSetDown;
   }
 
+  let text = "?";
   const times = getSunData();
   if (times != undefined) {
     const sunRise = Math.round(times.sunrise.getTime() / 1000);
     const sunSet = Math.round(times.sunset.getTime() / 1000);
     const now = Math.round(new Date().getTime() / 1000);
-    let text;
     if (now > sunRise && now < sunSet) {
       text = formatSeconds(sunSet - now);
     } else {
