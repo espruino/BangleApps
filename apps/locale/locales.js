@@ -591,23 +591,6 @@ var locales = {
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
     trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
   },
-  "en_BR": { // Mixed english and portuguese: using portuguese for the date, time and number formats, but english for the translations (so it won't be mixed in apps)
-    lang: "en_BR",
-    decimal_point: ",",
-    thousands_sep: ".",
-    currency_symbol: "R$", currency_first: true,
-    int_curr_symbol: "BRL",
-    speed: "kmh",
-    distance: { 0: "m", 1: "km" },
-    temperature: "°C",
-    ampm: { 0: "am", 1: "pm" },
-    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%d %b %Y", 1: "%d/%m/%y" },
-    abmonth: "Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez",
-    month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
-    abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
-    day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado"
-  },
   "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use charFallbacks
     lang: "cs_CZ",
     decimal_point: ",",
