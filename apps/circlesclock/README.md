@@ -13,7 +13,7 @@ It can show the following information (this can be configured):
        * Humidity or wind speed as circle progress
        * Temperature inside circle
        * Condition as icon below circle
-  * Time and progress until next sunrise or sunset
+  * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
