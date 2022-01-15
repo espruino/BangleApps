@@ -2,24 +2,28 @@ Bangle.js App Loader (and Apps)
 ================================
 Fork to host my apps. 
 
-Loader instance [here](https://diesphink.github.io/BangleApps/).
+App Loader instance [here](https://diesphink.github.io/BangleApps/).
 
 Original readme [here](README_ORIGINAL.md).
 
 New content
 ===
-- SPH Clock [clock]
-- SPH Weather [app]
-- SPH Calendar [app]
-- SPH 2FA [app]
-- SPH Menu [menu]
-- Font LECO 1976 Regular [font]
+- [SPH Clock](apps/sphclock) - new clock
+- [SPH Weather](apps/sphmenu) - new app
+- [SPH Calendar](apps/sphcalendar) - new app
+- [SPH 2FA](apps/sph2fa) - new app, forked from authentiwatch
+- [SPH Menu](apps/sphmenu) - new menu, forked from smallmenu
+- [LECO 1976 Regular](apps/leco1976) - new font
+
+More simple forks
+===
+- [Languages](apps/locale) - locale, just a version of pt_BR with only formatting, no translation of text
 
 # SPH Clock
 
 Hacky clock for my bangle.js 2, with a "vintage menu kind of 50s" look. [Code](apps/sphclock).
 
-![Screenshot](apps/sphclock/screenshot.png)
+![Screenshot](apps/sphclock/screenshot.png) ![Screenshot](apps/sphclock/screenshot2.png)
 
 # SPH Weather
 
@@ -52,7 +56,7 @@ Menu replacement with small text, doesn't work well with widgets. [Code](apps/sp
 
 # Font LECO 1976 Regular
 
-Module for font LECO 1976 Regular, with a small adaptation on small sizes, removed serif for better legibility [Code](apps/leco1976/FontLECO1976Regular.js).
+Module for font LECO 1976 Regular, with a small adaptation on small sizes, removed serif for better legibility [Code](apps/leco1976).
 
 Available sizes: 42, 20, 14, 12, 11, 8
 
