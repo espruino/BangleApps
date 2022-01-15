@@ -9,3 +9,4 @@
 0.09: Bangle.js 2 - pressing the button goes back to clock (fix #971)
       After 10s of being locked, the launcher goes back to the clock screen
 0.10: added in selectable font in settings including scalable vector font
+0.11: Merge Bangle.js 1 and 2 launchers, again
