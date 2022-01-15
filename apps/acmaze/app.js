@@ -63,7 +63,7 @@ function Maze(n) {
     from_group = to_group = -1;
     while (from_group<0) {
       let trying_down = false;
-      if (Math.random()<0.5 || !candidates_right.length) {
+      if (Math.random()<0.5 && candidates_down.length || !candidates_right.length) {
         trying_down = true;
       }
       let candidates = trying_down ? candidates_down : candidates_right;
