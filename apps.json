@@ -5155,7 +5155,6 @@
     "description": "A clock with circles for different data at the bottom in a probably familiar style",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}],
-    "dependencies": {"widpedom":"app"},
     "type": "clock",
     "tags": "clock",
     "supports" : ["BANGLEJS2"],
