@@ -32,6 +32,8 @@ exports.drawCalendar = function (date) {
     .filter((v) => v.data > new Date()) // Remove eventos que já foram
     .sort((a, b) => a.data - b.data); // Ordena pela data
 
+  schedules = schedules.slice(0, 4);
+
   if (schedules.length > 0) {
     let data = schedules[0].data;
     schedules = schedules.filter((v) => v.data.getDay() == data.getDay());
@@ -55,56 +57,51 @@ exports.drawCalendar = function (date) {
       data = require("locale").date(data, 1);
     }
 
-    g.setFontAlign(0, -1);
-    g.setColor("#000");
-    let x = 50;
-    let y = 113;
-    g.fillPoly(
-      [
-        x,
-        y,
-        (x -= 5),
-        (y += 7),
-        (x += 5),
-        (y += 7),
-        (x += 76),
-        y,
-        (x += 5),
-        (y -= 7),
-        (x -= 5),
-        (y -= 7),
-      ],
-      true
-    );
-    g.drawLine((x -= 74), (y += 15), (x += 72), y);
-
-    // g.setFont("Vector",10);
-
-    g.setColor("#FFF");
-    g.setFontLECO1976Regular12();
-    g.drawString(data, 88, 116);
-
-    g.setFont("Vector", 12);
     g.setFontAlign(1, -1);
     g.setColor("#000");
-    let text = schedules.reduce(function (acumulador, v) {
-      return (
-        acumulador +
-        `${v.data.getHours()}h${
-          v.data.getMinutes() > 0
-            ? v.data.getMinutes().toString().padStart(2, "0")
-            : ""
-        }\n`
-      );
-    }, "");
-    g.drawString(text, 45, 136);
 
-    g.setFontAlign(-1, -1);
+    g.setFontLECO1976Regular11();
+    width = g.stringWidth(data) + 3;
 
-    text = schedules.reduce(function (acumulador, v) {
-      return acumulador + `${v.descricao}\n`;
-    }, "");
-    g.drawString(text, 50, 136);
+    let x = 173 - width;
+    let y = 112;
+    g.fillRect(x, y, 176, y + 13);
+
+    g.setColor("#FFF");
+    g.drawString(data, 173, y + 3);
+
+    g.setFont("6x8");
+
+    startY = 122;
+    endY = 171;
+
+    g.setColor("#F00");
+    g.fillRect(4, startY, 41, endY);
+
+    var spaceEach = (endY - startY) / schedules.length;
+
+    xTime = 38;
+    xDesc = 45;
+    for (var i = 0; i < schedules.length; i++) {
+      v = schedules[i];
+      var textTime = v.data.getHours() + "h";
+      if (v.data.getMinutes() > 0)
+        textTime += v.data.getMinutes().toString().padStart(2, "0");
+
+      g.setFontAlign(-1, 0);
+      g.setColor("#000");
+      var y = startY + i * spaceEach;
+      var yText = Math.round(y + spaceEach / 2);
+      g.drawString(v.descricao, xDesc, yText);
+
+      g.setFontAlign(1, 0);
+      g.drawString(textTime, xTime + 1, yText + 1);
+      g.setColor("#FFF");
+      g.drawString(textTime, xTime, yText);
+
+      g.setColor("#FFF");
+      g.drawLine(4, y, 41, y);
+    }
   } else {
     g.setFontLECO1976Regular14();
     g.setFontAlign(0, 0);
