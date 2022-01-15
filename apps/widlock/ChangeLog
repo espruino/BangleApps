@@ -1,3 +1,4 @@
 0.01: First commit
 0.02: Handle new firmwares with 'lock' event
 0.03: Don't try to be fancy - just bail out on firmwares without a lock event
+0.04: Set sortorder to -1 so that widget always takes up the furthest left position

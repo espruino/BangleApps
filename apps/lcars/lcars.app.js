@@ -20,7 +20,7 @@ let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
-let cGrey = "#9E9E9E";
+let cGrey = "#424242";
 
 /*
  * Global lcars variables
@@ -143,7 +143,7 @@ function printData(key, y, c){
   } else if (key == "HUMIDITY"){
     text = "HUM";
     var weather = getWeather();
-    value = parseInt(weather.hum) + "%";
+    value = weather.hum + "%";
 
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
@@ -242,9 +242,14 @@ function drawPosition0(){
 
   // The last line is a battery indicator too
   var bat = E.getBattery() / 100.0;
-  var batX2 = parseInt((172 - 35) * bat + 35);
-  drawHorizontalBgLine(cOrange, 35, batX2-5, 171, 5);
-  drawHorizontalBgLine(cGrey, batX2+5, 172, 171, 5);
+  var batStart = 19;
+  var batWidth = 172 - batStart;
+  var batX2 = parseInt(batWidth * bat + batStart);
+  drawHorizontalBgLine(cOrange, batStart, batX2, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
+  for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
+    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
+  }
 
   // Draw Infos
   drawInfo();
