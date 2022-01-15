@@ -1,15 +1,15 @@
 (function(recorders) {
   recorders.bthrm = function() {
-    var bpm = 0;
+    var bpm = "";
     function onHRM(h) {
-        bpm = h.bpm;
+      bpm = h.bpm;
     }
     return {
       name : "BTHR",
       fields : ["BT Heartrate"],
       getValues : () => {
         result = [bpm];
-        bpm = 0;
+        bpm = "";
         return result;
       },
       start : () => {

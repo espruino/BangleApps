@@ -29,6 +29,24 @@
     ],
     "sortorder": -10
   },
+  { "id": "ac_ac",
+    "name": "A Configurable Analog Clock",
+    "shortName":"Configurable Clock",
+    "version":"0.03",
+    "description": "AC-AC, a highly customizable analog clock with several clock faces, hands and complications to choose from",
+    "icon": "app-icon.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports" : ["BANGLEJS2"],
+    "allow_emulator": false,
+    "screenshots": [{"url":"app-screenshot.png"}],
+    "readme": "README.md",
+    "custom": "Customizer.html",
+    "storage": [
+      {"name":"ac_ac.app.js","url":"app.js"},
+      {"name":"ac_ac.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "hebrew_calendar",
     "name": "Hebrew Calendar",
@@ -102,7 +120,7 @@
     "version": "0.06",
     "description": "Display notifications/music/etc sent from the Gadgetbridge app on Android. This replaces the old 'Gadgetbridge' Bangle.js widget.",
     "icon": "app.png",
-    "tags": "tool,system,messages,notifications",
+    "tags": "tool,system,messages,notifications,gadgetbridge",
     "dependencies": {"messages":"app"},
     "supports": ["BANGLEJS","BANGLEJS2"],
     "readme": "README.md",
@@ -309,7 +327,7 @@
     "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android' Bangle.js app instead.",
     "icon": "app.png",
     "type": "widget",
-    "tags": "tool,system,android,widget",
+    "tags": "tool,system,android,widget,gadgetbridge",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "dependencies": {"notify":"type"},
     "readme": "README.md",
@@ -326,7 +344,7 @@
     "version":"0.01",
     "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
     "icon": "app.png",
-    "tags": "",
+    "tags": "tool,debug,gadgetbridge",
     "supports" : ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
@@ -770,7 +788,7 @@
     "id": "recorder",
     "name": "Recorder (BETA)",
     "shortName": "Recorder",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
     "icon": "app.png",
     "tags": "tool,outdoors,gps,widget",
@@ -924,12 +942,13 @@
   {
     "id": "widlock",
     "name": "Lock Widget",
-    "version": "0.03",
+    "version": "0.04",
     "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,lock",
     "supports": ["BANGLEJS","BANGLEJS2"],
+    "sortorder": -1,
     "storage": [
       {"name":"widlock.wid.js","url":"widget.js"}
     ]
@@ -1042,7 +1061,7 @@
     "id": "bthrm",
     "name": "Bluetooth Heart Rate Monitor",
     "shortName": "BT HRM",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
     "icon": "app.png",
     "type": "app",
@@ -1536,7 +1555,7 @@
   {
     "id": "assistedgps",
     "name": "Assisted GPS Update (AGPS)",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Downloads assisted GPS (AGPS) data to Bangle.js 1 or 2 for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
     "icon": "app.png",
     "type": "RAM",
@@ -3008,6 +3027,20 @@
     ],
     "data": [{"wildcard":"accellog.?.csv"}]
   },
+  { "id": "accelgraph",
+    "name": "Accelerometer Graph",
+    "shortName":"Accel Graph",
+    "version":"0.01",
+    "description": "A simple app to draw a graph of data from the accelerometer on the screen",
+    "icon": "app.png",
+    "tags": "tool,debug",
+    "supports" : ["BANGLEJS","BANGLEJS2"],
+    "screenshots": [{"url":"screenshot.png"}],
+    "storage": [
+      {"name":"accelgraph.app.js","url":"app.js"},
+      {"name":"accelgraph.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
   {
     "id": "cprassist",
     "name": "CPR Assist",
@@ -3937,8 +3970,8 @@
     "id": "qmsched",
     "name": "Quiet Mode Schedule and Widget",
     "shortName": "Quiet Mode",
-    "version": "0.06",
-    "description": "Automatically turn Quiet Mode on or off at set times, and change LCD options while Quiet Mode is active.",
+    "version": "0.07",
+    "description": "Automatically turn Quiet Mode on or off at set times, change theme and LCD options while Quiet Mode is active.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
                     {"url":"screenshot_b2_main.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_lcd.png"}],
@@ -4534,7 +4567,7 @@
     "name": "LCARS Clock",
     "shortName":"LCARS",
     "icon": "lcars.png",
-    "version":"0.12",
+    "version":"0.13",
     "readme": "README.md",
     "supports": ["BANGLEJS2"],
     "description": "Library Computer Access Retrieval System (LCARS) clock.",
@@ -5010,8 +5043,8 @@
   },
   {
     "id": "coretemp",
-    "name": "Core Temp Display",
-    "version": "0.01",
+    "name": "CoreTemp",
+    "version": "0.03",
     "description": "Display CoreTemp device sensor data",
     "icon": "coretemp.png",
     "type": "app",
@@ -5021,8 +5054,13 @@
     "storage": [
       {"name":"coretemp.boot.js","url":"boot.js"},
       {"name":"coretemp.app.js","url":"coretemp.js"},
-      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true}
-    ]
+      {"name":"coretemp.recorder.js","url":"recorder.js"},
+      {"name":"coretemp.settings.js","url":"settings.js"},
+      {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
+      {"name":"coretemp.boot.js","url":"boot.js"}
+    ],
+    "data": [{"name":"coretemp.json","url":"app-settings.json"}],
+    "screenshots": [{"url":"screenshot.png"}]
   },
   {
     "id": "showimg",
@@ -5130,14 +5168,13 @@
   {
     "id": "ftclock",
     "name": "Four Twenty Clock",
-    "version": "0.01",
+    "version": "0.02",
     "description": "A clock that tells when and where it's going to be 4:20 next",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot1.png"}],
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2"],
-    "allow_emulator": true,
+    "supports": ["BANGLEJS2"],
     "readme": "README.md",
     "storage": [
       {"name":"ftclock.app.js","url":"app.js"},
@@ -5324,7 +5361,7 @@
   { "id": "colorful_clock",
     "name": "Colorful Analog Clock",
     "shortName":"Colorful Clock",
-    "version":"0.02",
+    "version":"0.03",
     "description": "a colorful analog clock",
     "icon": "app-icon.png",
     "type": "clock",
@@ -5521,7 +5558,7 @@
   { "id": "banglexercise",
     "name": "BanglExercise",
     "shortName":"BanglExercise",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Can automatically track exercises while wearing the Bangle.js watch.",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],
@@ -5538,5 +5575,69 @@
      "data": [
        {"name":"banglexercise.json"}
      ]
+  },
+  {
+    "id": "widpa",
+    "name": "Simple Pedometer",
+    "shortName":"Simple Pedometer",
+    "icon": "screenshot_widpa.png",
+    "screenshots": [{"url":"screenshot_widpa.png"}],
+    "version":"0.02",
+    "type": "widget",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in 12x16 font, requires firmware v2.11.21 or later",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"widpa.wid.js","url":"widpa.wid.js"}
+     ]
+  },
+  {
+    "id": "widpb",
+    "name": "Lato Pedometer",
+    "shortName":"Lato Pedometer",
+    "icon": "screenshot_widpb.png",
+    "screenshots": [{"url":"screenshot_widpb.png"}],
+    "version":"0.02",
+    "type": "widget",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
+    "tags": "widget,battery",
+    "storage": [
+      {"name":"widpb.wid.js","url":"widpb.wid.js"}
+     ]
+   },
+   {
+    "id": "timeandlife",
+    "name": "Time and Life",
+    "shortName":"Time and Lfie",
+    "icon": "app.png",
+    "version":"0.1",
+    "description": "A simple watchface which displays the time when the screen is tapped and decays according to the rules of Conway's game of life.",
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator":true,
+    "readme": "README.md",
+    "storage": [
+      {"name":"timeandlife.app.js","url":"app.js"},
+      {"name":"timeandlife.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  { "id": "acmaze",
+    "name": "AccelaMaze",
+    "shortName":"AccelaMaze",
+    "version":"0.01",
+    "description": "Tilt the watch to roll a ball through a maze",
+    "icon": "app.png",
+    "tags": "game",
+    "supports" : ["BANGLEJS2"],
+    "readme": "README.md",
+    "screenshots": [{"url":"screenshot.png"}],
+    "storage": [
+      {"name":"acmaze.app.js","url":"app.js"},
+      {"name":"acmaze.img","url":"app-icon.js","evaluate":true}
+    ]
   }
 ]

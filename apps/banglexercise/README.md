@@ -2,7 +2,7 @@
 
 Can automatically track exercises while wearing the Bangle.js watch.
 
-Currently only push ups and curls are supported.
+Currently only push ups, curls and sit ups are supported.
 
 ## Disclaimer
 
@@ -23,7 +23,7 @@ Press stop to end your exercise.
 ## TODO
 * Add other exercise types:
    * Rope jumps
-   * Sit ups
+   * Star jumps
    * ...
 * Save exercise summaries to file system
 * Configure daily goal for exercises

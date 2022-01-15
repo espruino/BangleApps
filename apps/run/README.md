@@ -1,6 +1,7 @@
 # Run App
 
-This app allows you to display the status of your run.
+This app allows you to display the status of your run, it
+shows distance, time, steps, cadence, pace and more.
 
 To use it, start the app and press the middle button so that
 the red `STOP` in the bottom right turns to a green `RUN`.

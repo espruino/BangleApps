@@ -17,14 +17,13 @@ function queueDraw() {
 
 function draw() {
   g.reset();
-  g.setBgColor("#ffffff");
   let date = new Date();
   let timeStr = require("locale").time(date,1);
   let next420 = getNextFourTwenty();
   g.clearRect(0,26,g.getWidth(),g.getHeight());
   g.setColor("#00ff00").setFontAlign(0,-1).setFont("Teletext10x18Ascii",2);
   g.drawString(next420.minutes? timeStr: `\0${leaf_img}${timeStr}\0${leaf_img}`, g.getWidth()/2, 28);
-  g.setColor("#000000");
+  g.setColor(g.theme.fg);
   g.setFontAlign(-1,-1).setFont("Teletext10x18Ascii");
   g.drawString(g.wrapString(next420.text, g.getWidth()-8).join("\n"),4,60);
 
