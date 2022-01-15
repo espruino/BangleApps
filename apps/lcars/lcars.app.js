@@ -26,10 +26,8 @@ let cGrey = "#424242";
  * Global lcars variables
  */
 let lcarsViewPos = 0;
-let drag;
-let hrmValue = 0;
+// let hrmValue = 0;
 var plotMonth = false;
-var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
  * Requirements and globals
@@ -132,16 +130,17 @@ function printRow(text, value, y, c){
 }
 
 
-function printData(key, y, c){
+function drawData(key, y, c){
   try{
-    _printData(key, y, c);
+    _drawData(key, y, c);
   } catch(ex){
     // Show last error - next try hopefully works.
   }
 }
 
 
-function _printData(key, y, c){
+function _drawData(key, y, c){
+  g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
   key = key.toUpperCase()
   var text = key;
@@ -160,7 +159,7 @@ function _printData(key, y, c){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
   } else if(key == "HRM"){
-    value = hrmValue;
+    value = Bangle.getHealthStatus("day").bpm.toFixed(0);
 
   } else if (key == "TEMP"){
     var weather = getWeather();
@@ -169,7 +168,7 @@ function _printData(key, y, c){
   } else if (key == "HUMIDITY"){
     text = "HUM";
     var weather = getWeather();
-    value = weather.hum + "%";
+    value = weather.hum;
 
   } else if (key == "ALTITUDE"){
     should_print= false;
@@ -304,9 +303,9 @@ function drawPosition0(){
   // Draw data
   g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
-  printData(settings.dataRow1, 97, cOrange);
-  printData(settings.dataRow2, 122, cPurple);
-  printData(settings.dataRow3, 147, cBlue);
+  drawData(settings.dataRow1, 97, cOrange);
+  drawData(settings.dataRow2, 122, cPurple);
+  drawData(settings.dataRow3, 147, cBlue);
 
   // Draw state
   drawState();
@@ -478,6 +477,7 @@ function getWeather(){
     };
   } else {
     weather.temp = locale.temp(parseInt(weather.temp-273.15))
+    weather.hum = weather.hum + "%";
   }
 
   return weather;
@@ -548,10 +548,6 @@ Bangle.on('lock', function(isLocked) {
 
 Bangle.on('charging',function(charging) {
   drawState();
-});
-
-Bangle.on('HRM', function (hrm) {
-  hrmValue = hrm.bpm;
 });
 
 
