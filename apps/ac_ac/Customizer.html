@@ -311,11 +311,11 @@
 
       function chosenClockFace () {
         switch (ClockFace) {
-          case 'none':        return "undefined"
-          case 'four-fold':   return "require('https://raw.githubusercontent.com/rozek/banglejs-2-four-fold-clock-face/main/ClockFace.js')"
-          case 'twelve-fold': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-twelve-fold-clock-face/main/ClockFace.js')"
-          case 'rainbow':     return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rainbow-clock-face/main/ClockFace.js')"
-          case 'custom':      return "require('" + ClockFaceURL + "')"
+          case 'none':            return "undefined"
+          case 'four-numbered':   return "require('https://raw.githubusercontent.com/rozek/banglejs-2-four-numbered-clock-face/main/ClockFace.js')"
+          case 'twelve-numbered': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-twelve-numbered-clock-face/main/ClockFace.js')"
+          case 'rainbow':         return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rainbow-clock-face/main/ClockFace.js')"
+          case 'custom':          return "require('" + ClockFaceURL + "')"
         }
       }
 
@@ -490,18 +490,18 @@ console.log(AppSource)
 
      <td>
        <label class="Preview">
-         <input type="radio" name="clock-face" value="four-fold">
-         <img src="fourfoldClockFace.png"/>
+         <input type="radio" name="clock-face" value="four-numbered">
+         <img src="fournumberedClockFace.png"/>
        </label><br>
-       four-fold
+       four-numbered
      </td>
 
      <td>
        <label class="Preview">
-         <input type="radio" name="clock-face" value="twelve-fold">
-         <img src="twelvefoldClockFace.png"/>
+         <input type="radio" name="clock-face" value="twelve-numbered">
+         <img src="twelvenumberedClockFace.png"/>
        </label><br>
-       twelve-fold
+       twelve-numbered
      </td>
 
      <td>
@@ -530,7 +530,7 @@ console.log(AppSource)
   Clock faces are drawn in the configured foreground and background colors
   (you may select them at the end of this form)
 </p><p>
-  "Four-fold" clock faces may draw indian-arabic or roman numerals. Which do you prefer?
+  "Four-numbered" clock faces may draw indian-arabic or roman numerals. Which do you prefer?
 </p><p>
   <input type="radio" name="clock-face-numerals" value="indian" checked> indian-arabic (3, 6, 9, 12)<br>
   <input type="radio" name="clock-face-numerals" value="roman"> roman (III, VI, IX, XII)
