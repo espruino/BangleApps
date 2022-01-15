@@ -1,15 +1,11 @@
 const SETTINGS_FILE = "lcars.setting.json";
-const Storage = require("Storage");
-
-
-// ...and overwrite them with any saved values
-// This way saved values are preserved if a new version adds more settings
+const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
-  dataRow1: "Battery",
-  dataRow2: "Steps",
-  dataRow3: "Temp."
+  dataRow1: "Steps",
+  dataRow2: "Temp",
+  dataRow3: "Battery"
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -24,6 +20,7 @@ let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
+let cGrey = "#424242";
 
 /*
  * Global lcars variables
@@ -31,13 +28,13 @@ let cBlack = "#000000";
 let lcarsViewPos = 0;
 let drag;
 let hrmValue = 0;
-var connected = NRF.getSecurityStatus().connected;
-var plotWeek = false;
+var plotMonth = false;
+var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
  * Requirements and globals
  */
-const locale = require('locale');
+
 
 var bgLeft =  {
   width : 27, height : 176, bpp : 3,
@@ -121,40 +118,49 @@ function queueDraw() {
 
 function printData(key, y, c){
   g.setFontAlign(-1,-1,0);
-  var text = "ERR";
-  var value = "NOT FOUND";
+  key = key.toUpperCase()
+  var text = key;
+  var value = "ERR";
 
-  if(key == "Battery"){
-    text = "BAT";
-    value = E.getBattery() + "%";
-
-  } else if(key == "Steps"){
+  if(key == "STEPS"){
     text = "STEP";
     value = getSteps();
 
-  } else if(key == "Temp."){
-    text = "TEMP";
-    value = Math.floor(E.getTemperature()) + "C";
-
-  } else if(key == "HRM"){
-    text = "HRM";
-    value = hrmValue;
+  } else if(key == "BATTERY"){
+    text = "BAT";
+    value = E.getBattery() + "%";
 
   } else if (key == "VREF"){
-    text = "VREF";
     value = E.getAnalogVRef().toFixed(2) + "V";
 
+  } else if(key == "HRM"){
+    value = hrmValue;
+
+  } else if (key == "TEMP"){
+    var weather = getWeather();
+    value = weather.temp;
+
+  } else if (key == "HUMIDITY"){
+    text = "HUM";
+    var weather = getWeather();
+    value = weather.hum + "%";
+
+  } else if(key == "CORET"){
+    value = locale.temp(parseInt(E.getTemperature()));
   }
 
   g.setColor(c);
+  g.fillRect(79, y-2, 85 ,y+18);
+
+  g.setFontAlign(0,-1,0);
+  g.drawString(value, 110, y);
+
+  g.setColor(c);
+  g.setFontAlign(-1,-1,0);
   g.fillRect(133, y-2, 165 ,y+18);
   g.fillCircle(161, y+8, 10);
   g.setColor(cBlack);
   g.drawString(text, 135, y);
-
-  g.setColor(c);
-  g.setFontAlign(1,-1,0);
-  g.drawString(value, 130, y);
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
@@ -166,7 +172,7 @@ function drawHorizontalBgLine(color, x1, x2, y, h){
 }
 
 
-function drawLock(){
+function drawInfo(){
   if(lcarsViewPos != 0){
     return;
   }
@@ -175,7 +181,8 @@ function drawLock(){
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 128, 13);
-  if(connected){
+
+  if(NRF.getSecurityStatus().connected){
     g.drawString("CONN", 128, 33);
   } else {
     g.drawString("NOCON", 128, 33);
@@ -191,13 +198,14 @@ function drawState(){
     return;
   }
 
-  g.clearRect(20, 93, 77, 170);
-  g.setColor(cWhite);
-  var bat = E.getBattery();
-  var current = new Date();
-  var hours = current.getHours();
+  g.clearRect(20, 93, 75, 170);
+  g.setFontAlign(0, 0, 0);
+  g.setFontAntonioMedium();
 
   if(!isAlarmEnabled()){
+    var bat = E.getBattery();
+    var current = new Date();
+    var hours = current.getHours();
     var iconImg =
         Bangle.isCharging() ? iconCharging :
         bat < 30 ? iconNoBattery :
@@ -206,16 +214,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 29, 104);
+    g.drawImage(iconImg, 24, 118);
+    g.setColor(cWhite);
+    g.drawString("STATUS", 24+25, 108);
   } else {
     // Alarm within symbol
-    g.setFontAntonioMedium();
-    g.setFontAlign(0, 0, 0);
     g.setColor(cOrange);
-    g.drawString("ALARM", 29+25, 107);
+    g.drawString("ALARM", 24+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 29+25, 107+35);
+    g.drawString(getAlarmMinutes(), 24+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -234,12 +242,17 @@ function drawPosition0(){
 
   // The last line is a battery indicator too
   var bat = E.getBattery() / 100.0;
-  var batX2 = parseInt((172 - 35) * bat + 35);
-  drawHorizontalBgLine(cOrange, 35, batX2, 171, 5);
-  drawHorizontalBgLine(cPurple, batX2+10, 172, 171, 5);
+  var batStart = 19;
+  var batWidth = 172 - batStart;
+  var batX2 = parseInt(batWidth * bat + batStart);
+  drawHorizontalBgLine(cOrange, batStart, batX2, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
+  for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
+    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
+  }
 
-  // Draw logo
-  drawLock();
+  // Draw Infos
+  drawInfo();
 
   // Write time
   g.setFontAlign(-1, -1, 0);
@@ -247,15 +260,15 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 28, 10);
+  g.drawString(timeStr, 27, 10);
 
   // Write date
   g.setColor(cWhite);
   g.setFontAntonioMedium();
   var dayStr = locale.dow(currentDate, true).toUpperCase();
   dayStr += " " + currentDate.getDate();
-  dayStr += " " + currentDate.getFullYear();
-  g.drawString(dayStr, 29, 56);
+  dayStr += " " + locale.month(currentDate, 1).toUpperCase();
+  g.drawString(dayStr, 30, 56);
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
@@ -294,7 +307,7 @@ function drawPosition1(){
   }
 
   // Plot HRM graph
-  if(plotWeek){
+  if(plotMonth){
     var data = new Uint16Array(32);
     var cnt = new Uint8Array(32);
     health.readDailySummaries(new Date(), h=>{
@@ -331,8 +344,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("WEEK HRM", 154, 27);
-    g.drawString("WEEK STEPS [K]", 154, 115);
+    g.drawString("M-HRM", 154, 27);
+    g.drawString("M-STEPS [K]", 154, 115);
 
   // Plot day
   } else {
@@ -372,8 +385,8 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("DAY HRM", 154, 27);
-    g.drawString("DAY STEPS", 154, 115);
+    g.drawString("D-HRM", 154, 27);
+    g.drawString("D-STEPS", 154, 115);
   }
 }
 
@@ -401,7 +414,8 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
-  var steps = 0
+  var steps = 0;
+  let health;
   try {
     health = require("health");
   } catch(ex) {
@@ -410,6 +424,32 @@ function getSteps() {
 
   health.readDay(new Date(), h=>steps+=h.steps);
   return steps;
+}
+
+
+function getWeather(){
+  var weather;
+
+  try {
+    weather = require('weather').get();
+  } catch(ex) {
+    // Return default
+  }
+
+  if (weather === undefined){
+    weather = {
+      temp: "-",
+      hum: "-",
+      txt: "-",
+      wind: "-",
+      wdir: "-",
+      wrose: "-"
+    };
+  } else {
+    weather.temp = locale.temp(parseInt(weather.temp-273.15))
+  }
+
+  return weather;
 }
 
 
@@ -451,7 +491,7 @@ function handleAlarm(){
   .then(() => {
     // Update alarm state to disabled
     settings.alarm = -1;
-    Storage.writeJSON(SETTINGS_FILE, settings);
+    storage.writeJSON(SETTINGS_FILE, settings);
   });
 }
 
@@ -462,24 +502,17 @@ function handleAlarm(){
 Bangle.on('lcdPower',on=>{
   if (on) {
     // Whenever we connect to Gadgetbridge, reading data from
-    // health failed. Therefore, we update and read data from
-    // health iff the connection state did not change.
-    if(connected == NRF.getSecurityStatus().connected) {
-      draw();
-    } else {
-      connected = NRF.getSecurityStatus().connected
-      drawLock();
-    }
+    // health failed. Therefore, we update only partially...
+    drawInfo();
+    drawState();
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
-
-  connected = NRF.getSecurityStatus().connected
 });
 
 Bangle.on('lock', function(isLocked) {
-  drawLock();
+  drawInfo();
 });
 
 Bangle.on('charging',function(charging) {
@@ -498,7 +531,7 @@ function increaseAlarm(){
     settings.alarm = getCurrentTimeInMinutes() + 5;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
 
@@ -509,47 +542,55 @@ function decreaseAlarm(){
     settings.alarm = -1;
   }
 
-  Storage.writeJSON(SETTINGS_FILE, settings);
+  storage.writeJSON(SETTINGS_FILE, settings);
 }
 
+function feedback(){
+  Bangle.buzz(40, 0.3);
+}
 
-// Thanks to the app "gbmusic" for this code to detect swipes in all 4 directions.
-Bangle.on("drag", e => {
-  if (!drag) { // start dragging
-    drag = {x: e.x, y: e.y};
-  } else if (!e.b) { // released
-    const dx = e.x-drag.x, dy = e.y-drag.y;
-    drag = null;
+// Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
+Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.2);
+  var right = g.getWidth() - left;
+  var upper = parseInt(g.getHeight() * 0.2);
+  var lower = g.getHeight() - upper;
 
-    // Horizontal swipe
-    if (Math.abs(dx)>Math.abs(dy)+10) {
-      if(dx > 0){
-        lcarsViewPos = 0;
-      } else {
-        lcarsViewPos = 1;
-      }
+  var is_left = e.x < left;
+  var is_right = e.x > right;
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
 
-    // Vertical swipe
-    } else if (Math.abs(dy)>Math.abs(dx)+10) {
-      if(lcarsViewPos == 0){
-        if(dy > 0){
-          decreaseAlarm();
-        } else {
-          increaseAlarm();
-        }
-
-        // Only update the state and return to
-        // avoid a full draw as this is much faster.
-        drawState();
-        return;
-      }
-
-      if(lcarsViewPos == 1){
-        plotWeek = dy < 0 ? true : false;
-      }
-    }
-
+  if(is_left && lcarsViewPos == 1){
+    feedback();
+    lcarsViewPos = 0;
     draw();
+    return;
+
+  } else if(is_right  && lcarsViewPos == 0){
+    feedback();
+    lcarsViewPos = 1;
+    draw();
+    return;
+  }
+
+  if(lcarsViewPos == 0){
+    if(is_upper){
+      feedback();
+      increaseAlarm();
+      drawState();
+      return;
+    } if(is_lower){
+      feedback();
+      decreaseAlarm();
+      drawState();
+      return;
+    }
+  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
+    feedback();
+    plotMonth = is_lower;
+    draw();
+    return;
   }
 });
 

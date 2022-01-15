@@ -11,3 +11,5 @@
 0.12: Fixed for Bangle 2
 0.13: Fillbar setting added, see README
 0.14: Fix drawing the bar when charging
+0.15: Added option to always display the icon when charging (useful if 'hide if charge greater than' is enabled)
+0.16: Increase screen update rate when charging

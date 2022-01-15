@@ -1,9 +1,21 @@
 var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 require("f_latosmall").add(Graphics);
+const storage = require('Storage');
+const locale = require("locale");
 const SETTINGS_FILE = "pastel.json";
 const LOCATION_FILE = "mylocation.json";
 let settings;
 let location;
+
+// cloud, sun, partSun, snow, rain, storm, error
+// create 1 bit, max contrast, brightness set to 85
+var cloudIcon = require("heatshrink").decompress(atob("kEggIfcj+AAYM/8ADBuFwAYPAmADCCAMBwEf8ADBhFwg4aBnEPAYMYjAVBhgDDDoQDHCYc4jwDB+EP///FYIDBMTgA=="));
+var sunIcon = require("heatshrink").decompress(atob("kEggILIgOAAZkDAYPAgeBwPAgIFBBgPhw4TBp/yAYMcnADBnEcAYMwhgDBsEGgE/AYP8AYYLDCYgbDEYYrD8fHIwI7CIYZLDL54AHA=="));
+var sunPartIcon = require("heatshrink").decompress(atob("kEggIHEmADJjEwsEAjkw8EAh0B4EAg35wEAgP+CYMDwv8AYMDBAP2g8HgH+g0DBYMMgPwAYX8gOMEwMG3kAg8OvgSBjg2BgcYGQIcBAY5CBg0Av//HAM///4MYgNBEIMOCoUMDoUAnBwGkEA"));
+var snowIcon = require("heatshrink").decompress(atob("kEggITQj/AAYM98ADBsEwAYPAjADCj+AgOAj/gAYMIuEHwEAjEPAYQVChk4AYQhCAYcYBYQTDnEPgEB+EH///IAQACE4IAB8EICIPghwDB4EeBYNAjgDBg8EAYQYCg4bCgZuFA=="));
+var rainIcon = require("heatshrink").decompress(atob("kEggIPMh+AAYM/8ADBuFwAYPgmADB4EbAYOAj/ggOAhnwg4aBnAeCjEcCIMMjADCDoQDHjAPCnAXCuEP///8EDAYJECAAXBwkAgPDhwDBwUMgEEhkggEOjFgFgMQLYQAOA=="));
+var errIcon = require("heatshrink").decompress(atob("kEggILIgOAAYsD4ADBg/gAYMGsADBhkwAYsYjADCjgDBmEMAYNxxwDBsOGAYPBwYDEgOBwOAgYDB4EDHYPAgwDBsADDhgDBFIcwjAHBjE4AYMcmADBhhNCKIcG/4AGOw4A=="));
+
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
@@ -93,7 +105,49 @@ function prevInfo() {
   }
 }
 
-var mm_prev = "xx";
+
+/**
+Choose weather icon to display based on condition.
+Based on function from the Bangle weather app so it should handle all of the conditions
+sent from gadget bridge.
+*/
+function chooseIcon(condition) {
+  condition = condition.toLowerCase();
+  if (condition.includes("thunderstorm")) return stormIcon;
+  if (condition.includes("freezing")||condition.includes("snow")||
+    condition.includes("sleet")) {
+    return snowIcon;
+  }
+  if (condition.includes("drizzle")||
+    condition.includes("shower")) {
+    return rainIcon;
+  }
+  if (condition.includes("rain")) return rainIcon;
+  if (condition.includes("clear")) return sunIcon;
+  if (condition.includes("few clouds")) return partSunIcon;
+  if (condition.includes("scattered clouds")) return cloudIcon;
+  if (condition.includes("clouds")) return cloudIcon;
+  if (condition.includes("mist") ||
+    condition.includes("smoke") ||
+    condition.includes("haze") ||
+    condition.includes("sand") ||
+    condition.includes("dust") ||
+    condition.includes("fog") ||
+    condition.includes("ash") ||
+    condition.includes("squalls") ||
+    condition.includes("tornado")) {
+    return cloudIcon;
+  }
+  return cloudIcon;
+}
+
+/**
+Get weather stored in json file by weather app.
+*/
+function getWeather() {
+  let jsonWeather = storage.readJSON('weather.json');
+  return jsonWeather;
+}
 
 function draw() {
   var d = new Date();
@@ -114,20 +168,28 @@ function draw() {
   var h = g.getHeight();
   var x = (g.getWidth()/2);
   var y = (g.getHeight()/3);
-  
-  g.reset();
 
-  if (process.env.HWVERSION == 1) {
-    // avoid flicker on a bangle 1 by comparing with previous minute
-    if (mm_prev != mm) {
-      mm_prev = mm;
-      g.clearRect(0, 30, w, h - 24);
-    }
+  var weatherJson = getWeather();
+  var w_temp;
+  var w_icon;
+  var w_wind;
+
+  if (settings.weather && weatherJson && weatherJson.weather) {
+      var currentWeather = weatherJson.weather;
+      const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
+      w_temp = temp[1] + " " + temp[2];
+      w_icon = chooseIcon(currentWeather.txt);
+      const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
+      w_wind = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
   } else {
-    // on a b2 safe to just clear anyway as there is no flicker
-    g.clearRect(0, 30, w, h - 24);
+      w_temp = "Err";
+      w_wind = "???";
+      w_icon = errIcon;
   }
-    
+
+  g.reset();
+  g.clearRect(0, 30, w, h - 24);
+  
   // draw a grid like graph paper
   if (settings.grid && process.env.HWVERSION !=1) {
     g.setColor("#0f0");
@@ -139,6 +201,18 @@ function draw() {
 
   g.setColor(g.theme.fg);
 
+  // draw weather line
+  if (settings.weather) {
+    g.drawImage(w_icon, (w/2) - 40, 24);
+    g.setFontLatoSmall();
+    g.setFontAlign(-1,0); // left aligned
+    if (drawCount % 2 == 0)
+      g.drawString(w_temp, (w/2) + 6, 24 + ((y - 24)/2));
+    else
+      g.drawString( (w_wind.split(' ').slice(0, 2).join(' ')), (w/2) + 6, 24 + ((y - 24)/2));
+  // display first 2 words of the wind string eg '4 mph'
+  }
+  
   if (settings.font == "Architect")
     g.setFontArchitect();
   else if (settings.font == "GochiHand")
@@ -161,36 +235,39 @@ function draw() {
 
   // for the colon
   g.setFontAlign(0,-1); // centre aligned
-
-  if (d.getSeconds()&1) {
-    g.drawString(":", x,y);
-  } else {
-    // on bangle 1, we are not using clearRect(), hide : by printing over it in reverse color
-    if (process.env.HWVERSION == 1) {
-      g.setColor(g.theme.bg);
-      g.drawString(":", x,y);
-      g.setColor(g.theme.fg);
-    }
-  }
-
+  g.drawString(":", x,y);
   g.setFontLatoSmall();
   g.setFontAlign(0, -1);
   g.drawString((infoData[infoMode].calc()), w/2, h - 24 - 24);
 
-  if (drawCount % 3600 == 0)
+  // recalc sunrise / sunset every hour
+  if (drawCount % 60 == 0)
     updateSunRiseSunSet(new Date(), location.lat, location.lon);
   drawCount++;
+  queueDraw();
 }
 
-// Only update when display turns on
-if (process.env.BOARD!="SMAQ3") // hack for Q3 which is always-on
-Bangle.on('lcdPower', function(on) {
-  if (secondInterval)
-    clearInterval(secondInterval);
-  secondInterval = undefined;
-  if (on)
-    secondInterval = setInterval(draw, 1000);
-  draw();
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    prevInfo();
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
 });
 
 Bangle.setUI("clockupdown", btn=> {
@@ -204,8 +281,6 @@ loadFonts();
 loadLocation();
 
 g.clear();
-var secondInterval = setInterval(draw, 1000);
-draw();
-
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+draw();

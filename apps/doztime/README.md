@@ -11,4 +11,4 @@ The year itself begins on the December solstice. Because that always happens, th
 
 The epoch (year numbering) begins in the last year when the perihelion coincided with the June solstice, near the beginning of the Holocene era. That astronomical basis makes the calendar free from politics, religion, or geography.
 
-While the year number remains cardinal, BTN5 toggles between cardinal and ordinal for the rest of the calendar segments. BTN4 adds or removes a quickly changing digit to or from the clock.
+While the year number remains cardinal, tapping on the right side of the watch face toggles between cardinal and ordinal for the rest of the calendar segments. Tapping on the left adds or removes a quickly changing digit to or from the clock.

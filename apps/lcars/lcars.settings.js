@@ -7,7 +7,7 @@
     alarm: -1,
     dataRow1: "Battery",
     dataRow2: "Steps",
-    dataRow3: "Temp."
+    dataRow3: "Temp"
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -18,14 +18,14 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var data_options = ["Battery", "Steps", "Temp.", "HRM", "VREF"];
+  var data_options = ["Steps", "Battery", "VREF", "HRM", "Temp", "Humidity", "CoreT"];
 
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
     '< Back': back,
     'Row 1': {
       value: 0 | data_options.indexOf(settings.dataRow1),
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow1 = data_options[v];
@@ -34,7 +34,7 @@
     },
     'Row 2': {
       value: 0 | data_options.indexOf(settings.dataRow2),
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow2 = data_options[v];
@@ -43,7 +43,7 @@
     },
     'Row 3': {
       value: 0 | data_options.indexOf(settings.dataRow3),
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => data_options[v],
       onchange: v => {
         settings.dataRow3 = data_options[v];
