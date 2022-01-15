@@ -81,7 +81,7 @@
     "description": "[WIP] Vintage menu style clock with weather icons and schedule",
     "icon": "icon.png",
     "readme": "README.MD",
-    "screenshots": [{ "url": "screenshot.png" }],
+    "screenshots": [{ "url": "screenshot.png" }, { "url": "screenshot2.png" }],
     "storage": [
       { "name": "sphclock.app.js", "url": "sphclock.app.js" },
       { "name": "sphclock.agenda.js", "url": "sphclock.agenda.js" },
