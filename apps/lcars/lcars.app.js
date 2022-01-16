@@ -115,6 +115,8 @@ function queueDraw() {
 
 
 function printRow(text, value, y, c){
+  g.setFontAntonioMedium();
+  g.setFontAlign(-1,-1,0);
   g.setColor(c);
   g.fillRect(79, y-2, 85 ,y+18);
 
@@ -140,8 +142,6 @@ function drawData(key, y, c){
 
 
 function _drawData(key, y, c){
-  g.setFontAntonioMedium();
-  g.setFontAlign(-1,-1,0);
   key = key.toUpperCase()
   var text = key;
   var value = "ERR";
