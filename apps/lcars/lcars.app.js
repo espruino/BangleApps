@@ -159,7 +159,7 @@ function _drawData(key, y, c){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
   } else if(key == "HRM"){
-    value = Bangle.getHealthStatus("day").bpm.toFixed(0);
+    value = Math.round(Bangle.getHealthStatus("day").bpm);
 
   } else if (key == "TEMP"){
     var weather = getWeather();
@@ -178,7 +178,7 @@ function _drawData(key, y, c){
     printRow(text, "", y, c);
     Bangle.getPressure().then(function(data){
       if(data && data.altitude){
-        value = data.altitude.toFixed(0);
+        value = Math.round(data.altitude);
         printRow(text, value, y, c);
       }
     })
@@ -476,7 +476,7 @@ function getWeather(){
       wrose: "-"
     };
   } else {
-    weather.temp = locale.temp(parseInt(weather.temp-273.15))
+    weather.temp = locale.temp(Math.round(weather.temp-273.15))
     weather.hum = weather.hum + "%";
   }
 
