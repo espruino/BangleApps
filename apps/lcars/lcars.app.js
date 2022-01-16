@@ -113,7 +113,11 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-
+/**
+ * This function plots a data row in LCARS style.
+ * Note: It can be called async and therefore, the text alignment and
+ * font is set each time the function is called.
+ */
 function printRow(text, value, y, c){
   g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
