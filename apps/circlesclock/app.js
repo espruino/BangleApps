@@ -46,10 +46,21 @@ function loadSettings() {
   }
 }
 loadSettings();
+
+
+/*
+ * Read location from myLocation app
+ */
+function getLocation() {
+  return storage.readJSON("mylocation.json", 1) || undefined;
+}
+let location = getLocation();
+
 const showWidgets = settings.showWidgets || false;
 
 let hrtValue;
 let now = Math.round(new Date().getTime() / 1000);
+
 
 // layout values:
 const colorFg = g.theme.dark ? '#fff' : '#000';
@@ -425,15 +436,7 @@ function formatSeconds(s) {
   return "<1m";
 }
 
-/*
- * Read location from myLocation app
- */
-function getLocation() {
-  return storage.readJSON("mylocation.json", 1) || undefined;
-}
-
 function getSunData() {
-  const location = getLocation();
   if (location != undefined && location.lat != undefined) {
     // get today's sunlight times for lat/lon
     return SunCalc.getTimes(new Date(), location.lat, location.lon);
@@ -460,7 +463,7 @@ function getSunProgress() {
     if (now > sunRise) {
       // after sunRise
       const upcomingSunRise = sunRise + 60 * 60 * 24;
-      return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
+      return 1 - (upcomingSunRise - now) / (upcomingSunRise - sunSet);
     } else {
       return (sunRise - now) / (sunRise - sunSet);
     }
