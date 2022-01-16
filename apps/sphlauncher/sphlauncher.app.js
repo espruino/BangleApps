@@ -110,10 +110,90 @@ function draw_launcher(p, n, selected) {
 }
 
 function draw_icon(app, name, x, y) {
-  g.setFontLECO1976Regular20();
-  g.setFontAlign(0, 0);
-  g.setColor("#FFF");
-  g.drawString(name.substring(0, 1), x, y);
+  if (name == "Weather") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob("jEYwMB/4AOwACBgF//0An/8gEfAQvigEn4EAgYCL8EAg41PAAIA=")
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Settings") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob(
+          "jEYwMB/4AI4f//vD3/44cf+EAh/4gEf/kAn/8jE/8E8g/gvwCEBAIOCCgQaCEAYmBFgQyCABAA=="
+        )
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "About") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob(
+          "jEYwMB/4AIwP//0Av/8gE//EYj/wjEP+EAh/ggEH8E8AQMYARIXDhkP/EAj4mCFgQyCABAA="
+        )
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Alarms") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob(
+          "jEYwMB/4AE/1+v/4nkf+H/h/j//H8+B8/unl3/n/n/5/+f+f/5/3/3v8/98/v3v39+bAQPLAQPn+/ggEHAQQ4FABAA=="
+        )
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Health") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob(
+          "jEYwMB/4AK/08v/8jE//EAj/wgEPAQoLC/kAn4CC/0Av//gAhBwICE4YCB843LAAYA=="
+        )
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "2FA") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob("jEYwMB/4AO4YCBgH//08v/+vwCHgACEhACBjACBiACECIoCBG5Y=")
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Pattern") {
+    g.drawImage(
+      require("heatshrink").decompress(atob("jEYwMB/4AQ+f/5/h1WH8NVw4ICBoN///+3///oFB/QKB5oCBw4CECwQAQA==")),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Calendar") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob("jEYwMB/4AH8EAg4CI9//+4CDwICE/ICB+YCB84CNEAgpCHxA")
+      ),
+      x - 12,
+      y - 12
+    );
+  } else if (name == "Clock") {
+    g.drawImage(
+      require("heatshrink").decompress(
+        atob("jEYwMB/4AJ74CBz4CB34CBn/+v1//08A4MZAQOBAQPDAQnnFBQAT")
+      ),
+      x - 12,
+      y - 12
+    );
+  } else {
+    g.setFontLECO1976Regular20();
+    g.setFontAlign(0, 0);
+    g.setColor("#FFF");
+    g.drawString(name.substring(0, 1), x, y);
+  }
 }
 
 function back(x, y, selected) {
@@ -147,7 +227,7 @@ function square_with_ribbon(app, name, x, y, selected) {
   drawBolt(px + distBolt, py + placHeight - distBolt);
   drawBolt(px + placWidth - distBolt, py + placHeight - distBolt);
 
-  draw_icon(app, name, x + w / 2, y + h / 2);
+  draw_icon(app, name, x + w / 2, y + h / 2 - 4);
 
   g.setColor("#F00");
   g.fillRect(x + 2, y + placHeight - 14, x + w - 3, y + placHeight - 2);
