@@ -167,6 +167,7 @@
     "tags": "tool,system,launcher",
     "supports": ["BANGLEJS2"],
     "readme": "README.md",
+    "screenshots": [{ "url": "screenshot.png" }],
     "storage": [
       {
         "name": "sphlauncher.app.js",
@@ -176,7 +177,11 @@
         "name": "sphlauncher.settings.js",
         "url": "sphlauncher.settings.js"
       },
-      { "name": "sphlauncher.app-icon.js", "url": "sphlauncher.app-icon.js", "evaluate": true }
+      {
+        "name": "sphlauncher.app-icon.js",
+        "url": "sphlauncher.app-icon.js",
+        "evaluate": true
+      }
     ],
     "data": [{ "name": "sphlauncher.json" }]
   }
