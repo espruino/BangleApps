@@ -11,6 +11,7 @@ New content
 - [SPH Clock](apps/sphclock) - new clock
 - [SPH Weather](apps/sphmenu) - new app
 - [SPH Calendar](apps/sphcalendar) - new app
+- [SPH Launcher](apps/sphlauncher) - new launcher, forked from dtlauncher
 - [SPH 2FA](apps/sph2fa) - new app, forked from authentiwatch
 - [SPH Menu](apps/sphmenu) - new menu, forked from smallmenu
 - [LECO 1976 Regular](apps/leco1976) - new font
@@ -36,6 +37,12 @@ Simple weather forecast app with graphs for temperature and prob. of rain. [Code
 Simple calendar with a vintage menu style. [Code](apps/sphcalendar).
 
 ![Screenshot](apps/sphcalendar/screenshot.png)
+
+# SPH Launcher
+
+Launcher with a vintage menu style. [Code](apps/sphlauncher).
+
+![Screenshot](apps/sphlauncher/screenshot.png)
 
 # SPH 2FA
 
