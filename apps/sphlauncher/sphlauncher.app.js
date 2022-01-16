@@ -3,6 +3,7 @@
  */
 
 require("FontLECO1976Regular.js").add20(Graphics);
+require("FontLECO1976Regular.js").add12(Graphics);
 
 var settings = Object.assign(
   {
@@ -14,6 +15,7 @@ var settings = Object.assign(
 );
 
 var s = require("Storage");
+var launcher_count = 3;
 var apps = s
   .list(/\.info$/)
   .map((app) => {
@@ -25,6 +27,8 @@ var apps = s
         icon: a.icon,
         sortorder: a.sortorder,
         src: a.src,
+        // launcher: a.name.charCodeAt(0) % launcher_count,
+        launcher: Math.round(Math.random() * (launcher_count - 1)),
       }
     );
   })
@@ -83,15 +87,25 @@ function octo(x, y, x2, y2, corner) {
   ];
 }
 
-function drawBolt(x, y) {
-  g.setColor("#FFF");
-  g.drawPoly([x - 1, y, x, y, x, y + 1, x + 1, y, x, y - 1]);
-  g.setColor("#000");
-  g.drawLine(x, y + 2, x + 2, y);
+function drawBolt(x, y, color, shadowColor) {
+  g.setColor(color || "#FFF");
+  g.setPixel(x, y);
+  g.setPixel(x - 1, y);
+  g.setPixel(x, y + 1);
+  g.setPixel(x + 1, y);
+  g.setPixel(x, y - 1);
+  g.setColor(shadowColor || "#000");
+  g.setPixel(x, y + 2);
+  g.setPixel(x + 1, y + 1);
+  g.setPixel(x + 2, y);
 }
 
 function draw_launcher(p, n, selected) {
-  var launchers = [square_with_ribbon];
+  var launchers = [
+    square_with_ribbon,
+    circle_banner_down,
+    circle_banner_middle,
+  ];
   var app = apps[p * 9 + n];
   var x = (n % 3) * 56 + XOFF;
   var y = Math.floor(n / 3) * 56 + YOFF;
@@ -105,18 +119,29 @@ function draw_launcher(p, n, selected) {
     .trim()
     .substring(0, 9);
 
-  launcher = launchers[name.charCodeAt(0) % launchers.length];
-  launcher(app, name, x, y, selected);
+  launchers[app.launcher](app, name, x, y, selected);
+  // circle_banner_middle(app, name, x, y, selected);
 }
 
-function draw_icon(app, name, x, y) {
+function draw_icon(app, name, cx, cy, small) {
+  if (small) {
+    options = { scale: 0.66 };
+    x = cx - 8;
+    y = cy - 8;
+  } else {
+    options = {};
+    x = cx - 12;
+    y = cy - 12;
+  }
+
   if (name == "Weather") {
     g.drawImage(
       require("heatshrink").decompress(
         atob("jEYwMB/4AOwACBgF//0An/8gEfAQvigEn4EAgYCL8EAg41PAAIA=")
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "Settings") {
     g.drawImage(
@@ -125,8 +150,9 @@ function draw_icon(app, name, x, y) {
           "jEYwMB/4AI4f//vD3/44cf+EAh/4gEf/kAn/8jE/8E8g/gvwCEBAIOCCgQaCEAYmBFgQyCABAA=="
         )
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "About") {
     g.drawImage(
@@ -135,8 +161,9 @@ function draw_icon(app, name, x, y) {
           "jEYwMB/4AIwP//0Av/8gE//EYj/wjEP+EAh/ggEH8E8AQMYARIXDhkP/EAj4mCFgQyCABAA="
         )
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "Alarms") {
     g.drawImage(
@@ -145,8 +172,9 @@ function draw_icon(app, name, x, y) {
           "jEYwMB/4AE/1+v/4nkf+H/h/j//H8+B8/unl3/n/n/5/+f+f/5/3/3v8/98/v3v39+bAQPLAQPn+/ggEHAQQ4FABAA=="
         )
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "Health") {
     g.drawImage(
@@ -155,53 +183,179 @@ function draw_icon(app, name, x, y) {
           "jEYwMB/4AK/08v/8jE//EAj/wgEPAQoLC/kAn4CC/0Av//gAhBwICE4YCB843LAAYA=="
         )
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "2FA") {
     g.drawImage(
       require("heatshrink").decompress(
         atob("jEYwMB/4AO4YCBgH//08v/+vwCHgACEhACBjACBiACECIoCBG5Y=")
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "Pattern") {
     g.drawImage(
-      require("heatshrink").decompress(atob("jEYwMB/4AQ+f/5/h1WH8NVw4ICBoN///+3///oFB/QKB5oCBw4CECwQAQA==")),
-      x - 12,
-      y - 12
+      require("heatshrink").decompress(
+        atob("jEYwMB/4AQ+f/5/h1WH8NVw4ICBoN///+3///oFB/QKB5oCBw4CECwQAQA==")
+      ),
+      x,
+      y,
+      options
     );
   } else if (name == "Calendar") {
     g.drawImage(
       require("heatshrink").decompress(
         atob("jEYwMB/4AH8EAg4CI9//+4CDwICE/ICB+YCB84CNEAgpCHxA")
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else if (name == "Clock") {
     g.drawImage(
       require("heatshrink").decompress(
         atob("jEYwMB/4AJ74CBz4CB34CBn/+v1//08A4MZAQOBAQPDAQnnFBQAT")
       ),
-      x - 12,
-      y - 12
+      x,
+      y,
+      options
     );
   } else {
-    g.setFontLECO1976Regular20();
+    if (small) g.setFontLECO1976Regular12();
+    else g.setFontLECO1976Regular20();
     g.setFontAlign(0, 0);
-    g.setColor("#FFF");
-    g.drawString(name.substring(0, 1), x, y);
+    g.drawString(name.substring(0, 1), cx, cy + 3);
   }
 }
 
 function back(x, y, selected) {
   g.setFontLECO1976Regular20();
   g.setFontAlign(0, 0);
-  if (selected) g.setColor("#F00");
-  else g.setColor("#000");
   g.drawString("<<", x + 28, y + 27);
+}
+
+function circle_banner_down(app, name, x, y, selected) {
+  var w = 55;
+  var h = 53;
+  g.setColor("#000");
+  g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 5);
+
+  g.setColor("#FFF");
+  g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 8);
+
+  if (selected) {
+    g.setColor("#F00");
+    g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 9);
+  }
+
+  g.setColor("#F00");
+  g.drawCircle(x + w / 2, y + h / 2 - 2, h / 2 - 9);
+
+  if (selected) {
+    g.setColor("#FFF");
+    g.setBgColor("#FFF");
+  } else {
+    g.setColor("#000");
+    g.setBgColor("#000");
+  }
+  draw_icon(app, name, x + w / 2, y + h / 2 - 2);
+
+  g.setColor("#FFF");
+  g.fillRect(x + 2, y + h - 16, x + w - 3, y + h - 4);
+
+  g.setColor("#F00");
+  px = x + 2;
+  py = y + h - 15;
+  banner_points = [
+    px,
+    py,
+    px + 3,
+    py + 5,
+    px,
+    py + 10,
+    x + w - 3,
+    py + 10,
+    x + w - 6,
+    py + 5,
+    x + w - 3,
+    py,
+  ];
+  g.fillPoly(banner_points, true);
+  g.setColor("#000");
+  g.drawPoly(banner_points, true);
+  g.setFontAlign(0, -1, 0).setFont("4x6", 1);
+  g.setColor("#000");
+  g.drawString(name, x + w / 2 - 1, y + h - 12 + 0);
+  g.drawString(name, x + w / 2 + 0, y + h - 12 + 1);
+  g.drawString(name, x + w / 2 + 1, y + h - 12 + 0);
+  g.drawString(name, x + w / 2 + 0, y + h - 12 - 1);
+  g.setColor("#FFF");
+  g.drawString(name, x + w / 2, y + h - 12);
+}
+
+function circle_banner_middle(app, name, x, y, selected) {
+  var w = 55;
+  var h = 53;
+  g.setColor("#000");
+  g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 5);
+
+  g.setColor("#FFF");
+  g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 8);
+
+  if (selected) {
+    g.setColor("#F00");
+    g.fillCircle(x + w / 2, y + h / 2 - 2, h / 2 - 9);
+  }
+
+  g.setColor("#F00");
+  g.drawCircle(x + w / 2, y + h / 2 - 2, h / 2 - 9);
+
+  if (selected) {
+    g.setColor("#FFF");
+    g.setBgColor("#FFF");
+  } else {
+    g.setColor("#000");
+    g.setBgColor("#000");
+  }
+  draw_icon(app, name, x + w / 2, y + h / 2 - 10, true);
+
+  for (i = -4; i <= 4; i += 4)
+    drawBolt(x + w / 2 + i, y + h / 2 + 11, selected? "#FFF":"#000", selected? "#F00":"#FFF");
+
+  g.setColor("#FFF");
+  g.fillRect(x + 2, y + h / 2 - 4, x + w - 3, y + h / 2 + 8);
+
+  g.setColor("#F00");
+  px = x + 2;
+  py = y + h / 2 - 4;
+  banner_points = [
+    px,
+    py,
+    px + 3,
+    py + 5,
+    px,
+    py + 10,
+    x + w - 3,
+    py + 10,
+    x + w - 6,
+    py + 5,
+    x + w - 3,
+    py,
+  ];
+  g.fillPoly(banner_points, true);
+  g.setColor("#000");
+  g.drawPoly(banner_points, true);
+  g.setFontAlign(0, 0, 0).setFont("4x6", 1);
+  g.setColor("#000");
+  g.drawString(name, x + w / 2 - 1, y + h / 2 + 3 + 0);
+  g.drawString(name, x + w / 2 + 0, y + h / 2 + 3 + 1);
+  g.drawString(name, x + w / 2 + 1, y + h / 2 + 3 + 0);
+  g.drawString(name, x + w / 2 + 0, y + h / 2 + 3 - 1);
+  g.setColor("#FFF");
+  g.drawString(name, x + w / 2, y + h / 2 + 3);
 }
 
 function square_with_ribbon(app, name, x, y, selected) {
@@ -227,7 +381,9 @@ function square_with_ribbon(app, name, x, y, selected) {
   drawBolt(px + distBolt, py + placHeight - distBolt);
   drawBolt(px + placWidth - distBolt, py + placHeight - distBolt);
 
-  draw_icon(app, name, x + w / 2, y + h / 2 - 4);
+  g.setColor("#FFF");
+  g.setBgColor("#FFF");
+  draw_icon(app, name, x + w / 2, y + h / 2 - 7);
 
   g.setColor("#F00");
   g.fillRect(x + 2, y + placHeight - 14, x + w - 3, y + placHeight - 2);
@@ -269,6 +425,7 @@ function square_with_ribbon(app, name, x, y, selected) {
 }
 
 function drawPage(p) {
+  g.setBgColor("#FFF");
   g.clear();
 
   var barSize = 174 / Npages;
