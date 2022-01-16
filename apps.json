@@ -948,7 +948,7 @@
     "type": "widget",
     "tags": "widget,lock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "sortorder": -1,
+    "sortorder": -10,
     "storage": [
       {"name":"widlock.wid.js","url":"widget.js"}
     ]
@@ -4853,6 +4853,7 @@
     "readme": "README.md",
     "description": "Shows the current battery level status in the top right using the clocks colour theme",
     "tags": "widget,battery",
+    "sortorder": -10,
     "storage": [
       {"name":"widbata.wid.js","url":"widbata.wid.js"}
      ]
@@ -5625,6 +5626,7 @@
     "readme": "README.md",
     "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in 12x16 font, requires firmware v2.11.21 or later",
     "tags": "widget,battery",
+    "sortorder": -1
     "storage": [
       {"name":"widpa.wid.js","url":"widpa.wid.js"}
      ]
@@ -5641,6 +5643,7 @@
     "readme": "README.md",
     "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
     "tags": "widget,battery",
+    "sortorder": -1
     "storage": [
       {"name":"widpb.wid.js","url":"widpb.wid.js"}
      ]
