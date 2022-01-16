@@ -49,6 +49,7 @@ loadSettings();
 const showWidgets = settings.showWidgets || false;
 
 let hrtValue;
+let now = Math.round(new Date().getTime() / 1000);
 
 // layout values:
 const colorFg = g.theme.dark ? '#fff' : '#000';
@@ -98,6 +99,7 @@ function draw() {
   g.setFontAlign(0, -1);
   g.setColor(colorFg);
   g.drawString(locale.time(new Date(), 1), w / 2, h1 + 8);
+  now = Math.round(new Date().getTime() / 1000);
 
   // date & dow
   g.setFont("Vector:21");
@@ -316,26 +318,34 @@ function drawSunProgress(w) {
 
   let icon = powerIcon;
   let color = colorFg;
-  if (percent < 1) { // it is before sunset
+  if (isDay()) {
+    // day
     color = colorFg;
-    icon = sunSetUp;
-  } else {
-    color = colorGrey;
     icon = sunSetDown;
+  } else {
+    // night
+    color = colorGrey;
+    icon = sunSetUp;
   }
+  g.setColor(color);
 
   let text = "?";
   const times = getSunData();
   if (times != undefined) {
     const sunRise = Math.round(times.sunrise.getTime() / 1000);
     const sunSet = Math.round(times.sunset.getTime() / 1000);
-    const now = Math.round(new Date().getTime() / 1000);
-    if (now > sunRise && now < sunSet) {
-      text = formatSeconds(sunSet - now);
+    if (!isDay()) {
+      // night
+      if (now > sunRise) {
+        // after sunRise
+        const upcomingSunRise = sunRise + 60 * 60 * 24;
+        text = formatSeconds(upcomingSunRise - now);
+      } else {
+        text = formatSeconds(sunRise - now);
+      }
     } else {
-      // approx sunrise tomorrow:
-      const upcomingSunRise = sunRise + 60 * 60 * 24;
-      text = formatSeconds(upcomingSunRise - now);
+      // day, approx sunrise tomorrow:
+      text = formatSeconds(sunSet - now);
     }
   }
 
@@ -401,7 +411,6 @@ function isDay() {
   if (times == undefined) return true;
   const sunRise = Math.round(times.sunrise.getTime() / 1000);
   const sunSet = Math.round(times.sunset.getTime() / 1000);
-  const now = Math.round(new Date().getTime() / 1000);
 
   return (now > sunRise && now < sunSet);
 }
@@ -411,9 +420,9 @@ function formatSeconds(s) {
     return Math.round(s / (60 * 60)) + "h";
   }
   if (s > 60) { // minutes
-    return Math.round(s / (60)) + "m";
+    return Math.round(s / 60) + "m";
   }
-  return s + "s";
+  return "<1m";
 }
 
 /*
@@ -442,15 +451,19 @@ function getSunProgress() {
   if (times == undefined) return 0;
   const sunRise = Math.round(times.sunrise.getTime() / 1000);
   const sunSet = Math.round(times.sunset.getTime() / 1000);
-  const now = Math.round(new Date().getTime() / 1000);
 
-  if (now > sunRise && now < sunSet) {
+  if (isDay()) {
     // during day, progress until sunSet
-    return (now - sunRise) / (sunSet - sunRise);
+    return (now - sunSet) / (sunSet - sunRise);
   } else {
-    // during night, progress until approx sunrise tomorrow:
-    const upcomingSunRise = sunRise + 60 * 60 * 24;
-    return ((upcomingSunRise - now) / (upcomingSunRise - sunSet));
+    // during night, progress until sunrise:
+    if (now > sunRise) {
+      // after sunRise
+      const upcomingSunRise = sunRise + 60 * 60 * 24;
+      return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
+    } else {
+      return (sunRise - now) / (sunRise - sunSet);
+    }
   }
 }
 
