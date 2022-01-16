@@ -156,5 +156,28 @@
     "screenshots": [{ "url": "screenshot.png" }],
     "supports": ["BANGLEJS2"],
     "storage": [{ "name": "sphmenu.boot.js", "url": "sphmenu.boot.js" }]
+  },
+  {
+    "id": "sphlauncher",
+    "name": "SPH Launcher",
+    "version": "0.07",
+    "description": "Vintage menu style launcher",
+    "icon": "icon.png",
+    "type": "launch",
+    "tags": "tool,system,launcher",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "storage": [
+      {
+        "name": "sphlauncher.app.js",
+        "url": "sphlauncher.app.js"
+      },
+      {
+        "name": "sphlauncher.settings.js",
+        "url": "sphlauncher.settings.js"
+      },
+      { "name": "sphlauncher.app-icon.js", "url": "sphlauncher.app-icon.js", "evaluate": true }
+    ],
+    "data": [{ "name": "sphlauncher.json" }]
   }
 ]
