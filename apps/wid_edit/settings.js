@@ -7,6 +7,19 @@
   if (!('custom' in settings)) settings.custom = {};
   global._WIDGETS = global._WIDGETS || {};
 
+  let cleanup = false;
+  for (const id in settings.custom) {
+    if (!(id in WIDGETS)) {
+      // widget which no longer exists
+      cleanup = true;
+      delete settings.custom[id];
+    }
+  }
+  if (cleanup) {
+    if (!Object.keys(settings.custom).length) delete settings.custom;
+    require("Storage").writeJSON("wid_edit.json", settings);
+  }
+
   /**
    * Sort & redraw all widgets
    */

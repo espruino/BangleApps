@@ -7,14 +7,8 @@ Bangle.loadWidgets = function() {
     });
   const s = require("Storage").readJSON("wid_edit.json", 1) || {},
     c = s.custom || {};
-  let u = false; // do we need to write updated settings?
   for (const w in c){
-    if (!(w in WIDGETS)) {
-      // widget no longer exists: remove it from settings file
-      delete c[w];
-      u = true;
-      continue;
-    }
+    if (!(w in WIDGETS)) continue;
     let _W = {};
     // store default area/sortorder in _WIDGETS
     if (c[w].area) _W.area = WIDGETS[w].area;
@@ -23,10 +17,6 @@ Bangle.loadWidgets = function() {
     _WIDGETS[w] = _W;
   }
   if (!Object.keys(_WIDGETS).length) delete _WIDGETS; // no need for this after all
-  if (u) {
-    s.custom = c;
-    require("Storage").writeJSON("wid_edit.json", s);
-  }
   const W = WIDGETS;
   WIDGETS = {};
   Object.keys(W)
