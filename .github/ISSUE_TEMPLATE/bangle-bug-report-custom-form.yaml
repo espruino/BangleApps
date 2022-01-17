@@ -1,7 +1,6 @@
 name: Bangle Bug report
-description: Bangle: Create a report to help us improve!
-title: "[Bug]: "
-#title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock] title"
+description: "Bangle: Create a report to help us improve!"
+title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock] title"
 labels: ["bug"]
 assignees: []
 body:
@@ -18,14 +17,23 @@ body:
       options:
         label: I confirm that I have searched the forum and also for similiar bugs.
         required: true
-#  - type: checkboxes
-#    id: bangle
-#    attributes:
-#      label: hwversion
-#      description: Which Bangle hw version is affected?
-#      options:
-#        - Bangle 1
-#        - Bangle 2
+  - type: input
+    id: devobject
+    attributes:
+      label: development object
+      description: | 
+        the foldername in 'BangleApps'
+        for generall issues create a generic issue, please.
+    validations:
+      required: true
+  - type: checkboxes
+    id: bangle
+    attributes:
+      label: hwversion
+      description: Which Bangle hw version is affected?
+      options:
+        - Bangle 1
+        - Bangle 2
   - type: textarea
     id: report
     attributes:
