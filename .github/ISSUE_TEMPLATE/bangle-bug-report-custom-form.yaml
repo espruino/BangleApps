@@ -14,18 +14,18 @@ body:
     id: searched
     attributes:
       label: agree searched
-      description: 
+      description: abc
       options:
         label: I confirm that I have searched the forum and also for similiar bugs.
         required: true
-  - type: checkboxes
-    id: bangle
-    attributes:
-      label: hwversion
-      description: Which Bangle hw version is affected?
-      options:
-        - Bangle 1
-        - Bangle 2
+#  - type: checkboxes
+#    id: bangle
+#    attributes:
+#      label: hwversion
+#      description: Which Bangle hw version is affected?
+#      options:
+#        - Bangle 1
+#        - Bangle 2
   - type: textarea
     id: report
     attributes:
@@ -39,16 +39,16 @@ body:
         A clear and concise description of what you expected to happen.
     validations:
       required: true
-  - type: textarea
-    id: log_screens
-    attributes:
-      label: Log file or log outp or screenshots
-      placeholder: |
-        logfile, logoutout or screen
-  - type: textarea
-    id: addional
-    attributes:
-      label: Additional context
-      description: for further helpfull information
-      placeholder: |
-        for further helpfull information
+#  - type: textarea
+#    id: log_screens
+#    attributes:
+#      label: Log file or log outp or screenshots
+#      placeholder: |
+#        logfile, logoutout or screen
+#  - type: textarea
+#    id: addional
+#    attributes:
+#      label: Additional context
+#      description: for further helpfull information
+#      placeholder: |
+#        for further helpfull information
