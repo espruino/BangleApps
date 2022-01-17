@@ -3,7 +3,7 @@ name: Bangle Feature request
 about: 'Bangle: Suggest an idea for this project'
 title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
   title"
-labels: feature request, widet
+labels: [feature request, widet]
 assignees: ''
 
 ---
