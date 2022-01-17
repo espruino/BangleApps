@@ -16,7 +16,7 @@ body:
       description: abc
       options:
         - label: I confirm that I have searched the forum and also for similiar bugs.
-        required: true
+          required: true
   - type: input
     id: devobject
     attributes:
