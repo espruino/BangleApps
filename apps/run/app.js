@@ -21,11 +21,11 @@ Bangle.drawWidgets();
 // ---------------------------
 
 function formatTime(ms) {
-  let hrs = Math.floor(ms/3600000);
-  let mins = Math.floor(ms/60000)%60;
-  let secs = Math.floor(ms/1000)%60;
+  let hrs = Math.floor(ms/3600000).toString();
+  let mins = (Math.floor(ms/60000)%60).toString();
+  let secs = (Math.floor(ms/1000)%60).toString();
 
-  if (hrs === 0)
+  if (hrs === '0')
     return mins.padStart(2,0)+":"+secs.padStart(2,0);
   else
     return hrs+":"+mins.padStart(2,0)+":"+secs.padStart(2,0); // dont pad hours
@@ -153,15 +153,10 @@ Bangle.on("step", function(steps) {
   lastStepCount = steps;
 });
 
-function loadSettings() {
-  settings = require("Storage").readJSON('run.json',1)||{};
-  settings.use_gps = settings.use_gps||true;
-  settings.use_hrm = settings.use_hrm||true;
-}
+let settings = require("Storage").readJSON('run.json',1)||{"use_gps":true,"use_hrm":true};
 
 // We always call ourselves once a second, if only to update the time
 setInterval(onTimer, 1000);
-loadSettings();
 
 /* Turn GPS and HRM on right at the start to ensure
 we get the highest chance of a lock. */
