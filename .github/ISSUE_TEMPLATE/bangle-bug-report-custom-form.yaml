@@ -38,7 +38,7 @@ body:
     id: report
     attributes:
       label: Bug description
-      description: please also mention the expected behaviour.
+      description: Please also mention the expected behaviour.
       placeholder: |
         **Describe the bug**
         A clear and concise description of what the bug is.
@@ -50,8 +50,8 @@ body:
   - type: textarea
     id: reproduce
     attributes:
-      label: 
-      description: Can be added here to make it more clear.
+      label: Steps to reproduce
+      description: Please provide the steps until bug occurs.
       placeholder: |
         1. start app xy
         2. choose abc
