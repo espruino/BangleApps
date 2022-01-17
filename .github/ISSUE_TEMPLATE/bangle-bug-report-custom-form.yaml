@@ -1,7 +1,7 @@
 name: Bangle Bug report
 description: Bangle: Create a report to help us improve!
-title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
-  title"
+title: "[Bug]: "
+#title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock] title"
 labels: ["bug"]
 assignees: []
 body:
@@ -37,6 +37,8 @@ body:
         
         **Expected behavior**
         A clear and concise description of what you expected to happen.
+    validations:
+      required: true
   - type: textarea
     id: log_screens
     attributes:
