@@ -1,20 +1,28 @@
-name: Bangle Bug custom form
-about: 'Bangle: Create a report to help us improve!'
+name: Bangle Bug report
+description: Bangle: Create a report to help us improve!
 title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
   title"
-labels: bug
-assignees: ''
+labels: ["bug"]
+assignees: []
 body:
   - type: markdown
     attributes:
       value: |
         ### If you have a question then 
         ### ** Ask it in the [forum](http://forum.espruino.com/microcosms/1424/), please! **
-  - type: dropdown
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: agree searched
+      description: 
+      options:
+        label: I confirm that I have searched the forum and also for similiar bugs.
+        required: true
+  - type: checkboxes
     id: bangle
     attributes:
-      label: version
-      description: Bangle version?
+      label: hwversion
+      description: Which Bangle hw version is affected?
       options:
         - Bangle 1
         - Bangle 2
