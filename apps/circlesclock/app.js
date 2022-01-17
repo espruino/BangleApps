@@ -457,7 +457,7 @@ function getSunProgress() {
 
   if (isDay()) {
     // during day, progress until sunSet
-    return (now - sunSet) / (sunSet - sunRise);
+    return (sunSet - now) / (sunSet - sunRise);
   } else {
     // during night, progress until sunrise:
     if (now > sunRise) {
