@@ -1,0 +1,46 @@
+---
+name: Bangle Bug report
+about: 'Bangle: Create a report to help us improve!'
+title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
+  title"
+labels: bug
+assignees: ''
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### If you have a question then 
+        ### ** Ask it in the [forum](http://forum.espruino.com/microcosms/1424/), please! **
+  - type: dropdown
+    id: bangle
+    attributes:
+      label: version
+      description: Bangle version?
+      options:
+        - Bangle 1
+        - Bangle 2
+  - type: textarea
+    id: report
+    attributes:
+      label: Bug description
+      description: and please mention expected behaviour
+      placeholder: |
+        **Describe the bug**
+        A clear and concise description of what the bug is.
+        
+        **Expected behavior**
+        A clear and concise description of what you expected to happen.
+  - type: textarea
+    id: log_screens
+    attributes:
+      label: Log file or log outp or screenshots
+      placeholder: |
+        logfile, logoutout or screen
+  - type: textarea
+    id: addional
+    attributes:
+      label: Additional context
+      description: for further helpfull information
+      placeholder: |
+        for further helpfull information
+---
