@@ -4219,7 +4219,7 @@
   {
     "id": "vectorclock",
     "name": "Vector Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A digital clock that uses the built-in vector font.",
     "icon": "app.png",
     "type": "clock",
@@ -4232,8 +4232,10 @@
     ],
     "storage": [
       {"name":"vectorclock.app.js","url":"app.js"},
-      {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
-    ]
+      {"name":"vectorclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"vectorclock.settings.js","url":"settings.js"}
+    ],
+    "data": [{"name":"vectorclock.json"}]
   },
   {
     "id": "fd6fdetect",
