@@ -1,5 +1,5 @@
 ---
-name: Bangle Bug report
+name: Bangle Bug custom form
 about: 'Bangle: Create a report to help us improve!'
 title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
   title"
