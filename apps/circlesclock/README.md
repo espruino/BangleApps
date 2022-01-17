@@ -5,8 +5,8 @@ A clock with circles for different data at the bottom in a probably familiar sty
 By default the time, date and day of week is shown.
 
 It can show the following information (this can be configured):
-  * Steps (requires [pedometer widget](https://banglejs.com/apps/#pedometer))
-  * Steps distance (depending on steps)
+  * Steps
+  * Steps distance
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
   * Weather (requires [weather app](https://banglejs.com/apps/#weather))
