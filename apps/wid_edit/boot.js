@@ -30,6 +30,7 @@ Bangle.loadWidgets = function() {
   const W = WIDGETS;
   WIDGETS = {};
   Object.keys(W)
+    .sort()
     .sort((a, b) => (0|W[b].sortorder)-(0|W[a].sortorder))
     .forEach(k => WIDGETS[k] = W[k]);
 }
