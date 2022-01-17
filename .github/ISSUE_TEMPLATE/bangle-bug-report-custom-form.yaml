@@ -1,4 +1,3 @@
----
 name: Bangle Bug custom form
 about: 'Bangle: Create a report to help us improve!'
 title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
@@ -43,4 +42,3 @@ body:
       description: for further helpfull information
       placeholder: |
         for further helpfull information
----
