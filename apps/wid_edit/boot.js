@@ -1,22 +1,20 @@
 Bangle.loadWidgets = function() {
-  global.WIDGETS={}; global._WIDGETS={};
+  global.WIDGETS={};
   require("Storage").list(/\.wid\.js$/)
-    .forEach(widget=>{
-      try { eval(require("Storage").read(widget)); }
-      catch (e) {print(widget,e);}
+    .forEach(w=>{
+      try { eval(require("Storage").read(w)); }
+      catch (e) { print(w, e); }
     });
   const s = require("Storage").readJSON("wid_edit.json", 1) || {},
     c = s.custom || {};
   for (const w in c){
-    if (!(w in WIDGETS)) continue;
-    let _W = {};
-    // store default area/sortorder in _WIDGETS
-    if (c[w].area) _W.area = WIDGETS[w].area;
-    if ('sortorder' in c[w]) _W.sortorder = WIDGETS[w].sortorder;
+    if (!(w in WIDGETS)) continue; // widget no longer exists
+    // store defaults of customized values in _WIDGETS
+    global._WIDGETS=global._WIDGETS||{};
+    _WIDGETS[w] = {};
+    Object.keys(c[w]).forEach(k => _WIDGETS[w][k] = WIDGETS[w][k]);
     Object.assign(WIDGETS[w], c[w]);
-    _WIDGETS[w] = _W;
   }
-  if (!Object.keys(_WIDGETS).length) delete _WIDGETS; // no need for this after all
   const W = WIDGETS;
   WIDGETS = {};
   Object.keys(W)
