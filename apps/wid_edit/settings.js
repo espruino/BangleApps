@@ -65,10 +65,27 @@
      * Draw highlighted widget
      */
     function highlight() {
-      if (WIDGET.width) {
+      if (WIDGET.width > 0) {
+        // draw widget, then draw a highlighted border on top
         WIDGET.draw();
         g.setColor(g.theme.fgH)
           .drawRect(WIDGET.x, WIDGET.y, WIDGET.x+WIDGET.width-1, WIDGET.y+23);
+      } else {
+        // hidden widget: fake a width and provide our own draw()
+        const draw = WIDGET.draw, width = WIDGET.width;
+        WIDGET.width = 24;
+        WIDGET.draw = function() {
+          g.setColor(g.theme.bgH).setColor(g.theme.fgH)
+            .clearRect(this.x, this.y, this.x+23, this.y+23)
+            .drawRect(this.x, this.y, this.x+23, this.y+23)
+            .drawLine(this.x, this.y, this.x+23, this.y+23)
+            .drawLine(this.x, this.y+23, this.x+23, this.y);
+        };
+        // re-layout+draw all widgets with our placeholder in between
+        redrawWidgets();
+        // and restore original values
+        WIDGET.draw = draw;
+        WIDGET.width = width;
       }
     }
     highlight();
@@ -108,12 +125,9 @@
     const menu = {
       "": {"title": name(id)},
       /*LANG*/"< Back": () => {
-        if (WIDGET.width) {
-          g.reset().clearRect(WIDGET.x, WIDGET.y, WIDGET.x+WIDGET.width-1, WIDGET.y+23);
-          WIDGET.draw();
-        }
+        redrawWidgets();
         mainMenu();
-        },
+      },
       /*LANG*/"Side": {
         value: (area === 'tl'),
         format: tl => tl ? /*LANG*/"Left" : /*LANG*/"Right",
