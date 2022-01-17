@@ -17,7 +17,7 @@ var lastFix = {
   satellites: 0
 };
 var SATinView = 0, lastSATinView = -1, nofGP = 0, nofBD = 0, nofGL = 0;
-const leaveNofixLayout = 1;  // 0 = stay on initial screen for debugging (default = 1)
+const leaveNofixLayout = 0;  // 0 = stay on initial screen for debugging (default = 1)
 var listenerGPSraw = 0;
 
 function formatTime(now) {
@@ -119,7 +119,7 @@ function onGPS(fix) {
       lastSATinView = SATinView;
       layout.clear(layout.progress);
       layout.progress.label = "in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL;
-      // console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
+   console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
       layout.render(layout.progress);
     }
   }
