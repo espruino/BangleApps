@@ -541,6 +541,9 @@ function shortValue(v) {
 }
 
 function getSteps() {
+  if (Bangle.getHealthStatus) {
+    return Bangle.getHealthStatus("day").steps;
+  }
   if (WIDGETS && WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
   }
