@@ -15,7 +15,7 @@ body:
       label: agree searched
       description: abc
       options:
-        label: I confirm that I have searched the forum and also for similiar bugs.
+        - label: I confirm that I have searched the forum and also for similiar bugs.
         required: true
   - type: input
     id: devobject
