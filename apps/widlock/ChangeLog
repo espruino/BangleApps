@@ -2,3 +2,4 @@
 0.02: Handle new firmwares with 'lock' event
 0.03: Don't try to be fancy - just bail out on firmwares without a lock event
 0.04: Set sortorder to -1 so that widget always takes up the furthest left position
+0.05: Set sortorder to -10 so that others can take -1 etc
