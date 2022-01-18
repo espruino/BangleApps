@@ -838,7 +838,7 @@
   {
     "id": "slevel",
     "name": "Spirit Level",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "icon": "spiritlevel.png",
     "tags": "tool",
@@ -1540,7 +1540,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.09",
+    "version": "0.10",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
