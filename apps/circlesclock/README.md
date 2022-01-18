@@ -5,22 +5,19 @@ A clock with circles for different data at the bottom in a probably familiar sty
 By default the time, date and day of week is shown.
 
 It can show the following information (this can be configured):
-  * Steps (requires [pedometer widget](https://banglejs.com/apps/#pedometer))
-  * Steps distance (depending on steps)
+  * Steps
+  * Steps distance
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
   * Weather (requires [weather app](https://banglejs.com/apps/#weather))
-       * Humidity as circle progress
+       * Humidity or wind speed as circle progress
        * Temperature inside circle
        * Condition as icon below circle
+  * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
-
-# TODO
-* Add sunrise and sunset
-* Display moon instead of sun during night on weather circle
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
