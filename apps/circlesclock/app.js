@@ -456,7 +456,7 @@ function getSunProgress() {
   const sunSet = Math.round(times.sunset.getTime() / 1000);
 
   if (isDay()) {
-    // during day, progress until sunSet
+    // during day
     const dayLength = sunSet - sunRise;
     if (now > sunRise) {
       return (now - sunRise) / dayLength;
@@ -464,13 +464,13 @@ function getSunProgress() {
       return (sunRise - now) / dayLength;
     }
   } else {
-    // during night, progress until sunrise:
-    if (now > sunRise) {
-      // after sunRise
+    // during night
+    if (sunSet < sunRise) {
       const upcomingSunRise = sunRise + 60 * 60 * 24;
       return 1 - (upcomingSunRise - now) / (upcomingSunRise - sunSet);
     } else {
-      return (sunRise - now) / (sunRise - sunSet);
+      const lastSunSet = sunSet - 60 * 60 * 24;
+      return (now - lastSunSet) / (sunRise - lastSunSet);
     }
   }
 }
