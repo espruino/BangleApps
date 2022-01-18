@@ -838,7 +838,7 @@
   {
     "id": "slevel",
     "name": "Spirit Level",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "icon": "spiritlevel.png",
     "tags": "tool",
@@ -854,6 +854,7 @@
     "version": "0.07",
     "description": "Show currently installed apps, free space, and allow their deletion from the watch",
     "icon": "files.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "tags": "tool,system,files",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
