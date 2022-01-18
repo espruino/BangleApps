@@ -296,10 +296,15 @@ function drawWeather(w) {
       }
       break;
     case "wind":
-      const wind = weather ? weather.wind : undefined;
-      if (wind >= 0) {
-        // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-        drawGauge(w, h3, wind / 12, colorYellow);
+      if (weather) {
+        const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+        if (wind[1] >= 0) {
+          if (wind[2] == "kmh") {
+            wind[1] = windAsBeaufort(wind[1]);
+          }
+          // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+          drawGauge(w, h3, wind[1] / 12, colorYellow);
+        }
       }
       break;
     case "empty":
@@ -364,6 +369,18 @@ function drawSunProgress(w) {
 
   g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
 
+}
+
+/*
+ * wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+ */
+function windAsBeaufort(windInKmh) {
+  const beaufort = [2, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
+  let l = 0;
+  while (l < beaufort.length && beaufort[l] < windInKmh) {
+    l++;
+  }
+  return l;
 }
 
 
