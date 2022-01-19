@@ -8,6 +8,7 @@
   "tags": "outdoors,widget",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
+  "screenshots": [{"url":"600.png"},{"url":"10600.png"},{"url":"1600.png"}],
   "storage": [
     {"name":"activepedom.wid.js","url":"widget.js"},
     {"name":"activepedom.settings.js","url":"settings.js"},
