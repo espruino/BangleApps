@@ -9,3 +9,4 @@ appdates.csv
 _config.yml
 tests/Layout/bin/tmp.*
 tests/Layout/testresult.bmp
+apps.json

@@ -22,7 +22,8 @@ for app in apps/*/; do
     echo "Ignoring $app"
   else
     cat ${app}metadata.json >> apps.json
-    echo ",\"$app\"," >> apps.json
+#    echo ",\"$app\"," >> apps.json # DEBUG ONLY
+    echo "," >> apps.json
   fi
 done
 echo "null]" >> apps.json
