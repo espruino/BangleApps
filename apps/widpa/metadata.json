@@ -4,7 +4,7 @@
   "shortName":"Simple Pedometer",
   "icon": "screenshot_widpa.png",
   "screenshots": [{"url":"screenshot_widpa.png"}],
-  "version":"0.03",
+  "version":"0.04",
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
