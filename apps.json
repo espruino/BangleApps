@@ -137,9 +137,9 @@
     "id": "ios",
     "name": "iOS Integration",
     "version": "0.08",
-    "description": "Display notifications/music/etc from iOS devices",
+    "description": "Display notifications/music/etc from iOS devices via ANCS",
     "icon": "app.png",
-    "tags": "tool,system,ios,apple,messages,notifications",
+    "tags": "tool,system,ios,apple,messages,notifications,ancs",
     "dependencies": {"messages":"app"},
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
@@ -170,16 +170,15 @@
     "id": "launch",
     "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.10",
+    "version": "0.11",
     "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
-      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
+      {"name":"launch.app.js","url":"app.js"},
+      {"name":"launch.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"launch.json"}],
     "sortorder": -10
@@ -839,9 +838,10 @@
   {
     "id": "slevel",
     "name": "Spirit Level",
-    "version": "0.02",
+    "version": "0.04",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "icon": "spiritlevel.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "tags": "tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
@@ -942,13 +942,13 @@
   {
     "id": "widlock",
     "name": "Lock Widget",
-    "version": "0.04",
+    "version": "0.05",
     "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked",
     "icon": "widget.png",
     "type": "widget",
     "tags": "widget,lock",
     "supports": ["BANGLEJS","BANGLEJS2"],
-    "sortorder": -1,
+    "sortorder": -10,
     "storage": [
       {"name":"widlock.wid.js","url":"widget.js"}
     ]
@@ -1359,12 +1359,12 @@
   {
     "id": "pparrot",
     "name": "Party Parrot",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Party with a parrot on your wrist",
     "icon": "party-parrot.png",
     "type": "app",
     "tags": "party,parrot,lol",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-party-parrot-screenshot.png"}],
     "storage": [
@@ -1541,7 +1541,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.09",
+    "version": "0.10",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",
@@ -2298,7 +2298,7 @@
   },
   { "id": "run",
     "name": "Run",
-    "version":"0.01",
+    "version":"0.02",
     "description": "Displays distance, time, steps, cadence, pace and more for runners.",
     "icon": "app.png",
     "tags": "run,running,fitness,outdoors,gps",
@@ -2307,8 +2307,10 @@
     "readme": "README.md",
     "storage": [
       {"name":"run.app.js","url":"app.js"},
-      {"name":"run.img","url":"app-icon.js","evaluate":true}
-    ]
+      {"name":"run.img","url":"app-icon.js","evaluate":true},
+      {"name":"run.settings.js","url":"settings.js"}
+    ],
+    "data": [{"name":"run.json"}]
   },
   {
     "id": "banglerun",
@@ -2975,22 +2977,6 @@
       {"name":"dk.face.js","url":"dk.face.js"},
       {"name":"nifty.face.js","url":"nifty.face.js"},
       {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
-    ]
-  },
-  {
-    "id": "widancs",
-    "name": "Apple Notification Widget",
-    "shortName": "ANCS Widget",
-    "version": "0.07",
-    "description": "Displays call, message etc notifications from a paired iPhone. Read README before installation as it only works with compatible apps",
-    "icon": "widget.png",
-    "type": "widget",
-    "tags": "widget",
-    "supports": ["BANGLEJS"],
-    "readme": "README.md",
-    "storage": [
-      {"name":"widancs.wid.js","url":"ancs.min.js"},
-      {"name":"widancs.settings.js","url":"settings.js"}
     ]
   },
   {
@@ -4219,7 +4205,7 @@
   {
     "id": "vectorclock",
     "name": "Vector Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A digital clock that uses the built-in vector font.",
     "icon": "app.png",
     "type": "clock",
@@ -4232,8 +4218,10 @@
     ],
     "storage": [
       {"name":"vectorclock.app.js","url":"app.js"},
-      {"name":"vectorclock.img","url":"app-icon.js","evaluate":true}
-    ]
+      {"name":"vectorclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"vectorclock.settings.js","url":"settings.js"}
+    ],
+    "data": [{"name":"vectorclock.json"}]
   },
   {
     "id": "fd6fdetect",
@@ -4847,12 +4835,13 @@
     "shortName":"Battery Theme",
     "icon": "widbata.png",
     "screenshots": [{"url":"screenshot_widbata_1.png"}],
-    "version":"0.01",
+    "version":"0.02",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "description": "Shows the current battery level status in the top right using the clocks colour theme",
     "tags": "widget,battery",
+    "sortorder": -10,
     "storage": [
       {"name":"widbata.wid.js","url":"widbata.wid.js"}
      ]
@@ -4923,7 +4912,7 @@
   { "id": "tinydraw",
     "name": "TinyDraw",
     "shortName":"TinyDraw",
-    "version":"0.01",
+    "version":"0.02",
     "type": "app",
     "description": "Draw stuff in your wrist",
     "icon": "app.png",
@@ -5151,11 +5140,10 @@
   { "id": "circlesclock",
     "name": "Circles clock",
     "shortName":"Circles clock",
-    "version":"0.05",
+    "version":"0.06",
     "description": "A clock with circles for different data at the bottom in a probably familiar style",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}],
-    "dependencies": {"widpedom":"app"},
     "type": "clock",
     "tags": "clock",
     "supports" : ["BANGLEJS2"],
@@ -5514,7 +5502,7 @@
   {
     "id": "touchmenu",
     "name": "TouchMenu",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
     "screenshots": [{"url":"touchmenu.gif"}],
     "icon": "touchmenu.png",
@@ -5619,12 +5607,13 @@
     "shortName":"Simple Pedometer",
     "icon": "screenshot_widpa.png",
     "screenshots": [{"url":"screenshot_widpa.png"}],
-    "version":"0.02",
+    "version":"0.03",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in 12x16 font, requires firmware v2.11.21 or later",
     "tags": "widget,battery",
+    "sortorder": -1,
     "storage": [
       {"name":"widpa.wid.js","url":"widpa.wid.js"}
      ]
@@ -5635,12 +5624,13 @@
     "shortName":"Lato Pedometer",
     "icon": "screenshot_widpb.png",
     "screenshots": [{"url":"screenshot_widpb.png"}],
-    "version":"0.02",
+    "version":"0.04",
     "type": "widget",
     "supports": ["BANGLEJS", "BANGLEJS2"],
     "readme": "README.md",
     "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
     "tags": "widget,battery",
+    "sortorder": -1,
     "storage": [
       {"name":"widpb.wid.js","url":"widpb.wid.js"}
      ]
@@ -5665,8 +5655,8 @@
   { "id": "acmaze",
     "name": "AccelaMaze",
     "shortName":"AccelaMaze",
-    "version":"0.01",
-    "description": "Tilt the watch to roll a ball through a maze",
+    "version":"0.02",
+    "description": "Tilt the watch to roll a ball through a maze.",
     "icon": "app.png",
     "tags": "game",
     "supports" : ["BANGLEJS2"],
@@ -5675,6 +5665,41 @@
     "storage": [
       {"name":"acmaze.app.js","url":"app.js"},
       {"name":"acmaze.img","url":"app-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "crowclk",
+    "name": "Crow Clock",
+    "version": "0.01",
+    "description": "A simple clock based on Bold Clock that has MST3K's Crow T. Robot for a face",
+    "icon": "crow_clock.png",
+    "screenshots": [{"url":"screenshot_crow.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"crowclk.app.js","url":"crow_clock.js"},
+      {"name":"crowclk.img","url":"crow_clock-icon.js","evaluate":true}
+    ]
+  },
+  {
+    "id": "wid_edit",
+    "version": "0.01",
+    "name": "Widget Editor",
+    "icon": "icon.png",
+    "description": "Customize widget locations",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "readme": "README.md",
+    "type": "bootloader",
+    "tags": "widget,tool",
+    "storage": [
+      {"name":"wid_edit.boot.js","url":"boot.js"},
+      {"name":"wid_edit.settings.js","url":"settings.js"}
+    ],
+    "data": [
+      {"name":"wid_edit.json"}
     ]
   }
 ]

@@ -1,6 +1,6 @@
 var B2 = process.env.HWVERSION==2;
 var Layout = require("Layout");
-var locale = require("locale")
+var locale = require("locale");
 var fontHeading = "6x8:2";
 var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
@@ -21,21 +21,25 @@ Bangle.drawWidgets();
 // ---------------------------
 
 function formatTime(ms) {
-  var s = Math.round(ms/1000);
-  var min = Math.floor(s/60).toString();
-  s = (s%60).toString();
-  return min.padStart(2,0)+":"+s.padStart(2,0);
+  let hrs = Math.floor(ms/3600000).toString();
+  let mins = (Math.floor(ms/60000)%60).toString();
+  let secs = (Math.floor(ms/1000)%60).toString();
+
+  if (hrs === '0')
+    return mins.padStart(2,0)+":"+secs.padStart(2,0);
+  else
+    return hrs+":"+mins.padStart(2,0)+":"+secs.padStart(2,0); // dont pad hours
 }
 
 // Format speed in meters/second
 function formatPace(speed) {
   if (speed < 0.1667) {
-    return `__'__"`;
+    return `__:__`;
   }
   const pace = Math.round(1000 / speed); // seconds for 1km
   const min = Math.floor(pace / 60); // minutes for 1km
   const sec = pace % 60;
-  return ('0' + min).substr(-2) + `'` + ('0' + sec).substr(-2) + `"`;
+  return ('0' + min).substr(-2) + `:` + ('0' + sec).substr(-2);
 }
 
 // ---------------------------
@@ -149,10 +153,12 @@ Bangle.on("step", function(steps) {
   lastStepCount = steps;
 });
 
+let settings = require("Storage").readJSON('run.json',1)||{"use_gps":true,"use_hrm":true};
+
 // We always call ourselves once a second, if only to update the time
 setInterval(onTimer, 1000);
 
 /* Turn GPS and HRM on right at the start to ensure
 we get the highest chance of a lock. */
-Bangle.setHRMPower(true,"app");
-Bangle.setGPSPower(true,"app");
+if (settings.use_hrm) Bangle.setHRMPower(true,"app");
+if (settings.use_gps) Bangle.setGPSPower(true,"app");
