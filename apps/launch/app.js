@@ -63,8 +63,11 @@ E.showScroller({
   }
 });
 
-// pressing button goes back
-setWatch(_=>load(), BTN1, {edge:"falling"});
+// on bangle.js 2, the screen is used for navigating, so the single button goes back
+// on bangle.js 1, the buttons are used for navigating
+if (process.env.HWVERSION==2) {
+  setWatch(_=>load(), BTN1, {edge:"falling"});
+}
 
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially

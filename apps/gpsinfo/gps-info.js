@@ -16,9 +16,8 @@ var lastFix = {
   time: 0,
   satellites: 0
 };
-var SATinView = 0;
-var nofBD = 0;
-var nofGP = 0;
+var SATinView = 0, lastSATinView = -1, nofGP = 0, nofBD = 0, nofGL = 0;
+const leaveNofixLayout = 1;  // 0 = stay on initial screen for debugging (default = 1)
 var listenerGPSraw = 0;
 
 function formatTime(now) {
@@ -63,7 +62,7 @@ function getMaidenHead(param1,param2){
 function onGPS(fix) {
   if (lastFix.fix != fix.fix) {
     // if fix is different, change the layout
-    if (fix.fix) {
+    if (fix.fix && leaveNofixLayout) {
       layout = new Layout( {
         type:"v", c: [
           {type:"txt", font:"6x8:2", label:"GPS Info" },
@@ -92,11 +91,12 @@ function onGPS(fix) {
     g.clearRect(0,24,g.getWidth(),g.getHeight());
     layout.render();
   }
-  //lastFix = fix;
-  if (fix.fix) {
+  if (fix.fix && leaveNofixLayout) {
     if (listenerGPSraw == 1) {
       Bangle.removeListener('GPS-raw', onGPSraw);
       listenerGPSraw = 0;
+      lastSATinView = -1;
+      Bangle.buzz(50);
     }
     var locale = require("locale");
     var satellites = fix.satellites;
@@ -115,27 +115,31 @@ function onGPS(fix) {
       layout.sat.label = fix.satellites;
       layout.render(layout.sat);
     }
-    if (SATinView != lastFix.SATinView) {
+    if (SATinView != lastSATinView) {
+      if (!leaveNofixLayout) SATinView = -1;
+      lastSATinView = SATinView;
       layout.clear(layout.progress);
-      layout.progress.label = "in view: " + SATinView;
+      layout.progress.label = "in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL;
+      // console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
       layout.render(layout.progress);
     }
   }
-  //layout.render();
 
   if (listenerGPSraw == 0 && !fix.fix) {
     setTimeout(() => Bangle.on('GPS-raw', onGPSraw), 10);
     listenerGPSraw = 1;
   }
-
   lastFix = fix;
-  lastFix.SATinView = SATinView;
 }
 
 function onGPSraw(nmea) {
-  if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
-  if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
-  SATinView = nofBD + nofGP;
+  if (nmea.slice(3,6) == "GSV") {
+    // console.log(nmea.slice(1,3) + "  " + nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$GLGSV,") nofGL = Number(nmea.slice(11,13));
+    SATinView = nofGP + nofBD + nofGL;
+  }
 }
 
 

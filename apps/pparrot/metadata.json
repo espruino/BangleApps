@@ -1,12 +1,12 @@
 {
   "id": "pparrot",
   "name": "Party Parrot",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Party with a parrot on your wrist",
   "icon": "party-parrot.png",
   "type": "app",
   "tags": "party,parrot,lol",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "screenshots": [{"url":"bangle1-party-parrot-screenshot.png"}],
   "storage": [

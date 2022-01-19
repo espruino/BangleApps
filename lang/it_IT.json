@@ -2,20 +2,20 @@
   "//":"Italian language translations",
   "GLOBAL": {
     "//":"Translations that apply for all apps",
-    "Alarms" : "Allarmi",
+    "Alarms" : "Sveglie",
     "Hours" : "Ore",
     "Minutes" : "Minuti",
-    "Enabled" : "Attivato",
-    "New Alarm" : "Nuovo allarme",
-    "Save" : "Salvare",
+    "Enabled" : "Attiva",
+    "New Alarm" : "Nuova sveglia",
+    "Save" : "Salva",
     "Back" : "Indietro",
-    "Repeat" : "Ripetere",
-    "Delete" : "Cancellare",
-    "ALARM!" : "ALARM!",
-    "Sleep" : "Dormire"
+    "Repeat" : "Ripeti",
+    "Delete" : "Cancella",
+    "ALARM!" : "SVEGLIA!",
+    "Sleep" : "Dormi"
   },
   "alarm": {
     "//":"App-specific overrides",
-    "rpt" : "ripetere"
+    "rpt" : "ripeti"
   }
 }

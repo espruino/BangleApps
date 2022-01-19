@@ -1,7 +1,7 @@
 {
   "id": "gpsinfo",
   "name": "GPS Info",
-  "version": "0.09",
+  "version": "0.10",
   "description": "An application that displays information about altitude, lat/lon, satellites and time",
   "icon": "gps-info.png",
   "type": "app",
