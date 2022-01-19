@@ -9,5 +9,6 @@
 0.09: Tab anywhere to open the launcher.
 0.10: Removed swipes to be compatible with the Pattern Launcher. Stability improvements.
 0.11: Show the gadgetbridge weather temperature (settings).
-0.12: Added humidity to data.
+0.12: Added humidity as an option to display.
 0.13: Improved battery visualization.
+0.14: Added altitude as an option to display.

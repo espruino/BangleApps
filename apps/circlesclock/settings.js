@@ -6,8 +6,12 @@
     settings[key] = value;
     storage.write(SETTINGS_FILE, settings);
   }
-  var valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather"];
-  var namesCircleTypes = ["steps", "distance", "heart", "battery", "weather"];
+
+  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty"];
+  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty"];
+
+  const weatherData = ["humidity", "wind", "empty"];
+
   E.showMenu({
     '': { 'title': 'circlesclock' },
     '< Back': back,
@@ -76,21 +80,27 @@
       format: () => (settings.showWidgets ? 'Yes' : 'No'),
       onchange: x => save('showWidgets', x),
     },
+    'weather circle': {
+      value: settings.weatherCircleData ? weatherData.indexOf(settings.weatherCircleData) : 0,
+      min: 0, max: 2,
+      format: v => weatherData[v],
+      onchange: x => save('weatherCircleData', weatherData[x]),
+    },
     'left': {
       value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle1', valuesCircleTypes[x]),
     },
     'middle': {
       value: settings.circle2 ? valuesCircleTypes.indexOf(settings.circle2) : 2,
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle2', valuesCircleTypes[x]),
     },
     'right': {
       value: settings.circle3 ? valuesCircleTypes.indexOf(settings.circle3) : 3,
-      min: 0, max: 4,
+      min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle3', valuesCircleTypes[x]),
     }

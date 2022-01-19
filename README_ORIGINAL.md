@@ -172,12 +172,13 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 
 Widgets are just small bits of code that run whenever an app that supports them
 calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
-widget bars at the top and bottom of the screen they can add themselves to
-the global `WIDGETS` array with:
+widget bar at the top of the screen they can add themselves to the global 
+`WIDGETS` array with:
 
 ```
 WIDGETS["mywidget"]={
-  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
+  area:"tl", // tl (top left), tr (top right)
+  sortorder:0, // (Optional) determines order of widgets in the same corner
   width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
   draw:draw // called to draw the widget
 };
@@ -461,15 +462,12 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 | areas | as rectangle or point |
 | :-:| :-: |
 | Widget | (0,0,239,23) |
-| Widget bottom bar (optional) | (0,216,239,239) |
-| Apps | (0,24,239,239) (see below) |
+| Apps | (0,24,239,239) |
 | BTN1 | (230, 55)  |
 | BTN2 | (230, 140) |
 | BTN3 | (230, 210) |
 | BTN4 | (0,0,119, 239)|
 | BTN5 |  (120,0,239,239) |
-
-- If there are widgets at the bottom of the screen, apps should actually keep the bottom 24px free, so should keep to the area (0,24,239,215)
 
 - Use `g.setFontAlign(0, 0, 3)` to draw rotated string to BTN1-BTN3 with `g.drawString()`.
 

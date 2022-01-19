@@ -1,5 +1,5 @@
 // on.step version
-Bangle.on('step', function(s) { WIDGETS["bata"].draw(); });
+Bangle.on('step', function(s) { WIDGETS["widpb"].draw(); });
 Bangle.on('lcdPower', function(on) {
   if (on) WIDGETS["widpb"].draw();
 });

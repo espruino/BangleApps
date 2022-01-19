@@ -1,6 +1,7 @@
 const locale = require("locale");
 const heatshrink = require("heatshrink");
 const storage = require("Storage");
+const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
 const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
 const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
@@ -11,12 +12,16 @@ const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSA
 
 const weatherCloudy = heatshrink.decompress(atob("iEQwYWTgP//+AAoMPAoPwAoN/AocfAgP//0AAgQAB/AFEABgdDAAMDDohMRA"));
 const weatherSunny = heatshrink.decompress(atob("iEQwYLIg3AAgVgAQMMAo8Am3YAgUB23bAoUNAoIUBjYFCsOwBYoFDDpFgHYI1JI4gFGAAYA="));
+const weatherMoon = heatshrink.decompress(atob("iEQwIFCgOAh/wj/4n/8AId//wBBBIoRBCoIZBDoI"));
 const weatherPartlyCloudy = heatshrink.decompress(atob("iEQwYQNv0AjgGDn4EDh///gFChwREC4MfxwIBv0//+AC4X4j4FCv/AgfwgED/wIBuAaBBwgFDgP4gf/AAXABwIEBDQQAEA=="));
 const weatherRainy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AocAnAFBFIU4EAM//gRBEAIOBhw1C/AmDAosAC4JNIAAg"));
 const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
 const weatherSnowy = heatshrink.decompress(atob("iEQwYROn/8AocH8AECuAFBh0Agf+CIN/4EDx/4j/x4EAgIIBwAXBAogRFDoopFGoxBGABIA="));
 const weatherFoggy = heatshrink.decompress(atob("iEQwYROn/8AgUB/EfwAFBh/AgfwgED/wIBuEABwd/4EcDQgFDgE4Fosf///8f//A/Lj/xCQIRNA="));
 const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AoX8gE4AoQpBnAdBF4IRBDQMH/kOHgY7DAo4AOA=="));
+
+const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfACoo"));
+const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
 
 let settings;
 
@@ -29,6 +34,7 @@ function loadSettings() {
     'stepLength': 0.8,
     'batteryWarn': 30,
     'showWidgets': false,
+    'weatherCircleData': 'humidity',
     'circle1': 'hr',
     'circle2': 'steps',
     'circle3': 'battery'
@@ -40,9 +46,21 @@ function loadSettings() {
   }
 }
 loadSettings();
+
+
+/*
+ * Read location from myLocation app
+ */
+function getLocation() {
+  return storage.readJSON("mylocation.json", 1) || undefined;
+}
+let location = getLocation();
+
 const showWidgets = settings.showWidgets || false;
 
 let hrtValue;
+let now = Math.round(new Date().getTime() / 1000);
+
 
 // layout values:
 const colorFg = g.theme.dark ? '#fff' : '#000';
@@ -64,7 +82,6 @@ const radiusOuter = 25;
 const radiusInner = 20;
 const circleFont = "Vector:15";
 const circleFontBig = "Vector:16";
-const circleFontSmall = "Vector:13";
 
 function draw() {
   g.clear(true);
@@ -93,6 +110,7 @@ function draw() {
   g.setFontAlign(0, -1);
   g.setColor(colorFg);
   g.drawString(locale.time(new Date(), 1), w / 2, h1 + 8);
+  now = Math.round(new Date().getTime() / 1000);
 
   // date & dow
   g.setFont("Vector:21");
@@ -127,19 +145,42 @@ function drawCircle(index) {
     case "weather":
       drawWeather(w);
       break;
+    case "sunprogress":
+      drawSunProgress(w);
+      break;
+    case "empty":
+      // we draw nothing here
+      return;
   }
 }
 
+// serves as cache for quicker lookup of circle positions
+let circlePositionsCache = [];
+/*
+ * Looks in the following order if a circle with the given type is somewhere visible/configured
+ * 1. circlePositionsCache
+ * 2. settings
+ * 3. defaultCircleTypes
+ *
+ * In case 2 and 3 the circlePositionsCache will be updated
+ */
 function getCirclePosition(type) {
+  if (circlePositionsCache[type] >= 0) {
+    return circlePosX[circlePositionsCache[type]];
+  }
   for (let i = 1; i <= 3; i++) {
     const setting = settings['circle' + i];
-    if (setting == type) return circlePosX[i - 1];
+    if (setting == type) {
+      circlePositionsCache[type] = i - 1;
+      return circlePosX[i - 1];
+    }
   }
   for (let i = 0; i < defaultCircleTypes.length; i++) {
-   if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
-     return circlePosX[i];
-   }
- }
+    if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
+      circlePositionsCache[type] = i;
+      return circlePosX[i];
+    }
+  }
   return undefined;
 }
 
@@ -147,16 +188,12 @@ function isCircleEnabled(type) {
   return getCirclePosition(type) != undefined;
 }
 
+
 function drawSteps(w) {
   if (!w) w = getCirclePosition("steps");
   const steps = getSteps();
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
@@ -165,15 +202,9 @@ function drawSteps(w) {
     drawGauge(w, h3, percent, colorBlue);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(shortValue(steps), w + 2, h3);
+  writeCircleText(w, shortValue(steps));
 
   g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
 }
@@ -184,12 +215,7 @@ function drawStepsDistance(w) {
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
@@ -198,15 +224,9 @@ function drawStepsDistance(w) {
     drawGauge(w, h3, percent, colorGreen);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(shortValue(stepsDistance), w + 2, h3);
+  writeCircleText(w, shortValue(stepsDistance));
 
   g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
 }
@@ -214,28 +234,18 @@ function drawStepsDistance(w) {
 function drawHeartRate(w) {
   if (!w) w = getCirclePosition("hr");
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  drawCircleBackground(w);
 
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
-
-  if (hrtValue != undefined && hrtValue > 0) {
+  if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
-    const percent = (hrtValue - minHR) / (settings.maxHR - minHR);
+    const maxHR = settings.maxHR || 200;
+    const percent = (hrtValue - minHR) / (maxHR - minHR);
     drawGauge(w, h3, percent, colorRed);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFontBig);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(hrtValue != undefined ? hrtValue : "-", w, h3);
+  writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
   g.drawImage(heartIcon, w - 6, h3 + radiusOuter - 6);
 }
@@ -244,25 +254,14 @@ function drawBattery(w) {
   if (!w) w = getCirclePosition("battery");
   const battery = E.getBattery();
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
-
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
+  drawCircleBackground(w);
 
   if (battery > 0) {
     const percent = battery / 100;
     drawGauge(w, h3, percent, colorYellow);
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
-
-  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-
-  g.setFont(circleFont);
-  g.setFontAlign(0, 0);
+  drawInnerCircleAndTriangle(w);
 
   let icon = powerIcon;
   let color = colorFg;
@@ -275,8 +274,7 @@ function drawBattery(w) {
       icon = powerIconRed;
     }
   }
-  g.setColor(color);
-  g.drawString(battery + '%', w, h3);
+  writeCircleText(w, battery + '%');
 
   g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
 }
@@ -285,36 +283,106 @@ function drawWeather(w) {
   if (!w) w = getCirclePosition("weather");
   const weather = getWeather();
   const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
-  const humidity = weather ? weather.hum : undefined;
   const code = weather ? weather.code : -1;
 
-  // Draw rectangle background:
-  g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  drawCircleBackground(w);
 
-  g.setColor(colorGrey);
-  g.fillCircle(w, h3, radiusOuter);
-
-  if (humidity >= 0) {
-    drawGauge(w, h3, humidity / 100, colorYellow);
+  const data = settings.weatherCircleData || "humidity";
+  switch (data) {
+    case "humidity":
+      const humidity = weather ? weather.hum : undefined;
+      if (humidity >= 0) {
+        drawGauge(w, h3, humidity / 100, colorYellow);
+      }
+      break;
+    case "wind":
+      if (weather) {
+        const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+        if (wind[1] >= 0) {
+          if (wind[2] == "kmh") {
+            wind[1] = windAsBeaufort(wind[1]);
+          }
+          // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+          drawGauge(w, h3, wind[1] / 12, colorYellow);
+        }
+      }
+      break;
+    case "empty":
+      break;
   }
 
-  g.setColor(colorBg);
-  g.fillCircle(w, h3, radiusInner);
+  drawInnerCircleAndTriangle(w);
 
-  g.fillPoly([w, h3, w - 25, h3 + radiusOuter + 5, w + 25, h3 + radiusOuter + 5]);
-
-  const content = tempString ? tempString : "?";
-  g.setFont(content.length < 4 ? circleFont : circleFontSmall);
-  g.setFontAlign(0, 0);
-  g.setColor(colorFg);
-  g.drawString(content, w, h3);
+  writeCircleText(w, tempString ? tempString : "?");
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
     if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 10);
   }
 }
+
+
+function drawSunProgress(w) {
+  if (!w) w = getCirclePosition("sunprogress");
+  const percent = getSunProgress();
+
+  drawCircleBackground(w);
+
+  drawGauge(w, h3, percent, colorYellow);
+
+  drawInnerCircleAndTriangle(w);
+
+  let icon = powerIcon;
+  let color = colorFg;
+  if (isDay()) {
+    // day
+    color = colorFg;
+    icon = sunSetDown;
+  } else {
+    // night
+    color = colorGrey;
+    icon = sunSetUp;
+  }
+  g.setColor(color);
+
+  let text = "?";
+  const times = getSunData();
+  if (times != undefined) {
+    const sunRise = Math.round(times.sunrise.getTime() / 1000);
+    const sunSet = Math.round(times.sunset.getTime() / 1000);
+    if (!isDay()) {
+      // night
+      if (now > sunRise) {
+        // after sunRise
+        const upcomingSunRise = sunRise + 60 * 60 * 24;
+        text = formatSeconds(upcomingSunRise - now);
+      } else {
+        text = formatSeconds(sunRise - now);
+      }
+    } else {
+      // day, approx sunrise tomorrow:
+      text = formatSeconds(sunSet - now);
+    }
+  }
+
+  writeCircleText(w, text);
+
+  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+
+}
+
+/*
+ * wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+ */
+function windAsBeaufort(windInKmh) {
+  const beaufort = [2, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
+  let l = 0;
+  while (l < beaufort.length && beaufort[l] < windInKmh) {
+    l++;
+  }
+  return l;
+}
+
 
 /*
  * Choose weather icon to display based on weather conditition code
@@ -350,7 +418,7 @@ function getWeatherIconByCode(code) {
     case 8:
       switch (code) {
         case 800:
-          return weatherSunny;
+          return isDay() ? weatherSunny : weatherMoon;
         case 801:
           return weatherPartlyCloudy;
         case 802:
@@ -365,30 +433,120 @@ function getWeatherIconByCode(code) {
   return undefined;
 }
 
+
+function isDay() {
+  const times = getSunData();
+  if (times == undefined) return true;
+  const sunRise = Math.round(times.sunrise.getTime() / 1000);
+  const sunSet = Math.round(times.sunset.getTime() / 1000);
+
+  return (now > sunRise && now < sunSet);
+}
+
+function formatSeconds(s) {
+  if (s > 60 * 60) { // hours
+    return Math.round(s / (60 * 60)) + "h";
+  }
+  if (s > 60) { // minutes
+    return Math.round(s / 60) + "m";
+  }
+  return "<1m";
+}
+
+function getSunData() {
+  if (location != undefined && location.lat != undefined) {
+    // get today's sunlight times for lat/lon
+    return SunCalc.getTimes(new Date(), location.lat, location.lon);
+  }
+  return undefined;
+}
+
+/*
+ * Calculated progress of the sun between sunrise and sunset in percent
+ *
+ * Taken from rebble app and modified
+ */
+function getSunProgress() {
+  const times = getSunData();
+  if (times == undefined) return 0;
+  const sunRise = Math.round(times.sunrise.getTime() / 1000);
+  const sunSet = Math.round(times.sunset.getTime() / 1000);
+
+  if (isDay()) {
+    // during day
+    const dayLength = sunSet - sunRise;
+    if (now > sunRise) {
+      return (now - sunRise) / dayLength;
+    } else {
+      return (sunRise - now) / dayLength;
+    }
+  } else {
+    // during night
+    if (sunSet < sunRise) {
+      const upcomingSunRise = sunRise + 60 * 60 * 24;
+      return 1 - (upcomingSunRise - now) / (upcomingSunRise - sunSet);
+    } else {
+      const lastSunSet = sunSet - 60 * 60 * 24;
+      return (now - lastSunSet) / (sunRise - lastSunSet);
+    }
+  }
+}
+
+/*
+ * Draws the background and the grey circle
+ */
+function drawCircleBackground(w) {
+  // Draw rectangle background:
+  g.setColor(colorBg);
+  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  // Draw grey background circle:
+  g.setColor(colorGrey);
+  g.fillCircle(w, h3, radiusOuter);
+}
+
+function drawInnerCircleAndTriangle(w) {
+  // Draw inner circle
+  g.setColor(colorBg);
+  g.fillCircle(w, h3, radiusInner);
+  // Draw triangle which covers the bottom of the circle
+  g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
+}
+
 function radians(a) {
   return a * Math.PI / 180;
 }
 
+/*
+ * This draws the actual gauge consisting out of lots of little filled circles
+ */
 function drawGauge(cx, cy, percent, color) {
   const offset = 15;
   const end = 345;
-  const r = radiusInner + 3;
+  const radius = radiusInner + 3;
+  const size = radiusOuter - radiusInner - 2;
 
   if (percent <= 0) return;
   if (percent > 1) percent = 1;
 
-  const startrot = -offset;
-  const endrot = startrot - ((end - offset) * percent);
+  const startRotation = -offset;
+  const endRotation = startRotation - ((end - offset) * percent);
 
   g.setColor(color);
 
-  const size = radiusOuter - radiusInner - 2;
-  // draw gauge
-  for (let i = startrot; i > endrot - size; i -= size) {
-    x = cx + r * Math.sin(radians(i));
-    y = cy + r * Math.cos(radians(i));
+  for (let i = startRotation; i > endRotation - size; i -= size) {
+    x = cx + radius * Math.sin(radians(i));
+    y = cy + radius * Math.cos(radians(i));
     g.fillCircle(x, y, size);
   }
+}
+
+function writeCircleText(w, content) {
+  if (content == undefined) return;
+  g.setFont(content.length < 4 ? circleFontBig : circleFont);
+
+  g.setFontAlign(0, 0);
+  g.setColor(colorFg);
+  g.drawString(content, w, h3);
 }
 
 function shortValue(v) {
@@ -405,6 +563,9 @@ function shortValue(v) {
 }
 
 function getSteps() {
+  if (Bangle.getHealthStatus) {
+    return Bangle.getHealthStatus("day").steps;
+  }
   if (WIDGETS && WIDGETS.wpedom !== undefined) {
     return WIDGETS.wpedom.getSteps();
   }
