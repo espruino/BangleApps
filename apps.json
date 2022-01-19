@@ -1,21 +1,20 @@
 ---
-# uncomment the following line if you only want explicitly listed
+# =================================================================
+#    ALL THE INFORMATION INSIDE APPS.JSON HAS NOW BEEN MOVED
+# 
+#  You'll find it inside a file called apps/yourapp/metadata.json
+# 
+#  Otherwise nothing has changed. GitHub Pages will automatically
+#  create apps.json as your site is hosted, or if you're hosting
+#  yourself you can run bin/create_apps_json.sh
+# 
+# =================================================================
+
+# Uncomment the following line if you only want explicitly listed
 # apps to be available on your site
 
 # restricted: ["boot", "launch", "antonclk", "health", "setting", "about", "widbat", "widbt", "widlock", "widid"]
 ---
-{% comment %}
-=================================================================
-   ALL THE INFORMATION INSIDE APPS.JSON HAS NOW BEEN MOVED
-
- You'll find it inside a file called apps/yourapp/metadata.json
-
- Otherwise nothing has changed. GitHub Pages will automatically
- create apps.json as your site is hosted, or if you're hosting
- yourself you can run bin/create_apps_json.sh
-
-=================================================================
-{% endcomment %}
 {%- if page.restricted == nil -%}
     {%- assign apps = site.static_files | where: "name", "metadata.json" | map: "path" -%}
 {%- else -%}
