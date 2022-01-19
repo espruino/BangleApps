@@ -7,7 +7,6 @@
   "type": "widget",
   "tags": "widget,lock",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "sortorder": 10,
   "storage": [
     {"name":"widlock.wid.js","url":"widget.js"}
   ]

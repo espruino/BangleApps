@@ -10,7 +10,6 @@
   "readme": "README.md",
   "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
   "tags": "widget,battery",
-  "sortorder": -1,
   "storage": [
     {"name":"widpb.wid.js","url":"widpb.wid.js"}
    ]
