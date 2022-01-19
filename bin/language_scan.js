@@ -6,19 +6,26 @@ See https://github.com/espruino/BangleApps/issues/1311
 */
 
 var IGNORE_STRINGS = [
-  "5x5","6x8","6x8:2","12x20","---","...",
-  "5x9Numeric7Seg",
-  "Vector",
-  "sortorder","tl","tr"
+  "5x5","6x8","6x8:2","4x6","12x20","6x15","5x9Numeric7Seg", "Vector", // fonts
+  "---","...","*","##","00","GPS","ram",
+  "12hour","rising","falling","title",
+  "sortorder","tl","tr",
+  "function","object", // typeof===
+  "txt", // layout styles
+  "play","stop","pause", // music state
 ];
 
 var IGNORE_FUNCTION_PARAMS = [
   "read",
   "readJSON",
   "require",
-  "setFont",
+  "setFont","setUI","setLCDMode",
   "on",
-  "RegExp",
+  "RegExp","sendCommand",
+  "print","log"
+];
+var IGNORE_ARRAY_ACCESS = [
+  "WIDGETS"
 ];
 
 var BASEDIR = __dirname+"/../";
@@ -50,9 +57,11 @@ try{
 }
 
 // Given a string value, work out if it's obviously not a text string
-function isNotString(s, wasFnCall) {
+function isNotString(s, wasFnCall, wasArrayAccess) {
+  if (s=="") return true;
   // wasFnCall is set to the function name if 's' is the first argument to a function
   if (wasFnCall && IGNORE_FUNCTION_PARAMS.includes(wasFnCall)) return true;
+  if (wasArrayAccess && IGNORE_ARRAY_ACCESS.includes(wasArrayAccess)) return true;
   if (s=="Storage") console.log("isNotString",s,wasFnCall);
 
   if (s.length<2) return true; // too short
@@ -66,7 +75,7 @@ function isNotString(s, wasFnCall) {
 }
 
 function getTextFromString(s) {
-  return s.replace(/^([.<>\- ]*)([^<>\!\?]*?)([.<>\!\?\- ]*)$/,"$2");
+  return s.replace(/^([.<>\-\n ]*)([^<>\!\?]*?)([.<>\!\?\-\n ]*)$/,"$2");
 }
 
 // A string that *could* be translated?
@@ -93,24 +102,32 @@ apps.forEach((app,appIdx) => {
   app.storage.forEach((file) => {
     if (!file.url || !file.name.endsWith(".js")) return;
     var filePath = appDir+file.url;
+    var shortFilePath = "apps/"+app.id+"/"+file.url;
     var fileContents = fs.readFileSync(filePath).toString();
     var lex = Espruino.Core.Utils.getLexer(fileContents);
     var lastIdx = 0;
-    var wasFnCall = undefined; // set to 'setFont' if we're at soemthing like setFont(".."
+    var wasFnCall = undefined; // set to 'setFont' if we're at something like setFont(".."
+    var wasArrayAccess = undefined; // set to 'WIDGETS' if we're at something like WIDGETS[".."
     var tok = lex.next();
     while (tok!==undefined) {
       var previousString = fileContents.substring(lastIdx, tok.startIdx);
-      //console.log(wasFnCall,tok.type,tok.value);
       if (tok.type=="STRING") {
         if (previousString.includes("/*LANG*/")) { // translated!
-          addString(translatedStrings, tok.value, filePath);
+          addString(translatedStrings, tok.value, shortFilePath);
         } else { // untranslated - potential to translate?
-          if (!isNotString(tok.value, wasFnCall)) {
-            addString(untranslatedStrings, tok.value, filePath);
+          if (!isNotString(tok.value, wasFnCall, wasArrayAccess)) {
+            addString(untranslatedStrings, tok.value, shortFilePath);
           }
         }
-      } else if (tok.value!="(") wasFnCall=undefined;
-      if (tok.type=="ID") wasFnCall=tok.value;
+      } else {
+        if (tok.value!="(") wasFnCall=undefined;
+        if (tok.value!="[") wasArrayAccess=undefined;
+      }
+      //console.log(wasFnCall,tok.type,tok.value);
+      if (tok.type=="ID") {
+        wasFnCall = tok.value;
+        wasArrayAccess = tok.value;
+      }
       lastIdx = tok.endIdx;
       tok = lex.next();
     }
@@ -118,17 +135,27 @@ apps.forEach((app,appIdx) => {
 });
 untranslatedStrings.sort((a,b)=>a.uses - b.uses);
 translatedStrings.sort((a,b)=>a.uses - b.uses);
-untranslatedStrings.filter(e => e.uses>2); // ignore individual uses
+
 
 var report = "";
-// too many! don't output these
+
+log("Translated Strings that are not tagged with LANG");
+log("=================================================================");
+log("");
+log("Maybe we should add /*LANG*/ to these automatically?");
+log("");
+log(untranslatedStrings.filter(e => translatedStrings.find(t=>t.str==e.str)).map(e=>`${JSON.stringify(e.str)} (${e.files.join(",")})`).join("\n"));
+log("");
+//process.exit(1);
 log("Possible English Strings that could be translated");
 log("=================================================================");
 log("");
-log("Add these to IGNORE_STRINGS if the don't make sense...");
+log("Add these to IGNORE_STRINGS if they don't make sense...");
 log("");
-log(untranslatedStrings.map(e=>`${JSON.stringify(e.str)} (${e.uses} uses)`).join("\n"));
+ // ignore ones only used once or twice
+log(untranslatedStrings.filter(e => e.uses>2).filter(e => !translatedStrings.find(t=>t.str==e.str)).map(e=>`${JSON.stringify(e.str)} (${e.uses} uses)`).join("\n"));
 log("");
+//process.exit(1);
 
 var languages = JSON.parse(fs.readFileSync(BASEDIR+"/lang/index.json").toString());
 languages.forEach(language => {
