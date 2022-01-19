@@ -13,10 +13,10 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
  * Full screen mode - widgets are still loaded but not shown.
  * Tab on left/right to switch between different screens.
  * Cusomizable data that is shown on screen 1 (steps, weather etc.)
- * Shows random images of real planets.
+ * Shows random and real images of planets.
  * Tap on top/bottom of screen 1 to activate an alarm.
  * The lower orange line indicates the battery level.
- * Display graphs for steps + hrm on the second screen.
+ * Display graphs (day or month) for steps + hrm on the second screen.
 
 ## Data that can be configured
  * Steps - Steps loaded via the health module
@@ -25,16 +25,17 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
  * Humidity - Humidity loaded via the weather module + gadgetbridge
+ * Altitude - Shows the altitude in m.
  * CoreT - Temperature of device
 
 ## Multiple screens support
-Access different screens via swipe left/ right
+Access different screens via tap on the left/ right side of the screen
 
 ![](screenshot.png)
 ![](screenshot_2.png)
 
 
 ## Contributors
-- Initial creation and improvements: [David Peer](https://github.com/peerdavid).
-- Improvements: [Adam Schmalhofer](https://github.com/adamschmalhofer).
-- Improvements: [Jon Warrington](https://github.com/BartokW).
+- [David Peer](https://github.com/peerdavid).
+- [Adam Schmalhofer](https://github.com/adamschmalhofer).
+- [Jon Warrington](https://github.com/BartokW).
