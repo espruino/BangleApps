@@ -1,0 +1,7 @@
+0.01: Initial creation of the clock face time and calendar
+0.02: Feature Request #1154 and some findings...
+      -> get rendered time from optimisations
+      -> *BATT SAFE* only update once a minute instead of once a second
+      -> *RAM optimized* clean code, corrected minute update (timout, no intervall)
+      -> locale: weekday name (first two characters) from locale
+      -> added settings to render cal view begin day (-1: today, 0:sunday, 1:monday [default])
