@@ -14,7 +14,13 @@
     "Sleep" : "Schlummern",
     "Alarms" : "Wecker",
     "New Alarm" : "Neuer Wecker",
-    "ALARM!" : "ALARM!"
+    "ALARM!" : "ALARM!",
+    "Yes" : "Ja",
+    "No" : "Nein",
+    "On" : "Auf",
+    "Off" : "aus",
+    "Ok" : "OK",
+    "Back" : "zurück"
   },
   "alarm": {
     "//":"App-specific overrides",
