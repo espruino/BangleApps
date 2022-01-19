@@ -19,8 +19,7 @@
     "No" : "Nein",
     "On" : "Ein",
     "Off" : "Aus",
-    "Ok" : "OK",
-    "Back" : "Zurück"
+    "Ok" : "OK"
   },
   "alarm": {
     "//":"App-specific overrides",
