@@ -3,9 +3,10 @@ name: Bangle Feature request
 about: 'Bangle: Suggest an idea for this project'
 title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock]
   title"
-labels: enhancement
+labels: 
+  - widget
+  - feature request
 assignees: ''
-
 ---
 
 **Is your feature request related to a problem? Please describe.**
