@@ -30,11 +30,12 @@ var apps = [];
 var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
 dirs.forEach(dir => {
   var appsFile;
-  if (dir.name.startsWith("_example"))
+  if (dir.name.startsWith("_example") || !dir.isDirectory())
     return;
   try {
     appsFile = fs.readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
   } catch (e) {
+    ERROR(dir.name+"/metadata.json does not exist");
     return;
   }
   try{
