@@ -26,7 +26,7 @@ function showMenu() {
     '': {
       'title': 'Set Date',
       'predraw': function() {
-        datemenu.Date.value = settings.day;
+        datemenu.Day.value = settings.day;
         datemenu.Month.value = settings.month;
         datemenu.Year.value = settings.year;
       }
