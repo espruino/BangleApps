@@ -1,7 +1,7 @@
 {
   "id": "mysticdock",
   "name": "Mystic Dock",
-  "version": "1.00",
+  "version": "0.01",
   "description": "A retro-inspired dockface that displays the current time and battery charge while plugged in, and which features an interactive mode that shows the time, date, and a rotating data display line.",
   "icon": "mystic-dock.png",
   "type": "dock",
