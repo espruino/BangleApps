@@ -65,3 +65,4 @@ function showMenu() {
 }
 
 showMenu();
+
