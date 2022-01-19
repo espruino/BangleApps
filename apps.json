@@ -170,16 +170,15 @@
     "id": "launch",
     "name": "Launcher",
     "shortName": "Launcher",
-    "version": "0.10",
+    "version": "0.11",
     "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
-      {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-      {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
-      {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
+      {"name":"launch.app.js","url":"app.js"},
+      {"name":"launch.settings.js","url":"settings.js"}
     ],
     "data": [{"name":"launch.json"}],
     "sortorder": -10
@@ -839,9 +838,10 @@
   {
     "id": "slevel",
     "name": "Spirit Level",
-    "version": "0.02",
+    "version": "0.04",
     "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
     "icon": "spiritlevel.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "tags": "tool",
     "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
@@ -1359,12 +1359,12 @@
   {
     "id": "pparrot",
     "name": "Party Parrot",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Party with a parrot on your wrist",
     "icon": "party-parrot.png",
     "type": "app",
     "tags": "party,parrot,lol",
-    "supports": ["BANGLEJS"],
+    "supports": ["BANGLEJS", "BANGLEJS2"],
     "allow_emulator": true,
     "screenshots": [{"url":"bangle1-party-parrot-screenshot.png"}],
     "storage": [
@@ -1541,7 +1541,7 @@
   {
     "id": "gpsinfo",
     "name": "GPS Info",
-    "version": "0.09",
+    "version": "0.10",
     "description": "An application that displays information about altitude, lat/lon, satellites and time",
     "icon": "gps-info.png",
     "type": "app",

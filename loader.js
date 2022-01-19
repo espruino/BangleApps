@@ -164,6 +164,48 @@ window.addEventListener('load', (event) => {
       showToast("App Install failed, "+err,"error");
     });
   });
+
+  // Load language list
+  httpGet("lang/index.json").then(languagesJSON=>{
+    var languages;
+    try {
+      languages = JSON.parse(languagesJSON);
+    } catch(e) {
+      console.error("lang/index.json Corrupted", e);
+    }
+
+    function reloadLanguage() {
+      LANGUAGE = undefined;
+      if (SETTINGS.language) {
+        var language = languages.find(l=>l.code==SETTINGS.language);
+        if (language) {
+          var langURL = "lang/"+language.url;
+          httpGet(langURL).then(languageJSON=>{
+            try {
+              LANGUAGE = JSON.parse(languageJSON);
+              console.log(`${langURL} loaded successfully`);
+            } catch(e) {
+              console.error(`${langURL} Corrupted`, e);
+            }
+          });
+        } else {
+          console.error(`Language code ${JSON.stringify(SETTINGS.language)} not found in lang/index.json`);
+        }
+      }
+    }
+
+    var selectLang = document.getElementById("settings-lang");
+    console.log(languages);
+    languages.forEach(lang => {
+      selectLang.innerHTML += `<option value="${lang.code}" ${SETTINGS.language==lang.code?"selected":""}>${lang.name} (${lang.code})</option>`;
+    });
+    selectLang.addEventListener("change",event=>{
+      SETTINGS.language = event.target.value;
+      reloadLanguage();      
+      saveSettings();
+    });
+    reloadLanguage();
+  });
 });
 
 function onAppJSONLoaded() {
