@@ -1,0 +1,18 @@
+{
+  "id": "timeandlife",
+  "name": "Time and Life",
+  "shortName":"Time and Lfie",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A simple watchface which displays the time when the screen is tapped and decay according to the rules of Conway's game of life.",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"timeandlife.app.js","url":"app.js"},
+    {"name":"timeandlife.img","url":"app-icon.js","evaluate":true}
+  ]
+}
+

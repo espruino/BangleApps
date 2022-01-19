@@ -2,16 +2,15 @@
   "id": "launch",
   "name": "Launcher",
   "shortName": "Launcher",
-  "version": "0.10",
+  "version": "0.11",
   "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
   "icon": "app.png",
   "type": "launch",
   "tags": "tool,system,launcher",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"launch.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
-    {"name":"launch.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
-    {"name":"launch.settings.js","url":"settings.js","supports":["BANGLEJS2"]}
+    {"name":"launch.app.js","url":"app.js"},
+    {"name":"launch.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"launch.json"}],
   "sortorder": -10
