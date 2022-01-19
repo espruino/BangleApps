@@ -5,6 +5,11 @@ if (window.location.host=="banglejs.com") {
   document.title += " [Development]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
+} else if (window.location.hostname==='localhost') {
+  document.title += " [Local]";
+  Const.APPS_JSON_FILE = "apps.local.json";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is your local Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 } else {
   document.title += " [Unofficial]";
   document.getElementById("apploaderlinks").innerHTML =
