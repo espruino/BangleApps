@@ -17,10 +17,10 @@
     "ALARM!" : "ALARM!",
     "Yes" : "Ja",
     "No" : "Nein",
-    "On" : "Auf",
-    "Off" : "aus",
+    "On" : "Ein",
+    "Off" : "Aus",
     "Ok" : "OK",
-    "Back" : "zurück"
+    "Back" : "Zurück"
   },
   "alarm": {
     "//":"App-specific overrides",
