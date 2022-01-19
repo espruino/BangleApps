@@ -1,0 +1,25 @@
+{
+  "id": "slidingtext",
+  "name": "Sliding Clock",
+  "version": "0.07",
+  "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese, Spanish and German are supported",
+  "icon": "slidingtext.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "allow_emulator": false,
+  "storage": [
+    {"name":"slidingtext.app.js","url":"slidingtext.js"},
+    {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
+    {"name":"slidingtext.locale.en.js","url":"slidingtext.locale.en.js"},
+    {"name":"slidingtext.locale.en2.js","url":"slidingtext.locale.en2.js"},
+    {"name":"slidingtext.utils.en.js","url":"slidingtext.utils.en.js"},
+    {"name":"slidingtext.locale.es.js","url":"slidingtext.locale.es.js"},
+    {"name":"slidingtext.locale.fr.js","url":"slidingtext.locale.fr.js"},
+    {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
+    {"name":"slidingtext.locale.de.js","url":"slidingtext.locale.de.js"},
+    {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
+  ]
+}

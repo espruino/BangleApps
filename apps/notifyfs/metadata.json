@@ -1,0 +1,14 @@
+{
+  "id": "notifyfs",
+  "name": "Fullscreen Notifications",
+  "shortName": "Notifications",
+  "version": "0.12",
+  "description": "Provides a replacement for the `Notifications (default)` `notify` module.   This version is used by applications to display notifications fullscreen. This may not fully restore the screen after on some apps. See `Notifications (default)` for more information about the notify module.",
+  "icon": "notify.png",
+  "type": "notify",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"notify","url":"notify.js"}
+  ]
+}

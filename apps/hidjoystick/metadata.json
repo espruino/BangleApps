@@ -1,0 +1,14 @@
+{
+  "id": "hidjoystick",
+  "name": "Bluetooth Joystick",
+  "shortName": "Joystick",
+  "version": "0.01",
+  "description": "Emulates a 2 axis/5 button Joystick using the accelerometer as stick input and buttons 1-3, touch left as button 4 and touch right as button 5.",
+  "icon": "app.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"hidjoystick.app.js","url":"app.js"},
+    {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
+  ]
+}

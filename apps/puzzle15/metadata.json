@@ -1,0 +1,19 @@
+{
+  "id": "puzzle15",
+  "name": "15 puzzle",
+  "version": "0.05",
+  "description": "A 15 puzzle game with drag gesture interface",
+  "readme":"README.md",
+  "icon": "puzzle15.app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "app",
+  "tags": "game",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"puzzle15.app.js","url":"puzzle15.app.js"},
+    {"name":"puzzle15.settings.js","url":"puzzle15.settings.js"},
+    {"name":"puzzle15.img","url":"puzzle15.app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"puzzle15.json"}]
+}

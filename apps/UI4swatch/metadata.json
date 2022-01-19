@@ -1,0 +1,15 @@
+{
+  "id": "UI4swatch",
+  "name": "UI 4 swatch",
+  "shortName": "UI 4 swatch",
+  "version": "0.01",
+  "description": "A UI/UX for espruino smartwatches, displays dinamically calc. x,y coordinates.",
+  "icon": "app.png",
+  "tags": "Color,input,buttons,touch,UI",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"UI4swatch.app.js","url":"app.js"},
+    {"name":"UI4swatch.img","url":"app-icon.js","evaluate":true}
+  ]
+}

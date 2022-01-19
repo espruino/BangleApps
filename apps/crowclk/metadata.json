@@ -1,0 +1,17 @@
+{
+  "id": "crowclk",
+  "name": "Crow Clock",
+  "version": "0.01",
+  "description": "A simple clock based on Bold Clock that has MST3K's Crow T. Robot for a face",
+  "icon": "crow_clock.png",
+  "screenshots": [{"url":"screenshot_crow.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"crowclk.app.js","url":"crow_clock.js"},
+    {"name":"crowclk.img","url":"crow_clock-icon.js","evaluate":true}
+  ]
+}

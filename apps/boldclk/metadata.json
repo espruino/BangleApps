@@ -1,0 +1,17 @@
+{
+  "id": "boldclk",
+  "name": "Bold Clock",
+  "version": "0.05",
+  "description": "Simple, readable and practical clock",
+  "icon": "bold_clock.png",
+  "screenshots": [{"url":"screenshot_bold.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"boldclk.app.js","url":"bold_clock.js"},
+    {"name":"boldclk.img","url":"bold_clock-icon.js","evaluate":true}
+  ]
+}

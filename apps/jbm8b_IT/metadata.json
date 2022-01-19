@@ -1,0 +1,16 @@
+{
+  "id": "jbm8b_IT",
+  "name": "Magic 8 Ball Italiano",
+  "shortName": "Magic 8 Ball IT",
+  "version": "0.01",
+  "description": "La palla predice il futuro",
+  "icon": "app.png",
+  "screenshots": [{"url":"bangle1-magic-8-ball-italiano-screenshot.png"}],
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"jbm8b_IT.app.js","url":"app.js"},
+    {"name":"jbm8b_IT.img","url":"app-icon.js","evaluate":true}
+  ]
+}

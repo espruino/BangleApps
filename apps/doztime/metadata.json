@@ -1,0 +1,18 @@
+{
+  "id": "doztime",
+  "name": "Dozenal Time",
+  "shortName": "Dozenal Time",
+  "version": "0.04",
+  "description": "A dozenal Holocene calendar and dozenal diurnal clock",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"doztime.app.js","url":"app-bangle1.js","supports":["BANGLEJS"]},
+    {"name":"doztime.app.js","url":"app-bangle2.js","supports":["BANGLEJS2"]},
+    {"name":"doztime.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "weather",
+  "name": "Weather",
+  "version": "0.15",
+  "description": "Show Gadgetbridge weather report",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "widget,outdoors",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "readme.md",
+  "storage": [
+    {"name":"weather.app.js","url":"app.js"},
+    {"name":"weather.wid.js","url":"widget.js"},
+    {"name":"weather","url":"lib.js"},
+    {"name":"weather.img","url":"icon.js","evaluate":true},
+    {"name":"weather.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"weather.json"}]
+}

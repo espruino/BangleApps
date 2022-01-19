@@ -1,0 +1,18 @@
+{
+  "id": "touchtimer",
+  "name": "Touch Timer",
+  "shortName": "Touch Timer",
+  "version": "0.02",
+  "description": "Quickly and easily create a timer with touch-only input. The time can be easily set with a number pad.",
+  "icon": "app.png",
+  "tags": "tools",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"0_light_timer_edit.png"},{"url":"1_light_timer_ready.png"},{"url":"2_light_timer_running.png"},{"url":"3_light_timer_finished.png"}],
+  "storage": [
+    { "name": "touchtimer.app.js", "url": "app.js" },
+    { "name":"touchtimer.settings.js", "url":"settings.js"},
+    { "name": "touchtimer.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "data": [{"name":"touchtimer.data.json"}]
+}

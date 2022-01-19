@@ -1,0 +1,14 @@
+{
+  "id": "gpsinfo",
+  "name": "GPS Info",
+  "version": "0.10",
+  "description": "An application that displays information about altitude, lat/lon, satellites and time",
+  "icon": "gps-info.png",
+  "type": "app",
+  "tags": "gps",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"gpsinfo.app.js","url":"gps-info.js"},
+    {"name":"gpsinfo.img","url":"gps-info-icon.js","evaluate":true}
+  ]
+}

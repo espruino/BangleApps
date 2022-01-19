@@ -1,0 +1,15 @@
+{
+  "id": "bootgattbat",
+  "name": "BLE GATT Battery Service",
+  "shortName": "BLE Battery Service",
+  "version": "0.01",
+  "description": "Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.\n",
+  "icon": "bluetooth.png",
+  "type": "bootloader",
+  "tags": "battery,ble,bluetooth,gatt",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"gattbat.boot.js","url":"boot.js"}
+  ]
+}

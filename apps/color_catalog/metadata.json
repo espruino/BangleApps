@@ -1,0 +1,15 @@
+{
+  "id": "color_catalog",
+  "name": "Colors Catalog",
+  "shortName": "Colors Catalog",
+  "version": "0.01",
+  "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
+  "icon": "app.png",
+  "tags": "Color,input,buttons,touch,UI",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"color_catalog.app.js","url":"app.js"},
+    {"name":"color_catalog.img","url":"app-icon.js","evaluate":true}
+  ]
+}

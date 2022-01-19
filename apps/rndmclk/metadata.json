@@ -1,0 +1,14 @@
+{
+  "id": "rndmclk",
+  "name": "Random Clock Loader",
+  "version": "0.03",
+  "description": "Load a different clock whenever the LCD is switched on.",
+  "icon": "rndmclk.png",
+  "type": "widget",
+  "tags": "widget,clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"rndmclk.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "widbatwarn",
+  "name": "Battery Warning",
+  "shortName": "Battery Warning",
+  "version": "0.02",
+  "description": "Show a warning when the battery runs low.",
+  "icon": "widget.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "widget",
+  "tags": "tool,battery",
+  "supports": ["BANGLEJS"],
+  "dependencies": {"notify":"type"},
+  "readme": "README.md",
+  "storage": [
+    {"name":"widbatwarn.wid.js","url":"widget.js"},
+    {"name":"widbatwarn.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widbatwarn.json"}]
+}
