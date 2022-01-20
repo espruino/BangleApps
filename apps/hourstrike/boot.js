@@ -30,9 +30,23 @@
   }
   function strike_func () {
     var setting = require('Storage').readJSON('hourstrike.json',1)||[];
-    Bangle.buzz(200, setting.vlevel||0.5)
-      .then(() => new Promise(resolve => setTimeout(resolve,200)))
-      .then(() => Bangle.buzz(200, setting.vlevel||0.5));
+    if (0 == setting.buzzOrBeep) {
+      if (2 == setting.scount) {
+        Bangle.buzz(200, setting.vlevel||0.5)
+          .then(() => new Promise(resolve => setTimeout(resolve,200)))
+          .then(() => Bangle.buzz(200, setting.vlevel||0.5));
+      } else {
+        Bangle.buzz(200, setting.vlevel||0.5);
+      }
+    } else {
+      if (2 == setting.scount) {
+        Bangle.beep(50)
+          .then(() => new Promise(resolve => setTimeout(resolve,50)))
+          .then(() => Bangle.beep(50));
+      } else {
+        Bangle.beep(50);
+      }
+    }
     setup();
   }
   setup();
