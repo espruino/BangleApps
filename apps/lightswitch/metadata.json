@@ -1,9 +1,19 @@
 {
   "id": "lightswitch",
-  "name": "Light Switch",
-  "type": "widget",
+  "name": "Light Switch Widget",
+  "shortName": "Light Switch",
   "version": "0.01",
+  "description": "This is a fast way to switch backlighting on/off, change the brightness and show the lock status. All in one widget.",
+  "type": "widget",
   "tags": "widget,brightness,lock",
-  "files": "lightswitch.info,lightswitch.boot.js,lightswitch.wid.js,lightswitch.settings.js,lightswitch.js",
-  "data": "lightswitch.json,lightswitch.images.json"
+  "storage": [
+    {"name": "lightswitch.boot.js", "url": "boot.js"},
+    {"name": "lightswitch.js", "url": "lib.js"},
+    {"name": "lightswitch.settings.js", "url": "settings.js"},
+    {"name": "lightswitch.wid.js", "url": "widget.js"}
+  ],
+  "data": [
+    {"name": "lightswitch.json"},
+    {"name": "lightswitch.images.json", "url": "images.json"}
+  ]
 }
