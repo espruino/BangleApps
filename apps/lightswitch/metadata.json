@@ -8,6 +8,7 @@
   "type": "widget",
   "tags": "widget,brightness,lock",
   "supports": ["BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name": "lightswitch.boot.js", "url": "boot.js"},
     {"name": "lightswitch.js", "url": "lib.js"},
