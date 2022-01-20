@@ -1,7 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateHrm = exports.initHrm = void 0;
 function initHrm(state) {
     Bangle.on('HRM', (hrm) => updateHrm(state, hrm));
     Bangle.setHRMPower(1);
 }
+exports.initHrm = initHrm;
 function updateHrm(state, hrm) {
     if (hrm.confidence === 0) {
         return;
@@ -12,4 +16,4 @@ function updateHrm(state, hrm) {
     state.hr += dHr * hrGain;
     state.hrError += (hrError - state.hrError) * hrGain;
 }
-export { initHrm, updateHrm };
+exports.updateHrm = updateHrm;

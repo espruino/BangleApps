@@ -1,11 +1,15 @@
-import { draw } from './display';
-import { updateLog } from './log';
-import { ActivityStatus } from './state';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateGps = exports.readGps = exports.initGps = void 0;
+const display_1 = require("./display");
+const log_1 = require("./log");
+const state_1 = require("./state");
 const EARTH_RADIUS = 6371008.8;
 function initGps(state) {
     Bangle.on('GPS', (gps) => readGps(state, gps));
     Bangle.setGPSPower(1);
 }
+exports.initGps = initGps;
 function readGps(state, gps) {
     state.lat = gps.lat;
     state.lon = gps.lon;
@@ -15,16 +19,17 @@ function readGps(state, gps) {
     state.dop = gps.hdop;
     state.gpsValid = state.fix > 0;
     updateGps(state);
-    draw(state);
+    (0, display_1.draw)(state);
     /* Only log GPS data every 5 secs if we
     have a fix and we're running. */
     if (state.gpsValid &&
-        state.status === ActivityStatus.Running &&
+        state.status === state_1.ActivityStatus.Running &&
         state.timeSinceLog > 5) {
         state.timeSinceLog = 0;
-        updateLog(state);
+        (0, log_1.updateLog)(state);
     }
 }
+exports.readGps = readGps;
 function updateGps(state) {
     const t = Date.now();
     let dt = (t - state.t) / 1000;
@@ -32,7 +37,7 @@ function updateGps(state) {
         dt = 0;
     state.t = t;
     state.timeSinceLog += dt;
-    if (state.status === ActivityStatus.Running) {
+    if (state.status === state_1.ActivityStatus.Running) {
         state.duration += dt;
     }
     if (!state.gpsValid) {
@@ -57,10 +62,10 @@ function updateGps(state) {
     state.x = x;
     state.y = y;
     state.z = z;
-    if (state.status === ActivityStatus.Running) {
+    if (state.status === state_1.ActivityStatus.Running) {
         state.distance += dpMag;
         state.speed = (state.distance / state.duration) || 0;
         state.cadence = (60 * state.steps / state.duration) || 0;
     }
 }
-export { initGps, readGps, updateGps };
+exports.updateGps = updateGps;

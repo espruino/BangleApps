@@ -1,9 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initState = exports.ActivityStatus = void 0;
 var ActivityStatus;
 (function (ActivityStatus) {
     ActivityStatus["Stopped"] = "STOP";
     ActivityStatus["Paused"] = "PAUSE";
     ActivityStatus["Running"] = "RUN";
 })(ActivityStatus || (ActivityStatus = {}));
+exports.ActivityStatus = ActivityStatus;
 function initState() {
     return {
         fix: NaN,
@@ -30,4 +34,4 @@ function initState() {
         cadence: 0,
     };
 }
-export { ActivityStatus, initState };
+exports.initState = initState;

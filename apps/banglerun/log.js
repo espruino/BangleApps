@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateLog = exports.initLog = void 0;
 function initLog(state) {
     const datetime = new Date().toISOString().replace(/[-:]/g, '');
     const date = datetime.substr(2, 6);
@@ -8,6 +11,7 @@ function initLog(state) {
     state.fileWritten = false;
     return state;
 }
+exports.initLog = initLog;
 function updateLog(state) {
     if (!state.fileWritten) {
         state.file.write([
@@ -33,4 +37,4 @@ function updateLog(state) {
         state.steps.toFixed(0),
     ].join(',') + '\n');
 }
-export { initLog, updateLog };
+exports.updateLog = updateLog;
