@@ -1,17 +1,19 @@
-import { AppState } from './state';
+import { AppState, AppStateWithLog } from './state';
 
 declare var require: any;
 
-function initLog(state: AppState): void {
+function initLog(state: AppState): AppStateWithLog {
   const datetime = new Date().toISOString().replace(/[-:]/g, '');
   const date = datetime.substr(2, 6);
   const time = datetime.substr(9, 6);
   const filename = `banglerun_${date}_${time}`;
+  state = <AppStateWithLog> state;
   state.file = require('Storage').open(filename, 'w');
   state.fileWritten = false;
+  return state;
 }
 
-function updateLog(state: AppState): void {
+function updateLog(state: AppStateWithLog): void {
   if (!state.fileWritten) {
     state.file.write([
       'timestamp',

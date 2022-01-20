@@ -4,7 +4,7 @@ enum ActivityStatus {
   Running = 'RUN',
 }
 
-interface AppState {
+interface BasicAppState {
   // GPS NMEA data
   fix: number;
   lat: number;
@@ -28,20 +28,29 @@ interface AppState {
   hrError: number,
 
   // Logger data
-  file: File;
   fileWritten: boolean;
 
   // Drawing data
   drawing: boolean;
 
   // Activity data
-  status: ActivityStatus;
   duration: number;
   distance: number;
   speed: number;
   steps: number;
   cadence: number;
 }
+
+interface AppStateWithoutLog extends BasicAppState {
+  status: 'STOP';
+}
+
+interface AppStateWithLog extends BasicAppState {
+  file: File;
+  status: ActivityStatus;
+}
+
+type AppState = AppStateWithLog | AppStateWithoutLog;
 
 interface File {
   read: Function;
@@ -68,7 +77,6 @@ function initState(): AppState {
     hr: 60,
     hrError: 100,
 
-    file: null,
     fileWritten: false,
 
     drawing: false,
@@ -82,4 +90,4 @@ function initState(): AppState {
   }
 }
 
-export { ActivityStatus, AppState, File, initState };
+export { ActivityStatus, AppState, AppStateWithLog, File, initState };
