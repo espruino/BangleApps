@@ -22,6 +22,6 @@ jobs:
       - name: build types
         working-directory: ./typescript
         run: npm run build:types
-      - name: build all TS apps
+      - name: build all TS apps and widgets
         working-directory: ./typescript
-        run: npm run build:apps
+        run: npm run build

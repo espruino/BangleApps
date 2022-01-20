@@ -11,8 +11,8 @@ The typing is an ongoing process. If anything is still missing, you can add it! 
 
 ## Compilation
 
-Install [npm](https://www.npmjs.com/get-npm) if you haven't already.
-Make sure you are using version ^8 by running `npm -v`. If the version is incorrect, run `npm i -g npm@^8`.
+Install [npm](https://www.npmjs.com/get-npm) and node.js if you haven't already. We recommend using a version manager like nvm, which is also referenced in the linked documentation.
+Make sure you are using node version 16 by running `nvm use 16` and npm version ^8 by running `npm -v`. If the latter version is incorrect, run `npm i -g npm@^8`.
 
 After having installed npm for your platform, open a terminal, and navigate into the `/typescript` folder. Then run:
 
@@ -23,7 +23,7 @@ npm ci
 to install the project's build tools, and:
 
 ```
-npm run build:apps
+npm run build
 ```
 
-To build all Typescript apps. The last command will generate the `app.js` files containing the transpiled code for the BangleJS.
+To build all Typescript apps and widgets. The last command will generate the `app.js` files containing the transpiled code for the BangleJS.
