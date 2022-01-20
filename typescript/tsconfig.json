@@ -13,7 +13,5 @@
     "noUnusedParameters": true,
     "strict": true
   },
-  "include": ["../apps/**/*", "./**/*"],
-  // this app is excluded because it was built before this configuration was created and is using its own
-  "exclude": ["../apps/hebrew_calendar"]
+  "include": ["../apps/**/*", "./**/*"], 
 }
