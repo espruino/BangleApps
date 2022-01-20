@@ -16,7 +16,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm ci
+      - name: install testing dependencies
+        run: npm i
+      - name: test all apps and widgets
+        run: npm run test
+      - name: install typescript dependencies
         working-directory: ./typescript
         run: npm ci
       - name: build types
@@ -25,7 +29,3 @@ jobs:
       - name: build all TS apps and widgets
         working-directory: ./typescript
         run: npm run build
-      - name: install testing dependencies
-        run: npm i
-      - name: test all apps and widgets
-        run: npm run test
