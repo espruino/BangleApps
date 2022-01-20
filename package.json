@@ -9,7 +9,7 @@
   "scripts": {
     "lint-apps": "eslint ./apps --ext .js",
     "test": "node bin/sanitycheck.js && eslint ./apps --ext .js",
-    "update-local-apps": "node bin/update_local_apps_json.js",
+    "update-local-apps": "./bin/create_apps_json.sh apps.local.json",
     "local": "npm-watch & npx http-server -a localhost -c-1",
     "start": "npx http-server -c-1"
   },

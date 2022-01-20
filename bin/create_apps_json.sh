@@ -13,17 +13,26 @@
 #
 # If you do this, please do not attempt to commit your modified
 # apps.json back into the main BangleApps repository!
+#
+# You can pass an optional filename to this script, and it will write
+# to that instead, apps.local.json is used when opening the loader on localhost
+outfile="${1:-apps.json}"
 
 cd `dirname $0`/..
-echo "[" > apps.json
+echo "[" > "$outfile"
+first=1
 for app in apps/*/; do 
   echo "Processing $app..."; 
   if [[ "$app" =~ ^apps/_example.* ]]; then
     echo "Ignoring $app"
   else
-    cat ${app}metadata.json >> apps.json
+    if [ $first -eq 1 ]; then
+      first=0;
+    else
+      echo "," >> "$outfile"
+    fi;
+    cat ${app}metadata.json >> "$outfile"
 #    echo ",\"$app\"," >> apps.json # DEBUG ONLY
-    echo "," >> apps.json
   fi
 done
-echo "null]" >> apps.json
+echo "]" >> "$outfile"
