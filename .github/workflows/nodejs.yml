@@ -18,6 +18,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: install testing dependencies
         run: npm i
+      - name: list content of folders
+        run: ls -l
+      - name: list content of folders 2
+        run: ls -l ./core
+      - name: list content of folders 3
+        run: ls -l ./core/lib
       - name: test all apps and widgets
         run: npm run test
       - name: install typescript dependencies
