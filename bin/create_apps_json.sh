@@ -36,3 +36,13 @@ for app in apps/*/; do
   fi
 done
 echo "]" >> "$outfile"
+
+if [ -z "$1"]; then
+  # Running with no arguments: prevent accidental commit of modified apps.json.
+  # You can use `create_apps.json.sh apps.json` if you really want to both
+  # overwrite and still commit apps.json
+  git update-index --skip-worktree apps.json
+  echo "Told git to ignore modified apps.json."
+  # If you want to unignore it, use
+  #   'git update-index --no-skip-worktree apps.json'
+fi
