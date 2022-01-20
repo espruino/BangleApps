@@ -7,6 +7,7 @@
   "icon": "app.png",
   "type": "widget",
   "tags": "widget,brightness,lock",
+  "supports": ["BANGLEJS2"],
   "storage": [
     {"name": "lightswitch.boot.js", "url": "boot.js"},
     {"name": "lightswitch.js", "url": "lib.js"},
