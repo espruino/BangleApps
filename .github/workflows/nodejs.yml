@@ -25,3 +25,7 @@ jobs:
       - name: build all TS apps and widgets
         working-directory: ./typescript
         run: npm run build
+      - name: install testing dependencies
+        run: npm i
+      - name: test all apps and widgets
+        run: npm run test
