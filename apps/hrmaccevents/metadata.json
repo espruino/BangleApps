@@ -1,0 +1,14 @@
+{
+  "id": "hrmaccevents",
+  "name": "HRM Accelerometer event recorder",
+  "shortName": "HRM ACC recorder",
+  "version": "0.01",
+  "type": "ram",
+  "description": "Record HRM and accelerometer events in high resolution to CSV files in your browser",
+  "icon": "app.png",
+  "tags": "debug",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "custom": "custom.html",
+  "customConnect": true,
+  "storage": [ ]
+}
