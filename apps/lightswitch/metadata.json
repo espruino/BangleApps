@@ -1,0 +1,9 @@
+{
+  "id": "lightswitch",
+  "name": "Light Switch",
+  "type": "widget",
+  "version": "0.01",
+  "tags": "widget,brightness,lock",
+  "files": "lightswitch.info,lightswitch.boot.js,lightswitch.wid.js,lightswitch.settings.js,lightswitch.js",
+  "data": "lightswitch.json,lightswitch.images.json"
+}
