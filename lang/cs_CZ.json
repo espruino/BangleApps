@@ -1,0 +1,53 @@
+{
+	"//":"Czech language translations",
+		"GLOBAL": {
+			"//":"Translations that apply for all apps",
+			"Alarm" : "Budík",
+			"Hour" : "Hodina",
+			"Hours" : "Hodiny",
+			"Minute" : "Minuta",
+			"Minutes" : "Minuty",
+			"Second" : "Sekunda",
+			"Seconds" : "Sekundy",
+			"Month" : "Měsíc",
+			"Enabled" : "Povoleno",
+			"Background" : "Pozadí",
+			"Connected" : "Připojeno",
+			"Settings" : "Nastavení",
+			"Save" : "Uložit",
+			"Back" : "Zpět",
+			"Repeat" : "Opakovat",
+			"Delete" : "Smazat",
+			"Sleep" : "Uspat",
+			"Alarms" : "Budíky",
+			"ALARM!" : "BUDÍK!",
+
+			" (repeat)" : " (opakovat)",
+			"< Back" : "< Zpět",
+			"> Delete" : "> Smazat",
+			"> Save" : " > Uložit",
+			"ALARM " : "BUDÍK ",
+
+			"Add Device" : "Přidat zařízení",
+			"App Settings" : "Nast. Aplikací",
+			"Apps" : "Aplikace"
+
+		},
+		"alarm": {
+			"//":"App-specific overrides",
+			"Alarm/Timer" : "Budik/Časovač",
+			"rpt" : "Opk.",
+			"New Alarm" : "Nový budík",
+			"New Timer" : "Nový časovač",
+			"Auto snooze" : "Auto odložit"
+		},
+		"setting" : {
+			"Quiet Mode" : "Tichý režim"
+
+		},
+		"messages": {
+			"Are you sure?" : "Opravdu?"
+		}
+
+
+}
