@@ -6,10 +6,7 @@ function initLog(state) {
     const date = datetime.substr(2, 6);
     const time = datetime.substr(9, 6);
     const filename = `banglerun_${date}_${time}`;
-    state = state;
-    state.file = require('Storage').open(filename, 'w');
-    state.fileWritten = false;
-    return state;
+    return Object.assign(Object.assign({}, state), { file: require('Storage').open(filename, 'w'), fileWritten: false });
 }
 exports.initLog = initLog;
 function updateLog(state) {
