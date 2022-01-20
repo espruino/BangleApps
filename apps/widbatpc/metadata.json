@@ -9,7 +9,7 @@
   "tags": "widget,battery",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
-  "screenshots": [{"url":"widbatpc.full.jpg"},{"widbatpc.part.jpg"}],
+  "screenshots": [{"url":"widbatpc.full.jpg"},{"url":"widbatpc.part.jpg"}],
   "storage": [
     {"name":"widbatpc.wid.js","url":"widget.js"},
     {"name":"widbatpc.settings.js","url":"settings.js"}
