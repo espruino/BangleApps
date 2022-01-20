@@ -1,0 +1,19 @@
+{ "id": "tinydraw",
+  "name": "TinyDraw",
+  "shortName":"TinyDraw",
+  "version":"0.02",
+  "type": "app",
+  "description": "Draw stuff in your wrist",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "tools, keyboard, text, scribble",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"tinydraw.app.js","url":"app.js"},
+    {"name":"tinydraw.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots":[
+    { "url":"screenshot.png" }
+  ]
+}

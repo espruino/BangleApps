@@ -1,0 +1,15 @@
+{
+  "id": "stopwatch",
+  "name": "Stopwatch Touch",
+  "version": "0.01",
+  "description": "A touch based stop watch for Bangle JS 2",
+  "icon": "stopwatch.png",
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"}],
+  "tags": "tools,app",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
+    {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
+  ]
+}

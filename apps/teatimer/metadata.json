@@ -1,0 +1,21 @@
+{
+  "id": "teatimer",
+  "name": "Tea Timer",
+  "version": "0.01",
+  "description": "A simple timer. You can easyly set up the time.",
+  "icon": "teatimer.png",
+  "type": "app",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"teatimer.app.js","url":"app.js"},
+    {"name":"teatimer.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [
+    {"url":"TeatimerStart.jpg"},
+    {"url":"TeatimerHelp.jpg"},
+    {"url":"TeatimerRun.jpg"},
+    {"url":"TeatimerUp.jpg"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "accellog",
+  "name": "Acceleration Logger",
+  "shortName": "Accel Log",
+  "version": "0.03",
+  "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
+  "icon": "app.png",
+  "tags": "outdoor",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"accellog.app.js","url":"app.js"},
+    {"name":"accellog.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"wildcard":"accellog.?.csv"}]
+}

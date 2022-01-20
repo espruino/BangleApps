@@ -1,0 +1,16 @@
+{
+  "id": "scolor",
+  "name": "Show Color",
+  "version": "0.01",
+  "description": "Display all available Colors and Names",
+  "icon": "show-color.png",
+  "type": "app",
+  "tags": "tool",
+  "screenshots": [{"url":"bangle1-view-color-screenshot.png"}],
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"scolor.app.js","url":"show-color.js"},
+    {"name":"scolor.img","url":"show-color-icon.js","evaluate":true}
+  ]
+}

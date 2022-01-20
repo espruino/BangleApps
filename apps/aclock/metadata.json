@@ -1,0 +1,16 @@
+{
+  "id": "aclock",
+  "name": "Analog Clock",
+  "version": "0.15",
+  "description": "An Analog Clock",
+  "icon": "clock-analog.png",
+  "screenshots": [{"url":"screenshot_analog.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"aclock.app.js","url":"clock-analog.js"},
+    {"name":"aclock.img","url":"clock-analog-icon.js","evaluate":true}
+  ]
+}

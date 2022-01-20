@@ -1,0 +1,14 @@
+{ "id": "snek",
+  "name": "The snek game",
+  "shortName":"Snek",
+  "version": "0.02",
+  "description": "A snek game where you control a snek to eat all the apples!",
+  "screenshots": [{"url":"screenshot_snek.png"}],
+  "icon": "snek.png",
+  "supports": ["BANGLEJS2"],
+  "tags": "game,fun",
+  "storage": [
+    {"name":"snek.app.js","url":"snek.js"},
+    {"name":"snek.img","url":"snek.icon.js","evaluate":true}
+  ]
+}

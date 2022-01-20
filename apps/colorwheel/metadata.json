@@ -1,0 +1,15 @@
+{
+  "id":"colorwheel",
+  "name":"Color Wheel",
+  "tags":"app,tool",
+  "version":"0.01",
+  "description":"a tappable wheel of good-looking colors",
+  "readme":"README.md",
+  "supports":["BANGLEJS2"],
+  "allow_emulator":true,
+  "icon":"colorwheel.png",
+  "storage": [
+    {"name":"colorwheel.app.js","url":"app.js"},
+    {"name":"colorwheel.img","url":"app-icon.js","evaluate":true}
+  ]
+}

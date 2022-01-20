@@ -1,0 +1,16 @@
+{
+  "id": "mclockplus",
+  "name": "Morph Clock+",
+  "shortName": "Morph Clock+",
+  "version": "0.03",
+  "description": "Morphing Clock with more readable seconds and date and additional stopwatch",
+  "icon": "mclockplus.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
+    {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
+  ]
+}

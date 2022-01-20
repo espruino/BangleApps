@@ -1,0 +1,16 @@
+{
+  "id": "setting",
+  "name": "Settings",
+  "version": "0.41",
+  "description": "A menu for setting up Bangle.js",
+  "icon": "settings.png",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"setting.app.js","url":"settings.js"},
+    {"name":"setting.img","url":"settings-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
+  "sortorder": -5
+}

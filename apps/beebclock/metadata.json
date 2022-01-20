@@ -1,0 +1,16 @@
+{
+  "id": "beebclock",
+  "name": "Beeb Clock",
+  "version": "0.05",
+  "description": "Clock face that may be coincidentally familiar to BBC viewers",
+  "icon": "beebclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [{"url":"bangle1-beeb-clock-screenshot.png"}],
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"beebclock.app.js","url":"beebclock.js"},
+    {"name":"beebclock.img","url":"beebclock-icon.js","evaluate":true}
+  ]
+}

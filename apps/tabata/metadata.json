@@ -1,0 +1,14 @@
+{
+  "id": "tabata",
+  "name": "Tabata",
+  "shortName": "Tabata - Control High-Intensity Interval Training",
+  "version": "0.01",
+  "description": "Control high-intensity interval training (according to tabata: https://en.wikipedia.org/wiki/Tabata_method).",
+  "icon": "tabata.png",
+  "tags": "workout,health",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"tabata.app.js","url":"tabata.js"},
+    {"name":"tabata.img","url":"tabata-icon.js","evaluate":true}
+  ]
+}

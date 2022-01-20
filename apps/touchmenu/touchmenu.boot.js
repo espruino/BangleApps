@@ -1,10 +1,8 @@
 E.showMenu = function(items) {
-  const gw = g.getWidth();
-  const gh = g.getHeight();
+  var ar = Bangle.appRect;
   Bangle.removeAllListeners("drag");
   if(!items){
-    delete m;
-    g.clearRect(0, 30, gw, gh - 30);
+    g.clearRect(ar.x, ar.y, ar.x2, ar.y2);
     return false;
   }
   var loc = require("locale");
@@ -26,45 +24,45 @@ E.showMenu = function(items) {
     draw: () => {
       g.reset().setFont('12x20');
       m.info.predraw(g);
-      g.setColor(m.info.cB).fillRect(0, 50, gw, gh - 30).setColor(m.info.cF);
+      g.setColor(m.info.cB).fillRect(ar.x, ar.y + 20, ar.x2, ar.y2).setColor(m.info.cF);
       m.items.forEach((e, i) => {
-        const s = (i * 48) - m.scroll + 50;
-        if(s < 30 || s > gh - 74){
+        const s = (i * 48) - m.scroll + ar.y + 20;
+        if(s < ar.y || s > ar.y2 - 44){
           return false;
         }
         if(i == m.selected){
-          g.setColor(m.info.cHB).fillRect(0, s, gw, Math.min(s + 48, gh - 30)).setColor(m.info.cHF);
+          g.setColor(m.info.cHB).fillRect(ar.x, s, ar.x2, Math.min(s + 48, ar.y2)).setColor(m.info.cHF);
         }else{
           g.setColor(m.info.cF);
         }
-        g.drawString(e.title, (e.icon ? 30 : 10), s + 5);
+        g.drawString(e.title, ar.x + (e.icon ? 30 : 10), s + 5);
         if(e.icon){
-          g.drawImage(e.icon, 5, s + 5);
+          g.drawImage(e.icon, ar.x + 5, s + 5);
         }
-        if(e.type && s < gh - 72){
+        if(e.type && s < ar.y2 - 42){
           if(e.format){
-            g.setFontAlign(1, -1, 0).drawString(e.format(e.value), gw - 10, s + 25).setFontAlign(-1, -1, 0);
+            g.setFontAlign(1, -1, 0).drawString(e.format(e.value), ar.x2 - 10, s + 25).setFontAlign(-1, -1, 0);
           }else{
-            g.setFontAlign(1, -1, 0).drawString(e.value, gw - 10, s + 25).setFontAlign(-1, -1, 0);
+            g.setFontAlign(1, -1, 0).drawString(e.value, ar.x2 - 10, s + 25).setFontAlign(-1, -1, 0);
           }
         }
       });
-      g.setColor(m.info.cAB).fillRect(0, 30, gw, 50);
-      g.setColor(m.info.cAF).drawString(m.info.title, (m.back ? 30 : 10), 32);
+      g.setColor(m.info.cAB).fillRect(ar.x, ar.y, ar.x2, ar.y + 20);
+      g.setColor(m.info.cAF).drawString(m.info.title, ar.x + (m.back ? 30 : 10), ar.y + 2);
       if(m.back){
-        g.drawLine(5, 40, 20, 40);
-        g.drawLine(5, 40, 15, 33);
-        g.drawLine(5, 40, 15, 47);
+        g.drawLine(ar.x + 5, ar.y + 10, ar.x + 20, ar.y + 10);
+        g.drawLine(ar.x + 5, ar.y + 10, ar.x + 15, ar.y + 17);
+        g.drawLine(ar.x + 5, ar.y + 10, ar.x + 15, ar.y + 3);
       }
       m.info.preflip(g, m.scroll > 0, m.scroll < (m.items.length - 1) * 48);
     },
     select: (x, y) => {
-      if(m.selected == -1 || m.selected !== Math.max(Math.min(Math.floor((y + m.scroll - 50) / 48), m.items.length - 1), 0)){
+      if(m.selected == -1 || m.selected !== Math.max(Math.min(Math.floor((y + m.scroll - ar.y - 20) / 48), m.items.length - 1), 0)){
         if(y){
-          if(y < 50 || y > gh - 30){
+          if(y < ar.y + 20 || y > ar.y2){
             return false;
           }else{
-            m.selected = Math.max(Math.min(Math.floor((y + m.scroll - 50) / 48), m.items.length - 1), 0);
+            m.selected = Math.max(Math.min(Math.floor((y + m.scroll - ar.y - 20) / 48), m.items.length - 1), 0);
           }
         }else{
           m.selected = Math.floor(m.scroll / 48);
@@ -76,7 +74,7 @@ E.showMenu = function(items) {
           m.items[m.selected].onchange(m.items[m.selected].value);
           m.draw();
         }else if(m.items[m.selected].type && m.items[m.selected].type === "number"){
-          if(x && x < (gw / 2)){
+          if(x && x < ((ar.x + ar.x2) / 2)){
             m.items[m.selected].value = m.items[m.selected].value - (m.items[m.selected].step ? m.items[m.selected].step : 1);
           }else{
             m.items[m.selected].value = m.items[m.selected].value + (m.items[m.selected].step ? m.items[m.selected].step : 1);
@@ -99,7 +97,7 @@ E.showMenu = function(items) {
     move: d => {
       m.scroll += (d * 48);
       m.scroll = Math.min(Math.max(m.scroll, 0), (m.items.length - 1) * 48);
-      m.selected = Math.max(Math.min(Math.floor((m.scroll - 50) / 48), m.items.length - 1), 0);
+      m.selected = Math.max(Math.min(Math.floor((m.scroll - ar.y - 20) / 48), m.items.length - 1), 0);
       m.draw();
     },
   };
@@ -127,7 +125,7 @@ E.showMenu = function(items) {
       return false;
     }
     if(d.dx == 0 && d.dy == 0){
-      if(d.x < 30 && d.y < 50){
+      if(d.x < ar.x + 30 && d.y < ar.y + 20){
         m.back();
         return false;
       }
@@ -194,4 +192,10 @@ E.showPrompt = function (e, t){
     }
     E.showMenu(menu);
   });
+};
+
+const bsl = Bangle.showLauncher;
+Bangle.showLauncher = function (){
+  Bangle.removeAllListeners("drag");
+  bsl();
 };

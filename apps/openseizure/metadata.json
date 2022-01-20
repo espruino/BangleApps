@@ -1,0 +1,15 @@
+{
+  "id": "openseizure",
+  "name": "OpenSeizureDetector Widget",
+  "shortName": "Short Name",
+  "version": "0.01",
+  "description": "[BETA!] A widget to work alongside [OpenSeizureDetector](https://www.openseizuredetector.org.uk/)",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"openseizure.wid.js","url":"widget.js"}
+  ]
+}

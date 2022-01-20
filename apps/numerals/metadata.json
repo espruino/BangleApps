@@ -1,0 +1,19 @@
+{
+  "id": "numerals",
+  "name": "Numerals Clock",
+  "shortName": "Numerals Clock",
+  "version": "0.10",
+  "description": "A simple big numerals clock",
+  "icon": "numerals.png",
+  "type": "clock",
+  "tags": "numerals,clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-numerals-screenshot.png"}],
+  "storage": [
+    {"name":"numerals.app.js","url":"numerals.app.js"},
+    {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
+    {"name":"numerals.settings.js","url":"numerals.settings.js"}
+  ],
+  "data": [{"name":"numerals.json"}]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "floralclk",
+  "name": "Floral Clock",
+  "version": "0.01",
+  "description": "A clock with a flower background by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: Works on any Bangle.js 2 but requires firmware 2v11 or later on Bangle.js 1**",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_floral.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"floralclk.app.js","url":"app.js"},
+    {"name":"floralclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

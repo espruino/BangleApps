@@ -1,0 +1,13 @@
+{ "id": "widChargingStatus",
+  "name": "Charging Status",
+  "shortName":"ChargingStatus",
+  "icon": "widget.png",
+  "version":"0.01",
+  "type": "widget",
+  "description": "A simple widget that shows a yellow lightning icon to indicate whenever the watch is charging. This way one can see the charging status at a glance, no matter which battery widget is being used.",
+  "tags": "widget",
+      "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widChargingStatus.wid.js","url":"widget.js"}
+   ]
+}

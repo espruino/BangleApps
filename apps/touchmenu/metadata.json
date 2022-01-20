@@ -1,0 +1,14 @@
+{
+  "id": "touchmenu",
+  "name": "TouchMenu",
+  "version": "0.02",
+  "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
+  "screenshots": [{"url":"touchmenu.gif"}],
+  "icon": "touchmenu.png",
+  "type": "bootloader",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
+  ]
+}

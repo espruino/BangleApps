@@ -1,0 +1,17 @@
+{
+  "id": "clock2x3",
+  "name": "2x3 Pixel Clock",
+  "version": "0.05",
+  "description": "This is a simple clock using minimalist 2x3 pixel numerical digits",
+  "icon": "clock2x3.png",
+  "screenshots": [{"url":"screenshot_pixel.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"clock2x3.app.js","url":"clock2x3-app.js"},
+    {"name":"clock2x3.img","url":"clock2x3-icon.js","evaluate":true}
+  ]
+}

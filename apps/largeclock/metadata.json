@@ -1,0 +1,19 @@
+{
+  "id": "largeclock",
+  "name": "Large Clock",
+  "version": "0.10",
+  "description": "A readable and informational digital watch, with date, seconds and moon phase",
+  "icon": "largeclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-large-clock-screenshot.png"}],
+  "storage": [
+    {"name":"largeclock.app.js","url":"largeclock.js"},
+    {"name":"largeclock.img","url":"largeclock-icon.js","evaluate":true},
+    {"name":"largeclock.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"largeclock.json"}]
+}

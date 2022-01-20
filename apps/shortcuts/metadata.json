@@ -1,0 +1,17 @@
+{
+  "id": "shortcuts",
+  "name": "Shortcuts",
+  "shortName": "Shortcuts",
+  "version": "0.01",
+  "description": "Quickly load your favourite apps from (almost) any watch face.",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "tool",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"shortcuts.boot.js","url":"boot.js"},
+    {"name":"shortcuts.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"shortcuts.json"}]
+}

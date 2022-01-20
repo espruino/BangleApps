@@ -1,0 +1,14 @@
+{
+  "id": "widcom",
+  "name": "Compass Widget",
+  "version": "0.02",
+  "description": "Tiny widget to show the power on/off status of the Compass",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,compass",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widcom.wid.js","url":"widget.js"}
+  ]
+}

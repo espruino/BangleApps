@@ -1,0 +1,17 @@
+{
+  "id": "devstopwatch",
+  "name": "Dev Stopwatch",
+  "shortName": "Dev Stopwatch",
+  "version": "0.04",
+  "description": "Stopwatch with 5 laps supported (cyclically replaced)",
+  "icon": "app.png",
+  "tags": "stopwatch,chrono,timer,chronometer",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"bangle1-dev-stopwatch-screenshot.png"},{"url":"bangle2-dev-stopwatch-screenshot.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"devstopwatch.app.js","url":"app.js"},
+    {"name":"devstopwatch.img","url":"app-icon.js","evaluate":true}
+  ]
+}

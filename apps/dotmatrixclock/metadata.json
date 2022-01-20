@@ -1,0 +1,16 @@
+{
+  "id": "dotmatrixclock",
+  "name": "Dotmatrix Clock",
+  "version": "0.01",
+  "description": "A clear white-on-blue dotmatrix simulated clock",
+  "icon": "dotmatrixclock.png",
+  "type": "clock",
+  "tags": "clock,dotmatrix,retro",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"dotmatrixclock.app.js","url":"app.js"},
+    {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
+  ]
+}

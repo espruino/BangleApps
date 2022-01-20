@@ -1,0 +1,13 @@
+{
+  "id": "oblique",
+  "name": "Oblique Strategies",
+  "version": "0.01",
+  "description": "Oblique Strategies for creativity. Copied from Brian Eno.",
+  "icon": "eno.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"oblique.app.js","url":"app.js"},
+    {"name":"oblique.img","url":"app-icon.js","evaluate":true}
+  ]
+}
