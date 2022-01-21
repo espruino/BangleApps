@@ -64,7 +64,7 @@
   "unlockSide": "",
   "tapSide": "right",
   "tapOn": "always",
-  "tOut": 3000,
+  "tOut": 2000,
   "minFlash": 0.2,
   // cached values
   "value": 1,
