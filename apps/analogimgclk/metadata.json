@@ -2,7 +2,7 @@
   "id": "analogimgclk",
   "name": "Analog Clock (Image background)",
   "shortName": "Analog Clock",
-  "version": "0.04",
+  "version": "0.03",
   "description": "An analog clock with an image background",
   "icon": "app.png",
   "type": "clock",
