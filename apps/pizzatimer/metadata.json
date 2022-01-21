@@ -2,7 +2,7 @@
   "id": "pizzatimer",
   "name": "Pizza Timer",
   "shortName": "Pizza Timer",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A timer app for when you cook Pizza. Some say it can also time other things",
   "icon": "pizza.png",
   "tags": "timer,tool,pizza",
