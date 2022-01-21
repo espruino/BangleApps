@@ -7,7 +7,6 @@
   "icon": "pizza.png",
   "tags": "timer,tool,pizza",
   "supports": ["BANGLEJS"],
-  "readme": "README.md",
   "storage": [
     {"name":"pizzatimer.app.js","url":"app.js"},
     {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
