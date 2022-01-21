@@ -8,6 +8,7 @@
   "tags": "health,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
+  "screenshots": [{"url":"Vernier-go-direct-respiration-belt-screenshot.png"}],
   "storage": [
     {"name":"vernierrespirate.app.js","url":"app.js"},
     {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
