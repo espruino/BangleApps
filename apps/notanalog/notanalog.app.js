@@ -87,7 +87,11 @@ function drawBackground() {
 
     g.clearRect(16,16,W-16,H-16);
 
-    g.drawString("B-JS", cx/2, cy/2);
+    var topStr = "B-JS";
+    if(Bangle.isLocked()){
+        topStr = "LOCK";
+    }
+    g.drawString(topStr, cx/2, cy/2);
 }
 
 
@@ -122,13 +126,17 @@ function drawData() {
     var steps = getSteps();
     var maxSteps = 10000;
     var stepsColor = steps > 10000 ? "#00ff00" : "#ff0000";
-    g.setColor(stepsColor);
 
     var img = stepsImg;
+    var imgColor = stepsColor;
     if(Bangle.isCharging()){
         img = chargeImg;
+        imgColor = "#ffffff";
     }
+    g.setColor(imgColor);
     g.drawImage(img, cx/2 - stepsImg.width/2 - 5, cy+cy/2 - stepsImg.height/2+5);
+
+    g.setColor(stepsColor);
     drawStepsHand(parseInt(steps*360/maxSteps));
 
     // Draw circle
@@ -220,6 +228,9 @@ Bangle.on('charging',function(charging) {
     draw();
 });
 
+Bangle.on('lock', function(isLocked) {
+    draw();
+});
 
 
 /*
@@ -236,7 +247,7 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
-//g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+// g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets
