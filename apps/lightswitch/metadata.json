@@ -4,7 +4,7 @@
   "shortName": "Light Switch",
   "version": "0.01",
   "description": "This is a fast way to switch backlighting on/off, change the brightness and show the lock status. All in one widget.",
-  "icon": "app.png",
+  "icon": "images/app.png",
   "type": "widget",
   "tags": "widget,brightness,lock",
   "supports": ["BANGLEJS2"],
@@ -20,9 +20,9 @@
     {"name": "lightswitch.images.json", "url": "images.json"}
   ],
   "screenshots": [
-    {"url": "screenshot_1.png"},
-    {"url": "screenshot_2.png"},
-    {"url": "screenshot_3.png"},
-    {"url": "screenshot_4.png"}
+    {"url": "images/screenshot_1.png"},
+    {"url": "images/screenshot_2.png"},
+    {"url": "images/screenshot_3.png"},
+    {"url": "images/screenshot_4.png"}
    ]
 }
