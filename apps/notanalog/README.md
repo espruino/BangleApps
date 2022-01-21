@@ -8,6 +8,9 @@ black one the battery level (100% = 0°, 75% = 270°, 50% = 180°, ...).
 The selected theme is also respected. Note that this watch face is in fullscreen
 mode - widgets are still loaded in background...
 
+## Other features
+- If you have done more than 10k steps, the red hand and icon will turn green.
+- If the battery is charged, the icons will change.
 
 ## Screenshots
 ![](screenshot_1.png)

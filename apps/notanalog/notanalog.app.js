@@ -14,13 +14,20 @@ var stepsImg =  {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
     buffer : require("heatshrink").decompress(atob("gPAAYMD+ADBg4DD/ADG/gDBh4DCA4YDBg/AAYMP8ADBj4DIgf8n4DB/ADBgIDDwADBgE8AYQTCgH+AYV+n5RBAYkfAYM8g+AIIMwMoU+AYV/AY1+AY08AYU4gAA="))
-  }
+};
 
 var batImg = {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
     buffer : require("heatshrink").decompress(atob("ADf/AAPwAYfABQMwAYfHnPAAYc/AY0zAZwXHFYgDDH45jbA="))
-  }
+};
+
+var chargeImg = {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("AAMMAYUeAYUzAYVjAYXGAQMPxwDBj8cAYM73ADBuPwEAPg8E+gHAuFzgOAnHjAYMd40BwOPxkBwfHjEBw1j2ADBsPgBYPAAYIYBsEDFoPgg+AgPAg/AgeAhgJBgEYuf+AYM//BhBnAYBh1wKQXAAYM5wADBBQQoBAYQOCgA="))
+};
+
 
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
@@ -88,21 +95,29 @@ function drawLines() {
 
 
 function drawHands() {
+    g.setFontAlign(0,0,0);
+
     // Set hand functions
     var drawBatteryHand = g.drawRotRect.bind(g,6,12,R-38);
     var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
 
-    // Draw hands
+    // Draw bat hand and icon
     var bat = E.getBattery();
     var maxBat = 100;
+    var img = Bangle.isCharging() ? chargeImg : batImg;
     g.setColor(g.theme.fg);
+    g.drawImage(img, cx/2 - img.width/2, cy + cy/2 - img.height/2);
     drawBatteryHand(parseInt(bat*360/maxBat));
 
+    // Draw step hand and icon
     var steps = getSteps();
     var maxSteps = 10000;
-    g.setColor(1.0,0.0,0.0);
+    var stepsColor = steps > 10000 ? "#00ff00" : "#ff0000";
+    g.setColor(stepsColor);
+    g.drawImage(stepsImg, cx + cx/2 - stepsImg.width/2, cy/2 - stepsImg.height/2);
     drawStepsHand(parseInt(steps*360/maxSteps));
 
+    // Draw circle
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 7);
     g.setColor(g.theme.bg);
@@ -147,15 +162,6 @@ function drawDate(){
     g.drawString(currentDate.getDate(), cx+cx/2, cy+cy/2);
 }
 
-function drawIcons(){
-    g.setFontAlign(0,0,0);
-    g.setColor(1,0,0);
-    g.drawImage(stepsImg, cx + cx/2 - stepsImg.width/2, cy/2 - stepsImg.height/2);
-
-    g.setColor(g.theme.fg);
-    g.drawImage(batImg, cx/2 - batImg.width/2, cy + cy/2 - batImg.height/2);
-}
-
 function draw(){
   // Clear watch face
   g.reset();
@@ -165,7 +171,6 @@ function draw(){
   g.setColor(1,1,1);
 
   drawLines();
-  drawIcons();
   drawHands();
   drawTime();
   drawDate();
@@ -195,6 +200,12 @@ function queueDraw() {
       draw();
     }, 60000 - (Date.now() % 60000));
 }
+
+
+Bangle.on('charging',function(charging) {
+    draw();
+});
+
 
 
 /*
