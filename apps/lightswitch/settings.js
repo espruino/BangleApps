@@ -12,7 +12,7 @@
     unlockSide: "",
     tapSide: "right",
     tapOn: "always",
-    tOut: 3000,
+    tOut: 2000,
     minFlash: 0.2
   }, storage.readJSON(filename, true) || {});
   var images = storage.readJSON(filename.replace(".", ".images."), true) || false;
@@ -88,8 +88,8 @@
       }
     },
     touchOn: {
-      title: ["on def clk", "on all clk", "clk+launch", "always on"],
-      value: ["", "clock", "clock,launch", "always"],
+      title: ["on def clk", "on all clk", "clk+launch", "clk+setting", "except apps", "always on"],
+      value: ["", "clock", "clock,setting.app.js", "clock,launch", "clock,setting.app.js,launch", "always"],
       drawWidgets: true
     },
     dragDelay: {
