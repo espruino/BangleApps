@@ -170,8 +170,8 @@ function drawDate(){
     g.setNormalFont();
     g.setColor(g.theme.fg);
     var dayStr = locale.dow(currentDate, true).toUpperCase();
-    g.drawString(dayStr, cx/2-15, cy/2);
-    g.drawString(currentDate.getDate(), cx/2-15, cy/2+22);
+    g.drawString(dayStr, cx/2-15, cy/2-5);
+    g.drawString(currentDate.getDate(), cx/2-15, cy/2+17);
 }
 
 
