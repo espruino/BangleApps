@@ -16,12 +16,6 @@ var stepsImg =  {
     buffer : require("heatshrink").decompress(atob("gPAAYMD+ADBg4DD/ADG/gDBh4DCA4YDBg/AAYMP8ADBj4DIgf8n4DB/ADBgIDDwADBgE8AYQTCgH+AYV+n5RBAYkfAYM8g+AIIMwMoU+AYV/AY1+AY08AYU4gAA="))
 };
 
-var batImg = {
-    width : 32, height : 32, bpp : 1,
-    transparent : 0,
-    buffer : require("heatshrink").decompress(atob("ADf/AAPwAYfABQMwAYfHnPAAYc/AY0zAZwXHFYgDDH45jbA="))
-};
-
 var chargeImg = {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
@@ -47,7 +41,7 @@ Graphics.prototype.setTimeFont = function(scale) {
     return this;
 };
 
-Graphics.prototype.setDateFont = function(scale)  {
+Graphics.prototype.setNormalFont = function(scale)  {
     // Actual height 20 (20 - 1)
     this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAf/nAf/3Af/nAAAAAAAAAfgAAfgAAfAAAAAAAfgAAfgAAfgAAAAAADMAAHOAAf/gAf/gADMAADMAAf/gAf/gAf/gADMAAAAAAAggAD54AH98AfefAeOPAeHPAH38AHz8ABxwAPwAAf4BAYYHAcYfAf4/APz8AAPwAA/gAB+AAH5+Afj/AeDnAcDDAQD/AAB+AAAYAH38AP/+Af//Ae+HAccHAccHAcf/Acf/AAf/AAcAAAcAAAAAAAAAAfgAAfgAAfgAAAAAAAAAAH/8AP/+Af//AeAPAcAHAcAHAAAAAAAAAcAHAcAHAeAPAf//AP/+AH/8AAAAAAAAANgAAPgAAfwAAfwAAPgAANgAAAAAAAMAAAMAAAMAAAOAAD/4AD/4AAMAAAMAAAMAAAMAAAAAAAAAAAAHYAAH4AAHwAAAAAAAAAOAAAOAAAOAAAOAAAOAAAAAAAAAAAAHAAAHAAAHAAAAAAADAAB/AB//Af/+Af/AAfAAAAAAAAAAAH/8AP/+Af//AeAPAcAHAcAHAeAPAf//AP/+AH/8AB/wAAAAAf//Af//Af//AAAAAHgPAPgfAfh/AeD/AcH3AcfnAf/HAP8HAH4HAAAAAAAAAHg8APg+Afg/AeOPAcOHAceHAf//AP/+AH78AAAwAAAAAAD4AAP4AA/4AD+4AP44Af//Af//Af//AAA4AAA4AAAAAAAAAf+8Af++Af+/AccPAccHAcePAcf/AcP+AcH8AAAAAH/8AP/+Af//AeePAccHAccHAff/APv+AHn8ABBwAYAAAcAAAcABAcAPAcB/AcP/Ac/8Af/gAf8AAfgAAAAAAAAAAH38AP/+Af//Ae+HAccHAe+PAf//AP/+AH38AAAAAAAAAH88AP++Af/fAcPPAcHHAePPAf//AP/+AH/8AAAAAAAAAAOHAAOHAAOHAAAAAAAAAAOHYAOH4AOHwAAAAAEAAAOAAAfAAA/AAA7gABxwADg4ADA4AAAQAAAAAAAAAAZgAAZgAAZgAAZgAAZgAAZgAAZgAAZgAAZgAAZgAAAAADAYADg4ABxwAB7gAA/gAAfAAAOAAAEAAAAAAHwAAPwAAfwAAeD3AcP3Aef3Af+AAP8AAH4AAAAAAD/4AP/+Af//AeAPAc/HAc/nAc/3AeB3Af/3AP/nAH/PAAAHAAAAAAA/AA//Af//Af/8AfwcAf/8Af//AA//AAA/AAAAAAAAAf//Af//Af//AcOHAcOHAcfPAf//AP/+AH78ABgwAAAAAH/8AP/+Af//AeAPAcAHAcAHAfg/APg+AHg8ABgwAAAAAf//Af//Af//AcAHAcAHAcAHAf//AP/+AP/8AD/4AAAAAf//Af//Af//AcOHAcOHAcOHAcOHAcOHAAAAAAAAAf//Af//Af//AcOAAcOAAcOAAcOAAcOAAAAAAAAAAH/8AP/+Af//AeAPAcHHAcHHAfn/APn+AHn8ABnwAf//Af//Af//Af//AAOAAAOAAAOAAf//Af//Af//AAAAAAAAAf//Af//Af//AAAAAAA8AAA+AAA/AAAHAAAHAAAPAf//Af/+Af/8AAAAAAAAAf//Af//Af//AA+AAD/gAP/4Afj+AeA/AYAPAQADAAAAAf//Af//Af//AAAHAAAHAAAHAAAHAAAHAAAAAAAAAf//Af//Af//AfgAAHwAAD4AAPwAAfgAAf//Af//Af//AAAAAAAAAf//Af//Af//AH+AAA/wAAP8Af//Af//Af//AAAAAB/wAH/8AP/+Af//AcAHAcAHAeAPAf//AP/+AH/8AAAAAAAAAf//Af//Af//AcHAAcHAAcPAAf/AAP+AAP8AADwAAB/wAH/8AP/+Af//AcAHAcAHAeAPAf//AP//gH//gAABAAAAAf//Af//Af//AcOAAcOAAcOAAefgAf//AP//AH5/AAAAAH48AP8+Af8/AeePAcPHAcPPAf3/APz+AHx8AAAAAcAAAcAAAcAAAf//Af//Af//AcAAAcAAAcAAAAAAAf/wAf/8Af/+Af//AAAHAAAHAAAPAf//Af/+Af/8AAAAAfAAAf+AAf/8AB//AAD/AA//Af/+Af/AAfgAAQAAAcAAAf8AAf/8AP//AAH/AD//Af/+Af/AAf//AB//AAP/Af//Af/4Af4AAYAAAYADAfAfAf7/AP/+AB/gAH/8Af//Afh/AcAHAAAAAcAAAfgAAf8AAH//AA//AH//Af8AAfgAAcAAAAAAAcAfAcB/AcH/Acf/Ad/nAf+HAf4HAfgHAeAHAAAAAAAAAf//Af//Af//AcAHAcAHAcAHAcAHAcAAAf4AAf/4AH//AAP/AAAPAAAAAcAHAcAHAcAHAcAHAf//Af//Af//AAAAA"), 32, atob("BAUJCwkQDAUICAgLBQcFBwwFCwsLCgsLCwsFBQoLCgoNCgsLCwoKCwsFCgsKDQsLCwsMCgoLCg8KCgoIBwg="), 24+(scale<<8)+(1<<16));
     return this;
@@ -69,8 +63,10 @@ function getSteps() {
 }
 
 
+function drawBackground() {
+    g.setFontAlign(0,0,0);
+    g.setNormalFont();
 
-function drawLines() {
     g.setColor(g.theme.fg);
     for (let a=0;a<360;a+=6){
         if (a % 30 == 0 || (a > 345 || a < 15) || (a > 90-15 && a < 90+15) || (a > 180-15 && a < 180+15) || (a > 270-15 && a < 270+15)) {
@@ -90,23 +86,36 @@ function drawLines() {
     }
 
     g.clearRect(16,16,W-16,H-16);
+
+    g.drawString("B-JS", cx/2, cy/2);
 }
 
 
 
-function drawHands() {
+function drawData() {
     g.setFontAlign(0,0,0);
+    g.setNormalFont();
 
     // Set hand functions
     var drawBatteryHand = g.drawRotRect.bind(g,6,12,R-38);
     var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
 
-    // Draw bat hand and icon
+    // Draw weather if possible
+    g.setColor(g.theme.fg);
+    var dataStr = "";
+    try {
+        weather = require('weather').get();
+        dataStr = locale.temp(Math.round(weather.temp-273.15));
+    } catch(ex) {
+        // NOP
+    }
+    g.setFontAlign(1,0,0);
+    g.drawString(dataStr, cx+cx/2+15, cy+cy/2+10);
+
+    // Draw battery hand
+    g.setFontAlign(0,0,0);
     var bat = E.getBattery();
     var maxBat = 100;
-    var img = Bangle.isCharging() ? chargeImg : batImg;
-    g.setColor(g.theme.fg);
-    g.drawImage(img, cx/2 - img.width/2, cy + cy/2 - img.height/2);
     drawBatteryHand(parseInt(bat*360/maxBat));
 
     // Draw step hand and icon
@@ -114,7 +123,12 @@ function drawHands() {
     var maxSteps = 10000;
     var stepsColor = steps > 10000 ? "#00ff00" : "#ff0000";
     g.setColor(stepsColor);
-    g.drawImage(stepsImg, cx + cx/2 - stepsImg.width/2, cy/2 - stepsImg.height/2);
+
+    var img = stepsImg;
+    if(Bangle.isCharging()){
+        img = chargeImg;
+    }
+    g.drawImage(img, cx/2 - stepsImg.width/2 - 5, cy+cy/2 - stepsImg.height/2+5);
     drawStepsHand(parseInt(steps*360/maxSteps));
 
     // Draw circle
@@ -154,12 +168,12 @@ function drawDate(){
     var currentDate = new Date();
 
     // Date
-    g.setFontAlign(0,0,0);
-    g.setDateFont();
+    g.setFontAlign(1,0,0);
+    g.setNormalFont();
     g.setColor(g.theme.fg);
     var dayStr = locale.dow(currentDate, true).toUpperCase();
-    g.drawString(dayStr, cx/2, cy/2);
-    g.drawString(currentDate.getDate(), cx+cx/2, cy+cy/2);
+    g.drawString(dayStr, cx+cx/2+15, cy/2);
+    g.drawString(currentDate.getDate(), cx+cx/2+15, cy/2+22);
 }
 
 function draw(){
@@ -170,10 +184,10 @@ function draw(){
   // Draw again
   g.setColor(1,1,1);
 
-  drawLines();
-  drawHands();
-  drawTime();
+  drawBackground();
   drawDate();
+  drawData();
+  drawTime();
 
   // Queue draw in one minute
   queueDraw();
@@ -222,7 +236,7 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets

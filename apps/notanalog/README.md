@@ -11,6 +11,7 @@ mode - widgets are still loaded in background...
 ## Other features
 - If you have done more than 10k steps, the red hand and icon will turn green.
 - If the battery is charged, the icons will change.
+- Shows outside temperature if gadgetbridge is connected with weather.
 
 ## Screenshots
 ![](screenshot_1.png)
