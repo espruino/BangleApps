@@ -21,6 +21,8 @@ Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
         {x:cx+r1*Math.sin(theta),y:cy-r1*Math.cos(theta),rotate:theta}));
 };
 
+// The following font was used:
+// <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
 Graphics.prototype.setTimeFont = function(scale) {
     // Actual height 26 (26 - 1)
     this.setFontCustom(atob("AAAAAAAAAD4AAAAD4AAAAD4AAAAD4AAAAB4AAAAAAAAAAAAAAAAD4AAAD/4AAD//4AD///4Af///gAf//gAAf/gAAAfwAAAAQAAAAAAAAAAAAAAAAAB//+AAH///gAP///wAP///wAfwAP4AfAAD4AfAAD4AfAAD4AfAAD4AfAAD4AfgAH4AP///wAP///wAH///gAB//+AAAP/wAAAAAAAAAAAAAAf///4Af///4Af///4Af///4Af///4AAAAAAAAAAAAAAAAAAAB+AD4AH+AP4AP+Af4AP+B/4AfwD/4AfAH/4AfAf74AfA/z4AfD/j4Af/+D4AP/8D4AH/wD4AD/gD4AB+AD4AAAAAAAB8B8AAD8B/AAH8B/gAP8B/wAf8A/4AfAAD4AfB8D4AfB8D4AfD8D4Af3/P4AP///wAP///wAH///gAB/H+AAAAAAAAAAAAAAAAB+AAAAP+AAAA/+AAAD/+AAAP/+AAA/8+AAD/w+AAf/A+AAf///4Af///4Af///4Af///4AD///4AAAA+AAAAA+AAAAAAAAAAAYAAf/8/AAf/8/gAf/8/wAf/8/wAfD4H4AfD4D4AfD4D4AfD4D4AfD8H4AfD//4AfB//wAfA//gAeAf/AAAAH8AAAAAAAAAAAAAAB//+AAD///AAH///gAP///wAf///4AfD4D4AfD4D4AfD4D4AfD4D4Afz+P4AP5//wAP5//wAH4//gAB4P+AAAAAAAAAAAAAAfAAAAAfAAAAAfAAAIAfAAB4AfAAP4AfAB/4AfAP/4AfA//4AfH//AAf//4AAf/+AAAf/wAAAf+AAAAfwAAAAAAAAAAAAAAAAB8P+AAH///gAP///wAP///wAf/+P4AfH4D4AfD4D4AfD4D4Afn8D4Af///4AP///wAH///gAD/f/AAA4P+AAAAAAAAAAAQAAB/w+AAH/4/gAP/8/wAP/+/wAfh+P4AfA/D4AfAfD4AfAfD4AfA+H4Af///4AP///wAH///gAD///AAA//8AAAAAAAAAAAAAAAB8D4AAB8D4AAB8D4AAB8D4AAA8B4AAAAAAA=="), 46, atob("BwsSCBAQEBAQEBAQBw=="), 36+(scale<<8)+(1<<16));
@@ -76,8 +78,8 @@ function drawLines() {
 
 function drawHands() {
     // Set hand functions
-    var drawBatteryHand = g.drawRotRect.bind(g,5,12,R-38);
-    var drawStepsHand = g.drawRotRect.bind(g,3,12,R-24);
+    var drawBatteryHand = g.drawRotRect.bind(g,6,12,R-38);
+    var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
 
     // Draw hands
     var bat = 100 - E.getBattery();
@@ -198,7 +200,7 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
+// g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets

@@ -1,9 +1,20 @@
 # NotAnalog
 An analog watch face for people (like me) that can not read analog watch faces.
 It looks like an analog clock, but its not! It shows the time digital - check the
-4 numbers on the watch face ;) The red hand shows the number of
-steps (10k steps = 360 degrees) and the black one the battery level.
-The selected theme is also respected. Note that this watch face is in fullscreen
+4 numbers on the watch face ;)
+
+## Screenshots
+![](screenshot_1.png)
+![](screenshot_2.png)
+
+## Help
+The red hand shows the number of steps (0 = 0°, 2.5k = 90°, 5k = 180°, ...) and the
+black one the battery level (100% = 0°, 75% = 90°, 50% = 180°, ...) as also shown
+in the following image:
+
+![](overview.png)
+
+Note: The selected theme is also respected. Note that this watch face is in fullscreen
 mode - widgets are still loaded in background...
 
 # Thanks
