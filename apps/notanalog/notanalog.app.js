@@ -10,6 +10,17 @@ var cx = W/2;
 var cy = H/2;
 var drawTimeout;
 
+var stepsImg =  {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("gPAAYMD+ADBg4DD/ADG/gDBh4DCA4YDBg/AAYMP8ADBj4DIgf8n4DB/ADBgIDDwADBgE8AYQTCgH+AYV+n5RBAYkfAYM8g+AIIMwMoU+AYV/AY1+AY08AYU4gAA="))
+  }
+
+var batImg = {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("ADf/AAPwAYfABQMwAYfHnPAAYc/AY0zAZwXHFYgDDH45jbA="))
+  }
 
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
@@ -94,7 +105,7 @@ function drawHands() {
 
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 7);
-    g.setColor(1.0,0.0,0.0);
+    g.setColor(g.theme.bg);
     g.fillCircle(cx, cy, 4);
 }
 
@@ -121,15 +132,6 @@ function drawTime(){
     var m2 = m < 10 ? m : m - m1*10;
     g.drawString(m2, cx, H-posY);
     g.drawString(m1, posX-2, cy+5);
-
-    // Connect
-    var rP = 24;
-    var w = 4;
-    g.setColor(1,0,0);
-    for(var dy=-w;dy <= w; dy += 1){
-        g.drawLine(cx+rP, posY+rP/2+dy, W-posX-rP, cy-rP);
-        g.drawLine(posX-2+rP, cy+rP/2+dy, cx-rP, H-posY+2-rP);
-    }
 }
 
 
@@ -145,6 +147,14 @@ function drawDate(){
     g.drawString(currentDate.getDate(), cx+cx/2, cy+cy/2);
 }
 
+function drawIcons(){
+    g.setFontAlign(0,0,0);
+    g.setColor(1,0,0);
+    g.drawImage(stepsImg, cx + cx/2 - stepsImg.width/2, cy/2 - stepsImg.height/2);
+
+    g.setColor(g.theme.fg);
+    g.drawImage(batImg, cx/2 - batImg.width/2, cy + cy/2 - batImg.height/2);
+}
 
 function draw(){
   // Clear watch face
@@ -155,6 +165,7 @@ function draw(){
   g.setColor(1,1,1);
 
   drawLines();
+  drawIcons();
   drawHands();
   drawTime();
   drawDate();
@@ -200,7 +211,7 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets
