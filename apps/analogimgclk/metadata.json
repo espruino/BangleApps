@@ -7,7 +7,6 @@
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "allow_emulator": true,
   "supports": ["BANGLEJS"],
   "storage": [
     {"name":"analogimgclk.app.js","url":"app.js"},
