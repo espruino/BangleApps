@@ -1,25 +1,38 @@
 ---
+# =================================================================
+#    ALL THE INFORMATION INSIDE APPS.JSON HAS NOW BEEN MOVED
+# 
+#  You'll find it inside a file called apps/yourapp/metadata.json
+# 
+#  Otherwise nothing has changed. GitHub Pages will automatically
+#  create apps.json as your site is hosted, or if you're hosting
+#  yourself you can run bin/create_apps_json.sh
+#
+#  If you serve the store from localhost for development/testing,
+#  the loader looks for apps.local.json instead, you can run
+#  `bin/create_apps_json.sh apps.local.json` to create that file.
+# =================================================================
+
+# Uncomment the following line if you only want explicitly listed
+# apps to be available on your site
+
+# restricted: ["boot", "launch", "antonclk", "health", "setting", "about", "widbat", "widbt", "widlock", "widid"]
 ---
-{% comment %}
-=================================================================
-   ALL THE INFORMATION INSIDE APPS.JSON HAS NOW BEEN MOVED
-
- You'll find it inside a file called apps/yourapp/metadata.json
-
- Otherwise nothing has changed. GitHub Pages will automatically
- create apps.json as your site is hosted, or if you're hosting
- yourself you can run bin/create_apps_json.sh
-
-=================================================================
-{% endcomment %}
-{%- assign apps = site.static_files | where: "name", "metadata.json" -%}
+{%- if page.restricted == nil -%}
+    {%- assign apps = site.static_files | where: "name", "metadata.json" | map: "path" -%}
+{%- else -%}
+    {%- capture temp -%}
+    {%- for app in page.restricted %} /apps/{{app}}/metadata.json {%- endfor -%}
+    {%- endcapture -%}
+    {%- assign apps = temp | strip | split: " " -%}
+{%- endif -%}
 
 [
 
-{%- include_relative {{ apps.first.path }} -%}
+{%- include_relative {{ apps.first }} -%}
 
 {%- for app in apps offset:1 -%}
-,{%- include_relative {{ app.path }} -%}
+,{%- include_relative {{ app }} -%}
 {%- endfor -%}
 
 ]

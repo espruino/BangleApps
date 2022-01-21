@@ -1,7 +1,7 @@
 {
   "id": "teatimer",
   "name": "Tea Timer",
-  "version": "1.00",
+  "version": "0.01",
   "description": "A simple timer. You can easyly set up the time.",
   "icon": "teatimer.png",
   "type": "app",
