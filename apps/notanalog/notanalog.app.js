@@ -10,12 +10,6 @@ var cx = W/2;
 var cy = H/2;
 var drawTimeout;
 
-var stepsImg =  {
-    width : 32, height : 32, bpp : 1,
-    transparent : 0,
-    buffer : require("heatshrink").decompress(atob("gPAAYMD+ADBg4DD/ADG/gDBh4DCA4YDBg/AAYMP8ADBj4DIgf8n4DB/ADBgIDDwADBgE8AYQTCgH+AYV+n5RBAYkfAYM8g+AIIMwMoU+AYV/AY1+AY08AYU4gAA="))
-};
-
 var chargeImg = {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
@@ -98,17 +92,26 @@ function drawData() {
     var drawBatteryHand = g.drawRotRect.bind(g,6,12,R-38);
     var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
 
-    // Draw weather if possible
+    // Draw state
     g.setColor(g.theme.fg);
-    var dataStr = "";
-    try {
-        weather = require('weather').get();
-        dataStr = locale.temp(Math.round(weather.temp-273.15));
-    } catch(ex) {
-        // NOP
+    if(Bangle.isCharging()){
+        g.drawImage(chargeImg, cx+cx/2 - chargeImg.width/2, cy+cy/2 - chargeImg.height/2+5);
+    } else {
+        dataStr = "B-JS";
+        try {
+            weather = require('weather').get();
+            if (weather === undefined){
+                dataStr = "-";
+            } else {
+                dataStr = locale.temp(Math.round(weather.temp-273.15));
+            }
+        } catch(ex) {
+
+        }
+        g.setFontAlign(1,0,0);
+        g.drawString(dataStr, cx+cx/2+15, cy+cy/2+10);
     }
-    g.setFontAlign(1,0,0);
-    g.drawString(dataStr, cx+cx/2+15, cy+cy/2+10);
+
 
     // Draw battery hand
     g.setFontAlign(0,0,0);
@@ -120,24 +123,8 @@ function drawData() {
     var steps = getSteps();
     var maxSteps = 10000;
     var stepsColor = steps > 10000 ? "#00ff00" : "#ff0000";
-
-    var img = stepsImg;
-    var imgColor = stepsColor;
-    if(Bangle.isCharging()){
-        img = chargeImg;
-        imgColor = "#ffffff";
-    }
-    g.setColor(imgColor);
-    g.drawImage(img, cx/2 - stepsImg.width/2 - 5, cy+cy/2 - stepsImg.height/2+5);
-
     g.setColor(stepsColor);
     drawStepsHand(parseInt(steps*360/maxSteps));
-
-    // Draw circle
-    g.setColor(g.theme.fg);
-    g.fillCircle(cx, cy, 7);
-    g.setColor(g.theme.bg);
-    g.fillCircle(cx, cy, 4);
 }
 
 
@@ -162,7 +149,16 @@ function drawTime(){
     var m1 = parseInt(m / 10);
     var m2 = m < 10 ? m : m - m1*10;
     g.drawString(m2, cx, H-posY);
-    g.drawString(m1, posX-2, cy+5);
+    g.drawString(m1, posX-1, cy+5);
+
+    // Connect
+    var rP = 24;
+    var w = 4;
+    g.setColor(1,0,0);
+    for(var dy=-w;dy <= w; dy += 1){
+        g.drawLine(cx+rP, posY+rP/2+dy+5, W-posX-rP, cy-rP);
+        g.drawLine(posX-2+rP, cy+rP/2+dy+5, cx-rP, H-posY+2-rP);
+    }
 }
 
 
@@ -170,24 +166,22 @@ function drawDate(){
     var currentDate = new Date();
 
     // Date
-    g.setFontAlign(1,0,0);
+    g.setFontAlign(-1,0,0);
     g.setNormalFont();
     g.setColor(g.theme.fg);
     var dayStr = locale.dow(currentDate, true).toUpperCase();
-    g.drawString(dayStr, cx+cx/2+15, cy/2);
-    g.drawString(currentDate.getDate(), cx+cx/2+15, cy/2+22);
+    g.drawString(dayStr, cx/2-15, cy/2);
+    g.drawString(currentDate.getDate(), cx/2-15, cy/2+22);
 }
 
 
 function drawLock(){
-    g.setFontAlign(0,0,0);
-    g.setNormalFont();
-    g.clearRect(cx/2-22, cy/2-13, cx/2+22, cy/2+13);
-    var topStr = "B-JS";
-    if(Bangle.isLocked()){
-        topStr = "LOCK";
-    }
-    g.drawString(topStr, cx/2, cy/2);
+    g.setColor(g.theme.fg);
+    g.fillCircle(cx, cy, 7);
+
+    var c = Bangle.isLocked() ? "#ff0000" : g.theme.bg;
+    g.setColor(c);
+    g.fillCircle(cx, cy, 4);
 }
 
 
@@ -229,6 +223,7 @@ Bangle.on('charging',function(charging) {
 Bangle.on('lock', function(isLocked) {
     drawLock();
 });
+
 
 
 /*
