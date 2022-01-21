@@ -238,6 +238,7 @@
 
       // add touch listener to control the light depending on settings
       if (w.touchOn === "always" || !global.__FILE__ ||
+        w.touchOn.includes(__FILE__) ||
         w.touchOn.includes(require("Storage").readJSON(__FILE__.replace("app.js", "info")).type))
         Bangle.on("touch", w.touchListener);
 
