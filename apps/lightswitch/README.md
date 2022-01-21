@@ -69,18 +69,15 @@ In addition it shows the lock status with the option to personalize the lock ico
 
 Examples in default light and dark theme.
 
-* __Lightbulb__ ![](images/lightbulb.png) _full_ / _dimmed_ / _off_
-* __Default lock icon__ ![](images/default.png) _on_ / _off_
+| Lightbulb (full/dimmed/off) | Default lock icon (on/off) |
+|:---------------------------:|:--------------------------:|
+| ![](images/lightbulb.png)   | ![](images/default.png)    |
 
 The following images are stored in a seperate file _(lightswitch.images.json)_:
-
-* __Lock__ ![](images/image_lock.png) _on_ / _off_
-* __Heart__ ![](images/image_heart.png)
-* __Invader__ ![](images/image_invader.png)
-* __JS__ ![](images/image_js.png)
-* __Smiley__ ![](images/image_smiley.png)
-* __Skull__ ![](images/image_skull.png)
-* __Storm__ ![](images/image_storm.png)
+  
+| Lock (on/off) | Heart | Invader | JS | Smiley | Skull | Storm | 
+|:-------------:|:-----:|:-------:|:--:|:------:|:-----:|:-----:|
+| ![](images/image_lock.png) | ![](images/image_heart.png) | ![](images/image_invader.png) | ![](images/image_js.png) | ![](images/image_smiley.png) | ![](images/image_skull.png) | ![](images/image_storm.png) |
 
 
 ## Worth Mentioning ##
