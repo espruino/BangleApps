@@ -1,0 +1,18 @@
+{
+  "id": "toucher",
+  "name": "Touch Launcher",
+  "shortName": "Toucher",
+  "version": "0.07",
+  "description": "Touch enable left to right launcher.",
+  "icon": "app.png",
+  "type": "launch",
+  "tags": "tool,system,launcher",
+  "screenshots": [{"url":"screenshot1.jpg"}],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"toucher.app.js","url":"app.js"},
+    {"name":"toucher.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"toucher.json"}]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "widid",
+  "name": "Bluetooth ID Widget",
+  "version": "0.03",
+  "description": "Display the last two tuple of your Bangle.js MAC address in the widget section. This is useful for figuring out which Bangle.js to connect to if you have more than one Bangle.js!",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,address,mac",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widid.wid.js","url":"widget.js"}
+  ]
+}

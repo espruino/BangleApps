@@ -1,0 +1,14 @@
+{
+  "id": "hidbkbd",
+  "name": "Binary Bluetooth Keyboard",
+  "shortName": "Binary BT Kbd",
+  "version": "0.02",
+  "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
+  "icon": "hid-binary-keyboard.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"hidbkbd.app.js","url":"hid-binary-keyboard.js"},
+    {"name":"hidbkbd.img","url":"hid-binary-keyboard-icon.js","evaluate":true}
+  ]
+}

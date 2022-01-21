@@ -1,0 +1,16 @@
+{
+  "id": "bluetoothdock",
+  "name": "Bluetooth Dock",
+  "shortName": "Dock",
+  "version": "0.01",
+  "description": "When charging shows the time, scans Bluetooth for known devices (eg temperature) and shows them on the screen",
+  "icon": "app.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"bluetoothdock.app.js","url":"app.js"},
+    {"name":"bluetoothdock.boot.js","url":"boot.js"},
+    {"name":"bluetoothdock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -12,7 +12,7 @@ and that it is not licensed in another way that would make this impossible.
 
 ## How does it work?
 
-* A list of apps is in `apps.json`
+* A list of apps is in `apps.json` (this is auto-generated from all the `apps/yourapp/metadata.json` using Jekyll or `bin/create_apps_json.sh`)
 * Each element references an app in `apps/<id>` which is uploaded
 * When it starts, BangleAppLoader checks the JSON and compares
 it with the files it sees in the watch's storage.
@@ -53,10 +53,10 @@ easily distinguish between file types, we use the following:
 is limited to 28 char filenames and appends a file extension (eg `.js`) so please
 try and keep filenames short to avoid overflowing the buffer.
 * Create a folder called `apps/<id>`, lets assume `apps/myappid`
-* We'd recommend that you copy files from 'Example Applications' (below) as a base, or...
+* We'd recommend that you copy files from one of the Examples in `apps/_example_*` (see below), or...
 * `apps/myappid/app.png` should be a 48px icon
 * Use http://www.espruino.com/Image+Converter to create `apps/myappid/app-icon.js`, using a 1 bit, 4 bit or 8 bit Web Palette "Image String"
-* Create an entry in `apps.json` as follows:
+* Create/modify `apps/myappid/metadata.json` as follows:
 
 ```
 { "id": "myappid",
@@ -116,8 +116,7 @@ and set it to `Load default application`.
 
 To make the process easier we've come up with some example applications that you can use as a base
 when creating your own. Just come up with a unique name (ideally lowercase, under 20 chars), copy `apps/_example_app`
-or `apps/_example_widget` to `apps/myappid`, and add `apps/_example_X/add_to_apps.json` to
-`apps.json`.
+or `apps/_example_widget` to `apps/myappid`, and edit `apps/myappid/metadata.json` accordingly.
 
 **Note:** the max filename length is 28 chars, so we suggest an app ID of under
 20 so that when `.app.js`/etc gets added to the end the filename isn't cropped.
@@ -131,7 +130,7 @@ The app example is available in [`apps/_example_app`](apps/_example_app)
 
 Apps are listed in the Bangle.js menu, accessible from a clock app via the middle button.
 
-* `add_to_apps.json` - insert into `apps.json`, describes the app to bootloader and loader
+* `metadata.json` - describes the app to bootloader and loader
 * `app.png` - app icon - 48x48px
 * `app-icon.js` - JS version of the icon (made with http://www.espruino.com/Image+Converter) for use in Bangle.js's menu
 * `app.js` - app code
@@ -144,11 +143,11 @@ Use the Espruino [image converter](https://www.espruino.com/Image+Converter) and
 
 Follow this steps to create a readable icon as image string.
 
-1. upload a png file
+1. upload a 48x48 png file - THE IMAGE SHOULD BE 48x48 OR LESS
 2. set _X_ Use Compression
 3. set _X_ Transparency (optional)
 4. set Diffusion: _flat_
-5. set Colours: _1 bit_, _4 bit_ or _8 bit Web Palette_
+5. set Colours: _1 bit_, any of the Optimised options, or _8 bit Web Palette_ are best
 6. set Output as: _Image String_
 
 Replace this line with the image converter output:
@@ -156,6 +155,8 @@ Replace this line with the image converter output:
 ```
 require("heatshrink").decompress(atob("mEwwJC/AH4A/AH4AgA=="))
 ```
+
+**Do not add a trailing semicolon**
 
 You can also use this converter for creating images you like to draw with `g.drawImage()` with your app.
 
@@ -167,17 +168,18 @@ has call to completely clear the screen. Widgets themselves will update as and w
 
 The widget example is available in [`apps/_example_widget`](apps/_example_widget)
 
-* `add_to_apps.json` - insert into `apps.json`, describes the widget to bootloader and loader
+* `metadata.json` - describes the widget to bootloader and loader
 * `widget.js` - widget code
 
 Widgets are just small bits of code that run whenever an app that supports them
 calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
-widget bars at the top and bottom of the screen they can add themselves to
-the global `WIDGETS` array with:
+widget bar at the top of the screen they can add themselves to the global 
+`WIDGETS` array with:
 
 ```
 WIDGETS["mywidget"]={
-  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
+  area:"tl", // tl (top left), tr (top right)
+  sortorder:0, // (Optional) determines order of widgets in the same corner
   width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
   draw:draw // called to draw the widget
 };
@@ -202,7 +204,7 @@ and which gives information about the app for the Launcher.
      // if it's 'clock' then it'll be loaded by default at boot time
      // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
   "version":"1.23",
-     // added by BangleApps loader on upload based on apps.json
+     // added by BangleApps loader on upload based on metadata.json
   "files:"file1,file2,file3",
      // added by BangleApps loader on upload - lists all files
      // that belong to the app so it can be deleted
@@ -214,7 +216,7 @@ and which gives information about the app for the Launcher.
 }
 ```
 
-### `apps.json` format
+### `metadata.json` format
 
 ```
 { "id": "appid",              // 7 character app id
@@ -293,9 +295,9 @@ and which gives information about the app for the Launcher.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
 
-### `apps.json`: `custom` element
+### `metadata.json`: `custom` element
 
-Apps that can be customised need to define a `custom` element in `apps.json`,
+Apps that can be customised need to define a `custom` element in `metadata.json`,
 which names an HTML file in that app's folder.
 
 When `custom` is defined, the 'upload' button is replaced by a customize
@@ -303,7 +305,7 @@ button, and when clicked it opens the HTML page specified in an iframe.
 
 In that HTML file you're then responsible for handling a button
 press and calling `sendCustomizedApp` with your own customised
-version of what's in `apps.json`:
+version of what's in `metadata.json`:
 
 ```
 <html>
@@ -335,9 +337,9 @@ for a clean example.
 and will never be loaded. This is so the app loader can tell if it's a JavaScript
 file based on the extension, and if so it can minify and pretokenise it.
 
-### `apps.json`: `interface` element
+### `metadata.json`: `interface` element
 
-Apps that create data that can be read back can define a `interface` element in `apps.json`,
+Apps that create data that can be read back can define a `interface` element in `metadata.json`,
 which names an HTML file in that app's folder.
 
 When `interface` is defined, a `Download from App` button is added to
@@ -401,7 +403,7 @@ Example `settings.js`
   E.showMenu(appMenu)
 })
 ```
-In this example the app needs to add `myappid.settings.js` to `storage` in `apps.json`.   
+In this example the app needs to add `myappid.settings.js` to `storage` in `metadata.json`.   
 It should also add `myappid.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
 ```json
   { "id": "myappid",
@@ -461,15 +463,12 @@ The screen is parted in a widget and app area for lcd mode `direct`(default).
 | areas | as rectangle or point |
 | :-:| :-: |
 | Widget | (0,0,239,23) |
-| Widget bottom bar (optional) | (0,216,239,239) |
-| Apps | (0,24,239,239) (see below) |
+| Apps | (0,24,239,239) |
 | BTN1 | (230, 55)  |
 | BTN2 | (230, 140) |
 | BTN3 | (230, 210) |
 | BTN4 | (0,0,119, 239)|
 | BTN5 |  (120,0,239,239) |
-
-- If there are widgets at the bottom of the screen, apps should actually keep the bottom 24px free, so should keep to the area (0,24,239,215)
 
 - Use `g.setFontAlign(0, 0, 3)` to draw rotated string to BTN1-BTN3 with `g.drawString()`.
 

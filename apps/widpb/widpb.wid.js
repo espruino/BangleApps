@@ -1,13 +1,13 @@
 // on.step version
-Bangle.on('step', function(s) { WIDGETS["bata"].draw(); });
+Bangle.on('step', function(s) { WIDGETS["widpb"].draw(); });
 Bangle.on('lcdPower', function(on) {
-  if (on) WIDGETS["bata"].draw();
+  if (on) WIDGETS["widpb"].draw();
 });
-WIDGETS["bata"]={area:"tl",width:13,draw:function() {
+WIDGETS["widpb"]={area:"tl",sortorder:-1,width:13,draw:function() {
   if (!Bangle.isLCDOn()) return; // dont redraw if LCD is off
   var steps = Bangle.getHealthStatus("day").steps;
   var w = 1 + (steps.toString().length)*12;
-  if (w > this.width) {this.width = w; setTimeout(() => Bangle.drawWidgets(),10); return;}
+  if (w != this.width) {this.width = w; setTimeout(() => Bangle.drawWidgets(),10); return;}
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(this.x, this.y, this.x + this.width, this.y + 23); // erase background

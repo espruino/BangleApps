@@ -26,29 +26,35 @@ function WARN(s) {
   console.log("Warning: "+s);
 }
 
-var appsFile, apps;
-try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
-} catch (e) {
-  ERROR("apps.json not found");
-}
-try{
-  apps = JSON.parse(appsFile);
-} catch (e) {
-  console.log(e);
-  var m = e.toString().match(/in JSON at position (\d+)/);
-  if (m) {
-    var char = parseInt(m[1]);
-    console.log("===============================================");
-    console.log("LINE "+appsFile.substr(0,char).split("\n").length);
-    console.log("===============================================");
-    console.log(appsFile.substr(char-10, 20));
-    console.log("===============================================");
+var apps = [];
+var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
+dirs.forEach(dir => {
+  var appsFile;
+  if (dir.name.startsWith("_example") || !dir.isDirectory())
+    return;
+  try {
+    appsFile = fs.readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
+  } catch (e) {
+    ERROR(dir.name+"/metadata.json does not exist");
+    return;
   }
-  console.log(m);
-  ERROR("apps.json not valid JSON");
-
-}
+  try{
+    apps.push(JSON.parse(appsFile));
+  } catch (e) {
+    console.log(e);
+    var m = e.toString().match(/in JSON at position (\d+)/);
+    if (m) {
+      var char = parseInt(m[1]);
+      console.log("===============================================");
+      console.log("LINE "+appsFile.substr(0,char).split("\n").length);
+      console.log("===============================================");
+      console.log(appsFile.substr(char-10, 20));
+      console.log("===============================================");
+    }
+    console.log(m);
+    ERROR(dir.name+"/metadata.json not valid JSON");
+  }
+});
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',

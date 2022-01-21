@@ -20,16 +20,14 @@ let cOrange = "#FF9900";
 let cPurple = "#FF00DC";
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
-let cGrey = "#9E9E9E";
+let cGrey = "#424242";
 
 /*
  * Global lcars variables
  */
 let lcarsViewPos = 0;
-let drag;
-let hrmValue = 0;
+// let hrmValue = 0;
 var plotMonth = false;
-var disableInfoUpdate = true; // When gadgetbridge connects, step infos cannot be loaded
 
 /*
  * Requirements and globals
@@ -115,12 +113,43 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-
-function printData(key, y, c){
+/**
+ * This function plots a data row in LCARS style.
+ * Note: It can be called async and therefore, the text alignment and
+ * font is set each time the function is called.
+ */
+function printRow(text, value, y, c){
+  g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
+  g.setColor(c);
+  g.fillRect(79, y-2, 85 ,y+18);
+
+  g.setFontAlign(0,-1,0);
+  g.drawString(value, 110, y);
+
+  g.setColor(c);
+  g.setFontAlign(-1,-1,0);
+  g.fillRect(133, y-2, 165 ,y+18);
+  g.fillCircle(161, y+8, 10);
+  g.setColor(cBlack);
+  g.drawString(text, 135, y);
+}
+
+
+function drawData(key, y, c){
+  try{
+    _drawData(key, y, c);
+  } catch(ex){
+    // Show last error - next try hopefully works.
+  }
+}
+
+
+function _drawData(key, y, c){
   key = key.toUpperCase()
   var text = key;
   var value = "ERR";
+  var should_print= true;
 
   if(key == "STEPS"){
     text = "STEP";
@@ -134,7 +163,7 @@ function printData(key, y, c){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
   } else if(key == "HRM"){
-    value = hrmValue;
+    value = Math.round(Bangle.getHealthStatus("day").bpm);
 
   } else if (key == "TEMP"){
     var weather = getWeather();
@@ -143,24 +172,29 @@ function printData(key, y, c){
   } else if (key == "HUMIDITY"){
     text = "HUM";
     var weather = getWeather();
-    value = parseInt(weather.hum) + "%";
+    value = weather.hum;
+
+  } else if (key == "ALTITUDE"){
+    should_print= false;
+    text = "ALT";
+
+    // Immediately print something - avoid that its empty
+    printRow(text, "", y, c);
+    Bangle.getPressure().then(function(data){
+      if(data && data.altitude){
+        value = Math.round(data.altitude);
+        printRow(text, value, y, c);
+      }
+    })
 
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
   }
 
-  g.setColor(c);
-  g.fillRect(79, y-2, 85 ,y+18);
-
-  g.setFontAlign(0,-1,0);
-  g.drawString(value, 110, y);
-
-  g.setColor(c);
-  g.setFontAlign(-1,-1,0);
-  g.fillRect(133, y-2, 165 ,y+18);
-  g.fillCircle(161, y+8, 10);
-  g.setColor(cBlack);
-  g.drawString(text, 135, y);
+  // Print for all datapoints that are not async
+  if(should_print){
+    printRow(text, value, y, c);
+  }
 }
 
 function drawHorizontalBgLine(color, x1, x2, y, h){
@@ -242,9 +276,14 @@ function drawPosition0(){
 
   // The last line is a battery indicator too
   var bat = E.getBattery() / 100.0;
-  var batX2 = parseInt((172 - 35) * bat + 35);
-  drawHorizontalBgLine(cOrange, 35, batX2-5, 171, 5);
-  drawHorizontalBgLine(cGrey, batX2+5, 172, 171, 5);
+  var batStart = 19;
+  var batWidth = 172 - batStart;
+  var batX2 = parseInt(batWidth * bat + batStart);
+  drawHorizontalBgLine(cOrange, batStart, batX2, 171, 5);
+  drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
+  for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
+    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
+  }
 
   // Draw Infos
   drawInfo();
@@ -268,9 +307,9 @@ function drawPosition0(){
   // Draw data
   g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
-  printData(settings.dataRow1, 97, cOrange);
-  printData(settings.dataRow2, 122, cPurple);
-  printData(settings.dataRow3, 147, cBlue);
+  drawData(settings.dataRow1, 97, cOrange);
+  drawData(settings.dataRow2, 122, cPurple);
+  drawData(settings.dataRow3, 147, cBlue);
 
   // Draw state
   drawState();
@@ -441,7 +480,8 @@ function getWeather(){
       wrose: "-"
     };
   } else {
-    weather.temp = locale.temp(parseInt(weather.temp-273.15))
+    weather.temp = locale.temp(Math.round(weather.temp-273.15))
+    weather.hum = weather.hum + "%";
   }
 
   return weather;
@@ -512,10 +552,6 @@ Bangle.on('lock', function(isLocked) {
 
 Bangle.on('charging',function(charging) {
   drawState();
-});
-
-Bangle.on('HRM', function (hrm) {
-  hrmValue = hrm.bpm;
 });
 
 

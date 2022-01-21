@@ -1,0 +1,13 @@
+{
+  "id": "widtbat",
+  "name": "Tiny Battery Widget",
+  "version": "0.02",
+  "description": "Tiny blueish battery widget, vibs and changes level color when charging",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widtbat.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mmind",
+  "name": "Classic Mind Game",
+  "shortName":"Master Mind",
+  "icon": "mmind.png",
+  "version":"0.01",
+  "description": "This is the classic game for masterminds",
+  "screenshots": [{"url":"screenshot_mmind.png"}],
+  "type": "app",
+  "tags": "game",
+  "readme":"README.md",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"mmind.app.js","url":"mmind.app.js"},
+    {"name":"mmind.img","url":"mmind.icon.js","evaluate":true}
+   ]
+}

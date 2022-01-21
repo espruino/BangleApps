@@ -1,0 +1,14 @@
+{
+  "id": "widram",
+  "name": "RAM Widget",
+  "shortName": "RAM Widget",
+  "version": "0.01",
+  "description": "Display your Bangle's available RAM percentage in a widget",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widram.wid.js","url":"widget.js"}
+  ]
+}

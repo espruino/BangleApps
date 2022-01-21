@@ -1,0 +1,15 @@
+{
+  "id": "widclkbttm",
+  "name": "Digital clock (Bottom) widget",
+  "shortName": "Digital clock Bottom Widget",
+  "version": "0.03",
+  "description": "Displays time in the bottom area.",
+  "icon": "widclkbttm.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widclkbttm.wid.js","url":"widclkbttm.wid.js"}
+  ]
+}

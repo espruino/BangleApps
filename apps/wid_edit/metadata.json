@@ -1,0 +1,18 @@
+{
+  "id": "wid_edit",
+  "version": "0.01",
+  "name": "Widget Editor",
+  "icon": "icon.png",
+  "description": "Customize widget locations",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "type": "bootloader",
+  "tags": "widget,tool",
+  "storage": [
+    {"name":"wid_edit.boot.js","url":"boot.js"},
+    {"name":"wid_edit.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"wid_edit.json"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "cprassist",
+  "name": "CPR Assist",
+  "version": "0.02",
+  "description": "Provides assistance while performing a CPR",
+  "icon": "cprassist-icon.png",
+  "tags": "tool,firstaid",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-CPR-assist-screenshot.png"}],
+  "storage": [
+    {"name":"cprassist.app.js","url":"cprassist.js"},
+    {"name":"cprassist.img","url":"cprassist-icon.js","evaluate":true},
+    {"name":"cprassist.settings.js","url":"settings.js"}
+  ]
+}

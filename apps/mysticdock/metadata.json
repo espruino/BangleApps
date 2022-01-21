@@ -1,0 +1,17 @@
+{
+  "id": "mysticdock",
+  "name": "Mystic Dock",
+  "version": "0.01",
+  "description": "A retro-inspired dockface that displays the current time and battery charge while plugged in, and which features an interactive mode that shows the time, date, and a rotating data display line.",
+  "icon": "mystic-dock.png",
+  "type": "dock",
+  "tags": "dock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"mysticdock.app.js","url":"mystic-dock-app.js"},
+    {"name":"mysticdock.boot.js","url":"mystic-dock-boot.js"},
+    {"name":"mysticdock.settings.js","url":"mystic-dock-settings.js"},
+    {"name":"mysticdock.img","url":"mystic-dock-icon.js","evaluate":true}
+  ]
+}
