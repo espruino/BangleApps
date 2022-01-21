@@ -640,7 +640,7 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
 
 // After drawing the watch face, we can draw the widgets
