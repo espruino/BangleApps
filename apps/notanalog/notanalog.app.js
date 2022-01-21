@@ -82,7 +82,7 @@ function drawHands() {
     var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
 
     // Draw hands
-    var bat = 100 - E.getBattery();
+    var bat = E.getBattery();
     var maxBat = 100;
     g.setColor(g.theme.fg);
     drawBatteryHand(parseInt(bat*360/maxBat));

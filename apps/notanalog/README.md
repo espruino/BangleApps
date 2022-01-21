@@ -9,7 +9,7 @@ It looks like an analog clock, but its not! It shows the time digital - check th
 
 ## Help
 The red hand shows the number of steps (0 = 0°, 2.5k = 90°, 5k = 180°, ...) and the
-black one the battery level (100% = 0°, 75% = 90°, 50% = 180°, ...) as also shown
+black one the battery level (100% = 0°, 75% = 270°, 50% = 180°, ...) as also shown
 in the following image:
 
 ![](overview.png)
