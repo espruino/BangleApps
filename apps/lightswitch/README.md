@@ -4,8 +4,8 @@ Whis this widget I wanted to create a solution to quickly en-/disable the LCD ba
 In addition it shows the lock status with the option to personalize the lock icon with a tiny image.
 
 ---
-## Control ##
-
+### Control
+---
 * __On / off__  
   Single touch the widget to en-/disable the backlight.
 * __Change brightness__ _(can be disabled)_  
@@ -17,9 +17,9 @@ In addition it shows the lock status with the option to personalize the lock ico
   If a side is defined in the app settings, your bangle will be unlocked if you double tab on that side.
 
 ---
-## Settings ##
-
-### Widget - Change the apperance of the widget:
+### Settings
+---
+#### Widget - Change the apperance of the widget:
 * __Bulb col__  
   _red_ / _yellow_ / _green_ / __cyan__ / _blue_ / _magenta_  
   Define the color used for the lightbulbs inner circle.  
@@ -29,7 +29,7 @@ In addition it shows the lock status with the option to personalize the lock ico
   Set your favourite lock icon image. (If no image file is found _no image_ will be displayed.)
     * _random_ -> Select a random image on each time the widget is drawn.
 
-### Control - Change when and how to use the widget:
+#### Control - Change when and how to use the widget:
 * __Touch__  
   _on def clk_ / _on all clk_ / _clk+setting_ / _clk+launch_ / _except apps_ / __always on__  
   Select when touching the widget is active to en-/disable the backlight.
@@ -46,11 +46,11 @@ In addition it shows the lock status with the option to personalize the lock ico
   _1%_ / _2%_ / _..._ / __10%__ / _..._ / _100%_  
   Set the minimal level of brightness you can change to.
 
-### Unlock - Set double tap side to unlock:
+#### Unlock - Set double tap side to unlock:
 * __TapSide__  
   __off__ / _left_ / _right_ / _top_ / _bottom_ / _front_ / _back_
 
-### Flash - Change if and how to flash the backlight:
+#### Flash - Change if and how to flash the backlight:
 * __TapSide__  
   _off_ / _left_ / __right__ / _top_ / _bottom_ / _front_ / _back_  
   Set the side to double tap on to flash the backlight or disable completely.
@@ -65,34 +65,36 @@ In addition it shows the lock status with the option to personalize the lock ico
   Set the minimal level of brightness for the backlight on a flash.
 
 ---
-## Images ##
+### Images
+---
+Examples in default light and dark theme.
 
-Examples in default light and dark theme.  
 | - Lightbulb (full/dimmed/off) - | - Default lock icon (on/off) - |
 |:---------------------------:|:--------------------------:|
 | ![](images/lightbulb.png)   | ![](images/default.png)    |
 
-The following images are stored in a seperate file _(lightswitch.images.json)_:  
+The following images are stored in a seperate file _(lightswitch.images.json)_:
+
 | - Lock (on/off) - | - Heart - | - Invader - | - JS - | - Smiley - | - Skull - | - Storm - | 
 |:-------------:|:-----:|:-------:|:--:|:------:|:-----:|:-----:|
 | ![](images/image_lock.png) | ![](images/image_heart.png) | ![](images/image_invader.png) | ![](images/image_js.png) | ![](images/image_smiley.png) | ![](images/image_skull.png) | ![](images/image_storm.png) |
 
 ---
-## Worth Mentioning ##
-
-### To do list
+### Worth Mentioning
+---
+#### To do list
 * Catch the touch and draw input related to this widget to prevent actions in the active app.  
   _(For now I have no idea how to achieve this, help is appreciated)_
 * Manage images for the lock icon through a _Customize and Upload App_ page.
 
-### Requests, Bugs and Feedback
+#### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) or send me a [mail](mailto:banglejs@storm64.de).
 
-### Thanks
+#### Thanks
 Huge thanks to Gordon Williams and all the motivated developers.
 
-### Creator
+#### Creator
 Storm64 ([Mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64))
 
-### License
+#### License
 [MIT License](LICENSE)
