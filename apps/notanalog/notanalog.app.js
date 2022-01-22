@@ -1,5 +1,17 @@
-const locale = require('locale');
+/**
+ * NOT ANALOG CLOCK
+ */
 
+const locale = require('locale');
+const storage = require('Storage')
+const SETTINGS_FILE = "notanalog.setting.json";
+let settings = {
+    alarm: -1,
+};
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+    settings[key] = saved_settings[key]
+}
 
 /*
  * Set some important constants such as width, height and center
@@ -10,10 +22,31 @@ var cx = W/2;
 var cy = H/2;
 var drawTimeout;
 
+var state = {
+    color: "#ff0000",
+    steps: 0,
+    maxSteps: 10000,
+    bat: 0,
+    has_weather: false,
+    temp: "-"
+}
+
 var chargeImg = {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
-    buffer : require("heatshrink").decompress(atob("AAMMAYUeAYUzAYVjAYXGAQMPxwDBj8cAYM73ADBuPwEAPg8E+gHAuFzgOAnHjAYMd40BwOPxkBwfHjEBw1j2ADBsPgBYPAAYIYBsEDFoPgg+AgPAg/AgeAhgJBgEYuf+AYM//BhBnAYBh1wKQXAAYM5wADBBQQoBAYQOCgA="))
+    buffer : E.toArrayBuffer(atob("AAAMAAAAHgAAADMAAABjAAAAxgAAD44AAB8cAAA7uAAAcfAMAODgPgDAcHMBgDjjAYAdxgGBj4wBg8cYAYZjsAGGYeABg8DgAQGAYAMAAOAHgAHAB8ADgAzgBwAYc/4AGD/4AAw4AAAOcAAAH8AAADmAAABwAAAA4AAAAMAAAAA="))
+};
+
+var alarmImg = {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : E.toArrayBuffer(atob("AA/wAAAP8AAAD/AAAAGAAAABgAAAA8AABh/4YAd//uAH+B/gA+AHwAOAAcAHAPDgDgD4cA4A/HAcAP44HAD+OBwA/zgYAP8YGAD/GBj//xgc//84HH/+OBx//jgOP/xwDh/4cAcP8OAHg8HgA8ADwAHwD4AA//8AAD/8AAAP8AA="))
+};
+
+var stepsImg = {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : E.toArrayBuffer(atob("AcAAAAPwAAAH8AAAB/gAAAf4AAAH/AAAD/wAAAf8AAAH/AfAB/wP4Af8H+AH/B/gB/wf4AP8P+AD+D/gAfg/4AGAP+AAPD/gAPw/4AD+P+AAfj/AAH4/wAB+H8AAPAeAAAAwAAAAPgAAAH8AAAB/AAAAfgAAAH4AAAA8AAAAOAA="))
 };
 
 
@@ -83,6 +116,23 @@ function drawBackground() {
 }
 
 
+function drawState(){
+    g.setColor(state.color);
+    g.setFontAlign(1,0,0);
+
+    // Draw alarm
+    var highPrioImg = isAlarmEnabled() ? alarmImg :
+        Bangle.isCharging() ? chargeImg : undefined;
+
+    // As default, we draw weather if available, otherwise the steps symbol is shown.
+    if(!highPrioImg && state.has_weather){
+        g.setColor(g.theme.fg);
+        g.drawString(state.temp, cx+cx/2+15, cy+cy/2+10);
+    } else {
+        var img = highPrioImg ? highPrioImg : stepsImg;
+        g.drawImage(img, cx+cx/2 - img.width/2, cy+cy/2 - img.height/2+5);
+    }
+}
 
 function drawData() {
     g.setFontAlign(0,0,0);
@@ -90,41 +140,23 @@ function drawData() {
 
     // Set hand functions
     var drawBatteryHand = g.drawRotRect.bind(g,6,12,R-38);
-    var drawStepsHand = g.drawRotRect.bind(g,5,12,R-24);
-
-    // Draw state
-    g.setColor(g.theme.fg);
-    if(Bangle.isCharging()){
-        g.drawImage(chargeImg, cx+cx/2 - chargeImg.width/2, cy+cy/2 - chargeImg.height/2+5);
-    } else {
-        dataStr = "B-JS";
-        try {
-            weather = require('weather').get();
-            if (weather === undefined){
-                dataStr = "-";
-            } else {
-                dataStr = locale.temp(Math.round(weather.temp-273.15));
-            }
-        } catch(ex) {
-
-        }
-        g.setFontAlign(1,0,0);
-        g.drawString(dataStr, cx+cx/2+15, cy+cy/2+10);
-    }
-
+    var drawDataHand = g.drawRotRect.bind(g,5,12,R-24);
 
     // Draw battery hand
+    g.setColor(g.theme.fg);
     g.setFontAlign(0,0,0);
-    var bat = E.getBattery();
-    var maxBat = 100;
-    drawBatteryHand(parseInt(bat*360/maxBat));
+    drawBatteryHand(parseInt(state.bat*360/100));
 
-    // Draw step hand and icon
-    var steps = getSteps();
-    var maxSteps = 10000;
-    var stepsColor = steps > 10000 ? "#00ff00" : "#ff0000";
-    g.setColor(stepsColor);
-    drawStepsHand(parseInt(steps*360/maxSteps));
+    // Draw data hand - depending on state
+    g.setColor(state.color);
+    if(isAlarmEnabled()){
+        var alrm = getAlarmMinutes();
+        drawDataHand(parseInt(alrm*360/60));
+        return;
+    }
+
+    // Default are the steps
+    drawDataHand(parseInt(state.steps*360/state.maxSteps));
 }
 
 
@@ -150,15 +182,6 @@ function drawTime(){
     var m2 = m < 10 ? m : m - m1*10;
     g.drawString(m2, cx, H-posY);
     g.drawString(m1, posX-1, cy+5);
-
-    // Connect
-    var rP = 24;
-    var w = 4;
-    g.setColor(1,0,0);
-    for(var dy=-w;dy <= w; dy += 1){
-        g.drawLine(cx+rP, posY+rP/2+dy+5, W-posX-rP, cy-rP);
-        g.drawLine(posX-2+rP, cy+rP/2+dy+5, cx-rP, H-posY+2-rP);
-    }
 }
 
 
@@ -179,28 +202,62 @@ function drawLock(){
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 7);
 
-    var c = Bangle.isLocked() ? "#ff0000" : g.theme.bg;
+    var c = Bangle.isLocked() ? state.color : g.theme.bg;
     g.setColor(c);
     g.fillCircle(cx, cy, 4);
 }
 
 
+function handleState(){
+    // Set battery
+    state.bat = E.getBattery();
+
+    // Set steps
+    state.steps = getSteps();
+    state.maxSteps = 10000;
+
+    // Set theme color
+    state.color = isAlarmEnabled() ? "#FF6A00" :
+        state.steps > state.maxSteps ? "#00ff00" :
+        "#ff0000";
+
+    // Set weather
+    state.has_weather = true;
+    try {
+        weather = require('weather').get();
+        if (weather === undefined){
+            state.temp = "-";
+        } else {
+            state.temp = locale.temp(Math.round(weather.temp-273.15));
+        }
+    } catch(ex) {
+        state.has_weather = false;
+    }
+
+}
+
+
 function draw(){
-  // Clear watch face
-  g.reset();
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
+    // Execute handlers
+    handleState();
+    handleAlarm();
 
-  // Draw again
-  g.setColor(1,1,1);
+    // Clear watch face
+    g.reset();
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
 
-  drawBackground();
-  drawLock();
-  drawDate();
-  drawData();
-  drawTime();
+    // Draw again
+    g.setColor(1,1,1);
 
-  // Queue draw in one minute
-  queueDraw();
+    drawBackground();
+    drawLock();
+    drawDate();
+    drawState();
+    drawData();
+    drawTime();
+
+    // Queue draw in one minute
+    queueDraw();
 }
 
 
@@ -208,12 +265,12 @@ function draw(){
  * Listeners
  */
 Bangle.on('lcdPower',on=>{
-  if (on) {
-    draw();
-  } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
+    if (on) {
+        draw();
+    } else { // stop draw timer
+        if (drawTimeout) clearTimeout(drawTimeout);
+        drawTimeout = undefined;
+    }
 });
 
 Bangle.on('charging',function(charging) {
@@ -224,6 +281,25 @@ Bangle.on('lock', function(isLocked) {
     drawLock();
 });
 
+Bangle.on('touch', function(btn, e){
+    var upper = parseInt(g.getHeight() * 0.2);
+    var lower = g.getHeight() - upper;
+
+    var is_upper = e.y < upper;
+    var is_lower = e.y > lower;
+
+    if(is_upper){
+        feedback();
+        increaseAlarm();
+        draw();
+    }
+
+    if(is_lower){
+        feedback();
+        decreaseAlarm();
+        draw();
+    }
+});
 
 
 /*
@@ -237,6 +313,74 @@ function queueDraw() {
     }, 60000 - (Date.now() % 60000));
 }
 
+
+/*
+ * Handle alarm
+ */
+function getCurrentTimeInMinutes(){
+    return Math.floor(Date.now() / (1000*60));
+}
+
+function isAlarmEnabled(){
+    return settings.alarm >= 0;
+}
+
+function getAlarmMinutes(){
+    var currentTime = getCurrentTimeInMinutes();
+    return settings.alarm - currentTime;
+}
+
+function handleAlarm(){
+    if(!isAlarmEnabled()){
+        return;
+    }
+
+    if(getAlarmMinutes() > 0){
+        return;
+    }
+
+    // Alarm
+    var t = 300;
+    Bangle.buzz(t, 1)
+    .then(() => new Promise(resolve => setTimeout(resolve, t)))
+    .then(() => Bangle.buzz(t, 1))
+    .then(() => new Promise(resolve => setTimeout(resolve, t)))
+    .then(() => Bangle.buzz(t, 1))
+    .then(() => new Promise(resolve => setTimeout(resolve, t)))
+    .then(() => Bangle.buzz(t, 1))
+    .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
+    .then(() => {
+        // Update alarm state to disabled
+        settings.alarm = -1;
+        storage.writeJSON(SETTINGS_FILE, settings);
+    });
+}
+
+
+function increaseAlarm(){
+    if(isAlarmEnabled()){
+        settings.alarm += 5;
+    } else {
+        settings.alarm = getCurrentTimeInMinutes() + 5;
+    }
+
+    storage.writeJSON(SETTINGS_FILE, settings);
+}
+
+
+function decreaseAlarm(){
+    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
+        settings.alarm -= 5;
+    } else {
+        settings.alarm = -1;
+    }
+
+    storage.writeJSON(SETTINGS_FILE, settings);
+}
+
+function feedback(){
+    Bangle.buzz(40, 0.3);
+}
 
 /*
  * Lets start widgets, listen for btn etc.

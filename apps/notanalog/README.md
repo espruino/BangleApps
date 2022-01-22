@@ -6,17 +6,19 @@ It looks like an analog clock, but its not! It shows the time digital - check th
 The red hand shows the number of steps (0 = 0°, 2.5k = 90°, 5k = 180°, ...) and the
 black one the battery level (100% = 0°, 75% = 270°, 50% = 180°, ...).
 The selected theme is also respected. Note that this watch face is in fullscreen
-mode - widgets are still loaded in background...
+mode, but widgets are still loaded in background.
 
 ## Other features
-- If you have done more than 10k steps, the red hand and icon will turn green.
+- Set a timer - simply touch top (+5min.) or bottom (-5 min.).
+- If the weather is available through the weather app, the outside temp. will be shown.
 - If the battery is charged, the icons will change.
-- Shows outside temperature if gadgetbridge is connected with weather.
-- Shows current lock status of your bangle.
+- If you have done more than 10k steps, the red hand and icon will turn green.
+- Shows current lock status of your bangle va a colored dot in the middle.
 
 ## Screenshots
 ![](screenshot_1.png)
 ![](screenshot_2.png)
+![](screenshot_3.png)
 
 
 # Thanks
