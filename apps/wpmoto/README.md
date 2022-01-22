@@ -1,176 +1,158 @@
-# Waypointer - navigate to waypoints
+# Waypointer Moto
 
-The app is aimed at navigation whilst walking. Please note that it
-would be foolish in the extreme to rely on this as your only
-navigation aid!
+Waypointer Moto is a GPS navigation aid intended to be attached to
+the handlebars of a motorcycle.
+It uses the GPS to find out which direction it's
+travelling and shows the direction and distance to the destination
+"as the crow flies". It gives you an indication of where to go,
+but exploring and navigating the environment is left up to the user.
 
-Please refer to the section on calibration of the compass.  This
-should be done each time the app is going to be used.
+![](watch-on-bike.jpeg)
 
-The main part of the display is a compass arrow that points in the
-direction you need to walk in. Once you have selected a waypoint a
-bearing from your current position (received from a GPS fix) is
-calculated and the compass is set to point in that direction.  If the
-arrow is pointing to the left, turning left should straighten the arrow
-up so that it is pointing straight ahead.
+(Please note that it would be foolish in the extreme to rely on this
+as your only navigation aid! Make sure you read this entire document
+before using the app for navigation so that you know the drawbacks
+and shortcomings.)
 
+## App usage
 
-![](waypointer_screenshot.jpg)
+### Main screen
 
-The large digits are the bearing from the current position. On the
-left is the distance to the waypoint in local units. The top of the
-display is a circular compass which displays the direction you will
-need to travel in to reach the selected waypoint. The blue text is
-the name of the current waypoint. NONE means that there is no
-waypoint set and so bearing and distance will remain at 0. To select
-a waypoint, press BTN2 (middle) and wait for the blue text to turn
-white. Then use BTN1 and BTN3 to select a waypoint. The waypoint
-choice is fixed by pressing BTN2 again. In the screen shot below a
-waypoint giving the location of Stone Henge has been selected.
+![](screenshot.png)
 
-The screenshot above shows that Stone Henge is 259.9 miles from the
-current location. To travel towards Stone Henge I need to turn
-slightly left until the arrow is pointing straight ahead. As you
-continue to walk in the pointed direction you should see the distance
-to the waypoint reduce.  The frequency of updates will depend on
-which settings you have used in the GPS.
+The main screen shows the direction arrow, the distance to the waypoint,
+and the name of the selected waypoint.
 
-At the top of the screen you can see two widgets.  These are the [GPS
-Power
-Widget](https://github.com/espruino/BangleApps/tree/master/apps/widgps)
-and the [Compass Power Indicator Widget]. These can be installed
-seperately and provide you a indication of when the GPS and Compass
-are switched on and drawing power.
+It also shows the status of the GPS fix in the colour of the arrow:
 
+ * Red: no GPS fix at all
+ * Yellow: GPS location, but no GPS course (probably you're moving too slowly);
+   in this case the direction of travel comes from the compass bearing instead
+   of the GPS course, but note that the compass is unreliable
+ * White: GPS fix includes both location and course, and the GPS course is used
+   to determine the direction of travel
 
-## Marking Waypoints
+### Select a waypoint
 
-The app lets you mark your current location as follows. There are
-vacant slots in the waypoint file which can be allocated a
-location. In the distributed waypoint file these are labelled WP0 to
-WP4. Select one of these - WP2 is shown below.
+![](screenshot-menu.png)
 
-![](wp2_screenshot.jpg)
+Press the middle button (`BTN2`) to enter the menu, choose a waypoint using
+the up/down arrows, and use the middle button again to select a waypoint and
+return to the main screen.
 
-Bearing and distance are both zero as WP2 has currently no GPS
-location associated with it. To mark the location, press BTN2.
+### Add a waypoint
 
-![](wp2_saved.jpg)
+Press the middle button (`BTN2`) to enter the menu, and select the "+ Here"
+option. This will add a waypoint named "WP*n*" marking your current location,
+where "*n*" is the next unused number.
 
-The app indicates that WP2 is now marked by adding the prefix @ to
-it's name. The distance should be small as shown in the screen shot
-as you have just marked your current location.
+### Delete a waypoint
 
-## Waypoint JSON file
+![](screenshot-delete.png)
 
-When the app is loaded from the app loader, a file named
-`waypoints.json` is loaded along with the javascript etc. The file
-has the following contents:
+Select a waypoint using the menu. Once the waypoint is selected and you're
+back on the main screen, press either the top or bottom button (`BTN1` or
+`BTN3`). Confirm that you want to delete the waypoint with the middle
+button (`BTN2`).
 
+## Waypoint editor
 
-```
-[
-  {
-  "name":"NONE"
-  },
-  {
-  "name":"No10",
-  "lat":51.5032,
-  "lon":-0.1269
-  },
-  {
-  "name":"Stone",
-  "lat":51.1788,
-  "lon":-1.8260
-  },
-  { "name":"WP0" },
-  { "name":"WP1" },
-  { "name":"WP2" },
-  { "name":"WP3" },
-  { "name":"WP4" }
-]
-```
+With the Bangle.js app loader connected to the watch, find the
+Waypointer Moto app and click on the floppy disk icon:
 
-The file contains the initial NONE waypoint which is useful if you
-just want to display course and speed. The next two entries are
-waypoints to No 10 Downing Street and to Stone Henge - obtained from
-Google Maps. The last five entries are entries which can be *marked*.
+![](floppy-disk.png)
 
-You add and delete entries using the Web IDE to load and then save
-the file from and to watch storage. The app itself does not limit the
-number of entries although it does load the entire file into RAM
-which will obviously limit this.
+This will load up the waypoint editor:
 
+![](editor.png)
 
-## Waypoint Editor
+### Add a waypoint
 
-Clicking on the download icon of gpsnav in the app loader invokes the
-waypoint editor.  The editor downloads and displays the current
-`waypoints.json` file. Clicking the `Edit` button beside an entry
-causes the entry to be deleted from the list and displayed in the
-edit boxes. It can be restored - by clicking the `Add waypoint`
-button. A new markable entry is created by using the `Add name`
-button. The edited `waypoints.json` file is uploaded to the Bangle by
-clicking the `Upload` button.
+Use the map to find your destination. Clicking on the map will
+populate the latitude/longitude input boxes with the coordinates
+of the point you clicked on. Type in a name for the waypoint and
+click "Add Waypoint". Click "Upload" to send the updated list of
+waypoints to the watch.
 
+### Edit a waypoint
 
-## Calibration of the Compass
+Click on the pencil icon next to the waypoint you wish to edit.
+This will remove the waypoint from the list and populate the
+input boxes.
+Edit the coordinates by hand, or by clicking on the map. Edit
+the name if you want. Click "Add Waypoint" to save the waypoint
+back to the list. Click "Upload" to send the updated list of
+waypoints to the watch.
 
-The Compass should be calibrated before using the App to navigate to
-a waypoint (or a series of waypoints).  To do this use either the
-Arrow Compass or the [Navigation
-Compass](https://github.com/espruino/BangleApps/tree/master/apps/magnav).
-Open the compass app and clicking on BTN3.  The calibration process
-takes 30 seconds during which you should move the watch slowly
-through figures of 8. It is important that during calibration the
-watch is fully rotated around each of it axes. If the app does give
-the correct direction heading or is not stable with respect to tilt
-and roll - redo the calibration by pressing *BTN3*. Calibration data
-is recorded in a storage file named `magnav.json`.
+### Delete a waypoint
 
+Click on the pencil icon next to the waypoint you wish to edit.
+This will remove the waypoint from the list.
+Click "Upload" to send the updated list of waypoints to the watch.
 
-## Advantages and Disadvantages
+## Mounting the watch on the bike
 
-This approach has some advantages and disadvantages.  First following
-the arrow is fairly easy to do and once the bearing has been
-established it does not matter if there is not another GPS fix for a
-while as the compass will continue to point in the general direction.
-Second the GPS will only supply a course to the waypoint (a bearing)
-once you are travelling above 8m/s or 28kph.  This is not a practical
-walking speed. 5kmph is considered a marching pace.
+There is a 3d-printable "artificial wrist" which will fit over a 7/8"
+handlebar and allow the watch strap to tighten up.
+Alternatively, in a pinch you can strap the watch around a glove or a sponge
+or anything else that will pad out the space so that the watch is a tight
+fit.
 
-One disadvantage is that the compass is not very accurate.  I have
-observed it being 20-30 degrees off when compared to a hiking
-compass.  Sometime its is necessary to walk in the opposite direction
-for a bit to establish the correct direction to go in.  The accuracy
-of the compass is impacted by the magnetic clamps on the charging
-cable, so it is particularly important that you recalibtrate the
-compass after the watch has been charged.  That said I have found I
-am successfully able to follow a chain of waypoints as a route.
+The 3d-printed part should be a snug fit on the handlebar so that it does
+not flop around. If it is too loose, line it with a layer or 2 of tape.
 
+[Download the handlebar mount STL &raquo;](handlebar-mount.stl)
+
+[Download the handlebar mount FreeCAD source &raquo;](handlebar-mount.FCStd)
+
+![](handlebar-mount.png)
+
+![](handlebar-mount.jpeg)
+
+## Comparison to Way Pointer
+
+Compared to the original Way Pointer app, Waypointer Moto:
+
+ * removes the numerical display of compass bearing
+ * makes the distance text bigger
+ * uses a higher-resolution arrow icon
+ * has a visual indication of the GPS status (the arrow colour)
+ * uses GPS course instead of compass bearing
+ * has OpenStreetMap integration in the waypoint editor
+ * uses Bangle.js menus to select waypoints instead of custom UI
+ * can add new waypoints from inside the app without requiring a blank slot
+ * can delete waypoints from inside the app without needing the PC
+ * still uses the same `waypoints.json` file
+
+## Gotchas
+
+Waypointer Moto derives your current heading from the GPS course
+rather than the compass, whenever GPS course is available.
+The compass bearing is based on the angle the watch is held, but
+the GPS course is based on the direction it's *travelling*. If the
+watch is not aligned with the direction of travel of the vehicle
+then the arrow will not point in the correct direction.
+
+When travelling too slowly, there is no GPS course information, so the
+app reverts to using the compass (and draws it in yellow), but
+the compass is not very reliable, and I
+have especially found it not to be reliable when placed on a motorcyle,
+maybe because of all the metal in the immediate vicinity. So if
+the arrow is not drawn in white, then you should probably not trust
+it. If you're not sure, just ride in a straight line until the arrow
+turns white again.
 
 ## Possible Future Enhancements
 
-- Buzz when the GPS establishes its first fix.
-
-- Add a small LED to show the status of the GPS during the phase of
-  establishing a first fix.
-
-- Add an option to calibrate the Compass without having to use the
-  Arrow Compass or the Navigation Compass.
-
-- Investigate the accuracy of the Compass and how it changes
-  throughout the day after the watch battery has been fully charged.
-
-- Investigate the possibility of setting the GPS in low speed mode so
-  that a current course value can be obtained.
-
-- Buzz when you arrive within 20m of a waypoint to signify arrival
-
+ - "routes" with multiple waypoints; automatically step from one
+   waypoint to the next when you get near to it
+ - some way to manually input coordinates directly on the watch
+ - make the text & arrow more legible in direct sunlight
+ - integrate a charging connector into the handlebar mount
+ - upstream the map integration to the other waypoint apps
 
 ## Acknowledgements
 
-The majority of the code in this application is a merge of
+Waypointer Moto is a project by [James Stanley](https://incoherency.co.uk/). It is a derivative of [Adam Schmalhofer's](https://github.com/adamschmalhofer) Way Pointer app, which is in turn a derivative of
 [jeffmer's](https://github.com/jeffmer/JeffsBangleAppsDev) GPS
-Navigation and Compass Navigation Applications.
-
+Navigation and Compass Navigation apps.

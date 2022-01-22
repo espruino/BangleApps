@@ -2,6 +2,8 @@
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.12.0/css/ol.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/ol-geocoder@latest/dist/ol-geocoder.min.css" rel="stylesheet">
   </head>
   <body>
 
@@ -30,13 +32,10 @@
           <input class="form-input input-sm" value="0.0000" type="number" step="any" id="add_latitude" placeholder="Lat">
         </div>
         <div class="column col-3 col-xs-8">
-          <input class="form-input input-sm" value="0.0000" type="number" step="any" id="add_longtitude" placeholder="Long">
+          <input class="form-input input-sm" value="0.0000" type="number" step="any" id="add_longitude" placeholder="Long">
         </div>
       </div>
       <div class="columns">
-        <div class="column col-3 col-xs-8">
-          <button id="add_name_button" class="btn btn-primary btn-sm">Add Name Only</button>
-        </div>
         <div class="column col-3 col-xs-8">
           <button id="add_waypoint_button" class="btn btn-primary btn-sm">Add Waypoint</button>
         </div>
@@ -44,20 +43,59 @@
     </form>
     <br>
     <button id="Download" class="btn btn-error">Reload</button> <button id="Upload" class="btn btn-primary">Upload</button>
+    <br>
+    <div id="map" class="map" style="width:100%; height:400px"></div>
     
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.12.0/build/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ol-geocoder"></script>
     <script src="../../core/lib/interface.js"></script>
 
     <script>
+      var map = new ol.Map({
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        view: new ol.View({
+          center: ol.proj.fromLonLat([37.41, 8.82]),
+          zoom: 4
+        })
+      });
+
+      var geocoder = new Geocoder('nominatim', {
+        provider: 'osm',
+        lang: 'en-GB',
+        placeholder: 'Search...',
+        targetType: 'text-input',
+      });
+      map.addControl(geocoder);
+      geocoder.on('addresschosen', function(e) {
+        map.getView().animate({
+            center: e.coordinate,
+            zoom: Math.max(map.getView().getZoom(),16)
+        });
+
+        var lonlat = ol.proj.toLonLat(e.coordinate);
+        $longitude.value = lonlat[0];
+        $latitude.value = lonlat[1];
+      });
 
       var waypoints = []
 
       var $name = document.getElementById('add_waypoint_name')
       var $form = document.getElementById('add_waypoint_form')
       var $button = document.getElementById('add_waypoint_button')
-      var $name_button = document.getElementById('add_name_button')
       var $latitude = document.getElementById('add_latitude')
-      var $longtitude = document.getElementById('add_longtitude')
+      var $longitude = document.getElementById('add_longitude')
       var $list = document.getElementById('waypoints')
+
+      map.on('click', function(e) {
+        var lonlat = ol.proj.toLonLat(e.coordinate);
+        $longitude.value = lonlat[0];
+        $latitude.value = lonlat[1];
+      });
 
       function compare(a, b){
             var x = a.name.toLowerCase();
@@ -73,8 +111,8 @@
         event.preventDefault()       
         var name = $name.value.trim()
         if(!name) return;
-        var lat = parseFloat($latitude.value).toPrecision(5);
-        var lon = parseFloat($longtitude.value).toPrecision(5);
+        var lat = parseFloat($latitude.value).toPrecision(8);
+        var lon = parseFloat($longitude.value).toPrecision(8);
 
         waypoints.push({
           name, lat,lon,
@@ -84,31 +122,21 @@
 
         renderWaypoints()
         $name.value = ''
-        $latitude.value = (0).toPrecision(5);
-        $longtitude.value = (0).toPrecision(5);
+        $latitude.value = (0).toPrecision(8);
+        $longitude.value = (0).toPrecision(8);
       });
-
-      $name_button.addEventListener('click', event => {
-        event.preventDefault()       
-        var name = $name.value.trim()
-        if(!name) return;
-
-        waypoints.push({
-          name
-        });
-        waypoints.sort(compare);
-
-        renderWaypoints()
-        $name.value = ''
-        $latitude.value = 0.0000
-        $longtitude.value = 0.0000
-      });
-
 
       function removeWaypoint(index){
         $name.value = waypoints[index].name
-        $latitude.value = waypoints[index].lat
-        $longtitude.value = waypoints[index].lon
+        if (waypoints[index].lat !== undefined && waypoints[index].lon !== undefined
+                && !isNaN(waypoints[index].lat) && !isNaN(waypoints[index].lon)) {
+            $latitude.value = waypoints[index].lat
+            $longitude.value = waypoints[index].lon
+            map.getView().animate({
+                center: ol.proj.fromLonLat([waypoints[index].lon, waypoints[index].lat]),
+                zoom: Math.max(map.getView().getZoom(),16)
+            });
+        }
         waypoints = waypoints.filter((p,i) => i!==index)
         renderWaypoints()
       }
