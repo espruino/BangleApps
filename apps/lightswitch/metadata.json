@@ -3,7 +3,7 @@
   "name": "Light Switch Widget",
   "shortName": "Light Switch",
   "version": "0.02",
-  "description": "This is a fast way to switch backlighting on/off, change the brightness and show the lock status. All in one widget.",
+  "description": "A fast way to switch backlighting on/off, change the brightness and show the lock status. All in one widget.",
   "icon": "images/app.png",
   "type": "widget",
   "tags": "widget,brightness,lock",
