@@ -9,12 +9,12 @@ In addition it shows the lock status with the option to personalize the lock ico
 * __On / off__  
   Single touch the widget to en-/disable the backlight.
 * __Change brightness__ _(can be disabled)_  
-  First touch the widget and then retouch the screen and drag up/down until you reach your wished brigthness.
+  First touch the widget, then quickly touch the screen again and drag up/down until you reach your wished brigthness.
 * __Double tap to flash backlight__ _(can be disabled)_  
   By defaut you can double tap on the right side of your bangle to flash the backlight for a short duration.  
   (While the backlight is active your bangle will be unlocked.)
 * __Double tap to unlock__ _(disabled by default)_  
-  If a side is defined in the app settings, your bangle will be unlocked if you double tab on that side.
+  If a side is defined in the app settings, your bangle will be unlocked if you double tap on that side.
 
 ---
 ### Settings
@@ -25,7 +25,7 @@ In addition it shows the lock status with the option to personalize the lock ico
   Define the color used for the lightbulbs inner circle.  
   The selected color will be dimmed depending on the actual brightness value.
 * __Image__  
-  __defaut__ / _random_ / _..._  
+  __default__ / _random_ / _..._  
   Set your favourite lock icon image. (If no image file is found _no image_ will be displayed.)
     * _random_ -> Select a random image on each time the widget is drawn.
 
@@ -41,7 +41,7 @@ In addition it shows the lock status with the option to personalize the lock ico
     * _always on_ -> always enabled when the widget is displayed
 * __Drag Delay__  
   _off_ / _50ms_ / _100ms_ / _..._ / __500ms__ / _..._ / _1000ms_  
-  Change the maximum delay between first touch and retouch/drag to change the brightness or disable changing the brightness completely.
+  Change the maximum delay between first touch and re-touch/drag to change the brightness or disable changing the brightness completely.
 * __Min Value__  
   _1%_ / _2%_ / _..._ / __10%__ / _..._ / _100%_  
   Set the minimal level of brightness you can change to.
@@ -53,7 +53,7 @@ In addition it shows the lock status with the option to personalize the lock ico
 #### Flash - Change if and how to flash the backlight:
 * __TapSide__  
   _off_ / _left_ / __right__ / _top_ / _bottom_ / _front_ / _back_  
-  Set the side to double tap on to flash the backlight or disable completely.
+  Set double tap side to flash the backlight or disable completely.
 * __Tap__  
   _on locked_ / _on unlocked_ / __always on__  
   Select when a double tap is recognised.
