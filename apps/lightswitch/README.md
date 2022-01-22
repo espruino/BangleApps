@@ -67,13 +67,13 @@ In addition it shows the lock status with the option to personalize the lock ico
 
 ## Images ##
 
-Examples in default light and dark theme.
-| Lightbulb (full/dimmed/off) | Default lock icon (on/off) |
+Examples in default light and dark theme.  
+| - Lightbulb (full/dimmed/off) - | - Default lock icon (on/off) - |
 |:---------------------------:|:--------------------------:|
 | ![](images/lightbulb.png)   | ![](images/default.png)    |
 
-The following images are stored in a seperate file _(lightswitch.images.json)_: 
-| Lock (on/off) | Heart | Invader | JS | Smiley | Skull | Storm | 
+The following images are stored in a seperate file _(lightswitch.images.json)_:  
+| - Lock (on/off) - | - Heart - | - Invader - | - JS - | - Smiley - | - Skull - | - Storm - | 
 |:-------------:|:-----:|:-------:|:--:|:------:|:-----:|:-----:|
 | ![](images/image_lock.png) | ![](images/image_heart.png) | ![](images/image_invader.png) | ![](images/image_js.png) | ![](images/image_smiley.png) | ![](images/image_skull.png) | ![](images/image_storm.png) |
 
@@ -81,14 +81,15 @@ The following images are stored in a seperate file _(lightswitch.images.json)_:
 ## Worth Mentioning ##
 
 ### To do list
-* Catch the touch and draw input related to this widget to prevent actions in the active app.
+* Catch the touch and draw input related to this widget to prevent actions in the active app.  
+  _(For now I have no idea how to achieve this, help is appreciated)_
 * Manage images for the lock icon through a _Customize and Upload App_ page.
 
 ### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) or send me a [mail](mailto:banglejs@storm64.de).
 
 ### Thanks
-Huge thanks to Gordon Williams for this genius device.
+Huge thanks to Gordon Williams and all the motivated developers.
 
 ### Creator
 Storm64 ([Mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64))
