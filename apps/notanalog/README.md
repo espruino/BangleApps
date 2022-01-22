@@ -14,6 +14,7 @@ mode, but widgets are still loaded in background.
 - If the battery is charged, the icons will change.
 - If you have done more than 10k steps, the red hand and icon will turn green.
 - Shows current lock status of your bangle va a colored dot in the middle.
+- Sows symbol if GPS is on.
 
 ## Screenshots
 ![](screenshot_1.png)

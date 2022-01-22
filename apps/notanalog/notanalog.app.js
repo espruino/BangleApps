@@ -49,6 +49,12 @@ var stepsImg = {
     buffer : E.toArrayBuffer(atob("AcAAAAPwAAAH8AAAB/gAAAf4AAAH/AAAD/wAAAf8AAAH/AfAB/wP4Af8H+AH/B/gB/wf4AP8P+AD+D/gAfg/4AGAP+AAPD/gAPw/4AD+P+AAfj/AAH4/wAB+H8AAPAeAAAAwAAAAPgAAAH8AAAB/AAAAfgAAAH4AAAA8AAAAOAA="))
 };
 
+var gpsImg = {
+    width : 32, height : 32, bpp : 1,
+    transparent : 0,
+    buffer : E.toArrayBuffer(atob("AAAMAAAAD4AAAAHAAAAA4AAADjABAA8YAYADmAPAAcwD4DzMB/B8zAf4fAAH/HwAB/74AAf/wAAH/4AAB//AAAP/4AAD//AAA//4AAH//AAA//4AAH//AAA//4ABH/4AAYP4AAHgAAAB/AAAA/4AAAP+AAAD/gAAP//gAD//4AA="))
+};
+
 
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
@@ -117,20 +123,27 @@ function drawBackground() {
 
 
 function drawState(){
-    g.setColor(state.color);
     g.setFontAlign(1,0,0);
 
     // Draw alarm
     var highPrioImg = isAlarmEnabled() ? alarmImg :
-        Bangle.isCharging() ? chargeImg : undefined;
+        Bangle.isCharging() ? chargeImg :
+        Bangle.isGPSOn() ? gpsImg :
+        undefined;
+
+    var imgColor = isAlarmEnabled() ? state.color :
+        Bangle.isCharging() ? g.theme.fg :
+        Bangle.isGPSOn() ? g.theme.fg :
+        state.color;
 
     // As default, we draw weather if available, otherwise the steps symbol is shown.
     if(!highPrioImg && state.has_weather){
         g.setColor(g.theme.fg);
         g.drawString(state.temp, cx+cx/2+15, cy+cy/2+10);
     } else {
+        g.setColor(imgColor);
         var img = highPrioImg ? highPrioImg : stepsImg;
-        g.drawImage(img, cx+cx/2 - img.width/2, cy+cy/2 - img.height/2+5);
+        g.drawImage(img, cx+cx/2 - img.width/2 + 5, cy+cy/2 - img.height/2+5);
     }
 }
 
@@ -208,18 +221,22 @@ function drawLock(){
 }
 
 
-function handleState(){
+function handleState(fastUpdate){
+    // Set theme color
+    state.color = isAlarmEnabled() ? "#FF6A00" :
+        state.steps > state.maxSteps ? "#00ff00" :
+        "#ff0000";
+
+    if(fastUpdate){
+        return;
+    }
+
     // Set battery
     state.bat = E.getBattery();
 
     // Set steps
     state.steps = getSteps();
     state.maxSteps = 10000;
-
-    // Set theme color
-    state.color = isAlarmEnabled() ? "#FF6A00" :
-        state.steps > state.maxSteps ? "#00ff00" :
-        "#ff0000";
 
     // Set weather
     state.has_weather = true;
@@ -238,21 +255,29 @@ function handleState(){
 }
 
 
-function draw(){
+function draw(fastUpdate){
     // Execute handlers
-    handleState();
+    handleState(fastUpdate);
     handleAlarm();
 
     // Clear watch face
-    g.reset();
-    g.clearRect(0, 0, g.getWidth(), g.getHeight());
+    if(fastUpdate){
+        var innerRect = 20;
+        g.clearRect(innerRect, innerRect, g.getWidth()-innerRect, g.getHeight()-innerRect);
+    } else {
+        g.reset();
+        g.clearRect(0, 0, g.getWidth(), g.getHeight());
+    }
 
     // Draw again
     g.setColor(1,1,1);
 
-    drawBackground();
-    drawLock();
+    if(!fastUpdate){
+        drawBackground();
+    }
+
     drawDate();
+    drawLock();
     drawState();
     drawData();
     drawTime();
@@ -267,7 +292,7 @@ function draw(){
  */
 Bangle.on('lcdPower',on=>{
     if (on) {
-        draw();
+        draw(false);
     } else { // stop draw timer
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
@@ -275,7 +300,7 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('charging',function(charging) {
-    draw();
+    draw(false);
 });
 
 Bangle.on('lock', function(isLocked) {
@@ -292,13 +317,13 @@ Bangle.on('touch', function(btn, e){
     if(is_upper){
         feedback();
         increaseAlarm();
-        draw();
+        draw(true);
     }
 
     if(is_lower){
         feedback();
         decreaseAlarm();
-        draw();
+        draw(true);
     }
 });
 
@@ -310,7 +335,7 @@ function queueDraw() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw();
+      draw(false);
     }, 60000 - (Date.now() % 60000));
 }
 
@@ -380,7 +405,7 @@ function decreaseAlarm(){
 }
 
 function feedback(){
-    Bangle.buzz(40, 0.3);
+    Bangle.buzz(40, 0.6);
 }
 
 /*
@@ -398,7 +423,7 @@ for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
 // g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
-draw();
+draw(false);
 
 // After drawing the watch face, we can draw the widgets
 // Bangle.drawWidgets();
