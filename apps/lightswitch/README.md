@@ -3,7 +3,7 @@
 Whis this widget I wanted to create a solution to quickly en-/disable the LCD backlight and even change the brightness.  
 In addition it shows the lock status with the option to personalize the lock icon with a tiny image.
 
-
+---
 ## Control ##
 
 * __On / off__  
@@ -16,7 +16,7 @@ In addition it shows the lock status with the option to personalize the lock ico
 * __Double tap to unlock__ _(disabled by default)_  
   If a side is defined in the app settings, your bangle will be unlocked if you double tab on that side.
 
-
+---
 ## Settings ##
 
 ### Widget - Change the apperance of the widget:
@@ -64,7 +64,7 @@ In addition it shows the lock status with the option to personalize the lock ico
   _1%_ / _2%_ / _..._ / __20%__ / _..._ / _100%_  
   Set the minimal level of brightness for the backlight on a flash.
 
-
+---
 ## Images ##
 
 Examples in default light and dark theme.  
@@ -77,7 +77,7 @@ The following images are stored in a seperate file _(lightswitch.images.json)_:
 |:-------------:|:-----:|:-------:|:--:|:------:|:-----:|:-----:|
 | ![](images/image_lock.png) | ![](images/image_heart.png) | ![](images/image_invader.png) | ![](images/image_js.png) | ![](images/image_smiley.png) | ![](images/image_skull.png) | ![](images/image_storm.png) |
 
-
+---
 ## Worth Mentioning ##
 
 ### To do list
