@@ -1,0 +1,38 @@
+{ 
+	"id": "timerclk",
+	"name": "Timer Clock",
+	"shortName":"Timer Clock",
+	"version":"0.01",
+	"description": "A clock with stopwatches, timers and alarms build in.",
+	"icon": "app-icon.png",
+	"type": "clock",
+	"tags": "clock",
+	"supports" : ["BANGLEJS","BANGLEJS2"],
+	"screenshots": [
+		{"url":"screenshot.png"},
+		{"url":"screenshot_stopwatch1.png"},
+		{"url":"screenshot_stopwatch2.png"},
+		{"url":"screenshot_settings1.png"},
+		{"url":"screenshot_settings2.png"},
+		{"url":"screenshot_settings3.png"}
+	],
+	"readme": "README.md",
+	"storage": [
+		{"name":"timerclk.app.js","url":"app.js"},
+		{"name":"timerclk.img","url":"app-icon.js","evaluate":true},
+		{"name":"timerclk.boot.js","url":"boot.js"},
+		{"name":"timerclk.lib.js","url":"lib.js"},
+		{"name":"timerclk.wid.js","url":"wid.js"},
+		{"name":"timerclk.settings.js","url":"settings.js"},
+		{"name":"timerclk.stopwatch.js","url":"stopwatch.js"},
+		{"name":"timerclk.timer.js","url":"timer.js"},
+		{"name":"timerclk.timer.alert.js","url":"timer.alert.js"},
+		{"name":"timerclk.alarm.js","url":"alarm.js"},
+		{"name":"timerclk.alarm.alert.js","url":"alarm.alert.js"},
+		{"name":"timerclk.stopwatch.info","url":"stopwatch.info"},
+		{"name":"timerclk.timer.info","url":"timer.info"},
+		{"name":"timerclk.alarm.info","url":"alarm.info"}
+	],
+	"data": [{"name":"timerclk.json"},{"name":"timerclk.stopwatch.json"},{"name":"timerclk.timer.json"},{"name":"timerclk.alarm.json"}],
+	"sortorder": 0
+}
