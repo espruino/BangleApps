@@ -226,6 +226,7 @@ function handleState(){
     try {
         weather = require('weather').get();
         if (weather === undefined){
+            state.has_weather = false;
             state.temp = "-";
         } else {
             state.temp = locale.temp(Math.round(weather.temp-273.15));
