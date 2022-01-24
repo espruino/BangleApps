@@ -29,6 +29,7 @@ function loadSettings() {
   settings = storage.readJSON("circlesclock.json", 1) || {
     'minHR': 40,
     'maxHR': 200,
+    'confidence': 0,
     'stepGoal': 10000,
     'stepDistanceGoal': 8000,
     'stepLength': 0.8,
@@ -599,9 +600,11 @@ Bangle.on('lock', function(isLocked) {
 
 Bangle.on('HRM', function(hrm) {
   if (isCircleEnabled("hr")) {
-    hrtValue = hrm.bpm;
-    if (Bangle.isLCDOn())
-      drawHeartRate();
+    if (hrm.confidence >= (settings.confidence || 0)) {
+      hrtValue = hrm.bpm;
+      if (Bangle.isLCDOn())
+        drawHeartRate();
+    }
   }
 });
 

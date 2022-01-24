@@ -14,7 +14,7 @@
   { "url": "screenshot-mag.png" }
 ],
 "type": "app",
-"tags": "tool,sensors",
+"tags": "tool,sensors,bluetooth",
 "supports" : [ "BANGLEJS2" ],
 "allow_emulator": true,
 "readme": "README.md",
