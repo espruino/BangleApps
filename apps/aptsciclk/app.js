@@ -144,6 +144,7 @@ var curWarning = Math.floor(Math.random() * (maxWarning+1));
 function buttonPressed(){
   if (curWarning < maxWarning) curWarning += 1;
   else curWarning = 0;
+  g.reset();
   buttonImg = getImg("butPress");
   g.drawImage(buttonImg, 0, 0);
 
