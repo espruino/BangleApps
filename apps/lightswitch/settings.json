@@ -1,0 +1,72 @@
+/*** Available settings for lightswitch ***
+
+ * colors: string // colors used for the bulb
+      // set with g.setColor(val*col[0], val*col[1], val*col[2])
+      "100" -> red
+      "110" -> yellow
+      "010" -> green
+      "011" -> cyan (default)
+      "001" -> blue
+      "101" -> magenta
+
+ * image: string //
+      "default" ->
+      "random"  ->
+
+ * touchOn: string // select when widget touch is active
+      ""             -> only on default clock
+      "clock"        -> on all clocks
+      "clock,launch" -> on all clocks and lanchers (default)
+      "always"       -> always
+
+ * dragDelay: int // drag listener reset time in ms
+      // time until a drag is needed to activate backlight changing mode
+      0   -> disabled
+      500 -> (default)
+
+ * minValue: float // minimal brightness level that can be set by dragging
+      0.05 to 1, 0.1 as default
+
+ * unlockSide: string // side of the watch to double tap on to flash backlight
+      0/false/undefined             -> backlight flash disabled
+      right/left/up/down/front/back -> side to tap on (default: right)
+
+ * tapSide: string // side of the watch to double tap on to flash backlight
+      0/false/undefined             -> backlight flash disabled
+      right/left/up/down/front/back -> side to tap on (default: right)
+
+ * tapOn: string // select when tap to flash backlight is active
+      "locked"   -> only when locked
+      "unlocked" -> only when unlocked (default)
+      "always"   -> always
+
+ * tOut: int // backlight flash timeout in ms
+      3000 (default)
+
+ * minFlash: float // minimal brightness level when 
+      0.05 to 1, 0.2 as default
+
+ *** Cached values ***
+
+ * value: float // active brightness value (0-1)
+      1 (default)
+ * isOn: bool // active backlight status
+      true (default)
+
+ */
+{
+  // settings
+  "colors": "011",
+  "image": "default",
+  "touchOn": "clock,launch",
+  "dragDelay": 500,
+  "minValue": 0.1,
+  "unlockSide": "",
+  "tapSide": "right",
+  "tapOn": "always",
+  "tOut": 2000,
+  "minFlash": 0.2,
+  // cached values
+  "value": 1,
+  "isOn": true
+}
