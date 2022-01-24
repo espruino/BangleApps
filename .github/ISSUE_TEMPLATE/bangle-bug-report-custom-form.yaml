@@ -26,7 +26,7 @@ body:
     attributes:
       label: Your firmware version
       description: |
-        ## Please make sure you installed the latest released firmware!
+        ## Please make sure you installed the latest (released) firmware!
         If it occurs only in "Cutting Edge build" please mention this.
         Update instructions:
         **Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)**
@@ -40,7 +40,7 @@ body:
     attributes:
       label: The bug
       description: |
-        ** Please also mention the expected behaviour and steps to reproduce **
+        ## Please also mention the expected behaviour and steps to reproduce
       placeholder: |
         ###Describe the bug
         A clear and concise description of what the bug is.
