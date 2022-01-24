@@ -5,6 +5,7 @@ var fontHeading = "6x8:2";
 var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
 var running = false;
+var fixCount = 0;
 var startTime;
 var startSteps;
 // This & previous GPS readings
@@ -102,8 +103,6 @@ var layout = new Layout( {
 clearState();
 layout.render();
 
-
-
 function onTimer() {
   layout.clock.label = locale.time(new Date(),1);
   if (!running) {
@@ -125,21 +124,36 @@ function onTimer() {
   stepHistory[0]=0;
 }
 
+function radians(a) {
+  return a*Math.PI/180;
+}
+
+// distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
+// https://www.movable-type.co.uk/scripts/latlong.html
+function calcDistance(a,b) {
+  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
+  var y = radians(b.lat-a.lat);
+  return Math.round(Math.sqrt(x*x + y*y) * 6371000);
+}
+
 Bangle.on("GPS", function(fix) {
   layout.gps.bgCol = fix.fix ? "#0f0" : "#f00";
-  lastGPS = thisGPS;
+  if (!fix.fix) { return; } // only process actual fixes
+  if (fixCount++ == 0) {
+    Bangle.buzz(); // first fix, does not need to respect quiet mode
+    lastGPS = fix; // initialise on first fix
+  }
+
   thisGPS = fix;
-  if (running && fix.fix && lastGPS.fix) {
-    // work out distance - moving from a to b
-    var a = Bangle.project(lastGPS);
-    var b = Bangle.project(thisGPS);
-    var dx = a.x-b.x, dy = a.y-b.y;
-    var d = Math.sqrt(dx*dx+dy*dy); // this should be the distance in meters
+
+  if (running) {
+    var d = calcDistance(lastGPS, thisGPS);
     distance += d;
     layout.dist.label=locale.distance(distance);
     var duration = Date.now() - startTime; // in ms
     var speed = distance * 1000 / duration; // meters/sec
     layout.pace.label = formatPace(speed);
+    lastGPS = fix;
   }
 });
 Bangle.on("HRM", function(h) {
