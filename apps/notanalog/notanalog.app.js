@@ -169,7 +169,7 @@ function drawData() {
     }
 
     // Default are the steps
-    drawDataHand(parseInt(state.steps*360/state.maxSteps));
+    drawDataHand(parseInt(state.steps*360/12000));
 }
 
 
@@ -236,7 +236,6 @@ function handleState(fastUpdate){
 
     // Set steps
     state.steps = getSteps();
-    state.maxSteps = 10000;
 
     // Set weather
     state.has_weather = true;
