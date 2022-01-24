@@ -80,7 +80,7 @@ function drawApp() {
       if (nowMinute < 10) nowMinute = "0" + nowMinute;
       if (nowSecond < 10) nowSecond = "0" + nowSecond;
       const time = nowHour + ":" + nowMinute + (BANGLEJS2 ? "" : ":" + nowSecond); //# hide seconds on bangle 2
-      drawString(time, BANGLEJS2 ? 85 : 140); //# remove x, adjust height
+      drawString(time, BANGLEJS2 ? 85 : 105); //# remove x, adjust height for bangle 2 an newer firmware
     }
   }
 
