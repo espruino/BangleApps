@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please!
+        ** If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please! **
   - type: dropdown
     id: hwversion
     attributes:
@@ -19,7 +19,7 @@ body:
         - label: Bangle 1
         - label: Bangle 2
       multiple: true
-    - type: input
+  - type: input
     id: fwversion
     attributes:
       label: Your firmware version
