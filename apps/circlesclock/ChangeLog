@@ -11,3 +11,4 @@
       Support to choose between humidity and wind speed for weather circle progress
       Support to show time and progress until next sunrise or sunset
       Load daily steps from Bangle health if available
+0.07: Allow configuration of minimal heart rate confidence

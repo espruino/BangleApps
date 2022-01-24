@@ -35,6 +35,16 @@
       },
       onchange: x => save('maxHR', x),
     },
+    'hr confidence': {
+      value: "confidence" in settings ? settings.confidence : 0,
+      min: 0,
+      max : 100,
+      step: 10,
+      format: x => {
+        return x;
+      },
+      onchange: x => save('confidence', x),
+    },
     'step goal': {
       value: "stepGoal" in settings ? settings.stepGoal : 10000,
       min: 2000,
