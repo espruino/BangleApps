@@ -3,8 +3,8 @@ An analog watch face for people (like me) that can not read analog watch faces.
 It looks like an analog clock, but its not! It shows the time digital - check the
 4 numbers on the watch face ;)
 
-The red hand shows the number of steps (0 = 0°, 2.5k = 90°, 5k = 180°, ...) and the
-black one the battery level (100% = 0°, 75% = 270°, 50% = 180°, ...).
+The red hand shows the number of steps (12k steps = 360 degrees) and the
+black one the battery level (100% = 360 degrees).
 The selected theme is also respected. Note that this watch face is in fullscreen
 mode, but widgets are still loaded in background.
 
@@ -14,7 +14,7 @@ mode, but widgets are still loaded in background.
 - If the battery is charged, the icons will change.
 - If you have done more than 10k steps, the red hand and icon will turn green.
 - Shows current lock status of your bangle va a colored dot in the middle.
-- Sows symbol if GPS is on.
+- Shows symbol if GPS is on.
 
 ## Screenshots
 ![](screenshot_1.png)
