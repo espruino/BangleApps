@@ -1,0 +1,18 @@
+{
+  "id": "gpsrawtime",
+  "name": "GPS-raw Time",
+  "version": "0.01",
+  "description": "Sets every hour the time from raw gps data (no fix required)",
+  "icon": "gpsrawtime.png",
+  "tags": "tool,gps,time",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "interface": "interface.html",
+  "storage": [
+    {
+      "name": "gpsrawtime.boot.js",
+      "url": "gpsrawtime.boot.js"
+    }
+  ]
+}
