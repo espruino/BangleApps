@@ -7,14 +7,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please!
+        # Attention: If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please!
   - type: dropdown
     id: hwversion
     attributes:
       label: Affected hardware version
       description: |
         Which Bangle hardware version(s) is/are affected?
-        Hint: You can select multiple entries.
+        _Hint: You can select multiple entries._
       options:
         - Bangle 1
         - Bangle 2
@@ -26,12 +26,12 @@ body:
     attributes:
       label: Your firmware version
       description: |
-        * Please make sure you installed the latest released firmware! *
+        ## Please make sure you installed the latest released firmware!
         If it occurs only in "Cutting Edge build" please mention this.
         Update instructions:
-        * Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates) *
-        * Bangle 1: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates) *
-        Hint: The links will open inplace hold e.g. ctrl/cmd-key and click to open in a new tab instead.
+        **Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)**
+        **Bangle 1: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)**
+        _Hint: The links will open inplace hold e.g. ctrl/cmd-key and click to open in a new tab instead._
       placeholder: e.g. 2v11
     validations:
       required: true
@@ -39,15 +39,16 @@ body:
     id: report
     attributes:
       label: The bug
-      description: * Please also mention the expected behaviour and steps to reproduce *
+      description: |
+        ** Please also mention the expected behaviour and steps to reproduce **
       placeholder: |
-        **Describe the bug**
+        ###Describe the bug
         A clear and concise description of what the bug is.
         
-        **Expected behavior**
+        ###Expected behavior
         A clear and concise description of what you expected to happen.
 
-        **Steps to reproduce**
+        ###Steps to reproduce
         1. Start app xy
         2. choose abc
         3. bug occurs
