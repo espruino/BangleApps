@@ -1,0 +1,16 @@
+{
+  "id": "pipboy",
+  "name": "Pipboy",
+  "version": "0.04",
+  "description": "Pipboy themed clock",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-pipboy-themed-clock-screenshot.png"}],
+  "storage": [
+    {"name":"pipboy.app.js","url":"app.js"},
+    {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
+  ]
+}

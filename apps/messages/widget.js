@@ -1,10 +1,10 @@
-
-WIDGETS["messages"]={area:"tl",width:0,draw:function() {
+WIDGETS["messages"]={area:"tl", width:0, iconwidth:23,
+draw:function() {
+  Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  g.reset().setBgColor((c&1) ? "#0f0" : "#030").setColor((c&1) ? "#000" : "#fff");
-  g.clearRect(this.x,this.y,this.x+this.width,this.y+23);
-  g.setFont("6x8:1x2").setFontAlign(0,0).drawString("MESSAGES", this.x+this.width/2, this.y+12);
+  g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+this.iconwidth);
+  g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
@@ -13,10 +13,12 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
   setTimeout(()=>WIDGETS["messages"].draw(), 1000);
-},show:function() {
+  if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
+},show:function(quiet) {
   WIDGETS["messages"].t=Date.now(); // first time
   WIDGETS["messages"].l=Date.now()-10000; // last buzz
-  WIDGETS["messages"].width=64;
+  if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
+  WIDGETS["messages"].width=this.iconwidth;
   Bangle.drawWidgets();
   Bangle.setLCDPower(1);// turns screen on
 },hide:function() {
@@ -25,6 +27,7 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
   WIDGETS["messages"].width=0;
   Bangle.drawWidgets();
 },buzz:function() {
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
   let v = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ".";
   function b() {
     var c = v[0];
@@ -33,4 +36,15 @@ WIDGETS["messages"]={area:"tl",width:0,draw:function() {
     if (c=="-") Bangle.buzz(500).then(()=>setTimeout(b,100));
   }
   b();
+},touch:function(b,c) {
+  var w=WIDGETS["messages"];
+  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;
+  load("messages.app.js");
 }};
+/* We might have returned here if we were in the Messages app for a
+message but then the watch was never viewed. In that case we don't
+want to buzz but should still show that there are unread messages. */
+if (global.MESSAGES===undefined) (function() {
+  var messages = require("Storage").readJSON("messages.json",1)||[];
+  if (messages.some(m=>m.new)) WIDGETS["messages"].show(true);
+})();

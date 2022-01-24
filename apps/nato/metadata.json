@@ -1,0 +1,17 @@
+{
+  "id": "nato",
+  "name": "NATO Alphabet",
+  "shortName": "NATOAlphabet",
+  "version": "0.01",
+  "description": "Learn the NATO Phonetic alphabet plus some numbers.",
+  "icon": "nato.png",
+  "type": "app",
+  "tags": "app,learn,visual",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-NATO-alphabet-screenshot.png"},{"url":"bangle1-NATO-alphabet-screenshot2.png"}],
+  "storage": [
+    {"name":"nato.app.js","url":"nato.js"},
+    {"name":"nato.img","url":"nato-icon.js","evaluate":true}
+  ]
+}

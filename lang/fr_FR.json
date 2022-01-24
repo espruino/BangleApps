@@ -1,0 +1,21 @@
+{
+  "//":"French language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarms" : "Réveils",
+    "Hours" : "Heures",
+    "Minutes" : "Minutes",
+    "Enabled" : "Activé",
+    "New Alarm" : "Nouveau Réveil",
+    "Save" : "Sauvegarder",
+    "Back" : "Retour",
+    "Repeat" : "Répétition",
+    "Delete" : "Supprimer",
+    "ALARM!" : "ALARM!",
+    "Sleep" : "Sommeil"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "rép."
+  }
+}

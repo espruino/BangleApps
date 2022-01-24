@@ -1,0 +1,15 @@
+{
+  "id": "fileman",
+  "name": "File manager",
+  "shortName": "FileManager",
+  "version": "0.03",
+  "description": "Simple file manager, allows user to examine watch storage and display, load or delete individual files",
+  "icon": "icons8-filing-cabinet-48.png",
+  "tags": "tools",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"fileman.app.js","url":"fileman.app.js"},
+    {"name":"fileman.img","url":"fileman-icon.js","evaluate":true}
+  ]
+}

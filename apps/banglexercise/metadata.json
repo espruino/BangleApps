@@ -1,0 +1,21 @@
+{ "id": "banglexercise",
+  "name": "BanglExercise",
+  "shortName":"BanglExercise",
+  "version":"0.02",
+  "description": "Can automatically track exercises while wearing the Bangle.js watch.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "app",
+  "tags": "sport",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"banglexercise.app.js","url":"app.js"},
+    {"name":"banglexercise.img","url":"app-icon.js","evaluate":true},
+    {"name":"banglexercise.settings.js","url":"settings.js"}
+   ],
+   "data": [
+     {"name":"banglexercise.json"}
+   ]
+}

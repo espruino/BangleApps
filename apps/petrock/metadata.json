@@ -1,0 +1,14 @@
+{
+  "id": "petrock",
+  "name": "Pet rock",
+  "version": "0.02",
+  "description": "A virtual pet rock with wobbly eyes",
+  "icon": "petrock.png",
+  "type": "app",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"petrock.app.js","url":"app.js"},
+    {"name":"petrock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

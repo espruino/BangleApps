@@ -1,0 +1,16 @@
+{
+  "id": "locale",
+  "name": "Languages",
+  "version": "0.15",
+  "description": "Translations for different countries",
+  "icon": "locale.png",
+  "type": "locale",
+  "tags": "tool,system,locale,translate",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "locale.html",
+  "storage": [
+    {"name":"locale"}
+  ],
+  "sortorder": -10
+}

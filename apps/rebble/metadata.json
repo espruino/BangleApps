@@ -1,0 +1,19 @@
+{
+  "id": "rebble",
+  "name": "Rebble Clock",
+  "shortName": "Rebble",
+  "version": "0.04",
+  "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
+  "readme": "README.md",
+  "icon": "rebble.png",
+  "dependencies": {"mylocation":"app", "widpedom":"app"},
+  "screenshots": [{"url":"screenshot_rebble.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"rebble.app.js","url":"rebble.app.js"},
+    {"name":"rebble.settings.js","url":"rebble.settings.js"},
+    {"name":"rebble.img","url":"rebble.icon.js","evaluate":true}
+  ]
+}

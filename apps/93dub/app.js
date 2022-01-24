@@ -78,6 +78,9 @@ function draw(){
     } else {
       h = " " + h;
     }
+  } else if (h === 0) {
+    // display 12:00 instead of 00:00 for 12 hr mode
+    h = "12";
   }
 
   //draw separator
@@ -90,7 +93,7 @@ function draw(){
   if (w == 1) {imgW = imgMon;}
   if (w == 2) {imgW = imgTue;}
   if (w == 3) {imgW = imgWed;}
-  if (w == 4) {imgW = imgThr;}
+  if (w == 4) {imgW = imgThu;}
   if (w == 5) {imgW = imgFri;}
   if (w == 6) {imgW = imgSat;}
   g.drawImage(imgW, 85, 63);
@@ -119,7 +122,13 @@ function draw(){
   queueDraw();
 }
 
-
+/**
+ * This watch is mostly dark, it does not make sense to respect the
+ * light theme as you end up with a white strip at the top for the
+ * widgets and black watch. So set the colours to the dark theme.
+ *
+ */
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
 
 //the following section is also from waveclk

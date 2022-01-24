@@ -13,6 +13,7 @@
     'fillbar': false,
     'charger': true,
     'hideifmorethan': 100,
+    'alwaysoncharge': false,
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -67,6 +68,11 @@
       step: 10,
       format: x => x+"%",
       onchange: save('hideifmorethan'),
+    },
+    'Show on charge': { // Not sure if this is readable enough in the 'big' menu
+      value: s.alwaysoncharge,
+      format: onOffFormat,
+      onchange: save('alwaysoncharge'),
     },
   }
   E.showMenu(menu)

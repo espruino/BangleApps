@@ -1,0 +1,13 @@
+{
+  "id": "widclk",
+  "name": "Digital clock widget",
+  "version": "0.06",
+  "description": "A simple digital clock widget",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widclk.wid.js","url":"widget.js"}
+  ]
+}

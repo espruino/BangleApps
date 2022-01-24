@@ -1,0 +1,28 @@
+{
+  "//":"German language translations",
+  "GLOBAL": {
+    "//":"Translations that apply for all apps",
+    "Alarm" : "Wecker",
+    "Hours" : "Stunden",
+    "Minutes" : "Minuten",
+    "Enabled" : "Aktiviert",
+    "Settings" : "Einstellungen",
+    "Save" : "Speichern",
+    "Back" : "Zurück",
+    "Repeat" : "Wiederholen",
+    "Delete" : "Löschen",
+    "Sleep" : "Schlummern",
+    "Alarms" : "Wecker",
+    "New Alarm" : "Neuer Wecker",
+    "ALARM!" : "ALARM!",
+    "Yes" : "Ja",
+    "No" : "Nein",
+    "On" : "Ein",
+    "Off" : "Aus",
+    "Ok" : "OK"
+  },
+  "alarm": {
+    "//":"App-specific overrides",
+    "rpt" : "Wdh."
+  }
+}

@@ -5,13 +5,18 @@ if (window.location.host=="banglejs.com") {
   document.title += " [Development]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
+} else if (window.location.hostname==='localhost') {
+  document.title += " [Local]";
+  Const.APPS_JSON_FILE = "apps.local.json";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is your local Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 } else {
   document.title += " [Unofficial]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v10";
+var RECOMMENDED_VERSION = "2v11";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -40,7 +45,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
   }
 
 
@@ -163,6 +168,48 @@ window.addEventListener('load', (event) => {
       Progress.hide({sticky:true});
       showToast("App Install failed, "+err,"error");
     });
+  });
+
+  // Load language list
+  httpGet("lang/index.json").then(languagesJSON=>{
+    var languages;
+    try {
+      languages = JSON.parse(languagesJSON);
+    } catch(e) {
+      console.error("lang/index.json Corrupted", e);
+    }
+
+    function reloadLanguage() {
+      LANGUAGE = undefined;
+      if (SETTINGS.language) {
+        var language = languages.find(l=>l.code==SETTINGS.language);
+        if (language) {
+          var langURL = "lang/"+language.url;
+          httpGet(langURL).then(languageJSON=>{
+            try {
+              LANGUAGE = JSON.parse(languageJSON);
+              console.log(`${langURL} loaded successfully`);
+            } catch(e) {
+              console.error(`${langURL} Corrupted`, e);
+            }
+          });
+        } else {
+          console.error(`Language code ${JSON.stringify(SETTINGS.language)} not found in lang/index.json`);
+        }
+      }
+    }
+
+    var selectLang = document.getElementById("settings-lang");
+    console.log(languages);
+    languages.forEach(lang => {
+      selectLang.innerHTML += `<option value="${lang.code}" ${SETTINGS.language==lang.code?"selected":""}>${lang.name} (${lang.code})</option>`;
+    });
+    selectLang.addEventListener("change",event=>{
+      SETTINGS.language = event.target.value;
+      reloadLanguage();      
+      saveSettings();
+    });
+    reloadLanguage();
   });
 });
 

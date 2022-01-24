@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Set pace format to mm:ss, time format to h:mm:ss,
+      added settings to opt out of GPS and HRM
+0.03: Fixed distance calculation, tested against Garmin Etrex, Amazfit GTS 2

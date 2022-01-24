@@ -34,7 +34,7 @@ layoutObject has:
        optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
-  * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
+  * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
 * A `font` field, eg `6x8` or `30%` to use a percentage of screen height
@@ -42,8 +42,8 @@ layoutObject has:
   and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
 * A `bgCol` field for background color (will automatically fill on render)
-* A `halign` field to set horizontal alignment. `-1`=left, `1`=right, `0`=center
-* A `valign` field to set vertical alignment. `-1`=top, `1`=bottom, `0`=center
+* A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
+* A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
 * A `pad` integer field to set pixels padding
 * A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
@@ -261,6 +261,7 @@ Layout.prototype.render = function (l) {
         x,y+4
       ], bg = l.selected?g.theme.bgH:g.theme.bg2;
     g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+    if (l.col) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
     else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){

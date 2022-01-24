@@ -1,2 +1,6 @@
 0.01: First version!
 0.02: Fixed alarms not working and localised days of week.
+0.03: Fix unfreed memory, and clearInterval that disabled all clocks at midnight
+      Fix app icon
+      Change menu order so 'back' is at the top
+0.04: Fix alarm not activating sometimes.

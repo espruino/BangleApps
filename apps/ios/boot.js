@@ -26,6 +26,13 @@ E.on('ANCS',msg=>{
   function ancsHandler() {
     var msg = Bangle.ancsMessageQueue[0];
     NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
+
+      if(msg.preExisting === true){
+        info.new = false;
+      } else {
+        info.new = true;
+      }
+
       E.emit("notify", Object.assign(msg, info));
       Bangle.ancsMessageQueue.shift();
       if (Bangle.ancsMessageQueue.length)
@@ -49,30 +56,74 @@ E.on('notify',msg=>{
   "message" : string,
   "messageSize" : string,
   "date" : string,
+  "new" : boolean,
   "posAction" : string,
   "negAction" : string,
   "name" : string,
 */
   var appNames = {
-    "com.netflix.Netflix" : "Netflix",
-    "com.google.ios.youtube" : "YouTube",
+    "com.apple.facetime": "FaceTime",
+    "com.apple.mobilecal": "Calendar",
+    "com.apple.mobilemail": "Mail",
+    "com.apple.mobilephone": "Phone",
+    "com.apple.mobileslideshow": "Pictures",
+    "com.apple.MobileSMS": "SMS Message",
+    "com.apple.Passbook": "iOS Wallet",
+    "com.apple.podcasts": "Podcasts",
+    "com.apple.reminders": "Reminders",
+    "com.apple.shortcuts": "Shortcuts",
+    "com.atebits.Tweetie2": "Twitter",
+    "com.burbn.instagram" : "Instagram",
+    "com.facebook.Facebook": "Facebook",
+    "com.facebook.Messenger": "Messenger",
+    "com.google.Chromecast" : "Google Home",
+    "com.google.Gmail" : "GMail",
     "com.google.hangouts" : "Hangouts",
+    "com.google.ios.youtube" : "YouTube",
+    "com.hammerandchisel.discord" : "Discord",
+    "com.ifttt.ifttt" : "IFTTT",
+    "com.jumbo.app" : "Jumbo",
+    "com.linkedin.LinkedIn" : "LinkedIn",
+    "com.marktplaats.iphone": "Marktplaats",
+    "com.microsoft.Office.Outlook" : "Outlook Mail",
+    "com.nestlabs.jasper.release" : "Nest",
+    "com.netflix.Netflix" : "Netflix",
+    "com.reddit.Reddit" : "Reddit",
+    "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
-    "com.atebits.Tweetie2": "Twitter"
+    "com.spotify.client": "Spotify",
+    "com.storytel.iphone": "Storytel",
+    "com.strava.stravaride": "Strava",
+    "com.tinyspeck.chatlyio": "Slack",
+    "com.toyopagroup.picaboo": "Snapchat",
+    "com.ubercab.UberClient": "Uber",
+    "com.ubercab.UberEats": "UberEats",
+    "com.vilcsak.bitcoin2": "Coinbase",
+    "com.wordfeud.free": "WordFeud",
+    "com.zhiliaoapp.musically": "TikTok",
+    "io.robbie.HomeAssistant": "Home Assistant",
+    "net.weks.prowl": "Prowl",
+    "net.whatsapp.WhatsApp": "WhatsApp",
+    "nl.ah.Appie": "Albert Heijn",
+    "nl.postnl.TrackNTrace": "PostNL",
+    "ph.telegra.Telegraph": "Telegram",
+    "tv.twitch": "Twitch",
+
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
     '2019':"'"
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
-  if (appNames[msg.appId]) msg.a
+  //if (appNames[msg.appId]) msg.a
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
     src : appNames[msg.appId] || msg.appId,
+    new : msg.new,
     title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
     subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
-    body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer)
+    body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer) || "Cannot display"
   });
   // TODO: posaction/negaction?
 });
@@ -82,9 +133,10 @@ E.on('AMS',a=>{
   function push(m) {
     var msg = { t : "modify", id : "music", title:"Music" };
     if (a.id=="artist")  msg.artist = m;
-    else if (a.id=="album")  msg.artist = m;
-    else if (a.id=="title")  msg.tracl = m;
-    else return; // duration? need to reformat
+    else if (a.id=="album")  msg.album = m;
+    else if (a.id=="title")  msg.track = m;
+    else if (a.id=="duration")  msg.dur = m;
+    else return;
     require("messages").pushMessage(msg);
   }
   if (a.truncated) NRF.amsGetMusicInfo(a.id).then(push)

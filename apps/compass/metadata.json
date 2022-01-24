@@ -1,0 +1,14 @@
+{
+  "id": "compass",
+  "name": "Compass",
+  "version": "0.05",
+  "description": "Simple compass that points North",
+  "icon": "compass.png",
+  "screenshots": [{"url":"screenshot_compass.png"}],
+  "tags": "tool,outdoors",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"compass.app.js","url":"compass.js"},
+    {"name":"compass.img","url":"compass-icon.js","evaluate":true}
+  ]
+}

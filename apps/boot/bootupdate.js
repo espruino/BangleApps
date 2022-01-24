@@ -6,11 +6,11 @@ var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 var boot = "";
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)!=${CRC})`;
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 } else {
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/));
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))!=${CRC})`;
+  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
+  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 }
 boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
@@ -18,13 +18,20 @@ boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
+    else if (s.HID=="com") boot += `Bangle.HID = E.toUint8Array(atob("BQEJAqEBhQEJAaEABQkZASkFFQAlAZUFdQGBApUBdQOBAwUBCTAJMQk4FYElf3UIlQOBBgUMCjgCFYElf3UIlQGBBsDABQEJBqEBhQIFBxngKecVACUBdQGVCIECdQiVAYEBGQApcxUAJXOVBXUIgQDA"));`
     else if (s.HID=="kb") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBBQcZ4CnnFQAlAXUBlQiBApUBdQiBAZUFdQEFCBkBKQWRApUBdQORAZUGdQgVACVzBQcZAClzgQAJBRUAJv8AdQiVArECwA=="));`
     else /*kbmedia*/boot += `Bangle.HID = E.toUint8Array(atob("BQEJBqEBhQIFBxngKecVACUBdQGVCIEClQF1CIEBlQV1AQUIGQEpBZEClQF1A5EBlQZ1CBUAJXMFBxkAKXOBAAkFFQAm/wB1CJUCsQLABQwJAaEBhQEVACUBdQGVAQm1gQIJtoECCbeBAgm4gQIJzYECCeKBAgnpgQIJ6oECwA=="));`;
     boot += `bleServiceOptions.hid=Bangle.HID;\n`;
   }
 }
-if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
-  if (s.log) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
+if (s.log==2) { // logging to file
+    boot += `_DBGLOG=require("Storage").open("log.txt","a");
+`;
+} if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
+  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+LoopbackA.setConsole(true);\n`;
+  else if (s.log) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
   else boot += `E.setConsole(null,{force:true});\n`; // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
   /* If not programmable add our own handler for Bluetooth data
   to allow Gadgetbridge commands to be received*/
@@ -41,7 +48,10 @@ Bluetooth.on('line',function(l) {
     try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
 });\n`;
 } else {
-  if (s.log) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
+  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
+  else if (s.log) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
   else boot += `Bluetooth.setConsole(true);\n`; // else if no debug, force REPL to Bluetooth
 }
 // we just reset, so BLE should be on.
@@ -78,14 +88,8 @@ boot += `E.on('errorFlag', function(errorFlags) {
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
-if (s.quiet && s.qmOptions) boot+=`Bangle.setOptions(${E.toJS(s.qmOptions)});\n`;
-if (s.quiet && s.qmBrightness) {
-  if (s.qmBrightness!=1) boot+=`Bangle.setLCDBrightness(${s.qmBrightness});\n`;
-} else {
-  if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
-}
-if (s.quiet && s.qmTimeout) boot+=`Bangle.setLCDTimeout(${s.qmTimeout});\n`;
-if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${s.passkey}, mitm:1, display:1});\n`;
+if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
+if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 // Pre-2v10 firmwares without a theme/setUI
 delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted

@@ -8,3 +8,23 @@
       Back now marks a message as read
       Clicking top-left opens a menu which allows you to delete a message or mark unread
 0.07: Added settings menu with option to choose vibrate pattern and frequency (fix #909)
+0.08: Fix rendering of long messages (fix #969)
+      buzz on new message (fix #999)
+0.09: Message now disappears after 60s if no action taken and clock loads (fix 922)
+      Fix phone icon (#1014)
+0.10: Respect the 'new' attribute if it was set from iOS integrations
+0.11: Open app when touching the widget (Bangle.js 2 only)
+0.12: Extra app-specific notification icons
+      New animated notifcationicon (instead of large blinking 'MESSAGES')
+      Added screenshots
+0.13: Add /*LANG*/ comments for internationalisation
+      Add 'Delete All' option to message options
+      Now update correctly when 'require("messages").clearAll()' is called
+0.14: Hide widget when all unread notifications are dismissed from phone
+0.15: Don't buzz when Quiet Mode is active
+0.16: Fix text wrapping so it fits the screen even if title is big (fix #1147)
+0.17: Fix: Get dynamic dimensions of notify icon, fixed notification font
+0.18: Use app-specific icon colors
+      Spread message action buttons out
+      Back button now goes back to list of messages
+      If showMessage called with no message (eg all messages deleted) now return to the clock (fix #1267)

@@ -48,38 +48,46 @@
             Bangle.removeListener('GPS', onGPS);
             Bangle.setGPSPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasFix?"#f00":"#888").drawImage(atob("DAyBAAACADgDuBOAeA4AzAHADgAAAA=="),x,y)
+          draw : (x,y) => g.setColor(hasFix?"#0f0":"#f88").drawImage(atob("DAwBEAKARAKQE4DwHkPqPRGKAEAA"),x,y)
         };
       },
       hrm:function() {
-        var bpm = 0, bpmConfidence = 0;
-        var hasBPM = false;
+        var bpm = "", bpmConfidence = "";
         function onHRM(h) {
-          if (h.confidence >= bpmConfidence) {
-            bpmConfidence = h.confidence;
-            bpm = h.bpm;
-            if (bpmConfidence) hasBPM = true;
-          }
+          bpmConfidence = h.confidence;
+          bpm = h.bpm;
         }
         return {
           name : "HR",
-          fields : ["Heartrate"],
+          fields : ["Heartrate", "Confidence"],
           getValues : () => {
-            var r = [bpmConfidence?bpm:""];
-            bpm = 0; bpmConfidence = 0;
+            var r = [bpm,bpmConfidence];
+            bpm = ""; bpmConfidence = "";
             return r;
           },
           start : () => {
-            hasBPM = false;
             Bangle.on('HRM', onHRM);
             Bangle.setHRMPower(1,"recorder");
           },
           stop : () => {
-            hasBPM = false;
             Bangle.removeListener('HRM', onHRM);
             Bangle.setHRMPower(0,"recorder");
           },
-          draw : (x,y) => g.setColor(hasBPM?"#f00":"#888").drawImage(atob("DAyBAAAAAD/H/n/n/j/D/B+AYAAAAA=="),x,y)
+          draw : (x,y) => g.setColor(Bangle.isHRMOn()?"#f00":"#f88").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+        };
+      },
+      bat:function() {
+        return {
+          name : "BAT",
+          fields : ["Battery Percentage", "Battery Voltage", "Charging"],
+          getValues : () => {
+            return [E.getBattery(), NRF.getBattery(), Bangle.isCharging()];
+          },
+          start : () => {
+          },
+          stop : () => {
+          },
+          draw : (x,y) => g.setColor(Bangle.isCharging() ? "#0f0" : "#ff0").drawImage(atob("DAwBAABgH4G4EYG4H4H4H4GIH4AA"),x,y)
         };
       },
       steps:function() {
@@ -94,11 +102,41 @@
           },
           start : () => { lastSteps = Bangle.getStepCount(); },
           stop : () => {},
-          draw : (x,y) => g.reset().drawImage(atob("DAyBAAADDHnnnnnnnnnnjDmDnDnAAA=="),x,y)
+          draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
         };
       }
-      // TODO: recAltitude from pressure sensor
     };
+    if (Bangle.getPressure){
+      recorders['baro'] = function() {
+        var temp="",press="",alt="";
+        function onPress(c) {
+            temp=c.temperature;
+            press=c.pressure;
+            alt=c.altitude;
+        }
+        return {
+          name : "Baro",
+          fields : ["Barometer Temperature", "Barometer Pressure", "Barometer Altitude"],
+          getValues : () => {
+              var r = [temp,press,alt];
+              temp="";
+              press="";
+              alt="";
+              return r;
+          },
+          start : () => {
+            Bangle.setBarometerPower(1,"recorder");
+            Bangle.on('pressure', onPress);
+          },
+          stop : () => {
+            Bangle.setBarometerPower(0,"recorder");
+            Bangle.removeListener('pressure', onPress);
+          },
+          draw : (x,y) => g.setColor("#0f0").drawImage(atob("DAwBAAH4EIHIEIHIEIHIEIEIH4AA"),x,y)
+        };
+      }
+    }
+    
     /* eg. foobar.recorder.js
     (function(recorders) {
       recorders.foobar = {
@@ -111,7 +149,7 @@
       }
     })
     */
-    require("Storage").list(/^.*\.recorder\.js$/).forEach(fn=>eval(fn)(recorders));
+    require("Storage").list(/^.*\.recorder\.js$/).forEach(fn=>eval(require("Storage").read(fn))(recorders));
     return recorders;
   }
 

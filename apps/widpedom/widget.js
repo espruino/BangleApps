@@ -1,5 +1,4 @@
 (() => {
-  const PEDOMFILE = "wpedom.json"
   // Last time Bangle.on('step' was called
   let lastUpdate = new Date();
   // Last step count when Bangle.on('step' was called
@@ -8,19 +7,14 @@
   let settings;
 
   function loadSettings() {
-    const d = require('Storage').readJSON(PEDOMFILE, 1) || {};
-    settings = d.settings || {};
-  }
-
-  function setting(key) {
-    if (!settings) { loadSettings() }
-    const DEFAULTS = {
+    const d = require('Storage').readJSON("wpedom.json", 1) || {};
+    settings = Object.assign({
       'goal': 10000,
       'progress': false,
       'large': false,
       'hide': false
-    }
-    return (key in settings) ? settings[key] : DEFAULTS[key];
+    }, d.settings || {});
+    return d;
   }
 
   Bangle.on('step', stepCount => {
@@ -31,10 +25,10 @@
     if (lastUpdate.getDate() == date.getDate()){
       stp_today += steps;
     } else {
-      // TODO: could save this to PEDOMFILE for lastUpdate's day?
+      // TODO: could save this to "wpedom.json" for lastUpdate's day?
       stp_today = steps;
     }
-    if (stp_today === setting('goal')
+    if (stp_today === settings.goal
         && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
       let b = 3, buzz = () => {
         if (b--) Bangle.buzz().then(() => setTimeout(buzz, 100))
@@ -51,29 +45,31 @@
   });
   // When unloading, save state
   E.on('kill', () => {
-    if (!settings) { loadSettings() }
-    let d = {
-      lastUpdate : lastUpdate.toISOString(),
+    require("Storage").writeJSON("wpedom.json",{
+      lastUpdate : lastUpdate.valueOf(),
       stepsToday : stp_today,
       settings   : settings,
-    };
-    require("Storage").write(PEDOMFILE,d);
+    });
   });
 
   // add your widget
-  WIDGETS["wpedom"]={area:"tl",width:26,
-    redraw:function() { // work out the width, and queue a full redraw if needed
+  WIDGETS["wpedom"]={area:"tl",width:0,
+    getWidth:function() {
       let stps = stp_today.toString();
       let newWidth = 24;
-      if (setting('hide')) 
+      if (settings.hide)
         newWidth = 0;
       else {
-        if (setting('large')) {
+        if (settings.large) {
           newWidth = 12 * stps.length + 3;
-          if (setting('progress'))
+          if (settings.progress)
             newWidth += 24;
         }
       }
+      return newWidth;
+    },
+    redraw:function() { // work out the width, and queue a full redraw if needed
+      let newWidth = this.getWidth();
       if (newWidth!=this.width) {
         // width has changed, re-layout all widgets
         this.width = newWidth;
@@ -84,14 +80,14 @@
       }
     },
     draw:function() {
-      if (setting('hide')) return;
+      if (settings.hide) return;
       if (stp_today > 99999)
         stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
       let stps = stp_today.toString();
       g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 23); // erase background
-      if (setting('progress')) { 
+      if (settings.progress) {
         const width = 23, half = 11;
-        const goal = setting('goal'), left = Math.max(goal-stps,0);
+        const goal = settings.goal, left = Math.max(goal-stps,0);
         // blue or dark green
         g.setColor(left ? "#08f" : "#080").fillCircle(this.x + half, this.y + half, half);
         if (left) {
@@ -113,10 +109,10 @@
         }
         g.reset();
       }
-      if (setting('large')) {
+      if (settings.large) {
         g.setFont("6x8",2);
         g.setFontAlign(-1, 0);
-        g.drawString(stps, this.x + (setting('progress')?28:4), this.y + 12);
+        g.drawString(stps, this.x + (settings.progress?28:4), this.y + 12);
       } else {
         let w = 24;
         if (stps.length > 3){
@@ -137,11 +133,12 @@
     getSteps:()=>stp_today
   };
   // Load data at startup
-  let pedomData = require("Storage").readJSON(PEDOMFILE,1);
+  let pedomData = loadSettings();
   if (pedomData) {
     if (pedomData.lastUpdate)
       lastUpdate = new Date(pedomData.lastUpdate);
     stp_today = pedomData.stepsToday|0;
     delete pedomData;
   }
+  WIDGETS["wpedom"].width = WIDGETS["wpedom"].getWidth();
 })()

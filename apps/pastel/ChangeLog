@@ -3,5 +3,11 @@
 0.03: Make it work with Gadgetbridge, Notifications fullscreen on a Bangle 2
 0.04: Leave space at the bottom for Chrono widget, set back option at first option
 0.05: Added 2 new fonts
-0.06: COnverted fonts to font modules
+0.06: Converted fonts to font modules
 0.07: Added info line that cycles on BTN1/BTN3 (or vitual buttons on a bangle 2)
+0.08: Added dependancy on MyLocation
+0.09: Added dependancy on Pedometer Widget
+0.10: Added Weather line, fixed issues on a Bangle 1, update every minute
+0.11: Changed cycle on minute to prevInfo to avoid the 2nd one being the blank line
+0.12: Removed dependancy on widpedom, now uses Bangle.getHealthStatus("day").steps
+      which requires 2.11.27 firmware to reset at midnight

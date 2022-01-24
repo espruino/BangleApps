@@ -5,3 +5,4 @@
 0.05: Setting to disable double/triple press control, remove touch controls setting, reduce fadeout flicker
 0.06: Bangle.js 2 support
 0.07: Fix "previous" button image
+0.08: Fix scrolling title background color

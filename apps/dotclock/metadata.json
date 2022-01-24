@@ -1,0 +1,16 @@
+{
+  "id": "dotclock",
+  "name": "Dot Clock",
+  "version": "0.03",
+  "description": "A Minimal Dot Analog Clock",
+  "icon": "clock-dot.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle2-dot-clcok-screenshot.png"},{"url":"bangle1-dot-clock-screenshot.png"}],
+  "storage": [
+    {"name":"dotclock.app.js","url":"clock-dot.js"},
+    {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
+  ]
+}

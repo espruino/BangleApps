@@ -1,9 +1,12 @@
 (function(){
+  const intervalLow = 60000; // update time when not charging
+  const intervalHigh = 2000; // update time when charging
+
   let COLORS = {
-    'white':    "#fff",
-    'black':    "#000",
+    'white':    g.theme.dark ? "#000" : "#fff",
+    'black':    g.theme.dark ? "#fff" : "#000",
     'charging': "#08f",
-    'high':     "#000",
+    'high':     g.theme.dark ? "#fff" : "#000",
     'low':      "#f00",
   };
 
@@ -36,10 +39,14 @@
     g.setFontAlign(0,0);
     g.setFont('6x8');
     g.drawString(l, x + 14, y + 10);
+
+    if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+      else                   changeInterval(id, intervalLow);
   }
 
+
   Bangle.on('charging',function(charging) { draw(); });
-  setInterval(()=>WIDGETS["wid_a_battery_widget"].draw(), 60000);
+  var id = setInterval(()=>WIDGETS["wid_a_battery_widget"].draw(), intervalLow);
 
   WIDGETS["wid_a_battery_widget"]={area:"tr",width:30,draw:draw};
 })();

@@ -1,0 +1,19 @@
+{ "id": "binwatch",
+  "name": "Binary Watch",
+  "shortName":"BinWatch",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "version":"0.04",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator":true,
+  "description": "Famous binary watch",
+  "tags": "clock",
+  "type": "clock",
+  "storage": [
+    {"name":"binwatch.app.js","url":"app.js"},
+    {"name":"binwatch.bg176.img","url":"Background176_center.img"},
+    {"name":"binwatch.bg240.img","url":"Background240_center.img"},
+    {"name":"binwatch.img","url":"app-icon.js","evaluate":true}
+  ]
+}

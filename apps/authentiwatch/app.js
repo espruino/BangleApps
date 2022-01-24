@@ -6,8 +6,15 @@ const algos = {
   "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
   "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
 };
+const calculating = "Calculating";
+const notokens = "No tokens";
+const notsupported = "Not supported";
 
-var tokens = require("Storage").readJSON("authentiwatch.json", true) || [];
+// sample settings:
+// {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
+var settings = require("Storage").readJSON("authentiwatch.json", true) || {tokens:[],misc:{}};
+if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
+if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 // QR Code Text
 //
@@ -66,9 +73,8 @@ function do_hmac(key, message, algo) {
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
-function hotp(token) {
+function hotp(d, token, dohmac) {
   var tick;
-  var d = new Date();
   if (token.period > 0) {
     // RFC6238 - timed
     var seconds = Math.floor(d.getTime() / 1000);
@@ -81,15 +87,17 @@ function hotp(token) {
   var v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var ret = "";
-  try {
-    var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
-    ret = "" + hash % Math.pow(10, token.digits);
-    while (ret.length < token.digits) {
-      ret = "0" + ret;
+  var ret = calculating;
+  if (dohmac) {
+    try {
+      var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
+      ret = "" + hash % Math.pow(10, token.digits);
+      while (ret.length < token.digits) {
+        ret = "0" + ret;
+      }
+    } catch(err) {
+      ret = notsupported;
     }
-  } catch(err) {
-    ret = "Not supported";
   }
   return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
@@ -109,7 +117,7 @@ function drawToken(id, r) {
   var y1 = r.y;
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
-  var adj;
+  var adj, sz;
   g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
                 Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
   if (id == state.curtoken) {
@@ -129,7 +137,7 @@ function drawToken(id, r) {
     adj = (y1 + y2) / 2;
   }
   g.clearRect(x1, y1, x2, y2);
-  g.drawString(tokens[id].label, (x1 + x2) / 2, adj, false);
+  g.drawString(tokens[id].label.substr(0, 10), (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
@@ -140,11 +148,14 @@ function drawToken(id, r) {
       // counter - draw triangle as swipe hint
       let yc = (y1 + y2) / 2;
       g.fillPoly([0, yc, 10, yc - 10, 10, yc + 10, 0, yc]);
-      adj = 5;
+      adj = 10;
     }
     // digits just below label
-    g.setFont("Vector", (state.otp.length > 8) ? 26 : 30);
-    g.drawString(state.otp, (x1 + x2) / 2 + adj, y1 + 16, false);
+    sz = 30;
+    do {
+      g.setFont("Vector", sz--);
+    } while (g.stringWidth(state.otp) > (r.w - adj));
+    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + 16, false);
   }
   // shaded lines top and bottom
   g.setColor(0.5, 0.5, 0.5);
@@ -154,9 +165,14 @@ function drawToken(id, r) {
 }
 
 function draw() {
+  var timerfn = exitApp;
+  var timerdly = 10000;
   var d = new Date();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
+    if (state.otp == calculating) {
+      state.otp = hotp(d, t, true).hotp;
+    }
     if (d.getTime() > state.nextTime) {
       if (state.hide == 0) {
         // auto-hide the current token
@@ -167,7 +183,7 @@ function draw() {
         state.nextTime = 0;
       } else {
         // time to generate a new token
-        var r = hotp(t);
+        var r = hotp(d, t, state.otp != "");
         state.nextTime = r.next;
         state.otp = r.hotp;
         if (t.period <= 0) {
@@ -191,11 +207,13 @@ function draw() {
       y += tokenentryheight;
     }
     if (drewcur) {
-      // the current token has been drawn - draw it again in 1sec
-      if (state.drawtimer) {
-        clearTimeout(state.drawtimer);
+      // the current token has been drawn - schedule a redraw
+      if (tokens[state.curtoken].period > 0) {
+        timerdly = (state.otp == calculating) ? 1 : 1000; // timed
+      } else {
+        timerdly = state.nexttime - d.getTime(); // counter
       }
-      state.drawtimer = setTimeout(draw, (tokens[state.curtoken].period > 0) ? 1000 : state.nexttime - d.getTime());
+      timerfn = draw;
       if (tokens[state.curtoken].period <= 0) {
         state.hide = 0;
       }
@@ -210,14 +228,18 @@ function draw() {
   } else {
     g.setFont("Vector", 30);
     g.setFontAlign(0, 0, 0);
-    g.drawString("No tokens", Bangle.appRect.x + Bangle.appRect.w / 2,Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
+  if (state.drawtimer) {
+    clearTimeout(state.drawtimer);
+  }
+  state.drawtimer = setTimeout(timerfn, timerdly);
 }
 
 function onTouch(zone, e) {
   if (e) {
     var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenentryheight);
-    if (id == state.curtoken || tokens.length == 0) {
+    if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
@@ -231,37 +253,34 @@ function onTouch(zone, e) {
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
+        state.otp = "";
       }
       state.nextTime = 0;
       state.curtoken = id;
       state.hide = 2;
-      draw();
     }
   }
+  draw();
 }
 
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
   var newy = Math.min(state.listy - e.dy, tokens.length * tokenentryheight - Bangle.appRect.h);
-  newy = Math.max(0, newy);
-  if (newy != state.listy) {
-    state.listy = newy;
-    draw();
-  }
+  state.listy = Math.max(0, newy);
+  draw();
 }
 
 function onSwipe(e) {
-  if (e == 1) {
-    Bangle.showLauncher();
-  }
   if (e == -1 && state.curtoken != -1 && tokens[state.curtoken].period <= 0) {
     tokens[state.curtoken].period--;
-    require("Storage").writeJSON("authentiwatch.json", tokens);
+    let newsettings={tokens:tokens,misc:settings.misc};
+    require("Storage").writeJSON("authentiwatch.json", newsettings);
     state.nextTime = 0;
+    state.otp = "";
     state.hide = 2;
-    draw();
   }
+  draw();
 }
 
 function bangle1Btn(e) {
@@ -281,16 +300,22 @@ function bangle1Btn(e) {
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
+  } else {
+    draw(); // resets idle timer
   }
+}
+
+function exitApp() {
+  Bangle.showLauncher();
 }
 
 Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);       }, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){Bangle.showLauncher();}, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);       }, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){exitApp();     }, BTN2, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
 

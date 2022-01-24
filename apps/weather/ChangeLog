@@ -8,3 +8,7 @@
 0.09: Fix crash when weather.json is absent.
 0.10: Use new Layout library
 0.11: Bangle.js 2 support
+0.12: Allow hiding the widget
+0.13: Tweak Bangle.js 2 light theme colors
+0.14: Use weather condition code for icon selection
+0.15: Fix widget icon

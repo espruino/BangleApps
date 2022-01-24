@@ -1,0 +1,18 @@
+{
+  "id": "calendar",
+  "name": "Calendar",
+  "version": "0.06",
+  "description": "Simple calendar",
+  "icon": "calendar.png",
+  "screenshots": [{"url":"screenshot_calendar.png"}],
+  "tags": "calendar",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"calendar.app.js","url":"calendar.js"},
+    {"name":"calendar.settings.js","url":"settings.js"},
+    {"name":"calendar.img","url":"calendar-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"calendar.json"}]
+}

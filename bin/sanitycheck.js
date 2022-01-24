@@ -3,6 +3,7 @@
 */
 
 var fs = require("fs");
+var heatshrink = require("../core/lib/heatshrink");
 var acorn;
 try {
   acorn = require("acorn");
@@ -25,29 +26,35 @@ function WARN(s) {
   console.log("Warning: "+s);
 }
 
-var appsFile, apps;
-try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
-} catch (e) {
-  ERROR("apps.json not found");
-}
-try{
-  apps = JSON.parse(appsFile);
-} catch (e) {
-  console.log(e);
-  var m = e.toString().match(/in JSON at position (\d+)/);
-  if (m) {
-    var char = parseInt(m[1]);
-    console.log("===============================================");
-    console.log("LINE "+appsFile.substr(0,char).split("\n").length);
-    console.log("===============================================");
-    console.log(appsFile.substr(char-10, 20));
-    console.log("===============================================");
+var apps = [];
+var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
+dirs.forEach(dir => {
+  var appsFile;
+  if (dir.name.startsWith("_example") || !dir.isDirectory())
+    return;
+  try {
+    appsFile = fs.readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
+  } catch (e) {
+    ERROR(dir.name+"/metadata.json does not exist");
+    return;
   }
-  console.log(m);
-  ERROR("apps.json not valid JSON");
-
-}
+  try{
+    apps.push(JSON.parse(appsFile));
+  } catch (e) {
+    console.log(e);
+    var m = e.toString().match(/in JSON at position (\d+)/);
+    if (m) {
+      var char = parseInt(m[1]);
+      console.log("===============================================");
+      console.log("LINE "+appsFile.substr(0,char).split("\n").length);
+      console.log("===============================================");
+      console.log(appsFile.substr(char-10, 20));
+      console.log("===============================================");
+    }
+    console.log(m);
+    ERROR(dir.name+"/metadata.json not valid JSON");
+  }
+});
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
@@ -57,8 +64,10 @@ const APP_KEYS = [
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
+const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
+const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -74,8 +83,11 @@ function globToRegex(pattern) {
 const isGlob = f => /[?*]/.test(f)
 // All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
 let allFiles = [];
+let existingApps = [];
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
+  if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`);
+  existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
   var appDir = APPSDIR+app.id+"/";
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
@@ -85,7 +97,7 @@ apps.forEach((app,appIdx) => {
   if (!Array.isArray(app.supports)) ERROR(`App ${app.id} has no 'supports' field or it's not an array`);
   else {
     app.supports.forEach(dev => {
-      if (!["BANGLEJS","BANGLEJS2"].includes(dev))
+      if (!SUPPORTS_DEVICES.includes(dev))
         ERROR(`App ${app.id} has unknown device in 'supports' field - ${dev}`);
     });
   }
@@ -135,6 +147,13 @@ apps.forEach((app,appIdx) => {
     if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`)
     if (fileNames.includes(file.name) && !file.supports)  // assume that there aren't duplicates if 'supports' is set
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
+    if (file.supports && !Array.isArray(file.supports))
+      ERROR(`App ${app.id} file ${file.name} supports field must be an array`);
+    if (file.supports)
+      file.supports.forEach(dev => {
+        if (!SUPPORTS_DEVICES.includes(dev))
+          ERROR(`App ${app.id} file ${file.name} has unknown device in 'supports' field - ${dev}`);
+      });
     fileNames.push(file.name);
     allFiles.push({app: app.id, file: file.name});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
@@ -175,6 +194,23 @@ apps.forEach((app,appIdx) => {
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`);
     }
+    // warn if JS icon is the wrong size
+    if (file.name == app.id+".img") {
+        let icon;
+        let match = fileContents.match(/E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)/);
+        if (match) icon = Buffer.from(match[1], 'base64');
+        else {
+          match = fileContents.match(/require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)/);
+          if (match) icon = heatshrink.decompress(Buffer.from(match[1], 'base64'));
+          else ERROR(`JS icon ${file.name} does not match the pattern 'require("heatshrink").decompress(atob("..."))'`);
+        }
+        if (match) {
+          if (icon[0] > 48 || icon[0] < 24 || icon[1] > 48 || icon[1] < 24) {
+            if (GRANDFATHERED_ICONS.includes(app.id)) WARN(`JS icon ${file.name} should be 48x48px (or slightly under) but is instead ${icon[0]}x${icon[1]}px`);
+            else ERROR(`JS icon ${file.name} should be 48x48px (or slightly under) but is instead ${icon[0]}x${icon[1]}px`);
+          }
+        }
+    }
   });
   let dataNames = [];
   (app.data||[]).forEach((data)=>{
@@ -207,10 +243,10 @@ apps.forEach((app,appIdx) => {
     }
   });
   // prefer "appid.json" over "appid.settings.json" (TODO: change to ERROR once all apps comply?)
-  if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
+ /* if (dataNames.includes(app.id+".settings.json") && !dataNames.includes(app.id+".json"))
     WARN(`App ${app.id} uses data file ${app.id+'.settings.json'} instead of ${app.id+'.json'}`)
   else if (dataNames.includes(app.id+".settings.json"))
-    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'}`)
+    WARN(`App ${app.id} uses data file ${app.id+'.settings.json'}`)*/
   // settings files should be listed under data, not storage (TODO: change to ERROR once all apps comply?)
   if (fileNames.includes(app.id+".settings.json"))
     WARN(`App ${app.id} uses storage file ${app.id+'.settings.json'} instead of data file`)
@@ -249,7 +285,8 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
-      else WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+      else if (fileA.app != fileB.app)
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
     }
   })
 }

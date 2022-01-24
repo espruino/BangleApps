@@ -1,3 +1,8 @@
 0.01: New App!
 0.02: Remove messages on disconnect
 0.03: Handling of message actions (ok/clear)
+0.04: Added common bundleId's
+0.05: Added more bundleId's (app-id's which can be used to determine a friendly app name in the notifications)
+0.06: Fix (not) popupping up old messages
+0.07: Added more details from music (instead of Undefined), added more app identifiers
+0.08: Added more app identifiers, added 'cannot display' in case a message goes empty because of replacements

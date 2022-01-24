@@ -10,3 +10,9 @@
 0.08: Added Mavigation units and en_NAV
 0.09: Added New Zealand en_NZ
 0.10: Apply 12hour setting to time
+0.11: Added translations for nl_NL and changes one formatting
+0.12: Fixed nl_NL formatting, because the full months won't fit on the Bangle.js2's screen
+0.13: Now use shorter de_DE date format to more closely match other languages for size
+0.14: Added some first translations for Messages in nl_NL
+0.15: Fixed sv_SE formatting, long date does not work well for Bangle.js2
+      Added Swedish localisation with English text
