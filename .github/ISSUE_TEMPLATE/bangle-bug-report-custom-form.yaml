@@ -1,39 +1,36 @@
 name: Bangle Bug report
-description: "Bangle: Create a report to help us improve!"
-title: "[general/app/widget/clock e.g. clock] [development object e.g. antonclock] title"
+description: "Bangle: Create a issue to help us improve!"
+title: "Please give it a short description and provide the affected app/widget."
 labels: ["bug"]
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        ### If you have a question then 
-        ### ** Ask it in the [forum](http://forum.espruino.com/microcosms/1424/), please! **
-  - type: checkboxes
-    id: searched
+        ### If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please!
+  - type: dropdown
+    id: hwversion
     attributes:
-      label: Agree searched
-      description: Please search for (closed) issues
-      options:
-        - label: I confirm that I have searched the forum and also for similiar bugs.
-          required: true
-  - type: input
-    id: devobject
-    attributes:
-      label: Development object
-      description: | 
-        the foldername in 'BangleApps'
-        for generall issues create a generic issue, please.
-    validations:
-      required: true
-  - type: checkboxes
-    id: bangle
-    attributes:
-      label: Hardware version
-      description: Which Bangle hw version is affected?
+      label: Affected hardware version
+      description: |
+        Which Bangle hardware version(s) is/are affected?
+        Hint: You can select both with ctrl key.
       options:
         - label: Bangle 1
         - label: Bangle 2
+      multiple: true
+    - type: input
+    id: fwversion
+    attributes:
+      label: Your firmware version
+      description: |
+        Please use the latest released firmware and check if the bug still occurs.
+        If it occurs only in "Cutting Edge build" please mention this.
+        Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)
+        Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
+      placeholder: e.g. 2v11
+    validations:
+      required: true
   - type: textarea
     id: report
     attributes:
@@ -45,36 +42,12 @@ body:
         
         **Expected behavior**
         A clear and concise description of what you expected to happen.
-    validations:
-      required: true
-  - type: textarea
-    id: reproduce
-    attributes:
-      label: Steps to reproduce
-      description: Please provide the steps until bug occurs.
-      placeholder: |
-        1. start app xy
+
+        **Steps to reproduce
+        1. Start app xy
         2. choose abc
         3. bug occurs
-      value: |
-        1.
-        2.
-        3.
-        ...
-  - type: textarea
-    id: log_screens
-    attributes:
-      label: Log file / outpout / screenshots
-      description: Can be added here to make it more clear.
-      placeholder: |
-        logfile, logoutput or screendump.
 
-        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
-        Please avoid upload of sensitive data.
-  - type: textarea
-    id: addional
-    attributes:
-      label: Additional context
-      description: For further helpfull information.
-      placeholder: |
-        for further helpfull information
+        It could be helpfull for us to provide
+    validations:
+      required: true
