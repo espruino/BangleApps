@@ -1,24 +1,26 @@
-name: Bangle Bug report
+name: Bangle bug report
 description: "Bangle: Create a issue to help us improve!"
-title: "Please give it a short description and provide the affected app/widget."
+title: "Short description and provide the affected app/widget"
 labels: ["bug"]
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        ** If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please! **
+        ### If you have a question then ask it at the [bangle forum](http://forum.espruino.com/microcosms/1424/), please!
   - type: dropdown
     id: hwversion
     attributes:
       label: Affected hardware version
       description: |
         Which Bangle hardware version(s) is/are affected?
-        Hint: You can select both with ctrl key.
+        Hint: You can select multiple entries.
       options:
-        - label: Bangle 1
-        - label: Bangle 2
+        - Bangle 1
+        - Bangle 2
       multiple: true
+    validations:
+      required: true
   - type: input
     id: fwversion
     attributes:
@@ -26,8 +28,9 @@ body:
       description: |
         Please use the latest released firmware and check if the bug still occurs.
         If it occurs only in "Cutting Edge build" please mention this.
+        Hint: The links will open inplace hold e.g. ctrl/cmd-key and click to open in a new tab instead.
         Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)
-        Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
+        Bangle 1: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
       placeholder: e.g. 2v11
     validations:
       required: true
