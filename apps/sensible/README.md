@@ -5,7 +5,9 @@ Collect all the sensor data from the Bangle.js 2, display the live readings in m
 
 ## Usage
 
-The advertising packets will be recognised by [Pareto Anywhere](https://www.reelyactive.com/pareto/anywhere/) open source middleware and any other program which observes the standard packet types.  Also convenient for testing individual sensors of the Bangle.js 2 via the menu interface.
+The advertising packets will be recognised by [Pareto Anywhere](https://www.reelyactive.com/pareto/anywhere/) open source middleware and any other program which observes the standard packet types.  See our [Bangle.js Development Guide](https://reelyactive.github.io/diy/banglejs-dev/) for details.  Also convenient for testing individual sensors of the Bangle.js 2 via the menu interface.
+
+![SensiBLE in Pareto Anywhere](/apps/sensible/screenshot-pareto-anywhere.png)
 
 
 ## Features
