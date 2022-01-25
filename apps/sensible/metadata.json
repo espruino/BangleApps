@@ -20,7 +20,9 @@
 "readme": "README.md",
 "storage": [
   { "name": "sensible.app.js", "url": "sensible.js" },
-  { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true },
-  { "name": "sensible.json", "url": "settings.json", "noOverwrite": true }
+  { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
+],
+"data": [
+  { "name": "sensible.data.json", "url": "settings.json", "storageFile": true }
 ]
 }

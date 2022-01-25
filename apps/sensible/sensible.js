@@ -7,7 +7,7 @@
 // Non-user-configurable constants
 const APP_ID = 'sensible';
 const ESPRUINO_COMPANY_CODE = 0x0590;
-const SETTINGS_FILENAME = 'sensible.json';
+const SETTINGS_FILENAME = 'sensible.data.json';
 const APP_ADVERTISING_DATA = [ 0x12, 0xff, 0x90, 0x05, 0x7b, 0x6e, 0x61, 0x6d,
                                0x65, 0x3a, 0x73, 0x65, 0x6e, 0x73, 0x69, 0x62,
                                0x6c, 0x65, 0x7d ];
