@@ -50,8 +50,7 @@ let barMenu = {
   "State": {
     value: settings.isBarEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { settings.isBarEnabled = v;
-                     Bangle.setBarometerPower(v, APP_ID); }
+    onchange: v => { updateSetting('isBarEnabled', v); }
   },
   "Altitude": { value: null },
   "Press": { value: null },
@@ -63,7 +62,7 @@ let gpsMenu = {
   "State": {
     value: settings.isGpsEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { settings.isGpsEnabled = v; Bangle.setGPSPower(v, APP_ID); }
+    onchange: v => { updateSetting('isGpsEnabled', v); }
   },
   "Lat": { value: null },
   "Lon": { value: null },
@@ -77,7 +76,7 @@ let hrmMenu = {
   "State": {
     value: settings.isHrmEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { settings.isHrmEnabled = v; Bangle.setHRMPower(v, APP_ID); }
+    onchange: v => { updateSetting('isHrmEnabled', v); }
   },
   "BPM": { value: null },
   "Confidence": { value: null },
@@ -88,8 +87,7 @@ let magMenu = {
   "State": {
     value: settings.isMagEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { settings.isMagEnabled = v;
-                     Bangle.setCompassPower(v, APP_ID); }
+    onchange: v => { updateSetting('isMagEnabled', v); }
   },
   "x": { value: null },
   "y": { value: null },
@@ -189,6 +187,23 @@ function toByteArray(value, numberOfBytes, isSigned) {
 }
 
 
+// Enable the sensors as per the current settings
+function enableSensors() {
+  Bangle.setBarometerPower(settings.isBarEnabled, APP_ID);
+  Bangle.setGPSPower(settings.isGpsEnabled, APP_ID);
+  Bangle.setHRMPower(settings.isHrmEnabled, APP_ID);
+  Bangle.setCompassPower(settings.isMagEnabled, APP_ID);
+}
+
+
+// Update the given setting and write to persistent storage
+function updateSetting(name, value) {
+  settings[name] = value;
+  require('Storage').writeJSON(SETTINGS_FILENAME, settings);
+  enableSensors();
+}
+
+
 // Update acceleration
 Bangle.on('accel', function(newAcc) {
   acc = newAcc;
@@ -259,9 +274,6 @@ Bangle.on('mag', function(newMag) {
 
 // On start: enable sensors and display main menu
 g.clear();
-Bangle.setBarometerPower(settings.isBarEnabled, APP_ID);
-Bangle.setGPSPower(settings.isGpsEnabled, APP_ID);
-Bangle.setHRMPower(settings.isHrmEnabled, APP_ID);
-Bangle.setCompassPower(settings.isMagEnabled, APP_ID);
+enableSensors();
 E.showMenu(mainMenu);
 setInterval(transmitUpdatedSensorData, 1000);
