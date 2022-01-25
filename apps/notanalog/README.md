@@ -1,4 +1,4 @@
-# NotAnalog
+# Not Analog
 An analog watch face for people (like me) that can not read analog watch faces.
 It looks like an analog clock, but its not! It shows the time digital - check the
 4 numbers on the watch face ;)
