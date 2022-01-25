@@ -24,7 +24,7 @@ in the menu display, and broadcasts all sensor data readings _except_ accelerati
 
 ## Controls
 
-Browse and control sensors using the standard Espruino menu interface.
+Browse and control sensors using the standard Espruino menu interface.  By default, all sensors _except_ the accelerometer are disabled.  Sensors can be individually enabled/disabled via the menu.  These settings are written to persistent storage (flash) and will be applied each time the SensiBLE app is loaded.
 
 
 ## Requests
