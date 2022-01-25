@@ -56,6 +56,12 @@ var gpsImg = {
     buffer : E.toArrayBuffer(atob("AAAMAAAAD4AAAAHAAAAA4AAADjABAA8YAYADmAPAAcwD4DzMB/B8zAf4fAAH/HwAB/74AAf/wAAH/4AAB//AAAP/4AAD//AAA//4AAH//AAA//4AAH//AAA//4ABH/4AAYP4AAHgAAAB/AAAA/4AAAP+AAAD/gAAP//gAD//4AA="))
 };
 
+var sleepImg = {
+    width : 128, height : 128, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("ABk//+AB5l///AB5wfDh4kIF4s/8AgIj4ED//wB5E+AYUB//8B5F8AYUD+F+B5H4AYUH8E/Bw8BHIcHwEfMA4PEh4RBQo8DNIYPBIIIPGDAkeEwJGDAAaZEB4MAOAisB+COEngCBOAn///4NAgPCMAgfCZ4gPCaIpWBd4l4QQZtFD4gPCgYPEQw3wRo41FgHxfw5tEB4sHfg7DC8IPDFQb8DB4XgB4ZDDWosD4DNCbAbsEB4zRDB5bRDfghKDB4bRCRwwPBuAFCbISOCgP/EYMPK4kPDgKOCgbiBDIJLDEoIYBRwQPD//DD4hQBbgPgF4QCB84PDBgICCDgJTBEQP/B4QFCwAIDKYIRB/84bQX/x+AD4YPCwF+nguC+B9FMYJuBngPBIgKmCeQoPEg5dBB4ryBB4kPPoMfdohRCB4McSYPAg5dBeQoPCjxOBCIIPBcQYUBL4N4j0B/hQBAATPBV4RnB/EegYFB//AbYYPCgfh+EeZgJNDAYYWBCQUedgN/NoUD/xhDEwUOj67BBQd/IAIFEh8+gZ3CNQMfSQkMBQN8g/wMATKBCQIAEh/4IAMPdoQlCB4vwn7sC/5OBSIQPE8F+KoRoBfIIPFPwP8cASyBQoIPG4JABJQUHAoJwEBAODIAUBAIIlBOAg/BgfgcAMDBYN+A4IPFC4I+BB4U/wKAFh8PwJ5BB4SFBB40fFANggPAg5nBSAsPzwwBDIRGB+F8L4v+NAIZCh8B+E8B4v8RAN4AwMOgH4jwPEY4M+gEwB4d8UA34E4sAn0PA4pHGgEeWApHBfA8HB4vgQ4oPBw4PF8IPGbALQEgfB8IXF4/DB4vD8YHG4LgEEwPDA4oPIA4w3BA4pWBF4poGdAJOEAAQPFQwyoDB4q2GB6VwB5twvAFDhwPIvAPFhwPNjwPTgaSDBwgPBj//wH//6qCnAPI4IPEvgPY4APEngPGjxPOL5KvER4gPFV5IPKZ4gPEZ4oPJd5QPF+APEg+AB5kHB5+HB40B8APFwfBVgIPCgeB8K0CB4fDB4kH4YXCLQfDB4oHBB43B8ZABB4UB4/DKgYPCCwRPDHAIPEKwgPDh+HB434B4yIDQwbGCB4ceB434ngPFnzIDewc+gEwB4MEgF8j4PFA4V4B4MOE4MeB4s8h+AB4QsBG4YADI4PA+APCgfwvgPFj8D8FwB4L2B8BnCAAcPwKQBL4UPEoIPFFwP8B4cfCwQPGvwPDv42BB4oHBn+AB4MB/gXBB4sB/Ef8BPC/B2BB4sADIP8B4M/8CeGAAN+gP/4fB//AWwIAGn5LB/4ABEwIPHj/Aj4OB/BGBB46ZBgYPBKAJ+GOAQZBj4sBEoIPHgP+Aod/Nw4KCDQQUFKAw6Ch5eIKAX/FYP/JxArCPwQSCABM/BwI+KGAYuLEAYeGA="))
+};
+
 
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
@@ -234,7 +240,7 @@ function handleState(fastUpdate){
 
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
-    if(fastUpdate && hours == 0 && minutes == 5){
+    if(fastUpdate && hours == 00 && minutes == 01){
         state.sleep = true;
         return;
     }
@@ -267,18 +273,16 @@ function handleState(fastUpdate){
     }
 }
 
+
 function drawSleep(){
     g.reset();
     g.clearRect(0, 0, g.getWidth(), g.getHeight());
-
     drawBackground();
 
-    g.setNormalFont();
-    g.setFontAlign(0,0,0);
-    g.drawString("SLEEPING", cx, cy-20);
-    g.drawString("PRESS BTN", cx, cy);
-    g.drawString("TO CONTINUE...", cx, cy+20);
+    g.setColor(1,1,1);
+    g.drawImage(sleepImg, cx - sleepImg.width/2, cy- sleepImg.height/2);
 }
+
 
 function draw(fastUpdate){
     // Execute handlers
