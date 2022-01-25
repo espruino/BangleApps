@@ -46,7 +46,7 @@ const dy = big ? 22 : 16;
 const fontSize = big ? 3 : 2;  // "6x8"
 const passivColor = 0x3186 /*grey*/ ;
 const activeColorNight = 0xF800 /*red*/ ;
-const activeColorDay = 0xFFFF /* white */;
+const activeColorDay = g.theme.fg;
 
 var hidxPrev;
 var showDigitalTime = false;
