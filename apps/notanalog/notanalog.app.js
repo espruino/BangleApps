@@ -28,7 +28,8 @@ var state = {
     maxSteps: 10000,
     bat: 0,
     has_weather: false,
-    temp: "-"
+    temp: "-",
+    sleep: false,
 }
 
 var chargeImg = {
@@ -172,42 +173,44 @@ function drawData() {
     drawDataHand(parseInt(state.steps*360/12000));
 }
 
+function drawTextCleared(s, x, y){
+    g.clearRect(x-15, y-22, x+15, y+15);
+    g.drawString(s, x, y);
+}
+
 
 function drawTime(){
     g.setTimeFont();
     g.setFontAlign(0,0,0);
     g.setColor(g.theme.fg);
 
-    var currentDate = new Date();
     var posX = 14;
     var posY = 14;
 
     // Hour
-    var h = currentDate.getHours();
+    var h = state.currentDate.getHours();
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
-    g.drawString(h1, cx, posY+8);
-    g.drawString(h2, W-posX, cy+5);
+    drawTextCleared(h1, cx, posY+8);
+    drawTextCleared(h2, W-posX, cy+5);
 
     // Minutes
-    var m = currentDate.getMinutes();
+    var m = state.currentDate.getMinutes();
     var m1 = parseInt(m / 10);
     var m2 = m < 10 ? m : m - m1*10;
-    g.drawString(m2, cx, H-posY);
-    g.drawString(m1, posX-1, cy+5);
+    drawTextCleared(m2, cx, H-posY);
+    drawTextCleared(m1, posX-1, cy+5);
 }
 
 
 function drawDate(){
-    var currentDate = new Date();
-
     // Date
     g.setFontAlign(-1,0,0);
     g.setNormalFont();
     g.setColor(g.theme.fg);
-    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    var dayStr = locale.dow(state.currentDate, true).toUpperCase();
     g.drawString(dayStr, cx/2-15, cy/2-5);
-    g.drawString(currentDate.getDate(), cx/2-15, cy/2+17);
+    g.drawString(state.currentDate.getDate(), cx/2-15, cy/2+17);
 }
 
 
@@ -222,10 +225,19 @@ function drawLock(){
 
 
 function handleState(fastUpdate){
-    // Set theme color
+    state.currentDate = new Date();
+
+    // Color based on state
     state.color = isAlarmEnabled() ? "#FF6A00" :
         state.steps > state.maxSteps ? "#00ff00" :
         "#ff0000";
+
+    var minutes = state.currentDate.getMinutes();
+    var hours = state.currentDate.getHours();
+    if(fastUpdate && hours == 0 && minutes == 5){
+        state.sleep = true;
+        return;
+    }
 
     if(fastUpdate){
         return;
@@ -238,26 +250,47 @@ function handleState(fastUpdate){
     state.steps = getSteps();
 
     // Set weather
-    state.has_weather = true;
-    try {
-        weather = require('weather').get();
-        if (weather === undefined){
+    // We do this every 5 minutes only to save some battery.
+    if(minutes & 5 == 0 || !state.has_weather){
+        state.has_weather = true;
+        try {
+            weather = require('weather').get();
+            if (weather === undefined){
+                state.has_weather = false;
+                state.temp = "-";
+            } else {
+                state.temp = locale.temp(Math.round(weather.temp-273.15));
+            }
+        } catch(ex) {
             state.has_weather = false;
-            state.temp = "-";
-        } else {
-            state.temp = locale.temp(Math.round(weather.temp-273.15));
         }
-    } catch(ex) {
-        state.has_weather = false;
     }
-
 }
 
+function drawSleep(){
+    g.reset();
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
+
+    drawBackground();
+
+    g.setNormalFont();
+    g.setFontAlign(0,0,0);
+    g.drawString("SLEEPING", cx, cy-20);
+    g.drawString("PRESS BTN", cx, cy);
+    g.drawString("TO CONTINUE...", cx, cy+20);
+}
 
 function draw(fastUpdate){
     // Execute handlers
     handleState(fastUpdate);
     handleAlarm();
+
+    if(state.sleep){
+        drawSleep();
+        // We don't queue draw again - so its sleeping until
+        // the user presses the btn again.
+        return;
+    }
 
     // Clear watch face
     if(fastUpdate){
@@ -291,7 +324,7 @@ function draw(fastUpdate){
  */
 Bangle.on('lcdPower',on=>{
     if (on) {
-        draw(false);
+        draw(true);
     } else { // stop draw timer
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
@@ -299,11 +332,16 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('charging',function(charging) {
-    draw(false);
+    draw(true);
 });
 
 Bangle.on('lock', function(isLocked) {
-    drawLock();
+    if(state.sleep){
+        state.sleep=false;
+        draw(false);
+    } else {
+        drawLock();
+    }
 });
 
 Bangle.on('touch', function(btn, e){
@@ -334,7 +372,7 @@ function queueDraw() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw(false);
+      draw(true);
     }, 60000 - (Date.now() % 60000));
 }
 
