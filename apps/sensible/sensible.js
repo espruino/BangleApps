@@ -8,6 +8,7 @@
 const APP_ID = 'sensible';
 const ESPRUINO_COMPANY_CODE = 0x0590;
 const SETTINGS_FILENAME = 'sensible.data.json';
+const UPDATE_MILLISECONDS = 1000;
 const APP_ADVERTISING_DATA = [ 0x12, 0xff, 0x90, 0x05, 0x7b, 0x6e, 0x61, 0x6d,
                                0x65, 0x3a, 0x73, 0x65, 0x6e, 0x73, 0x69, 0x62,
                                0x6c, 0x65, 0x7d ];
@@ -121,7 +122,7 @@ function transmitUpdatedSensorData() {
     isNewMagData = false;
   }
 
-  let interval = 1000 / data.length;
+  let interval = UPDATE_MILLISECONDS / data.length;
   NRF.setAdvertising(data, { showName: false, interval: interval });
 }
 
@@ -276,4 +277,4 @@ Bangle.on('mag', function(newMag) {
 g.clear();
 enableSensors();
 E.showMenu(mainMenu);
-setInterval(transmitUpdatedSensorData, 1000);
+setInterval(transmitUpdatedSensorData, UPDATE_MILLISECONDS);
