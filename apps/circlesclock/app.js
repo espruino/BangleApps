@@ -45,9 +45,6 @@ let settings = storage.readJSON("circlesclock.json", 1) || {
     settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
   }
 
-
-const circleCount = settings.circleCount || 3;
-
 /*
  * Read location from myLocation app
  */
@@ -57,6 +54,7 @@ function getLocation() {
 let location = getLocation();
 
 const showWidgets = settings.showWidgets || false;
+const circleCount = settings.circleCount || 3;
 
 let hrtValue;
 let now = Math.round(new Date().getTime() / 1000);
@@ -92,16 +90,16 @@ const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
 */
 const parts = circleCount * 2;
 const circlePosX = [
-  Math.round(1 * w / parts),
-  Math.round(3 * w / parts),
-  Math.round(5 * w / parts),
-  Math.round(7 * w / parts),
+  Math.round(1 * w / parts), // circle1
+  Math.round(3 * w / parts), // circle2
+  Math.round(5 * w / parts), // circle3
+  Math.round(7 * w / parts), // circle4
 ];
 
 const radiusOuter = circleCount == 3 ? 25 : 20;
 const radiusInner = circleCount == 3 ? 20 : 15;
-const circleFont = circleCount == 3 ? "Vector:15" : "Vector:13";
-const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:14";
+const circleFont = circleCount == 3 ? "Vector:15" : "Vector:12";
+const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:13";
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
@@ -190,7 +188,7 @@ function getCirclePosition(type) {
   if (circlePositionsCache[type] >= 0) {
     return circlePosX[circlePositionsCache[type]];
   }
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= circleCount; i++) {
     const setting = settings['circle' + i];
     if (setting == type) {
       circlePositionsCache[type] = i - 1;
