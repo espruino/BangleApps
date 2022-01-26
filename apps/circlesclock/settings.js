@@ -96,23 +96,36 @@
       format: v => weatherData[v],
       onchange: x => save('weatherCircleData', weatherData[x]),
     },
-    'left': {
+    'circle count': {
+      value: "circleCount" in settings ? settings.circleCount : 3,
+      min: 3,
+      max : 4,
+      step: 1,
+      onchange: x => save('circleCount', x),
+    },
+    'circle1': {
       value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,
       min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle1', valuesCircleTypes[x]),
     },
-    'middle': {
+    'circle2': {
       value: settings.circle2 ? valuesCircleTypes.indexOf(settings.circle2) : 2,
       min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle2', valuesCircleTypes[x]),
     },
-    'right': {
+    'circle3': {
       value: settings.circle3 ? valuesCircleTypes.indexOf(settings.circle3) : 3,
       min: 0, max: 6,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle3', valuesCircleTypes[x]),
+    },
+    'circle4': {
+      value: settings.circle4 ? valuesCircleTypes.indexOf(settings.circle4) : 4,
+      min: 0, max: 6,
+      format: v => namesCircleTypes[v],
+      onchange: x => save('circle4', valuesCircleTypes[x]),
     }
   });
 });

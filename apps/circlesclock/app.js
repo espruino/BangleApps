@@ -23,10 +23,7 @@ const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED
 const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfACoo"));
 const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
 
-let settings;
-
-function loadSettings() {
-  settings = storage.readJSON("circlesclock.json", 1) || {
+let settings = storage.readJSON("circlesclock.json", 1) || {
     'minHR': 40,
     'maxHR': 200,
     'confidence': 0,
@@ -36,18 +33,20 @@ function loadSettings() {
     'batteryWarn': 30,
     'showWidgets': false,
     'weatherCircleData': 'humidity',
+    'circleCount': 3,
     'circle1': 'hr',
     'circle2': 'steps',
-    'circle3': 'battery'
+    'circle3': 'battery',
+    'circle4': 'weather'
   };
   // Load step goal from pedometer widget as fallback
   if (settings.stepGoal == undefined) {
     const d = require('Storage').readJSON("wpedom.json", 1) || {};
     settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
   }
-}
-loadSettings();
 
+
+const circleCount = settings.circleCount || 3;
 
 /*
  * Read location from myLocation app
@@ -78,11 +77,33 @@ const hOffset = 30 - widgetOffset;
 const h1 = Math.round(1 * h / 5 - hOffset);
 const h2 = Math.round(3 * h / 5 - hOffset);
 const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
-const circlePosX = [Math.round(w / 6), Math.round(3 * w / 6), Math.round(5 * w / 6)]; // cirle x positions
-const radiusOuter = 25;
-const radiusInner = 20;
-const circleFont = "Vector:15";
-const circleFontBig = "Vector:16";
+
+/*
+* circle x positions
+* depending on circleCount
+*
+* | 1 2 3 4 5 6 |
+* | (1) (2) (3) |
+* => circles start at 1,3,5 / 6
+*
+* | 1 2 3 4 5 6 7 8 |
+* | (1) (2) (3) (4) |
+* => circles start at 1,3,5,7 / 8
+*/
+const parts = circleCount * 2;
+const circlePosX = [
+  Math.round(1 * w / parts),
+  Math.round(3 * w / parts),
+  Math.round(5 * w / parts),
+  Math.round(7 * w / parts),
+];
+
+const radiusOuter = circleCount == 3 ? 25 : 20;
+const radiusInner = circleCount == 3 ? 20 : 15;
+const circleFont = circleCount == 3 ? "Vector:15" : "Vector:13";
+const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:14";
+const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
+
 
 function draw() {
   g.clear(true);
@@ -122,9 +143,8 @@ function draw() {
   drawCircle(1);
   drawCircle(2);
   drawCircle(3);
+  if (circleCount >= 4) drawCircle(4);
 }
-
-const defaultCircleTypes = ["steps", "hr", "battery"];
 
 function drawCircle(index) {
   let type = settings['circle' + index];
@@ -147,6 +167,7 @@ function drawCircle(index) {
       drawWeather(w);
       break;
     case "sunprogress":
+    case "sunProgress":
       drawSunProgress(w);
       break;
     case "empty":
@@ -319,6 +340,8 @@ function drawWeather(w) {
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
     if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 10);
+  } else {
+    g.drawString("?", w, h3 + radiusOuter);
   }
 }
 
