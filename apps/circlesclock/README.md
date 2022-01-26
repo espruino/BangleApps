@@ -1,6 +1,6 @@
 # Circles clock
 
-A clock with circles for different data at the bottom in a probably familiar style
+A clock with three or four circles for different data at the bottom in a probably familiar style
 
 By default the time, date and day of week is shown.
 
@@ -18,6 +18,8 @@ It can show the following information (this can be configured):
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
+![Screenshot dark theme with four circles](screenshot-dark-4.png)
+![Screenshot light theme with four circles](screenshot-light-4.png)
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
