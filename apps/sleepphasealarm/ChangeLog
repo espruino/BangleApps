@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Respect Quiet Mode
 0.03: Add compatibility for Bangle.js 2 and new firmware, added "Alarm at " for the alarm time
+0.04: Changed nomothresh from 0.006 to 0.01, threshold was often crossed by sensor noise.
