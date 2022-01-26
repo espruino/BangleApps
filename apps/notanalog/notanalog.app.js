@@ -254,7 +254,7 @@ function handleState(fastUpdate){
     /*
      * 5 Minute updates
      */
-    if(minutes % 5 == 0){
+    if(minutes % 5 == 0 && fastUpdate){
         return;
     }
 
