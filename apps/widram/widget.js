@@ -1,11 +1,15 @@
 (() => {
   function draw() {
+    BANGLEJS2 = process.env.HWVERSION==2;
     g.reset();
     var m = process.memory();
-    var pc = Math.round(m.usage*100/m.total);
+    var percent = Math.round(m.usage*100/m.total);
     g.drawImage(atob("BwgBqgP////AVQ=="), this.x+(24-7)/2, this.y+4);
-    g.setColor(pc>70 ? "#ff0000" : (pc>50 ? "#ffff00" : "#ffffff"));
-    g.setFont("6x8").setFontAlign(0,0).drawString(pc+"%", this.x+12, this.y+20, true/*solid*/);
+    if (!BANGLEJS2)
+      g.setColor(percent>70 ? "#ff0000" : (percent>50 ? "#ffff00" : "#ffffff"));
+    else
+      g.setColor(percent>70 ? "#0f0" : (percent>50 ? "#00f" : "#f00"));
+    g.setFont("6x8").setFontAlign(0,0).drawString(percent+"%", this.x+12, this.y+20, true/*solid*/);
   }
   var ramInterval;
   Bangle.on('lcdPower', function(on) {
@@ -20,4 +24,4 @@
     }
   });
   WIDGETS["ram"]={area:"tl",width: 24,draw:draw};
-})()
+})();
