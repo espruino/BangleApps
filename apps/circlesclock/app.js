@@ -24,26 +24,26 @@ const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfA
 const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
 
 let settings = storage.readJSON("circlesclock.json", 1) || {
-    'minHR': 40,
-    'maxHR': 200,
-    'confidence': 0,
-    'stepGoal': 10000,
-    'stepDistanceGoal': 8000,
-    'stepLength': 0.8,
-    'batteryWarn': 30,
-    'showWidgets': false,
-    'weatherCircleData': 'humidity',
-    'circleCount': 3,
-    'circle1': 'hr',
-    'circle2': 'steps',
-    'circle3': 'battery',
-    'circle4': 'weather'
-  };
-  // Load step goal from pedometer widget as fallback
-  if (settings.stepGoal == undefined) {
-    const d = require('Storage').readJSON("wpedom.json", 1) || {};
-    settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
-  }
+  'minHR': 40,
+  'maxHR': 200,
+  'confidence': 0,
+  'stepGoal': 10000,
+  'stepDistanceGoal': 8000,
+  'stepLength': 0.8,
+  'batteryWarn': 30,
+  'showWidgets': false,
+  'weatherCircleData': 'humidity',
+  'circleCount': 3,
+  'circle1': 'hr',
+  'circle2': 'steps',
+  'circle3': 'battery',
+  'circle4': 'weather'
+};
+// Load step goal from pedometer widget as fallback
+if (settings.stepGoal == undefined) {
+  const d = require('Storage').readJSON("wpedom.json", 1) || {};
+  settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+}
 
 /*
  * Read location from myLocation app
@@ -77,17 +77,17 @@ const h2 = Math.round(3 * h / 5 - hOffset);
 const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
 
 /*
-* circle x positions
-* depending on circleCount
-*
-* | 1 2 3 4 5 6 |
-* | (1) (2) (3) |
-* => circles start at 1,3,5 / 6
-*
-* | 1 2 3 4 5 6 7 8 |
-* | (1) (2) (3) (4) |
-* => circles start at 1,3,5,7 / 8
-*/
+ * circle x positions
+ * depending on circleCount
+ *
+ * | 1 2 3 4 5 6 |
+ * | (1) (2) (3) |
+ * => circles start at 1,3,5 / 6
+ *
+ * | 1 2 3 4 5 6 7 8 |
+ * | (1) (2) (3) (4) |
+ * => circles start at 1,3,5,7 / 8
+ */
 const parts = circleCount * 2;
 const circlePosX = [
   Math.round(1 * w / parts), // circle1
