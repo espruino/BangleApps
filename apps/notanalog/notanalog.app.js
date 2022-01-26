@@ -233,11 +233,9 @@ function drawLock(){
 function handleState(fastUpdate){
     state.currentDate = new Date();
 
-    // Color based on state
-    state.color = isAlarmEnabled() ? "#FF6A00" :
-        state.steps > state.maxSteps ? "#00ff00" :
-        "#ff0000";
-
+    /*
+     * Sleep modus
+     */
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
     if(fastUpdate && hours == 00 && minutes == 01){
@@ -245,31 +243,36 @@ function handleState(fastUpdate){
         return;
     }
 
-    if(fastUpdate){
+    // Set steps
+    state.steps = getSteps();
+
+    // Color based on state
+    state.color = isAlarmEnabled() ? "#FF6A00" :
+        state.steps > state.maxSteps ? "#00ff00" :
+        "#ff0000";
+
+    /*
+     * 5 Minute updates
+     */
+    if(minutes % 5 == 0){
         return;
     }
 
     // Set battery
     state.bat = E.getBattery();
 
-    // Set steps
-    state.steps = getSteps();
-
     // Set weather
-    // We do this every 5 minutes only to save some battery.
-    if(minutes & 5 == 0 || !state.has_weather){
-        state.has_weather = true;
-        try {
-            weather = require('weather').get();
-            if (weather === undefined){
-                state.has_weather = false;
-                state.temp = "-";
-            } else {
-                state.temp = locale.temp(Math.round(weather.temp-273.15));
-            }
-        } catch(ex) {
+    state.has_weather = true;
+    try {
+        weather = require('weather').get();
+        if (weather === undefined){
             state.has_weather = false;
+            state.temp = "-";
+        } else {
+            state.temp = locale.temp(Math.round(weather.temp-273.15));
         }
+    } catch(ex) {
+        state.has_weather = false;
     }
 }
 
