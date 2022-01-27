@@ -504,12 +504,12 @@ function getSunProgress() {
     }
   } else {
     // during night
-    if (sunSet < sunRise) {
-      const upcomingSunRise = sunRise + 60 * 60 * 24;
-      return 1 - (upcomingSunRise - now) / (upcomingSunRise - sunSet);
+    if (now < sunRise) {
+      const prevSunSet = sunSet - 60 * 60 * 24;
+      return 1- (sunRise - now) / (sunRise - prevSunSet);
     } else {
-      const lastSunSet = sunSet - 60 * 60 * 24;
-      return (now - lastSunSet) / (sunRise - lastSunSet);
+      const upcomingSunRise = sunRise + 60 * 60 * 24;
+      return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
     }
   }
 }
