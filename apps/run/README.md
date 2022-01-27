@@ -28,6 +28,15 @@ so if you have no GPS lock you just need to wait.
 However you can just install the `Recorder` app, turn recording on in
 that, and then start the `Run` app.
 
+## Settings
+
+Under `Settings` -> `App` -> `Run` you can change settings for this app.
+
+* `Pace` is the distance that pace should be shown over - 1km, 1 mile, 1/2 Marathon or 1 Maraton
+* `Box 1/2/3/4/5/6` are what should be shown in each of the 6 boxes on the display. From the top left, down.
+  If you set it to `-` nothing will be displayed, so you can display only 4 boxes of information
+  if you wish by setting the last 2 boxes to `-`.
+
 ## TODO
 
 * Allow this app to trigger the `Recorder` app on and off directly.

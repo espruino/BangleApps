@@ -1,68 +1,37 @@
+var ExStats = require("exstats");
 var B2 = process.env.HWVERSION==2;
 var Layout = require("Layout");
 var locale = require("locale");
 var fontHeading = "6x8:2";
 var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
-var running = false;
 var fixCount = 0;
-var startTime;
-var startSteps;
-// This & previous GPS readings
-var lastGPS, thisGPS;
-var distance = 0; ///< distance in meters
-var startSteps = Bangle.getStepCount(); ///< number of steps when we started
-var lastStepCount = startSteps; // last time 'step' was called
-var stepHistory = new Uint8Array(60); // steps each second for the last minute (0 = current minute)
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // ---------------------------
-
-function formatTime(ms) {
-  let hrs = Math.floor(ms/3600000).toString();
-  let mins = (Math.floor(ms/60000)%60).toString();
-  let secs = (Math.floor(ms/1000)%60).toString();
-
-  if (hrs === '0')
-    return mins.padStart(2,0)+":"+secs.padStart(2,0);
-  else
-    return hrs+":"+mins.padStart(2,0)+":"+secs.padStart(2,0); // dont pad hours
-}
-
-// Format speed in meters/second
-function formatPace(speed) {
-  if (speed < 0.1667) {
-    return `__:__`;
-  }
-  const pace = Math.round(1000 / speed); // seconds for 1km
-  const min = Math.floor(pace / 60); // minutes for 1km
-  const sec = pace % 60;
-  return ('0' + min).substr(-2) + `:` + ('0' + sec).substr(-2);
-}
-
+let settings = Object.assign({
+  B1 : "dist",
+  B2 : "time",
+  B3 : "pacea",
+  B4 : "bpm",
+  B5 : "step",
+  B6 : "caden",
+  paceLength : 1000
+}, require("Storage").readJSON("run.json", 1) || {});
+var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!="");
+var exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
-function clearState() {
-  distance = 0;
-  startSteps = Bangle.getStepCount();
-  stepHistory.fill(0);
-  layout.dist.label=locale.distance(distance);
-  layout.time.label="00:00";
-  layout.pace.label=formatPace(0);
-  layout.hrm.label="--";
-  layout.steps.label=0;
-  layout.cadence.label= "0";
-  layout.status.bgCol = "#f00";
-}
-
+// Called to start/stop running
 function onStartStop() {
-  running = !running;
+  var running = !exs.state.active;
   if (running) {
-    clearState();
-    startTime = Date.now();
+    exs.start();
+  } else {
+    exs.stop();
   }
   layout.button.label = running ? "STOP" : "START";
   layout.status.label = running ? "RUN" : "STOP";
@@ -72,107 +41,44 @@ function onStartStop() {
   layout.render();
 }
 
+var lc = [];
+// Load stats in pair by pair
+for (var i=0;i<statIDs.length;i+=2) {
+  var sa = exs.stats[statIDs[i+0]];
+  var sb = exs.stats[statIDs[i+1]];
+  lc.push({ type:"h", filly:1, c:[
+    {type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol },
+    {type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol }
+  ]}, { type:"h", filly:1, c:[
+    {type:"txt", font:fontValue, label:sa.getString(), id:sa.id, fillx:1 },
+    {type:"txt", font:fontValue, label:sb.getString(), id:sb.id, fillx:1 }
+  ]});
+  sa.on('changed', e=>layout[e.id].label = e.getString());
+  sb.on('changed', e=>layout[e.id].label = e.getString());
+}
+// At the bottom put time/GPS state/etc
+lc.push({ type:"h", filly:1, c:[
+  {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
+  {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
+  {type:"txt", font:fontHeading, label:"STOP", id:"status", fillx:1 }
+]});
+// Now calculate the layout
 var layout = new Layout( {
-  type:"v", c: [
-    { type:"h", filly:1, c:[
-      {type:"txt", font:fontHeading, label:"DIST", fillx:1, col:headingCol },
-      {type:"txt", font:fontHeading, label:"TIME", fillx:1, col:headingCol }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontValue, label:"0.00", id:"dist", fillx:1 },
-      {type:"txt", font:fontValue, label:"00:00", id:"time", fillx:1 }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontHeading, label:"PACE", fillx:1, col:headingCol },
-      {type:"txt", font:fontHeading, label:"HEART", fillx:1, col:headingCol }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontValue, label:`__'__"`, id:"pace", fillx:1 },
-      {type:"txt", font:fontValue, label:"--", id:"hrm", fillx:1 }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontHeading, label:"STEPS", fillx:1, col:headingCol },
-      {type:"txt", font:fontHeading, label:"CADENCE", fillx:1, col:headingCol }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontValue, label:"0", id:"steps", fillx:1 },
-      {type:"txt", font:fontValue, label:"0", id:"cadence", fillx:1 }
-    ]}, { type:"h", filly:1, c:[
-      {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
-      {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
-      {type:"txt", font:fontHeading, label:"STOP", id:"status", fillx:1 }
-    ]},
-
-  ]
+  type:"v", c: lc
 },{lazy:true, btns:[{ label:"START", cb: onStartStop, id:"button"}]});
-clearState();
+delete lc;
 layout.render();
 
-function onTimer() {
-  layout.clock.label = locale.time(new Date(),1);
-  if (!running) {
-    layout.render();
-    return;
-  }
-  // called once a second
-  var duration = Date.now() - startTime; // in ms
-  // set cadence based on steps over last minute
-  var stepsInMinute = E.sum(stepHistory);
-  var cadence = 60000 * stepsInMinute / Math.min(duration,60000);
-  // update layout
-  layout.time.label = formatTime(duration);
-  layout.steps.label = Bangle.getStepCount()-startSteps;
-  layout.cadence.label = Math.round(cadence);
-  layout.render();
-  // move step history onwards
-  stepHistory.set(stepHistory,1);
-  stepHistory[0]=0;
-}
-
-function radians(a) {
-  return a*Math.PI/180;
-}
-
-// distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
-// https://www.movable-type.co.uk/scripts/latlong.html
-function calcDistance(a,b) {
-  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
-  return Math.round(Math.sqrt(x*x + y*y) * 6371000);
-}
-
+// Handle GPS state change for icon
 Bangle.on("GPS", function(fix) {
   layout.gps.bgCol = fix.fix ? "#0f0" : "#f00";
-  if (!fix.fix) { return; } // only process actual fixes
+  if (!fix.fix) return; // only process actual fixes
   if (fixCount++ == 0) {
     Bangle.buzz(); // first fix, does not need to respect quiet mode
-    lastGPS = fix; // initialise on first fix
-  }
-
-  thisGPS = fix;
-
-  if (running) {
-    var d = calcDistance(lastGPS, thisGPS);
-    distance += d;
-    layout.dist.label=locale.distance(distance);
-    var duration = Date.now() - startTime; // in ms
-    var speed = distance * 1000 / duration; // meters/sec
-    layout.pace.label = formatPace(speed);
-    lastGPS = fix;
   }
 });
-Bangle.on("HRM", function(h) {
-  layout.hrm.label = h.bpm;
-});
-Bangle.on("step", function(steps) {
-  if (running) {
-    layout.steps.label = steps-Bangle.getStepCount();
-    stepHistory[0] += steps-lastStepCount;
-  }
-  lastStepCount = steps;
-});
-
-let settings = require("Storage").readJSON('run.json',1)||{"use_gps":true,"use_hrm":true};
-
-// We always call ourselves once a second, if only to update the time
-setInterval(onTimer, 1000);
-
-/* Turn GPS and HRM on right at the start to ensure
-we get the highest chance of a lock. */
-if (settings.use_hrm) Bangle.setHRMPower(true,"app");
-if (settings.use_gps) Bangle.setGPSPower(true,"app");
+// We always call ourselves once a second to update
+setInterval(function() {
+  layout.clock.label = locale.time(new Date(),1);
+  layout.render();
+}, 1000);
