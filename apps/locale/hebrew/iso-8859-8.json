@@ -1,0 +1,370 @@
+[
+{
+  "charCode": 0,
+  "symbolChar": ""
+},
+{
+  "charCode": 1,
+  "symbolChar": ""
+},
+{
+  "charCode": 2,
+  "symbolChar": ""
+},
+{
+  "charCode": 3,
+  "symbolChar": ""
+},
+{
+  "charCode": 4,
+  "symbolChar": ""
+},
+{
+  "charCode": 5,
+  "symbolChar": ""
+},
+{
+  "charCode": 6,
+  "symbolChar": ""
+},
+{
+  "charCode": 7,
+  "symbolChar": ""
+},
+{
+  "charCode": 8,
+  "symbolChar": ""
+},
+{
+  "charCode": 9,
+  "symbolChar": ""
+},
+{
+  "charCode": 10,
+  "symbolChar": ""
+},
+{
+  "charCode": 11,
+  "symbolChar": ""
+},
+{
+  "charCode": 12,
+  "symbolChar": ""
+},
+{
+  "charCode": 13,
+  "symbolChar": ""
+},
+{
+  "charCode": 14,
+  "symbolChar": ""
+},
+{
+  "charCode": 15,
+  "symbolChar": ""
+},
+{
+  "charCode": 16,
+  "symbolChar": ""
+},
+{
+  "charCode": 17,
+  "symbolChar": ""
+},
+{
+  "charCode": 18,
+  "symbolChar": ""
+},
+{
+  "charCode": 19,
+  "symbolChar": ""
+},
+{
+  "charCode": 20,
+  "symbolChar": ""
+},
+{
+  "charCode": 21,
+  "symbolChar": ""
+},
+{
+  "charCode": 22,
+  "symbolChar": ""
+},
+{
+  "charCode": 23,
+  "symbolChar": ""
+},
+{
+  "charCode": 24,
+  "symbolChar": ""
+},
+{
+  "charCode": 25,
+  "symbolChar": ""
+},
+{
+  "charCode": 26,
+  "symbolChar": ""
+},
+{
+  "charCode": 27,
+  "symbolChar": ""
+},
+{
+  "charCode": 28,
+  "symbolChar": ""
+},
+{
+  "charCode": 29,
+  "symbolChar": ""
+},
+{
+  "charCode": 30,
+  "symbolChar": ""
+},
+{
+  "charCode": 31,
+  "symbolChar": ""
+},
+{
+  "charCode": 32,
+  "symbolChar": " "
+},
+{
+  "charCode": 34,
+  "symbolChar": "¢"
+},
+{
+  "charCode": 35,
+  "symbolChar": "£"
+},
+{
+  "charCode": 36,
+  "symbolChar": "¤"
+},
+{
+  "charCode": 37,
+  "symbolChar": "¥"
+},
+{
+  "charCode": 38,
+  "symbolChar": "¦"
+},
+{
+  "charCode": 39,
+  "symbolChar": "§"
+},
+{
+  "charCode": 40,
+  "symbolChar": "¨"
+},
+{
+  "charCode": 41,
+  "symbolChar": "©"
+},
+{
+  "charCode": 42,
+  "symbolChar": "×"
+},
+{
+  "charCode": 43,
+  "symbolChar": "«"
+},
+{
+  "charCode": 44,
+  "symbolChar": "¬"
+},
+{
+  "charCode": 45,
+  "symbolChar": "­"
+},
+{
+  "charCode": 46,
+  "symbolChar": "®"
+},
+{
+  "charCode": 47,
+  "symbolChar": "¯"
+},
+{
+  "charCode": 48,
+  "symbolChar": "°"
+},
+{
+  "charCode": 49,
+  "symbolChar": "±"
+},
+{
+  "charCode": 50,
+  "symbolChar": "²"
+},
+{
+  "charCode": 51,
+  "symbolChar": "³"
+},
+{
+  "charCode": 52,
+  "symbolChar": "´"
+},
+{
+  "charCode": 53,
+  "symbolChar": "µ"
+},
+{
+  "charCode": 54,
+  "symbolChar": "¶"
+},
+{
+  "charCode": 55,
+  "symbolChar": "·"
+},
+{
+  "charCode": 56,
+  "symbolChar": "¸"
+},
+{
+  "charCode": 57,
+  "symbolChar": "¹"
+},
+{
+  "charCode": 58,
+  "symbolChar": "÷"
+},
+{
+  "charCode": 59,
+  "symbolChar": "»"
+},
+{
+  "charCode": 60,
+  "symbolChar": "¼"
+},
+{
+  "charCode": 61,
+  "symbolChar": "½"
+},
+{
+  "charCode": 62,
+  "symbolChar": "¾"
+},
+{
+  "charCode": 95,
+  "symbolChar": "‗"
+},
+{
+  "charCode": 96,
+  "symbolChar": "א"
+},
+{
+  "charCode": 97,
+  "symbolChar": "ב"
+},
+{
+  "charCode": 98,
+  "symbolChar": "ג"
+},
+{
+  "charCode": 99,
+  "symbolChar": "ד"
+},
+{
+  "charCode": 100,
+  "symbolChar": "ה"
+},
+{
+  "charCode": 101,
+  "symbolChar": "ו"
+},
+{
+  "charCode": 102,
+  "symbolChar": "ז"
+},
+{
+  "charCode": 103,
+  "symbolChar": "ח"
+},
+{
+  "charCode": 104,
+  "symbolChar": "ט"
+},
+{
+  "charCode": 105,
+  "symbolChar": "י"
+},
+{
+  "charCode": 106,
+  "symbolChar": "ך"
+},
+{
+  "charCode": 107,
+  "symbolChar": "כ"
+},
+{
+  "charCode": 108,
+  "symbolChar": "ל"
+},
+{
+  "charCode": 109,
+  "symbolChar": "ם"
+},
+{
+  "charCode": 110,
+  "symbolChar": "מ"
+},
+{
+  "charCode": 111,
+  "symbolChar": "ן"
+},
+{
+  "charCode": 112,
+  "symbolChar": "נ"
+},
+{
+  "charCode": 113,
+  "symbolChar": "ס"
+},
+{
+  "charCode": 114,
+  "symbolChar": "ע"
+},
+{
+  "charCode": 115,
+  "symbolChar": "ף"
+},
+{
+  "charCode": 116,
+  "symbolChar": "פ"
+},
+{
+  "charCode": 117,
+  "symbolChar": "ץ"
+},
+{
+  "charCode": 118,
+  "symbolChar": "צ"
+},
+{
+  "charCode": 119,
+  "symbolChar": "ק"
+},
+{
+  "charCode": 120,
+  "symbolChar": "ר"
+},
+{
+  "charCode": 121,
+  "symbolChar": "ש"
+},
+{
+  "charCode": 122,
+  "symbolChar": "ת"
+},
+{
+  "charCode": 125,
+  "symbolChar": "‎"
+},
+{
+  "charCode": 126,
+  "symbolChar": "‏"
+}
+]

@@ -32,6 +32,13 @@ const codePages = {
 àáâãäåæçèéêëìíîï
 ðñòóôõö÷øùúûüýþÿ
 `.replace(/[ \n]/g,"")
+  },
+  "ISO8859-8": {
+    name: "ISO8859-8",
+    bitmap: undefined,
+    widths: undefined,
+    // eslint-disable-next-line no-irregular-whitespace
+    mapping: " ¢£¤¥¦§¨©×«¬­®¯°±²³´µ¶·¸¹÷»¼½¾‗אבגדהוזחטיךכלםמןנסעףפץצקרשת‎‏"
   }
 };
 /* When it's not in the codepage, try and use
@@ -539,7 +546,7 @@ var locales = {
     abday: "dg,dl,dm,dc,dj,dv,ds",
     day: "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
     trans: { yes: "òc", Yes: "Òc", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
-  },  
+  },
   "pt_BR": {
     lang: "pt_BR",
     decimal_point: ",",
@@ -630,8 +637,7 @@ var locales = {
     day: "Niedziela,Poniedziałek,Wtorek,Środa,Czwartek,Piątek,Sobota",
     trans: { yes: "tak", Yes: "Tak", no: "nie", No: "Nie", ok: "ok", on: "on", off: "off", "< Back": "< Wstecz" }
   },
-/*,
-  "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
+  "he_IL": {
     codePage : "ISO8859-8",
     lang: "he_IL",
     decimal_point: ",",
@@ -649,5 +655,5 @@ var locales = {
     abday: "א׳,ב׳,ג׳,ד׳,ה,ו׳,ש׳",
     day: "ראשון,שני,שלישי,רביעי,חמישי,שישי,שבת",
     trans: { yes: "כן", Yes: "כן", no: "לא", No: "לא", ok: "אישור", on: "פעיל", off: "כבוי" }
-  }*/
+  }
 };
