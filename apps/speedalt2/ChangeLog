@@ -1,3 +1,4 @@
 0.01: Initial import.
-0.02: Add swipe to change screens.
-0.03: Misc memory and screen optimisations.
+0.07: Add swipe to change screens.
+1.06: Misc memory and screen optimisations.
+1.10: Adds Kalman filter.
