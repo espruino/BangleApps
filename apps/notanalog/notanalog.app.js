@@ -90,17 +90,18 @@ Graphics.prototype.setNormalFont = function(scale) {
 
 
 function getSteps() {
-    var steps = 0;
-    let health;
-    try {
-        health = require("health");
+    try{
+        if (WIDGETS.wpedom !== undefined) {
+            return WIDGETS.wpedom.getSteps();
+        } else if (WIDGETS.activepedom !== undefined) {
+            return WIDGETS.activepedom.getSteps();
+        }
     } catch(ex) {
-        return steps;
+        // In case we failed, we can only show 0 steps.
     }
 
-    health.readDay(new Date(), h=>steps+=h.steps);
-    return steps;
-}
+    return 0;
+  }
 
 
 function drawBackground() {
@@ -238,7 +239,7 @@ function handleState(fastUpdate){
      */
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
-    if(fastUpdate && hours == 00 && minutes == 01){
+    if(!isAlarmEnabled() && fastUpdate && hours == 00 && minutes == 01){
         state.sleep = true;
         return;
     }
@@ -318,8 +319,8 @@ function draw(fastUpdate){
     drawDate();
     drawLock();
     drawState();
-    drawData();
     drawTime();
+    drawData();
 
     // Queue draw in one minute
     queueDraw();
