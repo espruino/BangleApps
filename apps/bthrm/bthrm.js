@@ -10,7 +10,9 @@ function draw(y, event, type, counter) {
   g.reset();
   g.setFontAlign(0,0);
   g.clearRect(0,y,g.getWidth(),y+75);
-  if (type == null || event == null || counter == 0) return;
+  if (type == null || event == null || counter == 0){
+    return;
+  }
   var str = event.bpm + "";
   g.setFontVector(40).drawString(str,px,y+20);
   str = "Confidence: " + event.confidence;
@@ -21,21 +23,27 @@ function draw(y, event, type, counter) {
 }
 
 function onBtHrm(e) {
-  print("Event for BT " + JSON.stringify(e));
-  counterBt += 5;
+  //print("Event for BT " + JSON.stringify(e));
+  if (e.bpm == 0){
+    Bangle.buzz(100,0.2);
+  }
+  if (counterBt == 0){
+    Bangle.buzz(200,0.5);
+  }
+  counterBt += 3;
   eventBt = e;
 }
 
 function onHrm(e) {
-  print("Event for Int " + JSON.stringify(e));
-  counterInt += 5;
+  //print("Event for Int " + JSON.stringify(e));
+  counterInt += 3;
   eventInt = e;
 }
 
 Bangle.on('BTHRM', onBtHrm);
 Bangle.on('HRM', onHrm);
 
-Bangle.setHRMPower(1,'bthrm')
+Bangle.setHRMPower(1,'bthrm');
 
 g.clear();
 Bangle.loadWidgets();
@@ -47,13 +55,13 @@ g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 function drawInt(){
   counterInt--;
   if (counterInt < 0) counterInt = 0;
-  if (counterInt > 5) counterInt = 5;
+  if (counterInt > 3) counterInt = 3;
   draw(24, eventInt, "HRM", counterInt);
 }
 function drawBt(){
   counterBt--;
   if (counterBt < 0) counterBt = 0;
-  if (counterBt > 5) counterBt = 5;
+  if (counterBt > 3) counterBt = 3;
   draw(100, eventBt, "BTHRM", counterBt);
 }
 
