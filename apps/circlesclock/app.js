@@ -149,6 +149,7 @@ function drawCircle(index) {
   let type = settings['circle' + index];
   if (!type) type = defaultCircleTypes[index - 1];
   const w = getCirclePosition(type);
+
   switch (type) {
     case "steps":
       drawSteps(w);
@@ -168,6 +169,12 @@ function drawCircle(index) {
     case "sunprogress":
     case "sunProgress":
       drawSunProgress(w);
+      break;
+    case "temperature":
+      drawTemperature(w);
+      break;
+    case "pressure":
+      drawPressure(w);
       break;
     case "empty":
       // we draw nothing here
@@ -391,7 +398,55 @@ function drawSunProgress(w) {
   writeCircleText(w, text);
 
   g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+}
 
+function drawTemperature(w) {
+  if (!w) w = getCirclePosition("temperature");
+  getPressureValue("temperature").then((temperature) => {
+
+    drawCircleBackground(w);
+
+    if (temperature && temperature > 0) {
+      const percent = temperature / 100; // TODO: find good max for temperature
+      drawGauge(w, h3, percent, colorGreen);
+    }
+
+    drawInnerCircleAndTriangle(w);
+
+    let icon = powerIcon;
+    let color = colorFg;
+    if (temperature && temperature > 0)
+      writeCircleText(w, locale.temp(temperature));
+
+    g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+
+  });
+}
+
+function drawPressure(w) {
+  if (!w) w = getCirclePosition("pressure");
+  getPressureValue("pressure").then((pressure) => {
+
+    drawCircleBackground(w);
+
+    if (pressure && pressure > 0) {
+
+      const minPressure = 870;
+      const maxPressure = 1080;
+      const percent = (pressure - minPressure) / (maxPressure - minPressure);
+      drawGauge(w, h3, percent, colorGreen);
+    }
+
+    drawInnerCircleAndTriangle(w);
+
+    let icon = powerIcon;
+    let color = colorFg;
+    if (pressure && pressure > 0)
+      writeCircleText(w, pressure);
+
+    g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+
+  });
 }
 
 /*
@@ -479,7 +534,7 @@ function formatSeconds(s) {
 function getSunData() {
   if (location != undefined && location.lat != undefined) {
     // get today's sunlight times for lat/lon
-    return SunCalc.getTimes(new Date(), location.lat, location.lon);
+    return SunCalc ? SunCalc.getTimes(new Date(), location.lat, location.lon) : undefined;
   }
   return undefined;
 }
@@ -507,7 +562,7 @@ function getSunProgress() {
     // during night
     if (now < sunRise) {
       const prevSunSet = sunSet - 60 * 60 * 24;
-      return 1- (sunRise - now) / (sunRise - prevSunSet);
+      return 1 - (sunRise - now) / (sunRise - prevSunSet);
     } else {
       const upcomingSunRise = sunRise + 60 * 60 * 24;
       return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
@@ -606,6 +661,24 @@ function enableHRMSensor() {
     hrtValue = '...';
     drawHeartRate();
   }
+}
+
+function getPressureValue(type) {
+  return new Promise((resolve) => {
+    if (Bangle.getPressure) {
+      Bangle.getPressure().then(function(d) {
+        if (d) {
+          resolve(d[type]);
+        }
+      }).catch(function(e) {});
+    } else {
+      switch (type) {
+        case "temperature":
+          resolve(E.getTemperature());
+          break;
+      }
+    }
+  });
 }
 
 Bangle.on('lock', function(isLocked) {

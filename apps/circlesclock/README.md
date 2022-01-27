@@ -14,12 +14,17 @@ It can show the following information (this can be configured):
        * Temperature inside circle
        * Condition as icon below circle
   * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
+  * Temperature from internal watch sensor
+  * Air pressure from internal watch sensor
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
 ![Screenshot dark theme with four circles](screenshot-dark-4.png)
 ![Screenshot light theme with four circles](screenshot-light-4.png)
+
+## Ideas
+* Make colors configurable
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))

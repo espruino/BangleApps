@@ -7,8 +7,8 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty"];
-  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty"];
+  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty", "temperature", "pressure"];
+  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty", "temperature", "pressure"];
 
   const weatherData = ["humidity", "wind", "empty"];
 
@@ -105,25 +105,25 @@
     },
     'circle1': {
       value: settings.circle1 ? valuesCircleTypes.indexOf(settings.circle1) : 0,
-      min: 0, max: 6,
+      min: 0, max: valuesCircleTypes.length,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle1', valuesCircleTypes[x]),
     },
     'circle2': {
       value: settings.circle2 ? valuesCircleTypes.indexOf(settings.circle2) : 2,
-      min: 0, max: 6,
+      min: 0, max: valuesCircleTypes.length,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle2', valuesCircleTypes[x]),
     },
     'circle3': {
       value: settings.circle3 ? valuesCircleTypes.indexOf(settings.circle3) : 3,
-      min: 0, max: 6,
+      min: 0, max: valuesCircleTypes.length,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle3', valuesCircleTypes[x]),
     },
     'circle4': {
       value: settings.circle4 ? valuesCircleTypes.indexOf(settings.circle4) : 4,
-      min: 0, max: 6,
+      min: 0, max: valuesCircleTypes.length,
       format: v => namesCircleTypes[v],
       onchange: x => save('circle4', valuesCircleTypes[x]),
     }
