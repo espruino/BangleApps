@@ -13,3 +13,4 @@
       Load daily steps from Bangle health if available
 0.07: Allow configuration of minimal heart rate confidence
 0.08: Allow configuration of up to 4 circles in a row
+0.09: Support to show temperature, air pressure or altitude from internal pressure sensor

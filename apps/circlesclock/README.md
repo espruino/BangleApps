@@ -14,8 +14,7 @@ It can show the following information (this can be configured):
        * Temperature inside circle
        * Condition as icon below circle
   * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
-  * Temperature from internal watch sensor
-  * Air pressure from internal watch sensor
+  * Temperature, air pressure or altitude from internal pressure sensor
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)

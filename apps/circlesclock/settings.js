@@ -7,8 +7,8 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty", "temperature", "pressure"];
-  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty", "temperature", "pressure"];
+  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty", "temperature", "pressure", "altitude"];
+  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty", "temperature", "pressure", "altitude"];
 
   const weatherData = ["humidity", "wind", "empty"];
 
