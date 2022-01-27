@@ -100,6 +100,7 @@ const radiusOuter = circleCount == 3 ? 25 : 20;
 const radiusInner = circleCount == 3 ? 20 : 15;
 const circleFont = circleCount == 3 ? "Vector:15" : "Vector:12";
 const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:13";
+const iconOffset = circleCount == 3 ? 6 : 8;
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
@@ -226,7 +227,7 @@ function drawSteps(w) {
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(shoesIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
@@ -248,7 +249,7 @@ function drawStepsDistance(w) {
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(shoesIconGreen, w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
@@ -267,7 +268,7 @@ function drawHeartRate(w) {
 
   writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
-  g.drawImage(heartIcon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(heartIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawBattery(w) {
@@ -296,7 +297,7 @@ function drawBattery(w) {
   }
   writeCircleText(w, battery + '%');
 
-  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawWeather(w) {
@@ -337,7 +338,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 10);
+    if (icon) g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }
@@ -389,7 +390,7 @@ function drawSunProgress(w) {
 
   writeCircleText(w, text);
 
-  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
 
 }
 
