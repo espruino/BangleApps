@@ -35,6 +35,9 @@ Access different screens via tap on the left/ right side of the screen
 ![](screenshot_2.png)
 
 
+# Ideas
+- Tap top / bottom to disable steps (also icon) and start a timer
+
 ## Contributors
 - [David Peer](https://github.com/peerdavid).
 - [Adam Schmalhofer](https://github.com/adamschmalhofer).

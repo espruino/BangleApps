@@ -1,4 +1,5 @@
-(() => {  
+(() => {
+  BANGLEJS2 = process.env.HWVERSION==2;
   Bangle.setLCDTimeout(0);
   let intervalID;
   let settings = require("Storage").readJSON("ballmaze.json",true) || {};
@@ -6,7 +7,9 @@
   // density, elasticity of bounces, "drag coefficient"
   const rho = 100, e = 0.3, C = 0.01;
   // screen width & height in pixels
-  const sW = 240, sH = 160;
+  const sW = g.getWidth();
+  const sH = g.getHeight()*2/3;
+  const bgColour ="#f00";  // only for Bangle.js 2
   // gravity constant (lowercase was already taken)
   const G = 9.80665;
 
@@ -17,14 +20,16 @@
   // The play area is 240x160, sizes are the ball radius, so we can use common
   // denominators of 120x80 to get square rooms
   // Reverse the order to show the easiest on top of the menu
-  const sizes = [1, 2, 4, 5, 8, 10, 16, 20, 40].reverse(),
-    // even size 1 actually works, but larger mazes take forever to generate
-    minSize = 4, defaultSize = 10;
   const sizeNames = {
     1: "Insane", 2: "Gigantic", 4: "Enormous", 5: "Huge", 8: "Large",
     10: "Medium", 16: "Small", 20: "Tiny", 40: "Trivial",
   };
-
+  // even size 1 actually works, but larger mazes take forever to generate
+  if (!BANGLEJS2) {
+    const sizes = [1, 2, 4, 5, 8, 10, 16, 20, 40].reverse(), minSize = 4, defaultSize = 10;
+  } else {
+    const sizes = [1, 2, 4, 5, 8, 10, 16, 20    ].reverse(), minSize = 4, defaultSize = 10;
+  }
   /**
    * Draw something to all screen buffers
    * @param draw {function} Callback which performs the drawing
@@ -45,17 +50,17 @@
 
   // use unbuffered graphics for UI stuff
   function showMessage(message, title) {
-    Bangle.setLCDMode();
+    if (!BANGLEJS2) Bangle.setLCDMode();
     return E.showMessage(message, title);
   }
 
   function showPrompt(prompt, options) {
-    Bangle.setLCDMode();
+    if (!BANGLEJS2) Bangle.setLCDMode();
     return E.showPrompt(prompt, options);
   }
 
   function showMenu(menu) {
-    Bangle.setLCDMode();
+    if (!BANGLEJS2) Bangle.setLCDMode();
     return E.showMenu(menu);
   }
 
@@ -105,7 +110,7 @@
       generateMaze(); // this shows unbuffered progress messages
       if (settings.cheat && r>1) findRoute(); // not enough memory for r==1 :-(
 
-      Bangle.setLCDMode("doublebuffered");
+      if (!BANGLEJS2) Bangle.setLCDMode("doublebuffered");
       clearAll();
       drawAll(drawMaze);
       intervalID = setInterval(tick, 100);
@@ -307,6 +312,7 @@
       const range = {top: 0, left: 0, bottom: rows, right: cols};
       const w = sW/cols, h = sH/rows;
       g.clear();
+      if (BANGLEJS2) g.setBgColor(bgColour);
       g.setColor(0.76, 0.60, 0.42);
       for(let row = range.top; row<=range.bottom; row++) {
         for(let col = range.left; col<=range.right; col++) {
