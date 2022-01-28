@@ -7,3 +7,10 @@
       Show actual source of event in app
 0.04: Automatically reconnect BT sensor
       App buzzes if no BTHRM events for more than 3 seconds
+0.05: Allow reading additional data if available: HRM battery, position and RR
+      Better caching of scanned BT device properties
+      New setting for not starting the BTHRM together with HRM
+      Save some RAM by not defining functions if disabled in settings
+      Always emit BTHRM event
+      Cleanup promises code and allow to configure custom additional waiting times to work around bugs
+      Disconnect cleanly on exit
