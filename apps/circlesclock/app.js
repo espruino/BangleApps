@@ -407,102 +407,85 @@ function drawSunProgress(w) {
 function drawTemperature(w) {
   if (!w) w = getCirclePosition("temperature");
 
-  drawCircleBackground(w);
-  g.setColor(colorFg);
+  getPressureValue("temperature").then((temperature) => {
+    drawCircleBackground(w);
+    g.setColor(colorFg);
 
-  const delay = pressureLocked ? 1000 : 0;
-  setTimeout(() => {
-    getPressureValue("temperature").then((temperature) => {
+    drawInnerCircleAndTriangle(w);
 
-      pressureLocked = false;
+    if (temperature) {
+      const min = -40; // TODO: find good min, max for temperature
+      const max = 85;
+      const percent = (temperature - min) / (max - min);
+      drawGauge(w, h3, percent, colorGreen);
+    }
 
-      if (temperature) {
-        const percent = temperature / 100; // TODO: find good max for temperature
-        drawGauge(w, h3, percent, colorGreen);
-      }
+    if (temperature)
+      writeCircleText(w, locale.temp(temperature));
 
-      drawInnerCircleAndTriangle(w);
+    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
 
-      if (temperature)
-        writeCircleText(w, locale.temp(temperature));
-
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-
-    }).catch(() => {
-      pressureLocked = false;
-      drawInnerCircleAndTriangle(w);
-      writeCircleText(w, "?");
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-    });
-  }, delay);
+  }).catch(() => {
+    setTimeout(() => {
+      drawTemperature();
+    }, 1000);
+  });
 }
 
 function drawPressure(w) {
   if (!w) w = getCirclePosition("pressure");
 
-  drawCircleBackground(w);
-  g.setColor(colorFg);
+  getPressureValue("pressure").then((pressure) => {
+    drawCircleBackground(w);
+    g.setColor(colorFg);
 
-  const delay = pressureLocked ? 1000 : 0;
-  setTimeout(() => {
-    getPressureValue("pressure").then((pressure) => {
-      pressureLocked = false;
+    drawInnerCircleAndTriangle(w);
 
-      if (pressure && pressure > 0) {
-        const minPressure = 900;
-        const maxPressure = 1050;
-        const percent = (pressure - minPressure) / (maxPressure - minPressure);
-        drawGauge(w, h3, percent, colorGreen);
-      }
+    if (pressure && pressure > 0) {
+      const minPressure = 900;
+      const maxPressure = 1050;
+      const percent = (pressure - minPressure) / (maxPressure - minPressure);
+      drawGauge(w, h3, percent, colorGreen);
+    }
 
-      drawInnerCircleAndTriangle(w);
+    if (pressure)
+      writeCircleText(w, Math.round(pressure));
 
-      if (pressure)
-        writeCircleText(w, pressure);
+    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
 
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-
-    }).catch(() => {
-      pressureLocked = false;
-      drawInnerCircleAndTriangle(w);
-      writeCircleText(w, "?");
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-    });
-  }, delay);
+  }).catch(() => {
+    setTimeout(() => {
+      drawPressure(w);
+    }, 1000);
+  });
 }
 
 function drawAltitude(w) {
   if (!w) w = getCirclePosition("altitude");
 
-  drawCircleBackground(w);
-  g.setColor(colorFg);
+  getPressureValue("altitude").then((altitude) => {
+    drawCircleBackground(w);
+    g.setColor(colorFg);
 
-  const delay = pressureLocked ? 1000 : 0;
-  setTimeout(() => {
-    getPressureValue("altitude").then((altitude) => {
-      pressureLocked = false;
+    drawInnerCircleAndTriangle(w);
 
-      if (altitude) {
-        const min = -1000;
-        const max = 10000;
-        const percent = (pressure - min) / (max - min);
-        drawGauge(w, h3, percent, colorGreen);
-      }
+    if (altitude) {
+      const min = 0;
+      const max = 10000;
+      const percent = (altitude - min) / (max - min);
+      drawGauge(w, h3, percent, colorGreen);
+    }
 
-      drawInnerCircleAndTriangle(w);
+    if (altitude)
+      writeCircleText(w, locale.distance(Math.round(altitude)));
 
-      if (altitude)
-        writeCircleText(w, altitude);
+    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
 
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-
-    }).catch(() => {
-      pressureLocked = false;
-      drawInnerCircleAndTriangle(w);
-      writeCircleText(w, "?");
-      g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
-    });
-  }, delay);
+  }).catch(() => {
+    setTimeout(() => {
+      drawAltitude(w);
+    }, 1000);
+  });
 }
 
 /*
@@ -720,6 +703,7 @@ function enableHRMSensor() {
 }
 
 let pressureLocked = false;
+let lastPressureValue;
 
 function getPressureValue(type) {
   return new Promise((resolve, reject) => {
@@ -727,14 +711,22 @@ function getPressureValue(type) {
       if (!pressureLocked) {
         pressureLocked = true;
         Bangle.getPressure().then(function(d) {
-          if (d && d[type]) {
-            resolve(d[type]);
+          pressureLocked = false;
+          if (d) {
+            lastPressureValue = d;
+            if (d[type]) {
+              resolve(d[type]);
+            }
           } else {
             reject();
           }
         }).catch(reject);
       } else {
-        reject();
+        if (lastPressureValue && lastPressureValue[type]) {
+          resolve(lastPressureValue[type]);
+        } else {
+          reject();
+        }
       }
     } else {
       reject();
