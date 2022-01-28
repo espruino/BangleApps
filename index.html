@@ -51,8 +51,8 @@
       <li class="tab-item" id="tab-myappscontainer">
         <a href="javascript:showTab('myappscontainer')">My Apps</a>
       </li>
-      <li class="tab-item" id="tab-aboutcontainer">
-        <a href="javascript:showTab('aboutcontainer')">About</a>
+      <li class="tab-item" id="tab-morecontainer">
+        <a href="javascript:showTab('morecontainer')">More...</a>
       </li>
     </ul>
 
@@ -111,7 +111,7 @@
       </div>
     </div>
 
-    <div class="container apploader-tab" id="aboutcontainer" style="display:none">
+    <div class="container apploader-tab" id="morecontainer" style="display:none">
       <div class="hero bg-gray">
         <div class="hero-body">
           <a href="https://banglejs.com" target="_blank"><img src="img/banglejs-logo-mid.png" alt="Bangle.js"></a>
@@ -141,6 +141,11 @@
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
+          <div class="form-group">
+            <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
+              <option value="">None (English)</option>
+            </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>)</span>
+          </div>
           <button class="btn" id="defaultsettings">Default settings</button>
         </div>
       </div>

@@ -1,0 +1,14 @@
+{
+  "id": "jbells",
+  "name": "Jingle Bells",
+  "version": "0.01",
+  "description": "Play Jingle Bells",
+  "icon": "jbells.png",
+  "type": "app",
+  "tags": "sound",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"jbells.app.js","url":"jbells.js"},
+    {"name":"jbells.img","url":"jbells-icon.js","evaluate":true}
+  ]
+}

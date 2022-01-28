@@ -1,0 +1,25 @@
+{
+  "id": "supmariodark",
+  "name": "Super mario clock night mode",
+  "shortName": "supmariodark",
+  "version": "0.01",
+  "description": "Super mario clock in night mode",
+  "icon": "supmariodark.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"supmariodark.app.js","url":"supmariodark.js"},
+    {"name":"supmariodark.img","url":"supmariodark-icon.js","evaluate":true},
+    {"name":"supmario30x24.bin","url":"supmario30x24.bin.js"},
+    {"name":"supmario30x24.wdt","url":"supmario30x24.wdt.js"},
+    {"name":"banner-up.img","url":"banner-up.js","evaluate":true},
+    {"name":"banner-down.img","url":"banner-down.js","evaluate":true},
+    {"name":"brick2.img","url":"brick2.js","evaluate":true},
+    {"name":"enemy.img","url":"enemy.js","evaluate":true},
+    {"name":"flower.img","url":"flower.js","evaluate":true},
+    {"name":"flower_b.img","url":"flower_b.js","evaluate":true},
+    {"name":"mario_wh.img","url":"mario_wh.js","evaluate":true},
+    {"name":"pipe.img","url":"pipe.js","evaluate":true}
+  ]
+}

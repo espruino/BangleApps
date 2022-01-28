@@ -1,0 +1,14 @@
+{ "id": "accelgraph",
+  "name": "Accelerometer Graph",
+  "shortName":"Accel Graph",
+  "version":"0.01",
+  "description": "A simple app to draw a graph of data from the accelerometer on the screen",
+  "icon": "app.png",
+  "tags": "tool,debug",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"accelgraph.app.js","url":"app.js"},
+    {"name":"accelgraph.img","url":"app-icon.js","evaluate":true}
+  ]
+}

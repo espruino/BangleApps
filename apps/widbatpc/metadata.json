@@ -1,0 +1,18 @@
+{
+  "id": "widbatpc",
+  "name": "Battery Level Widget (with percentage)",
+  "shortName": "Battery Widget",
+  "version": "0.16",
+  "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,battery",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"widbatpc.full.jpg"},{"url":"widbatpc.part.jpg"}],
+  "storage": [
+    {"name":"widbatpc.wid.js","url":"widget.js"},
+    {"name":"widbatpc.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widbatpc.json"}]
+}

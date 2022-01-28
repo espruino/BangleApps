@@ -1,0 +1,15 @@
+{
+  "id": "pizzatimer",
+  "name": "Pizza Timer",
+  "shortName": "Pizza Timer",
+  "version": "0.01",
+  "description": "A timer app for when you cook Pizza. Some say it can also time other things",
+  "icon": "pizza.png",
+  "tags": "timer,tool,pizza",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"pizzatimer.app.js","url":"app.js"},
+    {"name":"pizzatimer.img","url":"app-icon.js","evaluate":true}
+  ]
+}

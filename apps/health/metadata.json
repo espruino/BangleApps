@@ -1,0 +1,17 @@
+{
+  "id": "health",
+  "name": "Health Tracking",
+  "version": "0.10",
+  "description": "Logs health data and provides an app to view it (requires firmware 2v10.100 or later)",
+  "icon": "app.png",
+  "tags": "tool,system,health",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"health.app.js","url":"app.js"},
+    {"name":"health.img","url":"app-icon.js","evaluate":true},
+    {"name":"health.boot.js","url":"boot.js"},
+    {"name":"health","url":"lib.js"}
+  ]
+}

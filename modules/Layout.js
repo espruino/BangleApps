@@ -1,4 +1,7 @@
+/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
 /*
+
+Take a look at README.md for hints on developing with this library.
 
 Usage:
 
@@ -34,7 +37,7 @@ layoutObject has:
        optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
-  * `"v"` - Veritical layout, `c` is an array of more `layoutObject`
+  * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
 * A `font` field, eg `6x8` or `30%` to use a percentage of screen height
@@ -261,6 +264,7 @@ Layout.prototype.render = function (l) {
         x,y+4
       ], bg = l.selected?g.theme.bgH:g.theme.bg2;
     g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+    if (l.col) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
     else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){

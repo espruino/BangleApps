@@ -1,0 +1,16 @@
+{
+  "id": "sclock",
+  "name": "Simple Clock",
+  "version": "0.07",
+  "description": "A Simple Digital Clock",
+  "icon": "clock-simple.png",
+  "screenshots": [{"url":"screenshot_simplec.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"sclock.app.js","url":"clock-simple.js"},
+    {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
+  ]
+}

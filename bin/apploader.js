@@ -13,6 +13,7 @@ for Noble.
 var SETTINGS = {
   pretokenise : true
 };
+var APPSDIR = __dirname+"/../apps/";
 var Utils = require("../core/js/utils.js");
 var AppInfo = require("../core/js/appinfo.js");
 var noble;
@@ -29,18 +30,27 @@ if (!noble) {
   console.log("  npm install noble")
 }
 
-var apps;
+var apps = [];
 
 function ERROR(msg) {
   console.error(msg);
   process.exit(1);
 }
 
-try {
-  apps = JSON.parse(require("fs").readFileSync(__dirname+"/../apps.json"));
-} catch(e) {
-  ERROR("'apps.json' could not be loaded");
-}
+var apps = [];
+var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
+dirs.forEach(dir => {
+  var appsFile;
+  if (dir.name.startsWith("_example") || !dir.isDirectory())
+    return;
+  try {
+    appsFile = require("fs").readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
+  } catch (e) {
+    ERROR(dir.name+"/metadata.json does not exist");
+    return;
+  }
+  apps.push(JSON.parse(appsFile));
+});
 
 var args = process.argv;
 

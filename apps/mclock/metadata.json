@@ -1,0 +1,17 @@
+{
+  "id": "mclock",
+  "name": "Morphing Clock",
+  "version": "0.07",
+  "description": "7 segment clock that morphs between minutes and hours",
+  "icon": "clock-morphing.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-morphing-clock-screenshot.png"}],
+  "storage": [
+    {"name":"mclock.app.js","url":"clock-morphing.js"},
+    {"name":"mclock.img","url":"clock-morphing-icon.js","evaluate":true}
+  ],
+  "sortorder": -9
+}

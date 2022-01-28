@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.0/dist/geosearch.css"/>
   </head>
     <style>
       body {
@@ -44,6 +45,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../../core/lib/heatshrink.js"></script>
     <script src="../../core/lib/imageconverter.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.6.0/dist/bundle.min.js"></script>
 
     <script>
     /*
@@ -66,7 +68,8 @@ TODO:
       var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
 
-      var map = L.map('map').locate({setView: true, maxZoom: 16});
+      // Create map and try and set the location to where the browser thinks we are
+      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       // Tiles used for Bangle.js itself
       var bangleTileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
@@ -78,6 +81,19 @@ TODO:
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
+      // Search box:
+      const searchProvider = new window.GeoSearch.OpenStreetMapProvider();
+      const searchControl = new GeoSearch.GeoSearchControl({
+        provider: searchProvider,
+        style: 'button',
+        updateMap: true,
+        autoClose: true,
+        showMarker: false,
+        keepResult: true,
+        autoComplete: false
+      });
+      map.addControl(searchControl);
 
       function onInit(device) {
         if (device && device.info && device.info.g) {
@@ -100,8 +116,33 @@ TODO:
         if (document.getElementById("3bit").checked) {
           options = {
             compression:false, output:"raw",
-            mode:"3bit", brightness:-64,
+            mode:"3bit",
           };
+          /* If in 3 bit mode, go through all the data beforehand and
+          turn the saturation up to maximum, so when thresholded it
+          works a lot better */
+          var imageData = ctx.getImageData(0,0,width,height);
+          var rgba = imageData.data;
+          var l = width*height*4;
+          for (var i=0;i<l;i+=4) {
+             var min = Math.min(rgba[i+0],rgba[i+1],rgba[i+2]);
+             var max = Math.max(rgba[i+0],rgba[i+1],rgba[i+2]);
+             var d = max-min;
+             if (max<120) { // black
+               rgba[i+0]=0;
+               rgba[i+1]=0;
+               rgba[i+2]=0;
+             } else if (min>240 || d<8) { // white or grey
+               rgba[i+0]=255;
+               rgba[i+1]=255;
+               rgba[i+2]=255;
+             } else { // another colour - use max saturation
+               rgba[i+0] = (rgba[i+0]-min) * 255 / d;
+               rgba[i+1] = (rgba[i+1]-min) * 255 / d;
+               rgba[i+2] = (rgba[i+2]-min) * 255 / d;
+             }
+          }
+          ctx.putImageData(imageData,0,0);
         }
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
@@ -115,7 +156,7 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE);
+            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/

@@ -1,0 +1,16 @@
+{
+  "id": "ios",
+  "name": "iOS Integration",
+  "version": "0.08",
+  "description": "Display notifications/music/etc from iOS devices",
+  "icon": "app.png",
+  "tags": "tool,system,ios,apple,messages,notifications",
+  "dependencies": {"messages":"app"},
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"ios.app.js","url":"app.js"},
+    {"name":"ios.img","url":"app-icon.js","evaluate":true},
+    {"name":"ios.boot.js","url":"boot.js"}
+  ],
+  "sortorder": -8
+}

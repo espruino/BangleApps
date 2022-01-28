@@ -1,0 +1,15 @@
+{
+  "id": "counter",
+  "name": "Counter",
+  "version": "0.03",
+  "description": "Simple counter",
+  "icon": "counter_icon.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-counter-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"counter.app.js","url":"counter.js"},
+    {"name":"counter.img","url":"counter-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,17 @@
+{ "id": "configurable_clock",
+  "name": "Configurable Analog Clock",
+  "shortName":"Configurable Clock",
+  "version":"0.02",
+  "description": "an analog clock with several kinds of faces, hands and colors to choose from",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"app-screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"configurable_clock.app.js","url":"app.js"},
+    {"name":"configurable_clock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

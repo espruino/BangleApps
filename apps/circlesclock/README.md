@@ -1,20 +1,25 @@
 # Circles clock
 
-A clock with circles for different data at the bottom in a probably familiar style
+A clock with three or four circles for different data at the bottom in a probably familiar style
 
-It shows besides time, date and day of week the following information:
-  * Steps (requires [pedometer widget](https://banglejs.com/apps/#pedometer))
-  * Heart rate (when screen is on and unlocked)
-  * Battery (including charging and battery low)
+By default the time, date and day of week is shown.
 
-## Screenshot
+It can show the following information (this can be configured):
+  * Steps
+  * Steps distance
+  * Heart rate (automatically updates when screen is on and unlocked)
+  * Battery (including charging status and battery low warning)
+  * Weather (requires [weather app](https://banglejs.com/apps/#weather))
+       * Humidity or wind speed as circle progress
+       * Temperature inside circle
+       * Condition as icon below circle
+  * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
 
-![Screenshot](screenshot.png)
-
-## TODO
-* Show weather information
-* Configure which information to show in each circle
-* Configure visibility of widgets
+## Screenshots
+![Screenshot dark theme](screenshot-dark.png)
+![Screenshot light theme](screenshot-light.png)
+![Screenshot dark theme with four circles](screenshot-dark-4.png)
+![Screenshot light theme with four circles](screenshot-light-4.png)
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))

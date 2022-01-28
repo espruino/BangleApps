@@ -1,0 +1,16 @@
+{
+  "id": "analogimgclk",
+  "name": "Analog Clock (Image background)",
+  "shortName": "Analog Clock",
+  "version": "0.03",
+  "description": "An analog clock with an image background",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"analogimgclk.app.js","url":"app.js"},
+    {"name":"analogimgclk.bg.img","url":"bg.img"},
+    {"name":"analogimgclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "gpsautotime",
+  "name": "GPS auto time",
+  "shortName": "GPS auto time",
+  "version": "0.01",
+  "description": "A widget that automatically updates the Bangle.js time to the GPS time whenever there is a valid GPS fix.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,gps",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"gpsautotime.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,3 +1,15 @@
 0.01: New clock
 0.02: Fix icon & add battery warn functionality
 0.03: Theming support & minor fixes
+0.04: Make configurable what to show in each circle
+      Add step distance and weather
+      Allow switching visibility of widgets
+      Make circles and text slightly bigger
+0.05: Show correct percentage values in circles
+      Show humidity as weather circle data
+0.06: Allow settings empty circles
+      Support to choose between humidity and wind speed for weather circle progress
+      Support to show time and progress until next sunrise or sunset
+      Load daily steps from Bangle health if available
+0.07: Allow configuration of minimal heart rate confidence
+0.08: Allow configuration of up to 4 circles in a row

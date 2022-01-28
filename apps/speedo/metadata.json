@@ -1,0 +1,13 @@
+{
+  "id": "speedo",
+  "name": "Speedo",
+  "version": "0.05",
+  "description": "Show the current speed according to the GPS",
+  "icon": "speedo.png",
+  "tags": "tool,outdoors,gps",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"speedo.app.js","url":"speedo.js"},
+    {"name":"speedo.img","url":"speedo-icon.js","evaluate":true}
+  ]
+}

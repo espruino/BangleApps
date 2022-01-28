@@ -1,0 +1,16 @@
+{
+  "id": "waveclk",
+  "name": "Wave Clock",
+  "version": "0.02",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/). **Note: Works on any Bangle.js 2, but requires firmware 2v11 or later on Bangle.js 1**",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"waveclk.app.js","url":"app.js"},
+    {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

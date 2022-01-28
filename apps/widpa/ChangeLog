@@ -1,0 +1,4 @@
+0.01: First release
+0.02: Size widget after step count is reset
+0.03: set sortorder to -1
+0.04: set sortorder through code

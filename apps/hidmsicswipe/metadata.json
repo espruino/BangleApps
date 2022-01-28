@@ -1,0 +1,14 @@
+{
+  "id": "hidmsicswipe",
+  "name": "Bluetooth Music Swipe Controls",
+  "shortName": "Swipe Control",
+  "version": "0.01",
+  "description": "Based on the original Bluetooth Music Controls. Swipe up/down for volume, left/right for previous and next, tap for play/pause and btn1 to lock and unlock the controls. Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
+  "icon": "hidmsicswipe.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"hidmsicswipe.app.js","url":"hidmsicswipe.js"},
+    {"name":"hidmsicswipe.img","url":"hidmsicswipe-icon.js","evaluate":true}
+  ]
+}

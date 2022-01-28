@@ -1,0 +1,17 @@
+{
+  "id": "hourstrike",
+  "name": "Hour Strike",
+  "shortName": "Hour Strike",
+  "version": "0.09",
+  "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
+  "icon": "app-icon.png",
+  "tags": "tool,alarm",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"hourstrike.app.js","url":"app.js"},
+    {"name":"hourstrike.boot.js","url":"boot.js"},
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true},
+    {"name":"hourstrike.json","url":"hourstrike.json"}
+  ]
+}

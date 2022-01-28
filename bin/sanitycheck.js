@@ -26,29 +26,35 @@ function WARN(s) {
   console.log("Warning: "+s);
 }
 
-var appsFile, apps;
-try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
-} catch (e) {
-  ERROR("apps.json not found");
-}
-try{
-  apps = JSON.parse(appsFile);
-} catch (e) {
-  console.log(e);
-  var m = e.toString().match(/in JSON at position (\d+)/);
-  if (m) {
-    var char = parseInt(m[1]);
-    console.log("===============================================");
-    console.log("LINE "+appsFile.substr(0,char).split("\n").length);
-    console.log("===============================================");
-    console.log(appsFile.substr(char-10, 20));
-    console.log("===============================================");
+var apps = [];
+var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
+dirs.forEach(dir => {
+  var appsFile;
+  if (dir.name.startsWith("_example") || !dir.isDirectory())
+    return;
+  try {
+    appsFile = fs.readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
+  } catch (e) {
+    ERROR(dir.name+"/metadata.json does not exist");
+    return;
   }
-  console.log(m);
-  ERROR("apps.json not valid JSON");
-
-}
+  try{
+    apps.push(JSON.parse(appsFile));
+  } catch (e) {
+    console.log(e);
+    var m = e.toString().match(/in JSON at position (\d+)/);
+    if (m) {
+      var char = parseInt(m[1]);
+      console.log("===============================================");
+      console.log("LINE "+appsFile.substr(0,char).split("\n").length);
+      console.log("===============================================");
+      console.log(appsFile.substr(char-10, 20));
+      console.log("===============================================");
+    }
+    console.log(m);
+    ERROR(dir.name+"/metadata.json not valid JSON");
+  }
+});
 
 const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
@@ -58,6 +64,7 @@ const APP_KEYS = [
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
+const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -90,7 +97,7 @@ apps.forEach((app,appIdx) => {
   if (!Array.isArray(app.supports)) ERROR(`App ${app.id} has no 'supports' field or it's not an array`);
   else {
     app.supports.forEach(dev => {
-      if (!["BANGLEJS","BANGLEJS2"].includes(dev))
+      if (!SUPPORTS_DEVICES.includes(dev))
         ERROR(`App ${app.id} has unknown device in 'supports' field - ${dev}`);
     });
   }
@@ -140,6 +147,13 @@ apps.forEach((app,appIdx) => {
     if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`)
     if (fileNames.includes(file.name) && !file.supports)  // assume that there aren't duplicates if 'supports' is set
       ERROR(`App ${app.id} file ${file.name} is a duplicate`);
+    if (file.supports && !Array.isArray(file.supports))
+      ERROR(`App ${app.id} file ${file.name} supports field must be an array`);
+    if (file.supports)
+      file.supports.forEach(dev => {
+        if (!SUPPORTS_DEVICES.includes(dev))
+          ERROR(`App ${app.id} file ${file.name} has unknown device in 'supports' field - ${dev}`);
+      });
     fileNames.push(file.name);
     allFiles.push({app: app.id, file: file.name});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`);
@@ -271,7 +285,8 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`)
-      else WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
+      else if (fileA.app != fileB.app)
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`)
     }
   })
 }

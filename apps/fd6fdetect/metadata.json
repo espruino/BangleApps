@@ -1,0 +1,15 @@
+{
+  "id": "fd6fdetect",
+  "name": "fd6fdetect",
+  "shortName": "fd6fdetect",
+  "version": "0.02",
+  "description": "Allows you to see 0xFD6F beacons near you.",
+  "icon": "app.png",
+  "tags": "tool",
+  "readme": "README.md",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"fd6fdetect.app.js","url":"app.js"},
+    {"name":"fd6fdetect.img","url":"app-icon.js","evaluate":true}
+  ]
+}

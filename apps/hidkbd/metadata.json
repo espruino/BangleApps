@@ -1,0 +1,14 @@
+{
+  "id": "hidkbd",
+  "name": "Bluetooth Keyboard",
+  "shortName": "Bluetooth Kbd",
+  "version": "0.02",
+  "description": "Enable HID in settings, pair with your phone/PC, then use this app to control other apps",
+  "icon": "hid-keyboard.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"hidkbd.app.js","url":"hid-keyboard.js"},
+    {"name":"hidkbd.img","url":"hid-keyboard-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "slomoclock",
+  "name": "SloMo Clock",
+  "shortName": "SloMo Clock",
+  "version": "0.10",
+  "description": "Simple 24h clock face with large digits, hour above minute. Uses Layout library.",
+  "icon": "watch.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-slow-mo-clock-screenshot.png"}],
+  "storage": [
+    {"name":"slomoclock.app.js","url":"app.js"},
+    {"name":"slomoclock.img","url":"app-icon.js","evaluate":true},
+    {"name":"slomoclock.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"slomoclock.json"}]
+}
