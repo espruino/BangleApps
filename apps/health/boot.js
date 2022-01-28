@@ -1,18 +1,28 @@
 (function(){
-   var settings = require("Storage").readJSON("health.json",1)||{};
-   var hrm = 0|settings.hrm;
-   if (hrm==1) {
-     function onHealth() {
-       Bangle.setHRMPower(1, "health");
-       setTimeout(()=>Bangle.setHRMPower(0, "health"),2*60000); // give it 2 minutes
+  var settings = require("Storage").readJSON("health.json",1)||{};
+  var hrm = 0|settings.hrm;
+  if (hrm == 1 || hrm == 2) {
+   function onHealth() {
+     Bangle.setHRMPower(1, "health");
+     setTimeout(()=>Bangle.setHRMPower(0, "health"),hrm*60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
+     if (hrm == 1){
+       for (var i = 1; i <= 2; i++){
+         setTimeout(()=>{
+           Bangle.setHRMPower(1, "health");
+           setTimeout(()=>{
+             Bangle.setHRMPower(0, "health");
+           }, (i * 200000) + 60000);
+         }, (i * 200000));
+       }
      }
-     Bangle.on("health", onHealth);
-     Bangle.on('HRM', h => {
-       if (h.confidence>80) Bangle.setHRMPower(0, "health");
-     });
-     if (Bangle.getHealthStatus().bpmConfidence) return;
-     onHealth();
-   } else Bangle.setHRMPower(hrm!=0, "health");
+   }
+   Bangle.on("health", onHealth);
+   Bangle.on('HRM', h => {
+     if (h.confidence>80) Bangle.setHRMPower(0, "health");
+   });
+   if (Bangle.getHealthStatus().bpmConfidence) return;
+   onHealth();
+  } else Bangle.setHRMPower(hrm!=0, "health");
 })();
 
 Bangle.on("health", health => {
