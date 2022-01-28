@@ -70,6 +70,7 @@ const colorGreen = '#008000';
 const colorBlue = '#0000ff';
 const colorYellow = '#ffff00';
 const widgetOffset = showWidgets ? 24 : 0;
+const dowOffset = circleCount == 3 ? 22 : 24; // dow offset relative to date
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
 const hOffset = 30 - widgetOffset;
@@ -107,8 +108,6 @@ const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
 function draw() {
-  g.clear(true);
-
   if (!showWidgets) {
     /*
      * we are not drawing the widgets as we are taking over the whole screen
@@ -125,8 +124,9 @@ function draw() {
     Bangle.drawWidgets();
   }
 
+  g.clearRect(0, widgetOffset, w, h2 + 22);
   g.setColor(colorBg);
-  g.fillRect(0, widgetOffset, w, h);
+  g.fillRect(0, widgetOffset, w, h2 + 22);
 
   // time
   g.setFont("Vector:50");
@@ -139,7 +139,7 @@ function draw() {
   g.setFont("Vector:21");
   g.setFontAlign(-1, 0);
   g.drawString(locale.date(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2);
-  g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + 22);
+  g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + dowOffset);
 
   drawCircle(1);
   drawCircle(2);
@@ -410,7 +410,6 @@ function drawTemperature(w) {
 
   getPressureValue("temperature").then((temperature) => {
     drawCircleBackground(w);
-    g.setColor(colorFg);
 
     drawInnerCircleAndTriangle(w);
 
@@ -438,12 +437,11 @@ function drawPressure(w) {
 
   getPressureValue("pressure").then((pressure) => {
     drawCircleBackground(w);
-    g.setColor(colorFg);
 
     drawInnerCircleAndTriangle(w);
 
     if (pressure && pressure > 0) {
-      const minPressure = 900;
+      const minPressure = 950;
       const maxPressure = 1050;
       const percent = (pressure - minPressure) / (maxPressure - minPressure);
       drawGauge(w, h3, percent, colorGreen);
@@ -466,7 +464,6 @@ function drawAltitude(w) {
 
   getPressureValue("altitude").then((altitude) => {
     drawCircleBackground(w);
-    g.setColor(colorFg);
 
     drawInnerCircleAndTriangle(w);
 
@@ -614,6 +611,7 @@ function getSunProgress() {
  * Draws the background and the grey circle
  */
 function drawCircleBackground(w) {
+  g.clearRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
   // Draw rectangle background:
   g.setColor(colorBg);
   g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
@@ -705,17 +703,22 @@ function enableHRMSensor() {
 }
 
 let pressureLocked = false;
-let lastPressureValue;
+let pressureCache;
 
 function getPressureValue(type) {
   return new Promise((resolve, reject) => {
     if (Bangle.getPressure) {
       if (!pressureLocked) {
         pressureLocked = true;
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
+        } else {
+          reject();
+        }
         Bangle.getPressure().then(function(d) {
           pressureLocked = false;
           if (d) {
-            lastPressureValue = d;
+            pressureCache = d;
             if (d[type]) {
               resolve(d[type]);
             }
@@ -724,8 +727,8 @@ function getPressureValue(type) {
           }
         }).catch(reject);
       } else {
-        if (lastPressureValue && lastPressureValue[type]) {
-          resolve(lastPressureValue[type]);
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
         } else {
           reject();
         }
@@ -761,6 +764,8 @@ Bangle.on('HRM', function(hrm) {
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
+
+g.clear(true);
 
 draw();
 setInterval(draw, 60000);
