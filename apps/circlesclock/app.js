@@ -108,6 +108,7 @@ const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
 function draw() {
+  g.reset(true);
   if (!showWidgets) {
     /*
      * we are not drawing the widgets as we are taking over the whole screen
