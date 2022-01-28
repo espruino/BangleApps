@@ -1,4 +1,7 @@
+/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
 /*  Exercise Stats module
+
+Take a look at README.md for hints on developing with this library.
 
 Usage
 -----
@@ -38,6 +41,12 @@ var exs = ExStats.getStats(["dist", "time", "pacea","bpm","step","caden"], optio
   start : function, // call to start exercise and reset state
   stop : function, // call to stop exercise
 }
+
+/// Or you can display a menu where the settings can be configured - these are passed as the 'options' argument of getStats
+
+var menu = { ... };
+ExStats.appendMenuItems(menu, settings, saveSettingsFunction);
+E.showMenu(menu);
 
 */
 var state = {
@@ -235,5 +244,19 @@ exports.getStats = function(statIDs, options) {
     stop : function() {
       state.active = false;
     }
+  };
+};
+
+exports.appendMenuItems = function(menu, settings, saveSettings) {
+  var paceNames = ["1000m","1 mile","1/2 Mthn", "Marathon",];
+  var paceAmts = [1000,1609,21098,42195];
+  menu['Pace'] = {
+    min :0, max: paceNames.length-1,
+    value: Math.max(paceAmts.indexOf(settings.paceLength),0),
+    format: v => paceNames[v],
+    onchange: v => {
+      settings.paceLength = paceAmts[v];
+      saveSettings();
+    },
   };
 };

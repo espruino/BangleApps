@@ -17,7 +17,7 @@
     B6 : "caden",
     paceLength : 1000
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
-  function save() {
+  function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
   }
 
@@ -28,31 +28,23 @@
       format: v => statsList[v].name,
       onchange: v => {
         settings[boxID] = statsIDs[v];
-        save();
+        saveSettings();
       },
     }
   }
 
-  var paceNames = ["1000m","1 mile","1/2 Mthn", "Marathon",];
-  var paceAmts = [1000,1609,21098,42195];
-  E.showMenu({
+  var menu = {
     '': { 'title': 'Run' },
-    '< Back': back,
-    'Pace': {
-      min :0, max: paceNames.length-1,
-      value: Math.max(paceAmts.indexOf(settings.paceLength),0),
-      format: v => paceNames[v],
-      onchange: v => {
-        settings.paceLength = paceAmts[v];
-        print(settings);
-        save();
-      },
-    },
+    '< Back': back
+  };
+  ExStats.appendMenuItems(menu, settings, saveSettings);
+  Object.assign(menu,{
     'Box 1': getBoxChooser("B1"),
     'Box 2': getBoxChooser("B2"),
     'Box 3': getBoxChooser("B3"),
     'Box 4': getBoxChooser("B4"),
     'Box 5': getBoxChooser("B5"),
     'Box 6': getBoxChooser("B6"),
-  })
+  });
+  E.showMenu(menu);
 })

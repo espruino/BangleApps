@@ -32,7 +32,7 @@ that, and then start the `Run` app.
 
 Under `Settings` -> `App` -> `Run` you can change settings for this app.
 
-* `Pace` is the distance that pace should be shown over - 1km, 1 mile, 1/2 Marathon or 1 Maraton
+* `Pace` is the distance that pace should be shown over - 1km, 1 mile, 1/2 Marathon or 1 Marathon
 * `Box 1/2/3/4/5/6` are what should be shown in each of the 6 boxes on the display. From the top left, down.
   If you set it to `-` nothing will be displayed, so you can display only 4 boxes of information
   if you wish by setting the last 2 boxes to `-`.
@@ -41,3 +41,11 @@ Under `Settings` -> `App` -> `Run` you can change settings for this app.
 
 * Allow this app to trigger the `Recorder` app on and off directly.
 * Keep a log of each run's stats (distance/steps/etc)
+
+## Development
+
+This app uses the [`exstats` module](/modules/exstats.js). When uploaded via the
+app loader, the module is automatically included in the app's source. However
+when developing via the IDE the module won't get pulled in by default.
+
+There are some options to fix this easily - please check out the [modules README.md file](/modules/README.md)
