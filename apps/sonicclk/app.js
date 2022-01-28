@@ -264,18 +264,20 @@ const settings = require("Storage").readJSON("sonicclk-settings") || {
 let isSettings = false;
 
 const settingsMenu = {
-  "": { "title": "Settings" },
+  "": { title: "Settings" },
   "Active Mode": {
     value: settings.activeMode,
-    format: v => v ? "On" : "Off",
-    onchange: v => settings.activeMode = v,
+    format: (v) => (v ? "On" : "Off"),
+    onchange: (v) => (settings.activeMode = v),
   },
-  "Twist Thresh" : {
+  "Twist Thresh": {
     value: settings.twistThreshold,
-    min: 800, max: 4000, step: 200,
-    onchange: v => settings.twistThreshold = v,
+    min: 800,
+    max: 4000,
+    step: 200,
+    onchange: (v) => (settings.twistThreshold = v),
   },
-  "Exit" : () => {
+  Exit: () => {
     isSettings = false;
 
     require("Storage").writeJSON("sonicclk-settings", settings);
@@ -286,9 +288,10 @@ const settingsMenu = {
     });
 
     E.showMenu();
+    Bangle.setUI("clock");
     draw("reset");
     start();
-  }
+  },
 };
 
 g.setTheme({ bg: "#0099ff", fg: "#fff", dark: true }).clear();
@@ -313,7 +316,7 @@ Bangle.on("twist", () => {
 });
 
 Bangle.on("tap", (d) => {
-  if (d.double && d.dir === "right") {
+  if (d.double && d.dir === "top") {
     fullReset();
     isSettings = true;
     Bangle.setLocked(false);
