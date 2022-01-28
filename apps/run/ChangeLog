@@ -2,3 +2,4 @@
 0.02: Set pace format to mm:ss, time format to h:mm:ss,
       added settings to opt out of GPS and HRM
 0.03: Fixed distance calculation, tested against Garmin Etrex, Amazfit GTS 2
+0.04: Use the exstats module, and make what is displayed configurable
