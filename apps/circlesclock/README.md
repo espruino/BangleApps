@@ -24,6 +24,7 @@ It can show the following information (this can be configured):
 
 ## Ideas
 * Make colors configurable
+* Show compass heading
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
