@@ -97,8 +97,9 @@ const circlePosX = [
   Math.round(7 * w / parts), // circle4
 ];
 
-const radiusOuter = circleCount == 3 ? 25 : 20;
+const radiusOuter = circleCount == 3 ? 25 : 19;
 const radiusInner = circleCount == 3 ? 20 : 15;
+const circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:11";
 const circleFont = circleCount == 3 ? "Vector:15" : "Vector:12";
 const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:13";
 const iconOffset = circleCount == 3 ? 6 : 8;
@@ -638,8 +639,8 @@ function radians(a) {
  */
 function drawGauge(cx, cy, percent, color) {
   const offset = 15;
-  const end = 345;
-  const radius = radiusInner + 3;
+  const end = 360 - offset;
+  const radius = radiusInner + (circleCount == 3 ? 3 : 2);
   const size = radiusOuter - radiusInner - 2;
 
   if (percent <= 0) return;
@@ -659,7 +660,8 @@ function drawGauge(cx, cy, percent, color) {
 
 function writeCircleText(w, content) {
   if (content == undefined) return;
-  g.setFont(content.length < 4 ? circleFontBig : circleFont);
+  const font = String(content).length > 3 ? circleFontSmall : String(content).length > 2 ? circleFont : circleFontBig;
+  g.setFont(font);
 
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
