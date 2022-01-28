@@ -74,10 +74,11 @@ function onInit(device) {
   }
   Puck.eval("E.CRC32(E.memoryArea(0xF7000,0x7000))", crc => {
     console.log("Bootloader CRC = "+crc);
-    var version = `unknown (CRC 0x${crc.toString(16).padStart(8,2)})`;
+    var version = `unknown (CRC ${crc})`;
     if (crc==1339551013) version = "2v10.219";
     if (crc==1207580954) version = "2v10.236";
     if (crc==3435933210) version = "2v11.52";
+    if (crc==46757280) version = "2v11.58";
     document.getElementById("boot-version").innerText = version;
   });
 }
