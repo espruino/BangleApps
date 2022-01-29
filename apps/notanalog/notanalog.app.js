@@ -28,7 +28,8 @@ var state = {
     maxSteps: 10000,
     bat: 0,
     has_weather: false,
-    temp: "-"
+    temp: "-",
+    sleep: false,
 }
 
 var chargeImg = {
@@ -53,6 +54,12 @@ var gpsImg = {
     width : 32, height : 32, bpp : 1,
     transparent : 0,
     buffer : E.toArrayBuffer(atob("AAAMAAAAD4AAAAHAAAAA4AAADjABAA8YAYADmAPAAcwD4DzMB/B8zAf4fAAH/HwAB/74AAf/wAAH/4AAB//AAAP/4AAD//AAA//4AAH//AAA//4AAH//AAA//4ABH/4AAYP4AAHgAAAB/AAAA/4AAAP+AAAD/gAAP//gAD//4AA="))
+};
+
+var sleepImg = {
+    width : 128, height : 128, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("ABk//+AB5l///AB5wfDh4kIF4s/8AgIj4ED//wB5E+AYUB//8B5F8AYUD+F+B5H4AYUH8E/Bw8BHIcHwEfMA4PEh4RBQo8DNIYPBIIIPGDAkeEwJGDAAaZEB4MAOAisB+COEngCBOAn///4NAgPCMAgfCZ4gPCaIpWBd4l4QQZtFD4gPCgYPEQw3wRo41FgHxfw5tEB4sHfg7DC8IPDFQb8DB4XgB4ZDDWosD4DNCbAbsEB4zRDB5bRDfghKDB4bRCRwwPBuAFCbISOCgP/EYMPK4kPDgKOCgbiBDIJLDEoIYBRwQPD//DD4hQBbgPgF4QCB84PDBgICCDgJTBEQP/B4QFCwAIDKYIRB/84bQX/x+AD4YPCwF+nguC+B9FMYJuBngPBIgKmCeQoPEg5dBB4ryBB4kPPoMfdohRCB4McSYPAg5dBeQoPCjxOBCIIPBcQYUBL4N4j0B/hQBAATPBV4RnB/EegYFB//AbYYPCgfh+EeZgJNDAYYWBCQUedgN/NoUD/xhDEwUOj67BBQd/IAIFEh8+gZ3CNQMfSQkMBQN8g/wMATKBCQIAEh/4IAMPdoQlCB4vwn7sC/5OBSIQPE8F+KoRoBfIIPFPwP8cASyBQoIPG4JABJQUHAoJwEBAODIAUBAIIlBOAg/BgfgcAMDBYN+A4IPFC4I+BB4U/wKAFh8PwJ5BB4SFBB40fFANggPAg5nBSAsPzwwBDIRGB+F8L4v+NAIZCh8B+E8B4v8RAN4AwMOgH4jwPEY4M+gEwB4d8UA34E4sAn0PA4pHGgEeWApHBfA8HB4vgQ4oPBw4PF8IPGbALQEgfB8IXF4/DB4vD8YHG4LgEEwPDA4oPIA4w3BA4pWBF4poGdAJOEAAQPFQwyoDB4q2GB6VwB5twvAFDhwPIvAPFhwPNjwPTgaSDBwgPBj//wH//6qCnAPI4IPEvgPY4APEngPGjxPOL5KvER4gPFV5IPKZ4gPEZ4oPJd5QPF+APEg+AB5kHB5+HB40B8APFwfBVgIPCgeB8K0CB4fDB4kH4YXCLQfDB4oHBB43B8ZABB4UB4/DKgYPCCwRPDHAIPEKwgPDh+HB434B4yIDQwbGCB4ceB434ngPFnzIDewc+gEwB4MEgF8j4PFA4V4B4MOE4MeB4s8h+AB4QsBG4YADI4PA+APCgfwvgPFj8D8FwB4L2B8BnCAAcPwKQBL4UPEoIPFFwP8B4cfCwQPGvwPDv42BB4oHBn+AB4MB/gXBB4sB/Ef8BPC/B2BB4sADIP8B4M/8CeGAAN+gP/4fB//AWwIAGn5LB/4ABEwIPHj/Aj4OB/BGBB46ZBgYPBKAJ+GOAQZBj4sBEoIPHgP+Aod/Nw4KCDQQUFKAw6Ch5eIKAX/FYP/JxArCPwQSCABM/BwI+KGAYuLEAYeGA="))
 };
 
 
@@ -83,17 +90,18 @@ Graphics.prototype.setNormalFont = function(scale) {
 
 
 function getSteps() {
-    var steps = 0;
-    let health;
-    try {
-        health = require("health");
+    try{
+        if (WIDGETS.wpedom !== undefined) {
+            return WIDGETS.wpedom.getSteps();
+        } else if (WIDGETS.activepedom !== undefined) {
+            return WIDGETS.activepedom.getSteps();
+        }
     } catch(ex) {
-        return steps;
+        // In case we failed, we can only show 0 steps.
     }
 
-    health.readDay(new Date(), h=>steps+=h.steps);
-    return steps;
-}
+    return 0;
+  }
 
 
 function drawBackground() {
@@ -169,7 +177,12 @@ function drawData() {
     }
 
     // Default are the steps
-    drawDataHand(parseInt(state.steps*360/state.maxSteps));
+    drawDataHand(parseInt(state.steps*360/12000));
+}
+
+function drawTextCleared(s, x, y){
+    g.clearRect(x-15, y-22, x+15, y+15);
+    g.drawString(s, x, y);
 }
 
 
@@ -178,36 +191,33 @@ function drawTime(){
     g.setFontAlign(0,0,0);
     g.setColor(g.theme.fg);
 
-    var currentDate = new Date();
     var posX = 14;
     var posY = 14;
 
     // Hour
-    var h = currentDate.getHours();
+    var h = state.currentDate.getHours();
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
-    g.drawString(h1, cx, posY+8);
-    g.drawString(h2, W-posX, cy+5);
+    drawTextCleared(h1, cx, posY+8);
+    drawTextCleared(h2, W-posX, cy+5);
 
     // Minutes
-    var m = currentDate.getMinutes();
+    var m = state.currentDate.getMinutes();
     var m1 = parseInt(m / 10);
     var m2 = m < 10 ? m : m - m1*10;
-    g.drawString(m2, cx, H-posY);
-    g.drawString(m1, posX-1, cy+5);
+    drawTextCleared(m2, cx, H-posY);
+    drawTextCleared(m1, posX-1, cy+5);
 }
 
 
 function drawDate(){
-    var currentDate = new Date();
-
     // Date
     g.setFontAlign(-1,0,0);
     g.setNormalFont();
     g.setColor(g.theme.fg);
-    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    var dayStr = locale.dow(state.currentDate, true).toUpperCase();
     g.drawString(dayStr, cx/2-15, cy/2-5);
-    g.drawString(currentDate.getDate(), cx/2-15, cy/2+17);
+    g.drawString(state.currentDate.getDate(), cx/2-15, cy/2+17);
 }
 
 
@@ -222,21 +232,35 @@ function drawLock(){
 
 
 function handleState(fastUpdate){
-    // Set theme color
+    state.currentDate = new Date();
+
+    /*
+     * Sleep modus
+     */
+    var minutes = state.currentDate.getMinutes();
+    var hours = state.currentDate.getHours();
+    if(!isAlarmEnabled() && fastUpdate && hours == 00 && minutes == 01){
+        state.sleep = true;
+        return;
+    }
+
+    // Set steps
+    state.steps = getSteps();
+
+    // Color based on state
     state.color = isAlarmEnabled() ? "#FF6A00" :
         state.steps > state.maxSteps ? "#00ff00" :
         "#ff0000";
 
-    if(fastUpdate){
+    /*
+     * 5 Minute updates
+     */
+    if(minutes % 5 == 0 && fastUpdate){
         return;
     }
 
     // Set battery
     state.bat = E.getBattery();
-
-    // Set steps
-    state.steps = getSteps();
-    state.maxSteps = 10000;
 
     // Set weather
     state.has_weather = true;
@@ -251,7 +275,16 @@ function handleState(fastUpdate){
     } catch(ex) {
         state.has_weather = false;
     }
+}
 
+
+function drawSleep(){
+    g.reset();
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
+    drawBackground();
+
+    g.setColor(1,1,1);
+    g.drawImage(sleepImg, cx - sleepImg.width/2, cy- sleepImg.height/2);
 }
 
 
@@ -259,6 +292,13 @@ function draw(fastUpdate){
     // Execute handlers
     handleState(fastUpdate);
     handleAlarm();
+
+    if(state.sleep){
+        drawSleep();
+        // We don't queue draw again - so its sleeping until
+        // the user presses the btn again.
+        return;
+    }
 
     // Clear watch face
     if(fastUpdate){
@@ -279,8 +319,8 @@ function draw(fastUpdate){
     drawDate();
     drawLock();
     drawState();
-    drawData();
     drawTime();
+    drawData();
 
     // Queue draw in one minute
     queueDraw();
@@ -292,7 +332,7 @@ function draw(fastUpdate){
  */
 Bangle.on('lcdPower',on=>{
     if (on) {
-        draw(false);
+        draw(true);
     } else { // stop draw timer
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
@@ -300,11 +340,16 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('charging',function(charging) {
-    draw(false);
+    draw(true);
 });
 
 Bangle.on('lock', function(isLocked) {
-    drawLock();
+    if(state.sleep){
+        state.sleep=false;
+        draw(false);
+    } else {
+        drawLock();
+    }
 });
 
 Bangle.on('touch', function(btn, e){
@@ -335,7 +380,7 @@ function queueDraw() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw(false);
+      draw(true);
     }, 60000 - (Date.now() % 60000));
 }
 

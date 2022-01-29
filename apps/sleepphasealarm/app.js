@@ -1,3 +1,4 @@
+const BANGLEJS2 = process.env.HWVERSION == 2; //# check for bangle 2
 const alarms = require("Storage").readJSON("alarm.json",1)||[];
 const active = alarms.filter(a=>a.on);
 
@@ -52,21 +53,21 @@ active.forEach(alarm => {
   }
 });
 
-function drawString(s, x, y) {
-  g.clearRect(0,y-15,239,y+15);
-  g.reset();
-  g.setFont("Vector",20);
-  g.setFontAlign(0,0); // align right bottom
-  g.drawString(s, x, y);
+function drawString(s, y) { //# replaced x: always centered
+  g.reset(); //# moved up to prevent blue background
+  g.clearRect(0, y - 12, 239, y + 8); //# minimized upper+lower clearing
+  g.setFont("Vector", 20);
+  g.setFontAlign(0, 0); // align centered
+  g.drawString(s, g.getWidth() / 2, y); //# set x to center
 }
 
 function drawApp() {
-  g.clearRect(0,24,239,215);
+  g.clearRect(0,24,239,215); //# no problem
   var alarmHour = nextAlarm.getHours();
   var alarmMinute = nextAlarm.getMinutes();
   if (alarmHour < 10) alarmHour = "0" + alarmHour;
   if (alarmMinute < 10) alarmMinute = "0" + alarmMinute;
-  const s = alarmHour + ":" + alarmMinute + "\n\n";
+  const s = "Alarm at " + alarmHour + ":" + alarmMinute + "\n\n"; //# make distinct to time
   E.showMessage(s, "Sleep Phase Alarm");
 
   function drawTime() {
@@ -78,12 +79,20 @@ function drawApp() {
       if (nowHour < 10) nowHour = "0" + nowHour;
       if (nowMinute < 10) nowMinute = "0" + nowMinute;
       if (nowSecond < 10) nowSecond = "0" + nowSecond;
-      const time = nowHour + ":" + nowMinute + ":" + nowSecond;
-      drawString(time, 120, 140);
+      const time = nowHour + ":" + nowMinute + (BANGLEJS2 ? "" : ":" + nowSecond); //# hide seconds on bangle 2
+      drawString(time, BANGLEJS2 ? 85 : 105); //# remove x, adjust height for bangle 2 an newer firmware
     }
   }
 
-  setInterval(drawTime, 500); // 2Hz
+  if (BANGLEJS2) {
+    drawTime();
+    setTimeout(_ => {
+      drawTime();
+      setInterval(drawTime, 60000);
+    }, 60000 - Date.now() % 60000); //# every new minute on bangle 2
+  } else {
+    setInterval(drawTime, 500); // 2Hz
+  }
 }
 
 var buzzCount = 19;
@@ -104,8 +113,8 @@ function buzz() {
 var minAlarm = new Date();
 var measure = true;
 if (nextAlarm !== undefined) {
+  Bangle.loadWidgets(); //# correct widget load draw order
   Bangle.drawWidgets();
-  Bangle.loadWidgets();
 
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarm.getTime() - (30*60*1000));
@@ -116,7 +125,7 @@ if (nextAlarm !== undefined) {
 
     if (swest !== undefined) {
       if (Bangle.isLCDOn()) {
-        drawString(swest ? "Sleep" : "Awake", 120, 180);
+        drawString(swest ? "Sleep" : "Awake", BANGLEJS2 ? 150 : 180); //# remove x, adjust height
       }
     }
 
@@ -133,6 +142,6 @@ if (nextAlarm !== undefined) {
   E.showMessage('No Alarm');
   setTimeout(load, 1000);
 }
-// BTN2 to menu, BTN3 to main
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
-setWatch(() => load(), BTN3, { repeat: false, edge: "falling" });
+// BTN2 to menu, BTN3 to main # on bangle 2 only BTN to main
+if (!BANGLEJS2) setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+setWatch(() => load(), BANGLEJS2 ? BTN : BTN3, { repeat: false, edge: "falling" });

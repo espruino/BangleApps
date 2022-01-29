@@ -1,7 +1,7 @@
 {
   "id": "lapcounter",
   "name": "Lap Counter",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Click button to count laps. Shows count and total time snapshot (like a stopwatch, but laid back).",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

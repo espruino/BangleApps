@@ -1,7 +1,7 @@
 {
   "id": "simplest",
   "name": "Simplest Clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "The simplest working clock, acts as a tutorial piece",
   "icon": "simplest.png",
   "screenshots": [{"url":"screenshot_simplest.png"}],
@@ -9,7 +9,7 @@
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"simplest.app.js","url":"app.js"},
-    {"name":"simplest.img","url":"icon.js","evaluate":true}
+    {"name":"simplest.app.js","url":"simplest.app.js"},
+    {"name":"simplest.img","url":"simplest.icon.js","evaluate":true}
   ]
 }
