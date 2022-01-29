@@ -96,9 +96,9 @@ const circlePosX = [
 
 const radiusOuter = circleCount == 3 ? 25 : 19;
 const radiusInner = circleCount == 3 ? 20 : 15;
-const circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:11";
-const circleFont = circleCount == 3 ? "Vector:15" : "Vector:12";
-const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:13";
+const circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
+const circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
+const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 const iconOffset = circleCount == 3 ? 6 : 8;
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
@@ -231,17 +231,30 @@ function getCircleColor(type) {
   if (color && color != "") return color;
 }
 
-function getImage(graphic, color) {
-  return {
-    width: 16,
-    height: 16,
-    bpp: 1,
-    transparent: 0,
-    buffer: E.toArrayBuffer(graphic),
-    palette: new Uint16Array([colorBg, g.toColor(color)])
-  };
+function getCircleIconColor(type, color) {
+  const pos = getCirclePosition(type);
+  const colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] != undefined;
+  if (colorizeIcon) {
+    return color;
+  } else {
+    return "";
+  }
 }
 
+function getImage(graphic, color) {
+  if (!color || color == "") {
+    return graphic;
+  } else {
+    return {
+      width: 16,
+      height: 16,
+      bpp: 1,
+      transparent: 0,
+      buffer: E.toArrayBuffer(graphic),
+      palette: new Uint16Array([colorBg, g.toColor(color)])
+    };
+  }
+}
 
 function drawSteps(w) {
   if (!w) w = getCircleXPosition("steps");
@@ -262,7 +275,7 @@ function drawSteps(w) {
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(getImage(shoesIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("steps", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
@@ -286,7 +299,7 @@ function drawStepsDistance(w) {
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(getImage(shoesIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("stepsDistance", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
@@ -307,7 +320,7 @@ function drawHeartRate(w) {
 
   writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
-  g.drawImage(getImage(heartIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(heartIcon, getCircleIconColor("hr", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawBattery(w) {
@@ -334,7 +347,7 @@ function drawBattery(w) {
   }
   writeCircleText(w, battery + '%');
 
-  g.drawImage(getImage(powerIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawWeather(w) {
@@ -377,7 +390,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(getImage(icon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }
@@ -427,7 +440,7 @@ function drawSunProgress(w) {
 
   writeCircleText(w, text);
 
-  g.drawImage(getImage(icon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawTemperature(w) {
@@ -450,7 +463,7 @@ function drawTemperature(w) {
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
 
-    g.drawImage(getImage(temperatureIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -479,7 +492,7 @@ function drawPressure(w) {
     if (pressure)
       writeCircleText(w, Math.round(pressure));
 
-    g.drawImage(getImage(temperatureIcon), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -508,7 +521,7 @@ function drawAltitude(w) {
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
 
-    g.drawImage(getImage(temperatureIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -689,7 +702,7 @@ function drawGauge(cx, cy, percent, color) {
 
 function writeCircleText(w, content) {
   if (content == undefined) return;
-  const font = String(content).length > 3 ? circleFontSmall : String(content).length > 2 ? circleFont : circleFontBig;
+  const font = String(content).length > 4 ? circleFontSmall : String(content).length > 3 ? circleFont : circleFontBig;
   g.setFont(font);
 
   g.setFontAlign(0, 0);

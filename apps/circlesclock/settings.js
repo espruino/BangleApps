@@ -136,6 +136,7 @@
   function showCircleMenu(circleId) {
     String circleName = "circle" + circleId;
     String colorKey = circleName + "color";
+    String colorizeIconKey = circleName + "colorizeIcon";
     let menu = {
       '': { 'title': /*LANG*/'Circle ' + circleId },
       /*LANG*/'< Back': ()=>showMainMenu(),
@@ -150,6 +151,11 @@
         min: 0, max: valuesColors.length,
         format: v => namesColors[v],
         onchange: x => save(colorKey, valuesColors[x]),
+      },
+      /*LANG*/'colorize icon': {
+        value: colorizeIconKey in settings ? settings[colorizeIconKey] : false,
+        format: () => (settings[colorizeIconKey] ? 'Yes' : 'No'),
+        onchange: x => save(colorizeIconKey, x),
       },
     };
     E.showMenu(menu);
