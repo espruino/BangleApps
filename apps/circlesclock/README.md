@@ -16,6 +16,9 @@ It can show the following information (this can be configured):
   * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
   * Temperature, air pressure or altitude from internal pressure sensor
 
+
+The color of each circle can be configured.
+
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)
 ![Screenshot light theme](screenshot-light.png)
