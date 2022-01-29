@@ -23,7 +23,6 @@ It can show the following information (this can be configured):
 ![Screenshot light theme with four circles](screenshot-light-4.png)
 
 ## Ideas
-* Make colors configurable
 * Show compass heading
 
 ## Creator

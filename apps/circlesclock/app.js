@@ -1,28 +1,24 @@
 const locale = require("locale");
-const heatshrink = require("heatshrink");
 const storage = require("Storage");
 const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
-const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
-const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
-const heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
-const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
-const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
-const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
-const themperatureIcon = heatshrink.decompress(atob("h0OwIFChkAvEBkEHwEeAwXgh+An8A/gGBgYWCA=="));
+const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
+const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
+const powerIcon = atob("FBSBAAAAAAAAAfgAP8AH/gB/4Af+AH/gB/4Af+AH/gB/4Af+AH/gB/4Af+AH/gB/4AAAAAAA");
+const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
 
-const weatherCloudy = heatshrink.decompress(atob("iEQwYWTgP//+AAoMPAoPwAoN/AocfAgP//0AAgQAB/AFEABgdDAAMDDohMRA"));
-const weatherSunny = heatshrink.decompress(atob("iEQwYLIg3AAgVgAQMMAo8Am3YAgUB23bAoUNAoIUBjYFCsOwBYoFDDpFgHYI1JI4gFGAAYA="));
-const weatherMoon = heatshrink.decompress(atob("iEQwIFCgOAh/wj/4n/8AId//wBBBIoRBCoIZBDoI"));
-const weatherPartlyCloudy = heatshrink.decompress(atob("iEQwYQNv0AjgGDn4EDh///gFChwREC4MfxwIBv0//+AC4X4j4FCv/AgfwgED/wIBuAaBBwgFDgP4gf/AAXABwIEBDQQAEA=="));
-const weatherRainy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AocAnAFBFIU4EAM//gRBEAIOBhw1C/AmDAosAC4JNIAAg"));
-const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
-const weatherSnowy = heatshrink.decompress(atob("iEQwYROn/8AocH8AECuAFBh0Agf+CIN/4EDx/4j/x4EAgIIBwAXBAogRFDoopFGoxBGABIA="));
-const weatherFoggy = heatshrink.decompress(atob("iEQwYROn/8AgUB/EfwAFBh/AgfwgED/wIBuEABwd/4EcDQgFDgE4Fosf///8f//A/Lj/xCQIRNA="));
-const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AoX8gE4AoQpBnAdBF4IRBDQMH/kOHgY7DAo4AOA=="));
+const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
+const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
+const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
+const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
+const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
+const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
+const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
+const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
+const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
 
-const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfACoo"));
-const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
+const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
+const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
 let settings = storage.readJSON("circlesclock.json", 1) || {
   'minHR': 40,
@@ -42,7 +38,7 @@ let settings = storage.readJSON("circlesclock.json", 1) || {
 };
 // Load step goal from pedometer widget as fallback
 if (settings.stepGoal == undefined) {
-  const d = require('Storage').readJSON("wpedom.json", 1) || {};
+  const d = storage.readJSON("wpedom.json", 1) || {};
   settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
 }
 
@@ -150,7 +146,7 @@ function draw() {
 function drawCircle(index) {
   let type = settings['circle' + index];
   if (!type) type = defaultCircleTypes[index - 1];
-  const w = getCirclePosition(type);
+  const w = getCircleXPosition(type);
 
   switch (type) {
     case "steps":
@@ -199,20 +195,28 @@ let circlePositionsCache = [];
  */
 function getCirclePosition(type) {
   if (circlePositionsCache[type] >= 0) {
-    return circlePosX[circlePositionsCache[type]];
+    return circlePositionsCache[type];
   }
   for (let i = 1; i <= circleCount; i++) {
     const setting = settings['circle' + i];
     if (setting == type) {
       circlePositionsCache[type] = i - 1;
-      return circlePosX[i - 1];
+      return i - 1;
     }
   }
   for (let i = 0; i < defaultCircleTypes.length; i++) {
     if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
       circlePositionsCache[type] = i;
-      return circlePosX[i];
+      return i;
     }
+  }
+  return undefined;
+}
+
+function getCircleXPosition(type) {
+  const circlePos = getCirclePosition(type);
+  if (circlePos != undefined) {
+    return circlePosX[circlePos];
   }
   return undefined;
 }
@@ -221,111 +225,134 @@ function isCircleEnabled(type) {
   return getCirclePosition(type) != undefined;
 }
 
+function getCircleColor(type) {
+  const pos = getCirclePosition(type);
+  const color = settings["circle" + (pos + 1) + "color"];
+  if (color && color != "") return color;
+}
+
+function getImage(graphic, color) {
+  return {
+    width: 16,
+    height: 16,
+    bpp: 1,
+    transparent: 0,
+    buffer: E.toArrayBuffer(graphic),
+    palette: new Uint16Array([colorBg, g.toColor(color)])
+  };
+}
+
 
 function drawSteps(w) {
-  if (!w) w = getCirclePosition("steps");
+  if (!w) w = getCircleXPosition("steps");
   const steps = getSteps();
 
   drawCircleBackground(w);
+
+  const color = getCircleColor("steps") || colorBlue;
 
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
     let percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
-    drawGauge(w, h3, percent, colorBlue);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(shoesIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
-  if (!w) w = getCirclePosition("steps");
+  if (!w) w = getCircleXPosition("stepsDistance");
   const steps = getSteps();
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("stepsDistance") || colorGreen;
+
   const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
     let percent = stepsDistance / stepDistanceGoal;
     if (stepDistanceGoal < stepsDistance) percent = 1;
-    drawGauge(w, h3, percent, colorGreen);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(shoesIconGreen, w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
-  if (!w) w = getCirclePosition("hr");
+  if (!w) w = getCircleXPosition("hr");
 
   drawCircleBackground(w);
+
+  const color = getCircleColor("hr") || colorRed;
 
   if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
     const maxHR = settings.maxHR || 200;
     const percent = (hrtValue - minHR) / (maxHR - minHR);
-    drawGauge(w, h3, percent, colorRed);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
-  g.drawImage(heartIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(heartIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawBattery(w) {
-  if (!w) w = getCirclePosition("battery");
+  if (!w) w = getCircleXPosition("battery");
   const battery = E.getBattery();
 
   drawCircleBackground(w);
 
+  let color = getCircleColor("battery") || colorYellow;
+
   if (battery > 0) {
     const percent = battery / 100;
-    drawGauge(w, h3, percent, colorYellow);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
-  let icon = powerIcon;
-  let color = colorFg;
   if (Bangle.isCharging()) {
     color = colorGreen;
-    icon = powerIconGreen;
   } else {
     if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
       color = colorRed;
-      icon = powerIconRed;
     }
   }
   writeCircleText(w, battery + '%');
 
-  g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(powerIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawWeather(w) {
-  if (!w) w = getCirclePosition("weather");
+  if (!w) w = getCircleXPosition("weather");
   const weather = getWeather();
   const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
   const code = weather ? weather.code : -1;
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("weather") || colorYellow;
+
   const data = settings.weatherCircleData || "humidity";
   switch (data) {
     case "humidity":
       const humidity = weather ? weather.hum : undefined;
       if (humidity >= 0) {
-        drawGauge(w, h3, humidity / 100, colorYellow);
+        drawGauge(w, h3, humidity / 100, color);
       }
       break;
     case "wind":
@@ -336,7 +363,7 @@ function drawWeather(w) {
             wind[1] = windAsBeaufort(wind[1]);
           }
           // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-          drawGauge(w, h3, wind[1] / 12, colorYellow);
+          drawGauge(w, h3, wind[1] / 12, color);
         }
       }
       break;
@@ -350,7 +377,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+    if (icon) g.drawImage(getImage(icon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }
@@ -358,27 +385,25 @@ function drawWeather(w) {
 
 
 function drawSunProgress(w) {
-  if (!w) w = getCirclePosition("sunprogress");
+  if (!w) w = getCircleXPosition("sunprogress");
   const percent = getSunProgress();
 
   drawCircleBackground(w);
 
-  drawGauge(w, h3, percent, colorYellow);
+  const color = getCircleColor("sunpgrogress") || colorYellow;
+
+  drawGauge(w, h3, percent, color);
 
   drawInnerCircleAndTriangle(w);
 
-  let icon = powerIcon;
-  let color = colorFg;
+  let icon = sunSetDown;
   if (isDay()) {
     // day
-    color = colorFg;
     icon = sunSetDown;
   } else {
     // night
-    color = colorGrey;
     icon = sunSetUp;
   }
-  g.setColor(color);
 
   let text = "?";
   const times = getSunData();
@@ -402,28 +427,30 @@ function drawSunProgress(w) {
 
   writeCircleText(w, text);
 
-  g.drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(icon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawTemperature(w) {
-  if (!w) w = getCirclePosition("temperature");
+  if (!w) w = getCircleXPosition("temperature");
 
   getPressureValue("temperature").then((temperature) => {
     drawCircleBackground(w);
 
+    const color = getCircleColor("temperature") || colorGreen;
+
     drawInnerCircleAndTriangle(w);
 
     if (temperature) {
-      const min = -40; // TODO: find good min, max for temperature
+      const min = -40;
       const max = 85;
       const percent = (temperature - min) / (max - min);
-      drawGauge(w, h3, percent, colorGreen);
+      drawGauge(w, h3, percent, color);
     }
 
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
 
-    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -433,10 +460,12 @@ function drawTemperature(w) {
 }
 
 function drawPressure(w) {
-  if (!w) w = getCirclePosition("pressure");
+  if (!w) w = getCircleXPosition("pressure");
 
   getPressureValue("pressure").then((pressure) => {
     drawCircleBackground(w);
+
+    const color = getCircleColor("pressure") || colorGreen;
 
     drawInnerCircleAndTriangle(w);
 
@@ -444,13 +473,13 @@ function drawPressure(w) {
       const minPressure = 950;
       const maxPressure = 1050;
       const percent = (pressure - minPressure) / (maxPressure - minPressure);
-      drawGauge(w, h3, percent, colorGreen);
+      drawGauge(w, h3, percent, color);
     }
 
     if (pressure)
       writeCircleText(w, Math.round(pressure));
 
-    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -460,10 +489,12 @@ function drawPressure(w) {
 }
 
 function drawAltitude(w) {
-  if (!w) w = getCirclePosition("altitude");
+  if (!w) w = getCircleXPosition("altitude");
 
   getPressureValue("altitude").then((altitude) => {
     drawCircleBackground(w);
+
+    const color = getCircleColor("altitude") || colorGreen;
 
     drawInnerCircleAndTriangle(w);
 
@@ -471,13 +502,13 @@ function drawAltitude(w) {
       const min = 0;
       const max = 10000;
       const percent = (altitude - min) / (max - min);
-      drawGauge(w, h3, percent, colorGreen);
+      drawGauge(w, h3, percent, color);
     }
 
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
 
-    g.drawImage(themperatureIcon, w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, color), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
