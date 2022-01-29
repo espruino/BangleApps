@@ -233,7 +233,7 @@ function getCircleColor(type) {
 
 function getCircleIconColor(type, color) {
   const pos = getCirclePosition(type);
-  const colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] != undefined;
+  const colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] == true;
   if (colorizeIcon) {
     return color;
   } else {
