@@ -5,8 +5,6 @@ var characteristic;
 
 const SETTINGS_FILE = 'cscsensor.json';
 const storage = require('Storage');
-const W = g.getWidth();
-const H = g.getHeight();
 
 class CSCSensor {
   constructor() {
@@ -30,10 +28,6 @@ class CSCSensor {
     this.distFactor = this.qMetric ? 1.609344 : 1;
     this.screenInit = true;
     this.batteryLevel = -1;
-    this.lastCrankTime = 0;
-    this.lastCrankRevs = 0;
-    this.showCadence = false;
-    this.cadence = 0;
   }
 
   reset() {
@@ -43,11 +37,6 @@ class CSCSensor {
     this.movingTime = 0;
     this.lastRevsStart = this.lastRevs;
     this.maxSpeed = 0;
-    this.screenInit = true;
-  }
-
-  toggleDisplayCadence() {
-    this.showCadence = !this.showCadence;
     this.screenInit = true;
   }
 
@@ -63,108 +52,40 @@ class CSCSensor {
   }
 
   drawBatteryIcon() {
-    g.setColor(1, 1, 1).drawRect(10, 55, 20, 75).fillRect(14, 53, 16, 55).setColor(0).fillRect(11, 56, 19, 74);
+    g.setColor(1, 1, 1).drawRect(6, 38, 16, 58).fillRect(10, 36, 12, 38).setColor(0).fillRect(7, 39, 15, 57);
     if (this.batteryLevel!=-1) {
       if (this.batteryLevel<25) g.setColor(1, 0, 0);
       else if (this.batteryLevel<50) g.setColor(1, 0.5, 0);
       else g.setColor(0, 1, 0);
-      g.fillRect(11, 74-18*this.batteryLevel/100, 19, 74);
+      g.fillRect(7, 57-18*this.batteryLevel/100, 15, 57);
     }
-    else g.setFontVector(14).setFontAlign(0, 0, 0).setColor(0xffff).drawString("?", 16, 66);
+    else g.setFontVector(14).setFontAlign(0, 0, 0).setColor(0xffff).drawString("?", 12, 49);
   }
 
-  updateScreenRevs() {
+  updateScreen() {
     var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
-    var dspeed = Math.round(10*this.distFactor*this.speed)/10;
+    var dspeed = Math.round(10*this.distFactor*this.speed)/10; 
     var dmins = Math.floor(this.movingTime/60).toString();
     if (dmins.length<2) dmins = "0"+dmins;
     var dsecs = (Math.floor(this.movingTime) % 60).toString();
     if (dsecs.length<2) dsecs = "0"+dsecs;
     var avespeed = (this.movingTime>3 ? Math.round(10*dist/(this.movingTime/3600))/10 : 0);
     var maxspeed = Math.round(10*this.distFactor*this.maxSpeed)/10;
-    if (this.screenInit) {
-      for (var i=0; i<6; ++i) {
-        if ((i&1)==0) g.setColor(0, 0, 0);
-        else g.setColor(0x30cd);
-        g.fillRect(0, 48+i*32, 86, 48+(i+1)*32);
-        if ((i&1)==1) g.setColor(0);
-        else g.setColor(0x30cd);
-        g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
-        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239);//.drawRect(0, 48, 87, 239);
-        g.moveTo(0, 80).lineTo(30, 80).lineTo(30, 48).lineTo(87, 48).lineTo(87, 239).lineTo(0, 239).lineTo(0, 80);
-      }
-      g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
-      g.drawString("Time:", 87, 66);
-      g.drawString("Speed:", 87, 98);
-      g.drawString("Ave spd:", 87, 130);
-      g.drawString("Max spd:", 87, 162);
-      g.drawString("Trip:", 87, 194);
-      g.drawString("Total:", 87, 226);
-      this.drawBatteryIcon();
-      this.screenInit = false;
-    }
-    g.setFontAlign(-1, 0, 0).setFontVector(26);
-    g.setColor(0x30cd).fillRect(88, 49, 238, 79);
-    g.setColor(0xffff).drawString(dmins+":"+dsecs, 92, 66);
-    g.setColor(0).fillRect(88, 81, 238, 111);
-    g.setColor(0xffff).drawString(dspeed+" "+this.speedUnit, 92, 98);
-    g.setColor(0x30cd).fillRect(88, 113, 238, 143);
-    g.setColor(0xffff).drawString(avespeed + " " + this.speedUnit, 92, 130);
-    g.setColor(0).fillRect(88, 145, 238, 175);
-    g.setColor(0xffff).drawString(maxspeed + " " + this.speedUnit, 92, 162);
-    g.setColor(0x30cd).fillRect(88, 177, 238, 207);
-    g.setColor(0xffff).drawString(ddist + " " + this.distUnit, 92, 194);
-    g.setColor(0).fillRect(88, 209, 238, 238);
-    g.setColor(0xffff).drawString(tdist + " " + this.distUnit, 92, 226);
+    layout.vtime.label = dmins+":"+dsecs;
+    layout.vspeed.label = dspeed + "" + this.speedUnit;
+    layout.vaspeed.label = avespeed + "" + this.speedUnit;
+    layout.vmspeed.label = maxspeed + "" + this.speedUnit;
+    layout.vtrip.label = ddist + "" + this.distUnit;
+    layout.vtotal.label = tdist + "" + this.distUnit;
+    layout.render();
+    this.drawBatteryIcon();
   }
-
-  updateScreenCadence() {
-    if (this.screenInit) {
-      for (var i=0; i<2; ++i) {
-        if ((i&1)==0) g.setColor(0, 0, 0);
-        else g.setColor(0x30cd);
-        g.fillRect(0, 48+i*32, 86, 48+(i+1)*32);
-        if ((i&1)==1) g.setColor(0);
-        else g.setColor(0x30cd);
-        g.fillRect(87, 48+i*32, 239, 48+(i+1)*32);
-        g.setColor(0.5, 0.5, 0.5).drawRect(87, 48+i*32, 239, 48+(i+1)*32).drawLine(0, 239, 239, 239);//.drawRect(0, 48, 87, 239);
-        g.moveTo(0, 80).lineTo(30, 80).lineTo(30, 48).lineTo(87, 48).lineTo(87, 239).lineTo(0, 239).lineTo(0, 80);
-      }
-      g.setFontAlign(1, 0, 0).setFontVector(19).setColor(1, 1, 0);
-      g.drawString("Cadence:", 87, 98);
-      this.drawBatteryIcon();
-      this.screenInit = false;
-    }
-    g.setFontAlign(-1, 0, 0).setFontVector(26);
-    g.setColor(0).fillRect(88, 81, 238, 111);
-    g.setColor(0xffff).drawString(Math.round(this.cadence), 92, 98);
-  }
-
-  updateScreen() {
-    if (!this.showCadence) {
-      this.updateScreenRevs();
-    } else {
-      this.updateScreenCadence();
-    }
-  }
-
+  
   updateSensor(event) {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
-      if (event.target.value.getUint8(0, true) & 0x2) {
-        // crank revolution - if enabled
-        const crankRevs = event.target.value.getUint16(1, true);
-        const crankTime = event.target.value.getUint16(3, true);
-        if (crankTime > this.lastCrankTime) {
-          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
-          qChanged = true;
-        }
-        this.lastCrankRevs = crankRevs;
-        this.lastCrankTime = crankTime;
-      }
-      // wheel revolution
       var wheelRevs = event.target.value.getUint32(1, true);
       var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
       if (dRevs>0) {
@@ -193,7 +114,7 @@ class CSCSensor {
       else {
         this.speedFailed++;
         qChanged = false;
-        if (this.speedFailed>3) {
+        if (this.speedFailed>3) {  
           this.speed = 0;
           qChanged = (this.lastSpeed>0);
         }
@@ -216,47 +137,100 @@ function getSensorBatteryLevel(gatt) {
   });
 }
 
-function connection_setup() {
-  mySensor.screenInit = true;
-  E.showMessage("Scanning for CSC sensor...");
-  NRF.requestDevice({ filters: [{services:["1816"]}]}).then(function(d) {
-    device = d;
-    E.showMessage("Found device");
-    return device.gatt.connect();
-  }).then(function(ga) {
-    gatt = ga;
-    E.showMessage("Connected");
-    return gatt.getPrimaryService("1816");
-  }).then(function(s) {
-    service = s;
-    return service.getCharacteristic("2a5b");
-  }).then(function(c) {
-    characteristic = c;
-    characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
-    return characteristic.startNotifications();
-  }).then(function() {
-    console.log("Done!");
-    g.reset().clearRect(Bangle.appRect).flip();
-    getSensorBatteryLevel(gatt);
-    mySensor.updateScreen();
-  }).catch(function(e) {
-    E.showMessage(e.toString(), "ERROR");
-    console.log(e);
-  });
+function parseDevice(d) {
+  device = d;
+  g.clearRect(0, 24, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
+  device.gatt.connect().then(function(ga) {
+  gatt = ga;
+  g.clearRect(0, 24, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
+  return gatt.getPrimaryService("1816");
+}).then(function(s) {
+  service = s;
+  return service.getCharacteristic("2a5b");
+}).then(function(c) {
+  characteristic = c;
+  characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
+  return characteristic.startNotifications();
+}).then(function() {
+  console.log("Done!");
+  g.clearRect(0, 24, 239, 239).setColor(1, 1, 1).flip();
+//  setWatch(function() { mySensor.reset(); g.clearRect(0, 24, 239, 239); mySensor.updateScreen(); }, BTN1, {repeat:true, debounce:20});
+  E.on('kill',()=>{ if (gatt!=undefined) gatt.disconnect(); mySensor.settings.totaldist = mySensor.totaldist;  storage.writeJSON(SETTINGS_FILE, mySensor.settings); });
+//  setWatch(function() { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }, BTN3, {repeat:true, debounce:20});     getSensorBatteryLevel(gatt);
+  mySensor.updateScreen();
+}).catch(function(e) {
+  g.clear().setColor(1, 0, 0).setFontAlign(0, 0, 0).drawString("ERROR"+e, 120, 120).flip();
+  console.log(e);
+})}
+
+function scan() {
+  menu = {
+    "": { "title": "Select sensor" },
+    "re-scan":  () => scan()
+  };
+  waitMessage();
+  NRF.findDevices(devices => {
+    devices.forEach(device =>{
+      let deviceName = device.id.substring(0,17);
+      if (device.name) {
+        deviceName = device.name;
+      }
+      if (device.services!=undefined && device.services.find(e => e=="1816")) deviceName = "* "+deviceName;
+      menu[deviceName] = () => { E.showMenu(); parseDevice(device); }
+    });
+    E.showMenu(menu);
+  }, { active: true });
 }
 
+function waitMessage() {
+  E.showMenu();
+  E.showMessage("scanning");
+}
+
+function connection_setup() {
+  if (mySensor.settings.autoconnect) {
+    NRF.setScan();
+    mySensor.screenInit = true;
+    NRF.setScan(parseDevice, { filters: [{services:["1816"]}], timeout: 2000});
+    g.clearRect(0, 24, 239, 239).setFontVector(18).setFontAlign(0, 0, 0).setColor(0, 1, 0);
+    g.drawString("Scanning for CSC sensor...", 120, 120);
+  }
+  else scan();
+}
+
+var Layout = require("Layout");
+var layout = new Layout( {
+  lazy: true,
+  type:"h", c: [
+    {type: "v", c: [
+      {type:"txt", font:"12%", label:"Time", id:"time", halign:1, bgCol:0x30cd, col:"#ffff00"},
+      {type:"txt", font:"12%", label:"Speed", id:"speed", halign:1, col:"#ffff00"},
+      {type:"txt", font:"12%", label:"AveSpd", id:"aspeed", halign:1, bgCol:0x30cd, col:"#ffff00"},
+      {type:"txt", font:"12%", label:"MaxSpd", id:"mspeed", halign:1, col:"#ffff00"},
+      {type:"txt", font:"12%", label:"Trip", id:"trip", halign:1, bgCol:0x30cd, col:"#ffff00"},
+      {type:"txt", font:"12%", label:"Total", id:"total", halign:1, col:"#ffff00"}]
+    },
+    {type: "v", c: [
+      {type:"txt", font:"12%", label:": ", id:"vtimes", halign:-1},
+      {type:"txt", font:"12%", label:": ", id:"vspeeds", halign:-1},
+      {type:"txt", font:"12%", label:": ", id:"vaspeeds", halign:-1},
+      {type:"txt", font:"12%", label:": ", id:"vmspeeds", halign:-1},
+      {type:"txt", font:"12%", label:": ", id:"vtrips", halign:-1},
+      {type:"txt", font:"12%", label:": ", id:"vtotals", halign:-1}]
+    },
+    {type: "v", fillx:1.2, c: [
+      {type:"txt", font:"12%", label:"0:00", id:"vtime", halign:-1},
+      {type:"txt", font:"12%", label:"0", id:"vspeed", halign:-1, bgCol:0x30cd},
+      {type:"txt", font:"12%", label:"0", id:"vaspeed", halign:-1},
+      {type:"txt", font:"12%", label:"0", id:"vmspeed", halign:-1, bgCol:0x30cd},
+      {type:"txt", font:"12%", label:"0", id:"vtrip", halign:-1},
+      {type:"txt", font:"12%", label:"0", id:"vtotal", halign:-1, bgCol:0x30cd}]
+    }
+  ]
+});
+
 connection_setup();
-E.on('kill',()=>{
-  if (gatt!=undefined) gatt.disconnect();
-  mySensor.settings.totaldist = mySensor.totaldist;
-  storage.writeJSON(SETTINGS_FILE, mySensor.settings);
-});
-NRF.on('disconnect', connection_setup); // restart if disconnected
-Bangle.setUI("updown", d=>{
-  if (d<0) { mySensor.reset(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
-  if (d==0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
-  if (d>0) { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
-});
+NRF.on('disconnect', connection_setup);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
