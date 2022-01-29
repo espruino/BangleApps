@@ -113,6 +113,8 @@ const fullReset = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
   if (waitTimeout) clearTimeout(waitTimeout);
   if (drawInterval) clearInterval(drawInterval);
+  currentSonic = -1;
+  currentSpeed = 0;
 };
 
 const start = () => {
@@ -148,7 +150,6 @@ const wait = () => {
   currentSpeed = 0;
   if (drawTimeout) clearTimeout(drawTimeout);
   if (drawInterval) clearInterval(drawInterval);
-  Bangle.setLCDPower(1);
 
   drawInterval = setInterval(() => draw("wait"), timeout);
 
@@ -285,6 +286,7 @@ const settingsMenu = {
       lockTimeout: 10000,
       backlightTimeout: 12000,
       twistThreshold: settings.twistThreshold,
+      wakeOnTwist: !settings.activeMode,
     });
 
     E.showMenu();
@@ -328,6 +330,7 @@ Bangle.setOptions({
   lockTimeout: 10000,
   backlightTimeout: 12000,
   twistThreshold: settings.twistThreshold,
+  wakeOnTwist: !settings.activeMode,
 });
 
 Bangle.setUI("clock");
