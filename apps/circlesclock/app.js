@@ -770,11 +770,8 @@ if (isCircleEnabled("hr")) {
 }
 
 
-
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-
-g.clear(true);
 
 draw();
 setInterval(draw, 60000);
