@@ -108,7 +108,7 @@ const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
 function draw() {
-  g.reset(true);
+  g.clear(true);
   if (!showWidgets) {
     /*
      * we are not drawing the widgets as we are taking over the whole screen
@@ -125,7 +125,6 @@ function draw() {
     Bangle.drawWidgets();
   }
 
-  g.clearRect(0, widgetOffset, w, h2 + 22);
   g.setColor(colorBg);
   g.fillRect(0, widgetOffset, w, h2 + 22);
 
@@ -742,10 +741,10 @@ function getPressureValue(type) {
 
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
+    draw();
     if (isCircleEnabled("hr")) {
       enableHRMSensor();
     }
-    draw();
   } else {
     Bangle.setHRMPower(0, "circleclock");
   }
@@ -762,6 +761,15 @@ Bangle.on('HRM', function(hrm) {
   }
 });
 
+Bangle.on('charging', function(charging) {
+  if (isCircleEnabled("battery")) drawBattery();
+});
+
+if (isCircleEnabled("hr")) {
+  enableHRMSensor();
+}
+
+
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
@@ -770,11 +778,3 @@ g.clear(true);
 
 draw();
 setInterval(draw, 60000);
-
-Bangle.on('charging', function(charging) {
-  if (isCircleEnabled("battery")) drawBattery();
-});
-
-if (isCircleEnabled("hr")) {
-  enableHRMSensor();
-}
