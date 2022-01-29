@@ -1,0 +1,37 @@
+{
+  "lock": {
+    "str": "BQcBAAEYxiA=",
+    "x": 9,
+    "y": 15,
+  },
+  "heart": {
+    "str": "CQjBAQD4//+chAAACA4Pj+8=",
+    "x": 7,
+    "y": 14,
+  },
+  "invader": {
+    "str": "DQqDASQASQASSEAAECSQEAEASQEkkkAQEgkgkAEkkkkkAgkkkggEEAAEEAAEgkAASQAAASQ=",
+    "x": 5,
+    "y": 13,
+  },
+  "js": {
+    "str": "CAqBAd//2NfZ3tHfX78=",
+    "x": 7,
+    "y": 13,
+  },
+  "skull": {
+    "str": "CQqBAcHAZTKcH/+OfMGfAA==",
+    "x": 7,
+    "y": 13,
+  },
+  "smiley": {
+    "str": "CwqDASQAAASQNtsAQNttsANgMBsBsBgNgNtttsBsNsNgBsANgCBttgCSAAACQA==",
+    "x": 6,
+    "y": 13,
+  },
+  "storm": {
+    "str": "CQmDASAAACBttgBgABgBttgCMAACQNsASRgASSBgCSSACSA=",
+    "x": 7,
+    "y": 13,
+  }
+}

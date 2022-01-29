@@ -57,7 +57,7 @@ function fileGetter(url) {
 
 Promise.all(APPS.map(appid => {
   try {
-    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "metadata.json").toString());
+    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "/metadata.json").toString());
   } catch (e) {
     throw new Error(`App ${appid} not found`);
   }
@@ -77,6 +77,7 @@ Promise.all(APPS.map(appid => {
       js += `\x10if (E.CRC32(require('Storage').read(${JSON.stringify(file.name)}))!=${file.crc}){console.log("${file.name} invalid");FAIL++}\n`;
     }*/
   });
+  // js = js.replace(/\x10/g,""); // remove the echo-off characters (for testing only)
   fs.writeFileSync(OUTFILE, js);
   console.log("Output written to "+OUTFILE);
 });

@@ -24,12 +24,7 @@ if (!settings) resetSettings();
 function showMenu() {
   const datemenu = {
     '': {
-      'title': 'Set Date',
-      'predraw': function() {
-        datemenu.Day.value = settings.day;
-        datemenu.Month.value = settings.month;
-        datemenu.Year.value = settings.year;
-      }
+      'title': 'Set Date'
     },
     'Day': {
       value: settings.day,
@@ -65,4 +60,3 @@ function showMenu() {
 }
 
 showMenu();
-

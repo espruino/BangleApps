@@ -5,7 +5,7 @@ let tStart;
 let tNow;
 let counter=-1;
 
-const icon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4A/AAkQgEBAREAC6oABdZQXkI6wuKC5iPUFxoXIOpoX/C6QFCC6IsCC6ZEDC/4XcPooXOFgoXQIgwX/C7IUFC5wsIC5ouCC6hcJC5h1DF9YwBChCPOAH4A/AH4Ap"));
+const icon = require("heatshrink").decompress(atob("mEwwI0xg+evPsAon+ApX8Aon4AonwAod78AFDv4FWvoFE/IFDz4FXvIFD3wFE/wFW7wFDh5xBAoUfAok/Aol/BZUXAogA6A="));
 
 function timeToText(t) { // Courtesy of stopwatch app
   let hrs = Math.floor(t/3600000);
@@ -50,4 +50,5 @@ g.drawImage(icon,w/2-24,h/2-24);
 g.setFontAlign(0,0);
 require("Font8x12").add(Graphics);
 g.setFont("8x12");
-g.drawString("Click button to count.", w/2, h/2+22);
+g.drawString("Click button 1 to count.", w/2, h/2+22);
+

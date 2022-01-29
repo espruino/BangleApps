@@ -11,13 +11,10 @@ function Maze(n) {
   this.margin = Math.floor((g.getHeight()-this.total_length)/2);
   this.ball_x = 0;
   this.ball_y = 0;
-  this.clearScreen = function() {
-    g.clearRect(
-      0, this.margin,
-      g.getWidth(), this.margin+this.total_length
-    );
-  };
-  this.clearScreen();
+  // This voodoo is needed because otherwise
+  // bottom line widgets (like digital clock)
+  // disappear during maze generation
+  Bangle.drawWidgets();
   g.setColor(g.theme.fg);
   for (let i=0; i<=n; i++) {
     g.drawRect(
@@ -66,7 +63,7 @@ function Maze(n) {
       if (Math.random()<0.5 && candidates_down.length || !candidates_right.length) {
         trying_down = true;
       }
-      let candidates = trying_down ? candidates_down : candidates_right;
+      let candidates = trying_down ? candidates_down : candidates_right,
           candidate_index = Math.floor(Math.random()*candidates.length),
           cell = candidates.splice(candidate_index, 1)[0],
           r = Math.floor(cell/n),
@@ -105,11 +102,6 @@ function Maze(n) {
       }
     }
   }
-  this.clearScreen = function() {
-    g.clearRect(
-      0, MARGIN, g.getWidth(), g.getHeight()-MARGIN-1
-    );
-  };
   this.clearCell = function(r, c) {
     if (!r && !c) {
       g.setColor("#ffff00");
@@ -263,7 +255,7 @@ let mazeMenu = {
   "< Exit": function() { setTimeout(load, 100); } // timeout voodoo prevents deadlock
 };
 
-g.clear(true);
+g.reset();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLocked(false);
@@ -289,7 +281,7 @@ let maze_interval = setInterval(
         duration = Date.now()-start_time;
         g.setFontAlign(0,0).setColor(g.theme.fg);
         g.setFont("Vector",18);
-        g.drawString(`Solved ${maze.n}X${maze.n} in\n ${timeToText(duration)} \nClick to play again`, g.getWidth()/2, g.getHeight()/2, true);
+        g.drawString(`Solved ${maze.n}X${maze.n} in\n ${timeToText(duration)} \nBtn1 to play again`, g.getWidth()/2, g.getHeight()/2, true);
       }
     }
   }, 25);
