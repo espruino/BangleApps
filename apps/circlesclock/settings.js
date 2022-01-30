@@ -133,15 +133,18 @@
     E.showMenu(menu);
   }
 
+  const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
+
   function showCircleMenu(circleId) {
     String circleName = "circle" + circleId;
     String colorKey = circleName + "color";
     String colorizeIconKey = circleName + "colorizeIcon";
+
     let menu = {
       '': { 'title': /*LANG*/'Circle ' + circleId },
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'data': {
-        value: settings[circleName] ? valuesCircleTypes.indexOf(settings[circleName]) : 0,
+        value: settings[circleName]!=undefined ? valuesCircleTypes.indexOf(settings[circleName]) : valuesCircleTypes.indexOf(defaultCircleTypes[circleId -1]),
         min: 0, max: valuesCircleTypes.length - 1,
         format: v => namesCircleTypes[v],
         onchange: x => save(circleName, valuesCircleTypes[x]),
