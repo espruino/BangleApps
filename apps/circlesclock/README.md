@@ -17,7 +17,10 @@ It can show the following information (this can be configured):
   * Temperature, air pressure or altitude from internal pressure sensor
 
 
-The color of each circle can be configured.
+The color of each circle can be configured. The following colors are available:
+  * Basic colors (red, green, blue, yellow, magenta, cyan, black, white)
+  * Color depending on value (green -> red, red -> green)
+
 
 ## Screenshots
 ![Screenshot dark theme](screenshot-dark.png)

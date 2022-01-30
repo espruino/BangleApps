@@ -231,14 +231,31 @@ function getCircleColor(type) {
   if (color && color != "") return color;
 }
 
-function getCircleIconColor(type, color) {
+function getCircleIconColor(type, color, percent) {
   const pos = getCirclePosition(type);
   const colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] == true;
   if (colorizeIcon) {
-    return color;
+    return getGradientColor(color, percent);
   } else {
     return "";
   }
+}
+
+function getGradientColor(color, percent) {
+  if (isNaN(percent)) percent = 0;
+  if (percent > 1) percent = 1;
+  const colorList = [
+    '#00FF00', '#80FF00', '#FFFF00', '#FF8000', '#FF0000'
+  ];
+  if (color == "green-red") {
+    const colorIndex = Math.round(colorList.length * percent);
+    return colorList[Math.min(colorIndex, colorList.length) - 1] || "#00ff00";
+  }
+  if (color == "red-green") {
+    const colorIndex = colorList.length - Math.round(colorList.length * percent);
+    return colorList[Math.min(colorIndex, colorList.length)] || "#ff0000";
+  }
+  return color;
 }
 
 function getImage(graphic, color) {
@@ -264,9 +281,10 @@ function drawSteps(w) {
 
   const color = getCircleColor("steps") || colorBlue;
 
+  let percent;
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
-    let percent = steps / stepGoal;
+    percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
     drawGauge(w, h3, percent, color);
   }
@@ -275,7 +293,7 @@ function drawSteps(w) {
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(getImage(shoesIcon, getCircleIconColor("steps", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("steps", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
@@ -288,9 +306,10 @@ function drawStepsDistance(w) {
 
   const color = getCircleColor("stepsDistance") || colorGreen;
 
+  let percent;
   const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
-    let percent = stepsDistance / stepDistanceGoal;
+    percent = stepsDistance / stepDistanceGoal;
     if (stepDistanceGoal < stepsDistance) percent = 1;
     drawGauge(w, h3, percent, color);
   }
@@ -299,7 +318,7 @@ function drawStepsDistance(w) {
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(getImage(shoesIcon, getCircleIconColor("stepsDistance", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("stepsDistance", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
@@ -309,10 +328,12 @@ function drawHeartRate(w) {
 
   const color = getCircleColor("hr") || colorRed;
 
+  let percent;
   if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
     const maxHR = settings.maxHR || 200;
-    const percent = (hrtValue - minHR) / (maxHR - minHR);
+    percent = (hrtValue - minHR) / (maxHR - minHR);
+    if (isNaN(percent)) percent = 0;
     drawGauge(w, h3, percent, color);
   }
 
@@ -320,7 +341,7 @@ function drawHeartRate(w) {
 
   writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
-  g.drawImage(getImage(heartIcon, getCircleIconColor("hr", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(heartIcon, getCircleIconColor("hr", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawBattery(w) {
@@ -331,8 +352,9 @@ function drawBattery(w) {
 
   let color = getCircleColor("battery") || colorYellow;
 
+  let percent;
   if (battery > 0) {
-    const percent = battery / 100;
+    percent = battery / 100;
     drawGauge(w, h3, percent, color);
   }
 
@@ -347,7 +369,7 @@ function drawBattery(w) {
   }
   writeCircleText(w, battery + '%');
 
-  g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawWeather(w) {
@@ -359,13 +381,14 @@ function drawWeather(w) {
   drawCircleBackground(w);
 
   const color = getCircleColor("weather") || colorYellow;
-
+  let percent;
   const data = settings.weatherCircleData || "humidity";
   switch (data) {
     case "humidity":
       const humidity = weather ? weather.hum : undefined;
       if (humidity >= 0) {
-        drawGauge(w, h3, humidity / 100, color);
+        percent = humidity / 100;
+        drawGauge(w, h3, percent, color);
       }
       break;
     case "wind":
@@ -376,7 +399,8 @@ function drawWeather(w) {
             wind[1] = windAsBeaufort(wind[1]);
           }
           // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-          drawGauge(w, h3, wind[1] / 12, color);
+          percent = wind[1] / 12;
+          drawGauge(w, h3, percent, color);
         }
       }
       break;
@@ -390,7 +414,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }
@@ -403,21 +427,13 @@ function drawSunProgress(w) {
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("sunpgrogress") || colorYellow;
+  const color = getCircleColor("sunprogress") || colorYellow;
 
   drawGauge(w, h3, percent, color);
 
   drawInnerCircleAndTriangle(w);
 
   let icon = sunSetDown;
-  if (isDay()) {
-    // day
-    icon = sunSetDown;
-  } else {
-    // night
-    icon = sunSetUp;
-  }
-
   let text = "?";
   const times = getSunData();
   if (times != undefined) {
@@ -432,15 +448,17 @@ function drawSunProgress(w) {
       } else {
         text = formatSeconds(sunRise - now);
       }
+      icon = sunSetUp;
     } else {
       // day, approx sunrise tomorrow:
       text = formatSeconds(sunSet - now);
+      icon = sunSetDown;
     }
   }
 
   writeCircleText(w, text);
 
-  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawTemperature(w) {
@@ -452,18 +470,18 @@ function drawTemperature(w) {
     const color = getCircleColor("temperature") || colorGreen;
 
     drawInnerCircleAndTriangle(w);
-
+    let percent;
     if (temperature) {
       const min = -40;
       const max = 85;
-      const percent = (temperature - min) / (max - min);
+      percent = (temperature - min) / (max - min);
       drawGauge(w, h3, percent, color);
     }
 
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
 
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -482,17 +500,18 @@ function drawPressure(w) {
 
     drawInnerCircleAndTriangle(w);
 
+    let percent;
     if (pressure && pressure > 0) {
       const minPressure = 950;
       const maxPressure = 1050;
-      const percent = (pressure - minPressure) / (maxPressure - minPressure);
+      percent = (pressure - minPressure) / (maxPressure - minPressure);
       drawGauge(w, h3, percent, color);
     }
 
     if (pressure)
       writeCircleText(w, Math.round(pressure));
 
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -511,17 +530,18 @@ function drawAltitude(w) {
 
     drawInnerCircleAndTriangle(w);
 
+    let percent;
     if (altitude) {
       const min = 0;
       const max = 10000;
-      const percent = (altitude - min) / (max - min);
+      percent = (altitude - min) / (max - min);
       drawGauge(w, h3, percent, color);
     }
 
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
 
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   }).catch(() => {
     setTimeout(() => {
@@ -691,6 +711,7 @@ function drawGauge(cx, cy, percent, color) {
   const startRotation = -offset;
   const endRotation = startRotation - ((end - offset) * percent);
 
+  color = getGradientColor(color, percent);
   g.setColor(color);
 
   for (let i = startRotation; i > endRotation - size; i -= size) {

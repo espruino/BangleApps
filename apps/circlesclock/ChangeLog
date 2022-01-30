@@ -17,3 +17,4 @@
       Fix sunprogress calculation during night
       Refactor settings menu
       Colors of circles can be configured
+      Color depending on value (green -> red, red -> green) option
