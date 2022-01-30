@@ -94,7 +94,7 @@ const circlePosX = [
   Math.round(7 * w / parts), // circle4
 ];
 
-const radiusOuter = circleCount == 3 ? 25 : 19;
+const radiusOuter = circleCount == 3 ? 25 : 20;
 const radiusInner = circleCount == 3 ? 20 : 15;
 const circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
 const circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
