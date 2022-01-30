@@ -7,13 +7,13 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  const valuesCircleTypes = ["steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "empty", "temperature", "pressure", "altitude"];
-  const namesCircleTypes = ["steps", "distance", "heart", "battery", "weather", "sun progress", "empty", "temperature", "pressure", "altitude"];
+  const valuesCircleTypes = ["empty", "steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "temperature", "pressure", "altitude"];
+  const namesCircleTypes = ["empty", "steps", "distance", "heart", "battery", "weather", "sun", "temperature", "pressure", "altitude"];
 
   const valuesColors = ["", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#fff", "#000", "green-red", "red-green"];
   const namesColors = ["default", "red", "green", "blue", "yellow", "magenta", "cyan", "white", "black", "green->red", "red->green"];
 
-  const weatherData = ["humidity", "wind", "empty"];
+  const weatherData = ["empty", "humidity", "wind"];
 
   function showMainMenu() {
     let menu ={
@@ -48,7 +48,7 @@
         onchange: x => save('showWidgets', x),
       },
       /*LANG*/'weather circle': {
-        value: settings.weatherCircleData ? weatherData.indexOf(settings.weatherCircleData) : 0,
+        value: settings.weatherCircleData ? weatherData.indexOf(settings.weatherCircleData) : 1,
         min: 0, max: 2,
         format: v => weatherData[v],
         onchange: x => save('weatherCircleData', weatherData[x]),
@@ -142,13 +142,13 @@
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'data': {
         value: settings[circleName] ? valuesCircleTypes.indexOf(settings[circleName]) : 0,
-        min: 0, max: valuesCircleTypes.length,
+        min: 0, max: valuesCircleTypes.length - 1,
         format: v => namesCircleTypes[v],
         onchange: x => save(circleName, valuesCircleTypes[x]),
       },
       /*LANG*/'color': {
         value: settings[colorKey] ? valuesColors.indexOf(settings[colorKey]) : 0,
-        min: 0, max: valuesColors.length,
+        min: 0, max: valuesColors.length - 1,
         format: v => namesColors[v],
         onchange: x => save(colorKey, valuesColors[x]),
       },
