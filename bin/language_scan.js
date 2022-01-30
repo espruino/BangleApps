@@ -168,7 +168,7 @@ languages.forEach(language => {
   log("==========");
   var translations = JSON.parse(fs.readFileSync(BASEDIR+"/lang/"+language.url).toString());
   translatedStrings.forEach(str => {
-    if (!translations.GLOBAL[str])
+    if (!translations.GLOBAL[str.str])
       console.log(`Missing translation for ${JSON.stringify(str)}`);
   });
   log("");
