@@ -4,7 +4,7 @@ const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/maste
 
 const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
 const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
-const powerIcon = atob("FBSBAAAAAAAAAfgAP8AH/gB/4Af+AH/gB/4Af+AH/gB/4Af+AH/gB/4Af+AH/gB/4AAAAAAA");
+const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
 const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
 
 const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
@@ -469,7 +469,6 @@ function drawTemperature(w) {
 
     const color = getCircleColor("temperature") || colorGreen;
 
-    drawInnerCircleAndTriangle(w);
     let percent;
     if (temperature) {
       const min = -40;
@@ -478,15 +477,15 @@ function drawTemperature(w) {
       drawGauge(w, h3, percent, color);
     }
 
+
+    drawInnerCircleAndTriangle(w);
+
+
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
 
     g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
-  }).catch(() => {
-    setTimeout(() => {
-      drawTemperature();
-    }, 1000);
   });
 }
 
@@ -498,8 +497,6 @@ function drawPressure(w) {
 
     const color = getCircleColor("pressure") || colorGreen;
 
-    drawInnerCircleAndTriangle(w);
-
     let percent;
     if (pressure && pressure > 0) {
       const minPressure = 950;
@@ -508,15 +505,15 @@ function drawPressure(w) {
       drawGauge(w, h3, percent, color);
     }
 
+
+    drawInnerCircleAndTriangle(w);
+
+
     if (pressure)
       writeCircleText(w, Math.round(pressure));
 
     g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
-  }).catch(() => {
-    setTimeout(() => {
-      drawPressure(w);
-    }, 1000);
   });
 }
 
@@ -528,8 +525,6 @@ function drawAltitude(w) {
 
     const color = getCircleColor("altitude") || colorGreen;
 
-    drawInnerCircleAndTriangle(w);
-
     let percent;
     if (altitude) {
       const min = 0;
@@ -538,15 +533,15 @@ function drawAltitude(w) {
       drawGauge(w, h3, percent, color);
     }
 
+
+    drawInnerCircleAndTriangle(w);
+
+
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
 
     g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
-  }).catch(() => {
-    setTimeout(() => {
-      drawAltitude(w);
-    }, 1000);
   });
 }
 
@@ -705,7 +700,7 @@ function drawGauge(cx, cy, percent, color) {
   const radius = radiusInner + (circleCount == 3 ? 3 : 2);
   const size = radiusOuter - radiusInner - 2;
 
-  if (percent <= 0) return;
+  if (percent <= 0) return; // no gauge needed
   if (percent > 1) percent = 1;
 
   const startRotation = -offset;
@@ -771,14 +766,12 @@ let pressureLocked = false;
 let pressureCache;
 
 function getPressureValue(type) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (Bangle.getPressure) {
       if (!pressureLocked) {
         pressureLocked = true;
         if (pressureCache && pressureCache[type]) {
           resolve(pressureCache[type]);
-        } else {
-          reject();
         }
         Bangle.getPressure().then(function(d) {
           pressureLocked = false;
@@ -787,19 +780,13 @@ function getPressureValue(type) {
             if (d[type]) {
               resolve(d[type]);
             }
-          } else {
-            reject();
           }
-        }).catch(reject);
+        }).catch(() => {});
       } else {
         if (pressureCache && pressureCache[type]) {
           resolve(pressureCache[type]);
-        } else {
-          reject();
         }
       }
-    } else {
-      reject();
     }
   });
 }
