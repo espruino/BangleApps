@@ -3,8 +3,8 @@
 	Bangle.setUI("");
 	var settings = require('Storage').readJSON("contourclock.json", true) || {};
 	if (settings.fontIndex==undefined) {
-	  settings.fontIndex=0;
-	  require('Storage').writeJSON("myapp.json", settings);
+		settings.fontIndex=0;
+		require('Storage').writeJSON("myapp.json", settings);
 	}
   savedIndex=settings.fontIndex;
   setWatch(function() {          //save changes and return to settings menu
