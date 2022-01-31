@@ -3,9 +3,9 @@ var drawTimeout;
 var fontName="";
 var settings = require('Storage').readJSON("contourclock.json", true) || {};
 if (settings.fontIndex==undefined) {
-	  settings.fontIndex=0;
-	  require('Storage').writeJSON("myapp.json", settings);
-	}
+  settings.fontIndex=0;
+  require('Storage').writeJSON("myapp.json", settings);
+}
 require("FontTeletext10x18Ascii").add(Graphics);
 
 function queueDraw() {
