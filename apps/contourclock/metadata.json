@@ -4,7 +4,7 @@
   "version":"0.2",
   "icon": "app.png",
   "description": "A Minimalist clockface with large Digits. Now with more fonts!",
-  "screenshots" : [{"url":"cc-screenshot1.png"},{"url":"cc-screenshot2.png"}],
+  "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
   "allow_emulator":true,
   "supports" : ["BANGLEJS2"],
