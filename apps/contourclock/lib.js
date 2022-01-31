@@ -28,7 +28,7 @@ exports.drawClock = function(fontIndex) {
   squeeze=(g.getWidth()-w5)/(w1+w2+w3+w4);
 	if (fontIndex<0) {
 		fg=g.theme.fg;
-	 	bg=g.theme.bg;
+		bg=g.theme.bg;
 		g.setColor(bg);
 		g.setBgColor(fg);
 	}
