@@ -477,9 +477,7 @@ function drawTemperature(w) {
       drawGauge(w, h3, percent, color);
     }
 
-
     drawInnerCircleAndTriangle(w);
-
 
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
@@ -505,9 +503,7 @@ function drawPressure(w) {
       drawGauge(w, h3, percent, color);
     }
 
-
     drawInnerCircleAndTriangle(w);
-
 
     if (pressure)
       writeCircleText(w, Math.round(pressure));
@@ -533,9 +529,7 @@ function drawAltitude(w) {
       drawGauge(w, h3, percent, color);
     }
 
-
     drawInnerCircleAndTriangle(w);
-
 
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
@@ -803,12 +797,22 @@ Bangle.on('lock', function(isLocked) {
 });
 
 
+let timerHrm;
 Bangle.on('HRM', function(hrm) {
   if (isCircleEnabled("hr")) {
     if (hrm.confidence >= (settings.confidence || 0)) {
       hrtValue = hrm.bpm;
-      if (Bangle.isLCDOn())
+      if (Bangle.isLCDOn()) {
         drawHeartRate();
+      }
+    }
+    // Let us wait a bit before we overwrite "good" HRM values:
+    if (Bangle.isLCDOn()) {
+      if (timerHrm) clearTimeout(timerHrm);
+      timerHrm = setTimeout(() => {
+        hrtValue = '...';
+        drawHeartRate();
+      }, 10000);
     }
   }
 });
