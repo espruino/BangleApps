@@ -54,7 +54,7 @@ var state = {
   // startTime, // time exercise started
   lastGPS:{}, thisGPS:{}, // This & previous GPS readings
   // distance : 0, ///< distance in meters
-  // avrSpeed : 0, ///< in m/sec
+  // avrSpeed : 0, ///< speed over whole run in m/sec
   startSteps : Bangle.getStepCount(), ///< number of steps when we started
   lastSteps : Bangle.getStepCount(), // last time 'step' was called
   stepHistory : new Uint8Array(60), // steps each second for the last minute (0 = current minute)
@@ -72,7 +72,7 @@ function calcDistance(a,b) {
   function radians(a) { return a*Math.PI/180; }
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
-  return Math.round(Math.sqrt(x*x + y*y) * 6371000);
+  return Math.sqrt(x*x + y*y) * 6371000;
 }
 
 // Given milliseconds, return a time
@@ -104,12 +104,14 @@ Bangle.on("GPS", function(fix) {
   if (!state.active) return;
   if( state.lastGPS.fix)
     state.distance += calcDistance(state.lastGPS, fix);
+  if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
   var duration = Date.now() - state.startTime; // in ms
   state.avrSpeed = state.distance * 1000 / duration; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   state.lastGPS = state.thisGPS;
   state.thisGPS = fix;
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
+  if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
 });
 
 Bangle.on("step", function(steps) {
@@ -134,6 +136,7 @@ exports.getList = function() {
     {name: "Heart (BPM)", id:"bpm"},
     {name: "Pace (avr)", id:"pacea"},
     {name: "Pace (current)", id:"pacec"},
+    {name: "Speed", id:"speed"},
     {name: "Cadence", id:"caden"},
   ];
 };
@@ -180,7 +183,7 @@ exports.getStats = function(statIDs, options) {
   if (statIDs.includes("pacea")) {
     needGPS = true;
     stats["pacea"]={
-      title : "Pace(avr)",
+      title : "A Pace",
       getValue : function() { return state.avrSpeed; }, // in m/sec
       getString : function() { return formatPace(state.avrSpeed, options.paceLength); },
     };
@@ -188,9 +191,17 @@ exports.getStats = function(statIDs, options) {
   if (statIDs.includes("pacec")) {
     needGPS = true;
     stats["pacec"]={
-      title : "Pace(now)",
+      title : "C Pace",
       getValue : function() { return (state.thisGPS.speed||0)/3.6; }, // in m/sec
       getString : function() { return formatPace(this.getValue(), options.paceLength); },
+    };
+  }
+  if (statIDs.includes("speed")) {
+    needGPS = true;
+    stats["speed"]={
+      title : "Speed",
+      getValue : function() { return state.thisGPS.speed||0; }, // in kph
+      getString : function() { return require("locale").speed(state.thisGPS.speed||0); },
     };
   }
   if (statIDs.includes("caden")) {
