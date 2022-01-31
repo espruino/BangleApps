@@ -136,11 +136,11 @@
   const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
   function showCircleMenu(circleId) {
-    String circleName = "circle" + circleId;
-    String colorKey = circleName + "color";
-    String colorizeIconKey = circleName + "colorizeIcon";
+    const circleName = "circle" + circleId;
+    const colorKey = circleName + "color";
+    const colorizeIconKey = circleName + "colorizeIcon";
 
-    let menu = {
+    const menu = {
       '': { 'title': /*LANG*/'Circle ' + circleId },
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'data': {
