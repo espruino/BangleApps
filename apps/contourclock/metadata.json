@@ -1,9 +1,9 @@
 { "id": "contourclock",
   "name": "Contour Clock",
   "shortName" : "Contour Clock",
-  "version":"0.01",
+  "version":"0.2",
   "icon": "app.png",
-  "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
+  "description": "A Minimalist clockface with large Digits. Now with more fonts!",
   "screenshots" : [{"url":"screenshot.png"}],
   "tags": "clock",
   "allow_emulator":true,
@@ -11,6 +11,18 @@
   "type": "clock",
   "storage": [
     {"name":"contourclock.app.js","url":"app.js"},
+		{"name":"contourclock.settings.js","url":"contourclock.settings.js"},
+		{"name":"contourclock","url":"lib.js"},
+		{"name":"contourclock-0.json","url":"contourclock-0.json"},
+		{"name":"contourclock-1.json","url":"contourclock-1.json"},
+		{"name":"contourclock-2.json","url":"contourclock-2.json"},
+		{"name":"contourclock-3.json","url":"contourclock-3.json"},
+		{"name":"contourclock-4.json","url":"contourclock-4.json"},
+		{"name":"contourclock-5.json","url":"contourclock-5.json"},
+		{"name":"contourclock-6.json","url":"contourclock-6.json"},
+		{"name":"contourclock-7.json","url":"contourclock-7.json"},
+		{"name":"contourclock-8.json","url":"contourclock-8.json"},
+		{"name":"contourclock-9.json","url":"contourclock-9.json"},
     {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
     ]
 }
