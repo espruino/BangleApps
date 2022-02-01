@@ -183,7 +183,7 @@ class TimeCalClock{
 
     const DAY_NAME_FONT_SIZE=10;
     const CAL_Y=Bangle.appRect.y+this.DATE_FONT_SIZE()+10+this.TIME_FONT_SIZE()+3;
-    const CAL_AREA_H=Bangle.appRect.h-CAL_Y-24; //0,24,48 no,1,2 widget lines
+    const CAL_AREA_H=Bangle.appRect.h-CAL_Y;//+24; //+24: top widegtes only
     const CELL_W=Bangle.appRect.w/7; //cell width
     const CELL_H=(CAL_AREA_H-DAY_NAME_FONT_SIZE)/3; //cell heigth
     const DAY_NUM_FONT_SIZE=Math.min(CELL_H-1,15); //size down, max 15
@@ -276,7 +276,7 @@ class TimeCalClock{
     }
     return Number(1 + Math.ceil((firstThursday - tdt) / 604800000));
   }
- }
+}
 
 //*************************************************************************************
 //*************************************************************************************
