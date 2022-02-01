@@ -8,6 +8,7 @@
   "type": "clock",
   "supports":["BANGLEJS2"],
   "storage": [
-    {"name":"timecal.app.js","url":"timecal.app.js"}
+    {"name":"timecal.app.js","url":"timecal.app.js"},
+    {"name":"timecal.settings.js","url":"timecal.settings.js"}
   ]
 }
