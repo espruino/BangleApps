@@ -19,14 +19,14 @@ class TimeCalClock{
     const defaults = {
       shwDate:1, //0:none, 1:locale, 2:month, 3:monthshort.year #week
         
-      wdStrt:1, //identical to getDay() 0->Su, 1->Mo, ... //Issue #1154: weekstart So/Mo, -1 for use today
+      wdStrt:0, //identical to getDay() 0->Su, 1->Mo, ... //Issue #1154: weekstart So/Mo, -1 for use today
 
-      tdyNumClr:0, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      tdyNumClr:3, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
       tdyMrkr:0, //0:none, 1:circle, 2:rectangle, 3:filled
       tdyMrkClr:2, //1:red=#E00, 2:green=#0E0, 3:blue=#00E
       tdyMrkPxl:3, //px
 
-      suClr:0, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      suClr:1, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
       //phColor:"#E00", //public holiday
 
       calBrdr:false 
@@ -41,7 +41,19 @@ class TimeCalClock{
 
     this.centerX = Bangle.appRect.w/2;
     this.nrgb = [g.theme.fg, "#E00", "#0E0", "#00E"]; //fg, r ,g , b
-    this.ABR_DAY = require("locale") && require("locale").abday ? require("locale").abday : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    this.ABR_DAY=[];
+    if (require("locale") && require("locale").dow)
+      for (let d=0; d<=6; d++) {
+        var refDay=new Date();
+        refDay.setFullYear(1972);
+        refDay.setMonth(0);
+        refDay.setDate(2+d);
+        this.ABR_DAY.push(require("locale").dow(refDay));
+
+      }
+    else
+      this.ABR_DAY=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   }
 
   /**
@@ -57,7 +69,10 @@ class TimeCalClock{
   **/
   draw(){
     this.drawTime();
-  }
+
+    if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
+      this.drawDateAndCal();
+    }
 
   /**
    * draw given or current time from date
@@ -77,10 +92,7 @@ class TimeCalClock{
     g.drawString(("0" + require("locale").time(d, 1)).slice(-5), this.centerX, Y);
     //.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7); //DEV-Option
 
-    setTimeout(this.drawTime.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
-    if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
-      this.drawDateAndCal();
-    this.TZOffset=d.getTimezoneOffset();
+    setTimeout(this.draw.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
   }
 
   /**
@@ -90,11 +102,12 @@ class TimeCalClock{
   drawDateAndCal(){
     d=this.date ? this.date : new Date();
 
-    if (this.tOutD) //abort exisiting
-      clearTimeout(this.tOutD);
-
+    this.TZOffset=d.getTimezoneOffset();
     this.drawDate();
     this.drawCal();
+
+    if (this.tOutD) //abort exisiting
+      clearTimeout(this.tOutD);
     this.tOutD=setTimeout(this.drawDateAndCal.bind(this), 86400000-(d.getHours()*24*60*1000)-(d.getMinutes()*60*1000)-d.getSeconds()-d.getMilliseconds());
   }
   
@@ -182,13 +195,15 @@ class TimeCalClock{
     g.setFontAlign(-1, -1);
 
 
-    const tdyDate=d.getDate();
-    const sttngsWdStrt=this.settings().wdStrt>=0 ? this.settings().wdStrt : tdyDate.getDay();
-
     //draw grid & Headline
     const dNames = this.ABR_DAY.map((a) => a.length<=2 ? a : a.substr(0, 2)); //force shrt 2
     for(var dNo=0; dNo<dNames.length; dNo++){
-      const dName=dNames[(dNo+sttngsWdStrt)%7];
+      const dIdx=this.settings().wdStrt>=0 ? (dNo+this.settings().wdStrt)%7 : (dNo+d.getDay()+4)%7;
+      const dName=dNames[dIdx];
+      if (dIdx==0) //sunday colorize txt
+        g.setColor(this.nrgb[this.settings().suClr]);
+      else
+        g.setColor(g.theme.fg);
       g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1); //center Names
       if(dNo>0)
         g.drawLine(dNo*CELL_W, CAL_Y, dNo*CELL_W, CAL_Y+CAL_AREA_H-1);
@@ -204,8 +219,9 @@ class TimeCalClock{
     g.setFont("Vector", DAY_NUM_FONT_SIZE);
     
     //write days
-    const days=7+(7+d.getDay()-sttngsWdStrt)%7;//start day (week before=7 days + days in this week realtive to week start)
-    var rD=new Date();
+    const tdyDate=d.getDate();
+    const days=this.settings().wdStrt>=0 ? 7+((7+d.getDay()-this.settings().wdStrt)%7) : 10;//start day (week before=7 days + days in this week realtive to week start) or fixed 7+3 days
+    var rD=new Date(d.getTime());
     rD.setDate(rD.getDate()-days);
     var rDate=rD.getDate();
     for(var y=0; y<3; y++){ 
@@ -215,7 +231,7 @@ class TimeCalClock{
           switch(this.settings().tdyMrkr){ //0:none, 1:circle, 2:rectangle, 3:filled
             case 1: 
               for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
-                g.drawCircle(x*CELL_W+(CELL_W/2), nextY+(CELL_H*y)+(CELL_H/2), Math.min((CELL_W-m)/2, (CELL_H-m)/2));
+                g.drawCircle(x*CELL_W+(CELL_W/2)+1, nextY+(CELL_H*y)+(CELL_H/2)+1, Math.min((CELL_W-m)/2, (CELL_H-m)/2)-2);
               break;
             case 2: 
               for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
@@ -228,8 +244,8 @@ class TimeCalClock{
               break;
           }
           g.setColor(this.nrgb[this.settings().tdyNumClr]); //today color or fg color
-        }else if(this.settings().suColor && rD.getDay()==0){ //sundays
-          g.setColor(this.settings().suColor);
+        }else if(this.settings().suClr && rD.getDay()==0){ //sundays
+          g.setColor(this.nrgb[this.settings().suClr]);
         }else{ //default
           g.setColor(g.theme.fg);
         }
@@ -261,6 +277,5 @@ class TimeCalClock{
     return Number(1 + Math.ceil((firstThursday - tdt) / 604800000));
   }
  
-}
 
 timeCalClock = new TimeCalClock(); timeCalClock.draw();

@@ -12,9 +12,9 @@
       tdyNumClr:3, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
       tdyMrkr:0, //0:none, 1:circle, 2:rectangle, 3:filled
       tdyMrkClr:2, //1:red=#E00, 2:green=#0E0, 3:blue=#00E
-      tdyMrkPxl:2, //px
+      tdyMrkPxl:3, //px
 
-      suClr:0, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      suClr:1, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
       //phColor:"#E00", //public holiday
 
       calBrdr:false 
