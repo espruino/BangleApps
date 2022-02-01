@@ -1,3 +1,5 @@
 0.01: New watch face
 0.02: Use Bangle.setUI for button/launcher handling
 0.03: Bangle.js 2 support
+0.04: Adds costumizable colours and the respective settings menu
+0.05: "Chime the time" (buzz or beep) with up/down swipe added

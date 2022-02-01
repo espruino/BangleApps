@@ -1,0 +1,18 @@
+{
+  "id": "gbridge",
+  "name": "Gadgetbridge",
+  "version": "0.25",
+  "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android' Bangle.js app instead.",
+  "icon": "app.png",
+  "type": "widget",
+  "tags": "tool,system,android,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies": {"notify":"type"},
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbridge.settings.js","url":"settings.js"},
+    {"name":"gbridge.img","url":"app-icon.js","evaluate":true},
+    {"name":"gbridge.wid.js","url":"widget.js"}
+  ],
+  "data": [{"name":"gbridge.json"}]
+}

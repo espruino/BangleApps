@@ -1,0 +1,17 @@
+{
+  "id": "sonicclk",
+  "name": "Sonic Clock",
+  "version": "0.05",
+  "description": "A classic sonic clock featuring run, stop and wait animations.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"sonicclk.app.js","url":"app.js"},
+    {"name":"sonicclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

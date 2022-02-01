@@ -1,0 +1,18 @@
+{
+  "id": "ptlaunch",
+  "name": "Pattern Launcher",
+  "shortName": "Pattern Launcher",
+  "version": "0.13",
+  "description": "Directly launch apps from the clock screen with custom patterns.",
+  "icon": "app.png",
+  "screenshots": [{"url":"manage_patterns_light.png"}],
+  "tags": "tools",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "ptlaunch.app.js", "url": "app.js" },
+    { "name": "ptlaunch.boot.js", "url": "boot.js" },
+    { "name": "ptlaunch.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "data": [{"name":"ptlaunch.patterns.json"}]
+}

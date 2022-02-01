@@ -1,0 +1,16 @@
+{
+  "id": "promenu",
+  "name": "Pro Menu",
+  "version": "0.02",
+  "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
+  "icon": "icon.png",
+  "type": "boot",
+  "tags": "system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"pro-menu-screenshot.png"}],
+  "storage": [
+    {"name":"promenu.boot.js","url":"boot.js","supports": ["BANGLEJS"]},
+    {"name":"promenu.boot.js","url":"bootb2.js","supports": ["BANGLEJS2"]},
+    {"name":"promenu.img","url":"promenuIcon.js","evaluate":true}
+  ]
+}

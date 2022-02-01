@@ -1,0 +1,14 @@
+{
+  "id": "gmeter",
+  "name": "G-Meter",
+  "shortName": "G-Meter",
+  "version": "0.01",
+  "description": "Simple G-Meter",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"gmeter.app.js","url":"app.js"},
+    {"name":"gmeter.img","url":"app-icon.js","evaluate":true}
+  ]
+}

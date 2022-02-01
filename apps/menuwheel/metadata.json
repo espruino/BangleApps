@@ -1,0 +1,18 @@
+{
+  "id": "menuwheel",
+  "name": "Wheel Menus",
+  "version": "0.02",
+  "description": "Replace Bangle.js 2's menus with a version that contains variable-size text and a back button",
+  "readme": "README.md",
+  "icon": "icon.png",
+  "screenshots": [
+    {"url":"screenshot_b1_dark.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_light.png"},
+    {"url":"screenshot_b2_dark.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_light.png"}
+  ],
+  "type": "boot",
+  "tags": "system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"menuwheel.boot.js","url":"boot.js"}
+   ]
+}

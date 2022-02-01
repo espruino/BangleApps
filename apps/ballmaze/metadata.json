@@ -1,0 +1,16 @@
+{
+  "id": "ballmaze",
+  "name": "Ball Maze",
+  "version": "0.02",
+  "description": "Navigate a ball through a maze by tilting your watch.",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"ballmaze.app.js","url":"app.js"},
+    {"name":"ballmaze.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [{"name":"ballmaze.json"}]
+}

@@ -280,7 +280,7 @@ function showMessage(msgid) {
         showMessageSettings(msg);
       }},
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontSmall, label:msg.src||"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
+        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},

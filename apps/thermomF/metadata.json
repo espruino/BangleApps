@@ -1,0 +1,13 @@
+{
+  "id": "thermomF",
+  "name": "Fahrenheit Temp",
+  "version": "0.01",
+  "description": "[NOT RECOMMENDED] A modification of the Thermometer App to display temprature in Fahrenheit. Please use the 'Thermometer App' and install 'Languages' to get the temperature in the correct format for your locale.",
+  "icon": "thermf.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"thermomF.app.js","url":"app.js"},
+    {"name":"thermomF.img","url":"app-icon.js","evaluate":true}
+  ]
+}

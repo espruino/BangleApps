@@ -1,0 +1,28 @@
+{
+  "id": "fontclock",
+  "name": "Font Clock",
+  "version": "0.01",
+  "description": "Choose the font and design of clock face from a library of available designs",
+  "icon": "fontclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "allow_emulator": false,
+  "storage": [
+    {"name":"fontclock.app.js","url":"fontclock.js"},
+    {"name":"fontclock.img","url":"fontclock-icon.js","evaluate":true},
+    {"name":"fontclock.hand.js","url":"fontclock.hand.js"},
+    {"name":"fontclock.thinhand.js","url":"fontclock.thinhand.js"},
+    {"name":"fontclock.thickhand.js","url":"fontclock.thickhand.js"},
+    {"name":"fontclock.hourscriber.js","url":"fontclock.hourscriber.js"},
+    {"name":"fontclock.font.js","url":"fontclock.font.js"},
+    {"name":"fontclock.font.abril_ff50.js","url":"fontclock.font.abril_ff50.js"},
+    {"name":"fontclock.font.cpstc58.js","url":"fontclock.font.cpstc58.js"},
+    {"name":"fontclock.font.mntn25.js","url":"fontclock.font.mntn25.js"},
+    {"name":"fontclock.font.mntn50.js","url":"fontclock.font.mntn50.js"},
+    {"name":"fontclock.font.vector25.js","url":"fontclock.font.vector25.js"},
+    {"name":"fontclock.font.vector50.js","url":"fontclock.font.vector50.js"}
+  ]
+}

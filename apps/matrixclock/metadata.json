@@ -1,0 +1,17 @@
+{
+  "id": "matrixclock",
+  "name": "Matrix Clock",
+  "version": "0.03",
+  "description": "inspired by The Matrix, a clock of the same style",
+  "icon": "matrixclock.png",
+  "screenshots": [{"url":"screenshot_matrix.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"matrixclock.app.js","url":"matrixclock.js"},
+    {"name":"matrixclock.img","url":"matrixclock-icon.js","evaluate":true}
+  ]
+}

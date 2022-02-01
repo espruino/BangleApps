@@ -1,0 +1,14 @@
+{
+  "id": "widgps",
+  "name": "GPS Widget",
+  "version": "0.03",
+  "description": "Tiny widget to show the power on/off status of the GPS",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,gps",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widgps.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,4 +1,4 @@
 0.01: New App!
 0.02: Respect Quiet Mode
-0.03: available for BangleJS2
-      added support for qalarms
+0.03: Add compatibility for Bangle.js 2 and new firmware, added "Alarm at " for the alarm time
+0.04: added support for qalarms

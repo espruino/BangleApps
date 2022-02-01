@@ -11,13 +11,10 @@ function Maze(n) {
   this.margin = Math.floor((g.getHeight()-this.total_length)/2);
   this.ball_x = 0;
   this.ball_y = 0;
-  this.clearScreen = function() {
-    g.clearRect(
-      0, this.margin,
-      g.getWidth(), this.margin+this.total_length
-    );
-  };
-  this.clearScreen();
+  // This voodoo is needed because otherwise
+  // bottom line widgets (like digital clock)
+  // disappear during maze generation
+  Bangle.drawWidgets();
   g.setColor(g.theme.fg);
   for (let i=0; i<=n; i++) {
     g.drawRect(
@@ -35,21 +32,56 @@ function Maze(n) {
     this.walls[cell] = WALL_RIGHT|WALL_DOWN;
     this.groups[cell] = cell;
   }
+  // Candidates of walls to break when digging the maze.
+  // If candidate failed (breaking it would create a loop),
+  // it would never succeed, so no need to retry it.
+  let candidates_down = [],
+      candidates_right = [];
+  for (let r=0 ; r<n; r++) {
+    for (let c=0; c<n; c++) {
+      let cell = n*r+c;
+      if (r<(n-1)) { // Don't break wall down for bottom row.
+        candidates_down.push(cell);
+      }
+      if (c<(n-1)) { // Don't break wall right for rightmost column.
+        candidates_right.push(cell);
+      }
+    }
+  }
   let from_group, to_group;
   let ngroups = n*n;
   while (--ngroups) {
     // Abort if BTN1 pressed [grace period for menu]
     // (for some reason setWatch() fails inside constructor)
-    if (ngroups<n*n-4 && digitalRead(BTN1)) {
+    if (ngroups<n*n-16 && digitalRead(BTN1)) {
       aborting = true;
       return;
     }
     from_group = to_group = -1;
     while (from_group<0) {
-      if (Math.random()<0.5) { // try to break a wall right
-        let r = Math.floor(Math.random()*n);
-        let c = Math.floor(Math.random()*(n-1));
-        let cell = r*n+c;
+      let trying_down = false;
+      if (Math.random()<0.5 && candidates_down.length || !candidates_right.length) {
+        trying_down = true;
+      }
+      let candidates = trying_down ? candidates_down : candidates_right,
+          candidate_index = Math.floor(Math.random()*candidates.length),
+          cell = candidates.splice(candidate_index, 1)[0],
+          r = Math.floor(cell/n),
+          c = cell%n;
+      if (trying_down) { // try to break a wall down
+        if (this.groups[cell]!=this.groups[cell+n]) {
+          this.walls[cell] &= ~WALL_DOWN;
+          g.clearRect(
+              this.margin+c*this.wall_length+1,
+              this.margin+(r+1)*this.wall_length,
+              this.margin+(c+1)*this.wall_length-1,
+              this.margin+(r+1)*this.wall_length
+          );
+          g.flip(); // show progress.
+          from_group = this.groups[cell];
+          to_group = this.groups[cell+n];
+        }
+      } else { // try to break a wall right
         if (this.groups[cell]!=this.groups[cell+1]) {
           this.walls[cell] &= ~WALL_RIGHT;
           g.clearRect(
@@ -62,21 +94,6 @@ function Maze(n) {
           from_group = this.groups[cell];
           to_group = this.groups[cell+1];
         }
-      } else { // try to break a wall down
-        let r = Math.floor(Math.random()*(n-1));
-        let c = Math.floor(Math.random()*n);
-        let cell = r*n+c;
-        if (this.groups[cell]!=this.groups[cell+n]) {
-          this.walls[cell] &= ~WALL_DOWN;
-          g.clearRect(
-              this.margin+c*this.wall_length+1,
-              this.margin+(r+1)*this.wall_length,
-              this.margin+(c+1)*this.wall_length-1,
-              this.margin+(r+1)*this.wall_length
-          );
-          from_group = this.groups[cell];
-          to_group = this.groups[cell+n];
-        }
       }
     }
     for (let cell = 0; cell<n*n; cell++) {
@@ -85,11 +102,6 @@ function Maze(n) {
       }
     }
   }
-  this.clearScreen = function() {
-    g.clearRect(
-      0, MARGIN, g.getWidth(), g.getHeight()-MARGIN-1
-    );
-  };
   this.clearCell = function(r, c) {
     if (!r && !c) {
       g.setColor("#ffff00");
@@ -243,7 +255,7 @@ let mazeMenu = {
   "< Exit": function() { setTimeout(load, 100); } // timeout voodoo prevents deadlock
 };
 
-g.clear(true);
+g.reset();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLocked(false);
@@ -253,7 +265,6 @@ let maze_interval = setInterval(
   function() {
     if (maze) {
       if (digitalRead(BTN1) || maze.status==STATUS_ABORTED) {
-        console.log(`aborting ${start_time}`);
         maze = null;
         start_time = duration = 0;
         aborting = false;
@@ -270,7 +281,7 @@ let maze_interval = setInterval(
         duration = Date.now()-start_time;
         g.setFontAlign(0,0).setColor(g.theme.fg);
         g.setFont("Vector",18);
-        g.drawString(`Solved in\n ${timeToText(duration)} \nClick to play again`, g.getWidth()/2, g.getHeight()/2, true);
+        g.drawString(`Solved ${maze.n}X${maze.n} in\n ${timeToText(duration)} \nBtn1 to play again`, g.getWidth()/2, g.getHeight()/2, true);
       }
     }
   }, 25);

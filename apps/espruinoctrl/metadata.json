@@ -1,0 +1,16 @@
+{
+  "id": "espruinoctrl",
+  "name": "Espruino Control",
+  "shortName": "Espruino Ctrl",
+  "version": "0.01",
+  "description": "Send commands to other Espruino devices via the Bluetooth UART interface. Customisable commands!",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"espruinoctrl.app.js"},
+    {"name":"espruinoctrl.img","url":"app-icon.js","evaluate":true}
+  ]
+}

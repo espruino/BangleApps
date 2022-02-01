@@ -1,0 +1,16 @@
+{
+  "id": "impwclock",
+  "name": "Imprecise Word Clock",
+  "version": "0.05",
+  "description": "Imprecise word clock for vacations, weekends, and those who never need accurate time.",
+  "icon": "clock-impword.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"bangle1-impercise-word-clock-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"impwclock.app.js","url":"clock-impword.js"},
+    {"name":"impwclock.img","url":"clock-impword-icon.js","evaluate":true}
+  ]
+}

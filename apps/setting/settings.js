@@ -221,7 +221,7 @@ function showThemeMenu() {
     m.draw();
   }
   var m = E.showMenu({
-    '':{title:'Theme'},
+    '':{title:/*LANG*/'Theme'},
     '< Back': ()=>showSystemMenu(),
     /*LANG*/'Dark BW': ()=>{
       upd({

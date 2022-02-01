@@ -1,0 +1,19 @@
+{
+  "id": "recorder",
+  "name": "Recorder (BETA)",
+  "shortName": "Recorder",
+  "version": "0.07",
+  "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
+  "icon": "app.png",
+  "tags": "tool,outdoors,gps,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"recorder.app.js","url":"app.js"},
+    {"name":"recorder.img","url":"app-icon.js","evaluate":true},
+    {"name":"recorder.wid.js","url":"widget.js"},
+    {"name":"recorder.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"recorder.json"},{"wildcard":"recorder.log?.csv","storageFile":true}]
+}

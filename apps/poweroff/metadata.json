@@ -1,0 +1,15 @@
+{ "id": "poweroff",
+"name": "Poweroff",
+"shortName":"Poweroff",
+"version":"0.01",
+"description": "Simple app to power off your Bangle.js",
+"icon": "app.png",
+"tags": "tool, poweroff, shutdown",
+"supports" : ["BANGLEJS", "BANGLEJS2"],
+"readme": "README.md",
+"allow_emulator": true,
+"storage": [
+  {"name":"poweroff.app.js","url":"app.js"},
+  {"name":"poweroff.img","url":"app-icon.js","evaluate":true}
+]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "tapelauncher",
+  "name": "Tape Launcher",
+  "version": "0.02",
+  "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
+  "icon": "icon.png",
+  "type": "launch",
+  "tags": "tool,system,launcher",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"tapelauncher.app.js","url":"app.js"},
+    {"name":"tapelauncher.img","url":"icon.js","evaluate":true}
+  ]
+}

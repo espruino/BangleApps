@@ -1,0 +1,13 @@
+{
+  "id": "mmonday",
+  "name": "Manic Monday Tone",
+  "version": "0.02",
+  "description": "The Bangles make a comeback",
+  "icon": "manic-monday-icon.png",
+  "tags": "sound",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"mmonday.app.js","url":"manic-monday.js"},
+    {"name":"mmonday.img","url":"manic-monday-icon.js","evaluate":true}
+  ]
+}

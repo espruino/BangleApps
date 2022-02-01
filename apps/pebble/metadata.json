@@ -1,0 +1,19 @@
+{
+  "id": "pebble",
+  "name": "Pebble Clock",
+  "shortName": "Pebble",
+  "version": "0.07",
+  "description": "A pebble style clock to keep the rebellion going",
+  "dependencies": {"widpedom":"app"},
+  "readme": "README.md",
+  "icon": "pebble.png",
+  "screenshots": [{"url":"pebble_screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"pebble.app.js","url":"pebble.app.js"},
+    {"name":"pebble.settings.js","url":"pebble.settings.js"},
+    {"name":"pebble.img","url":"pebble.icon.js","evaluate":true}
+  ]
+}

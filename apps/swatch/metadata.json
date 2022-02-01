@@ -1,0 +1,17 @@
+{
+  "id": "swatch",
+  "name": "Stopwatch",
+  "version": "0.07",
+  "description": "Simple stopwatch with Lap Time logging to a JSON file",
+  "icon": "stopwatch.png",
+  "tags": "health",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-stopwatch-screenshot.png"}],
+  "storage": [
+    {"name":"swatch.app.js","url":"stopwatch.js"},
+    {"name":"swatch.img","url":"stopwatch-icon.js","evaluate":true}
+  ]
+}

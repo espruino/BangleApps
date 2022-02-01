@@ -1,0 +1,15 @@
+{
+  "id": "binclock",
+  "name": "Binary Clock",
+  "shortName": "Binary Clock",
+  "version": "0.03",
+  "description": "A binary clock with hours and minutes. BTN1 toggles a digital clock.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock,binary",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"binclock.app.js","url":"app.js"},
+    {"name":"binclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}
