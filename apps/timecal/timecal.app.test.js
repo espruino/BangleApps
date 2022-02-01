@@ -17,19 +17,19 @@ class TimeCalClock{
       this._settings = require("Storage").readJSON("timecal.settings.json", 1) || {};
 
     const defaults = {
-      showDate:"l", //(n)one, (l)ocale, (m)onth short(y)ear(w)eek
-      
-      wdStrt:1, //identical to getDay() 0->Su, 1->Mo, ... //Issue #1154: weekstart So/Mo,
+      shwDate:1, //0:none, 1:locale, 2:month, 3:monthshort.year #week
+        
+      wdStrt:0, //identical to getDay() 0->Su, 1->Mo, ... //Issue #1154: weekstart So/Mo, -1 for use today
 
-      todayNumClr:"#00E",
-      todayMrker:"r", //(n)one, (c)ircle, (r)ect, (f)illed
-      todayMrkClr:"#0E0",
-      todayMrkMrkPxl:3,
+      tdyNumClr:3, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      tdyMrkr:0, //0:none, 1:circle, 2:rectangle, 3:filled
+      tdyMrkClr:2, //1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      tdyMrkPxl:3, //px
 
-      suColor:"#E00", //sunday
-      phColor:"#E00", //public holiday
+      suClr:1, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
+      //phColor:"#E00", //public holiday
 
-      calBorder:true
+      calBrdr:false 
     };
     for (const k in this._settings) if (!defaults.hasOwnProperty(k)) delete this._settings[k]; //remove invalid settings
     for (const k in defaults) if(!this._settings.hasOwnProperty(k)) this._settings[k] = defaults[k]; //assign missing defaults
@@ -39,7 +39,21 @@ class TimeCalClock{
     Bangle.loadWidgets();
     Bangle.drawWidgets();
 
-    this.center_x = Bangle.appRect.w/2;
+    this.centerX = Bangle.appRect.w/2;
+    this.nrgb = [g.theme.fg, "#E00", "#0E0", "#00E"]; //fg, r ,g , b
+
+    this.ABR_DAY=[];
+    if (require("locale") && require("locale").dow)
+      for (let d=0; d<=6; d++) {
+        var refDay=new Date();
+        refDay.setFullYear(1972);
+        refDay.setMonth(0);
+        refDay.setDate(2+d);
+        this.ABR_DAY.push(require("locale").dow(refDay));
+
+      }
+    else
+      this.ABR_DAY=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   }
 
   /**
@@ -55,7 +69,10 @@ class TimeCalClock{
   **/
   draw(){
     this.drawTime();
-  }
+
+    if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
+      this.drawDateAndCal();
+    }
 
   /**
    * draw given or current time from date
@@ -64,7 +81,6 @@ class TimeCalClock{
    */
   drawTime(){
     d=this.date ? this.date : new Date();
-    console.log("drawTime", d);
     const Y=Bangle.appRect.y+this.DATE_FONT_SIZE()+10;
 
     d=d?d :new Date();
@@ -73,13 +89,10 @@ class TimeCalClock{
     g.setFont("Vector", this.TIME_FONT_SIZE());
     g.setColor(g.theme.fg);
     g.clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7);
-    g.drawString(("0" + require("locale").time(d, 1)).slice(-5), this.center_x, Y);
+    g.drawString(("0" + require("locale").time(d, 1)).slice(-5), this.centerX, Y);
     //.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7); //DEV-Option
 
-    setTimeout(this.drawTime.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
-    if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
-      this.drawDateAndCal();
-    this.TZOffset=d.getTimezoneOffset();
+    setTimeout(this.draw.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
   }
 
   /**
@@ -89,11 +102,12 @@ class TimeCalClock{
   drawDateAndCal(){
     d=this.date ? this.date : new Date();
 
-    if (this.tOutD) //abort exisiting
-      clearTimeout(this.tOutD);
-
+    this.TZOffset=d.getTimezoneOffset();
     this.drawDate();
     this.drawCal();
+
+    if (this.tOutD) //abort exisiting
+      clearTimeout(this.tOutD);
     this.tOutD=setTimeout(this.drawDateAndCal.bind(this), 86400000-(d.getHours()*24*60*1000)-(d.getMinutes()*60*1000)-d.getSeconds()-d.getMilliseconds());
   }
   
@@ -107,9 +121,9 @@ class TimeCalClock{
     const Y=Bangle.appRect.y;
     var render=false;
     var dateStr = "";
-    console.log(this.settings().showDate);
-    if (this.settings().showDate!=="n");
-      for (let c of this.settings().showDate) { //add part as configured
+    if (this.settings().shwDate>0) { //skip if exactly -none
+      const dateSttngs = ["","l","M","m.Y #W"];
+      for (let c of dateSttngs[this.settings().shwDate]) { //add part as configured
         switch (c){
           case "l":{ //locale
             render=true;
@@ -121,12 +135,26 @@ class TimeCalClock{
             dateStr+=require("locale").month(d,1);
             break;
           }
-          case "y":{ //year e.g. 2022
+          case "M":{ //month e.g. January
+            render=true;
+            dateStr+=require("locale").month(d,0);
+            break;
+          }
+          case "y":{ //year e.g. 22
+            render=true;
+            dateStr+=d.getFullYear().slice(-2);
+            break;
+          }
+          case "Y":{ //year e.g. 2022
             render=true;
             dateStr+=d.getFullYear();
             break;
           }
-          case "w":{ //week e.g. #02
+          case "w":{ //week e.g. #2
+            dateStr+=(this.ISO8601calWeek(d));
+            break;
+          }
+          case "W":{ //week e.g. #02
             dateStr+=("0"+this.ISO8601calWeek(d)).slice(-2);
             break;
           }
@@ -136,12 +164,13 @@ class TimeCalClock{
             break; //noop
         }
       }
+    }
     if (render){
       g.clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3);
       g.setFont("Vector", FONT_SIZE);
       g.setColor(g.theme.fg);
       g.setFontAlign(0, -1);
-      g.drawString(dateStr,this.center_x,Y);
+      g.drawString(dateStr,this.centerX,Y);
     }
     //g.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3); //DEV-Option
   }
@@ -161,19 +190,20 @@ class TimeCalClock{
   
     g.clearRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H);
 
-    var dNames=[];
-    if (require("locale") && require("locale").abday)
-      dNames=require("locale").abday.map((a) => a.length>2 ? a.substr(0, 2) : a ); //retrieve from locale and force max 2 chars
-    else
-      dNames=["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]; //fallback
-
     g.setFont("Vector", DAY_NAME_FONT_SIZE);
     g.setColor(g.theme.fg);
     g.setFontAlign(-1, -1);
 
+
     //draw grid & Headline
+    const dNames = this.ABR_DAY.map((a) => a.length<=2 ? a : a.substr(0, 2)); //force shrt 2
     for(var dNo=0; dNo<dNames.length; dNo++){
-      const dName=dNames[(dNo+this.settings().wdStrt)%7];
+      const dIdx=this.settings().wdStrt>=0 ? (dNo+this.settings().wdStrt)%7 : (dNo+d.getDay()+4)%7;
+      const dName=dNames[dIdx];
+      if (dIdx==0) //sunday colorize txt
+        g.setColor(this.nrgb[this.settings().suClr]);
+      else
+        g.setColor(g.theme.fg);
       g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1); //center Names
       if(dNo>0)
         g.drawLine(dNo*CELL_W, CAL_Y, dNo*CELL_W, CAL_Y+CAL_AREA_H-1);
@@ -189,33 +219,33 @@ class TimeCalClock{
     g.setFont("Vector", DAY_NUM_FONT_SIZE);
     
     //write days
-    const todayDate=d.getDate();
-    const days=7+(7+d.getDay()-this.settings().wdStrt)%7;//start day (week before=7 days + days in this week realtive to week start)
-    var rD=new Date();
+    const tdyDate=d.getDate();
+    const days=this.settings().wdStrt>=0 ? 7+((7+d.getDay()-this.settings().wdStrt)%7) : 10;//start day (week before=7 days + days in this week realtive to week start) or fixed 7+3 days
+    var rD=new Date(d.getTime());
     rD.setDate(rD.getDate()-days);
     var rDate=rD.getDate();
     for(var y=0; y<3; y++){ 
       for(var x=0; x<dNames.length; x++){
-        if(rDate===todayDate){ //today
-          g.setColor(this.settings().todayMrkClr ? this.settings().todayMrkClr : g.theme.fg); //today marker color or fg color
-          switch(this.settings().todayMrker){ //today marker
-            case "c": 
-              for(m=1; m<=this.settings().todayMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
-                g.drawCircle(x*CELL_W+(CELL_W/2), nextY+(CELL_H*y)+(CELL_H/2), Math.min((CELL_W-m)/2, (CELL_H-m)/2));
+        if(rDate===tdyDate){ //today
+          g.setColor(this.nrgb[this.settings().tdyMrkClr]); //today marker color or fg color
+          switch(this.settings().tdyMrkr){ //0:none, 1:circle, 2:rectangle, 3:filled
+            case 1: 
+              for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
+                g.drawCircle(x*CELL_W+(CELL_W/2)+1, nextY+(CELL_H*y)+(CELL_H/2)+1, Math.min((CELL_W-m)/2, (CELL_H-m)/2)-2);
               break;
-            case "r": 
-              for(m=1; m<=this.settings().todayMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
+            case 2: 
+              for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
                 g.drawRect(x*CELL_W+m, nextY+CELL_H+m, x*CELL_W+CELL_W-m, nextY+CELL_H+CELL_H-m);
               break;
-            case "f":
+            case 3:
               g.fillRect(x*CELL_W+1, nextY+CELL_H+1, x*CELL_W+CELL_W-1, nextY+CELL_H+CELL_H-1);
               break;
             default:
               break;
           }
-          g.setColor(this.settings().todayNumClr ? this.settings().todayNumClr : g.theme.fg); //today color or fg color
-        }else if(this.settings().suColor && rD.getDay()==0){ //sundays
-          g.setColor(this.settings().suColor);
+          g.setColor(this.nrgb[this.settings().tdyNumClr]); //today color or fg color
+        }else if(this.settings().suClr && rD.getDay()==0){ //sundays
+          g.setColor(this.nrgb[this.settings().suClr]);
         }else{ //default
           g.setColor(g.theme.fg);
         }
@@ -246,10 +276,15 @@ class TimeCalClock{
     }
     return Number(1 + Math.ceil((firstThursday - tdt) / 604800000));
   }
- 
-}
+ }
 
-//Copy above the src code of clock-app and load via espruino WEB IDE
+//*************************************************************************************
+//*************************************************************************************
+//*************************************************************************************
+//Copy ABOVE the src code of clock-app and load via espruino WEB IDE
+//*************************************************************************************
+//*************************************************************************************
+//*************************************************************************************
 
 /**
  * Severity for logging
@@ -260,7 +295,7 @@ class TimeCalClock{
   WARNING:    3,
   ERROR:      2,
   EXCEPTION:  1
-}
+};
 
 /**
  * Exception: Mandatory Field not provided
@@ -326,7 +361,6 @@ class TestSetting extends Test{
   TEST_SETTING_SAMPLE() {
     return {
       setting:       "<settingName>",
-      functionNames: ["required, <function under test>", "..."],
       cases: [
         { 
           value:            "required,<settingValue>",
@@ -335,8 +369,11 @@ class TestSetting extends Test{
           afterText:        "optional,<textToDisplayAfterTest>",
           afterExpression:  "optional,<expressionExpectedTrue>"
         }
-      ]
-    }
+      ],
+      constructorParams: ["optional: <cpar1>","|TEST_SETTINGS|","..."], //TEST_SETTINGS will be replcaed with each current {setting: case}
+      functionNames: ["required, <function under test>", "..."],
+      functionParams: ["optional: <fpar1>","|TEST_SETTINGS|","..."]
+    };
   }
 
   constructor(data){
@@ -344,7 +381,6 @@ class TestSetting extends Test{
     this._validate(data);
 
     this.setting = data.setting;
-    this.methodNames = data.functionNames;
     this.cases = data.cases.map((entry) => {
       return {
         value:              entry.value,
@@ -354,6 +390,9 @@ class TestSetting extends Test{
         afterExpression:    entry.afterExpression||true
       };
     });
+    this.constructorParams = data.constructorParams;
+    this.functionNames = data.functionNames;
+    this.functionParams = data.functionParams;
   }
 
   /**
@@ -362,11 +401,11 @@ class TestSetting extends Test{
   _validate(data){
     //validate given config
     if (!data.setting) throw new EmptyMandatoryError("setting", data, this.TEST_SETTING_SAMPLE());
-    if (!data.cases instanceof Array || data.cases.length==0) throw new EmptyMandatoryError("cases", data, this.TEST_SETTING_SAMPLE());
-    if (!data.functionNames instanceof Array || data.functionNames==0) throw new EmptyMandatoryError("functionNames", data, this.TEST_SETTING_SAMPLE());
+    if (!(data.cases instanceof Array) || data.cases.length==0) throw new EmptyMandatoryError("cases", data, this.TEST_SETTING_SAMPLE());
+    if (!(data.functionNames instanceof Array) || data.functionNames==0) throw new EmptyMandatoryError("functionNames", data, this.TEST_SETTING_SAMPLE());
 
     data.cases.forEach((entry,idx) => {
-      if (!entry.value) throw new EmptyMandatoryError("cases["+idx+"].value", entry, this.TEST_SETTING_SAMPLE());
+      if (entry.value === undefined) throw new EmptyMandatoryError("cases["+idx+"].value", entry, this.TEST_SETTING_SAMPLE());
     });
   }
 }
@@ -398,8 +437,8 @@ class BangleTestRunner{
    * add a Setting Test, return instance for chaining
    * @param {TestSetting}
    */
-  addSetting(test) {
-    this.tests.push(test);
+  addTestSettings(sttngs) {
+    this.tests.push(new TestSetting(sttngs));
     return this;
   }
 
@@ -416,14 +455,16 @@ class BangleTestRunner{
         this._afterCase();
       } 
       this._afterTest();
-    };
+      this._firstCase();
+    }
+    this._exit();
   }
 
   /**
-   * global prepare
+   * global prepare - before all test
    */
   _init() {
-    console.log(new Date(),">>init");
+    console.log(this._nowTime(), ">>init");
     this.currentTestNum=-1;
     this.currentCaseNum=-1;
   }
@@ -432,78 +473,69 @@ class BangleTestRunner{
    * before each test
    */
   _beforeTest() {
-    console.log(new Date(),">>test #" + this.currentTestNum);
+    console.log(this._nowTime(), ">>test #" + this.currentTestNum);
   }
 
   /**
    * befor each testcase
    */
   _beforeCase() {
-    console.log(new Date(),">>case #" + this.currentTestNum + "." + this.currentCaseNum + "/" + (this.currentTest.cases.length-1));
-    if (this.currentTest instanceof TestSetting) {
-      console.log(
-        this.currentTest.setting + "="+this.currentCase.value+"\n"+
-        this.currentCase.beforeTxt ? "testcase: " + this.currentCase.beforeTxt : ""
+    console.log(this._nowTime(), ">>case #" + this.currentTestNum + "." + this.currentCaseNum + "/" + (this.currentTest.cases.length-1));
+    if (this.currentTest instanceof TestSetting)
+      console.log(this.currentTest.setting+"="+this.currentCase.value+"\n"
+        +this.currentCase.beforeTxt ? "testcase:"+this.currentCase.beforeTxt : ""
       );
-    }
   }
 
+  /**
+   * testcase runner
+   */
   _runCase() {
-    console.log(new Date(), ">>running...");
+    console.log(this._nowTime(), ">>running...");
     var returns = [];
-    this.currentTest.methodNames.forEach((methodName) => {
-      var instance = eval("new " + this.oClass + "");
-      console.log(instance);
-      const method = instance[methodName];
-      //console.log(">>"+this.oClass+"["+methodName+"]()");
-      //if (typeof method !== "function")
-      //  throw new InvalidMethodName(this.oClass, methodName);
-      let settings={}; settings[this.currentTest.setting] = this.currentCase.value;
-      returns.push(new TimeCalClock(new Date(), settings).drawDate());
-      //returns.push(method());
-      console.log("<<"+this.oClass+"["+methodName+"]()");
-      g.dump()
+    this.currentTest.functionNames.forEach((fName) => {
+      var settings={}; settings[this.currentTest.setting] = this.currentCase.value;
+      var cParams = this.currentTest.constructorParams||[]; 
+      cParams = cParams.map((v) => (v && v instanceof String && v==="|TEST_SETTINGS|") ? settings : v);//replace settings in call params
+      var fParams = this.currentTest.functionParams||[];
+      fParams = fParams.map((v) => (v && v instanceof String && v==="|TEST_SETTINGS|") ? settings : v);//replace settings in call params
+
+      var creatorFunc = new Function("console.log('Constructor params:', arguments); return new " + this.oClass + "(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4],arguments[5],arguments[6],arguments[7],arguments[8],arguments[9])"); //prepare spwan arguments[0],arguments[1]
+      let instance = creatorFunc.call(this.oClass, cParams[0], cParams[1], cParams[2], cParams[3], cParams[4], cParams[5], cParams[6], cParams[7], cParams[8], cParams[9]); //spwan
+
+      console.log(">>"+this.oClass+"["+fName+"]()");
+      
+      console.log('Instance:', instance);
+      console.log('Function params:', fParams);
+      returns.push(instance[fName](fParams[0], fParams[1], fParams[2], fParams[3], fParams[4], fParams[5], fParams[6], fParams[7], fParams[8], fParams[9])); //run method and store result
+      g.dump();
+      console.log("<<"+this.oClass+"["+fName+"]()");
     });
-    
-    //this._delay(1).then((result) => console.log(new Date(), "finished"));
-    //g.dump(); 
-    /*var testCaseNum=0;
-    test.cases.forEach(testcase => { //execute test
-      testcase.dates.forEach(date => { //spawn with each date
-        testCaseNum++;
-        E.showMessage(
-          "="+testcase.value+"\n"
-          +"expected: "+testcase.descr, 
-          "#"+testCaseNum+": "+test.setting
-        );
-        this._delay(TESTCASE_MSG_TIMEOUT).then((r,e) => {
-          const objUnderTest = new Object.create(this.ObjClass)(date, new Object()[test.setting]=test.value );
-          objUnderTest.draw();
-          this._delay(TESTCASE_RUN_TIMEOUT).then((r,e) => {
-          });
-        });
-      });
-    });*/
-    console.log(new Date(), "<<...running");
+    console.log(this._nowTime(), "<<...running");
   }
 
+  /**
+   * after each testcase
+   */
   _afterCase() {
-    if (this.currentTest instanceof TestSetting) {
-      if (this.currentCase.afterTxt.length>0) {
-        console.log(
-          "--EXPECTED: " + this.currentCase.afterTxt
-        );
-      }
-    }
-    console.log(new Date(), "<<case #" + this.currentTestNum + "." + this.currentCaseNum + "/" + (this.currentTest.cases.length-1));
+    if (this.currentTest instanceof TestSetting)
+      if (this.currentCase.afterTxt.length>0)
+        console.log("++EXPECTED:" + this.currentCase.afterTxt + "EXPECTED++");
+    console.log(this._nowTime(), "<<case #" + this.currentTestNum + "." + this.currentCaseNum + "/" + (this.currentTest.cases.length-1));
   }
 
+  /**
+   * after each test
+   */
   _afterTest() {
-    console.log(new Date(), "<<test #" + this.currentTestNum);
+    console.log(this._nowTime(), "<<test #" + this.currentTestNum);
   }
 
+  /**
+   * after all tests
+   */
   _exit() {
-    console.log(new Date(), "<<exit");
+    console.log(this._nowTime(), "<<exit");
   }
 
   /**
@@ -524,43 +556,246 @@ class BangleTestRunner{
 
   _nextTest() {
     if (this.currentTestNum>=-1 && (this.currentTestNum+1)<this.tests.length) {
-      this.currentTestNum++;
-      this.currentTest = this.tests[this.currentTestNum];
+      this.currentTestNum++; this.currentTest = this.tests[this.currentTestNum];
       return true;
     }
     return false;
+  }
+
+  _firstCase() {
+    this.currentCaseNum=-1;
   }
 
   _nextCase() {
     if (this.currentCaseNum>=-1 && (this.currentCaseNum+1)<this.currentTest.cases.length) {
-      this.currentCaseNum++;
-      this.currentCase = this.currentTest.cases[this.currentCaseNum];
+      this.currentCaseNum++; this.currentCase = this.currentTest.cases[this.currentCaseNum];
       return true;
     }
     return false;
   }
+
+  _nowTime() {
+    d = new Date();
+    return(("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2) + "." + ("00" + d.getMilliseconds()).slice(-3))
+  }
 }
 /**
- * Settings
+ * TEST all Settings
  */
-
-const SHOW_DATE_TESTS =
-  { 
-    setting:       "showDate",
-    functionNames: ["drawDate"],
+const SUNDAY = 
+new BangleTestRunner("TimeCalClock", LogSeverity.INFO)
+  /*
+  .addTestSettings({ 
+    setting:       "shwDate",
     cases: [
-      { value: "n",      beforeTxt:"No date display?",        afterTxt: "top area should be 'emtpy'",   params:[new Date()]                },
-      { value: "l",      beforeTxt:"Locale date display?",    afterTxt: "date should be 06/05/1234",    params:[new Date(1234,5,6,7,8,9)]  },
-      { value: "m",      beforeTxt:"Month shortname?",        afterTxt: "date should be Jun",           params:[new Date(1234,5,6,7,8,9)]  },
-      { value: "m.y #w", beforeTxt:"Month short year week#",  afterTxt: "date should be Jun.1234 #23",  params:[new Date(1234,5,6,7,8,9)]  }
-    ]
-  };
-bangleTestRunner = new BangleTestRunner("TimeCalClock", LogSeverity.INFO)
-  .addSetting(new TestSetting(SHOW_DATE_TESTS))
-  .execute();
+      { value: 0, beforeTxt:"No date display?",            afterTxt: "top area should be 'emtpy'" },
+      { value: 1, beforeTxt:"Locale date display?",        afterTxt: "date should be 06/05/1234"  },
+      { value: 2, beforeTxt:"Month longname?",             afterTxt: "date should be June"        },
+      { value: 3, beforeTxt:"Monthshort yearshort #week",  afterTxt: "date should be Jun.34 #23"  }
+    ],
+    constructorParams: [new Date(1234,5,6,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawDate"],
+    functionParams: [],
+  })
+  */
+  /*
+  .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,3,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+  .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,4,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+   .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,5,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+   .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,6,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+   .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,7,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+   .addTestSettings({ 
+    setting:       "wdStrt",
+    cases: [
+      { value:  0, beforeTxt:"Week start Sunday?"     , afterTxt: "Calendar first day is Sunday" },
+      { value:  1, beforeTxt:"Week start Monday?"     , afterTxt: "Calendar first day is Monday"},
+      { value:  2, beforeTxt:"Week start Tuesday?"    , afterTxt: "Calendar first day is Tuesday"},
+      { value:  3, beforeTxt:"Week start Wednesday?"  , afterTxt: "Calendar first day is Wednesday"},
+      { value:  4, beforeTxt:"Week start Thursday?"   , afterTxt: "Calendar first day is Thursday"},
+      { value:  5, beforeTxt:"Week start Friday?"     , afterTxt: "Calendar first day is Friday"},
+      { value:  6, beforeTxt:"Week start Saturday?"   , afterTxt: "Calendar first day is Saturday"},
+    ],
+    constructorParams: [new Date(1234,5,8,7,8,9),"|TEST_SETTINGS|"],
+    functionNames: ["drawCal"],
+    functionParams: [],
+  })
+  */
   
-/**
- * Clock
- */
+  /*
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Sunday in mid?"     , afterTxt: "Calendar focus today: Sunday" },
+      ],
+      constructorParams: [new Date(1234,5,3,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Monday in mid?"     , afterTxt: "Calendar focus today: Monday" },
+      ],
+      constructorParams: [new Date(1234,5,4,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Tuesday in mid?"     , afterTxt: "Calendar focus today: Tuesday" },
+      ],
+      constructorParams: [new Date(1234,5,5,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Wednesday in mid?"     , afterTxt: "Calendar focus today: Wednesday" },
+      ],
+      constructorParams: [new Date(1234,5,6,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Thursday in mid?"     , afterTxt: "Calendar focus today: Thursday" },
+      ],
+      constructorParams: [new Date(1234,5,7,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Friday in mid?"     , afterTxt: "Calendar focus today: Friday" },
+      ],
+      constructorParams: [new Date(1234,5,8,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+  .addTestSettings({ 
+      setting:       "wdStrt",
+      cases: [
+        { value: -1, beforeTxt:"Saturday in mid?"     , afterTxt: "Calendar focus today: Saturday" },
+      ],
+      constructorParams: [new Date(1234,5,9,7,8,9),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+    */
 
- 
+    /*
+    .addTestSettings({ 
+      setting:       "tdyNumClr",
+      cases: [
+        { value: 1, beforeTxt:"Today color: red?"    , afterTxt: "Today is marked red" },
+        { value: 2, beforeTxt:"Today color: green?"  , afterTxt: "Today is marked green" },
+        { value: 3, beforeTxt:"Today color: blue?"   , afterTxt: "Today is marked blue" },
+      ],
+      constructorParams: [new Date(),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+    */
+
+    /*
+    .addTestSettings({ 
+      setting:       "tdyMrkr",
+      cases: [
+        { value: 1, beforeTxt:"Today highlight cricle?"     , afterTxt: "Today circled." },
+        { value: 2, beforeTxt:"Today highlight rectangle?"  , afterTxt: "Today rectangled." },
+        { value: 3, beforeTxt:"Today highlight filled?"     , afterTxt: "Today filled." },
+      ],
+      constructorParams: [new Date(),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+    */
+
+    /*
+    .addTestSettings({ 
+      setting:       "suClr",
+      cases: [
+        { value: 1, beforeTxt:"Sundays color: red?"    , afterTxt: "Sundays are red" },
+        { value: 2, beforeTxt:"Sundays color: green?"  , afterTxt: "Sundays are green" },
+        { value: 3, beforeTxt:"Sundays color: blue?"   , afterTxt: "Sundays are blue" },
+      ],
+      constructorParams: [new Date(),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+    */
+   .execute();
