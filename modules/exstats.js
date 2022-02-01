@@ -55,6 +55,7 @@ var state = {
   lastGPS:{}, thisGPS:{}, // This & previous GPS readings
   // distance : 0, ///< distance in meters
   // avrSpeed : 0, ///< speed over whole run in m/sec
+  // curSpeed : 0, ///< current (but averaged speed) in m/sec
   startSteps : Bangle.getStepCount(), ///< number of steps when we started
   lastSteps : Bangle.getStepCount(), // last time 'step' was called
   stepHistory : new Uint8Array(60), // steps each second for the last minute (0 = current minute)
@@ -102,14 +103,15 @@ Bangle.on("GPS", function(fix) {
   if (!fix.fix) return; // only process actual fixes
 
   if (!state.active) return;
-  if( state.lastGPS.fix)
+  state.lastGPS = state.thisGPS;
+  state.thisGPS = fix;
+  if (state.lastGPS.fix)
     state.distance += calcDistance(state.lastGPS, fix);
   if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
   var duration = Date.now() - state.startTime; // in ms
   state.avrSpeed = state.distance * 1000 / duration; // meters/sec
+  state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2*3.6; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
-  state.lastGPS = state.thisGPS;
-  state.thisGPS = fix;
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
 });
@@ -192,16 +194,16 @@ exports.getStats = function(statIDs, options) {
     needGPS = true;
     stats["pacec"]={
       title : "C Pace",
-      getValue : function() { return (state.thisGPS.speed||0)/3.6; }, // in m/sec
-      getString : function() { return formatPace(this.getValue(), options.paceLength); },
+      getValue : function() { return state.curSpeed; }, // in m/sec
+      getString : function() { return formatPace(state.curSpeed, options.paceLength); },
     };
   }
   if (statIDs.includes("speed")) {
     needGPS = true;
     stats["speed"]={
       title : "Speed",
-      getValue : function() { return state.thisGPS.speed||0; }, // in kph
-      getString : function() { return require("locale").speed(state.thisGPS.speed||0); },
+      getValue : function() { return state.curSpeed/3.6; }, // in kph
+      getString : function() { return require("locale").speed(state.curSpeed/3.6); },
     };
   }
   if (statIDs.includes("caden")) {
@@ -242,6 +244,7 @@ exports.getStats = function(statIDs, options) {
     state.stepsPerMin = 0;
     state.distance = 0;
     state.avrSpeed = 0;
+    state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
   }
