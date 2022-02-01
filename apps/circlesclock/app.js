@@ -803,13 +803,13 @@ Bangle.on('HRM', function(hrm) {
         drawHeartRate();
       }
     }
-    // Let us wait a bit before we overwrite "good" HRM values:
+    // Let us wait before we overwrite "good" HRM values:
     if (Bangle.isLCDOn()) {
       if (timerHrm) clearTimeout(timerHrm);
       timerHrm = setTimeout(() => {
         hrtValue = '...';
         drawHeartRate();
-      }, 60000);
+      }, settings.hrmValidity * 1000 || 30000);
     }
   }
 });

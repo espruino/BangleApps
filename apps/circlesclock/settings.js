@@ -61,23 +61,23 @@
     let menu = {
       '': { 'title': /*LANG*/'Heartrate' },
       /*LANG*/'< Back': ()=>showMainMenu(),
-      /*LANG*/'minimum bpm': {
+      /*LANG*/'minimum': {
         value: "minHR" in settings ? settings.minHR : 40,
         min: 0,
         max : 250,
         step: 5,
         format: x => {
-          return x;
+          return x + " bpm";
         },
         onchange: x => save('minHR', x),
       },
-      /*LANG*/'maximum bpm': {
+      /*LANG*/'maximum': {
         value: "maxHR" in settings ? settings.maxHR : 200,
         min: 20,
         max : 250,
         step: 5,
         format: x => {
-          return x;
+          return x + " bpm";
         },
         onchange: x => save('maxHR', x),
       },
@@ -87,9 +87,19 @@
         max : 100,
         step: 10,
         format: x => {
-          return x;
+          return x + "%";
         },
         onchange: x => save('confidence', x),
+      },
+      /*LANG*/'valid period': {
+        value: "hrmValidity" in settings ? settings.hrmValidity : 30,
+        min: 10,
+        max : 600,
+        step: 10,
+        format: x => {
+          return x + "s";
+        },
+        onchange: x => save('hrmValidity', x),
       },
     };
     E.showMenu(menu);
