@@ -809,7 +809,7 @@ Bangle.on('HRM', function(hrm) {
       timerHrm = setTimeout(() => {
         hrtValue = '...';
         drawHeartRate();
-      }, 10000);
+      }, 60000);
     }
   }
 });
