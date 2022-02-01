@@ -5,3 +5,4 @@
       -> *RAM optimized* clean code, corrected minute update (timout, no intervall)
       -> locale: weekday name (first two characters) from locale
       -> added settings to render cal view begin day (-1: today, 0:sunday, 1:monday [default])
+0.03: a lot of more settings for outline, colors and highlights
