@@ -110,7 +110,7 @@ Bangle.on("GPS", function(fix) {
   if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
   var duration = Date.now() - state.startTime; // in ms
   state.avrSpeed = state.distance * 1000 / duration; // meters/sec
-  state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2*3.6; // meters/sec
+  state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2/3.6; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
@@ -202,8 +202,8 @@ exports.getStats = function(statIDs, options) {
     needGPS = true;
     stats["speed"]={
       title : "Speed",
-      getValue : function() { return state.curSpeed/3.6; }, // in kph
-      getString : function() { return require("locale").speed(state.curSpeed/3.6); },
+      getValue : function() { return state.curSpeed*3.6; }, // in kph
+      getString : function() { return require("locale").speed(state.curSpeed*3.6); },
     };
   }
   if (statIDs.includes("caden")) {
