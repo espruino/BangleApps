@@ -16,7 +16,7 @@
   </ul>
     <div id="fw-ok" style="display:none">
       <p>If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x bootloader, the Firmware Update
-        will fail with a message about the bootloader version. If so, please <a href="bootloader_espruino_2v11.52_banglejs2.hex" class="fw-link">click here to update to bootloader 2v11.52</a> and then click the 'Upload' button that appears.</p>
+        will fail with a message about the bootloader version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to bootloader 2v12</a> and then click the 'Upload' button that appears.</p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
         <ul id="latest-firmware-list">
@@ -79,6 +79,7 @@ function onInit(device) {
     if (crc==1207580954) version = "2v10.236";
     if (crc==3435933210) version = "2v11.52";
     if (crc==46757280) version = "2v11.58";
+    if (crc==3508163280) version = "2v12";
     document.getElementById("boot-version").innerText = version;
   });
 }
