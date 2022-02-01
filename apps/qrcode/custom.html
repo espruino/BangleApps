@@ -288,7 +288,8 @@
                 content = document.getElementById("description").value;
             }
             var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
-            var app = `var img = ${img};
+            var app = `Bangle.loadWidgets();
+var img = ${img};
 ${ document.getElementById("preventBrightnessChangeOnTouch").checked ? '' : `var backlight = 0;
 Bangle.on('touch', function(button, xy) {
   backlight += 0.3;
