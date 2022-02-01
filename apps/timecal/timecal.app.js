@@ -198,17 +198,17 @@ class TimeCalClock{
     //draw grid & Headline
     const dNames = this.ABR_DAY.map((a) => a.length<=2 ? a : a.substr(0, 2)); //force shrt 2
     for(var dNo=0; dNo<dNames.length; dNo++){
-      g.setColor(g.theme.fg);
       const dIdx=this.settings().wdStrt>=0 ? (dNo+this.settings().wdStrt)%7 : (dNo+d.getDay()+4)%7;
       const dName=dNames[dIdx];
-      g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1); //center Names
       if(dNo>0)
         g.drawLine(dNo*CELL_W, CAL_Y, dNo*CELL_W, CAL_Y+CAL_AREA_H-1);
 
-      if (dIdx==0) //sunday colorize txt
+      if (dIdx==0) {
+        //sunday colorize txt
         g.setColor(this.nrgb[this.settings().suClr]);
-      else
+        g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1); //center Names
         g.setColor(g.theme.fg);
+      }
     }
 
     var nextY=CAL_Y+DAY_NAME_FONT_SIZE;
