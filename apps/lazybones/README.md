@@ -2,6 +2,7 @@
 
 'Warns when you have been sat still for too long.'
 
+![](screenshot_lazybones2.png)
 ![](screenshot_lazybones.png)
 
 - Spending too much time sat down is destructive to our health and fitness.
@@ -9,8 +10,12 @@
   has not changed after 26 minutes the buzzer will sound and a pop up
   screen will show.
 - It gives 3 warnings before giving up
+- Standing up and walking around until the step counting threshold is reached will automatically dismiss the warning.
+- When the warning is not displaying the apps is a simple clock
 - The timer only goes off between the hours 9am to 9pm.
+- The app is a basic proof of concept that can be used in other clocks
 - A settings menu may be added in a future release
+
 
 ## Dedication
 
