@@ -5,6 +5,7 @@
   "description": "Idleness timer, warns when you have been sat too long",
   "icon": "lazybones.png",
   "screenshots": [{"url":"screenshot_lazybones.png"}],
+  "readme": "README.md",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
