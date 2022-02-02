@@ -1,6 +1,6 @@
 {
   "id": "recorder",
-  "name": "Recorder (BETA)",
+  "name": "Recorder",
   "shortName": "Recorder",
   "version": "0.07",
   "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
