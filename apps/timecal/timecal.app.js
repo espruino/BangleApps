@@ -85,11 +85,9 @@ class TimeCalClock{
 
     d=d?d :new Date();
 
-    g.setFontAlign(0, -1);
-    g.setFont("Vector", this.TIME_FONT_SIZE());
-    g.setColor(g.theme.fg);
-    g.clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7);
-    g.drawString(("0" + require("locale").time(d, 1)).slice(-5), this.centerX, Y);
+    g.setFontAlign(0, -1).setFont("Vector", this.TIME_FONT_SIZE()).setColor(g.theme.fg)
+    .clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7)
+    .drawString(("0" + require("locale").time(d, 1)).slice(-5), this.centerX, Y, true);
     //.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7); //DEV-Option
 
     setTimeout(this.draw.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
@@ -166,11 +164,7 @@ class TimeCalClock{
       }
     }
     if (render){
-      g.clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3);
-      g.setFont("Vector", FONT_SIZE);
-      g.setColor(g.theme.fg);
-      g.setFontAlign(0, -1);
-      g.drawString(dateStr,this.centerX,Y);
+      g.setFont("Vector", FONT_SIZE).setColor(g.theme.fg).setFontAlign(0, -1).clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3).drawString(dateStr,this.centerX,Y);
     }
     //g.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3); //DEV-Option
   }
@@ -188,12 +182,7 @@ class TimeCalClock{
     const CELL_H=(CAL_AREA_H-DAY_NAME_FONT_SIZE)/3; //cell heigth
     const DAY_NUM_FONT_SIZE=Math.min(CELL_H-1,15); //size down, max 15
   
-    g.clearRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H);
-
-    g.setFont("Vector", DAY_NAME_FONT_SIZE);
-    g.setColor(g.theme.fg);
-    g.setFontAlign(-1, -1);
-
+    g.setFont("Vector", DAY_NAME_FONT_SIZE).setColor(g.theme.fg).setFontAlign(-1, -1).clearRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H);
 
     //draw grid & Headline
     const dNames = this.ABR_DAY.map((a) => a.length<=2 ? a : a.substr(0, 2)); //force shrt 2
@@ -204,8 +193,7 @@ class TimeCalClock{
         g.drawLine(dNo*CELL_W, CAL_Y, dNo*CELL_W, CAL_Y+CAL_AREA_H-1);
 
       if (dIdx==0) g.setColor(this.nrgb[this.settings().suClr]); //sunday maybe colorize txt
-      g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1); //center Names
-      g.setColor(g.theme.fg);
+      g.drawString(dName, dNo*CELL_W+(CELL_W-g.stringWidth(dName))/2+2, CAL_Y+1).setColor(g.theme.fg);
     }
 
     var nextY=CAL_Y+DAY_NAME_FONT_SIZE;
@@ -254,8 +242,7 @@ class TimeCalClock{
       }
     }
     if (this.settings().calBorder) {
-      g.setColor(g.theme.fg);
-      g.drawRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H-1);
+      g.setColor(g.theme.fg).drawRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H-1);
     }
   }
 
