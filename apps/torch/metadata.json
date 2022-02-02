@@ -10,6 +10,7 @@
   "storage": [
     {"name":"torch.app.js","url":"app.js"},
     {"name":"torch.wid.js","url":"widget.js"},
-    {"name":"torch.img","url":"app-icon.js","evaluate":true}
+    {"name":"torch.img","url":"app-icon.js","evaluate":true},
+    {"name":"torch.settings.js","url":"torch.settings.js"},
   ]
 }
