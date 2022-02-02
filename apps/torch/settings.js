@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "torch.json";
 
   // initialize with default settings...
-  let s = {'bg': '#0f0', 'color': 'Green'}
+  let s = {'bg': '#FFFFFF', 'color': 'White'}
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -18,8 +18,8 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow'];
-  var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f','#ffef00'];
+  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White'];
+  var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f','#ffef00','#FFFFFF'];
   
   E.showMenu({
     '': { 'title': 'Torch' },
