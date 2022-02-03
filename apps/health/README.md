@@ -34,6 +34,11 @@ writes data to a binary file (one per month).
 A library (that can be used with `require("health").readXYZ` can then be used
 to grab historical health info.
 
+`boot.js` and `lib.js` include some constants that don't get inlined by the simple
+minifier used in the App Loader, so we use the closure compiler to pre-minify them.
+The easiest way to use it is to install `https://github.com/espruino/EspruinoDocs`
+and run `EspruinoDocs/bin/minify.js lib.js lib.min.js`
+
 ## TODO
 
 * `interface` page for desktop to allow data to be viewed and exported in common formats
