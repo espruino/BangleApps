@@ -1,4 +1,5 @@
 const SETTINGS_FILE = "torch.json";
+let settings;
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#FFFFFF', 'color': 'White'};
