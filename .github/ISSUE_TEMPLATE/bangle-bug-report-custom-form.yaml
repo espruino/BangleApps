@@ -27,8 +27,10 @@ body:
       label: Your firmware version
       description: |
         ## Please make sure you installed the latest (released) firmware!
-        If it occurs only in "Cutting Edge build" please mention this.
-        Update instructions:
+        How to see FW version? Within the AppLoader at "More..."-page: Device info; via the "about"-app or the "firmware"-widget.
+        If the issue will occur in "Cutting Edge build" only, please mention this.
+        
+        FW Update instructions:
         **Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)**
         **Bangle 1: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)**
         _Hint: The links will open inplace hold e.g. ctrl/cmd-key and click to open in a new tab instead._
