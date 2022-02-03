@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.22';
+var v = '1.23';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -603,13 +603,15 @@ function setLpMode(m) {
   gpssetup.setPowerMode({power_mode:m});
 }
 
-/*
+
 function bleSpeed() {
 //  Bangle.bleAdvert[0x180F] = [E.getBattery()];
 //  NRF.setAdvertising(Bangle.bleAdvert); 
-  NRF.setAdvertising({},{name:"speedalt2"} );
+//  NRF.setAdvertising({},{name:"speedalt2"} );
+  var data = {m:1,v:'888',u:'kts',l:'MAX',s:'sats:12'};
+  NRF.setAdvertising(data,{interval:1000});
 }
-*/
+
 
 // == Events
 
@@ -736,6 +738,6 @@ setButtons();
 setInterval(updateClock, 10000);
 
 // Test ble broadcast every 10 secs
-//if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
-//setInterval(bleSpeed, 10000);
-//bleSpeed();
+if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
+setInterval(bleSpeed, 10000);
+bleSpeed();
