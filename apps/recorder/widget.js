@@ -57,17 +57,18 @@
         };
       },
       hrm:function() {
-        var bpm = "", bpmConfidence = "";
+        var bpm = "", bpmConfidence = "", src="";
         function onHRM(h) {
           bpmConfidence = h.confidence;
           bpm = h.bpm;
+          srv = h.src;
         }
         return {
           name : "HR",
-          fields : ["Heartrate", "Confidence"],
+          fields : ["Heartrate", "Confidence", "Source"],
           getValues : () => {
-            var r = [bpm,bpmConfidence];
-            bpm = ""; bpmConfidence = "";
+            var r = [bpm,bpmConfidence,src];
+            bpm = ""; bpmConfidence = ""; src="";
             return r;
           },
           start : () => {
