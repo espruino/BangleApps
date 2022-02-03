@@ -5,6 +5,8 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#FFFFFF', 'color': 'White'};
 }
 
+loadSettings();
+
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
 g.reset();
