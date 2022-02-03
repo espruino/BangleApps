@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.24';
+var v = '1.25';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -739,6 +739,6 @@ setButtons();
 setInterval(updateClock, 10000);
 
 // Test ble broadcast every 10 secs
-if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
-setInterval(bleSpeed, 10000);
-bleSpeed();
+//if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
+//setInterval(bleSpeed, 10000);
+//bleSpeed();
