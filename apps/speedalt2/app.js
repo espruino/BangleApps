@@ -608,7 +608,8 @@ function bleSpeed() {
 //  Bangle.bleAdvert[0x180F] = [E.getBattery()];
 //  NRF.setAdvertising(Bangle.bleAdvert); 
 //  NRF.setAdvertising({},{name:"speedalt2"} );
-  var data = {m:1,v:'888',u:'kts',l:'MAX',s:'sats:12'};
+//  var data = {m:1,v:'888',u:'kts',l:'MAX',s:'sats:12'};
+  var data = {0x180F,[95]};
   NRF.setAdvertising(data,{interval:1000});
 }
 
