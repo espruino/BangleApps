@@ -54,10 +54,10 @@ E.showScroller({
     var app = apps[i];
     if (!app) return;
     if (!app.src || require("Storage").read(app.src)===undefined) {
-      E.showMessage("App Source\nNot found");
+      E.showMessage(/*LANG*/"App Source\nNot found");
       setTimeout(drawMenu, 2000);
     } else {
-      E.showMessage("Loading...");
+      E.showMessage(/*LANG*/"Loading...");
       load(app.src);
     }
   }

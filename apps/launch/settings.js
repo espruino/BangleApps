@@ -8,22 +8,22 @@
     require("Storage").write("launch.json",settings);
   }
   const appMenu = {
-    "": {"title": "Launcher Settings"},
-    "< Back": back,
-    "Font": {
+    /*LANG*/"": {"title": /*LANG*/"Launcher Settings"},
+    /*LANG*/"< Back": back,
+    /*LANG*/"Font": {
       value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf("12x20"),
       min:0, max:fonts.length-1, step:1,wrap:true,
       onchange: (m) => {save("font", fonts[m])},
       format: v => fonts[v]
      },
-    "Vector font size": {
+    /*LANG*/"Vector font size": {
       value: settings.vectorsize || 10,
       min:10, max: 20,step:1,wrap:true,
       onchange: (m) => {save("vectorsize", m)}
     },
-    "Show clocks": {
+    /*LANG*/"Show clocks": {
       value: settings.showClocks == true,
-      format: v => v ? "Yes" : "No",
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: (m) => {save("showClocks", m)}
     }
   };
