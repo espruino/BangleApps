@@ -26,7 +26,7 @@
     '< Back': back,
     'Colour': {
       value: 0 | color_options.indexOf(s.color),
-      min: 0, max: 8,
+      min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
         s.color = color_options[v];
