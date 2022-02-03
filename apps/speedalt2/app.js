@@ -2,8 +2,9 @@
 Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
+1.14 : Add VMG screen
 */
-var v = '1.10';
+var v = '1.21';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -180,14 +181,10 @@ let LED = // LED as minimal and only definition (as instance / singleton)
 , toggle: function() { this.set( ! this.isOn); } // toggle the LED
 }, LED1 = LED; // LED1 as 'synonym' for LED 
 
-// Load fonts
-//require("Font7x11Numeric7Seg").add(Graphics);
-
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
 var pwrSav = 1;         // 1 = default power saving with watch screen off and GPS to PMOO mode. 0 = screen kept on.
 var canDraw = 1;
-var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 var tmrLP;            // Timer for delay in switching to low power after screen turns off
 
 var maxSpd = 0;
@@ -215,16 +212,27 @@ function radians(a) {
   return a*Math.PI/180;
 }
 
+function degrees(a) {
+  var d = a*180/Math.PI;
+  return (d+360)%360;
+}
+
+function bearing(a,b){
+  var delta = radians(b.lon-a.lon);
+  var alat = radians(a.lat);
+  var blat = radians(b.lat);
+  var y = Math.sin(delta) * Math.cos(blat);
+  var x = Math.cos(alat)*Math.sin(blat) -
+        Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
+  return Math.round(degrees(Math.atan2(y, x)));
+}
+
 function distance(a,b){
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
   
-  // Distance in selected units
+  // Distance in metres
   var d = Math.sqrt(x*x + y*y) * 6371000;
-  d = (d/parseFloat(cfg.dist)).toFixed(2);
-  if ( d >= 100 ) d = parseFloat(d).toFixed(1);
-  if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
-
   return d;
 }
 
@@ -328,8 +336,8 @@ function drawClock() {
 function drawWP(wp) {
   buf.setColor(3);  
   buf.setFontAlign(0,1); //left, bottom
-  buf.setFontVector(48);
-  buf.drawString(wp,120,140);  
+  buf.setFontVector(40);
+  buf.drawString(wp,120,132);  
 }
 
 function drawSats(sats) {
@@ -362,14 +370,18 @@ if ( emulator ) {
   var m;
 
   var sp = '---';        
-  var al = '---';
-  var di = '---';
-  var age = '---';
+  var al = sp;
+  var di = sp;
+  var brg = ''; // bearing
+  var crs = ''; // course
+  var age = sp;
   var lat = '---.--';
   var ns = '';
   var ew = '';
   var lon = '---.--';
-  var sats = '---';
+  var sats = sp;
+  var vmg = sp;
+  
   
   // Waypoint name
   var wpName = wp.name;
@@ -387,20 +399,32 @@ if ( emulator ) {
       lf.smoothed = 1;
       if ( maxN <= 15 ) maxN++;
     }
+    
+    // Bearing to waypoint
+    brg = bearing(lf,wp);
+    
+    // Current course
+    crs = lf.course;
+
+    // Relative angle to wp
+    var a = Math.max(crs,brg) - Math.min(crs,brg);
+    if ( a >= 180 ) a = 360 -a;
 
     // Speed
-    if ( cfg.spd == 0 ) {
-      m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-      sp = parseFloat(m[1]);
-      cfg.spd_unit = m[2];
-    }
-    else sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
+    sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
+
+    // vmg
+    if ( a >= 90 ) vmg = sp * Math.cos(radians(180-a)) * -1;  // moving away from WP
+    else vmg = sp * Math.cos(radians(a));  // towards wp
 
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
     if (isNaN(sp)) sp = '---';
-    
     if (parseFloat(sp) > parseFloat(maxSpd) && maxN > 15 ) maxSpd = sp;
+
+    if ( Math.abs(vmg) >= 0.05 && Math.abs(vmg) < 10 ) vmg = vmg.toFixed(1);
+    else vmg = Math.round(vmg);
+    if (isNaN(vmg)) vmg = '---';
 
     // Altitude
     al = lf.alt;
@@ -410,8 +434,11 @@ if ( emulator ) {
 
     // Distance to waypoint
     di = distance(lf,wp);
-    if (isNaN(di)) di = '--------';
-
+    di = (di/parseFloat(cfg.dist)).toFixed(2);
+    if ( di >= 100 ) di = parseFloat(di).toFixed(1);
+    if ( di >= 1000 ) di = parseFloat(di).toFixed(0);
+    if (isNaN(di)) di = '------';
+    
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
 
@@ -490,6 +517,18 @@ if ( emulator ) {
   }
 
   if ( cfg.modeA == 3 ) {
+    // VMG
+      drawScrn({
+        val:vmg,
+        unit:cfg.spd_unit,
+        sats:sats,
+        age:age,
+        max:'VMG',
+        wp:wpName
+      });
+  }
+
+  if ( cfg.modeA == 4 ) {
     // Position
     drawPosn({
         sats:sats,
@@ -501,7 +540,7 @@ if ( emulator ) {
       });
   }
   
-  if ( cfg.modeA == 4 )  {
+  if ( cfg.modeA == 5 )  {
     // Large clock
     drawClock();
   }
@@ -510,14 +549,14 @@ if ( emulator ) {
 
 function prevScrn() {
     cfg.modeA = cfg.modeA-1;
-    if ( cfg.modeA < 0 ) cfg.modeA = 4;
+    if ( cfg.modeA < 0 ) cfg.modeA = 5;
     savSettings();
     onGPS(lf); 
 }
 
 function nextScrn() {
     cfg.modeA = cfg.modeA+1;
-    if ( cfg.modeA > 4 ) cfg.modeA = 0;
+    if ( cfg.modeA > 5 ) cfg.modeA = 0;
     savSettings();
     onGPS(lf); 
 }
@@ -529,14 +568,14 @@ function nextFunc(dur) {
       if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
       else { maxSpd = 0; maxAlt = 0; }  // Long press resets max values.
     }
-    else  if ( cfg.modeA == 2) nxtWp();  // Dist mode - Select next waypoint
+    else  if ( cfg.modeA == 2 || cfg.modeA == 3) nxtWp();  // Dist or VMG mode - Select next waypoint
     onGPS(lf);
 }
 
 
 function updateClock() {
   if (!canDraw) return;
-  if ( cfg.modeA != 4 )  return;
+  if ( cfg.modeA != 5 )  return;
   drawClock(); 
   if ( emulator ) {maxSpd++;maxAlt++;}
 }
@@ -562,6 +601,12 @@ function setLpMode(m) {
   if (tmrLP) {clearInterval(tmrLP);tmrLP = false;} // Stop any scheduled drop to low power
   if ( !gpssetup ) return;
   gpssetup.setPowerMode({power_mode:m});
+}
+
+function bleSpeed() {
+//  Bangle.bleAdvert[0x180F] = [E.getBattery()];
+//  NRF.setAdvertising(Bangle.bleAdvert); 
+  NRF.setAdvertising({},{name:"speedalt2"} );
 }
 
 // == Events
@@ -593,17 +638,6 @@ function setButtons(){
   setWatch(function(e){
     nextScrn();
   }, BTN3, {repeat:true,edge:"falling"});
-  
-/* 
-  // Touch screen same as BTN1 short
-  setWatch(function(e){
-    nextFunc(1);  // Same as BTN1 short
-  }, BTN4, {repeat:true,edge:"falling"});
-  setWatch(function(e){
-    nextFunc(1);  // Same as BTN1 short
-  }, BTN5, {repeat:true,edge:"falling"});
-*/
-
 }
 
 Bangle.on('lcdPower',function(on) {
@@ -621,40 +655,22 @@ Bangle.on('swipe',function(dir) {
 Bangle.on('touch', function(button){
   if ( ! cfg.touch ) return;
   nextFunc(0);  // Same function as short BTN1
-/*  
-    switch(button){
-    case 1:    // BTN4
-console.log('BTN4');
-        prevScrn();
-      break;
-    case 2:    // BTN5
-console.log('BTN5');
-      nextScrn();
-      break;
-    case 3:
-console.log('MDL');
-      nextFunc(0);  // Centre - same function as short BTN1
-      break;
-    }
-*/
-  });
-
-
+});
 
 // == Main Prog
 
 // Read settings. 
 let cfg = require('Storage').readJSON('speedalt2.json',1)||{};
 
-cfg.spd = cfg.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
-cfg.spd_unit = cfg.spd_unit||'';  // Displayed speed unit
+cfg.spd = cfg.spd||1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd_unit = cfg.spd_unit||'kph';  // Displayed speed unit
 cfg.alt = cfg.alt||0.3048;// Multiplier for altitude unit conversions.
 cfg.alt_unit = cfg.alt_unit||'feet';  // Displayed altitude units
 cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3=Position 4=Clock 
+cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3 = vmg 4=Position 5=Clock 
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
@@ -716,3 +732,8 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 10000);
+
+// Test ble broadcast every 10 secs
+if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
+setInterval(bleSpeed, 10000);
+bleSpeed();
