@@ -19,7 +19,7 @@
   }
 
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White'];
-  var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f','#ffef00','#FFFFFF'];
+  var bg_code = ['#0f0','#FFA500','#0ff','#f0f','#f00','#00f','#ffef00','#FFFFFF'];
   
   E.showMenu({
     '': { 'title': 'Torch' },
