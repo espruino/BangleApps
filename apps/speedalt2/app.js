@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.26';
+var v = '1.27';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -605,6 +605,7 @@ function setLpMode(m) {
 
 
 function btData() {
+  Bangle.buzz();
   console.log("ABCDEF");
 }
 
