@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.14 : Add VMG screen
 1.34 : Add bluetooth data stream for Droidscript
 */
-var v = '1.39';
+var v = '1.40';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -635,6 +635,13 @@ function btSend(dat) {
   if ( dur < 1.5 ) return;                  // Don't need to transmit more than every 1.5 secs.
   btLast = getTime();
   console.log(JSON.stringify(dat));         // transmit the data
+}
+
+function btNextWP() {
+  if ( cfg.modeA == 2 || cfg.modeA == 3) {
+    nxtWp();  // Dist or VMG mode - Select next waypoint
+    onGPS(lf);
+  }
 }
 
 
