@@ -1,26 +1,38 @@
 (function(recorders) {
   recorders.bthrm = function() {
     var bpm = "";
+    var bat = "";
+    var energy = "";
+    var contact = "";
+    var rr= "";
     function onHRM(h) {
       bpm = h.bpm;
+      bat = h.bat;
+      energy = h.energy;
+      contact = h.contact;
+      if (h.rr) rr = h.rr.join(";");
     }
     return {
-      name : "BTHR",
-      fields : ["BT Heartrate"],
+      name : "BT HR",
+      fields : ["BT Heartrate", "BT Battery", "Energy expended", "Contact", "RR"],
       getValues : () => {
-        result = [bpm];
+        result = [bpm,bat,energy,contact,rr];
         bpm = "";
+        rr = "";
+        bat = "";
+        energy = "";
+        contact = "";
         return result;
       },
       start : () => {
         Bangle.on('BTHRM', onHRM);
-        Bangle.setBTHRMPower(1,"recorder");
+        if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(1,"recorder");
       },
       stop : () => {
         Bangle.removeListener('BTHRM', onHRM);
-        Bangle.setBTHRMPower(0,"recorder");
+        if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(0,"recorder");
       },
-      draw : (x,y) => g.setColor(Bangle.isBTHRMOn()?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+      draw : (x,y) => g.setColor((Bangle.isBTHRMConnected && Bangle.isBTHRMConnected())?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
     };
   }
 })
