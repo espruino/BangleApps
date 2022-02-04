@@ -365,18 +365,18 @@
         
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
-          
-          promise = promise.then((d)=>{
-            log("Got device: ", d);
-            d.on('gattserverdisconnected', onDisconnect);
-            device = d;
-          });
-          
-          promise = promise.then(()=>{
-            log("Wait after request");
-            return waitingPromise(settings.gracePeriodRequest);
-          });
         }
+          
+        promise = promise.then((d)=>{
+          log("Got device: ", d);
+          d.on('gattserverdisconnected', onDisconnect);
+          device = d;
+        });
+        
+        promise = promise.then(()=>{
+          log("Wait after request");
+          return waitingPromise(settings.gracePeriodRequest);
+        });
         
       } else {
         promise = Promise.resolve();
