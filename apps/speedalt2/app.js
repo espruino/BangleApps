@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.30';
+var v = '1.32';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -192,6 +192,7 @@ var maxAlt = 0;
 var maxN = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
+vat bt = 0;         // 0 = bluetooth data feed off. 1 = on
 
 var wp = {};        // Waypoint to use for distance from cur position.
 
@@ -331,6 +332,9 @@ function drawClock() {
   g.drawImage(img,0,40);
   
   LED1.write(!pwrSav);
+  
+btSend({t:time});
+  
 }
 
 function drawWP(wp) {
@@ -604,10 +608,12 @@ function setLpMode(m) {
 }
 
 
-function btData() {
-//  Bangle.buzz();
-  time = require("locale").time(new Date(),1);
-  console.log(time);
+function btOn(b) {
+  bt = b;  
+}
+
+function btSend(dat) {
+  if ( bt ) console.log(JSON.stringify(dat));
 }
 
 
@@ -734,8 +740,3 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 10000);
-
-// Test ble broadcast every 10 secs
-//if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
-setInterval(btData, 5000);
-//bleSpeed();
