@@ -228,7 +228,7 @@
   },setRecording:function(isOn) {
     var settings = loadSettings();
     if (isOn && !settings.recording && require("Storage").list(settings.file).length)
-      return E.showPrompt("Overwrite\nLog 0?",{title:"Recorder",buttons:{Yes:"yes",No:"no"}}).then(selection=>{
+      return E.showPrompt("Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:"Recorder",buttons:{Yes:"yes",No:"no"}}).then(selection=>{
         if (selection=="no") return false; // just cancel
         if (selection=="yes") require("Storage").open(settings.file,"r").erase();
         // TODO: Add 'new file' option

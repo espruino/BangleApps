@@ -12,3 +12,4 @@
       Record all HRM events
       Move recording for CoreTemp to its own app
 0.08: Memory usage improvements for recorder app itself
+0.09: Show correct number for log in overwrite prompt
