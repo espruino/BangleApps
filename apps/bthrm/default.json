@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "replace": true,
+  "debuglog": false,
+  "startWithHrm": true,
+  "allowFallback": true,
+  "warnDisconnect": false,
+  "fallbackTimeout": 10,
+  "gracePeriodNotification": 0,
+  "gracePeriodConnect": 0,
+  "gracePeriodService": 0,
+  "gracePeriodRequest": 0
+}
