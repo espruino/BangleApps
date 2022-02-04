@@ -624,15 +624,20 @@ function setLpMode(m) {
   gpssetup.setPowerMode({power_mode:m});
 }
 
+// == Droidscript bluetooth data
 
 function btOn(b) {
-  bt = b;  
+  bt = b;                                   // Turn data transmit on/off
+}
+
+function btSetMode(m) {
+  cfg.modeA = m;                            // Set a disply mode
 }
 
 function btSend(dat) {
   if ( ! bt ) return;                       // bt transmit off
   var dur = getTime() - btLast;
-  if ( dur < 1.5 ) return;                  // Don't need to transmit more than every 1.5 secs.
+  if ( dur < 1.2 ) return;                  // Don't need to transmit more than every 1.2 secs.
   btLast = getTime();
   console.log(JSON.stringify(dat));         // transmit the data
 }
