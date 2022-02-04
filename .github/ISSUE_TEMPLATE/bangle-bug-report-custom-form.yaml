@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **:fire: Attention: If you have a question then ask it at the [Bangle.js forum](http://forum.espruino.com/microcosms/1424/) please!**
+        **:fire: Attention: If you have a question then please ask on the [Bangle.js forum](http://forum.espruino.com/microcosms/1424/) :fire:**
         -----------------------------------------------------
   - type: dropdown
     id: hwversion
@@ -30,10 +30,10 @@ body:
         To find your firmware version, check the `About` Bangle.js app or connect with [the App Loader](https://banglejs.com/apps/), click `More...` and look for a `Device Info` heading.
         If the issue occurs only in "Cutting Edge" builds, please mention this.
         
-        FW Update instructions:
-        **Bangle 2: [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)**
-        **Bangle 1: [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)**
-        _Hint: The links will open inplace hold e.g. ctrl/cmd-key and click to open in a new tab instead._
+        **FW Update instructions:**
+        * **Bangle 2:** [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)
+        * **Bangle 1:** [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
+        _Hint: The links will open in-place (hold ctrl/cmd-key and click to open in a new tab instead)_
       placeholder: e.g. 2v12
     validations:
       required: true
