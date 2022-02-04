@@ -3,8 +3,9 @@ Speed and Altitude [speedalt2]
 Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
+1.34 : Add bluetooth data stream for Droidscript
 */
-var v = '1.33';
+var v = '1.34';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -332,9 +333,6 @@ function drawClock() {
   g.drawImage(img,0,40);
   
   LED1.write(!pwrSav);
-  
-btSend({t:time});
-  
 }
 
 function drawWP(wp) {
@@ -464,9 +462,30 @@ if ( emulator ) {
 
   }
 
+  // Bluetooth send data
+  btSend({
+     m:cfg.modeA,
+     max:showMax,
+    spd_unit:cfg.spd_unit,
+    alt_unit:cfg.alt_unit,
+    dist_unit:cfg.dist_unit,
+    wp:wpName,
+    sp:sp,
+    al:al,
+    brg:brg,
+    crs:crs,
+    age:age,
+    lat:lat,
+    ns:ns,
+    ew:ew,
+    lon:lon,
+    sats:sats,
+    vmg:vmg
+  });
+  
   if ( cfg.modeA == 0 )  {
     // Speed
-    if ( showMax ) 
+    if ( showMax ) {
       drawScrn({
         val:maxSpd,
         unit:cfg.spd_unit,
@@ -475,7 +494,20 @@ if ( emulator ) {
         max:'MAX',
         wp:''
       }); // Speed maximums
-    else
+
+      btSend({
+        mode:0,
+        max:1,
+        val:maxSpd,
+        unit:cfg.spd_unit,
+        sats:sats,
+        age:age,
+        max:'MAX',
+        wp:''
+      });
+      
+    }
+    else {
       drawScrn({
         val:sp,
         unit:cfg.spd_unit,
@@ -484,11 +516,24 @@ if ( emulator ) {
         max:'SPD',
         wp:''
       });
+
+      btSend({
+        mode:0,
+        max:0,
+        val:sp,
+        unit:cfg.spd_unit,
+        sats:sats,
+        age:age,
+        max:'SPD',
+        wp:''
+      });
+
+    }
   }
 
   if ( cfg.modeA == 1 ) {
     // Alt
-    if ( showMax ) 
+    if ( showMax ) {
       drawScrn({
         val:maxAlt,
         unit:cfg.alt_unit,
@@ -497,7 +542,21 @@ if ( emulator ) {
         max:'MAX',
         wp:''
       }); // Alt maximums
-    else 
+ 
+      btSend({
+        mode:1,
+        max:1,
+        val:maxAlt,
+        unit:cfg.alt_unit,
+        sats:sats,
+        age:age,
+        max:'MAX',
+        wp:''
+      });
+      
+    }
+    else {
+
       drawScrn({
         val:al,
         unit:cfg.alt_unit,
@@ -506,6 +565,19 @@ if ( emulator ) {
         max:'ALT',
         wp:''
       });
+      
+      btSend({
+        mode:1,
+        max:0,
+        val:al,
+        unit:cfg.alt_unit,
+        sats:sats,
+        age:age,
+        max:'ALT',
+        wp:''
+      });
+      
+    }
   }
 
   if ( cfg.modeA == 2 ) {
@@ -518,6 +590,16 @@ if ( emulator ) {
         max:'DST',
         wp:wpName
       });
+    
+      btSend({
+        mode:2,
+        val:di,
+        unit:cfg.dist_unit,
+        sats:sats,
+        age:age,
+        max:'DST',
+        wp:wpName
+      });   
   }
 
   if ( cfg.modeA == 3 ) {
@@ -530,6 +612,16 @@ if ( emulator ) {
         max:'VMG',
         wp:wpName
       });
+    
+      btSend({
+        mode:3,
+        val:vmg,
+        unit:cfg.spd_unit,
+        sats:sats,
+        age:age,
+        max:'VMG',
+        wp:wpName
+      });       
   }
 
   if ( cfg.modeA == 4 ) {
@@ -542,11 +634,27 @@ if ( emulator ) {
         ns:ns,
         ew:ew
       });
+ 
+      btSend({
+        mode:4,
+        sats:sats,
+        age:age,
+        lat:lat,
+        lon:lon,
+        ns:ns,
+        ew:ew
+      });  
+    
   }
   
   if ( cfg.modeA == 5 )  {
     // Large clock
     drawClock();
+  
+    btSend({
+        mode:5,
+        time:require("locale").time(new Date(),1)
+      });      
   }
 
 }
