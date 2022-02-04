@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.14 : Add VMG screen
 1.34 : Add bluetooth data stream for Droidscript
 */
-var v = '1.38';
+var v = '1.39';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -194,6 +194,7 @@ var maxN = 0;    // counter. Only start comparing for max after a certain number
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
 var bt = 0;         // 0 = bluetooth data feed off. 1 = on
+var btLast = 0;     // time of last bt transmit
 
 var wp = {};        // Waypoint to use for distance from cur position.
 
@@ -629,7 +630,11 @@ function btOn(b) {
 }
 
 function btSend(dat) {
-  if ( bt ) console.log(JSON.stringify(dat));
+  if ( ! bt ) return;                       // bt transmit off
+  var dur = getTime() - btLast;
+  if ( dur < 1.5 ) return;                  // Don't need to transmit more than every 1.5 secs.
+  btLast = getTime();
+  console.log(JSON.stringify(dat));         // transmit the data
 }
 
 
