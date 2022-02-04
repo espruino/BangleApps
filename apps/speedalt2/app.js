@@ -5,7 +5,7 @@ Mike Bennett mike[at]kereru.com
 1.14 : Add VMG screen
 1.34 : Add bluetooth data stream for Droidscript
 */
-var v = '1.37';
+var v = '1.38';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -471,7 +471,7 @@ if ( emulator ) {
     wp:wpName,
     sp:sp,
     al:al,
-    di:di
+    di:di,
     sats:sats,
     vmg:vmg
   });
