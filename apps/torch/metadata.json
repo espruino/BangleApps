@@ -6,7 +6,7 @@
   "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets. You can also set the color through the apps settings menu.",
   "icon": "app.png",
   "tags": "tool,torch",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"torch.app.js","url":"app.js","supports": ["BANGLEJS"]},
     {"name":"torch.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
