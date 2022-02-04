@@ -8,8 +8,7 @@
   "tags": "tool,torch",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"torch.app.js","url":"app.js","supports": ["BANGLEJS"]},
-    {"name":"torch.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
+    {"name":"torch.app.js","url":"app.js"},
     {"name":"torch.wid.js","url":"widget.js","supports": ["BANGLEJS"]},
     {"name":"torch.img","url":"app-icon.js","evaluate":true},
     {"name":"torch.settings.js","url":"settings.js"}
