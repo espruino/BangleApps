@@ -1,0 +1,15 @@
+{ "id": "7x7dotsclock",
+  "name": "7x7 dots clock",
+  "shortName":"7x7 dots clock",
+  "type":"clock",
+  "version":"0.01",
+  "description": "A clock with a big 7x7 dots font",
+  "icon": "7x7dotsclock.img",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"7x7dotsclock.app.js","url":"7x7dotsclock.app.js"},
+    {"name":"7x7dotsclock.img","url":"7x7dotsclock-icon.js","evaluate":true}
+  ]
+}
