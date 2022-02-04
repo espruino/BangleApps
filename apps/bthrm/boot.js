@@ -426,14 +426,14 @@
       });
 
       promise = promise.then(()=>{
-        var getCharacteristicsPromise = Promise.resolve();
+        var characteristicsPromise = Promise.resolve();
         if (characteristics.length == 0){
-          getCharacteristicsPromise = getCharacteristicsPromise.then(()=>{
+          characteristicsPromise = characteristicsPromise.then(()=>{
             log("Getting services");
             return gatt.getPrimaryServices();
           });
 
-          getCharacteristicsPromise = getCharacteristicsPromise().then((services)=>{
+          characteristicsPromise = characteristicsPromise.then((services)=>{
             log("Got services:", services);
             var result = Promise.resolve();
             for (var service of services){
@@ -453,11 +453,11 @@
           
         } else {
           for (var characteristic of characteristics){
-            getCharacteristicsPromise = attachCharacteristicPromise(getCharacteristicsPromise, characteristic, true);
+            characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
           }
         }
         
-        return getCharacteristicsPromise;
+        return characteristicsPromise;
       });
       
       promise = promise.then(()=>{
