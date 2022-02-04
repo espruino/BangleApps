@@ -6,6 +6,7 @@ var fontHeading = "6x8:2";
 var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
 var fixCount = 0;
+var isMenuDisplayed = false;
 
 g.clear();
 Bangle.loadWidgets();
@@ -13,6 +14,7 @@ Bangle.drawWidgets();
 
 // ---------------------------
 let settings = Object.assign({
+  record : true,
   B1 : "dist",
   B2 : "time",
   B3 : "pacea",
@@ -39,6 +41,19 @@ function onStartStop() {
   // if stopping running, don't clear state
   // so we can at least refer to what we've done
   layout.render();
+  // start/stop recording
+  if (settings.record && WIDGETS["recorder"]) {
+    if (running) {
+      isMenuDisplayed = true;
+      WIDGETS["recorder"].setRecording(true).then(() => {
+        isMenuDisplayed = false;
+        layout.forgetLazyState();
+        layout.render();
+      });
+    } else {
+      WIDGETS["recorder"].setRecording(false);
+    }
+  }
 }
 
 var lc = [];
@@ -80,5 +95,5 @@ Bangle.on("GPS", function(fix) {
 // We always call ourselves once a second to update
 setInterval(function() {
   layout.clock.label = locale.time(new Date(),1);
-  layout.render();
+  if (!isMenuDisplayed) layout.render();
 }, 1000);
