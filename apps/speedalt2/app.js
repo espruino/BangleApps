@@ -4,7 +4,7 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 */
-var v = '1.32';
+var v = '1.33';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -192,7 +192,7 @@ var maxAlt = 0;
 var maxN = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
-vat bt = 0;         // 0 = bluetooth data feed off. 1 = on
+var bt = 0;         // 0 = bluetooth data feed off. 1 = on
 
 var wp = {};        // Waypoint to use for distance from cur position.
 
