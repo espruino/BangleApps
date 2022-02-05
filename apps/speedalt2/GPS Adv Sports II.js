@@ -7,7 +7,7 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    requiredVer = '1.43';
+    requiredVer = '1.43';   // Minimum speedalt2 version required on Bangle
 
     //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
     btnOff = '#175A63'
