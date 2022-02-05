@@ -70,7 +70,7 @@ Android Screen Mirroring:<br>
 
 ## Waypoints
 
-Waypoints are used in [D]istance and VMG modes. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
+Waypoints are used in Distance and VMG modes. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
 The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
 
