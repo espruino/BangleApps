@@ -49,9 +49,28 @@ When using the GPS Setup App this app switches the GPS to SuperE (default) mode 
 
 The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
+## Velocity Made Good - VMG
+
+This implementaiton of VMG is very simplistic and is just the component of your current vector ( course and speed ) that is towards your selected waypoint. It is displayed as negative if you are moving away from the waypoint. For it to be displayed you must be moving and the GPS must be able to detemrine a course. If not it will display '---' as the VMG.
+
+## Mirroring to Android
+
+This feature is an optional extra to solve and enhance a specific requirement. While sailing the Bangle screen is very difficult to read in bright sun light while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle screen to an android device with a daylight readable OLED screen that I have in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
+
+There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.
+
+How is this done?
+
+Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
+
+The script file is called : **GPS Adv Sports II.js**
+
+Android Screen Mirroring:<br>
+![](screenmirror.jpg)<p>
+
 ## Waypoints
 
-Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
+Waypoints are used in [D]istance and VMG modes. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
 The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
 
@@ -119,21 +138,6 @@ Sample waypoints.json (My sailing waypoints)
   }
 ]
 </pre>
-
-## Mirroring to Android
-
-This feature is an optional extra to solve and enhance a specific requirement. While sailing the Bangle screen is very difficult to read in bright sun light while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle screen to an android device with a daylight readable OLED screen that I have in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
-
-There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.
-
-How is this done?
-
-Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
-
-The script file is called : GPS Adv Sports II.js
-
-Speed and Altitude:<br>
-![](screenmirror.jpg)<p>
 
 ## Comments and Feedback
 
