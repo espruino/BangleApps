@@ -1,4 +1,4 @@
-/ Add this script to DroidScript on an android device.
+// Add this script to DroidScript on an android device.
 // Uses the PuckJS plugin to provide mirroring of the GPS Adv Sports II Bangle app face onto an android device.
 
 app.LoadPlugin( "PuckJS" );
@@ -144,7 +144,7 @@ function readResponse(data) {
 
     if ( d.m == 0 ) { // Speed ( dont need pos or time here )
     	val.SetTextSize( 120 )
-    	val2.SetTextSize( 500 )
+    	val2.SetTextSize( 50 )
 
         val.SetText(d.sp)
         val2.SetText('')
@@ -187,8 +187,8 @@ function readResponse(data) {
     }
 
     if ( d.m == 4 ) { // POS
-    	val.SetTextSize( 90 )
-	    val2.SetTextSize( 0 )
+    	val.SetTextSize( 80 )
+	    val2.SetTextSize( 20 )
 
         val.SetText(d.lat+' '+d.ns+"\n"+d.lon+' '+d.ew)
         val2.SetText('')
@@ -199,7 +199,7 @@ function readResponse(data) {
 
     if ( d.m == 5 ) { // Time
     	val.SetTextSize( 90 )
-	    val2.SetTextSize( 0 )
+	    val2.SetTextSize( 10 )
 
         dt = new Date();
 
