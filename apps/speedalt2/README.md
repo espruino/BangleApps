@@ -63,7 +63,7 @@ How is this mirroring done?
 
 Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
 
-The Droidscript script file is called : **GPS Adv Sports II.spk**
+The Droidscript script file is called : **GPS Adv Sports II.js**
 
 **Important Gotcha :** For the BLE comms to find and connect to the Bangle.js it must be paired with the Android device but **NOT** connected. The Bangle.js must have been set in the Bluetooth settings as connectable.
 
