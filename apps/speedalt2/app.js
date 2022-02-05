@@ -4,8 +4,9 @@ Mike Bennett mike[at]kereru.com
 1.10 : add inverted colours
 1.14 : Add VMG screen
 1.34 : Add bluetooth data stream for Droidscript
+1.43 : Keep GPS in SuperE mode while using Droiscript screen mirroring
 */
-var v = '1.42';
+var v = '1.43';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -616,6 +617,7 @@ function startDraw(){
 
 function stopDraw() {
   canDraw=false;
+  if ( bt ) return;    // If bt screen mirror to Droidscript in use then keep GPS in SuperE mode to keep screen updates going.
   if (!tmrLP) tmrLP=setInterval(function () {if (lf.fix) setLpMode('PSMOO');}, 10000);   //Drop to low power in 10 secs. Keep lp mode off until we have a  first fix.
 }
 
