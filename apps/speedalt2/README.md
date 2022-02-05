@@ -51,21 +51,21 @@ The MAX values continue to be collected with the display off so may appear a lit
 
 ## Velocity Made Good - VMG
 
-This implementaiton of VMG is very simplistic and is just the component of your current vector ( course and speed ) that is towards your selected waypoint. It is displayed as negative if you are moving away from the waypoint. For it to be displayed you must be moving and the GPS must be able to detemrine a course. If not it will display '---' as the VMG.
+This implementation of VMG is very simplistic and is simply the component of your current vector ( course and speed ) that is towards your selected waypoint. It is displayed as negative if you are moving away from the waypoint. For it to be displayed you must be moving and the GPS must be able to detemrine a course. If not it will display '---' as the VMG.
 
 ## Mirroring to Android
 
-This feature is an optional extra to solve and enhance a specific requirement. While sailing the Bangle screen is very difficult to read in bright sun light while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle screen to an android device with a daylight readable OLED screen that I have in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
+This feature is an optional extra to solve and enhance a specific requirement for me. While sailing the Bangle watch screen is very difficult to read in bright sunlight while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle screen to an android device with a daylight readable OLED screen that I keep in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
 
 There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.
 
-How is this done?
+How is this mirroring done?
 
 Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
 
 The script file is called : **GPS Adv Sports II.js**
 
-A blue 'led' will flash each time a data packet is recieved to refresh the android display. An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again.
+When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again.
 
 Android Screen Mirroring:<br>
 ![](screenmirror.jpg)<p>
