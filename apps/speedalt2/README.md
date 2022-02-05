@@ -1,8 +1,4 @@
-# GPS Speed, Altimeter, Distance and VMG to Waypoint
-
-What is the difference between **GPS Adventure Sports** and **GPS Adventure Sports II** ?
-
-**GPS Adventure Sports** has 3 screens, each of which display different sets of information.
+# GPS Speed, Altitude, Distance and VMG
 
 **GPS Adventure Sports II** has 6 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, VMG to waypoint, Position or Time.
 
@@ -57,7 +53,7 @@ This implementation of VMG is very simplistic and is simply the component of you
 
 This feature is an optional extra to solve and enhance a specific requirement for me. While sailing the Bangle.js watch screen is very difficult to read in bright sunlight while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle.js screen to an android device with a daylight readable OLED screen that I keep in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
 
-There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.
+There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.js.
 
 How is this mirroring done?
 
@@ -69,7 +65,9 @@ The Droidscript script file is called : **GPS Adv Sports II.js**
 
 Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep. 
 
-When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
+When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
+
+An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
 
 Android Screen Mirroring:<br>
 ![](screenmirror.jpg)<p>
