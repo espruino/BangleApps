@@ -1,4 +1,4 @@
-// Add this script to DroidScript on an android device.
+/ Add this script to DroidScript on an android device.
 // Uses the PuckJS plugin to provide mirroring of the GPS Adv Sports II Bangle app face onto an android device.
 
 app.LoadPlugin( "PuckJS" );
@@ -57,9 +57,9 @@ function OnStart()
 	layHor.AddChild(mode)
 	
 //	sats = app.CreateText( '' ,.3,-1,"Right")
-	sats = app.CreateText( '' ,-1,-1)
+	sats = app.CreateText( '' ,-1,-1,"FillXY,Bottom")
     sats.SetSize(200,-1,"px")
-	sats.SetTextSize( 32 )
+	sats.SetTextSize( 20 )
 	sats.SetTextColor('#00E4FF')     // cyan
 	layHor.AddChild(sats)
 	
@@ -79,6 +79,11 @@ function OnStart()
     btnStop.SetOnTouch( btn_OnStop );
     btnStop.SetBackColor(btnOff)
     layBtn.AddChild( btnStop );
+
+    btnScan = app.CreateButton( "Scan" );
+    btnScan.SetOnTouch( btn_OnScan );
+    btnScan.SetBackColor(btnOff)
+    layBtn.AddChild( btnScan );
 
 /*
     btn1 = app.CreateButton( "  SPD  " );
@@ -102,6 +107,15 @@ function OnStart()
     layBtn.AddChild( btn4 );
 */
 
+    // Status 'LED'
+    led = app.AddCanvas( layBtn, 0.1, 0.1,"FillXY,Bottom" )
+    
+//    bt = app.CreateText( '' ,-1,-1)
+//	bt.SetSize(20,-1,"px")
+//	layBtn.AddChild(bt)
+
+
+
     layVert.AddChild( layBtn )
 		
 	//Add layout to app.	
@@ -122,9 +136,15 @@ function readResponse(data) {
         return
     }
 
+    // Flash blue 'led' indicator when data packet received.
+    led.SetPaintColor("#0051FF")
+    led.DrawCircle( 0.5, 0.5, 0.1 )
+    led.Update()
+    setTimeout(clearLED, 500 )
+
     if ( d.m == 0 ) { // Speed ( dont need pos or time here )
     	val.SetTextSize( 120 )
-    	val2.SetTextSize( 50 )
+    	val2.SetTextSize( 500 )
 
         val.SetText(d.sp)
         val2.SetText('')
@@ -192,6 +212,13 @@ function readResponse(data) {
 
  }
  
+function clearLED() {
+    led.Clear()
+// led.SetPaintColor("#D31A99")
+//    led.DrawCircle( 0.5, 0.5, 0.1 )
+    led.Update()
+}
+
 function onConnect() {
     btn_OnStart()       // Once connect tell app to start sending updates
 }
@@ -214,6 +241,14 @@ function btn_OnStop()
     mode.SetText('')
     sats.SetText('')
 }
+
+function btn_OnScan()
+{
+    btnStart.SetBackColor(btnOff)
+    btnStop.SetBackColor(btnOff)
+    puck.Scan("Bangle");
+}
+
 
 /*
  function btn_OnBTN1() {puck.SendCode('btSetMode(0)\n')}  // SPD
