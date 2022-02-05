@@ -7,7 +7,10 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    requiredVer = '1.43';   // Minimum speedalt2 version required on Bangle
+    requiredVer = '1.45';   // Minimum speedalt2 version required on Bangle
+    isStopped = true;       // Data receive turned off
+    lastData = new Date().getTime() / 1000;   // Time of last data received
+    addr = '';           // Address of last connection
 
     //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
     btnOff = '#175A63'
@@ -15,10 +18,10 @@ function OnStart() {
 
     // Connect to Bangle
     puck = app.CreatePuckJS();
-
-    puck.SetOnConnect(onConnect); // Callback.
-    puck.SetOnReceive(readResponse); // Callback to capture console output from app.
+    puck.SetOnConnect(onConnect);       // Callback.
+    puck.SetOnReceive(readResponse);    // Callback to capture console output from app.
     puck.Scan("Bangle");
+    setInterval(checkConnection,5000)   // Periodic check for data timeout and attempt a reconnect
 
     // Controls
     app.SetScreenMode("Full")
@@ -38,7 +41,6 @@ function OnStart() {
     val2.SetTextSize(50)
     val2.SetTextColor('#00E4FF') // cyan
     layVert.AddChild(val2)
-
 
     // Units and status text
     layHor = app.CreateLayout("Linear", "Horizontal")
@@ -66,9 +68,7 @@ function OnStart() {
     layVert.AddChild(layHor)
 
     // Buttons
-
     layBtn = app.CreateLayout("Linear", "Horizontal")
-
 
     btnStart = app.CreateButton("Start");
     btnStart.SetOnTouch(btn_OnStart);
@@ -93,26 +93,27 @@ function OnStart() {
     //Add layout to app.	
     app.AddLayout(layVert)
 
-
 }
 
 function readResponse(data) {
     if (data.substring(0, 1) != '{') return; // ignore non JSON
     btnStart.SetBackColor(btnOn)
 
+    lastData = new Date().getTime() / 1000;   // Time of last data received
+
     d = JSON.parse(data);
 
-    if ((parseFloat(d.v) < parseFloat(requiredVer)) || (typeof(d.v) == 'undefined')) {
+    if ( ( d.id != 'speedalt2' ) || (parseFloat(d.v) < parseFloat(requiredVer)) || (typeof(d.v) == 'undefined')) {
         btn_OnStop()
         app.Alert('The GPS Adv Sports II app on your Bangle must be at least version ' + requiredVer, 'Bangle App Upgrade Required')
         return
     }
 
+    isStopped = false;          // Flag that we are running and receiving data
+    
     // Flash blue 'led' indicator when data packet received.
-    led.SetPaintColor("#0051FF")
-    led.DrawCircle(0.5, 0.5, 0.1)
-    led.Update()
-    setTimeout(clearLED, 500)
+    setLED(led,true,"#0051FF")
+    setTimeout(function() {setLED(led,false,-1)}, 500)
 
     if (d.m == 0) { // Speed ( dont need pos or time here )
         val.SetTextSize(120)
@@ -184,25 +185,49 @@ function readResponse(data) {
 
 }
 
-function clearLED() {
-    led.Clear()
-    led.Update()
+function setLED(canvas,on,colour) {
+    if ( on ) {
+        canvas.SetPaintColor(colour)
+        canvas.DrawCircle(0.5, 0.5, 0.1)
+    }
+    else {
+        canvas.Clear()
+    }
+    canvas.Update()
 }
 
-function onConnect() {
+function onConnect(name, address, bonded, rssi) {
+    addr = address
+    console.log( "Connected to " + address );
     btn_OnStart() // Once connect tell app to start sending updates
+}
+
+// Periodic check for data timeout and attempt a reconnect
+function checkConnection() {
+    if (isStopped) return
+    if ( parseFloat(new Date().getTime() / 1000) - lastData > 30 ) {
+
+        console.log( "Reconnecting to : "+addr);
+
+        // Flash orange 'led' indicator for connection attempts.
+        setLED(led,true,"#FC8A00")
+        setTimeout(function() {setLED(led,false,-1)}, 500)
+        puck.Connect(addr)
+    }
 }
 
 function btn_OnStart() {
     btnStart.SetBackColor(btnOn)
     btnStop.SetBackColor(btnOff)
     puck.SendCode('btOn(1)\n') // Enable the data send
+    isStopped = false
 }
 
 function btn_OnStop() {
     btnStart.SetBackColor(btnOff)
     btnStop.SetBackColor(btnOn)
     puck.SendCode('btOn(0)\n') // Disable the data send
+    isStopped = true
     val.SetText('')
     val2.SetText('')
     unit.SetText('')
@@ -215,4 +240,3 @@ function btn_OnScan() {
     btnStop.SetBackColor(btnOff)
     puck.Scan("Bangle");
 }
-
