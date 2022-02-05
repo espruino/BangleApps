@@ -132,6 +132,8 @@ Install Droidscript on your Android device. Must have BLE suport and the PuckJS 
 
 The script file is called : GPS Adv Sports II.js
 
+Speed and Altitude:<br>
+![](screenmirror.jpg)<p>
 
 ## Comments and Feedback
 
