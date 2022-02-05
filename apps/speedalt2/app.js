@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 1.34 : Add bluetooth data stream for Droidscript
 1.43 : Keep GPS in SuperE mode while using Droiscript screen mirroring
 */
-var v = '1.44';
+var v = '1.45';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -466,6 +466,7 @@ if ( emulator ) {
 
   // Bluetooth send data
   btSend({
+    id:'speedalt2',
     v:v,
     m:cfg.modeA,
     spd_unit:cfg.spd_unit,
