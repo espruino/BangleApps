@@ -11,3 +11,4 @@
 1.06: Misc memory and screen optimisations.
 1.10: Adds Kalman filter.
 1.14: Add VMG and coordinates screens
+1.43: Adds mirroring of the watch face to an Android device. See ReadMe.
