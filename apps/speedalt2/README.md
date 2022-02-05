@@ -1,12 +1,10 @@
-# GPS Speed, Altimeter and Distance to Waypoint
+# GPS Speed, Altimeter, Distance and VMG to Waypoint
 
 What is the difference between **GPS Adventure Sports** and **GPS Adventure Sports II** ?
 
 **GPS Adventure Sports** has 3 screens, each of which display different sets of information.
 
-**GPS Adventure Sports II** has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
-
-In all other respect they perform the same functions.
+**GPS Adventure Sports II** has 6 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, VMG to waypoint, Position or Time.
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
@@ -14,17 +12,17 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 
 **BTN1** ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
 
-**BTN1** ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
+**BTN1** ( Distance and VMG ) Select next waypoint. Last fix distance from selected waypoint or speed towards is displayed.
 
 **BTN2** : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-**BTN3** : Cycles the screens between Speed, Altitude, Distance to waypoint, Position and Time
+**BTN3** : Cycles the screens between Speed, Altitude, Distance to waypoint, VMG to waypoint, Position and Time
 
 **BTN3** : Long press exit and return to watch.
 
 **Touch Screen** If the 'Touch' setting is ON then :
 
-Swipe Left/Right cycles between the five screens.
+Swipe Left/Right cycles between the six screens.
 
 Touch functions as BTN1 short press.
 
@@ -121,6 +119,19 @@ Sample waypoints.json (My sailing waypoints)
   }
 ]
 </pre>
+
+## Mirroring to Android
+
+This feature is an optional extra to solve and enhance a specific requirement. While sailing the Bangle screen is very difficult to read in bright sun light while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle screen to an android device with a daylight readable OLED screen that I have in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
+
+There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.
+
+How is this done?
+
+Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
+
+The script file is called : GPS Adv Sports II.js
+
 
 ## Comments and Feedback
 
