@@ -65,6 +65,8 @@ Install Droidscript on your Android device. Must have BLE suport and the PuckJS 
 
 The script file is called : **GPS Adv Sports II.js**
 
+A blue 'led' will flash each time a data packet is recieved to refresh the android display. An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again.
+
 Android Screen Mirroring:<br>
 ![](screenmirror.jpg)<p>
 
