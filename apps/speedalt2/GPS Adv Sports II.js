@@ -7,10 +7,12 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    requiredVer = '1.45';   // Minimum speedalt2 version required on Bangle
-    isStopped = true;       // Data receive turned off
+    v = '1.47'                      // Version of this script
+    requiredBangleVer = '1.46';     // Minimum speedalt2 version required on Bangle
+    curBangleVer = '-.--'
+    isStopped = true;               // Data receive turned off
     lastData = new Date().getTime() / 1000;   // Time of last data received
-    addr = '';           // Address of last connection
+    addr = '';                     // Address of last connection
 
     //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
     btnOff = '#175A63'
@@ -70,6 +72,11 @@ function OnStart() {
     // Buttons
     layBtn = app.CreateLayout("Linear", "Horizontal")
 
+    btnAbout = app.CreateButton("About");
+    btnAbout.SetOnTouch(btn_OnAbout);
+    btnAbout.SetBackColor(btnOff)
+    layBtn.AddChild(btnAbout);
+
     btnStart = app.CreateButton("Start");
     btnStart.SetOnTouch(btn_OnStart);
     btnStart.SetBackColor(btnOff)
@@ -103,11 +110,20 @@ function readResponse(data) {
 
     d = JSON.parse(data);
 
-    if ( ( d.id != 'speedalt2' ) || (parseFloat(d.v) < parseFloat(requiredVer)) || (typeof(d.v) == 'undefined')) {
+    if ( ( d.id != 'speedalt2' ) || (parseFloat(d.v) < parseFloat(requiredBangleVer)) || (typeof(d.v) == 'undefined')) {
         btn_OnStop()
-        app.Alert('The GPS Adv Sports II app on your Bangle must be at least version ' + requiredVer, 'Bangle App Upgrade Required')
+        app.Alert('The GPS Adv Sports II app on your Bangle must be at least version ' + requiredBangleVer, 'Bangle App Upgrade Required')
         return
     }
+    
+    curBangleVer = d.v
+
+    if (parseFloat(v) < parseFloat(d.vd)) {
+        btn_OnStop()
+        app.Alert('This GPS Adv Sports II script must be at least version ' + d.vd, 'Droidscript script Upgrade Required')
+        return
+    }
+
 
     isStopped = false;          // Flag that we are running and receiving data
     
@@ -214,6 +230,10 @@ function checkConnection() {
         setTimeout(function() {setLED(led,false,-1)}, 500)
         puck.Connect(addr)
     }
+}
+
+function btn_OnAbout() {
+    app.ShowPopup("GPS Adv Sports II\nAndroid Mirror : "+v+"\nBangle.js : "+curBangleVer,"Long")
 }
 
 function btn_OnStart() {
