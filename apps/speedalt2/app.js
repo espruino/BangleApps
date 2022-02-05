@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 1.34 : Add bluetooth data stream for Droidscript
 1.43 : Keep GPS in SuperE mode while using Droiscript screen mirroring
 */
-var v = '1.43';
+var v = '1.44';
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -637,25 +637,13 @@ function btOn(b) {
   bt = b;                                   // Turn data transmit on/off
 }
 
-function btSetMode(m) {
-  cfg.modeA = m;                            // Set a disply mode
-}
-
 function btSend(dat) {
   if ( ! bt ) return;                       // bt transmit off
   var dur = getTime() - btLast;
-  if ( dur < 1.2 ) return;                  // Don't need to transmit more than every 1.2 secs.
+  if ( dur < 1.0 ) return;                  // Don't need to transmit more than every 1.0 secs.
   btLast = getTime();
   console.log(JSON.stringify(dat));         // transmit the data
 }
-
-function btNextWP() {
-  if ( cfg.modeA == 2 || cfg.modeA == 3) {
-    nxtWp();  // Dist or VMG mode - Select next waypoint
-    onGPS(lf);
-  }
-}
-
 
 // == Events
 
