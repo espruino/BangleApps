@@ -3,11 +3,12 @@
 
 app.LoadPlugin( "PuckJS" );
 
+
 //Called when application is started.
 function OnStart()
 {
     
-    requiredVer = '1.41';
+    requiredVer = '1.43';
     
     //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
     btnOff = '#175A63'
@@ -15,7 +16,9 @@ function OnStart()
 
     // Connect to Bangle
     puck = app.CreatePuckJS();
-    puck.SetOnReceive( readResponse );   // Callback to capture console output from app.
+    
+    puck.SetOnConnect( onConnect );         // Callback.
+    puck.SetOnReceive( readResponse );      // Callback to capture console output from app.
     puck.Scan("Bangle");
 
     // Controls
@@ -189,6 +192,10 @@ function readResponse(data) {
 
  }
  
+function onConnect() {
+    btn_OnStart()       // Once connect tell app to start sending updates
+}
+
 function btn_OnStart()
 {
     btnStart.SetBackColor(btnOn)
