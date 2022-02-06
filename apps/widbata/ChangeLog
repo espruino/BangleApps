@@ -1,3 +1,4 @@
 0.01: Created
 0.02: Set sort order to -10 so always display in right hand corner
 0.03: Set sort order from the code
+0.04: fix vertical align
