@@ -3,6 +3,15 @@
 * GitHub: https://github.com/andrewgoz/Authentiwatch <-- Report bugs here
 * Bleeding edge AppLoader: https://andrewgoz.github.io/Authentiwatch/
 
+## Important!
+
+Tokens are stored *ONLY* on the watch. Make sure you do one or more of the following:
+
+* Make a backup copy of the "authentiwatch.json" file.
+* Export all your tokens to another device or print the QR code.
+
+Keep those copies safe and secure.
+
 ## Supports
 
 * Google Authenticator compatible 2-factor authentication
