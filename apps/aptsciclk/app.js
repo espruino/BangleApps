@@ -13,6 +13,8 @@ const buttonTolerance = 20;
 const buttonX = 88;
 const buttonY = 104;
 
+var pause = false; //set to true to pause any sort of drawing (except for quotes)
+
 function getImg(img){
   if (img == "w0"){//drink
     return {
@@ -105,11 +107,19 @@ else if (img == "apetureLaboratoriesLight"){
     }
   }
 
+  else if (img == "potato"){
+    return {
+  width : 54, height : 55, bpp : 4,
+  transparent : 6,
+  buffer : require("heatshrink").decompress(atob("swAEsEGA4oASEQ4ARGgNgDa8QsA3BKStowxTDDalikxTCRKsSNwY2BDSYvDGoI2TsoTDgwEBGx5IBs1VHIgaBGx4qCDQZOBUiUGstQDQ4FBKYwHGDQNWDRA3BCYsABotgJ4dkogABowcGAAUGOwogDDAVCAYScKOooFBooWCAAjqNAoQYHKYQ8ELQZzFsAMCiIeJAAdFMwiCEoIaNoICBoAaMiMUDA0ikMiigaIAAgaGDIIaBkcyoCHEMxqIBmdEkMzmcxDSVBkYXBGoMzmUQDSMSDIURiIbBkDBCDRtBiYwBDIMREAMiDR6qBiI0BkQEBKQKkBUJQAEoCfBC4MVgMSDYMkGwQaBeBMUiC3BGYNN8kSHgM0DQrsGAAMQQAMyCwIaBgK/BmIaKM4IGCiMTDQXd9waCmlENZIaEgESKAMhpxQEDQSiEoJTGiEimaGCqIaBmKABUQwyBUIzRBkIXBDoI8BkAaDGwgaFEIMCeQUSYAKNBmLYDGwJ/DDYlFqAaBGwILBGgLyBUIRSFQghrCgEjDYMiiTdCggaFDYgaFKIKIBmcTkciiA1GNwpsFgI4BmZsBkVEDRAbJiBTCNQMABIIZHfBCPBDQKSCoFEGhA2IKIMQgJ1CoCFHGxVBeASQDgAZJDQ8RQIMyDQkGDZQ1GDILtBAwNGsAaLs1hokECYNCaQMxDIVmDRoOBDQifCBggaNKgMRqUhiovFGxoMEsCADAQQaMsUWJBi+LsMRqtWDSwUBqvFqpVFQ54UCstVqEGsDbBQx4lFgAABotRAgQABT54ADqtRM5jjQAAQ"))
+    }
+  }
+
   else if (img == "apetureWatch"){
    return {
   width : 176, height : 176, bpp : 4,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+/4A/AH4A/AH4A/AD0RkQASkMSCqgrqiJX/K/5X/K/5XR7vQgAAHgMQBRAAKgMRCqgrJhGIK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K7Uv///+RX/K6ZWBAAJXDAA3/+Pd6IMIAG0YxADBj5XD+ISIBwRX/K4pWDAAIMCXQQABl4LC7vQbabxLiIVUFZMIxBJBK4siK4wLDK/5XSBYhX/K6MvBIQDBK/5XD+RXMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XF+SuEK4yuCK/5XHWAZOCK4cvKwhX/K45MFK4YAGK/5XGLApX/K6X/K5svK/5XIWAZXJ/5X/K6svK/5XPAoauDK/5XJ/5XDj5eEVwRX/K5y2FVwRX/K4/yK44GDVwRX/K50fWAi9DK/5XGUYRQCiKwCAwKuDK/5XGJgZXGMQJWDK/5XGKQKkCK4arEK/5XIVQRQDK/5XQKwIABJYXyK4IGDAAReBK/5XDVwSwFK44QBK/5XJLAoFEX4UvK/5XDI4QADK4gFDM4RX/K5aqCK4oMDK/5XEUARYE+JXCLoINEK/5XLkURK4QAGK/5XEfIhX/K/5Xr+RX/K/5Xu/5X/K/5WKAAJXfl5XB+RX/K6ywFK9XxK4XwK7xWCK58vK7sP/5XDGoJXw/5Xc//4xBXEHIKyPK5/yK5svK7kPxAyBK4oHBK7xOFK5AQBK7UP/GPD4JWCiMfK4IJBK7iuFK4QAFj5XC6IMHACH4VooADK4QKHACEYK4QSOK7ilBJYcc5kM5gMCdQRXaOZK3FkRXC6DbTAAf4UYInB5gABK4PM4KBD+AcLFZUIK4JNGkRXIAAJXYh6GDKwRXDLASwCK7HyK9auDjhXH5iwPK5hMIK8iuBKwhXFLAJX/AA0PxCuBKAhXG4KwCK/6uEx/xK5qwNK/KuBjhXL5kRWAJXrABUhiQMKK4RPFK4/BK4PyFaxXql+I+JXPiP//5X/K4WP+McJ4roBLAxX/K5vAAQhX/ABBDBiJXFVgawFiMf//yK/4gBAAKuHWA/BCYQhIK8uIwQCOK5CqFAohXxlGIxACMCAJX/K7cAAAZXFBQkBK/6v/ABOIwQCOK/4AMFZRXI4AEIV+wrO///iMcVRC0FiMf//yQaZXZlABCFZ0v//xK4qrCVwpXB/+PbahX15kAgCuFK/5XIiJOF5hWG4MR/BXvkWIwQrQ///K58f/HyK94rSK4UcK5kRj+IK8I1BADhXE+KwGK4vBiP4x5XhEJQASl4DDWARXMj/4NwZX/WAkcK5TiBxA0LK/awBLAhXEiKuBx5X/K4svWAURK4/BVwX/ERZX5WAhYDK4RWBVxxX7WAkRjhXCAoKuPK/awCxGBKQQADBIKuNK/iwBxBOBKocf//4x6uNK/gHB/BXB+KtDA4JWOK/siU4RXDKwQwPK/oJB/6vEVp5X/AARXDFqRX/IAJXCESRX/K/5XYLAQiTK/5X/K5r7CAGpX/K+zxMiIiTkMSCqZX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K9//ADA4HV/4APK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K6v/ADCv/ABMhiIiTK/5X/K/5X/K/5X/K/5X/K83/ADsRAG4A="))
+  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+/4A/AH4A/AH4A/AD0RgAASgMQCqgrqiJX/K/5X/K/5XR7vQK/8IxBX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5Xah////wK/5XTKwIABK4YAG//x7vRBhAA2jGIAYMfK4fxCRAOCK/5XFKwYABBgTBEh4LC7vQbabxLFYoVPFZMIxADBK4sAK4wLDK/5XSBYhX/K6MPBIQDBK/5XD+BXMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XF+CuEK4yuCK/5XHWAZOCK4cPKwhX/K45MFK4YAGK/5XGLApX/K6X/K5sPK/5XIWAZXJ/5X/K6sPK/5XPAoauDK/5XJ/5XDj5eEVwRX/K5y2FVwRX/K4/wK44GDVwRX/K50fWAi9DK/5XGUYRQCiKwCAwKuDK/5XGJgZXGMQJWDK/5XGAoKkCK4arEK/5XIVQRQDK/5XQAwZLC+BXBAwYACLwJX/K4auCWApXHCAJX/K5JYFAoi/Ch5X/K4ZHCAAZXEAoZnCK/5XLVQRXFBgZX/K4igCLAnxFYRdBBohX/K5cAiIrJK/5XEfIhX/K/5Xr+BX/K/5Xu/5X/K/5WKFhRXWl5XB+BX/K6ywFK9XxK4SMFK7JWCK58PK7sP/5XDGoxXr/5Xc//4xBXEHIKyPK54fFK5CPBK7cPxAyBK4oHBK7wKFK5AQBK7UP/GPD4JWCiMfK4IJBK7jOGFgYwEK4XRBg4AQ/CtFAAZXCBQ4AQjBXCCRxXcUoJLDjnMhnMBgTqCK7RzJYYxXC6DbTAAf4UYInB5gABK4PM4KBDdYwrQhBXBBQ5XIAAJXYh6GDKwRXDLASwCK7BxIK8auDjhXH5iwPK5gKIK8iuBKwhXFLAJX/AA0PxCuBKAhXG4KwCK/6uEx/xK5qwNK/KuBjhXL5kRWAJXrbapXEJ4pXH4JXXABRXhh+I+JXPiP//5X/K4WP+McJ4oLBLAxX/K5vAAQhX/ABBDBiJXFVgawFiMf//wK/4gBAAKuHWA/BCYQhIK8uIwACOK5CqFAohXxhGIxACMCAJX/K7YaEK4pKFK/6v/ABOIwACOK/4AMFZRXI4AEIV+wrO///iMcVRC0FiMf//wQaZXZhABCFZ0P//xK4qrCVwpXB/+PbahX15gLBVwpX/K5ERJwvMKw3BiP4K98AxGAFaH//5XPj/4+BXvFaRXCjhXMiMfxBXhGoIAcK4nxWAxXF4MR/GPK4Q4e+UiADcvK4UPWARXMj/4NwayKACUPK8KwDjhXKcQOIKYZX/eIkRLAhXEiKuBx5XEY4QAYDgJXiIAXxiJXH4KuC/4VDK/6wGLAZXCKwKuGK/6wIiMcK4QFBVw5X/WA2IwJSCAAYJBVwpX/WA2IJwJVDj///GPVwpX/LA34K4PxVoYHBKwxX/AAynCK4ZWC+BX/K5ixB/6vEVo5X/IxAABK4asHK/5XLgJXCBxRX/K/5XgLAQNLK/5X/K6r7CACxX/K/5XVfJcBiINLK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K5o6bK/YaZK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K6o6bK/cAABUBiINLK/5X/K/5X/K/5X/K/AMLACBX/K7DMaAAcRADA4eA=="))
     }
   }
 
@@ -117,7 +127,7 @@ else if (img == "apetureLaboratoriesLight"){
    return {
   width : 176, height : 176, bpp : 4,
   transparent : 2,
-  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+gAA/AH4A/AH4A/AD0RkQASkMSCqgrqiJX/K/5X/K/5XR7vf/4AH+MfBRAAK+MRCqgrJ/GIK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K7UggEAgRX/K6ZWBAAJXDAA0AgPd6IMIAG0YxADBiBXDgISIBwRX/K4pWDAAIMCXQQABkALC7vfbabxLiIVUFZP4xBJBK4siK4wLDK/5XSBYhX/K6MgBIQDBK/5XDgRXMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XFgSuEK4yuCK/5XHWAZOCK4cgKwhX/K45MFK4YAGK/5XGLApX/K6UAK5sgK/5XIWAZXJgBX/K6sgK/5XPAoauDK/5XJgBXDiBeEVwRX/K5y2FVwRX/K48CK44GDVwRX/K50QWAi9DK/5XGUYRQCiKwCAwKuDK/5XGJgZXGMQJWDK/5XGKQKkCK4arEK/5XIVQRQDK/5XQKwIABJYUCK4IGDAAReBK/5XDVwSwFK44QBK/5XJLAoFEX4UgK/5XDI4QADK4gFDM4RX/K5aqCK4oMDK/5XEUARYEgJXCLoINEK/5XLkURK4QAGK/5XEfIhX/K/5XrgRX/K/5XugBX/K/5WKAAJXfkBXBgRXvgJXCh5XhWApXoF4KvD+EALKBXMKwRXPkBXcgAUCK4QFB+BYPK78AK7ZWBGYJXExBYQK58CK5sgK7fwJ4JQBK4pYCK7pOFK5AQBK7UP/GPAgJWCiMfK4IJBWBpXOVwpXCAAsQK4XRBg4APgAwBVogADK4XwgInWjBXCCRxXbiD9BKwcc5kM5gNCS4XwK7JyJW4siK4XfbaZGD/CjBE4PMAAJXB5nBiIaC+AdLFZTWBgBNGkRXIAAJXYh6uDKwRXDLAQRDK68CK9SuEjhXH5iwPK5hMIK8UP/APBKwhXFLAKwNK/OIVwJQEK43BDgRX/AAXw/GP+JXNWAXwK/5XDVwMcK5fMiIdBK9YAKkMSBZMPK4RPFK4/BJIUCFagAJK8WI+JXPiJX/K4mP+McJ4sAgBYGK/5XN4ACEK/4AHkBDBiJXFVgawFiMf//wK/4gBAAKuHWA/BCYQhIK8uIwQCOK5CqFAohXxlGIxACMCAJX/K7cAAAZXFBQkBK/6v/ABOIwQCOK/4AMFZRXI4AEIV+wrNkH//8RjiqIWgsRj//+CDTK7MoAIQrOh//+JXFVYSuFK4P/x8CK/5XJ5kAgCuFK/5XIiJOF5hWG4MR/BXvkWIwRXR/5XPj/4/5XvFaMgK4UcK5kRj+I+ArVK5UAADpXE+KwGK4vBiP4x5XhaBIATkADCh6wCK5kf/H/GpRX7+McK5UR/+IK/5XEkBXBWAJYEK4kRVwOP+AiKK/CwEiJXH4KuOK/SwELAZXCKwKuOK/ywBiMcK4QFBVwZX/K40igBXBxGBKQQADBIKuBGZhX6kUPJoJOBKocf//4x//GRpX7kBOBK4PxVoYHB//wERpX7kUAU4RXDKwYxOK/hYC/6vEKyBX+LAMAK4fwgAvQK/wABgJXCFqRX/IAJXCESRX/LAYiTK/5X/K5r7CAGpX/K+zxMiIiTkMSCqZX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K98AADA4HV/4APK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K6sAADCv/ABMhiIiTK/5X/K/5X/K/5X/K/5X/K80AADsRAG4A=="))
+  buffer : require("heatshrink").decompress(atob("kQA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+gAA/AH4A/AH4A/AD0R/4AS+MfCqgrqiJX/K/5X/K/5XR7vfK//4xBX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5Xa+EAgEPK/5XTKwIABK4YAGgEB7vRBhAA2jGIAYMQK4cBCRAOCK/5XFKwYABBgTBE+ALC7vfbabxLFYoVPFZP4xADBK4v/K4wLDK/5XSBYhX/K6PwBIQDBK/5XDh5XMBAQQCK/5XDKAJXKVwRWBAoJX/K4j3CUohXDL4YACK/5XFh6uEK4yuCK/5XHWAZOCK4fwKwhX/K45MFK4YAGK/5XGLApX/K6UAK5vwK/5XIWAZXJgBX/K6vwK/5XPAoauDK/5XJgBXDiBeEVwRX/K5y2FVwRX/K48PK44GDVwRX/K50QWAi9DK/5XGUYRQCiKwCAwKuDK/5XGJgZXGMQJWDK/5XGAoKkCK4arEK/5XIVQRQDK/5XQAwZLCh5XBAwYACLwJX/K4auCWApXHCAJX/K5JYFAoi/C+BX/K4ZHCAAZXEAoZnCK/5XLVQRXFBgZX/K4igCLAkBFYRdBBohX/K5f/iIrJK/5XEfIhX/K/5Xrh5X/K/5XugBX/K/5WKFhRXWkBXBh5XvgJXCGgpXcWApXoF4KvD+COGK65WCK5/wK7gtCK4YmCLB5XfgBXbFgIzBK4mILCBXPDwpXIcIJXa+BPBKAJXFLARXdBQpXICAJXah/4x4qDAAMfK4IJBWBpXODgwsDAAcQK4XRBg4APgAwBVogADK4XwgInWjBXCCRxXbiD9BKwcc5kM5gNCRgXwK7JyJYYxXC77bTIwf4UYInB5gABK4PM4MRDQXwDpYrKawMABQ5XIAAJXYh6uDKwRXDLAQRDK64YIK8SuEjhXH5iwPK5gKIK8UP/APBKwhXFLAKwNK/ItBiJQEK43BDgRX/AAXw/GP+JXNGQXwK/5XDEgMcK5fMiIdBK9YAKK5cPK4RPFK4/BDoUPFagAJK8WI+JXPGYRX/IIWP+McJ4sAgBYGK/5XN4ACEK/4AH+AjCK4qsDWAsRDwIWCK/ogBAAKuHWA/BCYQhIK8uIx4COK5CqFAohXx/GIxACMCAJX/K7cAAAZXFBQkBK/6v/ABOIx4COK/4AMFZRXI4AEIV+wrN+AjCjiqIWgpUCCwRXr/ABCFZ0PBoJXFVYSuFK4P/x4VBK/5XI5kAgCuFK/5XIiJOF5hWG4MR/BXv/+Ix5XREgJXOj58BK94rR+AkCjhXMiMfxAUCK70AADpXE+KwGK4vBiP4x5XhgUiADcgEQTyCK5sf/ATDK/5DD+McK5UR/+IK/5XEeYcRLAhXEiKuBx4SDK/6wFiJXH4KuOK/SwELAZXCKwKuOK/ywBiMcK4QFBVwZX/K43/gACBxGBKQQADBIKuBh5X/K43/JAOIJwJVDIYP4x4NCK/5XHfAP4K4PxVoYHBBgRX/K5H/gCnCK4ZWDVxpX9LARABV4ZWQK/xYBgBXD+EAKx5X/AAMBK4RVQK/5ADK4RBSK/5YDIKZX/K/5XNfYQA1K/5X2eJkReKfxj4VTK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5XvgAAYh5X8DTJX/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5XVgAAYK/orL+MRIKZX/K/5X/K/5X/K/5X/K/5XmgAAdiIA3"))
     }
   }
 }
@@ -140,6 +150,86 @@ var drawTimeout;
 //warnings
 var maxWarning = 9;
 var curWarning = Math.floor(Math.random() * (maxWarning+1));
+
+function unPause(delay){
+  setTimeout(function() {
+    pause = false;
+    draw();
+  }, delay);
+}
+
+function quote(minFont, width, height, specificQuote){
+  pause = true;
+  unPause(5000);
+  var finalString = "";
+  var quotesFile;
+  var fontSize;
+  quotesFile = require("Storage").read("aptsciclkquotes.txt", 0, 0); //opens the quotes file
+  //console.log(quotesFile);
+  var quotes = quotesFile.split("^");
+  var numQuotes = quotes.length;//number of quotes
+  var curQuote;
+
+  if (specificQuote == undefined){
+  curQuote = quotes[Math.round(Math.random()*numQuotes)]; //quote to be displayed
+  }
+  else{
+    curQuote = quotes[specificQuote];
+  }
+
+  var curWords = curQuote.split(" "); //individual words
+  //console.log(numQuotes);
+  console.log(curWords);
+  //console.log(Math.round(width/7/curQuote.length));
+
+  if (width/6/curQuote.length >= minFont){
+    finalString = curQuote;
+    fontSize = width/6/curQuote.length;
+  }
+  else{
+    var maxChar = width/6/minFont;
+    var maxLines = height/10/minFont;
+    var curLines = 0;
+    var curLength = 0;
+    var maxLength = 0;
+    for (var i = 0; i < curWords.length; i++){
+      console.log(curLength+curWords[i].length);
+      if (curLength + curWords[i].length <= maxChar){
+        finalString += " "+curWords[i];
+        curLength += curWords[i].length+1;
+        console.log("next");
+      }
+      else{
+        console.log("break");
+        curLines++;
+        if (curLines > maxLines){
+          curLength = 0;
+          finalString = "";
+          i = -1;
+          if (minFont > 1){minFont--;}
+          maxChar = width/6/minFont;
+          maxLines = height/10/minFont;
+        }
+        else{
+          curLength = 0;
+          finalString += "\n";
+          i--;
+        }
+      }
+    fontSize = minFont;
+    }
+  }
+
+  //drawing actual stuff
+  g.setColor(g.getBgColor());
+  g.fillRect(10, 10+28, g.getWidth()-10,g.getWidth()-10);
+  g.reset();
+  g.setFont(font, fontSize);
+  g.setFontAlign(0, 0);
+  g.drawString(finalString, xyCenter, xyCenter+14);
+  //quote length*pixels per character = pixel width
+  //height ~120 width ~160
+}
 
 function buttonPressed(){
   if (curWarning < maxWarning) curWarning += 1;
@@ -169,52 +259,59 @@ function queueDraw() {
 
 
 function draw() {
-  // get date
-  var d = new Date();
-  var da = d.toString().split(" ");
+  if (pause){}
+  else{
+    // get date
+    var d = new Date();
+    var da = d.toString().split(" ");
 
-  g.reset(); // default draw styles
-  //draw watchface
-  if (g.theme.dark){apSciWatch = getImg("apetureWatch");}
-  else {apSciWatch = getImg("apetureWatchLight");}
-  g.drawImage(apSciWatch, xyCenter-apSciWatch.width/2, xyCenter-apSciWatch.height/2);
+    g.reset(); // default draw styles
+    //draw watchface
+    if (g.theme.dark){apSciWatch = getImg("apetureWatch");}
+    else {apSciWatch = getImg("apetureWatchLight");}
+    g.drawImage(apSciWatch, xyCenter-apSciWatch.width/2, xyCenter-apSciWatch.height/2);
 
-  // drawSting centered
-  g.setFontAlign(0, 0);
+    potato = getImg("potato");
+    g.drawImage(potato, 118, 118);
 
-  // draw time
-  var time = da[4].substr(0, 5).split(":");
-  var hours = time[0],
-    minutes = time[1];
-  var meridian = "";
-  if (is12Hour) {
-    hours = parseInt(hours,10);
-    meridian = "AM";
-    if (hours == 0) {
-      hours = 12;
+    g.drawImage(warningImg, 1, g.getWidth()-61);//update warning
+
+    // drawString centered
+    g.setFontAlign(0, 0);
+
+    // draw time
+    var time = da[4].substr(0, 5).split(":");
+    var hours = time[0],
+      minutes = time[1];
+    var meridian = "";
+    if (is12Hour) {
+      hours = parseInt(hours,10);
       meridian = "AM";
-    } else if (hours >= 12) {
-      meridian = "PM";
-      if (hours>12) hours -= 12;
+      if (hours == 0) {
+        hours = 12;
+        meridian = "AM";
+      } else if (hours >= 12) {
+        meridian = "PM";
+        if (hours>12) hours -= 12;
+      }
+      hours = (" "+hours).substr(-2);
     }
-    hours = (" "+hours).substr(-2);
+
+    g.setFont(font, timeFontSize);
+    g.drawString(`${hours}:${minutes}`, xyCenter+2, yposTime, false);
+    g.setFont(font, gmtFontSize);
+    g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
+
+    // draw Day, name of month, Date
+    var date = [da[0], da[1], da[2]].join(" ");
+    g.setFont(font, dateFontSize);
+    g.drawString(String(date), xyCenter, yposDate, false);
+
+
+    // draw year
+    g.setFont(font, dateFontSize);
+    g.drawString(d.getFullYear(), xyCenter+1, yposYear, true);
   }
-
-  g.setFont(font, timeFontSize);
-  g.drawString(`${hours}:${minutes}`, xyCenter+2, yposTime, false);
-  g.setFont(font, gmtFontSize);
-  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
-
-  // draw Day, name of month, Date
-  var date = [da[0], da[1], da[2]].join(" ");
-  g.setFont(font, dateFontSize);
-  g.drawString(String(date), xyCenter, yposDate, false);
-
-
-  // draw year
-  g.setFont(font, dateFontSize);
-  g.drawString(d.getFullYear(), xyCenter+1, yposYear, true);
-
   queueDraw();
 }
 
@@ -231,8 +328,12 @@ Bangle.on('lcdPower',on=>{
 
 Bangle.on('touch',(n,e)=>{
   //button is 88 104
-  if (buttonX-buttonTolerance < e.x && e.x < buttonX+buttonTolerance && buttonY-buttonTolerance < e.y && e.y < buttonY+buttonTolerance){
-  buttonPressed();
+  if (!pause && buttonX-buttonTolerance < e.x && e.x < buttonX+buttonTolerance && buttonY-buttonTolerance < e.y && e.y < buttonY+buttonTolerance){
+    buttonPressed();
+  }
+  //Potato GLaDOS
+  else if (!pause && 117 < e.x && e.x < 172 && 117 < e.y && e.y < 172){
+    quote(2, 150, 140);
   }
 });
 
