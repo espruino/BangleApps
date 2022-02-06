@@ -11,6 +11,11 @@
       settings.recording = false;
     return settings;
   }
+  
+  function updateSettings(settings) {
+    require("Storage").writeJSON("recorder.json", settings);
+    if (WIDGETS["recorder"]) WIDGETS["recorder"].reload();
+  }
 
   function getRecorders() {
     var recorders = {
@@ -52,17 +57,18 @@
         };
       },
       hrm:function() {
-        var bpm = "", bpmConfidence = "";
+        var bpm = "", bpmConfidence = "", src="";
         function onHRM(h) {
           bpmConfidence = h.confidence;
           bpm = h.bpm;
+          srv = h.src;
         }
         return {
           name : "HR",
-          fields : ["Heartrate", "Confidence"],
+          fields : ["Heartrate", "Confidence", "Source"],
           getValues : () => {
-            var r = [bpm,bpmConfidence];
-            bpm = ""; bpmConfidence = "";
+            var r = [bpm,bpmConfidence,src];
+            bpm = ""; bpmConfidence = ""; src="";
             return r;
           },
           start : () => {
@@ -227,15 +233,32 @@
     Bangle.drawWidgets(); // relayout all widgets
   },setRecording:function(isOn) {
     var settings = loadSettings();
-    if (isOn && !settings.recording && require("Storage").list(settings.file).length)
-      return E.showPrompt("Overwrite\nLog 0?",{title:"Recorder",buttons:{Yes:"yes",No:"no"}}).then(selection=>{
+    if (isOn && !settings.recording && require("Storage").list(settings.file).length){
+      var logfiles=require("Storage").list(/recorder.log.*/);
+      var maxNumber=0;
+      for (var c of logfiles){
+          maxNumber = Math.max(maxNumber, c.match(/\d+/)[0]);
+      }
+      var newFileName;
+      if (maxNumber < 99){
+        newFileName="recorder.log" + (maxNumber + 1) + ".csv";
+        updateSettings(settings);
+      }
+      var buttons={Yes:"yes",No:"no"};
+      if (newFileName) buttons["New"] = "new";
+      var prompt = E.showPrompt("Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:"Recorder",buttons:buttons}).then(selection=>{
         if (selection=="no") return false; // just cancel
         if (selection=="yes") require("Storage").open(settings.file,"r").erase();
-        // TODO: Add 'new file' option
+        if (selection=="new"){
+          settings.file = newFileName;
+          updateSettings(settings);
+        }
         return WIDGETS["recorder"].setRecording(1);
       });
+      return prompt;
+    }
     settings.recording = isOn;
-    require("Storage").write("recorder.json", settings);
+    updateSettings(settings);
     WIDGETS["recorder"].reload();
     return Promise.resolve(settings.recording);
   }/*,plotTrack:function(m) { // m=instance of openstmap module

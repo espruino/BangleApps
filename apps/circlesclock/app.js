@@ -1,27 +1,24 @@
 const locale = require("locale");
-const heatshrink = require("heatshrink");
 const storage = require("Storage");
 const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
-const shoesIcon = heatshrink.decompress(atob("h0OwYJGgmAAgUBkgECgVJB4cSoAUDyEBkARDpADBhMAyQRBgVAkgmDhIUDAAuQAgY1DAAYA="));
-const shoesIconGreen = heatshrink.decompress(atob("h0OwYJGhIEDgVIAgUEyQKDkmACgcggVACIeQAYMSgIRCgmApIbDiQUDAAkBkAFDGoYAD"));
-const heartIcon = heatshrink.decompress(atob("h0OwYOLkmQhMkgACByVJgESpIFBpEEBAIFBCgIFCCgsABwcAgQOCAAMSpAwDyBNM"));
-const powerIcon = heatshrink.decompress(atob("h0OwYQNsAED7AEDmwEDtu2AgUbtuABwXbBIUN23AAoYOCgEDFIgODABI"));
-const powerIconGreen = heatshrink.decompress(atob("h0OwYQNkAEDpAEDiQEDkmSAgUJkmABwVJBIUEyVAAoYOCgEBFIgODABI"));
-const powerIconRed = heatshrink.decompress(atob("h0OwYQNoAEDyAEDkgEDpIFDiVJBweSAgUJkmAAoYZDgQpEBwYAJA"));
+const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
+const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
+const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
+const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
 
-const weatherCloudy = heatshrink.decompress(atob("iEQwYWTgP//+AAoMPAoPwAoN/AocfAgP//0AAgQAB/AFEABgdDAAMDDohMRA"));
-const weatherSunny = heatshrink.decompress(atob("iEQwYLIg3AAgVgAQMMAo8Am3YAgUB23bAoUNAoIUBjYFCsOwBYoFDDpFgHYI1JI4gFGAAYA="));
-const weatherMoon = heatshrink.decompress(atob("iEQwIFCgOAh/wj/4n/8AId//wBBBIoRBCoIZBDoI"));
-const weatherPartlyCloudy = heatshrink.decompress(atob("iEQwYQNv0AjgGDn4EDh///gFChwREC4MfxwIBv0//+AC4X4j4FCv/AgfwgED/wIBuAaBBwgFDgP4gf/AAXABwIEBDQQAEA=="));
-const weatherRainy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AocAnAFBFIU4EAM//gRBEAIOBhw1C/AmDAosAC4JNIAAg"));
-const weatherPartlyRainy = heatshrink.decompress(atob("h0OwYJGjkAnAFCj+AAgU//4FCuEA8EAg8ch/4gEB4////AAoIIBCIMD/wgCg4bBg/8BwMD+AgBh4ZBDQf/FIIABh4IBgAA=="));
-const weatherSnowy = heatshrink.decompress(atob("iEQwYROn/8AocH8AECuAFBh0Agf+CIN/4EDx/4j/x4EAgIIBwAXBAogRFDoopFGoxBGABIA="));
-const weatherFoggy = heatshrink.decompress(atob("iEQwYROn/8AgUB/EfwAFBh/AgfwgED/wIBuEABwd/4EcDQgFDgE4Fosf///8f//A/Lj/xCQIRNA="));
-const weatherStormy = heatshrink.decompress(atob("iEQwYLIg/gAgUB///wAFBh/AgfwgED/wIBuEAj4OCv0AjgaCh/4AoX8gE4AoQpBnAdBF4IRBDQMH/kOHgY7DAo4AOA=="));
+const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
+const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
+const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
+const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
+const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
+const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
+const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
+const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
+const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
 
-const sunSetDown = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wLDg1ggfACoo"));
-const sunSetUp = heatshrink.decompress(atob("iEQwIHEgOAAocT5EGtEEkF//wRFgfAg1gBIY"));
+const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
+const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
 let settings = storage.readJSON("circlesclock.json", 1) || {
   'minHR': 40,
@@ -41,7 +38,7 @@ let settings = storage.readJSON("circlesclock.json", 1) || {
 };
 // Load step goal from pedometer widget as fallback
 if (settings.stepGoal == undefined) {
-  const d = require('Storage').readJSON("wpedom.json", 1) || {};
+  const d = storage.readJSON("wpedom.json", 1) || {};
   settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
 }
 
@@ -69,6 +66,7 @@ const colorGreen = '#008000';
 const colorBlue = '#0000ff';
 const colorYellow = '#ffff00';
 const widgetOffset = showWidgets ? 24 : 0;
+const dowOffset = circleCount == 3 ? 22 : 24; // dow offset relative to date
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
 const hOffset = 30 - widgetOffset;
@@ -98,14 +96,15 @@ const circlePosX = [
 
 const radiusOuter = circleCount == 3 ? 25 : 20;
 const radiusInner = circleCount == 3 ? 20 : 15;
-const circleFont = circleCount == 3 ? "Vector:15" : "Vector:12";
-const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:13";
+const circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
+const circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
+const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
+const iconOffset = circleCount == 3 ? 6 : 8;
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
 
 function draw() {
   g.clear(true);
-
   if (!showWidgets) {
     /*
      * we are not drawing the widgets as we are taking over the whole screen
@@ -123,7 +122,7 @@ function draw() {
   }
 
   g.setColor(colorBg);
-  g.fillRect(0, widgetOffset, w, h);
+  g.fillRect(0, widgetOffset, w, h2 + 22);
 
   // time
   g.setFont("Vector:50");
@@ -136,7 +135,7 @@ function draw() {
   g.setFont("Vector:21");
   g.setFontAlign(-1, 0);
   g.drawString(locale.date(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2);
-  g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + 22);
+  g.drawString(locale.dow(new Date()), w > 180 ? 2 * w / 10 : w / 10, h2 + dowOffset);
 
   drawCircle(1);
   drawCircle(2);
@@ -147,7 +146,8 @@ function draw() {
 function drawCircle(index) {
   let type = settings['circle' + index];
   if (!type) type = defaultCircleTypes[index - 1];
-  const w = getCirclePosition(type);
+  const w = getCircleXPosition(type);
+
   switch (type) {
     case "steps":
       drawSteps(w);
@@ -168,6 +168,15 @@ function drawCircle(index) {
     case "sunProgress":
       drawSunProgress(w);
       break;
+    case "temperature":
+      drawTemperature(w);
+      break;
+    case "pressure":
+      drawPressure(w);
+      break;
+    case "altitude":
+      drawAltitude(w);
+      break;
     case "empty":
       // we draw nothing here
       return;
@@ -186,20 +195,28 @@ let circlePositionsCache = [];
  */
 function getCirclePosition(type) {
   if (circlePositionsCache[type] >= 0) {
-    return circlePosX[circlePositionsCache[type]];
+    return circlePositionsCache[type];
   }
   for (let i = 1; i <= circleCount; i++) {
     const setting = settings['circle' + i];
     if (setting == type) {
       circlePositionsCache[type] = i - 1;
-      return circlePosX[i - 1];
+      return i - 1;
     }
   }
   for (let i = 0; i < defaultCircleTypes.length; i++) {
     if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
       circlePositionsCache[type] = i;
-      return circlePosX[i];
+      return i;
     }
+  }
+  return undefined;
+}
+
+function getCircleXPosition(type) {
+  const circlePos = getCirclePosition(type);
+  if (circlePos != undefined) {
+    return circlePosX[circlePos];
   }
   return undefined;
 }
@@ -208,111 +225,170 @@ function isCircleEnabled(type) {
   return getCirclePosition(type) != undefined;
 }
 
+function getCircleColor(type) {
+  const pos = getCirclePosition(type);
+  const color = settings["circle" + (pos + 1) + "color"];
+  if (color && color != "") return color;
+}
+
+function getCircleIconColor(type, color, percent) {
+  const pos = getCirclePosition(type);
+  const colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] == true;
+  if (colorizeIcon) {
+    return getGradientColor(color, percent);
+  } else {
+    return "";
+  }
+}
+
+function getGradientColor(color, percent) {
+  if (isNaN(percent)) percent = 0;
+  if (percent > 1) percent = 1;
+  const colorList = [
+    '#00FF00', '#80FF00', '#FFFF00', '#FF8000', '#FF0000'
+  ];
+  if (color == "green-red") {
+    const colorIndex = Math.round(colorList.length * percent);
+    return colorList[Math.min(colorIndex, colorList.length) - 1] || "#00ff00";
+  }
+  if (color == "red-green") {
+    const colorIndex = colorList.length - Math.round(colorList.length * percent);
+    return colorList[Math.min(colorIndex, colorList.length)] || "#ff0000";
+  }
+  return color;
+}
+
+function getImage(graphic, color) {
+  if (!color || color == "") {
+    return graphic;
+  } else {
+    return {
+      width: 16,
+      height: 16,
+      bpp: 1,
+      transparent: 0,
+      buffer: E.toArrayBuffer(graphic),
+      palette: new Uint16Array([colorBg, g.toColor(color)])
+    };
+  }
+}
 
 function drawSteps(w) {
-  if (!w) w = getCirclePosition("steps");
+  if (!w) w = getCircleXPosition("steps");
   const steps = getSteps();
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("steps") || colorBlue;
+
+  let percent;
   const stepGoal = settings.stepGoal || 10000;
   if (stepGoal > 0) {
-    let percent = steps / stepGoal;
+    percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
-    drawGauge(w, h3, percent, colorBlue);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(shoesIcon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("steps", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
-  if (!w) w = getCirclePosition("steps");
+  if (!w) w = getCircleXPosition("stepsDistance");
   const steps = getSteps();
   const stepDistance = settings.stepLength || 0.8;
   const stepsDistance = Math.round(steps * stepDistance);
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("stepsDistance") || colorGreen;
+
+  let percent;
   const stepDistanceGoal = settings.stepDistanceGoal || 8000;
   if (stepDistanceGoal > 0) {
-    let percent = stepsDistance / stepDistanceGoal;
+    percent = stepsDistance / stepDistanceGoal;
     if (stepDistanceGoal < stepsDistance) percent = 1;
-    drawGauge(w, h3, percent, colorGreen);
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(shoesIconGreen, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(getImage(shoesIcon, getCircleIconColor("stepsDistance", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
-  if (!w) w = getCirclePosition("hr");
+  if (!w) w = getCircleXPosition("hr");
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("hr") || colorRed;
+
+  let percent;
   if (hrtValue != undefined) {
     const minHR = settings.minHR || 40;
     const maxHR = settings.maxHR || 200;
-    const percent = (hrtValue - minHR) / (maxHR - minHR);
-    drawGauge(w, h3, percent, colorRed);
+    percent = (hrtValue - minHR) / (maxHR - minHR);
+    if (isNaN(percent)) percent = 0;
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
   writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
 
-  g.drawImage(heartIcon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(getImage(heartIcon, getCircleIconColor("hr", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawBattery(w) {
-  if (!w) w = getCirclePosition("battery");
+  if (!w) w = getCircleXPosition("battery");
   const battery = E.getBattery();
 
   drawCircleBackground(w);
 
+  let color = getCircleColor("battery") || colorYellow;
+
+  let percent;
   if (battery > 0) {
-    const percent = battery / 100;
-    drawGauge(w, h3, percent, colorYellow);
+    percent = battery / 100;
+    drawGauge(w, h3, percent, color);
   }
 
   drawInnerCircleAndTriangle(w);
 
-  let icon = powerIcon;
-  let color = colorFg;
   if (Bangle.isCharging()) {
     color = colorGreen;
-    icon = powerIconGreen;
   } else {
     if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
       color = colorRed;
-      icon = powerIconRed;
     }
   }
   writeCircleText(w, battery + '%');
 
-  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawWeather(w) {
-  if (!w) w = getCirclePosition("weather");
+  if (!w) w = getCircleXPosition("weather");
   const weather = getWeather();
   const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
   const code = weather ? weather.code : -1;
 
   drawCircleBackground(w);
 
+  const color = getCircleColor("weather") || colorYellow;
+  let percent;
   const data = settings.weatherCircleData || "humidity";
   switch (data) {
     case "humidity":
       const humidity = weather ? weather.hum : undefined;
       if (humidity >= 0) {
-        drawGauge(w, h3, humidity / 100, colorYellow);
+        percent = humidity / 100;
+        drawGauge(w, h3, percent, color);
       }
       break;
     case "wind":
@@ -323,7 +399,8 @@ function drawWeather(w) {
             wind[1] = windAsBeaufort(wind[1]);
           }
           // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-          drawGauge(w, h3, wind[1] / 12, colorYellow);
+          percent = wind[1] / 12;
+          drawGauge(w, h3, percent, color);
         }
       }
       break;
@@ -337,7 +414,7 @@ function drawWeather(w) {
 
   if (code > 0) {
     const icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(icon, w - 6, h3 + radiusOuter - 10);
+    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }
@@ -345,28 +422,18 @@ function drawWeather(w) {
 
 
 function drawSunProgress(w) {
-  if (!w) w = getCirclePosition("sunprogress");
+  if (!w) w = getCircleXPosition("sunprogress");
   const percent = getSunProgress();
 
   drawCircleBackground(w);
 
-  drawGauge(w, h3, percent, colorYellow);
+  const color = getCircleColor("sunprogress") || colorYellow;
+
+  drawGauge(w, h3, percent, color);
 
   drawInnerCircleAndTriangle(w);
 
-  let icon = powerIcon;
-  let color = colorFg;
-  if (isDay()) {
-    // day
-    color = colorFg;
-    icon = sunSetDown;
-  } else {
-    // night
-    color = colorGrey;
-    icon = sunSetUp;
-  }
-  g.setColor(color);
-
+  let icon = sunSetDown;
   let text = "?";
   const times = getSunData();
   if (times != undefined) {
@@ -381,16 +448,95 @@ function drawSunProgress(w) {
       } else {
         text = formatSeconds(sunRise - now);
       }
+      icon = sunSetUp;
     } else {
       // day, approx sunrise tomorrow:
       text = formatSeconds(sunSet - now);
+      icon = sunSetDown;
     }
   }
 
   writeCircleText(w, text);
 
-  g.drawImage(icon, w - 6, h3 + radiusOuter - 6);
+  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+}
 
+function drawTemperature(w) {
+  if (!w) w = getCircleXPosition("temperature");
+
+  getPressureValue("temperature").then((temperature) => {
+    drawCircleBackground(w);
+
+    const color = getCircleColor("temperature") || colorGreen;
+
+    let percent;
+    if (temperature) {
+      const min = -40;
+      const max = 85;
+      percent = (temperature - min) / (max - min);
+      drawGauge(w, h3, percent, color);
+    }
+
+    drawInnerCircleAndTriangle(w);
+
+    if (temperature)
+      writeCircleText(w, locale.temp(temperature));
+
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+
+  });
+}
+
+function drawPressure(w) {
+  if (!w) w = getCircleXPosition("pressure");
+
+  getPressureValue("pressure").then((pressure) => {
+    drawCircleBackground(w);
+
+    const color = getCircleColor("pressure") || colorGreen;
+
+    let percent;
+    if (pressure && pressure > 0) {
+      const minPressure = 950;
+      const maxPressure = 1050;
+      percent = (pressure - minPressure) / (maxPressure - minPressure);
+      drawGauge(w, h3, percent, color);
+    }
+
+    drawInnerCircleAndTriangle(w);
+
+    if (pressure)
+      writeCircleText(w, Math.round(pressure));
+
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+
+  });
+}
+
+function drawAltitude(w) {
+  if (!w) w = getCircleXPosition("altitude");
+
+  getPressureValue("altitude").then((altitude) => {
+    drawCircleBackground(w);
+
+    const color = getCircleColor("altitude") || colorGreen;
+
+    let percent;
+    if (altitude) {
+      const min = 0;
+      const max = 10000;
+      percent = (altitude - min) / (max - min);
+      drawGauge(w, h3, percent, color);
+    }
+
+    drawInnerCircleAndTriangle(w);
+
+    if (altitude)
+      writeCircleText(w, locale.distance(Math.round(altitude)));
+
+    g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+
+  });
 }
 
 /*
@@ -432,7 +578,6 @@ function getWeatherIconByCode(code) {
         default:
           return weatherRainy;
       }
-      break;
     case 6:
       return weatherSnowy;
     case 7:
@@ -448,11 +593,9 @@ function getWeatherIconByCode(code) {
         default:
           return weatherCloudy;
       }
-      break;
     default:
       return undefined;
   }
-  return undefined;
 }
 
 
@@ -478,7 +621,7 @@ function formatSeconds(s) {
 function getSunData() {
   if (location != undefined && location.lat != undefined) {
     // get today's sunlight times for lat/lon
-    return SunCalc.getTimes(new Date(), location.lat, location.lon);
+    return SunCalc ? SunCalc.getTimes(new Date(), location.lat, location.lon) : undefined;
   }
   return undefined;
 }
@@ -504,12 +647,12 @@ function getSunProgress() {
     }
   } else {
     // during night
-    if (sunSet < sunRise) {
-      const upcomingSunRise = sunRise + 60 * 60 * 24;
-      return 1 - (upcomingSunRise - now) / (upcomingSunRise - sunSet);
+    if (now < sunRise) {
+      const prevSunSet = sunSet - 60 * 60 * 24;
+      return 1 - (sunRise - now) / (sunRise - prevSunSet);
     } else {
-      const lastSunSet = sunSet - 60 * 60 * 24;
-      return (now - lastSunSet) / (sunRise - lastSunSet);
+      const upcomingSunRise = sunRise + 60 * 60 * 24;
+      return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
     }
   }
 }
@@ -518,6 +661,7 @@ function getSunProgress() {
  * Draws the background and the grey circle
  */
 function drawCircleBackground(w) {
+  g.clearRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
   // Draw rectangle background:
   g.setColor(colorBg);
   g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
@@ -543,16 +687,17 @@ function radians(a) {
  */
 function drawGauge(cx, cy, percent, color) {
   const offset = 15;
-  const end = 345;
-  const radius = radiusInner + 3;
+  const end = 360 - offset;
+  const radius = radiusInner + (circleCount == 3 ? 3 : 2);
   const size = radiusOuter - radiusInner - 2;
 
-  if (percent <= 0) return;
+  if (percent <= 0) return; // no gauge needed
   if (percent > 1) percent = 1;
 
   const startRotation = -offset;
   const endRotation = startRotation - ((end - offset) * percent);
 
+  color = getGradientColor(color, percent);
   g.setColor(color);
 
   for (let i = startRotation; i > endRotation - size; i -= size) {
@@ -564,7 +709,8 @@ function drawGauge(cx, cy, percent, color) {
 
 function writeCircleText(w, content) {
   if (content == undefined) return;
-  g.setFont(content.length < 4 ? circleFontBig : circleFont);
+  const font = String(content).length > 4 ? circleFontSmall : String(content).length > 3 ? circleFont : circleFontBig;
+  g.setFont(font);
 
   g.setFontAlign(0, 0);
   g.setColor(colorFg);
@@ -607,34 +753,66 @@ function enableHRMSensor() {
   }
 }
 
+let pressureLocked = false;
+let pressureCache;
+
+function getPressureValue(type) {
+  return new Promise((resolve) => {
+    if (Bangle.getPressure) {
+      if (!pressureLocked) {
+        pressureLocked = true;
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
+        }
+        Bangle.getPressure().then(function(d) {
+          pressureLocked = false;
+          if (d) {
+            pressureCache = d;
+            if (d[type]) {
+              resolve(d[type]);
+            }
+          }
+        }).catch(() => {});
+      } else {
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
+        }
+      }
+    }
+  });
+}
+
 Bangle.on('lock', function(isLocked) {
   if (!isLocked) {
+    draw();
     if (isCircleEnabled("hr")) {
       enableHRMSensor();
     }
-    draw();
   } else {
     Bangle.setHRMPower(0, "circleclock");
   }
 });
 
 
+let timerHrm;
 Bangle.on('HRM', function(hrm) {
   if (isCircleEnabled("hr")) {
     if (hrm.confidence >= (settings.confidence || 0)) {
       hrtValue = hrm.bpm;
-      if (Bangle.isLCDOn())
+      if (Bangle.isLCDOn()) {
         drawHeartRate();
+      }
+    }
+    // Let us wait before we overwrite "good" HRM values:
+    if (Bangle.isLCDOn()) {
+      if (timerHrm) clearTimeout(timerHrm);
+      timerHrm = setTimeout(() => {
+        hrtValue = '...';
+        drawHeartRate();
+      }, settings.hrmValidity * 1000 || 30000);
     }
   }
 });
-
-
-Bangle.setUI("clock");
-Bangle.loadWidgets();
-
-draw();
-setInterval(draw, 60000);
 
 Bangle.on('charging', function(charging) {
   if (isCircleEnabled("battery")) drawBattery();
@@ -643,3 +821,10 @@ Bangle.on('charging', function(charging) {
 if (isCircleEnabled("hr")) {
   enableHRMSensor();
 }
+
+
+Bangle.setUI("clock");
+Bangle.loadWidgets();
+
+draw();
+setInterval(draw, 60000);

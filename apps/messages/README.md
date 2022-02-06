@@ -17,6 +17,29 @@ and `Messages`:
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
 
+## New Messages
+
+When a new message is received:
+
+* If you're in an app, the Bangle will buzz and a 'new message' icon appears in the Widget bar. You can tap this bar to view the message.
+* If you're in a clock, the Messages app will automatically start and show the message
+
+When a message is shown, you'll see a screen showing the message title and text.
+
+### Android
+
+* The 'back-arrow' button goes back to Messages, marking the current message as read.
+* If shown, the 'tick' button opens the notification on the phone
+* If shown, the 'cross' button dismisses the notification on the phone
+* The top-left icon shows more options, for instance deleting the message of marking unread
+
+### iOS
+
+* The 'back-arrow' button goes back to Messages, marking the current message as read.
+* If shown, the 'tick' button responds positively to the notification (accept call/etc)
+* If shown, the 'cross' button responds negatively to the notification (dismiss call/etc)
+* The top-left icon shows more options, for instance deleting the message of marking unread
+
 ## Images
 _1. Screenshot of a notification_
 
