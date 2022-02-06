@@ -397,6 +397,7 @@ function handleTokenQr(res) {
   }
 }
 function cancelTokenQr() {
+  scanning = false;
   editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
 }
 class proto3decoder {
@@ -467,6 +468,7 @@ function handleImportQr(res) {
   }
 }
 function cancelImportQr() {
+  scanning = false;
   document.body.className = 'select';
 }
 /* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
@@ -474,7 +476,6 @@ qrcode.callback = res => {
   if (res) {
     scanCallback(res);
     if (scanning) {
-      scanning = false;
       scanBack();
     }
   }
