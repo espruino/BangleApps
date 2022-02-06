@@ -14,8 +14,8 @@
 * Between 6 and 10 digits
 * Phone/PC configuration web page:
   * Add/edit/delete/arrange tokens
-  * Scan QR codes
-  * Produce scannable QR codes
+  * Scan token and migration(import) QR codes
+  * Produce scannable token and migration(export) QR codes
 
 ## Usage
 
@@ -23,6 +23,8 @@
 * Tokens are stored *ONLY* on the watch.
 * Swipe right to exit to the app launcher.
 * Swipe left on selected counter token to advance the counter to the next value.
+
+![Screenshot](screenshot.png)
 
 ## Creator
 
