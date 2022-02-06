@@ -270,11 +270,11 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  // If body of message is only one line, use large font.
+  // If body of message is only two lines long w/ large font, use large font.
   var body=msg.body, bodyFont = fontLarge, lines;
   if (body) {
     var w = g.getWidth()-48;
-    if (g.setFont(bodyFont).stringWidth(body) > w)
+    if (g.setFont(bodyFont).stringWidth(body) > w * 2)
       bodyFont = fontMedium;
     if (g.setFont(bodyFont).stringWidth(body) > w) {
       lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
