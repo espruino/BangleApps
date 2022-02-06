@@ -158,12 +158,12 @@ function unPause(delay){
   }, delay);
 }
 
-function quote(minFont, width, height, specificQuote){
+function quote(fontsize, width, height, specificQuote){
   pause = true;
-  unPause(5000);
+  unPause(7000);
   var finalString = "";
   var quotesFile;
-  var fontSize;
+  var finalFontSize;
   quotesFile = require("Storage").read("aptsciclkquotes.txt", 0, 0); //opens the quotes file
   //console.log(quotesFile);
   var quotes = quotesFile.split("^");
@@ -171,7 +171,7 @@ function quote(minFont, width, height, specificQuote){
   var curQuote;
 
   if (specificQuote == undefined){
-  curQuote = quotes[Math.round(Math.random()*numQuotes)]; //quote to be displayed
+  curQuote = quotes[Math.round(Math.random()*numQuotes)-1]; //quote to be displayed
   }
   else{
     curQuote = quotes[specificQuote];
@@ -179,52 +179,49 @@ function quote(minFont, width, height, specificQuote){
 
   var curWords = curQuote.split(" "); //individual words
   //console.log(numQuotes);
-  console.log(curWords);
-  //console.log(Math.round(width/7/curQuote.length));
 
-  if (width/6/curQuote.length >= minFont){
-    finalString = curQuote;
-    fontSize = width/6/curQuote.length;
-  }
-  else{
-    var maxChar = width/6/minFont;
-    var maxLines = height/10/minFont;
-    var curLines = 0;
-    var curLength = 0;
-    var maxLength = 0;
-    for (var i = 0; i < curWords.length; i++){
-      console.log(curLength+curWords[i].length);
-      if (curLength + curWords[i].length <= maxChar){
-        finalString += " "+curWords[i];
-        curLength += curWords[i].length+1;
-        console.log("next");
+  var maxChar = width/6/fontsize;
+  var maxLines = height/10/fontsize;
+  var curLines = 0;
+  var curLength = 0;
+
+
+  for (var i = 0; i < curWords.length; i++){
+    //console.log(curLength+curWords[i].length);
+    if (curLength + curWords[i].length <= maxChar){
+      finalString += " "+curWords[i];
+      curLength += curWords[i].length+1;
+      //console.log("next");
+    }
+    else{
+      //console.log("break");
+      curLines++;
+      if (curLines > maxLines){
+        curLength = 0;
+        finalString = "";
+        i = -1;
+        if (fontsize > 1){fontsize--;}
+        maxChar = width/6/fontsize;
+        maxLines = height/10/fontsize;
+        console.log(maxLines);
+        console.log(maxChar);
+
       }
       else{
-        console.log("break");
-        curLines++;
-        if (curLines > maxLines){
-          curLength = 0;
-          finalString = "";
-          i = -1;
-          if (minFont > 1){minFont--;}
-          maxChar = width/6/minFont;
-          maxLines = height/10/minFont;
-        }
-        else{
-          curLength = 0;
-          finalString += "\n";
-          i--;
-        }
+        curLength = 0;
+        finalString += "\n";
+        i--;
       }
-    fontSize = minFont;
     }
+    finalFontSize = fontsize;
   }
+
 
   //drawing actual stuff
   g.setColor(g.getBgColor());
   g.fillRect(10, 10+28, g.getWidth()-10,g.getWidth()-10);
   g.reset();
-  g.setFont(font, fontSize);
+  g.setFont(font, finalFontSize);
   g.setFontAlign(0, 0);
   g.drawString(finalString, xyCenter, xyCenter+14);
   //quote length*pixels per character = pixel width
