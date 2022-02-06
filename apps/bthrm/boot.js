@@ -489,8 +489,8 @@
           if (gatt.connected){
             log("Disconnect with gatt: ", gatt);
             gatt.disconnect().then(()=>{
-              log("Successful disconnect", e);
-            }).catch(()=>{
+              log("Successful disconnect");
+            }).catch((e)=>{
               log("Error during disconnect", e);
             });
           }

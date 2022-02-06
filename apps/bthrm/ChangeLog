@@ -16,3 +16,4 @@
       Disconnect cleanly on exit
 0.06: Fix bug if no request waiting time is set
       Fix bug if no connection data was cached
+      Fix error during disconnect
