@@ -7,8 +7,8 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    v = '1.49'                      // Version of this script
-    requiredBangleVer = '1.46';     // Minimum speedalt2 version required on Bangle
+    v = '1.50'                      // Version of this script
+    requiredBangleVer = '1.47';     // Minimum speedalt2 version required on Bangle
     curBangleVer = '-.--'
     isStopped = true;               // Data receive turned off
     lastData = new Date().getTime() / 1000;   // Time of last data received
@@ -20,6 +20,8 @@ function OnStart() {
     col = new Array(['black'],['#64FF00'],['#FCFA00'],['#00E4FF'])   // bg, main, units, wp   - 0xFFFF,0x007F,0x0054,0x0054
 
     // Connect to Bangle
+     if( !app.IsBluetoothEnabled() ) app.SetBluetoothEnabled( true );
+
     puck = app.CreatePuckJS();
     puck.SetOnConnect(onConnect);       // Callback.
     puck.SetOnReceive(readResponse);    // Callback to capture console output from app.
@@ -270,4 +272,3 @@ function btn_OnScan() {
     btnStop.SetBackColor(btnOff)
     puck.Scan("Bangle");
 }
-
