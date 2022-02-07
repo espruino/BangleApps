@@ -448,16 +448,17 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
-  var steps = 0;
-  let health;
-  try {
-    health = require("health");
+  try{
+      if (WIDGETS.wpedom !== undefined) {
+          return WIDGETS.wpedom.getSteps();
+      } else if (WIDGETS.activepedom !== undefined) {
+          return WIDGETS.activepedom.getSteps();
+      }
   } catch(ex) {
-    return steps;
+      // In case we failed, we can only show 0 steps.
   }
 
-  health.readDay(new Date(), h=>steps+=h.steps);
-  return steps;
+  return 0;
 }
 
 
