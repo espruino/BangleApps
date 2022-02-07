@@ -7,7 +7,7 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    v = '1.47'                      // Version of this script
+    v = '1.48'                      // Version of this script
     requiredBangleVer = '1.46';     // Minimum speedalt2 version required on Bangle
     curBangleVer = '-.--'
     isStopped = true;               // Data receive turned off
@@ -17,6 +17,7 @@ function OnStart() {
     //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
     btnOff = '#175A63'
     btnOn = '#4285F4'
+    col = new Array(['black'],['#64FF00'],['#FCFA00'],['#00E4FF'])   // bg, main, units, wp   - 0xFFFF,0x007F,0x0054,0x0054
 
     // Connect to Bangle
     puck = app.CreatePuckJS();
@@ -26,22 +27,21 @@ function OnStart() {
     setInterval(checkConnection,5000)   // Periodic check for data timeout and attempt a reconnect
 
     // Controls
-    app.SetScreenMode("Full")
-
+    
     //Create a layout with objects vertically centered.
     layVert = app.CreateLayout("Linear", "VCenter,FillXY")
     layVert.SetPadding(0.02, 0.02, 0.02, 0.02);
-    layVert.SetBackColor('black')
+    layVert.SetBackColor(col[0])
 
     //Create a text label and add it to layout.
-    val = app.CreateText('', -1, -1, "Multiline") // main value
+    val = app.CreateText('', -1, -1, "Html,Multiline") // main value
     val.SetTextSize(120)
-    val.SetTextColor('#64FF00') // green
+    val.SetTextColor(col[1]) // green
     layVert.AddChild(val)
 
     val2 = app.CreateText('') // minor value or waypoint name
     val2.SetTextSize(50)
-    val2.SetTextColor('#00E4FF') // cyan
+    val2.SetTextColor(col[3]) // cyan
     layVert.AddChild(val2)
 
     // Units and status text
@@ -64,7 +64,7 @@ function OnStart() {
     sats = app.CreateText('', -1, -1, "FillXY,Bottom")
     sats.SetSize(200, -1, "px")
     sats.SetTextSize(20)
-    sats.SetTextColor('#00E4FF') // cyan
+    sats.SetTextColor(col[3]) // cyan
     layHor.AddChild(sats)
 
     layVert.AddChild(layHor)
@@ -177,9 +177,18 @@ function readResponse(data) {
 
     if (d.m == 4) { // POS
         val.SetTextSize(80)
-        val2.SetTextSize(20)
-
-        val.SetText(d.lat + ' ' + d.ns + "\n" + d.lon + ' ' + d.ew)
+        val2.SetTextSize(10)
+ 
+        txt = d.lat + 
+            ' <font color='+col[2]+'><small><small>' + 
+            d.ns + 
+            "</small></small></font><br>" + 
+            d.lon + 
+            ' <font color='+col[2]+'><small><small>' + 
+            d.ew +
+            "</small></small></font>"
+            
+        val.SetHtml(txt)
         val2.SetText('')
         unit.SetText('')
         mode.SetText('')
@@ -260,3 +269,4 @@ function btn_OnScan() {
     btnStop.SetBackColor(btnOff)
     puck.Scan("Bangle");
 }
+
