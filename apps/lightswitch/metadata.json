@@ -1,0 +1,28 @@
+{
+  "id": "lightswitch",
+  "name": "Light Switch Widget",
+  "shortName": "Light Switch",
+  "version": "0.02",
+  "description": "A fast way to switch LCD backlight on/off, change the brightness and show the lock status. All in one widget.",
+  "icon": "images/app.png",
+  "screenshots": [
+    {"url": "images/screenshot_1.png"},
+    {"url": "images/screenshot_2.png"},
+    {"url": "images/screenshot_3.png"},
+    {"url": "images/screenshot_4.png"}
+  ],
+  "type": "widget",
+  "tags": "tool,widget,brightness,lock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name": "lightswitch.boot.js", "url": "boot.js"},
+    {"name": "lightswitch.js", "url": "lib.js"},
+    {"name": "lightswitch.settings.js", "url": "settings.js"},
+    {"name": "lightswitch.wid.js", "url": "widget.js"}
+  ],
+  "data": [
+    {"name": "lightswitch.json"},
+    {"name": "lightswitch.images.json", "url": "images.json"}
+  ]
+}

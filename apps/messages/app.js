@@ -270,9 +270,18 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  var bodyFont = fontMedium;
-  lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
-  var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
+  // If body of message is only two lines long w/ large font, use large font.
+  var body=msg.body, bodyFont = fontLarge, lines;
+  if (body) {
+    var w = g.getWidth()-48;
+    if (g.setFont(bodyFont).stringWidth(body) > w * 2)
+      bodyFont = fontMedium;
+    if (g.setFont(bodyFont).stringWidth(body) > w) {
+      lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
+      body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
+    }
+  }
+     
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{

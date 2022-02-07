@@ -13,17 +13,36 @@
 #
 # If you do this, please do not attempt to commit your modified
 # apps.json back into the main BangleApps repository!
+#
+# You can pass an optional filename to this script, and it will write
+# to that instead, apps.local.json is used when opening the loader on localhost
+outfile="${1:-apps.json}"
 
 cd `dirname $0`/..
-echo "[" > apps.json
+echo "[" > "$outfile"
+first=1
 for app in apps/*/; do 
   echo "Processing $app..."; 
   if [[ "$app" =~ ^apps/_example.* ]]; then
     echo "Ignoring $app"
   else
-    cat ${app}metadata.json >> apps.json
+    if [ $first -eq 1 ]; then
+      first=0;
+    else
+      echo "," >> "$outfile"
+    fi;
+    cat ${app}metadata.json >> "$outfile"
 #    echo ",\"$app\"," >> apps.json # DEBUG ONLY
-    echo "," >> apps.json
   fi
 done
-echo "null]" >> apps.json
+echo "]" >> "$outfile"
+
+if [ -z "$1" ]; then
+  # Running with no arguments: prevent accidental commit of modified apps.json.
+  # You can use `create_apps.json.sh apps.json` if you really want to both
+  # overwrite and still commit apps.json
+  git update-index --skip-worktree apps.json
+  echo "Told git to ignore modified apps.json."
+  # If you want to unignore it, use
+  #   'git update-index --no-skip-worktree apps.json'
+fi

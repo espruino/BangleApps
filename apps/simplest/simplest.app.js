@@ -13,7 +13,6 @@ function draw() {
   g.setFontAlign(0, 0);
   g.setColor(g.theme.fg);
   g.drawString(timeStr, w/2, h/2);
-
   queueDraw();
 }
 
@@ -42,12 +41,11 @@ Bangle.on('lcdPower',on=>{
 g.clear();
 
 // Show launcher when middle button pressed
-//Bangle.setUI("clock");
+// Bangle.setUI("clock");
 // use  clockupdown as it tests for issue #1249
 Bangle.setUI("clockupdown", btn=> {
   draw();
 });
-
 
 // Load widgets
 Bangle.loadWidgets();

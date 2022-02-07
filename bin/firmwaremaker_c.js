@@ -133,7 +133,7 @@ function evaluateFile(file) {
 
 Promise.all(APPS.map(appid => {
   try {
-    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "metadata.json").toString());
+    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "/metadata.json").toString());
   } catch (e) {
     throw new Error(`App ${appid} not found`);
   }

@@ -5,13 +5,18 @@ if (window.location.host=="banglejs.com") {
   document.title += " [Development]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
+} else if (window.location.hostname==='localhost') {
+  document.title += " [Local]";
+  Const.APPS_JSON_FILE = "apps.local.json";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is your local Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 } else {
   document.title += " [Unofficial]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v11";
+var RECOMMENDED_VERSION = "2v12";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -27,12 +32,13 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 
 // When a device is found, filter the apps accordingly
 function onFoundDeviceInfo(deviceId, deviceVersion) {
-  var fwURL = "#";
+  var fwURL = "#", fwExtraText = "";
   if (deviceId == "BANGLEJS") {
     fwURL = "https://www.espruino.com/Bangle.js#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
   }
   if (deviceId == "BANGLEJS2") {
+    fwExtraText = "with the <b>Firmware Update</b> app in this App Loader, or "
     fwURL = "https://www.espruino.com/Bangle.js2#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
@@ -40,7 +46,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
   }
 
 
@@ -201,7 +207,7 @@ window.addEventListener('load', (event) => {
     });
     selectLang.addEventListener("change",event=>{
       SETTINGS.language = event.target.value;
-      reloadLanguage();      
+      reloadLanguage();
       saveSettings();
     });
     reloadLanguage();

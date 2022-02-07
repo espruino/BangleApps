@@ -28,8 +28,8 @@ function menuSettings() {
     "< Back":()=>menuMain(),
     "Heart Rt":{
       value : 0|s.hrm,
-      min : 0, max : 2,
-      format : v=>["Off","10 mins","Always"][v],
+      min : 0, max : 3,
+      format : v=>["Off","3 mins","10 mins","Always"][v],
       onchange : v => { s.hrm=v;setSettings(s); }
     }
   });

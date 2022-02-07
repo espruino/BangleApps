@@ -514,7 +514,6 @@ The [`testing`](testing) folder contains snippets of code that might be useful f
 
 * `testing/colors.js` - 16 bit colors as name value pairs
 * `testing/gpstrack.js` - code to store a GPS track in Bangle.js storage and output it back to the console
-* `testing/map` - code for splitting an image into map tiles and then displaying them
 
 ## Credits
 

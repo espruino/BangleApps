@@ -7,7 +7,10 @@
 #  Otherwise nothing has changed. GitHub Pages will automatically
 #  create apps.json as your site is hosted, or if you're hosting
 #  yourself you can run bin/create_apps_json.sh
-# 
+#
+#  If you serve the store from localhost for development/testing,
+#  the loader looks for apps.local.json instead, you can run
+#  `bin/create_apps_json.sh apps.local.json` to create that file.
 # =================================================================
 
 # Uncomment the following line if you only want explicitly listed

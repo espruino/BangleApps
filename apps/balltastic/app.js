@@ -1,11 +1,12 @@
+BANGLEJS2 = process.env.HWVERSION==2;
 Bangle.setLCDBrightness(1);
-Bangle.setLCDMode("doublebuffered");
+if (!BANGLEJS2) Bangle.setLCDMode("doublebuffered");
 Bangle.setLCDTimeout(0);
 
 let points = 0;
 let level = 1;
 let levelSpeedStart = 0.8;
-let nextLevelPoints = 20;
+let nextLevelPoints = 10;
 let levelSpeedFactor = 0.2;
 let counterWidth = 10;
 let gWidth = g.getWidth() - counterWidth;
@@ -81,12 +82,23 @@ function drawLevelText() {
   g.setColor("#26b6c7");
   g.setFontAlign(0, 0);
   g.setFont("4x6", 5);
-  g.drawString("Level " + level, 120, 80);
+  g.drawString("Level " + level, g.getWidth()/2, g.getHeight()/2);
+}
+
+function drawPointsText() {
+  g.setColor("#26b6c7");
+  g.setFontAlign(0, 0);
+  g.setFont("4x6", 2);
+  g.drawString("Points " + points, g.getWidth()/2, g.getHeight()-20);
 }
 
 function draw() {
   //bg
-  g.setColor("#71c6cf");
+  if (!BANGLEJS2) {
+    g.setColor("#71c6cf");
+  } else {
+    g.setColor("#002000");
+  }
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
   //counter
@@ -94,6 +106,7 @@ function draw() {
 
   //draw level
   drawLevelText();
+  drawPointsText();
 
   //dot
   g.setColor("#ff0000");
@@ -152,7 +165,7 @@ function count() {
   if (counter <= 0) {
     running = false;
     clearInterval(drawInterval);
-    setTimeout(function(){ E.showMessage("Press Button 1\nto restart.", "Gameover!");},50);
+    setTimeout(function(){ E.showMessage("Press Button 1\nto restart.", "Game over!");},50);
   }
 }
 
