@@ -7,7 +7,7 @@ app.LoadPlugin("PuckJS");
 //Called when application is started.
 function OnStart() {
 
-    v = '1.48'                      // Version of this script
+    v = '1.49'                      // Version of this script
     requiredBangleVer = '1.46';     // Minimum speedalt2 version required on Bangle
     curBangleVer = '-.--'
     isStopped = true;               // Data receive turned off
@@ -27,6 +27,7 @@ function OnStart() {
     setInterval(checkConnection,5000)   // Periodic check for data timeout and attempt a reconnect
 
     // Controls
+    app.SetScreenMode("Full")
     
     //Create a layout with objects vertically centered.
     layVert = app.CreateLayout("Linear", "VCenter,FillXY")
