@@ -365,18 +365,18 @@
         
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
-          
-          promise = promise.then((d)=>{
-            log("Got device: ", d);
-            d.on('gattserverdisconnected', onDisconnect);
-            device = d;
-          });
-          
-          promise = promise.then(()=>{
-            log("Wait after request");
-            return waitingPromise(settings.gracePeriodRequest);
-          });
         }
+          
+        promise = promise.then((d)=>{
+          log("Got device: ", d);
+          d.on('gattserverdisconnected', onDisconnect);
+          device = d;
+        });
+        
+        promise = promise.then(()=>{
+          log("Wait after request");
+          return waitingPromise(settings.gracePeriodRequest);
+        });
         
       } else {
         promise = Promise.resolve();
@@ -426,14 +426,14 @@
       });
 
       promise = promise.then(()=>{
-        var getCharacteristicsPromise = Promise.resolve();
+        var characteristicsPromise = Promise.resolve();
         if (characteristics.length == 0){
-          getCharacteristicsPromise = getCharacteristicsPromise.then(()=>{
+          characteristicsPromise = characteristicsPromise.then(()=>{
             log("Getting services");
             return gatt.getPrimaryServices();
           });
 
-          getCharacteristicsPromise = getCharacteristicsPromise().then((services)=>{
+          characteristicsPromise = characteristicsPromise.then((services)=>{
             log("Got services:", services);
             var result = Promise.resolve();
             for (var service of services){
@@ -453,11 +453,11 @@
           
         } else {
           for (var characteristic of characteristics){
-            getCharacteristicsPromise = attachCharacteristicPromise(getCharacteristicsPromise, characteristic, true);
+            characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
           }
         }
         
-        return getCharacteristicsPromise;
+        return characteristicsPromise;
       });
       
       promise = promise.then(()=>{
@@ -489,8 +489,8 @@
           if (gatt.connected){
             log("Disconnect with gatt: ", gatt);
             gatt.disconnect().then(()=>{
-              log("Successful disconnect", e);
-            }).catch(()=>{
+              log("Successful disconnect");
+            }).catch((e)=>{
               log("Error during disconnect", e);
             });
           }
