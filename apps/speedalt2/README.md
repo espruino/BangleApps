@@ -1,12 +1,6 @@
-# GPS Speed, Altimeter and Distance to Waypoint
+# GPS Speed, Altitude, Distance and VMG
 
-What is the difference between **GPS Adventure Sports** and **GPS Adventure Sports II** ?
-
-**GPS Adventure Sports** has 3 screens, each of which display different sets of information.
-
-**GPS Adventure Sports II** has 5 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, Position or Time.
-
-In all other respect they perform the same functions.
+**GPS Adventure Sports II** has 6 screens, each of which displays just one of Speed, Altitude, Distance to waypoint, VMG to waypoint, Position or Time.
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
@@ -14,17 +8,17 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 
 **BTN1** ( Speed and Altitude ) Short press < 2 secs toggles the display between last reading and maximum recorded.  Long press > 2 secs resets the recorded maximum values.
 
-**BTN1** ( Distance ) Select next waypoint. Last fix distance from selected waypoint is displayed.
+**BTN1** ( Distance and VMG ) Select next waypoint. Last fix distance from selected waypoint or speed towards is displayed.
 
 **BTN2** : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-**BTN3** : Cycles the screens between Speed, Altitude, Distance to waypoint, Position and Time
+**BTN3** : Cycles the screens between Speed, Altitude, Distance to waypoint, VMG to waypoint, Position and Time
 
 **BTN3** : Long press exit and return to watch.
 
 **Touch Screen** If the 'Touch' setting is ON then :
 
-Swipe Left/Right cycles between the five screens.
+Swipe Left/Right cycles between the six screens.
 
 Touch functions as BTN1 short press.
 
@@ -51,9 +45,36 @@ When using the GPS Setup App this app switches the GPS to SuperE (default) mode 
 
 The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
 
+## Velocity Made Good - VMG
+
+This implementation of VMG is very simplistic and is simply the component of your current vector ( course and speed ) that is towards your selected waypoint. It is displayed as negative if you are moving away from the waypoint. For it to be displayed you must be moving and the GPS must be able to detemrine a course. If not it will display '---' as the VMG.
+
+## Mirroring to Android
+
+This feature is an optional extra to solve and enhance a specific requirement for me. While sailing the Bangle.js watch screen is very difficult to read in bright sunlight while wearing the polaroid prescription lenses that I require on the water. The solution is to mirror the Bangle.js screen to an android device with a daylight readable OLED screen that I keep in a clear waterproof case on the boat. Using this mirroring feature I can see the GPS Adv Sports II app easily at all times, either on my wrist or on the bigger android device while still having full control over the display via the watch buttons.
+
+There is a caveat. While in use the watch GPS stays in SuperE mode in order to keep the android screen updates going which means a higher battery use on the Bangle.js.
+
+How is this mirroring done?
+
+Install Droidscript on your Android device. Must have BLE suport and the PuckJS plugin installed. The Droidscript script can be found in the BangleApps GIT repository : https://github.com/espruino/BangleApps/tree/master/apps/speedalt2
+
+The Droidscript script file is called : **GPS Adv Sports II.js**
+
+**Important Gotcha :** For the BLE comms to find and connect to the Bangle.js it must be paired with the Android device but **NOT** connected. The Bangle.js must have been set in the Bluetooth settings as connectable.
+
+Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep. 
+
+When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
+
+An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
+
+Android Screen Mirroring:<br>
+![](screenmirror.jpg)<p>
+
 ## Waypoints
 
-Waypoints are used in [D]istance mode. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
+Waypoints are used in Distance and VMG modes. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
 The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
 
