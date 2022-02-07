@@ -54,8 +54,8 @@ var tokens = settings.tokens;
  */
 function base32clean(val, nows) {
   var ret = val.replaceAll(/\s+/g, ' ');
-  ret = val.replaceAll(/0/g, 'O');
-  ret = val.replaceAll(/1/g, 'I');
+  ret = ret.replaceAll(/0/g, 'O');
+  ret = ret.replaceAll(/1/g, 'I');
   ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
   if (nows) {
     ret = ret.replaceAll(/\s+/g, '');
