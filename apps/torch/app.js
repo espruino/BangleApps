@@ -14,5 +14,6 @@ g.setColor(settings.bg);
 g.fillRect(0,0,g.getWidth(),g.getHeight());
 // Any button turns off
 setWatch(()=>load(), BTN1);
-setWatch(()=>load(), BTN2);
-setWatch(()=>load(), BTN3);
+if (global.BTN2) setWatch(()=>load(), BTN2);
+if (global.BTN3) setWatch(()=>load(), BTN3);
+
