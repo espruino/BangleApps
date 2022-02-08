@@ -1,0 +1,26 @@
+{
+  "id":"sleeplog",
+  "name":"Sleep Log",
+  "shortName": "SleepLog",
+  "version": "0.01",
+  "description": "Log and view your sleeping habits.",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,boot",
+  "supports": ["BANGLEJS2"],
+//  "readme": "README.md",
+  "storage": [
+    {"name": "sleeplog.app.js", "url": "app.js"},
+//    {"name": "sleeplog.img", "url": "app-icon.js", "evaluate":true},
+    {"name": "sleeplog.boot.js", "url": "boot.js"},
+    {"name": "sleeplog", "url": "lib.js"},
+//    {"name": "sleeplog.settings.js", "url": "settings.js"}
+  ],
+  "data": [
+    {"name": "sleeplog.json"},
+    {"name": "sleeplog.log"}
+  ],
+  "screenshots": [
+//    {"url": "screenshot.png"}
+   ]
+}
