@@ -20,25 +20,14 @@ const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
 const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
 const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
-let settings = storage.readJSON("circlesclock.json", 1) || {
-  'minHR': 40,
-  'maxHR': 200,
-  'confidence': 0,
-  'stepGoal': 10000,
-  'stepDistanceGoal': 8000,
-  'stepLength': 0.8,
-  'batteryWarn': 30,
-  'showWidgets': false,
-  'weatherCircleData': 'humidity',
-  'circleCount': 3,
-  'circle1': 'hr',
-  'circle2': 'steps',
-  'circle3': 'battery',
-  'circle4': 'weather'
-};
+const SETTINGS_FILE = "circlesclock.json";
+let settings = Object.assign(
+  storage.readJSON("circlesclock.default.json", true) || {},
+  storage.readJSON(SETTINGS_FILE, true) || {}
+);
 // Load step goal from pedometer widget as fallback
 if (settings.stepGoal == undefined) {
-  const d = storage.readJSON("wpedom.json", 1) || {};
+  const d = storage.readJSON("wpedom.json", true) || {};
   settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
 }
 
@@ -69,7 +58,7 @@ const widgetOffset = showWidgets ? 24 : 0;
 const dowOffset = circleCount == 3 ? 22 : 24; // dow offset relative to date
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
-const hOffset = 30 - widgetOffset;
+const hOffset = (circleCount == 3 ? 34 : 30) - widgetOffset;
 const h1 = Math.round(1 * h / 5 - hOffset);
 const h2 = Math.round(3 * h / 5 - hOffset);
 const h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
@@ -279,10 +268,10 @@ function drawSteps(w) {
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("steps") || colorBlue;
+  const color = getCircleColor("steps");
 
   let percent;
-  const stepGoal = settings.stepGoal || 10000;
+  const stepGoal = settings.stepGoal;
   if (stepGoal > 0) {
     percent = steps / stepGoal;
     if (stepGoal < steps) percent = 1;
@@ -299,15 +288,15 @@ function drawSteps(w) {
 function drawStepsDistance(w) {
   if (!w) w = getCircleXPosition("stepsDistance");
   const steps = getSteps();
-  const stepDistance = settings.stepLength || 0.8;
+  const stepDistance = settings.stepLength;
   const stepsDistance = Math.round(steps * stepDistance);
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("stepsDistance") || colorGreen;
+  const color = getCircleColor("stepsDistance");
 
   let percent;
-  const stepDistanceGoal = settings.stepDistanceGoal || 8000;
+  const stepDistanceGoal = settings.stepDistanceGoal;
   if (stepDistanceGoal > 0) {
     percent = stepsDistance / stepDistanceGoal;
     if (stepDistanceGoal < stepsDistance) percent = 1;
@@ -326,12 +315,12 @@ function drawHeartRate(w) {
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("hr") || colorRed;
+  const color = getCircleColor("hr");
 
   let percent;
   if (hrtValue != undefined) {
-    const minHR = settings.minHR || 40;
-    const maxHR = settings.maxHR || 200;
+    const minHR = settings.minHR;
+    const maxHR = settings.maxHR;
     percent = (hrtValue - minHR) / (maxHR - minHR);
     if (isNaN(percent)) percent = 0;
     drawGauge(w, h3, percent, color);
@@ -350,7 +339,7 @@ function drawBattery(w) {
 
   drawCircleBackground(w);
 
-  let color = getCircleColor("battery") || colorYellow;
+  let color = getCircleColor("battery");
 
   let percent;
   if (battery > 0) {
@@ -380,9 +369,9 @@ function drawWeather(w) {
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("weather") || colorYellow;
+  const color = getCircleColor("weather");
   let percent;
-  const data = settings.weatherCircleData || "humidity";
+  const data = settings.weatherCircleData;
   switch (data) {
     case "humidity":
       const humidity = weather ? weather.hum : undefined;
@@ -427,7 +416,7 @@ function drawSunProgress(w) {
 
   drawCircleBackground(w);
 
-  const color = getCircleColor("sunprogress") || colorYellow;
+  const color = getCircleColor("sunprogress");
 
   drawGauge(w, h3, percent, color);
 
@@ -467,7 +456,7 @@ function drawTemperature(w) {
   getPressureValue("temperature").then((temperature) => {
     drawCircleBackground(w);
 
-    const color = getCircleColor("temperature") || colorGreen;
+    const color = getCircleColor("temperature");
 
     let percent;
     if (temperature) {
@@ -493,7 +482,7 @@ function drawPressure(w) {
   getPressureValue("pressure").then((pressure) => {
     drawCircleBackground(w);
 
-    const color = getCircleColor("pressure") || colorGreen;
+    const color = getCircleColor("pressure");
 
     let percent;
     if (pressure && pressure > 0) {
@@ -519,7 +508,7 @@ function drawAltitude(w) {
   getPressureValue("altitude").then((altitude) => {
     drawCircleBackground(w);
 
-    const color = getCircleColor("altitude") || colorGreen;
+    const color = getCircleColor("altitude");
 
     let percent;
     if (altitude) {
@@ -578,23 +567,23 @@ function getWeatherIconByCode(code) {
         default:
           return weatherRainy;
       }
-    case 6:
-      return weatherSnowy;
-    case 7:
-      return weatherFoggy;
-    case 8:
-      switch (code) {
-        case 800:
-          return isDay() ? weatherSunny : weatherMoon;
-        case 801:
-          return weatherPartlyCloudy;
-        case 802:
-          return weatherPartlyCloudy;
+      case 6:
+        return weatherSnowy;
+      case 7:
+        return weatherFoggy;
+      case 8:
+        switch (code) {
+          case 800:
+            return isDay() ? weatherSunny : weatherMoon;
+          case 801:
+            return weatherPartlyCloudy;
+          case 802:
+            return weatherPartlyCloudy;
+          default:
+            return weatherCloudy;
+        }
         default:
-          return weatherCloudy;
-      }
-    default:
-      return undefined;
+          return undefined;
   }
 }
 
@@ -797,7 +786,7 @@ Bangle.on('lock', function(isLocked) {
 let timerHrm;
 Bangle.on('HRM', function(hrm) {
   if (isCircleEnabled("hr")) {
-    if (hrm.confidence >= (settings.confidence || 0)) {
+    if (hrm.confidence >= (settings.confidence)) {
       hrtValue = hrm.bpm;
       if (Bangle.isLCDOn()) {
         drawHeartRate();
@@ -809,7 +798,7 @@ Bangle.on('HRM', function(hrm) {
       timerHrm = setTimeout(() => {
         hrtValue = '...';
         drawHeartRate();
-      }, settings.hrmValidity * 1000 || 30000);
+      }, settings.hrmValidity * 1000);
     }
   }
 });
