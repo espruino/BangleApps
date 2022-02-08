@@ -204,6 +204,7 @@ function showMessageScroller(msg) {
   var lines = [];
   if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10)
   var titleCnt = lines.length;
+  if (titleCnt) lines.push(""); // add blank line after title
   lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10),["",/*LANG*/"< Back"]);
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
@@ -300,15 +301,14 @@ function showMessage(msgid) {
     }});
   }
   // If body of message is only two lines long w/ large font, use large font.
-  var body=msg.body, bodyFont = fontLarge, lines, bodyScroll = false;
+  var body=msg.body, bodyFont = fontLarge, lines;
   if (body) {
     var w = g.getWidth()-48;
     if (g.setFont(bodyFont).stringWidth(body) > w * 2)
       bodyFont = fontMedium;
     if (g.setFont(bodyFont).stringWidth(body) > w) {
       lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
-      bodyScroll = lines.length>4;
-      body = bodyScroll ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
+      body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
     }
   }
 
@@ -324,8 +324,8 @@ function showMessage(msgid) {
       ]},
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
-      // if the text was cropped, allow tapping to show a larger version
-      if (bodyScroll) showMessageScroller(msg);
+      // allow tapping to show a larger version
+      showMessageScroller(msg);
     } },
     {type:"h",fillx:1, c: buttons}
   ]});

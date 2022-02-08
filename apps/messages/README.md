@@ -28,7 +28,7 @@ When a message is shown, you'll see a screen showing the message title and text.
 
 * The 'back-arrow' button (or physical button on Bangle.js 2) goes back to Messages, marking the current message as read.
 * The top-left icon shows more options, for instance deleting the message of marking unread
-* If the message text doesn't fit in, you can tap on the message to view a scrollable version of the title and text
+* On Bangle.js 2 you can tap on the message body to view a scrollable version of the title and text (or can use the top-left icon + `View Message`)
 * If shown, the 'tick' button:
    * **Android** opens the notification on the phone
    * **iOS** responds positively to the notification (accept call/etc)
