@@ -27,6 +27,7 @@
     {"name":"contourclock-11.json","url":"font-OpenSansEC.json"},
     {"name":"contourclock-12.json","url":"font-SairaEC.json"},
     {"name":"contourclock-13.json","url":"font-Teko.json"},
+    {"name":"contourclock-14.json","url":"font-Nunito.json"},
     {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
     ]
 }
