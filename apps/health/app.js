@@ -208,9 +208,9 @@ function drawBarChart() {
     }
 
     // draw a fake 0 height bar if chart_index is outside the bounds of the array
-    if ((chart_index + bar - 1) >= 0 && (chart_index + bar - 1) < data_len) 
-      bar_top = bar_bot - 100 * (chart_data[chart_index + bar - 1]) / chart_max_datum;
-    else
+    if ((chart_index + bar - 1) >= 0 && (chart_index + bar - 1) < data_len){
+      //bar_top = bar_bot - 100 * (chart_data[chart_index + bar - 1]) / chart_max_datum;
+    }else
       bar_top = bar_bot;
 
     g.fillRect( 1 + (bar - 1)* bar_width, bar_bot, 1 + bar*bar_width, bar_top);
