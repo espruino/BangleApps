@@ -2,6 +2,8 @@
 // 'load(alarm.js)' - so let's remove it first!
 clearInterval();
 
+const buzz_on1 = 1000, buzz_on2 = 1000, buzz_off1 = 100, buzz_off2 = 500, buzz_count = 240, buzz_as = 10;
+
 function formatTime(t) {
   var hrs = 0|t;
   var mins = Math.round((t-hrs)*60);
@@ -21,8 +23,8 @@ function showAlarm(alarm) {
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   E.showPrompt(msg,{
-    title:alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons : {/*LANG*/"Sleep":true,/*LANG*/"Ok":false} // default is sleep so it'll come back in 10 mins
+    title:alarm.timer ? "TIMER!" : "ALARM!",
+    buttons : {"Sleep":true,"Ok":false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
@@ -41,17 +43,17 @@ function showAlarm(alarm) {
   });
   function buzz() {
     if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
-    Bangle.buzz(100).then(()=>{
+    Bangle.buzz(buzz_on1).then(()=>{
       setTimeout(()=>{
-        Bangle.buzz(100).then(function() {
-          if (buzzCount--)
-            setTimeout(buzz, 3000);
-          else if(alarm.as) { // auto-snooze
-            buzzCount = 10;
+        Bangle.buzz(buzz_on2).then(function() {
+          if (buzzCount--) {
+            setTimeout(buzz, buzz_off2);
+          } else if(alarm.as) { // auto-snooze
+            buzzCount = buzz_as;
             setTimeout(buzz, 600000);
           }
         });
-      },100);
+      },buzz_off1);
     });
   }
   buzz();
