@@ -29,3 +29,5 @@
       Back button now goes back to list of messages
       If showMessage called with no message (eg all messages deleted) now return to the clock (fix #1267)
 0.19: Use a larger font for message text if it'll fit
+0.20: If message doesn't fit, allow tapping on the body to show a scrollable
+      view of the message and title in a bigger font (fix #1405, #1031)
