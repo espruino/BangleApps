@@ -26,19 +26,15 @@ When a new message is received:
 
 When a message is shown, you'll see a screen showing the message title and text.
 
-### Android
-
-* The 'back-arrow' button goes back to Messages, marking the current message as read.
-* If shown, the 'tick' button opens the notification on the phone
-* If shown, the 'cross' button dismisses the notification on the phone
+* The 'back-arrow' button (or physical button on Bangle.js 2) goes back to Messages, marking the current message as read.
 * The top-left icon shows more options, for instance deleting the message of marking unread
-
-### iOS
-
-* The 'back-arrow' button goes back to Messages, marking the current message as read.
-* If shown, the 'tick' button responds positively to the notification (accept call/etc)
-* If shown, the 'cross' button responds negatively to the notification (dismiss call/etc)
-* The top-left icon shows more options, for instance deleting the message of marking unread
+* On Bangle.js 2 you can tap on the message body to view a scrollable version of the title and text (or can use the top-left icon + `View Message`)
+* If shown, the 'tick' button:
+   * **Android** opens the notification on the phone
+   * **iOS** responds positively to the notification (accept call/etc)
+* If shown, the 'cross' button:
+   * **Android** dismisses the notification on the phone
+   * **iOS** responds negatively to the notification (dismiss call/etc)
 
 ## Images
 _1. Screenshot of a notification_

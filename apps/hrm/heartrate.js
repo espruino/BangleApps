@@ -1,5 +1,8 @@
-Bangle.setLCDPower(1);
-Bangle.setLCDTimeout(0);
+if (process.env.HWVERSION == 1) {
+  Bangle.setLCDPower(1);
+  Bangle.setLCDTimeout(0);
+}
+
 Bangle.setHRMPower(1);
 var hrmInfo, hrmOffset = 0;
 var hrmInterval;
