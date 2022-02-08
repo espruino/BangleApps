@@ -1,0 +1,11 @@
+0.01: New App!
+0.02: Make overriding the HRM event optional
+      Emit BTHRM event for external sensor
+      Add recorder app plugin
+0.03: Prevent readings from internal sensor mixing into BT values
+      Mark events with src property
+      Show actual source of event in app
+0.04: Allow reading additional data if available: HRM battery and position
+      Better caching of scanned BT device properties
+      New setting for not starting the BTHRM together with HRM
+      Save some RAM by not definining functions if disabled in settings

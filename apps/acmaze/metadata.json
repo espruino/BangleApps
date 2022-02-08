@@ -1,11 +1,11 @@
 { "id": "acmaze",
   "name": "AccelaMaze",
   "shortName":"AccelaMaze",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Tilt the watch to roll a ball through a maze.",
   "icon": "app.png",
   "tags": "game",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "screenshots": [{"url":"screenshot.png"}],
   "storage": [

@@ -28,7 +28,26 @@ so if you have no GPS lock you just need to wait.
 However you can just install the `Recorder` app, turn recording on in
 that, and then start the `Run` app.
 
+## Settings
+
+Under `Settings` -> `App` -> `Run` you can change settings for this app.
+
+* `Record Run` (only displayed if `Recorder` app installed) should the Run app automatically
+record GPS/HRM/etc data every time you start a run?
+* `Pace` is the distance that pace should be shown over - 1km, 1 mile, 1/2 Marathon or 1 Marathon
+* `Box 1/2/3/4/5/6` are what should be shown in each of the 6 boxes on the display. From the top left, down.
+  If you set it to `-` nothing will be displayed, so you can display only 4 boxes of information
+  if you wish by setting the last 2 boxes to `-`.
+
 ## TODO
 
 * Allow this app to trigger the `Recorder` app on and off directly.
 * Keep a log of each run's stats (distance/steps/etc)
+
+## Development
+
+This app uses the [`exstats` module](/modules/exstats.js). When uploaded via the
+app loader, the module is automatically included in the app's source. However
+when developing via the IDE the module won't get pulled in by default.
+
+There are some options to fix this easily - please check out the [modules README.md file](/modules/README.md)
