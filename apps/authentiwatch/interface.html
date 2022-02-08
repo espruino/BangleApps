@@ -56,6 +56,7 @@ function base32clean(val, nows) {
   var ret = val.replaceAll(/\s+/g, ' ');
   ret = ret.replaceAll(/0/g, 'O');
   ret = ret.replaceAll(/1/g, 'I');
+  ret = ret.replaceAll(/8/g, 'B');
   ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
   if (nows) {
     ret = ret.replaceAll(/\s+/g, '');
