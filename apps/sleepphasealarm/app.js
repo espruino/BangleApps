@@ -9,7 +9,7 @@ const active = alarms.filter(a=>a.on);
 // Function needs to be called for every measurement but returns a value at maximum once a second (see winwidth)
 // start of sleep marker is delayed by sleepthresh due to continous data reading
 const winwidth=13;
-const nomothresh=0.006;
+const nomothresh=0.01;
 const sleepthresh=600;
 var ess_values = [];
 var slsnds = 0;
