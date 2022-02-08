@@ -211,7 +211,8 @@ function showMessageScroller(msg) {
     c : lines.length, // number of menu items
     // a function to draw a menu item
     draw : function(idx, r) {
-      g.setBgColor(idx<titleCnt ? colBg : g.theme.bg).clearRect(r);
+      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
+      g.setBgColor(idx<titleCnt ? colBg : g.theme.bg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
