@@ -827,5 +827,10 @@ if (isCircleEnabled("hr")) {
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 
+// schedule a draw for the next minute
+setTimeout(function() {
+  // draw every 60 seconds
+  setInterval(draw,60000);
+}, 60000 - (Date.now() % 60000));
+
 draw();
-setInterval(draw, 60000);
