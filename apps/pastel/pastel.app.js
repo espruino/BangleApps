@@ -83,7 +83,7 @@ const infoData = {
   ID_SS:    { calc: () => 'Sunset: ' + sunSet },
   ID_STEP:  { calc: () => 'Steps: ' + getSteps() },
   ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
-  ID_MEM:   { calc: () => {var val = process.memory(); return 'Ram: ' + Math.round(val.usage*100/val.total) + '%';} },
+  ID_MEM:   { calc: () => {var val = process.memory(false); return 'Ram: ' + Math.round(val.usage*100/val.total) + '%';} },
   ID_ID:    { calc: () => {var val = NRF.getAddress().split(':'); return 'Id: ' + val[4] + val[5];} },
   ID_FW:    { calc: () => 'Fw: ' + process.env.VERSION }
 };
