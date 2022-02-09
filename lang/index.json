@@ -9,5 +9,9 @@
   {"code":"it_IT","name":"Italian","url":"it_IT.json"},
   {"code":"nl_NL","name":"Dutch","url":"nl_NL.json"},
   {"code":"sv_SE","name":"Swedish","url":"sv_SE.json"},
-  {"code":"tr_TR","name":"Turkish","url":"tr_TR.json"}
+  {"code":"tr_TR","name":"Turkish","url":"tr_TR.json"},
+  {"code":"zh_ZH","name":"Chinese","url":"zh_ZH.json"},
+  {"code":"ru_RU","name":"Russian","url":"ru_RU.json"},
+  {"code":"pt_PT","name":"Portuguese","url":"pt_PT.json"},
+  {"code":"ja_JA","name":"Japanese","url":"ja_JA.json"}
 ]
