@@ -172,7 +172,7 @@ function setNumSets(){
   type:"v", c: [
     {type:"txt", font:"6x8:2", label:"Number Sets", id:"title" },
     {type:"txt", font:"30%", pad: 20, label: numSets, id:"value" },
-        {type:"btn", font:"6x8:2", label:"Back", cb: l => {
+        {type:"btn", font:"6x8:2", label:/*LANG*/"Back", cb: l => {
         setRestTime();
       }
     }
@@ -217,7 +217,7 @@ function setRestTime(){
   type:"v", c: [
     {type:"txt", font:"6x8:2", label:"Rest Time", id:"title" },
     {type:"txt", font:"30%", pad: 20, label: restTime, id:"value" },
-    {type:"btn", font:"6x8:2", label:"Back", cb: l => {
+    {type:"btn", font:"6x8:2", label:/*LANG*/"Back", cb: l => {
         setActiveTime();
       }
     }

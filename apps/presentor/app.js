@@ -106,7 +106,7 @@ let mainLayout = new Layout({
           type: 'txt',
           font: '15%',
           label: '00:00',
-          id: 'Timer',
+          id: /*LANG*/'Timer',
           halign: 1,
           pad: 3
         }

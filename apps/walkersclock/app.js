@@ -203,7 +203,7 @@ function drawInfo() {
     break;
   case FN_MODE_GPS:
     col = 0x07FF; // cyan
-    str = "GPS: " + (gpsPowerState ? "ON" : "OFF");
+    str = "GPS: " + (gpsPowerState ? "ON" : /*LANG*/"OFF");
     drawModeLine(str,col);
     return;
   case FN_MODE_GDISP:
@@ -560,7 +560,7 @@ Bangle.on('lcdPower',function(on) {
     prevInfoStr = "on"; // forces are redraw
     drawAll();
   } else {
-    prevInfoStr = "off"; // forces are redraw
+    prevInfoStr = /*LANG*/"off"; // forces are redraw
     drawInfo();
   }
 });

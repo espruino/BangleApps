@@ -23,7 +23,7 @@ function getVersion(name,file) {
 var versions = [
   getVersion("Bootloader","boot.info"),
   getVersion("Launcher","launch.info"),
-  getVersion("Settings","setting.info")
+  getVersion(/*LANG*/"Settings","setting.info")
 ];
 var logo = E.toArrayBuffer(atob("PBwBAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAD/w+AAAAQAHA4hAAAAQAMAMhAAAAQAYBmhAAAAQAYBGiAAAAQAQCD/H74+R4wGDhoKJCSEwEDgoKJCT8wFDgoKJCSAwHDhoKJCSEQHj/H6I+R4YHmAAAACAAYEGAAABCAAMEMAAAA8AAHA4AAAAAAAD/wAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/g"));
 
@@ -41,7 +41,7 @@ function drawInfo() {
 
   getVersion("Bootloader","boot.info");
   getVersion("Launcher","launch.info");
-  getVersion("Settings","setting.info");
+  getVersion(/*LANG*/"Settings","setting.info");
 
   g.drawString(MEM.total+" JS Vars",0,y+=h);
   g.drawString("Storage: "+(require("Storage").getFree()>>10)+"k free",0,y+=h);

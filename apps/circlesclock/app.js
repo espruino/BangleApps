@@ -227,7 +227,7 @@ function isCircleEnabled(type) {
 
 function getCircleColor(type) {
   const pos = getCirclePosition(type);
-  const color = settings["circle" + (pos + 1) + "color"];
+  const color = settings["circle" + (pos + 1) + /*LANG*/"color"];
   if (color && color != "") return color;
 }
 
@@ -825,6 +825,10 @@ if (isCircleEnabled("hr")) {
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
+
+draw();
+setInterval(draw, 60000);
+s();
 
 draw();
 setInterval(draw, 60000);

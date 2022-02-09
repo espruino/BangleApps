@@ -152,7 +152,7 @@ function showMenu()
   "Work seconds" : { value : settings.workseg,min:0,max:59,step:5,onchange : v => { settings.workseg=v; } },
   "Rest minutes" : { value : settings.restmin,min:0,max:59,step:1,onchange : v => { settings.restmin=v; } },
   "Rest seconds" : { value : settings.restseg,min:0,max:59,step:5,onchange : v => { settings.restseg=v; } },
-  "Signal type" :  { value : settings.buzz,format : v => v?"Buzz":"Beep",onchange : v => { settings.buzz=v; }}
+  "Signal type" :  { value : settings.buzz,format : v => v?"Buzz":/*LANG*/"Beep",onchange : v => { settings.buzz=v; }}
   };
   
   E.showMenu(mainmenu);

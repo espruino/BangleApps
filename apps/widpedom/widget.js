@@ -9,7 +9,7 @@
   function loadSettings() {
     const d = require('Storage').readJSON("wpedom.json", 1) || {};
     settings = Object.assign({
-      'goal': 10000,
+      /*LANG*/'goal': 10000,
       'progress': false,
       'large': false,
       'hide': false

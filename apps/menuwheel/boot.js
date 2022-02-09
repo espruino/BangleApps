@@ -14,7 +14,7 @@ E.showMenu = function(items) {
 
   // show "< Back" item (or similar) as button instead (i.e. remove from the menu)
   var back,backLbl;
-  for (var b of ['Back', 'Exit', 'Cancel']) {
+  for (var b of [/*LANG*/'Back', 'Exit', 'Cancel']) {
     if (!items[b] && items['< '+b]) b = '< '+b;
     back = items[b];
     if (typeof back === "function") {

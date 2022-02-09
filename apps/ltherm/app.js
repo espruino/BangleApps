@@ -20,6 +20,6 @@ const avg = [];
 setInterval(function() {
   drawTemperature();
 }, 2000);
-E.showMessage("Loading...");
+E.showMessage(/*LANG*/"Loading...");
 Bangle.loadWidgets();
 Bangle.drawWidgets();

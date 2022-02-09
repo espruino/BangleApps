@@ -40,7 +40,7 @@ function showNumberPicker(currentGuess, randomNum) {
 function showPrompt(msg, buzzCount, alarm) {
   E.showPrompt(msg,{
     title:"STAY AWAKE!",
-    buttons : {"Sleep":0,"Stop":1} // default is sleep so it'll come back in 10 mins
+    buttons : {/*LANG*/"Sleep":0,"Stop":1} // default is sleep so it'll come back in 10 mins
   }).then(function(choice) {
     buzzCount = 0;
     if (choice==0) {

@@ -5,7 +5,7 @@ function satelliteImage() {
 var Layout = require("Layout");
 var layout;
 //Bangle.setGPSPower(1, "app");
-E.showMessage("Loading..."); // avoid showing rubbish on screen
+E.showMessage(/*LANG*/"Loading..."); // avoid showing rubbish on screen
 
 var lastFix = {
   fix: -1,

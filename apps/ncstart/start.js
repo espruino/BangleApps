@@ -29,7 +29,7 @@ function welcome() {
     setWatch(() => {
       clearInterval(i);
       clearWatch();
-      E.showMessage('Loading...');
+      E.showMessage(/*LANG*/'Loading...');
       res();
     }, BTN2, {repeat:false});
   });

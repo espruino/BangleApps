@@ -376,7 +376,7 @@
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Back',    { common:halfWidthButton, onTouch:() => gotoScreen('DetailSelectionScreen') }),
+        Button(/*LANG*/'Back',    { common:halfWidthButton, onTouch:() => gotoScreen('DetailSelectionScreen') }),
         Button('Preview', { common:halfWidthButton, onTouch:() => gotoScreen('ThemePreviewScreen') })
       ], filly:1 },
     ]
@@ -399,7 +399,7 @@
       ] },
       { height:4 },
       { type:'h', c:[
-        Button('Back', { common:legible, pad:4, onTouch:() => gotoScreen('ColorSelectionScreen') })
+        Button(/*LANG*/'Back', { common:legible, pad:4, onTouch:() => gotoScreen('ColorSelectionScreen') })
       ], filly:1 }
     ]
   });

@@ -46,7 +46,7 @@ function showMenu() {
         updateSettings();
       }
     },
-    'Year': {
+    /*LANG*/'Year': {
       value: settings.year,
       step: 1,
       onchange: v => {

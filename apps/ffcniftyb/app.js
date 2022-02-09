@@ -2,7 +2,7 @@ const locale = require("locale");
 const storage = require('Storage');
 
 const is12Hour = (storage.readJSON("setting.json", 1) || {})["12hour"];
-const color = (storage.readJSON("ffcniftyb.json", 1) || {})["color"] || 63488 /* red */;
+const color = (storage.readJSON("ffcniftyb.json", 1) || {})[/*LANG*/"color"] || 63488 /* red */;
 
 
 /* Clock *********************************************/

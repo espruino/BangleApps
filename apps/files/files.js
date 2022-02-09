@@ -225,3 +225,4 @@ function sortHelper() {
 }
 
 showMainMenu();
+Menu();

@@ -116,7 +116,7 @@ function drawLabels() {
   g.setFont("6x8", 1);
   g.drawString("Reset                   (re)start", 230, 120);
   if (state != "started") // only when not runnung
-    g.drawString("Back", 230, 120);
+    g.drawString(/*LANG*/"Back", 230, 120);
 }
 
 function resetTimer(value) {

@@ -136,3 +136,5 @@ function startRecord(force) {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 showMenu();
+Menu();
+Menu();

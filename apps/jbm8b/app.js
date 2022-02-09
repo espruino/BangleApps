@@ -2,12 +2,12 @@ const affirmative = [
   'It is\ncertain.',
   'It is\ndicededly\nso.',
   'Without\na doubt.',
-  'Yes\ndefinitely.',
+  /*LANG*/'Yes\ndefinitely.',
   'You may\nrely\non it.',
   'As I see,\nit yes.',
   'Most\nlikely.',
   'Outlook\ngood.',
-  'Yes.',
+  /*LANG*/'Yes.',
   'Signs point\nto yes.'
 ];
 const nonCommittal = [

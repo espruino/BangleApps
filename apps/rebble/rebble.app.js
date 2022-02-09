@@ -33,7 +33,7 @@ function loadLocation() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green'};
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', /*LANG*/'color': 'Green'};
 }
 
 function extractTime(d){

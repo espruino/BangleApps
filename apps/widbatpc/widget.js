@@ -28,7 +28,7 @@
   function loadSettings() {
     settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
     const DEFAULTS = {
-      'color': 'By Level',
+      /*LANG*/'color': 'By Level',
       'percentage': true,
       'charger': true,
       'hideifmorethan': 100,
@@ -46,7 +46,7 @@
   const levelColor = (l) => {
   // "charging" is very bright -> percentage is hard to read, "high" is ok(ish)
     const green = setting('percentage') ? COLORS.high : COLORS.charging;
-    switch (setting('color')) {
+    switch (setting(/*LANG*/'color')) {
       case 'Monochrome': return COLORS.white; // no chance of reading the percentage here :-(
       case 'Green': return green;
       case 'By Level': // fall through
@@ -64,7 +64,7 @@
     }
   };
   const chargerColor = () => {
-    return (setting('color') === 'Monochrome') ? COLORS.white : COLORS.charging;
+    return (setting(/*LANG*/'color') === 'Monochrome') ? COLORS.white : COLORS.charging;
   };
 
   // sets width, returns true if it changed
@@ -112,7 +112,7 @@
       return;
     }
     let gfx = g;
-    if (setting('color') === 'Monochrome') {
+    if (setting(/*LANG*/'color') === 'Monochrome') {
     // draw text inverted on battery level
       gfx = Graphics.createCallback(g.getWidth(),g.getHeight(), 1,
         (x,y) => {g.setPixel(x,y,x<=xl?0:-1);});

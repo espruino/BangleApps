@@ -290,3 +290,5 @@
   };
   E.showMenu(mainMenu);
 });
+showMenu(mainMenu);
+});

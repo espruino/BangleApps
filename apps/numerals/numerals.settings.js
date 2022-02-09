@@ -32,7 +32,7 @@
     "Date on touch": {
       value: 0|numeralsSettings.showDate,
       min:0,max:1,
-      format: v=>v?"On":"Off",
+      format: v=>v?"On":/*LANG*/"Off",
       onchange: v=> { numeralsSettings.showDate=v; updateSettings();}
     },
     "< back": back

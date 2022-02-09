@@ -268,7 +268,7 @@ const settingsMenu = {
   "": { title: "Settings" },
   "Active Mode": {
     value: settings.activeMode,
-    format: (v) => (v ? "On" : "Off"),
+    format: (v) => (v ? "On" : /*LANG*/"Off"),
     onchange: (v) => (settings.activeMode = v),
   },
   "Twist Thresh": {

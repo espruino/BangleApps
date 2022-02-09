@@ -503,7 +503,7 @@
     if (settings.startWithHrm){
 
       Bangle.setHRMPower = function(isOn, app) {
-        log("setHRMPower for " + app + ": " + (isOn?"on":"off"));
+        log("setHRMPower for " + app + ": " + (isOn?"on":/*LANG*/"off"));
         if (settings.enabled){
           Bangle.setBTHRMPower(isOn, app);
         }

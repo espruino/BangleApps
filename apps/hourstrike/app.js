@@ -38,3 +38,4 @@ function showMainMenu() {
 }
 
 showMainMenu();
+Menu();

@@ -58,7 +58,7 @@ function draw(y, hrv) {
   }
   
   g.setRotation(3);
-  g.setFontVector(12).drawString("Reset",g.getHeight()/2, g.getWidth()-10);
+  g.setFontVector(12).drawString(/*LANG*/"Reset",g.getHeight()/2, g.getWidth()-10);
   g.setRotation(0);
 }
 

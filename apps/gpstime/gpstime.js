@@ -40,7 +40,7 @@ var layout = new Layout( {
     {type:"txt", fillx:1, filly:1, font:"6x8:2", label:"---", id:"gpstime" }
   ]},{lazy:true, btns: [
     { label : "Set", cb : setGPSTime},
-    { label : "Back", cb : ()=>load() }
+    { label : /*LANG*/"Back", cb : ()=>load() }
   ]});
 
 

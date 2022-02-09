@@ -5,7 +5,7 @@ const settings = storage.readJSON('setting.json',1) || { HID: false };
 var sendHid, next, prev, toggle, up, down, profile;
 
 if (settings.HID=="kbmedia") {
-  profile = 'Music';
+  profile = /*LANG*/'Music';
   sendHid = function (code, cb) {
     try {
       NRF.sendHIDReport([1,code], () => {

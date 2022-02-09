@@ -704,11 +704,16 @@ function showAppSettings(app) {
     return showError(/*LANG*/'Invalid settings');
   }
   try {
-    // pass showAppSettingsMenu as "back" argument
+    // pass showAppSettingsMenu as /*LANG*/"back" argument
     appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)
     return showError(/*LANG*/'Error in settings');
+  }
+}
+
+showMainMenu();
+tings');
   }
 }
 

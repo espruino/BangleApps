@@ -132,7 +132,7 @@ E.on('notify',msg=>{
 // Apple media service
 E.on('AMS',a=>{
   function push(m) {
-    var msg = { t : "modify", id : "music", title:"Music" };
+    var msg = { t : "modify", id : "music", title:/*LANG*/"Music" };
     if (a.id=="artist")  msg.artist = m;
     else if (a.id=="album")  msg.album = m;
     else if (a.id=="title")  msg.track = m;

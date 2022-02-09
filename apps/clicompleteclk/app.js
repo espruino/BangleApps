@@ -35,7 +35,7 @@ function setting(key) {
     'battery': true,
     'batteryLvl': 30,
     'weather': true,
-    'steps': true,
+    /*LANG*/'steps': true,
     'heartrate': true
   };
   return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -45,7 +45,7 @@ function setting(key) {
 let showBattery = setting('battery');
 let batteryWarnLevel = setting('batteryLvl');
 let showWeather = setting('weather');
-let showSteps = setting('steps');
+let showSteps = setting(/*LANG*/'steps');
 let showHeartRate = setting('heartrate');
 
 

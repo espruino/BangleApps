@@ -108,7 +108,7 @@
     g.setFont("6x8", 2);
     g.setColor(1,1,1);
     require("graph").drawLine(g, steps, {
-      //title: "Steps",
+      //title: /*LANG*/"Steps",
       axes : true,
       gridy : gridyValue,
       y : 60, //offset on screen
@@ -118,7 +118,7 @@
     // show steps and duration of the chart
     g.setFont("6x8", 2);
     g.setColor(0,1,0);
-    g.drawString("steps", 30, 24);
+    g.drawString(/*LANG*/"steps", 30, 24);
     g.drawString(stepsLastEntry, 30, 44);
     g.drawString((history/3600000) + " hrs",  30, 64);
 

@@ -40,3 +40,5 @@
   };
   E.showMenu(mainmenu);
 })
+.showMenu(mainmenu);
+})

@@ -23,6 +23,6 @@ setInterval(function() {
   drawTemperature();
 }, 20000);
 drawTemperature();
-E.showMessage("Loading...");
+E.showMessage(/*LANG*/"Loading...");
 Bangle.loadWidgets();
 Bangle.drawWidgets();

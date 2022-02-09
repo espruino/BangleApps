@@ -39,9 +39,9 @@ function showMainMenu() {
   };
   alarms.forEach((alarm,idx)=>{
     if (alarm.timer) {
-      txt = /*LANG*/"TIMER "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatMins(alarm.timer);
+      txt = /*LANG*/"TIMER "+(alarm.on?/*LANG*/"on  ":/*LANG*//*LANG*/"off ")+formatMins(alarm.timer);
     } else {
-      txt = /*LANG*/"ALARM "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatTime(alarm.hr);
+      txt = /*LANG*/"ALARM "+(alarm.on?/*LANG*/"on  ":/*LANG*//*LANG*/"off ")+formatTime(alarm.hr);
       if (alarm.rp) txt += /*LANG*/" (repeat)";
     }
     menu[txt] = function() {
@@ -82,7 +82,7 @@ function editAlarm(alarmIndex) {
     },
     /*LANG*/'Enabled': {
       value: en,
-      format: v=>v?"On":"Off",
+      format: v=>v?"On":/*LANG*/"Off",
       onchange: v=>en=v
     },
     /*LANG*/'Repeat': {
@@ -147,7 +147,7 @@ function editTimer(alarmIndex) {
     },
     /*LANG*/'Enabled': {
       value: en,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
+      format: v=>v?/*LANG*/"On":/*LANG*//*LANG*/"Off",
       onchange: v=>en=v
     }
   };

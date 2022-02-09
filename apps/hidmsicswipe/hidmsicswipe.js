@@ -7,7 +7,7 @@ var lasty = 0;
 var lastx = 0;
 
 if (settings.HID=="kbmedia") {
-  profile = 'Music';
+  profile = /*LANG*/'Music';
   sendHid = function (code, cb) {
     try {
       NRF.sendHIDReport([1,code], () => {
@@ -36,8 +36,8 @@ if (settings.HID=="kbmedia") {
 
 function drawApp() {
   g.clear();
-  if(Bangle.isLocked()==false) E.showMessage('Swipe', 'Music');
-  else E.showMessage('Locked', 'Music');
+  if(Bangle.isLocked()==false) E.showMessage('Swipe', /*LANG*/'Music');
+  else E.showMessage('Locked', /*LANG*/'Music');
 }
 
 if (next) {

@@ -710,7 +710,7 @@
       {
         Face:'1-12', colored:true,
         Hands:'rounded', withSeconds:true,
-        Foreground:'Theme', Background:'Theme', Seconds:'#FF0000'
+        Foreground:'Theme', Background:/*LANG*/'Theme', Seconds:'#FF0000'
       },
       require('Storage').readJSON('configurable_clock.json', true) || {}
     );
@@ -855,8 +855,8 @@
     activeLayout = null;
 
     g.setTheme({
-      fg:(Settings.Foreground === 'Theme' ? Theme.fg : Settings.Foreground || '#000000'),
-      bg:(Settings.Background === 'Theme' ? Theme.bg : Settings.Background || '#FFFFFF')
+      fg:(Settings.Foreground === /*LANG*/'Theme' ? Theme.fg : Settings.Foreground || '#000000'),
+      bg:(Settings.Background === /*LANG*/'Theme' ? Theme.bg : Settings.Background || '#FFFFFF')
     });
     g.clear(true);                            // also installs the current theme
 
@@ -872,8 +872,8 @@
 /**** renderClock ****/
 
   function renderClock () {
-    g.setColor  (Settings.Foreground === 'Theme' ? Theme.fg : Settings.Foreground || '#000000');
-    g.setBgColor(Settings.Background === 'Theme' ? Theme.bg : Settings.Background || '#FFFFFF');
+    g.setColor  (Settings.Foreground === /*LANG*/'Theme' ? Theme.fg : Settings.Foreground || '#000000');
+    g.setBgColor(Settings.Background === /*LANG*/'Theme' ? Theme.bg : Settings.Background || '#FFFFFF');
 
     switch (Settings.Face) {
       case 'none':
@@ -951,7 +951,7 @@
     let HoursAngle   = (Hours+(Minutes/60))/12 * twoPi - Pi;
     let MinutesAngle = (Minutes/60)            * twoPi - Pi;
 
-    g.setColor(Settings.Foreground === 'Theme' ? Theme.fg : Settings.Foreground || '#000000');
+    g.setColor(Settings.Foreground === /*LANG*/'Theme' ? Theme.fg : Settings.Foreground || '#000000');
 
     switch (Settings.Hands) {
       case 'simple':
@@ -968,10 +968,10 @@
         transformPolygon(roundedMinuteHandPolygon, CenterX,CenterY, MinutesAngle);
         g.fillPoly(transformedPolygon);
 
-//      g.setColor(Settings.Foreground === 'Theme' ? Theme.fg || '#000000');
+//      g.setColor(Settings.Foreground === /*LANG*/'Theme' ? Theme.fg || '#000000');
         g.fillCircle(CenterX,CenterY, outerBoltRadius);
 
-        g.setColor(Settings.Background === 'Theme' ? Theme.bg : Settings.Background || '#FFFFFF');
+        g.setColor(Settings.Background === /*LANG*/'Theme' ? Theme.bg : Settings.Background || '#FFFFFF');
         g.drawCircle(CenterX,CenterY, outerBoltRadius);
         g.fillCircle(CenterX,CenterY, innerBoltRadius);
         break;
@@ -986,7 +986,7 @@
     }
 
     if (Settings.withSeconds) {
-      g.setColor(Settings.Seconds === 'Theme' ? Theme.fgH : Settings.Seconds || '#FF0000');
+      g.setColor(Settings.Seconds === /*LANG*/'Theme' ? Theme.fgH : Settings.Seconds || '#FF0000');
 
       let Seconds      = now.getSeconds();
       let SecondsAngle = (Seconds/60) * twoPi - Pi;
@@ -1089,9 +1089,9 @@
     let Seconds    = (Changes.Seconds    == null ? Settings.Seconds    : Changes.Seconds);
 
     activeLayout = ColorsScreen;
-      activeLayout['Foreground'].bgCol = (Foreground === 'Theme' ? Theme.fg  : Foreground);
-      activeLayout['Background'].bgCol = (Background === 'Theme' ? Theme.bg  : Background);
-      activeLayout['Seconds'].bgCol    = (Seconds    === 'Theme' ? Theme.fgH : Seconds);
+      activeLayout['Foreground'].bgCol = (Foreground === /*LANG*/'Theme' ? Theme.fg  : Foreground);
+      activeLayout['Background'].bgCol = (Background === /*LANG*/'Theme' ? Theme.bg  : Background);
+      activeLayout['Seconds'].bgCol    = (Seconds    === /*LANG*/'Theme' ? Theme.fgH : Seconds);
     activeLayout.render();
   }
 
@@ -1123,12 +1123,12 @@
       activeLayout['#FF00FF'].selected = (chosenColor === '#FF00FF');
       activeLayout['#00FFFF'].selected = (chosenColor === '#00FFFF');
       activeLayout['#FFFFFF'].selected = (chosenColor === '#FFFFFF');
-      activeLayout['Theme'].selected   = (chosenColor === 'Theme');
+      activeLayout['Theme'].selected   = (chosenColor === /*LANG*/'Theme');
     activeLayout.render();
   }
 
   function chooseColor (Control) { Bangle.buzz(); chosenColor = Control.id; refreshColorChoiceScreen(); }
-  function chooseThemeColor ()   { Bangle.buzz(); chosenColor = 'Theme';    refreshColorChoiceScreen(); }
+  function chooseThemeColor ()   { Bangle.buzz(); chosenColor = /*LANG*/'Theme';    refreshColorChoiceScreen(); }
 
   function applyColor () {
     Changes[ColorToChange] = chosenColor;
@@ -1347,9 +1347,9 @@
         Drawable(drawColorChoice, { id:'#00FFFF', common:ColorChoice, col:'#00FFFF' }),
       ], filly:1 },
       { type:'h', c:[
-        Label('use Theme:', { id:'Theme', common:leftAligned, pad:4 }),
+        Label('use Theme:', { id:/*LANG*/'Theme', common:leftAligned, pad:4 }),
         { width:10 },
-        Drawable(drawColorChoice, { id:'Theme', common:ColorChoice, col:Theme.fg }),
+        Drawable(drawColorChoice, { id:/*LANG*/'Theme', common:ColorChoice, col:Theme.fg }),
       ], filly:1, onTouch:chooseThemeColor },
       { height:4 },
       { type:'h', c:[

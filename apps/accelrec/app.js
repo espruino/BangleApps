@@ -177,3 +177,7 @@ function showSaveMenu() {
 }
 
 showMenu();
+
+}
+
+showMenu();

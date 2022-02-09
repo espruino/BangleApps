@@ -3,7 +3,7 @@ const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
-  dataRow1: "Steps",
+  dataRow1: /*LANG*/"Steps",
   dataRow2: "Temp",
   dataRow3: "Battery"
 };
@@ -151,7 +151,7 @@ function _drawData(key, y, c){
   var value = "ERR";
   var should_print= true;
 
-  if(key == "STEPS"){
+  if(key == /*LANG*/"STEPS"){
     text = "STEP";
     value = getSteps();
 

@@ -269,3 +269,7 @@ function showEditTimerMenu(timerIndex) {
 }
 
 showMainMenu();
+wMenu(menu);
+}
+
+showMainMenu();
