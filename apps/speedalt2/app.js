@@ -6,7 +6,7 @@ Mike Bennett mike[at]kereru.com
 1.34 : Add bluetooth data stream for Droidscript
 1.43 : Keep GPS in SuperE mode while using Droiscript screen mirroring
 */
-var v = '1.47';
+var v = '1.48';
 var vDroid = '1.50';    // Required DroidScript program version
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
@@ -175,6 +175,7 @@ var KalmanFilter = (function () {
 
 var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
+/*
 let LED = // LED as minimal and only definition (as instance / singleton)
 { isOn: false // status on / off, not needed if you don't need to ask for it
 , set: function(v) { // turn on w/ no arg or truey, else off
@@ -183,6 +184,7 @@ let LED = // LED as minimal and only definition (as instance / singleton)
 , write: function(v) { this.set(v); }  // turn on w/ no arg or truey, else off
 , toggle: function() { this.set( ! this.isOn); } // toggle the LED
 }, LED1 = LED; // LED1 as 'synonym' for LED 
+*/
 
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
