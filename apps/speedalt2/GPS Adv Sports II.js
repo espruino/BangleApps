@@ -3,21 +3,27 @@
 
 app.LoadPlugin("PuckJS");
 
+app.SetDebugEnabled(false);
+
+conf = JSON.parse( app.LoadText( "settings", "{}" ))
+if ( typeof(conf.btAddr) != 'string' ) conf.btAddr = '' // Address of last connection
+if ( typeof(conf.btName) != 'string' ) conf.btName = '' // Name of last connection
+
+v = '1.51'                      // Version of this script
+requiredBangleVer = '1.47';     // Minimum speedalt2 version required on Bangle
+curBangleVer = '-.--'
+isStopped = true;               // Data receive turned off
+lastData = new Date().getTime() / 1000;   // Time of last data received
+
+//    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
+btnOff = '#175A63'
+btnOn = '#4285F4'
+col = new Array(['black'],['#64FF00'],['#FCFA00'],['#00E4FF'])   // bg, main, units, wp   - 0xFFFF,0x007F,0x0054,0x0054
+
 
 //Called when application is started.
 function OnStart() {
 
-    v = '1.50'                      // Version of this script
-    requiredBangleVer = '1.47';     // Minimum speedalt2 version required on Bangle
-    curBangleVer = '-.--'
-    isStopped = true;               // Data receive turned off
-    lastData = new Date().getTime() / 1000;   // Time of last data received
-    addr = '';                     // Address of last connection
-
-    //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
-    btnOff = '#175A63'
-    btnOn = '#4285F4'
-    col = new Array(['black'],['#64FF00'],['#FCFA00'],['#00E4FF'])   // bg, main, units, wp   - 0xFFFF,0x007F,0x0054,0x0054
 
     // Connect to Bangle
      if( !app.IsBluetoothEnabled() ) app.SetBluetoothEnabled( true );
@@ -25,7 +31,21 @@ function OnStart() {
     puck = app.CreatePuckJS();
     puck.SetOnConnect(onConnect);       // Callback.
     puck.SetOnReceive(readResponse);    // Callback to capture console output from app.
-    puck.Scan("Bangle");
+
+
+    if ( conf.btAddr == '' ) {
+        console.log('Scanning')
+        puck.Scan("Bangle");
+    }
+    else {
+        console.log('Reconnecting to : '+conf.btAddr)
+        puck.address = conf.btAddr
+        puck.name = conf.btName
+        puck.Connect(puck.address);
+    }
+
+    app.SetDebugEnabled(false);
+
     setInterval(checkConnection,5000)   // Periodic check for data timeout and attempt a reconnect
 
     // Controls
@@ -200,7 +220,7 @@ function readResponse(data) {
 
     if (d.m == 5) { // Time
         val.SetTextSize(90)
-        val2.SetTextSize(10)
+        val2.SetTextSize(0)
 
         dt = new Date();
 
@@ -224,10 +244,16 @@ function setLED(canvas,on,colour) {
     canvas.Update()
 }
 
-function onConnect(name, address, bonded, rssi) {
-    addr = address
-    console.log( "Connected to " + address );
+function onConnect(name, address) {
+//    app.SetDebugEnabled(true)
+
+    if ( typeof(address) == 'string' ) conf.btAddr = address
+    if ( typeof(name) == 'string' ) conf.btName = name
+    app.SaveText( "settings", JSON.stringify( conf ))  // persist connection for future so no need to scan each time used.
+    
+    console.log( "Connected to : " + conf.btAddr );
     btn_OnStart() // Once connect tell app to start sending updates
+    app.SetDebugEnabled(false)
 }
 
 // Periodic check for data timeout and attempt a reconnect
@@ -235,17 +261,20 @@ function checkConnection() {
     if (isStopped) return
     if ( parseFloat(new Date().getTime() / 1000) - lastData > 30 ) {
 
-        console.log( "Reconnecting to : "+addr);
+        console.log( "Reconnecting to : "+conf.btAddr);
 
         // Flash orange 'led' indicator for connection attempts.
         setLED(led,true,"#FC8A00")
         setTimeout(function() {setLED(led,false,-1)}, 500)
-        puck.Connect(addr)
+        puck.Connect(conf.btAddr)
     }
 }
 
 function btn_OnAbout() {
-    app.ShowPopup("GPS Adv Sports II\nAndroid Mirror : "+v+"\nBangle.js : "+curBangleVer,"Long")
+    app.ShowPopup(
+        "GPS Adv Sports II\nAndroid Mirror : "+v+
+        "\nBangle.js : "+curBangleVer+
+        "\nConnected : "+conf.btName,"Long")
 }
 
 function btn_OnStart() {
