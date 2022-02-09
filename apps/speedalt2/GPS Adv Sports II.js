@@ -3,23 +3,39 @@
 
 app.LoadPlugin("PuckJS");
 
-app.SetDebugEnabled(false);
+app.SetDebugEnabled(true);
 
-conf = JSON.parse( app.LoadText( "settings", "{}" ))
-if ( typeof(conf.btAddr) != 'string' ) conf.btAddr = '' // Address of last connection
-if ( typeof(conf.btName) != 'string' ) conf.btName = '' // Name of last connection
 
-v = '1.51'                      // Version of this script
+v = '1.52'                      // Version of this script
 requiredBangleVer = '1.47';     // Minimum speedalt2 version required on Bangle
 curBangleVer = '-.--'
 isStopped = true;               // Data receive turned off
 lastData = new Date().getTime() / 1000;   // Time of last data received
 
+//Colours
 //    Mode = 0 // 0=SPD, 1=ALT, 2=DST, 3=VMG, 4=POSN, 5=TIME
 btnOff = '#175A63'
 btnOn = '#4285F4'
 col = new Array(['black'],['#64FF00'],['#FCFA00'],['#00E4FF'])   // bg, main, units, wp   - 0xFFFF,0x007F,0x0054,0x0054
 
+// Settings
+conf = JSON.parse( app.LoadText( "settings", "{}" ))
+if ( typeof(conf.btAddr) != 'string' ) conf.btAddr = '' // Address of last connection
+if ( typeof(conf.btName) != 'string' ) conf.btName = '' // Name of last connection
+
+// Extend PuckJS
+app.CreateBangleJS = function( options ) 
+{ 
+    return new BangleJS( options );
+}
+
+class BangleJS extends PuckJS {
+    
+    constructor(options) {
+        super(options)
+    }
+
+}
 
 //Called when application is started.
 function OnStart() {
@@ -28,20 +44,21 @@ function OnStart() {
     // Connect to Bangle
      if( !app.IsBluetoothEnabled() ) app.SetBluetoothEnabled( true );
 
-    puck = app.CreatePuckJS();
-    puck.SetOnConnect(onConnect);       // Callback.
-    puck.SetOnReceive(readResponse);    // Callback to capture console output from app.
+//    puck = app.CreatePuckJS();
+    bngl = app.CreateBangleJS();
+    bngl.SetOnConnect(onConnect);       // Callback.
+    bngl.SetOnReceive(readResponse);    // Callback to capture console output from app.
 
 
     if ( conf.btAddr == '' ) {
         console.log('Scanning')
-        puck.Scan("Bangle");
+        bngl.Scan("Bangle");
     }
     else {
         console.log('Reconnecting to : '+conf.btAddr)
-        puck.address = conf.btAddr
-        puck.name = conf.btName
-        puck.Connect(puck.address);
+        bngl.address = conf.btAddr
+        bngl.name = conf.btName
+        bngl.Connect(bngl.address);
     }
 
     app.SetDebugEnabled(false);
@@ -266,7 +283,7 @@ function checkConnection() {
         // Flash orange 'led' indicator for connection attempts.
         setLED(led,true,"#FC8A00")
         setTimeout(function() {setLED(led,false,-1)}, 500)
-        puck.Connect(conf.btAddr)
+        bngl.Connect(conf.btAddr)
     }
 }
 
@@ -280,14 +297,14 @@ function btn_OnAbout() {
 function btn_OnStart() {
     btnStart.SetBackColor(btnOn)
     btnStop.SetBackColor(btnOff)
-    puck.SendCode('btOn(1)\n') // Enable the data send
+    bngl.SendCode('btOn(1)\n') // Enable the data send
     isStopped = false
 }
 
 function btn_OnStop() {
     btnStart.SetBackColor(btnOff)
     btnStop.SetBackColor(btnOn)
-    puck.SendCode('btOn(0)\n') // Disable the data send
+    bngl.SendCode('btOn(0)\n') // Disable the data send
     isStopped = true
     val.SetText('')
     val2.SetText('')
@@ -299,5 +316,5 @@ function btn_OnStop() {
 function btn_OnScan() {
     btnStart.SetBackColor(btnOff)
     btnStop.SetBackColor(btnOff)
-    puck.Scan("Bangle");
+    bngl.Scan("Bangle");
 }
