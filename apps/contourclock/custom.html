@@ -13,19 +13,21 @@
     <script>
     // When the 'upload' button is clicked...
     document.getElementById("upload").addEventListener("click", function() {
-      Fonts = ["Impact", "Phosphate"];
+      Font = ["Impact", "Phosphate"]
       var n=0;
-      for (fontName in Fonts) {
-        if (document.getElementById(fontName).checked==true) {
+      for (fIndex in Font) {
+        if (document.getElementById(Font[fIndex]).checked==true) {
           sendCustomizedApp({
             storage:[
-              {name:"contourclock-"+n+".js", url:"app.js", content:"font-"+fontName+".json"},
+              {name:"contourclock-"+n+".json", url:"app.js", content:"font-"+Font[fIndex]+".json"},
             ]
           });
+          n++;
         }
       }
-    });
-  </script>
-  </form>
+});
+
+</script>
+
 </body>
 </html>
