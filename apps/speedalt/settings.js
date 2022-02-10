@@ -87,6 +87,3 @@
   E.showMenu(appMenu);
 
 });
-showMenu(appMenu);
-
-});

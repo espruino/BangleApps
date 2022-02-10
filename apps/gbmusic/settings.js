@@ -43,5 +43,3 @@
 
   E.showMenu(menu);
 });
-u);
-});

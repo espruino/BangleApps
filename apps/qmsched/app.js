@@ -267,4 +267,3 @@ function showOptionsMenu() {
 
 loadSettings();
 showMainMenu();
-showMainMenu();

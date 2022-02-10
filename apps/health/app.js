@@ -255,7 +255,3 @@ function clearButton() {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 menuMain();
-Main();
-ts();
-Bangle.drawWidgets();
-menuMain();

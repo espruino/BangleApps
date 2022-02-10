@@ -45,7 +45,3 @@ const menu = {
 
   E.showMenu(menu);
 })
-nu);
-})
-nu);
-})

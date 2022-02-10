@@ -179,5 +179,3 @@
   settings = readSettings();
   showMainMenu();
 });
-();
-});

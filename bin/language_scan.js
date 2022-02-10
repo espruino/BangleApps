@@ -167,6 +167,7 @@ translatedStrings.sort((a,b)=>a.uses - b.uses);
  * @param file file that string is found
  * @returns void
  */
+//TODO fix settings bug
 function applyLANG(str, file) {
   fs.readFile(file, 'utf8', function (err,data) {
     if (err) {

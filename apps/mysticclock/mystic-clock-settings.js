@@ -39,9 +39,3 @@
     E.showMenu(appMenu)
 
 })
-nu(appMenu)
-
-})
-nu)
-
-})

@@ -828,7 +828,3 @@ Bangle.loadWidgets();
 
 draw();
 setInterval(draw, 60000);
-s();
-
-draw();
-setInterval(draw, 60000);

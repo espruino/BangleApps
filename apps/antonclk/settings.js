@@ -105,9 +105,3 @@
 });
 
 // end of file
-nu
-  E.showMenu(mainmenu);
-
-});
-
-// end of file

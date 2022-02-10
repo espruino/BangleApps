@@ -110,4 +110,3 @@ function editAlarm(alarmIndex) {
 }
 
 showMainMenu();
-showMainMenu();

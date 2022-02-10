@@ -102,5 +102,3 @@ function get_pruned_file_list() {
 
 files = get_pruned_file_list();
 drawMenu();
-Menu();
-Menu();

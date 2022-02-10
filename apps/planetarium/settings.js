@@ -28,5 +28,4 @@
           }},
       };
     E.showMenu(appMenu)
-  })E.showMenu(appMenu)
   })

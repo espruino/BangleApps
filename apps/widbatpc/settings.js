@@ -77,7 +77,3 @@
   }
   E.showMenu(menu)
 })
-   },
-  }
-  E.showMenu(menu)
-})

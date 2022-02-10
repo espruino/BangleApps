@@ -20,5 +20,3 @@
   }
   E.showMenu(menu)
 })
-enu)
-})

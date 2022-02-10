@@ -28,5 +28,3 @@
   };
   E.showMenu(mainmenu);
 })
-u(mainmenu);
-})

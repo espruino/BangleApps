@@ -62,6 +62,3 @@
     '< Back': back,
   })
 })
-'< Back': back,
-  })
-})

@@ -91,4 +91,3 @@ function showMenu() {
 }
 
 showMenu();
-enu();

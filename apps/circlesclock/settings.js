@@ -177,7 +177,3 @@
 
   showMainMenu();
 });
-
-
-  showMainMenu();
-});

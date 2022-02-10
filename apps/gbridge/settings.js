@@ -47,7 +47,3 @@
 
   E.showMenu(mainmenu);
 })
-nu);
-})
-u(mainmenu);
-})

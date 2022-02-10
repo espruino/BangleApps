@@ -713,8 +713,3 @@ function showAppSettings(app) {
 }
 
 showMainMenu();
-tings');
-  }
-}
-
-showMainMenu();
