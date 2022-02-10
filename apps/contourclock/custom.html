@@ -19,12 +19,18 @@
         if (document.getElementById(Font[fIndex]).checked==true) {
           sendCustomizedApp({
             storage:[
-              {name:"contourclock-"+n+".json", url:"app.js", content:"font-"+Font[fIndex]+".json"},
+              {name:"contourclock-"+n+".json", url:"font-"+Font[fIndex]+".json"},
             ]
           });
           n++;
         }
       }
+
+      /*sendCustomizedApp({
+      storage:[
+      {name:"myapp.app.js", url:"app.js", content:app},
+    ]
+  });*/
 });
 
 </script>
