@@ -54,7 +54,8 @@ var state = {
   // startTime, // time exercise started
   lastGPS:{}, thisGPS:{}, // This & previous GPS readings
   // distance : 0, ///< distance in meters
-  // avrSpeed : 0, ///< in m/sec
+  // avrSpeed : 0, ///< speed over whole run in m/sec
+  // curSpeed : 0, ///< current (but averaged speed) in m/sec
   startSteps : Bangle.getStepCount(), ///< number of steps when we started
   lastSteps : Bangle.getStepCount(), // last time 'step' was called
   stepHistory : new Uint8Array(60), // steps each second for the last minute (0 = current minute)
@@ -72,7 +73,7 @@ function calcDistance(a,b) {
   function radians(a) { return a*Math.PI/180; }
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
-  return Math.round(Math.sqrt(x*x + y*y) * 6371000);
+  return Math.sqrt(x*x + y*y) * 6371000;
 }
 
 // Given milliseconds, return a time
@@ -102,14 +103,17 @@ Bangle.on("GPS", function(fix) {
   if (!fix.fix) return; // only process actual fixes
 
   if (!state.active) return;
-  if( state.lastGPS.fix)
-    state.distance += calcDistance(state.lastGPS, fix);
-  var duration = Date.now() - state.startTime; // in ms
-  state.avrSpeed = state.distance * 1000 / duration; // meters/sec
-  if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   state.lastGPS = state.thisGPS;
   state.thisGPS = fix;
+  if (state.lastGPS.fix)
+    state.distance += calcDistance(state.lastGPS, fix);
+  if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
+  var duration = Date.now() - state.startTime; // in ms
+  state.avrSpeed = state.distance * 1000 / duration; // meters/sec
+  state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2/3.6; // meters/sec
+  if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
+  if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
 });
 
 Bangle.on("step", function(steps) {
@@ -134,6 +138,7 @@ exports.getList = function() {
     {name: "Heart (BPM)", id:"bpm"},
     {name: "Pace (avr)", id:"pacea"},
     {name: "Pace (current)", id:"pacec"},
+    {name: "Speed", id:"speed"},
     {name: "Cadence", id:"caden"},
   ];
 };
@@ -180,7 +185,7 @@ exports.getStats = function(statIDs, options) {
   if (statIDs.includes("pacea")) {
     needGPS = true;
     stats["pacea"]={
-      title : "Pace(avr)",
+      title : "A Pace",
       getValue : function() { return state.avrSpeed; }, // in m/sec
       getString : function() { return formatPace(state.avrSpeed, options.paceLength); },
     };
@@ -188,9 +193,17 @@ exports.getStats = function(statIDs, options) {
   if (statIDs.includes("pacec")) {
     needGPS = true;
     stats["pacec"]={
-      title : "Pace(now)",
-      getValue : function() { return (state.thisGPS.speed||0)/3.6; }, // in m/sec
-      getString : function() { return formatPace(this.getValue(), options.paceLength); },
+      title : "C Pace",
+      getValue : function() { return state.curSpeed; }, // in m/sec
+      getString : function() { return formatPace(state.curSpeed, options.paceLength); },
+    };
+  }
+  if (statIDs.includes("speed")) {
+    needGPS = true;
+    stats["speed"]={
+      title : "Speed",
+      getValue : function() { return state.curSpeed*3.6; }, // in kph
+      getString : function() { return require("locale").speed(state.curSpeed*3.6); },
     };
   }
   if (statIDs.includes("caden")) {
@@ -231,6 +244,7 @@ exports.getStats = function(statIDs, options) {
     state.stepsPerMin = 0;
     state.distance = 0;
     state.avrSpeed = 0;
+    state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
   }

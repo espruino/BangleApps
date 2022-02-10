@@ -9,6 +9,7 @@
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
   let settings = Object.assign({
+    record : true,
     B1 : "dist",
     B2 : "time",
     B3 : "pacea",
@@ -35,8 +36,17 @@
 
   var menu = {
     '': { 'title': 'Run' },
-    '< Back': back
+    '< Back': back,
   };
+  if (WIDGETS["recorder"])
+    menu[/*LANG*/"Record Run"] = {
+      value : !!settings.record,
+      format : v => v?/*LANG*/"Yes":/*LANG*/"No",
+      onchange : v => {
+        settings.record = v;
+        saveSettings();
+      }
+    };
   ExStats.appendMenuItems(menu, settings, saveSettings);
   Object.assign(menu,{
     'Box 1': getBoxChooser("B1"),

@@ -1,4 +1,5 @@
 bleServiceOptions.ancs = true;
+if (NRF.amsIsActive) bleServiceOptions.ams = true; // amsIsActive was added at the same time as the "am" option
 Bangle.ancsMessageQueue = [];
 
 /* Handle ANCS events coming in, and fire off 'notify' events

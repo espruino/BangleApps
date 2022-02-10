@@ -3,3 +3,5 @@
       added settings to opt out of GPS and HRM
 0.03: Fixed distance calculation, tested against Garmin Etrex, Amazfit GTS 2
 0.04: Use the exstats module, and make what is displayed configurable
+0.05: exstats updated so update 'distance' label is updated, option for 'speed'
+0.06: Add option to record a run using the recorder app automatically

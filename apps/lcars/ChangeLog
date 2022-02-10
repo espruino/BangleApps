@@ -12,3 +12,4 @@
 0.12: Added humidity as an option to display.
 0.13: Improved battery visualization.
 0.14: Added altitude as an option to display.
+0.15: Using wpedom to count steps.

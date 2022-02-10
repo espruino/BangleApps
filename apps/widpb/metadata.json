@@ -8,7 +8,7 @@
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
-  "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font, requires firmware v2.11.21 or later",
+  "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in the Lato font",
   "tags": "widget,battery",
   "storage": [
     {"name":"widpb.wid.js","url":"widpb.wid.js"}

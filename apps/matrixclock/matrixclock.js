@@ -147,7 +147,7 @@ function draw_clock(){
   g.setFont("Vector", g.getWidth() / 5);
   g.setFontAlign(0,-1);
   if(last_draw_time == null || now.getMinutes() != last_draw_time.getMinutes()){
-    g.setColor(g.theme.fg);
+    g.setColor(g.theme.bg);
     g.drawString(timeStr, w/2, TIME_Y_COORD);
     timeStr = format_time(now);
   }
@@ -158,12 +158,12 @@ function draw_clock(){
   g.setFont("Vector",15);
   g.setFontAlign(0,-1,0);
   if(last_draw_time == null || now.getDate() != last_draw_time.getDate()){
-    g.setColor(g.theme.fg);
+    g.setColor(g.theme.bg);
     g.drawString(dateStr, w/2, DATE_Y_COORD);
     dateStr = format_date(now);
-    g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
-    g.drawString(dateStr, w/2, DATE_Y_COORD); 
   }
+  g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
+  g.drawString(dateStr, w/2, DATE_Y_COORD);
   last_draw_time = now;
 }
 
