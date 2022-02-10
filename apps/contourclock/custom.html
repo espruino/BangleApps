@@ -43,18 +43,20 @@
     // When the 'upload' button is clicked...
     document.getElementById("upload").addEventListener("click", function() {
       var n=0;
+      var fonts = [];
       for (fontName of FontList) {
         if (document.getElementById(fontName).checked==true) {
-          sendCustomizedApp({
-            storage:[
-              {name:"contourclock-"+n+".json", url:"font-"+fontName+".json"},
-            ]
-          });
+          var f = new Object();
+          f.name="contourclock-"+n+".json";
+          f.url="font-"+fontName+".json";
+          //fonts.push({name:"contourclock-"+n+".json", url:"font-"+fontName+".json"});
+          fonts.push(f);
           //console.log("contourclock-"+n+".json  <-  font-"+fontName+".json");
           n++;
         }
       }
-
+      //console.log(fonts[0]);
+      sendCustomizedApp(storage=fonts);
       /*sendCustomizedApp({
       storage:[
       {name:"myapp.app.js", url:"app.js", content:app},
