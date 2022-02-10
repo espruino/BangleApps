@@ -4,24 +4,53 @@
 </head>
 <body>
   <form>
-    <input type="checkbox" id="Impact" name="Impact">
+    <input type="checkbox" id="BarlowCond">
+    <label for="BarlowCond">Barlow Condensed</label><br>
+    <input type="checkbox" id="BebasNeue">
+    <label for="BebasNeue">Bebas Neue</label><br>
+    <input type="checkbox" id="Dekko">
+    <label for="Dekko">Dekko</label><br>
+    <input type="checkbox" id="DinAlternate">
+    <label for="DinAlternate">Din Alternate</label><br>
+    <input type="checkbox" id="Dosis">
+    <label for="Dosis">Dosis</label><br>
+    <input type="checkbox" id="Impact">
     <label for="Impact">Impact</label><br>
-    <input type="checkbox" id="Phosphate" name="Phosphate">
+    <input type="checkbox" id="Nunito">
+    <label for="Nunito">Nunito</label><br>
+    <input type="checkbox" id="OpenSansEC">
+    <label for="OpenSansEC">Open Sans Extra Condensed</label><br>
+    <input type="checkbox" id="Phosphate">
     <label for="Phosphate">Phosphate</label><br>
+    <input type="checkbox" id="Quicksand">
+    <label for="Quicksand">Quicksand</label><br>
+    <input type="checkbox" id="SairaCond">
+    <label for="SairaCond">Saira Condensed</label><br>
+    <input type="checkbox" id="SairaEC">
+    <label for="SairaEC">Saira Extra Condensed</label><br>
+    <input type="checkbox" id="Teko">
+    <label for="Teko">Teko</label><br>
+    <input type="checkbox" id="Yumaro">
+    <label for="Yumaro">Yumaro</label><br>
+    <input type="checkbox" id="YuseiMagic">
+    <label for="YuseiMagic">Yusei Magic</label><br>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
     <script src="../../core/lib/customize.js"></script>
     <script>
+    FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate", "Dosis",
+    "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaCond", "SairaEC",
+  "Yumaro", "YuseiMagic"]
     // When the 'upload' button is clicked...
     document.getElementById("upload").addEventListener("click", function() {
-      Font = ["Impact", "Phosphate"]
       var n=0;
-      for (fIndex in Font) {
-        if (document.getElementById(Font[fIndex]).checked==true) {
+      for (fontName of FontList) {
+        if (document.getElementById(fontName).checked==true) {
           sendCustomizedApp({
             storage:[
-              {name:"contourclock-"+n+".json", url:"font-"+Font[fIndex]+".json"},
+              {name:"contourclock-"+n+".json", url:"font-"+fontName+".json"},
             ]
           });
+          //console.log("contourclock-"+n+".json  <-  font-"+fontName+".json");
           n++;
         }
       }
