@@ -6,6 +6,7 @@
   "description": "A Minimalist clockface with large Digits. Now with more fonts!",
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
+  "custom": "custom.html",
   "allow_emulator":true,
   "supports" : ["BANGLEJS2"],
   "type": "clock",
