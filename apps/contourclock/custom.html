@@ -16,7 +16,7 @@
       Fonts = ["Impact", "Phosphate"];
       var n=0;
       for (fontName in Fonts) {
-        if (document.getElementById(fontName).value==true) {
+        if (document.getElementById(fontName).checked==true) {
           sendCustomizedApp({
             storage:[
               {name:"contourclock-"+n+".js", url:"app.js", content:"font-"+fontName+".json"},
