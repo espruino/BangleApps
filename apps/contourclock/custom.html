@@ -13,7 +13,7 @@
     <script>
     // When the 'upload' button is clicked...
     document.getElementById("upload").addEventListener("click", function() {
-      Fonts = {"Impact", "Phosphate"};
+      Fonts = ["Impact", "Phosphate"];
       var n=0;
       for (fontName in Fonts) {
         if (document.getElementById(fontName).value==true) {
