@@ -704,7 +704,7 @@ function showAppSettings(app) {
     return showError(/*LANG*/'Invalid settings');
   }
   try {
-    // pass showAppSettingsMenu as /*LANG*/"back" argument
+    // pass showAppSettingsMenu as "back" argument
     appSettings(()=>showAppSettingsMenu());
   } catch (e) {
     console.log(`${app.name} settings error:`, e)

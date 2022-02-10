@@ -68,7 +68,7 @@ function drawApp() {
   if (alarmHour < 10) alarmHour = "0" + alarmHour;
   if (alarmMinute < 10) alarmMinute = "0" + alarmMinute;
   const s = "Alarm at " + alarmHour + ":" + alarmMinute + "\n\n"; //# make distinct to time
-  E.showMessage(s, /*LANG*/"Sleep Phase Alarm");
+  E.showMessage(s, "Sleep Phase Alarm");
 
   function drawTime() {
     if (Bangle.isLCDOn()) {
@@ -125,7 +125,7 @@ if (nextAlarm !== undefined) {
 
     if (swest !== undefined) {
       if (Bangle.isLCDOn()) {
-        drawString(swest ? /*LANG*/"Sleep" : "Awake", BANGLEJS2 ? 150 : 180); //# remove x, adjust height
+        drawString(swest ? "Sleep" : "Awake", BANGLEJS2 ? 150 : 180); //# remove x, adjust height
       }
     }
 

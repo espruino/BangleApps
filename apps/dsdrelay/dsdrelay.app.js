@@ -59,7 +59,7 @@ function parseDevice(d) {
   g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Found device", 120, 120).flip();
   device.gatt.connect().then(function(ga) {
   gatt = ga;
-  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString(/*LANG*/"Connected", 120, 120).flip();
+  g.clearRect(0, 60, 239, 239).setFontAlign(0, 0, 0).setColor(0, 1, 0).drawString("Connected", 120, 120).flip();
   return gatt.getPrimaryService("FFE0");
 }).then(function(s) {
   service = s;

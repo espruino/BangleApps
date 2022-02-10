@@ -63,7 +63,7 @@ var startWith;
 
 /* For development purposes
 require('Storage').writeJSON(SETTINGSFILE, {
-  splashMode: /*LANG*/"off",
+  splashMode: "off",
   startWith: "5x5",
 });
 /* */
@@ -622,9 +622,9 @@ function framedText(text, x, y, textcol, framecol) {
 }
 
 // Show the splash screen at program start, call afterSplash afterwards.
-// If spash mode is /*LANG*/"off", call afterSplash directly.
+// If spash mode is "off", call afterSplash directly.
 function showSplash(afterSplash) {
-  if (splashMode === /*LANG*/"off")
+  if (splashMode === "off")
     afterSplash();
   else {
     g.reset();

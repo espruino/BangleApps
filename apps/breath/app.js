@@ -191,8 +191,8 @@ function btn3Pressed() {
             if (settings.vibrate == "forward")
                 settings.vibrate = "backward";
             else if (settings.vibrate == "backward")
-                settings.vibrate = /*LANG*/"off";
-            else if (settings.vibrate == /*LANG*/"off")
+                settings.vibrate = "off";
+            else if (settings.vibrate == "off")
                 settings.vibrate = "forward";
         }
         else if(status == 5){

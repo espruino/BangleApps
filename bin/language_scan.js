@@ -5,14 +5,14 @@ outputs a list of strings that have been found.
 See https://github.com/espruino/BangleApps/issues/1311
 */
 
-let AUTO_TRANSLATE = false;
 let translate = false;
 if (process.env.DEEPL) {
+  // Requires translate
+  // npm i translate
   translate = require("translate");
   translate.engine = "deepl"; // Or "yandex", "libre", "deepl"
-  translate.key = process.env.DEEPL;
-  translate.url = "https://api-free.deepl.com/v2/translate";
-  AUTO_TRANSLATE = true;
+  translate.key = process.env.DEEPL; // Requires API key (which are free)
+  translate.url = process.env.TURL;
 }
 
 var IGNORE_STRINGS = [
@@ -25,10 +25,8 @@ var IGNORE_STRINGS = [
   "play","stop","pause", "volumeup", "volumedown", // music state
   "${hours}:${minutes}:${seconds}", "${hours}:${minutes}",
   "BANGLEJS",
-  "NONE",
-  "fgH", "bgH",
-  "m/s",
-  "undefined", "kbmedia"
+  "fgH", "bgH",  "m/s",
+  "undefined", "kbmedia", "NONE",
 ];
 
 var IGNORE_FUNCTION_PARAMS = [
@@ -190,8 +188,11 @@ log("");
 log("Maybe we should add /*LANG*/ to these automatically?");
 log("");
 const wordsToAdd = untranslatedStrings.filter(e => translatedStrings.find(t=>t.str==e.str));
+
 // Uncomment to add LANG to all strings
+// THIS IS EXPERIMENTAL
 //wordsToAdd.forEach(e => e.files.forEach(a => applyLANG(e.str, a)));
+
 log(wordsToAdd.map(e=>`${JSON.stringify(e.str)} (${e.uses} uses)`).join("\n"));
 log("");
 
@@ -226,7 +227,7 @@ for (let language of languages) {
           let appName = m[0].replaceAll("/", "");
           if (translations[appName] && translations[appName][translationItem.str]) {
             console.log(`     but LOCAL translation found in \"${appName}\"`);
-          } else if (AUTO_TRANSLATE && language.code !== "tr_TR") { // Auto Translate
+          } else if (translate && language.code !== "tr_TR") { // Auto Translate
             translationPromises.push(new Promise(async (resolve) => {
                 const translation = await translate(translationItem.str, language.code.split("_")[0]);
                 console.log("Translating:", translationItem.str, translation);

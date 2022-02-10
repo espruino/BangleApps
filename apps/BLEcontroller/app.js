@@ -295,7 +295,7 @@ const SocketsMenu = new State({
 const startEnd = status => status ? "start" : "end";
 
 /* translate status into english */
-const onOff= status => status ? "on" : /*LANG*/"off";
+const onOff= status => status ? "on" : "off";
 
 
 /* create watching functions that will change the global

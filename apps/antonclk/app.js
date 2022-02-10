@@ -37,7 +37,7 @@ require('Storage').writeJSON(SETTINGSFILE, {
   secondsColoured: true,
   secondsWithColon: true,
   dateOnMain: "Long", // "Short", "Long", "ISO8601"
-  dateOnSecs: "Year", // "No", /*LANG*/"Year", "Weekday", LEGACY: true/false
+  dateOnSecs: "Year", // "No", "Year", "Weekday", LEGACY: true/false
   weekDay: true,
   calWeek: true,
   upperCase: true,
@@ -60,7 +60,7 @@ function loadSettings() {
   secondsColoured = def(settings.secondsColoured, true);
   secondsWithColon = def(settings.secondsWithColon, true);
   dateOnMain = def(settings.dateOnMain, "Long");
-  dateOnSecs = def(settings.dateOnSecs, /*LANG*/"Year");
+  dateOnSecs = def(settings.dateOnSecs, "Year");
   weekDay = def(settings.weekDay, true);
   calWeek = def(settings.calWeek, false);
   upperCase = def(settings.upperCase, true);
@@ -68,7 +68,7 @@ function loadSettings() {
 
   // Legacy
   if (dateOnSecs === true)
-    dateOnSecs = /*LANG*/"Year";
+    dateOnSecs = "Year";
   if (dateOnSecs === false)
     dateOnSecs = "No";
 }
@@ -153,7 +153,7 @@ function draw() {
       var md;
       var yearfirst;
       if (dateStr2.match(/\d\d\d\d$/)) { // formatted date ends with year
-        year = (dateOnSecs === /*LANG*/"Year" ? dateStr2.slice(-4) : require("locale").dow(date, 1));
+        year = (dateOnSecs === "Year" ? dateStr2.slice(-4) : require("locale").dow(date, 1));
         md = dateStr2.slice(0, -4);
         if (!md.endsWith(".")) // keep separator before the year only if it is a dot (31.12. but 31/12)
           md = md.slice(0, -1);
@@ -161,7 +161,7 @@ function draw() {
       } else { // formatted date begins with year
         if (!dateStr2.match(/^\d\d\d\d/)) // if year position cannot be detected...
           dateStr2 = isoStr(date); // ...use ISO date format instead
-        year = (dateOnSecs === /*LANG*/"Year" ? dateStr2.slice(0, 4) : require("locale").dow(date, 1));
+        year = (dateOnSecs === "Year" ? dateStr2.slice(0, 4) : require("locale").dow(date, 1));
         md = dateStr2.slice(5); // never keep separator directly after year
         yearfirst = true;
       }

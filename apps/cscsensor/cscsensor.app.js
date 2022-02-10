@@ -225,7 +225,7 @@ function connection_setup() {
     return device.gatt.connect();
   }).then(function(ga) {
     gatt = ga;
-    E.showMessage(/*LANG*/"Connected");
+    E.showMessage("Connected");
     return gatt.getPrimaryService("1816");
   }).then(function(s) {
     service = s;

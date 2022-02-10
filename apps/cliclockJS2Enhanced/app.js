@@ -16,7 +16,7 @@ var lasty = 0;
 var lastx = 0;
 
 if (settings.HID=="kbmedia") {
-  profile = /*LANG*/'Music';
+  profile = 'Music';
   sendHid = function (code, cb) {
     try {
       NRF.sendHIDReport([1,code], () => {
@@ -57,29 +57,29 @@ if (next) {
     if(lasty >  40){
     writeLine('Down', 3);
      // setTimeout(drawApp, 1000);
-     // Bluetooth.println(JSON.stringify({t:/*LANG*/"music", n:"volumedown"}));
+     // Bluetooth.println(JSON.stringify({t:"music", n:"volumedown"}));
       down(() => {});
     }
       else if(lasty < -40){
        writeLine('Up', 3);
      // setTimeout(drawApp, 1000);
-     //Bluetooth.println(JSON.stringify({t:/*LANG*/"music", n:"volumeup"}));
+     //Bluetooth.println(JSON.stringify({t:"music", n:"volumeup"}));
 
       up(() => {});
     } else if(lastx < -40){
     writeLine('Prev', 3);
      // setTimeout(drawApp, 1000);
-     // Bluetooth.println(JSON.stringify({t:/*LANG*/"music", n:"previous"}));
+     // Bluetooth.println(JSON.stringify({t:"music", n:"previous"}));
       prev(() => {});
     } else if(lastx > 40){
     writeLine('Next', 3);
      // setTimeout(drawApp, 1000);
-     // Bluetooth.println(JSON.stringify({t:/*LANG*/"music", n:"next"}));
+     // Bluetooth.println(JSON.stringify({t:"music", n:"next"}));
       next(() => {});
     } else if(lastx==0 && lasty==0){
     writeLine('play/pause', 3);
       //setTimeout(drawApp, 1000);
-      //  Bluetooth.println(JSON.stringify({t:/*LANG*/"music", n:"play"}));
+      //  Bluetooth.println(JSON.stringify({t:"music", n:"play"}));
 
       toggle(() => {});
     }

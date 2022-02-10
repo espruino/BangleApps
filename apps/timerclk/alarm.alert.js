@@ -9,8 +9,8 @@ function showAlarm(alarm) {
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   Bangle.setLocked(false);
-  E.showPrompt(/*LANG*/"Alarm!",{
-    title:/*LANG*/"ALARM!",
+  E.showPrompt("Alarm!",{
+    title:"ALARM!",
     buttons : {/*LANG*/"Ok":true}
   }).then(function(ok) {
     buzzCount = 0;

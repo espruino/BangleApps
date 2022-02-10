@@ -35,7 +35,7 @@ function loadPage(page) {
   g.setFont("Vector", 15);
   g.drawString(page.name, g.getWidth() / 2, 200);
   g.setFont("Vector", 40);
-  g.drawString(page.state ? "On" : /*LANG*/"Off", g.getWidth() / 2, g.getHeight() / 2);
+  g.drawString(page.state ? "On" : "Off", g.getWidth() / 2, g.getHeight() / 2);
   g.drawImage(storage.read(`${icon}.img`), g.getWidth() / 2 - 24, g.getHeight() / 2 - 24 - 50);
 }
 

@@ -21,7 +21,7 @@
     area: "tr",
     sortorder: 10,
     width: 23,
-    dragStatus: /*LANG*/"off",
+    dragStatus: "off",
 
     // internal function //
     // write settings to storage
@@ -165,7 +165,7 @@
       // on touch release remove drag listener and reset drag status to indicate stopped drag action
       if (!event.b) {
         Bangle.removeListener("drag", w.dragListener);
-        w.dragStatus = /*LANG*/"off";
+        w.dragStatus = "off";
       }
 
       // clear variables
@@ -181,7 +181,7 @@
       var w = WIDGETS.lightswitch;
 
       // skip all if drag action ongoing
-      if (w.dragStatus === /*LANG*/"off") {
+      if (w.dragStatus === "off") {
 
         // check if inside widget area
         if (!(!w || cursor.x < w.x || cursor.x > w.x + w.width ||
@@ -199,7 +199,7 @@
               // clear drag timeout
               if (typeof w.dragStatus === "number") clearTimeout(w.dragStatus);
               // reset drag status to indicate stopped drag action
-              w.dragStatus = /*LANG*/"off";
+              w.dragStatus = "off";
             }, w.dragDelay, w);
           }
           // switch backlight

@@ -44,7 +44,7 @@
       },
       /*LANG*/'show widgets': {
         value: "showWidgets" in settings ? settings.showWidgets : false,
-        format: () => (settings.showWidgets ? /*LANG*/'Yes' : 'No'),
+        format: () => (settings.showWidgets ? 'Yes' : 'No'),
         onchange: x => save('showWidgets', x),
       },
       /*LANG*/'weather circle': {
@@ -167,7 +167,7 @@
       },
       /*LANG*/'colorize icon': {
         value: colorizeIconKey in settings ? settings[colorizeIconKey] : false,
-        format: () => (settings[colorizeIconKey] ? /*LANG*/'Yes' : 'No'),
+        format: () => (settings[colorizeIconKey] ? 'Yes' : 'No'),
         onchange: x => save(colorizeIconKey, x),
       },
     };

@@ -107,8 +107,8 @@
       step: 1
     },
     unlockSide: {
-      title: ["off", "left", "right", "top", "bottom", "front", /*LANG*/"back"],
-      value: ["", "left", "right", "top", "bottom", "front", /*LANG*/"back"]
+      title: ["off", "left", "right", "top", "bottom", "front", "back"],
+      value: ["", "left", "right", "top", "bottom", "front", "back"]
     },
     tapOn: {
       title: ["on locked", "on unlocked", "always on"],

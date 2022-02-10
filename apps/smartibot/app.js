@@ -35,7 +35,7 @@ function findDevices() {
         m[dev.id.substr(0,17)] = () => startConnectChoose(dev);
       });
       m["Search again"] = () => findDevices();
-      m[/*LANG*/"Back"] = () => load();
+      m["Back"] = () => load();
       E.showMenu(m);
     }
   }, {timeout : 2000, filters : [{ name : "Espruino SMARTIBOT" }] });
@@ -46,7 +46,7 @@ function startConnectChoose(device) {
     "": {title:"Control Method"},
     "Accelerometer" : () => startConnectAccel(device),
     "Button" : () => startConnectBtn(device),
-    /*LANG*/"Back": () => load(),
+    "Back": () => load(),
   });
 }
 
@@ -57,7 +57,7 @@ function startConnectBtn(device) {
                function(gatt, write) {
     function setMotors(val) { write(`\x10w(${val})\n`); }
     drawBGBtn();
-    g.reset().setFont("6x8",2).setFontAlign(0,0,1).drawString(/*LANG*/"BACK", 230,200);
+    g.reset().setFont("6x8",2).setFontAlign(0,0,1).drawString("BACK", 230,200);
     var state = 0;
     var watches = [
       setWatch(e=>setMotors(state = (state&0b0011) | (e.state<<2)), BTN4, {repeat:true, edge:0}),
@@ -81,7 +81,7 @@ function startConnectAccel(device) {
                "\x03\x10function w(x,y,z,v){var a=analogWrite;a(D4,x);a(D6,y);a(D10,z);a(D11,v);}\n",
                function(gatt, write) {
     drawBGAccel();
-    g.reset().setFont("6x8",2).setFontAlign(0,0,1).drawString(/*LANG*/"BACK", 230,200);
+    g.reset().setFont("6x8",2).setFontAlign(0,0,1).drawString("BACK", 230,200);
     Bangle.on("accel", function(a) {
         var v = [0,0,0,0];
         if (a.z<-0.5) {

@@ -227,7 +227,7 @@ function isCircleEnabled(type) {
 
 function getCircleColor(type) {
   const pos = getCirclePosition(type);
-  const color = settings["circle" + (pos + 1) + /*LANG*/"color"];
+  const color = settings["circle" + (pos + 1) + "color"];
   if (color && color != "") return color;
 }
 

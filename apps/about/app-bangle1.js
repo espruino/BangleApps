@@ -21,7 +21,7 @@ function getVersion(name,file) {
 }
 getVersion("Bootloader","boot.info");
 getVersion("Launcher","launch.info");
-getVersion(/*LANG*/"Settings","setting.info");
+getVersion("Settings","setting.info");
 
 y+=h;
 g.drawString(MEM.total+" JS Variables available",0,y+=h);

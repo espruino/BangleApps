@@ -29,11 +29,11 @@
       },
       // {t:"musicstate", state:"play/pause",position,shuffle,repeat}
       "musicstate" : function() {
-        require("messages").pushMessage({t:"modify",id:"music",title:/*LANG*/"Music",state:event.state});
+        require("messages").pushMessage({t:"modify",id:"music",title:"Music",state:event.state});
       },
       // {t:"musicinfo", artist,album,track,dur,c(track count),n(track num}
       "musicinfo" : function() {
-        require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:/*LANG*/"Music"}));
+        require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
       },
       // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
       "call" : function() {
@@ -63,7 +63,7 @@
   // Music control
   Bangle.musicControl = cmd => {
     // play/pause/next/previous/volumeup/volumedown
-    gbSend({ t: /*LANG*/"music", n:cmd });
+    gbSend({ t: "music", n:cmd });
   };
   // Message response
   Bangle.messageResponse = (msg,response) => {

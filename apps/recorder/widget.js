@@ -99,8 +99,8 @@
       steps:function() {
         var lastSteps = 0;
         return {
-          name : /*LANG*/"Steps",
-          fields : [/*LANG*/"Steps"],
+          name : "Steps",
+          fields : ["Steps"],
           getValues : () => {
             var c = Bangle.getStepCount(), r=[c-lastSteps];
             lastSteps = c;

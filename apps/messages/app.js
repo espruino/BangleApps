@@ -98,7 +98,7 @@ function getMessageImage(msg) {
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
   if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
-  if (msg.id==/*LANG*/"back") return getBackImage();
+  if (msg.id=="back") return getBackImage();
   return getNotificationImage();
 }
 function getMessageImageCol(msg,def) {
@@ -375,7 +375,7 @@ function checkMessages(options) {
       if (msg && msg.new) g.setBgColor(colBg);
       else g.setBgColor((idx&1) ? colSBg1 : colSBg2);
       g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1).setColor(g.theme.fg);
-      if (idx==0) msg = {id:/*LANG*/"back", title:"< Back"};
+      if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
       var img = getMessageImage(msg);

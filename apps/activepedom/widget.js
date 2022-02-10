@@ -69,7 +69,7 @@
       'stepGoal' : 10000,
       'stepLength' : 75,
       'lineOne' : "Distance",
-      'lineTwo' : /*LANG*/"Steps",
+      'lineTwo' : "Steps",
     };
     if (!settings) { loadSettings(); }
     return (key in settings) ? settings[key] : DEFAULTS[key];
@@ -169,7 +169,7 @@
     if (active == 1) g.setColor(0x07E0); //green
     else g.setColor(0xFFFF); //white
     g.setFont("6x8", 2);
-    if (setting('lineOne') == /*LANG*/'Steps') {
+    if (setting('lineOne') == 'Steps') {
       g.drawString(kFormatterSteps(stepsCounted),this.x+1,this.y);  //first line, big number, steps
     }
     if (setting('lineOne') == 'Distance') {
@@ -177,7 +177,7 @@
     }
     g.setFont("6x8", 1);
     g.setColor(0xFFFF); //white
-    if (setting('lineTwo') == /*LANG*/'Steps') {
+    if (setting('lineTwo') == 'Steps') {
       g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number, steps
     }
     if (setting('lineTwo') == 'Distance') {

@@ -58,7 +58,7 @@ var showMainMenu = () => {
       showScrollerContainingAppsWithPatterns().then((selected) => {
         var pattern = selected.pattern;
         var appName = selected.appName;
-        if (pattern === /*LANG*/"back") {
+        if (pattern === "back") {
           showMainMenu();
         } else {
           E.showPrompt(appName + "\n\npattern:\n" + pattern, {
@@ -309,7 +309,7 @@ var showScrollerContainingAppsWithPatterns = () => {
       },
       select: (i) => {
         log("selected: " + i);
-        var pattern = /*LANG*/"back";
+        var pattern = "back";
         var appName = "";
         if (i > 0) {
           var storedPattern = storedPatternsArray[i - 1];

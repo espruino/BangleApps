@@ -53,7 +53,7 @@ function countDown() {
   g.reset().clearRect(0, 76, 44+44, g.getHeight()/2+6);
 
   g.setFontAlign(0, -1, 0);
-  g.setFont("6x8").drawString(/*LANG*/"Timer", 44, g.getHeight()/2-20);
+  g.setFont("6x8").drawString("Timer", 44, g.getHeight()/2-20);
   g.setFont("Michroma16").drawString(timeToString(timervalue), 44, g.getHeight()/2-10);
 
   if (timervalue <= 0) {
