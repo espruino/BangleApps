@@ -1,0 +1,15 @@
+{ "id": "red7game",
+  "name": "Red 7 Card Game",
+  "shortName" : "Red 7",
+  "icon": "red7.png",
+  "version":"1.0",
+  "description": "An implementation of the card game Red 7 for your watch. Play against the AI and be the last player still in the game to win!",
+  "tags": "game",
+  "supports":["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"red7game.app.js","url":"red7.js"},
+    {"name":"red7game.img","url":"app-icon.js","evaluate":true}
+  ],
+}, 
