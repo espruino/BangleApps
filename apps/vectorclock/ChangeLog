@@ -3,4 +3,4 @@
 0.03: Bangle.js 2 support
 0.04: Adds costumizable colours and the respective settings menu
 0.05: "Chime the time" (buzz or beep) with up/down swipe added
-0.06: Draw widgets if time is updated
+0.06: Redraw widgets when time is updated
