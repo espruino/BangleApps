@@ -1,1 +1,2 @@
 1.0: Initial version of game 
+1.0.1: Fix mistake preventing game from ending in some cases.

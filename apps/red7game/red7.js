@@ -678,9 +678,7 @@ function finishTurn() {
     } else if(playerHand.handCards.length === 0) {
       drawGameOver(false);
     } else if(!canPlay(playerHand, playerPalette, AIPalette)) {
-      console.log("no play");
-      //drawGameOver(false);
-      drawScreen1();
+      drawGameOver(false);
     } else {
       E.showMenu();
       drawScreen1();
