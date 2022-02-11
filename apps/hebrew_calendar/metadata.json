@@ -7,7 +7,7 @@
   "icon": "app.png",
   "allow_emulator": true,
   "tags": "tool,locale",
-  "interface": "interface.html",
+  "custom": "interface.html",
   "supports": [
     "BANGLEJS",
     "BANGLEJS2"
