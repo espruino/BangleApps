@@ -188,7 +188,7 @@ function showBLEMenu() {
     },
     /*LANG*/'HID': {
       value: Math.max(0,0 | hidV.indexOf(settings.HID)),
-      min: 0, max: 3,
+      min: 0, max: hidN.length-1,
       format: v => hidN[v],
       onchange: v => {
         settings.HID = hidV[v];

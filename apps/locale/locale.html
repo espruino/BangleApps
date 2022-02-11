@@ -10,6 +10,9 @@
     <select id="languages" class="form-select">
     </select>
     </div>
+    <div class="form-group">
+      <input id="translations" type="checkbox" /> <label for="translations">Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
+    </div>
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -106,11 +109,17 @@ exports = { name : "en_GB", currencySym:"£",
         const lang = languageSelector.options[languageSelector.selectedIndex].value;
         console.log(`Language ${lang}`);
 
+        const translations = document.getElementById('translations').checked;
+        console.log(`Translations: ${translations}`);
+
         const locale = locales[lang];
         if (!locale) {
           alert(`Language ${lang} not found!`);
           return;
         }
+
+        if (!translations)
+          locale.trans = null;
 
         const codePageName = "ISO8859-1";
         if (locale.codePage)

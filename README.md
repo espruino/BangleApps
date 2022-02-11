@@ -134,6 +134,7 @@ Apps are listed in the Bangle.js menu, accessible from a clock app via the middl
 * `app.png` - app icon - 48x48px
 * `app-icon.js` - JS version of the icon (made with http://www.espruino.com/Image+Converter) for use in Bangle.js's menu
 * `app.js` - app code
+* `ChangeLog` - A file containing a list of changes to your app so users can see what's changed
 
 #### `app-icon.js`
 
@@ -189,9 +190,23 @@ When the widget is to be drawn, `x` and `y` values are set up in `WIDGETS["mywid
 and `draw` can then use `this.x` and `this.y` to figure out where it needs to draw to.
 
 
+### ChangeLog
+
+This is a file containing a list of changes to your app so users can see what's changed, for example:
+
+```
+0.01: New App!
+0.02: Changed the colors
+0.03: Made the app run quicker
+```
+
+Entries should be newest last, with the version number of the last entry matching the version in `metadata.json`
+
+Please keep the same format at the example as the file needs to be parsed by the BangleApps tools.
+
 ### `app.info` format
 
-This is the file that's **auto-generated** and loaded onto Bangle.js by the App Loader,
+This is the file that's **auto-generated** from `metadata.json` and loaded onto Bangle.js by the App Loader,
 and which gives information about the app for the Launcher.
 
 ```
