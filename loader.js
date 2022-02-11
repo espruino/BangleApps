@@ -179,6 +179,7 @@ window.addEventListener('load', (event) => {
     } catch(e) {
       console.error("lang/index.json Corrupted", e);
     }
+    languages = languages.filter( l=> l.disabled===undefined );
 
     function reloadLanguage() {
       LANGUAGE = undefined;
