@@ -482,31 +482,31 @@ function getWeather(){
     // Return default
   }
 
-  if(weatherJson){
-    var weather = weatherJson.weather;
-
-    // Temperature
-    const temp = locale.temp(weather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-    weather.temp = temp[1] + " " + temp[2].toUpperCase();
-
-    // Humidity
-    weather.hum = weather.hum + "%";
-
-    // Wind
-    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-    weather.wind = wind[1] + wind[2].toUpperCase();
-
-    return weather
+  if(weatherJson === undefined){
+    return {
+      temp: "-",
+      hum: "-",
+      txt: "-",
+      wind: "-",
+      wdir: "-",
+      wrose: "-"
+    };
   }
 
-  return {
-    temp: "-",
-    hum: "-",
-    txt: "-",
-    wind: "-",
-    wdir: "-",
-    wrose: "-"
-  };
+  var weather = weatherJson.weather;
+
+  // Temperature
+  const temp = locale.temp(weather.temp-273.15).match(/^(\D*\d*)(.*)$/);
+  weather.temp = temp[1] + " " + temp[2].toUpperCase();
+
+  // Humidity
+  weather.hum = weather.hum + "%";
+
+  // Wind
+  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+  weather.wind = wind[1]; // + wind[2].toUpperCase(); // Don't show mph - its too large
+
+  return weather
 }
 
 
