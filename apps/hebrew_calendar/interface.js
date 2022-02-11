@@ -1,13 +1,25 @@
 import { HebrewCalendar, HDate, Location, Zmanim } from 'https://cdn.skypack.dev/@hebcal/core';
 
-function onload (event) {
+function onload(event) {
 	event.preventDefault();
 	const latLon = getLatLonFromForm();
 	const events = generateHebCal(latLon);
-	console.debug(serializeEvents(events), events.slice(0,5));
+	const json = serializeEvents(events);
+	console.debug(json.slice(0, 5));
+	console.debug(loadWatch(json))
 }
 
-onload(new Event('init'));
+function loadWatch(json) {
+	console.debug(Puck.eval('new Date().toString()'))
+
+	Puck.eval(`require("Storage").writeJSON("hebrewCalendar.json",${json})`, () => {
+		Puck.eval(`Bangle.buzz()`, () => {
+			console.debug("all done");
+		})
+	});
+}
+
+onload(new Event('init')); // just for testing
 
 document.querySelector("button[type=submit]").addEventListener("click", onload, false);
 
