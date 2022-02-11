@@ -12,7 +12,10 @@ let s = {
 }
 
 function loadSettings() {
-  settings = require('Storage').readJSON(SETTINGS_FILE, 1) || s;
+  settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+  for (const key in settings) {
+    s[key] = settings[key]
+  }
 }
 
 function save() {
@@ -49,7 +52,7 @@ function setFromGPS() {
 }
 
 function showMainMenu() {
-  console.log("showMainMenu");
+  //console.log("showMainMenu");
   const mainmenu = {
     '': { 'title': 'My Location' },
     '<Back': ()=>{ load(); },

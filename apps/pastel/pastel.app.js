@@ -39,7 +39,10 @@ function loadSettings() {
 
 // requires the myLocation app
 function loadLocation() {
-  location = require("Storage").readJSON(LOCATION_FILE,1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  location = require("Storage").readJSON(LOCATION_FILE,1)||{};
+  location.lat = location.lat||51.5072;
+  location.lon = location.lon||0.1276;
+  location.location = location.location||"London";
 }
 
 function extractTime(d){
