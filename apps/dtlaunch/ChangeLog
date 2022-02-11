@@ -5,3 +5,4 @@
 0.05: add Bangle 2 version
 0.06: Adds settings page (hide clocks or launchers)
 0.07: Adds setting for directly launching app on touch for Bangle 2
+0.08: Optimize line wrapping for Bangle 2
