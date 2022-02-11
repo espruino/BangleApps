@@ -1,68 +1,72 @@
-<html>
-<head>
-  <link rel="stylesheet" href="../../css/spectre.min.css">
-</head>
-<body>
-  <form>
-    <input type="checkbox" id="BarlowCond">
-    <label for="BarlowCond">Barlow Condensed</label><br>
-    <input type="checkbox" id="BebasNeue">
-    <label for="BebasNeue">Bebas Neue</label><br>
-    <input type="checkbox" id="Dekko">
-    <label for="Dekko">Dekko</label><br>
-    <input type="checkbox" id="DinAlternate">
-    <label for="DinAlternate">Din Alternate</label><br>
-    <input type="checkbox" id="Dosis">
-    <label for="Dosis">Dosis</label><br>
-    <input type="checkbox" id="Impact">
-    <label for="Impact">Impact</label><br>
-    <input type="checkbox" id="Nunito">
-    <label for="Nunito">Nunito</label><br>
-    <input type="checkbox" id="OpenSansEC">
-    <label for="OpenSansEC">Open Sans Extra Condensed</label><br>
-    <input type="checkbox" id="Phosphate">
-    <label for="Phosphate">Phosphate</label><br>
-    <input type="checkbox" id="Quicksand">
-    <label for="Quicksand">Quicksand</label><br>
-    <input type="checkbox" id="SairaCond">
-    <label for="SairaCond">Saira Condensed</label><br>
-    <input type="checkbox" id="SairaEC">
-    <label for="SairaEC">Saira Extra Condensed</label><br>
-    <input type="checkbox" id="Teko">
-    <label for="Teko">Teko</label><br>
-    <input type="checkbox" id="Yumaro">
-    <label for="Yumaro">Yumaro</label><br>
-    <input type="checkbox" id="YuseiMagic">
-    <label for="YuseiMagic">Yusei Magic</label><br>
-    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
-    <script src="../../core/lib/customize.js"></script>
-    <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate", "Dosis",
-      "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaCond", "SairaEC",
-      "Yumaro", "YuseiMagic"]
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
-        var n=0;
-        var fonts = [];
-        for (fontName of FontList) {
-          if (document.getElementById(fontName).checked==true) {
-            var f = new Object();
-            f.name="contourclock-"+n+".json";
-            f.url="font-"+fontName+".json";
-            //fonts.push({name:"contourclock-"+n+".json", url:"font-"+fontName+".json"});
-            fonts.push(f);
-            //console.log("contourclock-"+n+".json  <-  font-"+fontName+".json");
-            n++;
+  <html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <form>
+      <input type="checkbox" id="BarlowCond">
+      <label for="BarlowCond">Barlow Condensed</label><br>
+      <input type="checkbox" id="BebasNeue">
+      <label for="BebasNeue">Bebas Neue</label><br>
+      <input type="checkbox" id="Dekko">
+      <label for="Dekko">Dekko</label><br>
+      <input type="checkbox" id="DinAlternate">
+      <label for="DinAlternate">Din Alternate</label><br>
+      <input type="checkbox" id="Dosis">
+      <label for="Dosis">Dosis</label><br>
+      <input type="checkbox" id="Impact">
+      <label for="Impact">Impact</label><br>
+      <input type="checkbox" id="Nunito">
+      <label for="Nunito">Nunito</label><br>
+      <input type="checkbox" id="OpenSansEC">
+      <label for="OpenSansEC">Open Sans Extra Condensed</label><br>
+      <input type="checkbox" id="Phosphate">
+      <label for="Phosphate">Phosphate</label><br>
+      <input type="checkbox" id="Quicksand">
+      <label for="Quicksand">Quicksand</label><br>
+      <input type="checkbox" id="SairaCond">
+      <label for="SairaCond">Saira Condensed</label><br>
+      <input type="checkbox" id="SairaEC">
+      <label for="SairaEC">Saira Extra Condensed</label><br>
+      <input type="checkbox" id="Teko">
+      <label for="Teko">Teko</label><br>
+      <input type="checkbox" id="Yumaro">
+      <label for="Yumaro">Yumaro</label><br>
+      <input type="checkbox" id="YuseiMagic">
+      <label for="YuseiMagic">Yusei Magic</label><br>
+      <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+      <script src="../../core/lib/customize.js"></script>
+      <script>
+        FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate", "Dosis",
+        "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaCond", "SairaEC",
+        "Yumaro", "YuseiMagic"]
+        // When the 'upload' button is clicked...
+        document.getElementById("upload").addEventListener("click", function() {
+          var n=0;
+          var fonts = [];
+          for (fontName of FontList) {
+            if (document.getElementById(fontName).checked==true) {
+              var f = new Object();
+              //f.name="contourclock-"+n+".json";
+              //f.url="font-"+fontName+".json";
+              fonts.push({
+                name:"contourclock-"+n+".json", 
+                url:"font-"+fontName+".json"
+              });
+              console.log(fonts[n]);
+              //fonts.push(f);
+              //console.log("contourclock-"+n+".json  <-  font-"+fontName+".json");
+              n++;
+            }
           }
-        }
-        //console.log(fonts[0]);
-        sendCustomizedApp(storage:fonts);
-        /*sendCustomizedApp({
-        storage:[
-        {name:"myapp.app.js", url:"app.js", content:app},
-      ]*/
-    });
-    </script>
-  </form>
-</body>
-</html>
+          //console.log(fonts[0]);
+          sendCustomizedApp({storage:fonts});
+          /*sendCustomizedApp({
+          storage:[
+          {name:"myapp.app.js", url:"app.js", content:app},
+        ]*/
+      });
+      </script>
+    </form>
+  </body>
+  </html>
