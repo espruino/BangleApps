@@ -20,13 +20,13 @@ with Gadgetbride and the weather app must be installed.
  * Display graphs (day or month) for steps + hrm on the second screen.
 
 ## Data that can be configured
- * Steps - Steps loaded via the health module
+ * Steps - Steps loaded via the wpedom app.
  * Battery - Current battery level in %
  * VREF - Voltage of battery
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
  * Humidity - Humidity loaded via the weather module + gadgetbridge
- * Wind - Wind loaded via the weather module + gadgetbridge
+ * Wind - Wind loaded via the weather module + gadgetbridge. Set kph / mph in the settings.
  * Altitude - Shows the altitude in m.
  * CoreT - Temperature of device
 
