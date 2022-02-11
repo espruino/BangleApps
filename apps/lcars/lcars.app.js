@@ -122,17 +122,17 @@ function printRow(text, value, y, c){
   g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
   g.setColor(c);
-  g.fillRect(79, y-2, 85 ,y+18);
+  g.fillRect(77, y-2, 83 ,y+18);
 
   g.setFontAlign(0,-1,0);
   g.drawString(value, 110, y);
 
   g.setColor(c);
   g.setFontAlign(-1,-1,0);
-  g.fillRect(133, y-2, 165 ,y+18);
-  g.fillCircle(161, y+8, 10);
+  g.fillRect(135, y-2, 165 ,y+18);
+  g.fillCircle(163, y+8, 10);
   g.setColor(cBlack);
-  g.drawString(text, 135, y);
+  g.drawString(text, 137, y);
 }
 
 
@@ -173,6 +173,11 @@ function _drawData(key, y, c){
     text = "HUM";
     var weather = getWeather();
     value = weather.hum;
+
+  } else if (key == "WIND"){
+    text = "WND";
+    var weather = getWeather();
+    value = weather.wind;
 
   } else if (key == "ALTITUDE"){
     should_print= false;
@@ -248,16 +253,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 24, 118);
+    g.drawImage(iconImg, 23, 118);
     g.setColor(cWhite);
-    g.drawString("STATUS", 24+25, 108);
+    g.drawString("STATUS", 23+25, 108);
   } else {
     // Alarm within symbol
     g.setColor(cOrange);
-    g.drawString("ALARM", 24+25, 108);
+    g.drawString("ALARM", 23+25, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 24+25, 108+35);
+    g.drawString(getAlarmMinutes(), 23+25, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -425,18 +430,24 @@ function drawPosition1(){
 }
 
 function draw(){
-  // First handle alarm to show this correctly afterwards
-  handleAlarm();
 
-  // Next draw the watch face
-  g.reset();
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
+  try{
+    // First handle alarm to show this correctly afterwards
+    handleAlarm();
 
-  // Draw current lcars position
-  if(lcarsViewPos == 0){
-    drawPosition0();
-  } else if (lcarsViewPos == 1) {
-    drawPosition1();
+    // Next draw the watch face
+    g.reset();
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
+
+    // Draw current lcars position
+    if(lcarsViewPos == 0){
+      drawPosition0();
+    } else if (lcarsViewPos == 1) {
+      drawPosition1();
+    }
+  } catch (ex){
+    // In case of an exception, we simply queue
+    // and try it in one minute again...
   }
 
   // Queue draw in one minute
@@ -463,16 +474,16 @@ function getSteps() {
 
 
 function getWeather(){
-  var weather;
+  var weatherJson;
 
   try {
-    weather = require('weather').get();
+    weatherJson = storage.readJSON('weather.json');
   } catch(ex) {
     // Return default
   }
 
-  if (weather === undefined){
-    weather = {
+  if(weatherJson === undefined){
+    return {
       temp: "-",
       hum: "-",
       txt: "-",
@@ -480,12 +491,22 @@ function getWeather(){
       wdir: "-",
       wrose: "-"
     };
-  } else {
-    weather.temp = locale.temp(Math.round(weather.temp-273.15))
-    weather.hum = weather.hum + "%";
   }
 
-  return weather;
+  var weather = weatherJson.weather;
+
+  // Temperature
+  const temp = locale.temp(weather.temp-273.15).match(/^(\D*\d*)(.*)$/);
+  weather.temp = temp[1] + " " + temp[2].toUpperCase();
+
+  // Humidity
+  weather.hum = weather.hum + "%";
+
+  // Wind
+  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+  weather.wind = wind[1]; // + wind[2].toUpperCase(); // Don't show mph - its too large
+
+  return weather
 }
 
 
