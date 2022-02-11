@@ -5,7 +5,8 @@ let settings = {
   alarm: -1,
   dataRow1: "Steps",
   dataRow2: "Temp",
-  dataRow3: "Battery"
+  dataRow3: "Battery",
+  speed: "kph",
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -121,18 +122,22 @@ function queueDraw() {
 function printRow(text, value, y, c){
   g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
-  g.setColor(c);
-  g.fillRect(77, y-2, 83 ,y+18);
 
-  g.setFontAlign(0,-1,0);
-  g.drawString(value, 110, y);
-
+  // Print background
   g.setColor(c);
   g.setFontAlign(-1,-1,0);
-  g.fillRect(135, y-2, 165 ,y+18);
+  g.fillRect(80, y-2, 165 ,y+18);
   g.fillCircle(163, y+8, 10);
   g.setColor(cBlack);
-  g.drawString(text, 137, y);
+  g.drawString(text, 135, y);
+
+  // Plot text
+  width = g.stringWidth(value);
+  g.setColor(cBlack);
+  g.fillRect(130-width-8, y-2, 130, y+18);
+  g.setColor(c);
+  g.setFontAlign(1,-1,0);
+  g.drawString(value, 126, y);
 }
 
 
@@ -255,14 +260,14 @@ function drawState(){
         iconEarth;
     g.drawImage(iconImg, 23, 118);
     g.setColor(cWhite);
-    g.drawString("STATUS", 23+25, 108);
+    g.drawString("STATUS", 23+26, 108);
   } else {
     // Alarm within symbol
     g.setColor(cOrange);
-    g.drawString("ALARM", 23+25, 108);
+    g.drawString("ALARM", 23+26, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 23+25, 108+35);
+    g.drawString(getAlarmMinutes(), 23+26, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -490,15 +495,14 @@ function getWeather(){
   var weather = weatherJson.weather;
 
   // Temperature
-  const temp = locale.temp(weather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-  weather.temp = temp[1] + " " + temp[2].toUpperCase();
+  weather.temp = locale.temp(weather.temp-273.15);
 
   // Humidity
   weather.hum = weather.hum + "%";
 
   // Wind
-  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  weather.wind = Math.round(wind[1] *  1.60934) ; // + wind[2].toUpperCase(); // Don't show mph - its too large
+  var speedFactor = settings.speed == "kph" ? 1.60934 : 1.0;
+  weather.wind = Math.round(weather.wind * speedFactor);
 
   return weather
 }
