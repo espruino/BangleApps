@@ -157,19 +157,29 @@ log(untranslatedStrings.filter(e => e.uses>2).filter(e => !translatedStrings.fin
 log("");
 //process.exit(1);
 
-var languages = JSON.parse(fs.readFileSync(BASEDIR+"/lang/index.json").toString());
+let languages = JSON.parse(fs.readFileSync(`${BASEDIR}/lang/index.json`).toString());
 languages.forEach(language => {
-  if (language.code=="en_GB") {
-    console.log("Ignoring "+language.code);
+  if (language.code == "en_GB") {
+    console.log(`Ignoring ${language.code}`);
     return;
   }
-  console.log("Scanning "+language.code);
+  console.log(`Scanning ${language.code}`);
   log(language.code);
   log("==========");
-  var translations = JSON.parse(fs.readFileSync(BASEDIR+"/lang/"+language.url).toString());
-  translatedStrings.forEach(str => {
-    if (!translations.GLOBAL[str])
-      console.log(`Missing translation for ${JSON.stringify(str)}`);
+  let translations = JSON.parse(fs.readFileSync(`${BASEDIR}/lang/${language.url}`).toString());
+  translatedStrings.forEach(translationItem => {
+    if (!translations.GLOBAL[translationItem.str]) {
+      console.log(`Missing GLOBAL translation for ${JSON.stringify(translationItem)}`);
+      translationItem.files.forEach(file => {
+        let m = file.match(/\/([a-zA-Z0-9_-]*)\//g);
+        if (m && m[0]) {
+          let appName = m[0].replaceAll("/", "");
+          if (translations[appName] && translations[appName][translationItem.str]) {
+            console.log(`     but LOCAL translation found in \"${appName}\"`);
+          }
+        }
+      });
+    }
   });
   log("");
 });

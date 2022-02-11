@@ -1,7 +1,7 @@
 {
   "id": "presentor",
   "name": "Presentor",
-  "version": "3.0",
+  "version": "0.08",
   "description": "Use your Bangle to present!",
   "icon": "app.png",
   "type": "app",

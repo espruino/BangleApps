@@ -1,5 +1,5 @@
 /**
- * Copyright reelyActive 2021
+ * Copyright reelyActive 2021-2022
  * We believe in an open Internet of Things
  */
 
@@ -7,6 +7,8 @@
 // Non-user-configurable constants
 const APP_ID = 'sensible';
 const ESPRUINO_COMPANY_CODE = 0x0590;
+const SETTINGS_FILENAME = 'sensible.data.json';
+const UPDATE_MILLISECONDS = 1000;
 const APP_ADVERTISING_DATA = [ 0x12, 0xff, 0x90, 0x05, 0x7b, 0x6e, 0x61, 0x6d,
                                0x65, 0x3a, 0x73, 0x65, 0x6e, 0x73, 0x69, 0x62,
                                0x6c, 0x65, 0x7d ];
@@ -19,16 +21,12 @@ let isBarMenu = false;
 let isGpsMenu = false;
 let isHrmMenu = false;
 let isMagMenu = false;
-let isBarEnabled = true;
-let isGpsEnabled = true;
-let isHrmEnabled = true;
-let isMagEnabled = true;
 let isNewAccData = false;
 let isNewBarData = false;
 let isNewGpsData = false;
 let isNewHrmData = false;
 let isNewMagData = false;
-
+let settings = require('Storage').readJSON(SETTINGS_FILENAME);
 
 
 // Menus
@@ -51,9 +49,9 @@ let accMenu = {
 let barMenu = {
   "": { "title" : "-  Barometer   -" },
   "State": {
-    value: isBarEnabled,
+    value: settings.isBarEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { isBarEnabled = v; Bangle.setBarometerPower(v, APP_ID); }
+    onchange: v => { updateSetting('isBarEnabled', v); }
   },
   "Altitude": { value: null },
   "Press": { value: null },
@@ -63,9 +61,9 @@ let barMenu = {
 let gpsMenu = {
   "": { "title" : "-      GPS     -" },
   "State": {
-    value: isGpsEnabled,
+    value: settings.isGpsEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { isGpsEnabled = v; Bangle.setGPSPower(v, APP_ID); }
+    onchange: v => { updateSetting('isGpsEnabled', v); }
   },
   "Lat": { value: null },
   "Lon": { value: null },
@@ -77,9 +75,9 @@ let gpsMenu = {
 let hrmMenu = {
   "": { "title" : "-  Heart Rate  -" },
   "State": {
-    value: isHrmEnabled,
+    value: settings.isHrmEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { isHrmEnabled = v; Bangle.setHRMPower(v, APP_ID); }
+    onchange: v => { updateSetting('isHrmEnabled', v); }
   },
   "BPM": { value: null },
   "Confidence": { value: null },
@@ -88,9 +86,9 @@ let hrmMenu = {
 let magMenu = {
   "": { "title" : "- Magnetometer -" },
   "State": {
-    value: isMagEnabled,
+    value: settings.isMagEnabled,
     format: v => v ? "On" : "Off",
-    onchange: v => { isMagEnabled = v; Bangle.setCompassPower(v, APP_ID); }
+    onchange: v => { updateSetting('isMagEnabled', v); }
   },
   "x": { value: null },
   "y": { value: null },
@@ -124,7 +122,7 @@ function transmitUpdatedSensorData() {
     isNewMagData = false;
   }
 
-  let interval = 1000 / data.length;
+  let interval = UPDATE_MILLISECONDS / data.length;
   NRF.setAdvertising(data, { showName: false, interval: interval });
 }
 
@@ -187,6 +185,23 @@ function toByteArray(value, numberOfBytes, isSigned) {
   }
 
   return byteArray;
+}
+
+
+// Enable the sensors as per the current settings
+function enableSensors() {
+  Bangle.setBarometerPower(settings.isBarEnabled, APP_ID);
+  Bangle.setGPSPower(settings.isGpsEnabled, APP_ID);
+  Bangle.setHRMPower(settings.isHrmEnabled, APP_ID);
+  Bangle.setCompassPower(settings.isMagEnabled, APP_ID);
+}
+
+
+// Update the given setting and write to persistent storage
+function updateSetting(name, value) {
+  settings[name] = value;
+  require('Storage').writeJSON(SETTINGS_FILENAME, settings);
+  enableSensors();
 }
 
 
@@ -260,9 +275,6 @@ Bangle.on('mag', function(newMag) {
 
 // On start: enable sensors and display main menu
 g.clear();
-Bangle.setBarometerPower(isBarEnabled, APP_ID);
-Bangle.setGPSPower(isGpsEnabled, APP_ID);
-Bangle.setHRMPower(isHrmEnabled, APP_ID);
-Bangle.setCompassPower(isMagEnabled, APP_ID);
+enableSensors();
 E.showMenu(mainMenu);
-setInterval(transmitUpdatedSensorData, 1000);
+setInterval(transmitUpdatedSensorData, UPDATE_MILLISECONDS);

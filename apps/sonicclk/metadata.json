@@ -1,7 +1,7 @@
 {
   "id": "sonicclk",
   "name": "Sonic Clock",
-  "version": "1.01",
+  "version": "0.05",
   "description": "A classic sonic clock featuring run, stop and wait animations.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

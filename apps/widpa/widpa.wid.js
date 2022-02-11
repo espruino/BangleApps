@@ -2,7 +2,7 @@ Bangle.on('step', function(s) { WIDGETS["widpa"].draw(); });
 Bangle.on('lcdPower', function(on) {
   if (on) WIDGETS["widpa"].draw();
 });
-WIDGETS["widpa"]={area:"tl",width:13,draw:function() {
+WIDGETS["widpa"]={area:"tl",sortorder:-1,width:13,draw:function() {
   if (!Bangle.isLCDOn()) return; // dont redraw if LCD is off
   var steps = Bangle.getHealthStatus("day").steps;
   var w = 1 + (steps.toString().length)*12;

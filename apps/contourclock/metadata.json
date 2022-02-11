@@ -1,16 +1,19 @@
 { "id": "contourclock",
   "name": "Contour Clock",
   "shortName" : "Contour Clock",
-  "version":"0.01",
+  "version":"0.23",
   "icon": "app.png",
-  "description": "A Minimalist clockface with large Digits. Looks best with the dark theme",
-  "screenshots" : [{"url":"screenshot.png"}],
+  "description": "A Minimalist clockface with large Digits. Now with more fonts!",
+  "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
+  "custom": "custom.html",
   "allow_emulator":true,
   "supports" : ["BANGLEJS2"],
   "type": "clock",
   "storage": [
     {"name":"contourclock.app.js","url":"app.js"},
+    {"name":"contourclock.settings.js","url":"contourclock.settings.js"},
+    {"name":"contourclock","url":"lib.js"},
     {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
     ]
 }

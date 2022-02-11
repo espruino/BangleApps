@@ -1,0 +1,20 @@
+{
+  "id": "notanalog",
+  "name": "Not Analog",
+  "shortName":"Not Analog",
+  "icon": "notanalog.png",
+  "version":"0.03",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "description": "An analog watch face for people that can not read analog watch faces.",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_2.png"}
+  ],
+  "storage": [
+    {"name":"notanalog.app.js","url":"notanalog.app.js"},
+    {"name":"notanalog.img","url":"notanalog.icon.js","evaluate":true}
+  ]
+}

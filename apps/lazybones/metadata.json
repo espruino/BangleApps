@@ -1,0 +1,16 @@
+{
+  "id": "lazybones",
+  "name": "Lazybones",
+  "version": "0.01",
+  "description": "Idleness timer, warns when you have been sat too long",
+  "icon": "lazybones.png",
+  "screenshots": [{"url":"screenshot_lazybones.png"}],
+  "readme": "README.md",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"lazybones.app.js","url":"lazybones.app.js"},
+    {"name":"lazybones.img","url":"lazybones.icon.js","evaluate":true}
+  ]
+}

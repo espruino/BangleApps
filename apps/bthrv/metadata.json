@@ -1,0 +1,17 @@
+{
+  "id": "bthrv",
+  "name": "Bluetooth Heart Rate variance calculator",
+  "shortName": "BT HRV",
+  "version": "0.01",
+  "description": "Calculates HRV from a a BT HRM with interval data",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "health,bluetooth",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"bthrv.app.js","url":"app.js"},
+    {"name":"bthrv.recorder.js","url":"recorder.js"},
+    {"name":"bthrv.img","url":"app-icon.js","evaluate":true}
+  ]
+}

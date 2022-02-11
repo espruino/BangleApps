@@ -7,7 +7,7 @@
   "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot1.png"}],
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"ftclock.app.js","url":"app.js"},
