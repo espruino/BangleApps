@@ -501,8 +501,9 @@ function getWeather(){
   weather.hum = weather.hum + "%";
 
   // Wind
-  var speedFactor = settings.speed == "kph" ? 1.60934 : 1.0;
-  weather.wind = Math.round(weather.wind * speedFactor);
+  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+  var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+  weather.wind = Math.round(wind[1] * speedFactor);
 
   return weather
 }
