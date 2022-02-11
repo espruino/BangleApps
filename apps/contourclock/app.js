@@ -6,16 +6,6 @@ if (settings.fontIndex==undefined) {
   settings.fontIndex=0;
   require('Storage').writeJSON("myapp.json", settings);
 }
-require("FontTeletext10x18Ascii").add(Graphics);
-
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-    queueDraw();
-  }, 60000 - (Date.now() % 60000));
-}
 
 function draw() {
   var date = new Date();
@@ -28,9 +18,12 @@ function draw() {
   require('contourclock').drawClock(settings.fontIndex);
 }
 
+require("FontTeletext10x18Ascii").add(Graphics);
 Bangle.setUI("clock");
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
-queueDraw();
+setTimeout(function() {
+  setInterval(draw,60000);
+}, 60000 - Date.now() % 60000);

@@ -5,7 +5,8 @@ let settings = {
   alarm: -1,
   dataRow1: "Steps",
   dataRow2: "Temp",
-  dataRow3: "Battery"
+  dataRow3: "Battery",
+  speed: "kph",
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -121,18 +122,22 @@ function queueDraw() {
 function printRow(text, value, y, c){
   g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
-  g.setColor(c);
-  g.fillRect(79, y-2, 85 ,y+18);
 
-  g.setFontAlign(0,-1,0);
-  g.drawString(value, 110, y);
-
+  // Print background
   g.setColor(c);
   g.setFontAlign(-1,-1,0);
-  g.fillRect(133, y-2, 165 ,y+18);
-  g.fillCircle(161, y+8, 10);
+  g.fillRect(80, y-2, 165 ,y+18);
+  g.fillCircle(163, y+8, 10);
   g.setColor(cBlack);
   g.drawString(text, 135, y);
+
+  // Plot text
+  width = g.stringWidth(value);
+  g.setColor(cBlack);
+  g.fillRect(130-width-8, y-2, 130, y+18);
+  g.setColor(c);
+  g.setFontAlign(1,-1,0);
+  g.drawString(value, 126, y);
 }
 
 
@@ -173,6 +178,11 @@ function _drawData(key, y, c){
     text = "HUM";
     var weather = getWeather();
     value = weather.hum;
+
+  } else if (key == "WIND"){
+    text = "WND";
+    var weather = getWeather();
+    value = weather.wind;
 
   } else if (key == "ALTITUDE"){
     should_print= false;
@@ -248,16 +258,16 @@ function drawState(){
         hours % 4 == 1 ? iconMars :
         hours % 4 == 2 ? iconMoon :
         iconEarth;
-    g.drawImage(iconImg, 24, 118);
+    g.drawImage(iconImg, 23, 118);
     g.setColor(cWhite);
-    g.drawString("STATUS", 24+25, 108);
+    g.drawString("STATUS", 23+26, 108);
   } else {
     // Alarm within symbol
     g.setColor(cOrange);
-    g.drawString("ALARM", 24+25, 108);
+    g.drawString("ALARM", 23+26, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
-    g.drawString(getAlarmMinutes(), 24+25, 108+35);
+    g.drawString(getAlarmMinutes(), 23+26, 108+35);
   }
 
   g.setFontAlign(-1, -1, 0);
@@ -425,22 +435,22 @@ function drawPosition1(){
 }
 
 function draw(){
-  // First handle alarm to show this correctly afterwards
-  handleAlarm();
+    // Queue draw first to ensure that its called in one minute again.
+    queueDraw();
 
-  // Next draw the watch face
-  g.reset();
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
+    // First handle alarm to show this correctly afterwards
+    handleAlarm();
 
-  // Draw current lcars position
-  if(lcarsViewPos == 0){
-    drawPosition0();
-  } else if (lcarsViewPos == 1) {
-    drawPosition1();
-  }
+    // Next draw the watch face
+    g.reset();
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
 
-  // Queue draw in one minute
-  queueDraw();
+    // Draw current lcars position
+    if(lcarsViewPos == 0){
+      drawPosition0();
+    } else if (lcarsViewPos == 1) {
+      drawPosition1();
+    }
 }
 
 
@@ -463,16 +473,16 @@ function getSteps() {
 
 
 function getWeather(){
-  var weather;
+  var weatherJson;
 
   try {
-    weather = require('weather').get();
+    weatherJson = storage.readJSON('weather.json');
   } catch(ex) {
     // Return default
   }
 
-  if (weather === undefined){
-    weather = {
+  if(weatherJson === undefined){
+    return {
       temp: "-",
       hum: "-",
       txt: "-",
@@ -480,12 +490,21 @@ function getWeather(){
       wdir: "-",
       wrose: "-"
     };
-  } else {
-    weather.temp = locale.temp(Math.round(weather.temp-273.15))
-    weather.hum = weather.hum + "%";
   }
 
-  return weather;
+  var weather = weatherJson.weather;
+
+  // Temperature
+  weather.temp = locale.temp(weather.temp-273.15);
+
+  // Humidity
+  weather.hum = weather.hum + "%";
+
+  // Wind
+  var speedFactor = settings.speed == "kph" ? 1.60934 : 1.0;
+  weather.wind = Math.round(weather.wind * speedFactor);
+
+  return weather
 }
 
 
