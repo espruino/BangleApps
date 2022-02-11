@@ -1,4 +1,7 @@
+/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
 /*
+
+Take a look at README.md for hints on developing with this library.
 
 Usage:
 
@@ -161,7 +164,7 @@ function Layout(layout, options) {
 
     // Handler for touch events
     function touchHandler(l,e) {
-      if (l.type=="btn" && l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
+      if (l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
         if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
       }
       if (l.c) l.c.forEach(n => touchHandler(n,e));

@@ -7,6 +7,7 @@
   "type": "widget",
   "tags": "widget,tool",
   "allow_emulator": true,
+  "screenshots": [{"url":"wash-hand-timer-screenshot.png"}],
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
     {"name":"widhwt.app.js","url":"app.js"},

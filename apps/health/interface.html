@@ -51,7 +51,7 @@ function saveCSV(data, date, title) {
 }
 
 function downloadHealth(filename, callback) {
-  Util.showModal("Downloading Track...");
+  Util.showModal("Downloading Health info...");
   Util.readStorage(filename, data => {
     Util.hideModal();
     callback(data);
