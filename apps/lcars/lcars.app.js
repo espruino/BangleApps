@@ -430,8 +430,9 @@ function drawPosition1(){
 }
 
 function draw(){
+    // Queue draw first to ensure that its called in one minute again.
+    queueDraw();
 
-  try{
     // First handle alarm to show this correctly afterwards
     handleAlarm();
 
@@ -445,13 +446,6 @@ function draw(){
     } else if (lcarsViewPos == 1) {
       drawPosition1();
     }
-  } catch (ex){
-    // In case of an exception, we simply queue
-    // and try it in one minute again...
-  }
-
-  // Queue draw in one minute
-  queueDraw();
 }
 
 
