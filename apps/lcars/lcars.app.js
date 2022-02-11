@@ -504,7 +504,7 @@ function getWeather(){
 
   // Wind
   const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  weather.wind = wind[1]; // + wind[2].toUpperCase(); // Don't show mph - its too large
+  weather.wind = Math.round(wind[1] *  1.60934) ; // + wind[2].toUpperCase(); // Don't show mph - its too large
 
   return weather
 }
