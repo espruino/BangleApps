@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Fix position and overdraw bugs
-      Better memory usage, theme support
+0.03: Better memory usage, theme support
+0.04: Replace the 8 phases by an exact calculation, see forum.espruino.com/conversations/371985
