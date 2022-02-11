@@ -4,3 +4,5 @@
 0.04: Update for new firmwares that have a 'HRM-raw' event
 0.05: Tweaks for 'HRM-raw' handling
 0.06: Add widgets
+0.07: Update scaling for new firmware
+0.08: Don't force backlight on/watch unlocked on Bangle 2
