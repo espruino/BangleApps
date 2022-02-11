@@ -80,6 +80,8 @@ function draw() {
   pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1, datecol);
 
   executeCommands();
+
+  Bangle.drawWidgets();
 }
 
 var timeout;
