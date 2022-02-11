@@ -32,6 +32,8 @@ that, and then start the `Run` app.
 
 Under `Settings` -> `App` -> `Run` you can change settings for this app.
 
+* `Record Run` (only displayed if `Recorder` app installed) should the Run app automatically
+record GPS/HRM/etc data every time you start a run?
 * `Pace` is the distance that pace should be shown over - 1km, 1 mile, 1/2 Marathon or 1 Marathon
 * `Box 1/2/3/4/5/6` are what should be shown in each of the 6 boxes on the display. From the top left, down.
   If you set it to `-` nothing will be displayed, so you can display only 4 boxes of information

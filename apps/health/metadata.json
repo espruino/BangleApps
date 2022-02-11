@@ -2,7 +2,7 @@
   "id": "health",
   "name": "Health Tracking",
   "version": "0.11",
-  "description": "Logs health data and provides an app to view it (requires firmware 2v10.100 or later)",
+  "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
   "tags": "tool,system,health",
   "supports": ["BANGLEJS","BANGLEJS2"],
