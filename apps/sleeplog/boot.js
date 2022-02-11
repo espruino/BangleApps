@@ -90,7 +90,10 @@ if (global.sleeplog.enabled) {
       var storage = require("Storage");
 
       // read previous logfile
-      var log = JSON.parse(atob(storage.read(this.logfile)));
+      var logContent = storage.read(this.logfile) || "";
+
+      // parse previous logfile
+      var log = JSON.parse(logContent.length > 0 ? atob(logContent) : "[]") ;
 
       // remove last state if it was unknown and is less then 10min ago
       if (log.length > 0 && log[0][1] === 0 &&
