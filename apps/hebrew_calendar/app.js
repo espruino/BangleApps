@@ -64,7 +64,7 @@ function getUpcomingEvents() {
 }
 
 function dateTime() {
-  return Locale.date(new Date()) + " " + Locale.time(new Date(), 1);
+  return Locale.dow(new Date(), 1) + ' ' + Locale.date(new Date(), 1) + " " + Locale.time(new Date(), 1);
 }
 
 let layout = new Layout(

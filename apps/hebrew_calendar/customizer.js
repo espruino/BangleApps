@@ -3,7 +3,7 @@ import {
   HDate,
   Location,
   Zmanim,
-} from "https://cdn.skypack.dev/@hebcal/core";
+} from "https://cdn.skypack.dev/@hebcal/core@^3?min";
 
 function onload(event) {
   event.preventDefault();
@@ -93,7 +93,7 @@ function getUpcomingEvents() {
 }
 
 function dateTime() {
-  return Locale.date(new Date()) + " " + Locale.time(new Date(), 1);
+  return Locale.dow(new Date(), 1) + ' ' + Locale.date(new Date(), 1) + " " + Locale.time(new Date(), 1);
 }
 
 let layout = new Layout(
