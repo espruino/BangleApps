@@ -140,6 +140,7 @@ function downloadTrack(filename, callback) {
     var headers = lines.shift().split(",");
     var track = lines.map(l=>trackLineToObject(headers, l));
     callback(track);
+    showToast("Download finished.", "toast-success");
   });
 }
 
