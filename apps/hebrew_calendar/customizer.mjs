@@ -104,61 +104,63 @@ function dateTime() {
   );
 }
 
-let layout = new Layout(
-  {
-    type: "v",
-    c: [
-      {
-        type: "txt",
-        font: "6x8",
-        id: "title",
-        label: "-- Hebrew Calendar Events --",
-        pad: 2,
-        bgCol: g.theme.bg2,
-      },
-      {
-        type: "txt",
-        font: "6x8",
-        id: "currently",
-        label: "Currently",
-        pad: 2,
-        bgCol: g.theme.bgH,
-      },
-    ]
-      .concat(getCurrentEvents())
-      .concat([
+function makeLayout() {
+  return new Layout(
+    {
+      type: "v",
+      c: [
         {
           type: "txt",
           font: "6x8",
-          label: "Upcoming",
-          id: "upcoming",
-          pad: 2,
-          bgCol: g.theme.bgH,
-        },
-      ])
-      .concat(getUpcomingEvents())
-      .concat([
-        {
-          type: "txt",
-          font: "6x8",
-          id: "gregorian",
-          label: "Gregorian",
+          id: "title",
+          label: "-- Hebrew Calendar Events --",
           pad: 2,
           bgCol: g.theme.bg2,
         },
         {
           type: "txt",
-          font: "Vector14",
-          id: "time",
-          label: dateTime(),
+          font: "6x8",
+          id: "currently",
+          label: "Currently",
           pad: 2,
-          bgCol: undefined,
+          bgCol: g.theme.bgH,
         },
-      ]),
-  },
-  { lazy: true }
-);
-
+      ]
+        .concat(getCurrentEvents())
+        .concat([
+          {
+            type: "txt",
+            font: "6x8",
+            label: "Upcoming",
+            id: "upcoming",
+            pad: 2,
+            bgCol: g.theme.bgH,
+          },
+        ])
+        .concat(getUpcomingEvents())
+        .concat([
+          {
+            type: "txt",
+            font: "6x8",
+            id: "gregorian",
+            label: "Gregorian",
+            pad: 2,
+            bgCol: g.theme.bg2,
+          },
+          {
+            type: "txt",
+            font: "Vector14",
+            id: "time",
+            label: dateTime(),
+            pad: 2,
+            bgCol: undefined,
+          },
+        ]),
+    },
+    { lazy: true }
+  );
+}
+let layout = makeLayout();
 // see also https://www.espruino.com/Bangle.js+Layout#updating-the-screen
 
 // timeout used to update every minute
@@ -183,35 +185,21 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
 
-let calendarTimeout;
+// function findNextEvent() {
+//   return hebrewCalendar.find(ev => {
+//     return ev.startEvent > Date.now();
+//   });
+// }
 
 function updateCalendar() {
-  for (let x = 0; x < 10; x++) {
-    if (layout["upcomingEvents" + x]) {
-      delete layout["upcomingEvents" + x];
-    }
-    if (layout["currentEvents" + x]) {
-      delete layout["currentEvents" + x];
-    }
-  }
-  getUpcomingEvents().forEach(function (e, i) {
-    layout["upcomingEvents" + i] = e;
-  });
-  getCurrentEvents().forEach(function (e, i) {
-    layout["currentEvents" + i] = e;
-  });
+  layout.clear();
+  layout = makeLayout();
   layout.render();
 
-  // schedule a draw for the next minute
-  if (calendarTimeout) clearTimeout(calendarTimeout);
-  calendarTimeout = setTimeout(function () {
-    calendarTimeout = undefined;
-    updateCalendar();
-  }, layout.upcomingEvents0.startEvent - Date.now() + 5000);
   console.log("updated events");
 }
 
-setTimeout(updateCalendar, 500);
+setInterval(updateCalendar, 1000 * 60 * 5);
 
 Bangle.setUI("clock");
 
