@@ -74,7 +74,7 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
 }
 
 function saveGPX(track, title) {
-  if (!track || !track[0] || !"Time" in track[0]) {
+  if (!track || !track[0] || !"Time" in track[0] || !track[0].Time) {
     showToast("Error in trackfile.", "toast-error");
     return;
   }
