@@ -29,8 +29,10 @@ let hebrewCalendar = ${json};
 
 const dayInMS = 86400000;
 
-var Layout = require("Layout");
+const Layout = require("Layout");
 const Locale = require("locale");
+
+let nextEndingEvent;
 
 function getCurrentEvents() {
   const now = Date.now();
@@ -38,6 +40,10 @@ function getCurrentEvents() {
   const current = hebrewCalendar.filter(
     (x) => x.startEvent < now && x.endEvent > now
   );
+
+  nextEndingEvent = current.reduce((acc, ev) => {
+    return Math.min(acc, ev.endEvent);
+  }, Infinity);
 
   return current.map((event, i) => {
     return {
@@ -185,21 +191,26 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
 
-// function findNextEvent() {
-//   return hebrewCalendar.find(ev => {
-//     return ev.startEvent > Date.now();
-//   });
-// }
+function findNextEvent() {
+  return hebrewCalendar.find((ev) => {
+    return ev.startEvent > Date.now();
+  });
+}
 
 function updateCalendar() {
   layout.clear();
   layout = makeLayout();
   layout.render();
 
+  let nextChange = Math.min(
+    findNextEvent().startEvent - Date.now() + 5000,
+    nextEndingEvent - Date.now() + 5000
+  );
+  setTimeout(updateCalendar, nextChange);
   console.log("updated events");
 }
 
-setInterval(updateCalendar, 1000 * 60 * 5);
+updateCalendar();
 
 Bangle.setUI("clock");
 
