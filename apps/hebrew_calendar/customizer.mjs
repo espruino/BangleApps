@@ -165,25 +165,36 @@ function draw() {
   drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
-    console.log("updated time");
   }, 60000 - (Date.now() % 60000));
+  console.log("updated time");
 }
 
 // update time and draw
 g.clear();
+Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
+
+let calendarTimeout;
 
 function updateCalendar() {
   layout.upcomingEvents = getUpcomingEvents();
   layout.currentEvents = getCurrentEvents();
   layout.render();
+
+  // 5 seconds after the next upcoming event
+  const nextUpdate = layout.upcomingEvents[0].startEvent - Date.now() + 5000;
+
+  // schedule the update for right after the next event
+  if (calendarTimeout) clearTimeout(calendarTimeout);
+  calendarTimeout = setTimeout(function () {
+    calendarTimeout = undefined;
+    updateCalendar();
+  }, nextUpdate);
   console.log("updated events");
 }
 
 setTimeout(updateCalendar, 500);
-
-setInterval(updateCalendar, 1000*60*30);
 
 Bangle.setUI("clock");
 			`,
