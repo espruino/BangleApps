@@ -22,8 +22,8 @@ function loadWatch(json) {
     storage: [
       {
         name: "hebrew_calendar.app.js",
-				url: "app.js",
-				// content below is same as app.js except for the first line which customizes the hebrewCalendar object used
+        url: "app.js",
+        // content below is same as app.js except for the first line which customizes the hebrewCalendar object used
         content: `
 let hebrewCalendar = ${json};
 
@@ -224,16 +224,12 @@ document
   .querySelector("button[type=submit]")
   .addEventListener("click", onload, false);
 
-document
-  .querySelector('#geoloc')
-  ?.addEventListener("click", (event) => {
-    event.preventDefault();
-    navigator.geolocation.getCurrentPosition((pos) => {
+document.querySelector("#geoloc")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
       const {
-        coords: {
-          latitude,
-          longitude,
-        }
+        coords: { latitude, longitude },
       } = pos;
       locationElements[0].value = latitude;
       locationElements[1].value = longitude;
@@ -241,13 +237,13 @@ document
     },
     (err) => {
       if (err.PERMISSION_DENIED) {
-        alert('permission required to use geolocation api; enter manually')
+        alert("permission required to use geolocation api; enter manually");
       }
       if (err.POSITION_UNAVAILABLE) {
-        alert('position unavailable; enter manually')
+        alert("position unavailable; enter manually");
       }
     },
-    {enableHighAccuracy: false}
+    { enableHighAccuracy: false }
   );
 });
 
@@ -262,9 +258,7 @@ const locationElements = [
 
 function getLatLonFromForm() {
   const latLon = locationElements.map((el) => el.value);
-  console.debug(latLon);
   if (locationElements.every((x) => x.checkValidity())) {
-    console.debug("lat lon all good");
     return latLon;
   } else {
     console.debug("lat lon invalid error");
@@ -296,6 +290,7 @@ function generateHebCal(latLon) {
     location,
     addHebrewDates: true,
     addHebrewDatesForEvents: true,
+    sedrot: true,
     start: now,
     end: new Date(now.getFullYear(), now.getMonth() + 3),
   };
