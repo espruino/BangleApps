@@ -73,6 +73,11 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
 }
 
 function saveGPX(track, title) {
+  if (!track || !track[0] || !"Time" in track[0]) {
+    showToast("Error in trackfile.", "toast-error");
+    return;
+  }
+
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata>
@@ -172,6 +177,10 @@ function getTrackList() {
   return {headers:headers,l:data};
 })(${JSON.stringify(filename)})`, trackInfo=>{
           console.log(filename," => ",trackInfo);
+          if (!trackInfo || !"headers" in trackInfo) {
+            showToast("Error loading track list.", "toast-error");
+            resolve();
+          }
           trackInfo.headers = trackInfo.headers.split(",");
           trackList.push({
             filename : filename,
