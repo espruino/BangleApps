@@ -4,7 +4,7 @@
   </head>
   <body>
     <div id="tracks"></div>
-    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;">
+    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
 
     <script src="../../core/lib/interface.js"></script>
     <script src="../../core/js/ui.js"></script>
@@ -73,12 +73,12 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
-  showToast("Download finished.", "toast-success");
+  showToast("Download finished.", "success");
 }
 
 function saveGPX(track, title) {
   if (!track || !track[0] || !"Time" in track[0] || !track[0].Time) {
-    showToast("Error in trackfile.", "toast-error");
+    showToast("Error in trackfile.", "error");
     return;
   }
 
@@ -118,7 +118,7 @@ function saveGPX(track, title) {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
-  showToast("Download finished.", "toast-success");
+  showToast("Download finished.", "success");
 }
 
 function saveCSV(track, title) {
@@ -131,7 +131,7 @@ function saveCSV(track, title) {
     }).join(",")+"\n";
   });
   Util.saveCSV(title, csv);
-  showToast("Download finished.", "toast-success");
+  showToast("Download finished.", "success");
 }
 
 function trackLineToObject(headers, l) {
@@ -183,7 +183,7 @@ function getTrackList() {
 })(${JSON.stringify(filename)})`, trackInfo=>{
           console.log(filename," => ",trackInfo);
           if (!trackInfo || !"headers" in trackInfo) {
-            showToast("Error loading track list.", "toast-error");
+            showToast("Error loading track list.", "error");
             resolve();
           }
           trackInfo.headers = trackInfo.headers.split(",");
