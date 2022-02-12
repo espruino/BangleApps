@@ -5,6 +5,7 @@
   let s = {
     'grid': false,
     'weather': false,
+    'idle_check': true,
     'font': "Lato"
   }
 
@@ -49,6 +50,13 @@
       format: () => (s.weather ? 'Yes' : 'No'),
       onchange: () => {
         s.weather = !s.weather;
+        save();
+      },
+    },
+    'Idle Warning': {
+      value: s.idle_check,
+      onchange : v => {
+        s.idle_check = v;
         save();
       },
     }
