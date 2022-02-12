@@ -5,17 +5,43 @@ function onload(event) {
 	const latLon = getLatLonFromForm();
 	const events = generateHebCal(latLon);
 	const json = serializeEvents(events);
-	console.debug(json.slice(0, 5));
-	console.debug(loadWatch(json))
+	console.debug(json.slice(0, 100));
+	globalThis['calen'] = json.slice(0, 100);
+	// console.debug(loadWatch(json))
 }
 
 function loadWatch(json) {
-	console.debug(Puck.eval('new Date().toString()'))
+	sendCustomizedApp({
+		id : "hebrew_calendar",
 
-	Puck.eval(`require("Storage").writeJSON("hebrewCalendar.json",${json})`, () => {
-		Puck.eval(`Bangle.buzz()`, () => {
-			console.debug("all done");
-		})
+		storage:[
+			{name:"-hebrew_calendar", content:`g.clear();
+
+			let now = new Date();
+
+			var mainmenu = {
+				"": {
+					"title": "Hebrew Date"
+				},
+				greg: {
+					value: require('locale').date(now, 1),
+				},
+				h: {
+					value: hebrewCalendar[0].desc,
+				},
+			};
+
+			const hebrewCalendar = ${json}
+
+			E.showMenu(mainmenu);`},
+			{name:"+hebrew_calendar", content:JSON.stringify({
+				name:"hebrew_calendar",
+				icon:"*hebrew_calendar",
+				src:"-hebrew_calendar"
+			})},
+			{name:"*hebrew_calendar", content:`require("heatshrink").decompress(atob("mEw4UA////G161hyd8Jf4ALlQLK1WABREC1WgBZEK32oFxPW1QuJ7QwIFwOqvQLHhW31NaBY8qy2rtUFoAuG3W61EVqALF1+qr2gqtUHQu11dawNVqo6F22q9XFBYIwEhWqz2r6oLBGAheBqwuBBYx2CFwQLGlWqgoLCMAsKLoILChR6EgQuDqkqYYsBFweqYYoLDoWnYYoLD/WVYYv8FwXqPoIwEn52BqGrPoILEh/1FwOl9SsBBYcD/pdB2uq/QvEh/8LoOu1xHFh8/gGp9WWL4oMBgWltXeO4owBgWt1ReFYYh2GYYmXEQzDD3wiHegYKIGAJRGAAguJAH4AC"))
+			`, evaluate:true},
+		]
 	});
 }
 
@@ -60,11 +86,11 @@ function generateHebCal(latLon) {
 		const zman = new Zmanim(ev.date, ...latLon.map(Number))
 
 		let output = {
-			greg: ev?.date?.greg(),
+			greg: ev?.date?.greg().getTime(),
 			desc,
-			eventTime,
-			startEvent: startEvent?.eventTime || zman.gregEve(),
-			endEvent: endEvent?.eventTime || zman.shkiah(),
+			eventTime: eventTime?.getTime(),
+			startEvent: startEvent?.eventTime || zman.gregEve().getTime(),
+			endEvent: endEvent?.eventTime || zman.shkiah().getTime(),
 		};
 
 		if (eventTime) {

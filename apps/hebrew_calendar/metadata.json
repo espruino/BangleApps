@@ -5,9 +5,9 @@
   "version": "0.05",
   "description": "lists the date & holidays according to the hebrew calendar",
   "icon": "app.png",
-  "allow_emulator": true,
+  "allow_emulator": false,
   "tags": "tool,locale",
-  "custom": "interface.html",
+  "custom": "customizer.html",
   "supports": [
     "BANGLEJS",
     "BANGLEJS2"
