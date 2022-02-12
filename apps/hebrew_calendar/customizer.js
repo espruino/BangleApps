@@ -9,8 +9,10 @@ function onload(event) {
   event.preventDefault();
   const latLon = getLatLonFromForm();
   const events = generateHebCal(latLon);
-  const json = serializeEvents(events);
-  // console.debug(loadWatch(json))
+  const calendar = serializeEvents(events);
+  console.debug(calendar);
+  globalThis["cal"] = calendar;
+  loadWatch(calendar);
 }
 
 function loadWatch(json) {
@@ -18,78 +20,172 @@ function loadWatch(json) {
     id: "hebrew_calendar",
 
     storage: [
-      { name: "-hebrew_calendar", content: `
-			let hebrewCalendar = ${json};
+      {
+        name: "-hebrew_calendar",
+        content: `
+let hebrewCalendar = ${json};
 
-			const dayInMS = 86400000;
+const dayInMS = 86400000;
 
-			g.clear(1);
-			Bangle.drawWidgets();
+var Layout = require("Layout");
+const Locale = require("locale");
 
-			var Layout = require("Layout");
-			const Locale = require("locale");
-			var layout = function () {
-				const now = Date.now();
+function getCurrentEvents() {
+  const now = Date.now();
 
-				const current = hebrewCalendar.filter(
-					(x) => x.startEvent < now && x.endEvent > now
-				);
+  const current = hebrewCalendar.filter(
+    (x) => x.startEvent < now && x.endEvent > now
+  );
 
-				const events = current.map((event) => {
-					return {
-						type: "txt",
-						font: "6x8:2",
-						label: event.desc,
-						pad: 5,
-						bgCol: g.theme.bg,
-					};
-				});
+  return current.map((event) => {
+    return {
+      type: "txt",
+      font: "12x20",
+      id: "currentEvents",
+      label: event.desc,
+      pad: 5,
+      bgCol: g.theme.bg,
+    };
+  });
+}
 
-				const upcoming = hebrewCalendar
-					.filter((x) => x.startEvent > now && x.startEvent < now + dayInMS)
-					.slice(0, 3)
-					.map((event) => {
-						return {
-							type: "txt",
-							font: "6x8:2",
-							label: event.desc,
-							pad: 5,
-							bgCol: g.theme.bg,
-						};
-					});
+function getUpcomingEvents() {
+  const now = Date.now();
 
-				return new Layout({
-					type: "v",
-					c: [
-						{
-							type: "txt",
-							font: "6x8",
-							label: "-- Hebrew Calendar Events --",
-							pad: 2,
-						},
-						{ type: "txt", font: "6x8", label: "Currently", pad: 2 },
-					]
-						.concat(events)
-						.concat([{ type: "txt", font: "6x8", label: "Upcoming", pad: 2 }])
-						.concat(upcoming)
-						.concat([
-							{ type: "txt", font: "6x8", label: "Gregorian", pad: 2 },
-							{
-								type: "txt",
-								font: "6x8",
-								label: Locale.date(new Date()) + " " + Locale.time(new Date(), 1),
-								pad: 5,
-								bgCol: g.theme.bg,
-							},
-						]),
-				});
-			};
-			layout().render();
+  const futureEvents = hebrewCalendar
+    .filter((x) => x.startEvent > now && x.startEvent < now + dayInMS);
 
-			setInterval(function () {
-				layout().render();
-			}, 1000 * 60);
-			` },
+  let warning;
+  let eventsLeft = hebrewCalendar
+    .filter((x) => x.startEvent > now && x.startEvent < now + dayInMS*14).length;
+
+  if (eventsLeft < 14) {
+    warning = {
+        startEvent: 0,
+        type: "txt",
+        font: "4x6",
+        id: "warning",
+        label: 'only '+ eventsLeft+' events left in calendar; update soon',
+        pad: 5,
+        bgCol: g.theme.bg,
+      };
+  }
+
+  return futureEvents
+    .slice(0, 5)
+    .map((event) => {
+      return {
+        startEvent: event.startEvent,
+        type: "txt",
+        font: "4x6",
+        id: "upcomingEvents",
+        label: event.desc + " at " + Locale.time(new Date(event.startEvent), 1),
+        pad: 5,
+        bgCol: g.theme.bg,
+      };
+    })
+    .concat(warning)
+    .sort(function (a, b) {
+      return a.startEvent - b.startEvent;
+    });
+}
+
+function dateTime() {
+  return Locale.date(new Date()) + " " + Locale.time(new Date(), 1);
+}
+
+let layout = new Layout(
+  {
+    type: "v",
+    c: [
+      {
+        type: "txt",
+        font: "6x8",
+        id: "title",
+        label: "-- Hebrew Calendar Events --",
+        pad: 2,
+        bgCol: g.theme.bg2,
+      },
+      {
+        type: "txt",
+        font: "6x8",
+        id: "currently",
+        label: "Currently",
+        pad: 2,
+        bgCol: g.theme.bgH,
+      },
+    ]
+      .concat(getCurrentEvents())
+      .concat([
+        {
+          type: "txt",
+          font: "6x8",
+          label: "Upcoming",
+          id: "upcoming",
+          pad: 2,
+          bgCol: g.theme.bgH,
+        },
+      ])
+      .concat(getUpcomingEvents())
+      .concat([
+        {
+          type: "txt",
+          font: "6x8",
+          id: "gregorian",
+          label: "Gregorian",
+          pad: 2,
+          bgCol: g.theme.bg2,
+        },
+        {
+          type: "txt",
+          font: "6x8",
+          id: "time",
+          label: dateTime(),
+          pad: 5,
+          bgCol: undefined,
+        },
+      ]),
+  },
+  { lazy: true }
+);
+
+// see also https://www.espruino.com/Bangle.js+Layout#updating-the-screen
+
+// timeout used to update every minute
+let drawTimeout;
+
+function draw() {
+  layout.time.label = dateTime();
+  layout.render();
+
+  // schedule a draw for the next minute
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function () {
+    drawTimeout = undefined;
+    draw();
+    console.log("updated time");
+  }, 60000 - (Date.now() % 60000));
+}
+
+// update time and draw
+g.clear();
+Bangle.drawWidgets();
+draw();
+
+function updateCalendar() {
+  layout.upcomingEvents = getUpcomingEvents();
+  layout.currentEvents = getCurrentEvents();
+  layout.render();
+  console.log("updated events");
+}
+
+setTimeout(updateCalendar, 500);
+
+setInterval(updateCalendar, dayInMS / 12);
+
+Bangle.setUI("clock");
+			`,
+      },
       {
         name: "+hebrew_calendar",
         content: JSON.stringify({
@@ -107,8 +203,6 @@ function loadWatch(json) {
     ],
   });
 }
-
-onload(new Event("init")); // just for testing
 
 document
   .querySelector("button[type=submit]")
@@ -134,18 +228,32 @@ function getLatLonFromForm() {
   }
 }
 
+function groupBy(arr, fn) {
+  return arr
+    .map(typeof fn === "function" ? fn : (val) => val[fn])
+    .reduce((acc, val, i) => {
+      acc[val] = (acc[val] || []).concat(arr[i]);
+      return acc;
+    }, {});
+}
+
 function generateHebCal(latLon) {
   const location = new Location(
     ...latLon,
     document.querySelector("#inIL").checked
   );
+
+  const now = new Date();
+
   const options = {
-    year: new Date().getFullYear(),
+    year: now.getFullYear(),
     isHebrewYear: false,
     candlelighting: true,
     location,
     addHebrewDates: true,
     addHebrewDatesForEvents: true,
+    start: now,
+    end: new Date(now.getFullYear(), now.getMonth() + 3),
   };
 
   const events = HebrewCalendar.calendar(options).map((ev) => {
@@ -154,17 +262,16 @@ function generateHebCal(latLon) {
     const zman = new Zmanim(ev.date, ...latLon.map(Number));
 
     let output = {
-      greg: ev?.date?.greg().getTime(),
       desc,
-      eventTime: eventTime?.getTime(),
-      startEvent: startEvent?.eventTime || zman.gregEve().getTime(),
-      endEvent: endEvent?.eventTime || zman.shkiah().getTime(),
+      startEvent: startEvent?.eventTime?.getTime() || zman.gregEve().getTime(),
+      endEvent: endEvent?.eventTime?.getTime() || zman.shkiah().getTime(),
     };
 
     if (eventTime) {
       delete output.startEvent;
       delete output.endEvent;
-      delete output.greg;
+      output.startEvent = eventTime.getTime();
+      output.endEvent = eventTime.getTime() + 60000 * 15;
     }
 
     return output;
@@ -172,20 +279,18 @@ function generateHebCal(latLon) {
 
   // console.table(events)
 
-  return events;
+  return events.sort((a, b) => {
+    return a.startEvent - b.startEvent;
+  });
 }
 
-/**
- *
- * @param { {
-			date: object,
-			desc: string,
-			eventTime: Date,
-			location: object,
-			startEvent: Date,
-			endEvent: Date,
-		}[]} events
- */
+function enc(data) {
+  return btoa(heatshrink.compress(new TextEncoder().encode(data)));
+}
+
 function serializeEvents(events) {
+  // const splitByGregorianMonth = groupBy(events, (evt) => {
+  //   return new Date(evt.startEvent).getMonth();
+  // });
   return JSON.parse(JSON.stringify(events));
 }

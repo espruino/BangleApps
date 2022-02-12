@@ -6,12 +6,13 @@
   "description": "lists the date & holidays according to the hebrew calendar",
   "icon": "app.png",
   "allow_emulator": false,
-  "tags": "tool,locale",
+  "tags": "clocks,tools",
   "custom": "customizer.html",
   "supports": [
     "BANGLEJS",
     "BANGLEJS2"
   ],
+  "type": "clock",
   "readme": "README.md",
   "storage": [
     {
