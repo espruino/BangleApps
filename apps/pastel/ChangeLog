@@ -15,3 +15,4 @@
       supported in pre 2.12.13 firmware
 0.14: incorporated lazybones idle timer, configuration settings to come
 0.15: fixed tendancy for mylocation to default to London
+      added setting to enable/disable idle timer warning
