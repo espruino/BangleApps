@@ -183,7 +183,7 @@ function updateCalendar() {
 
 setTimeout(updateCalendar, 500);
 
-setInterval(updateCalendar, dayInMS / 12);
+setInterval(updateCalendar, 1000*60*30);
 
 Bangle.setUI("clock");
 			`,
