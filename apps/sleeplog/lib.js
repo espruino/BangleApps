@@ -1,6 +1,6 @@
 exports = {
-  // define en-/disable function
-  setEnabled: function(enable, logfile) {
+  // define en-/disable function, restarts the service to make changes take effect
+  setEnabled: function(enable, logfile, powersaving) {
     // check if sleeplog is available
     if (typeof global.sleeplog !== "object") return;
 
@@ -8,10 +8,6 @@ exports = {
     logfile = logfile.endsWith(".log") ? logfile :
       logfile === false ? undefined :
       "sleeplog.log";
-
-    // check if status needs to be changed
-    if (enable === global.sleeplog.enabled ||
-      logfile === global.sleeplog.logfile) return false;
 
     // stop if enabled
     if (global.sleeplog.enabled) global.sleeplog.stop();
@@ -23,7 +19,8 @@ exports = {
     // change enabled value in settings
     storage.writeJSON(filename, Object.assign(storage.readJSON(filename, true) || {}, {
       enabled: enable,
-      logfile: logfile
+      logfile: logfile,
+      powersaving: powersaving
     }));
 
     // force changes to take effect by executing the boot script
@@ -50,7 +47,8 @@ exports = {
     if (since > Date()) return [];
 
     // read log json to array
-    var log = JSON.parse(atob(require("Storage").read(logfile)));
+    var log = storage.read(this.logfile) || "";
+    log = log ? JSON.parse(atob(log)) || [] : [];
 
     // search for latest entry befor since
     since = (log.find(element => element[0] <= since) || [0])[0];
@@ -104,7 +102,8 @@ exports = {
     var storage = require("Storage");
 
     // read log json to array
-    var log = JSON.parse(atob(storage.read(logfile)));
+    var log = storage.read(this.logfile) || "";
+    log = log ? JSON.parse(atob(log)) || [] : [];
 
     // define output variable to show number of changes
     var output = log.length;
@@ -125,7 +124,8 @@ exports = {
     var storage = require("Storage");
 
     // read log json to array
-    var log = JSON.parse(atob(storage.read(logfile)));
+    var log = storage.read(this.logfile) || "";
+    log = log ? JSON.parse(atob(log)) || [] : [];
 
     // define output variable to show number of changes
     var output = 0;

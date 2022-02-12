@@ -149,8 +149,8 @@ function drawNightTo(prevDays) {
 
   // reduce date by 1s to ensure correct headline
   date = Date(date.valueOf() - 1E3);
-  // draw headline, on red bg if service or loggging disabled
-  g.setColor(global.sleeplog && sleeplog.enabled && sleeplog.logfile ? g.theme.bg : 63488);
+  // draw headline, on red bg if service or loggging disabled or green bg if powersaving enabled
+  g.setColor(global.sleeplog && sleeplog.enabled && sleeplog.logfile ? sleeplog.powersaving ? 2016 : g.theme.bg : 63488);
   g.fillRect(0, 30, width, 66).reset();
   g.setFont("12x20").setFontAlign(0, -1);
   g.drawString("Night to " + require('locale').dow(date, 1) + "\n" +

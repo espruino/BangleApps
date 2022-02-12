@@ -8,6 +8,8 @@
     maxawake: 36E5, // 60min in ms
     minconsec: 18E5, // 30min in ms
     tempthresh: 27, // every temperature above ist registered as worn
+    powersaving: false, // disables ESS and uses build in movement detection
+    maxmove: 44, // movement threshold on power saving mode
     nomothresh: 0.012, // values lower than 0.008 getting triggert by noise
     sleepthresh: 577, // 577 times no movement * 1.04s window width > 10min
     winwidth: 13, // 13 values, read with 12.5Hz = every 1.04s
@@ -32,14 +34,20 @@
     return value > max ? min : value < min ? max : value;
   }
 
+  // define function to change values that need a restart of the service
+  function changeRestart() {
+    require("sleeplog").setEnabled(settings.enabled, settings.logfile, settings.powersaving);
+  }
+
   // calculate sleepthresh factor
   var stFactor = settings.winwidth / 12.5 / 60;
 
   // show main menu
-  function showMain() {
-    var mainMenu = E.showMenu({
+  function showMain(selected) {
+    var mainMenu = {
       "": {
-        title: "Sleep Log"
+        title: "Sleep Log",
+        selected: selected
       },
       "< Exit": () => load(),
       "< Back": () => back(),
@@ -78,6 +86,23 @@
           writeSetting("tempthresh", v);
         }
       },
+      "PowerSaving": {
+        value: settings.powersaving,
+        format: v => v ? "on" : "off",
+        onchange: function(v) {
+          settings.powersaving = v;
+          changeRestart();
+          showMain(7);
+        }
+      },
+      "MaxMove": {
+        value: settings.maxmove,
+        step: 44,
+        onchange: function(v) {
+          this.value = v = circulate(40, 100, v);
+          writeSetting("maxmove", v);
+        }
+      },
       "NoMoThresh": {
         value: settings.nomothresh,
         step: 0.001,
@@ -100,17 +125,32 @@
         value: settings.enabled,
         format: v => v ? "on" : "off",
         onchange: function(v) {
-          writeSetting("enabled", v);
+          settings.enabled = v;
+          changeRestart();
         }
       },
       "Logfile ": {
         value: settings.logfile === "sleeplog.log" ? true : settings.logfile.endsWith(".log") ? "custom" : false,
         format: v => v === true ? "default" : v ? "custom" : "off",
         onchange: function(v) {
-          if (v !== "custom") writeSetting("logfile", v ? "sleeplog.log" : undefined);
+          if (v !== "custom") {
+            settings.logfile = v ? "sleeplog.log" : undefined;
+            changeRestart();
+          }
         }
-      },
-    });
+      }
+    };
+    // check power saving mode to delete unused entries
+    (settings.powersaving ? ["NoMoThresh", "MinDuration"] : ["MaxMove"]).forEach(property => delete mainMenu[property]);
+    var menu = E.showMenu(mainMenu);
+    // workaround to display changed entries correct
+    if (selected) setTimeout(_ => {
+      menu.move(1);
+      menu.move(1);
+      menu.move(-1);
+      menu.move(-1);
+      menu.move(-1);
+    }, 100);
   }
 
   // draw main menu
