@@ -4,7 +4,7 @@
   </head>
   <body>
     <div id="tracks"></div>
-    <div class="container"  id="toastcontainer">
+    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;">
 
     <script src="../../core/lib/interface.js"></script>
     <script src="../../core/js/ui.js"></script>
@@ -73,6 +73,7 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "toast-success");
 }
 
 function saveGPX(track, title) {
@@ -117,6 +118,7 @@ function saveGPX(track, title) {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "toast-success");
 }
 
 function saveCSV(track, title) {
@@ -129,6 +131,7 @@ function saveCSV(track, title) {
     }).join(",")+"\n";
   });
   Util.saveCSV(title, csv);
+  showToast("Download finished.", "toast-success");
 }
 
 function trackLineToObject(headers, l) {
@@ -148,7 +151,6 @@ function downloadTrack(filename, callback) {
     var headers = lines.shift().split(",");
     var track = lines.map(l=>trackLineToObject(headers, l));
     callback(track);
-    showToast("Download finished.", "toast-success");
   });
 }
 
