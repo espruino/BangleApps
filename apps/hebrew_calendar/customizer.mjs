@@ -224,18 +224,46 @@ document
   .querySelector("button[type=submit]")
   .addEventListener("click", onload, false);
 
+document
+  .querySelector('#geoloc')
+  ?.addEventListener("click", (event) => {
+    event.preventDefault();
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const {
+        coords: {
+          latitude,
+          longitude,
+        }
+      } = pos;
+      locationElements[0].value = latitude;
+      locationElements[1].value = longitude;
+      console.debug(pos);
+    },
+    (err) => {
+      if (err.PERMISSION_DENIED) {
+        alert('permission required to use geolocation api; enter manually')
+      }
+      if (err.POSITION_UNAVAILABLE) {
+        alert('position unavailable; enter manually')
+      }
+    },
+    {enableHighAccuracy: false}
+  );
+});
+
 document.querySelector(
   "#hDate"
 ).innerText = `Today is ${new Date().toLocaleDateString()} & ${new HDate().toString()}`;
 
+const locationElements = [
+  document.querySelector("#lat"),
+  document.querySelector("#lon"),
+];
+
 function getLatLonFromForm() {
-  const elements = [
-    document.querySelector("#lat"),
-    document.querySelector("#lon"),
-  ];
-  const latLon = elements.map((el) => el.value);
+  const latLon = locationElements.map((el) => el.value);
   console.debug(latLon);
-  if (elements.every((x) => x.checkValidity())) {
+  if (locationElements.every((x) => x.checkValidity())) {
     console.debug("lat lon all good");
     return latLon;
   } else {

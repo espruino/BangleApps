@@ -20,10 +20,11 @@
 				<form method="GET">
 					<div class="form-group">
 						<label class="form-label" for="lat">Latitude</label>
-						<input class="form-input" type="number" id="lat" name="lat" required min="-90" max="90" step="0.000001" value="31.776580" placeholder="31.776580">
+						<input class="form-input" type="number" id="lat" name="lat" required min="-90" max="90" step="0.0000001" value="31.776580" placeholder="31.776580">
 						<label class="form-label" for="lon">Longitude</label>
-						<input class="form-input" type="number" id="lon" name="lon" required min="-180" max="180" step="0.000001" value="35.233706" placeholder="35.233706">
-						<div>get your latitude and longitude by searching your address on <a href="https://plus.codes/map">plus.codes</a> and then clicking the ^ arrow </div>
+						<input class="form-input" type="number" id="lon" name="lon" required min="-180" max="180" step="0.0000001" value="35.233706" placeholder="35.233706">
+						<div>get your latitude and longitude from <a href="https://plus.codes/map">plus.codes</a> or:</div>
+						<button class="btn btn-secondary input-group-btn" id="geoloc">Get Latitude and Longitude automatically (using location permission)</button>
 						<label class="form-switch">
 							<input type="checkbox" id="inIL" name="inIL" checked>
 							<i class="form-icon"></i> In Israel?
