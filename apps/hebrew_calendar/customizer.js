@@ -21,7 +21,9 @@ function loadWatch(json) {
 
     storage: [
       {
-        name: "-hebrew_calendar",
+        name: "hebrew_calendar.app.js",
+				url: "app.js",
+				// content below is same as app.js except for the first line which customizes the hebrewCalendar object used
         content: `
 let hebrewCalendar = ${json};
 
@@ -186,20 +188,6 @@ setInterval(updateCalendar, dayInMS / 12);
 Bangle.setUI("clock");
 			`,
       },
-      {
-        name: "+hebrew_calendar",
-        content: JSON.stringify({
-          name: "hebrew_calendar",
-          icon: "*hebrew_calendar",
-          src: "-hebrew_calendar",
-        }),
-      },
-      {
-        name: "*hebrew_calendar",
-        content: `require("heatshrink").decompress(atob("mEw4UA////G161hyd8Jf4ALlQLK1WABREC1WgBZEK32oFxPW1QuJ7QwIFwOqvQLHhW31NaBY8qy2rtUFoAuG3W61EVqALF1+qr2gqtUHQu11dawNVqo6F22q9XFBYIwEhWqz2r6oLBGAheBqwuBBYx2CFwQLGlWqgoLCMAsKLoILChR6EgQuDqkqYYsBFweqYYoLDoWnYYoLD/WVYYv8FwXqPoIwEn52BqGrPoILEh/1FwOl9SsBBYcD/pdB2uq/QvEh/8LoOu1xHFh8/gGp9WWL4oMBgWltXeO4owBgWt1ReFYYh2GYYmXEQzDD3wiHegYKIGAJRGAAguJAH4AC"))
-			`,
-        evaluate: true,
-      },
     ],
   });
 }
@@ -292,5 +280,5 @@ function serializeEvents(events) {
   // const splitByGregorianMonth = groupBy(events, (evt) => {
   //   return new Date(evt.startEvent).getMonth();
   // });
-  return JSON.parse(JSON.stringify(events));
+  return JSON.stringify(events);
 }

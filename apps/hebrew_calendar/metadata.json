@@ -16,10 +16,6 @@
   "readme": "README.md",
   "storage": [
     {
-      "name": "hebrew_calendar.app.js",
-      "url": "app.js"
-    },
-    {
       "name": "hebrew_calendar.img",
       "url": "app-icon.js",
       "evaluate": true
