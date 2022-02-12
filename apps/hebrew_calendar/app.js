@@ -10,11 +10,11 @@ function getCurrentEvents() {
     (x) => x.startEvent < now && x.endEvent > now
   );
 
-  return current.map((event) => {
+  return current.map((event, i) => {
     return {
       type: "txt",
       font: "12x20",
-      id: "currentEvents",
+      id: "currentEvents" + i,
       label: event.desc,
       pad: 5,
       bgCol: g.theme.bg,
@@ -25,35 +25,37 @@ function getCurrentEvents() {
 function getUpcomingEvents() {
   const now = Date.now();
 
-  const futureEvents = hebrewCalendar
-    .filter((x) => x.startEvent > now && x.startEvent < now + dayInMS);
+  const futureEvents = hebrewCalendar.filter(
+    (x) => x.startEvent > now && x.startEvent < now + dayInMS
+  );
 
   let warning;
-  let eventsLeft = hebrewCalendar
-    .filter((x) => x.startEvent > now && x.startEvent < now + dayInMS*14).length;
+  let eventsLeft = hebrewCalendar.filter(
+    (x) => x.startEvent > now && x.startEvent < now + dayInMS * 14
+  ).length;
 
   if (eventsLeft < 14) {
     warning = {
-        startEvent: 0,
-        type: "txt",
-        font: "4x6",
-        id: "warning",
-        label: 'only '+ eventsLeft+' events left in calendar; update soon',
-        pad: 5,
-        bgCol: g.theme.bg,
-      };
+      startEvent: 0,
+      type: "txt",
+      font: "4x6",
+      id: "warning",
+      label: "only " + eventsLeft + " events left in calendar; update soon",
+      pad: 5,
+      bgCol: g.theme.bg,
+    };
   }
 
   return futureEvents
     .slice(0, 5)
-    .map((event) => {
+    .map((event, i) => {
       return {
         startEvent: event.startEvent,
         type: "txt",
-        font: "4x6",
-        id: "upcomingEvents",
+        font: "6x8",
+        id: "upcomingEvents" + 1,
         label: event.desc + " at " + Locale.time(new Date(event.startEvent), 1),
-        pad: 5,
+        pad: 2,
         bgCol: g.theme.bg,
       };
     })
@@ -64,7 +66,13 @@ function getUpcomingEvents() {
 }
 
 function dateTime() {
-  return Locale.dow(new Date(), 1) + ' ' + Locale.date(new Date(), 1) + " " + Locale.time(new Date(), 1);
+  return (
+    Locale.dow(new Date(), 1) +
+    " " +
+    Locale.date(new Date(), 1) +
+    " " +
+    Locale.time(new Date(), 1)
+  );
 }
 
 let layout = new Layout(
@@ -111,10 +119,10 @@ let layout = new Layout(
         },
         {
           type: "txt",
-          font: "6x8",
+          font: "Vector14",
           id: "time",
           label: dateTime(),
-          pad: 5,
+          pad: 2,
           bgCol: undefined,
         },
       ]),
@@ -149,19 +157,28 @@ draw();
 let calendarTimeout;
 
 function updateCalendar() {
-  layout.upcomingEvents = getUpcomingEvents();
-  layout.currentEvents = getCurrentEvents();
+  for (let x = 0; x < 10; x++) {
+    if (layout["upcomingEvents" + x]) {
+      delete layout["upcomingEvents" + x];
+    }
+    if (layout["currentEvents" + x]) {
+      delete layout["currentEvents" + x];
+    }
+  }
+  getUpcomingEvents().forEach(function (e, i) {
+    layout["upcomingEvents" + i] = e;
+  });
+  getCurrentEvents().forEach(function (e, i) {
+    layout["currentEvents" + i] = e;
+  });
   layout.render();
 
-  // 5 seconds after the next upcoming event
-  const nextUpdate = layout.upcomingEvents[0].startEvent - Date.now() + 5000;
-
-  // schedule the update for right after the next event
+  // schedule a draw for the next minute
   if (calendarTimeout) clearTimeout(calendarTimeout);
   calendarTimeout = setTimeout(function () {
     calendarTimeout = undefined;
     updateCalendar();
-  }, nextUpdate);
+  }, layout.upcomingEvents0.startEvent - Date.now() + 5000);
   console.log("updated events");
 }
 
