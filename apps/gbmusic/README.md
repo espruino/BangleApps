@@ -15,7 +15,6 @@ Download the [latest Gadgetbridge for Android here](https://f-droid.org/packages
 * Dynamic colors based on Track/Artist/Album name
 * Scrolling display for long titles
 * Automatic start when music plays
-* Time and date display
 
 ## Settings
 
