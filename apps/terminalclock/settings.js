@@ -1,5 +1,5 @@
 (function(back) {
-  var FILE = "terminal_clock.json";
+  var FILE = "terminalclock.json";
   // Load settings
   var settings = Object.assign({
     HRMinConfidence: 40,

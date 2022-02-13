@@ -128,7 +128,7 @@ var settings = Object.assign({
   showHRM: "Yes",
   showActivity: "Yes",
   showStepCount: "Yes",
-}, require('Storage').readJSON("terminal_clock.json", true) || {});
+}, require('Storage').readJSON("terminalclock.json", true) || {});
 // draw immediately at first
 draw();
 // Show launcher when middle button pressed
