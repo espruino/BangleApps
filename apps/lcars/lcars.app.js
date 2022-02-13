@@ -7,6 +7,7 @@ let settings = {
   dataRow2: "Temp",
   dataRow3: "Battery",
   speed: "kph",
+  fullscreen: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -29,6 +30,7 @@ let cGrey = "#424242";
 let lcarsViewPos = 0;
 // let hrmValue = 0;
 var plotMonth = false;
+
 
 /*
  * Requirements and globals
@@ -217,7 +219,7 @@ function drawHorizontalBgLine(color, x1, x2, y, h){
 
 
 function drawInfo(){
-  if(lcarsViewPos != 0){
+  if(lcarsViewPos != 0 || !settings.fullscreen){
     return;
   }
 
@@ -304,15 +306,26 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 27, 10);
+  if(settings.fullscreen){
+    g.drawString(timeStr, 27, 10);
+  } else {
+    g.drawString(timeStr, 27, 30);
+  }
 
   // Write date
   g.setColor(cWhite);
   g.setFontAntonioMedium();
-  var dayStr = locale.dow(currentDate, true).toUpperCase();
-  dayStr += " " + currentDate.getDate();
-  dayStr += " " + locale.month(currentDate, 1).toUpperCase();
-  g.drawString(dayStr, 30, 56);
+  if(settings.fullscreen){
+    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    dayStr += " " + currentDate.getDate();
+    dayStr += " " + locale.month(currentDate, 1).toUpperCase();
+    g.drawString(dayStr, 30, 56);
+  } else {
+    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    var date = currentDate.getDate();
+    g.drawString(dayStr, 128, 33);
+    g.drawString(date, 128, 53);
+  }
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
@@ -450,6 +463,13 @@ function draw(){
       drawPosition0();
     } else if (lcarsViewPos == 1) {
       drawPosition1();
+    }
+
+    // After drawing the watch face, we can draw the widgets
+    if(settings.fullscreen){
+      for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+    } else {
+      Bangle.drawWidgets();
     }
 }
 
@@ -653,16 +673,7 @@ Bangle.on('touch', function(btn, e){
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
-
-// After drawing the watch face, we can draw the widgets
-// Bangle.drawWidgets();
