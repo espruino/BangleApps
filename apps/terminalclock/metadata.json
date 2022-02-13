@@ -15,7 +15,7 @@
     {"name": "terminalclock.img","url": "app-icon.js","evaluate": true}
   ],
   "data": [
-    {"name": "terminalclock.json"},
+    {"name": "terminalclock.json"}
   ],
   "screenshots": [
     {"url": "screenshot1.png"},
