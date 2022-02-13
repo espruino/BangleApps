@@ -37,17 +37,32 @@ var plotMonth = false;
  */
 
 
-var bgLeft =  {
+var bgLeftFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
 };
 
-var bgRight =  {
+var bgLeftNotFullscreen = {
+  width : 27, height : 152, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAGVbtu27YCCoAJBkuWrNlAQRkCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A="))
+};
+
+var bgRightFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAnUP7y/KH4yGeVYAJrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgAA="))
 };
+
+var bgRightNotFullscreen =  {
+  width : 27, height : 152, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAxrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgA="))
+};
+
+var bgLeft = settings.fullscreen ? bgLeftFullscreen : bgLeftNotFullscreen;
+var bgRight= settings.fullscreen ? bgRightFullscreen : bgRightNotFullscreen;
 
 var iconEarth = {
   width : 50, height : 50, bpp : 3,
@@ -278,9 +293,10 @@ function drawState(){
 
 function drawPosition0(){
   // Draw background image
-  g.drawImage(bgLeft, 0, 0);
-  drawHorizontalBgLine(cBlue, 25, 120, 0, 4);
-  drawHorizontalBgLine(cBlue, 130, 176, 0, 4);
+  var offset = settings.fullscreen ? 0 : 24;
+  g.drawImage(bgLeft, 0, offset);
+  drawHorizontalBgLine(cBlue, 25, 120, offset, 4);
+  drawHorizontalBgLine(cBlue, 130, 176, offset, 4);
   drawHorizontalBgLine(cPurple, 20, 70, 80, 4);
   drawHorizontalBgLine(cPurple, 80, 176, 80, 4);
   drawHorizontalBgLine(cOrange, 35, 110, 87, 4);
@@ -309,7 +325,7 @@ function drawPosition0(){
   if(settings.fullscreen){
     g.drawString(timeStr, 27, 10);
   } else {
-    g.drawString(timeStr, 27, 30);
+    g.drawString(timeStr, 27, 33);
   }
 
   // Write date
@@ -323,8 +339,8 @@ function drawPosition0(){
   } else {
     var dayStr = locale.dow(currentDate, true).toUpperCase();
     var date = currentDate.getDate();
-    g.drawString(dayStr, 128, 33);
-    g.drawString(date, 128, 53);
+    g.drawString(dayStr, 128, 35);
+    g.drawString(date, 128, 55);
   }
 
   // Draw data
@@ -340,8 +356,11 @@ function drawPosition0(){
 
 function drawPosition1(){
   // Draw background image
-  g.drawImage(bgRight, 149, 0);
-  drawHorizontalBgLine(cBlue, 0, 140, 0, 4);
+  var offset = settings.fullscreen ? 0 : 24;
+  g.drawImage(bgRight, 149, offset);
+  if(settings.fullscreen){
+    drawHorizontalBgLine(cBlue, 0, 140, offset, 4);
+  }
   drawHorizontalBgLine(cPurple, 0, 80, 80, 4);
   drawHorizontalBgLine(cPurple, 90, 150, 80, 4);
   drawHorizontalBgLine(cOrange, 0, 50, 87, 4);
@@ -401,8 +420,13 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("M-HRM", 154, 27);
-    g.drawString("M-STEPS [K]", 154, 115);
+
+    if(settings.fullscreen){
+      g.drawString("M-HRM", 154, 27);
+      g.drawString("M-STEPS [K]", 154, 115);
+    } else {
+      g.drawString("MONTH", 154, 115);
+    }
 
   // Plot day
   } else {
@@ -442,8 +466,13 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("D-HRM", 154, 27);
-    g.drawString("D-STEPS", 154, 115);
+
+    if(settings.fullscreen){
+      g.drawString("D-HRM", 154, 27);
+      g.drawString("D-STEPS", 154, 115);
+    } else {
+      g.drawString("DAY", 154, 115);
+    }
   }
 }
 
