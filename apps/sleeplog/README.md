@@ -49,14 +49,17 @@ also provides a power saving mode using the built in movement calculation. The i
 * __PowerSaving__  
   _on_ / __off__  
   En-/Disable power saving mode. _Saves battery, but might decrease accurracy._
-* __MaxMove__ | maximal movement threshold | only available when on power saving mode  
+* __MaxMove__ | maximal movement threshold  
+  (only available when on power saving mode)  
   _50_ / _51_ / _..._ / __100__ / _..._ / _200_  
   On power saving mode the watch is considered resting if this threshold is lower or equal to the movement value of bangle's health event.
-* __NoMoThresh__ | no movement threshold | only available when not on power saving mode  
+* __NoMoThresh__ | no movement threshold  
+  (only available when not on power saving mode)  
   _0.006_ / _0.007_ / _..._ / __0.012__ / _..._ / _0.020_  
   The standard deviation over the measured values needs to be lower then this threshold to count as not moving.  
   The defaut threshold value worked best for my watch. A threshold value below 0.008 may get triggert by noise.
-* __MinDuration__ | minimal no movement duration | only available when not on power saving mode  
+* __MinDuration__ | minimal no movement duration  
+  (only available when not on power saving mode)  
   _5min_ / _6min_ / _..._ / __10min__ / _..._ / _15min_  
   If no movement is detected for this duration, the watch is considered as resting.
 * __Enabled__  
@@ -77,7 +80,8 @@ For easy access from the console or other apps the following parameters, values 
   enabled: true,                // bool   / service status indicator
   logfile: "sleeplog.log",      // string / used logfile
   resting: false,               // bool   / indicates if the watch is resting
-  status: 2,                    // int    / actual status: 0 = unknown, 1 = not worn, 2 = awake, 3 = sleeping
+  status: 2,                    // int    / actual status:
+    / undefined = service stopped, 0 = unknown, 1 = not worn, 2 = awake, 3 = sleeping
   firstnomodate: 1644435877595, // number / Date.now() from first recognised no movement, not available in power saving mode
   stop: function () { ... },    // funct  / stops the service until the next load()
   start: function () { ... },   // funct  / restarts the service
@@ -144,7 +148,9 @@ For easy access from the console or other apps the following parameters, values 
 #### To do list
 * Send the logged information to Gadgetbridge.
   _(For now I have no idea how to achieve this, help is appreciated.)_
+* View, down- and upload log functions via App Loader.
 * Calculate and display overall sleep statistics.
+* Option to automatically change power saving mode depending on time of day.
 
 #### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) or send me a [mail](mailto:banglejs@storm64.de).

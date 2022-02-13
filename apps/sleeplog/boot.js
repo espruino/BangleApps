@@ -33,7 +33,7 @@ if (sleeplog.enabled) {
       // remove all listeners
       Bangle.removeListener('accel', sleeplog.accel);
       Bangle.removeListener('health', sleeplog.health);
-      E.removeListener('kill', sleeplog.stop);
+      E.removeListener('kill', () => sleeplog.stop());
       // exit on missing global object
       if (!global.sleeplog) return;
       // write log with undefined sleeping status
@@ -55,7 +55,7 @@ if (sleeplog.enabled) {
       // add acceleration listener if defined and set status to unknown
       if (sleeplog.accel) Bangle.on('accel', sleeplog.accel);
       // add kill listener
-      E.on('kill', sleeplog.stop);
+      E.on('kill', () => sleeplog.stop());
       // read log since 5min ago and restore status to last known state or unknown
       sleeplog.status = (require("sleeplog").readLog(0, Date.now() - 3E5)[1] || [0, 0])[1]
       // update resting according to status
