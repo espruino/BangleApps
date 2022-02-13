@@ -1,13 +1,13 @@
 { 
   "id": "terminalclock",
   "name": "Terminal Clock",
-  "shortName":"TerminalClock",
-  "icon": "app.png",
+  "shortName":"Terminal Clock",
+  "description": "A terminal cli like clock displaying multiple sensor data",
   "version":"0.01",
+  "icon": "app.png",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "description": "A terminal cli like clock displaying multiple sensor data",
   "readme": "README.md",
   "storage": [
     {"name": "terminalclock.app.js","url": "app.js"},
@@ -20,5 +20,5 @@
   "screenshots": [
     {"url": "screenshot1.png"},
     {"url": "screenshot2.png"}
-   ]
+  ]
 }
