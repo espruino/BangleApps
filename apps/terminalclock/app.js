@@ -92,19 +92,19 @@ function draw(){
   clearWatchIfNeeded(now); // mostly to not have issues when changing days
   drawTime(now, curPos);
   curPos++;
-  if(settings.showDate == "Yes"){
+  if(settings.showDate){
     drawDate(now, curPos);
     curPos++;
   }
-  if(settings.showHRM == "Yes"){
+  if(settings.showHRM){
     drawHRM(curPos);
     curPos++;
   }
-  if(settings.showActivity == "Yes"){
+  if(settings.showActivity){
     drawActivity(curPos);
     curPos++;
   }
-  if(settings.showStepCount == "Yes"){
+  if(settings.showStepCount){
     drawStepCount(curPos);
     curPos++;
   }
@@ -124,10 +124,10 @@ g.clear();
 var settings = Object.assign({
   // default values
   HRMinConfidence: 40,
-  showDate: "Yes",
-  showHRM: "Yes",
-  showActivity: "Yes",
-  showStepCount: "Yes",
+  showDate: true,
+  showHRM: true,
+  showActivity: true,
+  showStepCount: true,
 }, require('Storage').readJSON("terminalclock.json", true) || {});
 // draw immediately at first
 draw();
