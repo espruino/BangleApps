@@ -2,7 +2,7 @@
   "id": "gbmusic",
   "name": "Gadgetbridge Music Controls",
   "shortName": "Music Controls",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Control the music on your Gadgetbridge-connected phone",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot_v1.png"},{"url":"screenshot_v2.png"}],
@@ -14,7 +14,7 @@
   "storage": [
     {"name":"gbmusic.app.js","url":"app.js"},
     {"name":"gbmusic.settings.js","url":"settings.js"},
-    {"name":"gbmusic.wid.js","url":"widget.js"},
+    {"name":"gbmusic.boot.js","url":"boot.js"},
     {"name":"gbmusic.img","url":"icon.js","evaluate":true}
   ],
   "data": [{"name":"gbmusic.json"},{"name":"gbmusic.load.json"}]
