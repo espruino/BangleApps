@@ -195,9 +195,7 @@ function makeUI() {
       {
         type: "h", c: [
           {width: 3},
-          {id: "prev", type: "custom", height: 15, width: 15, icon: "previous", render: rIcon, bgCol: g.theme.bg},
           {id: "date", type: "txt", halign: 0, valign: 1, label: "", font: "8%", fillx: 1, bgCol: g.theme.bg},
-          {id: "next", type: "custom", height: 15, width: 15, icon: "next", render: rIcon, bgCol: g.theme.bg},
           BANGLE2 ? {width: 3} : {id: "down", type: "txt", label: " -", font: "6x8:2"},
         ],
       },
@@ -295,16 +293,10 @@ function drawDateTime() {
 }
 
 function drawControls() {
-  let l = layout;
+  if (BANGLE2) return;
   const cc = a => (a ? "#f00" : "#0f0"); // control color: red for active, green for inactive
-  if (!BANGLE2) {
-    l.up.col = cc("volumeup" in tCommand);
-    l.down.col = cc("volumedown" in tCommand);
-  }
-  l.prev.icon = (stat==="play") ? "pause" : "previous";
-  l.prev.col = cc("prev" in tCommand || "pause" in tCommand);
-  l.next.icon = (stat==="play") ? "next" : "play";
-  l.next.col = cc("next" in tCommand || "play" in tCommand);
+  layout.up.col = cc("volumeup" in tCommand);
+  layout.down.col = cc("volumedown" in tCommand);
   layout.render();
 }
 
@@ -473,37 +465,16 @@ function sendCommand(command) {
   drawControls();
 }
 
-// touch/swipe: navigation
 function togglePlay() {
   sendCommand(stat==="play" ? "pause" : "play");
-}
-function pausePrev() {
-  sendCommand(stat==="play" ? "pause" : "previous");
-}
-function nextPlay() {
-  sendCommand(stat==="play" ? "next" : "play");
 }
 
 /**
  * Setup touch+swipe for Bangle.js 1
  */
 function touch1() {
-  Bangle.on("touch", side => {
-    if (!Bangle.isLCDOn()) {return;} // for <2v10 firmware
-    switch(side) {
-      case 1:
-        pausePrev();
-        break;
-      case 2:
-        nextPlay();
-        break;
-      default:
-        togglePlay();
-        break;
-    }
-  });
+  Bangle.on("touch", togglePlay);
   Bangle.on("swipe", dir => {
-    if (!Bangle.isLCDOn()) {return;} // for <2v10 firmware
     sendCommand(dir===1 ? "previous" : "next");
   });
 }
@@ -511,16 +482,7 @@ function touch1() {
  * Setup touch+swipe for Bangle.js 2
  */
 function touch2() {
-  Bangle.on("touch", (side, xy) => {
-    const ar = Bangle.appRect;
-    if (xy.x<ar.x+ar.w/3) {
-      pausePrev();
-    } else if (xy.x>ar.x+ar.w*2/3) {
-      nextPlay();
-    } else {
-      togglePlay();
-    }
-  });
+  Bangle.on("touch", togglePlay);
   // swiping
   let drag;
   Bangle.on("drag", e => {
