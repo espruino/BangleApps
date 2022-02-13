@@ -25,7 +25,7 @@ function drawLog(topY, viewUntil) {
   var y = topY + graphHeight;
 
   // read 12h wide log
-  var log = require("sleeplog").readLog(timestamp0, viewUntil.valueOf());
+  var log = require("sleeplog").readLog(0, timestamp0, viewUntil.valueOf());
 
   // format log array if not empty
   if (log.length) {

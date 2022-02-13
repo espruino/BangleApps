@@ -9,7 +9,7 @@
     minconsec: 18E5, // 30min in ms
     tempthresh: 27, // every temperature above ist registered as worn
     powersaving: false, // disables ESS and uses build in movement detection
-    maxmove: 44, // movement threshold on power saving mode
+    maxmove: 100, // movement threshold on power saving mode
     nomothresh: 0.012, // values lower than 0.008 getting triggert by noise
     sleepthresh: 577, // 577 times no movement * 1.04s window width > 10min
     winwidth: 13, // 13 values, read with 12.5Hz = every 1.04s
@@ -97,9 +97,9 @@
       },
       "MaxMove": {
         value: settings.maxmove,
-        step: 44,
+        step: 1,
         onchange: function(v) {
-          this.value = v = circulate(40, 100, v);
+          this.value = v = circulate(50, 200, v);
           writeSetting("maxmove", v);
         }
       },

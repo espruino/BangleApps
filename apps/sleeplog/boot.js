@@ -12,7 +12,7 @@ global.sleeplog = Object.assign({
   winwidth: 13, // 13 values, read with 12.5Hz = every 1.04s
   nomothresh: 0.012, // values lower than 0.008 getting triggert by noise
   sleepthresh: 577, // 577 times no movement * 1.04s window width > 10min
-  maxmove: 44, // movement threshold on power saving mode
+  maxmove: 100, // movement threshold on power saving mode
   tempthresh: 27, // every temperature above ist registered as worn
 }, require("Storage").readJSON("sleeplog.json", true) || {});
 
@@ -28,41 +28,6 @@ if (sleeplog.enabled) {
     resting: undefined,
     status: undefined,
 
-    // define logging function
-    log: function(date, status, temperature, info) {
-      // exit on wrong this
-      if (this.enabled === undefined) return;
-      // skip logging if logfile is undefined or does not end with ".log"
-      if (!this.logfile || !this.logfile.endsWith(".log")) return;
-      // prevent logging on implausible date
-      if (date < 9E11 || Date() < 9E11) return;
-
-      // set default value for status
-      status = status || 0;
-
-      // define storage
-      var storage = require("Storage");
-
-      // read previous logfile
-      var log = storage.read(this.logfile) || "";
-      log = log ? JSON.parse(atob(log)) || [] : [];
-
-      // remove last state if it was unknown and is less then 10min ago
-      if (log.length > 0 && log[0][1] === 0 &&
-        Math.floor(Date.now()) - log[0][0] < 600000) log.shift();
-
-      // add actual status at the first position if it has changed
-      if (log.length === 0 || log[0][1] !== status)
-        log.unshift(info ? [date, status, temperature, info] : temperature ? [date, status, temperature] : [date, status]);
-
-      // write log to storage
-      storage.write(this.logfile, btoa(JSON.stringify(log)));
-
-      // clear variables
-      log = undefined;
-      storage = undefined;
-    },
-
     // define stop function (logging will restart if enabled and boot file is executed)
     stop: function() {
       // remove all listeners
@@ -72,7 +37,7 @@ if (sleeplog.enabled) {
       // exit on missing global object
       if (!global.sleeplog) return;
       // write log with undefined sleeping status
-      sleeplog.log(Math.floor(Date.now()));
+      require("sleeplog").writeLog(0, [Math.floor(Date.now()), 0]);
       // reset always used cached values
       sleeplog.resting = undefined;
       sleeplog.status = undefined;
@@ -91,14 +56,20 @@ if (sleeplog.enabled) {
       if (sleeplog.accel) Bangle.on('accel', sleeplog.accel);
       // add kill listener
       E.on('kill', sleeplog.stop);
-      // set status to unknown
-      sleeplog.status = 0;
+      // read log since 5min ago and restore status to last known state or unknown
+      sleeplog.status = (require("sleeplog").readLog(0, Date.now() - 3E5)[1] || [0, 0])[1]
+      // update resting according to status
+      sleeplog.resting = sleeplog.status % 2;
+      // write restored status to log
+      require("sleeplog").writeLog(0, [Math.floor(Date.now()), sleeplog.status]);
     }
   });
 
   // check for power saving mode
   if (sleeplog.powersaving) {
     // power saving mode using build in movement detection
+    // delete unused settings
+    ["winwidth", "nomothresh", "sleepthresh"].forEach(property => delete sleeplog[property]);
     // add cached values and functions to global object
     sleeplog = Object.assign(sleeplog, {
       // define health listener function
@@ -107,24 +78,27 @@ if (sleeplog.enabled) {
         var gObj = global.sleeplog;
         if (!gObj) return;
 
+        // calculate timestamp for this measurement
+        var timestamp = Math.floor(Date.now() - 6E5);
+
         // check for non-movement according to the threshold
         if (data.movement <= gObj.maxmove) {
           // check resting state
-          if (gObj.resting !== true) {
+          if (true || gObj.resting !== true) { // log always for testing
             // change resting state
             gObj.resting = true;
             // set status to sleeping or worn
             gObj.status = E.getTemperature() > gObj.tempthresh ? 3 : 1;
-            // write status to log, correct timestamp by health interval in ms
-            gObj.log(Math.floor(Date.now() - 6E5), gObj.status, E.getTemperature());
+            // write status to log, 
+            require("sleeplog").writeLog(0, [timestamp, gObj.status, E.getTemperature(), data.movement]);
           }
         } else {
           // check resting state
-          if (gObj.resting !== false) {
-            // change resting state, set status and write to log as awake
+          if (true || gObj.resting !== false) { // log always for testing
+            // change resting state, set status and write status to log
             gObj.resting = false;
             gObj.status = 2;
-            gObj.log(Math.floor(Date.now()), 2);
+            require("sleeplog").writeLog(0, [timestamp, 2, E.getTemperature(), data.movement]);
           }
         }
       }
@@ -164,18 +138,19 @@ if (sleeplog.enabled) {
             this.resting = true;
             // set status to sleeping or worn
             this.status = E.getTemperature() > this.tempthresh ? 3 : 1;
-            // write status to log, correct timestamp by health interval in ms
-            this.log(this.firstnomodate, this.status, E.getTemperature());
+            // write status to log, with first no movement timestamp
+            require("sleeplog").writeLog(0, [this.firstnomodate, this.status, E.getTemperature()]);
           }
         } else {
           // reset non-movement sections count
           this.nomocount = 0;
           // check resting state
           if (this.resting !== false) {
-            // change resting state, set status and write to log as awake
+            // change resting state and set status
             this.resting = false;
             this.status = 2;
-            this.log(Math.floor(Date.now()), 2);
+            // write status to log 
+            require("sleeplog").writeLog(0, [Math.floor(Date.now()), 2]);
           }
         }
       }
