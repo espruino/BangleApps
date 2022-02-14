@@ -4,8 +4,17 @@ const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "pastel.json";
 const LOCATION_FILE = "mylocation.json";
+const w = g.getWidth();
+const h = g.getHeight();
 let settings;
 let location;
+
+// variable for controlling idle alert
+let lastStep = getTime();
+let lastStepTime = '??';
+let warned = 0;
+let idle = false;
+let IDLE_MINUTES = 26;
 
 // cloud, sun, partSun, snow, rain, storm, error
 // create 1 bit, max contrast, brightness set to 85
@@ -16,16 +25,24 @@ var snowIcon = require("heatshrink").decompress(atob("kEggITQj/AAYM98ADBsEwAYPAj
 var rainIcon = require("heatshrink").decompress(atob("kEggIPMh+AAYM/8ADBuFwAYPgmADB4EbAYOAj/ggOAhnwg4aBnAeCjEcCIMMjADCDoQDHjAPCnAXCuEP///8EDAYJECAAXBwkAgPDhwDBwUMgEEhkggEOjFgFgMQLYQAOA=="));
 var errIcon = require("heatshrink").decompress(atob("kEggILIgOAAYsD4ADBg/gAYMGsADBhkwAYsYjADCjgDBmEMAYNxxwDBsOGAYPBwYDEgOBwOAgYDB4EDHYPAgwDBsADDhgDBFIcwjAHBjE4AYMcmADBhhNCKIcG/4AGOw4A=="));
 
+// saves having to recode all the small font calls
+function setSmallFont() {
+  g.setFontLatoSmall();
+}
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
   settings.font = settings.font||"Lato";
+  settings.idle_check = settings.idle_check||true;
 }
 
 // requires the myLocation app
 function loadLocation() {
-  location = require("Storage").readJSON(LOCATION_FILE,1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  location = require("Storage").readJSON(LOCATION_FILE,1)||{};
+  location.lat = location.lat||51.5072;
+  location.lon = location.lon||0.1276;
+  location.location = location.location||"London";
 }
 
 function extractTime(d){
@@ -71,17 +88,18 @@ function getSteps() {
     if (WIDGETS.wpedom !== undefined) 
       return WIDGETS.wpedom.getSteps();
     else
-      return '???'
+      return '???';
   }
 }
 
 const infoData = {
   ID_BLANK: { calc: () => '' },
-  ID_DATE:  { calc: () => {var d = (new Date).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
-  ID_DAY:   { calc: () => {var d = require("locale").dow(new Date).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
+  ID_DATE:  { calc: () => {var d = (new Date()).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
+  ID_DAY:   { calc: () => {var d = require("locale").dow(new Date()).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
   ID_SR:    { calc: () => 'Sunrise: ' + sunRise },
   ID_SS:    { calc: () => 'Sunset: ' + sunSet },
   ID_STEP:  { calc: () => 'Steps: ' + getSteps() },
+  ID_LAST:  { calc: () => 'Last Step: ' + lastStepTime },
   ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
   ID_MEM:   { calc: () => {var val = process.memory(false); return 'Ram: ' + Math.round(val.usage*100/val.total) + '%';} },
   ID_ID:    { calc: () => {var val = NRF.getAddress().split(':'); return 'Id: ' + val[4] + val[5];} },
@@ -152,6 +170,14 @@ function getWeather() {
 }
 
 function draw() {
+  if (!idle)
+    drawClock();
+  else
+    drawIdle();
+  queueDraw();
+}
+
+function drawClock() {
   var d = new Date();
   var da = d.toString().split(" ");
   var time = da[4].substr(0,5);
@@ -166,11 +192,8 @@ function draw() {
   if (parseInt(hh) > 12)
     hh = h2.substr(h2.length -2);
 
-  var w = g.getWidth();
-  var h = g.getHeight();
   var x = (g.getWidth()/2);
   var y = (g.getHeight()/3);
-
   var weatherJson = getWeather();
   var w_temp;
   var w_icon;
@@ -190,7 +213,8 @@ function draw() {
   }
 
   g.reset();
-  g.clearRect(0, 30, w, h - 24);
+  g.setColor(g.theme.bg);
+  g.fillRect(Bangle.appRect);
   
   // draw a grid like graph paper
   if (settings.grid && process.env.HWVERSION !=1) {
@@ -249,6 +273,141 @@ function draw() {
   queueDraw();
 }
 
+
+/////////////////   IDLE TIMER /////////////////////////////////////
+
+function log_debug(o) {
+  //print(o);
+}
+
+function drawIdle() {
+  let mins = Math.round((getTime() - lastStep) / 60);
+  g.reset();
+  g.setColor(g.theme.bg);
+  g.fillRect(Bangle.appRect);
+  g.setColor(g.theme.fg);
+  setSmallFont();
+  g.setFontAlign(0, 0);
+  g.drawString('Last step was', w/2, (h/3));
+  g.drawString(mins + ' minutes ago', w/2, 20+(h/3));
+  dismissBtn.draw();
+}
+
+///////////////   BUTTON CLASS ///////////////////////////////////////////
+
+// simple on screen button class
+function BUTTON(name,x,y,w,h,c,f,tx) {
+  this.name = name;
+  this.x = x;
+  this.y = y;
+  this.w = w;
+  this.h = h;
+  this.color = c;
+  this.callback = f;
+  this.text = tx;
+}
+
+// if pressed the callback
+BUTTON.prototype.check = function(x,y) {
+  //console.log(this.name + ":check() x=" + x + " y=" + y +"\n");
+  
+  if (x>= this.x && x<= (this.x + this.w) && y>= this.y && y<= (this.y + this.h)) {
+    log_debug(this.name + ":callback\n");
+    this.callback();
+    return true;
+  }
+  return false;
+};
+
+BUTTON.prototype.draw = function() {
+  g.setColor(this.color);
+  g.fillRect(this.x, this.y, this.x + this.w, this.y + this.h);
+  g.setColor("#000"); // the icons and boxes are drawn black
+  setSmallFont();
+  g.setFontAlign(0, 0);
+  g.drawString(this.text, (this.x + this.w/2), (this.y + this.h/2));
+  g.drawRect(this.x, this.y, (this.x + this.w), (this.y + this.h));
+};
+
+function dismissPrompt() {
+  idle = false;
+  warned = false;
+  lastStep = getTime();
+  Bangle.buzz(100);
+  draw();
+}
+
+var dismissBtn = new BUTTON("big",0, 3*h/4 ,w, h/4, "#0ff", dismissPrompt, "Dismiss");
+
+Bangle.on('touch', function(button, xy) {
+  if (idle && dismissBtn.check(xy.x, xy.y)) return;
+});
+
+// if we get a step then we are not idle
+Bangle.on('step', s => {
+  setLastStepTime();
+  lastStep = getTime();
+  // redraw if we had been idle
+  if (idle == true) {
+    dismissPrompt();
+  }
+  idle = false;
+  warned = 0;
+});
+
+function setLastStepTime() {
+  var date = new Date();
+  lastStepTime = require("locale").time(date,1);
+}
+
+function checkIdle() {
+  if (!settings.idle_check) {
+    idle = false;
+    warned = false;
+    return;
+  }
+  
+  let hour = (new Date()).getHours();
+  let active = (hour >= 9 && hour < 21);
+  //let active = true;
+  let dur = getTime() - lastStep;
+
+  if (active && dur > IDLE_MINUTES * 60) {
+    drawIdle();
+    if (warned++ < 3) {
+      buzzer(warned);
+      log_debug("checkIdle: warned=" + warned);
+      Bangle.setLocked(false);
+    }
+    idle = true;
+  } else {
+    idle = false;
+    warned = 0;
+  }
+}
+
+setLastStepTime();
+
+// timeout for multi-buzzer
+var buzzTimeout;
+
+// n buzzes
+function buzzer(n) {
+  log_debug("buzzer n=" + n);
+
+  if (n-- < 1) return;
+  Bangle.buzz(250);
+  
+  if (buzzTimeout) clearTimeout(buzzTimeout);
+  buzzTimeout = setTimeout(function() {
+    buzzTimeout = undefined;
+    buzzer(n);
+  }, 500);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
 // timeout used to update every minute
 var drawTimeout;
 
@@ -258,6 +417,7 @@ function queueDraw() {
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     prevInfo();
+    checkIdle();
     draw();
   }, 60000 - (Date.now() % 60000));
 }
