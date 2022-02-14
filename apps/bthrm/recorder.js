@@ -32,7 +32,7 @@
         Bangle.removeListener('BTHRM', onHRM);
         if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(0,"recorder");
       },
-      draw : (x,y) => g.setColor((Bangle.isBTHRMConnected && Bangle.isBTHRMConnected())?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+      draw : (x,y) => g.setColor((bpm != "")?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
     };
   }
 })
