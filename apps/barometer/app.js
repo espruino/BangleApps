@@ -110,9 +110,13 @@ drawScaleLabels();
 drawIcons();
 
 try {
-  Bangle.getPressure().then(data => {
-    drawHand(Math.round(data.pressure));
-  });
+  function baroHandler(data) {
+    if (data===undefined) // workaround for https://github.com/espruino/BangleApps/issues/1429
+      setTimeout(() => Bangle.getPressure().then(baroHandler), 500);
+    else
+      drawHand(Math.round(data.pressure));
+  }
+  Bangle.getPressure().then(baroHandler);
 } catch(e) {
   print(e.message);
   print("barometer not supporter, show a demo value");
