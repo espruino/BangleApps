@@ -34,3 +34,7 @@ clothing catches it.
   is 160*160 and is larger than required. The reason for this is that
   I plan to use this watch face with others in a multiclock format
   and want to be able to reuse the arrayBuffer with other clocks.
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

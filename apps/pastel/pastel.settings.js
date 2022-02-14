@@ -5,6 +5,7 @@
   let s = {
     'grid': false,
     'weather': false,
+    'idle_check': true,
     'font': "Lato"
   }
 
@@ -49,6 +50,24 @@
       format: () => (s.weather ? 'Yes' : 'No'),
       onchange: () => {
         s.weather = !s.weather;
+        save();
+      },
+    },
+    // for use when the new menu system goes live
+    /*
+    'Idle Warning': {
+      value: s.idle_check,
+      onchange : v => {
+        s.idle_check = v;
+        save();
+      },
+    },
+    */
+    'Idle Warning': {
+      value: s.idle_check,
+      format: () => (s.idle_check ? 'Yes' : 'No'),
+      onchange: () => {
+        s.idle_check = !s.idle_check;
         save();
       },
     }
