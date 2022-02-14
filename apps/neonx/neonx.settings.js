@@ -21,12 +21,13 @@
 
   const menu = {
     "" : { "title":"Neon X & IO"},
+    "< back": back,
     "Neon IO X": {
       value: 0 | neonXSettings.io,
       min: 0, max: 1,
       format: v => v ? "On" : "Off",
       onchange: v => {
-        neonXSettings.showDate = v;
+        neonXSettings.io = v;
         updateSettings();
       }
     },
@@ -47,8 +48,7 @@
         neonXSettings.showDate = v;
         updateSettings();
       }
-    },
-    "< back": back
+    }
   };
   E.showMenu(menu);
 })
