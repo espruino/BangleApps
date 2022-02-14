@@ -7,10 +7,20 @@ require("Storage").write("ruuviwatch.info", {
 
 const lookup = {};
 const ruuvis = [];
+const names = require("Storage").readJSON("RuuviNames") || {};
 let current = 0;
 let scanning = false;
 
+let paused = false;
+
 const SCAN_FREQ = 1000 * 30;
+
+// ALERT LIMITS
+LIMIT_SAUNA = 60;
+LIMIT_FRIDGE = 4;
+LIMIT_FREEZER = -18;
+// TODO add wine cellar limits
+// TODO configurable limits
 
 // Fonts
 const FONT_L = "Vector:60";
@@ -80,8 +90,8 @@ function p(data) {
     int2Hex(data[OFFSET + 23]),
   ].join(":");
 
-  robject.name =
-    "Ruuvi " + int2Hex(data[OFFSET + 22]) + int2Hex(data[OFFSET + 23]);
+  robject.id = int2Hex(data[OFFSET + 22]) + int2Hex(data[OFFSET + 23]);
+
   return robject;
 }
 
@@ -114,6 +124,7 @@ function drawAge() {
 }
 
 function redrawAge() {
+  if (paused) return;
   const originalColor = g.getColor();
   g.clearRect(0, SCANNING_Y - 10, g.getWidth(), SCANNING_Y + 10);
   g.setFont(FONT_S);
@@ -128,9 +139,15 @@ function redrawAge() {
   g.setColor(originalColor);
 }
 
+function getName(id) {
+  let name = names[id] || "Ruuvi";
+  return name + " (" + id + ")";
+}
+
 function redraw() {
   g.clear();
   g.setColor("#ffffff");
+  g.setFontAlign(0, 0);
 
   if (ruuvis.length > 0 && ruuvis[current]) {
     const ruuvi = ruuvis[current];
@@ -145,14 +162,22 @@ function redraw() {
 
     // name
     g.setFont(FONT_M);
-    g.drawString(ruuvi.name, CENTER, NAME_Y);
+    g.drawString(getName(ruuvi.id), CENTER, NAME_Y);
 
     // age
     redrawAge();
 
     // temp
     g.setFont(FONT_L);
-    g.drawString(ruuvi.temperature.toFixed(2) + "°c", CENTER, TEMP_Y);
+    if (
+      (ruuvi.name.startsWith("Sauna") && ruuvi.temperature > LIMIT_SAUNA) ||
+      (ruuvi.name.startsWith("Fridge") && ruuvi.temperature > LIMIT_FRIDGE) ||
+      (ruuvi.name.startsWith("Freezer") && ruuvi.temperature > LIMIT_FREEZER)
+    ) {
+      g.setColor("#ffe800");
+    }
+    g.drawString(getTempString(ruuvi.temperature), CENTER, TEMP_Y);
+    g.setColor("#ffffff");
 
     // humid & pressure
     g.setFont(FONT_M);
@@ -175,8 +200,28 @@ function redraw() {
   }
 }
 
+function getTempString(temp) {
+  // workaround: built-in 'locale' looses precision :-(
+  let unit = "°C";
+  const isF = require("locale").temp(1).endsWith("F");
+  if (isF) {
+    unit = "°F";
+    temp = (temp + 40) * 1.8 - 40;
+  }
+  return temp.toFixed(2) + unit;
+}
+
+function attention(message) {
+  // message ignored for now
+  Bangle.beep();
+  Bangle.beep();
+  Bangle.beep();
+  Bangle.buzz();
+}
+
 function scan() {
   if (scanning) return;
+  if (paused) return;
   scanning = true;
   NRF.findDevices(
     function (devices) {
@@ -184,11 +229,36 @@ function scan() {
       devices.forEach((device) => {
         const data = p(device.data);
         data.time = new Date().getTime();
-        const idx = lookup[data.name];
+        data.name = names[data.id] || "Ruuvi";
+
+        const idx = lookup[data.id];
         if (idx !== undefined) {
+          const old = ruuvis[idx];
+          if (
+            data.name.startsWith("Sauna") &&
+            old.temperature < LIMIT_SAUNA &&
+            data.temperature > LIMIT_SAUNA
+          ) {
+            current = idx;
+            attention(data.name + " ready!");
+          } else if (
+            data.name.startsWith("Fridge") &&
+            old.temperature < LIMIT_FRIDGE &&
+            data.temperature > LIMIT_FRIDGE
+          ) {
+            current = idx;
+            attention(data.name + " warning!");
+          } else if (
+            data.name.startsWith("Freezer") &&
+            old.temperature < LIMIT_FREEZER &&
+            data.temperature > LIMIT_FREEZER
+          ) {
+            current = idx;
+            attention(data.name + " warning!");
+          }
           ruuvis[idx] = data;
         } else {
-          lookup[data.name] = ruuvis.push(data) - 1;
+          lookup[data.id] = ruuvis.push(data) - 1;
           foundNew = true;
         }
       });
@@ -202,23 +272,195 @@ function scan() {
   );
 }
 
+function setName(newName) {
+  const ruuvi = ruuvis[current];
+  ruuvi.name = newName;
+  names[ruuvi.id] = ruuvi.name;
+  require("Storage").writeJSON("RuuviNames", names);
+}
+
+function closeMenu() {
+  E.showMenu();
+  paused = false;
+  redraw();
+}
+
+function showMenu() {
+  // TODO make this DRY + indicate current in menu
+  if (!ruuvis.length) {
+    scan();
+    return;
+  }
+  paused = true;
+  const ruuvi = ruuvis[current];
+  const id = ruuvi.id;
+  const name = getName(id);
+
+  var mainmenu = {
+    "": { title: name },
+    "Scan now": function () {
+      closeMenu();
+      scan();
+    },
+    "Rename tag": function () {
+      E.showMenu(namemenu);
+    },
+    "< Back": function () {
+      closeMenu();
+    }, // remove the menu
+  };
+  // Submenu
+  var namemenu = {
+    "": { title: "Rename " + name },
+    Ruuvi: function () {
+      setName("Ruuvi");
+      closeMenu();
+    },
+    Indoors: function () {
+      setName("Indoors");
+      closeMenu();
+    },
+    Downstairs: function () {
+      setName("Downstairs");
+      closeMenu();
+    },
+    Upstairs: function () {
+      setName("Upstairs");
+      closeMenu();
+    },
+    Attic: function () {
+      setName("Attic");
+      closeMenu();
+    },
+    Basement: function () {
+      setName("Basement");
+      closeMenu();
+    },
+    Kitchen: function () {
+      setName("Kitchen");
+      closeMenu();
+    },
+    Pantry: function () {
+      setName("Pantry");
+      closeMenu();
+    },
+    "Living room": function () {
+      setName("Living room");
+      closeMenu();
+    },
+    "Dining room": function () {
+      setName("Dining room");
+      closeMenu();
+    },
+    Office: function () {
+      setName("Office");
+      closeMenu();
+    },
+    Bedroom: function () {
+      setName("Bedroom");
+      closeMenu();
+    },
+    Bathroom: function () {
+      setName("Bathroom");
+      closeMenu();
+    },
+    Sauna: function () {
+      setName("Sauna");
+      closeMenu();
+    },
+    "Wine cellar": function () {
+      setName("Wine cellar");
+      closeMenu();
+    },
+    Outdoors: function () {
+      setName("Outdoors");
+      closeMenu();
+    },
+    Porch: function () {
+      setName("Porch");
+      closeMenu();
+    },
+    Backyard: function () {
+      setName("Backyard");
+      closeMenu();
+    },
+    Garage: function () {
+      setName("Garage");
+      closeMenu();
+    },
+    Greenhouse: function () {
+      setName("Greenhouse");
+      closeMenu();
+    },
+    Shed: function () {
+      setName("Shed");
+      closeMenu();
+    },
+    Fridge: function () {
+      setName("Fridge");
+      closeMenu();
+    },
+    Freezer: function () {
+      setName("Freezer");
+      closeMenu();
+    },
+    Dryer: function () {
+      setName("Dryer");
+      closeMenu();
+    },
+    Washer: function () {
+      setName("Washer");
+      closeMenu();
+    },
+    "< Back": function () {
+      E.showMenu(mainmenu);
+    },
+  };
+  // Actually display the menu
+  E.showMenu(mainmenu);
+}
+
+function nextPage() {
+  current++;
+  if (current >= ruuvis.length) {
+    current = 0;
+    scan();
+  }
+  redraw();
+}
+
+function prevPage() {
+  current--;
+  if (current < 0) {
+    current = ruuvis.length - 1;
+    scan();
+  }
+  redraw();
+}
+
 // START
+Bangle.on("swipe", function (dir) {
+  if (paused) return;
+  if (dir > 0) {
+    prevPage();
+  } else {
+    nextPage();
+  }
+});
 // Button 1 pages up
 setWatch(
   () => {
-    current--;
-    if (current < 0) {
-      current = ruuvis.length - 1;
-    }
-    redraw();
+    if (paused) return;
+    prevPage();
   },
   BTN1,
   { repeat: true }
 );
-// button triggers scan
+// button triggers menu
 setWatch(
   () => {
-    scan();
+    if (paused) return;
+    showMenu();
   },
   BTN2,
   { repeat: true }
@@ -226,11 +468,8 @@ setWatch(
 // button 3 pages down
 setWatch(
   () => {
-    current++;
-    if (current >= ruuvis.length) {
-      current = 0;
-    }
-    redraw();
+    if (paused) return;
+    nextPage();
   },
   BTN3,
   { repeat: true }

@@ -8,3 +8,7 @@ it is useful to know if it has been switched on or not.
 - Uses Bangle.isGPSOn()
 - Shows in grey when the GPS is off
 - Shows in amber when the GPS is on
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)
