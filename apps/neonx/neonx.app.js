@@ -2,7 +2,7 @@
  * Bangle.js Neon X/IO X Clock
  *
  * Author: Bundyo
- * Repo:
+ * Repo: https://github.com/bundyo/BangleApps/tree/master/apps/neonx
  * Initial code based on Numerals Clock by Raik M.
  * Pebble Watchface Author: Sam Jerichow
  * Created: February 2022

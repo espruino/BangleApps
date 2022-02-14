@@ -4,9 +4,9 @@
 |---------------------------------|--------------------------------------|
 | <center>Neon X</center>         | <center>Neon IO X</center>           |
 
-This is a clock based on Pebble's Neon X and Neon IO X watchfaces. 
-Can be switched between in Settings menu.
-It can be accessed through the app/widget settings menu of the Bangle.js
+This is a clock based on Pebble's Neon X and Neon IO X watchfaces by Sam Jerichow. 
+Can be switched between in the Settings menu, which can be accessed through 
+the app/widget settings menu of the Bangle.js
 
 ## Settings
 
