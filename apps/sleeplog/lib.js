@@ -5,9 +5,8 @@ exports = {
     if (typeof global.sleeplog !== "object") return;
 
     // set default logfile
-    logfile = logfile.endsWith(".log") ? logfile :
-      logfile === false ? undefined :
-      "sleeplog.log";
+    logfile = (typeof logfile === "string" && logfile.endsWith(".log")) ? logfile :
+      logfile === false ? undefined : "sleeplog.log";
 
     // stop if enabled
     if (global.sleeplog.enabled) global.sleeplog.stop();

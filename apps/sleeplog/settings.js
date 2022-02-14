@@ -134,7 +134,7 @@
         format: v => v === true ? "default" : v ? "custom" : "off",
         onchange: function(v) {
           if (v !== "custom") {
-            settings.logfile = v ? "sleeplog.log" : undefined;
+            settings.logfile = v ? "sleeplog.log" : false;
             changeRestart();
           }
         }
