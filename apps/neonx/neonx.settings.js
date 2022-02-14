@@ -21,7 +21,7 @@
 
   const menu = {
     "" : { "title":"Neon X & IO"},
-    "< back": back,
+    "< Back": back,
     "Neon IO X": {
       value: 0 | neonXSettings.io,
       min: 0, max: 1,
