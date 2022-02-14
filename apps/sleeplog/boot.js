@@ -84,21 +84,21 @@ if (sleeplog.enabled) {
         // check for non-movement according to the threshold
         if (data.movement <= gObj.maxmove) {
           // check resting state
-          if (true || gObj.resting !== true) { // log always for testing
+          if (gObj.resting !== true) {
             // change resting state
             gObj.resting = true;
             // set status to sleeping or worn
             gObj.status = E.getTemperature() > gObj.tempthresh ? 3 : 1;
             // write status to log, 
-            require("sleeplog").writeLog(0, [timestamp, gObj.status, E.getTemperature(), data.movement]);
+            require("sleeplog").writeLog(0, [timestamp, gObj.status, E.getTemperature()]);
           }
         } else {
           // check resting state
-          if (true || gObj.resting !== false) { // log always for testing
+          if (gObj.resting !== false) {
             // change resting state, set status and write status to log
             gObj.resting = false;
             gObj.status = 2;
-            require("sleeplog").writeLog(0, [timestamp, 2, E.getTemperature(), data.movement]);
+            require("sleeplog").writeLog(0, [timestamp, 2]);
           }
         }
       }

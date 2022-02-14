@@ -144,13 +144,8 @@
     (settings.powersaving ? ["NoMoThresh", "MinDuration"] : ["MaxMove"]).forEach(property => delete mainMenu[property]);
     var menu = E.showMenu(mainMenu);
     // workaround to display changed entries correct
-    if (selected) setTimeout(_ => {
-      menu.move(1);
-      menu.move(1);
-      menu.move(-1);
-      menu.move(-1);
-      menu.move(-1);
-    }, 100);
+    // https://github.com/espruino/Espruino/issues/2149
+    if (selected) setTimeout(m => m.draw(), 1, menu);
   }
 
   // draw main menu
