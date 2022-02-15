@@ -5,7 +5,16 @@ Mike Bennett mike[at]kereru.com
 1.01 : Third mode large clock display
 1.02 : add smoothing with kalman filter
 */
-var v = '1.02g';
+//var v = '1.02g';
+
+const BANGLEJS2 = process.env.HWVERSION==2;
+const screenH  = g.getHeight();
+const screenH_Half        = screenH / 2;
+const screenH_Third       = screenH / 3;
+const screenH_TwoThirds   = screenH * 2 / 3;
+const screenW  = g.getWidth();
+const screenW_Half        = screenW / 2;
+const fontFactorB2 = 2/3;
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
 var KalmanFilter = (function () {
@@ -171,10 +180,11 @@ var KalmanFilter = (function () {
 }());
 
 
-var buf = Graphics.createArrayBuffer(240,160,2,{msb:true});
 
-// Load fonts
-require("Font7x11Numeric7Seg").add(Graphics);
+var buf = Graphics.createArrayBuffer(screenW,screenH_TwoThirds,2,{msb:true});
+
+if (!BANGLEJS2)
+require("Font7x11Numeric7Seg").add(Graphics); // Load fonts
 
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
@@ -188,9 +198,10 @@ max.spd = 0;
 max.alt = 0;
 max.n = 0;    // counter. Only start comparing for max after a certain number of fixes to allow kalman filter to have smoohed the data.
 
-var emulator = (process.env.BOARD=="EMSCRIPTEN")?1:0;  // 1 = running in emulator. Supplies test values;
+var emulator = (process.env.BOARD=="EMSCRIPTEN" || process.env.BOARD=="EMSCRIPTEN2")?1:0;  // 1 = running in emulator. Supplies test values;
 
 var wp = {};        // Waypoint to use for distance from cur position.
+var SATinView = 0;
 
 function nxtWp(inc){
   cfg.wp+=inc;
@@ -212,7 +223,7 @@ function radians(a) {
 function distance(a,b){
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
-  
+
   // Distance in selected units
   var d = Math.sqrt(x*x + y*y) * 6371000;
   d = (d/parseFloat(cfg.dist)).toFixed(2);
@@ -228,41 +239,53 @@ function drawFix(dat) {
 
   buf.clear();
 
-  var v = '';  
+  var v = '';
   var u='';
-  
+
   // Primary Display
   v = (cfg.primSpd)?dat.speed.toString():dat.alt.toString();
-  
+
   // Primary Units
   u = (cfg.primSpd)?cfg.spd_unit:dat.alt_units;
 
   drawPrimary(v,u);
-  
+
   // Secondary Display
   v = (cfg.primSpd)?dat.alt.toString():dat.speed.toString();
 
   // Secondary Units
   u = (cfg.primSpd)?dat.alt_units:cfg.spd_unit;
-  
+
   drawSecondary(v,u);
-  
+
   // Time
   drawTime();
 
   // Waypoint name
   drawWP();
-  
+
   //Sats
   if ( dat.age > 10 ) {
     if ( dat.age > 90 ) dat.age = '>90';
     drawSats('Age:'+dat.age);
   }
   else drawSats('Sats:'+dat.sats);
-  
+
+/*  else if (!BANGLEJS2) {
+    drawSats('Sats:'+dat.sats);
+  } else {
+    if (lf.fix) {
+      if(emulator)console.log("fix "+lf.fix);
+      drawSats('Sats:'+dat.sats);
+    } else {
+      if(emulator)console.log("inView: "+SATinView);
+      drawSats('View:' + SATinView);
+    }
+  }
+*/
   g.reset();
   g.drawImage(img,0,40);
-  
+
 }
 
 function drawClock() {
@@ -275,125 +298,143 @@ function drawClock() {
 }
 
 function drawPrimary(n,u) {
-  
+  if(emulator)console.log("drawPrimary: " + n +" "+ u);
   // Primary Display
-  
+
   var s=40;    // Font size
   var l=n.length;
-  
+
   if ( l <= 7 ) s=48;
   if ( l <= 6 ) s=55;
   if ( l <= 5 ) s=66;
   if ( l <= 4 ) s=85;
   if ( l <= 3 ) s=110;
-        
-  buf.setFontAlign(0,-1); //Centre 
-  buf.setColor(1);  
+
+  buf.setFontAlign(0,-1); //Centre
+  buf.setColor(1);
+  if (BANGLEJS2) s *= fontFactorB2;
   buf.setFontVector(s);
-  buf.drawString(n,110,0);
- 
- 
-  
-    // Primary Units
+  buf.drawString(n,screenW_Half-10,0);
+
+  // Primary Units
+  s = 35;    // Font size
   buf.setFontAlign(1,-1,3); //right
-  buf.setColor(2);  
-  buf.setFontVector(35);
-  buf.drawString(u,210,0);  
+  buf.setColor(2);
+  if (BANGLEJS2) s = 20;
+  buf.setFontVector(s);
+  buf.drawString(u,screenW-30,0);
 }
 
 function drawSecondary(n,u) {
-
-  var s=180;    // units X position
+  if(emulator)console.log("drawSecondary: " + n +" "+ u);
+  var xu = 180;    // units X position
   var l=n.length;
-  if ( l <= 5 ) s=155;
-  if ( l <= 4 ) s=125;
-  if ( l <= 3 ) s=100;
-  if ( l <= 2 ) s=65;
-  if ( l <= 1 ) s=35;
-  
-  buf.setFontAlign(-1,1); //left, bottom 
-  buf.setColor(1);  
-  buf.setFontVector(45);
-  buf.drawString(n,5,140);
-    
+  if ( l <= 5 ) xu = 155;
+  if ( l <= 4 ) xu = 125;
+  if ( l <= 3 ) xu = 100;
+  if ( l <= 2 ) xu = 65;
+  if ( l <= 1 ) xu = 35;
+
+  buf.setFontAlign(-1,1); //left, bottom
+  buf.setColor(1);
+  var s = 45;    // Font size
+  if (BANGLEJS2) s *= fontFactorB2;
+  buf.setFontVector(s);
+  buf.drawString(n,5,screenH_TwoThirds-20);
+
   // Secondary Units
   buf.setFontAlign(-1,1); //left, bottom
-  buf.setColor(2);  
-  buf.setFontVector(30);
-  buf.drawString(u,s,135);
+
+  buf.setColor(2);
+  s = 30;    // Font size
+  if (BANGLEJS2) s *= fontFactorB2;
+  buf.setFontVector(s);
+  buf.drawString(u,xu - (BANGLEJS2*20),screenH_TwoThirds-25);
 }
 
 function drawTime() {
   var x, y;
-  
+
   if ( cfg.modeA == 2 ) {
-    x=120;
-    y=0;
-    buf.setFontAlign(0,-1); 
-    buf.setFontVector(80);
+    x = screenW_Half;
+    y = 0;
+    buf.setFontAlign(0,-1);
+    buf.setFontVector(screenH_Third);
   }
   else {
     x = 0;
-    y = 160;
+    y = screenH_TwoThirds;
     buf.setFontAlign(-1,1);
+    if (!BANGLEJS2)
     buf.setFont("7x11Numeric7Seg", 2);
+    else
+    buf.setFont("6x8", 2);
   }
 
 
   buf.setColor(0);
   buf.drawString(time,x,y);
   time = require("locale").time(new Date(),1);
-  buf.setColor(3);  
+  buf.setColor(3);
   buf.drawString(time,x,y);
 }
 
-function drawWP() {
+function drawWP() { // from  waypoints.json - see README.md
   var nm = wp.name;
   if ( nm == undefined || nm == 'NONE' || cfg.modeA ==1 ) nm = '';
-  buf.setColor(2);  
-  
+  if (emulator) nm="waypoint";
+  buf.setColor(2);
+  var s = 20;    // Font size
+
   if ( cfg.modeA == 0 ) {  // dist mode
+    if(emulator)console.log("drawWP() 0: "+nm);
     buf.setFontAlign(-1,1); //left, bottom
-    buf.setFontVector(20);
-    buf.drawString(nm.substring(0,6),72,160);  
+    if (BANGLEJS2) s *= fontFactorB2;
+    buf.setFontVector(s);
+    buf.drawString(nm.substring(0,6),72,screenH_TwoThirds);
   }
 
   if ( cfg.modeA == 2 ) {  // clock/large mode
+    if(emulator)console.log("drawWP() 2: "+nm);
+    s = 55;    // Font size
     buf.setFontAlign(0,1); //left, bottom
-    buf.setFontVector(55);
-    buf.drawString(nm.substring(0,6),120,160);  
+    if (BANGLEJS2) s *= fontFactorB2;
+    buf.setFontVector(s);
+    buf.drawString(nm.substring(0,6),screenW_Half,screenH_TwoThirds);
   }
-  
+
 }
 
 function drawSats(sats) {
 
-  buf.setColor(3);  
+  buf.setColor(3);
   buf.setFont("6x8", 2);
   buf.setFontAlign(1,1); //right, bottom
-  buf.drawString(sats,240,160);  
+  buf.drawString(sats,screenW,screenH_TwoThirds);
 
-  buf.setFontVector(30);
-  buf.setColor(2); 
-  
+  s = 30;    // Font size
+  if (BANGLEJS2) s = 18;
+  buf.setFontVector(s);
+  buf.setColor(2);
+
   if ( cfg.modeA == 1 ) {
-    buf.drawString('A',240,140);
+    buf.drawString('A',screenW,140-(BANGLEJS2 * 40));
     if ( showMax ) {
       buf.setFontAlign(0,1); //centre, bottom
       buf.drawString('MAX',120,164);
     }
   }
-  if ( cfg.modeA == 0 ) buf.drawString('D',240,140);
+  if ( cfg.modeA == 0 ) buf.drawString('D',screenW,140-(BANGLEJS2 * 40));
 }
 
 function onGPS(fix) {
-  
+
  if ( emulator ) {
     fix.fix = 1;
     fix.speed = 10 + (Math.random()*5);
     fix.alt = 354 + (Math.random()*50);
     fix.lat = -38.92;
-    fix.lon = 175.7613350;   
+    fix.lon = 175.7613350;
     fix.course = 245;
     fix.satellites = 12;
     fix.time = new Date();
@@ -402,7 +443,7 @@ function onGPS(fix) {
 
   var m;
 
-  var sp = '---';        
+  var sp = '---';
   var al = '---';
   var di = '---';
   var age = '---';
@@ -411,6 +452,8 @@ function onGPS(fix) {
 
     if (lf.fix) {
 
+//    if (BANGLEJS2 && !emulator) Bangle.removeListener('GPS-raw', onGPSraw);
+
     // Smooth data
     if ( lf.smoothed !== 1 ) {
       if ( cfg.spdFilt ) lf.speed = spdFilter.filter(lf.speed);
@@ -418,8 +461,8 @@ function onGPS(fix) {
       lf.smoothed = 1;
       if ( max.n <= 15 ) max.n++;
     }
-  
-    
+
+
     // Speed
     if ( cfg.spd == 0 ) {
       m = require("locale").speed(lf.speed).match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
@@ -427,7 +470,7 @@ function onGPS(fix) {
       cfg.spd_unit = m[2];
     }
     else sp = parseFloat(lf.speed)/parseFloat(cfg.spd); // Calculate for selected units
-    
+
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
     if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
@@ -444,9 +487,9 @@ function onGPS(fix) {
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   }
-      
+
   if ( cfg.modeA == 1 ) {
-    if ( showMax ) 
+    if ( showMax )
       drawFix({
         speed:max.spd,
         sats:lf.satellites,
@@ -455,7 +498,7 @@ function onGPS(fix) {
         age:age,
         fix:lf.fix
       }); // Speed and alt maximums
-    else 
+    else
       drawFix({
         speed:sp,
         sats:lf.satellites,
@@ -467,7 +510,7 @@ function onGPS(fix) {
   }
   if ( cfg.modeA == 0 )  {
     // Show speed/distance
-    if ( di <= 0 ) 
+    if ( di <= 0 )
       drawFix({
         speed:sp,
         sats:lf.satellites,
@@ -476,7 +519,7 @@ function onGPS(fix) {
         age:age,
         fix:lf.fix
       }); // No WP selected
-    else 
+    else
       drawFix({
         speed:sp,
         sats:lf.satellites,
@@ -494,7 +537,7 @@ function onGPS(fix) {
 }
 
 function setButtons(){
-
+if (!BANGLEJS2) { // Buttons for Bangle.js
   // Spd+Dist : Select next waypoint
   setWatch(function(e) {
     var dur = e.time - e.lastTime;
@@ -506,10 +549,10 @@ function setButtons(){
     else nxtWp(1);  // Spd+Dist or Clock mode - Select next waypoint
     onGPS(lf);
   }, BTN1, { edge:"falling",repeat:true});
-  
-  // Power saving on/off 
+
+  // Power saving on/off
   setWatch(function(e){
-    pwrSav=!pwrSav; 
+    pwrSav=!pwrSav;
     if ( pwrSav ) {
       LED1.reset();
       var s = require('Storage').readJSON('setting.json',1)||{};
@@ -522,15 +565,15 @@ function setButtons(){
       LED1.set();
     }
   }, BTN2, {repeat:true,edge:"falling"});
-  
+
   // Toggle between alt or dist
   setWatch(function(e){
     cfg.modeA = cfg.modeA+1;
     if ( cfg.modeA > 2 ) cfg.modeA = 0;
     savSettings();
-    onGPS(lf); 
+    onGPS(lf);
   }, BTN3, {repeat:true,edge:"falling"});
-  
+
   // Touch left screen to toggle display
   setWatch(function(e){
     cfg.primSpd = !cfg.primSpd;
@@ -538,11 +581,42 @@ function setButtons(){
     onGPS(lf);  // Update display
   }, BTN4, {repeat:true,edge:"falling"});
 
+} else {                                  // Buttons for Bangle.js 2
+  setWatch(function(e){ // Bangle.js BTN3
+    cfg.modeA = cfg.modeA+1;
+    if ( cfg.modeA > 2 ) cfg.modeA = 0;
+    if(emulator)console.log("cfg.modeA="+cfg.modeA);
+    savSettings();
+    onGPS(lf);
+  }, BTN1, {repeat:true,edge:"falling"});
+
+/*  Bangle.on('tap', function(data) { // data - {dir, double, x, y, z}
+    cfg.primSpd = !cfg.primSpd;
+    if(emulator)console.log("!cfg.primSpd");
+  }); */
+
+/*  Bangle.on('swipe', function(dir) {
+    if (dir < 0) { // left: Bangle.js BTN3
+      cfg.modeA = cfg.modeA+1;
+      if ( cfg.modeA > 2 ) cfg.modeA = 0;
+      if(emulator)console.log("cfg.modeA="+cfg.modeA);
+    }
+    else
+    {             // right: Bangle.js BTN4
+      cfg.primSpd = !cfg.primSpd;
+      if(emulator)console.log("!cfg.primSpd");
+    }
+  });
+*/
+  savSettings();
+  onGPS(lf);
+  }
 }
+
 
 function updateClock() {
   if (!canDraw) return;
-  drawTime(); 
+  drawTime();
   g.reset();
   g.drawImage(img,0,40);
   if ( emulator ) {max.spd++;max.alt++;}
@@ -573,21 +647,21 @@ function setLpMode(m) {
 
 // =Main Prog
 
-// Read settings. 
+// Read settings.
 let cfg = require('Storage').readJSON('speedalt.json',1)||{};
 
 cfg.spd = cfg.spd||0;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
-cfg.spd_unit = cfg.spd_unit||'';  // Displayed speed unit
-cfg.alt = cfg.alt||0.3048;// Multiplier for altitude unit conversions.
-cfg.alt_unit = cfg.alt_unit||'feet';  // Displayed altitude units
+cfg.spd_unit = cfg.spd_unit||'km/h';  // Displayed speed unit
+cfg.alt = cfg.alt||1;// Multiplier for altitude unit conversions. (feet:'0.3048')
+cfg.alt_unit = cfg.alt_unit||'meter';  // Displayed altitude units ('feet')
 cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
-cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
+cfg.modeA = cfg.modeA||1;    // 0 = [D]ist, 1 = [A]ltitude, 2 = [C]lock
+cfg.primSpd = cfg.primSpd||1;    // 1 = Spd in primary, 0 = Spd in secondary
 
-cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
+cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt;
 cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
@@ -602,28 +676,42 @@ Colour Pallet Idx
 2 : Units
 3 : Sats
 */
+const background = 0; // g.theme.bg = 0xFFFF = gelb!?
 var img = {
   width:buf.getWidth(),
   height:buf.getHeight(),
   bpp:2,
   buffer:buf.buffer,
-  palette:new Uint16Array([0,0x4FE0,0xEFE0,0x07DB])
+  palette:new Uint16Array([background,0x4FE0,0xEFE0,0x07DB]) // "Default"
 };
 
-if ( cfg.colour == 1 ) img.palette = new Uint16Array([0,0xFFFF,0xFFF6,0xDFFF]);
-if ( cfg.colour == 2 ) img.palette = new Uint16Array([0,0xFF800,0xFAE0,0xF813]);
+if ( cfg.colour == 1 ) img.palette = new Uint16Array([background,0xFFFF,0xFFF6,0xDFFF]); // "Hi contrast"
+if ( cfg.colour == 2 ) img.palette = new Uint16Array([background,0xFF800,0xFAE0,0xF813]); // "Night"
 
 var SCREENACCESS = {
       withApp:true,
       request:function(){this.withApp=false;stopDraw();},
       release:function(){this.withApp=true;startDraw();}
-}; 
+};
 
 Bangle.on('lcdPower',function(on) {
   if (!SCREENACCESS.withApp) return;
-  if (on) startDraw(); 
+  if (on) startDraw();
   else stopDraw();
 });
+
+/*
+function onGPSraw(nmea) {
+  var nofGP = 0, nofBD = 0, nofGL = 0;
+  if (nmea.slice(3,6) == "GSV") {
+    // console.log(nmea.slice(1,3) + "  " + nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
+    if (nmea.slice(0,7) == "$GLGSV,") nofGL = Number(nmea.slice(11,13));
+    SATinView = nofGP + nofBD + nofGL;
+  } }
+if(BANGLEJS2) Bangle.on('GPS-raw', onGPSraw);
+*/
 
 var gpssetup;
 try {
@@ -634,8 +722,6 @@ try {
 
 // All set up. Lets go.
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 onGPS(lf);
 Bangle.setGPSPower(1);
 
@@ -650,3 +736,5 @@ Bangle.on('GPS', onGPS);
 
 setButtons();
 setInterval(updateClock, 10000);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
