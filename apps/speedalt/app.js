@@ -400,7 +400,7 @@ function drawWP() { // from  waypoints.json - see README.md
     buf.setFontAlign(0,1); //left, bottom
     if (BANGLEJS2) s *= fontFactorB2;
     buf.setFontVector(s);
-    buf.drawString(nm.substring(0,6),screenW_Half,screenH_TwoThirds);
+    buf.drawString(nm.substring(0,6),screenW_Half,screenH_TwoThirds-(BANGLEJS2 * 20));
   }
 
 }
