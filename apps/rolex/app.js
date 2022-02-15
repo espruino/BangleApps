@@ -1,5 +1,3 @@
-/* Set background image */
-
 var imgBg = {
   width : 176, height : 176, bpp : 8,
   transparent : 254,
@@ -113,9 +111,7 @@ function drawHands() {
 }
 
 function drawBackground() {
-  g.setBgColor(0,0,0);
-  g.setColor(1,1,1);
-  g.clear();
+  g.clear(1);
   g.drawImage(imgBg,0,0);
   g.reset();
 }
@@ -131,7 +127,6 @@ function displayRefresh() {
   let Pause = 1000 - (Date.now() % 1000);
   Timeout = setTimeout(displayRefresh,Pause);
 }
-setTimeout(displayRefresh,500);
 
 Bangle.on('lcdPower', (on) => {
   if (on) {
@@ -140,5 +135,13 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
-Bangle.loadWidgets();
+g.setTheme({
+  bg : 0, fg : "#fff", dark:true,
+  bg2 : 0, fg2 : "#fff",
+  bgH : "#00f", fgH : "#fff",
+});
 Bangle.setUI("clock");
+// load widgets after 'setUI' so they're aware there is a clock active
+Bangle.loadWidgets(); 
+displayRefresh();
+
