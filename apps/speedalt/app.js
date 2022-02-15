@@ -391,7 +391,7 @@ function drawWP() { // from  waypoints.json - see README.md
     buf.setFontAlign(-1,1); //left, bottom
     if (BANGLEJS2) s *= fontFactorB2;
     buf.setFontVector(s);
-    buf.drawString(nm.substring(0,6),72,screenH_TwoThirds);
+    buf.drawString(nm.substring(0,6),72,screenH_TwoThirds-(BANGLEJS2 * 20));
   }
 
   if ( cfg.modeA == 2 ) {  // clock/large mode
