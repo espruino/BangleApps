@@ -11,3 +11,8 @@
 0.11: Changed cycle on minute to prevInfo to avoid the 2nd one being the blank line
 0.12: Removed dependancy on widpedom, now uses Bangle.getHealthStatus("day").steps
       which requires 2.11.27 firmware to reset at midnight
+0.13: call process.memory(false) to avoid triggering a GC of memory
+      supported in pre 2.12.13 firmware
+0.14: incorporated lazybones idle timer, configuration settings to come
+0.15: fixed tendancy for mylocation to default to London
+      added setting to enable/disable idle timer warning

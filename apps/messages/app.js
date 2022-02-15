@@ -27,7 +27,7 @@ var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 var colBg = g.theme.dark ? "#141":"#4f4";
 var colSBg1 = g.theme.dark ? "#121":"#cFc";
-var colSBg2 = g.theme.dark ? "#242":"#9F9";
+var colSBg2 = g.theme.dark ? "#000":"#9F9";
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -198,9 +198,39 @@ function showMusicMessage(msg) {
   layout.render();
 }
 
+function showMessageScroller(msg) {
+  var bodyFont = fontBig;
+  g.setFont(bodyFont);
+  var lines = [];
+  if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10)
+  var titleCnt = lines.length;
+  if (titleCnt) lines.push(""); // add blank line after title
+  lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10),["",/*LANG*/"< Back"]);
+  E.showScroller({
+    h : g.getFontHeight(), // height of each menu item in pixels
+    c : lines.length, // number of menu items
+    // a function to draw a menu item
+    draw : function(idx, r) {
+      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
+      g.setBgColor(idx<titleCnt ? colBg : g.theme.bg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
+      g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
+    }, select : function(idx) {
+      if (idx>=lines.length-2)
+        showMessage(msg.id);
+    }
+  });
+  // ensure button-press on Bangle.js 2 takes us back
+  if (process.env.HWVERSION>1) Bangle.btnWatches = [
+    setWatch(() => showMessage(msg.id), BTN1, {repeat:1,edge:"falling"})
+  ];
+}
+
 function showMessageSettings(msg) {
   E.showMenu({"":{"title":/*LANG*/"Message"},
     "< Back" : () => showMessage(msg.id),
+    /*LANG*/"View Message" : () => {
+      showMessageScroller(msg);
+    },
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       saveMessages();
@@ -245,12 +275,13 @@ function showMessage(msgid) {
       title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
     }
   }
+  function goBack() {
+    msg.new = false; saveMessages(); // read mail
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0});
+  }
   var buttons = [
-    {type:"btn", src:getBackImage(), cb:()=>{
-      msg.new = false; saveMessages(); // read mail
-      cancelReloadTimeout(); // don't auto-reload to clock now
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0});
-    }} // back
+    {type:"btn", src:getBackImage(), cb:goBack} // back
   ];
   if (msg.positive) {
     buttons.push({fillx:1});
@@ -270,9 +301,18 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  var bodyFont = fontMedium;
-  lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
-  var body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
+  // If body of message is only two lines long w/ large font, use large font.
+  var body=msg.body, bodyFont = fontLarge, lines;
+  if (body) {
+    var w = g.getWidth()-48;
+    if (g.setFont(bodyFont).stringWidth(body) > w * 2)
+      bodyFont = fontMedium;
+    if (g.setFont(bodyFont).stringWidth(body) > w) {
+      lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
+      body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
+    }
+  }
+
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
@@ -284,11 +324,18 @@ function showMessage(msgid) {
         title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
       ]},
     ]},
-    {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
+      // allow tapping to show a larger version
+      showMessageScroller(msg);
+    } },
     {type:"h",fillx:1, c: buttons}
   ]});
   g.clearRect(Bangle.appRect);
   layout.render();
+  // ensure button-press on Bangle.js 2 takes us back
+  if (process.env.HWVERSION>1) Bangle.btnWatches = [
+    setWatch(goBack, BTN1, {repeat:1,edge:"falling"})
+  ];
 }
 
 

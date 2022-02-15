@@ -48,7 +48,7 @@
   const unitsMenu = {
     '': {'title': 'Units'},
     '< Back': function() { E.showMenu(appMenu); },
-    'default (spd)' : function() { setUnits(0,''); },
+//    'default (spd)' : function() { setUnits(0,''); },
     'Kph (spd)' : function() { setUnits(1,'kph'); },
     'Knots (spd)' : function() { setUnits(1.852,'kts'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },

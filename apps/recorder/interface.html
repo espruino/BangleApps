@@ -4,12 +4,18 @@
   </head>
   <body>
     <div id="tracks"></div>
+    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
 
     <script src="../../core/lib/interface.js"></script>
+    <script src="../../core/js/ui.js"></script>
+    <script src="../../core/js/utils.js"></script>
     <script>
 var domTracks = document.getElementById("tracks");
 
 function saveKML(track,title) {
+  // only include data points with GPS values
+  track=track.filter(pt=>pt.Latitude!="" && pt.Longitude!="");
+  // Now output KML
   var kml = `<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
@@ -37,7 +43,6 @@ ${track.map(pt=>`            <when>${pt.Time.toISOString()}</when>\n`).join("")}
 ${track.map(pt=>`            <gx:coord>${pt.Longitude} ${pt.Latitude} ${pt.Altitude}</gx:coord>\n`).join("")}
           <ExtendedData>
             <SchemaData schemaUrl="#schema">
-
 ${track[0].Heartrate!==undefined ? `<gx:SimpleArrayData name="heartrate">
 ${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")}
               </gx:SimpleArrayData>`:``}
@@ -68,9 +73,15 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "success");
 }
 
 function saveGPX(track, title) {
+  if (!track || !track[0] || !"Time" in track[0] || !track[0].Time) {
+    showToast("Error in trackfile.", "error");
+    return;
+  }
+
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata>
@@ -80,7 +91,7 @@ function saveGPX(track, title) {
     <name>${title}</name>
     <trkseg>`;
   track.forEach(pt=>{
-    gpx += `
+    if (pt.Latitude!="" && pt.Longitude!="") gpx += `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
         <ele>${pt.Altitude}</ele>
         <time>${pt.Time.toISOString()}</time>
@@ -107,6 +118,7 @@ function saveGPX(track, title) {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "success");
 }
 
 function saveCSV(track, title) {
@@ -119,9 +131,11 @@ function saveCSV(track, title) {
     }).join(",")+"\n";
   });
   Util.saveCSV(title, csv);
+  showToast("Download finished.", "success");
 }
 
 function trackLineToObject(headers, l) {
+  if (l===undefined) return {};
   var t = l.trim().split(",");
   var o = {};
   headers.forEach((header,i) => o[header] = t[i]);
@@ -155,7 +169,7 @@ function getTrackList() {
         Util.showModal(`Loading Track ${trackNo}...`);
         Puck.eval(`(function(fn) {
   var f = require("Storage").open(fn,"r");
-  var headers = f.readLine();
+  var headers = f.readLine().trim();
   var data = f.readLine();
   var lIdx = headers.split(",").indexOf("Latitude");
   if (lIdx >= 0) {
@@ -168,6 +182,10 @@ function getTrackList() {
   return {headers:headers,l:data};
 })(${JSON.stringify(filename)})`, trackInfo=>{
           console.log(filename," => ",trackInfo);
+          if (!trackInfo || !"headers" in trackInfo) {
+            showToast("Error loading track list.", "error");
+            resolve();
+          }
           trackInfo.headers = trackInfo.headers.split(",");
           trackList.push({
             filename : filename,
@@ -184,14 +202,14 @@ function getTrackList() {
       var html = `<div class="container">
       <div class="columns">\n`;
       trackList.forEach(track => {
-        var trackData = trackLineToObject(track.info.headers, track.info.l);
         console.log("track", track);
+        var trackData = trackLineToObject(track.info.headers, track.info.l);
         console.log("trackData", trackData);
         html += `
          <div class="column col-12">
            <div class="card-header">
              <div class="card-title h5">Track ${track.number}</div>
-             <div class="card-subtitle text-gray">${trackData.Time.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+             <div class="card-subtitle text-gray">${trackData.Time?trackData.Time.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }):"No track data"}</div>
            </div>
 ${trackData.Latitude ? `
            <div class="card-image">

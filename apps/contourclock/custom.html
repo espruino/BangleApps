@@ -1,0 +1,74 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <style>
+    input[type=checkbox] {
+      opacity:0;
+    }
+    input[type=checkbox] + label {
+      opacity:0.2;
+    }
+    input[type=checkbox]:checked + label {
+      opacity:1;
+    }
+  </style>
+</head>
+<body>
+  <h3>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h3>
+  <form>
+    <input type="checkbox" id="BarlowCond">
+    <label for="BarlowCond"><img src="fonts/BarlowCond-p1.png"> <img src="fonts/BarlowCond-p2.png"></label><br>
+    <input type="checkbox" id="BebasNeue">
+    <label for="BebasNeue"><img src="fonts/BebasNeue-p1.png"> <img src="fonts/BebasNeue-p2.png"></label><br>
+    <input type="checkbox" id="Dekko">
+    <label for="Dekko"><img src="fonts/Dekko-p1.png"> <img src="fonts/Dekko-p2.png"></label><br>
+    <input type="checkbox" id="DinAlternate">
+    <label for="DinAlternate"><img src="fonts/DinAlternate-p1.png"> <img src="fonts/DinAlternate-p2.png"></label><br>
+    <input type="checkbox" id="Impact">
+    <label for="Impact"><img src="fonts/Impact-p1.png"> <img src="fonts/Impact-p2.png"></label><br>
+    <input type="checkbox" id="Nunito">
+    <label for="Nunito"><img src="fonts/Nunito-p1.png"> <img src="fonts/Nunito-p2.png"></label><br>
+    <input type="checkbox" id="OpenSansEC">
+    <label for="OpenSansEC"><img src="fonts/OpenSansEC-p1.png"> <img src="fonts/OpenSansEC-p2.png"></label><br>
+    <input type="checkbox" id="Phosphate">
+    <label for="Phosphate"><img src="fonts/Phosphate-p1.png"> <img src="fonts/Phosphate-p2.png"></label><br>
+    <input type="checkbox" id="Quicksand">
+    <label for="Quicksand"><img src="fonts/Quicksand-p1.png"> <img src="fonts/Quicksand-p2.png"></label><br>
+    <input type="checkbox" id="SairaEC">
+    <label for="SairaEC"><img src="fonts/SairaEC-p1.png"> <img src="fonts/SairaEC-p2.png"></label><br>
+    <input type="checkbox" id="Teko">
+    <label for="Teko"><img src="fonts/Teko-p1.png"> <img src="fonts/Teko-p2.png"></label><br>
+    <input type="checkbox" id="Yumaro">
+    <label for="Yumaro"><img src="fonts/Yumaro-p1.png"> <img src="fonts/Yumaro-p2.png"></label><br>
+    <input type="checkbox" id="YuseiMagic">
+    <label for="YuseiMagic"><img src="fonts/YuseiMagic-p1.png"> <img src="fonts/YuseiMagic-p2.png"></label><br>
+    <p><button id="upload" class="btn btn-primary">Upload selected Fonts</button></p>
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
+      "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
+      "Yumaro", "YuseiMagic"]
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+        var n=0;
+        var fonts = [];
+        for (fontName of FontList) {
+          if (document.getElementById(fontName).checked==true) {
+            var f = new Object();
+            fonts.push({
+              name:"contourclock-"+n+".json",
+              url:"font-"+fontName+".json"
+            });
+            n++;
+          }
+        }
+        if (n>0)
+          sendCustomizedApp({storage:fonts});
+        else
+          alert("Please select at least one Font!");
+
+    });
+    </script>
+  </form>
+</body>
+</html>

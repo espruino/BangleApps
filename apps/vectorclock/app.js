@@ -80,6 +80,8 @@ function draw() {
   pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1, datecol);
 
   executeCommands();
+
+  Bangle.drawWidgets();
 }
 
 var timeout;
@@ -160,8 +162,6 @@ if ("buzz"==chimetype || "beep"==chimetype)
 
 g.clear();
 tick();
+Bangle.setUI("clock"); // Show launcher when middle button is pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

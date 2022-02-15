@@ -1,8 +1,9 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, the health app is required. If this app is not installed, the data will not be shown.
-To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerdavid/BangleApps)
+Note: To display the steps, the wpedom app is required. To show weather data
+such as temperature, humidity or window you BangleJS must be connected
+with Gadgetbride and the weather app must be installed.
 
 ## Control
  * Tap left / right to change between screens.
@@ -10,7 +11,7 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
 
 ## Features
  * LCARS Style watch face.
- * Full screen mode - widgets are still loaded but not shown.
+ * Enable or disable fullscreen mode (widgets are always loaded, but hidden if fullscreen).
  * Tab on left/right to switch between different screens.
  * Cusomizable data that is shown on screen 1 (steps, weather etc.)
  * Shows random and real images of planets.
@@ -19,24 +20,22 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
  * Display graphs (day or month) for steps + hrm on the second screen.
 
 ## Data that can be configured
- * Steps - Steps loaded via the health module
+ * Steps - Steps loaded via the wpedom app.
  * Battery - Current battery level in %
  * VREF - Voltage of battery
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
  * Humidity - Humidity loaded via the weather module + gadgetbridge
+ * Wind - Wind loaded via the weather module + gadgetbridge. Set kph / mph in the settings.
  * Altitude - Shows the altitude in m.
  * CoreT - Temperature of device
 
 ## Multiple screens support
 Access different screens via tap on the left/ right side of the screen
 
-![](screenshot.png)
+![](screenshot_1.png)
 ![](screenshot_2.png)
 
-
-# Ideas
-- Tap top / bottom to disable steps (also icon) and start a timer
 
 ## Contributors
 - [David Peer](https://github.com/peerdavid).

@@ -8,7 +8,7 @@
     require("Storage").write("launch.json",settings);
   }
   const appMenu = {
-    /*LANG*/"": {"title": /*LANG*/"Launcher Settings"},
+    "": {"title": /*LANG*/"Launcher Settings"},
     /*LANG*/"< Back": back,
     /*LANG*/"Font": {
       value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf("12x20"),

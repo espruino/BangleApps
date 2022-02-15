@@ -1,0 +1,14 @@
+{ "id": "bowserWF",
+  "name": "Bowser Watchface",
+  "shortName":"Bowser Watchface",
+  "version":"0.01",
+  "description": "Let bowser show you the time",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"bowserWF.app.js","url":"app.js"},
+    {"name":"bowserWF.img","url":"app-icon.js","evaluate":true}
+  ]
+}
