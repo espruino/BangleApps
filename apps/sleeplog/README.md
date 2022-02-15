@@ -8,16 +8,16 @@ also provides a power saving mode using the built in movement calculation. The i
 #### Operating Principle
 * __ESS calculation__  
   The accelerometer polls values with 12.5Hz. On each poll the magnitude value is saved. When 13 values are collected, every 1.04 seconds, the standard deviation over this values is calculated.  
-  Is the calculated standard deviation lower than the "no movement" threshold (__NoMoThresh__) a "no movement" counter is incremented. Each time the "no movement" threshold is reached the "no movement" counter will be reset. The first time no movement is detected the actual timestamp is cached (in _sleeplog.firstnomodate_) for logging.  
-  When the "no movement" counter reaches the sleep threshold the watch is considered as resting. (The sleep threshold is calculated from the __MinDuration__ setting, Example: _sleep threshold = MinDuration * 60 / calculation interval => 10min * 60s/min / 1.04s ~= 576,9 rounded up to 577_)
+  Is the calculated standard deviation lower than the "no movement" threshold (__NoMo Thresh__) a "no movement" counter is incremented. Each time the "no movement" threshold is reached the "no movement" counter will be reset. The first time no movement is detected the actual timestamp is cached (in _sleeplog.firstnomodate_) for logging.  
+  When the "no movement" counter reaches the sleep threshold the watch is considered as resting. (The sleep threshold is calculated from the __Min Duration__ setting, Example: _sleep threshold = Min Duration * 60 / calculation interval => 10min * 60s/min / 1.04s ~= 576,9 rounded up to 577_)
 * __Power Saving Mode__  
-  On power saving mode the movement value of bangle's build in health event is checked against the maximal movement threshold (__MaxMove__). The event is only triggered every 10 minutes which decreases the battery impact but also reduces accurracy.
+  On power saving mode the movement value of bangle's build in health event is checked against the maximal movement threshold (__Max Move__). The event is only triggered every 10 minutes which decreases the battery impact but also reduces accurracy.
 * ___Sleeping___ __or__ ___Not Worn___  
-  To check if a resting watch indicates a sleeping status, the internal temperature must be greater than the temperature threshold (__TempThresh__). Otherwise the watch is considered as not worn.
+  To check if a resting watch indicates a sleeping status, the internal temperature must be greater than the temperature threshold (__Temp Thresh__). Otherwise the watch is considered as not worn.
 * __True Sleep__  
   The true sleep value is a simple addition of all registert sleeping periods.
 * __Consecutive Sleep__  
-  In addition the consecutive sleep value tries to predict the complete time you were asleep, even the light sleeping phases with registered movements. All periods after a sleeping period will be summarized til the first following non sleeping period that is longer then the maximal awake duration (__MaxAwake__). If this sum is lower than the minimal consecutive sleep duration (__MinConsec__) it is not considered, otherwise it will be added to the consecutive sleep value.
+  In addition the consecutive sleep value tries to predict the complete time you were asleep, even the light sleeping phases with registered movements. All periods after a sleeping period will be summarized til the first following non sleeping period that is longer then the maximal awake duration (__Max Awake__). If this sum is lower than the minimal consecutive sleep duration (__Min Consec__) it is not considered, otherwise it will be added to the consecutive sleep value.
 * __Logging__  
   To minimize the log size only a changed state is logged. The logged timestamp is matching the beginning of its measurement period.  
   When not on power saving mode a movement is detected nearly instantaneous and the detection of a no movement period is delayed by the minimal no movement duration. To match the beginning of the measurement period a cached timestamp (_sleeplog.firstnomodate_) is logged.  
