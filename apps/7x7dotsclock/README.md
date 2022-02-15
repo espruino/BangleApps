@@ -2,7 +2,7 @@
 
 ![](dotsfontclock.png)
 
-best look in dark theme so far
+looks best with dark theme so far
 
 * A Clock with big numbers made of 7x7 dots
 * system widgeds ar not (yet) supported
