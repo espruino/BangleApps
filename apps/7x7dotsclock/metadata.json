@@ -10,7 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"7x7dotsclock.app.js","url":"7x7dotsclock.app.js"},
-    {"name":"7x7dotsclock.info","url":"7x7dotsclock.info"},
     {"name":"7x7dotsclock.img","url":"7x7dotsclock.img.js","evaluate":true}
   ]
 }
