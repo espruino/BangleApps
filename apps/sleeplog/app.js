@@ -127,34 +127,24 @@ function drawLog(topY, viewUntil) {
   return output.map(value => value /= 6E4);
 }
 
-// define draw night to function
-function drawNightTo(prevDays) {
-  // calculate 10am of this or a previous day
-  var date = Date();
-  date = Date(date.getFullYear(), date.getMonth(), date.getDate() - prevDays, breaktod);
+// define function to draw the analysis
+function drawAnalysis(toDate) {
+  //var t0 = Date.now();
 
   // get width
   var width = g.getWidth();
 
-  // clear app area
-  g.clearRect(0, 24, width, width);
-
   // define variable for sleep calculation
   var outputs = [0, 0]; // [estimated, true]
-  // draw log graphs and read outputs
-  drawLog(110, date).forEach(
-    (value, index) => outputs[index] += value);
-  drawLog(145, Date(date.valueOf() - 432E5)).forEach(
-    (value, index) => outputs[index] += value);
 
-  // reduce date by 1s to ensure correct headline
-  date = Date(date.valueOf() - 1E3);
-  // draw headline, on red bg if service or loggging disabled or green bg if powersaving enabled
-  g.setColor(global.sleeplog && sleeplog.enabled && sleeplog.logfile ? sleeplog.powersaving ? 2016 : g.theme.bg : 63488);
-  g.fillRect(0, 30, width, 66).reset();
-  g.setFont("12x20").setFontAlign(0, -1);
-  g.drawString("Night to " + require('locale').dow(date, 1) + "\n" +
-    require('locale').date(date, 1), width / 2, 30);
+  // clear analysis area
+  g.clearRect(0, 71, width, width);
+
+  // draw log graphs and read outputs
+  drawLog(110, toDate).forEach(
+    (value, index) => outputs[index] += value);
+  drawLog(145, Date(toDate.valueOf() - 432E5)).forEach(
+    (value, index) => outputs[index] += value);
 
   // draw outputs
   g.reset(); // area: 0, 70, width, 105
@@ -166,8 +156,47 @@ function drawNightTo(prevDays) {
     Math.floor(outputs[0] % 60) + "min", width - 10, 70);
   g.drawString(Math.floor(outputs[1] / 60) + "h " +
     Math.floor(outputs[1] % 60) + "min", width - 10, 90);
+
+  //print("analysis processing seconds:", Math.round(Date.now() - t0) / 1000);
 }
 
+// define draw night to function
+function drawNightTo(prevDays) {
+  // calculate 10am of this or a previous day
+  var toDate = Date();
+  toDate = Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() - prevDays, breaktod);
+
+  // get width
+  var width = g.getWidth();
+  var center = width / 2;
+
+  // reduce date by 1s to ensure correct headline
+  toDate = Date(toDate.valueOf() - 1E3);
+
+  // clear heading area
+  g.clearRect(0, 24, width, 70);
+
+  // display service statuses: service, loggging and powersaving 
+  g.setColor(global.sleeplog && sleeplog.enabled && sleeplog.logfile ? sleeplog.powersaving ? 2016 : g.theme.bg : 63488);
+  g.fillRect(0, 30, width, 66).reset();
+
+  // draw headline
+  g.setFont("12x20").setFontAlign(0, -1);
+  g.drawString("Night to " + require('locale').dow(toDate, 1) + "\n" +
+    require('locale').date(toDate, 1), center, 30);
+
+  // show loading info
+  var info = "calculating data ...\nplease be patient :)";
+  var y0 = center + 30;
+  var bounds = [center - 80, y0 - 20, center + 80, y0 + 20];
+  g.clearRect.apply(g, bounds).drawRect.apply(g, bounds);
+  g.setFont("6x8").setFontAlign(0, 0);
+  g.drawString(info, center, y0);
+
+  // calculate and draw analysis after timeout for faster feedback
+  if (ATID) ATID = clearTimeout(ATID);
+  ATID = setTimeout(drawAnalysis, 50, toDate);
+}
 
 // define function to draw and setup UI
 function startApp() {
@@ -182,8 +211,9 @@ function startApp() {
   });
 }
 
-// define day to display
+// define day to display and analysis timeout id
 var prevDays = 0;
+var ATID;
 
 // setup app
 g.clear();

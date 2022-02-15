@@ -34,31 +34,31 @@ also provides a power saving mode using the built in movement calculation. The i
 ---
 ### Settings
 ---
-* __BreakTod__ | break at time of day  
+* __Break Tod__ | break at time of day  
   _0_ / _1_ / _..._ / __10__ / _..._ / _12_  
   Change time of day on wich the lower graph starts and the upper graph ends. 
-* __MaxAwake__ | maximal awake duration  
+* __Max Awake__ | maximal awake duration  
   _15min_ / _20min_ / _..._ / __60min__ / _..._ / _120min_  
   Adjust the maximal awake duration upon the exceeding of which aborts the consecutive sleep period.
-* __MinConsec__ | minimal consecutive sleep duration  
+* __Min Consec__ | minimal consecutive sleep duration  
   _15min_ / _20min_ / _..._ / __30min__ / _..._ / _120min_  
   Adjust the minimal consecutive sleep duration that will be considered for the consecutive sleep value.
-* __TempThresh__ | temperature threshold  
+* __Temp Thresh__ | temperature threshold  
   _20°C_ / _20.5°C_ / _..._ / __25°C__ / _..._ / _40°C_  
   The internal temperature must be greater than this threshold to log _sleeping_, otherwise it is _not worn_.
-* __PowerSaving__  
+* __Power Saving__  
   _on_ / __off__  
   En-/Disable power saving mode. _Saves battery, but might decrease accurracy._
-* __MaxMove__ | maximal movement threshold  
+* __Max Move__ | maximal movement threshold  
   (only available when on power saving mode)  
   _50_ / _51_ / _..._ / __100__ / _..._ / _200_  
   On power saving mode the watch is considered resting if this threshold is lower or equal to the movement value of bangle's health event.
-* __NoMoThresh__ | no movement threshold  
+* __NoMo Thresh__ | no movement threshold  
   (only available when not on power saving mode)  
   _0.006_ / _0.007_ / _..._ / __0.012__ / _..._ / _0.020_  
   The standard deviation over the measured values needs to be lower then this threshold to count as not moving.  
   The defaut threshold value worked best for my watch. A threshold value below 0.008 may get triggert by noise.
-* __MinDuration__ | minimal no movement duration  
+* __Min Duration__ | minimal no movement duration  
   (only available when not on power saving mode)  
   _5min_ / _6min_ / _..._ / __10min__ / _..._ / _15min_  
   If no movement is detected for this duration, the watch is considered as resting.
