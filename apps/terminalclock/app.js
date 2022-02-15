@@ -28,7 +28,7 @@ function clearField(pos){
 
 function clearWatchIfNeeded(now){
   if(now.getMinutes() % 10 == 0)
-    g.clearRect(0, 0, 240, 240);
+    g.clearRect(0, startY, 240, 240);
 }
 
 function drawLine(line, pos){
@@ -123,7 +123,7 @@ g.clear();
 // load the settings
 var settings = Object.assign({
   // default values
-  HRMinConfidence: 40,
+  HRMinConfidence: 50,
   showDate: true,
   showHRM: true,
   showActivity: true,

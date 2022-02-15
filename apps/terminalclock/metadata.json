@@ -7,7 +7,7 @@
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name": "terminalclock.app.js","url": "app.js"},

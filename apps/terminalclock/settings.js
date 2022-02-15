@@ -2,7 +2,7 @@
   var FILE = "terminalclock.json";
   // Load settings
   var settings = Object.assign({
-    HRMinConfidence: 40,
+    HRMinConfidence: 50,
     showDate: "Yes",
     showHRM: "Yes",
     showActivity: "Yes",
@@ -18,7 +18,7 @@
     "" : { "title" : "Terminal Clock" },
     "< Back" : () => back(),
     'HR confidence': {
-      value: 40|settings.HRMinConfidence,  // 0| converts undefined to 0
+      value: 50|settings.HRMinConfidence,  // 0| converts undefined to 0
       min: 0, max: 100,
       onchange: v => {
         settings.HRMinConfidence = v;
