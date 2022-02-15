@@ -1,7 +1,11 @@
 (function(back) {
   const SETTINGS_FILE = "circlesclock.json";
   const storage = require('Storage');
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+  let settings = Object.assign(
+    storage.readJSON("circlesclock.default.json", true) || {},
+    storage.readJSON(SETTINGS_FILE, true) || {}
+  );
+
   function save(key, value) {
     settings[key] = value;
     storage.write(SETTINGS_FILE, settings);
@@ -10,8 +14,8 @@
   const valuesCircleTypes = ["empty", "steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "temperature", "pressure", "altitude"];
   const namesCircleTypes = ["empty", "steps", "distance", "heart", "battery", "weather", "sun", "temperature", "pressure", "altitude"];
 
-  const valuesColors = ["", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#fff", "#000", "green-red", "red-green"];
-  const namesColors = ["default", "red", "green", "blue", "yellow", "magenta", "cyan", "white", "black", "green->red", "red->green"];
+  const valuesColors = ["",        "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#fff",  "#000", "green-red",   "red-green"];
+  const namesColors =  ["default", "red",     "green",   "blue",    "yellow",  "magenta", "cyan",    "white", "black", "green->red", "red->green"];
 
   const weatherData = ["empty", "humidity", "wind"];
 
@@ -20,7 +24,7 @@
       '': { 'title': 'Circles clock' },
       /*LANG*/'< Back': back,
       /*LANG*/'circle count': {
-        value: "circleCount" in settings ? settings.circleCount : 3,
+        value:  settings.circleCount,
         min: 3,
         max : 4,
         step: 1,
@@ -33,7 +37,7 @@
       /*LANG*/'heartrate': ()=>showHRMenu(),
       /*LANG*/'steps': ()=>showStepMenu(),
       /*LANG*/'battery warn': {
-        value: "batteryWarn" in settings ? settings.batteryWarn : 30,
+        value: settings.batteryWarn,
         min: 10,
         max : 100,
         step: 10,
@@ -43,12 +47,12 @@
         onchange: x => save('batteryWarn', x),
       },
       /*LANG*/'show widgets': {
-        value: "showWidgets" in settings ? settings.showWidgets : false,
+        value: !!settings.showWidgets,
         format: () => (settings.showWidgets ? 'Yes' : 'No'),
         onchange: x => save('showWidgets', x),
       },
-      /*LANG*/'weather circle': {
-        value: settings.weatherCircleData ? weatherData.indexOf(settings.weatherCircleData) : 1,
+      /*LANG*/'weather data': {
+        value: weatherData.indexOf(settings.weatherCircleData),
         min: 0, max: 2,
         format: v => weatherData[v],
         onchange: x => save('weatherCircleData', weatherData[x]),
@@ -62,7 +66,7 @@
       '': { 'title': /*LANG*/'Heartrate' },
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'minimum': {
-        value: "minHR" in settings ? settings.minHR : 40,
+        value: settings.minHR,
         min: 0,
         max : 250,
         step: 5,
@@ -72,7 +76,7 @@
         onchange: x => save('minHR', x),
       },
       /*LANG*/'maximum': {
-        value: "maxHR" in settings ? settings.maxHR : 200,
+        value: settings.maxHR,
         min: 20,
         max : 250,
         step: 5,
@@ -82,7 +86,7 @@
         onchange: x => save('maxHR', x),
       },
       /*LANG*/'min. confidence': {
-        value: "confidence" in settings ? settings.confidence : 0,
+        value: settings.confidence,
         min: 0,
         max : 100,
         step: 10,
@@ -92,7 +96,7 @@
         onchange: x => save('confidence', x),
       },
       /*LANG*/'valid period': {
-        value: "hrmValidity" in settings ? settings.hrmValidity : 30,
+        value: settings.hrmValidity,
         min: 10,
         max : 600,
         step: 10,
@@ -110,7 +114,7 @@
       '': { 'title': /*LANG*/'Steps' },
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'goal': {
-        value: "stepGoal" in settings ? settings.stepGoal : 10000,
+        value: settings.stepGoal,
         min: 2000,
         max : 50000,
         step: 2000,
@@ -120,7 +124,7 @@
         onchange: x => save('stepGoal', x),
       },
       /*LANG*/'distance goal': {
-        value: "stepDistanceGoal" in settings ? settings.stepDistanceGoal : 8000,
+        value: settings.stepDistanceGoal,
         min: 2000,
         max : 30000,
         step: 1000,
@@ -130,7 +134,7 @@
         onchange: x => save('stepDistanceGoal', x),
       },
       /*LANG*/'step length': {
-        value: "stepLength" in settings ? settings.stepLength : 0.8,
+        value: settings.stepLength,
         min: 0.1,
         max : 1.5,
         step: 0.01,
@@ -142,9 +146,6 @@
     };
     E.showMenu(menu);
   }
-
-  const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
-
   function showCircleMenu(circleId) {
     const circleName = "circle" + circleId;
     const colorKey = circleName + "color";
@@ -154,19 +155,19 @@
       '': { 'title': /*LANG*/'Circle ' + circleId },
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'data': {
-        value: settings[circleName]!=undefined ? valuesCircleTypes.indexOf(settings[circleName]) : valuesCircleTypes.indexOf(defaultCircleTypes[circleId -1]),
+        value: valuesCircleTypes.indexOf(settings[circleName]),
         min: 0, max: valuesCircleTypes.length - 1,
         format: v => namesCircleTypes[v],
         onchange: x => save(circleName, valuesCircleTypes[x]),
       },
       /*LANG*/'color': {
-        value: settings[colorKey] ? valuesColors.indexOf(settings[colorKey]) : 0,
+        value: valuesColors.indexOf(settings[colorKey]) || 0,
         min: 0, max: valuesColors.length - 1,
         format: v => namesColors[v],
         onchange: x => save(colorKey, valuesColors[x]),
       },
       /*LANG*/'colorize icon': {
-        value: colorizeIconKey in settings ? settings[colorizeIconKey] : false,
+        value: settings[colorizeIconKey] || false,
         format: () => (settings[colorizeIconKey] ? 'Yes' : 'No'),
         onchange: x => save(colorizeIconKey, x),
       },
