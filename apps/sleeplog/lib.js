@@ -5,8 +5,8 @@ exports = {
     if (typeof global.sleeplog !== "object") return;
 
     // set default logfile
-    logfile = (typeof logfile === "string" && logfile.endsWith(".log")) ? logfile :
-      logfile === false ? undefined : "sleeplog.log";
+    if ((typeof logfile !== "string" || !logfile.endsWith(".log")) &&
+      logfile !== false) logfile = "sleeplog.log";
 
     // stop if enabled
     if (global.sleeplog.enabled) global.sleeplog.stop();
@@ -40,8 +40,9 @@ exports = {
   // - string // additional information
   readLog: function(logfile, since, until) {
     // check/set logfile
-    logfile = typeof logfile === "string" && logfile.endsWith(".log") ? logfile :
-      (global.sleeplog || {}).logfile || "sleeplog.log";
+    if (typeof logfile !== "string" || !logfile.endsWith(".log")) {
+      logfile = (global.sleeplog || {}).logfile || "sleeplog.log";
+    }
 
     // check if since is in the future
     if (since > Date()) return [];
@@ -73,8 +74,10 @@ exports = {
   // replace log with input if at least one entry like above is inside another array
   writeLog: function(logfile, input) {
     // check/set logfile
-    logfile = typeof logfile === "string" && logfile.endsWith(".log") ? logfile :
-      (global.sleeplog || {}).logfile || "sleeplog.log";
+    if (typeof logfile !== "string" || !logfile.endsWith(".log")) {
+      if (!global.sleeplog || sleeplog.logfile === false) return;
+      logfile = sleeplog.logfile || "sleeplog.log";
+    }
 
     // check if input is an array
     if (typeof input !== "object" || typeof input.length !== "number") return;
