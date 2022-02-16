@@ -3,13 +3,15 @@
   "name": "LCARS Clock",
   "shortName":"LCARS",
   "icon": "lcars.png",
-  "version":"0.15",
+  "version":"0.18",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "description": "Library Computer Access Retrieval System (LCARS) clock.",
   "type": "clock",
   "tags": "clock",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_3.png"}],
   "storage": [
     {"name":"lcars.app.js","url":"lcars.app.js"},
     {"name":"lcars.img","url":"lcars.icon.js","evaluate":true},

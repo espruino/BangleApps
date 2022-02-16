@@ -19,3 +19,4 @@
       Colors of circles can be configured
       Color depending on value (green -> red, red -> green) option
       Good HRM value will not be overwritten so fast anymore
+0.10: Use roboto font for time, date and day of week and center align them

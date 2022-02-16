@@ -188,7 +188,7 @@ function showBLEMenu() {
     },
     /*LANG*/'HID': {
       value: Math.max(0,0 | hidV.indexOf(settings.HID)),
-      min: 0, max: 3,
+      min: 0, max: hidN.length-1,
       format: v => hidN[v],
       onchange: v => {
         settings.HID = hidV[v];
@@ -243,12 +243,11 @@ function showThemeMenu() {
   });
 
   function showCustomThemeMenu() {
-    function cv(x) { return g.setColor(x).getColor(); }
     function setT(t, v) {
       let th = g.theme;
       th[t] = v;
       if (t==="bg") {
-        th['dark'] = (v===cv("#000"));
+        th['dark'] = (v===cl("#000"));
       }
       upd(th);
     }
@@ -260,11 +259,7 @@ function showThemeMenu() {
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
-      colors.push(cv(rgb[c]));
-    }
-    function cn(v) {
-      const i = colors.indexOf(v);
-      return i!== -1 ? names[i] : v; // another color: just show value
+      colors.push(cl(rgb[c]));
     }
     let menu = {
       '':{title:'Custom Theme'},
@@ -277,14 +272,11 @@ function showThemeMenu() {
     };
     ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
       menu[labels[t]] = {
-          value: colors.indexOf(g.theme[t]),
-          format: () => cn(g.theme[t]),
+          min : 0, max : colors.length-1, wrap : true,
+          value: Math.max(colors.indexOf(g.theme[t]),0),
+          format: v => names[v],
           onchange: function(v) {
-            // wrap around
-            if (v>=colors.length) {v = 0;}
-            if (v<0) {v = colors.length-1;}
-            this.value = v;
-            const c = colors[v];
+            var c = colors[v];
             // if we select the same fg and bg: set the other to the old color
             // e.g. bg=black;fg=white, user selects fg=black -> bg changes to white automatically
             // so users don't end up with a black-on-black menu

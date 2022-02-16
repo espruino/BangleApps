@@ -5,6 +5,16 @@ outputs a list of strings that have been found.
 See https://github.com/espruino/BangleApps/issues/1311
 */
 
+let translate = false;
+if (process.env.DEEPL) {
+  // Requires translate
+  // npm i translate
+  translate = require("translate");
+  translate.engine = "deepl"; // Or "yandex", "libre", "deepl"
+  translate.key = process.env.DEEPL; // Requires API key (which are free)
+  translate.url = process.env.TURL;
+}
+
 var IGNORE_STRINGS = [
   "5x5","6x8","6x8:2","4x6","12x20","6x15","5x9Numeric7Seg", "Vector", // fonts
   "---","...","*","##","00","GPS","ram",
@@ -12,7 +22,11 @@ var IGNORE_STRINGS = [
   "sortorder","tl","tr",
   "function","object", // typeof===
   "txt", // layout styles
-  "play","stop","pause", // music state
+  "play","stop","pause", "volumeup", "volumedown", // music state
+  "${hours}:${minutes}:${seconds}", "${hours}:${minutes}",
+  "BANGLEJS",
+  "fgH", "bgH",  "m/s",
+  "undefined", "kbmedia", "NONE",
 ];
 
 var IGNORE_FUNCTION_PARAMS = [
@@ -64,13 +78,20 @@ function isNotString(s, wasFnCall, wasArrayAccess) {
   if (wasArrayAccess && IGNORE_ARRAY_ACCESS.includes(wasArrayAccess)) return true;
   if (s=="Storage") console.log("isNotString",s,wasFnCall);
 
-  if (s.length<2) return true; // too short
+  if (s.length<3) return true; // too short
   if (s.length>40) return true; // too long
   if (s[0]=="#") return true; // a color
-  if (s.endsWith(".json") || s.endsWith(".img")) return true; // a filename
+  if (s.endsWith('.log') || s.endsWith('.js') || s.endsWith(".info") || s.endsWith(".csv") || s.endsWith(".json") || s.endsWith(".img") || s.endsWith(".txt")) return true; // a filename
   if (s.endsWith("=")) return true; // probably base64
   if (s.startsWith("BTN")) return true; // button name
   if (IGNORE_STRINGS.includes(s)) return true; // one we know to ignore
+  if (!isNaN(parseFloat(s)) && isFinite(s)) return true; //is number
+  if (s.match(/^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/)) return true; //roman number
+  if (!s.match(/.*[A-Z].*/i)) return true; // No letters
+  if (s.match(/.*[0-9].*/i)) return true; // No letters
+  if (s.match(/.*\(.*\).*/)) return true; // is function
+  if (s.match(/[A-Za-z]+[A-Z]([A-Z]|[a-z])*/)) return true; // is camel case
+  if (s.includes('_')) return true;
   return false;
 }
 
@@ -115,6 +136,7 @@ apps.forEach((app,appIdx) => {
         if (previousString.includes("/*LANG*/")) { // translated!
           addString(translatedStrings, tok.value, shortFilePath);
         } else { // untranslated - potential to translate?
+          // filter out numbers
           if (!isNotString(tok.value, wasFnCall, wasArrayAccess)) {
             addString(untranslatedStrings, tok.value, shortFilePath);
           }
@@ -137,6 +159,27 @@ untranslatedStrings.sort((a,b)=>a.uses - b.uses);
 translatedStrings.sort((a,b)=>a.uses - b.uses);
 
 
+/* 
+ * @description Add lang to start of string
+ * @param str string to add LANG to
+ * @param file file that string is found
+ * @returns void
+ */
+//TODO fix settings bug
+function applyLANG(str, file) {
+  fs.readFile(file, 'utf8', function (err,data) {
+    if (err) {
+      return console.log(err);
+    }
+    const regex = new RegExp(`(.*)((?<!\/\*LANG\*\/)["|']${str}[^A-Z].*)`, 'gi');
+    const result = data.replace(regex, '$1/*LANG*/$2');
+    console.log(str, file);
+    fs.writeFile(file, result, 'utf8', function (err) {
+      if (err) return console.log(err);
+    });
+  });
+}
+
 var report = "";
 
 log("Translated Strings that are not tagged with LANG");
@@ -144,8 +187,15 @@ log("=================================================================");
 log("");
 log("Maybe we should add /*LANG*/ to these automatically?");
 log("");
-log(untranslatedStrings.filter(e => translatedStrings.find(t=>t.str==e.str)).map(e=>`${JSON.stringify(e.str)} (${e.files.join(",")})`).join("\n"));
+const wordsToAdd = untranslatedStrings.filter(e => translatedStrings.find(t=>t.str==e.str));
+
+// Uncomment to add LANG to all strings
+// THIS IS EXPERIMENTAL
+//wordsToAdd.forEach(e => e.files.forEach(a => applyLANG(e.str, a)));
+
+log(wordsToAdd.map(e=>`${JSON.stringify(e.str)} (${e.uses} uses)`).join("\n"));
 log("");
+
 //process.exit(1);
 log("Possible English Strings that could be translated");
 log("=================================================================");
@@ -158,15 +208,16 @@ log("");
 //process.exit(1);
 
 let languages = JSON.parse(fs.readFileSync(`${BASEDIR}/lang/index.json`).toString());
-languages.forEach(language => {
+for (let language of languages) {
   if (language.code == "en_GB") {
     console.log(`Ignoring ${language.code}`);
-    return;
+    continue;
   }
   console.log(`Scanning ${language.code}`);
   log(language.code);
   log("==========");
   let translations = JSON.parse(fs.readFileSync(`${BASEDIR}/lang/${language.url}`).toString());
+  let translationPromises = [];
   translatedStrings.forEach(translationItem => {
     if (!translations.GLOBAL[translationItem.str]) {
       console.log(`Missing GLOBAL translation for ${JSON.stringify(translationItem)}`);
@@ -176,11 +227,21 @@ languages.forEach(language => {
           let appName = m[0].replaceAll("/", "");
           if (translations[appName] && translations[appName][translationItem.str]) {
             console.log(`     but LOCAL translation found in \"${appName}\"`);
+          } else if (translate && language.code !== "tr_TR") { // Auto Translate
+            translationPromises.push(new Promise(async (resolve) => {
+                const translation = await translate(translationItem.str, language.code.split("_")[0]);
+                console.log("Translating:", translationItem.str, translation);
+                translations.GLOBAL[translationItem.str] = translation;
+                resolve()
+            }))
           }
         }
       });
     }
   });
+  Promise.all(translationPromises).then(() => {
+    fs.writeFileSync(`${BASEDIR}/lang/${language.url}`, JSON.stringify(translations, null, 4))
+  });
   log("");
-});
+}
 console.log("Done.");

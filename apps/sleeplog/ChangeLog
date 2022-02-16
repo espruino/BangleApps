@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Fix crash on start #1423
+0.03: Added power saving mode, move all read/write log actions into lib/module
+0.04: Fix #1445, display loading info, add icons to display service states

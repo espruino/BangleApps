@@ -1,7 +1,7 @@
 { "id": "barometer",
   "name": "Barometer",
   "shortName":"Barometer",
-  "version":"0.01",
+  "version":"0.03",
   "description": "A simple barometer that displays the current air pressure",
   "icon": "barometer.png",
   "tags": "tool,outdoors",
