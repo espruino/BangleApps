@@ -64,7 +64,7 @@ function drawLog(topY, viewUntil) {
   for (var x = 0; x < hours; x++) {
     g.fillRect(x * stepwidth, y + 2, x * stepwidth, y + 4);
     g.setFontAlign(-1, -1).setFont("6x8")
-      .drawString((startHour + x) % 24, x * stepwidth, y + 6);
+      .drawString((startHour + x) % 24, x * stepwidth + 1, y + 6);
   }
 
   // define variables for sleep calculation
@@ -143,7 +143,7 @@ function drawAnalysis(toDate) {
   // draw log graphs and read outputs
   drawLog(110, toDate).forEach(
     (value, index) => outputs[index] += value);
-  drawLog(145, Date(toDate.valueOf() - 432E5)).forEach(
+  drawLog(144, Date(toDate.valueOf() - 432E5)).forEach(
     (value, index) => outputs[index] += value);
 
   // draw outputs
@@ -176,12 +176,22 @@ function drawNightTo(prevDays) {
   // clear heading area
   g.clearRect(0, 24, width, 70);
 
-  // display service statuses: service, loggging and powersaving 
-  g.setColor(global.sleeplog && sleeplog.enabled && sleeplog.logfile ? sleeplog.powersaving ? 2016 : g.theme.bg : 63488);
-  g.fillRect(0, 30, width, 66).reset();
+  // display service states: service, loggging and powersaving
+  if (!sleeplog.enabled) {
+    // draw disabled service icon
+    g.setColor(1, 0, 0)
+      .drawImage(atob("FBSBAAH4AH/gH/+D//w/n8f5/nud7znP85z/f+/3/v8/z/P895+efGPj4Hw//8H/+Af+AB+A"), 2, 36);
+  } else if (!sleeplog.logfile) {
+    // draw disabled log icon
+    g.reset().drawImage(atob("EA6BAM//z/8AAAAAz//P/wAAAADP/8//AAAAAM//z/8="), 4, 40)
+      .setColor(1, 0, 0).fillPoly([2, 38, 4, 36, 22, 54, 20, 56]);
+  }
+  // draw power saving icon
+  if (sleeplog.powersaving) g.setColor(0, 1, 0)
+    .drawImage(atob("FBSBAAAAcAD/AH/wP/4P/+H//h//4//+fv/nj/7x/88//Of/jH/4j/8I/+Af+AH+AD8AA4AA"), width - 22, 36);
 
   // draw headline
-  g.setFont("12x20").setFontAlign(0, -1);
+  g.reset().setFont("12x20").setFontAlign(0, -1);
   g.drawString("Night to " + require('locale').dow(toDate, 1) + "\n" +
     require('locale').date(toDate, 1), center, 30);
 
@@ -195,7 +205,7 @@ function drawNightTo(prevDays) {
 
   // calculate and draw analysis after timeout for faster feedback
   if (ATID) ATID = clearTimeout(ATID);
-  ATID = setTimeout(drawAnalysis, 50, toDate);
+  ATID = setTimeout(drawAnalysis, 100, toDate);
 }
 
 // define function to draw and setup UI

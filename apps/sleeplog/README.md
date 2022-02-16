@@ -49,6 +49,7 @@ also provides a power saving mode using the built in movement calculation. The i
 * __Power Saving__  
   _on_ / __off__  
   En-/Disable power saving mode. _Saves battery, but might decrease accurracy._
+  In the app the following icon on the right indicates that power saving mode is enabled: ![](powersaving.png)
 * __Max Move__ | maximal movement threshold  
   (only available when on power saving mode)  
   _50_ / _51_ / _..._ / __100__ / _..._ / _200_  
@@ -65,10 +66,12 @@ also provides a power saving mode using the built in movement calculation. The i
 * __Enabled__  
   __on__ / _off_  
   En-/Disable the service (all background activities). _Saves the most battery, but might make this app useless._
+  In the app the following icon on the left indicates that the service is disabled: ![](disabled.png)
 * __Logfile__  
   __default__ / _off_  
   En-/Disable logging by setting the logfile to _sleeplog.log_ / _undefined_.  
   If the logfile has been customized it is displayed with _custom_.
+  In the app the following icon on the left indicates that logging is disabled: ![](nolog.png)
   
 ---
 ### Global Object and Module Functions

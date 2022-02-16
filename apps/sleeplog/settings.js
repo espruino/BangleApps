@@ -127,7 +127,7 @@
         }
       },
       "Logfile ": {
-        value: settings.logfile === "sleeplog.log" ? true : settings.logfile.endsWith(".log") ? "custom" : false,
+        value: settings.logfile === "sleeplog.log" ? true : (settings.logfile || "").endsWith(".log") ? "custom" : false,
         format: v => v === true ? "default" : v ? "custom" : "off",
         onchange: function(v) {
           if (v !== "custom") {
