@@ -11,34 +11,30 @@ var currentSlot = 0;
 var hrvSlots = [10,20,30,60,120,300];
 var hrvValues = {};
 var rrRmsProgress;
-var saved = false;
 
 var rrNumberOfValues = 0;
 var rrSquared = 0;
-var rrLastValue
+var rrLastValue;
 var rrMax;
 var rrMin;
 
 function calcHrv(rr){
   //Calculate HRV with RMSSD method: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5624990/
-  for (currentRr of rr){
+  for (var currentRr of rr){
     if (!rrMax) rrMax = currentRr;
     if (!rrMin) rrMin = currentRr;
     rrMax = Math.max(rrMax, currentRr);
     rrMin = Math.min(rrMin, currentRr);
-    //print("Calc for: " + currentRr);
     rrNumberOfValues++;
     if (!rrLastValue){
       rrLastValue = currentRr;
       continue;
     }
     rrSquared += (rrLastValue - currentRr)*(rrLastValue - currentRr);
-    
-    //print("rr²: " + rrSquared);
+
     rrLastValue = currentRr;
   }
   var rms = Math.sqrt(rrSquared / rrNumberOfValues);
-  //print("rms: " + rms);
   return rms;
 }
 
@@ -56,17 +52,36 @@ function draw(y, hrv) {
     if (hrvValues[hrvSlots[i]]) str += hrvValues[hrvSlots[i]].toFixed(1) + "ms";
     g.setFontVector(16).drawString(str,px,y+44+(i*17));
   }
-  
+
   g.setRotation(3);
   g.setFontVector(12).drawString("Reset",g.getHeight()/2, g.getWidth()-10);
   g.setRotation(0);
 }
 
+function write(){
+    if (!hrvValues[hrvSlots[0]]){
+      return;
+    }
+
+    var file = require('Storage').open("bthrv.csv", "a");
+    var data = new Date(startingTime).toISOString();
+    for (var i = 0; i < hrvSlots.length; i++ ){
+      data += ",";
+      if (hrvValues[hrvSlots[i]]){
+        data += hrvValues[hrvSlots[i]];
+      }
+    }
+
+    data += "," + rrMax + "," + rrMin + ","+rrNumberOfValues;
+    data += "\n";
+    file.write(data);
+    Bangle.buzz(500);
+}
+
 function onBtHrm(e) {
   if (e.rr && !startingTime) Bangle.buzz(500);
   if (e.rr && !startingTime) startingTime=Date.now();
-  //print("Event:" + e.rr);
-  
+
   var hrv = calcHrv(e.rr);
   if (hrv){
     if (currentSlot <= hrvSlots.length && (Date.now() - startingTime) > (hrvSlots[currentSlot] * 1000) && !hrvValues[hrvSlots[currentSlot]]){
@@ -74,35 +89,25 @@ function onBtHrm(e) {
       currentSlot++;
     }
   }
-  if (!saved && currentSlot == hrvSlots.length){
-    var file = require('Storage').open("bthrv.csv", "a");
-    var data = new Date(startingTime).toISOString();
-    for (var c of hrvSlots){
-      data+=","+hrvValues[c];
-    }
-    data+="," + rrMax + "," + rrMin + ","+rrNumberOfValues;
-    data+="\n";
-    file.write(data);
-    saved = true;
-    Bangle.buzz(500);
-  }
+
   if (hrv){
-    if (!ui){      
+    if (!ui){
       Bangle.setUI("leftright", ()=>{
         resetHrv();
         clear(30);
       });
       ui = true;
     }
+
     draw(30, hrv);
   }
 }
 
 function resetHrv(){
+  write();
   hrvValues={};
   startingTime=undefined;
   currentSlot=0;
-  saved=false;
   rrNumberOfValues = 0;
   rrSquared = 0;
   rrLastValue = undefined;
@@ -116,7 +121,6 @@ var settings = require('Storage').readJSON("bthrm.json", true) || {};
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
 
 if (Bangle.setBTHRMPower){
   Bangle.on('BTHRM', onBtHrm);
@@ -133,6 +137,11 @@ if (Bangle.setBTHRMPower){
     file.write(data);
   }
 
+  E.on('kill', ()=>{
+    write();
+    Bangle.setBTHRMPower(0,'bthrv');
+  });
+
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 } else {
@@ -140,4 +149,3 @@ if (Bangle.setBTHRMPower){
   g.drawString("Missing BT HRM",g.getWidth()/2,g.getHeight()/2 - 16);
 }
 
-E.on('kill', ()=>Bangle.setBTHRMPower(0,'bthrv'));

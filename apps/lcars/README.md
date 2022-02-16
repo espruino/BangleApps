@@ -11,7 +11,7 @@ with Gadgetbride and the weather app must be installed.
 
 ## Features
  * LCARS Style watch face.
- * Full screen mode - widgets are still loaded but not shown.
+ * Enable or disable fullscreen mode (widgets are always loaded, but hidden if fullscreen).
  * Tab on left/right to switch between different screens.
  * Cusomizable data that is shown on screen 1 (steps, weather etc.)
  * Shows random and real images of planets.
@@ -33,7 +33,7 @@ with Gadgetbride and the weather app must be installed.
 ## Multiple screens support
 Access different screens via tap on the left/ right side of the screen
 
-![](screenshot.png)
+![](screenshot_1.png)
 ![](screenshot_2.png)
 
 
