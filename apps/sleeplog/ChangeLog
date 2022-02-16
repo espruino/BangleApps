@@ -2,17 +2,3 @@
 0.02: Fix crash on start #1423
 0.03: Added power saving mode, move all read/write log actions into lib/module
 0.04: Fix #1445, display loading info, add icons to display service states
-
-Update app.js
- - adjust label position to improve readability on light themes
- - add icons to display service states
-Update ChangeLog
- - compact old and add new changes
-Update lib.js
- - fix logfile correction in `setEnabled(...)` to make disable logging possible
- - simplify logfile checks
-Update README.md
- - add icons of the service states
-Update settings.js
- - fix error on reading a non string logfile value
-Add icons: disabled.png, nolog.png and powersaving.png
