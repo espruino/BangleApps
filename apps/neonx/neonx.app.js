@@ -91,7 +91,7 @@ function drawClock(num){
         newScale = 0.33 + current * (settings.fullscreen ? 0.48 : 0.4);
 
         tx = (halfWidth - 139) * newScale + halfWidth + (settings.fullscreen ? 2 : 0);
-        ty = (halfWidth - 139) * newScale + halfWidth + (settings.fullscreen ? 1 : 12);
+        ty = (halfWidth - 139) * newScale + halfWidth + (settings.fullscreen ? 2 : 12);
       }
 
       for (let i = 0; i < digits[num[y][x]].length; i++) {
