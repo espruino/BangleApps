@@ -16,3 +16,4 @@
 0.14: incorporated lazybones idle timer, configuration settings to come
 0.15: fixed tendancy for mylocation to default to London
       added setting to enable/disable idle timer warning
+0.16: make check_idle boolean setting work properly with new B2 menu
