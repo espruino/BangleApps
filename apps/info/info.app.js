@@ -3,6 +3,7 @@ const locale = require('locale');
 var ENV = process.env;
 var W = g.getWidth(), H = g.getHeight();
 var screen = 0;
+const maxScreen = 2;
 
 function getVersion(file) {
   var j = s.readJSON(file,1);
@@ -87,11 +88,12 @@ Bangle.on('touch', function(btn, e){
   var isRight = e.x > right;
 
   if(isRight){
-    screen = (screen + 1) % 3;
+    screen = (screen + 1) % (maxScreen+1);
   }
 
   if(isLeft){
-    screen = Math.max(0, (screen - 1));
+    screen -= 1;
+    screen = screen < 0 ? maxScreen : screen;
   }
 
   drawInfo();
