@@ -27,7 +27,7 @@ function getSteps(){
 
 function getBpm(){
   try{
-    return Math.round(Bangle.getHealthStatus("day").bpm) + " bpm";
+    return Math.round(Bangle.getHealthStatus("day").bpm) + "bpm";
   } catch(e) {
     return ">= 2v12";
   }
