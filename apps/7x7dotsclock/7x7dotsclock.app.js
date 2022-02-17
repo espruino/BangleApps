@@ -324,6 +324,7 @@ function SetFull(on) {
             print(settings.swleftApp);
             break;
           case -1:
+            print("swipe right event");            
             if(settings.swrightApp != "")  load(settings.swrightApp);
             print(settings.swrightApp);
             break;
