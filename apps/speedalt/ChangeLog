@@ -8,3 +8,4 @@
 0.08: New features. Added waypoints file and distance to selected waypoint display. Added integration with GPS Setup module to switch GPS to low power mode when screen off. Save display settings and restore when app restarted.
 0.09: Add third screen mode with large clock and waypoint selection display to ease visibility in bright daylight.
 0.10: Add Kalman filter to smooth the speed and altitude values. Can be disabled in settings.
+0.11: Now also runs on Bangle.js 2 with basic functionality

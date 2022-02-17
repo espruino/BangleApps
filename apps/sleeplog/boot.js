@@ -28,36 +28,43 @@ if (sleeplog.enabled) {
     resting: undefined,
     status: undefined,
 
-    // define stop function (logging will restart if enabled and boot file is executed)
-    stop: function() {
+    // define function to handle stopping the service, it will be restarted on reload if enabled
+    stopHandler: function() {
       // remove all listeners
       Bangle.removeListener('accel', sleeplog.accel);
       Bangle.removeListener('health', sleeplog.health);
-      E.removeListener('kill', () => sleeplog.stop());
-      // exit on missing global object
-      if (!global.sleeplog) return;
       // write log with undefined sleeping status
       require("sleeplog").writeLog(0, [Math.floor(Date.now()), 0]);
-      // reset always used cached values
-      sleeplog.resting = undefined;
-      sleeplog.status = undefined;
-      sleeplog.ess_values = [];
-      sleeplog.nomocount = 0;
-      sleeplog.firstnomodate = undefined;
+      // reset cached values if sleeplog is defined
+      if (global.sleeplog) {
+        sleeplog.resting = undefined;
+        sleeplog.status = undefined;
+        // reset cached ESS calculation values
+        if (!sleeplog.powersaving) {
+          sleeplog.ess_values = [];
+          sleeplog.nomocount = 0;
+          sleeplog.firstnomodate = undefined;
+        }
+      }
     },
 
-    // define restart function (also use for initial starting)
+    // define function to remove the kill listener and stop the service
+    // https://github.com/espruino/BangleApps/issues/1445
+    stop: function() {
+      E.removeListener('kill', sleeplog.stopHandler);
+      sleeplog.stopHandler();
+    },
+
+    // define function to initialy start or restart the service
     start: function() {
-      // exit on missing global object
-      if (!global.sleeplog) return;
+      // add kill listener
+      E.on('kill', sleeplog.stopHandler);
       // add health listener if defined and 
       if (sleeplog.health) Bangle.on('health', sleeplog.health);
       // add acceleration listener if defined and set status to unknown
       if (sleeplog.accel) Bangle.on('accel', sleeplog.accel);
-      // add kill listener
-      E.on('kill', () => sleeplog.stop());
       // read log since 5min ago and restore status to last known state or unknown
-      sleeplog.status = (require("sleeplog").readLog(0, Date.now() - 3E5)[1] || [0, 0])[1]
+      sleeplog.status = (require("sleeplog").readLog(0, Date.now() - 3E5)[1] || [0, 0])[1];
       // update resting according to status
       sleeplog.resting = sleeplog.status % 2;
       // write restored status to log

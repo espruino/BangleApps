@@ -7,7 +7,8 @@
     neonXSettings = {
       thickness: 4,
       io: 0,
-      showDate: 1
+      showDate: 1,
+      fullscreen: false,
     };
 
     updateSettings();
@@ -17,7 +18,7 @@
 
   if (!neonXSettings) resetSettings();
 
-  let thicknesses = [1, 2, 3, 4, 5];
+  let thicknesses = [1, 2, 3, 4, 5, 6];
 
   const menu = {
     "" : { "title":"Neon X & IO"},
@@ -48,7 +49,15 @@
         neonXSettings.showDate = v;
         updateSettings();
       }
-    }
+    },
+    'Fullscreen': {
+      value: false | neonXSettings.fullscreen,
+      format: () => (neonXSettings.fullscreen ? 'Yes' : 'No'),
+      onchange: () => {
+        neonXSettings.fullscreen = !neonXSettings.fullscreen;
+        updateSettings();
+      },
+    },
   };
   E.showMenu(menu);
 })

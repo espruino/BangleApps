@@ -34,6 +34,7 @@ const colors = {
 
 const is12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 const screenWidth = g.getWidth();
+const screenHeight = g.getHeight();
 const halfWidth = screenWidth / 2;
 const scale = screenWidth / 240;
 const REFRESH_RATE = 10E3;
@@ -58,15 +59,18 @@ function drawLine(poly, thickness){
   }
 }
 
-let settings = require('Storage').readJSON('neonx.json', 1);
-
-if (!settings) {
-  settings = {
-    thickness: 4,
-    io: 0,
-    showDate: 1
-  };
+let settings = {
+  thickness: 4,
+  io: 0,
+  showDate: 1,
+  fullscreen: false,
+};
+let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
 }
+
+
 
 function drawClock(num){
   let tx, ty;
@@ -79,13 +83,15 @@ function drawClock(num){
       g.setColor(colors[settings.io ? 'io' : 'x'][y][x]);
 
       if (!settings.io) {
-        tx = (x * 100 + 18) * newScale;
-        ty = (y * 100 + 32) * newScale;
+        newScale *= settings.fullscreen ? 1.18 : 1.0;
+        let dx = settings.fullscreen ? 0 : 18
+        tx = (x * 100 + dx) * newScale;
+        ty = (y * 100 + dx*2) * newScale;
       } else {
-        newScale = 0.33 + current * 0.4;
+        newScale = 0.33 + current * (settings.fullscreen ? 0.48 : 0.4);
 
-        tx = (halfWidth - 139) * newScale + halfWidth;
-        ty = (halfWidth - 139) * newScale + halfWidth + 12;
+        tx = (halfWidth - 139) * newScale + halfWidth + (settings.fullscreen ? 2 : 0);
+        ty = (halfWidth - 139) * newScale + halfWidth + (settings.fullscreen ? 2 : 12);
       }
 
       for (let i = 0; i < digits[num[y][x]].length; i++) {
@@ -116,7 +122,11 @@ function draw(date){
     l2 = ('0' + d.getMinutes()).substr(-2);
   }
 
-  g.clearRect(0,24,240,240);
+  if(settings.fullscreen){
+    g.clearRect(0,0,screenWidth,screenHeight);
+  } else {
+    g.clearRect(0,24,240,240);
+  }
 
   drawClock([l1, l2]);
 }
@@ -150,4 +160,9 @@ Bangle.on('lcdPower', function(on){
 });
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+
+if(settings.fullscreen){
+  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+} else {
+  Bangle.drawWidgets();
+}
