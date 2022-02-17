@@ -11,8 +11,7 @@ looks best with dark theme so far
 ![](dotsfontclock-scr1.png)
 
 * when screen is unlocked it shows additional info: bluetooth, battery, new message, date and seconds
-* by swiping you can open customizable apps
+* you can configure a app per swipe direction
+* when swiping the configured apps are launced
 * button press opens launcher
 
-Contributors:
-* pkkpp
