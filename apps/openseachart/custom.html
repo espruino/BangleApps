@@ -24,8 +24,8 @@
         z-index: 100;
       }
       #maptiles {
-        width: 256px;
-        height: 256px;
+        width: 512px;
+        height: 512px;
       }
     </style>
   </head>
@@ -191,22 +191,14 @@ TODO:
         for (var i = 0; i < 1; i++) {
             for (var j = 0; j < 1; j++) {
               (function(i,j){
-                var coords = new L.Point(center.x+i-1, center.y+j-1);
-                coords.z = zoom;
                 var img = new Image();
                 img.crossOrigin = "Anonymous";
                 tileGetters.push(new Promise(function(resolve,reject) {
                   img.onload = function(){
                     ctx.drawImage(img, 0, 0);//i*OSMTILESIZE - ox, j*OSMTILESIZE - oy);
-                    /*if (testPt) {
-                      ctx.fillStyle="green";
-                      ctx.fillRect(testPt.x-1, testPt.y-5, 3,10);
-                      ctx.fillRect(testPt.x-5, testPt.y-1, 10,3);
-                    }*/
                     resolve();
                   };
                 }));
-                bangleTileLayer._tileZoom = previewTileLayer._tileZoom;
                 img.src = 'http://sandshore.duckdns.org:2552/boca_ciega_cr.png';
               })(i,j);
             }
