@@ -1,4 +1,5 @@
 {
+  "mode": 1,
   "enabled": true,
   "replace": true,
   "debuglog": false,
@@ -6,6 +7,12 @@
   "allowFallback": true,
   "warnDisconnect": false,
   "fallbackTimeout": 10,
+  "custom_replace": false,
+  "custom_debuglog": false,
+  "custom_startWithHrm": false,
+  "custom_allowFallback": false,
+  "custom_warnDisconnect": false,
+  "custom_fallbackTimeout": 10,
   "gracePeriodNotification": 0,
   "gracePeriodConnect": 0,
   "gracePeriodService": 0,

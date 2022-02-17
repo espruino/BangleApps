@@ -1,6 +1,8 @@
 # GPS Speed, Altimeter and Distance to Waypoint
 
-You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint. 
+You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint.
+
+*Note for **Bangle.js 2:** Currently only the BTN3 functionality is working with the Bangle.js 2 button.*
 
 Within the [A]ltitude and [D]istance displays modes one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
@@ -9,6 +11,8 @@ The waypoints list is the same as that used with the [GPS Navigation](https://ba
 ## Buttons and Controls
 
 BTN3 : Cycles the modes between Speed+[A]ltitude,  Speed+[D]istance and large Time/Waypoint
+
+***Bangle.js 2:** Currently only this button function is working*
 
 ### [A]ltitude mode
 

@@ -162,8 +162,6 @@ if ("buzz"==chimetype || "beep"==chimetype)
 
 g.clear();
 tick();
+Bangle.setUI("clock"); // Show launcher when middle button is pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

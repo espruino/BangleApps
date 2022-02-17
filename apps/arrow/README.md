@@ -43,3 +43,7 @@ charge.
 
 This app is based in the work done by [jeffmer](https://github.com/jeffmer/JeffsBangleAppsDev)
 
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

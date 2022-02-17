@@ -654,7 +654,52 @@ function drawScreen2() {
 }
 
 function drawScreenHelp() {
-  E.showAlert("Rules can be found on asmadigames.com").then(function(){drawMainMenu();});
+  //E.showAlert("Rules can be found on asmadigames.com").then(function(){drawMainMenu();});
+  E.showScroller({
+    h: 25,
+    c: 10,
+    draw: (idx,r) => {
+      g.setBgColor("#000").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+      g.setColor("#fff");
+      switch(idx) {
+        case 0:
+          g.setFont("6x8:2").drawString("Rules can be",r.x+10,r.y+4);
+          break;
+        case 1:
+          g.setFont("6x8:2").drawString("found on",r.x+10,r.y+4);
+          break;
+        case 2:
+          g.setFont("Vector:18").drawString("asmadigames.com",r.x+10,r.y+4);
+          break;
+        case 3:
+          g.setFont("6x8:1").drawString("Use button to show menu.",r.x+10,r.y+4);
+          break;
+        case 4:
+          g.setFont("6x8:1").drawString("Swipe L/R for hand/palette.",r.x+10,r.y+4);
+          break;
+        case 5:
+          g.setFont("6x8:1").drawString("Tap card to see details.",r.x+10,r.y+4);
+          break;
+        case 6:
+          g.setFont("6x8:1").drawString("Swipe card L/R to play.",r.x+10,r.y+4);
+          break;
+        case 7:
+          g.setFont("6x8:1").drawString("Finish turn in menu.",r.x+10,r.y+4);
+          break;
+        case 9:
+          g.fillRect(r.x+40,r.y+0,r.x+140,r.y+20);
+          g.setColor(0,0,0);
+          g.setFont("Vector:14").drawString("OK",r.x+80,r.y+4);
+          break;
+      }
+    },
+    select: (idx) => {
+      if(idx === 9){
+        E.showScroller();
+        drawMainMenu();
+      }
+    }
+  });
 }
 
 function drawGameOver(win) {
@@ -678,9 +723,7 @@ function finishTurn() {
     } else if(playerHand.handCards.length === 0) {
       drawGameOver(false);
     } else if(!canPlay(playerHand, playerPalette, AIPalette)) {
-      console.log("no play");
-      //drawGameOver(false);
-      drawScreen1();
+      drawGameOver(false);
     } else {
       E.showMenu();
       drawScreen1();
