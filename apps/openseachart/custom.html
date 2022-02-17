@@ -24,8 +24,8 @@
         z-index: 100;
       }
       #maptiles {
-        width: 512px;
-        height: 512px;
+        width: 896px;
+        height: 896px;
       }
     </style>
   </head>
@@ -135,7 +135,7 @@ TODO:
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/
             tiles.push({
-              name:"openstmap-"+x+"-"+y+".img",
+              name:"openseamap-"+x+"-"+y+".img",
               content:imgstr,
               evaluate:true
             });
@@ -186,8 +186,8 @@ TODO:
         var canvas = document.getElementById("maptiles");
         canvas.style.display="";
         var ctx = canvas.getContext('2d');
-        canvas.width = 912;//OSMTILESIZE*2;
-        canvas.height = 912;//OSMTILESIZE*2;
+        canvas.width = 896;//OSMTILESIZE*2;
+        canvas.height = 896;//OSMTILESIZE*2;
         for (var i = 0; i < 1; i++) {
             for (var j = 0; j < 1; j++) {
               (function(i,j){
