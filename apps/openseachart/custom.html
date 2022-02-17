@@ -121,6 +121,8 @@ TODO:
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);
+	console.log("Width", width);
+	console.log("Height", height);
         var tiles = [];
         for (var y=0;y<h;y++) {
           for (var x=0;x<w;x++) {
@@ -130,10 +132,7 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
-            /*var compress = 'require("heatshrink").decompress('
-            if (!imgstr.startsWith(compress)) throw "Data in wrong format";
-            imgstr = imgstr.slice(compress.length,-1);*/
+            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); 
             tiles.push({
               name:"openseamap-"+x+"-"+y+".img",
               content:imgstr,
