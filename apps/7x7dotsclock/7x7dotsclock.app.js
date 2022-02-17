@@ -4,6 +4,9 @@
 by Peter Kuppelwieser
 
 */
+
+let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
+
 // position on screen
 var Xs = 0, Ys = 30,Xe = 175, Ye=175;
 //const Xs = 0, Ys = 0,Xe = 175, Ye=175;
@@ -217,11 +220,12 @@ function actions(v){
   
    if(v==-1){
      print("up swipe event");
-     load("qrcode.app.js");
+     if(settings.swupApp != "") load(settings.swupApp);
+     print(settings.swupApp);
    } else if(v==1) {
      print("down swipe event");
-     load("hrm.app.js");
-     print(apps[0].src);
+     if(settings.swdownApp != "")  load(settings.swdownApp);
+     print(settings.swdownApp);
    } else {
      print("touch event");
    }
@@ -316,11 +320,13 @@ function SetFull(on) {
         switch (direction) {
           case 1:
             print("swipe left event");
-            load("gbmusic.app.js");
+            if(settings.swleftApp != "")  load(settings.swleftApp);
+            print(settings.swleftApp);
             break;
           case -1:
             load("messages.app.js");            
-            print("swipe right event");
+            if(settings.swrightApp != "")  load(settings.swrightApp);
+            print(settings.swrightApp);
             break;
           default:
             print("swipe undefined event");
