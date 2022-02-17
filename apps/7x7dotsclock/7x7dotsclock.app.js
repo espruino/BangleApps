@@ -324,7 +324,6 @@ function SetFull(on) {
             print(settings.swleftApp);
             break;
           case -1:
-            load("messages.app.js");            
             if(settings.swrightApp != "")  load(settings.swrightApp);
             print(settings.swrightApp);
             break;
