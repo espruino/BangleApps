@@ -33,8 +33,8 @@ exports.draw = function() {
   var s = require("Storage");
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
-  var ix = (map.lon-map.center.lon)/map.dlonpx + (map.imgx/2) - cx;
-  var iy = (map.center.lat-map.lat)/map.dlatpx + (map.imgy/2) - cy;
+  var ix = (m.lon-map.center.lon)/map.dlonpx + (map.imgx/2) - cx;
+  var iy = (map.center.lat-m.lat)/map.dlatpx + (map.imgy/2) - cy;
   //console.log(ix,iy);
   var tx = 0|(ix/map.tilesize);
   var ty = 0|(iy/map.tilesize);
@@ -61,6 +61,7 @@ exports.latLonToXY = function(lat, lon) {
 
 /// Given an amount to scroll in pixels on the screen, adjust the lat/lon of the map to match
 exports.scroll = function(x,y) {
-  this.lon += x * this.map.dlonpx;
-  this.lat -= y * this.map.dlatpx;
+  this.lon -= x * this.map.dlonpx;
+  this.lat += y * this.map.dlatpx;
+//  console.log(this.lon, this.lat);
 };
