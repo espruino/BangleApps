@@ -23,7 +23,7 @@ function center() {
 */
 
 var map = require("Storage").readJSON("openseachart.json");
-map.center = Bangle.project({lat:map.lat,lon:map.lon});
+map.center = {lat:map.lat, lon:map.lon} // save original center
 exports.map = map;
 exports.lat = map.lat; // actual position of middle of screen
 exports.lon = map.lon;  // actual position of middle of screen
@@ -33,9 +33,8 @@ exports.draw = function() {
   var s = require("Storage");
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
-  var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var ix = (p.x-map.center.x)/map.scale + (map.imgx/2) - cx;
-  var iy = (map.center.y-p.y)/map.scale + (map.imgy/2) - cy;
+  var ix = (map.lon-map.center.lon)/map.dlonpx + (map.imgx/2) - cx;
+  var iy = (map.center.lat-map.lat)/map.dlatpx + (map.imgy/2) - cy;
   //console.log(ix,iy);
   var tx = 0|(ix/map.tilesize);
   var ty = 0|(iy/map.tilesize);
@@ -52,20 +51,16 @@ exports.draw = function() {
 
 /// Convert lat/lon to pixels on the screen
 exports.latLonToXY = function(lat, lon) {
-  var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var q = Bangle.project({lat:lat, lon:lon});
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   return {
-    x : (q.x-p.x)/map.scale + cx,
-    y : cy - (q.y-p.y)/map.scale
+    x : cx + (lon-m.lon)/max.dlonpx,
+    y : cy - (lat-m.lat)/map.dlatpx
   };
 };
 
 /// Given an amount to scroll in pixels on the screen, adjust the lat/lon of the map to match
 exports.scroll = function(x,y) {
-  var a = Bangle.project({lat:this.lat,lon:this.lon});
-  var b = Bangle.project({lat:this.lat+1,lon:this.lon+1});
-  this.lon += x * this.map.scale / (a.x-b.x);
-  this.lat -= y * this.map.scale / (a.y-b.y);
+  this.lon += x * this.map.dlonpx;
+  this.lat -= y * this.map.dlatpx;
 };
