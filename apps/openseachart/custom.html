@@ -86,7 +86,7 @@ TODO:
       previewTileLayer.addTo(map);
 
       function tilesLoaded(ctx, width, height) {
-        var options = { compression:true, mode:"web", output:"string"};
+        var options = { compression:false, mode:"web", output:"raw"};
         if (document.getElementById("3bit").checked) {
           options = {
             compression:false, output:"raw",
@@ -136,7 +136,6 @@ TODO:
             tiles.push({
               name:"openseamap-"+x+"-"+y+".img",
               content:imgstr,
-              evaluate:true
             });
           }
         }
