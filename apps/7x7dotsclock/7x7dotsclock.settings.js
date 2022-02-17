@@ -24,7 +24,8 @@ function setSetting(key,value) {
   print("storing settings 7x7dotsclock.json");
   storage.write('7x7dotsclock.json', settings);
 }
-  
+
+
 function showSelAppMenu(key) {
   var Apps = require("Storage").list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (
@@ -43,7 +44,7 @@ function showSelAppMenu(key) {
   };
   Apps.forEach((app, index) => {
     var label = app.name;
-    if ((settings[key]  && index === 0) || (settings[key] === app.src)) {
+    if (settings[key] === app.src) {
       label = "* " + label;
     }
     SelAppMenu[label] = () => {
