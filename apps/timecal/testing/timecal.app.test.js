@@ -241,7 +241,7 @@ class TimeCalClock{
         rDate=rD.getDate();
       }
     }
-    if (this.settings().calBorder) {
+    if (this.settings().calBrdr) {
       g.setColor(g.theme.fg).drawRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H-1);
     }
   }
@@ -267,7 +267,7 @@ class TimeCalClock{
 //*************************************************************************************
 //*************************************************************************************
 //*************************************************************************************
-//Copy ABOVE the src code of clock-app and load via espruino WEB IDE
+//Copy ABOVE the src code of clock-app class and load via espruino WEB IDE
 //*************************************************************************************
 //*************************************************************************************
 //*************************************************************************************
@@ -466,11 +466,10 @@ class BangleTestRunner{
    * befor each testcase
    */
   _beforeCase() {
+    console.log(this.currentTest);
     console.log(this._nowTime(), ">>case #" + this.currentTestNum + "." + this.currentCaseNum + "/" + (this.currentTest.cases.length-1));
     if (this.currentTest instanceof TestSetting)
-      console.log(this.currentTest.setting+"="+this.currentCase.value+"\n"
-        +this.currentCase.beforeTxt ? "testcase:"+this.currentCase.beforeTxt : ""
-      );
+      console.log(this.currentTest.setting+"="+this.currentCase.value+"/n"+(this.currentCase.beforeTxt ? "#"+this.currentCase.beforeTxt : ""));
   }
 
   /**
@@ -562,13 +561,12 @@ class BangleTestRunner{
 
   _nowTime() {
     d = new Date();
-    return(("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2) + "." + ("00" + d.getMilliseconds()).slice(-3))
+    return(("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2) + "." + ("00" + d.getMilliseconds()).slice(-3));
   }
 }
 /**
  * TEST all Settings
  */
-const SUNDAY = 
 new BangleTestRunner("TimeCalClock", LogSeverity.INFO)
   /*
   .addTestSettings({ 
@@ -778,6 +776,19 @@ new BangleTestRunner("TimeCalClock", LogSeverity.INFO)
         { value: 1, beforeTxt:"Sundays color: red?"    , afterTxt: "Sundays are red" },
         { value: 2, beforeTxt:"Sundays color: green?"  , afterTxt: "Sundays are green" },
         { value: 3, beforeTxt:"Sundays color: blue?"   , afterTxt: "Sundays are blue" },
+      ],
+      constructorParams: [new Date(),"|TEST_SETTINGS|"],
+      functionNames: ["drawCal"],
+      functionParams: [],
+    })
+    */
+
+    /*
+    .addTestSettings({ 
+      setting:       "calBrdr",
+      cases: [
+        { value: false, beforeTxt:"Calendar without border?" , afterTxt: "No outer border." },
+        { value: true,  beforeTxt:"Calendar with border?"    , afterTxt: "Outer border." },
       ],
       constructorParams: [new Date(),"|TEST_SETTINGS|"],
       functionNames: ["drawCal"],

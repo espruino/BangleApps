@@ -67,10 +67,10 @@ class TimeCalClock{
   /*
   * Run forest run
   **/
-  draw(force){
+  draw(){
     this.drawTime();
 
-    if (force || this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
+    if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
       this.drawDateAndCal();
     }
 
@@ -82,6 +82,8 @@ class TimeCalClock{
   drawTime(){
     d=this.date ? this.date : new Date();
     const Y=Bangle.appRect.y+this.DATE_FONT_SIZE()+10;
+
+    d=d?d :new Date();
 
     g.setFontAlign(0, -1).setFont("Vector", this.TIME_FONT_SIZE()).setColor(g.theme.fg)
     .clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7)
@@ -239,7 +241,7 @@ class TimeCalClock{
         rDate=rD.getDate();
       }
     }
-    if (this.settings().calBorder) {
+    if (this.settings().calBrdr) {
       g.setColor(g.theme.fg).drawRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H-1);
     }
   }
