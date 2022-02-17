@@ -12,5 +12,5 @@
     {"name":"7x7dotsclock.app.js","url":"7x7dotsclock.app.js"},
     {"name":"7x7dotsclock.img","url":"7x7dotsclock.img.js","evaluate":true}
   ],
-  "data": [{"name":"7x7dotsclock.json"}],
+  "data": [{"name":"7x7dotsclock.json"}]
 }
