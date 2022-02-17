@@ -23,7 +23,7 @@ function center() {
 */
 
 var map = require("Storage").readJSON("openseachart.json");
-map.center = {lat:map.lat, lon:map.lon} // save original center
+map.center = {lat:map.lat, lon:map.lon}; // save original center
 exports.map = map;
 exports.lat = map.lat; // actual position of middle of screen
 exports.lon = map.lon;  // actual position of middle of screen
