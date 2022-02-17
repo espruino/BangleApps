@@ -43,7 +43,7 @@ exports.draw = function() {
   var oy = (ty*map.tilesize)-iy;
   for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
     for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
-      var img = s.read("openseachart-"+ttx+"-"+tty+".img");
+      var img = s.read("openseamap-"+ttx+"-"+tty+".img");
       if (img) g.drawImage(img,x,y);
       else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y+map.tilesize-1,x+map.tilesize-1,y);
     }
