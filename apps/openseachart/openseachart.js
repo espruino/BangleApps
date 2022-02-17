@@ -54,7 +54,7 @@ exports.latLonToXY = function(lat, lon) {
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   return {
-    x : cx + (lon-m.lon)/max.dlonpx,
+    x : cx + (lon-m.lon)/map.dlonpx,
     y : cy - (lat-m.lat)/map.dlatpx
   };
 };
