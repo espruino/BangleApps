@@ -1,0 +1,18 @@
+{
+  "id": "openseachart",
+  "name": "OpenSeaChart",
+  "shortName": "OpenSeaChart",
+  "version": "0.01",
+  "description": "Sea chart",
+  "icon": "app.png",
+  "tags": "outdoors,gps,osm",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "custom": "custom.html",
+  "customConnect": true,
+  "storage": [
+    {"name":"openseachart","url":"openseachart.js"},
+    {"name":"openseachart.app.js","url":"app.js"},
+    {"name":"opensseachart.img","url":"app-icon.js","evaluate":true}
+  ]
+}
