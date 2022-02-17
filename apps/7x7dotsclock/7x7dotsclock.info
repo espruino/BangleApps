@@ -1,7 +1,0 @@
-{
-  "id":"7x7dotsclock",
-  "name":"7x7 dots clock",
-  "type":"clock",
-  "src":"dotfontclock.app.js",
-  "icon":"dotfontclock.img"
-}
