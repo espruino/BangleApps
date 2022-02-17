@@ -1,41 +1,64 @@
 (function(back) {
-  function updateSettings() {
-    storage.write('numerals.json', numeralsSettings);
-  }
-  function resetSettings() {
-    numeralsSettings = {
-      color:0,
-      drawMode:"fill",
-      showDate:0
-    };
-    updateSettings();
-  }
-  let numeralsSettings = storage.readJSON('numerals.json',1);
-  if (!numeralsSettings) resetSettings();
-  let dm = ["fill","frame","framefill","thickframe","thickfill"];
-  let col = process.env.HWVERSION==1?["rnd","r/g","y/w","o/c","b/y"]:["rnd","r/g","g/b","r/c","m/g"];
-  let btn = [[24,"BTN1"],[22,"BTN2"],[23,"BTN3"],[11,"BTN4"],[16,"BTN5"]];
-  var menu={
-    "" : { "title":"Numerals"},
-    "Colors": {
-      value: 0|numeralsSettings.color,
-      min:0,max:col.length-1,
-      format: v=>col[v],
-      onchange: v=> { numeralsSettings.color=v; updateSettings();}
+
+let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
+  
+  
+function showMainMenu() {
+  const mainMenu = {
+    "": {"title": "7x7 Dots Clock Settings"},
+    "< Back": ()=>load(),
+    "sw-up": ()=>showSelAppMenu("swupApp"),
+    "sw-down": ()=>showSelAppMenu("swdownApp"),
+    "sw-left": ()=>showSelAppMenu("swleftApp"),
+    "sw-right": ()=>showSelAppMenu("swrightApp")
+
+  };  
+
+  E.showMenu(mainMenu);
+}
+
+function setSetting(key,value) {
+  print("call " + key + " = " + value);
+  settings[key] = value;
+
+  print("storing settings 7x7dotsclock.json");
+  storage.write('7x7dotsclock.json', settings);
+}
+  
+function showSelAppMenu(key) {
+  var Apps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (
+      a&&a.name != "Launcher" 
+      && a&&a.name != "Bootloader" 
+      &&  a&&a.type != "clock" 
+      && a&&a.type !="widget"
+    )?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
+  const SelAppMenu = {
+    '': {
+      'title': /*LANG*/'Select App',
     },
-    "Draw": {
-      value: 0|dm.indexOf(numeralsSettings.drawMode),
-      min:0,max:dm.length-1,
-      format: v=>dm[v],
-      onchange: v=> { numeralsSettings.drawMode=dm[v]; updateSettings();}
-    },
-    "Date on touch": {
-      value: 0|numeralsSettings.showDate,
-      min:0,max:1,
-      format: v=>v?"On":"Off",
-      onchange: v=> { numeralsSettings.showDate=v; updateSettings();}
-    },
-    "< back": back
+    '< Back': ()=>showMainMenu(),
   };
-  E.showMenu(menu);
+  Apps.forEach((app, index) => {
+    var label = app.name;
+    if ((settings[key]  && index === 0) || (settings[key] === app.src)) {
+      label = "* " + label;
+    }
+    SelAppMenu[label] = () => {
+      if (settings[key]  !== app.src) {
+        setSetting(key,app.src);
+        showMainMenu();
+      }
+    };
+  });
+  if (Apps.length === 0) {
+    SelAppMenu[/*LANG*/"No Apps Found"] = () => { };
+  }
+  return E.showMenu(SelAppMenu);
+}
+
+showMainMenu();
+  
 })
