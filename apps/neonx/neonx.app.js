@@ -8,6 +8,19 @@
  * Created: February 2022
  */
 
+let settings = {
+  thickness: 4,
+  io: 0,
+  showDate: 1,
+  fullscreen: false,
+  showLock: false,
+};
+let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
+
+
 const digits = {
   0:[[15,15,85,15,85,85,15,85,15,15]],
   1:[[85,15,85,85]],
@@ -21,6 +34,7 @@ const digits = {
   9:[[15,50,15,15,85,15,85,85,15,85]],
 };
 
+
 const colors = {
   x: [
     ["#FF00FF", "#00FFFF"],
@@ -31,16 +45,18 @@ const colors = {
     ["#00FF00", "#00FFFF"]
   ]
 };
+const unlockColor = "#FF0000";
 
 const is12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const halfWidth = screenWidth / 2;
 const scale = screenWidth / 240;
-const REFRESH_RATE = 10E3;
+const REFRESH_RATE = 60E3;
 
 let interval = 0;
 let showingDate = false;
+
 
 function drawLine(poly, thickness){
   for (let i = 0; i < poly.length; i = i + 2){
@@ -59,18 +75,6 @@ function drawLine(poly, thickness){
   }
 }
 
-let settings = {
-  thickness: 4,
-  io: 0,
-  showDate: 1,
-  fullscreen: false,
-};
-let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
-for (const key in saved_settings) {
-  settings[key] = saved_settings[key]
-}
-
-
 
 function drawClock(num){
   let tx, ty;
@@ -80,7 +84,11 @@ function drawClock(num){
       const current = ((y + 1) * 2 + x - 1);
       let newScale = scale;
 
-      g.setColor(colors[settings.io ? 'io' : 'x'][y][x]);
+      let c = colors[settings.io ? 'io' : 'x'][y][x];
+      if(x == 0 && y == 0 && settings.showLock){
+        c = Bangle.isLocked() ? c : unlockColor;
+      }
+      g.setColor(c);
 
       if (!settings.io) {
         newScale *= settings.fullscreen ? 1.18 : 1.0;
@@ -100,6 +108,7 @@ function drawClock(num){
     }
   }
 }
+
 
 function draw(date){
   let d = new Date();
@@ -131,6 +140,7 @@ function draw(date){
   drawClock([l1, l2]);
 }
 
+
 function setUpdateInt(set){
   if (interval) {
     clearInterval(interval);
@@ -148,15 +158,22 @@ Bangle.setUI("clock");
 setUpdateInt(1);
 draw();
 
+
 if (settings.showDate) {
   Bangle.on('touch', () => draw(!showingDate));
 }
 
 Bangle.on('lcdPower', function(on){
   if (on){
-    draw();
     setUpdateInt(1);
-  } else setUpdateInt(0);
+    draw();
+  } else {
+    setUpdateInt(0);
+  }
+});
+
+Bangle.on('lock', function(isLocked) {
+  draw();
 });
 
 Bangle.loadWidgets();

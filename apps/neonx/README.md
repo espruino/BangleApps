@@ -22,3 +22,8 @@ Shows the current date as DD MM on touch and reverts back to time after 5 second
 ### Fullscreen
 Shows the watchface in fullscreen mode.
 Note: In fullscreen mode, widgets are hidden, but still loaded.
+
+### Show lock status
+In fullscreen mode it can be useful to detect, whether the BangleJs is locked or not.
+If these settings are enabled, the first digit is shown red if the BangleJs is locked
+and purple otherwise.
