@@ -1,0 +1,17 @@
+{ "id": "rolex",
+    "name": "rolex",
+    "shortName":"rolex",
+    "icon": "rolex.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "version":"0.03",
+    "description": "A rolex like watch face",
+    "tags": "clock",
+    "type": "clock",
+    "supports":["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"rolex.app.js","url":"app.js"},
+      {"name":"rolex.img","url":"app-icon.js","evaluate":true}
+    ]
+   }

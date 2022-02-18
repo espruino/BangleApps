@@ -1,0 +1,20 @@
+{
+  "id": "neonx",
+  "name": "Neon X & IO X Clock",
+  "shortName": "Neon X Clock",
+  "version": "0.02",
+  "description": "Pebble Neon X & Neon IO X for Bangle.js",
+  "icon": "neonx.png",
+  "type": "clock",
+  "readme": "README.md",
+  "tags": "neonx,neonio,neoniox,clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url": "neonx-screenshot.png"}, {"url": "neoniox-screenshot.png"}],
+  "storage": [
+    {"name": "neonx.app.js", "url": "neonx.app.js"},
+    {"name": "neonx.img", "url": "neonx-icon.js", "evaluate": true},
+    {"name": "neonx.settings.js", "url": "neonx.settings.js"}
+  ],
+  "data": [{"name": "neonx.json"}]
+}
