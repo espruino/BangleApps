@@ -1,6 +1,6 @@
 var locale = require("locale");
-var fontColor = "#00FF00";
-var startY = 30;
+var fontColor = g.theme.dark ? "#0f0" : "#000";
+var startY = 24;
 var paddingY = 2;
 var font6x8At4Size = 32;
 var font6x8At2Size = 18;
@@ -82,8 +82,6 @@ function drawActivity(pos){
 
 
 function draw(){
-  // console.log("in draw");
-  // console.log(settings);
   var curPos = 1;
   g.reset();
   g.setFontAlign(-1, -1);
