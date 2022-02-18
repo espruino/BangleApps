@@ -12,7 +12,7 @@ draw:function(buzzed_once) {
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every settings.repeat seconds
   }
-  if (settings.repeat===0 && buzzed_once!==true) settings.repeat = (settings.unreadTimeout+1)*1000; // Dont buzz again after this initial one
+  if (settings.repeat===0 && buzzed_once===true) settings.repeat = (settings.unreadTimeout+241)*1000; // Dont buzz again after this initial one
   setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },show:function(quiet) {
