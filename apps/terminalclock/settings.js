@@ -3,10 +3,10 @@
   // Load settings
   var settings = Object.assign({
     HRMinConfidence: 50,
-    showDate: "Yes",
-    showHRM: "Yes",
-    showActivity: "Yes",
-    showStepCount: "Yes",
+    showDate: true,
+    showHRM: true,
+    showActivity: true,
+    showStepCount: true,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
