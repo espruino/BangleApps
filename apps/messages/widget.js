@@ -8,7 +8,7 @@ draw:function() {
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
-  else if (settings.repeat===0) settings.repeat = (settings.unreadTimeout+241)*1000; // best way to no-repeat and keep next code
+  //else if (settings.repeat===0) settings.repeat = (settings.unreadTimeout+241)*1000; // best way to no-repeat and keep next code
   if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every settings.repeat seconds
