@@ -1,4 +1,4 @@
-WIDGETS["messages"]={area:"tl", width:0, iconwidth:23,
+WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
 draw:function() {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
@@ -8,9 +8,11 @@ draw:function() {
   //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
-  if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
-    this.l = Date.now();
-    WIDGETS["messages"].buzz(); // buzz every 4 seconds
+  if(settings.repeat!==0) {
+    if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
+      this.l = Date.now();
+      WIDGETS["messages"].buzz(); // buzz every settings.repeat seconds
+    }
   }
   setTimeout(()=>WIDGETS["messages"].draw(), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);

@@ -27,8 +27,8 @@
     },
     /*LANG*/'Repeat': {
       value: settings().repeat,
-      min: 2, max: 10,
-      format: v => v+"s",
+      min: 0, max: 10,
+      format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
     },
     /*LANG*/'Unread timer': {
