@@ -4,8 +4,8 @@
 |---------------------------------|--------------------------------------|
 | <center>Neon X</center>         | <center>Neon IO X</center>           |
 
-This is a clock based on Pebble's Neon X and Neon IO X watchfaces by Sam Jerichow. 
-Can be switched between in the Settings menu, which can be accessed through 
+This is a clock based on Pebble's Neon X and Neon IO X watchfaces by Sam Jerichow.
+Can be switched between in the Settings menu, which can be accessed through
 the app/widget settings menu of the Bangle.js
 
 ## Settings
@@ -14,7 +14,11 @@ the app/widget settings menu of the Bangle.js
 Activate the Neon IO X clock look, a bit hard to read until one gets used to it.
 
 ### Thickness
-The thickness of watch lines, from 1 to 5.
+The thickness of watch lines, from 1 to 6.
 
 ### Date on touch
 Shows the current date as DD MM on touch and reverts back to time after 5 seconds or with another touch.
+
+### Fullscreen
+Shows the watchface in fullscreen mode.
+Note: In fullscreen mode, widgets are hidden, but still loaded.
