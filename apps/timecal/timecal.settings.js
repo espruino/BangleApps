@@ -2,7 +2,7 @@
 (function(exit) {
   ABR_DAY = require("locale") && require("locale").abday ? require("locale").abday : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  var FILE = "timecal.validSttngs.json";
+  var FILE = "timecal.settings.json";
 
   const DEFAULTS = {
     shwDate:1, //0:none, 1:locale, 2:month, 3:monthshort.year #week
@@ -19,14 +19,14 @@
 
     calBrdr:false 
   };
-  validSttngs = require("Storage").readJSON("timecal.validSttngs.json", 1) || {};
+  validSttngs = require("Storage").readJSON(FILE, 1) || {};
   for (const k in validSttngs) if (!DEFAULTS.hasOwnProperty(k)) delete this.validSttngs[k]; //remove invalid settings
   for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = validSttngs[k]; //assign missing defaults
 
-  var changedSttngs = Object.assign({}, validSttngs);
+  var chngdSttngs = Object.assign({}, validSttngs);
 
   var saveExitSettings = () => {
-    require('Storage').writeJSON(FILE, changedSttngs);
+    require('Storage').writeJSON(FILE, chngdSttngs);
     exit();
   };
 
@@ -42,27 +42,27 @@
       },
       /*LANG*/"< Save": () => saveExitSettings(),
       /*LANG*/"Show date": {
-        value: validSttngs.shwDate,
+        value: chngdSttngs.shwDate,
         min: 0, max: 3,
         format: v => [/*LANG*/"none", /*LANG*/"locale", /*LANG*/"M", /*LANG*/"m.Y #W"][v],
-        onchange: v => validSttngs.shwDate = v
+        onchange: v => chngdSttngs.shwDate = v
       },
       /*LANG*/"Start wday": {
-        value: validSttngs.wdStrt,
+        value: chngdSttngs.wdStrt,
         min: -1, max: 6,
         format: v => v>=0 ? ABR_DAY[v] : /*LANG*/"today",
-        onchange: v => validSttngs.wdStrt = v
+        onchange: v => chngdSttngs.wdStrt = v
       },
       /*LANG*/"Su color": {
-        value: validSttngs.suClr,
+        value: chngdSttngs.suClr,
         min: 0, max: 3,
         format: v => [/*LANG*/"none", /*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
-        onchange: v => validSttngs.suClr = v
+        onchange: v => chngdSttngs.suClr = v
       },
       /*LANG*/"Border": {
-        value: validSttngs.calBrdr,
+        value: chngdSttngs.calBrdr,
         format: v => v ? /*LANG*/"show" : /*LANG*/"none",
-        onchange: v => validSttngs.calBrdr = v
+        onchange: v => chngdSttngs.calBrdr = v
       },
       /*LANG*/"Today settings": () => {
         showTodayMenu();
@@ -78,28 +78,28 @@
     },
     "< Back": () => showMainMenu(),
     /*LANG*/"Color": {
-        value: validSttngs.tdyNumClr,
+        value: chngdSttngs.tdyNumClr,
         min: 0, max: 3,
         format: v => [/*LANG*/"none", /*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
-        onchange: v => validSttngs.tdyNumClr = v
+        onchange: v => chngdSttngs.tdyNumClr = v
       },
       /*LANG*/"Marker": {
-        value: validSttngs.tdyMrkr,
+        value: chngdSttngs.tdyMrkr,
         min: 0, max: 3,
         format: v => [/*LANG*/"none", /*LANG*/"circle", /*LANG*/"rectangle", /*LANG*/"filled"][v],
-        onchange: v => validSttngs.tdyMrkr = v
+        onchange: v => chngdSttngs.tdyMrkr = v
       },
       /*LANG*/"Mrk.Color": {
-        value: validSttngs.tdyMrkClr,
+        value: chngdSttngs.tdyMrkClr,
         min: 0, max: 2,
         format: v => [/*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
-        onchange: v => validSttngs.tdyMrkClr = v
+        onchange: v => chngdSttngs.tdyMrkClr = v
       },
       /*LANG*/"Mrk.Size": {
-        value: validSttngs.tdyMrkPxl,
+        value: chngdSttngs.tdyMrkPxl,
         min: 1, max: 10,
         format: v => v+"px",
-        onchange: v => validSttngs.tdyMrkPxl = v
+        onchange: v => chngdSttngs.tdyMrkPxl = v
       },
     /*LANG*/"< Cancel": () => cancelExitSettings()
   });
