@@ -21,7 +21,7 @@
   };
   validSttngs = require("Storage").readJSON("timecal.validSttngs.json", 1) || {};
   for (const k in validSttngs) if (!DEFAULTS.hasOwnProperty(k)) delete this.validSttngs[k]; //remove invalid settings
-  for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = validSttngs[k]; //assign missing defaults
+  for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = DEFAULTS[k]; //assign missing defaults
 
   var changedSttngs = Object.assign({}, validSttngs);
 
