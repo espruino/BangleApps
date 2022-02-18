@@ -21,7 +21,7 @@
   };
   validSttngs = require("Storage").readJSON(FILE, 1) || {};
   for (const k in validSttngs) if (!DEFAULTS.hasOwnProperty(k)) delete this.validSttngs[k]; //remove invalid settings
-  for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = DEFAULTS[k]; //assign missing defaults
+  for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = DEFAULTS[k]; //assign missing defaults fixed
 
   var chngdSttngs = Object.assign({}, validSttngs);
 
