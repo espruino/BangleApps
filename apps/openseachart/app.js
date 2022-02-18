@@ -2,7 +2,10 @@ var m = require("openseachart");
 var HASWIDGETS = true;
 var y1,y2;
 var fix = {};
-
+var last_course = -1;
+var cur_course = -1;
+var course_marker_len = g.getWidth()/4;
+    
 function redraw() {
   g.setClipRect(0,y1,g.getWidth()-1,y2);
   m.draw();
@@ -13,6 +16,7 @@ function redraw() {
     WIDGETS["gpsrec"].plotTrack(m);
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+  if (cur_course!=-1) drawCourseMarker(cur_course);
 }
 
 function drawMarker() {
@@ -22,6 +26,14 @@ function drawMarker() {
   g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
 }
 
+function drawCourseMarker(c) {
+  var p = m.latLonToXY(fix.lat, fix.lon);
+  var dx = -Math.sin(Math.PI*(c+180)/180.0)*course_marker_len*m.map.dlonpx/m.map.dlatpx;
+  var dy = Math.cos(Math.PI*(c+180)/180.0)*course_marker_len;
+  g.setColor(1,0,0);
+  g.drawLine(p.x, p.y, p.x+dx, p.y+dy);
+}
+
 var fix;
 Bangle.on('GPS',function(f) {
   fix=f;
@@ -29,6 +41,16 @@ Bangle.on('GPS',function(f) {
   var txt = fix.satellites+" satellites";
   if (!fix.fix)
     txt += " - NO FIX";
+  else {
+    if (fix.satellites>3 && fix.speed>2) { // only uses fixes w/ more than 3 sats and speed > 2kph
+      if (cur_course!=-1) cur_course = 0.8*cur_course + 0.2*fix.course;
+      else cur_course = fix.course;
+      if (Math.abs(cur_course-last_course)>10 && Math.abs(cur_course-last_course)<350) {
+	last_course = cur_course;
+	redraw();
+      }
+    }
+  }
   g.drawString(txt,g.getWidth()/2,y1 + 4);
   drawMarker();
 });
