@@ -13,7 +13,6 @@
   }
 
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
-  var currentVib = settings().vibrate;
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
