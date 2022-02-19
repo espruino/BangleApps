@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <script src="../../core/lib/heatshrink.js"></script>
+    <script src="../../core/lib/imageconverter.js"></script>
+    <script src="../../core/lib/customize.js"></script>
+
+    <p>Upload watchface</p>
+
+
+    <input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /><br/>
+    <button id="btnUpload">Upload to watch</button></br>
+    <button id="btnSave">Download resources file</button></br>
+    <canvas id="canvas" style="display:none;"></canvas></br>
+
+    <script>     
+      var result = "";
+      var resultJson = {};
+
+      function imageLoaded() {
+        var options = {};
+        
+        options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
+        options.compression = false;
+        options.alphaToColor = false;
+        options.transparent = this.path.match(/\.t[^.]*\./);
+        options.inverted = false;
+        options.autoCrop = false;
+        options.brightness = 0;
+        options.contrast = 0;
+        options.mode = infoJson.color ? infoJson.color : "1bpp";
+        options.output = "jsonobject";
+ 
+        var canvas = document.getElementById("canvas")
+        canvas.width = this.width*2;
+        canvas.height = this.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(this,0,0);
+
+        var imgstr = "";
+
+
+        var imageData = ctx.getImageData(0, 0, this.width, this.height);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(options.width, 0, this.width, this.height);
+        var rgba = imageData.data;
+        options.rgbaOut = rgba;
+        options.width = this.width;
+        options.height = this.height;
+        imgstr = imageconverter.RGBAtoString(rgba, options);
+        var outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
+        ctx.putImageData(outputImageData,this.width,0);
+       
+
+        // checkerboard for transparency on original image
+        var imageData = ctx.getImageData(0, 0, this.width, this.height);
+        imageconverter.RGBAtoCheckerboard(imageData.data, {width:this.width,height:this.height});
+        ctx.putImageData(imageData,0,0);
+
+        console.log("result is ", imgstr);
+       
+        var faceJson;
+        var jsonPath = this.path.replace(/^[^\/\\]*[\/\\](.*)(\.t[^.]){0,1}\.[^.]+/, "$1").split("/");
+       
+        var currentElement = resultJson;
+       
+        for (var i = 0; i < jsonPath.length; i++){
+          if (i == jsonPath.length - 1){
+            currentElement[jsonPath[i]] = JSON.parse(imgstr);
+          } else {
+            if (!currentElement[jsonPath[i]]) currentElement[jsonPath[i]] = {};
+            currentElement = currentElement[jsonPath[i]];
+          }
+        }
+       
+        result += '"' + jsonPath.join(".") + '":"' + imgstr + '"' + ",\n";
+       
+        console.log("json is ", result);
+      }
+      
+      function handleWatchFace(infoFile, faceFile, resourceFiles){
+        var reader = new FileReader();
+        reader.path = infoFile.webkitRelativePath;
+        reader.onload = function(event) {
+          infoJson = JSON.parse(reader.result);
+          handleFaceJson(faceFile, resourceFiles);
+        };
+        reader.readAsText(infoFile);
+      }
+      
+      function handleFaceJson(faceFile, resourceFiles){
+        var reader = new FileReader();
+        reader.path = faceFile.webkitRelativePath;
+        reader.onload = function(event) {
+          faceJson = JSON.parse(reader.result);
+          handleResourceFiles(resourceFiles);
+        };
+        reader.readAsText(faceFile);
+      }
+      
+      function handleResourceFiles(files){
+        for (var current of files){
+          console.log('Handle resource file ', current);
+          var reader = new FileReader();
+          reader.path = current.webkitRelativePath.replace("resources/","");
+          reader.onload = function(event) {
+            var img = new Image();
+            img.path = this.path;
+            img.onload = imageLoaded;
+            img.src = event.target.result;
+          };        
+          reader.readAsDataURL(current);
+        }
+      }
+      
+      function handleFileSelect(event) {
+        console.log("File select event", event);
+        if (event.target.files.length == 0) return;
+        result = "";
+        resultJson= {};
+        
+        var resourceFiles = [];
+        var faceFile;
+        var infoFile;
+        
+        for (var current of event.target.files){
+          console.log('Handle file ', current);
+          if (current.webkitRelativePath.split("/")[1].startsWith("resources")){
+            console.log('Found resource file', current.name);
+            resourceFiles.push(current);
+          } else if (current.name == "face.json"){
+            console.log('Found face file', current.name);
+            faceFile = current;
+          }  else if (current.name == "info.json"){
+            console.log('Found info file', current.name);
+            infoFile = current;
+          } else {
+            console.log('Found unsupported file', current.name);
+          }
+        }
+        handleWatchFace(infoFile, faceFile, resourceFiles);
+       
+      };
+      document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
+     
+      document.getElementById("btnSave").addEventListener("click", function() {
+        var h = document.createElement('a');
+        h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(resultJson));    
+        h.target = '_blank';
+        h.download = "imageclock.resources.json";
+        h.click();
+      });
+      document.getElementById("btnUpload").addEventListener("click", function() {
+        var appDef = {
+          id : "imageclock",
+          storage:[
+            {name:"imageclock.app.js", url:"app.js"},
+            {name:"imageclock.face.json", content: JSON.stringify(faceJson)},
+            {name:"imageclock.resources.json", content: JSON.stringify(resultJson)},
+            {name:"imageclock.img", url:"app-icon.js", evaluate:true},
+          ]
+        };
+        sendCustomizedApp(appDef);
+      });
+      
+
+      
+   </script>
+
+  </body>
+</html>
