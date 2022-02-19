@@ -353,7 +353,6 @@ function initialDraw(){ draw(undefined, zeroOffset); }
 function handleHrm(e){
   if (e.confidence > 70){
     pulse = e.bpm;
-    initialDraw();
   }
 }
 
@@ -361,7 +360,6 @@ function handlePressure(e){
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
-  initialDraw();
 }
 
 
@@ -389,10 +387,6 @@ function handleLock(isLocked){
 
 Bangle.setUI("clock");
 
-Bangle.on('GPS', initialDraw);
-Bangle.on('charging', initialDraw);
-Bangle.on('mag', initialDraw);
-Bangle.on('health', initialDraw);
 Bangle.on('pressure', handlePressure);
 Bangle.on('HRM', handleHrm);
 Bangle.on('lock', handleLock);
