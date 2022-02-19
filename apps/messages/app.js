@@ -165,6 +165,10 @@ function showMapMessage(msg) {
   });
 }
 
+function reduceStringAndPad(text, maxLen) {
+  return text.length > maxLen ? text.substr(0, maxLen - 1) + '...' : text;
+}
+
 function showMusicMessage(msg) {
   function fmtTime(s) {
     var m = Math.floor(s/60);
@@ -178,15 +182,20 @@ function showMusicMessage(msg) {
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
+  
+  var trackName = reduceStringAndPad(msg.track, 13);
+  var artistName = reduceStringAndPad(msg.artist, 21);
+  var albumName = reduceStringAndPad(msg.album, 21);
+  
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:colBg,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
-        { type:"txt", font:fontMedium, label:msg.album, pad:2 }
+        { type:"txt", font:fontMedium, label:artistName, pad:2 },
+        { type:"txt", font:fontMedium, label:albumName, pad:2 }
       ]}
     ]},
-    {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontLarge, label:trackName, fillx:1, filly:1, pad:2 },
     Bangle.musicControl?{type:"h",fillx:1, c: [
       {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
