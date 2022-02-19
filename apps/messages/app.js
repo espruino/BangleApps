@@ -221,9 +221,9 @@ function showMusicMessage(msg) {
     artistScrollOffset++;
     albumScrollOffset++;
     
-    if (trackScrollOffset > trackName.length) trackScrollOffset = 0;
-    if (artistScrollOffset > artistName.length) artistScrollOffset = 0;
-    if (albumScrollOffset > albumName.length) albumScrollOffset = 0;
+    if ((trackScrollOffset + 13) > msg.track.length) trackScrollOffset = 0;
+    if ((artistScrollOffset + 21) > msg.artist.length) artistScrollOffset = 0;
+    if ((albumScrollOffset + 21) > msg.album.length) albumScrollOffset = 0;
   }
   
   updateLabelsInterval = setInterval(updateLabels, 1000);
