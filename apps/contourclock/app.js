@@ -10,6 +10,7 @@ if (settings.fontIndex==undefined) {
 function draw() {
   var date = new Date();
   // Draw day of the week
+  g.setColor(g.theme.fg);
   g.setFont("Teletext10x18Ascii");
   g.clearRect(0,138,g.getWidth()-1,176);
   g.setFontAlign(0,1).drawString(require("locale").dow(date).toUpperCase(),g.getWidth()/2,g.getHeight()-18);
