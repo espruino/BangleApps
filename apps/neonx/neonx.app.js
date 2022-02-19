@@ -82,7 +82,7 @@ function drawClock(num){
       const current = ((y + 1) * 2 + x - 1);
       let newScale = scale;
 
-      let xc = settings.showLock && Bangle.isLocked() ? Math.abs(x-1) : x;
+      let xc = settings.showLock && !Bangle.isLocked() ? Math.abs(x-1) : x;
       let c = colors[settings.io ? 'io' : 'x'][y][xc];
       g.setColor(c);
 
