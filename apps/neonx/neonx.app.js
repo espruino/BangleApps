@@ -50,7 +50,7 @@ const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const halfWidth = screenWidth / 2;
 const scale = screenWidth / 240;
-const REFRESH_RATE = 30E3;
+const REFRESH_RATE = 10E3;
 
 let interval = 0;
 let showingDate = false;
