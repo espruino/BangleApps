@@ -165,11 +165,20 @@ function showMapMessage(msg) {
   });
 }
 
-function reduceStringAndPad(text, maxLen) {
-  return text.length > maxLen ? text.substr(0, maxLen - 1) + '...' : text;
+function reduceStringAndPad(text, offset, maxLen) {
+  var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
+  return text.substr(offset, sliceLength).padEnd(maxLen, " ");
 }
 
 function showMusicMessage(msg) {
+  var updateLabelsInterval;
+  var trackScrollOffset = 0;
+  var artistScrollOffset = 0;
+  var albumScrollOffset = 0;
+  var trackName = '';
+  var artistName = '';
+  var albumName = '';
+  
   function fmtTime(s) {
     var m = Math.floor(s/60);
     s = (parseInt(s%60)).toString().padStart(2,0);
@@ -177,34 +186,47 @@ function showMusicMessage(msg) {
   }
 
   function back() {
+    clearInterval(updateLabelsInterval);
     msg.new = false;
     saveMessages();
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
   
-  var trackName = reduceStringAndPad(msg.track, 13);
-  var artistName = reduceStringAndPad(msg.artist, 21);
-  var albumName = reduceStringAndPad(msg.album, 21);
+  function updateLabels() {
+    trackName = reduceStringAndPad(msg.track, trackScrollOffset, 13);
+    artistName = reduceStringAndPad(msg.artist, artistScrollOffset, 21);
+    albumName = reduceStringAndPad(msg.album, albumScrollOffset, 21);
   
-  layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:colBg,  c: [
-      { type:"btn", src:getBackImage, cb:back },
-      { type:"v", fillx:1, c: [
-        { type:"txt", font:fontMedium, label:artistName, pad:2 },
-        { type:"txt", font:fontMedium, label:albumName, pad:2 }
-      ]}
-    ]},
-    {type:"txt", font:fontLarge, label:trackName, fillx:1, filly:1, pad:2 },
-    Bangle.musicControl?{type:"h",fillx:1, c: [
-      {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
-      {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
-      {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
-    ]}:{},
-    {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
-  ]});
-  g.clearRect(Bangle.appRect);
-  layout.render();
+    layout = new Layout({ type:"v", c: [
+      {type:"h", fillx:1, bgCol:colBg,  c: [
+        { type:"btn", src:getBackImage, cb:back },
+        { type:"v", fillx:1, c: [
+          { type:"txt", font:fontMedium, label:artistName, pad:2 },
+          { type:"txt", font:fontMedium, label:albumName, pad:2 }
+        ]}
+      ]},
+      {type:"txt", font:fontLarge, label:trackName, fillx:1, filly:1, pad:2 },
+      Bangle.musicControl?{type:"h",fillx:1, c: [
+        {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
+        {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
+        {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
+      ]}:{},
+      {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
+    ]});
+    g.reset().clearRect(Bangle.appRect);
+    layout.render();
+    
+    trackScrollOffset++;
+    artistScrollOffset++;
+    albumScrollOffset++;
+    
+    if (trackScrollOffset > trackName.length) trackScrollOffset = 0;
+    if (artistScrollOffset > artistName.length) artistScrollOffset = 0;
+    if (albumScrollOffset > albumName.length) albumScrollOffset = 0;
+  }
+  
+  updateLabelsInterval = setInterval(updateLabels, 1000);
 }
 
 function showMessageScroller(msg) {
