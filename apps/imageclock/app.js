@@ -40,8 +40,15 @@ function splitNumberToDigits(num){
   return String(num).split('').map(item => Number(item));
 }
 
-function drawNumber(element, offset, number){
-  //print("drawNumber: ", element, number);
+function drawNumber(element, offset){
+  var number = numbers[element.Value]();
+  //print("drawNumber: ", number, element, offset);
+  if (number) number = number.toFixed(0);
+
+
+  //var numberOffset = updateOffset(element, offset);
+  var numberOffset = offset;
+
   var isNegative;
   var digits;
   if (number == undefined){
@@ -56,8 +63,8 @@ function drawNumber(element, offset, number){
   //print("digits: ", digits);
   var numberOfDigits = element.Digits;
   if (!numberOfDigits) numberOfDigits = digits.length;
-  var firstDigitX = element.TopLeftX;
-  var firstDigitY = element.TopLeftY;
+  var firstDigitX = element.X;
+  var firstDigitY = element.Y;
   var firstImage = getByPath(resources, element.ImagePath, 0);
 
   if (element.Alignment == "BottomRight"){
@@ -67,14 +74,14 @@ function drawNumber(element, offset, number){
       numberWidth += firstImage.width + element.Spacing;
     }
     //print("Number width: ", numberWidth, firstImage.width, element.Spacing);
-    firstDigitX = element.BottomRightX - numberWidth + 1;
-    firstDigitY = element.BottomRightY - firstImage.height + 1;
+    firstDigitX = element.X - numberWidth + 1;
+    firstDigitY = element.Y - firstImage.height + 1;
     //print("Calculated start " + firstDigitX + "," + firstDigitY + " From:" + element.BottomRightX + " " + firstImage.width + " " + element.Spacing);
   }
   var currentX = firstDigitX;
   
   if (isNegative){
-    drawElement({X:currentX,Y:firstDigitY}, offset, element.ImagePath, "minus");
+    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
     currentX += firstImage.width + element.Spacing;
   }
   
@@ -87,7 +94,7 @@ function drawNumber(element, offset, number){
       currentDigit = 0;
     }
     //print("Digit " + currentDigit + " " + currentX);
-    drawElement({X:currentX,Y:firstDigitY}, offset, element.ImagePath, currentDigit);
+    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit);
     currentX += firstImage.width + element.Spacing;
   }
 }
@@ -99,36 +106,42 @@ function setColors(properties){
 
 function drawElement(pos, offset, path, lastElem){
   //print("drawElement ",pos, offset, path, lastElem);
-  var image = getByPath(resources, path, lastElem);
-  if (image){
-    setColors(offset);
-    g.drawImage(getImg(image),offset.X + pos.X,offset.Y + pos.Y);
+  var resource = getByPath(resources, path, lastElem);
+  if (resource){
+    var image = getImg(resource);
+    if (image){
+      setColors(offset);
+      //print("drawImage from drawElement", image, pos, offset);
+      g.drawImage(image ,offset.X + pos.X,offset.Y + pos.Y);
+    } else {
+      //print("Could not create image from", resource);
+    }
   } else {
-    print("Could not create image from", path, lastElem);
+    //print("Could not get resource from", path, lastElem);
   }
 }
 
-function drawScale(scale, offset, value){
+function drawScale(scale, offset){
+  //print("drawScale", scale, offset);
   var segments = scale.Segments;
+  var value = numbers[scale.Value]();
+  var maxValue = scale.MaxValue ? scale.MaxValue : 1;
+  var minValue = scale.MinValue ? scale.MinValue : 0;
+
+  value = value/maxValue;
+  value -= minValue;
+
+  //print("Value is ", value, "(", maxValue, ",", minValue, ")");
+  
+  var scaleOffset = updateOffset(scale, offset);
+
   for (var i = 0; i < value * segments.length; i++){
-    drawElement(segments[i], offset, scale.ImagePath, i);
+    drawElement(segments[i], scaleOffset, scale.ImagePath, i);
   }
 }
 
 function drawDigit(element, offset, digit){
   drawElement(element, offset, element.ImagePath, digit);
-}
-
-function drawMonthAndDay(element, offset){
-  var date = new Date();
-  
-  var dateOffset = updateOffset(element, offset);
-  
-  if (element.Separate){
-    var separateOffset = updateOffset(element.Separate, dateOffset);
-    drawNumber(element.Separate.Month, separateOffset, date.getMonth() + 1);
-    drawNumber(element.Separate.Day, separateOffset, date.getDate());
-  }
 }
 
 function drawImage(image, offset, name){
@@ -142,42 +155,49 @@ function drawImage(image, offset, name){
   }
 }
 
-function drawWeather(element, offset){
-  var jsonWeather = require("Storage").readJSON('weather.json');
-  var weather = jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
-
-  var weatherOffset = updateOffset(element, offset);
-  
-  var iconOffset = updateOffset(element.Icon, weatherOffset);
-  if (weather && weather.code && element.Icon){
-    var weathercode = weather.code;
-    //print(getByPath(resources, element.Icon.CustomIcon.ImagePath, weathercode));
-    if (!getByPath(resources, element.Icon.CustomIcon.ImagePath, weathercode)){
-      weathercode = Math.floor(weathercode/10)*10;
-      //print("Weathercode ", weathercode);
+function drawCodedImage(image, offset){
+  var code = numbers[image.Value]();
+  //print("drawCodedImage", image, offset, code);
+  if (image.ImagePath) {
+    var factor = 1;
+    var currentCode = code;
+    while (code / factor > 1){
+      currentCode = Math.floor(currentCode/factor)*factor;
+      //print("currentCode", currentCode);
+      if (getByPath(resources, image.ImagePath, currentCode)){
+        break;
+      }
+      factor *= 10;
     }
-    if (!getByPath(resources, element.Icon.CustomIcon.ImagePath, weathercode)){
-      weathercode = Math.floor(weathercode/100)*100;
-      //print("Weathercode ", weathercode);
-    }
-    if (getByPath(resources, element.Icon.CustomIcon.ImagePath, weathercode)){
-      //print("Weathercode ", weathercode);
-      drawImage(element.Icon.CustomIcon, offset, weathercode);
-    }
-  } else if (getByPath(resources, element.Icon.CustomIcon.ImagePath, "000")) {
-    drawImage(element.Icon.CustomIcon, iconOffset, "000");
-  }
-
-  if (element.Temperature){
-    var tempOffset = updateOffset(element.Temperature, weatherOffset);
-    if (weather && weather.temp && element.Temperature){
-      drawNumber(element.Temperature.Current.Number, tempOffset, (weather.temp - 273.15).toFixed(0));
+    if (code / factor > 1){
+      //print("found match");
+      drawImage(image, offset, currentCode);
     } else {
-      drawNumber(element.Temperature.Current.Number, tempOffset);
+      //print("fallback");
+      drawImage(image, offset, "fallback");
     }
-    drawImage(element.Temperature.Current, tempOffset, "centigrade");
   }
+}
 
+function getWeatherCode(){
+  var jsonWeather = require("Storage").readJSON('weather.json');
+  var weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
+
+  if (weather && weather.code){
+    return weather.code;
+  }
+  return undefined;
+}
+
+function getWeatherTemperature(){
+  var jsonWeather = require("Storage").readJSON('weather.json');
+  var weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
+
+  if (weather && weather.temp){
+    //print("Weather temp is", weather.temp);
+    return weather.temp - 273.15;
+  }
+  return undefined;
 }
 
 function updateOffset(element, offset){
@@ -190,58 +210,60 @@ function updateOffset(element, offset){
   return newOffset;
 }
 
-function drawTime(element, offset){
-  var date = new Date();
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  
-  var offsetTime = updateOffset(element, offset);
+var numbers = {};
+numbers.Hour = () => { return new Date().getHours(); };
+numbers.HourTens = () => { return Math.floor(new Date().getHours()/10); };
+numbers.HourOnes = () => { return Math.floor(new Date().getHours()%10); };
+numbers.Hour12 = () => { return new Date().getHours()%12; };
+numbers.Hour12Tens = () => { return Math.floor((new Date().getHours()%12)/10); };
+numbers.Hour12Ones = () => { return Math.floor((new Date().getHours()%12)%10); };
+numbers.Minute = () => { return new Date().getMinutes(); };
+numbers.MinuteTens = () => { return Math.floor(new Date().getMinutes()/10); };
+numbers.MinuteOnes = () => { return Math.floor(new Date().getMinutes()%10); };
+numbers.Second = () => { return new Date().getSeconds(); };
+numbers.SecondTens = () => { return Math.floor(new Date().getSeconds()/10); };
+numbers.SecondOnes = () => { return Math.floor(new Date().getSeconds()%10); };
+numbers.Day = () => { return new Date().getDate(); };
+numbers.DayTens = () => { return Math.floor(new Date().getDate()/10); };
+numbers.DayOnes = () => { return Math.floor(new Date().getDate()%10); };
+numbers.Month = () => { return new Date().getMonth() + 1; };
+numbers.MonthTens = () => { return Math.floor((new Date().getMonth() + 1)/10); };
+numbers.MonthOnes = () => { return Math.floor((new Date().getMonth() + 1)%10); };
+numbers.Pulse = () => { return pulse; };
+numbers.Steps = () => { return Bangle.getHealthStatus ? Bangle.getHealthStatus("day").steps : undefined; };
+numbers.Temperature = () => { return temp; };
+numbers.Pressure = () => { return press; };
+numbers.Altitude = () => { return alt; };
+numbers.BatteryPercentage = () => { return E.getBattery(); };
+numbers.BatteryVoltage = () => { return NRF.getBattery(); };
+numbers.WeatherCode = () => getWeatherCode();
+numbers.WeatherTemperature = () => getWeatherTemperature();
 
-  var offsetHours = updateOffset(element.Hours, offsetTime);
-  if (element.Hours.Tens) {
-    drawDigit(element.Hours.Tens, offsetHours, Math.floor(hours/10));
-  }
+var multistates = {};
+multistates.Lock = () => { return Bangle.isLocked() ? "on" : "off"; };
+multistates.Charge = () => { return Bangle.isCharging() ? "on" : "off"; };
+multistates.Notifications = () => { return ((require("Storage").readJSON("setting.json", 1) || {}).quiet|0) ? "off" : "vibrate"; };
+multistates.Alarm = () => { return (require('Storage').readJSON('alarm.json',1)||[]).some(alarm=>alarm.on) ? "on" : "off"; };
+multistates.Bluetooth = () => { return NRF.getSecurityStatus().connected ? "on" : "off"; };
+//TODO: Implement peripheral connection status
+multistates.BluetoothPeripheral = () => { return NRF.getSecurityStatus().connected ? "on" : "off"; };
+multistates.HRM = () => { return Bangle.isHRMOn ? "on" : "off"; };
+multistates.Barometer = () => { return Bangle.isBarometerOn() ? "on" : "off"; };
+multistates.Compass = () => { return Bangle.isCompassOn() ? "on" : "off"; };
+multistates.GPS = () => { return Bangle.isGPSOn() ? "on" : "off"; };
 
-  if (element.Hours.Ones) {
-    drawDigit(element.Hours.Ones, offsetHours, hours % 10);
-  }
-
-  var offsetMinutes = updateOffset(element.Minutes, offsetTime);
-  if (element.Minutes.Tens) {
-    drawDigit(element.Minutes.Tens, offsetMinutes, Math.floor(minutes/10));
-  }
-
-  if (element.Minutes.Ones) {
-    drawDigit(element.Minutes.Ones, offsetMinutes, minutes % 10);
-  }
+function drawMultiState(element, offset){
+  //print("drawMultiState", element, offset);
+  drawImage(element, offset, multistates[element.Value]());
 }
 
-function drawSteps(element, offset){
-  //print("drawSteps", element, offset);
-  if (Bangle.getHealthStatus) {
-    drawNumber(element.Number, offset, Bangle.getHealthStatus("day").steps);
-  } else {
-    drawNumber(element.Number, offset);
-  }
-}
-
-function drawBattery(element, offset){
-  if (element.Scale){
-    drawScale(element.Scale, offset, E.getBattery()/100);
-  }
-}
-
-function drawStatus(element, offset){
-  var statusOffset = updateOffset(element, offset);
-  if (element.Lock) drawImage(element.Lock, statusOffset, Bangle.isLocked() ? "on" : "off");
-  if (element.Charge) drawImage(element.Charge, statusOffset, Bangle.isCharging() ? "on" : "off");
-  if (element.Bluetooth) drawImage(element.Bluetooth, statusOffset, NRF.getSecurityStatus().connected ? "on" : "off");
-  if (element.Alarm) drawImage(element.Alarm, statusOffset, (require('Storage').readJSON('alarm.json',1)||[]).some(alarm=>alarm.on) ? "on" : "off");
-  if (element.Notifications) drawImage(element.Notifications, statusOffset, ((require("Storage").readJSON("setting.json", 1) || {}).quiet|0) ? "soundoff" : "vibrate");
-}
+var drawing = false;
 
 function draw(element, offset){
-  if (!element){
+  var initial = !element;
+  if (initial){
+    if (drawing) return;
+    drawing = true;
     element = face;
     g.clear();
   }
@@ -252,57 +274,46 @@ function draw(element, offset){
   setColors(elementOffset);
   //print("Using offset", elementOffset);
 
-  //print("Starting drawing loop", element);
   for (var current in element){
     //print("Handling ", current, " with offset ", elementOffset);
     var currentElement = element[current];
-    switch(current){
-      case "X":
-      case "Y":
-      case "Properties":
-      case "ForegroundColor":
-      case "BackgroundColor":
-        //Nothing to draw for these
-        break;
-      case "Background":
-        drawImage(currentElement, elementOffset);
-        break;
-      case "Time":
-        drawTime(currentElement, elementOffset);
-        break;
-      case "Battery":
-        drawBattery(currentElement, elementOffset);
-        break;
-      case "Steps":
-        drawSteps(currentElement, elementOffset);
-        break;
-      case "Pulse":
-        if (pulse) drawNumber(currentElement.Number, elementOffset, pulse);
-        break;
-      case "Pressure":
-        if (press) drawNumber(currentElement.Number, elementOffset, press.toFixed(0));
-        break;
-      case "Altitude":
-        if (alt) drawNumber(currentElement.Number, elementOffset, alt.toFixed(0));
-        break;
-      case "Temperature":
-        if (temp) drawNumber(currentElement.Number, elementOffset, temp.toFixed(0));
-        break;
-      case "MonthAndDay":
-        drawMonthAndDay(currentElement, elementOffset);
-        break;
-      case "Weather":
-        drawWeather(currentElement, elementOffset);
-        break;
-      case "Status":
-        drawStatus(currentElement, elementOffset);
-        break;
-      default:
-        //print("Enter next level", currentElement, elementOffset);
-        draw(currentElement, elementOffset);
+    try {
+      switch(current){
+        case "X":
+        case "Y":
+        case "Properties":
+        case "ForegroundColor":
+        case "BackgroundColor":
+          //Nothing to draw for these
+          break;
+        case "MultiState":
+          drawMultiState(currentElement, elementOffset);
+          break;
+        case "Image":
+          drawImage(currentElement, elementOffset);
+          break;
+        case "CodedImage":
+          drawCodedImage(currentElement, elementOffset);
+          break;
+        case "Number":
+          drawNumber(currentElement, elementOffset);
+          break;
+        case "Scale":
+          drawScale(currentElement, elementOffset);
+          break;
+        default:
+          //print("Enter next level", elementOffset);
+          draw(currentElement, elementOffset);
+          //print("Done next level");
+      }
+    } catch (e){
+      print("Error during drawing of", current, "in", element, e);
     }
   }
   //print("Finished drawing loop");
+  if (initial){
+    drawing = false;
+  }
 }
 
 var pulse,alt,temp,press;
@@ -311,9 +322,12 @@ var pulse,alt,temp,press;
 var zeroOffset={X:0,Y:0};
 
 
+function initialDraw(){ draw(undefined, zeroOffset); }
+
 function handleHrm(e){
   if (e.confidence > 70){
     pulse = e.bpm;
+    initialDraw();
   }
 }
 
@@ -321,6 +335,7 @@ function handlePressure(e){
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
+  initialDraw();
 }
 
 
@@ -334,28 +349,30 @@ function handleLock(isLocked){
     Bangle.setHRMPower(1, "imageclock");
     Bangle.setBarometerPower(1, 'imageclock');
     unlockedDrawInterval = setInterval(()=>{
-      draw(face, zeroOffset);
+      initialDraw();
     },unlockedRedraw?unlockedRedraw:1000);
     draw(face, zeroOffset);
   } else {
     Bangle.setHRMPower(0, "imageclock");
     Bangle.setBarometerPower(0, 'imageclock');
-    clearInterval(unlockedDrawInterval);
+    if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
   }
 
 }
 
 Bangle.setUI("clock");
 
+Bangle.on('GPS', initialDraw);
+Bangle.on('charging', initialDraw);
+Bangle.on('mag', initialDraw);
+Bangle.on('health', initialDraw);
 Bangle.on('pressure', handlePressure);
 Bangle.on('HRM', handleHrm);
 Bangle.on('lock', handleLock);
-
-
-
-draw(face, zeroOffset);
-
-
 setInterval(()=>{
-  draw(face, zeroOffset);
-}, lockedRedraw ? lockedRedraw : 6000);
+  initialDraw();
+}, lockedRedraw ? lockedRedraw : 60000);
+
+initialDraw();
+
+
