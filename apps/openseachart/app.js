@@ -5,18 +5,15 @@ var fix = {};
 var last_course = -1;
 var cur_course = -1;
 var course_marker_len = g.getWidth()/4;
-    
+
+var settings = require("Storage").readJSON('openseacsettings.json', 1) || {};
+
 function redraw() {
   g.setClipRect(0,y1,g.getWidth()-1,y2);
   m.draw();
   drawMarker();
-  if (WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
-    g.flip(); // force immediate draw on double-buffered screens - track will update later
-    g.setColor(0.75,0.2,0);
-    WIDGETS["gpsrec"].plotTrack(m);
-  }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-  if (cur_course!=-1) drawCourseMarker(cur_course);
+  if (settings.drawcourse && cur_course!=-1) drawCourseMarker(cur_course);
 }
 
 function drawMarker() {
@@ -43,16 +40,16 @@ Bangle.on('GPS',function(f) {
     txt += " - NO FIX";
   else {
     if (fix.satellites>3 && fix.speed>2) { // only uses fixes w/ more than 3 sats and speed > 2kph
-      if (cur_course!=-1) cur_course = 0.8*cur_course + 0.2*fix.course;
-      else cur_course = fix.course;
+      cur_course = fix.course;
       if (Math.abs(cur_course-last_course)>10 && Math.abs(cur_course-last_course)<350) {
-	last_course = cur_course;
-	redraw();
+	      last_course = cur_course;
+	      redraw();
       }
     }
   }
   g.drawString(txt,g.getWidth()/2,y1 + 4);
   drawMarker();
+  if (settings.autocenter) recenter();
 });
 Bangle.setGPSPower(1, "app");
 
