@@ -1,5 +1,6 @@
 const tokenextraheight = 16;
 var tokendigitsheight = 30;
+var tokenheight = tokendigitsheight + tokenextraheight;
 // Hash functions
 const crypto = require("crypto");
 const algos = {
@@ -198,15 +199,15 @@ function draw() {
   }
   if (tokens.length > 0) {
     var drewcur = false;
-    var id = Math.floor(state.listy / (tokendigitsheight + tokenextraheight));
-    var y = id * (tokendigitsheight + tokenextraheight) + Bangle.appRect.y - state.listy;
+    var id = Math.floor(state.listy / tokenheight);
+    var y = id * tokenheight + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
-      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:(tokendigitsheight + tokenextraheight)});
+      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
       if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
       id += 1;
-      y += (tokendigitsheight + tokenextraheight);
+      y += tokenheight;
     }
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
@@ -240,18 +241,18 @@ function draw() {
 
 function onTouch(zone, e) {
   if (e) {
-    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / (tokendigitsheight + tokenextraheight));
+    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenheight);
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
       if (id != -1) {
-        var y = id * (tokendigitsheight + tokenextraheight) - state.listy;
+        var y = id * tokenheight - state.listy;
         if (y < 0) {
           state.listy += y;
           y = 0;
         }
-        y += (tokendigitsheight + tokenextraheight);
+        y += tokenheight;
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
@@ -268,7 +269,7 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var newy = Math.min(state.listy - e.dy, tokens.length * (tokendigitsheight + tokenextraheight) - Bangle.appRect.h);
+  var newy = Math.min(state.listy - e.dy, tokens.length * tokenheight - Bangle.appRect.h);
   state.listy = Math.max(0, newy);
   draw();
 }
@@ -300,8 +301,12 @@ function bangle1Btn(e) {
     }
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
+    state.listy = state.curtoken * tokenheight;
+    state.listy -= (Bangle.appRect.h - tokenheight) / 2;
+    state.listy = Math.min(state.listy, tokens.length * tokenheight - Bangle.appRect.h);
+    state.listy = Math.max(state.listy, 0);
     var fakee = {};
-    fakee.y = state.curtoken * (tokendigitsheight + tokenextraheight) - state.listy + Bangle.appRect.y;
+    fakee.y = state.curtoken * tokenheight - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
