@@ -13,6 +13,7 @@
   "storage": [
     {"name":"openseachart","url":"openseachart.js"},
     {"name":"openseachart.app.js","url":"app.js"},
+    {"name":"openseachart.settings.js", "url":"settings.js"},
     {"name":"openseachart.img","url":"app-icon.js","evaluate":true}
   ]
 }
