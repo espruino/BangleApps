@@ -50,9 +50,6 @@ const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const halfWidth = screenWidth / 2;
 const scale = screenWidth / 240;
-const REFRESH_RATE = 10E3;
-
-let interval = 0;
 let showingDate = false;
 
 
@@ -107,20 +104,22 @@ function drawClock(num){
 
 
 function draw(date){
+  queueDraw();
+
   let d = new Date();
   let l1, l2;
 
   showingDate = date;
 
   if (date) {
-    setUpdateInt(0);
-
     l1 = ('0' + (new Date()).getDate()).substr(-2);
     l2 = ('0' + ((new Date()).getMonth() + 1)).substr(-2);
 
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+
     setTimeout(_ => {
       draw();
-      setUpdateInt(1);
     }, 5000);
   } else {
     l1 = ('0' + (d.getHours() % (is12hour ? 12 : 24))).substr(-2);
@@ -137,40 +136,46 @@ function draw(date){
 }
 
 
-function setUpdateInt(set){
-  if (interval) {
-    clearInterval(interval);
-  }
-
-  if (set) {
-    interval = setInterval(draw, REFRESH_RATE);
-  }
+/*
+ * Draw watch face
+ */
+var drawTimeout;
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
 }
 
-g.clear(1);
 
-Bangle.setUI("clock");
-
-setUpdateInt(1);
-draw();
-
-
+/*
+ * Event handlers
+ */
 if (settings.showDate) {
   Bangle.on('touch', () => draw(!showingDate));
 }
 
 Bangle.on('lcdPower', function(on){
-  if (on){
-    setUpdateInt(1);
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+
+  if (on) {
     draw();
-  } else {
-    setUpdateInt(0);
   }
 });
 
 Bangle.on('lock', function(isLocked) {
   draw();
 });
+
+
+/*
+ * Draw first time
+ */
+g.clear(1);
+Bangle.setUI("clock");
+draw();
 
 Bangle.loadWidgets();
 
