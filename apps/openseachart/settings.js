@@ -34,7 +34,7 @@
     'Auto center': {
       value: s.autocenter,
       format: boolFormat,
-      onchange: save('autoconnect'),
+      onchange: save('autocenter'),
     }
   }
   E.showMenu(menu);
