@@ -1,7 +1,7 @@
 { "id": "circlesclock",
   "name": "Circles clock",
   "shortName":"Circles clock",
-  "version":"0.09",
+  "version":"0.10",
   "description": "A clock with three or four circles for different data at the bottom in a probably familiar style",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}, {"url":"screenshot-dark-4.png"}, {"url":"screenshot-light-4.png"}],
@@ -13,7 +13,8 @@
   "storage": [
     {"name":"circlesclock.app.js","url":"app.js"},
     {"name":"circlesclock.img","url":"app-icon.js","evaluate":true},
-    {"name":"circlesclock.settings.js","url":"settings.js"}
+    {"name":"circlesclock.settings.js","url":"settings.js"},
+    {"name":"circlesclock.default.json","url":"default.json"}
    ],
    "data": [
      {"name":"circlesclock.json"}

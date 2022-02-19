@@ -27,7 +27,7 @@ var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 var colBg = g.theme.dark ? "#141":"#4f4";
 var colSBg1 = g.theme.dark ? "#121":"#cFc";
-var colSBg2 = g.theme.dark ? "#242":"#9F9";
+var colSBg2 = g.theme.dark ? "#000":"#9F9";
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
