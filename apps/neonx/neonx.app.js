@@ -45,8 +45,6 @@ const colors = {
     ["#00FF00", "#00FFFF"]
   ]
 };
-const unlockColor = "#FF0000";
-
 const is12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
@@ -84,14 +82,12 @@ function drawClock(num){
       const current = ((y + 1) * 2 + x - 1);
       let newScale = scale;
 
-      let c = colors[settings.io ? 'io' : 'x'][y][x];
-      if(x == 0 && y == 0 && settings.showLock){
-        c = Bangle.isLocked() ? c : unlockColor;
-      }
+      let xc = settings.showLock && Bangle.isLocked() ? Math.abs(x-1) : x;
+      let c = colors[settings.io ? 'io' : 'x'][y][xc];
       g.setColor(c);
 
       if (!settings.io) {
-        newScale *= settings.fullscreen ? 1.18 : 1.0;
+        newScale *= settings.fullscreen ? 1.20 : 1.0;
         let dx = settings.fullscreen ? 0 : 18
         tx = (x * 100 + dx) * newScale;
         ty = (y * 100 + dx*2) * newScale;
