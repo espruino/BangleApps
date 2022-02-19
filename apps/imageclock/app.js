@@ -45,57 +45,57 @@ function drawNumber(element, offset){
   //print("drawNumber: ", number, element, offset);
   if (number) number = number.toFixed(0);
 
+  if (!element.Refresh || element.Refresh == "Always" || (element.Refresh == "Change" && element.lastDrawnValue && element.lastDrawnValue != number)){
+    //var numberOffset = updateOffset(element, offset);
+    var numberOffset = offset;
 
-  //var numberOffset = updateOffset(element, offset);
-  var numberOffset = offset;
-
-  var isNegative;
-  var digits;
-  if (number == undefined){
-    isNegative = false;
-    digits = ["minus","minus","minus"];
-  } else {
-    isNegative = number < 0;
-    if (isNegative) number *= -1;
-    digits = splitNumberToDigits(number);
-  }
-  
-  //print("digits: ", digits);
-  var numberOfDigits = element.Digits;
-  if (!numberOfDigits) numberOfDigits = digits.length;
-  var firstDigitX = element.X;
-  var firstDigitY = element.Y;
-  var firstImage = getByPath(resources, element.ImagePath, 0);
-
-  if (element.Alignment == "BottomRight"){
-    var digitWidth = firstImage.width + element.Spacing;
-    var numberWidth = (numberOfDigits * digitWidth);
-    if (isNegative){
-      numberWidth += firstImage.width + element.Spacing;
-    }
-    //print("Number width: ", numberWidth, firstImage.width, element.Spacing);
-    firstDigitX = element.X - numberWidth + 1;
-    firstDigitY = element.Y - firstImage.height + 1;
-    //print("Calculated start " + firstDigitX + "," + firstDigitY + " From:" + element.BottomRightX + " " + firstImage.width + " " + element.Spacing);
-  }
-  var currentX = firstDigitX;
-  
-  if (isNegative){
-    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
-    currentX += firstImage.width + element.Spacing;
-  }
-  
-  for (var d = 0; d < numberOfDigits; d++){
-    var currentDigit;
-    var difference = numberOfDigits - digits.length;
-    if (d >= difference){
-      currentDigit = digits[d-difference];
+    var isNegative;
+    var digits;
+    if (number == undefined){
+      isNegative = false;
+      digits = ["minus","minus","minus"];
     } else {
-      currentDigit = 0;
+      isNegative = number < 0;
+      if (isNegative) number *= -1;
+      digits = splitNumberToDigits(number);
     }
-    //print("Digit " + currentDigit + " " + currentX);
-    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit);
-    currentX += firstImage.width + element.Spacing;
+
+    //print("digits: ", digits);
+    var numberOfDigits = element.Digits;
+    if (!numberOfDigits) numberOfDigits = digits.length;
+    var firstDigitX = element.X;
+    var firstDigitY = element.Y;
+    var firstImage = getByPath(resources, element.ImagePath, 0);
+
+    if (element.Alignment == "BottomRight"){
+      var digitWidth = firstImage.width + element.Spacing;
+      var numberWidth = (numberOfDigits * digitWidth);
+      if (isNegative){
+        numberWidth += firstImage.width + element.Spacing;
+      }
+      //print("Number width: ", numberWidth, firstImage.width, element.Spacing);
+      firstDigitX = element.X - numberWidth + 1;
+      firstDigitY = element.Y - firstImage.height + 1;
+      //print("Calculated start " + firstDigitX + "," + firstDigitY + " From:" + element.BottomRightX + " " + firstImage.width + " " + element.Spacing);
+    }
+    var currentX = firstDigitX;
+    if (isNegative){
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
+      currentX += firstImage.width + element.Spacing;
+    }
+    for (var d = 0; d < numberOfDigits; d++){
+      var currentDigit;
+      var difference = numberOfDigits - digits.length;
+      if (d >= difference){
+        currentDigit = digits[d-difference];
+      } else {
+        currentDigit = 0;
+      }
+      //print("Digit " + currentDigit + " " + currentX);
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit);
+      currentX += firstImage.width + element.Spacing;
+    }
+    element.lastDrawnValue = number;
   }
 }
 
@@ -121,6 +121,19 @@ function drawElement(pos, offset, path, lastElem){
   }
 }
 
+function checkRedraw(element, newValue){
+  var redrawConfig = element.Redraw ? element.Redraw : defaultRedraw;
+  switch(redrawConfig){
+    case "Change":
+      return !element.lastDrawnValue || element.lastDrawnValue != newValue;
+    case "Never":
+      return false;
+    case "Always":
+    default:
+      return true;
+  }
+}
+
 function drawScale(scale, offset){
   //print("drawScale", scale, offset);
   var segments = scale.Segments;
@@ -134,9 +147,14 @@ function drawScale(scale, offset){
   //print("Value is ", value, "(", maxValue, ",", minValue, ")");
   
   var scaleOffset = updateOffset(scale, offset);
+  
+  var segmentsToDraw = Math.ceil(value * segments.length);
 
-  for (var i = 0; i < value * segments.length; i++){
-    drawElement(segments[i], scaleOffset, scale.ImagePath, i);
+  if (checkRedraw(scale, segmentsToDraw)){
+    for (var i = 0; i < segmentsToDraw; i++){
+      drawElement(segments[i], scaleOffset, scale.ImagePath, i);
+    }
+    scale.lastDrawnValue = segmentsToDraw;
   }
 }
 
@@ -158,24 +176,28 @@ function drawImage(image, offset, name){
 function drawCodedImage(image, offset){
   var code = numbers[image.Value]();
   //print("drawCodedImage", image, offset, code);
-  if (image.ImagePath) {
-    var factor = 1;
-    var currentCode = code;
-    while (code / factor > 1){
-      currentCode = Math.floor(currentCode/factor)*factor;
-      //print("currentCode", currentCode);
-      if (getByPath(resources, image.ImagePath, currentCode)){
-        break;
+  
+  if (checkRedraw(image, code)){
+    if (image.ImagePath) {
+      var factor = 1;
+      var currentCode = code;
+      while (code / factor > 1){
+        currentCode = Math.floor(currentCode/factor)*factor;
+        //print("currentCode", currentCode);
+        if (getByPath(resources, image.ImagePath, currentCode)){
+          break;
+        }
+        factor *= 10;
       }
-      factor *= 10;
+      if (code / factor > 1){
+        //print("found match");
+        drawImage(image, offset, currentCode);
+      } else {
+        //print("fallback");
+        drawImage(image, offset, "fallback");
+      }
     }
-    if (code / factor > 1){
-      //print("found match");
-      drawImage(image, offset, currentCode);
-    } else {
-      //print("fallback");
-      drawImage(image, offset, "fallback");
-    }
+    image.lastDrawnValue = code;
   }
 }
 
@@ -254,7 +276,11 @@ multistates.GPS = () => { return Bangle.isGPSOn() ? "on" : "off"; };
 
 function drawMultiState(element, offset){
   //print("drawMultiState", element, offset);
-  drawImage(element, offset, multistates[element.Value]());
+  var value = multistates[element.Value]();
+  if (checkRedraw(element, value)){
+    drawImage(element, offset, value);
+    element.lastDrawnValue = value;
+  }
 }
 
 var drawing = false;
@@ -343,6 +369,7 @@ var unlockedDrawInterval;
 
 var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]);
 var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]);
+var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
 
 function handleLock(isLocked){
   if (!isLocked){
