@@ -389,6 +389,9 @@ function initialDraw(){
 function handleHrm(e){
   if (e.confidence > 70){
     pulse = e.bpm;
+    if (!redrawEvents || redrawEvents.includes("HRM")){
+      initialDraw();
+    }
   }
 }
 
@@ -396,14 +399,21 @@ function handlePressure(e){
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
+  if (!redrawEvents || redrawEvents.includes("pressure")){
+    initialDraw();
+  }
 }
-
 
 var unlockedDrawInterval;
 
 var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]);
 var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]);
 var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
+var redrawEvents = getByPath(face, ["Properties","Redraw","Events"]);
+var events = getByPath(face, ["Properties","Events"]);
+
+//print("events", events);
+//print("redrawEvents", redrawEvents);
 
 function handleLock(isLocked){
   if (!isLocked){
@@ -412,20 +422,30 @@ function handleLock(isLocked){
     unlockedDrawInterval = setInterval(()=>{
       initialDraw();
     },unlockedRedraw?unlockedRedraw:1000);
-    draw(face, zeroOffset);
   } else {
     Bangle.setHRMPower(0, "imageclock");
     Bangle.setBarometerPower(0, 'imageclock');
     if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
   }
-
+  if (!redrawEvents || redrawEvents.includes("lock")){
+    initialDraw();
+  }
 }
 
 Bangle.setUI("clock");
 
-Bangle.on('pressure', handlePressure);
-Bangle.on('HRM', handleHrm);
-Bangle.on('lock', handleLock);
+if (!events || events.includes("pressure")){
+  Bangle.on('pressure', handlePressure);
+  Bangle.setBarometerPower(1, 'imageclock');
+}
+if (!events || events.includes("HRM")) {
+  Bangle.on('HRM', handleHrm);
+  Bangle.setHRMPower(1, "imageclock");
+}
+if (!events || events.includes("lock")) {
+  Bangle.on('lock', handleLock);
+}
+
 setInterval(()=>{
   initialDraw();
 }, lockedRedraw ? lockedRedraw : 60000);
