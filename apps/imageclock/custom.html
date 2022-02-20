@@ -9,13 +9,14 @@
     <script src="../../core/lib/customize.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
 
-    <p>Upload watchface</p>
+    <h4>Upload watchface:</h4>
 
 
-    <input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /><br/>
-    <input type="file" id="zipLoader" name="zip"/><br/>
-    <button id="btnUpload">Upload to watch</button></br>
-    <button id="btnSave">Download resources file</button></br>
+    <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
+    <p><b>or</b></p>
+    <p>Select watchface zip file: </br><input type="file" id="zipLoader" name="zip"/></p><br/>
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+    <button id="btnSave" class="btn btn-secondary">Save resources file</button></br>
     <canvas id="canvas" style="display:none;"></canvas></br>
 
     <script>     
@@ -112,13 +113,13 @@
       function handleResourceFiles(files){
         for (var current of files){
           console.log('Handle resource file ', current);
-          var filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"")
           var reader = new FileReader();
           console.log("Handling ", current.name, " with path ", current.webkitRelativePath);
+          var filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"")
           reader.path = filteredPath;
           reader.onload = function(event) {
             var img = new Image();
-            img.path = filteredPath;
+            img.path = this.path;
             img.onload = imageLoaded;
             img.src = event.target.result;
           };        
