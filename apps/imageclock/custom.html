@@ -24,6 +24,8 @@
       var resultJson = {};
       var infoJson;
       var faceJson;
+      var handledFiles = 0;
+      var expectedFiles = 0;
 
       function imageLoaded() {
         var options = {};
@@ -100,6 +102,14 @@
             currentElement = currentElement[jsonPath[i]];
           }
         }
+        
+        handledFiles++;
+        console.log("Expected:", expectedFiles, " handled:", handledFiles);
+        
+        if (handledFiles == expectedFiles){
+          document.getElementById('btnSave').disabled = false;
+          document.getElementById('btnUpload').disabled = false;
+        }
       }
       
       function handleWatchFace(infoFile, faceFile, resourceFiles){
@@ -140,6 +150,12 @@
       }
       
       function handleFileSelect(event) {
+        handledFiles = 0;
+        expectedFiles = undefined;
+        
+        document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnUpload').disabled = true;
+        
         console.log("File select event", event);
         if (event.target.files.length == 0) return;
         result = "";
@@ -154,6 +170,7 @@
           if (current.webkitRelativePath.split("/")[1].startsWith("resources")){
             console.log('Found resource file', current.name);
             resourceFiles.push(current);
+            expectedFiles = resourceFiles.length;
           } else if (current.name == "face.json"){
             console.log('Found face file', current.name);
             faceFile = current;
@@ -193,6 +210,10 @@
       function handleZipSelect(evt) {
 
       function handleFile(f) {
+        expectedFiles = 0;
+        handledFiles = 0;
+        document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnUpload').disabled = true;
         JSZip.loadAsync(f).then(function(zip) {
           
                 console.log("Zip loaded", zip);
@@ -215,6 +236,7 @@
                   console.log("iterating over", relativePath);
                   
                   if (!file.dir){
+                    expectedFiles++;
                     promise = promise.then(file.async("blob").then(function (blob) {
                       var reader = new FileReader();
                       console.log("Handling ", file.name, " with path ", relativePath);
@@ -246,12 +268,13 @@
     }
     
     handleFile(files[0]);
-}
+  }
 
 
       
-document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
-
+  document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
+  document.getElementById('btnSave').disabled = true;
+  document.getElementById('btnUpload').disabled = true;
       
    </script>
 
