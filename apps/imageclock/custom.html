@@ -7,11 +7,13 @@
     <script src="../../core/lib/heatshrink.js"></script>
     <script src="../../core/lib/imageconverter.js"></script>
     <script src="../../core/lib/customize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
 
     <p>Upload watchface</p>
 
 
     <input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /><br/>
+    <input type="file" id="zipLoader" name="zip"/><br/>
     <button id="btnUpload">Upload to watch</button></br>
     <button id="btnSave">Download resources file</button></br>
     <canvas id="canvas" style="display:none;"></canvas></br>
@@ -19,6 +21,8 @@
     <script>     
       var result = "";
       var resultJson = {};
+      var infoJson;
+      var faceJson;
 
       function imageLoaded() {
         var options = {};
@@ -31,7 +35,7 @@
         options.autoCrop = false;
         options.brightness = 0;
         options.contrast = 0;
-        options.mode = infoJson.color ? infoJson.color : "1bpp";
+        options.mode = infoJson.color ? infoJson.color : "1bit";
         options.output = "jsonobject";
  
         var canvas = document.getElementById("canvas")
@@ -50,6 +54,7 @@
         options.rgbaOut = rgba;
         options.width = this.width;
         options.height = this.height;
+        console.log("options", options);
         imgstr = imageconverter.RGBAtoString(rgba, options);
         var outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
         ctx.putImageData(outputImageData,this.width,0);
@@ -63,7 +68,10 @@
         console.log("result is ", imgstr);
        
         var faceJson;
-        var jsonPath = this.path.replace(/^[^\/\\]*[\/\\](.*)(\.t[^.]){0,1}\.[^.]+/, "$1").split("/");
+        console.log("Loaded image has path", this.path);
+        var jsonPath = this.path.split("/");
+        jsonPath[jsonPath.length-1] = jsonPath[jsonPath.length-1].replace(/(.*)(\.t[^.]){0,1}\.[^.]+/, "$1");
+        console.log("Loaded image has json path", jsonPath);
        
         var currentElement = resultJson;
        
@@ -104,11 +112,13 @@
       function handleResourceFiles(files){
         for (var current of files){
           console.log('Handle resource file ', current);
+          var filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"")
           var reader = new FileReader();
-          reader.path = current.webkitRelativePath.replace("resources/","");
+          console.log("Handling ", current.name, " with path ", current.webkitRelativePath);
+          reader.path = filteredPath;
           reader.onload = function(event) {
             var img = new Image();
-            img.path = this.path;
+            img.path = filteredPath;
             img.onload = imageLoaded;
             img.src = event.target.result;
           };        
@@ -165,7 +175,69 @@
         };
         sendCustomizedApp(appDef);
       });
+            
+
+      function handleZipSelect(evt) {
+
+      function handleFile(f) {
+        JSZip.loadAsync(f).then(function(zip) {
+          
+                console.log("Zip loaded", zip);
+                result = "";
+                resultJson= {};
+                
+                var resourceFiles = [];
+                
+                var promise = zip.file("face.json").async("string").then((data)=>{
+                  console.log("face.json data", data);
+                  faceJson = JSON.parse(data);
+                });
+                
+                promise = promise.then(zip.file("info.json").async("string").then((data)=>{
+                  console.log("info.json data", data);
+                  infoJson = JSON.parse(data);
+                }));
+                
+                zip.folder("resources").forEach(function (relativePath, file){
+                  console.log("iterating over", relativePath);
+                  
+                  if (!file.dir){
+                    promise = promise.then(file.async("blob").then(function (blob) {
+                      var reader = new FileReader();
+                      console.log("Handling ", file.name, " with path ", relativePath);
+                      reader.path = relativePath;
+                      reader.onload = function(event) {
+                        var img = new Image();
+                        img.path = this.path;
+                        img.onload = imageLoaded;
+                        img.src = event.target.result;
+                      };  
+                      reader.readAsDataURL(blob);
+                    }));
+                  }
+                  
+                });
+          
+          
+        }, function (e) {
+          console.log("Error reading " + f.name + ": " + e.message);
+        });
+    }
+
+
+    console.log("Zip select event", evt);
+    var files = evt.target.files;
+    
+    if (files.length > 1){
+      alert("Only one file allowed");
+    }
+    
+    handleFile(files[0]);
+}
+
+
       
+document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
 
       
    </script>
