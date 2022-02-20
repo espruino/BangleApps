@@ -31,7 +31,7 @@
         var options = {};
         
         options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
-        options.compression = false;
+        options.compression = infoJson.compression ? infoJson.compression : false;
         options.alphaToColor = false;
         options.transparent = false;
         options.inverted = false;

@@ -10,6 +10,8 @@ function getImg(resource){
   } else if (resource.file){
     buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
     //print("buffer from file");
+  } else if (resource.compressed){
+    buffer = require("heatshrink").decompress(atob(resource.compressed));
   }
 
   var result = {
