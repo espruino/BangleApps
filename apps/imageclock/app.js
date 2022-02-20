@@ -304,13 +304,9 @@ function drawMultiState(element, offset){
   }
 }
 
-var drawing = false;
-
 function draw(element, offset){
   var initial = !element;
   if (initial){
-    if (drawing) return;
-    drawing = true;
     element = face;
     g.clear();
   }
@@ -356,9 +352,6 @@ function draw(element, offset){
     }
   }
   //print("Finished drawing loop");
-  if (initial){
-    drawing = false;
-  }
 }
 
 var pulse,alt,temp,press;
@@ -367,7 +360,27 @@ var pulse,alt,temp,press;
 var zeroOffset={X:0,Y:0};
 
 
-function initialDraw(){ draw(undefined, zeroOffset); }
+var requestedDraws = 0;
+var isDrawing = false;
+
+function initialDraw(){
+  print("Free memory", process.memory(false).free);
+  requestedDraws++;
+  if (!isDrawing){
+    //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
+    isDrawing = true;
+    requestedDraws = 0;
+    //print(new Date().toISOString(), "Drawing start");
+    draw(undefined, zeroOffset);
+    //print(new Date().toISOString(), "Drawing done");
+    isDrawing = false;
+    if (requestedDraws > 0){
+      //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
+      requestedDraws = 0;
+      draw(undefined, zeroOffset);
+    }
+  }
+}
 
 function handleHrm(e){
   if (e.confidence > 70){
