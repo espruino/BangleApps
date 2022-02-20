@@ -111,6 +111,7 @@ function drawElement(pos, offset, path, lastElem){
   if (resource){
     var image = getImg(resource);
     if (image){
+      offset = updateColors(pos, offset);
       setColors(offset);
       //print("drawImage from drawElement", image, pos, offset);
       var options={};
@@ -177,6 +178,7 @@ function drawDigit(element, offset, digit){
 function drawImage(image, offset, name){
   if (image.ImagePath) {
     //print("drawImage", image, offset, name);
+    offset = updateColors(image, offset);
     drawElement(image, offset, image.ImagePath, name ? "" + name: undefined);
   } else if (image.ImageFile) {
     var file = require("Storage").readJSON(image.ImageFile);
@@ -238,6 +240,13 @@ function updateOffset(element, offset){
   var newOffset = { X: offset.X, Y: offset.Y };
   if (element.X) newOffset.X += element.X;
   if (element.Y) newOffset.Y += element.Y;
+  newOffset = updateColors(element, newOffset);
+  //print("Updated offset from ", offset, "to", newOffset);
+  return newOffset;
+}
+
+function updateColors(element, offset){
+  var newOffset = { X: offset.X, Y: offset.Y };
   newOffset.fg = element.ForegroundColor ? element.ForegroundColor: offset.fg;
   newOffset.bg = element.BackgroundColor ? element.BackgroundColor: offset.bg;
   //print("Updated offset from ", offset, "to", newOffset);
@@ -298,8 +307,6 @@ function drawMultiState(element, offset){
 var drawing = false;
 
 function draw(element, offset){
-  g.setColor(g.theme.fg);
-  g.setBgColor(g.theme.bg);
   var initial = !element;
   if (initial){
     if (drawing) return;
