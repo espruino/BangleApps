@@ -19,6 +19,7 @@ function getImg(resource){
     buffer: buffer
   };
   if (resource.transparent) result.transparent = resource.transparent;
+  if (resource.palette) result.palette = new Uint16Array(resource.palette);
 
   return result;
 }
@@ -112,7 +113,18 @@ function drawElement(pos, offset, path, lastElem){
     if (image){
       setColors(offset);
       //print("drawImage from drawElement", image, pos, offset);
-      g.drawImage(image ,offset.X + pos.X,offset.Y + pos.Y);
+      var options={};
+      if (pos.RotationValue){
+        options.rotate = numbers[pos.RotationValue]();
+        if (pos.MaxRotationValue) options.rotate /= pos.MaxRotationValue;
+        if (pos.MinRotationValue) options.rotate -= pos.MinRotationValue;
+        options.rotate = options.rotate * Math.PI* 2;
+      }
+      if (pos.Scale){
+        options.scale = pos.ScaleValue;
+      }
+      //print("options", options);
+      g.drawImage(image ,offset.X + pos.X,offset.Y + pos.Y, options);
     } else {
       //print("Could not create image from", resource);
     }
@@ -286,6 +298,8 @@ function drawMultiState(element, offset){
 var drawing = false;
 
 function draw(element, offset){
+  g.setColor(g.theme.fg);
+  g.setBgColor(g.theme.bg);
   var initial = !element;
   if (initial){
     if (drawing) return;
@@ -293,8 +307,6 @@ function draw(element, offset){
     element = face;
     g.clear();
   }
-  g.setColor(g.theme.fg);
-  g.setBgColor(g.theme.bg);
 
   var elementOffset = updateOffset(element, offset);
   setColors(elementOffset);

@@ -31,13 +31,33 @@
         options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
         options.compression = false;
         options.alphaToColor = false;
-        options.transparent = this.path.match(/\.t[^.]*\./);
+        options.transparent = false;
         options.inverted = false;
         options.autoCrop = false;
         options.brightness = 0;
         options.contrast = 0;
         options.mode = infoJson.color ? infoJson.color : "1bit";
         options.output = "jsonobject";
+        
+        var faceJson;
+        console.log("Loaded image has path", this.path);
+        var jsonPath = this.path.split("/");
+        
+        var forcedTransparentColorMatch = jsonPath[jsonPath.length-1].match(/.*\.t([^.]+)\..*/)        
+        
+        var forcedTransparentColor;
+        if (jsonPath[jsonPath.length-1].includes(".t.")){
+          options.transparent = true;
+        } else if (forcedTransparentColorMatch){
+          options.transparent = false;
+          forcedTransparentColor = forcedTransparentColorMatch[1];
+        }
+        
+        
+        console.log("image has transparency", options.transparent);
+        console.log("image has forced transparent color", forcedTransparentColor);
+        jsonPath[jsonPath.length-1] = jsonPath[jsonPath.length-1].replace(/([^.]*)\..*/, "$1");
+        console.log("Loaded image has json path", jsonPath);
  
         var canvas = document.getElementById("canvas")
         canvas.width = this.width*2;
@@ -66,28 +86,20 @@
         imageconverter.RGBAtoCheckerboard(imageData.data, {width:this.width,height:this.height});
         ctx.putImageData(imageData,0,0);
 
-        console.log("result is ", imgstr);
-       
-        var faceJson;
-        console.log("Loaded image has path", this.path);
-        var jsonPath = this.path.split("/");
-        jsonPath[jsonPath.length-1] = jsonPath[jsonPath.length-1].replace(/(.*)(\.t[^.]){0,1}\.[^.]+/, "$1");
-        console.log("Loaded image has json path", jsonPath);
        
         var currentElement = resultJson;
        
         for (var i = 0; i < jsonPath.length; i++){
           if (i == jsonPath.length - 1){
-            currentElement[jsonPath[i]] = JSON.parse(imgstr);
+            var resultingObject = JSON.parse(imgstr);
+            if (forcedTransparentColor !== undefined) resultingObject.transparent = forcedTransparentColor;
+            currentElement[jsonPath[i]] = resultingObject;
+            console.log("result is ", resultingObject);
           } else {
             if (!currentElement[jsonPath[i]]) currentElement[jsonPath[i]] = {};
             currentElement = currentElement[jsonPath[i]];
           }
         }
-       
-        result += '"' + jsonPath.join(".") + '":"' + imgstr + '"' + ",\n";
-       
-        console.log("json is ", result);
       }
       
       function handleWatchFace(infoFile, faceFile, resourceFiles){
