@@ -109,6 +109,7 @@ function drawElement(pos, offset, path, lastElem){
   //print("drawElement ",pos, offset, path, lastElem);
   var resource = getByPath(resources, path, lastElem);
   if (resource){
+    //print("resource ",pos, offset, path, lastElem);
     var image = getImg(resource);
     if (image){
       offset = updateColors(pos, offset);
@@ -299,6 +300,7 @@ function drawMultiState(element, offset){
   //print("drawMultiState", element, offset);
   var value = multistates[element.Value]();
   if (checkRedraw(element, value)){
+    //print("drawImage from drawMultiState", element, offset, value);
     drawImage(element, offset, value);
     element.lastDrawnValue = value;
   }
@@ -427,5 +429,3 @@ setInterval(()=>{
 }, lockedRedraw ? lockedRedraw : 60000);
 
 initialDraw();
-
-
