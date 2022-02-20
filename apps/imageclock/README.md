@@ -27,9 +27,11 @@ Folder types:
 
 * Number
   * Contains files named 0.ext to 9.ext and minus.ext
-* WeatherIcon
-  * Contains files named with 3 digits for openweathermap weather codes, i.e. 721.ext
-* Icon
+* CodedImage
+  * Contains files named with only digits for codes, i.e. 721.ext
+  * Contains a file named fallback.ext in case no code matches
+  * Codes are evaluated as follows: 721 -> if not found check 720 -> if not found check 700 -> if found use
+* MultiState
   * Notifications: sound.ext, silent.ext, vibrate.ext
   * other status icons: on.ext, off.ext
 * Scale
@@ -46,18 +48,30 @@ This file contains the description of the watch face elements.
 Properties: {
   "Redraw": {
     "Unlocked": 5000,
-    "Locked": 6000
-  }"
+    "Locked": 60000,
+    "Default": "Always" 
+  }
 }
 ```
+
+Possible values for `Default` are `Always`, `Change`
+
 ##### Images
 ```
 Image: {
   "X": 0,
   "Y": 0,
+  "Scale": 1,
+  "RotationValue": "Seconds",
+  "MinRotationValue": 0,
+  "MaxRotationValue": 60,
   ImagePath: [ "path", "in", "resources", "file" ]
 }
 ```
+`RotationValue` references one of the implemented numerical values.
+
+Mandatory:
+* `ImagePath`
 
 ##### Coded Images
 ```
@@ -88,6 +102,10 @@ be integer.
 The `Value` field is one of the implemented numerical values.
 `Alignment` is either `BottomRight` or `TopLeft`
 
+Mandatory:
+* `ImagePath`
+* `Value`
+
 ##### Scale
 
 ```
@@ -103,6 +121,10 @@ The `Value` field is one of the implemented numerical values.
 The `Value` field is one of the implemented numerical values.
 `MaxValue` and `MinValue` set the start and endpoints of the scale.
 
+Mandatory:
+* `ImagePath`
+* `Value`
+
 ##### MultiState
 
 ```
@@ -114,6 +136,10 @@ The `Value` field is one of the implemented numerical values.
 }
 ```
 The `Value` field is one of the implemented multi state values.
+
+Mandatory:
+* `ImagePath`
+* `Value`
 
 ##### Nesting
 ```
@@ -136,7 +162,7 @@ Container names can be everything but other object names.
 
 #### Implemented data sources
 
-##### For Number objects
+##### Numerical
 
 * Hour
 * HourTens
@@ -144,6 +170,9 @@ Container names can be everything but other object names.
 * Minute
 * MinuteTens
 * MinuteOnes
+* Second
+* SecondTens
+* SecondOnes
 * Day
 * DayTens
 * DayOnes
@@ -160,7 +189,7 @@ Container names can be everything but other object names.
 * WeatherCode
 * WeatherTemperature
 
-##### For MultiState
+##### Multistate
 
 * on/off
   * Lock
@@ -182,15 +211,16 @@ stored on the watch
 
 # TODO
 
+* Handle events and redraws better, actually hit minutes/seconds for redraw
 * Performance improvements
-  * Mark elements with how often they need to be redrawn
+  * Mark elements with how often they need to be redrawn 
   * Use less RAM (maybe dedicated parser for JSON working on a stack/queue)
 * Allow watchfaces to declare if the want to show widgets
 * Temporarily show widgets with slide up/down
-* Analog Hands?
 * Finalize the file format
-* Description of the file format
 * Allow additional files for upload declared in info.json
+* Settings
+* Localization
 
 # Creator
 
