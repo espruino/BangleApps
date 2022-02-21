@@ -369,7 +369,7 @@ var requestedDraws = 0;
 var isDrawing = false;
 
 function initialDraw(){
-  print("Free memory", process.memory(false).free);
+  //print("Free memory", process.memory(false).free);
   requestedDraws++;
   if (!isDrawing){
     //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
@@ -391,6 +391,7 @@ function handleHrm(e){
   if (e.confidence > 70){
     pulse = e.bpm;
     if (!redrawEvents || redrawEvents.includes("HRM")){
+      //print("Redrawing on HRM");
       initialDraw();
     }
   }
@@ -401,14 +402,34 @@ function handlePressure(e){
   temp = e.temperature;
   press = e.pressure;
   if (!redrawEvents || redrawEvents.includes("pressure")){
+    //print("Redrawing on pressure");
     initialDraw();
   }
 }
 
-var unlockedDrawInterval;
 
-var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]);
-var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]);
+function getMatchedWaitingTime(time){
+  var result = time - (Date.now() % time);
+  //print("Matched timeout", time, result);
+  return result;
+}
+
+
+
+function setMatchedInterval(callable, time, intervalHandler){
+  //print("Setting matched timeout for", time);
+  setTimeout(()=>{
+    var interval = setInterval(callable, time);
+    if (intervalHandler) intervalHandler(interval);
+  }, getMatchedWaitingTime(time));
+}
+
+
+var unlockedDrawInterval;
+var lockedDrawInterval;
+
+var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]) || 60000;
+var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000;
 var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
 var redrawEvents = getByPath(face, ["Properties","Redraw","Events"]);
 var events = getByPath(face, ["Properties","Events"]);
@@ -416,19 +437,31 @@ var events = getByPath(face, ["Properties","Events"]);
 //print("events", events);
 //print("redrawEvents", redrawEvents);
 
-function handleLock(isLocked){
+function handleLock(isLocked, forceRedraw){
+  //print("isLocked", Bangle.isLocked());
+  if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
+  if (lockedDrawInterval) clearInterval(lockedDrawInterval);
   if (!isLocked){
     Bangle.setHRMPower(1, "imageclock");
     Bangle.setBarometerPower(1, 'imageclock');
-    unlockedDrawInterval = setInterval(()=>{
+    setMatchedInterval(()=>{
+      //print("Redrawing on unlocked interval");
       initialDraw();
-    },unlockedRedraw?unlockedRedraw:1000);
+    },unlockedRedraw, (v)=>{
+      unlockedDrawInterval = v;
+    });
   } else {
     Bangle.setHRMPower(0, "imageclock");
     Bangle.setBarometerPower(0, 'imageclock');
-    if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
+    setMatchedInterval(()=>{
+      //print("Redrawing on locked interval");
+      initialDraw();
+    },lockedRedraw, (v)=>{
+      lockedDrawInterval = v;
+    });
   }
-  if (!redrawEvents || redrawEvents.includes("lock")){
+  if (forceRedraw || !redrawEvents || redrawEvents.includes("lock")){
+    //print("Redrawing on lock", isLocked);
     initialDraw();
   }
 }
@@ -447,8 +480,4 @@ if (!events || events.includes("lock")) {
   Bangle.on('lock', handleLock);
 }
 
-setInterval(()=>{
-  initialDraw();
-}, lockedRedraw ? lockedRedraw : 60000);
-
-initialDraw();
+handleLock(Bangle.isLocked(), true);
