@@ -1,6 +1,0 @@
-require("Storage").write("counter+.info",{
-  "id":"counterplus",
-  "name":"Counter+",
-  "src":"counter+.app.js",
-  "icon":"counter+.img"
-});
