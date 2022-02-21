@@ -1,6 +1,6 @@
 # The Ring
 
-  *A proof of concept ring guage clock using images, acts as a tutorial piece for discussion*
+  *A proof of concept clock with large ring guage for steps using images, acts as a tutorial piece for discussion*
 
 
 Written by: [Hugh Barney](https://github.com/hughbarney) For support
