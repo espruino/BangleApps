@@ -20,8 +20,11 @@ function prepareImg(resource){
     //print("buffer cached");
     resource.buffer = resource.buffer;
   }
-  if (resource.transparent) result.transparent = resource.transparent;
-  if (resource.palette) result.palette = new Uint16Array(resource.palette);
+  
+  if (resource.paletteData){
+    result.palette = new Uint16Array(resource.paletteData);
+    result.paletteData = undefined;
+  }
 
   return resource;
 }
