@@ -278,7 +278,7 @@ function drawWidgeds() {
 
   var x1M = 100;
   var y1M = y1B;
-  var x2M = x1M + 30;
+  var x2M = x1M + 25;
   var y2M = y2B;
 
   if (messages.some(m=>m.new)) {
@@ -295,6 +295,7 @@ function drawWidgeds() {
 
   print(strDow[dow] + ' ' + day  + '.' + month  + ' ' + year);
   
+  g.setColor(g.theme.fg);
   g.setFontAlign(-1, -1,0);
   g.setFont("Vector", 20);
   g.drawString(strDow[dow] + ' ' + day, 0, 0, true);
