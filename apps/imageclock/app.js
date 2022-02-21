@@ -36,6 +36,7 @@ function getByPath(object, path, lastElem){
     if (!current["" + lastElem]) return undefined;
     current = current["" + lastElem];
   }
+  if (typeof current == "function") return undefined;
   return current;
 }
 
