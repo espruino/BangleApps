@@ -7,10 +7,10 @@ function showMainMenu() {
   const mainMenu = {
     "": {"title": "7x7 Dots Clock Settings"},
     "< Back": ()=>load(),
-    "sw-up": ()=>showSelAppMenu("swupApp"),
-    "sw-down": ()=>showSelAppMenu("swdownApp"),
-    "sw-left": ()=>showSelAppMenu("swleftApp"),
-    "sw-right": ()=>showSelAppMenu("swrightApp")
+    "swipe-up": ()=>showSelAppMenu("swupApp"),
+    "swipe-down": ()=>showSelAppMenu("swdownApp"),
+    "swipe-left": ()=>showSelAppMenu("swleftApp"),
+    "swipe-right": ()=>showSelAppMenu("swrightApp")
 
   };  
 
