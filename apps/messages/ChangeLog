@@ -15,7 +15,7 @@
 0.10: Respect the 'new' attribute if it was set from iOS integrations
 0.11: Open app when touching the widget (Bangle.js 2 only)
 0.12: Extra app-specific notification icons
-      New animated notifcationicon (instead of large blinking 'MESSAGES')
+      New animated notification icon (instead of large blinking 'MESSAGES')
       Added screenshots
 0.13: Add /*LANG*/ comments for internationalisation
       Add 'Delete All' option to message options
@@ -31,3 +31,6 @@
 0.19: Use a larger font for message text if it'll fit
 0.20: Allow tapping on the body to show a scrollable view of the message and title in a bigger font (fix #1405, #1031)
 0.21: Improve list readability on dark theme
+0.22: Allow repeat to be switched Off, so there is no buzzing repetition.
+      Also gave the widget a pixel more room to the right
+

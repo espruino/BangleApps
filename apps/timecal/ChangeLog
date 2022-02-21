@@ -7,3 +7,4 @@
       -> added settings to render cal view begin day (-1: today, 0:sunday, 1:monday [default])
 0.03: a lot of more settings for outline, colors and highlights
 0.04: finalized README, fixed settings cancel, fixed border-setting
+0.05: bugfix: default settings

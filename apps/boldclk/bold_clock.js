@@ -129,14 +129,6 @@ Bangle.on('lcdPower', (on) => {
     clearTimers();
   }
 });
-Bangle.on('faceUp',function(up){
-  //console.log("faceUp: " + up + " LCD: " + Bangle.isLCDOn());
-  if (up && !Bangle.isLCDOn()) {
-    //console.log("faceUp and LCD off");
-    clearTimers();
-    Bangle.setLCDPower(true);
-  }
-});
 
 g.clear();
 Bangle.loadWidgets();
