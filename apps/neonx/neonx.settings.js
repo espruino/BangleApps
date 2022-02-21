@@ -9,6 +9,7 @@
       io: 0,
       showDate: 1,
       fullscreen: false,
+      showLock: false,
     };
 
     updateSettings();
@@ -55,6 +56,14 @@
       format: () => (neonXSettings.fullscreen ? 'Yes' : 'No'),
       onchange: () => {
         neonXSettings.fullscreen = !neonXSettings.fullscreen;
+        updateSettings();
+      },
+    },
+    'Show lock': {
+      value: false | neonXSettings.showLock,
+      format: () => (neonXSettings.showLock ? 'Yes' : 'No'),
+      onchange: () => {
+        neonXSettings.showLock = !neonXSettings.showLock;
         updateSettings();
       },
     },
