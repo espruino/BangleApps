@@ -123,7 +123,7 @@ function getMessageImageCol(msg,def) {
     "telegram": "#0088cc",
     "twitter": "#1da1f2",
     "whatsapp": "#4fce5d",
-    "wordfeud": "#dcc8bd",
+    "wordfeud": "#e7d3c7",
   }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
 }
 

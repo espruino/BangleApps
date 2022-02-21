@@ -8,6 +8,19 @@
  * Created: February 2022
  */
 
+let settings = {
+  thickness: 4,
+  io: 0,
+  showDate: 1,
+  fullscreen: false,
+  showLock: false,
+};
+let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
+
+
 const digits = {
   0:[[15,15,85,15,85,85,15,85,15,15]],
   1:[[85,15,85,85]],
@@ -21,6 +34,7 @@ const digits = {
   9:[[15,50,15,15,85,15,85,85,15,85]],
 };
 
+
 const colors = {
   x: [
     ["#FF00FF", "#00FFFF"],
@@ -31,16 +45,13 @@ const colors = {
     ["#00FF00", "#00FFFF"]
   ]
 };
-
 const is12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const halfWidth = screenWidth / 2;
 const scale = screenWidth / 240;
-const REFRESH_RATE = 10E3;
-
-let interval = 0;
 let showingDate = false;
+
 
 function drawLine(poly, thickness){
   for (let i = 0; i < poly.length; i = i + 2){
@@ -59,18 +70,6 @@ function drawLine(poly, thickness){
   }
 }
 
-let settings = {
-  thickness: 4,
-  io: 0,
-  showDate: 1,
-  fullscreen: false,
-};
-let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
-for (const key in saved_settings) {
-  settings[key] = saved_settings[key]
-}
-
-
 
 function drawClock(num){
   let tx, ty;
@@ -80,10 +79,12 @@ function drawClock(num){
       const current = ((y + 1) * 2 + x - 1);
       let newScale = scale;
 
-      g.setColor(colors[settings.io ? 'io' : 'x'][y][x]);
+      let xc = settings.showLock && !Bangle.isLocked() ? Math.abs(x-1) : x;
+      let c = colors[settings.io ? 'io' : 'x'][y][xc];
+      g.setColor(c);
 
       if (!settings.io) {
-        newScale *= settings.fullscreen ? 1.18 : 1.0;
+        newScale *= settings.fullscreen ? 1.20 : 1.0;
         let dx = settings.fullscreen ? 0 : 18
         tx = (x * 100 + dx) * newScale;
         ty = (y * 100 + dx*2) * newScale;
@@ -101,21 +102,24 @@ function drawClock(num){
   }
 }
 
+
 function draw(date){
+  queueDraw();
+
   let d = new Date();
   let l1, l2;
 
   showingDate = date;
 
   if (date) {
-    setUpdateInt(0);
-
     l1 = ('0' + (new Date()).getDate()).substr(-2);
     l2 = ('0' + ((new Date()).getMonth() + 1)).substr(-2);
 
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+
     setTimeout(_ => {
       draw();
-      setUpdateInt(1);
     }, 5000);
   } else {
     l1 = ('0' + (d.getHours() % (is12hour ? 12 : 24))).substr(-2);
@@ -131,33 +135,47 @@ function draw(date){
   drawClock([l1, l2]);
 }
 
-function setUpdateInt(set){
-  if (interval) {
-    clearInterval(interval);
-  }
 
-  if (set) {
-    interval = setInterval(draw, REFRESH_RATE);
-  }
+/*
+ * Draw watch face
+ */
+var drawTimeout;
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
 }
 
-g.clear(1);
 
-Bangle.setUI("clock");
-
-setUpdateInt(1);
-draw();
-
+/*
+ * Event handlers
+ */
 if (settings.showDate) {
   Bangle.on('touch', () => draw(!showingDate));
 }
 
 Bangle.on('lcdPower', function(on){
-  if (on){
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+
+  if (on) {
     draw();
-    setUpdateInt(1);
-  } else setUpdateInt(0);
+  }
 });
+
+Bangle.on('lock', function(isLocked) {
+  draw();
+});
+
+
+/*
+ * Draw first time
+ */
+g.clear(1);
+Bangle.setUI("clock");
+draw();
 
 Bangle.loadWidgets();
 
