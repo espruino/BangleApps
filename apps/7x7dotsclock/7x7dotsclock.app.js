@@ -13,9 +13,8 @@ var Xs = 0, Ys = 30,Xe = 175, Ye=175;
 var SegH = (Ye-Ys)/2,SegW = (Xe-Xs)/2;
 var Dx = SegW/14, Dy = SegH/16;
 
-const hColor = [1,1,1];
+
 const mColor = [0.3,0.3,1];
-const bColor = [0.2,0.2,0.2];
 
 const Font = [
               [
@@ -114,16 +113,21 @@ const Font = [
 var dho = -1, eho = -1, dmo = -1, emo = -1;
 
 
-function drawHSeg(x1,y1,x2,y2,Num,dColor,Size) {
-  g.setColor(0,0,0);
+function drawHSeg(x1,y1,x2,y2,Num,Color,Size) {
+  //g.setColor(0,0,0);
+  g.setColor(g.theme.bg);
   g.fillRect(x1, y1, x2, y2);
   for (let i = 1; i < 8; i++) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
-        g.setColor(dColor[0],dColor[1],dColor[2]);
+        if (Color == "fg") {
+          g.setColor(g.theme.fg);
+        } else {
+          g.setColor(mColor[0],mColor[1],mColor[2]);
+        }
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,Size);
       } else {
-        g.setColor(bColor[0],bColor[1],bColor[2]);
+        g.setColor(g.theme.fg);
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,1);
       }
     }
@@ -131,11 +135,15 @@ function drawHSeg(x1,y1,x2,y2,Num,dColor,Size) {
 }
 
 
-function drawSSeg(x1,y1,x2,y2,Num,dColor,Size) {
+function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
   for (let i = 1; i < 8; i++) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
-        g.setColor(dColor[0],dColor[1],dColor[2]);
+        if (Color == "fg") {
+          g.setColor(g.theme.fg);
+        } else {
+          g.setColor(mColor[0],mColor[1],mColor[2]);
+        }
         g.fillCircle(x1+(i-1)*(x2-x1)/7,y1+(j-1)*(y2-y1)/7,Size);
       }
     }
@@ -185,25 +193,25 @@ function draw() {
   g.reset();
   if (dh != dho) {
     g.setColor(1,1,1);
-    drawHSeg(Xs, Ys, Xs+SegW, Ys+SegH,dh,hColor,4);
+    drawHSeg(Xs, Ys, Xs+SegW, Ys+SegH,dh,"fg",4);
     dho = dh;
   }
 
   if (eh != eho) {
     g.setColor(1,1,1);
-    drawHSeg(Xs+SegW+Dx, Ys, Xs+SegW*2, Ys+SegH,eh,hColor,4);
+    drawHSeg(Xs+SegW+Dx, Ys, Xs+SegW*2, Ys+SegH,eh,"fg",4);
     eho = eh;
   }
 
   if (dm != dmo) {
     g.setColor(0.3,0.3,1);
-    drawHSeg(Xs, Ys+SegH+Dy, Xs+SegW, Ys+SegH*2,dm,mColor,4);
+    drawHSeg(Xs, Ys+SegH+Dy, Xs+SegW, Ys+SegH*2,dm,"",4);
     dmo = dm;
   }
 
   if (em != emo) {
     g.setColor(0.3,0.3,1);
-    drawHSeg(Xs+SegW+Dx, Ys+SegH+Dy, Xs+SegW*2, Ys+SegH*2,em,mColor,4);
+    drawHSeg(Xs+SegW+Dx, Ys+SegH+Dy, Xs+SegW*2, Ys+SegH*2,em,"",4);
     emo = em;
   }
 
