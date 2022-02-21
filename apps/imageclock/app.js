@@ -1,29 +1,29 @@
 var face = require("Storage").readJSON("imageclock.face.json");
 var resources = require("Storage").readJSON("imageclock.resources.json");
 
-function getImg(resource){
-  //print("getImg: ", resource);
-  var buffer;
+function prepareImg(resource){
+  //print("prepareImg: ", resource);
+
   if (resource.img){
-    buffer = E.toArrayBuffer(atob(resource.img));
+    resource.buffer = E.toArrayBuffer(atob(resource.img));
+    resource.img = undefined;
     //print("buffer from img");
   } else if (resource.file){
-    buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
+    resource.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
+    resource.file = undefined;
     //print("buffer from file");
   } else if (resource.compressed){
-    buffer = require("heatshrink").decompress(atob(resource.compressed));
+    resource.buffer = require("heatshrink").decompress(atob(resource.compressed));
+    resource.compressed = undefined;
+    //print("buffer from compressed");
+  } else if (resource.buffer){
+    //print("buffer cached");
+    resource.buffer = resource.buffer;
   }
-
-  var result = {
-    width: resource.width,
-    height: resource.height,
-    bpp: resource.bpp,
-    buffer: buffer
-  };
   if (resource.transparent) result.transparent = resource.transparent;
   if (resource.palette) result.palette = new Uint16Array(resource.palette);
 
-  return result;
+  return resource;
 }
 
 function getByPath(object, path, lastElem){
@@ -112,7 +112,7 @@ function drawElement(pos, offset, path, lastElem){
   var resource = getByPath(resources, path, lastElem);
   if (resource){
     //print("resource ",pos, offset, path, lastElem);
-    var image = getImg(resource);
+    var image = prepareImg(resource);
     if (image){
       offset = updateColors(pos, offset);
       setColors(offset);
@@ -128,6 +128,7 @@ function drawElement(pos, offset, path, lastElem){
         options.scale = pos.ScaleValue;
       }
       //print("options", options);
+      //print("Memory before drawing", process.memory(false));
       g.drawImage(image ,offset.X + pos.X,offset.Y + pos.Y, options);
     } else {
       //print("Could not create image from", resource);
@@ -186,7 +187,7 @@ function drawImage(image, offset, name){
   } else if (image.ImageFile) {
     var file = require("Storage").readJSON(image.ImageFile);
     setColors(offset);
-    g.drawImage(getImg(file),image.X + offset.X, image.Y + offsetY);
+    g.drawImage(prepareImg(file),image.X + offset.X, image.Y + offsetY);
   }
 }
 
