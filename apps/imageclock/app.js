@@ -235,7 +235,18 @@ function getWeatherTemperature(){
 
   if (weather && weather.temp){
     //print("Weather temp is", weather.temp);
-    return weather.temp - 273.15;
+    var temp = require('locale').temp(weather.temp-273.15);
+    var value = Number(temp.match(/[\d\-]*/)[0]);
+    var unit;
+    if (temp.includes("C")){
+      unit = "celsius";
+    } else if (temp.includes("F")){
+      unit = "fahrenheit";
+    } else {
+      throw new Error("Unknown temperature unit " + unit);
+    }
+
+    return {value: value, unit: unit};
   }
   return undefined;
 }
@@ -281,10 +292,10 @@ numbers.Steps = () => { return Bangle.getHealthStatus ? Bangle.getHealthStatus("
 numbers.Temperature = () => { return temp; };
 numbers.Pressure = () => { return press; };
 numbers.Altitude = () => { return alt; };
-numbers.BatteryPercentage = () => { return E.getBattery(); };
-numbers.BatteryVoltage = () => { return NRF.getBattery(); };
-numbers.WeatherCode = () => getWeatherCode();
-numbers.WeatherTemperature = () => getWeatherTemperature();
+numbers.BatteryPercentage = E.getBattery;
+numbers.BatteryVoltage = NRF.getBattery;
+numbers.WeatherCode = getWeatherCode;
+numbers.WeatherTemperature = () => getWeatherTemperature().value;
 
 var multistates = {};
 multistates.Lock = () => { return Bangle.isLocked() ? "on" : "off"; };
@@ -298,6 +309,7 @@ multistates.HRM = () => { return Bangle.isHRMOn ? "on" : "off"; };
 multistates.Barometer = () => { return Bangle.isBarometerOn() ? "on" : "off"; };
 multistates.Compass = () => { return Bangle.isCompassOn() ? "on" : "off"; };
 multistates.GPS = () => { return Bangle.isGPSOn() ? "on" : "off"; };
+multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
 
 function drawMultiState(element, offset){
   //print("drawMultiState", element, offset);
