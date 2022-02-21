@@ -207,7 +207,6 @@ exports.getStats = function(statIDs, options) {
     };
   }
   if (statIDs.includes("caden")) {
-    needGPS = true;
     stats["caden"]={
       title : "Cadence",
       getValue : function() { return state.stepsPerMin; },
