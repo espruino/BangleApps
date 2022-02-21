@@ -1,7 +1,7 @@
 { "id": "thering",
   "name": "The Ring",
   "version":"0.01",
-  "description": "A proof of concept ring guage clock using images, acts as a tutorial piece for discussion",
+  "description": "A proof of concept clock with large ring guage for steps using images, acts as a tutorial piece for discussion",
   "icon": "app.png",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
