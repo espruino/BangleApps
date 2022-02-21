@@ -6,7 +6,8 @@
   "icon": "dotsfontclock.png",
   "tags": "clock",
   "type": "clock",
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"7x7dotsclock.app.js","url":"7x7dotsclock.app.js"},
