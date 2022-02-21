@@ -5,7 +5,7 @@
   "icon": "app.png",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot_thering1.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"thering.app.js","url":"app.js"},
