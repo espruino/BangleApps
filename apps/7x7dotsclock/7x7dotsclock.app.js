@@ -15,6 +15,7 @@ var Dx = SegW/14, Dy = SegH/16;
 
 
 const mColor = [0.3,0.3,1];
+const bColor = [0.3,0.3,0.3];
 
 const Font = [
               [
@@ -123,11 +124,11 @@ function drawHSeg(x1,y1,x2,y2,Num,Color,Size) {
         if (Color == "fg") {
           g.setColor(g.theme.fg);
         } else {
-          g.setColor(mColor[0],mColor[1],mColor[2]);
+        g.setColor(mColor[0],mColor[1],mColor[2]);        
         }
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,Size);
       } else {
-        g.setColor(g.theme.fg);
+        g.setColor(bColor[0],bColor[1],bColor[2]);        
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,1);
       }
     }
@@ -142,7 +143,7 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
         if (Color == "fg") {
           g.setColor(g.theme.fg);
         } else {
-          g.setColor(mColor[0],mColor[1],mColor[2]);
+          g.setColor(g.theme.fgH);
         }
         g.fillCircle(x1+(i-1)*(x2-x1)/7,y1+(j-1)*(y2-y1)/7,Size);
       }
@@ -152,7 +153,7 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
 
 
 function ShowSecons() {
-  g.setColor(1,1,1);
+  g.setColor(g.theme.bgH);
   g.fillRect((Xe-Xs) / 2 - 14 + Xs -3,
             (Ye-Ys) / 2 - 7 + Ys  -3,
             (Xe-Xs) / 2 + 14 + Xs +1,
@@ -163,13 +164,13 @@ function ShowSecons() {
             (Ye-Ys) / 2 - 7 + Ys  ,
             (Xe-Xs) / 2     + Xs -1,
             (Ye-Ys) / 2 + 7 + Ys,
-            ds,mColor,1);
+            ds,"",1);
 
   drawSSeg(  (Xe-Xs) / 2     + Xs +1,
             (Ye-Ys) / 2 - 7 + Ys,
             (Xe-Xs) / 2 + 14 + Xs +1,
             (Ye-Ys) / 2 + 7 + Ys,
-            es,mColor,1);
+            es,"",1);
 
 }
 
