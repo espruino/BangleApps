@@ -62,14 +62,14 @@ for (var i=0;i<statIDs.length;i+=2) {
   var sa = exs.stats[statIDs[i+0]];
   var sb = exs.stats[statIDs[i+1]];
   lc.push({ type:"h", filly:1, c:[
-    {type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol },
-    {type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol }
+    sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol }:{},
+    sb?{type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol }:{}
   ]}, { type:"h", filly:1, c:[
-    {type:"txt", font:fontValue, label:sa.getString(), id:sa.id, fillx:1 },
-    {type:"txt", font:fontValue, label:sb.getString(), id:sb.id, fillx:1 }
+    sa?{type:"txt", font:fontValue, label:sa.getString(), id:sa.id, fillx:1 }:{},
+    sb?{type:"txt", font:fontValue, label:sb.getString(), id:sb.id, fillx:1 }:{}
   ]});
-  sa.on('changed', e=>layout[e.id].label = e.getString());
-  sb.on('changed', e=>layout[e.id].label = e.getString());
+  if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
+  if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
 }
 // At the bottom put time/GPS state/etc
 lc.push({ type:"h", filly:1, c:[
