@@ -1,0 +1,15 @@
+{ "id": "counterplus",
+  "name": "Counter+",
+  "shortName":"Counter+",
+  "icon": "",
+  "version":"1.00",
+  "description": "Counter+",
+  "tags": "",
+  "storage": [
+    {"name":"counterplus.app.js","url":"app.js"},
+    {"name":"counterplus.app.info","url":"app.info"},
+    {"name":"counter+.img","url":"counter+.img"},
+    {"name":"score.json","url":"score.json"},
+    {"name":"upward.img","url":"upward.img"}
+  ]
+}
