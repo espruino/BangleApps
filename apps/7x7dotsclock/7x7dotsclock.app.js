@@ -5,7 +5,7 @@ by Peter Kuppelwieser
 
 */
 
-let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
+let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: "", ColorMinutes: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
 
 // position on screen
 var Xs = 0, Ys = 30,Xe = 175, Ye=175;
@@ -13,8 +13,19 @@ var Xs = 0, Ys = 30,Xe = 175, Ye=175;
 var SegH = (Ye-Ys)/2,SegW = (Xe-Xs)/2;
 var Dx = SegW/14, Dy = SegH/16;
 
-
-const mColor = [0.3,0.3,1];
+switch(ColorMinutes) {
+	case "blue":
+		var mColor = [0.3,0.3,1];
+		break;
+	case "pink":
+		var mColor = [1,0.3,1];
+		break;
+	case "green":
+		var mColor = [0.3,1,0.3];
+		break;
+	default:
+		var mColor = [0.3,0.3,1];
+}
 const bColor = [0.3,0.3,0.3];
 
 const Font = [
@@ -141,9 +152,9 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
         if (Color == "fg") {
-          g.setColor(g.theme.fg);
+	       g.setColor(mColor[0],mColor[1],mColor[2]);        
         } else {
-          g.setColor(g.theme.fgH);
+          g.setColor(g.theme.fg);
         }
         g.fillCircle(x1+(i-1)*(x2-x1)/7,y1+(j-1)*(y2-y1)/7,Size);
       }
@@ -153,7 +164,7 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
 
 
 function ShowSecons() {
-  g.setColor(g.theme.bgH);
+  g.setColor(g.theme.fg);
   g.fillRect((Xe-Xs) / 2 - 14 + Xs -3,
             (Ye-Ys) / 2 - 7 + Ys  -3,
             (Xe-Xs) / 2 + 14 + Xs +1,
@@ -164,13 +175,13 @@ function ShowSecons() {
             (Ye-Ys) / 2 - 7 + Ys  ,
             (Xe-Xs) / 2     + Xs -1,
             (Ye-Ys) / 2 + 7 + Ys,
-            ds,"",1);
+            ds,"fg",1);
 
   drawSSeg(  (Xe-Xs) / 2     + Xs +1,
             (Ye-Ys) / 2 - 7 + Ys,
             (Xe-Xs) / 2 + 14 + Xs +1,
             (Ye-Ys) / 2 + 7 + Ys,
-            es,"",1);
+            es,"fg",1);
 
 }
 
