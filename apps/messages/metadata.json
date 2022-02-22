@@ -1,7 +1,7 @@
 {
   "id": "messages",
   "name": "Messages",
-  "version": "0.24",
+  "version": "0.25",
   "description": "App to display notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",
@@ -15,7 +15,8 @@
     {"name":"messages.wid.js","url":"widget.js"},
     {"name":"messages","url":"lib.js"}
   ],
-  "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
+  "data": [{"name":"messages.json"},{"name":"messages.jsonl","storageFile":true},
+           {"name":"messages.settings.json"}],
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-notify.gif"}],
   "sortorder": -9
 }
