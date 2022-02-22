@@ -74,6 +74,12 @@ function drawLine(poly, thickness){
 function drawClock(num){
   let tx, ty;
 
+  if(settings.fullscreen){
+    g.clearRect(0,0,screenWidth,screenHeight);
+  } else {
+    g.clearRect(0,24,240,240);
+  }
+
   for (let x = 0; x <= 1; x++) {
     for (let y = 0; y <= 1; y++) {
       const current = ((y + 1) * 2 + x - 1);
@@ -106,6 +112,14 @@ function drawClock(num){
 function draw(date){
   queueDraw();
 
+  // Depending on the settings, we clear all widgets or draw those.
+  if(settings.fullscreen){
+    for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+  } else {
+    Bangle.drawWidgets();
+  }
+
+  // Now lets draw the time/date
   let d = new Date();
   let l1, l2;
 
@@ -124,12 +138,6 @@ function draw(date){
   } else {
     l1 = ('0' + (d.getHours() % (is12hour ? 12 : 24))).substr(-2);
     l2 = ('0' + d.getMinutes()).substr(-2);
-  }
-
-  if(settings.fullscreen){
-    g.clearRect(0,0,screenWidth,screenHeight);
-  } else {
-    g.clearRect(0,24,240,240);
   }
 
   drawClock([l1, l2]);
@@ -175,12 +183,6 @@ Bangle.on('lock', function(isLocked) {
  */
 g.clear(1);
 Bangle.setUI("clock");
-draw();
-
 Bangle.loadWidgets();
 
-if(settings.fullscreen){
-  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-} else {
-  Bangle.drawWidgets();
-}
+draw();
