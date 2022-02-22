@@ -248,6 +248,9 @@ function getGradientColor(color, percent) {
   const colorList = [
     '#00FF00', '#80FF00', '#FFFF00', '#FF8000', '#FF0000'
   ];
+  if (color == "fg") {
+    color = colorFg;
+  }
   if (color == "green-red") {
     const colorIndex = Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length) - 1] || "#00ff00";
