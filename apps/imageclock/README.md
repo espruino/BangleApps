@@ -49,12 +49,14 @@ Properties: {
   "Redraw": {
     "Unlocked": 5000,
     "Locked": 60000,
-    "Default": "Always" 
-  }
+    "Default": "Always"
+    "Events": ["HRM"]
+  },
+  "Events": ["lock","HRM"]
 }
 ```
 
-Possible values for `Default` are `Always`, `Change`
+Possible values for `Default` are `Always`, `Change`.
 
 ##### Images
 ```
@@ -141,6 +143,30 @@ Mandatory:
 * `ImagePath`
 * `Value`
 
+##### Poly
+
+```
+"Poly":{
+  "Filled": true,
+  "RotationValue": "Second",
+  "MinRotationValue": "0",
+  "MaxRotationValue": "60",
+  "ForegroundColor": "#00f",
+  "BackgroundColor": "#008",
+  "Vertices":[
+    {"X":-1, "Y":13},
+    {"X":0, "Y":15},
+    {"X":1, "Y":13},
+    {"X":2, "Y":0},
+    {"X":1, "Y":-75},
+    {"X":0, "Y":-80},
+    {"X":-1, "Y":-75},
+    {"X":-2, "Y":0}
+  ]
+}
+```
+The `RotationValue` field is one of the implemented numeric values.
+
 ##### Nesting
 ```
 Container: {
@@ -165,12 +191,16 @@ Container names can be everything but other object names.
 ##### Numerical
 
 * Hour
+* Hour12Analog
+* Hour12
 * HourTens
 * HourOnes
 * Minute
+* MinuteAnalog
 * MinuteTens
 * MinuteOnes
 * Second
+* SecondAnalog
 * SecondTens
 * SecondOnes
 * Day
