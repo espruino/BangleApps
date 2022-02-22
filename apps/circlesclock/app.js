@@ -3,22 +3,7 @@ const storage = require("Storage");
 const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
 const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
-const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
-const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
 const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
-
-const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
-const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
-const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
-const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
-const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
-const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
-const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
-const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
-const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
-
-const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
-const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
 Graphics.prototype.setFontRobotoRegular50NumericOnly = function(scale) {
   // Actual height 39 (40 - 2)
@@ -337,6 +322,8 @@ function drawStepsDistance(w) {
 function drawHeartRate(w) {
   if (!w) w = getCircleXPosition("hr");
 
+  const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
+
   drawCircleBackground(w);
 
   const color = getCircleColor("hr");
@@ -360,6 +347,8 @@ function drawHeartRate(w) {
 function drawBattery(w) {
   if (!w) w = getCircleXPosition("battery");
   const battery = E.getBattery();
+
+  const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
 
   drawCircleBackground(w);
 
@@ -437,6 +426,10 @@ function drawWeather(w) {
 function drawSunProgress(w) {
   if (!w) w = getCircleXPosition("sunprogress");
   const percent = getSunProgress();
+
+  // sunset icons:
+  const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
+  const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
   drawCircleBackground(w);
 
@@ -571,6 +564,18 @@ function windAsBeaufort(windInKmh) {
  */
 function getWeatherIconByCode(code) {
   const codeGroup = Math.round(code / 100);
+
+  // weather icons:
+  const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
+  const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
+  const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
+  const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
+  const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
+  const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
+  const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
+  const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
+  const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
+
   switch (codeGroup) {
     case 2:
       return weatherStormy;
