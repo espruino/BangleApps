@@ -5,3 +5,4 @@
 0.04: Use the exstats module, and make what is displayed configurable
 0.05: exstats updated so update 'distance' label is updated, option for 'speed'
 0.06: Add option to record a run using the recorder app automatically
+0.07: Fix crash if an odd number of active boxes are configured (fix #1473)

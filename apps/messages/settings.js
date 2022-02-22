@@ -4,6 +4,7 @@
     if (settings.vibrate===undefined) settings.vibrate=".";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    settings.maxUnreadTimeout=240;
     return settings;
   }
   function updateSetting(setting, value) {
@@ -13,7 +14,6 @@
   }
 
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
-  var currentVib = settings().vibrate;
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
@@ -27,13 +27,13 @@
     },
     /*LANG*/'Repeat': {
       value: settings().repeat,
-      min: 2, max: 10,
-      format: v => v+"s",
+      min: 0, max: 10,
+      format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
     },
     /*LANG*/'Unread timer': {
       value: settings().unreadTimeout,
-      min: 0, max: 240, step : 10,
+      min: 0, max: settings().maxUnreadTimeout, step : 10,
       format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("unreadTimeout", v)
     },

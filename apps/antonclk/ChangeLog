@@ -8,3 +8,4 @@
 0.06: fixes #1271 - wrong settings name
       when weekday name and calendar weeknumber are on then display is <weekday short> #<calweek>
       week is buffered until date or timezone changes
+0.07: align default settings with app.js (otherwise the initial displayed settings will be confusing to users)
