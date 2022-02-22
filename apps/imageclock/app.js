@@ -551,4 +551,16 @@ if (!events || events.includes("charging")) {
   Bangle.on('charging', handleCharging);
 }
 
+function clearWidgetsDraw(){
+  if (WIDGETS && typeof WIDGETS === "object") {
+    for (let wd of WIDGETS) {
+      wd.draw = () => {};
+      wd.area = "";
+    }
+  }
+}
+
+Bangle.loadWidgets();
+clearWidgetsDraw();
+
 handleLock(Bangle.isLocked(), true);
