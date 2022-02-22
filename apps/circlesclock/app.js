@@ -138,10 +138,19 @@ function draw() {
   g.drawString(locale.date(new Date()), w / 2, h2);
   g.drawString(locale.dow(new Date()), w / 2, h2 + dowOffset);
 
-  drawCircle(1);
-  drawCircle(2);
-  drawCircle(3);
-  if (circleCount >= 4) drawCircle(4);
+  // draw the circles a little bit delayed so we decrease the blocking time
+  setTimeout(function() {
+    drawCircle(1);
+  }, 1);
+  setTimeout(function() {
+    drawCircle(2);
+  }, 1);
+  setTimeout(function() {
+    drawCircle(3);
+  }, 1);
+  setTimeout(function() {
+    if (circleCount >= 4) drawCircle(4);
+  }, 1);
 }
 
 function drawCircle(index) {
