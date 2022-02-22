@@ -46,9 +46,22 @@ we should start a timeout for settings.unreadTimeout to return
 to the clock. */
 var unreadTimeout;
 /// List of all our messages
-var MESSAGES = require("messages").load();
-// Write them back to storage when we're done
-E.on("kill", ()=>{ require("messages").save(MESSAGES); delete MESSAGES; });
+var MESSAGES;
+try {
+  MESSAGES = require("messages").load();
+  // Write them back to storage when we're done
+  E.on("kill", ()=>{ require("messages").save(MESSAGES); delete MESSAGES; });
+} catch (e) {
+  g.clear();
+  E.showPrompt(/*LANG*/"Message file corrupt, erase all messages?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
+    if (isYes) {    // OK: erase message file and reload this app
+      require("messages").save([]);
+      load("messages.app.js");
+    } else {
+      load();// well, this app won't work... let's go back to the clock
+    }
+  });
+}
 // used by lib.js to inform app of updates
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
@@ -463,16 +476,18 @@ function cancelReloadTimeout() {
 }
 
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-setTimeout(() => {
-  var unreadTimeoutSecs = settings.unreadTimeout;
-  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
-  if (unreadTimeoutSecs)
-    unreadTimeout = setTimeout(function() {
-      print("Message not seen - reloading");
-      load();
-    }, unreadTimeoutSecs*1000);
-  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
-},10); // if checkMessages wants to 'load', do that
+if (MESSAGES !== undefined) { // only if loading MESSAGES worked
+  g.clear();
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  setTimeout(() => {
+    var unreadTimeoutSecs = settings.unreadTimeout;
+    if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
+    if (unreadTimeoutSecs)
+      unreadTimeout = setTimeout(function() {
+        print("Message not seen - reloading");
+        load();
+      }, unreadTimeoutSecs*1000);
+    checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
+  },10); // if checkMessages wants to 'load', do that
+}

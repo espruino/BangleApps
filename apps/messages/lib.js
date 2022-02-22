@@ -48,11 +48,8 @@ exports.load = function() {
   }
   return events.filter(e => e).reverse(); // newest message comes last in StorageFile, but should be first in array
 };
-/**
- * Check if there are any unread messages
- * @returns {boolean}
- */
-exports.haveNew = function() {
+
+function haveNew() {
   if ("undefined"!= typeof MESSAGES) {
     // we're in an app that loaded messages
     return MESSAGES.some(e => e.new);
@@ -80,6 +77,17 @@ exports.haveNew = function() {
   }
 
   return ids.length>0;
+}
+/**
+ * Check if there are any unread messages
+ * @returns {boolean}
+ */
+exports.haveNew = function(){
+  try{
+    return haveNew();
+  } catch(e) {
+    return false; // don't bother e.g. the widget with errors
+  }
 };
 
 /**
