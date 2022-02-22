@@ -423,6 +423,13 @@ function handlePressure(e){
   }
 }
 
+function handleCharging(e){
+  if (!redrawEvents || redrawEvents.includes("charging")){
+    //print("Redrawing on charging");
+    initialDraw();
+  }
+}
+
 
 function getMatchedWaitingTime(time){
   var result = time - (Date.now() % time);
@@ -494,6 +501,9 @@ if (!events || events.includes("HRM")) {
 }
 if (!events || events.includes("lock")) {
   Bangle.on('lock', handleLock);
+}
+if (!events || events.includes("charging")) {
+  Bangle.on('charging', handleCharging);
 }
 
 handleLock(Bangle.isLocked(), true);
