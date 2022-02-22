@@ -26,3 +26,5 @@ Forum](http://forum.espruino.com/microcosms/1424/)
 ![](screenshot_daisy1.png)
 
 It is worth looking at the real thing though as the screenshot does not do it justice.
+(Though I need to redo this photo at some point)
+![](screenshot_daisy2.jpg)

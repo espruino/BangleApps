@@ -6,7 +6,7 @@
   "icon": "app.png",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot_daisy1.jpg"}],
+  "screenshots": [{"url":"screenshot_daisy2.jpg"}],
   "readme": "README.md",
   "storage": [
     {"name":"daisy.app.js","url":"app.js"},
