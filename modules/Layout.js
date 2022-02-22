@@ -232,7 +232,7 @@ Layout.prototype.render = function (l) {
 
   function render(l) {"ram"
     g.reset();
-    if (l.col) g.setColor(l.col);
+    if (l.col!==undefined) g.setColor(l.col);
     if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
     cb[l.type](l);
   }
@@ -264,7 +264,7 @@ Layout.prototype.render = function (l) {
         x,y+4
       ], bg = l.selected?g.theme.bgH:g.theme.bg2;
     g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
-    if (l.col) g.setColor(l.col);
+    if (l.col!==undefined) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
     else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){

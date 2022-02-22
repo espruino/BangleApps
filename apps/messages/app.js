@@ -83,6 +83,7 @@ function getMessageImage(msg) {
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
   if (s=="facebook") return getFBIcon();
   if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
+  if (s=="home assistant") return atob("FhaBAAAAAADAAAeAAD8AAf4AD/3AfP8D7fwft/D/P8ec572zbzbNsOEhw+AfD8D8P4fw/z/D/P8P8/w/z/AAAAA=");
   if (s=="instagram") return atob("GBiBAAAAAAAAAAAAAAAAAAP/wAYAYAwAMAgAkAh+EAjDEAiBEAiBEAiBEAiBEAjDEAh+EAgAEAwAMAYAYAP/wAAAAAAAAAAAAAAAAA==");
   if (s=="gmail") return getNotificationImage();
   if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA==");
@@ -114,6 +115,7 @@ function getMessageImageCol(msg,def) {
     "facebook": "#4267b2",
     "gmail": "#ea4335",
     "google home": "#fbbc05",
+    "home assistant": "#fff", // ha-blue is #41bdf5, but that's the background
     "hangouts": "#1ba261",
     "instagram": "#dd2a7b",
     "messenger": "#0078ff",
@@ -123,7 +125,7 @@ function getMessageImageCol(msg,def) {
     "telegram": "#0088cc",
     "twitter": "#1da1f2",
     "whatsapp": "#4fce5d",
-    "wordfeud": "#dcc8bd",
+    "wordfeud": "#e7d3c7",
   }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
 }
 
