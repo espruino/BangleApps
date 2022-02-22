@@ -151,16 +151,21 @@ var drawTimeout;
 var maxWarning = 9;
 var curWarning = Math.floor(Math.random() * (maxWarning+1));
 
-function unPause(delay){
-  setTimeout(function() {
-    pause = false;
-    draw();
-  }, delay);
+function unPause(delay, quote){
+  if (pause){
+    setTimeout(function() {
+      if (quote == undefined || quoteNum == quote){
+        pause = false;
+        draw();
+      }
+    }, delay);
+  }
 }
+
+var quoteNum;
 
 function quote(fontsize, width, height, specificQuote){
   pause = true;
-  unPause(7000);
   var finalString = "";
   var quotesFile;
   var finalFontSize;
@@ -171,11 +176,15 @@ function quote(fontsize, width, height, specificQuote){
   var curQuote;
 
   if (specificQuote == undefined){
-  curQuote = quotes[Math.round(Math.random()*numQuotes)-1]; //quote to be displayed
+    quoteNum = Math.round(Math.random()*numQuotes)-1;
+  curQuote = quotes[quoteNum]; //quote to be displayed
   }
   else{
-    curQuote = quotes[specificQuote];
+    quoteNum = specificQuote;
+    curQuote = quotes[quoteNum];
   }
+
+  unPause(10000, quoteNum);
 
   var curWords = curQuote.split(" "); //individual words
   //console.log(numQuotes);
@@ -241,8 +250,13 @@ function buttonPressed(){
   setTimeout(buttonUnpressed, 500);
 }
 function buttonUnpressed(){
-  buttonImg = getImg("butUnpress");
-  g.drawImage(buttonImg, 0, 0);
+  if (!pause){
+    buttonImg = getImg("butUnpress");
+    g.drawImage(buttonImg, 0, 0);
+  }
+  else{
+    setTimeout(buttonUnpressed, 500);
+  }
 }
 
 // schedule a draw for the next minute
@@ -331,6 +345,9 @@ Bangle.on('touch',(n,e)=>{
   //Potato GLaDOS
   else if (!pause && 117 < e.x && e.x < 172 && 117 < e.y && e.y < 172){
     quote(2, 150, 140);
+  }
+  else{
+    unPause(0);
   }
 });
 
