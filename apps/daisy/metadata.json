@@ -1,11 +1,12 @@
 { "id": "daisy",
   "name": "Daisy",
   "version":"0.01",
+  "dependencies": {"mylocation":"app"},
   "description": "A clock based on the Pastel clock with large ring guage for steps",
   "icon": "app.png",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot_thering3.jpg"}],
+  "screenshots": [{"url":"screenshot_daisy1.jpg"}],
   "readme": "README.md",
   "storage": [
     {"name":"daisy.app.js","url":"app.js"},
