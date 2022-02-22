@@ -237,22 +237,19 @@ function getWeatherTemperature(){
   var jsonWeather = require("Storage").readJSON('weather.json');
   var weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
 
+  var result = { unit: "unknown"};
   if (weather && weather.temp){
-    //print("Weather temp is", weather.temp);
+    //print("Weather is", weather);
     var temp = require('locale').temp(weather.temp-273.15);
-    var value = Number(temp.match(/[\d\-]*/)[0]);
+    result.value = Number(temp.match(/[\d\-]*/)[0]);
     var unit;
     if (temp.includes("C")){
-      unit = "celsius";
+      result.unit = "celsius";
     } else if (temp.includes("F")){
-      unit = "fahrenheit";
-    } else {
-      throw new Error("Unknown temperature unit " + unit);
+      result.unit = "fahrenheit";
     }
-
-    return {value: value, unit: unit};
   }
-  return undefined;
+  return result;
 }
 
 function updateOffset(element, offset){
@@ -299,7 +296,7 @@ numbers.Altitude = () => { return alt; };
 numbers.BatteryPercentage = E.getBattery;
 numbers.BatteryVoltage = NRF.getBattery;
 numbers.WeatherCode = getWeatherCode;
-numbers.WeatherTemperature = () => getWeatherTemperature().value;
+numbers.WeatherTemperature = () => { var t = getWeatherTemperature().value; return t ? t : undefined; };
 
 var multistates = {};
 multistates.Lock = () => { return Bangle.isLocked() ? "on" : "off"; };
