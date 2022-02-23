@@ -59,29 +59,41 @@ Properties: {
 Possible values for `Default` are `Always`, `Change`.
 
 ##### Images
+
 ```
-Image: {
+"Image": {
   "X": 0,
   "Y": 0,
   "Scale": 1,
   "RotationValue": "Seconds",
   "MinRotationValue": 0,
   "MaxRotationValue": 60,
-  ImagePath: [ "path", "in", "resources", "file" ]
+  "ImagePath": [ "path", "in", "resources", "file" ]
 }
 ```
-`RotationValue` references one of the implemented numerical values.
 
+`RotationValue` references one of the implemented numerical values.
 Mandatory:
 * `ImagePath`
 
+```
+"Image": {
+  "X": 0,
+  "Y": 0,
+  "Value": "BatteryPercentage",
+  "Steps": 7,
+  "ImagePath": [ "path", "in", "resources", "file" ]
+}
+```
+If `Value` and `Steps`are given, the value is scaled and `Steps` number of images starting at 0 are used to display the value.
+
 ##### Coded Images
 ```
-CodedImage: {
+"CodedImage": {
   "X": 0,
   "Y": 0,
   "Value": "WeatherCode",
-  ImagePath: [ "path", "in", "resources", "file" ]
+  "ImagePath": [ "path", "in", "resources", "file" ]
 }
 ```
 The `Value` field is one of the implemented numerical values.
@@ -169,13 +181,13 @@ The `RotationValue` field is one of the implemented numeric values.
 
 ##### Nesting
 ```
-Container: {
+"Container": {
   "X": 10,
   "Y": 10,
-  OtherContainer: {
+  "OtherContainer": {
     "X": 5,
     "Y": 5,
-    SomeElement: {
+    "SomeElement": {
       "X": 2,
       "Y": 2,
       <Content>

@@ -185,7 +185,13 @@ function drawImage(image, offset, name){
   if (image.ImagePath) {
     //print("drawImage", image, offset, name);
     offset = updateColors(image, offset);
-    drawElement(image, offset, image.ImagePath, name ? "" + name: undefined);
+    if (image.Value && image.Steps){
+      var steps = Math.floor(scaledown(numbers[image.Value](), image.MinValue, image.MaxValue) * (image.Steps - 1));
+      //print("Step", steps, "of", image.Steps);
+      drawElement(image, offset, image.ImagePath, "" + steps);
+    } else {
+      drawElement(image, offset, image.ImagePath, name ? "" + name: undefined);
+    }
   } else if (image.ImageFile) {
     var file = require("Storage").readJSON(image.ImageFile);
     setColors(offset);
