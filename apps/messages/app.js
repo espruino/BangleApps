@@ -141,8 +141,8 @@ function showMapMessage(msg) {
     eta = m[2];
   } else target=msg.body;
   layout = new Layout({ type:"v", c: [
-    {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2 },
-    {type:"h", bgCol:g.theme.bgH, col: g.theme.fgH,  fillx:1, c: [
+    {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 },
+    {type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
     ]},
@@ -179,7 +179,7 @@ function showMusicMessage(msg) {
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:g.theme.bgH, col: g.theme.fgH,   c: [
+    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,   c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
         { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
@@ -212,8 +212,8 @@ function showMessageScroller(msg) {
     // a function to draw a menu item
     draw : function(idx, r) {
       // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? g.theme.bgH : g.theme.bg).
-        setColor(idx<titleCnt ? g.theme.fgH : g.theme.fg).
+      g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
+        setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
         clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
@@ -324,14 +324,14 @@ function showMessage(msgid) {
 
 
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:g.theme.bgH, col: g.theme.fgH,  c: [
+    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
       { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2, halign:1 },
-        title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2 }:{},
+        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
+        title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
