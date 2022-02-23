@@ -124,8 +124,8 @@ function drawElement(pos, offset, path, lastElem){
       var options={};
       if (pos.RotationValue){
         options.rotate = numbers[pos.RotationValue]();
-        if (pos.MaxRotationValue) options.rotate /= pos.MaxRotationValue;
         if (pos.MinRotationValue) options.rotate -= pos.MinRotationValue;
+        if (pos.MaxRotationValue) options.rotate /= pos.MaxRotationValue;
         options.rotate = options.rotate * Math.PI* 2;
       }
       if (pos.Scale){
@@ -269,6 +269,48 @@ function updateColors(element, offset){
   return newOffset;
 }
 
+function rotate(center, coords, rotation) {
+    var value = E.clip(numbers[rotation.RotationValue](),rotation.MinRotationValue?rotation.MinRotationValue:0,rotation.MaxRotationValue?rotation.MaxRotationValue:1);
+    value -= rotation.MinRotationValue;
+    value /= rotation.MaxRotationValue;
+    value *= 360;
+    value -= 180;
+
+    //print("Angle", value);
+    
+    var radians = (Math.PI / 180) * value,
+        cos = -Math.cos(radians),
+        sin = Math.sin(radians),
+        x = (cos * (coords.X - center.X)) + (sin * (coords.Y - center.Y)) + center.X,
+        y = (cos * (coords.Y - center.Y)) - (sin * (coords.X - center.X)) + center.Y;
+    return {X:x,Y:y};
+}
+
+function drawPoly(element, offset){
+    var vertices = [];
+    var primitiveOffset = offset;
+
+    for (var c of element.Vertices){
+      if (element.RotationValue){
+        var rotated = rotate({X:0,Y:0}, c, element);
+        vertices.push(rotated.X + primitiveOffset.X);
+        vertices.push(rotated.Y + primitiveOffset.Y);
+      } else {
+        vertices.push(c.X + primitiveOffset.X);
+        vertices.push(c.Y + primitiveOffset.Y);
+      }
+    }
+
+    if (element.ForegroundColor) g.setColor(element.ForegroundColor);
+
+    if (element.Filled ){
+      g.fillPoly(vertices,true);
+    }
+
+    if (element.BackgroundColor) g.setColor(element.BackgroundColor);
+    g.drawPoly(vertices,true);
+}
+
 var numbers = {};
 numbers.Hour = () => { return new Date().getHours(); };
 numbers.HourTens = () => { return Math.floor(new Date().getHours()/10); };
@@ -359,6 +401,9 @@ function draw(element, offset){
           break;
         case "Number":
           drawNumber(currentElement, elementOffset);
+          break;
+        case "Poly":
+          drawPoly(currentElement, elementOffset);
           break;
         case "Scale":
           drawScale(currentElement, elementOffset);
