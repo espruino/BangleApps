@@ -3,7 +3,7 @@
 
   // initialize with default settings...
   let s = {'gy' : '#020',
-           'bg' : '#0f0',
+           'fg' : '#0f0',
            'color': 'Green',
            'check_idle' : true};
 
@@ -22,7 +22,7 @@
   }
 
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
-  var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
+  var fg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var gy_code = ['#020','#220','#022','#202','#200','#002'];
   
   E.showMenu({
@@ -34,7 +34,7 @@
       format: v => color_options[v],
       onchange: v => {
         s.color = color_options[v];
-        s.bg = bg_code[v];
+        s.fg = fg_code[v];
         s.gy = gy_code[v];
         save();
       },
