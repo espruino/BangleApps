@@ -1,13 +1,13 @@
+Bangle.loadWidgets();
+
+
 const storage = require('Storage');
 let settingsChronowid;
-
 
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const screenHalfWidth = parseInt(screenWidth/2);
 const screenHalfHeight = parseInt(screenHeight/2);
-let interval = 0;
-
 
 
 function updateSettings() {
@@ -15,9 +15,10 @@ function updateSettings() {
   const goal = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
     now.getHours() + settingsChronowid.hours, now.getMinutes() + settingsChronowid.minutes, now.getSeconds() + settingsChronowid.seconds);
   settingsChronowid.goal = goal.getTime();
-  storage.writeJSON('chronowid.json', settingsChronowid);
+  storage.writeJSON('chronosimplewid.json', settingsChronowid);
   if (WIDGETS["chronowid"]) WIDGETS["chronowid"].reload();
 }
+
 
 function resetSettings() {
   settingsChronowid = {
@@ -31,34 +32,34 @@ function resetSettings() {
   updateSettings();
 }
 
-settingsChronowid = storage.readJSON('chronowid.json',1);
+
+settingsChronowid = storage.readJSON('chronosimplewid.json',1);
 if (!settingsChronowid) resetSettings();
 
-E.on('kill', () => {
-  updateSettings();
-});
 
+setWatch(_=>load(), BTN1);
 function draw(){
   g.clear(1);
   Bangle.drawWidgets();
 
   g.setColor(g.theme.fg);
-  g.setFont("Vector", 25).setFontAlign(0,-1);
+  g.setFont("Vector", 26).setFontAlign(0,-1);
 
   g.setFontAlign(0, 0, 0);
   g.drawString("T-" + settingsChronowid.minutes + " min.", screenHalfWidth, screenHalfHeight);
 
   if(settingsChronowid.started){
     g.setColor("#ff0000");
-    g.setFont("Vector", 16).setFontAlign(0,-1);
+    g.setFont("Vector", 20).setFontAlign(0,-1);
     g.drawString("[started]", screenHalfWidth, screenHalfHeight+20);
   }
 }
 
+
 Bangle.on('touch', function(btn, e){
   var left = parseInt(g.getWidth() * 0.2);
   var right = g.getWidth() - left;
-  var upper = 24 + parseInt(g.getHeight() * 0.2);
+  var upper = parseInt(g.getHeight() * 0.2);
   var lower = g.getHeight() - upper;
 
   var isLeft = e.x < left;
@@ -89,6 +90,4 @@ Bangle.on('touch', function(btn, e){
 });
 
 g.reset();
-setWatch(_=>load(), BTN1);
-Bangle.loadWidgets();
 draw();

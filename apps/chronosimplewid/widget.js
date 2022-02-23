@@ -30,7 +30,7 @@
       Bangle.buzz(1500);
       //write timer off to file
       settingsChronowid.started = false;
-      require('Storage').writeJSON('chronowid.json', settingsChronowid);
+      require('Storage').writeJSON('chronosimplewid.json', settingsChronowid);
       clearInterval(interval); //stop interval
       interval = undefined;
     }
@@ -64,7 +64,7 @@
     if (last != this.width) Bangle.drawWidgets();
     else this.draw();
   }, reload:function() {
-    settingsChronowid = require('Storage').readJSON("chronowid.json",1)||{};
+    settingsChronowid = require('Storage').readJSON("chronosimplewid.json",1)||{};
     if (interval) clearInterval(interval);
     interval = undefined;
     // start countdown each second
