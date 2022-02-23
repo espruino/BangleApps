@@ -1,12 +1,12 @@
 {
   "id": "chronosimplewid",
-  "name": "Simple Chrono Widget",
-  "shortName": "Simple Chrono Widget",
-  "version": "0.05",
-  "description": "Fork from Chrono Widget with simpler UI.",
+  "name": "Simple Chrono",
+  "shortName": "Simple Chrono",
+  "version": "0.01",
+  "description": "Chrono Widget Fork. Implements a simpler UI.",
   "icon": "app.png",
   "tags": "tool,widget",
-  "supports": ["BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"}],
   "readme": "README.md",
   "storage": [

@@ -1,9 +1,14 @@
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
 const storage = require('Storage');
 let settingsChronowid;
+
+
+const screenWidth = g.getWidth();
+const screenHeight = g.getHeight();
+const screenHalfWidth = parseInt(screenWidth/2);
+const screenHalfHeight = parseInt(screenHeight/2);
+let interval = 0;
+
+
 
 function updateSettings() {
   var now = new Date();
@@ -33,61 +38,57 @@ E.on('kill', () => {
   updateSettings();
 });
 
-function showMenu() {
-  const timerMenu = {
-    '': {
-      'title': 'Set timer'
-    },
-    '< Back' :  ()=>{load();},
-    'Reset Values': function() {
-      settingsChronowid.hours = 0;
-      settingsChronowid.minutes = 0;
-      settingsChronowid.seconds = 0;
-      settingsChronowid.started = false;
-      updateSettings();
-      showMenu();
-    },
-    'Hours': {
-      value: settingsChronowid.hours,
-      min: 0,
-      max: 24,
-      step: 1,
-      onchange: v => {
-        settingsChronowid.hours = v;
-        updateSettings();
-      }
-    },
-    'Minutes': {
-      value: settingsChronowid.minutes,
-      min: 0,
-      max: 59,
-      step: 1,
-      onchange: v => {
-        settingsChronowid.minutes = v;
-        updateSettings();
-      }
-    },
-    'Seconds': {
-      value: settingsChronowid.seconds,
-      min: 0,
-      max: 59,
-      step: 1,
-      onchange: v => {
-        settingsChronowid.seconds = v;
-        updateSettings();
-      }
-    },
-    'Timer on': {
-      value: settingsChronowid.started,
-      format: v => v ? "On" : "Off",
-      onchange: v => {
-        settingsChronowid.started = v;
-        updateSettings();
-      }
-    },
-  };
+function draw(){
+  g.clear(1);
+  Bangle.drawWidgets();
 
-  return E.showMenu(timerMenu);
+  g.setColor(g.theme.fg);
+  g.setFont("Vector", 25).setFontAlign(0,-1);
+
+  g.setFontAlign(0, 0, 0);
+  g.drawString("T-" + settingsChronowid.minutes + " min.", screenHalfWidth, screenHalfHeight);
+
+  if(settingsChronowid.started){
+    g.setColor("#ff0000");
+    g.setFont("Vector", 16).setFontAlign(0,-1);
+    g.drawString("[started]", screenHalfWidth, screenHalfHeight+20);
+  }
 }
 
-showMenu();
+Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.2);
+  var right = g.getWidth() - left;
+  var upper = 24 + parseInt(g.getHeight() * 0.2);
+  var lower = g.getHeight() - upper;
+
+  var isLeft = e.x < left;
+  var isRight = e.x > right;
+  var isUpper = e.y < upper;
+  var isLower = e.y > lower;
+
+  if(isRight){
+    print("right");
+    settingsChronowid.minutes += 1;
+  } else if(isLeft){
+    print("left");
+    settingsChronowid.minutes -= 1;
+  } else if(isUpper){
+    print("upper");
+    settingsChronowid.minutes += 5;
+  } else if(isLower){
+    print("lower");
+    settingsChronowid.minutes -= 5;
+  } else {
+    print("else");
+    settingsChronowid.started = !settingsChronowid.started;
+  }
+
+  settingsChronowid.minutes = Math.max(0, settingsChronowid.minutes);
+  updateSettings();
+  draw();
+});
+
+g.reset();
+setWatch(_=>load(), BTN1);
+Bangle.loadWidgets();
+draw();
