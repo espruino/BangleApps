@@ -5,7 +5,7 @@
 * A Clock with big numbers made of 7x7 dots
 * system widgeds ar not (yet) supported
 * when screen is locked it shows hours and minutes in full screen mode
-* respects theme colors
+* adjustable color for minutes and seconds
 
 ![](dotsfontclock-scr1.png)
 
