@@ -13,18 +13,26 @@ var Xs = 0, Ys = 30,Xe = 175, Ye=175;
 var SegH = (Ye-Ys)/2,SegW = (Xe-Xs)/2;
 var Dx = SegW/14, Dy = SegH/16;
 
-switch(ColorMinutes) {
-	case "blue":
-		var mColor = [0.3,0.3,1];
-		break;
-	case "pink":
-		var mColor = [1,0.3,1];
-		break;
-	case "green":
-		var mColor = [0.3,1,0.3];
-		break;
-	default:
-		var mColor = [0.3,0.3,1];
+switch(settings.ColorMinutes) {
+case "blue":
+  var mColor = [0.3,0.3,1];
+  var sColor = [0,0,1];
+  break;
+case "pink":
+  var mColor = [1,0.3,1];
+  var sColor = [1,0,1];
+  break;
+case "green":
+  var mColor = [0.3,1,0.3];
+  var sColor = [0,1,0];
+  break;
+case "yellow":
+  var mColor = [1,1,0.3];
+  var sColor = [1,1,0];
+  break;
+default:
+  var sColor = [0,0,1];
+  var mColor = [0.3,0.3,1];
 }
 const bColor = [0.3,0.3,0.3];
 
@@ -152,9 +160,10 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
         if (Color == "fg") {
-	       g.setColor(mColor[0],mColor[1],mColor[2]);        
+       g.setColor(sColor[0],sColor[1],sColor[2]);        
         } else {
           g.setColor(g.theme.fg);
+          //g.setColor(0.7,0.7,0.7);
         }
         g.fillCircle(x1+(i-1)*(x2-x1)/7,y1+(j-1)*(y2-y1)/7,Size);
       }
@@ -164,23 +173,25 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
 
 
 function ShowSecons() {
+  //g.setColor(bColor[0],bColor[1],bColor[2]);
+  //g.setColor(0.7,0.7,0.7);
   g.setColor(g.theme.fg);
-  g.fillRect((Xe-Xs) / 2 - 14 + Xs -3,
-            (Ye-Ys) / 2 - 7 + Ys  -3,
-            (Xe-Xs) / 2 + 14 + Xs +1,
-            (Ye-Ys) / 2 + 7 + Ys  +1);
+  g.fillRect((Xe-Xs) / 2 - 14 + Xs -4,
+            (Ye-Ys) / 2 - 7 + Ys  -4,
+            (Xe-Xs) / 2 + 14 + Xs +4,
+            (Ye-Ys) / 2 + 7 + Ys  +4);
 
 
   drawSSeg(  (Xe-Xs) / 2 - 14 + Xs -1,
-            (Ye-Ys) / 2 - 7 + Ys  ,
+            (Ye-Ys) / 2 - 7 + Ys  +1,
             (Xe-Xs) / 2     + Xs -1,
-            (Ye-Ys) / 2 + 7 + Ys,
+            (Ye-Ys) / 2 + 7 + Ys +1,
             ds,"fg",1);
 
-  drawSSeg(  (Xe-Xs) / 2     + Xs +1,
-            (Ye-Ys) / 2 - 7 + Ys,
-            (Xe-Xs) / 2 + 14 + Xs +1,
-            (Ye-Ys) / 2 + 7 + Ys,
+  drawSSeg(  (Xe-Xs) / 2     + Xs +2,
+            (Ye-Ys) / 2 - 7 + Ys +1,
+            (Xe-Xs) / 2 + 14 + Xs +2,
+            (Ye-Ys) / 2 + 7 + Ys +1,
             es,"fg",1);
 
 }
