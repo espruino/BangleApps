@@ -37,6 +37,12 @@
       format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("unreadTimeout", v)
     },
+    /*LANG*/'Min Font': {
+      value: 0|settings().fontSize,
+      min: 0, max: 1,
+      format: v => [/*LANG*/"Small",/*LANG*/"Medium"][v],
+      onchange: v => updateSetting("fontSize", v)
+    },
   };
   E.showMenu(mainmenu);
 })

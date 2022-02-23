@@ -21,13 +21,11 @@
 */
 
 var Layout = require("Layout");
+var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
-var colBg = g.theme.dark ? "#141":"#4f4";
-var colSBg1 = g.theme.dark ? "#121":"#cFc";
-var colSBg2 = g.theme.dark ? "#000":"#9F9";
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -143,8 +141,8 @@ function showMapMessage(msg) {
     eta = m[2];
   } else target=msg.body;
   layout = new Layout({ type:"v", c: [
-    {type:"txt", font:fontMedium, label:target, bgCol:colBg, fillx:1, pad:2 },
-    {type:"h", bgCol:colBg, fillx:1, c: [
+    {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2 },
+    {type:"h", bgCol:g.theme.bgH, col: g.theme.fgH,  fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
     ]},
@@ -181,7 +179,7 @@ function showMusicMessage(msg) {
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:colBg,  c: [
+    {type:"h", fillx:1, bgCol:g.theme.bgH, col: g.theme.fgH,   c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
         { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
@@ -214,7 +212,9 @@ function showMessageScroller(msg) {
     // a function to draw a menu item
     draw : function(idx, r) {
       // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? colBg : g.theme.bg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
+      g.setBgColor(idx<titleCnt ? g.theme.bgH : g.theme.bg).
+        setColor(idx<titleCnt ? g.theme.fgH : g.theme.fg).
+        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
@@ -270,11 +270,29 @@ function showMessage(msgid) {
   var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
     var w = g.getWidth()-48;
-    if (g.setFont(titleFont).stringWidth(title) > w)
-      titleFont = fontMedium;
+    if (g.setFont(titleFont).stringWidth(title) > w) {
+      titleFont = fontBig;
+      if (settings.fontSize!=1 && g.setFont(titleFont).stringWidth(title) > w)
+        titleFont = fontMedium;
+    }
     if (g.setFont(titleFont).stringWidth(title) > w) {
       lines = g.wrapString(title, w);
       title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
+    }
+  }
+  // If body of message is only two lines long w/ large font, use large font.
+  var body=msg.body, bodyFont = fontLarge;
+  if (body) {
+    var w = g.getWidth()-10;
+    if (g.setFont(bodyFont).stringWidth(body) > w * 2) {
+      bodyFont = fontBig;
+      if (settings.fontSize!=1 && g.setFont(bodyFont).stringWidth(body) > w * 3)
+        bodyFont = fontMedium;
+    }
+    if (g.setFont(bodyFont).stringWidth(body) > w) {
+      lines = g.setFont(bodyFont).wrapString(msg.body, w);
+      var maxLines = Math.floor((g.getHeight()-110) / g.getFontHeight());
+      body = (lines.length>maxLines) ? lines.slice(0,maxLines).join("\n")+"..." : lines.join("\n");
     }
   }
   function goBack() {
@@ -303,27 +321,17 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  // If body of message is only two lines long w/ large font, use large font.
-  var body=msg.body, bodyFont = fontLarge, lines;
-  if (body) {
-    var w = g.getWidth()-48;
-    if (g.setFont(bodyFont).stringWidth(body) > w * 2)
-      bodyFont = fontMedium;
-    if (g.setFont(bodyFont).stringWidth(body) > w) {
-      lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
-      body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
-    }
-  }
+
 
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:colBg,  c: [
+    {type:"h", fillx:1, bgCol:g.theme.bgH, col: g.theme.fgH,  c: [
       { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
-        title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
+        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2, halign:1 },
+        title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bgH, col: g.theme.fgH, fillx:1, pad:2 }:{},
       ]},
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
@@ -374,9 +382,8 @@ function checkMessages(options) {
     c : Math.max(MESSAGES.length+1,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx-1];
-      if (msg && msg.new) g.setBgColor(colBg);
-      else g.setBgColor((idx&1) ? colSBg1 : colSBg2);
-      g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1).setColor(g.theme.fg);
+      if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
+      else g.setColor(g.theme.fg);
       if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
@@ -391,18 +398,20 @@ function checkMessages(options) {
          .setColor(fg); // only color the icon
         x += 50;
       }
-      var m = msg.title+"\n"+msg.body;
-      if (msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
+      var m = msg.title+"\n"+msg.body, longBody=false;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
       if (body) {
         g.setFontAlign(-1,-1).setFont("6x8");
-        var l = g.wrapString(body, r.w-14);
+        var l = g.wrapString(body, r.w-(x+14));
         if (l.length>3) {
           l = l.slice(0,3);
           l[l.length-1]+="...";
         }
+        longBody = l.length>2;
         g.drawString(l.join("\n"), x+10,r.y+20);
       }
+      if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
+      g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
     select : idx => {
       if (idx==0) load();
@@ -422,7 +431,7 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setTimeout(() => {
-  var unreadTimeoutSecs = (require('Storage').readJSON("messages.settings.json", true) || {}).unreadTimeout;
+  var unreadTimeoutSecs = settings.unreadTimeout;
   if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
   if (unreadTimeoutSecs)
     unreadTimeout = setTimeout(function() {
