@@ -1,21 +1,8 @@
 (function(back) {
 
-let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
+let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: "",ColorMinutes: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
   
   
-function showMainMenu() {
-  const mainMenu = {
-    "": {"title": "7x7 Dots Clock Settings"},
-    "< Back": ()=>load(),
-    "sw-up": ()=>showSelAppMenu("swupApp"),
-    "sw-down": ()=>showSelAppMenu("swdownApp"),
-    "sw-left": ()=>showSelAppMenu("swleftApp"),
-    "sw-right": ()=>showSelAppMenu("swrightApp")
-
-  };  
-
-  E.showMenu(mainMenu);
-}
 
 function setSetting(key,value) {
   print("call " + key + " = " + value);
@@ -26,6 +13,42 @@ function setSetting(key,value) {
 }
 
 
+  // Helper method which uses int-based menu item for set of string values
+  function stringItems(key, startvalue, values) {
+    return {
+      value: (startvalue === undefined ? 0 : values.indexOf(startvalue)),
+      format: v => values[v],
+      min: 0,
+      max: values.length - 1,
+      wrap: true,
+      step: 1,
+      onchange: v => {
+        setSetting(key,values[v]);
+      }
+    };
+  }
+
+  // Helper method which breaks string set settings down to local settings object
+  function stringInSettings(name, values) {
+    return stringItems(name,settings[name], values);
+  }  
+  
+function showMainMenu() {
+  const mainMenu = {
+    "": {"title": "7x7 Dots Clock Settings"},
+    "< Back": ()=>load(),
+    "Minutes": stringInSettings("ColorMinutes", ["blue","pink","green","yellow"]), 
+    "swipe-up": ()=>showSelAppMenu("swupApp"),
+    "swipe-down": ()=>showSelAppMenu("swdownApp"),
+    "swipe-left": ()=>showSelAppMenu("swleftApp"),
+    "swipe-right": ()=>showSelAppMenu("swrightApp")
+
+  };  
+
+  E.showMenu(mainMenu);
+}
+
+  
 function showSelAppMenu(key) {
   var Apps = require("Storage").list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (
