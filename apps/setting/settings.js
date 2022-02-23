@@ -226,7 +226,7 @@ function showThemeMenu() {
     /*LANG*/'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
-        fg2:cl("#0ff"), bg2:cl("#000"),
+        fg2:cl("#fff"), bg2:cl("#004"),
         fgH:cl("#fff"), bgH:cl("#00f"),
         dark:true
       });

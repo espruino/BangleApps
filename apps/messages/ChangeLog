@@ -32,5 +32,7 @@
 0.20: Allow tapping on the body to show a scrollable view of the message and title in a bigger font (fix #1405, #1031)
 0.21: Improve list readability on dark theme
 0.22: Add Home Assistant icon
-0.22: Allow repeat to be switched Off, so there is no buzzing repetition.
+      Allow repeat to be switched Off, so there is no buzzing repetition.
       Also gave the widget a pixel more room to the right
+0.23: Change message colors to match current theme instead of using green
+      Now attempt to use Large/Big/Medium fonts, and allow minimum font size to be configured         
