@@ -123,9 +123,7 @@ function drawElement(pos, offset, path, lastElem){
       //print("drawImage from drawElement", image, pos, offset);
       var options={};
       if (pos.RotationValue){
-        options.rotate = numbers[pos.RotationValue]();
-        if (pos.MinRotationValue) options.rotate -= pos.MinRotationValue;
-        if (pos.MaxRotationValue) options.rotate /= pos.MaxRotationValue;
+        options.rotate = scaledown(numbers[pos.RotationValue](), pos.MinRotationValue, pos.MaxRotationValue);
         options.rotate = options.rotate * Math.PI* 2;
       }
       if (pos.Scale){
@@ -269,10 +267,16 @@ function updateColors(element, offset){
   return newOffset;
 }
 
+function scaledown(value, min, max){
+  print("scaledown", value, min, max);
+  var scaled = E.clip(value,min?min:0,max?max:1);
+  scaled -= min?min:0;
+  scaled /= max?max:1;
+  return scaled;
+}
+
 function rotate(center, coords, rotation) {
-    var value = E.clip(numbers[rotation.RotationValue](),rotation.MinRotationValue?rotation.MinRotationValue:0,rotation.MaxRotationValue?rotation.MaxRotationValue:1);
-    value -= rotation.MinRotationValue;
-    value /= rotation.MaxRotationValue;
+    var value = scaledown(numbers[rotation.RotationValue](), rotation.MinRotationValue, rotation.MaxRotationValue);
     value *= 360;
     value -= 180;
 
