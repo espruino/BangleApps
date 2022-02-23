@@ -1,6 +1,6 @@
 { "id": "openwind",
-  "name": "OpenWind display",
-  "shortName":"Display OpenWind data",
+  "name": "OpenWind",
+  "shortName":"OpenWind",
   "version":"0.01",
   "description": "OpenWind",
   "icon": "app.png",
