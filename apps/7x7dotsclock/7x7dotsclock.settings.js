@@ -37,7 +37,7 @@ function showMainMenu() {
   const mainMenu = {
     "": {"title": "7x7 Dots Clock Settings"},
     "< Back": ()=>load(),
-    "Minutes": stringInSettings("ColorMinutes", ["blue","pink","green"]), 
+    "Minutes": stringInSettings("ColorMinutes", ["blue","pink","green","yellow"]), 
     "swipe-up": ()=>showSelAppMenu("swupApp"),
     "swipe-down": ()=>showSelAppMenu("swdownApp"),
     "swipe-left": ()=>showSelAppMenu("swleftApp"),
