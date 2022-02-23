@@ -25,7 +25,7 @@
   const menu = {
     '': { 'title': 'OpenWind' },
     '< Back': back,
-    'Draw course': {
+    'True wind': {
       value: s.truewind,
       format: boolFormat,
       onchange: save('truewind'),

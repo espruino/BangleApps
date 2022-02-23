@@ -2,7 +2,7 @@
   "name": "OpenWind display",
   "shortName":"Display OpenWind data",
   "version":"0.01",
-  "description": "OpenWind wind speed and direction sensor display",
+  "description": "OpenWind",
   "icon": "app.png",
   "tags": "",
   "supports" : ["BANGLEJS2"],  
