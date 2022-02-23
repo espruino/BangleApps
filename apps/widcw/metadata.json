@@ -1,0 +1,13 @@
+{
+  "id": "widcw",
+  "name": "Calendar Week Widget",
+  "version": "0.01",
+  "description": "Widget which shows the current calendar week",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,calendar",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widcw.wid.js","url":"widget.js"}
+  ]
+}
