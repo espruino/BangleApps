@@ -17,22 +17,27 @@ switch(settings.ColorMinutes) {
 case "blue":
   var mColor = [0.3,0.3,1];
   var sColor = [0,0,1];
+  var sbColor = [1,1,1];
   break;
 case "pink":
   var mColor = [1,0.3,1];
   var sColor = [1,0,1];
+  var sbColor = [1,1,1];
   break;
 case "green":
   var mColor = [0.3,1,0.3];
   var sColor = [0,1,0];
+  var sbColor = [1,1,1];
   break;
 case "yellow":
   var mColor = [1,1,0.3];
   var sColor = [1,1,0];
+  var sbColor = [0,0,0];
   break;
 default:
   var sColor = [0,0,1];
   var mColor = [0.3,0.3,1];
+  var sbColor = [1,1,1];
 }
 const bColor = [0.3,0.3,0.3];
 
@@ -134,7 +139,8 @@ var dho = -1, eho = -1, dmo = -1, emo = -1;
 
 
 function drawHSeg(x1,y1,x2,y2,Num,Color,Size) {
-  //g.setColor(0,0,0);
+
+
   g.setColor(g.theme.bg);
   g.fillRect(x1, y1, x2, y2);
   for (let i = 1; i < 8; i++) {
@@ -172,10 +178,10 @@ function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
 }
 
 
-function ShowSecons() {
-  //g.setColor(bColor[0],bColor[1],bColor[2]);
-  //g.setColor(0.7,0.7,0.7);
-  g.setColor(g.theme.fg);
+function ShowSeconds() {
+
+  g.setColor(sbColor[0],sbColor[1],sbColor[2]);
+
   g.fillRect((Xe-Xs) / 2 - 14 + Xs -4,
             (Ye-Ys) / 2 - 7 + Ys  -4,
             (Xe-Xs) / 2 + 14 + Xs +4,
@@ -238,7 +244,7 @@ function draw() {
     emo = em;
   }
 
-  if (!Bangle.isLocked()) ShowSecons();
+  if (!Bangle.isLocked()) ShowSeconds();
 
 }
 
