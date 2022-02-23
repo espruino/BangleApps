@@ -1,17 +1,19 @@
 { "id": "7x7dotsclock",
   "name": "7x7 Dots Clock",
   "shortName":"7x7 Dots Clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A clock with a big 7x7 dots Font",
   "icon": "dotsfontclock.png",
   "tags": "clock",
   "type": "clock",
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"7x7dotsclock.app.js","url":"7x7dotsclock.app.js"},
     {"name":"7x7dotsclock.settings.js","url":"7x7dotsclock.settings.js"},    
     {"name":"7x7dotsclock.img","url":"7x7dotsclock.img.js","evaluate":true}
   ],
-  "data": [{"name":"7x7dotsclock.json"}]
+  "data": [{"name":"7x7dotsclock.json"}],
+  "screenshots": [{"url":"dotsfontclock.png"},{"url":"dotsfontclock-scr1.png"},{"url":"dotsfontclock-scr2.png"}]
 }
