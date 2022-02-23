@@ -9,6 +9,7 @@
     "tags": "clock",
     "supports": "BANGLEJS2",
     "allow_emulator": false,
+    "readme":"README.md",
     "storage": [
       {"name":"aptsciclkquotes.txt","url":"quotes.txt"},
       {"name":"aptsciclk.app.js","url":"app.js"},
