@@ -1,0 +1,12 @@
+0.02: Modified for use with new bootloader and firmware
+0.03: add hour ticks, remove timers
+0.04: add day-date display
+0.07: make date and face bigger
+0.08: make dots bigger and date more readable
+0.09: center date, remove box around it, internal refactor to remove redundant code.
+0.10: remove debug, refactor seconds to show elapsed secs each time app is displayed
+0.11: shift face down for widget area, maximize face size, 0 pad single digit date, use locale for date
+0.12: Fix regression after 0.11
+0.13: Fix broken date padding (fix #376)
+0.14: Remove hardcoded hour buzz (you can install widchime if you miss it)
+0.15: Add color scheme support
