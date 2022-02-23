@@ -180,13 +180,6 @@ function Layout(layout, options) {
     if (l.id) ll[l.id] = l;
     // fix type up
     if (!l.type) l.type="";
-    // FIXME ':'/fsz not needed in new firmwares - Font:12 is handled internally
-    // fix fonts for pre-2v11 firmware
-    if (l.font && l.font.includes(":")) {
-      var f = l.font.split(":");
-      l.font = f[0];
-      l.fsz = f[1];
-    }
     if (l.c) l.c.forEach(recurser);
   }
   recurser(this._l);
@@ -241,13 +234,13 @@ Layout.prototype.render = function (l) {
     "":function(){},
     "txt":function(l){
       if (l.wrap) {
-        g.setFont(l.font,l.fsz).setFontAlign(0,-1);
+        g.setFont(l.font).setFontAlign(0,-1);
         var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
         //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
-        g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
@@ -365,7 +358,7 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        var m = g.setFont(l.font,l.fsz).stringMetrics(l.label);
+        var m = g.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
