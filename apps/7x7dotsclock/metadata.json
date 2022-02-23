@@ -14,5 +14,6 @@
     {"name":"7x7dotsclock.settings.js","url":"7x7dotsclock.settings.js"},    
     {"name":"7x7dotsclock.img","url":"7x7dotsclock.img.js","evaluate":true}
   ],
-  "data": [{"name":"7x7dotsclock.json"}]
+  "data": [{"name":"7x7dotsclock.json"}],
+  "screenshots": [{"url":"dotsfontclock.png"},{"url":"dotsfontclock-scr1.png"},{"url":"dotsfontclock-scr2.png"}]
 }
