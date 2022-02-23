@@ -56,25 +56,25 @@ function editAlarm(alarmIndex) {
   }
   const menu = {
     '': { 'title': 'Alarms' },
-    'Hours': {
-      value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+    /*LANG*/'Hours': {
+      value: hrs, min : 0, max : 23, wrap : true,
+      onchange: v => hrs=v;
     },
-    'Minutes': {
-      value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+    /*LANG*/'Minutes': {
+      value: mins, min : 0, max : 59, wrap : true,
+      onchange: v => mins=v;
     },
-    'Enabled': {
+    /*LANG*/'Enabled': {
       value: en,
       format: v=>v?"On":"Off",
       onchange: v=>en=v
     },
-    'Repeat': {
+    /*LANG*/'Repeat': {
       value: en,
       format: v=>v?"Yes":"No",
       onchange: v=>repeat=v
     },
-    'Auto snooze': {
+    /*LANG*/'Auto snooze': {
       value: as,
       format: v=>v?"Yes":"No",
       onchange: v=>as=v

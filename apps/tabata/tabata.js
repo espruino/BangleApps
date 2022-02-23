@@ -30,18 +30,17 @@ function showMainMenu() {
     },
     'Pause sec.': {
       value: settings.pause,
-      onchange: function(v){
-        if (v<0)v=MAX_SECONDS;
-        if (v>MAX_SECONDS)v=0;
+        min : 0, max : MAX_SECONDS, wrap : true,
+      onchange: v => {
         settings.pause=v;
-        this.value=v;
         saveSettingsDebounce();
       }
     },
     'Trainig sec.': {
       value: settings.training,
-      onchange: function(v){if (v<0)v=MAX_SECONDS;if (v>MAX_SECONDS)v=0;settings.training=v;
-        this.value=v;
+      min : 0, max : MAX_SECONDS, wrap : true,
+      onchange: v => {
+        settings.training=v;
         saveSettingsDebounce();
       }
     },
@@ -61,8 +60,8 @@ function startTabata() {
   g.clear();
   Bangle.setLCDMode("doublebuffered");
   g.flip();
-  var pause = settings.pause, 
-    training = settings.training, 
+  var pause = settings.pause,
+    training = settings.training,
     round = 1,
     active = true,
     clearBtn1, clearBtn2, clearBtn3, timer;
@@ -86,7 +85,7 @@ function startTabata() {
       exitTraining();
       return;
     }
-    
+
     if (active) {
       drawCountDown(round, training, active);
       training--;
@@ -117,7 +116,7 @@ function drawCountDown(round, count, active) {
 
   g.setFontAlign(0,0);
   g.setFont("6x8", 2);
-  g.drawString("Round " + round + "/" + settings.rounds,120,6); 
+  g.drawString("Round " + round + "/" + settings.rounds,120,6);
 
   g.setFont("6x8", 6);
   g.drawString("" + count,120,80);
