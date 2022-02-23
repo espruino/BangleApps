@@ -3,7 +3,12 @@
   "name":"Monogram Watch Face",
   "shortName":"MonoClock",
   "icon":"app.png",
+<<<<<<< HEAD
   "version":"0.03",
+=======
+  "screenshots": [{"url":"screenshot.png"}],
+  "version":"0.02",
+>>>>>>> 29432bb9 (Add screenshot)
   "description": "A simple watchface based on my stylised monogram.",
   "tags":"clock",
   "readme":"README.md",
