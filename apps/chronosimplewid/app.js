@@ -6,8 +6,8 @@ let settingsChronowid;
 
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
-const screenHalfWidth = parseInt(screenWidth/2);
-const screenHalfHeight = parseInt(screenHeight/2);
+const cx = parseInt(screenWidth/2);
+const cy = parseInt(screenHeight/2);
 
 
 function updateSettings() {
@@ -43,15 +43,15 @@ function draw(){
   Bangle.drawWidgets();
 
   g.setColor(g.theme.fg);
-  g.setFont("Vector", 26).setFontAlign(0,-1);
+  g.setFont("Vector", 32).setFontAlign(0,-1);
 
   g.setFontAlign(0, 0, 0);
-  g.drawString("T-" + settingsChronowid.minutes + " min.", screenHalfWidth, screenHalfHeight);
+  g.drawString(settingsChronowid.minutes + " min.", cx, cy);
 
   if(settingsChronowid.started){
     g.setColor("#ff0000");
     g.setFont("Vector", 20).setFontAlign(0,-1);
-    g.drawString("[started]", screenHalfWidth, screenHalfHeight+20);
+    g.drawString("[started]", cx, cy+20);
   }
 }
 
@@ -68,23 +68,22 @@ Bangle.on('touch', function(btn, e){
   var isLower = e.y > lower;
 
   if(isRight){
-    print("right");
     settingsChronowid.minutes += 1;
   } else if(isLeft){
-    print("left");
     settingsChronowid.minutes -= 1;
   } else if(isUpper){
-    print("upper");
     settingsChronowid.minutes += 5;
   } else if(isLower){
-    print("lower");
     settingsChronowid.minutes -= 5;
   } else {
-    print("else");
     settingsChronowid.started = !settingsChronowid.started;
   }
 
-  settingsChronowid.minutes = Math.max(0, settingsChronowid.minutes);
+  if(settingsChronowid.minutes <= 0){
+    settingsChronowid.minutes = 0;
+    settingsChronowid.started = false;
+  }
+
   updateSettings();
   draw();
 });
