@@ -74,11 +74,11 @@ function editAlarm(alarmIndex) {
     /*LANG*/'< Back' : showMainMenu,
     /*LANG*/'Hours': {
       value: hrs, min : 0, max : 23, wrap : true,
-      onchange: v => hrs=v;
+      onchange: v => hrs=v
     },
     /*LANG*/'Minutes': {
       value: mins, min : 0, max : 59, wrap : true,
-      onchange: v => mins=v;
+      onchange: v => mins=v
     },
     /*LANG*/'Enabled': {
       value: en,
@@ -139,11 +139,11 @@ function editTimer(alarmIndex) {
     '': { 'title': /*LANG*/'Timer' },
     /*LANG*/'Hours': {
       value: hrs, min : 0, max : 23, wrap : true,
-      onchange: v => hrs=v;
+      onchange: v => hrs=v
     },
     /*LANG*/'Minutes': {
       value: mins, min : 0, max : 59, wrap : true,
-      onchange: v => mins=v;
+      onchange: v => mins=v
     },
     /*LANG*/'Enabled': {
       value: en,
