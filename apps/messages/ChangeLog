@@ -36,3 +36,4 @@
       Also gave the widget a pixel more room to the right
 0.23: Change message colors to match current theme instead of using green
       Now attempt to use Large/Big/Medium fonts, and allow minimum font size to be configured         
+0.24: Remove left-over debug statement
