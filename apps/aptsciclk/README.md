@@ -1,8 +1,8 @@
-#Description
+# Description
 
 This is a simple clock based on the Portal Series.
 
-#Features
+# Features
 
 The button in the center of the screen is interactable and the warning image will change when it is pressed.
 
