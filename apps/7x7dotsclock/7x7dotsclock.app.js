@@ -5,7 +5,7 @@ by Peter Kuppelwieser
 
 */
 
-let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
+let settings = Object.assign({ swupApp: "",swdownApp: "", swleftApp: "", swrightApp: "", ColorMinutes: ""}, require("Storage").readJSON("7x7dotsclock.json", true) || {});
 
 // position on screen
 var Xs = 0, Ys = 30,Xe = 175, Ye=175;
@@ -13,9 +13,33 @@ var Xs = 0, Ys = 30,Xe = 175, Ye=175;
 var SegH = (Ye-Ys)/2,SegW = (Xe-Xs)/2;
 var Dx = SegW/14, Dy = SegH/16;
 
-const hColor = [1,1,1];
-const mColor = [0.3,0.3,1];
-const bColor = [0.2,0.2,0.2];
+switch(settings.ColorMinutes) {
+case "blue":
+  var mColor = [0.3,0.3,1];
+  var sColor = [0,0,1];
+  var sbColor = [1,1,1];
+  break;
+case "pink":
+  var mColor = [1,0.3,1];
+  var sColor = [1,0,1];
+  var sbColor = [1,1,1];
+  break;
+case "green":
+  var mColor = [0.3,1,0.3];
+  var sColor = [0,1,0];
+  var sbColor = [1,1,1];
+  break;
+case "yellow":
+  var mColor = [1,1,0.3];
+  var sColor = [1,1,0];
+  var sbColor = [0,0,0];
+  break;
+default:
+  var sColor = [0,0,1];
+  var mColor = [0.3,0.3,1];
+  var sbColor = [1,1,1];
+}
+const bColor = [0.3,0.3,0.3];
 
 const Font = [
               [
@@ -114,16 +138,22 @@ const Font = [
 var dho = -1, eho = -1, dmo = -1, emo = -1;
 
 
-function drawHSeg(x1,y1,x2,y2,Num,dColor,Size) {
-  g.setColor(0,0,0);
+function drawHSeg(x1,y1,x2,y2,Num,Color,Size) {
+
+
+  g.setColor(g.theme.bg);
   g.fillRect(x1, y1, x2, y2);
   for (let i = 1; i < 8; i++) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
-        g.setColor(dColor[0],dColor[1],dColor[2]);
+        if (Color == "fg") {
+          g.setColor(g.theme.fg);
+        } else {
+        g.setColor(mColor[0],mColor[1],mColor[2]);        
+        }
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,Size);
       } else {
-        g.setColor(bColor[0],bColor[1],bColor[2]);
+        g.setColor(bColor[0],bColor[1],bColor[2]);        
         g.fillCircle(x1+Dx+(i-1)*(x2-x1)/7,y1+Dy+(j-1)*(y2-y1)/7,1);
       }
     }
@@ -131,11 +161,16 @@ function drawHSeg(x1,y1,x2,y2,Num,dColor,Size) {
 }
 
 
-function drawSSeg(x1,y1,x2,y2,Num,dColor,Size) {
+function drawSSeg(x1,y1,x2,y2,Num,Color,Size) {
   for (let i = 1; i < 8; i++) {
     for (let j = 1; j < 8; j++) {
       if (Font[Num][j-1][i-1] == 1) {
-        g.setColor(dColor[0],dColor[1],dColor[2]);
+        if (Color == "fg") {
+       g.setColor(sColor[0],sColor[1],sColor[2]);        
+        } else {
+          g.setColor(g.theme.fg);
+          //g.setColor(0.7,0.7,0.7);
+        }
         g.fillCircle(x1+(i-1)*(x2-x1)/7,y1+(j-1)*(y2-y1)/7,Size);
       }
     }
@@ -143,25 +178,27 @@ function drawSSeg(x1,y1,x2,y2,Num,dColor,Size) {
 }
 
 
-function ShowSecons() {
-  g.setColor(1,1,1);
-  g.fillRect((Xe-Xs) / 2 - 14 + Xs -3,
-            (Ye-Ys) / 2 - 7 + Ys  -3,
-            (Xe-Xs) / 2 + 14 + Xs +1,
-            (Ye-Ys) / 2 + 7 + Ys  +1);
+function ShowSeconds() {
+
+  g.setColor(sbColor[0],sbColor[1],sbColor[2]);
+
+  g.fillRect((Xe-Xs) / 2 - 14 + Xs -4,
+            (Ye-Ys) / 2 - 7 + Ys  -4,
+            (Xe-Xs) / 2 + 14 + Xs +4,
+            (Ye-Ys) / 2 + 7 + Ys  +4);
 
 
   drawSSeg(  (Xe-Xs) / 2 - 14 + Xs -1,
-            (Ye-Ys) / 2 - 7 + Ys  ,
+            (Ye-Ys) / 2 - 7 + Ys  +1,
             (Xe-Xs) / 2     + Xs -1,
-            (Ye-Ys) / 2 + 7 + Ys,
-            ds,mColor,1);
+            (Ye-Ys) / 2 + 7 + Ys +1,
+            ds,"fg",1);
 
-  drawSSeg(  (Xe-Xs) / 2     + Xs +1,
-            (Ye-Ys) / 2 - 7 + Ys,
-            (Xe-Xs) / 2 + 14 + Xs +1,
-            (Ye-Ys) / 2 + 7 + Ys,
-            es,mColor,1);
+  drawSSeg(  (Xe-Xs) / 2     + Xs +2,
+            (Ye-Ys) / 2 - 7 + Ys +1,
+            (Xe-Xs) / 2 + 14 + Xs +2,
+            (Ye-Ys) / 2 + 7 + Ys +1,
+            es,"fg",1);
 
 }
 
@@ -185,29 +222,29 @@ function draw() {
   g.reset();
   if (dh != dho) {
     g.setColor(1,1,1);
-    drawHSeg(Xs, Ys, Xs+SegW, Ys+SegH,dh,hColor,4);
+    drawHSeg(Xs, Ys, Xs+SegW, Ys+SegH,dh,"fg",4);
     dho = dh;
   }
 
   if (eh != eho) {
     g.setColor(1,1,1);
-    drawHSeg(Xs+SegW+Dx, Ys, Xs+SegW*2, Ys+SegH,eh,hColor,4);
+    drawHSeg(Xs+SegW+Dx, Ys, Xs+SegW*2, Ys+SegH,eh,"fg",4);
     eho = eh;
   }
 
   if (dm != dmo) {
     g.setColor(0.3,0.3,1);
-    drawHSeg(Xs, Ys+SegH+Dy, Xs+SegW, Ys+SegH*2,dm,mColor,4);
+    drawHSeg(Xs, Ys+SegH+Dy, Xs+SegW, Ys+SegH*2,dm,"",4);
     dmo = dm;
   }
 
   if (em != emo) {
     g.setColor(0.3,0.3,1);
-    drawHSeg(Xs+SegW+Dx, Ys+SegH+Dy, Xs+SegW*2, Ys+SegH*2,em,mColor,4);
+    drawHSeg(Xs+SegW+Dx, Ys+SegH+Dy, Xs+SegW*2, Ys+SegH*2,em,"",4);
     emo = em;
   }
 
-  if (!Bangle.isLocked()) ShowSecons();
+  if (!Bangle.isLocked()) ShowSeconds();
 
 }
 
@@ -278,7 +315,7 @@ function drawWidgeds() {
 
   var x1M = 100;
   var y1M = y1B;
-  var x2M = x1M + 30;
+  var x2M = x1M + 25;
   var y2M = y2B;
 
   if (messages.some(m=>m.new)) {
@@ -295,6 +332,7 @@ function drawWidgeds() {
 
   print(strDow[dow] + ' ' + day  + '.' + month  + ' ' + year);
   
+  g.setColor(g.theme.fg);
   g.setFontAlign(-1, -1,0);
   g.setFont("Vector", 20);
   g.drawString(strDow[dow] + ' ' + day, 0, 0, true);

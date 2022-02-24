@@ -12,4 +12,4 @@
 1.10: Adds Kalman filter.
 1.14: Add VMG and coordinates screens
 1.43: Adds mirroring of the watch face to an Android device. See README.md
-1.48: Droidscript mirroring prog automatically uses last connection address. Auto connects when run.
+1.49: Droidscript mirroring prog automatically uses last connection address. Auto connects when run.
