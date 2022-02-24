@@ -92,6 +92,7 @@ function getMessageImage(msg) {
   if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
   if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
   if (s=="sms message") return getNotificationImage();
+  if (s=="threema") return atob("GBjB/4Yx//8AAAAAAAAAAAAAfgAB/4AD/8AH/+AH/+AP//AP2/APw/APw/AHw+AH/+AH/8AH/4AH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
@@ -120,6 +121,7 @@ function getMessageImageCol(msg,def) {
     "outlook mail": "#0072c6",
     "skype": "#00aff0",
     "slack": "#e51670",
+    "threema": "#000",
     "telegram": "#0088cc",
     "twitter": "#1da1f2",
     "whatsapp": "#4fce5d",
@@ -166,27 +168,56 @@ function showMapMessage(msg) {
 }
 
 function showMusicMessage(msg) {
+  var updateLabelsInterval;
+  var trackScrollOffset = 0;
+  var artistScrollOffset = 0;
+  var albumScrollOffset = 0;
+  var trackName = '';
+  var artistName = '';
+  var albumName = '';
+
   function fmtTime(s) {
     var m = Math.floor(s/60);
     s = (parseInt(s%60)).toString().padStart(2,0);
     return m+":"+s;
   }
+  function reduceStringAndPad(text, offset, maxLen) {
+    var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
+    return text.substr(offset, sliceLength).padEnd(maxLen, " ");
+  }
+
 
   function back() {
+    clearInterval(updateLabelsInterval);
     msg.new = false;
     saveMessages();
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
+  function updateLabels() {
+    trackName = reduceStringAndPad(msg.track, trackScrollOffset, 13);
+    artistName = reduceStringAndPad(msg.artist, artistScrollOffset, 21);
+    albumName = reduceStringAndPad(msg.album, albumScrollOffset, 21);
+
+    trackScrollOffset++;
+    artistScrollOffset++;
+    albumScrollOffset++;
+
+    if ((trackScrollOffset + 13) > msg.track.length) trackScrollOffset = 0;
+    if ((artistScrollOffset + 21) > msg.artist.length) artistScrollOffset = 0;
+    if ((albumScrollOffset + 21) > msg.album.length) albumScrollOffset = 0;
+  }
+  updateLabels();
+
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,   c: [
+    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
-        { type:"txt", font:fontMedium, label:msg.album, pad:2 }
+        { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:artistName, pad:2, id:"artist" },
+        { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:albumName, pad:2, id:"album" }
       ]}
     ]},
-    {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontLarge, bgCol:g.theme.bg, label:trackName, fillx:1, filly:1, pad:2, id:"track" },
     Bangle.musicControl?{type:"h",fillx:1, c: [
       {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
@@ -196,6 +227,14 @@ function showMusicMessage(msg) {
   ]});
   g.clearRect(Bangle.appRect);
   layout.render();
+
+  updateLabelsInterval = setInterval(function() {
+    updateLabels();
+    layout.artist.label = artistName;
+    layout.album.label = albumName;
+    layout.track.label = trackName;
+    layout.render();
+  }, 400);
 }
 
 function showMessageScroller(msg) {
