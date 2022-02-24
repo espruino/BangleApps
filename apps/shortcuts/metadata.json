@@ -2,7 +2,7 @@
   "id": "shortcuts",
   "name": "Shortcuts",
   "shortName": "Shortcuts",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Quickly load your favourite apps from (almost) any watch face.",
   "icon": "app.png",
   "type": "bootloader",
