@@ -30,16 +30,23 @@ function prepareImg(resource){
 }
 
 function getByPath(object, path, lastElem){
+  //print("getByPath", path,lastElem);
   var current = object;
-  for (var c of path){
-    if (!current[c]) return undefined;
-    current = current[c];
+  if (path.length) {
+    for (var c of path){
+      if (!current[c]) return undefined;
+      current = current[c];
+    }
   }
   if (lastElem!==undefined){
     if (!current["" + lastElem]) return undefined;
+    //print("Found by lastElem", lastElem);
     current = current["" + lastElem];
   }
-  if (typeof current == "function") return undefined;
+  if (typeof current == "function"){
+    //print("current was function");
+    return undefined;
+  }
   return current;
 }
 
@@ -49,6 +56,14 @@ function splitNumberToDigits(num){
 
 function drawNumber(element, offset){
   var number = numbers[element.Value]();
+  var spacing = element.Spacing ? element.Spacing : 0;
+  var unit = element.Unit;
+  
+  var imageIndexMinus = element.ImageIndexMinus;
+  var imageIndexUnit = element.ImageIndexUnit;
+  var numberOfDigits = element.Digits;
+  
+  
   //print("drawNumber: ", number, element, offset);
   if (number) number = number.toFixed(0);
 
@@ -59,8 +74,9 @@ function drawNumber(element, offset){
     var isNegative;
     var digits;
     if (number == undefined){
-      isNegative = false;
-      digits = ["minus","minus","minus"];
+      isNegative = true;
+      digits = [];
+      numberOfDigits = 0;
     } else {
       isNegative = number < 0;
       if (isNegative) number *= -1;
@@ -68,27 +84,69 @@ function drawNumber(element, offset){
     }
 
     //print("digits: ", digits);
-    var numberOfDigits = element.Digits;
     if (!numberOfDigits) numberOfDigits = digits.length;
     var firstDigitX = element.X;
     var firstDigitY = element.Y;
-    var firstImage = getByPath(resources, element.ImagePath, 0);
+    var imageIndex = element.ImageIndex ? element.ImageIndex : 0;
 
-    if (element.Alignment == "BottomRight"){
-      var digitWidth = firstImage.width + element.Spacing;
-      var numberWidth = (numberOfDigits * digitWidth);
-      if (isNegative){
-        numberWidth += firstImage.width + element.Spacing;
-      }
-      //print("Number width: ", numberWidth, firstImage.width, element.Spacing);
+    var firstImage;
+    if (imageIndex){
+      firstImage = getByPath(resources, [], "" + (0 + imageIndex));
+    } else {
+      firstImage = getByPath(resources, element.ImagePath, 0);
+    }
+
+    var minusImage;
+    if (imageIndexMinus){
+      minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
+    } else {
+      minusImage = getByPath(resources, element.ImagePath, "minus");
+    }
+
+    var unitImage;
+    //print("Get image for unit", imageIndexUnit);
+    if (imageIndexUnit !== undefined){
+      unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
+      //print("Unit image is", unitImage);
+    } else if (element.Unit){
+      unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+    }
+
+    var numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
+    if (isNegative && minusImage){
+      //print("Adding to width", minusImage);
+      numberWidth += minusImage.width + spacing;
+    }
+    if (unitImage){
+      //print("Adding to width", unitImage);
+      numberWidth += unitImage.width + spacing;
+    }
+    //print("numberWidth:", numberWidth);
+    
+    if (element.Alignment == "Center") {
+      firstDigitX = Math.round(element.X - (numberWidth/2)) + 1;
+      firstDigitY = Math.round(element.Y - (firstImage.height/2)) + 1;
+    } else if (element.Alignment == "BottomRight"){
       firstDigitX = element.X - numberWidth + 1;
       firstDigitY = element.Y - firstImage.height + 1;
-      //print("Calculated start " + firstDigitX + "," + firstDigitY + " From:" + element.BottomRightX + " " + firstImage.width + " " + element.Spacing);
+    } else if (element.Alignment == "TopRight") {
+      firstDigitX = element.X - numberWidth + 1;
+      firstDigitY = element.Y;
+    } else if (element.Alignment == "BottomLeft") {
+      firstDigitX = element.X;
+      firstDigitY = element.Y - firstImage.height + 1;
     }
+    
     var currentX = firstDigitX;
-    if (isNegative){
+    if (isNegative && minusImage){
+      //print("Draw minus at", currentX);
+      if (imageIndexMinus){
+        drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
+      } else {
+        drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
+      }
       drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
-      currentX += firstImage.width + element.Spacing;
+      currentX += minusImage.width + spacing;
     }
     for (var d = 0; d < numberOfDigits; d++){
       var currentDigit;
@@ -99,8 +157,14 @@ function drawNumber(element, offset){
         currentDigit = 0;
       }
       //print("Digit " + currentDigit + " " + currentX);
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit);
-      currentX += firstImage.width + element.Spacing;
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
+      currentX += firstImage.width + spacing;
+    }
+    if (imageIndexUnit){
+      //print("Draw unit at", currentX);
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
+    } else if (element.Unit){
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
     }
     element.lastDrawnValue = number;
   }
@@ -113,13 +177,15 @@ function setColors(properties){
 
 function drawElement(pos, offset, path, lastElem){
   //print("drawElement ",pos, offset, path, lastElem);
+  //print("drawElement offset", offset, pos.X, pos.Y);
   var resource = getByPath(resources, path, lastElem);
+  //print("Got resource", resource);
   if (resource){
-    //print("resource ",pos, offset, path, lastElem);
+    //print("resource ", resource,pos, offset, path, lastElem);
     var image = prepareImg(resource);
     if (image){
-      offset = updateColors(pos, offset);
-      setColors(offset);
+      var imageOffset = updateColors(pos, offset);
+      setColors(imageOffset);
       //print("drawImage from drawElement", image, pos, offset);
       var options={};
       if (pos.RotationValue){
@@ -131,7 +197,7 @@ function drawElement(pos, offset, path, lastElem){
       }
       //print("options", options);
       //print("Memory before drawing", process.memory(false));
-      g.drawImage(image ,offset.X + pos.X,offset.Y + pos.Y, options);
+      g.drawImage(image ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);
     } else {
       //print("Could not create image from", resource);
     }
@@ -153,12 +219,30 @@ function checkRedraw(element, newValue){
   }
 }
 
+function getValue(value, defaultValue){
+  if (typeof value == "string"){
+    return numbers[value]();
+  }
+  if (value == undefined) return defaultValue;
+  return value;
+}
+
+function getMultistate(name, defaultValue){
+  if (typeof name == "string"){
+    return multistates[name]();
+  } else {
+    if (name == undefined) return defaultValue;
+  }
+  return undefined;
+}
+
 function drawScale(scale, offset){
   //print("drawScale", scale, offset);
   var segments = scale.Segments;
   var value = numbers[scale.Value]();
-  var maxValue = scale.MaxValue ? scale.MaxValue : 1;
-  var minValue = scale.MinValue ? scale.MinValue : 0;
+  var maxValue = getValue(scale.MaxValue, 1);
+  var minValue = getValue(scale.MinValue, 0);
+  var imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
 
   value = value/maxValue;
   value -= minValue;
@@ -171,7 +255,7 @@ function drawScale(scale, offset){
 
   if (checkRedraw(scale, segmentsToDraw)){
     for (var i = 0; i < segmentsToDraw; i++){
-      drawElement(segments[i], scaleOffset, scale.ImagePath, i);
+      drawElement(segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
     }
     scale.lastDrawnValue = segmentsToDraw;
   }
@@ -182,20 +266,22 @@ function drawDigit(element, offset, digit){
 }
 
 function drawImage(image, offset, name){
+  var imageOffset = updateColors(image, offset);
   if (image.ImagePath) {
     //print("drawImage", image, offset, name);
-    offset = updateColors(image, offset);
     if (image.Value && image.Steps){
-      var steps = Math.floor(scaledown(numbers[image.Value](), image.MinValue, image.MaxValue) * (image.Steps - 1));
+      var steps = Math.floor(scaledown(getValue(image.Value), getValue(image.MinValue, 0), getValue(image.MaxValue, 1)) * (image.Steps - 1));
       //print("Step", steps, "of", image.Steps);
-      drawElement(image, offset, image.ImagePath, "" + steps);
+      drawElement(image, imageOffset, image.ImagePath, "" + steps);
+    } else if (image.ImageIndex !== undefined) {
+      drawElement(image, imageOffset, image.ImagePath, image.ImageIndex);
     } else {
-      drawElement(image, offset, image.ImagePath, name ? "" + name: undefined);
+      drawElement(image, imageOffset, image.ImagePath, name ? "" + name: undefined);
     }
   } else if (image.ImageFile) {
     var file = require("Storage").readJSON(image.ImageFile);
-    setColors(offset);
-    g.drawImage(prepareImg(file),image.X + offset.X, image.Y + offsetY);
+    setColors(imageOffset);
+    g.drawImage(prepareImg(file),image.X + imageOffset.X, image.Y + imageOffset.Y);
   }
 }
 
@@ -257,32 +343,35 @@ function getWeatherTemperature(){
 }
 
 function updateOffset(element, offset){
-  var newOffset = { X: offset.X, Y: offset.Y };
-  if (element.X) newOffset.X += element.X;
-  if (element.Y) newOffset.Y += element.Y;
+  var newOffset = { X: offset.X ? offset.X : 0, Y: offset.Y ? offset.Y : 0 };
+  if (element && element.X) newOffset.X += element.X;
+  if (element && element.Y) newOffset.Y += element.Y;
   newOffset = updateColors(element, newOffset);
   //print("Updated offset from ", offset, "to", newOffset);
   return newOffset;
 }
 
 function updateColors(element, offset){
-  var newOffset = { X: offset.X, Y: offset.Y };
-  newOffset.fg = element.ForegroundColor ? element.ForegroundColor: offset.fg;
-  newOffset.bg = element.BackgroundColor ? element.BackgroundColor: offset.bg;
+  var newOffset = { X: offset.X ? offset.X : 0, Y: offset.Y ? offset.Y : 0 };
+  if (element){
+    newOffset.fg = element.ForegroundColor ? element.ForegroundColor: offset.fg;
+    newOffset.bg = element.BackgroundColor ? element.BackgroundColor: offset.bg;
+  }
   //print("Updated offset from ", offset, "to", newOffset);
   return newOffset;
 }
 
 function scaledown(value, min, max){
-  print("scaledown", value, min, max);
-  var scaled = E.clip(value,min?min:0,max?max:1);
-  scaled -= min?min:0;
-  scaled /= max?max:1;
+  //print("scaledown", value, min, max);
+  var scaled = E.clip(value,getValue(min,0),getValue(max,1));
+  scaled -= getValue(min,0);
+  scaled /= getValue(max,1);
   return scaled;
 }
 
 function rotate(center, coords, rotation) {
     var value = scaledown(numbers[rotation.RotationValue](), rotation.MinRotationValue, rotation.MaxRotationValue);
+    value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
     value *= 360;
     value -= 180;
 
@@ -298,7 +387,9 @@ function rotate(center, coords, rotation) {
 
 function drawPoly(element, offset){
     var vertices = [];
-    var primitiveOffset = offset;
+    var primitiveOffset = offset.clone();
+    if (element.X) primitiveOffset.X += element.X;
+    if (element.Y) primitiveOffset.Y += element.Y;
 
     for (var c of element.Vertices){
       if (element.RotationValue){
@@ -313,7 +404,7 @@ function drawPoly(element, offset){
 
     if (element.ForegroundColor) g.setColor(element.ForegroundColor);
 
-    if (element.Filled ){
+    if (element.Filled){
       g.fillPoly(vertices,true);
     }
 
@@ -337,6 +428,8 @@ numbers.Second = () => { return new Date().getSeconds(); };
 numbers.SecondAnalog = () => { var date = new Date(); return date.getSeconds() + (date.getMilliseconds()/999); };
 numbers.SecondTens = () => { return Math.floor(new Date().getSeconds()/10); };
 numbers.SecondOnes = () => { return Math.floor(new Date().getSeconds()%10); };
+numbers.WeekDay = () => { return new Date().getDay(); };
+numbers.WeekDayMondayFirst = () => {  var day = (new Date().getDay() - 1); if (day < 0) day = 7 + day; return day; };
 numbers.Day = () => { return new Date().getDate(); };
 numbers.DayTens = () => { return Math.floor(new Date().getDate()/10); };
 numbers.DayOnes = () => { return Math.floor(new Date().getDate()%10); };
@@ -345,13 +438,14 @@ numbers.MonthTens = () => { return Math.floor((new Date().getMonth() + 1)/10); }
 numbers.MonthOnes = () => { return Math.floor((new Date().getMonth() + 1)%10); };
 numbers.Pulse = () => { return pulse; };
 numbers.Steps = () => { return Bangle.getHealthStatus ? Bangle.getHealthStatus("day").steps : undefined; };
+numbers.StepsGoal = () => { return stepsgoal; };
 numbers.Temperature = () => { return temp; };
 numbers.Pressure = () => { return press; };
 numbers.Altitude = () => { return alt; };
 numbers.BatteryPercentage = E.getBattery;
 numbers.BatteryVoltage = NRF.getBattery;
 numbers.WeatherCode = getWeatherCode;
-numbers.WeatherTemperature = () => { var t = getWeatherTemperature().value; return t ? t : undefined; };
+numbers.WeatherTemperature = () => { return getWeatherTemperature().value; };
 
 var multistates = {};
 multistates.Lock = () => { return Bangle.isLocked() ? "on" : "off"; };
@@ -365,7 +459,9 @@ multistates.HRM = () => { return Bangle.isHRMOn ? "on" : "off"; };
 multistates.Barometer = () => { return Bangle.isBarometerOn() ? "on" : "off"; };
 multistates.Compass = () => { return Bangle.isCompassOn() ? "on" : "off"; };
 multistates.GPS = () => { return Bangle.isGPSOn() ? "on" : "off"; };
+multistates.WeatherTemperatureNegative = () => { return getWeatherTemperature().value ? getWeatherTemperature().value : 0 < 0; };
 multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
+multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
 
 function drawMultiState(element, offset){
   //print("drawMultiState", element, offset);
@@ -381,6 +477,9 @@ function draw(element, offset){
   var initial = !element;
   if (initial){
     element = face;
+    if (!offset) offset ={};
+    if (!offset.X) offset.X = 0;
+    if (!offset.Y) offset.Y = 0;
     g.clear();
   }
 
@@ -461,7 +560,7 @@ function initialDraw(){
 function handleHrm(e){
   if (e.confidence > 70){
     pulse = e.bpm;
-    if (!redrawEvents || redrawEvents.includes("HRM")){
+    if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
       //print("Redrawing on HRM");
       initialDraw();
     }
@@ -472,14 +571,14 @@ function handlePressure(e){
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
-  if (!redrawEvents || redrawEvents.includes("pressure")){
+  if (!redrawEvents || redrawEvents.includes("pressure") && !Bangle.isLocked()){
     //print("Redrawing on pressure");
     initialDraw();
   }
 }
 
 function handleCharging(e){
-  if (!redrawEvents || redrawEvents.includes("charging")){
+  if (!redrawEvents || redrawEvents.includes("charging") && !Bangle.isLocked()){
     //print("Redrawing on charging");
     initialDraw();
   }
@@ -511,6 +610,8 @@ var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000
 var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
 var redrawEvents = getByPath(face, ["Properties","Redraw","Events"]);
 var events = getByPath(face, ["Properties","Events"]);
+
+var stepsgoal = 2000;
 
 //print("events", events);
 //print("redrawEvents", redrawEvents);

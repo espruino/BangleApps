@@ -11,12 +11,22 @@
 
     <h4>Upload watchface:</h4>
 
+    <p>
+      Select format:</br>
+      <input type="radio" id="useNative" name="mode" checked/>
+      <label for="useNative">Native</label></br>
+      <input type="radio" id="useAmazefit" name="mode"/>
+      <label for="useAmazefit">ALPHA: Decompiled Amazfit</label></br>
+    </p>
 
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
     <p><b>or</b></p>
     <p>Select watchface zip file: </br><input type="file" id="zipLoader" name="zip"/></p><br/>
-    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+    
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button></br>
     <button id="btnSave" class="btn btn-secondary">Save resources file</button></br>
+    <button id="btnSaveFace" class="btn btn-secondary">Save face file</button></br>
+    <button id="btnSaveZip" class="btn btn-secondary">Save watchface zip file</button></br>
     <canvas id="canvas" style="display:none;"></canvas></br>
     <p>Download Demo Watchface here: </br>
       <a href="digitalretro.zip">digitalretro.zip</a></br>
@@ -30,6 +40,468 @@
       var faceJson;
       var handledFiles = 0;
       var expectedFiles = 0;
+      var rootZip = new JSZip();
+      var resourcesZip = rootZip.folder("resources");
+      
+      function isNativeFormat(){
+        return document.getElementById("useNative").checked;
+      }
+      
+      function convertAmazfitTime(time){
+        var result = {};
+        if (time.Hours){
+          result.Hours = {
+            Tens: convertAmazfitNumber(time.Hours.Tens, "HourTens", 0, 10),
+            Ones: convertAmazfitNumber(time.Hours.Ones, "HourOnes", 0, 10)
+          }
+          result.Hours.Tens.Number.Alignment = "TopLeft";
+          result.Hours.Tens.Number.Spacing = 0;
+          result.Hours.Ones.Number.Alignment = "TopLeft";
+          result.Hours.Ones.Number.Spacing = 0;
+        }
+        if (time.Minutes){
+          result.Minutes = {
+            Tens: convertAmazfitNumber(time.Minutes.Tens, "MinuteTens", 0, 10),
+            Ones: convertAmazfitNumber(time.Minutes.Ones, "MinuteOnes", 0, 10)
+          }
+          result.Minutes.Tens.Number.Alignment = "TopLeft";
+          result.Minutes.Tens.Number.Spacing = 0;
+          result.Minutes.Ones.Number.Alignment = "TopLeft";
+          result.Minutes.Ones.Number.Spacing = 0;
+        }
+        return result;
+      }
+      
+      function convertAmazfitDate(date){
+        var result = {};
+        if (date.MonthAndDay.Separate.Day) result.Day = convertAmazfitNumber(date.MonthAndDay.Separate.Day, "Day");
+        if (date.MonthAndDay.Separate.Month) result.Month = convertAmazfitNumber(date.MonthAndDay.Separate.Month, "Month");
+        if (date.WeekDay){
+          result.WeekDay = convertAmazfitNumber(date.WeekDay, "WeekDayMondayFirst");
+        }
+        return result;
+      }
+      
+      var filesToMove={};
+      
+      var zipChangePromise = Promise.resolve();
+      
+      function performFileChanges(){
+        var promise = Promise.resolve();
+        //rename all files to just numbers without leading zeroes
+        for (var c in resultJson){
+          console.log("Renaming", c, resultJson[c]);
+          var tmp = resultJson[c];
+          delete resultJson[c];
+          resultJson[Number(c)] = tmp;
+          
+          async function modZip(c){
+            console.log("Async modification of ", c)
+            var fileRegex = new RegExp(c + ".*");
+            var fileObject = resourcesZip.file(fileRegex)[0];
+            var fileData = await fileObject.async("uint8array");
+            console.log("Filedata is", fileData);
+            var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
+            var newName = Number(c) + extension;
+            
+            console.log("Renaming to", newName);
+            resourcesZip.remove(c + extension);
+            resourcesZip.file(newName, fileData);
+          }
+          promise = promise.then(modZip(c));
+
+          
+        }
+          
+        
+        console.log("File moves:", filesToMove);
+        
+        for (var c in filesToMove){
+          var tmp = resultJson[c];
+          console.log("Handle filemove", c, filesToMove[c], tmp);
+          
+          var element = resultJson;
+          var path = filesToMove[c];
+          
+          
+          async function modZip(c){
+            console.log("Async modification of ", c)
+            var fileRegex = new RegExp(c + ".*");
+            var fileObject = resourcesZip.file(fileRegex)[0];
+            var fileData = await fileObject.async("uint8array");
+            console.log("Filedata is", fileData);
+            var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
+            var newName = Number(c) + extension;
+            
+            console.log("Copying to", newName);
+            resourcesZip.file(filesToMove[c].join("/") + extension, fileData);
+          }
+          promise = promise.then(modZip(c));
+          
+          
+          for (var i = 0; i< path.length; i++){
+            if (!element[path[i]]) element[path[i]] = {};
+            if (i == path.length - 1){
+              element[path[i]] = tmp;
+            } else {
+              element = element[path[i]];
+            }
+          }
+          
+        }
+        promise.then(()=>{
+          document.getElementById('btnUpload').disabled = true; 
+        });
+        console.log("After moves", resultJson);
+        return promise;
+      };
+      
+      function convertAmazfitMultistate(multistate, value, minValue, maxValue){
+        var result = {
+          MultiState: {
+            X: multistate.Coordinates.X,
+            Y: multistate.Coordinates.Y,
+            Value: value,
+            ImagePath: [value]
+          }
+        };
+        if (minValue !== undefined) result.MultiState.MinValue = minValue;
+        if (maxValue !== undefined) result.MultiState.MaxValue = maxValue;
+        if (multistate.ImageIndexOn) filesToMove[multistate.ImageIndexOn] = ["status", value, "vibrate"];
+        if (multistate.ImageIndexOff) filesToMove[multistate.ImageIndexOff] = ["status", value, "off"];
+        return result;
+      }
+      
+      function convertAmazfitStatus(status){
+        var result = {};
+        
+        if (status.Alarm) result.Alarm = convertAmazfitMultistate(status.Alarm,"Alarm");
+        if (status.Bluetooth) result.Bluetooth = convertAmazfitMultistate(status.Bluetooth,"Bluetooth");
+        if (status.DoNotDisturb) result.DoNotDisturb = convertAmazfitMultistate(status.DoNotDisturb,"Notifications");
+        if (status.Lock) result.Lock = convertAmazfitMultistate(status.Lock,"Lock");
+        
+        return result;
+      }
+      
+      function convertAmazfitNumber(element, value, minValue, maxValue){
+        var number = {};
+        var result = {
+          Number: number
+        };
+        if (element.Alignment == "BottomRight"){
+          number.X = element.BottomRightX;
+          number.Y = element.BottomRightY;
+        } else if (element.Alignment == "TopLeft"){
+          number.X = element.TopLeftX;
+          number.Y = element.TopLeftY;
+        } else if (element.Alignment == "TopRight"){
+          number.X = element.BottomRightX;
+          number.Y = element.TopLeftY;
+        } else if (element.Alignment == "BottomLeft"){
+          number.X = element.TopLeftX;
+          number.Y = element.BottomLeftY;
+        } else if (element.Alignment == "Center"){
+          number.X = (element.TopLeftX + (element.BottomRightX - element.TopLeftX)/2),
+          number.Y = (element.TopLeftY + (element.BottomRightY - element.TopLeftY)/2)
+        } else {
+          number.X = element.X,
+          number.Y = element.Y
+        }
+        number.Alignment = element.Alignment;
+        number.Spacing = element.Spacing;
+        number.ImageIndex = element.ImageIndex;
+        number.ImagePath = [];
+        number.Value = value;
+        if (minValue !== undefined) number.MaxValue = maxValue;
+        if (maxValue !== undefined) number.MinValue = minValue;
+        return result;
+      }
+      
+      function moveWeatherIcons(icon){
+        filesToMove[icon.ImageIndex + 0] = ["weather", "fallback"];
+        
+        // Light clouds
+        filesToMove[icon.ImageIndex + 1] = ["weather", 801];
+        // Cloudy, possible rain
+        filesToMove[icon.ImageIndex + 2] = ["weather", 500];
+        // Cloudy, possible snow
+        filesToMove[icon.ImageIndex + 3] = ["weather", 600];
+        // Clear
+        filesToMove[icon.ImageIndex + 4] = ["weather", 800];
+        // Clouds
+        filesToMove[icon.ImageIndex + 5] = ["weather", 803];
+        // Light Rain
+        filesToMove[icon.ImageIndex + 6] = ["weather", 501];
+        // Light Snow
+        filesToMove[icon.ImageIndex + 7] = ["weather", 601];
+        // Rain
+        filesToMove[icon.ImageIndex + 8] = ["weather", 502];
+        // Snow
+        filesToMove[icon.ImageIndex + 9] = ["weather", 602];
+        // Heavy Snow
+        filesToMove[icon.ImageIndex + 10] = ["weather", 621];
+        // Heavy Rain
+        filesToMove[icon.ImageIndex + 11] = ["weather", 503];
+        // Sandstorm
+        filesToMove[icon.ImageIndex + 12] = ["weather", 751];
+        // Snow and Rain
+        filesToMove[icon.ImageIndex + 13] = ["weather", 616];
+        // Fog
+        filesToMove[icon.ImageIndex + 14] = ["weather", 741];
+        // Mist
+        filesToMove[icon.ImageIndex + 15] = ["weather", 701];
+        // Shower
+        filesToMove[icon.ImageIndex + 16] = ["weather", 521];
+        // Hail
+        filesToMove[icon.ImageIndex + 17] = ["weather", 611];
+        // Hailstorm
+        filesToMove[icon.ImageIndex + 18] = ["weather", 613];
+        // Heavy Shower
+        filesToMove[icon.ImageIndex + 19] = ["weather", 522];
+        // Dust whirls
+        filesToMove[icon.ImageIndex + 20] = ["weather", 731];
+        // Tornado
+        filesToMove[icon.ImageIndex + 21] = ["weather", 781];
+        // Very heavy shower
+        filesToMove[icon.ImageIndex + 22] = ["weather", 531];
+      }
+      
+      function convertAmazfitTemperature(temp){
+        var result = {};
+        result = convertAmazfitNumber(temp.Number, "WeatherTemperature");
+        if (temp.MinusImageIndex){
+          result.Number.ImageIndexMinus = temp.MinusImageIndex;
+        }
+        if (temp.DegreesImageIndex){
+          result.Number.ImageIndexUnit = temp.DegreesImageIndex;
+        }
+        return result;
+      }
+      
+      function convertAmazfitWeather(weather){
+        var result = {};
+        
+        if (weather.Temperature && weather.Temperature.Current){
+          if (!result.Temperature) result.Temperature = {};
+          result.Temperature.Current = convertAmazfitTemperature(weather.Temperature.Current);
+        }
+        
+        if (weather.Temperature && weather.Temperature.Today){
+          if (!result.Temperature) result.Temperature = {};          
+          if (weather.Temperature.Today.Separate){
+            if (weather.Temperature.Today.Separate.Day){
+              result.Temperature.Day = convertAmazfitTemperature(weather.Temperature.Today.Separate.Day);
+            }
+            if (weather.Temperature.Today.Separate.Night){
+              result.Temperature.Night = convertAmazfitTemperature(weather.Temperature.Today.Separate.Night);
+            }
+          }
+        }
+        if (weather.Icon){
+          result.WeatherIcon = {
+            CodedImage: {
+              X: weather.Icon.CustomIcon.X,
+              Y: weather.Icon.CustomIcon.Y,
+              Value: "WeatherCode",
+              ImagePath: ["weather"]
+            }
+          }
+          moveWeatherIcons(weather.Icon.CustomIcon);
+        }
+        return result;
+      }
+      
+      function convertAmazfitActivity(activity){
+        var result = {};
+        
+        if (activity.Steps){
+          result.Steps = convertAmazfitNumber(activity.Steps, "Steps");
+        }
+        if (activity.Pulse){
+          result.Pulse = convertAmazfitNumber(activity.Pulse, "Pulse");
+        }
+        return result;
+      }
+      
+      function convertAmazfitScale(scale, value, minValue, maxValue){
+        var result = {};
+        result.Scale = {
+          ImageIndex: scale.StartImageIndex,
+          ImagePath: [],
+          Value: value,
+          MaxValue: maxValue,
+          MinValue: minValue
+        };
+        result.Scale.Segments = [];
+        for (var c of scale.Segments){
+          result.Scale.Segments.push({
+            X: c.X,
+            Y: c.Y
+          });
+        }
+        
+        return result;
+      }
+      
+      function convertAmazfitStepsProgress(steps){
+        var result = {};
+        if (steps.GoalImage){
+          result.Goal = {
+            MultiState: {
+              X: steps.GoalImage.X,
+              Y: steps.GoalImage.Y,
+              Value: "StepsGoal",
+              ImagePath: ["StepsGoal"]
+            }
+          }
+          filesToMove[steps.GoalImage.ImageIndex] = ["StepsGoal", "on"];
+        }
+        if (steps.Linear){
+          result.Scale = convertAmazfitScale(steps.Linear, "Steps", 0, "StepsGoal").Scale;
+        }
+        return result;
+      }
+      
+      function convertAmazfitBattery(battery){
+        var result = {};
+        if (battery.Scale){
+          result.Scale = convertAmazfitScale(battery.Scale, "BatteryPercentage", 0, 100).Scale;
+        }
+        if (battery.Text){
+          result.Number = convertAmazfitNumber(battery.Text, "BatteryPercentage", 0, 100).Number;
+        }
+        return result;
+      }
+      
+      function convertAmazfitImage(image){
+        var result = {
+          Image: {
+            X: image.X,
+            Y: image.Y,
+            ImagePath: [],
+            ImageIndex: image.ImageIndex
+          }
+        };
+        return result;
+      }
+      
+      function convertAmazfitColor(color){
+        return "#" + color.substring(2);
+      }
+      
+      function convertAmazfitHand(hand, rotationValue, minRotationValue, maxRotationValue){
+        var result = {
+          Filled: !hand.OnlyBorder,
+          X: hand.Center.X,
+          Y: hand.Center.Y,
+          ForegroundColor: convertAmazfitColor(hand.Color),
+          BackgroundColor: convertAmazfitColor(hand.Color),
+          RotationValue: rotationValue,
+          RotationOffset: 0.25,
+          MaxRotationValue: maxRotationValue,
+          MinRotationValue: minRotationValue
+        };
+        
+        result.Vertices = []
+        for (var c of hand.Shape){
+          result.Vertices.push(c);
+        }
+        return { Poly: result };
+      }
+      
+      function convertAmazfitAnalog(analog){
+        var result = {
+        };
+        
+        if (analog.Hours){
+          result.Hours = {};
+          result.Hours.Hand = convertAmazfitHand(analog.Hours, "Hour12Analog", 0, 12);
+          if (analog.Hours.CenterImage){
+            result.Hours.Center = convertAmazfitImage(analog.Hours.CenterImage);
+          }
+        }
+        if (analog.Minutes){
+          result.Minutes = {};
+          result.Minutes.Hand = convertAmazfitHand(analog.Minutes, "Minute", 0, 60);
+          if (analog.Minutes.CenterImage){
+            result.Minutes.Center = convertAmazfitImage(analog.Minutes.CenterImage);
+          }
+        }
+        if (analog.Seconds){
+          result.Seconds = {};
+          result.Seconds = convertAmazfitHand(analog.Seconds, "Second", 0, 60);
+          if (!faceJson.Properties) faceJson.Properties = {};
+          if (!faceJson.Properties.Redraw) faceJson.Properties.Redraw = {};
+          if (!faceJson.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Unlocked = 1000;
+          if (!faceJson.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Locked = 15000;
+          if (analog.Seconds.CenterImage){
+            result.Seconds.Center = convertAmazfitImage(analog.Seconds.CenterImage);
+          }
+        }
+        return result;
+      }
+      
+      function restructureAmazfitFormat(dataString){
+        console.log("Amazfit data:", dataString);
+        
+        
+        var json = JSON.parse(dataString);
+        faceJson = json;
+        
+        if (!json.Properties) faceJson.Properties = {};
+        if (!json.Properties.Redraw) faceJson.Properties.Redraw = {};
+        if (!json.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Unlocked = 10000;
+        if (!json.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Locked = 60000;
+        
+        var result = {};
+        
+        if (json.Background){
+          result.Background = json.Background;
+          result.Background.Image.ImagePath = [];
+          delete result.Background.Preview;
+        }
+        if (json.Time){
+          result.Time = convertAmazfitTime(json.Time);
+        }
+        
+        if (json.Date){
+          result.Date = convertAmazfitDate(json.Date);
+        }
+        
+        if (json.Status){
+          result.Status = convertAmazfitStatus(json.Status);
+        }
+        
+        if (json.Weather){
+          result.Weather = convertAmazfitWeather(json.Weather);
+        }
+        
+        if (json.Activity){
+          result.Activity = convertAmazfitActivity(json.Activity);
+        }
+        
+        if (json.StepsProgress){
+          result.StepsProgress = convertAmazfitStepsProgress(json.StepsProgress);
+        }
+        
+        if (json.Battery){
+          result.Battery = convertAmazfitBattery(json.Battery);
+        }
+        if (json.AnalogDialFace){
+          result.Analog = convertAmazfitAnalog(json.AnalogDialFace);
+        }
+        console.log("Converted to native:", result);
+        return result;
+
+      }
+      
+      function parseFaceJson(jsonString){
+          if (isNativeFormat()){
+            return JSON.parse(jsonString);
+          } else {
+            return restructureAmazfitFormat(jsonString);
+          }
+      }
 
       function imageLoaded() {
         var options = {};
@@ -37,7 +509,7 @@
         options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
         options.compression = infoJson.compression ? infoJson.compression : false;
         options.alphaToColor = false;
-        options.transparent = false;
+        options.transparent = infoJson.transparent ? infoJson.transparent : false;
         options.inverted = false;
         options.autoCrop = false;
         options.brightness = 0;
@@ -45,7 +517,6 @@
         options.mode = infoJson.color ? infoJson.color : "1bit";
         options.output = "jsonobject";
         
-        var faceJson;
         console.log("Loaded image has path", this.path);
         var jsonPath = this.path.split("/");
         
@@ -111,26 +582,45 @@
         console.log("Expected:", expectedFiles, " handled:", handledFiles);
         
         if (handledFiles == expectedFiles){
-          document.getElementById('btnSave').disabled = false;
-          document.getElementById('btnUpload').disabled = false;
+          if (!isNativeFormat()) {
+            performFileChanges().then(()=>{
+              rootZip.file("face.json", JSON.stringify(faceJson, null, 2));
+              rootZip.file("info.json", JSON.stringify(infoJson, null, 2));
+              document.getElementById('btnSave').disabled = false;
+              document.getElementById('btnSaveFace').disabled = false;
+              document.getElementById('btnSaveZip').disabled = false;
+              document.getElementById('btnUpload').disabled = false;
+            });
+          } else {
+            document.getElementById('btnSave').disabled = false;
+            document.getElementById('btnSaveFace').disabled = false;
+            document.getElementById('btnUpload').disabled = false;
+          }
         }
       }
       
       function handleWatchFace(infoFile, faceFile, resourceFiles){
-        var reader = new FileReader();
-        reader.path = infoFile.webkitRelativePath;
-        reader.onload = function(event) {
-          infoJson = JSON.parse(reader.result);
+        if (isNativeFormat()){
+          var reader = new FileReader();
+          reader.path = infoFile.webkitRelativePath;
+          reader.onload = function(event) {
+            infoJson = JSON.parse(reader.result);
+            
+            handleFaceJson(faceFile, resourceFiles);
+          };
+          reader.readAsText(infoFile);
+        } else {
+          console.log("Handling amazfit watch face");
           handleFaceJson(faceFile, resourceFiles);
-        };
-        reader.readAsText(infoFile);
+        }
       }
       
       function handleFaceJson(faceFile, resourceFiles){
         var reader = new FileReader();
         reader.path = faceFile.webkitRelativePath;
         reader.onload = function(event) {
-          faceJson = JSON.parse(reader.result);
+          faceJson = parseFaceJson(reader.result);
+          
           handleResourceFiles(resourceFiles);
         };
         reader.readAsText(faceFile);
@@ -141,8 +631,14 @@
           console.log('Handle resource file ', current);
           var reader = new FileReader();
           console.log("Handling ", current.name, " with path ", current.webkitRelativePath);
-          var filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"")
+          var filteredPath;
+          if (isNativeFormat()){
+            filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"");
+          } else {
+            filteredPath = current.webkitRelativePath.replace(/.*\//,"");
+          }
           reader.path = filteredPath;
+          resourcesZip.file(filteredPath, current);
           reader.onload = function(event) {
             var img = new Image();
             img.path = this.path;
@@ -158,6 +654,8 @@
         expectedFiles = undefined;
         
         document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnSaveZip').disabled = true;
+        document.getElementById('btnSaveFace').disabled = true;
         document.getElementById('btnUpload').disabled = true;
         
         console.log("File select event", event);
@@ -171,18 +669,36 @@
         
         for (var current of event.target.files){
           console.log('Handle file ', current);
-          if (current.webkitRelativePath.split("/")[1].startsWith("resources")){
-            console.log('Found resource file', current.name);
-            resourceFiles.push(current);
-            expectedFiles = resourceFiles.length;
-          } else if (current.name == "face.json"){
-            console.log('Found face file', current.name);
-            faceFile = current;
-          }  else if (current.name == "info.json"){
-            console.log('Found info file', current.name);
-            infoFile = current;
+          if (isNativeFormat()){
+            if (current.webkitRelativePath.split("/")[1].startsWith("resources")){
+              console.log('Found resource file', current.name);
+              resourceFiles.push(current);
+              expectedFiles = resourceFiles.length;
+            } else if (current.name == "face.json"){
+              console.log('Found face file', current.name);
+              faceFile = current;
+            } else if (current.name == "info.json"){
+              console.log('Found info file', current.name);
+              infoFile = current;
+            } else {
+              console.log('Found unsupported file', current.name);
+            }
           } else {
-            console.log('Found unsupported file', current.name);
+            infoJson = {
+              "color": "3bit",
+              "compression": true,
+              "transparent": true
+            };
+            if (current.name.includes(".png")){
+              console.log('Found resource file', current.name);
+              resourceFiles.push(current);
+              expectedFiles = resourceFiles.length;
+            } else if (current.name.includes(".json")){
+              console.log('Found amazfit file', current.name);
+              faceFile = current;
+            } else {
+              console.log('Found unsupported file', current.name);
+            }
           }
         }
         handleWatchFace(infoFile, faceFile, resourceFiles);
@@ -207,6 +723,8 @@
             {name:"imageclock.img", url:"app-icon.js", evaluate:true},
           ]
         };
+        
+        console.log("Uploading app:", appDef);
         sendCustomizedApp(appDef);
       });
             
@@ -217,6 +735,8 @@
         expectedFiles = 0;
         handledFiles = 0;
         document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnSaveFace').disabled = true;
+        document.getElementById('btnSaveZip').disabled = true;
         document.getElementById('btnUpload').disabled = true;
         JSZip.loadAsync(f).then(function(zip) {
           
@@ -228,13 +748,22 @@
                 
                 var promise = zip.file("face.json").async("string").then((data)=>{
                   console.log("face.json data", data);
-                  faceJson = JSON.parse(data);
+                  faceJson = parseFaceJson(data);
                 });
                 
-                promise = promise.then(zip.file("info.json").async("string").then((data)=>{
-                  console.log("info.json data", data);
-                  infoJson = JSON.parse(data);
-                }));
+                if (isNativeFormat()){
+                  promise = promise.then(zip.file("info.json").async("string").then((data)=>{
+                    console.log("info.json data", data);
+                    infoJson = JSON.parse(data);
+                  }));
+                } else {
+                  infoJson = {
+                    "color": "3bit",
+                    "compression": true,
+                    "transparent": true
+                  };
+                  
+                }
                 
                 zip.folder("resources").forEach(function (relativePath, file){
                   console.log("iterating over", relativePath);
@@ -274,10 +803,30 @@
     handleFile(files[0]);
   }
 
+  function handleZipExport(){
+    rootZip.generateAsync({type:"base64"}).then(function (base64) {
+      var h = document.createElement('a');
+      h.href="data:application/zip;base64," + base64;
+      h.target = '_blank';
+      h.download = "watchface.zip";
+      h.click();
+    });
+  }
 
+     
+  document.getElementById("btnSaveFace").addEventListener("click", function() {
+    var h = document.createElement('a');
+    h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(faceJson));    
+    h.target = '_blank';
+    h.download = "face.json";
+    h.click();
+  });
       
   document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
+  document.getElementById('btnSaveZip').addEventListener('click', handleZipExport, false);
   document.getElementById('btnSave').disabled = true;
+  document.getElementById('btnSaveFace').disabled = true;
+  document.getElementById('btnSaveZip').disabled = true;
   document.getElementById('btnUpload').disabled = true;
       
    </script>
