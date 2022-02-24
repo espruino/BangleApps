@@ -7,7 +7,7 @@ w = (g.getWidth()-24)/2;
 
 gps_course = {};
 
-var settings = require("Storage").readJSON('openwind.json', 1) || {};
+var settings = require("Storage").readJSON('openwindsettings.json', 1) || {};
 
 i = 0;
 hullpoly = [];
