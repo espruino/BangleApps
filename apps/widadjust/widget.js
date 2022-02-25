@@ -25,7 +25,7 @@
   let settings;
   let saved;
 
-  let lastClockCheckTime = Date.now();;
+  let lastClockCheckTime = Date.now();
   let lastClockErrorUpdateTime;
 
   let clockError;
