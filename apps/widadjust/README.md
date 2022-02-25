@@ -50,3 +50,8 @@ function adjustedNow() {
   return WIDGETS.adjust ? WIDGETS.adjust.now() : Date.now();
 }
 ```
+
+## Acknowledgment
+
+Uses [Clock Settings](https://icons8.com/icon/tQvI71EfIWy3/clock-settings)
+icon by [Icons8](https://icons8.com).
