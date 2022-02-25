@@ -1,6 +1,6 @@
 { "id": "daisy",
   "name": "Daisy",
-  "version":"0.01",
+  "version":"0.02",
   "dependencies": {"mylocation":"app"},
   "description": "A clock based on the Pastel clock with large ring guage for steps",
   "icon": "app.png",
@@ -10,6 +10,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"daisy.app.js","url":"app.js"},
-    {"name":"daisy.img","url":"app-icon.js","evaluate":true}
-  ]
+    {"name":"daisy.img","url":"app-icon.js","evaluate":true},
+    {"name":"daisy.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"daisy.json"}]
 }
