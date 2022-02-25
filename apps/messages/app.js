@@ -75,9 +75,13 @@ function getPosImage() {
 function getNegImage() {
   return atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA=");
 }
+/*
+* icons should be 24x24px with 1bpp colors and transparancy
+*/
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
+  if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
   if (s=="facebook") return getFBIcon();
   if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
@@ -104,6 +108,7 @@ function getMessageImage(msg) {
 function getMessageImageCol(msg,def) {
   return {
     // generic colors, using B2-safe colors
+    "alarm": "#fff",
     "calendar": "#f00",
     "mail": "#ff0",
     "music": "#f0f",
