@@ -5,4 +5,4 @@
 0.23: Customizer! Unused fonts no longer take up precious memory.
 0.24: Added previews to the customizer.
 0.25: Fixed a bug that would let widgets change the color of the clock.
-0.26: Time now works with locale formatting
+0.26: Time formatted to locale
