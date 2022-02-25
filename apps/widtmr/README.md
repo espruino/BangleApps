@@ -41,3 +41,7 @@ WIDGETS["widtmr"].decreaseTimer(5);
 
 [David Peer](https://github.com/peerdavid)
  forked from Chrono Widget of [Purple-Tentacle](https://github.com/Purple-Tentacle)
+
+
+# Thanks to...
+<a href="https://www.flaticon.com/free-icons/time" title="time icons">Time icon created by CreativeCons - Flaticon</a>
