@@ -1,8 +1,19 @@
+/*
+ * This is a fork of the Chrono Widget, but implements a
+ * simpler UI which to be able to set a timer faster with
+ * less interaction. Additionally, it exposes some functions
+ * that can be used by other apps or clocks to easily
+ * implement a timer. It is used e.g. by lcars or notanalog.
+ *
+ * Creator: David Peer
+ * Date: 02/2022
+ */
+
 Bangle.loadWidgets();
 
 
 const storage = require('Storage');
-let settingsChronowid;
+let settings;
 
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
@@ -13,15 +24,15 @@ const cy = parseInt(screenHeight/2);
 function updateSettings() {
   var now = new Date();
   const goal = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-    now.getHours(), now.getMinutes() + settingsChronowid.minutes, now.getSeconds());
-  settingsChronowid.goal = goal.getTime();
-  storage.writeJSON('chronosimplewid.json', settingsChronowid);
-  if (WIDGETS["chronowid"]) WIDGETS["chronowid"].reload();
+    now.getHours(), now.getMinutes() + settings.minutes, now.getSeconds());
+  settings.goal = goal.getTime();
+  storage.writeJSON('widtmr.json', settings);
+  if (WIDGETS["widtmr"]) WIDGETS["widtmr"].reload();
 }
 
 
 function resetSettings() {
-  settingsChronowid = {
+  settings = {
     hours : 0,
     minutes : 0,
     seconds : 0,
@@ -33,8 +44,8 @@ function resetSettings() {
 }
 
 
-settingsChronowid = storage.readJSON('chronosimplewid.json',1);
-if (!settingsChronowid) resetSettings();
+settings = storage.readJSON('widtmr.json',1);
+if (!settings) resetSettings();
 
 
 setWatch(_=>load(), BTN1);
@@ -44,10 +55,10 @@ function draw(){
 
   g.setFontAlign(0, 0, 0);
   g.setFont("Vector", 32).setFontAlign(0,-1);
-  var text = settingsChronowid.minutes + " min.";
+  var text = settings.minutes + " min.";
   var rectWidth = parseInt(g.stringWidth(text) / 2);
 
-  if(settingsChronowid.started){
+  if(settings.started){
     g.setColor("#ff0000");
   } else {
     g.setColor(g.theme.fg);
@@ -70,25 +81,25 @@ Bangle.on('touch', function(btn, e){
   var isLower = e.y > lower;
 
   if(isRight){
-    settingsChronowid.minutes += 1;
+    settings.minutes += 1;
     Bangle.buzz(40, 0.3);
   } else if(isLeft){
-    settingsChronowid.minutes -= 1;
+    settings.minutes -= 1;
     Bangle.buzz(40, 0.3);
   } else if(isUpper){
-    settingsChronowid.minutes += 5;
+    settings.minutes += 5;
     Bangle.buzz(40, 0.3);
   } else if(isLower){
-    settingsChronowid.minutes -= 5;
+    settings.minutes -= 5;
     Bangle.buzz(40, 0.3);
   } else {
-    settingsChronowid.started = !settingsChronowid.started;
+    settings.started = !settings.started;
     Bangle.buzz(120, 0.6);
   }
 
-  if(settingsChronowid.minutes <= 0){
-    settingsChronowid.minutes = 0;
-    settingsChronowid.started = false;
+  if(settings.minutes <= 0){
+    settings.minutes = 0;
+    settings.started = false;
   }
 
   updateSettings();

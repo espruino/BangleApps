@@ -1,0 +1,17 @@
+{
+  "id": "widtmr",
+  "name": "Timer Widget",
+  "shortName": "Timer Widget",
+  "version": "0.01",
+  "description": "Fork from Chrono Widget with a simpler UI and a lib for other apps.",
+  "icon": "app.png",
+  "tags": "tool,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widtmr.wid.js","url":"widget.js"},
+    {"name":"widtmr.app.js","url":"app.js"},
+    {"name":"widtmr.img","url":"app-icon.js","evaluate":true}
+  ]
+}
