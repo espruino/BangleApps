@@ -40,4 +40,4 @@ WIDGETS["widtmr"].decreaseTimer(5);
 # Creator
 
 [David Peer](https://github.com/peerdavid)
- forked from [Purple-Tentacle](https://github.com/Purple-Tentacle)
+ forked from Chrono Widget of [Purple-Tentacle](https://github.com/Purple-Tentacle)
