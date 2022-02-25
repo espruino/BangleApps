@@ -7,7 +7,7 @@
   "icon": "app.png",
   "tags": "tool,widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"}, {"url": "screenshot_2.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"widtmr.wid.js","url":"widget.js"},
