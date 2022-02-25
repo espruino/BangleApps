@@ -1,13 +1,17 @@
+const SETTINGSFILE = "smclock.json";
 const background = {
-  width : 176, height : 176, bpp : 3,
-  transparent : 1,
+  width : 176, height : 176, bpp : 3, transparent : 1,
   buffer : require("heatshrink").decompress(atob("/4A/AH4ACUb8H9MkyVJAThB/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INP/AH4A/AAX8Yz4Afn5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INI="))
 };
-
+const monthName = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-var level = -1;
 
-function ISO8601_week_no(date) { //copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
+// dynamic variables
+var batLevel = -1;
+var batColor = [0,0,0];
+
+// copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
+function ISO8601_week_no(date) {
     var tdt = new Date(date.valueOf());
     var dayn = (date.getDay() + 6) % 7;
     tdt.setDate(tdt.getDate() - dayn + 3);
@@ -24,8 +28,8 @@ function d02(value) {
 }
 
 function pollBattery() {
-  level = E.getBattery();
-  return level;
+  batLevel = E.getBattery();
+  return batLevel;
 }
 
 function getBatteryColor(level) {
@@ -100,7 +104,7 @@ Bangle.on('lcdPower',on=>{
     drawInterval = setInterval(draw, 10000);
     
     pollBattery();
-    draw(); // draw immediately
+    draw();
   }
 });
 
