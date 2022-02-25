@@ -15,7 +15,7 @@ started / stopped.
 ![](description.png)
 
 
-# Lib
+# Library for other Apps
 Different functions are exposed to integrate a timer
 into your own app.
 
@@ -28,20 +28,25 @@ The following functions are available:
 
 Example to increase the timer by 5 and ensure that its started:
 ```Javascript
+Bangle.loadWidgets();
+...
 WIDGETS["widtmr"].increaseTimer(5);
 WIDGETS["widtmr"].setStarted(true);
 ```
 
 Example to decrease the timer. This also disables the timer if time <= 0.:
 ```Javascript
+Bangle.loadWidgets();
+...
 WIDGETS["widtmr"].decreaseTimer(5);
 ```
 
 # Creator
 
 [David Peer](https://github.com/peerdavid)
- forked from Chrono Widget of [Purple-Tentacle](https://github.com/Purple-Tentacle)
 
 
 # Thanks to...
-<a href="https://www.flaticon.com/free-icons/time" title="time icons">Time icon created by CreativeCons - Flaticon</a>
+Forked from Chrono Widget of [Purple-Tentacle](https://github.com/Purple-Tentacle)
+
+Time icon created by <a href="https://www.flaticon.com/free-icons/time" title="time icons">CreativeCons - Flaticon</a>
