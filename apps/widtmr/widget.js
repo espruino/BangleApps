@@ -34,6 +34,18 @@
   }
 
 
+  function updateSettings(){
+    var now = new Date();
+    const goal = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+    now.getHours(), now.getMinutes() + settings.minutes, now.getSeconds());
+    settings.goal = goal.getTime();
+
+    settings.goal = goal.getTime();
+    storage.writeJSON('widtmr.json', settings);
+    WIDGETS["widtmr"].reload();
+  }
+
+
   /*
    * Add the widgets and functions for other apps
    */
@@ -92,6 +104,32 @@
   }, isStarted: function(){
     settings = storage.readJSON("widtmr.json",1)||{started: false};
     return settings.started;
+
+  }, setStarted: function(started){
+    settings.started=started;
+    updateSettings();
+
+  }, increaseTimer: function(m){
+    settings.minutes += m;
+    updateSettings();
+
+  }, decreaseTimer: function(m){
+    settings.minutes -= m;
+    if(settings.minutes <= 0){
+      settings.started=false;
+      settings.minutes=0;
+    }
+    updateSettings();
+
+  }, getRemainingMinutes: function(){
+    settings = storage.readJSON("widtmr.json",1)||{started: false};
+    if(!settings.started){
+      return -1;
+    }
+
+    var now = new Date();
+    var diff = settings.goal - now;
+    return  Math.floor(diff / (1000*60));
   }
 
 };

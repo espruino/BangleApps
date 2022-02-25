@@ -1,4 +1,6 @@
 /*
+ * TIMER WIDGET
+ *
  * This is a fork of the Chrono Widget, but implements a
  * simpler UI which to be able to set a timer faster with
  * less interaction. Additionally, it exposes some functions
@@ -18,7 +20,7 @@ let settings;
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const cx = parseInt(screenWidth/2);
-const cy = parseInt(screenHeight/2);
+const cy = parseInt(screenHeight/2)-12;
 
 
 function updateSettings() {

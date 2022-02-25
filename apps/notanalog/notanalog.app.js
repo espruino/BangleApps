@@ -291,7 +291,6 @@ function drawSleep(){
 function draw(fastUpdate){
     // Execute handlers
     handleState(fastUpdate);
-    handleAlarm();
 
     if(state.sleep){
         drawSleep();
@@ -388,70 +387,27 @@ function queueDraw() {
 /*
  * Handle alarm
  */
-function getCurrentTimeInMinutes(){
-    return Math.floor(Date.now() / (1000*60));
-}
-
 function isAlarmEnabled(){
-    return settings.alarm >= 0;
+    return WIDGETS["widtmr"].isStarted();
 }
 
 function getAlarmMinutes(){
-    var currentTime = getCurrentTimeInMinutes();
-    return settings.alarm - currentTime;
+    return WIDGETS["widtmr"].getRemainingMinutes();
 }
-
-function handleAlarm(){
-    if(!isAlarmEnabled()){
-        return;
-    }
-
-    if(getAlarmMinutes() > 0){
-        return;
-    }
-
-    // Alarm
-    var t = 300;
-    Bangle.buzz(t, 1)
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
-    .then(() => {
-        // Update alarm state to disabled
-        settings.alarm = -1;
-        storage.writeJSON(SETTINGS_FILE, settings);
-    });
-}
-
 
 function increaseAlarm(){
-    if(isAlarmEnabled()){
-        settings.alarm += 5;
-    } else {
-        settings.alarm = getCurrentTimeInMinutes() + 5;
-    }
-
-    storage.writeJSON(SETTINGS_FILE, settings);
+    WIDGETS["widtmr"].increaseTimer(5);
+    WIDGETS["widtmr"].setStarted(true);
 }
 
-
 function decreaseAlarm(){
-    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-        settings.alarm -= 5;
-    } else {
-        settings.alarm = -1;
-    }
-
-    storage.writeJSON(SETTINGS_FILE, settings);
+    WIDGETS["widtmr"].decreaseTimer(5);
 }
 
 function feedback(){
     Bangle.buzz(40, 0.6);
 }
+
 
 /*
  * Lets start widgets, listen for btn etc.

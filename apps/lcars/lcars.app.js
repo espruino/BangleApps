@@ -480,9 +480,6 @@ function draw(){
     // Queue draw first to ensure that its called in one minute again.
     queueDraw();
 
-    // First handle alarm to show this correctly afterwards
-    handleAlarm();
-
     // Next draw the watch face
     g.reset();
     g.clearRect(0, 0, g.getWidth(), g.getHeight());
@@ -561,43 +558,21 @@ function getWeather(){
 /*
  * Handle alarm
  */
-function getCurrentTimeInMinutes(){
-  return Math.floor(Date.now() / (1000*60));
-}
-
 function isAlarmEnabled(){
- return settings.alarm >= 0;
+  return WIDGETS["widtmr"].isStarted();
 }
 
 function getAlarmMinutes(){
-  var currentTime = getCurrentTimeInMinutes();
-  return settings.alarm - currentTime;
+  return WIDGETS["widtmr"].getRemainingMinutes();
 }
 
-function handleAlarm(){
-  if(!isAlarmEnabled()){
-    return;
-  }
+function increaseAlarm(){
+  WIDGETS["widtmr"].increaseTimer(5);
+  WIDGETS["widtmr"].setStarted(true);
+}
 
-  if(getAlarmMinutes() > 0){
-    return;
-  }
-
-  // Alarm
-  var t = 300;
-  Bangle.buzz(t, 1)
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
-  .then(() => {
-    // Update alarm state to disabled
-    settings.alarm = -1;
-    storage.writeJSON(SETTINGS_FILE, settings);
-  });
+function decreaseAlarm(){
+  WIDGETS["widtmr"].decreaseTimer(5);
 }
 
 
@@ -625,26 +600,6 @@ Bangle.on('charging',function(charging) {
 });
 
 
-function increaseAlarm(){
-  if(isAlarmEnabled()){
-    settings.alarm += 5;
-  } else {
-    settings.alarm = getCurrentTimeInMinutes() + 5;
-  }
-
-  storage.writeJSON(SETTINGS_FILE, settings);
-}
-
-
-function decreaseAlarm(){
-  if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-    settings.alarm -= 5;
-  } else {
-    settings.alarm = -1;
-  }
-
-  storage.writeJSON(SETTINGS_FILE, settings);
-}
 
 function feedback(){
   Bangle.buzz(40, 0.3);
