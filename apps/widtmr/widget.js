@@ -129,7 +129,7 @@
 
     var now = new Date();
     var diff = settings.goal - now;
-    return  Math.floor(diff / (1000*60));
+    return  Math.ceil(diff / (1000*60));
   }
 
 };
