@@ -1,4 +1,4 @@
-​var locale = require("locale");
+var locale = require("locale");
 var fontColor = g.theme.dark ? "#0f0" : "#000";
 var paddingY = 2;
 var font6x8At4Size = 32;
@@ -75,10 +75,9 @@ function drawHRM(pos){
 function drawActivity(pos){
   clearField(pos);
   var health = Bangle.getHealthStatus('last');
-  var steps_formated = ">Activity: " + parseInt(health.movement/10);
+  var steps_formated = ">Motion: " + parseInt(health.movement);
   drawLine(steps_formated, pos);
 }
-
 
 function draw(){
   var curPos = 1;
@@ -107,7 +106,6 @@ function draw(){
   }
   drawInput(now, curPos);
 }
-
 
 Bangle.on('HRM',function(hrmInfo) {
   if(hrmInfo.confidence >= settings.HRMinConfidence)
