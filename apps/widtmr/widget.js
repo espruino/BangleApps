@@ -130,6 +130,15 @@
     var now = new Date();
     var diff = settings.goal - now;
     return  Math.ceil(diff / (1000*60));
+
+  }, getRemainingTime: function(){
+    if(!settings.started){
+      return;
+    }
+
+    var now = new Date();
+    var diff = settings.goal - now;
+    return getTime(diff);
   }
 
 };

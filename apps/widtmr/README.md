@@ -25,6 +25,7 @@ The following functions are available:
 - increaseTimer(int) -> void
 - decreaseTimer(int) -> void
 - getRemainingMinutes() -> int
+- getRemainingTime() -> DateTime
 
 Example to increase the timer by 5 and ensure that its started:
 ```Javascript
