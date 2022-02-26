@@ -396,6 +396,10 @@ function getAlarmMinutes(){
 }
 
 function increaseAlarm(){
+    if(!isAlarmEnabled()){
+        WIDGETS["widtmr"].resetTimer();
+    }
+
     WIDGETS["widtmr"].increaseTimer(5);
     WIDGETS["widtmr"].setStarted(true);
 }

@@ -22,25 +22,36 @@ into your own app.
 The following functions are available:
 - isStarted() -> boolean
 - setStarted(boolean) -> void
+- resetTimer() -> void
 - increaseTimer(int) -> void
 - decreaseTimer(int) -> void
 - getRemainingMinutes() -> int
 - getRemainingTime() -> DateTime
 - getRemainingTimeStr() -> str
 
-Example to increase the timer by 5 and ensure that its started:
+For example if we want to increase the timer by +5 minutes each time
+the touch event is fired:
 ```Javascript
 Bangle.loadWidgets();
 ...
-WIDGETS["widtmr"].increaseTimer(5);
-WIDGETS["widtmr"].setStarted(true);
+Bangle.on('touch', function(btn, e){
+  // Set to zero if alarm was disabled before
+  if(!isAlarmEnabled()){
+    WIDGETS["widtmr"].resetTimer();
+  }
+
+  WIDGETS["widtmr"].increaseTimer(5);
+  WIDGETS["widtmr"].setStarted(true);
+});
 ```
 
-Example to decrease the timer. This also disables the timer if time <= 0.:
+Example to decrease the timer by 5 and stop if 0 is reached:
 ```Javascript
 Bangle.loadWidgets();
 ...
-WIDGETS["widtmr"].decreaseTimer(5);
+Bangle.on('touch', function(btn, e){
+    WIDGETS["widtmr"].decreaseTimer(5);
+}
 ```
 
 # Creator

@@ -567,6 +567,11 @@ function getAlarmMinutes(){
 }
 
 function increaseAlarm(){
+  // Set to zero if alarm was disabled before
+  if(!isAlarmEnabled()){
+    WIDGETS["widtmr"].resetTimer();
+  }
+
   WIDGETS["widtmr"].increaseTimer(5);
   WIDGETS["widtmr"].setStarted(true);
 }

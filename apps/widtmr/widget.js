@@ -121,6 +121,11 @@
     }
     updateSettings();
 
+  }, resetTimer: function(){
+    settings.started=false;
+    settings.minutes = 0;
+    updateSettings();
+
   }, getRemainingMinutes: function(){
     settings = storage.readJSON("widtmr.json",1)||{started: false};
     if(!settings.started){
@@ -129,7 +134,7 @@
 
     var now = new Date();
     var diff = settings.goal - now;
-    return  Math.ceil(diff / (1000*60));
+    return  Math.round(diff / (1000*60));
 
   }, getRemainingTimeStr: function(){
     settings = storage.readJSON("widtmr.json",1)||{started: false};
