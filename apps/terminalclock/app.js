@@ -1,6 +1,5 @@
-var locale = require("locale");
+​var locale = require("locale");
 var fontColor = g.theme.dark ? "#0f0" : "#000";
-var startY = 24;
 var paddingY = 2;
 var font6x8At4Size = 32;
 var font6x8At2Size = 18;
@@ -15,25 +14,25 @@ function setFontSize(pos){
 }
 
 function clearField(pos){
-  var yStartPos = startY + 
+  var yStartPos = Bangle.appRect.y + 
       paddingY * (pos - 1) + 
       font6x8At4Size * Math.min(1, pos-1) + 
       font6x8At2Size * Math.max(0, pos-2);
-    var yEndPos = startY + 
+    var yEndPos = Bangle.appRect.y + 
       paddingY * (pos - 1) + 
       font6x8At4Size * Math.min(1, pos) + 
       font6x8At2Size * Math.max(0, pos-1);
-    g.clearRect(0, yStartPos, 240, yEndPos);
+    g.clearRect(Bangle.appRect.x, yStartPos, Bangle.appRect.x2, yEndPos);
 }
 
 function clearWatchIfNeeded(now){
   if(now.getMinutes() % 10 == 0)
-    g.clearRect(0, startY, 240, 240);
+    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
 }
 
 function drawLine(line, pos){
   setFontSize(pos);
-  var yPos = startY + 
+  var yPos = Bangle.appRect.y + 
       paddingY * (pos - 1) + 
       font6x8At4Size * Math.min(1, pos-1) + 
       font6x8At2Size * Math.max(0, pos-2);
@@ -127,12 +126,12 @@ var settings = Object.assign({
   showActivity: true,
   showStepCount: true,
 }, require('Storage').readJSON("terminalclock.json", true) || {});
-// draw immediately at first
-draw();
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+// draw immediately at first
+draw();
 
 var secondInterval = setInterval(draw, 10000);
