@@ -5,5 +5,5 @@ It can display :
 - time
 - date
 - hrm
-- activity
+- motion
 - steps
