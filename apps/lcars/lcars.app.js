@@ -567,7 +567,7 @@ function isWidtmrAvailable(){
   try {
     WIDGETS["widtmr"].isStarted();
     return true;
-  } catch {
+  } catch(e) {
     // In case the widtmr widget is not installed, the timer can
     // not be used...
     return false;
