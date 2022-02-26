@@ -596,7 +596,7 @@ function increaseAlarm(){
 
   // Set to zero if alarm was disabled before
   if(!isAlarmEnabled()){
-    WIDGETS["widtmr"].setTime(0);
+    WIDGETS["widtmr"].setTimer(0);
   }
 
   WIDGETS["widtmr"].increaseTimer(5);

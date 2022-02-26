@@ -21,7 +21,7 @@ into your own app.
 The following functions are available:
 - isStarted() -> boolean
 - setStarted(boolean) -> void
-- setTime(t) -> void
+- setTimer(t) -> void
 - increaseTimer(int) -> void
 - decreaseTimer(int) -> void
 - getRemainingMinutes() -> int
@@ -37,7 +37,7 @@ Bangle.on('touch', function(btn, e){
   // Set to zero if alarm was disabled before. Otherwise
   // it starts from the last setting made by the user.
   if(!isAlarmEnabled()){
-    WIDGETS["widtmr"].setTime(0);
+    WIDGETS["widtmr"].setTimer(0);
   }
 
   WIDGETS["widtmr"].increaseTimer(5);

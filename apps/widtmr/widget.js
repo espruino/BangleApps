@@ -121,7 +121,7 @@
     }
     updateSettings();
 
-  }, setTime: function(t){
+  }, setTimer: function(t){
     settings.minutes = Math.max(0, t);
     settings.started = t > 0;
     updateSettings();
