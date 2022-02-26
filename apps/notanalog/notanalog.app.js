@@ -376,28 +376,56 @@ Bangle.on('touch', function(btn, e){
  * Some helpers
  */
 function queueDraw() {
+
+    // Faster updates during alarm to ensure that it is
+    // shown correctly...
+    var timeout = isAlarmEnabled() ? 10000 : 60000;
+
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw(true);
-    }, 60000 - (Date.now() % 60000));
+      draw();
+    }, timeout - (Date.now() % timeout));
 }
 
 
 /*
  * Handle alarm
  */
+function isWidtmrAvailable(){
+    try {
+        WIDGETS["widtmr"].isStarted();
+        return true;
+    } catch {
+        // In case the widtmr widget is not installed, the timer can
+        // not be used...
+        return false;
+    }
+}
+
 function isAlarmEnabled(){
+    if(!isWidtmrAvailable()){
+        return false;
+    }
+
     return WIDGETS["widtmr"].isStarted();
 }
 
 function getAlarmMinutes(){
+    if(!isWidtmrAvailable()){
+        return "-";
+    }
     return WIDGETS["widtmr"].getRemainingMinutes();
 }
 
 function increaseAlarm(){
+    if(!isWidtmrAvailable()){
+        return;
+    }
+
+    // Set to zero if alarm was disabled before
     if(!isAlarmEnabled()){
-        WIDGETS["widtmr"].resetTimer();
+        WIDGETS["widtmr"].setTime(0);
     }
 
     WIDGETS["widtmr"].increaseTimer(5);
@@ -405,6 +433,10 @@ function increaseAlarm(){
 }
 
 function decreaseAlarm(){
+    if(!isWidtmrAvailable()){
+        return;
+    }
+
     WIDGETS["widtmr"].decreaseTimer(5);
 }
 

@@ -22,7 +22,7 @@ into your own app.
 The following functions are available:
 - isStarted() -> boolean
 - setStarted(boolean) -> void
-- resetTimer() -> void
+- setTime(t) -> void
 - increaseTimer(int) -> void
 - decreaseTimer(int) -> void
 - getRemainingMinutes() -> int
@@ -37,7 +37,7 @@ Bangle.loadWidgets();
 Bangle.on('touch', function(btn, e){
   // Set to zero if alarm was disabled before
   if(!isAlarmEnabled()){
-    WIDGETS["widtmr"].resetTimer();
+    WIDGETS["widtmr"].setTime(0);
   }
 
   WIDGETS["widtmr"].increaseTimer(5);
@@ -53,6 +53,8 @@ Bangle.on('touch', function(btn, e){
     WIDGETS["widtmr"].decreaseTimer(5);
 }
 ```
+
+You can find even more examples in the lcars or notanalog app ...
 
 # Creator
 
