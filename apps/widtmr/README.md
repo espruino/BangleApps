@@ -1,10 +1,9 @@
 # Timer Widget
 
 This is a fork of the Chrono Widget, but implements a
-simpler UI which to be able to set a timer faster with
-less interaction. Additionally, it exposes some functions
-that can be used by other apps or clocks to easily
-implement a timer. It is used e.g. by lcars or notanalog.
+simpler UI. Additionally, it exposes functions for other
+apps or clocks such that they can easily implement a timer.
+Currently, it is used by lcars and notanalog.
 
 # Overview
 If you open the app, you can simply control the timer
@@ -15,7 +14,7 @@ started / stopped.
 ![](description.png)
 
 
-# Library for other Apps
+# Lib
 Different functions are exposed to integrate a timer
 into your own app.
 
@@ -35,7 +34,8 @@ the touch event is fired:
 Bangle.loadWidgets();
 ...
 Bangle.on('touch', function(btn, e){
-  // Set to zero if alarm was disabled before
+  // Set to zero if alarm was disabled before. Otherwise
+  // it starts from the last setting made by the user.
   if(!isAlarmEnabled()){
     WIDGETS["widtmr"].setTime(0);
   }
@@ -54,10 +54,10 @@ Bangle.on('touch', function(btn, e){
 }
 ```
 
-You can find even more examples in the lcars or notanalog app ...
+You can find implementations and usages in the lcars or notanalog app.
+
 
 # Creator
-
 [David Peer](https://github.com/peerdavid)
 
 
