@@ -131,16 +131,30 @@
     var diff = settings.goal - now;
     return  Math.ceil(diff / (1000*60));
 
-  }, getRemainingTime: function(){
+  }, getRemainingTimeStr: function(){
+    settings = storage.readJSON("widtmr.json",1)||{started: false};
     if(!settings.started){
       return;
     }
 
     var now = new Date();
     var diff = settings.goal - now;
-    return getTime(diff);
-  }
+    var timeStr = getTime(diff);
+    if(diff < 3600000){
+      timeStr = timeStr.substring(3); // remove hour part 00:00:00 -> 00:00
+    }
+    return timeStr;
 
+  }, getRemainingTime: function(){
+    settings = storage.readJSON("widtmr.json",1)||{started: false};
+    if(!settings.started){
+      return;
+    }
+
+    var now = new Date();
+    var diff = settings.goal - now;
+    return diff;
+  }
 };
 
   // set width correctly, start countdown each second
