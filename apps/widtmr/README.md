@@ -15,8 +15,8 @@ started / stopped.
 
 
 # Lib
-Different functions are exposed to integrate a timer
-into your own app.
+Different functions are exposed by widtmr which enables other
+apps to directly use and integrate this functionality:
 
 The following functions are available:
 - isStarted() -> boolean
