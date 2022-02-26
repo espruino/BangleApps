@@ -119,6 +119,7 @@ Bangle.on("GPS", function(fix) {
 Bangle.on("step", function(steps) {
   if (!state.active) return;
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
+  state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
 });
 Bangle.on("HRM", function(h) {

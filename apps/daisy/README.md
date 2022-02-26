@@ -16,7 +16,6 @@ Forum](http://forum.espruino.com/microcosms/1424/)
 * Uses the [BloggerSansLight](https://www.1001fonts.com/rounded-fonts.html?page=3) font, which if free for commercial use
 
 ## Future Development
-* Add settings menu to change primary clock color
 * Add a heart rate option in the information line that turns on when selected
 * Use mini icons in the information line rather that text
 * Add weather icons as per Pastel clock

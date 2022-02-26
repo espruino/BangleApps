@@ -21,13 +21,11 @@
 */
 
 var Layout = require("Layout");
+var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
-var colBg = g.theme.dark ? "#141":"#4f4";
-var colSBg1 = g.theme.dark ? "#121":"#cFc";
-var colSBg2 = g.theme.dark ? "#000":"#9F9";
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -77,9 +75,13 @@ function getPosImage() {
 function getNegImage() {
   return atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA=");
 }
+/*
+* icons should be 24x24px with 1bpp colors and transparancy
+*/
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
+  if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
   if (s=="facebook") return getFBIcon();
   if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
@@ -94,6 +96,7 @@ function getMessageImage(msg) {
   if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
   if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
   if (s=="sms message") return getNotificationImage();
+  if (s=="threema") return atob("GBjB/4Yx//8AAAAAAAAAAAAAfgAB/4AD/8AH/+AH/+AP//AP2/APw/APw/AHw+AH/+AH/8AH/4AH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
@@ -105,6 +108,7 @@ function getMessageImage(msg) {
 function getMessageImageCol(msg,def) {
   return {
     // generic colors, using B2-safe colors
+    "alarm": "#fff",
     "calendar": "#f00",
     "mail": "#ff0",
     "music": "#f0f",
@@ -122,6 +126,7 @@ function getMessageImageCol(msg,def) {
     "outlook mail": "#0072c6",
     "skype": "#00aff0",
     "slack": "#e51670",
+    "threema": "#000",
     "telegram": "#0088cc",
     "twitter": "#1da1f2",
     "whatsapp": "#4fce5d",
@@ -143,8 +148,8 @@ function showMapMessage(msg) {
     eta = m[2];
   } else target=msg.body;
   layout = new Layout({ type:"v", c: [
-    {type:"txt", font:fontMedium, label:target, bgCol:colBg, fillx:1, pad:2 },
-    {type:"h", bgCol:colBg, fillx:1, c: [
+    {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 },
+    {type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
     ]},
@@ -168,27 +173,56 @@ function showMapMessage(msg) {
 }
 
 function showMusicMessage(msg) {
+  var updateLabelsInterval;
+  var trackScrollOffset = 0;
+  var artistScrollOffset = 0;
+  var albumScrollOffset = 0;
+  var trackName = '';
+  var artistName = '';
+  var albumName = '';
+
   function fmtTime(s) {
     var m = Math.floor(s/60);
     s = (parseInt(s%60)).toString().padStart(2,0);
     return m+":"+s;
   }
+  function reduceStringAndPad(text, offset, maxLen) {
+    var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
+    return text.substr(offset, sliceLength).padEnd(maxLen, " ");
+  }
+
 
   function back() {
+    clearInterval(updateLabelsInterval);
     msg.new = false;
     saveMessages();
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
   }
+  function updateLabels() {
+    trackName = reduceStringAndPad(msg.track, trackScrollOffset, 13);
+    artistName = reduceStringAndPad(msg.artist, artistScrollOffset, 21);
+    albumName = reduceStringAndPad(msg.album, albumScrollOffset, 21);
+
+    trackScrollOffset++;
+    artistScrollOffset++;
+    albumScrollOffset++;
+
+    if ((trackScrollOffset + 13) > msg.track.length) trackScrollOffset = 0;
+    if ((artistScrollOffset + 21) > msg.artist.length) artistScrollOffset = 0;
+    if ((albumScrollOffset + 21) > msg.album.length) albumScrollOffset = 0;
+  }
+  updateLabels();
+
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:colBg,  c: [
+    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
       { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
-        { type:"txt", font:fontMedium, label:msg.artist, pad:2 },
-        { type:"txt", font:fontMedium, label:msg.album, pad:2 }
+        { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:artistName, pad:2, id:"artist" },
+        { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:albumName, pad:2, id:"album" }
       ]}
     ]},
-    {type:"txt", font:fontLarge, label:msg.track, fillx:1, filly:1, pad:2 },
+    {type:"txt", font:fontLarge, bgCol:g.theme.bg, label:trackName, fillx:1, filly:1, pad:2, id:"track" },
     Bangle.musicControl?{type:"h",fillx:1, c: [
       {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
       {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
@@ -198,6 +232,14 @@ function showMusicMessage(msg) {
   ]});
   g.clearRect(Bangle.appRect);
   layout.render();
+
+  updateLabelsInterval = setInterval(function() {
+    updateLabels();
+    layout.artist.label = artistName;
+    layout.album.label = albumName;
+    layout.track.label = trackName;
+    layout.render();
+  }, 400);
 }
 
 function showMessageScroller(msg) {
@@ -214,7 +256,9 @@ function showMessageScroller(msg) {
     // a function to draw a menu item
     draw : function(idx, r) {
       // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? colBg : g.theme.bg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
+      g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
+        setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
+        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
@@ -270,11 +314,29 @@ function showMessage(msgid) {
   var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
     var w = g.getWidth()-48;
-    if (g.setFont(titleFont).stringWidth(title) > w)
-      titleFont = fontMedium;
+    if (g.setFont(titleFont).stringWidth(title) > w) {
+      titleFont = fontBig;
+      if (settings.fontSize!=1 && g.setFont(titleFont).stringWidth(title) > w)
+        titleFont = fontMedium;
+    }
     if (g.setFont(titleFont).stringWidth(title) > w) {
       lines = g.wrapString(title, w);
       title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
+    }
+  }
+  // If body of message is only two lines long w/ large font, use large font.
+  var body=msg.body, bodyFont = fontLarge;
+  if (body) {
+    var w = g.getWidth()-10;
+    if (g.setFont(bodyFont).stringWidth(body) > w * 2) {
+      bodyFont = fontBig;
+      if (settings.fontSize!=1 && g.setFont(bodyFont).stringWidth(body) > w * 3)
+        bodyFont = fontMedium;
+    }
+    if (g.setFont(bodyFont).stringWidth(body) > w) {
+      lines = g.setFont(bodyFont).wrapString(msg.body, w);
+      var maxLines = Math.floor((g.getHeight()-110) / g.getFontHeight());
+      body = (lines.length>maxLines) ? lines.slice(0,maxLines).join("\n")+"..." : lines.join("\n");
     }
   }
   function goBack() {
@@ -303,27 +365,17 @@ function showMessage(msgid) {
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
     }});
   }
-  // If body of message is only two lines long w/ large font, use large font.
-  var body=msg.body, bodyFont = fontLarge, lines;
-  if (body) {
-    var w = g.getWidth()-48;
-    if (g.setFont(bodyFont).stringWidth(body) > w * 2)
-      bodyFont = fontMedium;
-    if (g.setFont(bodyFont).stringWidth(body) > w) {
-      lines = g.setFont(bodyFont).wrapString(msg.body, g.getWidth()-10);
-      body = (lines.length>4) ? lines.slice(0,4).join("\n")+"..." : lines.join("\n");
-    }
-  }
+
 
   layout = new Layout({ type:"v", c: [
-    {type:"h", fillx:1, bgCol:colBg,  c: [
+    {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
       { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
       { type:"v", fillx:1, c: [
-        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:colBg, fillx:1, pad:2, halign:1 },
-        title?{type:"txt", font:titleFont, label:title, bgCol:colBg, fillx:1, pad:2 }:{},
+        {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
+        title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
@@ -374,9 +426,8 @@ function checkMessages(options) {
     c : Math.max(MESSAGES.length+1,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx-1];
-      if (msg && msg.new) g.setBgColor(colBg);
-      else g.setBgColor((idx&1) ? colSBg1 : colSBg2);
-      g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1).setColor(g.theme.fg);
+      if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
+      else g.setColor(g.theme.fg);
       if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
@@ -391,18 +442,20 @@ function checkMessages(options) {
          .setColor(fg); // only color the icon
         x += 50;
       }
-      var m = msg.title+"\n"+msg.body;
-      if (msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
+      var m = msg.title+"\n"+msg.body, longBody=false;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
       if (body) {
         g.setFontAlign(-1,-1).setFont("6x8");
-        var l = g.wrapString(body, r.w-14);
+        var l = g.wrapString(body, r.w-(x+14));
         if (l.length>3) {
           l = l.slice(0,3);
           l[l.length-1]+="...";
         }
+        longBody = l.length>2;
         g.drawString(l.join("\n"), x+10,r.y+20);
       }
+      if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
+      g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
     select : idx => {
       if (idx==0) load();
@@ -422,7 +475,7 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setTimeout(() => {
-  var unreadTimeoutSecs = (require('Storage').readJSON("messages.settings.json", true) || {}).unreadTimeout;
+  var unreadTimeoutSecs = settings.unreadTimeout;
   if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
   if (unreadTimeoutSecs)
     unreadTimeout = setTimeout(function() {
