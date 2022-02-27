@@ -551,7 +551,7 @@ function draw(element, offset){
       }
       //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
     } catch (e){
-      print("Error during drawing of", current, "in", element, e);
+      print("Error during drawing of", current, "in", element, e, e.stack);
     }
   }
   //print("Finished drawing loop in", Date.now() - start);
@@ -588,28 +588,30 @@ function initialDraw(){
 
 function handleHrm(e){
   if (e.confidence > 70){
+    var change = pulse != e.bpm
     pulse = e.bpm;
     if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
       //print("Redrawing on HRM");
-      initialDraw();
+      changeFromEvent |= change;
     }
   }
 }
 
 function handlePressure(e){
+  var change = (alt != e.altitude) || (temp != e.temperature) || (press != e.pressure);
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
   if (!redrawEvents || redrawEvents.includes("pressure") && !Bangle.isLocked()){
     //print("Redrawing on pressure");
-    initialDraw();
+      changeFromEvent |= change;
   }
 }
 
 function handleCharging(e){
   if (!redrawEvents || redrawEvents.includes("charging") && !Bangle.isLocked()){
     //print("Redrawing on charging");
-    initialDraw();
+      changeFromEvent = true;
   }
 }
 
@@ -633,6 +635,8 @@ function setMatchedInterval(callable, time, intervalHandler){
 
 var unlockedDrawInterval;
 var lockedDrawInterval;
+
+var changeFromEvent = false;
 
 var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]) || 60000;
 var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000;
