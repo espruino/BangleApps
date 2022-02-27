@@ -1,3 +1,4 @@
 0.01: New App
 0.02: Allow drawing polys
 0.03: Allow partly importing Amazfit decompiler formatted watchfaces
+0.04: Allow writing all image data to separate file to save some RAM

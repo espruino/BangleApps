@@ -4,29 +4,47 @@ var resources = require("Storage").readJSON("imageclock.resources.json");
 function prepareImg(resource){
   //print("prepareImg: ", resource);
 
+  var result = cacheBuffers ? resource : {
+    width: resource.width,
+    height: resource.height,
+    bpp: resource.bpp
+  };
+  if (!cacheBuffers && resource.transparent) result.transparent = resource.transparent;
+
   if (resource.img){
-    resource.buffer = E.toArrayBuffer(atob(resource.img));
-    resource.img = undefined;
     //print("buffer from img");
+    result.buffer = E.toArrayBuffer(atob(resource.img));
+    result.img = undefined;
   } else if (resource.file){
-    resource.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
-    resource.file = undefined;
     //print("buffer from file");
-  } else if (resource.compressed){
-    resource.buffer = require("heatshrink").decompress(atob(resource.compressed));
-    resource.compressed = undefined;
+    result.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
+    result.file = undefined;
+  } else if (resource.compressed && (resource.dataOffset == undefined)){
     //print("buffer from compressed");
+    result.buffer = require("heatshrink").decompress(atob(resource.compressed));
+    result.compressed = undefined;
   } else if (resource.buffer){
     //print("buffer cached");
-    resource.buffer = resource.buffer;
+  } else if (resource.dataOffset !== undefined){
+    //print("buffer from data file");
+    if (resource.compressed){
+      result.buffer = require("heatshrink").decompress(atob(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength)));
+    } else {
+      result.buffer = E.toArrayBuffer(atob(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength)));
+    }
+    result.compressed = undefined;
+    result.dataOffset = undefined;
+    result.dataLength = undefined;
+  } else {
+    print("Could not get image data for resource", resource);
   }
-  
-  if (resource.paletteData){
+
+  if (result.paletteData){
     result.palette = new Uint16Array(resource.paletteData);
     result.paletteData = undefined;
   }
 
-  return resource;
+  return result;
 }
 
 function getByPath(object, path, lastElem){
@@ -609,6 +627,7 @@ var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]) || 60000;
 var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000;
 var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
 var redrawEvents = getByPath(face, ["Properties","Redraw","Events"]);
+var cacheBuffers = getByPath(face, ["Properties","CacheBuffers"]) || false;
 var events = getByPath(face, ["Properties","Events"]);
 
 var stepsgoal = 2000;

@@ -19,6 +19,12 @@
       <label for="useAmazefit">ALPHA: Decompiled Amazfit</label></br>
     </p>
 
+    <p>
+      Options:</br>
+      <input type="checkbox" id="useAmazefit" name="mode" checked/>
+      <label for="useDataFile">Use resource data file (image data not in RAM by default)</label></br>
+    </p>
+
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
     <p><b>or</b></p>
     <p>Select watchface zip file: </br><input type="file" id="zipLoader" name="zip"/></p><br/>
@@ -38,6 +44,8 @@
       var resultJson = {};
       var infoJson;
       var faceJson;
+      var resourceDataString = "";
+      var resourceDataOffset = 0;
       var handledFiles = 0;
       var expectedFiles = 0;
       var rootZip = new JSZip();
@@ -586,12 +594,22 @@
             performFileChanges().then(()=>{
               rootZip.file("face.json", JSON.stringify(faceJson, null, 2));
               rootZip.file("info.json", JSON.stringify(infoJson, null, 2));
+              
+              if (document.getElementById('useDataFile').checked){
+                moveData(resultJson);
+                console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
+              }
               document.getElementById('btnSave').disabled = false;
               document.getElementById('btnSaveFace').disabled = false;
               document.getElementById('btnSaveZip').disabled = false;
               document.getElementById('btnUpload').disabled = false;
             });
           } else {
+            
+            if (true){
+              moveData(resultJson);
+              console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
+            }
             document.getElementById('btnSave').disabled = false;
             document.getElementById('btnSaveFace').disabled = false;
             document.getElementById('btnUpload').disabled = false;
@@ -706,6 +724,30 @@
       };
       document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
      
+      function moveData(json){
+        console.log("MoveData for", json);
+        for (var k in json){
+          var c = json[k];
+          if (c.img){
+            var currentData = c.img;
+            delete c.img;
+            c.dataOffset = resourceDataOffset;
+            c.dataLength = currentData.length;
+            resourceDataString += currentData;
+            resourceDataOffset += currentData.length;
+          } else if (c.compressed){
+            var currentData = c.compressed;
+            c.compressed = true;
+            c.dataOffset = resourceDataOffset;
+            c.dataLength = currentData.length;
+            resourceDataString += currentData;
+            resourceDataOffset += currentData.length;
+          } else {
+            moveData(c);
+          }
+        }
+      }
+     
       document.getElementById("btnSave").addEventListener("click", function() {
         var h = document.createElement('a');
         h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(resultJson));    
@@ -714,6 +756,7 @@
         h.click();
       });
       document.getElementById("btnUpload").addEventListener("click", function() {
+        
         var appDef = {
           id : "imageclock",
           storage:[
@@ -723,6 +766,10 @@
             {name:"imageclock.img", url:"app-icon.js", evaluate:true},
           ]
         };
+        if (resourceDataString.length > 0){
+          appDef.storage.push({name:"imageclock.resources.data", content: resourceDataString});
+        }
+        
         
         console.log("Uploading app:", appDef);
         sendCustomizedApp(appDef);
