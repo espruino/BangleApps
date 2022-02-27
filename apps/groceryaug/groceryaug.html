@@ -69,6 +69,7 @@
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
+        products = [];
         getLines();
         alert($area.value);
         for(var i in $lines) {
