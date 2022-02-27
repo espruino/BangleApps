@@ -38,7 +38,6 @@
 
         xhr.addEventListener("readystatechange", function () {
           if (this.readyState === this.DONE) {
-            document.getElementById('laden').style.display="none";
             console.log(this.responseText);
             var antwort =JSON.parse(this.responseText);
             antwort_val = antwort["value"];
@@ -52,7 +51,6 @@
 
 
           xhr.send(data);
-          document.getElementById('laden').style.display="block";
       }
       
       document.getElementById('upload2').addEventListener('change', handleFileSelect, false);
