@@ -58,9 +58,10 @@
         event.preventDefault()
         
         for(var i in $lines) {
-          alert($lines[i]["name"]);
+          var curname = $lines[i]["name"];
+          alert(curname);
           products.push({
-            $lines[i]["name"],
+            curname,
             ok: false
           })
         }
