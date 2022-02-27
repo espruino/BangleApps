@@ -64,7 +64,7 @@ function update_target_HR(){
     g.drawString("+", 160, 10);
     g.drawString("GO", 150, 88);
     g.setFontAlign(0,0); // center font
-    g.drawString("target HR", 88,120);
+    g.drawString("target HR", 88,70);
     g.setFont("6x8", 1);
     g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 88,150);
   }
