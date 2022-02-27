@@ -207,7 +207,7 @@ function drawElement(pos, offset, path, lastElem){
       //print("drawImage from drawElement", image, pos, offset);
       var options={};
       if (pos.RotationValue){
-        options.rotate = scaledown(numbers[pos.RotationValue](), pos.MinRotationValue, pos.MaxRotationValue);
+        options.rotate = scaledown(pos.RotationValue, pos.MinRotationValue, pos.MaxRotationValue);
         options.rotate = options.rotate * Math.PI* 2;
       }
       if (pos.Scale){
@@ -381,14 +381,14 @@ function updateColors(element, offset){
 
 function scaledown(value, min, max){
   //print("scaledown", value, min, max);
-  var scaled = E.clip(value,getValue(min,0),getValue(max,1));
+  var scaled = E.clip(getValue(value),getValue(min,0),getValue(max,1));
   scaled -= getValue(min,0);
   scaled /= getValue(max,1);
   return scaled;
 }
 
 function rotate(center, coords, rotation) {
-    var value = scaledown(numbers[rotation.RotationValue](), rotation.MinRotationValue, rotation.MaxRotationValue);
+    var value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
     value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
     value *= 360;
     value -= 180;
@@ -500,6 +500,7 @@ function draw(element, offset){
     if (!offset.Y) offset.Y = 0;
     g.clear();
   }
+  
 
   var elementOffset = updateOffset(element, offset);
   setColors(elementOffset);
@@ -507,7 +508,9 @@ function draw(element, offset){
 
   for (var current in element){
     //print("Handling ", current, " with offset ", elementOffset);
+    //print("Handling ", current);
     var currentElement = element[current];
+    var start = Date.now();
     try {
       switch(current){
         case "X":
@@ -540,11 +543,12 @@ function draw(element, offset){
           draw(currentElement, elementOffset);
           //print("Done next level");
       }
+      //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
     } catch (e){
       print("Error during drawing of", current, "in", element, e);
     }
   }
-  //print("Finished drawing loop");
+  //print("Finished drawing loop in", Date.now() - start);
 }
 
 var pulse,alt,temp,press;
@@ -564,8 +568,9 @@ function initialDraw(){
     isDrawing = true;
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
+    var start = Date.now();
     draw(undefined, zeroOffset);
-    //print(new Date().toISOString(), "Drawing done");
+    print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
     isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
