@@ -29,13 +29,13 @@ function d02(value) {
 
 function pollBattery() {
   batLevel = E.getBattery();
-  return batLevel;
 }
 
 function getBatteryColor(level) {
   var color;
   if (level < 0) {
-    level = pollBattery();
+    pollBattery();
+    level = batLevel;
   }
   if(level>80) {
     color = [0,0,1];
@@ -54,7 +54,7 @@ function getBatteryColor(level) {
 function draw() {
   g.drawImage(background);
 
-  const color = getBatteryColor();
+  const color = getBatteryColor(batLevel);
   const bat = d02(E.getBattery()) + "%";
   const d = new Date();
   const day = d.getDate();
