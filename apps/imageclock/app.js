@@ -304,7 +304,7 @@ function drawImage(image, offset, name){
 }
 
 function drawCodedImage(image, offset){
-  var code = numbers[image.Value]();
+  var code = getValue(image.Value);
   //print("drawCodedImage", image, offset, code);
   
   if (checkRedraw(image, code)){
