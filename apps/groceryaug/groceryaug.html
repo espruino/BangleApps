@@ -85,6 +85,7 @@
       })
 
       function save(){
+        localStorage.removeItem('grocery-product-list-aug')
         localStorage.setItem('grocery-product-list-aug',JSON.stringify(products));
       }
 
