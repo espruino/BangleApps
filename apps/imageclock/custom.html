@@ -21,7 +21,7 @@
 
     <p>
       Options:</br>
-      <input type="checkbox" id="useAmazefit" name="mode" checked/>
+      <input type="checkbox" id="useDataFile" name="mode" checked/>
       <label for="useDataFile">Use resource data file (image data not in RAM by default)</label></br>
     </p>
 
@@ -704,7 +704,7 @@
           } else {
             infoJson = {
               "color": "3bit",
-              "compression": true,
+              "compression": false,
               "transparent": true
             };
             if (current.name.includes(".png")){
@@ -806,7 +806,7 @@
                 } else {
                   infoJson = {
                     "color": "3bit",
-                    "compression": true,
+                    "compression": false,
                     "transparent": true
                   };
                   
