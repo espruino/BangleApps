@@ -67,7 +67,7 @@
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
-        
+        alert($area.value);
         for(var i in $lines) {
           var name = $lines[i];
           alert(name);
@@ -85,7 +85,7 @@
         localStorage.setItem('grocery-product-list-aug',JSON.stringify(products));
       }
 
-
+    //$button.addEventListener('click')
 
 
       document.getElementById("upload").addEventListener("click", function() {
