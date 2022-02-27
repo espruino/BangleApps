@@ -23,8 +23,7 @@
         <textarea id="area">
           Schokolade
           Wein
-          Kefir
-        </textarea>
+          Kefir</textarea>
         <div class="column col-4 col-xs-12">
           <button id="add_product_button" class="btn btn-primary btn-sm">Add</button>
         </div>
@@ -49,7 +48,9 @@
       var $reset = document.getElementById('reset')
       var $area = document.getElementById("area");             
       var $lines = area.value.replace(/\r\n/g,"\n").split("\n");
-      var $lines = $lines.trim();
+      for (var i in $lines) {
+        $lines[i] = $lines[i].trim();
+      }
 
 
 
