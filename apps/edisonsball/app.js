@@ -130,10 +130,23 @@ function checkHR() {
 }
 
 update_target_HR();
-
-setWatch(btn1Pressed, BTN1, {repeat:true});
-setWatch(btn2Pressed, BTN2, {repeat:true});
-setWatch(btn3Pressed, BTN3, {repeat:true});
+if (process.env.HWVERSION==1) {
+  // Bangle 1
+  setWatch(btn1Pressed, BTN1, {repeat:true});
+  setWatch(btn2Pressed, BTN2, {repeat:true});
+  setWatch(btn3Pressed, BTN3, {repeat:true});
+} else {
+  setWatch(btn2Pressed, BTN2, { repeat: true });
+  // Bangle 2
+  Bangle.on('touch', function(zone, e) {
+    if (e.y < g.getHeight() / 2) {
+      btn1Pressed();
+    }
+    if (e.y > g.getHeight() / 2) {
+      btn3Pressed();
+    }
+  });
+}
 
 Bangle.on('HRM',function(hrm) {
 
