@@ -55,18 +55,21 @@
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
       var $area = document.getElementById("area");             
-      var $lines = area.value.replace(/\r\n/g,"\n").split("\n");
-      for (var i in $lines) {
-        $lines[i] = $lines[i].trim();
+      var $lines = [];
+      function getLines() {
+        var $lines = area.value.replace(/\r\n/g,"\n").split("\n");
+        for (var i in $lines) {
+          $lines[i] = $lines[i].trim();
+        }
       }
-
-      
+      getLines();
 
 
       $reset.addEventListener('click', reset)
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
+        getLines();
         alert($area.value);
         for(var i in $lines) {
           var name = $lines[i];
