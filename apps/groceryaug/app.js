@@ -12,7 +12,7 @@ function updateSettings() {
 }*/
 
 const mainMenu = settings.products.reduce(function(m, p, i){
-  const name = p.name;
+  const name = ''+p.name;
   m[name] = {
     value: p.ok,
     format: v => v?'[x]':'[ ]',
