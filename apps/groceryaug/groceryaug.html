@@ -43,7 +43,6 @@
         if(stored) products = JSON.parse(stored);
       }catch(e){}
 
-      var $name = document.getElementById('add_product_name')
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
       var $list = document.getElementById('products')
@@ -68,7 +67,6 @@
 
 
         renderProducts()
-        $name.value = ''
         save()
       })
 
@@ -76,29 +74,8 @@
         localStorage.setItem('grocery-product-list-aug',JSON.stringify(products));
       }
 
-      function reset(){
-        products = []
-        save()
-        renderProducts()
-      }
-
-      function removeProduct(index){
-        products = products.filter((p,i) => i!==index)
-        save()
-        renderProducts()
-      }
-
-      function renderProducts(){
-        $list.innerHTML = ''
-        products.forEach((product,index) => {
-          var $product = document.createElement('tr')
-
-          $product.innerHTML = `<td>${product.name}</td><td><button class="btn btn-error" onclick="removeProduct(${index})">remove</button></td>`
-          $list.appendChild($product)
-        })
 
 
-      }
 
       document.getElementById("upload").addEventListener("click", function() {
         sendCustomizedApp({
