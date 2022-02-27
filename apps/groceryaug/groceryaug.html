@@ -43,6 +43,12 @@
        
       }catch(e){}
       
+      var tstring = "";
+      for(e in products) {
+        tstring += products[e]["name"]+"\n";
+      }
+      document.getElementById("area").value = tstring;
+
 
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
@@ -55,11 +61,6 @@
       }
 
       
-      var tstring = "";
-      for(e in products) {
-        tstring += products[e]["name"]+"\n";
-      }
-      $area.value = tstring;
 
 
       $reset.addEventListener('click', reset)
