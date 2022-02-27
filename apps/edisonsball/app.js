@@ -64,7 +64,7 @@ function update_target_HR(){
     g.drawString("+", 160, 10);
     g.drawString("GO", 150, 88);
     g.setFontAlign(0,0); // center font
-    g.drawString("target HR", 88,70);
+    g.drawString("target HR", 88,65);
     g.setFont("6x8", 1);
     g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 88,150);
   }
@@ -125,8 +125,8 @@ function checkHR() {
       g.drawString("HR: " + average_HR, 120,100);
       g.drawString("STDEV: " + stdev_HR, 120,160);
     } else {
-      g.drawString("HR: " + average_HR, 60,70);
-      g.drawString("STDEV: " + stdev_HR, 80,70);
+      g.drawString("HR: " + average_HR, 88,60);
+      g.drawString("STDEV: " + stdev_HR, 88,90);
     }
      HR_samples = [];
      if(average_HR < target_heartrate && stdev_HR < deviation_threshold){
