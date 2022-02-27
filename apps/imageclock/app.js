@@ -510,7 +510,8 @@ function draw(element, offset){
     //print("Handling ", current, " with offset ", elementOffset);
     //print("Handling ", current);
     var currentElement = element[current];
-    var start = Date.now();
+
+    //var start = Date.now();
     try {
       switch(current){
         case "X":
@@ -518,6 +519,7 @@ function draw(element, offset){
         case "Properties":
         case "ForegroundColor":
         case "BackgroundColor":
+        case "HideOn":
           //Nothing to draw for these
           break;
         case "MultiState":
@@ -540,6 +542,10 @@ function draw(element, offset){
           break;
         default:
           //print("Enter next level", elementOffset);
+          if (currentElement.HideOn && currentElement.HideOn == "Lock" && Bangle.isLocked()){
+            //print("Hiding", current);
+            continue;
+          }
           draw(currentElement, elementOffset);
           //print("Done next level");
       }
@@ -570,7 +576,7 @@ function initialDraw(){
     //print(new Date().toISOString(), "Drawing start");
     var start = Date.now();
     draw(undefined, zeroOffset);
-    print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
+    //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
     isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
