@@ -52,7 +52,7 @@ const colorGreen = '#008000';
 const colorBlue = '#0000ff';
 const colorYellow = '#ffff00';
 const widgetOffset = showWidgets ? 24 : 0;
-const dowOffset = circleCount == 3 ? 22 : 24; // dow offset relative to date
+const dowOffset = circleCount == 3 ? 20 : 22; // dow offset relative to date
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
 const hOffset = (circleCount == 3 ? 34 : 30) - widgetOffset;
@@ -88,21 +88,24 @@ const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 const iconOffset = circleCount == 3 ? 6 : 8;
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
+function hideWidgets() {
+  /*
+   * we are not drawing the widgets as we are taking over the whole screen
+   * so we will blank out the draw() functions of each widget and change the
+   * area to the top bar doesn't get cleared.
+   */
+  if (WIDGETS && typeof WIDGETS === "object") {
+    for (let wd of WIDGETS) {
+      wd.draw = () => {};
+      wd.area = "";
+    }
+  }
+}
 
 function draw() {
   g.clear(true);
   if (!showWidgets) {
-    /*
-     * we are not drawing the widgets as we are taking over the whole screen
-     * so we will blank out the draw() functions of each widget and change the
-     * area to the top bar doesn't get cleared.
-     */
-    if (WIDGETS && typeof WIDGETS === "object") {
-      for (let wd of WIDGETS) {
-        wd.draw = () => {};
-        wd.area = "";
-      }
-    }
+    hideWidgets();
   } else {
     Bangle.drawWidgets();
   }
@@ -114,7 +117,7 @@ function draw() {
   g.setFontRobotoRegular50NumericOnly();
   g.setFontAlign(0, -1);
   g.setColor(colorFg);
-  g.drawString(locale.time(new Date(), 1), w / 2, h1 + 8);
+  g.drawString(locale.time(new Date(), 1), w / 2, h1 + 6);
   now = Math.round(new Date().getTime() / 1000);
 
   // date & dow
@@ -839,7 +842,6 @@ Bangle.on('charging', function(charging) {
 if (isCircleEnabled("hr")) {
   enableHRMSensor();
 }
-
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
