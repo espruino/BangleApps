@@ -9,7 +9,6 @@
       <thead>
         <tr>
           <th>name</th>
-          <th>quantity</th>
           <th>actions</th>
         </tr>
       </thead>
@@ -23,9 +22,6 @@
       <div class="columns">
         <div class="column col-4 col-xs-12">
           <input class="form-input input-sm" type="text" id="add_product_name" placeholder="Name">
-        </div>
-        <div class="column col-4 col-xs-12">
-          <input class="form-input input-sm" value="1" type="number" id="add_product_quantity" placeholder="Quantity">
         </div>
         <div class="column col-4 col-xs-12">
           <button id="add_product_button" class="btn btn-primary btn-sm">Add</button>
@@ -48,7 +44,6 @@
       var $name = document.getElementById('add_product_name')
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
-      var $quantity = document.getElementById('add_product_quantity')
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
 
@@ -62,16 +57,14 @@
         var name = $name.value.trim()
         if(!name) return;
 
-        var quantity = parseInt($quantity.value)
 
         products.push({
-          name, quantity,
+          name,
           ok: false
         })
 
         renderProducts()
         $name.value = ''
-        $quantity.value = 1
         save()
       })
 
@@ -96,7 +89,7 @@
         products.forEach((product,index) => {
           var $product = document.createElement('tr')
 
-          $product.innerHTML = `<td>${product.name}</td><td>${product.quantity}</td><td><button class="btn btn-error" onclick="removeProduct(${index})">remove</button></td>`
+          $product.innerHTML = `<td>${product.name}</td><td><button class="btn btn-error" onclick="removeProduct(${index})">remove</button></td>`
           $list.appendChild($product)
         })
 
