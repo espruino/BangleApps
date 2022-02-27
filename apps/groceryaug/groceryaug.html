@@ -48,7 +48,8 @@
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
       var $area = document.getElementById("area");             
-      var $lines = area.value.replace(/\r\n/g,"\n").split("\n").trim();
+      var $lines = area.value.replace(/\r\n/g,"\n").split("\n");
+      var $lines = $lines.trim();
 
 
 
