@@ -3,6 +3,8 @@ var lower_limit_BPM = 49;
 var upper_limit_BPM = 140;
 var deviation_threshold = 3;
 
+var ISBANGLEJS1 = process.env.HWVERSION==1;
+
 var target_heartrate = 70;
 var heartrate_set;
 
@@ -33,25 +35,39 @@ function btn2Pressed() {
   }
 
 function update_target_HR(){
-  
   g.clear();
-  g.setColor("#00ff7f");
-  g.setFont("6x8", 4);
-  g.setFontAlign(0,0); // center font
+  if (process.env.HWVERSION==1) {
+    g.setColor("#00ff7f");
+    g.setFont("6x8", 4);
+    g.setFontAlign(0,0); // center font
 
-  g.drawString(target_heartrate, 120,120);
-  g.setFont("6x8", 2);
-  g.setFontAlign(-1,-1);
-  g.drawString("-", 220, 200);
-  g.drawString("+", 220, 40);
-  g.drawString("GO", 210, 120);
-  
-  g.setColor("#ffffff");
-  g.setFontAlign(0,0); // center font
-  g.drawString("target HR", 120,90);
-  
-  g.setFont("6x8", 1);
-  g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 120,170);
+    g.drawString(target_heartrate, 120,120);
+    g.setFont("6x8", 2);
+    g.setFontAlign(-1,-1);
+    g.drawString("-", 220, 200);
+    g.drawString("+", 220, 40);
+    g.drawString("GO", 210, 120);
+
+    g.setColor("#ffffff");
+    g.setFontAlign(0,0); // center font
+    g.drawString("target HR", 120,90);
+
+    g.setFont("6x8", 1);
+    g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 120,170);
+  } else {
+    g.setFont("6x8", 4);
+    g.setFontAlign(0,0); // center font
+    g.drawString(target_heartrate, 88,88);
+    g.setFont("6x8", 2);
+    g.setFontAlign(-1,-1);
+    g.drawString("-", 160, 160);
+    g.drawString("+", 160, 10);
+    g.drawString("GO", 150, 88);
+    g.setFontAlign(0,0); // center font
+    g.drawString("target HR", 88,120);
+    g.setFont("6x8", 1);
+    g.drawString("if unsure, start with 7-10%\n less than waking average and\n adjust as required", 88,150);
+  }
   
   g.setFont("6x8",3);
   g.flip();
@@ -105,8 +121,13 @@ function checkHR() {
      average_HR = average(HR_samples).toFixed(0);
      stdev_HR = getStandardDeviation (HR_samples).toFixed(1);
 
-     g.drawString("HR: " + average_HR, 120,100);
-     g.drawString("STDEV: " + stdev_HR, 120,160);
+    if (ISBANGLEJS1) {
+      g.drawString("HR: " + average_HR, 120,100);
+      g.drawString("STDEV: " + stdev_HR, 120,160);
+    } else {
+      g.drawString("HR: " + average_HR, 60,70);
+      g.drawString("STDEV: " + stdev_HR, 80,70);
+    }
      HR_samples = [];
      if(average_HR < target_heartrate && stdev_HR < deviation_threshold){
        
@@ -130,14 +151,15 @@ function checkHR() {
 }
 
 update_target_HR();
-if (process.env.HWVERSION==1) {
+
+if (ISBANGLEJS1) {
   // Bangle 1
   setWatch(btn1Pressed, BTN1, {repeat:true});
   setWatch(btn2Pressed, BTN2, {repeat:true});
   setWatch(btn3Pressed, BTN3, {repeat:true});
 } else {
-  setWatch(btn2Pressed, BTN2, { repeat: true });
   // Bangle 2
+  setWatch(btn2Pressed, BTN1, { repeat: true });
   Bangle.on('touch', function(zone, e) {
     if (e.y < g.getHeight() / 2) {
       btn1Pressed();
@@ -148,8 +170,8 @@ if (process.env.HWVERSION==1) {
   });
 }
 
-Bangle.on('HRM',function(hrm) {
 
+Bangle.on('HRM',function(hrm) {
    if(trigger_count < 2){
     if (firstBPM)
       firstBPM=false; // ignore the first one as it's usually rubbish
