@@ -57,7 +57,7 @@
       var $area = document.getElementById("area");             
       var $lines = [];
       function getLines() {
-        var $lines = area.value.replace(/\r\n/g,"\n").split("\n");
+        $lines = area.value.replace(/\r\n/g,"\n").split("\n");
         for (var i in $lines) {
           $lines[i] = $lines[i].trim();
         }
