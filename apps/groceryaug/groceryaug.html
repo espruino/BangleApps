@@ -48,7 +48,7 @@
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
       var $area = document.getElementById("area");             
-      var $lines = $area.value.replace(/\r\n/g,"\n").split("\n");
+      var $lines = area.value.replace(/\r\n/g,"\n").split("\n").filter(line => line);
 
 
 
@@ -58,6 +58,7 @@
         event.preventDefault()
         
         for(var i in $lines) {
+          console.log($lines[i]["name"]);
           products.push({
             name,
             ok: false
