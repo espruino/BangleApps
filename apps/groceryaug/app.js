@@ -6,14 +6,15 @@ function updateSettings() {
   Bangle.buzz();
 }
 
-/*function twoChat(n){
+function twoChat(n){
   if(n<10) return '0'+n;
   return ''+n;
-}*/
+}
+
+  
 
 const mainMenu = settings.products.reduce(function(m, p, i){
-  const name = ''+p.name;
-  m[name] = {
+const name = twoChat(p.quantity)+' '+p.name;  m[name] = {
     value: p.ok,
     format: v => v?'[x]':'[ ]',
     onchange: v => {
