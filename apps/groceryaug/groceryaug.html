@@ -58,14 +58,13 @@
         event.preventDefault()
         products = [];
         getLines();
-        alert($area.value);
         for(var i in $lines) {
           var name = $lines[i];
-          alert(name);
           products.push({
             name,
             ok: false
           })
+          alert("Products added");
         }
 
 
