@@ -38,10 +38,10 @@
     <script>
 
       var products = []
-      try{
+     /* try{
         var stored = localStorage.getItem('grocery-product-list-aug')
         if(stored) products = JSON.parse(stored);
-      }catch(e){}
+      }catch(e){}*/
 
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
@@ -58,9 +58,9 @@
         event.preventDefault()
         
         for(var i in $lines) {
-          alert($lines[i]);
+          alert($lines[i]["name"]);
           products.push({
-            name,
+            $lines[i]["name"],
             ok: false
           })
         }
