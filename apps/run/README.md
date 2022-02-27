@@ -46,8 +46,8 @@ record GPS/HRM/etc data every time you start a run?
 
 ## Development
 
-This app uses the [`exstats` module](/modules/exstats.js). When uploaded via the
+This app uses the [`exstats` module](https://github.com/espruino/BangleApps/blob/master/modules/exstats.js). When uploaded via the
 app loader, the module is automatically included in the app's source. However
 when developing via the IDE the module won't get pulled in by default.
 
-There are some options to fix this easily - please check out the [modules README.md file](/modules/README.md)
+There are some options to fix this easily - please check out the [modules README.md file](https://github.com/espruino/BangleApps/blob/master/modules/README.md)
