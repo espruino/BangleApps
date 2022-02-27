@@ -20,9 +20,11 @@
     <h4>Add a new product</h4>
     <form id="add_product_form">
       <div class="columns">
-        <div class="column col-4 col-xs-12">
-          <input class="form-input input-sm" type="text" id="add_product_name" placeholder="Name">
-        </div>
+        <textarea id="area">
+          Schokolade
+          Wein
+          Kefir
+        </textarea>
         <div class="column col-4 col-xs-12">
           <button id="add_product_button" class="btn btn-primary btn-sm">Add</button>
         </div>
@@ -46,6 +48,9 @@
       var $button = document.getElementById('add_product_button')
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
+      var $area = document.getElementById("area");             
+      var $lines = $area.value.replace(/\r\n/g,"\n").split("\n");
+
 
       renderProducts()
 
@@ -53,15 +58,14 @@
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
+        
+        for(var i in $lines) {
+          products.push({
+            name,
+            ok: false
+          })
+        }
 
-        var name = $name.value.trim()
-        if(!name) return;
-
-
-        products.push({
-          name,
-          ok: false
-        })
 
         renderProducts()
         $name.value = ''
