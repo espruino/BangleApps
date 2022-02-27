@@ -37,10 +37,14 @@
     <script>
 
       var products = []
-     /* try{
+     try{
         var stored = localStorage.getItem('grocery-product-list-aug')
-        if(stored) products = JSON.parse(stored);
-      }catch(e){}*/
+        if(stored){
+          products = JSON.parse(stored);
+          console.log(products);
+        }
+       
+      }catch(e){}
 
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
