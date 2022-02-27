@@ -41,7 +41,7 @@
 
       var products = []
       try{
-        var stored = localStorage.getItem('grocery-product-list')
+        var stored = localStorage.getItem('grocery-product-list-aug')
         if(stored) products = JSON.parse(stored);
       }catch(e){}
 
@@ -76,7 +76,7 @@
       })
 
       function save(){
-        localStorage.setItem('grocery-product-list',JSON.stringify(products));
+        localStorage.setItem('grocery-product-list-aug',JSON.stringify(products));
       }
 
       function reset(){
