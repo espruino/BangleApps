@@ -252,8 +252,7 @@ function drawElement(pos, offset, path, lastElem){
       //print("drawImage from drawElement", image, pos, offset);
       var options={};
       if (pos.RotationValue){
-        options.rotate = scaledown(pos.RotationValue, pos.MinRotationValue, pos.MaxRotationValue);
-        options.rotate = options.rotate * Math.PI* 2;
+        options.rotate = radians(pos);
       }
       if (pos.Scale){
         options.scale = pos.ScaleValue;
@@ -439,23 +438,12 @@ function scaledown(value, min, max){
   return scaled;
 }
 
-function rotate(center, coords, rotation) {
-    startPerfLog("rotate");
-    var value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
-    value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
-    value *= 360;
-    value -= 180;
-
-    //print("Angle", value);
-    
-    var radians = (Math.PI / 180) * value,
-        cos = -Math.cos(radians),
-        sin = Math.sin(radians),
-        x = (cos * (coords.X - center.X)) + (sin * (coords.Y - center.Y)) + center.X,
-        y = (cos * (coords.Y - center.Y)) - (sin * (coords.X - center.X)) + center.Y;
-        
-    endPerfLog("rotate");
-    return {X:x,Y:y};
+function radians(rotation){
+  var value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
+  value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
+  value *= 360;
+  value *= Math.PI / 180;
+  return value;
 }
 
 function drawPoly(element, offset){
@@ -467,15 +455,17 @@ function drawPoly(element, offset){
 
     startPerfLog("drawPoly_transform");
     for (var c of element.Vertices){
-      if (element.RotationValue){
-        var rotated = rotate({X:0,Y:0}, c, element);
-        vertices.push(rotated.X + primitiveOffset.X);
-        vertices.push(rotated.Y + primitiveOffset.Y);
-      } else {
-        vertices.push(c.X + primitiveOffset.X);
-        vertices.push(c.Y + primitiveOffset.Y);
-      }
+      vertices.push(c.X);
+      vertices.push(c.Y);
     }
+    var transform = { x: primitiveOffset.X,
+      y: primitiveOffset.Y
+    };
+    if (element.RotationValue){
+      transform.rotate = radians(element);
+    }
+    vertices = g.transformVertices(vertices, transform);
+
     endPerfLog("drawPoly_transform");
 
     if (element.ForegroundColor) g.setColor(element.ForegroundColor);
