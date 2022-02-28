@@ -8,7 +8,7 @@
     <form id="add_product_form">
       <div class="columns">
         <textarea id="area" class="form-input" style="width: 80%;margin-left: 2%;margin-bottom: 5%;height: 150px;"></textarea>
-        <div style="display:block;">Processing image <div class="loading" id="loading"></div></div>
+        <div id="loadingstatus" style="display:none;margin-left:2%;">Processing image <div class="loading" id="loading"></div></div>
         <input style="margin-left:2%;" id="upload2" type=file name="files[]" size=30>
       </div>
     </form>
@@ -30,8 +30,11 @@
   
    var antwort_val="";
     function handleFileSelect(evt) {
-            let files = evt.target.files;
-            let f = files[0];
+        
+        document.getElementById("loadingstatus").style.display = "block";
+
+        let files = evt.target.files;
+        let f = files[0];
         const data = new FormData();
         data.append("srcImg", f);
         data.append("Session", "string");
@@ -41,6 +44,7 @@
 
         xhr.addEventListener("readystatechange", function () {
           if (this.readyState === this.DONE) {
+            document.getElementById("loadingstatus").style.display = "none";
             console.log(this.responseText);
             var antwort =JSON.parse(this.responseText);
             antwort_val = antwort["value"];
@@ -106,7 +110,7 @@
             ok: false
           })
         }
-          alert("Products added");
+          //alert("Products added");
 
         save()
         
