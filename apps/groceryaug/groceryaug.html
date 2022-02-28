@@ -76,7 +76,6 @@
       var $form = document.getElementById('add_product_form')
       var $button = document.getElementById('add_product_button')
       var $list = document.getElementById('products')
-      var $reset = document.getElementById('reset')
       var $area = document.getElementById("area");             
       var $lines = [];
       function getLines() {
@@ -88,7 +87,6 @@
       getLines();
 
 
-      $reset.addEventListener('click', reset)
 
       $form.addEventListener('submit', event => {
         event.preventDefault()
