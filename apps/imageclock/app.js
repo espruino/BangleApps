@@ -547,66 +547,99 @@ function drawMultiState(element, offset){
   endPerfLog("drawMultiState");
 }
 
-function draw(element, offset){
-  startPerfLog("draw_"+ path.join("_"));
-  var initial = !element;
-  if (initial){
-    element = face;
-    if (!offset) offset ={};
-    if (!offset.X) offset.X = 0;
-    if (!offset.Y) offset.Y = 0;
-    g.clear();
+function drawIteratively(items){
+  //print("drawIteratively");
+  startPerfLog("drawIteratively");
+  for (var c of items){
+    startPerfLog("drawIteratively_handling_" + c.type);
+    if (c.value.HideOn && c.value.HideOn == "Lock" && Bangle.isLocked()){
+      //print("Hiding", current);
+      continue;
+    }
+    switch(c.type){
+      case "MultiState":
+        drawMultiState(c.value, zeroOffset);
+        break;
+      case "Image":
+        drawImage(c.value, zeroOffset);
+        break;
+      case "CodedImage":
+        drawCodedImage(c.value, zeroOffset);
+        break;
+      case "Number":
+        drawNumber(c.value, zeroOffset);
+        break;
+      case "Poly":
+        drawPoly(c.value, zeroOffset);
+        break;
+      case "Scale":
+        drawScale(c.value, zeroOffset);
+        break;
+    }
+    endPerfLog("drawIteratively_handling_" + c.type);
   }
+  endPerfLog("drawIteratively");
+}
 
+function draw(root, path, offset){
+  //print("draw", path);
+  startPerfLog("draw_"+ path.join("_"));
+  
+  var element = getByPath(root, path);
   var elementOffset = updateOffset(element, offset);
   setColors(elementOffset);
   //print("Using offset", elementOffset);
+  if (Array.isArray(element))
+    drawIteratively(element);
+  else {
+    //print("Using offset", elementOffset);
 
-  for (var current in element){
-    //print("Handling ", current, " with offset ", elementOffset);
-    startPerfLog("draw_handling_"+ path.join("_")+"_"+current);
-    var currentElement = element[current];
-    try {
-      switch(current){
-        case "X":
-        case "Y":
-        case "Properties":
-        case "ForegroundColor":
-        case "BackgroundColor":
-        case "HideOn":
-          //Nothing to draw for these
-          break;
-        case "MultiState":
-          drawMultiState(currentElement, elementOffset);
-          break;
-        case "Image":
-          drawImage(currentElement, elementOffset);
-          break;
-        case "CodedImage":
-          drawCodedImage(currentElement, elementOffset);
-          break;
-        case "Number":
-          drawNumber(currentElement, elementOffset);
-          break;
-        case "Poly":
-          drawPoly(currentElement, elementOffset);
-          break;
-        case "Scale":
-          drawScale(currentElement, elementOffset);
-          break;
-        default:
-          //print("Enter next level", elementOffset);
-          if (currentElement.HideOn && currentElement.HideOn == "Lock" && Bangle.isLocked()){
+    for (var current in element){
+      //print("Handling ", current, " with offset ", elementOffset);
+      startPerfLog("draw_handling_"+ path.join("_")+"_"+current);
+      var currentElement = element[current];
+      try {
+        switch(current){
+          case "X":
+          case "Y":
+          case "Properties":
+          case "ForegroundColor":
+          case "BackgroundColor":
+          case "HideOn":
             //print("Hiding", current);
-            continue;
-          }
-          draw(currentElement, elementOffset);
-          //print("Done next level");
+            break;
+          case "MultiState":
+            drawMultiState(currentElement, elementOffset);
+            break;
+          case "Image":
+            drawImage(currentElement, elementOffset);
+            break;
+          case "CodedImage":
+            drawCodedImage(currentElement, elementOffset);
+            break;
+          case "Number":
+            drawNumber(currentElement, elementOffset);
+            break;
+          case "Poly":
+            drawPoly(currentElement, elementOffset);
+            break;
+          case "Scale":
+            drawScale(currentElement, elementOffset);
+            break;
+          default:
+            //print("Enter next level", elementOffset);
+            if (currentElement.HideOn && currentElement.HideOn == "Lock" && Bangle.isLocked()){
+              //print("Hiding", current);
+              continue;
+            }
+            draw(root, path.concat(current), elementOffset);
+            //print("Done next level");
+        }
+        endPerfLog("draw_handling_"+ path.join("_")+"_"+current);
+        //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
+      } catch (e){
+        print("Error during drawing of", current, "in", element, e, e.stack);
       }
-      endPerfLog("draw_handling_"+ path.join("_")+"_"+current);
-      //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
-    } catch (e){
-      print("Error during drawing of", current, "in", element, e, e.stack);
     }
   }
   //print("Finished drawing loop");
@@ -629,17 +662,20 @@ function initialDraw(){
   if (!isDrawing){
     //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
     isDrawing = true;
+    startPerfLog("initialDraw_g.clear");
+    g.clear();
+    endPerfLog("initialDraw_g.clear");
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
     startPerfLog("initialDraw");
-    draw(undefined, zeroOffset);
+    draw(face, [], zeroOffset);
     endPerfLog("initialDraw");
     //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
     isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
       requestedDraws = 0;
-      draw(undefined, zeroOffset);
+      setTimeout(initialDraw, 10);
     }
   }
 }

@@ -23,6 +23,8 @@
       Options:</br>
       <input type="checkbox" id="useDataFile" name="mode" checked/>
       <label for="useDataFile">Use resource data file (image data not in RAM by default)</label></br>
+      <input type="checkbox" id="collapseTree" name="mode" checked/>
+      <label for="collapseTree">Collapse the tree to a flat representation</label></br>
     </p>
 
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
@@ -510,6 +512,56 @@
             return restructureAmazfitFormat(jsonString);
           }
       }
+      
+      function combineProperty(name, source, target){
+        if (source[name] && target[name]){
+          if (Array.isArray(target[name])){
+            target[name] = target[name].concat(source[name]);
+            target[name].filter((item, i) => target[name].indexOf(item) === i)
+          } else if (typeof target[name] == "number"){
+            target[name] = source[name] + target[name];
+          }
+        } else if (source[name]){
+          target[name] = source[name]
+        }
+      }
+
+      function collapseTree(element, props){
+        var result = [];
+        if (typeof element == "string" || typeof element == "number") return [];
+        for (var c in element){
+          var next = element[c];
+          
+          combineProperty("X",element,next);
+          combineProperty("Y",element,next);
+          combineProperty("HideOn",element,next);
+          combineProperty("ForegroundColor",element,next);
+          combineProperty("BackgroundColor",element,next);
+          combineProperty("RotationValue",element,next);          
+          combineProperty("RotationOffset",element,next);          
+          combineProperty("MinRotationValue",element,next);          
+          combineProperty("MaxRotationValue",element,next);          
+          
+          if (["MultiState","Image","CodedImage","Number","Poly","Scale"].includes(c)){
+            result.push({type:c, value: element[c]});
+          } else {
+            result = result.concat(collapseTree(element[c]));
+          }
+        }
+        return result;
+      }
+
+      function postProcess(){
+        if (document.getElementById('useDataFile').checked){
+          moveData(resultJson);
+          console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
+        }
+        
+        if (document.getElementById('collapseTree').checked){
+          faceJson = { Collapsed: collapseTree(faceJson,{X:0,Y:0})};
+          console.log("After collapsing", faceJson);
+        }
+      }
 
       function imageLoaded() {
         var options = {};
@@ -592,24 +644,19 @@
         if (handledFiles == expectedFiles){
           if (!isNativeFormat()) {
             performFileChanges().then(()=>{
+              postProcess();
+              
               rootZip.file("face.json", JSON.stringify(faceJson, null, 2));
               rootZip.file("info.json", JSON.stringify(infoJson, null, 2));
               
-              if (document.getElementById('useDataFile').checked){
-                moveData(resultJson);
-                console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
-              }
               document.getElementById('btnSave').disabled = false;
               document.getElementById('btnSaveFace').disabled = false;
               document.getElementById('btnSaveZip').disabled = false;
               document.getElementById('btnUpload').disabled = false;
             });
           } else {
-            
-            if (true){
-              moveData(resultJson);
-              console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
-            }
+            postProcess();
+              
             document.getElementById('btnSave').disabled = false;
             document.getElementById('btnSaveFace').disabled = false;
             document.getElementById('btnUpload').disabled = false;
