@@ -1,7 +1,46 @@
 var face = require("Storage").readJSON("imageclock.face.json");
 var resources = require("Storage").readJSON("imageclock.resources.json");
 
+var performanceLog = {};
+
+var startPerfLog = ()=>{};
+var endPerfLog = ()=>{};
+var printPerfLog = ()=>print("Deactivated");
+
+if (true){
+  startPerfLog = function(name){
+    var time = getTime();
+    if (!performanceLog.start) performanceLog.start={};
+    performanceLog.start[name] = time;
+  };
+  endPerfLog = function (name){
+    var time = getTime();
+    if (!performanceLog.last) performanceLog.last={};
+    var duration = time - performanceLog.start[name];
+    performanceLog.last[name] = duration;
+    if (!performanceLog.cum) performanceLog.cum={};
+    if (!performanceLog.cum[name]) performanceLog.cum[name] = 0;
+    performanceLog.cum[name] += duration;
+    if (!performanceLog.count) performanceLog.count={};
+    if (!performanceLog.count[name]) performanceLog.count[name] = 0;
+    performanceLog.count[name]++;
+  };
+
+  printPerfLog = function(){
+    var result = "";
+    var keys = [];
+    for (var c in performanceLog.cum){
+      keys.push(c);
+    }
+    keys.sort();
+    for (var k of keys){
+      print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "total:", (performanceLog.cum[k] * 1000).toFixed(0));
+    }
+  };
+}
+
 function prepareImg(resource){
+  startPerfLog("prepareImg");
   //print("prepareImg: ", resource);
 
   var result = cacheBuffers ? resource : {
@@ -19,7 +58,7 @@ function prepareImg(resource){
     //print("buffer from file");
     result.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
     result.file = undefined;
-  } else if (resource.compressed && (resource.dataOffset == undefined)){
+  } else if (resource.compressed && (resource.dataOffset === undefined)){
     //print("buffer from compressed");
     result.buffer = require("heatshrink").decompress(atob(resource.compressed));
     result.compressed = undefined;
@@ -44,10 +83,12 @@ function prepareImg(resource){
     result.paletteData = undefined;
   }
 
+  endPerfLog("prepareImg");
   return result;
 }
 
 function getByPath(object, path, lastElem){
+  startPerfLog("getByPath");
   //print("getByPath", path,lastElem);
   var current = object;
   if (path.length) {
@@ -61,6 +102,7 @@ function getByPath(object, path, lastElem){
     //print("Found by lastElem", lastElem);
     current = current["" + lastElem];
   }
+  endPerfLog("getByPath");
   if (typeof current == "function"){
     //print("current was function");
     return undefined;
@@ -73,6 +115,7 @@ function splitNumberToDigits(num){
 }
 
 function drawNumber(element, offset){
+  startPerfLog("drawNumber");
   var number = numbers[element.Value]();
   var spacing = element.Spacing ? element.Spacing : 0;
   var unit = element.Unit;
@@ -85,13 +128,13 @@ function drawNumber(element, offset){
   //print("drawNumber: ", number, element, offset);
   if (number) number = number.toFixed(0);
 
-  if (!element.Refresh || element.Refresh == "Always" || (element.Refresh == "Change" && element.lastDrawnValue && element.lastDrawnValue != number)){
+  if (checkRedraw(element,number)){
     //var numberOffset = updateOffset(element, offset);
     var numberOffset = offset;
 
     var isNegative;
     var digits;
-    if (number == undefined){
+    if (typeof number !== "number"){
       isNegative = true;
       digits = [];
       numberOfDigits = 0;
@@ -185,6 +228,8 @@ function drawNumber(element, offset){
       drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
     }
     element.lastDrawnValue = number;
+    
+    endPerfLog("drawNumber");
   }
 }
 
@@ -194,6 +239,7 @@ function setColors(properties){
 }
 
 function drawElement(pos, offset, path, lastElem){
+  startPerfLog("drawElement");
   //print("drawElement ",pos, offset, path, lastElem);
   //print("drawElement offset", offset, pos.X, pos.Y);
   var resource = getByPath(resources, path, lastElem);
@@ -215,13 +261,16 @@ function drawElement(pos, offset, path, lastElem){
       }
       //print("options", options);
       //print("Memory before drawing", process.memory(false));
+      startPerfLog("drawElement_g.drawImage");
       g.drawImage(image ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);
+      endPerfLog("drawElement_g.drawImage");
     } else {
       //print("Could not create image from", resource);
     }
   } else {
     //print("Could not get resource from", path, lastElem);
   }
+  endPerfLog("drawElement");
 }
 
 function checkRedraw(element, newValue){
@@ -255,15 +304,12 @@ function getMultistate(name, defaultValue){
 }
 
 function drawScale(scale, offset){
+  startPerfLog("drawScale");
   //print("drawScale", scale, offset);
   var segments = scale.Segments;
-  var value = numbers[scale.Value]();
-  var maxValue = getValue(scale.MaxValue, 1);
-  var minValue = getValue(scale.MinValue, 0);
   var imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
 
-  value = value/maxValue;
-  value -= minValue;
+  var value = scaledown(scale.Value, scale.MinValue, scale.MaxValue);
 
   //print("Value is ", value, "(", maxValue, ",", minValue, ")");
   
@@ -277,6 +323,7 @@ function drawScale(scale, offset){
     }
     scale.lastDrawnValue = segmentsToDraw;
   }
+  endPerfLog("drawScale");
 }
 
 function drawDigit(element, offset, digit){
@@ -284,11 +331,12 @@ function drawDigit(element, offset, digit){
 }
 
 function drawImage(image, offset, name){
+  startPerfLog("drawImage");
   var imageOffset = updateColors(image, offset);
   if (image.ImagePath) {
     //print("drawImage", image, offset, name);
     if (image.Value && image.Steps){
-      var steps = Math.floor(scaledown(getValue(image.Value), getValue(image.MinValue, 0), getValue(image.MaxValue, 1)) * (image.Steps - 1));
+      var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
       //print("Step", steps, "of", image.Steps);
       drawElement(image, imageOffset, image.ImagePath, "" + steps);
     } else if (image.ImageIndex !== undefined) {
@@ -301,9 +349,11 @@ function drawImage(image, offset, name){
     setColors(imageOffset);
     g.drawImage(prepareImg(file),image.X + imageOffset.X, image.Y + imageOffset.Y);
   }
+  endPerfLog("drawImage");
 }
 
 function drawCodedImage(image, offset){
+  startPerfLog("drawCodedImage");
   var code = getValue(image.Value);
   //print("drawCodedImage", image, offset, code);
   
@@ -329,6 +379,7 @@ function drawCodedImage(image, offset){
     }
     image.lastDrawnValue = code;
   }
+  startPerfLog("drawCodedImage");
 }
 
 function getWeatherCode(){
@@ -361,11 +412,13 @@ function getWeatherTemperature(){
 }
 
 function updateOffset(element, offset){
+  startPerfLog("updateOffset");
   var newOffset = { X: offset.X ? offset.X : 0, Y: offset.Y ? offset.Y : 0 };
   if (element && element.X) newOffset.X += element.X;
   if (element && element.Y) newOffset.Y += element.Y;
   newOffset = updateColors(element, newOffset);
   //print("Updated offset from ", offset, "to", newOffset);
+  endPerfLog("updateOffset");
   return newOffset;
 }
 
@@ -388,6 +441,7 @@ function scaledown(value, min, max){
 }
 
 function rotate(center, coords, rotation) {
+    startPerfLog("rotate");
     var value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
     value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
     value *= 360;
@@ -400,15 +454,19 @@ function rotate(center, coords, rotation) {
         sin = Math.sin(radians),
         x = (cos * (coords.X - center.X)) + (sin * (coords.Y - center.Y)) + center.X,
         y = (cos * (coords.Y - center.Y)) - (sin * (coords.X - center.X)) + center.Y;
+        
+    endPerfLog("rotate");
     return {X:x,Y:y};
 }
 
 function drawPoly(element, offset){
+    startPerfLog("drawPoly");
     var vertices = [];
     var primitiveOffset = offset.clone();
     if (element.X) primitiveOffset.X += element.X;
     if (element.Y) primitiveOffset.Y += element.Y;
 
+    startPerfLog("drawPoly_transform");
     for (var c of element.Vertices){
       if (element.RotationValue){
         var rotated = rotate({X:0,Y:0}, c, element);
@@ -419,15 +477,22 @@ function drawPoly(element, offset){
         vertices.push(c.Y + primitiveOffset.Y);
       }
     }
+    endPerfLog("drawPoly_transform");
 
     if (element.ForegroundColor) g.setColor(element.ForegroundColor);
 
     if (element.Filled){
+      startPerfLog("drawPoly_g.fillPoly");
       g.fillPoly(vertices,true);
+      endPerfLog("drawPoly_g.fillPoly");
     }
 
     if (element.BackgroundColor) g.setColor(element.BackgroundColor);
+    startPerfLog("drawPoly_g.drawPoly");
     g.drawPoly(vertices,true);
+    endPerfLog("drawPoly_g.drawPoly");
+    
+    startPerfLog("drawPoly");
 }
 
 var numbers = {};
@@ -482,6 +547,7 @@ multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit
 multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
 
 function drawMultiState(element, offset){
+  startPerfLog("drawMultiState");
   //print("drawMultiState", element, offset);
   var value = multistates[element.Value]();
   if (checkRedraw(element, value)){
@@ -489,9 +555,11 @@ function drawMultiState(element, offset){
     drawImage(element, offset, value);
     element.lastDrawnValue = value;
   }
+  endPerfLog("drawMultiState");
 }
 
 function draw(element, offset){
+  startPerfLog("draw_"+ path.join("_"));
   var initial = !element;
   if (initial){
     element = face;
@@ -500,7 +568,6 @@ function draw(element, offset){
     if (!offset.Y) offset.Y = 0;
     g.clear();
   }
-  
 
   var elementOffset = updateOffset(element, offset);
   setColors(elementOffset);
@@ -508,10 +575,8 @@ function draw(element, offset){
 
   for (var current in element){
     //print("Handling ", current, " with offset ", elementOffset);
-    //print("Handling ", current);
+    startPerfLog("draw_handling_"+ path.join("_")+"_"+current);
     var currentElement = element[current];
-
-    //var start = Date.now();
     try {
       switch(current){
         case "X":
@@ -549,12 +614,15 @@ function draw(element, offset){
           draw(currentElement, elementOffset);
           //print("Done next level");
       }
+      endPerfLog("draw_handling_"+ path.join("_")+"_"+current);
       //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
     } catch (e){
       print("Error during drawing of", current, "in", element, e, e.stack);
     }
   }
-  //print("Finished drawing loop in", Date.now() - start);
+  //print("Finished drawing loop");
+  
+  endPerfLog("draw_"+ path.join("_"));
 }
 
 var pulse,alt,temp,press;
@@ -574,8 +642,9 @@ function initialDraw(){
     isDrawing = true;
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
-    var start = Date.now();
+    startPerfLog("initialDraw");
     draw(undefined, zeroOffset);
+    endPerfLog("initialDraw");
     //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
     isDrawing = false;
     if (requestedDraws > 0){
@@ -588,30 +657,28 @@ function initialDraw(){
 
 function handleHrm(e){
   if (e.confidence > 70){
-    var change = pulse != e.bpm
     pulse = e.bpm;
     if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
       //print("Redrawing on HRM");
-      changeFromEvent |= change;
+      initialDraw();
     }
   }
 }
 
 function handlePressure(e){
-  var change = (alt != e.altitude) || (temp != e.temperature) || (press != e.pressure);
   alt = e.altitude;
   temp = e.temperature;
   press = e.pressure;
   if (!redrawEvents || redrawEvents.includes("pressure") && !Bangle.isLocked()){
     //print("Redrawing on pressure");
-      changeFromEvent |= change;
+    initialDraw();
   }
 }
 
 function handleCharging(e){
   if (!redrawEvents || redrawEvents.includes("charging") && !Bangle.isLocked()){
     //print("Redrawing on charging");
-      changeFromEvent = true;
+    initialDraw();
   }
 }
 
@@ -635,8 +702,6 @@ function setMatchedInterval(callable, time, intervalHandler){
 
 var unlockedDrawInterval;
 var lockedDrawInterval;
-
-var changeFromEvent = false;
 
 var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]) || 60000;
 var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000;
