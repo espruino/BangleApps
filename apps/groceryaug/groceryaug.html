@@ -20,7 +20,14 @@
     <script src="../../core/lib/customize.js"></script>
 
     <script>
-   if(localStorage.getItem('apikey')) {alert(localStorage.getItem('apikey'));}
+   if(!localStorage.getItem('apikey')) {
+     
+     var ak = prompt('Enter API key:','');
+     if(ak!="") {
+      localStorage.setItem('apikey', ak);
+     }
+   
+   }
    var apikey = localStorage.getItem('apikey');
   
    var antwort_val="";
