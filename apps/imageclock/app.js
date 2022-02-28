@@ -3,11 +3,12 @@ var resources = require("Storage").readJSON("imageclock.resources.json");
 
 var performanceLog = {};
 
-var startPerfLog = ()=>{};
-var endPerfLog = ()=>{};
-var printPerfLog = ()=>print("Deactivated");
+var startPerfLog = () => {};
+var endPerfLog = () => {};
+var printPerfLog = () => print("Deactivated");
+var resetPerfLog = () => {performanceLog = {};};
 
-if (true){
+if (false){
   startPerfLog = function(name){
     var time = getTime();
     if (!performanceLog.start) performanceLog.start={};
@@ -34,7 +35,7 @@ if (true){
     }
     keys.sort();
     for (var k of keys){
-      print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "total:", (performanceLog.cum[k] * 1000).toFixed(0));
+      print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "count:", performanceLog.count[k], "total:", (performanceLog.cum[k] * 1000).toFixed(0));
     }
   };
 }
@@ -662,6 +663,7 @@ function initialDraw(){
   if (!isDrawing){
     //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
     isDrawing = true;
+    resetPerfLog();
     startPerfLog("initialDraw_g.clear");
     g.clear();
     endPerfLog("initialDraw_g.clear");
