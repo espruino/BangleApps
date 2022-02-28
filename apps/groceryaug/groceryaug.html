@@ -15,13 +15,14 @@
       </div>
     </form>
     <br><br>
-    <button id="reset" class="btn btn-error">Reset</button> <button id="upload" class="btn btn-primary">Upload</button>
+   <button id="upload" class="btn btn-primary">Upload</button>
 
     <script src="../../core/lib/customize.js"></script>
 
     <script>
-      
+   if(localStorage.getItem('apikey')) {alert(localStorage.getItem('apikey'));}
    var apikey = localStorage.getItem('apikey');
+  
    var antwort_val="";
     function handleFileSelect(evt) {
             let files = evt.target.files; // FileList object
