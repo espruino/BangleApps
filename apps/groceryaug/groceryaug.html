@@ -32,11 +32,8 @@
   
    var antwort_val="";
     function handleFileSelect(evt) {
-            let files = evt.target.files; // FileList object
-
-            // use the 1st file from the list
+            let files = evt.target.files;
             let f = files[0];
-
         const data = new FormData();
         data.append("srcImg", f);
         data.append("Session", "string");
@@ -93,8 +90,7 @@
       }
       getLines();
 
-
-
+      /*
       $form.addEventListener('submit', event => {
         event.preventDefault()
         products = [];
@@ -110,7 +106,7 @@
 
 
         save()
-      })
+      })*/
 
       function save(){
         localStorage.removeItem('grocery-product-list-aug');
@@ -121,6 +117,21 @@
 
 
       document.getElementById("upload").addEventListener("click", function() {
+        
+        //event.preventDefault()
+        products = [];
+        getLines();
+        for(var i in $lines) {
+          var name = $lines[i];
+          products.push({
+            name,
+            ok: false
+          })
+        }
+          alert("Products added");
+
+        save()
+        
         sendCustomizedApp({
           storage:[
             { name:"grocery_list_aug.json", content: JSON.stringify({products: products}) }
