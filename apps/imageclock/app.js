@@ -58,7 +58,7 @@ function prepareImg(resource){
     //print("buffer from file");
     result.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
     result.file = undefined;
-  } else if (resource.compressed && (resource.dataOffset === undefined)){
+  } else if (resource.compressed && (resource.dataOffset == undefined)){
     //print("buffer from compressed");
     result.buffer = require("heatshrink").decompress(atob(resource.compressed));
     result.compressed = undefined;
@@ -134,7 +134,7 @@ function drawNumber(element, offset){
 
     var isNegative;
     var digits;
-    if (typeof number !== "number"){
+    if (number == undefined){
       isNegative = true;
       digits = [];
       numberOfDigits = 0;
@@ -206,7 +206,6 @@ function drawNumber(element, offset){
       } else {
         drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
       }
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
       currentX += minusImage.width + spacing;
     }
     for (var d = 0; d < numberOfDigits; d++){
