@@ -3,7 +3,7 @@
   "name": "2FA Authenticator",
   "shortName": "AuthWatch",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"}],
   "version": "0.06",
   "description": "Google Authenticator compatible tool.",
   "tags": "tool",
