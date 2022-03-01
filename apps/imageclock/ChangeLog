@@ -3,3 +3,4 @@
 0.03: Allow partly importing Amazfit decompiler formatted watchfaces
 0.04: Allow writing all image data to separate file to save some RAM
       Allow hiding elements on lock
+0.05: Add precompilation to js for performance

@@ -100,7 +100,7 @@ The `Value` field is one of the implemented numerical values.
 
 ##### Number
 
-Can bottom right, or top left aligned. Will currently force all numbers to
+Can be aligned to bottom left, top left, bottom right, top right and center. Will currently force all numbers to
 be integer.
 
 ```
@@ -215,6 +215,8 @@ Container names can be everything but other object names.
 * SecondAnalog
 * SecondTens
 * SecondOnes
+* WeekDay
+* WeekDayMondayFirst
 * Day
 * DayTens
 * DayOnes
@@ -228,6 +230,7 @@ Container names can be everything but other object names.
 * Altitude
 * BatteryPercentage 
 * BatteryVoltage
+* StepsGoal
 * WeatherCode
 * WeatherTemperature
 
@@ -243,8 +246,12 @@ Container names can be everything but other object names.
   * Barometer
   * Compass
   * GPS
+  * StepsGoal
+  * WeatherTemperatureNegative
 * on/off/vibrate
   * Notifications
+* celsius/fahrenheit/unknown
+  * WeatherTemperatureUnit
 
 ### info.json
 
@@ -253,14 +260,13 @@ stored on the watch
 
 # TODO
 
-* Handle events and redraws better, actually hit minutes/seconds for redraw
+* Handle events and redraws better
 * Performance improvements
-  * Mark elements with how often they need to be redrawn 
-  * Use less RAM (maybe dedicated parser for JSON working on a stack/queue)
+  * Mark elements with how often they need to be redrawn
+  * Drawing to buffers and compositing later
 * Allow watchfaces to declare if the want to show widgets
 * Temporarily show widgets with slide up/down
 * Finalize the file format
-* Allow additional files for upload declared in info.json
 * Settings
 * Localization
 
