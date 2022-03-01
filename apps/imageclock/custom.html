@@ -25,6 +25,8 @@
       <label for="useDataFile">Use resource data file (image data not in RAM by default)</label></br>
       <input type="checkbox" id="collapseTree" name="mode" checked/>
       <label for="collapseTree">Collapse the tree to a flat representation</label></br>
+      <input type="checkbox" id="precompile" name="mode" checked/>
+      <label for="precompile">Precompile watch face to js</label></br>
     </p>
 
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
@@ -46,6 +48,7 @@
       var resultJson = {};
       var infoJson;
       var faceJson;
+      var precompiledJs = "";
       var resourceDataString = "";
       var resourceDataOffset = 0;
       var handledFiles = 0;
@@ -550,6 +553,24 @@
         }
         return result;
       }
+      
+      function convertToCode(elements){
+        var code = "";  
+        
+        for (var i = 0; i< elements.length; i++){
+          var c = elements[i]
+          console.log("convert to code", c);
+          
+          var condition = "";
+          if (c.value.HideOn && c.value.HideOn.includes("Lock")){
+            condition = 'if (!Bangle.isLocked())';
+          }
+          
+          code += condition + " draw" + c.type + "(face.Collapsed[" + i + "].value, zeroOffset);\n";
+        }
+        console.log("Code:", code);
+        return code
+      }
 
       function postProcess(){
         if (document.getElementById('useDataFile').checked){
@@ -557,10 +578,18 @@
           console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
         }
         
+        
+        var properties = faceJson.Properties;
+        
         if (document.getElementById('collapseTree').checked){
-          faceJson = { Collapsed: collapseTree(faceJson,{X:0,Y:0})};
+          faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
           console.log("After collapsing", faceJson);
         }
+        
+        if (document.getElementById('precompile').checked){
+          precompiledJs = convertToCode(faceJson.Collapsed);
+          console.log("After precompiling", precompiledJs);
+        } 
       }
 
       function imageLoaded() {
@@ -808,7 +837,6 @@
           id : "imageclock",
           storage:[
             {name:"imageclock.app.js", url:"app.js"},
-            {name:"imageclock.face.json", content: JSON.stringify(faceJson)},
             {name:"imageclock.resources.json", content: JSON.stringify(resultJson)},
             {name:"imageclock.img", url:"app-icon.js", evaluate:true},
           ]
@@ -816,9 +844,10 @@
         if (resourceDataString.length > 0){
           appDef.storage.push({name:"imageclock.resources.data", content: resourceDataString});
         }
-        
-        
-        console.log("Uploading app:", appDef);
+        appDef.storage.push({name:"imageclock.draw.js", content: precompiledJs.length > 0 ? precompiledJs : "//empty"});
+        appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
+
+        console.log("Uploading app:", appDef);        
         sendCustomizedApp(appDef);
       });
             

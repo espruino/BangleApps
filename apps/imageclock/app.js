@@ -1,5 +1,6 @@
 var face = require("Storage").readJSON("imageclock.face.json");
 var resources = require("Storage").readJSON("imageclock.resources.json");
+var precompiledJs = require("Storage").read("imageclock.draw.js");
 
 var performanceLog = {};
 
@@ -670,7 +671,17 @@ function initialDraw(){
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
     startPerfLog("initialDraw");
-    draw(face, [], zeroOffset);
+    //var start = Date.now();
+    if (precompiledJs && precompiledJs.length > 7){
+      //print("Precompiled");
+      eval(precompiledJs);
+    } else if (face.Collapsed){
+      //print("Collapsed");
+      drawIteratively(face.Collapsed);
+    } else {
+      //print("Full");
+      draw(face, [], zeroOffset);
+    }
     endPerfLog("initialDraw");
     //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
     isDrawing = false;
@@ -679,6 +690,8 @@ function initialDraw(){
       requestedDraws = 0;
       setTimeout(initialDraw, 10);
     }
+  } else {
+    print("queued draw");
   }
 }
 
