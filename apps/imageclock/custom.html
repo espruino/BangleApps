@@ -21,8 +21,6 @@
 
     <p>
       Options:</br>
-      <input type="checkbox" id="collapseTree" name="mode" checked/>
-      <label for="collapseTree">Collapse the tree to a flat representation</label></br>
       <input type="checkbox" id="precompile" name="mode" checked/>
       <label for="precompile">Precompile watch face to js</label></br>
     </p>
@@ -581,15 +579,11 @@
         moveData(resultJson);
         console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
         
-        
         var properties = faceJson.Properties;
         
-        if (document.getElementById('collapseTree').checked){
+        if (document.getElementById('precompile').checked){
           faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
           console.log("After collapsing", faceJson);
-        }
-        
-        if (document.getElementById('precompile').checked){
           precompiledJs = convertToCode(faceJson.Collapsed);
           console.log("After precompiling", precompiledJs);
         } 
