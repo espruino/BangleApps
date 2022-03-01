@@ -14,16 +14,14 @@ Bangle.drawWidgets();
 
 // ---------------------------
 let settings = Object.assign({
-  record : true,
-  B1 : "dist",
-  B2 : "time",
-  B3 : "pacea",
-  B4 : "pacec",
-  B5 : "bpm",
-  B6 : "step",
-  B7 : "caden",
-  B8 : "speed",
-  paceLength : 1000
+  record: true,
+  B1: "dist",
+  B2: "time",
+  B3: "pacea",
+  B4: "bpm",
+  B5: "step",
+  B6: "caden",
+  paceLength: 1000
 }, require("Storage").readJSON("run.json", 1) || {});
 var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 var exs = ExStats.getStats(statIDs, settings);

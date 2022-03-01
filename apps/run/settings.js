@@ -13,14 +13,11 @@
     B1: "dist",
     B2: "time",
     B3: "pacea",
-    B4: "pacec",
-    B5: "bpm",
-    B6: "step",
-    B7: "caden",
-    B8: "speed",
-    paceLength: 1000,
+    B4: "bpm",
+    B5: "step",
+    B6: "caden",
+    paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
     notify: false,
-
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
@@ -59,8 +56,6 @@
     'Box 4': getBoxChooser("B4"),
     'Box 5': getBoxChooser("B5"),
     'Box 6': getBoxChooser("B6"),
-    'Box 7': getBoxChooser("B7"),
-    'Box 8': getBoxChooser("B8"),
   });
   E.showMenu(menu);
 })
