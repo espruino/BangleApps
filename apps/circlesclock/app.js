@@ -3,22 +3,7 @@ const storage = require("Storage");
 const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 
 const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
-const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
-const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
 const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
-
-const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
-const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
-const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
-const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
-const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
-const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
-const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
-const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
-const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
-
-const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
-const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
 Graphics.prototype.setFontRobotoRegular50NumericOnly = function(scale) {
   // Actual height 39 (40 - 2)
@@ -67,7 +52,7 @@ const colorGreen = '#008000';
 const colorBlue = '#0000ff';
 const colorYellow = '#ffff00';
 const widgetOffset = showWidgets ? 24 : 0;
-const dowOffset = circleCount == 3 ? 22 : 24; // dow offset relative to date
+const dowOffset = circleCount == 3 ? 20 : 22; // dow offset relative to date
 const h = g.getHeight() - widgetOffset;
 const w = g.getWidth();
 const hOffset = (circleCount == 3 ? 34 : 30) - widgetOffset;
@@ -103,21 +88,24 @@ const circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 const iconOffset = circleCount == 3 ? 6 : 8;
 const defaultCircleTypes = ["steps", "hr", "battery", "weather"];
 
+function hideWidgets() {
+  /*
+   * we are not drawing the widgets as we are taking over the whole screen
+   * so we will blank out the draw() functions of each widget and change the
+   * area to the top bar doesn't get cleared.
+   */
+  if (WIDGETS && typeof WIDGETS === "object") {
+    for (let wd of WIDGETS) {
+      wd.draw = () => {};
+      wd.area = "";
+    }
+  }
+}
 
 function draw() {
   g.clear(true);
   if (!showWidgets) {
-    /*
-     * we are not drawing the widgets as we are taking over the whole screen
-     * so we will blank out the draw() functions of each widget and change the
-     * area to the top bar doesn't get cleared.
-     */
-    if (WIDGETS && typeof WIDGETS === "object") {
-      for (let wd of WIDGETS) {
-        wd.draw = () => {};
-        wd.area = "";
-      }
-    }
+    hideWidgets();
   } else {
     Bangle.drawWidgets();
   }
@@ -129,7 +117,7 @@ function draw() {
   g.setFontRobotoRegular50NumericOnly();
   g.setFontAlign(0, -1);
   g.setColor(colorFg);
-  g.drawString(locale.time(new Date(), 1), w / 2, h1 + 8);
+  g.drawString(locale.time(new Date(), 1), w / 2, h1 + 6);
   now = Math.round(new Date().getTime() / 1000);
 
   // date & dow
@@ -138,10 +126,19 @@ function draw() {
   g.drawString(locale.date(new Date()), w / 2, h2);
   g.drawString(locale.dow(new Date()), w / 2, h2 + dowOffset);
 
-  drawCircle(1);
-  drawCircle(2);
-  drawCircle(3);
-  if (circleCount >= 4) drawCircle(4);
+  // draw the circles a little bit delayed so we decrease the blocking time
+  setTimeout(function() {
+    drawCircle(1);
+  }, 1);
+  setTimeout(function() {
+    drawCircle(2);
+  }, 1);
+  setTimeout(function() {
+    drawCircle(3);
+  }, 1);
+  setTimeout(function() {
+    if (circleCount >= 4) drawCircle(4);
+  }, 1);
 }
 
 function drawCircle(index) {
@@ -248,6 +245,9 @@ function getGradientColor(color, percent) {
   const colorList = [
     '#00FF00', '#80FF00', '#FFFF00', '#FF8000', '#FF0000'
   ];
+  if (color == "fg") {
+    color = colorFg;
+  }
   if (color == "green-red") {
     const colorIndex = Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length) - 1] || "#00ff00";
@@ -325,6 +325,8 @@ function drawStepsDistance(w) {
 function drawHeartRate(w) {
   if (!w) w = getCircleXPosition("hr");
 
+  const heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
+
   drawCircleBackground(w);
 
   const color = getCircleColor("hr");
@@ -348,6 +350,8 @@ function drawHeartRate(w) {
 function drawBattery(w) {
   if (!w) w = getCircleXPosition("battery");
   const battery = E.getBattery();
+
+  const powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
 
   drawCircleBackground(w);
 
@@ -425,6 +429,10 @@ function drawWeather(w) {
 function drawSunProgress(w) {
   if (!w) w = getCircleXPosition("sunprogress");
   const percent = getSunProgress();
+
+  // sunset icons:
+  const sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
+  const sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
 
   drawCircleBackground(w);
 
@@ -559,6 +567,18 @@ function windAsBeaufort(windInKmh) {
  */
 function getWeatherIconByCode(code) {
   const codeGroup = Math.round(code / 100);
+
+  // weather icons:
+  const weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
+  const weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
+  const weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
+  const weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
+  const weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
+  const weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
+  const weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
+  const weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
+  const weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
+
   switch (codeGroup) {
     case 2:
       return weatherStormy;
@@ -822,7 +842,6 @@ Bangle.on('charging', function(charging) {
 if (isCircleEnabled("hr")) {
   enableHRMSensor();
 }
-
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();

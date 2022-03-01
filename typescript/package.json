@@ -1,0 +1,13 @@
+{
+  "name": "Bangle.ts",
+  "description": "Bangle.js Typescript Project Setup and Types",
+  "author": "Sebastian Di Luzio <sebastian@diluz.io> (https://diluz.io)",
+  "version": "0.0.1",
+  "devDependencies": {
+    "typescript": "4.5.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:types": "tsc ./types/globals.d.ts"
+  }
+}
