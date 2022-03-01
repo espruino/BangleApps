@@ -732,13 +732,13 @@ function getMatchedWaitingTime(time){
 
 
 function setMatchedInterval(callable, time, intervalHandler){
-  //print("Setting matched timeout for", time);
+  //print("Setting matched interval for", time);
   setTimeout(()=>{
     var interval = setInterval(callable, time);
     if (intervalHandler) intervalHandler(interval);
+    callable();
   }, getMatchedWaitingTime(time));
 }
-
 
 var unlockedDrawInterval;
 var lockedDrawInterval;
