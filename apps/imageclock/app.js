@@ -102,108 +102,106 @@ function drawNumber(element, offset){
   //print("drawNumber: ", number, element, offset);
   if (number) number = number.toFixed(0);
 
-  if (checkRedraw(element,number)){
-    //var numberOffset = updateOffset(element, offset);
-    var numberOffset = offset;
+  //var numberOffset = updateOffset(element, offset);
+  var numberOffset = offset;
 
-    var isNegative;
-    var digits;
-    if (number == undefined){
-      isNegative = true;
-      digits = [];
-      numberOfDigits = 0;
-    } else {
-      isNegative = number < 0;
-      if (isNegative) number *= -1;
-      digits = splitNumberToDigits(number);
-    }
-
-    //print("digits: ", digits);
-    if (!numberOfDigits) numberOfDigits = digits.length;
-    var firstDigitX = element.X;
-    var firstDigitY = element.Y;
-    var imageIndex = element.ImageIndex ? element.ImageIndex : 0;
-
-    var firstImage;
-    if (imageIndex){
-      firstImage = getByPath(resources, [], "" + (0 + imageIndex));
-    } else {
-      firstImage = getByPath(resources, element.ImagePath, 0);
-    }
-
-    var minusImage;
-    if (imageIndexMinus){
-      minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
-    } else {
-      minusImage = getByPath(resources, element.ImagePath, "minus");
-    }
-
-    var unitImage;
-    //print("Get image for unit", imageIndexUnit);
-    if (imageIndexUnit !== undefined){
-      unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
-      //print("Unit image is", unitImage);
-    } else if (element.Unit){
-      unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
-    }
-
-    var numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
-    if (isNegative && minusImage){
-      //print("Adding to width", minusImage);
-      numberWidth += minusImage.width + spacing;
-    }
-    if (unitImage){
-      //print("Adding to width", unitImage);
-      numberWidth += unitImage.width + spacing;
-    }
-    //print("numberWidth:", numberWidth);
-    
-    if (element.Alignment == "Center") {
-      firstDigitX = Math.round(element.X - (numberWidth/2)) + 1;
-      firstDigitY = Math.round(element.Y - (firstImage.height/2)) + 1;
-    } else if (element.Alignment == "BottomRight"){
-      firstDigitX = element.X - numberWidth + 1;
-      firstDigitY = element.Y - firstImage.height + 1;
-    } else if (element.Alignment == "TopRight") {
-      firstDigitX = element.X - numberWidth + 1;
-      firstDigitY = element.Y;
-    } else if (element.Alignment == "BottomLeft") {
-      firstDigitX = element.X;
-      firstDigitY = element.Y - firstImage.height + 1;
-    }
-    
-    var currentX = firstDigitX;
-    if (isNegative && minusImage){
-      //print("Draw minus at", currentX);
-      if (imageIndexMinus){
-        drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
-      } else {
-        drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
-      }
-      currentX += minusImage.width + spacing;
-    }
-    for (var d = 0; d < numberOfDigits; d++){
-      var currentDigit;
-      var difference = numberOfDigits - digits.length;
-      if (d >= difference){
-        currentDigit = digits[d-difference];
-      } else {
-        currentDigit = 0;
-      }
-      //print("Digit " + currentDigit + " " + currentX);
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
-      currentX += firstImage.width + spacing;
-    }
-    if (imageIndexUnit){
-      //print("Draw unit at", currentX);
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
-    } else if (element.Unit){
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
-    }
-    element.lastDrawnValue = number;
-    
-    endPerfLog("drawNumber");
+  var isNegative;
+  var digits;
+  if (number == undefined){
+    isNegative = true;
+    digits = [];
+    numberOfDigits = 0;
+  } else {
+    isNegative = number < 0;
+    if (isNegative) number *= -1;
+    digits = splitNumberToDigits(number);
   }
+
+  //print("digits: ", digits);
+  if (!numberOfDigits) numberOfDigits = digits.length;
+  var firstDigitX = element.X;
+  var firstDigitY = element.Y;
+  var imageIndex = element.ImageIndex ? element.ImageIndex : 0;
+
+  var firstImage;
+  if (imageIndex){
+    firstImage = getByPath(resources, [], "" + (0 + imageIndex));
+  } else {
+    firstImage = getByPath(resources, element.ImagePath, 0);
+  }
+
+  var minusImage;
+  if (imageIndexMinus){
+    minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
+  } else {
+    minusImage = getByPath(resources, element.ImagePath, "minus");
+  }
+
+  var unitImage;
+  //print("Get image for unit", imageIndexUnit);
+  if (imageIndexUnit !== undefined){
+    unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
+    //print("Unit image is", unitImage);
+  } else if (element.Unit){
+    unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+  }
+
+  var numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
+  if (isNegative && minusImage){
+    //print("Adding to width", minusImage);
+    numberWidth += minusImage.width + spacing;
+  }
+  if (unitImage){
+    //print("Adding to width", unitImage);
+    numberWidth += unitImage.width + spacing;
+  }
+  //print("numberWidth:", numberWidth);
+
+  if (element.Alignment == "Center") {
+    firstDigitX = Math.round(element.X - (numberWidth/2)) + 1;
+    firstDigitY = Math.round(element.Y - (firstImage.height/2)) + 1;
+  } else if (element.Alignment == "BottomRight"){
+    firstDigitX = element.X - numberWidth + 1;
+    firstDigitY = element.Y - firstImage.height + 1;
+  } else if (element.Alignment == "TopRight") {
+    firstDigitX = element.X - numberWidth + 1;
+    firstDigitY = element.Y;
+  } else if (element.Alignment == "BottomLeft") {
+    firstDigitX = element.X;
+    firstDigitY = element.Y - firstImage.height + 1;
+  }
+
+  var currentX = firstDigitX;
+  if (isNegative && minusImage){
+    //print("Draw minus at", currentX);
+    if (imageIndexMinus){
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
+    } else {
+      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
+    }
+    currentX += minusImage.width + spacing;
+  }
+  for (var d = 0; d < numberOfDigits; d++){
+    var currentDigit;
+    var difference = numberOfDigits - digits.length;
+    if (d >= difference){
+      currentDigit = digits[d-difference];
+    } else {
+      currentDigit = 0;
+    }
+    //print("Digit " + currentDigit + " " + currentX);
+    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
+    currentX += firstImage.width + spacing;
+  }
+  if (imageIndexUnit){
+    //print("Draw unit at", currentX);
+    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
+  } else if (element.Unit){
+    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
+  }
+  element.lastDrawnValue = number;
+
+  endPerfLog("drawNumber");
 }
 
 function setColors(properties){
@@ -245,19 +243,6 @@ function drawElement(pos, offset, path, lastElem){
   endPerfLog("drawElement");
 }
 
-function checkRedraw(element, newValue){
-  var redrawConfig = element.Redraw ? element.Redraw : defaultRedraw;
-  switch(redrawConfig){
-    case "Change":
-      return !element.lastDrawnValue || element.lastDrawnValue != newValue;
-    case "Never":
-      return false;
-    case "Always":
-    default:
-      return true;
-  }
-}
-
 function getValue(value, defaultValue){
   if (typeof value == "string"){
     return numbers[value]();
@@ -289,12 +274,11 @@ function drawScale(scale, offset){
   
   var segmentsToDraw = Math.ceil(value * segments.length);
 
-  if (checkRedraw(scale, segmentsToDraw)){
-    for (var i = 0; i < segmentsToDraw; i++){
-      drawElement(segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
-    }
-    scale.lastDrawnValue = segmentsToDraw;
+  for (var i = 0; i < segmentsToDraw; i++){
+    drawElement(segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
   }
+  scale.lastDrawnValue = segmentsToDraw;
+
   endPerfLog("drawScale");
 }
 
@@ -323,29 +307,28 @@ function drawCodedImage(image, offset){
   startPerfLog("drawCodedImage");
   var code = getValue(image.Value);
   //print("drawCodedImage", image, offset, code);
-  
-  if (checkRedraw(image, code)){
-    if (image.ImagePath) {
-      var factor = 1;
-      var currentCode = code;
-      while (code / factor > 1){
-        currentCode = Math.floor(currentCode/factor)*factor;
-        //print("currentCode", currentCode);
-        if (getByPath(resources, image.ImagePath, currentCode)){
-          break;
-        }
-        factor *= 10;
+
+  if (image.ImagePath) {
+    var factor = 1;
+    var currentCode = code;
+    while (code / factor > 1){
+      currentCode = Math.floor(currentCode/factor)*factor;
+      //print("currentCode", currentCode);
+      if (getByPath(resources, image.ImagePath, currentCode)){
+        break;
       }
-      if (code / factor > 1){
-        //print("found match");
-        drawImage(image, offset, currentCode);
-      } else {
-        //print("fallback");
-        drawImage(image, offset, "fallback");
-      }
+      factor *= 10;
     }
-    image.lastDrawnValue = code;
+    if (code / factor > 1){
+      //print("found match");
+      drawImage(image, offset, currentCode);
+    } else {
+      //print("fallback");
+      drawImage(image, offset, "fallback");
+    }
   }
+  image.lastDrawnValue = code;
+
   startPerfLog("drawCodedImage");
 }
 
@@ -508,11 +491,9 @@ function drawMultiState(element, offset){
   startPerfLog("drawMultiState");
   //print("drawMultiState", element, offset);
   var value = multistates[element.Value]();
-  if (checkRedraw(element, value)){
-    //print("drawImage from drawMultiState", element, offset, value);
-    drawImage(element, offset, value);
-    element.lastDrawnValue = value;
-  }
+  //print("drawImage from drawMultiState", element, offset, value);
+  drawImage(element, offset, value);
+  element.lastDrawnValue = value;
   endPerfLog("drawMultiState");
 }
 
