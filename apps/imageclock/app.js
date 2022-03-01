@@ -666,7 +666,7 @@ function initialDraw(){
     isDrawing = true;
     resetPerfLog();
     startPerfLog("initialDraw_g.clear");
-    g.clear();
+    g.clear(true);
     endPerfLog("initialDraw_g.clear");
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
