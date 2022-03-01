@@ -1,6 +1,6 @@
 { "id": "run",
   "name": "Run",
-  "version":"0.07",
+  "version":"0.08",
   "description": "Displays distance, time, steps, cadence, pace and more for runners.",
   "icon": "app.png",
   "tags": "run,running,fitness,outdoors,gps",
@@ -12,5 +12,6 @@
     {"name":"run.img","url":"app-icon.js","evaluate":true},
     {"name":"run.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"run.json"}]
+  "data": [{"name":"run.json"}],
+  "dependencies" : { "messages":"recorder" }
 }

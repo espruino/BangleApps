@@ -9,14 +9,18 @@
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
   let settings = Object.assign({
-    record : true,
-    B1 : "dist",
-    B2 : "time",
-    B3 : "pacea",
-    B4 : "bpm",
-    B5 : "step",
-    B6 : "caden",
-    paceLength : 1000
+    record: true,
+    B1: "dist",
+    B2: "time",
+    B3: "pacea",
+    B4: "pacec",
+    B5: "bpm",
+    B6: "step",
+    B7: "caden",
+    B8: "speed",
+    paceLength: 1000,
+    notify: false,
+
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
@@ -24,7 +28,7 @@
 
   function getBoxChooser(boxID) {
     return {
-      min :0, max: statsIDs.length-1,
+      min: 0, max: statsIDs.length-1,
       value: Math.max(statsIDs.indexOf(settings[boxID]),0),
       format: v => statsList[v].name,
       onchange: v => {
@@ -55,6 +59,8 @@
     'Box 4': getBoxChooser("B4"),
     'Box 5': getBoxChooser("B5"),
     'Box 6': getBoxChooser("B6"),
+    'Box 7': getBoxChooser("B7"),
+    'Box 8': getBoxChooser("B8"),
   });
   E.showMenu(menu);
 })

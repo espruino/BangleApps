@@ -1,5 +1,5 @@
 var ExStats = require("exstats");
-var B2 = process.env.HWVERSION==2;
+var B2 = process.env.HWVERSION===2;
 var Layout = require("Layout");
 var locale = require("locale");
 var fontHeading = "6x8:2";
@@ -18,12 +18,14 @@ let settings = Object.assign({
   B1 : "dist",
   B2 : "time",
   B3 : "pacea",
-  B4 : "bpm",
-  B5 : "step",
-  B6 : "caden",
+  B4 : "pacec",
+  B5 : "bpm",
+  B6 : "step",
+  B7 : "caden",
+  B8 : "speed",
   paceLength : 1000
 }, require("Storage").readJSON("run.json", 1) || {});
-var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!="");
+var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 var exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
@@ -88,7 +90,7 @@ layout.render();
 Bangle.on("GPS", function(fix) {
   layout.gps.bgCol = fix.fix ? "#0f0" : "#f00";
   if (!fix.fix) return; // only process actual fixes
-  if (fixCount++ == 0) {
+  if (fixCount++ === 0) {
     Bangle.buzz(); // first fix, does not need to respect quiet mode
   }
 });

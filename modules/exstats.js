@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
+/* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
 /*  Exercise Stats module
 
 Take a look at README.md for hints on developing with this library.
@@ -69,10 +69,10 @@ var stats = {};
 
 // distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
 // https://www.movable-type.co.uk/scripts/latlong.html
+// (Equirectangular approximation)
 function calcDistance(a,b) {
-  function radians(a) { return a*Math.PI/180; }
-  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
+  var x = b.lon-a.lon * Math.cos((a.lat+b.lat)/2);
+  var y = b.lat-a.lat;
   return Math.sqrt(x*x + y*y) * 6371000;
 }
 
@@ -126,7 +126,7 @@ Bangle.on("HRM", function(h) {
   if (h.confidence>=60) {
     state.BPM = h.bpm;
     state.BPMage = 0;
-    stats["bpm"].emit("changed",stats["bpm"]);
+    if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
   }
 });
 
@@ -137,13 +137,13 @@ exports.getList = function() {
     {name: "Distance", id:"dist"},
     {name: "Steps", id:"step"},
     {name: "Heart (BPM)", id:"bpm"},
-    {name: "Pace (avr)", id:"pacea"},
-    {name: "Pace (current)", id:"pacec"},
+    {name: "Pace (avg)", id:"pacea"},
+    {name: "Pace (curr)", id:"pacec"},
     {name: "Speed", id:"speed"},
     {name: "Cadence", id:"caden"},
   ];
 };
-/** Instatiate the given list of statistic IDs (see comments at top)
+/** Instantiate the given list of statistic IDs (see comments at top)
  options = {
    paceLength : meters to measure pace over
  }
@@ -159,7 +159,7 @@ exports.getStats = function(statIDs, options) {
       getValue : function() { return Date.now()-state.startTime; },
       getString : function() { return formatTime(this.getValue()) },
     };
-  };
+  }
   if (statIDs.includes("dist")) {
     needGPS = true;
     stats["dist"]={
