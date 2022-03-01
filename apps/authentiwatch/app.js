@@ -94,6 +94,9 @@ function hotp(d, token, dohmac) {
       while (ret.length < token.digits) {
         ret = "0" + ret;
       }
+      // add a space after every 3rd or 4th digit
+      var re = (token.digits % 3 == 0 || (token.digits % 3 >= token.digits % 4 && token.digits % 4 != 0)) ? "" : ".";
+      ret = ret.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
     } catch(err) {
       ret = notsupported;
     }
@@ -122,15 +125,15 @@ function drawToken(id, r) {
   lbl = tokens[id].label.substr(0, 10);
   if (id == state.curtoken) {
     // current token
-    g.setColor(g.theme.fgH);
-    g.setBgColor(g.theme.bgH);
-    g.setFont("Vector", tokenextraheight);
+    g.setColor(g.theme.fgH)
+     .setBgColor(g.theme.bgH)
+     .setFont("Vector", tokenextraheight)
     // center just below top line
-    g.setFontAlign(0, -1, 0);
+     .setFontAlign(0, -1, 0);
     adj = y1;
   } else {
-    g.setColor(g.theme.fg);
-    g.setBgColor(g.theme.bg);
+    g.setColor(g.theme.fg)
+     .setBgColor(g.theme.bg);
     sz = tokendigitsheight;
     do {
       g.setFont("Vector", sz--);
@@ -139,8 +142,8 @@ function drawToken(id, r) {
     g.setFontAlign(0, 0, 0);
     adj = (y1 + y2) / 2;
   }
-  g.clearRect(x1, y1, x2, y2);
-  g.drawString(lbl, (x1 + x2) / 2, adj, false);
+  g.clearRect(x1, y1, x2, y2)
+   .drawString(lbl, (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
@@ -161,10 +164,10 @@ function drawToken(id, r) {
     g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
   }
   // shaded lines top and bottom
-  g.setColor(0.5, 0.5, 0.5);
-  g.drawLine(x1, y1, x2, y1);
-  g.drawLine(x1, y2, x2, y2);
-  g.setClipRect(0, 0, g.getWidth(), g.getHeight());
+  g.setColor(0.5, 0.5, 0.5)
+   .drawLine(x1, y1, x2, y1)
+   .drawLine(x1, y2, x2, y2)
+   .setClipRect(0, 0, g.getWidth(), g.getHeight());
 }
 
 function draw() {
@@ -229,9 +232,9 @@ function draw() {
       state.nexttime = 0;
     }
   } else {
-    g.setFont("Vector", tokendigitsheight);
-    g.setFontAlign(0, 0, 0);
-    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.setFont("Vector", tokendigitsheight)
+     .setFontAlign(0, 0, 0)
+     .drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
   if (state.drawtimer) {
     clearTimeout(state.drawtimer);
@@ -323,9 +326,9 @@ Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){exitApp();     }, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising" , debounce:50, repeat:true});
+  setWatch(function(){exitApp();     }, BTN2, {edge:"falling", debounce:50});
+  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising" , debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
 
