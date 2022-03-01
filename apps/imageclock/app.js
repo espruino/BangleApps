@@ -45,44 +45,16 @@ function prepareImg(resource){
   startPerfLog("prepareImg");
   //print("prepareImg: ", resource);
 
-  var result = cacheBuffers ? resource : {
+  var result = {
     width: resource.width,
     height: resource.height,
-    bpp: resource.bpp
+    bpp: resource.bpp,
+    buffer: E.toArrayBuffer(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength))
   };
-  if (!cacheBuffers && resource.transparent) result.transparent = resource.transparent;
 
-  if (resource.img){
-    //print("buffer from img");
-    result.buffer = E.toArrayBuffer(atob(resource.img));
-    result.img = undefined;
-  } else if (resource.file){
-    //print("buffer from file");
-    result.buffer = E.toArrayBuffer(atob(require("Storage").read(resource.file)));
-    result.file = undefined;
-  } else if (resource.compressed && (resource.dataOffset == undefined)){
-    //print("buffer from compressed");
-    result.buffer = require("heatshrink").decompress(atob(resource.compressed));
-    result.compressed = undefined;
-  } else if (resource.buffer){
-    //print("buffer cached");
-  } else if (resource.dataOffset !== undefined){
-    //print("buffer from data file");
-    if (resource.compressed){
-      result.buffer = require("heatshrink").decompress(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength));
-    } else {
-      result.buffer = E.toArrayBuffer(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength));
-    }
-    result.compressed = undefined;
-    result.dataOffset = undefined;
-    result.dataLength = undefined;
-  } else {
-    print("Could not get image data for resource", resource);
-  }
-
-  if (result.paletteData){
+  if (resource.transparent) result.transparent = resource.transparent;
+  if (resource.paletteData){
     result.palette = new Uint16Array(resource.paletteData);
-    result.paletteData = undefined;
   }
 
   endPerfLog("prepareImg");
@@ -333,22 +305,17 @@ function drawDigit(element, offset, digit){
 function drawImage(image, offset, name){
   startPerfLog("drawImage");
   var imageOffset = updateColors(image, offset);
-  if (image.ImagePath) {
-    //print("drawImage", image, offset, name);
-    if (image.Value && image.Steps){
-      var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
-      //print("Step", steps, "of", image.Steps);
-      drawElement(image, imageOffset, image.ImagePath, "" + steps);
-    } else if (image.ImageIndex !== undefined) {
-      drawElement(image, imageOffset, image.ImagePath, image.ImageIndex);
-    } else {
-      drawElement(image, imageOffset, image.ImagePath, name ? "" + name: undefined);
-    }
-  } else if (image.ImageFile) {
-    var file = require("Storage").readJSON(image.ImageFile);
-    setColors(imageOffset);
-    g.drawImage(prepareImg(file),image.X + imageOffset.X, image.Y + imageOffset.Y);
+  //print("drawImage", image, offset, name);
+  if (image.Value && image.Steps){
+    var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
+    //print("Step", steps, "of", image.Steps);
+    drawElement(image, imageOffset, image.ImagePath, "" + steps);
+  } else if (image.ImageIndex !== undefined) {
+    drawElement(image, imageOffset, image.ImagePath, image.ImageIndex);
+  } else {
+    drawElement(image, imageOffset, image.ImagePath, name ? "" + name: undefined);
   }
+  
   endPerfLog("drawImage");
 }
 
