@@ -422,7 +422,7 @@
         return { Poly: result };
       }
       
-      function convertAmazfitAnalog(analog){
+      function convertAmazfitAnalog(analog, face){
         var result = {
         };
         
@@ -436,6 +436,10 @@
         if (analog.Minutes){
           result.Minutes = {};
           result.Minutes.Hand = convertAmazfitHand(analog.Minutes, "Minute", 0, 60);
+          if (!face.Properties) face.Properties = {};
+          if (!face.Properties.Redraw) face.Properties.Redraw = {};
+          face.Properties.Redraw.Unlocked = 1000;
+          face.Properties.Redraw.Locked = 60000;
           if (analog.Minutes.CenterImage){
             result.Minutes.Center = convertAmazfitImage(analog.Minutes.CenterImage);
           }
@@ -443,10 +447,13 @@
         if (analog.Seconds){
           result.Seconds = {};
           result.Seconds = convertAmazfitHand(analog.Seconds, "Second", 0, 60);
-          if (!faceJson.Properties) faceJson.Properties = {};
-          if (!faceJson.Properties.Redraw) faceJson.Properties.Redraw = {};
-          if (!faceJson.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Unlocked = 1000;
-          if (!faceJson.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Locked = 15000;
+          result.Seconds.Poly.HideOn = ["Lock"];
+          if (!face.Properties) face.Properties = {};
+          if (!face.Properties.Redraw) face.Properties.Redraw = {};
+          face.Properties.Redraw.Unlocked = 1000;
+          face.Properties.Redraw.Locked = 60000;
+          if (!face.Properties.Redraw.Events) face.Properties.Redraw.Events = [];
+          if (!face.Properties.Redraw.Events.includes("lock")) face.Properties.Redraw.Events.push("lock");
           if (analog.Seconds.CenterImage){
             result.Seconds.Center = convertAmazfitImage(analog.Seconds.CenterImage);
           }
@@ -501,7 +508,7 @@
           result.Battery = convertAmazfitBattery(json.Battery);
         }
         if (json.AnalogDialFace){
-          result.Analog = convertAmazfitAnalog(json.AnalogDialFace);
+          result.Analog = convertAmazfitAnalog(json.AnalogDialFace, result);
         }
         console.log("Converted to native:", result);
         return result;
