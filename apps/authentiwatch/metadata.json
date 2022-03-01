@@ -4,7 +4,7 @@
   "shortName": "AuthWatch",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
-  "version": "0.05",
+  "version": "0.06",
   "description": "Google Authenticator compatible tool.",
   "tags": "tool",
   "interface": "interface.html",
