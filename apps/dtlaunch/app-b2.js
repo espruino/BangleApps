@@ -6,8 +6,12 @@ var settings = Object.assign({
   showClocks: true,
   showLaunchers: true,
   direct: false,
+  oneClickExit:false
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
+if( settings.oneClickExit)
+  setWatch(_=> load(), BTN1);
+  
 var s = require("Storage");
 var apps = s.list(/\.info$/).map(app=>{
   var a=s.readJSON(app,1);
