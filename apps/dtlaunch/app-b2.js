@@ -125,5 +125,6 @@ Bangle.on("touch",(_,p)=>{
 });
 
 Bangle.loadWidgets();
+g.clear();
 Bangle.drawWidgets();
 drawPage(0);
