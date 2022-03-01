@@ -16,6 +16,9 @@ and `Messages`:
 * `Unread Timer` - when a new message is received we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
+* `Min Font` - the minimum font size used when displaying messages on the screen. A bigger font
+is chosen if there isn't much message text, but this specifies the smallest the font should get before
+it starts getting clipped.
 
 ## New Messages
 

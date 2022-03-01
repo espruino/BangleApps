@@ -1,0 +1,19 @@
+{
+  "id": "widadjust",
+  "name": "Adjust Clock",
+  "icon": "icon.png",
+  "version": "0.01",
+  "description": "Adjusts clock continually in the background to counter clock drift",
+  "type": "widget",
+  "tags": "widget",
+  "supports": [ "BANGLEJS", "BANGLEJS2" ],
+  "readme": "README.md",
+  "storage": [
+    { "name": "widadjust.wid.js", "url": "widget.js" },
+    { "name": "widadjust.settings.js", "url": "settings.js" }
+  ],
+  "data": [
+    { "name": "widadjust.json" },
+    { "name": "widadjust.state" }
+  ]
+}

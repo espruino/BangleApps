@@ -1,7 +1,13 @@
 (function(){
-  if (!Bangle.isGPSOn) return; // old firmware
+  // override setGPSPower so we know if GPS is on or off
+  var oldSetGPSPower = Bangle.setGPSPower;
+  Bangle.setGPSPower = function(on,id) {
+    var isGPSon = oldSetGPSPower(on,id);
+    WIDGETS.gps.draw();
+    return isGPSon;
+  }
 
-  function draw() {
+  WIDGETS.gps={area:"tr",width:24,draw:function() {
     g.reset();
     if (Bangle.isGPSOn()) {
       const gpsObject = Bangle.getGPSFix();
@@ -14,20 +20,5 @@
       g.setColor("#888"); // off = grey
     }
     g.drawImage(atob("GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="), this.x, 2+this.y);
-  }
-
-  var timerInterval;
-  Bangle.on('lcdPower', function(on) {
-    if (on) {
-      WIDGETS.gps.draw();
-      if (!timerInterval) timerInterval = setInterval(()=>WIDGETS.gps.draw(), 2000);
-    } else {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = undefined;
-      }
-    }
-  });
-
-  WIDGETS.gps={area:"tr",width:24,draw:draw};
+  }};
 })();
