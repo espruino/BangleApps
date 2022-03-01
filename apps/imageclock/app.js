@@ -68,9 +68,9 @@ function prepareImg(resource){
   } else if (resource.dataOffset !== undefined){
     //print("buffer from data file");
     if (resource.compressed){
-      result.buffer = require("heatshrink").decompress(atob(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength)));
+      result.buffer = require("heatshrink").decompress(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength));
     } else {
-      result.buffer = E.toArrayBuffer(atob(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength)));
+      result.buffer = E.toArrayBuffer(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength));
     }
     result.compressed = undefined;
     result.dataOffset = undefined;

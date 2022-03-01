@@ -776,14 +776,14 @@
         for (var k in json){
           var c = json[k];
           if (c.img){
-            var currentData = c.img;
+            var currentData = atob(c.img);
             delete c.img;
             c.dataOffset = resourceDataOffset;
             c.dataLength = currentData.length;
             resourceDataString += currentData;
             resourceDataOffset += currentData.length;
           } else if (c.compressed){
-            var currentData = c.compressed;
+            var currentData = atob(c.compressed);
             c.compressed = true;
             c.dataOffset = resourceDataOffset;
             c.dataLength = currentData.length;
