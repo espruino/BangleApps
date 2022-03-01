@@ -757,30 +757,30 @@ var stepsgoal = 2000;
 
 function handleLock(isLocked, forceRedraw){
   //print("isLocked", Bangle.isLocked());
-  if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
+  if (forceRedraw || !redrawEvents || redrawEvents.includes("lock")){
+    //print("Redrawing on lock", isLocked);
+    initialDraw();
+  }
   if (lockedDrawInterval) clearInterval(lockedDrawInterval);
+  if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
   if (!isLocked){
-    Bangle.setHRMPower(1, "imageclock");
-    Bangle.setBarometerPower(1, 'imageclock');
     setMatchedInterval(()=>{
       //print("Redrawing on unlocked interval");
       initialDraw();
     },unlockedRedraw, (v)=>{
       unlockedDrawInterval = v;
     });
+    Bangle.setHRMPower(1, "imageclock");
+    Bangle.setBarometerPower(1, 'imageclock');
   } else {
-    Bangle.setHRMPower(0, "imageclock");
-    Bangle.setBarometerPower(0, 'imageclock');
     setMatchedInterval(()=>{
       //print("Redrawing on locked interval");
       initialDraw();
     },lockedRedraw, (v)=>{
       lockedDrawInterval = v;
     });
-  }
-  if (forceRedraw || !redrawEvents || redrawEvents.includes("lock")){
-    //print("Redrawing on lock", isLocked);
-    initialDraw();
+    Bangle.setHRMPower(0, "imageclock");
+    Bangle.setBarometerPower(0, 'imageclock');
   }
 }
 
