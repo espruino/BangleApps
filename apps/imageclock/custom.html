@@ -569,7 +569,7 @@
             condition = 'if (!Bangle.isLocked())';
           }
           
-          code += condition + " draw" + c.type + "(face.Collapsed[" + i + "].value, zeroOffset);\n";
+          code += condition + " draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + i + "].value, {X:0,Y:0});\n";
         }
         console.log("Code:", code);
         return code

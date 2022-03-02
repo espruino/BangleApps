@@ -1,5 +1,5 @@
-var face = require("Storage").readJSON("imageclock.face.json");
-var resources = require("Storage").readJSON("imageclock.resources.json");
+var watchface = require("Storage").readJSON("imageclock.face.json");
+var watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
 var precompiledJs = require("Storage").read("imageclock.draw.js");
 
 var performanceLog = {};
@@ -88,7 +88,7 @@ function splitNumberToDigits(num){
   return String(num).split('').map(item => Number(item));
 }
 
-function drawNumber(element, offset){
+function drawNumber(resources, element, offset){
   startPerfLog("drawNumber");
   var number = numbers[element.Value]();
   var spacing = element.Spacing ? element.Spacing : 0;
@@ -175,9 +175,9 @@ function drawNumber(element, offset){
   if (isNegative && minusImage){
     //print("Draw minus at", currentX);
     if (imageIndexMinus){
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
+      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
     } else {
-      drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
+      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
     }
     currentX += minusImage.width + spacing;
   }
@@ -190,14 +190,14 @@ function drawNumber(element, offset){
       currentDigit = 0;
     }
     //print("Digit " + currentDigit + " " + currentX);
-    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
     currentX += firstImage.width + spacing;
   }
   if (imageIndexUnit){
     //print("Draw unit at", currentX);
-    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
   } else if (element.Unit){
-    drawElement({X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
   }
   element.lastDrawnValue = number;
 
@@ -209,7 +209,7 @@ function setColors(properties){
   if (properties.bg) g.setBgColor(properties.bg);
 }
 
-function drawElement(pos, offset, path, lastElem){
+function drawElement(resources, pos, offset, path, lastElem){
   startPerfLog("drawElement");
   //print("drawElement ",pos, offset, path, lastElem);
   //print("drawElement offset", offset, pos.X, pos.Y);
@@ -260,7 +260,7 @@ function getMultistate(name, defaultValue){
   return undefined;
 }
 
-function drawScale(scale, offset){
+function drawScale(resources, scale, offset){
   startPerfLog("drawScale");
   //print("drawScale", scale, offset);
   var segments = scale.Segments;
@@ -275,35 +275,35 @@ function drawScale(scale, offset){
   var segmentsToDraw = Math.ceil(value * segments.length);
 
   for (var i = 0; i < segmentsToDraw; i++){
-    drawElement(segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
+    drawElement(resources, segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
   }
   scale.lastDrawnValue = segmentsToDraw;
 
   endPerfLog("drawScale");
 }
 
-function drawDigit(element, offset, digit){
-  drawElement(element, offset, element.ImagePath, digit);
+function drawDigit(resources, element, offset, digit){
+  drawElement(resources, element, offset, element.ImagePath, digit);
 }
 
-function drawImage(image, offset, name){
+function drawImage(resources, image, offset, name){
   startPerfLog("drawImage");
   var imageOffset = updateColors(image, offset);
   //print("drawImage", image, offset, name);
   if (image.Value && image.Steps){
     var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
     //print("Step", steps, "of", image.Steps);
-    drawElement(image, imageOffset, image.ImagePath, "" + steps);
+    drawElement(resources, image, imageOffset, image.ImagePath, "" + steps);
   } else if (image.ImageIndex !== undefined) {
-    drawElement(image, imageOffset, image.ImagePath, image.ImageIndex);
+    drawElement(resources, image, imageOffset, image.ImagePath, image.ImageIndex);
   } else {
-    drawElement(image, imageOffset, image.ImagePath, name ? "" + name: undefined);
+    drawElement(resources, image, imageOffset, image.ImagePath, name ? "" + name: undefined);
   }
   
   endPerfLog("drawImage");
 }
 
-function drawCodedImage(image, offset){
+function drawCodedImage(resources, image, offset){
   startPerfLog("drawCodedImage");
   var code = getValue(image.Value);
   //print("drawCodedImage", image, offset, code);
@@ -321,10 +321,10 @@ function drawCodedImage(image, offset){
     }
     if (code / factor > 1){
       //print("found match");
-      drawImage(image, offset, currentCode);
+      drawImage(resources, image, offset, currentCode);
     } else {
       //print("fallback");
-      drawImage(image, offset, "fallback");
+      drawImage(resources, image, offset, "fallback");
     }
   }
   image.lastDrawnValue = code;
@@ -398,7 +398,7 @@ function radians(rotation){
   return value;
 }
 
-function drawPoly(element, offset){
+function drawPoly(resources, element, offset){
     startPerfLog("drawPoly");
     var vertices = [];
     var primitiveOffset = offset.clone();
@@ -433,7 +433,7 @@ function drawPoly(element, offset){
     g.drawPoly(vertices,true);
     endPerfLog("drawPoly_g.drawPoly");
     
-    startPerfLog("drawPoly");
+    endPerfLog("drawPoly");
 }
 
 var numbers = {};
@@ -487,17 +487,17 @@ multistates.WeatherTemperatureNegative = () => { return getWeatherTemperature().
 multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
 multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
 
-function drawMultiState(element, offset){
+function drawMultiState(resources, element, offset){
   startPerfLog("drawMultiState");
   //print("drawMultiState", element, offset);
   var value = multistates[element.Value]();
   //print("drawImage from drawMultiState", element, offset, value);
-  drawImage(element, offset, value);
+  drawImage(resources, element, offset, value);
   element.lastDrawnValue = value;
   endPerfLog("drawMultiState");
 }
 
-function drawIteratively(items){
+function drawIteratively(resources, items){
   //print("drawIteratively");
   startPerfLog("drawIteratively");
   for (var c of items){
@@ -508,22 +508,22 @@ function drawIteratively(items){
     }
     switch(c.type){
       case "MultiState":
-        drawMultiState(c.value, zeroOffset);
+        drawMultiState(resources, c.value, zeroOffset);
         break;
       case "Image":
-        drawImage(c.value, zeroOffset);
+        drawImage(resources, c.value, zeroOffset);
         break;
       case "CodedImage":
-        drawCodedImage(c.value, zeroOffset);
+        drawCodedImage(resources, c.value, zeroOffset);
         break;
       case "Number":
-        drawNumber(c.value, zeroOffset);
+        drawNumber(resources, c.value, zeroOffset);
         break;
       case "Poly":
-        drawPoly(c.value, zeroOffset);
+        drawPoly(resources, c.value, zeroOffset);
         break;
       case "Scale":
-        drawScale(c.value, zeroOffset);
+        drawScale(resources, c.value, zeroOffset);
         break;
     }
     endPerfLog("drawIteratively_handling_" + c.type);
@@ -531,10 +531,10 @@ function drawIteratively(items){
   endPerfLog("drawIteratively");
 }
 
-function draw(root, path, offset){
+function draw(resources, root, path, offset){
   //print("draw", path);
   startPerfLog("draw_"+ path.join("_"));
-  
+
   var element = getByPath(root, path);
   var elementOffset = updateOffset(element, offset);
   setColors(elementOffset);
@@ -559,22 +559,22 @@ function draw(root, path, offset){
             //print("Hiding", current);
             break;
           case "MultiState":
-            drawMultiState(currentElement, elementOffset);
+            drawMultiState(resources, currentElement, elementOffset);
             break;
           case "Image":
-            drawImage(currentElement, elementOffset);
+            drawImage(resources, currentElement, elementOffset);
             break;
           case "CodedImage":
-            drawCodedImage(currentElement, elementOffset);
+            drawCodedImage(resources, currentElement, elementOffset);
             break;
           case "Number":
-            drawNumber(currentElement, elementOffset);
+            drawNumber(resources, currentElement, elementOffset);
             break;
           case "Poly":
             drawPoly(currentElement, elementOffset);
             break;
           case "Scale":
-            drawScale(currentElement, elementOffset);
+            drawScale(resources, currentElement, elementOffset);
             break;
           default:
             //print("Enter next level", elementOffset);
@@ -582,7 +582,7 @@ function draw(root, path, offset){
               //print("Hiding", current);
               continue;
             }
-            draw(root, path.concat(current), elementOffset);
+            draw(resources, root, path.concat(current), elementOffset);
             //print("Done next level");
         }
         endPerfLog("draw_handling_"+ path.join("_")+"_"+current);
@@ -606,7 +606,7 @@ var zeroOffset={X:0,Y:0};
 var requestedDraws = 0;
 var isDrawing = false;
 
-function initialDraw(){
+function initialDraw(resources, face){
   //print("Free memory", process.memory(false).free);
   requestedDraws++;
   if (!isDrawing){
@@ -625,10 +625,10 @@ function initialDraw(){
       eval(precompiledJs);
     } else if (face.Collapsed){
       //print("Collapsed");
-      drawIteratively(face.Collapsed);
+      drawIteratively(resources, face.Collapsed);
     } else {
       //print("Full");
-      draw(face, [], zeroOffset);
+      draw(resources, face, [], zeroOffset);
     }
     endPerfLog("initialDraw");
     //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
@@ -636,7 +636,7 @@ function initialDraw(){
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
       requestedDraws = 0;
-      setTimeout(initialDraw, 10);
+      setTimeout(()=>{initialDraw(resources, face);}, 10);
     }
   } else {
     print("queued draw");
@@ -648,7 +648,7 @@ function handleHrm(e){
     pulse = e.bpm;
     if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
       //print("Redrawing on HRM");
-      initialDraw();
+      initialDraw(watchfaceResources, watchface);
     }
   }
 }
@@ -659,14 +659,14 @@ function handlePressure(e){
   press = e.pressure;
   if (!redrawEvents || redrawEvents.includes("pressure") && !Bangle.isLocked()){
     //print("Redrawing on pressure");
-    initialDraw();
+    initialDraw(watchfaceResources, watchface);
   }
 }
 
 function handleCharging(e){
   if (!redrawEvents || redrawEvents.includes("charging") && !Bangle.isLocked()){
     //print("Redrawing on charging");
-    initialDraw();
+    initialDraw(watchfaceResources, watchface);
   }
 }
 
@@ -691,12 +691,11 @@ function setMatchedInterval(callable, time, intervalHandler){
 var unlockedDrawInterval;
 var lockedDrawInterval;
 
-var lockedRedraw = getByPath(face, ["Properties","Redraw","Locked"]) || 60000;
-var unlockedRedraw = getByPath(face, ["Properties","Redraw","Unlocked"]) || 1000;
-var defaultRedraw = getByPath(face, ["Properties","Redraw","Default"]) || "Always";
-var redrawEvents = getByPath(face, ["Properties","Redraw","Events"]);
-var cacheBuffers = getByPath(face, ["Properties","CacheBuffers"]) || false;
-var events = getByPath(face, ["Properties","Events"]);
+var lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
+var unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
+var defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "Always";
+var redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
+var events = getByPath(watchface, ["Properties","Events"]);
 
 var stepsgoal = 2000;
 
@@ -707,14 +706,14 @@ function handleLock(isLocked, forceRedraw){
   //print("isLocked", Bangle.isLocked());
   if (forceRedraw || !redrawEvents || redrawEvents.includes("lock")){
     //print("Redrawing on lock", isLocked);
-    initialDraw();
+    initialDraw(watchfaceResources, watchface);
   }
   if (lockedDrawInterval) clearInterval(lockedDrawInterval);
   if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
   if (!isLocked){
     setMatchedInterval(()=>{
       //print("Redrawing on unlocked interval");
-      initialDraw();
+      initialDraw(watchfaceResources, watchface);
     },unlockedRedraw, (v)=>{
       unlockedDrawInterval = v;
     });
@@ -723,7 +722,7 @@ function handleLock(isLocked, forceRedraw){
   } else {
     setMatchedInterval(()=>{
       //print("Redrawing on locked interval");
-      initialDraw();
+      initialDraw(watchfaceResources, watchface);
     },lockedRedraw, (v)=>{
       lockedDrawInterval = v;
     });
