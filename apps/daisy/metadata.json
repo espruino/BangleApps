@@ -1,6 +1,6 @@
 { "id": "daisy",
   "name": "Daisy",
-  "version":"0.02",
+  "version":"0.03",
   "dependencies": {"mylocation":"app"},
   "description": "A clock based on the Pastel clock with large ring guage for steps",
   "icon": "app.png",
