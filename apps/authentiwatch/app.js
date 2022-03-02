@@ -32,9 +32,12 @@ if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 function b32decode(seedstr) {
   // RFC4648
-  var i, buf = 0, bitcount = 0, retstr = "";
-  for (i in seedstr) {
-    var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(seedstr.charAt(i).toUpperCase(), 0);
+  var buf = 0, bitcount = 0, retstr = "";
+  for (var c of seedstr.toUpperCase()) {
+    if (c=='0')c='O';
+    if (c=='1')c='I';
+    if (c=='8')c='B';
+    c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(c);
     if (c != -1) {
       buf <<= 5;
       buf |= c;
@@ -47,7 +50,7 @@ function b32decode(seedstr) {
     }
   }
   var retbuf = new Uint8Array(retstr.length);
-  for (i in retstr) {
+  for (var i in retstr) {
     retbuf[i] = retstr.charCodeAt(i);
   }
   return retbuf;
