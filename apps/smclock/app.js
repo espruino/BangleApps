@@ -51,7 +51,7 @@ function draw() {
   g.drawImage(background);
 
   const color = getBatteryColor();
-  const bat = d02(E.getBattery()) + "%";
+  const bat = E.getBattery() + "%";
   const d = new Date();
   const day = d.getDate();
   const month = (d.getMonth() + 1);
@@ -78,7 +78,7 @@ function draw() {
   g.setFont("Vector", 16);
   g.drawString("Bat:", 12, 22, false);
   g.setColor(color[0], color[1], color[2]);
-  g.drawString(bat, 52, 22, false);
+  g.drawString(bat, 46, 22, false);
 }
 
 g.clear();
