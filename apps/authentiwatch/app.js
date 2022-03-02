@@ -8,9 +8,9 @@ const algos = {
   "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
   "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
 };
-const calculating = "Calculating";
-const notokens = "No tokens";
-const notsupported = "Not supported";
+const calculating = /*LANG*/"Calculating";
+const notokens = /*LANG*/"No tokens";
+const notsupported = /*LANG*/"Not supported";
 
 // sample settings:
 // {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
