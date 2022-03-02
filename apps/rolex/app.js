@@ -28,6 +28,14 @@ var imgSec = {
   buffer : E.toArrayBuffer(atob("v/q//r/+v/qv+q/qq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qv+v/6/D/wD8PDw8PwD/w///6v+qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqr+r//v///X/1X/Vf9V/1X/1///+//q/qq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq+qr6qvqq6qrqg=="))
 };
 
+/* use font closer to Rolex */
+
+Graphics.prototype.setFontRolexFont = function(scale) {
+  // Actual height 12 (12 - 1)
+  this.setFontCustom(atob("AAAABAACAAAAAYAHgA4AOABgAAAAA/gD/gMBgQBAwGA/4A/gAAAAAAIBAQCB/8D/4AAQAAAAAAAAAwEDAYEBQIEgYxA/CA4MAAAAAAAAgIBAhCBCEDOYHvgCOAAAAAAABgANAAyAHEAf/A/+AAgABAAAAAAADBAcCBsECYIEYgIeAAAAAAAHwAfwB5wGggZBAjGBH4CDgAAACAAYAAgABAMCDwE+APgAYAAAAAAABxwH3wJwgRhA3iB54AhgAAAAAAPhA/iBDMCCQGHgH+AHwAAAAAAAQIAgQAAAAAA="), 46, atob("BAUJCQkJCQkJCQkJBQ=="), 17+(scale<<8)+(1<<16));
+  return this;
+};
+
 /* Set variables to get screen width, height and center points */
 
 let W = g.getWidth();
@@ -35,10 +43,6 @@ let H = g.getHeight();
 let cx = W/2;
 let cy = H/2;
 let Timeout;
-
-/* set font */
-
-require("Font4x5Numeric").add(Graphics);
 
 Bangle.loadWidgets();
 
@@ -106,9 +110,10 @@ function drawHands() {
   g.drawImage(imgHour,cx-22*hourSin,cy+22*hourCos,{rotate:hourAngle});
   g.drawImage(imgMin,cx-34*minSin,cy+34*minCos,{rotate:minAngle});
   g.drawImage(imgSec,cx-25*secSin,cy+25*secCos,{rotate:secAngle});
-  g.setFont("4x5Numeric:3");
+  g.setFontRolexFont();
   g.setColor(g.theme.bg);
-  g.drawString(d.getDate(),157,81);
+  g.setFontAlign(0,0,0);
+  g.drawString(d.getDate(),165,89);
 }
 
 function drawBackground() {
