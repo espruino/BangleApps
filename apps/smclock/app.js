@@ -99,7 +99,7 @@ function draw() {
   g.drawImage(background);
 
   const color = getBatteryColor(batLevel);
-  const bat = "";
+  let bat = "";
   const d = new Date();
   const day = d.getDate();
   const month = d.getMonth() + 1;
