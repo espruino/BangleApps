@@ -754,7 +754,9 @@ function clearWidgetsDraw(){
   }
 }
 
-Bangle.loadWidgets();
-clearWidgetsDraw();
+setTimeout(()=>{
+  Bangle.loadWidgets();
+  clearWidgetsDraw();
+}, 100);
 
 handleLock(Bangle.isLocked(), true);
