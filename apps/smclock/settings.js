@@ -55,11 +55,15 @@
         settings.showAnalogFace !== undefined ? settings.showAnalogFace : false,
       format: (v) => (v ? "On" : "Off"),
       onchange: (v) => {
-        settings.showAnalogFace = v;
+        if (v == "On") {
+          settings.showAnalogFace = true;
+        } else {
+          settings.showAnalogFace = false;
+        }
         writeSettings();
       },
     },
-    Date: stringInSettings("dateFormat", ["Long", "Short", "ISO8601"]),
+    Date: stringInSettings("dateFormat", ["Long", "Short"]),
     "Draw Interval": {
       value: settings.drawInterval,
       onchange: (v) => {
@@ -79,7 +83,11 @@
         settings.showWeekInfo !== undefined ? settings.showWeekInfo : false,
       format: (v) => (v ? "On" : "Off"),
       onchange: (v) => {
-        settings.showWeekInfo = v;
+        if (v == "On") {
+          settings.showWeekInfo = true;
+        } else {
+          settings.showWeekInfo = false;
+        }
         writeSettings();
       },
     },
