@@ -99,7 +99,7 @@ function draw() {
   g.drawImage(background);
 
   const color = getBatteryColor(batLevel);
-  const bat;
+  const bat = "";
   const d = new Date();
   const day = d.getDate();
   const month = d.getMonth() + 1;
@@ -111,9 +111,9 @@ function draw() {
   const time = d02(h) + ":" + d02(m);
 
   if (E.getBattery() < 100) {
-    bat = d02(E.getBattery()) + "%"
+    bat = d02(E.getBattery()) + "%";
   } else {
-    bat = E.getBattery() + "%"
+    bat = E.getBattery() + "%";
   }
 
   g.reset();
@@ -145,6 +145,8 @@ function draw() {
 }
 
 loadSettings();
+
+console.log(settings);
 
 g.clear();
 

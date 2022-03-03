@@ -6,17 +6,7 @@
   var FILE = "smclock.json";
   // load settings from the file
   // assign default values if it doesn't exist
-  var settings = Object.assign(
-    {
-      dateFormat: "Short",
-      drawInterval: 10,
-      pollInterval: 60,
-      showAnalogFace: false,
-      showWeekInfo: false,
-      useVectorFont: false,
-    },
-    require("Storage").readJSON(FILE, true) || {}
-  );
+  var settings = Object.assign(require("Storage").readJSON(FILE, true) || {});
 
   // write the new settings to the file
   function writeSettings() {
