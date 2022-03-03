@@ -49,42 +49,14 @@ exports.load = function() {
   return events.filter(e => e).reverse(); // newest message comes last in StorageFile, but should be first in array
 };
 
-function haveNew() {
-  if ("undefined"!= typeof MESSAGES) {
-    // we're in an app that loaded messages
-    return MESSAGES.some(e => e.new);
-  }
-  // start with ids of new events in old file (if any)
-  var ids = [], e;
-  for(e of (require("Storage").readJSON("messages.json", 1) || []).filter(e => e.new)) {
-    if (e.id===undefined) return true; // no id, so can't be removed/modified by storageFile line
-    ids.push(e.id);
-  }
-  // add/remove ids of new messages to the list
-  var l, f = require("Storage").open("messages.jsonl", "r");
-  while((l = f.readLine())!==undefined) {
-    e = JSON.parse(l);
-    if (e.t=="remove") {
-      if (ids.includes(e.id)) ids.splice(ids.indexOf(e.id), 1);
-    } else if (e.new) {
-      // add or modify event to new
-      if (!e.id) return true;// no id, so can't be removed/modified by later line
-      if (!ids.includes(e.id)) ids.push(e.id);
-    } else if (e.t=="modify" && e.new==false && ids.includes(e.id)) {
-      // event modified to no longer be new
-      ids.splice(ids.indexOf(e.id), 1);
-    }
-  }
-
-  return ids.length>0;
-}
 /**
  * Check if there are any unread messages
  * @returns {boolean}
  */
 exports.haveNew = function(){
   try{
-    return haveNew();
+    if ("undefined"!==typeof MESSAGES) return MESSAGES.some(e => e.new);
+    return exports.load().some(e => e.new);
   } catch(e) {
     return false; // don't bother e.g. the widget with errors
   }
