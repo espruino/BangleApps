@@ -27,24 +27,22 @@ const monthName = [
 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // dynamic variables
-let batLevel = -1;
-let batColor = [0, 0, 0];
+var batLevel = -1;
+var batColor = [0, 0, 0];
 
 // settings variables
-let dateFormat;
-let drawInterval;
-let pollInterval;
-let showAnalogFace;
-let showWeekInfo;
-let useVectorFont;
+var dateFormat;
+var drawInterval;
+var pollInterval;
+var showAnalogFace;
+var showWeekInfo;
+var useVectorFont;
 
 // load settings
 function loadSettings() {
   // Helper function default setting
-  function def(value, def) {
-    return value !== undefined ? value : def;
-  }
-  let settings = require("Storage").readJSON(SETTINGSFILE, true) || {};
+  function def(value, def) {return value !== undefined ? value : def;}
+  var settings = require("Storage").readJSON(SETTINGSFILE, true) || {};
 
   dateFormat = def(settings.dateFormat, "Short");
   drawInterval = def(settings.drawInterval, 10);
@@ -99,7 +97,7 @@ function draw() {
   g.drawImage(background);
 
   const color = getBatteryColor(batLevel);
-  let bat = "";
+  var bat = "";
   const d = new Date();
   const day = d.getDate();
   const month = d.getMonth() + 1;
@@ -152,7 +150,7 @@ pollBattery();
 draw();
 
 var batInterval = setInterval(pollBattery, 60000);
-let actualDrawInterval = setInterval(draw, drawInterval * 1000);
+var actualDrawInterval = setInterval(draw, drawInterval * 1000);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on("lcdPower", (on) => {

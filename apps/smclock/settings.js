@@ -3,36 +3,31 @@
 // helper functions taken from Anton Clock
 
 (function (back) {
-  const FILE = "smclock.json";
+  var FILE = "smclock.json";
   // load settings from the file
   // assign default values if it doesn't exist
-  let settings = Object.assign(
-    {
+  var settings = Object.assign({
       dateFormat: "Short",
       drawInterval: 10,
       pollInterval: 60,
       showAnalogFace: false,
       showWeekInfo: false,
       useVectorFont: false,
-    },
-    require("Storage").readJSON(FILE, true) || {}
-  );
+    }, require("Storage").readJSON(FILE, true) || {});
 
   // write the new settings to the file
-  function writeSettings() {
-    require("Storage").writeJSON(FILE, settings);
-  }
+  function writeSettings() {require("Storage").writeJSON(FILE, settings);}
 
   // helper method which uses int-based menu item for set of string values
   function stringItems(startvalue, writer, values) {
     return {
       value: startvalue === undefined ? 0 : values.indexOf(startvalue),
-      format: (v) => values[v],
+      format: v => values[v],
       min: 0,
       max: values.length - 1,
       wrap: true,
       step: 1,
-      onchange: (v) => {
+      onchange: v => {
         writer(values[v]);
         writeSettings();
       },
@@ -46,15 +41,13 @@
 
   // settings menu
   var mainmenu = {
-    "": {
-      title: "Monogram Clock",
-    },
+    "": {title: "Monogram Clock",},
     "< Back": () => back(),
     "Analog Face": {
       value:
         settings.showAnalogFace !== undefined ? settings.showAnalogFace : false,
-      format: (v) => (v ? "On" : "Off"),
-      onchange: (v) => {
+      format: v => v ? "On" : "Off",
+      onchange: v => {
         if (v == "On") {
           settings.showAnalogFace = true;
         } else {
@@ -66,14 +59,14 @@
     Date: stringInSettings("dateFormat", ["Long", "Short"]),
     "Draw Interval": {
       value: settings.drawInterval,
-      onchange: (v) => {
+      onchange: v => {
         settings.drawInterval = v;
         writeSettings();
       },
     },
     "Poll Interval": {
       value: settings.pollInterval,
-      onchange: (v) => {
+      onchange: v => {
         settings.pollInterval = v;
         writeSettings();
       },
@@ -81,8 +74,8 @@
     "Week Info": {
       value:
         settings.showWeekInfo !== undefined ? settings.showWeekInfo : false,
-      format: (v) => (v ? "On" : "Off"),
-      onchange: (v) => {
+      format: v => v ? "On" : "Off",
+      onchange: v => {
         if (v == "On") {
           settings.showWeekInfo = true;
         } else {
@@ -94,13 +87,9 @@
     "Vector Font": {
       value:
         settings.useVectorFont !== undefined ? settings.useVectorFont : false,
-      format: (v) => (v ? "On" : "Off"),
-      onchange: (v) => {
-        if (v == "On") {
-          settings.useVectorFont = true;
-        } else {
-          settings.useVectorFont = false;
-        }
+      format: v => v ? "On" : "Off",
+      onchange: v => {
+        settings.useVectorFont = v;
         writeSettings();
       },
     },
