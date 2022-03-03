@@ -603,6 +603,9 @@ var zeroOffset={X:0,Y:0};
 var requestedDraws = 0;
 var isDrawing = false;
 
+
+var start;
+
 function initialDraw(resources, face){
   //print("Free memory", process.memory(false).free);
   requestedDraws++;
@@ -628,7 +631,8 @@ function initialDraw(resources, face){
       draw(resources, face, [], zeroOffset);
     }
     endPerfLog("initialDraw");
-    //print(new Date().toISOString(), "Drawing done", (Date.now() - start).toFixed(0));
+    lastDrawTime = (Date.now() - start);
+    //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
     isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
@@ -676,17 +680,20 @@ function getMatchedWaitingTime(time){
 
 
 
-function setMatchedInterval(callable, time, intervalHandler){
+function setMatchedInterval(callable, time, intervalHandler, delay){
   //print("Setting matched interval for", time);
+  var matchedTime = getMatchedWaitingTime(time + delay);
   setTimeout(()=>{
     var interval = setInterval(callable, time);
     if (intervalHandler) intervalHandler(interval);
     callable();
-  }, getMatchedWaitingTime(time));
+  }, matchedTime);
 }
 
 var unlockedDrawInterval;
 var lockedDrawInterval;
+
+var lastDrawTime = 0;
 
 var lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
 var unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
@@ -701,28 +708,32 @@ var stepsgoal = 2000;
 
 function handleLock(isLocked, forceRedraw){
   //print("isLocked", Bangle.isLocked());
-  if (forceRedraw || !redrawEvents || redrawEvents.includes("lock")){
-    //print("Redrawing on lock", isLocked);
-    initialDraw(watchfaceResources, watchface);
-  }
   if (lockedDrawInterval) clearInterval(lockedDrawInterval);
   if (unlockedDrawInterval) clearInterval(unlockedDrawInterval);
   if (!isLocked){
+    if (forceRedraw || !redrawEvents || (redrawEvents.includes("unlock"))){
+      //print("Redrawing on unlock", isLocked);
+      initialDraw(watchfaceResources, watchface);
+    }
     setMatchedInterval(()=>{
       //print("Redrawing on unlocked interval");
       initialDraw(watchfaceResources, watchface);
     },unlockedRedraw, (v)=>{
       unlockedDrawInterval = v;
-    });
+    }, lastDrawTime);
     Bangle.setHRMPower(1, "imageclock");
     Bangle.setBarometerPower(1, 'imageclock');
   } else {
+    if (forceRedraw || !redrawEvents || (redrawEvents.includes("lock"))){
+      //print("Redrawing on lock", isLocked);
+      initialDraw(watchfaceResources, watchface);
+    }
     setMatchedInterval(()=>{
       //print("Redrawing on locked interval");
       initialDraw(watchfaceResources, watchface);
     },lockedRedraw, (v)=>{
       lockedDrawInterval = v;
-    });
+    }, lastDrawTime);
     Bangle.setHRMPower(0, "imageclock");
     Bangle.setBarometerPower(0, 'imageclock');
   }
@@ -759,4 +770,4 @@ setTimeout(()=>{
   clearWidgetsDraw();
 }, 100);
 
-handleLock(Bangle.isLocked(), true);
+handleLock(Bangle.isLocked());
