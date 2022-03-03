@@ -10,20 +10,7 @@ const background = {
     )
   ),
 };
-const monthName = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const monthName = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // dynamic variables
@@ -116,8 +103,23 @@ function draw() {
 
   g.reset();
 
+  // draw battery info
+  g.setColor(1, 1, 1);
+  if (useVectorFont == true) {
+    g.setFont("Vector", 16);
+    g.drawString("Bat:", 12, 22, false);
+  } else {
+    g.setFont("4x6", 2);
+    g.drawString("Bat:", 10, 22, false);
+  }
+  g.setColor(color[0], color[1], color[2]);
+  if (batLevel < 100) {
+    g.drawString(bat, 52, 22, false);
+  } else {
+    g.drawString(bat, 46, 22, false);
+  }
+
   g.setColor(0, 0, 0);
-  console.log(useVectorFont, dateFormat);
   if (useVectorFont == true && dateFormat == "Short") {
     g.setFont("Vector", 20);
   } else {
@@ -130,16 +132,6 @@ function draw() {
   g.setColor(1, 1, 1);
   g.setFont("Vector", 60);
   g.drawString(time, 10, 108, false);
-
-  g.setColor(1, 1, 1);
-  g.setFont("Vector", 16);
-  g.drawString("Bat:", 12, 22, false);
-  g.setColor(color[0], color[1], color[2]);
-  if (batLevel < 100) {
-    g.drawString(bat, 52, 22, false);
-  } else {
-    g.drawString(bat, 46, 22, false);
-  }
 }
 
 loadSettings();
@@ -149,7 +141,7 @@ g.clear();
 pollBattery();
 draw();
 
-var batInterval = setInterval(pollBattery, 60000);
+var batInterval = setInterval(pollBattery, pollInterval * 1000);
 var actualDrawInterval = setInterval(draw, drawInterval * 1000);
 
 // Stop updates when LCD is off, restart when on
@@ -159,7 +151,7 @@ Bangle.on("lcdPower", (on) => {
   if (actualDrawInterval) clearInterval(actualDrawInterval);
   actualDrawInterval = undefined;
   if (on) {
-    batInterval = setInterval(pollBattery, 60000);
+    batInterval = setInterval(pollBattery, pollInterval * 1000);
     actualDrawInterval = setInterval(draw, drawInterval * 1000);
 
     pollBattery();
