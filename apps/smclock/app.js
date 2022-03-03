@@ -89,8 +89,8 @@ function draw() {
   const day = d.getDate();
   const month = d.getMonth() + 1;
   const week = d02(ISO8601_week_no(d));
-  const date1 = d02(day) + "/" + d02(month);
-  const date2 = weekday[d.getDay()] + " " + d02(week);
+  const date1 = "";
+  const date2 = "";
   const h = d.getHours();
   const m = d.getMinutes();
   const time = d02(h) + ":" + d02(m);
@@ -119,15 +119,40 @@ function draw() {
     g.drawString(bat, 46, 22, false);
   }
 
+  // draw date info
   g.setColor(0, 0, 0);
-  if (useVectorFont == true && dateFormat == "Short") {
+  if (useVectorFont == true) {
     g.setFont("Vector", 20);
   } else {
     g.setFont("6x8", 2);
   }
-  g.drawString(date1, 105, 20, false);
-  g.setFont("Vector", 16);
-  g.drawString(date2, 105, 55, false);
+  if (dateFormat == "Short") {
+    date1 = d02(day) + "/" + d02(month);
+    g.drawString(date1, 105, 20, false);
+  } else {
+    date1 = monthName[month - 1] + d02(day);
+    g.drawString(date1, 104, 20, false);
+  }
+
+  // draw week info
+  if (showWeekInfo == true) {
+    date2 = weekday[d.getDay()] + " " + d02(week)
+    if (useVectorFont == true) {
+      g.setFont("Vector", 18);
+    } else {
+      g.setFont("6x8", 2);
+    }
+    g.drawString(date2, 105, 55, false);
+  } else {
+    date2 = d.getFullYear();
+    if (useVectorFont == true) {
+      g.setFont("Vector", 22);
+      g.drawString(date2, 105, 55, false);
+    } else {
+      g.setFont("4x6", 3);
+      g.drawString(date2, 108, 55, false);
+    }
+  }
 
   // draw time
   g.setColor(1, 1, 1);

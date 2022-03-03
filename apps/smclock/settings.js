@@ -48,11 +48,7 @@
         settings.showAnalogFace !== undefined ? settings.showAnalogFace : false,
       format: v => v ? "On" : "Off",
       onchange: v => {
-        if (v == "On") {
-          settings.showAnalogFace = true;
-        } else {
-          settings.showAnalogFace = false;
-        }
+        settings.showAnalogFace = v;
         writeSettings();
       },
     },
@@ -76,11 +72,7 @@
         settings.showWeekInfo !== undefined ? settings.showWeekInfo : false,
       format: v => v ? "On" : "Off",
       onchange: v => {
-        if (v == "On") {
-          settings.showWeekInfo = true;
-        } else {
-          settings.showWeekInfo = false;
-        }
+        settings.showWeekInfo = v;
         writeSettings();
       },
     },
