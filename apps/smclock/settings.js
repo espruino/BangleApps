@@ -8,10 +8,12 @@
   // assign default values if it doesn't exist
   var settings = Object.assign(
     {
-      dateFormat: "short",
+      dateFormat: "Short",
+      drawInterval: 10,
+      pollInterval: 60,
       showAnalogFace: false,
       showWeekInfo: false,
-      useVectorFont: true,
+      useVectorFont: false,
     },
     require("Storage").readJSON(FILE, true) || {}
   );
@@ -57,7 +59,21 @@
         writeSettings();
       },
     },
-    Date: stringInSettings("dateOnMain", ["Long", "Short", "ISO8601"]),
+    Date: stringInSettings("dateFormat", ["Long", "Short", "ISO8601"]),
+    "Draw Interval": {
+      value: settings.drawInterval,
+      onchange: (v) => {
+        settings.drawInterval = v;
+        writeSettings();
+      },
+    },
+    "Poll Interval": {
+      value: settings.pollInterval,
+      onchange: (v) => {
+        settings.pollInterval = v;
+        writeSettings();
+      },
+    },
     "Week Info": {
       value:
         settings.showWeekInfo !== undefined ? settings.showWeekInfo : false,
@@ -72,7 +88,11 @@
         settings.useVectorFont !== undefined ? settings.useVectorFont : false,
       format: (v) => (v ? "On" : "Off"),
       onchange: (v) => {
-        settings.useVectorFont = v;
+        if (v == "On") {
+          settings.useVectorFont = true;
+        } else {
+          settings.useVectorFont = false;
+        }
         writeSettings();
       },
     },
