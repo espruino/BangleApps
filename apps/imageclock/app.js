@@ -45,20 +45,17 @@ function prepareImg(resource){
   startPerfLog("prepareImg");
   //print("prepareImg: ", resource);
 
-  var result = {
-    width: resource.width,
-    height: resource.height,
-    bpp: resource.bpp,
-    buffer: E.toArrayBuffer(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength))
-  };
-
-  if (resource.transparent) result.transparent = resource.transparent;
-  if (resource.paletteData){
-    result.palette = new Uint16Array(resource.paletteData);
+  if (resource.dataOffset !== undefined){
+    resource.buffer = E.toArrayBuffer(require("Storage").read("imageclock.resources.data", resource.dataOffset, resource.dataLength));
+    delete resource.dataOffset;
+    delete resource.dataLength;
+    if (resource.paletteData){
+      result.palette = new Uint16Array(resource.paletteData);
+      delete resource.paletteData;
+    }
   }
-
   endPerfLog("prepareImg");
-  return result;
+  return resource;
 }
 
 function getByPath(object, path, lastElem){
