@@ -129,9 +129,15 @@ function draw() {
   g.setFont("Vector", 16);
   g.drawString(date2, 105, 55, false);
 
+  // draw time
   g.setColor(1, 1, 1);
-  g.setFont("Vector", 60);
-  g.drawString(time, 10, 108, false);
+  if (useVectorFont == true) {
+    g.setFont("Vector", 60);
+    g.drawString(time, 10, 108, false);
+  } else {
+    g.setFont("6x8", 5);
+    g.drawString(time, 14, 112, false);
+  }
 }
 
 loadSettings();
