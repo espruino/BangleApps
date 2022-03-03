@@ -6,9 +6,10 @@
   "screenshots": [{ "url": "screenshot.png" }],
   "version": "0.04",
   "description": "A simple watchface based on my stylised monogram.",
+  "type": "clock",
   "tags": "clock",
   "readme": "README.md",
-  "supports": ["BANGLEJS2"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
     { "name": "smclock.app.js", "url": "app.js" },
