@@ -152,17 +152,17 @@ pollBattery();
 draw();
 
 var batInterval = setInterval(pollBattery, 60000);
-var drawInterval = setInterval(draw, 10000);
+let actualDrawInterval = setInterval(draw, drawInterval * 1000);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on("lcdPower", (on) => {
   if (batInterval) clearInterval(batInterval);
   batInterval = undefined;
-  if (drawInterval) clearInterval(drawInterval);
-  drawInterval = undefined;
+  if (actualDrawInterval) clearInterval(actualDrawInterval);
+  actualDrawInterval = undefined;
   if (on) {
     batInterval = setInterval(pollBattery, 60000);
-    drawInterval = setInterval(draw, 10000);
+    actualDrawInterval = setInterval(draw, drawInterval * 1000);
 
     pollBattery();
     draw();
