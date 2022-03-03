@@ -27,16 +27,16 @@ const monthName = [
 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // dynamic variables
-var batLevel = -1;
-var batColor = [0, 0, 0];
+let batLevel = -1;
+let batColor = [0, 0, 0];
 
 // settings variables
-var dateFormat;
-var drawInterval;
-var pollInterval;
-var showAnalogFace;
-var showWeekInfo;
-var useVectorFont;
+let dateFormat;
+let drawInterval;
+let pollInterval;
+let showAnalogFace;
+let showWeekInfo;
+let useVectorFont;
 
 // load settings
 function loadSettings() {
@@ -44,7 +44,7 @@ function loadSettings() {
   function def(value, def) {
     return value !== undefined ? value : def;
   }
-  var settings = require("Storage").readJSON(SETTINGSFILE, true) || {};
+  let settings = require("Storage").readJSON(SETTINGSFILE, true) || {};
 
   dateFormat = def(settings.dateFormat, "Short");
   drawInterval = def(settings.drawInterval, 10);
@@ -145,8 +145,6 @@ function draw() {
 }
 
 loadSettings();
-
-console.log(settings);
 
 g.clear();
 
