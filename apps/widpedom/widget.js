@@ -140,5 +140,5 @@
     stp_today = pedomData.stepsToday|0;
     delete pedomData;
   }
-  WIDGETS["wpedom"].width = WIDGETS["wpedom"].getWidth();
+  WIDGETS["wpedom"].width = 0;
 })()
