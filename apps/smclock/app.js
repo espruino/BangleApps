@@ -94,8 +94,8 @@ function draw() {
   const day = d.getDate();
   const month = d.getMonth() + 1;
   const week = d02(ISO8601_week_no(d));
-  const date1 = "";
-  const date2 = "";
+  var date1 = "";
+  var date2 = "";
   const h = d.getHours();
   const m = d.getMinutes();
   const time = d02(h) + ":" + d02(m);
