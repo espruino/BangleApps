@@ -83,13 +83,8 @@ function getBatteryColor(level) {
 function draw() {
   g.drawImage(background);
 
-<<<<<<< HEAD
-  const color = getBatteryColor();
-  const bat = E.getBattery() + "%";
-=======
   const color = getBatteryColor(batLevel);
   var bat = "";
->>>>>>> feature/introduce_settings
   const d = new Date();
   const day = d.getDate();
   const month = d.getMonth() + 1;
@@ -118,9 +113,6 @@ function draw() {
     g.drawString("Bat:", 10, 22, false);
   }
   g.setColor(color[0], color[1], color[2]);
-<<<<<<< HEAD
-  g.drawString(bat, 46, 22, false);
-=======
   if (batLevel < 100) {
     g.drawString(bat, 52, 22, false);
   } else {
@@ -171,7 +163,6 @@ function draw() {
     g.setFont("6x8", 5);
     g.drawString(time, 14, 112, false);
   }
->>>>>>> feature/introduce_settings
 }
 
 loadSettings();
