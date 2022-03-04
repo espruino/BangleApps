@@ -1,23 +1,10 @@
 {
-<<<<<<< HEAD
-  "id":"smclock",
-  "name":"Monogram Watch Face",
-  "shortName":"MonoClock",
-  "icon":"app.png",
-<<<<<<< HEAD
-  "version":"0.03",
-=======
-  "screenshots": [{"url":"screenshot.png"}],
-  "version":"0.02",
->>>>>>> 29432bb9 (Add screenshot)
-=======
   "id": "smclock",
   "name": "Monogram Watch Face",
   "shortName": "MonoClock",
   "icon": "app.png",
   "screenshots": [{ "url": "screenshot.png" }],
   "version": "0.04",
->>>>>>> feature/introduce_settings
   "description": "A simple watchface based on my stylised monogram.",
   "type": "clock",
   "tags": "clock",
