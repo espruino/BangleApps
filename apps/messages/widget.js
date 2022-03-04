@@ -1,4 +1,4 @@
-WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
+WIDGETS["messages"]={area:"tl", width:0, iconwidth:0,
 draw:function() {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
