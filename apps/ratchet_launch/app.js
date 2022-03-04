@@ -1,8 +1,8 @@
 var Storage = require("Storage");
 var Layout = require("Layout");
 
-var font = "6x15";
-var largeFont = "12x20";
+var font = g.getFonts().includes("6x15") ? "6x15" : "6x8:2";
+var largeFont = g.getFonts().includes("12x20") ? "12x20" : "6x8:3";
 var currentApp = 0;
 var overscroll = 0;
 var blankImage = Graphics.createImage(` `);
@@ -31,6 +31,24 @@ apps.sort((a,b)=>{
   return 0;
 });
 
+// Uncomment for testing in the emulator without apps:
+// apps = [
+//   {
+//     name:"Test",
+//     type:"app",
+//     icon:blankImage,
+//     sortorder:undefined,
+//     src:""
+//   },
+//   {
+//     name:"Test 2",
+//     type:"app",
+//     icon:blankImage,
+//     sortorder:undefined,
+//     src:""
+//   },
+// ];
+
 // Initialize layout
 var layout = new Layout({
   type:"v", c:[
@@ -41,8 +59,8 @@ var layout = new Layout({
     ]},
     // A row for the current app
     { type:"h", height:rowHeight, c:[
-      {type: "img", id:"cur_icon", src:apps[currentApp].icon, width:48, height:48},
-      {type: "txt", id:"cur_name", label:apps[currentApp].name, font:largeFont, fillx:1, wrap:1},
+      {type: "img", id:"cur_icon", src:blankImage, width:48, height:48},
+      {type: "txt", id:"cur_name", label:"", font:largeFont, fillx:1, wrap:1},
     ]},
     // A row for the next app
     { type:"h", height:rowHeight, c:[
@@ -54,6 +72,11 @@ var layout = new Layout({
 
 // Drawing logic
 function render() {
+  if (!apps.length) {
+    E.showMessage(/*LANG*/"No apps");
+    return load();
+  }
+
   // Previous app
   if (currentApp > 0) {
     layout.prev_icon.src = apps[currentApp-1].icon;
@@ -86,7 +109,7 @@ function launch() {
   if (!app) return;
   if (!app.src || Storage.read(app.src)===undefined) {
     E.showMessage(/*LANG*/"App Source\nNot found");
-    setTimeout(drawMenu, 2000);
+    setTimeout(render, 2000);
   } else {
     E.showMessage(/*LANG*/"Loading...");
     load(app.src);
@@ -116,8 +139,11 @@ function move(step) {
 
 // Wire up user input
 Bangle.setUI('updown', dir => {
-  if (dir) move(-1*dir);
-  else launch();
+  if (!dir) launch();
+  else {
+    if (process.env.HWVERSION==2) dir *= -1; // "natural scrolling" on touch screen
+    move(dir);
+  }
 });
 
 render();
