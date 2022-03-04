@@ -1,5 +1,6 @@
 const tokenextraheight = 16;
 var tokendigitsheight = 30;
+var tokenheight = tokendigitsheight + tokenextraheight;
 // Hash functions
 const crypto = require("crypto");
 const algos = {
@@ -93,6 +94,9 @@ function hotp(d, token, dohmac) {
       while (ret.length < token.digits) {
         ret = "0" + ret;
       }
+      // add a space after every 3rd or 4th digit
+      var re = (token.digits % 3 == 0 || (token.digits % 3 >= token.digits % 4 && token.digits % 4 != 0)) ? "" : ".";
+      ret = ret.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
     } catch(err) {
       ret = notsupported;
     }
@@ -121,15 +125,15 @@ function drawToken(id, r) {
   lbl = tokens[id].label.substr(0, 10);
   if (id == state.curtoken) {
     // current token
-    g.setColor(g.theme.fgH);
-    g.setBgColor(g.theme.bgH);
-    g.setFont("Vector", tokenextraheight);
+    g.setColor(g.theme.fgH)
+     .setBgColor(g.theme.bgH)
+     .setFont("Vector", tokenextraheight)
     // center just below top line
-    g.setFontAlign(0, -1, 0);
+     .setFontAlign(0, -1, 0);
     adj = y1;
   } else {
-    g.setColor(g.theme.fg);
-    g.setBgColor(g.theme.bg);
+    g.setColor(g.theme.fg)
+     .setBgColor(g.theme.bg);
     sz = tokendigitsheight;
     do {
       g.setFont("Vector", sz--);
@@ -138,8 +142,8 @@ function drawToken(id, r) {
     g.setFontAlign(0, 0, 0);
     adj = (y1 + y2) / 2;
   }
-  g.clearRect(x1, y1, x2, y2);
-  g.drawString(lbl, (x1 + x2) / 2, adj, false);
+  g.clearRect(x1, y1, x2, y2)
+   .drawString(lbl, (x1 + x2) / 2, adj, false);
   if (id == state.curtoken) {
     if (tokens[id].period > 0) {
       // timed - draw progress bar
@@ -160,10 +164,10 @@ function drawToken(id, r) {
     g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
   }
   // shaded lines top and bottom
-  g.setColor(0.5, 0.5, 0.5);
-  g.drawLine(x1, y1, x2, y1);
-  g.drawLine(x1, y2, x2, y2);
-  g.setClipRect(0, 0, g.getWidth(), g.getHeight());
+  g.setColor(0.5, 0.5, 0.5)
+   .drawLine(x1, y1, x2, y1)
+   .drawLine(x1, y2, x2, y2)
+   .setClipRect(0, 0, g.getWidth(), g.getHeight());
 }
 
 function draw() {
@@ -198,15 +202,15 @@ function draw() {
   }
   if (tokens.length > 0) {
     var drewcur = false;
-    var id = Math.floor(state.listy / (tokendigitsheight + tokenextraheight));
-    var y = id * (tokendigitsheight + tokenextraheight) + Bangle.appRect.y - state.listy;
+    var id = Math.floor(state.listy / tokenheight);
+    var y = id * tokenheight + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
-      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:(tokendigitsheight + tokenextraheight)});
+      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
       if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
       id += 1;
-      y += (tokendigitsheight + tokenextraheight);
+      y += tokenheight;
     }
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
@@ -228,9 +232,9 @@ function draw() {
       state.nexttime = 0;
     }
   } else {
-    g.setFont("Vector", tokendigitsheight);
-    g.setFontAlign(0, 0, 0);
-    g.drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
+    g.setFont("Vector", tokendigitsheight)
+     .setFontAlign(0, 0, 0)
+     .drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
   if (state.drawtimer) {
     clearTimeout(state.drawtimer);
@@ -240,18 +244,18 @@ function draw() {
 
 function onTouch(zone, e) {
   if (e) {
-    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / (tokendigitsheight + tokenextraheight));
+    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenheight);
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
       if (id != -1) {
-        var y = id * (tokendigitsheight + tokenextraheight) - state.listy;
+        var y = id * tokenheight - state.listy;
         if (y < 0) {
           state.listy += y;
           y = 0;
         }
-        y += (tokendigitsheight + tokenextraheight);
+        y += tokenheight;
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
@@ -268,7 +272,7 @@ function onTouch(zone, e) {
 function onDrag(e) {
   if (e.x > g.getWidth() || e.y > g.getHeight()) return;
   if (e.dx == 0 && e.dy == 0) return;
-  var newy = Math.min(state.listy - e.dy, tokens.length * (tokendigitsheight + tokenextraheight) - Bangle.appRect.h);
+  var newy = Math.min(state.listy - e.dy, tokens.length * tokenheight - Bangle.appRect.h);
   state.listy = Math.max(0, newy);
   draw();
 }
@@ -300,8 +304,12 @@ function bangle1Btn(e) {
     }
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
+    state.listy = state.curtoken * tokenheight;
+    state.listy -= (Bangle.appRect.h - tokenheight) / 2;
+    state.listy = Math.min(state.listy, tokens.length * tokenheight - Bangle.appRect.h);
+    state.listy = Math.max(state.listy, 0);
     var fakee = {};
-    fakee.y = state.curtoken * (tokendigitsheight + tokenextraheight) - state.listy + Bangle.appRect.y;
+    fakee.y = state.curtoken * tokenheight - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
@@ -318,9 +326,9 @@ Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
 if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){exitApp();     }, BTN2, {edge:"rising", debounce:50, repeat:true});
-  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising", debounce:50, repeat:true});
+  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising" , debounce:50, repeat:true});
+  setWatch(function(){exitApp();     }, BTN2, {edge:"falling", debounce:50});
+  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising" , debounce:50, repeat:true});
 }
 Bangle.loadWidgets();
 
