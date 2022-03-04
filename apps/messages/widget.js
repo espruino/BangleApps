@@ -4,7 +4,7 @@ draw:function() {
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
   g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+this.iconwidth);
-  g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
+  //g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
   if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
