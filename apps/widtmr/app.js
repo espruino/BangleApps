@@ -57,6 +57,9 @@ function draw(){
 
   g.setFontAlign(0, 0, 0);
   g.setFont("Vector", 32).setFontAlign(0,-1);
+
+  print(require("alarm").createTimer());
+
   var text = settings.minutes + " min.";
   var rectWidth = parseInt(g.stringWidth(text) / 2);
 
