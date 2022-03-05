@@ -299,7 +299,7 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var paceNames = ["1000m","1 mile","1/2 Mthn", "Marathon",];
   var paceAmts = [1000,1609,21098,42195];
   menu['Pace'] = {
-    min :0, max: paceNames.length-1,
+    min: 0, max: paceNames.length-1,
     value: Math.max(paceAmts.indexOf(settings.paceLength),0),
     format: v => paceNames[v],
     onchange: v => {
@@ -310,7 +310,7 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var distNames = ['Off', ...paceNames];
   var distAmts = [0, ...paceAmts];
   menu['Ntfy Dist'] = {
-    min :0, max: distNames.length-1,
+    min: 0, max: distNames.length-1,
     value: Math.max(distAmts.indexOf(settings.notifyDist),0),
     format: v => distNames[v],
     onchange: v => {
@@ -321,7 +321,7 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var timeNames = ['Off', '30s', '1min', '2min', '5min', '10min', '30min', '1hr'];
   var timeAmts = [0, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
   menu['Ntfy Time'] = {
-    min :0, max: timeNames.length-1,
+    min: 0, max: timeNames.length-1,
     value: Math.max(timeAmts.indexOf(settings.notifyTime),0),
     format: v => timeNames[v],
     onchange: v => {
@@ -331,9 +331,9 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   };
   var stepAmts = [0, 100, 500, 1000, 5000, 10000];
   menu['Ntfy Steps'] = {
-    min :0, max: stepAmts.length-1,
+    min: 0, max: stepAmts.length-1,
     value: Math.max(stepAmts.indexOf(settings.notifySteps),0),
-    format: v => stepAmts[v],
+    format: v => stepAmts[v].toString(),
     onchange: v => {
       settings.notifySteps = stepAmts[v];
       saveSettings();
