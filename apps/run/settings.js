@@ -20,15 +20,15 @@
     notify: {
       dist: {
         increment: 0,
-        notification: [],
+        notifications: [],
       },
       step: {
         increment: 0,
-        notification: [],
+        notifications: [],
       },
       time: {
         increment: 0,
-        notification: [],
+        notifications: [],
       },
     },
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
@@ -48,10 +48,10 @@
     }
   }
 
-  function sampleBuzz(buzzTimes) {
-    buzzTimes.reduce(function (promise, buzzTime) {
+  function sampleBuzz(buzzPatterns) {
+    buzzPatterns.reduce(function (promise, buzzPattern) {
         return promise.then(function () {
-            return Bangle.buzz(buzzTime);
+            return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
     }, Promise.resolve());
   }
@@ -74,7 +74,8 @@
   var vibTimes = [
     [],
     [[100, 1]],
-    [[500, 1]],[[500, 1], [100, 0], [500, 1]],
+    [[500, 1]],
+    [[500, 1], [100, 0], [500, 1]],
     [[500, 1],[100, 0], [100, 1], [100, 0], [500, 1]],
     [[500, 1],[100, 0],[500, 1],[100, 0],[500, 1]],
   ];

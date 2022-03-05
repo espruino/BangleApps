@@ -25,15 +25,15 @@ let settings = Object.assign({
   notify: {
     dist: {
       value: 0,
-      notification: [],
+      notifications: [],
     },
     step: {
       value: 0,
-      notification: [],
+      notifications: [],
     },
     time: {
       value: 0,
-      notification: [],
+      notifications: [],
     },
   },
 }, require("Storage").readJSON("run.json", 1) || {});

@@ -67,17 +67,14 @@ var state = {
   notify: {
       dist: {
         increment: 0,
-        notification: [],
         next: 0,
       },
       steps: {
         increment: 0,
-        notification: [],
         next: 0,
       },
       time: {
         increment: 0,
-        notification: [],
         next: 0,
       },
     },
@@ -277,8 +274,6 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
-    console.log(now);
-    console.log(state.notify.time.next);
     if (state.notify.time.increment > 0 && state.notify.time.next < now) {
       stats["time"].emit("notify",stats["time"]);
       state.notify.time.next = now + state.notify.time.increment;
@@ -296,8 +291,6 @@ exports.getStats = function(statIDs, options) {
     state.BPM = 0;
     state.BPMage = 0;
     state.notify = options.notify;
-    console.log("options:");
-    console.log(JSON.stringify(options));
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;
     }
@@ -307,8 +300,6 @@ exports.getStats = function(statIDs, options) {
     if (options.notify.time.increment > 0) {
       state.notify.time.next = state.startTime + options.notify.time.increment;
     }
-    console.log("state:");
-    console.log(JSON.stringify(state));
   }
   reset();
   return {
