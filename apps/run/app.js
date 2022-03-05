@@ -100,12 +100,11 @@ layout.render();
 
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
-    settings.notify[stat.id].notifications.reduce(function (promise, buzzPattern) {
+    settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
         return promise.then(function () {
             return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
     }, Promise.resolve());
-    console.log(`notify from ${JSON.stringify(e)}`);
   });
 }
 

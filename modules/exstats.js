@@ -130,7 +130,7 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
-  if (state.notify.dist.increment > 0 && state.notify.dist.next < stats["dist"]) {
+  if (state.notify.dist.increment > 0 && state.notify.dist.next <= stats["dist"]) {
     stats["dist"].emit("notify",stats["dist"]);
     state.notify.dist.next = stats["dist"] + state.notify.dist.increment;
   }
@@ -141,7 +141,7 @@ Bangle.on("step", function(steps) {
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
   state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
-  if (state.notify.step.increment > 0 && state.notify.step.next < steps) {
+  if (state.notify.step.increment > 0 && state.notify.step.next <= steps) {
     stats["step"].emit("notify",stats["step"]);
     state.notify.step.next = steps + state.notify.step.increment;
   }
@@ -274,7 +274,7 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
-    if (state.notify.time.increment > 0 && state.notify.time.next < now) {
+    if (state.notify.time.increment > 0 && state.notify.time.next <= now) {
       stats["time"].emit("notify",stats["time"]);
       state.notify.time.next = now + state.notify.time.increment;
     }

@@ -49,7 +49,7 @@
   }
 
   function sampleBuzz(buzzPatterns) {
-    buzzPatterns.reduce(function (promise, buzzPattern) {
+    return buzzPatterns.reduce(function (promise, buzzPattern) {
         return promise.then(function () {
             return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
@@ -75,9 +75,9 @@
     [],
     [[100, 1]],
     [[500, 1]],
-    [[500, 1], [100, 0], [500, 1]],
-    [[500, 1],[100, 0], [100, 1], [100, 0], [500, 1]],
-    [[500, 1],[100, 0],[500, 1],[100, 0],[500, 1]],
+    [[500, 1], [200, 0], [500, 1]],
+    [[500, 1],[200, 0], [100, 1], [200, 0], [500, 1]],
+    [[500, 1],[200, 0],[500, 1],[200, 0],[500, 1]],
   ];
   menu[/*LANG*/"Dist Notifctn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
