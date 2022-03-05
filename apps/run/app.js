@@ -84,22 +84,6 @@ for (var i=0;i<statIDs.length;i+=2) {
   ]});
   if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
   if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
-  if (sa) sa.on('notify', (e)=>{
-    settings.notify[e.id].notifications.reduce(function (promise, buzzTime) {
-        return promise.then(function () {
-            return Bangle.buzz(buzzTime);
-        });
-    }, Promise.resolve());
-    console.log(`notify from ${JSON.stringify(e)}`);
-  });
-  if (sb) sa.on('notify', (e)=>{
-    settings.notify[e.id].notifications.reduce(function (promise, buzzTime) {
-        return promise.then(function () {
-            return Bangle.buzz(buzzTime);
-        });
-    }, Promise.resolve());
-    console.log(`notify from ${JSON.stringify(e)}`);
-  });
 }
 // At the bottom put time/GPS state/etc
 lc.push({ type:"h", filly:1, c:[
@@ -113,6 +97,30 @@ var layout = new Layout( {
 },{lazy:true, btns:[{ label:"START", cb: onStartStop, id:"button"}]});
 delete lc;
 layout.render();
+
+function configureNotification(stat) {
+  stat.on('notify', (e)=>{
+    settings.notify[stat.id].notifications.reduce(function (promise, buzzTime) {
+        return promise.then(function () {
+            return Bangle.buzz(buzzTime);
+        });
+    }, Promise.resolve());
+    console.log(`notify from ${JSON.stringify(e)}`);
+  });
+}
+
+// TODO: Should really loop over Object.keys(settings.notify)
+if (settings.notify.dist.increment > 0) {
+  configureNotification(exs.stats.dist);
+}
+
+if (settings.notify.step.increment > 0) {
+  configureNotification(exs.stats.step);
+}
+
+if (settings.notify.time.increment > 0) {
+  configureNotification(exs.stats.time);
+}
 
 // Handle GPS state change for icon
 Bangle.on("GPS", function(fix) {
