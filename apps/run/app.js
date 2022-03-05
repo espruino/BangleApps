@@ -44,18 +44,10 @@ var exs = ExStats.getStats(statIDs, settings);
 // Called to start/stop running
 function onStartStop() {
   var running = !exs.state.active;
-  if (running) {
-    exs.start();
-  } else {
-    exs.stop();
-  }
-  layout.button.label = running ? "STOP" : "START";
-  layout.status.label = running ? "RUN" : "STOP";
-  layout.status.bgCol = running ? "#0f0" : "#f00";
-  // if stopping running, don't clear state
-  // so we can at least refer to what we've done
-  layout.render();
+
   // start/stop recording
+  // Do this first in case recorder needs to prompt for
+  // an overwrite before we begin things like the total time
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
@@ -68,6 +60,18 @@ function onStartStop() {
       WIDGETS["recorder"].setRecording(false);
     }
   }
+
+  if (running) {
+    exs.start();
+  } else {
+    exs.stop();
+  }
+  layout.button.label = running ? "STOP" : "START";
+  layout.status.label = running ? "RUN" : "STOP";
+  layout.status.bgCol = running ? "#0f0" : "#f00";
+  // if stopping running, don't clear state
+  // so we can at least refer to what we've done
+  layout.render();
 }
 
 var lc = [];
@@ -100,28 +104,23 @@ layout.render();
 
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
+    console.log(`Got notify from ${e}`);
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
       console.log(buzzPattern);
         return promise.then(function () {
-            return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
+          console.log('Should buzz now');
+          return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
     }, Promise.resolve())
       .then(console.log);
   });
 }
 
-// TODO: Should really loop over Object.keys(settings.notify)
-if (settings.notify.dist.increment > 0) {
-  configureNotification(exs.stats.dist);
-}
-
-if (settings.notify.step.increment > 0) {
-  configureNotification(exs.stats.step);
-}
-
-if (settings.notify.time.increment > 0) {
-  configureNotification(exs.stats.time);
-}
+Object.keys(settings.notify).forEach((statType) => {
+  if (settings.notify[statType].increment > 0) {
+      configureNotification(exs.stats[statType]);
+  }
+});
 
 // Handle GPS state change for icon
 Bangle.on("GPS", function(fix) {
