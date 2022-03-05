@@ -22,7 +22,7 @@
         increment: 0,
         notification: [],
       },
-      steps: {
+      step: {
         increment: 0,
         notification: [],
       },

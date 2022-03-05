@@ -177,7 +177,7 @@ exports.getList = function() {
     dist: {
       increment: 0 to not notify on distance milestones, otherwise the number of meters to notify after, repeating
     },
-    steps: {
+    step: {
       increment: 0 to not notify on step milestones, otherwise the number of steps to notify after, repeating
     },
     time: {

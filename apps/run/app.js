@@ -27,7 +27,7 @@ let settings = Object.assign({
       value: 0,
       notification: [],
     },
-    steps: {
+    step: {
       value: 0,
       notification: [],
     },
