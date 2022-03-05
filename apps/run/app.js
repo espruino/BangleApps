@@ -113,6 +113,8 @@ layout.render();
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
     console.log(`Got notify from ${JSON.stringify(e)}`);
+    console.log(`Got notify from ${JSON.stringify(e.id)}`);
+    console.log(JSON.stringify(settings.notify));
     console.log(JSON.stringify(settings.notify[e.id]));
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
       console.log(buzzPattern);
