@@ -189,9 +189,9 @@ exports.getList = function() {
 exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
-  options.notify.dist.increment = options.notify.dist.increment||0;
-  options.notify.step.increment = options.notify.step.increment||0;
-  options.notify.time.increment = options.notify.time.increment||0;
+  options.notify.dist.increment = (options.notify && options.notify.dist && options.notify.dist.increment)||0;
+  options.notify.step.increment = (options.notify && options.notify.step && options.notify.step.increment)||0;
+  options.notify.time.increment = (options.notify && options.notify.time && options.notify.time.increment)||0;
   var needGPS,needHRM;
   // ======================
   if (statIDs.includes("time")) {
