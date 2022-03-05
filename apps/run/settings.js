@@ -80,7 +80,7 @@
     [[300, 1],[200, 0], [100, 1], [200, 0], [300, 1]],
     [[300, 1],[200, 0],[300, 1],[200, 0],[300, 1]],
   ];
-  menu[/*LANG*/"Dist Notifctn"] = {
+  menu[/*LANG*/"Dist Ntfy Ptrn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
@@ -90,7 +90,7 @@
         saveSettings();
       }
   }
-  menu[/*LANG*/"Step Notifctn"] = {
+  menu[/*LANG*/"Step Ntfy Ptrn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.step.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
@@ -100,7 +100,7 @@
         saveSettings();
       }
   }
-  menu[/*LANG*/"Time Notifctn"] = {
+  menu[/*LANG*/"Time Ntfy Ptrn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.time.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
