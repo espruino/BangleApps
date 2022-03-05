@@ -272,6 +272,8 @@ exports.getStats = function(statIDs, options) {
     state.notifyTime = options.notifyTime;
     state.notifyDist = options.notifyDist;
     state.notifySteps = options.notifySteps;
+    console.log("options:");
+    console.log(JSON.stringify(options));
     if (options.notifyTime) {
       state.nextNotifyTime = state.startTime + options.notifyTime;
     }
@@ -281,6 +283,8 @@ exports.getStats = function(statIDs, options) {
     if (options.notifySteps) {
       state.nextNotifySteps = state.lastSteps + options.notifySteps;
     }
+    console.log("state:");
+    console.log(JSON.stringify(state));
   }
   reset();
   return {
@@ -329,11 +333,12 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
       saveSettings();
     },
   };
+  var stepNames = ['Off', '100', '500', '1000', '5000', '10000'];
   var stepAmts = [0, 100, 500, 1000, 5000, 10000];
   menu['Ntfy Steps'] = {
-    min: 0, max: stepAmts.length-1,
+    min: 0, max: stepNames.length-1,
     value: Math.max(stepAmts.indexOf(settings.notifySteps),0),
-    format: v => stepAmts[v].toString(),
+    format: v => stepNames[v],
     onchange: v => {
       settings.notifySteps = stepAmts[v];
       saveSettings();
