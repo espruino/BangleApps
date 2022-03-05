@@ -71,7 +71,13 @@
     };
   ExStats.appendMenuItems(menu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
-  var vibTimes = [[], [[100, 1]], [[500, 1]],[[500, 1], [50, 0], [500, 1]],[[500, 1],[50, 0], [100, 1], [50, 0], [500, 1]],[[500, 1],[50,0],[500, 1],[50,0],[500, 1]]];
+  var vibTimes = [
+    [],
+    [[100, 1]],
+    [[500, 1]],[[500, 1], [100, 0], [500, 1]],
+    [[500, 1],[100, 0], [100, 1], [100, 0], [500, 1]],
+    [[500, 1],[100, 0],[500, 1],[100, 0],[500, 1]],
+  ];
   menu[/*LANG*/"Dist Notifctn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
       min: 0, max: vibPatterns.length,
