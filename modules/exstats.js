@@ -307,8 +307,8 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
       saveSettings();
     },
   };
-  var distNames = ['Off', ...paceNames];
-  var distAmts = [0, ...paceAmts];
+  var distNames = ['Off', "1000m","1 mile","1/2 Mthn", "Marathon",];
+  var distAmts = [0, 1000,1609,21098,42195];
   menu['Ntfy Dist'] = {
     min: 0, max: distNames.length-1,
     value: Math.max(distAmts.indexOf(settings.notifyDist),0),
