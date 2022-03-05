@@ -239,7 +239,8 @@ exports.getStats = function(statIDs, options) {
   setInterval(function() { // run once a second....
     if (!state.active) return;
     // called once a second
-    var duration = Date.now() - state.startTime; // in ms
+    var now = Date.now();
+    var duration = now - state.startTime; // in ms
     // set cadence -> steps over last minute
     state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(duration,60000));
     if (stats["caden"]) stats["caden"].emit("changed",stats["caden"]);
@@ -253,7 +254,7 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
-    if (state.notifyTime > 0 && state.nextNotifyTime < stats["time"]) {
+    if (state.notifyTime > 0 && state.nextNotifyTime < now) {
       stats["time"].emit("notify",stats["time"]);
       state.nextNotifyTime = stats["time"] + state.notifyTime;
     }
@@ -281,7 +282,7 @@ exports.getStats = function(statIDs, options) {
       state.nextNotifyDist = state.distance + options.notifyDist;
     }
     if (options.notifySteps) {
-      state.nextNotifySteps = state.lastSteps + options.notifySteps;
+      state.nextNotifySteps = state.startSteps + options.notifySteps;
     }
     console.log("state:");
     console.log(JSON.stringify(state));
