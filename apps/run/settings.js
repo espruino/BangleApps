@@ -69,6 +69,7 @@
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.time.notification = vibTimes[v];
+        vibTimes[v].forEach((b) => Bangle.buzz(b));
         saveSettings();
       }
   }
@@ -78,6 +79,7 @@
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.dist.notification = vibTimes[v];
+        vibTimes[v].forEach((b) => Bangle.buzz(b));
         saveSettings();
       }
   }
@@ -87,6 +89,7 @@
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.steps.notification = vibTimes[v];
+        vibTimes[v].forEach((b) => Bangle.buzz(b));
         saveSettings();
       }
   }
