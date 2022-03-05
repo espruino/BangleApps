@@ -69,19 +69,23 @@
         saveSettings();
       }
     };
+  var notificationsMenu = {
+    '< Back': function() { E.showMenu(menu) },
+  }
+  menu[/*LANG*/"Notifications"] = function() { E.showMenu(notificationsMenu)};
   ExStats.appendMenuItems(menu, settings, saveSettings);
-  ExStats.appendNotifyMenuItems(menu, settings, saveSettings);
+  ExStats.appendNotifyMenuItems(notificationsMenu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
   var vibTimes = [
     [],
     [[100, 1]],
     [[300, 1]],
-    [[300, 1], [200, 0], [300, 1]],
-    [[300, 1],[200, 0], [100, 1], [200, 0], [300, 1]],
-    [[300, 1],[200, 0],[300, 1],[200, 0],[300, 1]],
+    [[300, 1], [300, 0], [300, 1]],
+    [[300, 1],[300, 0], [100, 1], [300, 0], [300, 1]],
+    [[300, 1],[300, 0],[300, 1],[300, 0],[300, 1]],
   ];
   menu[/*LANG*/"Dist Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notifications)),
+    value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.dist.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
@@ -91,7 +95,7 @@
       }
   }
   menu[/*LANG*/"Step Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.step.notifications)),
+    value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.step.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
@@ -101,7 +105,7 @@
       }
   }
   menu[/*LANG*/"Time Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.time.notifications)),
+    value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.time.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
