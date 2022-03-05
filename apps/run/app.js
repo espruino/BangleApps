@@ -85,11 +85,19 @@ for (var i=0;i<statIDs.length;i+=2) {
   if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
   if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
   if (sa) sa.on('notify', (e)=>{
-    settings.notify[id].notifications.forEach((vibTime) => Bangle.buzz(vibTime));
+    settings.notify[e.id].notifications.reduce(function (promise, buzzTime) {
+        return promise.then(function () {
+            return Bangle.buzz(buzzTime);
+        });
+    }, Promise.resolve());
     console.log(`notify from ${JSON.stringify(e)}`);
   });
   if (sb) sa.on('notify', (e)=>{
-    settings.notify[id].notifications.forEach((vibTime) => Bangle.buzz(vibTime));
+    settings.notify[e.id].notifications.reduce(function (promise, buzzTime) {
+        return promise.then(function () {
+            return Bangle.buzz(buzzTime);
+        });
+    }, Promise.resolve());g
     console.log(`notify from ${JSON.stringify(e)}`);
   });
 }

@@ -61,20 +61,11 @@
         saveSettings();
       }
     };
+  ExStats.appendMenuItems(menu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
   var vibTimes = [[], [100], [500],[500,500],[500,100,500],[500,500,500]];
-  menu[/*LANG*/"Time Notifctn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.timeNotification)),
-      min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
-      onchange: v => {
-        settings.notify.time.notification = vibTimes[v];
-        vibTimes[v].forEach((b) => Bangle.buzz(b));
-        saveSettings();
-      }
-  }
   menu[/*LANG*/"Dist Notifctn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.distNotification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
@@ -84,7 +75,7 @@
       }
   }
   menu[/*LANG*/"Step Notifctn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.stepNotification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.steps.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
@@ -93,7 +84,16 @@
         saveSettings();
       }
   }
-  ExStats.appendMenuItems(menu, settings, saveSettings);
+  menu[/*LANG*/"Time Notifctn"] = {
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.time.notification)),
+      min: 0, max: vibPatterns.length,
+      format: v => vibPatterns[v]||"Off",
+      onchange: v => {
+        settings.notify.time.notification = vibTimes[v];
+        vibTimes[v].forEach((b) => Bangle.buzz(b));
+        saveSettings();
+      }
+  }
   Object.assign(menu,{
     'Box 1': getBoxChooser("B1"),
     'Box 2': getBoxChooser("B2"),
