@@ -1,0 +1,19 @@
+{
+  "id": "clockcal",
+  "name": "clockcal Clock",
+  "version": "0.07",
+  "description": "A clockcal.",
+  "readme":"README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"clockcal.app.js","url":"app.js"},
+    {"name":"clockcal.settings.js","url":"settings.js"},
+    {"name":"clockcal.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"clockcal.json"}]
+}
