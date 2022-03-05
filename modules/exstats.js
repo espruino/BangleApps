@@ -48,6 +48,15 @@ var menu = { ... };
 ExStats.appendMenuItems(menu, settings, saveSettingsFunction);
 E.showMenu(menu);
 
+// Additionally, if your app makes use of the stat notifications, you can display additional menu
+// settings for configuring when to notify (note the added line in the example below)W
+
+var menu = { ... };
+ExStats.appendMenuItems(menu, settings, saveSettingsFunction);
+ExStats.appendNotifyMenuItems(menu, settings, saveSettingsFunction);
+E.showMenu(menu);
+
+
 */
 var state = {
   active : false, // are we working or not?
@@ -315,17 +324,19 @@ exports.getStats = function(statIDs, options) {
 };
 
 exports.appendMenuItems = function(menu, settings, saveSettings) {
-  var paceNames = ["1000m","1 mile","1/2 Mthn", "Marathon",];
-  var paceAmts = [1000,1609,21098,42195];
+  var paceNames = ["1000m", "1 mile", "1/2 Mthn", "Marathon",];
+  var paceAmts = [1000, 1609, 21098, 42195];
   menu['Pace'] = {
-    min: 0, max: paceNames.length-1,
-    value: Math.max(paceAmts.indexOf(settings.paceLength),0),
+    min: 0, max: paceNames.length - 1,
+    value: Math.max(paceAmts.indexOf(settings.paceLength), 0),
     format: v => paceNames[v],
     onchange: v => {
       settings.paceLength = paceAmts[v];
       saveSettings();
     },
   };
+}
+exports.appendNotifyMenuItems = function(menu, settings, saveSettings) {
   var distNames = ['Off', "1000m","1 mile","1/2 Mthn", "Marathon",];
   var distAmts = [0, 1000,1609,21098,42195];
   menu['Ntfy Dist'] = {
@@ -337,17 +348,6 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
       saveSettings();
     },
   };
-  var timeNames = ['Off', '30s', '1min', '2min', '5min', '10min', '30min', '1hr'];
-  var timeAmts = [0, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
-  menu['Ntfy Time'] = {
-    min: 0, max: timeNames.length-1,
-    value: Math.max(timeAmts.indexOf(settings.notify.time.increment),0),
-    format: v => timeNames[v],
-    onchange: v => {
-      settings.notify.time.increment = timeAmts[v];
-      saveSettings();
-    },
-  };
   var stepNames = ['Off', '100', '500', '1000', '5000', '10000'];
   var stepAmts = [0, 100, 500, 1000, 5000, 10000];
   menu['Ntfy Steps'] = {
@@ -356,6 +356,17 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
     format: v => stepNames[v],
     onchange: v => {
       settings.notify.step.increment = stepAmts[v];
+      saveSettings();
+    },
+  };
+  var timeNames = ['Off', '30s', '1min', '2min', '5min', '10min', '30min', '1hr'];
+  var timeAmts = [0, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
+  menu['Ntfy Time'] = {
+    min: 0, max: timeNames.length-1,
+    value: Math.max(timeAmts.indexOf(settings.notify.time.increment),0),
+    format: v => timeNames[v],
+    onchange: v => {
+      settings.notify.time.increment = timeAmts[v];
       saveSettings();
     },
   };

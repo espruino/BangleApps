@@ -70,14 +70,15 @@
       }
     };
   ExStats.appendMenuItems(menu, settings, saveSettings);
+  ExStats.appendNotifyMenuItems(menu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
   var vibTimes = [
     [],
     [[100, 1]],
-    [[500, 1]],
-    [[500, 1], [200, 0], [500, 1]],
-    [[500, 1],[200, 0], [100, 1], [200, 0], [500, 1]],
-    [[500, 1],[200, 0],[500, 1],[200, 0],[500, 1]],
+    [[300, 1]],
+    [[300, 1], [200, 0], [300, 1]],
+    [[300, 1],[200, 0], [100, 1], [200, 0], [300, 1]],
+    [[300, 1],[200, 0],[300, 1],[200, 0],[300, 1]],
   ];
   menu[/*LANG*/"Dist Notifctn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
