@@ -83,11 +83,11 @@
       }
   }
   menu[/*LANG*/"Step Notifctn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.steps.notification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.step.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
-        settings.notify.steps.notification = vibTimes[v];
+        settings.notify.step.notification = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
       }

@@ -144,9 +144,9 @@ Bangle.on("step", function(steps) {
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
   state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
-  if (state.notify.steps.increment > 0 && state.notify.steps.next < steps) {
+  if (state.notify.step.increment > 0 && state.notify.step.next < steps) {
     stats["step"].emit("notify",stats["step"]);
-    state.notify.steps.next = steps + state.notify.steps.increment;
+    state.notify.step.next = steps + state.notify.step.increment;
   }
 });
 Bangle.on("HRM", function(h) {
@@ -190,7 +190,7 @@ exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
   options.notify.dist.increment = options.notify.dist.increment||0;
-  options.notify.steps.increment = options.notify.steps.increment||0;
+  options.notify.step.increment = options.notify.step.increment||0;
   options.notify.time.increment = options.notify.time.increment||0;
   var needGPS,needHRM;
   // ======================
@@ -301,8 +301,8 @@ exports.getStats = function(statIDs, options) {
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;
     }
-    if (options.notify.steps.increment > 0) {
-      state.notify.steps.next = state.startSteps + options.notify.steps.increment;
+    if (options.notify.step.increment > 0) {
+      state.notify.step.next = state.startSteps + options.notify.step.increment;
     }
     if (options.notify.time.increment > 0) {
       state.notify.time.next = state.startTime + options.notify.time.increment;
@@ -361,10 +361,10 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var stepAmts = [0, 100, 500, 1000, 5000, 10000];
   menu['Ntfy Steps'] = {
     min: 0, max: stepNames.length-1,
-    value: Math.max(stepAmts.indexOf(settings.notify.steps.increment),0),
+    value: Math.max(stepAmts.indexOf(settings.notify.step.increment),0),
     format: v => stepNames[v],
     onchange: v => {
-      settings.notify.steps.increment = stepAmts[v];
+      settings.notify.step.increment = stepAmts[v];
       saveSettings();
     },
   };
