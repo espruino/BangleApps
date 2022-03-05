@@ -84,7 +84,7 @@
     [[300, 1],[300, 0], [100, 1], [300, 0], [300, 1]],
     [[300, 1],[300, 0],[300, 1],[300, 0],[300, 1]],
   ];
-  menu[/*LANG*/"Dist Ntfy Ptrn"] = {
+  notificationsMenu[/*LANG*/"Dist Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.dist.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
@@ -94,7 +94,7 @@
         saveSettings();
       }
   }
-  menu[/*LANG*/"Step Ntfy Ptrn"] = {
+  notificationsMenu[/*LANG*/"Step Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.step.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
@@ -104,7 +104,7 @@
         saveSettings();
       }
   }
-  menu[/*LANG*/"Time Ntfy Ptrn"] = {
+  notificationsMenu[/*LANG*/"Time Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.time.notifications))),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
@@ -114,7 +114,10 @@
         saveSettings();
       }
   }
-  Object.assign(menu,{
+  var boxMenu = {
+    '< Back': function() { E.showMenu(menu) },
+  }
+  Object.assign(boxMenu,{
     'Box 1': getBoxChooser("B1"),
     'Box 2': getBoxChooser("B2"),
     'Box 3': getBoxChooser("B3"),
@@ -122,5 +125,6 @@
     'Box 5': getBoxChooser("B5"),
     'Box 6': getBoxChooser("B6"),
   });
+  menu[/*LANG*/"Boxes"] = function() { E.showMenu(boxMenu)};
   E.showMenu(menu);
 })
