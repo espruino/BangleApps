@@ -101,10 +101,12 @@ layout.render();
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
+      console.log(buzzPattern);
         return promise.then(function () {
             return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
-    }, Promise.resolve());
+    }, Promise.resolve())
+      .then(console.log);
   });
 }
 
