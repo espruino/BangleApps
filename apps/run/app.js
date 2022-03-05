@@ -48,7 +48,7 @@ function onStartStop() {
 
   // start/stop recording
   // Do this first in case recorder needs to prompt for
-  // an overwrite before we begin things like the total time
+  // an overwrite before we start tracking exstats
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
