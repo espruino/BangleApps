@@ -18,4 +18,4 @@ I know that it seems redundant because there already **is** a *time&cal*-app, bu
 
 ## Feedback
 The clock works for me in a 24h/MondayFirst/WeekendFree environment but is not well-tested with other settings.
-So if something isn't working, please tell me.
+So if something isn't working, please tell me: https://github.com/foostuff/BangleApps/issues
