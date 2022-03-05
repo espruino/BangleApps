@@ -81,31 +81,31 @@
     [[300, 1],[200, 0],[300, 1],[200, 0],[300, 1]],
   ];
   menu[/*LANG*/"Dist Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notifications)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
-        settings.notify.dist.notification = vibTimes[v];
+        settings.notify.dist.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
       }
   }
   menu[/*LANG*/"Step Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.step.notification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.step.notifications)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
-        settings.notify.step.notification = vibTimes[v];
+        settings.notify.step.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
       }
   }
   menu[/*LANG*/"Time Ntfy Ptrn"] = {
-    value: Math.max(0,vibPatterns.indexOf(settings.notify.time.notification)),
+    value: Math.max(0,vibPatterns.indexOf(settings.notify.time.notifications)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
-        settings.notify.time.notification = vibTimes[v];
+        settings.notify.time.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
       }

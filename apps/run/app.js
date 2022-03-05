@@ -44,6 +44,7 @@ var exs = ExStats.getStats(statIDs, settings);
 // Called to start/stop running
 function onStartStop() {
   var running = !exs.state.active;
+  var prepPromises = [];
 
   // start/stop recording
   // Do this first in case recorder needs to prompt for
@@ -51,27 +52,34 @@ function onStartStop() {
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
-      WIDGETS["recorder"].setRecording(true).then(() => {
-        isMenuDisplayed = false;
-        layout.forgetLazyState();
-        layout.render();
-      });
+      prepPromises.push(
+        WIDGETS["recorder"].setRecording(true).then(() => {
+          isMenuDisplayed = false;
+          layout.forgetLazyState();
+          layout.render();
+        })
+      );
     } else {
-      WIDGETS["recorder"].setRecording(false);
+      prepPromises.push(
+        WIDGETS["recorder"].setRecording(false)
+      );
     }
   }
 
-  if (running) {
-    exs.start();
-  } else {
-    exs.stop();
-  }
-  layout.button.label = running ? "STOP" : "START";
-  layout.status.label = running ? "RUN" : "STOP";
-  layout.status.bgCol = running ? "#0f0" : "#f00";
-  // if stopping running, don't clear state
-  // so we can at least refer to what we've done
-  layout.render();
+  Promise.all(prepPromises)
+    .then(() => {
+      if (running) {
+        exs.start();
+      } else {
+        exs.stop();
+      }
+      layout.button.label = running ? "STOP" : "START";
+      layout.status.label = running ? "RUN" : "STOP";
+      layout.status.bgCol = running ? "#0f0" : "#f00";
+      // if stopping running, don't clear state
+      // so we can at least refer to what we've done
+      layout.render();
+    });
 }
 
 var lc = [];
@@ -104,7 +112,8 @@ layout.render();
 
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
-    console.log(`Got notify from ${e}`);
+    console.log(`Got notify from ${JSON.stringify(e)}`);
+    console.log(JSON.stringify(settings.notify[e.id]));
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
       console.log(buzzPattern);
         return promise.then(function () {
