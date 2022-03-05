@@ -166,6 +166,9 @@ exports.getList = function() {
 exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
+  options.notifyDistance = options.notifyDistance||0;
+  options.notifyTime = options.notifyTime||0;
+  options.notifySteps = options.notifySteps||0;
   var needGPS,needHRM;
   // ======================
   if (statIDs.includes("time")) {
@@ -266,6 +269,18 @@ exports.getStats = function(statIDs, options) {
     state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
+    state.notifyTime = options.notifyTime;
+    state.notifyDistance = options.notifyDistance;
+    state.notifySteps = options.notifySteps;
+    if (options.notifyTime) {
+      state.nextNotifyTime = state.startTime + options.notifyTime;
+    }
+    if (options.notifyDistance) {
+      state.nextNotifyDist = state.distance + options.notifyDistance;
+    }
+    if (options.notifySteps) {
+      state.nextNotifySteps = state.lastSteps + options.notifySteps;
+    }
   }
   reset();
   return {
@@ -292,12 +307,35 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
       saveSettings();
     },
   };
+  var distNames = ['Off', ...paceNames];
+  var distAmts = [0, ...paceAmts];
   menu['Ntfy Dist'] = {
-    min :0, max: paceNames.length-1,
-    value: Math.max(paceAmts.indexOf(settings.paceLength),0),
-    format: v => paceNames[v],
+    min :0, max: distNames.length-1,
+    value: Math.max(distAmts.indexOf(settings.notifyDistance),0),
+    format: v => distNames[v],
     onchange: v => {
-      state.notifyDistance = paceAmts[v];
+      settings.notifyDistance = distAmts[v];
+      saveSettings();
+    },
+  };
+  var timeNames = ['Off', '30s', '1min', '2min', '5min', '10min', '30min', '1hr'];
+  var timeAmts = [0, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
+  menu['Ntfy Time'] = {
+    min :0, max: timeNames.length-1,
+    value: Math.max(timeAmts.indexOf(settings.notifyTime),0),
+    format: v => timeNames[v],
+    onchange: v => {
+      settings.notifyTime = timeAmts[v];
+      saveSettings();
+    },
+  };
+  var stepAmts = [0, 100, 500, 1000, 5000, 10000];
+  menu['Ntfy Steps'] = {
+    min :0, max: stepAmts.length-1,
+    value: Math.max(stepAmts.indexOf(settings.notifySteps),0),
+    format: v => stepAmts[v],
+    onchange: v => {
+      settings.notifySteps = stepAmts[v];
       saveSettings();
     },
   };

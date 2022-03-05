@@ -74,6 +74,14 @@ for (var i=0;i<statIDs.length;i+=2) {
   ]});
   if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
   if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
+  if (sa) sa.on('notify', (e)=>{
+    Bangle.buzz();
+    console.log(`notify from ${JSON.stringify(e)}`);
+  });
+  if (sb) sa.on('notify', (e)=>{
+    Bangle.buzz();
+    console.log(`notify from ${JSON.stringify(e)}`);
+  });
 }
 // At the bottom put time/GPS state/etc
 lc.push({ type:"h", filly:1, c:[
