@@ -48,6 +48,14 @@
     }
   }
 
+  function sampleBuzz(buzzTimes) {
+    buzzTimes.reduce(function (promise, buzzTime) {
+        return promise.then(function () {
+            return Bangle.buzz(buzzTime);
+        });
+    }, Promise.resolve());
+  }
+
   var menu = {
     '': { 'title': 'Run' },
     '< Back': back,
@@ -63,14 +71,14 @@
     };
   ExStats.appendMenuItems(menu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
-  var vibTimes = [[], [100], [500],[500,500],[500,100,500],[500,500,500]];
+  var vibTimes = [[], [[100, 1]], [[500, 1]],[[500, 1], [50, 0], [500, 1]],[[500, 1],[50, 0], [100, 1], [50, 0], [500, 1]],[[500, 1],[50,0],[500, 1],[50,0],[500, 1]]];
   menu[/*LANG*/"Dist Notifctn"] = {
     value: Math.max(0,vibPatterns.indexOf(settings.notify.dist.notification)),
       min: 0, max: vibPatterns.length,
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.dist.notification = vibTimes[v];
-        vibTimes[v].forEach((b) => Bangle.buzz(b));
+        sampleBuzz(vibTimes[v]);
         saveSettings();
       }
   }
@@ -80,7 +88,7 @@
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.steps.notification = vibTimes[v];
-        vibTimes[v].forEach((b) => Bangle.buzz(b));
+        sampleBuzz(vibTimes[v]);
         saveSettings();
       }
   }
@@ -90,7 +98,7 @@
       format: v => vibPatterns[v]||"Off",
       onchange: v => {
         settings.notify.time.notification = vibTimes[v];
-        vibTimes[v].forEach((b) => Bangle.buzz(b));
+        sampleBuzz(vibTimes[v]);
         saveSettings();
       }
   }

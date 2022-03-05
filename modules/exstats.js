@@ -145,7 +145,7 @@ Bangle.on("step", function(steps) {
   state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
   if (state.notify.steps.increment > 0 && state.notify.steps.next < steps) {
-    stats["steps"].emit("notify",stats["steps"]);
+    stats["step"].emit("notify",stats["step"]);
     state.notify.steps.next = steps + state.notify.steps.increment;
   }
 });
@@ -277,9 +277,11 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
+    console.log(now);
+    console.log(state.notify.time.next);
     if (state.notify.time.increment > 0 && state.notify.time.next < now) {
       stats["time"].emit("notify",stats["time"]);
-      state.notify.time.next = stats["time"] + state.notify.time.increment;
+      state.notify.time.next = now + state.notify.time.increment;
     }
   }, 1000);
   function reset() {
