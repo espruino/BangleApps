@@ -7,8 +7,6 @@ var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
 var fixCount = 0;
 var isMenuDisplayed = false;
-var nextNotifyTime = 0;
-var nextNotifyDist = 0;
 
 g.clear();
 Bangle.loadWidgets();
@@ -24,9 +22,20 @@ let settings = Object.assign({
   B5: "step",
   B6: "caden",
   paceLength: 1000,
-  notifyDist: 0,
-  notifyTime: 0,
-  notifySteps: 0,
+  notify: {
+    dist: {
+      value: 0,
+      notification: [],
+    },
+    steps: {
+      value: 0,
+      notification: [],
+    },
+    time: {
+      value: 0,
+      notification: [],
+    },
+  },
 }, require("Storage").readJSON("run.json", 1) || {});
 var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 var exs = ExStats.getStats(statIDs, settings);
@@ -76,11 +85,11 @@ for (var i=0;i<statIDs.length;i+=2) {
   if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
   if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
   if (sa) sa.on('notify', (e)=>{
-    Bangle.buzz();
+    settings.notify[id].notifications.forEach((vibTime) => Bangle.buzz(vibTime));
     console.log(`notify from ${JSON.stringify(e)}`);
   });
   if (sb) sa.on('notify', (e)=>{
-    Bangle.buzz();
+    settings.notify[id].notifications.forEach((vibTime) => Bangle.buzz(vibTime));
     console.log(`notify from ${JSON.stringify(e)}`);
   });
 }

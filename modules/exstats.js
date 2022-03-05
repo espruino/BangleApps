@@ -63,9 +63,24 @@ var state = {
   // cadence // steps per minute adjusted if <1 minute
   // BPM // beats per minute
   // BPMage // how many seconds was BPM set?
-  // Notifies: 0 for disabled, otherwise how often to notify in meters and seconds
-  notifyDist: 0, notifyTime: 0, notifySteps: 0,
-  nextNotifyDist: 0, nextNotifyTime: 0, nextNotifySteps: 0,
+  // Notifies: 0 for disabled, otherwise how often to notify in meters, seconds, or steps
+  notify: {
+      dist: {
+        increment: 0,
+        notification: [],
+        next: 0,
+      },
+      steps: {
+        increment: 0,
+        notification: [],
+        next: 0,
+      },
+      time: {
+        increment: 0,
+        notification: [],
+        next: 0,
+      },
+    },
 };
 // list of active stats (indexed by ID)
 var stats = {};
@@ -118,9 +133,9 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
-  if (state.notifyDist > 0 && state.nextNotifyDist < stats["dist"]) {
+  if (state.notify.dist.increment > 0 && state.notify.dist.next < stats["dist"]) {
     stats["dist"].emit("notify",stats["dist"]);
-    state.nextNotifyDist = stats["dist"] + state.notifyDist;
+    state.notify.dist.next = stats["dist"] + state.notify.dist.increment;
   }
 });
 
@@ -129,9 +144,9 @@ Bangle.on("step", function(steps) {
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
   state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
-  if (state.notifySteps > 0 && state.nextNotifySteps < steps) {
-    stats["step"].emit("notify",stats["step"]);
-    state.nextNotifySteps = steps + state.notifySteps;
+  if (state.notify.steps.increment > 0 && state.notify.steps.next < steps) {
+    stats["steps"].emit("notify",stats["steps"]);
+    state.notify.steps.next = steps + state.notify.steps.increment;
   }
 });
 Bangle.on("HRM", function(h) {
@@ -158,17 +173,25 @@ exports.getList = function() {
 /** Instantiate the given list of statistic IDs (see comments at top)
  options = {
    paceLength : meters to measure pace over
-   notifyDist : meters to notify have elapsed (repeats)
-   notifyTime : ms to notify have elapsed (repeats)
-   notifySteps : number of steps to notify have elapsed (repeats)
+   notify: {
+    dist: {
+      increment: 0 to not notify on distance milestones, otherwise the number of meters to notify after, repeating
+    },
+    steps: {
+      increment: 0 to not notify on step milestones, otherwise the number of steps to notify after, repeating
+    },
+    time: {
+      increment: 0 to not notify on time milestones, otherwise the number of milliseconds to notify after, repeating
+    }
+   }
  }
 */
 exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
-  options.notifyDist = options.notifyDist||0;
-  options.notifyTime = options.notifyTime||0;
-  options.notifySteps = options.notifySteps||0;
+  options.notify.dist.increment = options.notify.dist.increment||0;
+  options.notify.steps.increment = options.notify.steps.increment||0;
+  options.notify.time.increment = options.notify.time.increment||0;
   var needGPS,needHRM;
   // ======================
   if (statIDs.includes("time")) {
@@ -254,9 +277,9 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
-    if (state.notifyTime > 0 && state.nextNotifyTime < now) {
+    if (state.notify.time.increment > 0 && state.notify.time.next < now) {
       stats["time"].emit("notify",stats["time"]);
-      state.nextNotifyTime = stats["time"] + state.notifyTime;
+      state.notify.time.next = stats["time"] + state.notify.time.increment;
     }
   }, 1000);
   function reset() {
@@ -270,19 +293,17 @@ exports.getStats = function(statIDs, options) {
     state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
-    state.notifyTime = options.notifyTime;
-    state.notifyDist = options.notifyDist;
-    state.notifySteps = options.notifySteps;
+    state.notify = options.notify;
     console.log("options:");
     console.log(JSON.stringify(options));
-    if (options.notifyTime) {
-      state.nextNotifyTime = state.startTime + options.notifyTime;
+    if (options.notify.dist.increment > 0) {
+      state.notify.dist.next = state.distance + options.notify.dist.increment;
     }
-    if (options.notifyDist) {
-      state.nextNotifyDist = state.distance + options.notifyDist;
+    if (options.notify.steps.increment > 0) {
+      state.notify.steps.next = state.startTime + options.notify.steps.increment;
     }
-    if (options.notifySteps) {
-      state.nextNotifySteps = state.startSteps + options.notifySteps;
+    if (options.notify.time.increment > 0) {
+      state.notify.time.next = state.startTime + options.notify.time.increment;
     }
     console.log("state:");
     console.log(JSON.stringify(state));
@@ -316,10 +337,10 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var distAmts = [0, 1000,1609,21098,42195];
   menu['Ntfy Dist'] = {
     min: 0, max: distNames.length-1,
-    value: Math.max(distAmts.indexOf(settings.notifyDist),0),
+    value: Math.max(distAmts.indexOf(settings.notify.dist.increment),0),
     format: v => distNames[v],
     onchange: v => {
-      settings.notifyDist = distAmts[v];
+      settings.notify.dist.increment = distAmts[v];
       saveSettings();
     },
   };
@@ -327,10 +348,10 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var timeAmts = [0, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
   menu['Ntfy Time'] = {
     min: 0, max: timeNames.length-1,
-    value: Math.max(timeAmts.indexOf(settings.notifyTime),0),
+    value: Math.max(timeAmts.indexOf(settings.notify.time.increment),0),
     format: v => timeNames[v],
     onchange: v => {
-      settings.notifyTime = timeAmts[v];
+      settings.notify.time.increment = timeAmts[v];
       saveSettings();
     },
   };
@@ -338,10 +359,10 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var stepAmts = [0, 100, 500, 1000, 5000, 10000];
   menu['Ntfy Steps'] = {
     min: 0, max: stepNames.length-1,
-    value: Math.max(stepAmts.indexOf(settings.notifySteps),0),
+    value: Math.max(stepAmts.indexOf(settings.notify.steps.increment),0),
     format: v => stepNames[v],
     onchange: v => {
-      settings.notifySteps = stepAmts[v];
+      settings.notify.steps.increment = stepAmts[v];
       saveSettings();
     },
   };

@@ -17,9 +17,20 @@
     B5: "step",
     B6: "caden",
     paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
-    notifyDist: 0,
-    notifyTime: 0,
-    notifySteps: 0,
+    notify: {
+      dist: {
+        increment: 0,
+        notification: [],
+      },
+      steps: {
+        increment: 0,
+        notification: [],
+      },
+      time: {
+        increment: 0,
+        notification: [],
+      },
+    },
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
@@ -50,6 +61,35 @@
         saveSettings();
       }
     };
+  var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
+  var vibTimes = [[], [100], [500],[500,500],[500,100,500],[500,500,500]];
+  menu[/*LANG*/"Time Notifctn"] = {
+    value: Math.max(0,vibPatterns.indexOf(settings.timeNotification)),
+      min: 0, max: vibPatterns.length,
+      format: v => vibPatterns[v]||"Off",
+      onchange: v => {
+        settings.notify.time.notification = vibTimes[v];
+        saveSettings();
+      }
+  }
+  menu[/*LANG*/"Dist Notifctn"] = {
+    value: Math.max(0,vibPatterns.indexOf(settings.distNotification)),
+      min: 0, max: vibPatterns.length,
+      format: v => vibPatterns[v]||"Off",
+      onchange: v => {
+        settings.notify.dist.notification = vibTimes[v];
+        saveSettings();
+      }
+  }
+  menu[/*LANG*/"Step Notifctn"] = {
+    value: Math.max(0,vibPatterns.indexOf(settings.stepNotification)),
+      min: 0, max: vibPatterns.length,
+      format: v => vibPatterns[v]||"Off",
+      onchange: v => {
+        settings.notify.steps.notification = vibTimes[v];
+        saveSettings();
+      }
+  }
   ExStats.appendMenuItems(menu, settings, saveSettings);
   Object.assign(menu,{
     'Box 1': getBoxChooser("B1"),
