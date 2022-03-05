@@ -97,7 +97,7 @@ for (var i=0;i<statIDs.length;i+=2) {
         return promise.then(function () {
             return Bangle.buzz(buzzTime);
         });
-    }, Promise.resolve());g
+    }, Promise.resolve());
     console.log(`notify from ${JSON.stringify(e)}`);
   });
 }
