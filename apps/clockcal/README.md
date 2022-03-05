@@ -10,8 +10,8 @@ I know that it seems redundant because there already **is** a *time&cal*-app, bu
 
 ## Configurable Features
 - Number of calendar rows (weeks)
-- Buzz on connect/disconnect (I know, this should be an extra widget, but for now, it is a configurable setting)
-- Clock Mode (24h/12h). Doesn't have an am/pm indicator, because I don't really care. It's configurable because it was easy.
+- Buzz on connect/disconnect (I know, this should be an extra widget, but for now, it is included)
+- Clock Mode (24h/12h). Doesn't have an am/pm indicator. It's only there because it was easy.
 - First day of the week
 - Red Saturday
 - Red Sunday
