@@ -64,8 +64,8 @@ var state = {
   // BPM // beats per minute
   // BPMage // how many seconds was BPM set?
   // Notifies: 0 for disabled, otherwise how often to notify in meters and seconds
-  notifyDistance: 0, notifyTime: 0, notifySteps: 0,
-  nextNotifyDistance: 0, nextNotifyTime: 0, nextNotifySteps: 0,
+  notifyDist: 0, notifyTime: 0, notifySteps: 0,
+  nextNotifyDist: 0, nextNotifyTime: 0, nextNotifySteps: 0,
 };
 // list of active stats (indexed by ID)
 var stats = {};
@@ -118,9 +118,9 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
-  if (state.notifyDistance > 0 && state.nextNotifyDist < stats["dist"]) {
+  if (state.notifyDist > 0 && state.nextNotifyDist < stats["dist"]) {
     stats["dist"].emit("notify",stats["dist"]);
-    state.nextNotifyDist = stats["dist"] + state.notifyDistance;
+    state.nextNotifyDist = stats["dist"] + state.notifyDist;
   }
 });
 
@@ -158,7 +158,7 @@ exports.getList = function() {
 /** Instantiate the given list of statistic IDs (see comments at top)
  options = {
    paceLength : meters to measure pace over
-   notifyDistance : meters to notify have elapsed (repeats)
+   notifyDist : meters to notify have elapsed (repeats)
    notifyTime : ms to notify have elapsed (repeats)
    notifySteps : number of steps to notify have elapsed (repeats)
  }
@@ -166,7 +166,7 @@ exports.getList = function() {
 exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
-  options.notifyDistance = options.notifyDistance||0;
+  options.notifyDist = options.notifyDist||0;
   options.notifyTime = options.notifyTime||0;
   options.notifySteps = options.notifySteps||0;
   var needGPS,needHRM;
@@ -255,7 +255,7 @@ exports.getStats = function(statIDs, options) {
     }
     if (state.notifyTime > 0 && state.nextNotifyTime < stats["time"]) {
       stats["time"].emit("notify",stats["time"]);
-      state.nextNotifyTime = stats["time"] + state.notifyDistance;
+      state.nextNotifyTime = stats["time"] + state.notifyTime;
     }
   }, 1000);
   function reset() {
@@ -270,13 +270,13 @@ exports.getStats = function(statIDs, options) {
     state.BPM = 0;
     state.BPMage = 0;
     state.notifyTime = options.notifyTime;
-    state.notifyDistance = options.notifyDistance;
+    state.notifyDist = options.notifyDist;
     state.notifySteps = options.notifySteps;
     if (options.notifyTime) {
       state.nextNotifyTime = state.startTime + options.notifyTime;
     }
-    if (options.notifyDistance) {
-      state.nextNotifyDist = state.distance + options.notifyDistance;
+    if (options.notifyDist) {
+      state.nextNotifyDist = state.distance + options.notifyDist;
     }
     if (options.notifySteps) {
       state.nextNotifySteps = state.lastSteps + options.notifySteps;
@@ -311,10 +311,10 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
   var distAmts = [0, ...paceAmts];
   menu['Ntfy Dist'] = {
     min :0, max: distNames.length-1,
-    value: Math.max(distAmts.indexOf(settings.notifyDistance),0),
+    value: Math.max(distAmts.indexOf(settings.notifyDist),0),
     format: v => distNames[v],
     onchange: v => {
-      settings.notifyDistance = distAmts[v];
+      settings.notifyDist = distAmts[v];
       saveSettings();
     },
   };
