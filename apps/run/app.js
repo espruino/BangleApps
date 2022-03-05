@@ -7,6 +7,8 @@ var fontValue = B2 ? "6x15:2" : "6x8:3";
 var headingCol = "#888";
 var fixCount = 0;
 var isMenuDisplayed = false;
+var nextNotifyTime = 0;
+var nextNotifyDist = 0;
 
 g.clear();
 Bangle.loadWidgets();
@@ -21,7 +23,9 @@ let settings = Object.assign({
   B4: "bpm",
   B5: "step",
   B6: "caden",
-  paceLength: 1000
+  paceLength: 1000,
+  notifyDistance: false,
+  notifyTime: false,
 }, require("Storage").readJSON("run.json", 1) || {});
 var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 var exs = ExStats.getStats(statIDs, settings);

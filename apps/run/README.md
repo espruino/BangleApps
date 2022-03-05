@@ -24,8 +24,8 @@ so if you have no GPS lock you just need to wait.
 
 ## Recording Tracks
 
-`Run` depends on the `Recorder` app and it will be installed automatically.
-Starting and stopping a run will automatically start and stop recordings with the `Recorder` app.
+When the `Recorder` app is installed, `Run` will automatically start and stop tracks
+as needed, prompting you to overwrite or begin a new track, if necessary.
 
 ## Settings
 

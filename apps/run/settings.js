@@ -17,7 +17,8 @@
     B5: "step",
     B6: "caden",
     paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
-    notify: false,
+    notifyDistance: false,
+    notifyTime: false,
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
@@ -48,6 +49,7 @@
         saveSettings();
       }
     };
+
   ExStats.appendMenuItems(menu, settings, saveSettings);
   Object.assign(menu,{
     'Box 1': getBoxChooser("B1"),

@@ -63,6 +63,9 @@ var state = {
   // cadence // steps per minute adjusted if <1 minute
   // BPM // beats per minute
   // BPMage // how many seconds was BPM set?
+  // Notifies: 0 for disabled, otherwise how often to notify in meters and seconds
+  notifyDistance: 0, notifyTime: 0, notifySteps: 0,
+  nextNotifyDistance: 0, nextNotifyTime: 0, nextNotifySteps: 0,
 };
 // list of active stats (indexed by ID)
 var stats = {};
@@ -71,8 +74,9 @@ var stats = {};
 // https://www.movable-type.co.uk/scripts/latlong.html
 // (Equirectangular approximation)
 function calcDistance(a,b) {
-  var x = b.lon-a.lon * Math.cos((a.lat+b.lat)/2);
-  var y = b.lat-a.lat;
+  function radians(a) { return a*Math.PI/180; }
+  var x = radians(b.lon-a.lon) * Math.cos(radians((a.lat+b.lat)/2));
+  var y = radians(b.lat-a.lat);
   return Math.sqrt(x*x + y*y) * 6371000;
 }
 
@@ -114,6 +118,10 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
+  if (state.notifyDistance > 0 && state.nextNotifyDist < stats["dist"]) {
+    stats["dist"].emit("notify",stats["dist"]);
+    state.nextNotifyDist = stats["dist"] + state.notifyDistance;
+  }
 });
 
 Bangle.on("step", function(steps) {
@@ -121,6 +129,10 @@ Bangle.on("step", function(steps) {
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
   state.stepHistory[0] += steps-state.lastStepCount;
   state.lastStepCount = steps;
+  if (state.notifySteps > 0 && state.nextNotifySteps < steps) {
+    stats["step"].emit("notify",stats["step"]);
+    state.nextNotifySteps = steps + state.notifySteps;
+  }
 });
 Bangle.on("HRM", function(h) {
   if (h.confidence>=60) {
@@ -146,6 +158,9 @@ exports.getList = function() {
 /** Instantiate the given list of statistic IDs (see comments at top)
  options = {
    paceLength : meters to measure pace over
+   notifyDistance : meters to notify have elapsed (repeats)
+   notifyTime : ms to notify have elapsed (repeats)
+   notifySteps : number of steps to notify have elapsed (repeats)
  }
 */
 exports.getStats = function(statIDs, options) {
@@ -235,6 +250,10 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
+    if (state.notifyTime > 0 && state.nextNotifyTime < stats["time"]) {
+      stats["time"].emit("notify",stats["time"]);
+      state.nextNotifyTime = stats["time"] + state.notifyDistance;
+    }
   }, 1000);
   function reset() {
     state.startTime = Date.now();
@@ -270,6 +289,15 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
     format: v => paceNames[v],
     onchange: v => {
       settings.paceLength = paceAmts[v];
+      saveSettings();
+    },
+  };
+  menu['Ntfy Dist'] = {
+    min :0, max: paceNames.length-1,
+    value: Math.max(paceAmts.indexOf(settings.paceLength),0),
+    format: v => paceNames[v],
+    onchange: v => {
+      state.notifyDistance = paceAmts[v];
       saveSettings();
     },
   };

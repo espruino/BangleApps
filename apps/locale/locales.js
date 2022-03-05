@@ -110,7 +110,6 @@ var locales = {
     int_curr_symbol: "INR",
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
-    paceLength: 1000,
     temperature: '°C',
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
