@@ -88,7 +88,6 @@
         settings.notify.dist.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
-        console.log(JSON.stringify(settings));
       }
   }
   menu[/*LANG*/"Step Ntfy Ptrn"] = {
@@ -99,7 +98,6 @@
         settings.notify.step.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
-        console.log(JSON.stringify(settings));
       }
   }
   menu[/*LANG*/"Time Ntfy Ptrn"] = {
@@ -110,7 +108,6 @@
         settings.notify.time.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
         saveSettings();
-        console.log(JSON.stringify(settings));
       }
   }
   Object.assign(menu,{

@@ -112,18 +112,11 @@ layout.render();
 
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
-    console.log(`Got notify from ${JSON.stringify(e)}`);
-    console.log(`Got notify from ${JSON.stringify(e.id)}`);
-    console.log(JSON.stringify(settings.notify));
-    console.log(JSON.stringify(settings.notify[e.id]));
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
-      console.log(buzzPattern);
         return promise.then(function () {
-          console.log('Should buzz now');
           return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
         });
-    }, Promise.resolve())
-      .then(console.log);
+    }, Promise.resolve());
   });
 }
 
