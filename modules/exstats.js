@@ -300,7 +300,7 @@ exports.getStats = function(statIDs, options) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;
     }
     if (options.notify.steps.increment > 0) {
-      state.notify.steps.next = state.startTime + options.notify.steps.increment;
+      state.notify.steps.next = state.startSteps + options.notify.steps.increment;
     }
     if (options.notify.time.increment > 0) {
       state.notify.time.next = state.startTime + options.notify.time.increment;
