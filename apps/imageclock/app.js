@@ -1,6 +1,6 @@
 var watchface = require("Storage").readJSON("imageclock.face.json");
 var watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
-var precompiledJs = require("Storage").read("imageclock.draw.js");
+var precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
 
 var performanceLog = {};
 
@@ -9,6 +9,7 @@ var endPerfLog = () => {};
 var printPerfLog = () => print("Deactivated");
 var resetPerfLog = () => {performanceLog = {};};
 
+var graphics = Graphics.createArrayBuffer(176,176,16,{msb:true});
 if (false){
   startPerfLog = function(name){
     var time = getTime();
@@ -39,6 +40,12 @@ if (false){
       print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "count:", performanceLog.count[k], "total:", (performanceLog.cum[k] * 1000).toFixed(0));
     }
   };
+}
+
+function delay(t) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, t);
+    });
 }
 
 function prepareImg(resource){
@@ -210,8 +217,8 @@ function drawNumber(resources, element, offset){
 }
 
 function setColors(properties){
-  if (properties.fg) g.setColor(properties.fg);
-  if (properties.bg) g.setBgColor(properties.bg);
+  if (properties.fg) graphics.setColor(properties.fg);
+  if (properties.bg) graphics.setBgColor(properties.bg);
 }
 
 function drawElement(resources, pos, offset, element, lastElem){
@@ -255,7 +262,7 @@ function drawElement(resources, pos, offset, element, lastElem){
     //print("Memory before drawing", process.memory(false));
     startPerfLog("drawElement_g.drawImage");
     try{
-    g.drawImage(element.cachedImage[cacheKey] ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);} catch (e) {
+    graphics.drawImage(element.cachedImage[cacheKey] ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);} catch (e) {
       //print("Error", e, element.cachedImage[cacheKey]);
     }
     endPerfLog("drawElement_g.drawImage");
@@ -436,21 +443,21 @@ function drawPoly(resources, element, offset){
     if (element.RotationValue){
       transform.rotate = radians(element);
     }
-    vertices = g.transformVertices(vertices, transform);
+    vertices = graphics.transformVertices(vertices, transform);
 
     endPerfLog("drawPoly_transform");
 
-    if (element.ForegroundColor) g.setColor(element.ForegroundColor);
+    if (element.ForegroundColor) graphics.setColor(element.ForegroundColor);
 
     if (element.Filled){
       startPerfLog("drawPoly_g.fillPoly");
-      g.fillPoly(vertices,true);
+      graphics.fillPoly(vertices,true);
       endPerfLog("drawPoly_g.fillPoly");
     }
 
-    if (element.BackgroundColor) g.setColor(element.BackgroundColor);
+    if (element.BackgroundColor) graphics.setColor(element.BackgroundColor);
     startPerfLog("drawPoly_g.drawPoly");
-    g.drawPoly(vertices,true);
+    graphics.drawPoly(vertices,true);
     endPerfLog("drawPoly_g.drawPoly");
     
     endPerfLog("drawPoly");
@@ -463,15 +470,15 @@ function drawRect(resources, element, offset){
     if (element.X) primitiveOffset.X += element.X;
     if (element.Y) primitiveOffset.Y += element.Y;
 
-    if (element.ForegroundColor) g.setColor(element.ForegroundColor);
+    if (element.ForegroundColor) graphics.setColor(element.ForegroundColor);
 
     if (element.Filled){
       startPerfLog("drawRect_g.fillRect");
-      g.fillRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      graphics.fillRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
       endPerfLog("drawRect_g.fillRect");
     } else {
       startPerfLog("drawRect_g.fillRect");
-      g.drawRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      graphics.drawRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
       endPerfLog("drawRect_g.fillRect");
     }
     endPerfLog("drawRect");
@@ -647,6 +654,7 @@ var zeroOffset={X:0,Y:0};
 var requestedDraws = 0;
 var isDrawing = false;
 
+var drawingTime;
 
 var start;
 
@@ -661,22 +669,55 @@ function initialDraw(resources, face){
     //print(new Date().toISOString(), "Drawing start");
     startPerfLog("initialDraw");
     //var start = Date.now();
-    if (clearOnRedraw) g.clear(true);
-    if (precompiledJs && precompiledJs.length > 7){
+    drawingTime = 0;
+    if (typeof precompiledJs == "function"){
       //print("Precompiled");
-      eval(precompiledJs);
+      var promise = Promise.resolve();
+      if (clearOnRedraw){
+        promise = promise.then(()=>{
+          var currentDrawingTime = Date.now();
+          startPerfLog("initialDraw_g.clear");
+          graphics.clear(true);
+          endPerfLog("initialDraw_g.clear");
+          drawingTime += Date.now() - currentDrawingTime;
+        });
+      }
+      promise = promise.then(()=>precompiledJs(watchfaceResources, watchface));
+
+      promise.then(()=>{
+        var currentDrawingTime = Date.now();
+        g.drawImage({width: graphics.getWidth(), height: graphics.getHeight(), bpp: graphics.getBPP(), buffer: graphics.buffer});
+        lastDrawTime = Date.now() - start;
+        drawingTime += Date.now() - currentDrawingTime;
+        //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
+        isDrawing=false;
+        firstDraw=false;
+        requestRefresh = false;
+        endPerfLog("initialDraw");
+      });
     } else if (face.Collapsed){
       //print("Collapsed");
+      startPerfLog("initialDraw_g.clear");
+      if (clearOnRedraw) graphics.clear(true);
+      endPerfLog("initialDraw_g.clear");
       drawIteratively(resources, face.Collapsed);
+      endPerfLog("initialDraw");
+      lastDrawTime = (Date.now() - start);
+      //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
+      firstDraw = false;
+      isDrawing = false;
     } else {
+      startPerfLog("initialDraw_g.clear");
+      if (clearOnRedraw) graphics.clear(true);
+      endPerfLog("initialDraw_g.clear");
       //print("Full");
       draw(resources, face, [], zeroOffset);
+      endPerfLog("initialDraw");
+      lastDrawTime = (Date.now() - start);
+      //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
+      firstDraw = false;
+      isDrawing = false;
     }
-    endPerfLog("initialDraw");
-    lastDrawTime = (Date.now() - start);
-    //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
-    firstDraw = false;
-    isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
       requestedDraws = 0;

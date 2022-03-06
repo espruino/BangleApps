@@ -562,7 +562,9 @@
       }
       
       function convertToCode(elements, properties){
-        var code = "var layerchanged;\n";  
+        var code = "(function (watchfaceResources, watchface) {\n";
+        code += "var layerchanged;\n";  
+        code += "var promise = Promise.resolve();\n";  
         
         //get mapped by layer
         var layers = {};
@@ -636,11 +638,17 @@
             else colorsetting += "g.setBgColor(g.theme.bg);\n";
             
             code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
-            code += colorsetting;
-            code += "draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});";
+            code += "  promise = promise.then(()=>delay(0)).then(()=>{\n";
+            code += "    var currentDrawTime=Date.now();\n";
+            code += "    " + colorsetting;
+            code += "    draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});";
+            code += "    drawingTime += Date.now() - currentDrawTime;\n";
+            code += "  });\n";
             code += (condition.length > 0 ? "}\n" : "");
           }
         }
+        
+        code += "return promise;})";
         console.log("Code:", code);
         return code
       }
