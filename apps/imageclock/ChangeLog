@@ -4,3 +4,4 @@
 0.04: Allow writing all image data to separate file to save some RAM
       Allow hiding elements on lock
 0.05: Add precompilation to js for performance
+0.06: Watchfaces can be refreshed partly
