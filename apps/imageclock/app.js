@@ -85,9 +85,17 @@ function splitNumberToDigits(num){
   return String(num).split('').map(item => Number(item));
 }
 
+function isChangedNumber(element){
+  return element.lastDrawnValue != getValue(element.Value);
+}
+
+function isChangedMultistate(element){
+  return element.lastDrawnValue != getMultistate(element.Value);
+}
+
 function drawNumber(resources, element, offset){
   startPerfLog("drawNumber");
-  var number = numbers[element.Value]();
+  var number = getValue(element.Value);
   var spacing = element.Spacing ? element.Spacing : 0;
   var unit = element.Unit;
   
@@ -613,13 +621,11 @@ function initialDraw(resources, face){
     //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
     isDrawing = true;
     resetPerfLog();
-    startPerfLog("initialDraw_g.clear");
-    g.clear(true);
-    endPerfLog("initialDraw_g.clear");
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
     startPerfLog("initialDraw");
     //var start = Date.now();
+    if (clearOnRedraw) g.clear(true);
     if (precompiledJs && precompiledJs.length > 7){
       //print("Precompiled");
       eval(precompiledJs);
@@ -633,6 +639,7 @@ function initialDraw(resources, face){
     endPerfLog("initialDraw");
     lastDrawTime = (Date.now() - start);
     //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
+    firstDraw = false;
     isDrawing = false;
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
@@ -694,11 +701,13 @@ var unlockedDrawInterval;
 var lockedDrawInterval;
 
 var lastDrawTime = 0;
+var firstDraw = true;
 
 var lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
 var unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
 var defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "Always";
 var redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
+var clearOnRedraw = getByPath(watchface, ["Properties","Redraw","Clear"]);
 var events = getByPath(watchface, ["Properties","Events"]);
 
 var stepsgoal = 2000;

@@ -541,35 +541,103 @@
           combineProperty("X",element,next);
           combineProperty("Y",element,next);
           combineProperty("HideOn",element,next);
+          combineProperty("Type",element,next);
           combineProperty("ForegroundColor",element,next);
           combineProperty("BackgroundColor",element,next);
-          combineProperty("RotationValue",element,next);          
-          combineProperty("RotationOffset",element,next);          
-          combineProperty("MinRotationValue",element,next);          
-          combineProperty("MaxRotationValue",element,next);          
+          combineProperty("RotationValue",element,next);
+          combineProperty("RotationOffset",element,next);
+          combineProperty("MinRotationValue",element,next);
+          combineProperty("MaxRotationValue",element,next);
+          next.Layer = element.Layer ? (element.Layer) : "" + c;
           
           if (["MultiState","Image","CodedImage","Number","Poly","Scale"].includes(c)){
-            result.push({type:c, value: element[c]});
+            result.push({type:c, value: next});
           } else {
-            result = result.concat(collapseTree(element[c]));
+            result = result.concat(collapseTree(next));
           }
         }
         return result;
       }
       
-      function convertToCode(elements){
-        var code = "";  
+      function convertToCode(elements, properties){
+        var code = "var layerchanged;\n";  
         
+        //get mapped by layer
+        var layers = {};
+        var counter = 0;
         for (var i = 0; i< elements.length; i++){
-          var c = elements[i]
-          console.log("convert to code", c);
+          var c = elements[i].value;
+          console.log("Check element", c);
+          var name = c.Layer;
+          if (c.type == "Standalone") name = "standalone" + counter++;
+          if (!layers[name]) layers[name] = [];
+          layers[name].push({index: i, element: c});
+        }
+        
+        console.log("Got layers", layers);
+        
+        for (var layername in layers){
+          var layerElements = layers[layername];
           
-          var condition = "";
-          if (c.value.HideOn && c.value.HideOn.includes("Lock")){
-            condition = 'if (!Bangle.isLocked())';
+          console.log("Layer elements", layername, layerElements);
+          //code for whole layer
+          
+          var checkForLayerChange = false;
+          var checkcode = "";
+          
+          if (!(properties.Redraw && properties.Redraw.Clear)){
+            checkcode = 'layerchanged = firstDraw;' + "\n";
+            for (var i = 0; i< layerElements.length; i++){
+              var layerElement = layerElements[i];
+              var referencedElement = elements[layerElements[i].index];
+              var elementType = referencedElement.type;
+              console.log("Check for change:", layerElement, referencedElement);
+              if (layerElement.element.Value){
+                if (elementType == "MultiState" && layerElement.element.Value) {
+                  checkcode += 'layerchanged |= isChangedMultistate(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                } else {
+                  checkcode += 'layerchanged |= isChangedNumber(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                }
+                checkForLayerChange = true;
+              }
+            }
           }
           
-          code += condition + " draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + i + "].value, {X:0,Y:0});\n";
+          code += checkcode;
+          
+          //code for elements
+          for (var i = 0; i< layerElements.length; i++){
+            var elementIndex = layerElements[i].index;
+            var c = elements[elementIndex];
+            console.log("convert to code", c);
+            
+            var condition = "";
+            if (checkcode.length > 0 && checkForLayerChange){
+              if (condition.length > 0) condition += " && ";
+              condition = 'layerchanged';
+            }
+            
+            if (c.value.HideOn && c.value.HideOn.includes("Lock")){
+              if (condition.length > 0) condition += " && ";
+              condition = '!Bangle.isLocked()';
+            }
+            
+            if (c.value.Type == "Once"){
+              if (condition.length > 0) condition += " && ";
+              condition += "firstDraw";
+            }
+            
+            var colorsetting = "";
+            if (c.value.ForegroundColor) colorsetting += "g.setColor(\"" + c.value.ForegroundColor + "\");\n";
+            else colorsetting += "g.setColor(g.theme.fg);\n";
+            if (c.value.BackgroundColor) colorsetting += "g.setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+            else colorsetting += "g.setBgColor(g.theme.bg);\n";
+            
+            code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
+            code += colorsetting;
+            code += "draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});";
+            code += (condition.length > 0 ? "}\n" : "");
+          }
         }
         console.log("Code:", code);
         return code
@@ -584,7 +652,7 @@
         if (document.getElementById('precompile').checked){
           faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
           console.log("After collapsing", faceJson);
-          precompiledJs = convertToCode(faceJson.Collapsed);
+          precompiledJs = convertToCode(faceJson.Collapsed, properties);
           console.log("After precompiling", precompiledJs);
         } 
       }
