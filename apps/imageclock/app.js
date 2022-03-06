@@ -441,6 +441,27 @@ function drawPoly(resources, element, offset){
     endPerfLog("drawPoly");
 }
 
+function drawRect(resources, element, offset){
+    startPerfLog("drawRect");
+    var vertices = [];
+    var primitiveOffset = offset.clone();
+    if (element.X) primitiveOffset.X += element.X;
+    if (element.Y) primitiveOffset.Y += element.Y;
+
+    if (element.ForegroundColor) g.setColor(element.ForegroundColor);
+
+    if (element.Filled){
+      startPerfLog("drawRect_g.fillRect");
+      g.fillRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      endPerfLog("drawRect_g.fillRect");
+    } else {
+      startPerfLog("drawRect_g.fillRect");
+      g.drawRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      endPerfLog("drawRect_g.fillRect");
+    }
+    endPerfLog("drawRect");
+}
+
 var numbers = {};
 numbers.Hour = () => { return new Date().getHours(); };
 numbers.HourTens = () => { return Math.floor(new Date().getHours()/10); };

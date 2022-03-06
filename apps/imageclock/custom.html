@@ -540,6 +540,8 @@
           
           combineProperty("X",element,next);
           combineProperty("Y",element,next);
+          combineProperty("Width",element,next);
+          combineProperty("Height",element,next);
           combineProperty("HideOn",element,next);
           combineProperty("Type",element,next);
           combineProperty("ForegroundColor",element,next);
@@ -550,7 +552,7 @@
           combineProperty("MaxRotationValue",element,next);
           next.Layer = element.Layer ? (element.Layer) : "" + c;
           
-          if (["MultiState","Image","CodedImage","Number","Poly","Scale"].includes(c)){
+          if (["MultiState","Image","CodedImage","Number","Poly","Rect","Scale"].includes(c)){
             result.push({type:c, value: next});
           } else {
             result = result.concat(collapseTree(next));
