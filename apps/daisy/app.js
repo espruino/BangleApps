@@ -14,15 +14,18 @@ let warned = 0;
 let idle = false;
 let IDLE_MINUTES = 26;
 
-var pal1; // palette for 0-40%
-var pal2; // palette for 50-100%
-const infoWidth = 50;
-const infoHeight = 14;
+let pal1; // palette for 0-40%
+let pal2; // palette for 50-100%
+const infoLine = (3*h/4) - 6;
+const infoWidth = 56;
+const infoHeight = 11;
 var drawingSteps = false;
 
 function log_debug(o) {
   //print(o);
 }
+
+var hrmImg = require("heatshrink").decompress(atob("i0WgIKHgPh8Ef5/g///44CBz///1///5A4PnBQk///wA4PBA4MDA4MH/+Ah/8gEP4EAjw0GA"));
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
 Graphics.prototype.setFontBloggerSansLight46 = function(scale) {
@@ -109,7 +112,8 @@ const infoData = {
   ID_SR:    { calc: () => 'Sunrise: ' + sunRise },
   ID_SS:    { calc: () => 'Sunset: ' + sunSet },
   ID_STEP:  { calc: () => 'Steps: ' + getSteps() },
-  ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' }
+  ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
+  ID_HRM:   { calc: () => hrmCurrent }
 };
 
 const infoList = Object.keys(infoData).sort();
@@ -121,6 +125,9 @@ function nextInfo() {
     if (idx === infoList.length - 1) infoMode = infoList[0];
     else infoMode = infoList[idx + 1];
   }
+  // power HRM on/off accordingly
+  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
+  resetHrm();
 }
 
 function prevInfo() {
@@ -129,7 +136,124 @@ function prevInfo() {
     if (idx === 0) infoMode = infoList[infoList.length - 1];
     else infoMode = infoList[idx - 1];
   }
+  // power HRM on/off accordingly
+  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
+  resetHrm();
 }
+
+function clearInfo() {
+  g.setColor(g.theme.bg);
+  //g.setColor(g.theme.fg);
+  g.fillRect((w/2) - infoWidth, infoLine - infoHeight, (w/2) + infoWidth, infoLine + infoHeight); 
+}
+
+function drawInfo() {
+  clearInfo();
+  g.setColor(g.theme.fg);
+  setSmallFont();
+  g.setFontAlign(0,0);
+
+  if (infoMode == "ID_HRM") {
+    clearInfo();
+    g.setColor('#f00'); // red
+    drawHeartIcon();
+  } else {
+    g.drawString((infoData[infoMode].calc()), w/2, infoLine);
+  }
+}
+
+function drawHeartIcon() {
+  g.drawImage(hrmImg, (w/2) - infoHeight - 20, infoLine - infoHeight);
+}
+
+function drawHrm() {
+  if (idle) return; // dont draw while prompting
+  var d = new Date();
+  clearInfo();
+  g.setColor(d.getSeconds()&1 ? '#f00' : g.theme.bg);
+  drawHeartIcon();
+  setSmallFont();
+  g.setFontAlign(-1,0); // left
+  g.setColor(hrmConfidence >= 50 ? g.theme.fg : '#f00');
+  g.drawString(hrmCurrent, (w/2) + 10, infoLine);
+}
+
+function draw() {
+  if (!idle)
+    drawClock();
+  else
+    drawIdle();
+  queueDraw();
+}
+
+function drawClock() {
+  var date = new Date();
+  var timeStr = require("locale").time(date,1);
+  var da = date.toString().split(" ");
+  var time = da[4].substr(0,5);
+  var hh = da[4].substr(0,2);
+  var mm = da[4].substr(3,2);
+  var steps = getSteps();
+  var p_steps = Math.round(100*(steps/10000));
+  
+  g.reset();
+  g.setColor(g.theme.bg);
+  g.fillRect(0, 0, w, h);
+  g.drawImage(getGaugeImage(p_steps), 0, 0);
+  setLargeFont();
+
+  g.setColor(settings.fg);
+  g.setFontAlign(1,0);  // right aligned
+  g.drawString(hh, (w/2) - 1, h/2);
+
+  g.setColor(g.theme.fg);
+  g.setFontAlign(-1,0); // left aligned
+  g.drawString(mm, (w/2) + 1, h/2);
+
+  drawInfo();
+  
+  // recalc sunrise / sunset every hour
+  if (drawCount % 60 == 0)
+    updateSunRiseSunSet(new Date(), location.lat, location.lon);
+  drawCount++;
+}
+
+function drawSteps() {
+  if (drawingSteps) return;
+  drawingSteps = true;
+  clearInfo();
+  setSmallFont();
+  g.setFontAlign(0,0);
+  g.setColor(g.theme.fg);
+  g.drawString('Steps ' + getSteps(), w/2, (3*h/4) - 4);
+  drawingSteps = false;
+}
+
+/////////////////   GAUGE images /////////////////////////////////////
+
+var hrmCurrent = "--";
+var hrmConfidence = 0;
+
+function resetHrm() {
+  hrmCurrent = "--";
+  hrmConfidence = 0;
+  if (infoMode == "ID_HRM") {
+    clearInfo();
+    g.setColor('#f00'); // red
+    drawHeartIcon();
+  }
+}
+
+Bangle.on('HRM', function(hrm) {
+  hrmCurrent = hrm.bpm;
+  hrmConfidence = hrm.confidence;
+  log_debug("HRM=" + hrm.bpm + " (" + hrm.confidence + ")"); 
+  if (infoMode == "ID_HRM" ) drawHrm();
+});
+
+
+/////////////////   GAUGE images /////////////////////////////////////
+
 
 // putting into 1 function like this, rather than individual variables
 // reduces ram usage from 70%-13%
@@ -247,68 +371,6 @@ function getGaugeImage(p) {
   };
 }
 
-function draw() {
-  if (!idle)
-    drawClock();
-  else
-    drawIdle();
-  queueDraw();
-}
-
-function drawClock() {
-  var date = new Date();
-  var timeStr = require("locale").time(date,1);
-  var da = date.toString().split(" ");
-  var time = da[4].substr(0,5);
-  var hh = da[4].substr(0,2);
-  var mm = da[4].substr(3,2);
-  var steps = getSteps();
-  var p_steps = Math.round(100*(steps/10000));
-  
-  g.reset();
-  g.setColor(g.theme.bg);
-  g.fillRect(0, 0, w, h);
-  g.drawImage(getGaugeImage(p_steps), 0, 0);
-  setLargeFont();
-
-  g.setColor(settings.fg);
-  g.setFontAlign(1,0);  // right aligned
-  g.drawString(hh, (w/2) - 1, h/2);
-
-  g.setColor(g.theme.fg);
-  g.setFontAlign(-1,0); // left aligned
-  g.drawString(mm, (w/2) + 1, h/2);
-
-  setSmallFont();
-  g.setFontAlign(0,0); // left aligned
-  g.drawString((infoData[infoMode].calc()), w/2, (3*h/4) - 4);
-
-  // recalc sunrise / sunset every hour
-  if (drawCount % 60 == 0)
-    updateSunRiseSunSet(new Date(), location.lat, location.lon);
-  drawCount++;
-}
-
-function drawSteps() {
-  if (drawingSteps) return;
-  drawingSteps = true;
-  setSmallFont();
-  g.setFontAlign(0,0);
-  var steps = getSteps();
-  g.setColor(g.theme.bg);
-  g.fillRect((w/2) - infoWidth, (3*h/4) - infoHeight, (w/2) + infoWidth, (3*h/4) + infoHeight); 
-  g.setColor(g.theme.fg);
-  g.drawString('Steps ' + steps, w/2, (3*h/4) - 4);
-  drawingSteps = false;
-}
-
-/*
-Bangle.on('step', s => {
-  drawSteps();
-});
-*/
-
-
 /////////////////   IDLE TIMER /////////////////////////////////////
 
 function drawIdle() {
@@ -392,6 +454,8 @@ Bangle.on('step', s => {
   }
   idle = false;
   warned = 0;
+
+  if (infoMode == "ID_STEP") drawSteps();
 });
 
 function checkIdle() {
