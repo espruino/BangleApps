@@ -2,7 +2,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const modeNames = ["Off", "Alarms", "Silent"];
-
+const B2 = process.env.HWVERSION===2;
 // load global settings
 let bSettings = require('Storage').readJSON('setting.json',true)||{};
 let current = 0|bSettings.quiet;
@@ -109,26 +109,19 @@ function setAppQuietMode(mode) {
 
 let m;
 function showMainMenu() {
-  let menu = {
-    "": {"title": "Quiet Mode"},
-    "< Exit": () => load()
-  };
+  let menu = {"": {"title": "Quiet Mode"},};
+  menu[B2 ? "< Back" : "< Exit"] = () => {load();};
   // "Current Mode""Silent" won't fit on Bangle.js 2
   menu["Current"+((process.env.HWVERSION===2) ? "" : " Mode")] = {
     value: current,
     min:0, max:2, wrap: true,
-    format: () => modeNames[current],
+    format: v => modeNames[v],
     onchange: require("qmsched").setMode, // library calls setAppMode(), which updates `current`
   };
   scheds.sort((a, b) => (a.hr-b.hr));
   scheds.forEach((sched, idx) => {
-    menu[formatTime(sched.hr)] = {
-      format: () => modeNames[sched.mode], // abuse format to right-align text
-      onchange: () => {
-        m.draw = ()=> {}; // prevent redraw of main menu over edit menu (needed because we abuse format/onchange)
-        showEditMenu(idx);
-      }
-    };
+    menu[formatTime(sched.hr)] = () => { showEditMenu(idx); };
+    menu[formatTime(sched.hr)].format = () => modeNames[sched.mode]+' >'; // this does nothing :-(
   });
   menu["Add Schedule"] = () => showEditMenu(-1);
   menu["Switch Theme"] = {
@@ -150,25 +143,23 @@ function showEditMenu(index) {
     mins = Math.round((s.hr-hrs)*60);
     mode = s.mode;
   }
-  const menu = {
-    "": {"title": (isNew ? "Add" : "Edit")+" Schedule"},
-    "< Cancel": () => showMainMenu(),
-    "Hours": {
-      value: hrs,
-      min:0, max:23, wrap:true,
-      onchange: v => {hrs = v;},
-    },
-    "Minutes": {
-      value: mins,
-      min:0, max:55, step:5, wrap:true,
-      onchange: v => {mins = v;},
-    },
-    "Switch to": {
-      value: mode,
-      min:0, max:2, wrap:true,
-      format: v => modeNames[v],
-      onchange: v => {mode = v;},
-    },
+  let menu = {"": {"title": (isNew ? "Add" : "Edit")+" Schedule"}};
+  menu[B2 ? "< Back" : "< Cancel"] =  () => showMainMenu();
+  menu["Hours"] = {
+    value: hrs,
+    min:0, max:23, wrap:true,
+    onchange: v => {hrs = v;},
+  };
+  menu["Minutes"] = {
+    value: mins,
+    min:0, max:55, step:5, wrap:true,
+    onchange: v => {mins = v;},
+  };
+  menu["Switch to"] = {
+    value: mode,
+    min:0, max:2, wrap:true,
+    format: v => modeNames[v],
+    onchange: v => {mode = v;},
   };
   function getSched() {
     return {
@@ -176,7 +167,7 @@ function showEditMenu(index) {
       mode: mode,
     };
   }
-  menu["> Save"] = function() {
+  menu[B2 ? "Save" : "> Save"] = function() {
     if (isNew) {
       scheds.push(getSched());
     } else {
@@ -186,7 +177,7 @@ function showEditMenu(index) {
     showMainMenu();
   };
   if (!isNew) {
-    menu["> Delete"] = function() {
+    menu[B2 ? "Delete" : "> Delete"] = function() {
       scheds.splice(index, 1);
       save();
       showMainMenu();
