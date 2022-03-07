@@ -1,0 +1,10 @@
+{
+  "buzz": true,
+  "lowalarm": false,
+  "min": 950,
+  "highalarm": false,
+  "max": 1030,
+  "changeIn3h": 2,
+  "show": true,
+  "interval": 15
+}

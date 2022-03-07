@@ -1,0 +1,19 @@
+{
+  "id": "widbaroalarm",
+  "name": "Barometer alarm widget",
+  "shortName": "Barometer alarm",
+  "version": "0.01",
+  "description": "A widget that can alarm on when the pressure reaches defined thresholds.",
+  "icon": "widget.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "widget",
+  "tags": "tool,barometer",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widbaroalarm.wid.js","url":"widget.js"},
+    {"name":"widbaroalarm.settings.js","url":"settings.js"},
+    {"name":"widbaroalarm.default.json","url":"default.json"}
+  ],
+  "data": [{"name":"widbaroalarm.json"}, {"name":"widbaroalarm.log"}]
+}
