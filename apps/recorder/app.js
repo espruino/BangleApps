@@ -305,7 +305,7 @@ function viewTrack(filename, info) {
     g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
     g.setFont("6x8",2);
     g.setFontAlign(0,0,3);
-    g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40); // TODO: this position depends on Bangle1 vs 2
+    g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
     setWatch(function() {
       viewTrack(info.fn, info);
     }, global.BTN3||BTN1);
