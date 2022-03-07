@@ -180,9 +180,9 @@ function drawNumber(resources, element, offset){
   if (isNegative && minusImage){
     //print("Draw minus at", currentX);
     if (imageIndexMinus){
-      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexMinus));
+      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexMinus));
     } else {
-      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "minus");
+      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "minus");
     }
     currentX += minusImage.width + spacing;
   }
@@ -195,14 +195,14 @@ function drawNumber(resources, element, offset){
       currentDigit = 0;
     }
     //print("Digit " + currentDigit + " " + currentX);
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, currentDigit + imageIndex);
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, currentDigit + imageIndex);
     currentX += firstImage.width + spacing;
   }
   if (imageIndexUnit){
     //print("Draw unit at", currentX);
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, "" + (0 + imageIndexUnit));
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexUnit));
   } else if (element.Unit){
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element.ImagePath, getMultistate(element.Unit,"unknown"));
+    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, getMultistate(element.Unit,"unknown"));
   }
   element.lastDrawnValue = number;
 
@@ -214,36 +214,51 @@ function setColors(properties){
   if (properties.bg) g.setBgColor(properties.bg);
 }
 
-function drawElement(resources, pos, offset, path, lastElem){
+function drawElement(resources, pos, offset, element, lastElem){
   startPerfLog("drawElement");
-  //print("drawElement ",pos, offset, path, lastElem);
-  //print("drawElement offset", offset, pos.X, pos.Y);
-  var resource = getByPath(resources, path, lastElem);
-  //print("Got resource", resource);
-  if (resource){
-    //print("resource ", resource,pos, offset, path, lastElem);
-    var image = prepareImg(resource);
-    if (image){
-      var imageOffset = updateColors(pos, offset);
-      setColors(imageOffset);
-      //print("drawImage from drawElement", image, pos, offset);
-      var options={};
-      if (pos.RotationValue){
-        options.rotate = radians(pos);
+  var cacheKey = "_"+(lastElem?lastElem:"nole");
+  if (!element.cachedImage) element.cachedImage={};
+  if (!element.cachedImage[cacheKey]){
+    var resource = getByPath(resources, element.ImagePath, lastElem);
+    if (resource){
+      prepareImg(resource);
+      //print("lastElem", typeof resource)
+      if (resource) {
+        element.cachedImage[cacheKey] = resource;
+        //print("cache res ",typeof element.cachedImage[cacheKey]);
+      } else {
+        element.cachedImage[cacheKey] = null;
+        //print("cache null",typeof element.cachedImage[cacheKey]);
+        //print("Could not create image from", resource);
       }
-      if (pos.Scale){
-        options.scale = pos.ScaleValue;
-      }
-      //print("options", options);
-      //print("Memory before drawing", process.memory(false));
-      startPerfLog("drawElement_g.drawImage");
-      g.drawImage(image ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);
-      endPerfLog("drawElement_g.drawImage");
     } else {
-      //print("Could not create image from", resource);
+      //print("Could not get resource from", element, lastElem);
     }
-  } else {
-    //print("Could not get resource from", path, lastElem);
+  }
+  
+  //print("cache ",typeof element.cachedImage[cacheKey], element.ImagePath, lastElem);
+  if(element.cachedImage[cacheKey]){
+    //print("drawElement ",pos, offset, path, lastElem);
+    //print("drawElement offset", offset, pos.X, pos.Y);
+    //print("resource ", resource,pos, offset, path, lastElem);
+    var imageOffset = updateColors(pos, offset);
+    setColors(imageOffset);
+    //print("drawImage from drawElement", image, pos, offset);
+    var options={};
+    if (pos.RotationValue){
+      options.rotate = radians(pos);
+    }
+    if (pos.Scale){
+      options.scale = pos.ScaleValue;
+    }
+    //print("options", options);
+    //print("Memory before drawing", process.memory(false));
+    startPerfLog("drawElement_g.drawImage");
+    try{
+    g.drawImage(element.cachedImage[cacheKey] ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);} catch (e) {
+      //print("Error", e, element.cachedImage[cacheKey]);
+    }
+    endPerfLog("drawElement_g.drawImage");
   }
   endPerfLog("drawElement");
 }
@@ -280,7 +295,7 @@ function drawScale(resources, scale, offset){
   var segmentsToDraw = Math.ceil(value * segments.length);
 
   for (var i = 0; i < segmentsToDraw; i++){
-    drawElement(resources, segments[i], scaleOffset, scale.ImagePath, imageIndex + i);
+    drawElement(resources, segments[i], scaleOffset, scale, imageIndex + i);
   }
   scale.lastDrawnValue = segmentsToDraw;
 
@@ -288,7 +303,7 @@ function drawScale(resources, scale, offset){
 }
 
 function drawDigit(resources, element, offset, digit){
-  drawElement(resources, element, offset, element.ImagePath, digit);
+  drawElement(resources, element, offset, element, digit);
 }
 
 function drawImage(resources, image, offset, name){
@@ -298,11 +313,11 @@ function drawImage(resources, image, offset, name){
   if (image.Value && image.Steps){
     var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
     //print("Step", steps, "of", image.Steps);
-    drawElement(resources, image, imageOffset, image.ImagePath, "" + steps);
+    drawElement(resources, image, imageOffset, image, "" + steps);
   } else if (image.ImageIndex !== undefined) {
-    drawElement(resources, image, imageOffset, image.ImagePath, image.ImageIndex);
+    drawElement(resources, image, imageOffset, image, image.ImageIndex);
   } else {
-    drawElement(resources, image, imageOffset, image.ImagePath, name ? "" + name: undefined);
+    drawElement(resources, image, imageOffset, image, name ? "" + name: undefined);
   }
   
   endPerfLog("drawImage");
