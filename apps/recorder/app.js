@@ -49,11 +49,11 @@ function showMainMenu() {
     };
   }
   const mainmenu = {
-    '': { 'title': 'Recorder' },
+    '': { 'title': /*LANG*/'Recorder' },
     '< Back': ()=>{load();},
-    'RECORD': {
+    /*LANG*/'RECORD': {
       value: !!settings.recording,
-      format: v=>v?"On":"Off",
+      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
       onchange: v => {
         setTimeout(function() {
           E.showMenu();
@@ -66,7 +66,7 @@ function showMainMenu() {
         }, 1);
       }
     },
-    'File #': {
+    /*LANG*/'File #': {
       value: getTrackNumber(settings.file),
       min: 0,
       max: 99,
@@ -77,8 +77,8 @@ function showMainMenu() {
         updateSettings();
       }
     },
-    'View Tracks': ()=>{viewTracks();},
-    'Time Period': {
+    /*LANG*/'View Tracks': ()=>{viewTracks();},
+    /*LANG*/'Time Period': {
       value: settings.period||10,
       min: 1,
       max: 120,
@@ -103,15 +103,15 @@ function showMainMenu() {
 
 function viewTracks() {
   const menu = {
-    '': { 'title': 'Tracks' }
+    '': { 'title': /*LANG*/'Tracks' }
   };
   var found = false;
   require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).forEach(filename=>{
     found = true;
-    menu["Track "+getTrackNumber(filename)] = ()=>viewTrack(filename,false);
+    menu[/*LANG*/"Track "+getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });
   if (!found)
-    menu["No Tracks found"] = function(){};
+    menu[/*LANG*/"No Tracks found"] = function(){};
   menu['< Back'] = () => { showMainMenu(); };
   return E.showMenu(menu);
 }
@@ -175,38 +175,38 @@ function asTime(v){
 
 function viewTrack(filename, info) {
   if (!info) {
-    E.showMessage("Loading...","Track "+getTrackNumber(filename));
+    E.showMessage(/*LANG*/"Loading...",/*LANG*/"Track "+getTrackNumber(filename));
     info = getTrackInfo(filename);
   }
   //console.log(info);
   const menu = {
-    '': { 'title': 'Track '+info.fn }
+    '': { 'title': /*LANG*/'Track '+info.fn }
   };
   if (info.time)
     menu[info.time.toISOString().substr(0,16).replace("T"," ")] = function(){};
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
   if (info.fields.includes("Latitude"))
-    menu['Plot Map'] = function() {
+    menu[/*LANG*/'Plot Map'] = function() {
       info.qOSTM = false;
       plotTrack(info);
     };
   if (osm && info.fields.includes("Latitude"))
-    menu['Plot OpenStMap'] = function() {
+    menu[/*LANG*/'Plot OpenStMap'] = function() {
       info.qOSTM = true;
       plotTrack(info);
     }
   if (info.fields.includes("Altitude"))
-    menu['Plot Alt.'] = function() {
+    menu[/*LANG*/'Plot Alt.'] = function() {
       plotGraph(info, "Altitude");
     };
   if (info.fields.includes("Latitude"))
-    menu['Plot Speed'] = function() {
+    menu[/*LANG*/'Plot Speed'] = function() {
       plotGraph(info, "Speed");
     };
   // TODO: steps, heart rate?
-  menu['Erase'] = function() {
-    E.showPrompt("Delete Track?").then(function(v) {
+  menu[/*LANG*/'Erase'] = function() {
+    E.showPrompt(/*LANG*/"Delete Track?").then(function(v) {
       if (v) {
         settings.recording = false;
         updateSettings();
@@ -238,7 +238,7 @@ function viewTrack(filename, info) {
     }
 
     E.showMenu(); // remove menu
-    E.showMessage("Drawing...","Track "+info.fn);
+    E.showMessage(/*LANG*/"Drawing...",/*LANG*/"Track "+info.fn);
     g.flip(); // on buffered screens, draw a not saying we're busy
     g.clear(1);
     var s = require("Storage");
@@ -305,17 +305,18 @@ function viewTrack(filename, info) {
     g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
     g.setFont("6x8",2);
     g.setFontAlign(0,0,3);
-    g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
+    var isBTN3 = "BTN3" in global;
+    g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
     setWatch(function() {
       viewTrack(info.fn, info);
-    }, global.BTN3||BTN1);
+    }, isBTN3?BTN3:BTN1);
     Bangle.drawWidgets();
     g.flip();
   }
 
   function plotGraph(info, style) { "ram"
     E.showMenu(); // remove menu
-    E.showMessage("Calculating...","Track "+info.fn);
+    E.showMessage(/*LANG*/"Calculating...",/*LANG*/"Track "+info.fn);
     var filename = info.filename;
     var infn = new Float32Array(80);
     var infc = new Uint16Array(80);
@@ -334,7 +335,7 @@ function viewTrack(filename, info) {
       strt = c[timeIdx];
     }
     if (style=="Altitude") {
-      title = "Altitude (m)";
+      title = /*LANG*/"Altitude (m)";
       var altIdx = info.fields.indexOf("Altitude");
       while(l!==undefined) {
         ++nl;c=l.split(",");l = f.readLine(f);
@@ -344,7 +345,7 @@ function viewTrack(filename, info) {
         infc[i]++;
       }
     } else if (style=="Speed") {
-      title = "Speed (m/s)";
+      title = /*LANG*/"Speed (m/s)";
       var latIdx = info.fields.indexOf("Latitude");
       var lonIdx = info.fields.indexOf("Longitude");
       // skip until we find our first data
@@ -404,10 +405,11 @@ function viewTrack(filename, info) {
     });
     g.setFont("6x8",2);
     g.setFontAlign(0,0,3);
-    g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
+    var isBTN3 = "BTN3" in global;
+    g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
     setWatch(function() {
       viewTrack(info.filename, info);
-    }, global.BTN3||BTN1);
+    }, isBTN3?BTN3:BTN1);
     g.flip();
   }
 
