@@ -3,11 +3,12 @@
   "name": "Q Alarm and Timer",
   "shortName": "Q Alarm",
   "icon": "app.png",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Alarm and timer app with days of week and 'hard' option.",
   "tags": "tool,alarm,widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
+    { "name": "qalarm", "url": "lib.js" },
     { "name": "qalarm.app.js", "url": "app.js" },
     { "name": "qalarm.boot.js", "url": "boot.js" },
     { "name": "qalarm.js", "url": "qalarm.js" },
