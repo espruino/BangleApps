@@ -34,9 +34,9 @@ function b32decode(seedstr) {
   // RFC4648
   var buf = 0, bitcount = 0, retstr = "";
   for (var c of seedstr.toUpperCase()) {
-    if (c=='0')c='O';
-    if (c=='1')c='I';
-    if (c=='8')c='B';
+    if (c == '0') c = 'O';
+    if (c == '1') c = 'I';
+    if (c == '8') c = 'B';
     c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(c);
     if (c != -1) {
       buf <<= 5;
@@ -166,11 +166,7 @@ function drawToken(id, r) {
     } while (g.stringWidth(state.otp) > (r.w - adj));
     g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
   }
-  // shaded lines top and bottom
-  g.setColor(0.5, 0.5, 0.5)
-   .drawLine(x1, y1, x2, y1)
-   .drawLine(x1, y2, x2, y2)
-   .setClipRect(0, 0, g.getWidth(), g.getHeight());
+  g.setClipRect(0, 0, g.getWidth(), g.getHeight());
 }
 
 function draw() {
@@ -212,7 +208,7 @@ function draw() {
       if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
-      id += 1;
+      id++;
       y += tokenheight;
     }
     if (drewcur) {
@@ -273,11 +269,33 @@ function onTouch(zone, e) {
 }
 
 function onDrag(e) {
-  if (e.x > g.getWidth() || e.y > g.getHeight()) return;
-  if (e.dx == 0 && e.dy == 0) return;
-  var newy = Math.min(state.listy - e.dy, tokens.length * tokenheight - Bangle.appRect.h);
-  state.listy = Math.max(0, newy);
-  draw();
+  if (e.b != 0 && e.x < g.getWidth() && e.y < g.getHeight() && e.dy != 0) {
+    var y = Math.max(0, Math.min(state.listy - e.dy, tokens.length * tokenheight - Bangle.appRect.h));
+    if (state.listy != y) {
+      var id, dy = state.listy - y;
+      state.listy = y;
+      g.setClipRect(Bangle.appRect.x,Bangle.appRect.y,Bangle.appRect.x2,Bangle.appRect.y2)
+       .scroll(0, dy);
+      if (dy > 0) {
+        id = Math.floor((state.listy + dy) / tokenheight);
+        y = id * tokenheight + Bangle.appRect.y - state.listy;
+        do {
+          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
+          id--;
+          y -= tokenheight;
+        } while (y > 0);
+      }
+      if (dy < 0) {
+        id = Math.floor((state.listy + dy + Bangle.appRect.h) / tokenheight);
+        y = id * tokenheight + Bangle.appRect.y - state.listy;
+        while (y < Bangle.appRect.y2) {
+          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
+          id++;
+          y += tokenheight;
+        }
+      }
+    }
+  }
 }
 
 function onSwipe(e) {
@@ -332,6 +350,8 @@ if (typeof BTN2 == 'number') {
   setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising" , debounce:50, repeat:true});
   setWatch(function(){exitApp();     }, BTN2, {edge:"falling", debounce:50});
   setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising" , debounce:50, repeat:true});
+} else {
+  setWatch(function(){exitApp();     }, BTN1, {edge:"falling", debounce:50});
 }
 Bangle.loadWidgets();
 
