@@ -4,6 +4,7 @@
     if (settings.vibrate===undefined) settings.vibrate=".";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
     return settings;
   }
@@ -42,6 +43,11 @@
       min: 0, max: 1,
       format: v => [/*LANG*/"Small",/*LANG*/"Medium"][v],
       onchange: v => updateSetting("fontSize", v)
+    },
+    /*LANG*/'Auto-Open Music': {
+      value: !!settings().openMusic,
+      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
+      onchange: v => updateSetting("openMusic", v)
     },
   };
   E.showMenu(mainmenu);
