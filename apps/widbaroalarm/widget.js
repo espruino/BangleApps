@@ -18,65 +18,14 @@
 
   let history3 = storage.readJSON(LOG_FILE, true) || []; // history of recent 3 hours
 
-  function showAlarm(text, value, value2, icon) {
-    if (text == undefined || value == undefined) return;
-    const Layout = require("Layout");
-    layout = new Layout({
-      type: "v",
-      c: [{
-          type: "h",
-          c: [{
-              type: "img",
-              pad: 0,
-              src: function() {
-                return icon || require("heatshrink").decompress(atob("jEY4cA///gH4/++mkK30kiWC4H8x3BGDmSGgYDCgmSoEAg3bsAIDpAIFkmSpMAm3btgIFDQwIGNQpTYkAIJwAHEgMoCA0JgMEyBnBCAW3KoQQDhu3oAIH5JnDBAW24IIBEYm2EYwACBCIACA"));
-              }
-            },
-            {
-              type: "txt",
-              id: "title",
-              font: "6x8:2",
-              label: "Alarm",
-              pad: 2
-            },
-          ]
-        },
-        {
-          type: "txt",
-          id: "text",
-          font: "6x8:2",
-          label: text,
-          pad: 3
-        },
-        {
-          type: "txt",
-          id: "value",
-          font: "6x8:2",
-          label: value,
-          halign: 0,
-          pad: 3
-        },
-        {
-          type: "txt",
-          id: "value2",
-          font: "6x8:1",
-          label: value2 || "",
-          halign: 0,
-          pad: 3
-        },
-      ]
-    }, {
-      btns: [{
-        label: "OK",
-        cb: function() {
-          load(); // close
-        }
-      }],
-      lazy: false
-    });
+  function showAlarm(body, title) {
+    if (body == undefined) return;
 
-    g.clear();
-    layout.render();
+    require("notify").show({
+      title: title || "Pressure",
+      body: body,
+      icon: require("heatshrink").decompress(atob("jEY4cA///gH4/++mkK30kiWC4H8x3BGDmSGgYDCgmSoEAg3bsAIDpAIFkmSpMAm3btgIFDQwIGNQpTYkAIJwAHEgMoCA0JgMEyBnBCAW3KoQQDhu3oAIH5JnDBAW24IIBEYm2EYwACBCIACA"))
+    });
 
     if (setting("buzz") &&
       !(storage.readJSON('setting.json', 1) || {}).quiet) {
@@ -121,11 +70,11 @@
         avrPressure = (history3[history3.length - 1]["p"] + history3[history3.length - 2]["p"] + history3[history3.length - 3]["p"]) / 3;
 
         if (setting("lowalarm") && avrPressure <= setting("min")) {
-          showAlarm("Pressure low", Math.round(avrPressure) + " hPa");
+          showAlarm("Pressure low: " + Math.round(avrPressure) + " hPa");
           alreadyWarned = true;
         }
         if (setting("highalarm") && avrPressure >= setting("max")) {
-          showAlarm("Pressure high", Math.round(avrPressure) + " hPa");
+          showAlarm("Pressure high: " + Math.round(avrPressure) + " hPa");
           alreadyWarned = true;
         }
 
@@ -143,8 +92,9 @@
             if (oldestAvgPressure != undefined && oldestAvgPressure > 0) {
               const diff = oldestAvgPressure - avrPressure;
               if (Math.abs(diff) > threeHourChange) {
-                showAlarm("Pressure " + (diff > 0 ? "drop" : "raise"), (Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h",
-                  Math.round(oldestAvgPressure) + " hPa -> " + Math.round(avrPressure) + " hPa");
+                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
+                  Math.round(oldestAvgPressure) + " to " + Math.round(avrPressure) + " hPa",
+                  "Pressure " + (diff > 0 ? "drop" : "raise"));
               }
             }
           }
@@ -188,7 +138,7 @@
     };
   }
 
-  // Let's delay check a bit
+  // Let's delay the first check a bit
   setTimeout(function() {
     check();
     if (interval > 0) {
