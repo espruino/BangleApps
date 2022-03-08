@@ -18,18 +18,6 @@ var settings = require("Storage").readJSON("authentiwatch.json", true) || {token
 if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
-// QR Code Text
-//
-// Example:
-//
-// otpauth://totp/${url}:AA_${algorithm}_${digits}dig_${period}s@${url}?algorithm=${algorithm}&digits=${digits}&issuer=${url}&period=${period}&secret=${secret}
-//
-// ${algorithm} : one of SHA1 / SHA256 / SHA512
-// ${digits} : one of 6 / 8
-// ${period} : one of 30 / 60
-// ${url} : a domain name "example.com"
-// ${secret} : the seed code
-
 function b32decode(seedstr) {
   // RFC4648
   var buf = 0, bitcount = 0, retstr = "";
@@ -75,6 +63,10 @@ function do_hmac(key, message, algo) {
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
+function formatOtp(otp, digits) {
+  var re = (digits % 3 == 0 || (digits % 3 >= digits % 4 && digits % 4 != 0)) ? "" : ".";
+  return otp.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
+}
 function hotp(d, token, dohmac) {
   var tick;
   if (token.period > 0) {
@@ -98,8 +90,7 @@ function hotp(d, token, dohmac) {
         ret = "0" + ret;
       }
       // add a space after every 3rd or 4th digit
-      var re = (token.digits % 3 == 0 || (token.digits % 3 >= token.digits % 4 && token.digits % 4 != 0)) ? "" : ".";
-      ret = ret.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
+      ret = formatOtp(ret, token.digits);
     } catch(err) {
       ret = notsupported;
     }
@@ -107,6 +98,7 @@ function hotp(d, token, dohmac) {
   return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
 
+var fontsz_cache = {};
 var state = {
   listy: 0,
   prevcur:0,
@@ -117,12 +109,25 @@ var state = {
   hide:0
 };
 
+function size_font(id, txt, w) {
+  var sz = fontsz_cache[id];
+  if (sz) {
+    g.setFont("Vector", sz);
+  } else {
+    sz = tokendigitsheight;
+    do {
+      g.setFont("Vector", sz--);
+    } while (g.stringWidth(txt) > w);
+    fontsz_cache[id] = sz + 1;
+  }
+}
+
 function drawToken(id, r) {
   var x1 = r.x;
   var y1 = r.y;
   var x2 = r.x + r.w - 1;
   var y2 = r.y + r.h - 1;
-  var adj, lbl, sz;
+  var adj, lbl;
   g.setClipRect(Math.max(x1, Bangle.appRect.x ), Math.max(y1, Bangle.appRect.y ),
                 Math.min(x2, Bangle.appRect.x2), Math.min(y2, Bangle.appRect.y2));
   lbl = tokens[id].label.substr(0, 10);
@@ -137,10 +142,7 @@ function drawToken(id, r) {
   } else {
     g.setColor(g.theme.fg)
      .setBgColor(g.theme.bg);
-    sz = tokendigitsheight;
-    do {
-      g.setFont("Vector", sz--);
-    } while (g.stringWidth(lbl) > r.w);
+    size_font("l" + id, lbl, r.w);
     // center in box
     g.setFontAlign(0, 0, 0);
     adj = (y1 + y2) / 2;
@@ -160,10 +162,7 @@ function drawToken(id, r) {
       adj = 12;
     }
     // digits just below label
-    sz = tokendigitsheight;
-    do {
-      g.setFont("Vector", sz--);
-    } while (g.stringWidth(state.otp) > (r.w - adj));
+    size_font("d" + id, state.otp, r.w - adj);
     g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
   }
   g.setClipRect(0, 0, g.getWidth(), g.getHeight());
