@@ -405,7 +405,7 @@ class proto3decoder {
   constructor(str) {
     this.buf = [];
     for (let i in str) {
-      this.buf = this.buf.concat(str.charCodeAt(i));
+      this.buf.push(str.charCodeAt(i));
     }
   }
   getVarint() {
