@@ -87,6 +87,7 @@ Bangle.on('touch', function(btn, e){
     }
     Bangle.buzz(80, 0.6);
   }
+  minutes = Math.max(0, minutes);
 
   draw();
 });
