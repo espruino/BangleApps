@@ -1,5 +1,5 @@
 var ExStats = require("exstats");
-var B2 = process.env.HWVERSION==2;
+var B2 = process.env.HWVERSION===2;
 var Layout = require("Layout");
 var locale = require("locale");
 var fontHeading = "6x8:2";
@@ -14,46 +14,72 @@ Bangle.drawWidgets();
 
 // ---------------------------
 let settings = Object.assign({
-  record : true,
-  B1 : "dist",
-  B2 : "time",
-  B3 : "pacea",
-  B4 : "bpm",
-  B5 : "step",
-  B6 : "caden",
-  paceLength : 1000
+  record: true,
+  B1: "dist",
+  B2: "time",
+  B3: "pacea",
+  B4: "bpm",
+  B5: "step",
+  B6: "caden",
+  paceLength: 1000,
+  notify: {
+    dist: {
+      value: 0,
+      notifications: [],
+    },
+    step: {
+      value: 0,
+      notifications: [],
+    },
+    time: {
+      value: 0,
+      notifications: [],
+    },
+  },
 }, require("Storage").readJSON("run.json", 1) || {});
-var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!="");
+var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 var exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
 // Called to start/stop running
 function onStartStop() {
   var running = !exs.state.active;
-  if (running) {
-    exs.start();
-  } else {
-    exs.stop();
-  }
-  layout.button.label = running ? "STOP" : "START";
-  layout.status.label = running ? "RUN" : "STOP";
-  layout.status.bgCol = running ? "#0f0" : "#f00";
-  // if stopping running, don't clear state
-  // so we can at least refer to what we've done
-  layout.render();
+  var prepPromises = [];
+
   // start/stop recording
+  // Do this first in case recorder needs to prompt for
+  // an overwrite before we start tracking exstats
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
-      WIDGETS["recorder"].setRecording(true).then(() => {
-        isMenuDisplayed = false;
-        layout.forgetLazyState();
-        layout.render();
-      });
+      prepPromises.push(
+        WIDGETS["recorder"].setRecording(true).then(() => {
+          isMenuDisplayed = false;
+          layout.forgetLazyState();
+          layout.render();
+        })
+      );
     } else {
-      WIDGETS["recorder"].setRecording(false);
+      prepPromises.push(
+        WIDGETS["recorder"].setRecording(false)
+      );
     }
   }
+
+  Promise.all(prepPromises)
+    .then(() => {
+      if (running) {
+        exs.start();
+      } else {
+        exs.stop();
+      }
+      layout.button.label = running ? "STOP" : "START";
+      layout.status.label = running ? "RUN" : "STOP";
+      layout.status.bgCol = running ? "#0f0" : "#f00";
+      // if stopping running, don't clear state
+      // so we can at least refer to what we've done
+      layout.render();
+    });
 }
 
 var lc = [];
@@ -84,11 +110,27 @@ var layout = new Layout( {
 delete lc;
 layout.render();
 
+function configureNotification(stat) {
+  stat.on('notify', (e)=>{
+    settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
+        return promise.then(function () {
+          return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
+        });
+    }, Promise.resolve());
+  });
+}
+
+Object.keys(settings.notify).forEach((statType) => {
+  if (settings.notify[statType].increment > 0) {
+      configureNotification(exs.stats[statType]);
+  }
+});
+
 // Handle GPS state change for icon
 Bangle.on("GPS", function(fix) {
   layout.gps.bgCol = fix.fix ? "#0f0" : "#f00";
   if (!fix.fix) return; // only process actual fixes
-  if (fixCount++ == 0) {
+  if (fixCount++ === 0) {
     Bangle.buzz(); // first fix, does not need to respect quiet mode
   }
 });
