@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
+/* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
 /*
 
 Take a look at README.md for hints on developing with this library.
