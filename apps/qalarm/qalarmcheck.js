@@ -2,7 +2,6 @@
  * This file checks for upcoming alarms and schedules qalarm.js to deal with them and itself to continue doing these checks.
  */
 
-print("Checking for alarms...");
 
 if (Bangle.QALARM) {
   clearInterval(Bangle.QALARM);

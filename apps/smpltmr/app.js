@@ -8,34 +8,15 @@
 Bangle.loadWidgets();
 
 
-const storage = require('Storage');
 const alarm = require('qalarm');
 
-let settings;
-
+const TIMER_IDX = "smpltmr";
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const cx = parseInt(screenWidth/2);
 const cy = parseInt(screenHeight/2)-12;
 var minutes = 5;
 var interval; //used for the 1 second interval timer
-
-
-function updateSettings() {
-  storage.writeJSON('widtmr.json', settings);
-}
-
-
-function resetSettings() {
-  settings = {
-    alarmIndex: -1
-  };
-  updateSettings();
-}
-
-
-settings = storage.readJSON('widtmr.json',1);
-if (!settings) resetSettings();
 
 
 setWatch(_=>load(), BTN1);
@@ -51,10 +32,10 @@ function draw(){
   // Write time
   g.setFontAlign(0, 0, 0);
   g.setFont("Vector", 32).setFontAlign(0,-1);
-  var started = alarm.isTimerStarted(settings.alarmIndex);
+  var started = alarm.isTimerStarted(TIMER_IDX);
   var text = minutes + " min.";
   if(started){
-    var min = alarm.getTimerMin(settings.alarmIndex);
+    var min = alarm.getTimerMin(TIMER_IDX);
     text = min + " min.";
   }
 
@@ -84,7 +65,7 @@ Bangle.on('touch', function(btn, e){
   var isUpper = e.y < upper;
   var isLower = e.y > lower;
   var isMiddle = !isLeft && !isRight && !isUpper && !isLower;
-  var started = alarm.isTimerStarted(settings.alarmIndex);
+  var started = alarm.isTimerStarted(TIMER_IDX);
 
   if(isRight && !started){
     minutes += 1;
@@ -100,14 +81,13 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.3);
   } else if(isMiddle) {
     if(!started){
-      settings.alarmIndex = alarm.editTimer(settings.alarmIndex, 0, minutes, 0);
+      alarm.editTimer(TIMER_IDX, 0, minutes, 0);
     } else {
-      alarm.deleteTimer(settings.alarmIndex);
+      alarm.deleteTimer(TIMER_IDX);
     }
     Bangle.buzz(80, 0.6);
   }
 
-  updateSettings();
   draw();
 });
 

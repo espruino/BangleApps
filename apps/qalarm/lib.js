@@ -15,18 +15,29 @@ function getCurrentTime() {
     );
 }
 
-function alarmExists(alarmIndex){
+function getAlarmIndex(idx){
+    for(var i=0; i<alarms.length; i++){
+        if(alarms[i].idx == idx){
+            return i;
+        }
+    }
+    return -1;
+}
+
+function alarmExists(idx){
+    var alarmIndex = getAlarmIndex(idx);
     var exists = alarmIndex >= 0 && alarmIndex < alarms.length;
     return exists;
 }
 
-function isAlarmStarted(alarmIndex){
-    if(!alarmExists(alarmIndex)){
+function isAlarmStarted(idx){
+    if(!alarmExists(idx)){
         return false;
     }
 
-    let time = new Date();
-    let t = getCurrentTime();
+    var alarmIndex = getAlarmIndex(idx);
+    var time = new Date();
+    var t = getCurrentTime();
     a = alarms[alarmIndex];
     return a.on &&
         t <= a.t &&
@@ -34,15 +45,16 @@ function isAlarmStarted(alarmIndex){
         (a.timer || a.daysOfWeek[time.getDay()]);
 }
 
-function getTimerMin(alarmIndex){
-    if(!isAlarmStarted(alarmIndex)){
+function getTimerMin(idx){
+    if(!isAlarmStarted(idx)){
         return 0;
     }
 
-    let a = alarms[alarmIndex] ;
-    let diff = a.t - getCurrentTime();
+    var alarmIndex = getAlarmIndex(idx);
+    var a = alarms[alarmIndex] ;
+    var diff = a.t - getCurrentTime();
     // let hrs = Math.floor(t / 3600000);
-    let mins = Math.round((diff / 60000) % 60);
+    var mins = Math.round((diff / 60000) % 60);
     // return hrs + ":" + ("0" + mins).substr(-2);
     return mins;
 }
@@ -53,12 +65,14 @@ function reloadQalarm(){
     if (WIDGETS["qalarm"]) WIDGETS["qalarm"].reload();
 }
 
-function editTimer(alarmIndex, hrs, mins, secs){
+function editTimer(idx, hrs, mins, secs){
+    var alarmIndex = getAlarmIndex(idx);
     var a = {
-      on: true,
-      rp: false,
-      as: false,
-      hard: false,
+        idx: idx,
+        on: true,
+        rp: false,
+        as: false,
+        hard: false,
     };
     a.timer = hrs * 3600 + mins * 60 + secs;
     a.t = (getCurrentTime() + a.timer * 1000) % 86400000;
@@ -71,10 +85,10 @@ function editTimer(alarmIndex, hrs, mins, secs){
     }
 
     reloadQalarm();
-    return alarmIndex;
 }
 
-function deleteAlarm(alarmIndex){
+function deleteAlarm(idx){
+    var alarmIndex = getAlarmIndex(idx);
     if(!alarmExists(alarmIndex)){
         return;
     }
