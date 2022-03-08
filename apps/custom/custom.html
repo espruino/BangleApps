@@ -16,12 +16,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.11.0/jshint.min.js"></script>
     <p>Type your javascript code here</p>
     <p><textarea id="custom-js"></textarea></p>
-    <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
+    <p>Then click <button id="upload" class="btn btn-primary">Upload</button>&nbsp;<span id="btninfo" style="color:orange"></span></p>
     <script>
     const item = "custom.boot.js";
     const id = "custom-js";
     const sample = "//Bangle.setOptions({wakeOnBTN2:false});";
-    var localeModule = null;
+    var customBootCode = null;
     var editor = {};
 
     if (localStorage.getItem(item) === null) {
@@ -48,15 +48,30 @@
         gutters: ["CodeMirror-linenumbers", "CodeMirror-lint-markers"],
         lineNumbers: true
     });
+    function hasWarnings() {
+      return editor.state.lint.marked.length!=0;
+    }
+
+    editor.on("change", function() {
+      setTimeout(function() {
+        if (hasWarnings()) {
+          document.getElementById("btninfo").innerHTML = "There are warnings in the code to be uploaded";
+          document.getElementById("upload").classList.add("disabled");
+        } else {
+          document.getElementById("btninfo").innerHTML = "";
+          document.getElementById("upload").classList.remove("disabled");
+        }
+      }, 500);
+    })
 
     document.getElementById("upload").addEventListener("click", function() {
-        if (!editor.state.lint.marked.length) {
-            localeModule = editor.getValue();
-            localStorage.setItem(item, localeModule);
-            sendCustomizedApp({
-                storage: [{ name: item, content: localeModule }]
-            });
-        }
+      if (!hasWarnings()) {
+        customBootCode = editor.getValue();
+        localStorage.setItem(item, customBootCode);
+        sendCustomizedApp({
+            storage: [{ name: item, content: customBootCode }]
+        });
+      }
     });
     </script>
 </body>
