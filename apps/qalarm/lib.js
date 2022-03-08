@@ -77,7 +77,7 @@ function editTimer(idx, hrs, mins, secs){
     a.timer = hrs * 3600 + mins * 60 + secs;
     a.t = (getCurrentTime() + a.timer * 1000) % 86400000;
 
-    if(alarmExists(a)){
+    if(alarmExists(idx)){
         alarms[alarmIndex] = a;
     } else {
         alarms.push(a)
