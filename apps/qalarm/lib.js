@@ -89,7 +89,7 @@ function editTimer(idx, hrs, mins, secs){
 
 function deleteAlarm(idx){
     var alarmIndex = getAlarmIndex(idx);
-    if(!alarmExists(alarmIndex)){
+    if(!alarmExists(idx)){
         return;
     }
 
