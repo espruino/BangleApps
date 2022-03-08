@@ -14,4 +14,3 @@
 0.13: Alarm widget state now updates when setting/resetting an alarm
 0.14: Order of 'back' menu item
 0.15: Fix hour/minute wrapping code for new menu system
-0.16: Expose functions for other apps

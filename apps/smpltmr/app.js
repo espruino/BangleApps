@@ -15,32 +15,26 @@ Bangle.loadWidgets();
 
 
 const storage = require('Storage');
+const alarm = require('qalarm');
+
 let settings;
 
 const screenWidth = g.getWidth();
 const screenHeight = g.getHeight();
 const cx = parseInt(screenWidth/2);
 const cy = parseInt(screenHeight/2)-12;
+var minutes = 5;
+var interval; //used for the 1 second interval timer
 
 
 function updateSettings() {
-  var now = new Date();
-  const goal = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-    now.getHours(), now.getMinutes() + settings.minutes, now.getSeconds());
-  settings.goal = goal.getTime();
   storage.writeJSON('widtmr.json', settings);
-  if (WIDGETS["widtmr"]) WIDGETS["widtmr"].reload();
 }
 
 
 function resetSettings() {
   settings = {
-    hours : 0,
-    minutes : 0,
-    seconds : 0,
-    started : false,
-    counter : 0,
-    goal : 0,
+    alarmIndex: -1
   };
   updateSettings();
 }
@@ -55,15 +49,25 @@ function draw(){
   g.clear(1);
   Bangle.drawWidgets();
 
+  if (interval) {
+    clearInterval(interval);
+  }
+  interval = undefined;
+
+  // Write time
   g.setFontAlign(0, 0, 0);
   g.setFont("Vector", 32).setFontAlign(0,-1);
+  var started = alarm.isTimerStarted(settings.alarmIndex);
+  var text = minutes + " min.";
+  if(started){
+    var min = alarm.getTimerMin(settings.alarmIndex);
+    text = min + " min.";
+  }
 
-  print(require("alarm").createTimer());
-
-  var text = settings.minutes + " min.";
   var rectWidth = parseInt(g.stringWidth(text) / 2);
 
-  if(settings.started){
+  if(started){
+    interval = setInterval(draw, 1000);
     g.setColor("#ff0000");
   } else {
     g.setColor(g.theme.fg);
@@ -73,6 +77,7 @@ function draw(){
   g.setColor(g.theme.bg);
   g.drawString(text, cx, cy);
 }
+
 
 Bangle.on('touch', function(btn, e){
   var left = parseInt(g.getWidth() * 0.25);
@@ -84,27 +89,34 @@ Bangle.on('touch', function(btn, e){
   var isRight = e.x > right;
   var isUpper = e.y < upper;
   var isLower = e.y > lower;
+  var isMiddle = !isLeft && !isRight && !isUpper && !isLower;
+  print(settings.alarmIndex);
+  var started = alarm.isTimerStarted(settings.alarmIndex);
 
-  if(isRight){
-    settings.minutes += 1;
+  if(isRight && !started){
+    minutes += 1;
     Bangle.buzz(40, 0.3);
-  } else if(isLeft){
-    settings.minutes -= 1;
+  } else if(isLeft && !started){
+    minutes -= 1;
     Bangle.buzz(40, 0.3);
-  } else if(isUpper){
-    settings.minutes += 5;
+  } else if(isUpper && !started){
+    minutes += 5;
     Bangle.buzz(40, 0.3);
-  } else if(isLower){
-    settings.minutes -= 5;
+  } else if(isLower && !started){
+    minutes -= 5;
     Bangle.buzz(40, 0.3);
-  } else {
-    settings.started = !settings.started;
-    Bangle.buzz(120, 0.6);
-  }
-
-  if(settings.minutes <= 0){
-    settings.minutes = 0;
-    settings.started = false;
+  } else if(isMiddle) {
+    if(!started){
+      settings.alarmIndex = alarm.editTimer(settings.alarmIndex, 0, minutes, 0);
+      print("-----")
+      print(settings.alarmIndex);
+      print(alarm.timerExists(settings.alarmIndex))
+      print(alarm.isTimerStarted(settings.alarmIndex))
+      print("-----")
+    } else {
+      alarm.deleteTimer(settings.alarmIndex);
+    }
+    Bangle.buzz(80, 0.6);
   }
 
   updateSettings();

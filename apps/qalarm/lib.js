@@ -5,8 +5,19 @@ let alarms = require("Storage").readJSON("qalarm.json", 1) || [];
 /**
  * LIBRARY
  */
+
+function getCurrentTime() {
+    let time = new Date();
+    return (
+        time.getHours() * 3600000 +
+        time.getMinutes() * 60000 +
+        time.getSeconds() * 1000
+    );
+}
+
 function alarmExists(alarmIndex){
-    return alarmIndex > 0 && alarmIndex < alarms.length;
+    var exists = alarmIndex >= 0 && alarmIndex < alarms.length;
+    return exists;
 }
 
 function isAlarmStarted(alarmIndex){
@@ -18,20 +29,23 @@ function isAlarmStarted(alarmIndex){
     let t = getCurrentTime();
     a = alarms[alarmIndex];
     return a.on &&
-        a.t <= t &&
+        t <= a.t &&
         a.last != time.getDate() &&
         (a.timer || a.daysOfWeek[time.getDay()]);
 }
 
-function getAlarmMin(alarmIndex){
+function getTimerMin(alarmIndex){
     if(!isAlarmStarted(alarmIndex)){
         return 0;
     }
 
-    let t = getCurrentTime();
     let a = alarms[alarmIndex] ;
-    return a.t - t * 60;
-  }
+    let diff = a.t - getCurrentTime();
+    // let hrs = Math.floor(t / 3600000);
+    let mins = Math.round((diff / 60000) % 60);
+    // return hrs + ":" + ("0" + mins).substr(-2);
+    return mins;
+}
 
 function _reload(){
     require("Storage").write("qalarm.json", JSON.stringify(alarms));
@@ -41,26 +55,24 @@ function _reload(){
 
 function editTimer(alarmIndex, hrs, mins, secs){
     var a = {
-      timer: 300,
       on: true,
       rp: false,
       as: false,
       hard: false,
     };
     a.timer = hrs * 3600 + mins * 60 + secs;
-    a.t = (getCurrentTime() + alarm.timer * 1000) % 86400000;
+    a.t = (getCurrentTime() + a.timer * 1000) % 86400000;
 
     if(alarmExists(a)){
         alarms[alarmIndex] = a;
     } else {
-        alarmIndex = alarms.length;
         alarms.push(a)
+        alarmIndex = alarms.length-1;
     }
 
     _reload();
     return alarmIndex;
 }
-
 
 function deleteAlarm(alarmIndex){
     if(!alarmExists(alarmIndex)){
@@ -68,7 +80,6 @@ function deleteAlarm(alarmIndex){
     }
 
     alarms.splice(alarmIndex, 1);
-
     _reload();
 }
 
@@ -76,6 +87,10 @@ function deleteAlarm(alarmIndex){
 // Export functions
 exports.alarmExists = alarmExists;
 exports.isAlarmStarted = isAlarmStarted;
-exports.getAlarmMin = getAlarmMin;
-exports.editTimer = editTimer;
 exports.deleteAlarm = deleteAlarm;
+
+exports.timerExists = alarmExists;
+exports.isTimerStarted = isAlarmStarted;
+exports.getTimerMin = getTimerMin;
+exports.editTimer = editTimer;
+exports.deleteTimer = deleteAlarm;
