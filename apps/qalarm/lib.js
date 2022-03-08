@@ -47,7 +47,7 @@ function getTimerMin(alarmIndex){
     return mins;
 }
 
-function _reload(){
+function reloadQalarm(){
     require("Storage").write("qalarm.json", JSON.stringify(alarms));
     eval(require("Storage").read("qalarmcheck.js"));
     if (WIDGETS["qalarm"]) WIDGETS["qalarm"].reload();
@@ -70,7 +70,7 @@ function editTimer(alarmIndex, hrs, mins, secs){
         alarmIndex = alarms.length-1;
     }
 
-    _reload();
+    reloadQalarm();
     return alarmIndex;
 }
 
@@ -80,7 +80,7 @@ function deleteAlarm(alarmIndex){
     }
 
     alarms.splice(alarmIndex, 1);
-    _reload();
+    reloadQalarm();
 }
 
 

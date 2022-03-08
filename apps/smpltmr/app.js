@@ -1,11 +1,5 @@
 /*
- * TIMER WIDGET
- *
- * This is a fork of the Chrono Widget, but implements a
- * simpler UI which to be able to set a timer faster with
- * less interaction. Additionally, it exposes some functions
- * that can be used by other apps or clocks to easily
- * implement a timer. It is used e.g. by lcars or notanalog.
+ * SIMPLE TIMER
  *
  * Creator: David Peer
  * Date: 02/2022
@@ -90,7 +84,6 @@ Bangle.on('touch', function(btn, e){
   var isUpper = e.y < upper;
   var isLower = e.y > lower;
   var isMiddle = !isLeft && !isRight && !isUpper && !isLower;
-  print(settings.alarmIndex);
   var started = alarm.isTimerStarted(settings.alarmIndex);
 
   if(isRight && !started){
@@ -108,11 +101,6 @@ Bangle.on('touch', function(btn, e){
   } else if(isMiddle) {
     if(!started){
       settings.alarmIndex = alarm.editTimer(settings.alarmIndex, 0, minutes, 0);
-      print("-----")
-      print(settings.alarmIndex);
-      print(alarm.timerExists(settings.alarmIndex))
-      print(alarm.isTimerStarted(settings.alarmIndex))
-      print("-----")
     } else {
       alarm.deleteTimer(settings.alarmIndex);
     }
