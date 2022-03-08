@@ -11,7 +11,9 @@ Get a notification when the pressure reaches defined thresholds.
   * Low threshold: Warn when pressure drops below this value
 * High alarm: Toggle high alarm
   * High threshold: Warn when pressure exceeds above this value
-* Change alarm: Warn when pressure changes more than this value in the recent 3 hours (having at least 30 min of data)
+* Drop alarm: Warn when pressure drops more than this value in the recent 3 hours (having at least 30 min of data)
+    0 to disable this alarm.
+* Raise alarm: Warn when pressure raises more than this value in the recent 3 hours (having at least 30 min of data)
     0 to disable this alarm.
 * Show widget: Enable/disable widget visibility
 * Buzz on alarm: Enable/disable buzzer on alarm

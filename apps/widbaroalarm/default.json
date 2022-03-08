@@ -4,7 +4,8 @@
   "min": 950,
   "highalarm": false,
   "max": 1030,
-  "changeIn3h": 2,
+  "drop3halarm": 2,
+  "raise3halarm": 0,
   "show": true,
   "interval": 15
 }

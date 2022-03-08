@@ -80,8 +80,9 @@
 
         if (!alreadyWarned) {
           // 3h change detection
-          const threeHourChange = setting("changeIn3h");
-          if (threeHourChange > 0) {
+          const drop3halarm = setting("drop3halarm");
+          const raise3halarm = setting("raise3halarm");
+          if (drop3halarm > 0 || raise3halarm > 0) {
             // we need at least 30min of data for reliable detection
             if (history3[0]["ts"] > ts - (30 * 60)) {
               return;
@@ -91,10 +92,23 @@
             const oldestAvgPressure = (history3[0]["p"] + history3[1]["p"] + history3[2]["p"]) / 3;
             if (oldestAvgPressure != undefined && oldestAvgPressure > 0) {
               const diff = oldestAvgPressure - avrPressure;
-              if (Math.abs(diff) > threeHourChange) {
-                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                  Math.round(oldestAvgPressure) + " to " + Math.round(avrPressure) + " hPa",
-                  "Pressure " + (diff > 0 ? "drop" : "raise"));
+
+              // drop alarm
+              if (drop3halarm > 0 && oldestAvgPressure > avrPressure) {
+                if (Math.abs(diff) > drop3halarm) {
+                  showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
+                    Math.round(oldestAvgPressure) + " to " + Math.round(avrPressure) + " hPa",
+                    "Pressure drop"));
+                }
+              }
+
+              // raise alarm
+              if (raise3halarm > 0 && oldestAvgPressure < avrPressure) {
+                if (Math.abs(diff) > raise3halarm) {
+                  showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
+                    Math.round(oldestAvgPressure) + " to " + Math.round(avrPressure) + " hPa",
+                    "Pressure raise"));
+                }
               }
             }
           }

@@ -53,15 +53,25 @@
         step: 10,
         onchange: x => save("max", x),
       },
-      "Change alarm": {
-        value: settings.changeIn3h,
+      "Drop alarm": {
+        value: settings.drop3halarm,
         min: 0,
         max: 10,
         step: 1,
         format: x => {
           return x != 0 ? x + ' hPa/3h' : 'off';
         },
-        onchange: x => save("changeIn3h", x)
+        onchange: x => save("drop3halarm", x)
+      },
+      "Raise alarm": {
+        value: settings.raise3halarm,
+        min: 0,
+        max: 10,
+        step: 1,
+        format: x => {
+          return x != 0 ? x + ' hPa/3h' : 'off';
+        },
+        onchange: x => save("raise3halarm", x)
       },
       "Show widget": {
         value: settings.show,
