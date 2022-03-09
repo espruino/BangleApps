@@ -120,29 +120,33 @@
           const diff = oldestPressure - pressure;
 
           // drop alarm
-          if (drop3halarm > 0 && oldestPressure > pressure && !didWeAlreadyWarn("lastHighWarningTs")) {
+          if (drop3halarm > 0 && oldestPressure > pressure) {
             if (Math.abs(diff) > drop3halarm) {
-              showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop");
-              saveSetting("lastDropWarningTs", ts);
+              if (!didWeAlreadyWarn("lastHighWarningTs")) {
+                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop");
+                saveSetting("lastDropWarningTs", ts);
+              }
             } else {
-              saveSetting("lastDropWarningTs", ts);
+              saveSetting("lastDropWarningTs", 0);
             }
           } else {
-            saveSetting("lastDropWarningTs", ts);
+            saveSetting("lastDropWarningTs", 0);
           }
 
           // raise alarm
-          if (raise3halarm > 0 && oldestPressure < pressure && !didWeAlreadyWarn("lastRaiseWarningTs")) {
+          if (raise3halarm > 0 && oldestPressure < pressure) {
             if (Math.abs(diff) > raise3halarm) {
-              showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise");
-              saveSetting("lastRaiseWarningTs", ts);
+              if (!didWeAlreadyWarn("lastRaiseWarningTs")) {
+                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise");
+                saveSetting("lastRaiseWarningTs", ts);
+              }
             } else {
-              saveSetting("lastRaiseWarningTs", ts);
+              saveSetting("lastRaiseWarningTs", 0);
             }
           } else {
-            saveSetting("lastRaiseWarningTs", ts);
+            saveSetting("lastRaiseWarningTs", 0);
           }
         }
       }
