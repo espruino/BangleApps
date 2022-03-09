@@ -1,6 +1,6 @@
-const tokenextraheight = 16;
-var tokendigitsheight = 30;
-var tokenheight = tokendigitsheight + tokenextraheight;
+const TOKEN_EXTRA_HEIGHT = 16;
+var TOKEN_DIGITS_HEIGHT = 30;
+var TOKEN_HEIGHT = TOKEN_DIGITS_HEIGHT + TOKEN_EXTRA_HEIGHT;
 // Hash functions
 const crypto = require("crypto");
 const algos = {
@@ -8,9 +8,9 @@ const algos = {
   "SHA256":{sha:crypto.SHA256,retsz:32,blksz:64 },
   "SHA1"  :{sha:crypto.SHA1  ,retsz:20,blksz:64 },
 };
-const calculating = /*LANG*/"Calculating";
-const notokens = /*LANG*/"No tokens";
-const notsupported = /*LANG*/"Not supported";
+const CALCULATING = /*LANG*/"Calculating";
+const NO_TOKENS = /*LANG*/"No tokens";
+const NOT_SUPPORTED = /*LANG*/"Not supported";
 
 // sample settings:
 // {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
@@ -43,7 +43,8 @@ function b32decode(seedstr) {
   }
   return retbuf;
 }
-function do_hmac(key, message, algo) {
+
+function doHmac(key, message, algo) {
   var a = algos[algo];
   // RFC2104
   if (key.length > a.blksz) {
@@ -63,11 +64,13 @@ function do_hmac(key, message, algo) {
   var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
+
 function formatOtp(otp, digits) {
   var re = (digits % 3 == 0 || (digits % 3 >= digits % 4 && digits % 4 != 0)) ? "" : ".";
   return otp.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
 }
-function hotp(d, token, dohmac) {
+
+function hotp(d, token, calcHmac) {
   var tick;
   if (token.period > 0) {
     // RFC6238 - timed
@@ -81,10 +84,10 @@ function hotp(d, token, dohmac) {
   var v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var ret = calculating;
-  if (dohmac) {
+  var ret = CALCULATING;
+  if (calcHmac) {
     try {
-      var hash = do_hmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
+      var hash = doHmac(b32decode(token.secret), msg, token.algorithm.toUpperCase());
       ret = "" + hash % Math.pow(10, token.digits);
       while (ret.length < token.digits) {
         ret = "0" + ret;
@@ -92,13 +95,13 @@ function hotp(d, token, dohmac) {
       // add a space after every 3rd or 4th digit
       ret = formatOtp(ret, token.digits);
     } catch(err) {
-      ret = notsupported;
+      ret = NOT_SUPPORTED;
     }
   }
   return {hotp:ret, next:((token.period > 0) ? ((tick + 1) * token.period * 1000) : d.getTime() + 30000)};
 }
 
-var fontsz_cache = {};
+var fontszCache = {};
 var state = {
   listy: 0,
   prevcur:0,
@@ -109,16 +112,16 @@ var state = {
   hide:0
 };
 
-function size_font(id, txt, w) {
-  var sz = fontsz_cache[id];
+function sizeFont(id, txt, w) {
+  var sz = fontszCache[id];
   if (sz) {
     g.setFont("Vector", sz);
   } else {
-    sz = tokendigitsheight;
+    sz = TOKEN_DIGITS_HEIGHT;
     do {
       g.setFont("Vector", sz--);
     } while (g.stringWidth(txt) > w);
-    fontsz_cache[id] = sz + 1;
+    fontszCache[id] = sz + 1;
   }
 }
 
@@ -135,14 +138,14 @@ function drawToken(id, r) {
     // current token
     g.setColor(g.theme.fgH)
      .setBgColor(g.theme.bgH)
-     .setFont("Vector", tokenextraheight)
+     .setFont("Vector", TOKEN_EXTRA_HEIGHT)
     // center just below top line
      .setFontAlign(0, -1, 0);
     adj = y1;
   } else {
     g.setColor(g.theme.fg)
      .setBgColor(g.theme.bg);
-    size_font("l" + id, lbl, r.w);
+    sizeFont("l" + id, lbl, r.w);
     // center in box
     g.setFontAlign(0, 0, 0);
     adj = (y1 + y2) / 2;
@@ -162,8 +165,8 @@ function drawToken(id, r) {
       adj = 12;
     }
     // digits just below label
-    size_font("d" + id, state.otp, r.w - adj);
-    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + tokenextraheight, false);
+    sizeFont("d" + id, state.otp, r.w - adj);
+    g.drawString(state.otp, (x1 + adj + x2) / 2, y1 + TOKEN_EXTRA_HEIGHT, false);
   }
   g.setClipRect(0, 0, g.getWidth(), g.getHeight());
 }
@@ -174,7 +177,7 @@ function draw() {
   var d = new Date();
   if (state.curtoken != -1) {
     var t = tokens[state.curtoken];
-    if (state.otp == calculating) {
+    if (state.otp == CALCULATING) {
       state.otp = hotp(d, t, true).hotp;
     }
     if (d.getTime() > state.nextTime) {
@@ -200,20 +203,20 @@ function draw() {
   }
   if (tokens.length > 0) {
     var drewcur = false;
-    var id = Math.floor(state.listy / tokenheight);
-    var y = id * tokenheight + Bangle.appRect.y - state.listy;
+    var id = Math.floor(state.listy / TOKEN_HEIGHT);
+    var y = id * TOKEN_HEIGHT + Bangle.appRect.y - state.listy;
     while (id < tokens.length && y < Bangle.appRect.y2) {
-      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
+      drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:TOKEN_HEIGHT});
       if (id == state.curtoken && (tokens[id].period <= 0 || state.nextTime != 0)) {
         drewcur = true;
       }
       id++;
-      y += tokenheight;
+      y += TOKEN_HEIGHT;
     }
     if (drewcur) {
       // the current token has been drawn - schedule a redraw
       if (tokens[state.curtoken].period > 0) {
-        timerdly = (state.otp == calculating) ? 1 : 1000; // timed
+        timerdly = (state.otp == CALCULATING) ? 1 : 1000; // timed
       } else {
         timerdly = state.nexttime - d.getTime(); // counter
       }
@@ -230,9 +233,9 @@ function draw() {
       state.nexttime = 0;
     }
   } else {
-    g.setFont("Vector", tokendigitsheight)
+    g.setFont("Vector", TOKEN_DIGITS_HEIGHT)
      .setFontAlign(0, 0, 0)
-     .drawString(notokens, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
+     .drawString(NO_TOKENS, Bangle.appRect.x + Bangle.appRect.w / 2, Bangle.appRect.y + Bangle.appRect.h / 2, false);
   }
   if (state.drawtimer) {
     clearTimeout(state.drawtimer);
@@ -242,18 +245,18 @@ function draw() {
 
 function onTouch(zone, e) {
   if (e) {
-    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / tokenheight);
+    var id = Math.floor((state.listy + (e.y - Bangle.appRect.y)) / TOKEN_HEIGHT);
     if (id == state.curtoken || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.curtoken != id) {
       if (id != -1) {
-        var y = id * tokenheight - state.listy;
+        var y = id * TOKEN_HEIGHT - state.listy;
         if (y < 0) {
           state.listy += y;
           y = 0;
         }
-        y += tokenheight;
+        y += TOKEN_HEIGHT;
         if (y > Bangle.appRect.h) {
           state.listy += (y - Bangle.appRect.h);
         }
@@ -269,28 +272,28 @@ function onTouch(zone, e) {
 
 function onDrag(e) {
   if (e.b != 0 && e.x < g.getWidth() && e.y < g.getHeight() && e.dy != 0) {
-    var y = Math.max(0, Math.min(state.listy - e.dy, tokens.length * tokenheight - Bangle.appRect.h));
+    var y = Math.max(0, Math.min(state.listy - e.dy, tokens.length * TOKEN_HEIGHT - Bangle.appRect.h));
     if (state.listy != y) {
       var id, dy = state.listy - y;
       state.listy = y;
       g.setClipRect(Bangle.appRect.x,Bangle.appRect.y,Bangle.appRect.x2,Bangle.appRect.y2)
        .scroll(0, dy);
       if (dy > 0) {
-        id = Math.floor((state.listy + dy) / tokenheight);
-        y = id * tokenheight + Bangle.appRect.y - state.listy;
+        id = Math.floor((state.listy + dy) / TOKEN_HEIGHT);
+        y = id * TOKEN_HEIGHT + Bangle.appRect.y - state.listy;
         do {
-          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
+          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:TOKEN_HEIGHT});
           id--;
-          y -= tokenheight;
+          y -= TOKEN_HEIGHT;
         } while (y > 0);
       }
       if (dy < 0) {
-        id = Math.floor((state.listy + dy + Bangle.appRect.h) / tokenheight);
-        y = id * tokenheight + Bangle.appRect.y - state.listy;
+        id = Math.floor((state.listy + dy + Bangle.appRect.h) / TOKEN_HEIGHT);
+        y = id * TOKEN_HEIGHT + Bangle.appRect.y - state.listy;
         while (y < Bangle.appRect.y2) {
-          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:tokenheight});
+          drawToken(id, {x:Bangle.appRect.x, y:y, w:Bangle.appRect.w, h:TOKEN_HEIGHT});
           id++;
-          y += tokenheight;
+          y += TOKEN_HEIGHT;
         }
       }
     }
@@ -324,12 +327,12 @@ function bangle1Btn(e) {
     }
     state.curtoken = Math.max(state.curtoken, 0);
     state.curtoken = Math.min(state.curtoken, tokens.length - 1);
-    state.listy = state.curtoken * tokenheight;
-    state.listy -= (Bangle.appRect.h - tokenheight) / 2;
-    state.listy = Math.min(state.listy, tokens.length * tokenheight - Bangle.appRect.h);
+    state.listy = state.curtoken * TOKEN_HEIGHT;
+    state.listy -= (Bangle.appRect.h - TOKEN_HEIGHT) / 2;
+    state.listy = Math.min(state.listy, tokens.length * TOKEN_HEIGHT - Bangle.appRect.h);
     state.listy = Math.max(state.listy, 0);
     var fakee = {};
-    fakee.y = state.curtoken * tokenheight - state.listy + Bangle.appRect.y;
+    fakee.y = state.curtoken * TOKEN_HEIGHT - state.listy + Bangle.appRect.y;
     state.curtoken = -1;
     state.nextTime = 0;
     onTouch(0, fakee);
