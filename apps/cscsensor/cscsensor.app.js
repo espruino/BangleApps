@@ -254,8 +254,8 @@ E.on('kill',()=>{
 NRF.on('disconnect', connection_setup); // restart if disconnected
 Bangle.setUI("updown", d=>{
   if (d<0) { mySensor.reset(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
-  if (d==0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
-  if (d>0) { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
+  else if (d>0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
+  else { mySensor.toggleDisplayCadence(); g.clearRect(0, 48, W, H); mySensor.updateScreen(); }
 });
 
 Bangle.loadWidgets();
