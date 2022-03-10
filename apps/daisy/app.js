@@ -109,10 +109,10 @@ function updateSunRiseSunSet(now, lat, lon, line){
 const infoData = {
   ID_DATE:  { calc: () => {var d = (new Date()).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
   ID_DAY:   { calc: () => {var d = require("locale").dow(new Date()).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
-  ID_SR:    { calc: () => 'Sunrise: ' + sunRise },
-  ID_SS:    { calc: () => 'Sunset: ' + sunSet },
-  ID_STEP:  { calc: () => 'Steps: ' + getSteps() },
-  ID_BATT:  { calc: () => 'Battery: ' + E.getBattery() + '%' },
+  ID_SR:    { calc: () => 'Sunrise ' + sunRise },
+  ID_SS:    { calc: () => 'Sunset ' + sunSet },
+  ID_STEP:  { calc: () => 'Steps ' + getSteps() },
+  ID_BATT:  { calc: () => 'Battery ' + E.getBattery() + '%' },
   ID_HRM:   { calc: () => hrmCurrent }
 };
 
@@ -158,7 +158,7 @@ function drawInfo() {
     g.setColor('#f00'); // red
     drawHeartIcon();
   } else {
-    g.drawString((infoData[infoMode].calc()), w/2, infoLine);
+    g.drawString((infoData[infoMode].calc().toUpperCase()), w/2, infoLine);
   }
 }
 
