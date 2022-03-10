@@ -20,3 +20,4 @@
 0.07: Recorder icon only blue if values actually arive
       Adds some preset modes and a custom one
       Restructure the settings menu
+0.08: Allow scanning for devices in settings
