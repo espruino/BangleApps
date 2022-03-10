@@ -1,0 +1,14 @@
+{ "id": "widmnth",
+  "name": "Days left in month widget",
+  "shortName":"Month Countdown",
+  "version":"0.01",
+  "description": "A simple widget that displays the number of days left in the month.",
+  "icon": "widget.png",  
+  "type": "widget",
+  "tags": "widget,date,time,countdown,month",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widmnth.wid.js","url":"widget.js"}
+  ]
+}
