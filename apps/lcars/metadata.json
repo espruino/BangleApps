@@ -5,7 +5,7 @@
   "icon": "lcars.png",
   "version":"0.19",
   "readme": "README.md",
-  "dependencies": {"widtmr":"app"},
+  "dependencies": {"qalarm":"app"},
   "supports": ["BANGLEJS2"],
   "description": "Library Computer Access Retrieval System (LCARS) clock.",
   "type": "clock",

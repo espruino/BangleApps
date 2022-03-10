@@ -16,4 +16,4 @@
 0.16: Improved stability. Wind can now be shown.
 0.17: Settings for mph/kph and other minor improvements.
 0.18: Fullscreen mode can now be enabled or disabled in the settings.
-0.19: Use widtmr for alarm functionality instead of own implementation.
+0.19: Use qalarm for alarm functionality instead of own implementation.

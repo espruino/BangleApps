@@ -5,6 +5,7 @@
 const locale = require('locale');
 const storage = require('Storage')
 const SETTINGS_FILE = "notanalog.setting.json";
+const qalarm = require('qalarm');
 let settings = {
     alarm: -1,
 };
@@ -392,52 +393,26 @@ function queueDraw() {
 /*
  * Handle alarm
  */
-function isWidtmrAvailable(){
-    try {
-        WIDGETS["widtmr"].isStarted();
-        return true;
-    } catch(e) {
-        // In case the widtmr widget is not installed, the timer can
-        // not be used...
-        return false;
-    }
-}
-
 function isAlarmEnabled(){
-    if(!isWidtmrAvailable()){
-        return false;
-    }
-
-    return WIDGETS["widtmr"].isStarted();
+    return qalarm.isTimerStarted("lcars");
 }
 
 function getAlarmMinutes(){
-    if(!isWidtmrAvailable()){
-        return "-";
-    }
-    return WIDGETS["widtmr"].getRemainingMinutes();
+    return qalarm.getTimerMin("lcars");
 }
 
 function increaseAlarm(){
-    if(!isWidtmrAvailable()){
-        return;
-    }
-
-    // Set to zero if alarm was disabled before
-    if(!isAlarmEnabled()){
-        WIDGETS["widtmr"].setTimer(0);
-    }
-
-    WIDGETS["widtmr"].increaseTimer(5);
-    WIDGETS["widtmr"].setStarted(true);
+    var mins = qalarm.getTimerMin("lcars")+5;
+    qalarm.deleteTimer("lcars");
+    qalarm.editTimer("lcars", 0, mins, 0);
 }
 
 function decreaseAlarm(){
-    if(!isWidtmrAvailable()){
-        return;
+    var mins = qalarm.getTimerMin("lcars")-5;
+    qalarm.deleteTimer("lcars");
+    if(mins > 0){
+        qalarm.editTimer("lcars", 0, mins, 0);
     }
-
-    WIDGETS["widtmr"].decreaseTimer(5);
 }
 
 function feedback(){

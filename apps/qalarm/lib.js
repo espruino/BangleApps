@@ -1,5 +1,3 @@
-Bangle.loadWidgets();
-
 let alarms = require("Storage").readJSON("qalarm.json", 1) || [];
 
 /**
