@@ -36,7 +36,7 @@
         value: settings.min,
         min: 600,
         max: 1000,
-        step: 10,
+        step: 5,
         onchange: x => save("min", x),
       },
       "High alarm": {
@@ -48,9 +48,9 @@
       },
       "High threshold": {
         value: settings.max,
-        min: 1000,
+        min: 700,
         max: 1100,
-        step: 10,
+        step: 5,
         onchange: x => save("max", x),
       },
       "Drop alarm": {
