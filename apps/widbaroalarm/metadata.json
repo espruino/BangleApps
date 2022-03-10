@@ -1,7 +1,7 @@
 {
   "id": "widbaroalarm",
-  "name": "Barometer alarm widget",
-  "shortName": "Barometer alarm",
+  "name": "Barometer Alarm Widget",
+  "shortName": "Barometer Alarm",
   "version": "0.01",
   "description": "A widget that can alarm on when the pressure reaches defined thresholds.",
   "icon": "widget.png",
