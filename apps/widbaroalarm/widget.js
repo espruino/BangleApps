@@ -122,7 +122,7 @@
           // drop alarm
           if (drop3halarm > 0 && oldestPressure > pressure) {
             if (Math.abs(diff) > drop3halarm) {
-              if (!didWeAlreadyWarn("lastHighWarningTs")) {
+              if (!didWeAlreadyWarn("lastDropWarningTs")) {
                 showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
                   Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop");
                 saveSetting("lastDropWarningTs", ts);
@@ -209,6 +209,15 @@
   }
 
   function draw() {
+    if (global.WIDGETS != undefined && typeof WIDGETS === "object") {
+      WIDGETS["baroalarm"] = {
+        width: setting("show") ? 24 : 0,
+        reload: reload,
+        area: "tr",
+        draw: draw
+      };
+    }
+
     g.reset();
     if (setting("show") && medianPressure != undefined) {
       g.setFont("6x8", 1).setFontAlign(1, 0);
@@ -217,15 +226,6 @@
         g.drawString(Math.round(threeHourAvrPressure), this.x + 24, this.y + 6 + 10);
       }
     }
-  }
-
-  if (global.WIDGETS != undefined && typeof WIDGETS === "object") {
-    WIDGETS["baroalarm"] = {
-      width: setting("show") ? 24 : 0,
-      reload: reload,
-      area: "tr",
-      draw: draw
-    };
   }
 
   // Let's delay the first check a bit
