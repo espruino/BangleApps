@@ -394,24 +394,24 @@ function queueDraw() {
  * Handle alarm
  */
 function isAlarmEnabled(){
-    return qalarm.isTimerStarted("lcars");
+    return qalarm.isTimerStarted("notanalog");
 }
 
 function getAlarmMinutes(){
-    return qalarm.getTimerMin("lcars");
+    return qalarm.getTimerMin("notanalog");
 }
 
 function increaseAlarm(){
-    var mins = qalarm.getTimerMin("lcars")+5;
-    qalarm.deleteTimer("lcars");
-    qalarm.editTimer("lcars", 0, mins, 0);
+    var mins = qalarm.getTimerMin("notanalog")+5;
+    qalarm.deleteTimer("notanalog");
+    qalarm.editTimer("notanalog", 0, mins, 0);
 }
 
 function decreaseAlarm(){
-    var mins = qalarm.getTimerMin("lcars")-5;
-    qalarm.deleteTimer("lcars");
+    var mins = qalarm.getTimerMin("notanalog")-5;
+    qalarm.deleteTimer("notanalog");
     if(mins > 0){
-        qalarm.editTimer("lcars", 0, mins, 0);
+        qalarm.editTimer("notanalog", 0, mins, 0);
     }
 }
 
