@@ -2,10 +2,8 @@
 
 Get a notification when the pressure reaches defined thresholds.
 
-![Screenshot](screenshot.png)
 
 ## Settings
-
 * Interval: check interval of sensor data in minutes. 0 to disable automatic check.
 * Low alarm: Toggle low alarm
   * Low threshold: Warn when pressure drops below this value
