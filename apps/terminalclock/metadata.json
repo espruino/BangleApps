@@ -3,7 +3,7 @@
   "name": "Terminal Clock",
   "shortName":"Terminal Clock",
   "description": "A terminal cli like clock displaying multiple sensor data",
-  "version":"0.01",
+  "version":"0.02",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",

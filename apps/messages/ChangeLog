@@ -38,3 +38,4 @@
       Now attempt to use Large/Big/Medium fonts, and allow minimum font size to be configured
 0.24: Remove left-over debug statement
 0.25: Fix widget memory usage issues if message received and watch repeatedly calls Bangle.drawWidgets (fix #1550)
+0.26: Setting to auto-open music
