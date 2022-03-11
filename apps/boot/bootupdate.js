@@ -38,7 +38,7 @@ LoopbackA.setConsole(true);\n`;
   boot += `
 Bluetooth.line="";
 Bluetooth.on('data',function(d) {
-  var l = (Bluetooth.line + d).split("\n");
+  var l = (Bluetooth.line + d).split(/[\\n\\r]/);
   Bluetooth.line = l.pop();
   l.forEach(n=>Bluetooth.emit("line",n));
 });
