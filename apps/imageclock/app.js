@@ -545,106 +545,6 @@ function drawMultiState(resources, element, offset){
   endPerfLog("drawMultiState");
 }
 
-function drawIteratively(resources, items){
-  //print("drawIteratively");
-  startPerfLog("drawIteratively");
-  for (var c of items){
-    startPerfLog("drawIteratively_handling_" + c.type);
-    if (c.value.HideOn && c.value.HideOn == "Lock" && Bangle.isLocked()){
-      //print("Hiding", current);
-      continue;
-    }
-    switch(c.type){
-      case "MultiState":
-        drawMultiState(resources, c.value, zeroOffset);
-        break;
-      case "Image":
-        drawImage(resources, c.value, zeroOffset);
-        break;
-      case "CodedImage":
-        drawCodedImage(resources, c.value, zeroOffset);
-        break;
-      case "Number":
-        drawNumber(resources, c.value, zeroOffset);
-        break;
-      case "Poly":
-        drawPoly(resources, c.value, zeroOffset);
-        break;
-      case "Scale":
-        drawScale(resources, c.value, zeroOffset);
-        break;
-    }
-    endPerfLog("drawIteratively_handling_" + c.type);
-  }
-  endPerfLog("drawIteratively");
-}
-
-function draw(resources, root, path, offset){
-  //print("draw", path);
-  startPerfLog("draw_"+ path.join("_"));
-
-  var element = getByPath(root, path);
-  var elementOffset = updateOffset(element, offset);
-  setColors(elementOffset);
-  //print("Using offset", elementOffset);
-  if (Array.isArray(element))
-    drawIteratively(element);
-  else {
-    //print("Using offset", elementOffset);
-
-    for (var current in element){
-      //print("Handling ", current, " with offset ", elementOffset);
-      startPerfLog("draw_handling_"+ path.join("_")+"_"+current);
-      var currentElement = element[current];
-      try {
-        switch(current){
-          case "X":
-          case "Y":
-          case "Properties":
-          case "ForegroundColor":
-          case "BackgroundColor":
-          case "HideOn":
-            //print("Hiding", current);
-            break;
-          case "MultiState":
-            drawMultiState(resources, currentElement, elementOffset);
-            break;
-          case "Image":
-            drawImage(resources, currentElement, elementOffset);
-            break;
-          case "CodedImage":
-            drawCodedImage(resources, currentElement, elementOffset);
-            break;
-          case "Number":
-            drawNumber(resources, currentElement, elementOffset);
-            break;
-          case "Poly":
-            drawPoly(currentElement, elementOffset);
-            break;
-          case "Scale":
-            drawScale(resources, currentElement, elementOffset);
-            break;
-          default:
-            //print("Enter next level", elementOffset);
-            if (currentElement.HideOn && currentElement.HideOn == "Lock" && Bangle.isLocked()){
-              //print("Hiding", current);
-              continue;
-            }
-            draw(resources, root, path.concat(current), elementOffset);
-            //print("Done next level");
-        }
-        endPerfLog("draw_handling_"+ path.join("_")+"_"+current);
-        //print("Drawing of", current, "in", (Date.now() - start).toFixed(0), "ms");
-      } catch (e){
-        print("Error during drawing of", current, "in", element, e, e.stack);
-      }
-    }
-  }
-  //print("Finished drawing loop");
-  
-  endPerfLog("draw_"+ path.join("_"));
-}
-
 var pulse,alt,temp,press;
 
 
@@ -670,54 +570,31 @@ function initialDraw(resources, face){
     startPerfLog("initialDraw");
     //var start = Date.now();
     drawingTime = 0;
-    if (typeof precompiledJs == "function"){
-      //print("Precompiled");
-      var promise = Promise.resolve();
-      if (clearOnRedraw){
-        promise = promise.then(()=>{
-          var currentDrawingTime = Date.now();
-          startPerfLog("initialDraw_g.clear");
-          graphics.clear(true);
-          endPerfLog("initialDraw_g.clear");
-          drawingTime += Date.now() - currentDrawingTime;
-        });
-      }
-      promise = promise.then(()=>precompiledJs(watchfaceResources, watchface));
-
-      promise.then(()=>{
+    //print("Precompiled");
+    var promise = Promise.resolve();
+    if (clearOnRedraw){
+      promise = promise.then(()=>{
         var currentDrawingTime = Date.now();
-        g.drawImage({width: graphics.getWidth(), height: graphics.getHeight(), bpp: graphics.getBPP(), buffer: graphics.buffer});
-        lastDrawTime = Date.now() - start;
+        startPerfLog("initialDraw_g.clear");
+        graphics.clear(true);
+        endPerfLog("initialDraw_g.clear");
         drawingTime += Date.now() - currentDrawingTime;
-        //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
-        isDrawing=false;
-        firstDraw=false;
-        requestRefresh = false;
-        endPerfLog("initialDraw");
       });
-    } else if (face.Collapsed){
-      //print("Collapsed");
-      startPerfLog("initialDraw_g.clear");
-      if (clearOnRedraw) graphics.clear(true);
-      endPerfLog("initialDraw_g.clear");
-      drawIteratively(resources, face.Collapsed);
-      endPerfLog("initialDraw");
-      lastDrawTime = (Date.now() - start);
-      //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
-      firstDraw = false;
-      isDrawing = false;
-    } else {
-      startPerfLog("initialDraw_g.clear");
-      if (clearOnRedraw) graphics.clear(true);
-      endPerfLog("initialDraw_g.clear");
-      //print("Full");
-      draw(resources, face, [], zeroOffset);
-      endPerfLog("initialDraw");
-      lastDrawTime = (Date.now() - start);
-      //print(new Date().toISOString(), "Drawing done", lastDrawTime.toFixed(0));
-      firstDraw = false;
-      isDrawing = false;
     }
+    promise = promise.then(()=>precompiledJs(watchfaceResources, watchface));
+
+    promise.then(()=>{
+      var currentDrawingTime = Date.now();
+      g.drawImage({width: graphics.getWidth(), height: graphics.getHeight(), bpp: graphics.getBPP(), buffer: graphics.buffer});
+      lastDrawTime = Date.now() - start;
+      drawingTime += Date.now() - currentDrawingTime;
+      //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
+      isDrawing=false;
+      firstDraw=false;
+      requestRefresh = false;
+      endPerfLog("initialDraw");
+    });
+
     if (requestedDraws > 0){
       //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
       requestedDraws = 0;
