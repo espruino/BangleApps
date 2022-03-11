@@ -13,12 +13,13 @@ and `Messages`:
 
 * `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
-* `Unread Timer` - when a new message is received we go into the Messages app.
+* `Unread Timer` - When a new message is received we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
-* `Min Font` - the minimum font size used when displaying messages on the screen. A bigger font
+* `Min Font` - The minimum font size used when displaying messages on the screen. A bigger font
 is chosen if there isn't much message text, but this specifies the smallest the font should get before
 it starts getting clipped.
+* `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 
 ## New Messages
 
