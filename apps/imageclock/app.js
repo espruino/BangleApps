@@ -706,7 +706,11 @@ Bangle.setUI("clock");
 
 if (!events || events.includes("pressure")){
   Bangle.on('pressure', handlePressure);
-  Bangle.setBarometerPower(1, 'imageclock');
+  try{
+    Bangle.setBarometerPower(1, 'imageclock');
+  } catch (e){
+    print("Error during barometer power up", e);
+  }
 }
 if (!events || events.includes("HRM")) {
   Bangle.on('HRM', handleHrm);
