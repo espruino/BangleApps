@@ -677,8 +677,8 @@ function handleLock(isLocked, forceRedraw){
     },unlockedRedraw, (v)=>{
       unlockedDrawInterval = v;
     }, lastDrawTime);
-    Bangle.setHRMPower(1, "imageclock");
-    Bangle.setBarometerPower(1, 'imageclock');
+    if (!events || events.includes("HRM")) Bangle.setHRMPower(1, "imageclock");
+    if (!events || events.includes("pressure")) Bangle.setBarometerPower(1, 'imageclock');
   } else {
     if (forceRedraw || !redrawEvents || (redrawEvents.includes("lock"))){
       //print("Redrawing on lock", isLocked);
