@@ -9,7 +9,9 @@ var endPerfLog = () => {};
 var printPerfLog = () => print("Deactivated");
 var resetPerfLog = () => {performanceLog = {};};
 
-var graphics = Graphics.createArrayBuffer(176,176,16,{msb:true});
+var plane0 = g;
+var plane1;
+
 if (false){
   startPerfLog = function(name){
     var time = getTime();
@@ -100,7 +102,7 @@ function isChangedMultistate(element){
   return element.lastDrawnValue != getMultistate(element.Value);
 }
 
-function drawNumber(resources, element, offset){
+function drawNumber(graphics, resources, element, offset){
   startPerfLog("drawNumber");
   var number = getValue(element.Value);
   var spacing = element.Spacing ? element.Spacing : 0;
@@ -187,9 +189,9 @@ function drawNumber(resources, element, offset){
   if (isNegative && minusImage){
     //print("Draw minus at", currentX);
     if (imageIndexMinus){
-      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexMinus));
+      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexMinus));
     } else {
-      drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "minus");
+      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "minus");
     }
     currentX += minusImage.width + spacing;
   }
@@ -202,14 +204,14 @@ function drawNumber(resources, element, offset){
       currentDigit = 0;
     }
     //print("Digit " + currentDigit + " " + currentX);
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, currentDigit + imageIndex);
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, currentDigit + imageIndex);
     currentX += firstImage.width + spacing;
   }
   if (imageIndexUnit){
     //print("Draw unit at", currentX);
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexUnit));
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexUnit));
   } else if (element.Unit){
-    drawElement(resources, {X:currentX,Y:firstDigitY}, numberOffset, element, getMultistate(element.Unit,"unknown"));
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, getMultistate(element.Unit,"unknown"));
   }
   element.lastDrawnValue = number;
 
@@ -221,7 +223,7 @@ function setColors(properties){
   if (properties.bg) graphics.setBgColor(properties.bg);
 }
 
-function drawElement(resources, pos, offset, element, lastElem){
+function drawElement(graphics, resources, pos, offset, element, lastElem){
   startPerfLog("drawElement");
   var cacheKey = "_"+(lastElem?lastElem:"nole");
   if (!element.cachedImage) element.cachedImage={};
@@ -287,7 +289,7 @@ function getMultistate(name, defaultValue){
   return undefined;
 }
 
-function drawScale(resources, scale, offset){
+function drawScale(graphics, resources, scale, offset){
   startPerfLog("drawScale");
   //print("drawScale", scale, offset);
   var segments = scale.Segments;
@@ -302,35 +304,35 @@ function drawScale(resources, scale, offset){
   var segmentsToDraw = Math.ceil(value * segments.length);
 
   for (var i = 0; i < segmentsToDraw; i++){
-    drawElement(resources, segments[i], scaleOffset, scale, imageIndex + i);
+    drawElement(graphics, resources, segments[i], scaleOffset, scale, imageIndex + i);
   }
   scale.lastDrawnValue = segmentsToDraw;
 
   endPerfLog("drawScale");
 }
 
-function drawDigit(resources, element, offset, digit){
-  drawElement(resources, element, offset, element, digit);
+function drawDigit(graphics, resources, element, offset, digit){
+  drawElement(graphics, resources, element, offset, element, digit);
 }
 
-function drawImage(resources, image, offset, name){
+function drawImage(graphics, resources, image, offset, name){
   startPerfLog("drawImage");
   var imageOffset = updateColors(image, offset);
   //print("drawImage", image, offset, name);
   if (image.Value && image.Steps){
     var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
     //print("Step", steps, "of", image.Steps);
-    drawElement(resources, image, imageOffset, image, "" + steps);
+    drawElement(graphics, resources, image, imageOffset, image, "" + steps);
   } else if (image.ImageIndex !== undefined) {
-    drawElement(resources, image, imageOffset, image, image.ImageIndex);
+    drawElement(graphics, resources, image, imageOffset, image, image.ImageIndex);
   } else {
-    drawElement(resources, image, imageOffset, image, name ? "" + name: undefined);
+    drawElement(graphics, resources, image, imageOffset, image, name ? "" + name: undefined);
   }
   
   endPerfLog("drawImage");
 }
 
-function drawCodedImage(resources, image, offset){
+function drawCodedImage(graphics, resources, image, offset){
   startPerfLog("drawCodedImage");
   var code = getValue(image.Value);
   //print("drawCodedImage", image, offset, code);
@@ -348,10 +350,10 @@ function drawCodedImage(resources, image, offset){
     }
     if (code / factor > 1){
       //print("found match");
-      drawImage(resources, image, offset, currentCode);
+      drawImage(graphics, resources, image, offset, currentCode);
     } else {
       //print("fallback");
-      drawImage(resources, image, offset, "fallback");
+      drawImage(graphics, resources, image, offset, "fallback");
     }
   }
   image.lastDrawnValue = code;
@@ -425,7 +427,7 @@ function radians(rotation){
   return value;
 }
 
-function drawPoly(resources, element, offset){
+function drawPoly(graphics, resources, element, offset){
     startPerfLog("drawPoly");
     var vertices = [];
     var primitiveOffset = offset.clone();
@@ -463,7 +465,7 @@ function drawPoly(resources, element, offset){
     endPerfLog("drawPoly");
 }
 
-function drawRect(resources, element, offset){
+function drawRect(graphics, resources, element, offset){
     startPerfLog("drawRect");
     var vertices = [];
     var primitiveOffset = offset.clone();
@@ -535,12 +537,12 @@ multistates.WeatherTemperatureNegative = () => { return getWeatherTemperature().
 multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
 multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
 
-function drawMultiState(resources, element, offset){
+function drawMultiState(graphics, resources, element, offset){
   startPerfLog("drawMultiState");
   //print("drawMultiState", element, offset);
   var value = multistates[element.Value]();
   //print("drawImage from drawMultiState", element, offset, value);
-  drawImage(resources, element, offset, value);
+  drawImage(graphics, resources, element, offset, value);
   element.lastDrawnValue = value;
   endPerfLog("drawMultiState");
 }
@@ -568,24 +570,13 @@ function initialDraw(resources, face){
     requestedDraws = 0;
     //print(new Date().toISOString(), "Drawing start");
     startPerfLog("initialDraw");
-    //var start = Date.now();
+    //start = Date.now();
     drawingTime = 0;
     //print("Precompiled");
-    var promise = Promise.resolve();
-    if (clearOnRedraw){
-      promise = promise.then(()=>{
-        var currentDrawingTime = Date.now();
-        startPerfLog("initialDraw_g.clear");
-        graphics.clear(true);
-        endPerfLog("initialDraw_g.clear");
-        drawingTime += Date.now() - currentDrawingTime;
-      });
-    }
-    promise = promise.then(()=>precompiledJs(watchfaceResources, watchface));
+    var promise = precompiledJs(watchfaceResources, watchface);
 
     promise.then(()=>{
       var currentDrawingTime = Date.now();
-      g.drawImage({width: graphics.getWidth(), height: graphics.getHeight(), bpp: graphics.getBPP(), buffer: graphics.buffer});
       lastDrawTime = Date.now() - start;
       drawingTime += Date.now() - currentDrawingTime;
       //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
@@ -593,6 +584,8 @@ function initialDraw(resources, face){
       firstDraw=false;
       requestRefresh = false;
       endPerfLog("initialDraw");
+    }).catch((e)=>{
+      print("Error during drawing", e);
     });
 
     if (requestedDraws > 0){

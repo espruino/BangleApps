@@ -21,8 +21,8 @@
 
     <p>
       Options:</br>
-      <input type="checkbox" id="promisewrap" name="mode" checked/>
-      <label for="promisewrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
+      <input type="checkbox" id="timeoutwrap" name="mode" checked/>
+      <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
     </p>
 
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
@@ -561,25 +561,49 @@
         return result;
       }
       
-      function convertToCode(elements, properties, wrapInPromises){
+      function convertToCode(elements, properties, wrapInTimeouts){
         var code = "(function (watchfaceResources, watchface) {\n";
-        if (!wrapInPromises){
+        if (!wrapInTimeouts){
           code += "var currentDrawTime=Date.now();\n";
         }
-        code += "var layerchanged;\n";  
+        code += "var layerchanged;\n";
         code += "var promise = Promise.resolve();\n";  
         
         //get mapped by layer
         var layers = {};
         var counter = 0;
+        var planes = 0;
         for (var i = 0; i< elements.length; i++){
           var c = elements[i].value;
           console.log("Check element", c);
           var name = c.Layer;
           if (c.type == "Standalone") name = "standalone" + counter++;
+          if (c.Plane) planes = Math.max(c.Plane, planes);
           if (!layers[name]) layers[name] = [];
           layers[name].push({index: i, element: c});
         }
+        
+        console.log("Found planes", planes)
+        
+        if (wrapInTimeouts && planes == 0) planes = 1;
+        
+        code += "plane0 = g;\n";
+        
+        if (planes > 0){
+          for (var i = 1; i <= planes; i++){
+            code += "if (!plane" + i + ") plane" + i + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
+          }
+        }
+        
+        code += `
+if (clearOnRedraw){
+  var currentDrawingTime = Date.now();
+  startPerfLog("initialDraw_g.clear");
+  g.clear(true);
+  endPerfLog("initialDraw_g.clear");
+  drawingTime += Date.now() - currentDrawingTime;
+}
+`
         
         console.log("Got layers", layers);
         
@@ -589,7 +613,7 @@
           console.log("Layer elements", layername, layerElements);
           //code for whole layer
           
-          if (wrapInPromises){
+          if (wrapInTimeouts){
             code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
             code += "var currentDrawTime=Date.now();\n";
           }
@@ -616,7 +640,7 @@
           }
           
           code += checkcode;
-          
+            
           //code for elements
           for (var i = 0; i< layerElements.length; i++){
             var elementIndex = layerElements[i].index;
@@ -639,27 +663,38 @@
               condition += "firstDraw";
             }
             
+            var planeName = "plane" + (typeof c.value.Plane == "number" ? c.value.Plane : planes) ;
+            
             var colorsetting = "";
-            if (c.value.ForegroundColor) colorsetting += "g.setColor(\"" + c.value.ForegroundColor + "\");\n";
-            else colorsetting += "g.setColor(g.theme.fg);\n";
-            if (c.value.BackgroundColor) colorsetting += "g.setBgColor(\"" + c.value.BackgroundColor + "\");\n";
-            else colorsetting += "g.setBgColor(g.theme.bg);\n";
+            if (c.value.ForegroundColor) colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
+            else colorsetting += planeName + ".setColor(g.theme.fg);\n";
+            if (c.value.BackgroundColor) colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+            else colorsetting += planeName + ".setBgColor(g.theme.bg);\n";
             
             code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
             code += "" + colorsetting;
-            code += "draw" + c.type + "(watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
+            code += "draw" + c.type + "(" + planeName + ", watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
 
             code += (condition.length > 0 ? "}\n" : "");
           }
           
-          if (wrapInPromises){
+          if (wrapInTimeouts){
             code += "drawingTime += Date.now() - currentDrawTime;\n";
             code += "});\n";
           }
         }
         
-        if (!wrapInPromises){
+        if (planes > 0){
+          code += "promise = promise.then(()=>{\n";
+          code += "var currentDrawTime=Date.now();\n";
+          
+          for (var i = 1; i <= planes; i++){
+            //code += "g.drawImage(plane" + i + ".asImage());";
+            code += "g.drawImage(g.drawImage({width: plane" + i + ".getWidth(), height: plane" + i + ".getHeight(), bpp: plane" + i + ".getBPP(), buffer: plane" + i + ".buffer}));";
+          }
+          
           code += "drawingTime += Date.now() - currentDrawTime;\n";
+          code += "});\n";
         }
           
         code += "return promise;})";
@@ -674,7 +709,7 @@
         var properties = faceJson.Properties;        
         faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
         console.log("After collapsing", faceJson);
-        precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('promisewrap').checked);
+        precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('timeoutwrap').checked);
         console.log("After precompiling", precompiledJs);
       }
 
