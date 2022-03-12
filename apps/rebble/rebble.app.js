@@ -204,6 +204,14 @@ function drawBattery(x,y,wi,hi) {
   g.setColor(g.theme.fg);
   g.fillRect(x+wi-3,y+2+(((hi - 1)/2)-1),x+wi-2,y+2+(((hi - 1)/2)-1)+4); // contact
   g.fillRect(x+3, y+5, x +4 + E.getBattery()*(wi-12)/100, y+hi-1); // the level
+
+  if( Bangle.isCharging() )
+  {
+    g.setBgColor(settings.bg);
+    image = ()=> { return require("heatshrink").decompress(atob("j8OwMB/4AD94DC44DCwP//n/gH//EOgE/+AdBh/gAYMH4EAvkDAYP/+/AFAX+FgfzGAnAA=="));}
+    g.drawImage(image(),x+3,y+4);
+  }
+
 }
   
 function getSteps() {
@@ -270,3 +278,14 @@ for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 loadLocation();
 draw();  // queues the next draw for a minutes time
+Bangle.on('charging', function(charging) { 
+  //redraw the sidebar ( with the battery )
+  switch(sideBar) {
+    case 0:
+      drawSideBar1();
+      break;
+    case 1:
+      drawSideBar2();
+      break;
+  }
+});
