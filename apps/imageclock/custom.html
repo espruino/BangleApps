@@ -597,22 +597,43 @@
         
         code += "plane0 = g;\n";
         
-        code += `
-if (clearOnRedraw){
-  var currentDrawingTime = Date.now();
-  startPerfLog("initialDraw_g.clear");
-  g.clear(true);
-  endPerfLog("initialDraw_g.clear");
-  drawingTime += Date.now() - currentDrawingTime;
-}
-`
-        
         for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
           var layers = planes[planeNumbers[planeIndex]];
           var plane = planeNumbers[planeIndex];
           
           
           if (plane != 0) code += "if (!plane" + plane + ") plane" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
+          
+          if (properties.Redraw && properties.Redraw.Clear){
+            if (wrapInTimeouts && plane != 0){
+              code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
+              code += "var currentDrawTime=Date.now();\n";
+            } else {
+              code += "promise = promise.then(()=>{\n";
+            }
+            code += "var currentDrawTime=Date.now();\n"
+            code += 'print("Clear for redraw of plane ' + plane + '");'+"\n";
+            code += 'startPerfLog("initialDraw_g.clear");'+"\n";
+            code += "plane" + plane + ".clear(true);\n";
+            code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
+  
+          }
+          code += "drawingTime += Date.now() - currentDrawTime;\n";
+          code += "});\n";
+          
+          var previousPlane = plane + 1;
+          if (previousPlane < planeNumbers.length){
+            code += "promise = promise.then(()=>{\n";
+            code += "var currentDrawTime=Date.now();\n";
+            
+            code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
+            //code += "g.drawImage(plane" + i + ".asImage());";
+            code += "plane0.drawImage({width: plane" + previousPlane + ".getWidth(), height: plane" + previousPlane + ".getHeight(), bpp: plane" + previousPlane + ".getBPP(), buffer: plane" + previousPlane + ".buffer});\n";
+            
+            
+            code += "drawingTime += Date.now() - currentDrawTime;\n";
+            code += "});\n";
+          }
           
           console.log("Got layers", layers);
           for (var layername in layers){
@@ -624,7 +645,10 @@ if (clearOnRedraw){
             if (wrapInTimeouts && plane != 0){
               code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
               code += "var currentDrawTime=Date.now();\n";
+            } else {
+              code += "promise = promise.then(()=>{\n";
             }
+            code += "var currentDrawTime=Date.now();\n";
             
             var checkForLayerChange = false;
             var checkcode = "";
@@ -685,23 +709,13 @@ if (clearOnRedraw){
               code += (condition.length > 0 ? "}\n" : "");
             }
             
-            if (wrapInTimeouts && plane != 0){
-              code += "drawingTime += Date.now() - currentDrawTime;\n";
-              code += "});\n";
-            }
-          }
-          console.log("Current plane is", plane);
-          if (plane != 0){
-            code += "promise = promise.then(()=>{\n";
-            code += "var currentDrawTime=Date.now();\n";
-            
-            //code += "g.drawImage(plane" + i + ".asImage());";
-            code += "g.drawImage({width: plane" + plane + ".getWidth(), height: plane" + plane + ".getHeight(), bpp: plane" + plane + ".getBPP(), buffer: plane" + plane + ".buffer});\n";
-            
-            
             code += "drawingTime += Date.now() - currentDrawTime;\n";
             code += "});\n";
           }
+          console.log("Current plane is", plane);
+          
+
+          
         }
           
         code += "return promise;})";
