@@ -81,7 +81,7 @@ function draw() {
 
   executeCommands();
 
-  Bangle.drawWidgets();
+  if (!showSeconds) Bangle.drawWidgets();
 }
 
 var timeout;
