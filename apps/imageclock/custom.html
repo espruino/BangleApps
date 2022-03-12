@@ -475,36 +475,46 @@
           result.Background = json.Background;
           result.Background.Image.ImagePath = [];
           delete result.Background.Preview;
+          result.Background.Type = "Once";
+          if (json.AnalogDialFace) result.Background.Plane = 1;
         }
         if (json.Time){
           result.Time = convertAmazfitTime(json.Time);
+          if (json.AnalogDialFace) result.Time.Plane = 1;
         }
         
         if (json.Date){
           result.Date = convertAmazfitDate(json.Date);
+          if (json.AnalogDialFace) result.Date.Plane = 1;
         }
         
         if (json.Status){
           result.Status = convertAmazfitStatus(json.Status);
+          if (json.AnalogDialFace) result.Status.Plane = 1;
         }
         
         if (json.Weather){
           result.Weather = convertAmazfitWeather(json.Weather);
+          if (json.AnalogDialFace) result.Weather.Plane = 1;
         }
         
         if (json.Activity){
           result.Activity = convertAmazfitActivity(json.Activity);
+          if (json.AnalogDialFace) result.Activity.Plane = 1;
         }
         
         if (json.StepsProgress){
           result.StepsProgress = convertAmazfitStepsProgress(json.StepsProgress);
+          if (json.AnalogDialFace) result.StepsProgress.Plane = 1;
         }
         
         if (json.Battery){
           result.Battery = convertAmazfitBattery(json.Battery);
+          if (json.AnalogDialFace) result.Battery.Plane = 1;
         }
         if (json.AnalogDialFace){
           result.Analog = convertAmazfitAnalog(json.AnalogDialFace, result);
+          result.Analog.Plane = 0;
         }
         console.log("Converted to native:", result);
         return result;
@@ -617,9 +627,9 @@
             code += "plane" + plane + ".clear(true);\n";
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
   
+            code += "drawingTime += Date.now() - currentDrawTime;\n";
+            code += "});\n";
           }
-          code += "drawingTime += Date.now() - currentDrawTime;\n";
-          code += "});\n";
           
           var previousPlane = plane + 1;
           if (previousPlane < planeNumbers.length){
