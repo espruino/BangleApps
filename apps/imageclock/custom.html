@@ -550,6 +550,7 @@
           combineProperty("RotationOffset",element,next);
           combineProperty("MinRotationValue",element,next);
           combineProperty("MaxRotationValue",element,next);
+          if (typeof element.Plane == "number") next.Plane = element.Plane;
           next.Layer = element.Layer ? (element.Layer) : "" + c;
           
           if (["MultiState","Image","CodedImage","Number","Poly","Rect","Scale"].includes(c)){
@@ -570,30 +571,31 @@
         code += "var promise = Promise.resolve();\n";  
         
         //get mapped by layer
-        var layers = {};
         var counter = 0;
-        var planes = 0;
+        var planes = {};
+        var planeNumbers = [];
         for (var i = 0; i< elements.length; i++){
           var c = elements[i].value;
           console.log("Check element", c);
           var name = c.Layer;
           if (c.type == "Standalone") name = "standalone" + counter++;
-          if (c.Plane) planes = Math.max(c.Plane, planes);
-          if (!layers[name]) layers[name] = [];
-          layers[name].push({index: i, element: c});
+          var plane = wrapInTimeouts ? 1 : 0;
+          if (typeof c.Plane == "number"){
+            plane = c.Plane;
+          }
+          console.log("Found plane for element", plane, c);
+          if (!planeNumbers.includes(plane)) planeNumbers.push(plane);
+          if (!planes[plane]) planes[plane] = {};
+          if (!planes[plane][name]) planes[plane][name] = [];
+          planes[plane][name].push({index: i, element: c});
         }
+        planeNumbers.sort().reverse();
         
-        console.log("Found planes", planes)
+        console.log("Found planes", planes, "with numbers", planeNumbers)
         
         if (wrapInTimeouts && planes == 0) planes = 1;
         
         code += "plane0 = g;\n";
-        
-        if (planes > 0){
-          for (var i = 1; i <= planes; i++){
-            code += "if (!plane" + i + ") plane" + i + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
-          }
-        }
         
         code += `
 if (clearOnRedraw){
@@ -605,96 +607,101 @@ if (clearOnRedraw){
 }
 `
         
-        console.log("Got layers", layers);
-        
-        for (var layername in layers){
-          var layerElements = layers[layername];
+        for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
+          var layers = planes[planeNumbers[planeIndex]];
+          var plane = planeNumbers[planeIndex];
           
-          console.log("Layer elements", layername, layerElements);
-          //code for whole layer
           
-          if (wrapInTimeouts){
-            code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
-            code += "var currentDrawTime=Date.now();\n";
-          }
+          if (plane != 0) code += "if (!plane" + plane + ") plane" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
           
-          var checkForLayerChange = false;
-          var checkcode = "";
-          
-          if (!(properties.Redraw && properties.Redraw.Clear)){
-            checkcode = 'layerchanged = firstDraw;' + "\n";
-            for (var i = 0; i< layerElements.length; i++){
-              var layerElement = layerElements[i];
-              var referencedElement = elements[layerElements[i].index];
-              var elementType = referencedElement.type;
-              console.log("Check for change:", layerElement, referencedElement);
-              if (layerElement.element.Value){
-                if (elementType == "MultiState" && layerElement.element.Value) {
-                  checkcode += 'layerchanged |= isChangedMultistate(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
-                } else {
-                  checkcode += 'layerchanged |= isChangedNumber(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+          console.log("Got layers", layers);
+          for (var layername in layers){
+            var layerElements = layers[layername];
+            
+            console.log("Layer elements", layername, layerElements);
+            //code for whole layer
+            
+            if (wrapInTimeouts && plane != 0){
+              code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
+              code += "var currentDrawTime=Date.now();\n";
+            }
+            
+            var checkForLayerChange = false;
+            var checkcode = "";
+            
+            if (!(properties.Redraw && properties.Redraw.Clear)){
+              checkcode = 'layerchanged = firstDraw;' + "\n";
+              for (var i = 0; i< layerElements.length; i++){
+                var layerElement = layerElements[i];
+                var referencedElement = elements[layerElements[i].index];
+                var elementType = referencedElement.type;
+                console.log("Check for change:", layerElement, referencedElement);
+                if (layerElement.element.Value){
+                  if (elementType == "MultiState" && layerElement.element.Value) {
+                    checkcode += 'layerchanged |= isChangedMultistate(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                  } else {
+                    checkcode += 'layerchanged |= isChangedNumber(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                  }
+                  checkForLayerChange = true;
                 }
-                checkForLayerChange = true;
               }
             }
-          }
-          
-          code += checkcode;
             
-          //code for elements
-          for (var i = 0; i< layerElements.length; i++){
-            var elementIndex = layerElements[i].index;
-            var c = elements[elementIndex];
-            console.log("convert to code", c);
-            
-            var condition = "";
-            if (checkcode.length > 0 && checkForLayerChange){
-              if (condition.length > 0) condition += " && ";
-              condition = 'layerchanged';
-            }
-            
-            if (c.value.HideOn && c.value.HideOn.includes("Lock")){
-              if (condition.length > 0) condition += " && ";
-              condition = '!Bangle.isLocked()';
-            }
-            
-            if (c.value.Type == "Once"){
-              if (condition.length > 0) condition += " && ";
-              condition += "firstDraw";
-            }
-            
-            var planeName = "plane" + (typeof c.value.Plane == "number" ? c.value.Plane : planes) ;
-            
-            var colorsetting = "";
-            if (c.value.ForegroundColor) colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
-            else colorsetting += planeName + ".setColor(g.theme.fg);\n";
-            if (c.value.BackgroundColor) colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
-            else colorsetting += planeName + ".setBgColor(g.theme.bg);\n";
-            
-            code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
-            code += "" + colorsetting;
-            code += "draw" + c.type + "(" + planeName + ", watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
+            code += checkcode;
+              
+            //code for elements
+            for (var i = 0; i< layerElements.length; i++){
+              var elementIndex = layerElements[i].index;
+              var c = elements[elementIndex];
+              console.log("convert to code", c);
+              
+              var condition = "";
+              if (checkcode.length > 0 && checkForLayerChange){
+                if (condition.length > 0) condition += " && ";
+                condition = 'layerchanged';
+              }
+              
+              if (c.value.HideOn && c.value.HideOn.includes("Lock")){
+                if (condition.length > 0) condition += " && ";
+                condition = '!Bangle.isLocked()';
+              }
+              
+              if (c.value.Type == "Once"){
+                if (condition.length > 0) condition += " && ";
+                condition += "firstDraw";
+              }
+              
+              var planeName = "plane" + plane;
+              var colorsetting = "";
+              if (c.value.ForegroundColor) colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
+              else colorsetting += planeName + ".setColor(g.theme.fg);\n";
+              if (c.value.BackgroundColor) colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+              else colorsetting += planeName + ".setBgColor(g.theme.bg);\n";
+              
+              code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
+              code += "" + colorsetting;
+              code += "draw" + c.type + "(" + planeName + ", watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
 
-            code += (condition.length > 0 ? "}\n" : "");
+              code += (condition.length > 0 ? "}\n" : "");
+            }
+            
+            if (wrapInTimeouts && plane != 0){
+              code += "drawingTime += Date.now() - currentDrawTime;\n";
+              code += "});\n";
+            }
           }
-          
-          if (wrapInTimeouts){
+          console.log("Current plane is", plane);
+          if (plane != 0){
+            code += "promise = promise.then(()=>{\n";
+            code += "var currentDrawTime=Date.now();\n";
+            
+            //code += "g.drawImage(plane" + i + ".asImage());";
+            code += "g.drawImage({width: plane" + plane + ".getWidth(), height: plane" + plane + ".getHeight(), bpp: plane" + plane + ".getBPP(), buffer: plane" + plane + ".buffer});\n";
+            
+            
             code += "drawingTime += Date.now() - currentDrawTime;\n";
             code += "});\n";
           }
-        }
-        
-        if (planes > 0){
-          code += "promise = promise.then(()=>{\n";
-          code += "var currentDrawTime=Date.now();\n";
-          
-          for (var i = 1; i <= planes; i++){
-            //code += "g.drawImage(plane" + i + ".asImage());";
-            code += "g.drawImage(g.drawImage({width: plane" + i + ".getWidth(), height: plane" + i + ".getHeight(), bpp: plane" + i + ".getBPP(), buffer: plane" + i + ".buffer}));";
-          }
-          
-          code += "drawingTime += Date.now() - currentDrawTime;\n";
-          code += "});\n";
         }
           
         code += "return promise;})";

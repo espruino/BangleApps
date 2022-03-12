@@ -218,7 +218,7 @@ function drawNumber(graphics, resources, element, offset){
   endPerfLog("drawNumber");
 }
 
-function setColors(properties){
+function setColors(graphics, properties){
   if (properties.fg) graphics.setColor(properties.fg);
   if (properties.bg) graphics.setBgColor(properties.bg);
 }
@@ -251,7 +251,7 @@ function drawElement(graphics, resources, pos, offset, element, lastElem){
     //print("drawElement offset", offset, pos.X, pos.Y);
     //print("resource ", resource,pos, offset, path, lastElem);
     var imageOffset = updateColors(pos, offset);
-    setColors(imageOffset);
+    setColors(graphics, imageOffset);
     //print("drawImage from drawElement", image, pos, offset);
     var options={};
     if (pos.RotationValue){
