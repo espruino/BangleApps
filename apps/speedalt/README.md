@@ -2,23 +2,21 @@
 
 You can switch between three display modes. One showing speed and altitude (A), one showing speed and distance to waypoint (D) and a large dispay of time and selected waypoint.
 
-*Note for **Bangle.js 2:** Currently only the BTN3 functionality is working with the Bangle.js 2 button.*
-
 Within the [A]ltitude and [D]istance displays modes one figure is displayed on the watch face using the largest possible characters depending on the number of digits. The other is in a smaller characters below that. Both are always visible. You can display the current or maximum observed speed/altitude values. Current time is always displayed. 
 
 The waypoints list is the same as that used with the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app so the same set of waypoints can be used across both apps. Refer to that app for waypoint file information.
 
 ## Buttons and Controls
 
-BTN3 : Cycles the modes between Speed+[A]ltitude,  Speed+[D]istance and large Time/Waypoint
+*(Mapping for **Bangle.js 2**: BTN2 = Touch upper right side; BTN3 = Touch lower right side; BTN4 = Touch left side)*
 
-***Bangle.js 2:** Currently only this button function is working*
+BTN3 : Cycles the modes between Speed+[A]ltitude,  Speed+[D]istance and large Time/Waypoint
 
 ### [A]ltitude mode
 
 BTN1 : Short press < 2 secs toggles the displays between showing the current speed/alt values or the maximum speed/alt values recorded.
 
-BTN1 : Long press > 2 secs resets the recorded maximum values.
+BTN1 : Long press > 2 secs resets the recorded maximum values. *(Bangle.js 2: Long press > 0.4 secs)*
 
 ### [D]istance mode
 
@@ -32,7 +30,7 @@ BTN1 : Select next waypoint.
 
 BTN2 : Disables/Restores power saving timeout. Locks the screen on and GPS in SuperE mode to enable reading for longer periods but uses maximum battery drain. Red LED (dot) at top of screen when screen is locked on. Press again to restore power saving timeouts.
 
-BTN3 : Long press exit and return to watch.
+BTN3 : Long press exit and return to watch. *(Bangle.js 2: Long press BTN > 2 secs)*
 
 BTN4 : Left Display Tap : Swaps which figure is in the large display. You can have either speed or [A]ltitude/[D]istance on the large primary display.
 
