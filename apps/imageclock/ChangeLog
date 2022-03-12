@@ -5,3 +5,4 @@
       Allow hiding elements on lock
 0.05: Add precompilation to js for performance
 0.06: Watchfaces can be refreshed partly
+0.07: Allow wrapping drawing in timeouts to get faster reactions
