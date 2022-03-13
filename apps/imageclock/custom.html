@@ -600,6 +600,7 @@
           if (!planes[plane][name]) planes[plane][name] = [];
           planes[plane][name].push({index: i, element: c});
         }
+        if (!planeNumbers.includes(0)) planeNumbers.push(0);
         planeNumbers.sort().reverse();
         
         console.log("Found planes", planes, "with numbers", planeNumbers)
