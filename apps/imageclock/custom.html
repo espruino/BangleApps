@@ -618,7 +618,6 @@
           if (properties.Redraw && properties.Redraw.Clear){
             if (wrapInTimeouts && plane != 0){
               code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
-              code += "var currentDrawTime=Date.now();\n";
             } else {
               code += "promise = promise.then(()=>{\n";
             }
