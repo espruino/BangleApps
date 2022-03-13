@@ -434,7 +434,7 @@
           result.Minutes.Hand = convertAmazfitHand(analog.Minutes, "Minute", 0, 60);
           if (!face.Properties) face.Properties = {};
           if (!face.Properties.Redraw) face.Properties.Redraw = {};
-          face.Properties.Redraw.Unlocked = 1000;
+          face.Properties.Redraw.Unlocked = 10000;
           face.Properties.Redraw.Locked = 60000;
           if (analog.Minutes.CenterImage){
             result.Minutes.Center = convertAmazfitImage(analog.Minutes.CenterImage);
@@ -464,18 +464,19 @@
         var json = JSON.parse(dataString);
         faceJson = json;
         
-        if (!json.Properties) faceJson.Properties = {};
-        if (!json.Properties.Redraw) faceJson.Properties.Redraw = {};
-        if (!json.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Unlocked = 10000;
-        if (!json.Properties.Redraw.Unlocked) faceJson.Properties.Redraw.Locked = 60000;
-        
+
         var result = {};
+        result.Properties = {};
+        result.Properties.Redraw = {};
+        result.Properties.Redraw.Unlocked = 60000;
+        result.Properties.Redraw.Locked = 60000;
+        result.Properties.Redraw.Clear = true;
+        
         
         if (json.Background){
           result.Background = json.Background;
           result.Background.Image.ImagePath = [];
           delete result.Background.Preview;
-          result.Background.Type = "Once";
           if (json.AnalogDialFace) result.Background.Plane = 1;
         }
         if (json.Time){
