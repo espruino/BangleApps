@@ -1,6 +1,7 @@
 var watchface = require("Storage").readJSON("imageclock.face.json");
 var watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
 var precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
+var settings = require('Storage').readJSON("imageclock.json", true) || {};
 
 var performanceLog = {};
 
@@ -12,7 +13,7 @@ var resetPerfLog = () => {performanceLog = {};};
 var p0 = g;
 var p1;
 
-if (false){
+if (settings.perflog){
   startPerfLog = function(name){
     var time = getTime();
     if (!performanceLog.start) performanceLog.start={};
@@ -467,7 +468,7 @@ numbers.MonthTens = () => { return Math.floor((new Date().getMonth() + 1)/10); }
 numbers.MonthOnes = () => { return Math.floor((new Date().getMonth() + 1)%10); };
 numbers.Pulse = () => { return pulse; };
 numbers.Steps = () => { return Bangle.getHealthStatus ? Bangle.getHealthStatus("day").steps : undefined; };
-numbers.StepsGoal = () => { return stepsgoal; };
+numbers.StepsGoal = () => { return settings.stepsgoal || 10000; };
 numbers.Temperature = () => { return temp; };
 numbers.Pressure = () => { return press; };
 numbers.Altitude = () => { return alt; };
@@ -490,7 +491,7 @@ multistates.Compass = () => { return Bangle.isCompassOn() ? "on" : "off"; };
 multistates.GPS = () => { return Bangle.isGPSOn() ? "on" : "off"; };
 multistates.WeatherTemperatureNegative = () => { return getWeatherTemperature().value ? getWeatherTemperature().value : 0 < 0; };
 multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
-multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
+multistates.StepsGoal = () => { return (numbers.Steps() >= (settings.stepsgoal || 10000)) ? "on": "off"; };
 
 function drawMultiState(graphics, resources, element){
   startPerfLog("drawMultiState");
@@ -614,8 +615,6 @@ var defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "
 var redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
 var clearOnRedraw = getByPath(watchface, ["Properties","Redraw","Clear"]);
 var events = getByPath(watchface, ["Properties","Events"]);
-
-var stepsgoal = 2000;
 
 //print("events", events);
 //print("redrawEvents", redrawEvents);

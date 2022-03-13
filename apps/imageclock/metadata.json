@@ -13,6 +13,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"imageclock.app.js","url":"app.js"},
+    {"name":"imageclock.settings.js","url":"settings.js"},
     {"name":"imageclock.img","url":"app-icon.js","evaluate":true}
   ]
 }
