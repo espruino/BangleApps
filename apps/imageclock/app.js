@@ -9,8 +9,8 @@ var endPerfLog = () => {};
 var printPerfLog = () => print("Deactivated");
 var resetPerfLog = () => {performanceLog = {};};
 
-var plane0 = g;
-var plane1;
+var p0 = g;
+var p1;
 
 if (false){
   startPerfLog = function(name){

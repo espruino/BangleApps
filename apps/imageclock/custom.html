@@ -573,13 +573,13 @@
         return result;
       }
       
-      function convertToCode(elements, properties, wrapInTimeouts){
-        var code = "(function (watchfaceResources, watchface) {\n";
+      function convertToCode(elements, properties, wrapInTimeouts){        
+        var code = "(function (wr, wf) {\n";
         if (!wrapInTimeouts){
-          code += "var currentDrawTime=Date.now();\n";
+          code += "var ct=Date.now();\n";
         }
-        code += "var layerchanged;\n";
-        code += "var promise = Promise.resolve();\n";  
+        code += "var lc;\n";
+        code += "var p = Promise.resolve();\n";  
         
         //get mapped by layer
         var counter = 0;
@@ -606,42 +606,47 @@
         
         if (wrapInTimeouts && planes == 0) planes = 1;
         
-        code += "plane0 = g;\n";
+        code += "p0 = g;\n";
         
         for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
           var layers = planes[planeNumbers[planeIndex]];
           var plane = planeNumbers[planeIndex];
           
+          var lastSetColor;
+          var lastSetBgColor;
           
-          if (plane != 0) code += "if (!plane" + plane + ") plane" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
+          if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
+          
+          code += "p" + plane + ".setBgColor(g.theme.bg);\n";
+          code += "p" + plane + ".setColor(g.theme.fg);\n";
           
           if (properties.Redraw && properties.Redraw.Clear){
             if (wrapInTimeouts && plane != 0){
-              code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
+              code += "p = p.then(()=>delay(0)).then(()=>{\n";
             } else {
-              code += "promise = promise.then(()=>{\n";
+              code += "p = p.then(()=>{\n";
             }
-            code += "var currentDrawTime=Date.now();\n"
-            code += 'print("Clear for redraw of plane ' + plane + '");'+"\n";
+            code += "var ct=Date.now();\n"
+            //code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
             code += 'startPerfLog("initialDraw_g.clear");'+"\n";
-            code += "plane" + plane + ".clear(true);\n";
+            code += "p" + plane + ".clear(true);\n";
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
   
-            code += "drawingTime += Date.now() - currentDrawTime;\n";
+            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
           var previousPlane = plane + 1;
           if (previousPlane < planeNumbers.length){
-            code += "promise = promise.then(()=>{\n";
-            code += "var currentDrawTime=Date.now();\n";
+            code += "p = p.then(()=>{\n";
+            code += "var ct=Date.now();\n";
             
-            code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
-            //code += "g.drawImage(plane" + i + ".asImage());";
-            code += "plane0.drawImage({width: plane" + previousPlane + ".getWidth(), height: plane" + previousPlane + ".getHeight(), bpp: plane" + previousPlane + ".getBPP(), buffer: plane" + previousPlane + ".buffer});\n";
+            //code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
+            //code += "g.drawImage(p" + i + ".asImage());";
+            code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer});\n";
             
             
-            code += "drawingTime += Date.now() - currentDrawTime;\n";
+            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
@@ -653,18 +658,17 @@
             //code for whole layer
             
             if (wrapInTimeouts && plane != 0){
-              code += "promise = promise.then(()=>delay(0)).then(()=>{\n";
-              code += "var currentDrawTime=Date.now();\n";
+              code += "p = p.then(()=>delay(0)).then(()=>{\n";
             } else {
-              code += "promise = promise.then(()=>{\n";
+              code += "p = p.then(()=>{\n";
             }
-            code += "var currentDrawTime=Date.now();\n";
+            code += "var ct=Date.now();\n";
             
             var checkForLayerChange = false;
             var checkcode = "";
             
             if (!(properties.Redraw && properties.Redraw.Clear)){
-              checkcode = 'layerchanged = firstDraw;' + "\n";
+              checkcode = 'firstDraw';
               for (var i = 0; i< layerElements.length; i++){
                 var layerElement = layerElements[i];
                 var referencedElement = elements[layerElements[i].index];
@@ -672,16 +676,15 @@
                 console.log("Check for change:", layerElement, referencedElement);
                 if (layerElement.element.Value){
                   if (elementType == "MultiState" && layerElement.element.Value) {
-                    checkcode += 'layerchanged |= isChangedMultistate(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                    checkcode += '| isChangedMultistate(wf.Collapsed[' + layerElement.index + '].value)';
                   } else {
-                    checkcode += 'layerchanged |= isChangedNumber(watchface.Collapsed[' + layerElement.index + '].value);' + "\n";
+                    checkcode += '| isChangedNumber(wf.Collapsed[' + layerElement.index + '].value)';
                   }
                   checkForLayerChange = true;
                 }
               }
             }
             
-            code += checkcode;
               
             //code for elements
             for (var i = 0; i< layerElements.length; i++){
@@ -692,7 +695,7 @@
               var condition = "";
               if (checkcode.length > 0 && checkForLayerChange){
                 if (condition.length > 0) condition += " && ";
-                condition = 'layerchanged';
+                condition = '(' + checkcode + ')';
               }
               
               if (c.value.HideOn && c.value.HideOn.includes("Lock")){
@@ -705,21 +708,25 @@
                 condition += "firstDraw";
               }
               
-              var planeName = "plane" + plane;
+              var planeName = "p" + plane;
               var colorsetting = "";
-              if (c.value.ForegroundColor) colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
-              else colorsetting += planeName + ".setColor(g.theme.fg);\n";
-              if (c.value.BackgroundColor) colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
-              else colorsetting += planeName + ".setBgColor(g.theme.bg);\n";
+              if (c.value.ForegroundColor && lastSetColor != c.value.ForegroundColor){
+                lastSetColor = c.value.ForegroundColor;
+                colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
+              }
+              if (c.value.BackgroundColor && lastSetBgColor != c.value.BackgroundColor){
+                lastSetBgColor = c.value.BackgroundColor;
+                colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+              }
               
               code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
               code += "" + colorsetting;
-              code += "draw" + c.type + "(" + planeName + ", watchfaceResources, watchface.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
+              code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
 
               code += (condition.length > 0 ? "}\n" : "");
             }
             
-            code += "drawingTime += Date.now() - currentDrawTime;\n";
+            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           console.log("Current plane is", plane);
@@ -728,7 +735,7 @@
           
         }
           
-        code += "return promise;})";
+        code += "return p;})";
         console.log("Code:", code);
         return code
       }
