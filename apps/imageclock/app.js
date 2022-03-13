@@ -102,7 +102,7 @@ function isChangedMultistate(element){
   return element.lastDrawnValue != getMultistate(element.Value);
 }
 
-function drawNumber(graphics, resources, element, offset){
+function drawNumber(graphics, resources, element){
   startPerfLog("drawNumber");
   var number = getValue(element.Value);
   var spacing = element.Spacing ? element.Spacing : 0;
@@ -113,11 +113,8 @@ function drawNumber(graphics, resources, element, offset){
   var numberOfDigits = element.Digits;
   
   
-  //print("drawNumber: ", number, element, offset);
+  //print("drawNumber: ", number, element);
   if (number) number = number.toFixed(0);
-
-  //var numberOffset = updateOffset(element, offset);
-  var numberOffset = offset;
 
   var isNegative;
   var digits;
@@ -189,9 +186,9 @@ function drawNumber(graphics, resources, element, offset){
   if (isNegative && minusImage){
     //print("Draw minus at", currentX);
     if (imageIndexMinus){
-      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexMinus));
+      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, "" + (0 + imageIndexMinus));
     } else {
-      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "minus");
+      drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, "minus");
     }
     currentX += minusImage.width + spacing;
   }
@@ -204,26 +201,21 @@ function drawNumber(graphics, resources, element, offset){
       currentDigit = 0;
     }
     //print("Digit " + currentDigit + " " + currentX);
-    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, currentDigit + imageIndex);
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, currentDigit + imageIndex);
     currentX += firstImage.width + spacing;
   }
   if (imageIndexUnit){
     //print("Draw unit at", currentX);
-    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, "" + (0 + imageIndexUnit));
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, "" + (0 + imageIndexUnit));
   } else if (element.Unit){
-    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, numberOffset, element, getMultistate(element.Unit,"unknown"));
+    drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, getMultistate(element.Unit,"unknown"));
   }
   element.lastDrawnValue = number;
 
   endPerfLog("drawNumber");
 }
 
-function setColors(graphics, properties){
-  if (properties.fg) graphics.setColor(properties.fg);
-  if (properties.bg) graphics.setBgColor(properties.bg);
-}
-
-function drawElement(graphics, resources, pos, offset, element, lastElem){
+function drawElement(graphics, resources, pos, element, lastElem){
   startPerfLog("drawElement");
   var cacheKey = "_"+(lastElem?lastElem:"nole");
   if (!element.cachedImage) element.cachedImage={};
@@ -247,24 +239,21 @@ function drawElement(graphics, resources, pos, offset, element, lastElem){
   
   //print("cache ",typeof element.cachedImage[cacheKey], element.ImagePath, lastElem);
   if(element.cachedImage[cacheKey]){
-    //print("drawElement ",pos, offset, path, lastElem);
-    //print("drawElement offset", offset, pos.X, pos.Y);
-    //print("resource ", resource,pos, offset, path, lastElem);
-    var imageOffset = updateColors(pos, offset);
-    setColors(graphics, imageOffset);
-    //print("drawImage from drawElement", image, pos, offset);
+    //print("drawElement ",pos, path, lastElem);
+    //print("resource ", resource,pos, path, lastElem);
+    //print("drawImage from drawElement", image, pos);
     var options={};
-    if (pos.RotationValue){
-      options.rotate = radians(pos);
+    if (element.RotationValue){
+      options.rotate = radians(element);
     }
-    if (pos.Scale){
-      options.scale = pos.ScaleValue;
+    if (element.Scale){
+      options.scale = element.ScaleValue;
     }
     //print("options", options);
     //print("Memory before drawing", process.memory(false));
     startPerfLog("drawElement_g.drawImage");
     try{
-    graphics.drawImage(element.cachedImage[cacheKey] ,(imageOffset.X ? imageOffset.X : 0) + (pos.X ? pos.X : 0),(imageOffset.Y ? imageOffset.Y :0) + (pos.Y ? pos.Y : 0), options);} catch (e) {
+    graphics.drawImage(element.cachedImage[cacheKey] ,(pos.X ? pos.X : 0), (pos.Y ? pos.Y : 0), options);} catch (e) {
       //print("Error", e, element.cachedImage[cacheKey]);
     }
     endPerfLog("drawElement_g.drawImage");
@@ -289,53 +278,46 @@ function getMultistate(name, defaultValue){
   return undefined;
 }
 
-function drawScale(graphics, resources, scale, offset){
+function drawScale(graphics, resources, scale){
   startPerfLog("drawScale");
-  //print("drawScale", scale, offset);
+  //print("drawScale", scale);
   var segments = scale.Segments;
   var imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
 
   var value = scaledown(scale.Value, scale.MinValue, scale.MaxValue);
 
   //print("Value is ", value, "(", maxValue, ",", minValue, ")");
-  
-  var scaleOffset = updateOffset(scale, offset);
-  
+
   var segmentsToDraw = Math.ceil(value * segments.length);
 
   for (var i = 0; i < segmentsToDraw; i++){
-    drawElement(graphics, resources, segments[i], scaleOffset, scale, imageIndex + i);
+    drawElement(graphics, resources, segments[i], scale, imageIndex + i);
   }
   scale.lastDrawnValue = segmentsToDraw;
 
   endPerfLog("drawScale");
 }
 
-function drawDigit(graphics, resources, element, offset, digit){
-  drawElement(graphics, resources, element, offset, element, digit);
-}
-
-function drawImage(graphics, resources, image, offset, name){
+function drawImage(graphics, resources, image, name){
   startPerfLog("drawImage");
-  var imageOffset = updateColors(image, offset);
-  //print("drawImage", image, offset, name);
+  //print("drawImage", image.X, image.Y, name);
   if (image.Value && image.Steps){
     var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
     //print("Step", steps, "of", image.Steps);
-    drawElement(graphics, resources, image, imageOffset, image, "" + steps);
+    drawElement(graphics, resources, image, image, "" + steps);
   } else if (image.ImageIndex !== undefined) {
-    drawElement(graphics, resources, image, imageOffset, image, image.ImageIndex);
+    drawElement(graphics, resources, image, image, image.ImageIndex);
   } else {
-    drawElement(graphics, resources, image, imageOffset, image, name ? "" + name: undefined);
+    drawElement(graphics, resources, image, image, name ? "" + name: undefined);
   }
   
   endPerfLog("drawImage");
 }
 
-function drawCodedImage(graphics, resources, image, offset){
+function drawCodedImage(graphics, resources, image){
   startPerfLog("drawCodedImage");
   var code = getValue(image.Value);
-  //print("drawCodedImage", image, offset, code);
+  //print("drawCodedImage", image, code);
 
   if (image.ImagePath) {
     var factor = 1;
@@ -350,10 +332,10 @@ function drawCodedImage(graphics, resources, image, offset){
     }
     if (code / factor > 1){
       //print("found match");
-      drawImage(graphics, resources, image, offset, currentCode);
+      drawImage(graphics, resources, image, currentCode);
     } else {
       //print("fallback");
-      drawImage(graphics, resources, image, offset, "fallback");
+      drawImage(graphics, resources, image, "fallback");
     }
   }
   image.lastDrawnValue = code;
@@ -390,27 +372,6 @@ function getWeatherTemperature(){
   return result;
 }
 
-function updateOffset(element, offset){
-  startPerfLog("updateOffset");
-  var newOffset = { X: offset.X ? offset.X : 0, Y: offset.Y ? offset.Y : 0 };
-  if (element && element.X) newOffset.X += element.X;
-  if (element && element.Y) newOffset.Y += element.Y;
-  newOffset = updateColors(element, newOffset);
-  //print("Updated offset from ", offset, "to", newOffset);
-  endPerfLog("updateOffset");
-  return newOffset;
-}
-
-function updateColors(element, offset){
-  var newOffset = { X: offset.X ? offset.X : 0, Y: offset.Y ? offset.Y : 0 };
-  if (element){
-    newOffset.fg = element.ForegroundColor ? element.ForegroundColor: offset.fg;
-    newOffset.bg = element.BackgroundColor ? element.BackgroundColor: offset.bg;
-  }
-  //print("Updated offset from ", offset, "to", newOffset);
-  return newOffset;
-}
-
 function scaledown(value, min, max){
   //print("scaledown", value, min, max);
   var scaled = E.clip(getValue(value),getValue(min,0),getValue(max,1));
@@ -427,20 +388,17 @@ function radians(rotation){
   return value;
 }
 
-function drawPoly(graphics, resources, element, offset){
+function drawPoly(graphics, resources, element){
     startPerfLog("drawPoly");
     var vertices = [];
-    var primitiveOffset = offset.clone();
-    if (element.X) primitiveOffset.X += element.X;
-    if (element.Y) primitiveOffset.Y += element.Y;
 
     startPerfLog("drawPoly_transform");
     for (var c of element.Vertices){
       vertices.push(c.X);
       vertices.push(c.Y);
     }
-    var transform = { x: primitiveOffset.X,
-      y: primitiveOffset.Y
+    var transform = { x: element.X ? element.X : 0,
+      y: element.Y ? element.Y : 0
     };
     if (element.RotationValue){
       transform.rotate = radians(element);
@@ -461,26 +419,23 @@ function drawPoly(graphics, resources, element, offset){
     startPerfLog("drawPoly_g.drawPoly");
     graphics.drawPoly(vertices,true);
     endPerfLog("drawPoly_g.drawPoly");
-    
+
     endPerfLog("drawPoly");
 }
 
-function drawRect(graphics, resources, element, offset){
+function drawRect(graphics, resources, element){
     startPerfLog("drawRect");
     var vertices = [];
-    var primitiveOffset = offset.clone();
-    if (element.X) primitiveOffset.X += element.X;
-    if (element.Y) primitiveOffset.Y += element.Y;
 
     if (element.ForegroundColor) graphics.setColor(element.ForegroundColor);
 
     if (element.Filled){
       startPerfLog("drawRect_g.fillRect");
-      graphics.fillRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      graphics.fillRect(element.X, element.Y, element.X + element.Width, element.Y + element.Height);
       endPerfLog("drawRect_g.fillRect");
     } else {
       startPerfLog("drawRect_g.fillRect");
-      graphics.drawRect(primitiveOffset.X, primitiveOffset.Y, primitiveOffset.X + element.Width, primitiveOffset.Y + element.Height);
+      graphics.drawRect(element.X, element.Y, element.X + element.Width, element.Y + element.Height);
       endPerfLog("drawRect_g.fillRect");
     }
     endPerfLog("drawRect");
@@ -537,20 +492,17 @@ multistates.WeatherTemperatureNegative = () => { return getWeatherTemperature().
 multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
 multistates.StepsGoal = () => { return (numbers.Steps() >= stepsgoal) ? "on": "off"; };
 
-function drawMultiState(graphics, resources, element, offset){
+function drawMultiState(graphics, resources, element){
   startPerfLog("drawMultiState");
-  //print("drawMultiState", element, offset);
+  //print("drawMultiState", element);
   var value = multistates[element.Value]();
-  //print("drawImage from drawMultiState", element, offset, value);
-  drawImage(graphics, resources, element, offset, value);
+  //print("drawImage from drawMultiState", element, value);
+  drawImage(graphics, resources, element, value);
   element.lastDrawnValue = value;
   endPerfLog("drawMultiState");
 }
 
 var pulse,alt,temp,press;
-
-
-var zeroOffset={X:0,Y:0};
 
 
 var requestedDraws = 0;
@@ -599,9 +551,9 @@ function initialDraw(resources, face){
       requestedDraws = 0;
       setTimeout(()=>{initialDraw(resources, face);}, 10);
     }
-  } else {
-    print("queued draw");
-  }
+  } //else {
+    //print("queued draw");
+  //}
 }
 
 function handleHrm(e){

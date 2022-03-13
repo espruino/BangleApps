@@ -595,7 +595,6 @@
           var c = elements[i].value;
           console.log("Check element", c);
           var name = c.Layer;
-          if (c.type == "Standalone") name = "standalone" + counter++;
           var plane = wrapInTimeouts ? 1 : 0;
           if (typeof c.Plane == "number"){
             plane = c.Plane;
@@ -623,9 +622,6 @@
           var lastSetBgColor;
           
           if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
-          
-          code += "p" + plane + ".setBgColor(g.theme.bg);\n";
-          code += "p" + plane + ".setColor(g.theme.fg);\n";
           
           if (properties.Redraw && properties.Redraw.Clear){
             if (wrapInTimeouts && plane != 0){
@@ -728,10 +724,10 @@
               }
               
               if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
-              code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
               code += "" + colorsetting;
+              code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
               if (addDebug()) code += 'print("Drawing element ' + elementIndex + ' with type ' + c.type + ' on plane ' + planeName + '");' + "\n";
-              code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
+              code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value);\n";
 
               code += (condition.length > 0 ? "}\n" : "");
             }
