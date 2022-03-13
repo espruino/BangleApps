@@ -8,13 +8,14 @@
   "screenshots": [
     {"url": "black.png"}
   ],
-  "tags": "",
+  "tags": "clock",
+  "type": "clock",
   "supports": [
     "BANGLEJS2"
   ],
   "readme": "README.md",
   "allow_emulator": true,
-  "storage": [
+  "storage": [ 
     {
       "name": "mtgwatchface.app.js",
       "url": "app.js",
