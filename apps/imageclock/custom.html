@@ -21,8 +21,10 @@
 
     <p>
       Options:</br>
-      <input type="checkbox" id="timeoutwrap" name="mode" checked/>
+      <input type="checkbox" id="timeoutwrap" name="mode"/>
       <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
+      <input type="checkbox" id="debugprints" name="mode"/>
+      <label for="debugprints">Add debug prints to generated code</label></br>
     </p>
 
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
@@ -54,6 +56,10 @@
       
       function isNativeFormat(){
         return document.getElementById("useNative").checked;
+      }
+      
+      function addDebug(){
+        return document.getElementById("debugprints").checked;
       }
       
       function convertAmazfitTime(time){
@@ -628,7 +634,7 @@
               code += "p = p.then(()=>{\n";
             }
             code += "var ct=Date.now();\n"
-            //code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
+            if (addDebug()) code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
             code += 'startPerfLog("initialDraw_g.clear");'+"\n";
             code += "p" + plane + ".clear(true);\n";
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
@@ -642,7 +648,7 @@
             code += "p = p.then(()=>{\n";
             code += "var ct=Date.now();\n";
             
-            //code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
+            if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
             //code += "g.drawImage(p" + i + ".asImage());";
             code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer});\n";
             
@@ -664,6 +670,7 @@
               code += "p = p.then(()=>{\n";
             }
             code += "var ct=Date.now();\n";
+            if (addDebug()) code += 'print("Starting layer ' + layername + '");' + "\n";
             
             var checkForLayerChange = false;
             var checkcode = "";
@@ -720,8 +727,10 @@
                 colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
               }
               
+              if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
               code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
               code += "" + colorsetting;
+              if (addDebug()) code += 'print("Drawing element ' + elementIndex + ' with type ' + c.type + ' on plane ' + planeName + '");' + "\n";
               code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value, {X:0,Y:0});\n";
 
               code += (condition.length > 0 ? "}\n" : "");
