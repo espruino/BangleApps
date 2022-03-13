@@ -1,16 +1,22 @@
 # Imageclock
 
 This app is a highly customizable watchface. To use it, you need to select
-a watchface from another source.
+a watchface from another source. There is a native format as described here. You can also load decompiled watchfaces for Amazfit BIP fitness trackers.
 
 # Usage
 
+## Install a watchface
+
 Choose the folder which contains the watchface, then clock "Upload to watch".
+
+## Usage on the watch
+
+Slide up/down to hide/show widgets.
+Press button to start launcher.
 
 # Design watch faces
 
 ## Folder structure
-
 
 * watchfacename
   * resources/
@@ -49,8 +55,9 @@ Properties: {
   "Redraw": {
     "Unlocked": 5000,
     "Locked": 60000,
-    "Default": "Always"
-    "Events": ["HRM"]
+    "Default": "Always",
+    "Events": ["HRM"],
+    "Clear": true
   },
   "Events": ["lock","HRM"]
 }
@@ -129,7 +136,11 @@ Mandatory:
   "Value": "Temperature",
   "MinValue": "-20",
   "MaxValue": "50",
-  "ImagePath": [ "path", "to", "scale", "folder" ]
+  "ImagePath": [ "path", "to", "scale", "folder" ],
+  "Segments": [
+    { "X": 5, "Y": 5},
+    { "X": 10, "Y": 10 }
+  ]
 }
 ```
 The `Value` field is one of the implemented numerical values.
@@ -175,6 +186,21 @@ Mandatory:
     {"X":-1, "Y":-75},
     {"X":-2, "Y":0}
   ]
+}
+```
+The `RotationValue` field is one of the implemented numeric values.
+
+##### Rect
+
+```
+"Rect":{
+  "X": 10,
+  "Y": 20,
+  "Width": 30,
+  "Height": 40,
+  "Filled": true,
+  "ForegroundColor": "#00f",
+  "BackgroundColor": "#008"
 }
 ```
 The `RotationValue` field is one of the implemented numeric values.
@@ -263,11 +289,7 @@ stored on the watch
 * Handle events and redraws better
 * Performance improvements
   * Mark elements with how often they need to be redrawn
-  * Drawing to buffers and compositing later
-* Allow watchfaces to declare if the want to show widgets
-* Temporarily show widgets with slide up/down
 * Finalize the file format
-* Settings
 * Localization
 
 # Creator
