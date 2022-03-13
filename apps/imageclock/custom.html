@@ -743,6 +743,22 @@
         precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('timeoutwrap').checked);
         console.log("After precompiling", precompiledJs);
       }
+      
+      function convertJsToJson(imgstr){
+        var E = {};
+        E.toArrayBuffer = (s)=>s;
+        var atob = (s)=>s;
+        var imgstr = "imgstr = " + imgstr;
+        eval(imgstr);
+        imgstr.img = imgstr.buffer;
+        delete imgstr.buffer;
+        if (imgstr.palette) {
+          imgstr.paletteData = "[" + imgstr.palette.toString() + "]";
+          delete imgstr.palette;
+        }
+        console.log("converted Image JSON", JSON.stringify(imgstr));
+        return JSON.stringify(imgstr);
+      }
 
       function imageLoaded() {
         var options = {};
@@ -756,7 +772,7 @@
         options.brightness = 0;
         options.contrast = 0;
         options.mode = infoJson.color ? infoJson.color : "1bit";
-        options.output = "jsonobject";
+        options.output = "object";
         
         console.log("Loaded image has path", this.path);
         var jsonPath = this.path.split("/");
@@ -797,7 +813,8 @@
         imgstr = imageconverter.RGBAtoString(rgba, options);
         var outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
         ctx.putImageData(outputImageData,this.width,0);
-       
+        
+        imgstr = convertJsToJson(imgstr);
 
         // checkerboard for transparency on original image
         var imageData = ctx.getImageData(0, 0, this.width, this.height);
