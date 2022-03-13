@@ -577,6 +577,12 @@ function initialDraw(resources, face){
 
     promise.then(()=>{
       var currentDrawingTime = Date.now();
+      if (showWidgets){
+        //print("Draw widgets");
+        Bangle.drawWidgets();
+        g.setColor(g.theme.fg);
+        g.drawLine(0,24,g.getWidth(),24);
+      }
       lastDrawTime = Date.now() - start;
       drawingTime += Date.now() - currentDrawingTime;
       //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
@@ -695,7 +701,42 @@ function handleLock(isLocked, forceRedraw){
   }
 }
 
+
+var showWidgets = false;
+var showWidgetsChanged = false;
+var currentDragDistance = 0;
+
 Bangle.setUI("clock");
+Bangle.on('drag', (e)=>{
+    currentDragDistance += e.dy;
+    if (Math.abs(currentDragDistance) < 10) return;
+    dragDown = currentDragDistance > 0;
+    currentDragDistance = 0;
+    if (!showWidgets && dragDown){
+      //print("Enable widgets");
+      if (WIDGETS && typeof WIDGETS === "object") {
+        for (let w in WIDGETS) {
+          var wd = WIDGETS[w];
+          wd.draw = originalWidgetDraw[w];
+          wd.area = originalWidgetArea[w];
+        }
+      }
+      showWidgetsChanged = true;
+    }
+    if (showWidgets && !dragDown){
+      //print("Disable widgets");
+      clearWidgetsDraw();
+      firstDraw = true;
+      showWidgetsChanged = true;
+    }
+    if (showWidgetsChanged){
+      showWidgetsChanged = false;
+      //print("Draw after widget change");
+      showWidgets = dragDown;
+      initialDraw();
+    }
+  }
+);
 
 if (!events || events.includes("pressure")){
   Bangle.on('pressure', handlePressure);
@@ -716,9 +757,18 @@ if (!events || events.includes("charging")) {
   Bangle.on('charging', handleCharging);
 }
 
+var originalWidgetDraw = {};
+var originalWidgetArea = {};
+
 function clearWidgetsDraw(){
+  //print("Clear widget draw calls");
   if (WIDGETS && typeof WIDGETS === "object") {
-    for (let wd of WIDGETS) {
+    originalWidgetDraw = {};
+    originalWidgetArea = {};
+    for (let w in WIDGETS) {
+      var wd = WIDGETS[w];
+      originalWidgetDraw[w] = wd.draw;
+      originalWidgetArea[w] = wd.area;
       wd.draw = () => {};
       wd.area = "";
     }
@@ -728,6 +778,6 @@ function clearWidgetsDraw(){
 setTimeout(()=>{
   Bangle.loadWidgets();
   clearWidgetsDraw();
-}, 100);
+}, 0);
 
 handleLock(Bangle.isLocked());
