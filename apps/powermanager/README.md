@@ -1,6 +1,10 @@
 # Power manager
 
-Manages settings for charging. You can set a warning threshold to be able to disconnect the charger at a given percentage. Also allows to set the battery calibration offset.
+Manages settings for charging.
+Features:
+* Warning threshold to be able to disconnect the charger at a given percentage
+* Set the battery calibration offset.
+* Force monotonic battery percentage or voltage
 
 ## Internals
 
