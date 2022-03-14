@@ -10,6 +10,36 @@ var endPerfLog = () => {};
 var printPerfLog = () => print("Deactivated");
 var resetPerfLog = () => {performanceLog = {};};
 
+var colormap={
+"#000":0,
+"#00f":1,
+"#0f0":2,
+"#0ff":3,
+"#f00":4,
+"#f0f":5,
+"#ff0":6,
+"#fff":7
+};
+
+var palette = new Uint16Array([
+0x0000, //black #000
+0x001f, //blue #00f
+0x07e0, //green #0f0
+0x07ff, //cyan #0ff
+0xf800, //red #f00
+0xf81f, //magenta #f0f
+0xffe0, //yellow #ff0
+0xffff, //white #fff
+0xffff, //white
+0xffff, //white
+0xffff, //white
+0xffff, //white
+0xffff, //white
+0xffff, //white
+0xffff, //white
+0xffff, //white
+])
+
 var p0 = g;
 var p1;
 

@@ -621,7 +621,7 @@
           var lastSetColor;
           var lastSetBgColor;
           
-          if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),16,{msb:true});\n";
+          if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),4,{msb:true});\n";
           
           if (properties.Redraw && properties.Redraw.Clear){
             if (wrapInTimeouts && plane != 0){
@@ -646,7 +646,7 @@
             
             if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
             //code += "g.drawImage(p" + i + ".asImage());";
-            code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer});\n";
+            code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer, palette: palette});\n";
             
             
             code += "drawingTime += Date.now() - ct;\n";
@@ -716,11 +716,17 @@
               var colorsetting = "";
               if (c.value.ForegroundColor && lastSetColor != c.value.ForegroundColor){
                 lastSetColor = c.value.ForegroundColor;
-                colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
+                if (plane > 0)
+                  colorsetting += planeName + ".setColor(colormap[\"" + c.value.ForegroundColor + "\"]);\n";
+                else
+                  colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
               }
               if (c.value.BackgroundColor && lastSetBgColor != c.value.BackgroundColor){
                 lastSetBgColor = c.value.BackgroundColor;
-                colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+                if (plane > 0)
+                  colorsetting += planeName + ".setBgColor(colormap[\"" + c.value.BackgroundColor + "\"]);\n";
+                else
+                  colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
               }
               
               if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
