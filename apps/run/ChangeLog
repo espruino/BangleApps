@@ -7,3 +7,4 @@
 0.06: Add option to record a run using the recorder app automatically
 0.07: Fix crash if an odd number of active boxes are configured (fix #1473)
 0.08: Added support for notifications from exstats. Support all stats from exstats
+0.09: Fix broken start/stop if recording not enabled (fix #1561)

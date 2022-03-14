@@ -243,6 +243,7 @@ and which gives information about the app for the Launcher.
   "screenshots" : [ { url:"screenshot.png" } ], // optional screenshot for app
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
+                              //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
                               //   'launch' - replacement launcher app
                               //   'bootloader' - code that runs at startup only
