@@ -7,7 +7,9 @@ I know that it seems redundant because there already **is** a *time&cal*-app, bu
 - ![locked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot.png)
 - unlocked screen (twist?) with seconds
 - ![unlocked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot2.png)
-
+- swipe up for big calendar (up down to scroll, left/right to exit)
+- ![unlocked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot3.png)
+- 
 ## Configurable Features
 - Number of calendar rows (weeks)
 - Buzz on connect/disconnect (I know, this should be an extra widget, but for now, it is included)
@@ -15,6 +17,14 @@ I know that it seems redundant because there already **is** a *time&cal*-app, bu
 - First day of the week
 - Red Saturday
 - Red Sunday
+- Swipes (to disable all gestures)
+- Swipes: music (swipe down)
+- Spipes: messages (swipe right)
+
+## Auto detects your message/music apps:
+- swiping down will search your files for an app with the string "music" in its filename and launch it
+- swiping right will search your files for an app with the string "message" in its filename and launch it.
+- Configurable apps coming soon.
 
 ## Feedback
 The clock works for me in a 24h/MondayFirst/WeekendFree environment but is not well-tested with other settings.
