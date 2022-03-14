@@ -31,7 +31,12 @@ function updateSettings() {
 }
 
 function getTrackNumber(filename) {
-  return parseInt(filename.match(/^recorder\.log(.*)\.csv$/)[1]||0);
+  var trackNum = 0;
+  var matches = filename.match(/^recorder\.log(.*)\.csv$/);
+  if (matches) {
+    trackNum = parseInt(matches[1]||0);
+  }
+  return trackNum;
 }
 
 function showMainMenu() {
