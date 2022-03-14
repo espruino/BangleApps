@@ -1,6 +1,6 @@
 {
   "recording":false,
-  "file":"record.log0.csv",
+  "file":"recorder.log0.csv",
   "period":10,
   "record" : ["gps"]
 }
