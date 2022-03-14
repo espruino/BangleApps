@@ -8,7 +8,7 @@ I know that it seems redundant because there already **is** a *time&cal*-app, bu
 - unlocked screen (twist?) with seconds
 - ![unlocked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot2.png)
 - swipe up for big calendar (up down to scroll, left/right to exit)
-- ![unlocked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot3.png)
+- ![big calendar](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot3.png)
 - 
 ## Configurable Features
 - Number of calendar rows (weeks)
