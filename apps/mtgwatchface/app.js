@@ -51,6 +51,16 @@ Graphics.prototype.setFontTreasurehuntDOYwE_40_N = function(scale) {
   return this;
 }
 
+//Bluetooth on
+var btOnImg = {
+  width : 15, height : 22, bpp : 3,
+  transparent : 2,
+  buffer : E.toArrayBuffer(atob("/////H//////A/////4A/////4BH////4JI////4JJH///4J5I///4BP5I///BJ/5A//BJPP5A/4JJ5P5H4J/PL/JHBJf/5JI4JJ/7JJIBP75/ZJAJZPJ/JIBJJ5/JJHBJP/JJA4JJ/JJI/4JPJJI//4BJJA////AAH//A=="))
+}
+var btOffImg = {
+  width : 15, height : 22, bpp : 1,
+  buffer : E.toArrayBuffer(atob("AAAAwAcAGgBEAQgEEBgQIDCAIQAiACgAUABgAMABgAKACQARAEGDAPgA"))
+}
 
 function draw() {
   g.clear();
@@ -58,6 +68,7 @@ function draw() {
   drawDate();
   drawTime();
   drawBattery();
+  drawBluetooth();
 }
 function drawDate() {
   days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
@@ -103,7 +114,13 @@ function drawBattery(){
 }
 
 function drawBluetooth(){
-
+  var img;
+  if (NRF.getSecurityStatus().connected) {
+    img=btOnImg;
+  } else {
+    img=btOffImg;
+  }
+  g.reset().drawImage(img,3,3);
 }
 
 function drawBackground() {
@@ -135,6 +152,9 @@ draw();
 Bangle.setLocked(false);
 Bangle.setLCDPower(true);
 Bangle.setUI("clock");
+
+NRF.on('connect', draw);
+NRF.on('disconnect', draw);
 
 var redrawTimerId = setInterval(function(){
    draw();
