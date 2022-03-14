@@ -31,7 +31,7 @@
     var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
     var op = E.getBattery;
     E.getBattery = function() {
-      var current = (op()+op()+op()+op())/4;
+      var current = Math.round((op()+op()+op()+op())/4);
       if (Bangle.isCharging() && current > p) p = current;
       if (!Bangle.isCharging() && current < p) p = current;
       return p;
