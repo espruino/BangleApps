@@ -38,7 +38,7 @@ LoopbackA.setConsole(true);\n`;
   boot += `
 Bluetooth.line="";
 Bluetooth.on('data',function(d) {
-  var l = (Bluetooth.line + d).split("\n");
+  var l = (Bluetooth.line + d).split(/[\\n\\r]/);
   Bluetooth.line = l.pop();
   l.forEach(n=>Bluetooth.emit("line",n));
 });
@@ -196,7 +196,7 @@ if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
 var getPriority = /.*\.(\d+)\.boot\.js$/;
-require('Storage').list(/\.boot\.js/).sort((a,b)=>{
+require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
   var aPriority = a.match(getPriority);
   var bPriority = b.match(getPriority);
   if (aPriority && bPriority){
@@ -206,7 +206,7 @@ require('Storage').list(/\.boot\.js/).sort((a,b)=>{
   } else if (!aPriority && bPriority){
     return 1;
   }
-  return a > b;
+  return a==b ? 0 : (a>b ? 1 : -1);
 }).forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
