@@ -3,13 +3,15 @@
 This is my "Hello World". I first made this watchface almost 10 years ago for my original Pebble and Pebble Time and I missed this so much, that I had to write it for the BangleJS2.
 I know that it seems redundant because there already **is** a *time&cal*-app, but it didn't fit my style.
 
-- locked screen with only one minimal update/minute
-- ![locked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot.png)
-- unlocked screen (twist?) with seconds
-- ![unlocked screen](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot2.png)
-- swipe up for big calendar (up down to scroll, left/right to exit)
-- ![big calendar](https://foostuff.github.io/BangleApps/apps/clockcal/screenshot3.png)
-- 
+|Screenshot|description|
+|:--:|:-|
+|![locked screen](screenshot.png)|locked: triggers only one minimal update/min|
+|![unlocked screen](screenshot2.png)|unlocked: smaller clock, but with seconds|
+|![big calendar](screenshot3.png)|swipe up for big calendar, (up down to scroll, left/right to exit)|
+
+
+
+
 ## Configurable Features
 - Number of calendar rows (weeks)
 - Buzz on connect/disconnect (I know, this should be an extra widget, but for now, it is included)
