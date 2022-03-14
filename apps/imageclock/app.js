@@ -408,18 +408,15 @@ function drawPoly(graphics, resources, element){
 
     endPerfLog("drawPoly_transform");
 
-    if (element.ForegroundColor) graphics.setColor(element.ForegroundColor);
-
     if (element.Filled){
       startPerfLog("drawPoly_g.fillPoly");
       graphics.fillPoly(vertices,true);
       endPerfLog("drawPoly_g.fillPoly");
+    } else {
+      startPerfLog("drawPoly_g.drawPoly");
+      graphics.drawPoly(vertices,true);
+      endPerfLog("drawPoly_g.drawPoly");
     }
-
-    if (element.BackgroundColor) graphics.setColor(element.BackgroundColor);
-    startPerfLog("drawPoly_g.drawPoly");
-    graphics.drawPoly(vertices,true);
-    endPerfLog("drawPoly_g.drawPoly");
 
     endPerfLog("drawPoly");
 }
@@ -427,8 +424,6 @@ function drawPoly(graphics, resources, element){
 function drawRect(graphics, resources, element){
     startPerfLog("drawRect");
     var vertices = [];
-
-    if (element.ForegroundColor) graphics.setColor(element.ForegroundColor);
 
     if (element.Filled){
       startPerfLog("drawRect_g.fillRect");
@@ -440,6 +435,21 @@ function drawRect(graphics, resources, element){
       endPerfLog("drawRect_g.fillRect");
     }
     endPerfLog("drawRect");
+}
+
+function drawCircle(graphics, resources, element){
+    startPerfLog("drawCircle");
+
+    if (element.Filled){
+      startPerfLog("drawCircle_g.fillCircle");
+      graphics.fillCircle(element.X, element.Y, element.Radius);
+      endPerfLog("drawCircle_g.fillCircle");
+    } else {
+      startPerfLog("drawCircle_g.drawCircle");
+      graphics.drawCircle(element.X, element.Y, element.Radius);
+      endPerfLog("drawCircle_g.drawCircle");
+    }
+    endPerfLog("drawCircle");
 }
 
 var numbers = {};

@@ -570,7 +570,7 @@
           if (typeof element.Plane == "number") next.Plane = element.Plane;
           next.Layer = element.Layer ? (element.Layer) : "" + c;
           
-          if (["MultiState","Image","CodedImage","Number","Poly","Rect","Scale"].includes(c)){
+          if (["MultiState","Image","CodedImage","Number","Circle","Poly","Rect","Scale"].includes(c)){
             result.push({type:c, value: next});
           } else {
             result = result.concat(collapseTree(next));
