@@ -66,6 +66,9 @@ function onStartStop() {
     }
   }
 
+  if (!prepPromises.length) // fix for Promise.all bug in 2v12
+    prepPromises.push(Promise.resolve());
+    
   Promise.all(prepPromises)
     .then(() => {
       if (running) {
