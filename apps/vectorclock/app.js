@@ -81,7 +81,7 @@ function draw() {
 
   executeCommands();
 
-  Bangle.drawWidgets();
+  if (process.env.HWVERSION==2) Bangle.drawWidgets();
 }
 
 var timeout;
