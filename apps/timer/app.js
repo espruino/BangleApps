@@ -44,7 +44,7 @@ function countDown() {
   }
   
   g.clear(true);
-  g.drawImage(require("Storage").read("timer.png"),70,20);
+  g.drawImage(require("Storage").read("timer.img"),70,20);
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",60); // vector font, 80px  
   // draw the current counter value
