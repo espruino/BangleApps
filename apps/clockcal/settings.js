@@ -8,6 +8,9 @@
         FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
         REDSUN: true, // Use red color for sunday?
         REDSAT: true, // Use red color for saturday?
+        DRAGENABLED: true, //Enable drag gestures (bigger calendar etc)
+        DRAGMUSIC: true, //Enable drag down for music (looks for "music*app")
+        DRAGMESSAGES: true //Enable drag right for messages (looks for "message*app")
     }, require('Storage').readJSON(FILE, true) || {});
 
 
@@ -67,6 +70,30 @@
                 writeSettings();
             }
         },
+        'Swipes (big cal.)?': {
+            value: settings.DRAGENABLED,
+            format: v => v ? "On" : "Off",
+            onchange: v => {
+                settings.DRAGENABLED = v;
+                writeSettings();
+            }
+        },
+        'Swipes (music)?': {
+            value: settings.DRAGMUSIC,
+            format: v => v ? "On" : "Off",
+            onchange: v => {
+                settings.DRAGMUSIC = v;
+                writeSettings();
+            }
+        },
+        'Swipes (messg)?': {
+            value: settings.DRAGMESSAGES,
+            format: v => v ? "On" : "Off",
+            onchange: v => {
+                settings.DRAGMESSAGES = v;
+                writeSettings();
+            }
+        },
         'Load deafauls?': {
             value: 0,
             min: 0, max: 1,
@@ -80,13 +107,16 @@
                         FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
                         REDSUN: true, // Use red color for sunday?
                         REDSAT: true, // Use red color for saturday?
+                        DRAGENABLED: true,
+                        DRAGMUSIC: true,
+                        DRAGMESSAGES: true
                     };
                     writeSettings();
-                    load()
+                    load();
                 }
             }
         },
-    }
+    };
     // Show the menu
     E.showMenu(menu);
-})
+});
