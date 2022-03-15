@@ -2,7 +2,7 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
   const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
   var southernHemisphere = false; // when in southern hemisphere, use the "My Location" App
 
-  const simulate = true; // simulate one month in one minute
+  const simulate = false; // simulate one month in one minute
   const updateR = 1000; // update every x ms in simulation
 
   function moonPhase() {
