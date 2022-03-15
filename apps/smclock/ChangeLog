@@ -2,3 +2,4 @@
 0.02: Add battery level
 0.03: Fix battery display when full
 0.04: Add support for settings
+0.05: Add ability to change background (3bit or 4bit)

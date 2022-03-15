@@ -10,7 +10,9 @@ It shows battery level in the upper left corner, date information in the upper r
 
 **Analog Clock:**
 
-**Human Readable Date:** When the setting is on, the date is shown in a more human-friendly format (e.g. "Oct 2"), otherwise the date is shown in a standard format (e.g. "02/10"). Default is off.
+**Background:** When the setting is set as "3bit", a background with more accurate colors is chosen for the watchface. Otherwise, it uses a background following the 16-bit Mac Color Palette.
+
+**Date Format:** When the setting is set as "Long", the date is shown in a more human-friendly format (e.g. "Oct 2"), otherwise the date is shown in a standard format (e.g. "02/10"). Default is off.
 
 **Show Week Info:** When the setting is on, the weekday and week number are shown in the upper right box. When the setting is off, the full year is shown instead. Default is off.
 

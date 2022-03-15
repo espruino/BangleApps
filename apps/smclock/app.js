@@ -1,5 +1,10 @@
 const SETTINGSFILE = "smclock.json";
-const background = {
+const image3bit = {
+  width : 176, height : 176, bpp : 3,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("/4A/AH4AC23btoCct/pkmSpICcIP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5Bp/4A/AH4AC/kAAH0/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5BpA="))
+};
+const image4bit = {
   width : 176, height : 176, bpp : 4,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("/4A/AH4Au1QAp1/2swApK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K+//AH4A/AF8AAH4AUK/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/AA=="))
@@ -12,6 +17,7 @@ var batLevel = -1;
 var batColor = [0, 0, 0];
 
 // settings variables
+var backgroundImage;
 var dateFormat;
 var drawInterval;
 var pollInterval;
@@ -25,6 +31,7 @@ function loadSettings() {
   function def(value, def) {return value !== undefined ? value : def;}
   var settings = require("Storage").readJSON(SETTINGSFILE, true) || {};
 
+  backgroundImage = def(settings.backgroundImage, "3bit");
   dateFormat = def(settings.dateFormat, "Short");
   drawInterval = def(settings.drawInterval, 10);
   pollInterval = def(settings.pollInterval, 60);
@@ -75,6 +82,12 @@ function getBatteryColor(level) {
 }
 
 function draw() {
+  var background;
+  if (backgroundImage == "3bit") {
+    background = image3bit;
+  } else {
+    background = image4bit;
+  }
   g.drawImage(background);
 
   const color = getBatteryColor(batLevel);
