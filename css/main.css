@@ -81,7 +81,7 @@ a.btn.btn-link.dropdown-toggle {
   min-height: 8em;
 }
 
-.tile-content { position: relative; }
+.tile-content { position: relative; word-break: break-all; }
 .link-github {
   position:absolute;
   top: 36px;
