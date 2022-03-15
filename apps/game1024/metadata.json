@@ -1,7 +1,7 @@
 { "id": "game1024",
     "name": "1024 Game",
     "shortName" : "1024 Game",
-    "icon": "game1024.img",
+    "icon": "game1024.png",
     "description": "Join the numbers and get to the 1024 tile!",
     "tags": "game puzzle 1024",
     "allow_emulator": true,
