@@ -8,6 +8,6 @@
   "tags": "widget,tools",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name":"widdaysleft.wid.js","url":"widget.js"}
+    {"name":"widdaysleft.wid.js","url":"widget.js", "settings":"daysleft.json"}
   ]
 }
