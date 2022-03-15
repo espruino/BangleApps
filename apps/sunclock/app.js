@@ -41,7 +41,7 @@ function drawSimpleClock() {
   g.setFont("Vector",60); 
   g.drawString(time, xyCenter, yposTime, true);
 
-  var date = [loc.dow(new Date(),1), loc.date(d,1)].join(" "); // draw Day, name of month, Date
+  var date = [loc.dow(new Date(),1), loc.date(d,1)].join(" "); // draw day of week, date
   g.setFont("Vector",24);
   g.drawString(date, xyCenter, yposDate, true);
 
@@ -71,7 +71,7 @@ g.clear(); // clean app screen
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-setInterval(updatePos, 60*15E3);    // refesh every 15 mins
+setInterval(updatePos, 60*5E3);    // refesh every 5 mins
 
 updatePos();
 drawSimpleClock(); // draw now
