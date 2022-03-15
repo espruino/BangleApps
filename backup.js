@@ -7,7 +7,10 @@ function bangleDownload() {
   Progress.show({title:"Scanning...",sticky:true});
   var normalFiles, storageFiles;
   console.log("Listing normal files...");
-  Comms.listFiles({sf:false}).then(f => {
+  Comms.reset()
+  .then(() => Comms.showMessage("Backing up..."))
+  .then(() => Comms.listFiles({sf:false}))
+  .then(f => {
     normalFiles = f;
     console.log(" - "+f.join(","));
     console.log("Listing StorageFiles...");
@@ -38,8 +41,9 @@ function bangleDownload() {
         });
       });
     }
-    console.log("Listing StorageFiles...");
     return promise;
+  }).then(() => {
+    return Comms.showMessage(Const.MESSAGE_RELOAD);
   }).then(() => {
     return zip.generateAsync({type:"blob"});
   }).then(content => {
