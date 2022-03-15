@@ -62,6 +62,14 @@ var btOffImg = {
   buffer : E.toArrayBuffer(atob("AAAAwAcAGgBEAQgEEBgQIDCAIQAiACgAUABgAMABgAKACQARAEGDAPgA"))
 }
 
+//Charging symbol
+var chrgOn = {
+  width : 8, height : 15, bpp : 2,
+  transparent : 0,
+  palette : new Uint16Array([65535,65504,63488,64928]),
+  buffer : E.toArrayBuffer(atob("qterVKlcrVClcLVAlVfVVA1cDVANQA3ADQAPAAwA"))
+}
+
 function draw() {
   g.clear();
   drawBackground();
@@ -69,6 +77,7 @@ function draw() {
   drawTime();
   drawBattery();
   drawBluetooth();
+  drawBatteryStatus();
 }
 function drawDate() {
   days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
@@ -122,6 +131,17 @@ function drawBluetooth(){
   }
   g.reset().drawImage(img,3,3);
 }
+function drawBatteryStatus(){
+  var left = g.width - (20+6+4);
+  var img;
+  if (Bangle.isCharging()) {
+    console.log("Charger connected");
+    img=chrgOn;
+    g.reset().drawImage(img,left, 4);
+  } else {
+    console.log("Charger not connected");
+  }
+}
 
 function drawBackground() {
   var metrics = g.imageMetrics(backgrounds[bgIndex]);
@@ -155,6 +175,7 @@ Bangle.setUI("clock");
 
 NRF.on('connect', draw);
 NRF.on('disconnect', draw);
+Bangle.on("charging", draw);
 
 var redrawTimerId = setInterval(function(){
    draw();
