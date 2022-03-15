@@ -45,7 +45,7 @@ function bangleDownload() {
   }).then(() => {
     return Comms.showMessage(Const.MESSAGE_RELOAD);
   }).then(() => {
-    return zip.generateAsync({type:"blob"});
+    return zip.generateAsync({type:"binarystring"});
   }).then(content => {
     Progress.hide({ sticky: true });
     showToast('Backup complete!', 'success');
