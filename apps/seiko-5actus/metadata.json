@@ -11,7 +11,7 @@
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [
-      {"name":"seiko-5actus.app.js","url":"seiko-5actus.js"},
+      {"name":"seiko-5actus.app.js","url":"app.js"},
       {"name":"seiko-5actus.img","url":"app-icon.js","evaluate":true}
     ]
    }
