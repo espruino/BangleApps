@@ -536,7 +536,7 @@ function Compass_reading() {
   Compass_heading = Compass_newHeading(d,Compass_heading);
   hdngCompass = Compass_heading.toFixed(0);
 }
-setInterval(Compass_reading,200);
+if (!calibrateCompass) setInterval(Compass_reading,200);
 
 setButtons();
 if (emulator) setInterval(updateClock, 2000);
