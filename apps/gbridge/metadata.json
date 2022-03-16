@@ -2,7 +2,7 @@
   "id": "gbridge",
   "name": "Gadgetbridge",
   "version": "0.26",
-  "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android' Bangle.js app instead.",
+  "description": "(NOT RECOMMENDED) Displays Gadgetbridge notifications from Android. Please use the 'Android Integration' Bangle.js app instead.",
   "icon": "app.png",
   "type": "widget",
   "tags": "tool,system,android,widget",

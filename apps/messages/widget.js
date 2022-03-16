@@ -1,18 +1,22 @@
-WIDGETS["messages"]={area:"tl", width:0, iconwidth:23,
+WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
 draw:function() {
+  // If we had a setTimeout queued from the last time we were called, remove it
+  if (WIDGETS["messages"].i) {
+    clearTimeout(WIDGETS["messages"].i);
+    delete WIDGETS["messages"].i;
+  }
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
   g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+this.iconwidth);
   g.drawImage((c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y);
-  //if (c<60) Bangle.setLCDPower(1); // keep LCD on for 1 minute
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.repeat===undefined) settings.repeat = 4;
   if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
-  setTimeout(()=>WIDGETS["messages"].draw(), 1000);
+  WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },show:function(quiet) {
   WIDGETS["messages"].t=Date.now(); // first time
@@ -46,5 +50,5 @@ message but then the watch was never viewed. In that case we don't
 want to buzz but should still show that there are unread messages. */
 if (global.MESSAGES===undefined) (function() {
   var messages = require("Storage").readJSON("messages.json",1)||[];
-  if (messages.some(m=>m.new)) WIDGETS["messages"].show(true);
+  if (messages.some(m=>m.new&&m.id!="music")) WIDGETS["messages"].show(true);
 })();

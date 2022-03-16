@@ -1,3 +1,4 @@
 0.01: Initial Release
 0.02: Support for Bangle 2
 0.03: Keep the date from being overwritten, use correct colour from theme for clearing
+0.04: Removed "wake LCD on face-up"-feature: A watch-face should not set things like "wake LCD on face-up". 

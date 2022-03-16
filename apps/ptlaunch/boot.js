@@ -76,6 +76,7 @@
   var sui = Bangle.setUI;
   Bangle.setUI = function (mode, cb) {
     sui(mode, cb);
+    if ("object"==typeof mode) mode = mode.mode;
     if (!mode) {
       Bangle.removeListener("drag", dragHandler);
       storedPatterns = {};

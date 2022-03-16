@@ -1,0 +1,14 @@
+{ "id": "thering",
+  "name": "The Ring",
+  "version":"0.01",
+  "description": "A proof of concept clock with large ring guage for steps using pre-set images, acts as a tutorial piece for discussion",
+  "icon": "app.png",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot_thering3.jpg"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"thering.app.js","url":"app.js"},
+    {"name":"thering.img","url":"app-icon.js","evaluate":true}
+  ]
+}

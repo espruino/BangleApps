@@ -1,13 +1,16 @@
 { "id": "timecal",
   "name": "TimeCal",
   "shortName":"TimeCal",
+  "version":"0.05",
+  "description": "TimeCal shows the date/time along with a 3 week calendar",
   "icon": "icon.png",
-  "version":"0.01",
-  "description": "TimeCal shows the Time along with a 3 week calendar",
-  "tags": "clock",
   "type": "clock",
+  "tags": "clock,calendar",
   "supports":["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator":true,
   "storage": [
-    {"name":"timecal.app.js","url":"timecal.app.js"}
+    {"name":"timecal.app.js","url":"timecal.app.js"},
+    {"name":"timecal.settings.js","url":"timecal.settings.js"}
   ]
 }

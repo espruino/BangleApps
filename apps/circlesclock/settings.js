@@ -14,8 +14,10 @@
   const valuesCircleTypes = ["empty", "steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "temperature", "pressure", "altitude"];
   const namesCircleTypes = ["empty", "steps", "distance", "heart", "battery", "weather", "sun", "temperature", "pressure", "altitude"];
 
-  const valuesColors = ["",        "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#fff",  "#000", "green-red",   "red-green"];
-  const namesColors =  ["default", "red",     "green",   "blue",    "yellow",  "magenta", "cyan",    "white", "black", "green->red", "red->green"];
+  const valuesColors = ["",        "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff",
+  "#00ffff", "#fff",  "#000", "green-red",   "red-green", "fg"];
+  const namesColors =  ["default", "red",     "green",   "blue",    "yellow",  "magenta",
+  "cyan",    "white", "black", "green->red", "red->green", "foreground"];
 
   const weatherData = ["empty", "humidity", "wind"];
 

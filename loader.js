@@ -202,7 +202,6 @@ window.addEventListener('load', (event) => {
     }
 
     var selectLang = document.getElementById("settings-lang");
-    console.log(languages);
     languages.forEach(lang => {
       selectLang.innerHTML += `<option value="${lang.code}" ${SETTINGS.language==lang.code?"selected":""}>${lang.name} (${lang.code})</option>`;
     });

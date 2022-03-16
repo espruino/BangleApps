@@ -10,15 +10,15 @@ const BANGLE2 = process.env.HWVERSION===2;
 
 /**
  * @param {string} text
- * @return {number} Maximum font size to make text fit on screen
+ * @param {number} w Width to fit text in
+ * @return {number} Maximum font size to make text fit
  */
-function fitText(text) {
+function fitText(text, w) {
   if (!text.length) {
     return Infinity;
   }
   // make a guess, then shrink/grow until it fits
-  const w = Bangle.appRect.w,
-    test = (s) => g.setFont("Vector", s).stringWidth(text);
+  const test = (s) => g.setFont("Vector", s).stringWidth(text);
   let best = Math.floor(100*w/test(100));
   if (test(best)===w) { // good guess!
     return best;
@@ -106,7 +106,7 @@ function rTitle(l) {
     rScroller(l); // already scrolling
     return;
   }
-  let size = fitText(l.label);
+  let size = fitText(l.label, l.w);
   if (size<l.h/2) {
     // the title is too long: start the scroller
     scrollStart();
@@ -119,7 +119,7 @@ function rTitle(l) {
  * @param l
  */
 function rInfo(l) {
-  let size = fitText(l.label);
+  let size = fitText(l.label, l.w);
   if (size>l.h) {
     size = l.h;
   }
@@ -182,23 +182,17 @@ function makeUI() {
     type: "v", c: [
       {
         type: "h", fillx: 1, c: [
-          {id: "time", type: "txt", label: "88:88", valign: -1, halign: -1, font: "8%", bgCol: g.theme.bg},
           {fillx: 1},
-          {id: "num", type: "txt", label: "88:88", valign: -1, halign: 1, font: "12%", bgCol: g.theme.bg},
-          BANGLE2 ? {} : {id: "up", type: "txt", label: " +", font: "6x8:2"},
+          {id: "num", type: "txt", label: "", valign: -1, halign: -1, font: "12%", bgCol: g.theme.bg},
+          BANGLE2 ? {} : {id: "up", type: "txt", label: " +", halign: 1, font: "6x8:2"},
         ],
       },
       {id: "title", type: "custom", label: "", fillx: 1, filly: 2, offset: null, font: "Vector:20%", render: rTitle, bgCol: g.theme.bg},
       {id: "artist", type: "custom", label: "", fillx: 1, filly: 1, size: 30, render: rInfo, bgCol: g.theme.bg},
-      {id: "album", type: "custom", label: "", fillx: 1, filly: 1, size: 20, render: rInfo, bgCol: g.theme.bg},
-      {height: 10},
       {
         type: "h", c: [
-          {width: 3},
-          {id: "prev", type: "custom", height: 15, width: 15, icon: "previous", render: rIcon, bgCol: g.theme.bg},
-          {id: "date", type: "txt", halign: 0, valign: 1, label: "", font: "8%", fillx: 1, bgCol: g.theme.bg},
-          {id: "next", type: "custom", height: 15, width: 15, icon: "next", render: rIcon, bgCol: g.theme.bg},
-          BANGLE2 ? {width: 3} : {id: "down", type: "txt", label: " -", font: "6x8:2"},
+          {id: "album", type: "custom", label: "", fillx: 1, filly: 1, size: 20, render: rInfo, bgCol: g.theme.bg},
+          BANGLE2 ? {} : {id: "down", type: "txt", label: " -", font: "6x8:2"},
         ],
       },
       {height: 10},
@@ -210,20 +204,6 @@ function makeUI() {
 ///////////////////////
 // Self-repeating timeouts
 ///////////////////////
-
-// Clock
-let tock = -1;
-function tick() {
-  if (!BANGLE2 && !Bangle.isLCDOn()) {
-    return;
-  }
-  const now = new Date();
-  if (now.getHours()*60+now.getMinutes()!==tock) {
-    drawDateTime();
-    tock = now.getHours()*60+now.getMinutes();
-  }
-  setTimeout(tick, 1000); // we only show minute precision anyway
-}
 
 // Fade out while paused and auto closing
 let fade = null;
@@ -271,40 +251,12 @@ function scrollStop() {
 ////////////////////
 // Drawing functions
 ////////////////////
-/**
- * Draw date and time
- */
-function drawDateTime() {
-  const now = new Date();
-  const l = require("locale");
-  const is12 = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-  if (is12) {
-    const d12 = new Date(now.getTime());
-    const hour = d12.getHours();
-    if (hour===0) {
-      d12.setHours(12);
-    } else if (hour>12) {
-      d12.setHours(hour-12);
-    }
-    layout.time.label = l.time(d12, true)+l.meridian(now);
-  } else {
-    layout.time.label = l.time(now, true);
-  }
-  layout.date.label = require("locale").date(now, true);
-  layout.render();
-}
 
 function drawControls() {
-  let l = layout;
+  if (BANGLE2) return;
   const cc = a => (a ? "#f00" : "#0f0"); // control color: red for active, green for inactive
-  if (!BANGLE2) {
-    l.up.col = cc("volumeup" in tCommand);
-    l.down.col = cc("volumedown" in tCommand);
-  }
-  l.prev.icon = (stat==="play") ? "pause" : "previous";
-  l.prev.col = cc("prev" in tCommand || "pause" in tCommand);
-  l.next.icon = (stat==="play") ? "next" : "play";
-  l.next.col = cc("next" in tCommand || "play" in tCommand);
+  layout.up.col = cc("volumeup" in tCommand);
+  layout.down.col = cc("volumedown" in tCommand);
   layout.render();
 }
 
@@ -339,6 +291,7 @@ function info(info) {
   layout.album.col = infoColor("album");
   layout.artist.col = infoColor("artist");
   layout.num.label = formatNum(info);
+  layout.update();
   layout.render();
   rTitle(layout.title); // force redraw of title, or scroller might break
   // reset auto exit interval
@@ -473,37 +426,16 @@ function sendCommand(command) {
   drawControls();
 }
 
-// touch/swipe: navigation
 function togglePlay() {
   sendCommand(stat==="play" ? "pause" : "play");
-}
-function pausePrev() {
-  sendCommand(stat==="play" ? "pause" : "previous");
-}
-function nextPlay() {
-  sendCommand(stat==="play" ? "next" : "play");
 }
 
 /**
  * Setup touch+swipe for Bangle.js 1
  */
 function touch1() {
-  Bangle.on("touch", side => {
-    if (!Bangle.isLCDOn()) {return;} // for <2v10 firmware
-    switch(side) {
-      case 1:
-        pausePrev();
-        break;
-      case 2:
-        nextPlay();
-        break;
-      default:
-        togglePlay();
-        break;
-    }
-  });
+  Bangle.on("touch", togglePlay);
   Bangle.on("swipe", dir => {
-    if (!Bangle.isLCDOn()) {return;} // for <2v10 firmware
     sendCommand(dir===1 ? "previous" : "next");
   });
 }
@@ -511,16 +443,7 @@ function touch1() {
  * Setup touch+swipe for Bangle.js 2
  */
 function touch2() {
-  Bangle.on("touch", (side, xy) => {
-    const ar = Bangle.appRect;
-    if (xy.x<ar.x+ar.w/3) {
-      pausePrev();
-    } else if (xy.x>ar.x+ar.w*2/3) {
-      nextPlay();
-    } else {
-      togglePlay();
-    }
-  });
+  Bangle.on("touch", togglePlay);
   // swiping
   let drag;
   Bangle.on("drag", e => {
@@ -595,7 +518,6 @@ function startWatches() {
 function start() {
   makeUI();
   startWatches();
-  tick();
   startEmulator();
 }
 
