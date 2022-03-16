@@ -1,6 +1,6 @@
 # GPS speed, GPS heading, Compass heading, GPS altitude and Barometer altitude...
 
-![](Hochrad120px.gif)...all taken from internal sources.
+![](Hochrad120px.png)...all taken from internal sources.
 
 ### To speed-up GPS reception it is strongly recommended to upload AGPS data with ["Assisted GPS Update"](https://banglejs.com/apps/?id=assistedgps)
 
