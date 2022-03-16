@@ -7,6 +7,6 @@
 ### If "CALIB!" is shown on the display or the compass heading differs too much from GPS heading, compass calibration should be done with the ["Navigation Compass" App](https://banglejs.com/apps/?id=magnav) 
 
 **Credits:**<br>
-Bike Speedometer App by *github.com/HilmarSt*<br>
-Big parts of the software are based on *github.com/espruino/BangleApps/tree/master/apps/speedalt*<br>
-Compass and Compass Calibration based on *github.com/espruino/BangleApps/tree/master/apps/magnav*
+Bike Speedometer App by <i>github.com/HilmarSt</i><br>
+Big parts of the software are based on <i>github.com/espruino/BangleApps/tree/master/apps/speedalt</i><br>
+Compass and Compass Calibration based on <i>github.com/espruino/BangleApps/tree/master/apps/magnav</i>
