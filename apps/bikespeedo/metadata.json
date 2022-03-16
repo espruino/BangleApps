@@ -9,7 +9,6 @@
   "type": "app",
   "tags": "tool,cycling,bicycle,outdoors,sport",
   "supports": ["BANGLEJS2"],
-  "readme": "README.md",
   "allow_emulator": true,
   "storage": [
     {"name":"bikespeedo.app.js","url":"app.js"},
