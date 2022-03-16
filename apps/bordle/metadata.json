@@ -9,7 +9,7 @@
   "tags": "game, text",
   "storage": [
     {"name":"bordle.app.js","url":"app.js"},
-    {"name":"wordlencr.txt","url":"wordlencr.txt"}
+    {"name":"wordlencr.txt","url":"wordlencr.txt"},
     {"name":"bordle.img","url":"app-icon.js","evaluate":true}
   ]
 }
