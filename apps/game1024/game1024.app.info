@@ -1,6 +1,0 @@
-require("Storage").write("timer.info",{
-  "id":"game1024",
-  "name":"1024 Game",
-  "src":"game1024.app.js",
-  "icon":"game1024.img"
-});
