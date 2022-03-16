@@ -46,3 +46,4 @@
 0.40: Bootloader now rebuilds for new firmware versions
 0.41: Add Keyboard and Mouse Bluetooth HID option
 0.42: Sort *.boot.js files lexically and by optional numeric priority, e.g. appname.<priority>.boot.js
+0.43: Fix Gadgetbridge handling with Programmable:off

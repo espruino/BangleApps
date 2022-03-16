@@ -349,7 +349,7 @@ function drawSecondary(n,u) {
   s = 30;    // Font size
   if (BANGLEJS2) s *= fontFactorB2;
   buf.setFontVector(s);
-  buf.drawString(u,xu - (BANGLEJS2*20),screenH_TwoThirds-25);
+  buf.drawString(u,xu - (BANGLEJS2*xu/5),screenH_TwoThirds-25);
 }
 
 function drawTime() {
@@ -391,7 +391,7 @@ function drawWP() { // from  waypoints.json - see README.md
     buf.setFontAlign(-1,1); //left, bottom
     if (BANGLEJS2) s *= fontFactorB2;
     buf.setFontVector(s);
-    buf.drawString(nm.substring(0,6),72,screenH_TwoThirds-(BANGLEJS2 * 20));
+    buf.drawString(nm.substring(0,6),72,screenH_TwoThirds-(BANGLEJS2 * 15));
   }
 
   if ( cfg.modeA == 2 ) {  // clock/large mode
@@ -421,7 +421,7 @@ function drawSats(sats) {
     buf.drawString('A',screenW,140-(BANGLEJS2 * 40));
     if ( showMax ) {
       buf.setFontAlign(0,1); //centre, bottom
-      buf.drawString('MAX',120,164);
+      buf.drawString('MAX',screenW_Half,screenH_TwoThirds + 4);
     }
   }
   if ( cfg.modeA == 0 ) buf.drawString('D',screenW,140-(BANGLEJS2 * 40));
@@ -536,22 +536,18 @@ function onGPS(fix) {
 
 }
 
-function setButtons(){
-if (!BANGLEJS2) { // Buttons for Bangle.js
-  // Spd+Dist : Select next waypoint
-  setWatch(function(e) {
-    var dur = e.time - e.lastTime;
-    if ( cfg.modeA == 1 ) {
-      // Spd+Alt mode - Switch between fix and MAX
-      if ( dur < 2 ) showMax = !showMax;   // Short press toggle fix/max display
-      else { max.spd = 0; max.alt = 0; }  // Long press resets max values.
-    }
-    else nxtWp(1);  // Spd+Dist or Clock mode - Select next waypoint
-    onGPS(lf);
-  }, BTN1, { edge:"falling",repeat:true});
 
-  // Power saving on/off
-  setWatch(function(e){
+function btn1press(longpress) {
+    if(emulator) console.log("Btn1, long="+longpress);
+    if ( cfg.modeA == 1 ) {  // Spd+Alt mode - Switch between fix and MAX
+      if ( !longpress ) showMax = !showMax;   // Short press toggle fix/max display
+      else { max.spd = 0; max.alt = 0; }      // Long press resets max values.
+    }
+    else nxtWp(1);           // Spd+Dist or Clock mode - Select next waypoint
+    onGPS(lf);
+  }
+function btn2press(){
+    if(emulator) console.log("Btn2");
     pwrSav=!pwrSav;
     if ( pwrSav ) {
       LED1.reset();
@@ -564,52 +560,51 @@ if (!BANGLEJS2) { // Buttons for Bangle.js
       Bangle.setLCDPower(1);
       LED1.set();
     }
-  }, BTN2, {repeat:true,edge:"falling"});
-
-  // Toggle between alt or dist
-  setWatch(function(e){
-    cfg.modeA = cfg.modeA+1;
-    if ( cfg.modeA > 2 ) cfg.modeA = 0;
-    savSettings();
-    onGPS(lf);
-  }, BTN3, {repeat:true,edge:"falling"});
-
-  // Touch left screen to toggle display
-  setWatch(function(e){
-    cfg.primSpd = !cfg.primSpd;
-    savSettings();
-    onGPS(lf);  // Update display
-  }, BTN4, {repeat:true,edge:"falling"});
-
-} else {                                  // Buttons for Bangle.js 2
-  setWatch(function(e){ // Bangle.js BTN3
+  }
+function btn3press(){
+    if(emulator) console.log("Btn3");
     cfg.modeA = cfg.modeA+1;
     if ( cfg.modeA > 2 ) cfg.modeA = 0;
     if(emulator)console.log("cfg.modeA="+cfg.modeA);
     savSettings();
     onGPS(lf);
-  }, BTN1, {repeat:true,edge:"falling"});
-
-/*  Bangle.on('tap', function(data) { // data - {dir, double, x, y, z}
+  }
+function btn4press(){
+    if(emulator) console.log("Btn4");
     cfg.primSpd = !cfg.primSpd;
-    if(emulator)console.log("!cfg.primSpd");
-  }); */
+    savSettings();
+    onGPS(lf);  // Update display
+  }
 
-/*  Bangle.on('swipe', function(dir) {
-    if (dir < 0) { // left: Bangle.js BTN3
-      cfg.modeA = cfg.modeA+1;
-      if ( cfg.modeA > 2 ) cfg.modeA = 0;
-      if(emulator)console.log("cfg.modeA="+cfg.modeA);
-    }
+
+function setButtons(){
+if (!BANGLEJS2) {                         // Buttons for Bangle.js 1
+  setWatch(function(e) {
+     btn1press(( e.time - e.lastTime) > 2); // > 2 sec. is long press
+  }, BTN1, { edge:"falling",repeat:true});
+
+  // Power saving on/off (red dot visible if off)
+  setWatch(btn2press, BTN2, {repeat:true,edge:"falling"});
+
+  // Toggle between alt or dist
+  setWatch(btn3press, BTN3, {repeat:true,edge:"falling"});
+
+  // Touch left screen to toggle display
+  setWatch(btn4press, BTN4, {repeat:true,edge:"falling"});
+
+} else {                                  // Buttons for Bangle.js 2
+  setWatch(function(e) {
+     btn1press(( e.time - e.lastTime) > 0.4); // > 0.4 sec. is long press
+  }, BTN1, { edge:"falling",repeat:true});
+
+  Bangle.on('touch', function(btn_l_r, e) {
+    if(e.x < screenW_Half) btn4press();
     else
-    {             // right: Bangle.js BTN4
-      cfg.primSpd = !cfg.primSpd;
-      if(emulator)console.log("!cfg.primSpd");
-    }
+      if (e.y < screenH_Half)
+        btn2press();
+      else
+        btn3press();
   });
-*/
-  savSettings();
-  onGPS(lf);
   }
 }
 
@@ -700,18 +695,6 @@ Bangle.on('lcdPower',function(on) {
   else stopDraw();
 });
 
-/*
-function onGPSraw(nmea) {
-  var nofGP = 0, nofBD = 0, nofGL = 0;
-  if (nmea.slice(3,6) == "GSV") {
-    // console.log(nmea.slice(1,3) + "  " + nmea.slice(11,13));
-    if (nmea.slice(0,7) == "$GPGSV,") nofGP = Number(nmea.slice(11,13));
-    if (nmea.slice(0,7) == "$BDGSV,") nofBD = Number(nmea.slice(11,13));
-    if (nmea.slice(0,7) == "$GLGSV,") nofGL = Number(nmea.slice(11,13));
-    SATinView = nofGP + nofBD + nofGL;
-  } }
-if(BANGLEJS2) Bangle.on('GPS-raw', onGPSraw);
-*/
 
 var gpssetup;
 try {
