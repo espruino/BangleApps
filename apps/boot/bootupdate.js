@@ -4,7 +4,7 @@ of the time. */
 E.showMessage("Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
-var boot = "";
+var boot = "", bootPost = "";
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
   var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
   boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
@@ -15,6 +15,7 @@ if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't chang
 boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
 boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
+bootPost += `NRF.setServices(bleServices, bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
@@ -195,8 +196,8 @@ if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
 
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
-var getPriority = /.*\.(\d+)\.boot\.js$/;
-require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
+var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
+  var getPriority = /.*\.(\d+)\.boot\.js$/;
   var aPriority = a.match(getPriority);
   var bPriority = b.match(getPriority);
   if (aPriority && bPriority){
@@ -207,17 +208,39 @@ require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
     return 1;
   }
   return a==b ? 0 : (a>b ? 1 : -1);
-}).forEach(bootFile=>{
+});
+// precalculate file size
+var fileSize = boot.length + bootPost.length;
+bootFiles.forEach(bootFile=>{
+  // match the size of data we're adding below in bootFiles.forEach
+  fileSize += 2+bootFile.length+1+require('Storage').read(bootFile).length+1;
+});
+// write file in chunks (so as not to use up all RAM)
+require('Storage').write('.boot0',boot,0,fileSize);
+var fileOffset = boot.length;
+bootFiles.forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
   // which would cause an error!
-  boot += "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
+  // we write:
+  // "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
+  // but we need to do this without ever loading everything into RAM as some
+  // boot files seem to be getting pretty big now.
+  require('Storage').write('.boot0',"//"+bootFile+"\n",fileOffset);
+  fileOffset+=2+bootFile.length+1;
+  var bf = require('Storage').read(bootFile);
+  require('Storage').write('.boot0',bf,fileOffset);
+  fileOffset+=bf.length;
+  require('Storage').write('.boot0',"\n",fileOffset);
+  fileOffset+=1;
 });
-// update ble
-boot += `NRF.setServices(bleServices, bleServiceOptions);delete bleServices,bleServiceOptions;\n`;
-// write file
-require('Storage').write('.boot0',boot);
+require('Storage').write('.boot0',bootPost,fileOffset);
+
 delete boot;
+delete bootPost;
+delete bootFiles;
+delete fileSize;
+delete fileOffset;
 E.showMessage("Reloading...");
 eval(require('Storage').read('.boot0'));
 // .bootcde should be run automatically after if required, since
