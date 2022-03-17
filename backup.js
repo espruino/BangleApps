@@ -29,7 +29,7 @@ function bangleDownload() {
       promise = promise.then(() => {
         Progress.hide({sticky: true});
         var percent = n/fileCount;
-        Progress.show({title:`Download ${filename}`,sticky:true,min:percent,max:percent,percent:0});
+        Progress.show({title:`Download ${filename}`,sticky:true,min:percent,max:percent+(1/fileCount),percent:0});
         return Comms.readFile(filename).then(data => zip.file(filename,data));
       });
     });
@@ -40,7 +40,7 @@ function bangleDownload() {
         promise = promise.then(() => {
           Progress.hide({sticky: true});
           var percent = (normalFiles.length+n)/fileCount;
-          Progress.show({title:`Download ${filename}`,sticky:true,min:percent,max:percent,percent:0});
+          Progress.show({title:`Download ${filename}`,sticky:true,min:percent,max:percent+(1/fileCount),percent:0});
           return Comms.readStorageFile(filename).then(data => zipStorageFiles.file(filename,data));
         });
       });
