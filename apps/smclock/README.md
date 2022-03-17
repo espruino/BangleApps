@@ -9,7 +9,7 @@ It shows battery level in the upper left corner, date information in the upper r
 
 ## Settings
 
-**Analog Clock:**
+**Analog Clock:** *Not yet implemented.*
 
 **Background:** When the setting is set as "3bit", a background with more accurate colors is chosen for the watchface. Otherwise, it uses a background following the 16-bit Mac Color Palette.
 
@@ -23,4 +23,4 @@ It shows battery level in the upper left corner, date information in the upper r
 
 Monogram Watch Face can be selected as the default clock or it can be run manually from the launcher. Its settings can be accessed and changed via the relevant menu.
 
-Tapping on the "Alerts" area will replace the current time display with the time of the most immediate alert.
+*Tapping on the "Alerts" area will replace the current time display with the time of the most immediate alert.* - *Feature not implemented yet.*
