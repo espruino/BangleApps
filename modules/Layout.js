@@ -59,6 +59,7 @@ options is an object containing:
   * `label` - the text on the button
   * `cb` - a callback function
   * `cbl` - a callback function for long presses
+* `back` - a callback function, passed as `back` into Bangle.setUI
 
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
@@ -89,7 +90,7 @@ function Layout(layout, options) {
   options = options || {};
   this.lazy = options.lazy || false;
 
-  var btnList;
+  var btnList, uiSet;
   Bangle.setUI(); // remove all existing input handlers
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
@@ -104,7 +105,7 @@ function Layout(layout, options) {
       this.physBtns = 0;
       this.buttons = btnList;
       this.selectedButton = -1;
-      Bangle.setUI("updown", dir=>{
+      Bangle.setUI({mode:"updown", back:options.back}, dir=>{
         var s = this.selectedButton, l=this.buttons.length;
         if (dir===undefined && this.buttons[s])
           return this.buttons[s].cb();
@@ -119,8 +120,10 @@ function Layout(layout, options) {
         }
         this.selectedButton = s;
       });
+      uiSet = true;
     }
   }
+  if (options.back && !uiSet) Bangle.setUI({mode: "custom", back: options.back});
 
   if (options.btns) {
     var buttons = options.btns;
