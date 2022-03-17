@@ -1,0 +1,17 @@
+{ "id": "seiko-5actus",
+    "name": "Seiko 5actus",
+    "shortName":"5actus",
+    "icon": "seiko-5actus.png",
+    "screenshots": [{"url":"screenshot.png"}],
+    "version":"0.01",
+    "description": "A watch designed after then Seiko 5actus from the 1970's",
+    "tags": "clock",
+    "type": "clock",
+    "supports":["BANGLEJS2"],
+    "readme": "README.md",
+    "allow_emulator": true,
+    "storage": [
+      {"name":"seiko-5actus.app.js","url":"app.js"},
+      {"name":"seiko-5actus.img","url":"app-icon.js","evaluate":true}
+    ]
+   }

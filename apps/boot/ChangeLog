@@ -47,3 +47,4 @@
 0.41: Add Keyboard and Mouse Bluetooth HID option
 0.42: Sort *.boot.js files lexically and by optional numeric priority, e.g. appname.<priority>.boot.js
 0.43: Fix Gadgetbridge handling with Programmable:off
+0.44: Write .boot0 without ever having it all in RAM (fix Bangle.js 1 issues with BTHRM)
