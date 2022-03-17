@@ -436,9 +436,9 @@ function initGame() {
   if (snReadOnInit) {
     snapshot.recover();
     debug(console.log("R E C O V E R E D !", snapshot.dump));
-    let sum = allSquares.reduce((t,v) => { return t + v ;});
+    let sum = allSquares.reduce(function (tv, sq) {return (sq.expVal + tv) ;}, 0);
     if (!sum) {
-      addRandomNumber();  
+      addRandomNumber();
     }
   } else {
     addRandomNumber();
