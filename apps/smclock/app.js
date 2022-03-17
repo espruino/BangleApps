@@ -14,7 +14,7 @@ const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // dynamic variables
 var batLevel = -1;
-var batColor = [0, 0, 0];
+var batColor = "";
 
 // settings variables
 var backgroundImage;
@@ -68,15 +68,15 @@ function getBatteryColor(level) {
     level = batLevel;
   }
   if (level > 80) {
-    color = [0, 0, 1];
+    color = "#00f";
   } else if (level > 60) {
-    color = [0, 1, 1];
+    color = "#0ff";
   } else if (level > 40) {
-    color = [0, 1, 0];
+    color = "#0f0";
   } else if (level > 20) {
-    color = [1, 1, 0];
+    color = "#f40";
   } else {
-    color = [1, 0, 0];
+    color = "f00";
   }
   return color;
 }
@@ -90,7 +90,7 @@ function draw() {
   }
   g.drawImage(background);
 
-  const color = getBatteryColor(batLevel);
+  batColor = getBatteryColor(batLevel);
   var bat = "";
   const d = new Date();
   const day = d.getDate();
@@ -102,32 +102,34 @@ function draw() {
   const m = d.getMinutes();
   const time = d02(h) + ":" + d02(m);
 
-  if (E.getBattery() < 100) {
-    bat = d02(E.getBattery()) + "%";
-  } else {
-    bat = E.getBattery() + "%";
-  }
-
   g.reset();
 
   // draw battery info
-  g.setColor(1, 1, 1);
-  if (useVectorFont == true) {
-    g.setFont("Vector", 16);
-    g.drawString("Bat:", 12, 22, false);
+  var x = 12;
+  var y = 16;
+  if (Bangle.isCharging()) {
+    g.setColor("#ff0").drawImage(atob("DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
   } else {
-    g.setFont("4x6", 2);
-    g.drawString("Bat:", 10, 22, false);
+    g.clearRect(x,y,x+14,y+24);
+    g.setColor("#000").fillRect(x+2,y+2,x+12,y+22).clearRect(x+4,y+4,x+10,y+20).fillRect(x+5,y+1,x+9,y+2);
+    g.setColor(batColor).fillRect(x+4,y+20-(batLevel*16/100),x+10,y+20);
   }
-  g.setColor(color[0], color[1], color[2]);
-  if (batLevel < 100) {
-    g.drawString(bat, 52, 22, false);
+  g.setFont("Vector", 16);
+  if (Bangle.isCharging()) {
+    g.setColor("#ff0");
   } else {
-    g.drawString(bat, 46, 22, false);
+    g.setColor(batColor);
+  }
+  if (batLevel < 100) {
+    bat = d02(batLevel) + "%";
+    g.drawString(bat, 50, 22, false);
+  } else {
+    bat = "100%";
+    g.drawString(bat, 40, 22, false);
   }
 
   // draw date info
-  g.setColor(0, 0, 0);
+  g.setColor("#000");
   if (useVectorFont == true) {
     g.setFont("Vector", 20);
   } else {
@@ -143,7 +145,7 @@ function draw() {
 
   // draw week info
   if (showWeekInfo == true) {
-    date2 = weekday[d.getDay()] + " " + d02(week)
+    date2 = weekday[d.getDay()] + " " + d02(week);
     if (useVectorFont == true) {
       g.setFont("Vector", 18);
     } else {
@@ -162,7 +164,7 @@ function draw() {
   }
 
   // draw time
-  g.setColor(1, 1, 1);
+  g.setColor("#fff");
   if (useVectorFont == true) {
     g.setFont("Vector", 60);
     g.drawString(time, 10, 108, false);
