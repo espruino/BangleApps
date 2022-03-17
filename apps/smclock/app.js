@@ -114,11 +114,15 @@ function draw() {
     g.setColor("#000").fillRect(x+2,y+2,x+12,y+22).clearRect(x+4,y+4,x+10,y+20).fillRect(x+5,y+1,x+9,y+2);
     g.setColor(batColor).fillRect(x+4,y+20-(batLevel*16/100),x+10,y+20);
   }
-  g.setFont("Vector", 16);
   if (Bangle.isCharging()) {
     g.setColor("#ff0");
   } else {
     g.setColor(batColor);
+  }
+  if (useVectorFont == true) {
+    g.setFont("Vector", 16);
+  } else {
+    g.setFont("4x6", 3);
   }
   if (batLevel < 100) {
     bat = d02(batLevel) + "%";
