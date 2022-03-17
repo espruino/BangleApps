@@ -22,6 +22,10 @@ function bangleDownload() {
     var promise = Promise.resolve();
     // Normal files
     normalFiles.forEach((filename,n) => {
+      if (filename==".firmware") {
+        console.log("Ignoring .firmware file");
+        return;
+      }
       promise = promise.then(() => {
         Progress.hide({sticky: true});
         var percent = n/fileCount;
