@@ -1,0 +1,9 @@
+[
+  { "day": 25, "month": 2, "year": 2022 }, // Urlaub Essen
+  { "day":  2, "month": 3, "year": 2022 }, // Aschermittwoch
+  { "day": 27, "month": 3, "year": 2022 }, // Sommerzeit
+  { "day": 16, "month": 4, "year": 2022 }, // Ostersamstag
+  { "day":  3, "month": 6, "year": 2022 }, // Kalamata
+  { "day": 17, "month": 7, "year": 2022 }, // Exerzitien
+  { "day": 31, "month":12, "year": 2022 }  // Sylvester
+]

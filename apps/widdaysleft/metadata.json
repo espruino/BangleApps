@@ -1,0 +1,14 @@
+{
+  "id": "widdaysleft",
+  "name": "Days Left",
+  "version": "0.01",
+  "description": "Read daysleft.json and show number of days left until first date, which lies in the future",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,tools",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"widdaysleft.wid.js","url":"widget.js"},
+    {"name":"daysleft.json", "url":"daysleft.json"}
+  ]
+}
