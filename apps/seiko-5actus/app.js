@@ -7,17 +7,17 @@ var imgBg = {
 /* Set hour hand image */
 
 var imgHour = {
-  width : 16, height : 176, bpp : 2,
+  width : 14, height : 114, bpp : 2,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AH4A/AH4A/AEk//gDp///gEDAYPAh4DB+E/AYP8AaYbDEYYrDLdgD/Af4DXh/wAYIA/AGwA="))
+  buffer : require("heatshrink").decompress(atob("AH4A/AB8P/4DB//wAz8D//8BIIKBn4DB54CBACPzAQP8EoImBD4PAJkQG/A34GIgbUBA"))
 };
 
 /* Set minute hand image */
 
 var imgMin = {
-  width : 8, height : 176, bpp : 2,
+  width : 4, height : 168, bpp : 2,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AH4A/AB8P+AB/AP4B/AIcA4DPHA="))
+  buffer : require("heatshrink").decompress(atob("AH4AE/4A/AEI"))
 };
 
 /* Set second hand image */
