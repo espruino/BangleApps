@@ -1,5 +1,10 @@
 WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
 draw:function() {
+  // If we had a setTimeout queued from the last time we were called, remove it
+  if (WIDGETS["messages"].i) {
+    clearTimeout(WIDGETS["messages"].i);
+    delete WIDGETS["messages"].i;
+  }
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
@@ -11,7 +16,7 @@ draw:function() {
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
-  setTimeout(()=>WIDGETS["messages"].draw(), 1000);
+  WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },show:function(quiet) {
   WIDGETS["messages"].t=Date.now(); // first time
@@ -45,5 +50,5 @@ message but then the watch was never viewed. In that case we don't
 want to buzz but should still show that there are unread messages. */
 if (global.MESSAGES===undefined) (function() {
   var messages = require("Storage").readJSON("messages.json",1)||[];
-  if (messages.some(m=>m.new)) WIDGETS["messages"].show(true);
+  if (messages.some(m=>m.new&&m.id!="music")) WIDGETS["messages"].show(true);
 })();
