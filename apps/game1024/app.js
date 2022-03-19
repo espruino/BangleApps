@@ -3,12 +3,10 @@ const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)}
 const rows = 4, cols = 4;
 const borderWidth = 6;
 const sqWidth = (Math.floor(Bangle.appRect.w - 48) / rows) - borderWidth;
-const cellColors = [{bg:'#CCFFFF', fg: '#000000'},
-                    {bg:'#FF9966', fg: '#000000'}, {bg:'#330033', fg: '#FFFFFF'}, {bg:'#6600FF', fg: '#FFFFFF'}, {bg:'#33CC66', fg: '#000000'},
-                    {bg:'#990000', fg: '#FFFFFF'}, {bg:'#99FF66', fg: '#000000'}, {bg:'#0033CC', fg: '#FFFFFF'}, {bg:'#CCFF00', fg: '#000000'},
-                    {bg:'#00CC00', fg: '#FFFFFF'}, {bg:'#FF0000', fg: '#FFFFFF'}];
-const cellFgColor = '#000000';
-const cellShadowColor = '#f2f2f2';
+const cellColors = [{bg:'#00FFFF', fg: '#000000'},
+                    {bg:'#FF00FF', fg: '#000000'}, {bg:'#808000', fg: '#FFFFFF'}, {bg:'#0000FF', fg: '#FFFFFF'}, {bg:'#008000', fg: '#FFFFFF'},
+                    {bg:'#800000', fg: '#FFFFFF'}, {bg:'#00FF00', fg: '#000000'}, {bg:'#000080', fg: '#FFFFFF'}, {bg:'#FFFF00', fg: '#000000'},
+                    {bg:'#800080', fg: '#FFFFFF'}, {bg:'#FF0000', fg: '#FFFFFF'}];
 const cellFonts = ["12x20", "12x20", "Vector:14"];
 const cellChars = [
   [0,1,2,3,4,5,6,7,8,9,10],
@@ -135,7 +133,7 @@ const snapshot = {
     debug(console.log("reset D U M P E D!", this.dump));
   }
 };
-const btnAtribs = {x: 134, w: 42, h: 42, fg:'#B5E61D', bg:'#870014'};
+const btnAtribs = {x: 134, w: 42, h: 42, fg:'#C0C0C0', bg:'#800000'};
 const buttons = {
   all: [],
   draw: function () {
