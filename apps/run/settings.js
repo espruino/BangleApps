@@ -42,6 +42,11 @@
       value: Math.max(statsIDs.indexOf(settings[boxID]),0),
       format: v => statsList[v].name,
       onchange: v => {
+        for (var i=1;i<=6;i++)
+          if (settings["B"+i]==statsIDs[v]) {
+            settings["B"+i]="";
+            boxMenu["Box "+i].value=0;
+          }
         settings[boxID] = statsIDs[v];
         saveSettings();
       },
@@ -60,7 +65,7 @@
     '': { 'title': 'Run' },
     '< Back': back,
   };
-  if (WIDGETS["recorder"])
+  if (global.WIDGETS&&WIDGETS["recorder"])
     menu[/*LANG*/"Record Run"] = {
       value : !!settings.record,
       format : v => v?/*LANG*/"Yes":/*LANG*/"No",
@@ -87,7 +92,7 @@
   notificationsMenu[/*LANG*/"Dist Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.dist.notifications))),
       min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
+      format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.dist.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
@@ -97,7 +102,7 @@
   notificationsMenu[/*LANG*/"Step Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.step.notifications))),
       min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
+      format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.step.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
@@ -107,7 +112,7 @@
   notificationsMenu[/*LANG*/"Time Pattern"] = {
     value: Math.max(0,vibPatterns.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.time.notifications))),
       min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
+      format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.time.notifications = vibTimes[v];
         sampleBuzz(vibTimes[v]);
