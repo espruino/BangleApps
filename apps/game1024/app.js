@@ -127,7 +127,8 @@ const snapshot = {
     for (let i = 0; i< this.dump.gridsize; i++) {
       this.dump.expVals[i] = 0;
     }
-    this.dump.score = scores.currentScore;
+    this.dump.score = 0;
+    this.dump.highScore = scores.highScore;
     this.dump.charIndex = charIndex;
     this.write();
     debug(console.log("reset D U M P E D!", this.dump));

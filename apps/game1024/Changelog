@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 0.01: Initial version
-0.02: Temporary intermediate version, bug fix, added descriptions
-=======
-0.01: New App!
 0.02: Temporary intermediate version
 0.03: Basic colors
->>>>>>> 49f2dae36dd66a567153baa1544cdc5d318b024e
+0.04: Bug fix score reset after Game Over, new icon
