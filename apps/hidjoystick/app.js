@@ -1,7 +1,42 @@
-var storage = require('Storage');
+const storage = require('Storage');
+const Layout = require("Layout");
 const settings = storage.readJSON('setting.json',1) || { HID: false };
+const BANGLEJS2 = process.env.HWVERSION == 2;
+const buttonWidth = Bangle.appRect.w/2;
+const buttonHeight = (Bangle.appRect.h-16)/2*0.85; // subtract text row and add a safety margin
 
 var sendInProgress = false; // Only send one message at a time, do not flood
+
+
+function renderBtnArrows(l) {
+  const d = g.getWidth() - l.width;
+
+  function c(a) {
+    return {
+      width: 8,
+      height: a.length,
+      bpp: 1,
+      buffer: (new Uint8Array(a)).buffer
+    };
+  }
+
+  g.drawImage(c([0,8,12,14,255,14,12,8]),d,g.getHeight()/2);
+  if (!BANGLEJS2) {
+    g.drawImage(c([16,56,124,254,16,16,16,16]),d,40);
+    g.drawImage(c([16,16,16,16,254,124,56,16]),d,194);
+  }
+}
+
+const layout = new Layout(
+	{type:"h", c:[
+		{type:"v", width:Bangle.appRect.w-18, c: [
+			{type:"h", c:[
+				{type:"txt", font:"6x8:2", label:"Joystick"},
+			]}
+		]},
+		{type:"custom", width:18, height: Bangle.appRect.h, render:renderBtnArrows}
+	]}
+);
 
 const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
   try {
@@ -20,31 +55,17 @@ const sendHid = function (x, y, btn1, btn2, btn3, btn4, btn5, cb) {
 
 function drawApp() {
   g.clear();
-  g.setFont("6x8",2);
-  g.setFontAlign(0,0);
-  g.drawString("Joystick", 120, 120);
-  const d = g.getWidth() - 18;
-
-  function c(a) {
-    return {
-      width: 8,
-      height: a.length,
-      bpp: 1,
-      buffer: (new Uint8Array(a)).buffer
-    };
-  }
-
-  g.drawImage(c([16,56,124,254,16,16,16,16]),d,40);
-  g.drawImage(c([16,16,16,16,254,124,56,16]),d,194);
-  g.drawImage(c([0,8,12,14,255,14,12,8]),d,116);
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+  layout.render();
 }
 
 function update() {
-  const btn1 = BTN1.read();
-  const btn2 = BTN2.read();
-  const btn3 = BTN3.read();
-  const btn4 = BTN4.read();
-  const btn5 = BTN5.read();
+  const btn1 = BTN1 ? BTN1.read() : 0;
+  const btn2 = !BANGLEJS2 ? BTN2.read() : 0;
+  const btn3 = !BANGLEJS2 ? BTN3.read() : 0;
+  const btn4 = !BANGLEJS2 ? BTN4.read() : 0;
+  const btn5 = !BANGLEJS2 ? BTN5.read() : 0;
   const acc = Bangle.getAccel();
   var x = acc.x*-127;
   var y = acc.y*-127;
