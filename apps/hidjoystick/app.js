@@ -45,7 +45,7 @@ if (BANGLEJS2) { // add virtual buttons in display
 	layoutChilden.push({type:"h", c:[
 		{type:"btn", width:buttonWidth, height:buttonHeight, label:"BTN4", id:"touchBtn4" },
 		{type:"btn", width:buttonWidth, height:buttonHeight, label:"BTN5", id:"touchBtn5" },
-	  ]});
+	]});
 }
 
 const layout = new Layout(
