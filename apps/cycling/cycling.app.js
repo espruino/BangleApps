@@ -1,6 +1,6 @@
 const Layout = require('Layout');
 
-const SETTINGS_FILE = 'cscsensor.json';
+const SETTINGS_FILE = 'cycling.json';
 const storage = require('Storage');
 
 const RECONNECT_TIMEOUT = 4000;
@@ -57,7 +57,7 @@ class CSCSensor {
   connect() {
     this.connected = false;
     this.setLayout(0);
-    this.display.setStatus("Connecting...");
+    this.display.setStatus("Connecting");
     console.log("Trying to connect to BLE CSC");
 
     // Hook up events
@@ -180,7 +180,8 @@ class CSCDisplay {
   constructor() {
     this.metric = true;
     this.fontLabel = "6x8";
-    this.fontMed = "15%";
+    this.fontSmall = "15%";
+    this.fontMed = "18%";
     this.fontLarge = "32%";
     this.currentLayout = "status";
     this.layouts = {};
@@ -206,7 +207,7 @@ class CSCDisplay {
           fillx: 1,
           pad: 4,
           bgCol: "#000",
-          height: 32,
+          height: 36,
           c: [
             {type: undefined, width: 32, halign: -1},
             {type: "txt", id: "time", label: "00:00", font: this.fontMed, bgCol: "#000", col: "#fff", width: 122},
@@ -218,7 +219,7 @@ class CSCDisplay {
           id: "stats_g",
           fillx: 1,
           bgCol: "#fff",
-          height: 32,
+          height: 36,
           c: [
             {
               type: "v",
@@ -226,7 +227,7 @@ class CSCDisplay {
               bgCol: "#fff",
               c: [
                 {type: "txt", id: "max_l", label: "MAX", font: this.fontLabel, col: "#000"},
-                {type: "txt", id: "max", label: "00.0", font: this.fontMed, bgCol: "#fff", col: "#000", width: 69},
+                {type: "txt", id: "max", label: "00.0", font: this.fontSmall, bgCol: "#fff", col: "#000", width: 69},
               ],
             },
             {
@@ -235,7 +236,7 @@ class CSCDisplay {
               bgCol: "#fff",
               c: [
                 {type: "txt", id: "avg_l", label: "AVG", font: this.fontLabel, col: "#000"},
-                {type: "txt", id: "avg", label: "00.0", font: this.fontMed, bgCol: "#fff", col: "#000", width: 69},
+                {type: "txt", id: "avg", label: "00.0", font: this.fontSmall, bgCol: "#fff", col: "#000", width: 69},
               ],
             },
             {type: "txt", id: "stats_u", label: " km/h", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 22, r: 90},
@@ -245,6 +246,7 @@ class CSCDisplay {
     });
     this.layouts.distance = new Layout({
       type: "v",
+      bgCol: "#fff",
       c: [
         {
           type: "h",
@@ -264,12 +266,12 @@ class CSCDisplay {
           id: "totald_g",
           fillx: 1,
           pad: 4,
-          bgCol: "#000",
+          bgCol: "#fff",
           height: 32,
           c: [
-            {type: "txt", id: "totald_l", label: "TTL", font: this.fontLabel, bgCol: "#000", col: "#fff", width: 36},
-            {type: "txt", id: "totald", label: "0", font: this.fontMed, bgCol: "#000", col: "#fff", width: 118},
-            {type: "txt", id: "totald_u", label: "km", font: this.fontLabel, bgCol: "#000", col: "#fff", width: 22, r: 90},
+            {type: "txt", id: "totald_l", label: "TTL", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 36},
+            {type: "txt", id: "totald", label: "0", font: this.fontMed, bgCol: "#fff", col: "#000", width: 118},
+            {type: "txt", id: "totald_u", label: "km", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 22, r: 90},
           ]
         },
       ],
@@ -284,7 +286,7 @@ class CSCDisplay {
           bgCol: "#fff",
           height: 100,
           c: [
-            {type: "txt", id: "status", label: "Bangle Cycling", font: this.fontMed, bgCol: "#fff", col: "#000", width: 176, wrap: 1},
+            {type: "txt", id: "status", label: "Bangle Cycling", font: this.fontSmall, bgCol: "#fff", col: "#000", width: 176, wrap: 1},
           ]
         },
         {
@@ -309,6 +311,7 @@ class CSCDisplay {
     g.clear();
     this.layouts[layout].update();
     this.layouts[layout].render();
+    Bangle.drawWidgets();
   }
 
   renderIfLayoutActive(layout, node) {
@@ -380,7 +383,12 @@ class CSCDisplay {
   }
 
   setTotalDistance(distance) {
-    this.layouts.distance.totald.label = this.convertDistance(distance).toFixed(1)
+    const distance = this.convertDistance(distance);
+    if (distance >= 1000) {
+      this.layouts.distance.totald.label = String(Math.round(distance));
+    } else {
+      this.layouts.distance.totald.label = distance.toFixed(1);
+    }
     this.renderIfLayoutActive("distance", this.layouts.distance.totald_g);
   }
 
@@ -415,6 +423,5 @@ Bangle.setUI("updown", d => {
   sensor.interact(d);
 });
 
+Bangle.loadWidgets();
 sensor.connect();
-// Bangle.loadWidgets();
-// Bangle.drawWidgets();
