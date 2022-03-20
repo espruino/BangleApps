@@ -54,4 +54,4 @@
   }
 
   E.showMenu(menu);
-})(load)
+})
