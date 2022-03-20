@@ -244,6 +244,7 @@ function drawInfo(){
     return;
   }
 
+  g.setFontAlign(-1, -1, 0);
   g.setFontAntonioMedium();
   g.setColor(cOrange);
   g.clearRect(120, 10, g.getWidth(), 75);
