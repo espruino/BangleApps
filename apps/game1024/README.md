@@ -19,7 +19,7 @@ Use the side **BTN** to exit the game, score and tile positions will be saved.
 
 ## Buttons on the screen
 
- - Button **U**: Undo the last move. There are currently a maximum of 4 undo levels
+ - Button **U**: Undo the last move. There are currently a maximum of 4 undo levels. The level is indicated with a small number in the lower righthand corner of the Undo button
  - Button **\***:  Change the text on the tile to number, capitals or Roman numbers
  - Button **R**: Reset the game. The Higscore will be remembered. You will be prompted first.
 
@@ -27,4 +27,5 @@ Use the side **BTN** to exit the game, score and tile positions will be saved.
 
 Game 1024 is based on Saming's 2048 and Misho M. Petkovic 1024game.org and conceptually similar to Threes by Asher Vollmer.
 
-![Screenshot from the Banglejs 2 watch with the game](./game1024_sc_watch.png)
+![Screenshot from the Banglejs 2 watch with the game in dark theme](./scrnshot_dn_300.jpg)
+![Screenshot from the Banglejs 2 watch with the game in light theme](./scrnshot_lc_300.jpg)
