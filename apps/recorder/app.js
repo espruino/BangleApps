@@ -219,7 +219,7 @@ function viewTrack(filename, info) {
         f.erase();
         viewTracks();
       } else
-        viewTrack(n, info);
+        viewTrack(filename, info);
     });
   };
   menu['< Back'] = () => { viewTracks(); };
