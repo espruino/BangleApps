@@ -131,6 +131,8 @@
            <button class="btn" id="removeall">Remove all Apps</button>
            <button class="btn" id="installdefault">Install default apps</button>
            <button class="btn" id="installfavourite">Install favourite apps</button></p>
+        <p><button class="btn tooltip tooltip-right" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
+           <button class="btn tooltip tooltip-right" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button></p>
         <h3>Settings</h3>
         <div class="form-group">
           <label class="form-switch">
@@ -170,6 +172,8 @@
     <script src="core/lib/heatshrink.js"></script>
     <script src="core/js/utils.js"></script>
     <script src="loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script> <!-- for backup.js -->
+    <script src="backup.js"></script>
     <script src="core/js/ui.js"></script>
     <script src="core/js/comms.js"></script>
     <script src="core/js/appinfo.js"></script>

@@ -9,3 +9,4 @@
 0.09: Add third screen mode with large clock and waypoint selection display to ease visibility in bright daylight.
 0.10: Add Kalman filter to smooth the speed and altitude values. Can be disabled in settings.
 0.11: Now also runs on Bangle.js 2 with basic functionality
+0.12: Full functionality on Bangle.js 2: Bangle.js 1 buttons mapped to touch areas.
