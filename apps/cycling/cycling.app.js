@@ -1,7 +1,11 @@
 const Layout = require('Layout');
+const storage = require('Storage');
 
 const SETTINGS_FILE = 'cycling.json';
-const storage = require('Storage');
+const SETTINGS_DEFAULT = {
+  sensors: {},
+  metric: true,
+};
 
 const RECONNECT_TIMEOUT = 4000;
 const MAX_CONN_ATTEMPTS = 2;
@@ -13,8 +17,8 @@ class CSCSensor {
     this.display = display;
 
     // Load settings
-    this.settings = storage.readJSON(SETTINGS_FILE, 1) || {};
-    this.wheelCirc = (this.settings.wheelcirc || 2230) / 1000;  // unit: m
+    this.settings = storage.readJSON(SETTINGS_FILE, true) || SETTINGS_DEFAULT;
+    this.wheelCirc = undefined;
 
     // CSC runtime variables
     this.movingTime = 0;              // unit: s
@@ -34,13 +38,16 @@ class CSCSensor {
     // Layout configuration
     this.layout = 0;
     this.display.useMetricUnits(true);
-    // this.display.useMetricUnits(!require("locale").speed(1).toString().endsWith("mph"));
+    this.deviceAddress = undefined;
+    this.display.useMetricUnits((this.settings.metric));
   }
 
   onDisconnect(event) {
     console.log("disconnected ", event);
 
     this.connected = false;
+    this.wheelCirc = undefined;
+
     this.setLayout(0);
     this.display.setDeviceAddress("unknown");
 
@@ -51,7 +58,23 @@ class CSCSensor {
       this.display.setStatus("Disconnected");
       setTimeout(this.connect.bind(this), RECONNECT_TIMEOUT);
     }
+  }
 
+  loadCircumference() {
+    if (!this.deviceAddress) return;
+
+    // Add sensor to settings if not present
+    if (!this.settings.sensors[this.deviceAddress]) {
+      this.settings.sensors[this.deviceAddress] = {
+        cm: 223,
+        mm: 0,
+      };
+      storage.writeJSON(SETTINGS_FILE, this.settings);
+    }
+
+    const high = this.settings.sensors[this.deviceAddress].cm || 223;
+    const low = this.settings.sensors[this.deviceAddress].mm || 0;
+    this.wheelCirc = (10*high + low) / 1000;
   }
 
   connect() {
@@ -70,11 +93,13 @@ class CSCSensor {
         this.failedAttempts = 0;
         this.failed = false;
         this.connected = true;
-        var addr = this.blecsc.getDeviceAddress();
-        console.log("Connected to " + addr);
+        this.deviceAddress = this.blecsc.getDeviceAddress();
+        console.log("Connected to " + this.deviceAddress);
 
-        this.display.setDeviceAddress(addr);
+        this.display.setDeviceAddress(this.deviceAddress);
         this.display.setStatus("Connected");
+
+        this.loadCircumference();
 
         // Switch to speed screen in 2s
         setTimeout(function() {
@@ -90,9 +115,9 @@ class CSCSensor {
 
   disconnect() {
     this.blecsc.disconnect();
-    this.connected = false;
+    this.reset();
     this.setLayout(0);
-    this.display.setStatus("Disconnected")
+    this.display.setStatus("Disconnected");
   }
 
   setLayout(num) {
@@ -110,6 +135,7 @@ class CSCSensor {
     this.connected = false;
     this.failed = false;
     this.failedAttempts = 0;
+    this.wheelCirc = undefined;
   }
 
   interact(d) {
@@ -127,7 +153,7 @@ class CSCSensor {
 
   updateScreen() {
     var tripDist = this.cwrTrip * this.wheelCirc;
-    var avgSpeed = this.movingTime > 3 ? tripDist / this.movingTime : 0
+    var avgSpeed = this.movingTime > 3 ? tripDist / this.movingTime : 0;
 
     this.display.setTotalDistance(this.cwr * this.wheelCirc);
     this.display.setTripDistance(tripDist);
@@ -297,7 +323,7 @@ class CSCDisplay {
           bgCol: "#fff",
           height: 32,
           c: [
-            { type: "txt", id: "addr_l", label: "MAC", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 36 },
+            { type: "txt", id: "addr_l", label: "ADDR", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 36 },
             { type: "txt", id: "addr", label: "unknown", font: this.fontLabel, bgCol: "#fff", col: "#000", width: 140 },
           ]
         },
@@ -316,13 +342,13 @@ class CSCDisplay {
 
   renderIfLayoutActive(layout, node) {
     if (layout != this.currentLayout) return;
-    this.layouts[layout].render(node)
+    this.layouts[layout].render(node);
   }
 
   useMetricUnits(metric) {
     this.metric = metric;
 
-    console.log("using " + (metric ? "metric" : "imperial") + " units");
+    // console.log("using " + (metric ? "metric" : "imperial") + " units");
 
     var speedUnit = metric ? "km/h" : "mph";
     this.layouts.speed.speed_u.label = speedUnit;
@@ -378,12 +404,12 @@ class CSCDisplay {
   }
 
   setTripDistance(distance) {
-    this.layouts.distance.tripd.label = this.convertDistance(distance).toFixed(1)
+    this.layouts.distance.tripd.label = this.convertDistance(distance).toFixed(1);
     this.renderIfLayoutActive("distance", this.layouts.distance.tripd_g);
   }
 
   setTotalDistance(distance) {
-    const distance = this.convertDistance(distance);
+    distance = this.convertDistance(distance);
     if (distance >= 1000) {
       this.layouts.distance.totald.label = String(Math.round(distance));
     } else {
@@ -393,12 +419,12 @@ class CSCDisplay {
   }
 
   setDeviceAddress(address) {
-    this.layouts.status.addr.label = address
+    this.layouts.status.addr.label = address;
     this.renderIfLayoutActive("status", this.layouts.status.addr_g);
   }
 
   setStatus(status) {
-    this.layouts.status.status.label = status
+    this.layouts.status.status.label = status;
     this.renderIfLayoutActive("status", this.layouts.status.status_g);
   }
 }
