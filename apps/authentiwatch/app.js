@@ -135,34 +135,32 @@ function timerCalc() {
   let timerfn = exitApp;
   let timerdly = 10000;
   let id = state.id;
-  if (id != -1) {
-    if (state.hotp.hotp != "") {
-      if (tokens[id].period > 0) {
-        // timed HOTP
-        if (state.hotp.next < Date.now()) {
-          if (state.cnt > 0) {
-            --state.cnt;
-            state.hotp = hotp(tokens[id]);
-          } else {
-            state.hotp.hotp = "";
-          }
-          timerdly = 1;
-          timerfn = updateCurrentToken;
-        } else {
-          timerdly = 1000;
-          timerfn = updateProgressBar;
-        }
-      } else {
-        // counter HOTP
+  if (id != -1 && state.hotp.hotp != "") {
+    if (tokens[id].period > 0) {
+      // timed HOTP
+      if (state.hotp.next < Date.now()) {
         if (state.cnt > 0) {
           --state.cnt;
-          timerdly = 30000;
+          state.hotp = hotp(tokens[id]);
         } else {
           state.hotp.hotp = "";
-          timerdly = 1;
         }
+        timerdly = 1;
         timerfn = updateCurrentToken;
+      } else {
+        timerdly = 1000;
+        timerfn = updateProgressBar;
       }
+    } else {
+      // counter HOTP
+      if (state.cnt > 0) {
+        --state.cnt;
+        timerdly = 30000;
+      } else {
+        state.hotp.hotp = "";
+        timerdly = 1;
+      }
+      timerfn = updateCurrentToken;
     }
   }
   if (state.drawtimer) {
@@ -183,29 +181,27 @@ function updateProgressBar() {
 
 function drawProgressBar() {
   let id = state.id;
-  if (id != -1) {
-    if (tokens[id].period > 0) {
-      let rem = Math.floor((state.hotp.next - Date.now()) / 1000);
-      if (rem >= 0) {
-        let y1 = tokenY(id);
-        let y2 = y1 + TOKEN_HEIGHT - 1;
-        if (y2 >= AR.y && y1 <= AR.y2) {
-          // token visible
-          if ((y2 - 3) <= AR.y2)
-          {
-            // progress bar visible
-            y2 = Math.min(y2, AR.y2);
-            rem = Math.min(rem, tokens[id].period);
-            let xr = Math.floor(AR.w * rem / tokens[id].period) + AR.x;
-            g.setColor(g.theme.fgH)
-             .setBgColor(g.theme.bgH)
-             .fillRect(AR.x, y2 - 3, xr, y2)
-             .clearRect(xr + 1, y2 - 3, AR.x2, y2);
-          }
-        } else {
-          // token not visible
-          state.id = -1;
+  if (id != -1 && tokens[id].period > 0) {
+    let rem = Math.floor((state.hotp.next - Date.now()) / 1000);
+    if (rem >= 0) {
+      let y1 = tokenY(id);
+      let y2 = y1 + TOKEN_HEIGHT - 1;
+      if (y2 >= AR.y && y1 <= AR.y2) {
+        // token visible
+        if ((y2 - 3) <= AR.y2)
+        {
+          // progress bar visible
+          y2 = Math.min(y2, AR.y2);
+          rem = Math.min(rem, tokens[id].period);
+          let xr = Math.floor(AR.w * rem / tokens[id].period) + AR.x;
+          g.setColor(g.theme.fgH)
+           .setBgColor(g.theme.bgH)
+           .fillRect(AR.x, y2 - 3, xr, y2)
+           .clearRect(xr + 1, y2 - 3, AR.x2, y2);
         }
+      } else {
+        // token not visible
+        state.id = -1;
       }
     }
   }
@@ -265,10 +261,10 @@ function drawToken(id) {
       drawProgressBar();
     }
   }
-  g.setClipRect(0, 0, g.getWidth(), g.getHeight());
+  g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
 }
 
-function startupDraw() {
+function drawAll() {
   if (tokens.length > 0) {
     let id = 0;
     let y = tokenY(id);
@@ -391,8 +387,13 @@ function bangle1Btn(e) {
     id = E.clip(id, 0, tokens.length - 1);
     var fakee = {b:1,x:0,y:0,dx:0};
     fakee.dy = state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, tokens.length * TOKEN_HEIGHT - AR.h);
-    onDrag(fakee);
-    changeId(id);
+    //onDrag(fakee);
+    //changeId(id);
+    // onDrag() (specifically g.scroll()) doesn't appear to work with the Bangle1
+    state.id = id;
+    state.hotp.hotp = CALCULATING;
+    state.listy -= fakee.dy;
+    drawAll();
   } else {
     timerCalc();
   }
@@ -415,5 +416,5 @@ if (typeof BTN2 == 'number') {
 Bangle.loadWidgets();
 const AR = Bangle.appRect;
 g.clear(); // Clear the screen once, at startup
-startupDraw();
+drawAll();
 Bangle.drawWidgets();
