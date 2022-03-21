@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "A clock with large numbers",
   "dependencies": {"widpedom":"app"},
-  "readme": "README.md",
+  "readme": "readme.md",
   "icon": "icon48.png",
   "screenshots": [{"url":"glbasic_screenshot.png"}],
   "type": "clock",
