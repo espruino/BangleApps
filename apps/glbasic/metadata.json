@@ -7,7 +7,7 @@
   "dependencies": {"widpedom":"app"},
   "readme": "README.md",
   "icon": "icon48.png",
-  "screenshots": [{"url":glbasic_screenshot.png"}],
+  "screenshots": [{"url":"glbasic_screenshot.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],
