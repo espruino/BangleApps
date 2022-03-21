@@ -27,5 +27,8 @@ Use the side **BTN** to exit the game, score and tile positions will be saved.
 
 Game 1024 is based on Saming's 2048 and Misho M. Petkovic 1024game.org and conceptually similar to Threes by Asher Vollmer.
 
-![Screenshot from the Banglejs 2 watch with the game in dark theme](./scrnshot_dn_300.jpg)
-![Screenshot from the Banglejs 2 watch with the game in light theme](./scrnshot_lc_300.jpg)
+In Dark theme with numbers:
+![Screenshot from the Banglejs 2 watch with the game in dark theme](./game1024_sc_dump_dark.png)
+
+In Light theme with characters:
+![Screenshot from the Banglejs 2 watch with the game in light theme](./game1024_sc_dump_light.png)
