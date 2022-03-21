@@ -72,6 +72,18 @@ try and keep filenames short to avoid overflowing the buffer.
 },
 ```
 
+### Screenshots
+
+In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { url:"screenshot.png" } ],`
+
+To get a screenshot you can:
+
+* Type `g.dump()` in the left-hand side of the Web IDE when connected to a Bangle.js 2 - you can then
+right-click and save the image shown in the terminal (this only works on Bangle.js 2 - Bangle.js 1 is
+unable to read data back from the LCD controller).
+* Run your code in the emulator and use the screenshot button in the bottom right of the window.
+
+
 ## Testing
 
 ### Online
