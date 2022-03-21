@@ -1,4 +1,4 @@
-const debugMode = 'development'; // valid values are: off, test, production, development
+const debugMode = 'off'; // valid values are: off, test, production, development
 const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)};
 const rows = 4, cols = 4;
 const borderWidth = 6;
@@ -26,7 +26,7 @@ const scores = {
   lastScores: [0],
   add: function(val) {
     this.currentScore = this.currentScore + Math.pow(2, val);
-    debug(console.log("new score=",this.currentScore));
+    debug(() => console.log("new score=",this.currentScore));
   },
   addToUndo: function () {
     this.lastScores.push(this.currentScore);
@@ -34,7 +34,7 @@ const scores = {
   },
   undo: function () {
     this.currentScore = this.lastScores.pop();
-    debug(console.log("undo score =", this.currentScore, "rest:", this.lastScores));
+    debug(() => console.log("undo score =", this.currentScore, "rest:", this.lastScores));
   },
   reset: function () {
     this.currentScore = 0;
@@ -44,25 +44,25 @@ const scores = {
     g.setColor(btnAtribs.fg);
     let ulCorner = {x: Bangle.appRect.x + 6, y: Bangle.appRect.y2 -22 };
     let lrCorner = {x: Bangle.appRect.x2, y: Bangle.appRect.y2 - 1};
-    g.fillRect(ulCorner.x, ulCorner.y, lrCorner.x, lrCorner.y);
-    g.setFont12x20(1);
-    g.setFontAlign(0,0,0);
+    g.fillRect(ulCorner.x, ulCorner.y, lrCorner.x, lrCorner.y)
+     .setFont12x20(1)
+     .setFontAlign(0,0,0);
     let scrX = Math.floor((ulCorner.x + lrCorner.x)/3);
     let scrY = Math.floor((ulCorner.y + lrCorner.y)/2) + 1;
-    g.setColor('#000000');
-    g.drawString(this.currentScore, scrX+1, scrY+1);
-    g.setColor(btnAtribs.bg);
-    g.drawString(this.currentScore, scrX, scrY);
+    g.setColor('#000000')
+     .drawString(this.currentScore, scrX+1, scrY+1)
+     .setColor(btnAtribs.bg)
+     .drawString(this.currentScore, scrX, scrY);
     scrX = Math.floor(4*(ulCorner.x + lrCorner.x)/5);
-    g.setFont("6x8:1x2");
-    g.drawString(this.highScore, btnAtribs.x + Math.floor(btnAtribs.w/2), scrY);
+    g.setFont("6x8:1x2")
+     .drawString(this.highScore, btnAtribs.x + Math.floor(btnAtribs.w/2), scrY);
   },
   hsContents: function () {
     return  {"highScore": this.highScore, "lastScore": this.currentScore};
   },
   check: function () {
     this.highScore = (this.currentScore > this.highScore) ? this.currentScore : this.highScore;
-    debug(console.log('highScore =', this.highScore));
+    debug(() => console.log('highScore =', this.highScore));
   }
 };
 
@@ -108,7 +108,7 @@ const snapshot = {
     if (this.counter == this.interval) {
       this.setDump();
       this.write();
-      debug(console.log("D U M P E D!", this.dump));
+      debug(() => console.log("snapped the state of the game:", this.dump));
     }
   },
   recover: function () {
@@ -131,7 +131,7 @@ const snapshot = {
     this.dump.highScore = scores.highScore;
     this.dump.charIndex = charIndex;
     this.write();
-    debug(console.log("reset D U M P E D!", this.dump));
+    debug(() => console.log("reset D U M P E D!", this.dump));
   }
 };
 const btnAtribs = {x: 134, w: 42, h: 42, fg:'#C0C0C0', bg:'#800000'};
@@ -201,7 +201,7 @@ const mover = {
     return canContinue;
   },
   nonEmptyCells: function (dir) {
-    debug(console.log("Move: ", dir.name));
+    debug(() => console.log("Move: ", dir.name));
     const step = dir.step;
     // outer loop for all colums/rows
     for (let n = dir.outerBegin; step*n <= step*dir.outerEnd; n=n+step) {
@@ -276,16 +276,16 @@ class Button {
     this.enabled = true;
   }
   draw() {
-    g.setColor(this.bg);
-    g.fillRect(this.x0, this.y0, this.x1, this.y1);
-    g.setFont(this.font);
-    g.setFontAlign(0,0,0);
+    g.setColor(this.bg)
+     .fillRect(this.x0, this.y0, this.x1, this.y1)
+     .setFont(this.font)
+     .setFontAlign(0,0,0);
     let strX = Math.floor((this.x0+this.x1)/2);
     let strY = Math.floor((this.y0+this.y1)/2);
-    g.setColor("#000000");
-    g.drawString(this.text, strX+2, strY+2);
-    g.setColor(this.fg);
-    g.drawString(this.text, strX, strY);
+    g.setColor("#000000")
+     .drawString(this.text, strX+2, strY+2)
+     .setColor(this.fg)
+     .drawString(this.text, strX, strY);
     // buttons.push(this);
   }
   onClick() {if (typeof this.cb === 'function' && this.enabled) {
@@ -309,20 +309,18 @@ class Cell {
     return cellColors[i >= cellColors.length ? cellColors.length -1 : i];
   }
   drawBg() {
-    g.setColor(this.getColor(this.expVal).bg);
-    g.fillRect(this.x0, this.y0, this.x1, this.y1);
+    g.setColor(this.getColor(this.expVal).bg)
+     .fillRect(this.x0, this.y0, this.x1, this.y1);
   }
   drawNumber() {
     if (this.expVal !== 0) {
-      g.setFont(cellFonts[charIndex]);
-      g.setFontAlign(0,0,0);
+      g.setFont(cellFonts[charIndex])
+       .setFontAlign(0,0,0);
       let char = cellChars[charIndex][this.expVal];
       let strX = Math.floor((this.x0 + this.x1)/2);
       let strY = Math.floor((this.y0 + this.y1)/2);
-      // g.setColor(cellShadowColor);
-      // g.drawString(this.expVal, strX+1, strY+1);
-      g.setColor(this.getColor(this.expVal).fg);
-      g.drawString(char, strX, strY);
+      g.setColor(this.getColor(this.expVal).fg)
+       .drawString(char, strX, strY);
     }
   }
   setExpVal(val) {
@@ -389,24 +387,23 @@ function createGrid () {
   }
 }
 function messageGameOver () {
-  g.setColor("#1a0d00");
-  g.setFont12x20(2);
-  g.setFontAlign(0,0,0);
-  g.drawString("G A M E", middle.x+13, middle.y-24);
-  g.drawString("O V E R !", middle.x+13, middle.y+24);
-  g.setColor("#ffffff");
-  g.drawString("G A M E", middle.x+12, middle.y-25);
-  g.drawString("O V E R !", middle.x+12, middle.y+25);
+  g.setColor("#1a0d00")
+    .setFont12x20(2).setFontAlign(0,0,0)
+    .drawString("G A M E", middle.x+13, middle.y-24)
+    .drawString("O V E R !", middle.x+13, middle.y+24);
+  g.setColor("#ffffff")
+    .drawString("G A M E", middle.x+12, middle.y-25)
+    .drawString("O V E R !", middle.x+12, middle.y+25);
 }
 function messageYouWin () {
-  g.setColor("#1a0d00");
-  g.setFont12x20(2);
-  g.setFontAlign(0,0,0);
-  g.drawString("YOU HAVE", middle.x+18, middle.y-24);
-  g.drawString("W O N ! !", middle.x+18, middle.y+24);
-  g.setColor("#FF0808");
-  g.drawString("YOU HAVE", middle.x+17, middle.y-25);
-  g.drawString("W O N ! !", middle.x+17, middle.y+25);
+  g.setColor("#1a0d00")
+   .setFont12x20(2)
+   .setFontAlign(0,0,0)
+   .drawString("YOU HAVE", middle.x+18, middle.y-24)
+   .drawString("W O N ! !", middle.x+18, middle.y+24);
+  g.setColor("#FF0808")
+   .drawString("YOU HAVE", middle.x+17, middle.y-25)
+   .drawString("W O N ! !", middle.x+17, middle.y+25);
   Bangle.buzz(200, 1);
 }
 function makeRandomNumber () {
@@ -434,7 +431,7 @@ function initGame() {
   createGrid();
   if (snReadOnInit) {
     snapshot.recover();
-    debug(console.log("R E C O V E R E D !", snapshot.dump));
+    debug(() => console.log("R E C O V E R E D !", snapshot.dump));
     let sum = allSquares.reduce(function (tv, sq) {return (sq.expVal + tv) ;}, 0);
     if (!sum) {
       addRandomNumber();
@@ -482,7 +479,7 @@ function handlePopUpClicks(btn) {
   buttons.all.pop(); // remove the no button
   buttons.all.pop(); // remove the yes button
   buttons.all.forEach(b => {b.enable();}); // enable the remaining buttons again
-  debug(console.log("Button name =", name));
+  debug(() => console.log("Button name =", name));
   switch (name) {
     case 'yes':
       resetGame();
@@ -512,43 +509,18 @@ function resetGame() {
 
 /**
  * Function that can be used in test or development environment, or production. 
- * Depends on global constant EFTriggerDebugMode
+ * Depends on global constant debugMode
  * @param {function} func function to call like console.log()
  */
  const debug = (func) => {
   switch (debugMode) {
     case "development": 
-            // console.log("Development"); 
-            if (typeof func === 'function') {
-              func();
-            }
-            break;
-    case "test" : 
-            console.log("--- test ---"); 
-            if (typeof func === 'function') {
-              func();
-            }
-            break;
-    case "off": 
-    case "production": // ignore func
+      if (typeof func === 'function') {
+        func();
+      }
+      break;
+    case "off":
     default: break;
-  }
-};
-const test =  {
-  drawAllColors: function(i) {
-    charIndex = i>2 ? 0 : i<0 ? 0 : i;
-    allSquares.forEach((sq,i) => {
-      let  c = i<11 ? i : i-10;
-      sq.setExpVal(c);
-      debug(console.log("c=",c));
-    });
-    drawGrid();
-  },
-  youWin: function() {
-    messageYouWin();
-  },
-  gameOver: function() {
-    messageGameOver();
   }
 };
 
@@ -557,7 +529,7 @@ function handleclick(e) {
   buttons.all.forEach(btn => {
     if ((e.x >= btn.x0) && (e.x <= btn.x1) && (e.y >= btn.y0) && (e.y <= btn.y1)) {
       btn.onClick();
-      debug(console.log(btn.name));
+      debug(() => console.log(btn.name));
     }  
   });
 }
@@ -650,7 +622,7 @@ function runGame(dir){
   snapshot.make();
   dragger.setEnabled(true);
   if (!(mover.anyLeft())) {
-    debug(console.log("G A M E  O V E R !!"));
+    debug(() => console.log("G A M E  O V E R !!"));
     snapshot.reset();
     messageGameOver();
   }
@@ -659,12 +631,12 @@ function runGame(dir){
 function updUndoLvlIndex() {
   let x = 170;
   let y = 60;
-  g.setColor(btnAtribs.fg);
-  g.fillRect(x-6,y-6, 176, 67);
+  g.setColor(btnAtribs.fg)
+    .fillRect(x-6,y-6, 176, 67);
   if (scores.lastScores.length > 0) {
-    g.setColor("#000000");
-    g.setFont("4x6:2");
-    g.drawString(scores.lastScores.length, x, y);
+    g.setColor("#000000")
+    .setFont("4x6:2")
+    .drawString(scores.lastScores.length, x, y);
   }
 }
 function incrCharIndex() {
@@ -679,3 +651,8 @@ buttons.add(new Button('restart', btnAtribs.x, 106, btnAtribs.w, btnAtribs.h, 'R
 initGame();
 
 dragger.setEnabled(true);
+
+E.on('kill',function() {
+  this.write();
+  debug(() => console.log("1024 game got killed!"));
+});
