@@ -29,11 +29,11 @@ function calc_ess(val) {
     if (nonmot) {
       slsnds+=1;
       if (slsnds >= sleepthresh) {
-        return true; // awake
+        return true; // sleep
       }
     } else {
       slsnds=0;
-      return false; // sleep
+      return false; // awake
     }
   }
 }

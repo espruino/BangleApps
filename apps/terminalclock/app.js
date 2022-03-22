@@ -1,16 +1,28 @@
 var locale = require("locale");
 var fontColor = g.theme.dark ? "#0f0" : "#000";
-var paddingY = 2;
-var font6x8At4Size = 32;
-var font6x8At2Size = 18;
 var heartRate = 0;
 
+// handling the differents versions of the Banglejs smartwatch
+if (process.env.HWVERSION == 1){
+  var paddingY = 3;
+  var font6x8At4Size = 48;
+  var font6x8At2Size = 27;
+  var font6x8FirstTextSize = 6;
+  var font6x8DefaultTextSize = 3;
+}
+else{
+  var paddingY = 2;
+  var font6x8At4Size = 32;
+  var font6x8At2Size = 18;
+  var font6x8FirstTextSize = 4;
+  var font6x8DefaultTextSize = 2;
+}
 
 function setFontSize(pos){
   if(pos == 1)
-    g.setFont("6x8", 4);
+    g.setFont("6x8", font6x8FirstTextSize);
   else
-    g.setFont("6x8", 2);
+    g.setFont("6x8", font6x8DefaultTextSize);
 }
 
 function clearField(pos){
