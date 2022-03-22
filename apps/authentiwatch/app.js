@@ -2,6 +2,7 @@ const COUNTER_TRIANGLE_SIZE = 10;
 const TOKEN_EXTRA_HEIGHT = 16;
 var TOKEN_DIGITS_HEIGHT = 30;
 var TOKEN_HEIGHT = TOKEN_DIGITS_HEIGHT + TOKEN_EXTRA_HEIGHT;
+const SETTINGS = "authentiwatch.json";
 // Hash functions
 const crypto = require("crypto");
 const algos = {
@@ -15,7 +16,7 @@ const NOT_SUPPORTED = /*LANG*/"Not supported";
 
 // sample settings:
 // {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
-var settings = require("Storage").readJSON("authentiwatch.json", true) || {tokens:[],misc:{}};
+var settings = require("Storage").readJSON(SETTINGS, true) || {tokens:[],misc:{}};
 if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
@@ -134,14 +135,13 @@ half = n => Math.floor(n / 2);
 function timerCalc() {
   let timerfn = exitApp;
   let timerdly = 10000;
-  let id = state.id;
-  if (id != -1 && state.hotp.hotp != "") {
-    if (tokens[id].period > 0) {
+  if (state.id != -1 && state.hotp.hotp != "") {
+    if (tokens[state.id].period > 0) {
       // timed HOTP
       if (state.hotp.next < Date.now()) {
         if (state.cnt > 0) {
-          --state.cnt;
-          state.hotp = hotp(tokens[id]);
+          state.cnt--;
+          state.hotp = hotp(tokens[state.id]);
         } else {
           state.hotp.hotp = "";
         }
@@ -154,7 +154,7 @@ function timerCalc() {
     } else {
       // counter HOTP
       if (state.cnt > 0) {
-        --state.cnt;
+        state.cnt--;
         timerdly = 30000;
       } else {
         state.hotp.hotp = "";
@@ -215,7 +215,7 @@ function drawToken(id) {
   var y2 = y1 + TOKEN_HEIGHT - 1;
   var adj, lbl;
   g.setClipRect(x1, Math.max(y1, AR.y), x2, Math.min(y2, AR.y2));
-  lbl = tokens[id].label.substr(0, 10);
+  lbl = (id >= 0 && id < tokens.length) ? tokens[id].label.substr(0, 10) : "";
   if (id === state.id) {
     g.setColor(g.theme.fgH)
      .setBgColor(g.theme.bgH);
@@ -264,31 +264,24 @@ function drawToken(id) {
   g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
 }
 
-function drawAll() {
-  if (tokens.length > 0) {
-    let id = 0;
-    let y = tokenY(id);
-    while (id < tokens.length && y < AR.y2) {
-      if ((y + TOKEN_HEIGHT) > AR.y) {
-        drawToken(id);
-      }
-      id++;
-      y += TOKEN_HEIGHT;
+function changeId(id) {
+  if (id != state.id) {
+    state.hotp.hotp = CALCULATING;
+    let pid = state.id;
+    state.id = id;
+    if (pid != -1) {
+      drawToken(pid);
     }
-  } else {
-    let x = AR.x + half(AR.w);
-    let y = AR.y + half(AR.h);
-    g.setFont("Vector", TOKEN_DIGITS_HEIGHT)
-     .setFontAlign(0, 0, 0)
-     .drawString(NO_TOKENS, x, y, false);
+    if (id != -1) {
+      drawToken( id);
+    }
   }
-  timerCalc();
 }
 
 function onDrag(e) {
   state.cnt = 1;
   if (e.b != 0 && e.dy != 0) {
-    var y = E.clip(state.listy - e.dy, 0, tokens.length * TOKEN_HEIGHT - AR.h);
+    var y = E.clip(state.listy - E.clip(e.dy, -AR.h, AR.h), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
     if (state.listy != y) {
       var id, dy = state.listy - y;
       state.listy = y;
@@ -319,21 +312,6 @@ function onDrag(e) {
   }
 }
 
-function changeId(id) {
-  if (id != state.id) {
-    state.hotp.hotp = CALCULATING;
-    let pid = state.id;
-    state.id = id;
-    if (pid != -1) {
-      drawToken(pid);
-    }
-    if (id != -1) {
-      drawToken( id);
-    }
-    timerCalc();
-  }
-}
-
 function onTouch(zone, e) {
   state.cnt = 1;
   if (e) {
@@ -344,36 +322,39 @@ function onTouch(zone, e) {
     if (state.id != id) {
       if (id != -1) {
         // scroll token into view if necessary
-        var fakee = {b:1,x:0,y:0,dx:0,dy:0};
+        var dy = 0;
         var y = id * TOKEN_HEIGHT - state.listy;
         if (y < 0) {
-          fakee.dy -= y;
+          dy -= y;
           y = 0;
         }
         y += TOKEN_HEIGHT;
         if (y > AR.h) {
-          fakee.dy -= (y - AR.h);
+          dy -= (y - AR.h);
         }
-        onDrag(fakee);
+        onDrag({b:1, dy:dy});
       }
       changeId(id);
     }
   }
+  timerCalc();
 }
 
 function onSwipe(e) {
   state.cnt = 1;
-  let id = state.id;
-  if (e == 1) {
+  switch (e) {
+  case  1:
     exitApp();
+    break;
+  case -1:
+    if (state.id != -1 && tokens[state.id].period <= 0) {
+      tokens[state.id].period--;
+      require("Storage").writeJSON(SETTINGS, {tokens:tokens, misc:settings.misc});
+      state.hotp.hotp = CALCULATING;
+      drawToken(state.id);
+    }
   }
-  if (e == -1 && id != -1 && tokens[id].period <= 0) {
-    tokens[id].period--;
-    let newsettings={tokens:tokens,misc:settings.misc};
-    require("Storage").writeJSON("authentiwatch.json", newsettings);
-    state.hotp.hotp = CALCULATING;
-    drawToken(id);
-  }
+  timerCalc();
 }
 
 function bangle1Btn(e) {
@@ -385,18 +366,11 @@ function bangle1Btn(e) {
       case  1: id++; break;
     }
     id = E.clip(id, 0, tokens.length - 1);
-    var fakee = {b:1,x:0,y:0,dx:0};
-    fakee.dy = state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, tokens.length * TOKEN_HEIGHT - AR.h);
-    //onDrag(fakee);
-    //changeId(id);
-    // onDrag() (specifically g.scroll()) doesn't appear to work with the Bangle1
-    state.id = id;
-    state.hotp.hotp = CALCULATING;
-    state.listy -= fakee.dy;
-    drawAll();
-  } else {
-    timerCalc();
+    var dy = state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
+    onDrag({b:1, dy:dy});
+    changeId(id);
   }
+  timerCalc();
 }
 
 function exitApp() {
@@ -415,6 +389,15 @@ if (typeof BTN2 == 'number') {
 }
 Bangle.loadWidgets();
 const AR = Bangle.appRect;
-g.clear(); // Clear the screen once, at startup
-drawAll();
+// draw the initial display
+g.clear();
+if (tokens.length > 0) {
+  state.listy = AR.h;
+  onDrag({b:1, dy:AR.h});
+} else {
+  g.setFont("Vector", TOKEN_DIGITS_HEIGHT)
+   .setFontAlign(0, 0, 0)
+   .drawString(NO_TOKENS, AR.x + half(AR.w), AR.y + half(AR.h), false);
+}
+timerCalc();
 Bangle.drawWidgets();
