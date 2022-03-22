@@ -8,3 +8,4 @@
 0.08: Optimize line wrapping for Bangle 2
 0.09: fix the trasparent widget bar if there are no widgets for Bangle 2
 0.10: added "one click exit" setting  for Bangle 2
+0.11: Fix bangle.js 1 white icons not displaying

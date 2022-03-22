@@ -172,6 +172,7 @@ Bangle.on('touch', function(zone,e) {
             break;
           case 4:
             //new game
+            turn = 0;
             play = [-1,-1,-1,-1];
             game = [];
             endgame=false;
@@ -189,10 +190,3 @@ Bangle.on('touch', function(zone,e) {
 game = [];
 get_secret();
 draw();
-//Bangle.loadWidgets();
-//Bangle.drawWidgets();
-
-
-
-
-
