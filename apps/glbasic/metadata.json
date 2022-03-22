@@ -2,7 +2,7 @@
   "id": "glbasic",
   "name": "GLBasic Clock",
   "shortName": "GLBasic",
-  "version": "0.01",
+  "version": "0.2",
   "description": "A clock with large numbers",
   "dependencies": {"widpedom":"app"},
   "readme": "readme.md",
