@@ -17,7 +17,7 @@ const cellChars = [
 const maxUndoLevels = 4;
 const noExceptions = true;
 let charIndex = 0; // plain numbers on the grid
-
+const themeBg = g.theme.bg;
 
   
 const scores = {
@@ -304,13 +304,29 @@ class Cell {
     this.previousExpVals=[];
     this.idx = idx;
     this.cb = cb;
+    this.isRndm = false;
+    this.ax = x0;
+    this.ay = Math.floor(0.2*width+y0);
+    this.bx = Math.floor(0.3*width+x0);
+    this.by = Math.floor(0.5*width+y0);
+    this.cx = x0;
+    this.cy = Math.floor(0.8*width+y0);
   }
   getColor(i) {
     return cellColors[i >= cellColors.length ? cellColors.length -1 : i];
   }
   drawBg() {
-    g.setColor(this.getColor(this.expVal).bg)
-     .fillRect(this.x0, this.y0, this.x1, this.y1);
+    debug(()=>console.log("Drawbg!!"));
+    if (this.isRndm == true) {
+      debug(()=>console.log('Random: (ax)', this.ax));
+      g.setColor(this.getColor(this.expVal).bg)
+       .fillRect(this.x0, this.y0, this.x1, this.y1)
+       .setColor(themeBg)
+       .fillPoly([this.cx,this.cy,this.bx,this.by,this.ax,this.ay]);  
+    } else {
+      g.setColor(this.getColor(this.expVal).bg)
+      .fillRect(this.x0, this.y0, this.x1, this.y1);
+    }
   }
   drawNumber() {
     if (this.expVal !== 0) {
@@ -344,6 +360,19 @@ class Cell {
   }
   addToScore() {if (typeof this.cb === 'function') {
       this.cb(this.expVal);
+    }
+  }
+  setRndmFalse() {
+    this.isRndm = false;
+  }
+  setRndmTrue() {
+    this.isRndm = true;
+  }
+  drawRndmIndicator(){
+    if (this.isRndm == true) {
+      debug(()=>console.log('Random: (ax)', this.ax));
+      g.setColor(this.getColor(0).bg)
+     .fillPoly(this.ax,this.ay,this.bx,this.by,this.cx,this.cy);
     }
   }
 }
@@ -387,11 +416,12 @@ function createGrid () {
   }
 }
 function messageGameOver () {
-  g.setColor("#1a0d00")
+  const c = (g.theme.dark) ? {"fg": "#FFFFFF", "bg": "#808080"} : {"fg": "#FF0000", "bg": "#000000"};
+  g.setColor(c.bg)
     .setFont12x20(2).setFontAlign(0,0,0)
     .drawString("G A M E", middle.x+13, middle.y-24)
     .drawString("O V E R !", middle.x+13, middle.y+24);
-  g.setColor("#ffffff")
+  g.setColor(c.fg)
     .drawString("G A M E", middle.x+12, middle.y-25)
     .drawString("O V E R !", middle.x+12, middle.y+25);
 }
@@ -417,11 +447,13 @@ function addRandomNumber() {
   if (emptySquaresIdxs.length > 0) {
     let randomIdx = Math.floor( emptySquaresIdxs.length * Math.random() );
     allSquares[emptySquaresIdxs[randomIdx]].setExpVal(makeRandomNumber());
+    allSquares[emptySquaresIdxs[randomIdx]].setRndmTrue();
   } 
 }
 function drawGrid() {
   allSquares.forEach(sq => {
     sq.drawBg();
+    // sq.drawRndmIndicator();
     sq.drawNumber();
   });
 }
@@ -497,7 +529,7 @@ function handlePopUpClicks(btn) {
 function resetGame() {
   g.clear();
   scores.reset();
-  allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();});
+  allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();sq.setRndmFalse();});
   addRandomNumber();
   addRandomNumber();
   drawGrid();
@@ -614,6 +646,7 @@ function runGame(dir){
   mover.nonEmptyCells(dir);
   mover.mergeEqlCells(dir);
   mover.nonEmptyCells(dir);
+  allSquares.forEach(sq => {sq.setRndmFalse();});
   addRandomNumber();
   drawGrid();
   scores.check();

@@ -11,6 +11,8 @@ When two tiles with the same number are squashed together they will add up as ex
 
 **3 + 3 = 4** or **C + C = D** which is a representation of  **2^3 +  2^3 = 2^4 = 16**
 
+After each move a new tile will be added on a random empty square. The value can be 1 or 2, and will be marked with a chevron.
+
 So you can continue till you reach **1024** which equals **2^(10)**. So when you reach tile **10** you have won.
 
 The score is maintained by adding the outcome of the sum of all pairs of squashed tiles (4+16+4+8 etc.)
