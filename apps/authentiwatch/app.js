@@ -369,11 +369,15 @@ function bangle1Btn(e) {
     var dy = state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
     onDrag({b:1, dy:dy});
     changeId(id);
+    drawProgressBar();
   }
   timerCalc();
 }
 
 function exitApp() {
+  if (state.drawtimer) {
+    clearTimeout(state.drawtimer);
+  }
   Bangle.showLauncher();
 }
 
