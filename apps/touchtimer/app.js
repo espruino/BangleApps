@@ -141,6 +141,13 @@ var main = () => {
             if (buzzCount >= settings.buzzCount) {
               clearInterval(buzzIntervalId);
               buzzIntervalId = undefined;
+
+              buttonStartPause.value = "REPEAT";
+              buttonStartPause.draw();
+              buttonStartPause.value = "START";
+              timerCountDown = undefined;
+              timerEdit.draw();
+
               return;
             } else {
               Bangle.buzz(settings.buzzDuration * 1000, 1);
