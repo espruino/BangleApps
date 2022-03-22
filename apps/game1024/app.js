@@ -1,4 +1,4 @@
-const debugMode = 'development'; // valid values are: off, test, production, development
+const debugMode = 'off'; // valid values are: off, test, production, development
 const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)};
 const rows = 4, cols = 4;
 const borderWidth = 6;
