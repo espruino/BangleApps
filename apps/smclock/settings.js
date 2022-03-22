@@ -52,6 +52,7 @@
         writeSettings();
       },
     },
+    "Background": stringInSettings("backgroundImage", ["3bit", "4bit"]),
     Date: stringInSettings("dateFormat", ["Long", "Short"]),
     "Draw Interval": {
       value: settings.drawInterval,

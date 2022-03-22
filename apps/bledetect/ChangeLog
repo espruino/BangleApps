@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Fixed issue with wrong device informations
 0.03: Ensure manufacturer:undefined doesn't overflow screen
+0.04: Set Bangle.js 2 compatible, show widgets
