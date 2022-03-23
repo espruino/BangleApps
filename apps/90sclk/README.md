@@ -1,4 +1,4 @@
-# Wave Clock
+# 90s Clock
 
 ![](screenshot.png)
 

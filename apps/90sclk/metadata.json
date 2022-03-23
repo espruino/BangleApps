@@ -1,13 +1,13 @@
 {
   "id": "90sclk",
   "name": "90s Clock",
-  "version": "0.02",
+  "version": "0.01",
   "description": "A clock in 90s style",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
     {"name":"90sclk.app.js","url":"app.js"},
