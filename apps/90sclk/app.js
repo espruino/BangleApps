@@ -32,32 +32,49 @@ function queueDraw() {
 }
 
 
-function drawBorderString(str, x, y, bw, fc){
+function drawBorderString(str, x, y, b, fc){
   g.setColor("#000");
-  for(var i=-bw; i<bw+1; i++){
-    g.drawString(str, x, y+i);
-    g.drawString(str, x+i, y);
-  }
+  g.drawString(str, x, y+b);
+  g.drawString(str, x, y-b);
+  g.drawString(str, x+b, y);
+  g.drawString(str, x-b, y);
 
   g.setColor(fc);
   g.drawString(str,x+1,y);
 }
 
 
+function getSteps() {
+  try{
+      if (WIDGETS.wpedom !== undefined) {
+          return WIDGETS.wpedom.getSteps();
+      } else if (WIDGETS.activepedom !== undefined) {
+          return WIDGETS.activepedom.getSteps();
+      }
+  } catch(ex) {
+      // In case we failed, we can only show 0 steps.
+  }
+
+  return 0;
+}
+
+
 function draw() {
   for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-  var x = g.getWidth()/2;
+  var x = g.getWidth()/2-5;
   var y = g.getHeight()/2-20;
 
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
   g.drawImage(getImg(),0,0);
 
+  // Draw time
   var date = new Date();
   var timeStr = locale.time(date,1);
   g.setFontAlign(0,0);
   g.setFontTime();
   drawBorderString(timeStr, x, y, 5, "#fff");
 
+  // Draw date
   y += 50;
   x = x - g.stringWidth(timeStr) / 2 + 5;
   g.setFontDate();
@@ -66,6 +83,11 @@ function draw() {
   var fc = Bangle.isLocked() ? "#0ff" :"#fff";
   fc = E.getBattery() < 50 ? "#f00" : fc;
   drawBorderString(dateStr, x, y, 3, fc);
+
+  // Draw steps
+  g.setFontAlign(1,1);
+  var steps = parseInt(getSteps() / 1000);
+  drawBorderString(steps, g.getWidth()-10, g.getHeight()-10, 3, "#f0f");
 
   // queue draw in one minute
   queueDraw();
