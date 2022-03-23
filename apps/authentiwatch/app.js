@@ -353,6 +353,7 @@ function onSwipe(e) {
       state.hotp.hotp = CALCULATING;
       drawToken(state.id);
     }
+    break;
   }
   timerCalc();
 }
