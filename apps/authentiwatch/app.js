@@ -16,7 +16,7 @@ const NOT_SUPPORTED = /*LANG*/"Not supported";
 
 // sample settings:
 // {tokens:[{"algorithm":"SHA1","digits":6,"period":30,"issuer":"","account":"","secret":"Bbb","label":"Aaa"}],misc:{}}
-var settings = require("Storage").readJSON(SETTINGS, true) || {tokens:[],misc:{}};
+var settings = require("Storage").readJSON(SETTINGS, true) || {tokens:[], misc:{}};
 if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
@@ -106,9 +106,9 @@ function hotp(token) {
 }
 
 // Tokens are displayed in three states:
-// 1. Unselected (state.id==-1)
-// 2. Selected, inactive (no code) (state.id!=-1,state.hotp.hotp=="")
-// 3. Selected, active (code showing) (state.id!=-1,state.hotp.hotp!="")
+// 1. Unselected (state.id<0)
+// 2. Selected, inactive (no code) (state.id>=0,state.hotp.hotp=="")
+// 3. Selected, active (code showing) (state.id>=0,state.hotp.hotp!="")
 var fontszCache = {};
 var state = {
   listy:0, // list scroll position
@@ -135,7 +135,7 @@ half = n => Math.floor(n / 2);
 function timerCalc() {
   let timerfn = exitApp;
   let timerdly = 10000;
-  if (state.id != -1 && state.hotp.hotp != "") {
+  if (state.id >= 0 && state.hotp.hotp != "") {
     if (tokens[state.id].period > 0) {
       // timed HOTP
       if (state.hotp.next < Date.now()) {
@@ -181,7 +181,7 @@ function updateProgressBar() {
 
 function drawProgressBar() {
   let id = state.id;
-  if (id != -1 && tokens[id].period > 0) {
+  if (id >= 0 && tokens[id].period > 0) {
     let rem = Math.floor((state.hotp.next - Date.now()) / 1000);
     if (rem >= 0) {
       let y1 = tokenY(id);
@@ -269,10 +269,10 @@ function changeId(id) {
     state.hotp.hotp = CALCULATING;
     let pid = state.id;
     state.id = id;
-    if (pid != -1) {
+    if (pid >= 0) {
       drawToken(pid);
     }
-    if (id != -1) {
+    if (id >= 0) {
       drawToken( id);
     }
   }
@@ -320,7 +320,7 @@ function onTouch(zone, e) {
       id = -1;
     }
     if (state.id != id) {
-      if (id != -1) {
+      if (id >= 0) {
         // scroll token into view if necessary
         var dy = 0;
         var y = id * TOKEN_HEIGHT - state.listy;
@@ -347,7 +347,7 @@ function onSwipe(e) {
     exitApp();
     break;
   case -1:
-    if (state.id != -1 && tokens[state.id].period <= 0) {
+    if (state.id >= 0 && tokens[state.id].period <= 0) {
       tokens[state.id].period--;
       require("Storage").writeJSON(SETTINGS, {tokens:tokens, misc:settings.misc});
       state.hotp.hotp = CALCULATING;
