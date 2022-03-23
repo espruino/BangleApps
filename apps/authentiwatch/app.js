@@ -2,6 +2,8 @@ const COUNTER_TRIANGLE_SIZE = 10;
 const TOKEN_EXTRA_HEIGHT = 16;
 var TOKEN_DIGITS_HEIGHT = 30;
 var TOKEN_HEIGHT = TOKEN_DIGITS_HEIGHT + TOKEN_EXTRA_HEIGHT;
+const PROGRESSBAR_HEIGHT = 3;
+const IDLE_REPEATS = 1; // when idle, the number of extra timed periods to show before hiding
 const SETTINGS = "authentiwatch.json";
 // Hash functions
 const crypto = require("crypto");
@@ -21,7 +23,7 @@ if (settings.data  ) tokens = settings.data  ; /* v0.02 settings */
 if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 function b32decode(seedstr) {
-  // RFC4648
+  // RFC4648 Base16/32/64 Data Encodings
   let buf = 0, bitcount = 0, retstr = "";
   for (let c of seedstr.toUpperCase()) {
     if (c == '0') c = 'O';
@@ -48,7 +50,7 @@ function b32decode(seedstr) {
 
 function hmac(key, message, algo) {
   let a = algos[algo.toUpperCase()];
-  // RFC2104
+  // RFC2104 HMAC
   if (key.length > a.blksz) {
     key = a.sha(key);
   }
@@ -62,7 +64,7 @@ function hmac(key, message, algo) {
   istr.set(message, a.blksz);
   ostr.set(a.sha(istr), a.blksz);
   let ret = a.sha(ostr);
-  // RFC4226 dynamic truncation
+  // RFC4226 HOTP (dynamic truncation)
   let v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
@@ -187,7 +189,7 @@ function drawProgressBar() {
       let y2 = y1 + TOKEN_HEIGHT - 1;
       if (y2 >= AR.y && y1 <= AR.y2) {
         // token visible
-        y1 = y2 - 3;
+        y1 = y2 - PROGRESSBAR_HEIGHT;
         if (y1 <= AR.y2)
         {
           // progress bar visible
@@ -278,7 +280,7 @@ function changeId(id) {
 }
 
 function onDrag(e) {
-  state.cnt = 1;
+  state.cnt = IDLE_REPEATS;
   if (e.b != 0 && e.dy != 0) {
     let y = E.clip(state.listy - E.clip(e.dy, -AR.h, AR.h), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
     if (state.listy != y) {
@@ -312,7 +314,7 @@ function onDrag(e) {
 }
 
 function onTouch(zone, e) {
-  state.cnt = 1;
+  state.cnt = IDLE_REPEATS;
   if (e) {
     let id = Math.floor((state.listy + e.y - AR.y) / TOKEN_HEIGHT);
     if (id == state.id || tokens.length == 0 || id >= tokens.length) {
@@ -340,7 +342,7 @@ function onTouch(zone, e) {
 }
 
 function onSwipe(e) {
-  state.cnt = 1;
+  state.cnt = IDLE_REPEATS;
   switch (e) {
   case  1:
     exitApp();
@@ -358,7 +360,7 @@ function onSwipe(e) {
 }
 
 function bangleBtn(e) {
-  state.cnt = 1;
+  state.cnt = IDLE_REPEATS;
   if (tokens.length > 0) {
     let id = E.clip(state.id + e, 0, tokens.length - 1);
     onDrag({b:1, dy:state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h))});
