@@ -612,6 +612,12 @@ Bangle.on('charging',function(charging) {
 });
 
 
+function increaseAlarm(){
+  if(isAlarmEnabled() && getAlarmMinutes() < 95){
+    settings.alarm += 5;
+  } else {
+    settings.alarm = getCurrentTimeInMinutes() + 5;
+  }
 
 function feedback(){
   Bangle.buzz(40, 0.3);

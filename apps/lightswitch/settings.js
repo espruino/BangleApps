@@ -44,9 +44,11 @@
       // return entry for string value
       return {
         value: entry.value.indexOf(settings[key]),
+        min : 0,
+        max : entry.value.length-1,
+        wrap : true,
         format: v => entry.title ? entry.title[v] : entry.value[v],
         onchange: function(v) {
-          this.value = v = v >= entry.value.length ? 0 : v < 0 ? entry.value.length - 1 : v;
           writeSetting(key, entry.value[v], entry.drawWidgets);
           if (entry.exec) entry.exec(entry.value[v]);
         }
@@ -57,8 +59,10 @@
         value: settings[key] * entry.factor,
         step: entry.step,
         format: v => v > 0 ? v + entry.unit : "off",
+        min : entry.min,
+        max : entry.max,
+        wrap : true,
         onchange: function(v) {
-          this.value = v = v > entry.max ? entry.min : v < entry.min ? entry.max : v;
           writeSetting(key, v / entry.factor, entry.drawWidgets);
         },
       };
@@ -133,16 +137,16 @@
         title: "Light Switch"
       },
       "< Back": () => back(),
-      "-- Widget --------": 0,
+      "-- Widget": 0,
       "Bulb col": getEntry("colors"),
       "Image": getEntry("image"),
-      "-- Control -------": 0,
+      "-- Control": 0,
       "Touch": getEntry("touchOn"),
       "Drag Delay": getEntry("dragDelay"),
       "Min Value": getEntry("minValue"),
-      "-- Unlock --------": 0,
+      "-- Unlock": 0,
       "TapSide": getEntry("unlockSide"),
-      "-- Flash ---------": 0,
+      "-- Flash": 0,
       "TapSide ": getEntry("tapSide"),
       "Tap": getEntry("tapOn"),
       "Timeout": getEntry("tOut"),

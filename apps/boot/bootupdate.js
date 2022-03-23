@@ -213,7 +213,7 @@ var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
 var fileSize = boot.length + bootPost.length;
 bootFiles.forEach(bootFile=>{
   // match the size of data we're adding below in bootFiles.forEach
-  fileSize += 2+bootFile.length+1+require('Storage').read(bootFile).length+1;
+  fileSize += 2+bootFile.length+1+require('Storage').read(bootFile).length+2;
 });
 // write file in chunks (so as not to use up all RAM)
 require('Storage').write('.boot0',boot,0,fileSize);
@@ -231,8 +231,8 @@ bootFiles.forEach(bootFile=>{
   var bf = require('Storage').read(bootFile);
   require('Storage').write('.boot0',bf,fileOffset);
   fileOffset+=bf.length;
-  require('Storage').write('.boot0',"\n",fileOffset);
-  fileOffset+=1;
+  require('Storage').write('.boot0',";\n",fileOffset);
+  fileOffset+=2;
 });
 require('Storage').write('.boot0',bootPost,fileOffset);
 
