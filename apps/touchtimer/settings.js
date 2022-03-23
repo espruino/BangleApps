@@ -31,6 +31,14 @@
           writeSettings(settings);
         },
       },
+      "CountDown Buzz": {
+        value: !!settings.countDownBuzz,
+        format: value => value?"On":"Off",
+        onchange: (value) => {
+          settings.countDownBuzz = value;
+          writeSettings(settings);
+        },
+      },
       "Pause Between": {
         value: settings.pauseBetween,
         min: 1,
