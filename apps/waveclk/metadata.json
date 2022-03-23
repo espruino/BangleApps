@@ -1,7 +1,7 @@
 {
   "id": "waveclk",
   "name": "Wave Clock",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/)",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
