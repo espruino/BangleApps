@@ -126,6 +126,14 @@ var main = () => {
       timerIntervalId = setInterval(() => {
         timerCountDown.draw();
 
+        // Buzz lightly when there are less then 5 seconds left
+        if (settings.countDownBuzz) {
+          var remainingSeconds = timerCountDown.getAdjustedTime().seconds;
+          if (remainingSeconds <= 5 && remainingSeconds > 0) {
+            Bangle.buzz();
+          }
+        }
+
         if (timerCountDown.isFinished()) {
           buttonStartPause.value = "FINISHED!";
           buttonStartPause.draw();
