@@ -188,15 +188,16 @@ function drawProgressBar() {
       let y2 = y1 + TOKEN_HEIGHT - 1;
       if (y2 >= AR.y && y1 <= AR.y2) {
         // token visible
-        if ((y2 - 3) <= AR.y2)
+        y1 = y2 - 3;
+        if (y1 <= AR.y2)
         {
           // progress bar visible
           y2 = Math.min(y2, AR.y2);
           let xr = Math.floor(AR.w * rem / tokens[id].period) + AR.x;
           g.setColor(g.theme.fgH)
            .setBgColor(g.theme.bgH)
-           .fillRect(AR.x, y2 - 3, xr, y2)
-           .clearRect(xr + 1, y2 - 3, AR.x2, y2);
+           .fillRect(AR.x, y1, xr, y2)
+           .clearRect(xr + 1, y1, AR.x2, y2);
         }
       } else {
         // token not visible
