@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "Bangle version of a tile shifting game",
-  "supports" : ["BANGLEJS1","BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "tags": "game",
   "storage": [
