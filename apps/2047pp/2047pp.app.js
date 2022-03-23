@@ -18,11 +18,11 @@ class TwoK {
     bw = Math.floor(w/4);
     g.clearRect(0, 0, g.getWidth()-1, yo).setFontAlign(0, 0, 0);
     g.setFont("Vector", 16).setColor("#fff").drawString("Score:"+this.score.toString(), g.getWidth()/2, 8);
-    this.drawBRect(xo-2, yo-2, xo+w+2, yo+h, 2, "#a88", "#caa", false);
+    this.drawBRect(xo-3, yo-3, xo+w+2, yo+h+2, 4, "#a88", "#caa", false);
     for (y=0; y<4; ++y)
       for (x=0; x<4; ++x) {
         b = this.b[y][x];
-        this.drawBRect(xo+x*bw, yo+y*bh-2, xo+(x+1)*bh, yo+(y+1)*bh-2, 4, "#a88", this.cmap[b], true);
+        this.drawBRect(xo+x*bw, yo+y*bh-1, xo+(x+1)*bh-1, yo+(y+1)*bh-2, 4, "#a88", this.cmap[b], true);
         if (b > 4) g.setColor(1, 1, 1);
         else g.setColor(0, 0, 0);
         g.setFont("Vector", bh*(b>8 ? (b>64 ? (b>512 ? 0.32 : 0.4) : 0.6) : 0.7)); 
@@ -35,7 +35,7 @@ class TwoK {
       for (y=0; y<4; ++y) {
         for (x=2; x>=0; x--)
           if (this.b[y][x]==0) {
-            for (i=x; i<3; i++) this.b[y][i] = this.b[y][i+1]; 
+            for (i=x; i<3; i++) this.b[y][i] = this.b[y][i+1];
             this.b[y][3] = 0;
           }
         for (x=0; x<3; ++x)
@@ -133,7 +133,7 @@ var twok = new TwoK();
 twok.addDigit(); twok.addDigit();
 twok.render();
 if (process.env.HWVERSION==2) Bangle.on("drag", dragHandler);
-else if (process.env.HWVERSION==1) {
+if (process.env.HWVERSION==1) {
   Bangle.on("swipe", (e) => { res = twok.shift(e); if (res) twok.addDigit(); twok.render(); });
   setWatch(() => { res = twok.shift(2); if (res) twok.addDigit(); twok.render(); }, BTN1, {repeat: true});
   setWatch(() => { res = twok.shift(-2); if (res) twok.addDigit(); twok.render(); }, BTN3, {repeat: true});

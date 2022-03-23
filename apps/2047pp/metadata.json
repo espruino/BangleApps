@@ -5,6 +5,7 @@
   "version":"0.01",
   "description": "Bangle version of a tile shifting game",
   "supports" : ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "tags": "game",
   "storage": [
