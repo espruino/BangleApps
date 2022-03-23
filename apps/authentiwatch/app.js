@@ -22,8 +22,8 @@ if (settings.tokens) tokens = settings.tokens; /* v0.03+ settings */
 
 function b32decode(seedstr) {
   // RFC4648
-  var buf = 0, bitcount = 0, retstr = "";
-  for (var c of seedstr.toUpperCase()) {
+  let buf = 0, bitcount = 0, retstr = "";
+  for (let c of seedstr.toUpperCase()) {
     if (c == '0') c = 'O';
     if (c == '1') c = 'I';
     if (c == '8') c = 'B';
@@ -39,63 +39,62 @@ function b32decode(seedstr) {
       }
     }
   }
-  var retbuf = new Uint8Array(retstr.length);
-  for (var i in retstr) {
+  let retbuf = new Uint8Array(retstr.length);
+  for (let i in retstr) {
     retbuf[i] = retstr.charCodeAt(i);
   }
   return retbuf;
 }
 
 function hmac(key, message, algo) {
-  var a = algos[algo.toUpperCase()];
+  let a = algos[algo.toUpperCase()];
   // RFC2104
   if (key.length > a.blksz) {
     key = a.sha(key);
   }
-  var istr = new Uint8Array(a.blksz + message.length);
-  var ostr = new Uint8Array(a.blksz + a.retsz);
-  for (var i = 0; i < a.blksz; ++i) {
-    var c = (i < key.length) ? key[i] : 0;
+  let istr = new Uint8Array(a.blksz + message.length);
+  let ostr = new Uint8Array(a.blksz + a.retsz);
+  for (let i = 0; i < a.blksz; ++i) {
+    let c = (i < key.length) ? key[i] : 0;
     istr[i] = c ^ 0x36;
     ostr[i] = c ^ 0x5C;
   }
   istr.set(message, a.blksz);
   ostr.set(a.sha(istr), a.blksz);
-  var ret = a.sha(ostr);
+  let ret = a.sha(ostr);
   // RFC4226 dynamic truncation
-  var v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
+  let v = new DataView(ret, ret[ret.length - 1] & 0x0F, 4);
   return v.getUint32(0) & 0x7FFFFFFF;
 }
 
 function formatOtp(otp, digits) {
   // add 0 padding
-  var ret = "" + otp % Math.pow(10, digits);
+  let ret = "" + otp % Math.pow(10, digits);
   while (ret.length < digits) {
     ret = "0" + ret;
   }
   // add a space after every 3rd or 4th digit
-  var re = (digits % 3 == 0 || (digits % 3 >= digits % 4 && digits % 4 != 0)) ? "" : ".";
+  let re = (digits % 3 == 0 || (digits % 3 >= digits % 4 && digits % 4 != 0)) ? "" : ".";
   return ret.replace(new RegExp("(..." + re + ")", "g"), "$1 ").trim();
 }
 
 function hotp(token) {
-  var d = Date.now();
-  var tick, next;
+  let d = Date.now();
+  let tick, next;
   if (token.period > 0) {
     // RFC6238 - timed
-    var seconds = Math.floor(d / 1000);
-    tick = Math.floor(seconds / token.period);
+    tick = Math.floor(Math.floor(d / 1000) / token.period);
     next = (tick + 1) * token.period * 1000;
   } else {
     // RFC4226 - counter
     tick = -token.period;
     next = d + 30000;
   }
-  var msg = new Uint8Array(8);
-  var v = new DataView(msg.buffer);
+  let msg = new Uint8Array(8);
+  let v = new DataView(msg.buffer);
   v.setUint32(0, tick >> 16 >> 16);
   v.setUint32(4, tick & 0xFFFFFFFF);
-  var ret;
+  let ret;
   try {
     ret = hmac(b32decode(token.secret), msg, token.algorithm);
     ret = formatOtp(ret, token.digits);
@@ -117,7 +116,7 @@ var state = {
 };
 
 function sizeFont(id, txt, w) {
-  var sz = fontszCache[id];
+  let sz = fontszCache[id];
   if (sz) {
     g.setFont("Vector", sz);
   } else {
