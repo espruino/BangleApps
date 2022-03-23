@@ -618,6 +618,8 @@ function increaseAlarm(){
   } else {
     settings.alarm = getCurrentTimeInMinutes() + 5;
   }
+}
+
 
 function feedback(){
   Bangle.buzz(40, 0.3);
