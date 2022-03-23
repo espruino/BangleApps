@@ -182,7 +182,7 @@ function updateProgressBar() {
 function drawProgressBar() {
   let id = state.id;
   if (id >= 0 && tokens[id].period > 0) {
-    let rem = Math.floor((state.hotp.next - Date.now()) / 1000);
+    let rem = Math.min(tokens[id].period, Math.floor((state.hotp.next - Date.now()) / 1000));
     if (rem >= 0) {
       let y1 = tokenY(id);
       let y2 = y1 + TOKEN_HEIGHT - 1;
@@ -192,7 +192,6 @@ function drawProgressBar() {
         {
           // progress bar visible
           y2 = Math.min(y2, AR.y2);
-          rem = Math.min(rem, tokens[id].period);
           let xr = Math.floor(AR.w * rem / tokens[id].period) + AR.x;
           g.setColor(g.theme.fgH)
            .setBgColor(g.theme.bgH)
@@ -209,13 +208,13 @@ function drawProgressBar() {
 
 // id = token ID number (0...)
 function drawToken(id) {
-  var x1 = AR.x;
-  var y1 = tokenY(id);
-  var x2 = AR.x2;
-  var y2 = y1 + TOKEN_HEIGHT - 1;
-  var adj, lbl;
+  let x1 = AR.x;
+  let y1 = tokenY(id);
+  let x2 = AR.x2;
+  let y2 = y1 + TOKEN_HEIGHT - 1;
+  let lbl = (id >= 0 && id < tokens.length) ? tokens[id].label.substr(0, 10) : "";
+  let adj;
   g.setClipRect(x1, Math.max(y1, AR.y), x2, Math.min(y2, AR.y2));
-  lbl = (id >= 0 && id < tokens.length) ? tokens[id].label.substr(0, 10) : "";
   if (id === state.id) {
     g.setColor(g.theme.fgH)
      .setBgColor(g.theme.bgH);
@@ -281,9 +280,9 @@ function changeId(id) {
 function onDrag(e) {
   state.cnt = 1;
   if (e.b != 0 && e.dy != 0) {
-    var y = E.clip(state.listy - E.clip(e.dy, -AR.h, AR.h), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
+    let y = E.clip(state.listy - E.clip(e.dy, -AR.h, AR.h), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
     if (state.listy != y) {
-      var id, dy = state.listy - y;
+      let id, dy = state.listy - y;
       state.listy = y;
       g.setClipRect(AR.x, AR.y, AR.x2, AR.y2)
        .scroll(0, dy);
@@ -315,15 +314,15 @@ function onDrag(e) {
 function onTouch(zone, e) {
   state.cnt = 1;
   if (e) {
-    var id = Math.floor((state.listy + e.y - AR.y) / TOKEN_HEIGHT);
+    let id = Math.floor((state.listy + e.y - AR.y) / TOKEN_HEIGHT);
     if (id == state.id || tokens.length == 0 || id >= tokens.length) {
       id = -1;
     }
     if (state.id != id) {
       if (id >= 0) {
         // scroll token into view if necessary
-        var dy = 0;
-        var y = id * TOKEN_HEIGHT - state.listy;
+        let dy = 0;
+        let y = id * TOKEN_HEIGHT - state.listy;
         if (y < 0) {
           dy -= y;
           y = 0;
@@ -357,17 +356,16 @@ function onSwipe(e) {
   timerCalc();
 }
 
-function bangle1Btn(e) {
+function bangleBtn(e) {
   state.cnt = 1;
   if (tokens.length > 0) {
-    var id = state.id;
+    let id = state.id;
     switch (e) {
       case -1: id--; break;
       case  1: id++; break;
     }
     id = E.clip(id, 0, tokens.length - 1);
-    var dy = state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h));
-    onDrag({b:1, dy:dy});
+    onDrag({b:1, dy:state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h))});
     changeId(id);
     drawProgressBar();
   }
@@ -384,12 +382,14 @@ function exitApp() {
 Bangle.on('touch', onTouch);
 Bangle.on('drag' , onDrag );
 Bangle.on('swipe', onSwipe);
-if (typeof BTN2 == 'number') {
-  setWatch(function(){bangle1Btn(-1);}, BTN1, {edge:"rising" , debounce:50, repeat:true});
-  setWatch(function(){exitApp();     }, BTN2, {edge:"falling", debounce:50});
-  setWatch(function(){bangle1Btn( 1);}, BTN3, {edge:"rising" , debounce:50, repeat:true});
-} else {
-  setWatch(function(){exitApp();     }, BTN1, {edge:"falling", debounce:50});
+if (typeof BTN1 == 'number') {
+  if (typeof BTN2 == 'number' && typeof BTN3 == 'number') {
+    setWatch(()=>bangleBtn(-1), BTN1, {edge:"rising" , debounce:50, repeat:true});
+    setWatch(()=>exitApp()    , BTN2, {edge:"falling", debounce:50});
+    setWatch(()=>bangleBtn( 1), BTN3, {edge:"rising" , debounce:50, repeat:true});
+  } else {
+    setWatch(()=>exitApp()    , BTN1, {edge:"falling", debounce:50});
+  }
 }
 Bangle.loadWidgets();
 const AR = Bangle.appRect;
