@@ -360,12 +360,7 @@ function onSwipe(e) {
 function bangleBtn(e) {
   state.cnt = 1;
   if (tokens.length > 0) {
-    let id = state.id;
-    switch (e) {
-      case -1: id--; break;
-      case  1: id++; break;
-    }
-    id = E.clip(id, 0, tokens.length - 1);
+    let id = E.clip(state.id + e, 0, tokens.length - 1);
     onDrag({b:1, dy:state.listy - E.clip(id * TOKEN_HEIGHT - half(AR.h - TOKEN_HEIGHT), 0, Math.max(0, tokens.length * TOKEN_HEIGHT - AR.h))});
     changeId(id);
     drawProgressBar();
