@@ -4,12 +4,13 @@ var s = Object.assign({
     CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
     BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
     MODE24: true, //24h mode vs 12h mode
-    FIRSTDAYOFFSET: 6, //First day of the week: 0-6: Sun, Sat, Fri, Thu, Wed, Tue, Mon
+    FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
     REDSUN: true, // Use red color for sunday?
     REDSAT: true, // Use red color for saturday?
-    DRAGENABLED: true,
-    DRAGMUSIC: true,
-    DRAGMESSAGES: true
+    DRAGDOWN: "[AI:messg]",
+    DRAGRIGHT: "[AI:music]",
+    DRAGLEFT: "[ignore]",
+    DRAGUP: "[calend.]"
 }, require('Storage').readJSON("clockcal.json", true) || {});
 
 const h = g.getHeight();
@@ -27,13 +28,13 @@ var monthOffset = 0;
  */
 function drawFullCalendar(monthOffset) {
     addMonths = function (_d, _am) {
-      var ay = 0, m = _d.getMonth(), y = _d.getFullYear();
-      while ((m + _am) > 11) { ay++; _am -= 12; }
-      while ((m + _am) < 0) { ay--; _am += 12; }
-      n = new Date(_d.getTime());
-      n.setMonth(m + _am);
-      n.setFullYear(y + ay);
-      return n;
+        var ay = 0, m = _d.getMonth(), y = _d.getFullYear();
+        while ((m + _am) > 11) { ay++; _am -= 12; }
+        while ((m + _am) < 0) { ay--; _am += 12; }
+        n = new Date(_d.getTime());
+        n.setMonth(m + _am);
+        n.setFullYear(y + ay);
+        return n;
     };
     monthOffset = (typeof monthOffset == "undefined") ? 0 : monthOffset;
     state = "calendar";
@@ -45,22 +46,22 @@ function drawFullCalendar(monthOffset) {
     if (typeof minuteInterval !== "undefined") clearTimeout(minuteInterval);
     d = addMonths(Date(), monthOffset);
     tdy = Date().getDate() + "." + Date().getMonth();
-    newmonth=false;
+    newmonth = false;
     c_y = 0;
     g.reset();
     g.setBgColor(0);
     g.clear();
-    var prevmonth = addMonths(d, -1)
+    var prevmonth = addMonths(d, -1);
     const today = prevmonth.getDate();
     var rD = new Date(prevmonth.getTime());
     rD.setDate(rD.getDate() - (today - 1));
-    const dow = (s.FIRSTDAYOFFSET + rD.getDay()) % 7;
+    const dow = (s.FIRSTDAY + rD.getDay()) % 7;
     rD.setDate(rD.getDate() - dow);
     var rDate = rD.getDate();
     bottomrightY = c_y - 3;
-    clrsun=s.REDSUN?'#f00':'#fff';
-    clrsat=s.REDSUN?'#f00':'#fff';
-    var fg=[clrsun,'#fff','#fff','#fff','#fff','#fff',clrsat];
+    clrsun = s.REDSUN ? '#f00' : '#fff';
+    clrsat = s.REDSUN ? '#f00' : '#fff';
+    var fg = [clrsun, '#fff', '#fff', '#fff', '#fff', '#fff', clrsat];
     for (var y = 1; y <= 11; y++) {
         bottomrightY += CELL_H;
         bottomrightX = -2;
@@ -69,14 +70,14 @@ function drawFullCalendar(monthOffset) {
             rMonth = rD.getMonth();
             rDate = rD.getDate();
             if (tdy == rDate + "." + rMonth) {
-              caldrawToday(rDate);
+                caldrawToday(rDate);
             } else if (rDate == 1) {
-              caldrawFirst(rDate);
+                caldrawFirst(rDate);
             } else {
-              caldrawNormal(rDate,fg[rD.getDay()]);
+                caldrawNormal(rDate, fg[rD.getDay()]);
             }
             if (newmonth && x == 7) {
-              caldrawMonth(rDate,monthclr[rMonth % 6],months[rMonth],rD);
+                caldrawMonth(rDate, monthclr[rMonth % 6], months[rMonth], rD);
             }
             rD.setDate(rDate + 1);
         }
@@ -84,7 +85,7 @@ function drawFullCalendar(monthOffset) {
     delete addMonths;
     if (DEBUG) console.log("Calendar performance (ms):" + (Date().getTime() - start));
 }
-function caldrawMonth(rDate,c,m,rD) {
+function caldrawMonth(rDate, c, m, rD) {
     g.setColor(c);
     g.setFont("Vector", 18);
     g.setFontAlign(-1, 1, 1);
@@ -93,29 +94,29 @@ function caldrawMonth(rDate,c,m,rD) {
     newmonth = false;
 }
 function caldrawToday(rDate) {
-  g.setFont("Vector", 16);
-  g.setFontAlign(1, 1);
-  g.setColor('#0f0');
-  g.fillRect(bottomrightX - CELL2_W + 1, bottomrightY - CELL_H - 1, bottomrightX, bottomrightY - 2);
-  g.setColor('#000');
-  g.drawString(rDate, bottomrightX, bottomrightY);
+    g.setFont("Vector", 16);
+    g.setFontAlign(1, 1);
+    g.setColor('#0f0');
+    g.fillRect(bottomrightX - CELL2_W + 1, bottomrightY - CELL_H - 1, bottomrightX, bottomrightY - 2);
+    g.setColor('#000');
+    g.drawString(rDate, bottomrightX, bottomrightY);
 }
 function caldrawFirst(rDate) {
-  g.flip();
-  g.setFont("Vector", 16);
-  g.setFontAlign(1, 1);
-  bottomrightY += 3;
-  newmonth = true;
-  g.setColor('#0ff');
-  g.fillRect(bottomrightX - CELL2_W + 1, bottomrightY - CELL_H - 1, bottomrightX, bottomrightY - 2);
-  g.setColor('#000');
-  g.drawString(rDate, bottomrightX, bottomrightY);
+    g.flip();
+    g.setFont("Vector", 16);
+    g.setFontAlign(1, 1);
+    bottomrightY += 3;
+    newmonth = true;
+    g.setColor('#0ff');
+    g.fillRect(bottomrightX - CELL2_W + 1, bottomrightY - CELL_H - 1, bottomrightX, bottomrightY - 2);
+    g.setColor('#000');
+    g.drawString(rDate, bottomrightX, bottomrightY);
 }
-function caldrawNormal(rDate,c) {
-  g.setFont("Vector", 16);
-  g.setFontAlign(1, 1);
-  g.setColor(c);
-  g.drawString(rDate, bottomrightX, bottomrightY);//100
+function caldrawNormal(rDate, c) {
+    g.setFont("Vector", 16);
+    g.setFontAlign(1, 1);
+    g.setColor(c);
+    g.drawString(rDate, bottomrightX, bottomrightY);//100
 }
 function drawMinutes() {
     if (DEBUG) console.log("|-->minutes");
@@ -163,7 +164,7 @@ function drawWatch() {
     g.clear();
     drawMinutes();
     if (!dimSeconds) drawSeconds();
-    const dow = (s.FIRSTDAYOFFSET + d.getDay()) % 7; //MO=0, SU=6
+    const dow = (s.FIRSTDAY + d.getDay()) % 7; //MO=0, SU=6
     const today = d.getDate();
     var rD = new Date(d.getTime());
     rD.setDate(rD.getDate() - dow);
@@ -205,27 +206,52 @@ function BTevent() {
         setTimeout(function () { Bangle.buzz(interval); }, interval * 3);
     }
 }
-
+function action(a) {
+    g.reset();
+    if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
+    if (DEBUG) console.log("action:" + a);
+    switch (a) {
+        case "[ignore]":
+            break;
+        case "[calend.]":
+            drawFullCalendar();
+            break;
+        case "[AI:music]":
+            l = require("Storage").list(RegExp("music.*app.js"));
+            if (l.length > 0) {
+                load(l[0]);
+            } else E.showAlert("Music app not found", "Not found").then(drawWatch);
+            break;
+        case "[AI:messg]":
+            l = require("Storage").list(RegExp("message.*app.js"));
+            if (l.length > 0) {
+                load(l[0]);
+            } else E.showAlert("Message app not found", "Not found").then(drawWatch);
+            break;
+        default:
+            l = require("Storage").list(RegExp(a + ".app.js"));
+            if (l.length > 0) {
+                load(l[0]);
+            } else E.showAlert(a + ": App not found", "Not found").then(drawWatch);
+            break;
+    }
+}
 function input(dir) {
-  if (s.DRAGENABLED) {
-    Bangle.buzz(100,1);
-    console.log("swipe:"+dir);
+    Bangle.buzz(100, 1);
+    if (DEBUG) console.log("swipe:" + dir);
     switch (dir) {
         case "r":
             if (state == "calendar") {
                 drawWatch();
             } else {
-                if (s.DRAGMUSIC) {
-                  l=require("Storage").list(RegExp("music.*app"));
-                  if (l.length > 0) {
-                      load(l[0]);
-                  } else Bangle.buzz(3000,1);//not found
-                }
+                action(s.DRAGRIGHT);
             }
             break;
         case "l":
             if (state == "calendar") {
                 drawWatch();
+            } else {
+                action(s.DRAGLEFT);
             }
             break;
         case "d":
@@ -233,21 +259,15 @@ function input(dir) {
                 monthOffset--;
                 drawFullCalendar(monthOffset);
             } else {
-                if (s.DRAGMESSAGES) {
-                  l=require("Storage").list(RegExp("message.*app"));
-                  if (l.length > 0) {
-                      load(l[0]);
-                  } else Bangle.buzz(3000,1);//not found
-                }
+                action(s.DRAGDOWN);
             }
             break;
         case "u":
-            if (state == "watch") {
-                state = "calendar";
-                drawFullCalendar(0);
-            } else if (state == "calendar") {
+            if (state == "calendar") {
                 monthOffset++;
                 drawFullCalendar(monthOffset);
+            } else {
+                action(s.DRAGUP);
             }
             break;
         default:
@@ -255,26 +275,24 @@ function input(dir) {
                 drawWatch();
             }
             break;
+
     }
-  }
 }
 
 let drag;
 Bangle.on("drag", e => {
-    if (s.DRAGENABLED) {
-        if (!drag) {
-            drag = { x: e.x, y: e.y };
-        } else if (!e.b) {
-            const dx = e.x - drag.x, dy = e.y - drag.y;
-            var dir = "t";
-            if (Math.abs(dx) > Math.abs(dy) + 10) {
-                dir = (dx > 0) ? "r" : "l";
-            } else if (Math.abs(dy) > Math.abs(dx) + 10) {
-                dir = (dy > 0) ? "d" : "u";
-            }
-            drag = null;
-            input(dir);
+    if (!drag) {
+        drag = { x: e.x, y: e.y };
+    } else if (!e.b) {
+        const dx = e.x - drag.x, dy = e.y - drag.y;
+        var dir = "t";
+        if (Math.abs(dx) > Math.abs(dy) + 20) {
+            dir = (dx > 0) ? "r" : "l";
+        } else if (Math.abs(dy) > Math.abs(dx) + 20) {
+            dir = (dy > 0) ? "d" : "u";
         }
+        drag = null;
+        input(dir);
     }
 });
 
