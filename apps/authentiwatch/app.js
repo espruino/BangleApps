@@ -119,15 +119,14 @@ var state = {
 
 function sizeFont(id, txt, w) {
   let sz = fontszCache[id];
-  if (sz) {
-    g.setFont("Vector", sz);
-  } else {
+  if (!sz) {
     sz = TOKEN_DIGITS_HEIGHT;
     do {
       g.setFont("Vector", sz--);
     } while (g.stringWidth(txt) > w);
-    fontszCache[id] = sz + 1;
+    fontszCache[id] = ++sz;
   }
+  g.setFont("Vector", sz);
 }
 
 tokenY = id => id * TOKEN_HEIGHT + AR.y - state.listy;
