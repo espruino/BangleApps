@@ -54,9 +54,9 @@ var tokens = settings.tokens;
  */
 function base32clean(val, nows) {
   var ret = val.replaceAll(/\s+/g, ' ');
-  ret = ret.replaceAll(/0/g, 'O');
-  ret = ret.replaceAll(/1/g, 'I');
-  ret = ret.replaceAll(/8/g, 'B');
+  ret = ret.replaceAll('0', 'O');
+  ret = ret.replaceAll('1', 'I');
+  ret = ret.replaceAll('8', 'B');
   ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
   if (nows) {
     ret = ret.replaceAll(/\s+/g, '');
@@ -81,9 +81,9 @@ function b32encode(str) {
 
 function b32decode(seedstr) {
   // RFC4648
-  var i, buf = 0, bitcount = 0, ret = '';
-  for (i in seedstr) {
-    var c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.indexOf(seedstr.charAt(i).toUpperCase(), 0);
+  var buf = 0, bitcount = 0, ret = '';
+  for (var c of seedstr.toUpperCase()) {
+    c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.indexOf(c);
     if (c != -1) {
       buf <<= 5;
       buf |= c;
@@ -405,7 +405,7 @@ class proto3decoder {
   constructor(str) {
     this.buf = [];
     for (let i in str) {
-      this.buf = this.buf.concat(str.charCodeAt(i));
+      this.buf.push(str.charCodeAt(i));
     }
   }
   getVarint() {
@@ -487,7 +487,7 @@ function startScan(handler,cancel) {
   document.body.className = 'scanning';
   navigator.mediaDevices
     .getUserMedia({video:{facingMode:'environment'}})
-    .then(function(stream){
+    .then(stream => {
       scanning=true;
       video.setAttribute('playsinline',true);
       video.srcObject = stream;
