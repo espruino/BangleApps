@@ -65,7 +65,7 @@ function draw() {
   // Draw Steps
   g.setSmallFont();
   g.setFontAlign(0,0);
-  g.drawString(getSteps(), W/2, H/5*4 + 10);
+  g.drawString(getSteps() + Bangle.isLocked() ? "L" : "", W/2, H/5*4 + 10);
 
   // Draw date
   g.setColor("#000");
