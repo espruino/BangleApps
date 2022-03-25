@@ -9,6 +9,6 @@
   "readme": "README.md",
   "supports": ["BANGLEJS"],
   "storage": [
-    {"name":"gsat.app.js","url":"app.js"},
+    {"name":"gsat.app.js","url":"app.js"}
   ]
 }
