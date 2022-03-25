@@ -12,6 +12,6 @@
   "allow_emulator": true,
   "storage": [
     {"name":"bwclk.app.js","url":"app.js"},
-    {"name":"bwclk.img","url":"app-icon.js","evaluate":true},
+    {"name":"bwclk.img","url":"app-icon.js","evaluate":true}
   ]
 }
