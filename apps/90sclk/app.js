@@ -1,4 +1,19 @@
+const SETTINGS_FILE = "90sclk.setting.json";
 const locale = require('locale');
+const storage = require('Storage');
+
+
+/*
+ * Load settings
+ */
+let settings = {
+  fullscreen: false,
+};
+
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
 
 
 function getImg() {
@@ -60,9 +75,9 @@ function getSteps() {
 
 
 function draw() {
-  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
   var x = g.getWidth()/2;
-  var y = g.getHeight()/2-20;
+  var y_offset = settings.fullscreen ? 0 : 10;
+  var y = g.getHeight()/2-20 + y_offset;
 
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
   g.drawImage(getImg(),0,0);
@@ -89,6 +104,13 @@ function draw() {
   var steps = parseInt(getSteps() / 1000);
   drawBorderString(steps, g.getWidth()-10, g.getHeight()-10, 3, "#f0f");
 
+  // Draw widgets if not fullscreen
+  if(settings.fullscreen){
+    for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+  } else {
+    Bangle.drawWidgets();
+  }
+
   // queue draw in one minute
   queueDraw();
 }
@@ -96,7 +118,7 @@ function draw() {
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup
-g.setTheme({bg:"#fff",fg:"#fff",dark:false}).clear();
+g.setTheme({bg:"#000",fg:"#fff",dark:false}).clear();
 // draw immediately at first, queue update
 draw();
 // Stop updates when LCD is off, restart when on
