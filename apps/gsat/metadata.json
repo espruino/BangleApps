@@ -1,0 +1,14 @@
+{
+  "id": "gsat",
+  "name": "Geek Squad Appointment Timer",
+  "shortName": "gsat",
+  "version": "0.01",
+  "description": "Starts a 20 minute timer for appointments at Geek Squad.",
+  "icon": "app.png",
+  "tags": "tool",
+  "readme": "README.md",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"gsat.app.js","url":"app.js"},
+  ]
+}
