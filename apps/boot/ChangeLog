@@ -49,3 +49,4 @@
 0.43: Fix Gadgetbridge handling with Programmable:off
 0.44: Write .boot0 without ever having it all in RAM (fix Bangle.js 1 issues with BTHRM)
 0.45: Fix 0.44 regression (auto-add semi-colon between each boot code chunk)
+0.46: Fix no clock found error on Bangle.js 2
