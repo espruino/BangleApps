@@ -1,24 +1,25 @@
-var pal_by = new Uint16Array([0x0000,0xFFC0],0,1); // black, yellow
-var pal_bw = new Uint16Array([0x0000,0xffff],0,1);  // black, white
-var pal_bb = new Uint16Array([0x0000,0x07ff],0,1); // black, blue
+const scale = g.getWidth()/240;
+var pal_by = new Uint16Array([g.getBgColor(),0xFFC0],0,1); // black, yellow
+var pal_bw = new Uint16Array([g.getBgColor(),g.getColor()],0,1);  // black, white
+var pal_bb = new Uint16Array([g.getBgColor(),0x07ff],0,1); // black, blue
 
 // having 3 2 color pallette keeps the memory requirement lower
-var buf1 = Graphics.createArrayBuffer(160,160,1, {msb:true});
-var buf2 = Graphics.createArrayBuffer(80,40,1, {msb:true});
+var buf1 = Graphics.createArrayBuffer(160*scale,160*scale,1, {msb:true});
+var buf2 = Graphics.createArrayBuffer(g.getWidth()/3,40*scale,1, {msb:true});
 var arrow_img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
 function flip1(x,y) {
-  g.drawImage({width:160,height:160,bpp:1,buffer:buf1.buffer, palette:pal_by},x,y);
+  g.drawImage({width:160*scale,height:160*scale,bpp:1,buffer:buf1.buffer, palette:pal_by},x,y);
   buf1.clear();
 }
 
 function flip2_bw(x,y) {
-  g.drawImage({width:80,height:40,bpp:1,buffer:buf2.buffer, palette:pal_bw},x,y);
+  g.drawImage({width:g.getWidth()/3,height:40*scale,bpp:1,buffer:buf2.buffer, palette:pal_bw},x,y);
   buf2.clear();
 }
 
 function flip2_bb(x,y) {
-  g.drawImage({width:80,height:40,bpp:1,buffer:buf2.buffer, palette:pal_bb},x,y);
+  g.drawImage({width:g.getWidth()/3,height:40*scale,bpp:1,buffer:buf2.buffer, palette:pal_bb},x,y);
   buf2.clear();
 }
 
@@ -51,12 +52,12 @@ function drawCompass(course) {
   previous.course = course;
   
   buf1.setColor(1);
-  buf1.fillCircle(80,80,79,79);
+  buf1.fillCircle(buf1.getWidth()/2,buf1.getHeight()/2,79*scale);
   buf1.setColor(0);
-  buf1.fillCircle(80,80,69,69);
+  buf1.fillCircle(buf1.getWidth()/2,buf1.getHeight()/2,69*scale);
   buf1.setColor(1);
-  buf1.drawImage(arrow_img, 80, 80, {scale:3,  rotate:radians(course)} );
-  flip1(40, 30);
+  buf1.drawImage(arrow_img, buf1.getWidth()/2, buf1.getHeight()/2, {scale:3*scale,  rotate:radians(course)} );
+  flip1(40*scale, Bangle.appRect.y+6*scale);
 }
 
 /***** COMPASS CODE ***********/
@@ -138,7 +139,7 @@ function distance(a,b){
 
 
 function drawN(){
-  buf2.setFont("Vector",24);
+  buf2.setFont("Vector",24*scale);
   var bs = wp_bearing.toString();
   bs = wp_bearing<10?"00"+bs : wp_bearing<100 ?"0"+bs : bs;
   var dst = loc.distance(dist);
@@ -147,12 +148,12 @@ function drawN(){
   
   // show distance on the left
   if (previous.dst !== dst) {
-    previous.dst = dst
+    previous.dst = dst;
     buf2.setColor(1);
     buf2.setFontAlign(-1,-1);
-    buf2.setFont("Vector", 20);
+    buf2.setFont("Vector", 20*scale);
     buf2.drawString(dst,0,0);
-    flip2_bw(0, 200);
+    flip2_bw(0, g.getHeight()-40*scale);
   }
   
   // bearing, place in middle at bottom of compass
@@ -160,9 +161,9 @@ function drawN(){
     previous.bs = bs;
     buf2.setColor(1);
     buf2.setFontAlign(0, -1);
-    buf2.setFont("Vector",38);
-    buf2.drawString(bs,40,0);
-    flip2_bw(80, 200);
+    buf2.setFont("Vector",38*scale);
+    buf2.drawString(bs,40*scale,0);
+    flip2_bw(g.getWidth()/3, g.getHeight()-40*scale);
   }
 
   // waypoint name on right
@@ -170,13 +171,13 @@ function drawN(){
     previous.selected = selected;
     buf2.setColor(1);
     buf2.setFontAlign(1,-1);     // right, bottom
-    buf2.setFont("Vector", 20);
-    buf2.drawString(wp.name, 80, 0);
+    buf2.setFont("Vector", 20*scale);
+    buf2.drawString(wp.name, 80*scale, 0);
 
     if (selected)
-      flip2_bw(160, 200);
+      flip2_bw(g.getWidth()/3*2, g.getHeight()-40*scale);
     else
-      flip2_bb(160, 200);
+      flip2_bb(g.getWidth()/3*2, g.getHeight()-40*scale);
   }
 }
 
@@ -229,9 +230,11 @@ function startdraw(){
 }
 
 function setButtons(){
-  setWatch(nextwp.bind(null,-1), BTN1, {repeat:true,edge:"falling"});
-  setWatch(doselect, BTN2, {repeat:true,edge:"falling"});
-  setWatch(nextwp.bind(null,1), BTN3, {repeat:true,edge:"falling"});
+  Bangle.setUI("updown", d=>{
+    if (d<0) { nextwp(-1); }
+    else if (d>0) { nextwp(1); }
+    else { doselect(); }
+  });
 }
  
 Bangle.on('lcdPower',function(on) {
