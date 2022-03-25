@@ -26,4 +26,26 @@
     Bangle.on("charging",handleCharging);
     handleCharging(Bangle.isCharging());
   }
+  
+  if (settings.forceMonoPercentage){
+    var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
+    var op = E.getBattery;
+    E.getBattery = function() {
+      var current = Math.round((op()+op()+op()+op())/4);
+      if (Bangle.isCharging() && current > p) p = current;
+      if (!Bangle.isCharging() && current < p) p = current;
+      return p;
+    };
+  }
+  
+  if (settings.forceMonoVoltage){
+    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/4;
+    var ov = NRF.getBattery;
+    NRF.getBattery = function() {
+      var current = (ov()+ov()+ov()+ov())/4;
+      if (Bangle.isCharging() && current > v) v = current;
+      if (!Bangle.isCharging() && current < v) v = current;
+      return v;
+    };
+  }
 })();

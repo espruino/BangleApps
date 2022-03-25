@@ -2,11 +2,11 @@
   "id": "bledetect",
   "name": "BLE Detector",
   "shortName": "BLE Detector",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Detect BLE devices and show some informations.",
   "icon": "bledetect.png",
   "tags": "app,bluetooth,tool",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"bledetect.app.js","url":"bledetect.js"},
