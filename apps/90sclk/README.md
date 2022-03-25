@@ -2,11 +2,11 @@
 
 A watch face in 90s style:
 
+![](screenshot_2.png)
+
+Fullscreen mode can be enabled in the settings:
+
 ![](screenshot.png)
-
-
-# Settings
-In the settings you can enable / disable the fullscreen mode.
 
 
 ## Creator

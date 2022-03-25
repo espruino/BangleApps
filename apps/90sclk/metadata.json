@@ -5,7 +5,7 @@
   "description": "A 90s style watch-face",
   "readme": "README.md",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot_2.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
