@@ -61,7 +61,7 @@ function getSteps() {
 
 function draw() {
   for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-  var x = g.getWidth()/2-5;
+  var x = g.getWidth()/2;
   var y = g.getHeight()/2-20;
 
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
