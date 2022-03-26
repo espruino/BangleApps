@@ -9,6 +9,6 @@
     {"name":"quicklaunch.app.js","url":"app.js"},
     {"name":"quicklaunch.boot.js","url":"boot.js"},
     {"name":"quicklaunch.img","url":"app-icon.js","evaluate":true}
-    
-  ]
+  ],
+  "data": [{"name":"quicklaunch.json"}]
 }
