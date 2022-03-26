@@ -6,7 +6,7 @@
   "description": "",
   "tags": "",
   "storage": [
-    {"name":"quicklaunch.app.js","url":"quicklaunch.js"},
+    {"name":"quicklaunch.app.js","url":"app.js"},
     {"name":"quicklaunch.img","url":"app-icon.js","evaluate":true}
   ]
 }
