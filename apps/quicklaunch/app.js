@@ -15,13 +15,14 @@ function save(key, value) {
   require("Storage").write("quicklaunch.json",settings);
 }
 
-// First menu
+// Quick Launch menu
 function showMainMenu() {
   var mainmenu = {
     "" : { "title" : "Quick Launch" },
     "< Back" : ()=>{load();}
   };
 
+  //List all selected apps
   mainmenu["Left: "+settings.leftapp.name] = function() { E.showMenu(leftmenu); };
   mainmenu["Right: "+settings.rightapp.name] = function() { E.showMenu(rightmenu); };
   mainmenu["Up: "+settings.upapp.name] = function() { E.showMenu(upmenu); };
@@ -31,7 +32,7 @@ function showMainMenu() {
   return E.showMenu(mainmenu);
 }
   
-  
+//Left swipe menu  
 var leftmenu = {
   "" : { "title" : "Left Swipe" },
   "< Back" : showMainMenu
@@ -48,6 +49,7 @@ apps.forEach((a)=>{
     };
 });
 
+//Right swipe menu
 var rightmenu = {
   "" : { "title" : "Right Swipe" },
   "< Back" : showMainMenu
@@ -64,6 +66,7 @@ apps.forEach((a)=>{
     };
 });
 
+//Up swipe menu
 var upmenu = {
   "" : { "title" : "Up Swipe" },
   "< Back" : showMainMenu
@@ -80,6 +83,7 @@ apps.forEach((a)=>{
     };
 });
 
+//Down swipe menu
 var downmenu = {
   "" : { "title" : "Down Swipe" },
   "< Back" : showMainMenu
@@ -96,6 +100,7 @@ apps.forEach((a)=>{
     };
 });
 
+//Tap menu
 var tapmenu = {
   "" : { "title" : "Tap" },
   "< Back" : showMainMenu
@@ -112,5 +117,4 @@ apps.forEach((a)=>{
     };
 });
 
-// Actually display the menu
 showMainMenu();
