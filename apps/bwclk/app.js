@@ -111,7 +111,6 @@ Bangle.on('lcdPower',on=>{
 
 
 Bangle.on('lock', function(isLocked) {
-  print("LOCK");
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   draw();
