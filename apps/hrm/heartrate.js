@@ -35,9 +35,9 @@ function onHRM(h) {
   g.clearRect(0,24,g.getWidth(),80);
   g.setFont("6x8").drawString("Confidence "+hrmInfo.confidence+"%", px, 75);
   var str = hrmInfo.bpm;
-  g.setFontVector(40).drawString(str,px,45);
+  g.setFontVector(40).setColor(hrmInfo.confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
   px += g.stringWidth(str)/2;
-  g.setFont("6x8");
+  g.setFont("6x8").setColor(g.theme.fg);
   g.drawString("BPM",px+15,45);
 }
 Bangle.on('HRM', onHRM);
@@ -101,4 +101,3 @@ function readHRM() {
     lastHrmPt = [hrmOffset, y];
   }
 }
-

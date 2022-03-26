@@ -24,7 +24,7 @@ need to travel in to reach the selected waypoint. The blue text is
 the name of the current waypoint. NONE means that there is no
 waypoint set and so bearing and distance will remain at 0. To select
 a waypoint, press BTN2 (middle) and wait for the blue text to turn
-white. Then use BTN1 and BTN3 to select a waypoint. The waypoint
+white. Then use BTN1 and BTN3 (swipe up/down on Bangle.js 2) to select a waypoint. The waypoint
 choice is fixed by pressing BTN2 again. In the screen shot below a
 waypoint giving the location of Stone Henge has been selected.
 

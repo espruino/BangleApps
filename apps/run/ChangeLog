@@ -9,3 +9,4 @@
 0.08: Added support for notifications from exstats. Support all stats from exstats
 0.09: Fix broken start/stop if recording not enabled (fix #1561)
 0.10: Don't allow the same setting to be chosen for 2 boxes (fix #1578)
+0.11: Notifications fixes

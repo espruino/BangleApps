@@ -248,7 +248,7 @@
       }
       var buttons={Yes:"yes",No:"no"};
       if (newFileName) buttons["New"] = "new";
-      var prompt = E.showPrompt("Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:"Recorder",buttons:buttons}).then(selection=>{
+      return E.showPrompt("Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:"Recorder",buttons:buttons}).then(selection=>{
         if (selection==="no") return false; // just cancel
         if (selection==="yes") {
           require("Storage").open(settings.file,"r").erase();
@@ -259,7 +259,6 @@
         }
         return WIDGETS["recorder"].setRecording(1);
       });
-      return prompt;
     }
     settings.recording = isOn;
     updateSettings(settings);

@@ -144,6 +144,13 @@ const buttons = {
   },
   add: function(btn) {
     this.all.push(btn);
+  },
+  isPopUpActive: false,
+  activatePopUp: function() {
+    this.isPopUpActive = true;
+  },
+  deActivatePopUp: function() {
+    this.isPopUpActive = false;
   }
 };
 /**
@@ -253,7 +260,6 @@ const dragThreshold = 10;
 const clickThreshold = 3;
 
 let allSquares = [];
-// let buttons = [];
 
 class Button {
   constructor(name, x0, y0, width, height, text, bg, fg, cb, enabled) {
@@ -483,6 +489,7 @@ function initGame() {
   Bangle.drawWidgets();
 }
 function drawPopUp(message,cb) {
+  buttons.activatePopUp();
   g.setColor('#FFFFFF');
   let rDims = Bangle.appRect;
   g.fillPoly([rDims.x+10, rDims.y+20,
@@ -505,6 +512,7 @@ function drawPopUp(message,cb) {
   g.drawString(message, rDims.x+20, rDims.y+20);
   buttons.add(btnYes);
   buttons.add(btnNo);
+
 }
 function handlePopUpClicks(btn) {
   const name = btn.name;
@@ -512,6 +520,7 @@ function handlePopUpClicks(btn) {
   buttons.all.pop(); // remove the yes button
   buttons.all.forEach(b => {b.enable();}); // enable the remaining buttons again
   debug(() => console.log("Button name =", name));
+  buttons.deActivatePopUp();
   switch (name) {
     case 'yes':
       resetGame();
@@ -568,14 +577,13 @@ function handleclick(e) {
 
 // Handle a drag event (moving the stones around)
 function handledrag(e) {
-  /*debug(Math.abs(e.dx) > Math.abs(e.dy) ?
-    (e.dx > 0 ? e => console.log('To the right') : e => console.log('To the left') ) :
-    (e.dy > 0 ? e => console.log('Move down')  : e => console.log('Move up') ));
-    */
-  // [move.right, move.left, move.up, move.down]
-  runGame((Math.abs(e.dx) > Math.abs(e.dy) ?
-    (e.dx > 0 ?  mover.direction.right :  mover.direction.left ) :
-    (e.dy > 0 ?  mover.direction.down  :  mover.direction.up )));
+  // Stop moving things around when the popup message is active
+  // Bangleapps issue #1609
+  if (!(buttons.isPopUpActive)) {
+    runGame((Math.abs(e.dx) > Math.abs(e.dy) ?
+      (e.dx > 0 ?  mover.direction.right :  mover.direction.left ) :
+      (e.dy > 0 ?  mover.direction.down  :  mover.direction.up )));
+  }
 }
 // Evaluate "drag" events from the UI and call handlers for drags or clicks
 // The UI sends a drag as a series of events indicating partial movements
