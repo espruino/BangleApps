@@ -31,8 +31,6 @@ function showMainMenu() {
 
   mainmenu["Left: "+settings.leftapp.name] = function() { E.showMenu(ltappmenu); };
   mainmenu["Right: "+settings.rightapp.name] = function() { E.showMenu(rtappmenu); };
-  mainmenu["Launch left "+settings.leftapp.name] = function() { load(settings.leftapp.src); };
-  mainmenu["Launch right "+settings.rightapp.name] = function() { load(settings.rightapp.src); };
   
   return E.showMenu(mainmenu);
 }
