@@ -1,6 +1,6 @@
 var settings = Object.assign(require("Storage").readJSON("quicklaunch.json", true) || {});
 
-var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || (app.type=="clock" && Object.assign(require("Storage").readJSON("launch.json", true) || {}).showClocks) || !app.type));
+var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
 
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
