@@ -27,6 +27,7 @@ function save(key, value) {
 function showMainMenu() {
   var mainmenu = {
     "" : { "title" : "Quick Launch" }
+    "< Back" : ()=>{load();
   };
 
   mainmenu["Left: "+settings.leftapp.name] = function() { E.showMenu(ltappmenu); };
