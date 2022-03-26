@@ -43,13 +43,13 @@
     } else if (!e.b) { // released
       const dx = e.x-drag.x, dy = e.y-drag.y;
       drag = null;
-      if ((Math.abs(dx)>Math.abs(dy)+10) && (settings.leftapp.src)) {
-        // horizontal
-        load(dx>0 ? settings.rightapp.src : settings.leftapp.src);
+      if (Math.abs(dx)>Math.abs(dy)+10) {
+        if ((settings.leftapp.src) && dx<0) load(settings.leftapp.src);
+        if ((settings.rightapp.src) && dx>0) load(settings.rightapp.src);
       } 
       else if (Math.abs(dy)>Math.abs(dx)+10) {
-        // vertical
-        load(dy>0 ? settings.downapp.src : settings.upapp.src);
+        if ((settings.upapp.src) && dy<0) load(settings.upapp.src);
+        if ((settings.downapp.src) && dy>0) load(settings.downapp.src);
       }
     }
   });
