@@ -36,6 +36,8 @@ function getSteps() {
           return WIDGETS.wpedom.getSteps();
       } else if (WIDGETS.activepedom !== undefined) {
           return WIDGETS.activepedom.getSteps();
+      } else {
+        return Bangle.getHealthStatus("day").steps;
       }
   } catch(ex) {
       // In case we failed, we can only show 0 steps.
@@ -71,17 +73,21 @@ function draw() {
 
   // Draw date
   g.setColor("#000");
-  g.setSmallFont();
-  g.setFontAlign(0,1);
   var y = H/5+30;
-  g.drawString(locale.dow(date, true), W/2-55, y);
-  var monthStr = date.getMonth()+1;
 
-  monthStr = monthStr < 10 ? "0" + monthStr : monthStr;
-  g.drawString(monthStr, W/2+55, y);
-
+  g.setFontAlign(0,1);
   g.setLargeFont();
-  g.drawString(date.getDate(), W/2, y+7);
+  var dateStr = date.getDate();
+  g.drawString(dateStr, W/2, y+7);
+  var strW = g.stringWidth(dateStr);
+
+  g.setSmallFont();
+  g.setFontAlign(1,1);
+  g.drawString(locale.dow(date, true), W/2-strW/2, y);
+
+  g.setFontAlign(-1,1);
+  var monthStr = locale.month(date, 1);
+  g.drawString(monthStr, W/2+strW/2, y);
 
   // queue draw in one minute
   queueDraw();
