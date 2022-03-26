@@ -1,6 +1,6 @@
 { "id": "quicklaunch",
   "name": "Quick Launch",
-  "icon": "quicklaunch.img",
+  "icon": "app.png",
   "version":"0.01",
   "description": "",
   "tags": "tools, system",
