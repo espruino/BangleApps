@@ -2,7 +2,7 @@
   "name": "Quick Launch",
   "icon": "app.png",
   "version":"0.01",
-  "description": "",
+  "description": "Swipe left or right on your clock face to launch any two apps of your choice.",
   "tags": "tools, system",
   "supports": ["BANGLEJS2"],
   "storage": [
