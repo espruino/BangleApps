@@ -17,8 +17,8 @@
         if ("object"==typeof mode) mode = mode.mode;
         if (!mode.startsWith("clock")) return;
         Bangle.swipeHandler = dir => { 
-          if (dir<0) && (settings.leftapp.src) load(settings.leftapp.src); 
-          if (dir>0) && (settings.rightapp.src) load(settings.rightapp.src);
+          if ((dir<0) && (settings.leftapp.src)) load(settings.leftapp.src); 
+          if ((dir>0) && (settings.rightapp.src)) load(settings.rightapp.src);
           };
         Bangle.on("swipe", Bangle.swipeHandler);
     };
