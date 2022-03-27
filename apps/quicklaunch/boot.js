@@ -37,7 +37,6 @@
 
   function tap() {
     //tap, check if source exists, launch
-    var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{src:a.src};});
     if ((settings.tapapp.src) && apps.some(e => e.src === settings.tapapp.src)) load (settings.tapapp.src);
   }
     
