@@ -226,18 +226,18 @@ function editToken(id) {
   markup += selectMarkup('algorithm', otpAlgos, tokens[id].algorithm);
   markup += '</td></tr>';
   markup += '</tbody><tr><td id="advbtn" colspan="2">';
-  markup += '<button class="btn btn-primary" type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
+  markup += '<button class="btn" type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
   markup += '</td></tr></table></form>';
-  markup += '<button class="btn btn-primary" type="button" onclick="updateTokens()">Cancel Edit</button>';
+  markup += '<button class="btn" type="button" onclick="updateTokens()">Cancel Edit</button>';
   markup += '&nbsp;';
-  markup += '<button class="btn btn-primary" type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
+  markup += '<button class="btn" type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
     markup += '&nbsp;';
   if (tokens[id].isnew) {
-    markup += '<button class="btn btn-primary" type="button" onclick="startScan(handleTokenQr,cancelTokenQr)">Scan QR</button>';
+    markup += '<button class="btn" type="button" onclick="startScan(handleTokenQr,cancelTokenQr)">Scan QR</button>';
   } else {
-    markup += '<button class="btn btn-primary" type="button" onclick="showTokenQr()">Show QR</button>';
+    markup += '<button class="btn" type="button" onclick="showTokenQr()">Show QR</button>';
     markup += '&nbsp;';
-    markup += '<button class="btn btn-primary" type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
+    markup += '<button class="btn" type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
   }
   document.getElementById('edit').innerHTML = markup;
   document.body.className = 'editing';
@@ -307,21 +307,21 @@ function updateTokens() {
     return '<input name="exp_' + id + '" type="checkbox" onclick="exportTokens(false, \'' + id + '\')">';
   };
   const tokenButton = function(fn, id, label, dir) {
-    return '<button class="btn btn-primary" type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
+    return '<button class="btn" type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
   };
   var markup = '';
   markup += '<div class="select">';
-  markup += '<button class="btn btn-primary" type="button" onclick="addToken()">Add Token</button>';
+  markup += '<button class="btn" type="button" onclick="addToken()">Add Token</button>';
   markup += '&nbsp;';
-  markup += '<button class="btn btn-primary" type="button" onclick="saveTokens()">Save to watch</button>';
+  markup += '<button class="btn" type="button" onclick="saveTokens()">Save to watch</button>';
   markup += '&nbsp;';
-  markup += '<button class="btn btn-primary" type="button" onclick="startScan(handleImportQr,cancelImportQr)">Import</button>';
+  markup += '<button class="btn" type="button" onclick="startScan(handleImportQr,cancelImportQr)">Import</button>';
   markup += '&nbsp;';
-  markup += '<button class="btn btn-primary" type="button" onclick="document.body.className=\'export\'">Export</button>';
+  markup += '<button class="btn" type="button" onclick="document.body.className=\'export\'">Export</button>';
   markup += '</div><div class="export">';
-  markup += '<button class="btn btn-primary" type="button" onclick="document.body.className=\'select\'">Cancel</button>';
+  markup += '<button class="btn" type="button" onclick="document.body.className=\'select\'">Cancel</button>';
   markup += '&nbsp;';
-  markup += '<button class="btn btn-primary" type="button" onclick="exportTokens(true, null)">Show QR</button>';
+  markup += '<button class="btn" type="button" onclick="exportTokens(true, null)">Show QR</button>';
   markup += '</div>';
   markup += '<table><tr><th>';
   markup += tokenSelect('all');
@@ -612,7 +612,7 @@ function qrBack() {
 <div id="scan">
 <table>
 <tr><td><canvas id="qr-canvas"></canvas></td></tr>
-<tr><td><button class="btn btn-primary" type="button" onclick="scanBack()">Cancel</button></td></tr>
+<tr><td><button class="btn" type="button" onclick="scanBack()">Cancel</button></td></tr>
 </table>
 </div>
 
@@ -621,7 +621,7 @@ function qrBack() {
 
 <div id="showqr">
 <table><tr><td id="qrcode"></td></tr><tr><td>
-<button class="btn btn-primary" type="button" onclick="qrBack()">Back</button>
+<button class="btn" type="button" onclick="qrBack()">Back</button>
 </td></tr></table>
 </div>
 
