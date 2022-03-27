@@ -139,9 +139,9 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
-  if (state.notify.dist.increment > 0 && state.notify.dist.next <= stats["dist"]) {
+  if (state.notify.dist.increment > 0 && state.notify.dist.next <= state.distance) {
     stats["dist"].emit("notify",stats["dist"]);
-    state.notify.dist.next = stats["dist"] + state.notify.dist.increment;
+    state.notify.dist.next = state.notify.dist.next + state.notify.dist.increment;
   }
 });
 
@@ -152,7 +152,7 @@ Bangle.on("step", function(steps) {
   state.lastStepCount = steps;
   if (state.notify.step.increment > 0 && state.notify.step.next <= steps) {
     stats["step"].emit("notify",stats["step"]);
-    state.notify.step.next = steps + state.notify.step.increment;
+    state.notify.step.next = state.notify.step.next + state.notify.step.increment;
   }
 });
 Bangle.on("HRM", function(h) {
@@ -285,7 +285,7 @@ exports.getStats = function(statIDs, options) {
     }
     if (state.notify.time.increment > 0 && state.notify.time.next <= now) {
       stats["time"].emit("notify",stats["time"]);
-      state.notify.time.next = now + state.notify.time.increment;
+      state.notify.time.next = state.notify.time.next + state.notify.time.increment;
     }
   }, 1000);
   function reset() {
@@ -299,6 +299,8 @@ exports.getStats = function(statIDs, options) {
     state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
+    state.thisGPS = {};
+    state.lastGPS = {};
     state.notify = options.notify;
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;
@@ -338,7 +340,7 @@ exports.appendMenuItems = function(menu, settings, saveSettings) {
 }
 exports.appendNotifyMenuItems = function(menu, settings, saveSettings) {
   var distNames = ['Off', "1000m","1 mile","1/2 Mthn", "Marathon",];
-  var distAmts = [0, 1000,1609,21098,42195];
+  var distAmts = [0, 1000, 1609, 21098, 42195];
   menu['Ntfy Dist'] = {
     min: 0, max: distNames.length-1,
     value: Math.max(distAmts.indexOf(settings.notify.dist.increment),0),

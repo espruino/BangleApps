@@ -59,7 +59,7 @@ function onStartStop() {
           layout.render();
         })
       );
-    } else {
+    } else if (!settings.record && WIDGETS["recorder"]) {
       prepPromises.push(
         WIDGETS["recorder"].setRecording(false)
       );
@@ -124,7 +124,7 @@ function configureNotification(stat) {
 }
 
 Object.keys(settings.notify).forEach((statType) => {
-  if (settings.notify[statType].increment > 0) {
+  if (settings.notify[statType].increment > 0 && exs.stats[statType]) {
       configureNotification(exs.stats[statType]);
   }
 });

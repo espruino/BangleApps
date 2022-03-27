@@ -17,7 +17,7 @@ const cellChars = [
 const maxUndoLevels = 4;
 const noExceptions = true;
 let charIndex = 0; // plain numbers on the grid
-
+const themeBg = g.theme.bg;
 
   
 const scores = {
@@ -144,6 +144,13 @@ const buttons = {
   },
   add: function(btn) {
     this.all.push(btn);
+  },
+  isPopUpActive: false,
+  activatePopUp: function() {
+    this.isPopUpActive = true;
+  },
+  deActivatePopUp: function() {
+    this.isPopUpActive = false;
   }
 };
 /**
@@ -253,7 +260,6 @@ const dragThreshold = 10;
 const clickThreshold = 3;
 
 let allSquares = [];
-// let buttons = [];
 
 class Button {
   constructor(name, x0, y0, width, height, text, bg, fg, cb, enabled) {
@@ -304,13 +310,29 @@ class Cell {
     this.previousExpVals=[];
     this.idx = idx;
     this.cb = cb;
+    this.isRndm = false;
+    this.ax = x0;
+    this.ay = Math.floor(0.2*width+y0);
+    this.bx = Math.floor(0.3*width+x0);
+    this.by = Math.floor(0.5*width+y0);
+    this.cx = x0;
+    this.cy = Math.floor(0.8*width+y0);
   }
   getColor(i) {
     return cellColors[i >= cellColors.length ? cellColors.length -1 : i];
   }
   drawBg() {
-    g.setColor(this.getColor(this.expVal).bg)
-     .fillRect(this.x0, this.y0, this.x1, this.y1);
+    debug(()=>console.log("Drawbg!!"));
+    if (this.isRndm == true) {
+      debug(()=>console.log('Random: (ax)', this.ax));
+      g.setColor(this.getColor(this.expVal).bg)
+       .fillRect(this.x0, this.y0, this.x1, this.y1)
+       .setColor(themeBg)
+       .fillPoly([this.cx,this.cy,this.bx,this.by,this.ax,this.ay]);  
+    } else {
+      g.setColor(this.getColor(this.expVal).bg)
+      .fillRect(this.x0, this.y0, this.x1, this.y1);
+    }
   }
   drawNumber() {
     if (this.expVal !== 0) {
@@ -344,6 +366,19 @@ class Cell {
   }
   addToScore() {if (typeof this.cb === 'function') {
       this.cb(this.expVal);
+    }
+  }
+  setRndmFalse() {
+    this.isRndm = false;
+  }
+  setRndmTrue() {
+    this.isRndm = true;
+  }
+  drawRndmIndicator(){
+    if (this.isRndm == true) {
+      debug(()=>console.log('Random: (ax)', this.ax));
+      g.setColor(this.getColor(0).bg)
+     .fillPoly(this.ax,this.ay,this.bx,this.by,this.cx,this.cy);
     }
   }
 }
@@ -387,11 +422,12 @@ function createGrid () {
   }
 }
 function messageGameOver () {
-  g.setColor("#1a0d00")
+  const c = (g.theme.dark) ? {"fg": "#FFFFFF", "bg": "#808080"} : {"fg": "#FF0000", "bg": "#000000"};
+  g.setColor(c.bg)
     .setFont12x20(2).setFontAlign(0,0,0)
     .drawString("G A M E", middle.x+13, middle.y-24)
     .drawString("O V E R !", middle.x+13, middle.y+24);
-  g.setColor("#ffffff")
+  g.setColor(c.fg)
     .drawString("G A M E", middle.x+12, middle.y-25)
     .drawString("O V E R !", middle.x+12, middle.y+25);
 }
@@ -417,11 +453,13 @@ function addRandomNumber() {
   if (emptySquaresIdxs.length > 0) {
     let randomIdx = Math.floor( emptySquaresIdxs.length * Math.random() );
     allSquares[emptySquaresIdxs[randomIdx]].setExpVal(makeRandomNumber());
+    allSquares[emptySquaresIdxs[randomIdx]].setRndmTrue();
   } 
 }
 function drawGrid() {
   allSquares.forEach(sq => {
     sq.drawBg();
+    // sq.drawRndmIndicator();
     sq.drawNumber();
   });
 }
@@ -451,6 +489,7 @@ function initGame() {
   Bangle.drawWidgets();
 }
 function drawPopUp(message,cb) {
+  buttons.activatePopUp();
   g.setColor('#FFFFFF');
   let rDims = Bangle.appRect;
   g.fillPoly([rDims.x+10, rDims.y+20,
@@ -473,6 +512,7 @@ function drawPopUp(message,cb) {
   g.drawString(message, rDims.x+20, rDims.y+20);
   buttons.add(btnYes);
   buttons.add(btnNo);
+
 }
 function handlePopUpClicks(btn) {
   const name = btn.name;
@@ -480,6 +520,7 @@ function handlePopUpClicks(btn) {
   buttons.all.pop(); // remove the yes button
   buttons.all.forEach(b => {b.enable();}); // enable the remaining buttons again
   debug(() => console.log("Button name =", name));
+  buttons.deActivatePopUp();
   switch (name) {
     case 'yes':
       resetGame();
@@ -497,7 +538,7 @@ function handlePopUpClicks(btn) {
 function resetGame() {
   g.clear();
   scores.reset();
-  allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();});
+  allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();sq.setRndmFalse();});
   addRandomNumber();
   addRandomNumber();
   drawGrid();
@@ -536,14 +577,13 @@ function handleclick(e) {
 
 // Handle a drag event (moving the stones around)
 function handledrag(e) {
-  /*debug(Math.abs(e.dx) > Math.abs(e.dy) ?
-    (e.dx > 0 ? e => console.log('To the right') : e => console.log('To the left') ) :
-    (e.dy > 0 ? e => console.log('Move down')  : e => console.log('Move up') ));
-    */
-  // [move.right, move.left, move.up, move.down]
-  runGame((Math.abs(e.dx) > Math.abs(e.dy) ?
-    (e.dx > 0 ?  mover.direction.right :  mover.direction.left ) :
-    (e.dy > 0 ?  mover.direction.down  :  mover.direction.up )));
+  // Stop moving things around when the popup message is active
+  // Bangleapps issue #1609
+  if (!(buttons.isPopUpActive)) {
+    runGame((Math.abs(e.dx) > Math.abs(e.dy) ?
+      (e.dx > 0 ?  mover.direction.right :  mover.direction.left ) :
+      (e.dy > 0 ?  mover.direction.down  :  mover.direction.up )));
+  }
 }
 // Evaluate "drag" events from the UI and call handlers for drags or clicks
 // The UI sends a drag as a series of events indicating partial movements
@@ -614,6 +654,7 @@ function runGame(dir){
   mover.nonEmptyCells(dir);
   mover.mergeEqlCells(dir);
   mover.nonEmptyCells(dir);
+  allSquares.forEach(sq => {sq.setRndmFalse();});
   addRandomNumber();
   drawGrid();
   scores.check();
