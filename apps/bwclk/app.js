@@ -7,7 +7,7 @@ const storage = require('Storage');
  * Load settings
  */
 let settings = {
-  fullscreen: true,
+  fullscreen: false,
   showLock: true,
 };
 
