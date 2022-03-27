@@ -56,7 +56,9 @@ function queueDraw() {
 }
 
 
-
+/*
+ * Handle alarm
+ */
 function getSteps() {
   try{
       if (WIDGETS.wpedom !== undefined) {
@@ -71,6 +73,44 @@ function getSteps() {
   }
 
   return 0;
+}
+
+
+function isAlarmEnabled(){
+  try{
+    var qalarm = require('qalarm');
+    return qalarm.isTimerStarted("bwclk");
+  } catch(ex){ }
+  return false;
+}
+
+
+function getAlarmMinutes(){
+  try{
+    var qalarm = require('qalarm');
+    return qalarm.getTimerMin("bwclk");
+  } catch(ex){ }
+  return -1;
+}
+
+function increaseAlarm(){
+  try{
+    var qalarm = require('qalarm');
+    var mins = qalarm.getTimerMin("bwclk")+5;
+    qalarm.deleteTimer("bwclk");
+    qalarm.editTimer("bwclk", 0, mins, 0);
+  } catch(ex){ }
+}
+
+function decreaseAlarm(){
+  try{
+    var qalarm = require('qalarm');
+    var mins = qalarm.getTimerMin("bwclk")-5;
+    qalarm.deleteTimer("bwclk");
+    if(mins > 0){
+        qalarm.editTimer("bwclk", 0, mins, 0);
+    }
+  } catch(ex){ }
 }
 
 
@@ -109,11 +149,13 @@ function draw() {
   var timeStr = locale.time(date,1);
   g.drawString(timeStr, W/2, y+10);
 
-  // Draw Steps
+  // Draw steps or timer
   y += H/5*2+10;
   g.setSmallFont();
   g.setFontAlign(0,0);
-  g.drawString(getSteps(), W/2, y);
+  var str = isAlarmEnabled() ? "T-" + getAlarmMinutes() + " min." : getSteps() ;
+  g.drawString(str, W/2, y);
+
 
   // Draw lock
   if(settings.showLock && Bangle.isLocked()){
@@ -135,6 +177,8 @@ Bangle.loadWidgets();
 g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 // draw immediately at first, queue update
 draw();
+
+
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
   if (on) {
@@ -150,6 +194,27 @@ Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   draw();
+});
+
+
+Bangle.on('touch', function(btn, e){
+  var upper = parseInt(g.getHeight() * 0.2);
+  var lower = g.getHeight() - upper;
+
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
+
+  if(is_upper){
+    Bangle.buzz(40, 0.6);
+    increaseAlarm();
+    draw(true);
+  }
+
+  if(is_lower){
+    Bangle.buzz(40, 0.6);
+    decreaseAlarm();
+    draw(true);
+  }
 });
 
 
