@@ -229,11 +229,14 @@ function editToken(id) {
   markup += '<button class="btn btn-primary" type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
   markup += '</td></tr></table></form>';
   markup += '<button class="btn btn-primary" type="button" onclick="updateTokens()">Cancel Edit</button>';
+  markup += '&nbsp;';
   markup += '<button class="btn btn-primary" type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
+    markup += '&nbsp;';
   if (tokens[id].isnew) {
     markup += '<button class="btn btn-primary" type="button" onclick="startScan(handleTokenQr,cancelTokenQr)">Scan QR</button>';
   } else {
     markup += '<button class="btn btn-primary" type="button" onclick="showTokenQr()">Show QR</button>';
+    markup += '&nbsp;';
     markup += '<button class="btn btn-primary" type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
   }
   document.getElementById('edit').innerHTML = markup;
@@ -309,11 +312,15 @@ function updateTokens() {
   var markup = '';
   markup += '<div class="select">';
   markup += '<button class="btn btn-primary" type="button" onclick="addToken()">Add Token</button>';
+  markup += '&nbsp;';
   markup += '<button class="btn btn-primary" type="button" onclick="saveTokens()">Save to watch</button>';
+  markup += '&nbsp;';
   markup += '<button class="btn btn-primary" type="button" onclick="startScan(handleImportQr,cancelImportQr)">Import</button>';
+  markup += '&nbsp;';
   markup += '<button class="btn btn-primary" type="button" onclick="document.body.className=\'export\'">Export</button>';
   markup += '</div><div class="export">';
   markup += '<button class="btn btn-primary" type="button" onclick="document.body.className=\'select\'">Cancel</button>';
+  markup += '&nbsp;';
   markup += '<button class="btn btn-primary" type="button" onclick="exportTokens(true, null)">Show QR</button>';
   markup += '</div>';
   markup += '<table><tr><th>';
