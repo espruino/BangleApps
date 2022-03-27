@@ -3,3 +3,4 @@
 0.03: Basic colors
 0.04: Bug fix score reset after Game Over, new icon
 0.05: Chevron marker on the randomly added square
+0.06: Fixed issue 1609 added a message popup state handler to control unwanted screen redraw
