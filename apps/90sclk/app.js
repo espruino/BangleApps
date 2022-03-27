@@ -75,6 +75,9 @@ function getSteps() {
 
 
 function draw() {
+  // queue draw in one minute
+  queueDraw();
+
   var x = g.getWidth()/2;
   var y_offset = settings.fullscreen ? 0 : 10;
   var y = g.getHeight()/2-20 + y_offset;
@@ -110,9 +113,6 @@ function draw() {
   } else {
     Bangle.drawWidgets();
   }
-
-  // queue draw in one minute
-  queueDraw();
 }
 
 Bangle.loadWidgets();
