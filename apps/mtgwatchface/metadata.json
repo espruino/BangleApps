@@ -18,18 +18,12 @@
   "storage": [ 
     {
       "name": "mtgwatchface.app.js",
-      "url": "app.js",
-      "supports": [
-        "BANGLEJS2"
-      ]
+      "url": "app.js"
     },
     {
       "name": "mtgwatchface.img",
       "url": "app-icon.js",
-      "evaluate":true,
-      "supports": [
-        "BANGLEJS2"
-      ]
+      "evaluate":true
     }
   ]
 }
