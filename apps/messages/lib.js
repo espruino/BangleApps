@@ -61,7 +61,7 @@ exports.pushMessage = function(event) {
   var unlockWatch = (require('Storage').readJSON('setting.json',1)||{}).unlockWatch;
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
       WIDGETS.messages.buzz();
-      if(!!unlockWatch){
+      if(unlockWatch != false){
         Bangle.setLocked(false);
       }
   }
