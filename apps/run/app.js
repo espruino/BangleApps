@@ -59,7 +59,7 @@ function onStartStop() {
           layout.render();
         })
       );
-    } else if (!settings.record && WIDGETS["recorder"]) {
+    } else {
       prepPromises.push(
         WIDGETS["recorder"].setRecording(false)
       );
@@ -68,7 +68,7 @@ function onStartStop() {
 
   if (!prepPromises.length) // fix for Promise.all bug in 2v12
     prepPromises.push(Promise.resolve());
-    
+
   Promise.all(prepPromises)
     .then(() => {
       if (running) {
