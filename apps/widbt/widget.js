@@ -15,10 +15,11 @@ WIDGETS.bluetooth = {
     connect: function() {
         WIDGETS.bluetooth.draw();
     },
-    diconnect: function() {
+    disconnect: function() {
         if(warningEnabled == 1){
             Bangle.buzz(700, 1); // buzz on connection loss
-            warningEnabled = 0;
+            E.showMessage("Connection\nlost.","Bluetooth");
+            WIDGETS.bluetooth.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth.warningEnabled = 1;', 30000); // re-notify only after 30 seconds.
         }
         WIDGETS.bluetooth.draw();
@@ -26,4 +27,4 @@ WIDGETS.bluetooth = {
 };
 
 NRF.on('connect', WIDGETS.bluetooth.connect);
-NRF.on('disconnect', WIDGETS.bluetooth.diconnect);
+NRF.on('disconnect', WIDGETS.bluetooth.disconnect);
