@@ -16,7 +16,7 @@ WIDGETS.bluetooth = {
         WIDGETS.bluetooth.draw();
     },
     disconnect: function() {
-        if(warningEnabled == 1){
+        if(WIDGETS.bluetooth.warningEnabled == 1){
             Bangle.buzz(700, 1); // buzz on connection loss
             E.showMessage("Connection\nlost.","Bluetooth");
             WIDGETS.bluetooth.warningEnabled = 0;
