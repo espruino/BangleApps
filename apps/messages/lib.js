@@ -58,6 +58,7 @@ exports.pushMessage = function(event) {
   var loadMessages = Bangle.CLOCK || event.important;
   // first, buzz
   var quiet = (require('Storage').readJSON('setting.json',1)||{}).quiet;
+  var unlockWatch = (require('Storage').readJSON('setting.json',1)||{}).unlockWatch;
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages)
       WIDGETS.messages.buzz();
   // after a delay load the app, to ensure we have all the messages
@@ -65,7 +66,12 @@ exports.pushMessage = function(event) {
   exports.messageTimeout = setTimeout(function() {
     exports.messageTimeout = undefined;
     // if we're in a clock or it's important, go straight to messages app
-    if (loadMessages) return load("messages.app.js");
+    if (loadMessages){
+      if(unlockWatch){
+        Bangle.setLocked(false);
+      }
+      return load("messages.app.js");
+    }
     if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz to let someone know
     WIDGETS.messages.show();
   }, 500);
