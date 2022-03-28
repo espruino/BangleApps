@@ -128,19 +128,16 @@ function draw() {
   // Draw date
   var date = new Date();
   g.setColor("#000");
-  g.setFontAlign(0,1);
+  g.setFontAlign(1,1);
   g.setLargeFont();
   var dateStr = date.getDate();
   g.drawString(dateStr, W/2, y+5);
-  var strW = g.stringWidth(dateStr);
 
   g.setSmallFont();
-  g.setFontAlign(1,1);
-  g.drawString(locale.dow(date, true), W/2-strW/2, y);
-
   g.setFontAlign(-1,1);
   var monthStr = locale.month(date, 1);
-  g.drawString(monthStr, W/2+strW/2, y);
+  g.drawString(monthStr, W/2 + 5, y+2);
+  g.drawString(locale.dow(date, true), W/2 + 5, y-22);
 
   // Draw time
   g.setColor("#fff");
