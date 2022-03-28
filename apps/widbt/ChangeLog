@@ -7,3 +7,4 @@
 0.08: Disable LCD on, on bluetooth status change
 0.09: Vibrate on connection loss
 0.10: Bug fix
+0.11: Avoid too many notifications. Change disconnected colour to red.
