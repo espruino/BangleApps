@@ -477,9 +477,9 @@ cfg.primSpd = 1;    // 1 = Spd in primary, 0 = Spd in secondary
 cfg.altDiff = cfg.altDiff==undefined?100:cfg.altDiff;
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt;
 cfg.altFilt = cfg.altFilt==undefined?false:cfg.altFilt;
-console.log("cfg.altDiff: " + cfg.altDiff);
-console.log("cfg.spdFilt: " + cfg.spdFilt);
-console.log("cfg.altFilt: " + cfg.altFilt);
+// console.log("cfg.altDiff: " + cfg.altDiff);
+// console.log("cfg.spdFilt: " + cfg.spdFilt);
+// console.log("cfg.altFilt: " + cfg.altFilt);
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
 if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
