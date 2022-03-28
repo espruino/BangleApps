@@ -10,6 +10,7 @@
   "tags": "tool,todo",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     { "name": "todolist.app.js", "url": "app.js" },
     { "name": "todolist.img", "url": "app-icon.js", "evaluate": true }
