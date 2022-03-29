@@ -4,7 +4,7 @@
     if (settings.vibrate===undefined) settings.vibrate=".";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
-    if( settings.unlockWatch===undefined)   settings.unlockWatch = false;
+    settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
     return settings;
