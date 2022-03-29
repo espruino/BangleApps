@@ -125,12 +125,15 @@ function loadThemeColors() {
 }
 
 function drawLock(){
-  if(Bangle.isLocked()){
-    g.setColor(theme.day);
-    g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), 1, 4);
-  } else {
-    g.setColor(settings.bg);
-    g.fillRect(0, 0, 20, 20);
+  if (settings.showlock == 'true') {
+    if (Bangle.isLocked()){
+      g.setColor(theme.day);
+      g.setBgColor(settings.bg);
+      g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), 1, 4);
+    } else {
+      g.setColor(settings.bg);
+      g.fillRect(0, 0, 20, 20);
+    }
   }
 }
 
