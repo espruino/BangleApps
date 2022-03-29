@@ -12,7 +12,7 @@ const SETTINGS_FILE = "pebble.json";
 let settings;
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'theme':'System'};
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'theme':'System', 'showlock':'false'};
 }
 
 var img = require("heatshrink").decompress(atob("oFAwkEogA/AH4A/AH4A/AH4A/AE8AAAoeXoAfeDQUBmcyD7A+Dh///8QD649CiAfaHwUvD4sEHy0DDYIfEICg+Cn4fHICY+DD4nxcgojOHwgfEIAYfRCIQaDD4ZAFD5r7DH4//kAfRCIZ/GAAnwD5p9DX44fTHgYSBf4ofVDAQEBl4fFUAgfOXoQzBgIfFBAIfPP4RAEAoYAB+cRiK/SG4h/WIBAfXIA7CBAAswD55AHn6fUIBMCD65AHl4gCmcziAfQQJqfQQJpiDgk0IDXxQLRAEECaBM+QgRYRYgUIA0CD4ggSQJiDCiAKBICszAAswD55AHABKBVD7BAFABIqBD5pAFABPxD55AOD6BADiIAJQAyxLABwf/gaAPAH4A/AH4ARA=="));
@@ -48,11 +48,11 @@ function draw() {
   g.fillRect(0, h2 - t, w, h2);
 
   // day and steps
-  if (settings.color == 'Blue' || settings.color == 'Red')
-    g.setColor('#fff'); // white on blue or red best contrast
-  else
-    g.setColor('#000'); // otherwise black regardless of theme
-
+  //if (settings.color == 'Blue' || settings.color == 'Red')
+  //  g.setColor('#fff'); // white on blue or red best contrast
+  //else
+  //  g.setColor('#000'); // otherwise black regardless of theme
+  g.setColor(theme.day);
   g.setFontLECO1976Regular22();
   g.setFontAlign(0, -1);
   g.drawString(da[0].toUpperCase(), w/4, ha); // day of week
@@ -107,14 +107,32 @@ function getSteps() {
   return '????';
 }
 
-function loadThemeColors(style) {
-  if (style === "Dark")
-    theme = {fg: g.toColor(1,1,1), bg: g.toColor(0,0,0)};
-  else if (style === "Light")
-    theme = {fg: g.toColor(0,0,0), bg: g.toColor(1,1,1)};
-  else 
-    theme = {fg: g.theme.fg, bg: g.theme.bg};
+function loadThemeColors() {
+  theme = {fg: g.theme.fg, bg: g.theme.bg, day: g.toColor(0,0,0)};
+  if (settings.theme === "Dark") {
+    theme.fg = g.toColor(1,1,1);
+    theme.bg = g.toColor(0,0,0);
+  }
+  else if (settings.theme === "Light") {
+    theme.fg = g.toColor(0,0,0);
+    theme.bg = g.toColor(1,1,1);
+  }
+  // day and steps
+  if (settings.color == 'Blue' || settings.color == 'Red')
+    theme.day = g.toColor(1,1,1); // white on blue or red best contrast
 }
+
+function drawLock(){
+  if(Bangle.isLocked()){
+    g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), 1, 4);
+  } else {
+    g.clearRect(0, 0, 20, 20);
+  }
+}
+
+Bangle.on('lock', function(isLocked) {
+  drawLock();
+});
 
 g.clear();
 Bangle.loadWidgets();
@@ -125,7 +143,7 @@ Bangle.loadWidgets();
  */
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
-loadThemeColors(settings.theme);
+loadThemeColors();
 setInterval(draw, 15000); // refresh every 15s
 draw();
 Bangle.setUI("clock");
