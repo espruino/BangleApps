@@ -10,7 +10,7 @@ The format of the bars are
   * H: Hours
   * m: Minutes
 * Right section: MM9c
-  * M: Month
+  * M: Day of month
   * w: Day of week
   * c: Calculated EAN-8 digit checksum
 

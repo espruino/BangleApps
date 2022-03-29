@@ -1,4 +1,4 @@
-var startOffsetX = 18;
+var startOffsetX = 17;
 var startOffsetHeight = 40;
 
 var checkBarWidth = 10;
@@ -29,9 +29,10 @@ function renderWatch(l) {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
   var time = h + ":" + ("0"+m).substr(-2);
-  var month = ("0" + (d.getMonth()+1)).slice(-2);
+  //var month = ("0" + (d.getMonth()+1)).slice(-2);
+  var dayOfMonth = ('0' + d.getDate()).slice(-2);
   var dayOfWeek = d.getDay() || 7;
-  var concatTime = ("0"+h).substr(-2) + ("0"+m).substr(-2) + month + dayOfWeek;
+  var concatTime = ("0"+h).substr(-2) + ("0"+m).substr(-2) + dayOfMonth + dayOfWeek;
 
   const chars = String(concatTime).split("").map((concatTime) => {
     return Number(concatTime);
@@ -58,7 +59,6 @@ function renderWatch(l) {
     clearTimeout(drawTimeout);
   }
   drawTimeout = setTimeout(function() {
-
     drawTimeout = undefined;
     layout.render(layout.watch);
   }, 60000 - (Date.now() % 60000));
