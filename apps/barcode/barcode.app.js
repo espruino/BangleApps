@@ -19,8 +19,6 @@ let intCaster = num => Number(num);
 
 var drawTimeout;
 
-Bangle.loadWidgets();
-
 function renderWatch(l) {
   g.setFont("4x6",2);
   
@@ -372,4 +370,7 @@ var layout = new Layout( {
 
 // Clear the screen once, at startup
 g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+Bangle.setUI("clock");
 layout.render();
