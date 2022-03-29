@@ -63,6 +63,7 @@ exports.pushMessage = function(event) {
       WIDGETS.messages.buzz();
       if(unlockWatch != false){
         Bangle.setLocked(false);
+        Bangle.setLCDPower(1); // turn screen on
       }
   }
   // after a delay load the app, to ensure we have all the messages
