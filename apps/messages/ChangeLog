@@ -39,3 +39,4 @@
 0.24: Remove left-over debug statement
 0.25: Fix widget memory usage issues if message received and watch repeatedly calls Bangle.drawWidgets (fix #1550)
 0.26: Setting to auto-open music
+0.27: Add 'mark all read' option to popup menu (fix #1624)
