@@ -2,7 +2,7 @@
   "name": "Barcode clock",
   "shortName":"Barcode clock",
   "icon": "barcode.icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "EAN-8 compatible barcode clock. Format (c: checksum): [HHmm] [MM9c]",
   "tags": "barcode,ean,ean-8,watchface,clock,clockface",
   "type": "clock",

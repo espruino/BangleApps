@@ -1,4 +1,4 @@
-var startOffsetX = 20;
+var startOffsetX = 18;
 var startOffsetHeight = 40;
 
 var checkBarWidth = 10;
@@ -33,8 +33,6 @@ function renderWatch(l) {
   var time = h + ":" + ("0"+m).substr(-2);
   var month = ("0" + (d.getMonth()+1)).slice(-2);
   var concatTime = ("0"+h).substr(-2) + ("0"+m).substr(-2) + month + 9;
-
-  concatTime = "20510398";
 
   const chars = String(concatTime).split("").map((concatTime) => {
     return Number(concatTime);
