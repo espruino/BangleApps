@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "pebble.json";
 
   // initialize with default settings...
-  let s = {'bg': '#0f0', 'color': 'Green', 'theme':'System'}
+  let s = {'bg': '#0f0', 'color': 'Green', 'theme':'System', 'showlock':'false'}
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -21,6 +21,7 @@
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var theme_options = ['System', 'Light', 'Dark'];
+  var lock_options = ['false', 'true'];
   
   E.showMenu({
     '': { 'title': 'Pebble Clock' },
@@ -41,6 +42,15 @@
       format: v => theme_options[v],
       onchange: v => {
         s.theme = theme_options[v];
+        save();
+      }
+    },
+    'Show Lock': {
+      value: 0 | lock_options.indexOf(s.showlock),
+      min: 0, max: lock_options.length - 1,
+      format: v => lock_options[v],
+      onchange: v => {
+        s.showlock = lock_options[v];
         save();
       }
     }
