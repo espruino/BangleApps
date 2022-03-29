@@ -79,6 +79,8 @@ function draw() {
   g.setColor(settings.bg);
   g.drawImage(img, w/2 + ((w/2) - 64)/2, 1, { scale: 1 });
   drawCalendar(((w/2) - 42)/2, 14, 42, 4, da[2]);
+  
+  drawLock();
 }
 
 // at x,y width:wi thicknes:th
@@ -124,9 +126,11 @@ function loadThemeColors() {
 
 function drawLock(){
   if(Bangle.isLocked()){
+    g.setColor(theme.day);
     g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), 1, 4);
   } else {
-    g.clearRect(0, 0, 20, 20);
+    g.setColor(settings.bg);
+    g.drawRect(0, 0, 20, 20);
   }
 }
 
