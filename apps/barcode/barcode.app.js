@@ -21,7 +21,7 @@ var drawTimeout;
 
 function renderWatch(l) {
   g.setFont("4x6",2);
-  
+
   // work out how to display the current time
 
   var offsetY = l.y;
@@ -30,7 +30,8 @@ function renderWatch(l) {
   var h = d.getHours(), m = d.getMinutes();
   var time = h + ":" + ("0"+m).substr(-2);
   var month = ("0" + (d.getMonth()+1)).slice(-2);
-  var concatTime = ("0"+h).substr(-2) + ("0"+m).substr(-2) + month + 9;
+  var dayOfWeek = d.getDay() || 7;
+  var concatTime = ("0"+h).substr(-2) + ("0"+m).substr(-2) + month + dayOfWeek;
 
   const chars = String(concatTime).split("").map((concatTime) => {
     return Number(concatTime);
@@ -57,7 +58,7 @@ function renderWatch(l) {
     clearTimeout(drawTimeout);
   }
   drawTimeout = setTimeout(function() {
-    
+
     drawTimeout = undefined;
     layout.render(layout.watch);
   }, 60000 - (Date.now() % 60000));
@@ -150,7 +151,7 @@ LEAN
 */
 function drawLOneWithOffset(offset, offsetY) {
   let barOneX = 4;
-  let barTwoX = 12;  
+  let barTwoX = 12;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+3+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+1+offset,offsetY+digitHeight);
   g.drawString("1",offset+3,offsetY+digitHeight+5);
@@ -158,7 +159,7 @@ function drawLOneWithOffset(offset, offsetY) {
 
 function drawLTwoWithOffset(offset, offsetY) {
   let barOneX = 4;
-  let barTwoX = 10;  
+  let barTwoX = 10;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+1+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+3+offset,offsetY+digitHeight);
   g.drawString("2",offset+3,offsetY+digitHeight+5);
@@ -166,7 +167,7 @@ function drawLTwoWithOffset(offset, offsetY) {
 
 function drawLThreeWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 12;  
+  let barTwoX = 12;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+7+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+1+offset,offsetY+digitHeight);
   g.drawString("3",offset+3,offsetY+digitHeight+5);
@@ -174,7 +175,7 @@ function drawLThreeWithOffset(offset, offsetY) {
 
 function drawLFourWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 10;  
+  let barTwoX = 10;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+1+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+3+offset,offsetY+digitHeight);
   g.drawString("4",offset+3,offsetY+digitHeight+5);
@@ -182,7 +183,7 @@ function drawLFourWithOffset(offset, offsetY) {
 
 function drawLFiveWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 12;  
+  let barTwoX = 12;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+3+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+1+offset,offsetY+digitHeight);
   g.drawString("5",offset+3,offsetY+digitHeight+5);
@@ -190,7 +191,7 @@ function drawLFiveWithOffset(offset, offsetY) {
 
 function drawLSixWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 6;  
+  let barTwoX = 6;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+1+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+7+offset,offsetY+digitHeight);
   g.drawString("6",offset+3,offsetY+digitHeight+5);
@@ -198,7 +199,7 @@ function drawLSixWithOffset(offset, offsetY) {
 
 function drawLSevenWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 10;  
+  let barTwoX = 10;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+5+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+3+offset,offsetY+digitHeight);
   g.drawString("7",offset+3,offsetY+digitHeight+5);
@@ -206,7 +207,7 @@ function drawLSevenWithOffset(offset, offsetY) {
 
 function drawLEightWithOffset(offset, offsetY) {
   let barOneX = 2;
-  let barTwoX = 8;  
+  let barTwoX = 8;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+3+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+5+offset,offsetY+digitHeight);
   g.drawString("8",offset+3,offsetY+digitHeight+5);
@@ -214,7 +215,7 @@ function drawLEightWithOffset(offset, offsetY) {
 
 function drawLNineWithOffset(offset, offsetY) {
   let barOneX = 6;
-  let barTwoX = 10;  
+  let barTwoX = 10;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+1+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+3+offset,offsetY+digitHeight);
   g.drawString("9",offset+3,offsetY+digitHeight+5);
@@ -222,7 +223,7 @@ function drawLNineWithOffset(offset, offsetY) {
 
 function drawLZeroWithOffset(offset, offsetY) {
   let barOneX = 6;
-  let barTwoX = 12;  
+  let barTwoX = 12;
   g.fillRect(barOneX+offset,offsetY+0,barOneX+3+offset,offsetY+digitHeight);
   g.fillRect(barTwoX+offset,offsetY+0,barTwoX+1+offset,offsetY+digitHeight);
   g.drawString("0",offset+3,offsetY+digitHeight+5);
