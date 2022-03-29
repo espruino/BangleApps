@@ -4,7 +4,7 @@
 
 * Designed specifically for Bangle 2
 * A choice of 6 different background colous through its setting menu. Goto Settings, App/Widget settings, Pebble.
-* Supports the Light and Dark themes
+* Supports the Light and Dark themes (or set theme independently)
 * Uses pedometer widget to get latest step count
 * Dependant apps are installed when Pebble installs
 * Uses the whole screen, widgets are made invisible but still run in the background
