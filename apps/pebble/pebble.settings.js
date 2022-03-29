@@ -33,7 +33,8 @@
         s.color = color_options[v];
         s.bg = bg_code[v];
         save();
-      },
+      }
+    },
     'Theme': {
       value: 0 | theme_options.indexOf(s.theme),
       min: 0, max: theme_options.length - 1,
