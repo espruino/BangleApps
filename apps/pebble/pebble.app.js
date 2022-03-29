@@ -130,11 +130,11 @@ function drawLock(){
     g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), 1, 4);
   } else {
     g.setColor(settings.bg);
-    g.drawRect(0, 0, 20, 20);
+    g.fillRect(0, 0, 20, 20);
   }
 }
 
-Bangle.on('lock', function(isLocked) {
+Bangle.on('lock', function(on) {
   drawLock();
 });
 
