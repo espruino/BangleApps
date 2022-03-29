@@ -19,7 +19,7 @@ WIDGETS.bluetooth = {
         if(WIDGETS.bluetooth.warningEnabled == 1){
             Bangle.buzz(700, 1); // buzz on connection loss
             
-            E.showMessage(/*LANG*/"Connection\nlost.","Bluetooth");
+            E.showMessage(/*LANG*/'Connection\nlost.', 'Bluetooth');
             setInterval(()=>{load();}, 3000); // clear message
             
             WIDGETS.bluetooth.warningEnabled = 0;
