@@ -41,7 +41,7 @@
       onchange: v => {
         s.theme = theme_options[v];
         save();
-      },
+      }
     }
   });
 })
