@@ -30,8 +30,6 @@ function draw() {
   let da = date.toString().split(" ");
   let timeStr = da[4].substr(0,5);
   const t = 6;
-  print('Theme');
-  print(theme);
 
   // turn the warning on once we have dipped below 30%
   if (E.getBattery() < 30)
