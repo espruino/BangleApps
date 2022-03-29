@@ -62,7 +62,7 @@ function draw() {
 
   // time
   // white on red for battery warning
-  g.setColor(!batteryWarning ? g.theme.bg : '#f00');
+  g.setColor(!batteryWarning ? theme.bg : '#f00');
   g.fillRect(0, h2, w, h3);
 
   g.setFontLECO1976Regular42();
