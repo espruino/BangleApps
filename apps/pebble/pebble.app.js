@@ -30,6 +30,8 @@ function draw() {
   let da = date.toString().split(" ");
   let timeStr = da[4].substr(0,5);
   const t = 6;
+  print('Theme');
+  print(theme);
 
   // turn the warning on once we have dipped below 30%
   if (E.getBattery() < 30)
@@ -44,7 +46,7 @@ function draw() {
   g.fillRect(0, 0, w, h2 - t);
 
   // contrast bar
-  g.setColor(g.theme.fg);
+  g.setColor(theme.fg);
   g.fillRect(0, h2 - t, w, h2);
 
   // day and steps
@@ -65,11 +67,11 @@ function draw() {
 
   g.setFontLECO1976Regular42();
   g.setFontAlign(0, -1);
-  g.setColor(!batteryWarning ? g.theme.fg : '#fff');
+  g.setColor(!batteryWarning ? theme.fg : '#fff');
   g.drawString(timeStr, w/2, h2 + 8);
 
   // contrast bar
-  g.setColor(g.theme.fg);
+  g.setColor(theme.fg);
   g.fillRect(0, h3, w, h3 + t);
 
   // the bottom
@@ -83,11 +85,11 @@ function draw() {
 
 // at x,y width:wi thicknes:th
 function drawCalendar(x,y,wi,th,str) {
-  g.setColor(g.theme.fg);
+  g.setColor(theme.fg);
   g.fillRect(x, y, x + wi, y + wi);
-  g.setColor(g.theme.bg);
+  g.setColor(theme.bg);
   g.fillRect(x + th, y + th, x + wi - th, y + wi - th);
-  g.setColor(g.theme.fg);
+  g.setColor(theme.fg);
 
   let hook_t = 6;
   // first calendar hook, one third in
@@ -107,15 +109,13 @@ function getSteps() {
   return '????';
 }
 
-function set_colors() {
-  if (settings.theme == 'Light') {
-    pass
-  } else if (settings.theme == 'Dark') {
-    pass
-  } else {
-    let color_bg = g.theme.bg
-    let color_fg = g.theme.fg 
-  }
+function loadThemeColors(style) {
+  if (style === "Dark")
+    theme = {fg: g.toColor(1,1,1), bg: g.toColor(0,0,0)};
+  else if (style === "Light")
+    theme = {fg: g.toColor(0,0,0), bg: g.toColor(1,1,1)};
+  else 
+    theme = {fg: g.theme.fg, bg: g.theme.bg};
 }
 
 g.clear();
@@ -127,7 +127,7 @@ Bangle.loadWidgets();
  */
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
-set_colors();
+loadThemeColors(settings.theme);
 setInterval(draw, 15000); // refresh every 15s
 draw();
 Bangle.setUI("clock");
