@@ -299,8 +299,6 @@ exports.getStats = function(statIDs, options) {
     state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
-    state.thisGPS = {};
-    state.lastGPS = {};
     state.notify = options.notify;
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;
