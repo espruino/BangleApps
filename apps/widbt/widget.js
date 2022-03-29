@@ -18,7 +18,10 @@ WIDGETS.bluetooth = {
     disconnect: function() {
         if(WIDGETS.bluetooth.warningEnabled == 1){
             Bangle.buzz(700, 1); // buzz on connection loss
-            E.showMessage("Connection\nlost.","Bluetooth");
+            
+            E.showMessage(/*LANG*/"Connection\nlost.","Bluetooth");
+            setInterval(()=>{load();}, 3000); // clear message
+            
             WIDGETS.bluetooth.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth.warningEnabled = 1;', 30000); // re-notify only after 30 seconds.
         }
