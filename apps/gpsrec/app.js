@@ -248,7 +248,7 @@ function plotTrack(info) {
   g.fillCircle(ox,oy,5);
   if (info.qOSTM) g.setColor(0, 0, 0);
   else g.setColor(g.theme.fg);
-  g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
+  g.drawString(require("locale").distance(dist,2),g.getWidth() / 2, g.getHeight() - 20);
   g.setFont("6x8",2);
   g.setFontAlign(0,0,3);
   g.drawString("Back",g.getWidth() - 10, g.getHeight()/2);

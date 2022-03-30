@@ -16,3 +16,5 @@
 0.14: Added some first translations for Messages in nl_NL
 0.15: Fixed sv_SE formatting, long date does not work well for Bangle.js2
       Added Swedish localisation with English text
+0.16: Remove global variables that used RAM
+      Add second 'dp' argument for decimal places in distance/speed/temp (fix #1523)

@@ -158,10 +158,10 @@ exports = { name : "en_GB", currencySym:"£",
           "%HH": "('0'+getHours(d)).slice(-2)",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
-          "%A":  "day.split(',')[d.getDay()]",
-          "%a":  "day.split(',')[d.getDay() + 7]",
-          "%B":  "month.split(',')[d.getMonth()]",
-          "%b":  "month.split(',')[d.getMonth() + 12]",
+          "%A":  `${js(locale.day)}.split(',')[d.getDay()]`,
+          "%a":  `${js(locale.abday)}.split(',')[d.getDay()]`,
+          "%B":  `${js(locale.month)}.split(',')[d.getMonth()]`,
+          "%b":  `${js(locale.abmonth)}.split(',')[d.getMonth() + 12]`,
           "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
           "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
@@ -182,10 +182,10 @@ exports = { name : "en_GB", currencySym:"£",
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         var localeModule = `
-var day = ${js(locale.day + ',' + locale.abday)};
-var month = ${js(locale.month + ',' + locale.abmonth)};
-function round(n) {
-  return n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+function round(n, dp) {
+  if (dp===undefined) dp=0;
+  var p = Math.min(dp,dp - Math.floor(Math.log(n)/Math.log(10)));
+  return n.toFixed(p);
 }
 var is12;
 function getHours(d) {
@@ -197,8 +197,8 @@ function getHours(d) {
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => day.split(',')[d.getDay() + (short ? 7 : 0)],
-  month: (d,short) => month.split(',')[d.getMonth() + (short ? 12 : 0)],
+  dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
+  month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
     if (dec == null) dec = 2;
     var w = n.toFixed(dec),
@@ -215,9 +215,9 @@ exports = {
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
   currency: n => ${currency},
-  distance: n => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])}) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])}) + ${js(locale.distance[1])},
-  speed: n => round(${unitConv(speedUnits[locale.speed])}) + ${js(locale.speed)},
-  temp: t => Math.round(${temperature}) + ${js(locale.temperature)},
+  distance: (n,dp) => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])},dp) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])},dp) + ${js(locale.distance[1])},
+  speed: (n,dp) => round(${unitConv(speedUnits[locale.speed])},dp) + ${js(locale.speed)},
+  temp: (t,dp) => round(${temperature},dp) + ${js(locale.temperature)},
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,

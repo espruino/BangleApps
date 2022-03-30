@@ -1,7 +1,7 @@
 {
   "id": "locale",
   "name": "Languages",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Translations for different countries",
   "icon": "locale.png",
   "type": "locale",
