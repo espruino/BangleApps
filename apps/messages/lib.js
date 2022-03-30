@@ -58,7 +58,7 @@ exports.pushMessage = function(event) {
   var loadMessages = Bangle.CLOCK || event.important;
   // first, buzz
   var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
-  var unlockWatch = (require('Storage').readJSON('messages.setting.json',1)||{}).unlockWatch;
+  var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
       WIDGETS.messages.buzz();
       if(unlockWatch != false){
