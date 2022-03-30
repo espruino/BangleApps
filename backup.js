@@ -79,7 +79,9 @@ function bangleUpload() {
         .then(() => file.async("string"))
         .then(data => {
           console.log("decoded", path);
-          if (path.startsWith(BACKUP_STORAGEFILE_DIR)) {
+          if (data.length==0) { // https://github.com/espruino/BangleApps/issues/1593
+            console.log("Can't restore files of length 0, ignoring "+path);
+          } else if (path.startsWith(BACKUP_STORAGEFILE_DIR)) {
             path = path.substr(BACKUP_STORAGEFILE_DIR.length+1);
             cmds += AppInfo.getStorageFileUploadCommands(path, data)+"\n";
           } else if (!path.includes("/")) {

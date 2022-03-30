@@ -212,7 +212,7 @@ exports.getStats = function(statIDs, options) {
     stats["dist"]={
       title : "Dist",
       getValue : function() { return state.distance; },
-      getString : function() { return require("locale").distance(state.distance); },
+      getString : function() { return require("locale").distance(state.distance,2); },
     };
   }
   if (statIDs.includes("step")) {
@@ -251,7 +251,7 @@ exports.getStats = function(statIDs, options) {
     stats["speed"]={
       title : "Speed",
       getValue : function() { return state.curSpeed*3.6; }, // in kph
-      getString : function() { return require("locale").speed(state.curSpeed*3.6); },
+      getString : function() { return require("locale").speed(state.curSpeed*3.6,2); },
     };
   }
   if (statIDs.includes("caden")) {
