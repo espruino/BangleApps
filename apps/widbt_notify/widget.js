@@ -17,13 +17,16 @@ WIDGETS.bluetooth_notify = {
     },
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
-            Bangle.buzz(700, 1); // buzz on connection loss
-            
             E.showMessage(/*LANG*/'Connection\nlost.', 'Bluetooth');
             // setInterval(()=>{load();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // re-notify only after 30 seconds.
+            
+            var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
+            if(!quiet){
+                Bangle.buzz(700, 1); // buzz on connection loss
+            }
         }
         WIDGETS.bluetooth_notify.draw();
     }
