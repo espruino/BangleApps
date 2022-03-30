@@ -4,3 +4,4 @@
 0.04: Bug fix score reset after Game Over, new icon
 0.05: Chevron marker on the randomly added square
 0.06: Fixed issue 1609 added a message popup state handler to control unwanted screen redraw
+0.07: Optimized the mover algorithm for efficiency (work in progress)

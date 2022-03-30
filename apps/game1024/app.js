@@ -164,16 +164,16 @@ const buttons = {
 const mover = {
   direction: {
     up: {name: 'up', step: 1, innerBegin: 0,    innerEnd: rows-1, outerBegin: 0,    outerEnd: cols-1, iter: rows -1,
-      sqIndex: function (m,n) {return m*(cols) + n;}, sqNextIndex: function (m,n) {return m < rows -1 ? (m+1)*(cols) + n : -1;}
+      sqIndex: function (i,o) {return i*(cols) + o;}, sqNextIndex: function (i,o) {return i < rows -1 ? (i+1)*(cols) + o : -1;}
     }, 
     down: {name: 'down', step:-1, innerBegin: rows-1, innerEnd: 0,    outerBegin: cols-1, outerEnd: 0, iter: rows -1,
-      sqIndex: function (m,n) {return m*(cols) + n;}, sqNextIndex: function (m,n) {return m > 0 ? (m-1)*(cols) + n : -1;}
+      sqIndex: function (i,o) {return i*(cols) + o;}, sqNextIndex: function (i,o) {return i > 0 ? (i-1)*(cols) + o : -1;}
     }, 
     left: {name: 'left', step: 1, innerBegin: 0,    innerEnd: cols-1, outerBegin: 0,    outerEnd: rows-1, iter: cols -1,
-      sqIndex: function (m,n) {return n*(rows) + m;}, sqNextIndex: function (m,n) {return m < cols -1 ? n*(rows) + m +1 : -1;}
+      sqIndex: function (i,o) {return o*(rows) + i;}, sqNextIndex: function (i,o) {return i < cols -1 ? o*(rows) + i +1 : -1;}
     },
     right: {name: 'right', step:-1, innerBegin: cols-1, innerEnd: 0,    outerBegin: rows-1, outerEnd: 0, iter: cols -1,
-      sqIndex: function (m,n) {return n*(rows) + m;}, sqNextIndex: function (m,n) {return m > 0 ? n*(rows) + m -1: -1;}
+      sqIndex: function (i,o) {return o*(rows) + i;}, sqNextIndex: function (i,o) {return i > 0 ? o*(rows) + i -1: -1;}
     }
   },
   anyLeft: function() {
@@ -207,49 +207,39 @@ const mover = {
     });
     return canContinue;
   },
-  nonEmptyCells: function (dir) {
-    debug(() => console.log("Move: ", dir.name));
+  moveAndMerge: function (dir) {
     const step = dir.step;
     // outer loop for all colums/rows
-    for (let n = dir.outerBegin; step*n <= step*dir.outerEnd; n=n+step) {
-      // let rowStr = '| ';
-
-      // Move a number of iteration with the squares to move them all to one side
-      for (let iter = 0; iter < dir.iter; iter++) {
-
-        // lets move squares one position in a row or column, counting backwards starting from the and where the squares will end up
-        for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
-          // get the array of squares index for current cell
-          const idx = dir.sqIndex(m,n);
-          const nextIdx = dir.sqNextIndex(m,n);
-
-          if (allSquares[idx].expVal == 0 && nextIdx >= 0) {
-            allSquares[idx].setExpVal(allSquares[nextIdx].expVal);
-            allSquares[nextIdx].setExpVal(0);
-          }
-        }
-      }
-    }
-  },
-  // add up the conjacent squares with identical values en set next square to empty in the process
-  mergeEqlCells: function(dir) {
-    const step = dir.step;
-    // outer loop for all colums/rows
-    for (let n = dir.outerBegin; step*n <= step*dir.outerEnd; n=n+step) {
-      // lets move squares one position in a row or column, counting backwards starting from the and where the squares will end up
+    for (let o = dir.outerBegin; step*o <= step*dir.outerEnd; o=o+step) {
+      
+      let allVals = allSquares.map(sq=>{return sq.getExpVal()});
+      let allLineVals = [];
       for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
-        const idx = dir.sqIndex(m,n);
-        const nextIdx = dir.sqNextIndex(m,n);
-
-        if ((allSquares[idx].expVal > 0) && nextIdx >= 0) {
-          if (allSquares[idx].expVal == allSquares[nextIdx].expVal) {
-            let expVal = allSquares[idx].expVal;
-            allSquares[idx].setExpVal(++expVal);
-            allSquares[idx].addToScore();
-            allSquares[nextIdx].setExpVal(0);
-          }
-        }
+        allLineVals.push(allVals[dir.sqIndex(m,o)]);
       }
+      
+      let sortedLineVals = allLineVals.filter((val)=>{return val>0;});
+      let zeroLineVals = allLineVals.filter((val)=>{return val==0;});
+      // merge the equally valued adjacent cells
+      let r=0;
+      while (r<sortedLineVals.length-1) {
+        if (sortedLineVals[r] == sortedLineVals[r+1]) {
+          ++sortedLineVals[r];
+          addToScore(sortedLineVals[r]);
+          sortedLineVals[++r] = 0;
+        }
+        r++;
+      }
+      let mergedLineVals = sortedLineVals.filter((val)=>{return val>0;});
+      sortedLineVals.filter((val)=>{return val==0;}).forEach((zero)=>{mergedLineVals.push(zero);});
+      zeroLineVals.forEach((zero)=>{mergedLineVals.push(zero);});
+      
+      let i = 0;
+      for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
+        let idx = dir.sqIndex(m,o);
+        allSquares[idx].setExpVal(mergedLineVals[i++]);
+      }
+      debug(()=>console.log("new allSquares values:", allSquares.map(sq=>{return sq.expVal})));
     }
   }
 };
@@ -301,7 +291,7 @@ class Button {
 }
 
 class Cell {
-  constructor(x0, y0, width, idx, cb) {
+  constructor(x0, y0, width, idx) {
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x0 + width;
@@ -309,7 +299,7 @@ class Cell {
     this.expVal = 0;
     this.previousExpVals=[];
     this.idx = idx;
-    this.cb = cb;
+    // this.cb = cb;
     this.isRndm = false;
     this.ax = x0;
     this.ay = Math.floor(0.2*width+y0);
@@ -345,6 +335,9 @@ class Cell {
        .drawString(char, strX, strY);
     }
   }
+  getExpVal() {
+    return this.expVal;
+  }
   setExpVal(val) {
     this.expVal = val;
   }
@@ -363,10 +356,6 @@ class Cell {
   }
   removeUndo() {
     this.previousExpVals=[0];
-  }
-  addToScore() {if (typeof this.cb === 'function') {
-      this.cb(this.expVal);
-    }
   }
   setRndmFalse() {
     this.isRndm = false;
@@ -416,7 +405,7 @@ function createGrid () {
     for (let c = 0; c < cols; c++) {
       let x0 = borderWidth + c*(borderWidth + sqWidth) - (rows/2)*(2*borderWidth + sqWidth) + middle.x + Math.floor(sqWidth/3);
       let y0 = borderWidth + r*(borderWidth + sqWidth) - (cols/2)*(2*borderWidth + sqWidth) + middle.y + Math.floor(sqWidth/3);
-      let cell = new Cell(x0, y0, sqWidth, c + r*cols, addToScore);
+      let cell = new Cell(x0, y0, sqWidth, c + r*cols);
       allSquares.push(cell);
     }
   }
@@ -454,7 +443,7 @@ function addRandomNumber() {
     let randomIdx = Math.floor( emptySquaresIdxs.length * Math.random() );
     allSquares[emptySquaresIdxs[randomIdx]].setExpVal(makeRandomNumber());
     allSquares[emptySquaresIdxs[randomIdx]].setRndmTrue();
-  } 
+  }
 }
 function drawGrid() {
   allSquares.forEach(sq => {
@@ -651,9 +640,7 @@ dragger.attach();
 function runGame(dir){
   addToUndo();
   updUndoLvlIndex();
-  mover.nonEmptyCells(dir);
-  mover.mergeEqlCells(dir);
-  mover.nonEmptyCells(dir);
+  mover.moveAndMerge(dir);
   allSquares.forEach(sq => {sq.setRndmFalse();});
   addRandomNumber();
   drawGrid();
