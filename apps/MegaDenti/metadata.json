@@ -1,0 +1,12 @@
+{ "id": "MegaDenti",
+  "name": "Denti",
+  "shortName":"My Denti",
+  "icon": "brush-teeth.png",
+  "version":"0.01",
+  "description": "This is a description of my awesome teeths app",
+  "tags": "",
+  "storage": [
+    {"name":"MegaDenti.app.js","url":"app.js"},
+    {"name":"brush-teeth.img","url":"app-icon.js","evaluate":true}
+  ]
+}
