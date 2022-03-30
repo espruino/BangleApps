@@ -10,6 +10,7 @@ Graphics.prototype.setFontLECO1976Regular22 = function(scale) {
 
 const SETTINGS_FILE = "pebble.json";
 let settings;
+let theme;
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'theme':'System', 'showlock':false};
