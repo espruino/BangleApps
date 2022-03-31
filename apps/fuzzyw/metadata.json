@@ -6,7 +6,7 @@
   "description": "An inaccurate clock for when you're not in a rush",
   "readme": "README.md",
   "icon":"fuzzyw.png",
-  "screenshots": [{"url":"fuzzyw_light.png"},{"url":"fuzzyw_dark.png"}],
+  "screenshots": [{"url":"fuzzyw-light.png"},{"url":"fuzzyw-dark.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],
