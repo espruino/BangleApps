@@ -33,7 +33,7 @@
         save();
       }
     },
-    'Language': {
+    'Alignment': {
       value: 0 | align_options.indexOf(s.theme),
       min: 0, max: align_options.length - 1,
       format: v => align_options[v],
