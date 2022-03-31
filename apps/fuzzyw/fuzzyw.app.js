@@ -1,6 +1,6 @@
 
 // adapted from https://github.com/hallettj/Fuzzy-Text-International/
-const fuzzy_strings = require("Storage").readJSON("fuzzy_strings.json);
+const fuzzy_strings = require("Storage").readJSON("fuzzy_strings.json");
 
 const SETTINGS_FILE = "fuzzyw.settings.json";
 let settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'language': 'en_GB', 'alignment':'Centre'};
