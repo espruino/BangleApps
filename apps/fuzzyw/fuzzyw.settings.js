@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "fuzzyw.json";
   
   var align_options = ['Left','Centre','Right'];
-  var language_options = ['System', 'en_GB'];
+  var language_options = ['System', 'en_GB', 'en_US', 'es_ES', 'fr_FR', 'no_NO', 'sv_SE', 'de_DE'];
 
   // initialize with default settings...
   let s = {'language': language_options[0], 'align': align_options[1]};
