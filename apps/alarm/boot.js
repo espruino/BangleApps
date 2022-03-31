@@ -20,10 +20,9 @@
       /* execute alarm at the correct time. We avoid execing immediately
       since this code will get called AGAIN when alarm.js is loaded. alarm.js
       will then clearInterval() to get rid of this call so it can proceed
-      normally. */
-      Bangle.ALARM = setTimeout(function() {
-        load("alarm.js");
-      },t);
+      normally.
+      If active[0].js is defined, just run that code as-is and not alarm.js */
+      Bangle.ALARM = setTimeout(active[0].js||'load("alarm.js")',t);
     }
   } else { // check for new alarms at midnight (so day of week works)
     Bangle.ALARM = setTimeout(() => {

@@ -3,13 +3,16 @@ Bangle.drawWidgets();
 
 var alarms = require("Storage").readJSON("alarm.json",1)||[];
 /*alarms = [
-  { on : true,
-    t : 23400000, // Time of day since midnight in ms
-    msg : "Eat chocolate",
-    last : 0, // last day of the month we alarmed on - so we don't alarm twice in one day!
-    rp : true, // repeat
-    as : false, // auto snooze
+  {
+    id : "mytimer", // optional ID for this alarm/timer, so apps can easily find *their* timers
+    on : true,      // is the alarm enabled?
+    t : 23400000,   // Time of day since midnight in ms
+    msg : "Eat chocolate", // message to display
+    last : 0,       // last day of the month we alarmed on - so we don't alarm twice in one day!
+    rp : true,      // repeat
+    as : false,     // auto snooze
     timer : 5*60*1000, // OPTIONAL - if set, this is a timer and it's the time in ms
+    js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'alarm.js')
   }
 ];*/
 
@@ -41,7 +44,7 @@ function getCurrentTime() {
 
 function saveAndReload() {
   require("Storage").write("alarm.json",JSON.stringify(alarms));
-  eval(require("Storage").read("alarm.boot.js"));
+  require("alarm").reload();
 }
 
 function showMainMenu() {
@@ -185,7 +188,7 @@ function editTimer(alarmIndex, alarm) {
   };
   menu[/*LANG*/"Save"] = function() {
     a.timer = encodeTime(t);
-    a.hr = getCurrentTime() + a.timer;
+    a.t = getCurrentTime() + a.timer;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
