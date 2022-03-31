@@ -1,20 +1,38 @@
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(alarm.js)' - so let's remove it first!
-clearInterval();
-
-function formatTime(t) {
-  var hrs = 0|t;
-  var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+if (Bangle.ALARM) {
+  clearInterval(Bangle.ALARM);
+  delete Bangle.ALARM;
 }
 
-function getCurrentHr() {
+// time in ms -> { hrs, mins }
+function decodeTime(t) {
+  t = 0|t; // sanitise
+  var hrs = 0|(t/3600000);
+  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
+}
+
+// time in { hrs, mins } -> ms
+function encodeTime(o) {
+  return o.hrs*3600000 + o.mins*60000;
+}
+
+function formatTime(t) {
+  var o = decodeTime(t);
+  return o.hrs+":"+("0"+o.mins).substr(-2);
+}
+
+function getCurrentTime() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
+  return (
+    time.getHours() * 3600000 +
+    time.getMinutes() * 60000 +
+    time.getSeconds() * 1000
+  );
 }
 
 function showAlarm(alarm) {
-  var msg = formatTime(alarm.hr);
+  var msg = alarm.timer ? formatTime(alarm.timer) : formatTime(alarm.t);
   var buzzCount = 10;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
@@ -26,13 +44,13 @@ function showAlarm(alarm) {
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
-      if(alarm.ohr===undefined) alarm.ohr = alarm.hr;
-      alarm.hr += 10/60; // 10 minutes
+      if(alarm.ot===undefined) alarm.ot = alarm.t;
+      alarm.t += 10*60*1000; // 10 minutes
     } else {
       alarm.last = (new Date()).getDate();
-      if (alarm.ohr!==undefined) {
-          alarm.hr = alarm.ohr;
-          delete alarm.ohr;
+      if (alarm.ot!==undefined) {
+          alarm.t = alarm.ot;
+          delete alarm.ot;
       }
       if (!alarm.rp) alarm.on = false;
     }
@@ -59,12 +77,12 @@ function showAlarm(alarm) {
 
 // Check for alarms
 var day = (new Date()).getDate();
-var hr = getCurrentHr()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
+var currentTime = getCurrentTime()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
 var alarms = require("Storage").readJSON("alarm.json",1)||[];
-var active = alarms.filter(a=>a.on&&(a.hr<hr)&&(a.last!=day));
+var active = alarms.filter(a=>a.on&&(a.t<currentTime)&&(a.last!=day));
 if (active.length) {
   // if there's an alarm, show it
-  active = active.sort((a,b)=>a.hr-b.hr);
+  active = active.sort((a,b)=>a.t-b.t);
   showAlarm(active[0]);
 } else {
   // otherwise just go back to default app
