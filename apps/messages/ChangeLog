@@ -41,3 +41,4 @@
 0.26: Setting to auto-open music
 0.27: Add 'mark all read' option to popup menu (fix #1624)
 0.28: Option to auto-unlock the watch when a new message arrives
+0.29: Support for the setUI 'back' icon in the top left
