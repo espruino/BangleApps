@@ -20,7 +20,15 @@ Alarms are stored in an array in `alarm.json`, and take the form:
 {
   id : "mytimer", // optional ID for this alarm/timer, so apps can easily find *their* timers
   on : true,      // is the alarm enabled?
-  t : 23400000,   // Time of day since midnight in ms
+  t : 23400000,   // Time of day since midnight in ms (if a timer, this is set automatically when timer starts)
+  dow : 0b1111111, // Binary encoding for days of the week to run alarm on
+    //  SUN = 1
+    //  MON = 2
+    //  TUE = 4
+    //  WED = 8
+    //  THU = 16
+    //  FRI = 32
+    //  SAT = 64    
   msg : "Eat chocolate", // message to display
   last : 0,       // last day of the month we alarmed on - so we don't alarm twice in one day!
   rp : true,      // repeat

@@ -2,19 +2,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 var alarms = require("Storage").readJSON("alarm.json",1)||[];
-/*alarms = [
-  {
-    id : "mytimer", // optional ID for this alarm/timer, so apps can easily find *their* timers
-    on : true,      // is the alarm enabled?
-    t : 23400000,   // Time of day since midnight in ms
-    msg : "Eat chocolate", // message to display
-    last : 0,       // last day of the month we alarmed on - so we don't alarm twice in one day!
-    rp : true,      // repeat
-    as : false,     // auto snooze
-    timer : 5*60*1000, // OPTIONAL - if set, this is a timer and it's the time in ms
-    js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'alarm.js')
-  }
-];*/
+// An array of alarm objects (see README.md)
 
 // time in ms -> { hrs, mins }
 function decodeTime(t) {
