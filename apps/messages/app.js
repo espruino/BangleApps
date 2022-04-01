@@ -53,13 +53,15 @@ if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
-    else Bangle.buzz();
+    if (WIDGETS["messages"]) {
+      WIDGETS["messages"].buzz();
+    } else {
+        Bangle.buzz();
 
-    var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
-    if (unlockWatch != false){
-      Bangle.setLocked(false);
-      Bangle.setLCDPower(1); // turn screen on
+        if ((require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch != false){
+          Bangle.setLocked(false);
+          Bangle.setLCDPower(1); // turn screen on
+        }
     }
   }
   if (msg && msg.id=="music") {

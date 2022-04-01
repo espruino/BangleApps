@@ -40,6 +40,14 @@ draw:function() {
     if (c=="-") Bangle.buzz(500).then(()=>setTimeout(b,100));
   }
   b();
+  
+  
+  var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
+  if (unlockWatch != false){
+    Bangle.setLocked(false);
+    Bangle.setLCDPower(1); // turn screen on
+  }
+
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;
