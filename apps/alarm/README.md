@@ -32,12 +32,16 @@ Alarms are stored in an array in `alarm.json`, and take the form:
   msg : "Eat chocolate", // message to display
   last : 0,       // last day of the month we alarmed on - so we don't alarm twice in one day!
   rp : true,      // repeat
+  vibrate : "...", // pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
   as : false,     // auto snooze
   timer : 5*60*1000, // OPTIONAL - if set, this is a timer and it's the time in ms
   js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'alarm.js')
                           // when this code is run, you're responsible for setting alarm.on=false (or removing the alarm)
+  data : { ... }          // OPTIONAL - your app can store custom data in here if needed
 }
 ```
+
+You app
 
 The [`alarm` library](https://github.com/espruino/BangleApps/blob/master/apps/alarm/lib.js) contains
 a few helpful functions for getting/setting alarms, but is intentionally sparse so as not to

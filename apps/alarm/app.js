@@ -87,7 +87,8 @@ function editAlarm(alarmIndex, alarm) {
     rp : true,
     as : false,
     dow : 0b1111111,
-    last : 0
+    last : 0,
+    vibrate : ".."
   }
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
@@ -118,6 +119,7 @@ function editAlarm(alarmIndex, alarm) {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
     },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     /*LANG*/'Auto snooze': {
       value: a.as,
       format: v=>v?"Yes":"No",
@@ -151,7 +153,8 @@ function editTimer(alarmIndex, alarm) {
     rp : false,
     as : false,
     dow : 0b1111111,
-    last : 0
+    last : 0,
+    vibrate : ".."
   }
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
@@ -172,7 +175,8 @@ function editTimer(alarmIndex, alarm) {
       value: a.on,
       format: v=>v?"On":"Off",
       onchange: v=>a.on=v
-    }
+    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
   menu[/*LANG*/"Save"] = function() {
     a.timer = encodeTime(t);

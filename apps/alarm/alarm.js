@@ -58,20 +58,16 @@ function showAlarm(alarm) {
     load();
   });
   function buzz() {
-    if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
-    Bangle.buzz(100).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(100).then(function() {
-          if (buzzCount--)
-            setTimeout(buzz, 3000);
-          else if(alarm.as) { // auto-snooze
-            buzzCount = 10;
-            setTimeout(buzz, 600000);
-          }
-        });
-      },100);
+    require("buzz").pattern(alarm.vibrate===undefined?"..":alarm.vibrate).then(function() {
+      if (buzzCount--)
+        setTimeout(buzz, 3000);
+      else if(alarm.as) { // auto-snooze
+        buzzCount = 10;
+        setTimeout(buzz, 600000);
+      }
     });
   }
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return;
   buzz();
 }
 
