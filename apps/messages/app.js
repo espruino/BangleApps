@@ -55,6 +55,12 @@ var onMessagesModified = function(msg) {
   if (msg && msg.id!=="music" && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
+
+    var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
+    if (unlockWatch != false){
+      Bangle.setLocked(false);
+      Bangle.setLCDPower(1); // turn screen on
+    }
   }
   if (msg && msg.id=="music") {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
