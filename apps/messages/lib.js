@@ -60,12 +60,14 @@ exports.pushMessage = function(event) {
   var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
   var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
-      WIDGETS.messages.buzz();
-      if(unlockWatch != false){
-        Bangle.setLocked(false);
-        Bangle.setLCDPower(1); // turn screen on
-      }
+    WIDGETS.messages.buzz();
   }
+  
+  if (!quiet && unlockWatch != false){
+    Bangle.setLocked(false);
+    Bangle.setLCDPower(1); // turn screen on
+  }
+  
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
