@@ -162,6 +162,7 @@ const buttons = {
  */
 
 const mover = {
+  gameWon: false,
   direction: {
     up: {name: 'up', step: 1, innerBegin: 0,    innerEnd: rows-1, outerBegin: 0,    outerEnd: cols-1, iter: rows -1,
       sqIndex: function (i,o) {return i*(cols) + o;}, sqNextIndex: function (i,o) {return i < rows -1 ? (i+1)*(cols) + o : -1;}
@@ -397,7 +398,7 @@ function addToUndo() {
 }
 function addToScore (val) {
   scores.add(val);
-  if (val == 10) messageYouWin();
+  if (val == 10) mover.gameWon = true;
 }
 function createGrid () {
   let cn =0;
@@ -421,15 +422,30 @@ function messageGameOver () {
     .drawString("O V E R !", middle.x+12, middle.y+25);
 }
 function messageYouWin () {
-  g.setColor("#1a0d00")
+  const c = (g.theme.dark) ? {"fg": "#FFFFFF", "bg": "#808080"} : {"fg": "#FF0000", "bg": "#000000"};
+  g.setColor(c.bg)
    .setFont12x20(2)
    .setFontAlign(0,0,0)
    .drawString("YOU HAVE", middle.x+18, middle.y-24)
    .drawString("W O N ! !", middle.x+18, middle.y+24);
-  g.setColor("#FF0808")
+   g.setColor(c.fg)
    .drawString("YOU HAVE", middle.x+17, middle.y-25)
    .drawString("W O N ! !", middle.x+17, middle.y+25);
-  Bangle.buzz(200, 1);
+   for (let r=0;r<4;r++){
+    Bangle.buzz(200,0.2)
+    .then((result) => {
+      Bangle.buzz(200,0.5)
+      .then((result)=>{
+        Bangle.buzz(200,0.8)
+        .then((result)=>{
+          Bangle.buzz(200,1)
+          .then((result)=>{
+            Bangle.buzz(500,0);
+          })
+        })   
+      }) 
+    })
+  }
 }
 function makeRandomNumber () {
   return Math.ceil(2*Math.random());
@@ -527,6 +543,7 @@ function handlePopUpClicks(btn) {
 function resetGame() {
   g.clear();
   scores.reset();
+  mover.gameWon=false;
   allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();sq.setRndmFalse();});
   addRandomNumber();
   addRandomNumber();
@@ -653,6 +670,12 @@ function runGame(dir){
     debug(() => console.log("G A M E  O V E R !!"));
     snapshot.reset();
     messageGameOver();
+  } else {
+    if (mover.gameWon) {
+      debug(() => console.log("Y O U  H A V E  W O N !!"));
+      snapshot.reset();
+      messageYouWin();
+    }
   }
 }
 
