@@ -18,7 +18,7 @@
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
-    /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v) }),
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v)),
     /*LANG*/'Repeat': {
       value: settings().repeat,
       min: 0, max: 10,
