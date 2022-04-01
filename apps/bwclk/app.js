@@ -126,28 +126,30 @@ function draw() {
   g.fillRect(0,y,W,H);
 
   // Draw date
+  y -= settings.fullscreen ? 5 : 0;
   var date = new Date();
   g.setColor("#000");
   g.setFontAlign(1,1);
   g.setLargeFont();
   var dateStr = date.getDate();
-  g.drawString(dateStr, W/2, y+5);
+  dateStr = ("0"+dateStr).substr(-2);
+  g.drawString(dateStr, W/2, y+3);
 
   g.setSmallFont();
   g.setFontAlign(-1,1);
-  var monthStr = locale.month(date, 1);
-  g.drawString(monthStr, W/2 + 5, y+2);
   g.drawString(locale.dow(date, true), W/2 + 5, y-22);
+  g.drawString(locale.month(date, 1), W/2 + 5, y);
 
   // Draw time
   g.setColor("#fff");
   g.setLargeFont();
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
-  g.drawString(timeStr, W/2, y+10);
+  y += settings.fullscreen ? 20 : 10;
+  g.drawString(timeStr, W/2, y);
 
   // Draw steps or timer
-  y += H/5*2+10;
+  y += H/5*2;
   g.setSmallFont();
   g.setFontAlign(0,0);
   var str = isAlarmEnabled() ? "T-" + getAlarmMinutes() + " min." : getSteps() ;
