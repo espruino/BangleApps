@@ -11,6 +11,7 @@ A clock based on the Anton Clock with stopwatches, timers and alarms based on th
 * alarms
 * multiple stopwatches, timers and alarms
 * stopwatches and timers keep running in the background
+* optional time of sunrise/sunset using the My Location app - hidden by default
 
 ## Images
 

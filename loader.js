@@ -156,6 +156,29 @@ window.addEventListener('load', (event) => {
   });
 
   // Button to install all default apps in one go
+  document.getElementById("reinstallall").addEventListener("click",event=>{
+    var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
+      getInstalledApps().then(installedapps => {
+        console.log(installedapps);
+        var promise = Promise.resolve();
+        installedapps.forEach(app => {
+          if (app.custom)
+            return console.log(`Ignoring ${app.id} as customised`);
+          var oldApp = app;
+          app = appJSON.find(a => a.id==oldApp.id);
+          if (!app)
+            return console.log(`Ignoring ${oldApp.id} as not found`);
+          promise = promise.then(() => updateApp(app));
+        });
+        return promise;
+      }).catch(err=>{
+        Progress.hide({sticky:true});
+        showToast("App re-install failed, "+err,"error");
+      });
+    });
+  });
+
+  // Button to install all default apps in one go
   document.getElementById("installdefault").addEventListener("click",event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")

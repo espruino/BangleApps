@@ -34,18 +34,20 @@ function update() {
 }
 function play() {
   if (all[current].start) { // running
-    all[current].timeAdd += Date.now() - all[current].start;
+    all[current].timeAdd = Date.now() - all[current].start;
     all[current].start = null;
     update();
   } else { // paused
-    all[current].start = Date.now();
+    all[current].start = Date.now() - all[current].timeAdd;
+    all[current].timeAdd = 0;
     update();
   }
   require("Storage").write("timerclk.timer.json",JSON.stringify(all));
   timerclkCheckTimers();
 }
 function reset() {
-  all[current] = defaultElement.clone();
+  all[current].start = null;
+  all[current].timeAdd = 0;
   update();
   require("Storage").write("timerclk.timer.json",JSON.stringify(all));
   timerclkCheckTimers();

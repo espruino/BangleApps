@@ -460,9 +460,11 @@ function updateClock() {
 }
 
 
+// =Main Prog
 
-//###
-let cfg = {};
+// Read settings.
+let cfg = require('Storage').readJSON('bikespeedo.json',1)||{};
+
 cfg.spd = 1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 cfg.spd_unit = 'km/h';  // Displayed speed unit
 cfg.alt = 1; // Multiplier for altitude unit conversions. (feet:'0.3048')
@@ -472,8 +474,12 @@ cfg.dist_unit = 'km';  // Displayed distnce units
 cfg.modeA = 1;
 cfg.primSpd = 1;    // 1 = Spd in primary, 0 = Spd in secondary
 
-cfg.spdFilt = false;
-cfg.altFilt = false;
+cfg.altDiff = cfg.altDiff==undefined?100:cfg.altDiff;
+cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt;
+cfg.altFilt = cfg.altFilt==undefined?false:cfg.altFilt;
+// console.log("cfg.altDiff: " + cfg.altDiff);
+// console.log("cfg.spdFilt: " + cfg.spdFilt);
+// console.log("cfg.altFilt: " + cfg.altFilt);
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
 if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
@@ -489,7 +495,9 @@ function onGPSraw(nmea) {
   } }
 if(BANGLEJS2) Bangle.on('GPS-raw', onGPSraw);
 
-function onPressure(dat) { altiBaro = dat.altitude.toFixed(0); }
+function onPressure(dat) {
+  altiBaro = Number(dat.altitude.toFixed(0)) + Number(cfg.altDiff);
+}
 
 Bangle.setBarometerPower(1); // needs some time...
 g.clearRect(0,screenYstart,screenW,screenH);
@@ -520,10 +528,10 @@ function Compass_tiltfixread(O,S){
   return psi;
 }
 var Compass_heading = 0;
-function Compass_newHeading(m,h){ 
+function Compass_newHeading(m,h){
     var s = Math.abs(m - h);
     var delta = (m>h)?1:-1;
-    if (s>=180){s=360-s; delta = -delta;} 
+    if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
     var hd = h + delta*(1 + Math.round(s/5));
     if (hd<0) hd+=360;

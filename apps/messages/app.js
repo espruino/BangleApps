@@ -302,6 +302,11 @@ function showMessageSettings(msg) {
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
+    /*LANG*/"Mark all read" : () => {
+      MESSAGES.forEach(msg => msg.new = false);
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+    },
     /*LANG*/"Delete all messages" : () => {
       E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
         if (isYes) {
