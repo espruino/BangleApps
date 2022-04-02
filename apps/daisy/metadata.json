@@ -2,7 +2,7 @@
   "name": "Daisy",
   "version":"0.06",
   "dependencies": {"mylocation":"app"},
-  "description": "A clock based on the Pastel clock with large ring guage for steps",
+  "description": "A beautiful digital clock with large ring guage, idle timer and a cyclic information line that includes, day, date, steps, battery, sunrise and sunset times",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
