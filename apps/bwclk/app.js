@@ -245,7 +245,7 @@ function draw() {
   // Draw lock
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
-    g.drawImage(imgLock, 2, 2);
+    g.drawImage(imgLock, W-16, 2);
   }
 
   // Draw widgets if not fullscreen
