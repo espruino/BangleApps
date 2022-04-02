@@ -22,7 +22,7 @@ function prepareLetterIdx () {
       console.log(prefix);
       li.push(words.indexOf("\n"+prefix, li[i-1])+1);
     }
-    li.push(require("Storage").read('bee.words').length);
+    li.push(S.read('bee.words').length);
     S.writeJSON("bee_lindex.json", li);
   }
   for (var i=0; i<26; ++i) letterIdx[i] = S.read("bee.words", li[i], li[i+1]-li[i]);
@@ -176,6 +176,7 @@ function showWordList() {
         E.showScroller();
         drawHive();
         drawScore();
+        drawWord(g.theme.fg);
         Bangle.on("touch", touchHandler);
         Bangle.on("swipe", swipeHandler);
         clearInterval();
