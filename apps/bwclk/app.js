@@ -10,7 +10,7 @@ const storage = require('Storage');
 let settings = {
   fullscreen: false,
   showLock: true,
-  showSteps: true,
+  showInfo: 0,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -83,6 +83,40 @@ function getSteps() {
   }
 
   return 0;
+}
+
+
+function getWeather(){
+  var weatherJson;
+
+  try {
+    weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
+
+    // Temperature
+    weather.temp = locale.temp(weather.temp-273.15);
+
+    // Humidity
+    weather.hum = weather.hum + "%";
+
+    // Wind
+    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+    weather.wind = Math.round(wind[1]) + " km/h";
+
+    return weather
+
+  } catch(ex) {
+    // Return default
+  }
+
+  return {
+    temp: "??? °C",
+    hum: "-",
+    txt: "-",
+    wind: "??? km/h",
+    wdir: "-",
+    wrose: "-"
+  };
 }
 
 function isAlarmEnabled(){
@@ -171,7 +205,7 @@ function draw() {
   var timeStr = locale.time(date,1);
   y += settings.fullscreen ? 20 : 10;
 
-  if(!isAlarmEnabled() && !settings.showSteps){
+  if(!isAlarmEnabled() && settings.showInfo == 0){
     y += 8;
     g.setLargeFont();
   } else {
@@ -180,13 +214,32 @@ function draw() {
 
   g.drawString(timeStr, W/2, y);
 
-  // Draw steps or timer
+  // Draw info or timer
   y += H/5*2;
   g.setFontAlign(0,0);
-  if(isAlarmEnabled() || settings.showSteps){
+  if(isAlarmEnabled() || settings.showInfo > 0){
     g.setSmallFont();
-    var str = isAlarmEnabled() ? "T-" + getAlarmMinutes() + " min." : getSteps() ;
-    g.drawString(str, W/2, y);
+
+    var infoStr = "";
+    if(isAlarmEnabled()){
+      infoStr = "T-" + getAlarmMinutes() + " min.";
+    } else if (settings.showInfo == 1){
+      infoStr = E.getBattery() + "%";
+    } else if (settings.showInfo == 2){
+      infoStr = getSteps()
+      infoStr = Math.round(infoStr/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
+      infoStr = infoStr + "k steps";
+    } else if (settings.showInfo == 3){
+      infoStr = Math.round(Bangle.getHealthStatus("day").bpm) + " bpm";
+    } else if (settings.showInfo == 4){
+      var weather = getWeather();
+      infoStr = weather.temp;
+    } else if (settings.showInfo == 5){
+      var weather = getWeather();
+      infoStr = weather.wind;
+    }
+
+    g.drawString(infoStr, W/2, y);
   }
 
   // Draw lock
@@ -205,13 +258,11 @@ function draw() {
 
 Bangle.loadWidgets();
 
-// Clear the screen once, at startup
+// Clear the screen once, at startup and set the correct theme.
 var bgOrig = g.theme.bg
 var fgOrig = g.theme.fg
 g.setTheme({bg:fgOrig,fg:bgOrig}).clear();
-// draw immediately at first, queue update
 draw();
-
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
@@ -223,13 +274,11 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-
 Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   draw();
 });
-
 
 Bangle.on('touch', function(btn, e){
   var upper = parseInt(g.getHeight() * 0.2);
@@ -247,6 +296,13 @@ Bangle.on('touch', function(btn, e){
   if(is_lower){
     Bangle.buzz(40, 0.6);
     decreaseAlarm();
+    draw(true);
+  }
+
+  if(!is_lower && !is_upper){
+    Bangle.buzz(40, 0.6);
+    settings.showInfo = (settings.showInfo+1) % 6;
+    storage.write(SETTINGS_FILE, settings);
     draw(true);
   }
 });

@@ -6,7 +6,6 @@
     let settings = {
       fullscreen: false,
       showLock: true,
-      showSteps: true
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -26,14 +25,6 @@
         format: () => (settings.fullscreen ? 'Yes' : 'No'),
         onchange: () => {
           settings.fullscreen = !settings.fullscreen;
-          save();
-        },
-      },
-      'Show Steps': {
-        value: settings.showSteps,
-        format: () => (settings.showSteps ? 'Yes' : 'No'),
-        onchange: () => {
-          settings.showSteps = !settings.showSteps;
           save();
         },
       },
