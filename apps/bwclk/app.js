@@ -138,13 +138,13 @@ function draw() {
   var yOffset = settings.fullscreen ? 0 : 10;
   var y = H/5*2 + yOffset;
   g.reset().clearRect(0,0,W,W);
-  g.setColor("#000");
+  g.setColor(g.theme.fg);
   g.fillRect(0,y,W,H);
 
   // Draw date
   y -= settings.fullscreen ? 5 : 0;
   var date = new Date();
-  g.setColor("#000");
+  g.setColor(g.theme.fg);
   g.setFontAlign(1,1);
   g.setLargeFont();
   var dateStr = date.getDate();
@@ -157,7 +157,7 @@ function draw() {
   g.drawString(locale.month(date, 1), W/2 + 10, y+1);
 
   // Draw time
-  g.setColor("#fff");
+  g.setColor(g.theme.bg);
   g.setLargeFont();
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
@@ -174,7 +174,7 @@ function draw() {
 
   // Draw lock
   if(settings.showLock && Bangle.isLocked()){
-    g.setColor("#000");
+    g.setColor(g.theme.bg);
     g.drawImage(imgLock, 2, 2);
   }
 
@@ -189,7 +189,9 @@ function draw() {
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup
-g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+var bgOrig = g.theme.bg
+var fgOrig = g.theme.fg
+g.setTheme({bg:fgOrig,fg:bgOrig}).clear();
 // draw immediately at first, queue update
 draw();
 
