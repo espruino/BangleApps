@@ -215,7 +215,7 @@ function draw() {
   g.drawString(timeStr, W/2, y);
 
   // Draw info or timer
-  y += H/5*2;
+  y += H/5*2-5;
   g.setFontAlign(0,0);
   if(isAlarmEnabled() || settings.showInfo > 0){
     g.setSmallFont();
