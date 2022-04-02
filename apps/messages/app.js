@@ -457,6 +457,7 @@ function checkMessages(options) {
       var msg = MESSAGES[idx-1];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
       else g.setColor(g.theme.fg);
+      g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
