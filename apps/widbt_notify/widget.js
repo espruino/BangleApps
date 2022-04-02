@@ -13,22 +13,17 @@ WIDGETS.bluetooth_notify = {
         g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
     },
     
-    redrawCurrentApp: function(){
-        if(typeof(draw)=='function'){
-            draw();
-        }else{
-            load(); // fallback. This might reset some variables
-        }
-    },
-    
     connect: function() {
         WIDGETS.bluetooth_notify.draw();
     },
     
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
-            E.showMessage(/*LANG*/'Connection\nlost.', 'Bluetooth');
-            setInterval(()=>{WIDGETS.bluetooth_notify.redrawCurrentApp();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
+            E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH').then(function(){console.log("button pressed");});
+            setInterval(()=>{
+                E.showAlert();
+                try{ draw();} catch(err){}
+            }, 3000); // clear message
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // don't buzz for the next 30 seconds.
