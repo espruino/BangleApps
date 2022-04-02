@@ -8,7 +8,7 @@
 Bangle.loadWidgets();
 
 
-const qalarm = require('qalarm');
+const alarm = require("alarm");
 
 const TIMER_IDX = "smpltmr";
 const screenWidth = g.getWidth();
@@ -18,6 +18,33 @@ const cy = parseInt(screenHeight/2)-12;
 var minutes = 5;
 var interval; //used for the 1 second interval timer
 
+
+function isTimerEnabled(){
+  var alarmObj = alarm.getAlarm(TIMER_IDX);
+  if(alarmObj===undefined || !alarmObj.on){
+    return false;
+  }
+
+  return true;
+}
+
+function getTimerMin(){
+  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
+}
+
+function setTimer(minutes){
+  alarm.setAlarm(TIMER_IDX, {
+    // msg : "Simple Timer",
+    timer : minutes*60*1000,
+  });
+  alarm.reload();
+}
+
+function deleteTimer(){
+  alarm.setAlarm(TIMER_IDX, undefined);
+  alarm.reload();
+}
 
 setWatch(_=>load(), BTN1);
 function draw(){
@@ -32,10 +59,11 @@ function draw(){
   // Write time
   g.setFontAlign(0, 0, 0);
   g.setFont("Vector", 32).setFontAlign(0,-1);
-  var started = qalarm.isTimerStarted(TIMER_IDX);
+
+  var started = isTimerEnabled();
   var text = minutes + " min.";
   if(started){
-    var min = qalarm.getTimerMin(TIMER_IDX);
+    var min = getTimerMin();
     text = min + " min.";
   }
 
@@ -65,7 +93,7 @@ Bangle.on('touch', function(btn, e){
   var isUpper = e.y < upper;
   var isLower = e.y > lower;
   var isMiddle = !isLeft && !isRight && !isUpper && !isLower;
-  var started = qalarm.isTimerStarted(TIMER_IDX);
+  var started = isTimerEnabled();
 
   if(isRight && !started){
     minutes += 1;
@@ -81,9 +109,9 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.3);
   } else if(isMiddle) {
     if(!started){
-      qalarm.editTimer(TIMER_IDX, 0, minutes, 0);
+      setTimer(minutes);
     } else {
-      qalarm.deleteTimer(TIMER_IDX);
+      deleteTimer();
     }
     Bangle.buzz(80, 0.6);
   }

@@ -1,11 +1,10 @@
 /**
  * NOT ANALOG CLOCK
  */
-
+const TIMER_IDX = "notanalog";
 const locale = require('locale');
 const storage = require('Storage')
 const SETTINGS_FILE = "notanalog.setting.json";
-const qalarm = require('qalarm');
 let settings = {
     alarm: -1,
 };
@@ -394,25 +393,56 @@ function queueDraw() {
  * Handle alarm
  */
 function isAlarmEnabled(){
-    return qalarm.isTimerStarted("notanalog");
-}
+    try{
+      var alarm = require('alarm');
+      var alarmObj = alarm.getAlarm(TIMER_IDX);
+      if(alarmObj===undefined || !alarmObj.on){
+        return false;
+      }
+
+      return true;
+
+    } catch(ex){ }
+    return false;
+  }
 
 function getAlarmMinutes(){
-    return qalarm.getTimerMin("notanalog");
+    if(!isAlarmEnabled()){
+        return -1;
+    }
+
+    var alarm = require('alarm');
+    var alarmObj =  alarm.getAlarm(TIMER_IDX);
+    return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
 
 function increaseAlarm(){
-    var mins = qalarm.getTimerMin("notanalog")+5;
-    qalarm.deleteTimer("notanalog");
-    qalarm.editTimer("notanalog", 0, mins, 0);
+    try{
+        var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+        var alarm = require('alarm')
+        alarm.setAlarm(TIMER_IDX, {
+        timer : (minutes+5)*60*1000,
+        });
+        alarm.reload();
+    } catch(ex){ }
 }
 
 function decreaseAlarm(){
-    var mins = qalarm.getTimerMin("notanalog")-5;
-    qalarm.deleteTimer("notanalog");
-    if(mins > 0){
-        qalarm.editTimer("notanalog", 0, mins, 0);
-    }
+    try{
+        var minutes = getAlarmMinutes();
+        minutes -= 5;
+
+        var alarm = require('alarm')
+        alarm.setAlarm(TIMER_IDX, undefined);
+
+        if(minutes > 0){
+        alarm.setAlarm(TIMER_IDX, {
+            timer : minutes*60*1000,
+        });
+        }
+
+        alarm.reload();
+    } catch(ex){ }
 }
 
 function feedback(){

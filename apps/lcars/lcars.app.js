@@ -1,7 +1,7 @@
+const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
 const storage = require('Storage');
-const qalarm = require('qalarm');
 let settings = {
   alarm: -1,
   dataRow1: "Steps",
@@ -566,25 +566,56 @@ function getWeather(){
  * Handle alarm
  */
 function isAlarmEnabled(){
-  return qalarm.isTimerStarted("lcars");
+  try{
+    var alarm = require('alarm');
+    var alarmObj = alarm.getAlarm(TIMER_IDX);
+    if(alarmObj===undefined || !alarmObj.on){
+      return false;
+    }
+
+    return true;
+
+  } catch(ex){ }
+  return false;
 }
 
 function getAlarmMinutes(){
-  return qalarm.getTimerMin("lcars");
+  if(!isAlarmEnabled()){
+      return -1;
+  }
+
+  var alarm = require('alarm');
+  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
 
 function increaseAlarm(){
-  var mins = qalarm.getTimerMin("lcars")+5;
-  qalarm.deleteTimer("lcars");
-  qalarm.editTimer("lcars", 0, mins, 0);
+  try{
+      var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+      var alarm = require('alarm')
+      alarm.setAlarm(TIMER_IDX, {
+      timer : (minutes+5)*60*1000,
+      });
+      alarm.reload();
+  } catch(ex){ }
 }
 
 function decreaseAlarm(){
-  var mins = qalarm.getTimerMin("lcars")-5;
-  qalarm.deleteTimer("lcars");
-  if(mins > 0){
-    qalarm.editTimer("lcars", 0, mins, 0);
-  }
+  try{
+      var minutes = getAlarmMinutes();
+      minutes -= 5;
+
+      var alarm = require('alarm')
+      alarm.setAlarm(TIMER_IDX, undefined);
+
+      if(minutes > 0){
+      alarm.setAlarm(TIMER_IDX, {
+          timer : minutes*60*1000,
+      });
+      }
+
+      alarm.reload();
+  } catch(ex){ }
 }
 
 
@@ -610,15 +641,6 @@ Bangle.on('lock', function(isLocked) {
 Bangle.on('charging',function(charging) {
   drawState();
 });
-
-
-function increaseAlarm(){
-  if(isAlarmEnabled() && getAlarmMinutes() < 95){
-    settings.alarm += 5;
-  } else {
-    settings.alarm = getCurrentTimeInMinutes() + 5;
-  }
-}
 
 
 function feedback(){

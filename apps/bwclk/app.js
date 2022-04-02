@@ -1,3 +1,4 @@
+const TIMER_IDX = "bwclk";
 const SETTINGS_FILE = "bwclk.setting.json";
 const locale = require('locale');
 const storage = require('Storage');
@@ -75,41 +76,56 @@ function getSteps() {
   return 0;
 }
 
-
 function isAlarmEnabled(){
   try{
-    var qalarm = require('qalarm');
-    return qalarm.isTimerStarted("bwclk");
+    var alarm = require('alarm');
+    var alarmObj = alarm.getAlarm(TIMER_IDX);
+    if(alarmObj===undefined || !alarmObj.on){
+      return false;
+    }
+
+    return true;
+
   } catch(ex){ }
   return false;
 }
 
-
 function getAlarmMinutes(){
-  try{
-    var qalarm = require('qalarm');
-    return qalarm.getTimerMin("bwclk");
-  } catch(ex){ }
-  return -1;
+  if(!isAlarmEnabled()){
+    return -1;
+  }
+
+  var alarm = require('alarm');
+  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
 
 function increaseAlarm(){
   try{
-    var qalarm = require('qalarm');
-    var mins = qalarm.getTimerMin("bwclk")+5;
-    qalarm.deleteTimer("bwclk");
-    qalarm.editTimer("bwclk", 0, mins, 0);
+    var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+    var alarm = require('alarm')
+    alarm.setAlarm(TIMER_IDX, {
+      timer : (minutes+5)*60*1000,
+    });
+    alarm.reload();
   } catch(ex){ }
 }
 
 function decreaseAlarm(){
   try{
-    var qalarm = require('qalarm');
-    var mins = qalarm.getTimerMin("bwclk")-5;
-    qalarm.deleteTimer("bwclk");
-    if(mins > 0){
-        qalarm.editTimer("bwclk", 0, mins, 0);
+    var minutes = getAlarmMinutes();
+    minutes -= 5;
+
+    var alarm = require('alarm')
+    alarm.setAlarm(TIMER_IDX, undefined);
+
+    if(minutes > 0){
+      alarm.setAlarm(TIMER_IDX, {
+        timer : minutes*60*1000,
+      });
     }
+
+    alarm.reload();
   } catch(ex){ }
 }
 
