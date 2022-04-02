@@ -148,13 +148,13 @@ function draw() {
   g.setFontAlign(1,1);
   g.setLargeFont();
   var dateStr = date.getDate();
-  dateStr = ("0"+dateStr).substr(-2);
-  g.drawString(dateStr, W/2, y+3);
+  dateStr = ("0" + dateStr).substr(-2);
+  g.drawString(dateStr, W/2-2, y+3);
 
   g.setSmallFont();
   g.setFontAlign(-1,1);
-  g.drawString(locale.dow(date, true), W/2 + 5, y-22);
-  g.drawString(locale.month(date, 1), W/2 + 5, y);
+  g.drawString(locale.dow(date, true), W/2 + 10, y-23);
+  g.drawString(locale.month(date, 1), W/2 + 10, y+1);
 
   // Draw time
   g.setColor("#fff");
