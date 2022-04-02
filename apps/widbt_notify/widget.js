@@ -13,6 +13,7 @@ WIDGETS.bluetooth_notify = {
         g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
     },
     
+    
     connect: function() {
         WIDGETS.bluetooth_notify.draw();
     },
@@ -22,7 +23,6 @@ WIDGETS.bluetooth_notify = {
             E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH').then(function(){console.log("button pressed");});
             setInterval(()=>{
                 E.showAlert();
-                try{ draw();} catch(err){}
             }, 3000); // clear message
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
