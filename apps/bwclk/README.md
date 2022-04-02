@@ -13,6 +13,12 @@ If you switch the light/dark theme on your bangle, the design changes accordingl
 
 ![](screenshot_3.png)
 
+## Show / Hide steps
+Optionally, you can hide the steps in the settings.
+
+![](screenshot_4.png)
+
+
 ## Other features
 - Lock icon: Show lock icon in fullscreen mode
 - Timer: If you installed the "alarm" app, you can directly set a timer. Simply tab at

@@ -6,6 +6,7 @@
     let settings = {
       fullscreen: false,
       showLock: true,
+      showSteps: true
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -20,19 +21,27 @@
     E.showMenu({
       '': { 'title': 'BlackWhite Clock' },
       '< Back': back,
+      'Fullscreen': {
+        value: settings.fullscreen,
+        format: () => (settings.fullscreen ? 'Yes' : 'No'),
+        onchange: () => {
+          settings.fullscreen = !settings.fullscreen;
+          save();
+        },
+      },
+      'Show Steps': {
+        value: settings.showSteps,
+        format: () => (settings.showSteps ? 'Yes' : 'No'),
+        onchange: () => {
+          settings.showSteps = !settings.showSteps;
+          save();
+        },
+      },
       'Show Lock': {
         value: settings.showLock,
         format: () => (settings.showLock ? 'Yes' : 'No'),
         onchange: () => {
           settings.showLock = !settings.showLock;
-          save();
-        },
-      },
-      'Full Screen': {
-        value: settings.fullscreen,
-        format: () => (settings.fullscreen ? 'Yes' : 'No'),
-        onchange: () => {
-          settings.fullscreen = !settings.fullscreen;
           save();
         },
       }
