@@ -22,3 +22,6 @@ Shows the current date as DD MM on touch and reverts back to time after 5 second
 ### Fullscreen
 Shows the watchface in fullscreen mode.
 Note: In fullscreen mode, widgets are hidden, but still loaded.
+
+### Show lock status
+If enabled, color changes when unlocked to detect the lock state easily.

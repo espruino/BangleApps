@@ -353,13 +353,15 @@ const events = {
         let c, p, i, l = from - o, h = to - o;
         for (i = 0; (c = this.wall[i]).time < l; i++) ;
         for (; (c = this.wall[i]).time < h; i++) {
-            if ((p = c.time < t) ? c.past : c.future)
+            p = c.time < t;
+            if (p ? c.past : c.future)
                 result = Math.min(result, f(c, new Date(c.time + o), p));
         }
         l += o; h += o; t += o;
         for (i = 0; (c = this.fixed[i]).time < l; i++) ;
         for (; (c = this.fixed[i]).time < h; i++) {
-            if ((p = c.time < t) ? c.past : c.future)
+            p = c.time < t;
+            if (p ? c.past : c.future)
                 result = Math.min(f(c, new Date(c.time), p));
         }
         return result;

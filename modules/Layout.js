@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 Bangle.js contibutors. See the file LICENSE for copying permission. */
+/* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
 /*
 
 Take a look at README.md for hints on developing with this library.
@@ -59,6 +59,7 @@ options is an object containing:
   * `label` - the text on the button
   * `cb` - a callback function
   * `cbl` - a callback function for long presses
+* `back` - a callback function, passed as `back` into Bangle.setUI
 
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
@@ -89,7 +90,7 @@ function Layout(layout, options) {
   options = options || {};
   this.lazy = options.lazy || false;
 
-  var btnList;
+  var btnList, uiSet;
   Bangle.setUI(); // remove all existing input handlers
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
@@ -104,7 +105,7 @@ function Layout(layout, options) {
       this.physBtns = 0;
       this.buttons = btnList;
       this.selectedButton = -1;
-      Bangle.setUI("updown", dir=>{
+      Bangle.setUI({mode:"updown", back:options.back}, dir=>{
         var s = this.selectedButton, l=this.buttons.length;
         if (dir===undefined && this.buttons[s])
           return this.buttons[s].cb();
@@ -119,8 +120,10 @@ function Layout(layout, options) {
         }
         this.selectedButton = s;
       });
+      uiSet = true;
     }
   }
+  if (options.back && !uiSet) Bangle.setUI({mode: "custom", back: options.back});
 
   if (options.btns) {
     var buttons = options.btns;
@@ -180,13 +183,6 @@ function Layout(layout, options) {
     if (l.id) ll[l.id] = l;
     // fix type up
     if (!l.type) l.type="";
-    // FIXME ':'/fsz not needed in new firmwares - Font:12 is handled internally
-    // fix fonts for pre-2v11 firmware
-    if (l.font && l.font.includes(":")) {
-      var f = l.font.split(":");
-      l.font = f[0];
-      l.fsz = f[1];
-    }
     if (l.c) l.c.forEach(recurser);
   }
   recurser(this._l);
@@ -232,7 +228,7 @@ Layout.prototype.render = function (l) {
 
   function render(l) {"ram"
     g.reset();
-    if (l.col) g.setColor(l.col);
+    if (l.col!==undefined) g.setColor(l.col);
     if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
     cb[l.type](l);
   }
@@ -241,13 +237,13 @@ Layout.prototype.render = function (l) {
     "":function(){},
     "txt":function(l){
       if (l.wrap) {
-        g.setFont(l.font,l.fsz).setFontAlign(0,-1);
+        g.setFont(l.font).setFontAlign(0,-1);
         var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
         //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
-        g.setFont(l.font,l.fsz).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
@@ -264,7 +260,7 @@ Layout.prototype.render = function (l) {
         x,y+4
       ], bg = l.selected?g.theme.bgH:g.theme.bg2;
     g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
-    if (l.col) g.setColor(l.col);
+    if (l.col!==undefined) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
     else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
@@ -365,7 +361,7 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        var m = g.setFont(l.font,l.fsz).stringMetrics(l.label);
+        var m = g.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {

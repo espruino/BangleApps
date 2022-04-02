@@ -626,7 +626,7 @@ Bangle.on('charging',function(charging) {
 
 
 function increaseAlarm(){
-  if(isAlarmEnabled()){
+  if(isAlarmEnabled() && getAlarmMinutes() < 95){
     settings.alarm += 5;
   } else {
     settings.alarm = getCurrentTimeInMinutes() + 5;

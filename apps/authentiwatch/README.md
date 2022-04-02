@@ -33,7 +33,7 @@ Keep those copies safe and secure.
 * Swipe right to exit to the app launcher.
 * Swipe left on selected counter token to advance the counter to the next value.
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot1.png) ![Screenshot](screenshot2.png) ![Screenshot](screenshot3.png) ![Screenshot](screenshot4.png)
 
 ## Creator
 

@@ -1,9 +1,9 @@
 {
   "id": "doztime",
-  "name": "Dozenal Time",
-  "shortName": "Dozenal Time",
-  "version": "0.04",
-  "description": "A dozenal Holocene calendar and dozenal diurnal clock",
+  "name": "Dozenal Digital Time",
+  "shortName": "Dozenal Digital",
+  "version": "0.05",
+  "description": "A dozenal Holocene calendar and dozenal diurnal digital clock",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",

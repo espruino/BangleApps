@@ -7,7 +7,7 @@ screen. Very useful if combined with pattern launcher ;)
 
 ![](screenshot_1.png)
 ![](screenshot_2.png)
-![](screenshot_2.png)
+![](screenshot_3.png)
 
 
 ## Contributors

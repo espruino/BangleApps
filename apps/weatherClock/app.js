@@ -71,7 +71,6 @@ function chooseIconByCode(code) {
         case 801: return partSunIcon;
         default: return cloudIcon;
       }
-      break;
     default: return cloudIcon;
   }
 }

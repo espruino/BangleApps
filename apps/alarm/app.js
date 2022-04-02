@@ -73,12 +73,12 @@ function editAlarm(alarmIndex) {
     '': { 'title': /*LANG*/'Alarm' },
     /*LANG*/'< Back' : showMainMenu,
     /*LANG*/'Hours': {
-      value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+      value: hrs, min : 0, max : 23, wrap : true,
+      onchange: v => hrs=v
     },
     /*LANG*/'Minutes': {
-      value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+      value: mins, min : 0, max : 59, wrap : true,
+      onchange: v => mins=v
     },
     /*LANG*/'Enabled': {
       value: en,
@@ -139,12 +139,12 @@ function editTimer(alarmIndex) {
     '': { 'title': /*LANG*/'Timer' },
     /*LANG*/'< Back' : showMainMenu,
     /*LANG*/'Hours': {
-      value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+      value: hrs, min : 0, max : 23, wrap : true,
+      onchange: v => hrs=v
     },
     /*LANG*/'Minutes': {
-      value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+      value: mins, min : 0, max : 59, wrap : true,
+      onchange: v => mins=v
     },
     /*LANG*/'Enabled': {
       value: en,

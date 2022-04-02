@@ -60,7 +60,8 @@ const prepFont = (name, data) => {
     let width = m[2] == '*' ? null : +m[2];
     let c = null, o = 0;
     lines.forEach((line, l) => {
-      if (m = /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) || /^(<*)(-)(.)(-*)(>*)$/.exec(line)) {
+      m = /^(<*)(=)([*\d]*)(=*)(>*)$/.exec(line) || /^(<*)(-)(.)(-*)(>*)$/.exec(line);
+      if (m) {
         const h = m[2] == '=';
         if (m[1].length > desc || h && m[1].length != desc)
           throw new Error('Invalid descender height at ' + l);
