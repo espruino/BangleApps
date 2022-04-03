@@ -237,7 +237,7 @@ exports.getStats = function(statIDs, options) {
       getString : function() { return state.BPM||"--" },
     };
   }
-  if (statIDs.includes("bpm")) {
+  if (statIDs.includes("maxbpm")) {
     needHRM = true;
     stats["maxbpm"]={
       title : "Max BPM",
