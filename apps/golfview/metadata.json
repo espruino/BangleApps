@@ -1,0 +1,14 @@
+{ "id": "glfview",
+  "name": "Golf View",
+  "version":"0.01",
+  "description": "This app will provide you with on course data to support your golf game! All information comes from OpenStreetMap. Please contribute by drawing your course using these guidelines: [guidelines](guidelines.com)",
+  "icon": "golfview.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "custom": "index.html",
+  "storage": [
+    {"name":"glfview.app.js","url":"golfview.js"},
+    {"name":"glfview.img","url":"golfview-icon.js","evaluate":true}
+  ]
+}

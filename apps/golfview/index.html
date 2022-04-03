@@ -1,0 +1,114 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <button id="upload" class="btn btn-primary">Upload</button>
+
+  <script src="../../core/lib/customize.js"></script>
+  <script src="./maptools.js"></script>
+
+  <script>
+    const url = "https://overpass-api.de/api/interpreter";
+    let query = `[out:json][timeout:5];relation["name"="Davis Golf Course"];way(r)["golf"="hole"];foreach->.a(.a out;way(around.a:40.0)["golf"];out;>>;out;)`; // this gets everything at least
+    let course_input = null;
+
+    function findNodeCoordinates(elements, id) {
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].type === "node" && elements[i].id === id) {
+          let thing = (({ lat, lon }) => ({ lat, lon }))(elements[i]);
+          return thing;
+        }
+      }
+      console.error("node id: ", id, " not found");
+    }
+
+    function processFeatures(course_verbose) {
+      let course_processed = {
+        holes: {}
+      };
+      let current_hole = 0;
+      for (let i = 0; i < course_verbose.length; i++) {
+        const element = course_verbose[i];
+
+        if (element.type === "way") {
+          // if we find a high-level hole feature
+          if (element.tags.golf === "hole") {
+            if (element.tags.ref in course_processed.holes) continue; // the around picks up hole ways that mess everything up
+            current_hole = parseInt(element.tags.ref); //subsequent way features should be applied to the current hole
+            let nodes = [];
+            for (const node_id of element.nodes) {
+              nodes.push(findNodeCoordinates(course_verbose, node_id));
+            }
+            var hole = {
+              hole_number: current_hole,
+              handicap: parseInt(element.tags.handicap),
+              par: parseInt(element.tags.par),
+              nodes: nodes,
+              features: [],
+            }
+
+            course_processed.holes[current_hole.toString()] = hole;
+          }
+
+          // if we find a feature add it to the corresponding hole
+          if (/(green)|(bunker)|(tee)|(teebox)|(fairway)|(water_hazard)/.test(element.tags.golf)) { //TODO missing cartpath
+            let nodes = []
+            for (const node_id of element.nodes) {
+              nodes.push(findNodeCoordinates(course_verbose, node_id));
+            }
+            let new_feature = {
+              nodes: nodes,
+              type: element.tags.golf,
+              id: element.id,
+            }
+            course_processed.holes[current_hole.toString()].features.push(new_feature);
+          }
+        }
+      }
+
+      return course_processed;
+    }
+
+    function preprocessCoords(course_input) {
+      // first do the high-level way
+      for (var hole in course_input.holes) {
+        course_input.holes[hole].nodesXY = arraytoXY(course_input.holes[hole].nodes, course_input.holes[hole].nodes[0])
+        // then do the shapes in the features
+        for (var feature in course_input.holes[hole].features) {
+          course_input.holes[hole].features[feature].nodesXY = arraytoXY(course_input.holes[hole].features[feature].nodes, course_input.holes[hole].nodes[0]);
+        }
+
+        // find out how the hole is angled
+        course_input.holes[hole].angle = angle(course_input.holes[hole].nodesXY[0], course_input.holes[hole].nodesXY[course_input.holes[hole].nodesXY.length - 1])
+      }
+      return course_input;
+    }
+
+    var out = {};
+    // download info from the course
+    $.post(url, query, function (result) {
+      course_input = result;
+      out = processFeatures(course_input.elements);
+      out = preprocessCoords(out);
+      console.log(course_input);
+      console.log(out);
+    })
+
+    // When the 'upload' button is clicked...
+    document.getElementById("upload").addEventListener("click", function () {
+      downloadObjectAsJSON(out.holes["1"], "course_data");
+      sendCustomizedApp({
+        storage: courses
+      });
+    });
+
+  </script>
+</body>
+
+</html>
