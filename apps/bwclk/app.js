@@ -154,10 +154,10 @@ function getWeather(){
   }
 
   return {
-    temp: "??? °C",
+    temp: "? °C",
     hum: "-",
     txt: "-",
-    wind: "??? km/h",
+    wind: "? km/h",
     wdir: "-",
     wrose: "-"
   };
