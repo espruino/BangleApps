@@ -361,6 +361,12 @@ Bangle.on('lock', function(isLocked) {
   draw();
 });
 
+Bangle.on('charging',function(charging) {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+  draw();
+});
+
 Bangle.on('touch', function(btn, e){
   var left = parseInt(g.getWidth() * 0.2);
   var right = g.getWidth() - left;
