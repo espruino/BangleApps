@@ -47,6 +47,10 @@ function rotateVec(a, theta) {
     return pt;
 }
 
+function distance(a,b) {
+    return Math.sqrt(Math.pow(a.x-b.x,2) + Math.pow(a.y-b.y,2))
+}
+
 // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
 function downloadObjectAsJSON(exportObj, exportName) {
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
