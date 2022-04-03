@@ -2,6 +2,7 @@
 
 <head>
   <link rel="stylesheet" href="../../css/spectre.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/mourner/simplify-js@1.2.4/simplify.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
@@ -75,13 +76,14 @@
       return course_processed;
     }
 
-    function preprocessCoords(course_input) {
+    function preprocessCoords(course_input) { //todo posibly remove other coordinates for ~0.5 size reduction
       // first do the high-level way
       for (var hole in course_input.holes) {
         course_input.holes[hole].nodesXY = arraytoXY(course_input.holes[hole].nodes, course_input.holes[hole].nodes[0])
         // then do the shapes in the features
         for (var feature in course_input.holes[hole].features) {
-          course_input.holes[hole].features[feature].nodesXY = arraytoXY(course_input.holes[hole].features[feature].nodes, course_input.holes[hole].nodes[0]);
+          many_points = arraytoXY(course_input.holes[hole].features[feature].nodes, course_input.holes[hole].nodes[0]);
+          course_input.holes[hole].features[feature].nodesXY = simplify(many_points,3,true); // from simplify-js
         }
 
         // find out how the hole is angled

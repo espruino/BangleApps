@@ -1,7 +1,8 @@
-let course = require("Storage").readJSON("course_data_hole1.json");
+let course = require("Storage").readJSON("course_data(3).json");
 
 console.log(Object.keys(course));
 
+g.setBgColor(0,0,0);
 g.clear();
 
 for (var feature of course.features) {
