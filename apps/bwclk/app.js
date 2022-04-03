@@ -93,6 +93,13 @@ var imgTimer = {
   buffer : require("heatshrink").decompress(atob("/+B/4CD84CEBAPygFP+F+h/x/+P+fz5/n+HnAQNn5/wuYCBmYCC5kAAQfOgFz80As/ngHn+fD54mC/F+j/+gF/HAQA=="))
 };
 
+var imgCharging = {
+  width : 24, height : 24, bpp : 1,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
+};
+
+
 
 /*
  * Draw timeout
@@ -224,6 +231,17 @@ function draw() {
   // queue draw in one minute
   queueDraw();
 
+  // Set info
+  var showInfo = settings.showInfo;
+  if(isAlarmEnabled()){
+    showInfo = 100;
+  }
+
+  if(Bangle.isCharging()){
+    showInfo = 101;
+  }
+
+
   // Draw background
   var yOffset = settings.fullscreen ? 0 : 10;
   var y = H/5*2 + yOffset;
@@ -252,7 +270,7 @@ function draw() {
   var timeStr = locale.time(date,1);
   y += settings.fullscreen ? 20 : 10;
 
-  if(!isAlarmEnabled() && settings.showInfo == 0){
+  if(showInfo == 0){
     y += 8;
     g.setLargeFont();
   } else {
@@ -264,30 +282,33 @@ function draw() {
   // Draw info or timer
   y += H/5*2-5;
   g.setFontAlign(0,0);
-  if(isAlarmEnabled() || settings.showInfo > 0){
+  if(showInfo > 0){
     g.setSmallFont();
 
     var infoStr = "";
     var infoImg;
-    if(isAlarmEnabled()){
+    if(showInfo == 100){
       infoStr = getAlarmMinutes() + " min.";
       infoImg = imgTimer;
-    } else if (settings.showInfo == 1){
+    } else if(showInfo == 101){
+      infoStr = "";
+      infoImg = imgCharging;
+    } else if (showInfo == 1){
       infoStr = E.getBattery() + "%";
       infoImg = imgBattery;
-    } else if (settings.showInfo == 2){
+    } else if (showInfo == 2){
       infoStr = getSteps()
       infoStr = Math.round(infoStr/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
       infoStr = infoStr + "k";
       infoImg = imgSteps;
-    } else if (settings.showInfo == 3){
+    } else if (showInfo == 3){
       infoStr = Math.round(Bangle.getHealthStatus("day").bpm) + " bpm";
       infoImg = imgBpm;
-    } else if (settings.showInfo == 4){
+    } else if (showInfo == 4){
       var weather = getWeather();
       infoStr = weather.temp;
       infoImg = imgTemperature;
-    } else if (settings.showInfo == 5){
+    } else if (showInfo == 5){
       var weather = getWeather();
       infoStr = weather.wind;
       infoImg = imgWind;
