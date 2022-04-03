@@ -291,7 +291,7 @@ function draw() {
       infoStr = getAlarmMinutes() + " min.";
       infoImg = imgTimer;
     } else if(showInfo == 101){
-      infoStr = "";
+      infoStr = E.getBattery() + "%";
       infoImg = imgCharging;
     } else if (showInfo == 1){
       infoStr = E.getBattery() + "%";
@@ -381,13 +381,13 @@ Bangle.on('touch', function(btn, e){
   if(is_upper){
     Bangle.buzz(40, 0.6);
     increaseAlarm();
-    draw(true);
+    draw();
   }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
     decreaseAlarm();
-    draw(true);
+    draw();
   }
 
   var maxInfo = 6;
@@ -395,7 +395,7 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.6);
     settings.showInfo = (settings.showInfo+1) % maxInfo;
     storage.write(SETTINGS_FILE, settings);
-    draw(true);
+    draw();
   }
 
   if(is_left){
@@ -403,7 +403,7 @@ Bangle.on('touch', function(btn, e){
     settings.showInfo = settings.showInfo-1;
     settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
     storage.write(SETTINGS_FILE, settings);
-    draw(true);
+    draw();
   }
 });
 
