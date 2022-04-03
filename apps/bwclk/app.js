@@ -341,9 +341,13 @@ Bangle.on('lock', function(isLocked) {
 });
 
 Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.2);
+  var right = g.getWidth() - left;
   var upper = parseInt(g.getHeight() * 0.2);
   var lower = g.getHeight() - upper;
 
+  var is_left = e.x < left;
+  var is_right = e.x > right;
   var is_upper = e.y < upper;
   var is_lower = e.y > lower;
 
@@ -359,9 +363,18 @@ Bangle.on('touch', function(btn, e){
     draw(true);
   }
 
-  if(!is_lower && !is_upper){
+  var maxInfo = 6;
+  if(is_right){
     Bangle.buzz(40, 0.6);
-    settings.showInfo = (settings.showInfo+1) % 6;
+    settings.showInfo = (settings.showInfo+1) % maxInfo;
+    storage.write(SETTINGS_FILE, settings);
+    draw(true);
+  }
+
+  if(is_left){
+    Bangle.buzz(40, 0.6);
+    settings.showInfo = settings.showInfo-1;
+    settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
     storage.write(SETTINGS_FILE, settings);
     draw(true);
   }

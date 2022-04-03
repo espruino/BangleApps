@@ -5,7 +5,7 @@
 ## Features
 - Fullscreen on/off
 - The design is adapted to the theme of your bangle.
-- Tab in middle of screen to show between different information.
+- Tab left/right of screen to show steps, temperature etc.
 - Enable / disable lock icon in the settings.
 - If the "alarm" app is installed tab top / bottom of the screen to set the timer.
 
