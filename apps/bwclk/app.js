@@ -239,7 +239,7 @@ function draw() {
   g.setMediumFont();
   var dateStr = date.getDate();
   dateStr = ("0" + dateStr).substr(-2);
-  g.drawString(dateStr, W/2-2, y+3);
+  g.drawString(dateStr, W/2-1, y+3);
 
   g.setSmallFont();
   g.setFontAlign(-1,1);
