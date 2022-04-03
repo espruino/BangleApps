@@ -10,7 +10,7 @@
 - If the "alarm" app is installed tab top / bottom of the screen to set the timer.
 
 ## Thanks to
-<a href="https://www.flaticon.com/free-icons/lock" title="lock icons">Lock icons created by Those Icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
 
 ## Creator
 - [David Peer](https://github.com/peerdavid)
