@@ -383,7 +383,7 @@ class Cell {
 
 function undoGame() {
   
-  if (scores.lastScores.length > 0) {
+  if (scores.lastScores.length) {
     g.clear();
     allSquares.forEach(sq => {
       sq.popFromUndo();
@@ -396,7 +396,7 @@ function undoGame() {
     updUndoLvlIndex();
     snapshot.make();
     Bangle.loadWidgets();
-  Bangle.drawWidgets();
+    Bangle.drawWidgets();
   }
 }
 function addToUndo() {
@@ -516,8 +516,8 @@ function drawPopUp(message,cb) {
               rDims.x+10, rDims.y2-40
   ]);
   buttons.all.forEach(btn => {btn.disable();});
-  const btnYes = new Button('yes', rDims.x+16, rDims.y2-80, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
-  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-80, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnYes = new Button('yes', rDims.x+16, rDims.y2-88, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-88, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
   btnYes.draw();
   btnNo.draw();
   g.setColor('#000000');
