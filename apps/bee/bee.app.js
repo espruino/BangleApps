@@ -20,7 +20,7 @@ function prepareLetterIdx () {
     for (var i=1; i<26; ++i) {
       var prefix = String.fromCharCode(97+i%26);
       console.log(prefix);
-      li.push(words.indexOf("\n"+prefix, li[i-1])+1);
+      li.push(S.read('bee.words').indexOf("\n"+prefix, li[i-1])+1);
     }
     li.push(S.read('bee.words').length);
     S.writeJSON("bee_lindex.json", li);
