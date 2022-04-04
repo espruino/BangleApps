@@ -2,7 +2,7 @@
 
 Logs health data to a file every 10 minutes, and provides an app to view it
 
-**BETA - requires firmware 2v11**
+**BETA - requires firmware 2v11 or later**
 
 ## Usage
 
