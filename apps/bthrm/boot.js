@@ -108,7 +108,7 @@
           var sensorContact;
           
           if (flags & 2){
-            sensorContact = (flags & 4) ? true : false;
+            sensorContact = !!(flags & 4);
           }
           
           var idx = 2 + (flags&1);
@@ -297,7 +297,7 @@
         });
       } else if (newCharacteristic.read){
         result = result.then(()=>{
-          readData(newCharacteristic);
+          // readData(newCharacteristic);
           log("Reading data for " + newCharacteristic);
           return newCharacteristic.read().then((data)=>{
             supportedCharacteristics[newCharacteristic.uuid].handler(data);
