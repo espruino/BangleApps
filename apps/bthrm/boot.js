@@ -31,7 +31,7 @@
     
     function addNotificationHandler(characteristic){
       log("Setting notification handler: " + supportedCharacteristics[characteristic.uuid].handler);
-      characteristic.on('characteristicvaluechanged', supportedCharacteristics[characteristic.uuid].handler);
+      characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     }
     
     function writeCache(cache){
@@ -92,15 +92,14 @@
       services: [ "180d" ]
     }];
 
-    supportedServices = [
+    var supportedServices = [
       "0x180d", "0x180f"
     ];
 
     var supportedCharacteristics = {
       "0x2a37": {
         //Heart rate measurement
-        handler: function (event){          
-          var dv = event.target.value;
+        handler: function (dv){
           var flags = dv.getUint8(0);
           
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
@@ -121,7 +120,7 @@
           var interval;
           if (flags & 16) {
             interval = [];
-            maxIntervalBytes = (dv.byteLength - idx);
+            var maxIntervalBytes = (dv.byteLength - idx);
             log("Found " + (maxIntervalBytes / 2) + " rr data fields");
             for(var i = 0 ; i < maxIntervalBytes / 2; i++){
               interval[i] = dv.getUint16(idx,1); // in milliseconds
@@ -140,14 +139,14 @@
           }
 
           if (settings.replace){
-            var newEvent = {
+            var repEvent = {
               bpm: bpm,
               confidence: (sensorContact || sensorContact === undefined)? 100 : 0,
               src: "bthrm"
             };
           
-            log("Emitting HRM: ", newEvent);
-            Bangle.emit("HRM", newEvent);
+            log("Emitting HRM: ", repEvent);
+            Bangle.emit("HRM", repEvent);
           }
 
           var newEvent = {
@@ -159,23 +158,23 @@
           if (energyExpended) newEvent.energy = energyExpended;
           if (battery) newEvent.battery = battery;
           if (sensorContact) newEvent.contact = sensorContact;
-          
+
           log("Emitting BTHRM: ", newEvent);
           Bangle.emit("BTHRM", newEvent);
         }
       },
       "0x2a38": {
         //Body sensor location
-        handler: function(data){
+        handler: function(dv){
           if (!lastReceivedData["0x180d"]) lastReceivedData["0x180d"] = {};
-          lastReceivedData["0x180d"]["0x2a38"] = parseInt(data.buffer, 10);
+          lastReceivedData["0x180d"]["0x2a38"] = parseInt(dv.buffer, 10);
         }
       },
       "0x2a19": {
         //Battery
-        handler: function (event){
-          if (!lastReceivedData["0x180f"]) lastReceivedData["0x180f"] = { "0x2a19": null };
-          lastReceivedData["0x180f"]["0x2a19"] = event.target.value.getUint8(0);
+        handler: function (dv){
+          if (!lastReceivedData["0x180f"]) lastReceivedData["0x180f"] = {};
+          lastReceivedData["0x180f"]["0x2a19"] = dv.getUint8(0);
         }
       }
 
@@ -282,6 +281,18 @@
     function createCharacteristicPromise(newCharacteristic){
       log("Create characteristic promise: ", newCharacteristic);
       var result = Promise.resolve();
+      // For values that can be read, go ahead and read them, even if we might be notified in the future
+      // Allows for getting initial state of infrequently updating characteristics, like battery
+      if (newCharacteristic.readValue){
+        result = result.then(()=>{
+          log("Reading data for " + JSON.stringify(newCharacteristic));
+          return newCharacteristic.readValue().then((data)=>{
+            if (supportedCharacteristics[newCharacteristic.uuid] && supportedCharacteristics[newCharacteristic.uuid].handler) {
+              supportedCharacteristics[newCharacteristic.uuid].handler(data);
+            }
+          });
+        });
+      }
       if (newCharacteristic.properties.notify){
         result = result.then(()=>{
           log("Starting notifications for: ", newCharacteristic);
@@ -294,15 +305,6 @@
             });
           }
           return startPromise;
-        });
-      } else if (newCharacteristic.readValue){
-        result = result.then(()=>{
-          log("Reading data for " + JSON.stringify(newCharacteristic));
-          return newCharacteristic.readValue().then((data)=>{
-            if (supportedCharacteristics[newCharacteristic.uuid] && supportedCharacteristics[newCharacteristic.uuid].handler) {
-              supportedCharacteristics[newCharacteristic.uuid].handler(data);
-            }
-          });
         });
       }
       return result.then(()=>log("Handled characteristic: ", newCharacteristic));
@@ -526,10 +528,9 @@
         }
       };
     }
-    
-    
+
     var fallbackInterval;
-    
+
     function switchInternalHrm(){
       if (settings.allowFallback && !fallbackInterval){
         log("Fallback to HRM enabled");
@@ -558,7 +559,7 @@
       }
       switchInternalHrm();
     }
-    
+
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
