@@ -1,7 +1,7 @@
 
 # Play the game of 1024
 
-Move the tiles by swiping left, righth, up- or downward over the watchface.
+Move the tiles by swiping left, right, up- or downward over the watchface.
 
 When two tiles with the same number are squashed together they will add up as exponentials:
 
@@ -24,7 +24,7 @@ Use the side **BTN** to exit the game, score and tile positions will be saved.
  - Button **U**: Undo the last move. There are currently a maximum of 9 undo levels. The level is indicated with a small number in the lower righthand corner of the Undo button
     - You can set the maximum undo level in the Apps settings menu.
  
- - Button **R**: Reset the game. The Higscore will be remembered. You will be prompted first. 
+ - Button **R**: Reset the game. The Highscore will be remembered. You will be prompted first. 
     - The highscore value can be reset in the Apps settings menu.
 
     Apps setting: ![Screenshot of the apps settings menu](./game1024_sc_dump_app_settings.png)
