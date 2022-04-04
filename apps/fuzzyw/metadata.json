@@ -3,7 +3,7 @@
   "name":"Fuzzy Text Clock",
   "shortName": "Fuzzy Text",
   "version": "0.01",
-  "description": "An inaccurate clock for when you're not in a rush",
+  "description": "An imprecise clock for when you're not in a rush",
   "readme": "README.md",
   "icon":"fuzzyw.png",
   "screenshots": [{"url":"fuzzyw-light.png"},{"url":"fuzzyw-dark.png"}],
