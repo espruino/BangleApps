@@ -5,4 +5,5 @@
 0.05: Chevron marker on the randomly added square
 0.06: Fixed issue 1609 added a message popup state handler to control unwanted screen redraw
 0.07: Optimized the mover algorithm for efficiency (work in progress)
-0.08: Bug fix at end of the game with victorious splash and glorious orchestra 
+0.08: Bug fix at end of the game with victorious splash and glorious orchestra
+0.09: Added settings menu, removed symbol selection button (*), added highscore reset

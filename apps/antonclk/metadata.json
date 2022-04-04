@@ -1,7 +1,7 @@
 {
   "id": "antonclk",
   "name": "Anton Clock",
-  "version": "0.07",
+  "version": "0.08",
   "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
   "readme":"README.md",
   "icon": "app.png",

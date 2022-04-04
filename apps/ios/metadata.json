@@ -7,6 +7,7 @@
   "tags": "tool,system,ios,apple,messages,notifications",
   "dependencies": {"messages":"app"},
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"ios.app.js","url":"app.js"},
     {"name":"ios.img","url":"app-icon.js","evaluate":true},

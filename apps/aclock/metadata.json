@@ -8,6 +8,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "allow_emulator": true,
   "storage": [
     {"name":"aclock.app.js","url":"clock-analog.js"},
