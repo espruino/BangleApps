@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "fuzzyw.json";
+  const SETTINGS_FILE = "fuzzyw.settings.json";
   
   var align_options = ['Left','Centre','Right'];
   var language_options = ['System', 'en_GB', 'en_US', 'es_ES', 'fr_FR', 'no_NO', 'sv_SE', 'de_DE'];
