@@ -5,7 +5,7 @@
   var language_options = ['System', 'en_GB', 'en_US', 'es_ES', 'fr_FR', 'no_NO', 'sv_SE', 'de_DE'];
 
   // initialize with default settings...
-  let s = {'language': language_options[0], 'align': align_options[1]};
+  let s = {'language': language_options[0], 'alignment': align_options[1]};
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -22,14 +22,14 @@
   }
 
   E.showMenu({
-    '': { 'title': 'Fuzzy Clock' },
+    '': { 'title': 'Fuzzy Word Clock' },
     '< Back': back,
     'Language': {
       value: 0 | language_options.indexOf(s.theme),
       min: 0, max: language_options.length - 1,
       format: v => language_options[v],
       onchange: v => {
-        s.theme = language_options[v];
+        s.language = language_options[v];
         save();
       }
     },
@@ -38,7 +38,7 @@
       min: 0, max: align_options.length - 1,
       format: v => align_options[v],
       onchange: v => {
-        s.theme = align_options[v];
+        s.alignment = align_options[v];
         save();
       }
     },
