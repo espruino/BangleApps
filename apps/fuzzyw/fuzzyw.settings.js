@@ -5,7 +5,7 @@
   var language_options = ['System', 'en_GB', 'en_US', 'es_ES', 'fr_FR', 'no_NO', 'sv_SE', 'de_DE'];
 
   // initialize with default settings...
-  let s = {'language': language_options[0], 'alignment': align_options[1]};
+  let s = {'language': 'System', 'alignment': 'Centre'};
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
