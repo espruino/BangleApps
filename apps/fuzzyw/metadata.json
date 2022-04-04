@@ -12,8 +12,8 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
-    {"name":"fuzzyw.app.js","url":"fuzzyw.app.js"},
-    {"name":"fuzzyw.settings.js","url":"fuzzyw.settings.js"},
+    {"name":"fuzzyw.app.js","url":"app.js"},
+    {"name":"fuzzyw.settings.js","url":"settings.js"},
     {"name":"fuzzyw.img","url":"fuzzyw.icon.js","evaluate":true},
     {"name":"fuzzy_strings.json","url":"fuzzy_strings.json"}
   ]
