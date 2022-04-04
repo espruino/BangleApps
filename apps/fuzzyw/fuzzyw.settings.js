@@ -25,7 +25,7 @@
     '': { 'title': 'Fuzzy Text Clock' },
     '< Back': back,
     'Language': {
-      value: 0 | language_options.indexOf(s.theme),
+      value: 0 | language_options.indexOf(s.language),
       min: 0, max: language_options.length - 1,
       format: v => language_options[v],
       onchange: v => {
@@ -34,7 +34,7 @@
       }
     },
     'Alignment': {
-      value: 0 | align_options.indexOf(s.theme),
+      value: 0 | align_options.indexOf(s.alignment),
       min: 0, max: align_options.length - 1,
       format: v => align_options[v],
       onchange: v => {
