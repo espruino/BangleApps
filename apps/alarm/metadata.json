@@ -3,7 +3,7 @@
   "name": "Alarm & Timer",
   "shortName": "Alarms",
   "version": "0.17",
-  "description": "Set and respond to alarms and timers",
+  "description": "Set alarms and timers on your Bangle",
   "icon": "app.png",
   "tags": "tool,alarm,widget",
   "supports": ["BANGLEJS","BANGLEJS2"],

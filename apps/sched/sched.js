@@ -1,8 +1,8 @@
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(sched.js)' - so let's remove it first!
-if (Bangle.ALARM) {
-  clearInterval(Bangle.ALARM);
-  delete Bangle.ALARM;
+if (Bangle.SCHED) {
+  clearInterval(Bangle.SCHED);
+  delete Bangle.SCHED;
 }
 
 // time in ms -> { hrs, mins }
@@ -12,23 +12,9 @@ function decodeTime(t) {
   return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
 }
 
-// time in { hrs, mins } -> ms
-function encodeTime(o) {
-  return o.hrs*3600000 + o.mins*60000;
-}
-
 function formatTime(t) {
   var o = decodeTime(t);
   return o.hrs+":"+("0"+o.mins).substr(-2);
-}
-
-function getCurrentTime() {
-  var time = new Date();
-  return (
-    time.getHours() * 3600000 +
-    time.getMinutes() * 60000 +
-    time.getSeconds() * 1000
-  );
 }
 
 function showAlarm(alarm) {
@@ -54,7 +40,8 @@ function showAlarm(alarm) {
       }
       if (!alarm.rp) alarm.on = false;
     }
-    require("Storage").write("sched.json",JSON.stringify(alarms));
+    // alarm is still a member of 'alarms', so writing to array writes changes back directly
+    require("sched").setAlarms(alarms);
     load();
   });
   function buzz() {
@@ -72,15 +59,9 @@ function showAlarm(alarm) {
 }
 
 // Check for alarms
-var day = (new Date()).getDate();
-var currentTime = getCurrentTime()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
-var alarms = require("Storage").readJSON("sched.json",1)||[];
-var active = alarms.filter(a=>a.on&&(a.t<currentTime)&&(a.last!=day) && (!a.date || a.date==time.toISOString().substr(0,10)));
-if (active.length) {
-  // if there's an alarm, show it
-  active = active.sort((a,b)=>a.t-b.t);
+var alarms = require("sched").getAlarms();
+var active = require("sched").getActiveAlarms(alarms);
+if (active.length) // if there's an alarm, show it
   showAlarm(active[0]);
-} else {
-  // otherwise just go back to default app
+else // otherwise just go back to default app
   setTimeout(load, 100);
-}

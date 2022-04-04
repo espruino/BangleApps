@@ -1,8 +1,8 @@
 // check for alarms
-(function() {
-  if (Bangle.ALARM) {
-    clearTimeout(Bangle.ALARM);
-    delete Bangle.ALARM;
+(function() { // run in closure to ensure allocated vars get removed
+  if (Bangle.SCHED) {
+    clearTimeout(Bangle.SCHED);
+    delete Bangle.SCHED;
   }
   var alarms = require('Storage').readJSON('sched.json',1)||[];
   var time = new Date();
@@ -18,10 +18,8 @@
     will then clearInterval() to get rid of this call so it can proceed
     normally.
     If active[0].js is defined, just run that code as-is and not alarm.js */
-    Bangle.ALARM = setTimeout(active[0].js||'load("sched.js")',t);
+    Bangle.SCHED = setTimeout(active[0].js||'load("sched.js")',t);
   } else { // check for new alarms at midnight (so day of week works)
-    Bangle.ALARM = setTimeout(() => {
-      eval(require("Storage").read("sched.boot.js"));
-    }, 86400000 - (Date.now()%86400000));
+    Bangle.SCHED = setTimeout('eval(require("Storage").read("sched.boot.js"))', 86400000 - (Date.now()%86400000));
   }
 })();
