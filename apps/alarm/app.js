@@ -1,7 +1,7 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
+var alarms = require("Storage").readJSON("sched.json",1)||[];
 // An array of alarm objects (see README.md)
 
 // time in ms -> { hrs, mins }
@@ -31,8 +31,8 @@ function getCurrentTime() {
 }
 
 function saveAndReload() {
-  require("Storage").write("alarm.json",JSON.stringify(alarms));
-  require("alarm").reload();
+  require("Storage").write("sched.json",JSON.stringify(alarms));
+  require("sched").reload();
 }
 
 function showMainMenu() {

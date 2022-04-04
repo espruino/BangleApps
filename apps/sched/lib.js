@@ -1,15 +1,15 @@
 // Return an array of all alarms
 exports.getAlarms = function() {
-  return require("Storage").readJSON("alarm.json",1)||[];
+  return require("Storage").readJSON("sched.json",1)||[];
 };
 // Return an alarm object based on ID
 exports.getAlarm = function(id) {
-  var alarms = require("Storage").readJSON("alarm.json",1)||[];
+  var alarms = require("Storage").readJSON("sched.json",1)||[];
   return alarms.find(a=>a.id==id);
 };
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
 exports.setAlarm = function(id, alarm) {
-  var alarms = require("Storage").readJSON("alarm.json",1)||[];
+  var alarms = require("Storage").readJSON("sched.json",1)||[];
   alarms = alarms.filter(a=>a.id!=id);
   if (alarm !== undefined) {
     alarm.id = id;
@@ -22,13 +22,13 @@ exports.setAlarm = function(id, alarm) {
     }
   }
   alarms.push(alarm);
-  require("Storage").writeJSON("alarm.json", alarms);
+  require("Storage").writeJSON("sched.json", alarms);
 };
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could me *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
-  var active = alarm.on && (alarm.dow>>time.getDay())&1;
+  var active = alarm.on && (alarm.dow>>time.getDay())&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
   if (!active) return undefined;
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
   var t = alarm.t-currentTime;
@@ -37,7 +37,7 @@ exports.getTimeToAlarm = function(alarm, time) {
 };
 /// Force a reload of the current alarms and widget
 exports.reload = function() {
-  eval(require("Storage").read("alarm.boot.js"));
+  eval(require("Storage").read("sched.boot.js"));
   if (WIDGETS["alarm"]) {
     WIDGETS["alarm"].reload();
     Bangle.drawWidgets();

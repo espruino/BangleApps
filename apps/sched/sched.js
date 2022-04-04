@@ -1,5 +1,5 @@
 // Chances are boot0.js got run already and scheduled *another*
-// 'load(alarm.js)' - so let's remove it first!
+// 'load(sched.js)' - so let's remove it first!
 if (Bangle.ALARM) {
   clearInterval(Bangle.ALARM);
   delete Bangle.ALARM;
@@ -54,7 +54,7 @@ function showAlarm(alarm) {
       }
       if (!alarm.rp) alarm.on = false;
     }
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
+    require("Storage").write("sched.json",JSON.stringify(alarms));
     load();
   });
   function buzz() {
@@ -74,8 +74,8 @@ function showAlarm(alarm) {
 // Check for alarms
 var day = (new Date()).getDate();
 var currentTime = getCurrentTime()+10000; // get current time - 10s in future to ensure we alarm if we've started the app a tad early
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
-var active = alarms.filter(a=>a.on&&(a.t<currentTime)&&(a.last!=day));
+var alarms = require("Storage").readJSON("sched.json",1)||[];
+var active = alarms.filter(a=>a.on&&(a.t<currentTime)&&(a.last!=day) && (!a.date || a.date==time.toISOString().substr(0,10)));
 if (active.length) {
   // if there's an alarm, show it
   active = active.sort((a,b)=>a.t-b.t);

@@ -15,3 +15,4 @@
 0.14: Order of 'back' menu item
 0.15: Fix hour/minute wrapping code for new menu system
 0.16: Adding alarm library
+0.17: Moving alarm internals to 'sched' library
