@@ -9,7 +9,7 @@ The selected theme is also respected. Note that this watch face is in fullscreen
 mode, but widgets are still loaded in background.
 
 ## Other Features
-- Set a timer - simply touch top (+5min.) or bottom (-5 min.). This only works if "alarm" is installed.
+- Set a timer - simply touch top (+5min.) or bottom (-5 min.). This only works if "sched" is installed.
 - If the weather is available through the weather app, the outside temp. will be shown.
 - Sleep modus at midnight to save more battery (no minute updates).
 - Icons for charging and GPS.
