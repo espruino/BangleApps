@@ -1,7 +1,21 @@
-const debugMode = 'off'; // valid values are: off, test, production, development
+let settings = Object.assign({
+  // default values
+  maxUndoLevels: 4,
+  charIndex: 0,
+  clockMode: true,
+  debugMode: false,
+}, require('Storage').readJSON("game1024.settings.json", true) || {});
+
+const clockMode = settings.clockMode!==undefined ? settings.clockMode : true;
+const debugMode = settings.debugMode!==undefined ? settings.debugMode : false; // #settings -- valid values are: true or false
+const maxUndoLevels = settings.maxUndoLevels!==undefined ? settings.maxUndoLevels : 4; // #settings
+const charIndex = settings.charIndex!==undefined ? settings.charIndex : 0; // #settings -- plain numbers on the grid
+
+delete settings; // remove unneeded settings from memory
+
 const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)};
-const rows = 4, cols = 4;
-const borderWidth = 6;
+const rows = 4, cols = 4; // #settings
+const borderWidth = 6; 
 const sqWidth = (Math.floor(Bangle.appRect.w - 48) / rows) - borderWidth;
 const cellColors = [{bg:'#00FFFF', fg: '#000000'},
                     {bg:'#FF00FF', fg: '#000000'}, {bg:'#808000', fg: '#FFFFFF'}, {bg:'#0000FF', fg: '#FFFFFF'}, {bg:'#008000', fg: '#FFFFFF'},
@@ -13,12 +27,8 @@ const cellChars = [
   ['0','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
   ['0','I', 'II', 'III', 'IV', 'V', 'VI', 'VII','VIII', 'IX', 'X']
 ];
-// const numInitialCells = 2;
-const maxUndoLevels = 4;
-const noExceptions = true;
-let charIndex = 0; // plain numbers on the grid
-const themeBg = g.theme.bg;
 
+const themeBg = g.theme.bg;
   
 const scores = {
   currentScore: 0,
@@ -78,12 +88,12 @@ const snapshot = {
   updCounter: function() {
     this.counter = ++this.counter > this.interval ? 0 : this.counter;
   },
-  dump: {gridsize: rows * cols, expVals: [], score: 0, highScore: 0, charIndex: charIndex},
+  dump: {gridsize: rows * cols, expVals: [], score: 0, highScore: 0},
   write: function() {
     require("Storage").writeJSON(this.snFileName, this.dump);
   },
   read: function () {
-    let sn = require("Storage").readJSON(this.snFileName, noExceptions);
+    let sn = require("Storage").readJSON(this.snFileName, true);
     if ((typeof sn == "undefined") || (sn.gridsize !== rows * cols)) {
       require("Storage").writeJSON(this.snFileName, this.dump);
       return false;
@@ -101,7 +111,6 @@ const snapshot = {
     });
     this.dump.score = scores.currentScore;
     this.dump.highScore = scores.highScore;
-    this.dump.charIndex = charIndex;
   },
   make: function () {
     this.updCounter();
@@ -118,7 +127,7 @@ const snapshot = {
       });
       scores.currentScore = this.dump.score ? this.dump.score : 0;
       scores.highScore = this.dump.highScore ? this.dump.highScore : 0 ;
-      charIndex = this.dump.charIndex ? this.dump.charIndex : 0 ;
+      if (this.dump.hasOwnProperty('charIndex')) delete this.dump.charIndex; // depricated in v0.09
     }
   },
   reset: function () {
@@ -129,12 +138,11 @@ const snapshot = {
     }
     this.dump.score = 0;
     this.dump.highScore = scores.highScore;
-    this.dump.charIndex = charIndex;
     this.write();
     debug(() => console.log("reset D U M P E D!", this.dump));
   }
 };
-const btnAtribs = {x: 134, w: 42, h: 42, fg:'#C0C0C0', bg:'#800000'};
+const btnAtribs = {x: 134, w: 42, h: 50, fg:'#C0C0C0', bg:'#800000'};
 const buttons = {
   all: [],
   draw: function () {
@@ -314,7 +322,7 @@ class Cell {
   }
   drawBg() {
     debug(()=>console.log("Drawbg!!"));
-    if (this.isRndm == true) {
+    if (this.isRndm) {
       debug(()=>console.log('Random: (ax)', this.ax));
       g.setColor(this.getColor(this.expVal).bg)
        .fillRect(this.x0, this.y0, this.x1, this.y1)
@@ -365,7 +373,7 @@ class Cell {
     this.isRndm = true;
   }
   drawRndmIndicator(){
-    if (this.isRndm == true) {
+    if (this.isRndm) {
       debug(()=>console.log('Random: (ax)', this.ax));
       g.setColor(this.getColor(0).bg)
      .fillPoly(this.ax,this.ay,this.bx,this.by,this.cx,this.cy);
@@ -374,8 +382,9 @@ class Cell {
 }
 
 function undoGame() {
-  g.clear();
-  if (scores.lastScores.length > 0) {
+  
+  if (scores.lastScores.length) {
+    g.clear();
     allSquares.forEach(sq => {
       sq.popFromUndo();
       sq.drawBg();
@@ -386,9 +395,9 @@ function undoGame() {
     buttons.draw();
     updUndoLvlIndex();
     snapshot.make();
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
   }
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
 }
 function addToUndo() {
   allSquares.forEach(sq => {
@@ -487,8 +496,8 @@ function initGame() {
   drawGrid();
   scores.draw();
   buttons.draw();
-    // Clock mode allows short-press on button to exit
-  Bangle.setUI("clock");
+    // #settings  Clock mode allows short-press on button to exit
+  if(clockMode) Bangle.setUI("clock");
   // Load widgets
   Bangle.loadWidgets();
   Bangle.drawWidgets();
@@ -507,8 +516,8 @@ function drawPopUp(message,cb) {
               rDims.x+10, rDims.y2-40
   ]);
   buttons.all.forEach(btn => {btn.disable();});
-  const btnYes = new Button('yes', rDims.x+16, rDims.y2-80, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
-  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-80, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnYes = new Button('yes', rDims.x+16, rDims.y2-88, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-88, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
   btnYes.draw();
   btnNo.draw();
   g.setColor('#000000');
@@ -560,14 +569,8 @@ function resetGame() {
  * @param {function} func function to call like console.log()
  */
  const debug = (func) => {
-  switch (debugMode) {
-    case "development": 
-      if (typeof func === 'function') {
-        func();
-      }
-      break;
-    case "off":
-    default: break;
+  if (debugMode) {
+    if (typeof func === 'function') func();
   }
 };
 
@@ -690,13 +693,9 @@ function updUndoLvlIndex() {
     .drawString(scores.lastScores.length, x, y);
   }
 }
-function incrCharIndex() {
-  charIndex++;
-  if (charIndex >= cellChars.length) charIndex = 0;
-  drawGrid();
-}
+
 buttons.add(new Button('undo', btnAtribs.x, 25, btnAtribs.w, btnAtribs.h, 'U', btnAtribs.fg, btnAtribs.bg, undoGame, true));
-buttons.add(new Button('chars', btnAtribs.x, 71, btnAtribs.w, 31, '*', btnAtribs.fg, btnAtribs.bg, function(){incrCharIndex();}, true));
+
 buttons.add(new Button('restart', btnAtribs.x, 106, btnAtribs.w, btnAtribs.h, 'R', btnAtribs.fg, btnAtribs.bg, function(){drawPopUp('Do you want\nto restart?',handlePopUpClicks);}, true));
 
 initGame();
