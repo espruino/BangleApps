@@ -16,7 +16,7 @@
 
   <script>
     const url = "https://overpass-api.de/api/interpreter";
-    let query = `[out:json][timeout:5];relation["name"="Davis Golf Course"];way(r)["golf"="hole"];foreach->.a(.a out;way(around.a:40.0)["golf"];out;>>;out;)`; // this gets everything at least
+    let query = `[out:json][timeout:5];relation["name"="Davis Golf Course"];way(r)["golf"="hole"];foreach->.a(.a out;.a >>;out;way(around.a:40.0)["golf"]["golf"!="hole"];out;>>;out;)`; // this gets everything at least
     let course_input = null;
 
     function findNodeCoordinates(elements, id) {
@@ -40,7 +40,6 @@
         if (element.type === "way") {
           // if we find a high-level hole feature
           if (element.tags.golf === "hole") {
-            if (element.tags.ref in course_processed.holes) continue; // the around picks up hole ways that mess everything up
             current_hole = parseInt(element.tags.ref); //subsequent way features should be applied to the current hole
             let nodes = [];
             for (const node_id of element.nodes) {
@@ -101,9 +100,9 @@
     // download info from the course
     $.post(url, query, function (result) {
       course_input = result;
+      console.log(course_input);
       out = processFeatures(course_input.elements);
       out = preprocessCoords(out);
-      console.log(course_input);
       console.log(out);
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
