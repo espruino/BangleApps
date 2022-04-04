@@ -12,6 +12,7 @@ By default it will use the language set on the watch, go to settings to pick:
 *  no_NO - Norwegian
 *  sv_SE - Swedish
 *  de_DE - German
+
 Most translations are taken from the original Fuzzy Text International code.
 
 ## TODO
