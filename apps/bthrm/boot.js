@@ -370,7 +370,7 @@
           filters = [{name: settings.btname}];
         }
         log("Requesting device with filters", filters);
-        promise = NRF.requestDevice({ filters: filters });
+        promise = NRF.requestDevice({ filters: filters, active: true });
         
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
