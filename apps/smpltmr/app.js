@@ -8,7 +8,7 @@
 Bangle.loadWidgets();
 
 
-const alarm = require("alarm");
+const alarm = require("sched");
 
 const TIMER_IDX = "smpltmr";
 const screenWidth = g.getWidth();

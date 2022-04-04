@@ -172,7 +172,7 @@ function getWeather(){
 
 function isAlarmEnabled(){
   try{
-    var alarm = require('alarm');
+    var alarm = require('sched');
     var alarmObj = alarm.getAlarm(TIMER_IDX);
     if(alarmObj===undefined || !alarmObj.on){
       return false;
@@ -189,7 +189,7 @@ function getAlarmMinutes(){
     return -1;
   }
 
-  var alarm = require('alarm');
+  var alarm = require('sched');
   var alarmObj =  alarm.getAlarm(TIMER_IDX);
   return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
@@ -197,7 +197,7 @@ function getAlarmMinutes(){
 function increaseAlarm(){
   try{
     var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-    var alarm = require('alarm')
+    var alarm = require('sched')
     alarm.setAlarm(TIMER_IDX, {
       timer : (minutes+5)*60*1000,
     });
@@ -210,7 +210,7 @@ function decreaseAlarm(){
     var minutes = getAlarmMinutes();
     minutes -= 5;
 
-    var alarm = require('alarm')
+    var alarm = require('sched')
     alarm.setAlarm(TIMER_IDX, undefined);
 
     if(minutes > 0){
