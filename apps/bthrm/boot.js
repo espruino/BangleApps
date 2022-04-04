@@ -168,14 +168,14 @@
         //Body sensor location
         handler: function(data){
           if (!lastReceivedData["0x180d"]) lastReceivedData["0x180d"] = {};
-          if (!lastReceivedData["0x180d"]["0x2a38"]) lastReceivedData["0x180d"]["0x2a38"] = data.target.value;
+          lastReceivedData["0x180d"]["0x2a38"] = parseInt(data.buffer, 10);
         }
       },
       "0x2a19": {
         //Battery
         handler: function (event){
-          if (!lastReceivedData["0x180f"]) lastReceivedData["0x180f"] = {};
-          if (!lastReceivedData["0x180f"]["0x2a19"]) lastReceivedData["0x180f"]["0x2a19"] = event.target.value.getUint8(0);
+          if (!lastReceivedData["0x180f"]) lastReceivedData["0x180f"] = { "0x2a19": null };
+          lastReceivedData["0x180f"]["0x2a19"] = event.target.value.getUint8(0);
         }
       }
 
@@ -295,12 +295,13 @@
           }
           return startPromise;
         });
-      } else if (newCharacteristic.read){
+      } else if (newCharacteristic.readValue){
         result = result.then(()=>{
-          // readData(newCharacteristic);
-          log("Reading data for " + newCharacteristic);
-          return newCharacteristic.read().then((data)=>{
-            supportedCharacteristics[newCharacteristic.uuid].handler(data);
+          log("Reading data for " + JSON.stringify(newCharacteristic));
+          return newCharacteristic.readValue().then((data)=>{
+            if (supportedCharacteristics[newCharacteristic.uuid] && supportedCharacteristics[newCharacteristic.uuid].handler) {
+              supportedCharacteristics[newCharacteristic.uuid].handler(data);
+            }
           });
         });
       }

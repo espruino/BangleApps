@@ -1,6 +1,15 @@
-var btm = g.getHeight()-1;
 var intervalInt;
 var intervalBt;
+
+var BODY_LOCS = {
+  0: 'Other',
+  1: 'Chest',
+  2: 'Wrist',
+  3: 'Finger',
+  4: 'Hand',
+  5: 'Ear Lobe',
+  6: 'Foot',
+}
 
 function clear(y){
   g.reset();
@@ -25,7 +34,7 @@ function draw(y, type, event) {
     if (event.battery) str += " Bat: " + (event.battery ? event.battery : "");
     g.setFontVector(12).drawString(str,px,y+40);
     str= "";
-    if (event.location) str += "Loc: " + event.location.toFixed(0) + "ms";
+    if (event.location) str += "Loc: " + BODY_LOCS[event.location];
     if (event.rr && event.rr.length > 0) str += " RR: " + event.rr.join(",");
     g.setFontVector(12).drawString(str,px,y+50);
     str= "";
