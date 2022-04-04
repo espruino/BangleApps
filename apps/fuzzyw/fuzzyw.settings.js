@@ -22,7 +22,7 @@
   }
 
   E.showMenu({
-    '': { 'title': 'Fuzzy Word Clock' },
+    '': { 'title': 'Fuzzy Text Clock' },
     '< Back': back,
     'Language': {
       value: 0 | language_options.indexOf(s.theme),
