@@ -21,7 +21,7 @@ WIDGETS.bluetooth_notify = {
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
             E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH').then(function(){console.log("button pressed");});
-            setInterval(()=>{
+            setTimeout(()=>{
                 E.showAlert();
             }, 3000); // clear message
             
