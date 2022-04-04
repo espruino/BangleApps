@@ -168,8 +168,8 @@ function showWordList() {
   E.showScroller({
     h : 20, c : foundWords.length,
     draw : (idx, r) => {
-      g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-      g.setFont("6x8:2").drawString(foundWords[idx].toUpperCase(),r.x+10,r.y+4);
+      g.clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1).setFont("6x8:2");
+      g.setColor(isPangram(foundWords[idx])?'#0f0':g.theme.fg).drawString(foundWords[idx].toUpperCase(),r.x+10,r.y+4);
     },
     select : (idx) => { 
       setInterval(()=> {
