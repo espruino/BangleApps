@@ -703,8 +703,8 @@ function drawScreenHelp() {
 }
 
 function drawGameOver(win) {
+  startedGame = false;
   E.showAlert(win ? "AI has given up. You Win!" : "You cannot play. AI wins.").then(function(){
-    startedGame = false;
     undoStack = [];
     drawMainMenu();
   });
