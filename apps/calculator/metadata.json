@@ -8,6 +8,7 @@
   "screenshots": [{"url":"screenshot_calculator.png"}],
   "tags": "app,tool",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"calculator.app.js","url":"app.js"},
     {"name":"calculator.img","url":"calculator-icon.js","evaluate":true}
