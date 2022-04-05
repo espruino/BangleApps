@@ -3,11 +3,11 @@
   "version":"0.01",
   "description": "This app will provide you with on course data to support your golf game! All information comes from OpenStreetMap. Please contribute by drawing your course using these guidelines: [guidelines](guidelines.com)",
   "icon": "golfview.png",
-  "tags": "outdoors",
+  "tags": "outdoors, gps",
   "allow_emulator": true,
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
-  "interface": "index.html",
+  "custom": "custom.html",
   "storage": [
     {"name":"golfview.app.js","url":"golfview.js"},
     {"name":"golfview.img","url":"app-icon.js","evaluate":true}
