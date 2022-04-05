@@ -98,11 +98,11 @@
       return course_input;
     }
 
-    var course = {};
+    var courses = [];
     var course_name = "Davis";
     $("#upload").click(function () {
       sendCustomizedApp({
-        storage: course
+        storage: courses
       });
     });
 
@@ -117,10 +117,10 @@
       out = processFeatures(course_input.elements);
       out = preprocessCoords(out);
       console.log(out);
-      course = {
+      courses.push({
         name: "golfcourse-" + course_name + ".json",
         content: JSON.parse(JSON.stringify(out)) // deep copy
-      };
+      });
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
       $('#download').attr("disabled", false);
