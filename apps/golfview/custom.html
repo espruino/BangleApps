@@ -78,7 +78,7 @@
       return course_processed;
     }
 
-    function preprocessCoords(course_input) { 
+    function preprocessCoords(course_input) {
       // first do the high-level way
       for (var hole in course_input.holes) {
         course_input.holes[hole].nodesXY = arraytoXY(course_input.holes[hole].nodes, course_input.holes[hole].nodes[0])
@@ -98,15 +98,16 @@
       return course_input;
     }
 
-    var courses = [];
+    var course = {};
+    var course_name = "Davis";
     $("#upload").click(function () {
       sendCustomizedApp({
-        storage: courses
+        storage: course
       });
     });
 
     $("#download").click(function () {
-      downloadObjectAsJSON(courses, "courses");
+      downloadObjectAsJSON(course, "golfcourse-" + course_name);
     });
 
     // download info from the course
@@ -116,7 +117,10 @@
       out = processFeatures(course_input.elements);
       out = preprocessCoords(out);
       console.log(out);
-      courses.push(JSON.parse(JSON.stringify(out))); // deep copy
+      course = {
+        name: "golfcourse-" + course_name + ".json",
+        content: JSON.parse(JSON.stringify(out)) // deep copy
+      };
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
       $('#download').attr("disabled", false);

@@ -1,4 +1,4 @@
-let course = require("Storage").readJSON("courses.json")[0].holes;
+let course = require("Storage").readJSON("golfcourse-Davis.json").holes;//TODO use the course ID
 let current_hole = 1;
 let hole = course[current_hole.toString()];
 
