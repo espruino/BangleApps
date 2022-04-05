@@ -10,7 +10,7 @@
   "readme": "README.md",
   "storage": [
     {"name": "activityreminder.boot.js","url": "boot.js"},
-    {"name": "activityreminder.settings.js","url": "settings.js"},
+    {"name": "activityreminder.settings.js","url": "settings.js"}
   ],
   "data": [
     {"name": "activityreminder.json"}
