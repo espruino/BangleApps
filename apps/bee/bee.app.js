@@ -31,9 +31,9 @@ function prepareLetterIdx () {
 function findWord (w) {
   "compile"
   var ci = w.charCodeAt(0)-97;
-  if (letterIdx[ci].substr(0, w.length)==w) return true;
   var f = letterIdx[ci].indexOf("\n"+w+"\n");
   if (f>=0) return true;
+  if (letterIdx[ci].substr(0, w.length)==w) return true;
   return false;
 }
 
