@@ -1,4 +1,4 @@
-let course = require("Storage").readJSON("course_data.json");
+let course = require("Storage").readJSON("courses.json").holes;
 let current_hole = 1;
 let hole = course[current_hole.toString()];
 
