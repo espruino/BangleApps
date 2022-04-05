@@ -97,52 +97,20 @@ delete g.theme; // deleting stops us getting confused by our own decl. builtins 
 if (!g.theme) {
   boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
 }
-delete Bangle.setUI; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!Bangle.setUI) { // assume this is just for F18 - Q3 should already have it
-  boot += `Bangle.setUI=function(mode, cb) {
-if (Bangle.btnWatches) {
-  Bangle.btnWatches.forEach(clearWatch);
-  delete Bangle.btnWatches;
-}
-if (Bangle.swipeHandler) {
-  Bangle.removeListener("swipe", Bangle.swipeHandler);
-  delete Bangle.swipeHandler;
-}
-if (Bangle.touchHandler) {
-  Bangle.removeListener("touch", Bangle.touchHandler);
-  delete Bangle.touchHandler;
-}
-if (!mode) return;
-else if (mode=="updown") {
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { cb(); }, BTN2, {repeat:1})
-  ];
-} else if (mode=="leftright") {
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { cb(); }, BTN2, {repeat:1})
-  ];
-  Bangle.swipeHandler = d => {cb(d);};
-  Bangle.on("swipe", Bangle.swipeHandler);
-  Bangle.touchHandler = d => {cb();};
-  Bangle.on("touch", Bangle.touchHandler);
-} else if (mode=="clock") {
-  Bangle.CLOCK=1;
-  Bangle.btnWatches = [
-    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
-  ];
-} else if (mode=="clockupdown") {
-  Bangle.CLOCK=1;
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
-  ];
-} else
-  throw new Error("Unknown UI mode");
+try {
+  Bangle.setUI({}); // In 2v12.xx we added the option for mode to be an object - for 2v12 and earlier, add a fix if it fails with an object supplied
+} catch(e) {
+  boot += `Bangle._setUI = Bangle.setUI;
+Bangle.setUI=function(mode, cb) {
+  if (Bangle.uiRemove) {
+    Bangle.uiRemove();
+    delete Bangle.uiRemove;
+  }
+  if ("object"==typeof mode) {
+    // TODO: handle mode.back?
+    mode = mode.mode;
+  }
+  Bangle._setUI(mode, cb);
 };\n`;
 }
 delete E.showScroller; // deleting stops us getting confused by our own decl. builtins can't be deleted

@@ -4,6 +4,7 @@
     if (settings.vibrate===undefined) settings.vibrate=".";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
     return settings;
@@ -48,6 +49,11 @@
       value: !!settings().openMusic,
       format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("openMusic", v)
+    },
+    /*LANG*/'Unlock Watch': {
+      value: !!settings().unlockWatch,
+      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
+      onchange: v => updateSetting("unlockWatch", v)
     },
   };
   E.showMenu(mainmenu);

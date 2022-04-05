@@ -14,6 +14,6 @@ if (!clockApp) {
   if (clockApp)
     clockApp = require("Storage").read(clockApp.src);
 }
-if (!clockApp) clockApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, BTN2, {repeat:false,edge:"falling"});`;
+if (!clockApp) clockApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
 eval(clockApp);
 delete clockApp;
