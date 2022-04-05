@@ -24,7 +24,7 @@
 
     function getCache(){
       var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
-      if (settings.btname && settings.btname == cache.name) return cache;
+      if (settings.btid && settings.btid == cache.id) return cache;
       clearCache();
       return {};
     }
@@ -368,9 +368,9 @@
       
       if (!device){
         var filters = serviceFilters;
-        if (settings.btname){
-          log("Configured device name", settings.btname);
-          filters = [{name: settings.btname}];
+        if (settings.btid){
+          log("Configured device id", settings.btid);
+          filters = [{id: settings.btid }];
         }
         log("Requesting device with filters", filters);
         promise = NRF.requestDevice({ filters: filters, active: true });
