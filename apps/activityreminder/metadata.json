@@ -4,7 +4,7 @@
   "shortName":"Activity Reminder",
   "description": "A reminder to take short walks for the ones with a sedentary lifestyle",
   "version":"0.01",
-  "type": "app",
+  "type": "bootloader",
   "tags": "tool",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
