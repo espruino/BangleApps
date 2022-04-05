@@ -9,7 +9,10 @@
 
 <body>
   <p id="status">No course</p>
-  <button id="upload" class="btn btn-primary" disabled="true">Upload</button>
+  <div>
+    <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
+    <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+  </div>
 
   <script src="../../core/lib/customize.js"></script>
   <script src="./maptools.js"></script>
@@ -57,7 +60,7 @@
           }
 
           // if we find a feature add it to the corresponding hole
-          if (/(green)|(bunker)|(tee)|(teebox)|(fairway)|(water_hazard)/.test(element.tags.golf)) { //TODO missing cartpath
+          if (/(green)|(bunker)|(tee)|(teebox)|(fairway)|(water_hazard)/.test(element.tags.golf)) {
             let nodes = []
             for (const node_id of element.nodes) {
               nodes.push(findNodeCoordinates(course_verbose, node_id));
@@ -75,14 +78,14 @@
       return course_processed;
     }
 
-    function preprocessCoords(course_input) { //todo posibly remove other coordinates for ~0.5 size reduction
+    function preprocessCoords(course_input) { 
       // first do the high-level way
       for (var hole in course_input.holes) {
         course_input.holes[hole].nodesXY = arraytoXY(course_input.holes[hole].nodes, course_input.holes[hole].nodes[0])
         // then do the shapes in the features
         for (var feature in course_input.holes[hole].features) {
           many_points = arraytoXY(course_input.holes[hole].features[feature].nodes, course_input.holes[hole].nodes[0]);
-          less_points = simplify(many_points, 3, true); // from simplify-js
+          less_points = simplify(many_points, 2, true); // from simplify-js
           // convert to int to save some memory
           course_input.holes[hole].features[feature].nodesXY = less_points.map(function (pt) {
             return { x: Math.round(pt.x), y: Math.round(pt.y) }
@@ -90,11 +93,20 @@
           delete course_input.holes[hole].features[feature].nodes; // delete coords because they take up a lot of memory
         }
 
-        // find out how the hole is angled
         course_input.holes[hole].angle = angle(course_input.holes[hole].nodesXY[0], course_input.holes[hole].nodesXY[course_input.holes[hole].nodesXY.length - 1])
       }
       return course_input;
     }
+
+    $("#upload").click(function () {
+      sendCustomizedApp({
+        storage: courses
+      });
+    });
+
+    $("#download").click(function () {
+      downloadObjectAsJSON(out.holes, "course_data");
+    });
 
     var out = {};
     // download info from the course
@@ -106,15 +118,8 @@
       console.log(out);
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
+      $('#download').attr("disabled", false);
     })
-
-    // When the 'upload' button is clicked...
-    document.getElementById("upload").addEventListener("click", function () {
-      downloadObjectAsJSON(out.holes, "course_data");
-      sendCustomizedApp({
-        storage: courses
-      });
-    });
 
   </script>
 </body>
