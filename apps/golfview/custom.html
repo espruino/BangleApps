@@ -98,6 +98,7 @@
       return course_input;
     }
 
+    let courses = {};
     $("#upload").click(function () {
       sendCustomizedApp({
         storage: courses
@@ -105,10 +106,9 @@
     });
 
     $("#download").click(function () {
-      downloadObjectAsJSON(out.holes, "course_data");
+      downloadObjectAsJSON(courses, "courses");
     });
 
-    var out = {};
     // download info from the course
     $.post(url, query, function (result) {
       course_input = result;
@@ -116,6 +116,7 @@
       out = processFeatures(course_input.elements);
       out = preprocessCoords(out);
       console.log(out);
+      courses = JSON.parse(JSON.stringify(out)); // deep copy
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
       $('#download').attr("disabled", false);
