@@ -29,8 +29,8 @@ exports.setAlarm = function(id, alarm) {
       var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
       alarm.t = currentTime + alarm.timer;
     }
+    alarms.push(alarm);
   }
-  alarms.push(alarm);
   exports.setAlarms(alarms);
 };
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could me *more* than a day in the future
