@@ -14,10 +14,7 @@ function showTimer(timer) {
     buttons : {/*LANG*/"Ok":true}
   }).then(function(ok) {
     buzzCount = 0;
-    if (ok) {
-      timer.time += Date.now() - timer.start;
-      timer.start = null;
-    }
+    timer.start = null;
     require("Storage").write("timerclk.timer.json",JSON.stringify(timers));
     load();
   });
@@ -45,16 +42,8 @@ console.log("checking for timers...");
 var timers = require("Storage").readJSON("timerclk.timer.json",1)||[];
 var active = timers.filter(e=>e.start);
 if (active.length) {
-  // if there's an timer, show it
-  active = active.sort((a,b)=>{
-    var at = a.time;
-    if (a.start) at += Date.now()-a.start;
-    at = a.period-at;
-    var bt = b.time;
-    if (b.start) bt += Date.now()-b.start;
-    bt = b.period-bt;
-    return at-bt;
-  });
+  // if there's an active timer, show it
+  active = active.sort((a,b)=>timerclk.timerExpiresIn(a)-timerclk.timerExpiresIn(b));
   showTimer(active[0]);
 } else {
   // otherwise just go back to default app

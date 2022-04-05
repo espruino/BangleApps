@@ -68,7 +68,7 @@ function onStartStop() {
 
   if (!prepPromises.length) // fix for Promise.all bug in 2v12
     prepPromises.push(Promise.resolve());
-    
+
   Promise.all(prepPromises)
     .then(() => {
       if (running) {
@@ -124,7 +124,7 @@ function configureNotification(stat) {
 }
 
 Object.keys(settings.notify).forEach((statType) => {
-  if (settings.notify[statType].increment > 0) {
+  if (settings.notify[statType].increment > 0 && exs.stats[statType]) {
       configureNotification(exs.stats[statType]);
   }
 });

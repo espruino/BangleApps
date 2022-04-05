@@ -28,5 +28,6 @@ See [#1248](https://github.com/espruino/BangleApps/issues/1248)
 
 ## Screenshots
 ![](screenshot_daisy1.png)
+![](screenshot_daisy3.png)
 
-It is worth looking at the real thing though as the screenshot does not do it justice.
+It is worth looking at the real thing though as the screenshots do not do it justice.

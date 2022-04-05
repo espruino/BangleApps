@@ -171,7 +171,7 @@ function drawCalendar(date) {
   let days = [];
   let nextMonthDay = 1;
   let thisMonthDay = 51;
-  let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm;
+  let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm + 1;
   for (let i = 0; i < colN * (rowN - 1) + 1; i++) {
     if (i < dowNorm) {
       days.push(prevMonthDay);
