@@ -10,6 +10,18 @@ if (settings.language == 'System') {
 
 let fuzzy_string = fuzzy_strings[settings.language];
 
+let timeout = 2.5*60;
+let drawTimeout;
+
+function queueDraw(seconds) {
+  let millisecs = seconds * 1000;
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, millisecs - (Date.now() % millisecs));
+}
+
 const h = g.getHeight();
 const w = g.getWidth();
 let align_mode = 0;
@@ -42,11 +54,11 @@ function draw() {
   g.clearRect(0, 24, w, h-24);
   g.setColor(g.theme.fg);
   g.drawString(g.wrapString(time_string, w).join("\n"), align_pos, h/2);
+  queueDraw(timeout);
 }
 
 g.clear();
 draw();
-setInterval(draw, 10000); // refresh every 10s
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
