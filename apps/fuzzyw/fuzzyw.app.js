@@ -62,11 +62,11 @@ draw();
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
-  if (secondInterval) clearInterval(secondInterval);
-  secondInterval = undefined;
   if (on) {
-    secondInterval = setInterval(draw, 10000);
-    draw(); // draw immediately
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
   }
 });
 
