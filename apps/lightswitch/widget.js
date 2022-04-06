@@ -3,7 +3,7 @@
   var settings = Object.assign({
     colors: "011",
     image: "default",
-    touchOn: "clock,launch",
+    touchOn: "always",
     oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
