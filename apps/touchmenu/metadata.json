@@ -8,6 +8,7 @@
   "type": "bootloader",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"touchmenu.boot.js","url":"touchmenu.boot.js"}
   ]

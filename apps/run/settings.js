@@ -42,11 +42,6 @@
       value: Math.max(statsIDs.indexOf(settings[boxID]),0),
       format: v => statsList[v].name,
       onchange: v => {
-        for (var i=1;i<=6;i++)
-          if (settings["B"+i]==statsIDs[v]) {
-            settings["B"+i]="";
-            boxMenu["Box "+i].value=0;
-          }
         settings[boxID] = statsIDs[v];
         saveSettings();
       },

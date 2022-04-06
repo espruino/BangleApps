@@ -39,11 +39,13 @@ these conversions */
 const charFallbacks = {
   "ą":"a",
   "ā":"a",
+  "å":"a",
   "č":"c",
   "ć":"c",
   "ě":"e",
   "ę":"e",
   "ē":"e",
+  "æ":"e",
   "ģ":"g",
   "i":"ī",
   "ķ":"k",
@@ -53,6 +55,7 @@ const charFallbacks = {
   "ņ":"n",
   "ő":"o",
   "ó":"o",
+  "ø":"o",
   "ř":"r",
   "ś":"s",
   "š":"s",
@@ -681,6 +684,24 @@ var locales = {
     day: "Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena,Svētdiena",
     trans: { yes: "jā", Yes: "Jā", no: "nē", No: "Nē", ok: "labi", on: "Ieslēgt", off: "Izslēgt", "< Back": "< Atpakaļ" }
   },
+    "no_NB": { // Using charfallbacks
+      lang: "no_NB",
+      decimal_point: ",",
+      thousands_sep: " ",
+      currency_symbol: "kr",
+      int_curr_symbol: "NOK",
+      speed: "kmh",
+      distance: { 0: "m", 1: "km" },
+      temperature: "°C",
+      ampm: { 0: "", 1: "" },
+      timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+      datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
+      abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
+      month: "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
+      abday: "Ma,Ti,On,To,Fr,Lø,Sø",
+      day: "Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag,Søndag",
+      trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
+      },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",
