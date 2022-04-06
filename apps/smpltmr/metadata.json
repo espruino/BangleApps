@@ -6,7 +6,7 @@
   "description": "A very simple app to start a timer.",
   "icon": "app.png",
   "tags": "tool",
-  "dependencies": {"sched":"app"},
+  "dependencies": {"sched":"type"},
   "supports": ["BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"}, {"url": "screenshot_2.png"}],
   "readme": "README.md",
