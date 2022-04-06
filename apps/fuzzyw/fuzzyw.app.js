@@ -35,7 +35,7 @@ if (settings.alignment =='Left') {
 }
 
 function getTimeString(date) {
-  let segment = Math.round((date.getMinutes()*60 + date.getSeconds())/300);
+  let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
   let hour = date.getHours() + Math.floor(segment/12);
   f_string = fuzzy_string.minutes[segment % 12];
   if (f_string.includes('$1')) {
