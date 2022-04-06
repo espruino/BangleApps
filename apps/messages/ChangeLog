@@ -43,4 +43,3 @@
 0.28: Option to auto-unlock the watch when a new message arrives
 0.29: Fix message list overwrites on Bangle.js 1 (fix #1642)
 0.30: Add new Icons (Youtube, Twitch, MS TODO, Teams, Snapchat, Signal, Post & DHL, Nina, Lieferando, Kalender, Discord, Corona Warn, Bibel)
-0.31: Option to disable icon flashing
