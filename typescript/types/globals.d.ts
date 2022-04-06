@@ -140,7 +140,7 @@ declare const require: ((module: 'heatshrink') => {
 
 declare const Bangle: {
   // functions
-  buzz: (duration: number, intensity: number) => Promise<void>;
+  buzz: (duration?: number, intensity?: number) => Promise<void>;
   drawWidgets: () => void;
   isCharging: () => boolean;
   // events
