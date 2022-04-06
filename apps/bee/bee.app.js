@@ -31,8 +31,9 @@ function prepareLetterIdx () {
 function findWord (w) {
   "compile"
   var ci = w.charCodeAt(0)-97;
-  var f = letterIdx[ci].indexOf(w);
-  if (f>=0 && letterIdx[ci][f+w.length]=="\n") return true;
+  var f = letterIdx[ci].indexOf("\n"+w+"\n");
+  if (f>=0) return true;
+  if (letterIdx[ci].substr(0, w.length)==w) return true;
   return false;
 }
 
@@ -47,6 +48,7 @@ function checkWord (w) {
   if (foundWords.indexOf(w)>=0) return false; // already found
   if (findWord(w)) {
     foundWords.push(w);
+    foundWords.sort();
     if (w.length==4) score++;
     else score += w.length;
     if (isPangram(w)) score += 7;

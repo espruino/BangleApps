@@ -2,7 +2,7 @@
   "name": "Bee",
   "shortName":"Bee",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Spelling bee",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
