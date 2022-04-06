@@ -1,7 +1,7 @@
 /**
  * NOT ANALOG CLOCK
  */
-
+const TIMER_IDX = "notanalog";
 const locale = require('locale');
 const storage = require('Storage')
 const SETTINGS_FILE = "notanalog.setting.json";
@@ -291,7 +291,6 @@ function drawSleep(){
 function draw(fastUpdate){
     // Execute handlers
     handleState(fastUpdate);
-    handleAlarm();
 
     if(state.sleep){
         drawSleep();
@@ -377,81 +376,79 @@ Bangle.on('touch', function(btn, e){
  * Some helpers
  */
 function queueDraw() {
+
+    // Faster updates during alarm to ensure that it is
+    // shown correctly...
+    var timeout = isAlarmEnabled() ? 10000 : 60000;
+
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw(true);
-    }, 60000 - (Date.now() % 60000));
+      draw();
+    }, timeout - (Date.now() % timeout));
 }
 
 
 /*
  * Handle alarm
  */
-function getCurrentTimeInMinutes(){
-    return Math.floor(Date.now() / (1000*60));
-}
-
 function isAlarmEnabled(){
-    return settings.alarm >= 0;
-}
+    try{
+      var alarm = require('sched');
+      var alarmObj = alarm.getAlarm(TIMER_IDX);
+      if(alarmObj===undefined || !alarmObj.on){
+        return false;
+      }
+
+      return true;
+
+    } catch(ex){ }
+    return false;
+  }
 
 function getAlarmMinutes(){
-    var currentTime = getCurrentTimeInMinutes();
-    return settings.alarm - currentTime;
-}
-
-function handleAlarm(){
     if(!isAlarmEnabled()){
-        return;
+        return -1;
     }
 
-    if(getAlarmMinutes() > 0){
-        return;
-    }
-
-    // Alarm
-    var t = 300;
-    Bangle.buzz(t, 1)
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
-    .then(() => {
-        // Update alarm state to disabled
-        settings.alarm = -1;
-        storage.writeJSON(SETTINGS_FILE, settings);
-    });
+    var alarm = require('sched');
+    var alarmObj =  alarm.getAlarm(TIMER_IDX);
+    return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
-
 
 function increaseAlarm(){
-    if(isAlarmEnabled()){
-        settings.alarm += 5;
-    } else {
-        settings.alarm = getCurrentTimeInMinutes() + 5;
-    }
-
-    storage.writeJSON(SETTINGS_FILE, settings);
+    try{
+        var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+        var alarm = require('sched')
+        alarm.setAlarm(TIMER_IDX, {
+        timer : (minutes+5)*60*1000,
+        });
+        alarm.reload();
+    } catch(ex){ }
 }
 
-
 function decreaseAlarm(){
-    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-        settings.alarm -= 5;
-    } else {
-        settings.alarm = -1;
-    }
+    try{
+        var minutes = getAlarmMinutes();
+        minutes -= 5;
 
-    storage.writeJSON(SETTINGS_FILE, settings);
+        var alarm = require('sched')
+        alarm.setAlarm(TIMER_IDX, undefined);
+
+        if(minutes > 0){
+        alarm.setAlarm(TIMER_IDX, {
+            timer : minutes*60*1000,
+        });
+        }
+
+        alarm.reload();
+    } catch(ex){ }
 }
 
 function feedback(){
     Bangle.buzz(40, 0.6);
 }
+
 
 /*
  * Lets start widgets, listen for btn etc.
