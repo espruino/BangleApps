@@ -24,13 +24,13 @@ function draw(y, type, event) {
   g.setFontAlign(0,0);
   g.setFontVector(40).drawString(str,px,y+20);
   str = "Event: " + type;
-  if (type == "HRM") {
+  if (type === "HRM") {
     str += " Confidence: " + event.confidence;
     g.setFontVector(12).drawString(str,px,y+40);
     str = " Source: " + (event.src ? event.src : "internal");
     g.setFontVector(12).drawString(str,px,y+50);
   }
-  if (type == "BTHRM"){
+  if (type === "BTHRM"){
     if (event.battery) str += " Bat: " + (event.battery ? event.battery : "");
     g.setFontVector(12).drawString(str,px,y+40);
     str= "";
@@ -54,7 +54,7 @@ function onBtHrm(e) {
     firstEventBt = false;
   }
   draw(100, "BTHRM", e);
-  if (e.bpm == 0){
+  if (e.bpm === 0){
     Bangle.buzz(100,0.2);
   }
   if (intervalBt){

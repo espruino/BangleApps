@@ -3,7 +3,7 @@
     require('Storage').readJSON("bthrm.default.json", true) || {},
     require('Storage').readJSON("bthrm.json", true) || {}
   );
-  
+
   var log = function(text, param){
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
@@ -13,9 +13,9 @@
       print(logline);
     }
   };
-  
+
   log("Settings: ", settings);
-  
+
   if (settings.enabled){
 
     function clearCache(){
@@ -24,25 +24,24 @@
 
     function getCache(){
       var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
-      if (settings.btid && settings.btid == cache.id) return cache;
+      if (settings.btid && settings.btid === cache.id) return cache;
       clearCache();
       return {};
     }
-    
+
     function addNotificationHandler(characteristic){
       log("Setting notification handler: " + supportedCharacteristics[characteristic.uuid].handler);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     }
-    
+
     function writeCache(cache){
       var oldCache = getCache();
-      if (oldCache != cache) {
+      if (oldCache !== cache) {
         log("Writing cache");
         require('Storage').writeJSON("bthrm.cache.json", cache)
       } else {
         log("No changes, don't write cache");
       }
-      
     }
 
     function characteristicsToCache(characteristics){
@@ -177,7 +176,6 @@
           lastReceivedData["0x180f"]["0x2a19"] = dv.getUint8(0);
         }
       }
-
     };
 
     var device;
@@ -185,7 +183,7 @@
     var characteristics = [];
     var blockInit = false;
     var currentRetryTimeout;
-    var initialRetryTime = 40;
+    var initialRetryTime = 1000;
     var maxRetryTime = 60000;
     var retryTime = initialRetryTime;
 
@@ -213,7 +211,6 @@
         return gatt && gatt.connected;
       };
     }
-
 
     if (settings.replace){
       var origIsHRMOn = Bangle.isHRMOn;
@@ -309,14 +306,14 @@
       }
       return result.then(()=>log("Handled characteristic: ", newCharacteristic));
     }
-    
+
     function attachCharacteristicPromise(promise, characteristic){
       return promise.then(()=>{
         log("Handling characteristic:", characteristic);
         return createCharacteristicPromise(characteristic);
       });
     }
-    
+
     function createCharacteristicsPromise(newCharacteristics){
       log("Create characteristics promise: ", newCharacteristics);
       var result = Promise.resolve();
@@ -327,12 +324,12 @@
         if (c.properties.notify){
           addNotificationHandler(c);
         }
-        
+
         result = attachCharacteristicPromise(result, c);
       }
       return result.then(()=>log("Handled characteristics"));
     }
-    
+
     function createServicePromise(service){
       log("Create service promise: ", service);
       var result = Promise.resolve();
@@ -342,11 +339,11 @@
       });
       return result.then(()=>log("Handled service" + service.uuid));
     }
-    
+
     function attachServicePromise(promise, service){
       return promise.then(()=>createServicePromise(service));
     }
-    
+
     var reUseCounter = 0;
 
     function initBt() {
@@ -363,9 +360,9 @@
         gatt=undefined;
         reUseCounter = 0;
       }
-      
+
       var promise;
-      
+
       if (!device){
         var filters = serviceFilters;
         if (settings.btid){
@@ -374,27 +371,26 @@
         }
         log("Requesting device with filters", filters);
         promise = NRF.requestDevice({ filters: filters, active: true });
-        
+
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
         }
-          
+
         promise = promise.then((d)=>{
           log("Got device: ", d);
           d.on('gattserverdisconnected', onDisconnect);
           device = d;
         });
-        
+
         promise = promise.then(()=>{
           log("Wait after request");
           return waitingPromise(settings.gracePeriodRequest);
         });
-        
       } else {
         promise = Promise.resolve();
         log("Reuse device: ", device);
       }
-      
+
       promise = promise.then(()=>{
         if (gatt){
           log("Reuse GATT: ", gatt);
@@ -402,7 +398,7 @@
           log("GATT is new: ", gatt);
           characteristics = [];
           var cachedName = getCache().name;
-          if (device.name != cachedName){
+          if (device.name !== cachedName){
             log("Device name changed from " + cachedName + " to " + device.name + ", clearing cache");
             clearCache();
           }
@@ -411,10 +407,10 @@
           writeCache(newCache);
           gatt = device.gatt;
         }
-        
+
         return Promise.resolve(gatt);
       });
-      
+
       promise = promise.then((gatt)=>{
         if (!gatt.connected){
           var connectPromise = gatt.connect(connectSettings);
@@ -430,16 +426,28 @@
           return Promise.resolve();
         }
       });
-      
+
+      promise = promise.then(() => {
+        log(JSON.stringify(gatt.getSecurityStatus()));
+        if (gatt.getSecurityStatus()['bonded']) {
+          log("Already bonded");
+          return Promise.resolve();
+        } else {
+          log("Start bonding");
+          return gatt.startBonding()
+            .then(() => console.log(gatt.getSecurityStatus()));
+        }
+      });
+
       promise = promise.then(()=>{
-        if (!characteristics || characteristics.length == 0){
+        if (!characteristics || characteristics.length === 0){
           characteristics = characteristicsFromCache();
         }
       });
 
       promise = promise.then(()=>{
         var characteristicsPromise = Promise.resolve();
-        if (characteristics.length == 0){
+        if (characteristics.length === 0){
           characteristicsPromise = characteristicsPromise.then(()=>{
             log("Getting services");
             return gatt.getPrimaryServices();
@@ -462,17 +470,16 @@
             }
             return result;
           });
-          
         } else {
           for (var characteristic of characteristics){
             characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
           }
         }
-        
+
         return characteristicsPromise;
       });
       
-      promise = promise.then(()=>{
+      return promise.then(()=>{
         log("Connection established, waiting for notifications");
         reUseCounter = 0;
         characteristicsToCache(characteristics);
@@ -490,7 +497,7 @@
       if (Bangle._PWR===undefined) Bangle._PWR={};
       if (Bangle._PWR.BTHRM===undefined) Bangle._PWR.BTHRM=[];
       if (isOn && !Bangle._PWR.BTHRM.includes(app)) Bangle._PWR.BTHRM.push(app);
-      if (!isOn && Bangle._PWR.BTHRM.includes(app)) Bangle._PWR.BTHRM = Bangle._PWR.BTHRM.filter(a=>a!=app);
+      if (!isOn && Bangle._PWR.BTHRM.includes(app)) Bangle._PWR.BTHRM = Bangle._PWR.BTHRM.filter(a=>a!==app);
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
@@ -513,7 +520,7 @@
         }
       }
     };
-    
+
     var origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
@@ -563,7 +570,7 @@
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
-        var promise = gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
+        gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
       }
     });
   }
