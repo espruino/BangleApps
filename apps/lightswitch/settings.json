@@ -10,14 +10,17 @@
       "101" -> magenta
 
  * image: string //
-      "default" ->
-      "random"  ->
+      "default" -> image nearest to the default lock
+      "random"  -> a random image from all available
 
  * touchOn: string // select when widget touch is active
       ""             -> only on default clock
       "clock"        -> on all clocks
       "clock,launch" -> on all clocks and lanchers (default)
       "always"       -> always
+
+ * oversize: int // extends the touch area of the widget in px in all directions
+      0 to 50, 20 as default
 
  * dragDelay: int // drag listener reset time in ms
       // time until a drag is needed to activate backlight changing mode
@@ -59,6 +62,7 @@
   "colors": "011",
   "image": "default",
   "touchOn": "clock,launch",
+  "oversize": 20,
   "dragDelay": 500,
   "minValue": 0.1,
   "unlockSide": "",
