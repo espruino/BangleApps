@@ -15,18 +15,10 @@
     require('Storage').writeJSON("messages.settings.json", settings);
   }
 
-  var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
-    /*LANG*/'Vibrate': {
-      value: Math.max(0,vibPatterns.indexOf(settings().vibrate)),
-      min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
-      onchange: v => {
-        updateSetting("vibrate", vibPatterns[v]);
-      }
-    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v)),
     /*LANG*/'Repeat': {
       value: settings().repeat,
       min: 0, max: 10,
