@@ -68,7 +68,7 @@ function countDown() {
     return;
 
   }
-  g.clear();
+  g.clear(1);
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",80); // vector font, 80px 
   // draw the current counter value
