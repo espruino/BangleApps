@@ -64,7 +64,12 @@ Bangle.on('mag', function(m) {
   oldHeading = m.heading;
 });
 
-g.clear();
+g.clear(1);
+g.setFont("6x8").setFontAlign(0,0,3).drawString("RESET", g.getWidth()-5, g.getHeight()/2);
+setWatch(function() {
+  Bangle.resetCompass();
+}, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat:true});
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setCompassPower(1);
