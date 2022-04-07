@@ -138,8 +138,7 @@ function editAlarm(alarmIndex, alarm) {
   };
   menu[/*LANG*/"Save"] = function() {
     a.t = encodeTime(t);
-    if (a.t < getCurrentTime())
-      a.day = (new Date()).getDate();
+    a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
@@ -191,6 +190,7 @@ function editTimer(alarmIndex, alarm) {
   menu[/*LANG*/"Save"] = function() {
     a.timer = encodeTime(t);
     a.t = getCurrentTime() + a.timer;
+    a.last = 0;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
