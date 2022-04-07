@@ -94,7 +94,7 @@
     var course_name = "Davis";
     $("#upload").click(function () {
       sendCustomizedApp({
-        storage: courses
+        storage: JSON.stringify(courses),
       });
     });
 
