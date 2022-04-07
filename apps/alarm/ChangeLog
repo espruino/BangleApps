@@ -16,3 +16,4 @@
 0.15: Fix hour/minute wrapping code for new menu system
 0.16: Adding alarm library
 0.17: Moving alarm internals to 'sched' library
+0.18: Cope with >1 identical alarm at once (#1667)

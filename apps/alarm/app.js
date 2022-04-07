@@ -45,12 +45,22 @@ function showMainMenu() {
     /*LANG*/'New Timer': ()=>editTimer(-1)
   };
   alarms.forEach((alarm,idx)=>{
-    var txt; // a leading space is currently required (JS error in Espruino 2v12)
-    if (alarm.timer)
-      txt = /*LANG*/"Timer"+" "+formatTime(alarm.timer);
-    else
-      txt = /*LANG*/"Alarm"+" "+formatTime(alarm.t);
+    var type,txt; // a leading space is currently required (JS error in Espruino 2v12)
+    if (alarm.timer) {
+      type = /*LANG*/"Timer";
+      txt = " "+formatTime(alarm.timer);
+    } else {
+      type = /*LANG*/"Alarm";
+      txt = " "+formatTime(alarm.t);
+    }
     if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
+    // rename duplicate alarms
+    if (menu[type+txt]) {
+      var n = 2;
+      while (menu[type+" "+n+txt]) n++;
+      txt = type+" "+n+txt;
+    } else txt = type+txt;
+    // add to menu
     menu[txt] = {
       value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
       onchange : function() {
@@ -84,7 +94,7 @@ function editAlarm(alarmIndex, alarm) {
   var a = {
     t : 12*3600000, // 12 o clock default
     on : true,
-    rp : true,
+    rp : false, // repeat not the default
     as : false,
     dow : 0b1111111,
     last : 0,
