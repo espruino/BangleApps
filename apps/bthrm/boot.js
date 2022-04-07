@@ -427,7 +427,7 @@
         }
       });
 
-      promise = promise.then(() => {
+/*      promise = promise.then(() => {
         log(JSON.stringify(gatt.getSecurityStatus()));
         if (gatt.getSecurityStatus()['bonded']) {
           log("Already bonded");
@@ -437,7 +437,7 @@
           return gatt.startBonding()
             .then(() => console.log(gatt.getSecurityStatus()));
         }
-      });
+      });*/
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
