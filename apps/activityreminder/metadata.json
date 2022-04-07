@@ -4,6 +4,7 @@
   "shortName":"Activity Reminder",
   "description": "A reminder to take short walks for the ones with a sedentary lifestyle",
   "version":"0.01",
+  "icon": "app.png",
   "type": "app",
   "tags": "tool",
   "supports": ["BANGLEJS", "BANGLEJS2"],
