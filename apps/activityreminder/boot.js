@@ -7,6 +7,7 @@ global.activityreminder = Object.assign({
   minSteps: 50,
 }, require("Storage").readJSON("activityreminder.json", true) || {});
 
+var stepsArray = [];
 
 
 if (global.activityreminder) {
@@ -14,51 +15,29 @@ if (global.activityreminder) {
   activityreminder =
     Object.assign(activityreminder,
     {
-      stepsArray: [],
 
       run: function(){
         var now = new Date();
         var h = now.getHours();
+        console.log(stepsArray);
         if(h >= activityreminder.startHour && h < activityreminder.endHour)
         {
           var health = Bangle.getHealthStatus("day");
-          activityreminder.stepsArray.unshift(health.steps);
-          activityreminder.stepsArray = activityreminder.stepsArray.slice(0, activityreminder.maxInnactivityMin);
+          stepsArray.unshift(health.steps);
+          stepsArray = activityreminder.stepsArray.slice(0, activityreminder.maxInnactivityMin);
         }
         else{
-          activityreminder.stepsArray = [];
+          stepsArray = [];
         }
-        if(activityreminder.stepsArray.length == activityreminder.maxInnactivityMin){
-          if (activityreminder.stepsArray[0] - activityreminder.stepsArray[activityreminder.stepsArray.length-1] < activityreminder.minSteps)
+        if(stepsArray.length == activityreminder.maxInnactivityMin){
+          if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps)
           {
-              activityreminder.showAlert();
+              load('authentiwatch.app.js');
           }
         }
-
-
-      },
-
-      showAlert: function(){
-        g.clear();
-        Bangle.loadWidgets();
-        Bangle.drawWidgets();
-        E.showPrompt("Innactivity detected",{
-          title:"Activity reminder",
-          buttons : {"Ok": true,"Dismiss": false}
-        }).then(function(v) {
-          if(v == true){
-            activityreminder.stepsArray = activityreminder.stepsArray.slice(0, activityreminder.maxInnactivityMin - 3);
-          }
-          if(v == false){
-            activityreminder.stepsArray = activityreminder.stepsArray.slice(0, activityreminder.maxInnactivityMin - activityreminder.dismissDelayMin);
-          }
-          load();
-        });
-        Bangle.buzz();
-        setTimeout(load, 10000);
-      },
-    }
+      }
   );
+
 
   setInterval(global.activityreminder.run, 2000);
 }
