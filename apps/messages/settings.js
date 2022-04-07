@@ -7,6 +7,7 @@
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
+    if (settings.flash===undefined) settings.flash=true;
     return settings;
   }
   function updateSetting(setting, value) {
@@ -46,6 +47,11 @@
       value: !!settings().unlockWatch,
       format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("unlockWatch", v)
+    },
+    /*LANG*/'Flash Icon': {
+      value: !!settings().flash,
+      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
+      onchange: v => updateSetting("flash", v)
     },
   };
   E.showMenu(mainmenu);

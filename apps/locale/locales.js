@@ -688,8 +688,8 @@ var locales = {
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
     abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
     month: "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
-    abday: "Ma,Ti,On,To,Fr,Lø,Sø",
-    day: "Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag,Søndag",
+    abday: "Sø,Ma,Ti,On,To,Fr,Lø",
+    day: "Søndag,Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag",
     trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
   },
 /*,
