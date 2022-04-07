@@ -1,1 +1,2 @@
 0.01: New App!
+0.02: Fix scheduling of other alarms if there is a pending alarm from the past (fix #1667)

@@ -114,6 +114,29 @@
     ],
     "text_scale":3.5
   },
+  "nn_NO":{
+    "hours":[
+      "tolv", "eitt", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve",
+      "tolv", "eitt", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve"
+    ],
+    "minutes":[
+      "klokka er *$1",
+      "fem over *$1",
+      "ti over *$1",
+      "kvart over *$1",
+      "ti på halv *$2",
+      "fem på halv *$2",
+      "halv *$2",
+      "fem over halv *$2",
+      "ti over halv *$2",
+      "kvart på *$2",
+      "ti på *$2",
+      "fem på *$2"
+    ],
+    "text_scale":3.5
+  },
   "sv_SE":{
     "hours":[
       "tolv", "ett", "två", "tre", "fyra", "fem",
