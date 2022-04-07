@@ -66,7 +66,7 @@
           let active_holes = element.tags.ref.split(";"); // a feature can be on more than one hole
           for (feature_hole of active_holes) {
             let new_feature = {
-              nodes: preprocessCoords(element.geometry, course_processed.holes[feature_hole].way[0]),
+              nodesXY: preprocessCoords(element.geometry, course_processed.holes[feature_hole].way[0]),
               type: element.tags.golf,
               id: element.id,
             }
