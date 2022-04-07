@@ -4,11 +4,13 @@ global.activityreminder = Object.assign({
   endHour: 20,
   maxInnactivityMin: 30,
   dismissDelayMin: 15,
-  minSteps: 50,
+  minSteps: 50
 }, require("Storage").readJSON("activityreminder.json", true) || {});
 
-global.stepsArray = [];
+var stepsArray = []; // todo load from storage and save in storage on activityreminder.data. Create lib.js to read and write in it 
 
+
+// todo put it in sequential to see if it work still
 
 if (global.activityreminder) {
 
@@ -23,14 +25,20 @@ if (global.activityreminder) {
         if(h >= activityreminder.startHour && h < activityreminder.endHour)
         {
           var health = Bangle.getHealthStatus("day");
-          global.stepsArray.unshift(health.steps);
-          global.stepsArray = global.stepsArray.slice(0, activityreminder.maxInnactivityMin);
+          stepsArray.unshift(health.steps);
+          stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin);
+          // todo save stepsArray
         }
         else{
-          global.stepsArray = [];
+          if(stepsArray != [])
+          {
+             stepsArray = [];
+             // todo save stepsArray
+          }
+          
         }
-        if(global.stepsArray.length == activityreminder.maxInnactivityMin){
-          if (global.stepsArray[0] - global.stepsArray[stepsArray.length-1] < activityreminder.minSteps)
+        if(stepsArray.length == activityreminder.maxInnactivityMin){
+          if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps)
           {
               load('activityreminder.app.js');
           }
@@ -38,6 +46,6 @@ if (global.activityreminder) {
       }
    });
 
-  setInterval(global.activityreminder.run, 2000);
+  setInterval(global.activityreminder.run, 60000);
 }
 
