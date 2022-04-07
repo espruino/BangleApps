@@ -34,36 +34,8 @@ const codePages = {
 `.replace(/[ \n]/g,"")
   }
 };
-/* When it's not in the codepage, try and use
-these conversions */
-const charFallbacks = {
-  "ą":"a",
-  "ā":"a",
-  "å":"a",
-  "č":"c",
-  "ć":"c",
-  "ě":"e",
-  "ę":"e",
-  "ē":"e",
-  "æ":"e",
-  "ģ":"g",
-  "i":"ī",
-  "ķ":"k",
-  "ļ":"l",
-  "ł":"l",
-  "ń":"n",
-  "ņ":"n",
-  "ő":"o",
-  "ó":"o",
-  "ø":"o",
-  "ř":"r",
-  "ś":"s",
-  "š":"s",
-  "ū":"u",
-  "ż":"z",
-  "ź":"z",
-  "ž":"z",
- };
+
+// charFallbacks is now in core/js/utils.js as CODEPAGE_CONVERSIONS
 
 /*
 timePattern / datePattern:
@@ -594,7 +566,7 @@ var locales = {
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
     trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
   },
-  "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use charFallbacks
+  "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use CODEPAGE_CONVERSIONS
     lang: "cs_CZ",
     decimal_point: ",",
     thousands_sep: " ",
