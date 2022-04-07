@@ -64,9 +64,15 @@
           course_processed.holes[current_hole.toString()] = hole;
         }
 
-        else if (element.type == "way") { // TODO deal with relations
-          // if we find a feature add it to the corresponding hole
+        else {
           if (!("ref" in element.tags)) continue;
+          if (element.type == "relation") {
+            for (member of element.members) {
+              if (member.role === "outer") break; // only use the outer because it is overwritten anyway
+            }
+            Object.assign(element, { "geometry": member.geometry });
+          }
+          // if we find a feature add it to the corresponding hole
           let active_holes = element.tags.ref.split(";"); // a feature can be on more than one hole
           for (feature_hole of active_holes) {
             let new_feature = {
