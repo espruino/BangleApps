@@ -94,7 +94,7 @@
     var course_name = "Davis";
     $("#upload").click(function () {
       sendCustomizedApp({
-        storage: JSON.stringify(courses),
+        storage: courses,
       });
     });
 
@@ -110,7 +110,7 @@
       console.log(out);
       courses.push({
         name: "golfcourse-" + course_name + ".json",
-        content: JSON.parse(JSON.stringify(out)) // deep copy
+        content: JSON.stringify(out),
       });
       $('#status').text("Course retrieved!");
       $('#upload').attr("disabled", false);
