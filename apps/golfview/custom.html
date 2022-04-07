@@ -19,7 +19,7 @@
 
   <script>
     const url = "https://overpass-api.de/api/interpreter";
-    let query = `[out:json][timeout:5];relation["name"="Davis Golf Course"];way(r)["golf"="hole"];foreach->.a(.a out;.a >>;out;way(around.a:40.0)["golf"]["golf"!="hole"];out;>>;out;)`; // this gets everything at least
+    let query = `[bbox:38.4829,-121.8694,38.7110,-121.6215][out:json][timeout:5];way["name"="Davis Golf Course"];map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
     let course_input = null;
 
     function findNodeCoordinates(elements, id) {
@@ -36,41 +36,45 @@
       let course_processed = {
         holes: {}
       };
-      let current_hole = 0;
       for (let i = 0; i < course_verbose.length; i++) {
         const element = course_verbose[i];
 
-        if (element.type === "way") {
+        if (element.tags.golf === "hole") {
           // if we find a high-level hole feature
-          if (element.tags.golf === "hole") {
-            current_hole = parseInt(element.tags.ref); //subsequent way features should be applied to the current hole
-            let nodes = [];
-            for (const node_id of element.nodes) {
-              nodes.push(findNodeCoordinates(course_verbose, node_id));
+          // todo check if hole exists
+          let current_hole = parseInt(element.tags.ref); //subsequent way features should be applied to the current hole
+          let tees = []
+          Object.keys(element.tags).forEach((key) => {
+            if (key.includes("dist")) {
+              tees.push(Math.round(element.tags[key]));
             }
-            var hole = {
-              hole_number: current_hole,
-              handicap: parseInt(element.tags.handicap),
-              par: parseInt(element.tags.par),
-              nodes: nodes,
-              features: [],
-            }
-
-            course_processed.holes[current_hole.toString()] = hole;
+          })
+          var hole = {
+            hole_number: current_hole,
+            handicap: parseInt(element.tags.handicap),
+            par: parseInt(element.tags.par),
+            nodesXY: preprocessCoords(element.geometry, element.geometry[0]),
+            tees: tees.sort(),
+            way: element.geometry,
+            features: [],
+            angle: 0,
           }
 
+          hole.angle = angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1])
+          course_processed.holes[current_hole.toString()] = hole;
+        }
+
+        else if (element.type == "way") { // TODO deal with relations
           // if we find a feature add it to the corresponding hole
-          if (/(green)|(bunker)|(tee)|(teebox)|(fairway)|(water_hazard)/.test(element.tags.golf)) {
-            let nodes = []
-            for (const node_id of element.nodes) {
-              nodes.push(findNodeCoordinates(course_verbose, node_id));
-            }
+          if (!("ref" in element.tags)) continue;
+          let active_holes = element.tags.ref.split(";"); // a feature can be on more than one hole
+          for (feature_hole of active_holes) {
             let new_feature = {
-              nodes: nodes,
+              nodes: preprocessCoords(element.geometry, course_processed.holes[feature_hole].way[0]),
               type: element.tags.golf,
               id: element.id,
             }
-            course_processed.holes[current_hole.toString()].features.push(new_feature);
+            course_processed.holes[feature_hole].features.push(new_feature);
           }
         }
       }
@@ -78,24 +82,16 @@
       return course_processed;
     }
 
-    function preprocessCoords(course_input) {
-      // first do the high-level way
-      for (var hole in course_input.holes) {
-        course_input.holes[hole].nodesXY = arraytoXY(course_input.holes[hole].nodes, course_input.holes[hole].nodes[0])
-        // then do the shapes in the features
-        for (var feature in course_input.holes[hole].features) {
-          many_points = arraytoXY(course_input.holes[hole].features[feature].nodes, course_input.holes[hole].nodes[0]);
-          less_points = simplify(many_points, 2, true); // from simplify-js
-          // convert to int to save some memory
-          course_input.holes[hole].features[feature].nodesXY = less_points.map(function (pt) {
-            return { x: Math.round(pt.x), y: Math.round(pt.y) }
-          });
-          delete course_input.holes[hole].features[feature].nodes; // delete coords because they take up a lot of memory
-        }
+    function preprocessCoords(coord_array, origin) {
+      let many_points = arraytoXY(coord_array, origin);
+      let less_points = simplify(many_points, 2, true); // from simplify-js
 
-        course_input.holes[hole].angle = angle(course_input.holes[hole].nodesXY[0], course_input.holes[hole].nodesXY[course_input.holes[hole].nodesXY.length - 1])
-      }
-      return course_input;
+      // convert to int to save some memory
+      less_points = less_points.map(function (pt) {
+        return { x: Math.round(pt.x), y: Math.round(pt.y) }
+      });
+
+      return less_points;
     }
 
     var courses = [];
@@ -115,7 +111,6 @@
       course_input = result;
       console.log(course_input);
       out = processFeatures(course_input.elements);
-      out = preprocessCoords(out);
       console.log(out);
       courses.push({
         name: "golfcourse-" + course_name + ".json",
