@@ -33,7 +33,7 @@ exports.setAlarm = function(id, alarm) {
   }
   exports.setAlarms(alarms);
 };
-/// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could me *more* than a day in the future
+/// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
