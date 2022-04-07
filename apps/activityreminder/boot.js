@@ -39,6 +39,9 @@ if (global.activityreminder) {
       },
 
       showAlert: function(){
+        g.clear();
+        Bangle.loadWidgets();
+        Bangle.drawWidgets();
         E.showPrompt("Innactivity detected",{
           title:"Activity reminder",
           buttons : {"Ok": true,"Dismiss": false}
@@ -52,11 +55,11 @@ if (global.activityreminder) {
           load();
         });
         Bangle.buzz();
-
+        setTimeout(load, 10000);
       },
     }
   );
 
-  setInterval(global.activityreminder.run, 60000);
+  setInterval(global.activityreminder.run, 2000);
 }
 
