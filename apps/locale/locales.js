@@ -684,6 +684,24 @@ var locales = {
     day: "Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena,Svētdiena",
     trans: { yes: "jā", Yes: "Jā", no: "nē", No: "Nē", ok: "labi", on: "Ieslēgt", off: "Izslēgt", "< Back": "< Atpakaļ" }
   },
+    "nn_NO": { // Using charfallbacks
+        lang: "nn_NO",
+        decimal_point: ",",
+        thousands_sep: " ",
+        currency_symbol: "kr",
+        int_curr_symbol: "NOK",
+        speed: "kmh",
+        distance: { 0: "m", 1: "km" },
+        temperature: "°C",
+        ampm: { 0: "", 1: "" },
+        timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+        datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
+        abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
+        month: "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
+        abday: "Su,Må,Ty,On,To,Fr,La",
+        day: "Sundag,Måndag,Tysdag,Onsdag,Torsdag,Fredag,Laurdag",
+        trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulesen" }
+    },
     "no_NB": { // Using charfallbacks
       lang: "no_NB",
       decimal_point: ",",
