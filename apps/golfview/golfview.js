@@ -98,7 +98,7 @@ Bangle.on('swipe', function (direction) {
   layout.hole.label = "Hole " + current_hole;
   layout.par.label = "Par " + course[current_hole.toString()].par;
   layout.hcp.label = "Hcp " + course[current_hole.toString()].handicap;
-  layout.postyardage.label = 420; //TODO
+  layout.postyardage.label = course[current_hole.toString()].tees[course[current_hole.toString()].tees.length -1]; //TODO only use longest hole for now
 
   g.clear();
   layout.render();
