@@ -6,10 +6,11 @@
   "version":"0.01",
   "icon": "app.png",
   "type": "app",
-  "tags": "tool",
+  "tags": "tool,activity",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
+    {"name": "activityreminder.app.js","url":"app.js"},
     {"name": "activityreminder.boot.js","url": "boot.js"},
     {"name": "activityreminder.settings.js","url": "settings.js"},
     {"name": "activityreminder.img","url": "app-icon.js","evaluate": true}
