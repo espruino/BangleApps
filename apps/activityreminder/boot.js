@@ -24,7 +24,7 @@ if (global.activityreminder) {
         {
           var health = Bangle.getHealthStatus("day");
           stepsArray.unshift(health.steps);
-          stepsArray = activityreminder.stepsArray.slice(0, activityreminder.maxInnactivityMin);
+          stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin);
         }
         else{
           stepsArray = [];
@@ -36,8 +36,7 @@ if (global.activityreminder) {
           }
         }
       }
-  );
-
+   });
 
   setInterval(global.activityreminder.run, 2000);
 }
