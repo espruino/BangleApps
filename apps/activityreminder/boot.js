@@ -32,7 +32,7 @@ if (global.activityreminder) {
         if(stepsArray.length == activityreminder.maxInnactivityMin){
           if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps)
           {
-              load('authentiwatch.app.js');
+              load('activityreminder.app.js');
           }
         }
       }
