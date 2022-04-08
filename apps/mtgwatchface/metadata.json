@@ -1,0 +1,29 @@
+{
+  "id": "mtgwatchface",
+  "name": "MTG Watchface",
+  "shortName": "Magic the Gathering Watch Face",
+  "version": "1v03",
+  "description": "Magic the Gathering themed watch face. Embrace the inner wizzard. Dispay any of the different types of mana on your watch. Which color are you devoted to today? ",
+  "icon": "icon.png",
+  "screenshots": [
+    {"url": "black.png"}
+  ],
+  "tags": "clock",
+  "type": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [ 
+    {
+      "name": "mtgwatchface.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "mtgwatchface.img",
+      "url": "app-icon.js",
+      "evaluate":true
+    }
+  ]
+}

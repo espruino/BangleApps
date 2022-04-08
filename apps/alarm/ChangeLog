@@ -14,3 +14,7 @@
 0.13: Alarm widget state now updates when setting/resetting an alarm
 0.14: Order of 'back' menu item
 0.15: Fix hour/minute wrapping code for new menu system
+0.16: Adding alarm library
+0.17: Moving alarm internals to 'sched' library
+0.18: Cope with >1 identical alarm at once (#1667)
+0.19: Ensure rescheduled alarms that already fired have 'last' reset

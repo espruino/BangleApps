@@ -42,11 +42,6 @@
       value: Math.max(statsIDs.indexOf(settings[boxID]),0),
       format: v => statsList[v].name,
       onchange: v => {
-        for (var i=1;i<=6;i++)
-          if (settings["B"+i]==statsIDs[v]) {
-            settings["B"+i]="";
-            boxMenu["Box "+i].value=0;
-          }
         settings[boxID] = statsIDs[v];
         saveSettings();
       },
@@ -91,7 +86,7 @@
   ];
   notificationsMenu[/*LANG*/"Dist Pattern"] = {
     value: Math.max(0,vibTimes.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.dist.notifications))),
-      min: 0, max: vibTimes.length,
+      min: 0, max: vibTimes.length - 1,
       format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.dist.notifications = vibTimes[v];
@@ -101,7 +96,7 @@
   }
   notificationsMenu[/*LANG*/"Step Pattern"] = {
     value: Math.max(0,vibTimes.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.step.notifications))),
-      min: 0, max: vibTimes.length,
+      min: 0, max: vibTimes.length - 1,
       format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.step.notifications = vibTimes[v];
@@ -111,7 +106,7 @@
   }
   notificationsMenu[/*LANG*/"Time Pattern"] = {
     value: Math.max(0,vibTimes.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.time.notifications))),
-      min: 0, max: vibTimes.length,
+      min: 0, max: vibTimes.length - 1,
       format: v => vibPatterns[v]||/*LANG*/"Off",
       onchange: v => {
         settings.notify.time.notifications = vibTimes[v];

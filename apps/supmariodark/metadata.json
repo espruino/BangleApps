@@ -8,6 +8,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS"],
+  "readme": "README.md",
   "storage": [
     {"name":"supmariodark.app.js","url":"supmariodark.js"},
     {"name":"supmariodark.img","url":"supmariodark-icon.js","evaluate":true},

@@ -8,8 +8,8 @@ black one the battery level (100% = 360 degrees).
 The selected theme is also respected. Note that this watch face is in fullscreen
 mode, but widgets are still loaded in background.
 
-## Other features
-- Set a timer - simply touch top (+5min.) or bottom (-5 min.).
+## Other Features
+- Set a timer - simply touch top (+5min.) or bottom (-5 min.). This only works if "sched" is installed.
 - If the weather is available through the weather app, the outside temp. will be shown.
 - Sleep modus at midnight to save more battery (no minute updates).
 - Icons for charging and GPS.
@@ -29,5 +29,5 @@ which helped a lot for this development.
 
 Icons from <a href="https://www.flaticon.com/free-icons" title="icons">by Freepik - Flaticon</a>
 
-## Contributors
+## Creator
 - [David Peer](https://github.com/peerdavid).
