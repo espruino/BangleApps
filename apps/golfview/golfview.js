@@ -1,10 +1,71 @@
-let course = require("Storage").readJSON("golfcourse-Davis.json").holes;//TODO use the course ID
-let current_hole = 1;
-let hole = course[current_hole.toString()];
+// maptools.js
+const EARTHRADIUS = 6371000; //km
+
+function radians(a) {
+  return a * Math.PI / 180;
+}
+
+function degrees(a) {
+  let d = a * 180 / Math.PI;
+  return (d + 360) % 360;
+}
+
+function toXY(a, origin) {
+  let pt = {
+    x: 0,
+    y: 0
+  };
+
+  pt.x = EARTHRADIUS * radians(a.lon - origin.lon) * Math.cos(radians((a.lat + origin.lat) / 2));
+  pt.y = EARTHRADIUS * radians(origin.lat - a.lat);
+  return pt;
+}
+
+function arraytoXY(array, origin) {
+  let out = [];
+  for (var j in array) {
+    let newpt = toXY(array[j], origin);
+    out.push(newpt);
+  }
+  return out;
+}
+
+function angle(a, b) {
+  let x = b.x - a.x;
+  let y = b.y - a.y;
+  return Math.atan2(-y, x);
+}
+
+function rotateVec(a, theta) {
+  let pt = {
+    x: 0,
+    y: 0
+  };
+  c = Math.cos(theta);
+  s = Math.sin(theta);
+  pt.x = c * a.x - s * a.y;
+  pt.y = s * a.x + c * a.y;
+  return pt;
+}
 
 function distance(a, b) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
+
+
+// golfview.js
+let course = require("Storage").readJSON("golfcourse-Davis.json").holes;//TODO use the course ID
+let current_hole = 1;
+let hole = course[current_hole.toString()];
+let user_position = {
+  fix: false,
+  lat: 0,
+  lon: 0,
+  x: 0,
+  y: 0,
+  to_hole: 0,
+  last_time: getTime()
+};
 
 function drawHole(l) {
 
@@ -28,7 +89,7 @@ function drawHole(l) {
     if (a.type === "fairway") {
       return -1;
     }
-  })
+  });
 
   for (var feature of hole.features) {
     //console.log(Object.keys(feature));
@@ -78,26 +139,19 @@ function setHole(current_hole) {
   g.clear();
   layout.render();
 }
-// The layout, referencing the custom renderer
-var Layout = require("Layout");
-var layout = new Layout({
-  type: "h", c: [
-    {
-      type: "v", c: [
-        { type: "txt", font: "10%", id: "hole", label: "HOLE 18" },
-        { type: "txt", font: "10%", id: "par", label: "PAR 4" },
-        { type: "txt", font: "10%", id: "hcp", label: "HCP 18" },
-        { type: "txt", font: "35%", id: "postyardage", label: "000" },
-        { type: "txt", font: "20%", id: "measyardage", label: "000" },
-      ]
-    },
-    { type: "custom", render: drawHole, id: "graph", bgCol: g.theme.bg, fillx: 1, filly: 1 }
-  ],
-  lazy: true
-});
 
-setHole(current_hole);
-//layout.debug();
+function updateDistanceToHole() {
+  let xy = toXY({ "lat": user_position.lat, "lon": user_position.lon }, hole.way[hole.way.length - 1]);
+  user_position.x = xy.x;
+  user_position.y = xy.y;
+  user_position.last_time = getTime();
+  let new_distance = Math.round(distance(xy, hole.nodesXY[hole.nodesXY.length - 1]) * 1.093613); //TODO meters later
+  console.log(new_distance);
+  layout.measyardage.label = (new_distance < 999) ? new_distance : "---";
+
+  g.clear();
+  layout.render();
+}
 
 Bangle.on('swipe', function (direction) {
   if (direction > 0) {
@@ -112,3 +166,34 @@ Bangle.on('swipe', function (direction) {
 
   setHole(current_hole);
 });
+
+Bangle.on('GPS', (fix) => {
+  if (isNaN(fix.lat)) return;
+  console.log(fix.hdop * 5); //precision
+  user_position.fix = true;
+  user_position.lat = fix.lat;
+  user_position.lon = fix.lon;
+  updateDistanceToHole();
+});
+
+// The layout, referencing the custom renderer
+var Layout = require("Layout");
+var layout = new Layout({
+  type: "h", c: [
+    {
+      type: "v", c: [
+        { type: "txt", font: "10%", id: "hole", label: "HOLE 18" },
+        { type: "txt", font: "10%", id: "par", label: "PAR 4" },
+        { type: "txt", font: "10%", id: "hcp", label: "HCP 18" },
+        { type: "txt", font: "35%", id: "postyardage", label: "---" },
+        { type: "txt", font: "20%", id: "measyardage", label: "---" },
+      ]
+    },
+    { type: "custom", render: drawHole, id: "graph", bgCol: g.theme.bg, fillx: 1, filly: 1 }
+  ],
+  lazy: true
+});
+
+Bangle.setGPSPower(1);
+setHole(current_hole);
+//layout.debug();
