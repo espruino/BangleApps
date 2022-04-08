@@ -32,7 +32,7 @@
       onchange: save('truewind'),
     },
     'Mounting angle': {
-      value: s.mount_angle
+      value: s.mount_angle,
       min: 0,
       max: 355,
       step: 5,
