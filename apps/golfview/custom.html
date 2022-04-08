@@ -56,7 +56,7 @@
 
         else {
           if (!("ref" in element.tags)) continue;
-          if (element.type == "relation") {
+          if (element.type === "relation") {
             for (member of element.members) {
               if (member.role === "outer") break; // only use the outer because it is overwritten anyway
             }

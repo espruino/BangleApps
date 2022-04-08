@@ -18,7 +18,7 @@ function drawHole(l) {
 
   let transform = {
     x: l.x + l.w / 2, // center in the box
-    y: l.h * 0.95, // pad it just a bit
+    y: l.h * 0.95, // pad it just a bit TODO use the extent of the teeboxes/green
     scale: scale, // scale factor (default 1)
     rotate: hole.angle - Math.PI / 2.0, // angle in radians (default 0)
   };
@@ -62,17 +62,26 @@ function drawHole(l) {
   g.drawPoly(newnodelist);
 }
 
+function setHole(current_hole) {
+  layout.hole.label = "Hole " + current_hole;
+  layout.par.label = "Par " + course[current_hole.toString()].par;
+  layout.hcp.label = "Hcp " + course[current_hole.toString()].handicap;
+  layout.postyardage.label = course[current_hole.toString()].tees[course[current_hole.toString()].tees.length - 1]; //TODO only use longest hole for now
+
+  g.clear();
+  layout.render();
+}
 // The layout, referencing the custom renderer
 var Layout = require("Layout");
 var layout = new Layout({
   type: "h", c: [
     {
       type: "v", c: [
-        { type: "txt", font: "10%", id: "hole", label: "Hole 1" },
+        { type: "txt", font: "10%", id: "hole", label: "Hole 18" },
         { type: "txt", font: "10%", id: "par", label: "Par 4" },
-        { type: "txt", font: "10%", id: "hcp", label: "Hcp 15" },
-        { type: "txt", font: "35%", id: "postyardage", label: "420" },
-        { type: "txt", font: "20%", id: "measyardage", label: "69" },
+        { type: "txt", font: "10%", id: "hcp", label: "Hcp 18" },
+        { type: "txt", font: "35%", id: "postyardage", label: "000" },
+        { type: "txt", font: "20%", id: "measyardage", label: "000" },
       ]
     },
     { type: "custom", render: drawHole, id: "graph", bgCol: g.theme.bg, fillx: 1, filly: 1 }
@@ -80,8 +89,7 @@ var layout = new Layout({
   lazy: true
 });
 
-g.clear();
-layout.render();
+setHole(current_hole);
 //layout.debug();
 
 Bangle.on('swipe', function (direction) {
@@ -95,11 +103,5 @@ Bangle.on('swipe', function (direction) {
   if (current_hole < 1) { current_hole = 18; }
   hole = course[current_hole.toString()];
 
-  layout.hole.label = "Hole " + current_hole;
-  layout.par.label = "Par " + course[current_hole.toString()].par;
-  layout.hcp.label = "Hcp " + course[current_hole.toString()].handicap;
-  layout.postyardage.label = course[current_hole.toString()].tees[course[current_hole.toString()].tees.length -1]; //TODO only use longest hole for now
-
-  g.clear();
-  layout.render();
+  setHole(current_hole);
 });
