@@ -70,9 +70,9 @@ function drawHole(l) {
 }
 
 function setHole(current_hole) {
-  layout.hole.label = "Hole " + current_hole;
-  layout.par.label = "Par " + course[current_hole.toString()].par;
-  layout.hcp.label = "Hcp " + course[current_hole.toString()].handicap;
+  layout.hole.label = "HOLE " + current_hole;
+  layout.par.label = "PAR " + course[current_hole.toString()].par;
+  layout.hcp.label = "HCP " + course[current_hole.toString()].handicap;
   layout.postyardage.label = course[current_hole.toString()].tees[course[current_hole.toString()].tees.length - 1]; //TODO only use longest hole for now
 
   g.clear();
@@ -84,9 +84,9 @@ var layout = new Layout({
   type: "h", c: [
     {
       type: "v", c: [
-        { type: "txt", font: "10%", id: "hole", label: "Hole 18" },
-        { type: "txt", font: "10%", id: "par", label: "Par 4" },
-        { type: "txt", font: "10%", id: "hcp", label: "Hcp 18" },
+        { type: "txt", font: "10%", id: "hole", label: "HOLE 18" },
+        { type: "txt", font: "10%", id: "par", label: "PAR 4" },
+        { type: "txt", font: "10%", id: "hcp", label: "HCP 18" },
         { type: "txt", font: "35%", id: "postyardage", label: "000" },
         { type: "txt", font: "20%", id: "measyardage", label: "000" },
       ]
