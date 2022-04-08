@@ -5,7 +5,7 @@
   "description": "OpenWind",
   "icon": "openwind.png",
   "readme": "README.md",
-  "tags": "ble,sailing",
+  "tags": "ble,outdoors,gps,sailing",
   "supports" : ["BANGLEJS", "BANGLEJS2"],  
   "storage": [
     {"name":"openwind.app.js","url":"app.js"},
