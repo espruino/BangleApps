@@ -13,8 +13,7 @@
     {"name":"noteify.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"noteify.json"}],
-  "dependencies": {"scheduler":"type"},
-  {"textinput":"type"},
+  "dependencies": {"scheduler":"type","textinput":"type"},
   "screenshots": [
   {"url": "menu.png"},
   {"url": "keypad.png"},
