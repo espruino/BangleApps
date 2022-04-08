@@ -2,10 +2,11 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
+const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 (function(back) {
   const SETTINGS_FILE = 'openwindsettings.json'
   // initialize with default settings...
-  let s = {
+  let settings = {
     'truewind': false,
     'mount_angle': 0
   }
@@ -14,25 +15,25 @@
   const storage = require('Storage')
   const saved = storage.readJSON(SETTINGS_FILE, 1) || {}
   for (const key in saved) {
-    s[key] = saved[key];
+    settings[key] = saved[key];
   }
   // creates a function to safe a specific setting, e.g.  save('color')(1)
   function save(key) {
     return function (value) {
-      s[key] = value;
-      storage.write(SETTINGS_FILE, s);
+      settings[key] = value;
+      storage.write(SETTINGS_FILE, settings);
     }
   }
   const menu = {
     '': { 'title': 'OpenWind' },
     '< Back': back,
     'True wind': {
-      value: s.truewind,
+      value: settings.truewind,
       format: boolFormat,
       onchange: save('truewind'),
     },
     'Mounting angle': {
-      value: s.mount_angle,
+      value: settings.mount_angle,
       min: 0,
       max: 355,
       step: 5,
