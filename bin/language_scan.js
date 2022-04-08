@@ -3,6 +3,9 @@
 outputs a list of strings that have been found.
 
 See https://github.com/espruino/BangleApps/issues/1311
+
+If you want to auto-add new string (with *only english text*), set the
+environment variable AUTOREFRESH.
 */
 
 let translate = false;
@@ -232,6 +235,11 @@ for (let language of languages) {
                 const translation = await translate(translationItem.str, language.code.split("_")[0]);
                 console.log("Translating:", translationItem.str, translation);
                 translations.GLOBAL[translationItem.str] = translation;
+                resolve()
+            }))
+          } else if(process.env.AUTOREFRESH && !translate) {
+            translationPromises.push(new Promise(async (resolve) => {
+                translations.GLOBAL[translationItem.str] = translationItem.str;
                 resolve()
             }))
           }
