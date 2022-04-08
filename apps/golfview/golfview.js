@@ -23,6 +23,13 @@ function drawHole(l) {
     rotate: hole.angle - Math.PI / 2.0, // angle in radians (default 0)
   };
 
+  // draw the fairways first
+  hole.features.sort((a, b) => {
+    if (a.type === "fairway") {
+      return -1;
+    }
+  })
+
   for (var feature of hole.features) {
     //console.log(Object.keys(feature));
     if (feature.type === "fairway") {
