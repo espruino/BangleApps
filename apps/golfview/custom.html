@@ -19,7 +19,7 @@
 
   <script>
     const url = "https://overpass-api.de/api/interpreter";
-    let query = `[bbox:38.4829,-121.8694,38.7110,-121.6215][out:json][timeout:5];way["name"="Davis Golf Course"];map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+    let query = `[bbox:37.4829,-122.8694,39.7110,-120.6215][out:json][timeout:5];way["name"="El Macero Country Club"];map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
     let course_input = null;
 
     function processFeatures(course_verbose) {
