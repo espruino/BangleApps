@@ -18,33 +18,33 @@
 
   if (settings.enabled){
 
-    function clearCache(){
+    var clearCache = function() {
       return require('Storage').erase("bthrm.cache.json");
-    }
+    };
 
-    function getCache(){
+    var getCache = function() {
       var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
       if (settings.btid && settings.btid === cache.id) return cache;
       clearCache();
       return {};
-    }
+    };
 
-    function addNotificationHandler(characteristic){
+    var addNotificationHandler = function(characteristic) {
       log("Setting notification handler: " + supportedCharacteristics[characteristic.uuid].handler);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
-    }
+    };
 
-    function writeCache(cache){
+    var writeCache = function(cache) {
       var oldCache = getCache();
       if (oldCache !== cache) {
         log("Writing cache");
-        require('Storage').writeJSON("bthrm.cache.json", cache)
+        require('Storage').writeJSON("bthrm.cache.json", cache);
       } else {
         log("No changes, don't write cache");
       }
-    }
+    };
 
-    function characteristicsToCache(characteristics){
+    var characteristicsToCache = function(characteristics) {
       log("Cache characteristics");
       var cache = getCache();
       if (!cache.characteristics) cache.characteristics = {};
@@ -59,9 +59,9 @@
         };
       }
       writeCache(cache);
-    }
+    };
 
-    function characteristicsFromCache(){
+    var characteristicsFromCache = function() {
       log("Read cached characteristics");
       var cache = getCache();
       if (!cache.characteristics) return [];
@@ -80,19 +80,16 @@
         restored.push(r);
       }
       return restored;
-    }
+    };
 
     log("Start");
 
     var lastReceivedData={
     };
 
-    var serviceFilters = [{
-      services: [ "180d" ]
-    }];
-
     var supportedServices = [
-      "0x180d", "0x180f"
+      "0x180d", // Heart Rate
+      "0x180f", // Battery
     ];
 
     var supportedCharacteristics = {
@@ -100,17 +97,17 @@
         //Heart rate measurement
         handler: function (dv){
           var flags = dv.getUint8(0);
-          
+
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
-          
+
           var sensorContact;
-          
+
           if (flags & 2){
             sensorContact = !!(flags & 4);
           }
-          
+
           var idx = 2 + (flags&1);
-          
+
           var energyExpended;
           if (flags & 8){
             energyExpended = dv.getUint16(idx,1);
@@ -123,7 +120,7 @@
             log("Found " + (maxIntervalBytes / 2) + " rr data fields");
             for(var i = 0 ; i < maxIntervalBytes / 2; i++){
               interval[i] = dv.getUint16(idx,1); // in milliseconds
-              idx += 2
+              idx += 2;
             }
           }
 
@@ -143,7 +140,7 @@
               confidence: (sensorContact || sensorContact === undefined)? 100 : 0,
               src: "bthrm"
             };
-          
+
             log("Emitting HRM: ", repEvent);
             Bangle.emit("HRM", repEvent);
           }
@@ -151,7 +148,7 @@
           var newEvent = {
             bpm: bpm
           };
-          
+
           if (location) newEvent.location = location;
           if (interval) newEvent.rr = interval;
           if (energyExpended) newEvent.energy = energyExpended;
@@ -183,7 +180,7 @@
     var characteristics = [];
     var blockInit = false;
     var currentRetryTimeout;
-    var initialRetryTime = 1000;
+    var initialRetryTime = 40;
     var maxRetryTime = 60000;
     var retryTime = initialRetryTime;
 
@@ -192,7 +189,7 @@
       maxInterval: 1500
     };
 
-    function waitingPromise(timeout) {
+    var waitingPromise = function(timeout) {
       return new Promise(function(resolve){
         log("Start waiting for " + timeout);
         setTimeout(()=>{
@@ -200,7 +197,7 @@
           resolve();
         }, timeout);
       });
-    }
+    };
 
     if (settings.enabled){
       Bangle.isBTHRMOn = function(){
@@ -225,15 +222,15 @@
       };
     }
 
-    function clearRetryTimeout(){
+    var clearRetryTimeout = function() {
       if (currentRetryTimeout){
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
         currentRetryTimeout = undefined;
       }
-    }
+    };
 
-    function retry(){
+    var retry = function() {
       log("Retry");
 
       if (!currentRetryTimeout){
@@ -255,10 +252,10 @@
       } else {
         log("Already in retry...");
       }
-    }
+    };
 
     var buzzing = false;
-    function onDisconnect(reason) {
+    var onDisconnect = function(reason) {
       log("Disconnect: " + reason);
       log("GATT: ", gatt);
       log("Characteristics: ", characteristics);
@@ -273,9 +270,9 @@
       if (Bangle.isBTHRMOn()){
         retry();
       }
-    }
+    };
 
-    function createCharacteristicPromise(newCharacteristic){
+    var createCharacteristicPromise = function(newCharacteristic) {
       log("Create characteristic promise: ", newCharacteristic);
       var result = Promise.resolve();
       // For values that can be read, go ahead and read them, even if we might be notified in the future
@@ -298,23 +295,23 @@
             log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
             startPromise = startPromise.then(()=>{
               log("Wait after connect");
-              waitingPromise(settings.gracePeriodNotification)
+              return waitingPromise(settings.gracePeriodNotification);
             });
           }
           return startPromise;
         });
       }
       return result.then(()=>log("Handled characteristic: ", newCharacteristic));
-    }
+    };
 
-    function attachCharacteristicPromise(promise, characteristic){
+    var attachCharacteristicPromise = function(promise, characteristic) {
       return promise.then(()=>{
         log("Handling characteristic:", characteristic);
         return createCharacteristicPromise(characteristic);
       });
-    }
+    };
 
-    function createCharacteristicsPromise(newCharacteristics){
+    var createCharacteristicsPromise = function(newCharacteristics) {
       log("Create characteristics promise: ", newCharacteristics);
       var result = Promise.resolve();
       for (var c of newCharacteristics){
@@ -328,9 +325,9 @@
         result = attachCharacteristicPromise(result, c);
       }
       return result.then(()=>log("Handled characteristics"));
-    }
+    };
 
-    function createServicePromise(service){
+    var createServicePromise = function(service) {
       log("Create service promise: ", service);
       var result = Promise.resolve();
       result = result.then(()=>{
@@ -338,15 +335,13 @@
         return service.getCharacteristics().then((c)=>createCharacteristicsPromise(c));
       });
       return result.then(()=>log("Handled service" + service.uuid));
-    }
+    };
 
-    function attachServicePromise(promise, service){
+    var attachServicePromise = function(promise, service) {
       return promise.then(()=>createServicePromise(service));
-    }
+    };
 
-    var reUseCounter = 0;
-
-    function initBt() {
+    var initBt = function () {
       log("initBt with blockInit: " + blockInit);
       if (blockInit){
         retry();
@@ -355,19 +350,15 @@
 
       blockInit = true;
 
-      if (reUseCounter > 10){
-        log("Reuse counter to high");
-        gatt=undefined;
-        reUseCounter = 0;
-      }
-
       var promise;
+      var filters;
 
       if (!device){
-        var filters = serviceFilters;
         if (settings.btid){
           log("Configured device id", settings.btid);
-          filters = [{id: settings.btid }];
+          filters = [{ id: settings.btid }];
+        } else {
+          return;
         }
         log("Requesting device with filters", filters);
         promise = NRF.requestDevice({ filters: filters, active: true });
@@ -397,13 +388,13 @@
         } else {
           log("GATT is new: ", gatt);
           characteristics = [];
-          var cachedName = getCache().name;
-          if (device.name !== cachedName){
-            log("Device name changed from " + cachedName + " to " + device.name + ", clearing cache");
+          var cachedId = getCache().id;
+          if (device.id !== cachedId){
+            log("Device ID changed from " + cachedId + " to " + device.id + ", clearing cache");
             clearCache();
           }
           var newCache = getCache();
-          newCache.name = device.name;
+          newCache.id = device.id;
           writeCache(newCache);
           gatt = device.gatt;
         }
@@ -465,7 +456,7 @@
               log("Add " + settings.gracePeriodService + "ms grace period after services");
               result = result.then(()=>{
                 log("Wait after services");
-                return waitingPromise(settings.gracePeriodService)
+                return waitingPromise(settings.gracePeriodService);
               });
             }
             return result;
@@ -478,10 +469,9 @@
 
         return characteristicsPromise;
       });
-      
+
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
-        reUseCounter = 0;
         characteristicsToCache(characteristics);
         clearRetryTimeout();
       }).catch((e) => {
@@ -489,7 +479,7 @@
         log("Error:", e);
         onDisconnect(e);
       });
-    }
+    };
 
     Bangle.setBTHRMPower = function(isOn, app) {
       // Do app power handling
@@ -538,7 +528,7 @@
 
     var fallbackInterval;
 
-    function switchInternalHrm(){
+    var switchInternalHrm = function() {
       if (settings.allowFallback && !fallbackInterval){
         log("Fallback to HRM enabled");
         origSetHRMPower(1, "bthrm_fallback");
@@ -551,7 +541,7 @@
           }
         }, settings.fallbackTimeout);
       }
-    }
+    };
 
     if (settings.replace){
       log("Replace HRM event");
