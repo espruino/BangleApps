@@ -4,7 +4,7 @@ const EARTHRADIUS = 6371000; //km
 function radians(a) {
   return a * Math.PI / 180;
 }
-
+position
 function degrees(a) {
   let d = a * 180 / Math.PI;
   return (d + 360) % 360;
@@ -64,8 +64,16 @@ let user_position = {
   x: 0,
   y: 0,
   to_hole: 0,
-  last_time: getTime()
+  last_time: getTime(),
+  transform: {},
 };
+
+function drawUser() {
+  if(!user_position.fix) return;
+  let new_pos = g.transformVertices([user_position.x,user_position.y],user_position.transform);
+  g.setColor(g.theme.fg);
+  g.drawCircle(new_pos[0],new_pos[1],8);
+}
 
 function drawHole(l) {
 
@@ -83,6 +91,8 @@ function drawHole(l) {
     scale: scale, // scale factor (default 1)
     rotate: hole.angle - Math.PI / 2.0, // angle in radians (default 0)
   };
+
+  user_position.transform = transform;
 
   // draw the fairways first
   hole.features.sort((a, b) => {
@@ -117,6 +127,8 @@ function drawHole(l) {
     g.fillPoly(newnodelist, true);
     //console.log(feature.type);
     //console.log(newnodelist);
+
+    drawUser();
   }
 
   var waynodelist = [];
@@ -141,12 +153,12 @@ function setHole(current_hole) {
 }
 
 function updateDistanceToHole() {
-  let xy = toXY({ "lat": user_position.lat, "lon": user_position.lon }, hole.way[hole.way.length - 1]);
+  let xy = toXY({ "lat": user_position.lat, "lon": user_position.lon }, hole.way[0]);
   user_position.x = xy.x;
   user_position.y = xy.y;
   user_position.last_time = getTime();
   let new_distance = Math.round(distance(xy, hole.nodesXY[hole.nodesXY.length - 1]) * 1.093613); //TODO meters later
-  console.log(new_distance);
+  //console.log(new_distance);
   layout.measyardage.label = (new_distance < 999) ? new_distance : "---";
 
   g.clear();
@@ -169,11 +181,12 @@ Bangle.on('swipe', function (direction) {
 
 Bangle.on('GPS', (fix) => {
   if (isNaN(fix.lat)) return;
-  console.log(fix.hdop * 5); //precision
+  //console.log(fix.hdop * 5); //precision
   user_position.fix = true;
   user_position.lat = fix.lat;
   user_position.lon = fix.lon;
   updateDistanceToHole();
+  drawUser();
 });
 
 // The layout, referencing the custom renderer
