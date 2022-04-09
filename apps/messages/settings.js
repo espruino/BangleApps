@@ -7,6 +7,7 @@
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
+    if (settings.flash===undefined) settings.flash=true;
     return settings;
   }
   function updateSetting(setting, value) {
@@ -15,18 +16,10 @@
     require('Storage').writeJSON("messages.settings.json", settings);
   }
 
-  var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
-    /*LANG*/'Vibrate': {
-      value: Math.max(0,vibPatterns.indexOf(settings().vibrate)),
-      min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
-      onchange: v => {
-        updateSetting("vibrate", vibPatterns[v]);
-      }
-    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v)),
     /*LANG*/'Repeat': {
       value: settings().repeat,
       min: 0, max: 10,
@@ -54,6 +47,11 @@
       value: !!settings().unlockWatch,
       format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("unlockWatch", v)
+    },
+    /*LANG*/'Flash Icon': {
+      value: !!settings().flash,
+      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
+      onchange: v => updateSetting("flash", v)
     },
   };
   E.showMenu(mainmenu);

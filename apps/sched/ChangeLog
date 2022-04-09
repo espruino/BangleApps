@@ -1,0 +1,3 @@
+0.01: New App!
+0.02: Fix scheduling of other alarms if there is a pending alarm from the past (fix #1667)
+0.03: Fix `getTimeToAlarm` for a timer already used at same day, don't set `last` for timers. 

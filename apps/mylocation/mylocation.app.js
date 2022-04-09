@@ -61,7 +61,7 @@ function showMainMenu() {
       min: 0, max: locations.length - 1,
       format: v => locations[v],
       onchange: v => {
-        if (v != 6) {
+        if (locations[v] !== "???") {
           s.location = locations[v];
           s.lat = lats[v];
           s.lon = lons[v];

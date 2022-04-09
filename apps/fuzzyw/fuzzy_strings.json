@@ -1,0 +1,186 @@
+{
+  "en_GB":{
+    "hours":[
+      "midnight", "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten", "eleven",
+      "twelve", "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten", "eleven"
+    ],
+    "minutes":[
+      "*$1 o'clock",
+      "five past *$1",
+      "ten past *$1",
+      "quarter past *$1",
+      "twenty past *$1",
+      "twenty five past *$1",
+      "half past *$1",
+      "twenty five to *$2",
+      "twenty to *$2",
+      "quarter to *$2",
+      "ten to *$2",
+      "five to *$2"
+    ],
+    "text_scale":3.5
+  },
+  "en_US":{
+    "hours":[
+      "midnight", "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten", "eleven",
+      "twelve", "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten", "eleven"
+    ],
+    "minutes":[
+      "*$1 o'clock",
+      "five after *$1",
+      "ten after *$1",
+      "quarter after *$1",
+      "twenty after *$1",
+      "twenty five after *$1",
+      "half past *$1",
+      "twenty five to *$2",
+      "twenty to *$2",
+      "quarter to *$2",
+      "ten to *$2",
+      "five to *$2"
+    ],
+    "text_scale":3.5
+  },
+  "es_ES":{
+    "hours":[
+      "doce", "una", "dos", "tres", "cuatro", "cinco",
+      "seis", "siete", "ocho", "nueve", "diez", "once",
+      "doce", "una", "dos", "tres", "cuatro", "cinco",
+      "seis", "siete", "ocho", "nueve", "diez", "once"
+    ],
+    "minutes":[
+      "*$1 en punto",
+      "*$1 y cinco",
+      "*$1 y diez",
+      "*$1 y cuarto",
+      "*$1 y veinte",
+      "*$1 y veinti- cinco",
+      "*$1 y media",
+      "*$2 menos veinti- cinco",
+      "*$2 menos veinte",
+      "*$2 menos cuarto",
+      "*$2 menos diez",
+      "*$2 menos cinco"
+    ],
+    "text_scale":3.5
+  },
+  "fr_FR":{
+    "hours":[
+      "douze", "une", "deux", "trois", "quatre", "cinq",
+      "six", "sept", "huit", "neuf", "dix", "onze",
+      "douze", "une", "deux", "trois", "quatre", "cinq",
+      "six", "sept", "huit", "neuf", "dix", "onze"
+    ],
+    "minutes":[
+      "*$1 heures",
+      "*$1 heures cinq",
+      "*$1 heures dix",
+      "*$1 heures et quart",
+      "*$1 heures vingt",
+      "*$1 heures vingt- cinq",
+      "*$1 heures et demie",
+      "*$2 moins vingt- cinq",
+      "*$2 heures moins vingt",
+      "*$2 moins le quart",
+      "*$2 heures moins dix",
+      "*$2 heures moins cinq"
+    ],
+    "text_scale":3.5
+  },
+  "no_NB":{
+    "hours":[
+      "tolv", "ett", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve",
+      "tolv", "ett", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve"
+    ],
+    "minutes":[
+      "klokka er *$1",
+      "fem over *$1",
+      "ti over *$1",
+      "kvart over *$1",
+      "ti på halv *$2",
+      "fem på halv *$2",
+      "halv *$2",
+      "fem over halv *$2",
+      "ti over halv *$2",
+      "kvart på *$2",
+      "ti på *$2",
+      "fem på *$2"
+    ],
+    "text_scale":3.5
+  },
+  "nn_NO":{
+    "hours":[
+      "tolv", "eitt", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve",
+      "tolv", "eitt", "to", "tre", "fire", "fem",
+      "seks", "sju", "åtte", "ni", "ti", "elleve"
+    ],
+    "minutes":[
+      "klokka er *$1",
+      "fem over *$1",
+      "ti over *$1",
+      "kvart over *$1",
+      "ti på halv *$2",
+      "fem på halv *$2",
+      "halv *$2",
+      "fem over halv *$2",
+      "ti over halv *$2",
+      "kvart på *$2",
+      "ti på *$2",
+      "fem på *$2"
+    ],
+    "text_scale":3.5
+  },
+  "sv_SE":{
+    "hours":[
+      "tolv", "ett", "två", "tre", "fyra", "fem",
+      "sex", "sju", "åtta", "nio", "tio", "elva",
+      "tolv", "ett", "två", "tre", "fyra", "fem",
+      "sex", "sju", "åtta", "nio", "tio", "elva"
+    ],
+    "minutes":[
+      "*$1",
+      "fem över *$1",
+      "tio över *$1",
+      "kvart över *$1",
+      "tjugo över *$1",
+      "fem i halv *$2",
+      "halv *$2",
+      "fem över halv *$2",
+      "tjugo i *$2",
+      "kvart i *$2",
+      "tio i *$2",
+      "fem i *$2"
+    ],
+    "text_scale":3.5
+  },
+  "de_DE":{
+    "hours":[
+      "zwölf", "eins", "zwei", "drei", "vier", "fünf",
+      "sechs", "sieben", "acht", "neun", "zehn", "elf",
+      "zwölf", "eins", "zwei", "drei", "vier", "fünf",
+      "sechs", "sieben", "acht", "neun", "zehn", "elf"
+    ],
+    "minutes":[
+      "*$1 uhr",
+      "fünf nach *$1",
+      "zehn nach *$1",
+      "viertel nach *$1",
+      "zwanzig nach *$1",
+      "fünf for halb *$2",
+      "halb *$2",
+      "fünf nach halb *$2",
+      "zwanzig vor *$2",
+      "viertel vor *$2",
+      "zehn vor *$2",
+      "fünf vor *$2"
+    ],
+    "text_scale":3.5
+  }
+}

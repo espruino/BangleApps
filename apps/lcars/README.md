@@ -3,7 +3,8 @@
 A simple LCARS inspired clock.
 Note: To display the steps, the wpedom app is required. To show weather data
 such as temperature, humidity or window you BangleJS must be connected
-with Gadgetbride and the weather app must be installed.
+with Gadgetbride and the weather app must be installed. To use the timer
+the "sched" app must be installed on your device.
 
 ## Control
  * Tap left / right to change between screens.
@@ -15,7 +16,7 @@ with Gadgetbride and the weather app must be installed.
  * Tab on left/right to switch between different screens.
  * Cusomizable data that is shown on screen 1 (steps, weather etc.)
  * Shows random and real images of planets.
- * Tap on top/bottom of screen 1 to activate an alarm.
+ * Tap on top/bottom of screen 1 to activate an alarm. Depends on widtmr.
  * The lower orange line indicates the battery level.
  * Display graphs (day or month) for steps + hrm on the second screen.
 
@@ -36,8 +37,9 @@ Access different screens via tap on the left/ right side of the screen
 ![](screenshot_1.png)
 ![](screenshot_2.png)
 
+## Creator
+- [David Peer](https://github.com/peerdavid)
 
 ## Contributors
-- [David Peer](https://github.com/peerdavid).
-- [Adam Schmalhofer](https://github.com/adamschmalhofer).
-- [Jon Warrington](https://github.com/BartokW).
+- [Adam Schmalhofer](https://github.com/adamschmalhofer)
+- [Jon Warrington](https://github.com/BartokW)
