@@ -2,7 +2,7 @@
   var settings = require("Storage").readJSON("gbalarms.json", 1) || {};
   E.showMenu({
     "" : { "title": "GB Alarms" },
-    "Vibrate": () => require("buzz_menu").pattern(settings.vibrate, v => settings.vibrate=v),
+    "Vibrate": require("buzz_menu").pattern(settings.vibrate, v => settings.vibrate=v),
     "Repeat": {
       value: settings.rp,
       format: v => v ? "Yes" : "No",
