@@ -1,4 +1,4 @@
-# App Name
+# Golf View
 
 This app leverages open source map data to give you a birds eye view of your golf game! See a preview of any hole as well as your realtime distance to the green and position on the hole.
 
