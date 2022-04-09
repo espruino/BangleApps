@@ -105,6 +105,7 @@ E.on('notify',msg=>{
     "io.robbie.HomeAssistant": "Home Assistant",
     "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
+    "net.superblock.Pushover": "Pushover",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
     "ph.telegra.Telegraph": "Telegram",
