@@ -48,7 +48,7 @@ function draw_compass(awa, aws, twa, tws) {
   g.clearRect(0, 24, g.getWidth()-1, g.getHeight()-1);
   fh = w*0.15;
   g.setColor(0, 0, 1).fillPoly(hullpoly);
-  g.setFontVector(fh).setColor(1, 1, 1);
+  g.setFontVector(fh).setColor(g.theme.fg);
   g.setFontAlign(0, 0, 0).drawString("0", cx, 24+fh/2);
   g.setFontAlign(0, 0, 1).drawString("90", g.getWidth()-12-fh, cy);
   g.setFontAlign(0, 0, 2).drawString("180", cx, g.getHeight()-fh/2);
@@ -64,7 +64,7 @@ function draw_compass(awa, aws, twa, tws) {
   if (tws>0) g.setColor(1, 0, 0).drawString(tws.toFixed(1), cx, cy+0.32*w);
   if (settings.truewind && typeof gps_course.spd!=='undefined') {
     spd = gps_course.spd/1.852;
-    g.setColor(1, 1, 1).setFont("7x11Numeric7Seg", w*0.03).setFontAlign(-1, 1, 0).drawString(spd.toFixed(1), 1, g.getHeight()-1);
+    g.setColor(g.theme.fg).setFont("7x11Numeric7Seg", w*0.03).setFontAlign(-1, 1, 0).drawString(spd.toFixed(1), 1, g.getHeight()-1);
   }
 }
 
