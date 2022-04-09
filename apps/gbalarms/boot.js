@@ -1,11 +1,5 @@
 (function() {
 
-  var settings = require("Storage").readJSON("gbalarms.json", 1) || {};
-  if (!settings.rp) settings.rp = true;
-  if (!settings.as) settings.as = true;
-  if (!settings.vibrate) settings.vibrate = "..";
-  require('Storage').writeJSON("gbalarms.json", settings);
-
 //convert GB DOW format to sched DOW format
 function convDow(x) {
   //if no DOW selected, set alarm to all DOW
@@ -20,6 +14,12 @@ function convDow(x) {
 
 global.GB = (event) => {
   if (event.t==="alarm") {
+    var settings = require("Storage").readJSON("gbalarms.json", 1) || {};
+    if (settings.rp == undefined) settings.rp = true;
+    if (settings.as == undefined) settings.as = true;
+    if (settings.vibrate == undefined) settings.vibrate = "..";
+    require('Storage').writeJSON("gbalarms.json", settings);
+
     //wipe existing GB alarms
     var gbalarms = require("sched").getAlarms().filter(a=>a.appid=="gbalarms");
     for (i = 0; i < gbalarms.length; i++) {
@@ -38,7 +38,7 @@ global.GB = (event) => {
         vibrate : settings.vibrate
       };
       require("sched").setAlarm(a.id, a);
-    }    
+    }
   }
   require("sched").reload();
 };
