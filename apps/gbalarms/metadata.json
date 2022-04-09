@@ -5,6 +5,7 @@
   "version": "0.01",
   "description": "Sync sched.json with Gadgetbridge alarms.",
   "icon": "app.png",
+  "type": "alarm",
   "tags": "system,gadgetbridge,alarm",
   "dependencies": {"scheduler":"type"},
   "supports": ["BANGLEJS","BANGLEJS2"],
