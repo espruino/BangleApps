@@ -132,11 +132,14 @@ function showAlarmMenu() {
     'New Timer': ()=>editTimer(-1)
   };
   alarms.forEach((alarm,idx)=>{
-    var txt; // a leading space is currently required (JS error in Espruino 2v12)
-    if (alarm.timer)
-      txt = "Timer"+" "+formatTime(alarm.timer);
-    else
-      txt = "Alarm"+" "+formatTime(alarm.t);
+    var type,txt; // a leading space is currently required (JS error in Espruino 2v12)
+    if (alarm.timer) {
+      type = /*LANG*/"Timer";
+      txt = " "+formatTime(alarm.timer);
+    } else {
+      type = /*LANG*/"Alarm";
+      txt = " "+formatTime(alarm.t);
+    }
     if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
     // rename duplicate alarms
     if (menu[type+txt]) {
