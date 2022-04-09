@@ -11,6 +11,7 @@
   "storage": [
     {"name":"noteify.app.js","url":"app.js"},
     {"name":"noteify.img","url":"app-icon.js","evaluate":true}
+    {"name":"noteify.wid.js","url":"widget.js"}
   ],
   "data": [{"name":"noteify.json"}],
   "dependencies": {"scheduler":"type","textinput":"type"},
