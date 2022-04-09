@@ -9,6 +9,7 @@
   "type": "clock",
   "tags": "clock,cli,command,bash,shell",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "allow_emulator": true,
   "storage": [
     {"name":"cliock.app.js","url":"app.js"},
