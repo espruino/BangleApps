@@ -1,4 +1,10 @@
 (function() {
+  
+  var settings = require("Storage").readJSON("gbalarms.json", 1) || {};
+  if (settings.rp == undefined) settings.rp = true;
+  if (settings.as == undefined) settings.as = true;
+  if (settings.vibrate == undefined) settings.vibrate = "..";
+  require('Storage').writeJSON("gbalarms.json", settings);
 
 //convert GB DOW format to sched DOW format
 function convDow(x) {
@@ -14,11 +20,7 @@ function convDow(x) {
 
 global.GB = (event) => {
   if (event.t==="alarm") {
-    var settings = require("Storage").readJSON("gbalarms.json", 1) || {};
-    if (settings.rp == undefined) settings.rp = true;
-    if (settings.as == undefined) settings.as = true;
-    if (settings.vibrate == undefined) settings.vibrate = "..";
-    require('Storage').writeJSON("gbalarms.json", settings);
+    settings = require("Storage").readJSON("gbalarms.json", 1) || {};
 
     //wipe existing GB alarms
     var gbalarms = require("sched").getAlarms().filter(a=>a.appid=="gbalarms");
