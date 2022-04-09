@@ -21,6 +21,7 @@ is chosen if there isn't much message text, but this specifies the smallest the 
 it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
+* `Flash Icon` - Toggle flashing of the widget icon.
 
 ## New Messages
 

@@ -1,36 +1,43 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
-/*alarms = [
-  { on : true,
-    hr : 6.5, // hours + minutes/60
-    msg : "Eat chocolate",
-    last : 0, // last day of the month we alarmed on - so we don't alarm twice in one day!
-    rp : true, // repeat
-    as : false, // auto snooze
-    timer : 5, // OPTIONAL - if set, this is a timer and it's the time in minutes
-  }
-];*/
+var alarms = require("sched").getAlarms();
+// An array of alarm objects (see sched/README.md)
+
+// time in ms -> { hrs, mins }
+function decodeTime(t) {
+  t = 0|t; // sanitise
+  var hrs = 0|(t/3600000);
+  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
+}
+
+// time in { hrs, mins } -> ms
+function encodeTime(o) {
+  return o.hrs*3600000 + o.mins*60000;
+}
 
 function formatTime(t) {
-  var hrs = 0|t;
-  var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+  var o = decodeTime(t);
+  return o.hrs+":"+("0"+o.mins).substr(-2);
 }
 
-function formatMins(t) {
-  mins = (0|t)%60;
-  hrs = 0|(t/60);
-  return hrs+":"+("0"+mins).substr(-2);
-}
-
-function getCurrentHr() {
+function getCurrentTime() {
   var time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
+  return (
+    time.getHours() * 3600000 +
+    time.getMinutes() * 60000 +
+    time.getSeconds() * 1000
+  );
+}
+
+function saveAndReload() {
+  require("sched").setAlarms(alarms);
+  require("sched").reload();
 }
 
 function showMainMenu() {
+  // Timer img "\0"+atob("DhKBAP////MDDAwwMGGBzgPwB4AeAPwHOBhgwMMzDez////w")
+  // Alarm img "\0"+atob("FBSBAABgA4YcMPDGP8Zn/mx/48//PP/zD/8A//AP/wD/8A//AP/wH/+D//w//8AAAADwAAYA")
   const menu = {
     '': { 'title': 'Alarm/Timer' },
     /*LANG*/'< Back' : ()=>{load();},
@@ -38,140 +45,161 @@ function showMainMenu() {
     /*LANG*/'New Timer': ()=>editTimer(-1)
   };
   alarms.forEach((alarm,idx)=>{
+    var type,txt; // a leading space is currently required (JS error in Espruino 2v12)
     if (alarm.timer) {
-      txt = /*LANG*/"TIMER "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatMins(alarm.timer);
+      type = /*LANG*/"Timer";
+      txt = " "+formatTime(alarm.timer);
     } else {
-      txt = /*LANG*/"ALARM "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatTime(alarm.hr);
-      if (alarm.rp) txt += /*LANG*/" (repeat)";
+      type = /*LANG*/"Alarm";
+      txt = " "+formatTime(alarm.t);
     }
-    menu[txt] = function() {
-      if (alarm.timer) editTimer(idx);
-      else editAlarm(idx);
+    if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
+    // rename duplicate alarms
+    if (menu[type+txt]) {
+      var n = 2;
+      while (menu[type+" "+n+txt]) n++;
+      txt = type+" "+n+txt;
+    } else txt = type+txt;
+    // add to menu
+    menu[txt] = {
+      value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
+      onchange : function() {
+        if (alarm.timer) editTimer(idx, alarm);
+        else editAlarm(idx, alarm);
+      }
     };
   });
-
   if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
 }
 
-function editAlarm(alarmIndex) {
+function editDOW(dow, onchange) {
+  const menu = {
+    '': { 'title': /*LANG*/'Days of Week' },
+    '< Back' : () => onchange(dow)
+  };
+  for (var i = 0; i < 7; i++) (i => {
+    var dayOfWeek = require("locale").dow({ getDay: () => i });
+    menu[dayOfWeek] = {
+      value: !!(dow&(1<<i)),
+      format: v => v ? "Yes" : "No",
+      onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
+    };
+  })(i);
+  E.showMenu(menu);
+}
+
+function editAlarm(alarmIndex, alarm) {
   var newAlarm = alarmIndex<0;
-  var hrs = 12;
-  var mins = 0;
-  var en = true;
-  var repeat = true;
-  var as = false;
-  if (!newAlarm) {
-    var a = alarms[alarmIndex];
-    hrs = 0|a.hr;
-    mins = Math.round((a.hr-hrs)*60);
-    en = a.on;
-    repeat = a.rp;
-    as = a.as;
+  var a = {
+    t : 12*3600000, // 12 o clock default
+    on : true,
+    rp : false, // repeat not the default
+    as : false,
+    dow : 0b1111111,
+    last : 0,
+    vibrate : ".."
   }
+  if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
+  if (alarm) Object.assign(a,alarm);
+  var t = decodeTime(a.t);
+
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
-    /*LANG*/'< Back' : showMainMenu,
+    '< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
-      value: hrs, min : 0, max : 23, wrap : true,
-      onchange: v => hrs=v
+      value: t.hrs, min : 0, max : 23, wrap : true,
+      onchange: v => t.hrs=v
     },
     /*LANG*/'Minutes': {
-      value: mins, min : 0, max : 59, wrap : true,
-      onchange: v => mins=v
+      value: t.mins, min : 0, max : 59, wrap : true,
+      onchange: v => t.mins=v
     },
     /*LANG*/'Enabled': {
-      value: en,
+      value: a.on,
       format: v=>v?"On":"Off",
-      onchange: v=>en=v
+      onchange: v=>a.on=v
     },
     /*LANG*/'Repeat': {
-      value: en,
+      value: a.rp,
       format: v=>v?"Yes":"No",
-      onchange: v=>repeat=v
+      onchange: v=>a.rp=v
     },
+    /*LANG*/'Days': {
+      value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
+      onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
+    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     /*LANG*/'Auto snooze': {
-      value: as,
+      value: a.as,
       format: v=>v?"Yes":"No",
-      onchange: v=>as=v
+      onchange: v=>a.as=v
     }
   };
-  function getAlarm() {
-    var hr = hrs+(mins/60);
-    var day = 0;
-    // If alarm is for tomorrow not today (eg, in the past), set day
-    if (hr < getCurrentHr())
-      day = (new Date()).getDate();
-    // Save alarm
-    return {
-      on : en, hr : hr,
-      last : day, rp : repeat, as: as
-    };
-  }
-  menu[/*LANG*/"> Save"] = function() {
-    if (newAlarm) alarms.push(getAlarm());
-    else alarms[alarmIndex] = getAlarm();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
+  menu[/*LANG*/"Save"] = function() {
+    a.t = encodeTime(t);
+    a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
+    if (newAlarm) alarms.push(a);
+    else alarms[alarmIndex] = a;
+    saveAndReload();
     showMainMenu();
   };
   if (!newAlarm) {
-    menu[/*LANG*/"> Delete"] = function() {
+    menu[/*LANG*/"Delete"] = function() {
       alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
+      saveAndReload();
       showMainMenu();
     };
   }
   return E.showMenu(menu);
 }
 
-function editTimer(alarmIndex) {
+function editTimer(alarmIndex, alarm) {
   var newAlarm = alarmIndex<0;
-  var hrs = 0;
-  var mins = 5;
-  var en = true;
-  if (!newAlarm) {
-    var a = alarms[alarmIndex];
-    mins = (0|a.timer)%60;
-    hrs = 0|(a.timer/60);
-    en = a.on;
+  var a = {
+    timer : 5*60*1000, // 5 minutes
+    on : true,
+    rp : false,
+    as : false,
+    dow : 0b1111111,
+    last : 0,
+    vibrate : ".."
   }
+  if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
+  if (alarm) Object.assign(a,alarm);
+  var t = decodeTime(a.timer);
+
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
+    '< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
-      value: hrs, min : 0, max : 23, wrap : true,
-      onchange: v => hrs=v
+      value: t.hrs, min : 0, max : 23, wrap : true,
+      onchange: v => t.hrs=v
     },
     /*LANG*/'Minutes': {
-      value: mins, min : 0, max : 59, wrap : true,
-      onchange: v => mins=v
+      value: t.mins, min : 0, max : 59, wrap : true,
+      onchange: v => t.mins=v
     },
     /*LANG*/'Enabled': {
-      value: en,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
-      onchange: v=>en=v
-    }
+      value: a.on,
+      format: v=>v?"On":"Off",
+      onchange: v=>a.on=v
+    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
-  function getTimer() {
-    var d = new Date(Date.now() + ((hrs*60)+mins)*60000);
-    var hr = d.getHours() + (d.getMinutes()/60) + (d.getSeconds()/3600);
-    // Save alarm
-    return {
-      on : en,
-      timer : (hrs*60)+mins,
-      hr : hr,
-      rp : false, as: false
-    };
-  }
-  menu["> Save"] = function() {
-    if (newAlarm) alarms.push(getTimer());
-    else alarms[alarmIndex] = getTimer();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
+  menu[/*LANG*/"Save"] = function() {
+    a.timer = encodeTime(t);
+    a.t = getCurrentTime() + a.timer;
+    a.last = 0;
+    if (newAlarm) alarms.push(a);
+    else alarms[alarmIndex] = a;
+    saveAndReload();
     showMainMenu();
   };
   if (!newAlarm) {
-    menu["> Delete"] = function() {
+    menu[/*LANG*/"Delete"] = function() {
       alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
+      saveAndReload();
       showMainMenu();
     };
   }

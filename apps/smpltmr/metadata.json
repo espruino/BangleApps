@@ -1,0 +1,17 @@
+{
+  "id": "smpltmr",
+  "name": "Simple Timer",
+  "shortName": "Simple Timer",
+  "version": "0.01",
+  "description": "A very simple app to start a timer.",
+  "icon": "app.png",
+  "tags": "tool",
+  "dependencies": {"scheduler":"type"},
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}, {"url": "screenshot_2.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"smpltmr.app.js","url":"app.js"},
+    {"name":"smpltmr.img","url":"app-icon.js","evaluate":true}
+  ]
+}

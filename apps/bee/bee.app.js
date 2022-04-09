@@ -1,7 +1,7 @@
 
 const S = require("Storage");
+const words = S.read("bee.words");
 var letters = [];
-var letterIdx = [];
 
 var centers = [];
 
@@ -12,28 +12,17 @@ var score = 0;
 
 var intervalID = -1;
 
-function prepareLetterIdx () {
+function biSearch(w, ws, start, end, count) {
   "compile"
-  var li = [0];
-  if (S.read("bee_lindex.json")!==undefined) li = S.readJSON("bee_lindex.json"); // check for cached index
-  else {
-    for (var i=1; i<26; ++i) {
-      var prefix = String.fromCharCode(97+i%26);
-      console.log(prefix);
-      li.push(S.read('bee.words').indexOf("\n"+prefix, li[i-1])+1);
-    }
-    li.push(S.read('bee.words').length);
-    S.writeJSON("bee_lindex.json", li);
-  }
-  for (var i=0; i<26; ++i) letterIdx[i] = S.read("bee.words", li[i], li[i+1]-li[i]);
-}
-
-function findWord (w) {
-  "compile"
-  var ci = w.charCodeAt(0)-97;
-  var f = letterIdx[ci].indexOf(w);
-  if (f>=0 && letterIdx[ci][f+w.length]=="\n") return true;
-  return false;
+  if (start>end-w.legnth || count--<=0) return ws.substr(start, end-start).indexOf("\n"+w+"\n");
+  var mid = (end+start)>>1;
+  if (ws[mid-1]==="\n") --mid;
+  else while (mid<end && ws[mid]!=="\n") mid++;
+  var i = 0;
+  while (i<w.length && ws[mid+i+1]==w[i]) ++i;
+  if (i==w.length && ws[mid+i+1]==="\n") return mid+1;
+  if (i==w.length || w[i]<ws[mid+i+1]) return biSearch(w, ws, start, mid+1, count);
+  if (w[i]>ws[mid+i+1]) return biSearch(w, ws, mid+1, end, count);
 }
 
 function isPangram(w) {
@@ -45,8 +34,9 @@ function isPangram(w) {
 function checkWord (w) {
   if (w.indexOf(String.fromCharCode(97+letters[0]))==-1) return false; // does it contain central letter?
   if (foundWords.indexOf(w)>=0) return false; // already found
-  if (findWord(w)) {
+  if (biSearch(w, words, 0, words.length, 20)>-1) {
     foundWords.push(w);
+    foundWords.sort();
     if (w.length==4) score++;
     else score += w.length;
     if (isPangram(w)) score += 7;
@@ -91,13 +81,12 @@ function pickLetters() {
   var ltrs = "";
   while (ltrs.length!==7) {
     ltrs = [];
-    var j = Math.floor(26*Math.random());
-    var i = Math.floor((letterIdx[j].length-10)*Math.random());
-    while (letterIdx[j][i]!="\n" && i<letterIdx[j].length) ++i;
-    if (i<letterIdx[j].length-1) {
+    var i = Math.floor((words.length-10)*Math.random());
+    while (words[i]!="\n" && i<words.length) ++i;
+    if (i<words.length-1) {
       ++i;
-      while (letterIdx[j][i]!=="\n") {
-        var c = letterIdx[j][i];
+      while (words[i]!=="\n") {
+        var c = words[i];
         if (ltrs.indexOf(c)===-1) ltrs += c;
         ++i;
       }
@@ -185,7 +174,6 @@ function showWordList() {
   });
 }
 
-prepareLetterIdx();
 pickLetters();
 drawHive();
 drawScore();

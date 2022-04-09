@@ -1,0 +1,18 @@
+{
+  "id": "90sclk",
+  "name": "90s Clock",
+  "version": "0.02",
+  "description": "A 90s style watch-face",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot_2.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"90sclk.app.js","url":"app.js"},
+    {"name":"90sclk.img","url":"app-icon.js","evaluate":true},
+    {"name":"90sclk.settings.js","url":"settings.js"}
+  ]
+}
