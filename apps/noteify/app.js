@@ -138,6 +138,13 @@ function showAlarmMenu() {
     else
       txt = "Alarm"+" "+formatTime(alarm.t);
     if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
+    // rename duplicate alarms
+    if (menu[type+txt]) {
+      var n = 2;
+      while (menu[type+" "+n+txt]) n++;
+      txt = type+" "+n+txt;
+    } else txt = type+txt;
+    // add to menu
     menu[txt] = {
       value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
       onchange : function() {
@@ -218,8 +225,7 @@ function editAlarm(alarmIndex, alarm) {
   };
   menu["Save"] = function() {
     a.t = encodeTime(t);
-    if (a.t < getCurrentTime())
-      a.day = (new Date()).getDate();
+    a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
