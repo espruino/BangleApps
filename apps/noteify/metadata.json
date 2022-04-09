@@ -17,7 +17,6 @@
   "dependencies": {"scheduler":"type","textinput":"type"},
   "screenshots": [
   {"url": "menu.png"},
-  {"url": "keypad.png"},
   {"url": "note.png"},
   {"url": "timer-alert.png"}
   ]
