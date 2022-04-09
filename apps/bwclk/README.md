@@ -1,4 +1,4 @@
-# Black & White clock
+# BW Clock
 
 ![](screenshot.png)
 

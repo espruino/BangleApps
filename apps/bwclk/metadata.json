@@ -1,8 +1,8 @@
 {
   "id": "bwclk",
-  "name": "BlackWhite Clock",
-  "version": "0.05",
-  "description": "Black and white clock.",
+  "name": "BW Clock",
+  "version": "0.06",
+  "description": "BW Clock.",
   "readme": "README.md",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot_2.png"}],

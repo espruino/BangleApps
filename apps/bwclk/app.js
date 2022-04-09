@@ -250,7 +250,7 @@ function draw() {
   g.fillRect(0,y,W,H);
 
   // Draw date
-  y -= settings.fullscreen ? 5 : 0;
+  y -= settings.fullscreen ? 10 : 0;
   var date = new Date();
   g.setColor(g.theme.fg);
   g.setFontAlign(1,1);
@@ -268,7 +268,7 @@ function draw() {
   g.setColor(g.theme.bg);
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
-  y += settings.fullscreen ? 20 : 10;
+  y += settings.fullscreen ? 25 : 10;
 
   if(showInfo == 0){
     y += 8;
