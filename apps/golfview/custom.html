@@ -8,10 +8,28 @@
 </head>
 
 <body>
-  <p id="status">No course</p>
   <div>
-    <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
-    <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+    <input type="text" placeholder="Course ID" id="course_id">
+    <button type="button" onclick="courseSearch();">Search</button>
+    <p id="status"></p>
+    <div>
+      <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
+      <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+    </div>
+    <p>A course needs a few things to be parsed correctly by this tool.</p>
+    <ul>
+      <li>See official mapping guidelines <a
+          href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
+      <li>All holes and features must be within the target course's area.</li>
+      <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
+      <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features should
+        list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
+      <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
+      <li>For any mapping assistance or issues, please file in the <a
+          href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
+          repo</a></li>
+    </ul>
+    <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
   </div>
 
   <script src="../../core/lib/customize.js"></script>
@@ -19,9 +37,14 @@
 
   <script>
     const url = "https://overpass-api.de/api/interpreter";
-    //let query = `[bbox:37.4829,-122.8694,39.7110,-120.6215][out:json][timeout:5];way["name"="El Macero Country Club"];map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
-    let query = `[bbox:37.4829,-122.8694,39.7110,-120.6215][out:json][timeout:5];way["name"="Davis Golf Course"];map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+    let query = `[out:json][timeout:5];way(25447898);map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
     let course_input = null;
+
+    function courseSearch() {
+      let inputVal = document.getElementById("course_id").value;
+      query = `[out:json][timeout:5];way(${inputVal});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+      doQuery();
+    }
 
     function processFeatures(course_verbose) {
       let course_processed = {
@@ -104,19 +127,25 @@
     });
 
     // download info from the course
-    $.post(url, query, function (result) {
-      course_input = result;
-      console.log(course_input);
-      out = processFeatures(course_input.elements);
-      console.log(out);
-      courses.push({
-        name: "golfcourse-" + course_name + ".json",
-        content: JSON.stringify(out),
-      });
-      $('#status').text("Course retrieved!");
-      $('#upload').attr("disabled", false);
-      $('#download').attr("disabled", false);
-    })
+    function doQuery() {
+      $.post(url, query, function (result) {
+        if (result.elements.length === 0) {
+          $('#status').text("Course not found!");
+          return;
+        }
+        course_input = result;
+        console.log(course_input);
+        out = processFeatures(course_input.elements);
+        console.log(out);
+        courses.push({
+          name: "golfcourse-" + course_name + ".json",
+          content: JSON.stringify(out),
+        });
+        $('#status').text("Course retrieved!");
+        $('#upload').attr("disabled", false);
+        $('#download').attr("disabled", false);
+      })
+    }
 
   </script>
 </body>
