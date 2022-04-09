@@ -4,7 +4,7 @@ const EARTHRADIUS = 6371000; //km
 function radians(a) {
   return a * Math.PI / 180;
 }
-position
+
 function degrees(a) {
   let d = a * 180 / Math.PI;
   return (d + 360) % 360;
