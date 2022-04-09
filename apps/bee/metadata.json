@@ -2,7 +2,7 @@
   "name": "Bee",
   "shortName":"Bee",
   "icon": "app.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Spelling bee",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
@@ -10,7 +10,6 @@
   "storage": [
     {"name":"bee.app.js","url":"bee.app.js"},
     {"name":"bee.words","url":"bee_words_2of12"},
-    {"name":"bee_lindex.json","url":"bee_lindex.json"},
     {"name":"bee.img","url":"app-icon.js","evaluate":true}
   ]
 }
