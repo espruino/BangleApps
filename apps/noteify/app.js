@@ -187,6 +187,10 @@ function editAlarm(alarmIndex, alarm) {
   const menu = {
     '': { 'title': alarmTitle },
     '< Back' : () => showAlarmMenu(),
+    'Days': {
+      value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
+      onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
+    },
     'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -204,10 +208,6 @@ function editAlarm(alarmIndex, alarm) {
       value: a.rp,
       format: v=>v?"Yes":"No",
       onchange: v=>a.rp=v
-    },
-    'Days': {
-      value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
     },
     'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     'Auto snooze': {
