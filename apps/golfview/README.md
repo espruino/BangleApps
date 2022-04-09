@@ -27,3 +27,7 @@ Swipe to change holes and tap to see a green closeup.
 ## Requests/Creator
 
 [Jason Dekarske](https://github.com/jdekarske)
+
+## Attribution
+
+[© OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
