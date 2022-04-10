@@ -29,7 +29,7 @@ global.GB = (event) => {
     }
     for (j = 0; j < event.d.length; j++) {
       var a = {
-        id : "gb"+j,
+//        id : "gb"+j,
         appid : "gbalarms",
         on : true,
         t : event.d[j].h * 3600000 + event.d[j].m * 60000,
@@ -41,8 +41,8 @@ global.GB = (event) => {
       };
       require("sched").setAlarm(a.id, a);
     }
+    require("sched").reload();
   }
-  require("sched").reload();
 };
 
 })();
