@@ -8,5 +8,6 @@
   "tags": "app",
   "storage": [
     {"name":"testkeyboard.app.js","url":"app.js"},
+    {"name":"testkeyboard.img","url":"app-icon.js","evaluate":true}
   ]
 }
