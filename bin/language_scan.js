@@ -1,12 +1,71 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env node
 /* Scans for strings that may be in English in each app, and
 outputs a list of strings that have been found.
 
 See https://github.com/espruino/BangleApps/issues/1311
-
-If you want to auto-add new string (with *only english text*), set the
-environment variable AUTOREFRESH.
 */
+
+let refresh = false;
+
+function handleCliParameters ()
+{
+    let usage = "USAGE: language_scan.js [options]";
+    let die = function (message) {
+        console.log(usage);
+        console.log(message);
+        process.exit(3);
+    };
+    let hadTURL = false,
+        hadDEEPL = false;
+    for(let i = 2; i < process.argv.length; i++)
+    {
+        const param = process.argv[i];
+        switch(param)
+        {
+            case '-r':
+            case '--refresh':
+                refresh = true;
+                break;
+            case '--deepl':
+                i++;
+                let KEY = process.argv[i];
+                if(KEY === '' || KEY === null || KEY === undefined)
+                {
+                    die('--deepl requires a parameter: the API key to use');
+                }
+                process.env.DEEPL = KEY;
+                hadDEEPL = true;
+                break;
+            case '--turl':
+                i++;
+                let URL = process.argv[i];
+                if(URL === '' || URL === null || URL === undefined)
+                {
+                    die('--turl requires a parameter: the URL to use');
+                }
+                process.env.TURL = URL;
+                hadTURL = true;
+                break;
+            case '-h':
+            case '--help':
+                console.log(usage+"\n");
+                console.log("Parameters:");
+                console.log("  -h, --help       Output this help text and exit");
+                console.log("  -r, --refresh    Auto-add new strings into lang/*.json");
+                console.log('      --deepl KEY  Enable DEEPL as auto-translation engine and');
+                console.log('                   use KEY as its API key. You also need to provide --turl');
+                console.log('      --turl URL   In combination with --deepl, use URL as the API base URL');
+                process.exit(0);
+            default:
+                die("Unknown parameter: "+param);
+        }
+    }
+    if((hadTURL !== false || hadDEEPL !== false) && hadTURL !== hadDEEPL)
+    {
+        die("Use of deepl requires both a --deepl API key and --turl URL");
+    }
+}
+handleCliParameters();
 
 let translate = false;
 if (process.env.DEEPL) {
@@ -237,7 +296,7 @@ for (let language of languages) {
                 translations.GLOBAL[translationItem.str] = translation;
                 resolve()
             }))
-          } else if(process.env.AUTOREFRESH && !translate) {
+          } else if(refresh && !translate) {
             translationPromises.push(new Promise(async (resolve) => {
                 translations.GLOBAL[translationItem.str] = translationItem.str;
                 resolve()
