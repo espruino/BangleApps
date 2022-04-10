@@ -4,7 +4,6 @@
   "version": "0.01",
   "description": "Write notes using an onscreen keyboard and use them as custom messages for alarms or timers.",
   "icon": "app.png",
-  "allow_emulator": true,
   "tags": "tool,alarm",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
