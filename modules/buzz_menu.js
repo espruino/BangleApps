@@ -7,6 +7,7 @@ exports.pattern = function(value, callback) {
     min: 0, max: vibPatterns.length,
     format: v => vibPatterns[v]||/*LANG*/"Off",
     onchange: v => {
+      require("buzz").pattern(vibPatterns[v]);
       callback(vibPatterns[v]);
     }
   };
