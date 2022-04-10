@@ -1,0 +1,11 @@
+{ "id": "testkeyboard",
+  "name": "testkeyboard",
+  "version":"0.01",
+  "description": "Keyboard Test",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "dependencies": {"textinput":"type"},
+  "tags": "app",
+  "storage": [
+    {"name":"testkeyboard.app.js","url":"app.js"},
+  ]
+}
