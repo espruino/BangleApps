@@ -1,7 +1,7 @@
 /* This rewrites boot0.js based on current settings. If settings changed then it
 recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
-E.showMessage("Updating boot0...");
+E.showMessage(/*LANG*/"Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 var boot = "", bootPost = "";
@@ -209,7 +209,7 @@ delete bootPost;
 delete bootFiles;
 delete fileSize;
 delete fileOffset;
-E.showMessage("Reloading...");
+E.showMessage(/*LANG*/"Reloading...");
 eval(require('Storage').read('.boot0'));
 // .bootcde should be run automatically after if required, since
 // we normally get called automatically from '.boot0'
