@@ -5,6 +5,8 @@ outputs a list of strings that have been found.
 See https://github.com/espruino/BangleApps/issues/1311
 */
 
+var childProcess = require('child_process');
+
 let refresh = false;
 
 function handleCliParameters ()
@@ -125,6 +127,14 @@ try {
   appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
 } catch (e) {
   ERROR("apps.json not found");
+}
+if (appsFile.indexOf("---") === 0 && fs.existsSync(BASEDIR+"bin/create_apps_json.sh"))
+{
+    console.log("apps.json has not been generated, running bin/create_apps_json.sh to build it...");
+    childProcess.execFileSync(BASEDIR+'bin/create_apps_json.sh',[],{
+        stdio: 'inherit'
+    });
+  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
 }
 try{
   apps = JSON.parse(appsFile);
