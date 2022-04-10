@@ -2,6 +2,7 @@
   "name": "testkeyboard",
   "version":"0.01",
   "description": "Keyboard Test",
+  "icon": "app.png",
   "supports" : ["BANGLEJS","BANGLEJS2"],
   "dependencies": {"textinput":"type"},
   "tags": "app",
