@@ -34,6 +34,7 @@
   pattern.forEach((a, idx) => {
     vibMenu[pattern[idx]] = function() {
       settings.vibrate = a;
+      require("buzz").pattern(a);
       showMainMenu();
     };
   });
