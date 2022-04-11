@@ -4,7 +4,9 @@ Graphics.prototype.setFont16x32N = function() {
   ), "0".charCodeAt(0), 16, 32);
 };
 
-Bangle.loadWidgets();
+Bangle.setUI("clock"); // set UI first, so widgets know about Bangle.CLOCK
+Bangle.loadWidgets(); // load widgets, so Bangle.appRect knows about them
+
 const r1 = 84, // inner radius
   r3 = Math.min(Bangle.appRect.w/2, Bangle.appRect.h/2), // outer radius
   r2 = (r1*3+r3*2)/5,
@@ -99,7 +101,6 @@ function draw() {
 }
 g.clear();
 Bangle.drawWidgets();
-Bangle.setUI("clock");
 Bangle.on("lcdPower", on => {
   if (timeOut) {
     clearTimeout(timeOut);
