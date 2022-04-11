@@ -18,3 +18,4 @@
 0.18: Fullscreen mode can now be enabled or disabled in the settings.
 0.19: Alarms can not go bigger than 100.
 0.20: Use alarm for alarm functionality instead of own implementation.
+0.21: Add custom theming.
