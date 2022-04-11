@@ -1,4 +1,3 @@
-//g.setTheme({fg : 0xFFFF,bg : 0,fg2 : 0xFFFF,bg2 : 0x0007,fgH : 0xFFFF,bgH : 0x02F7,dark : true});
 var blueImg = {
   width : 93, height : 145, bpp : 2,
   transparent : 1,
