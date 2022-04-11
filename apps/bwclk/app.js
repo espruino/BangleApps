@@ -252,17 +252,26 @@ function draw() {
   // Draw date
   y -= settings.fullscreen ? 8 : 0;
   var date = new Date();
-  g.setColor(g.theme.fg);
-  g.setFontAlign(1,1);
-  g.setMediumFont();
   var dateStr = date.getDate();
   dateStr = ("0" + dateStr).substr(-2);
-  g.drawString(dateStr, W/2-1, y+4);
+  g.setMediumFont();  // Needed to compute the width correctly
+  var dateW = g.stringWidth(dateStr);
 
   g.setSmallFont();
+  var dayStr = locale.dow(date, true);
+  var monthStr = locale.month(date, 1);
+  var dayW = Math.max(g.stringWidth(dayStr), g.stringWidth(monthStr));
+  var fullDateW = dateW + 10 + dayW;
+
   g.setFontAlign(-1,1);
-  g.drawString(locale.dow(date, true), W/2 + 10, y-23);
-  g.drawString(locale.month(date, 1), W/2 + 10, y+1);
+  g.setMediumFont();
+  g.setColor(g.theme.fg);
+  g.drawString(dateStr, W/2 - fullDateW / 2, y+4);
+
+  g.setSmallFont();
+  g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+4);
+  g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
+
 
   // Draw time
   g.setColor(g.theme.bg);
