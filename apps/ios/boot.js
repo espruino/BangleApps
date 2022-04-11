@@ -108,6 +108,7 @@ E.on('notify',msg=>{
     "net.superblock.Pushover": "Pushover",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
+    "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
     "tv.twitch": "Twitch",
 
