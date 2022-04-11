@@ -10,6 +10,12 @@
     dataRow3: "Temp",
     speed: "kph",
     fullscreen: false,
+    themeColor1: "Orange",
+    themeColor1BG: "#FF9900",
+    themeColor2: "Purple",
+    themeColor2BG: "#FF00DC",
+    themeColor3: "Cyan",
+    themeColor3BG: "#0094FF",
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -20,8 +26,11 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
+  
   var dataOptions = ["Steps", "Battery", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
+  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White'];
+  var bg_code = ['#0f0','#FF9900','#0094FF','#FF00DC','#f00','#00f','#ffef00','#FFFFFF'];
 
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
@@ -67,6 +76,36 @@
       format: v => speedOptions[v],
       onchange: v => {
         settings.speed = speedOptions[v];
+        save();
+      },
+    },
+    'Theme Color 1': {
+      value: 0 | color_options.indexOf(settings.themeColor1),
+      min: 0, max: 7,
+      format: v => color_options[v],
+      onchange: v => {
+        settings.themeColor1 = color_options[v];
+        settings.themeColor1BG = bg_code[v];
+        save();
+      },
+    },
+    'Theme Color 2': {
+      value: 0 | color_options.indexOf(settings.themeColor2),
+      min: 0, max: 7,
+      format: v => color_options[v],
+      onchange: v => {
+        settings.themeColor2 = color_options[v];
+        settings.themeColor2BG = bg_code[v];
+        save();
+      },
+    },
+    'Theme Color 3': {
+      value: 0 | color_options.indexOf(settings.themeColor3),
+      min: 0, max: 7,
+      format: v => color_options[v],
+      onchange: v => {
+        settings.themeColor3 = color_options[v];
+        settings.themeColor3BG = bg_code[v];
         save();
       },
     }
