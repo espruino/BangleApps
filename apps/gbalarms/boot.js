@@ -42,14 +42,14 @@ global.GB = (event) => {
       var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < getCurrentTime()) ? (new Date()).getDate() : 0;
       var a = {
         id : "gb"+j,
-        appid : "gbalarms"
+        appid : "gbalarms",
         on : true,
         t : event.d[j].h * 3600000 + event.d[j].m * 60000,
         dow : convDow(event.d[j].rep),
         last : last,
         rp : settings.rp,
         as : settings.as,
-        vibrate : settings.vibrate,
+        vibrate : settings.vibrate
       };
       alarms.push(a);
     }
