@@ -548,9 +548,7 @@
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
-        var promise = gatt.disconnect();
-        promise.then(()=>log("Disconnected on kill"));
-        promise.catch((e)=>log("Error during disconnnect on kill", e));
+        var promise = gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
       }
     });
   }

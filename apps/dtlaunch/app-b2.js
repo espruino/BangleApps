@@ -45,11 +45,23 @@ function draw_icon(p,n,selected) {
     g.setColor(g.theme.fg);
     try{g.drawImage(apps[p*4+n].icon,x+12,y+4);} catch(e){}
     g.setFontAlign(0,-1,0).setFont("6x8",1);
-    var txt =  apps[p*4+n].name.split(" ");
-    for (var i = 0; i < txt.length; i++) {
-        txt[i] = txt[i].trim();
-        g.drawString(txt[i],x+36,y+54+i*8);
+    var txt =  apps[p*4+n].name.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
+    var lineY = 0;
+    var line = "";
+    while (txt.length > 0){      
+      var c = txt.shift();
+      
+      if (c.length + 1 + line.length > 13){
+        if (line.length > 0){
+          g.drawString(line.trim(),x+36,y+54+lineY*8);
+          lineY++;
+        }
+        line = c;
+      } else {
+        line += " " + c;
+      }
     }
+    g.drawString(line.trim(),x+36,y+54+lineY*8);
 }
 
 function drawPage(p){

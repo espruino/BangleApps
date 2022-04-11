@@ -3,6 +3,7 @@
   "name": "Simplest Clock",
   "version": "0.06",
   "description": "The simplest working clock, acts as a tutorial piece",
+  "readme": "README.md",
   "icon": "simplest.png",
   "screenshots": [{"url":"screenshot_simplest.png"}],
   "type": "clock",

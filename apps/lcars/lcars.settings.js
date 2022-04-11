@@ -9,6 +9,7 @@
     dataRow2: "Steps",
     dataRow3: "Temp",
     speed: "kph",
+    fullscreen: false,
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -49,6 +50,14 @@
       format: v => dataOptions[v],
       onchange: v => {
         settings.dataRow3 = dataOptions[v];
+        save();
+      },
+    },
+    'Full Screen': {
+      value: settings.fullscreen,
+      format: () => (settings.fullscreen ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.fullscreen = !settings.fullscreen;
         save();
       },
     },

@@ -1,9 +1,14 @@
 var loc = require("locale");
 
-var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+var waypoints = require("Storage").readJSON("waypoints.json") || [];
 var wp = waypoints[0];
+if (wp == undefined) wp = {name:"NONE"};
 var wp_bearing = 0;
+var routeidx = 0;
 var candraw = true;
+
+const ROUTE_STEP = 50; // metres
+const EPSILON = 1; // degrees
 
 var direction = 0;
 var dist = 0;
@@ -15,137 +20,129 @@ var previous = {
   wp_name: '',
   course: 180,
   selected: false,
+  routeidx: -1,
 };
 
 /*** Drawing ***/
 
-var pal_by = new Uint16Array([0x0000,0xFFC0],0,1); // black, yellow
-var pal_bw = new Uint16Array([0x0000,0xffff],0,1);  // black, white
-var pal_bb = new Uint16Array([0x0000,0x07ff],0,1); // black, blue
-var pal_br = new Uint16Array([0x0000,0xf800],0,1); // black, red
-var pal_compass = pal_by;
+var W = g.getWidth();
+var H = g.getHeight();
+// layout (XXX: this should probably use the Layout library instead)
+var L = { // banglejs1
+  arrow: {
+    x: 120,
+    y: 80,
+    r1: 79,
+    r2: 69,
+    bufh: 160,
+    bufy: 40,
+  },
+  text: {
+    bufh: 40,
+    bufy: 200,
+    largesize: 40,
+    smallsize: 15,
+    waypointy: 20,
+  },
+};
+if (W == 176) {
+  L = { // banglejs2
+    arrow: {
+      x: 88,
+      y: 70,
+      r1: 70,
+      r2: 62,
+      bufh: 160,
+      bufy: 0,
+    },
+    text: {
+      bufh: 40,
+      bufy: 142,
+      largesize: 40,
+      smallsize: 14,
+      waypointy: 20,
+    },
+  };
+}
 
-var buf = Graphics.createArrayBuffer(160,160,1, {msb:true});
+var pal_by = new Uint16Array([0x0000,0xffc0],0,1); // black, yellow
+var pal_bw = new Uint16Array([0x0000,0xffff],0,1); // black, white
+var pal_br = new Uint16Array([0x0000,0xf800],0,1); // black, red
+
+var buf = Graphics.createArrayBuffer(240,160, 1, {msb:true});
 var arrow_img = require("heatshrink").decompress(atob("vF4wJC/AEMYBxs8Bxt+Bxv/BpkB/+ABxcD//ABxcH//gBxcP//wBxcf//4Bxc///8Bxd///+OxgABOxgABPBR2BAAJ4KOwIABPBR2BAAJ4KOwIABPBR2BAAJ4KOwIABPBQNCPBR2DPBR2DPBR2DPBR2DPBR2DPBR2DPBR2DPBQNEPBB2FPBB2FPBB2FPBB2FPBB2FPBB2FPBB2FPBANGPAx2HPAx2HPAx2HPAx2HPAx2HPAx2HeJTeJB34O/B34O/B34O/B34O/B34O/B34O/B34O/B34OTAH4AT"));
 
-function flip1(x,y,palette) {
-  g.drawImage({width:160,height:160,bpp:1,buffer:buf.buffer, palette:palette},x,y);
+function flip(y,h,palette) {
+  g.drawImage({width:240,height:h,bpp:1,buffer:buf.buffer, palette:palette},0,y);
   buf.clear();
 }
 
-function flip2_bw(x,y) {
-  g.drawImage({width:160,height:40,bpp:1,buffer:buf.buffer, palette:pal_bw},x,y);
-  buf.clear();
-}
-
-function flip2_bb(x,y) {
-  g.drawImage({width:160,height:40,bpp:1,buffer:buf.buffer, palette:pal_bb},x,y);
-  buf.clear();
-}
-
-function drawCompass(course) {
+function draw(force) {
   if (!candraw) return;
 
-  previous.course = course;
-
-  buf.setColor(1);
-  buf.fillCircle(80,80, 79);
-  buf.setColor(0);
-  buf.fillCircle(80,80, 69);
-  buf.setColor(1);
-  buf.drawImage(arrow_img, 80, 80, {rotate:radians(course)} );
-  var palette = pal_br;
-  if (savedfix !== undefined && savedfix.fix !== 0) palette = pal_compass;
-  flip1(40, 30, palette);
-}
-
-function drawN(force){
-  if (!candraw) return;
-
-  buf.setFont("Vector",24);
+  var course = direction;
   var dst = loc.distance(dist);
 
-  // distance on left
-  if (force || previous.dst !== dst) {
+  if (force || previous.dst !== dst || previous.wp_name !== wp.name || previous.routeidx !== routeidx || Math.abs(course-previous.course)>EPSILON) {
+    previous.course = course;
+
+    var palette = pal_br;
+    if (savedfix !== undefined && savedfix.fix !== 0)
+      palette = isNaN(savedfix.course) ? pal_by : pal_bw;
+
+    buf.setColor(1);
+    buf.fillCircle(L.arrow.x,L.arrow.y, L.arrow.r1);
+    buf.setColor(0);
+    buf.fillCircle(L.arrow.x,L.arrow.y, L.arrow.r2);
+    buf.setColor(1);
+    buf.drawImage(arrow_img, L.arrow.x, L.arrow.y, {rotate:radians(course)} );
+    flip(L.arrow.bufy,L.arrow.bufh,palette);
+
+    // distance on left
     previous.dst = dst;
+    previous.wp_name = wp.name;
+    previous.routeidx = routeidx;
+
     buf.setColor(1);
     buf.setFontAlign(-1, -1);
-    buf.setFont("Vector",40);
+    buf.setFont("Vector",L.text.largesize);
     buf.drawString(dst,0,0);
-    flip2_bw(8, 200);
-  }
 
-  // waypoint name on right
-  if (force || previous.wp_name !== wp.name) {
-    previous.wp_name = wp.name;
+    // waypoint name on right
     buf.setColor(1);
     buf.setFontAlign(1, -1);
-    buf.setFont("Vector", 15);
-    buf.drawString(wp.name, 80, 0);
-    flip2_bw(160, 220);
+    buf.setFont("Vector", L.text.smallsize);
+    buf.drawString(wp.name, W, L.text.waypointy);
+
+    // if this is a route, draw the step name above the route name
+    if (wp.route) {
+      buf.drawString((wp.route[routeidx].name||'') + " " + (routeidx+1) + "/" + wp.route.length, W, 0);
+    }
+
+    flip(L.text.bufy,L.text.bufh,pal_bw);
   }
-}
-
-function drawAll(force) {
-  if (!candraw) return;
-
-  g.setColor(1,1,1);
-  drawN(force);
-  drawCompass(direction);
 }
 
 /*** Heading ***/
 
 var heading = 0;
-function newHeading(m,h){
-    var s = Math.abs(m - h);
-    var delta = (m>h)?1:-1;
-    if (s>=180){s=360-s; delta = -delta;}
-    if (s<2) return h;
-    var hd = h + delta*(1 + Math.round(s/5));
-    if (hd<0) hd+=360;
-    if (hd>360)hd-= 360;
-    return hd;
-}
-
-var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
-
-function tiltfixread(O,S){
-  var start = Date.now();
-  var m = Bangle.getCompass();
-  var g = Bangle.getAccel();
-  m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
-  var d = Math.atan2(-m.dx,m.dy)*180/Math.PI;
-  if (d<0) d+=360;
-  var phi = Math.atan(-g.x/-g.z);
-  var cosphi = Math.cos(phi), sinphi = Math.sin(phi);
-  var theta = Math.atan(-g.y/(-g.x*sinphi-g.z*cosphi));
-  var costheta = Math.cos(theta), sintheta = Math.sin(theta);
-  var xh = m.dy*costheta + m.dx*sinphi*sintheta + m.dz*cosphi*sintheta;
-  var yh = m.dz*sinphi - m.dx*cosphi;
-  var psi = Math.atan2(yh,xh)*180/Math.PI;
-  if (psi<0) psi+=360;
-  return psi;
-}
-
 function read_heading() {
-  if (savedfix !== undefined && !isNaN(savedfix.course)) {
+  if (savedfix !== undefined && savedfix.satellites > 0 && !isNaN(savedfix.course)) {
     Bangle.setCompassPower(0);
     heading = savedfix.course;
-    pal_compass = pal_bw;
   } else {
-    var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
     Bangle.setCompassPower(1);
-    heading = newHeading(d,heading);
-    pal_compass = pal_by;
+    var d = 0;
+    var m = Bangle.getCompass();
+    if (!isNaN(m.heading)) d = -m.heading;
+    heading = d;
   }
 
   direction = wp_bearing - heading;
   if (direction < 0) direction += 360;
   if (direction > 360) direction -= 360;
-  drawCompass(direction);
+  draw();
 }
-
 
 /*** Maths ***/
 
@@ -218,23 +215,39 @@ function onGPS(fix) {
   savedfix = fix;
 
   if (fix !== undefined && fix.fix == 1){
-    dist = distance(fix, wp);
+    if (wp.route) {
+      while (true) {
+        dist = distance(fix, wp.route[routeidx]);
+        // step to next point if we're within ROUTE_STEP metres
+        if (!isNaN(dist) && dist < ROUTE_STEP && routeidx < wp.route.length-1)
+          routeidx++;
+        else
+          break;
+      }
+    } else {
+      dist = distance(fix, wp);
+    }
     if (isNaN(dist)) dist = 0;
-    wp_bearing = bearing(fix, wp);
+
+    if (wp.route) {
+      wp_bearing = bearing(fix, wp.route[routeidx]);
+    } else {
+      wp_bearing = bearing(fix, wp);
+    }
     if (isNaN(wp_bearing)) wp_bearing = 0;
-    drawN();
+    draw();
   }
 }
 
 function startTimers() {
   setInterval(function() {
-    Bangle.setLCDPower(1);
+    if (W==240) Bangle.setLCDPower(1); // keep banglejs1 display on
     read_heading();
-  }, 500);
+  }, 250);
 }
 
 function addWaypointToMenu(menu, i) {
-  menu[waypoints[i].name] = function() {
+  menu[waypoints[i].name + (waypoints[i].route ? " (R)" : "")] = function() {
     wp = waypoints[i];
     mainScreen();
   };
@@ -243,7 +256,9 @@ function addWaypointToMenu(menu, i) {
 function mainScreen() {
   E.showMenu();
   candraw = true;
-  drawAll(true);
+  g.setColor(0,0,0);
+  g.fillRect(0,0,W,H);
+  draw(true);
 
   Bangle.setUI("updown", function(v) {
     if (v === undefined) {
@@ -262,11 +277,13 @@ function mainScreen() {
       E.showMenu(menu);
     } else {
       candraw = false;
-      E.showPrompt("Delete waypoint: " + wp.name + "?").then(function(confirmed) {
+      var thing = wp.route ? "route" : "waypoint";
+      E.showPrompt("Delete " + thing + ": " + wp.name + "?").then(function(confirmed) {
         var name = wp.name;
         if (confirmed) {
+          var thing = wp.route ? "Route" : "Waypoint";
           deleteWaypoint(wp);
-          E.showAlert("Waypoint deleted: " + name).then(mainScreen);
+          E.showAlert(thing + " deleted: " + name).then(mainScreen);
         } else {
           mainScreen();
         }
@@ -281,7 +298,6 @@ Bangle.on('kill',()=>{
 });
 
 g.clear();
-Bangle.setLCDBrightness(1);
 Bangle.setGPSPower(1);
 startTimers();
 Bangle.on('GPS', onGPS);

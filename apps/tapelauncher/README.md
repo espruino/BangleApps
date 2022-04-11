@@ -15,3 +15,8 @@ Reminiscent of a Telegram or Turing machine tape.
 **Swipe Left** -  move forward to the next app icon
 
 **Swipe Right** - move backwards (to the left) to the previous app
+
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

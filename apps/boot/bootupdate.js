@@ -195,7 +195,19 @@ if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
 
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
-require('Storage').list(/\.boot\.js/).forEach(bootFile=>{
+var getPriority = /.*\.(\d+)\.boot\.js$/;
+require('Storage').list(/\.boot\.js/).sort((a,b)=>{
+  var aPriority = a.match(getPriority);
+  var bPriority = b.match(getPriority);
+  if (aPriority && bPriority){
+    return parseInt(aPriority[1]) - parseInt(bPriority[1]);
+  } else if (aPriority && !bPriority){
+    return -1;
+  } else if (!aPriority && bPriority){
+    return 1;
+  }
+  return a > b;
+}).forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
   // which would cause an error!

@@ -4,8 +4,11 @@
   </head>
   <body>
     <div id="tracks"></div>
+    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
 
     <script src="../../core/lib/interface.js"></script>
+    <script src="../../core/js/ui.js"></script>
+    <script src="../../core/js/utils.js"></script>
     <script>
 var domTracks = document.getElementById("tracks");
 
@@ -70,9 +73,15 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "success");
 }
 
 function saveGPX(track, title) {
+  if (!track || !track[0] || !"Time" in track[0] || !track[0].Time) {
+    showToast("Error in trackfile.", "error");
+    return;
+  }
+
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata>
@@ -109,6 +118,7 @@ function saveGPX(track, title) {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
   }, 0);
+  showToast("Download finished.", "success");
 }
 
 function saveCSV(track, title) {
@@ -121,6 +131,7 @@ function saveCSV(track, title) {
     }).join(",")+"\n";
   });
   Util.saveCSV(title, csv);
+  showToast("Download finished.", "success");
 }
 
 function trackLineToObject(headers, l) {
@@ -171,6 +182,10 @@ function getTrackList() {
   return {headers:headers,l:data};
 })(${JSON.stringify(filename)})`, trackInfo=>{
           console.log(filename," => ",trackInfo);
+          if (!trackInfo || !"headers" in trackInfo) {
+            showToast("Error loading track list.", "error");
+            resolve();
+          }
           trackInfo.headers = trackInfo.headers.split(",");
           trackList.push({
             filename : filename,

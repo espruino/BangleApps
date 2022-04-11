@@ -175,10 +175,8 @@ function rIcon(l) {
 }
 let layout;
 function makeUI() {
-  global.gbmusic_active = true; // we don't need our widget (needed for <2.09 devices)
   Bangle.loadWidgets();
   Bangle.drawWidgets();
-  delete (global.gbmusic_active);
   const Layout = require("Layout");
   layout = new Layout({
     type: "v", c: [
@@ -331,7 +329,7 @@ function formatNum(info) {
  * Update music info
  * @param {Object} info - Gadgetbridge musicinfo event
  */
-function musicInfo(info) {
+function info(info) {
   scrollStop();
   layout.title.label = info.track || "";
   layout.album.label = info.album || "";
@@ -360,7 +358,7 @@ let tPxt, tIxt; // Timeouts to eXiT when Paused/Inactive for too long
  * Update music state
  * @param {Object} e - Gadgetbridge musicstate event
  */
-function musicState(e) {
+function state(e) {
   stat = e.state;
   // if paused for five minutes, load the clock
   // (but timeout resets if we get new info, even while paused)
@@ -584,8 +582,8 @@ function startEmulator() {
       println: (line) => {console.log("Bluetooth:", line);},
     };
     // some example info
-    GB({"t": "musicinfo", "artist": "Some Artist Name", "album": "The Album Name", "track": "The Track Title Goes Here", "dur": 241, "c": 2, "n": 2});
-    GB({"t": "musicstate", "state": "play", "position": 0, "shuffle": 1, "repeat": 1});
+    info({"t": "musicinfo", "artist": "Some Artist Name", "album": "The Album Name", "track": "The Track Title Goes Here", "dur": 241, "c": 2, "n": 2});
+    state({"t": "musicstate", "state": "play", "position": 0, "shuffle": 1, "repeat": 1});
   }
 }
 function startWatches() {
@@ -596,25 +594,6 @@ function startWatches() {
 
 function start() {
   makeUI();
-  // start listening for music updates
-  const _GB = global.GB;
-  global.GB = (event) => {
-    // we eat music events!
-    switch(event.t) {
-      case "musicinfo":
-        musicInfo(event);
-        break;
-      case "musicstate":
-        musicState(event);
-        break;
-      default:
-        // pass on other events
-        if (_GB) {
-          setTimeout(_GB, 0, event);
-        }
-        return;
-    }
-  };
   startWatches();
   tick();
   startEmulator();
@@ -625,11 +604,11 @@ function init() {
   let saved = require("Storage").readJSON("gbmusic.load.json", true);
   require("Storage").erase("gbmusic.load.json");
   if (saved) {
-    // autoloaded: load state was saved by widget
+    // autoloaded: load state as saved by widget
     auto = true;
     start();
-    musicInfo(saved.info);
-    musicState(saved.state);
+    info(saved.info);
+    state(saved.state);
     return;
   }
 

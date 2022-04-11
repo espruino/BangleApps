@@ -7,6 +7,7 @@ let settings = {
   dataRow2: "Temp",
   dataRow3: "Battery",
   speed: "kph",
+  fullscreen: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -30,22 +31,38 @@ let lcarsViewPos = 0;
 // let hrmValue = 0;
 var plotMonth = false;
 
+
 /*
  * Requirements and globals
  */
 
 
-var bgLeft =  {
+var bgLeftFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
 };
 
-var bgRight =  {
+var bgLeftNotFullscreen = {
+  width : 27, height : 152, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAGVbtu27YCCoAJBkuWrNlAQRkCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A="))
+};
+
+var bgRightFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAnUP7y/KH4yGeVYAJrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgAA="))
 };
+
+var bgRightNotFullscreen =  {
+  width : 27, height : 152, bpp : 3,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAxrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgA="))
+};
+
+var bgLeft = settings.fullscreen ? bgLeftFullscreen : bgLeftNotFullscreen;
+var bgRight= settings.fullscreen ? bgRightFullscreen : bgRightNotFullscreen;
 
 var iconEarth = {
   width : 50, height : 50, bpp : 3,
@@ -217,7 +234,7 @@ function drawHorizontalBgLine(color, x1, x2, y, h){
 
 
 function drawInfo(){
-  if(lcarsViewPos != 0){
+  if(lcarsViewPos != 0 || !settings.fullscreen){
     return;
   }
 
@@ -276,9 +293,10 @@ function drawState(){
 
 function drawPosition0(){
   // Draw background image
-  g.drawImage(bgLeft, 0, 0);
-  drawHorizontalBgLine(cBlue, 25, 120, 0, 4);
-  drawHorizontalBgLine(cBlue, 130, 176, 0, 4);
+  var offset = settings.fullscreen ? 0 : 24;
+  g.drawImage(bgLeft, 0, offset);
+  drawHorizontalBgLine(cBlue, 25, 120, offset, 4);
+  drawHorizontalBgLine(cBlue, 130, 176, offset, 4);
   drawHorizontalBgLine(cPurple, 20, 70, 80, 4);
   drawHorizontalBgLine(cPurple, 80, 176, 80, 4);
   drawHorizontalBgLine(cOrange, 35, 110, 87, 4);
@@ -304,15 +322,26 @@ function drawPosition0(){
   var currentDate = new Date();
   var timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
-  g.drawString(timeStr, 27, 10);
+  if(settings.fullscreen){
+    g.drawString(timeStr, 27, 10);
+  } else {
+    g.drawString(timeStr, 27, 33);
+  }
 
   // Write date
   g.setColor(cWhite);
   g.setFontAntonioMedium();
-  var dayStr = locale.dow(currentDate, true).toUpperCase();
-  dayStr += " " + currentDate.getDate();
-  dayStr += " " + locale.month(currentDate, 1).toUpperCase();
-  g.drawString(dayStr, 30, 56);
+  if(settings.fullscreen){
+    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    dayStr += " " + currentDate.getDate();
+    dayStr += " " + locale.month(currentDate, 1).toUpperCase();
+    g.drawString(dayStr, 30, 56);
+  } else {
+    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    var date = currentDate.getDate();
+    g.drawString(dayStr, 128, 35);
+    g.drawString(date, 128, 55);
+  }
 
   // Draw data
   g.setFontAlign(-1, -1, 0);
@@ -327,8 +356,11 @@ function drawPosition0(){
 
 function drawPosition1(){
   // Draw background image
-  g.drawImage(bgRight, 149, 0);
-  drawHorizontalBgLine(cBlue, 0, 140, 0, 4);
+  var offset = settings.fullscreen ? 0 : 24;
+  g.drawImage(bgRight, 149, offset);
+  if(settings.fullscreen){
+    drawHorizontalBgLine(cBlue, 0, 140, offset, 4);
+  }
   drawHorizontalBgLine(cPurple, 0, 80, 80, 4);
   drawHorizontalBgLine(cPurple, 90, 150, 80, 4);
   drawHorizontalBgLine(cOrange, 0, 50, 87, 4);
@@ -388,8 +420,13 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("M-HRM", 154, 27);
-    g.drawString("M-STEPS [K]", 154, 115);
+
+    if(settings.fullscreen){
+      g.drawString("M-HRM", 154, 27);
+      g.drawString("M-STEPS [K]", 154, 115);
+    } else {
+      g.drawString("MONTH", 154, 115);
+    }
 
   // Plot day
   } else {
@@ -429,8 +466,13 @@ function drawPosition1(){
     g.setFontAlign(1, 1, 0);
     g.setFontAntonioMedium();
     g.setColor(cWhite);
-    g.drawString("D-HRM", 154, 27);
-    g.drawString("D-STEPS", 154, 115);
+
+    if(settings.fullscreen){
+      g.drawString("D-HRM", 154, 27);
+      g.drawString("D-STEPS", 154, 115);
+    } else {
+      g.drawString("DAY", 154, 115);
+    }
   }
 }
 
@@ -450,6 +492,13 @@ function draw(){
       drawPosition0();
     } else if (lcarsViewPos == 1) {
       drawPosition1();
+    }
+
+    // After drawing the watch face, we can draw the widgets
+    if(settings.fullscreen){
+      for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+    } else {
+      Bangle.drawWidgets();
     }
 }
 
@@ -501,8 +550,9 @@ function getWeather(){
   weather.hum = weather.hum + "%";
 
   // Wind
-  var speedFactor = settings.speed == "kph" ? 1.60934 : 1.0;
-  weather.wind = Math.round(weather.wind * speedFactor);
+  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+  var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+  weather.wind = Math.round(wind[1] * speedFactor);
 
   return weather
 }
@@ -652,16 +702,7 @@ Bangle.on('touch', function(btn, e){
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
-
-// After drawing the watch face, we can draw the widgets
-// Bangle.drawWidgets();
