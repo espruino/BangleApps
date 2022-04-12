@@ -23,6 +23,9 @@ WIDGETS.bluetooth_notify = {
             E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH').then(function(){console.log("button pressed");});
             setTimeout(()=>{
                 E.showAlert();
+                try{
+                    draw(); // redraw the current clock or whatever is currently visible.
+                } catch(e){}
             }, 3000); // clear message
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
