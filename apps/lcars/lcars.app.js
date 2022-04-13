@@ -8,11 +8,8 @@ let settings = {
   dataRow3: "Battery",
   speed: "kph",
   fullscreen: false,
-  themeColor1: "Orange",
   themeColor1BG: "#FF9900",
-  themeColor2: "Purple",
   themeColor2BG: "#FF00DC",
-  themeColor3: "Cyan",
   themeColor3BG: "#0094FF",
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -23,9 +20,9 @@ for (const key in saved_settings) {
 /*
  * Colors to use
  */
-let cBlue = settings.themeColor3BG;
-let cOrange = settings.themeColor1BG;
-let cPurple = settings.themeColor2BG;
+let color1 = settings.themeColor3BG;
+let color2 = settings.themeColor1BG;
+let color3 = settings.themeColor2BG;
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
 let cGrey = "#424242";
@@ -56,37 +53,59 @@ function convert24to16(input)
   return "0x"+RGB565.toString(16);
 }
 
-/*
- * Requirements and globals
- */
+var color1C = convert24to16(color1);
+var color2C = convert24to16(color2);
+var color3C = convert24to16(color3);
 
+/*
+* Requirements and globals
+*/
+
+var colorPalette = new Uint16Array([
+  0x0000, // not used
+  color2C,  // second
+  color3C, // third
+  0x0000,  //  not used
+  color1C, // first
+  0x0000, //  not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000, // not used
+  0x0000  // not used
+],0,1);
 
 var bgLeftFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A==")),
-//  pallet: 
+  buffer : require("heatshrink").decompress((atob("/4AB+VJkmSAQV///+BAtJn//5IIFkmf/4IGyVP/gIGpMnF41PHIImGF4ImHJoQmGJoIdK8hNHNY47C/JNGBIJZGyYJBQA5GCKH5Q/KAQAoUP7y/KH5QGDoQAy0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyDCKH5Q1GShlJChQLCCg5TCHw5TMAD35FAoIIkgJB8hGGv/8Mg8/+QIFp4cB5IRGBIIvI/4IFybyCF4wTCDp5NBHZZiGz4JBLJKAGk4JBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4"))),
+  palette: colorPalette
 };
 
-var gray = convert24to16(cBlue);
-var palette1 = new Uint16Array([0x0000,gray,0x0000,gray,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000],0,1);
 var bgLeftNotFullscreen = {
   width : 27, height : 152, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAGVbtu27YCCoAJBkuWrNlAQRkCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=")),
-  palette: palette1
+  buffer : require("heatshrink").decompress((atob("/4AB+VJkmSAQV///+BAtJn//5IIFkmf/4IGyVP/gIGpMnF41PHIImGF4ImHJoQmGJoIdK8hNHNY47C/JNGBIJZGyYJBQA5GCKH5Q/KAQAy0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyhCKH5Q1GShlJChQLCCg5TCHw5TMAD35FAoIIkgJB8hGGv/8Mg8/+QIFp4cB5IRGBIIvI/4IFybyCF4wTCDp5NBHZZiGz4JBLJKAGk4JBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))),
+  palette: colorPalette
 };
 
 var bgRightFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAnUP7y/KH4yGeVYAJrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgAA="))
+  buffer : require("heatshrink").decompress((atob("yVJkgCCyf/AAPJBAYCBk4JB8gUFyVP//yBAoCB//5BAwUCAAIUHAAIgGChopGv5TIn5TIz4yLKYxxC/iGI/xxGKH5Q/agwAnUP7y/KH4yGeVYAJ0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkp4CS4xGCWoyhCKH5QuDoxQCDpI7GDoJZGHYIRGLIQvGO4QvGMQRNJADv+GIqTC/5PGz4JBJ41JBIPJCg2TD4QLGn4JB/gUaHwRTGHwRTHBIRTGNAQyJ8gyI+QdFp4JB/IdFk5lLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJoyJC/4A=="))),
+  palette: colorPalette
 };
 
 var bgRightNotFullscreen =  {
   width : 27, height : 152, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("lmy5YCDBIUyBAmy5AJBhYUG2EAhgIFAQMAgQIGCgQABCg4ABEAwUNFI2AKZHAKZEgGRZTGOIUDQxJxGKH5Q/agwAxrdt23bAQVABIMly1ZsoCCMgUWCIYCB6AJBhIRDAQNgBIMFEwlt2i1CEwmWrAJBgI7FtpGCHYuWKH5QxEwpQDlo7F0A7IqBZBEwo7BCIwCBJo53CJoxiCJpIAdgOmzVpAQR/CgAIEAQJ2CBAoCBBIMmCg1oD4QLGFQUCCjQ+CKYw+CKY4JCKYwoCGRMaGREJDoroCgwdFzBlLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJox/CgA="))
+  buffer : require("heatshrink").decompress((atob("yVJkgCCyf/AAPJBAYCBk4JB8gUFyVP//yBAoCB//5BAwUCAAIUHAAIgGChopGv5TIn5TIz4yLKYxxC/iGI/xxGKH5Q/agwAx0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyhCKH5QuDoxQCDpI7GDoJZGHYIRGLIQvGO4QvGMQRNJADv+GIqTC/5PGz4JBJ41JBIPJCg2TD4QLGn4JB/gUaHwRTGHwRTHBIRTGNAQyJ8gyI+QdFp4JB/IdFk5lLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJoyJC/4A="))),
+  palette: colorPalette
 };
 
 var bgLeft = settings.fullscreen ? bgLeftFullscreen : bgLeftNotFullscreen;
@@ -267,7 +286,7 @@ function drawInfo(){
   }
 
   g.setFontAntonioMedium();
-  g.setColor(cOrange);
+  g.setColor(color2);
   g.clearRect(120, 10, g.getWidth(), 75);
   g.drawString("LCARS", 128, 13);
 
@@ -277,7 +296,7 @@ function drawInfo(){
     g.drawString("NOCON", 128, 33);
   }
   if(Bangle.isLocked()){
-    g.setColor(cPurple);
+    g.setColor(color3);
     g.drawString("LOCK", 128, 53);
   }
 }
@@ -308,7 +327,7 @@ function drawState(){
     g.drawString("STATUS", 23+26, 108);
   } else {
     // Alarm within symbol
-    g.setColor(cOrange);
+    g.setColor(color2);
     g.drawString("ALARM", 23+26, 108);
     g.setColor(cWhite);
     g.setFontAntonioLarge();
@@ -323,19 +342,19 @@ function drawPosition0(){
   // Draw background image
   var offset = settings.fullscreen ? 0 : 24;
   g.drawImage(bgLeft, 0, offset);
-  drawHorizontalBgLine(cBlue, 25, 120, offset, 4);
-  drawHorizontalBgLine(cBlue, 130, 176, offset, 4);
-  drawHorizontalBgLine(cPurple, 20, 70, 80, 4);
-  drawHorizontalBgLine(cPurple, 80, 176, 80, 4);
-  drawHorizontalBgLine(cOrange, 35, 110, 87, 4);
-  drawHorizontalBgLine(cOrange, 120, 176, 87, 4);
+  drawHorizontalBgLine(color1, 25, 120, offset, 4);
+  drawHorizontalBgLine(color1, 130, 176, offset, 4);
+  drawHorizontalBgLine(color3, 20, 70, 80, 4);
+  drawHorizontalBgLine(color3, 80, 176, 80, 4);
+  drawHorizontalBgLine(color2, 35, 110, 87, 4);
+  drawHorizontalBgLine(color2, 120, 176, 87, 4);
 
   // The last line is a battery indicator too
   var bat = E.getBattery() / 100.0;
   var batStart = 19;
   var batWidth = 172 - batStart;
   var batX2 = parseInt(batWidth * bat + batStart);
-  drawHorizontalBgLine(cOrange, batStart, batX2, 171, 5);
+  drawHorizontalBgLine(color2, batStart, batX2, 171, 5);
   drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
   for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
     drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
@@ -374,9 +393,9 @@ function drawPosition0(){
   // Draw data
   g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
-  drawData(settings.dataRow1, 97, cOrange);
-  drawData(settings.dataRow2, 122, cPurple);
-  drawData(settings.dataRow3, 147, cBlue);
+  drawData(settings.dataRow1, 97, color2);
+  drawData(settings.dataRow2, 122, color3);
+  drawData(settings.dataRow3, 147, color1);
 
   // Draw state
   drawState();
@@ -387,13 +406,13 @@ function drawPosition1(){
   var offset = settings.fullscreen ? 0 : 24;
   g.drawImage(bgRight, 149, offset);
   if(settings.fullscreen){
-    drawHorizontalBgLine(cBlue, 0, 140, offset, 4);
+    drawHorizontalBgLine(color1, 0, 140, offset, 4);
   }
-  drawHorizontalBgLine(cPurple, 0, 80, 80, 4);
-  drawHorizontalBgLine(cPurple, 90, 150, 80, 4);
-  drawHorizontalBgLine(cOrange, 0, 50, 87, 4);
-  drawHorizontalBgLine(cOrange, 60, 140, 87, 4);
-  drawHorizontalBgLine(cOrange, 0, 150, 171, 5);
+  drawHorizontalBgLine(color3, 0, 80, 80, 4);
+  drawHorizontalBgLine(color3, 90, 150, 80, 4);
+  drawHorizontalBgLine(color2, 0, 50, 87, 4);
+  drawHorizontalBgLine(color2, 60, 140, 87, 4);
+  drawHorizontalBgLine(color2, 0, 150, 171, 5);
 
   // Draw steps bars
   g.setColor(cWhite);
