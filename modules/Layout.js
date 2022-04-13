@@ -30,7 +30,8 @@ layoutObject has:
 
 * A `type` field of:
   * `undefined` - blank, can be used for padding
-  * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
+  * `"txt"` - a text label, with value `label` and `r` for text rotation.
+      'font' is required, and its size can be changed with `scale`.
   * `"btn"` - a button, with value `label` and callback `cb`
        optional `src` specifies an image (like img) in which case label is ignored
   * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
@@ -237,13 +238,13 @@ Layout.prototype.render = function (l) {
     "":function(){},
     "txt":function(l){
       if (l.wrap) {
-        g.setFont(l.font).setFontAlign(0,-1);
+        g.setFont(l.font, l.scale).setFontAlign(0,-1);
         var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
         //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
-        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        g.setFont(l.font, l.scale).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
@@ -361,7 +362,7 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        var m = g.setFont(l.font).stringMetrics(l.label);
+        var m = g.setFont(l.font, l.scale).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
