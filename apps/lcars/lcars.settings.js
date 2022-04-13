@@ -10,11 +10,8 @@
     dataRow3: "Temp",
     speed: "kph",
     fullscreen: false,
-    themeColor1: "Orange",
     themeColor1BG: "#FF9900",
-    themeColor2: "Purple",
     themeColor2BG: "#FF00DC",
-    themeColor3: "Cyan",
     themeColor3BG: "#0094FF",
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -84,7 +81,6 @@
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
-        settings.themeColor1 = color_options[v];
         settings.themeColor1BG = bg_code[v];
         save();
       },
@@ -94,7 +90,6 @@
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
-        settings.themeColor2 = color_options[v];
         settings.themeColor2BG = bg_code[v];
         save();
       },
@@ -104,7 +99,6 @@
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
-        settings.themeColor3 = color_options[v];
         settings.themeColor3BG = bg_code[v];
         save();
       },
