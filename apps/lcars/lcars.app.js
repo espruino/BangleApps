@@ -652,13 +652,12 @@ function decreaseAlarm(){
 
       var alarm = require('sched')
       alarm.setAlarm(TIMER_IDX, undefined);
-  
 
-    if(minutes > 0){
+      if(minutes > 0){
       alarm.setAlarm(TIMER_IDX, {
           timer : minutes*60*1000,
       });
-    }
+      }
 
       alarm.reload();
   } catch(ex){ }
