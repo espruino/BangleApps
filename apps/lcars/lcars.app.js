@@ -612,39 +612,44 @@ function getCurrentTimeInMinutes(){
   return Math.floor(Date.now() / (1000*60));
 }
 
-function isAlarmEnabled(){
- return settings.alarm >= 0;
-}
-
 function getAlarmMinutes(){
-  var currentTime = getCurrentTimeInMinutes();
-  return settings.alarm - currentTime;
+  if(!isAlarmEnabled()){
+      return -1;
+  }
+
+  var alarm = require('sched');
+  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
 
-function handleAlarm(){
-  if(!isAlarmEnabled()){
-    return;
+function increaseAlarm(){
+  try{
+      var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+      var alarm = require('sched')
+      alarm.setAlarm(TIMER_IDX, {
+      timer : (minutes+5)*60*1000,
+      });
+      alarm.reload();
+  } catch(ex){ }
+}
+
+function decreaseAlarm(){
+  try{
+      var minutes = getAlarmMinutes();
+      minutes -= 5;
+
+      var alarm = require('sched')
+      alarm.setAlarm(TIMER_IDX, undefined);
   }
 
-  if(getAlarmMinutes() > 0){
-    return;
+  if(minutes > 0){
+    alarm.setAlarm(TIMER_IDX, {
+        timer : minutes*60*1000,
+    });
   }
 
-  // Alarm
-  var t = 300;
-  Bangle.buzz(t, 1)
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, t)))
-  .then(() => Bangle.buzz(t, 1))
-  .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
-  .then(() => {
-    // Update alarm state to disabled
-    settings.alarm = -1;
-    storage.writeJSON(SETTINGS_FILE, settings);
-  });
+      alarm.reload();
+  } catch(ex){ }
 }
 
 
@@ -670,28 +675,6 @@ Bangle.on('lock', function(isLocked) {
 Bangle.on('charging',function(charging) {
   drawState();
 });
-
-
-function increaseAlarm(){
-  if(isAlarmEnabled() && getAlarmMinutes() < 95){
-    settings.alarm += 5;
-  } else {
-    settings.alarm = getCurrentTimeInMinutes() + 5;
-  }
-
-  storage.writeJSON(SETTINGS_FILE, settings);
-}
-
-
-function decreaseAlarm(){
-  if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-    settings.alarm -= 5;
-  } else {
-    settings.alarm = -1;
-  }
-
-  storage.writeJSON(SETTINGS_FILE, settings);
-}
 
 function feedback(){
   Bangle.buzz(40, 0.3);
@@ -753,4 +736,3 @@ Bangle.loadWidgets();
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
-console.log(bgLeftNotFullscreen);
