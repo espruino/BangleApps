@@ -77,7 +77,7 @@
       },
     },
     'Theme Color 1': {
-      value: 0 | color_options.indexOf(settings.themeColor1),
+      value: 0 | bg_code.indexOf(settings.themeColor1BG),
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
@@ -86,7 +86,7 @@
       },
     },
     'Theme Color 2': {
-      value: 0 | color_options.indexOf(settings.themeColor2),
+      value: 0 | bg_code.indexOf(settings.themeColor2BG),
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
@@ -95,7 +95,7 @@
       },
     },
     'Theme Color 3': {
-      value: 0 | color_options.indexOf(settings.themeColor3),
+      value: 0 | bg_code.indexOf(settings.themeColor3BG),
       min: 0, max: 7,
       format: v => color_options[v],
       onchange: v => {
