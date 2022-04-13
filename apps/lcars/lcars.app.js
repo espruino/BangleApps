@@ -23,9 +23,9 @@ for (const key in saved_settings) {
 /*
  * Colors to use
  */
-let cBlue = settings.themeColor1BG;
-let cOrange = settings.themeColor2BG;
-let cPurple = settings.themeColor3BG;
+let cBlue = settings.themeColor3BG;
+let cOrange = settings.themeColor1BG;
+let cPurple = settings.themeColor2BG;
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
 let cGrey = "#424242";
@@ -38,6 +38,24 @@ let lcarsViewPos = 0;
 var plotMonth = false;
 
 
+function convert24to16(input) 
+{
+  let RGB888 = parseInt(input.replace(/^#/, ''), 16);
+  let r = (RGB888 & 0xFF0000) >> 16;
+  let g = (RGB888 & 0xFF00) >> 8;
+  let b = RGB888 & 0xFF;
+
+  r = (r * 249 + 1014) >> 11;
+  g = (g * 253 + 505) >> 10;
+  b = (b * 249 + 1014) >> 11;
+  let RGB565 = 0;
+  RGB565 = RGB565 | (r << 11);
+  RGB565 = RGB565 | (g << 5);
+  RGB565 = RGB565 | b;
+
+  return "0x"+RGB565.toString(16);
+}
+
 /*
  * Requirements and globals
  */
@@ -46,13 +64,17 @@ var plotMonth = false;
 var bgLeftFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))
+  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAFCh/eX5Q/KAwdCAGVbtu27YCCoAJBkuWrNlAQRGCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A==")),
+//  pallet: 
 };
 
+var gray = convert24to16(cBlue);
+var palette1 = new Uint16Array([0x0000,gray,0x0000,gray,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000],0,1);
 var bgLeftNotFullscreen = {
   width : 27, height : 152, bpp : 3,
   transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAGVbtu27YCCoAJBkuWrNlAQRkCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A="))
+  buffer : require("heatshrink").decompress(atob("AAUM2XLlgCCwAJBBAuy4EAmQIF5cggAIGlmwgYIG2XIF42wF4ImGF4ImHJoQmGJoQdJhZNHNY47CgRNGBIJZHHgRiGBIRQ/KH5QCAGVbtu27YCCoAJBkuWrNlAQRkCiwRDAQPQBIMJCIYCBsAJBgomEtu0WoQmEy1YBIMBHYttIwQ7FyxQ/KHFlFAQ7F2weCHYplKChRTCCg5TCHw5TMAD0GzVp0wCCBBGaBIMaBAtpwECBA2mwEJBAugDgMmCIwJBF5EABAtoeQQvGCYQdPJoI7LMQzTCLJKAGzAJBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=")),
+  palette: palette1
 };
 
 var bgRightFullscreen =  {
@@ -712,3 +734,4 @@ Bangle.loadWidgets();
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
+console.log(bgLeftNotFullscreen);
