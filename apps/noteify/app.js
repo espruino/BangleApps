@@ -8,8 +8,10 @@ msg = "";
 function startNote(idx) { 
   idx == undefined ? note = "" : note = notes[idx].note;
   require("textinput").input({text:note}).then(result => {
-  idx == undefined ? notes.push({"note" : result}) : notes[idx].note = result;
-  require("Storage").write("noteify.json",JSON.stringify(notes));
+  if (result != "") {
+    idx == undefined ? notes.push({"note" : result}) : notes[idx].note = result;
+    require("Storage").write("noteify.json",JSON.stringify(notes));
+  }
   showMainMenu();
   });
 }
@@ -51,7 +53,7 @@ function showMainMenu() {
 function showEditMenu(idx) {
   var moveNote = notes[idx].note;
   var editMenu = {
-    "" : { "title" : notes[idx].note.length > 12 ? notes[idx].note.substring(0, 12)+"..." : notes[idx].note },
+    "" : { "title" : notes[idx].note.length > 12 ? notes[idx].note.replace(/\n/g, " ").substring(0, 12)+"..." : notes[idx].note.replace(/\n/g, " ") },
     "View note" : function() {
       E.showMenu();
       viewNote(idx);
@@ -192,7 +194,7 @@ function editAlarm(alarmIndex, alarm) {
   if (alarm) Object.assign(a,alarm);
   var t = decodeTime(a.t);
 
-  var alarmTitle = (a.msg == undefined) ? 'Alarm' : (a.msg.length > 12) ? a.msg.substring(0, 12)+"..." : msg;
+  var alarmTitle = (a.msg == undefined) ? 'Alarm' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg;
   
   const menu = {
     '': { 'title': alarmTitle },
@@ -261,7 +263,7 @@ function editTimer(alarmIndex, alarm) {
   if (alarm) Object.assign(a,alarm);
   var t = decodeTime(a.timer);
 
-  var timerTitle = (a.msg == undefined) ? 'Timer' : (a.msg.length > 12) ? a.msg.substring(0, 12)+"..." : msg;
+  var timerTitle = (a.msg == undefined) ? 'Timer' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg;
   
   const menu = {
     '': { 'title': timerTitle },
