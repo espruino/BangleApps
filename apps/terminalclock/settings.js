@@ -4,6 +4,7 @@
   var settings = Object.assign({
     HRMinConfidence: 50,
     showDate: true,
+    showAltitude: true,
     showHRM: true,
     showActivity: true,
     showStepCount: true,
@@ -30,6 +31,14 @@
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showDate = v;
+        writeSettings();
+      }
+    },
+    'Show Altitude': {
+      value: settings.showAltitude,
+      format: v => v?"Yes":"No",
+      onchange: v => {
+        settings.showAltitude = v;
         writeSettings();
       }
     },
