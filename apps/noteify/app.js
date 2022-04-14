@@ -194,7 +194,7 @@ function editAlarm(alarmIndex, alarm) {
   if (alarm) Object.assign(a,alarm);
   var t = decodeTime(a.t);
 
-  var alarmTitle = (a.msg == undefined) ? 'Alarm' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg;
+  var alarmTitle = (a.msg == undefined) ? 'Alarm' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg.replace(/\n/g, " ").substring(0, 12)+"...";
   
   const menu = {
     '': { 'title': alarmTitle },
@@ -263,7 +263,7 @@ function editTimer(alarmIndex, alarm) {
   if (alarm) Object.assign(a,alarm);
   var t = decodeTime(a.timer);
 
-  var timerTitle = (a.msg == undefined) ? 'Timer' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg;
+  var timerTitle = (a.msg == undefined) ? 'Timer' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg.replace(/\n/g, " ").substring(0, 12)+"...";
   
   const menu = {
     '': { 'title': timerTitle },
