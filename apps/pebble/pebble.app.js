@@ -32,6 +32,7 @@ function draw() {
   let dayOfWeek = locale.dow(date, 1).toUpperCase();
   let dayOfMonth = date.getDate();
   let time = locale.time(date, 1);
+  let steps = Bangle.getHealthStatus("day").steps;
   const t = 6;
 
   if (E.getBattery() < 30) {
@@ -55,7 +56,7 @@ function draw() {
   g.setFontLECO1976Regular22();
   g.setFontAlign(0, -1);
   g.drawString(dayOfWeek, w/4, ha);
-  g.drawString(getSteps(), 3*w/4, ha);
+  g.drawString(steps, 3*w/4, ha);
 
   // time
   // white on red for battery warning
@@ -99,13 +100,6 @@ function drawCalendar(x,y,wi,th,str) {
   g.setFontLECO1976Regular22();
   g.setFontAlign(0, 0);
   g.drawString(str, x + wi/2, y + wi/2 + th);
-}
-
-function getSteps() {
-  if (WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return '????';
 }
 
 function loadThemeColors() {
