@@ -245,10 +245,10 @@ function drawDate(){
     g.setFontAlign(-1,1);
     g.setMediumFont();
     g.setColor(g.theme.fg);
-    g.drawString(dateStr, W/2 - fullDateW / 2, y+4);
+    g.drawString(dateStr, W/2 - fullDateW / 2, y+5);
 
     g.setSmallFont();
-    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+4);
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+3);
     g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
 }
 
@@ -275,7 +275,7 @@ function drawTime(){
   g.setColor(g.theme.bg);
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
-  y += settings.fullscreen ? 12 : 10;
+  y += settings.fullscreen ? 14 : 10;
 
   if(showInfo == 0){
     y += 10;
