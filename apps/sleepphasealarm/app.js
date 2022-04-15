@@ -125,9 +125,9 @@ if (nextAlarm !== undefined) {
 
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarm.getTime() - (30*60*1000));
-  setInterval(function() {
+  Bangle.on('accel', (accelData) => { // 12.5Hz
     const now = new Date();
-    const acc = Bangle.getAccel().mag;
+    const acc = accelData.mag;
     const swest = calc_ess(acc);
 
     if (swest !== undefined) {
@@ -143,7 +143,7 @@ if (nextAlarm !== undefined) {
       buzz();
       measure = false;
     }
-  }, 80); // 12.5Hz
+  });
   drawApp();
 } else {
   E.showMessage('No Alarm');
