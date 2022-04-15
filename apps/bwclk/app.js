@@ -223,13 +223,43 @@ function decreaseAlarm(){
   } catch(ex){ }
 }
 
+function drawDate(){
+    // Draw background
+    var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+    g.reset().clearRect(0,0,W,W);
 
-/*
- * D R A W
- */
-function draw() {
-  // queue draw in one minute
-  queueDraw();
+    // Draw date
+    y -= settings.fullscreen ? 8 : 0;
+    var date = new Date();
+    var dateStr = date.getDate();
+    dateStr = ("0" + dateStr).substr(-2);
+    g.setMediumFont();  // Needed to compute the width correctly
+    var dateW = g.stringWidth(dateStr);
+
+    g.setSmallFont();
+    var dayStr = locale.dow(date, true);
+    var monthStr = locale.month(date, 1);
+    var dayW = Math.max(g.stringWidth(dayStr), g.stringWidth(monthStr));
+    var fullDateW = dateW + 10 + dayW;
+
+    g.setFontAlign(-1,1);
+    g.setMediumFont();
+    g.setColor(g.theme.fg);
+    g.drawString(dateStr, W/2 - fullDateW / 2, y+4);
+
+    g.setSmallFont();
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+4);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
+}
+
+
+function drawTime(){
+  // Draw background
+  var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+  g.setColor(g.theme.fg);
+  g.fillRect(0,y,W,H);
+
+  var date = new Date();
 
   // Set info
   var showInfo = settings.showInfo;
@@ -241,46 +271,14 @@ function draw() {
     showInfo = 101;
   }
 
-
-  // Draw background
-  var yOffset = settings.fullscreen ? 0 : 10;
-  var y = H/5*2 + yOffset;
-  g.reset().clearRect(0,0,W,W);
-  g.setColor(g.theme.fg);
-  g.fillRect(0,y,W,H);
-
-  // Draw date
-  y -= settings.fullscreen ? 8 : 0;
-  var date = new Date();
-  var dateStr = date.getDate();
-  dateStr = ("0" + dateStr).substr(-2);
-  g.setMediumFont();  // Needed to compute the width correctly
-  var dateW = g.stringWidth(dateStr);
-
-  g.setSmallFont();
-  var dayStr = locale.dow(date, true);
-  var monthStr = locale.month(date, 1);
-  var dayW = Math.max(g.stringWidth(dayStr), g.stringWidth(monthStr));
-  var fullDateW = dateW + 10 + dayW;
-
-  g.setFontAlign(-1,1);
-  g.setMediumFont();
-  g.setColor(g.theme.fg);
-  g.drawString(dateStr, W/2 - fullDateW / 2, y+4);
-
-  g.setSmallFont();
-  g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+4);
-  g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
-
-
   // Draw time
   g.setColor(g.theme.bg);
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
-  y += settings.fullscreen ? 23 : 10;
+  y += settings.fullscreen ? 12 : 10;
 
   if(showInfo == 0){
-    y += 8;
+    y += 10;
     g.setLargeFont();
   } else {
     g.setMediumFont();
@@ -331,19 +329,38 @@ function draw() {
     }
     g.drawString(infoStr, W/2 + imgWidth/2, y+3);
   }
+}
 
-  // Draw lock
+
+function drawLock(){
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
     g.drawImage(imgLock, W-16, 2);
   }
+}
 
-  // Draw widgets if not fullscreen
+
+function drawWidgets(){
   if(settings.fullscreen){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
   } else {
     Bangle.drawWidgets();
   }
+}
+
+
+/*
+ * D R A W
+ */
+function draw() {
+  // Queue draw again
+  queueDraw();
+
+  // Draw clock
+  drawDate();
+  drawTime();
+  drawLock();
+  drawWidgets();
 }
 
 Bangle.loadWidgets();
@@ -390,27 +407,27 @@ Bangle.on('touch', function(btn, e){
   if(is_upper){
     Bangle.buzz(40, 0.6);
     increaseAlarm();
-    draw();
+    drawTime();
   }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
     decreaseAlarm();
-    draw();
+    drawTime();
   }
 
   var maxInfo = 6;
   if(is_right){
     Bangle.buzz(40, 0.6);
     settings.showInfo = (settings.showInfo+1) % maxInfo;
-    draw();
+    drawTime();
   }
 
   if(is_left){
     Bangle.buzz(40, 0.6);
     settings.showInfo = settings.showInfo-1;
     settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
-    draw();
+    drawTime();
   }
 });
 
