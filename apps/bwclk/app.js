@@ -403,7 +403,6 @@ Bangle.on('touch', function(btn, e){
   if(is_right){
     Bangle.buzz(40, 0.6);
     settings.showInfo = (settings.showInfo+1) % maxInfo;
-    storage.write(SETTINGS_FILE, settings);
     draw();
   }
 
@@ -411,9 +410,13 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.6);
     settings.showInfo = settings.showInfo-1;
     settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
-    storage.write(SETTINGS_FILE, settings);
     draw();
   }
+});
+
+
+E.on("kill", function(){
+  storage.write(SETTINGS_FILE, settings);
 });
 
 
