@@ -584,6 +584,24 @@ var locales = {
     day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
     trans: { yes: "ano", Yes: "Ano", no: "ne", No: "Ne", ok: "ok", on: "zap", off: "vyp" }
   },
+    "hr_HR": {
+    lang: "hr_HR",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "km/h",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "dop.", 1: "pop." },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%-d. %b %Y", 1: "%-d.%-m.%Y" }, // "3. jan. 2020" // "3.1.2020"(short)
+    abmonth: "sij.,velj.,ožu.,tra.,svi,lip.,srp.,kol.,ruj.,lis.,stu.,pro.",
+    month: "siječanj,veljača,ožujak,travanj,svibanj,lipanj,srpanj,kolovoz,rujan,listopad,studeni,prosinac",
+    abday: "ned.,pon.,uto.,sri.,čet.,pet.,sub.",
+    day: "nedjelja,ponedjeljak,utorak,srijeda,četvrtak,petak,subota",
+    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "Uklj.", off: "Isklj.", "< Back": "< Natrag" }
+  },
   "sl_SI": {
     lang: "sl_SI",
     decimal_point: ",",
