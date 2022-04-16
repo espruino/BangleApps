@@ -11,6 +11,7 @@ const SETTINGS_FILE = "bwclk.setting.json";
 const TIMER_IDX = "bwclk";
 const W = g.getWidth();
 const H = g.getHeight();
+const NUM_INFO=7;
 
 /*
  * Settings
@@ -99,6 +100,11 @@ var imgCharging = {
   buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
 };
 
+var imgWatch = {
+  width : 24, height : 24, bpp : 1,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"))
+};
 
 
 /*
@@ -294,6 +300,7 @@ function drawTime(){
 
     var infoStr = "";
     var infoImg;
+    var printImgLeft = true;
     if(showInfo == 100){
       infoStr = getAlarmMinutes() + " min.";
       infoImg = imgTimer;
@@ -319,15 +326,23 @@ function drawTime(){
       var weather = getWeather();
       infoStr = weather.wind;
       infoImg = imgWind;
+    } else if (showInfo == NUM_INFO-1){
+      infoStr = "Bangle";
+      infoImg = imgWatch;
+      printImgLeft = false;
     }
 
     var imgWidth = 0;
     if(infoImg !== undefined){
       imgWidth = infoImg.width;
       var strWidth = g.stringWidth(infoStr);
-      g.drawImage(infoImg, W/2 - strWidth/2 - infoImg.width/2 - 5, y - infoImg.height/2);
+      g.drawImage(
+        infoImg,
+        W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - infoImg.width/2,
+        y - infoImg.height/2
+      );
     }
-    g.drawString(infoStr, W/2 + imgWidth/2, y+3);
+    g.drawString(infoStr, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
   }
 }
 
@@ -416,17 +431,16 @@ Bangle.on('touch', function(btn, e){
     drawTime();
   }
 
-  var maxInfo = 6;
   if(is_right){
     Bangle.buzz(40, 0.6);
-    settings.showInfo = (settings.showInfo+1) % maxInfo;
+    settings.showInfo = (settings.showInfo+1) % NUM_INFO;
     drawTime();
   }
 
   if(is_left){
     Bangle.buzz(40, 0.6);
     settings.showInfo = settings.showInfo-1;
-    settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
+    settings.showInfo = settings.showInfo < 0 ? NUM_INFO-1 : settings.showInfo;
     drawTime();
   }
 });
