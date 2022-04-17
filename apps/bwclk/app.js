@@ -111,12 +111,12 @@ var imgWatch = {
  */
 var infoArray = [
   function(){ return [ null, null, "left" ] },
+  function(){ return [ "Bangle", imgWatch, "right" ] },
   function(){ return [ E.getBattery() + "%", imgBattery, "left" ] },
   function(){ return [ getSteps(), imgSteps, "left" ] },
   function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm, "left"] },
   function(){ return [ getWeather().temp, imgTemperature, "left" ] },
   function(){ return [ getWeather().wind, imgWind, "left" ] },
-  function(){ return [ "Bangle", imgWatch, "right" ] }
 ];
 const NUM_INFO=infoArray.length;
 
