@@ -11,7 +11,6 @@ const SETTINGS_FILE = "bwclk.setting.json";
 const TIMER_IDX = "bwclk";
 const W = g.getWidth();
 const H = g.getHeight();
-const NUM_INFO=7;
 
 /*
  * Settings
@@ -108,18 +107,28 @@ var imgWatch = {
 
 
 /*
- * Draw timeout
+ * INFO ENTRIES
  */
-// timeout used to update every minute
-var drawTimeout;
+var infoArray = [
+  function(){ return [ null, null, "left" ] },
+  function(){ return [ E.getBattery() + "%", imgBattery, "left" ] },
+  function(){ return [ getSteps(), imgSteps, "left" ] },
+  function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm, "left"] },
+  function(){ return [ getWeather().temp, imgTemperature, "left" ] },
+  function(){ return [ getWeather().wind, imgWind, "left" ] },
+  function(){ return [ "Bangle", imgWatch, "right" ] }
+];
+const NUM_INFO=infoArray.length;
 
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
+
+function getInfoEntry(){
+  if(isAlarmEnabled()){
+    return [getAlarmMinutes() + " min.", imgTimer, "left"]
+  } else if(Bangle.isCharging()){
+    return [E.getBattery() + "%", imgCharging, "left"]
+  } else{
+    return infoArray[settings.showInfo]();
+  }
 }
 
 
@@ -127,19 +136,21 @@ function queueDraw() {
  * Helper
  */
 function getSteps() {
+  var steps = 0;
   try{
       if (WIDGETS.wpedom !== undefined) {
-          return WIDGETS.wpedom.getSteps();
+          steps = WIDGETS.wpedom.getSteps();
       } else if (WIDGETS.activepedom !== undefined) {
-          return WIDGETS.activepedom.getSteps();
+          steps = WIDGETS.activepedom.getSteps();
       } else {
-        return Bangle.getHealthStatus("day").steps;
+        steps = Bangle.getHealthStatus("day").steps;
       }
   } catch(ex) {
       // In case we failed, we can only show 0 steps.
   }
 
-  return 0;
+  steps = Math.round(steps/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
+  return steps + "k";
 }
 
 
@@ -229,6 +240,23 @@ function decreaseAlarm(){
   } catch(ex){ }
 }
 
+
+/*
+ * DRAW functions
+ */
+
+function draw() {
+  // Queue draw again
+  queueDraw();
+
+  // Draw clock
+  drawDate();
+  drawTime();
+  drawLock();
+  drawWidgets();
+}
+
+
 function drawDate(){
     // Draw background
     var y = H/5*2 + (settings.fullscreen ? 0 : 8);
@@ -264,18 +292,7 @@ function drawTime(){
   var y = H/5*2 + (settings.fullscreen ? 0 : 8);
   g.setColor(g.theme.fg);
   g.fillRect(0,y,W,H);
-
   var date = new Date();
-
-  // Set info
-  var showInfo = settings.showInfo;
-  if(isAlarmEnabled()){
-    showInfo = 100;
-  }
-
-  if(Bangle.isCharging()){
-    showInfo = 101;
-  }
 
   // Draw time
   g.setColor(g.theme.bg);
@@ -283,67 +300,39 @@ function drawTime(){
   var timeStr = locale.time(date,1);
   y += settings.fullscreen ? 14 : 10;
 
-  if(showInfo == 0){
+  var infoEntry = getInfoEntry();
+  var infoStr = infoEntry[0];
+  var infoImg = infoEntry[1];
+  var printImgLeft = infoEntry[2] == "left";
+
+  // Show large or small time depending on info entry
+  if(infoStr == null){
     y += 10;
     g.setLargeFont();
   } else {
     g.setMediumFont();
   }
-
   g.drawString(timeStr, W/2, y);
 
-  // Draw info or timer
+  // Draw info if set
+  if(infoStr == null){
+    return;
+  }
+
   y += H/5*2-5;
   g.setFontAlign(0,0);
-  if(showInfo > 0){
-    g.setSmallFont();
-
-    var infoStr = "";
-    var infoImg;
-    var printImgLeft = true;
-    if(showInfo == 100){
-      infoStr = getAlarmMinutes() + " min.";
-      infoImg = imgTimer;
-    } else if(showInfo == 101){
-      infoStr = E.getBattery() + "%";
-      infoImg = imgCharging;
-    } else if (showInfo == 1){
-      infoStr = E.getBattery() + "%";
-      infoImg = imgBattery;
-    } else if (showInfo == 2){
-      infoStr = getSteps()
-      infoStr = Math.round(infoStr/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
-      infoStr = infoStr + "k";
-      infoImg = imgSteps;
-    } else if (showInfo == 3){
-      infoStr = Math.round(Bangle.getHealthStatus("day").bpm) + " bpm";
-      infoImg = imgBpm;
-    } else if (showInfo == 4){
-      var weather = getWeather();
-      infoStr = weather.temp;
-      infoImg = imgTemperature;
-    } else if (showInfo == 5){
-      var weather = getWeather();
-      infoStr = weather.wind;
-      infoImg = imgWind;
-    } else if (showInfo == NUM_INFO-1){
-      infoStr = "Bangle";
-      infoImg = imgWatch;
-      printImgLeft = false;
-    }
-
-    var imgWidth = 0;
-    if(infoImg !== undefined){
-      imgWidth = infoImg.width;
-      var strWidth = g.stringWidth(infoStr);
-      g.drawImage(
-        infoImg,
-        W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - infoImg.width/2,
-        y - infoImg.height/2
-      );
-    }
-    g.drawString(infoStr, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
+  g.setSmallFont();
+  var imgWidth = 0;
+  if(infoImg !== undefined){
+    imgWidth = infoImg.width;
+    var strWidth = g.stringWidth(infoStr);
+    g.drawImage(
+      infoImg,
+      W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - infoImg.width/2,
+      y - infoImg.height/2
+    );
   }
+  g.drawString(infoStr, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
 }
 
 
@@ -364,20 +353,26 @@ function drawWidgets(){
 }
 
 
-/*
- * D R A W
- */
-function draw() {
-  // Queue draw again
-  queueDraw();
 
-  // Draw clock
-  drawDate();
-  drawTime();
-  drawLock();
-  drawWidgets();
+/*
+ * Draw timeout
+ */
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
 }
 
+
+/*
+ * Load clock, widgets and listen for events
+ */
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup and set the correct theme.
