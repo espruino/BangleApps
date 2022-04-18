@@ -1,18 +1,6 @@
 (function(back) {
-  var FILE = "activityreminder.settings.json";
   // Load settings
-  var settings = Object.assign({
-    enabled: true,
-    startHour: 9,
-    endHour: 20,
-    maxInnactivityMin: 30,
-    dismissDelayMin: 15,
-    minsteps: 50,
-  }, require('Storage').readJSON(FILE, true) || {});
-
-  function writeSettings() {
-    require('Storage').writeJSON(FILE, settings);
-  }
+  var settings = require("activityreminder").loadSettings();
 
   // Show the menu
   E.showMenu({
@@ -23,7 +11,7 @@
         format: v => v?"Yes":"No",
         onchange: v => {
           settings.enabled = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings);
         }
       },
       'Start hour': {
@@ -31,7 +19,7 @@
         min: 0, max: 24,
         onchange: v => {
           settings.startHour = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings)
         }
      },
      'End hour': {
@@ -39,7 +27,7 @@
         min: 0, max: 24,
         onchange: v => {
           settings.endHour = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings)
         }
      },
      'Max innactivity': {
@@ -47,7 +35,7 @@
         min: 15, max: 60,
         onchange: v => {
           settings.maxInnactivityMin = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings)
         }
      },
      'Dismiss delay': {
@@ -55,7 +43,7 @@
         min: 5, max: 15,
         onchange: v => {
           settings.dismissDelayMin = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings)
         }
      },
      'Min steps': {
@@ -63,7 +51,7 @@
         min: 10, max: 500,
         onchange: v => {
           settings.minSteps = v;
-          writeSettings();
+          require("activityreminder").writeSettings(settings)
         }
      }
   });

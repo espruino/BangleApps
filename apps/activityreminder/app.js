@@ -14,10 +14,8 @@ function drawAlert(){
       }
     load();
   });
-
   Bangle.buzz(400);
   setTimeout(load, 10000);
-
 }
 
 function run(){

@@ -9,6 +9,10 @@ exports.loadSettings = function() {
     }, require("Storage").readJSON("activityreminder.settings.json", true) || {});
 }
 
+export.writeSettings = function(settings){
+    require('Storage').writeJSON("activityreminder.settings.json", settings);
+}
+
 exports.saveStepsArray = function(stepsArray) {
     require("Storage").writeJSON("activityreminder.stepsarray.json", stepsArray);
 }
