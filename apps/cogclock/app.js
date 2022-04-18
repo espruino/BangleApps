@@ -37,6 +37,7 @@ function addTooth(poly, n) {
 }
 
 function drawCog() {
+  g.reset();
   g.drawCircle(x, y, r1);
   let poly = [];
   for(let t = 1; t<=teeth; t++) {
