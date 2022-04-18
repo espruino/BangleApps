@@ -34,6 +34,6 @@ if (global.activityreminder) {
    });
 
   stepsArray = require("activityreminder").loadStepsArray(); // todo load from storage and save in storage on activityreminder.data. Create lib.js to read and write in it
-  setInterval(global.activityreminder.run, 1000); // todo change back to 60000
+  setInterval(global.activityreminder.run, 10000); // todo change back to 60000
 }
 
