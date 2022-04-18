@@ -6,7 +6,7 @@
     startHour: 9,
     endHour: 20,
     maxInnactivityMin: 30,
-    delayondismiss: 15,
+    dismissDelayMin: 15,
     minsteps: 50,
   }, require('Storage').readJSON(FILE, true) || {});
 
@@ -60,7 +60,7 @@
      },
      'Min steps': {
         value: 50|settings.minSteps,
-        min: 5, max: 60,
+        min: 10, max: 500,
         onchange: v => {
           settings.minSteps = v;
           writeSettings();

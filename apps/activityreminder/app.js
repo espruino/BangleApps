@@ -4,7 +4,7 @@ function drawAlert(){
     buttons : {"Ok": true,"Dismiss": false}
     }).then(function(v) {
       console.log(stepsArray); // todo remove
-      if(v == true){  
+      if(v == true){
         stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin - 3);
         require("activityreminder").saveStepsArray(stepsArray);
       }
@@ -15,28 +15,25 @@ function drawAlert(){
     load();
   });
 
-  Bangle.buzz();
+  Bangle.buzz(400);
   setTimeout(load, 10000);
 
 }
 
-function run()
-{
-  if(stepsArray.length == activityreminder.maxInnactivityMin){
-    if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps)
-    {
-       drawAlert();
+function run(){
+    if(stepsArray.length == activityreminder.maxInnactivityMin){
+        if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps){
+            drawAlert();
+        }
+    }else{
+        eval(require("Storage").read("activityreminder.settings.js"))(()=>load());
     }
-  }else{
-    // todo find something else to do when there is no alert to show, showing the setting is a placeholder for now
-    eval(require("Storage").read("activityreminder.settings.js"))(()=>load());
-  }
 }
 
 
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-global.activityreminder = require("activityreminder").loadSettings();
+activityreminder = require("activityreminder").loadSettings();
 stepsArray = require("activityreminder").loadStepsArray();
 run()
