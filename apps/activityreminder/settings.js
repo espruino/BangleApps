@@ -2,10 +2,6 @@
   // Load settings
   var settings = require("activityreminder").loadSettings();
 
-  function writeSettings() {
-    require('Storage').writeJSON(FILE, settings);
-  }
-
   // Show the menu
   E.showMenu({
       "" : { "title" : "Activity Reminder" },

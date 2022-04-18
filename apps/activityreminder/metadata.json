@@ -17,6 +17,6 @@
     {"name": "activityreminder.img", "url": "app-icon.js", "evaluate": true}
   ],
   "data": [
-    {"name": "activityreminder.settings.json", "name":  "activityreminder.stepsarray.json"}
+    {"name": "ar.settings.json", "name":  "ar.stepsarray.json"}
   ]
 }
