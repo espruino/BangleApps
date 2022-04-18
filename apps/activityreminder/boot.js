@@ -25,6 +25,6 @@ function run(){
 activityreminder = require("activityreminder").loadSettings();
 if(activityreminder.enabled) {
     stepsArray = require("activityreminder").loadStepsArray();
-    setInterval(global.activityreminder.run, 60000);
+    setInterval(run, 60000);
 }
 
