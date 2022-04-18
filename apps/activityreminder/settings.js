@@ -39,7 +39,7 @@
         }
      },
      'Dismiss delay': {
-        value: 15|settings.dismissDelayMin,
+        value: 10|settings.dismissDelayMin,
         min: 5, max: 15,
         onchange: v => {
           settings.dismissDelayMin = v;
