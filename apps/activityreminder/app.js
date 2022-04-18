@@ -14,6 +14,7 @@ function drawAlert(){
       }
     load();
   });
+  
   Bangle.buzz(400);
   setTimeout(load, 10000);
 }
@@ -34,4 +35,4 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 activityreminder = require("activityreminder").loadSettings();
 stepsArray = require("activityreminder").loadStepsArray();
-run()
+run();
