@@ -3,7 +3,6 @@ function drawAlert(){
     title:"Activity reminder",
     buttons : {"Ok": true,"Dismiss": false}
     }).then(function(v) {
-      console.log(stepsArray); // todo remove
       if(v == true){
         stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin - 3);
         require("activityreminder").saveStepsArray(stepsArray);

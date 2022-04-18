@@ -1,7 +1,6 @@
 function run(){
     var now = new Date();
     var h = now.getHours();
-    console.log(stepsArray); // todo remove
     if(h >= activityreminder.startHour && h < activityreminder.endHour){
         var health = Bangle.getHealthStatus("day");
         stepsArray.unshift(health.steps);
