@@ -1,7 +1,3 @@
-
-var stepsArray = []; // todo load from storage and save in storage on activityreminder.data. Create lib.js to read and write in it 
-
-
 function drawAlert(){
   E.showPrompt("Innactivity detected",{
     title:"Activity reminder",

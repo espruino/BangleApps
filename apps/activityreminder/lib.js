@@ -1,4 +1,4 @@
-export.loadSettings = function() {
+exports.loadSettings = function() {
     return Object.assign({
         enabled: true,
         startHour: 9,
