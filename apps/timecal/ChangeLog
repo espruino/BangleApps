@@ -8,3 +8,4 @@
 0.03: a lot of more settings for outline, colors and highlights
 0.04: finalized README, fixed settings cancel, fixed border-setting
 0.05: bugfix: default settings
+0.06: bugfix: Mrk.Color doesn't reflect the color selected, fixes #1706
