@@ -1,5 +1,5 @@
 (function(back) {
-  var FILE = "activityreminder.json";
+  var FILE = "activityreminder.settings.json";
   // Load settings
   var settings = Object.assign({
     enabled: true,
