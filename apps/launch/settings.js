@@ -1,6 +1,9 @@
 // make sure to enclose the function in parentheses
 (function(back) {
-  let settings = Object.assign({ showClocks: true }, require("Storage").readJSON("launch.json", true) || {});
+  let settings = Object.assign({
+    showClocks: true,
+    fullscreen: false
+  }, require("Storage").readJSON("launch.json", true) || {});
 
   let fonts = g.getFonts();
   function save(key, value) {
@@ -24,7 +27,12 @@
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
       format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
-      onchange: (m) => {save("showClocks", m)}
+      onchange: (m) => { save("showClocks", m) }
+    },
+    /*LANG*/"Fullscreen": {
+      value: settings.fullscreen == true,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: (m) => { save("fullscreen", m) }
     }
   };
   E.showMenu(appMenu);
