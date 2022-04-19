@@ -126,7 +126,7 @@ function asTime(v){
 
 function viewTrack(n, info) {
   if (!info) {
-    E.showMessage("Loading...","GPS Track "+n);
+    E.showMessage(/*LANG*/"Loading...","GPS Track "+n);
     info = getTrackInfo(n);
   }
   const menu = {

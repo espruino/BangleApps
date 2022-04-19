@@ -85,17 +85,24 @@ function drawPage(p){
     g.flip();
 }
 
-Bangle.on("swipe",(dir)=>{
+Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
     selected = 0;
     oldselected=-1;
-    if (dir<0){
+    if (dirUpDown==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
-    } else {
+    } else if (dirUpDown==1){
         --page; if (page<0) page=maxPage;
         drawPage(page);
-    }  
+    }
+    if (dirLeftRight==1) showClock();
 });
+
+function showClock(){
+  var app = require("Storage").readJSON('setting.json', 1).clock;
+  if (app) load(app);
+  else E.showMessage("clock\nnot found");
+}
 
 function isTouched(p,n){
     if (n<0 || n>3) return false;
