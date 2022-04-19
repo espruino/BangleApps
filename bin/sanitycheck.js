@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/node
 /* Checks for any obvious problems in apps.json
 */
 
@@ -197,10 +197,11 @@ apps.forEach((app,appIdx) => {
     // warn if JS icon is the wrong size
     if (file.name == app.id+".img") {
         let icon;
-        let match = fileContents.match(/E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)/);
+        let match = fileContents.match(/^\s*E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)\s*$/);
+        if (match==null) match = fileContents.match(/^\s*atob\(\"([^"]*)\"\)\s*$/);
         if (match) icon = Buffer.from(match[1], 'base64');
         else {
-          match = fileContents.match(/require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)/);
+          match = fileContents.match(/^\s*require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)\s*$/);
           if (match) icon = heatshrink.decompress(Buffer.from(match[1], 'base64'));
           else ERROR(`JS icon ${file.name} does not match the pattern 'require("heatshrink").decompress(atob("..."))'`);
         }

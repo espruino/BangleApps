@@ -29,7 +29,7 @@ function showMenu() {
 }
 
 function viewLog(n) {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var f = require("Storage").open(getFileName(n), "r");
   var records = 0, l = "", ll="";
   while ((l=f.readLine())!==undefined) {records++;ll=l;}

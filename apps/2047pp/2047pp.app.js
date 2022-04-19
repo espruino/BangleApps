@@ -17,7 +17,7 @@ class TwoK {
     bh = Math.floor(h/4);
     bw = Math.floor(w/4);
     g.clearRect(0, 0, g.getWidth()-1, yo).setFontAlign(0, 0, 0);
-    g.setFont("Vector", 16).setColor("#fff").drawString("Score:"+this.score.toString(), g.getWidth()/2, 8);
+    g.setFont("Vector", 16).setColor(g.theme.fg).drawString("Score:"+this.score.toString(), g.getWidth()/2, 8);
     this.drawBRect(xo-3, yo-3, xo+w+2, yo+h+2, 4, "#a88", "#caa", false);
     for (y=0; y<4; ++y)
       for (x=0; x<4; ++x) {

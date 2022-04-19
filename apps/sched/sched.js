@@ -40,7 +40,7 @@ function showAlarm(alarm) {
       if(alarm.ot===undefined) alarm.ot = alarm.t;
       alarm.t += 10*60*1000; // 10 minutes
     } else {
-      alarm.last = (new Date()).getDate();
+      if (!alarm.timer) alarm.last = (new Date()).getDate();
       if (alarm.ot!==undefined) {
           alarm.t = alarm.ot;
           delete alarm.ot;
