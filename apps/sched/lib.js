@@ -37,9 +37,9 @@ exports.setAlarm = function(id, alarm) {
 exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
-  var active = alarm.on && (alarm.dow>>time.getDay())&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
-  if (!active) return undefined;
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+  var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
+  if (!active) return undefined;
   var t = alarm.t-currentTime;
   if (alarm.last == time.getDate() || t < -60000) t += 86400000;
   return t;
