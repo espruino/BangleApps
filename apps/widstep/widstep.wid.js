@@ -14,8 +14,8 @@ Bangle.on('lcdPower', function(on) {
 WIDGETS["widstep"]={area:"tl", sortorder:-1, width:28,
   draw:function() {
     if (!Bangle.isLCDOn()) return; // dont redraw if LCD is off
-    //var steps = Bangle.getHealthStatus("day").steps;
-    var steps = 5285;
+    var steps = Bangle.getHealthStatus("day").steps;
+    //var steps = 5285;
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(this.x, this.y, this.x + this.width, this.y + 23);
