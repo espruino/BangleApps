@@ -44,12 +44,6 @@ exports.input = function(options) {
     g.fillRect(NUMPADDING, g.getHeight()-rectHeight*4/3, g.getWidth()-NUMPADDING, g.getHeight()-rectHeight*2/3);
   }
 
-  function initMarker() {
-    g.setColor(0.5,0,0);
-    g.fillRect(3,4+20,11,13+20);
-    g.setColor(HLCOLOR);
-  }
-
   function updateTopString() {
     "ram"
     g.setColor(BGCOLOR);
@@ -64,7 +58,7 @@ exports.input = function(options) {
 
   drawAbcRow();
   drawNumRow();
-  initMarker();
+  updateTopString();
 
   var abcHL;
   var abcHLPrev = -10;
