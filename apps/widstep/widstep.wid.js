@@ -1,9 +1,9 @@
-let settings;
+let wsSettings;
 
 function loadSettings() {
-  settings = require('Storage').readJSON("health.json", 1) || {};
-  if( settings.stepGoal === undefined ) {
-    settings.stepGoal = 10000;
+  wsSettings = require('Storage').readJSON("health.json", 1) || {};
+  if( wsSettings.stepGoal === undefined ) {
+    wsSettings.stepGoal = 10000;
   }
 }
 
@@ -20,7 +20,7 @@ WIDGETS["widstep"]={area:"tl", sortorder:-1, width:28,
     g.setColor(g.theme.bg);
     g.fillRect(this.x, this.y, this.x + this.width, this.y + 23);
     g.setColor(g.theme.dark ? '#00f' : '#0ff');
-    var progress = this.width * Math.min(steps/settings.stepGoal, 1);
+    var progress = this.width * Math.min(steps/wsSettings.stepGoal, 1);
     g.fillRect(this.x+1, this.y+1, this.x + progress -1, this.y + 23);
     g.setColor(g.theme.fg);
     g.setFontAlign(0, -1);
