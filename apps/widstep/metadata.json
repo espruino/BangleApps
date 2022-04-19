@@ -1,0 +1,15 @@
+{
+    "id": "widstep",
+    "name": "Step counter widget",
+    "version": "0.01",
+    "description": "Step counter widget, narrow but clearly readable",
+    "icon": "icons8-winter-boots-48.png",
+    "type": "widget",
+    "tags": "widget,health",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "dependencies" : {"health":"app"},
+    "allow_emulator":true,
+    "storage": [
+      {"name":"widstep.wid.js","url":"widstep.wid.js"}
+    ]
+  }
