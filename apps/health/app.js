@@ -70,7 +70,7 @@ function menuHRM() {
 
 
 function stepsPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
   g.clear(1);
@@ -81,7 +81,7 @@ function stepsPerHour() {
 }
 
 function stepsPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   g.clear(1);
@@ -92,7 +92,7 @@ function stepsPerDay() {
 }
 
 function hrmPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   var cnt = new Uint8Array(23);
   require("health").readDay(new Date(), h=>{
@@ -108,7 +108,7 @@ function hrmPerHour() {
 }
 
 function hrmPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   var cnt = new Uint8Array(31);
   require("health").readDailySummaries(new Date(), h=>{
@@ -124,7 +124,7 @@ function hrmPerDay() {
 }
 
 function movementPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
   g.clear(1);
@@ -135,7 +135,7 @@ function movementPerHour() {
 }
 
 function movementPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
   g.clear(1);

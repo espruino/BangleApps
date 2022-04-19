@@ -354,7 +354,7 @@ function loadFile(fn) {
   Bangle.setLCDMode("direct");
   g.clear();
   E.showMenu();
-  E.showMessage("Loading...", fn);
+  E.showMessage(/*LANG*/"Loading...", fn);
   readSTL(fn);
   zDist = 5*largestExtent(points);
   g.clear();
