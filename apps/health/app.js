@@ -31,11 +31,6 @@ function menuSettings() {
       min : 0, max : 3,
       format : v=>["Off","3 mins","10 mins","Always"][v],
       onchange : v => { s.hrm=v;setSettings(s); }
-    },
-    "Daily Step Goal":{
-      value : 10000|s.stepGoal,
-      min : 0, max : 20000, step : 100,
-      onchange : v => { s.stepGoal=v;setSettings(s); }
     }
   });
 }
@@ -43,11 +38,17 @@ function menuSettings() {
 function menuStepCount() {
   swipe_enabled = false;
   clearButton();
+  var s=getSettings();
   E.showMenu({
     "":{title:"Step Counting"},
     "< Back":()=>menuMain(),
     "per hour":()=>stepsPerHour(),
-    "per day":()=>stepsPerDay()
+    "per day":()=>stepsPerDay(),
+    "Daily Step Goal":{
+      value : 10000|s.stepGoal,
+      min : 0, max : 20000, step : 100,
+      onchange : v => { s.stepGoal=v;setSettings(s); }
+    }
   });
 }
 
