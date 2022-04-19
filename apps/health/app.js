@@ -2,8 +2,8 @@ function getSettings() {
   return require("Storage").readJSON("health.json",1)||{};
 }
 
-function setSettings(healthSettings) {
-  require("Storage").writeJSON("health.json",healthSettings);
+function setSettings(s) {
+  require("Storage").writeJSON("health.json",s);
 }
 
 function menuMain() {
@@ -15,39 +15,22 @@ function menuMain() {
     "Step Counting":()=>menuStepCount(),
     "Movement":()=>menuMovement(),
     "Heart Rate":()=>menuHRM(),
-    "Settings":()=>menuSettings()
-  });
-}
-
-function menuSettings() {
-  swipe_enabled = false;
-  clearButton();
-  var healthSettings=getSettings();
-  E.showMenu({
-    "":{title:"Health Tracking"},
-    "< Back":()=>menuMain(),
-    "Heart Rt":{
-      value : 0|healthSettings.hrm,
-      min : 0, max : 3,
-      format : v=>["Off","3 mins","10 mins","Always"][v],
-      onchange : v => { healthSettings.hrm=v;setSettings(healthSettings); }
-    }
   });
 }
 
 function menuStepCount() {
   swipe_enabled = false;
   clearButton();
-  var healthSettings=getSettings();
+  var s=getSettings();
   E.showMenu({
     "":{title:"Step Counting"},
     "< Back":()=>menuMain(),
     "per hour":()=>stepsPerHour(),
     "per day":()=>stepsPerDay(),
     "Daily Step Goal":{
-      value : 10000|healthSettings.stepGoal,
+      value : (s.stepGoal ? s.stepGoal : 10000),
       min : 0, max : 20000, step : 100,
-      onchange : v => { healthSettings.stepGoal=v;setSettings(healthSettings); }
+      onchange : v => { s.stepGoal=v;setSettings(s); }
     }
   });
 }
@@ -66,11 +49,18 @@ function menuMovement() {
 function menuHRM() {
   swipe_enabled = false;
   clearButton();
+  var s=getSettings();
   E.showMenu({
     "":{title:"Heart Rate"},
     "< Back":()=>menuMain(),
     "per hour":()=>hrmPerHour(),
     "per day":()=>hrmPerDay(),
+    "Log interval":{
+      value : 0|s.hrm,
+      min : 0, max : 3,
+      format : v=>["Off","3 mins","10 mins","Always"][v],
+      onchange : v => { s.hrm=v;setSettings(s); }
+    }
   });
 }
 
