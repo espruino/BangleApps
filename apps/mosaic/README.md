@@ -6,8 +6,9 @@ A fabulously colourful clock!
 * Dark and Light theme compatible, with a setting to override the digit colour scheme.
 * Show or hide widgets with a setting (default shows widgets).
 
-![](mosaic_scr1.png)
-![](mosaic_scr2.png)
-![](mosaic_scr3.png)
+![](mosaic-scr1.png)
+![](mosaic-scr2.png)
+
+This clock is inspired by the mosaic watchface for pebble: https://apps.rebble.io/en_US/application/55386bcd2aead62b16000028
 
 Written by: [Sir Indy](https://github.com/sir-indy) For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)
