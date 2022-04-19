@@ -53,6 +53,11 @@
       format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("flash", v)
     },
+    /*LANG*/'Quiet mode disables auto-open': {
+      value: !!settings().quietNoAutOpn,
+      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
+      onchange: v => updateSetting("quietNoAutOpn", v)
+    },
   };
   E.showMenu(mainmenu);
 })

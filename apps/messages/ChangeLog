@@ -44,3 +44,4 @@
 0.29: Fix message list overwrites on Bangle.js 1 (fix #1642)
 0.30: Add new Icons (Youtube, Twitch, MS TODO, Teams, Snapchat, Signal, Post & DHL, Nina, Lieferando, Kalender, Discord, Corona Warn, Bibel)
 0.31: Option to disable icon flashing
+0.32: Added an option to allow quiet mode to override message auto-open
