@@ -22,5 +22,6 @@
   {"code":"ro_RO","name":"Romanian","url":"ro_RO.json"},
   {"code":"sk_SK","name":"Slovak","url":"sk_SK.json"},
   {"code":"sl_SL","name":"Slovenian","url":"sl_SL.json"},
-  {"code":"nn_NO","name":"Norwegian (Nynorsk)","url":"nn_NO.json"}
+  {"code":"nn_NO","name":"Norwegian (Nynorsk)","url":"nn_NO.json"},
+  {"code":"hr_HR","name":"Croatian","url":"hr_HR.json"}  
 ]
