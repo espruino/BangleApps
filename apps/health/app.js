@@ -33,7 +33,7 @@ function menuSettings() {
       onchange : v => { s.hrm=v;setSettings(s); }
     },
     "Daily Step Goal":{
-      value : 0|s.stepGoal,
+      value : 10000|s.stepGoal,
       min : 0, max : 20000, step : 100,
       onchange : v => { s.stepGoal=v;setSettings(s); }
     }
