@@ -6,5 +6,5 @@
 0.06: Add dependancy on Pedometer Widget
 0.07: Fix icon and ong file to 48x48
 0.08: Add theme options and optional lock symbol
-0.09 (1): Add support for internationalization (LANG placeholders + "locale" module)
-0.09 (2): Get steps from built-in step counter (widpedom no more needed, fix #1697)
+0.09: Add support for internationalization (LANG placeholders + "locale" module)
+      Get steps from built-in step counter (widpedom no more needed, fix #1697)
