@@ -2,8 +2,8 @@ function getSettings() {
   return require("Storage").readJSON("health.json",1)||{};
 }
 
-function setSettings(s) {
-  require("Storage").writeJSON("health.json",s);
+function setSettings(healthSettings) {
+  require("Storage").writeJSON("health.json",healthSettings);
 }
 
 function menuMain() {
@@ -22,15 +22,15 @@ function menuMain() {
 function menuSettings() {
   swipe_enabled = false;
   clearButton();
-  var s=getSettings();
+  var healthSettings=getSettings();
   E.showMenu({
     "":{title:"Health Tracking"},
     "< Back":()=>menuMain(),
     "Heart Rt":{
-      value : 0|s.hrm,
+      value : 0|healthSettings.hrm,
       min : 0, max : 3,
       format : v=>["Off","3 mins","10 mins","Always"][v],
-      onchange : v => { s.hrm=v;setSettings(s); }
+      onchange : v => { healthSettings.hrm=v;setSettings(healthSettings); }
     }
   });
 }
@@ -38,16 +38,16 @@ function menuSettings() {
 function menuStepCount() {
   swipe_enabled = false;
   clearButton();
-  var s=getSettings();
+  var healthSettings=getSettings();
   E.showMenu({
     "":{title:"Step Counting"},
     "< Back":()=>menuMain(),
     "per hour":()=>stepsPerHour(),
     "per day":()=>stepsPerDay(),
     "Daily Step Goal":{
-      value : 10000|s.stepGoal,
+      value : 10000|healthSettings.stepGoal,
       min : 0, max : 20000, step : 100,
-      onchange : v => { s.stepGoal=v;setSettings(s); }
+      onchange : v => { healthSettings.stepGoal=v;setSettings(healthSettings); }
     }
   });
 }
