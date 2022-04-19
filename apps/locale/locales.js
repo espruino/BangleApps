@@ -662,7 +662,7 @@ var locales = {
     thousands_sep: " ",
     currency_symbol: "kr",
     int_curr_symbol: "NOK",
-    speed: "kmh",
+    speed: "kmt",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
     ampm: { 0: "", 1: "" },
