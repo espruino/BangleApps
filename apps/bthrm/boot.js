@@ -245,7 +245,7 @@
           initBt();
         }, clampedTime);
 
-        retryTime = Math.pow(retryTime, 1.1);
+        retryTime = Math.pow(clampedTime, 1.1);
         if (retryTime > maxRetryTime){
           retryTime = maxRetryTime;
         }
