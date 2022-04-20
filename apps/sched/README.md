@@ -53,21 +53,27 @@ use too much RAM.
 It can be used as follows:
 
 ```
-// add/update an existing alarm
+// Get a new alarm with default values
+let alarm = require("sched").newDefaultAlarm();
+
+// Get a new timer with default values
+let timer = require("sched").newDefaultTimer();
+
+// Add/update an existing alarm
 require("sched").setAlarm("mytimer", {
   msg : "Wake up",
-  timer : 10*60*1000, // 10 Minutes
+  timer : 10 * 60 * 1000 // 10 minutes
 });
 // Ensure the widget and alarm timer updates to schedule the new alarm properly
 require("sched").reload();
 
 // Get the time to the next alarm for us
-var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm("mytimer"));
-// timeToNext===undefined if no alarm or alarm disabled
+let timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm("mytimer"));
+// timeToNext === undefined if no alarm or alarm disabled
 
-// delete an alarm
+// Delete an alarm
 require("sched").setAlarm("mytimer", undefined);
-// reload after deleting...
+// Reload after deleting
 require("sched").reload();
 
 // Or add an alarm that runs your own code - in this case
@@ -76,12 +82,15 @@ require("sched").reload();
 require("sched").setAlarm("customrunner", {
   appid : "myapp",
   js : "load('setting.app.js')",
-  timer : 1*60*1000, // 1 Minute
+  timer : 1 * 60 * 1000 // 1 minute
 });
 
 // If you have been specifying `appid` you can also find any alarms that
 // your app has created with the following:
-require("sched").getAlarms().filter(a=>a.appid=="myapp");
+require("sched").getAlarms().filter(a => a.appid == "myapp");
+
+// Get the scheduler settings
+let settings = require("sched").getSettings();
 ```
 
 If your app requires alarms, you can specify that the alarms app needs to
