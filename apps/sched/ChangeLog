@@ -2,3 +2,4 @@
 0.02: Fix scheduling of other alarms if there is a pending alarm from the past (fix #1667)
 0.03: Fix `getTimeToAlarm` for a timer already used at same day, don't set `last` for timers. 
 0.04: Fix `getTimeToAlarm` to check for next dow if alarm.t lower currentTime.
+0.05: Export new functions (`newDefaultAlarm/Timer`), add Settings page
