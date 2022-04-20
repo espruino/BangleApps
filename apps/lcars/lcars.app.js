@@ -5,7 +5,7 @@ const storage = require('Storage')
 let settings = {
   alarm: -1,
   dataRow1: "Steps",
-  dataRow2: "Temp",
+  dataRow2: "HRM",
   dataRow3: "Battery",
   speed: "kph",
   fullscreen: false,
