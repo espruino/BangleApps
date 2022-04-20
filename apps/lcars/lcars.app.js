@@ -291,6 +291,9 @@ function drawInfo(){
     return;
   }
 
+  // Draw Infor is called from different sources so
+  // we have to ensure that the alignment is always the same.
+  g.setFontAlign(-1, -1, 0);
   g.setFontAntonioMedium();
   g.setColor(color2);
   g.clearRect(120, 10, g.getWidth(), 75);
