@@ -579,37 +579,34 @@ function getWeather(){
 
   try {
     weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
+
+    // Temperature
+    weather.temp = locale.temp(weather.temp-273.15);
+
+    // Humidity
+    weather.hum = weather.hum + "%";
+
+    // Wind
+    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+    var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+    weather.wind = Math.round(wind[1] * speedFactor);
+
+    return weather
+
   } catch(ex) {
     // Return default
   }
 
-  if(weatherJson === undefined){
-    return {
-      temp: "-",
-      hum: "-",
-      txt: "-",
-      wind: "-",
-      wdir: "-",
-      wrose: "-"
-    };
-  }
-
-  var weather = weatherJson.weather;
-
-  // Temperature
-  weather.temp = locale.temp(weather.temp-273.15);
-
-  // Humidity
-  weather.hum = weather.hum + "%";
-
-  // Wind
-  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
-  weather.wind = Math.round(wind[1] * speedFactor);
-
-  return weather
+  return {
+    temp: " ? ",
+    hum: " ? ",
+    txt: " ? ",
+    wind: " ? ",
+    wdir: " ? ",
+    wrose: " ? "
+  };
 }
-
 
 /*
  * Handle alarm
