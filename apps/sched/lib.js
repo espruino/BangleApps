@@ -52,3 +52,58 @@ exports.reload = function() {
     Bangle.drawWidgets();
   }
 };
+// Factory that creates a new alarm with default values
+exports.newDefaultAlarm = function () {
+  const settings = exports.getSettings();
+
+  let alarm = {
+    t: 12 * 3600000, // Default to 12:00
+    on: true,
+    rp: false, // repeat not the default
+    as: settings.defaultAutoSnooze || false,
+    dow: 0b1111111,
+    last: 0,
+    vibrate: settings.defaultAlarmPattern,
+  };
+
+  delete settings;
+
+  return alarm;
+}
+// Factory that creates a new timer with default values
+exports.newDefaultTimer = function () {
+  const settings = exports.getSettings();
+
+  let timer = {
+    timer: 5 * 60 * 1000, // 5 minutes
+    on: true,
+    rp: false,
+    as: false,
+    dow: 0b1111111,
+    last: 0,
+    vibrate: settings.defaultTimerPattern
+  }
+
+  delete settings;
+
+  return timer;
+};
+// Return the scheduler settings
+exports.getSettings = function () {
+  return Object.assign(
+    {
+      unlockAtBuzz: false,
+      defaultSnoozeMillis: 600000, // 10 minutes
+      defaultAutoSnooze: false,
+      buzzCount: 10,
+      buzzIntervalMillis: 3000, // 3 seconds
+      defaultAlarmPattern: "..",
+      defaultTimerPattern: ".."
+    },
+    require("Storage").readJSON("sched.settings.json", true) || {}
+  );
+}
+// Write the updated settings back to storage
+exports.setSettings = function(settings) {
+  require("Storage").writeJSON("sched.settings.json", settings);
+};

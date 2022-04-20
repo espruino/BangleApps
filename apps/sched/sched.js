@@ -18,7 +18,9 @@ function formatTime(t) {
 }
 
 function showAlarm(alarm) {
-  var msg = "";
+  const settings = require("sched").getSettings();
+
+  let msg = "";
   msg += alarm.timer ? formatTime(alarm.timer) : formatTime(alarm.t);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
@@ -28,9 +30,12 @@ function showAlarm(alarm) {
     else
       msg = atob("AC0swgF97///RcEpMlVVVVVVf9VVVVVVVVX/9VVf9VVf/1VVV///1Vf9VX///VVX///VWqqlV///1Vf//9aqqqqpf//9V///2qqqqqqn///V///6qqqqqqr///X//+qqoAAKqqv//3//6qoAAAAKqr//3//qqAAAAAAqq//3/+qoAADwAAKqv/3/+qgAADwAACqv/3/aqAAADwAAAqp/19qoAAADwAAAKqfV1qgAAADwAAACqXVWqgAAADwAAACqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAAOsAAAAKpVaoAAAAOsAAAAKpVaoAAAAL/AAAAKpVaoAAAAgPwAAAKpVaoAAACAD8AAAKpVWqAAAIAA/AAAqlVWqAAAgAAPwAAqlVWqAACAAADwAAqlVWqgAIAAAAAACqlVVqgAgAAAAAACqVVVqoAAAAAAAAKqVVVaqAAAAAAAAqpVVVWqgAAAAAACqlVVVWqoAAAAAAKqlVVVVqqAAAAAAqqVVVVVaqoAAAAKqpVVVVVeqqoAAKqqtVVVVV/6qqqqqqr/VVVVX/2qqqqqqn/1VVVf/VaqqqqpV/9VVVf9VVWqqlVVf9VVVf1VVVVVVVVX9VQ==")+" "+msg;
   }
+
   Bangle.loadWidgets();
   Bangle.drawWidgets();
-  var buzzCount = 10;
+
+  let buzzCount = settings.buzzCount;
+
   E.showPrompt(msg,{
     title:alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
     buttons : {/*LANG*/"Snooze":true,/*LANG*/"Ok":false} // default is sleep so it'll come back in 10 mins
@@ -38,7 +43,7 @@ function showAlarm(alarm) {
     buzzCount = 0;
     if (sleep) {
       if(alarm.ot===undefined) alarm.ot = alarm.t;
-      alarm.t += 10*60*1000; // 10 minutes
+      alarm.t += settings.defaultSnoozeMillis;
     } else {
       if (!alarm.timer) alarm.last = (new Date()).getDate();
       if (alarm.ot!==undefined) {
@@ -51,24 +56,35 @@ function showAlarm(alarm) {
     require("sched").setAlarms(alarms);
     load();
   });
+
   function buzz() {
-    require("buzz").pattern(alarm.vibrate===undefined?"..":alarm.vibrate).then(function() {
-      if (buzzCount--)
-        setTimeout(buzz, 3000);
-      else if(alarm.as) { // auto-snooze
-        buzzCount = 10;
-        setTimeout(buzz, 600000);
+    if (settings.unlockAtBuzz) {
+      Bangle.setLocked(false);
+    }
+
+    require("buzz").pattern(alarm.vibrate === undefined ? ".." : alarm.vibrate).then(() => {
+      if (buzzCount--) {
+        setTimeout(buzz, settings.buzzIntervalMillis);
+      } else if (alarm.as) { // auto-snooze
+        buzzCount = settings.buzzCount;
+        setTimeout(buzz, settings.defaultSnoozeMillis);
       }
     });
   }
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return;
+
+  if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1)
+    return;
+
   buzz();
 }
 
 // Check for alarms
-var alarms = require("sched").getAlarms();
-var active = require("sched").getActiveAlarms(alarms);
-if (active.length) // if there's an alarm, show it
+let alarms = require("sched").getAlarms();
+let active = require("sched").getActiveAlarms(alarms);
+if (active.length) {
+  // if there's an alarm, show it
   showAlarm(active[0]);
-else // otherwise just go back to default app
+} else {
+  // otherwise just go back to default app
   setTimeout(load, 100);
+}
