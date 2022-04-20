@@ -1,28 +1,28 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("sched").getAlarms();
 // An array of alarm objects (see sched/README.md)
+let alarms = require("sched").getAlarms();
 
 // time in ms -> { hrs, mins }
 function decodeTime(t) {
-  t = 0|t; // sanitise
-  var hrs = 0|(t/3600000);
-  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
+  t = 0 | t; // sanitise
+  let hrs = 0 | (t / 3600000);
+  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
 }
 
 // time in { hrs, mins } -> ms
 function encodeTime(o) {
-  return o.hrs*3600000 + o.mins*60000;
+  return o.hrs * 3600000 + o.mins * 60000;
 }
 
 function formatTime(t) {
-  var o = decodeTime(t);
-  return o.hrs+":"+("0"+o.mins).substr(-2);
+  let o = decodeTime(t);
+  return o.hrs + ":" + ("0" + o.mins).substr(-2);
 }
 
 function getCurrentTime() {
-  var time = new Date();
+  let time = new Date();
   return (
     time.getHours() * 3600000 +
     time.getMinutes() * 60000 +
@@ -78,8 +78,8 @@ function editDOW(dow, onchange) {
     '': { 'title': /*LANG*/'Days of Week' },
     /*LANG*/'< Back' : () => onchange(dow)
   };
-  for (var i = 0; i < 7; i++) (i => {
-    var dayOfWeek = require("locale").dow({ getDay: () => i });
+  for (let i = 0; i < 7; i++) (i => {
+    let dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
       format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
@@ -90,19 +90,11 @@ function editDOW(dow, onchange) {
 }
 
 function editAlarm(alarmIndex, alarm) {
-  var newAlarm = alarmIndex<0;
-  var a = {
-    t : 12*3600000, // 12 o clock default
-    on : true,
-    rp : false, // repeat not the default
-    as : false,
-    dow : 0b1111111,
-    last : 0,
-    vibrate : ".."
-  }
+  let newAlarm = alarmIndex < 0;
+  let a = require("sched").newDefaultAlarm();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  var t = decodeTime(a.t);
+  let t = decodeTime(a.t);
 
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
@@ -155,19 +147,11 @@ function editAlarm(alarmIndex, alarm) {
 }
 
 function editTimer(alarmIndex, alarm) {
-  var newAlarm = alarmIndex<0;
-  var a = {
-    timer : 5*60*1000, // 5 minutes
-    on : true,
-    rp : false,
-    as : false,
-    dow : 0b1111111,
-    last : 0,
-    vibrate : ".."
-  }
+  let newAlarm = alarmIndex < 0;
+  let a = require("sched").newDefaultTimer();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  var t = decodeTime(a.timer);
+  let t = decodeTime(a.timer);
 
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
