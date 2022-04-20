@@ -5,9 +5,9 @@
   const storage = require('Storage')
   let settings = {
     alarm: -1,
-    dataRow1: "Battery",
-    dataRow2: "Steps",
-    dataRow3: "Temp",
+    dataRow1: "Steps",
+    dataRow2: "HRM",
+    dataRow3: "Battery",
     speed: "kph",
     fullscreen: false,
     themeColor1BG: "#FF9900",
@@ -23,7 +23,7 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
-  
+
   var dataOptions = ["Steps", "Battery", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White'];

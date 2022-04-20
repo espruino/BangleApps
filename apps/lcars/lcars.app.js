@@ -1,10 +1,11 @@
+const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
 const storage = require('Storage')
 let settings = {
   alarm: -1,
   dataRow1: "Steps",
-  dataRow2: "Temp",
+  dataRow2: "HRM",
   dataRow3: "Battery",
   speed: "kph",
   fullscreen: false,
@@ -35,7 +36,7 @@ let lcarsViewPos = 0;
 var plotMonth = false;
 
 
-function convert24to16(input) 
+function convert24to16(input)
 {
   let RGB888 = parseInt(input.replace(/^#/, ''), 16);
   let r = (RGB888 & 0xFF0000) >> 16;
@@ -171,7 +172,7 @@ Graphics.prototype.setFontAntonioLarge = function(scale) {
  */
 var drawTimeout;
 function queueDraw() {
-  
+
   // Faster updates during alarm to ensure that it is
   // shown correctly...
   var timeout = isAlarmEnabled() ? 10000 : 60000;
@@ -237,7 +238,7 @@ function _drawData(key, y, c){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
   } else if(key == "HRM"){
-    value = Math.round(Bangle.getHealthStatus("day").bpm);
+    value = Math.round(Bangle.getHealthStatus("last").bpm);
 
   } else if (key == "TEMP"){
     var weather = getWeather();
@@ -290,6 +291,9 @@ function drawInfo(){
     return;
   }
 
+  // Draw Infor is called from different sources so
+  // we have to ensure that the alignment is always the same.
+  g.setFontAlign(-1, -1, 0);
   g.setFontAntonioMedium();
   g.setColor(color2);
   g.clearRect(120, 10, g.getWidth(), 75);
@@ -556,17 +560,20 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
+  var steps = 0;
   try{
       if (WIDGETS.wpedom !== undefined) {
-          return WIDGETS.wpedom.getSteps();
+          steps = WIDGETS.wpedom.getSteps();
       } else if (WIDGETS.activepedom !== undefined) {
-          return WIDGETS.activepedom.getSteps();
+          steps = WIDGETS.activepedom.getSteps();
+      } else {
+        steps = Bangle.getHealthStatus("day").steps;
       }
   } catch(ex) {
       // In case we failed, we can only show 0 steps.
   }
 
-  return 0;
+  return steps;
 }
 
 
@@ -575,37 +582,34 @@ function getWeather(){
 
   try {
     weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
+
+    // Temperature
+    weather.temp = locale.temp(weather.temp-273.15);
+
+    // Humidity
+    weather.hum = weather.hum + "%";
+
+    // Wind
+    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+    var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+    weather.wind = Math.round(wind[1] * speedFactor);
+
+    return weather
+
   } catch(ex) {
     // Return default
   }
 
-  if(weatherJson === undefined){
-    return {
-      temp: "-",
-      hum: "-",
-      txt: "-",
-      wind: "-",
-      wdir: "-",
-      wrose: "-"
-    };
-  }
-
-  var weather = weatherJson.weather;
-
-  // Temperature
-  weather.temp = locale.temp(weather.temp-273.15);
-
-  // Humidity
-  weather.hum = weather.hum + "%";
-
-  // Wind
-  const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
-  weather.wind = Math.round(wind[1] * speedFactor);
-
-  return weather
+  return {
+    temp: " ? ",
+    hum: " ? ",
+    txt: " ? ",
+    wind: " ? ",
+    wdir: " ? ",
+    wrose: " ? "
+  };
 }
-
 
 /*
  * Handle alarm
@@ -639,7 +643,7 @@ function increaseAlarm(){
       var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
       var alarm = require('sched')
       alarm.setAlarm(TIMER_IDX, {
-      timer : (minutes+5)*60*1000,
+        timer : (minutes+5)*60*1000,
       });
       alarm.reload();
   } catch(ex){ }
@@ -654,9 +658,9 @@ function decreaseAlarm(){
       alarm.setAlarm(TIMER_IDX, undefined);
 
       if(minutes > 0){
-      alarm.setAlarm(TIMER_IDX, {
-          timer : minutes*60*1000,
-      });
+        alarm.setAlarm(TIMER_IDX, {
+            timer : minutes*60*1000,
+        });
       }
 
       alarm.reload();
