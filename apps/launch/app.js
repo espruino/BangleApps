@@ -2,7 +2,10 @@ var s = require("Storage");
 var scaleval = 1;
 var vectorval = 20;
 var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-let settings = Object.assign({ showClocks: true }, s.readJSON("launch.json", true) || {});
+let settings = Object.assign({
+  showClocks: true,
+  fullscreen: false
+}, s.readJSON("launch.json", true) || {});
 
 if ("vectorsize" in settings) {
     vectorval = parseInt(settings.vectorsize);
@@ -44,8 +47,11 @@ function drawApp(i, r) {
 }
 
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+
+if (!settings.fullscreen) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}
 
 E.showScroller({
   h : 64*scaleval, c : apps.length,
