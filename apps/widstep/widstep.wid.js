@@ -1,11 +1,4 @@
-let wsSettings;
-
-function loadSettings() {
-  wsSettings = require('Storage').readJSON("health.json", 1) || {};
-  if( wsSettings.stepGoal === undefined ) {
-    wsSettings.stepGoal = 10000;
-  }
-}
+let wsSettingsGoal;
 
 Bangle.on('step', function(s) { WIDGETS["widstep"].draw(); });
 Bangle.on('lcdPower', function(on) {
@@ -15,12 +8,11 @@ WIDGETS["widstep"]={area:"tl", sortorder:-1, width:28,
   draw:function() {
     if (!Bangle.isLCDOn()) return; // dont redraw if LCD is off
     var steps = Bangle.getHealthStatus("day").steps;
-    //var steps = 5285;
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(this.x, this.y, this.x + this.width, this.y + 23);
     g.setColor(g.theme.dark ? '#00f' : '#0ff');
-    var progress = this.width * Math.min(steps/wsSettings.stepGoal, 1);
+    var progress = this.width * Math.min(steps/wsSettingsGoal, 1);
     g.fillRect(this.x+1, this.y+1, this.x + progress -1, this.y + 23);
     g.setColor(g.theme.fg);
     g.setFontAlign(0, -1);
@@ -29,7 +21,7 @@ WIDGETS["widstep"]={area:"tl", sortorder:-1, width:28,
     g.setFont('4x6').drawString('steps', this.x+this.width/2, this.y + 2);
     //g.drawRect(this.x, this.y, this.x + this.width, this.y + 23);
   }, reload:function() {
-    loadSettings();
+    wsSettingsGoal = (require('Storage').readJSON("health.json", 1) || {}).stepGoal || 10000;
     WIDGETS["widstep"].draw();
   }
 };
