@@ -1,4 +1,4 @@
-let wsSettingsGoal;
+let wsSettingsGoal = 10000;
 
 Bangle.on('step', function(s) { WIDGETS["widstep"].draw(); });
 Bangle.on('lcdPower', function(on) {
@@ -25,4 +25,3 @@ WIDGETS["widstep"]={area:"tl", sortorder:-1, width:28,
     WIDGETS["widstep"].draw();
   }
 };
-loadSettings();
