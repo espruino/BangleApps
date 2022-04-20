@@ -19,6 +19,7 @@ the "sched" app must be installed on your device.
  * Tap on top/bottom of screen 1 to activate an alarm. Depends on widtmr.
  * The lower orange line indicates the battery level.
  * Display graphs (day or month) for steps + hrm on the second screen.
+ * Customizable theming colors in the settings menu of the app.
 
 ## Data that can be configured
  * Steps - Steps loaded via the wpedom app.
@@ -43,3 +44,4 @@ Access different screens via tap on the left/ right side of the screen
 ## Contributors
 - [Adam Schmalhofer](https://github.com/adamschmalhofer)
 - [Jon Warrington](https://github.com/BartokW)
+- [Ronin Stegner](https://github.com/Ronin0000)
