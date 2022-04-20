@@ -238,7 +238,7 @@ function _drawData(key, y, c){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
   } else if(key == "HRM"){
-    value = Math.round(Bangle.getHealthStatus("day").bpm);
+    value = Math.round(Bangle.getHealthStatus("last").bpm);
 
   } else if (key == "TEMP"){
     var weather = getWeather();
