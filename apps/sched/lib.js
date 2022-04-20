@@ -121,6 +121,6 @@ exports.encodeTime = function(o) {
 }
 
 exports.formatTime = function(t) {
-  let o = decodeTime(t);
+  let o = exports.decodeTime(t);
   return o.hrs + ":" + ("0" + o.mins).substr(-2);
 }
