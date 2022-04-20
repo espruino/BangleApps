@@ -5,23 +5,11 @@ if (Bangle.SCHED) {
   delete Bangle.SCHED;
 }
 
-// time in ms -> { hrs, mins }
-function decodeTime(t) {
-  t = 0|t; // sanitise
-  var hrs = 0|(t/3600000);
-  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
-}
-
-function formatTime(t) {
-  var o = decodeTime(t);
-  return o.hrs+":"+("0"+o.mins).substr(-2);
-}
-
 function showAlarm(alarm) {
   const settings = require("sched").getSettings();
 
   let msg = "";
-  msg += alarm.timer ? formatTime(alarm.timer) : formatTime(alarm.t);
+  msg += alarm.timer ? require("sched").formatTime(alarm.timer) : require("sched").formatTime(alarm.t);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
   } else {
