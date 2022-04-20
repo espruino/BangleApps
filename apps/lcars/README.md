@@ -1,8 +1,7 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, the wpedom app is required. To show weather data
-such as temperature, humidity or window you BangleJS must be connected
+To show weather data such as temperature, humidity or window you BangleJS must be connected
 with Gadgetbride and the weather app must be installed. To use the timer
 the "sched" app must be installed on your device.
 

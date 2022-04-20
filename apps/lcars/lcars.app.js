@@ -1,3 +1,4 @@
+const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
 const storage = require('Storage')
@@ -35,7 +36,7 @@ let lcarsViewPos = 0;
 var plotMonth = false;
 
 
-function convert24to16(input) 
+function convert24to16(input)
 {
   let RGB888 = parseInt(input.replace(/^#/, ''), 16);
   let r = (RGB888 & 0xFF0000) >> 16;
@@ -171,7 +172,7 @@ Graphics.prototype.setFontAntonioLarge = function(scale) {
  */
 var drawTimeout;
 function queueDraw() {
-  
+
   // Faster updates during alarm to ensure that it is
   // shown correctly...
   var timeout = isAlarmEnabled() ? 10000 : 60000;
@@ -556,17 +557,20 @@ function draw(){
  * Step counter via widget
  */
 function getSteps() {
+  var steps = 0;
   try{
       if (WIDGETS.wpedom !== undefined) {
-          return WIDGETS.wpedom.getSteps();
+          steps = WIDGETS.wpedom.getSteps();
       } else if (WIDGETS.activepedom !== undefined) {
-          return WIDGETS.activepedom.getSteps();
+          steps = WIDGETS.activepedom.getSteps();
+      } else {
+        steps = Bangle.getHealthStatus("day").steps;
       }
   } catch(ex) {
       // In case we failed, we can only show 0 steps.
   }
 
-  return 0;
+  return steps;
 }
 
 
@@ -639,7 +643,7 @@ function increaseAlarm(){
       var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
       var alarm = require('sched')
       alarm.setAlarm(TIMER_IDX, {
-      timer : (minutes+5)*60*1000,
+        timer : (minutes+5)*60*1000,
       });
       alarm.reload();
   } catch(ex){ }
@@ -654,9 +658,9 @@ function decreaseAlarm(){
       alarm.setAlarm(TIMER_IDX, undefined);
 
       if(minutes > 0){
-      alarm.setAlarm(TIMER_IDX, {
-          timer : minutes*60*1000,
-      });
+        alarm.setAlarm(TIMER_IDX, {
+            timer : minutes*60*1000,
+        });
       }
 
       alarm.reload();
