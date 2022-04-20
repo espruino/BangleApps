@@ -18,3 +18,4 @@
 0.17: Moving alarm internals to 'sched' library
 0.18: Cope with >1 identical alarm at once (#1667)
 0.19: Ensure rescheduled alarms that already fired have 'last' reset
+0.20: Use the new 'sched' factories to initialize new alarms/timers
