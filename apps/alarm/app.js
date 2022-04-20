@@ -39,7 +39,7 @@ function showMainMenu() {
   // Timer img "\0"+atob("DhKBAP////MDDAwwMGGBzgPwB4AeAPwHOBhgwMMzDez////w")
   // Alarm img "\0"+atob("FBSBAABgA4YcMPDGP8Zn/mx/48//PP/zD/8A//AP/wD/8A//AP/wH/+D//w//8AAAADwAAYA")
   const menu = {
-    '': { 'title': 'Alarm/Timer' },
+    '': { 'title': /*LANG*/'Alarms&Timers' },
     /*LANG*/'< Back' : ()=>{load();},
     /*LANG*/'New Alarm': ()=>editAlarm(-1),
     /*LANG*/'New Timer': ()=>editTimer(-1)
@@ -76,13 +76,13 @@ function showMainMenu() {
 function editDOW(dow, onchange) {
   const menu = {
     '': { 'title': /*LANG*/'Days of Week' },
-    '< Back' : () => onchange(dow)
+    /*LANG*/'< Back' : () => onchange(dow)
   };
   for (var i = 0; i < 7; i++) (i => {
     var dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
-      format: v => v ? "Yes" : "No",
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
     };
   })(i);
@@ -106,7 +106,7 @@ function editAlarm(alarmIndex, alarm) {
 
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
-    '< Back' : () => showMainMenu(),
+    /*LANG*/'< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -117,23 +117,23 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
       onchange: v=>a.on=v
     },
     /*LANG*/'Repeat': {
       value: a.rp,
-      format: v=>v?"Yes":"No",
-      onchange: v=>a.rp=v
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: v => a.rp = v
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
-    /*LANG*/'Auto snooze': {
+    /*LANG*/'Auto Snooze': {
       value: a.as,
-      format: v=>v?"Yes":"No",
-      onchange: v=>a.as=v
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: v => a.as = v
     }
   };
   menu[/*LANG*/"Save"] = function() {
@@ -171,7 +171,7 @@ function editTimer(alarmIndex, alarm) {
 
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
-    '< Back' : () => showMainMenu(),
+    /*LANG*/'< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -182,8 +182,8 @@ function editTimer(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
-      onchange: v=>a.on=v
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
+      onchange: v => a.on = v
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
