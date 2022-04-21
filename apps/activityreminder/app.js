@@ -1,5 +1,5 @@
 function drawAlert(){
-  E.showPrompt("Innactivity detected",{
+  E.showPrompt("Inactivity detected",{
     title:"Activity reminder",
     buttons : {"Ok": true,"Dismiss": false}
     }).then(function(v) {
