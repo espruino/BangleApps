@@ -36,7 +36,9 @@ function showMainMenu() {
       type = /*LANG*/"Alarm";
       txt = " "+require("sched").formatTime(alarm.t);
     }
-    if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
+
+    if (alarm.rp) txt += " \0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
+
     // rename duplicate alarms
     if (menu[type+txt]) {
       var n = 2;
