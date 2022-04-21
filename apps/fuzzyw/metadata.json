@@ -13,7 +13,6 @@
   "allow_emulator": true,
   "storage": [
     {"name":"fuzzyw.app.js","url":"fuzzyw.app.js"},
-    {"name":"fuzzyw.settings.js","url":"fuzzyw.settings.js"},
     {"name":"fuzzyw.img","url":"fuzzyw.icon.js","evaluate":true}
   ]
 }
