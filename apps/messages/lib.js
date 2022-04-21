@@ -56,9 +56,16 @@ exports.pushMessage = function(event) {
   }
   // otherwise load messages/show widget
   var loadMessages = Bangle.CLOCK || event.important;
-  // first, buzz
   var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
-  var unlockWatch = (require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch;
+  var appSettings = require('Storage').readJSON('messages.settings.json',1)||{};
+  var unlockWatch = appSettings.unlockWatch;
+  var quietNoAutOpn = appSettings.quietNoAutOpn;
+  delete appSettings;
+  // don't auto-open messages in quiet mode if quietNoAutOpn is true
+  if(quiet && quietNoAutOpn) {
+      loadMessages = false;
+  }
+  // first, buzz
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
       WIDGETS.messages.buzz();
       if(unlockWatch != false){

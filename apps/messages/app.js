@@ -470,8 +470,6 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-  // we don't have to time out of this screen...
-  cancelReloadTimeout();
   active = "main";
   // Otherwise show a menu
   E.showScroller({

@@ -1,28 +1,28 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("sched").getAlarms();
 // An array of alarm objects (see sched/README.md)
+let alarms = require("sched").getAlarms();
 
 // time in ms -> { hrs, mins }
 function decodeTime(t) {
-  t = 0|t; // sanitise
-  var hrs = 0|(t/3600000);
-  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
+  t = 0 | t; // sanitise
+  let hrs = 0 | (t / 3600000);
+  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
 }
 
 // time in { hrs, mins } -> ms
 function encodeTime(o) {
-  return o.hrs*3600000 + o.mins*60000;
+  return o.hrs * 3600000 + o.mins * 60000;
 }
 
 function formatTime(t) {
-  var o = decodeTime(t);
-  return o.hrs+":"+("0"+o.mins).substr(-2);
+  let o = decodeTime(t);
+  return o.hrs + ":" + ("0" + o.mins).substr(-2);
 }
 
 function getCurrentTime() {
-  var time = new Date();
+  let time = new Date();
   return (
     time.getHours() * 3600000 +
     time.getMinutes() * 60000 +
@@ -39,7 +39,7 @@ function showMainMenu() {
   // Timer img "\0"+atob("DhKBAP////MDDAwwMGGBzgPwB4AeAPwHOBhgwMMzDez////w")
   // Alarm img "\0"+atob("FBSBAABgA4YcMPDGP8Zn/mx/48//PP/zD/8A//AP/wD/8A//AP/wH/+D//w//8AAAADwAAYA")
   const menu = {
-    '': { 'title': 'Alarm/Timer' },
+    '': { 'title': /*LANG*/'Alarms&Timers' },
     /*LANG*/'< Back' : ()=>{load();},
     /*LANG*/'New Alarm': ()=>editAlarm(-1),
     /*LANG*/'New Timer': ()=>editTimer(-1)
@@ -76,13 +76,13 @@ function showMainMenu() {
 function editDOW(dow, onchange) {
   const menu = {
     '': { 'title': /*LANG*/'Days of Week' },
-    '< Back' : () => onchange(dow)
+    /*LANG*/'< Back' : () => onchange(dow)
   };
-  for (var i = 0; i < 7; i++) (i => {
-    var dayOfWeek = require("locale").dow({ getDay: () => i });
+  for (let i = 0; i < 7; i++) (i => {
+    let dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
-      format: v => v ? "Yes" : "No",
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
     };
   })(i);
@@ -90,23 +90,15 @@ function editDOW(dow, onchange) {
 }
 
 function editAlarm(alarmIndex, alarm) {
-  var newAlarm = alarmIndex<0;
-  var a = {
-    t : 12*3600000, // 12 o clock default
-    on : true,
-    rp : false, // repeat not the default
-    as : false,
-    dow : 0b1111111,
-    last : 0,
-    vibrate : ".."
-  }
+  let newAlarm = alarmIndex < 0;
+  let a = require("sched").newDefaultAlarm();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  var t = decodeTime(a.t);
+  let t = decodeTime(a.t);
 
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
-    '< Back' : () => showMainMenu(),
+    /*LANG*/'< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -117,23 +109,23 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
       onchange: v=>a.on=v
     },
     /*LANG*/'Repeat': {
       value: a.rp,
-      format: v=>v?"Yes":"No",
-      onchange: v=>a.rp=v
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: v => a.rp = v
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
-    /*LANG*/'Auto snooze': {
+    /*LANG*/'Auto Snooze': {
       value: a.as,
-      format: v=>v?"Yes":"No",
-      onchange: v=>a.as=v
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: v => a.as = v
     }
   };
   menu[/*LANG*/"Save"] = function() {
@@ -155,23 +147,15 @@ function editAlarm(alarmIndex, alarm) {
 }
 
 function editTimer(alarmIndex, alarm) {
-  var newAlarm = alarmIndex<0;
-  var a = {
-    timer : 5*60*1000, // 5 minutes
-    on : true,
-    rp : false,
-    as : false,
-    dow : 0b1111111,
-    last : 0,
-    vibrate : ".."
-  }
+  let newAlarm = alarmIndex < 0;
+  let a = require("sched").newDefaultTimer();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  var t = decodeTime(a.timer);
+  let t = decodeTime(a.timer);
 
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
-    '< Back' : () => showMainMenu(),
+    /*LANG*/'< Back' : () => showMainMenu(),
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -182,8 +166,8 @@ function editTimer(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
-      onchange: v=>a.on=v
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
+      onchange: v => a.on = v
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
