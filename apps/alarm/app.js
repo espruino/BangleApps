@@ -119,7 +119,11 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
+      onchange: () => editDOW(a.dow, d => {
+        a.dow = d;
+        a.t = encodeTime(t);
+        editAlarm(alarmIndex, a);
+      })
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     /*LANG*/'Auto Snooze': {
