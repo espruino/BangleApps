@@ -27,6 +27,7 @@ function convDow(x) {
   return "0b"+x;
 }
 
+const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="alarm") {
     settings = require("Storage").readJSON("gbalarms.json", 1) || {};
@@ -55,6 +56,7 @@ global.GB = (event) => {
     require("sched").setAlarms(alarms);
     require("sched").reload();
   }
+  if (_GB) setTimeout(_GB, 0, event);
 };
 
 })();
