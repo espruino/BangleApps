@@ -27,17 +27,15 @@ function convDow(x) {
   return "0b"+x;
 }
 
-const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="alarm") {
     settings = require("Storage").readJSON("gbalarms.json", 1) || {};
-    var alarms = [];
-
     //wipe existing GB alarms
     var gbalarms = require("sched").getAlarms().filter(a=>a.appid=="gbalarms");
     for (i = 0; i < gbalarms.length; i++) {
       require("sched").setAlarm(gbalarms[i].id, undefined);
     }
+    var alarms = require("sched").getAlarms();
     for (j = 0; j < event.d.length; j++) {
       //prevents all alarms from going off at once??
       var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < getCurrentTime()) ? (new Date()).getDate() : 0;
@@ -57,7 +55,6 @@ global.GB = (event) => {
     require("sched").setAlarms(alarms);
     require("sched").reload();
   }
-  if (_GB) setTimeout(_GB, 0, event);
 };
 
 })();
