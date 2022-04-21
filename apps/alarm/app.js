@@ -45,6 +45,11 @@ function showMainMenu() {
       while (menu[type+" "+n+txt]) n++;
       txt = type+" "+n+txt;
     } else txt = type+txt;
+
+    if (!alarm.timer) {
+      txt = txt + "\n" + decodeDOW(alarm.dow);
+    }
+
     // add to menu
     menu[txt] = {
       value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
@@ -56,6 +61,10 @@ function showMainMenu() {
   });
   if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
+}
+
+function decodeDOW(dow) {
+  return require("locale").dowAll(2).map((day, index) => dow & (1 << index) ? day : "_").join("");
 }
 
 function editDOW(dow, onchange) {
@@ -103,7 +112,7 @@ function editAlarm(alarmIndex, alarm) {
       onchange: v => a.rp = v
     },
     /*LANG*/'Days': {
-      value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
+      value: decodeDOW(a.dow),
       onchange: () => editDOW(a.dow, d => {
         a.dow = d;
         a.t = require("sched").encodeTime(t);
