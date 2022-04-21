@@ -38,19 +38,11 @@ function calc_ess(acc_magn) {
   }
 }
 
-// copied from alarm app
-// time in ms -> { hrs, mins }
-function decodeTime(t) {
-  t = 0|t; // sanitise
-  var hrs = 0|(t/3600000);
-  return { hrs : hrs, mins : Math.round((t-hrs*3600000)/60000) };
-}
-
 // locate next alarm
 var nextAlarm;
 active.forEach(alarm => {
   const now = new Date();
-  const t = decodeTime(alarm.t);
+  const t = require("sched").decodeTime(alarm.t);
   var dateAlarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), t.hrs, t.mins);
   if (dateAlarm < now) { // dateAlarm in the past, add 24h
     dateAlarm.setTime(dateAlarm.getTime() + (24*60*60*1000));
