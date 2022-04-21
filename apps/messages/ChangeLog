@@ -46,3 +46,4 @@
 0.31: Option to disable icon flashing
 0.32: Added an option to allow quiet mode to override message auto-open
 0.33: Timeout from the message list screen if the message being displayed is removed and there is a timer going
+0.34: Don't buzz for 'map' update messages
