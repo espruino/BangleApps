@@ -4,23 +4,6 @@ Bangle.drawWidgets();
 // An array of alarm objects (see sched/README.md)
 let alarms = require("sched").getAlarms();
 
-// time in ms -> { hrs, mins }
-function decodeTime(t) {
-  t = 0 | t; // sanitise
-  let hrs = 0 | (t / 3600000);
-  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
-}
-
-// time in { hrs, mins } -> ms
-function encodeTime(o) {
-  return o.hrs * 3600000 + o.mins * 60000;
-}
-
-function formatTime(t) {
-  let o = decodeTime(t);
-  return o.hrs + ":" + ("0" + o.mins).substr(-2);
-}
-
 function getCurrentTime() {
   let time = new Date();
   return (
@@ -48,10 +31,10 @@ function showMainMenu() {
     var type,txt; // a leading space is currently required (JS error in Espruino 2v12)
     if (alarm.timer) {
       type = /*LANG*/"Timer";
-      txt = " "+formatTime(alarm.timer);
+      txt = " "+require("sched").formatTime(alarm.timer);
     } else {
       type = /*LANG*/"Alarm";
-      txt = " "+formatTime(alarm.t);
+      txt = " "+require("sched").formatTime(alarm.t);
     }
     if (alarm.rp) txt += "\0"+atob("FBaBAAABgAAcAAHn//////wAHsABzAAYwAAMAADAAAAAAwAAMAADGAAzgAN4AD//////54AAOAABgAA=");
     // rename duplicate alarms
@@ -94,7 +77,7 @@ function editAlarm(alarmIndex, alarm) {
   let a = require("sched").newDefaultAlarm();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  let t = decodeTime(a.t);
+  let t = require("sched").decodeTime(a.t);
 
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
@@ -119,7 +102,11 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(alarmIndex,a)})
+      onchange: () => editDOW(a.dow, d => {
+        a.dow = d;
+        a.t = encodeTime(t);
+        editAlarm(alarmIndex, a);
+      })
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     /*LANG*/'Auto Snooze': {
@@ -129,7 +116,7 @@ function editAlarm(alarmIndex, alarm) {
     }
   };
   menu[/*LANG*/"Save"] = function() {
-    a.t = encodeTime(t);
+    a.t = require("sched").encodeTime(t);
     a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
@@ -151,7 +138,7 @@ function editTimer(alarmIndex, alarm) {
   let a = require("sched").newDefaultTimer();
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
   if (alarm) Object.assign(a,alarm);
-  let t = decodeTime(a.timer);
+  let t = require("sched").decodeTime(a.timer);
 
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
@@ -172,7 +159,7 @@ function editTimer(alarmIndex, alarm) {
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
   menu[/*LANG*/"Save"] = function() {
-    a.timer = encodeTime(t);
+    a.timer = require("sched").encodeTime(t);
     a.t = getCurrentTime() + a.timer;
     a.last = 0;
     if (newAlarm) alarms.push(a);
