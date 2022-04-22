@@ -1,7 +1,7 @@
 { "id": "mylocation",
   "name": "My Location",
   "shortName":"My Location",
-  "icon": "mylocation.png",
+  "icon": "app.png",
   "type": "app",
   "screenshots": [{"url":"screenshot_1.png"}],
   "version":"0.05",
@@ -10,8 +10,8 @@
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
-    {"name":"mylocation.app.js","url":"mylocation.app.js"},
-    {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
+    {"name":"mylocation.app.js","url":"app.js"},
+    {"name":"mylocation.img","url":"icon.js","evaluate": true }
   ],
   "data": [
     {"name":"mylocation.json"}
