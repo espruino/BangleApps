@@ -1,6 +1,8 @@
 const BANGLEJS2 = process.env.HWVERSION == 2; //# check for bangle 2
-const alarms = require("Storage").readJSON("sched.json",1)||[];
+const alarms = require("Storage").readJSON("sched.json",1) || [];
+const config = require("Storage").readJSON("sleepphasealarm.json",1) || {logs: []};
 const active = alarms.filter(a=>a.on);
+let logs = [];
 
 // Sleep/Wake detection with Estimation of Stationary Sleep-segments (ESS):
 // Marko Borazio, Eugen Berlin, Nagihan Kücükyildiz, Philipp M. Scholl and Kristof Van Laerhoven, "Towards a Benchmark for Wearable Sleep Analysis with Inertial Wrist-worn Sensing Units", ICHI 2014, Verona, Italy, IEEE Press, 2014.
@@ -108,12 +110,20 @@ function buzz() {
   });
 }
 
+function addLog(time, type) {
+  logs.push({time: time, type: type});
+  require("Storage").writeJSON("sleepphasealarm.json", config);
+}
+
 // run
 var minAlarm = new Date();
 var measure = true;
 if (nextAlarm !== undefined) {
-  Bangle.loadWidgets(); //# correct widget load draw order
+  config.logs[nextAlarm.getDate()] = []; // overwrite log on each day of month
+  logs = config.logs[nextAlarm.getDate()];
+  Bangle.loadWidgets();
   Bangle.drawWidgets();
+  let swest_last;
 
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarm.getTime() - (30*60*1000));
@@ -124,7 +134,16 @@ if (nextAlarm !== undefined) {
 
     if (swest !== undefined) {
       if (Bangle.isLCDOn()) {
-        drawString(swest ? "Sleep" : "Awake", BANGLEJS2 ? 150 : 180); //# remove x, adjust height
+        drawString(swest ? "Sleep" : "Awake", BANGLEJS2 ? 150 : 180);
+      }
+      // log
+      if (swest_last != swest) {
+        if (swest) {
+          addLog(new Date(Date.now() - sleepthresh*13/12.5*1000), "sleep"); // calculate begin of no motion phase, 13 values/second at 12.5Hz
+        } else {
+          addLog(new Date(), "awake");
+        }
+        swest_last = swest;
       }
     }
 
@@ -132,6 +151,7 @@ if (nextAlarm !== undefined) {
       // The alarm widget should handle this one
       setTimeout(load, 1000);
     } else if (measure && now >= minAlarm && swest === false) {
+      addLog(new Date(), "alarm");
       buzz();
       measure = false;
     }
