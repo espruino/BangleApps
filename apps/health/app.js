@@ -1,42 +1,54 @@
 function getSettings() {
-  return require("Storage").readJSON("health.json",1)||{};
+  return Object.assign({
+    hrm: 0,
+    stepGoal: 10000
+  }, require("Storage").readJSON("health.json", true) || {});
 }
 
-function setSettings(healthSettings) {
-  require("Storage").writeJSON("health.json",healthSettings);
+function setSettings(settings) {
+  require("Storage").writeJSON("health.json", settings);
 }
 
 function menuMain() {
   swipe_enabled = false;
   clearButton();
   E.showMenu({
-    "":{title:"Health Tracking"},
-    "< Back":()=>load(),
-    "Step Counting":()=>menuStepCount(),
-    "Movement":()=>menuMovement(),
-    "Heart Rate":()=>menuHRM(),
-    "Settings":()=>menuSettings()
+    "": { title: /*LANG*/"Health Tracking" },
+    /*LANG*/"< Back": () => load(),
+    /*LANG*/"Step Counting": () => menuStepCount(),
+    /*LANG*/"Movement": () => menuMovement(),
+    /*LANG*/"Heart Rate": () => menuHRM(),
+    /*LANG*/"Settings": () => menuSettings()
   });
 }
 
 function menuSettings() {
   swipe_enabled = false;
   clearButton();
-  var healthSettings=getSettings();
-  //print(healthSettings);
+  let settings = getSettings();
+
   E.showMenu({
-    "":{title:"Health Tracking"},
-    "< Back":()=>menuMain(),
-    "Heart Rt":{
-      value : 0|healthSettings.hrm,
-      min : 0, max : 3,
-      format : v=>["Off","3 mins","10 mins","Always"][v],
-      onchange : v => { healthSettings.hrm=v;setSettings(healthSettings); }
+    "": { title:/*LANG*/"Health Tracking" },
+    /*LANG*/"< Back": () => menuMain(),
+    /*LANG*/"HRM Interval": {
+      value: settings.hrm,
+      min: 0,
+      max: 3,
+      format: v => [ /*LANG*/"Off", /*LANG*/"3 min", /*LANG*/"10 min", /*LANG*/"Always"][v],
+      onchange: v => {
+        settings.hrm = v;
+        setSettings(settings);
+      }
     },
-    "Daily Step Goal":{
-      value : (healthSettings.stepGoal ? healthSettings.stepGoal : 10000),
-      min : 0, max : 20000, step : 100,
-      onchange : v => { healthSettings.stepGoal=v;setSettings(healthSettings); }
+    /*LANG*/"Daily Step Goal": {
+      value: settings.stepGoal,
+      min: 0,
+      max: 20000,
+      step: 250,
+      onchange: v => {
+        settings.stepGoal = v;
+        setSettings(settings);
+      }
     }
   });
 }
@@ -45,10 +57,10 @@ function menuStepCount() {
   swipe_enabled = false;
   clearButton();
   E.showMenu({
-    "":{title:"Step Counting"},
-    "< Back":()=>menuMain(),
-    "per hour":()=>stepsPerHour(),
-    "per day":()=>stepsPerDay()
+    "": { title:/*LANG*/"Steps" },
+    /*LANG*/"< Back": () => menuMain(),
+    /*LANG*/"per hour": () => stepsPerHour(),
+    /*LANG*/"per day": () => stepsPerDay()
   });
 }
 
@@ -56,10 +68,10 @@ function menuMovement() {
   swipe_enabled = false;
   clearButton();
   E.showMenu({
-    "":{title:"Movement"},
-    "< Back":()=>menuMain(),
-    "per hour":()=>movementPerHour(),
-    "per day":()=>movementPerDay(),
+    "": { title:/*LANG*/"Movement" },
+    /*LANG*/"< Back": () => menuMain(),
+    /*LANG*/"per hour": () => movementPerHour(),
+    /*LANG*/"per day": () => movementPerDay(),
   });
 }
 
@@ -67,17 +79,17 @@ function menuHRM() {
   swipe_enabled = false;
   clearButton();
   E.showMenu({
-    "":{title:"Heart Rate"},
-    "< Back":()=>menuMain(),
-    "per hour":()=>hrmPerHour(),
-    "per day":()=>hrmPerDay(),
+    "": { title:/*LANG*/"Heart Rate" },
+    /*LANG*/"< Back": () => menuMain(),
+    /*LANG*/"per hour": () => hrmPerHour(),
+    /*LANG*/"per day": () => hrmPerDay(),
   });
 }
 
 
 function stepsPerHour() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(24);
+  let data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
   g.clear(1);
   Bangle.drawWidgets();
@@ -88,7 +100,7 @@ function stepsPerHour() {
 
 function stepsPerDay() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(31);
+  let data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   g.clear(1);
   Bangle.drawWidgets();
@@ -99,8 +111,8 @@ function stepsPerDay() {
 
 function hrmPerHour() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(24);
-  var cnt = new Uint8Array(23);
+  let data = new Uint16Array(24);
+  let cnt = new Uint8Array(23);
   require("health").readDay(new Date(), h=>{
     data[h.hr]+=h.bpm;
     if (h.bpm) cnt[h.hr]++;
@@ -115,8 +127,8 @@ function hrmPerHour() {
 
 function hrmPerDay() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(31);
-  var cnt = new Uint8Array(31);
+  let data = new Uint16Array(31);
+  let cnt = new Uint8Array(31);
   require("health").readDailySummaries(new Date(), h=>{
     data[h.day]+=h.bpm;
     if (h.bpm) cnt[h.day]++;
@@ -131,7 +143,7 @@ function hrmPerDay() {
 
 function movementPerHour() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(24);
+  let data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
   g.clear(1);
   Bangle.drawWidgets();
@@ -142,7 +154,7 @@ function movementPerHour() {
 
 function movementPerDay() {
   E.showMessage(/*LANG*/"Loading...");
-  var data = new Uint16Array(31);
+  let data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
   g.clear(1);
   Bangle.drawWidgets();
@@ -260,4 +272,5 @@ function clearButton() {
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
 menuMain();
