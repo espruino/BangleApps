@@ -10,7 +10,7 @@ The drag in Dragboard is a nod to the javascript 'drag' event, which is used to 
 
 Known bugs: 
 - Initially developed for use with dark theme set on Bangle.js 2 - that is still the preferred way to view it although it now works with other themes.
-- When doing 'del' on a empty text-string, the letter case is changed.
+- When repeatedly doing 'del' on an empty text-string, the letter case is changed back and forth between upper and lower case.
 
 To do: 
 - Possibly provide a dragboard.settings.js file
