@@ -1,6 +1,3 @@
-//g.setTheme({fg : 0xFFFF, fg2 : 0xFFFF,bg2 : 0x0007,fgH : 0xFFFF,bgH : 0x02F7,dark : true});
-
-
 /* Choozi - Choose people or things at random using Bangle.js.
  * Inspired by the "Chwazi" Android app
  *
@@ -77,7 +74,7 @@ function arc(minR, maxR, minAngle, maxAngle) {
   inside.push(centreY+s*minR);
   outside.unshift(centreY+s*maxR);
   outside.unshift(centreX+c*maxR);
-  
+
   var vertices = inside.concat(outside);
   g.fillPoly(vertices, true);
 }
@@ -133,6 +130,7 @@ function animateChoice(target) {
     g.fillCircle(x, y, ballSize);
     oldx=x;
     oldy=y;
+    g.flip();
   }
 }
 
@@ -154,7 +152,7 @@ function choose() {
 // draw the current value of N in the middle of the screen, with
 // up/down arrows
 function drawN() {
-  g.setColor('#000000');
+  g.setColor(g.theme.fg);
   g.setFont("Vector",fontSize);
   g.drawString(N,centreX-g.stringWidth(N)/2+4,centreY-fontSize/2);
   if (N < maxN)
