@@ -54,18 +54,18 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
     if (strArr.length == 0) {
       Rx1 = 4;
       Rx2 = 6*4;
-      Ry1 = 8*4;
-      Ry2 = 8*4 + 3;
+      Ry1 = 8*4 + R.y;
+      Ry2 = 8*4 + 3 + R.y;
     } else if (strArr.length <= 4) {
       Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
       Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
-      Ry1 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
-      Ry2 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+      Ry1 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + R.y;
+      Ry2 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3 + R.y;
     } else {
       Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
       Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
-      Ry1 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
-      Ry2 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+      Ry1 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + R.y;
+      Ry2 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3 + R.y;
     }
     //print(Rx1,Rx2,Ry1, Ry2);
     return {x:Rx1,y:Ry1,x2:Rx2,y2:Ry2};
