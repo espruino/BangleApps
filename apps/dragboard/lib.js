@@ -49,11 +49,12 @@ exports.input = function(options) {
     g.setColor(BGCOLOR);
     g.fillRect(0,4+20,176,13+20);
     g.setColor(0.2,0,0);
-    g.fillRect(3,4+20,5+text.length*6,13+20);
+    var rectLen = text.length<27? text.length*6:27*6;
+    g.fillRect(3,4+20,5+rectLen,13+20);
     g.setColor(0.7,0,0);
-    g.fillRect(text.length*6+5,4+20,10+text.length*6,13+20);
+    g.fillRect(rectLen+5,4+20,rectLen+10,13+20);
     g.setColor(1,1,1);
-    g.drawString(text, 5, 5+20);
+    g.drawString(text.length<=27? text.substr(-27, 27) : '<- '+text.substr(-24,24), 5, 5+20);
   }
 
   drawAbcRow();
@@ -213,7 +214,7 @@ exports.input = function(options) {
       
       
       // Make a space or backspace by swiping right or left on screen above green rectangle
-      else {
+      else if (event.y > 20+4) {
         if (event.b == 0) {
           g.setColor(HLCOLOR);
           if (event.x < g.getWidth()/2) {
