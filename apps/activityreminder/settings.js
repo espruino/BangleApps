@@ -10,7 +10,7 @@
       "" : { "title" : "Activity Reminder" },
       "< Back" : () => back(),
       'Enable': {
-        value: !!settings.enabled,
+        value: settings.enabled,
         format: v => v?"Yes":"No",
         onchange: v => {
           settings.enabled = v;
@@ -18,7 +18,7 @@
         }
       },
       'Start hour': {
-        value: 9|settings.startHour,
+        value: settings.startHour,
         min: 0, max: 24,
         onchange: v => {
           settings.startHour = v;
@@ -26,7 +26,7 @@
         }
      },
      'End hour': {
-        value: 20|settings.endHour,
+        value: settings.endHour,
         min: 0, max: 24,
         onchange: v => {
           settings.endHour = v;
@@ -42,7 +42,7 @@
         }
      },
      'Dismiss delay': {
-        value: 10|settings.dismissDelayMin,
+        value: settings.dismissDelayMin,
         min: 5, max: 15,
         onchange: v => {
           settings.dismissDelayMin = v;
@@ -50,7 +50,7 @@
         }
      },
      'Min steps': {
-        value: 50|settings.minSteps,
+        value: settings.minSteps,
         min: 10, max: 500,
         onchange: v => {
           settings.minSteps = v;
