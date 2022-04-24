@@ -4,7 +4,7 @@ Graphics.prototype.setFont15x32N = function() {
     "/////oAAAAKAAAACgAAAAoAAAAKAAAACgf//AoEAAQKB//8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+/wAB/oEAAQKBAAECgf//AoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAAC////AgAAAQIAAAH+/w///oEIAAKBCAACgQgAAoEIAAKBCAACgQg/AoEIIQKB+CECgAAhAoAAIQKAACECgAAhAoAAIQL//+H+/w/h/oEIIQKBCCECgQghAoEIIQKBCCECgQghAoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+///gAIAAIACAACAAgAAgAIAAIAD/+CAAAAggAAAIIAAACD/+//gAAoAAAAKAAAACgAAAAoAAAAL////+///h/oAAIQKAACECgAAhAoAAIQKAACECgfghAoEIIQKBCD8CgQgAAoEIAAKBCAACgQgAAoEIAAL/D//+/////oAAAAKAAAACgAAAAoAAAAKAAAACgfg/AoEIIQKBCD8CgQgAAoEIAAKBCAACgQgAAoEIAAL/D//+/wAAAIEAAACBAAAAgQAAAIEAAACBAAAAgQAAAIH///6AAAACgAAAAoAAAAKAAAACgAAAAoAAAAL////+/////oAAAAKAAAACgAAAAoAAAAKAAAACgfg/AoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+///h/oAAIQKAACECgAAhAoAAIQKAACECgfghAoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+"
   ), "0".charCodeAt(0), 15, 32);
 };
-
+const SHOW_DATE = false; // TODO: make into setting?
 Bangle.setUI("clock"); // set UI first, so widgets know about Bangle.CLOCK
 Bangle.loadWidgets(); // load widgets, so Bangle.appRect knows about them
 
@@ -69,17 +69,23 @@ function draw() {
     time = pad2(d.getHours())+pad2(d.getMinutes()),
     tooth = Math.round(d.getSeconds()/60*teeth),
     m = d.getMilliseconds();
-  if (year!==last.year) {
-    g.setFont("15x32N").setFontAlign(0, -1) // center top
-      .drawString(year, x, y+32, true);
-  }
-  if (date!==last.date) {
-    g.setFont("15x32N").setFontAlign(0, 1) // center bottom
-      .drawString(date, x, y-32, true);
-  }
   if (time!==last.time) {
     g.setFont("15x32N:2").setFontAlign(0, 0) // center middle
       .drawString(time, x, y, true);
+  }
+  if (SHOW_DATE) {
+    if (year!==last.year) {
+      g.setFont("15x32N").setFontAlign(0, -1) // center top
+        .drawString(year, x, y+32, true);
+    }
+    if (date!==last.date) {
+      g.setFont("15x32N").setFontAlign(0, 1) // center bottom
+        .drawString(date, x, y-32, true);
+    }
+  }
+  else if (time!==last.time) {
+    g.fillRect(x-30, y-60, x+29, y-33).clearRect(x-28, y-58, x+27, y-33);
+    g.fillRect(x-30, y+60, x+29, y+30).clearRect(x-28, y+58, x+27, y+30);
   }
   if (tooth!==last.tooth) {
     if (tooth>last.tooth) {
