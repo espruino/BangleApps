@@ -32,7 +32,7 @@
      },
      'Max innactivity': {
         value: 30|settings.maxInnactivityMin,
-        min: 15, max: 60,
+        min: 15, max: 120,
         onchange: v => {
           settings.maxInnactivityMin = v;
           require("activityreminder").writeSettings(settings);
