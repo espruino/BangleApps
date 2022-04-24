@@ -37,9 +37,9 @@ exports.setAlarm = function(id, alarm) {
 exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
-  var active = alarm.on && (alarm.dow>>time.getDay())&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
-  if (!active) return undefined;
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+  var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
+  if (!active) return undefined;
   var t = alarm.t-currentTime;
   if (alarm.last == time.getDate() || t < -60000) t += 86400000;
   return t;
@@ -52,3 +52,75 @@ exports.reload = function() {
     Bangle.drawWidgets();
   }
 };
+// Factory that creates a new alarm with default values
+exports.newDefaultAlarm = function () {
+  const settings = exports.getSettings();
+
+  let alarm = {
+    t: 12 * 3600000, // Default to 12:00
+    on: true,
+    rp: false, // repeat not the default
+    as: settings.defaultAutoSnooze || false,
+    dow: 0b1111111,
+    last: 0,
+    vibrate: settings.defaultAlarmPattern,
+  };
+
+  delete settings;
+
+  return alarm;
+}
+// Factory that creates a new timer with default values
+exports.newDefaultTimer = function () {
+  const settings = exports.getSettings();
+
+  let timer = {
+    timer: 5 * 60 * 1000, // 5 minutes
+    on: true,
+    rp: false,
+    as: false,
+    dow: 0b1111111,
+    last: 0,
+    vibrate: settings.defaultTimerPattern
+  }
+
+  delete settings;
+
+  return timer;
+};
+// Return the scheduler settings
+exports.getSettings = function () {
+  return Object.assign(
+    {
+      unlockAtBuzz: false,
+      defaultSnoozeMillis: 600000, // 10 minutes
+      defaultAutoSnooze: false,
+      buzzCount: 10,
+      buzzIntervalMillis: 3000, // 3 seconds
+      defaultAlarmPattern: "..",
+      defaultTimerPattern: ".."
+    },
+    require("Storage").readJSON("sched.settings.json", true) || {}
+  );
+}
+// Write the updated settings back to storage
+exports.setSettings = function(settings) {
+  require("Storage").writeJSON("sched.settings.json", settings);
+};
+
+// time in ms -> { hrs, mins }
+exports.decodeTime = function(t) {
+  t = 0 | t; // sanitise
+  let hrs = 0 | (t / 3600000);
+  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
+}
+
+// time in { hrs, mins } -> ms
+exports.encodeTime = function(o) {
+  return o.hrs * 3600000 + o.mins * 60000;
+}
+
+exports.formatTime = function(t) {
+  let o = exports.decodeTime(t);
+  return o.hrs + ":" + ("0" + o.mins).substr(-2);
+}

@@ -45,11 +45,39 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
 
   var flashToggle = false;
   const R = Bangle.appRect;
+  var Rx1;
+  var Rx2;
+  var Ry1;
+  var Ry2;
+
+  function findMarker(strArr) {
+    if (strArr.length == 0) {
+      Rx1 = 4;
+      Rx2 = 6*4;
+      Ry1 = 8*4;
+      Ry2 = 8*4 + 3;
+    } else if (strArr.length <= 4) {
+      Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
+      Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
+      Ry1 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
+      Ry2 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+    } else {
+      Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
+      Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
+      Ry1 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
+      Ry2 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+    }
+    //print(Rx1,Rx2,Ry1, Ry2);
+    return {x:Rx1,y:Ry1,x2:Rx2,y2:Ry2};
+  }
 
   function draw(noclear) {
     g.reset();
-    if (!noclear) g.clearRect(R);
-    var l = g.setFont("6x8:4").wrapString(text+(flashToggle?"_":" "), R.w-8);
+    var l = g.setFont("6x8:4").wrapString(text+' ', R.w-8);
+    if (!l) l = [];
+    //print(text+':');
+    //print(l);
+    if (!noclear) (flashToggle?(g.fillRect(findMarker(l))):(g.clearRect(findMarker(l))));
     if (l.length>4) l=l.slice(-4);
     g.drawString(l.join("\n"),R.x+4,R.y+4);
   }
@@ -80,6 +108,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
       var ch = o.stroke;
       if (ch=="\b") text = text.slice(0,-1);
       else text += ch;
+    g.clearRect(R);
     }
     flashToggle = true;
     draw();
@@ -87,7 +116,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
   Bangle.on('stroke',strokeHandler);
   g.reset().clearRect(R);
   show();
-  draw(true);
+  draw(false);
   var flashInterval;
 
   return new Promise((resolve,reject) => {

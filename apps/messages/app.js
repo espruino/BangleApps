@@ -52,7 +52,8 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg && msg.id!=="music" && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
+  if (msg && msg.id!=="music" && msg.new && active!="map" &&
+      !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
   }
@@ -470,8 +471,6 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-  // we don't have to time out of this screen...
-  cancelReloadTimeout();
   active = "main";
   // Otherwise show a menu
   E.showScroller({

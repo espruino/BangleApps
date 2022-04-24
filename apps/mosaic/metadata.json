@@ -1,0 +1,19 @@
+{
+    "id":"mosaic",
+    "name":"Mosaic Clock",
+    "shortName": "Mosaic Clock",
+    "version": "0.01",
+    "description": "A fabulously colourful clock",
+    "readme": "README.md",
+    "icon":"mosaic.png",
+    "screenshots": [{"url":"mosaic-scr1.png"},{"url":"mosaic-scr2.png"}],
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS", "BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"mosaic.app.js","url":"mosaic.app.js"},
+      {"name":"mosaic.settings.js","url":"mosaic.settings.js"},
+      {"name":"mosaic.img","url":"mosaic.icon.js","evaluate":true}
+    ]
+  }

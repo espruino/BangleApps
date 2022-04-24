@@ -1,5 +1,5 @@
 const BANGLEJS2 = process.env.HWVERSION == 2; //# check for bangle 2
-const alarms = require("Storage").readJSON("alarm.json",1)||[];
+const alarms = require("Storage").readJSON("sched.json",1)||[];
 const active = alarms.filter(a=>a.on);
 
 // Sleep/Wake detection with Estimation of Stationary Sleep-segments (ESS):
@@ -9,12 +9,12 @@ const active = alarms.filter(a=>a.on);
 // Function needs to be called for every measurement but returns a value at maximum once a second (see winwidth)
 // start of sleep marker is delayed by sleepthresh due to continous data reading
 const winwidth=13;
-const nomothresh=0.006;
+const nomothresh=0.03; // 0.006 was working on Bangle1, but Bangle2 has higher noise.
 const sleepthresh=600;
 var ess_values = [];
 var slsnds = 0;
-function calc_ess(val) {
-  ess_values.push(val);
+function calc_ess(acc_magn) {
+  ess_values.push(acc_magn);
 
   if (ess_values.length == winwidth) {
     // calculate standard deviation over ~1s 
@@ -42,9 +42,8 @@ function calc_ess(val) {
 var nextAlarm;
 active.forEach(alarm => {
   const now = new Date();
-  const alarmHour = alarm.hr/1;
-  const alarmMinute = Math.round((alarm.hr%1)*60);
-  var dateAlarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), alarmHour, alarmMinute);
+  const t = require("sched").decodeTime(alarm.t);
+  var dateAlarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), t.hrs, t.mins);
   if (dateAlarm < now) { // dateAlarm in the past, add 24h
     dateAlarm.setTime(dateAlarm.getTime() + (24*60*60*1000));
   }
@@ -118,9 +117,9 @@ if (nextAlarm !== undefined) {
 
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarm.getTime() - (30*60*1000));
-  setInterval(function() {
+  Bangle.on('accel', (accelData) => { // 12.5Hz
     const now = new Date();
-    const acc = Bangle.getAccel().mag;
+    const acc = accelData.mag;
     const swest = calc_ess(acc);
 
     if (swest !== undefined) {
@@ -136,7 +135,7 @@ if (nextAlarm !== undefined) {
       buzz();
       measure = false;
     }
-  }, 80); // 12.5Hz
+  });
   drawApp();
 } else {
   E.showMessage('No Alarm');
