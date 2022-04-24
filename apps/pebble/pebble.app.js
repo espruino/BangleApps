@@ -27,18 +27,21 @@ const h3 = 7*h/8;
 let batteryWarning = false;
 
 function draw() {
+  let locale = require("locale");
   let date = new Date();
-  let da = date.toString().split(" ");
-  let timeStr = da[4].substr(0,5);
+  let dayOfWeek = locale.dow(date, 1).toUpperCase();
+  let dayOfMonth = date.getDate();
+  let time = locale.time(date, 1);
+  let steps = Bangle.getHealthStatus("day").steps;
   const t = 6;
 
-  // turn the warning on once we have dipped below 30%
-  if (E.getBattery() < 30)
+  if (E.getBattery() < 30) {
+    // turn the warning on once we have dipped below 30%
     batteryWarning = true;
-
-  // turn the warning off once we have dipped above 40%
-  if (E.getBattery() > 40)
+  } else if (E.getBattery() > 40) {
+    // turn the warning off once we have dipped above 40%
     batteryWarning = false;
+  }
 
   g.reset();
   g.setColor(settings.bg);
@@ -49,15 +52,11 @@ function draw() {
   g.fillRect(0, h2 - t, w, h2);
 
   // day and steps
-  //if (settings.color == 'Blue' || settings.color == 'Red')
-  //  g.setColor('#fff'); // white on blue or red best contrast
-  //else
-  //  g.setColor('#000'); // otherwise black regardless of theme
   g.setColor(theme.day);
   g.setFontLECO1976Regular22();
   g.setFontAlign(0, -1);
-  g.drawString(da[0].toUpperCase(), w/4, ha); // day of week
-  g.drawString(getSteps(), 3*w/4, ha);
+  g.drawString(dayOfWeek, w/4, ha);
+  g.drawString(steps, 3*w/4, ha);
 
   // time
   // white on red for battery warning
@@ -67,7 +66,7 @@ function draw() {
   g.setFontLECO1976Regular42();
   g.setFontAlign(0, -1);
   g.setColor(!batteryWarning ? theme.fg : '#fff');
-  g.drawString(timeStr, w/2, h2 + 8);
+  g.drawString(time, w/2, h2 + 8);
 
   // contrast bar
   g.setColor(theme.fg);
@@ -79,8 +78,8 @@ function draw() {
 
   g.setColor(settings.bg);
   g.drawImage(img, w/2 + ((w/2) - 64)/2, 1, { scale: 1 });
-  drawCalendar(((w/2) - 42)/2, 14, 42, 4, da[2]);
-  
+  drawCalendar(((w/2) - 42)/2, 14, 42, 4, dayOfMonth);
+
   drawLock();
 }
 
@@ -103,20 +102,12 @@ function drawCalendar(x,y,wi,th,str) {
   g.drawString(str, x + wi/2, y + wi/2 + th);
 }
 
-function getSteps() {
-  if (WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return '????';
-}
-
 function loadThemeColors() {
   theme = {fg: g.theme.fg, bg: g.theme.bg, day: g.toColor(0,0,0)};
   if (settings.theme === "Dark") {
     theme.fg = g.toColor(1,1,1);
     theme.bg = g.toColor(0,0,0);
-  }
-  else if (settings.theme === "Light") {
+  } else if (settings.theme === "Light") {
     theme.fg = g.toColor(0,0,0);
     theme.bg = g.toColor(1,1,1);
   }
@@ -144,14 +135,18 @@ Bangle.on('lock', function(on) {
 
 g.clear();
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+
+// We are not drawing the widgets as we are taking over the whole screen
+// so we will blank out the draw() functions of each widget and change the
+// area to the top bar doesn't get cleared.
+for (let wd of WIDGETS) {
+  wd.draw=()=>{};
+  wd.area="";
+}
+
 loadSettings();
 loadThemeColors();
 setInterval(draw, 15000); // refresh every 15s
 draw();
+
 Bangle.setUI("clock");
