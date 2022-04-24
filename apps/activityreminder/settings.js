@@ -34,7 +34,7 @@
         }
      },
      'Max innactivity': {
-        value: 30|settings.maxInnactivityMin,
+        value: settings.maxInnactivityMin,
         min: 15, max: 120,
         onchange: v => {
           settings.maxInnactivityMin = v;
