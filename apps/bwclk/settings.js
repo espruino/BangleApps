@@ -18,7 +18,7 @@
 
 
     E.showMenu({
-      '': { 'title': 'BlackWhite Clock' },
+      '': { 'title': 'BW Clock' },
       '< Back': back,
       'Fullscreen': {
         value: settings.fullscreen,

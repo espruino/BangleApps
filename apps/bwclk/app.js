@@ -99,21 +99,36 @@ var imgCharging = {
   buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
 };
 
+var imgWatch = {
+  width : 24, height : 24, bpp : 1,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"))
+};
 
 
 /*
- * Draw timeout
+ * INFO ENTRIES
  */
-// timeout used to update every minute
-var drawTimeout;
+var infoArray = [
+  function(){ return [ null, null, "left" ] },
+  function(){ return [ "Bangle", imgWatch, "right" ] },
+  function(){ return [ E.getBattery() + "%", imgBattery, "left" ] },
+  function(){ return [ getSteps(), imgSteps, "left" ] },
+  function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm, "left"] },
+  function(){ return [ getWeather().temp, imgTemperature, "left" ] },
+  function(){ return [ getWeather().wind, imgWind, "left" ] },
+];
+const NUM_INFO=infoArray.length;
 
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
+
+function getInfoEntry(){
+  if(isAlarmEnabled()){
+    return [getAlarmMinutes() + " min.", imgTimer, "left"]
+  } else if(Bangle.isCharging()){
+    return [E.getBattery() + "%", imgCharging, "left"]
+  } else{
+    return infoArray[settings.showInfo]();
+  }
 }
 
 
@@ -121,19 +136,21 @@ function queueDraw() {
  * Helper
  */
 function getSteps() {
+  var steps = 0;
   try{
       if (WIDGETS.wpedom !== undefined) {
-          return WIDGETS.wpedom.getSteps();
+          steps = WIDGETS.wpedom.getSteps();
       } else if (WIDGETS.activepedom !== undefined) {
-          return WIDGETS.activepedom.getSteps();
+          steps = WIDGETS.activepedom.getSteps();
       } else {
-        return Bangle.getHealthStatus("day").steps;
+        steps = Bangle.getHealthStatus("day").steps;
       }
   } catch(ex) {
       // In case we failed, we can only show 0 steps.
   }
 
-  return 0;
+  steps = Math.round(steps/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
+  return steps + "k";
 }
 
 
@@ -225,111 +242,109 @@ function decreaseAlarm(){
 
 
 /*
- * D R A W
+ * DRAW functions
  */
+
 function draw() {
-  // queue draw in one minute
+  // Queue draw again
   queueDraw();
 
-  // Set info
-  var showInfo = settings.showInfo;
-  if(isAlarmEnabled()){
-    showInfo = 100;
-  }
-
-  if(Bangle.isCharging()){
-    showInfo = 101;
-  }
+  // Draw clock
+  drawDate();
+  drawTime();
+  drawLock();
+  drawWidgets();
+}
 
 
+function drawDate(){
+    // Draw background
+    var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+    g.reset().clearRect(0,0,W,W);
+
+    // Draw date
+    y -= settings.fullscreen ? 8 : 0;
+    var date = new Date();
+    var dateStr = date.getDate();
+    dateStr = ("0" + dateStr).substr(-2);
+    g.setMediumFont();  // Needed to compute the width correctly
+    var dateW = g.stringWidth(dateStr);
+
+    g.setSmallFont();
+    var dayStr = locale.dow(date, true);
+    var monthStr = locale.month(date, 1);
+    var dayW = Math.max(g.stringWidth(dayStr), g.stringWidth(monthStr));
+    var fullDateW = dateW + 10 + dayW;
+
+    g.setFontAlign(-1,1);
+    g.setMediumFont();
+    g.setColor(g.theme.fg);
+    g.drawString(dateStr, W/2 - fullDateW / 2, y+5);
+
+    g.setSmallFont();
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+3);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
+}
+
+
+function drawTime(){
   // Draw background
-  var yOffset = settings.fullscreen ? 0 : 10;
-  var y = H/5*2 + yOffset;
-  g.reset().clearRect(0,0,W,W);
+  var y = H/5*2 + (settings.fullscreen ? 0 : 8);
   g.setColor(g.theme.fg);
   g.fillRect(0,y,W,H);
-
-  // Draw date
-  y -= settings.fullscreen ? 5 : 0;
   var date = new Date();
-  g.setColor(g.theme.fg);
-  g.setFontAlign(1,1);
-  g.setMediumFont();
-  var dateStr = date.getDate();
-  dateStr = ("0" + dateStr).substr(-2);
-  g.drawString(dateStr, W/2-1, y+4);
-
-  g.setSmallFont();
-  g.setFontAlign(-1,1);
-  g.drawString(locale.dow(date, true), W/2 + 10, y-23);
-  g.drawString(locale.month(date, 1), W/2 + 10, y+1);
 
   // Draw time
   g.setColor(g.theme.bg);
   g.setFontAlign(0,-1);
   var timeStr = locale.time(date,1);
-  y += settings.fullscreen ? 20 : 10;
+  y += settings.fullscreen ? 14 : 10;
 
-  if(showInfo == 0){
-    y += 8;
+  var infoEntry = getInfoEntry();
+  var infoStr = infoEntry[0];
+  var infoImg = infoEntry[1];
+  var printImgLeft = infoEntry[2] == "left";
+
+  // Show large or small time depending on info entry
+  if(infoStr == null){
+    y += 10;
     g.setLargeFont();
   } else {
     g.setMediumFont();
   }
-
   g.drawString(timeStr, W/2, y);
 
-  // Draw info or timer
-  y += H/5*2-5;
-  g.setFontAlign(0,0);
-  if(showInfo > 0){
-    g.setSmallFont();
-
-    var infoStr = "";
-    var infoImg;
-    if(showInfo == 100){
-      infoStr = getAlarmMinutes() + " min.";
-      infoImg = imgTimer;
-    } else if(showInfo == 101){
-      infoStr = E.getBattery() + "%";
-      infoImg = imgCharging;
-    } else if (showInfo == 1){
-      infoStr = E.getBattery() + "%";
-      infoImg = imgBattery;
-    } else if (showInfo == 2){
-      infoStr = getSteps()
-      infoStr = Math.round(infoStr/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
-      infoStr = infoStr + "k";
-      infoImg = imgSteps;
-    } else if (showInfo == 3){
-      infoStr = Math.round(Bangle.getHealthStatus("day").bpm) + " bpm";
-      infoImg = imgBpm;
-    } else if (showInfo == 4){
-      var weather = getWeather();
-      infoStr = weather.temp;
-      infoImg = imgTemperature;
-    } else if (showInfo == 5){
-      var weather = getWeather();
-      infoStr = weather.wind;
-      infoImg = imgWind;
-    }
-
-    var imgWidth = 0;
-    if(infoImg !== undefined){
-      imgWidth = infoImg.width;
-      var strWidth = g.stringWidth(infoStr);
-      g.drawImage(infoImg, W/2 - strWidth/2 - infoImg.width/2 - 5, y - infoImg.height/2);
-    }
-    g.drawString(infoStr, W/2 + imgWidth/2, y+3);
+  // Draw info if set
+  if(infoStr == null){
+    return;
   }
 
-  // Draw lock
+  y += H/5*2-5;
+  g.setFontAlign(0,0);
+  g.setSmallFont();
+  var imgWidth = 0;
+  if(infoImg !== undefined){
+    imgWidth = infoImg.width;
+    var strWidth = g.stringWidth(infoStr);
+    g.drawImage(
+      infoImg,
+      W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - infoImg.width/2,
+      y - infoImg.height/2
+    );
+  }
+  g.drawString(infoStr, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
+}
+
+
+function drawLock(){
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
     g.drawImage(imgLock, W-16, 2);
   }
+}
 
-  // Draw widgets if not fullscreen
+
+function drawWidgets(){
   if(settings.fullscreen){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
   } else {
@@ -337,6 +352,27 @@ function draw() {
   }
 }
 
+
+
+/*
+ * Draw timeout
+ */
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+
+/*
+ * Load clock, widgets and listen for events
+ */
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup and set the correct theme.
@@ -381,30 +417,32 @@ Bangle.on('touch', function(btn, e){
   if(is_upper){
     Bangle.buzz(40, 0.6);
     increaseAlarm();
-    draw();
+    drawTime();
   }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
     decreaseAlarm();
-    draw();
+    drawTime();
   }
 
-  var maxInfo = 6;
   if(is_right){
     Bangle.buzz(40, 0.6);
-    settings.showInfo = (settings.showInfo+1) % maxInfo;
-    storage.write(SETTINGS_FILE, settings);
-    draw();
+    settings.showInfo = (settings.showInfo+1) % NUM_INFO;
+    drawTime();
   }
 
   if(is_left){
     Bangle.buzz(40, 0.6);
     settings.showInfo = settings.showInfo-1;
-    settings.showInfo = settings.showInfo < 0 ? maxInfo-1 : settings.showInfo;
-    storage.write(SETTINGS_FILE, settings);
-    draw();
+    settings.showInfo = settings.showInfo < 0 ? NUM_INFO-1 : settings.showInfo;
+    drawTime();
   }
+});
+
+
+E.on("kill", function(){
+  storage.write(SETTINGS_FILE, settings);
 });
 
 

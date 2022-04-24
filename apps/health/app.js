@@ -2,8 +2,8 @@ function getSettings() {
   return require("Storage").readJSON("health.json",1)||{};
 }
 
-function setSettings(s) {
-  require("Storage").writeJSON("health.json",s);
+function setSettings(healthSettings) {
+  require("Storage").writeJSON("health.json",healthSettings);
 }
 
 function menuMain() {
@@ -22,15 +22,21 @@ function menuMain() {
 function menuSettings() {
   swipe_enabled = false;
   clearButton();
-  var s=getSettings();
+  var healthSettings=getSettings();
+  //print(healthSettings);
   E.showMenu({
     "":{title:"Health Tracking"},
     "< Back":()=>menuMain(),
     "Heart Rt":{
-      value : 0|s.hrm,
+      value : 0|healthSettings.hrm,
       min : 0, max : 3,
       format : v=>["Off","3 mins","10 mins","Always"][v],
-      onchange : v => { s.hrm=v;setSettings(s); }
+      onchange : v => { healthSettings.hrm=v;setSettings(healthSettings); }
+    },
+    "Daily Step Goal":{
+      value : (healthSettings.stepGoal ? healthSettings.stepGoal : 10000),
+      min : 0, max : 20000, step : 100,
+      onchange : v => { healthSettings.stepGoal=v;setSettings(healthSettings); }
     }
   });
 }
@@ -70,7 +76,7 @@ function menuHRM() {
 
 
 function stepsPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
   g.clear(1);
@@ -81,7 +87,7 @@ function stepsPerHour() {
 }
 
 function stepsPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   g.clear(1);
@@ -92,7 +98,7 @@ function stepsPerDay() {
 }
 
 function hrmPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   var cnt = new Uint8Array(23);
   require("health").readDay(new Date(), h=>{
@@ -108,7 +114,7 @@ function hrmPerHour() {
 }
 
 function hrmPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   var cnt = new Uint8Array(31);
   require("health").readDailySummaries(new Date(), h=>{
@@ -124,7 +130,7 @@ function hrmPerDay() {
 }
 
 function movementPerHour() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
   g.clear(1);
@@ -135,7 +141,7 @@ function movementPerHour() {
 }
 
 function movementPerDay() {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
   g.clear(1);
@@ -199,7 +205,7 @@ function drawBarChart() {
   for (bar = 1; bar < 10; bar++) {
     if (bar == 5) {
       g.setFont('6x8', 2);
-      g.setFontAlign(0,-1)
+      g.setFontAlign(0,-1);
       g.setColor(g.theme.fg);
       g.drawString(chart_label + " " + (chart_index + bar -1) + "   " + chart_data[chart_index + bar - 1], g.getWidth()/2, 150);
       g.setColor("#00f");
