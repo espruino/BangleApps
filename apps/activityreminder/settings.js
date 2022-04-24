@@ -2,9 +2,6 @@
   // Load settings
   var settings = require("activityreminder").loadSettings();
 
-  console.log('In settings')
-  console.log(settings);
-  
   // Show the menu
   E.showMenu({
       "" : { "title" : "Activity Reminder" },
