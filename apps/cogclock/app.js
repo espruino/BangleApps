@@ -1,7 +1,8 @@
-Graphics.prototype.setFont16x32N = function() {
+Graphics.prototype.setFont15x32N = function() {
   this.setFontCustom(atob(
-    "/////v////7////+4AAADuAAAA7gAAAO4AAADuAAAA7gAAAO4AAADuAAAA7gAAAO/////v////7////+AAAAAOAAAA7gAAAO4AAADuAAAA7gAAAO4AAADv////7////+/////gAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAADgA//+4AP//uAD//7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7//4AO//+ADv//gA4AAAAA4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO/////v////7////+AAAAAP//gAD//4AA//+AAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAP////7////+/////gAAAAD//4AO//+ADv//gA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA//+4AP//uAD//4AAAAA/////v////7////+4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AP//uAD//7gA//+AAAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAP////7////+/////gAAAAD////+/////v////7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7////+/////v////4AAAAA//+ADv//gA7//4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO4AOADuADgA7gA4AO/////v////7////+AAAAAA=="
-  ), "0".charCodeAt(0), 16, 32);
+    // 15x32.png, converted using http://ebfc.mattbrailsford.com/
+    "/////oAAAAKAAAACgAAAAoAAAAKAAAACgf//AoEAAQKB//8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+/wAB/oEAAQKBAAECgf//AoAAAAKAAAACgAAAAoAAAAKAAAACgAAAAoAAAAKAAAAC////AgAAAQIAAAH+/w///oEIAAKBCAACgQgAAoEIAAKBCAACgQg/AoEIIQKB+CECgAAhAoAAIQKAACECgAAhAoAAIQL//+H+/w/h/oEIIQKBCCECgQghAoEIIQKBCCECgQghAoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+///gAIAAIACAACAAgAAgAIAAIAD/+CAAAAggAAAIIAAACD/+//gAAoAAAAKAAAACgAAAAoAAAAL////+///h/oAAIQKAACECgAAhAoAAIQKAACECgfghAoEIIQKBCD8CgQgAAoEIAAKBCAACgQgAAoEIAAL/D//+/////oAAAAKAAAACgAAAAoAAAAKAAAACgfg/AoEIIQKBCD8CgQgAAoEIAAKBCAACgQgAAoEIAAL/D//+/wAAAIEAAACBAAAAgQAAAIEAAACBAAAAgQAAAIH///6AAAACgAAAAoAAAAKAAAACgAAAAoAAAAL////+/////oAAAAKAAAACgAAAAoAAAAKAAAACgfg/AoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+///h/oAAIQKAACECgAAhAoAAIQKAACECgfghAoEIIQKB+D8CgAAAAoAAAAKAAAACgAAAAoAAAAL////+"
+  ), "0".charCodeAt(0), 15, 32);
 };
 
 Bangle.setUI("clock"); // set UI first, so widgets know about Bangle.CLOCK
@@ -69,15 +70,15 @@ function draw() {
     tooth = Math.round(d.getSeconds()/60*teeth),
     m = d.getMilliseconds();
   if (year!==last.year) {
-    g.setFont("16x32N").setFontAlign(0, -1) // center top
-      .drawString(year, x, y+34, true);
+    g.setFont("15x32N").setFontAlign(0, -1) // center top
+      .drawString(year, x, y+32, true);
   }
   if (date!==last.date) {
-    g.setFont("16x32N").setFontAlign(0, 1) // center bottom
-      .drawString(date, x, y-34, true);
+    g.setFont("15x32N").setFontAlign(0, 1) // center bottom
+      .drawString(date, x, y-32, true);
   }
   if (time!==last.time) {
-    g.setFont("16x32N:2").setFontAlign(0, 0) // center middle
+    g.setFont("15x32N:2").setFontAlign(0, 0) // center middle
       .drawString(time, x, y, true);
   }
   if (tooth!==last.tooth) {
