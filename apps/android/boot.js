@@ -51,11 +51,13 @@
       },
       "alarm" : function() {
         //wipe existing GB alarms
-        var gbalarms = require("sched").getAlarms().filter(a=>a.appid=="gbalarms");
-        for (var i = 0; i < gbalarms.length; i++) {
-          require("sched").setAlarm(gbalarms[i].id, undefined);
-        }
-        var alarms = require("sched").getAlarms();
+        var sched;
+        try { sched = require("sched"); } catch (e) {}
+        if (!sched) return; // alarms may not be installed
+        var gbalarms = sched.getAlarms().filter(a=>a.appid=="gbalarms");
+        for (var i = 0; i < gbalarms.length; i++)
+          sched.setAlarm(gbalarms[i].id, undefined);
+        var alarms = sched.getAlarms();
         var time = new Date();
         var currentTime = time.getHours() * 3600000 +
                           time.getMinutes() * 60000 +
@@ -78,8 +80,8 @@
           };
           alarms.push(a);
         }
-        require("sched").setAlarms(alarms);
-        require("sched").reload();
+        sched.setAlarms(alarms);
+        sched.reload();
       },
     };
     var h = HANDLERS[event.t];
