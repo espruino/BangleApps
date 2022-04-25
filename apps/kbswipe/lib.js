@@ -130,7 +130,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
       show();
     }, back:()=>{
       Bangle.removeListener("stroke", strokeHandler);
-      clearInterval(flashInterval);
+      if (flashInterval) clearInterval(flashInterval);
       Bangle.setUI();
       g.clearRect(Bangle.appRect);
       resolve(text);
