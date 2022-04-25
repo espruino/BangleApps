@@ -52,6 +52,17 @@ function showMainMenu() {
       }
     };
   });
+
+  if (alarms.some(e => !e.on)) {
+    menu[/*LANG*/"Enable All"] = () => enableAll(true);
+  }
+  if (alarms.some(e => e.on)) {
+    menu[/*LANG*/"Disable All"] = () => enableAll(false);
+  }
+  if (alarms.length > 0) {
+    menu[/*LANG*/"Delete All"] = () => deleteAll();
+  }
+
   if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
 }
@@ -175,6 +186,32 @@ function editTimer(alarmIndex, alarm) {
     };
   }
   return E.showMenu(menu);
+}
+
+function enableAll(on) {
+  E.showPrompt(/*LANG*/"Are you sure?", {
+    title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All"
+  }).then((confirm) => {
+    if (confirm) {
+      alarms.forEach(alarm => alarm.on = on);
+      saveAndReload();
+    }
+
+    showMainMenu();
+  });
+}
+
+function deleteAll() {
+  E.showPrompt(/*LANG*/"Are you sure?", {
+    title: /*LANG*/"Delete All"
+  }).then((confirm) => {
+    if (confirm) {
+      alarms = [];
+      saveAndReload();
+    }
+
+    showMainMenu();
+  });
 }
 
 showMainMenu();
