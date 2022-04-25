@@ -82,6 +82,24 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
     g.drawString(l.join("\n"),R.x+4,R.y+4);
   }
 
+  /*
+  // This draws a big image to use in the README
+  (function() {
+    E.defrag();
+    var b = Graphics.createArrayBuffer(500,420,1,{msb:true});
+    var n=0;
+    exports.getStrokes((id,s) => {
+      var x = n%6;
+      var y = (n-x)/6;
+      s = b.transformVertices(s, {scale:0.55, x:x*85-20, y:y*85-20});
+      b.fillCircle(s[0],s[1],3);
+      b.drawPoly(s);
+      n++;
+    });
+    b.dump();
+  })()
+  */
+
   function show() {
     g.reset();
     g.clearRect(R).setColor("#f00");
@@ -94,7 +112,6 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
       g.drawPoly(s);
       n++;
     });
-
   }
 
   function strokeHandler(o) {
