@@ -40,4 +40,4 @@
   function setSettings(settings) {
     require("Storage").writeJSON("health.json", settings);
   }
-});
+})
