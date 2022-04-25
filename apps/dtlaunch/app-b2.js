@@ -6,7 +6,8 @@ var settings = Object.assign({
   showClocks: true,
   showLaunchers: true,
   direct: false,
-  oneClickExit:false
+  oneClickExit:false,
+  swipeExit: false
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 if( settings.oneClickExit)
@@ -88,14 +89,14 @@ function drawPage(p){
 Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
     selected = 0;
     oldselected=-1;
-    if (dirUpDown==-1){
+    if(settings.swipeExit && dirLeftRight==1) showClock();
+    if (dirUpDown==-1||dirLeftRight==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
-    } else if (dirUpDown==1){
+    } else if (dirUpDown==1||dirLeftRight==1){
         --page; if (page<0) page=maxPage;
         drawPage(page);
     }
-    if (dirLeftRight==1) showClock();
 });
 
 function showClock(){

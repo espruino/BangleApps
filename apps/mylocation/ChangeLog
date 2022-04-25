@@ -2,3 +2,5 @@
 0.02: Enhanced icon, make it bolder
 0.03: Fixed issue with defaulting back to London
 0.04: Fixed issue selecting Frankfurt not saved
+0.05: Fixed issue with back option
+0.06: renamed source files to match standard

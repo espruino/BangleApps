@@ -1,15 +1,37 @@
 // adapted from https://github.com/hallettj/Fuzzy-Text-International/
-const fuzzy_strings = require("Storage").readJSON("fuzzy_strings.json");
 
-const SETTINGS_FILE = "fuzzyw.settings.json";
-let settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'language': 'System', 'alignment':'Centre'};
+let fuzzy_string = {
+  "hours":[
+    /*LANG*/"twelve",
+    /*LANG*/"one",
+    /*LANG*/"two",
+    /*LANG*/"three",
+    /*LANG*/"four",
+    /*LANG*/"five",
+    /*LANG*/"six",
+    /*LANG*/"seven",
+    /*LANG*/"eight",
+    /*LANG*/"nine",
+    /*LANG*/"ten",
+    /*LANG*/"eleven"
+  ],
+  "minutes":[
+    /*LANG*/"*$1 o'clock",
+    /*LANG*/"five past *$1",
+    /*LANG*/"ten past *$1",
+    /*LANG*/"quarter past *$1",
+    /*LANG*/"twenty past *$1",
+    /*LANG*/"twenty five past *$1",
+    /*LANG*/"half past *$1",
+    /*LANG*/"twenty five to *$2",
+    /*LANG*/"twenty to *$2",
+    /*LANG*/"quarter to *$2",
+    /*LANG*/"ten to *$2",
+    /*LANG*/"five to *$2"
+  ]
+};
 
-if (settings.language == 'System') {
-  settings.language = require('locale').name;
-}
-
-let fuzzy_string = fuzzy_strings[settings.language];
-
+let text_scale = 3.5;
 let timeout = 2.5*60;
 let drawTimeout;
 
@@ -24,24 +46,15 @@ function queueDraw(seconds) {
 
 const h = g.getHeight();
 const w = g.getWidth();
-let align_mode = 0;
-let align_pos = w/2;
-if (settings.alignment =='Left') {
-  align_mode = -1;
-  align_pos = 0;
-} else if (settings.alignment == 'Right') {
-  align_mode = 1;
-  align_pos = w;
-}
 
 function getTimeString(date) {
   let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
   let hour = date.getHours() + Math.floor(segment/12);
   f_string = fuzzy_string.minutes[segment % 12];
   if (f_string.includes('$1')) {
-    f_string = f_string.replace('$1', fuzzy_string.hours[(hour) % 24]);
+    f_string = f_string.replace('$1', fuzzy_string.hours[(hour) % 12]);
   } else {
-    f_string = f_string.replace('$2', fuzzy_string.hours[(hour + 1) % 24]);
+    f_string = f_string.replace('$2', fuzzy_string.hours[(hour + 1) % 12]);
   }
     return f_string;
 }
@@ -49,11 +62,11 @@ function getTimeString(date) {
 function draw() {
   let time_string = getTimeString(new Date()).replace('*', '');
   // print(time_string);
-  g.setFont('Vector', (h-24*2)/fuzzy_string.text_scale);
-  g.setFontAlign(align_mode, 0);
+  g.setFont('Vector', (h-24*2)/text_scale);
+  g.setFontAlign(0, 0);
   g.clearRect(0, 24, w, h-24);
   g.setColor(g.theme.fg);
-  g.drawString(g.wrapString(time_string, w).join("\n"), align_pos, h/2);
+  g.drawString(g.wrapString(time_string, w).join("\n"), w/2, h/2);
   queueDraw(timeout);
 }
 

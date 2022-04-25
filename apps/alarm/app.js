@@ -104,7 +104,7 @@ function editAlarm(alarmIndex, alarm) {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
       onchange: () => editDOW(a.dow, d => {
         a.dow = d;
-        a.t = encodeTime(t);
+        a.t = require("sched").encodeTime(t);
         editAlarm(alarmIndex, a);
       })
     },
