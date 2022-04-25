@@ -59,8 +59,8 @@ exports.newDefaultAlarm = function () {
   let alarm = {
     t: 12 * 3600000, // Default to 12:00
     on: true,
-    rp: false, // repeat not the default
-    as: settings.defaultAutoSnooze || false,
+    rp: settings.defaultRepeat,
+    as: settings.defaultAutoSnooze,
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
@@ -95,6 +95,7 @@ exports.getSettings = function () {
       unlockAtBuzz: false,
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
+      defaultRepeat: false,
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "..",
