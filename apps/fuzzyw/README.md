@@ -4,12 +4,11 @@ An imprecise clock for when you're not in a rush.
 
 This clock is a remake of one of my favourite Pebble watchfaces, Fuzzy Text International. I use this watch for weekends and holidays, when 'within 5 minutes of the actual time' is close enough!
 
-By default it will use the language set on the watch, go to settings to pick:
-*  en_GB - English
-*  en_US - American
+Translations are supported to get the time in the language of your choice! To choose language, in the Bangle App Loader, navigate to the 'More...' tab and pick language under 'Settings'. Currently supported languages are below, but if you want to contribution a translation please feel free!:
+*  en_GB - English (Default)
 *  es_ES - Spanish
 *  fr_FR - French
-*  no_NO - Norwegian
+*  nn_NO - Norwegian Nynorsk (thank you zerodogg)
 *  sv_SE - Swedish
 *  de_DE - German
 

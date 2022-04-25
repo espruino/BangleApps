@@ -111,9 +111,9 @@ exports.setSettings = function(settings) {
 
 // time in ms -> { hrs, mins }
 exports.decodeTime = function(t) {
-  t = 0 | t; // sanitise
-  let hrs = 0 | (t / 3600000);
-  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
+  t = Math.ceil(t / 60000); // sanitise to full minutes
+  let hrs = 0 | (t / 60);
+  return { hrs: hrs, mins: t - hrs * 60 };
 }
 
 // time in { hrs, mins } -> ms
