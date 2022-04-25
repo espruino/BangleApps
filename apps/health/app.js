@@ -1,14 +1,3 @@
-function getSettings() {
-  return Object.assign({
-    hrm: 0,
-    stepGoal: 10000
-  }, require("Storage").readJSON("health.json", true) || {});
-}
-
-function setSettings(settings) {
-  require("Storage").writeJSON("health.json", settings);
-}
-
 function menuMain() {
   swipe_enabled = false;
   clearButton();
@@ -17,39 +6,7 @@ function menuMain() {
     /*LANG*/"< Back": () => load(),
     /*LANG*/"Step Counting": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
-    /*LANG*/"Heart Rate": () => menuHRM(),
-    /*LANG*/"Settings": () => menuSettings()
-  });
-}
-
-function menuSettings() {
-  swipe_enabled = false;
-  clearButton();
-  let settings = getSettings();
-
-  E.showMenu({
-    "": { title:/*LANG*/"Health Tracking" },
-    /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"HRM Interval": {
-      value: settings.hrm,
-      min: 0,
-      max: 3,
-      format: v => [ /*LANG*/"Off", /*LANG*/"3 min", /*LANG*/"10 min", /*LANG*/"Always"][v],
-      onchange: v => {
-        settings.hrm = v;
-        setSettings(settings);
-      }
-    },
-    /*LANG*/"Daily Step Goal": {
-      value: settings.stepGoal,
-      min: 0,
-      max: 20000,
-      step: 250,
-      onchange: v => {
-        settings.stepGoal = v;
-        setSettings(settings);
-      }
-    }
+    /*LANG*/"Heart Rate": () => menuHRM()
   });
 }
 
@@ -85,7 +42,6 @@ function menuHRM() {
     /*LANG*/"per day": () => hrmPerDay(),
   });
 }
-
 
 function stepsPerHour() {
   E.showMessage(/*LANG*/"Loading...");
