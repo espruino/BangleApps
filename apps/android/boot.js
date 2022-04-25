@@ -4,27 +4,6 @@
     Bluetooth.println(JSON.stringify(message));
   }
 
-  function getCurrentTime() {
-    var time = new Date();
-    return (
-      time.getHours() * 3600000 +
-      time.getMinutes() * 60000 +
-      time.getSeconds() * 1000
-    );
-  }
-
-  //convert GB DOW format to sched DOW format
-  function convDow(x) {
-    //if no DOW selected, set alarm to all DOW
-    if (x == 0) x = 127;
-    x = x.toString(2);
-    for (var i = 0; x.length < 7; i++) {
-      x = "0"+x;
-    }
-    x = x.slice(1, 7) + x.slice(0, 1);
-    return "0b"+x;
-  }
-
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
   if (settings.rp == undefined) settings.rp = true;
@@ -73,19 +52,25 @@
       "alarm" : function() {
         //wipe existing GB alarms
         var gbalarms = require("sched").getAlarms().filter(a=>a.appid=="gbalarms");
-        for (i = 0; i < gbalarms.length; i++) {
+        for (var i = 0; i < gbalarms.length; i++) {
           require("sched").setAlarm(gbalarms[i].id, undefined);
         }
         var alarms = require("sched").getAlarms();
-        for (j = 0; j < event.d.length; j++) {
-          //prevents all alarms from going off at once??
-          var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < getCurrentTime()) ? (new Date()).getDate() : 0;
+        var time = new Date();
+        var currentTime = time.getHours() * 3600000 +
+                          time.getMinutes() * 60000 +
+                          time.getSeconds() * 1000;
+        for (var j = 0; j < event.d.length; j++) {
+          // prevents all alarms from going off at once??
+          var dow = event.d[j].rep;
+          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
           var a = {
             id : "gb"+j,
             appid : "gbalarms",
             on : true,
             t : event.d[j].h * 3600000 + event.d[j].m * 60000,
-            dow : convDow(event.d[j].rep),
+            dow : ((dow&63)<<1) | (dow>>6), // Gadgetbridge sends DOW in a different format
             last : last,
             rp : settings.rp,
             as : settings.as,

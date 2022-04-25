@@ -10,8 +10,8 @@
     "" : { "title" : "Android" },
     "< Back" : back,
     /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
-    "Find Phone" : () => E.showMenu({
-        "" : { "title" : "Find Phone" },
+    /*LANG*/"Find Phone" : () => E.showMenu({
+        "" : { "title" : /*LANG*/"Find Phone" },
         "< Back" : ()=>E.showMenu(mainmenu),
         /*LANG*/"On" : _=>gb({t:"findPhone",n:true}),
         /*LANG*/"Off" : _=>gb({t:"findPhone",n:false}),
@@ -26,7 +26,7 @@
     },
     /*LANG*/"Messages" : ()=>load("messages.app.js"),
     /*LANG*/"Alarms" : () => E.showMenu({
-      "" : { "title" : "Find Phone" },
+      "" : { "title" : /*LANG*/"Alarms" },
       "< Back" : ()=>E.showMenu(mainmenu),
       /*LANG*/"Vibrate": require("buzz_menu").pattern(settings.vibrate, v => {settings.vibrate = v; updateSettings();}),
       /*LANG*/"Repeat": {
