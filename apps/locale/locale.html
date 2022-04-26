@@ -198,8 +198,7 @@ function getHours(d) {
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => ${js(locale.day + ',' + locale.abday + ',' + locale.abday.split(',').map(e => e.charAt(0).toUpperCase()).join(','))}.split(',')[d.getDay() + ((short || 0) * 7)],
-  dowAll: (short) => ${js(locale.day + ',' + locale.abday + ',' + locale.abday.split(',').map(e => e.charAt(0).toUpperCase()).join(','))}.split(',').slice((short || 0) * 7, ((short || 0) + 1) * 7),
+  dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
     if (dec == null) dec = 2;
