@@ -6,7 +6,6 @@
  "version":"0.01",
  "description": "A watch face based on the classic Seiko model worn by one of my favorite authors. I didn't follow the original lcd layout exactly, opting for larger font for more easily readable time, and adding date, battery level, and step count read from the device. For now the only mode excludes widgets to maintain aesthetics.",
  "tags": "Seiko",
- "type": "clock",
  "supports": ["BANGLEJS2"],
  "storage": [
    {"name":"bradbury.app.js","url":"app.js"},
