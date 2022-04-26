@@ -6,17 +6,17 @@ exports.loadSettings = function() {
         maxInnactivityMin: 30,
         dismissDelayMin: 15,
         minSteps: 50
-    }, require("Storage").readJSON("ar.settings.json", true) || {});
+    }, require("Storage").readJSON("activityreminder.s.json", true) || {});
 };
 
 exports.writeSettings = function(settings){
-    require("Storage").writeJSON("ar.settings.json", settings);
+    require("Storage").writeJSON("activityreminder.s.json", settings);
 };
 
 exports.saveStepsArray = function(stepsArray) {
-    require("Storage").writeJSON("ar.stepsarray.json", stepsArray);
+    require("Storage").writeJSON("activityreminder.sa.json", stepsArray);
 };
 
 exports.loadStepsArray = function(){
-    return require("Storage").readJSON("ar.stepsarray.json") || [];
+    return require("Storage").readJSON("activityreminder.sa.json") || [];
 };
