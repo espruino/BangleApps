@@ -101,7 +101,8 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
 
   function show() {
     g.reset();
-    g.clearRect(R).setColor("#f00");
+    //g.clearRect(R).setColor("#f00");
+    g.clearRect(R).setColor(g.theme.fg);
     var n=0;
     exports.getStrokes((id,s) => {
       var x = n%6;
