@@ -19,3 +19,4 @@
 0.13: Fix for when widget is used before app
 0.14: Remove unneeded variable assignment
 0.15: Show distance more accurately in conjunction with new locale app (fix #1523)
+0.16: Ability to append to existing track (fix #1712)

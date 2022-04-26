@@ -142,7 +142,7 @@
         };
       }
     }
-    
+
     /* eg. foobar.recorder.js
     (function(recorders) {
       recorders.foobar = {
@@ -193,7 +193,7 @@
       settings.record.forEach(r => {
         var recorder = recorders[r];
         if (!recorder) {
-          console.log("Recorder for "+E.toJS(r)+"+not found");
+          console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
           return;
         }
         var activeRecorder = recorder();
@@ -231,11 +231,11 @@
   },getRecorders:getRecorders,reload:function() {
     reload();
     Bangle.drawWidgets(); // relayout all widgets
-  },setRecording:function(isOn) {
+  },setRecording:function(isOn, forceAppend) {
     var settings = loadSettings();
     if (isOn && !settings.recording && !settings.file) {
       settings.file = "recorder.log0.csv";
-    } else if (isOn && !settings.recording && require("Storage").list(settings.file).length){
+    } else if (isOn && !forceAppend && !settings.recording && require("Storage").list(settings.file).length){
       var logfiles=require("Storage").list(/recorder.log.*/);
       var maxNumber=0;
       for (var c of logfiles){
@@ -246,18 +246,19 @@
         newFileName="recorder.log" + (maxNumber + 1) + ".csv";
         updateSettings(settings);
       }
-      var buttons={Yes:"yes",No:"no"};
-      if (newFileName) buttons["New"] = "new";
-      return E.showPrompt("Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:"Recorder",buttons:buttons}).then(selection=>{
-        if (selection==="no") return false; // just cancel
-        if (selection==="yes") {
+      var buttons={/*LANG*/"Yes":"overwrite",/*LANG*/"No":"cancel"};
+      if (newFileName) buttons[/*LANG*/"New"] = "new";
+      buttons[/*LANG*/"Append"] = "append";
+      return E.showPrompt(/*LANG*/"Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:/*LANG*/"Recorder",buttons:buttons}).then(selection=>{
+        if (selection==="cancel") return false; // just cancel
+        if (selection==="overwrite")
           require("Storage").open(settings.file,"r").erase();
-        }
         if (selection==="new"){
           settings.file = newFileName;
           updateSettings(settings);
         }
-        return WIDGETS["recorder"].setRecording(1);
+        // if (selection==="append") // we do nothing - all is fine
+        return WIDGETS["recorder"].setRecording(1,true/*force append*/);
       });
     }
     settings.recording = isOn;
