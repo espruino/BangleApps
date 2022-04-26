@@ -74,7 +74,7 @@ try and keep filenames short to avoid overflowing the buffer.
 
 ### Screenshots
 
-In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { url:"screenshot.png" } ],`
+In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { "url":"screenshot.png" } ],`
 
 To get a screenshot you can:
 

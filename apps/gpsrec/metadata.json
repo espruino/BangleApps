@@ -2,7 +2,7 @@
   "id": "gpsrec",
   "name": "GPS Recorder",
   "version": "0.28",
-  "description": "Application that allows you to record a GPS track. Can run in background",
+  "description": "(NOT RECOMMENDED) - please use the more flexible 'Recorder' app instead. Application that allows you to record a GPS track. Can run in background",
   "icon": "app.png",
   "tags": "tool,outdoors,gps,widget",
   "screenshots": [{"url":"screenshot.png"}],

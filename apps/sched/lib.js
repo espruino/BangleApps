@@ -47,7 +47,7 @@ exports.getTimeToAlarm = function(alarm, time) {
 /// Force a reload of the current alarms and widget
 exports.reload = function() {
   eval(require("Storage").read("sched.boot.js"));
-  if (WIDGETS["alarm"]) {
+  if (global.WIDGETS && WIDGETS["alarm"]) {
     WIDGETS["alarm"].reload();
     Bangle.drawWidgets();
   }
@@ -59,8 +59,8 @@ exports.newDefaultAlarm = function () {
   let alarm = {
     t: 12 * 3600000, // Default to 12:00
     on: true,
-    rp: false, // repeat not the default
-    as: settings.defaultAutoSnooze || false,
+    rp: settings.defaultRepeat,
+    as: settings.defaultAutoSnooze,
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
@@ -95,6 +95,7 @@ exports.getSettings = function () {
       unlockAtBuzz: false,
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
+      defaultRepeat: false,
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "..",
@@ -110,9 +111,9 @@ exports.setSettings = function(settings) {
 
 // time in ms -> { hrs, mins }
 exports.decodeTime = function(t) {
-  t = 0 | t; // sanitise
-  let hrs = 0 | (t / 3600000);
-  return { hrs: hrs, mins: Math.round((t - hrs * 3600000) / 60000) };
+  t = Math.ceil(t / 60000); // sanitise to full minutes
+  let hrs = 0 | (t / 60);
+  return { hrs: hrs, mins: t - hrs * 60 };
 }
 
 // time in { hrs, mins } -> ms

@@ -36,6 +36,15 @@
       }
     },
 
+    /*LANG*/"Default Repeat": {
+      value: settings.defaultRepeat,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: v => {
+        settings.defaultRepeat = v;
+        require("sched").setSettings(settings);
+      }
+    },
+
     /*LANG*/"Buzz Count": {
       value: settings.buzzCount,
       min: 5,

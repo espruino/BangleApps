@@ -164,10 +164,37 @@
         "color": "färg",
         "off": "off",
         "Off": "Av",
-        "Theme": "Tema"
+        "Theme": "Tema",
+        "one": "ett",
+        "two": "två",
+        "three": "tre",
+        "four": "fyra",
+        "five": "fem",
+        "six": "sex",
+        "seven": "sju",
+        "eight": "åtta",
+        "nine": "nio",
+        "ten": "tio",
+        "eleven": "elva",
+        "twelve": "tolv"
     },
     "alarm": {
         "//": "App-specific overrides",
         "rpt": "uppr."
+    },
+    "fuzzyw": {
+        "//": "App-specific overrides",
+        "*$1 o'clock": "*$1",
+        "five past *$1": "fem över *$1",
+        "ten past *$1": "tio över *$1",
+        "quarter past *$1": "kvart över *$1",
+        "twenty past *$1": "tjugo över *$1",
+        "twenty five past *$1": "fem i halv *$2",
+        "half past *$1": "halv *$2",
+        "twenty five to *$2": "fem över halv *$2",
+        "twenty to *$2": "tjugo i *$2",
+        "quarter to *$2": "kvart i *$2",
+        "ten to *$2": "tio i *$2",
+        "five to *$2": "fem i *$2"
     }
 }

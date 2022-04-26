@@ -5,6 +5,11 @@
   }
 
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
+  //default alarm settings
+  if (settings.rp == undefined) settings.rp = true;
+  if (settings.as == undefined) settings.as = true;
+  if (settings.vibrate == undefined) settings.vibrate = "..";
+  require('Storage').writeJSON("android.settings.json", settings);
   var _GB = global.GB;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
@@ -43,6 +48,40 @@
           positive:true, negative:true,
           title:event.name||"Call", body:"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
+      },
+      "alarm" : function() {
+        //wipe existing GB alarms
+        var sched;
+        try { sched = require("sched"); } catch (e) {}
+        if (!sched) return; // alarms may not be installed
+        var gbalarms = sched.getAlarms().filter(a=>a.appid=="gbalarms");
+        for (var i = 0; i < gbalarms.length; i++)
+          sched.setAlarm(gbalarms[i].id, undefined);
+        var alarms = sched.getAlarms();
+        var time = new Date();
+        var currentTime = time.getHours() * 3600000 +
+                          time.getMinutes() * 60000 +
+                          time.getSeconds() * 1000;
+        for (var j = 0; j < event.d.length; j++) {
+          // prevents all alarms from going off at once??
+          var dow = event.d[j].rep;
+          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
+          var a = {
+            id : "gb"+j,
+            appid : "gbalarms",
+            on : true,
+            t : event.d[j].h * 3600000 + event.d[j].m * 60000,
+            dow : ((dow&63)<<1) | (dow>>6), // Gadgetbridge sends DOW in a different format
+            last : last,
+            rp : settings.rp,
+            as : settings.as,
+            vibrate : settings.vibrate
+          };
+          alarms.push(a);
+        }
+        sched.setAlarms(alarms);
+        sched.reload();
       },
     };
     var h = HANDLERS[event.t];

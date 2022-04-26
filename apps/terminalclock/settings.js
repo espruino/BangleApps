@@ -18,7 +18,7 @@
     "" : { "title" : "Terminal Clock" },
     "< Back" : () => back(),
     'HR confidence': {
-      value: 50|settings.HRMinConfidence,  // 0| converts undefined to 0
+      value: settings.HRMinConfidence,
       min: 0, max: 100,
       onchange: v => {
         settings.HRMinConfidence = v;
@@ -26,7 +26,7 @@
       }
    },
    'Show date': {
-      value: !!settings.showDate,
+      value: settings.showDate,
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showDate = v;
@@ -34,7 +34,7 @@
       }
     },
     'Show HRM': {
-      value: !!settings.showHRM,
+      value: settings.showHRM,
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showHRM = v;
@@ -42,7 +42,7 @@
       }
     },
     'Show Activity': {
-      value: !!settings.showActivity,
+      value: settings.showActivity,
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showActivity = v;
@@ -50,7 +50,7 @@
       }
     },
     'Show Steps': {
-      value: !!settings.showStepCount,
+      value: settings.showStepCount,
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showStepCount = v;

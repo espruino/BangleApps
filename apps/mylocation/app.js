@@ -55,7 +55,7 @@ function showMainMenu() {
   //console.log("showMainMenu");
   const mainmenu = {
     '': { 'title': 'My Location' },
-    '<Back': ()=>{ load(); },
+    '< Back': ()=>{ load(); },
     'City': {
       value: 0 | locations.indexOf(s.location),
       min: 0, max: locations.length - 1,
