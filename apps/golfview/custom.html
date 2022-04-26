@@ -7,30 +7,56 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 
+<style>
+  #searchresults ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #searchresults ul li a {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    padding: 5px;
+  }
+
+  #searchresults ul li a:hover {
+    background-color: #ccc;
+  }
+</style>
+
 <body>
   <div>
-    <input type="text" placeholder="Course ID" id="course_id">
+    <input type="text" placeholder="Whistling Straits" id="course_id">
     <button type="button" onclick="courseSearch();">Search</button>
-    <p id="status"></p>
+    <ul id="searchresults"></ul>
     <div>
+      <p id="status">No course loaded.</p>
       <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
       <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
     </div>
-    <p>A course needs a few things to be parsed correctly by this tool.</p>
-    <ul>
-      <li>See official mapping guidelines <a
-          href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
-      <li>All holes and features must be within the target course's area.</li>
-      <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
-      <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features should
-        list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
-      <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
-      <li>For any mapping assistance or issues, please file in the <a
-          href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
-          repo</a></li>
-    </ul>
-    <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
-    <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
+    <div>
+      <p>A course needs a few things to be parsed correctly by this tool.</p>
+      <ul>
+        <li>See official mapping guidelines <a
+            href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
+        <li>All holes and features must be within the target course's area.</li>
+        <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
+        <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
+          should
+          list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
+        <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
+        <li>For any mapping assistance or issues, please file in the <a
+            href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
+            repo</a></li>
+      </ul>
+      <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
+    </div>
+    <footer>
+      <hr />
+      <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
+    </footer>
   </div>
 
   <script src="../../core/lib/customize.js"></script>
@@ -38,13 +64,21 @@
 
   <script>
     const url = "https://overpass-api.de/api/interpreter";
-    let query = `[out:json][timeout:5];way(25447898);map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+    const search_url = "https://nominatim.openstreetmap.org/search";
+    let search_query = null;
     let course_input = null;
+    let search_results = $("#searchresults");
 
     function courseSearch() {
       let inputVal = document.getElementById("course_id").value;
-      query = `[out:json][timeout:5];way(${inputVal});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
-      doQuery();
+      search_query = {
+        "format": "jsonv2",
+        "q": inputVal,
+      };
+      doSearch();
+
+      // query = `[out:json][timeout:5];way(${inputVal});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+      // doQuery();
     }
 
     function processFeatures(course_verbose) {
@@ -126,6 +160,24 @@
     $("#download").click(function () {
       downloadObjectAsJSON(courses[0].content, "golfcourse-" + course_name);
     });
+
+    // download info from the course
+    function doSearch() {
+      $.get(search_url, search_query, function (result) {
+        if (result.length === 0) {
+          $('#status').text("Course not found!");
+          return;
+        }
+
+        search_results.empty();
+        for (let index = 0; index < result.length; index++) {
+          const element = result[index];
+          if (element.type != "golf_course") continue;
+          search_results.append($("<li>").append($("<a>").attr('href', 'google.com').text(element.display_name)));
+        }
+
+      })
+    }
 
     // download info from the course
     function doQuery() {
