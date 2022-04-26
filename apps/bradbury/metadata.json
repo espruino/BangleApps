@@ -5,7 +5,7 @@
  "screenshots": [{"url":"screenshot.png"}],
  "version":"0.01",
  "description": "A watch face based on the classic Seiko model worn by one of my favorite authors. I didn't follow the original lcd layout exactly, opting for larger font for more easily readable time, and adding date, battery level, and step count read from the device. For now the only mode excludes widgets to maintain aesthetics.",
- "tags": "Seiko", "Voice", "Note ", "M516", "4009", "Ray", "Sci-Fi", "Digital", "Watch", "Clock", "Vintage", "80s",
+ "tags": "Seiko",
  "type": "clock",
  "supports": ["BANGLEJS2"],
  "allow_emulator": true, 
