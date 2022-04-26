@@ -14,12 +14,6 @@ class keyPad {
     this.y2 = y2;
     this.func = !func ? "" : func;
   }
-  get funcName() {
-    this.func = func;
-  }
-  set funcName(a) {
-    this.func = a;
-  }
 
   draw() {
     g.setColor(g.theme.fg).drawRect(this.x1, this.y1, this.x2, this.y2).clearRect(this.x1+1, this.y1+1, this.x2-1, this.y2-1).setFont("6x8",2).setFontAlign(0, 0, 0).drawString(this.func, (((this.x2-this.x1)/2)+this.x1), (((this.y2-this.y1)/2)+this.y1));
@@ -59,7 +53,7 @@ function renderKeys() {
     else a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "Caps", "space", "<-"];
     if (caps == 2) a[9] = "CAPS";
     for (i = 0; i < a.length; i++) {
-      pad[i].funcName = a[i];
+      pad[i].func = a[i];
     }
   }
   else if (layer == 1) {
@@ -69,7 +63,7 @@ function renderKeys() {
     else a = ["J", "K", "L", "M", "N", "O", "P", "Q", "R", "Caps", "space", "<-"];
     if (caps == 2) a[9] = "CAPS";
     for (i = 0; i < a.length; i++) {
-      pad[i].funcName = a[i];
+      pad[i].func = a[i];
     }
   }
   else if (layer == 2) {
@@ -79,7 +73,7 @@ function renderKeys() {
     else a = ["S", "T", "U", "V", "W", "X", "Y", "Z", "0", "Caps", "space", "<-"];
     if (caps == 2) a[9] = "CAPS";
     for (i = 0; i < a.length; i++) {
-      pad[i].funcName = a[i];
+      pad[i].func = a[i];
     }
   }
   else if (layer == 3) {
@@ -89,7 +83,7 @@ function renderKeys() {
     else a = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "Caps", "space", "<-"];
     if (caps == 2) a[9] = "CAPS";
     for (i = 0; i < a.length; i++) {
-      pad[i].funcName = a[i];
+      pad[i].func = a[i];
     }
   }
   else if (layer == 4) {
@@ -99,7 +93,7 @@ function renderKeys() {
     else a = ["-", "+", "/", "*", ":", "#", "$", "%", "new\nline", "Caps", "space", "<-"];
     if (caps == 2) a[9] = "CAPS";
     for (i = 0; i < a.length; i++) {
-      pad[i].funcName = a[i];
+      pad[i].func = a[i];
     }
   }
 
