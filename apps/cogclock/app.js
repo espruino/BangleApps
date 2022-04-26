@@ -39,12 +39,15 @@ function addTooth(poly, n) {
 
 function drawCog() {
   g.reset();
-  g.drawCircle(x, y, r1);
-  let poly = [];
+  g.setColor(g.theme.bg2).fillCircle(x, y, r2) // fill cog
+    .setColor(g.theme.bg).fillCircle(x, y, r1) // clear center
+    .setColor(g.theme.fg2).drawCircle(x, y, r1); // draw inner border
+  let poly = []; // complete teeth outline
   for(let t = 1; t<=teeth; t++) {
+    fillTooth(t, g.theme.bg2);
     addTooth(poly, t);
   }
-  g.drawPoly(poly, true);
+  g.drawPoly(poly, true); // draw outer border
 }
 /**
  * @param {number} n Tooth number to fill (1-based)
@@ -55,7 +58,7 @@ function fillTooth(n, col) {
   let poly = [];
   addTooth(poly, n);
   g.setColor(col).fillPoly(poly)
-    .setColor(g.theme.fg).drawPoly(poly); // fillPoly colored over the outline
+    .setColor(g.theme.fg2).drawPoly(poly); // fillPoly colored over the outline
 }
 
 let last = {tooth: 0}, timeOut;
@@ -82,8 +85,7 @@ function draw() {
       g.setFont("15x32N").setFontAlign(0, 1) // center bottom
         .drawString(date, x, y-32, true);
     }
-  }
-  else if (time!==last.time) {
+  } else if (time!==last.time) {
     g.fillRect(x-30, y-60, x+29, y-33).clearRect(x-28, y-58, x+27, y-33);
     g.fillRect(x-30, y+60, x+29, y+30).clearRect(x-28, y+58, x+27, y+30);
   }
@@ -94,7 +96,7 @@ function draw() {
       }
     } else {
       for(let t = last.tooth; t>tooth; t--) { // erase extraneous teeth
-        fillTooth(t, g.theme.bg);
+        fillTooth(t, g.theme.bg2);
       }
     }
   }
