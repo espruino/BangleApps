@@ -30,12 +30,15 @@
           require("activityreminder").writeSettings(settings);
         }
      },
-     'Max innactivity': {
+     'Max inactivity': {
         value: settings.maxInnactivityMin,
         min: 15, max: 120,
         onchange: v => {
           settings.maxInnactivityMin = v;
           require("activityreminder").writeSettings(settings);
+        },
+        format: x => {
+          return x + " min";
         }
      },
      'Dismiss delay': {
@@ -44,6 +47,9 @@
         onchange: v => {
           settings.dismissDelayMin = v;
           require("activityreminder").writeSettings(settings);
+        },
+        format: x => {
+          return x + " min";
         }
      },
      'Min steps': {
