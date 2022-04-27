@@ -9,6 +9,7 @@ function bangleDownload() {
   console.log("Listing normal files...");
   Comms.reset()
   .then(() => Comms.showMessage("Backing up..."))
+  .then(() => Comms.write("\x10Bangle.removeAllListeners()\n"))
   .then(() => Comms.listFiles({sf:false}))
   .then(f => {
     normalFiles = f;
