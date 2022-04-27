@@ -43,6 +43,9 @@ exports.pushMessage = function(event) {
   // if we've removed the last new message, hide the widget
   if (event.t=="remove" && !messages.some(m=>m.new)) {
     if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.hide();
+    // if no new messages now, make sure we don't load the messages app
+    if (exports.messageTimeout && !messages.some(m=>m.new))
+      clearTimeout(exports.messageTimeout);
   }
   // ok, saved now
   if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
