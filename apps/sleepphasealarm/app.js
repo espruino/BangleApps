@@ -1,4 +1,6 @@
 const BANGLEJS2 = process.env.HWVERSION == 2; //# check for bangle 2
+const Layout = require("Layout");
+const locale = require('locale');
 const alarms = require("Storage").readJSON("sched.json",1) || [];
 const config = require("Storage").readJSON("sleepphasealarm.json",1) || {logs: []};
 const active = alarms.filter(a=>a.on);
@@ -54,53 +56,45 @@ active.forEach(alarm => {
   }
 });
 
-function drawString(s, y) { //# replaced x: always centered
-  g.reset(); //# moved up to prevent blue background
-  g.clearRect(0, y - 12, 239, y + 8); //# minimized upper+lower clearing
-  g.setFont("Vector", 20);
-  g.setFontAlign(0, 0); // align centered
-  g.drawString(s, g.getWidth() / 2, y); //# set x to center
-}
+var layout = new Layout({
+  type:"v", c: [
+    {type:"txt", font:"10%", label:"Sleep Phase Alarm", bgCol:g.theme.bgH, fillx: true, height:Bangle.appRect.h/6},
+    {type:"txt", font:"16%", label: ' '.repeat(20), id:"date", height:Bangle.appRect.h/6},
+    {type:"txt", font:"12%", label: "", id:"alarm_date", height:Bangle.appRect.h/6},
+    {type:"txt", font:"10%", label: ' '.repeat(20), id:"eta", height:Bangle.appRect.h/6},
+    {type:"txt", font:"12%", label: ' '.repeat(20), id:"state", height:Bangle.appRect.h/6},
+  ]
+}, {lazy:true});
 
 function drawApp() {
-  g.clearRect(0,24,239,215); //# no problem
   var alarmHour = nextAlarm.getHours();
   var alarmMinute = nextAlarm.getMinutes();
   if (alarmHour < 10) alarmHour = "0" + alarmHour;
   if (alarmMinute < 10) alarmMinute = "0" + alarmMinute;
-  const s = "Alarm at " + alarmHour + ":" + alarmMinute + "\n\n"; //# make distinct to time
-  E.showMessage(s, "Sleep Phase Alarm");
+  layout.alarm_date.label = "Alarm at " + alarmHour + ":" + alarmMinute;
+  layout.render();
 
   function drawTime() {
     if (Bangle.isLCDOn()) {
       const now = new Date();
-      var nowHour = now.getHours();
-      var nowMinute = now.getMinutes();
-      var nowSecond = now.getSeconds();
-      if (nowHour < 10) nowHour = "0" + nowHour;
-      if (nowMinute < 10) nowMinute = "0" + nowMinute;
-      if (nowSecond < 10) nowSecond = "0" + nowSecond;
-      const time = nowHour + ":" + nowMinute + (BANGLEJS2 ? "" : ":" + nowSecond); //# hide seconds on bangle 2
-      drawString(time, BANGLEJS2 ? 85 : 105); //# remove x, adjust height for bangle 2 an newer firmware
+      layout.date.label = locale.time(now, BANGLEJS2 && Bangle.isLocked() ? 1 : 0); // hide seconds on bangle 2
+      const diff = nextAlarm - now;
+      const diffHour = Math.floor((diff % 86400000) / 3600000).toString();
+      const diffMinutes = Math.round(((diff % 86400000) % 3600000) / 60000).toString();
+      layout.eta.label = "ETA: -"+ diffHour + ":" + diffMinutes.padStart(2, '0');
+      layout.render();
     }
   }
 
-  if (BANGLEJS2) {
-    drawTime();
-    setTimeout(_ => {
-      drawTime();
-      setInterval(drawTime, 60000);
-    }, 60000 - Date.now() % 60000); //# every new minute on bangle 2
-  } else {
-    setInterval(drawTime, 500); // 2Hz
-  }
+  drawTime();
+  setInterval(drawTime, 500); // 2Hz
 }
 
 var buzzCount = 19;
 function buzz() {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
-  Bangle.setLCDPower(1);
-  Bangle.buzz().then(()=>{
+    Bangle.setLCDPower(1);
+    Bangle.buzz().then(()=>{
     if (buzzCount--) {
       setTimeout(buzz, 500);
     } else {
@@ -121,6 +115,7 @@ var measure = true;
 if (nextAlarm !== undefined) {
   config.logs[nextAlarm.getDate()] = []; // overwrite log on each day of month
   logs = config.logs[nextAlarm.getDate()];
+  g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   let swest_last;
@@ -134,7 +129,8 @@ if (nextAlarm !== undefined) {
 
     if (swest !== undefined) {
       if (Bangle.isLCDOn()) {
-        drawString(swest ? "Sleep" : "Awake", BANGLEJS2 ? 150 : 180);
+        layout.state.label = swest ? "Sleep" : "Awake";
+        layout.render();
       }
       // log
       if (swest_last != swest) {
@@ -161,6 +157,4 @@ if (nextAlarm !== undefined) {
   E.showMessage('No Alarm');
   setTimeout(load, 1000);
 }
-// BTN2 to menu, BTN3 to main # on bangle 2 only BTN to main
-if (!BANGLEJS2) setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
 setWatch(() => load(), BANGLEJS2 ? BTN : BTN3, { repeat: false, edge: "falling" });
