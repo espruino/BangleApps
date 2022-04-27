@@ -89,7 +89,7 @@ function getNegImage() {
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
-  if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");  
+  if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
   if (s=="corona-warn") return atob("GBgBAAAAABwAAP+AAf/gA//wB/PwD/PgDzvAHzuAP8EAP8AAPAAAPMAAP8AAH8AAHzsADzuAB/PAB/PgA//wAP/gAH+AAAwAAAAA");
@@ -193,7 +193,7 @@ function showMapMessage(msg) {
     ]},
     {type:"txt", font:"6x8:2", label:eta }
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
   Bangle.setUI("updown",function() {
     // any input to mark as not new and return to menu
@@ -268,7 +268,7 @@ function showMusicMessage(msg) {
     ]}:{},
     {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
 
   updateLabelsInterval = setInterval(function() {
@@ -434,7 +434,7 @@ function showMessage(msgid) {
     } },
     {type:"h",fillx:1, c: buttons}
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
   // ensure button-press on Bangle.js 2 takes us back
   if (process.env.HWVERSION>1) Bangle.btnWatches = [

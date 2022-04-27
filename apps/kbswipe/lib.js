@@ -54,18 +54,18 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
     if (strArr.length == 0) {
       Rx1 = 4;
       Rx2 = 6*4;
-      Ry1 = 8*4;
-      Ry2 = 8*4 + 3;
+      Ry1 = 8*4 + R.y;
+      Ry2 = 8*4 + 3 + R.y;
     } else if (strArr.length <= 4) {
       Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
       Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
-      Ry1 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
-      Ry2 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+      Ry1 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + R.y;
+      Ry2 = (strArr.length)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3 + R.y;
     } else {
       Rx1 = (strArr[strArr.length-1].length)%7*6*4 + 4 ;
       Rx2 = (strArr[strArr.length-1].length)%7*6*4 + 6*4;
-      Ry1 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4);
-      Ry2 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3;
+      Ry1 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + R.y;
+      Ry2 = (4)*(8*4) + Math.floor((strArr[strArr.length-1].length)/7)*(8*4) + 3 + R.y;
     }
     //print(Rx1,Rx2,Ry1, Ry2);
     return {x:Rx1,y:Ry1,x2:Rx2,y2:Ry2};
@@ -82,6 +82,24 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
     g.drawString(l.join("\n"),R.x+4,R.y+4);
   }
 
+  /*
+  // This draws a big image to use in the README
+  (function() {
+    E.defrag();
+    var b = Graphics.createArrayBuffer(500,420,1,{msb:true});
+    var n=0;
+    exports.getStrokes((id,s) => {
+      var x = n%6;
+      var y = (n-x)/6;
+      s = b.transformVertices(s, {scale:0.55, x:x*85-20, y:y*85-20});
+      b.fillCircle(s[0],s[1],3);
+      b.drawPoly(s);
+      n++;
+    });
+    b.dump();
+  })()
+  */
+
   function show() {
     g.reset();
     g.clearRect(R).setColor("#f00");
@@ -94,7 +112,6 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
       g.drawPoly(s);
       n++;
     });
-
   }
 
   function strokeHandler(o) {
@@ -130,7 +147,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
       show();
     }, back:()=>{
       Bangle.removeListener("stroke", strokeHandler);
-      clearInterval(flashInterval);
+      if (flashInterval) clearInterval(flashInterval);
       Bangle.setUI();
       g.clearRect(Bangle.appRect);
       resolve(text);

@@ -239,6 +239,33 @@
         "Su color": "Su farge",
         "filled": "fylt",
         "Mrk.Color": "Mrk.Farge",
-        "Mrk.Size": "Mrk.Storleik"
+        "Mrk.Size": "Mrk.Storleik",
+        "one": "eitt",
+        "two": "to",
+        "three": "tre",
+        "four": "fire",
+        "five": "fem",
+        "six": "seks",
+        "seven": "sju",
+        "eight": "åtte",
+        "nine": "ni",
+        "ten": "ti",
+        "eleven": "elleve",
+        "twelve": "tolv"
+    },
+    "fuzzyw": {
+        "//": "App-specific overrides",
+        "*$1 o'clock": "klokka er *$1",
+        "five past *$1": "fem over *$1",
+        "ten past *$1": "ti over *$1",
+        "quarter past *$1": "kvart over *$1",
+        "twenty past *$1": "ti på halv *$2",
+        "twenty five past *$1": "fem på halv *$2",
+        "half past *$1": "halv *$2",
+        "twenty five to *$2": "fem over halv *$2",
+        "twenty to *$2": "ti over halv *$2",
+        "quarter to *$2": "kvart på *$2",
+        "ten to *$2": "ti på *$2",
+        "five to *$2": "fem på *$2"
     }
 }

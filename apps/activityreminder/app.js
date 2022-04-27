@@ -15,7 +15,7 @@ function drawAlert(){
   });
   
   Bangle.buzz(400);
-  setTimeout(load, 10000);
+  setTimeout(load, 20000);
 }
 
 function run(){

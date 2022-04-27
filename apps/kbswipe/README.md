@@ -4,6 +4,7 @@ A library that provides the ability to input text by swiping PalmOS Graffiti-sty
 
 To get a legend of available characters, just tap the screen.
 
+![](key.png)
 
 ## Usage
 
