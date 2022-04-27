@@ -1,0 +1,18 @@
+{
+    "id":"timersimple",
+    "name":"Timer Simple",
+    "shortName": "Timer Simple",
+    "version": "0.01",
+    "description": "Sets a single timer, and tells you how long left.",
+    "readme": "README.md",
+    "icon":"icons8-time-span-48.png",
+    "screenshots": [{"url":"timersimple-scr1.png"},{"url":"timersimple-scr2.png"}],
+    "tags": "tool,alarm,timer",
+    "supports": ["BANGLEJS2"],
+    "dependencies": {"scheduler":"type"},
+    "allow_emulator": true,
+    "storage": [
+      {"name":"timersimple.app.js","url":"timersimple.app.js"},
+      {"name":"timersimple.img","url":"timersimple.icon.js","evaluate":true}
+    ]
+  }
