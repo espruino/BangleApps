@@ -45,7 +45,7 @@ function showMainMenu() {
     } else txt = type+txt;
     // add to menu
     menu[txt] = {
-      value : alarm.on,
+      value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
       onchange : function() {
         setTimeout(alarm.timer ? editTimer : editAlarm, 10, idx, alarm);
       }
@@ -75,6 +75,7 @@ function editDOW(dow, onchange) {
     let dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
     };
   })(i);
@@ -104,10 +105,12 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
       onchange: v=>a.on=v
     },
     /*LANG*/'Repeat': {
       value: a.rp,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => a.rp = v
     },
     /*LANG*/'Days': {
@@ -121,6 +124,7 @@ function editAlarm(alarmIndex, alarm) {
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     /*LANG*/'Auto Snooze': {
       value: a.as,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => a.as = v
     }
   };
@@ -174,6 +178,7 @@ function editTimer(alarmIndex, alarm) {
     },
     /*LANG*/'Enabled': {
       value: a.on,
+      format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
       onchange: v => a.on = v
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
