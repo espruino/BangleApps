@@ -15,13 +15,7 @@ function draw() {
   var time = (""+h).substr(-2) + ":" + ("0"+m).substr(-2);
   g.reset();  // Reset the state of the graphics library
   g.clear();
-  
-  
-  
-  g.drawImage(getImg());
-  g.setColor(1,1,1);
-  g.drawString(wizible, 10, 10, 0);
-  //g.drawImage(require("Storage").read("Tigger4.gif"));
+  g.drawImage(getImg()); //load bg image
   //TIME
   g.setFont("7x11Numeric7Seg",2);
   g.setFontAlign(1,1);
@@ -119,5 +113,3 @@ Bangle.on('touch', function(button) {
     wizible=0;
   }
 });
-
-//Bangle.drawWidgets();
