@@ -112,7 +112,7 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d => {
+      onchange: () => setTimeout(editDOW, 10, a.dow, d => {
         a.dow = d;
         a.t = require("sched").encodeTime(t);
         editAlarm(alarmIndex, a);
