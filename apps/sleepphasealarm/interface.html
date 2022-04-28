@@ -27,12 +27,12 @@ function getData() {
   Util.showModal("Loading...");
   // get the data
   Util.readStorageFile('sleepphasealarm.json',data=>{
-    data = '{"logs":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[{"time":"2022-04-21T19:03:02.130Z","type":"awake"},{"time":"2022-04-21T19:03:35.219Z","type":"sleep"},{"time":"2022-04-21T19:16:08.958Z","type":"awake"},{"time":"2022-04-21T19:16:08.994Z","type":"alarm"}]]}';
     let logs = JSON.parse(data || "{}")?.logs || [];
     // remove window
     Util.hideModal();
 
     logs = logs.filter(log => log != null);
+    logs.sort(function(a, b) {return new Date(b?.filter(entry => entry.type === "alarm")[0]?.time) - new Date(a?.filter(entry => entry.type === "alarm")[0]?.time)}); // sort by alarm date desc
     logs.forEach((log, i) => {
       const timeStr = log.filter(entry => entry.type === "alarm")[0]?.time;
       if (timeStr) {
@@ -64,6 +64,7 @@ function getData() {
           x: {
             type: 'time',
             time: {
+              tooltipFormat: 'HH:mm',
               displayFormats: {
                 millisecond: 'HH:mm:ss.SSS',
                 second: 'HH:mm:ss',
@@ -77,7 +78,11 @@ function getData() {
          },
         plugins: {
           tooltip: {
-            enabled: false
+            callbacks: {
+                label: function(context) {
+                    return yTicks[context.raw];
+                }
+            }
           },
         }
       }

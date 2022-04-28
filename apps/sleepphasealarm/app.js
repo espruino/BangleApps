@@ -1,4 +1,4 @@
-const BANGLEJS2 = process.env.HWVERSION == 2; //# check for bangle 2
+const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 const Layout = require("Layout");
 const locale = require('locale');
 const alarms = require("Storage").readJSON("sched.json",1) || [];
@@ -135,9 +135,9 @@ if (nextAlarm !== undefined) {
       // log
       if (swest_last != swest) {
         if (swest) {
-          addLog(new Date(Date.now() - sleepthresh*13/12.5*1000), "sleep"); // calculate begin of no motion phase, 13 values/second at 12.5Hz
+          addLog(new Date(now - sleepthresh*13/12.5*1000), "sleep"); // calculate begin of no motion phase, 13 values/second at 12.5Hz
         } else {
-          addLog(new Date(), "awake");
+          addLog(now, "awake");
         }
         swest_last = swest;
       }
@@ -145,9 +145,10 @@ if (nextAlarm !== undefined) {
 
     if (now >= nextAlarm) {
       // The alarm widget should handle this one
+      addLog(now, "alarm");
       setTimeout(load, 1000);
     } else if (measure && now >= minAlarm && swest === false) {
-      addLog(new Date(), "alarm");
+      addLog(now, "alarm");
       buzz();
       measure = false;
     }
