@@ -87,6 +87,9 @@ function draw() {
     g.setColor(0,0,0);
     g.drawString("SA", 136, 42, 0);
   }
+  if(wizible==1){
+     Bangle.drawWidgets();
+     }
 }
 
 // Clear the screen once, at startup
@@ -111,7 +114,6 @@ Bangle.loadWidgets();
 Bangle.on('touch', function(button) {
   if(wizible==0){
     wizible=1;
-    Bangle.drawWidgets();
   }
   else if(wizible==1){
     wizible=0;
