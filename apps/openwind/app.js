@@ -106,8 +106,8 @@ if (settings.truewind) {
       gps_course = 
         { vlon: Math.sin(Math.PI*fix.course/180)*fix.speed/1.852,
           vlat: Math.cos(Math.PI*fix.course/180)*fix.speed/1.852,
-	  lat: fix.lat,
-	  lon: fix.lon,
+          lat: fix.lat,
+          lon: fix.lon,
           spd: fix.speed,
           course: fix.course
         };
