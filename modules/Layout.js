@@ -138,15 +138,15 @@ function Layout(layout, options) {
       }
       // enough physical buttons
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
-      if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
-      Bangle.btnWatch = [];
+      if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
+      Bangle.btnWatches = [];
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle
       while (this.physBtns > buttons.length)
         buttons.push({label:""});
-      if (buttons[0]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
-      if (buttons[1]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
-      if (buttons[2]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
+      if (buttons[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
+      if (buttons[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
+      if (buttons[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
       this._l.width = g.getWidth()-8; // text width
       this._l = {type:"h", filly:1, c: [
         this._l,
@@ -190,9 +190,9 @@ function Layout(layout, options) {
 }
 
 Layout.prototype.remove = function (l) {
-  if (Bangle.btnWatch) {
-    Bangle.btnWatch.forEach(clearWatch);
-    delete Bangle.btnWatch;
+  if (Bangle.btnWatches) {
+    Bangle.btnWatches.forEach(clearWatch);
+    delete Bangle.btnWatches;
   }
   if (Bangle.touchHandler) {
     Bangle.removeListener("touch",Bangle.touchHandler);

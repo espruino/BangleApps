@@ -47,8 +47,7 @@ function showMainMenu() {
     menu[txt] = {
       value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
       onchange : function() {
-        if (alarm.timer) editTimer(idx, alarm);
-        else editAlarm(idx, alarm);
+        setTimeout(alarm.timer ? editTimer : editAlarm, 10, idx, alarm);
       }
     };
   });
@@ -116,7 +115,7 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d => {
+      onchange: () => setTimeout(editDOW, 100, a.dow, d => {
         a.dow = d;
         a.t = require("sched").encodeTime(t);
         editAlarm(alarmIndex, a);

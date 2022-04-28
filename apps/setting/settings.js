@@ -251,11 +251,15 @@ function showThemeMenu() {
       }
       upd(th);
     }
-    const rgb = {
+    let rgb = {
       black: "#000", white: "#fff",
       red: "#f00", green: "#0f0", blue: "#00f",
       cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
     };
+    if (!BANGLEJS2) Object.assign(rgb, {
+      // these would cause dithering, which is not great for e.g. text
+      orange: "#ff7f00", purple: "#7f00ff", grey: "#7f7f7f",
+    });
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
