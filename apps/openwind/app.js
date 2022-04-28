@@ -79,20 +79,20 @@ function draw_compass(awa, aws, twa, tws) {
 function parseDevice(d) {
   device = d;
   console.log("Found device");
- device.gatt.connect().then(function(ga) {
-  console.log("Connected");
-   gatt = ga;
-  return ga.getPrimaryService("cc90");
-}).then(function(s) {
-  return s.getCharacteristic("cc91");
-}).then(function(c) {
-  c.on('characteristicvaluechanged', (event)=>wind_updated(event));
-  return c.startNotifications();
-}).then(function() {
-  console.log("Done!");
-}).catch(function(e) {
-  console.log("ERROR"+e);
-});}
+  device.gatt.connect().then(function(ga) {
+    console.log("Connected");
+    gatt = ga;
+    return ga.getPrimaryService("cc90");
+  }).then(function(s) {
+    return s.getCharacteristic("cc91");
+  }).then(function(c) {
+    c.on('characteristicvaluechanged', (event)=>wind_updated(event));
+    return c.startNotifications();
+  }).then(function() {
+    console.log("Done!");
+  }).catch(function(e) {
+    console.log("ERROR"+e);
+  });}
 
 function connection_setup() {
   NRF.setScan();
@@ -106,8 +106,8 @@ if (settings.truewind) {
       gps_course = 
         { vlon: Math.sin(Math.PI*fix.course/180)*fix.speed/1.852,
           vlat: Math.cos(Math.PI*fix.course/180)*fix.speed/1.852,
-	        lat: fix.lat,
-	        lon: fix.lon,
+	  lat: fix.lat,
+	  lon: fix.lon,
           spd: fix.speed,
           course: fix.course
         };
