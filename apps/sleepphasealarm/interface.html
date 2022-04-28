@@ -26,7 +26,7 @@ function getData() {
   // show loading window
   Util.showModal("Loading...");
   // get the data
-  Util.readStorageFile('sleepphasealarm.json',data=>{
+  Util.readStorage('sleepphasealarm.json',data=>{
     let logs = JSON.parse(data || "{}")?.logs || [];
     // remove window
     Util.hideModal();
