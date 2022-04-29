@@ -1,2 +1,3 @@
 0.01: first release
 0.02: Adjust for touch events outside of screen g dimensions
+0.03: Do not register as watch, manually start clock on button

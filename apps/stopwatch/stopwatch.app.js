@@ -227,4 +227,4 @@ g.fillRect(0,0,w,h);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
-Bangle.setUI("clock"); // Show launcher when button pressed
+setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
