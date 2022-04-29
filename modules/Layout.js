@@ -417,3 +417,5 @@ Layout.prototype.clear = function(l) {
   if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
   g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
 };
+
+exports = Layout;
