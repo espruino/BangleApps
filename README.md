@@ -226,10 +226,8 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*myappid", // for Bangle.js menu
   "src":"-myappid", // source file
-  "type":"widget/clock/app/bootloader", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu  
-     // if it's 'clock' then it'll be loaded by default at boot time
-     // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
+  "type":"widget/clock/app/bootloader/...", // optional, default "app"
+     // see 'type' in 'metadata.json format' below for more options/info
   "version":"1.23",
      // added by BangleApps loader on upload based on metadata.json
   "files:"file1,file2,file3",
