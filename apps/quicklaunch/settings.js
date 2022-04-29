@@ -1,3 +1,4 @@
+(function(back) {
 var settings = Object.assign(require("Storage").readJSON("quicklaunch.json", true) || {});
 
 var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
@@ -118,3 +119,4 @@ apps.forEach((a)=>{
 });
 
 showMainMenu();
+});
