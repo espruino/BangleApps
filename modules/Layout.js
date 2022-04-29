@@ -1,18 +1,13 @@
 /* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
 /*
-
 Take a look at README.md for hints on developing with this library.
-
 Usage:
-
 ```
 var Layout = require("Layout");
 var layout = new Layout( layoutObject, options )
 layout.render(optionalObject);
 ```
-
 For example:
-
 ```
 var Layout = require("Layout");
 var layout = new Layout( {
@@ -24,10 +19,7 @@ var layout = new Layout( {
 g.clear();
 layout.render();
 ```
-
-
 layoutObject has:
-
 * A `type` field of:
   * `undefined` - blank, can be used for padding
   * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
@@ -51,34 +43,25 @@ layoutObject has:
 * A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 * `width` and `height` fields to optionally specify minimum size
-
 options is an object containing:
-
 * `lazy` - a boolean specifying whether to enable automatic lazy rendering
 * `btns` - array of objects containing:
   * `label` - the text on the button
   * `cb` - a callback function
   * `cbl` - a callback function for long presses
 * `back` - a callback function, passed as `back` into Bangle.setUI
-
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
-
 Once `layout.update()` is called, the following fields are added
 to each object:
-
 * `x` and `y` for the top left position
 * `w` and `h` for the width and height
 * `_w` and `_h` for the **minimum** width and height
-
-
 Other functions:
-
 * `layout.update()` - update positions of everything if contents have changed
 * `layout.debug(obj)` - draw outlines for objects on screen
 * `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
 * `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
-
 */
 
 
@@ -138,15 +121,15 @@ function Layout(layout, options) {
       }
       // enough physical buttons
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
-      if (Bangle.btnWatch) Bangle.btnWatch.forEach(clearWatch);
-      Bangle.btnWatch = [];
+      if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
+      Bangle.btnWatches = [];
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle
       while (this.physBtns > buttons.length)
         buttons.push({label:""});
-      if (buttons[0]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
-      if (buttons[1]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
-      if (buttons[2]) Bangle.btnWatch.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
+      if (buttons[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
+      if (buttons[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
+      if (buttons[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
       this._l.width = g.getWidth()-8; // text width
       this._l = {type:"h", filly:1, c: [
         this._l,
@@ -190,9 +173,9 @@ function Layout(layout, options) {
 }
 
 Layout.prototype.remove = function (l) {
-  if (Bangle.btnWatch) {
-    Bangle.btnWatch.forEach(clearWatch);
-    delete Bangle.btnWatch;
+  if (Bangle.btnWatches) {
+    Bangle.btnWatches.forEach(clearWatch);
+    delete Bangle.btnWatches;
   }
   if (Bangle.touchHandler) {
     Bangle.removeListener("touch",Bangle.touchHandler);
@@ -237,34 +220,34 @@ Layout.prototype.render = function (l) {
     "":function(){},
     "txt":function(l){
       if (l.wrap) {
-        g.setFont(l.font).setFontAlign(0,-1);
+        g.setFont(l.font, l.scale||1).setFontAlign(0,-1);
         var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
         //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
-        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        g.setFont(l.font, l.scale||1).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
-      var poly = [
-        x,y+4,
-        x+4,y,
-        x+w-5,y,
-        x+w-1,y+4,
-        x+w-1,y+h-5,
-        x+w-5,y+h-1,
-        x+4,y+h-1,
-        x,y+h-5,
-        x,y+4
-      ], bg = l.selected?g.theme.bgH:g.theme.bg2;
-    g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+      var bg = l.selected?g.theme.bgH:g.theme.bg2;
+    g.setColor(bg).fillRect(x, y, x+w, y+h, 4).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawRect(x, y, x+w, y+h, 4);
     if (l.col!==undefined) g.setColor(l.col);
-    if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
-    else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+    if (l.src) g.setBgColor(bg).drawImage(
+      "function"==typeof l.src?l.src():l.src,
+      l.x + l.w/2 + (0|l.pad),
+      l.y + l.h/2 + (0|l.pad),
+      {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
+    );
+    else g.setFont(l.font||"6x8", l.scale||2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad), l.scale?{scale:l.scale}:undefined);
+    g.drawImage(
+      "function"==typeof l.src?l.src():l.src,
+      l.x + l.w/2 + (0|l.pad),
+      l.y + l.h/2 + (0|l.pad),
+      {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
+    );
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -361,11 +344,11 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        var m = g.setFont(l.font).stringMetrics(l.label);
+        var m = g.setFont(l.font, l.scale||1).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
-      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont("6x8",2).stringMetrics(l.label);
+      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont(l.font||"6x8", l.scale||2).stringMetrics(l.label);
       l._h = 16 + m.height;
       l._w = 20 + m.width;
     }, "img": function(l) {
