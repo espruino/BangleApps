@@ -22,17 +22,19 @@ layout.render();
 layoutObject has:
 * A `type` field of:
   * `undefined` - blank, can be used for padding
-  * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
+  * `"txt"` - a text label, with value `label`. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
        optional `src` specifies an image (like img) in which case label is ignored
+       Default font is `6x8`, scale 2. This can be overridden with the `font` or `scale` fields.
   * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
-       optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
   * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
 * A `font` field, eg `6x8` or `30%` to use a percentage of screen height
+* A `scale` field, eg `2` to set scale of an image or text
+* A `r` field to set rotation of text or images.
 * A `wrap` field to enable line wrapping. Requires some combination of `width`/`height`
   and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
@@ -232,20 +234,20 @@ Layout.prototype.render = function (l) {
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
       var bg = l.selected?g.theme.bgH:g.theme.bg2;
-    g.setColor(bg).fillRect(x, y, x+w, y+h, 4).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawRect(x, y, x+w, y+h, 4);
+    g.setColor(bg).fillRect({x:x,y:y,x2:x+w,y2:y+h,r:4}).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawRect({x:x,y:y,x2:x+w,y2:y+h,r:4});
     if (l.col!==undefined) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage(
       "function"==typeof l.src?l.src():l.src,
-      l.x + l.w/2 + (0|l.pad),
-      l.y + l.h/2 + (0|l.pad),
+      l.x + (l.w + (0|l.pad))/2,
+      l.y + (l.h + (0|l.pad))/2,
       {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
     );
     else g.setFont(l.font||"6x8", l.scale||2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
     g.drawImage(
       "function"==typeof l.src?l.src():l.src,
-      l.x + l.w/2 + (0|l.pad),
-      l.y + l.h/2 + (0|l.pad),
+      l.x + (l.w + (0|l.pad))/2,
+      l.y + (l.h + (0|l.pad))/2,
       {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
     );
   }, "custom":function(l){
