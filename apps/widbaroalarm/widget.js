@@ -104,7 +104,7 @@
       saveSetting("lastHighWarningTs", 0);
     }
 
-    if (!alreadyWarned) {
+    if (history3.length > 0 && !alreadyWarned) {
       // 3h change detection
       const drop3halarm = setting("drop3halarm");
       const raise3halarm = setting("raise3halarm");
