@@ -34,6 +34,7 @@ const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
 function onDrag(event) {
+  Bangle.buzz(20, 0.3);
   var diff = -Math.round(event.dy/5);
   if (event.x < timePickerLayout.hours.w) {
     diff *= 3600;
@@ -47,10 +48,13 @@ function onTouch(button, xy) {
   var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
   var diff = 0;
   if (xy.y > 24 && xy.y < touchMidpoint - 10) {
+    Bangle.buzz(40, 0.3);
     diff = 1;
   } else if (xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
+    Bangle.buzz(40, 0.3);
     diff = -1;
   } else if (xy.y > timePickerLayout.btnStart.y) {
+    Bangle.buzz(40, 0.6);
     runTimer();
     return;
   }
