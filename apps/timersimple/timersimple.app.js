@@ -13,23 +13,12 @@ const timerID = "simpletimer";
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var Layout = require("Layout");
+//var Layout = require("Layout");
 var seconds = 5 * 60; // Default to 5 minutes
 var drawTimeout;
 var timerLayout;
 var timePickerLayout;
-var imgArrowDown = Graphics.createImage(`
-xxx   xxx
-xxx   xxx
- xxx xxx 
- xxx xxx 
-  xxxxx
-  xxxxx
-   xxx
-   xxx
-    x
-`);
-var imgArrowUp = Graphics.createImage(`
+var imgArrow = Graphics.createImage(`
     x
    xxx
    xxx
@@ -117,26 +106,27 @@ var timePickerLayoutCode = {
     {type:undefined, height:2},
     //{type:"txt", font:"15%", label:"TIMER", id:"title"},
     {type:"h", c: [
-      {type:"v", c: [
+      {type:"v", width:g.getWidth()/3, c: [
         {type:"txt", font:"6x8", label:/*LANG*/"Hours", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrowUp, col:g.theme.fg2},
-        {type:"txt", font:"20%", label:"0", id:"hours", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrowDown, col:g.theme.fg2}
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"20%", label:"00", id:"hours", filly:1, fillx:1},
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
       ]},
-      {type:"v", c: [
+      {type:"v", width:g.getWidth()/3, c: [
         {type:"txt", font:"6x8", label:/*LANG*/"Minutes", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrowUp, col:g.theme.fg2},
-        {type:"txt", font:"20%", label:"0", id:"mins", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrowDown, col:g.theme.fg2}
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"20%", label:"00", id:"mins", filly:1, fillx:1},
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
       ]},
-      {type:"v", c: [
+      {type:"v", width:g.getWidth()/3, c: [
         {type:"txt", font:"6x8", label:/*LANG*/"Seconds", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrowUp, col:g.theme.fg2},
-        {type:"txt", font:"20%", label:"0", id:"secs", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrowDown, col:g.theme.fg2}
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"20%", label:"00", id:"secs", filly:1, fillx:1},
+        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
       ]},
     ]},
     {type:"btn", src:imgPlay, id:"btnStart", fillx:1 }
+    //{type:"btn", label:'Start', font:"20%", id:"btnStart", fillx:0 }
   ], filly:1
 };
 
@@ -164,6 +154,7 @@ function runTimePicker() {
   });
   timePickerLayout.render();
   updateTimePicker();
+  //timePickerLayout.debug();
 }
 
 function runTimer() {
