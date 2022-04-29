@@ -233,8 +233,18 @@ Layout.prototype.render = function (l) {
     }, "btn":function(l){
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
-      var bg = l.selected?g.theme.bgH:g.theme.bg2;
-    g.setColor(bg).fillRect({x:x,y:y,x2:x+w,y2:y+h,r:4}).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawRect({x:x,y:y,x2:x+w,y2:y+h,r:4});
+      var poly = [
+        x,y+4,
+        x+4,y,
+        x+w-5,y,
+        x+w-1,y+4,
+        x+w-1,y+h-5,
+        x+w-5,y+h-1,
+        x+4,y+h-1,
+        x,y+h-5,
+        x,y+4
+      ], bg = l.selected?g.theme.bgH:g.theme.bg2;
+      g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
     if (l.col!==undefined) g.setColor(l.col);
     if (l.src) g.setBgColor(bg).drawImage(
       "function"==typeof l.src?l.src():l.src,
