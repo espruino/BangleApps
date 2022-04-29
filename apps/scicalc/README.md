@@ -18,5 +18,7 @@ The calculator supports the following operations:
  * a memory button "M" stores or recalls the last result (after hitting the "=" button or swiping down)
 
 ![](scicalc_screenshot1.png)
+
 ![](scicalc_screenshot2.png)
+
 ![](scicalc_screenshot3.png)
