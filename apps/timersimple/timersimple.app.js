@@ -13,7 +13,7 @@ const timerID = "simpletimer";
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-//var Layout = require("Layout");
+var Layout = require("Layout");
 var seconds = 5 * 60; // Default to 5 minutes
 var drawTimeout;
 var timerLayout;
