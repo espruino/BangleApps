@@ -257,12 +257,18 @@ and which gives information about the app for the Launcher.
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
-                              //   'launch' - replacement launcher app
-                              //   'bootloader' - code that runs at startup only
+                              //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
                               //   'RAM' - code that runs and doesn't upload anything to storage
+                              //   'launch' - replacement 'Launcher'
+                              //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
+                              //   'scheduler' - provides 'sched' library and boot code for scheduling alarms/timers 
+                              //                 (currently only 'sched' app)
+                              //   'notify' - provides 'notify' library for showing notifications
+                              //   'locale' - provides 'locale' library for language-specific date/distance/etc 
+                              //              (a version of 'locale' is included in the firmware)
   "tags": "",                 // comma separated tag list for searching
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
-  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
