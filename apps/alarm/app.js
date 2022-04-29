@@ -47,11 +47,21 @@ function showMainMenu() {
     menu[txt] = {
       value : "\0"+atob(alarm.on?"EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g":"EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g"),
       onchange : function() {
-        if (alarm.timer) editTimer(idx, alarm);
-        else editAlarm(idx, alarm);
+        setTimeout(alarm.timer ? editTimer : editAlarm, 10, idx, alarm);
       }
     };
   });
+
+  if (alarms.some(e => !e.on)) {
+    menu[/*LANG*/"Enable All"] = () => enableAll(true);
+  }
+  if (alarms.some(e => e.on)) {
+    menu[/*LANG*/"Disable All"] = () => enableAll(false);
+  }
+  if (alarms.length > 0) {
+    menu[/*LANG*/"Delete All"] = () => deleteAll();
+  }
+
   if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
   return E.showMenu(menu);
 }
@@ -81,7 +91,10 @@ function editAlarm(alarmIndex, alarm) {
 
   const menu = {
     '': { 'title': /*LANG*/'Alarm' },
-    /*LANG*/'< Back' : () => showMainMenu(),
+    /*LANG*/'< Back': () => {
+      saveAlarm(newAlarm, alarmIndex, a, t);
+      showMainMenu();
+    },
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -102,7 +115,7 @@ function editAlarm(alarmIndex, alarm) {
     },
     /*LANG*/'Days': {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
-      onchange: () => editDOW(a.dow, d => {
+      onchange: () => setTimeout(editDOW, 100, a.dow, d => {
         a.dow = d;
         a.t = require("sched").encodeTime(t);
         editAlarm(alarmIndex, a);
@@ -115,22 +128,31 @@ function editAlarm(alarmIndex, alarm) {
       onchange: v => a.as = v
     }
   };
-  menu[/*LANG*/"Save"] = function() {
-    a.t = require("sched").encodeTime(t);
-    a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
-    if (newAlarm) alarms.push(a);
-    else alarms[alarmIndex] = a;
-    saveAndReload();
-    showMainMenu();
-  };
+
+  menu[/*LANG*/"Cancel"] = () => showMainMenu();
+
   if (!newAlarm) {
-    menu[/*LANG*/"Delete"] = function() {
-      alarms.splice(alarmIndex,1);
+    menu[/*LANG*/"Delete"] = function () {
+      alarms.splice(alarmIndex, 1);
       saveAndReload();
       showMainMenu();
     };
   }
+
   return E.showMenu(menu);
+}
+
+function saveAlarm(newAlarm, alarmIndex, a, t) {
+  a.t = require("sched").encodeTime(t);
+  a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
+
+  if (newAlarm) {
+    alarms.push(a);
+  } else {
+    alarms[alarmIndex] = a;
+  }
+
+  saveAndReload();
 }
 
 function editTimer(alarmIndex, alarm) {
@@ -142,7 +164,10 @@ function editTimer(alarmIndex, alarm) {
 
   const menu = {
     '': { 'title': /*LANG*/'Timer' },
-    /*LANG*/'< Back' : () => showMainMenu(),
+    /*LANG*/'< Back': () => {
+      saveTimer(newAlarm, alarmIndex, a, t);
+      showMainMenu();
+    },
     /*LANG*/'Hours': {
       value: t.hrs, min : 0, max : 23, wrap : true,
       onchange: v => t.hrs=v
@@ -158,15 +183,9 @@ function editTimer(alarmIndex, alarm) {
     },
     /*LANG*/'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
   };
-  menu[/*LANG*/"Save"] = function() {
-    a.timer = require("sched").encodeTime(t);
-    a.t = getCurrentTime() + a.timer;
-    a.last = 0;
-    if (newAlarm) alarms.push(a);
-    else alarms[alarmIndex] = a;
-    saveAndReload();
-    showMainMenu();
-  };
+
+  menu[/*LANG*/"Cancel"] = () => showMainMenu();
+
   if (!newAlarm) {
     menu[/*LANG*/"Delete"] = function() {
       alarms.splice(alarmIndex,1);
@@ -175,6 +194,46 @@ function editTimer(alarmIndex, alarm) {
     };
   }
   return E.showMenu(menu);
+}
+
+function saveTimer(newAlarm, alarmIndex, a, t) {
+  a.timer = require("sched").encodeTime(t);
+  a.t = getCurrentTime() + a.timer;
+  a.last = 0;
+
+  if (newAlarm) {
+    alarms.push(a);
+  } else {
+    alarms[alarmIndex] = a;
+  }
+
+  saveAndReload();
+}
+
+function enableAll(on) {
+  E.showPrompt(/*LANG*/"Are you sure?", {
+    title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All"
+  }).then((confirm) => {
+    if (confirm) {
+      alarms.forEach(alarm => alarm.on = on);
+      saveAndReload();
+    }
+
+    showMainMenu();
+  });
+}
+
+function deleteAll() {
+  E.showPrompt(/*LANG*/"Are you sure?", {
+    title: /*LANG*/"Delete All"
+  }).then((confirm) => {
+    if (confirm) {
+      alarms = [];
+      saveAndReload();
+    }
+
+    showMainMenu();
+  });
 }
 
 showMainMenu();

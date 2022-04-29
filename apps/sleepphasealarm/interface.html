@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.css">
+  </head>
+  <body>
+    <p>Please select a wakeup day:</p>
+    <div class="form-group">
+      <select id="day" disabled class="form-select">
+        <option selected disabled>No day</option>
+      </select>
+    </div>
+    <div class="chart-container">
+      <canvas id="sleepChart"></canvas>
+    </div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script>
+function getData() {
+  const select = document.getElementById("day");
+  const ctx = document.getElementById('sleepChart').getContext('2d');
+  const yTicks = ["sleep", "awake", "alarm"];
+
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  Util.readStorage('sleepphasealarm.json',data=>{
+    let logs = JSON.parse(data || "{}")?.logs || [];
+    // remove window
+    Util.hideModal();
+
+    logs = logs.filter(log => log != null);
+    logs.sort(function(a, b) {return new Date(b?.filter(entry => entry.type === "alarm")[0]?.time) - new Date(a?.filter(entry => entry.type === "alarm")[0]?.time)}); // sort by alarm date desc
+    logs.forEach((log, i) => {
+      const timeStr = log.filter(entry => entry.type === "alarm")[0]?.time;
+      if (timeStr) {
+        const date = new Date(timeStr);
+        let option = document.createElement("option");
+        option.text = date.toLocaleDateString();
+        option.value = i;
+        select.add(option);
+        select.disabled = false;
+      }
+    });
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      labels: [],
+      data: {
+        datasets: [
+          {
+            label: "No date selected",
+            data: [],
+            fill: false,
+            stepped: true,
+            borderColor: '#ff0000',
+          }
+        ]
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              tooltipFormat: 'HH:mm',
+              displayFormats: {
+                millisecond: 'HH:mm:ss.SSS',
+                second: 'HH:mm:ss',
+                minute: 'HH:mm',
+                hour: 'HH',
+                day: 'D MMM.',
+              },
+            },
+          },
+          y: {ticks: {callback: (value, index, values) => yTicks[value]}},
+         },
+        plugins: {
+          tooltip: {
+            callbacks: {
+                label: function(context) {
+                    return yTicks[context.raw];
+                }
+            }
+          },
+        }
+      }
+    });
+
+    select.onchange = () => {
+      const log = logs[select.value];
+      chart.data.labels = log.map(entry => new Date(entry.time));
+      chart.data.datasets[0].data = log.map(entry => yTicks.indexOf(entry.type));
+      const timeStr = log.filter(entry => entry.type === "alarm")[0]?.time;
+      chart.data.datasets[0].label = new Date(timeStr).toLocaleDateString();
+      chart.update();
+    }
+  });
+}
+
+// Called when app starts
+function onInit() {
+  getData();
+}
+    </script>
+  </body>
+</html>

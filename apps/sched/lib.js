@@ -47,7 +47,7 @@ exports.getTimeToAlarm = function(alarm, time) {
 /// Force a reload of the current alarms and widget
 exports.reload = function() {
   eval(require("Storage").read("sched.boot.js"));
-  if (WIDGETS["alarm"]) {
+  if (global.WIDGETS && WIDGETS["alarm"]) {
     WIDGETS["alarm"].reload();
     Bangle.drawWidgets();
   }

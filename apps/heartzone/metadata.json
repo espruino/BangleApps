@@ -1,7 +1,7 @@
 {
   "id": "heartzone",
   "name": "HeartZone",
-  "version": "1.0",
+  "version": "0.01",
   "description": "Exercise app for keeping your heart rate in the aerobic zone. Buzzes the watch at configurable intervals when your heart rate is outside of configured limits.",
   "readme":"README.md",
   "screenshots": [

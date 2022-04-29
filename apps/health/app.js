@@ -1,14 +1,3 @@
-function getSettings() {
-  return Object.assign({
-    hrm: 0,
-    stepGoal: 10000
-  }, require("Storage").readJSON("health.json", true) || {});
-}
-
-function setSettings(settings) {
-  require("Storage").writeJSON("health.json", settings);
-}
-
 function menuMain() {
   swipe_enabled = false;
   clearButton();
@@ -18,38 +7,7 @@ function menuMain() {
     /*LANG*/"Step Counting": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
-    /*LANG*/"Settings": () => menuSettings()
-  });
-}
-
-function menuSettings() {
-  swipe_enabled = false;
-  clearButton();
-  let settings = getSettings();
-
-  E.showMenu({
-    "": { title:/*LANG*/"Health Tracking" },
-    /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"HRM Interval": {
-      value: settings.hrm,
-      min: 0,
-      max: 3,
-      format: v => [ /*LANG*/"Off", /*LANG*/"3 min", /*LANG*/"10 min", /*LANG*/"Always"][v],
-      onchange: v => {
-        settings.hrm = v;
-        setSettings(settings);
-      }
-    },
-    /*LANG*/"Daily Step Goal": {
-      value: settings.stepGoal,
-      min: 0,
-      max: 20000,
-      step: 250,
-      onchange: v => {
-        settings.stepGoal = v;
-        setSettings(settings);
-      }
-    }
+    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>menuMain())
   });
 }
 
@@ -85,7 +43,6 @@ function menuHRM() {
     /*LANG*/"per day": () => hrmPerDay(),
   });
 }
-
 
 function stepsPerHour() {
   E.showMessage(/*LANG*/"Loading...");
@@ -176,7 +133,7 @@ var chart_data;
 var swipe_enabled = false;
 var btn;
 
-// find the max value in the array, using a loop due to array size 
+// find the max value in the array, using a loop due to array size
 function max(arr) {
   var m = -Infinity;
 
@@ -188,10 +145,10 @@ function max(arr) {
 // find the end of the data, the array might be for 31 days but only have 2 days of data in it
 function get_data_length(arr) {
   var nlen = arr.length;
-  
+
   for(var i = arr.length - 1; i > 0 && arr[i] == 0;  i--)
     nlen--;
-  
+
   return nlen;
 }
 
@@ -210,10 +167,10 @@ function drawBarChart() {
   const bar_width = (w - 2) / 9;  // we want 9 bars, bar 5 in the centre
   var bar_top;
   var bar;
-  
+
   g.setColor(g.theme.bg);
   g.fillRect(0,24,w,h);
-  
+
   for (bar = 1; bar < 10; bar++) {
     if (bar == 5) {
       g.setFont('6x8', 2);
@@ -226,7 +183,7 @@ function drawBarChart() {
     }
 
     // draw a fake 0 height bar if chart_index is outside the bounds of the array
-    if ((chart_index + bar - 1) >= 0 && (chart_index + bar - 1) < data_len) 
+    if ((chart_index + bar - 1) >= 0 && (chart_index + bar - 1) < data_len)
       bar_top = bar_bot - 100 * (chart_data[chart_index + bar - 1]) / chart_max_datum;
     else
       bar_top = bar_bot;
@@ -256,7 +213,7 @@ Bangle.on('swipe', dir => {
 function setButton(fn) {
   // cancel callback, otherwise a slight up down movement will show the E.showMenu()
   Bangle.setUI("updown", undefined);
-  
+
   if (process.env.HWVERSION == 1)
     btn = setWatch(fn, BTN2);
   else

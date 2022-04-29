@@ -5,7 +5,7 @@
     "icon": "mmind.png",
     "version":"0.01",
     "description": "This is the classic game for masterminds",
-    "type": "game",
+    "type": "app",
     "tags": "mastermind, game, classic",
     "readme":"README.md",
     "supports": ["BANGLEJS2"],
