@@ -1,4 +1,5 @@
 function run(){
+    if (Bangle.isCharging()) return;
     var now = new Date();
     var h = now.getHours();
     if(h >= activityreminder.startHour && h < activityreminder.endHour){
