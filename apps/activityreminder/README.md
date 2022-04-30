@@ -9,5 +9,6 @@ Different settings can be personalized:
 - End hour: Hour to end the reminder
 - Max inactivity: Maximum inactivity time to allow before the alert. From 15 to 60 min
 - Dismiss delay: Delay added before the next alert if the alert is dismissed. From 5 to 60 min
+    Notice: If Dissmiss delay > Max inactivity then it will be equal Max inactivity
 - Min steps: Minimal amount of steps to count as an activity
 
