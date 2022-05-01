@@ -20,40 +20,44 @@
 </style>
 
 <body>
-  <div class="form-group">
-    <label class="form-label" for="input-example-1">Course Search</label>
-    <input class="form-input" type="text" id="course_id" placeholder="Whistling Straits">
-    <button type="button" class="btn btn-primary" onclick="courseSearch();">Search</button>
+  <div class="container">
+    <div class="form-group">
+      <label class="form-label" for="course_id">Course Search</label>
+      <div class="input-group">
+        <input class="form-input" type="text" id="course_id" placeholder="Whistling Straits">
+        <button type="button" class="btn btn-primary input-group-btn" onclick="courseSearch();">Search</button>
+      </div>
+    </div>
+    <div>
+      <ul id="searchresults"></ul>
+    </div>
+    <div>
+      <p id="status">No course loaded.</p>
+      <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
+      <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+    </div>
+    <div>
+      <p>A course needs a few things to be parsed correctly by this tool.</p>
+      <ul>
+        <li>See official mapping guidelines <a
+            href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
+        <li>All holes and features must be within the target course's area.</li>
+        <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
+        <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
+          should
+          list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
+        <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
+        <li>For any mapping assistance or issues, please file in the <a
+            href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
+            repo</a></li>
+      </ul>
+      <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
+    </div>
+    <footer>
+      <hr />
+      <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
+    </footer>
   </div>
-  <div>
-    <ul id="searchresults"></ul>
-  </div>
-  <div>
-    <p id="status">No course loaded.</p>
-    <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
-    <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
-  </div>
-  <div>
-    <p>A course needs a few things to be parsed correctly by this tool.</p>
-    <ul>
-      <li>See official mapping guidelines <a
-          href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
-      <li>All holes and features must be within the target course's area.</li>
-      <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
-      <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
-        should
-        list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
-      <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
-      <li>For any mapping assistance or issues, please file in the <a
-          href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
-          repo</a></li>
-    </ul>
-    <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
-  </div>
-  <footer>
-    <hr />
-    <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
-  </footer>
 
   <script src="../../core/lib/customize.js"></script>
   <script src="./maptools.js"></script>
