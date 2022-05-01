@@ -51,8 +51,10 @@ active.forEach(alarm => {
   if (dateAlarm < now) { // dateAlarm in the past, add 24h
     dateAlarm.setTime(dateAlarm.getTime() + (24*60*60*1000));
   }
-  if (nextAlarm === undefined || dateAlarm < nextAlarm) {
-    nextAlarm = dateAlarm;
+  if ((alarm.dow >> dateAlarm.getDay()) & 1) { // check valid day of week
+    if (nextAlarm === undefined || dateAlarm < nextAlarm) {
+      nextAlarm = dateAlarm;
+    }
   }
 });
 
@@ -80,7 +82,7 @@ function drawApp() {
       layout.date.label = locale.time(now, BANGLEJS2 && Bangle.isLocked() ? 1 : 0); // hide seconds on bangle 2
       const diff = nextAlarm - now;
       const diffHour = Math.floor((diff % 86400000) / 3600000).toString();
-      const diffMinutes = Math.round(((diff % 86400000) % 3600000) / 60000).toString();
+      const diffMinutes = Math.floor(((diff % 86400000) % 3600000) / 60000).toString();
       layout.eta.label = "ETA: -"+ diffHour + ":" + diffMinutes.padStart(2, '0');
       layout.render();
     }
