@@ -2,7 +2,7 @@
 
 A library that provides an on-screen keyboard for text input.
 
-## Settings ( -> Apps -> kbtouch )
+## Settings
 Text size - small or big text font. Default=Big. Suggested=Small.
 
 Offset keyboard - display the keyboard on top, making it faster to see what character you have selected. Default=No. Suggested=Yes.
