@@ -68,9 +68,9 @@ function onButton() {
   var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID));
   g.clearRect(Bangle.appRect);
   if (timeToNext != undefined) {
-    runTimer();
+    timerRun();
   } else {
-    runTimePicker();
+    timerStop();
   }
 }
 
@@ -102,15 +102,6 @@ function queueDraw(millisecs) {
   }, millisecs - (Date.now() % millisecs));
 }
 
-function timerStop() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = undefined;
-  seconds = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) / 1000;
-  require("sched").setAlarm(timerID, undefined);
-  require("sched").reload();
-  runTimePicker(); 
-}
-
 function runTimePicker() {
   g.clearRect(Bangle.appRect);
   Bangle.setUI({
@@ -124,7 +115,7 @@ function runTimePicker() {
   //timePickerLayout.debug();
 }
 
-function runTimer() {
+function timerRun() {
   require("sched").setAlarm(timerID, {
     vibrate : ".-.-",
     hidden: true,
@@ -134,6 +125,15 @@ function runTimer() {
   g.clearRect(Bangle.appRect);
   timerLayout.render();
   updateTimer();
+}
+
+function timerStop() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+  seconds = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) / 1000;
+  require("sched").setAlarm(timerID, undefined);
+  require("sched").reload();
+  runTimePicker(); 
 }
 
 var timePickerLayout = new Layout({
