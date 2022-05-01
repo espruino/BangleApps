@@ -130,7 +130,10 @@ function timerRun() {
 function timerStop() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
-  seconds = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) / 1000;
+  var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID));
+  if (timeToNext != undefined) {
+    seconds = timeToNext / 1000;
+  }
   require("sched").setAlarm(timerID, undefined);
   require("sched").reload();
   runTimePicker(); 
