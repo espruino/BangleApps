@@ -8,56 +8,52 @@
 </head>
 
 <style>
-  #searchresults ul {
+  #searchresults {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
 
-  #searchresults ul li a {
-    display: block;
-    width: 100%;
-    text-decoration: none;
-    padding: 5px;
-  }
-
-  #searchresults ul li a:hover {
+  #searchresults li:hover {
     background-color: #ccc;
   }
 </style>
 
 <body>
-  <div>
-    <input type="text" placeholder="Whistling Straits" id="course_id">
-    <button type="button" onclick="courseSearch();">Search</button>
-    <ul id="searchresults"></ul>
-    <div>
-      <p id="status">No course loaded.</p>
-      <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
-      <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
-    </div>
-    <div>
-      <p>A course needs a few things to be parsed correctly by this tool.</p>
-      <ul>
-        <li>See official mapping guidelines <a
-            href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
-        <li>All holes and features must be within the target course's area.</li>
-        <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
-        <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
-          should
-          list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
-        <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
-        <li>For any mapping assistance or issues, please file in the <a
-            href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
-            repo</a></li>
-      </ul>
-      <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
-    </div>
-    <footer>
-      <hr />
-      <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
-    </footer>
+  <div class="form-group">
+    <label class="form-label" for="input-example-1">Course Search</label>
+    <input class="form-input" type="text" id="course_id" placeholder="Whistling Straits">
+    <button type="button" class="btn btn-primary" onclick="courseSearch();">Search</button>
   </div>
+  <div>
+    <ul id="searchresults"></ul>
+  </div>
+  <div>
+    <p id="status">No course loaded.</p>
+    <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
+    <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+  </div>
+  <div>
+    <p>A course needs a few things to be parsed correctly by this tool.</p>
+    <ul>
+      <li>See official mapping guidelines <a
+          href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
+      <li>All holes and features must be within the target course's area.</li>
+      <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
+      <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
+        should
+        list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
+      <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
+      <li>For any mapping assistance or issues, please file in the <a
+          href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
+          repo</a></li>
+    </ul>
+    <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
+  </div>
+  <footer>
+    <hr />
+    <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
+  </footer>
 
   <script src="../../core/lib/customize.js"></script>
   <script src="./maptools.js"></script>
@@ -67,6 +63,7 @@
     const search_url = "https://nominatim.openstreetmap.org/search";
     let search_query = null;
     let course_input = null;
+    let current_course = null;
     let search_results = $("#searchresults");
 
     function courseSearch() {
@@ -76,9 +73,6 @@
         "q": inputVal,
       };
       doSearch();
-
-      // query = `[out:json][timeout:5];way(${inputVal});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
-      // doQuery();
     }
 
     function processFeatures(course_verbose) {
@@ -150,7 +144,6 @@
     }
 
     var courses = [];
-    var course_name = "Davis";
     $("#upload").click(function () {
       sendCustomizedApp({
         storage: courses,
@@ -158,8 +151,12 @@
     });
 
     $("#download").click(function () {
-      downloadObjectAsJSON(courses[0].content, "golfcourse-" + course_name);
+      downloadObjectAsJSON(courses[0].content, "golfcourse-download");
     });
+
+    function testfunc(params) {
+      console.log(params);
+    }
 
     // download info from the course
     function doSearch() {
@@ -173,25 +170,35 @@
         for (let index = 0; index < result.length; index++) {
           const element = result[index];
           if (element.type != "golf_course") continue;
-          search_results.append($("<li>").append($("<a>").attr('href', 'google.com').text(element.display_name)));
+          search_results.append($("<li>")
+            .append($("<p>").text(element.display_name)
+              .append($("<div>")
+                .append($('<button>').addClass("btn btn-primary").text("select").on('click', function () {
+                  console.log(element);
+                  doQuery(element);
+                }))
+                .append($('<a>').attr('href', `https://www.openstreetmap.org/${element.osm_type}/${element.osm_id}`).attr('target', '_blank')
+                  .append('<button>').addClass("btn btn-primary").text("view")
+                ))));
         }
 
       })
     }
 
     // download info from the course
-    function doQuery() {
+    function doQuery(course) {
+      const query = `[out:json][timeout:5];way(${course.osm_id});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+      const course_name = course.display_name.split(",")[0];
       $.post(url, query, function (result) {
         if (result.elements.length === 0) {
           $('#status').text("Course not found!");
           return;
         }
-        course_input = result;
-        console.log(course_input);
-        out = processFeatures(course_input.elements);
+        console.log(result);
+        out = processFeatures(result.elements);
         console.log(out);
         courses.push({
-          name: "golfcourse-" + course_name + ".json",
+          name: `golfcourse-${course_name}.json`,
           content: JSON.stringify(out),
         });
         $('#status').text("Course retrieved!");
