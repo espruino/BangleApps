@@ -16,7 +16,7 @@ Bangle.drawWidgets();
 var Layout = require("Layout");
 var seconds = 5 * 60; // Default to 5 minutes
 var drawTimeout;
-var timerRunning = False;
+var timerRunning = false;
 var imgArrow = Graphics.createImage(`
     x
    xxx
@@ -174,6 +174,6 @@ function updateLayoutField(layout, field, value) {
 }
 
 if (require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) != undefined) {
-  timerRunning = True;
+  timerRunning = true;
 }
 onButton();
