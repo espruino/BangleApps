@@ -68,8 +68,10 @@ function onTouch(button, xy) {
 function onButton() {
   g.clearRect(Bangle.appRect);
   if (timerRunning) {
+    timerRunning = false;
     timerStop();
   } else {
+    timerRunning = true;
     timerRun();
   }
 }
