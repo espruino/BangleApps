@@ -53,7 +53,7 @@ function onTouch(button, xy) {
     diff = -1;
   } else if (xy.y > timePickerLayout.btnStart.y) {
     Bangle.buzz(40, 0.6);
-    runTimer();
+    onButton();
     return;
   }
   if (xy.x < timePickerLayout.hours.w) {
