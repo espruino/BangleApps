@@ -115,7 +115,23 @@ E.on('notify',msg=>{
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
-    '2019':"'"
+    '2019':"'",
+    '260':"A",
+    '261':"a",
+    '262':"C",
+    '263':"c",
+    '280':"E",
+    '281':"e",
+    '321':"L",
+    '322':"l",
+    '323':"N",
+    '324':"n",
+    '346':"S",
+    '347':"s",
+    '377':"Z",
+    '378':"z",
+    '379':"Z",
+    '380':"z",
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
