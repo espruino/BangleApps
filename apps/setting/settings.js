@@ -37,18 +37,19 @@ function internalToG(u) {
 
 function resetSettings() {
   settings = {
-    ble: true,             // Bluetooth enabled by default
-    blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
-    log: false,            // Do log messages appear on screen?
-    quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
-    timeout: 10,           // Default LCD timeout in seconds
-    vibrate: true,         // Vibration enabled by default. App must support
-    beep: BANGLEJS2?true:"vib",            // Beep enabled by default. App must support
-    timezone: 0,           // Set the timezone for the device
-    HID: false,           // BLE HID mode, off by default
-    clock: null,           // a string for the default clock's name
-    "12hour" : false,      // 12 or 24 hour clock?
-    brightness: 1,       // LCD brightness from 0 to 1
+    ble: true,                      // Bluetooth enabled by default
+    blerepl: true,                  // Is REPL on Bluetooth - can Espruino IDE be used?
+    log: false,                     // Do log messages appear on screen?
+    quiet: 0,                       // quiet mode:  0: off, 1: priority only, 2: total silence
+    timeout: 10,                    // Default LCD timeout in seconds
+    vibrate: true,                  // Vibration enabled by default. App must support
+    beep: BANGLEJS2 ? true : "vib", // Beep enabled by default. App must support
+    timezone: 0,                    // Set the timezone for the device
+    HID: false,                     // BLE HID mode, off by default
+    clock: null,                    // a string for the default clock's name
+    "12hour" : false,               // 12 or 24 hour clock?
+    firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
+    brightness: 1,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
       wakeOnBTN1: true,
@@ -493,6 +494,16 @@ function showLocaleMenu() {
         settings["12hour"] = v;
         updateSettings();
       }
+    },
+    /*LANG*/'Start Week On': {
+      value: settings["firstDayOfWeek"] || 0,
+      min: 0, // Sunday
+      max: 1, // Monday
+      format: v => require("date_utils").dow(v, 1),
+      onchange: v => {
+        settings["firstDayOfWeek"] = v;
+        updateSettings();
+      },
     }
   };
   return E.showMenu(localemenu);

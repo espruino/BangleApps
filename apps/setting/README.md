@@ -7,7 +7,7 @@ This is Bangle.js's settings menu
 * **Beep** most Bangle.js do not have a speaker inside, but they can use the vibration motor to beep in different pitches. You can change the behaviour here to use a Piezo speaker if one is connected
 * **Vibration** enable/disable the vibration motor
 * **Quiet Mode** prevent notifications/alarms from vibrating/beeping/turning the screen on - see below
-* **Locale** set time zone/whether the clock is 12/24 hour (for supported clocks)
+* **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
 * **Select Clock** if you have more than one clock face, select the default one
 * **Set Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
