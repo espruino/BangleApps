@@ -16,6 +16,7 @@ Bangle.drawWidgets();
 var Layout = require("Layout");
 var seconds = 5 * 60; // Default to 5 minutes
 var drawTimeout;
+var timerRunning = False;
 var imgArrow = Graphics.createImage(`
     x
    xxx
@@ -32,7 +33,7 @@ const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
 function onDrag(event) {
-  Bangle.buzz(20, 0.3);
+  Bangle.buzz(40, 0.3);
   var diff = -Math.round(event.dy/5);
   if (event.x < timePickerLayout.hours.w) {
     diff *= 3600;
@@ -65,12 +66,11 @@ function onTouch(button, xy) {
 }
 
 function onButton() {
-  var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID));
   g.clearRect(Bangle.appRect);
-  if (timeToNext != undefined) {
-    timerRun();
-  } else {
+  if (timerRunning) {
     timerStop();
+  } else {
+    timerRun();
   }
 }
 
@@ -80,12 +80,6 @@ function updateTimePicker(diff) {
   updateLayoutField(timePickerLayout, 'hours', set_time.h);
   updateLayoutField(timePickerLayout, 'mins', set_time.m); 
   updateLayoutField(timePickerLayout, 'secs', set_time.s); 
-}
-
-function updateLayoutField(layout, field, value) {
-  layout.clear(layout[field]);
-  layout[field].label = value;
-  layout.render(layout[field]);
 }
 
 function updateTimer() {
@@ -173,4 +167,13 @@ var timerLayout = new Layout({
   ], filly:1
 });
 
+function updateLayoutField(layout, field, value) {
+  layout.clear(layout[field]);
+  layout[field].label = value;
+  layout.render(layout[field]);
+}
+
+if (require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) != undefined) {
+  timerRunning = True;
+}
 onButton();
