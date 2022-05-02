@@ -479,6 +479,7 @@ function showLocaleMenu() {
     '< Back': ()=>showSystemMenu(),
     /*LANG*/'Time Zone': {
       value: settings.timezone,
+      format: v => (v > 0 ? "+" : "") + v,
       min: -11,
       max: 13,
       step: 0.5,
