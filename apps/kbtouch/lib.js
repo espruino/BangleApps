@@ -78,12 +78,7 @@ var settings = Object.assign({
   oneToOne: 0,
   speedScaling: 24
 }, require('Storage').readJSON("kbtouch.settings.json", true) || {});
-print(settings);
 
-//settings = { "textSize": 1, "offsetKeyboard": 0, "oneToOne": 1,
-//  "speedScaling": 15, "loopAround": 0 /*, "releaseToSelect": 0*/};
-
-print(settings);
 // state
 const R = Bangle.appRect;
 var kbx = 0, kby = 0, kbdx = 0, kbdy = 0, kbShift = false, flashToggle = false;
