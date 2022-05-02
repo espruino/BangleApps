@@ -1,3 +1,17 @@
+/*
+ * SIMPLE TIMER
+ *
+ * Creator: David Peer
+ * Date: 02/2022
+ * 
+ * Modified: Sir Indy
+ * Date: 05/2022
+ */
+
+const Layout = require("Layout");
+const alarm = require("sched")
+const TIMER_IDX = "smpltmr";
+
 const secondsToTime = (s) => new Object({h:Math.floor((s/3600) % 24), m:Math.floor((s/60) % 60), s:Math.floor(s % 60)});
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 function formatTime(s) {
@@ -8,16 +22,14 @@ function formatTime(s) {
     return t.m + ':' + ("0" + t.s).substr(-2);
   }
 }
-const timerID = "simpletimer";
 
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
-var Layout = require("Layout");
 var seconds = 5 * 60; // Default to 5 minutes
 var drawTimeout;
-var timerRunning = false;
-var imgArrow = Graphics.createImage(`
+//var timerRunning = false;
+function timerRunning() {
+  return (alarm.getTimeToAlarm(alarm.getAlarm(TIMER_IDX)) != undefined)
+}
+const imgArrow = Graphics.createImage(`
     x
    xxx
    xxx
@@ -33,23 +45,25 @@ const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
 function onDrag(event) {
-  Bangle.buzz(40, 0.3);
-  var diff = -Math.round(event.dy/5);
-  if (event.x < timePickerLayout.hours.w) {
-    diff *= 3600;
-  } else if (event.x > timePickerLayout.mins.x && event.x < timePickerLayout.secs.x) {
-    diff *= 60;
+  if (timerRunning()) {
+    Bangle.buzz(40, 0.3);
+    var diff = -Math.round(event.dy/5);
+    if (event.x < timePickerLayout.hours.w) {
+      diff *= 3600;
+    } else if (event.x > timePickerLayout.mins.x && event.x < timePickerLayout.secs.x) {
+      diff *= 60;
+    }
+    updateTimePicker(diff);
   }
-  updateTimePicker(diff);
 }
 
 function onTouch(button, xy) {
   var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
   var diff = 0;
-  if (xy.y > 24 && xy.y < touchMidpoint - 10) {
+  if (timerRunning() && xy.y > 24 && xy.y < touchMidpoint - 10) {
     Bangle.buzz(40, 0.3);
     diff = 1;
-  } else if (xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
+  } else if (timerRunning() && xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
     Bangle.buzz(40, 0.3);
     diff = -1;
   } else if (xy.y > timePickerLayout.btnStart.y) {
@@ -67,11 +81,9 @@ function onTouch(button, xy) {
 
 function onButton() {
   g.clearRect(Bangle.appRect);
-  if (timerRunning) {
-    timerRunning = false;
+  if (timerRunning()) {
     timerStop();
   } else {
-    timerRunning = true;
     timerRun();
   }
 }
@@ -85,7 +97,7 @@ function updateTimePicker(diff) {
 }
 
 function updateTimer() {
-  var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID));
+  var timeToNext = alarm.getTimeToAlarm(alarm.getAlarm(TIMER_IDX));
   updateLayoutField(timerLayout, 'timer', formatTime(timeToNext / 1000)); 
   queueDraw(1000);
 }
@@ -98,26 +110,13 @@ function queueDraw(millisecs) {
   }, millisecs - (Date.now() % millisecs));
 }
 
-function runTimePicker() {
-  g.clearRect(Bangle.appRect);
-  Bangle.setUI({
-    mode : "custom",
-    touch : function(n,e) {onTouch(n,e);},
-    drag : function(e) {onDrag(e);},
-    btn : function(n) {onButton();},
-  });
-  timePickerLayout.render();
-  updateTimePicker();
-  //timePickerLayout.debug();
-}
-
 function timerRun() {
-  require("sched").setAlarm(timerID, {
+  alarm.setAlarm(TIMER_IDX, {
     vibrate : ".-.-",
     hidden: true,
     timer : seconds * 1000
   });
-  require("sched").reload();
+  alarm.reload();
   g.clearRect(Bangle.appRect);
   timerLayout.render();
   updateTimer();
@@ -126,13 +125,15 @@ function timerRun() {
 function timerStop() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
-  var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm(timerID));
+  var timeToNext = alarm.getTimeToAlarm(alarm.getAlarm(TIMER_IDX));
   if (timeToNext != undefined) {
     seconds = timeToNext / 1000;
   }
-  require("sched").setAlarm(timerID, undefined);
-  require("sched").reload();
-  runTimePicker(); 
+  alarm.setAlarm(TIMER_IDX, undefined);
+  alarm.reload();
+  g.clearRect(Bangle.appRect);
+  timePickerLayout.render();
+  updateTimePicker();
 }
 
 var timePickerLayout = new Layout({
@@ -175,7 +176,21 @@ function updateLayoutField(layout, field, value) {
   layout.render(layout[field]);
 }
 
-if (require("sched").getTimeToAlarm(require("sched").getAlarm(timerID)) != undefined) {
-  timerRunning = true;
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
+Bangle.setUI({
+  mode : "custom",
+  touch : function(n,e) {onTouch(n,e);},
+  drag : function(e) {onDrag(e);},
+  btn : function(n) {onButton();},
+});
+
+g.clearRect(Bangle.appRect);
+if (timerRunning()) {
+  timerLayout.render();
+  updateTimer();
+} else {
+  timePickerLayout.render();
+  updateTimePicker();
 }
-onButton();
