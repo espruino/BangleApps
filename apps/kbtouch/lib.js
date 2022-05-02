@@ -122,7 +122,7 @@ function draw() {
     Bangle.setUI({mode:"custom", drag:e=>{
       if (settings.oneToOne) {
         kbx = Math.max(Math.min(Math.floor((e.x-16) / (6*2)) , 13) , 0);
-        kby = Math.max(Math.min(Math.floor((e.y-120) / (8*2)) , 4) , 0);
+        kby = Math.max(Math.min(Math.floor((e.y-120) / (8*2)) , 3) , 0);
       //print(e.y, kby, e.x, kbx);
       }
       
