@@ -95,7 +95,7 @@ function showSystemMenu() {
     /*LANG*/'LCD': ()=>showLCDMenu(),
     /*LANG*/'Locale': ()=>showLocaleMenu(),
     /*LANG*/'Select Clock': ()=>showClockMenu(),
-    /*LANG*/'Set Time': ()=>showSetTimeMenu()
+    /*LANG*/'Date & Time': ()=>showSetTimeMenu()
   };
 
   return E.showMenu(mainmenu);
@@ -488,9 +488,9 @@ function showLocaleMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Clock Style': {
+    /*LANG*/'Time Format': {
       value: !!settings["12hour"],
-      format: v => v ? "12hr" : "24hr",
+      format: v => v ? "12h" : "24h",
       onchange: v => {
         settings["12hour"] = v;
         updateSettings();
@@ -618,10 +618,33 @@ function showClockMenu() {
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
-    '': { 'title': /*LANG*/'Set Time' },
+    '': { 'title': /*LANG*/'Date & Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
       showSystemMenu();
+    },
+    /*LANG*/'Day': {
+      value: d.getDate(),
+      onchange: function (v) {
+        this.value = ((v+30)%31)+1;
+        d.setDate(this.value);
+      }
+    },
+    /*LANG*/'Month': {
+      value: d.getMonth() + 1,
+      format: v => require("date_utils").month(v),
+      onchange: function (v) {
+        this.value = ((v+11)%12)+1;
+        d.setMonth(this.value - 1);
+      }
+    },
+    /*LANG*/'Year': {
+      value: d.getFullYear(),
+      min: 2019,
+      max: 2100,
+      onchange: function (v) {
+        d.setFullYear(v);
+      }
     },
     /*LANG*/'Hour': {
       value: d.getHours(),
@@ -642,28 +665,6 @@ function showSetTimeMenu() {
       onchange: function (v) {
         this.value = (v+60)%60;
         d.setSeconds(this.value);
-      }
-    },
-    /*LANG*/'Date': {
-      value: d.getDate(),
-      onchange: function (v) {
-        this.value = ((v+30)%31)+1;
-        d.setDate(this.value);
-      }
-    },
-    /*LANG*/'Month': {
-      value: d.getMonth() + 1,
-      onchange: function (v) {
-        this.value = ((v+11)%12)+1;
-        d.setMonth(this.value - 1);
-      }
-    },
-    /*LANG*/'Year': {
-      value: d.getFullYear(),
-      min: 2019,
-      max: 2100,
-      onchange: function (v) {
-        d.setFullYear(v);
       }
     }
   };
