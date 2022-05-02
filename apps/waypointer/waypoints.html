@@ -73,8 +73,8 @@
         event.preventDefault()       
         var name = $name.value.trim()
         if(!name) return;
-        var lat = parseFloat($latitude.value).toPrecision(5);
-        var lon = parseFloat($longtitude.value).toPrecision(5);
+        var lat = parseFloat($latitude.value);
+        var lon = parseFloat($longtitude.value);
 
         waypoints.push({
           name, lat,lon,
