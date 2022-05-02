@@ -60,14 +60,12 @@ function onDrag(event) {
 function onTouch(button, xy) {
   var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
   var diff = 0;
-  if (timerRunning() && xy.y > 24 && xy.y < touchMidpoint - 10) {
-    Bangle.buzz(40, 0.3);
+  Bangle.buzz(40, 0.3);
+  if (!timerRunning() && xy.y > 24 && xy.y < touchMidpoint - 10) {
     diff = 1;
-  } else if (timerRunning() && xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
-    Bangle.buzz(40, 0.3);
+  } else if (!timerRunning() && xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
     diff = -1;
   } else if (xy.y > timePickerLayout.btnStart.y) {
-    Bangle.buzz(40, 0.6);
     onButton();
     return;
   }
