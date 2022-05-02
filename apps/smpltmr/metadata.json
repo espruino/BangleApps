@@ -8,7 +8,7 @@
   "tags": "tool,alarm,timer",
   "dependencies": {"scheduler":"type"},
   "supports": ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot.png"}, {"url": "screenshot_2.png"}],
+  "screenshots": [{"url":"screenshot_1.png"}, {"url": "screenshot_2.png"}, {"url": "screenshot_3.png"}, {"url": "screenshot_4.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"smpltmr.app.js","url":"app.js"},
