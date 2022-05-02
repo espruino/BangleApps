@@ -4,6 +4,11 @@ A simple app to set a timer quickly. Drag or tap on the up and down buttons over
 
 This app uses the `sched` library, which allows the timer to continue to run in the background when this app is closed.
 
+![](screenshot_1.png)
+![](screenshot_2.png)
+![](screenshot_3.png)
+![](screenshot_4.png)
+
 # Creators
 [David Peer](https://github.com/peerdavid)
 
