@@ -47,14 +47,15 @@ function onDrag(event) {
 }
 
 function onTouch(button, xy) {
-  var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
-  var diff = 0;
-  Bangle.buzz(40, 0.3);
-  if (xy.y > timePickerLayout.btnStart.y) {
+  if (xy.y > (timePickerLayout.btnStart.y||timerLayout.btnStart.y)) {
+    Bangle.buzz(40, 0.3);
     onButton();
     return;
   }
   if (!timerRunning()) {
+    var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
+    var diff = 0;
+    Bangle.buzz(40, 0.3);
     if (xy.y > 24 && xy.y < touchMidpoint - 10) {
       diff = 1;
     } else if (xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
@@ -159,7 +160,7 @@ var timePickerLayout = new Layout({
 var timerLayout = new Layout({
   type:"v", c: [
     {type:"txt", font:"22%", label:"0:00", id:"timer", fillx:1, filly:1 },
-    {type:"btn", src:imgPause, cb: l=>timerStop(), fillx:1 }
+    {type:"btn", src:imgPause, id:"btnStart", cb: l=>timerStop(), fillx:1 }
   ], filly:1
 });
 
