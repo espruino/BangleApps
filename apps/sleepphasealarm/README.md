@@ -1,5 +1,7 @@
 # Sleep Phase Alarm
 
+The alarm must be in the next 24h.
+
 The display shows:
 
 - the current time
