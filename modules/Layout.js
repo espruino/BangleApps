@@ -32,9 +32,9 @@ layoutObject has:
   * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
-* A `font` field, eg `6x8` or `30%` to use a percentage of screen height
-* A `scale` field, eg `2` to set scale of an image or text
-* A `r` field to set rotation of text or images.
+* A `font` field, eg `6x8` or `30%` to use a percentage of screen height. Set scale with :, e.g. `6x8:2`.
+* A `scale` field, eg `2` to set scale of an image
+* A `r` field to set rotation of text or images (0: 0°, 1: 90°, 2: 180°, 3: 270°).
 * A `wrap` field to enable line wrapping. Requires some combination of `width`/`height`
   and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
@@ -222,13 +222,13 @@ Layout.prototype.render = function (l) {
     "":function(){},
     "txt":function(l){
       if (l.wrap) {
-        g.setFont(l.font, l.scale||1).setFontAlign(0,-1);
+        g.setFont(l.font).setFontAlign(0,-1);
         var lines = g.wrapString(l.label, l.w);
         var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
         //  TODO: on 2v11 we can just render in a single drawString call
         lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
       } else {
-        g.setFont(l.font, l.scale||1).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
       if (l.font && l.font.endsWith("%"))
@@ -252,15 +252,15 @@ Layout.prototype.render = function (l) {
       "function"==typeof l.src?l.src():l.src,
       l.x + l.w/2,
       l.y + l.h/2,
-      {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
+      {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
     );
-    else g.setFont(l.font||"6x8", l.scale||2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+    else g.setFont(l.font||"6x8:2").setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
     g.drawImage(
       "function"==typeof l.src?l.src():l.src,
       l.x + l.w/2,
       l.y + l.h/2,
-      {scale: l.scale ? l.scale : undefined, rotate: Math.PI*0.5*(l.r ? l.r : 0)}
+      {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
     );
   }, "custom":function(l){
     l.render(l);
@@ -358,13 +358,13 @@ Layout.prototype.update = function() {
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
-        var m = g.setFont(l.font, l.scale||1).stringMetrics(l.label);
+        var m = g.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
       if (l.font && l.font.endsWith("%"))
         l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont(l.font||"6x8", l.scale||2).stringMetrics(l.label);
+      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont(l.font||"6x8:2").stringMetrics(l.label);
       l._h = 16 + m.height;
       l._w = 20 + m.width;
     }, "img": function(l) {
