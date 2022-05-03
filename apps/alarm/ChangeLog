@@ -25,3 +25,4 @@
 0.24: Automatically save the alarm/timer when the user returns to the main menu using the back arrow
       Add "Enable All", "Disable All" and "Remove All" actions
 0.25: Fix redrawing selected Alarm/Timer entry inside edit submenu
+0.26: Add support for Monday as first day of the week (#1780)
