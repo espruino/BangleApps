@@ -29,18 +29,7 @@ var drawTimeout;
 function timerRunning() {
   return (alarm.getTimeToAlarm(alarm.getAlarm(TIMER_IDX)) != undefined)
 }
-const imgArrow = Graphics.createImage(`
-    x
-   xxx
-   xxx
-  xxxxx
-  xxxxx
- xxx xxx 
- xxx xxx 
-xxx   xxx
-xxx   xxx
-`);
-
+const imgArrow = atob("CQmBAAgOBwfD47ndx+OA");
 const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/w==");
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
