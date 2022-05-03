@@ -55,9 +55,9 @@ function onTouch(button, xy) {
     return;
   }
   if (!timerRunning()) {
-    if (&& xy.y > 24 && xy.y < touchMidpoint - 10) {
+    if (xy.y > 24 && xy.y < touchMidpoint - 10) {
       diff = 1;
-    } else if (&& xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
+    } else if (xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
       diff = -1;
     }
     if (xy.x < timePickerLayout.hours.w) {
