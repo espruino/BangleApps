@@ -13,8 +13,11 @@ function drawAlert(){
       }
     load();
   });
-  
-  Bangle.buzz(400);
+
+  // Obey system quiet mode:
+  if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
+    Bangle.buzz(400);
+  }
   setTimeout(load, 20000);
 }
 
