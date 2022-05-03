@@ -1,5 +1,5 @@
 {
-  "id": "alarmeta",
+  "id": "widalarmeta",
   "name": "Alarm & Timer ETA",
   "shortName": "Alarm ETA",
   "version": "0.01",
@@ -10,6 +10,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots" : [ { "url":"screenshot.png" } ],
   "storage": [
-    {"name":"alarmeta.wid.js","url":"widget.js"}
+    {"name":"widalarmeta.wid.js","url":"widget.js"}
   ]
 }

@@ -12,8 +12,6 @@
       g.setFontAlign(0,0); // center fonts
       g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
 
-      // Use 'locale' module to get a shortened month name
-      // in the correct language
       var text = hours.padStart(2, '0') + ":" + minutes.padStart(2, '0');
       g.setFont("6x8:1x2");
       g.drawString(text, this.x+this.width/2, this.y+12);
@@ -25,11 +23,11 @@
   }
 
   setInterval(function() {
-    WIDGETS["alarmeta"].draw(WIDGETS["alarmeta"]);
+    WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]);
   }, 30000); // update every half minute
 
   // add your widget
-  WIDGETS["alarmeta"]={
+  WIDGETS["widalarmeta"]={
     area:"tl",
     width: 0, // hide by default = assume no timer
     draw:draw
