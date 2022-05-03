@@ -50,20 +50,24 @@ function onTouch(button, xy) {
   var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
   var diff = 0;
   Bangle.buzz(40, 0.3);
-  if (!timerRunning() && xy.y > 24 && xy.y < touchMidpoint - 10) {
-    diff = 1;
-  } else if (!timerRunning() && xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
-    diff = -1;
-  } else if (xy.y > timePickerLayout.btnStart.y) {
+  if (xy.y > timePickerLayout.btnStart.y) {
     onButton();
     return;
   }
-  if (xy.x < timePickerLayout.hours.w) {
-    diff *= 3600;
-  } else if (xy.x > timePickerLayout.mins.x && xy.x < timePickerLayout.secs.x) {
-    diff *= 60;
+  if (!timerRunning()) {
+    if (&& xy.y > 24 && xy.y < touchMidpoint - 10) {
+      diff = 1;
+    } else if (&& xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
+      diff = -1;
+    }
+    if (xy.x < timePickerLayout.hours.w) {
+      diff *= 3600;
+    } else if (xy.x > timePickerLayout.mins.x && xy.x < timePickerLayout.secs.x) {
+      diff *= 60;
+    }
+    updateTimePicker(diff);
   }
-  updateTimePicker(diff);
+  
 }
 
 function onButton() {
