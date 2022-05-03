@@ -16,3 +16,9 @@ The calculator supports the following operations:
  * exponential exp, natural logarithm log, pow function (this one takes 2 comma separated arguments)
  * Pi is provided as a constant
  * a memory button "M" stores or recalls the last result (after hitting the "=" button or swiping down)
+
+![](scicalc_screenshot1.png)
+
+![](scicalc_screenshot2.png)
+
+![](scicalc_screenshot3.png)
