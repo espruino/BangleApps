@@ -2,6 +2,17 @@
 
 A library that provides an on-screen keyboard for text input.
 
+## Settings
+Text size - small or big text font. Default=Big. Suggested=Small.
+
+Offset keyboard - display the keyboard on top, making it faster to see what character you have selected. Default=No. Suggested=Yes.
+
+Loop around - should the keyboard highlight loop around when going past the edges? Default=Yes. Suggested=No.
+
+One-to-one input and release to select - should the input correspond directly to discrete areas on the screen, instead of being handled by scaled relative changes in position on swipes? Default=No. Suggested=Yes.
+
+Speed scaling - how much should a swipe move the highligt on the keyboard? Higher number corresponds to slower movement. Not applicable if using one-to-one input. Default=24. Suggested=15.
+
 ## Usage
 
 In your app's metadata, add:
