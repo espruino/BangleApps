@@ -186,7 +186,7 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 
 Widgets are just small bits of code that run whenever an app that supports them
 calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
-widget bar at the top of the screen they can add themselves to the global 
+widget bar at the top of the screen they can add themselves to the global
 `WIDGETS` array with:
 
 ```
@@ -250,7 +250,7 @@ and which gives information about the app for the Launcher.
   "version": "0v01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
-  "screenshots" : [ { url:"screenshot.png" } ], // optional screenshot for app
+  "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
@@ -259,10 +259,10 @@ and which gives information about the app for the Launcher.
                               //   'RAM' - code that runs and doesn't upload anything to storage
                               //   'launch' - replacement 'Launcher'
                               //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
-                              //   'scheduler' - provides 'sched' library and boot code for scheduling alarms/timers 
+                              //   'scheduler' - provides 'sched' library and boot code for scheduling alarms/timers
                               //                 (currently only 'sched' app)
                               //   'notify' - provides 'notify' library for showing notifications
-                              //   'locale' - provides 'locale' library for language-specific date/distance/etc 
+                              //   'locale' - provides 'locale' library for language-specific date/distance/etc
                               //              (a version of 'locale' is included in the firmware)
   "tags": "",                 // comma separated tag list for searching
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
@@ -419,7 +419,7 @@ Example `settings.js`
 // make sure to enclose the function in parentheses
 (function(back) {
   let settings = require('Storage').readJSON('myappid.json',1)||{};
-  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value 
+  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value
   function save(key, value) {
     settings[key] = value;
     require('Storage').write('myappid.json', settings);
