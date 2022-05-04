@@ -19,7 +19,7 @@ exports.getActiveAlarms = function(alarms, time) {
           &&(a.t<currentTime)
           &&(a.last!=time.getDate())
           && (!a.date || a.date==time.toISOString().substr(0,10))
-          && a.dow >> (time).getDay() & 1))
+          && a.dow >> (time).getDay() & 1)
         .sort((a,b)=>a.t-b.t);
 }
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
