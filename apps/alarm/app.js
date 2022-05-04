@@ -80,14 +80,15 @@ function editDOW(dow, onchange) {
     '': { 'title': /*LANG*/'Days of Week' },
     /*LANG*/'< Back': () => onchange(dow)
   };
-  var dows = require("date_utils").dows(firstDayOfWeek);
-  for (var i = 0; i < 7; i++) (i => {
-    menu[dows[i]] = {
+
+  require("date_utils").dows(firstDayOfWeek).forEach((day, i) => (i => {
+    menu[day] = {
       value: !!(dow & (1 << (i + firstDayOfWeek))),
       format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => v ? (dow |= 1 << (i + firstDayOfWeek)) : (dow &= ~(1 << (i + firstDayOfWeek)))
     };
-  })(i);
+  })(i));
+
   E.showMenu(menu);
 }
 
