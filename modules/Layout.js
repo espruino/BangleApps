@@ -1,18 +1,13 @@
 /* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
 /*
-
 Take a look at README.md for hints on developing with this library.
-
 Usage:
-
 ```
 var Layout = require("Layout");
 var layout = new Layout( layoutObject, options )
 layout.render(optionalObject);
 ```
-
 For example:
-
 ```
 var Layout = require("Layout");
 var layout = new Layout( {
@@ -24,23 +19,22 @@ var layout = new Layout( {
 g.clear();
 layout.render();
 ```
-
-
 layoutObject has:
-
 * A `type` field of:
   * `undefined` - blank, can be used for padding
-  * `"txt"` - a text label, with value `label` and `r` for text rotation. 'font' is required
+  * `"txt"` - a text label, with value `label`. 'font' is required
   * `"btn"` - a button, with value `label` and callback `cb`
        optional `src` specifies an image (like img) in which case label is ignored
+       Default font is `6x8`, scale 2. This can be overridden with the `font` or `scale` fields.
   * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
-       optional `scale` specifies if image should be scaled up or not
   * `"custom"` - a custom block where `render(layoutObj)` is called to render
   * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
   * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
 * A `id` field. If specified the object is added with this name to the
   returned `layout` object, so can be referenced as `layout.foo`
-* A `font` field, eg `6x8` or `30%` to use a percentage of screen height
+* A `font` field, eg `6x8` or `30%` to use a percentage of screen height. Set scale with :, e.g. `6x8:2`.
+* A `scale` field, eg `2` to set scale of an image
+* A `r` field to set rotation of text or images (0: 0°, 1: 90°, 2: 180°, 3: 270°).
 * A `wrap` field to enable line wrapping. Requires some combination of `width`/`height`
   and `fillx`/`filly` to be set. Not compatible with text rotation.
 * A `col` field, eg `#f00` for red
@@ -51,34 +45,25 @@ layoutObject has:
 * A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 * A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 * `width` and `height` fields to optionally specify minimum size
-
 options is an object containing:
-
 * `lazy` - a boolean specifying whether to enable automatic lazy rendering
 * `btns` - array of objects containing:
   * `label` - the text on the button
   * `cb` - a callback function
   * `cbl` - a callback function for long presses
 * `back` - a callback function, passed as `back` into Bangle.setUI
-
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
-
 Once `layout.update()` is called, the following fields are added
 to each object:
-
 * `x` and `y` for the top left position
 * `w` and `h` for the width and height
 * `_w` and `_h` for the **minimum** width and height
-
-
 Other functions:
-
 * `layout.update()` - update positions of everything if contents have changed
 * `layout.debug(obj)` - draw outlines for objects on screen
 * `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
 * `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
-
 */
 
 
@@ -259,12 +244,22 @@ Layout.prototype.render = function (l) {
         x,y+h-5,
         x,y+4
       ], bg = l.selected?g.theme.bgH:g.theme.bg2;
-    g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
+      g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
     if (l.col!==undefined) g.setColor(l.col);
-    if (l.src) g.setBgColor(bg).drawImage("function"==typeof l.src?l.src():l.src, l.x + 10 + (0|l.pad), l.y + 8 + (0|l.pad));
-    else g.setFont("6x8",2).setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+    if (l.src) g.setBgColor(bg).drawImage(
+      "function"==typeof l.src?l.src():l.src,
+      l.x + l.w/2,
+      l.y + l.h/2,
+      {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
+    );
+    else g.setFont(l.font||"6x8:2").setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
   }, "img":function(l){
-    g.drawImage("function"==typeof l.src?l.src():l.src, l.x + (0|l.pad), l.y + (0|l.pad), l.scale?{scale:l.scale}:undefined);
+    g.drawImage(
+      "function"==typeof l.src?l.src():l.src,
+      l.x + l.w/2,
+      l.y + l.h/2,
+      {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
+    );
   }, "custom":function(l){
     l.render(l);
   },"h":function(l) { l.c.forEach(render); },
@@ -365,7 +360,9 @@ Layout.prototype.update = function() {
         l._w = m.width; l._h = m.height;
       }
     }, "btn": function(l) {
-      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont("6x8",2).stringMetrics(l.label);
+      if (l.font && l.font.endsWith("%"))
+        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
+      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont(l.font||"6x8:2").stringMetrics(l.label);
       l._h = 16 + m.height;
       l._w = 20 + m.width;
     }, "img": function(l) {

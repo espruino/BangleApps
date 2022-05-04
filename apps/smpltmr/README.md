@@ -1,21 +1,18 @@
 # Simple Timer
 
-A simple app to set a timer quickly. Simply tab on top/bottom/left/right
-to select the minutes and tab in the middle of the screen to start/stop
-the timer. Note that this timer depends on qalarm.
+A simple app to set a timer quickly. Drag or tap on the up and down buttons over the hour, minute or second to set the time.
 
-# Overview
-If you open the app, you can simply control the timer
-by clicking on top, bottom, left or right of the screen.
-If you tab at the middle of the screen, the timer is
-started / stopped.
+This app uses the `sched` library, which allows the timer to continue to run in the background when this app is closed.
 
-![](description.png)
+![](screenshot_1.png)
+![](screenshot_2.png)
+![](screenshot_3.png)
+![](screenshot_4.png)
 
-
-# Creator
+# Creators
 [David Peer](https://github.com/peerdavid)
 
+[Sir Indy](https://github.com/sir-indy)
 
 # Thanks to...
 Time icon created by <a href="https://www.flaticon.com/free-icons/time" title="time icons">CreativeCons - Flaticon</a>
