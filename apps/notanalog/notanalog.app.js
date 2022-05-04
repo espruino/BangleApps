@@ -291,6 +291,9 @@ function drawSleep(){
 
 
 function draw(fastUpdate){
+    // Queue draw in one minute
+    queueDraw();
+
     // Execute handlers
     handleState(fastUpdate);
 
@@ -322,9 +325,6 @@ function draw(fastUpdate){
     drawState();
     drawTime();
     drawData();
-
-    // Queue draw in one minute
-    queueDraw();
 }
 
 
