@@ -6,4 +6,4 @@
 0.06: Refactor some methods to library
 0.07: Update settings
       Correct `decodeTime(t)` to return a more likely expected time
-
+0.08: add day of week check to getActiveAlarms()
