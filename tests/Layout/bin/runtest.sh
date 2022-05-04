@@ -19,7 +19,7 @@ SRCBMP=$SRCDIR/`basename $SRCJS .js`.bmp
 echo "TEST $SRCJS ($SRCBMP)"
 
 cat  ../../modules/Layout.js > $TESTJS
-echo 'Bangle = { setUI : function(){} };BTN1=0;process.env = process.env;process.env.HWVERSION=2;' >> $TESTJS
+echo 'Bangle = { setUI : function(){}, appRect:{x:0,y:0,w:176,h:176,x2:175,y2:175} };BTN1=0;process.env = process.env;process.env.HWVERSION=2;' >> $TESTJS
 echo 'g = Graphics.createArrayBuffer(176,176,4);' >> $TESTJS
 cat $SRCJS >> $TESTJS  || exit 1
 echo 'layout.render()' >> $TESTJS

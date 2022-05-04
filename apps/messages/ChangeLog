@@ -39,3 +39,13 @@
 0.24: Remove left-over debug statement
 0.25: Fix widget memory usage issues if message received and watch repeatedly calls Bangle.drawWidgets (fix #1550)
 0.26: Setting to auto-open music
+0.27: Add 'mark all read' option to popup menu (fix #1624)
+0.28: Option to auto-unlock the watch when a new message arrives
+0.29: Fix message list overwrites on Bangle.js 1 (fix #1642)
+0.30: Add new Icons (Youtube, Twitch, MS TODO, Teams, Snapchat, Signal, Post & DHL, Nina, Lieferando, Kalender, Discord, Corona Warn, Bibel)
+0.31: Option to disable icon flashing
+0.32: Added an option to allow quiet mode to override message auto-open
+0.33: Timeout from the message list screen if the message being displayed is removed and there is a timer going
+0.34: Don't buzz for 'map' update messages
+0.35: Reset graphics colors before rendering a message (possibly fix #1752)
+0.36: Ensure a new message plus an almost immediate deletion of that message doesn't load the messages app (fix #1362)

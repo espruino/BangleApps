@@ -52,7 +52,8 @@ var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg && msg.id!=="music" && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
+  if (msg && msg.id!=="music" && msg.new && active!="map" &&
+      !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
     else Bangle.buzz();
   }
@@ -82,31 +83,45 @@ function getNegImage() {
   return atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA=");
 }
 /*
-* icons should be 24x24px with 1bpp colors and transparancy
+* icons should be 24x24px with 1bpp colors and 'Transparency to Color'
+* http://www.espruino.com/Image+Converter
 */
 function getMessageImage(msg) {
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
   if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
+  if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
+  if (s=="corona-warn") return atob("GBgBAAAAABwAAP+AAf/gA//wB/PwD/PgDzvAHzuAP8EAP8AAPAAAPMAAP8AAH8AAHzsADzuAB/PAB/PgA//wAP/gAH+AAAwAAAAA");
+  if (s=="discord") return atob("GBgBAAAAAAAAAAAAAIEABwDgDP8wH//4H//4P//8P//8P//8Pjx8fhh+fzz+f//+f//+e//ePH48HwD4AgBAAAAAAAAAAAAAAAAA");
   if (s=="facebook") return getFBIcon();
+  if (s=="gmail") return getNotificationImage();
+  if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA==");
   if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
   if (s=="home assistant") return atob("FhaBAAAAAADAAAeAAD8AAf4AD/3AfP8D7fwft/D/P8ec572zbzbNsOEhw+AfD8D8P4fw/z/D/P8P8/w/z/AAAAA=");
   if (s=="instagram") return atob("GBiBAAAAAAAAAAAAAAAAAAP/wAYAYAwAMAgAkAh+EAjDEAiBEAiBEAiBEAiBEAjDEAh+EAgAEAwAMAYAYAP/wAAAAAAAAAAAAAAAAA==");
-  if (s=="gmail") return getNotificationImage();
-  if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA==");
+  if (s=="kalender") return atob("GBgBBgBgBQCgff++RQCiRgBiQAACf//+QAACQAACR//iRJkiRIEiR//iRNsiRIEiRJkiR//iRIEiRIEiR//iQAACQAACf//+AAAA");
+  if (s=="lieferando") return atob("GBgBABgAAH5wAP9wAf/4A//4B//4D//4H//4P/88fV8+fV4//V4//Vw/HVw4HVw4HBg4HBg4HBg4HDg4Hjw4Hj84Hj44Hj44Hj44");
   if (s=="mail") return getNotificationImage();
   if (s=="messenger") return getFBIcon();
-  if (s=="outlook mail") return getNotificationImage();
+  if (s=="nina") return atob("GBgBAAAABAAQCAAICAAIEAAEEgAkJAgSJBwSKRxKSj4pUn8lVP+VVP+VUgAlSgApKQBKJAASJAASEgAkEAAECAAICAAIBAAQAAAA");
+  if (s=="outlook mail") return atob("HBwBAAAAAAAAAAAIAAAfwAAP/gAB/+AAP/5/A//v/D/+/8P/7/g+Pv8Dye/gPd74w5znHDnOB8Oc4Pw8nv/Dwe/8Pj7/w//v/D/+/8P/7/gf/gAA/+AAAfwAAACAAAAAAAAAAAA=");
   if (s=="phone") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
+  if (s=="post & dhl") return atob("GBgBAPgAE/5wMwZ8NgN8NgP4NgP4HgP4HgPwDwfgD//AB/+AAf8AAAAABs7AHcdgG4MwAAAAGESAFESAEkSAEnyAEkSAFESAGETw");
+  if (s=="signal") return atob("GBgBAAAAAGwAAQGAAhggCP8QE//AB//oJ//kL//wD//0D//wT//wD//wL//0J//kB//oA//ICf8ABfxgBYBAADoABMAABAAAAAAA");
   if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
   if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
   if (s=="sms message") return getNotificationImage();
-  if (s=="threema") return atob("GBjB/4Yx//8AAAAAAAAAAAAAfgAB/4AD/8AH/+AH/+AP//AP2/APw/APw/AHw+AH/+AH/8AH/4AH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
-  if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
+  if (s=="snapchat") return atob("GBgBAAAAAAAAAH4AAf+AAf+AA//AA//AA//AA//AA//AH//4D//wB//gA//AB//gD//wH//4f//+P//8D//wAf+AAH4AAAAAAAAA");
+  if (s=="teams") return atob("GBgBAAAAAAAAAAQAAB4AAD8IAA8cP/M+f/scf/gIeDgAfvvefvvffvvffvvffvvff/vff/veP/PeAA/cAH/AAD+AAD8AAAQAAAAA");
   if (s=="telegram") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
+  if (s=="threema") return atob("GBjB/4Yx//8AAAAAAAAAAAAAfgAB/4AD/8AH/+AH/+AP//AP2/APw/APw/AHw+AH/+AH/8AH/4AH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+  if (s=="to do") return atob("GBgBAAAAAAAAAAAwAAB4AAD8AAH+AAP/DAf/Hg//Px/+f7/8///4///wf//gP//AH/+AD/8AB/4AA/wAAfgAAPAAAGAAAAAAAAAA");
+  if (s=="twitch") return atob("GBgBH//+P//+P//+eAAGeAAGeAAGeDGGeDOGeDOGeDOGeDOGeDOGeDOGeAAOeAAOeAAcf4/4f5/wf7/gf//Af/+AA/AAA+AAAcAA");
+  if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
   if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
+  if (s=="youtube") return atob("GBgBAAAAAAAAAAAAAAAAAf8AH//4P//4P//8P//8P5/8P4/8f4P8f4P8P4/8P5/8P//8P//8P//4H//4Af8AAAAAAAAAAAAAAAAA");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
   if (msg.id=="back") return getBackImage();
   return getNotificationImage();
@@ -115,28 +130,38 @@ function getMessageImageCol(msg,def) {
   return {
     // generic colors, using B2-safe colors
     "alarm": "#fff",
-    "calendar": "#f00",
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
     "sms message": "#0ff",
     // brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
     // all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
+    "bibel": "#54342c",
+    "discord": "#738adb",
     "facebook": "#4267b2",
     "gmail": "#ea4335",
     "google home": "#fbbc05",
-    "home assistant": "#fff", // ha-blue is #41bdf5, but that's the background
     "hangouts": "#1ba261",
+    "home assistant": "#fff", // ha-blue is #41bdf5, but that's the background
     "instagram": "#dd2a7b",
+    "liferando": "#ee5c00",
     "messenger": "#0078ff",
+    "nina": "#e57004",
     "outlook mail": "#0072c6",
+    "post & dhl": "#f2c101",
+    "signal": "#00f",
     "skype": "#00aff0",
     "slack": "#e51670",
-    "threema": "#000",
+    "snapchat": "#ff0",
+    "teams": "#464eb8",
     "telegram": "#0088cc",
+    "threema": "#000",
+    "to do": "#3999e5",
+    "twitch": "#6441A4",
     "twitter": "#1da1f2",
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
+    "youtube": "#f00",
   }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
 }
 
@@ -168,7 +193,7 @@ function showMapMessage(msg) {
     ]},
     {type:"txt", font:"6x8:2", label:eta }
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
   Bangle.setUI("updown",function() {
     // any input to mark as not new and return to menu
@@ -243,7 +268,7 @@ function showMusicMessage(msg) {
     ]}:{},
     {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
 
   updateLabelsInterval = setInterval(function() {
@@ -299,6 +324,11 @@ function showMessageSettings(msg) {
     },
     /*LANG*/"Mark Unread" : () => {
       msg.new = true;
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+    },
+    /*LANG*/"Mark all read" : () => {
+      MESSAGES.forEach(msg => msg.new = false);
       saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
@@ -404,7 +434,7 @@ function showMessage(msgid) {
     } },
     {type:"h",fillx:1, c: buttons}
   ]});
-  g.clearRect(Bangle.appRect);
+  g.reset().clearRect(Bangle.appRect);
   layout.render();
   // ensure button-press on Bangle.js 2 takes us back
   if (process.env.HWVERSION>1) Bangle.btnWatches = [
@@ -441,8 +471,6 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-  // we don't have to time out of this screen...
-  cancelReloadTimeout();
   active = "main";
   // Otherwise show a menu
   E.showScroller({
@@ -452,6 +480,7 @@ function checkMessages(options) {
       var msg = MESSAGES[idx-1];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
       else g.setColor(g.theme.fg);
+      g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;

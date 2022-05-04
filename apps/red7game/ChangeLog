@@ -1,3 +1,4 @@
 0.01: Initial version of game 
 0.02: Fix mistake preventing game from ending in some cases.
 0.03: Update help screen with more details.
+0.04: Update cards to draw rounded on newer firmware. Make sure in-game menu can't be pulled up during end of game.

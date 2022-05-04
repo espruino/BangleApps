@@ -4,7 +4,7 @@
   "shortName": "MonoClock",
   "icon": "app.png",
   "screenshots": [{ "url": "screenshot0.png" }, {"url": "screenshot1.png" }],
-  "version": "0.04",
+  "version": "0.06",
   "description": "A simple watchface based on my stylised monogram.",
   "type": "clock",
   "tags": "clock",

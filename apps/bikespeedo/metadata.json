@@ -1,8 +1,8 @@
 {
   "id": "bikespeedo",
   "name": "Bike Speedometer (beta)",
-  "shortName": "Bike Speedomet.",
-  "version": "0.01",
+  "shortName": "Bike Speedometer",
+  "version": "0.02",
   "description": "Shows GPS speed, GPS heading, Compass heading, GPS altitude and Barometer altitude from internal sources",
   "icon": "app.png",
   "screenshots": [{"url":"Screenshot.png"}],
@@ -13,6 +13,8 @@
   "allow_emulator": true,
   "storage": [
     {"name":"bikespeedo.app.js","url":"app.js"},
-    {"name":"bikespeedo.img","url":"app-icon.js","evaluate":true}
-  ]
+    {"name":"bikespeedo.img","url":"app-icon.js","evaluate":true},
+    {"name":"bikespeedo.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"bikespeedo.json"}]
 }

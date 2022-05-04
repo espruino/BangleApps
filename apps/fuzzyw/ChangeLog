@@ -1,0 +1,2 @@
+0.01: First release
+0.02: Move translations to locale module (removed watch settings, now pick language in Bangle App Loader, More..., Settings)

@@ -10,8 +10,8 @@
     "" : { "title" : "Android" },
     "< Back" : back,
     /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
-    "Find Phone" : () => E.showMenu({
-        "" : { "title" : "Find Phone" },
+    /*LANG*/"Find Phone" : () => E.showMenu({
+        "" : { "title" : /*LANG*/"Find Phone" },
         "< Back" : ()=>E.showMenu(mainmenu),
         /*LANG*/"On" : _=>gb({t:"findPhone",n:true}),
         /*LANG*/"Off" : _=>gb({t:"findPhone",n:false}),
@@ -24,7 +24,28 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>load("messages.app.js")
+    /*LANG*/"Messages" : ()=>load("messages.app.js"),
+    /*LANG*/"Alarms" : () => E.showMenu({
+      "" : { "title" : /*LANG*/"Alarms" },
+      "< Back" : ()=>E.showMenu(mainmenu),
+      /*LANG*/"Vibrate": require("buzz_menu").pattern(settings.vibrate, v => {settings.vibrate = v; updateSettings();}),
+      /*LANG*/"Repeat": {
+        value: settings.rp,
+        format : v=>v?/*LANG*/"Yes":/*LANG*/"No",
+        onchange: v => {
+          settings.rp = v;
+          updateSettings();
+        }
+      },
+      /*LANG*/"Auto snooze": {
+        value: settings.as,
+        format : v=>v?/*LANG*/"Yes":/*LANG*/"No",
+        onchange: v => {
+          settings.as = v;
+          updateSettings();
+        }
+      },
+    })
   };
   E.showMenu(mainmenu);
 })

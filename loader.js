@@ -16,7 +16,7 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v12";
+var RECOMMENDED_VERSION = "2v13";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -25,7 +25,7 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 // Set up source code URL
 (function() {
   let username = "espruino";
-  let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+  let githubMatch = window.location.href.match(/\/([\w-]+)\.github\.io/);
   if (githubMatch) username = githubMatch[1];
   Const.APP_SOURCECODE_URL = `https://github.com/${username}/BangleApps/tree/master/apps`;
 })();
@@ -152,6 +152,29 @@ window.addEventListener('load', (event) => {
       filterAppsForDevice(deviceId); // also sets the device dropdown
       setSavedDeviceId(undefined); // ask at startup next time
       document.querySelector(".devicetype-nav span").innerText = a.innerText;
+    });
+  });
+
+  // Button to install all default apps in one go
+  document.getElementById("reinstallall").addEventListener("click",event=>{
+    var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
+      getInstalledApps().then(installedapps => {
+        console.log(installedapps);
+        var promise = Promise.resolve();
+        installedapps.forEach(app => {
+          if (app.custom)
+            return console.log(`Ignoring ${app.id} as customised`);
+          var oldApp = app;
+          app = appJSON.find(a => a.id==oldApp.id);
+          if (!app)
+            return console.log(`Ignoring ${oldApp.id} as not found`);
+          promise = promise.then(() => updateApp(app));
+        });
+        return promise;
+      }).catch(err=>{
+        Progress.hide({sticky:true});
+        showToast("App re-install failed, "+err,"error");
+      });
     });
   });
 
