@@ -231,8 +231,6 @@ Layout.prototype.render = function (l) {
         g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
-      if (l.font && l.font.endsWith("%"))
-        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
       var poly = [
