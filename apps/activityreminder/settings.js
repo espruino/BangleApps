@@ -43,7 +43,7 @@
      },
      'Dismiss delay': {
         value: settings.dismissDelayMin,
-        min: 5, max: 15,
+        min: 5, max: 60,
         onchange: v => {
           settings.dismissDelayMin = v;
           require("activityreminder").writeSettings(settings);
