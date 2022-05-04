@@ -135,22 +135,22 @@ var timePickerLayout = new Layout({
     {type:undefined, height:2},
     {type:"h", c: [
       {type:"v", width:g.getWidth()/3, c: [
-        {type:"txt", font:"6x8", label:/*LANG*/"Hours", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"6x8", label:/*LANG*/"Hours"},
+        {type:"img", pad:8, src:imgArrow},
         {type:"txt", font:"20%", label:"00", id:"hours", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
+        {type:"img", pad:8, src:imgArrow, r:2}
       ]},
       {type:"v", width:g.getWidth()/3, c: [
-        {type:"txt", font:"6x8", label:/*LANG*/"Minutes", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"6x8", label:/*LANG*/"Minutes"},
+        {type:"img", pad:8, src:imgArrow},
         {type:"txt", font:"20%", label:"00", id:"mins", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
+        {type:"img", pad:8, src:imgArrow, r:2}
       ]},
       {type:"v", width:g.getWidth()/3, c: [
-        {type:"txt", font:"6x8", label:/*LANG*/"Seconds", col:g.theme.fg2},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2},
+        {type:"txt", font:"6x8", label:/*LANG*/"Seconds"},
+        {type:"img", pad:8, src:imgArrow},
         {type:"txt", font:"20%", label:"00", id:"secs", filly:1, fillx:1},
-        {type:"img", pad:8, src:imgArrow, col:g.theme.fg2, r:2}
+        {type:"img", pad:8, src:imgArrow, r:2}
       ]},
     ]},
     {type:"btn", src:imgPlay, id:"btnStart", fillx:1 }
