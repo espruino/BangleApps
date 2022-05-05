@@ -28,9 +28,8 @@
         <button type="button" class="btn btn-primary input-group-btn" onclick="courseSearch();">Search</button>
       </div>
     </div>
-    <div>
-      <ul id="searchresults"></ul>
-    </div>
+    <div class="columns" id="searchresults"></div>
+
     <div>
       <p id="status">No course loaded.</p>
       <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
@@ -69,6 +68,34 @@
     let course_input = null;
     let current_course = null;
     let search_results = $("#searchresults");
+
+    function buildCourseListElement(title, subtitle, element) {
+      let base_element = $(`<div class="column col-4">
+        <div class="tile">
+          <div class="tile-icon">
+            <figure class="avatar avatar-lg"><img src="./golfview.png" alt="Avatar"></figure>
+          </div>
+          <div class="tile-content">
+            <p class="tile-title">${title}</p>
+            <p class="tile-subtitle">${subtitle}</p>
+            <div class="btn-group btn-group-block">
+            </div>
+          </div>
+        </div>
+      </div>`);
+
+      // add the buttons
+      base_element.find('.btn-group')
+        .append($('<button>').addClass("btn btn-primary").text("select")
+          .on('click', function () {
+            console.log(element);
+            doQuery(element);
+          }))
+        .append($('<a>').attr('href', `https://www.openstreetmap.org/${element.osm_type}/${element.osm_id}`).attr('target', '_blank')
+          .append('<button>').addClass("btn").text("view")
+        );
+      return base_element
+    }
 
     function courseSearch() {
       let inputVal = document.getElementById("course_id").value;
@@ -174,16 +201,7 @@
         for (let index = 0; index < result.length; index++) {
           const element = result[index];
           if (element.type != "golf_course") continue;
-          search_results.append($("<li>")
-            .append($("<p>").text(element.display_name)
-              .append($("<div>")
-                .append($('<button>').addClass("btn btn-primary").text("select").on('click', function () {
-                  console.log(element);
-                  doQuery(element);
-                }))
-                .append($('<a>').attr('href', `https://www.openstreetmap.org/${element.osm_type}/${element.osm_id}`).attr('target', '_blank')
-                  .append('<button>').addClass("btn btn-primary").text("view")
-                ))));
+          search_results.append(buildCourseListElement(element.display_name.split(",")[0], element.display_name, element));
         }
 
       })
@@ -192,7 +210,7 @@
     // download info from the course
     function doQuery(course) {
       const query = `[out:json][timeout:5];way(${course.osm_id});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
-      const course_name = course.display_name.split(",")[0];
+      const course_id = course["osm_id"];
       $.post(url, query, function (result) {
         if (result.elements.length === 0) {
           $('#status').text("Course not found!");
@@ -202,7 +220,7 @@
         out = processFeatures(result.elements);
         console.log(out);
         courses.push({
-          name: `golfcourse-${course_name}.json`,
+          name: `golfcourse-${course_id}.json`,
           content: JSON.stringify(out),
         });
         $('#status').text("Course retrieved!");
