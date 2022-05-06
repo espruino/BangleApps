@@ -6,7 +6,7 @@
   "type":"textinput",
   "tags": "keyboard",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot_1.png"},{"url":"screenshot_2.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"textinput","url":"lib.js"}
