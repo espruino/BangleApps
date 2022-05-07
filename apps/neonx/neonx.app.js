@@ -186,9 +186,9 @@ function animateColor(speed, fun){
             draw(false, 0);
             fun();
           }
-        ), speed+5;
-      }, speed+5);
-    }, speed+5);
+        ), speed;
+      }, speed);
+    }, speed);
   }, speed);
 }
 
@@ -202,8 +202,8 @@ Bangle.on('lock', function(isLocked) {
   }
 
   // Animate in case the use selected this setting.
-  animateColor(25, function(){
-    animateColor(25, function(){});
+  animateColor(5, function(){
+    animateColor(5, function(){});
   });
 });
 
