@@ -1,9 +1,19 @@
 (function(){
+  var interval;
+
   // override setGPSPower so we know if GPS is on or off
   var oldSetGPSPower = Bangle.setGPSPower;
   Bangle.setGPSPower = function(on,id) {
     var isGPSon = oldSetGPSPower(on,id);
     WIDGETS.gps.draw();
+    if (isGPSon && interval === undefined) {
+      interval = setInterval(function() {
+        WIDGETS.gps.draw(WIDGETS.gps);
+      }, 10*1000); // update every 10 seconds to show gps fix/no fix
+    } else if (!isGPSon && interval !== undefined) {
+      clearInterval(interval);
+      interval = undefined;
+    }
     return isGPSon;
   }
 
