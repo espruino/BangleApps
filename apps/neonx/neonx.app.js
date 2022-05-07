@@ -116,11 +116,11 @@ function drawAnimated(){
   // Animate draw through different colors
   speed = 25;
   setTimeout(function() {
-    _draw(false, 2);
+    _draw(false, 1);
     setTimeout(function() {
       _draw(false, 3);
       setTimeout(function() {
-        _draw(false, 1);
+        _draw(false, 2);
         setTimeout(function(){
             _draw(false, 0);
         }, speed);
