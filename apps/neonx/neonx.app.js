@@ -197,7 +197,6 @@ function drawAnimated(){
 
 Bangle.on('lock', function(isLocked) {
   if(!settings.showLock){
-    queueDraw();
     return;
   }
 
