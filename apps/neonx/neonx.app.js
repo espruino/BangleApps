@@ -104,13 +104,35 @@ function drawClock(num, xc){
 }
 
 
-function drawAndQueue(date){
+function draw(date){
   queueDraw();
-  draw(date, 0);
+  _draw(date, 0);
 }
 
 
-function draw(date, xc){
+function drawAnimated(){
+  queueDraw();
+
+  // Animate draw through different colors
+  speed = 25;
+  setTimeout(function() {
+    _draw(false, 1);
+    setTimeout(function() {
+      _draw(false, 2);
+      setTimeout(function() {
+        _draw(false, 3);
+        setTimeout(
+          function(){
+            _draw(false, 0);
+          }
+        ), speed;
+      }, speed);
+    }, speed);
+  }, speed);
+}
+
+
+function _draw(date, xc){
   // Depending on the settings, we clear all widgets or draw those.
   if(settings.fullscreen){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
@@ -132,7 +154,7 @@ function draw(date, xc){
     drawTimeout = undefined;
 
     setTimeout(_ => {
-      drawAndQueue();
+      draw();
     }, 5000);
   } else {
     l1 = ('0' + (d.getHours() % (is12hour ? 12 : 24))).substr(-2);
@@ -151,7 +173,7 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    drawAndQueue();
+    draw();
   }, 60000 - (Date.now() % 60000));
 }
 
@@ -160,7 +182,7 @@ function queueDraw() {
  * Event handlers
  */
 if (settings.showDate) {
-  Bangle.on('touch', () => drawAndQueue(!showingDate));
+  Bangle.on('touch', () => draw(!showingDate));
 }
 
 Bangle.on('lcdPower', function(on){
@@ -168,31 +190,9 @@ Bangle.on('lcdPower', function(on){
   drawTimeout = undefined;
 
   if (on) {
-    drawAndQueue();
+    draw();
   }
 });
-
-
-function drawAnimated(){
-  queueDraw();
-  speed = 25;
-
-  // Animate lock
-  setTimeout(function() {
-    draw(false, 1);
-    setTimeout(function() {
-      draw(false, 2);
-      setTimeout(function() {
-        draw(false, 3);
-        setTimeout(
-          function(){
-            draw(false, 0);
-          }
-        ), speed;
-      }, speed);
-    }, speed);
-  }, speed);
-}
 
 
 Bangle.on('lock', function(isLocked) {
@@ -212,4 +212,4 @@ g.clear(1);
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 
-drawAndQueue();
+draw();
