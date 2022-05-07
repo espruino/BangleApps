@@ -173,7 +173,10 @@ Bangle.on('lcdPower', function(on){
 });
 
 
-function animateColor(speed, fun){
+function drawAnimated(){
+  queueDraw();
+  speed = 25;
+
   // Animate lock
   setTimeout(function() {
     draw(false, 1);
@@ -184,7 +187,6 @@ function animateColor(speed, fun){
         setTimeout(
           function(){
             draw(false, 0);
-            fun();
           }
         ), speed;
       }, speed);
@@ -194,7 +196,6 @@ function animateColor(speed, fun){
 
 
 Bangle.on('lock', function(isLocked) {
-  queueDraw();
 
   if(!settings.showLock){
     draw(false, 0);
@@ -202,9 +203,7 @@ Bangle.on('lock', function(isLocked) {
   }
 
   // Animate in case the use selected this setting.
-  animateColor(5, function(){
-    animateColor(5, function(){});
-  });
+  drawAnimated();
 });
 
 
