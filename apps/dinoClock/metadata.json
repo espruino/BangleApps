@@ -8,6 +8,7 @@
   "tags": "clock, weather",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name":"dinoClock.app.js","url":"app.js"}
+    {"name":"dinoClock.app.js","url":"app.js"},
+    {"name":"dinoClock.img","url":"icon.js","evaluate":true}
    ]
 }
