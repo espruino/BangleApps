@@ -1,0 +1,11 @@
+{
+  "id": "dynoClock",
+  "name": "Dyno Clock",
+  "version": "0.01",
+  "type": "clock",
+  "tags": "clock, weather",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"dynoClock.app.js","url":"app.js"}
+   ]
+}
