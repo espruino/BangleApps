@@ -2,6 +2,7 @@
   "id": "dinoClock",
   "name": "Dino Clock",
   "description": "Clock with dino from Chrome",
+  "icon": "app.png",
   "version": "0.01",
   "type": "clock",
   "tags": "clock, weather",
