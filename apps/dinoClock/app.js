@@ -117,11 +117,13 @@ function queueDraw() {
 
 // only draw the first time
 function drawBg() {
+  g.clearRect(0, 24, 176, 176);
   g.reset();
   g.drawImage(bgImg, 0, 101);
 }
 
 function draw() {
+  drawBg();
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
   h = ("0"+h).substr(-2);
@@ -153,23 +155,23 @@ function draw() {
   weatherIcon = chooseIconByCode(700);
   g.reset();
   g.setFont("4x5NumPretty",8);
-  g.clearRect(22,35,153,75);
+  //g.clearRect(22,35,153,75);
   g.fillRect(84, 42, 92, 49);
   g.fillRect(84, 60, 92, 67);
   g.drawString(h, 22, 35);
   g.drawString(m, 98, 35);
   
   g.setFont("4x5NumPretty",2);
-  g.clearRect(22, 95, 22+4*2*4+2*4, 95+2*5);
+  //g.clearRect(22, 95, 22+4*2*4+2*4, 95+2*5);
   g.drawString(date, 22, 95);
   g.setFont("DoW");
-  g.clearRect(22, 79, 22+24, 79+13);
+  //g.clearRect(22, 79, 22+24, 79+13);
   g.drawString(dow, 22, 79);
 
-  g.clearRect(119, 81, 126+32, 81+32);
+  //g.clearRect(119, 81, 126+32, 81+32);
   g.drawImage(weatherIcon, 126, 81);
   if (temp != "") {
-    g.clearRect(126, 114, 126+5*4*4, 114+4*5);
+    //g.clearRect(126, 114, 126+5*4*4, 114+4*5);
     g.setFont("4x5NumPretty",4);
     g.drawString(temp[1], 126, 114);
     g.setFont("4x6", 2);
@@ -184,6 +186,5 @@ g.clear();
 Bangle.setUI("clock");  // Show launcher when middle button pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-drawBg();
 draw();
 
