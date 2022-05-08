@@ -152,30 +152,26 @@ function draw() {
       temp = "";
       weatherIcon = errIcon;
   }
-  weatherIcon = chooseIconByCode(700);
   g.reset();
   g.setFont("4x5NumPretty",8);
-  //g.clearRect(22,35,153,75);
   g.fillRect(84, 42, 92, 49);
   g.fillRect(84, 60, 92, 67);
   g.drawString(h, 22, 35);
   g.drawString(m, 98, 35);
   
   g.setFont("4x5NumPretty",2);
-  //g.clearRect(22, 95, 22+4*2*4+2*4, 95+2*5);
   g.drawString(date, 22, 95);
   g.setFont("DoW");
-  //g.clearRect(22, 79, 22+24, 79+13);
   g.drawString(dow, 22, 79);
 
-  //g.clearRect(119, 81, 126+32, 81+32);
   g.drawImage(weatherIcon, 126, 81);
   if (temp != "") {
-    //g.clearRect(126, 114, 126+5*4*4, 114+4*5);
+    var x = 126;
     g.setFont("4x5NumPretty",4);
     g.drawString(temp[1], 126, 114);
-    g.setFont("4x6", 2);
-    g.drawString("o", 126+temp[1].length*4*4+5, 112);
+    x += temp[1].length*4*4;
+    g.fillRect(x, 114, x+6, 114+6);
+    g.setColor("#fff").fillRect(x+2, 114+2, x+6-2, 114+6-2);
   }
 
   // queue draw in one minute
