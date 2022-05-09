@@ -3,8 +3,13 @@
   "description": "Bangle.js App Loader (and Apps)",
   "author": "Gordon Williams <gw@pur3.co.uk> (http://espruino.com)",
   "version": "0.0.1",
+  "license": "MIT",
+  "repository": "https://github.com/espruino/BangleApps",
   "devDependencies": {
-    "eslint": "7.1.0"
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "npm-watch": "^0.11.0"
   },
   "scripts": {
     "lint-apps": "eslint ./apps --ext .js",
@@ -18,8 +23,5 @@
   },
   "dependencies": {
     "acorn": "^7.2.0"
-  },
-  "devDpendencies": {
-    "npm-watch": "^0.11.0"
   }
 }
