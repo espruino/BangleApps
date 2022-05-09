@@ -1,7 +1,7 @@
 {
   "id": "widgps",
   "name": "GPS Widget",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Tiny widget to show the power and fix status of the GPS",
   "icon": "widget.png",
   "type": "widget",
