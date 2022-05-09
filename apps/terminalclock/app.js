@@ -160,10 +160,10 @@ var settings = Object.assign({
   showHRM: true,
   showActivity: true,
   showStepCount: true,
-  showAltitude: true,
+  showAltitude: process.env.HWVERSION != 1 ? true : false,
 }, require('Storage').readJSON("terminalclock.json", true) || {});
 
-if(settings.showAltitude){
+if(settings.showAltitude && process.env.HWVERSION != 1){
   Bangle.setBarometerPower(true, "app");
 }
 
