@@ -110,7 +110,12 @@ class Wordle {
     }
   }
   addGuess(w) {
-    if ((this.words.indexOf(w.toLowerCase())%5)!=0) {
+    let idx = -1;
+    do{
+      idx = this.words.indexOf(w.toLowerCase(), idx+1);
+    }
+    while(idx !== -1 && idx%5 !== 0);
+    if(idx%5 !== 0) {
       E.showAlert(w+"\nis not a word", "Invalid word").then(function() { 
         layout = getKeyLayout("");
         wordle.render(true);
