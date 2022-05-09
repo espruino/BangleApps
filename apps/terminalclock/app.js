@@ -1,6 +1,7 @@
 var locale = require("locale");
 var fontColor = g.theme.dark ? "#0f0" : "#000";
 var heartRate = 0;
+var altitude = -9001;
 
 // handling the differents versions of the Banglejs smartwatch
 if (process.env.HWVERSION == 1){
@@ -26,13 +27,13 @@ function setFontSize(pos){
 }
 
 function clearField(pos){
-  var yStartPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos-1) + 
+  var yStartPos = Bangle.appRect.y +
+      paddingY * (pos - 1) +
+      font6x8At4Size * Math.min(1, pos-1) +
       font6x8At2Size * Math.max(0, pos-2);
-    var yEndPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos) + 
+    var yEndPos = Bangle.appRect.y +
+      paddingY * (pos - 1) +
+      font6x8At4Size * Math.min(1, pos) +
       font6x8At2Size * Math.max(0, pos-1);
     g.clearRect(Bangle.appRect.x, yStartPos, Bangle.appRect.x2, yEndPos);
 }
@@ -44,9 +45,9 @@ function clearWatchIfNeeded(now){
 
 function drawLine(line, pos){
   setFontSize(pos);
-  var yPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos-1) + 
+  var yPos = Bangle.appRect.y +
+      paddingY * (pos - 1) +
+      font6x8At4Size * Math.min(1, pos-1) +
       font6x8At2Size * Math.max(0, pos-2);
   g.drawString(line, 5, yPos, true);
 }
@@ -84,6 +85,14 @@ function drawHRM(pos){
     drawLine(">HR: unknown", pos);
 }
 
+function drawAltitude(pos){
+  clearField(pos);
+  if(altitude > 0)
+    drawLine(">Alt: " + altitude.toFixed(1) + "m", pos);
+  else
+    drawLine(">Alt: unknown", pos);
+}
+
 function drawActivity(pos){
   clearField(pos);
   var health = Bangle.getHealthStatus('last');
@@ -102,6 +111,10 @@ function draw(){
   curPos++;
   if(settings.showDate){
     drawDate(now, curPos);
+    curPos++;
+  }
+  if(settings.showAltitude){
+    drawAltitude(curPos);
     curPos++;
   }
   if(settings.showHRM){
@@ -124,6 +137,18 @@ Bangle.on('HRM',function(hrmInfo) {
     heartRate = hrmInfo.bpm;
 });
 
+var MEDIANLENGTH = 20;
+var avr = [], median;
+Bangle.on('pressure', function(e) {
+  while (avr.length>MEDIANLENGTH) avr.pop();
+  avr.unshift(e.altitude);
+  median = avr.slice().sort();
+  if (median.length>10) {
+    var mid = median.length>>1;
+    altitude = E.sum(median.slice(mid-4,mid+5)) / 9;
+  }
+});
+
 
 // Clear the screen once, at startup
 g.clear();
@@ -135,7 +160,13 @@ var settings = Object.assign({
   showHRM: true,
   showActivity: true,
   showStepCount: true,
+  showAltitude: process.env.HWVERSION != 1 ? true : false,
 }, require('Storage').readJSON("terminalclock.json", true) || {});
+
+if(settings.showAltitude && process.env.HWVERSION != 1){
+  Bangle.setBarometerPower(true, "app");
+}
+
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 // Load widgets
