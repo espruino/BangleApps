@@ -140,21 +140,21 @@ function draw() {
   date = day + "." + mon
 
   var weatherJson = getWeather();
-  var weatherIcon;
+  var wIcon;
   var temp;
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
       temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
       const code = currentWeather.code || -1;
       if (code > 0) {
-        weatherIcon = chooseIconByCode(code);
+        wIcon = chooseIconByCode(code);
       } else {
-        weatherIcon = chooseIcon(currentWeather.txt);
+        wIcon = chooseIcon(currentWeather.txt);
       }
   }
   else{
       temp = "";
-      weatherIcon = weatherIcon("err");
+      wIcon = weatherIcon("err");
   }
   g.reset();
   g.clearRect(22,35,153,75);
@@ -172,9 +172,7 @@ function draw() {
   g.setFont("DoW");
   g.drawString(dow, 22, 79);
 
-  // not needed in case icon is w/o transparency
-  g.clearRect(126, 81, 126+32, 81+32);
-  g.drawImage(weatherIcon, 126, 81);
+  g.drawImage(wIcon, 126, 81);
 
   g.clearRect(126, 114, 126+5*4*4, 114+4*5);
   if (temp != "") {
