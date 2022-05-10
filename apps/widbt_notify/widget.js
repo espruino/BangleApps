@@ -14,11 +14,7 @@ WIDGETS.bluetooth_notify = {
     },
     
     redrawCurrentApp: function(){
-        if(typeof(draw)=='function'){
-            draw();
-        }else{
-            load(); // fallback. This might reset some variables
-        }
+            load(); // there should be a better way to dismiss a message box IMO.
     },
     
     connect: function() {
