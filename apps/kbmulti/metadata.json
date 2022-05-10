@@ -11,6 +11,6 @@
   "storage": [
     {"name":"textinput","url":"lib.js"},
     {"name":"kbmulti.settings.js","url":"settings.js"},
-    {"name":"kbmulti.settings.json","url":"kbmulti.settings.json"}
+    {"name":"kbmulti.settings.json"}
   ]
 }
