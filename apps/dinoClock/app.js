@@ -20,24 +20,28 @@ const locale = require("locale");
 
 
 
-var bgImg = require("heatshrink").decompress(atob("2E7wINKn///+AEaIVUgIUB//wCs/5CtRXrCvMD8AVTg4LFCv4VZ/iSLCrwWMCrMOAQMPCp7cBCojjFCo/xFgIVQgeHCopABCpcH44Vuh/AQQX/wAV7+F/Cq/nCsw/CCqyvRCvgODCqfAgEDCp4QCSIIVQgIOBDQgGDABX/NgIECCp8HCrM/CgP4CqKaCCqSfCCqq1BCqBuB54VqgYVG/gCECp0BwgCDCp8HgYCDCo/wCo0MgHAjACBj7rDABS1Bv4lBv4rPAAsPCo3+gbbPJAIVFiAXMFZ2AUQsAuAQHiOAgJeEA"));
-
-
 // weather icons from https://icons8.com/icon/set/weather/ios-glyphs
-var sunIcon = atob("Hh4BAAAAAAAMAAAAMAAAAMAAAAMAABgMBgBwADgA4AHAAY/GAAB/gAAD/wAAH/4AAP/8AAP/8AfP/8+fP/8+AP/8AAP/8AAH/4AAD/wAAB/gAAY/GAA4AHABwADgBgMBgAAMAAAAMAAAAMAAAAMAAAAAAAA=");
+// error icon from https://icons8.com/icon/set/error-cloud/ios-glyphs
+function weatherIcon(weather) {
+  switch (weather) {
+    case "sun":
+      return atob("Hh4BAAAAAAAMAAAAMAAAAMAAAAMAABgMBgBwADgA4AHAAY/GAAB/gAAD/wAAH/4AAP/8AAP/8AfP/8+fP/8+AP/8AAP/8AAH/4AAD/wAAB/gAAY/GAA4AHABwADgBgMBgAAMAAAAMAAAAMAAAAMAAAAAAAA=");
+    case "partSun":
+      return atob("Hh4BAAAAAAAAAAAMAAAAMAAAEMIAAOAcAAGAYAAAeAAAA/AAAB/gAA5/gAA5/g+AB+D/gA4H/wAR//wGD//4OD//4EH//4AH//4Af//+Af//+A////A////A////A///+Af//+AH//4AAAAAAAAAAAAAAAA=");
+    case "cloud":
+      return atob("Hh4BAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAf+AAA//AAB//gAf//gB///wB///wD///wD///wP///8f///+f///+////////////////////f///+f///+P///8D///wAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+    case "snow":
+      return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf8/AA/8/AB/gHgH/wP4H/wP4P/gH8P/8/8P/8/8P///4H///4B///gAAAAAAMAAAAMAAAB/gGAA/AfgA/AfgB/gfgAMAfgAMAGAAAAAAAAAAAA=");
+    case "rain":
+      return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf//AA///AB///gH///4H///4P///8P///8P///8P///4H///4B///gAAAAAAAAAABgBgABgBgABhhhgABgBgABgBgAAAAAAAAAAAAAAAAAAAAA=");
+    case "storm":
+      return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf//AA///AB///gH///4H/x/4P/g/8P/k/8P/E/8P/M/4H+MP4B+cHgAAfgAAA/gABg/AABgHAABgGBgAAGBgAAEBgAAEAAAAAAAAAAAAAAAAAA=");
+    case "err":
+    default:
+      return atob("Hh4BAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAf+AAA//AAB//gAf//gB///wB/z/wD/z/wD/z/wP/z/8f/z/+f/z/+//z//////////////z//f/z/+f///+P///8D///wAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+    }
+}
 
-var partSunIcon = atob("Hh4B///////////z////z///7z3//x/j//5/n///h////A///+Af//GAf//GAfB/+B8Af/H4AP/uAAP58AAHx8AAH74AAH/4AAH/gAAB/gAAB/AAAA/AAAA/AAAA/AAAA/gAAB/wAAD///////////////A=");
-
-var cloudIcon = atob("Hh4B///////////////////////////4H///gB///AA//+AAf/gAAf+AAAP+AAAP8AAAP8AAAPwAAADgAAABgAAABAAAAAAAAAAAAAAAAAAAAgAAABgAAABwAAAD8AAAP/////////////////////////A=");
-
-var snowIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gDA//ADA/+Af4f4APwH4APwDwAf4DwADADwADADwAAAD4AAAH8AAAP//////z////z///+Af5//A/gf/A/gf+Afgf/z/gf/z/5///////////A=");
-
-var rainIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gAA//AAA/+AAAf4AAAH4AAAHwAAADwAAADwAAADwAAAD4AAAH8AAAP//////////+f+f/+f+f/+eeef/+f+f/+f+f////////////////////A=");
-
-var stormIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gAA//AAA/+AAAf4AAAH4AOADwAfADwAbADwA7ADwAzAD4BzwH8Bj4P//gf///Af/+fA//+f4//+f5+f//5+f//7+f//7/////////////////A=");
-
-// from https://icons8.com/icon/set/error-cloud/ios-glyphs
-var errIcon = atob("Hh4B///////////////////////////4H///gB///AA//+AAf/gAAf+AAAP+AMAP8AMAP8AMAPwAMADgAMABgAMABAAMAAAAAAAAAAAAAAMAAgAMABgAAABwAAAD8AAAP/////////////////////////A=");
 
 /**
 Choose weather icon to display based on condition.
@@ -46,20 +50,20 @@ sent from gadget bridge.
 */
 function chooseIcon(condition) {
   condition = condition.toLowerCase();
-  if (condition.includes("thunderstorm")) return stormIcon;
+  if (condition.includes("thunderstorm")) return weatherIcon("storm");
   if (condition.includes("freezing")||condition.includes("snow")||
     condition.includes("sleet")) {
-    return snowIcon;
+    return weatherIcon("snow");
   }
   if (condition.includes("drizzle")||
     condition.includes("shower")) {
-    return rainIcon;
+    return weatherIcon("rain");
   }
-  if (condition.includes("rain")) return rainIcon;
-  if (condition.includes("clear")) return sunIcon;
-  if (condition.includes("few clouds")) return partSunIcon;
-  if (condition.includes("scattered clouds")) return cloudIcon;
-  if (condition.includes("clouds")) return cloudIcon;
+  if (condition.includes("rain")) return weatherIcon("rain");
+  if (condition.includes("clear")) return weatherIcon("sun");
+  if (condition.includes("few clouds")) return weatherIcon("partSun");
+  if (condition.includes("scattered clouds")) return weatherIcon("cloud");
+  if (condition.includes("clouds")) return weatherIcon("cloud");
   if (condition.includes("mist") ||
     condition.includes("smoke") ||
     condition.includes("haze") ||
@@ -69,9 +73,9 @@ function chooseIcon(condition) {
     condition.includes("ash") ||
     condition.includes("squalls") ||
     condition.includes("tornado")) {
-    return cloudIcon;
+    return weatherIcon("cloud");
   }
-  return cloudIcon;
+  return weatherIcon("cloud");
 }
 
 /*
@@ -81,18 +85,18 @@ function chooseIcon(condition) {
 function chooseIconByCode(code) {
   const codeGroup = Math.round(code / 100);
   switch (codeGroup) {
-    case 2: return stormIcon;
-    case 3: return rainIcon;
-    case 5: return rainIcon;
-    case 6: return snowIcon;
-    case 7: return cloudIcon;
+    case 2: return weatherIcon("storm");
+    case 3: return weatherIcon("rain");
+    case 5: return weatherIcon("rain");
+    case 6: return weatherIcon("snow");
+    case 7: return weatherIcon("cloud");
     case 8:
       switch (code) {
-        case 800: return sunIcon;
-        case 801: return partSunIcon;
-        default: return cloudIcon;
+        case 800: return weatherIcon("sun");
+        case 801: return weatherIcon("partSun");
+        default: return weatherIcon("cloud");
       }
-    default: return cloudIcon;
+    default: return weatherIcon("cloud");
   }
 }
 
@@ -118,6 +122,7 @@ function queueDraw() {
 
 // only draw the first time
 function drawBg() {
+  var bgImg = require("heatshrink").decompress(atob("2E7wINKn///+AEaIVUgIUB//wCs/5CtRXrCvMD8AVTg4LFCv4VZ/iSLCrwWMCrMOAQMPCp7cBCojjFCo/xFgIVQgeHCopABCpcH44Vuh/AQQX/wAV7+F/Cq/nCsw/CCqyvRCvgODCqfAgEDCp4QCSIIVQgIOBDQgGDABX/NgIECCp8HCrM/CgP4CqKaCCqSfCCqq1BCqBuB54VqgYVG/gCECp0BwgCDCp8HgYCDCo/wCo0MgHAjACBj7rDABS1Bv4lBv4rPAAsPCo3+gbbPJAIVFiAXMFZ2AUQsAuAQHiOAgJeEA"));
   g.reset();
   g.drawImage(bgImg, 0, 101);
 }
@@ -149,7 +154,7 @@ function draw() {
   }
   else{
       temp = "";
-      weatherIcon = errIcon;
+      weatherIcon = weatherIcon("err");
   }
   g.reset();
   g.clearRect(22,35,153,75);
