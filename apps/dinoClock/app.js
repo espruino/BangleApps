@@ -23,20 +23,21 @@ const locale = require("locale");
 var bgImg = require("heatshrink").decompress(atob("2E7wINKn///+AEaIVUgIUB//wCs/5CtRXrCvMD8AVTg4LFCv4VZ/iSLCrwWMCrMOAQMPCp7cBCojjFCo/xFgIVQgeHCopABCpcH44Vuh/AQQX/wAV7+F/Cq/nCsw/CCqyvRCvgODCqfAgEDCp4QCSIIVQgIOBDQgGDABX/NgIECCp8HCrM/CgP4CqKaCCqSfCCqq1BCqBuB54VqgYVG/gCECp0BwgCDCp8HgYCDCo/wCo0MgHAjACBj7rDABS1Bv4lBv4rPAAsPCo3+gbbPJAIVFiAXMFZ2AUQsAuAQHiOAgJeEA"));
 
 
-// weather icons from https://icons8.com/icon/set/weather/small
-var sunIcon = require("heatshrink").decompress(atob("kEgwIMJgYDJgUDgMAg8DgeAgeDg8AgPHxwQB//8AYN4vADBsEYAYvAhkAn/Ah/wAYYLDC5AjDFYQzDHYZDDJYZbLAB4="));
+// weather icons from https://icons8.com/icon/set/weather/ios-glyphs
+var sunIcon = atob("Hh4BAAAAAAAMAAAAMAAAAMAAAAMAABgMBgBwADgA4AHAAY/GAAB/gAAD/wAAH/4AAP/8AAP/8AfP/8+fP/8+AP/8AAP/8AAH/4AAD/wAAB/gAAY/GAA4AHABwADgBgMBgAAMAAAAMAAAAMAAAAMAAAAAAAA=");
 
-var partSunIcon = require("heatshrink").decompress(atob("kEgwIEBmAICAYUQmEggE4mFwgEcvHggEP//AgEHw+MgEGg+OAYMPg/Ahkcg/w/kYDwP8nEAjEMEQMMg3wAYMHwADBkY2BhlxAYMOsADBgwxBgEDAZYTDFQIbBn////8J4P/GIIAW"));
+var partSunIcon = atob("Hh4B///////////z////z///7z3//x/j//5/n///h////A///+Af//GAf//GAfB/+B8Af/H4AP/uAAP58AAHx8AAH74AAH/4AAH/gAAB/gAAB/AAAA/AAAA/AAAA/AAAA/gAAB/wAAD///////////////A=");
 
-var cloudIcon = require("heatshrink").decompress(atob("kEgwIURg/gAYMf/ADBnk8AYNwhwDBsEH4EA8EH+EBAoM4gYDBjEGCIMMhgDGEIUMuADBh1gAYMGDQMADwQDJCYYbDn////8h4DB+CDXA"));
+var cloudIcon = atob("Hh4B///////////////////////////4H///gB///AA//+AAf/gAAf+AAAP+AAAP8AAAP8AAAPwAAADgAAABgAAABAAAAAAAAAAAAAAAAAAAAgAAABgAAABwAAAD8AAAP/////////////////////////A=");
 
-var snowIcon = require("heatshrink").decompress(atob("kEgwIURg/gAYMf/ADBnk8AYNwhwDBsEH4EA8EH+EBAoM4gYDBjEGCIMMhgDGEIUMuACBh1gAYMG4Ewn4eBAYf8hgDEsEwgEGuADBh0/gHD/kPAYPwgEDAQIDEgBEBAYoAFA="));
+var snowIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gDA//ADA/+Af4f4APwH4APwDwAf4DwADADwADADwAAAD4AAAH8AAAP//////z////z///+Af5//A/gf/A/gf+Afgf/z/gf/z/5///////////A=");
 
-var rainIcon = require("heatshrink").decompress(atob("kEgwIURg/gAYMf/ADBnk8AYNwhwDBsEH4EA8EH+EBAoM4gYDBjEGCIMMhgDGEIUMuEA4EOsADBgwaB4AeCAYUM5gDEsADBg1wAYMOn/M5n8h4DB+A1JAYwAG"));
+var rainIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gAA//AAA/+AAAf4AAAH4AAAHwAAADwAAADwAAADwAAAD4AAAH8AAAP//////////+f+f/+f+f/+eeef/+f+f/+f+f////////////////////A=");
 
-var stormIcon = require("heatshrink").decompress(atob("kEgwIURg/gAYMf/ADBnk8AYNwhwDBsEH4EA8EH+EBAoM4gYDBjEGCIMMhgDGEIUMuADBh1gAYMGDQM8DwV4AY3wgYTB8EGuEB8EOn/5/n8h/z/PwEQMwLgQtCKAIDCEIIAHA"));
+var stormIcon = atob("Hh4B/////////////////4P///gD///AB//4AB//gAA//gAA//AAA/+AAAf4AAAH4AOADwAfADwAbADwA7ADwAzAD4BzwH8Bj4P//gf///Af/+fA//+f4//+f5+f//5+f//7+f//7/////////////////A=");
 
-var errIcon = require("heatshrink").decompress(atob("kEgwIURg/gAYMf/ADBnk8AYNwhwDBsEH4EA8EH+EB4HAnEDAYMYg0A4EMhgDGEIIDBuADBh1gAYMGEgMADwIDE4ADECYMAgwbBgEOn////8h4DB+CDXA"));
+// from https://icons8.com/icon/set/error-cloud/ios-glyphs
+var errIcon = atob("Hh4B///////////////////////////4H///gB///AA//+AAf/gAAf+AAAP+AMAP8AMAP8AMAPwAMADgAMABgAMABAAMAAAAAAAAAAAAAAMAAgAMABgAAABwAAAD8AAAP/////////////////////////A=");
 
 /**
 Choose weather icon to display based on condition.
