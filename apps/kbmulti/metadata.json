@@ -9,6 +9,8 @@
   "screenshots": [{"url":"screenshot_1.png"},{"url":"screenshot_2.png"}],
   "readme": "README.md",
   "storage": [
-    {"name":"textinput","url":"lib.js"}
+    {"name":"textinput","url":"lib.js"},
+    {"name":"kbmulti.settings.js","url":"settings.js"},
+    {"name":"kbmulti.settings.json","url":"kbmulti.settings.json"}
   ]
 }
