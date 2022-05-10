@@ -2,19 +2,19 @@
   const SETTINGS_FILE = "rebble.json";
 
   // initialize with default settings...
-  let s = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true}
+  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true}
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || s;
+  let settings = storage.readJSON(SETTINGS_FILE, 1) || localSettings;
   const saved = settings || {}
   for (const key in saved) {
-    s[key] = saved[key]
+    localSettings[key] = saved[key]
   }
 
   function save() {
-    settings = s
+    settings = localSettings
     storage.write(SETTINGS_FILE, settings)
   }
 
@@ -25,20 +25,20 @@
     '': { 'title': 'Rebble Clock' },
     '< Back': back,
     'Colour': {
-      value: 0 | color_options.indexOf(s.color),
+      value: 0 | color_options.indexOf(localSettings.color),
       min: 0, max: 5,
       format: v => color_options[v],
       onchange: v => {
-        s.color = color_options[v];
-        s.bg = bg_code[v];
+        localSettings.color = color_options[v];
+        localSettings.bg = bg_code[v];
         save();
       },
     },
     'Auto Cycle': {
-      value: "autoCycle" in s ? s.autoCycle : true,
-      format: () => (s.autoCycle ? 'Yes' : 'No'),
+      value: "autoCycle" in localSettings ? localSettings.autoCycle : true,
+      format: () => (localSettings.autoCycle ? 'Yes' : 'No'),
       onchange: () => {
-        s.autoCycle = !s.autoCycle;
+        localSettings.autoCycle = !localSettings.autoCycle;
         save();
       }
     }
