@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "rebble.json";
 
   // initialize with default settings...
-  let s = {'bg': '#0f0', 'color': 'Green'}
+  let s = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true}
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -33,6 +33,14 @@
         s.bg = bg_code[v];
         save();
       },
+    },
+    'Auto Cycle': {
+      value: "autoCycle" in s ? s.autoCycle : true,
+      format: () => (s.autoCycle ? 'Yes' : 'No'),
+      onchange: () => {
+        s.autoCycle = !s.autoCycle;
+        save();
+      }
     }
   });
 })
