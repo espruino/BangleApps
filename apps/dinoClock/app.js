@@ -129,7 +129,7 @@ function draw() {
 
   var day = d.getDate(), mon = d.getMonth(), dow = d.getDay();
   day = ("0"+day).substr(-2);
-  mon = ("0"+mon).substr(-2);
+  mon = ("0"+(mon+1)).substr(-2);
   dow = ((dow+6) % 7).toString();
   date = day + "." + mon
 
