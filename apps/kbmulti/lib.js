@@ -1,7 +1,7 @@
 //Multitap logic originally from here: http://www.espruino.com/Morse+Code+Texting
 
 exports.input = function(options) {
-  var options = options||{};
+  options = options||{};
   var text = options.text;
   if ("string"!=typeof text) text="";
 
