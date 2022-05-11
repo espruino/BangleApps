@@ -19,11 +19,13 @@ WIDGETS.bluetooth_notify = {
     
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
-            E.showAlert(/*LANG*/'Connection\nlost.', 'BLUETOOH');
-            setTimeout(()=>{
-                E.showAlert();
+            var tId = null;
+            E.showAlert(/*LANG*/'Connection\nlost.', 'BLUETOOH').then(()=>{
+                // ok clicked before timeout
+                if(tId != null) clearTimeout(tId);
                 load();
-            }, 3000); // clear message
+            });
+            tId = setTimeout(load, 3000); // clear message
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // don't buzz for the next 30 seconds.
