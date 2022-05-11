@@ -124,6 +124,7 @@ exports.input = function(options) {
       ]},
     ]
     },{back: ()=>{
+      charTimeout = undefined;
       Bangle.setUI();
       Bangle.removeListener("swipe", onSwipe);
       g.clearRect(Bangle.appRect);
