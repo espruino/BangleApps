@@ -51,7 +51,8 @@ options is an object containing:
   * `label` - the text on the button
   * `cb` - a callback function
   * `cbl` - a callback function for long presses
-* `back` - a callback function, passed as `back` into Bangle.setUI
+* `back` - a callback function, passed as `back` into Bangle.setUI (which usually adds an icon in the top left)
+
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
 determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
 Once `layout.update()` is called, the following fields are added
