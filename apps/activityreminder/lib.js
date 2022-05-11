@@ -25,9 +25,9 @@ exports.loadData = function () {
     return Object.assign({
         stepsDate: new Date(),
         stepsOnDate: health.steps,
-        okDate: new Date('1/1/1970'),
-        dismissDate: new Date('1/1/1970'),
-        pauseDate: new Date('1/1/1970'),
+        okDate: new Date(1970, 1, 1),
+        dismissDate: new Date(1970, 1, 1),
+        pauseDate: new Date(1970, 1, 1),
     },
         storage.readJSON("activityreminder.data.json") || {});
 };
