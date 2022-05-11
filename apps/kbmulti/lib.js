@@ -6,7 +6,7 @@ exports.input = function(options) {
   if ("string"!=typeof text) text="";
 
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
+  //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; } // Unnecessary if doing if(!settings.firstLaunch) down inside the promise. But maybe it's good to keep it as in v0.01 for readability?
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
 
@@ -27,7 +27,7 @@ exports.input = function(options) {
 
   function displayText(charTimeout) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (charTimeout ? " " : "_");
+    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (charTimeout ? " " : "_"); // Implemented marker here.
     layout.render(layout.text);
   }
 
@@ -124,7 +124,7 @@ exports.input = function(options) {
       ]},
     ]
     },{back: ()=>{
-      charTimeout = undefined;
+      // charTimeout = undefined; // Tried this to see if it would stop the text from being drawn after closing keyboard when doing it too soon after pressing a key. It didn't help. This problem goes back to how I've implemented the marker above. 
       Bangle.setUI();
       Bangle.removeListener("swipe", onSwipe);
       g.clearRect(Bangle.appRect);
