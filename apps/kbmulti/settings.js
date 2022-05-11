@@ -1,7 +1,7 @@
 (function(back) {
     function settings() {
       var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-      if (settings.showHelpBtn===undefined) { settings.firstLaunch = true; }
+      if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
       if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
       return settings;
     }
