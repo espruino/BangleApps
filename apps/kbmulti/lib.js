@@ -27,7 +27,7 @@ exports.input = function(options) {
 
   function displayText(charTimeout) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(settings.showHelpBtn ? -12 : -13) + (charTimeout ? " " : "_");
+    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (charTimeout ? " " : "_");
     layout.render(layout.text);
   }
 
