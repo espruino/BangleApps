@@ -21,7 +21,7 @@
         format: v => v,
         onchange: v => updateSetting("charTimeout", v),
       },
-      /*LANG*/'Show help button': {
+      /*LANG*/'Show help button?': {
         value: !!settings().showHelpBtn,
         format: v => v?"Yes":"No",
         onchange: v =>  updateSetting("showHelpBtn", v)
