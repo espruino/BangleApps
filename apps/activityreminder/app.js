@@ -25,9 +25,7 @@ function drawAlert() {
 
 function run() {
   if (activityreminder.mustAlert(activityreminder_data, activityreminder_settings)) {
-    if (stepsArray[0] - stepsArray[stepsArray.length - 1] < activityreminder_settings.minSteps) {
-      drawAlert();
-    }
+    drawAlert();
   } else {
     eval(storage.read("activityreminder.settings.js"))(() => load());
   }
