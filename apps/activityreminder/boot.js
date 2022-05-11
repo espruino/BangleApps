@@ -1,30 +1,38 @@
-function run(){
-    if (Bangle.isCharging()) return;
+function run() {
+    if (isNotWorn()) return;
     var now = new Date();
     var h = now.getHours();
-    if(h >= activityreminder.startHour && h < activityreminder.endHour){
-        var health = Bangle.getHealthStatus("day");
-        stepsArray.unshift(health.steps);
-        stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin);
-        require("activityreminder").saveStepsArray(stepsArray);
-    }
-    else{
-        if(stepsArray != []){
-            stepsArray = [];
-            require("activityreminder").saveStepsArray(stepsArray);
+    var doAlert = false;
+    var doSave = false;
+    var health = Bangle.getHealthStatus("day");
+
+    if (h >= activityreminder_settings.startHour && h < activityreminder_settings.endHour) {
+        if (health.steps - activityreminder_data.stepsOnDate >= activityreminder_settings.minSteps) {
+            activityreminder_data.stepsOnDate = health.steps;
+            activityreminder_data.stepsDate = now;
+            doSave = true;
         }
+        doAlert = activityreminder.mustAlert(activityreminder_data, activityreminder_settings);
     }
-    if(stepsArray.length >= activityreminder.maxInnactivityMin){
-        if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps){
-            load('activityreminder.app.js');
-        }
+
+    if (doSave) {
+        activityreminder.saveData(activityreminder_data);
+    }
+    if (doAlert) {
+        load('activityreminder.app.js');
     }
 }
 
+function isNotWorn() {
+    // todo check temperature and mouvement in a futur release 
+    return Bangle.isCharging();
+}
 
-activityreminder = require("activityreminder").loadSettings();
-if(activityreminder.enabled) {
-    stepsArray = require("activityreminder").loadStepsArray();
+const activityreminder = require("activityreminder");
+activityreminder_settings = activityreminder.loadSettings();
+if (activityreminder_settings.enabled) {
+    activityreminder_data = activityreminder.loadData();
+    activityreminder.saveData(activityreminder_data);
     setInterval(run, 60000);
 }
 
