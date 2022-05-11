@@ -1,0 +1,17 @@
+{ "id": "calibration",
+  "name": "Touchscreen Calibration",
+  "shortName":"Calibration",
+  "icon": "calibration.png",
+  "version":"1.00",
+  "description": "A simple calibration app for the touchscreen",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "tags": "tool",
+  "storage": [
+    {"name":"calibration.app.js","url":"app.js"},
+    {"name":"calibration.boot.js","url":"boot.js"},
+    {"name":"calibration.settings.js","url":"settings.js"},
+    {"name":"calibration.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"calibration.json"}]
+}
