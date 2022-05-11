@@ -1,14 +1,14 @@
 //Multitap logic originally from here: http://www.espruino.com/Morse+Code+Texting
 
 exports.input = function(options) {
-  options = options||{};
+  var options = options||{};
   var text = options.text;
   if ("string"!=typeof text) text="";
 
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
   //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
+  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = false; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -25,9 +25,9 @@ exports.input = function(options) {
   var caps = true;
   var layout;
 
-  function displayText() {
+  function displayText(charTimeout) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(-12);
+    layout.text.label = text.slice(settings.showHelpBtn ? -12 : -13) + (charTimeout ? " " : "_");
     layout.render(layout.text);
   }
 
@@ -70,12 +70,12 @@ exports.input = function(options) {
     }
     var newLetter = letters[charCurrent][charIndex];
     text += (caps ? newLetter.toUpperCase() : newLetter.toLowerCase());
-    displayText();
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
       newCharacter();
     }, settings.charTimeout);
+    displayText(charTimeout);
   }
 
   function onSwipe(dirLeftRight, dirUpDown) {
@@ -139,6 +139,7 @@ exports.input = function(options) {
       require('Storage').writeJSON("kbmulti.settings.json", settings);
     } else {
       generateLayout(resolve,reject);
+      displayText(false);
       Bangle.on('swipe', onSwipe);
       layout.render();
     }
