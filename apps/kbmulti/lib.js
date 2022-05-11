@@ -6,7 +6,7 @@ exports.input = function(options) {
   if ("string"!=typeof text) text="";
 
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
+  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = false; }
 
@@ -133,13 +133,13 @@ exports.input = function(options) {
 
   return new Promise((resolve,reject) => {
     g.clearRect(Bangle.appRect);
-    if (!settings.firstLaunch) { 
+    if (settings.firstLaunch==true) { 
       onHelp(resolve,reject); 
       settings.firstLaunch = false;
       require('Storage').writeJSON("kbmulti.settings.json", settings);
     } else {
       generateLayout(resolve,reject);
-      displayText(false);
+      displayText(true);
       Bangle.on('swipe', onSwipe);
       layout.render();
     }
