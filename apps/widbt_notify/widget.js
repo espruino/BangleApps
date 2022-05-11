@@ -19,7 +19,7 @@ WIDGETS.bluetooth_notify = {
     
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
-            E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH');
+            E.showAlert(/*LANG*/'Connection\nlost.', 'BLUETOOH');
             setTimeout(()=>{
                 E.showAlert();
                 load();
