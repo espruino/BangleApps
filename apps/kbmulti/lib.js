@@ -8,7 +8,7 @@ exports.input = function(options) {
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
   //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = false; }
+  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");
