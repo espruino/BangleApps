@@ -1,2 +1,2 @@
 0.01: New keyboard
-0.02: Introduce setting "Show help button". Remove the firstLaunch setting from settings.js.
+0.02: Introduce setting "Show help button". Make setting firstLaunch invisible by removing corresponding code from settings.js. Add marker that shows when character selection timeout has run out.
