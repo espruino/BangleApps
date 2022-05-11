@@ -13,10 +13,6 @@ WIDGETS.bluetooth_notify = {
         g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
     },
     
-    redrawCurrentApp: function(){
-            load(); // there should be a better way to dismiss a message box IMO.
-    },
-    
     connect: function() {
         WIDGETS.bluetooth_notify.draw();
     },
@@ -26,7 +22,7 @@ WIDGETS.bluetooth_notify = {
             E.showAlert(/*LANG*/'BLUETOOTH\nConnection\nlost.', 'BLUETOOH');
             setTimeout(()=>{
                 E.showAlert();
-                WIDGETS.bluetooth_notify.redrawCurrentApp();
+                load();
             }, 3000); // clear message
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
