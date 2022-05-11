@@ -1,7 +1,6 @@
 (function (back) {
   // Load settings
-  const storage = require("Storage");
-  var settings = storage.loadSettings();
+  var settings = require("Storage").loadSettings();
 
   // Show the menu
   E.showMenu({
@@ -12,7 +11,7 @@
       format: v => v ? "Yes" : "No",
       onchange: v => {
         settings.enabled = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       }
     },
     'Start hour': {
@@ -20,7 +19,7 @@
       min: 0, max: 24,
       onchange: v => {
         settings.startHour = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       }
     },
     'End hour': {
@@ -28,7 +27,7 @@
       min: 0, max: 24,
       onchange: v => {
         settings.endHour = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       }
     },
     'Max inactivity': {
@@ -36,7 +35,7 @@
       min: 15, max: 120,
       onchange: v => {
         settings.maxInnactivityMin = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       },
       format: x => {
         return x + " min";
@@ -47,7 +46,7 @@
       min: 5, max: 60,
       onchange: v => {
         settings.dismissDelayMin = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       },
       format: x => {
         return x + " min";
@@ -57,8 +56,8 @@
       value: settings.pauseDelayMin,
       min: 30, max: 240,
       onchange: v => {
-        settings.dismissDelayMin = v;
-        storage.writeSettings(settings);
+        settings.pauseDelayMin = v;
+        require("Storage").writeSettings(settings);
       },
       format: x => {
         return x + " min";
@@ -69,7 +68,7 @@
       min: 10, max: 500,
       onchange: v => {
         settings.minSteps = v;
-        storage.writeSettings(settings);
+        require("Storage").writeSettings(settings);
       }
     }
   });
