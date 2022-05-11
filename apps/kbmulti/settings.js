@@ -21,10 +21,10 @@
         format: v => v,
         onchange: v => updateSetting("charTimeout", v),
       },
-      /*LANG*/'Show help on first launch': {
-        value: !!settings().firstLaunch,
+      /*LANG*/'Show help button': {
+        value: !!settings().showHelpBtn,
         format: v => v?"Yes":"No",
-        onchange: v =>  updateSetting("firstLaunch", v)
+        onchange: v =>  updateSetting("showHelpBtn", v)
       }
     };
     E.showMenu(mainmenu);
