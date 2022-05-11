@@ -6,7 +6,7 @@ exports.input = function(options) {
   if ("string"!=typeof text) text="";
 
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; } // Unnecessary if doing if(!settings.firstLaunch) down inside the promise. But maybe it's good to keep it as in v0.01 for readability?
+  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
 
@@ -134,7 +134,7 @@ exports.input = function(options) {
 
   return new Promise((resolve,reject) => {
     g.clearRect(Bangle.appRect);
-    if (!settings.firstLaunch) { 
+    if (settings.firstLaunch) { 
       onHelp(resolve,reject); 
       settings.firstLaunch = false;
       require('Storage').writeJSON("kbmulti.settings.json", settings);
