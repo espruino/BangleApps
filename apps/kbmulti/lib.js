@@ -6,8 +6,9 @@ exports.input = function(options) {
   if ("string"!=typeof text) text="";
 
   var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
+  //if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
+  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -104,7 +105,7 @@ exports.input = function(options) {
     type:"v", c: [
       {type:"h", c: [
         {type:"txt", font:"12x20", label:text.slice(-12), id:"text", fillx:1},
-        {type:"btn", font:'6x8', label:'?', cb: l=>onHelp(resolve,reject), filly:1 },
+        (settings.showHelpBtn ? {type:"btn", font:'6x8', label:'?', cb: l=>onHelp(resolve,reject), filly:1 } : {}),
       ]},
       {type:"h", c: [
         {type:"btn", font:fontSize, label:letters[1], cb: l=>onKeyPad(1), id:'1', fillx:1, filly:1 },
@@ -132,7 +133,7 @@ exports.input = function(options) {
 
   return new Promise((resolve,reject) => {
     g.clearRect(Bangle.appRect);
-    if (settings.firstLaunch) { 
+    if (!settings.firstLaunch) { 
       onHelp(resolve,reject); 
       settings.firstLaunch = false;
       require('Storage').writeJSON("kbmulti.settings.json", settings);
