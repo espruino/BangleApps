@@ -61,12 +61,12 @@ exports.reload = function() {
 exports.newDefaultAlarm = function () {
   const settings = exports.getSettings();
 
-  let alarm = {
+  var alarm = {
     t: 12 * 3600000, // Default to 12:00
     on: true,
     rp: settings.defaultRepeat,
     as: settings.defaultAutoSnooze,
-    dow: 0b1111111,
+    dow: settings.defaultRepeat ? 0b1111111 : 0b0000000,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
   };
@@ -79,7 +79,7 @@ exports.newDefaultAlarm = function () {
 exports.newDefaultTimer = function () {
   const settings = exports.getSettings();
 
-  let timer = {
+  var timer = {
     timer: 5 * 60 * 1000, // 5 minutes
     on: true,
     rp: false,
