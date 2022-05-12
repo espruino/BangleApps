@@ -37,6 +37,6 @@ const storage = require("Storage");
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-activityreminder_settings = activityreminder.loadSettings();
-activityreminder_data = activityreminder.loadData();
+const activityreminder_settings = activityreminder.loadSettings();
+const activityreminder_data = activityreminder.loadData();
 run();

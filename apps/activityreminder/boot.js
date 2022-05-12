@@ -1,8 +1,8 @@
 function run() {
     if (isNotWorn()) return;
-    var now = new Date();
-    var h = now.getHours();
-    var health = Bangle.getHealthStatus("day");
+    let now = new Date();
+    let h = now.getHours();
+    let health = Bangle.getHealthStatus("day");
 
     if (h >= activityreminder_settings.startHour && h < activityreminder_settings.endHour) {
         if (health.steps - activityreminder_data.stepsOnDate >= activityreminder_settings.minSteps // more steps made than needed
@@ -25,9 +25,9 @@ function isNotWorn() {
 }
 
 const activityreminder = require("activityreminder");
-activityreminder_settings = activityreminder.loadSettings();
+const activityreminder_settings = activityreminder.loadSettings();
 if (activityreminder_settings.enabled) {
-    activityreminder_data = activityreminder.loadData();
+    const activityreminder_data = activityreminder.loadData();
     if(activityreminder_data.firstLoad){
         activityreminder_data.firstLoad =false;
         activityreminder.saveData(activityreminder_data);

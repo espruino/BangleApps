@@ -21,8 +21,8 @@ exports.saveData = function (data) {
 };
 
 exports.loadData = function () {
-    var health = Bangle.getHealthStatus("day");
-    var data = Object.assign({
+    let health = Bangle.getHealthStatus("day");
+    const data = Object.assign({
         firstLoad: true,
         stepsDate: new Date(),
         stepsOnDate: health.steps,
@@ -45,7 +45,7 @@ exports.loadData = function () {
 };
 
 exports.mustAlert = function(activityreminder_data, activityreminder_settings) {
-    var now = new Date();
+    let now = new Date();
     if ((now - activityreminder_data.stepsDate) / 60000 > activityreminder_settings.maxInnactivityMin) { // inactivity detected
         if ((now - activityreminder_settings.okDate) / 60000 > 3 && // last alert anwsered with ok was more than 3 min ago
             (now - activityreminder_settings.dismissDate) / 60000 > activityreminder_settings.dismissDelayMin && // last alert was more than dismissDelayMin ago
