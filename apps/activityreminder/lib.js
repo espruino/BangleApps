@@ -47,9 +47,9 @@ exports.loadData = function () {
 exports.mustAlert = function(activityreminder_data, activityreminder_settings) {
     let now = new Date();
     if ((now - activityreminder_data.stepsDate) / 60000 > activityreminder_settings.maxInnactivityMin) { // inactivity detected
-        if ((now - activityreminder_settings.okDate) / 60000 > 3 && // last alert anwsered with ok was more than 3 min ago
-            (now - activityreminder_settings.dismissDate) / 60000 > activityreminder_settings.dismissDelayMin && // last alert was more than dismissDelayMin ago
-            (now - activityreminder_settings.pauseDate) / 60000 > activityreminder_settings.pauseDelayMin) { // last alert was more than pauseDelayMin ago
+        if ((now - activityreminder_data.okDate) / 60000 > 3 && // last alert anwsered with ok was more than 3 min ago
+            (now - activityreminder_data.dismissDate) / 60000 > activityreminder_settings.dismissDelayMin && // last alert was more than dismissDelayMin ago
+            (now - activityreminder_data.pauseDate) / 60000 > activityreminder_settings.pauseDelayMin) { // last alert was more than pauseDelayMin ago
             return true;
         }
     }

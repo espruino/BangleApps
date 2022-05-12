@@ -10,6 +10,10 @@ function run() {
             activityreminder_data.stepsOnDate = health.steps;
             activityreminder_data.stepsDate = now;
             activityreminder.saveData(activityreminder_data);
+            /* todo in a futur release 
+            add settimer to trigger like 10 secs after the stepsDate + minSteps
+            cancel all other timers of this app
+            */
         }
         
         if(activityreminder.mustAlert(activityreminder_data, activityreminder_settings)){
@@ -20,7 +24,7 @@ function run() {
 }
 
 function isNotWorn() {
-    // todo check temperature and mouvement in a futur release 
+    // todo in a futur release check temperature and mouvement in a futur release 
     return Bangle.isCharging();
 }
 
@@ -33,4 +37,9 @@ if (activityreminder_settings.enabled) {
         activityreminder.saveData(activityreminder_data);
     }
     setInterval(run, 60000);
+    /* todo in a futur release 
+    increase setInterval time to something that is still sensible (5 mins ?)
+    add settimer to trigger like 10 secs after the stepsDate + minSteps
+    cancel all other timers of this app
+    */
 }
