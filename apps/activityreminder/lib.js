@@ -38,7 +38,7 @@ exports.loadData = function () {
         data.okDate = new Date(data.okDate);
     if(typeof(data.dismissDate) == "string")
         data.dismissDate = new Date(data.dismissDate);
-    if(typeof(data.stepsDate) == "string")
+    if(typeof(data.pauseDate) == "string")
         data.pauseDate = new Date(data.pauseDate);
 
     return data;
