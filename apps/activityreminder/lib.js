@@ -22,20 +22,32 @@ exports.saveData = function (data) {
 
 exports.loadData = function () {
     var health = Bangle.getHealthStatus("day");
-    return Object.assign({
+    var data = Object.assign({
+        firstLoad: true,
         stepsDate: new Date(),
         stepsOnDate: health.steps,
-        okDate: new Date(1970, 1, 1),
-        dismissDate: new Date(1970, 1, 1),
-        pauseDate: new Date(1970, 1, 1),
+        okDate: new Date(1970),
+        dismissDate: new Date(1970),
+        pauseDate: new Date(1970),
     },
-        storage.readJSON("activityreminder.data.json") || {});
+    storage.readJSON("activityreminder.data.json") || {});
+
+    if(typeof(data.stepsDate) == "string")
+        data.stepsDate = new Date(data.stepsDate);
+    if(typeof(data.okDate) == "string")
+        data.okDate = new Date(data.okDate);
+    if(typeof(data.dismissDate) == "string")
+        data.dismissDate = new Date(data.dismissDate);
+    if(typeof(data.stepsDate) == "string")
+        data.pauseDate = new Date(data.pauseDate);
+
+    return data;
 };
 
 exports.mustAlert = function(activityreminder_data, activityreminder_settings) {
     var now = new Date();
     if ((now - activityreminder_data.stepsDate) / 60000 > activityreminder_settings.maxInnactivityMin) { // inactivity detected
-        if ((now - activityreminder_settings.okDate) / 60000 > 3 && // last alert was more than 3 min ago
+        if ((now - activityreminder_settings.okDate) / 60000 > 3 && // last alert anwsered with ok was more than 3 min ago
             (now - activityreminder_settings.dismissDate) / 60000 > activityreminder_settings.dismissDelayMin && // last alert was more than dismissDelayMin ago
             (now - activityreminder_settings.pauseDate) / 60000 > activityreminder_settings.pauseDelayMin) { // last alert was more than pauseDelayMin ago
             return true;
