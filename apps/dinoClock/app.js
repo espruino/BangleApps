@@ -8,14 +8,14 @@ const locale = require("locale");
 (function(graphics) {
   graphics.prototype.setFont4x5NumPretty = function() {
     this.setFontCustom(atob("IQAQDJgH4/An4QXr0Fa/BwnwdrcH63BCHwfr8Ha/"), 45, atob("AwIEBAQEBAQEBAQEBA=="), 5);
-  }
+  };
 })(Graphics);
 
 // add font for days of the week
 (function(graphics) {
   graphics.prototype.setFontDoW = function() {
     this.setFontCustom(atob("///////ADgB//////+AHAD//////gAAAH//////4D8B+A///////4AcAOAH//////4AcAOAAAAAB//////wA4AcAP//////wAAAAAAAA//////4AcAP//////wA4Af//////gAAAH//////5z85+c/OfnOAA4AcAOAH//////4AcAOAAAAAB//////wcAOAHB//////wAAAAAAAA///////ODnBzg5wc4AAAAD//////84OcH//8/+fAAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////84OcH//////AAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////gBwA///////AAAAAAAAAAAAA"), 48, 24, 13);
-  }
+  };
 })(Graphics);
 
 
@@ -137,7 +137,7 @@ function draw() {
   day = ("0"+day).substr(-2);
   mon = ("0"+(mon+1)).substr(-2);
   dow = ((dow+6) % 7).toString();
-  date = day + "." + mon
+  date = day+"."+mon;
 
   var weatherJson = getWeather();
   var wIcon;
@@ -163,7 +163,7 @@ function draw() {
   g.fillRect(84, 60, 92, 67);
   g.drawString(h, 22, 35);
   g.drawString(m, 98, 35);
-  
+
   g.clearRect(22, 95, 22+4*2*4+2*4, 95+2*5);
   g.setFont("4x5NumPretty",2);
   g.drawString(date, 22, 95);
