@@ -17,7 +17,7 @@ exports.input = function(options) {
     "4":"GHI4","5":"JKL5","6":"MNO6",
     "7":"PQRS7","8":"TUV80","9":"WXYZ9",
   };
-  var helpMessage = 'swipe:\nRight: Space\nLeft:Backspace\nUp/Down: Caps lock\n';
+  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp/Down: Caps lock\n';
 
   var charTimeout; // timeout after a key is pressed
   var charCurrent; // current character (index in letters)
