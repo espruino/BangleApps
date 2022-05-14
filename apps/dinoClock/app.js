@@ -137,6 +137,11 @@ function drawBg() {
   g.drawImage(bgImg, 0, 101);
 }
 
+function square(x,y,w,e) {
+  g.setColor("#000").fillRect(x,y,x+w,y+w);
+  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
+}
+
 function draw() {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
@@ -184,14 +189,22 @@ function draw() {
 
   g.drawImage(wIcon, 126, 81);
 
-  g.clearRect(126, 114, 126+5*4*4, 114+4*5);
+  g.clearRect(108, 114, 176, 114+4*5);
   if (temp != "") {
-    var x = 126;
+    var tempWidth;
+    const mid=126+15;
+    if (temp[1][0]=="-") {
+      // do not account for - when aligning
+      const minusWidth=3*4;
+      tempWidth = minusWidth+(temp[1].length-1)*4*4;
+      x = mid-Math.round((tempWidth-minusWidth)/2)-minusWidth;
+    } else {
+      tempWidth = temp[1].length*4*4;
+      x = mid-Math.round(tempWidth/2);
+    }
     g.setFont("4x5NumPretty",4);
-    g.drawString(temp[1], 126, 114);
-    x += temp[1].length*4*4;
-    g.fillRect(x, 114, x+6, 114+6);
-    g.setColor("#fff").fillRect(x+2, 114+2, x+6-2, 114+6-2);
+    g.drawString(temp[1], x, 114);
+    square(x+tempWidth,114,6,2);
   }
 
   // queue draw in one minute
