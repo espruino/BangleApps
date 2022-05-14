@@ -19,6 +19,13 @@ const locale = require("locale");
 })(Graphics);
 
 
+const SUN = 1;
+const PART_SUN = 2;
+const CLOUD = 3;
+const SNOW = 4;
+const RAIN = 5;
+const STORM = 6;
+const ERR = 7;
 
 /**
 Choose weather icon based on weather const
@@ -27,19 +34,19 @@ Error icon from https://icons8.com/icon/set/error-cloud/ios-glyphs
 **/
 function weatherIcon(weather) {
   switch (weather) {
-    case "sun":
+    case SUN:
       return atob("Hh4BAAAAAAAMAAAAMAAAAMAAAAMAABgMBgBwADgA4AHAAY/GAAB/gAAD/wAAH/4AAP/8AAP/8AfP/8+fP/8+AP/8AAP/8AAH/4AAD/wAAB/gAAY/GAA4AHABwADgBgMBgAAMAAAAMAAAAMAAAAMAAAAAAAA=");
-    case "partSun":
+    case PART_SUN:
       return atob("Hh4BAAAAAAAAAAAMAAAAMAAAEMIAAOAcAAGAYAAAeAAAA/AAAB/gAA5/gAA5/g+AB+D/gA4H/wAR//wGD//4OD//4EH//4AH//4Af//+Af//+A////A////A////A///+Af//+AH//4AAAAAAAAAAAAAAAA=");
-    case "cloud":
+    case CLOUD:
       return atob("Hh4BAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAf+AAA//AAB//gAf//gB///wB///wD///wD///wP///8f///+f///+////////////////////f///+f///+P///8D///wAAAAAAAAAAAAAAAAAAAAAAAAAA=");
-    case "snow":
+    case SNOW:
       return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf8/AA/8/AB/gHgH/wP4H/wP4P/gH8P/8/8P/8/8P///4H///4B///gAAAAAAMAAAAMAAAB/gGAA/AfgA/AfgB/gfgAMAfgAMAGAAAAAAAAAAAA=");
-    case "rain":
+    case RAIN:
       return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf//AA///AB///gH///4H///4P///8P///8P///8P///4H///4B///gAAAAAAAAAABgBgABgBgABhhhgABgBgABgBgAAAAAAAAAAAAAAAAAAAAA=");
-    case "storm":
+    case STORM:
       return atob("Hh4BAAAAAAAAAAAAAAAAAHwAAAf8AAA/+AAH/+AAf//AAf//AA///AB///gH///4H/x/4P/g/8P/k/8P/E/8P/M/4H+MP4B+cHgAAfgAAA/gABg/AABgHAABgGBgAAGBgAAEBgAAEAAAAAAAAAAAAAAAAAA=");
-    case "err":
+    case ERR:
     default:
       return atob("Hh4BAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAf+AAA//AAB//gAf//gB///wB/z/wD/z/wD/z/wP/z/8f/z/+f/z/+//z//////////////z//f/z/+f///+P///8D///wAAAAAAAAAAAAAAAAAAAAAAAAAA=");
     }
@@ -53,20 +60,20 @@ sent from gadget bridge.
 */
 function chooseIcon(condition) {
   condition = condition.toLowerCase();
-  if (condition.includes("thunderstorm")) return weatherIcon("storm");
+  if (condition.includes("thunderstorm")) return weatherIcon(STORM);
   if (condition.includes("freezing")||condition.includes("snow")||
     condition.includes("sleet")) {
-    return weatherIcon("snow");
+    return weatherIcon(SNOW);
   }
   if (condition.includes("drizzle")||
     condition.includes("shower")) {
-    return weatherIcon("rain");
+    return weatherIcon(RAIN);
   }
-  if (condition.includes("rain")) return weatherIcon("rain");
-  if (condition.includes("clear")) return weatherIcon("sun");
-  if (condition.includes("few clouds")) return weatherIcon("partSun");
-  if (condition.includes("scattered clouds")) return weatherIcon("cloud");
-  if (condition.includes("clouds")) return weatherIcon("cloud");
+  if (condition.includes("rain")) return weatherIcon(RAIN);
+  if (condition.includes("clear")) return weatherIcon(SUN);
+  if (condition.includes("few clouds")) return weatherIcon(PART_SUN);
+  if (condition.includes("scattered clouds")) return weatherIcon(CLOUD);
+  if (condition.includes("clouds")) return weatherIcon(CLOUD);
   if (condition.includes("mist") ||
     condition.includes("smoke") ||
     condition.includes("haze") ||
@@ -76,9 +83,9 @@ function chooseIcon(condition) {
     condition.includes("ash") ||
     condition.includes("squalls") ||
     condition.includes("tornado")) {
-    return weatherIcon("cloud");
+    return weatherIcon(CLOUD);
   }
-  return weatherIcon("cloud");
+  return weatherIcon(CLOUD);
 }
 
 /*
@@ -88,18 +95,18 @@ function chooseIcon(condition) {
 function chooseIconByCode(code) {
   const codeGroup = Math.round(code / 100);
   switch (codeGroup) {
-    case 2: return weatherIcon("storm");
-    case 3: return weatherIcon("rain");
-    case 5: return weatherIcon("rain");
-    case 6: return weatherIcon("snow");
-    case 7: return weatherIcon("cloud");
+    case 2: return weatherIcon(STORM);
+    case 3: return weatherIcon(RAIN);
+    case 5: return weatherIcon(RAIN);
+    case 6: return weatherIcon(SNOW);
+    case 7: return weatherIcon(CLOUD);
     case 8:
       switch (code) {
-        case 800: return weatherIcon("sun");
-        case 801: return weatherIcon("partSun");
-        default: return weatherIcon("cloud");
+        case 800: return weatherIcon(SUN);
+        case 801: return weatherIcon(PART_SUN);
+        default: return weatherIcon(CLOUD);
       }
-    default: return weatherIcon("cloud");
+    default: return weatherIcon(CLOUD);
   }
 }
 
@@ -157,7 +164,7 @@ function draw() {
   }
   else{
       temp = "";
-      wIcon = weatherIcon("err");
+      wIcon = weatherIcon(ERR);
   }
   g.reset();
   g.clearRect(22,35,153,75);
