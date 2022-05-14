@@ -166,8 +166,7 @@ function draw() {
       } else {
         wIcon = chooseIcon(currentWeather.txt);
       }
-  }
-  else{
+  }else{
       temp = "";
       wIcon = weatherIcon(ERR);
   }
