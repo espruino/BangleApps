@@ -20,8 +20,11 @@ const locale = require("locale");
 
 
 
-// weather icons from https://icons8.com/icon/set/weather/ios-glyphs
-// error icon from https://icons8.com/icon/set/error-cloud/ios-glyphs
+/**
+Choose weather icon based on weather const
+Weather icons from https://icons8.com/icon/set/weather/ios-glyphs
+Error icon from https://icons8.com/icon/set/error-cloud/ios-glyphs
+**/
 function weatherIcon(weather) {
   switch (weather) {
     case "sun":
