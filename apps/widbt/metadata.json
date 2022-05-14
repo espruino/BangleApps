@@ -1,13 +1,16 @@
 {
   "id": "widbt",
   "name": "Bluetooth Widget",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Show the current Bluetooth connection status in the top right of the clock",
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"widbt.wid.js","url":"widget.js"}
-  ]
+    {"name":"widbt.wid.js","url":"widget.js"},
+    {"name":"widbt.settings.js","url":"settings.js"},
+    {"name":"widbt.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"widbt.json"}]
 }
