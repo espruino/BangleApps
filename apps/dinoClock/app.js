@@ -7,14 +7,14 @@ const locale = require("locale");
 // add modifiied 4x5 numeric font
 (function(graphics) {
   graphics.prototype.setFont4x5NumPretty = function() {
-    this.setFontCustom(atob("IQAQDJgH4/An4QXr0Fa/BwnwdrcH63BCHwfr8Ha/"), 45, atob("AwIEBAQEBAQEBAQEBA=="), 5);
+    this.setFontCustom(atob("IQAQDJgH4/An4QXr0Fa/BwnwdrcH63BCHwfr8Ha/"),45,atob("AwIEBAQEBAQEBAQEBA=="),5);
   };
 })(Graphics);
 
 // add font for days of the week
 (function(graphics) {
   graphics.prototype.setFontDoW = function() {
-    this.setFontCustom(atob("///////ADgB//////+AHAD//////gAAAH//////4D8B+A///////4AcAOAH//////4AcAOAAAAAB//////wA4AcAP//////wAAAAAAAA//////4AcAP//////wA4Af//////gAAAH//////5z85+c/OfnOAA4AcAOAH//////4AcAOAAAAAB//////wcAOAHB//////wAAAAAAAA///////ODnBzg5wc4AAAAD//////84OcH//8/+fAAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////84OcH//////AAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////gBwA///////AAAAAAAAAAAAA"), 48, 24, 13);
+    this.setFontCustom(atob("///////ADgB//////+AHAD//////gAAAH//////4D8B+A///////4AcAOAH//////4AcAOAAAAAB//////wA4AcAP//////wAAAAAAAA//////4AcAP//////wA4Af//////gAAAH//////5z85+c/OfnOAA4AcAOAH//////4AcAOAAAAAB//////wcAOAHB//////wAAAAAAAA///////ODnBzg5wc4AAAAD//////84OcH//8/+fAAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////84OcH//////AAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////gBwA///////AAAAAAAAAAAAA"),48,24,13);
   };
 })(Graphics);
 
@@ -127,14 +127,14 @@ function queueDraw() {
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
-  }, 60000 - (Date.now() % 60000));
+  },60000-(Date.now()%60000));
 }
 
 // only draw the first time
 function drawBg() {
   var bgImg = require("heatshrink").decompress(atob("2E7wINKn///+AEaIVUgIUB//wCs/5CtRXrCvMD8AVTg4LFCv4VZ/iSLCrwWMCrMOAQMPCp7cBCojjFCo/xFgIVQgeHCopABCpcH44Vuh/AQQX/wAV7+F/Cq/nCsw/CCqyvRCvgODCqfAgEDCp4QCSIIVQgIOBDQgGDABX/NgIECCp8HCrM/CgP4CqKaCCqSfCCqq1BCqBuB54VqgYVG/gCECp0BwgCDCp8HgYCDCo/wCo0MgHAjACBj7rDABS1Bv4lBv4rPAAsPCo3+gbbPJAIVFiAXMFZ2AUQsAuAQHiOAgJeEA"));
   g.reset();
-  g.drawImage(bgImg, 0, 101);
+  g.drawImage(bgImg,0,101);
 }
 
 function square(x,y,w,e) {
@@ -151,7 +151,7 @@ function draw() {
   var day = d.getDate(), mon = d.getMonth(), dow = d.getDay();
   day = ("0"+day).substr(-2);
   mon = ("0"+(mon+1)).substr(-2);
-  dow = ((dow+6) % 7).toString();
+  dow = ((dow+6)%7).toString();
   date = day+"."+mon;
 
   var weatherJson = getWeather();
@@ -160,7 +160,7 @@ function draw() {
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
       temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-      const code = currentWeather.code || -1;
+      const code = currentWeather.code||-1;
       if (code > 0) {
         wIcon = chooseIconByCode(code);
       } else {
@@ -173,22 +173,22 @@ function draw() {
   g.reset();
   g.clearRect(22,35,153,75);
   g.setFont("4x5NumPretty",8);
-  g.fillRect(84, 42, 92, 49);
-  g.fillRect(84, 60, 92, 67);
-  g.drawString(h, 22, 35);
-  g.drawString(m, 98, 35);
+  g.fillRect(84,42,92,49);
+  g.fillRect(84,60,92,67);
+  g.drawString(h,22,35);
+  g.drawString(m,98,35);
 
-  g.clearRect(22, 95, 22+4*2*4+2*4, 95+2*5);
+  g.clearRect(22,95,22+4*2*4+2*4,95+2*5);
   g.setFont("4x5NumPretty",2);
-  g.drawString(date, 22, 95);
+  g.drawString(date,22,95);
 
-  g.clearRect(22, 79, 22+24, 79+13);
+  g.clearRect(22,79,22+24,79+13);
   g.setFont("DoW");
-  g.drawString(dow, 22, 79);
+  g.drawString(dow,22,79);
 
-  g.drawImage(wIcon, 126, 81);
+  g.drawImage(wIcon,126,81);
 
-  g.clearRect(108, 114, 176, 114+4*5);
+  g.clearRect(108,114,176,114+4*5);
   if (temp != "") {
     var tempWidth;
     const mid=126+15;
@@ -202,7 +202,7 @@ function draw() {
       x = mid-Math.round(tempWidth/2);
     }
     g.setFont("4x5NumPretty",4);
-    g.drawString(temp[1], x, 114);
+    g.drawString(temp[1],x,114);
     square(x+tempWidth,114,6,2);
   }
 
