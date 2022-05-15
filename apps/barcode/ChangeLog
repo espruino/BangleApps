@@ -3,3 +3,4 @@
 0.03: Interaction
 0.04: Shows day of week
 0.05: Shows day of month
+0.06: Updates every 5 minutes when locked, or when unlock occurs. Also shows nr of steps.
