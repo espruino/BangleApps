@@ -259,11 +259,12 @@ function draw() {
 
 function drawDate(){
     // Draw background
-    var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+    var y = H/5*2;
     g.reset().clearRect(0,0,W,W);
 
     // Draw date
-    y -= settings.fullscreen ? 8 : 0;
+    y = parseInt(y/2);
+    y += settings.fullscreen ? 0 : 15;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
@@ -276,14 +277,14 @@ function drawDate(){
     var dayW = Math.max(g.stringWidth(dayStr), g.stringWidth(monthStr));
     var fullDateW = dateW + 10 + dayW;
 
-    g.setFontAlign(-1,1);
+    g.setFontAlign(-1,0);
     g.setMediumFont();
     g.setColor(g.theme.fg);
     g.drawString(dateStr, W/2 - fullDateW / 2, y+5);
 
     g.setSmallFont();
-    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+3);
-    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-23);
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+14);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-10);
 }
 
 
@@ -296,9 +297,9 @@ function drawTime(){
 
   // Draw time
   g.setColor(g.theme.bg);
-  g.setFontAlign(0,-1);
+  g.setFontAlign(0,0);
   var timeStr = locale.time(date,1);
-  y += settings.fullscreen ? 14 : 10;
+  y += parseInt((H - y)/2) + 5;
 
   var infoEntry = getInfoEntry();
   var infoStr = infoEntry[0];
@@ -307,9 +308,9 @@ function drawTime(){
 
   // Show large or small time depending on info entry
   if(infoStr == null){
-    y += 10;
     g.setLargeFont();
   } else {
+    y -= 15;
     g.setMediumFont();
   }
   g.drawString(timeStr, W/2, y);
@@ -319,7 +320,7 @@ function drawTime(){
     return;
   }
 
-  y += H/5*2-5;
+  y += 35;
   g.setFontAlign(0,0);
   g.setSmallFont();
   var imgWidth = 0;
