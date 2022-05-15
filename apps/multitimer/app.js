@@ -190,7 +190,7 @@ function timerMenu(idx) {
       //reset
       if (i == 2) {
         clearInt();
-        a.timer = a.data;
+        a.timer = a.data.ot;
         if (a.on == true) a.on = false;
         saveAndReload();
       }
@@ -252,7 +252,8 @@ function editTimer(idx, a) {
     "< Back": () => {
       a.t = getCurrentTime() + a.timer;
       a.last = 0;
-      a.data = a.timer;
+      if (!a.data) a.data = {};
+      a.data.ot = a.timer;
       a.appid = "multitimer";
       a.js = "load('multitimer.alarm.js')";
       if (idx < 0) alarms.push(a);
