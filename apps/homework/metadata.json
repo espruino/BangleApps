@@ -4,7 +4,7 @@
   "shortName":"Homwork",
   "version":"0.1",
   "description": "A simple app to manage homework",
-  "icon": "app-icon.js",
+  "icon": "app.png",
   "tags": "tool",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
