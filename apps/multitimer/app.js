@@ -227,6 +227,10 @@ function editTimer(idx, a) {
     if (idx < 0) a = require("sched").newDefaultTimer();
     else a = timers[idx];
   }
+  if (!a.data) {
+    a.data = {};
+    a.data.hm = false;
+  }
   var t = decodeTime(a.timer);
 
   function editMsg(idx, a) { 
@@ -252,7 +256,6 @@ function editTimer(idx, a) {
     "< Back": () => {
       a.t = getCurrentTime() + a.timer;
       a.last = 0;
-      if (!a.data) a.data = {};
       a.data.ot = a.timer;
       a.appid = "multitimer";
       a.js = "load('multitimer.alarm.js')";
@@ -287,6 +290,11 @@ function editTimer(idx, a) {
         t.secs = v;
         a.timer = encodeTime(t);
       }
+    },
+    "Hard Mode": {
+      value: a.data.hm,
+      format: v => v ? "On" : "Off",
+      onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Msg": {
@@ -550,6 +558,10 @@ function editAlarm(idx, a) {
     if (idx >= 0) a = alarms[alarmIdx[idx]];
     else a = require("sched").newDefaultAlarm();
   }
+  if (!a.data) {
+    a.data = {};
+    a.data.hm = false;
+  }
   var t = decodeTime(a.t);
 
   function editMsg(idx, a) { 
@@ -573,6 +585,8 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
+      if (a.data.hm == true) a.js = "load('multitimer.alarm.js')";
+      if (a.data.hm == false && a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);
       require("sched").setAlarms(alarms);
@@ -606,6 +620,11 @@ function editAlarm(idx, a) {
     "Days": {
       value: "SMTWTFS".split("").map((d,n)=>a.dow&(1<<n)?d:".").join(""),
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(idx,a);})
+    },
+    "Hard Mode": {
+      value: a.data.hm,
+      format: v => v ? "On" : "Off",
+      onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Auto Snooze": {
