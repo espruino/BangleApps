@@ -25,18 +25,21 @@ exports.input = function(options) {
   var caps = true;
   var layout;
 
-  function displayText(charTimeout) {
+  function displayText(hideMarker) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (charTimeout ? " " : "_"); // Implemented marker here.
+    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (!hideMarker ? "_" : " ");
     layout.render(layout.text);
   }
 
-  function backspace() {
-    // remove the timeout if we had one
+  function deactivateTimeout(charTimeout) {
     if (charTimeout!==undefined) {
       clearTimeout(charTimeout);
       charTimeout = undefined;
     }
+  }
+
+  function backspace() {
+    deactivateTimeout(charTimeout);
     text = text.slice(0, -1);
     newCharacter();
   }
@@ -56,11 +59,7 @@ exports.input = function(options) {
   }
 
   function onKeyPad(key) {
-    // remove the timeout if we had one
-    if (charTimeout!==undefined) {
-      clearTimeout(charTimeout);
-      charTimeout = undefined;
-    }
+    deactivateTimeout(charTimeout);
     // work out which char was pressed
     if (key==charCurrent) {
       charIndex = (charIndex+1) % letters[charCurrent].length;
@@ -124,7 +123,7 @@ exports.input = function(options) {
       ]},
     ]
     },{back: ()=>{
-      // charTimeout = undefined; // Tried this to see if it would stop the text from being drawn after closing keyboard when doing it too soon after pressing a key. It didn't help. This problem goes back to how I've implemented the marker above. 
+      deactivateTimeout(charTimeout);
       Bangle.setUI();
       Bangle.removeListener("swipe", onSwipe);
       g.clearRect(Bangle.appRect);
@@ -134,13 +133,13 @@ exports.input = function(options) {
 
   return new Promise((resolve,reject) => {
     g.clearRect(Bangle.appRect);
-    if (settings.firstLaunch) { 
-      onHelp(resolve,reject); 
+    if (settings.firstLaunch) {
+      onHelp(resolve,reject);
       settings.firstLaunch = false;
       require('Storage').writeJSON("kbmulti.settings.json", settings);
     } else {
       generateLayout(resolve,reject);
-      displayText(true);
+      displayText(false);
       Bangle.on('swipe', onSwipe);
       layout.render();
     }
