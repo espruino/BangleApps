@@ -1,7 +1,7 @@
 
 { "id": "homework",
   "name": "Homework",
-  "shortName":"Homwork",
+  "shortName":"Homework",
   "version":"0.1",
   "description": "A simple app to manage homework",
   "icon": "app.png",
