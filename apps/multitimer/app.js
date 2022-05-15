@@ -17,7 +17,7 @@ function getCurrentTime() {
 }
 
 function decodeTime(t) {
-  let hrs = 0 | Math.floor(t / 3600000 % 24);
+  let hrs = 0 | Math.floor(t / 3600000);
   let mins = 0 | Math.floor(t / 60000 % 60);
   let secs = 0 | Math.floor(t / 1000 % 60);
   return { hrs: hrs, mins: mins, secs: secs };
@@ -33,7 +33,7 @@ function formatTime(t) {
 }
 
 function decodeTimeDecis(t) {
-  let hrs = 0 | Math.floor(t / 3600000 % 24);
+  let hrs = 0 | Math.floor(t / 3600000);
   let mins = 0 | Math.floor(t / 60000 % 60);
   let secs = 0 | Math.floor(t / 1000 % 60);
   let decis = 0 | Math.floor(t / 100 % 100);
