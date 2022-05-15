@@ -27,7 +27,7 @@ exports.input = function(options) {
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (!hideMarker ? "_" : " ");
+    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (hideMarker ? " " : "_");
     layout.render(layout.text);
   }
 
