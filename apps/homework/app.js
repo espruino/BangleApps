@@ -1,11 +1,35 @@
 var Layout = require("Layout");
 
 var homework = require("Storage").readJSON("homework.txt", "r");
-//var hwfile = require("Storage").open("homework.txt", "w");
 var mainCheckHomeworkMenu;
-console.log(homework);
-//subjects = require("Storage").open("subjects.txt", "r");
 
+var nhwmn = { // New homework Menu
+  "": {
+    "title": "New HW Subject:"
+  }
+
+};
+
+
+
+function newHomeworkMenu() {
+  E.showMessage("Getting subjects...");
+  var rawsubjects = require("Storage").read("subjects.txt"); // This code reads out the subjects list and removes the newline character at the end
+  var splitsubjects = rawsubjects.split(",");
+  var lastItem = splitsubjects[splitsubjects.length - 1];
+  var thiscurrentsubject;
+  var command;
+  lastItem = lastItem.slice(0, -1);
+  splitsubjects[splitsubjects.length - 1] = lastItem;
+  for (let i = 0; i < splitsubjects.length; i++) { // loop through array and add to menu
+    thiscurrentsubject = splitsubjects[i];
+    command = addNewHomework(thiscurrentsubject);
+    nhwmn[splitsubjects[i]] = addNewHomework.bind(null, thiscurrentsubject);
+  }
+  nhwmn["Back"] = function() {E.showMenu(mainMenu);};
+  console.log(nhwmn);
+  E.showMenu(nhwmn);
+}
 var mode = "mainmenu";
 var statusmsg;
 var mainMenu = {
@@ -13,7 +37,7 @@ var mainMenu = {
     title: "--Main Menu--"
   },
   "New Homework": function() {
-    E.showMenu(nhwmn);
+    newHomeworkMenu();
     mode = "newhomework";
   },
   "Check Homework": function() {
@@ -38,73 +62,20 @@ var mainMenu = {
   },
 };
 
-
-var nhwmn = { // New homework Menu
-  "": {
-    "title": "New HW Subject:"
-  },
-  "German": function() {
-    addNewHomework("German");
-  },
-  "English": function() {
-    addNewHomework("English");
-  },
-  "Maths": function() {
-    addNewHomework("Maths");
-  },
-  "French": function() {
-    addNewHomework("French");
-  },
-  "Chemistry": function() {
-    addNewHomework("Chemistry");
-  },
-  "Physics": function() {
-    addNewHomework("Physics");
-  },
-  "Religion": function() {
-    addNewHomework("Religion");
-  },
-  "Biology": function() {
-    addNewHomework("Biology");
-  },
-  "Music": function() {
-    addNewHomework("Music");
-  },
-  "History": function() {
-    addNewHomework("History");
-  },
-  "Arts": function() {
-    addNewHomework("Arts");
-  },
-  "Sports": function() {
-    addNewHomework("Sports");
-  },
-
-  "Back": function() {
-    mode = "mainmenu";
-    E.showMenu(mainMenu);
-  },
-
-
-};
-
-
 function checkUnfinishedHomeworkAssembler() {
   homework = require("Storage").readJSON("homework.txt", "r");
   var hwcount = Object.keys(homework.homework).length;
   mainCheckHomeworkMenu = {
     '': {
-      'title': 'Unfinished HW:'
+      'title': 'Archived HW:'
     }
   };
   // This code snippet gets the unfinished HW and puts it in mainCheckHomeworkMenu
-  // btw mainCheckHomeworkMenu displays all the homework, when tapping on it you get more details with checkPreciseHomework function (currently being written)
+  // btw mainCheckHomeworkMenu displays all the homework, when tapping on it you get more details with checkPreciseHomework function 
   for (var i = 0; i < hwcount; ++i) {
     if (homework.homework[i].done === false) {
       var currentsubject = i; //attempting to pass i
-      mainCheckHomeworkMenu[homework.homework[i].subject] = function() {
-        checkPreciseHomework(currentsubject);
-      };
+      mainCheckHomeworkMenu[homework.homework[i].subject] = checkPreciseHomework.bind(null, currentsubject);
     }
 
   }
@@ -115,6 +86,7 @@ function checkUnfinishedHomeworkAssembler() {
     mode = "mainmenu";
     E.showMenu(mainMenu);
   };
+  console.log(mainCheckHomeworkMenu);
   E.showMenu(mainCheckHomeworkMenu);
 }
 
@@ -126,14 +98,13 @@ function checkFinishedHomeworkAssembler() {
       'title': 'Unfinished HW:'
     }
   };
+
   // This code snippet gets the unfinished HW and puts it in mainCheckHomeworkMenu
   // btw mainCheckHomeworkMenu displays all the homework, when tapping on it you get more details with checkPreciseHomework function (currently being written)
   for (var i = 0; i < hwcount; ++i) {
     if (homework.homework[i].done === true) {
       var currentsubject = i; //attempting to pass i
-      mainCheckHomeworkMenu[homework.homework[i].subject] = function() {
-        checkPreciseHomework(currentsubject);
-      };
+      mainCheckHomeworkMenu[homework.homework[i].subject] = checkPreciseHomework.bind(null, currentsubject);
     }
 
   }
@@ -197,10 +168,11 @@ function pushHomework(subject, status, datetimehwdone) {
 }
 
 function addNewHomework(subject) { // Pass subject
+  console.log(subject);
   require("textinput").input().then(result => {
     if (result === "") {
       mode = "newhomework";
-      E.showMenu(nhwmn);
+      newHomeworkMenu();
     } else {
       var d = new Date();
       // update time and date
@@ -213,6 +185,8 @@ function addNewHomework(subject) { // Pass subject
         done: false,
         datetimerecievehw: datetime
       }); // TODO: when HW is done, add datetimeendhw !!!
+      console.log("subject is" + subject);
+
       //homework.homework[subject] = result;
       require("Storage").write("homework.txt", JSON.stringify(homework));
       E.showMenu(mainMenu);
@@ -227,7 +201,7 @@ function main() { // why does this still exist
     E.showMenu(mainMenu);
 
   } else if (mode === "newhomework") {
-    E.showMenu(nhwmn);
+    newHomeworkMenu()
 
   }
 }
