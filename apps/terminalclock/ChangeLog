@@ -2,3 +2,4 @@
 0.02: Rename "Activity" in "Motion" and display the true values for it
 0.03: Add Banglejs 1 compatibility
 0.04: Fix settings bug
+0.05: Add altitude display (only Bangle.js 2)

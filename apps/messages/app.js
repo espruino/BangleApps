@@ -13,11 +13,11 @@
 /* For example for maps:
 
 // a message
-{"t":"add","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"}
+require("messages").pushMessage({"t":"add","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"})
 // maps
-{"t":"add","id":1,"src":"Maps","title":"0 yd - High St","body":"Campton - 11:48 ETA","img":"GhqBAAAMAAAHgAAD8AAB/gAA/8AAf/gAP/8AH//gD/98B//Pg/4B8f8Afv+PP//n3/f5//j+f/wfn/4D5/8Aef+AD//AAf/gAD/wAAf4AAD8AAAeAAADAAA="}
+require("messages").pushMessage({"t":"add","id":1,"src":"Maps","title":"0 yd - High St","body":"Campton - 11:48 ETA","img":"GhqBAAAMAAAHgAAD8AAB/gAA/8AAf/gAP/8AH//gD/98B//Pg/4B8f8Afv+PP//n3/f5//j+f/wfn/4D5/8Aef+AD//AAf/gAD/wAAf4AAD8AAAeAAADAAA="});
 // call
-{"t":"add","id":"call","src":"Phone","name":"Bob","number":"12421312",positive:true,negative:true}
+require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
 
 var Layout = require("Layout");
@@ -67,9 +67,6 @@ function saveMessages() {
   require("Storage").writeJSON("messages.json",MESSAGES)
 }
 
-function getBackImage() {
-  return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
-}
 function getNotificationImage() {
   return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
 }
@@ -123,7 +120,6 @@ function getMessageImage(msg) {
   if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
   if (s=="youtube") return atob("GBgBAAAAAAAAAAAAAAAAAf8AH//4P//4P//8P//8P5/8P4/8f4P8f4P8P4/8P5/8P//8P//8P//4H//4Af8AAAAAAAAAAAAAAAAA");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
-  if (msg.id=="back") return getBackImage();
   return getNotificationImage();
 }
 function getMessageImageCol(msg,def) {
@@ -195,13 +191,13 @@ function showMapMessage(msg) {
   ]});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
-  Bangle.setUI("updown",function() {
-    // any input to mark as not new and return to menu
+  function back() { // mark as not new and return to menu
     msg.new = false;
     saveMessages();
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
-  });
+  }
+  Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
 
 var updateLabelsInterval;
@@ -224,8 +220,6 @@ function showMusicMessage(msg) {
     var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
     return text.substr(offset, sliceLength).padEnd(maxLen, " ");
   }
-
-
   function back() {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval = undefined;
@@ -254,7 +248,6 @@ function showMusicMessage(msg) {
 
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
-      { type:"btn", src:getBackImage, cb:back },
       { type:"v", fillx:1, c: [
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:artistName, pad:2, id:"artist" },
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:albumName, pad:2, id:"album" }
@@ -267,7 +260,7 @@ function showMusicMessage(msg) {
       {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
     ]}:{},
     {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
-  ]});
+  ]}, { back : back });
   g.reset().clearRect(Bangle.appRect);
   layout.render();
 
@@ -302,12 +295,9 @@ function showMessageScroller(msg) {
     }, select : function(idx) {
       if (idx>=lines.length-2)
         showMessage(msg.id);
-    }
+    },
+    back : () => showMessage(msg.id)
   });
-  // ensure button-press on Bangle.js 2 takes us back
-  if (process.env.HWVERSION>1) Bangle.btnWatches = [
-    setWatch(() => showMessage(msg.id), BTN1, {repeat:1,edge:"falling"})
-  ];
 }
 
 function showMessageSettings(msg) {
@@ -395,10 +385,8 @@ function showMessage(msgid) {
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
   }
   var buttons = [
-    {type:"btn", src:getBackImage(), cb:goBack} // back
   ];
   if (msg.positive) {
-    buttons.push({fillx:1});
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
@@ -407,7 +395,7 @@ function showMessage(msgid) {
     }});
   }
   if (msg.negative) {
-    buttons.push({fillx:1});
+    if (buttons.length) buttons.push({width:32}); // nasty hack...
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
@@ -419,27 +407,23 @@ function showMessage(msgid) {
 
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
-      { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
-        cancelReloadTimeout(); // don't auto-reload to clock now
-        showMessageSettings(msg);
-      }},
       { type:"v", fillx:1, c: [
         {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
+      { type:"btn", src:getMessageImage(msg), col:getMessageImageCol(msg), pad: 3, cb:()=>{
+        cancelReloadTimeout(); // don't auto-reload to clock now
+        showMessageSettings(msg);
+      }},
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
       // allow tapping to show a larger version
       showMessageScroller(msg);
     } },
     {type:"h",fillx:1, c: buttons}
-  ]});
+  ]},{back:goBack});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
-  // ensure button-press on Bangle.js 2 takes us back
-  if (process.env.HWVERSION>1) Bangle.btnWatches = [
-    setWatch(goBack, BTN1, {repeat:1,edge:"falling"})
-  ];
 }
 
 
@@ -475,13 +459,12 @@ function checkMessages(options) {
   // Otherwise show a menu
   E.showScroller({
     h : 48,
-    c : Math.max(MESSAGES.length+1,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
+    c : Math.max(MESSAGES.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
-      var msg = MESSAGES[idx-1];
+      var msg = MESSAGES[idx];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
       else g.setColor(g.theme.fg);
       g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
-      if (idx==0) msg = {id:"back", title:"< Back"};
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
       var img = getMessageImage(msg);
@@ -510,12 +493,11 @@ function checkMessages(options) {
       if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
-    select : idx => {
-      if (idx==0) load();
-      else showMessage(MESSAGES[idx-1].id);
-    }
+    select : idx => showMessage(MESSAGES[idx].id),
+    back : () => load()
   });
 }
+
 
 function cancelReloadTimeout() {
   if (!unreadTimeout) return;

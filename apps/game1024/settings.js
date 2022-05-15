@@ -32,10 +32,10 @@
         }
       },
       "Exit press:": {
-        value: !settings.debugMode,  // ! converts undefined to true
+        value: !settings.clockMode,  // ! converts undefined to true
         format: v => v?"short":"long",
         onchange: v => {
-          settings.debugMode = v;
+          settings.clockMode = v;
           writeSettings();
         },
       },
