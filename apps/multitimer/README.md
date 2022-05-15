@@ -6,5 +6,5 @@ With this app, you can set timers and chronographs (stopwatches) and watch them 
 ## WARNING
 * Editing timers in another app (such as the default Alarm app) is not recommended. Editing alarms should not be a problem (in theory).
 * This app uses the [Scheduler library](https://banglejs.com/apps/?id=sched). 
-* To avoid potential conflicts with other apps that uses sched (especially ones that make use of the data and js field), this app only lists timers and alarms that it created - any made outside the app will be ignored.
+* To avoid potential conflicts with other apps that uses sched (especially ones that make use of the data and js field), this app only lists timers and alarms that it created - any made outside the app will be ignored. GB alarms are currently an exception as they do not make use of the data and js field.
 * A keyboard app is only used for adding messages to timers and is therefore not strictly needed.
