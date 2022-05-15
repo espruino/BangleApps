@@ -1,0 +1,15 @@
+
+{ "id": "homework",
+  "name": "Homework",
+  "shortName":"Homwork",
+  "version":"0.1",
+  "description": "A simple app to manage homework",
+  "icon": "app-icon.js",
+  "tags": "tool",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"homework.app.js","url":"app.js"},
+    {"name":"homework.img","url":"app-icon.js","evaluate":true}
+  ]
+}
