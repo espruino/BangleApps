@@ -67,11 +67,11 @@ function checkUnfinishedHomeworkAssembler() {
   var hwcount = Object.keys(homework.homework).length;
   mainCheckHomeworkMenu = {
     '': {
-      'title': 'Archived HW:'
+      'title': 'Unfinished HW:'
     }
   };
   // This code snippet gets the unfinished HW and puts it in mainCheckHomeworkMenu
-  // btw mainCheckHomeworkMenu displays all the homework, when tapping on it you get more details with checkPreciseHomework function 
+  // btw mainCheckHomeworkMenu displays all the homework, when tapping on it you get more details with checkPreciseHomework function
   for (var i = 0; i < hwcount; ++i) {
     if (homework.homework[i].done === false) {
       var currentsubject = i; //attempting to pass i
@@ -95,7 +95,7 @@ function checkFinishedHomeworkAssembler() {
   var hwcount = Object.keys(homework.homework).length;
   mainCheckHomeworkMenu = {
     '': {
-      'title': 'Unfinished HW:'
+      'title': 'Archived HW:'
     }
   };
 
