@@ -38,7 +38,7 @@ function showAlarm(alarm) {
       if (!alarm.rp) alarm.on = false;
     }
     //reset timer value
-    alarm.timer = alarm.data;
+    alarm.timer = alarm.data.ot;
     // alarm is still a member of 'alarms', so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
     load();
