@@ -104,7 +104,7 @@ function epilogue(str) {
   g.setFont("Vector", 24).setFontAlign(0, 0, 0).setColor(0, 0, 0).drawString(str, g.getWidth()/2, g.getHeight()/2).flip();
   g.setFont("Vector", 16).drawString("<= again      exit =>", g.getWidth()/2, g.getHeight()/2+20);
   clearInterval(stepInterval);
-  Bangle.on("swipe", (d) => { if (d>0) load(); else load('falcon.app.js'); });
+  Bangle.on("swipe", (d) => { if (d>0) load(); else load('f9lander.app.js'); });
 }
 
 function gameStep() {
