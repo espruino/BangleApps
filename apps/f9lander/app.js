@@ -49,7 +49,7 @@ var landed = false;
 
 const gravity = 4;
 const dt = 0.1;
-const fuelBurnRate = 20;
+const fuelBurnRate = 20*(176/g.getHeight());
 const maxV = 12;
 
 function flameImageGen (throttle) {
