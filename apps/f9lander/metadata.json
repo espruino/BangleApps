@@ -4,7 +4,7 @@
   "version":"0.01",
   "description": "Land a rocket booster",
   "icon": "f9lander.png",
-  "screenshots" : [ { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot1.png" }],
+  "screenshots" : [ { "url":"f9lander_screenshot1.png" }, { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot3.png" }],
   "readme": "README.md",
   "tags": "game",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
