@@ -24,6 +24,7 @@ exports.input = function(options) {
   var charIndex; // index in letters[charCurrent]
   var caps = true;
   var layout;
+  var btnWidth = g.getWidth()/3
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
@@ -107,19 +108,19 @@ exports.input = function(options) {
         (settings.showHelpBtn ? {type:"btn", font:'6x8', label:'?', cb: l=>onHelp(resolve,reject), filly:1 } : {}),
       ]},
       {type:"h", c: [
-        {type:"btn", font:fontSize, label:letters[1], cb: l=>onKeyPad(1), id:'1', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[2], cb: l=>onKeyPad(2), id:'2', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[3], cb: l=>onKeyPad(3), id:'3', fillx:1, filly:1 },
+        {type:"btn", font:fontSize, label:letters[1], cb: l=>onKeyPad(1), id:'1', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[2], cb: l=>onKeyPad(2), id:'2', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[3], cb: l=>onKeyPad(3), id:'3', width:btnWidth, filly:1 },
       ]},
       {type:"h", filly:1, c: [
-        {type:"btn", font:fontSize, label:letters[4], cb: l=>onKeyPad(4), id:'4', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[5], cb: l=>onKeyPad(5), id:'5', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[6], cb: l=>onKeyPad(6), id:'6', fillx:1, filly:1 },
+        {type:"btn", font:fontSize, label:letters[4], cb: l=>onKeyPad(4), id:'4', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[5], cb: l=>onKeyPad(5), id:'5', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[6], cb: l=>onKeyPad(6), id:'6', width:btnWidth,  filly:1 },
       ]},
       {type:"h", filly:1, c: [
-        {type:"btn", font:fontSize, label:letters[7], cb: l=>onKeyPad(7), id:'7', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[8], cb: l=>onKeyPad(8), id:'8', fillx:1, filly:1 },
-        {type:"btn", font:fontSize, label:letters[9], cb: l=>onKeyPad(9), id:'9', fillx:1, filly:1 },
+        {type:"btn", font:fontSize, label:letters[7], cb: l=>onKeyPad(7), id:'7', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[8], cb: l=>onKeyPad(8), id:'8', width:btnWidth, filly:1 },
+        {type:"btn", font:fontSize, label:letters[9], cb: l=>onKeyPad(9), id:'9', width:btnWidth, filly:1 },
       ]},
     ]
     },{back: ()=>{
