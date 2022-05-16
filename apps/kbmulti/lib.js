@@ -115,7 +115,7 @@ exports.input = function(options) {
       {type:"h", filly:1, c: [
         {type:"btn", font:fontSize, label:letters[4], cb: l=>onKeyPad(4), id:'4', width:btnWidth, filly:1 },
         {type:"btn", font:fontSize, label:letters[5], cb: l=>onKeyPad(5), id:'5', width:btnWidth, filly:1 },
-        {type:"btn", font:fontSize, label:letters[6], cb: l=>onKeyPad(6), id:'6', width:btnWidth,  filly:1 },
+        {type:"btn", font:fontSize, label:letters[6], cb: l=>onKeyPad(6), id:'6', width:btnWidth, filly:1 },
       ]},
       {type:"h", filly:1, c: [
         {type:"btn", font:fontSize, label:letters[7], cb: l=>onKeyPad(7), id:'7', width:btnWidth, filly:1 },
