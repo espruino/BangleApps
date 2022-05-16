@@ -24,7 +24,8 @@
         ]);
       }
       // redraw when date changes
-      setTimeout(()=>WIDGETS["cal"].draw(), (86401 - Math.floor(date/1000) % 86400)*1000);
+      if (WIDGETS["cal"].to) clearTimeout(WIDGETS["cal"].to);
+      WIDGETS["cal"].to = setTimeout(()=>WIDGETS["cal"].draw(), (86401 - Math.floor(date/1000) % 86400)*1000);
     }
   };
 })();

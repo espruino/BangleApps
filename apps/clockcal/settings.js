@@ -1,16 +1,22 @@
 (function (back) {
     var FILE = "clockcal.json";
-
-    settings = Object.assign({
+    defaults={
         CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
         BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
         MODE24: true, //24h mode vs 12h mode
         FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
         REDSUN: true, // Use red color for sunday?
         REDSAT: true, // Use red color for saturday?
-    }, require('Storage').readJSON(FILE, true) || {});
+        DRAGDOWN: "[AI:messg]",
+        DRAGRIGHT: "[AI:music]",
+        DRAGLEFT: "[ignore]",
+        DRAGUP: "[calend.]"
+    };
+    settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
 
-
+    actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]"];
+    require("Storage").list(RegExp(".app.js")).forEach(element => actions.push(element.replace(".app.js","")));
+  
     function writeSettings() {
         require('Storage').writeJSON(FILE, settings);
     }
@@ -67,26 +73,55 @@
                 writeSettings();
             }
         },
+        'Drag Up ': {
+            min:0, max:actions.length-1,
+            value: actions.indexOf(settings.DRAGUP),
+            format: v => actions[v],
+            onchange: v => {
+                settings.DRAGUP = actions[v];
+                writeSettings();
+            }
+        },
+        'Drag Right': {
+            min:0, max:actions.length-1,
+            value: actions.indexOf(settings.DRAGRIGHT),
+            format: v => actions[v],
+            onchange: v => {
+                settings.DRAGRIGHT = actions[v];
+                writeSettings();
+            }
+        },
+        'Drag Down': {
+            min:0, max:actions.length-1,
+            value: actions.indexOf(settings.DRAGDOWN),
+            format: v => actions[v],
+            onchange: v => {
+                settings.DRGDOWN = actions[v];
+                writeSettings();
+            }
+        },
+        'Drag Left': {
+            min:0, max:actions.length-1,
+            value: actions.indexOf(settings.DRAGLEFT),
+            format: v => actions[v],
+            onchange: v => {
+                settings.DRAGLEFT = actions[v];
+                writeSettings();
+            }
+        },
         'Load deafauls?': {
             value: 0,
             min: 0, max: 1,
             format: v => ["No", "Yes"][v],
             onchange: v => {
                 if (v == 1) {
-                    settings = {
-                        CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
-                        BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. 
-                        MODE24: true, //24h mode vs 12h mode
-                        FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
-                        REDSUN: true, // Use red color for sunday?
-                        REDSAT: true, // Use red color for saturday?
-                    };
+                    settings = defaults;
                     writeSettings();
-                    load()
+                    load();
                 }
             }
         },
-    }
+    };
     // Show the menu
     E.showMenu(menu);
-})
+});

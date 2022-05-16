@@ -1,7 +1,7 @@
 { "id": "contourclock",
   "name": "Contour Clock",
   "shortName" : "Contour Clock",
-  "version":"0.26",
+  "version":"0.27",
   "icon": "app.png",
   "description": "A Minimalist clockface with large Digits. Now with more fonts!",
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],

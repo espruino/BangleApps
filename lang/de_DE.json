@@ -164,10 +164,37 @@
         "Music": "Musik",
         "color": "Farbe",
         "off": "aus",
-        "Theme": "Thema"
+        "Theme": "Thema",
+        "one": "eins",
+        "two": "zwei",
+        "three": "drei",
+        "four": "vier",
+        "five": "fünf",
+        "six": "sechs",
+        "seven": "sieben",
+        "eight": "acht",
+        "nine": "neun",
+        "ten": "zehn",
+        "eleven": "elf",
+        "twelve": "zwölf"
     },
     "alarm": {
         "//": "App-specific overrides",
         "rpt": "Wdh."
+    },
+    "fuzzyw": {
+        "//": "App-specific overrides",
+        "*$1 o'clock": "*$1 uhr",
+        "five past *$1": "fünf nach *$1",
+        "ten past *$1": "zehn nach *$1",
+        "quarter past *$1": "viertel nach *$1",
+        "twenty past *$1": "zwanzig nach *$1",
+        "twenty five past *$1": "fünf for halb *$2",
+        "half past *$1": "halb *$2",
+        "twenty five to *$2": "fünf nach halb *$2",
+        "twenty to *$2": "zwanzig vor *$2",
+        "quarter to *$2": "viertel vor *$2",
+        "ten to *$2": "zehn vor *$2",
+        "five to *$2": "fünf vor *$2"
     }
 }

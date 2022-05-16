@@ -2,17 +2,17 @@
 {
   "id": "flipper",
   "name": "flipper",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Switch between dark and light theme and vice versa, combine with pattern launcher and swipe to flip.",
   "readme":"README.md",
-  "screenshots": [{"url":"flipper.png"}],
-  "icon": "flipper.png",
+  "screenshots": [{"url":"app.png"}],
+  "icon": "app.png",
   "type": "app",
-  "tags": "game",
+  "tags": "tool",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
-    {"name":"flipper.app.js","url":"flipper.app.js"},
-    {"name":"flipper.img","url":"flipper.icon.js","evaluate":true}
+    {"name":"flipper.app.js","url":"app.js"},
+    {"name":"flipper.img","url":"icon.js","evaluate":true}
   ]
 }

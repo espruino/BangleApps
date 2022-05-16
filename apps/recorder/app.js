@@ -31,7 +31,12 @@ function updateSettings() {
 }
 
 function getTrackNumber(filename) {
-  return parseInt(filename.match(/^recorder\.log(.*)\.csv$/)[1]||0);
+  var trackNum = 0;
+  var matches = filename.match(/^recorder\.log(.*)\.csv$/);
+  if (matches) {
+    trackNum = parseInt(matches[1]||0);
+  }
+  return trackNum;
 }
 
 function showMainMenu() {
@@ -214,7 +219,7 @@ function viewTrack(filename, info) {
         f.erase();
         viewTracks();
       } else
-        viewTrack(n, info);
+        viewTrack(filename, info);
     });
   };
   menu['< Back'] = () => { viewTracks(); };
@@ -302,7 +307,7 @@ function viewTrack(filename, info) {
     g.fillCircle(ox,oy,5);
     if (info.qOSTM) g.setColor("#000");
     else g.setColor(g.theme.fg);
-    g.drawString(require("locale").distance(dist),g.getWidth() / 2, g.getHeight() - 20);
+    g.drawString(require("locale").distance(dist,2),g.getWidth() / 2, g.getHeight() - 20);
     g.setFont("6x8",2);
     g.setFontAlign(0,0,3);
     var isBTN3 = "BTN3" in global;

@@ -1,3 +1,10 @@
+function openMusic() {
+  // only read settings file for first music message
+  if ("undefined"==typeof exports._openMusic) {
+    exports._openMusic = !!((require('Storage').readJSON("messages.settings.json", true) || {}).openMusic);
+  }
+  return exports._openMusic;
+}
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
@@ -26,6 +33,9 @@ exports.pushMessage = function(event) {
       messages.unshift(event); // add new messages to the beginning
     }
     else Object.assign(messages[mIdx], event);
+    if (event.id=="music" && messages[mIdx].state=="play") {
+      messages[mIdx].new = true; // new track, or playback (re)started
+    }
   }
   require("Storage").writeJSON("messages.json",messages);
   // if in app, process immediately
@@ -33,25 +43,47 @@ exports.pushMessage = function(event) {
   // if we've removed the last new message, hide the widget
   if (event.t=="remove" && !messages.some(m=>m.new)) {
     if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.hide();
+    // if no new messages now, make sure we don't load the messages app
+    if (exports.messageTimeout && !messages.some(m=>m.new))
+      clearTimeout(exports.messageTimeout);
   }
-  // ok, saved now - we only care if it's new
-  if (event.t!="add") {
+  // ok, saved now
+  if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
+    // just load the app to display music: no buzzing
+    load("messages.app.js");
+  } else if (event.t!="add") {
+    // we only care if it's new
     return;
   } else if(event.new == false) {
     return;
   }
   // otherwise load messages/show widget
   var loadMessages = Bangle.CLOCK || event.important;
+  var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
+  var appSettings = require('Storage').readJSON('messages.settings.json',1)||{};
+  var unlockWatch = appSettings.unlockWatch;
+  var quietNoAutOpn = appSettings.quietNoAutOpn;
+  delete appSettings;
+  // don't auto-open messages in quiet mode if quietNoAutOpn is true
+  if(quiet && quietNoAutOpn) {
+      loadMessages = false;
+  }
   // first, buzz
-  var quiet = (require('Storage').readJSON('setting.json',1)||{}).quiet;
-  if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages)
+  if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
       WIDGETS.messages.buzz();
+      if(unlockWatch != false){
+        Bangle.setLocked(false);
+        Bangle.setLCDPower(1); // turn screen on
+      }
+  }
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
     exports.messageTimeout = undefined;
     // if we're in a clock or it's important, go straight to messages app
-    if (loadMessages) return load("messages.app.js");
+    if (loadMessages){
+      return load("messages.app.js");
+    }
     if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz to let someone know
     WIDGETS.messages.show();
   }, 500);

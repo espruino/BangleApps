@@ -7,6 +7,13 @@ if (settings.fontIndex==undefined) {
   require('Storage').writeJSON("myapp.json", settings);
 }
 
+function queueDraw() {
+  setTimeout(function() {
+    draw();
+    queueDraw();
+  }, 60000 - (Date.now() % 60000));
+}
+
 function draw() {
   var date = new Date();
   // Draw day of the week
@@ -24,7 +31,5 @@ Bangle.setUI("clock");
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+queueDraw();
 draw();
-setTimeout(function() {
-  setInterval(draw,60000);
-}, 60000 - Date.now() % 60000);

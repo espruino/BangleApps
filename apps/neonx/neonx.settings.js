@@ -19,7 +19,7 @@
 
   if (!neonXSettings) resetSettings();
 
-  let thicknesses = [1, 2, 3, 4, 5, 6];
+  let thicknesses = [1, 2, 3, 4, 5, 6, 7];
 
   const menu = {
     "" : { "title":"Neon X & IO"},

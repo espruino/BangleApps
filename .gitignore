@@ -10,3 +10,5 @@ _config.yml
 tests/Layout/bin/tmp.*
 tests/Layout/testresult.bmp
 apps.local.json
+_site
+.jekyll-cache

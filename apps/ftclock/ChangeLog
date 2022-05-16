@@ -1,2 +1,3 @@
 0.01: first release
 0.02: RAM efficient version of `fourTwentyTz.js` (as suggested by @gfwilliams).
+0.03: `mkFourTwentyTz.js` now handles new timezonedb.com CSV format

@@ -7,6 +7,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS"],
+  "readme": "README.md",
   "allow_emulator": true,
   "screenshots": [{"url":"bangle1-pipboy-themed-clock-screenshot.png"}],
   "storage": [

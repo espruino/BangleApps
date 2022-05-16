@@ -23,7 +23,10 @@
     }
 
     function getCache(){
-      return require('Storage').readJSON("bthrm.cache.json", true) || {};
+      var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
+      if (settings.btname && settings.btname == cache.name) return cache;
+      clearCache();
+      return {};
     }
     
     function addNotificationHandler(characteristic){
@@ -361,7 +364,13 @@
       var promise;
       
       if (!device){
-        promise = NRF.requestDevice({ filters: serviceFilters });
+        var filters = serviceFilters;
+        if (settings.btname){
+          log("Configured device name", settings.btname);
+          filters = [{name: settings.btname}];
+        }
+        log("Requesting device with filters", filters);
+        promise = NRF.requestDevice({ filters: filters });
         
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
@@ -488,11 +497,15 @@
         if (gatt) {
           if (gatt.connected){
             log("Disconnect with gatt: ", gatt);
-            gatt.disconnect().then(()=>{
-              log("Successful disconnect");
-            }).catch((e)=>{
-              log("Error during disconnect", e);
-            });
+            try{
+              gatt.disconnect().then(()=>{
+                log("Successful disconnect");
+              }).catch((e)=>{
+                log("Error during disconnect promise", e);
+              });
+            } catch (e){
+              log("Error during disconnect attempt", e);
+            }
           }
         }
       }

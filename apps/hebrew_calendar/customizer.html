@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hebrew Calendar Customizer</title>
+	<link rel="stylesheet" href="https://banglejs.com/apps/css/spectre.min.css">
+</head>
+
+<body>
+	<div class="container grid-sm">
+		<div class="panel center">
+			<div class="panel-header">
+				<div class="panel-title text-center h5 mt-10">Hebrew Calendar Loader</div>
+			</div>
+			<div class="panel-body">
+				<div class="h4">Your location</div>
+				<form method="GET">
+					<div class="form-group">
+						<label class="form-label" for="lat">Latitude</label>
+						<input class="form-input" type="number" id="lat" name="lat" required min="-90" max="90" step="0.0000001" value="31.776580" placeholder="31.776580">
+						<label class="form-label" for="lon">Longitude</label>
+						<input class="form-input" type="number" id="lon" name="lon" required min="-180" max="180" step="0.0000001" value="35.233706" placeholder="35.233706">
+						<div>get your latitude and longitude from <a href="https://plus.codes/map">plus.codes</a> or:</div>
+						<button class="btn btn-secondary input-group-btn" id="geoloc">Get Latitude and Longitude automatically (using location permission)</button>
+						<label class="form-switch">
+							<input type="checkbox" id="inIL" name="inIL" checked>
+							<i class="form-icon"></i> In Israel?
+						</label>
+						<button class="btn btn-primary input-group-btn" type="submit">Upload</button>
+					</div>
+				</form>
+			</div>
+			<div class="panel-footer">
+				<div class="text-center h6"><a href="https://github.com/hebcal/hebcal-es6">With help from @hebcal/core</a></div>
+				<div class="text-center" id="hDate"></div>
+			</div>
+		</div>
+		<script src="https://banglejs.com/apps/core/lib/customize.js"></script>
+		<script type="module" src="customizer.mjs"></script>
+	</div>
+</body>
+
+</html>

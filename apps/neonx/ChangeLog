@@ -2,3 +2,4 @@
 0.02: Optional fullscreen mode
 0.03: Optional show lock status via color
 0.04: Ensure that widgets are always hidden in fullscreen mode
+0.05: Better lock/unlock animation
