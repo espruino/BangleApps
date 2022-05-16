@@ -9,5 +9,6 @@
     {"name":"distort.app.js","url":"app.js"},
     {"name":"distort.img","url":"app-icon.js","evaluate":true}
   ],
-  screenshots" : [ { "url":"screenshot.png" } ]
+  screenshots" : [ { "url":"screenshot.png" } ],
+  "readme":"README.md"
 }
