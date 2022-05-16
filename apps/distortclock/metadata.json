@@ -4,12 +4,12 @@
   "icon": "distort.png",
   "version":"0.01",
   "description": "A simple to read, happy accident",
-   "type": "clock",
+  "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS2"],
+  "supports": ["BANGLEJS2"], 
+  "readme":"README.md",
   "storage": [
     {"name":"distort.app.js","url":"app.js"},
     {"name":"distort.img","url":"app-icon.js","evaluate":true}
-  ],
-  "readme":"README.md"
+  ]
 }
