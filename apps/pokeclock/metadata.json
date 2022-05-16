@@ -1,4 +1,4 @@
-{ "id": "poketchclock",
+{ "id": "pokeclock",
   "name": "Poketch Clock",
   "shortName":"Poketch",
   "icon": "pokeclock.png",
@@ -9,7 +9,7 @@
   "supports": ["BANGLEJS2"], 
   "readme":"README.md",
   "storage": [
-    {"name":"poketchclock.app.js","url":"app.js"},
-    {"name":"poketchclock.img","url":"app-icon.js","evaluate":true}
+    {"name":"pokeclock.app.js","url":"app.js"},
+    {"name":"pokeclock.img","url":"app-icon.js","evaluate":true}
   ]
 }
