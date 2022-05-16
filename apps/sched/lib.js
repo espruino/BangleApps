@@ -61,12 +61,12 @@ exports.reload = function() {
 exports.newDefaultAlarm = function () {
   const settings = exports.getSettings();
 
-  let alarm = {
+  var alarm = {
     t: 12 * 3600000, // Default to 12:00
     on: true,
     rp: settings.defaultRepeat,
     as: settings.defaultAutoSnooze,
-    dow: 0b1111111,
+    dow: settings.defaultRepeat ? 0b1111111 : 0b0000000,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
   };
@@ -79,7 +79,7 @@ exports.newDefaultAlarm = function () {
 exports.newDefaultTimer = function () {
   const settings = exports.getSettings();
 
-  let timer = {
+  var timer = {
     timer: 5 * 60 * 1000, // 5 minutes
     on: true,
     rp: false,
@@ -113,20 +113,3 @@ exports.getSettings = function () {
 exports.setSettings = function(settings) {
   require("Storage").writeJSON("sched.settings.json", settings);
 };
-
-// time in ms -> { hrs, mins }
-exports.decodeTime = function(t) {
-  t = Math.ceil(t / 60000); // sanitise to full minutes
-  let hrs = 0 | (t / 60);
-  return { hrs: hrs, mins: t - hrs * 60 };
-}
-
-// time in { hrs, mins } -> ms
-exports.encodeTime = function(o) {
-  return o.hrs * 3600000 + o.mins * 60000;
-}
-
-exports.formatTime = function(t) {
-  let o = exports.decodeTime(t);
-  return o.hrs + ":" + ("0" + o.mins).substr(-2);
-}

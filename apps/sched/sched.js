@@ -9,7 +9,7 @@ function showAlarm(alarm) {
   const settings = require("sched").getSettings();
 
   let msg = "";
-  msg += alarm.timer ? require("sched").formatTime(alarm.timer) : require("sched").formatTime(alarm.t);
+  msg += require("time_utils").formatTime(alarm.timer ? alarm.timer : alarm.t);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
   } else {
@@ -26,7 +26,7 @@ function showAlarm(alarm) {
 
   E.showPrompt(msg,{
     title:alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons : {/*LANG*/"Snooze":true,/*LANG*/"Ok":false} // default is sleep so it'll come back in 10 mins
+    buttons : {/*LANG*/"Snooze":true,/*LANG*/"Stop":false} // default is sleep so it'll come back in 10 mins
   }).then(function(sleep) {
     buzzCount = 0;
     if (sleep) {
