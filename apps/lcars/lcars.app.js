@@ -323,11 +323,13 @@ function drawState(){
 
   if(!isAlarmEnabled()){
     var bat = E.getBattery();
+    var flash = storage.getFree() / process.env.STORAGE;
     var current = new Date();
     var hours = current.getHours();
     var iconImg =
         Bangle.isCharging() ? iconCharging :
         bat < 30 ? iconWarning("NO BAT"):
+        flash < 0.1 ? iconWarning("DISK"):
         Bangle.isGPSOn() ? iconSatellite :
         hours % 4 == 0 ? iconSaturn :
         hours % 4 == 1 ? iconMars :
