@@ -1,0 +1,14 @@
+{ "id": "poketch",
+  "name": "Poketch Clock",
+  "shortName":"Poketch",
+  "version":"0.01",
+  "description": "A fan-made recreation of a popular Pebble watchface",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"poketch.app.js","url":"app.js"},
+    {"name":"poketch.img","url":"app-icon.js","evaluate":true}
+  ]
+}
