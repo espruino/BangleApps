@@ -32,6 +32,8 @@ function ClockFace(options) {
     if (dir>0 && options.down) options.down.apply(this);
   };
   if (options.upDown) this._upDown = options.upDown;
+
+  this.is12Hour = !!(require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 }
 
 ClockFace.prototype.tick = function() {
@@ -69,6 +71,7 @@ ClockFace.prototype.start = function() {
   if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
   else Bangle.setUI("clock");
   delete this._last;
+  this.paused = false;
   this.tick();
 
   Bangle.on("lcdPower", on => {
@@ -87,7 +90,7 @@ ClockFace.prototype.pause = function() {
 ClockFace.prototype.resume = function() {
   if (this._timeout) return; // not paused
   delete this._last;
-  delete this.paused;
+  this.paused = false;
   if (this._resume) this._resume.apply(this);
   this.tick(true);
 };
