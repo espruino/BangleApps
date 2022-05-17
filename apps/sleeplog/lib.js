@@ -98,6 +98,9 @@ exports = {
       input = log;
     }
 
+    // check and if neccessary reduce logsize to prevent low mem
+    if (input.length > 1500) input = input.slice(-1500);
+
     // simple check for log plausibility
     if (input[0].length > 1 && input[0][0] * 1 > 9E11) {
       // write log to storage
