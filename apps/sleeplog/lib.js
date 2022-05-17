@@ -99,7 +99,7 @@ exports = {
     }
 
     // check and if neccessary reduce logsize to prevent low mem
-    if (input.length > 1500) input = input.slice(-1500);
+    if (input.length > 750) input = input.slice(-750);
 
     // simple check for log plausibility
     if (input[0].length > 1 && input[0][0] * 1 > 9E11) {
