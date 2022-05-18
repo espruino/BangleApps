@@ -67,16 +67,14 @@
           var dow = event.d[j].rep;
           if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
           var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
-          var a = {
+          var a = require("sched").newDefaultAlarm();
+          a = {
             id : "gb"+j,
             appid : "gbalarms",
             on : true,
             t : event.d[j].h * 3600000 + event.d[j].m * 60000,
             dow : ((dow&63)<<1) | (dow>>6), // Gadgetbridge sends DOW in a different format
-            last : last,
-            rp : settings.rp,
-            as : settings.as,
-            vibrate : settings.vibrate
+            last : last
           };
           alarms.push(a);
         }
