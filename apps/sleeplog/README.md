@@ -22,7 +22,7 @@ also provides a power saving mode using the built in movement calculation. The i
   To minimize the log size only a changed state is logged. The logged timestamp is matching the beginning of its measurement period.  
   When not on power saving mode a movement is detected nearly instantaneous and the detection of a no movement period is delayed by the minimal no movement duration. To match the beginning of the measurement period a cached timestamp (_sleeplog.firstnomodate_) is logged.  
   On power saving mode the measurement period is fixed to 10 minutes and all logged timestamps are also set back 10 minutes.  
-  To prevent a LOW_MEMORY,MEMORY error the log size is limited to 1500 entries, older entries will be overwritten.
+  To prevent a LOW_MEMORY,MEMORY error the log size is limited to 750 entries, older entries will be overwritten.
 
 ---
 ### Control
