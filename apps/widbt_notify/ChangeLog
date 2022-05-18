@@ -8,3 +8,4 @@
 0.09: Vibrate on connection loss
 0.10: Bug fix
 0.11: Avoid too many notifications. Change disconnected colour to red.
+0.12: Prevent repeated execution of `draw()` from the current app.
