@@ -58,6 +58,16 @@
         min: 0, max: 2,
         format: v => weatherData[v],
         onchange: x => save('weatherCircleData', weatherData[x]),
+      },
+      /*LANG*/'update interval': {
+        value: settings.updateInterval,
+        min: 0,
+        max : 3600,
+        step: 30,
+        format: x => {
+          return x + 's';
+        },
+        onchange: x => save('updateInterval', x),
       }
     };
     E.showMenu(menu);

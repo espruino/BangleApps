@@ -21,5 +21,6 @@
   "circle2colorizeIcon": true,
   "circle3colorizeIcon": true,
   "circle4colorizeIcon": false,
-  "hrmValidity": 60
+  "hrmValidity": 60,
+  "updateInterval": 60
 }
