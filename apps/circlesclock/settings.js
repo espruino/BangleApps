@@ -100,7 +100,7 @@
       /*LANG*/'valid period': {
         value: settings.hrmValidity,
         min: 10,
-        max : 600,
+        max : 1800,
         step: 10,
         format: x => {
           return x + "s";
@@ -117,9 +117,9 @@
       /*LANG*/'< Back': ()=>showMainMenu(),
       /*LANG*/'goal': {
         value: settings.stepGoal,
-        min: 2000,
+        min: 1000,
         max : 50000,
-        step: 2000,
+        step: 500,
         format: x => {
           return x;
         },
@@ -127,9 +127,9 @@
       },
       /*LANG*/'distance goal': {
         value: settings.stepDistanceGoal,
-        min: 2000,
-        max : 30000,
-        step: 1000,
+        min: 1000,
+        max : 50000,
+        step: 500,
         format: x => {
           return x;
         },
