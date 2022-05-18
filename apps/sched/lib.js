@@ -1,115 +1,111 @@
-// Return an array of all alarms
-exports.getAlarms = function() {
-  return require("Storage").readJSON("sched.json",1)||[];
-};
-// Write a list of alarms back to storage
-exports.setAlarms = function(alarms) {
-  return require("Storage").writeJSON("sched.json",alarms);
-};
-// Return an alarm object based on ID
-exports.getAlarm = function(id) {
-  return exports.getAlarms().find(a=>a.id==id);
-};
-// Given a list of alarms from getAlarms, return a list of active alarms for the given time (or current time if time not specified)
-exports.getActiveAlarms = function(alarms, time) {
-  if (!time) time = new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000)
-                    +10000;// get current time - 10s in future to ensure we alarm if we've started the app a tad early
-  return alarms.filter(a=>a.on
-          &&(a.t<currentTime)
-          &&(a.last!=time.getDate())
-          && (!a.date || a.date==time.toISOString().substr(0,10))
-          && a.dow >> (time).getDay() & 1)
-        .sort((a,b)=>a.t-b.t);
-}
-// Set an alarm object based on ID. Leave 'alarm' undefined to remove it
-exports.setAlarm = function(id, alarm) {
-  var alarms = exports.getAlarms().filter(a=>a.id!=id);
-  if (alarm !== undefined) {
-    alarm.id = id;
-    if (alarm.dow===undefined) alarm.dow = 0b1111111;
-    if (alarm.on!==false) alarm.on=true;
-    if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
-      var time = new Date();
-      var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-      alarm.t = currentTime + alarm.timer;
-    }
-    alarms.push(alarm);
+(function() {
+  function gbSend(message) {
+    Bluetooth.println("");
+    Bluetooth.println(JSON.stringify(message));
   }
-  exports.setAlarms(alarms);
-};
-/// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
-exports.getTimeToAlarm = function(alarm, time) {
-  if (!alarm) return undefined;
-  if (!time) time = new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-  var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
-  if (!active) return undefined;
-  var t = alarm.t-currentTime;
-  if (alarm.last == time.getDate() || t < -60000) t += 86400000;
-  return t;
-};
-/// Force a reload of the current alarms and widget
-exports.reload = function() {
-  eval(require("Storage").read("sched.boot.js"));
-  if (global.WIDGETS && WIDGETS["alarm"]) {
-    WIDGETS["alarm"].reload();
-    Bangle.drawWidgets();
-  }
-};
-// Factory that creates a new alarm with default values
-exports.newDefaultAlarm = function () {
-  const settings = exports.getSettings();
 
-  var alarm = {
-    t: 12 * 3600000, // Default to 12:00
-    on: true,
-    rp: settings.defaultRepeat,
-    as: settings.defaultAutoSnooze,
-    dow: settings.defaultRepeat ? 0b1111111 : 0b0000000,
-    last: 0,
-    vibrate: settings.defaultAlarmPattern,
+  var settings = require("Storage").readJSON("android.settings.json",1)||{};
+  //default alarm settings
+  if (settings.rp == undefined) settings.rp = true;
+  if (settings.as == undefined) settings.as = true;
+  if (settings.vibrate == undefined) settings.vibrate = "..";
+  require('Storage').writeJSON("android.settings.json", settings);
+  var _GB = global.GB;
+  global.GB = (event) => {
+    // feed a copy to other handlers if there were any
+    if (_GB) setTimeout(_GB,0,Object.assign({},event));
+
+    /* TODO: Call handling, fitness */
+    var HANDLERS = {
+      // {t:"notify",id:int, src,title,subject,body,sender,tel:string} add
+      "notify" : function() { Object.assign(event,{t:"add",positive:true, negative:true});require("messages").pushMessage(event); },
+      // {t:"notify~",id:int, title:string} // modified
+      "notify~" : function() { event.t="modify";require("messages").pushMessage(event); },
+      // {t:"notify-",id:int} // remove
+      "notify-" : function() { event.t="remove";require("messages").pushMessage(event); },
+      // {t:"find", n:bool} // find my phone
+      "find" : function() {
+        if (Bangle.findDeviceInterval) {
+          clearInterval(Bangle.findDeviceInterval);
+          delete Bangle.findDeviceInterval;
+        }
+        if (event.n) // Ignore quiet mode: we always want to find our watch
+          Bangle.findDeviceInterval = setInterval(_=>Bangle.buzz(),1000);
+      },
+      // {t:"musicstate", state:"play/pause",position,shuffle,repeat}
+      "musicstate" : function() {
+        require("messages").pushMessage({t:"modify",id:"music",title:"Music",state:event.state});
+      },
+      // {t:"musicinfo", artist,album,track,dur,c(track count),n(track num}
+      "musicinfo" : function() {
+        require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
+      },
+      // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
+      "call" : function() {
+        Object.assign(event, {
+          t:event.cmd=="incoming"?"add":"remove",
+          id:"call", src:"Phone",
+          positive:true, negative:true,
+          title:event.name||"Call", body:"Incoming call\n"+event.number});
+        require("messages").pushMessage(event);
+      },
+      "alarm" : function() {
+        //wipe existing GB alarms
+        var sched;
+        try { sched = require("sched"); } catch (e) {}
+        if (!sched) return; // alarms may not be installed
+        var gbalarms = sched.getAlarms().filter(a=>a.appid=="gbalarms");
+        for (var i = 0; i < gbalarms.length; i++)
+          sched.setAlarm(gbalarms[i].id, undefined);
+        var alarms = sched.getAlarms();
+        var time = new Date();
+        var currentTime = time.getHours() * 3600000 +
+                          time.getMinutes() * 60000 +
+                          time.getSeconds() * 1000;
+        for (var j = 0; j < event.d.length; j++) {
+          // prevents all alarms from going off at once??
+          var dow = event.d[j].rep;
+          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
+          var a = require("sched").newDefaultAlarm();
+          a.id = "gb"+j;
+          a.appid = "gbalarms";
+          a.on = true;
+          a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
+          a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
+          a.last = last;
+          alarms.push(a);
+        }
+        sched.setAlarms(alarms);
+        sched.reload();
+      },
+    };
+    var h = HANDLERS[event.t];
+    if (h) h(); else console.log("GB Unknown",event);
   };
 
+  // Battery monitor
+  function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
+  NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  Bangle.on("charging", sendBattery);
+  if (!settings.keep)
+    NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
+  setInterval(sendBattery, 10*60*1000);
+  // Health tracking
+  Bangle.on('health', health=>{
+    gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
+  });
+  // Music control
+  Bangle.musicControl = cmd => {
+    // play/pause/next/previous/volumeup/volumedown
+    gbSend({ t: "music", n:cmd });
+  };
+  // Message response
+  Bangle.messageResponse = (msg,response) => {
+    if (msg.id=="call") return gbSend({ t: "call", n:response?"ACCEPT":"REJECT" });
+    if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
+    // error/warn here?
+  };
+  // remove settings object so it's not taking up RAM
   delete settings;
-
-  return alarm;
-}
-// Factory that creates a new timer with default values
-exports.newDefaultTimer = function () {
-  const settings = exports.getSettings();
-
-  var timer = {
-    timer: 5 * 60 * 1000, // 5 minutes
-    on: true,
-    rp: false,
-    as: false,
-    dow: 0b1111111,
-    last: 0,
-    vibrate: settings.defaultTimerPattern
-  }
-
-  delete settings;
-
-  return timer;
-};
-// Return the scheduler settings
-exports.getSettings = function () {
-  return Object.assign(
-    {
-      unlockAtBuzz: false,
-      defaultSnoozeMillis: 600000, // 10 minutes
-      defaultAutoSnooze: false,
-      defaultRepeat: false,
-      buzzCount: 10,
-      buzzIntervalMillis: 3000, // 3 seconds
-      defaultAlarmPattern: "..",
-      defaultTimerPattern: ".."
-    },
-    require("Storage").readJSON("sched.settings.json", true) || {}
-  );
-}
-// Write the updated settings back to storage
-exports.setSettings = function(settings) {
-  require("Storage").writeJSON("sched.settings.json", settings);
-};
+})();
