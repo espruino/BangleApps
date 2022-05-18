@@ -36,6 +36,8 @@ let leftBarsStartY = upperTextBarLeftOffsetY + textBarHeight;
 let rightBarsStartX = midBarOffsetX + checkBarWidth;
 let rightBarsStartY = upperTextBarRightOffsetY + textBarHeight;
 
+/* Utilities */
+let stepCount = 0;
 let intCaster = num => Number(num);
 
 var drawTimeout;
@@ -66,7 +68,7 @@ function renderWatch(l) {
     drawLDigit(chars[2], 2, leftBarsStartY);
     drawLDigit(chars[3], 3, leftBarsStartY);
 
-    g.drawString(Bangle.getStepCount(), startOffsetX + checkBarWidth + 3, startOffsetY + 4);
+    g.drawString(getStepCount(), startOffsetX + checkBarWidth + 3, startOffsetY + 4);
     g.drawString(concatTime.substring(0,4), startOffsetX + checkBarWidth + 3, startOffsetY + textBarHeight + digitBarHeight + 6);
 
     drawCheckBar(midBarOffsetX, midBarOffsetY);
@@ -371,6 +373,36 @@ function calculateChecksum(digits) {
     return checkSum;
 }
 
+function storeStepCount() {
+    stepCount = Bangle.getStepCount();
+}
+
+function getStepCount() {
+    let accumulatedSteps = Bangle.getStepCount();
+    if(accumulatedSteps <= stepCount) {
+        return 0;
+    }
+    return accumulatedSteps - stepCount;
+}
+
+function resetAtMidnight() {
+    var now = new Date();
+    var night = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1, // the next day, ...
+        23, 58, 0 // ...at 00:00:00 hours
+    );
+    var msToMidnight = night.getTime() - now.getTime();
+
+    setTimeout(function() {
+        storeStepCount();              //      <-- This is the function being called at midnight.
+        resetAtMidnight();    //      Then, reset again next midnight.
+    }, msToMidnight);
+}
+
+resetAtMidnight();
+
 // The layout, referencing the custom renderer
 var Layout = require("Layout");
 var layout = new Layout( {
@@ -387,5 +419,7 @@ Bangle.setUI("clock");
 layout.render();
 
 Bangle.on('lock', function(locked) {
-    layout.render();
+    if(!locked) {
+        layout.render();
+    }
 });
