@@ -3,7 +3,6 @@
  * A simple digital clock showing seconds as a bar
  **/
 // Check settings for what type our clock should be
-const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 let locale = require("locale");
 { // add some more info to locale
   let date = new Date();
@@ -25,7 +24,7 @@ function renderBar(l) {
 
 
 function timeText(date) {
-  if (!is12Hour) {
+  if (!clock.is12Hour) {
     return locale.time(date, true);
   }
   const date12 = new Date(date.getTime());
@@ -38,7 +37,7 @@ function timeText(date) {
   return locale.time(date12, true);
 }
 function ampmText(date) {
-  return (is12Hour && locale.hasMeridian)? locale.meridian(date) : "";
+  return (clock.is12Hour && locale.hasMeridian) ? locale.meridian(date) : "";
 }
 function dateText(date) {
   const dayName = locale.dow(date, true),
@@ -69,7 +68,7 @@ const ClockFace = require("ClockFace"),
       }, {lazy: true});
       // adjustments based on screen size and whether we display am/pm
       let thickness; // bar thickness, same as time font "pixel block" size
-      if (is12Hour) {
+      if (this.is12Hour) {
         // Maximum font size = (<screen width> - <ampm: 2chars * (2*6)px>) / (5chars * 6px)
         thickness = Math.floor((Bangle.appRect.w-24)/(5*6));
       } else {

@@ -59,6 +59,7 @@ var clock = new ClockFace({
     draw: function(time, changed) {   // at least draw or update is required
       // (re)draw entire clockface, time is a Date object
       // `changed` is the same format as for update() below, but always all true
+      // You can use `this.is12Hour` to test if the 'Time Format' setting is set to "12h" or "24h"
     },
     // The difference between draw() and update() is that the screen is cleared
     // before draw() is called, so it needs to always redraw the entire clock
@@ -106,5 +107,30 @@ var clock = new ClockFace(function(time) {
     );
 });
 clock.start();
+
+```
+
+Properties
+----------
+The following properties are automatically set on the clock:
+* `is12Hour`: `true` if the "Time Format" setting is set to "12h", `false` for "24h".
+* `paused`: `true` while the clock is paused.  (You don't need to check this inside your `draw()` code)
+
+Inside the `draw()`/`update()` function you can access these using `this`:
+
+```js
+
+var ClockFace = require("ClockFace");
+var clock = new ClockFace({
+  draw: function (time) {
+    if (this.is12Hour) // draw 12h time
+    else // use 24h format
+  }
+});
+clock.start();
+
+Bangle.on('step', function(steps) {
+  if (clock.paused === false) // draw step count
+});
 
 ```
