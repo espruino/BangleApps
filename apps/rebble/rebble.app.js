@@ -1,8 +1,10 @@
 var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 const SETTINGS_FILE = "rebble.json";
 const LOCATION_FILE = "mylocation.json";
+const GLOBAL_SETTINGS = "setting.json";
 let settings;
 let location;
+let is12Hour;
 
 Graphics.prototype.setFontLECO1976Regular22 = function(scale) {
   // Actual height 22 (21 - 0)
@@ -33,12 +35,26 @@ function loadLocation() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green'};
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'autoCycle': true};
+  is12Hour = (require("Storage").readJSON(GLOBAL_SETTINGS, 1) || {})["12hour"] || false;
+}
+
+function formatHours(hh) {
+  if (is12Hour) {
+    let hours = parseInt(hh,10);
+    if (hours == 0) {
+      hours = 12;
+    } else if (hours >= 12) {
+      if (hours>12) hours -= 12;
+    }
+    hh = (" "+hours).substr(-2);
+  }
+  return hh;
 }
 
 function extractTime(d){
   var h = d.getHours(), m = d.getMinutes();
-  return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
+  return(formatHours(("0"+h).substr(-2)) + ":" + ("0"+m).substr(-2));
 }
 
 function updateSunRiseSunSet(lat, lon){
@@ -81,6 +97,9 @@ function draw() {
   let da = date.toString().split(" ");
   let hh = da[4].substr(0,2);
   let mm = da[4].substr(3,2);
+  
+  hh = formatHours(hh);
+  
   //const t = 6;
 
   if (drawCount % 60 == 0)
@@ -260,7 +279,9 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    nextSidebar();
+    if (!settings.autoCycle) {
+        nextSidebar();
+    }
     draw();
   }, 60000 - (Date.now() % 60000));
 }

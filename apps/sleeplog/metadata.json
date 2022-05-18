@@ -2,7 +2,7 @@
   "id":"sleeplog",
   "name":"Sleep Log",
   "shortName": "SleepLog",
-  "version": "0.04",
+  "version": "0.06",
   "description": "Log and view your sleeping habits. This app derived from SleepPhaseAlarm and uses also the principe of Estimation of Stationary Sleep-segments (ESS). It also provides a power saving mode using the built in movement calculation.",
   "icon": "app.png",
   "type": "app",
