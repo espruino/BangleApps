@@ -46,8 +46,8 @@ function calc_ess(acc_magn) {
 var nextAlarm;
 active.forEach(alarm => {
   const now = new Date();
-  const t = require("sched").decodeTime(alarm.t);
-  var dateAlarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), t.hrs, t.mins);
+  const time = require("time_utils").decodeTime(alarm.t);
+  var dateAlarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), time.h, time.m);
   if (dateAlarm < now) { // dateAlarm in the past, add 24h
     dateAlarm.setTime(dateAlarm.getTime() + (24*60*60*1000));
   }
