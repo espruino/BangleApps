@@ -1,0 +1,7 @@
+0.02: Tweaks for variable size widget system
+0.03: Ensure redrawing works with variable size widget system
+0.04: Fix automatic update of Bluetooth connection status
+0.05: Make Bluetooth widget thinner, and when on a bright theme use light grey for disabled color
+0.06: Tweaking colors for dark/light themes and low bpp screens
+0.07: Memory usage improvements
+0.08: Disable LCD on, on bluetooth status change
