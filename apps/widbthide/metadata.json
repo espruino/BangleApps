@@ -8,6 +8,6 @@
   "tags": "widget,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"widbt.wid.js","url":"widget.js"}
+    {"name":"widbthide.wid.js","url":"widget.js"}
   ]
 }
