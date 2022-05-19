@@ -37,7 +37,16 @@ function loadLocation() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'autoCycle': true};
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':'on'};
+
+  let settings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':'on'};
+  let tmp =  require('Storage').readJSON(SETTINGS_FILE, 1) || settings;
+  for (const key in tmp) {
+    settings[key] = tmp[key]
+  }
+
+  if(settings.sideTap!='on')
+    sideBar=parseInt(settings.sideTap)-1; //tab to show
   is12Hour = (require("Storage").readJSON(GLOBAL_SETTINGS, 1) || {})["12hour"] || false;
 }
 
@@ -251,20 +260,19 @@ function formatSteps() {
 }
 
 function nextSidebar() {
+ 
   if (++sideBar > 2) sideBar = 0;
   log_debug("next: " + sideBar);
+  
 }
 
 function prevSidebar() {
+  
   if (--sideBar < 0) sideBar = 2;
   log_debug("prev: " + sideBar);
+  
 }
 
-Bangle.setUI("clockupdown", btn=> {
-  if (btn<0) prevSidebar();
-  if (btn>0) nextSidebar();
-  draw();
-});
 
 
 // timeout used to update every minute
@@ -294,6 +302,24 @@ Bangle.loadWidgets();
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 loadLocation();
+
+
+
+if(settings.autoCycle || settings.sideTap=='on')
+{
+  Bangle.setUI("clockupdown", btn=> {
+    if (btn<0) prevSidebar();
+    if (btn>0) nextSidebar();
+    draw();
+  });
+}
+else{
+  Bangle.setUI("clock");
+}
+
+
+
+
 draw();  // queues the next draw for a minutes time
 Bangle.on('charging', function(charging) { 
   //redraw the sidebar ( with the battery )
