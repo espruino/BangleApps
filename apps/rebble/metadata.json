@@ -2,7 +2,7 @@
   "id": "rebble",
   "name": "Rebble Clock",
   "shortName": "Rebble",
-  "version": "0.08",
+  "version": "0.09",
   "description": "A Pebble style clock, with configurable background, three sidebars including steps, day, date, sunrise, sunset, long live the rebellion",
   "readme": "README.md",
   "icon": "rebble.png",
@@ -14,6 +14,7 @@
   "storage": [
     {"name":"rebble.app.js","url":"rebble.app.js"},
     {"name":"rebble.settings.js","url":"rebble.settings.js"},
-    {"name":"rebble.img","url":"rebble.icon.js","evaluate":true}
+    {"name":"rebble.img","url":"rebble.icon.js","evaluate":true},
+    {"name":"suncalc","url":"suncalc.js"}
   ]
 }

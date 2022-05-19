@@ -1,4 +1,4 @@
-var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
+var SunCalc = require("suncalc");
 const SETTINGS_FILE = "rebble.json";
 const LOCATION_FILE = "mylocation.json";
 const GLOBAL_SETTINGS = "setting.json";

@@ -6,3 +6,4 @@
 0.06: Add 12h support and autocycle control
 0.07: added localization, removed deprecated code
 0.08: removed unused font, fix autocycle 
+0.09: imported suncalc and trimmed
