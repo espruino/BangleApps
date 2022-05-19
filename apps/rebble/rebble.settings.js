@@ -2,7 +2,8 @@
   const SETTINGS_FILE = "rebble.json";
 
   // initialize with default settings...
-  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'sideTap':'on'};
+  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'sideTap':0};
+  //sideTap 0 = on| 1= sideBar1 | 2 = ...
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -49,43 +50,27 @@
 
     if( !localSettings.autoCycle)
     {
-      menu['Tap to Cycle']={
+      menu['Tap to Cycle']= {
         value: localSettings.sideTap,
-        onchange: () => setTimeout(showTapMenu, 100, changedValue => {
-          localSettings.sideTap=changedValue;
+        min: 0,
+        max: 3,
+        step: 1,
+        format: v => NumberToSideTap(v),
+        onchange: v => {
+          localSettings.sideTap=v
           save();
           setTimeout(showMenu, 10);
-        })
+        }
       };
     }
     E.showMenu(menu);
   }
 
-  function showTapMenu(changeCallback)
+  function NumberToSideTap(Number)
   {
-    var current = localSettings.sideTap;
-    const menu = {
-      "": { "title": /*LANG*/"Tap to Cycle" },
-      "< Back": () => changeCallback(current),
-      "on": { // No days set: the alarm will fire once
-        value: current == 'on',
-        onchange: () => changeCallback('on')
-      },
-      "1": {
-        value: current == '1',
-        onchange: () => changeCallback('1')
-      },
-      "2": {
-        value: current == '2',
-        onchange: () => changeCallback('2')
-      },
-      "3": {
-        value: current == '3',
-        onchange: () => changeCallback('3')
-      },
-    };
-  
-    E.showMenu(menu);
+    if(Number==0)
+      return 'on';
+    return Number+"";
   }
   
   showMenu();

@@ -37,15 +37,15 @@ function loadLocation() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':'on'};
+  settings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':0};
+  //sideTap 0 = on | 1 = sidebar1...
 
-  let settings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':'on'};
   let tmp =  require('Storage').readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in tmp) {
     settings[key] = tmp[key]
   }
 
-  if(settings.sideTap!='on')
+  if(settings.sideTap!=0)
     sideBar=parseInt(settings.sideTap)-1; //tab to show
   is12Hour = (require("Storage").readJSON(GLOBAL_SETTINGS, 1) || {})["12hour"] || false;
 }
@@ -305,7 +305,7 @@ loadLocation();
 
 
 
-if(settings.autoCycle || settings.sideTap=='on')
+if(settings.autoCycle || settings.sideTap==0)
 {
   Bangle.setUI("clockupdown", btn=> {
     if (btn<0) prevSidebar();
