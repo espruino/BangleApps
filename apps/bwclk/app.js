@@ -264,7 +264,7 @@ function drawDate(){
 
     // Draw date
     y = parseInt(y/2);
-    y += settings.fullscreen ? 0 : 15;
+    y += settings.fullscreen ? 2 : 15;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
@@ -280,11 +280,11 @@ function drawDate(){
     g.setFontAlign(-1,0);
     g.setMediumFont();
     g.setColor(g.theme.fg);
-    g.drawString(dateStr, W/2 - fullDateW / 2, y+5);
+    g.drawString(dateStr, W/2 - fullDateW / 2, y+1);
 
     g.setSmallFont();
-    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+14);
-    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-10);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-11);
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+11);
 }
 
 
@@ -371,17 +371,6 @@ function queueDraw() {
 }
 
 
-/*
- * Load clock, widgets and listen for events
- */
-Bangle.loadWidgets();
-
-// Clear the screen once, at startup and set the correct theme.
-var bgOrig = g.theme.bg
-var fgOrig = g.theme.fg
-g.setTheme({bg:fgOrig,fg:bgOrig}).clear();
-draw();
-
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
   if (on) {
@@ -446,6 +435,18 @@ E.on("kill", function(){
   storage.write(SETTINGS_FILE, settings);
 });
 
+
+/*
+ * Draw clock the first time
+ */
+// The upper part is inverse i.e. light if dark and dark if light theme
+// is enabled. In order to draw the widgets correctly, we invert the
+// dark/light theme as well as the colors.
+g.setTheme({bg:g.theme.fg,fg:g.theme.bg, dark:!g.theme.dark}).clear();
+
+// Load widgets and draw clock the first time
+Bangle.loadWidgets();
+draw();
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
