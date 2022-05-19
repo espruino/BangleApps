@@ -37,7 +37,8 @@ let rightBarsStartX = midBarOffsetX + checkBarWidth;
 let rightBarsStartY = upperTextBarRightOffsetY + textBarHeight;
 
 /* Utilities */
-let stepCount = 0;
+let stepCount = require("Storage").readJSON("stepCount",1);
+if(stepCount === undefined) stepCount = 0;
 let intCaster = num => Number(num);
 
 var drawTimeout;
@@ -78,6 +79,7 @@ function renderWatch(l) {
     drawRDigit(chars[6], 2, rightBarsStartY);
     drawRDigit(checkSum, 3, rightBarsStartY);
 
+    g.drawString(Bangle.getStepCount(), midBarOffsetX + checkBarWidth + 3, startOffsetY + 4);
     g.drawString(concatTime.substring(4), midBarOffsetX + checkBarWidth + 3, startOffsetY + textBarHeight + digitBarHeight + 6);
 
     drawCheckBar(endBarOffsetX, endBarOffsetY);
@@ -375,6 +377,7 @@ function calculateChecksum(digits) {
 
 function storeStepCount() {
     stepCount = Bangle.getStepCount();
+    require("Storage").writeJSON("stepCount",stepCount);
 }
 
 function getStepCount() {
@@ -386,14 +389,14 @@ function getStepCount() {
 }
 
 function resetAtMidnight() {
-    var now = new Date();
-    var night = new Date(
+    let now = new Date();
+    let night = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate() + 1, // the next day, ...
         23, 58, 0 // ...at 00:00:00 hours
-    );
-    var msToMidnight = night.getTime() - now.getTime();
+);
+    let msToMidnight = night.getTime() - now.getTime();
 
     setTimeout(function() {
         storeStepCount();              //      <-- This is the function being called at midnight.
