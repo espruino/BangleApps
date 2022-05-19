@@ -238,20 +238,11 @@ function drawBattery(x,y,wi,hi) {
 
 }
   
-function getSteps() {
-  if (WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return '????';
-}
-
 // format steps so they fit in the place
 function formatSteps() {
-  var s = getSteps();
+  var s = Bangle.getHealthStatus("day").steps;
 
-  if ( s == '????') {
-    return s;
-  } else if (s < 1000) {
+  if (s < 1000) {
     return s + '';
   } else if (s < 10000) {
     return '' + (s/1000).toFixed(1) + 'K';
